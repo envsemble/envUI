@@ -13,7 +13,10 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "customConditions": ["envui-source"],
-    "paths": { "envui-icon-list": ["../../packages/ui/src/icons/index.ts"] }
+    "paths": {
+      "envui-icon-list": ["../../packages/ui/src/icons/index.ts"],
+      "@docs-model/*": ["../../scripts/docs/model/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

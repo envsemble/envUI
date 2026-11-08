@@ -1,36 +1,12 @@
 import type { ReactNode } from 'react';
 import { Column, Table, Text } from '@envsemble/envui';
 import { PlainCode } from './SimpleTable';
-import type { ExportEntry, PropEntry } from '../../../../scripts/docs/model/DocumentationTypes';
+import type { ExportEntry, PropEntry } from '@docs-model/DocumentationTypes';
+import { nativePropsSentence, propDescription } from '@docs-model/PropWording';
 import type { Documentation } from './PageModel';
 // The ids search leads to, as the search index writes them.
-import { exportSection, propSection } from '../shared/SearchAnchors';
+import { exportSection, propSection } from '@docs-model/SearchAnchors';
 import { useSectionOutline } from '../template/SectionOutline';
-
-/** The same sentences as the packaged Markdown's Props section (scripts/docs/GenerateDocumentation.ts). */
-function nativeSentence(elements: string[]) {
-  if (!elements.length) return null;
-  const tags = elements.map((element) =>
-    element === 'element' ? 'an HTML element' : `<${element}>`,
-  );
-  const list = tags.length === 1 ? tags[0] : `${tags.slice(0, -1).join(', ')} or ${tags.at(-1)}`;
-  return `Also accepts the native props of ${list}, such as ref, className and aria-* attributes.`;
-}
-
-function description(prop: PropEntry) {
-  return [
-    prop.deprecated ? `Deprecated${prop.deprecated === true ? '' : `: ${prop.deprecated}`}.` : '',
-    prop.requiredWhen
-      ? prop.requiredWhen === 'in some forms'
-        ? 'Required in some forms.'
-        : `Required when ${prop.requiredWhen.replaceAll('`', '')}.`
-      : '',
-    prop.source === 'base-ui' ? 'Passed to Base UI.' : '',
-    prop.description,
-  ]
-    .filter(Boolean)
-    .join(' ');
-}
 
 /**
  * A type's top-level alternatives, such as 'sm' | 'md' | 'lg', split at the bars outside brackets,
@@ -152,7 +128,7 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
                 </Table.Cell>
                 <Table.Cell label="Description">
                   <Text render={<span />} variant="body-sm" emphasis="muted">
-                    {description(prop)}
+                    {propDescription(prop, 'text')}
                   </Text>
                 </Table.Cell>
               </Table.Row>
@@ -162,8 +138,8 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
       ) : (
         <Text>{entry.native.length ? 'No props of its own.' : 'Takes no props.'}</Text>
       )}
-      {entry.kind === 'component' && nativeSentence(entry.native) && (
-        <Text emphasis="muted">{nativeSentence(entry.native)}</Text>
+      {entry.kind === 'component' && entry.native.length > 0 && (
+        <Text emphasis="muted">{nativePropsSentence(entry.native, 'text')}</Text>
       )}
     </Column>
   );

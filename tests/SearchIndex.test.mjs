@@ -7,7 +7,7 @@ import {
   readProps,
 } from '../scripts/docs/GenerateDocumentation.ts';
 import { headingsOf } from '../scripts/docs/MarkdownHeadings.ts';
-import { exportSection, propSection, tokenSection } from '../apps/site/src/shared/SearchAnchors.ts';
+import { exportSection, propSection, tokenSection } from '../scripts/docs/model/SearchAnchors.ts';
 import {
   buildSearchIndex,
   standalonePages,
@@ -20,7 +20,7 @@ import {
   queryOptionsFor,
   searchIndex,
   tokenize,
-} from '../apps/site/src/shared/SearchTerms.ts';
+} from '../scripts/docs/model/SearchTerms.ts';
 
 const props = readProps();
 const documents = readDocumentation(undefined, { props });

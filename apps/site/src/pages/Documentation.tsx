@@ -10,7 +10,7 @@ import { documents, type Documentation as Document } from './PageModel';
 import { groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { inDocs, routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useSiteRoute';
-import { headingSlugger } from '../shared/SearchAnchors';
+import { headingSlugger } from '@docs-model/SearchAnchors';
 import { headingsOnly, useSectionOutline } from '../template/SectionOutline';
 import { marked, type Token, type Tokens } from 'marked';
 
@@ -60,7 +60,7 @@ function textOf(node: { type: string; value?: string; children?: unknown[] }): s
 
 /**
  * A rehype plugin that gives each heading of a rendered document the id its text makes, as
- * apps/site/src/shared/SearchAnchors.ts writes them, so links to #heading and search reach it.
+ * scripts/docs/model/SearchAnchors.ts writes them, so links to #heading and search reach it.
  */
 const headingIds: NonNullable<MarkdownProps['rehypePlugins']>[number] = () => (tree) => {
   const slug = headingSlugger();

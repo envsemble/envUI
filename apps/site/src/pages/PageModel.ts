@@ -1,5 +1,5 @@
 import { documents } from '../generated/Documentation';
-import type { DocumentationEntry } from '../../../../scripts/docs/model/DocumentationTypes';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 
 export { documents };
 export const componentGroups = [

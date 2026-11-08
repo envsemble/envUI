@@ -22,7 +22,7 @@ import { fileURLToPath } from 'node:url';
 import type { DocumentationEntry, DocumentationSummary } from './model/DocumentationTypes.ts';
 import { marked } from 'marked';
 import { headingsOf, plainText } from './MarkdownHeadings.ts';
-import { exportSection, headingSlugger } from '../../apps/site/src/shared/SearchAnchors.ts';
+import { exportSection, headingSlugger } from './model/SearchAnchors.ts';
 import { providesHeadings } from './model/CatalogueContent.ts';
 import { writeSearchIndex } from '../site/SearchIndex.ts';
 import { documentationDirectory, generatedFile, pageKindOf, readProps } from './Schema.ts';
@@ -48,7 +48,6 @@ export {
   readProps,
   specimensDirectory,
   splitFrontmatter,
-  statuses,
 } from './Schema.ts';
 export { fenceFor, isPropsTable, readPartNames } from './Validation.ts';
 export { readDocumentation } from './Reader.ts';
@@ -58,7 +57,6 @@ export {
   documentedExports,
   exampleSource,
   packageDocumentation,
-  propDescription,
   renderProps,
 } from './Compiler.ts';
 
@@ -245,7 +243,7 @@ export function generateDocumentation() {
       })),
     };
   });
-  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '../../../../scripts/docs/model/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
+  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '@docs-model/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
   writeIfChanged(generatedFile, source);
   const contents = new Map(
     entries.map((entry) => {

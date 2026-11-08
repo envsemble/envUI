@@ -3,10 +3,7 @@
  * component, the address of a related page, and and what a tile shows: an example, or a foundation's tile.
  */
 import type { ComponentType } from 'react';
-import type {
-  DocumentationMetadata,
-  StageFill,
-} from '../../../../scripts/docs/model/DocumentationTypes';
+import type { DocumentationMetadata, StageFill } from '@docs-model/DocumentationTypes';
 import { routeHref } from '../navigation/Address';
 import { pageHref, groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { documents, type DocumentSummary } from '../pages/PageModel';

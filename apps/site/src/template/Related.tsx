@@ -1,7 +1,7 @@
 import { useId, useRef, type ReactNode } from 'react';
 import { Column, Link, Row, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import type { DocumentationMetadata } from '../../../../scripts/docs/model/DocumentationTypes';
+import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/Motion';

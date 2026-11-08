@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked, type Token, type Tokens } from 'marked';
-import type { DocumentationBlock } from './model/DocumentationTypes.ts';
+import { pageStatuses, type DocumentationBlock } from './model/DocumentationTypes.ts';
 import { optionTable, optionTableProblems } from './model/CatalogueContent.ts';
 import {
   codeSubsections,
@@ -15,7 +15,6 @@ import {
   pageSchemas,
   pageSections,
   sourcePattern,
-  statuses,
   type ExampleEntry,
   type Frontmatter,
   type PageSection,
@@ -181,8 +180,8 @@ export function validateFrontmatter(
         for (const [name, status] of Object.entries<unknown>(value)) {
           if (!listed.includes(name))
             problems.push(`${key} names ${name}, which components does not list`);
-          if (!statuses.includes(status as string))
-            problems.push(`${key} of ${name} must be one of ${statuses.join(', ')}`);
+          if (!(pageStatuses as readonly unknown[]).includes(status))
+            problems.push(`${key} of ${name} must be one of ${pageStatuses.join(', ')}`);
           else if (
             status === (schema ? frontmatter.status : (frontmatter.status ?? guideExportStatus))
           )

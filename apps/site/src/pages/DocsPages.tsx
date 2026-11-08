@@ -26,8 +26,8 @@ import { TokenReferenceSkeleton } from './TokenTables';
 import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleton';
 import { SpecimenHeadingLevel } from '../figures/Example';
 import { ReleaseNotes } from './ReleaseNotes';
-import { codeColumns, subsections } from '../../../../scripts/docs/model/CatalogueContent';
-import { headingSlug } from '../shared/SearchAnchors';
+import { codeColumns, subsections } from '@docs-model/CatalogueContent';
+import { headingSlug } from '@docs-model/SearchAnchors';
 
 /** The token reference, a large page that loads with the page that shows it. */
 const tokenReference = lazyPart(

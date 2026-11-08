@@ -2,12 +2,10 @@
  * The small badge beside a page's name in the Docs' navigation: Deprecated or Alpha, which
  * a reader must not miss, else New while the page came in the current minor release. One badge a
  * page, the first that applies. Beta has none here: it stays on the page, as so many pages are
- * beta that the navigation would be a column of them. Kept free of imports, so the unit tests
+ * beta that the navigation would be a column of them. It imports only types, so the unit tests
  * read it as it is.
  */
-
-/** A page's status, from its frontmatter. */
-type PageStatus = 'alpha' | 'beta' | 'stable' | 'deprecated';
+import type { PageStatus } from '@docs-model/DocumentationTypes';
 
 /**
  * The tone of each status's Badge, the same wherever a status shows: under a page's title and

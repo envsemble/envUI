@@ -2,7 +2,7 @@ import MiniSearch from 'minisearch';
 // Written by scripts/site/SearchIndex.ts when the documentation is generated; read as text, which
 // MiniSearch parses on load.
 import serializedIndex from '../generated/SearchIndex.json?raw';
-import { indexOptions, nameKey, processTerm, searchIndex, tokenize } from '../shared/SearchTerms';
+import { indexOptions, nameKey, processTerm, searchIndex, tokenize } from '@docs-model/SearchTerms';
 
 /** What a search finds, as scripts/site/SearchIndex.ts describes it. */
 export interface SearchResult {

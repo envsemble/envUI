@@ -16,13 +16,13 @@ import MiniSearch from 'minisearch';
 import { plainText } from '../docs/MarkdownHeadings.ts';
 import type { DocumentRecord } from '../docs/Reader.ts';
 import type { PropsFile } from '../docs/Schema.ts';
-import { indexOptions, nameKey } from '../../apps/site/src/shared/SearchTerms.ts';
+import { indexOptions, nameKey } from '../docs/model/SearchTerms.ts';
 import {
   exportSection,
   headingSlugger,
   propSection,
   tokenSection,
-} from '../../apps/site/src/shared/SearchAnchors.ts';
+} from '../docs/model/SearchAnchors.ts';
 
 /** The token list, packages/ui/src/generated/tokens.json. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; the token build writes it

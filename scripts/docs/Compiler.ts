@@ -13,6 +13,7 @@ import {
 import { cell, fenceFor } from './Validation.ts';
 import { readMessages, renderStrings, type MessageNamespace } from './Messages.ts';
 import type { AnatomyLegendItem, PropEntry } from './model/DocumentationTypes.ts';
+import { nativePropsSentence, propDescription } from './model/PropWording.ts';
 
 /** How the package names a do, a don't or a caution figure in a run of figures. */
 const verdictWords: Record<string, string> = { do: 'do', dont: "don't", caution: 'caution' };
@@ -28,35 +29,8 @@ export function documentedExports(names: readonly string[], props: PropsFile | u
 
 const codeCell = (text: string) => `\`${cell(text)}\``;
 
-const orList = (items: string[]) =>
-  items.length === 1 ? items[0] : `${items.slice(0, -1).join(', ')} or ${items.at(-1)}`;
 const andList = (items: string[]) =>
   items.length === 1 ? items[0] : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
-
-/** The elements whose native props an export takes; the index says once what native props are. */
-function nativeSentence(elements: string[]) {
-  if (!elements.length) return '';
-  const tags = elements.map((element: string) =>
-    element === 'element' ? 'HTML element' : `\`<${element}>\``,
-  );
-  return `Native props: ${orList(tags)}.`;
-}
-
-/** The description of a prop as its table shows it, with when it is required or deprecated. */
-export function propDescription(prop: PropEntry) {
-  return [
-    prop.deprecated ? `Deprecated${prop.deprecated === true ? '' : `: ${prop.deprecated}`}.` : '',
-    prop.requiredWhen
-      ? prop.requiredWhen === 'in some forms'
-        ? 'Required in some forms.'
-        : `Required when ${prop.requiredWhen}.`
-      : '',
-    prop.source === 'base-ui' ? 'Passed to Base UI.' : '',
-    prop.description,
-  ]
-    .filter(Boolean)
-    .join(' ');
-}
 
 /**
  * The generated Props section of a page, as Markdown: each export's props in a table, where a prop
@@ -68,7 +42,13 @@ export function renderProps(names: readonly string[], props: PropsFile, headingD
   // The export that first lists a prop, by its name, type, default and description.
   const firstWith = new Map<string, string>();
   const propKey = (prop: PropEntry) =>
-    JSON.stringify([prop.name, prop.required, prop.type, prop.default, propDescription(prop)]);
+    JSON.stringify([
+      prop.name,
+      prop.required,
+      prop.type,
+      prop.default,
+      propDescription(prop, 'markdown'),
+    ]);
   for (const name of documentedExports(names, props)) {
     const entry = props.exports[name];
     if (entry.kind === 'namespace') continue;
@@ -78,7 +58,7 @@ export function renderProps(names: readonly string[], props: PropsFile, headingD
       lines.push('```ts', `${name}${entry.signature}`, '```', '');
       continue;
     }
-    const native = nativeSentence(entry.native);
+    const native = nativePropsSentence(entry.native, 'markdown');
     if (!entry.props.length) {
       lines.push(native ? `No props of its own. ${native}` : 'Takes no props.', '');
       continue;
@@ -110,7 +90,7 @@ export function renderProps(names: readonly string[], props: PropsFile, headingD
             : prop.defaultBuiltIn
               ? 'built-in'
               : '—'
-        } | ${cell(propDescription(prop))} |`,
+        } | ${cell(propDescription(prop, 'markdown'))} |`,
       );
     lines.push('');
     if (sharedSentence) lines.push(`Also ${sharedSentence}.`, '');

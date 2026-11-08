@@ -1,9 +1,5 @@
-import type { DocumentationSection } from '../../../../scripts/docs/model/DocumentationTypes';
-import {
-  providesOf,
-  catalogueMarkdown,
-  withoutProvides,
-} from '../../../../scripts/docs/model/CatalogueContent';
+import type { DocumentationSection } from '@docs-model/DocumentationTypes';
+import { providesOf, catalogueMarkdown, withoutProvides } from '@docs-model/CatalogueContent';
 
 /**
  * The subsections of a page's Accessibility that say what envUI provides and what the application

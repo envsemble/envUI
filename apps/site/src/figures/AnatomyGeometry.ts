@@ -3,7 +3,7 @@
  * shows of each part a legend item names, its corners and edge, the labels in the subject, and in
  * a variants figure, its items and the room their names and uses take.
  */
-import type { AnatomyLegendItem } from '../../../../scripts/docs/model/DocumentationTypes';
+import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
 import { remPixels } from '../shared/Lengths';
 import { partSelector } from '../template/Parts';
 import type {

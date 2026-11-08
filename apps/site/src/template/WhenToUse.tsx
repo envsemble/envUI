@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import type { DocumentationMetadata } from '../../../../scripts/docs/model/DocumentationTypes';
+import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { pageOf } from './RelatedPages';
 
