@@ -34,9 +34,12 @@ export interface ResizeOptions {
   step?: number;
   /** How far Page Up and Page Down, and an arrow key with Shift, move it; ten steps by default. */
   largeStep?: number;
-  /** The size's unit: px, % of the handle's parent element or `percentOf`, or rem, of the root's font size. */
+  /** The size's unit: px, % of `percentOf`, or rem, of the root's font size. */
   unit?: 'px' | '%' | 'rem';
-  /** The element a size in % is a share of, such as a column's table: the handle's parent by default. */
+  /**
+   * The element a size in % is a share of, such as a column's table: the handle's parent element by
+   * default.
+   */
   percentOf?: (handle: HTMLElement) => HTMLElement | null;
   /**
    * Whether the size grows toward the start of the axis: a panel docked at the bottom grows up as
@@ -91,6 +94,31 @@ interface Drag {
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+/**
+ * Size units per pixel of pointer movement along the axis, read as a drag starts: a rem follows the
+ * root's font size and a percent the extent of the element it is a share of. Pointer movement is in
+ * screen pixels, and a scaled ancestor, as in a zoomed preview, draws the layout smaller or larger
+ * than it is.
+ */
+function unitsPerPixel(
+  handle: HTMLElement,
+  container: HTMLElement | null,
+  inline: boolean,
+  unit: NonNullable<ResizeOptions['unit']>,
+) {
+  let perLayoutPixel = 1;
+  if (unit === 'rem') perLayoutPixel = 1 / remPixels(handle);
+  else if (unit === '%') {
+    const extent = container ? (inline ? container.clientWidth : container.clientHeight) : 0;
+    perLayoutPixel = extent > 0 ? 100 / extent : 0;
+  }
+  if (!container) return perLayoutPixel;
+  const box = container.getBoundingClientRect();
+  const drawn = inline ? box.width : box.height;
+  const laid = inline ? container.offsetWidth : container.offsetHeight;
+  return drawn > 0 && laid > 0 ? (perLayoutPixel * laid) / drawn : perLayoutPixel;
+}
 
 /**
  * One implementation of a window splitter's handle (the APG window splitter pattern): a focusable
@@ -161,26 +189,12 @@ export function useResize({
     // Dragging selects no text and leaves focus where it is.
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
-    const container = percentOf(event.currentTarget);
-    const extent = container
-      ? axis === 'inline'
-        ? container.clientWidth
-        : container.clientHeight
-      : 0;
-    // Pointer movement is in screen pixels; a scaled ancestor, as in a zoomed preview, draws the
-    // layout smaller or larger than it is.
-    const box = container?.getBoundingClientRect();
-    const drawn = box ? (axis === 'inline' ? box.width : box.height) : 0;
-    const laid = container
-      ? axis === 'inline'
-        ? container.offsetWidth
-        : container.offsetHeight
-      : 0;
-    const layoutPerScreen = drawn > 0 && laid > 0 ? laid / drawn : 1;
-    // A rem follows the root's font size, read as the drag starts.
-    const pixelsPerUnit = unit === 'rem' ? remPixels(event.currentTarget) : 1;
-    const perUnit = unit === '%' ? (extent > 0 ? 100 / extent : 0) : 1 / pixelsPerUnit;
-    const perPixel = perUnit * layoutPerScreen;
+    const perPixel = unitsPerPixel(
+      event.currentTarget,
+      percentOf(event.currentTarget),
+      axis === 'inline',
+      unit,
+    );
     const upper = upperAt(event.currentTarget);
     measure(event.currentTarget);
     drag.current = {

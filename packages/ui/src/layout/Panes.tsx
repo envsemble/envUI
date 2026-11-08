@@ -217,13 +217,17 @@ function usePanes(part: string) {
 /** Whether an element shows, as CSS decided: it has a box. */
 const shows = (element: HTMLElement | null) => element !== null && element.offsetParent !== null;
 
+/** The other pane's least width in rem, as `--env-panes-other-min` sets it in Panes.css. */
+const otherPaneMinWidth = 16;
+
 /** The widest the resized pane can be, in rem, beside the other pane's least width. */
 function roomFor(divider: HTMLElement) {
   const root = divider.parentElement;
   if (!root) return Infinity;
   const rem = remPixels(divider);
   const other =
-    Number.parseFloat(getComputedStyle(root).getPropertyValue('--env-panes-other-min')) || 16;
+    Number.parseFloat(getComputedStyle(root).getPropertyValue('--env-panes-other-min')) ||
+    otherPaneMinWidth;
   return roundToHundredth((root.clientWidth - divider.offsetWidth) / rem - other);
 }
 
