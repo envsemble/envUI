@@ -1,4 +1,4 @@
-import { Documentation } from '../pages/Documentation';
+import { PageMarkdown } from '../pages/PageMarkdown';
 import type { OptionTable } from '@docs-model/CatalogueContent';
 
 /**
@@ -15,12 +15,12 @@ export function OptionLegend({ table, path }: { table: OptionTable; path: string
         <div key={option.name} className="catalogue-option">
           <dt>{option.name}</dt>
           <dd>
-            <Documentation markdown={option.use} path={path} />
+            <PageMarkdown markdown={option.use} path={path} />
             {option.details.map(
               (detail) =>
                 detail.markdown && (
                   <div key={detail.title} className="catalogue-option-detail">
-                    <Documentation markdown={`${detail.title}: ${detail.markdown}`} path={path} />
+                    <PageMarkdown markdown={`${detail.title}: ${detail.markdown}`} path={path} />
                   </div>
                 ),
             )}

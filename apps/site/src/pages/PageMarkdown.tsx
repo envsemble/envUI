@@ -6,7 +6,8 @@ import {
   type MarkdownLinkProps,
   type MarkdownProps,
 } from '@envsemble/envui/content';
-import { documents, type Documentation as Document } from './PageModel';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import { documents } from './PageModel';
 import { groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { inDocs, routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useSiteRoute';
@@ -242,20 +243,19 @@ function OutlineHeadings({ markdown }: { markdown: string }) {
  * gives it a role in the catalogue's type hierarchy, such as `site-lead` for a section's opening
  * paragraph (SiteText.css).
  */
-export function Documentation(
-  props: ({ document: Document } | { markdown: string; path: string }) & {
+export function PageMarkdown(
+  props: ({ document: DocumentationEntry } | { markdown: string; path: string }) & {
     className?: string;
     /** Whether its links show as their words alone, as inside a tile that is a link itself. */
     linkless?: boolean;
   },
 ) {
-  const [written, path] =
+  const [markdown, path] =
     'document' in props
       ? [props.document.markdown ?? '', props.document.path]
       : [props.markdown, props.path];
   // A section waiting its turn to show renders its headings alone (SectionOutline).
   const outline = useSectionOutline();
-  const markdown = written;
   const guidance = useContext(GuidanceLists);
   const plugins = useMemo(
     () => (guidance ? [headingIds, componentNames(path)] : rehypePlugins),

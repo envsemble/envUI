@@ -144,7 +144,7 @@
   margin-block-start: var(--env-space-2);
 }
 
-/* A code block in a page's Markdown (Documentation.tsx): the code alone, snug, unlabelled, with its
+/* A code block in a page's Markdown (PageMarkdown.tsx): the code alone, snug, unlabelled, with its
    copy button in the top end corner. The code keeps clear of the corner on every line, so the
    button never covers it: the button is as wide as a small control, and under a coarse pointer as
    the touch size (Button.css). */

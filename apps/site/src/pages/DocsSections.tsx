@@ -7,8 +7,8 @@ import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleto
 import { SpecimenHeadingLevel } from '../figures/SpecimenFrame';
 import { partsOf } from '../template/Parts';
 import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
-import type { Documentation as Document } from './PageModel';
-import { Documentation } from './Documentation';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import { PageMarkdown } from './PageMarkdown';
 import { LoadedPart } from './LoadedPart';
 import { PropsTables } from './PropsTables';
 import { providesOf } from '@docs-model/CatalogueContent';
@@ -125,7 +125,7 @@ export function Provides({
   title,
   id,
 }: {
-  document: Document;
+  document: DocumentationEntry;
   title: string;
   id: string;
 }) {
@@ -148,7 +148,7 @@ export function Provides({
           <Text render={<h3 />} variant="title">
             You provide
           </Text>
-          <Documentation markdown={app} path={document.path} />
+          <PageMarkdown markdown={app} path={document.path} />
         </Column>
       )}
       {envui && (
@@ -156,7 +156,7 @@ export function Provides({
           <Text render={<h3 />} variant="title">
             envUI provides
           </Text>
-          <Documentation markdown={envui} path={document.path} />
+          <PageMarkdown markdown={envui} path={document.path} />
         </Column>
       )}
     </Column>
@@ -173,7 +173,7 @@ export function CodeGuide({
   document,
   showExample = false,
 }: {
-  document: Document;
+  document: DocumentationEntry;
   showExample?: boolean;
 }) {
   return guideSubsections(document.sections).map(({ title, content }) => {
@@ -188,7 +188,7 @@ export function CodeGuide({
           part.kind === 'source' ? (
             <ExampleSource key={index} page={document.id} name={part.name} />
           ) : (
-            <Documentation
+            <PageMarkdown
               key={index}
               markdown={raisedHeadings(part.markdown)}
               path={document.path}
@@ -205,7 +205,7 @@ export function CodeGuide({
  * table's In code column, which the catalogue leaves out, beside the words. Nothing where the
  * page has no such column.
  */
-export function WordsInCode({ document }: { document: Document }) {
+export function WordsInCode({ document }: { document: DocumentationEntry }) {
   const markdown = wordsInCode(document.sections);
   const outline = useSectionOutline();
   if (!markdown) return null;
@@ -219,7 +219,7 @@ export function WordsInCode({ document }: { document: Document }) {
       <Text render={<h2 />} variant="title" className="site-section-title" id="words-in-code">
         Words in code
       </Text>
-      <Documentation markdown={markdown} path={document.path} />
+      <PageMarkdown markdown={markdown} path={document.path} />
     </Column>
   );
 }
@@ -268,7 +268,7 @@ export function ColorProperties({ components }: { components: readonly string[] 
 }
 
 /** Every export's props, generated from their types, under Props. */
-export function PropsSection({ document }: { document: Document }) {
+export function PropsSection({ document }: { document: DocumentationEntry }) {
   return (
     <Column
       render={<section />}
@@ -285,7 +285,7 @@ export function PropsSection({ document }: { document: Document }) {
 }
 
 /** The built-in strings a page's exports show, each a key of EnvUIProvider's `messages`. */
-export function Strings({ document }: { document: Document }) {
+export function Strings({ document }: { document: DocumentationEntry }) {
   const strings = document.strings ?? [];
   const outline = useSectionOutline();
   if (!strings.length) return null;

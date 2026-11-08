@@ -1,5 +1,5 @@
 import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
-import { Documentation } from '../pages/Documentation';
+import { PageMarkdown } from '../pages/PageMarkdown';
 import { pageOf } from './RelatedPages';
 
 /**
@@ -44,10 +44,10 @@ export function WhenToUse({ metadata, path }: { metadata: DocumentationMetadata;
         }
         style={{ '--catalogue-when-rows': Math.ceil(metadata.useWhen.length / 2) }}
       >
-        <Documentation markdown={`### Use it when\n\n${list(metadata.useWhen)}`} path={path} />
+        <PageMarkdown markdown={`### Use it when\n\n${list(metadata.useWhen)}`} path={path} />
       </div>
       {built.length ? (
-        <Documentation
+        <PageMarkdown
           markdown={`### Built from\n\n${built.map(({ title, path: page }) => `[${title}](../${page})`).join(', ')}`}
           path={path}
         />

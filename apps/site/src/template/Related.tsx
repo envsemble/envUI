@@ -2,7 +2,7 @@ import { useId, useRef, type ReactNode } from 'react';
 import { Column, Link, Row, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
-import { Documentation } from '../pages/Documentation';
+import { PageMarkdown } from '../pages/PageMarkdown';
 import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/usePlaying';
 import { TileStage } from '../figures/TileStage';
@@ -89,7 +89,7 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
           </Row>
           {/* Words alone, its links as text: the tile holds one link, its name's. */}
           <div className="catalogue-related-line catalogue-gallery-slide" id={`${id}-${index}`}>
-            <Documentation markdown={line} path={path} linkless />
+            <PageMarkdown markdown={line} path={path} linkless />
           </div>
         </RelatedTile>
       ))}

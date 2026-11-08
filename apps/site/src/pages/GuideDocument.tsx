@@ -1,6 +1,6 @@
 import { Fragment, Suspense } from 'react';
-import type { Documentation as Document } from './PageModel';
-import { Documentation } from './Documentation';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import { PageMarkdown } from './PageMarkdown';
 import { StageSkeleton } from '../loading/Skeletons';
 import { useFoundationFigures } from '../figures/foundations/FoundationFigures';
 
@@ -19,9 +19,9 @@ function GuideFigure({ page, name }: { page: string; name: string }) {
 }
 
 /** A guide page's Markdown, with its figures in place. */
-export function GuideDocument({ document }: { document: Document }) {
+export function GuideDocument({ document }: { document: DocumentationEntry }) {
   const pieces = (document.markdown ?? '').split(new RegExp(figureFence.source, 'gm'));
-  if (pieces.length === 1) return <Documentation document={document} />;
+  if (pieces.length === 1) return <PageMarkdown document={document} />;
   // Markdown and figure names alternate: the split keeps each figure's name.
   return pieces.map((piece, index) => (
     <Fragment key={index}>
@@ -32,7 +32,7 @@ export function GuideDocument({ document }: { document: Document }) {
           <GuideFigure page={document.id} name={piece} />
         </Suspense>
       ) : (
-        piece.trim() && <Documentation markdown={piece} path={document.path} />
+        piece.trim() && <PageMarkdown markdown={piece} path={document.path} />
       )}
     </Fragment>
   ));
