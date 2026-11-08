@@ -1,5 +1,5 @@
 /*
- * The fit's pure calculations (FitPicture.ts): boxes in a canvas's own px, the scales a picture is
+ * The fit's pure calculations (useFit.ts): boxes in a canvas's own px, the scales a picture is
  * drawn at, and where its view goes. Nothing here reads the page (tests/site/Fit.test.mjs).
  */
 import type { FitKind } from './FitKind';
@@ -155,7 +155,7 @@ export function frameOnCourse(
   for (const found of parts) {
     if (!found || found.right <= found.left || found.bottom <= found.top) continue;
     // The first, larger than the stage, such as a divider as tall as its panes, shows from its
-    // start, a margin from the stage's edge, as the play shows it (playFit), so the pointer coming
+    // start, a margin from the stage's edge, as the play shows it (decideDrawOut), so the pointer coming
     // in moves nothing.
     let box = found;
     if (!held) {
@@ -362,7 +362,7 @@ export interface DrawOut {
 }
 
 /**
- * Where a playing tile's view goes to take in what it opened (playFit, FitPlaying.ts): where all of it fits the
+ * Where a playing tile's view goes to take in what it opened (decideDrawOut, FitPlaying.ts): where all of it fits the
  * stage at the scale it is drawn at, it keeps that scale, the view moving just far enough; else
  * about the trigger, as much smaller as keeps it where it is; without one in view, as small as all
  * of it needs; either way, no smaller than `least`. The trigger is never panned out of view: where

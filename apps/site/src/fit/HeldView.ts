@@ -1,5 +1,5 @@
 /*
- * A held view's scale and place (useFit.ts): a tile that holds its view (holdsView, MustShow.ts),
+ * A held view's scale and place (useFit.ts): a tile that holds its view (StageScript, FitKind.ts),
  * such as a picker resting open, is framed once on its still, the largest it shows, so what its
  * script acts on shows whole in it from its top, above the fade at its foot, with the cursor on
  * it. Nothing here reads the page (tests/site/Fit.test.mjs).
@@ -219,7 +219,7 @@ export function heldScale(
 }
 
 /**
- * A held component view that names what it shows (useMustShow), such as a docked panel, shows
+ * A held component view that names what it shows anywhere (StageScript), such as a docked panel, shows
  * whole in the stage's room, a margin from its edges, at the scale `wants`: where the one scale
  * doesn't allow that, it is drawn at the largest of the scales tiles are drawn at that does, as a
  * held picker is (heldScale), else as much smaller as it needs, down to a held view's least.
@@ -291,9 +291,10 @@ export interface Follow {
  * a frame after its tile shows, or opened again where it was after its tile played, it is framed
  * again on any change. Where the view has moved in its stage since, it follows a popup placed a few
  * px away, a number of times, such as a menu pressed against the stage's edge until it is under its
- * button, and then holds.
+ * button, and then holds. With whether it holds comes how often it has followed since, counted on.
  */
 export function holdsFrame(was: Shape, now: Shape, follow: Follow) {
+  const holds = (held: boolean) => ({ holds: held, follow });
   const near = (a: readonly number[], b: readonly number[], slack: number) =>
     a.every((value, index) => Math.abs(value - b[index]!) <= slack);
   const edges = ({ box }: Shape['boxes'][number]) => [box.left, box.top, box.right, box.bottom];
@@ -307,12 +308,10 @@ export function holdsFrame(was: Shape, now: Shape, follow: Follow) {
     was.popups !== now.popups ||
     !same(parts(was.boxes, false), parts(now.boxes, false), 1)
   )
-    return false;
-  if (!now.whole) return true;
+    return holds(false);
+  if (!now.whole) return holds(true);
   const popups = [parts(was.boxes, true), parts(now.boxes, true)] as const;
-  if (near(was.view, now.view, 0.01)) return same(...popups, 1);
-  if (follow.count >= followsAtMost || same(...popups, followSlack)) return true;
-  follow.count += 1;
-  follow.following = true;
-  return false;
+  if (near(was.view, now.view, 0.01)) return holds(same(...popups, 1));
+  if (follow.count >= followsAtMost || same(...popups, followSlack)) return holds(true);
+  return { holds: false, follow: { count: follow.count + 1, following: true } };
 }

@@ -1,11 +1,10 @@
 /*
- * What a fit measures before it decides anything (FitPicture.ts): what the picture paints, the
- * room its stage has, the scales its style sets, what a held view shows of what its script acts
- * on, and the shape a resting picture is framed on. Nothing here writes to the page.
+ * What a fit measures before it decides anything (useFit.ts): what the picture paints, the room
+ * its stage has, the scales its style sets, what a held view shows of what its script acts on, and
+ * the shape a resting picture is framed on. Nothing here writes to the page.
  */
-import { holdsView, mustShowOf } from '../motion/MustShow';
 import { remPixels } from '@envui-internal/internal/lengths';
-import type { Moment } from './FitKind';
+import type { FitKind, Moment, StageScript } from './FitKind';
 import {
   cursorLength,
   inset,
@@ -18,7 +17,6 @@ import {
   type Extent,
   type OwnScales,
 } from './FitGeometry';
-import type { Fitting } from './FitState';
 import {
   heldRows,
   heldWays,
@@ -82,6 +80,8 @@ function scalesOf(canvas: HTMLElement): Scales {
 /** What a fit past its waits and holds is decided on, measured before it moves anything. */
 export interface Measured {
   extent: Extent;
+  /** What it paints, each box with whether it is in a popup. */
+  painted: { box: Box; popup: boolean }[];
   /**
    * The parts a tile that holds its view is framed on (heldElements), what of them is laid out
    * elsewhere as it plays (laidOutOf), and the rows after them (rowsAfter).
@@ -95,15 +95,19 @@ export interface Measured {
   scales: Scales;
   /** The scale a component is drawn at, at its own size (ownScale). */
   own: number;
-  /** Whether it shows a popup open, in its overlay layer. */
+  /** Whether it shows a popup open, in its overlay layer, and whether that is a dialog's backdrop. */
   popup: boolean;
+  dialog: boolean;
 }
 
 /** Measures what a fit past its waits and holds is decided on (Measured). */
-export function measure(f: Fitting, boxes: Shown[]): Measured {
-  const { stage, canvas } = f;
+export function measure(
+  { stage, canvas, kind }: { stage: HTMLElement; canvas: HTMLElement; kind: FitKind },
+  boxes: Shown[],
+  script: StageScript,
+): Measured {
   // A tile that holds its view is framed on its largest state (heldElements).
-  const heldParts = heldElements(canvas);
+  const heldParts = heldElements(canvas, script);
   // Below what is chosen in a picker's grid or wheel, the rows after it show whole too, so the
   // picker reads as a month, a day's hours or a year rather than a strip of one row: the next above
   // the fade at the foot, and where there is room the one after it in the fade (rowsAfter).
@@ -117,16 +121,19 @@ export function measure(f: Fitting, boxes: Shown[]): Measured {
     height: stage.clientHeight - 2 * inset,
   };
   const scales = scalesOf(canvas);
+  const painted = boxes.map(({ element, box }) => ({ box, popup: inPopup(element) }));
   return {
     extent,
+    painted,
     heldParts,
     laidOut,
     below,
     further,
-    window: windowScale(f.kind, extent, f.canvas),
+    window: windowScale(kind, extent, canvas),
     scales,
     own: ownScale(extent, scales),
-    popup: boxes.some(({ element }) => inPopup(element)),
+    popup: painted.some(({ popup }) => popup),
+    dialog: canvas.querySelector(`${overlayLayer} .env-dialog-backdrop`) !== null,
   };
 }
 
@@ -146,15 +153,15 @@ export interface Held {
  * is laid out to be drawn (`data-popup`).
  */
 export function measureHeld(
-  f: Fitting,
+  { stage, canvas }: { stage: HTMLElement; canvas: HTMLElement },
   { heldParts, laidOut, below, further, extent }: Measured,
+  script: StageScript,
 ): Held {
-  const { canvas } = f;
   // A tile that holds its view is framed once on its still, the largest it shows: what its script
   // acts on there, such as a time picker's chosen hour under its field, a menu's items or a
   // contents list's entries, every point its pointer heads to that is there at rest, shows whole
   // in it from its top, above the fade at its foot, with the cursor on it.
-  const aims = holdsView(canvas) ? restingAims(canvas) : [];
+  const aims = script.holdsView ? restingAims(canvas, script) : [];
   const acted = [
     ...heldParts.map((element) => partOf(element, canvas)).filter(filled),
     ...laidOut,
@@ -167,7 +174,7 @@ export function measureHeld(
     lowest: lowestOf(acted),
     ways: rows ? heldWays(rows) : [],
     room: {
-      size: f.stage.clientHeight,
+      size: stage.clientHeight,
       top: extent.top,
       // The lowest point the pointer presses at rest, where its cursor's tip is.
       pointerFoot: aims.length ? Math.max(...aims.map(({ y }) => y)) : null,
@@ -201,9 +208,9 @@ const heldItems = [
  * the same whenever and wherever the pointer comes in, and what it rests open on (heldItems). Any
  * other tile holds nothing.
  */
-function heldElements(canvas: HTMLElement) {
-  if (!holdsView(canvas)) return [];
-  return [...mustShowOf(canvas), heldItems]
+function heldElements(canvas: HTMLElement, script: StageScript) {
+  if (!script.holdsView) return [];
+  return [...script.named, heldItems]
     .flatMap((selector) => elementsOf(canvas, selector))
     .filter((element) => element.checkVisibility());
 }

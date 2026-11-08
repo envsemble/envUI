@@ -1,11 +1,11 @@
 /*
- * What a fit draws (FitPicture.ts): the layout a decision lays its canvas out at, the sides it is
- * cut off at, the canvas where its view is (place), and the crop's fade at its foot, with the rows
+ * What a fit draws (useFit.ts): the layout a decision lays its canvas out at, the sides it is cut
+ * off at, the canvas where its view is (place), and the crop's fade at its foot, with the rows
  * hidden whole there and the regions that scroll as it plays, which fade at their own foot. Where
- * the view goes, it eases to (settle, ViewEasing.ts).
+ * the view goes, it eases to (settle, ViewEasing.ts). It writes the page, never what the fit keeps.
  */
 import { remPixels } from '@envui-internal/internal/lengths';
-import type { Fitting } from './FitState';
+import type { Fitting } from './useFit';
 import { rowSlack } from './HeldView';
 import { moving, pictures } from './PaintedBoxes';
 
@@ -25,14 +25,19 @@ export interface Placement {
   screenTop?: boolean;
 }
 
-/** Draws where a decision cuts the picture off, and trims its crop there, before its view moves. */
-export function drawCut(f: Fitting, { cut, fadeAt, played, screenTop }: Placement) {
-  const { canvas, kept } = f;
+/**
+ * Draws where a decision cuts the picture off, and trims its crop there, before its view moves:
+ * below where its fade starts, which the fit keeps first (`kept.fadeAt`).
+ */
+export function drawCut(
+  f: Fitting,
+  { cut, played, screenTop }: Pick<Placement, 'cut' | 'played' | 'screenTop'>,
+) {
+  const { canvas } = f;
   if (cut !== undefined) {
     if (cut) canvas.dataset.cut = cut;
     else delete canvas.dataset.cut;
   }
-  kept.fadeAt = fadeAt;
   // Its screen's top is the stage's edge too, cut off there rather than faded (trimRows).
   if (screenTop) canvas.parentElement?.style.setProperty('--catalogue-crop-top', '0px');
   if (cut !== undefined) trim(f, played);

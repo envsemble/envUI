@@ -15,11 +15,36 @@ import { ExampleRender } from './LiveExample';
 import { FoundationTile } from '../tiles/foundations/FoundationTiles';
 import type { TilePicture } from '../template/RelatedPages';
 import { TileSkeleton } from '../loading/Skeletons';
-import { cropped, fitKindOf } from '../fit/FitKind';
+import { cropped, fitKindOf, type StageScript } from '../fit/FitKind';
 import { useFit } from '../fit/useFit';
 import { AppScreen } from './AppTile';
 import { useAppFit } from '../fit/standalone/useAppFit';
-import { appTileFrame } from '../tiles/Tiles';
+import { appTileFrame, narrowGallery } from '../tiles/Tiles';
+import {
+  courseOf,
+  headingEvent,
+  headingOf,
+  holdsFromTop,
+  holdsView,
+  mustShowOf,
+} from '../motion/MustShow';
+import { aimedElement } from '../motion/pointer/PointerPlan';
+import { flag } from '@envui-internal/internal/flag';
+
+/** What a tile's script tells its fit, as each fit starts (StageScript), and when it changes. */
+const tileScript = {
+  read: (canvas: HTMLElement): StageScript => ({
+    holdsView: holdsView(canvas),
+    fromTop: holdsFromTop(canvas),
+    named: mustShowOf(canvas),
+    anywhere: mustShowOf(canvas, true),
+    heading: headingOf(canvas),
+    course: courseOf(canvas),
+    aimed: (selector) => aimedElement(canvas, selector),
+    narrow: matchMedia(narrowGallery).matches,
+  }),
+  heading: headingEvent,
+};
 
 /**
  * Keeps a tile that fails to render to itself: it shows nothing, and the gallery around it its
@@ -107,7 +132,7 @@ export function TileStage({
   const kind = fitKindOf(picture, app ? undefined : frame);
   const ownSize = kind.scale === 'own';
   const scene = kind.scale === 'legible';
-  useFit(stage, canvas, { on: shown && !app, kind, playing: plays });
+  useFit(stage, canvas, { on: shown && !app, kind, playing: plays, script: tileScript });
   useAppFit(stage, canvas, shown && Boolean(app), app?.least);
   useStillAtRest(canvasElement, kind.tile && !plays);
   return (
@@ -118,10 +143,10 @@ export function TileStage({
       data-example={picture?.foundation || Composition ? undefined : picture?.name}
       data-catalogue-specimen={picture?.foundation}
       data-stage={picture?.stage}
-      data-empty={picture ? undefined : ''}
-      data-playing={plays ? '' : undefined}
-      data-scene={scene ? '' : undefined}
-      data-still={Composition && animations > 0 ? undefined : ''}
+      data-empty={flag(!picture)}
+      data-playing={flag(plays)}
+      data-scene={flag(scene)}
+      data-still={flag(!(Composition && animations > 0))}
     >
       {!picture ? (
         <IconArticle className="catalogue-tile-placeholder" aria-hidden />
@@ -135,9 +160,9 @@ export function TileStage({
               setCanvasElement(element);
             }}
             className="catalogue-tile-canvas"
-            data-tile={picture.tile ? '' : undefined}
-            data-own-size={ownSize ? '' : undefined}
-            data-overlay={ownSize && picture.window?.overlay ? '' : undefined}
+            data-tile={flag(picture.tile)}
+            data-own-size={flag(ownSize)}
+            data-overlay={flag(ownSize && picture.window?.overlay)}
             data-app={app ? appTileFrame : undefined}
             style={
               picture.window &&

@@ -1,15 +1,40 @@
 /*
- * What a picture is fitted as, and how its view is placed now. Each figure kind has its fitter:
+ * What a picture is fitted as, what its script tells the fit, and how its view is placed now.
+ * Each figure kind has its fitter:
  *
  * - a gallery's tile, a page's own tile, and an example's or a specimen's picture: useFit.ts, by
- *   the FitKind below, in this folder's steps (FitPicture.ts);
+ *   the FitKind below, deciding in FitScreen.ts, FitPlaying.ts and FitResting.ts;
  * - an application's tile, which fills its card: standalone/useAppFit.ts;
  * - a device figure, a phone or a window around its example: standalone/useDeviceFit.ts;
  * - an Adapting to width figure's frames and an anatomy figure's subject drawn from a width:
  *   standalone/WidthFit.tsx;
  * - an open example's room for the overlays it rests open on: standalone/OverlayRoom.ts;
  * - a do or don't figure's example: figures/useVerdictFit.ts, outside this folder, as the motion
- *   figures' stage uses it too, and this folder reads motion/.
+ *   figures' stage uses it too (AGENTS.md).
+ *
+ * The words this folder's comments use:
+ *
+ * - picture: what a tile or a figure shows, rendered in its canvas; stage: the box it is shown in;
+ *   canvas: the box the picture lays out in, moved and scaled to its place; crop: the box around a
+ *   tile's canvas, which clips it at the stage and fades out at its foot (TileStage.tsx).
+ * - view: where the canvas is drawn in its stage, the point it centres and its scale, and where it
+ *   eases to (ViewEasing.ts). Framed: the view a resting picture was placed at, with what it was
+ *   measured as then, which it holds while only its popups move (holdsFrame, HeldView.ts).
+ * - still, at rest: a tile that isn't playing, and what it shows then; playing: its script runs,
+ *   on hover or by itself. Shown (`data-fitted`): once its first fit has held, it fades in.
+ * - what it paints: the boxes that show something of their own, such as a fill, an edge or text,
+ *   rather than boxes that only lay others out (shownBoxes, PaintedBoxes.ts).
+ * - the script: what a tile's animation tells its fit (StageScript): what it acts on, which the
+ *   view keeps in view (it names them), where its pointer heads now (heading) and over the whole
+ *   script (course). A held view: a tile whose still is written as its largest state, such as a
+ *   picker resting open, holds its view as it plays, framed once on its still.
+ * - drawn out: a playing tile's view moved and drawn smaller, once, so what it opened fits.
+ * - cut: the sides a picture reaches past its stage at (`data-cut`), where it fades out; trimmed:
+ *   the rows past the crop's foot hidden whole (trimRows, FitDraw.ts).
+ * - popup: what opens in a picture's overlay layer; an overlay: a tile that is one, such as a
+ *   notification, drawn at the overlays' scale; a modal: a dialog, a sheet or a palette over its
+ *   backdrop, whose screen is the stage (FitScreen.ts).
+ * - kept: what one fit decides that the next goes by (`kept`, useFit.ts).
  */
 
 /**
@@ -59,6 +84,39 @@ export function fitKindOf(
  */
 export const cropped = (kind: FitKind) => kind.scale === 'own' || kind.scale === 'legible';
 
+/** A point a tile's pointer heads to: an element, by its selector, and fractions of its box. */
+export interface Aim {
+  selector: string;
+  x: number;
+  y: number;
+}
+
+/**
+ * What a tile's script tells its fit, read as each fit starts (TileStage.tsx reads it from
+ * motion/MustShow.ts, where the script names it).
+ */
+export interface StageScript {
+  /** Whether its view holds as it plays, and whether it lays out from its window's top. */
+  holdsView: boolean;
+  fromTop: boolean;
+  /**
+   * The selectors of everything its animation acts on, which count in its popups, and of those it
+   * names to count anywhere too, such as a panel it opens in place.
+   */
+  named: readonly string[];
+  anywhere: readonly string[];
+  /** Where its pointer heads now, and every point it heads to over its script, in order. */
+  heading: Aim | null;
+  course: readonly Aim[];
+  /** The element of the canvas a selector of its script aims at, as its pointer finds it. */
+  aimed: (selector: string) => Element | null;
+  /**
+   * Whether the components' gallery stands two to a row, its stages too narrow for a popup beside
+   * its button (narrowGallery, Tiles.ts).
+   */
+  narrow: boolean;
+}
+
 /**
  * When a fit runs: whether its picture plays now, and whether it has shown (`data-fitted`). Until
  * it shows, it is framed as at rest, also a tile whose picture loaded while the pointer was on it.
@@ -72,7 +130,7 @@ export interface Moment {
  * How a fit places the view: on a modal's screen, the stage, at rest and as it plays (FitScreen.ts);
  * drawn out for what it opens as a cropped tile plays, once it has shown (FitPlaying.ts); else at
  * rest, centred on what it paints (FitResting.ts), as any other picture is also as it plays.
- * `screen` is whether the picture was decided to be a modal's screen (FitState's `kept`).
+ * `screen` is whether the picture was decided to be a modal's screen (`kept.screen`, useFit.ts).
  */
 export type FitMode = 'screen' | 'playing' | 'resting';
 
