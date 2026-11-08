@@ -64,9 +64,8 @@ export function easingFunction(easing: string): (progress: number) => number {
   const [x1, y1, x2, y2] =
     points?.length === 4 && points.every(Number.isFinite)
       ? points
-      : (keywords[value] ?? keywords.ease!);
-  // Four numbers: four points, or a keyword's, or ease's.
-  return (progress) => bezier(clamp(progress), x1!, y1!, x2!, y2!);
+      : (keywords[value] ?? keywords.ease);
+  return (progress) => bezier(clamp(progress), x1, y1, x2, y2);
 }
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
