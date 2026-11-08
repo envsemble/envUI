@@ -1,5 +1,5 @@
 // Records the size of every figure's subject that loads with its page, an example, a specimen or a
-// guide's demo, in apps/site/src/loading/PartSizes.json: its skeleton keeps that size while it
+// guide's figure, in apps/site/src/loading/PartSizes.json: its skeleton keeps that size while it
 // loads (StageSkeleton in loading/Loading.tsx), so the page doesn't move when it lands. Of an
 // example shown open, it records its stage too, which keeps that height until its overlays rest
 // open in it (reserveStage in OpenExample.tsx). It opens every page of the catalogue and the Docs

@@ -1,5 +1,5 @@
-// The hosted site holds dev mode in the dev mode page's files only, and every demo a guide
-// page places is one the catalogue has.
+// The hosted site holds dev mode in the dev mode page's files only, and every figure a guide
+// places is one its page registers.
 import assert from 'node:assert/strict';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -8,26 +8,26 @@ import { fileURLToPath } from 'node:url';
 import {
   devEntry,
   devMarker,
-  tryDevMode,
+  devModeFigures,
   devModeProblems,
 } from '../../scripts/site/SiteDevMode.ts';
 
 const repository = fileURLToPath(new URL('../../', import.meta.url));
 
-/** A build as the catalogue's is: dev mode in a chunk of its own that only the demo loads. */
+/** A build as the catalogue's is: dev mode in a chunk of its own that only the dev mode page's figures load. */
 function build() {
   const manifest = {
     'index.html': {
       file: 'assets/index-1.js',
       isEntry: true,
       imports: ['_react-1.js', '_Button-1.js'],
-      dynamicImports: [tryDevMode, 'src/examples/button/CreateProject.tsx'],
+      dynamicImports: [devModeFigures, 'src/examples/button/CreateProject.tsx'],
     },
     '_react-1.js': { file: 'assets/react-1.js' },
     '_Button-1.js': { file: 'assets/Button-1.js', imports: ['_react-1.js'] },
     '_View3D-1.js': { file: 'assets/View3D-1.js', imports: ['_react-1.js'] },
-    [tryDevMode]: {
-      file: 'assets/TryDevMode-1.js',
+    [devModeFigures]: {
+      file: 'assets/DevModeFigures-1.js',
       isDynamicEntry: true,
       imports: ['_Button-1.js'],
       dynamicImports: [devEntry],
@@ -48,14 +48,14 @@ function build() {
     'assets/react-1.js': 'react',
     'assets/Button-1.js': 'button',
     'assets/View3D-1.js': 'view',
-    'assets/TryDevMode-1.js': 'demo',
+    'assets/DevModeFigures-1.js': 'figures',
     'assets/dev-1.js': `host.setAttribute('${devMarker}', '')`,
     'assets/CreateProject-1.js': 'example',
   };
   return { manifest, contents };
 }
 
-test('dev mode in chunks of its own, which only the demo loads, is no problem', () => {
+test("dev mode in chunks of its own, which only the dev mode page's figures load, is no problem", () => {
   const { manifest, contents } = build();
   assert.deepEqual(devModeProblems(manifest, contents), []);
 });
@@ -82,16 +82,25 @@ test('dev mode anywhere else is a problem', () => {
   assert.match(devModeProblems(manifest, contents).join('\n'), /not a chunk of its own/);
 });
 
-test('every demo a guide page places is one the catalogue has', async () => {
-  const guide = await readFile(join(repository, 'apps/site/src/pages/GuideDocument.tsx'), 'utf8');
+test('every figure a guide places is one its page registers', async () => {
+  const figures = join(repository, 'apps/site/src/figures/foundations');
+  const loaders = await readFile(join(figures, 'FoundationFigures.ts'), 'utf8');
   const docs = join(repository, 'docs');
   const placed = [];
   for (const name of (await readdir(docs)).filter((file) => file.endsWith('.md'))) {
     const markdown = await readFile(join(docs, name), 'utf8');
-    for (const [, demo] of markdown.matchAll(/^<!--\s*demo:\s*([A-Za-z]\w*)\s*-->[ \t]*$/gm)) {
-      placed.push(demo);
-      assert.match(guide, new RegExp(`^  ${demo}: lazyPart\\(`, 'm'), `${name} places ${demo}`);
+    const names = [...markdown.matchAll(/^```tsx figure=([A-Za-z]\w*)$/gm)].map(([, n]) => n);
+    if (!names.length) continue;
+    const page = name.replace(/\.md$/, '');
+    const module = loaders.match(
+      new RegExp(String.raw`^  '?${page}'?: \(\) => import\('([^']+)'\)`, 'm'),
+    );
+    assert.ok(module, `FoundationFigures.ts registers no figures for docs/${name}`);
+    const source = await readFile(join(figures, `${module[1]}.ts`), 'utf8');
+    for (const figure of names) {
+      placed.push(figure);
+      assert.match(source, new RegExp(`^  ${figure}: `, 'm'), `${name} places ${figure}`);
     }
   }
-  assert.ok(placed.includes('TryDevMode'), 'docs/dev-mode.md places the dev mode demo');
+  assert.ok(placed.includes('TryDevMode'), 'docs/dev-mode.md places Try dev mode');
 });

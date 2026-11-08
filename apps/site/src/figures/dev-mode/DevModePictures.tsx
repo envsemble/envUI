@@ -18,8 +18,8 @@ import frameLight from './dev-mode-frame-light.webp';
 import frameDark from './dev-mode-frame-dark.webp';
 
 /**
- * The pictures the dev mode guide places beside its words, each a demo of its own
- * (`<!-- demo: Name -->` in docs/dev-mode.md). None of them loads `@envsemble/envui/dev`.
+ * The pictures the dev mode guide places beside its words, each a figure of its own
+ * (DevModeFigures.ts). None of them loads `@envsemble/envui/dev`.
  */
 
 /** A picture of dev mode in each theme, with its size in CSS pixels: the files hold twice as many. */

@@ -99,7 +99,7 @@ function AgentSetup({ note, path = '' }: { note?: string; path?: string }) {
 }
 
 /**
- * A guide of docs/, such as migration, with its live demos in place. The setup guide is the Docs'
+ * A guide of docs/, such as migration, with its figures in place. The setup guide is the Docs'
  * home, with the prompt that sets envUI up with a coding agent at its top.
  */
 export function GuidePage({ page }: { page: DocumentPage }) {

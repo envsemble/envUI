@@ -383,7 +383,7 @@ export function LongPartSkeleton({
 }
 
 /**
- * A figure's subject while it loads, an example, a specimen or a demo: on a stage of its own, a
+ * A figure's subject while it loads, an example, a specimen or a guide's figure: on a stage of its own, a
  * skeleton stage at the subject's recorded size and with the stage's fill, with a filled shape in
  * its middle where the subject will be, as a subject on its stage has; on the stage that will
  * show it, a skeleton of the subject's recorded size in its place. A part with no record keeps the

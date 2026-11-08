@@ -10,7 +10,7 @@
   "changelog:### 1.0.0-prerelease.0 — 2026-10-18": [46.96, 1596.05],
   "changelog:### 1.0.0-prerelease.3 — 2026-10-25": [46.96, 1430.09],
   "changelog:### 1.0.0-prerelease.4 — 2026-10-25": [46.96, 175.41],
-  "demo:TryDevMode": [46.96, 32.67],
+  "figure:dev-mode/TryDevMode": [46.96, 32.67],
   "example:accordion/AccordionAnatomy": [26, 7.29],
   "example:accordion/FrequentQuestions": [32, 12.69],
   "example:accordion/SeveralOpen": [32, 11.88],

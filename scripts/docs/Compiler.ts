@@ -268,8 +268,8 @@ function compilePage(
 
 /**
  * The Markdown of a page as it ships: a component, pattern or foundation page as compilePage writes
- * it, with its props; the index with each page's summary; and a
- * guide as it is written.
+ * it, with its props; the index with each page's summary; and a guide as it is written, but for its
+ * figures (```tsx figure=Name```), the catalogue's own pictures, which its words describe.
  */
 export function compileDocument(
   document: DocumentRecord,
@@ -310,7 +310,8 @@ export function compileDocument(
   const head = document.frontmatter
     ? `---\n${(document.yaml ?? '').replace(/\n*$/, '')}\n---\n\n`
     : '';
-  return `${head}${title}${document.markdown}`;
+  const markdown = document.markdown.replace(/^```tsx figure=\w+\n\n?```[ \t]*\n+/gm, '');
+  return `${head}${title}${markdown}`;
 }
 
 /** Every packaged documentation file: compiled pages, the index and the example sources. */
