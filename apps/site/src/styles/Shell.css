@@ -355,6 +355,8 @@ body {
   }
 }
 .site-main {
+  /* The box of the layer that holds placeholders on their way out (Loading.css). */
+  position: relative;
   display: flex;
   flex-direction: column;
   min-block-size: 100%;

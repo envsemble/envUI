@@ -91,6 +91,16 @@
   block-size: 7.5rem;
 }
 
+/* The layer over the scrolling page that holds the copies of placeholders on their way out, each
+   where its placeholder was, as they fade out over what took their place (template/Loading.tsx):
+   clipped to the page, so they never add to its length, and over its content. */
+.site-loading-leaving-layer {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+}
+
 /* The sign that a pressed link's page is loading (navigation/RouteProgress.tsx): envUI's loading
    bar, as a TopBar shows it, along the window's top, which creeps forward while the page loads,
    then completes and fades out. With motion reduced, it is at its full width, and appears and
