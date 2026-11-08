@@ -3,7 +3,7 @@
 /* A do, don't or caution figure: a cell as a gallery's is (Figures.tsx), the example on its stage,
    flat and square-cornered as every figure of a page, and under it, as a cell's name, its mark and
    its one sentence, with its code switch at the row's end (Figures.css). The stage is as tall as
-   the example, and at least 7 rem, or square where the example shows open or playing, the room
+   the example, and at least 11 rem, or square where the example shows open or playing, the room
    what opens needs; never wider than `--site-verdict-size`, so a pair side by side stays small
    beside the text; alone, or in a narrow column, it starts where the text does. A `wide` figure,
    whose point is a change across the column's width, spans the column instead. */
@@ -16,6 +16,23 @@
   inline-size: min(100%, var(--site-verdict-size));
 }
 
+/* Side by side, the figures of a row are cells of one size, as a gallery's are: they share the run's
+   rows, so their stages are as tall as the row's tallest, what each shows centred in it, their
+   captions start on one line under them, and their code under those. Stacked, as on a phone, each
+   keeps its own rows. 32 rem is where a run of do and don't figures goes two to a row
+   (Figures.css). */
+@container (width >= 32rem) {
+  .site-figure-run > .site-verdict {
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    align-self: stretch;
+    row-gap: var(--env-space-2);
+  }
+  .site-figure-run > .site-verdict > .site-verdict-stage {
+    align-self: stretch;
+  }
+}
+
 /* The stage is every stage's recessed canvas (Stage.css). A square clips what it holds, and its
    overlays open in the box over it (below). */
 .site-verdict-stage {
@@ -23,7 +40,8 @@
 }
 
 .site-verdict[data-shape='fit'] .site-verdict-stage {
-  min-block-size: 7rem;
+  /* A gallery cell's least height, as every figure of a page has (Stage.css). */
+  min-block-size: 11rem;
   overflow: clip;
 }
 
@@ -94,13 +112,12 @@
 }
 
 /* The caption, as a gallery cell's name row: the mark, a small icon in the verdict's color and its
-   word in the text's, then the sentence, quieter, on the same line where it fits. No strip, frame
-   or fill: the color is the icon's alone. */
+   word in the text's, and under it the sentence, quieter. No strip, frame or fill: the color is the
+   icon's alone. */
 .site-verdict-caption {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 var(--env-space-2);
+  display: grid;
+  justify-items: start;
+  row-gap: var(--env-space-1);
   min-inline-size: 0;
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-sm);
@@ -110,7 +127,6 @@
   display: inline-flex;
   flex: none;
   align-items: center;
-  align-self: center;
   gap: var(--env-space-1);
   color: var(--env-color-fg-default);
   font-weight: var(--env-font-weight-medium);
