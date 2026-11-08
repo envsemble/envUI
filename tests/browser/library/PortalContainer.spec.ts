@@ -75,6 +75,27 @@ test.describe('PortalContainer, contained', () => {
     await expect(layer.getByRole('tooltip')).toHaveCount(0);
   });
 
+  test('Esc on a combobox or picker field, the trigger outside the container, closes its popup @engines', async ({
+    page,
+  }) => {
+    await page.goto(preview);
+    const list = page.getByTestId('combobox-layer').getByRole('listbox');
+    await expect(list).toBeVisible();
+    await page.getByRole('combobox', { name: 'Owner' }).focus();
+    await page.keyboard.press('Escape');
+    await expect(list).toHaveCount(0);
+    // Focus goes into the picker's popup as it opens, and back to the field, which Esc then
+    // closes the popup from.
+    const field = page.getByRole('combobox', { name: 'Due' });
+    await field.click();
+    const popup = page.getByTestId('picker-layer').getByRole('dialog');
+    await expect(popup).toBeVisible();
+    await field.focus();
+    await expect(popup).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(popup).toHaveCount(0);
+  });
+
   test('a context menu opens at the pointer in the container, without hiding or locking the page @engines', async ({
     page,
   }) => {

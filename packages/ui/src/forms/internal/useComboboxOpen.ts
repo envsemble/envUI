@@ -38,8 +38,9 @@ export function useComboboxOpen({
     setOpen(next, { reason });
   }
 
+  // The text field is the list's trigger: Esc in it, or focus leaving it, closes the list there too.
   const handleOpenChange: (next: boolean, details: BaseCombobox.Root.ChangeEventDetails) => void =
-    containedOpenChange(portal, null, (next, details) => changeOpen(next, details.reason));
+    containedOpenChange(portal, inputRef, (next, details) => changeOpen(next, details.reason));
 
   return { popupOpen, changeOpen, handleOpenChange };
 }

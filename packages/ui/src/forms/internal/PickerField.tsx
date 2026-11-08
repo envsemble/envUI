@@ -328,7 +328,7 @@ export function PickerField({
   return (
     <BasePopover.Root
       open={open}
-      onOpenChange={containedOpenChange(portal, null, (next, details) =>
+      onOpenChange={containedOpenChange(portal, triggerRef, (next, details) =>
         setOpen(next, details.reason),
       )}
       onOpenChangeComplete={(next) => {
