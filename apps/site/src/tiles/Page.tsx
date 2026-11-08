@@ -6,8 +6,8 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 /**
- * The page's sections, each with its own line, short enough to fit on one at a phone's width: an
- * overview, then the three it rests on in turn.
+ * The page's sections, each with its own line, short enough to fit on one line at a phone's width:
+ * an overview, then the three it scrolls through in turn.
  */
 const sections = [
   { title: 'Overview', line: 'A year of growth.' },
@@ -17,20 +17,20 @@ const sections = [
 ];
 
 /**
- * About a section's pitch, in px: a turn of the wheel this far scrolls one section on, and the box,
- * which snaps to its sections' starts, settles on that section's start under the header.
+ * About a section's height, in px. A turn of the wheel this far scrolls one section on, and the
+ * box, which snaps to its sections' starts, settles on that section's start under the header.
  */
 const pitch = 95;
 
 /**
- * The pointer comes over the page and turns the wheel a section on, twice, Summary to Revenue to
- * Costs, then back up to Summary, as a person reads a report, so the cursor shows why the page
- * scrolls under its header.
+ * The pointer comes over the page and turns the wheel one section on, twice, from Summary to
+ * Revenue to Costs, then back up to Summary, as a person reads a report, so the cursor shows why
+ * the page scrolls under its header.
  */
 const script: PointerStep[] = [
   { wait: 300 },
-  // Over the section below the header: the page's content is taller than the box, so it is aimed
-  // at from the header, which stays where it is.
+  // Over the section below the header: the page's content is taller than the box, so the aim is
+  // measured from the header, which stays in place.
   { to: '.env-page-header', x: 0.7, y: 1.7 },
   { wait: 500 },
   { wheel: pitch, duration: 450 },
@@ -44,14 +44,14 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A page in a box that scrolls, as a window does, at its own size and as low as its header and one
- * whole section: its still is scrolled past the overview to Summary, under the header stuck at the
- * top with the fill it takes once content scrolls beneath it. As it plays, the pointer's wheel
- * scrolls it a section at a time and back; the box snaps to the sections' starts, each held clear
+ * A page in a box that scrolls, as a window does, at its own size and as low as its header plus one
+ * whole section. Its still is scrolled past the overview to Summary, under the header stuck at the
+ * top with the fill it takes once content scrolls beneath it. While it plays, the pointer's wheel
+ * scrolls it one section at a time and back. The box snaps to the sections' starts, each held clear
  * of the header by the Page's own scroll margin, so each turn rests with one whole section under
- * it; each section ends in room as deep as that margin's, so the one above is wholly past the
- * header's top. Room after the last lets it scroll there too. In a phone's narrower tile the box is
- * narrower, so the page is drawn at about its own size there.
+ * the header; each section ends in space as deep as that margin, so the one above is entirely past
+ * the header's top. Space after the last section lets it scroll there too. In a phone's narrower
+ * tile the box is narrower, so the page is drawn at about its own size there.
  */
 export default function PageTile() {
   const narrow = useMedia(narrowGallery);

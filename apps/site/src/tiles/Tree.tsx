@@ -12,8 +12,8 @@ const row = (id: string) => `.env-tree-item[data-id="${id}"]`;
 const chevron = (id: string) => `${row(id)} .env-tree-chevron`;
 
 /*
- * Design collapsed by its chevron, Roadmap.md chosen in Engineering, which rises under it, and
- * Design expanded again and Brand.md chosen, as it began.
+ * Collapses Design with its chevron and chooses Roadmap.md in Engineering, which moves up under it.
+ * Then expands Design again and chooses Brand.md, as it began.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -45,8 +45,8 @@ const files = [
 ];
 
 /**
- * Two folders of files, both open, Brand.md chosen. In a phone's narrower tile the tree is a little
- * narrower, so it is drawn at about its own size there.
+ * Two folders of files, both open, with Brand.md chosen. In a phone's narrower tile the tree is a
+ * little narrower, so it is drawn at about its own size there.
  */
 export default function TreeTile() {
   const narrow = useMedia(narrowGallery);

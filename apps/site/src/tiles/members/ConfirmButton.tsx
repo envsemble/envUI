@@ -10,8 +10,8 @@ const people = ['Alex Morgan', 'Sam Lee'];
 const remove = '.env-list-item:nth-child(2) button';
 
 /**
- * Remove pressed once, which asks in place, Remove Sam; pressed again, and Sam leaves the list;
- * a while later the list is drawn anew as it began, with a short fade (Renew).
+ * Presses Remove once, which asks in place, "Remove Sam"; pressed again, Sam leaves the list. A
+ * while later the list is drawn again as it began, with a short fade (Renew).
  */
 const script: PointerStep[] = [
   { wait: 300 },

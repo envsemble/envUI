@@ -13,9 +13,9 @@ const people = [
 ];
 
 /**
- * Hovered, the pile spreads its people apart; resting on the count, its tooltip names the people
- * it stands for; left, the tooltip closes and the pile gathers again, and rests gathered a while
- * before it plays again.
+ * On hover, the pile spreads its people apart. Resting on the count opens its tooltip, which names
+ * the people it stands for. When the pointer leaves, the tooltip closes and the pile gathers again,
+ * and rests gathered a while before it plays again.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -28,11 +28,11 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A pile of people's avatars, three of four shown and a count for the one more, whose tooltip names
- * them on one line, with room above it in the stage. Its view holds as it plays: the pile spreads
- * and its count's tooltip opens in place, rather than the view following the tooltip away from the
- * pile. Two to a row, a smaller pile, two of three shown, so the spread pile's count stays near the
- * middle and its tooltip shows whole in the narrow stage.
+ * A pile of people's avatars: three of four shown, and a count for the one more, whose tooltip
+ * names them on one line, with room above it in the stage. Its view holds while it plays: the pile
+ * spreads and the count's tooltip opens in place, rather than the view following the tooltip away
+ * from the pile. In a gallery of two tiles to a row the pile is smaller, two of three shown, so the
+ * spread pile's count stays near the middle and its tooltip shows whole in the narrow stage.
  */
 export default function AvatarTile() {
   const narrow = useMedia(narrowGallery);

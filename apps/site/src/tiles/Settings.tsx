@@ -7,7 +7,7 @@ import type { TileWindow } from './Tiles';
 const toggle = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) .env-switch-input`;
 
-/** A preference turned on, which applies at once, and off again. */
+/** Turns a preference on, which applies at once, and off again. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: toggle(2) },

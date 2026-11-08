@@ -6,7 +6,7 @@ import { outlined } from './Outline';
 import type { TileWindow } from './Tiles';
 
 /*
- * A photo removed from the files and dragged in again, its file chip beside the hand: dropped,
+ * Removes a photo from the files and drags it in again, its file chip beside the pointer. Dropped,
  * it uploads, leaving the files as they began.
  */
 const script: PointerStep[] = [
@@ -15,29 +15,29 @@ const script: PointerStep[] = [
   { wait: 700 },
   { click: true },
   { wait: 600 },
-  // The photo picked up again where it was, its chip beside the hand, and carried up over the
-  // zone, which shows it would take it, so the drop is seen to bring it back.
+  // Picks the photo up again where it was, its chip beside the pointer, and carries it over the
+  // zone, which shows it would accept it, so the drop is seen to bring it back.
   { carry: 'team-photo.jpg', as: 'image/jpeg' },
   { wait: 400 },
   { to: '.env-drop-zone-target', x: 0.6, y: 0.55, duration: 1100 },
   { wait: 700 },
   { drop: true },
   { wait: 200 },
-  // The hand moves off the zone while the photo goes up, about two seconds, and the files rest
-  // as they began for about three more, so the upload is seen to finish before the loop.
+  // The pointer moves off the zone while the photo uploads, for about two seconds, and the files
+  // rest as they began for about three more, so the upload is seen to finish before the loop.
   { leave: true },
   { wait: 5800 },
 ];
 
-/** How much of the photo has gone up, in MB, of 1.1. */
+/** How much of the photo has uploaded, in MB, out of 1.1. */
 const size = 1.1;
 
 /** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 19, height: 14.25 };
 
 /**
- * Adding files: a drop zone over the files added, each with its Remove action, one uploading as it
- * goes up.
+ * Adding files: a drop zone above the files added, each with its Remove action, and one of them
+ * uploading.
  */
 export default function FileUploadTile() {
   const [report, setReport] = useState(true);

@@ -7,8 +7,8 @@ import type { TileWindow } from '../Tiles';
 const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
 
 /**
- * Preview chosen: the Markdown written under Write renders, its bold phrase bold; then Write
- * again, its source as it was typed.
+ * Chooses Preview: the Markdown written under Write renders, with its bold phrase bold. Then Write
+ * again, showing its source as it was typed.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -28,9 +28,9 @@ const script: PointerStep[] = [
 export const tileWindow: TileWindow = { width: 16, height: 12 };
 
 /**
- * A Markdown editor without its toolbar, so it shows whole: a short note whose phrase is marked
- * bold, its Write and Preview tabs showing the source and what it renders. Framed on Write, the
- * taller, its view holds as the preview shows.
+ * A Markdown editor without its toolbar, so it shows whole: a short note with a phrase marked bold,
+ * and its Write and Preview tabs, showing the source and what it renders. Framed on Write, the
+ * taller tab, its view holds while the preview shows.
  */
 export default function MarkdownEditorTile() {
   useHeldView();

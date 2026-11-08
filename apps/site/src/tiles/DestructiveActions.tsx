@@ -16,10 +16,10 @@ import type { TileWindow } from './Tiles';
 
 const projects = ['Launch plan', 'Annual report', 'Press kit'];
 
-/** Archived at once, with no question first; Undo brings it back. */
+/** Archives a row at once, with no question first; Undo brings it back. */
 const script: PointerStep[] = [
   { wait: 400 },
-  // Over Archive for a moment, and pressed, so its row goes a second in, once the card is in view.
+  // Over Archive for a moment, then pressed, so its row goes a second after the card is in view.
   { to: '[aria-label="Archive Annual report"]', duration: 600 },
   { wait: 700 },
   { press: true },
@@ -46,7 +46,8 @@ function Projects() {
         label: 'Undo',
         onClick: () => {
           toast.dismiss(id);
-          // Back once the notification has gone, so it never fades out over the row it restores.
+          // Restored once the notification has gone, so it never fades out over the row it
+          // restores.
           setTimeout(() => setArchived((current) => current.filter((item) => item !== name)), 300);
         },
       },
@@ -80,8 +81,8 @@ function Projects() {
 }
 
 /**
- * The window's foot, below the list, where its notifications appear at the end, as an
- * application's toast region sits at the foot of its window rather than over what it lists.
+ * The window's bottom, below the list, where its notifications appear at the end, as an
+ * application's toast region sits at the bottom of its window rather than over what it lists.
  */
 function NotificationArea({ children }: { children: (area: HTMLElement | null) => ReactNode }) {
   const [area, setArea] = useState<HTMLDivElement | null>(null);

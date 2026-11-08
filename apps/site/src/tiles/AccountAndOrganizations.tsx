@@ -14,8 +14,8 @@ const organization = (index: number) => `.env-menu-choice:nth-child(${index} of 
 const switcher = '.env-top-bar .env-button';
 
 /*
- * Contoso chosen from the open switcher, which closes it and names Contoso in the bar; opened
- * again, Northwind Labs chosen back, and opened once more, as it began.
+ * Chooses Contoso from the open switcher, which closes it and shows Contoso in the bar. Then opens
+ * it again and chooses Northwind Labs, and opens it once more, as it began.
  */
 const script: PointerStep[] = [
   { wait: 400 },

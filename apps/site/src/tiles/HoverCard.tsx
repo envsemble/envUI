@@ -6,10 +6,10 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 const trigger = '.env-link';
 
 /*
- * From the open card, as it rests: the pointer comes to the name and moves onto the card, which
- * stays open while it is there; it moves off, well before the name's start and clear of the card,
- * and the card closes after its close delay; the pointer comes back to the name and rests, and
- * after the card's delay it opens again, where the loop began.
+ * Starts from the open card, as it rests. The pointer comes to the name and moves onto the card,
+ * which stays open while the pointer is there. It moves off, well before the name's start and clear
+ * of the card, and the card closes after its close delay. The pointer comes back to the name and
+ * rests, and after the card's delay it opens again, where the loop began.
  */
 const script: PointerStep[] = [
   { cue: 'live' },
@@ -23,14 +23,16 @@ const script: PointerStep[] = [
   { wait: 2200 },
 ];
 
-/** How long the pointer rests on the name before the card opens: brief, so it is never long shut. */
+/**
+ * How long the pointer rests on the name before the card opens: brief, so it is never closed long.
+ */
 const delay = 350;
 
 /**
- * A hover card, open below the name it tells about, its avatar of the default size, so it shows
- * whole at about its own size in a gallery's low tile. The pointer ends the loop resting on the name,
- * so it stays open; stopped, it stays open too, rather than closing as the pointer goes or being
- * drawn anew, which would bring it in again.
+ * A hover card, open below the name it describes, with an avatar of the default size, so it shows
+ * whole at about its own size in a gallery's low tile. The pointer ends the loop resting on the
+ * name, so the card stays open. When the tile stops it stays open too, rather than closing as the
+ * pointer leaves or being drawn again, which would make it appear with motion again.
  */
 export default function HoverCardTile() {
   const [open, setOpen] = useState(true);

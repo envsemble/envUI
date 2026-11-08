@@ -13,9 +13,9 @@ const labels: ComboboxItem[] = ['Bug', 'Docs'].map((name) => ({
 const input = '.env-combobox-input';
 
 /**
- * A label typed after the chip already chosen, which narrows the open list to one; chosen, it joins
- * the first as a second chip, and the two hold a while; then the field is drawn anew as it began,
- * its list open, with a short fade (Renew).
+ * Types a label after the chip already chosen, which narrows the open list to one. Choosing it adds
+ * it as a second chip, and the two hold a while; then the field is drawn again as it began, its
+ * list open, with a short fade (Renew).
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -37,11 +37,11 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A combobox of two labels, several to choose, one already chosen as a chip beside the field's
- * text, so at rest it reads as a field to type in rather than a select; labels short enough that
- * two chips share the field's one row, on a phone's narrower tile too. It rests with its list open,
- * framed on the field and the list, so as it plays the list narrows, closes and opens again in
- * place, and nothing in its tile moves.
+ * A combobox of two labels, where several can be chosen, with one already chosen as a chip beside
+ * the field's text, so at rest it reads as a field to type in rather than a select. The labels are
+ * short enough that two chips share the field's one row, on a phone's narrower tile too. It rests
+ * with its list open, framed on the field and the list, so while it plays the list narrows, closes
+ * and opens again in place, and nothing in its tile moves.
  */
 export default function ComboboxTile() {
   const [round, setRound] = useState(0);

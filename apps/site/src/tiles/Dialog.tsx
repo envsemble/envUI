@@ -8,8 +8,8 @@ import type { TileWindow } from './Tiles';
 const field = '.env-dialog input';
 
 /**
- * The name changed, North kept and star typed after it, and Rename pressed, which closes the
- * dialog and renames the project in its row; opened again from its button, it shows the new name.
+ * Changes the name: keeps North, types star after it, and presses Rename, which closes the dialog
+ * and renames the project in its row. Opened again from its button, the dialog shows the new name.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -34,7 +34,7 @@ const script: PointerStep[] = [
 
 const named = 'Northwind';
 
-/** A dialog as narrow as a gallery's tile shows across at the overlays' scale (Tiles.ts). */
+/** A dialog as narrow as a gallery's tile shows across at the overlays' scale (tileWindow). */
 const narrow = { inlineSize: '12rem' } as const;
 
 /**
@@ -46,11 +46,12 @@ const narrow = { inlineSize: '12rem' } as const;
 export const tileWindow: TileWindow = { width: 14, height: 13, popupLeast: 0.56 };
 
 /**
- * A dialog that renames a project, open over the project's row, its name and the button that
- * opens it, in the middle of the screen the stage is: its field named by the title above it, its
- * label hidden and small, as a rename's is. The name in the row is a title, as a project's header
- * shows it, so the renamed row reads once the dialog closes. Rename renames the project in its row. Stopped, it is
- * open again with the first name rather than drawn anew, which would bring it in again.
+ * A dialog that renames a project, open over the project's row (its name and the button that opens
+ * the dialog), in the middle of the stage, which stands in for the screen. Its field is named by
+ * the title above it, with its label hidden and small, as a rename's is. The name in the row is a
+ * title, as a project's header shows it, so the renamed row reads clearly once the dialog closes.
+ * Rename renames the project in its row. When the tile stops, the dialog is open again with the
+ * first name, rather than drawn again, which would make it appear with motion again.
  */
 export default function DialogTile() {
   const [open, setOpen] = useState(true);

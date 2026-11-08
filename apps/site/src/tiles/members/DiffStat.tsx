@@ -6,7 +6,10 @@ const files = [
   { name: 'notes.md', additions: 1, deletions: 1 },
 ];
 
-/** Changed files, each with the size of its change. A count shows what it is given, so it holds still. */
+/**
+ * Changed files, each with the size of its change. A count shows what it is given, so it holds
+ * still.
+ */
 export default function DiffStatTile() {
   return (
     <List.Root aria-label="Changed files" density="sm" style={{ inlineSize: '11rem' }}>

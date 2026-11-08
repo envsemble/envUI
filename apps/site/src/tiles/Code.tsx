@@ -6,7 +6,7 @@ import { narrowGallery } from './Tiles';
 
 const copy = '.env-code-block-header .env-icon-button';
 
-/** Its copy button pressed: the icon turns to a check and, a few seconds later, back. */
+/** Presses its copy button: the icon turns to a check and, a few seconds later, back. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: 'pre', x: 0.6, y: 0.6 },

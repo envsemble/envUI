@@ -16,8 +16,8 @@ const row = (index: number) => `.env-table-body .env-table-row:nth-child(${index
 const sort = '.env-table-sort-button';
 
 /*
- * Down the rows, the first chosen; its column sorted the other way, which takes the chosen row
- * below the other, and back; the row let go again.
+ * Moves down the rows and chooses the first. Sorts its column the other way, which moves the chosen
+ * row below the other, and back, then clears the row again.
  */
 const script: PointerStep[] = [
   { wait: 300 },

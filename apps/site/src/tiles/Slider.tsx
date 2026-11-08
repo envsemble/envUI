@@ -5,9 +5,9 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 const control = '.env-slider-control';
 
 /*
- * Hovered at its value, which shows the handle and the ruler; pressed there and dragged up to
- * about 70, short of the value at the end, which the handle and the pointer would cover; down
- * and back to where it began, and let go.
+ * Hovers at its value, which shows the handle and the ruler. Presses there and drags up to about
+ * 70, short of the value at the end, which the handle and the pointer would cover; then down and
+ * back to where it began, and releases.
  */
 const script: PointerStep[] = [
   { wait: 300 },

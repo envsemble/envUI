@@ -11,8 +11,8 @@ const projects = ['Northwind launch', 'Pricing research'];
 const input = '.env-text-field-input';
 
 /*
- * No project matches the search: the search cleared, which brings the projects back, and the
- * same search typed again, which leaves none, as it began.
+ * No project matches the search. Clears the search, which brings the projects back, then types the
+ * same search again, which leaves none, as it began.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -32,7 +32,7 @@ const script: PointerStep[] = [
 /** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 18, height: 13.5 };
 
-/** A search with no results, its empty state offering the one way on. */
+/** A search with no results, whose empty state offers the one way forward. */
 export default function EmptyStatesTile() {
   const [query, setQuery] = useState('roadmap');
   usePointer(script);

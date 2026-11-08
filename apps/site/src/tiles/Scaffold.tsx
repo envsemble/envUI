@@ -18,7 +18,7 @@ import type { TileWindow } from './Tiles';
 const item = (index: number) =>
   `.env-navigation-bar-list > li:nth-child(${index}) .env-navigation-bar-item`;
 
-/** Inbox chosen in the bar, and Home again: the top bar's title follows, and the frame stays. */
+/** Chooses Inbox in the bar, then Home again: the top bar's title follows, and the frame stays. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: item(2) },
@@ -45,9 +45,9 @@ const places = [
 export const tileWindow: TileWindow = { app: {} };
 
 /**
- * An application's frame filling its card (TileStage.tsx): the top bar, titled with the place, over
- * its page, and the navigation bar, the form a compact window's navigation takes, its places side
- * by side at the foot.
+ * An application's frame filling its card (TileStage.tsx): the top bar, titled with the place,
+ * above its page, and the navigation bar, the form a compact window's navigation takes, with its
+ * places side by side at the bottom.
  */
 export default function ScaffoldTile() {
   const [current, setCurrent] = useState('Home');

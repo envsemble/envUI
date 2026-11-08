@@ -16,7 +16,9 @@ const script: PointerStep[] = [
 /** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 16, height: 12 };
 
-/** A page's header: its title, a sentence under it and its action at the end of the title's row. */
+/**
+ * A page's header: its title, a sentence under it, and its action at the end of the title's row.
+ */
 export default function PageHeaderTile() {
   usePointer(script);
   return (

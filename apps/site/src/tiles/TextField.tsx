@@ -5,8 +5,8 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 const input = '.env-text-field-input';
 
 /**
- * Clicked into, a name typed and, a while later, selected by a drag across it and deleted, so the
- * field is empty again, as it began; each state holds long enough to read.
+ * Clicks into the field and types a name. A while later it selects the name with a drag and deletes
+ * it, so the field is empty again, as it began. Each state holds long enough to read.
  */
 const script: PointerStep[] = [
   { wait: 300 },

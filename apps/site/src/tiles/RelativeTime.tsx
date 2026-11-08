@@ -5,13 +5,13 @@ import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
-/** The moment the tile's clock reads: fixed, so the times and the tooltip's date never change. */
+/** The time the tile's clock reads: fixed, so the times and the tooltip's date never change. */
 const now = Date.UTC(2026, 9, 14, 9, 41, 30);
 const minute = 60_000;
 
 /**
- * A document's recent events, each when it happened: two, so the stage has the room above them
- * for a time's tooltip at their own size, and nothing moves as it opens.
+ * A document's recent events, each with when it happened. There are two, so the stage has room
+ * above them for a time's tooltip at their own size, and nothing moves as it opens.
  */
 const events = [
   { label: 'Saved', at: now - 20_000 },
@@ -19,9 +19,9 @@ const events = [
 ];
 
 /*
- * A minute on, the save that was just now is a minute ago, as the shared clock moves each time on
- * once a minute; hovered, that time shows its date and time, its tooltip above the list, where
- * it covers no other time.
+ * A minute later, the save that was "just now" is "a minute ago", as the shared clock moves every
+ * time on once a minute. On hover, that time shows its date and time, in a tooltip above the list
+ * where it covers no other time.
  */
 const script: PointerStep[] = [
   { wait: 1000 },
@@ -34,14 +34,14 @@ const script: PointerStep[] = [
 ];
 
 /**
- * In a phone's narrower tile, the minute on alone: a time's tooltip, as wide as its date, would
+ * In a phone's narrower tile, only the minute passing: a time's tooltip, as wide as its date, would
  * run past the stage's end from the times' column there.
  */
 const narrowScript: PointerStep[] = [{ wait: 1000 }, { cue: 'minute' }, { wait: 4000 }];
 
 /**
  * When a document's last events happened, each as a time relative to now beside what happened. In a
- * phone's narrower tile, the times take their short format, so the list is drawn at about its own
+ * phone's narrower tile the times take their short format, so the list is drawn at about its own
  * size there.
  */
 export default function RelativeTimeTile() {

@@ -8,7 +8,7 @@ const formats = [
   { value: 'pdf', label: 'PDF' },
 ];
 
-/** The advanced options opened, a moment to see them, and closed again. */
+/** Opens the advanced options, waits a moment to show them, and closes them again. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: '.env-disclosure summary', x: 0.25 },
@@ -24,7 +24,7 @@ const script: PointerStep[] = [
 /** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 16, height: 12 };
 
-/** An export: what most people need first, the rest behind Advanced options. */
+/** An export: what most people need first, with the rest behind Advanced options. */
 export default function ProgressiveDisclosureTile() {
   usePointer(script);
   return (

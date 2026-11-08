@@ -16,8 +16,8 @@ const documents: DocumentTabsItem[] = ['Plan', 'Spec'].map((label) => ({
 const untitled = 'Untitled';
 
 /**
- * The first line of each document, the panel under the strip, which the application renders; a
- * new one is empty, its placeholder in its place.
+ * The first line of each document, in the panel under the strip, which the application renders. A
+ * new document is empty and shows its placeholder instead.
  */
 const firstLines: Record<string, string> = {
   Plan: 'Launch in May.',
@@ -30,8 +30,8 @@ const close = (id: string) =>
   `.env-document-tabs-item:has(> ${tab(id)}) > .env-document-tabs-close`;
 
 /*
- * Spec shown, then a new document opened from New document, Untitled, empty, which shows; closed
- * by its button, which shows Spec beside it again, and Plan shown, as it began.
+ * Shows Spec, then opens a new document from New document: Untitled, empty, which shows. Closes it
+ * with its button, which shows Spec beside it again, then shows Plan, as it began.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -56,8 +56,9 @@ const script: PointerStep[] = [
 ];
 
 /*
- * On a phone, Plan alone open: a new document opened from New document, Untitled, empty, which
- * shows, the strip scrolled to it; closed by its button, which shows Plan again, as it began.
+ * On a phone, with Plan alone open: opens a new document from New document, Untitled, empty, which
+ * shows, with the strip scrolled to it. Closes it with its button, which shows Plan again, as it
+ * began.
  */
 const short: PointerStep[] = [
   { wait: 300 },
@@ -74,11 +75,11 @@ const short: PointerStep[] = [
 ];
 
 /**
- * Two open documents, Plan shown, over the start of its page, short enough to show whole; on a
+ * Two open documents, with Plan shown above the start of its page, short enough to show whole. On a
  * phone's narrower tile, Plan alone, with New document beside it, as wide as the strip is with
- * Untitled open beside Plan, so the open tabs and Untitled's close button show whole as it plays:
- * there it is drawn as much smaller as shows that whole, through its whole loop (useHeldView).
- * Stopped, its documents are open again, Plan shown.
+ * Untitled open beside Plan, so the open tabs and Untitled's close button show whole while it
+ * plays: there it is drawn as much smaller as shows that whole, for its whole loop (useHeldView).
+ * When the tile stops, its documents are open again, with Plan shown.
  */
 export default function DocumentTabsTile() {
   const narrow = useMedia(narrowGallery);
@@ -135,7 +136,7 @@ function Strip({ narrow }: { narrow: boolean }) {
   );
 }
 
-/** Holds the tile's view as it plays, drawn whole (useHeldView, useMustShow). */
+/** Holds the tile's view while it plays, drawn whole (useHeldView, useMustShow). */
 function HeldWhole() {
   useHeldView();
   useMustShow('.env-document-tabs');

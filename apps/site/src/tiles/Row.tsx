@@ -15,17 +15,18 @@ const card = 2.75;
 const fit = (count: number) => `calc(${count * card}rem + ${count - 1} * var(--env-space-2))`;
 
 /**
- * The row's widths, step by step: all on one line, the last wrapped, all on one line again, two and
- * two; of three, the last wrapped, all on one line, and the last wrapped again.
+ * The row's widths, step by step: all on one line, the last card wrapped, all on one line again,
+ * then two and two. With three cards: the last wrapped, all on one line, and the last wrapped
+ * again.
  */
 const widths = [fit(4), fit(3), fit(4), fit(2)];
 const narrowWidths = [fit(3), fit(2), fit(3), fit(2)];
 
 /**
- * Four small outlined cards in a row, three on a phone, a gap apart, in an outlined panel whose
- * width changes, so its edge shows the room the row has: the row wraps as the panel narrows, a card
- * and then two, and widens again. Each width lays the row out at once, as a Row does when the room
- * it has changes.
+ * Four small outlined cards in a row (three on a phone), a gap apart, in an outlined panel whose
+ * width changes, so its edge shows the room the row has. The row wraps as the panel narrows, first
+ * one card and then two, and unwraps as it widens again. Each width lays the row out at once, as a
+ * Row does when its room changes.
  */
 export default function RowTile() {
   const step = useTimeline([1800, 2000, 1800, 2000]);

@@ -1,7 +1,9 @@
 import { Meter } from '@envsemble/envui';
 import { useTimeline } from '../motion/Timeline';
 
-/* Seats assigned one by one until the plan is full, then three of them freed again. */
+/*
+ * Assigns seats one by one until the plan is full, then frees three of them again.
+ */
 const seats = [2, 3, 4, 5];
 
 /** A meter of the seats assigned in a plan, which fills as they are assigned. */

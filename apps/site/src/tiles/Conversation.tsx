@@ -16,17 +16,17 @@ const history: Entry[] = [
   { id: 2, from: 'other', text: 'Priya Shah, for Friday.' },
 ];
 
-// An answer to the question it follows, one line, as the first one is.
+// An answer to the question it follows, one line long, as the first answer is.
 const question = 'Is the copy final?';
 const reply = 'Yes, Sam signed it off.';
 
 const input = '.env-composer-input';
 
 /*
- * A question typed and sent: it joins the thread under the first exchange, the assistant works a
- * moment, the reply grows a few words at a time while the send button is Stop, the log following
- * the thread to its end as it outgrows it; a while to read it, and the thread is back to the first
- * exchange.
+ * Types a question and sends it: it joins the thread under the first exchange, and the assistant
+ * works a moment. The reply grows a few words at a time while the send button is Stop, and the log
+ * follows the thread to its end as the thread outgrows it. After a while to read it, the thread is
+ * back to the first exchange.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -61,7 +61,7 @@ export default function ConversationTile() {
   const pause = useRef<number>(undefined);
   const frame = useRef(0);
 
-  // Glides the log, a little each frame, to its end, so it follows the thread as it grows.
+  // Scrolls the log a little each frame toward its end, so it follows the thread as it grows.
   const follow = useCallback(() => {
     if (frame.current) return;
     const step = () => {
@@ -127,8 +127,8 @@ export default function ConversationTile() {
         aria-label="Conversation with the assistant"
         busy={thinking}
         busyAuthor="Assistant"
-        // A set height with room under the first exchange for the next, which the thread grows
-        // into, scrolling once it runs past it.
+        // A set height with room under the first exchange for the next one, which the thread grows
+        // into, scrolling once it grows past it.
         style={{ blockSize: '9.375rem', overflowY: 'hidden' }}
       >
         {entries.map((entry) =>

@@ -58,36 +58,40 @@ export interface TileWindow {
 }
 
 /**
- * About the widths at which the components' gallery stands two to a row (Gallery.css), whose
- * stages are too narrow for a popup beside its button: there a tile opens it below.
+ * About the widths at which the components' gallery shows two tiles to a row (Gallery.css). Those
+ * stages are too narrow for a popup beside its button, so there a tile opens it below.
  */
 export const narrowGallery = '(width < 29rem)';
 
 /**
  * Starts loading a page's tile, where it has one, well before it nears the view, so it is drawn as
- * it comes in rather than after.
+ * it comes into view rather than after.
  */
 export const preloadTile = (page: string) => tiles.preload(tilePath(page));
 
-/** A page's own tile, by the page's id, where it has one: what loads its file, once. */
+/** A page's own tile, by the page's id, where it has one: a function that loads its file, once. */
 export const tileOf = (page: string) =>
   tiles.has(tilePath(page)) ? () => tiles.load(tilePath(page)) : undefined;
 
 /*
- * The tiles of the exports documented on another's page, for the Related cards that name them,
- * apps/site/src/tiles/members/<Export>.tsx, such as SearchField.tsx on the TextField page's: a
- * small live picture of the export alone, written as a page's own tile is, where the page's
- * examples show it in a larger scene than a card holds whole, or hold still where it acts.
+ * The tiles of the exports documented on another page, for the Related cards that name them:
+ * apps/site/src/tiles/members/<Export>.tsx, such as SearchField.tsx on the TextField page. Each is
+ * a small live picture of the export alone, written as a page's own tile is, for an export whose
+ * page's examples show it in a larger scene than a card can show whole, or hold still where it
+ * acts.
  */
 const memberTiles = moduleRegistry(import.meta.glob<TileModule>('/src/tiles/members/*.tsx'));
 
-/** The exports a page's own tile already shows alone, by the id of that page. */
+/** The exports a page's own tile already shows alone, mapped to the id of that page. */
 const shownByPageTile: Readonly<Record<string, string>> = {
   RichTextEditor: 'rich-text',
   CodeBlock: 'code',
 };
 
-/** The tile of an export documented on another's page, where it has one: what loads its file. */
+/**
+ * The tile of an export documented on another page, where it has one: a function that loads its
+ * file.
+ */
 export const memberTileOf = (component: string) => {
   const page = shownByPageTile[component];
   if (page) return tileOf(page);

@@ -16,8 +16,8 @@ const select = (name: string) => `[aria-label="Select ${name}"]`;
 const sort = '.env-table-sort-button';
 
 /*
- * A second row selected, which the bar counts; the names sorted the other way and back, the
- * selection going with its rows; the row let go again.
+ * Selects a second row, which the bar counts; sorts the names the other way and back, with the
+ * selection staying on its rows; then clears the row again.
  */
 const script: PointerStep[] = [
   { wait: 400 },
