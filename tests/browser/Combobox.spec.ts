@@ -1,17 +1,9 @@
 import { test, expect, type Browser, type Locator, type Page } from '@playwright/test';
 import { chevronTips, expectHalfTurn, slowChevron } from './helpers/Chevron';
 import { fixtureUrl } from './helpers/Servers';
+import { collectErrors } from './helpers/PageErrors';
 
 const comboboxFixture = `${fixtureUrl}/?fixture=combobox`;
-
-function collectErrors(page: Page) {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  page.on('console', (message) => {
-    if (message.type() === 'error' || message.type() === 'warning') errors.push(message.text());
-  });
-  return errors;
-}
 
 const field = (page: Page, name: string) => page.getByRole('combobox', { name, exact: true });
 const highlighted = (page: Page) =>
@@ -31,7 +23,7 @@ test.beforeEach(async ({ page }) => {
 test('typing filters by label and description, ignoring case and accents, and Enter chooses the first match', async ({
   page,
 }) => {
-  const errors = collectErrors(page);
+  const errors = collectErrors(page, { warnings: true });
   const author = field(page, 'Author light');
   await expect(author).toHaveValue('Alex Morgan');
   await expect(author).toHaveAttribute('aria-expanded', 'false');

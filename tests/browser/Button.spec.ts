@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './helpers/Servers';
 import { openServerMarkup } from './helpers/ServerMarkup';
+import { collectErrors } from './helpers/PageErrors';
 
 const fixture = `${fixtureUrl}/?fixture=adoption`;
 
@@ -14,15 +15,6 @@ async function stopClock(page: Page) {
   const start = Date.now();
   await page.clock.install({ time: start });
   await page.clock.pauseAt(start + 1000);
-}
-
-function collectErrors(page: Page) {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
-  return errors;
 }
 
 test('LinkProvider routes destinations and leaves disabled links native', async ({ page }) => {

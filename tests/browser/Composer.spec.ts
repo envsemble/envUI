@@ -1,16 +1,8 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './helpers/Servers';
+import { collectErrors } from './helpers/PageErrors';
 
 const composerFixture = `${fixtureUrl}/?fixture=composer`;
-
-function collectErrors(page: Page) {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
-  return errors;
-}
 
 /** The composer root around a field. */
 function composerOf(field: Locator) {
