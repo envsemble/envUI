@@ -245,8 +245,9 @@ test('a component page shows plain sections, equal cells and the parts of its an
 });
 
 test('every anatomy figure numbers each part its legend names', async ({ page }) => {
-  // It visits every component and pattern page, whose examples load as each opens.
-  test.slow();
+  // It visits every component and pattern page, whose examples load as each opens: about 1.5
+  // minutes alone, longer beside other workers.
+  test.setTimeout(8 * 60_000);
   // A legend part the example doesn't render would leave its number off the figure. A part the
   // figure shows whole, such as a field around its control, takes neither.
   const pages = figurePages.map((document) => ({
@@ -281,8 +282,9 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
 });
 
 test('every stage is the only frame of its figure', async ({ page }) => {
-  // It visits every component and pattern page, whose examples load as each opens.
-  test.slow();
+  // It visits every component and pattern page, whose examples load as each opens: about 1.5
+  // minutes alone, longer beside other workers.
+  test.setTimeout(8 * 60_000);
   // One frame per figure: no stage sits inside another framed or filled box in the article, such
   // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's
   // stage is the figure's one frame, as a gallery cell's picture is.

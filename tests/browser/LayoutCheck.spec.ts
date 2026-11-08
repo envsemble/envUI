@@ -59,11 +59,17 @@ const allowances: Allowance[] = [];
 async function settle(page: Page) {
   await page.evaluate(async () => {
     await document.fonts.ready;
-    // Motion that ends, not a spinner's, which never does; one cancelled on the way ends too.
+    // Motion that ends, not a spinner's, which never does, nor one on a scroll timeline, such as a
+    // table region's edge fade, which follows the scroll rather than time; one cancelled on the way
+    // ends too.
     await Promise.all(
       document
         .getAnimations()
-        .filter((animation) => animation.effect?.getComputedTiming().endTime !== Infinity)
+        .filter(
+          (animation) =>
+            animation.timeline === document.timeline &&
+            animation.effect?.getComputedTiming().endTime !== Infinity,
+        )
         .map((animation) => animation.finished.catch(() => undefined)),
     );
     const frame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
