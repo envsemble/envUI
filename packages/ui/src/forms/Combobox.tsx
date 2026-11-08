@@ -28,7 +28,6 @@ import {
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { autoHighlightAlways } from './internal/autoHighlightAlways.js';
 import {
-  standIn,
   type ComboboxFilter,
   type ComboboxGroup,
   type ComboboxItem,
@@ -160,8 +159,12 @@ interface ComboboxMultipleProps<Item extends ComboboxItem> {
   value?: readonly string[];
   /** The values an uncontrolled field starts with, and that a form reset restores; none by default. */
   defaultValue?: readonly string[];
-  /** Receives the chosen values and their options. */
-  onValueChange?: (value: string[], items: Item[]) => void;
+  /**
+   * Receives the chosen values and their options. A value none of the options has had, such as one
+   * given before a server search finds it, comes as a ComboboxItem of its own, with the value as
+   * its label, as its chip shows it.
+   */
+  onValueChange?: (value: string[], items: (Item | ComboboxItem)[]) => void;
 }
 
 export type ComboboxProps<Item extends ComboboxItem = ComboboxItem> = ComboboxSharedProps<Item> &
@@ -278,19 +281,16 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   /** Keeps a value people chose, where the field keeps its own, and reports it with its options. */
   function choose(next: Selection) {
     if (!controlled) setUncontrolledValue(next);
-    // The props are a union on multiple, which the field has already told apart.
-    if (isMultiple) {
+    // Base UI's selection is a list of values for a field that takes several, else one or none.
+    if (props.multiple) {
       const values = [...((next as readonly string[] | null) ?? [])];
-      (onValueChange as ((value: string[], items: Item[]) => void) | undefined)?.(
+      props.onValueChange?.(
         values,
-        values.map((selected) => known.get(selected) ?? standIn<Item>(selected)),
+        values.map((selected) => known.get(selected) ?? { value: selected, label: selected }),
       );
     } else {
       const single = (next as string | null) ?? null;
-      (onValueChange as ((value: string | null, item: Item | null) => void) | undefined)?.(
-        single,
-        single == null ? null : (known.get(single) ?? null),
-      );
+      props.onValueChange?.(single, single == null ? null : (known.get(single) ?? null));
     }
   }
 
