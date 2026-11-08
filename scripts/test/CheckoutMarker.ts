@@ -4,6 +4,7 @@
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import type { ViteDevServer } from 'vite';
 
 export const checkoutPath = '/__envui/checkout';
 
@@ -29,7 +30,7 @@ export function checkoutMarker() {
   return {
     name: 'envui-checkout-marker',
     apply: 'serve',
-    configureServer(server) {
+    configureServer(server: ViteDevServer) {
       server.middlewares.use(checkoutPath, (_request, response) => {
         response.setHeader('Content-Type', 'text/plain');
         response.setHeader('Cache-Control', 'no-store');
@@ -40,7 +41,7 @@ export function checkoutMarker() {
 }
 
 /** What listens on a local port: nothing, this checkout's server, or anything else. */
-export async function probe(port, id = checkoutId()) {
+export async function probe(port: number, id = checkoutId()) {
   try {
     const response = await fetch(`http://127.0.0.1:${port}${checkoutPath}`, {
       signal: AbortSignal.timeout(2000),
@@ -54,7 +55,7 @@ export async function probe(port, id = checkoutId()) {
 }
 
 /** A port of this checkout's own, for when another program holds the default. */
-export function checkoutPort(offset, id = checkoutId()) {
+export function checkoutPort(offset: number, id = checkoutId()) {
   return 20000 + (parseInt(id.slice(0, 8), 16) % 9000) * 2 + offset;
 }
 

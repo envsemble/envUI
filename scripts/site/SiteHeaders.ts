@@ -11,13 +11,16 @@ export const headersFile = fileURLToPath(
   new URL('../../apps/site/hosting/_headers', import.meta.url),
 );
 
-/**
- * The rules of a _headers file, in order.
- * @param {string} text
- * @returns {{ pattern: string, set: [string, string][], remove: string[] }[]}
- */
+/** A rule of a _headers file: the paths it matches, and the headers it sets and removes. */
+interface HeaderRule {
+  pattern: string;
+  set: [string, string][];
+  remove: string[];
+}
+
+/** The rules of a _headers file, in order. */
 export function parseHeaders(text: string) {
-  const rules: { pattern: string; set: [string, string][]; remove: string[] }[] = [];
+  const rules: HeaderRule[] = [];
   for (const [index, line] of text.split(/\r?\n/).entries()) {
     if (line.trim() === '' || line.trimStart().startsWith('#')) continue;
     if (!/^\s/.test(line)) {
@@ -38,8 +41,7 @@ export function parseHeaders(text: string) {
   return rules;
 }
 
-/** @param {string} pattern */
-function patternExpression(pattern) {
+function patternExpression(pattern: string) {
   const source = pattern
     .split(/(\*|:[A-Za-z]\w*)/)
     .map((part) => {
@@ -51,15 +53,9 @@ function patternExpression(pattern) {
   return new RegExp(`^${source}$`);
 }
 
-/**
- * The headers the rules give a response for a path, with lowercase names.
- * @param {ReturnType<typeof parseHeaders>} rules
- * @param {string} pathname
- * @returns {Record<string, string>}
- */
-export function headersFor(rules, pathname) {
-  /** @type {Record<string, string>} */
-  const headers = {};
+/** The headers the rules give a response for a path, with lowercase names. */
+export function headersFor(rules: HeaderRule[], pathname: string) {
+  const headers: Record<string, string> = {};
   for (const rule of rules) {
     if (!patternExpression(rule.pattern).test(pathname)) continue;
     for (const name of rule.remove) delete headers[name.toLowerCase()];

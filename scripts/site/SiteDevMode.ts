@@ -61,7 +61,7 @@ export function devModeProblems(
  * Checks the hosted build in `siteDirectory` for dev mode outside the dev mode page, from Vite's
  * manifest; throws on a problem. A build already finalised, without its manifest, is left as it is.
  */
-export async function checkDevModeChunks(siteDirectory) {
+export async function checkDevModeChunks(siteDirectory: string) {
   const manifestFile = resolve(siteDirectory, '.vite/manifest.json');
   if (!existsSync(manifestFile)) return false;
   const manifest: ViteManifest = JSON.parse(await readFile(manifestFile, 'utf8'));

@@ -18,6 +18,7 @@ import {
   statuses,
   type ExampleEntry,
   type Frontmatter,
+  type PageSection,
   type PageSectionDefinition,
 } from './Schema.ts';
 
@@ -26,10 +27,7 @@ type FigureBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 
 /** A section of a page as readPage builds it: its blocks, and in Compose its tokens. */
-export interface ReadSection {
-  id: string;
-  title: string;
-  blocks: DocumentationBlock[];
+export interface ReadSection extends PageSection {
   tokens: Token[];
 }
 
@@ -1034,7 +1032,7 @@ function pageProblems(page: PageReading) {
  * The page's sections, after the Overview: the frontmatter's overview examples, side by side, the
  * first named after the page.
  */
-function withOverview({ document, sections, foundation, context }: PageReading) {
+function withOverview({ document, sections, foundation, context }: PageReading): PageSection[] {
   const result = sections.map(({ id, title, blocks }) => ({ id, title, blocks }));
   const overviews = Object.entries(context.catalog).filter(([, { role }]) => role === 'overview');
   if (!overviews.length) return result;
@@ -1042,8 +1040,8 @@ function withOverview({ document, sections, foundation, context }: PageReading) 
     id: 'overview',
     title: 'Overview',
     blocks: [
-      { kind: 'markdown', markdown: '## Overview\n\n' },
-      ...overviews.map(([name, { caption, open, stage, motion, wide, device }], index) => ({
+      { kind: 'markdown' as const, markdown: '## Overview\n\n' },
+      ...(overviews.map(([name, { caption, open, stage, motion, wide, device }], index) => ({
         kind: foundation ? 'figure' : 'example',
         name,
         heading: index === 0 ? document.title : fileWords(name),
@@ -1053,7 +1051,7 @@ function withOverview({ document, sections, foundation, context }: PageReading) 
         ...(motion && { motion: true }),
         ...(wide && { wide: true }),
         ...(device && { device: device as ExampleBlock['device'] }),
-      })),
+      })) as DocumentationBlock[]),
     ],
   };
   return [overview, ...result];

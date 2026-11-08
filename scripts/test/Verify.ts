@@ -14,15 +14,25 @@
 // does not count as verified. --keep-going runs later phases after a failure. ENVUI_WORKERS sets
 // the browser workers (default: half the cores). The browsers run alone because timing-sensitive
 // specs, and Firefox's slowest, fail when unit tests or Docker compete with them for the cores.
-import { bin, dockerRunning, parallel, red, series, summary, task, yellow } from './TestTasks.ts';
+import {
+  bin,
+  dockerRunning,
+  parallel,
+  red,
+  series,
+  summary,
+  task,
+  yellow,
+  type TaskResult,
+} from './TestTasks.ts';
 import { unitTestFiles } from './TestScope.ts';
 
 const started = performance.now();
 const argv = process.argv.slice(2);
 const skipVisual = argv.includes('--skip-visual') || process.env.ENVUI_SKIP_VISUAL === '1';
 const keepGoing = argv.includes('--keep-going');
-const node = (script, ...args) => [...bin.node, script, ...args];
-const failed = (results) => results.some((result) => !result.ok && !result.optional);
+const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];
+const failed = (results: TaskResult[]) => results.some((result) => !result.ok && !result.optional);
 const finish = () => {
   const ok = summary('verify', started);
   if (skipVisual)

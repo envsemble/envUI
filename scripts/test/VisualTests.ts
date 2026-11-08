@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const args = process.argv.slice(2);
-const flag = (name) => {
+const flag = (name: string) => {
   const index = args.indexOf(name);
   if (index !== -1) args.splice(index, 1);
   return index !== -1;
@@ -35,7 +35,7 @@ const preflight = flag('--preflight');
  * @playwright/test, add the Digest that `docker buildx imagetools inspect
  * mcr.microsoft.com/playwright:v<version>-noble` prints, and rerun the baseline.
  */
-const imageDigests = {
+const imageDigests: Record<string, string> = {
   '1.63.0': 'sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27',
 };
 /** Snapshots are rendered on x86-64; other hosts emulate it rather than draw different pixels. */

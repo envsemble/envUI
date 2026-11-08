@@ -538,11 +538,11 @@ export function buildParts({
   for (const group of groups.values())
     if (group.source && (members.get(group.name)?.length ?? 0) > 0)
       groupsBySource.set(group.source, [...(groupsBySource.get(group.source) ?? []), group.name]);
-  const reachable = (start) => {
+  const reachable = (start: string) => {
     const found = new Set([start]);
     const queue = [start];
     while (queue.length) {
-      const file = queue.shift();
+      const file = queue.shift()!;
       for (const next of imports.get(file) ?? [])
         if (!found.has(next) && !componentSources.has(next)) {
           found.add(next);
@@ -814,7 +814,7 @@ export function removedParts(
   return removed;
 }
 
-function git(args) {
+function git(args: string[]) {
   return execFileSync('git', args, {
     cwd: root,
     encoding: 'utf8',

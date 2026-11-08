@@ -35,7 +35,7 @@ else if (process.argv.includes('--release-flag')) console.log(prerelease ? '--pr
 else console.log(`Validated ${tag}; ${prerelease ? 'prerelease' : 'stable'} distribution.`);
 
 /** The CHANGELOG section for one version: from its `## <version>` heading to the next `## ` heading. */
-function releaseNotes(changelog, version) {
+function releaseNotes(changelog: string, version: string) {
   const lines = changelog.replaceAll('\r\n', '\n').split('\n');
   const start = lines.findIndex(
     (line) => line === `## ${version}` || line.startsWith(`## ${version} `),

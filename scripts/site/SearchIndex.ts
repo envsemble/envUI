@@ -183,7 +183,7 @@ function placeOf(
   const foundations = documents.filter(
     (document) => document.group === 'Foundations' && document !== home,
   );
-  for (const where of ['code', 'prose'])
+  for (const where of ['code', 'prose'] as const)
     for (const document of [home, ...foundations]) {
       const section = sectionsOf(document.markdown).find((entry) => mentions(entry[where], name));
       if (section) return { document, section: section.slug };

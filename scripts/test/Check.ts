@@ -77,7 +77,7 @@ const builds = {
 };
 
 // What runs, and why.
-const list = (items) =>
+const list = (items: string[]) =>
   items.length > 6
     ? `${items.slice(0, 6).join(', ')} and ${items.length - 6} more`
     : items.join(', ');
