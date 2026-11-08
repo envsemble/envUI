@@ -30,6 +30,15 @@
   margin-block-start: calc(var(--env-space-4) - var(--catalogue-subtopic-gap));
 }
 
+/* Overview's heading is for the contents alone (TemplateContent.tsx): its figure, the page's one
+   large cell, sits right under the banner, as close to it as a figure to its text, so the two read
+   as the page's head. */
+.site-figure-section[data-section='overview']
+  > .site-figure-section-heading.site-visually-hidden
+  + * {
+  margin-block-start: calc(var(--env-space-6) - var(--site-section-gap) + var(--env-space-2));
+}
+
 /* Text sits close to the figure it introduces, but not to a subsection that starts with its own
    heading beside its figure. */
 .site-figure-section
@@ -52,9 +61,30 @@
   margin-block-start: var(--catalogue-subtopic-gap);
 }
 
-/* A figure: its stage, its caption and its code, close together. */
-.site-live-example-entry {
-  gap: var(--env-space-2);
+/* A figure, as a gallery's cell: its stage, and under it on one row, as a cell's name and arrow,
+   its caption at the start and its code switch at the end; open, the code runs under both, the
+   switch keeping its place at the end. A figure without a caption has its switch alone on the
+   row. */
+:is(.site-live-example-entry, .site-verdict) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-auto-flow: row dense;
+  align-items: baseline;
+  gap: var(--env-space-2) var(--env-space-4);
+}
+:is(.site-live-example-entry, .site-verdict) > * {
+  grid-column: 1 / -1;
+}
+:is(.site-live-example-entry, .site-verdict)
+  > :is(.site-figure-caption, .site-verdict-caption, .site-still-mark) {
+  grid-column: 1;
+}
+:is(.site-live-example-entry, .site-verdict) > .site-live-example-code:not([open]) {
+  grid-column: 2;
+  justify-self: end;
+}
+:is(.site-live-example-entry, .site-verdict) > .site-live-example-code[open] > summary {
+  margin-inline-start: auto;
 }
 
 /* A still picture's mark sits just under its stage, quieter than a caption (StillMark.tsx). */
@@ -77,7 +107,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: var(--env-space-7) var(--env-space-6);
+  /* Side by side, as close as a gallery's cells; a row apart by their captions. */
+  gap: var(--env-space-7) var(--env-space-3);
   min-inline-size: 0;
 }
 
@@ -312,14 +343,37 @@
   background: var(--env-color-border-muted);
 }
 
+/* An example's code switch: plain text, quiet, without a chevron or a fill, underlined under the
+   pointer as a link is. Show code and Hide code say its state. */
+.site-live-example-code > summary {
+  margin-inline: 0;
+  padding-inline: 0;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.site-live-example-code > summary > .env-disclosure-indicator {
+  display: none;
+}
+.site-live-example-code > summary:is(:hover, :active) {
+  background: none;
+  color: var(--env-color-fg-default);
+  text-decoration-color: currentcolor;
+}
+
 /* An example's open code lines up with its stage, edge to edge and with the stage's corners, so
-   the two read as one figure. Code never wraps: a line wider than the column scrolls sideways. */
+   the two read as one figure: square under a page's figure, a surface's corners elsewhere. Code
+   never wraps: a line wider than the column scrolls sideways. */
 .site-live-example-code > .env-disclosure-panel {
   margin-inline: 0;
 }
 
 .site-example-source.env-code-block {
   border-radius: var(--env-radius-surface);
+}
+.site-figures .site-example-source.env-code-block {
+  border-radius: 0;
 }
 
 /* Text for assistive technology alone, such as the file a Code disclosure shows. */

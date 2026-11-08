@@ -26,7 +26,7 @@ export function ComponentPage({ page }: { page: RoutePage }) {
         meta={document.metadata && <MetadataBadges metadata={document.metadata} plain />}
         corner={<PartSwitch page={page} />}
       />
-      <TemplateContent document={document} />
+      <TemplateContent document={document} overviewHeading={false} />
     </>
   );
 }
@@ -47,7 +47,7 @@ export function PatternPage({ page }: { page: RoutePage }) {
         meta={document.metadata && <MetadataBadges metadata={document.metadata} plain />}
         corner={<PartSwitch page={page} />}
       />
-      <TemplateContent document={document} />
+      <TemplateContent document={document} overviewHeading={false} />
     </>
   );
 }

@@ -8,10 +8,10 @@ import { findPage } from './navigation/SiteRoutes';
 import { currentRoute } from './navigation/useSiteRoute';
 import { preloadPage } from './pages/PreloadPage';
 import { keepScrollInPreviews } from './motion/StandIns';
-import { applyPageStyle } from './theme/PageStyle';
+import { applyVerdictOption } from './figures/VerdictOption';
 
-// The look of the catalogue's pages being explored, if one is asked for (PageStyle.ts).
-applyPageStyle();
+// Which way a do or don't figure is drawn, while the owner chooses (VerdictOption.ts).
+applyVerdictOption();
 
 // The site renders once what the page it opens on needs has loaded, which started as it did, so
 // its first paint has the whole page rather than the frame and then the page.

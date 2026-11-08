@@ -237,11 +237,7 @@ export function MotionStage({
     <div
       ref={stage}
       className={[
-        foundation
-          ? 'site-foundation-stage'
-          : verdict
-            ? 'site-verdict-stage env-connected-row'
-            : 'site-live-example',
+        foundation ? 'site-foundation-stage' : verdict ? 'site-verdict-stage' : 'site-live-example',
         'catalogue-motion-stage',
         className,
       ]

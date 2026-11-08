@@ -1,15 +1,13 @@
 /* Do, don't and caution figures; the frame they share with other figures is in Figures.css. */
 
-/* A do, don't or caution figure: the example on its stage, a quiet strip that says Do, Don't or
-   Caution in green, red or amber, and one sentence. The stage is as tall as the example, and at
-   least 7 rem, or square where the example shows open or playing, the room what
-   opens needs; never wider than `--site-verdict-size`, so a pair side by side stays small beside
-   the text; alone, or in a narrow column, it starts where the text does. A `wide` figure, whose
-   point is a change across the column's width, spans the column instead. */
+/* A do, don't or caution figure: a cell as a gallery's is (Figures.tsx), the example on its stage,
+   flat and square-cornered as every figure of a page, and under it, as a cell's name, its mark and
+   its one sentence, with its code switch at the row's end (Figures.css). The stage is as tall as
+   the example, and at least 7 rem, or square where the example shows open or playing, the room
+   what opens needs; never wider than `--site-verdict-size`, so a pair side by side stays small
+   beside the text; alone, or in a narrow column, it starts where the text does. A `wide` figure,
+   whose point is a change across the column's width, spans the column instead. */
 .site-verdict {
-  display: grid;
-  align-content: start;
-  gap: var(--env-space-2);
   min-inline-size: 0;
   margin: 0;
 }
@@ -18,17 +16,8 @@
   inline-size: min(100%, var(--site-verdict-size));
 }
 
-.site-verdict-frame {
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  /* The stage and the bar are envUI's connected rows (env-connected-rows), which give the outer
-     corners the large radius and the inner corners where they meet the small one; the gap is the
-     one between a list's rows. */
-  gap: 0.125rem;
-}
-
-/* The stage is every stage's recessed canvas (Stage.css); its corners are the connected rows'. A
-   square clips what it holds, and its overlays open in the box over it (below). */
+/* The stage is every stage's recessed canvas (Stage.css). A square clips what it holds, and its
+   overlays open in the box over it (below). */
 .site-verdict-stage {
   --site-verdict-inset: var(--env-space-6);
 }
@@ -104,42 +93,86 @@
   transform-origin: 0 0;
 }
 
-/* The verdict: a quiet strip on the stage's own fill, its icon and word in the verdict's text
-   color. Above its stage, so the stage's shadow falls around the figure, not across the strip. */
-.site-verdict-bar {
-  position: relative;
-  z-index: var(--env-z-raised);
+/* The caption, as a gallery cell's name row: the mark, a small icon in the verdict's color and its
+   word in the text's, then the sentence, quieter, on the same line where it fits. No strip, frame
+   or fill: the color is the icon's alone. */
+.site-verdict-caption {
   display: flex;
-  align-items: center;
-  gap: var(--env-space-2);
-  padding: var(--env-space-2) var(--env-space-4);
-  background: var(--env-color-bg-recessed);
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--env-space-2);
+  min-inline-size: 0;
+  color: var(--env-color-fg-muted);
   font: var(--env-type-body-sm);
+}
+
+.site-verdict-mark {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  align-self: center;
+  gap: var(--env-space-1);
+  color: var(--env-color-fg-default);
   font-weight: var(--env-font-weight-medium);
 }
 
-.site-verdict-bar > svg {
+.site-verdict-mark > svg {
   flex: none;
   inline-size: 1rem;
   block-size: 1rem;
 }
 
-.site-verdict[data-verdict='do'] .site-verdict-bar {
+.site-verdict[data-verdict='do'] .site-verdict-mark > svg {
   color: var(--env-color-fg-success);
 }
 
-.site-verdict[data-verdict='dont'] .site-verdict-bar {
+.site-verdict[data-verdict='dont'] .site-verdict-mark > svg {
   color: var(--env-color-fg-danger);
 }
 
 /* A caution, acceptable with care. */
-.site-verdict[data-verdict='caution'] .site-verdict-bar {
+.site-verdict[data-verdict='caution'] .site-verdict-mark > svg {
   color: var(--env-color-fg-warning);
 }
 
-.site-verdict-caption {
-  padding-inline: var(--env-space-2);
-  font: var(--env-type-body);
+.site-verdict-sentence {
+  min-inline-size: 0;
+}
+
+/* Temporary, while the owner chooses (VerdictOption.ts, `?verdicts=2`): the mark on the cell
+   itself, at its top start corner, as a picture's tag, in the verdict's color, and the sentence
+   alone under the cell. */
+:root[data-catalogue-verdicts='2'] .site-verdict {
+  position: relative;
+}
+
+:root[data-catalogue-verdicts='2'] .site-verdict-mark {
+  position: absolute;
+  inset-block-start: var(--env-space-3);
+  inset-inline-start: var(--env-space-3);
+  z-index: var(--env-z-raised);
+  padding: var(--env-space-1) var(--env-space-2);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-raised);
+  font: var(--env-type-body-sm);
+  font-weight: var(--env-font-weight-medium);
+}
+
+/* The example keeps clear of the tag, by its height and a little more, above the stage's inset. */
+:root[data-catalogue-verdicts='2'] .site-verdict-fit {
+  padding-block-start: calc(var(--site-verdict-inset) + var(--env-space-6));
+}
+
+:root[data-catalogue-verdicts='2'] .site-verdict[data-verdict='do'] .site-verdict-mark {
+  color: var(--env-color-fg-success);
+}
+
+:root[data-catalogue-verdicts='2'] .site-verdict[data-verdict='dont'] .site-verdict-mark {
+  color: var(--env-color-fg-danger);
+}
+
+:root[data-catalogue-verdicts='2'] .site-verdict[data-verdict='caution'] .site-verdict-mark {
+  color: var(--env-color-fg-warning);
 }
 
 @container (width < 30rem) {

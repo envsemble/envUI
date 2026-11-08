@@ -61,8 +61,8 @@ test('a component page shows plain sections, equal cells and the parts of its an
 }) => {
   // Wide enough for an overview's three figures to share a row beside the page's contents.
   await page.setViewportSize({ width: 1920, height: 900 });
-  // Figures that share a row are cells of one width, from the top of the row, each stage as tall
-  // as its own figure: a stage stretched to a taller neighbour's left a lone control floating.
+  // Figures that share a row are cells of one width, from the top of the row, each at least a
+  // gallery cell's height, 11 rem, so a lone control sits in a calm field rather than a strip.
   await page.goto(`${siteDevUrl}/components/badge`);
   await expect(page.locator('[data-section="overview"] .site-loading')).toHaveCount(0);
   const cells = () =>
@@ -77,10 +77,10 @@ test('a component page shows plain sections, equal cells and the parts of its an
           count: stages.length,
           widths: new Set(stages.map((box) => Math.round(box.width))).size,
           tops: new Set(stages.map((box) => Math.round(box.top))).size,
-          heights: new Set(stages.map((box) => Math.round(box.height))).size > 1,
+          least: stages.every((box) => box.height >= 11 * 16 - 1),
         };
       });
-  await expect.poll(cells).toEqual({ count: 3, widths: 1, tops: 1, heights: true });
+  await expect.poll(cells).toEqual({ count: 3, widths: 1, tops: 1, least: true });
   // Each figure's caption or code follows its stage closely, with no empty band.
   const codeGaps = () =>
     page
@@ -119,21 +119,23 @@ test('a component page shows plain sections, equal cells and the parts of its an
     'Accessibility',
   ]);
   await expect(page.locator('.site-figures .env-message')).toHaveCount(0);
-  // Do and don't figures carry their verdict and one sentence, with the code below.
+  // Do and don't figures are cells as a gallery's are: a square-cornered stage with no frame, and
+  // under it their mark and one sentence, with the code switch at the row's end.
   const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
-  await expect(verdict.locator('.site-verdict-bar')).toHaveText('Do');
+  await expect(verdict.locator('.site-verdict-caption .site-verdict-mark')).toHaveText('Do');
   await expect(verdict.locator('details summary')).toHaveText('Show code, OnePrimaryAction.tsx');
-  // Its stage and its bar are connected rows: large outer corners, small inner ones.
-  const corners = await verdict.evaluate((figure) => {
+  const cell = await verdict.evaluate((figure) => {
     const stage = getComputedStyle(figure.querySelector('.site-verdict-stage')!);
-    const bar = getComputedStyle(figure.querySelector('.site-verdict-bar')!);
+    const mark = figure.querySelector('.site-verdict-mark')!.getBoundingClientRect();
+    const code = figure.querySelector('details summary')!.getBoundingClientRect();
     return {
-      outer: stage.borderTopLeftRadius === bar.borderBottomLeftRadius,
-      inner: stage.borderBottomLeftRadius === bar.borderTopLeftRadius,
-      larger: parseFloat(stage.borderTopLeftRadius) > parseFloat(stage.borderBottomLeftRadius),
+      corner: stage.borderTopLeftRadius,
+      shadow: stage.boxShadow,
+      // The switch on the caption's row, at its end.
+      row: Math.abs(code.top - mark.top) < mark.height && code.left > mark.right,
     };
   });
-  expect(corners).toEqual({ outer: true, inner: true, larger: true });
+  expect(cell).toEqual({ corner: '0px', shadow: 'none', row: true });
   // When to use is a guidance list, marked with sparks, where a component named at an item's end
   // follows it after a muted dot: the Button family's own page, so not a link.
   const useWhen = page.locator('.site-when .site-guidance li');
@@ -261,8 +263,8 @@ test('every stage is the only frame of its figure', async ({ page }) => {
   // It visits every component and pattern page, whose examples load as each opens.
   test.slow();
   // One frame per figure: no stage sits inside another framed or filled box in the article, such
-  // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's own
-  // frame, which holds its stage and its verdict bar, is the figure's one frame.
+  // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's
+  // stage is the figure's one frame, as a gallery cell's picture is.
   expect(figurePages.length).toBeGreaterThan(0);
   await page.goto(`${siteDevUrl}/`);
   for (const { id, route } of figurePages) {
@@ -286,7 +288,6 @@ test('every stage is the only frame of its figure', async ({ page }) => {
           node && !node.classList.contains('site-figures');
           node = node.parentElement
         ) {
-          if (node.classList.contains('site-verdict-frame')) continue;
           const style = getComputedStyle(node);
           const bordered = (['Top', 'Right', 'Bottom', 'Left'] as const).some(
             (side) =>

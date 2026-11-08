@@ -93,9 +93,9 @@
   stroke-width: 3px;
 }
 
-/* A callout's tag and the legend's number: quiet, envUI's blue on a light tint of it, so the eye
-   finds the numbers and the component stays the loudest thing in the figure. Its edge,
-   transparent, shows where forced colors drop the tint. */
+/* A callout's tag and the legend's number: quiet, the text's color on a faint neutral tint of it,
+   so the eye finds the numbers and the component, with its own colors, stays the loudest thing in
+   the figure. Its edge, transparent, shows where forced colors drop the tint. */
 .site-anatomy-badge,
 .site-anatomy-number {
   display: grid;
@@ -107,10 +107,11 @@
   border-radius: var(--env-radius-lg);
   /* The tint over the canvas's own color, opaque, so a leader line ends at its edge rather than
      showing through the digit. */
+  --site-anatomy-tint: color-mix(in oklab, var(--env-color-fg-default) 8%, transparent);
   background:
-    linear-gradient(var(--env-color-bg-primary-soft), var(--env-color-bg-primary-soft)),
+    linear-gradient(var(--site-anatomy-tint), var(--site-anatomy-tint)),
     var(--catalogue-card-fill, var(--env-color-bg-page));
-  color: var(--env-color-fg-primary);
+  color: var(--env-color-fg-default);
   font: var(--env-type-body-sm);
   font-weight: var(--env-font-weight-medium);
   font-variant-numeric: tabular-nums;
@@ -180,6 +181,13 @@
   translate: -100% 0;
 }
 
+/* Its code switch at the end of the row under the legend, as under every figure (Figures.css). */
+:is(.site-anatomy, .catalogue-variants) > .site-live-example-code:not([open]) {
+  justify-self: end;
+}
+:is(.site-anatomy, .catalogue-variants) > .site-live-example-code[open] > summary {
+  margin-inline-start: auto;
+}
 .site-anatomy-caption {
   display: grid;
   gap: var(--env-space-6);

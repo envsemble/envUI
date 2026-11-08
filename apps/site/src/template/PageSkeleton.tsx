@@ -8,15 +8,17 @@ import { MetadataBadges } from './TemplateContent';
 
 /**
  * An example's height where its size wasn't recorded, the stage's room around it and its least
- * height, in rem (Stage.css).
+ * height, in rem (Stage.css); the overview's least height, which follows the column's width.
  */
 const exampleHeight = 12;
-const stagePadding = 4;
-const stageLeast = 8;
+const stagePadding = 5;
+const stageLeast = 11;
+const overviewLeast = 'clamp(16rem, 42cqi, 30rem)';
 
 /**
  * The first section of a page of the catalogue as it loads: its heading, its lead and its first
- * figure's stage, at the size recorded for its example.
+ * figure's stage, at the size recorded for its example. Overview shows its figure alone, its heading
+ * being for the contents alone (TemplateContent.tsx).
  */
 function CatalogueSection({ page }: { page: RoutePage }) {
   const first = page.document?.outline?.[0];
@@ -27,20 +29,22 @@ function CatalogueSection({ page }: { page: RoutePage }) {
     // page's checks look for.
     <div className="site-section-groups">
       <Column gap={4} render={<section />} className="site-article site-section-group">
-        <Text render={<h2 />} variant="headline">
-          {placeholderText(8)}
-        </Text>
-        {/* Overview opens with its figure; another section with its lead. */}
+        {/* Overview opens with its figure; another section with its heading and its lead. */}
         {first?.id !== 'overview' && (
-          <Text render={<p />} className="site-page-skeleton-lead">
-            {placeholderText(150)}
-          </Text>
+          <>
+            <Text render={<h2 />} variant="headline">
+              {placeholderText(8)}
+            </Text>
+            <Text render={<p />} className="site-page-skeleton-lead">
+              {placeholderText(150)}
+            </Text>
+          </>
         )}
         {example && (
           <div
             className="site-page-skeleton-stage"
             style={{
-              blockSize: `${Math.max(stageLeast, (size?.[1] ?? exampleHeight) + stagePadding)}rem`,
+              blockSize: `max(${Math.max(stageLeast, (size?.[1] ?? exampleHeight) + stagePadding)}rem, ${first?.id === 'overview' ? overviewLeast : '0rem'})`,
             }}
           />
         )}

@@ -57,12 +57,15 @@
   container-type: inline-size;
 }
 
-.site-live-example,
-.site-anatomy-stage,
-.site-loading-stage,
-.site-foundation-stage,
-.catalogue-related-stage,
-.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
+/* A stage outside a page's figures, such as the Docs' example of a component, has a surface's
+   corners; in them it is a gallery's cell, square-cornered (below). */
+:is(
+  .site-live-example,
+  .site-anatomy-stage,
+  .site-loading-stage,
+  .site-foundation-stage,
+  .catalogue-related-stage
+):not(.site-figures *) {
   border-radius: var(--env-radius-surface);
 }
 
@@ -89,9 +92,35 @@
     var(--env-color-bg-recessed)
   );
   background-color: var(--catalogue-card-fill);
-  /* Every canvas, an example's, a tile's or a card's, lifts off the page a little in the light
-     themes. */
+}
+
+/* A stage outside a page's figures lifts off the page a little in the light themes. */
+:is(
+  .site-live-example,
+  .site-verdict-stage,
+  .site-anatomy-stage,
+  .site-loading-stage,
+  .catalogue-related-stage,
+  .site-foundation-stage[data-figure='example']
+):not(.site-figures *) {
   box-shadow: var(--catalogue-card-shadow-recessed);
+}
+
+/* In a component's, a pattern's or a foundation's page (TemplateContent.tsx), each figure is a
+   gallery's cell (Gallery.css): its stage square-cornered and flat on the page, with no edge and
+   no shadow, on the same fill as the galleries' pictures, so the page reads as the galleries and
+   the home page do, and what it shows is the one thing raised. */
+.site-figures
+  :is(
+    .site-live-example,
+    .site-verdict-stage,
+    .site-anatomy-stage,
+    .site-loading-stage,
+    .site-foundation-stage,
+    .catalogue-specimen-grid,
+    .catalogue-matrix-scroll
+  ) {
+  border-radius: 0;
 }
 
 /* The cards of the Overview's fan lie over one another: each takes the stronger shadow. They are
@@ -256,6 +285,25 @@
    another. */
 .site-live-example:has(> .env-table-region) {
   padding: calc(var(--env-radius-surface) - var(--env-radius-lg));
+}
+
+/* A page's figure has a gallery cell's room around what it shows: a row of buttons sits in a calm
+   field rather than a strip, as a gallery's picture does. A component's or pattern's overview of one
+   figure, right under its banner, is the page's one large cell. */
+.site-figures .site-live-example {
+  min-block-size: 11rem;
+  padding-block: var(--env-space-7);
+}
+.site-figure-section[data-section='overview'] > .site-live-example-entry > .site-live-example {
+  min-block-size: clamp(16rem, 42cqi, 30rem);
+  padding-block: var(--env-space-8);
+}
+
+/* A figure that shows its overlays open fills its stage with its room, which places them in its
+   middle, or a palette's search at its top start, rather than being centred on a stage taller than
+   it: as its room grows and shrinks a little with what opens, what it shows stays put. */
+.site-figures .site-live-example:has(> .catalogue-open-example) {
+  align-content: stretch;
 }
 
 /* A row of items centres them on the stage, also once it wraps, unless the example aligns it or it

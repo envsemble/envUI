@@ -48,7 +48,7 @@ function FoundationFigure({ page, block }: { page: Document; block: FoundationBl
   );
 }
 
-/** The bar under a do, a don't or a caution: its word and its icon. */
+/** The mark of a do, a don't or a caution: its icon and its word. */
 const verdicts = {
   do: { label: 'Do', icon: <IconCheck /> },
   dont: { label: 'Don’t', icon: <IconClose /> },
@@ -56,9 +56,10 @@ const verdicts = {
 };
 
 /**
- * A do, don't or caution figure: the live example on its stage with a quiet strip under it, Do in
- * green, Don't in red or Caution in amber, a caution being acceptable with care rather than a
- * mistake, and its one sentence below, and the example's code under it. The stage is as tall as
+ * A do, don't or caution figure, a cell as a gallery's is: the live example on its stage, and under
+ * it, as a gallery cell's name, its mark, a check, a cross or a warning in green, red or amber with
+ * the word Do, Don't or Caution, a caution being acceptable with care rather than a mistake, then
+ * its one sentence, and the example's code at the row's end (Verdicts.css). The stage is as tall as
  * the example, or square where the example shows open or playing, and the example is drawn smaller
  * where it needs more room than the stage's width (useVerdictFit). With `motion`, its animated specimen of the same
  * name plays it on the stage. A `wide` figure, whose point is a change across the column's width,
@@ -100,50 +101,48 @@ export function VerdictFigure({
   const shape = wide ? 'wide' : open || motion ? 'square' : 'fit';
   useVerdictFit(stageRef, box, !wide && !(motion && page), shape === 'fit' ? 'fit' : 'square');
   return (
-    // Named by its bar and its sentence, each read once.
+    // Named by its mark and its sentence, each read once.
     <figure
       className="site-verdict"
       data-verdict={verdict}
       data-shape={shape}
       aria-labelledby={`${id}-verdict ${id}-caption`}
     >
-      {/* The stage and the bar are two connected rows: envUI's connected-row parts give the outer
-          corners the large radius and the inner ones the small radius. */}
-      <div className="site-verdict-frame env-connected-rows">
-        {motion && page ? (
-          <VerdictMotion value={wide ? 'wide' : 'square'}>
-            <SpecimenRender page={page} name={name ?? ''} />
-          </VerdictMotion>
-        ) : (
-          <Column
-            ref={stageRef}
-            render={<Theme {...theme} />}
-            gap={0}
-            className="site-verdict-stage env-connected-row"
-            data-example={name}
-            data-stage={stage}
-            {...keepLinksInPlace}
-          >
-            <div ref={box} className="site-verdict-fit">
-              {!page ? (
-                children
-              ) : open ? (
-                <OpenExample name={name ?? ''}>
-                  <ExampleRender page={page} name={name ?? ''} />
-                </OpenExample>
-              ) : (
+      {motion && page ? (
+        <VerdictMotion value={wide ? 'wide' : 'square'}>
+          <SpecimenRender page={page} name={name ?? ''} />
+        </VerdictMotion>
+      ) : (
+        <Column
+          ref={stageRef}
+          render={<Theme {...theme} />}
+          gap={0}
+          className="site-verdict-stage"
+          data-example={name}
+          data-stage={stage}
+          {...keepLinksInPlace}
+        >
+          <div ref={box} className="site-verdict-fit">
+            {!page ? (
+              children
+            ) : open ? (
+              <OpenExample name={name ?? ''}>
                 <ExampleRender page={page} name={name ?? ''} />
-              )}
-            </div>
-          </Column>
-        )}
-        <Theme {...theme} className="site-verdict-bar env-connected-row" id={`${id}-verdict`}>
+              </OpenExample>
+            ) : (
+              <ExampleRender page={page} name={name ?? ''} />
+            )}
+          </div>
+        </Column>
+      )}
+      <figcaption className="site-verdict-caption">
+        <span className="site-verdict-mark" id={`${id}-verdict`}>
           {icon}
           <span>{label}</span>
-        </Theme>
-      </div>
-      <figcaption className="site-verdict-caption" id={`${id}-caption`}>
-        {caption}
+        </span>
+        <span className="site-verdict-sentence" id={`${id}-caption`}>
+          {caption}
+        </span>
       </figcaption>
       {page && <ExampleCode page={page} name={name ?? ''} />}
     </figure>
@@ -306,17 +305,20 @@ function groupFigures(blocks: DocumentationBlock[], figures: Record<string, Figu
  * written, with figures that follow each other side by side and a subsection beside its one
  * figure. `lead` comes right after the heading, before the authored content, or with `leadAfter`
  * after the section's own lead paragraph, as Use it when follows a page's Rules lead.
+ * `headingHidden` keeps the heading for the page's contents and assistive technology alone.
  */
 export function FigureSection({
   page,
   section,
   lead,
   leadAfter = false,
+  headingHidden = false,
 }: {
   page: Document;
   section: DocumentationSection;
   lead?: ReactNode;
   leadAfter?: boolean;
+  headingHidden?: boolean;
 }) {
   const blocks = [...section.blocks];
   // The first Markdown block opens with the section's "## Title" line, which the heading shows.
@@ -465,7 +467,7 @@ export function FigureSection({
       data-section={section.id}
       {...pendingAttribute(outline)}
     >
-      <div className="site-figure-section-heading">
+      <div className={`site-figure-section-heading${headingHidden ? ' site-visually-hidden' : ''}`}>
         <Documentation markdown={title} path={page.path} />
       </div>
       {content}

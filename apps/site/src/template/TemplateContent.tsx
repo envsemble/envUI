@@ -54,12 +54,25 @@ export function MetadataBadges({
   );
 }
 
-/** One section of a page; Rules opens with when to use it, after its own lead. */
-function Section({ page, section }: { page: Document; section: DocumentationSection }) {
+/**
+ * One section of a page; Rules opens with when to use it, after its own lead. Without
+ * `overviewHeading`, Overview's heading is for the page's contents and assistive technology alone,
+ * as the page's title, right above, heads its figure.
+ */
+function Section({
+  page,
+  section,
+  overviewHeading,
+}: {
+  page: Document;
+  section: DocumentationSection;
+  overviewHeading: boolean;
+}) {
   return (
     <FigureSection
       page={page}
       section={section}
+      headingHidden={!overviewHeading && section.id === 'overview'}
       leadAfter
       lead={
         section.id === 'rules' &&
@@ -107,11 +120,13 @@ function Sections({
   sections,
   provides,
   related,
+  overviewHeading,
 }: {
   page: Document;
   sections: DocumentationSection[];
   provides: boolean;
   related: boolean;
+  overviewHeading: boolean;
 }) {
   const shown = useMemo(
     () =>
@@ -126,10 +141,15 @@ function Sections({
       new Map(
         shown.map((section) => [
           section.id,
-          <Section key={section.id} page={page} section={section} />,
+          <Section
+            key={section.id}
+            page={page}
+            section={section}
+            overviewHeading={overviewHeading}
+          />,
         ]),
       ),
-    [shown, page],
+    [shown, page, overviewHeading],
   );
   const withRelated = related && sections.some((section) => section.id === 'overview');
   const total = shown.length + (withRelated ? 1 : 0);
@@ -170,16 +190,19 @@ function Sections({
  * a component's props, part names, what the application provides and changelog are on its page in
  * the Docs. For Field, whose whole page is in the Docs, `provides` keeps what envUI and the
  * application provide in Accessibility and `related={false}` leaves out Related, which the Docs
- * don't have.
+ * don't have. `overviewHeading={false}` hides Overview's heading where the page's title, on the page
+ * rather than in a card, heads its figure (PageHeader.tsx).
  */
 export function TemplateContent({
   document,
   provides = false,
   related = true,
+  overviewHeading = true,
 }: {
   document: Document;
   provides?: boolean;
   related?: boolean;
+  overviewHeading?: boolean;
 }) {
   // A component's or pattern's page is guidance: its lists are check lists.
   return (
@@ -189,6 +212,7 @@ export function TemplateContent({
         sections={document.sections ?? []}
         provides={provides}
         related={related}
+        overviewHeading={overviewHeading}
       />
     </GuidanceLists>
   );
