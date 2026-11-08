@@ -19,6 +19,8 @@
 @import './SiteText.css';
 @import './Related.css';
 @import './Gallery.css';
+/* Design exploration of the catalogue's pages (theme/PageStyle.ts): after what it overrides. */
+@import './PageStyles.css';
 @import './FoundationCatalogue.css';
 @import './OverviewFan.css';
 @import './WhenToUse.css';
