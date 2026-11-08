@@ -1,3 +1,6 @@
+// Compiles the documentation into the Markdown the package ships in docs/, for agents and readers
+// without the catalogue: each page whole, with its examples' code, the generated Props, Parts and
+// Strings sections, and the example sources beside it.
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { readDocumentation, type DocumentRecord } from './DocumentationReader.ts';
@@ -9,7 +12,7 @@ import {
   type PageSection,
   type PropsFile,
 } from './PageStructure.ts';
-import { cell, fenceFor } from './validation/MarkdownBlocks.ts';
+import { cell, fenceFor } from './MarkdownBlocks.ts';
 import { readMessages, renderStrings, type MessageNamespace } from './Messages.ts';
 import type { AnatomyLegendItem, PropEntry } from './model/DocumentationTypes.ts';
 import { nativePropsSentence, propDescription } from './model/PropWording.ts';

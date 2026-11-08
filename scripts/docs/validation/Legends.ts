@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Tokens } from 'marked';
 import { documentationDirectory } from '../DocumentationPaths.ts';
-import type { ExampleBlock, FigureBlock, PageReading, PartNames } from './PageReading.ts';
+import type { ExampleBlock, FigureBlock, PageReading, PartNames } from '../PageReading.ts';
 
 const stylesDirectory = fileURLToPath(new URL('../../../packages/ui/src/styles/', import.meta.url));
 

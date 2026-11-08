@@ -12,14 +12,14 @@ import {
 } from './validation/Editorial.ts';
 import { figurePattern, fileWords, kindFencePattern, placeFigure } from './validation/Figures.ts';
 import { readLegend } from './validation/Legends.ts';
-import { isPropsTable, specimenPattern } from './validation/MarkdownBlocks.ts';
+import { isPropsTable, specimenPattern } from './MarkdownBlocks.ts';
 import type {
   ExampleBlock,
   PageContext,
   PageInput,
   PageReading,
   ReadSection,
-} from './validation/PageReading.ts';
+} from './PageReading.ts';
 
 /** Adds Markdown to a section's blocks, to the Markdown block it ends with if it does. */
 function appendMarkdown(blocks: DocumentationBlock[], raw: string) {

@@ -52,7 +52,7 @@ export {
   readProps,
   splitFrontmatter,
 } from './PageStructure.ts';
-export { fenceFor, isPropsTable } from './validation/MarkdownBlocks.ts';
+export { fenceFor, isPropsTable } from './MarkdownBlocks.ts';
 export { readPartNames } from './validation/Legends.ts';
 export { readDocumentation } from './DocumentationReader.ts';
 export {

@@ -2,7 +2,7 @@
 // and the others, and the block the page shows it as.
 import type { Tokens } from 'marked';
 import type { ExampleEntry } from '../PageStructure.ts';
-import type { ExampleBlock, FigureBlock, PageReading, ReadSection } from './PageReading.ts';
+import type { ExampleBlock, FigureBlock, PageReading, ReadSection } from '../PageReading.ts';
 
 /**
  * A figure, placed by name: ```tsx figure=Name```, with optional attributes, written

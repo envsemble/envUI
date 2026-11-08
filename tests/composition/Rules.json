@@ -101,6 +101,7 @@
       "forms/internal/comboboxItems.ts": "composites",
       "forms/internal/useComboboxOpen.ts": "composites",
       "forms/internal/useComboboxOptions.ts": "composites",
+      "forms/internal/useComboboxSelection.ts": "composites",
       "content/Composer.tsx": "composites",
       "forms/DatePicker.tsx": "composites",
       "forms/TimePicker.tsx": "composites",
@@ -331,7 +332,8 @@
           "forms/internal/ComboboxPopup.tsx",
           "forms/internal/comboboxItems.ts",
           "forms/internal/useComboboxOpen.ts",
-          "forms/internal/useComboboxOptions.ts"
+          "forms/internal/useComboboxOptions.ts",
+          "forms/internal/useComboboxSelection.ts"
         ]
       },
       "Dialog": {

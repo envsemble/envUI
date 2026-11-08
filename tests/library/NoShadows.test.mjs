@@ -4,24 +4,14 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
+import { declarations } from '../support/cssDeclarations.mjs';
 
 // envUI draws no drop shadows: sheets, toasts and tooltips separate by their fill, their edge and,
-// for modals, the backdrop. Rings drawn with box-shadow stay: focus rings and halos
-// (no offset, no blur), inset edges and selection bars, and a hairline line one pixel below or
-// beside a box. This test reads the shipped style sheet, dev mode's own and the catalogue's, and
-// rejects every other shadow, also one a custom property carries into box-shadow. The library has
-// two exceptions, by request: the faint, small shadow under an avatar,
-// `--env-avatar-shadow` (Avatar.css), so stacked avatars part from one another; and the soft shadow
-// of the frosted popups, `--env-popup-shadow` (Popup.css), which keeps a translucent popup's edge
-// where it crosses an area of its own color, gone wherever the popup is solid; dialogs, which take
-// the popups' fill, cast it too; and the soft shadow under a segmented control's chosen segment,
-// `--env-segmented-control-shadow` (SegmentedControl.css), the raised thumb that rises out of its
-// track, which an edge replaces at high contrast. They are the only
-// custom properties of envUI that are shadows, and no token is one. The catalogue has
-// one exception, by request: the very faint shadow its example canvases, tiles and its own cards
-// take, `--catalogue-card-shadow`, and half of it for a small card, `--catalogue-card-shadow-subtle`, and a stronger one for cards laid over one another,
-// `--catalogue-card-shadow-raised`, and the canvases' own, `--catalogue-card-shadow-recessed`, gone in the dark themes
-// (figures/Stage.css), a device of the documentation that envUI never ships.
+// for modals, the backdrop. Rings drawn with box-shadow stay: focus rings and halos (no offset, no
+// blur), inset edges and selection bars, and a hairline one pixel below or beside a box. This test
+// reads the shipped style sheet, dev mode's own and the catalogue's, and rejects every other shadow,
+// also one a custom property carries into box-shadow. The exceptions, each by request, are the
+// custom properties listed below with their reasons; no token is a shadow.
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const styles = join(root, 'packages/ui/src/styles');
@@ -52,15 +42,6 @@ async function catalogue() {
     name.endsWith('.css'),
   );
   return Promise.all(files.map((name) => readFile(join(folder, name), 'utf8')));
-}
-
-/** Every declaration of a style sheet, comments dropped, as [property, value]. */
-function declarations(css) {
-  const found = [];
-  const pattern = /(?:^|[{;])\s*(-{0,2}[a-zA-Z][\w-]*)\s*:\s*([^;{}]+)/g;
-  for (const [, property, value] of css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(pattern))
-    found.push([property, value.trim()]);
-  return found;
 }
 
 /** Splits `value` at `separator` outside parentheses. */
@@ -131,14 +112,13 @@ function problems(sheets, { allowed = [] } = {}) {
   const all = sheets
     .flatMap(declarations)
     .filter(
-      ([property, value]) => !allowed.some((name) => property === name || value === `var(${name})`),
+      ({ prop, value }) => !allowed.some((name) => prop === name || value === `var(${name})`),
     );
   const properties = new Map();
-  for (const [property, value] of all)
-    if (property.startsWith('--'))
-      properties.set(property, [...(properties.get(property) ?? []), value]);
+  for (const { prop, value } of all)
+    if (prop.startsWith('--')) properties.set(prop, [...(properties.get(prop) ?? []), value]);
   const found = [];
-  for (const [property, value] of all) {
+  for (const { prop: property, value } of all) {
     if (/^(-webkit-)?box-shadow$/.test(property)) {
       for (const expanded of expand(value, properties)) {
         if (/^(none|initial|inherit|unset|revert|revert-layer)$/.test(expanded)) continue;
@@ -157,15 +137,37 @@ function problems(sheets, { allowed = [] } = {}) {
   return [...new Set(found)];
 }
 
-/**
- * The library's drop shadows: under avatars, under frosted popups and
- * tooltips, and under a segmented control's chosen segment.
- */
+// The library's shadows.
+/** Faint and small, under an avatar (Avatar.css), so stacked avatars part from one another. */
 const avatarShadow = '--env-avatar-shadow';
+/**
+ * Soft, under the frosted popups and the dialogs that take their fill (Popup.css): it keeps a
+ * translucent popup's edge where it crosses an area of its own color, and goes where it is solid.
+ */
 const popupShadow = '--env-popup-shadow';
+/** The popups' shadow, smaller, under a frosted tooltip (Tooltip.css). */
 const tooltipShadow = '--env-tooltip-shadow';
+/**
+ * Under a segmented control's chosen segment (SegmentedControl.css), the raised thumb that rises
+ * out of its track; an edge replaces it at high contrast.
+ */
 const segmentShadow = '--env-segmented-control-shadow';
 const libraryShadows = [avatarShadow, popupShadow, tooltipShadow, segmentShadow];
+
+/**
+ * The catalogue's shadows (Stage.css), gone in the dark themes: a device of the documentation that
+ * envUI never ships.
+ */
+const catalogueShadows = [
+  // The very faint shadow its example canvases, tiles and its own cards take.
+  '--catalogue-card-shadow',
+  // Half of it, for a small card.
+  '--catalogue-card-shadow-subtle',
+  // A stronger one, for cards laid over one another.
+  '--catalogue-card-shadow-raised',
+  // The example canvases' own.
+  '--catalogue-card-shadow-recessed',
+];
 
 test('no envUI style sheet draws a drop shadow but the avatars’, the popups’, the tooltips’ and the chosen segment’s; rings stay', async () => {
   const library = { allowed: libraryShadows };
@@ -176,14 +178,7 @@ test('no envUI style sheet draws a drop shadow but the avatars’, the popups’
     'Dev mode’s style sheet',
   );
   assert.deepEqual(
-    problems(await catalogue(), {
-      allowed: [
-        '--catalogue-card-shadow',
-        '--catalogue-card-shadow-subtle',
-        '--catalogue-card-shadow-raised',
-        '--catalogue-card-shadow-recessed',
-      ],
-    }),
+    problems(await catalogue(), { allowed: catalogueShadows }),
     [],
     'The catalogue’s style sheets',
   );
@@ -192,20 +187,25 @@ test('no envUI style sheet draws a drop shadow but the avatars’, the popups’
 test('no token or custom property is a shadow but the avatars’, the popups’, the tooltips’ and the chosen segment’s', async () => {
   const css = await shipped();
   const shadows = declarations(css)
-    .map(([property]) => property)
-    .filter((property) => /^--env-.*shadow$/.test(property));
+    .map(({ prop }) => prop)
+    .filter((prop) => /^--env-.*shadow$/.test(prop));
   assert.deepEqual([...new Set(shadows)].sort(), [...libraryShadows].sort());
 });
 
-/** The values a frosted shadow takes: one in light, one in dark, and none where it is solid. */
-function frostedShadows(css, name) {
-  const values = [
+/** The values declared for the custom property `name`, whitespace collapsed, each once. */
+function valuesOf(css, name) {
+  return [
     ...new Set(
       declarations(css)
-        .filter(([property]) => property === name)
-        .map(([, value]) => value.replace(/\s+/g, ' ')),
+        .filter(({ prop }) => prop === name)
+        .map(({ value }) => value.replace(/\s+/g, ' ')),
     ),
   ];
+}
+
+/** The values a frosted shadow takes: one in light, one in dark, and none where it is solid. */
+function frostedShadows(css, name) {
+  const values = valuesOf(css, name);
   // The light and the dark shadow, and none: at high contrast, under reduced transparency and
   // forced colors, where the popup is solid.
   assert.ok(values.includes('none'), `${name}: solid popups have no shadow`);
@@ -227,11 +227,9 @@ function frostedShadows(css, name) {
 
 /** The selectors whose box-shadow is the property `name`. */
 function usersOf(css, name) {
-  return [
-    ...css
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .matchAll(new RegExp(String.raw`([^{}]+)\{[^{}]*box-shadow:\s*var\(${name}\)`, 'g')),
-  ].map(([, selector]) => selector.trim().replace(/\s+/g, ' '));
+  return declarations(css)
+    .filter(({ prop, value }) => prop === 'box-shadow' && value === `var(${name})`)
+    .map(({ selector }) => selector);
 }
 
 test('the popups’ shadow is soft, follows the theme, goes where popups are solid and stays on popups', async () => {
@@ -265,21 +263,15 @@ test('the tooltips’ shadow is smaller than the popups’, goes where they are 
 
 test('the avatars’ shadow is small, faint and follows the surface below', async () => {
   const css = await shipped();
-  const values = [
-    ...new Set(
-      declarations(css)
-        .filter(([property]) => property === avatarShadow)
-        .map(([, value]) => value.replace(/\s+/g, ' ')),
-    ),
-  ];
+  const values = valuesOf(css, avatarShadow);
   // Avatar.css declares it; the count of a group is flat. In a group, the group's rings take its
   // place: rings alone, with no offset and no blur.
   assert.equal(values.length, 1, 'one shadow');
   const [, ringName, shadow] = values[0].match(/^var\(\s*(--[\w-]+),\s*(.*?)\s*\)$/);
   assert.equal(ringName, '--env-avatar-group-ring-layers');
-  const rings = declarations(css).filter(([property]) => property === ringName);
+  const rings = declarations(css).filter(({ prop }) => prop === ringName);
   assert.equal(rings.length, 1, 'AvatarGroup.css declares the rings');
-  for (const layer of split(rings[0][1], /,/)) {
+  for (const layer of split(rings[0].value, /,/)) {
     const [x, y, blur] = split(layer, /\s/);
     assert.deepEqual([x, y, blur], ['0', '0', '0'], layer);
   }
@@ -290,23 +282,12 @@ test('the avatars’ shadow is small, faint and follows the surface below', asyn
   // Its color is derived from the surface below, never a literal color.
   assert.match(rest[0], /^oklch\(\s*from var\(--env-surface-color, var\(--env-color-bg-page\)\)/);
   // Only an avatar uses it.
-  const users = [
-    ...css
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .matchAll(/([^{}]+)\{[^}]*box-shadow:\s*var\(--env-avatar-shadow\)/g),
-  ].map(([, selector]) => selector.trim().replace(/\s+/g, ' '));
-  assert.deepEqual(users, ['.env-avatar']);
+  assert.deepEqual(usersOf(css, avatarShadow), ['.env-avatar']);
 });
 
 test('the chosen segment’s shadow is small, follows the theme, gives way at high contrast and stays on it', async () => {
   const css = await shipped();
-  const values = [
-    ...new Set(
-      declarations(css)
-        .filter(([property]) => property === segmentShadow)
-        .map(([, value]) => value.replace(/\s+/g, ' ')),
-    ),
-  ];
+  const values = valuesOf(css, segmentShadow);
   assert.equal(values.length, 1, 'one declaration');
   // The high-contrast edge first, then the shadow and a hairline ring as its fallback.
   const [edge, ...layers] = split(values[0].replace(/^var\(|\)$/g, ''), /,/);
@@ -321,9 +302,7 @@ test('the chosen segment’s shadow is small, follows the theme, gives way at hi
   assert.deepEqual(ring.slice(0, 3), ['0', '0', '0']);
   assert.equal(dropShadow(layers[1]), null);
   // The edge is valid only under high contrast (Theme.css's switch), and an inset ring.
-  const [edgeValue] = declarations(css)
-    .filter(([property]) => property === '--env-segmented-control-high-contrast-edge')
-    .map(([, value]) => value.replace(/\s+/g, ' '));
+  const [edgeValue] = valuesOf(css, '--env-segmented-control-high-contrast-edge');
   assert.match(edgeValue, /^var\(--env-theme-high-contrast\) inset 0 0 0 /);
   // The chosen segment, and the thumb that travels to it.
   assert.deepEqual(usersOf(css, segmentShadow), [
@@ -335,7 +314,8 @@ test('the chosen segment’s shadow is small, follows the theme, gives way at hi
 test('the check tells drop shadows from rings', () => {
   const properties = new Map([['--ring', ['0.125rem']]]);
   const check = (value) =>
-    problems([`--ring: ${properties.get('--ring')[0]}; .a { box-shadow: ${value}; }`]).length === 0;
+    problems([`:root { --ring: ${properties.get('--ring')[0]}; } .a { box-shadow: ${value}; }`])
+      .length === 0;
   // Rings, inset edges, selection bars and hairlines stay.
   assert.ok(check('0 0 0 var(--ring) blue'));
   assert.ok(check('inset 0 0 0 1px red, inset 0 0 0 1px red'));
