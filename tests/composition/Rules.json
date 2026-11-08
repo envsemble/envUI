@@ -83,6 +83,8 @@
       "feedback/internal/SpinnerArc.tsx": "base",
       "feedback/Tooltip.tsx": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
+      "feedback/toast/LiveNotice.tsx": "composites",
+      "feedback/toast/PictureNotice.tsx": "composites",
       "feedback/toast/ToastBody.tsx": "composites",
       "feedback/toast/toastInternals.ts": "composites",
       "feedback/toast/ToastProvider.tsx": "composites",
@@ -90,6 +92,7 @@
       "feedback/toast/toastTypes.ts": "composites",
       "feedback/toast/useToast.ts": "composites",
       "feedback/toast/useToastController.ts": "composites",
+      "feedback/toast/useToastGlide.ts": "composites",
       "forms/Calendar.tsx": "composites",
       "forms/Checkbox.tsx": "base",
       "forms/Combobox.tsx": "composites",
@@ -316,7 +319,10 @@
           "feedback/toast/ToastRegion.tsx",
           "feedback/toast/toastTypes.ts",
           "feedback/toast/useToast.ts",
-          "feedback/toast/useToastController.ts"
+          "feedback/toast/useToastController.ts",
+          "feedback/toast/useToastGlide.ts",
+          "feedback/toast/LiveNotice.tsx",
+          "feedback/toast/PictureNotice.tsx"
         ]
       },
       "ChoiceControl": {
