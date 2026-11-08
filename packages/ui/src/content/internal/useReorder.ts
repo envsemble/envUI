@@ -130,7 +130,7 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
   /** Shows the rows where they would be with the moving row at its target. */
   const paint = (current: Move) => {
     const { rows, tops, heights, from, to, gap } = current;
-    const shift = heights[from]! + gap;
+    const shift = heights[from] + gap;
     rows.forEach((row, index) => {
       let offset = 0;
       if (index === from)
@@ -138,8 +138,8 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
           current.mode === 'pointer' && current.pointer
             ? pointerOffset(current.pointer)
             : to > from
-              ? tops[to]! + heights[to]! - (tops[from]! + heights[from]!)
-              : tops[to]! - tops[from]!;
+              ? tops[to] + heights[to] - (tops[from] + heights[from])
+              : tops[to] - tops[from];
       else if (from < to && index > from && index <= to) offset = -shift;
       else if (to < from && index >= to && index < from) offset = shift;
       row.style.translate = offset === 0 ? '' : `0 ${offset}px`;
@@ -188,7 +188,7 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
       rows,
       tops: boxes.map((box) => box.top - origin),
       heights: boxes.map((box) => box.height),
-      gap: boxes.length > 1 ? Math.max(0, boxes[1]!.top - boxes[0]!.bottom) : 0,
+      gap: boxes.length > 1 ? Math.max(0, boxes[1].top - boxes[0].bottom) : 0,
       mode,
     };
     // A press on the handle shows nothing until the pointer drags; a key lifts the row at once.
@@ -237,12 +237,12 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
     const pointer = move?.pointer;
     if (!move || !pointer) return;
     const { tops, heights, from } = move;
-    const centre = tops[from]! + heights[from]! / 2 + pointerOffset(pointer);
+    const centre = tops[from] + heights[from] / 2 + pointerOffset(pointer);
     let to = from;
     for (let index = from + 1; index < tops.length; index++)
-      if (centre > tops[index]! + heights[index]! / 2) to = index;
+      if (centre > tops[index] + heights[index] / 2) to = index;
     for (let index = from - 1; index >= 0; index--)
-      if (centre < tops[index]! + heights[index]! / 2) to = index;
+      if (centre < tops[index] + heights[index] / 2) to = index;
     if (to !== move.to) {
       move.to = to;
       say('moved', move.label, to, move.rows.length);

@@ -93,7 +93,7 @@ export function scaleChroma(color: string, factor: number) {
 export function over(color: string, alpha: number, background: string) {
   const [top, bottom] = [parseHex(color), parseHex(background)];
   return formatHex(
-    top.map((channel, index) => channel * alpha + bottom[index]! * (1 - alpha)) as Rgb,
+    top.map((channel, index) => channel * alpha + bottom[index] * (1 - alpha)) as Rgb,
   );
 }
 

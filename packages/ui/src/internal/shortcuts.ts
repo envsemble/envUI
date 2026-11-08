@@ -39,7 +39,7 @@ export function shortcutChords(shortcut: string) {
       .split(/\s+/)
       .filter(Boolean)
       // Each key is followed by a + or the end; a + right after a separator is the key itself.
-      .map((chord) => Array.from(chord.matchAll(/([^+]+|\+)(?:\+|$)/g), (match) => match[1]!))
+      .map((chord) => Array.from(chord.matchAll(/([^+]+|\+)(?:\+|$)/g), (match) => match[1]))
       .filter((keys) => keys.length > 0)
   );
 }
@@ -51,11 +51,11 @@ export function shortcutChords(shortcut: string) {
 export function keyShortcuts(chords: string[][]) {
   if (chords.length !== 1) return undefined;
   return (
-    chords[0]!
+    chords[0]
       // Modifier symbols written without +, as in ⌘B or ⌥⇧K, are keys of their own.
       .flatMap((key) => {
         const symbols = /^([⌘⌃⌥⇧]+)(.+)$/u.exec(key);
-        return symbols ? [...symbols[1]!, symbols[2]!] : [key];
+        return symbols ? [...symbols[1], symbols[2]] : [key];
       })
       .map((key) => (key === '+' ? 'Plus' : (keyNames[key.toLowerCase()] ?? key)))
       .join('+')

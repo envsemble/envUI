@@ -131,7 +131,7 @@ function keepKeys(children: MarkdownNode[]) {
     ) {
       kept.push({ type: 'key', data: { hName: 'kbd' }, children: [text] });
       index += 2;
-    } else kept.push(children[index]!);
+    } else kept.push(children[index]);
   }
   return kept;
 }

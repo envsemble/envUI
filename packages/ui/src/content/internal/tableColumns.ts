@@ -36,8 +36,8 @@ export function resizeColumns(
 ) {
   if (column < 0 || column + 1 >= widths.length) return [...widths];
   const { min, max } = columnBounds(widths, minimums, column);
-  const pair = widths[column]! + widths[column + 1]!;
-  const width = Math.min(max, Math.max(min, widths[column]! + delta));
+  const pair = widths[column] + widths[column + 1];
+  const width = Math.min(max, Math.max(min, widths[column] + delta));
   const next = [...widths];
   next[column] = width;
   next[column + 1] = pair - width;
