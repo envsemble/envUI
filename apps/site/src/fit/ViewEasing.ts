@@ -1,17 +1,19 @@
 /*
- * A picture's view and how it moves to where its fit places it (useFit.ts): at once until it
- * shows, then easing there, in the slow motion token on the standard easing. The view is this
- * file's: only it writes `view`, where the fit asks it to go (glideTo, settle).
+ * A picture's view, and how it moves to where the fit places it (useFit.ts). Until the picture
+ * has shown, the view jumps to its place; after that it eases there over the slow motion token's
+ * duration with the standard easing. Only this file writes `view`; the fit asks it to move through
+ * glideTo and settle.
  */
 import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
-import { rootEasingFunction, rootMotionDuration } from '../motion/RootMotionTokens';
+import { rootEasingFunction, rootMotionDuration } from '../shared/RootMotionTokens';
 import { place } from './FitDraw';
 import type { Seen } from './FitMeasure';
 import type { Fitting } from './useFit';
+import { pixelTolerance } from '../shared/Remeasure';
 
 type Point = [x: number, y: number, scale: number];
 
-/** A glide: from where the view was to where it goes, when it started and how long it takes. */
+/** One glide of the view: its start and end points, its start time and its length, in ms. */
 interface Course {
   from: Point;
   to: Point;
@@ -20,10 +22,10 @@ interface Course {
 }
 
 /**
- * The view: where the canvas is and the scale it is drawn at, and where it eases to (glide), a
- * target that moves as the picture changes followed on the way. `rest` is the scale it is fitted
- * at resting, `zoomed` whether it is drawn smaller than that as it plays, or on its way back, and
- * `frame` the glide's next frame.
+ * The view: where the canvas is drawn now (`x`, `y`, `scale`) and where it is easing to (the
+ * Target fields). The target can change during a glide; the glide then bends toward it (steer).
+ * `rest` is the scale the picture is fitted at when resting; `zoomed` is whether a playing tile is
+ * drawn smaller than that, or on its way back; `frame` is the next animation frame's request id.
  */
 export interface View extends Target {
   x: number;
@@ -31,18 +33,21 @@ export interface View extends Target {
   scale: number;
   rest: number;
   frame: number;
-  /** The glide the view is on, and its easing. */
+  /** The current glide, if any, and the easing function. */
   course: Course | null;
   ease: (time: number) => number;
   /**
-   * Before it shows, the frames its fit has held where it is, and when it was first fitted: a
-   * popup is placed by its style a frame or two after it opens, and a picture shown before then
-   * would glide to it as it fades in.
+   * Before the picture shows: how many fits in a row placed the view at the same spot (`calm`),
+   * and when the first fit ran (`start`). A popup is placed by its style a frame or two after it
+   * opens, so a picture shown earlier would glide to it while fading in (settle).
    */
   first: { calm: number; start: number };
 }
 
-/** Where the view goes: the point it centres and the scale, and whether that is drawn out smaller. */
+/**
+ * Where the view goes: the point at the stage's middle (`toX`, `toY`, in drawn px), the scale,
+ * and whether that scale is smaller than the resting one because a playing tile was drawn out.
+ */
 export interface Target {
   toX: number;
   toY: number;
@@ -67,10 +72,13 @@ export const newView = (): View => ({
 });
 
 /**
- * The glide from where the view is, `at`, to `to`, at the time `now`. A target that moves on the
- * way, as a tile's popups open and are placed, is taken up from where the view is then, the
- * glide's time left kept, so the view doesn't stop and start again: only near its end does it
- * start a glide of its own to the new place.
+ * The glide to use at time `now`, from the view's current point `at` to `to`.
+ *
+ * With no glide, it starts one. With the same target, the glide goes on. When the target moved
+ * (for example as a tile's popups open and are placed): past 85% of the glide, a new glide starts
+ * from `at`; earlier, the glide keeps its timing and its start point moves so the curve passes
+ * through `at` now and ends at `to`. That way the view does not stop and start again each time
+ * the target moves.
  * @internal
  */
 export function steer(
@@ -84,14 +92,14 @@ export function steer(
   if (!course) return { from: at, to, start: now, length };
   if (to.every((value, index) => value === course.to[index])) return course;
   const share = ease((now - course.start) / course.length);
-  // Late in a glide, a new one; before then, the same, bent to the new place: from a start that
-  // puts the view where it is now at this point of the curve.
+  // Solve from + (to - from) * share = at for `from`, so the bent curve passes through `at` now.
   if (share > 0.85) return { from: at, to, start: now, length };
   const back = (index: 0 | 1 | 2) => (at[index] - to[index] * share) / (1 - share);
   return { ...course, to, from: [back(0), back(1), back(2)] };
 }
 
-/** Where a glide has the view at the time `now`, and whether it has settled there.
+/**
+ * The view's point on a glide at time `now`, and whether the glide has ended.
  * @internal
  */
 export function glideAt(
@@ -108,7 +116,7 @@ export function glideAt(
   };
 }
 
-/** One frame of the view's glide to where it goes, which asks for the next until it settles. */
+/** Runs one frame of the view's glide and requests the next, until the glide ends. */
 function glide(f: Fitting, now: number) {
   const { view } = f;
   const to: Point = [view.toX, view.toY, view.toScale];
@@ -130,18 +138,19 @@ function glide(f: Fitting, now: number) {
   }
   place(f);
   view.frame = settled ? 0 : requestAnimationFrame((time) => glide(f, time));
-  // Still again at rest, it looks once more at where its popups are placed now (holdsFrame).
+  // When a resting picture stops moving, fit once more, since its popups may have been placed
+  // again during the glide (holdsFrame).
   if (settled && !f.playing.current) f.update();
 }
 
-/** Starts the view's glide where it isn't on one already. */
+/** Starts a glide, unless one is already running. */
 function startGlide(f: Fitting) {
   if (f.view.frame) return;
   f.view.course = null;
   f.view.frame = requestAnimationFrame((time) => glide(f, time));
 }
 
-/** Places the view where it goes at once, ending any glide. */
+/** Moves the view to its target at once, cancelling any glide. */
 function jump(f: Fitting) {
   const { view } = f;
   cancelAnimationFrame(view.frame);
@@ -152,9 +161,7 @@ function jump(f: Fitting) {
   place(f);
 }
 
-/**
- * Eases the view to a playing tile's new target, or with motion reduced, places it there at once.
- */
+/** Sets a playing tile's new target and eases there, or jumps there when motion is reduced. */
 export function glideTo(f: Fitting, { toX, toY, toScale, zoomed }: Target) {
   Object.assign(f.view, { toX, toY, toScale, zoomed });
   if (prefersReducedMotion()) jump(f);
@@ -162,8 +169,9 @@ export function glideTo(f: Fitting, { toX, toY, toScale, zoomed }: Target) {
 }
 
 /**
- * Places the view at a scale and a point, `toX` and `toY`: until the picture shows, at once, and
- * from then on, in place, easing there.
+ * Places the view at `scale`, `toX`, `toY`, and observes the painted `boxes` so their resizes fit
+ * again. Before the picture has shown, the view jumps there; afterwards a tile eases there, and
+ * any other picture jumps.
  */
 export function settle(
   f: Fitting,
@@ -172,19 +180,19 @@ export function settle(
 ) {
   const { canvas, view } = f;
   const { first } = view;
-  // A tile in place eases to where it is fitted next; anything else is placed at once.
+  // Only a tile that has shown eases (and not when motion is reduced).
   const eases = f.kind.tile && canvas.dataset.fitted !== undefined && !prefersReducedMotion();
-  // Until it shows, it is placed at once, and shows only once its place has held for a few
-  // frames, or after a quarter of a second, whatever is still moving, such as a popup placed again
-  // against the stage's edges as the view moves: it appears in place, as every picture does, by
-  // fading in. A quarter of a second, not a count of frames: on a busy page, as a gallery is while
-  // its tiles load, frames come slowly, and a count would keep it hidden for seconds.
+  // Before it has shown, the view jumps to each fit's place. The picture is marked shown
+  // (`data-fitted`, which fades it in) once three fits in a row placed it at the same spot, or
+  // after 250 ms even if something still moves, such as a popup placed again against the stage's
+  // edges. The time limit matters on a busy page, such as a gallery while its tiles load: frames
+  // come slowly there, and waiting for a count of frames alone could keep it hidden for seconds.
   if (canvas.dataset.fitted === undefined) {
     const held =
       first.calm > 0 &&
       view.scale === scale &&
-      Math.abs(view.x - toX) < 0.5 &&
-      Math.abs(view.y - toY) < 0.5;
+      Math.abs(view.x - toX) < pixelTolerance &&
+      Math.abs(view.y - toY) < pixelTolerance;
     first.calm = held ? first.calm + 1 : 1;
     first.start ||= performance.now();
     view.x = view.toX = toX;
@@ -196,8 +204,8 @@ export function settle(
     else f.update();
     return;
   }
-  // It follows only a change of a pixel or more: a popup is placed again as the view moves, a
-  // fraction away, which would move the view again, in a tremble.
+  // While playing, a move of less than 1 px is ignored. A popup is placed again a fraction of a
+  // pixel away as the view moves, and following that would make the view tremble.
   if (
     eases &&
     f.playing.current &&
@@ -206,8 +214,8 @@ export function settle(
   )
     return;
   view.rest = scale;
-  // Drawn smaller as it played, it eases back to its still's scale, unless motion is reduced; any
-  // other change of scale, such as the stage's, is placed at once.
+  // A tile drawn smaller while playing eases back to its resting scale. Any other change of
+  // scale, such as from the stage resizing, jumps.
   const zooms = scale !== view.toScale && view.zoomed;
   view.zoomed = false;
   view.toX = toX;

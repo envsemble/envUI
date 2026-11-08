@@ -1,19 +1,20 @@
 /*
- * What a picture paints, measured in its canvas's own px (FitMeasure.ts): what is centred is what
- * shows, rather than the boxes that lay it out.
+ * Measures what a picture paints, in its canvas's own px (FitMeasure.ts). The fit centres what
+ * shows, not the boxes that only lay it out, so it needs to know which boxes paint something.
  */
 import { paintsOf } from '@envui-internal/dev/measure';
 import type { Box } from './FitGeometry';
+import { pixelTolerance } from '../shared/Remeasure';
 
 /** The layer a picture's popups open in (StageOverlays, motion/Playback.tsx). */
 export const overlayLayer = '.catalogue-overlay-layer';
 
-/** Whether an element is in a picture's overlay layer, a popup. */
+/** Whether an element is in a picture's overlay layer, that is, part of a popup. */
 export const inPopup = (element: Element) => element.closest(overlayLayer) !== null;
 
 /**
- * The elements of a canvas a selector names, such as one a tile names for its view to keep
- * (StageScript, FitKind.ts); a selector that doesn't parse names none.
+ * The elements of a canvas that match a selector, such as one a tile's script names
+ * (StageScript, FitKind.ts). An invalid selector matches nothing instead of throwing.
  */
 export function elementsOf(canvas: Element, selector: string) {
   try {
@@ -24,19 +25,21 @@ export function elementsOf(canvas: Element, selector: string) {
 }
 
 /**
- * Whether an element is clipped away whole, as a visually hidden one is (`clip-path: inset(50%)`),
- * such as a notification region's announcer, which only a screen reader reads.
+ * Whether an element is clipped away entirely, as a visually hidden element is
+ * (`clip-path: inset(50%)`). Example: a notification region's announcer, which only a screen
+ * reader reads.
  */
 const clippedAway = (style: CSSStyleDeclaration) => /^inset\((50|100)%/.test(style.clipPath);
 
-/** Whether an element is coming or going: starting its entrance, or in a transition or animation. */
+/** Whether an element is entering or leaving, or has any running animation or transition. */
 export const moving = (element: Element) =>
   element.closest('[data-starting-style], [data-ending-style]') !== null ||
   (element.getAnimations?.().length ?? 0) > 0;
 
 /**
- * Whether an element is on its way somewhere: it or a box around it, inside the canvas, starting or
- * ending its entrance, or in a transition or an animation that ends, unlike a spinner's.
+ * Whether an element is still moving to where it will rest: it is entering or leaving, or it or an
+ * ancestor inside the canvas runs an animation or transition that ends. Endless animations, such
+ * as a spinner's, do not count.
  */
 export function settling(element: Element, canvas: Element) {
   if (element.closest('[data-starting-style], [data-ending-style]')) return true;
@@ -51,14 +54,14 @@ export function settling(element: Element, canvas: Element) {
   return false;
 }
 
-/** Elements that are their own picture, whatever their style. */
+/** Elements that always paint something, whatever their style. */
 export const pictures = /^(img|svg|canvas|video|input|textarea|select|hr)$/i;
 
 /**
- * Whether an element paints something of its own: a fill, an image, an edge or a shadow, as dev
- * mode counts them (paintsOf), text, or a picture such as an icon. A box that only lays out
- * others, such as an avatar group's row, which keeps the room its avatars spread into, paints
- * nothing, so what it holds is measured instead.
+ * Whether an element paints something of its own: a fill, an image, an edge or a shadow (counted
+ * as dev mode's paintsOf counts them), its own text, or a picture such as an icon. A box that only
+ * lays out others paints nothing, so its children are measured instead. Example: an avatar
+ * group's row, which is as wide as the avatars spread out.
  */
 function paints(element: Element, style: CSSStyleDeclaration) {
   if (pictures.test(element.localName) || paintsOf(style).length) return true;
@@ -67,7 +70,7 @@ function paints(element: Element, style: CSSStyleDeclaration) {
   );
 }
 
-/** The part of a box inside a clip, empty where none is, or the box where nothing clips it. */
+/** The part of `box` inside `clip`: empty when they do not overlap, `box` itself when no clip. */
 function within(box: DOMRect, clip: DOMRect | null) {
   if (!clip) return box;
   const left = Math.max(box.left, clip.left);
@@ -77,33 +80,33 @@ function within(box: DOMRect, clip: DOMRect | null) {
   return new DOMRect(left, top, Math.max(0, right - left), Math.max(0, bottom - top));
 }
 
-/** A box a picture paints, and its element (shownBoxes). */
+/** A box a picture paints, in its canvas's own px, and its element (shownBoxes). */
 export interface Shown {
   element: Element;
   box: DOMRect;
 }
 
 /**
- * The boxes a picture paints, in the canvas's own px (paints), so what is centred is what shows
- * rather than the boxes that lay it out. A backdrop or a positioner over the whole canvas, such as
- * a dialog's, counts only for what it holds; what is hidden, transparent or a visually hidden pixel
- * doesn't count.
+ * The boxes a picture paints (paints), in the canvas's own px. Skipped: elements that are hidden,
+ * transparent or visually hidden, and a backdrop or positioner that covers the whole canvas, such
+ * as a dialog's, whose children are measured instead.
  */
 export function shownBoxes(canvas: HTMLElement) {
   const frame = canvas.getBoundingClientRect();
   const scale = frame.width / canvas.offsetWidth || 1;
   const area = { width: canvas.offsetWidth, height: canvas.offsetHeight };
   const found: Shown[] = [];
-  // What a box that clips its content, such as a scrolling list, holds outside it doesn't show:
-  // each box counts as far as the boxes around it that clip show it.
+  // Content outside a box that clips it, such as a scrolling list, does not show: each box is
+  // cut to the clipping boxes around it.
   const visit = (element: Element, clip: DOMRect | null) => {
     for (const child of element.children) {
       const style = getComputedStyle(child);
       if (style.display === 'none' || clippedAway(style)) continue;
-      // What is transparent doesn't show, unless it is on its way in or out, such as a popup
-      // starting its entrance: the view is placed for it, rather than without it and back.
+      // A transparent element does not show, unless it is entering or leaving, such as a popup
+      // at the start of its entrance. Counting it then places the view for it at once, rather
+      // than without it and then back.
       if (style.opacity === '0' && !moving(child)) continue;
-      // A row hidden past the crop's foot (trimRows) still counts, so hiding it moves nothing.
+      // A row hidden past the crop's bottom (trimRows) still counts, so hiding it moves nothing.
       if (style.visibility === 'hidden' && !child.closest('[data-catalogue-past]')) continue;
       const rect = child.getBoundingClientRect();
       const box = within(
@@ -119,11 +122,16 @@ export function shownBoxes(canvas: HTMLElement) {
         box.width >= area.width - 1 &&
         box.height >= area.height - 1 &&
         /absolute|fixed/.test(style.position);
-      // A hairline counts, such as a toolbar's separator a px wide, whatever the scale rounds it to.
-      if (box.width > 0.5 && box.height > 0.5 && !covers && paints(child, style))
+      // A hairline, such as a toolbar's 1 px separator, counts at any scale.
+      if (
+        box.width > pixelTolerance &&
+        box.height > pixelTolerance &&
+        !covers &&
+        paints(child, style)
+      )
         found.push({ element: child, box });
-      // Text counts as far as it runs, also past a box narrower than it, such as a heatmap's
-      // month names over columns of no width.
+      // Text counts by its own extent, also where it overflows a narrower box, such as a
+      // heatmap's month names over columns of no width.
       for (const node of child.childNodes) {
         if (node.nodeType !== Node.TEXT_NODE || !node.textContent?.trim()) continue;
         const range = document.createRange();
@@ -140,7 +148,8 @@ export function shownBoxes(canvas: HTMLElement) {
         );
         if (text.width > 1 && text.height > 1) found.push({ element: child, box: text });
       }
-      // A picture's parts are the picture; anything else may hold more that shows.
+      // A picture element (pictures) is measured whole; any other element's children are
+      // visited too.
       const clips = style.overflowX !== 'visible' || style.overflowY !== 'visible';
       if (!pictures.test(child.localName)) visit(child, clips ? box : clip);
     }
@@ -150,8 +159,8 @@ export function shownBoxes(canvas: HTMLElement) {
 }
 
 /**
- * What shows of an element, in its canvas's own px, inside the boxes around it that clip it, such
- * as a scrolling column's: a row scrolled out of it doesn't count.
+ * The visible part of an element, in its canvas's own px: its box cut to every ancestor inside
+ * the canvas that clips it, such as a scrolling column. A row scrolled out of view comes out empty.
  */
 export function partOf(element: Element, canvas: HTMLElement): Box {
   const frame = canvas.getBoundingClientRect();
@@ -181,9 +190,9 @@ export function partOf(element: Element, canvas: HTMLElement): Box {
 }
 
 /**
- * Where an element is laid out, in its canvas's own px, without the transforms that move it from
- * there, such as a pile's avatar gathered toward its start from its place in the spread row; for an
- * element that nothing moves, none: it counts as far as it paints (shownBoxes).
+ * Where an element is laid out, in its canvas's own px, ignoring the transforms that move it.
+ * Example: a pile's avatar moved toward the start from its place in the spread-out row. Returns
+ * null for an element with no transform, which shownBoxes already measures where it paints.
  */
 export function laidOutOf(element: Element, canvas: HTMLElement): Box | null {
   if (!(element instanceof HTMLElement)) return null;
@@ -207,8 +216,8 @@ export function laidOutOf(element: Element, canvas: HTMLElement): Box | null {
 }
 
 /**
- * What shows of an element as far as it paints, in its canvas's own px: of one that holds text,
- * such as a heading as wide as its pane, the text's own extent, not its box's.
+ * The visible part of an element (partOf), narrowed to its text's extent when it holds text.
+ * Example: a heading as wide as its pane counts only as wide as its words.
  */
 export function inkOf(element: Element, canvas: HTMLElement): Box {
   const box = partOf(element, canvas);
@@ -227,8 +236,8 @@ export function inkOf(element: Element, canvas: HTMLElement): Box {
 }
 
 /**
- * The two rows after the one an element is chosen in, of a picker's grid or wheel, in its canvas's
- * own px, as far as there are.
+ * The visible boxes, in the canvas's own px, of up to two rows after the row that holds an
+ * element, in a picker's grid (`tr`) or wheel (`.env-time-list-row`).
  */
 export function rowsAfter(element: Element, canvas: HTMLElement): Box[] {
   const rows: Box[] = [];

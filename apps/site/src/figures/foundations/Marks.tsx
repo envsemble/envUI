@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { remeasure } from '../../fit/Remeasure';
+import { remeasure } from '../../shared/Remeasure';
 
 /**
  * A real envUI example with numbered marks measured from its live layout, as an anatomy figure's

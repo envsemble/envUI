@@ -6,7 +6,7 @@
  */
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
-import { remeasure, type Change } from '../../fit/Remeasure';
+import { remeasure, type Change } from '../../shared/Remeasure';
 import { labelWidths, measureParts, measureVariantItems, sizesOfUses } from './MeasureAnatomy';
 import {
   fitsBeside,

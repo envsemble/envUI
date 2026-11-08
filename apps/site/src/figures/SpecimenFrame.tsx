@@ -1,6 +1,7 @@
 import { createContext, useContext, useLayoutEffect, useRef, type ReactNode } from 'react';
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
 import { StillMark } from './StillMark';
+import { pixelTolerance, remeasure } from '../shared/Remeasure';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
@@ -151,16 +152,19 @@ export function MatrixScroll({
       if (cells.some((cell) => cell.scrollWidth > cell.clientWidth + 1))
         element.setAttribute('data-stacked', '');
     };
+    // Measured at once, then again at another width, and once the fonts have loaded, which lay
+    // the cells out anew at the same width.
     let width = -1;
-    const observer = new ResizeObserver(([entry]) => {
-      const next = entry?.contentRect.width ?? 0;
-      if (Math.abs(next - width) < 0.5) return;
-      width = next;
-      stack();
-    });
-    observer.observe(element);
-    void document.fonts?.ready.then(stack);
-    return () => observer.disconnect();
+    const widths = remeasure(
+      (changed) => {
+        const next = element.getBoundingClientRect().width;
+        if (!changed.has('fonts') && Math.abs(next - width) < pixelTolerance) return;
+        width = next;
+        stack();
+      },
+      { first: 'now', resize: [element], fonts: true },
+    );
+    return widths.stop;
   }, []);
   return (
     <div

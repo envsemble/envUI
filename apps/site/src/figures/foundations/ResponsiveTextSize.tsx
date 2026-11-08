@@ -12,6 +12,7 @@ import { useTimeline } from '../../motion/Timeline';
 import { remPixels } from '@envui-internal/internal/dom/lengths';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
 import { Figure } from './Figure';
+import { remeasure } from '../../shared/Remeasure';
 
 /*
  * The Adapting to width foundation's figure of the reader's text size: one profile in a frame of
@@ -65,10 +66,7 @@ function useTextFit() {
     const measure = () => {
       setFit(Math.min(1, element.clientWidth / ((frameWidth + 1) * remPixels())));
     };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
+    return remeasure(measure, { first: 'now', resize: [element] }).stop;
   }, []);
   return [place, fit] as const;
 }

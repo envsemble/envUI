@@ -1,6 +1,6 @@
 import { useLayoutEffect } from 'react';
 import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
-import { rootMotionDuration, rootMotionEasing } from '../motion/RootMotionTokens';
+import { rootMotionDuration, rootMotionEasing } from '../shared/RootMotionTokens';
 
 /**
  * The layer over a page that holds the copies of skeletons on their way out (leaveInPlace): over

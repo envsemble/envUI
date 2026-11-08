@@ -13,6 +13,7 @@
  * popup, as the view pans to the rest as the pointer heads there; what `useMustShow` names counts
  * anywhere, such as a panel that opens in place.
  */
+import type { Aim } from '../fit/FitKind';
 
 /** A stage's named selectors, and whether they count outside its popups too. */
 interface Named {
@@ -84,21 +85,14 @@ export const holdsFromTop = (root: Element) => (fromTop.get(root) ?? 0) > 0;
  * (useFit.ts). Each change is announced to the stage's root as a `headingEvent`.
  */
 
-/** A point the pointer heads to: an element, by its selector, and fractions of its box. */
-export interface Heading {
-  selector: string;
-  x: number;
-  y: number;
-}
-
 /** Where each stage's pointer is heading, by the stage's root element. */
-const headings = new WeakMap<Element, Heading>();
+const headings = new WeakMap<Element, Aim>();
 
 /** The event a stage's root hears as its pointer heads somewhere else. */
 export const headingEvent = 'catalogue-heading';
 
 /** Says where a stage's pointer is heading, or with null that it heads nowhere. */
-export function headFor(root: Element, heading: Heading | null) {
+export function headFor(root: Element, heading: Aim | null) {
   const was = headings.get(root) ?? null;
   if (was === heading) return;
   if (
@@ -124,10 +118,10 @@ export const headingOf = (root: Element) => headings.get(root) ?? null;
  */
 
 /** The points each stage's pointer heads to, by the stage's root element. */
-const courses = new WeakMap<Element, Set<readonly Heading[]>>();
+const courses = new WeakMap<Element, Set<readonly Aim[]>>();
 
 /** Names the points a stage's pointer heads to, in order; returns the release. */
-export function nameCourse(root: Element, points: readonly Heading[]) {
+export function nameCourse(root: Element, points: readonly Aim[]) {
   let set = courses.get(root);
   if (!set) courses.set(root, (set = new Set()));
   const own = set;
@@ -136,4 +130,4 @@ export function nameCourse(root: Element, points: readonly Heading[]) {
 }
 
 /** The points a stage's pointer heads to over its script, in order. */
-export const courseOf = (root: Element): Heading[] => [...(courses.get(root) ?? [])].flat();
+export const courseOf = (root: Element): Aim[] => [...(courses.get(root) ?? [])].flat();

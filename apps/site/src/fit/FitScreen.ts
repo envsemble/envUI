@@ -1,57 +1,60 @@
 /*
- * The decisions of a fit on a modal's screen (useFit.ts): a component's modal over its backdrop,
- * such as a dialog, a sheet or a command palette, with its tile's stage for its screen. They are
- * returned for the fit to draw (FitDraw.ts) and keep, and write nothing: the scale is decided on
- * what was measured, the place on the screen as it is laid out at that scale.
+ * The fit's decisions for a modal's screen (useFit.ts): a component's modal over its backdrop,
+ * such as a dialog, a sheet or a command palette, in a tile whose stage is its screen. The
+ * functions return their decisions for the fit to draw (FitDraw.ts) and keep; they write nothing.
+ * The scale is decided from the measurements, and the place after the canvas is laid out at it.
  *
- * The modal has the stage for its screen, as an application's has the window: the canvas is laid
- * out as large as the stage shows at its scale, from the stage's corner, so the backdrop covers the
- * stage as it covers a screen and the modal is placed in it by its own style. Taller than the stage
- * still, the screen is as tall as the modal needs and shows from its top; as the tile plays, the
- * view pans down it, easing, to what the pointer heads to, so what it presses is in view before the
- * press.
+ * The stage acts as the modal's screen, as the window does in an application. The canvas is laid
+ * out as large as the stage at the chosen scale, from the stage's corner, so the backdrop covers
+ * the stage and the modal's own style places it. When the modal is taller than the stage, the
+ * screen is as tall as the modal needs and shows from its top. While the tile plays, the view pans
+ * down the screen to where the pointer is heading, so what it presses is in view before the press.
  */
 import type { Placement } from './FitDraw';
 import { contain, join, margin, stepDown } from './FitGeometry';
 import type { StageScript } from './FitKind';
-import type { Measured } from './FitMeasure';
+import { stageSize, type Measured, type StageSize } from './FitMeasure';
 import { overlayLayer, partOf, type Shown } from './PaintedBoxes';
 import { heading, onCourse } from './PointerCourse';
+import { pixelTolerance } from '../shared/Remeasure';
 
-/** A component's modal over its backdrop, open in its tile's overlay layer. */
+/** A modal's backdrop, open in a tile's overlay layer. */
 export const modal = `${overlayLayer} .env-dialog-backdrop`;
 
-/** A modal's surface, what it shows over its backdrop: a dialog's, a sheet's or a palette's. */
+/** A modal's surface over its backdrop: a dialog's, a sheet's or a command palette's. */
 const modalSurfaces = `${overlayLayer} :is(.env-dialog-surface, .env-command-palette, .env-sheet)`;
 
-/** The box that places a modal's surface over the screen, with its gutters. */
+/** The element that positions a modal's surface on the screen, with the gutters around it. */
 const modalPositioners =
   '.env-dialog-positioner, .env-command-palette-positioner, .env-sheet-viewport';
 
-/** Whether a modal's surface is open and staying so. */
+/** Whether a modal's surface is visible and not closing. */
 const open = (surface: Element) =>
   surface.checkVisibility() && !surface.closest('[data-ending-style]');
 
 /**
- * The room the modals in a canvas need, in its own px: as tall as their content and the gutters
- * around it, a sheet as tall as the screen it spans, and as wide where one is wider than the
- * screen; and how tall a surface is alone.
+ * The space the open modals in a canvas need, in its own px:
+ * - `needHeight`: the tallest surface's content height plus its margins and its positioner's
+ *   padding. Sheets do not count, since a sheet is as tall as the screen it spans.
+ * - `needWidth`: the widest surface's width plus margins and padding, only when wider than the
+ *   canvas; else 0.
+ * - `surfaceHeight`: the tallest surface's content height alone.
  */
-export interface ModalRoom {
+export interface ModalNeeds {
   needHeight: number;
   needWidth: number;
   surfaceHeight: number;
 }
 
-/** Measures the room the modals in a canvas need (ModalRoom). */
-export function modalRoom(canvas: HTMLElement): ModalRoom {
+/** Measures the space the open modals in a canvas need (ModalNeeds). */
+export function modalNeeds(canvas: HTMLElement): ModalNeeds {
   const px = (value: string) => parseFloat(value) || 0;
   let needHeight = 0;
   let needWidth = 0;
   let surfaceHeight = 0;
   for (const surface of canvas.querySelectorAll<HTMLElement>(modalSurfaces)) {
     if (!open(surface)) continue;
-    // A surface open in the overlay layer is inside it.
+    // An open surface is inside the overlay layer, so it has a parent.
     const holder = surface.closest<HTMLElement>(modalPositioners) ?? surface.parentElement!;
     const itself = getComputedStyle(surface);
     const around = getComputedStyle(holder);
@@ -73,15 +76,15 @@ export function modalRoom(canvas: HTMLElement): ModalRoom {
       px(itself.marginRight) +
       px(around.paddingLeft) +
       px(around.paddingRight);
-    if (wide > canvas.offsetWidth + 0.5) needWidth = Math.max(needWidth, wide);
+    if (wide > canvas.offsetWidth + pixelTolerance) needWidth = Math.max(needWidth, wide);
   }
   return { needHeight, needWidth, surfaceHeight };
 }
 
 /**
- * The scale a modal's screen is drawn at, and how tall it is in the canvas's own px; whether it
- * plays, keeping the screen it had at rest; how tall its surface is; and whether it is an overlay,
- * centred on its surface.
+ * A modal screen's scale, and `tall`, its height in the canvas's own px; `plays`, whether it
+ * keeps the screen it had at rest because the tile plays; `surfaceHeight` (ModalNeeds); and
+ * `centred`, whether it is an overlay, centred on its surface.
  */
 export interface ScreenScale {
   scale: number;
@@ -92,18 +95,24 @@ export interface ScreenScale {
 }
 
 /**
- * An overlay, such as a dialog, is drawn at the overlays' one scale, or smaller as far as it needs
- * to show whole, down to its window's least (Tiles.ts), shown from its top where it is taller than
- * the stage still; any other modal at its own size, as far smaller as it needs, down to the popups'
- * least, or on a phone at one of a phone's scales. An overlay is drawn whole where its surface
- * fits the stage a margin from its edges, the gutters of backdrop around it cut off where they
- * don't, centred on it. `across` and `down` are the stage's size; `played`, as a tile that has
- * shown plays, how tall its screen is, which it keeps, at the scale it rested at, `rest`.
+ * Decides a modal screen's scale and height (ScreenScale).
+ *
+ * An overlay, such as a dialog, is drawn at the overlays' scale, or smaller so its surface fits
+ * the stage less a margin at the top and bottom (the backdrop's gutters around it may be cut
+ * off), but no smaller than the popups' least scale (or the overlays' scale, if lower). If it is
+ * still taller than the stage, it shows from its top.
+ *
+ * Any other modal is drawn at its own scale (1 on a phone), or smaller so it fits what it needs
+ * (ModalNeeds), but no smaller than the popups' least scale (or its own, if lower). On a phone the
+ * scale is one of the phone's steps.
+ *
+ * `played` is the screen's height when a tile that has shown is playing: it then keeps that height
+ * and its resting scale, `rest`.
  */
 export function decideScreenScale(
-  { across, down }: { across: number; down: number },
+  { across, down }: StageSize,
   { scales, own }: Pick<Measured, 'scales' | 'own'>,
-  { needHeight, needWidth, surfaceHeight }: ModalRoom,
+  { needHeight, needWidth, surfaceHeight }: ModalNeeds,
   { played, rest }: { played: number | null; rest: number },
 ): ScreenScale {
   const { overlay, phone, steps, popupLeast } = scales;
@@ -120,7 +129,7 @@ export function decideScreenScale(
     needHeight ? (centred ? (down - 2 * margin) / surfaceHeight : down / needHeight) : Infinity,
     needWidth ? across / needWidth : Infinity,
   );
-  // As it plays, the screen stays as it was at rest, as the modal closes and opens again.
+  // While playing, the screen keeps its resting size as the modal closes and opens again.
   const plays = played !== null;
   const scale = plays ? rest : stepped(fits);
   const tall = plays ? played : Math.max(down / scale, needHeight);
@@ -128,13 +137,18 @@ export function decideScreenScale(
 }
 
 /**
- * Where a modal's screen is viewed, measured as it is laid out at its scale (drawScreenSize): at
- * rest, framed as it plays, on what its pointer heads to (onCourse); an overlay centred on its
- * surface, which its positioner centres on the screen. A modal's surface, such as a dialog's or a
- * palette's, that shows whole a margin from the stage's edges is centred on; an overlay's taller
- * than that shows from its top, a margin from the stage's. As it plays, the view pans down the
- * screen to what the pointer heads to. What it shows past the stage's top or foot, the screen's
- * own fill aside, is cut off there.
+ * Where the view of a modal's screen goes, measured after the screen is laid out at its scale
+ * (drawScreenSize). The view is always centred across; only its height changes.
+ *
+ * At rest, in order:
+ * - a surface (not a sheet) that fits the stage less a margin is centred;
+ * - an overlay's surface that does not fit shows from its top, a margin below the stage's top;
+ * - an overlay with no surface found is centred on the screen;
+ * - any other modal is framed on the pointer's course, as its play frames it (onCourse).
+ * While playing, the view keeps its height and pans to keep where the pointer is heading in view.
+ *
+ * The view stays within the screen. The top and bottom are cut where what it paints reaches past
+ * the stage by more than 1 px.
  */
 export function decideScreenPlace(
   { stage, canvas }: { stage: HTMLElement; canvas: HTMLElement },
@@ -143,9 +157,8 @@ export function decideScreenPlace(
   { scale, tall, plays, surfaceHeight, centred }: ScreenScale,
   { toY: viewY, fadeAt, playing }: { toY: number; fadeAt: number | null; playing: boolean },
 ): Placement {
-  const across = stage.clientWidth;
-  const down = stage.clientHeight;
-  // From the screen's top to its foot: where the stage's middle is along it.
+  const { across, down } = stageSize(stage);
+  // The range of view heights that keep the stage inside the screen, from its top to its bottom.
   const highest = down / 2;
   const lowest = Math.max(highest, tall * scale - down / 2);
   const along = (y: number) => Math.min(Math.max(y, highest), lowest);

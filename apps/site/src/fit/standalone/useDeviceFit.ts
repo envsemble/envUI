@@ -1,20 +1,22 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
-import { headingEvent } from '../../motion/MustShow';
-import { remeasure } from '../Remeasure';
+import { remeasure } from '../../shared/Remeasure';
+import type { ScriptReader } from '../FitKind';
 import { deviceFit, sameFit, type DeviceFit, type DeviceFitting } from './DeviceFit';
 
 /**
- * A device's fit in its stage (DeviceStage, DeviceFrame.tsx), as its stage and the row that holds
- * it at its own size resize, its figure's pointer heads somewhere else and what is on its screen
- * changes; none before it has a size (deviceFit).
+ * The fit of a device figure in its stage (deviceFit, for DeviceStage in DeviceFrame.tsx), or
+ * undefined before it has a size. It fits again when the stage or the device's row resizes, and,
+ * for an animated figure, when its screen changes or its pointer's heading changes (`script`).
  */
 export function useDeviceFit(
   stage: RefObject<HTMLElement | null>,
   row: RefObject<HTMLElement | null>,
   kind: DeviceKind,
+  script: ScriptReader,
 ) {
   const [fit, setFit] = useState<DeviceFit>();
+  const { read, heading } = script;
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const rowElement = row.current;
@@ -26,14 +28,16 @@ export function useDeviceFit(
       box,
       row: rowElement,
       root: stageElement.closest('.catalogue-motion-subject'),
+      readScript: read,
       view: { x: 0, y: 0 },
       held: { size: '' },
     };
     const { root } = fitting;
-    // Measured at once, then in the next frame: the size it sets resizes the stage it observes.
+    // Measured at once, then again in later frames: the size it sets resizes the stage it
+    // observes.
     const fits = remeasure(
       (changed) => {
-        // Whether it follows only a change on the screen as the figure plays, not its layout.
+        // Whether only the screen's content changed (as the figure plays), not its layout.
         const fromMutation = [...changed].every(
           (change) => change === 'mutation' || change === 'event',
         );
@@ -43,23 +47,24 @@ export function useDeviceFit(
       {
         first: 'now',
         resize: [stageElement, rowElement],
-        // What opens and closes on the screen, such as a pane the pointer heads into, moves the
-        // view to what is left of its points, as the pointer heading somewhere else does.
+        // Something opening or closing on the screen, such as a pane the pointer heads into,
+        // changes which points are visible, so it fits again, as a new heading does.
         ...(root && {
           mutation: {
             target: rowElement,
             options: { childList: true, attributes: true, subtree: true },
           },
-          events: [{ target: root, types: [headingEvent] }],
+          events: [{ target: root, types: [heading] }],
         }),
       },
     );
-    // The pointer's script names its points as its picture starts, a moment after.
+    // The pointer's script registers its points a moment after the picture starts, so fit
+    // again after 600 ms.
     const timer = setTimeout(fits.update, 600);
     return () => {
       fits.stop();
       clearTimeout(timer);
     };
-  }, [stage, row, kind]);
+  }, [stage, row, kind, read, heading]);
   return fit;
 }

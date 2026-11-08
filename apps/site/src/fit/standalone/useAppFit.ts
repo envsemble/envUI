@@ -1,11 +1,13 @@
 import { useLayoutEffect, type RefObject } from 'react';
 import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { pixelTolerance, remeasure } from '../../shared/Remeasure';
 
 /**
- * Lays the canvas of an application's tile out over its stage, less the margin the frame keeps
- * (`--catalogue-app-margin`), at its own size, or `--catalogue-app-scale` on a narrow card. A tile
- * no narrower than `least` rem is cut off at its end where that is wider than the card
- * (AppTile.css). It follows the stage's size, and shows the canvas once it is laid out.
+ * Lays out the canvas of an application's tile to fill its stage, less the frame's margin
+ * (`--catalogue-app-margin`), at its own size, or at `--catalogue-app-scale` on a narrow card.
+ * `least` is the tile's least width, in rem: where that is wider than the card, the canvas is cut
+ * off at its end (AppTile.css). It lays out again when the stage resizes, and marks the canvas
+ * shown (`data-fitted`) once laid out.
  */
 export function useAppFit(
   stage: RefObject<HTMLElement | null>,
@@ -18,14 +20,11 @@ export function useAppFit(
     const canvasElement = canvas.current;
     if (!on || !stageElement || !canvasElement) return;
     const fit = () => fitApp(stageElement, canvasElement, least);
-    fit();
-    const observer = new ResizeObserver(fit);
-    observer.observe(stageElement);
-    return () => observer.disconnect();
+    return remeasure(fit, { first: 'now', resize: [stageElement] }).stop;
   }, [stage, canvas, on, least]);
 }
 
-/** Lays a canvas out over its stage, as useAppFit says. */
+/** Lays a canvas out over its stage, as described at useAppFit. */
 function fitApp(stage: HTMLElement, canvas: HTMLElement, least: number) {
   const rem = remPixels();
   const style = getComputedStyle(canvas);
@@ -34,8 +33,9 @@ function fitApp(stage: HTMLElement, canvas: HTMLElement, least: number) {
   const height = stage.clientHeight - 2 * margin;
   if (width <= 0 || height <= 0) return;
   const scale = parseFloat(style.getPropertyValue('--catalogue-app-scale')) || 1;
-  // Wider than the card, it is cut off at its end, fading out there, as a screenshot is cropped.
-  if (least * rem * scale > width + 0.5) canvas.dataset.cut = 'end';
+  // A tile wider than the card is cut off at its end and fades out there, like a cropped
+  // screenshot.
+  if (least * rem * scale > width + pixelTolerance) canvas.dataset.cut = 'end';
   else delete canvas.dataset.cut;
   canvas.style.setProperty('--catalogue-app-least', `${least}rem`);
   canvas.style.inlineSize = `${width / scale}px`;

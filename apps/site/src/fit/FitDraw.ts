@@ -1,19 +1,24 @@
 /*
- * What a fit draws (useFit.ts): the layout a decision lays its canvas out at, the sides it is cut
- * off at, the canvas where its view is (place), and the crop's fade at its foot, with the rows
- * hidden whole there and the regions that scroll as it plays, which fade at their own foot. Where
- * the view goes, it eases to (settle, ViewEasing.ts). It writes the page, never what the fit keeps.
+ * Writes a fit's decisions to the page (useFit.ts): the canvas's layout size and scale, the sides
+ * it is cut off at (`data-cut`), its transform for the current view (place), and the crop's fade
+ * at its bottom, hiding the rows that would show only a sliver there. It also marks regions that
+ * scroll while a tile plays, so they fade at their own bottom. Moving the view is ViewEasing.ts's
+ * job. This file writes the page, never what the fit keeps.
  */
 import { remPixels } from '@envui-internal/internal/dom/lengths';
 import type { Fitting } from './useFit';
 import { rowSlack } from './HeldView';
 import { moving, pictures } from './PaintedBoxes';
+import { pixelTolerance } from '../shared/Remeasure';
 
 /**
- * Where a decision places a picture's view (FitResting.ts, FitScreen.ts): the scale it is drawn at
- * and the point it is centred on, the sides it is cut off at (`data-cut`), or undefined where they
- * stay as they are, where its fade at its foot starts, and how its crop is trimmed there (trimRows):
- * as a tile's that played, and whether its screen's top is the stage's edge.
+ * A decision on where a picture's view goes (FitResting.ts, FitScreen.ts):
+ * - `scale`, `toX`, `toY`: the scale and the point at the stage's middle;
+ * - `cut`: the sides it is cut off at (`data-cut`), or undefined to leave them as they are;
+ * - `fadeAt`: where the crop's bottom fade starts, in the canvas's own px, or null for the
+ *   default;
+ * - `played`: whether the tile played, which changes how rows are trimmed (trimRows);
+ * - `screenTop`: whether the top of a modal's screen is the stage's top edge.
  */
 export interface Placement {
   scale: number;
@@ -26,8 +31,8 @@ export interface Placement {
 }
 
 /**
- * Draws where a decision cuts the picture off, and trims its crop there, before its view moves:
- * below where its fade starts, which the fit keeps first (`kept.fadeAt`).
+ * Writes a decision's cut sides and trims the crop's rows (trim), before the view moves. The
+ * caller sets `kept.fadeAt` first, since trim reads it.
  */
 export function drawCut(
   f: Fitting,
@@ -38,15 +43,15 @@ export function drawCut(
     if (cut) canvas.dataset.cut = cut;
     else delete canvas.dataset.cut;
   }
-  // Its screen's top is the stage's edge too, cut off there rather than faded (trimRows).
+  // A modal's screen is cut off at the stage's top edge rather than faded there (trimRows).
   if (screenTop) canvas.parentElement?.style.setProperty('--catalogue-crop-top', '0px');
   if (cut !== undefined) trim(f, played);
 }
 
 /**
- * Draws a held view's scale on its canvas (decideRestingScale), before its view is placed there:
- * whether its subject is drawn smaller (`data-held-scale`), and on a phone the scale a popup shown
- * open lays out at (`--catalogue-canvas-scale`), which lays it out anew.
+ * Writes the layout parts of a resting scale (decideRestingScale) before the view is placed:
+ * `data-held-scale` when a held subject is drawn smaller, and on a phone the scale an open popup
+ * lays out at (`--catalogue-canvas-scale`), which changes the canvas's layout.
  */
 export function drawLayoutScale(
   canvas: HTMLElement,
@@ -62,9 +67,9 @@ export function drawLayoutScale(
 }
 
 /**
- * Lays a modal's canvas out as large as its stage shows at its scale (decideScreenScale), at least
- * as tall as the modal needs, `tall` in the canvas's own px, so its backdrop covers the stage as it
- * covers a screen.
+ * Sizes a modal's canvas to the stage at `scale` (decideScreenScale): as wide as the stage and
+ * `tall` canvas px high, which is at least the stage's height. The modal's backdrop then covers
+ * the stage as it would cover a screen.
  */
 export function drawScreenSize(f: Fitting, scale: number, tall: number) {
   const style = f.canvas.style;
@@ -76,8 +81,9 @@ export function drawScreenSize(f: Fitting, scale: number, tall: number) {
 }
 
 /**
- * Hides the rows past the crop's foot and fades it out there, below `fadeAt`; a modal's screen is
- * cut off at the stage's edges, as at a screen's, its backdrop whole (trimRows).
+ * Trims the crop's rows and sets its bottom fade (trimRows), with the fade starting no higher than
+ * `kept.fadeAt`. A modal's screen (`kept.screen`) is cut off at the stage's edges instead of
+ * fading.
  */
 export const trim = (f: Fitting, played = false) =>
   trimRows(
@@ -89,7 +95,7 @@ export const trim = (f: Fitting, played = false) =>
     f.kept.screen,
   );
 
-/** Draws the canvas where the view is, and trims its crop there. */
+/** Writes the canvas's transform for the current view, and trims the crop for it. */
 export function place(f: Fitting) {
   const { canvas, view, kept } = f;
   const transform = `translate(${-view.x}px, ${-view.y}px) scale(${view.scale})`;
@@ -98,9 +104,9 @@ export function place(f: Fitting) {
 }
 
 /**
- * The rows of a list, a menu, a table, a tree or a picker's column, the cards of a pager, and the
- * parts of a dialog, such as its heading, a field, a checkbox or its actions: each drawn whole or
- * not at all at a crop's foot.
+ * The elements that are shown whole or not at all at a crop's bottom: rows of a list, menu, table,
+ * tree or picker column, a pager's cards, and a dialog's parts (its heading, fields, checkboxes,
+ * actions).
  */
 export const rowSelector = [
   ...['menuitem', 'menuitemradio', 'menuitemcheckbox', 'option', 'row', 'treeitem'].map(
@@ -114,29 +120,32 @@ export const rowSelector = [
   '.env-dialog-content .env-checkbox',
 ].join(', ');
 
-/** How long the crop's fade at its foot is, in px, as its style sets it (Tile.css). */
+/** The length, in px, of the crop's bottom fade, from `--catalogue-crop-fade` (Tile.css). */
 export const cropFade = (crop: Element) =>
   parseFloat(getComputedStyle(crop).getPropertyValue('--catalogue-crop-fade')) * remPixels();
 
 /**
- * Where a picture is cut off at its foot, it fades out over the last stretch, as a drawer's list
- * does, through the rows it reaches past the foot with, rather than ending in a slice through one
- * (Tile.css). A row that would show no more than a sliver in the fade's faint end, or in a
- * fade too short to fade it out, is hidden whole. Where `fadeFrom` is given, px from the crop's
- * top, such as below a picker's chosen row, the fade starts no higher, so what is above it shows
- * whole. A row that holds others, such as a tree's branch, is left to its rows.
+ * Fades a picture out at the crop's bottom, as a drawer's list does, instead of ending in a slice
+ * through a row (Tile.css). Rows (rowSelector) that reach past the bottom but would show only a
+ * sliver, in the faint end of the fade or in a fade too short to fade them out, are hidden whole
+ * (`data-catalogue-past`). A row that holds other rows, such as a tree's branch, is left to them.
+ *
+ * `fadeFrom`, in px from the crop's top, is the highest the fade may start, so what is above it,
+ * such as a picker's chosen row, shows whole. `edge` means the crop's bottom is a modal screen's
+ * edge: there is no fade, and every row that reaches past it is hidden. Without a `bottom` cut
+ * (and without `edge`), nothing is trimmed.
  */
 function trimRows(
   canvas: HTMLElement,
   played = false,
   fadeFrom: number | null = null,
-  /** Whether the crop's foot is a screen's edge, which cuts off rather than fades (FitScreen.ts). */
+  /** Whether the crop's bottom is a modal screen's edge, which cuts, not fades (FitScreen.ts). */
   edge = false,
 ) {
   const crop = canvas.parentElement;
   if (!crop?.classList.contains('catalogue-tile-crop')) return;
-  // A screen's edge cuts what reaches past it, also where a box in it clips that first, such as a
-  // page's body as tall as the screen: there too a row shows whole or not at all.
+  // At a screen's edge, rows are trimmed even without a `bottom` cut, such as when a page's body
+  // as tall as the screen clips them first: there too a row shows whole or not at all.
   if (!edge && !canvas.dataset.cut?.split(' ').includes('bottom')) {
     for (const row of canvas.querySelectorAll<HTMLElement>('[data-catalogue-past]'))
       delete row.dataset.cataloguePast;
@@ -150,18 +159,18 @@ function trimRows(
     : fadeFrom === null
       ? fade
       : Math.max(0, Math.min(fade, height - fadeFrom));
-  // How far up from the foot a row's top shows no more than a sliver: in a fade's faint end, or
-  // anywhere in a fade too short to fade a row out.
-  const sliver = length < remPixels() / 2 ? length + 0.5 : length / 2;
-  // A fade shortened below what a held view's script acts on is too short to fade a row out: a
-  // row below it that reaches past the foot is hidden whole, so the window stops on a whole row
-  // rather than on one cut through its glyphs, also as the tile plays, its view held.
-  const short = !edge && fadeFrom !== null && length < fade - 0.5;
+  // How far above the bottom a row's top must be to show more than a sliver: half the fade, or
+  // the whole fade when it is shorter than half a rem and too short to fade a row out.
+  const sliver = length < remPixels() / 2 ? length + pixelTolerance : length / 2;
+  // A fade shortened by `fadeFrom` (below what a held view's script acts on) is too short to fade
+  // a row out. A row below `fadeFrom` that reaches past the bottom is hidden, so the crop ends on a
+  // whole row rather than one cut through its glyphs, also while the tile plays.
+  const short = !edge && fadeFrom !== null && length < fade - pixelTolerance;
   for (const row of canvas.querySelectorAll<HTMLElement>(rowSelector)) {
     const box = row.getBoundingClientRect();
-    // As a tile plays, its view drawn out for all it shows, a row it showed stays as the view
-    // moves, cut off by the fade, rather than going and coming back. At a screen's edge, which
-    // doesn't fade, a row shows whole or not at all.
+    // While a tile plays (`played`), a row past the bottom keeps its current state as the view
+    // moves, rather than disappearing and coming back; only `edge` and `below` rows are newly
+    // hidden.
     const below = short && box.top - top >= fadeFrom - rowSlack;
     if (
       !row.querySelector(rowSelector) &&
@@ -177,12 +186,12 @@ function trimRows(
 }
 
 /**
- * Marks a region of a canvas that scrolls as it plays, such as a page's body in its box, while its
- * content runs on past its foot (`data-catalogue-runs-on`), so it fades out there (Tile.css),
- * as the crop does where the stage cuts a picture off, rather than ending in a slice through a
- * line. Only the foot, and only where text or a picture reaches past it, not the room under its
- * last line: what stays at its top, such as a sticky header, isn't cut. A region on its way open or
- * closed, such as a panel easing to its height, isn't one, nor one that fades its own edges.
+ * Marks each region that scrolls while a tile plays, such as a page's body in its box, with
+ * `data-catalogue-runs-on` while text or a picture continues past its bottom. The mark fades the
+ * region's bottom (Tile.css), as the crop fades a cut picture, instead of ending in a slice through
+ * a line. Only the bottom fades, so a sticky header at the top is not cut. Not marked: regions
+ * shorter than 24 px, regions that do not scroll, regions still opening or closing (moving), and
+ * regions that already fade their own edges, such as a time picker's wheel.
  */
 export function markRunsOn(regions: Iterable<Element>) {
   for (const region of regions) {
@@ -192,7 +201,7 @@ export function markRunsOn(regions: Iterable<Element>) {
       continue;
     }
     const style = getComputedStyle(region);
-    // A region that fades its own edges, such as a time picker's wheel, keeps its own fade.
+    // A mask-image the site did not set means the region fades its own edges.
     const ownFade = region.dataset.catalogueRunsOn === undefined && style.maskImage !== 'none';
     const runsOn =
       region.scrollTop + region.clientHeight < region.scrollHeight - 1 &&
@@ -205,11 +214,11 @@ export function markRunsOn(regions: Iterable<Element>) {
   }
 }
 
-/** Whether text or a picture in a region that scrolls reaches past its foot, where it is cut. */
+/** Whether any text or picture element in a scrolling region reaches past its visible bottom. */
 function inkPastFoot(region: HTMLElement) {
   const box = region.getBoundingClientRect();
   const ratio = box.height / region.offsetHeight || 1;
-  const foot = box.top + (region.clientTop + region.clientHeight) * ratio + 0.5 * ratio;
+  const foot = box.top + (region.clientTop + region.clientHeight) * ratio + pixelTolerance * ratio;
   const walker = document.createTreeWalker(region, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     if (node instanceof Element) {

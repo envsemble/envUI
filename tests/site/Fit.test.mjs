@@ -28,6 +28,8 @@ test('a tile is fitted as one of four kinds, by how its page frames it and what 
   assert.deepEqual(kinds.fitKindOf({}, 'legible'), { scale: 'legible', tile: false });
   assert.deepEqual(kinds.fitKindOf(tile, undefined), { scale: 'window', tile: true });
   assert.deepEqual(kinds.fitKindOf(undefined, undefined), { scale: 'content', tile: false });
+  // The same kind is the same object, so the fit restarts only when the kind changes (useFit).
+  assert.equal(kinds.fitKindOf(tile, 'own'), kinds.fitKindOf({ tile: true }, 'own'));
   assert.ok(kinds.cropped({ scale: 'own', tile: false }));
   assert.ok(kinds.cropped({ scale: 'legible', tile: true }));
   assert.ok(!kinds.cropped({ scale: 'window', tile: true }));
@@ -248,7 +250,7 @@ test('a held view shows its chosen row and the rows after it, as many as its sca
   assert.deepEqual(ways[0].reach, rows.keepFurther);
   // The last two show the chosen row alone.
   assert.deepEqual(ways.at(-1).whole, rows.chosen);
-  const room = { size: 150, top: 0, pointerFoot: null, cursor: 20 };
+  const room = { stage: 150, top: 0, pointerFoot: null, cursor: 20 };
   // At its own size, its chosen row and the next show whole above a 150 stage's foot, the row
   // after them past it, moved up nearer the top than the inset, the fade starting under them.
   assert.deepEqual(held.heldPlace(1, ways, room), { at: 12, fadeAt: 140 });
@@ -264,7 +266,7 @@ test('a held view shows its chosen row and the rows after it, as many as its sca
 test('a held view taller than its stage is drawn at the largest scale that shows it', () => {
   const rows = held.heldRows([box(0, 300, 200, 320)], [], []);
   const ways = held.heldWays(rows);
-  const room = { size: 200, top: 0, pointerFoot: null, cursor: 20 };
+  const room = { stage: 200, top: 0, pointerFoot: null, cursor: 20 };
   const scales = { phone: false, steps: [1], popupLeast: 0.84, overlayScale: 0.75 };
   // Short enough, it keeps its scale.
   assert.equal(held.heldScale(1, ways, room, { tall: 100, height: 168 }, scales), 1);
@@ -288,7 +290,7 @@ test('a held subject takes the largest of the scales tiles are drawn at that sho
 
 test('a resting picture holds its frame, and follows its popups placed again only so often', () => {
   const shape = (view, popupLeft = 0, whole = true) => ({
-    room: [200, 150, 300, 200],
+    sizes: [200, 150, 300, 200],
     whole,
     view,
     boxes: [
@@ -307,7 +309,7 @@ test('a resting picture holds its frame, and follows its popups placed again onl
   assert.ok(holds(shape([0, 0]), shape([0, 0])));
   assert.ok(!holds(shape([0, 0]), shape([0, 0], 3)));
   // A change outside the popups, or of the stage, frames it anew.
-  assert.ok(!holds(shape([0, 0]), { ...shape([0, 0]), room: [210, 150, 300, 200] }));
+  assert.ok(!holds(shape([0, 0]), { ...shape([0, 0]), sizes: [210, 150, 300, 200] }));
   // Scrolled to the window's edge, it holds.
   assert.ok(holds(shape([0, 0]), shape([0, 0], 30, false)));
   // The view moved: a popup placed a few px away holds; further, it is followed, so often, each
@@ -407,7 +409,7 @@ test("a popup's whole scale is decided once for its stage's size, and kept while
   const kind = { scale: 'own', tile: true };
   const script = { holdsView: false, narrow: false };
   const room = { across: 300, down: 200 };
-  const kept = { room: '300 200', narrower: 0.7, whole: 0.7 };
+  const kept = { stage: '300 200', narrower: 0.7, whole: 0.7 };
   const shown = popups.decidePopups(room, kind, measured, script, { shown: true, wholeFor: kept });
   assert.equal(shown.wholeFor, kept);
   // A component's popup keeps its room from the stage's edges, what opens it the inset.
@@ -419,7 +421,7 @@ test("a popup's whole scale is decided once for its stage's size, and kept while
   const other = { across: 320, down: 200 };
   assert.deepEqual(
     popups.decidePopups(other, kind, measured, script, { shown: true, wholeFor: kept }).wholeFor,
-    { room: '320 200', narrower: null, whole: 0 },
+    { stage: '320 200', narrower: null, whole: 0 },
   );
   assert.notEqual(
     popups.decidePopups(room, kind, measured, script, { shown: false, wholeFor: kept }).wholeFor,
@@ -459,7 +461,7 @@ test('a resting component keeps the scale it rested at, and a held subject is dr
   };
   const kind = { scale: 'own', tile: true };
   const popupsAt = { anchored: null, narrower: null, whole: 0, scale: (atMost) => atMost };
-  const held = { rows: null, lowest: null, ways: [], room: {} };
+  const held = { rows: null, lowest: null, ways: [], heights: {} };
   const room = { across: 200, down: 150 };
   const decide = (script, at) =>
     popups.decideRestingScale(room, kind, measured, popupsAt, held, script, {
