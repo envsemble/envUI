@@ -127,6 +127,7 @@ export function ColorPalette() {
     if (!paletteElement.current) return;
     const target = isHighContrast(paletteElement.current) ? 7 : 4.5;
     const computedStyle = getComputedStyle(paletteElement.current);
+    // A new canvas always gives its first 2D context.
     const context = document
       .createElement('canvas')
       .getContext('2d', { willReadFrequently: true })!;
@@ -142,7 +143,7 @@ export function ColorPalette() {
         const probe = document.createElement('span');
         probe.style.color = `var(${colorVariable(token)})`;
         probe.hidden = true;
-        paletteElement.current!.append(probe);
+        paletteElement.current?.append(probe);
         return { token, probe };
       }),
     );

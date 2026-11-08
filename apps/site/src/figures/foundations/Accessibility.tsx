@@ -68,6 +68,7 @@ function KeyboardSteps() {
         setAt(-1);
         return;
       }
+      // Its script cues only the keys it presses, and that it is done (keyboardScript).
       const press = cue as Press;
       setKey((last) => ({ press, count: (last?.count ?? 0) + 1 }));
       if (press === 'space') setShared((checked) => !checked);

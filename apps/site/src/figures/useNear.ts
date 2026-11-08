@@ -102,18 +102,19 @@ let cameIntoView: CameIntoView | null = null;
  * by one as each arrives.
  */
 function inViewTogether(load: (() => Promise<unknown> | void) | undefined, render: () => void) {
-  if (!cameIntoView) {
-    const batch: CameIntoView = { loads: [], renders: [] };
-    cameIntoView = batch;
+  let batch = cameIntoView;
+  if (!batch) {
+    const next: CameIntoView = { loads: [], renders: [] };
+    batch = cameIntoView = next;
     requestAnimationFrame(() => {
       cameIntoView = null;
-      void Promise.all(batch.loads).then(() => {
-        for (const each of batch.renders) each();
+      void Promise.all(next.loads).then(() => {
+        for (const each of next.renders) each();
       });
     });
   }
-  cameIntoView!.loads.push(Promise.resolve(load?.()).catch(() => undefined));
-  cameIntoView!.renders.push(render);
+  batch.loads.push(Promise.resolve(load?.()).catch(() => undefined));
+  batch.renders.push(render);
 }
 
 /**

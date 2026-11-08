@@ -48,6 +48,8 @@ export function VariantButton({
 }) {
   const icon = <example.icon />;
   const props = { variant: example.variant, tone: example.tone, className, disabled, inert };
+  // Each pair is one a button is designed in (buttonVariants), which the props' types don't
+  // narrow to from a list.
   if (form === 'icon') {
     return <IconButton {...({ ...props, icon, 'aria-label': example.label } as IconButtonProps)} />;
   }
