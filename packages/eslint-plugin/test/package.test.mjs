@@ -62,6 +62,7 @@ test('the package ships the plugin, its data and its documentation, and nothing 
     'README.md',
     'index.d.ts',
     'package.json',
+    'src/colorPolicy.js',
     'src/data/elements.json',
     'src/data/tokens.json',
     'src/index.js',

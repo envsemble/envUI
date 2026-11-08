@@ -35,7 +35,7 @@ const families = ['fg', 'bg', 'border'].map((role) => ({ role, family: colorFami
  * The envUI color tokens to suggest in place of a raw color in a property: for a property with a
  * known role, its default token and the family it belongs to; otherwise every family.
  */
-export function colorTokenSuggestion(property) {
+function colorTokenSuggestion(property) {
   const role = property && roleOfProperty.find((entry) => entry.property.test(property))?.role;
   const family = families.find((entry) => entry.role === role)?.family;
   if (family) return `such as var(${family.example}) or another var(${family.prefix}…) role`;
@@ -43,4 +43,9 @@ export function colorTokenSuggestion(property) {
   if (known.length === 0) return 'from envUI';
   const list = known.map((prefix) => `var(${prefix}…)`);
   return `one of the ${list.length > 1 ? `${list.slice(0, -1).join(', ')} or ${list.at(-1)}` : list[0]} roles`;
+}
+
+/** What to use instead of a raw color, with the envUI tokens for the property it is in. */
+export function colorTokenAdvice(property) {
+  return `use an envUI color token instead, ${colorTokenSuggestion(property)}, so the color follows the theme and keeps its contrast.`;
 }

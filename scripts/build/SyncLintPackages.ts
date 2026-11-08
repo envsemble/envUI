@@ -1,21 +1,26 @@
-// Writes the token files the lint packages ship: in the ESLint plugin (src/) and the Stylelint
-// config, data/tokens.json, the envUI tokens their messages name, from the library's generated
-// token list (packages/ui/src/generated/tokens.json), and tokens.js, the helper that reads it,
-// from scripts/build/LintPackageTokens.js. Each package ships its own copies, so it works on its
+// Writes the files the lint packages share: in the ESLint plugin (src/) and the Stylelint config,
+// data/tokens.json, the envUI tokens their messages name, from the library's generated token list
+// (packages/ui/src/generated/tokens.json); tokens.js, the helper that reads it, from
+// scripts/build/LintPackageTokens.js; and colorPolicy.js, what both count as a raw color, from
+// scripts/build/LintPackageColorPolicy.js. Each package ships its own copies, so it works on its
 // own once installed; a published package names the tokens of its own envUI release, as each
 // pack runs this first.
 //
 //   node scripts/build/SyncLintPackages.ts           write the copies
 //   node scripts/build/SyncLintPackages.ts --check   fail when a copy differs from its source
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 const repository = new URL('../../', import.meta.url);
 const libraryTokens = 'packages/ui/src/generated/tokens.json';
-const helper = 'scripts/build/LintPackageTokens.js';
+/** The modules each lint package ships a copy of, by their name in the package. */
+const copiedModules = {
+  'tokens.js': 'scripts/build/LintPackageTokens.js',
+  'colorPolicy.js': 'scripts/build/LintPackageColorPolicy.js',
+};
 
-/** Where each lint package keeps tokens.js, with data/tokens.json beside it. */
+/** Where each lint package keeps its copied modules, with data/tokens.json beside them. */
 export const lintPackages = {
   '@envsemble/eslint-plugin-envui': 'packages/eslint-plugin/src',
   '@envsemble/stylelint-config-envui': 'packages/stylelint-config',
@@ -71,19 +76,23 @@ const read = (path: string) => readFileSync(new URL(path, repository), 'utf8');
 /** Each file the lint packages ship from a source, by its path in the repository, with its text. */
 export function expectedFiles(): Map<string, string> {
   const tokens = serializeTokens(summarizeTokens(JSON.parse(read(libraryTokens)) as TokenList));
-  const source = read(helper);
-  const copy = `// Generated from ${helper} by npm run tokens:build; edit that file.\n${source}`;
+  const copies = Object.entries(copiedModules).map(([name, source]) => {
+    const copy = `// Generated from ${source} by npm run tokens:build; edit that file.\n${read(source)}`;
+    return [name, copy] as const;
+  });
   const files = new Map<string, string>();
   for (const directory of Object.values(lintPackages)) {
     files.set(`${directory}/data/tokens.json`, tokens);
-    files.set(`${directory}/tokens.js`, copy);
+    for (const [name, copy] of copies) files.set(`${directory}/${name}`, copy);
   }
   return files;
 }
 
-/** The copies that differ from their sources. */
+/** The copies that differ from their sources, or are missing. */
 export function staleFiles() {
-  return [...expectedFiles()].filter(([path, text]) => read(path) !== text).map(([path]) => path);
+  return [...expectedFiles()]
+    .filter(([path, text]) => !existsSync(new URL(path, repository)) || read(path) !== text)
+    .map(([path]) => path);
 }
 
 function main() {
@@ -91,11 +100,9 @@ function main() {
   const stale = staleFiles();
   if (check) {
     if (stale.length) {
-      console.error(
-        `${stale.join(', ')} differ from ${libraryTokens} and ${helper}. Run npm run tokens:build.`,
-      );
+      console.error(`${stale.join(', ')} differ from their sources. Run npm run tokens:build.`);
       process.exitCode = 1;
-    } else console.log("The lint packages' token files match their sources.");
+    } else console.log("The lint packages' shared files match their sources.");
     return;
   }
   const expected = expectedFiles();
@@ -103,7 +110,7 @@ function main() {
   console.log(
     stale.length
       ? `Updated ${stale.join(', ')}.`
-      : `The lint packages' token files already match their sources.`,
+      : `The lint packages' shared files already match their sources.`,
   );
 }
 
