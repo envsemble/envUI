@@ -9,16 +9,19 @@ import {
   type ReactNode,
 } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
-import type { AnatomyLegendItem, StageFill } from '../shared/DocumentationTypes';
+import type {
+  AnatomyLegendItem,
+  StageFill,
+} from '../../../../scripts/docs/model/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender, leastFitScale } from './LiveExample';
 import { OpenExample } from './OpenExample';
 import { legendOf, partDescription } from '../template/Parts';
-import { legendName } from '../shared/CatalogueContent';
+import { legendName } from '../../../../scripts/docs/model/CatalogueContent';
 import { OptionLegend } from '../template/OptionLegend';
 import { SpecimenRender } from './Specimen';
 import { measure, measureVariants, type Callout, type Room } from './AnatomyLayout';
-import type { OptionTable } from '../shared/CatalogueContent';
+import type { OptionTable } from '../../../../scripts/docs/model/CatalogueContent';
 
 /** A subject at most this wide and tall, in CSS pixels, is small enough to show larger. */
 const smallSubject = { width: 240, height: 48 };

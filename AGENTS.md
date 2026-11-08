@@ -90,7 +90,7 @@ One word for each thing the site shows, and one folder in `apps/site/src` for ea
 | tile          | A gallery's small live picture of a page                        | `tiles/`                                             |
 | figure        | The frame that shows an example or a specimen on a page         | `figures/`; a foundation's in `figures/foundations/` |
 | motion        | Scripted playback: the pointer no one sees, timelines, autoplay | `motion/`                                            |
-| documentation | The Markdown in `docs/` and the model generated from it         | `scripts/docs/`, `shared/DocumentationTypes.ts`      |
+| documentation | The Markdown in `docs/` and the model generated from it         | `scripts/docs/`, its model in `scripts/docs/model/`  |
 | Docs          | The part under /docs, and nothing else                          | `docs-` classes, `Docs*` names                       |
 
 Other words for these, such as preview, demo, showcase and sample, are older names; don't add new uses.

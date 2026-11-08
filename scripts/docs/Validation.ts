@@ -2,8 +2,8 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked, type Token, type Tokens } from 'marked';
-import type { DocumentationBlock } from '../../apps/site/src/shared/DocumentationTypes.ts';
-import { optionTable, optionTableProblems } from '../../apps/site/src/shared/CatalogueContent.ts';
+import type { DocumentationBlock } from './model/DocumentationTypes.ts';
+import { optionTable, optionTableProblems } from './model/CatalogueContent.ts';
 import {
   codeSubsections,
   documentationDirectory,

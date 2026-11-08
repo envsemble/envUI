@@ -7,14 +7,14 @@ import type {
   DocumentationBlock,
   DocumentationSection,
   StageFill,
-} from '../shared/DocumentationTypes';
+} from '../../../../scripts/docs/model/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../pages/PageModel';
 import { AnatomyFigure } from './AnatomyFigure';
 import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from '../template/OptionLegend';
-import { optionPieces, type OptionTable } from '../shared/CatalogueContent';
+import { optionPieces, type OptionTable } from '../../../../scripts/docs/model/CatalogueContent';
 import { Specimen, SpecimenRender } from './Specimen';
 import { VerdictMotion } from '../motion/MotionStage';
 import {

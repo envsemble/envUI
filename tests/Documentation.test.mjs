@@ -17,7 +17,7 @@ import {
   optionTableProblems,
   paragraphLength,
   catalogueStructure,
-} from '../apps/site/src/shared/CatalogueContent.ts';
+} from '../scripts/docs/model/CatalogueContent.ts';
 
 test('focused Markdown discovery preserves examples and rejects broken documentation', async () => {
   const cache = resolve('.cache');

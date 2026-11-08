@@ -1,7 +1,8 @@
 /**
  * The shape of the generated documentation data, written by scripts/docs/GenerateDocumentation.ts
- * from docs/ and docs/generated/props.json: every page's summary (generated/Documentation.ts) and
- * each page's content (generated/pages/<id>.json).
+ * from docs/ and docs/generated/props.json: every page's summary
+ * (apps/site/src/generated/Documentation.ts) and each page's content
+ * (apps/site/src/generated/pages/<id>.json). The site and the documentation scripts both read it.
  */
 
 /** One prop of a component, as scripts/docs/ExtractProps.ts reads it from the TypeScript source. */

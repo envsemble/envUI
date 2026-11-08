@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
-import type { DeviceKind, StageFill } from '../shared/DocumentationTypes';
+import type { DeviceKind, StageFill } from '../../../../scripts/docs/model/DocumentationTypes';
 import { FigureDevice, OnDevice } from './DeviceFrame';
 import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
 import { OpenExample } from './OpenExample';

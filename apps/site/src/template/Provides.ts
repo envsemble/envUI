@@ -1,11 +1,15 @@
-import type { DocumentationSection } from '../shared/DocumentationTypes';
-import { providesOf, catalogueMarkdown, withoutProvides } from '../shared/CatalogueContent';
+import type { DocumentationSection } from '../../../../scripts/docs/model/DocumentationTypes';
+import {
+  providesOf,
+  catalogueMarkdown,
+  withoutProvides,
+} from '../../../../scripts/docs/model/CatalogueContent';
 
 /**
  * The subsections of a page's Accessibility that say what envUI provides and what the application
  * provides are for people who build with envUI, so the page in the Docs shows them, and the catalogue,
  * which shows what it looks like and when to use it, leaves them out, as it leaves out a
- * table's In code column. apps/site/src/shared/CatalogueContent.ts holds the
+ * table's In code column. scripts/docs/model/CatalogueContent.ts holds the
  * rules, which the plain-language test reads too.
  */
 export { providesOf, withoutProvides };
