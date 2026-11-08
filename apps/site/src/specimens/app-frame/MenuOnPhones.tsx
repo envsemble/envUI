@@ -7,8 +7,8 @@ import { WidthSweep } from '../../motion/WidthSweep';
 import { keepLinksInPlace } from '../../figures/LiveExample';
 
 const menu = '[aria-label="Open the chapters"]';
-const chapter = (index: number, where: string) =>
-  `${where} .env-navigation-drawer-list > li:nth-child(${index}) > .env-navigation-drawer-item`;
+const chapter = (id: string, where: string) =>
+  `${where} .env-navigation-drawer-item[href="#${id}"]`;
 
 /*
  * At 22 rem the pointer taps the menu button: the sheet with the chapters slides in, it picks
@@ -23,7 +23,7 @@ const script: PointerStep[] = [
   { wait: 200 },
   { click: true },
   { wait: 900 },
-  { to: chapter(2, '.env-sheet'), x: 0.35, y: 0.5, duration: 550 },
+  { to: chapter('installing', '.env-sheet'), x: 0.35, y: 0.5, duration: 550 },
   { wait: 250 },
   { click: true },
   { wait: 400 },
@@ -32,8 +32,8 @@ const script: PointerStep[] = [
   { cue: 'wide' },
   // The frame's travel to 44 rem.
   { wait: 3300 },
-  { to: chapter(1, '.catalogue-width-sweep-frame'), x: 0.35, y: 2.5 },
-  { to: chapter(1, '.catalogue-width-sweep-frame'), x: 0.35, y: 0.5, duration: 450 },
+  { to: chapter('introduction', '.catalogue-width-sweep-frame'), x: 0.35, y: 2.5 },
+  { to: chapter('introduction', '.catalogue-width-sweep-frame'), x: 0.35, y: 0.5, duration: 450 },
   { wait: 200 },
   { click: true },
   { wait: 400 },

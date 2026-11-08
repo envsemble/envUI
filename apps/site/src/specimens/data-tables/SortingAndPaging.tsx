@@ -19,7 +19,7 @@ const script: PointerStep[] = [
   { wait: 300 },
   { click: true },
   { wait: 1300 },
-  { to: '.env-pagination-button:last-of-type', x: 0.5, y: 0.55, duration: 700 },
+  { to: '.env-pagination-button[data-direction="next"]', x: 0.5, y: 0.55, duration: 700 },
   { wait: 300 },
   { click: true },
   { wait: 1500 },
