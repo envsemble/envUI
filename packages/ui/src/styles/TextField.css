@@ -137,7 +137,7 @@
     border: var(--env-text-field-frame) solid var(--env-text-field-border-color);
     border-radius: inherit;
     pointer-events: none;
-    transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: border-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-text-field-border > legend {
     display: block;
@@ -231,7 +231,7 @@
       inset-block-start var(--env-motion-duration-medium) var(--env-motion-ease),
       inset-inline-start var(--env-motion-duration-medium) var(--env-motion-ease),
       font-size var(--env-motion-duration-medium) var(--env-motion-ease),
-      color var(--env-motion-duration-medium) var(--env-motion-ease),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
       padding var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   /* Native placeholder state tracks controlled values, autofill and form reset without JS. A control
