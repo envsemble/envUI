@@ -62,7 +62,6 @@ export const aliases: Record<string, string[]> = {
   accessibleName: ['Tooltip'],
   DialogParts: ['Dialog', 'Skeleton'],
   skeleton: ['Skeleton'],
-  inSkeleton: ['Skeleton'],
   skeletonShift: ['Skeleton'],
   Listbox: ['Select', 'Combobox'],
   ListRow: ['List'],

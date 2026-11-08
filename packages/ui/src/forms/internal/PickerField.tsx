@@ -22,7 +22,11 @@ import { type ControlSize } from '../../foundations/Theme.js';
 import type { PopoverOpenChangeReason } from '../../overlays/Popover.js';
 import { IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
-import { FieldFrame, type FieldControlBoxProps, type FieldProps } from '../../internal/field/FieldFrame.js';
+import {
+  FieldFrame,
+  type FieldControlBoxProps,
+  type FieldProps,
+} from '../../internal/field/FieldFrame.js';
 import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { useFormReset } from '../../internal/field/useFormReset.js';
 import { useFieldMetadata } from '../../internal/field/useFieldMetadata.js';

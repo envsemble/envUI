@@ -24,8 +24,7 @@ import {
   containedPopupStyle,
   usePortalContainer,
 } from './PortalContainerContext.js';
-import { inSkeleton } from '../foundations/internal/inSkeleton.js';
-import { skeletonAttributes } from './skeleton.js';
+import { inSkeleton, skeletonAttributes } from './skeleton.js';
 import { computedDirection } from './direction.js';
 import '../styles/Base.css';
 import '../styles/Popup.css';

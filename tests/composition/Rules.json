@@ -145,6 +145,7 @@
       "navigation/internal/useTreeTransitions.ts": "composites",
       "navigation/internal/useTreeViewport.ts": "composites",
       "internal/PopupSurface.tsx": "foundations",
+      "internal/skeleton.tsx": "foundations",
       "internal/TooltipPopup.tsx": "base",
       "messages.ts": "entries",
       "layout/Layout.tsx": "foundations",

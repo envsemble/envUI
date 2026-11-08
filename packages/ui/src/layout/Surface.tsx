@@ -3,9 +3,8 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactElement, Ref } from 'react';
 import { useRender } from '@base-ui/react/use-render';
 import { classNames } from '../internal/classNames.js';
-import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import type { SpaceStep } from './Layout.js';
-import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import '../styles/Base.css';
 
 /**

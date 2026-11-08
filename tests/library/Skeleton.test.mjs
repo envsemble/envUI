@@ -10,7 +10,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 const library = await importSource('Skeleton', [
   "export { placeholders, isPlaceholder } from './packages/ui/src/foundations/placeholders.ts';",
-  "export { skeletonAttributes, skeletonListAttributes, given } from './packages/ui/src/internal/skeleton.ts';",
+  "export { skeletonAttributes, skeletonListAttributes, given } from './packages/ui/src/internal/skeleton.tsx';",
   "export { useSkeleton } from './packages/ui/src/foundations/SkeletonScope.tsx';",
   "export { Surface } from './packages/ui/src/layout/Surface.tsx';",
   "export { Text } from './packages/ui/src/foundations/Text.tsx';",

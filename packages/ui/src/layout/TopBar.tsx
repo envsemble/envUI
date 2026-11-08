@@ -7,9 +7,11 @@ import { topBar } from '../foundations/messages/topBar.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { inSkeleton } from '../foundations/internal/inSkeleton.js';
-import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
-import { backgroundAttribute, type NavigationBackground } from '../navigation/navigationBackground.js';
+import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  backgroundAttribute,
+  type NavigationBackground,
+} from '../navigation/navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/TopBar.css';

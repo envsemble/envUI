@@ -10,10 +10,11 @@ import {
 import type { RowDensity } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { inSkeleton, inSkeletonList } from '../foundations/internal/inSkeleton.js';
 import { SkeletonStatus } from '../foundations/SkeletonScope.js';
 import { Text } from '../foundations/Text.js';
 import {
+  inSkeleton,
+  inSkeletonList,
   given,
   skeletonAttributes,
   skeletonListAttributes,
