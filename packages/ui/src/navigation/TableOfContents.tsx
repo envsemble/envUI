@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { ActionElement } from '../internal/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
+import { useLatest } from '../internal/useLatest.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { tableOfContents } from '../foundations/messages/tableOfContents.js';
 import {
@@ -263,8 +264,7 @@ export function TableOfContents({
     }, delay);
   }, []);
   useEffect(() => () => clearTimeout(settle.current), []);
-  const filterRef = useRef(filter);
-  filterRef.current = filter;
+  const filterRef = useLatest(filter);
   const levelKey = levels.join(',');
   const flat = useMemo(() => flatten(items), [items]);
   const ids = flat.map((entry) => entry.id).join('\n');
@@ -308,7 +308,7 @@ export function TableOfContents({
       observer.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [givenItems, container, levelKey]);
+  }, [givenItems, container, levelKey, filterRef]);
 
   // The current section, from where the area that holds the sections has scrolled, and the shape
   // beside the list that marks the reader's place.

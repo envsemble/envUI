@@ -2,6 +2,7 @@
 
 import { useCallback, useLayoutEffect, useRef, useState, type ChangeEvent } from 'react';
 import { subscribeFormReset } from '../subscribeFormReset.js';
+import { useLatest } from '../../../internal/useLatest.js';
 import { readMarkdownSelection, type MarkdownSelection } from './markdownFormatting.js';
 import {
   createMarkdownHistory,
@@ -28,16 +29,12 @@ export function useMarkdownEditing({
   const beforeInput = useRef<MarkdownSelection | null>(null);
   const pendingSelection = useRef<MarkdownSelection | null>(null);
   const composing = useRef(false);
-  const valueChange = useRef(onValueChange);
+  const valueChange = useLatest(onValueChange);
   const [revision, setRevision] = useState(0);
   const attachInput = useCallback((input: HTMLTextAreaElement | null) => {
     inputRef.current = input;
     setInputElement(input);
   }, []);
-
-  useLayoutEffect(() => {
-    valueChange.current = onValueChange;
-  }, [onValueChange]);
 
   useLayoutEffect(() => {
     // A replacement supplied by the application starts a fresh document history.

@@ -22,6 +22,7 @@ import { IconClose } from '../../icons/Close.js';
 import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './FieldFrame.js';
 import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { subscribeFormReset } from './subscribeFormReset.js';
+import { useLatest } from '../../internal/useLatest.js';
 import { useFieldMetadata } from './useFieldMetadata.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
@@ -192,8 +193,7 @@ export function PickerField({
   const popupRef = useRef<HTMLDivElement>(null);
   // Whether the popup was open when a press on the label began, which closes it.
   const labelPressOpen = useRef(false);
-  const resetRef = useRef(onFormReset);
-  resetRef.current = onFormReset;
+  const resetRef = useLatest(onFormReset);
   // Read as the popup opens, which takes the field's direction into its portal.
   const [direction] = useDirection(triggerRef, open);
   const hydrated = useHydrated();
@@ -211,7 +211,7 @@ export function PickerField({
       if (!input || !ownerForm) return;
       return subscribeFormReset(ownerForm, () => resetRef.current());
     },
-    [form],
+    [form, resetRef],
   );
 
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>) {

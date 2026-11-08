@@ -22,6 +22,7 @@ import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
 import { acceptsFile } from './internal/acceptsFile.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { useLatest } from '../internal/useLatest.js';
 import '../styles/Base.css';
 import '../styles/DropZone.css';
 
@@ -117,8 +118,7 @@ export function DropZone({
   const [dragging, setDragging] = useState(false);
   // Entering a child of the zone leaves its parent first, so count the elements under the files.
   const depth = useRef(0);
-  const latestFiles = useRef(files);
-  latestFiles.current = files;
+  const latestFiles = useLatest(files);
   const available = !disabled && !pending;
 
   /** Native forms submit exactly these files, also when they were dropped. */
@@ -143,7 +143,7 @@ export function DropZone({
         if (latestFiles.current !== undefined) hold(latestFiles.current);
       });
     },
-    [form, name],
+    [form, name, latestFiles],
   );
 
   function take(chosen: File[]) {

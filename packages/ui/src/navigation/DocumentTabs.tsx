@@ -2,12 +2,7 @@
 
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
-import {
-  useRef,
-  type ComponentPropsWithRef,
-  type KeyboardEvent,
-  type ReactNode,
-} from 'react';
+import { useRef, type ComponentPropsWithRef, type KeyboardEvent, type ReactNode } from 'react';
 import { IconButton } from '../actions/Button.js';
 import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
