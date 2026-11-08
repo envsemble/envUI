@@ -52,7 +52,7 @@ export function keepFocus() {
     return focus.call(this, options);
   };
   const { matches } = Element.prototype;
-  Element.prototype.matches = function (selectors: string) {
+  Element.prototype.matches = function (this: Element, selectors: string) {
     if (selectors.includes(':focus'))
       for (const scope of keyboardFocused.keys())
         if (scope.contains(this))
@@ -63,7 +63,7 @@ export function keepFocus() {
               .replace(/:focus\b(?!-)/g, `[${focusMark}]`),
           );
     return matches.call(this, selectors);
-  };
+  } as typeof matches;
 }
 
 /**

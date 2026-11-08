@@ -463,7 +463,8 @@ test('installed declarations typecheck a React 19 consumer without source aliase
         strict: true,
         noEmit: true,
         skipLibCheck: false,
-        types: ['react', 'react-dom'],
+        // A bundler's types declare the style sheet's import, as Vite's do in an application.
+        types: ['react', 'react-dom', 'vite/client'],
         lib: ['ES2022', 'DOM'],
       },
       include: ['Consumer.tsx'],
