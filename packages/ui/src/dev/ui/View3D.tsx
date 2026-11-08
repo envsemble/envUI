@@ -30,7 +30,7 @@ import { Plane, SurfaceCache } from './Plane.js';
 import { devStats } from './stats.js';
 import type { LivePage } from './useLivePage.js';
 import { ViewCorners, ViewToolbar, type ShowOptions } from './ViewToolbar.js';
-import { glideScrollBy, scrollerAt, wheelDelta } from './wheel.js';
+import { useViewWheel } from './useViewWheel.js';
 
 export interface View3DProps {
   live: LivePage;
@@ -201,41 +201,7 @@ export const View3D = memo(function View3D({
     setHovered(key);
   };
 
-  // The wheel scrolls the page's scroller under the pointer, in the root, gliding as the
-  // browser's smooth scrolling does, and the planes follow; Ctrl+wheel, or the wheel where nothing
-  // scrolls, zooms toward the pointer.
-  useEffect(() => {
-    const element = view.current;
-    if (!element) return;
-    const wheel = (event: WheelEvent) => {
-      if ((event.target as Element).closest('.env-dev-float')) return;
-      event.preventDefault();
-      const { dx, dy } = wheelDelta(event);
-      const key = hoveredRef.current;
-      const current = snapshotRef.current;
-      const node =
-        key === null ? undefined : current?.nodes.find((candidate) => candidate.key === key);
-      const target = node ? current?.elements?.[node.index] : undefined;
-      const scroller =
-        !event.ctrlKey && !event.metaKey && target ? scrollerAt(target, root, dx, dy) : null;
-      if (scroller === 'end') return;
-      if (scroller) {
-        glideScrollBy(scroller, dx, dy);
-        return;
-      }
-      const room = element.getBoundingClientRect();
-      // A notch zooms a tenth; a touchpad's small turns zoom as little as they turn.
-      const factor = Math.exp(-Math.max(-100, Math.min(100, dy || dx)) * 0.00095);
-      camera.zoomToward(
-        factor,
-        event.clientX - room.left - room.width / 2,
-        event.clientY - room.top - room.height / 2,
-      );
-    };
-    element.addEventListener('wheel', wheel, { passive: false });
-    return () => element.removeEventListener('wheel', wheel);
-    // The view element is there from the first render, and the snapshot is read from its ref.
-  }, [root, camera, measured]);
+  useViewWheel({ view, root, camera, snapshot: snapshotRef, hovered: hoveredRef, measured });
 
   // With "only the selected" on, the view shows the selected node and what is inside it.
   const focused = show.onlySelected ? selected : null;
