@@ -25,6 +25,7 @@ import { pixelTolerance, remeasure } from '../shared/Remeasure';
 import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 import { flag } from '@envui-internal/internal/flag';
 import { useBrowserStandIns } from './BrowserStandIns';
+import { classNames } from '@envui-internal/internal/classNames';
 
 /**
  * The elements a reader can operate in a figure. A stage that has none of them stays a recording.
@@ -271,13 +272,11 @@ export function MotionStage({
   return (
     <div
       ref={stage}
-      className={[
+      className={classNames(
         foundation ? 'site-foundation-stage' : verdict ? 'site-verdict-stage' : 'site-live-example',
         'catalogue-motion-stage',
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
       data-figure={foundation ? 'example' : undefined}
       data-stage={fill}
       data-device={device && !verdict ? device : undefined}

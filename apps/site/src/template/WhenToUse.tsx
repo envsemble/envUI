@@ -1,6 +1,7 @@
 import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
 import { PageMarkdown } from '../pages/PageMarkdown';
 import { pageOf } from './RelatedPages';
+import { classNames } from '@envui-internal/internal/classNames';
 
 /**
  * Component pages that paint nothing a reader sees, which Built from leaves out: the layout
@@ -39,9 +40,10 @@ export function WhenToUse({ metadata, path }: { metadata: DocumentationMetadata;
       {/* More than three items run in two columns where there is room, each read top to bottom,
           with the first half on the left (WhenToUse.css). */}
       <div
-        className={
-          metadata.useWhen.length > 3 ? 'site-when-use catalogue-when-columns' : 'site-when-use'
-        }
+        className={classNames(
+          'site-when-use',
+          metadata.useWhen.length > 3 && 'catalogue-when-columns',
+        )}
         style={{ '--catalogue-when-rows': Math.ceil(metadata.useWhen.length / 2) }}
       >
         <PageMarkdown markdown={`### Use it when\n\n${list(metadata.useWhen)}`} path={path} />

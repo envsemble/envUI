@@ -5,6 +5,7 @@ import { useDelayPassed, usePlaceholderShown } from './LoadingStore';
 import { useArrival } from './useArrival';
 import { recordedSize } from './RecordedSizes';
 import { flag } from '@envui-internal/internal/flag';
+import { classNames } from '@envui-internal/internal/classNames';
 
 /*
  * What the site shows while a part of a page loads, such as an example, its code or a specimen,
@@ -48,7 +49,7 @@ export function PartSkeleton({
       skeleton
       padding={0}
       radius="none"
-      className={['site-loading', className].filter(Boolean).join(' ')}
+      className={classNames('site-loading', className)}
       data-shown={flag(shown)}
       data-site-part={part}
       style={style}
@@ -113,9 +114,7 @@ export function StageSkeleton({
     <PartSkeleton
       what={what}
       part={part}
-      className={[stage ? 'site-loading-stage' : 'site-loading-subject', className]
-        .filter(Boolean)
-        .join(' ')}
+      className={classNames(stage ? 'site-loading-stage' : 'site-loading-subject', className)}
       style={
         size && {
           inlineSize: stage ? undefined : `min(100%, ${size[0]}rem)`,
