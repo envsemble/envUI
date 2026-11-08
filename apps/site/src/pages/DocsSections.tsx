@@ -5,7 +5,7 @@ import { ExampleSource } from '../figures/LiveExample';
 import { UsageFigure } from '../figures/Figures';
 import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleton';
 import { SpecimenHeadingLevel } from '../figures/SpecimenFrame';
-import { partsOf } from '../template/Parts';
+import { partsOf } from '../figures/anatomy/Parts';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';

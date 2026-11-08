@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { siteDevUrl } from '../helpers/Servers';
-import type * as PageModel from '../../../apps/site/src/pages/PageModel';
+import type * as PageModel from '../../../apps/site/src/routes/PageModel';
 import type * as RelatedPages from '../../../apps/site/src/template/RelatedPages';
 import type { DocumentationMetadata } from '../../../scripts/docs/model/DocumentationTypes';
 import { showTile } from '../helpers/SiteSpecHelpers';
@@ -29,13 +29,13 @@ test('each Related tile shows the component it names, also one documented on ano
   page,
 }) => {
   // An export documented on another's page, such as SearchField on TextField's, shows an example
-  // that renders it, not the page's lead (RelatedPages.ts).
+  // that renders it, not the page's lead (tilePictureOf, tiles/TilePictures.ts).
   await page.goto(`${siteDevUrl}/components`);
   const wrong = await page.evaluate(async () => {
     // The site's own modules, as its dev server serves them.
     const load = (path: string) => import(/* @vite-ignore */ path);
     const related = (await load('/src/template/RelatedPages.ts')) as typeof RelatedPages;
-    const { documents } = (await load('/src/pages/PageModel.ts')) as typeof PageModel;
+    const { documents } = (await load('/src/routes/PageModel.ts')) as typeof PageModel;
     const found: string[] = [];
     for (const document of documents) {
       const full = (await load(`/src/generated/pages/${document.id}.json`).catch(() => null)) as {

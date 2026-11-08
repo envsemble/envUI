@@ -1,4 +1,4 @@
-import { componentGroups, componentGroupId } from './PageModel';
+import { componentGroups, componentGroupId } from '../routes/PageModel';
 import { pagesOf } from '../routes/SiteRoutes';
 import { Gallery, type GalleryGroup } from '../figures/Gallery';
 

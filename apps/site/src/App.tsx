@@ -55,7 +55,7 @@ import { useSiteRoute } from './routes/useSiteRoute';
 import { DisplaySettingsProvider } from './display/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
 import { LoadingStatus } from './loading/LoadingStore';
-import { PageSkeleton } from './loading/PageSkeleton';
+import { PageSkeleton } from './pages/PageSkeleton';
 
 /** What each kind of page renders. */
 const pageContent: { [Kind in PageKind]: (props: { page: PageOfKind<Kind> }) => ReactNode } = {

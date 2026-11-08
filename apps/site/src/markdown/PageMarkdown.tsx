@@ -3,7 +3,7 @@ import { CopyButton, Link } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
 import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/markdown';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
-import { documents } from '../pages/PageModel';
+import { documents } from '../routes/PageModel';
 import { groupedPages, routeOfDocument } from '../routes/SiteRoutes';
 import { inDocs, routeHref } from '../routes/Address';
 import { currentRoute } from '../routes/useSiteRoute';

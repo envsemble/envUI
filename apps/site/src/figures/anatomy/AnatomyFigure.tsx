@@ -9,7 +9,7 @@ import { legendName, type OptionTable } from '@docs-model/CatalogueContent';
 import { PageMarkdown } from '../../markdown/PageMarkdown';
 import { FitFrame } from '../../fit/standalone/WidthFit';
 import { OptionLegend } from '../../markdown/OptionLegend';
-import { legendOf, partDescription } from '../../template/Parts';
+import { legendOf, partDescription } from './Parts';
 import { ExampleCode, ExampleRender } from '../LiveExample';
 import { OpenExample } from '../OpenExample';
 import { ExamplePlayback } from '../Specimen';

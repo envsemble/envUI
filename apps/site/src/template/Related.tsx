@@ -7,7 +7,8 @@ import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/usePlaying';
 import { TileStage } from '../figures/TileStage';
 import { useNear } from '../figures/useNear';
-import { alternativesOf, type Alternative, type TilePicture } from './RelatedPages';
+import { alternativesOf, type Alternative } from './RelatedPages';
+import type { TileFrame, TilePicture } from '../tiles/TilePictures';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
 import { flag } from '@envui-internal/internal/flag';
 
@@ -26,7 +27,7 @@ function RelatedTile({
 }: {
   picture?: TilePicture;
   near: boolean;
-  frame?: Alternative['frame'];
+  frame?: TileFrame;
   children: ReactNode;
 }) {
   const tile = useRef<HTMLLIElement>(null);

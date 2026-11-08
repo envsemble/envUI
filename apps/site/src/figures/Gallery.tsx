@@ -7,7 +7,7 @@ import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/usePlaying';
 import { TileStage } from './TileStage';
 import { useNear } from './useNear';
-import { frameOf, tilePictureOf, type TilePicture } from '../template/RelatedPages';
+import { frameOf, tilePictureOf, type TilePicture } from '../tiles/TilePictures';
 import { preloadTile } from '../tiles/Tiles';
 import { flag } from '@envui-internal/internal/flag';
 
