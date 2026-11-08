@@ -1,5 +1,5 @@
 // Unused files, exports and dependencies (npm run lint:unused, which npm run check runs). Each
-// ignore says why; "pending" lists what the refactor still has to remove, and only shrinks.
+// ignore says why.
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   // An export tagged @internal is there for a unit test that bundles the module from its source,

@@ -86,7 +86,7 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 
 - `packages/eslint-plugin` and `packages/stylelint-config` hold applications to envUI's components and tokens; their READMEs document the rules and how to run their tests.
 - A new ESLint rule is a file of `packages/eslint-plugin/src/rules/` named after it, registered in `src/index.js` and its recommended config, with its test in `test/<rule>.test.mjs` through `test/RuleTester.mjs`, and its section in the README. A Stylelint rule is configured in `packages/stylelint-config/index.js` and tested in `test/config.test.mjs`.
-- Each package ships its own `tokens.js` and `data/tokens.json`, copies that `npm run tokens:build` writes (`scripts/build/SyncLintPackages.ts`): `tokens.js` from `scripts/build/LintPackageTokens.js`, the data from the library's `src/generated/tokens.json`. Edit the sources, never the copies; `npm run tokens:check` fails on a stale one.
+- Each package ships its own `tokens.js`, `colorPolicy.js` and `data/tokens.json`, copies that `npm run tokens:build` writes (`scripts/build/SyncLintPackages.ts`): `tokens.js` from `scripts/build/LintPackageTokens.js`, `colorPolicy.js`, what both count as a raw color, from `scripts/build/LintPackageColorPolicy.js`, the data from the library's `src/generated/tokens.json`. Edit the sources, never the copies; `npm run tokens:check` fails on a stale one.
 
 ## Record the change
 
