@@ -43,9 +43,9 @@
     border-radius: var(--env-radius-sm);
     color: var(--env-color-fg-muted);
     text-decoration: none;
-    /* A label that becomes current takes the text color as the shape arrives beside it, in the
-       shape's slow duration and standard easing, and the one it leaves fades with it. */
-    transition: color var(--env-motion-duration-slow) var(--env-motion-ease);
+    /* A label that becomes current takes the text color quickly, ahead of the shape on its way
+       beside it, and the one it leaves fades as fast, so only one label reads as current. */
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     /* Long labels wrap, and a long word breaks rather than overflowing the column. */
     overflow-wrap: break-word;
   }

@@ -208,7 +208,7 @@ test('a smooth scroll to a section moves the marks through the sections on the w
       return first === (await outline());
     })
     .toBe(true);
-  // Still after longer than a glide lasts, the slow duration, 240 ms.
+  // Still after longer than a glide lasts, the medium duration, 160 ms.
   const rested = await outline();
   await page.evaluate(() => new Promise((done) => setTimeout(done, 400)));
   expect(await outline()).toBe(rested);

@@ -122,6 +122,12 @@
     }
   }
   @media (prefers-reduced-motion: no-preference) {
+    /* Closing, the content fades over the height's whole closing, so no empty band is left. */
+    .env-accordion-panel[data-ending-style] {
+      transition:
+        block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    }
     .env-accordion-indicator > svg {
       transition:
         opacity var(--env-motion-duration-fast) var(--env-motion-ease),

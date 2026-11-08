@@ -317,13 +317,17 @@
   }
 
   /* Motion: the chevron, always in the field, doesn't settle in as the field's other actions do,
-     and turns as the list opens without a reduced-motion preference. */
+     and turns as the list opens, and quickly back as it closes, done when the list is, without a
+     reduced-motion preference. */
   .env-combobox-trigger {
     animation: none;
   }
   @media (prefers-reduced-motion: no-preference) {
     .env-combobox-trigger .env-icon {
-      transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+      transition: transform var(--env-motion-duration-fast) var(--env-motion-ease-exit);
+    }
+    .env-combobox-trigger[data-popup-open] .env-icon {
+      transition: transform var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     }
   }
 
