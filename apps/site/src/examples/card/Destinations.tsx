@@ -1,4 +1,4 @@
-import { Card, Text } from '@envsemble/envui';
+import { Card, Grid, Text } from '@envsemble/envui';
 
 const projects = [
   { id: 'northwind', name: 'Northwind launch', summary: '12 open tasks · Due 14 November' },
@@ -6,17 +6,10 @@ const projects = [
   { id: 'handbook', name: 'Support handbook', summary: 'Archived in March' },
 ];
 
-/** As many columns of at least 14 rem as fit. */
-const grid = {
-  display: 'grid',
-  inlineSize: '100%',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 14rem), 1fr))',
-  gap: '1rem',
-} as const;
-
 export default function Destinations() {
   return (
-    <div style={grid}>
+    // As many columns of at least 14 rem as fit.
+    <Grid columns={{ min: '14rem' }} gap={4} style={{ inlineSize: '100%' }}>
       {projects.map(({ id, name, summary }) => (
         // The card's text names the link: its title, then its summary.
         <Card key={id} href={`/projects/${id}`}>
@@ -28,6 +21,6 @@ export default function Destinations() {
           </Text>
         </Card>
       ))}
-    </div>
+    </Grid>
   );
 }

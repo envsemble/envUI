@@ -1,4 +1,4 @@
-import { Table } from '@envsemble/envui';
+import { Column, Table } from '@envsemble/envui';
 
 const months = [
   { month: 'January', orders: 412, revenue: 18240, refunds: 6 },
@@ -25,7 +25,7 @@ const money = new Intl.NumberFormat('en-US', {
 export default function StickyHeader() {
   return (
     // The region scrolls within this height; an application's layout usually gives it one.
-    <div style={{ display: 'flex', flexDirection: 'column', blockSize: '18rem' }}>
+    <Column style={{ blockSize: '18rem' }}>
       <Table.Root aria-label="Sales by month" stickyHeader>
         <Table.Head>
           <Table.Row>
@@ -46,6 +46,6 @@ export default function StickyHeader() {
           ))}
         </Table.Body>
       </Table.Root>
-    </div>
+    </Column>
   );
 }

@@ -1,4 +1,4 @@
-import { Column, Row, Surface, Tabs, Text } from '@envsemble/envui';
+import { Column, Grid, Row, Surface, Tabs, Text } from '@envsemble/envui';
 import type { ReactNode } from 'react';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 
@@ -7,7 +7,7 @@ const steps = ['Draft', 'Review', 'Publish'];
 function View({ children }: { children: ReactNode }) {
   return (
     // The view fills the panel, as a canvas would.
-    <Surface background="muted" style={{ flex: 1, display: 'grid', placeItems: 'center' }}>
+    <Surface render={<Grid />} background="muted" style={{ flex: 1, placeItems: 'center' }}>
       {children}
     </Surface>
   );
@@ -43,14 +43,7 @@ function Outline() {
 export default function FillARegion() {
   return (
     // The region has a size of its own, as an application's layout gives it.
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        inlineSize: 'min(100%, 32rem)',
-        blockSize: '16rem',
-      }}
-    >
+    <Column style={{ inlineSize: 'min(100%, 32rem)', blockSize: '16rem' }}>
       <Tabs
         aria-label="Diagram views"
         fill
@@ -76,6 +69,6 @@ export default function FillARegion() {
           },
         ]}
       />
-    </div>
+    </Column>
   );
 }
