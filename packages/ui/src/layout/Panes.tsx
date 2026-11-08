@@ -34,6 +34,7 @@ import { remPixels, roundToHundredth } from '../internal/lengths.js';
 import { useResizableWidth } from '../internal/useResizableWidth.js';
 import { useLatest } from '../internal/useLatest.js';
 import { flag } from '../internal/flag.js';
+import { keepTabInside, useSupportingSheet } from './internal/useSupportingSheet.js';
 import '../styles/Base.css';
 import '../styles/Panes.css';
 
@@ -232,14 +233,6 @@ function roomFor(divider: HTMLElement) {
   return roundToHundredth((root.clientWidth - divider.offsetWidth) / rem - other);
 }
 
-/** What Tab reaches inside an element, in order. */
-const tabbables = (element: HTMLElement) =>
-  [
-    ...element.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]',
-    ),
-  ].filter((candidate) => candidate.tabIndex >= 0 && candidate.getClientRects().length > 0);
-
 /**
  * Two panes side by side, after Material's pane patterns, and how they behave in less room: a main
  * pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time.
@@ -391,80 +384,7 @@ function Supporting({
   const messages = useMessages('panes', panes);
   const { contained } = usePortalContainer();
   const pane = useRef<HTMLDivElement | null>(null);
-  const returnFocus = useRef<HTMLElement | null>(null);
-  // Whether the pane is a sheet: CSS decides, positioning it over the main pane below splitAt. Read
-  // while it is open, again as the Panes' width changes; side by side it is there all along.
-  const [sheet, setSheet] = useState(false);
-  useLayoutEffect(() => {
-    const element = pane.current;
-    if (!open || !element) {
-      setSheet(false);
-      return;
-    }
-    const check = () => {
-      const { position } = getComputedStyle(element);
-      setSheet(position === 'absolute' || position === 'fixed');
-    };
-    check();
-    const observer = new ResizeObserver(check);
-    if (element.parentElement) observer.observe(element.parentElement);
-    return () => observer.disconnect();
-  }, [open]);
-  // A sheet is modal, unless it belongs to a contained PortalContainer rather than the window.
-  const modal = sheet && !contained;
-  // As a sheet, everything else on the page is inert, so aria-modal holds, and focus moves in; as it
-  // closes, focus goes back to where it was. A sheet that becomes a pane beside the main one, as
-  // the Panes widen, keeps focus where it is. A sheet fixed to the window keeps the page still.
-  const openRef = useRef(open);
-  openRef.current = open;
-  useLayoutEffect(() => {
-    const element = pane.current;
-    if (!modal || !element) return;
-    const document = element.ownerDocument;
-    const active = document.activeElement;
-    returnFocus.current = active instanceof HTMLElement ? active : null;
-    if (!element.contains(active)) element.focus();
-    const others: HTMLElement[] = [];
-    for (let node: Element = element; node.parentElement && node !== document.body;) {
-      for (const other of node.parentElement.children)
-        if (
-          other instanceof HTMLElement &&
-          other !== node &&
-          !other.inert &&
-          // The backdrop stays live, as a press on it closes the sheet, and so do live regions, such
-          // as toasts, which announce what happens meanwhile.
-          !other.classList.contains('env-panes-backdrop') &&
-          !other.hasAttribute('aria-live')
-        )
-          others.push(other);
-      node = node.parentElement;
-    }
-    for (const other of others) other.inert = true;
-    const html = document.documentElement;
-    const still = getComputedStyle(element).position === 'fixed';
-    const kept = { overflow: html.style.overflow, gutter: html.style.scrollbarGutter };
-    if (still) {
-      // The page keeps its scrollbar's room, so nothing moves.
-      html.style.scrollbarGutter = 'stable';
-      html.style.overflow = 'hidden';
-    }
-    return () => {
-      for (const other of others) other.inert = false;
-      if (still) {
-        html.style.overflow = kept.overflow;
-        html.style.scrollbarGutter = kept.gutter;
-      }
-      const target = returnFocus.current;
-      returnFocus.current = null;
-      if (openRef.current) return;
-      const now = document.activeElement;
-      const lost = now === null || now === document.body || element.contains(now);
-      if (!target?.isConnected || !lost) return;
-      // WebKit lets focus onto what was inert only once styles are worked out again.
-      target.getBoundingClientRect();
-      target.focus();
-    };
-  }, [modal]);
+  const { sheet, modal } = useSupportingSheet(pane, open, contained);
   return (
     <div
       tabIndex={-1}
@@ -487,21 +407,7 @@ function Supporting({
           close('escape-key');
           return;
         }
-        // Tab stays in a modal sheet, from its last stop to its first and back.
-        if (event.key !== 'Tab' || !modal) return;
-        const stops = tabbables(event.currentTarget);
-        const first = stops[0];
-        const last = stops[stops.length - 1];
-        const active = event.currentTarget.ownerDocument.activeElement;
-        if (!first || !last) {
-          event.preventDefault();
-        } else if (event.shiftKey && (active === first || active === event.currentTarget)) {
-          event.preventDefault();
-          last.focus();
-        } else if (!event.shiftKey && active === last) {
-          event.preventDefault();
-          first.focus();
-        }
+        if (modal) keepTabInside(event);
       }}
     >
       {/* Always rendered, so the server's markup has it; the style sheet shows it only while the
