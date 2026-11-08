@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext, type ReactNode } from 'react';
-import * as Menu from '../navigation/Menu.js';
+import * as Menu from '../actions/Menu.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { themePreference } from './messages/themePreference.js';
 import { ThemePreferenceContext } from './internal/ThemePreferenceContext.js';

@@ -171,7 +171,7 @@
     },
     "AnimatedNumber": {
       "root": "env-animated-number",
-      "source": "packages/ui/src/content/AnimatedNumber.tsx",
+      "source": "packages/ui/src/data-display/AnimatedNumber.tsx",
       "parts": [
         {
           "class": "env-animated-number",
@@ -209,7 +209,7 @@
     },
     "Avatar": {
       "root": "env-avatar",
-      "source": "packages/ui/src/content/Avatar.tsx",
+      "source": "packages/ui/src/data-display/Avatar.tsx",
       "parts": [
         {
           "class": "env-avatar",
@@ -303,7 +303,7 @@
     },
     "AvatarButton": {
       "root": "env-avatar-button",
-      "source": "packages/ui/src/actions/AvatarButton.tsx",
+      "source": "packages/ui/src/data-display/AvatarButton.tsx",
       "parts": [
         {
           "class": "env-avatar-button",
@@ -322,7 +322,7 @@
     },
     "AvatarGroup": {
       "root": "env-avatar-group",
-      "source": "packages/ui/src/content/AvatarGroup.tsx",
+      "source": "packages/ui/src/data-display/AvatarGroup.tsx",
       "parts": [
         {
           "class": "env-avatar-group",
@@ -390,7 +390,7 @@
     },
     "Badge": {
       "root": "env-badge",
-      "source": "packages/ui/src/content/Badge.tsx",
+      "source": "packages/ui/src/data-display/Badge.tsx",
       "parts": [
         {
           "class": "env-badge",
@@ -719,7 +719,7 @@
     },
     "CalendarHeatmap": {
       "root": "env-calendar-heatmap",
-      "source": "packages/ui/src/content/CalendarHeatmap.tsx",
+      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
       "parts": [
         {
           "class": "env-calendar-heatmap",
@@ -825,7 +825,7 @@
     },
     "Card": {
       "root": "env-card",
-      "source": "packages/ui/src/content/Card.tsx",
+      "source": "packages/ui/src/layout/Card.tsx",
       "parts": [
         {
           "class": "env-card",
@@ -897,6 +897,7 @@
         }
       ],
       "uses": [
+        "Skeleton",
         "Surface",
         "Text"
       ],
@@ -1009,7 +1010,7 @@
     },
     "CodeDiff": {
       "root": "env-code-diff",
-      "source": "packages/ui/src/diff/CodeDiff.tsx",
+      "source": "packages/ui/src/content/CodeDiff.tsx",
       "parts": [
         {
           "class": "env-code-diff",
@@ -1034,7 +1035,7 @@
     },
     "ColorPicker": {
       "root": "env-color-picker",
-      "source": "packages/ui/src/color/ColorPicker.tsx",
+      "source": "packages/ui/src/forms/color/ColorPicker.tsx",
       "parts": [
         {
           "class": "env-color-picker",
@@ -1264,7 +1265,7 @@
     },
     "ColorPickerButton": {
       "root": "env-color-picker-button",
-      "source": "packages/ui/src/color/ColorPickerButton.tsx",
+      "source": "packages/ui/src/forms/color/ColorPickerButton.tsx",
       "parts": [
         {
           "class": "env-color-picker-button",
@@ -1305,7 +1306,7 @@
     },
     "ColorSwatch": {
       "root": "env-color-swatch",
-      "source": "packages/ui/src/color/ColorSwatch.tsx",
+      "source": "packages/ui/src/forms/color/ColorSwatch.tsx",
       "parts": [
         {
           "class": "env-color-swatch",
@@ -1490,7 +1491,7 @@
     },
     "CommandPalette": {
       "root": "env-command-palette",
-      "source": "packages/ui/src/feedback/CommandPalette.tsx",
+      "source": "packages/ui/src/actions/CommandPalette.tsx",
       "parts": [
         {
           "class": "env-command-palette",
@@ -1603,7 +1604,7 @@
     },
     "Composer": {
       "root": "env-composer",
-      "source": "packages/ui/src/forms/Composer.tsx",
+      "source": "packages/ui/src/content/Composer.tsx",
       "parts": [
         {
           "class": "env-composer",
@@ -1689,7 +1690,7 @@
     },
     "ConfirmDialog": {
       "root": "env-dialog",
-      "source": "packages/ui/src/feedback/ConfirmDialog.tsx",
+      "source": "packages/ui/src/overlays/ConfirmDialog.tsx",
       "parts": [
         {
           "class": "env-confirm-dialog-form",
@@ -1858,7 +1859,7 @@
     },
     "DescriptionList": {
       "root": "env-description-list",
-      "source": "packages/ui/src/content/DescriptionList.tsx",
+      "source": "packages/ui/src/data-display/DescriptionList.tsx",
       "parts": [
         {
           "class": "env-description-list",
@@ -1912,7 +1913,7 @@
     },
     "Dialog": {
       "root": "env-dialog",
-      "source": "packages/ui/src/feedback/Dialog.tsx",
+      "source": "packages/ui/src/overlays/Dialog.tsx",
       "parts": [
         {
           "class": "env-dialog",
@@ -2023,7 +2024,7 @@
     },
     "DiffStat": {
       "root": "env-diff-stat",
-      "source": "packages/ui/src/content/DiffStat.tsx",
+      "source": "packages/ui/src/data-display/DiffStat.tsx",
       "parts": [
         {
           "class": "env-diff-stat",
@@ -2315,7 +2316,7 @@
     },
     "Graphic": {
       "root": "env-graphic",
-      "source": "packages/ui/src/content/Graphic.tsx",
+      "source": "packages/ui/src/data-display/Graphic.tsx",
       "parts": [
         {
           "class": "env-graphic",
@@ -2377,7 +2378,7 @@
     },
     "HoverCard": {
       "root": "env-hover-card",
-      "source": "packages/ui/src/feedback/HoverCard.tsx",
+      "source": "packages/ui/src/overlays/HoverCard.tsx",
       "parts": [
         {
           "class": "env-hover-card",
@@ -2627,7 +2628,7 @@
     },
     "List": {
       "root": "env-list",
-      "source": "packages/ui/src/content/List.tsx",
+      "source": "packages/ui/src/data-display/List.tsx",
       "parts": [
         {
           "class": "env-list",
@@ -2788,7 +2789,7 @@
     },
     "MarkdownEditor": {
       "root": "env-markdown-editor",
-      "source": "packages/ui/src/forms/MarkdownEditor.tsx",
+      "source": "packages/ui/src/content/MarkdownEditor.tsx",
       "parts": [
         {
           "class": "env-markdown-editor",
@@ -2820,7 +2821,7 @@
     },
     "Menu": {
       "root": "env-menu",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "parts": [
         {
           "class": "env-menu",
@@ -2966,7 +2967,7 @@
     },
     "Menubar": {
       "root": "env-menubar",
-      "source": "packages/ui/src/navigation/Menubar.tsx",
+      "source": "packages/ui/src/actions/Menubar.tsx",
       "parts": [
         {
           "class": "env-menubar",
@@ -3126,7 +3127,7 @@
     },
     "Meter": {
       "root": "env-meter",
-      "source": "packages/ui/src/feedback/Meter.tsx",
+      "source": "packages/ui/src/data-display/Meter.tsx",
       "parts": [
         {
           "class": "env-meter",
@@ -3738,7 +3739,7 @@
     },
     "PanelDock": {
       "root": "env-panel-dock",
-      "source": "packages/ui/src/navigation/panel-dock/PanelDock.tsx",
+      "source": "packages/ui/src/layout/panel-dock/PanelDock.tsx",
       "parts": [
         {
           "class": "env-panel-dock",
@@ -4039,7 +4040,7 @@
     },
     "Popover": {
       "root": "env-popover",
-      "source": "packages/ui/src/feedback/Popover.tsx",
+      "source": "packages/ui/src/overlays/Popover.tsx",
       "parts": [
         {
           "class": "env-popover",
@@ -4203,7 +4204,7 @@
     },
     "Rating": {
       "root": "env-rating",
-      "source": "packages/ui/src/content/Rating.tsx",
+      "source": "packages/ui/src/data-display/Rating.tsx",
       "parts": [
         {
           "class": "env-rating",
@@ -4244,7 +4245,7 @@
     },
     "RelativeTime": {
       "root": "env-relative-time",
-      "source": "packages/ui/src/content/RelativeTime.tsx",
+      "source": "packages/ui/src/data-display/RelativeTime.tsx",
       "parts": [
         {
           "class": "env-relative-time",
@@ -4262,7 +4263,7 @@
     },
     "RichText": {
       "root": "env-rich-text",
-      "source": "packages/ui/src/rich-text/RichText.tsx",
+      "source": "packages/ui/src/forms/rich-text/RichText.tsx",
       "parts": [
         {
           "class": "env-rich-text",
@@ -4330,7 +4331,7 @@
     },
     "RichTextEditor": {
       "root": "env-rich-text-editor",
-      "source": "packages/ui/src/rich-text/RichTextEditor.tsx",
+      "source": "packages/ui/src/forms/rich-text/RichTextEditor.tsx",
       "parts": [
         {
           "class": "env-rich-text-editor",
@@ -4553,7 +4554,7 @@
     },
     "SegmentedControl": {
       "root": "env-segmented-control",
-      "source": "packages/ui/src/actions/SegmentedControl.tsx",
+      "source": "packages/ui/src/forms/SegmentedControl.tsx",
       "parts": [
         {
           "class": "env-segmented-control",
@@ -4764,7 +4765,7 @@
     },
     "Sheet": {
       "root": "env-sheet",
-      "source": "packages/ui/src/feedback/Sheet.tsx",
+      "source": "packages/ui/src/overlays/Sheet.tsx",
       "parts": [
         {
           "class": "env-sheet",
@@ -5004,7 +5005,7 @@
     },
     "Surface": {
       "root": "env-surface",
-      "source": "packages/ui/src/foundations/Surface.tsx",
+      "source": "packages/ui/src/layout/Surface.tsx",
       "parts": [
         {
           "class": "env-surface",
@@ -5103,7 +5104,7 @@
     },
     "Table": {
       "root": "env-table",
-      "source": "packages/ui/src/content/Table.tsx",
+      "source": "packages/ui/src/data-display/Table.tsx",
       "parts": [
         {
           "class": "env-table",
@@ -6018,7 +6019,7 @@
     },
     "Tooltip": {
       "root": "env-tooltip",
-      "source": "packages/ui/src/feedback/Tooltip.tsx",
+      "source": "packages/ui/src/overlays/Tooltip.tsx",
       "parts": [
         {
           "class": "env-tooltip",
@@ -6084,7 +6085,7 @@
     },
     "TopBar": {
       "root": "env-top-bar",
-      "source": "packages/ui/src/navigation/TopBar.tsx",
+      "source": "packages/ui/src/layout/TopBar.tsx",
       "parts": [
         {
           "class": "env-top-bar",
@@ -6712,6 +6713,7 @@
         "Alert",
         "Breadcrumbs",
         "CalendarHeatmap",
+        "Card",
         "ColorPickerButton",
         "Combobox",
         "CommandPalette",

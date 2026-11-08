@@ -126,10 +126,10 @@ export const reportedCodes = new Map<number, string>([
 
 /**
  * The entries an unimported name that several export comes from first, before the rest in the
- * manifest's order: the root, and content before rich-text, which also exports the Markdown link
+ * manifest's order: the root, and markdown before rich-text, which also exports the Markdown link
  * types but loads Tiptap.
  */
-const preferredEntries = ['@envsemble/envui', '@envsemble/envui/content'];
+const preferredEntries = ['@envsemble/envui', '@envsemble/envui/markdown'];
 
 /** Every entry point's specifier, in order of preference for an unimported name. */
 const entries = [

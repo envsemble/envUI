@@ -18,7 +18,7 @@ import { useOpenState } from '../../internal/useOpenState.js';
 import { useDirection } from '../../internal/useDirection.js';
 import { containedOpenChange, usePortalContainer } from '../../internal/PortalContainerContext.js';
 import type { OverlayOpenChangeReason } from '../../internal/overlayOpenChangeReason.js';
-import type { PopoverOpenChangeReason } from '../../feedback/Popover.js';
+import type { PopoverOpenChangeReason } from '../../overlays/Popover.js';
 import { IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
 import {
@@ -27,10 +27,10 @@ import {
   type FieldProps,
   type FieldSizeProps,
   type TextFieldDecorationProps,
-} from './FieldFrame.js';
+} from '../../internal/field/FieldFrame.js';
 import { PickerPopup, type PickerName } from './PickerPopup.js';
-import { useFormReset } from './useFormReset.js';
-import { useFieldMetadata } from './useFieldMetadata.js';
+import { useFormReset } from '../../internal/field/useFormReset.js';
+import { useFieldMetadata } from '../../internal/field/useFieldMetadata.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/DatePicker.css';

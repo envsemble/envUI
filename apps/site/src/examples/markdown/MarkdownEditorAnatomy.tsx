@@ -1,4 +1,4 @@
-import { MarkdownEditor } from '@envsemble/envui/content';
+import { MarkdownEditor } from '@envsemble/envui/markdown';
 
 export default function MarkdownEditorAnatomy() {
   return (

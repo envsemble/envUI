@@ -2,7 +2,7 @@
 
 import { useId, useMemo, useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../foundations/Layout.js';
+import { Grid, Row } from '../layout/Layout.js';
 import { useHydrated } from '../internal/useHydrated.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';

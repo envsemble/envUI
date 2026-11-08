@@ -88,7 +88,7 @@ test('a component runs the spec of its name, or of the name its alias gives', ()
   assert.deepEqual(specs('packages/ui/src/forms/Checkbox.tsx'), ['Checkbox']);
   assert.deepEqual(specs('packages/ui/src/styles/Table.css'), ['Table']);
   // A file in a component's folder is about that component.
-  assert.ok(specs('packages/ui/src/navigation/panel-dock/Header.tsx').includes('PanelDock'));
+  assert.ok(specs('packages/ui/src/layout/panel-dock/panelDockTypes.ts').includes('PanelDock'));
   assert.deepEqual(specs('packages/ui/src/foundations/Theme.tsx'), [
     'ThemeContrast',
     'ThemePreference',

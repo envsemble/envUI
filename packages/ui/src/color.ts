@@ -3,6 +3,6 @@
  * application installs @react-aria/color, @react-stately/color and @react-aria/i18n itself; an
  * application that never imports this entry never loads them.
  */
-export * from './color/ColorPicker.js';
-export * from './color/ColorPickerButton.js';
-export * from './color/ColorSwatch.js';
+export * from './forms/color/ColorPicker.js';
+export * from './forms/color/ColorPickerButton.js';
+export * from './forms/color/ColorSwatch.js';

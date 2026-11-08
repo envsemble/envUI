@@ -1,5 +1,5 @@
 import { Column, DescriptionList, Text } from '@envsemble/envui';
-import { Code } from '@envsemble/envui/content';
+import { Code } from '@envsemble/envui/code';
 import { lazyPart } from '../loading/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
 import { UsageFigure } from '../figures/Figures';

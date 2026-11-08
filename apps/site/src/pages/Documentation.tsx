@@ -1,11 +1,7 @@
 import { createContext, useContext, useMemo } from 'react';
 import { CopyButton, Link } from '@envsemble/envui';
-import {
-  CodeBlock,
-  Markdown,
-  type MarkdownLinkProps,
-  type MarkdownProps,
-} from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
+import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/markdown';
 import { documents, type Documentation as Document } from './PageModel';
 import { groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { inDocs, routeHref } from '../navigation/Address';

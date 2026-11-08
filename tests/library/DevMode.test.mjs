@@ -92,7 +92,7 @@ test('parts.json is indexed by part class, and names never wait for it', () => {
     components: {
       Card: {
         root: 'env-card',
-        source: 'packages/ui/src/content/Card.tsx',
+        source: 'packages/ui/src/layout/Card.tsx',
         parts: [
           { class: 'env-card', description: "The card's surface." },
           { class: 'env-card-header', description: 'The title row.' },

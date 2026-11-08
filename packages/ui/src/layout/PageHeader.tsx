@@ -1,5 +1,5 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
-import { Column, Row } from '../foundations/Layout.js';
+import { Column, Row } from './Layout.js';
 import { Text } from '../foundations/Text.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';

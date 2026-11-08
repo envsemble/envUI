@@ -1,6 +1,6 @@
 import { useRef, type CSSProperties, type ReactNode } from 'react';
 import { Surface } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 import { useDelayPassed, usePlaceholderShown } from './LoadingStore';
 import { useArrival } from './useArrival';
 import { recordedSize } from './RecordedSizes';

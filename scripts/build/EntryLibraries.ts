@@ -7,7 +7,7 @@ import { dirname, resolve } from 'node:path';
  * dependency or peer, as GitHub Packages drops `peerDependenciesMeta` and npm would then install
  * every peer; docs/setup.md names each entry's libraries instead.
  */
-export const libraryEntries = ['content', 'rich-text', 'diff', 'color'];
+export const libraryEntries = ['code', 'markdown', 'rich-text', 'diff', 'color'];
 
 /** The libraries every entry may import, which envUI declares itself. */
 const declared = new Set(['react', 'react-dom', '@base-ui/react']);

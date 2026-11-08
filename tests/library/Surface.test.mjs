@@ -7,7 +7,7 @@ import { readFile } from 'node:fs/promises';
 
 const read = (path) => readFile(new URL(`../../${path}`, import.meta.url), 'utf8');
 const [source, css, tokens] = await Promise.all([
-  read('packages/ui/src/foundations/Surface.tsx'),
+  read('packages/ui/src/layout/Surface.tsx'),
   read('packages/ui/src/styles/Surface.css'),
   read('packages/ui/src/generated/Tokens.css'),
 ]);

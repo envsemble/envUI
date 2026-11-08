@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Card, Column, Theme } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 import { CodeDiff } from '@envsemble/envui/diff';
 
 const before = '{\n  "theme": "light",\n  "density": "standard"\n}';

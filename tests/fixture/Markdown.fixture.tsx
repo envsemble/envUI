@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { EnvUIProvider, Column } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 
 const document = `## Prices
 

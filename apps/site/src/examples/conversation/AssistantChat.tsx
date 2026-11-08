@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { Button, Column, Composer, CopyButton, Grid, Message, MessageList } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 import { IconArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
 
 interface Entry {

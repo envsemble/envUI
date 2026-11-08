@@ -1,7 +1,7 @@
 'use client';
 
 import type { CSSProperties, InputHTMLAttributes, Ref } from 'react';
-import { useFieldMetadata } from './internal/useFieldMetadata.js';
+import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import {
   FieldFrame,
   isLabelShown,
@@ -10,10 +10,10 @@ import {
   type TextFieldAffixProps,
   type TextFieldAppearanceProps,
   type TextFieldDecorationProps,
-} from './internal/FieldFrame.js';
+} from '../internal/field/FieldFrame.js';
 
 /** A text field's look: outline or ghost. */
-export type { FieldVariant as TextFieldVariant } from './internal/FieldFrame.js';
+export type { FieldVariant as TextFieldVariant } from '../internal/field/FieldFrame.js';
 import '../styles/Base.css';
 import '../styles/TextField.css';
 

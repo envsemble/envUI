@@ -1,6 +1,6 @@
 import { Suspense, use, useState, type MouseEvent, type ReactNode } from 'react';
 import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 import type { DeviceKind, StageFill } from '@docs-model/DocumentationTypes';
 import { FigureDevice, OnDevice } from './DeviceFrame';
 import { LoadBoundary } from '../loading/LoadBoundary';

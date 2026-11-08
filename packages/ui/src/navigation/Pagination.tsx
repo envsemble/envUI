@@ -3,11 +3,11 @@
 import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { IconButton, type ButtonVariant } from '../actions/Button.js';
-import { Tooltip } from '../feedback/Tooltip.js';
+import { Tooltip } from '../overlays/Tooltip.js';
 import { IconChevronLeft } from '../icons/ChevronLeft.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { classNames } from '../internal/classNames.js';
-import { Row } from '../foundations/Layout.js';
+import { Row } from '../layout/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { pagination } from '../foundations/messages/pagination.js';

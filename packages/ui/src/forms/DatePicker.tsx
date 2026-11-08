@@ -4,7 +4,7 @@ import { useId, type ButtonHTMLAttributes, type CSSProperties, type Ref } from '
 import { useMessages } from '../internal/EnvUIContext.js';
 import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
 import { Button } from '../actions/Button.js';
-import { Grid, Row } from '../foundations/Layout.js';
+import { Grid, Row } from '../layout/Layout.js';
 import { IconCalendarClock } from '../icons/CalendarClock.js';
 import { IconCalendarMonth } from '../icons/CalendarMonth.js';
 import { Calendar, calendarActiveDay } from './Calendar.js';
@@ -12,7 +12,7 @@ import {
   type FieldProps,
   type FieldSizeProps,
   type TextFieldDecorationProps,
-} from './internal/FieldFrame.js';
+} from '../internal/field/FieldFrame.js';
 import {
   PickerField,
   usePickerOpen,

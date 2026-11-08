@@ -10,7 +10,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 const { Box, Column, Grid, Row } = await importSource(
   'Layout',
-  'packages/ui/src/foundations/Layout.tsx',
+  'packages/ui/src/layout/Layout.tsx',
 );
 
 const markup = (element) => renderToStaticMarkup(element);

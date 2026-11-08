@@ -16,7 +16,16 @@ const dist = join(repository, 'packages/ui/dist');
 const modules = await libraryModules();
 
 /** The entry points, whose `export *` and `export * as` lines a server component imports through. */
-const entries = ['index', 'content', 'diff', 'color', 'rich-text', 'theme-bootstrap', 'dev'];
+const entries = [
+  'index',
+  'code',
+  'markdown',
+  'diff',
+  'color',
+  'rich-text',
+  'theme-bootstrap',
+  'dev',
+];
 
 const startsWithDirective = (code) => /^\s*(['"])use client\1;?/.test(code);
 
@@ -39,7 +48,7 @@ test("every module that uses client-only APIs, and only such a module, says 'use
     assert.equal(module.client, false, `${entry} stays a server module`);
   }
   // Menu.Item is a part of a client module; the Menu namespace is an `export * as` in the entry.
-  assert.ok(modules.find(({ file }) => file === 'navigation/Menu.tsx').client);
+  assert.ok(modules.find(({ file }) => file === 'actions/Menu.tsx').client);
 });
 
 test('the check sees what makes a module a client module, also by name and through types', () => {
@@ -221,7 +230,7 @@ test('a server component imports envUI and renders it on the server', () => {
     assert.ok(main.client.includes(name), `${name} is a client reference`);
   // The page's client components receive only what a server can send them.
   const page = JSON.stringify(result.page);
-  assert.match(page, /"client":"navigation\/Menu\.js#Item"/);
+  assert.match(page, /"client":"actions\/Menu\.js#Item"/);
   assert.match(page, /"client":"icons\/Home\.js#IconHome"/);
   // A pending Button hands ActionElement a boolean, not a click handler.
   assert.match(

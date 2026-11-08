@@ -1,5 +1,5 @@
 import { Alert } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 
 const text = `Budgets for the next quarter are due on Friday.
 

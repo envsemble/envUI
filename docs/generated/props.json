@@ -203,7 +203,7 @@
     },
     "AnimatedNumber": {
       "kind": "component",
-      "source": "packages/ui/src/content/AnimatedNumber.tsx",
+      "source": "packages/ui/src/data-display/AnimatedNumber.tsx",
       "description": "A number within text that rolls to its new value when it changes: up when it grows and down when it shrinks, so a count updated by other controls is noticed. The text is always the current value.",
       "props": [
         {
@@ -229,7 +229,7 @@
     },
     "Avatar": {
       "kind": "component",
-      "source": "packages/ui/src/content/Avatar.tsx",
+      "source": "packages/ui/src/data-display/Avatar.tsx",
       "description": "A round picture of a person or organization, with their initials or the default person picture as fallback.",
       "props": [
         {
@@ -288,7 +288,7 @@
     },
     "AvatarButton": {
       "kind": "component",
-      "source": "packages/ui/src/actions/AvatarButton.tsx",
+      "source": "packages/ui/src/data-display/AvatarButton.tsx",
       "description": "A person's avatar as a button, typically the account menu trigger in a topbar. A halo shows hover, press and an open menu, and the tooltip names the account.",
       "props": [
         {
@@ -332,7 +332,7 @@
     },
     "AvatarGroup": {
       "kind": "component",
-      "source": "packages/ui/src/content/AvatarGroup.tsx",
+      "source": "packages/ui/src/data-display/AvatarGroup.tsx",
       "description": "A pile of avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip. Hover, a tap or keyboard focus spreads it.",
       "props": [
         {
@@ -397,7 +397,7 @@
     },
     "Badge": {
       "kind": "component",
-      "source": "packages/ui/src/content/Badge.tsx",
+      "source": "packages/ui/src/data-display/Badge.tsx",
       "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats; with count, a compact count, such as 12 unread.",
       "props": [
         {
@@ -448,7 +448,7 @@
     },
     "Box": {
       "kind": "component",
-      "source": "packages/ui/src/foundations/Layout.tsx",
+      "source": "packages/ui/src/layout/Layout.tsx",
       "description": "A plain block for what needs no row or column of its own: an inset (`padding`), a size container (`container`) or a named node. It sizes to its content and never paints.",
       "props": [
         {
@@ -713,7 +713,7 @@
     },
     "CalendarHeatmap": {
       "kind": "component",
-      "source": "packages/ui/src/content/CalendarHeatmap.tsx",
+      "source": "packages/ui/src/data-display/CalendarHeatmap.tsx",
       "description": "A calendar of daily values with weeks as columns and weekdays as rows, colored in steps of a tone. Each day names its date and value, shows them in a tooltip on hover and focus, and the grid is one tab stop that the arrow keys move through.",
       "props": [
         {
@@ -839,7 +839,7 @@
     },
     "Card": {
       "kind": "component",
-      "source": "packages/ui/src/content/Card.tsx",
+      "source": "packages/ui/src/layout/Card.tsx",
       "description": "A rounded surface that groups content about one subject: a content card with an optional title row and actions, or one link or button.",
       "props": [
         {
@@ -1013,7 +1013,7 @@
         "code"
       ],
       "entries": [
-        "@envsemble/envui/content"
+        "@envsemble/envui/code"
       ]
     },
     "CodeBlock": {
@@ -1058,12 +1058,12 @@
         "div"
       ],
       "entries": [
-        "@envsemble/envui/content"
+        "@envsemble/envui/code"
       ]
     },
     "CodeDiff": {
       "kind": "component",
-      "source": "packages/ui/src/diff/CodeDiff.tsx",
+      "source": "packages/ui/src/content/CodeDiff.tsx",
       "description": "The changes between two versions of a file, rendered by Diffs (diffs.com) in the code theme of the app theme, as code blocks are; the whole file when nothing changed.",
       "props": [
         {
@@ -1121,7 +1121,7 @@
     },
     "ColorPicker": {
       "kind": "component",
-      "source": "packages/ui/src/color/ColorPicker.tsx",
+      "source": "packages/ui/src/forms/color/ColorPicker.tsx",
       "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format, or the fields of several `formats` together, each with its own copy button; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
       "props": [
         {
@@ -1244,7 +1244,7 @@
     },
     "ColorPickerButton": {
       "kind": "component",
-      "source": "packages/ui/src/color/ColorPickerButton.tsx",
+      "source": "packages/ui/src/forms/color/ColorPickerButton.tsx",
       "description": "A compact button that shows a color as a swatch and its value, and opens a ColorPicker in a Popover: the common way to choose a color in a toolbar, a row or a form. The button is named after the label and the color, such as Accent color, #6750A4. className, style, ref and the other native props go to the button.",
       "props": [
         {
@@ -1387,7 +1387,7 @@
     },
     "ColorSwatch": {
       "kind": "component",
-      "source": "packages/ui/src/color/ColorSwatch.tsx",
+      "source": "packages/ui/src/forms/color/ColorSwatch.tsx",
       "description": "A small rounded sample of a color, with a hairline edge that keeps light and dark colors visible on every surface and a checkerboard under a translucent one. With `format`, it writes the color's value beside it, and with `label`, a name. Alone, it is an image named by the color's description, such as dark purple, in the EnvUIProvider's language; as a Button's icon it is decorative, and the button's text names the color.",
       "props": [
         {
@@ -1425,7 +1425,7 @@
     },
     "Column": {
       "kind": "component",
-      "source": "packages/ui/src/foundations/Layout.tsx",
+      "source": "packages/ui/src/layout/Layout.tsx",
       "description": "Lays its direct children out one under another, `gap` apart, such as a form's fields. A flex column that sizes to its content and never paints.",
       "props": [
         {
@@ -1659,7 +1659,7 @@
     },
     "CommandPalette": {
       "kind": "component",
-      "source": "packages/ui/src/feedback/CommandPalette.tsx",
+      "source": "packages/ui/src/actions/CommandPalette.tsx",
       "description": "A quick-open dialog near the top of the window: a search field over a list of options the application filters and ranks, built on Base UI's Autocomplete inside a dialog. The arrow keys move the highlight while typing continues, and the number of results is announced as it changes. className, style, ref and data attributes go to the dialog's surface.",
       "props": [
         {
@@ -1779,7 +1779,7 @@
     },
     "Composer": {
       "kind": "component",
-      "source": "packages/ui/src/forms/Composer.tsx",
+      "source": "packages/ui/src/content/Composer.tsx",
       "description": "The message field of a conversation: a multiline field on a raised surface that grows with its text up to maxRows, with a send button at the end that becomes a stop button while running. Enter submits, Shift+Enter starts a new line and an input method's composition never submits. Without onSend, Enter and the send button submit the field's form.",
       "props": [
         {
@@ -1995,7 +1995,7 @@
     },
     "ConfirmDialog": {
       "kind": "component",
-      "source": "packages/ui/src/feedback/ConfirmDialog.tsx",
+      "source": "packages/ui/src/overlays/ConfirmDialog.tsx",
       "description": "Asks people to confirm an action whose consequence needs a sentence, such as deleting a project: an alert dialog with a question, a description, Cancel and a confirm button that names the consequence. It waits for onConfirm's promise, pending, and stays open when it fails. className, style, ref and data attributes go to the dialog's surface.",
       "props": [
         {
@@ -2096,7 +2096,7 @@
     },
     "ContextMenu": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/ContextMenu.tsx",
+      "source": "packages/ui/src/actions/ContextMenu.tsx",
       "description": "Actions for an area, opened by right click, long press, the ContextMenu key or Shift+F10. In a contained PortalContainer, such as a preview of an interface, it is part of the container as its other overlays are: it opens by right click and the keyboard without hiding the page, locking its scroll or taking focus.",
       "props": [
         {
@@ -2496,7 +2496,7 @@
     },
     "DescriptionList": {
       "kind": "namespace",
-      "source": "packages/ui/src/content/DescriptionList.tsx",
+      "source": "packages/ui/src/data-display/DescriptionList.tsx",
       "description": "",
       "parts": [
         "DescriptionList.Root",
@@ -2508,7 +2508,7 @@
     },
     "DescriptionList.Item": {
       "kind": "component",
-      "source": "packages/ui/src/content/DescriptionList.tsx",
+      "source": "packages/ui/src/data-display/DescriptionList.tsx",
       "description": "One term and its value: a `div` around a `dt` and a `dd`.",
       "props": [
         {
@@ -2533,7 +2533,7 @@
     },
     "DescriptionList.Root": {
       "kind": "component",
-      "source": "packages/ui/src/content/DescriptionList.tsx",
+      "source": "packages/ui/src/data-display/DescriptionList.tsx",
       "description": "A list of labelled values, the facts about one thing, such as a project's owner, status and dates: a `dl` whose items are its terms with their values.",
       "props": [
         {
@@ -2567,7 +2567,7 @@
     },
     "Dialog": {
       "kind": "component",
-      "source": "packages/ui/src/feedback/Dialog.tsx",
+      "source": "packages/ui/src/overlays/Dialog.tsx",
       "description": "A focused task over the page: a centered modal, or a modal near the top of the window. It has a title, an optional description, content and actions that start with a built-in close button. Base UI's dialog owns focus, Escape and outside presses. className, style, ref and data attributes go to the dialog's surface.",
       "props": [
         {
@@ -2690,7 +2690,7 @@
     },
     "DialogClose": {
       "kind": "component",
-      "source": "packages/ui/src/feedback/Dialog.tsx",
+      "source": "packages/ui/src/overlays/Dialog.tsx",
       "description": "A button inside a Dialog or a Sheet that closes it after its own onClick, for an action other than the built-in close button, such as Don't save or Done. It takes Button's props and is secondary by default, and is disabled while the dialog or sheet is pending.",
       "props": [
         {
@@ -2762,7 +2762,7 @@
     },
     "DiffStat": {
       "kind": "component",
-      "source": "packages/ui/src/content/DiffStat.tsx",
+      "source": "packages/ui/src/data-display/DiffStat.tsx",
       "description": "The size of a change as one compact pill, such as +12 −3: additions in the success tone and deletions in the danger tone, on a counter badge's quiet fill.",
       "props": [
         {
@@ -3362,7 +3362,7 @@
     },
     "Graphic": {
       "kind": "component",
-      "source": "packages/ui/src/content/Graphic.tsx",
+      "source": "packages/ui/src/data-display/Graphic.tsx",
       "description": "An application's own logo, icon or picture, from a file or an SVG component, at one of envUI's sizes: contained and centered in its box, or covering it for a photo, never stretched, and never at the file's own size.",
       "props": [
         {
@@ -3420,7 +3420,7 @@
     },
     "Grid": {
       "kind": "component",
-      "source": "packages/ui/src/foundations/Layout.tsx",
+      "source": "packages/ui/src/layout/Layout.tsx",
       "description": "Lays its direct children out in columns, `gap` apart: a number of equal columns, a template, or as many as fit at a minimum width. A CSS grid that sizes to its content and never paints.",
       "props": [
         {
@@ -3482,7 +3482,7 @@
     },
     "HoverCard": {
       "kind": "component",
-      "source": "packages/ui/src/feedback/HoverCard.tsx",
+      "source": "packages/ui/src/overlays/HoverCard.tsx",
       "description": "Supplementary details that open beside their trigger on hover and keyboard focus, like a link preview. className, style, ref and data attributes go to the card.",
       "props": [
         {
@@ -3779,7 +3779,7 @@
     },
     "List": {
       "kind": "namespace",
-      "source": "packages/ui/src/content/List.tsx",
+      "source": "packages/ui/src/data-display/List.tsx",
       "description": "",
       "parts": [
         "List.Root",
@@ -3791,7 +3791,7 @@
     },
     "List.Item": {
       "kind": "component",
-      "source": "packages/ui/src/content/List.tsx",
+      "source": "packages/ui/src/data-display/List.tsx",
       "description": "One `li` row with a label, a description and content at its end; the current row, content at its start, and in a reorderable list a drag handle. It renders on the server: only the handle of a reorderable row needs the browser.",
       "props": [
         {
@@ -3862,7 +3862,7 @@
     },
     "List.Root": {
       "kind": "component",
-      "source": "packages/ui/src/content/List.tsx",
+      "source": "packages/ui/src/data-display/List.tsx",
       "description": "A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as `<Surface background=\"muted\" padding={3}>`, the rows take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles.",
       "props": [
         {
@@ -3947,12 +3947,12 @@
         "div"
       ],
       "entries": [
-        "@envsemble/envui/content"
+        "@envsemble/envui/markdown"
       ]
     },
     "MarkdownEditor": {
       "kind": "component",
-      "source": "packages/ui/src/forms/MarkdownEditor.tsx",
+      "source": "packages/ui/src/content/MarkdownEditor.tsx",
       "description": "Native Markdown source editing, shared formatting history, and optional preview. Its toolbar, views and status come from EnvUIProvider's messages: markdownEditor, editor and linkDialog.",
       "props": [
         {
@@ -4062,12 +4062,12 @@
         "textarea"
       ],
       "entries": [
-        "@envsemble/envui/content"
+        "@envsemble/envui/markdown"
       ]
     },
     "Menu": {
       "kind": "namespace",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "description": "",
       "parts": [
         "Menu.Root",
@@ -4086,7 +4086,7 @@
     },
     "Menu.CheckboxItem": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "description": "An independent on/off option; a check mark shows while it is on.",
       "props": [
         {
@@ -4166,7 +4166,7 @@
     },
     "Menu.Group": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "description": "A labelled group of related items, with a small heading above its rows.",
       "props": [
         {
@@ -4191,7 +4191,7 @@
     },
     "Menu.Header": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "description": "Non-interactive context at the top of a menu, such as the signed-in account.",
       "props": [
         {
@@ -4210,7 +4210,7 @@
     },
     "Menu.Item": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "description": "One action (onClick) or destination (href) in a Menu. Destinations use the LinkProvider's link and close the menu as they are followed.",
       "props": [
         {
@@ -4309,7 +4309,7 @@
     },
     "Menu.RadioGroup": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "description": "One choice among several items; the checked item shows a check mark.",
       "props": [
         {
@@ -4359,7 +4359,7 @@
     },
     "Menu.RadioItem": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "description": "One option of a Menu.RadioGroup.",
       "props": [
         {
@@ -4420,7 +4420,7 @@
     },
     "Menu.Root": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "description": "A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. The popup is raised above the page, with rows of the scale's row height, full-width hairline separators and small keys for shortcuts.",
       "props": [
         {
@@ -4498,7 +4498,7 @@
     },
     "Menu.Separator": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "description": "Separates groups of menu items.",
       "props": [],
       "native": [
@@ -4510,7 +4510,7 @@
     },
     "Menu.Submenu": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menu.tsx",
+      "source": "packages/ui/src/actions/Menu.tsx",
       "description": "A row that opens a nested menu beside it, on hover or with the keyboard. The submenu opens in the theme of its menu, and lines its first row up with the row that opened it.",
       "props": [
         {
@@ -4597,7 +4597,7 @@
     },
     "Menubar": {
       "kind": "namespace",
-      "source": "packages/ui/src/navigation/Menubar.tsx",
+      "source": "packages/ui/src/actions/Menubar.tsx",
       "description": "",
       "parts": [
         "Menubar.Root",
@@ -4609,7 +4609,7 @@
     },
     "Menubar.Menu": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menubar.tsx",
+      "source": "packages/ui/src/actions/Menubar.tsx",
       "description": "One menu of a Menubar.Root: a small text trigger and the menu that opens below it. After a command, focus returns to where it was before the menubar took it, as in a desktop application.",
       "props": [
         {
@@ -4690,7 +4690,7 @@
     },
     "Menubar.Root": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/Menubar.tsx",
+      "source": "packages/ui/src/actions/Menubar.tsx",
       "description": "An application menubar: a row of small text buttons that open menus, such as File, Edit, View and Help. Once a menu is open, hovering another trigger or pressing ← and → switches to its menu. Opening a menu neither locks scrolling nor shifts the page.",
       "props": [
         {
@@ -4825,7 +4825,7 @@
     },
     "Meter": {
       "kind": "component",
-      "source": "packages/ui/src/feedback/Meter.tsx",
+      "source": "packages/ui/src/data-display/Meter.tsx",
       "description": "A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota: a label, an optional value and a bar, exposed as a meter. For how much of a task is done, use Progress.",
       "props": [
         {
@@ -5619,7 +5619,7 @@
     },
     "PanelDock": {
       "kind": "namespace",
-      "source": "packages/ui/src/navigation/panel-dock/PanelDock.tsx",
+      "source": "packages/ui/src/layout/panel-dock/PanelDock.tsx",
       "description": "",
       "parts": [
         "PanelDock.Root",
@@ -5631,7 +5631,7 @@
     },
     "PanelDock.Header": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/panel-dock/PanelDock.tsx",
+      "source": "packages/ui/src/layout/panel-dock/PanelDock.tsx",
       "description": "The header of a docked panel. It sticks to the top of the panel while its content scrolls: the title and its metadata at the start, the application's actions and the window controls at the end, small like a title bar's.",
       "props": [
         {
@@ -5682,7 +5682,7 @@
     },
     "PanelDock.Root": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/panel-dock/PanelDock.tsx",
+      "source": "packages/ui/src/layout/panel-dock/PanelDock.tsx",
       "description": "Panels docked to the bottom inline-end edge of a region, beside the page, for items people work on alongside it, such as drafts and conversations: open panels side by side, one maximized panel filling the region, and minimized panels as tabs. A panel's content stays mounted through every change of mode and order.",
       "props": [
         {
@@ -6087,7 +6087,7 @@
     },
     "Popover": {
       "kind": "component",
-      "source": "packages/ui/src/feedback/Popover.tsx",
+      "source": "packages/ui/src/overlays/Popover.tsx",
       "description": "A floating panel beside its trigger, for details or a small form: it opens on press, moves focus into itself, and closes with Esc, a press outside or when focus leaves it. className, style, ref and data attributes go to the popover's surface.",
       "props": [
         {
@@ -6389,7 +6389,7 @@
     },
     "Rating": {
       "kind": "component",
-      "source": "packages/ui/src/content/Rating.tsx",
+      "source": "packages/ui/src/data-display/Rating.tsx",
       "description": "A read-only rating, such as a review score: stars filled to the value in half steps in their own gold, with an optional number before them, named once for assistive technology as an image, such as \"4.5 out of 5 stars\". It shows a rating; it does not ask for one.",
       "props": [
         {
@@ -6429,7 +6429,7 @@
     },
     "RelativeTime": {
       "kind": "component",
-      "source": "packages/ui/src/content/RelativeTime.tsx",
+      "source": "packages/ui/src/data-display/RelativeTime.tsx",
       "description": "A moment in a time element as text relative to now, such as \"3 hours ago\", with the date and time in a tooltip. One shared clock keeps every RelativeTime on the page current.",
       "props": [
         {
@@ -6482,7 +6482,7 @@
     },
     "RichText": {
       "kind": "component",
-      "source": "packages/ui/src/rich-text/RichText.tsx",
+      "source": "packages/ui/src/forms/rich-text/RichText.tsx",
       "description": "Saved rich text, read-only: Markdown rendered with the editor's own schema and parser, so it shows what RichTextEditor wrote, references included, with envUI's links, code and checkboxes. It renders on the server too.",
       "props": [
         {
@@ -6527,7 +6527,7 @@
     },
     "RichTextEditor": {
       "kind": "component",
-      "source": "packages/ui/src/rich-text/RichTextEditor.tsx",
+      "source": "packages/ui/src/forms/rich-text/RichTextEditor.tsx",
       "description": "A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a formatting toolbar, references typed with a trigger such as",
       "props": [
         {
@@ -6700,7 +6700,7 @@
     },
     "Row": {
       "kind": "component",
-      "source": "packages/ui/src/foundations/Layout.tsx",
+      "source": "packages/ui/src/layout/Layout.tsx",
       "description": "Lays its direct children out side by side, `gap` apart, with `wrap` to run onto more lines, such as a form's actions. A flex row that sizes to its content and never paints.",
       "props": [
         {
@@ -6976,7 +6976,7 @@
     },
     "SegmentedControl": {
       "kind": "component",
-      "source": "packages/ui/src/actions/SegmentedControl.tsx",
+      "source": "packages/ui/src/forms/SegmentedControl.tsx",
       "description": "One choice among a few items, such as views or filters of the same content: segments in a recessed track, the chosen one raised on a thumb. A radio group, with one tab stop and arrow keys.",
       "props": [
         {
@@ -7177,7 +7177,7 @@
     },
     "Sheet": {
       "kind": "component",
-      "source": "packages/ui/src/feedback/Sheet.tsx",
+      "source": "packages/ui/src/overlays/Sheet.tsx",
       "description": "A panel that slides in over the page from an edge of the window, for filters, details, an inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a modal by default, which traps focus and returns it on close, or beside the page with modal false. A side sheet takes the whole width of a compact window, and a finger's swipe toward its edge closes it; a mouse or a pen never swipes it. With `resizable`, people resize it by its inner edge, with the same handle as between Panes. className, style, ref and data attributes go to the sheet's surface.",
       "props": [
         {
@@ -7508,7 +7508,7 @@
     },
     "Surface": {
       "kind": "component",
-      "source": "packages/ui/src/foundations/Surface.tsx",
+      "source": "packages/ui/src/layout/Surface.tsx",
       "description": "A container with a background, an inset and corners, but no layout of its own: spacing between its children, alignment and behavior come from what it holds, such as a Column. Card and other containers build on it.",
       "props": [
         {
@@ -7623,7 +7623,7 @@
     },
     "Table": {
       "kind": "namespace",
-      "source": "packages/ui/src/content/Table.tsx",
+      "source": "packages/ui/src/data-display/Table.tsx",
       "description": "",
       "parts": [
         "Table.Root",
@@ -7639,7 +7639,7 @@
     },
     "Table.Body": {
       "kind": "component",
-      "source": "packages/ui/src/content/Table.tsx",
+      "source": "packages/ui/src/data-display/Table.tsx",
       "description": "The data rows of a table, a native tbody, separated by hairlines.",
       "props": [],
       "native": [
@@ -7651,7 +7651,7 @@
     },
     "Table.Cell": {
       "kind": "component",
-      "source": "packages/ui/src/content/Table.tsx",
+      "source": "packages/ui/src/data-display/Table.tsx",
       "description": "A data cell, a native td, with a label that names its value while rows stack.",
       "props": [
         {
@@ -7691,7 +7691,7 @@
     },
     "Table.Head": {
       "kind": "component",
-      "source": "packages/ui/src/content/Table.tsx",
+      "source": "packages/ui/src/data-display/Table.tsx",
       "description": "The header rows of a table, a native thead, which hold the column headers.",
       "props": [],
       "native": [
@@ -7703,7 +7703,7 @@
     },
     "Table.HeaderCell": {
       "kind": "component",
-      "source": "packages/ui/src/content/Table.tsx",
+      "source": "packages/ui/src/data-display/Table.tsx",
       "description": "A header cell, a native th that heads its column, or its row with scope=\"row\". With onSortChange it sorts its column; in a table with resizable columns it holds the column's resize handle.",
       "props": [
         {
@@ -7764,7 +7764,7 @@
     },
     "Table.Root": {
       "kind": "component",
-      "source": "packages/ui/src/content/Table.tsx",
+      "source": "packages/ui/src/data-display/Table.tsx",
       "description": "A semantic data table on a rounded surface, in a focusable region that scrolls sideways when the columns do not fit.",
       "props": [
         {
@@ -7868,7 +7868,7 @@
     },
     "Table.Row": {
       "kind": "component",
-      "source": "packages/ui/src/content/Table.tsx",
+      "source": "packages/ui/src/data-display/Table.tsx",
       "description": "A row of a table, a native tr, which can highlight on hover or be selected.",
       "props": [
         {
@@ -8861,7 +8861,7 @@
     },
     "Tooltip": {
       "kind": "component",
-      "source": "packages/ui/src/feedback/Tooltip.tsx",
+      "source": "packages/ui/src/overlays/Tooltip.tsx",
       "description": "A short label beside a control, shown while the pointer rests on it or it has keyboard focus, such as an icon-only button's name or why a control is disabled. It closes on Esc and when the control is pressed, and stays closed while the control's own popup, such as a menu, is open. Native props and ref go to the control, so a Tooltip can be the trigger of a Menu.Root or Popover; popupClassName styles the tooltip's popup.",
       "props": [
         {
@@ -8938,7 +8938,7 @@
     },
     "TopBar": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/TopBar.tsx",
+      "source": "packages/ui/src/layout/TopBar.tsx",
       "description": "The bar at the top of an application or a screen: start content, such as a navigation button or the application's mark, the title, which truncates first, and the actions at the end, in one row that never wraps, at the top bar height. It can stick to the top as the page scrolls, show page progress along its bottom edge, or be the window's own title bar.",
       "props": [
         {
@@ -9081,7 +9081,7 @@
     },
     "avatarHue": {
       "kind": "function",
-      "source": "packages/ui/src/content/Avatar.tsx",
+      "source": "packages/ui/src/data-display/Avatar.tsx",
       "description": "The hue a name gives an avatar: the same name always gives the same hue, on every page and in every session, and different names spread across the hues. Letter case and surrounding spaces do not count.",
       "signature": "(name: string): AvatarHue",
       "entries": [
@@ -9090,7 +9090,7 @@
     },
     "countDiffLines": {
       "kind": "function",
-      "source": "packages/ui/src/diff/countDiffLines.ts",
+      "source": "packages/ui/src/content/countDiffLines.ts",
       "description": "How many lines a change adds and removes, as a DiffStat shows them.",
       "signature": "(before: string, after: string, filename?: string): { additions: number; deletions: number; }",
       "entries": [
@@ -9099,7 +9099,7 @@
     },
     "createRichTextExtensions": {
       "kind": "function",
-      "source": "packages/ui/src/rich-text/extensions.ts",
+      "source": "packages/ui/src/forms/rich-text/extensions.ts",
       "description": "The Tiptap extensions RichTextEditor and RichText share: formatting, lists and task lists, tables, safe links and images, Markdown with raw HTML kept as text, a placeholder and references. options.extensions are added after them, for other Tiptap integrations that need the same schema.",
       "signature": "(options?: RichTextRenderOptions & { placeholder?: string; }): AnyExtension[]",
       "entries": [
@@ -9118,7 +9118,7 @@
     },
     "formatRelativeTime": {
       "kind": "function",
-      "source": "packages/ui/src/content/formatRelativeTime.ts",
+      "source": "packages/ui/src/data-display/formatRelativeTime.ts",
       "description": "A moment as text relative to another, by default the current time, such as \"in 2 days\", \"3 hours ago\" or \"just now\", through Intl.RelativeTimeFormat. An invalid moment gives an empty string; an invalid now is ignored, as by RelativeTime, for the current time.",
       "signature": "(value: RelativeTimeValue, options?: RelativeTimeOptions): string",
       "entries": [

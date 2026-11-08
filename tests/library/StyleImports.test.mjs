@@ -89,7 +89,8 @@ function guaranteedBefore() {
   const barrels = new Set(
     [
       'index.ts',
-      'content.ts',
+      'code.ts',
+      'markdown.ts',
       'rich-text.ts',
       'diff.ts',
       'color.ts',

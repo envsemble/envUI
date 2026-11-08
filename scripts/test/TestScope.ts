@@ -61,7 +61,6 @@ export const aliases: Record<string, string[]> = {
   accessibleName: ['Tooltip'],
   DialogParts: ['Dialog', 'Skeleton'],
   skeleton: ['Skeleton'],
-  inSkeleton: ['Skeleton'],
   skeletonShift: ['Skeleton'],
   Listbox: ['Select', 'Combobox'],
   ListRow: ['List'],
@@ -301,7 +300,7 @@ export function specsFor(
       if (affected || users.length <= helperBudget)
         for (const user of users) found = add(user, `imports ${path}`) || found;
     } else if (/^(?:packages\/ui\/src|tests\/fixture)\//.test(path)) {
-      // Combobox.tsx and Combobox.fixture.tsx are about Combobox, and a file in navigation/panel-dock/
+      // Combobox.tsx and Combobox.fixture.tsx are about Combobox, and a file in layout/panel-dock/
       // about PanelDock. An icon's name names a symbol, not a component: icons/Palette.tsx is not
       // about CommandPalette.
       const name = baseName(path);

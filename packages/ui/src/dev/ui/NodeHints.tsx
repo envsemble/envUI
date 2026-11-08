@@ -1,7 +1,7 @@
 // What the 3D view says about the node under the pointer: a card beside the pointer with its size,
 // container and problems, and, colored by window class, a ruler over it.
 
-import { Column } from '../../foundations/Layout.js';
+import { Column } from '../../layout/Layout.js';
 import { Text } from '../../foundations/Text.js';
 import type { LayoutProblem, NodeData, Snapshot } from '../model.js';
 import { queriesFor, thresholdsFor } from '../queries.js';

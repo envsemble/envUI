@@ -8,7 +8,7 @@ import { setRef } from '../internal/setRef.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { searchField as searchFieldMessages } from '../foundations/messages/searchField.js';
 import { TextField, type TextFieldProps } from './TextField.js';
-import { useFormReset } from './internal/useFormReset.js';
+import { useFormReset } from '../internal/field/useFormReset.js';
 
 export interface SearchFieldProps extends Omit<
   TextFieldProps,

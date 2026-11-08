@@ -9,7 +9,7 @@ export const repository = fileURLToPath(new URL('../../', import.meta.url));
 /**
  * The exports of the given sources, bundled into `.cache/unit/<name>.mjs`. `sources` is a path from
  * the repository's root, whose exports it returns, or the lines of a module that re-exports from
- * such paths, written relative to the root: `export { Badge } from './packages/ui/src/content/Badge.tsx';`.
+ * such paths, written relative to the root: `export { Badge } from './packages/ui/src/data-display/Badge.tsx';`.
  * The style sheets and assets the modules import are the browser's concern and load as nothing;
  * packages stay imports.
  */

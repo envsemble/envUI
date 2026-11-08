@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Dialog, List } from '@envsemble/envui';
-import { MarkdownEditor, type MarkdownLink } from '@envsemble/envui/content';
+import { MarkdownEditor, type MarkdownLink } from '@envsemble/envui/markdown';
 
 const documents = [
   { title: 'Launch plan', href: '/documents/launch-plan', owner: 'Priya Shah' },

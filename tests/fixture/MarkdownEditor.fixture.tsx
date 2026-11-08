@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { Button, Column } from '@envsemble/envui';
-import {
-  CodeBlock,
-  Markdown,
-  MarkdownEditor,
-  type MarkdownLinkProps,
-} from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
+import { Markdown, MarkdownEditor, type MarkdownLinkProps } from '@envsemble/envui/markdown';
 
 declare global {
   interface Window {

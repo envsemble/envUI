@@ -1,13 +1,12 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../foundations/Layout.js';
+import { Grid, Row } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { IconError } from '../icons/Error.js';
 import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
-import { inSkeleton } from '../foundations/internal/inSkeleton.js';
-import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Message.css';

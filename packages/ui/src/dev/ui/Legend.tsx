@@ -2,7 +2,7 @@
 // by kind of node or by window class.
 
 import type { ReactNode } from 'react';
-import { Row } from '../../foundations/Layout.js';
+import { Row } from '../../layout/Layout.js';
 import { Text } from '../../foundations/Text.js';
 import { roundToHundredth } from '../../internal/lengths.js';
 import { windowClasses } from '../units.js';

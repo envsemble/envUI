@@ -12,7 +12,7 @@ import {
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Row } from '../foundations/Layout.js';
+import { Row } from '../layout/Layout.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';

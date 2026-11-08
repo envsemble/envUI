@@ -7,8 +7,8 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { IconButton } from '../../actions/Button.js';
-import { Tooltip } from '../../feedback/Tooltip.js';
-import { Row } from '../../foundations/Layout.js';
+import { Tooltip } from '../../overlays/Tooltip.js';
+import { Row } from '../../layout/Layout.js';
 import { PortalContainer } from '../../foundations/PortalContainer.js';
 import { Theme, type ColorScheme } from '../../foundations/Theme.js';
 import { IconViewInAr } from '../../icons/ViewInAr.js';

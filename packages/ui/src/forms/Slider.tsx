@@ -13,14 +13,14 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Row } from '../foundations/Layout.js';
+import { Row } from '../layout/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { setRef } from '../internal/setRef.js';
 import { useLocale } from '../internal/EnvUIContext.js';
 import { useDirectionScope } from '../internal/useDirection.js';
-import { FieldFrame } from './internal/FieldFrame.js';
-import { fieldMessageIds } from './internal/useFieldMetadata.js';
-import { useFormReset } from './internal/useFormReset.js';
+import { FieldFrame } from '../internal/field/FieldFrame.js';
+import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
+import { useFormReset } from '../internal/field/useFormReset.js';
 import { followDrag, followOverdrag } from './internal/sliderDrag.js';
 import { useSliderReveal } from './internal/useSliderReveal.js';
 import { flag } from '../internal/flag.js';

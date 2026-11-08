@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Grid } from '@envsemble/envui';
-import { MarkdownEditor } from '@envsemble/envui/content';
+import { MarkdownEditor } from '@envsemble/envui/markdown';
 import { Example } from '../../figures/Example';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';

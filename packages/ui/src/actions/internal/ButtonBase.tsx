@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
 import { ActionElement, type ActionElementProps } from '../../internal/ActionElement.js';
-import { SpinnerArc } from '../../feedback/internal/SpinnerArc.js';
+import { SpinnerArc } from '../../internal/SpinnerArc.js';
 import { textRuns } from '../../internal/textRuns.js';
 import type { ButtonAppearanceProps, ButtonVariant } from '../Button.js';
 import { flag } from '../../internal/flag.js';

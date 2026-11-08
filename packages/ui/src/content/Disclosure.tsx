@@ -2,7 +2,7 @@
 
 import { useState, type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Column } from '../foundations/Layout.js';
+import { Column } from '../layout/Layout.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import '../styles/Base.css';
 import '../styles/Disclosure.css';

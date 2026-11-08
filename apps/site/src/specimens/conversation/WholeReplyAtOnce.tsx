@@ -1,5 +1,5 @@
 import { Column, Composer, Message, MessageList, Spinner } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 import { useSharedTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 import { replyClock, replySteps, replyWords } from './Reply';

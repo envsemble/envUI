@@ -7,7 +7,7 @@ import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 const { Badge } = await importSource('Badge', [
-  "export { Badge } from './packages/ui/src/content/Badge.tsx';",
+  "export { Badge } from './packages/ui/src/data-display/Badge.tsx';",
 ]);
 
 test('a badge shows its label in its tone and variant', () => {

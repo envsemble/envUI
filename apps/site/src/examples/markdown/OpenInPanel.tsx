@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Sheet, Text } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 
 const text =
   'See the [launch plan](/documents/launch-plan) and the [pricing research](/documents/pricing), ' +

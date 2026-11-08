@@ -33,7 +33,7 @@ import {
   type CommandPaletteItem,
   type Destination,
 } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 import { CodeDiff, countDiffLines } from '@envsemble/envui/diff';
 import { IconAttachFile } from '@envsemble/envui/icons/AttachFile';
 import { IconBolt } from '@envsemble/envui/icons/Bolt';

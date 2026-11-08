@@ -5,7 +5,7 @@ import { type ReactNode, type RefObject } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { type Direction } from '../../internal/EnvUIContext.js';
 import { PopupSurface } from '../../internal/PopupSurface.js';
-import { Grid, Row } from '../../foundations/Layout.js';
+import { Grid, Row } from '../../layout/Layout.js';
 import '../../styles/Base.css';
 import '../../styles/PickerPopup.css';
 

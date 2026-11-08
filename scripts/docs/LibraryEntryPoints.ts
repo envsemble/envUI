@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 const libraryDirectory = fileURLToPath(new URL('../../packages/ui/', import.meta.url));
 
 export interface LibraryEntryPoint {
-  /** What applications import, such as @envsemble/envui/content. */
+  /** What applications import, such as @envsemble/envui/markdown. */
   specifier: string;
   /** Its TypeScript source, an absolute path. */
   file: string;

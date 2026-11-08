@@ -1,6 +1,6 @@
 import { use } from 'react';
 import { Column, Composer, Message, MessageList } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 import { Example } from '../../figures/Example';
 import { useSharedTimeline } from '../../motion/Timeline';
 import { MotionStage, VerdictMotion } from '../../motion/MotionStage';
