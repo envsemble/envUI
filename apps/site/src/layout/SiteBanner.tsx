@@ -15,8 +15,8 @@ import { CompactContents } from './PageContents';
  */
 export type BannerKind = 'catalogue' | 'docs';
 
-/** Documentation banner composed from the library's card, text and layout primitives. */
-export function PageHeader({
+/** A page's banner, composed from the library's card, text and layout primitives. */
+export function SiteBanner({
   title,
   breadcrumb,
   trail,

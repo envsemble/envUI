@@ -1,5 +1,5 @@
 import { Column, Text } from '@envsemble/envui';
-import { PageHeader } from '../layout/PageHeader';
+import { SiteBanner } from '../layout/SiteBanner';
 import { catalogueTrail, docsTrail } from '../navigation/Trails';
 import type { RoutePage } from '../navigation/SiteRoutes';
 import { PartSwitch } from '../navigation/OtherPart';
@@ -92,7 +92,7 @@ export function PageSkeleton({ page }: { page: RoutePage }) {
   const docs = page.area === 'docs';
   return (
     <PartSkeleton what="page" className="site-page-skeleton">
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={docs ? docsTrail(page) : catalogueTrail(page)}
         description={page.summary}

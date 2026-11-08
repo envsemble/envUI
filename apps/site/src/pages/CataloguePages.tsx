@@ -1,5 +1,5 @@
 import { Alert, Column, Link } from '@envsemble/envui';
-import { PageHeader } from '../layout/PageHeader';
+import { SiteBanner } from '../layout/SiteBanner';
 import { catalogueTrail } from '../navigation/Trails';
 import type { DocumentPage, RoutePage } from '../navigation/SiteRoutes';
 import { PartSwitch } from '../navigation/OtherPart';
@@ -18,7 +18,7 @@ export function ComponentPage({ page }: { page: DocumentPage }) {
   const document = useDocument(page.document);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
@@ -39,7 +39,7 @@ export function PatternPage({ page }: { page: DocumentPage }) {
   const document = useDocument(page.document);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
@@ -79,7 +79,7 @@ export function FoundationPage({ page }: { page: DocumentPage }) {
   const document = useDocument(page.document);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
@@ -97,7 +97,7 @@ export function FoundationPage({ page }: { page: DocumentPage }) {
 export function FoundationsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
@@ -114,7 +114,7 @@ export function FoundationsPage({ page }: { page: RoutePage }) {
 export function ComponentsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
@@ -131,7 +131,7 @@ export function ComponentsPage({ page }: { page: RoutePage }) {
 export function PatternsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}

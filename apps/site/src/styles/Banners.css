@@ -1,4 +1,4 @@
-/* The banners of the catalogue and the Docs (PageHeader.tsx), one card in both: every page's banner
+/* The banners of the catalogue and the Docs (SiteBanner.tsx), one card in both: every page's banner
    reads from the start like a document, under its breadcrumbs, on the default surface's fill with
    no edge, lifted off the page by the site's card shadow (Stage.css), with a LineArt drawing hidden
    from assistive technology at its end, or, on the few catalogue pages with one, a motif drawn from
@@ -9,7 +9,7 @@
   z-index: var(--env-z-raised);
 }
 
-/* The banner's top end corner (PageHeader.tsx), such as the Design | Code switch: over the picture,
+/* The banner's top end corner (SiteBanner.tsx), such as the Design | Code switch: over the picture,
    at the banner's corner, so the text keeps its column. */
 .site-banner > .site-page-banner-corner {
   position: absolute;

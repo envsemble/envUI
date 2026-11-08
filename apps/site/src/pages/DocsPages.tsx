@@ -2,7 +2,7 @@ import { Fragment, useMemo } from 'react';
 import { Column, CopyButton, DescriptionList, Row, Surface, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import { AgentLogos } from '../brand/AgentLogos';
-import { PageHeader } from '../layout/PageHeader';
+import { SiteBanner } from '../layout/SiteBanner';
 import { pagesOf, type DocumentPage, type RoutePage } from '../navigation/SiteRoutes';
 import { docsTrail } from '../navigation/Trails';
 import { docsRoute } from '../navigation/Address';
@@ -114,7 +114,7 @@ export function GuidePage({ page }: { page: DocumentPage }) {
   );
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
@@ -134,7 +134,7 @@ export function GuidePage({ page }: { page: DocumentPage }) {
 export function TokensPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
@@ -165,7 +165,7 @@ const changelog = lazyPart(
 export function ChangelogDocsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
@@ -219,7 +219,7 @@ export function FoundationGuidePage({ page }: { page: DocumentPage }) {
   const document = useDocument(page.document);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         kind="docs"
         trail={docsTrail(page)}
@@ -568,7 +568,7 @@ export function DocsReferencePage({ page }: { page: DocumentPage }) {
   const revealed = useRevealed(2);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         kind="docs"
         trail={docsTrail(page)}

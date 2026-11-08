@@ -19,7 +19,7 @@ import {
   type RoutePage,
 } from './navigation/SiteRoutes';
 import { PageBoundary } from './layout/PageBoundary';
-import { PageHeader } from './layout/PageHeader';
+import { SiteBanner } from './layout/SiteBanner';
 import { HasContents, PageContents } from './layout/PageContents';
 import { PageFooter } from './layout/PageFooter';
 import { Overview } from './pages/Overview';
@@ -180,7 +180,7 @@ function Shell() {
     <Content key={page.path} page={page} />
   ) : (
     <>
-      <PageHeader title="Page not found" breadcrumb={area === 'docs' ? 'Docs' : 'envUI'} />
+      <SiteBanner title="Page not found" breadcrumb={area === 'docs' ? 'Docs' : 'envUI'} />
       <Column gap={7} className="site-article">
         <Text>
           <Link href={routeHref(area === 'docs' ? docsRoute : homeRoute)}>
