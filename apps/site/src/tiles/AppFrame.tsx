@@ -12,8 +12,8 @@ import {
 import { IconCategory } from '@envsemble/envui/icons/Category';
 import { IconGroup } from '@envsemble/envui/icons/Group';
 import { IconHome } from '@envsemble/envui/icons/Home';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const item = (index: number) =>
   `.env-navigation-rail-list > li:nth-child(${index}) .env-navigation-rail-item`;

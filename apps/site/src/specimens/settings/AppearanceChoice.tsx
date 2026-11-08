@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Surface, ThemePreferenceProvider, useTheme, type ThemeScale } from '@envsemble/envui';
 import AppearanceChoice from '../../examples/settings/AppearanceChoice';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 /** Where the figure's own preference is kept, apart from the site's. */

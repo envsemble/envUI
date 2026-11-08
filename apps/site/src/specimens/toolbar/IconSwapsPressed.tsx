@@ -1,5 +1,5 @@
 import IconSwapsPressed from '../../examples/toolbar/IconSwapsPressed';
-import { usePointer } from '../../motion/PointerPlayback';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { pressing, pressingClock } from './Pressing';
 

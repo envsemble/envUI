@@ -1,6 +1,6 @@
 import ActiveFilters from '../../examples/filtering/ActiveFilters';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const token = '[aria-label="Remove filter Assignee: Sam Lee"]';

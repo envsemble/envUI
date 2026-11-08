@@ -1,5 +1,5 @@
 import { useState, type FocusEvent, type PointerEvent } from 'react';
-import { isVirtual } from './VirtualPointer';
+import { isVirtual } from './pointer/VirtualPointer';
 
 /**
  * Whether a tile plays: while a pointer rests on it or the keyboard is on its link. A finger's tap

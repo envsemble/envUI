@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef, type MouseEvent } from 'react';
 import { TableOfContents } from '@envsemble/envui';
 import { useHeldView } from '../motion/Playback';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
 
 /** How tall the unseen article's view and each of its sections are, in px. */

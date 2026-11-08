@@ -1,5 +1,5 @@
 import { createElement, type ReactNode } from 'react';
-import type { PointerStep } from '../../motion/PointerPlan';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
 
 /*
  * The do and the don't of a composer while a send is in progress play on one timeline, side by

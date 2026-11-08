@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { MonthPicker } from '@envsemble/envui';
 import { useHeldView } from '../motion/Playback';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const month = (value: string) => `.env-month-picker-month[data-month="${value}"]`;
 const field = '.env-date-picker-trigger';

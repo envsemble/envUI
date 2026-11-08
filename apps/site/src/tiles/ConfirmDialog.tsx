@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import { Button, ConfirmDialog, IconButton, Row, Text } from '@envsemble/envui';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 /**
  * Confirmed, which waits for the action, pending, and closes on the plan's row, which says it is

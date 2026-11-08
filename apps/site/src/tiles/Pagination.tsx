@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Pagination } from '@envsemble/envui';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const button = (direction: 'previous' | 'next') =>
   `.env-pagination-button[data-direction="${direction}"]`;

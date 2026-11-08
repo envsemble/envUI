@@ -1,7 +1,7 @@
 import { Column } from '@envsemble/envui';
 import Submenus from '../../examples/menu/Submenus';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const row = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;

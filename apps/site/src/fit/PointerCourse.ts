@@ -3,7 +3,7 @@
  * in view (useFit.ts): at rest, so its still is framed as its play is, and as it plays.
  */
 import { courseOf, headingOf, mustShowOf, type Heading } from '../motion/MustShow';
-import { aimedElement } from '../motion/PointerPlan';
+import { aimedElement } from '../motion/pointer/PointerPlan';
 import { remPixels } from '@envui-internal/internal/lengths';
 import { rowSelector } from './Crop';
 import { contain, join, margin, type Box } from './FitMath';

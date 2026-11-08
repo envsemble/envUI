@@ -9,8 +9,8 @@ import {
   useToast,
 } from '@envsemble/envui';
 import { IconArchive } from '@envsemble/envui/icons/Archive';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
 
 const projects = ['Launch plan', 'Annual report', 'Press kit'];

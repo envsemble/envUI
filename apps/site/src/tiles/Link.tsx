@@ -1,6 +1,6 @@
 import { Column, Link, Text } from '@envsemble/envui';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 /**
  * Hovered, its underline drawn in full and its color a step deeper; pressed, a fill behind it,

@@ -3,9 +3,9 @@
  * field it types into and the element its focus is on, marked as focused, as the inert stage can't
  * focus it.
  */
-import { editorOf, type PointerSelection } from './VirtualSelection';
-import { focusMark, focusWithinMark, mark } from './PointerStates';
-import { chainOf, textFields, type Modifiers } from './PointerTargets';
+import { editorOf, type PointerSelection } from './pointer/VirtualSelection';
+import { focusMark, focusWithinMark, mark } from './pointer/PointerStates';
+import { chainOf, textFields, type Modifiers } from './pointer/PointerTargets';
 import { keyboardFocused, lendSelection } from './BrowserStandIns';
 
 /** The modifier keys, by their key, and the flag a held one sets on every event. */

@@ -3,7 +3,7 @@
  * releases, and the clicks they make, by the same events a mouse sends.
  */
 import type { PointerSelection } from './VirtualSelection';
-import type { KeyboardControl } from './KeyboardControl';
+import type { KeyboardControl } from '../KeyboardControl';
 import { hoverMark, mark, pressMark } from './PointerStates';
 import {
   chainOf,
@@ -13,7 +13,7 @@ import {
   type Point,
   type PointerSpot,
 } from './PointerTargets';
-import { captures, keepClipboard, keyboardFocused } from './BrowserStandIns';
+import { captures, keepClipboard, keyboardFocused } from '../BrowserStandIns';
 
 /**
  * The id of the pointer holding its button down, if any: a page has one mouse, so a component that follows

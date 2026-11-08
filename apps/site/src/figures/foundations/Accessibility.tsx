@@ -1,8 +1,8 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, Checkbox, Column, IconButton, Kbd, Row, TextField } from '@envsemble/envui';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import type { FoundationFigure } from './FoundationFigures';
 import { CornerLabel } from './Steps';
 import { Figure } from './Topic';

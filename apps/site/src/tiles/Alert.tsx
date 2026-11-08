@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Alert, Button } from '@envsemble/envui';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const upgrade = '.env-alert .env-button:not(.env-alert-dismiss)';
 

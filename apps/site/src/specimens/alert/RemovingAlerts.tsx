@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Alert, Column, Text } from '@envsemble/envui';
 import { Example } from '../../figures/Example';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 /*

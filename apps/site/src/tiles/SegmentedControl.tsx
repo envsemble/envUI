@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { SegmentedControl } from '@envsemble/envui';
 import { IconViewList } from '@envsemble/envui/icons/ViewList';
 import { IconViewModule } from '@envsemble/envui/icons/ViewModule';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const segment = (index: number) =>
   `.env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;

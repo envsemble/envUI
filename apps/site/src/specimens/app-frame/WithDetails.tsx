@@ -1,7 +1,7 @@
 import WithDetails from '../../examples/app-frame/WithDetails';
 import { useMustShow } from '../../motion/Playback';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const close = '[aria-label="Close"]';

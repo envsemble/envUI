@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Combobox, type ComboboxItem } from '@envsemble/envui';
 import { useHeldView } from '../motion/Playback';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { Renew } from '../motion/Renew';
 
 const labels: ComboboxItem[] = ['Bug', 'Docs'].map((name) => ({

@@ -1,6 +1,6 @@
 import ShortTabLabels from '../../examples/panel-dock/ShortTabLabels';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 /* The pointer rests on the short tab, and its tooltip gives the full title. */

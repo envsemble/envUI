@@ -1,6 +1,6 @@
 import ReviewChanges from '../../examples/dialog/ReviewChanges';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage, roomFor } from '../../motion/MotionStage';
 
 /*

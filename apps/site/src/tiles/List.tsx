@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Avatar, Link, List } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const people = [

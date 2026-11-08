@@ -3,7 +3,7 @@
  * writes, and the plan they make of its time, where the pointer is and what it does when, at the
  * site's brisk pace.
  */
-import type { CarriedFile } from './DragControl';
+import type { CarriedFile } from '../DragControl';
 import { textPoint } from './VirtualSelection';
 import { remPixels } from '@envui-internal/internal/lengths';
 

@@ -1,6 +1,6 @@
 import { use, useEffect, useRef, useState } from 'react';
 import { PlaybackContext, useCountedAnimation } from './Playback';
-import { firstWait, waitPace } from './PointerPlan';
+import { firstWait, waitPace } from './pointer/PointerPlan';
 
 /*
  * Timelines: the steps of a stage's animation where something other than a pointer changes it,

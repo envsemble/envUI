@@ -7,7 +7,7 @@
  * for one call, the clipboard a copy button writes to and the page's selection a rich text command
  * reads (tests/site/BrowserStandIns.test.mjs).
  */
-import { focusMark } from './PointerStates';
+import { focusMark } from './pointer/PointerStates';
 
 /** Where the page keeps the stand-ins' state, the same for every evaluation of this module. */
 const standInsKey = Symbol.for('catalogue-browser-stand-ins');

@@ -1,6 +1,6 @@
 import WithinRange from '../../examples/date-picker/WithinRange';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage, rowsAnd } from '../../motion/MotionStage';
 
 const next = '.env-calendar-next';

@@ -652,9 +652,9 @@
   }
 }
 
-/* Text the pointer no one sees selects by dragging (motion/VirtualSelection.ts), painted as the
-   browser paints a selection: in content, a highlight; in a field, which an inert preview can't
-   focus, a copy of its text over it, transparent but its selected part. */
+/* Text the pointer no one sees selects by dragging (motion/pointer/VirtualSelection.ts), painted
+   as the browser paints a selection: in content, a highlight; in a field, which an inert stage
+   can't focus, a copy of its text over it, transparent but its selected part. */
 ::highlight(catalogue-selection) {
   background-color: Highlight;
   color: HighlightText;
@@ -716,9 +716,9 @@
   pointer-events: none;
 }
 
-/* The cursor of the pointer no one sees (motion/PointerCursor.ts), over a playing preview's stage:
-   a plain arrow in the text's color, edged in the page's, at the scale the preview is drawn at,
-   its tip where the pointer is, a little smaller while it presses. */
+/* The cursor of the pointer no one sees (motion/pointer/PointerCursor.ts), over a playing stage:
+   a plain arrow in the text's color, edged in the page's, at the scale the stage is drawn at, its
+   tip where the pointer is, a little smaller while it presses. */
 .catalogue-pointer-cursor {
   --catalogue-cursor-scale: 1;
   position: absolute;

@@ -1,7 +1,7 @@
 import { ColorPicker } from '@envsemble/envui/color';
 import { useMedia } from '../motion/Autoplay';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const area = '.env-color-picker-area';

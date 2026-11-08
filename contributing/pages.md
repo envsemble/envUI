@@ -308,7 +308,7 @@ The visual baseline captures a page's specimens, or its first example when it ha
 
 ### Animated specimens and playbacks
 
-Where a section is about a change, such as a slider stretching past its ends or a reply arriving, a specimen plays it: the live component on a `MotionStage` (`apps/site/src/motion/MotionStage.tsx`), driven by a script of a pointer no one sees (`usePointer`, `apps/site/src/motion/PointerPlayback.ts`) or by steps of its props (`useTimeline`, `apps/site/src/motion/Timeline.ts`).
+Where a section is about a change, such as a slider stretching past its ends or a reply arriving, a specimen plays it: the live component on a `MotionStage` (`apps/site/src/motion/MotionStage.tsx`), driven by a script of a pointer no one sees (`usePointer`, `apps/site/src/motion/pointer/PointerPlayback.ts`) or by steps of its props (`useTimeline`, `apps/site/src/motion/Timeline.ts`).
 
 - **The component's own behaviour.** The pointer hovers, presses, drags, types and uses keys as a person would, so the component shows its own states; change props only where no person could.
 - **It loops**, ending where it began, at one height, so the page never moves; give `MotionStage` a `height` that holds what opens, or `roomFor` where wrapped rows grow it, and `top` where that room is for what opens below the control, such as a select's list.

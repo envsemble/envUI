@@ -11,8 +11,8 @@ import {
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSearch } from '@envsemble/envui/icons/Search';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const item = (index: number) =>
   `.env-navigation-bar-list > li:nth-child(${index}) .env-navigation-bar-item`;

@@ -1,7 +1,7 @@
 import { MarkdownEditor } from '@envsemble/envui/content';
 import { useHeldView } from '../../motion/Playback';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 
 const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
 

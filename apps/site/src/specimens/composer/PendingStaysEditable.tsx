@@ -1,5 +1,5 @@
 import PendingStaysEditable from '../../examples/composer/PendingStaysEditable';
-import { usePointer } from '../../motion/PointerPlayback';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { keepsWriting, Room } from './Sending';
 

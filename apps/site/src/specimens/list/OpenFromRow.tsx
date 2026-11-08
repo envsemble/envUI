@@ -1,6 +1,6 @@
 import OpenFromRow from '../../examples/list/OpenFromRow';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-item)`;

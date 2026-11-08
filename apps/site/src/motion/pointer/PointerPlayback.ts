@@ -1,8 +1,8 @@
 import { use, useEffect, useRef, useState, type RefObject } from 'react';
 import { VirtualPointer } from './VirtualPointer';
 import type { Aimed } from './PointerTargets';
-import { headFor, nameCourse, nameMustShow } from './MustShow';
-import { PlaybackContext, useCountedAnimation } from './Playback';
+import { headFor, nameCourse, nameMustShow } from '../MustShow';
+import { PlaybackContext, useCountedAnimation } from '../Playback';
 import {
   aimsOf,
   ease,
@@ -13,7 +13,7 @@ import {
   type AimPoints,
   type PointerStep,
 } from './PointerPlan';
-import { joinClock } from './Timeline';
+import { joinClock } from '../Timeline';
 
 /*
  * A pointer's script played over a stage's live component (usePointer): a pointer no one sees

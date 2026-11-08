@@ -1,6 +1,6 @@
 import { Button, Checkbox, Column, Disclosure, Row, Select, Text } from '@envsemble/envui';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const formats = [
   { value: 'csv', label: 'CSV' },
