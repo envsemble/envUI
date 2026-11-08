@@ -2,19 +2,12 @@
  * The pages a page relates to, for its Related tiles and the galleries: which page documents a
  * component, the address of a related page, and and what a tile shows: an example, or a foundation's tile.
  */
-import type { ComponentType } from 'react';
 import type { DocumentationMetadata, StageFill } from '@docs-model/DocumentationTypes';
 import { routeHref } from '../routes/Address';
 import { pageHref, groupedPages, routeOfDocument } from '../routes/SiteRoutes';
 import { documents, type DocumentSummary } from '../pages/PageModel';
 import { hasFoundationTile } from '../tiles/foundations/FoundationTiles';
-import {
-  memberTileOf,
-  memberTileWindow,
-  tileOf,
-  tileWindows,
-  type TileWindow,
-} from '../tiles/Tiles';
+import { memberTileOf, tileOf, type TileModule } from '../tiles/Tiles';
 
 /**
  * The page that documents a component, for the components a page relates to and the exports a
@@ -46,13 +39,10 @@ export interface TilePicture {
   /** A foundation's page, without an example: its id, for its tile (tiles/foundations/FoundationTiles.tsx). */
   foundation?: string;
   /**
-   * A composition drawn for the tile instead of an example: the page's own tile (tiles/Tiles.ts).
+   * A tile drawn instead of an example, a page's own or an export's (tiles/Tiles.ts): what loads
+   * its file, which holds its picture and the window it lays out in.
    */
-  composition?: ComponentType;
-  /** Whether the composition is the page's own tile, drawn in the tiles' window (Tile.css). */
-  tile?: boolean;
-  /** The window a tile lays out in, in rem, where it needs a larger one than the tiles'. */
-  window?: TileWindow;
+  tile?: () => Promise<TileModule>;
 }
 
 /** Letters alone, lower case, to match an export's name with a figure's heading or file. */
@@ -94,9 +84,7 @@ export function tilePictureOf(
       page: document.id,
       name: document.id,
       open: true,
-      composition: tile,
-      tile: true,
-      window: tileWindows[document.id],
+      tile,
     };
   // An export documented on another's page, such as SearchField on TextField's, with a tile of its
   // own (tiles/members/): that tile, as a page's own is shown.
@@ -106,9 +94,7 @@ export function tilePictureOf(
       page: document.id,
       name: component,
       open: true,
-      composition: memberTile,
-      tile: true,
-      window: memberTileWindow(component),
+      tile: memberTile,
     };
   const anatomy = blocks.find((block) => block.role === 'anatomy');
   const member = own && component ? memberExamples[component] : undefined;

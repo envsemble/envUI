@@ -3,9 +3,10 @@ import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 
 /**
- * Hovered, its underline drawn in full and its color a step deeper; pressed, a fill behind it,
- * briefly, as a click is; let go, and left, its underline back to its lighter rest. Only the
- * pointer acts: a focus ring arriving with no key to see would come from nowhere.
+ * On hover, its underline is drawn in full and its color gets a step deeper. Pressed, it gets a
+ * fill behind it, briefly, as a click does. When the pointer releases and leaves, its underline
+ * returns to its lighter rest. Only the pointer acts: a focus ring appearing with no visible key
+ * press would come from nowhere.
  */
 const script: PointerStep[] = [
   { wait: 300 },

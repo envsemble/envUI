@@ -3,21 +3,21 @@ import { PlaybackContext, useCountedAnimation } from './Playback';
 import { firstWait, waitPace } from './pointer/PointerPlan';
 
 /*
- * Timelines: the steps of a stage's animation where something other than a pointer changes it,
- * such as a notification arriving, each a list of what changes at each step.
+ * Timelines: the steps of a stage's animation where something other than a pointer changes it, such
+ * as a notification arriving. A timeline is a list of what changes at each step.
  */
 
-/** Counts a timeline in its stage's while it is there, and as one of its animations. */
+/** Counts a timeline in its stage while it is mounted, also as one of the stage's animations. */
 function useCounted(countTimeline: (() => () => void) | undefined) {
   useEffect(() => countTimeline?.(), [countTimeline]);
   useCountedAnimation();
 }
 
 /**
- * The step a looping animation is at, from 0, the still: each step lasts its duration, in ms, and
- * the last leads back to the first, so an animation is a list of what changes at each step. It
- * advances only while its stage plays (Playback), and stopped, it goes back to the still or
- * holds where it is, as its stage rests.
+ * The step a looping animation is at, from 0, which is the still. Each step lasts its duration, in
+ * ms, and the last step leads back to the first, so an animation is a list of what changes at each
+ * step. It advances only while its stage plays (Playback). When the stage stops, it goes back to
+ * the still or holds where it is, as the stage rests.
  *
  *     const step = useTimeline([600, 1200]);
  *     return <Toast ... />;
@@ -26,9 +26,10 @@ export function useTimeline(durations: readonly number[]) {
   const { playing, rest, countTimeline } = use(PlaybackContext);
   useCounted(countTimeline);
   const [step, setStep] = useState(0);
-  // Whether it has yet to leave its still since it started playing: it leaves it at once.
+  // Whether it has not yet left its still since it started playing. It leaves it at once.
   const fresh = useRef(true);
-  // Stopped, a stage that rests at the still goes back to it at once, in the same render.
+  // When a stage that rests at the still stops, the timeline goes back to the still at once, in the
+  // same render.
   if (!playing && rest === 'start' && step !== 0) setStep(0);
   const duration = (durations[step] ?? 0) * waitPace;
   const count = durations.length;
@@ -48,15 +49,15 @@ export function useTimeline(durations: readonly number[]) {
 }
 
 /**
- * The clocks of timelines that play together: the time each has played, counted while any of its
+ * The clocks of timelines that play together: how long each has played, counted while any of its
  * stages plays.
  */
 const sharedClocks = new Map<string, { played: number; since: number | null; players: number }>();
 
 /**
- * Joins a shared clock while a stage plays on it: `time` is how long the clock has played, and
- * `leave` stops counting for this stage. A new clock starts `from` that time. A pointer's script
- * on a clock (usePointer's `clock`) plays on these too.
+ * Joins a shared clock while a stage plays on it. Returns `time`, how long the clock has played,
+ * and `leave`, which stops counting for this stage. A new clock starts at `from`. A pointer's
+ * script on a clock (usePointer's `clock`) also plays on these.
  */
 export function joinClock(clock: string, from: number) {
   let shared = sharedClocks.get(clock);
@@ -77,10 +78,10 @@ export function joinClock(clock: string, from: number) {
 }
 
 /**
- * useTimeline for stages that play one timeline together, such as a do and a don't side by side:
- * every stage that names the same `clock` takes its step from one clock, so they keep in step
- * however their timers fall. The clock runs while any of them plays; one paused by itself holds
- * where it is, and plays on in step with the others.
+ * useTimeline for stages that play one timeline together, such as a do and a don't side by side.
+ * Every stage that names the same `clock` takes its step from one clock, so they stay in step
+ * however their timers fire. The clock runs while any of them plays. A stage paused on its own
+ * holds where it is, and continues in step with the others when it plays again.
  *
  *     const step = useSharedTimeline('reply', [1100, 140, 140, 2600]);
  */

@@ -9,13 +9,14 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 const button = (index: number) => `.env-icon-button:nth-child(${index} of .env-icon-button)`;
 
 /*
- * The pointer, resting on the middle button, steps off it below, and its tooltip closes; once it
- * has gone, the pointer moves onto the next button, whose tooltip opens once it rests there for
- * the tooltip's delay, and the same back, where the loop began. The delay is short, as it is
- * between the buttons of a toolbar once one tooltip has shown, so the row is never long without
- * one, and no two tooltips show at once. Its view holds as it plays (useHeldView), framed on its
- * still, a tooltip open, so the row stays where it is as one closes and the next opens; the
- * pointer steps off just below a button, so its cursor stays in a phone's low stage.
+ * The pointer rests on the middle button, steps off it downward, and its tooltip closes. Once that
+ * has gone, the pointer moves onto the next button, whose tooltip opens once the pointer has rested
+ * there for the tooltip's delay; then the same back, where the loop began. The delay is short, as
+ * it is between the buttons of a toolbar once one tooltip has shown, so the row is never long
+ * without a tooltip, and no two tooltips show at once. Its view holds while it plays (useHeldView),
+ * framed on its still with a tooltip open, so the row stays in place as one tooltip closes and the
+ * next opens. The pointer steps off just below a button, so its cursor stays inside a phone's low
+ * stage.
  */
 const script: PointerStep[] = [
   { to: button(2), y: 0.6 },
@@ -39,7 +40,7 @@ const actions = [
   { label: 'Share', icon: <IconShare /> },
 ];
 
-/** Icon buttons, the middle one's tooltip open above it. */
+/** Icon buttons, with the middle one's tooltip open above it. */
 export default function TooltipTile() {
   useHeldView();
   usePointer(script);

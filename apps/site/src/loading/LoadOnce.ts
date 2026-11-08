@@ -1,3 +1,4 @@
+import { useEffect, useReducer } from 'react';
 import { loadModule } from './LoadBoundary';
 
 /** A promise with the fields React's use() reads to take its value without suspending. */
@@ -39,3 +40,27 @@ export function loadOnce<T>(cache: Map<string, Promise<T>>, key: string, load: (
 export const settled = (promise: Promise<unknown>) =>
   // Every load loadOnce makes is tracked.
   (promise as Tracked<unknown>).status !== 'pending';
+
+/**
+ * The value of a load from loadOnce once it has loaded, without suspending: undefined until then,
+ * and for a load that failed or for no load. The component renders again when the load settles.
+ * For a part whose surroundings show while it loads, such as a tile's skeleton on its stage.
+ */
+export function useLoaded<T>(load: Promise<T> | undefined): T | undefined {
+  const [, loaded] = useReducer((count: number) => count + 1, 0);
+  useEffect(() => {
+    if (!load) return;
+    let gone = false;
+    // Also a load settled since the render: it renders again with the value.
+    const settle = () => {
+      if (!gone) loaded();
+    };
+    load.then(settle, settle);
+    return () => {
+      gone = true;
+    };
+  }, [load]);
+  // Every load loadOnce makes is tracked.
+  const tracked = load as Tracked<T> | undefined;
+  return tracked?.status === 'fulfilled' ? tracked.value : undefined;
+}

@@ -10,8 +10,8 @@ const projects = ['Website refresh', 'Pricing page'];
 const input = '.env-text-field-input';
 
 /**
- * A query typed, which narrows the two projects to one; cleared with the field's clear button, which
- * brings them all back, as it began.
+ * Types a query, which narrows the two projects to one, then clears it with the field's clear
+ * button, which brings them all back, as it began.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -31,9 +31,9 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A search field over the projects it filters, controlled, as an application keeps its query:
- * each letter typed narrows the list, and the clear button empties the query. It rests with every
- * project shown, its largest state, framed on it, so nothing moves as the list narrows.
+ * A search field above the projects it filters, controlled, as an application keeps its query: each
+ * letter typed narrows the list, and the clear button empties the query. It rests with every
+ * project shown, its largest state, framed on that, so nothing moves as the list narrows.
  */
 export default function SearchFieldTile() {
   const [query, setQuery] = useState('');

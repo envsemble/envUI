@@ -8,8 +8,8 @@ const area = '.env-color-picker-area';
 const hue = '.env-color-picker-slider .env-color-picker-track';
 
 /**
- * Dragged across the colors, then along the hue: each change shows in the area and its thumb, the
- * hue's thumb and the value under them.
+ * Drags across the colors, then along the hue. Each change shows in the area and its thumb, the
+ * hue's thumb and the value below them.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -31,11 +31,12 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A compact color picker: its colors and its hue whole in the tile, over the value they make. Its
- * square area is as tall as it is wide, so the picker is drawn a little smaller, as wide as leaves
- * the value its whole row under it in a gallery's low tile. Its label is left out of sight, as is
- * its copy button, so the value has the row; the label still names the picker. In a phone's lower
- * tile its colors are smaller still and its eye dropper left out, so the value shows whole under them.
+ * A compact color picker: its colors and its hue shown whole in the tile, above the value they
+ * make. Its square area is as tall as it is wide, so the picker is drawn a little smaller, just
+ * wide enough that the value keeps a whole row below it in a gallery's low tile. Its label and its
+ * copy button are visually hidden, so the value has the row; the label still names the picker. In a
+ * phone's lower tile its colors are smaller still and its eye dropper is left out, so the value
+ * shows whole below them.
  */
 export default function ColorPickerTile() {
   const narrow = useMedia(narrowGallery);

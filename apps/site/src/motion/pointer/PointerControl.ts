@@ -1,6 +1,6 @@
 /*
- * The pointer no one sees as a mouse (VirtualPointer.ts): its moves, what it hovers, its presses and
- * releases, and the clicks they make, by the same events a mouse sends.
+ * The virtual pointer as a mouse (VirtualPointer.ts): its moves, what it hovers, its presses and
+ * releases, and the clicks they make, with the same events a mouse sends.
  */
 import type { PointerSelection } from './VirtualSelection';
 import type { KeyboardControl } from '../KeyboardControl';
@@ -16,22 +16,25 @@ import {
 import { captures, keepClipboard, keyboardFocused } from '../BrowserStandIns';
 
 /**
- * The id of the pointer holding its button down, if any: a page has one mouse, so a component that follows
- * a drag on the document, such as a slider, hears every move there, and takes a move without a
- * button for the end of its drag. While one pointer holds its button, the others wait
+ * The id of the pointer holding its button down, if any. A page has one mouse, so a component that
+ * follows a drag on the document, such as a slider, receives every move there, and treats a move
+ * without a button as the end of its drag. While one pointer holds its button, the others wait
  * (usePointer).
  */
 let pressing: number | null = null;
 
 /**
- * Keeps the reader's own mouse moves from the page's listeners while a pointer no one sees holds
- * its button down: a component following that drag on the document, such as a slider, would take
- * a move without a button, such as the reader reaching for a pause button, for the drag's end.
- * Their presses and clicks still go through.
+ * Keeps the reader's own mouse moves from the page's listeners while a virtual pointer holds its
+ * button down. A component following that drag on the document, such as a slider, would treat a
+ * move without a button, such as the reader reaching for a pause button, as the end of the drag.
+ * The reader's presses and clicks still go through.
  */
 export function holdReaderMoves() {
-  if ((window as { catalogueHoldsMoves?: boolean }).catalogueHoldsMoves) return;
-  (window as { catalogueHoldsMoves?: boolean }).catalogueHoldsMoves = true;
+  // A flag on the window, whose type declares none, so the listeners are added once per page,
+  // also after a hot reload of this module.
+  const page = window as { catalogueHoldsMoves?: boolean };
+  if (page.catalogueHoldsMoves) return;
+  page.catalogueHoldsMoves = true;
   const hold = (event: Event) => {
     if (event.isTrusted && pressing !== null) event.stopImmediatePropagation();
   };
@@ -39,7 +42,7 @@ export function holdReaderMoves() {
     window.addEventListener(type, hold, { capture: true });
 }
 
-/** The mouse event a pointer event is followed by, as a browser follows it, for older handlers. */
+/** The mouse event the browser sends after a pointer event, for older handlers. */
 const mouseTwin: Record<string, string> = {
   pointerover: 'mouseover',
   pointerenter: 'mouseenter',
@@ -60,15 +63,17 @@ export class PointerControl {
   private pressed: Element[] = [];
   /** The buttons held, as a mouse event's `buttons` gives them. */
   buttons = 0;
-  /** Whether the page took the press for itself, which keeps its mouse twins from being sent. */
+  /**
+   * Whether the page handled the press itself, which stops the matching mouse events being sent.
+   */
   private mouseless = false;
   /** The button held: 0, the main one, or 2, the secondary one, which opens a context menu. */
   private button = 0;
-  /** Whether the press may select text by dragging: no one took it for itself. */
+  /** Whether the press may select text by dragging: nothing handled it. */
   private selects = false;
-  /** Whether its press was let go of the page's lock while its stage was paused. */
+  /** Whether its press released the page's lock while its stage was paused. */
   private suspended = false;
-  /** The last click, which a second one soon after on the same element makes a double click. */
+  /** The last click; a second click soon after on the same element makes a double click. */
   private lastClick: { target: Element; time: number } | null = null;
 
   constructor(
@@ -79,10 +84,11 @@ export class PointerControl {
   ) {}
 
   /**
-   * Gives an event the pointer's position on the page's content as its page position: the page
-   * here scrolls in a box rather than the window, so the browser's would be the viewport's. A
-   * component that follows a drag by how far its page position moves, such as React Aria's color
-   * area, then takes the pointer carried along with the content as the page scrolls for no move.
+   * Gives an event the pointer's position on the page's content as its page position. The page here
+   * scrolls in a box rather than the window, so the browser's page position would be the
+   * viewport's. A component that follows a drag by how far its page position moves, such as React
+   * Aria's color area, then doesn't take the pointer, carried with the content as the page scrolls,
+   * for a move.
    */
   private onContent<T extends MouseEvent>(event: T): T {
     let [x, y] = [event.clientX, event.clientY];
@@ -113,7 +119,7 @@ export class PointerControl {
       ...init,
     };
     const sent = target.dispatchEvent(this.onContent(new PointerEvent(type, options)));
-    // A press the page takes for itself, by preventing its default, sends no mouse events after.
+    // A press the page handles itself, by preventing its default, sends no mouse events after it.
     if (type === 'pointerdown') this.mouseless = !sent;
     const twin = mouseTwin[type];
     if (twin && !(this.mouseless && /down|move|up/.test(twin))) {
@@ -130,8 +136,8 @@ export class PointerControl {
   }
 
   /**
-   * Moves the pointer to a point, coming over the stage there if it wasn't; `aimed`, what aim
-   * read for the point, saves reading the layout again.
+   * Moves the pointer to a point, entering the stage there if it wasn't over it. `aimed`, what aim
+   * found for the point, saves reading the layout again.
    */
   moveTo(point: Point, aimed: Aimed | null) {
     const spot = this.spot;
@@ -145,8 +151,8 @@ export class PointerControl {
     const previous = spot.over[0] ?? null;
     const left = spot.over.filter((element) => !chain.includes(element));
     const entered = chain.filter((element) => !spot.over.includes(element));
-    // Each says where the pointer comes from or goes to, as a mouse's do, so a component that
-    // follows enter and leave by them, such as React's, sees a move inside it as one.
+    // Each says where the pointer comes from or goes to, as a mouse's events do, so a component
+    // that follows enter and leave by them, such as React, sees a move inside it as one.
     if (previous && previous !== target)
       this.send(previous, 'pointerout', { relatedTarget: target });
     for (const element of left) {
@@ -160,13 +166,13 @@ export class PointerControl {
     }
     spot.over = chain;
     this.send(captures.get(this.id) ?? target, 'pointermove');
-    // A drag across text selects it, unless something took the drag, as a slider's thumb does.
+    // A drag across text selects it, unless something handled the drag, as a slider's thumb does.
     if (this.buttons === 1 && this.selects && !captures.get(this.id)) this.selection.extend(point);
     spot.drawCursor();
   }
 
   /**
-   * Its stage is paused: a press it holds lets the page's lock go, so nothing waits on a paused
+   * Its stage is paused: a press it holds releases the page's lock, so nothing waits on a paused
    * stage, and the reader's moves reach the page again.
    */
   suspend() {
@@ -176,8 +182,9 @@ export class PointerControl {
   }
 
   /**
-   * Its stage plays again: a press it held is taken up where it is, as a hand pressing again,
-   * so a drag the page ended meanwhile goes on. Returns whether it may go on, once the lock is free.
+   * Its stage plays again: a press it held is taken up again where it is, as a hand pressing again,
+   * so a drag the page ended meanwhile continues. Returns whether it may continue, once the lock is
+   * free.
    */
   resume() {
     if (!this.suspended) return this.canPress;
@@ -189,20 +196,22 @@ export class PointerControl {
     return true;
   }
 
-  /** Whether this pointer may go on now: no other is holding its button down on the page. */
+  /**
+   * Whether this pointer may continue now: no other pointer is holding its button down on the page.
+   */
   get canPress() {
     return pressing === null || pressing === this.id;
   }
 
   /**
-   * Presses the pointer's button where it is: the main one, or with `button` 2 the secondary one,
-   * whose press asks for a context menu, as a right click does. A press of the main one on text
-   * starts a selection that a drag extends, and leaves what was selected unselected.
+   * Presses the pointer's button where it is: the main button, or with `button` 2 the secondary
+   * one, whose press asks for a context menu, as a right click does. A press of the main button on
+   * text starts a selection that a drag extends, and clears what was selected.
    */
   press(button: 0 | 2 = 0) {
     const spot = this.spot;
     // What was under the pointer may have been replaced since it came to rest, as a button's icon
-    // is by its spinner and back: a press goes to what is there now, as a mouse's does.
+    // is replaced by its spinner and back: a press goes to what is there now, as a mouse's does.
     if (spot.at && spot.over[0] && !spot.over[0].isConnected) {
       const at = spot.at;
       spot.at = null;
@@ -217,13 +226,13 @@ export class PointerControl {
     const sent = this.send(target, 'pointerdown', { button });
     this.pressed = [...spot.over];
     if (button === 0) for (const element of this.pressed) mark(element, pressMark, true);
-    // A press in a field focuses it, and anywhere else takes focus from the field, unless the page
-    // prevents it, as a formatting button does. A button keeps no focus ring under a pointer, so it
-    // isn't marked.
+    // A press in a field focuses it, and a press anywhere else takes focus from the field, unless
+    // the page prevents it, as a formatting button does. A button shows no focus ring under a
+    // pointer, so it isn't marked.
     if (keyboardFocused.has(spot.scope)) this.keyboard.keyboardFocus(null);
     if (sent) this.keyboard.focus(target.closest(textFields));
     if (button === 2) {
-      // As the secondary button goes down, the context menu is asked for where the pointer is.
+      // When the secondary button goes down, the context menu is asked for where the pointer is.
       const point = spot.at ?? { x: 0, y: 0 };
       target.dispatchEvent(
         new PointerEvent('contextmenu', {
@@ -244,13 +253,13 @@ export class PointerControl {
       return;
     }
     this.selects = sent;
-    // A press whose default the page prevents, such as on a formatting button, leaves the
-    // selection as it was, as a browser does.
+    // A press whose default the page prevents, such as on a formatting button, leaves the selection
+    // as it was, as a browser does.
     if (sent && spot.at) this.selection.begin(spot.at, target);
     else if (sent) this.selection.clear();
   }
 
-  /** Releases the button: the press ends, and where it ends on what it began on, it clicks. */
+  /** Releases the button: the press ends, and if it ends on what it began on, it clicks. */
   release() {
     if (!this.buttons) return;
     const spot = this.spot;
@@ -267,15 +276,15 @@ export class PointerControl {
       captured.dispatchEvent(new PointerEvent('lostpointercapture', { pointerId: this.id }));
     }
     // A click goes to the nearest element the press and the release share; the secondary button
-    // asked for its context menu as it went down. None goes to an element the page has taken away,
-    // such as as it leaves for another: a link would still follow its address, outside the figure
-    // that keeps its links in place.
+    // asked for its context menu when it went down. No click goes to an element the page has
+    // removed, such as while it navigates to another page: a link would still follow its address,
+    // outside the figure that keeps its links in place.
     const shared =
       button === 0 &&
       this.pressed.find((element) => element.isConnected && spot.over.includes(element));
     if (shared) {
       const point = spot.at ?? { x: 0, y: 0 };
-      // A second click on the same element soon after the first is a double click, as a mouse's.
+      // A second click on the same element soon after the first is a double click, as with a mouse.
       const now = performance.now();
       const second =
         this.lastClick?.target === shared && now - this.lastClick.time < doubleClickTime;
@@ -300,7 +309,7 @@ export class PointerControl {
     spot.drawCursor();
   }
 
-  /** Leaves what it is over: each element hears it go and loses its hover. */
+  /** Leaves what it is over: each element receives the leave events and loses its hover. */
   unhover() {
     const spot = this.spot;
     if (spot.over[0]) this.send(spot.over[0], 'pointerout');

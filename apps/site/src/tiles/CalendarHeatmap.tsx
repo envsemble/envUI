@@ -15,7 +15,10 @@ const data: CalendarHeatmapDay[] = Array.from({ length: 63 }, (_, index) => ({
 
 const day = (date: string) => `.env-calendar-heatmap-day[data-date="${date}"]`;
 
-/* A day hovered shows its edits; along the week and down the next, each day's at once. */
+/*
+ * Hovers a day, which shows its edits, then moves along the week and down the next; each day's
+ * tooltip opens at once.
+ */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: day('2026-02-25') },
@@ -36,17 +39,18 @@ const days = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', 
 const dayOf = (date: string) => days.format(new Date(`${date}T00:00:00Z`));
 
 /**
- * A calendar heatmap of nine weeks of edits; in a phone's tile eight, so it is drawn larger. Its
- * stage shows it from its months down to Saturday's row, cropped there, on a whole row, rather
- * than fading out partway through Sunday's; a phone's lower stage down to Friday's, the working
- * week, so it keeps the inset from the stage's foot every tile keeps. The crop's height is read
- * off that row, so it follows the days' size, which grows on a touch screen.
+ * A calendar heatmap of nine weeks of edits, or eight in a phone's tile, so it is drawn larger. Its
+ * stage shows it from the months down to Saturday's row, cropped there on a whole row rather than
+ * fading out partway through Sunday's. A phone's lower stage shows it down to Friday's row, the
+ * working week, so it keeps the inset from the stage's bottom that every tile keeps. The crop's
+ * height is read from that row, so it follows the days' size, which grows on a touch screen.
  */
 export default function CalendarHeatmapTile() {
   const narrow = useMedia(narrowGallery);
   const crop = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState<number>();
-  // Framed from its months down to the days it hovers, it holds that view as their tooltips open.
+  // Framed from its months down to the days it hovers, it holds that view while their tooltips
+  // open.
   useHeldView();
   usePointer(script);
   useLayoutEffect(() => {

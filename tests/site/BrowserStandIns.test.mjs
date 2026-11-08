@@ -1,5 +1,6 @@
 // The site's stand-ins for browser methods (apps/site/src/motion/BrowserStandIns.ts): installed
-// once, each calls the browser's own method for anything it doesn't stand in for.
+// once while any stage holds them and removed when the last lets go, each calls the browser's own
+// method for anything it doesn't stand in for.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
@@ -10,7 +11,8 @@ const standIns = await importSource('BrowserStandIns', 'apps/site/src/motion/Bro
 
 /**
  * A realm of its own, with an element that matches the selectors it is given as inside, and
- * methods that record each call that reaches them: the browser's own.
+ * methods that record each call that reaches them: the browser's own. Its stand-ins are held, and
+ * `release` lets them go.
  */
 function realm() {
   const calls = [];
@@ -48,17 +50,33 @@ function realm() {
       calls.push(['focus', options]);
     }
   }
-  standIns.installBrowserStandIns({ Element, HTMLElement });
-  return { Element, HTMLElement, calls };
+  const own = {
+    scrollIntoView: Element.prototype.scrollIntoView,
+    focus: HTMLElement.prototype.focus,
+  };
+  const release = standIns.holdBrowserStandIns({ Element, HTMLElement });
+  return { Element, HTMLElement, calls, own, release };
 }
 
-test('installed twice, each method is wrapped once', () => {
-  const { Element, HTMLElement } = realm();
+test('held twice, each method is wrapped once, and the last release puts the own ones back', () => {
+  const { Element, HTMLElement, own, release } = realm();
   const wrapped = Element.prototype.scrollIntoView;
   const focus = HTMLElement.prototype.focus;
-  standIns.installBrowserStandIns({ Element, HTMLElement });
+  assert.notEqual(wrapped, own.scrollIntoView);
+  const again = standIns.holdBrowserStandIns({ Element, HTMLElement });
   assert.equal(Element.prototype.scrollIntoView, wrapped);
   assert.equal(HTMLElement.prototype.focus, focus);
+  again();
+  // Released twice, a hold counts once: the first hold still holds them.
+  again();
+  assert.equal(Element.prototype.scrollIntoView, wrapped);
+  release();
+  assert.equal(Element.prototype.scrollIntoView, own.scrollIntoView);
+  assert.equal(HTMLElement.prototype.focus, own.focus);
+  // Held again, they are installed again.
+  const third = standIns.holdBrowserStandIns({ Element, HTMLElement });
+  assert.notEqual(Element.prototype.scrollIntoView, own.scrollIntoView);
+  third();
 });
 
 test('outside a stage or an example, every method is the browser’s own', () => {
@@ -134,7 +152,7 @@ test('evaluated again, as on a hot reload, the module keeps the state its stand-
   // The same bundle, evaluated again as a module of its own.
   const bundle = pathToFileURL(join(repository, '.cache/unit/BrowserStandIns.mjs')).href;
   const again = await import(`${bundle}?evaluated=again`);
-  assert.notEqual(again.installBrowserStandIns, standIns.installBrowserStandIns);
+  assert.notEqual(again.holdBrowserStandIns, standIns.holdBrowserStandIns);
   assert.equal(again.captures, standIns.captures);
   assert.equal(again.keyboardFocused, standIns.keyboardFocused);
   // A pointer its callers register now is one the installed stand-ins capture for.
@@ -145,8 +163,9 @@ test('evaluated again, as on a hot reload, the module keeps the state its stand-
   assert.ok(element.hasPointerCapture(41));
   again.captures.delete(41);
   assert.deepEqual(calls, []);
-  // Installing from it changes nothing on a realm that has the stand-ins.
+  // Holding them from it changes nothing on a realm that has the stand-ins.
   const wrapped = Element.prototype.setPointerCapture;
-  again.installBrowserStandIns({ Element, HTMLElement: class extends Element {} });
+  const release = again.holdBrowserStandIns({ Element, HTMLElement: class extends Element {} });
   assert.equal(Element.prototype.setPointerCapture, wrapped);
+  release();
 });

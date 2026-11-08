@@ -6,13 +6,14 @@ import { useHeldView } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
+import type { TileWindow } from './Tiles';
 
 const trigger = '.env-button[aria-haspopup]';
 const action = '.env-popover .env-button';
 
 /**
- * From the open popover, as it rests: its action pressed, which switches the billing period and
- * closes it; opened again from its button, it tells the new one and rests open, held so a while
+ * Starts from the open popover, as it rests: presses its action, which switches the billing period
+ * and closes it. Opened again from its button, it shows the new period and rests open, held a while
  * before it plays again, when it switches back.
  */
 const script: PointerStep[] = [
@@ -32,12 +33,16 @@ const script: PointerStep[] = [
 const periods = { monthly: 'Monthly', yearly: 'Yearly' } as const;
 type Period = keyof typeof periods;
 
+/** The tiles' window (Tile.css), as an overlay: drawn at the overlays' one scale. */
+export const tileWindow: TileWindow = { overlay: true };
+
 /**
- * A popover that tells the billing period, open beside the icon button that opens it, so it shows
- * whole at about its own size in a gallery's low tile, with the action that switches the period,
- * which closes it; on a phone's narrower tile, under its button. It rests open, its largest state,
- * so as it closes and opens again nothing in its tile moves (useHeldView). Stopped, it is monthly and open again rather than drawn anew, which
- * would bring it in again.
+ * A popover that shows the billing period, open beside the icon button that opens it, so it shows
+ * whole at about its own size in a gallery's low tile, with the action that switches the period and
+ * closes it. On a phone's narrower tile it opens under its button. It rests open, its largest
+ * state, so nothing in its tile moves as it closes and opens again (useHeldView). When the tile
+ * stops, the period is monthly and the popover is open again rather than drawn again, which would
+ * make it appear with motion again.
  */
 export default function PopoverTile() {
   const [open, setOpen] = useState(true);
@@ -55,7 +60,7 @@ export default function PopoverTile() {
     <Popover
       open={open}
       onOpenChange={setOpen}
-      // Named rather than headed, so it is low enough to show whole beside its button.
+      // Labelled rather than given a heading, so it is low enough to show whole beside its button.
       aria-label="Billing period"
       side={narrow ? 'bottom' : 'inline-end'}
       trigger={<IconButton variant="secondary" icon={<IconInfo />} aria-label="Billing" />}

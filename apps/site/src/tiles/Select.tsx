@@ -12,9 +12,9 @@ const trigger = '.env-select-trigger';
 const option = (index: number) => `.env-select-item:nth-child(${index})`;
 
 /**
- * Down the open list, Private chosen, which closes it; opened again from its trigger and Team
- * chosen; opened once more, as it began. Each choice is held closed about a second, and the open
- * list rests a while before the loop starts over.
+ * Moves down the open list and chooses Private, which closes it. Opens it again from its trigger
+ * and chooses Team, then opens it once more, as it began. Each choice is held, closed, for about a
+ * second, and the open list rests a while before the loop starts over.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -41,8 +41,8 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A select resting with its list open under it, framed on both, so as it plays the list closes and
- * opens again in place, and nothing in its tile moves.
+ * A select resting with its list open under it, framed on both, so while it plays the list closes
+ * and opens again in place, and nothing in its tile moves.
  */
 export default function SelectTile() {
   useHeldView();

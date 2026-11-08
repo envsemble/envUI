@@ -3,10 +3,12 @@ import { PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
 import { useStageLayer } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 /*
- * Undo pressed on the notification of an archived project: it leaves, and a notification that the
- * project is restored takes its place, one at a time, so the tile never shows a stack half hidden.
+ * Presses Undo on the notification of an archived project: it leaves, and a notification that the
+ * project is restored takes its place. One shows at a time, so the tile never shows a half-hidden
+ * stack.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -21,15 +23,15 @@ const script: PointerStep[] = [
 ];
 
 /**
- * How long after one notification starts to leave the next comes: as it fades, so the stage is
- * never empty between them, but not before it has mostly gone, so the two never stack.
+ * How long after one notification starts to leave the next one comes: while it fades, so the stage
+ * is never empty between them, but not before it has mostly gone, so the two never stack.
  */
 const handover = 120;
 
 /**
- * A notification of an archived project, short enough to show whole in a gallery's tile, with
- * Undo, which restores it. Stopped, or at the end of a round, the restored notification leaves
- * and the archived one is shown again.
+ * A notification of an archived project, short enough to show whole in a gallery's tile, with Undo,
+ * which restores the project. When the tile stops, or at the end of a round, the restored
+ * notification leaves and the archived one shows again.
  */
 function Notices() {
   const toast = useToast();
@@ -78,9 +80,12 @@ function Notices() {
   return null;
 }
 
+/** The tiles' window (Tile.css), as an overlay: drawn at the overlays' one scale. */
+export const tileWindow: TileWindow = { overlay: true };
+
 /**
- * A notification in the live region rather than a picture of one, so it arrives and leaves with
- * its own motion: the region renders into the tile's layer, whose transform holds it in the tile's
+ * A notification in the live region rather than a picture of one, so it arrives and leaves with its
+ * own motion. The region renders into the tile's layer, whose transform keeps it in the tile's
  * corner.
  */
 export default function ToastTile() {

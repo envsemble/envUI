@@ -3,6 +3,7 @@ import { AvatarButton, Button, Menu, TopBar } from '@envsemble/envui';
 import { IconUnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const organizations = [
   { id: 'northwind', label: 'Northwind Labs', role: 'Admin' },
@@ -13,8 +14,8 @@ const organization = (index: number) => `.env-menu-choice:nth-child(${index} of 
 const switcher = '.env-top-bar .env-button';
 
 /*
- * Contoso chosen from the open switcher, which closes it and names Contoso in the bar; opened
- * again, Northwind Labs chosen back, and opened once more, as it began.
+ * Chooses Contoso from the open switcher, which closes it and shows Contoso in the bar. Then opens
+ * it again and chooses Northwind Labs, and opens it once more, as it began.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -39,6 +40,9 @@ const script: PointerStep[] = [
   { leave: true },
   { wait: 400 },
 ];
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 19, height: 14.25 };
 
 /**
  * A top bar with the active organization's switcher at its start, open, and the signed-in person's

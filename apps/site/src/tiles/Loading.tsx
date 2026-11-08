@@ -1,14 +1,19 @@
 import { Button, Card } from '@envsemble/envui';
 import { useTimeline } from '../motion/Timeline';
 import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 17, height: 12.75 };
 
 /**
- * In the shape of what is coming: a card with its item at rest; as it plays, it loads, its title
- * and its line given as undefined, so its skeleton draws a bar for each, their own pulse playing,
- * and the item arrives in the same place; a while to read it, and it loads again.
+ * Shows the shape of what is coming: a card with its item at rest. While it plays, it loads: its
+ * title and its line are given as undefined, so its skeleton draws a bar for each, with their own
+ * pulse playing, and then the item arrives in the same place. After a while to read it, it loads
+ * again.
  */
 export default function LoadingTile() {
-  // The still, loading, the item, loading again, and the item a while longer, across the loop.
+  // Across the loop: the still, loading, the item, loading again, and the item a while longer.
   const step = useTimeline([400, 2000, 2700, 2000, 4000]);
   const loaded = step % 2 === 0;
   return (

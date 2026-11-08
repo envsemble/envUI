@@ -8,8 +8,8 @@ import { narrowGallery } from './Tiles';
 const input = '.env-composer-input';
 
 /**
- * Clicked into, a message typed and sent: the field clears and, while the reply comes, the send
- * button is a stop button; then it is a send button again.
+ * Clicks into it, types a message and sends it: the field clears and, while the reply comes, the
+ * send button is a stop button; then it is a send button again.
  */
 const script: PointerStep[] = [
   { wait: 300 },

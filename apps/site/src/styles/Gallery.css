@@ -225,7 +225,7 @@
       .catalogue-gallery-stage.catalogue-gallery-stage
       .catalogue-tile-canvas[data-own-size][data-popup] {
       inline-size: min(
-        var(--catalogue-tile-width, 14rem),
+        var(--catalogue-tile-width),
         (100% - 2rem) / var(--catalogue-canvas-scale, var(--catalogue-own-popup-least))
       );
     }
@@ -328,7 +328,7 @@
    end. */
 .catalogue-gallery-stage.catalogue-gallery-stage .catalogue-tile-canvas[data-own-size] {
   inline-size: max(100% - 2rem, var(--catalogue-own-least));
-  block-size: max(100% - 2rem, var(--catalogue-tile-height, 10.5rem));
+  block-size: max(100% - 2rem, var(--catalogue-tile-height));
   min-block-size: 0;
 }
 
@@ -337,5 +337,5 @@
 :is(.catalogue-gallery-grid, .catalogue-related-tiles)
   .catalogue-gallery-stage.catalogue-gallery-stage
   .catalogue-tile-canvas[data-own-size][data-popup] {
-  inline-size: max(100% - 2rem, var(--catalogue-tile-width, 14rem));
+  inline-size: max(100% - 2rem, var(--catalogue-tile-width));
 }

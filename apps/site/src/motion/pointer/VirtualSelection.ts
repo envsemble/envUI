@@ -1,28 +1,28 @@
 /*
- * The text a pointer no one sees selects by dragging across it, as a mouse does
- * (VirtualPointer.ts). A stage is inert, so neither the page's selection nor focus can reach it,
- * and the reader's own selection on the page is theirs to keep:
- * - in a text field, the selection is the field's own (setSelectionRange), which a component reads
- *   as it would a person's, such as a formatting button; an unfocused field doesn't paint it, so a
- *   copy of the field's text over it, transparent but the selected part, paints it in the
- *   selection's colours (FieldCopy.ts);
- * - in content, it is a range in a highlight of the catalogue's (`::highlight(catalogue-selection)`),
- *   painted as a selection is;
- * - in a rich text editor (StageEditors.ts), it is also the editor's own selection, set
- *   through its state, so its toolbar shows what is on there and typing goes there; the highlight
- *   then follows the editor's selection as its content changes, such as when the text is bolded.
- * A drag selects whole words, as a person selecting a word or a phrase does: from the start of the
- * word it begins in to the end of the word it ends in, without the space after it.
+ * The text a virtual pointer selects by dragging across it, as a mouse does (VirtualPointer.ts). A
+ * stage is inert, so neither the page's selection nor focus can reach it, and the reader's own
+ * selection on the page must be left alone:
+ * - In a text field, the selection is the field's own (setSelectionRange), which a component reads
+ *   as it would a person's, such as a formatting button. An unfocused field doesn't paint it, so a
+ *   copy of the field's text laid over it, transparent except for the selected part, paints it in
+ *   the selection's colours (FieldCopy.ts).
+ * - In content, it is a range in a highlight of the catalogue's
+ *   (`::highlight(catalogue-selection)`), painted as a selection is.
+ * - In a rich text editor (StageEditors.ts), it is also the editor's own selection, set through the
+ *   editor's state, so its toolbar shows the formatting there and typing goes there. The highlight
+ *   then follows the editor's selection as its content changes, such as when the text is made bold.
+ *   A drag selects whole words, as a person selecting a word or a phrase does: from the start of
+ *   the word it begins in to the end of the word it ends in, without the space after it.
  */
 import { fieldCharacterBox, paintField, type Field } from './FieldCopy';
 import type { RichEditor, StageEditors } from './StageEditors';
 
-/** A character of a word: a letter, a digit, or an apostrophe or underscore inside one. */
+/** A character of a word: a letter, a digit, or an apostrophe or underscore inside a word. */
 const wordCharacter = /[\p{L}\p{N}\p{M}_'’]/u;
 const isWord = (text: string, index: number) => wordCharacter.test(text.charAt(index));
 const isSpace = (text: string, index: number) => /\s/.test(text.charAt(index));
 
-/** Where a selection starts in a text: at the start of the word it is in, past any spaces. */
+/** Where a selection starts in a text: at the start of the word it is in, after any spaces. */
 function wordStart(text: string, at: number) {
   let index = at;
   if (isWord(text, index - 1) && isWord(text, index))
@@ -41,8 +41,8 @@ function wordEnd(text: string, at: number) {
 }
 
 /**
- * The part of a text a drag from `start` to `end` selects, in whole words: nothing, as `null`, if
- * it holds no word.
+ * The part of a text that a drag from `start` to `end` selects, in whole words, or `null` if it
+ * contains no word.
  */
 function wholeWords(text: string, start: number, end: number) {
   const from = wordStart(text, start);
@@ -63,7 +63,10 @@ const selectableFields =
 /** The name of the highlight that paints the selections in content. */
 const highlightName = 'catalogue-selection';
 
-/** The catalogue's highlight, made the first time it is needed, where the browser has highlights. */
+/**
+ * The catalogue's highlight, created the first time it is needed, where the browser supports
+ * highlights.
+ */
 function highlight() {
   if (typeof CSS === 'undefined' || !('highlights' in CSS) || typeof Highlight === 'undefined')
     return null;
@@ -76,13 +79,14 @@ function highlight() {
 }
 
 /**
- * Where the caret would go for a point in a stage: a node and an offset in it, as a press puts it
- * there. The browser finds no caret in what is inert, as a stage is, nor under what covers it,
- * such as a gallery tile's link stretched over its stage, so it is found for a moment as if the
- * stage weren't inert and nothing covered it, which changes nothing it shows or sends.
+ * Where the caret would go for a point in a stage, as a node and an offset in it, as a press would
+ * put it. The browser finds no caret inside an inert element, as a stage is, nor under something
+ * that covers it, such as a gallery tile's link stretched over its stage. So the caret is found for
+ * a moment as if the stage weren't inert and nothing covered it, which changes nothing it shows or
+ * sends.
  */
 function caretAt(point: Point, scope: Element) {
-  // Methods some engines lack, which the DOM's types have as always there or not at all.
+  // Methods some engines lack, which the DOM's types declare as either always present or absent.
   const doc = document as Document & {
     caretPositionFromPoint?: (x: number, y: number) => CaretPosition | null;
     caretRangeFromPoint?: (x: number, y: number) => Range | null;
@@ -113,7 +117,7 @@ function caretAt(point: Point, scope: Element) {
   }
 }
 
-/** A point brought inside a box, a pixel in from its edges. */
+/** A point moved inside a box, a pixel in from its edges. */
 function clampTo(point: Point, box: DOMRect): Point {
   return {
     x: Math.min(Math.max(point.x, box.left + 1), box.right - 1),
@@ -122,9 +126,9 @@ function clampTo(point: Point, box: DOMRect): Point {
 }
 
 /**
- * The offset in a field's value nearest a point, as a press or a drag there puts the caret: a
- * point outside the field is taken at its nearest edge. Where the browser doesn't say, a line's
- * offset is measured from its text.
+ * The offset in a field's value nearest a point, where a press or a drag there puts the caret. A
+ * point outside the field counts as at its nearest edge. Where the browser doesn't report it, a
+ * line's offset is measured from its text.
  */
 function fieldOffsetAt(field: Field, point: Point) {
   const box = field.getBoundingClientRect();
@@ -156,7 +160,7 @@ function fieldOffsetAt(field: Field, point: Point) {
 
 /**
  * Where a text is in an element's text, or in a field's value, for the pointer to go to: `x` along
- * it, by its characters, so 0 is just inside its start and 1 just inside its end, and `y` down its
+ * it, by characters, so 0 is just inside its start and 1 just inside its end, and `y` down its
  * line. Nothing where the text isn't there, such as before it is typed.
  */
 export function textPoint(element: Element, text: string, x: number, y: number): Point | null {
@@ -177,7 +181,7 @@ export function textPoint(element: Element, text: string, x: number, y: number):
 function contentCharacterBox(element: Element, text: string, along: (start: number) => number) {
   const nodes: Text[] = [];
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
-  // SHOW_TEXT walks text nodes alone.
+  // SHOW_TEXT walks only text nodes.
   while (walker.nextNode()) nodes.push(walker.currentNode as Text);
   const whole = nodes.map((node) => node.data).join('');
   const start = text ? whole.indexOf(text) : -1;
@@ -196,8 +200,8 @@ function contentCharacterBox(element: Element, text: string, along: (start: numb
 }
 
 /**
- * Brings a range in content to whole words, within the text at each of its ends: returns whether
- * it holds a word, else it is left collapsed at its start.
+ * Extends a range in content to whole words, within the text at each of its ends. Returns whether
+ * it contains a word; if not, it is left collapsed at its start.
  */
 function toWholeWords(range: Range) {
   if (range.collapsed) return false;
@@ -219,7 +223,7 @@ interface Caret {
   offset: number;
 }
 
-/** The selection one pointer no one sees makes in its stage. */
+/** The selection one virtual pointer makes in its stage. */
 export class PointerSelection {
   /** The field it selects in, its anchor's offset and its painted copy, while it selects there. */
   private field: Field | null = null;
@@ -239,8 +243,8 @@ export class PointerSelection {
   ) {}
 
   /**
-   * A press at a point: what was selected is no longer, and the press marks where a drag would
-   * select from, in a field or in text of the stage whose text can be selected.
+   * A press at a point: it clears what was selected, and marks where a drag would select from, in a
+   * field or in selectable text of the stage.
    */
   begin(point: Point, target: Element) {
     this.clear();
@@ -251,7 +255,7 @@ export class PointerSelection {
       field.setSelectionRange(this.fieldAnchor, this.fieldAnchor);
       return;
     }
-    // In text, the caret is found once a drag needs it, so a click reads no layout; a rich text
+    // In text, the caret is found once a drag needs it, so a click reads no layout. A rich text
     // editor takes its caret at once.
     this.pressed = point;
     if (this.editors.use(target)) this.anchorAt();
@@ -271,8 +275,8 @@ export class PointerSelection {
     const parent = caret.node.parentElement;
     if (!parent || getComputedStyle(parent).userSelect === 'none') return;
     this.anchor = caret;
-    // In a rich text editor, the press puts the editor's caret there, and the editor's selection
-    // is painted from then on, as it changes.
+    // In a rich text editor, the press puts the editor's caret there, and from then on the editor's
+    // selection is painted as it changes.
     const found = this.editors.use(caret.node);
     if (!found) return;
     const { editor } = found;
@@ -298,7 +302,7 @@ export class PointerSelection {
     shown?.add(range);
   }
 
-  /** A drag on to a point: the selection runs from where the press was to there. */
+  /** A drag to a point: the selection runs from where the press was to there. */
   extend(point: Point) {
     const field = this.field;
     if (field) {
@@ -332,7 +336,7 @@ export class PointerSelection {
       range.setEnd(anchor.node, anchor.offset);
     } else range.setEnd(caret.node, caret.offset);
     const words = toWholeWords(range);
-    // In a rich text editor, the editor's selection, which paints itself as it changes.
+    // In a rich text editor, the editor's selection, which is painted again as it changes.
     const editor = this.editor?.editor;
     if (editor) {
       const { view } = editor;
@@ -347,7 +351,7 @@ export class PointerSelection {
     if (words) shown?.add(range);
   }
 
-  /** Paints the field's selection again, as its value or scroll changed. */
+  /** Paints the field's selection again, after its value or scroll changed. */
   private paint() {
     const selected = this.selected;
     if (!selected) {
@@ -362,14 +366,16 @@ export class PointerSelection {
     if (!this.watching) this.watching = requestAnimationFrame(this.watch);
   }
 
-  /** The field's value and scroll as last painted, and the frame that looks for a change to them. */
+  /**
+   * The field's value and scroll as last painted, and the frame that checks for a change to them.
+   */
   private painted = { value: '', scroll: 0 };
   private watching = 0;
 
   /**
-   * Follows the field while its selection is painted: a component that changes its text, such as
-   * Bold wrapping the selected word, sets its own selection there, which is painted in its place;
-   * a field drawn anew or emptied of its selection paints none.
+   * Follows the field while its selection is painted. A component that changes the field's text,
+   * such as Bold wrapping the selected word, sets its own selection there, which is painted
+   * instead. A field that is drawn again or loses its selection paints none.
    */
   private readonly watch = () => {
     this.watching = 0;
@@ -390,9 +396,9 @@ export class PointerSelection {
   };
 
   /**
-   * The value a field takes for text typed into it, as a keyboard types: over its selected part,
-   * or at the caret typing left, or at its end. `text` null deletes: the selected part, or the
-   * character before the caret. Returns the value and where the caret is after it.
+   * The value a field takes for text typed into it, as a keyboard types: over its selected part, or
+   * at the caret where typing left it, or at its end. `text` null deletes: the selected part, or
+   * the character before the caret. Returns the value and where the caret is afterwards.
    */
   typed(field: Field, text: string | null) {
     const value = field.value;
@@ -407,13 +413,13 @@ export class PointerSelection {
     const at = start + (text?.length ?? 0);
     this.selected = null;
     this.paint();
-    // Typing that began over a selection goes on at the caret; anywhere else, at the end.
+    // Typing that began over a selection continues at the caret; anywhere else, at the end.
     this.caret = selected || this.caret?.field === field ? { field, at } : null;
     return { value: next, at };
   }
 
   /**
-   * A field's own selection shown again as the field takes focus again, as a browser shows it,
+   * Shows a field's own selection again when the field takes focus again, as a browser shows it,
    * such as a word left selected while a menu's command ran.
    */
   reveal(element: Element) {
@@ -426,10 +432,10 @@ export class PointerSelection {
     this.paint();
   }
 
-  /** Where typing goes on in a field, after it typed over a selection there. */
+  /** Where typing continues in a field, after it typed over a selection there. */
   private caret: { field: Field; at: number } | null = null;
 
-  /** Nothing is selected any more, as a press elsewhere or the stage's end leaves it. */
+  /** Clears the selection, as a press elsewhere or the stage ending does. */
   clear() {
     if (this.editor) this.editor.editor.off('transaction', this.editor.follow);
     this.editor = null;

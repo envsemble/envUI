@@ -1,50 +1,51 @@
 /*
- * The script of the pointer no one sees, as usePointer (PointerPlayback.ts) plays it: the steps a figure
- * writes, and the plan they make of its time, where the pointer is and what it does when, at the
- * site's brisk pace.
+ * The virtual pointer's script, as usePointer (PointerPlayback.ts) plays it: the steps a figure
+ * writes, and the plan they make of its time, saying where the pointer is and what it does when, at
+ * the site's brisk pace.
  */
 import type { CarriedFile } from '../DragControl';
 import { textPoint } from './VirtualSelection';
 import { remPixels } from '@envui-internal/internal/dom/lengths';
 
 /**
- * One step of what the pointer no one sees does, or of what happens around it:
+ * One step of what the virtual pointer does, or of what happens around it:
  * - `wait`, ms: it stays as it is, over the stage or not, pressed or not.
- * - `to`, a selector of an element in the stage: it moves to a point of it, `x` and `y` as
- *   fractions of its box, the middle by default, over `duration` ms, or comes there at once if it
- *   wasn't over the stage. Pressed, it drags; pressed on text, in a field or in content, the drag
- *   selects the words it crosses, whole, as a person does, until a press elsewhere. With `text`, a
- *   word or phrase in the element's text or value, it moves to that text: `x` is how far along it,
- *   by its characters, and `y` how far down its line, so a script finds a word wherever the text
- *   wraps, such as `{ to: field, text: 'launch plan', x: 0.1 }` then `x: 0.9` to select it.
- * - `press`, `release`: its button; `click` presses and releases it a moment later, and
- *   `doubleClick` clicks twice, quickly, as a double click; two clicks in quick succession on one
- *   element are a double click too. After a click or a release that a wait follows, the pointer
- *   steps a little aside, as a hand does, about a rem toward the end of what it pressed, staying
- *   on it, so its cursor doesn't hide what the press changes there, such as a button's spinner;
- *   `stay` keeps it where it pressed.
+ * - `to`, a selector of an element in the stage: it moves to a point of that element over
+ *   `duration` ms, with `x` and `y` as fractions of its box (the middle by default), or appears
+ *   there at once if it wasn't over the stage. While pressed, it drags. Pressed on text, in a field
+ *   or in content, the drag selects the whole words it crosses, as a person does, until a press
+ *   elsewhere. With `text`, a word or phrase in the element's text or value, it moves to that text:
+ *   `x` is how far along it, by characters, and `y` how far down its line, so a script finds a word
+ *   wherever the text wraps, such as `{ to: field, text: 'launch plan', x: 0.1 }` then `x: 0.9` to
+ *   select it.
+ * - `press`, `release`: its button. `click` presses and releases it a moment later, and
+ *   `doubleClick` clicks twice quickly; two clicks in quick succession on one element are also a
+ *   double click. After a click or a release followed by a wait, the pointer moves a little aside,
+ *   as a hand does, about a rem toward the end of what it pressed while staying on it, so its
+ *   cursor doesn't hide what the press changes there, such as a button's spinner. `stay` keeps it
+ *   where it pressed.
  * - `rightClick`: its secondary button pressed and released, which opens a context menu where it
  *   is, as a right click does.
- * - `leave`: it goes off the stage, releasing its button and any key held first.
+ * - `leave`: it goes off the stage, first releasing its button and any held key.
  * - `cue`: a moment the stage acts on (usePointer's `onCue`), such as a notification arriving.
- * - `type`, text, `into` a selector of a field: typed a character at a time, `every` ms apart;
- *   `erase`, a count: as many characters deleted the same way.
- * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`. Tab
- *   leaves the field typed into, which hears its blur; Enter in a single-line field submits its
- *   form.
- * - `focus`, a selector: the keyboard's focus arrives on that element, as a Tab brings it, with
- *   its focus ring; keys then go to it, and where a key moves focus, as an arrow key along tabs
- *   does, it follows. `blur` takes it off the stage again.
- * - `keyDown`, `keyUp`, a key such as `Alt`: held down and let go, on the field typed into or on
- *   `on`. A held modifier, Alt, Control, Shift or Meta, is on every event meanwhile, so Alt and a
- *   `key` is Alt with that key.
- * - `wheel`, px, down or along `axis` `x` (negative: up, or back): the wheel turned over the
- *   element under the pointer, which scrolls the nearest box around it in the stage that can
- *   scroll, smoothly, over `duration` ms.
- * - `carry`, a file's name, `as` its type and `size` its bytes, or a list of files: the pointer
- *   picks them up, as from the desktop, so its moves drag them; `drop` drops them where it is.
- *   Carry again before the drop for more files at once. An image (PNG, JPEG or WebP) without a
- *   size is a small real picture.
+ * - `type`, text, `into` a selector of a field: typed one character at a time, `every` ms apart.
+ *   `erase`, a count: that many characters deleted the same way.
+ * - `key`, such as `ArrowDown` or `Enter`: pressed on the field being typed into, or on `on`. Tab
+ *   leaves the field being typed into, which receives a blur; Enter in a single-line field submits
+ *   its form.
+ * - `focus`, a selector: the keyboard's focus moves to that element, as a Tab does, with its focus
+ *   ring. Keys then go to it, and where a key moves focus, as an arrow key along tabs does, the
+ *   focus follows. `blur` moves it off the stage again.
+ * - `keyDown`, `keyUp`, a key such as `Alt`: held down and released, on the field being typed into
+ *   or on `on`. A held modifier (Alt, Control, Shift or Meta) is set on every event meanwhile, so
+ *   Alt held with a `key` is Alt plus that key.
+ * - `wheel`, px, down, or along `axis` `x` (negative for up or back): the wheel is turned over the
+ *   element under the pointer, which smoothly scrolls the nearest box around it in the stage that
+ *   can scroll, over `duration` ms.
+ * - `carry`, a file's name with `as` its type and `size` its bytes, or a list of files: the pointer
+ *   picks them up, as from the desktop, so its moves drag them. `drop` drops them where it is.
+ *   Carry again before the drop for more files at once. An image (PNG, JPEG or WebP) without a size
+ *   is a small real picture.
  */
 export type PointerStep =
   | { wait: number }
@@ -104,7 +105,7 @@ interface Plan {
     /** A cue's name, the text typed (null for a deleted character), or the key. */
     cue?: string;
     text?: string | null;
-    /** The field typed into, or the element a key is pressed on. */
+    /** The field being typed into, or the element a key is pressed on. */
     target?: string;
     /** The files carried. */
     files?: readonly CarriedFile[];
@@ -125,19 +126,19 @@ const asideTook = 220;
 const asideReach = 1;
 
 /*
- * The pace of every animation, brisk: a script's and a timeline's waits are cut to this share of
- * what they are written as, and its moves and typing a little less, so a hand still moves at a
- * hand's speed. An animation starts at once: what a script waits before its first act is cut to
+ * The pace of every animation, which is brisk: a script's and a timeline's waits are cut to this
+ * share of what is written, and its moves and typing a little less, so a hand still moves at a
+ * hand's speed. An animation starts at once: the wait before a script's first action is cut to
  * `firstWait` at most.
  */
 export const waitPace = 0.6;
 const movePace = 0.8;
 export const firstWait = 60;
 
-/** How far apart typed characters are, by default: an easy typing pace. */
+/** How far apart typed characters are by default: an easy typing pace. */
 const typingPace = 140;
 
-/** How long a turn of the wheel takes, by default. */
+/** How long a turn of the wheel takes by default. */
 const wheelTurn = 500;
 
 export function planOf(script: readonly PointerStep[]): Plan {
@@ -146,8 +147,8 @@ export function planOf(script: readonly PointerStep[]): Plan {
   let at: Aim | null = null;
   let acted = false;
   /**
-   * After a click or a release, where a wait as long as the step follows and the script doesn't
-   * say `stay`, the pointer steps aside over that wait, on what it pressed.
+   * After a click or a release that is followed by a wait as long as the step, unless the script
+   * says `stay`, the pointer steps aside during that wait, staying on what it pressed.
    */
   const stepAside = (index: number) => {
     const step = script[index];
@@ -234,8 +235,8 @@ export function planOf(script: readonly PointerStep[]): Plan {
 }
 
 /**
- * The selectors of every element a plan acts on: what it moves to, and so presses, drags and turns
- * the wheel over, and what it types into, presses keys on or focuses.
+ * The selectors of every element a plan acts on: what it moves to (and so presses, drags or turns
+ * the wheel over), and what it types into, presses keys on or focuses.
  */
 export function aimsOf(plan: Plan): string[] {
   const aims = [
@@ -246,8 +247,8 @@ export function aimsOf(plan: Plan): string[] {
 }
 
 /**
- * Where the pointer is heading at a time of its plan: the aim of the move it is making, or of the
- * last it made; none while it is off the stage.
+ * Where the pointer is heading at a time in its plan: the aim of the move it is making, or of the
+ * last one it made; nothing while it is off the stage.
  */
 export function headingAt(plan: Plan, time: number): Aim | null {
   if (!presentAt(plan, time)) return null;
@@ -258,8 +259,8 @@ export function headingAt(plan: Plan, time: number): Aim | null {
 export const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 /**
- * Where aims are in the viewport, as read once in a frame: a pointer reads them before it acts,
- * and finds them here again until it does, rather than reading the layout its own moves changed.
+ * Where aims are in the viewport, as read once in a frame. A pointer reads them before it acts and
+ * finds them here again until it does, rather than reading the layout its own moves changed.
  */
 export type AimPoints = Map<Aim, { x: number; y: number } | null>;
 
@@ -273,9 +274,9 @@ function pointOf(scope: Element, aim: Aim, known?: AimPoints) {
 }
 
 /**
- * The element of a stage a selector aims at: the first that shows, its middle inside every box
- * around it that clips what overflows it, such as the shown copy of a looping wheel's row rather
- * than one scrolled out of it, else the first there is.
+ * The element of a stage a selector aims at: the first matching element that shows, with its middle
+ * inside every surrounding box that clips its overflow (such as the visible copy of a looping
+ * wheel's row rather than one scrolled out of it), else the first matching element.
  */
 export function aimedElement(scope: Element, selector: string) {
   let found: Element[];
@@ -309,8 +310,8 @@ function readPoint(scope: Element, aim: Aim) {
 }
 
 /**
- * A step aside from a point of an element: about a rem toward its end, at the scale it is drawn
- * at, but no further than a few px inside its edge, so the pointer stays on it.
+ * A step aside from a point of an element: about a rem toward its end, at the scale it is drawn at,
+ * but no further than a few px inside its edge, so the pointer stays on it.
  */
 function asideOf(element: Element, box: DOMRect, point: { x: number; y: number }) {
   const own = element instanceof HTMLElement && element.offsetWidth ? element.offsetWidth : 0;
@@ -336,8 +337,8 @@ export function presentAt(plan: Plan, time: number) {
 }
 
 /**
- * Where the pointer is at a time: along its move, or where its last move ended. `known` holds the
- * aims read already in this frame.
+ * Where the pointer is at a time: along its current move, or where its last move ended. `known`
+ * holds the aims already read in this frame.
  */
 export function positionAt(scope: Element, plan: Plan, time: number, known?: AimPoints) {
   const move = plan.moves.filter((item) => item.start <= time).at(-1);

@@ -1,41 +1,56 @@
 /*
- * The site's stand-ins for browser methods, so the components of a stage, a tile's or a figure's
- * that the pointer no one sees plays (VirtualPointer.ts), answer as they would on a page of their
- * own. installBrowserStandIns, which main.tsx runs once as the site starts, replaces these methods
- * on the page's Element and HTMLElement prototypes, so every call on the page goes through them;
- * each changes what a call does only for an element of a stage, or an id of that pointer, and
- * calls the browser's own method for any other:
- * - setPointerCapture, releasePointerCapture and hasPointerCapture keep the capture of the pointers
- *   no one sees, whose ids the browser would throw for.
- * - focus, inside a stage the keyboard's focus is in, moves that pointer's focus instead, since the
- *   stage is inert; in a live example the reader hasn't reached for, it does nothing, so an overlay
- *   open as the page loads doesn't take the reader's focus and scroll the page.
- * - matches, asked about :focus or :focus-visible inside a stage the keyboard's focus is in, is
- *   answered by that pointer's mark, as the stage's stylesheets are.
+ * Stand-ins for a few browser methods, so that the components in a stage (a tile's canvas or a
+ * page's figure) behave as they would on a page of their own while the site's virtual pointer
+ * (VirtualPointer.ts) plays them.
+ *
+ * useBrowserStandIns, which every stage calls, installs the stand-ins on the page's Element and
+ * HTMLElement prototypes when the first stage mounts, and puts the browser's own methods back when
+ * the last one unmounts. So a page without a stage, such as a guide, runs on the browser's own
+ * methods. Each stand-in changes what a call does only for an element inside a stage, or for one
+ * of the virtual pointer's ids, and calls the browser's own method for anything else:
+ * - setPointerCapture, releasePointerCapture and hasPointerCapture keep the capture of the virtual
+ *   pointers. The browser would throw for their ids, which it doesn't know.
+ * - focus, inside a stage that has the virtual keyboard's focus, moves that focus instead, since
+ *   the stage is inert. In a live example the reader hasn't touched yet, it does nothing, so an
+ *   overlay that opens as the page loads doesn't take the reader's focus and scroll the page.
+ * - matches, asked about :focus or :focus-visible inside a stage that has the virtual keyboard's
+ *   focus, answers from the virtual pointer's focus mark, as the stage's stylesheets do.
  * - scrollIntoView, inside a stage or an open example, scrolls only the boxes inside it, never the
  *   page around it.
- * Two more apply only for the length of one call: keepClipboard, so a copy button the pointer
- * presses copies nowhere, and lendSelection, so a rich text command finds the page's selection.
- * Their state is on the page's global object, so the methods on the prototypes read the same
- * state after a hot reload of this module (tests/site/BrowserStandIns.test.mjs).
+ * Two more apply only during one call: keepClipboard, so a copy button the virtual pointer presses
+ * doesn't write to the reader's clipboard, and lendSelection, so a rich text command finds a
+ * selection on the page.
+ *
+ * The state lives on the page's global object, so after a hot reload of this module the new
+ * module finds the state that the installed methods read (tests/site/BrowserStandIns.test.mjs).
  */
+import { useLayoutEffect } from 'react';
 import { focusMark } from './pointer/PointerStates';
 
-/** Where the page keeps the stand-ins' state, the same for every evaluation of this module. */
+/** The key of the stand-ins' state on the page's global object, the same for every evaluation. */
 const standInsKey = Symbol.for('catalogue-browser-stand-ins');
 
+/** The stages holding a realm's stand-ins: how many there are, and how to remove the stand-ins. */
+interface Hold {
+  count: number;
+  restore: () => void;
+}
+
 /**
- * What the stand-ins keep, in one place for the whole page: the wrappers installed on a realm's
- * prototypes live on across a hot reload of this module, so the module, evaluated again, finds the
- * state they read rather than starting its own.
+ * The stand-ins' state, one for the whole page. The methods installed on a realm's prototypes
+ * outlive a hot reload of this module, so the module, evaluated again, reads this state rather
+ * than starting its own.
  */
 interface StandIns {
-  /** The ids of the pointers no one sees, and what each has captured. */
+  /** The ids of the virtual pointers, and the element each has captured, if any. */
   captures: Map<number, Element | null>;
-  /** The stages the keyboard's focus is in, by their scope, and what follows a move of it there. */
+  /**
+   * The stages that have the virtual keyboard's focus, by their scope, and what a call to focus an
+   * element inside one does instead.
+   */
   keyboardFocused: Map<Element, (element: Element) => void>;
-  /** The realms' Element prototypes that have the stand-ins. */
-  installed: WeakSet<object>;
+  /** The holds on each realm's stand-ins, by the realm's Element prototype. */
+  holds: WeakMap<object, Hold>;
 }
 
 // The page's global object, which declares no such key: the state is this module's own.
@@ -43,21 +58,22 @@ const page = globalThis as { [standInsKey]?: StandIns };
 const state: StandIns = (page[standInsKey] ??= {
   captures: new Map(),
   keyboardFocused: new Map(),
-  installed: new WeakSet(),
+  holds: new WeakMap(),
 });
 
 export const { captures, keyboardFocused } = state;
 
-/** What a stage's own scrolling stays inside: a tile's window and a page's figure. */
+/** The elements a stage's own scrolling stays inside: a tile's canvas and a page's figure. */
 const stages = '.catalogue-tile-canvas, .site-live-example';
 
 /**
- * What an open example's scrolling stays inside where no stage holds it, such as in an anatomy
- * figure, and an animated figure's, whose menus highlight their items as its pointer runs down them.
+ * The elements an open example's scrolling stays inside where no stage holds it, such as an
+ * anatomy figure, and an animated figure's subject, whose menus highlight their items as the
+ * virtual pointer moves down them.
  */
 const openExamples = '.catalogue-open-example, .catalogue-motion-subject';
 
-/** A live example the reader hasn't reached for yet (`data-touched`, OpenExample.tsx). */
+/** A live example the reader hasn't touched yet (`data-touched`, OpenExample.tsx). */
 const untouchedExample = '.catalogue-open-example[data-live]:not([data-touched])';
 
 /** The prototypes the stand-ins are installed on: the page's, or a test's. */
@@ -67,92 +83,151 @@ interface Realm {
 }
 
 /**
- * Installs the stand-ins on a realm's prototypes, once: a second call changes nothing. Each wraps
- * the browser's own method and calls it for anything it doesn't stand in for.
+ * Installs the stand-ins while the calling stage is mounted: the first stage to mount installs
+ * them, and the last one to unmount removes them. It is a layout effect, so the stand-ins are in
+ * place before the stage's later effects run, such as an overlay opening or a playback starting.
  */
-export function installBrowserStandIns(realm: Realm = globalThis) {
-  const element = realm.Element.prototype;
-  if (state.installed.has(element)) return;
-  state.installed.add(element);
-  keepCaptures(element);
-  keepFocus(element, realm.HTMLElement.prototype);
-  keepScrollInStages(element);
+export function useBrowserStandIns() {
+  useLayoutEffect(() => holdBrowserStandIns(), []);
 }
 
 /**
- * Keeps a pointer's capture for the pointers no one sees: the browser throws for an id it doesn't
- * know. Only those ids are kept here; a real pointer's capture is the browser's.
+ * Holds the stand-ins on a realm's prototypes and returns the release. The first hold installs
+ * them; once every hold is released, the browser's own methods are put back. A second release of
+ * the same hold does nothing.
+ * @internal Also for tests/site/BrowserStandIns.test.mjs, which holds them on a realm of its own.
+ */
+export function holdBrowserStandIns(realm: Realm = globalThis) {
+  const element = realm.Element.prototype;
+  let hold = state.holds.get(element);
+  if (!hold) {
+    const restores = [
+      keepCaptures(element),
+      keepFocus(element, realm.HTMLElement.prototype),
+      keepScrollInStages(element),
+    ];
+    hold = { count: 0, restore: () => restores.forEach((restore) => restore()) };
+    state.holds.set(element, hold);
+  }
+  const held = hold;
+  held.count++;
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    if (--held.count > 0) return;
+    held.restore();
+    state.holds.delete(element);
+  };
+}
+
+/**
+ * Replaces methods on an object, such as a prototype, and returns a function that puts back what
+ * the object had: its own property, or none where the method was inherited.
+ */
+function replace<T extends object>(target: T, methods: Partial<T>) {
+  // Object.keys types its keys as strings; they are the methods' names.
+  const names = Object.keys(methods) as (keyof T & string)[];
+  const own = names.map((name) => Object.getOwnPropertyDescriptor(target, name));
+  Object.assign(target, methods);
+  return () =>
+    names.forEach((name, index) => {
+      const descriptor = own[index];
+      if (descriptor) Object.defineProperty(target, name, descriptor);
+      else Reflect.deleteProperty(target, name);
+    });
+}
+
+/**
+ * Keeps pointer capture for the virtual pointers, whose ids the browser would throw for. Only
+ * those ids are handled here; a real pointer's capture stays with the browser.
  */
 function keepCaptures(proto: Element) {
   const { setPointerCapture, releasePointerCapture, hasPointerCapture } = proto;
-  proto.setPointerCapture = function (id: number) {
-    if (!captures.has(id)) return setPointerCapture.call(this, id);
-    captures.set(id, this);
-  };
-  proto.releasePointerCapture = function (id: number) {
-    if (!captures.has(id)) return releasePointerCapture.call(this, id);
-    if (captures.get(id) === this) captures.set(id, null);
-  };
-  proto.hasPointerCapture = function (id: number) {
-    if (!captures.has(id)) return hasPointerCapture.call(this, id);
-    return captures.get(id) === this;
-  };
+  return replace(proto, {
+    setPointerCapture(this: Element, id: number) {
+      if (!captures.has(id)) return setPointerCapture.call(this, id);
+      captures.set(id, this);
+    },
+    releasePointerCapture(this: Element, id: number) {
+      if (!captures.has(id)) return releasePointerCapture.call(this, id);
+      if (captures.get(id) === this) captures.set(id, null);
+    },
+    hasPointerCapture(this: Element, id: number) {
+      if (!captures.has(id)) return hasPointerCapture.call(this, id);
+      return captures.get(id) === this;
+    },
+  });
 }
 
 /**
- * Keeps focus where a stage or an example holds it. Inside a stage the keyboard's focus is in,
- * which is inert, where one of its components moves focus, as an arrow key along tabs does, the
- * pointer's focus follows instead (VirtualPointer.keyboardFocus), and a component asking whether an
- * element of it matches :focus or :focus-visible is answered by the pointer's mark, as its
- * stylesheets are (mirrorPointerStates). In a live example the reader hasn't reached for, a call
- * to focus an element does nothing: an overlay pressed open as the page loads, such as a select's
- * list, moves focus to its chosen item as an opened list does, which would take focus from the
- * page, and scroll it, wherever the reader was.
+ * Keeps focus inside the stage or example that holds it.
+ *
+ * A stage with the virtual keyboard's focus is inert. When one of its components moves focus, as
+ * an arrow key does along tabs, the virtual focus moves instead (KeyboardControl.keyboardFocus).
+ * When a component asks whether one of its elements matches :focus or :focus-visible, the answer
+ * comes from the virtual focus mark, as the stage's stylesheets read it (mirrorPointerStates).
+ *
+ * In a live example the reader hasn't touched, focus() does nothing. An overlay pressed open as
+ * the page loads, such as a select's list, moves focus to its chosen item, as an opened list does.
+ * That would take focus from wherever the reader is, and scroll the page to the example.
  */
 function keepFocus(element: Element, html: HTMLElement) {
   const { focus } = html;
-  html.focus = function (this: HTMLElement, options?: FocusOptions) {
-    for (const [scope, follow] of keyboardFocused) if (scope.contains(this)) return follow(this);
-    if (this.closest(untouchedExample)) return;
-    return focus.call(this, options);
-  };
   const { matches } = element;
-  element.matches = function (this: Element, selectors: string) {
-    if (selectors.includes(':focus'))
-      for (const scope of keyboardFocused.keys())
-        if (scope.contains(this))
-          return matches.call(
-            this,
-            selectors
-              .replace(/:focus-visible\b/g, `[${focusMark}]`)
-              .replace(/:focus\b(?!-)/g, `[${focusMark}]`),
-          );
-    return matches.call(this, selectors);
-  } as typeof matches;
+  const restoreFocus = replace(html, {
+    focus(this: HTMLElement, options?: FocusOptions) {
+      for (const [scope, follow] of keyboardFocused) if (scope.contains(this)) return follow(this);
+      if (this.closest(untouchedExample)) return;
+      return focus.call(this, options);
+    },
+  });
+  const restoreMatches = replace(element, {
+    // One signature for matches' overloads by tag name, which only narrow the element's type.
+    matches: function (this: Element, selectors: string) {
+      if (selectors.includes(':focus'))
+        for (const scope of keyboardFocused.keys())
+          if (scope.contains(this))
+            return matches.call(
+              this,
+              selectors
+                .replace(/:focus-visible\b/g, `[${focusMark}]`)
+                .replace(/:focus\b(?!-)/g, `[${focusMark}]`),
+            );
+      return matches.call(this, selectors);
+    } as typeof matches,
+  });
+  return () => {
+    restoreFocus();
+    restoreMatches();
+  };
 }
 
-/** Whether a box scrolls along the block axis, its content taller than it. */
+/** Whether a box scrolls vertically: its content is taller than it and its overflow scrolls. */
 const scrollsDown = (box: Element) =>
   box.scrollHeight > box.clientHeight &&
   /auto|scroll|overlay/.test(getComputedStyle(box).overflowY);
-/** Whether a box scrolls along the inline axis, its content wider than it. */
+/** Whether a box scrolls horizontally: its content is wider than it and its overflow scrolls. */
 const scrollsAcross = (box: Element) =>
   box.scrollWidth > box.clientWidth && /auto|scroll|overlay/.test(getComputedStyle(box).overflowX);
 
-/** How far a box scrolls along an axis to bring a span into it, by where it is to show there. */
+/**
+ * How far a box scrolls along one axis to bring a span into view. `start` and `end` are the
+ * span's edges, `from` and `to` the box's, and `place` the alignment scrollIntoView takes.
+ */
 function scrollFor(start: number, end: number, from: number, to: number, place: string) {
   if (place === 'start') return start - from;
   if (place === 'end') return end - to;
   if (place === 'center') return (start + end) / 2 - (from + to) / 2;
-  // Nearest: as little as brings it in, none where it is in already.
+  // Nearest: as little as brings it in, and nothing where it is in view already.
   if (start < from) return start - from;
   if (end > to) return Math.min(end - to, start - from);
   return 0;
 }
 
 /**
- * How far a box scrolls to show an item it holds, by the item's `block` alignment as
- * scrollIntoView takes it; `nearest` scrolls only as far as the item needs.
+ * How far a box scrolls vertically to show an item inside it, by the item's `block` alignment as
+ * scrollIntoView takes it. `nearest` scrolls only as far as the item needs.
  */
 function scrollDelta(item: DOMRect, box: Element, block: ScrollLogicalPosition) {
   const top = item.top - box.getBoundingClientRect().top - box.clientTop;
@@ -169,23 +244,25 @@ const blockOf = (options?: boolean | ScrollIntoViewOptions): ScrollLogicalPositi
   typeof options === 'object' ? (options.block ?? 'start') : options === false ? 'end' : 'start';
 
 /**
- * Keeps what a component scrolls into view inside the stage or the open example it is in, such
- * as the chosen row of a select resting open in a gallery tile: the browser's own scrollIntoView
- * scrolls every box around the element, the page among them, so a tile loaded below the fold would
- * pull the page down to it as it appears, and a page with an example opened partway down, wherever
- * the example was. In a stage, the boxes that scroll inside it scroll as the browser would scroll
- * them, along both axes; in an open example elsewhere, the boxes inside it that scroll down, such
- * as a popup's list.
+ * Keeps scrollIntoView inside the stage or open example the element is in, such as the chosen row
+ * of a select resting open in a gallery tile. The browser's own scrollIntoView scrolls every box
+ * around the element, the page included: a tile below the fold would pull the page down to it as
+ * it appears, and an example opened partway down the page would scroll the page to itself. In a
+ * stage, the boxes inside it scroll as the browser would scroll them, along both axes. In an open
+ * example outside a stage, only the boxes inside it that scroll vertically scroll, such as a
+ * popup's list.
  */
 function keepScrollInStages(proto: Element) {
   const { scrollIntoView } = proto;
-  proto.scrollIntoView = function (this: Element, options?: boolean | ScrollIntoViewOptions) {
-    const stage = this.closest(stages);
-    if (stage) return scrollInStage(this, stage, options);
-    const example = this.closest(openExamples);
-    if (example) return scrollInExample(this, example, options);
-    return scrollIntoView.call(this, options);
-  };
+  return replace(proto, {
+    scrollIntoView(this: Element, options?: boolean | ScrollIntoViewOptions) {
+      const stage = this.closest(stages);
+      if (stage) return scrollInStage(this, stage, options);
+      const example = this.closest(openExamples);
+      if (example) return scrollInExample(this, example, options);
+      return scrollIntoView.call(this, options);
+    },
+  });
 }
 
 function scrollInStage(target: Element, stage: Element, options?: boolean | ScrollIntoViewOptions) {
@@ -219,35 +296,31 @@ function scrollInExample(
 }
 
 /**
- * Runs a click with the reader's clipboard kept as it is: a stage's copy button, pressed by the
- * pointer no one sees, copies nowhere. Its writes resolve, so it shows that it copied.
+ * Runs a click with the reader's clipboard left as it is, so a stage's copy button that the
+ * virtual pointer presses copies nothing. The clipboard's writes still resolve, so the button
+ * shows that it copied.
  */
 export function keepClipboard(click: () => void) {
   // Absent outside a secure context, though the DOM's types always have it.
   const clipboard = navigator.clipboard as Clipboard | undefined;
   if (!clipboard) return click();
-  const names = ['writeText', 'write'] as const;
-  // The clipboard's own properties, if any, to put back; its methods are usually its prototype's.
-  const own = names.map((name) => Object.getOwnPropertyDescriptor(clipboard, name));
-  for (const name of names)
-    Object.defineProperty(clipboard, name, { value: () => Promise.resolve(), configurable: true });
+  const restore = replace(clipboard, {
+    writeText: () => Promise.resolve(),
+    write: () => Promise.resolve(),
+  });
   try {
     click();
   } finally {
-    names.forEach((name, index) => {
-      const descriptor = own[index];
-      if (descriptor) Object.defineProperty(clipboard, name, descriptor);
-      // Its own property, which the clipboard's type doesn't index.
-      else delete (clipboard as unknown as Record<string, unknown>)[name];
-    });
+    restore();
   }
 }
 
 /**
- * Runs what a key does in a rich text editor with the page's selection lent to the stage, at its
- * start, outside the editor, so nothing takes focus, and then given back as the reader left it: a
- * command that reads the page's selection, such as inserting a reference, finds one, as it would
- * in a focused editor, though nothing in an inert stage holds the page's selection.
+ * Runs what a key does in a rich text editor with the page's selection lent to the stage. The
+ * selection is placed at the start of `scope`, outside the editor, so nothing takes focus, and
+ * afterwards it is put back as the reader left it. A command that reads the page's selection, such
+ * as inserting a reference, then finds one, as it would in a focused editor. Without this it finds
+ * none, since nothing in an inert stage holds the page's selection.
  */
 export function lendSelection(scope: Element | undefined, run: () => void) {
   const selection = scope ? window.getSelection() : null;

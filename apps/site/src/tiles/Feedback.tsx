@@ -11,9 +11,10 @@ import { IconSend } from '@envsemble/envui/icons/Send';
 import { useStageLayer } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 /**
- * The last invitation's notification dismissed, then another sent: the button works a moment, and
+ * Dismisses the last invitation's notification, then sends another: the button works a moment, and
  * a notification says how it went, in the place the last one held, so nothing moves.
  */
 const script: PointerStep[] = [
@@ -26,7 +27,7 @@ const script: PointerStep[] = [
   { wait: 300 },
   { click: true },
   { wait: 80 },
-  // Off the button it pressed, so its spinner shows clear while it works.
+  // Off the button it pressed, so its spinner shows clearly while it works.
   { to: '.env-button', x: 1.35, y: 1.9, duration: 300 },
   { wait: 250 },
   { leave: true },
@@ -52,7 +53,7 @@ function Invite() {
     }, 900);
     return () => clearTimeout(timer);
   }, [sending, toast]);
-  // At the window's top, so the notification at its foot leaves the button in view.
+  // At the window's top, so the notification at its bottom leaves the button in view.
   return (
     <Column gap={4} style={{ inlineSize: '17rem', minBlockSize: '11.5rem' }}>
       <TextField label="Email address" defaultValue="jordan.kim@example.com" />
@@ -63,9 +64,12 @@ function Invite() {
   );
 }
 
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 18, height: 16 };
+
 /**
- * A small form whose action says how it went: the button while it works, then a notification,
- * in the live region the tile's layer holds.
+ * A small form whose action says how it went: the button while it works, then a notification, in
+ * the live region the tile's layer holds.
  */
 export default function FeedbackTile() {
   const layer = useStageLayer();

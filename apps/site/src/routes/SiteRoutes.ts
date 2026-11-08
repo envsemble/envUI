@@ -312,7 +312,8 @@ export const groupedPageOf = (id: string) => groupedPages.find((page) => page.do
 
 /**
  * The route of a page by its document id, such as `button`, or by a site page's, such as `tokens`,
- * scrolled to the element `section`. `view` picks the page's part in the Docs where the catalogue shows
+ * scrolled to the element `section`. It knows only the current ids; the ids of documents that are
+ * gone are in OldAddresses.ts. `view` picks the page's part in the Docs where the catalogue shows
  * the rest: `props` a component's or a pattern's page there, `usage` a foundation's guide.
  */
 export function routeOfDocument(
@@ -332,25 +333,13 @@ export function routeOfDocument(
     return `${patternDocsRoute(id)}${query}`;
   if (id === 'index' || id === docsRoute) return `${docsRoute}${query}`;
   if (id === 'overview') return homeRoute;
+  // The site's own pages that search results name (scripts/site/BuildSearchIndex.ts).
   const own: Record<string, string> = {
-    'get-started': docsRoute,
     foundations: 'foundations',
     components: 'components',
     patterns: 'patterns',
-    // Dev mode's page in the catalogue, folded into its guide in the Docs.
-    'dev-mode-overview': 'docs/dev-mode',
-    changelog: 'docs/changelog',
     tokens: 'docs/tokens',
-    // The codemods are gone: their page opens the migration guide.
-    codemods: 'docs/migration',
     'full-changelog': 'docs/changelog',
-    // The agent skills are gone, and so is the guide for agents: setup leads to the skill.
-    'agent-skills': `${docsRoute}?section=coding-agents`,
-    'agent-tooling': `${docsRoute}?section=coding-agents`,
-    // Pages merged into others.
-    'customizing-colors': 'docs/customizing',
-    composition: 'docs/customizing',
-    scale: 'foundations/spacing',
   };
   if (Object.hasOwn(own, id)) return `${own[id]}${query}`;
   const page = allPages.find(

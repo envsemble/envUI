@@ -4,10 +4,11 @@ import { useHeldView } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
+import type { TileWindow } from './Tiles';
 
 const trigger = (index: number) => `.env-accordion-item:nth-child(${index}) .env-accordion-trigger`;
 
-/** The second question opened, which closes the first; and the first opened again, as it began. */
+/** Opens the second question, which closes the first, then opens the first again, as it began. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: trigger(2), x: 0.35 },
@@ -22,11 +23,14 @@ const script: PointerStep[] = [
   { wait: 600 },
 ];
 
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 15, height: 11.25 };
+
 /**
- * An accordion of two questions, the first open at rest: one answer is open in every state, so the
- * still is as tall as the accordion gets and the stage shows it whole, clear of the card's foot,
- * and the view holds as either answer opens below its question (useHeldView); in a phone's lower
- * tile a little narrower.
+ * An accordion of two questions, the first open at rest. One answer is open in every state, so the
+ * still is as tall as the accordion ever gets, the stage shows it whole, clear of the card's
+ * bottom, and the view holds while either answer opens below its question (useHeldView). In a
+ * phone's lower tile it is a little narrower.
  */
 export default function AccordionTile() {
   const narrow = useMedia(narrowGallery);

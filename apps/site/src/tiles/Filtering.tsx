@@ -3,6 +3,7 @@ import { Column, List, Row, SearchField, Select, Surface, Text } from '@envsembl
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
 
 const projects = [
   { name: 'Website refresh', active: true },
@@ -20,8 +21,8 @@ const option = (index: number) => `.env-select-item:nth-child(${index})`;
 const search = '.env-text-field-input';
 
 /**
- * A search typed, the list narrowing as it goes and its count following, and cleared; then the
- * list narrowed to the active projects, and widened again.
+ * Types a search, the list narrowing as it goes and its count following, and clears it; then
+ * narrows the list to the active projects, and widens it again.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -52,7 +53,10 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** A list with its filters over it, and how many items match. */
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 20, height: 15 };
+
+/** A list with its filters above it, and how many items match. */
 export default function FilteringTile() {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState<string | null>('any');

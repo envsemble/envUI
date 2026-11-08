@@ -10,9 +10,9 @@ import { narrowGallery } from './Tiles';
 const zone = '.env-drop-zone-target';
 
 /**
- * A file picked up inside the stage, above the zone, dragged over it and dropped; it uploads a
- * moment, and the file takes the zone's place, uploaded, until it is removed, which brings the
- * zone back, as it began.
+ * Picks up a file inside the stage, above the zone, drags it over the zone and drops it. It uploads
+ * for a moment, then the file takes the zone's place, uploaded, until it is removed, which brings
+ * the zone back, as it began.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -34,10 +34,10 @@ const script: PointerStep[] = [
 const uploading = 1100;
 
 /**
- * A drop zone for documents, the small one, which shows whole in a gallery's low tile; narrower in
- * a phone's, so it is drawn whole at its own size there too. Its words are short, the same at every
- * width, so each stays one line. Once a file has uploaded, it shows in the zone's place, as tall as
- * the zone, so nothing around it moves.
+ * A drop zone for documents, the small one, which shows whole in a gallery's low tile, and narrower
+ * in a phone's, so it is drawn whole at its own size there too. Its words are short and the same at
+ * every width, so each stays on one line. Once a file has uploaded, it shows in the zone's place,
+ * as tall as the zone, so nothing around it moves.
  */
 export default function DropZoneTile() {
   const [file, setFile] = useState<string | null>(null);

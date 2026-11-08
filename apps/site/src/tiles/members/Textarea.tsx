@@ -4,7 +4,7 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 
 const input = 'textarea';
 
-/** A reply typed, which grows the text area a line as it wraps, and erased again. */
+/** Types a reply, which grows the text area by a line as it wraps, and erases it again. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: input, x: 0.3 },

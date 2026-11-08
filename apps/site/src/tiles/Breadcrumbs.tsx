@@ -3,16 +3,17 @@ import { Breadcrumbs } from '@envsemble/envui';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { rootMotionDuration, rootMotionEasing } from '../shared/RootMotionTokens';
+import type { TileWindow } from './Tiles';
 
 const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .env-breadcrumbs-link`;
 
 /**
- * Along the trail, then a press on Plans, a level back: the trail ends there, Plans now the current
- * page, the pointer resting on it a moment so the press reads as what shortened it, and holds so a
- * while, the pointer gone; then, as the loop starts over, it is drawn anew as
- * it began, crossfading into the whole trail (Crossfade), since nothing on the trail leads forward
- * again, and the pointer walks it again, so the loop is paced across the whole of a look at the
- * card rather than holding still after its first seconds.
+ * Moves along the trail, then presses Plans, one level back: the trail now ends there, with Plans
+ * as the current page. The pointer rests on it a moment, so the press reads as what shortened the
+ * trail, and the trail holds a while after the pointer leaves. When the loop starts over, the whole
+ * trail is drawn again and crossfades in (Crossfade), since nothing on the trail leads forward
+ * again, and the pointer walks along it again. So the loop is paced across the whole time a reader
+ * looks at the card, rather than holding still after its first seconds.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -28,13 +29,13 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
-/** How long the trail drawn anew takes to crossfade in over the one it replaces: the slow token. */
+/** How long the new trail takes to crossfade in over the one it replaces: the slow motion token. */
 const fade = () => rootMotionDuration('slow');
 
 /**
- * Draws its children anew whenever `round` changes, the new ones fading in over the old, which
- * fade out under them once they are half in, in one place, so what the two share, such as a
- * trail's first levels, holds still and the tile is never empty between them.
+ * Draws its children again whenever `round` changes. The new ones fade in over the old ones, which
+ * fade out underneath once the new ones are half visible, in the same place. So what the two share,
+ * such as a trail's first levels, holds still, and the tile is never empty between them.
  */
 function Crossfade({ round, children }: { round: number; children: ReactNode }) {
   const [rounds, setRounds] = useState({ current: round, leaving: null as number | null });
@@ -62,7 +63,10 @@ function Crossfade({ round, children }: { round: number; children: ReactNode }) 
   );
 }
 
-/** One round of a crossfade: fading in as it arrives, or out under it as it goes, unreachable then. */
+/**
+ * One round of a crossfade: fading in as it arrives, or fading out under the next one as it goes,
+ * and unreachable then.
+ */
 function Layer({
   entering = false,
   leaving = false,
@@ -114,9 +118,9 @@ const levels = [
 ];
 
 /**
- * The trail, which a link pressed takes back to its level, in the tile rather than the site; its
- * last level short, the same at every width, so the trail is drawn at about its own size in a
- * phone's narrower tile too.
+ * The trail, where a pressed link goes back to its level inside the tile rather than navigating the
+ * site. Its last level is short and the same at every width, so the trail is drawn at about its own
+ * size in a phone's narrower tile too.
  */
 function Trail() {
   const [depth, setDepth] = useState(levels.length);
@@ -139,11 +143,14 @@ function Trail() {
   );
 }
 
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 15, height: 11.25 };
+
 /**
- * A trail of three levels, the last the current page, on one line at every width. The trail keeps
- * its start where it is as it shortens: it lies at the start of a box as wide as the whole trail,
- * which a copy of it, hidden and after it, so the pointer's aims find the trail itself, holds
- * open.
+ * A trail of three levels, the last one the current page, on one line at every width. The trail
+ * keeps its start in place as it shortens: it sits at the start of a box as wide as the whole
+ * trail, which a hidden copy of the trail after it holds open. The copy is hidden so that the
+ * pointer's aims find the trail itself.
  */
 export default function BreadcrumbsTile() {
   const [round, setRound] = useState(0);

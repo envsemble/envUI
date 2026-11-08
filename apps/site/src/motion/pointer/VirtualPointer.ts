@@ -1,17 +1,17 @@
 /*
- * A pointer no one sees, which a stage's animation moves over its live component: it hovers,
- * presses, drags and releases by the same events a mouse sends, so the component answers as it
- * does a person, with its own hover, press and drag, rather than a picture of them. The stage is
- * inert, so only these events reach it.
+ * The virtual pointer: a pointer the reader doesn't control, which a stage's animation moves over
+ * its live component. It hovers, presses, drags and releases with the same events a mouse sends, so
+ * the component responds as it does to a person, with its own hover, press and drag states, rather
+ * than a picture of them. The stage is inert, so only these events reach it.
  *
- * What a stylesheet shows under a real pointer, `:hover` and `:active`, no event can set; the
- * pointer marks what it is over and presses, and PointerStates.ts gives every such rule of the
- * site's stylesheets a twin for those marks. What the browser keeps only for a pointer it made,
+ * No event can set what a stylesheet shows under a real pointer, `:hover` and `:active`. So the
+ * pointer marks what it is over and presses, and PointerStates.ts gives every such rule in the
+ * site's stylesheets a copy for those marks. What the browser keeps only for a pointer it created,
  * such as a drag's capture, BrowserStandIns.ts keeps for it.
  *
- * VirtualPointer keeps where the pointer is and draws its cursor; its controllers act: as a mouse
- * (PointerControl.ts), a keyboard (KeyboardControl.ts), a drag of files from outside
- * (DragControl.ts) and a wheel (WheelControl.ts).
+ * VirtualPointer keeps track of where the pointer is and draws its cursor. Its controllers act on
+ * the stage: as a mouse (PointerControl.ts), a keyboard (KeyboardControl.ts), a drag of files from
+ * outside (DragControl.ts) and a wheel (WheelControl.ts).
  */
 
 import { PointerSelection } from './VirtualSelection';
@@ -25,10 +25,10 @@ import { DragControl, type CarriedFile } from '../DragControl';
 import { WheelControl } from '../WheelControl';
 import { captures, keyboardFocused } from '../BrowserStandIns';
 
-/** The ids of the pointers no one sees count up from here, clear of a real pointer's. */
+/** The ids of the virtual pointers count up from here, clear of a real pointer's. */
 let nextId = 9000;
 
-/** The pointer no one sees, over one stage's elements, `scope`. */
+/** The virtual pointer over one stage's elements, `scope`. */
 export class VirtualPointer {
   readonly id = nextId++;
   /** Where it is and what it is over, which its controllers share. */
@@ -42,15 +42,15 @@ export class VirtualPointer {
   private readonly drag: DragControl;
   private readonly wheel: WheelControl;
 
-  /** Where the stage was, in the viewport, as the pointer last moved over it. */
+  /** Where the stage was in the viewport when the pointer last moved over it. */
   private scopeAt: Point | null = null;
 
   /**
-   * The reader's scroll of the page carries the pointer with the stage, as a hand on it would
-   * be, rather than leaving it where it was in the window: what it is over and drags stays the
+   * When the reader scrolls the page, the pointer moves with the stage, as a hand resting on it
+   * would, rather than staying where it was in the window. So what it is over and drags stays the
    * same, also between the moves of its script and while it waits. A real mouse stays where it is
-   * in the window, and the components follow it there, such as a list's lifted row, which would
-   * otherwise stay in the window too, off its list.
+   * in the window, and components follow it there, such as a list's lifted row, which would
+   * otherwise also stay in the window, away from its list.
    */
   private readonly followScroll = () => {
     const at = this.spot.at;
@@ -95,13 +95,15 @@ export class VirtualPointer {
     this.wheel = new WheelControl(this.spot);
   }
 
-  /** Draws its cursor while its stage plays, or takes it away. */
+  /** Draws its cursor while its stage plays, or removes it. */
   showCursor(on: boolean) {
     this.cursorShown = on;
     this.drawCursor();
   }
 
-  /** Draws its cursor where it is, pressed or not, or none while it is off the stage. */
+  /**
+   * Draws its cursor where it is, pressed or not, or removes it while the pointer is off the stage.
+   */
   private drawCursor() {
     if (this.cursorShown)
       this.cursor.place(this.spot.at, this.pointer.buttons > 0, this.drag.names);
@@ -109,24 +111,24 @@ export class VirtualPointer {
   }
 
   /**
-   * Picks up files, as a person drags them in from the desktop: its moves are a drag now
-   * (DragControl.carry).
+   * Picks up files, as a person drags them in from the desktop, so the pointer's moves become a
+   * drag (DragControl.carry).
    */
   carry(files: readonly CarriedFile[]) {
-    // What it hovers, it leaves, as the drag comes in over it: the drag's own events take over,
-    // and nothing keeps its hover after the drop.
+    // It leaves what it hovers as the drag comes in over it: the drag's own events take over, and
+    // nothing keeps its hover after the drop.
     if (!this.drag.carrying) this.pointer.unhover();
     this.drag.carry(files);
   }
 
-  /** Drops the carried file where the pointer is. */
+  /** Drops the carried files where the pointer is. */
   drop() {
     this.drag.drop();
   }
 
   /**
-   * What a move to a point will be over, read ahead of it, while the page's layout is still the
-   * one the frame starts with: nothing where the move sends nothing.
+   * What a move to a point will be over, found before the move, while the page's layout is still
+   * the one the frame starts with. Nothing where the move sends no events.
    */
   aim(point: Point): Aimed | null {
     if (!this.drag.carrying && this.pointer.rests(point)) return null;
@@ -134,25 +136,27 @@ export class VirtualPointer {
   }
 
   /**
-   * Moves the pointer to a point, coming over the stage there if it wasn't; `aimed`, what aim
-   * read for the point, saves reading the layout again.
+   * Moves the pointer to a point, entering the stage there if it wasn't over it. `aimed`, what aim
+   * found for the point, saves reading the layout again.
    */
   moveTo(point: Point, aimed: Aimed | null = null) {
     if (this.drag.carrying) this.drag.moveTo(point, aimed);
     else this.pointer.moveTo(point, aimed);
   }
 
-  /** Its stage is paused: a press it holds lets the page's lock go (PointerControl.suspend). */
+  /** Its stage is paused: a press it holds releases the page's lock (PointerControl.suspend). */
   suspend() {
     this.pointer.suspend();
   }
 
-  /** Its stage plays again: returns whether it may go on (PointerControl.resume). */
+  /** Its stage plays again. Returns whether the pointer may continue (PointerControl.resume). */
   resume() {
     return this.pointer.resume();
   }
 
-  /** Whether this pointer may go on now: no other is holding its button down on the page. */
+  /**
+   * Whether this pointer may continue now: no other pointer is holding its button down on the page.
+   */
   get canPress() {
     return this.pointer.canPress;
   }
@@ -162,7 +166,7 @@ export class VirtualPointer {
     this.pointer.press(button);
   }
 
-  /** Releases the button: the press ends, and where it ends on what it began on, it clicks. */
+  /** Releases the button: the press ends, and if it ends on what it began on, it clicks. */
   release() {
     this.pointer.release();
   }
@@ -172,12 +176,12 @@ export class VirtualPointer {
     this.keyboard.type(selector, text);
   }
 
-  /** The keyboard's focus arrives on an element of the stage, or leaves it. */
+  /** Moves the keyboard's focus to an element of the stage, or away from the stage. */
   keyboardFocus(selector: string | Element | null) {
     this.keyboard.keyboardFocus(selector);
   }
 
-  /** Presses a key on an element of the stage, or on the field typed into or focused. */
+  /** Presses a key on an element of the stage, or on the field being typed into or focused. */
   key(key: string, selector?: string) {
     this.keyboard.key(key, selector);
   }
@@ -187,7 +191,7 @@ export class VirtualPointer {
     this.keyboard.keyDown(key, selector);
   }
 
-  /** Lets a held key go. */
+  /** Releases a held key. */
   keyUp(key: string, selector?: string) {
     this.keyboard.keyUp(key, selector);
   }
@@ -197,17 +201,17 @@ export class VirtualPointer {
     this.wheel.start(axis);
   }
 
-  /** Turns the wheel on to `distance` px from where the turn started. */
+  /** Turns the wheel to `distance` px from where the turn started. */
   turnWheel(distance: number) {
     this.wheel.to(distance);
   }
 
-  /** Ends a turn of the wheel: a box that snaps snaps again. */
+  /** Ends a turn of the wheel: a box with scroll snapping snaps again. */
   endWheel() {
     this.wheel.end();
   }
 
-  /** Takes the pointer off the stage, releasing its button and the keys it holds first. */
+  /** Takes the pointer off the stage, first releasing its button and the keys it holds. */
   leave() {
     this.keyboard.releaseKeys();
     if (this.drag.carrying) return this.drag.leave();
@@ -240,6 +244,6 @@ export class VirtualPointer {
   }
 }
 
-/** Whether an event comes from a pointer no one sees, which a tile's own hover ignores. */
+/** Whether an event comes from a virtual pointer, which a tile's own hover ignores. */
 export const isVirtual = (event: { pointerId?: number }) =>
   event.pointerId !== undefined && captures.has(event.pointerId);

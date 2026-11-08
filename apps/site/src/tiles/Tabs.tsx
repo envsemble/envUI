@@ -3,10 +3,11 @@ import { IconButton, Row, Tabs, Text } from '@envsemble/envui';
 import { IconUpload } from '@envsemble/envui/icons/Upload';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
 
-/** Files chosen, the indicator and the panel following, and Plan again. */
+/** Chooses Files, the indicator and the panel following, then Plan again. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: tab(2) },
@@ -21,14 +22,18 @@ const script: PointerStep[] = [
   { wait: 2500 },
 ];
 
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 15, height: 11.25 };
+
 /**
- * Three tabs of a project, Plan chosen, over its panel, filling a box of the height of the tallest
- * panel, as tabs in a pane do, so the strip stays where it is as the panels change. The component
- * fades the panel leaving out as the one coming fades in, in the same place; both panels the card
- * moves between start at the panel's start, as a pane's content does: Plan a short line, Files its
- * count beside its upload button. Its names are the same at every width; in a phone's narrower and lower
- * tile the strip is a little wider than the stage shows at its own size, so it is drawn at the one
- * smaller scale the other navigation cards there take, its panels whole and apart.
+ * Three tabs of a project, with Plan chosen, above its panel, filling a box as tall as the tallest
+ * panel, as tabs in a pane do, so the strip stays in place as the panels change. The component
+ * fades the old panel out as the new one fades in, in the same place. Both panels the tile moves
+ * between start at the panel's start, as a pane's content does: Plan is a short line, and Files its
+ * count beside its upload button. Its labels are the same at every width. In a phone's narrower and
+ * lower tile the strip is a little wider than the stage shows at its own size, so it is drawn at
+ * the one smaller scale that the other navigation tiles there take, with its panels whole and
+ * apart.
  */
 export default function TabsTile() {
   const [value, setValue] = useState('summary');

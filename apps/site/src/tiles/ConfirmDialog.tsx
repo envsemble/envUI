@@ -3,11 +3,12 @@ import { Button, ConfirmDialog, IconButton, Row, Text } from '@envsemble/envui';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 /**
- * Confirmed, which waits for the action, pending, and closes on the plan's row, which says it is
- * deleted and offers to undo it, held a while so it reads; undone, and the dialog opened again
- * from the row's button, held open a while before the loop starts over.
+ * Confirms, which waits for the action, pending, then closes on the plan's row, which says the plan
+ * is deleted and offers to undo it, held a while so it can be read. Then undoes it and opens the
+ * dialog again from the row's button, held open a while before the loop starts over.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -27,19 +28,27 @@ const script: PointerStep[] = [
   { wait: 900 },
 ];
 
-/** How long deleting takes, pending, and the dialog then takes to close. */
+/** How long deleting takes, pending, and how long the dialog then takes to close. */
 const deleting = 1000;
 const closing = 300;
 
-/** The dialog as narrow as its actions allow, so they leave it room. */
+/** The dialog as narrow as its actions allow, so they still fit. */
 const narrow = { inlineSize: '12rem' } as const;
 
 /**
- * A confirm dialog, open over the row of the plan it deletes, its name and the button that opens
- * it, in the middle of the screen the stage is: its question and its actions, low enough to show
- * whole at the overlays' scale (Tiles.ts). Deleted, the row offers Undo in its place. Stopped, it
- * is open again rather than drawn anew, which would bring it in again; a deletion still running
- * then ends at once, and no longer closes it.
+ * A larger window than the tiles' (Tile.css), as an overlay, with a lower least scale for its
+ * popup: a confirm dialog with its button beside it is wider than a tile's stage at a popup's
+ * least.
+ */
+export const tileWindow: TileWindow = { width: 15, height: 11.25, popupLeast: 0.56, overlay: true };
+
+/**
+ * A confirm dialog, open over the row of the plan it deletes (the plan's name and the button that
+ * opens the dialog), in the middle of the stage, which stands in for the screen. It holds its
+ * question and its actions, low enough to show whole at the overlays' scale (tileWindow). Once the
+ * plan is deleted, the row offers Undo in its place. When the tile stops, the dialog is open again
+ * rather than drawn again, which would make it appear with motion again; a deletion still running
+ * then ends at once, and no longer closes the dialog.
  */
 export default function ConfirmDialogTile() {
   const [open, setOpen] = useState(true);
@@ -84,7 +93,7 @@ export default function ConfirmDialogTile() {
         onConfirm={() => {
           const at = round.current;
           confirmedIn.current = at;
-          // Deleted once the dialog has closed over the row, not under it as it fades.
+          // Deleted once the dialog has closed over the row, not while it fades out over it.
           setTimeout(() => {
             if (round.current === at) setDeleted(true);
           }, deleting + closing);

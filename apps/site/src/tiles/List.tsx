@@ -4,6 +4,7 @@ import { useMedia } from '../motion/Autoplay';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
+import type { TileWindow } from './Tiles';
 
 const people = [
   { id: 'alex', name: 'Alex Morgan', role: 'Design' },
@@ -13,14 +14,14 @@ const people = [
 
 /*
  * A row's link, which covers the row with a pseudo-element, so a press anywhere on the row follows
- * it: the pointer no one sees aims at the link itself, as it finds elements, not pseudo-elements.
+ * it. The virtual pointer aims at the link itself, since it finds elements, not pseudo-elements.
  */
 const row = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) [data-row-target]`;
 
 /*
- * On the two rows the stage shows whole, so its view never moves: the first opened, which makes it
- * the current row, and the second again.
+ * Only on the two rows the stage shows whole, so its view never moves: opens the first, which makes
+ * it the current row, then the second again.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -36,10 +37,13 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 16, height: 12 };
+
 /**
- * A list of people, each row opening that person, Sam Lee's the current one: its first two rows
- * whole, the third fading out at the stage's foot; on a phone's lower, narrower tile, its first
- * two rows alone, narrower, so it is drawn whole at about its own size there.
+ * A list of people, each row opening that person, with Sam Lee's as the current one. Its first two
+ * rows show whole and the third fades out at the stage's bottom. On a phone's lower, narrower tile,
+ * only its first two rows, narrower, so it is drawn whole at about its own size there.
  */
 export default function ListTile() {
   const [current, setCurrent] = useState('sam');

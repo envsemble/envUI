@@ -1,15 +1,16 @@
 /*
- * What an anatomy figure's callouts are placed by (PlaceCallouts.ts), measured in its stage
- * (useAnatomyLayout.ts): what shows of each part a legend item names, its corners and edge, the
- * labels in the subject, and in a variants figure, its items and the room their names and uses
- * take. Nothing here changes the figure.
+ * Measures what an anatomy figure's callouts are placed by (PlaceCallouts.ts, PlaceVariants.ts),
+ * in its stage (useAnatomyLayout.ts): what shows of each part a legend item names, its corners and
+ * edge, the labels in the subject, and in a variants figure, its items and the room their names
+ * and uses take. Nothing here changes the figure.
  */
 import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
 import { union, type Box } from '../../fit/FitGeometry';
 import { openerBox } from '../../fit/standalone/OverlayRoom';
 import { remPixels } from '@envui-internal/internal/dom/lengths';
 import { partSelector } from '../../template/Parts';
-import type { AnatomyGeometry, Corners, Part, UseSize, VariantGeometry } from './PlaceCallouts';
+import type { AnatomyGeometry, Corners, Part } from './PlaceCallouts';
+import type { UseSize, VariantGeometry } from './PlaceVariants';
 
 /**
  * Whether an element is only text, such as a label or a description, with no fill or edge of its

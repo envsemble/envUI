@@ -5,6 +5,7 @@ import { remeasure } from '../shared/Remeasure';
 import { sitePopupOpen } from '../motion/SitePopup';
 import { press, triggerOf } from './PressTrigger';
 import { flag } from '@envui-internal/internal/flag';
+import { useBrowserStandIns } from '../motion/BrowserStandIns';
 
 /**
  * How long a figure's room may wait, in ms, for overlays to rest open in before it shows anyway,
@@ -139,6 +140,8 @@ export function OpenExample({
   part?: string;
   children: ReactNode;
 }) {
+  // First, so the stand-ins are in place before its overlays open (useRestOpen, useOpenOnce).
+  useBrowserStandIns();
   const room = useRef<HTMLDivElement>(null);
   const [roomElement, setRoomElement] = useState<HTMLDivElement | null>(null);
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);

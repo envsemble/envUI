@@ -1,28 +1,46 @@
 import { use } from 'react';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
-import { loadOnce } from '../loading/LoadOnce';
+import { moduleRegistry } from '../loading/ModuleRegistry';
 import { keepPageParts } from '../loading/RecordedSizes';
 
-/** Each page's content, in a file of its own that loads with the page. */
-const contents = import.meta.glob<DocumentationEntry>('../generated/pages/*.json', {
+/** Records the sizes a page's content brings (keepPageParts) and returns the content. */
+const kept = (content: DocumentationEntry) => {
+  keepPageParts(content);
+  return content;
+};
+
+const glob = import.meta.glob<DocumentationEntry>('/src/generated/pages/*.json', {
   import: 'default',
 });
-const loads = new Map<string, Promise<DocumentationEntry>>();
+
+/**
+ * Each page's content, in a file of its own that loads with the page (moduleRegistry). In
+ * development, a file asked for again after a failure is asked for as a module: Vite serves JSON
+ * as a module only under `import` with a query that ends in `.json`. Its default export is the
+ * content.
+ */
+const contents = moduleRegistry(
+  Object.fromEntries(Object.entries(glob).map(([path, load]) => [path, () => load().then(kept)])),
+  {
+    query: 'import&lang.json',
+    // A JSON module's default export is its parsed content.
+    pick: (module) => kept((module as { default: DocumentationEntry }).default),
+  },
+);
+
+const pathOf = (id: string) => `/src/generated/pages/${id}.json`;
 
 /**
  * A page's content, loaded once and kept (loadOnce): as the site starts, for the page it opens on,
  * and as a link to a page is about to be followed (preloadPage).
  */
 export function loadDocument(id: string) {
-  const loader = contents[`../generated/pages/${id}.json`];
-  if (!loader) throw new Error(`No content for the page ${id}`);
-  return loadOnce(loads, id, () =>
-    loader().then((content) => {
-      keepPageParts(content);
-      return content;
-    }),
-  );
+  if (!contents.has(pathOf(id))) throw new Error(`No content for the page ${id}`);
+  return contents.load(pathOf(id));
 }
+
+/** Drops a page's content that failed to load, so the page's next render loads it again. */
+export const retryDocument = (id: string) => contents.retry(pathOf(id));
 
 /** A page's content, suspending the page until it has loaded. */
 export const useDocument = (summary: { id: string }) => use(loadDocument(summary.id));

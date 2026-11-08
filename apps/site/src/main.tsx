@@ -7,11 +7,6 @@ import { PaletteCustomizationProvider } from './display/PaletteCustomization';
 import { findPage } from './routes/SiteRoutes';
 import { currentRoute } from './routes/useSiteRoute';
 import { preloadPage } from './pages/PreloadPage';
-import { installBrowserStandIns } from './motion/BrowserStandIns';
-
-// A stage's components scroll and take focus only inside it, never the page's, and the pointer no
-// one sees captures as a person's does, from the first render on.
-installBrowserStandIns();
 // The site renders once what the page it opens on needs has loaded, which started as it did, so
 // its first paint has the whole page rather than the frame and then the page.
 void preloadPage(findPage(currentRoute().split('?')[0])).then(() =>

@@ -8,7 +8,7 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 const segment = (index: number) =>
   `.env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
 
-/** Board chosen, its selection sliding across, and List again. */
+/** Chooses Board, the selection sliding across, then List again. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: segment(2) },
@@ -23,7 +23,7 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** A segmented control of two views, List chosen. */
+/** A segmented control of two views, with List chosen. */
 export default function SegmentedControlTile() {
   const [value, setValue] = useState('list');
   usePointer(script);

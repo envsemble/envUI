@@ -4,6 +4,7 @@ import { IconViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import type { DevModeHandle } from '@envsemble/envui/dev';
 import { keepLinksInPlace } from '../LiveExample';
 import { SmallApplication } from './SmallApplication';
+import { useBrowserStandIns } from '../../motion/BrowserStandIns';
 // The 3D view of the application below, captured from the real dev mode by
 // scripts/docs/CaptureDevModeImage.ts (npm run docs:dev-mode-image).
 import viewLight from './dev-mode-3d-light.webp';
@@ -70,6 +71,7 @@ function LiveApplication({
   onReady: (handle: DevModeHandle) => void;
   onFail: () => void;
 }) {
+  useBrowserStandIns();
   const theme = useTheme();
   const root = useRef<HTMLDivElement>(null);
   const ready = useRef(onReady);

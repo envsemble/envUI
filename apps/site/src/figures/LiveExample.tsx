@@ -20,6 +20,7 @@ import { WidthSweep } from '../motion/WidthSweep';
 import { WidthBox } from '../fit/standalone/WidthFit';
 import { ExamplePlayback } from './Specimen';
 import { StillMark } from './StillMark';
+import { useBrowserStandIns } from '../motion/BrowserStandIns';
 
 /**
  * Links in an example keep their semantics without navigating away from the documentation. A link
@@ -205,6 +206,7 @@ export function LiveExample({
   /** Whether its code shows under it, in a disclosure. */
   code?: boolean;
 }) {
+  useBrowserStandIns();
   const theme = useTheme();
   const still = presentation?.kind === 'open' && !presentation.live;
   const device = presentation?.kind === 'device' ? presentation.device : undefined;

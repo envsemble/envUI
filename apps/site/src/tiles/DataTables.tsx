@@ -4,6 +4,7 @@ import { IconArchive } from '@envsemble/envui/icons/Archive';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const projects = [
   { id: 'website', name: 'Website refresh', tasks: 12 },
@@ -15,8 +16,8 @@ const select = (name: string) => `[aria-label="Select ${name}"]`;
 const sort = '.env-table-sort-button';
 
 /*
- * A second row selected, which the bar counts; the names sorted the other way and back, the
- * selection going with its rows; the row let go again.
+ * Selects a second row, which the bar counts; sorts the names the other way and back, with the
+ * selection staying on its rows; then clears the row again.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -39,6 +40,9 @@ const script: PointerStep[] = [
 ];
 
 const count = (selected: number) => (selected === 1 ? '1 project' : `${selected} projects`);
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 19, height: 14.25 };
 
 /** A table of projects, sortable by name, whose selected rows a bar counts and acts on. */
 export default function DataTablesTile() {

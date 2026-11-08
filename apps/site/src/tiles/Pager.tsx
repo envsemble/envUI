@@ -10,7 +10,9 @@ const pages = ['Intro', 'Setup', 'Usage', 'Theme', 'Deploy'];
 /** The page the guide opens at, with a page on either side of it. */
 const first = 1;
 
-/** On through the guide twice by Next, each page's neighbours following, and back twice. */
+/**
+ * Goes forward through the guide twice with Next, each page's neighbours following, and back twice.
+ */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-pager-link-next', x: 0.5 },
@@ -30,10 +32,10 @@ const script: PointerStep[] = [
 ];
 
 /**
- * The foot of a page of a guide: the page's title, then the links before and after it, side by
- * side, so both show in a gallery's low tile, and each press shows which page it led to. A page at
- * either end of the guide shows only the link it has.
- * In a phone's narrower tile it is narrower too, so it is drawn at about its own size there.
+ * The bottom of a page of a guide: the page's title, then the links before and after it, side by
+ * side, so both show in a gallery's low tile and each press shows which page it led to. A page at
+ * either end of the guide shows only the link it has. In a phone's narrower tile the pager is
+ * narrower too, so it is drawn at about its own size there.
  */
 export default function PagerTile() {
   const narrow = useMedia(narrowGallery);

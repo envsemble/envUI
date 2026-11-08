@@ -1,25 +1,25 @@
 /*
- * An anatomy figure's callouts laid out as it changes (AnatomyFigure.tsx): what its subject shows
- * is measured (MeasureAnatomy.ts) and the callouts placed from that (PlaceCallouts.ts), a numbered
- * one on each part; for a variants figure, each variant's name beside its item, with the room the
- * names take, its items stood apart for what each is for (spreadItems).
+ * Lays out an anatomy figure's callouts, again whenever the figure changes (AnatomyFigure.tsx).
+ * It measures what the subject shows (MeasureAnatomy.ts) and places the callouts from that: a
+ * numbered callout on each part (PlaceCallouts.ts), or, for a variants figure, each variant's name
+ * beside its item (PlaceVariants.ts). It also sets the room the names take, and moves the items
+ * apart to make room for the text under each one (spreadItems).
  */
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
 import { remeasure, type Change } from '../../shared/Remeasure';
 import { labelWidths, measureParts, measureVariantItems, sizesOfUses } from './MeasureAnatomy';
+import { placeCallouts, type Callout } from './PlaceCallouts';
 import {
   fitsBeside,
   nameRoom,
-  placeCallouts,
   spreadAbove,
   stackedItems,
   stackedVariants,
   roomsForUses,
   variantsInRow,
-  type Callout,
   type Room,
-} from './PlaceCallouts';
+} from './PlaceVariants';
 
 /** A subject at most this wide and tall, in CSS pixels, is small enough to show larger. */
 const smallSubject = { width: 240, height: 48 };

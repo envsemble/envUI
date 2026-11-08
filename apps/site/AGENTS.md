@@ -48,7 +48,7 @@ Each has one folder in `apps/site/src`:
 
 ## Where a component behaves differently than in a fixture
 
-- Look first at `apps/site/src/motion/BrowserStandIns.ts`: the site replaces `focus`, `matches`, the pointer-capture methods and `scrollIntoView` on the page's prototypes there.
+- Look first at `apps/site/src/motion/BrowserStandIns.ts`: the site replaces `focus`, `matches`, the pointer-capture methods and `scrollIntoView` on the page's prototypes there while a stage is mounted, and puts the browser's own back when the last stage unmounts.
 - It changes what a call does only inside the stages its pointer plays, and calls the browser's own method everywhere else.
 
 ## Files for agents

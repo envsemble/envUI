@@ -4,8 +4,9 @@ import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 
 /**
- * The card hovered, its fill taking the hover layer; pressed and held a moment, the pressed layer
- * over it as it settles a little; released, which opens the project; then the pointer leaves.
+ * Hovers the card, whose fill takes the hover layer; presses and holds it a moment, with the
+ * pressed layer over it as it settles a little; releases it, which opens the project; then the
+ * pointer leaves.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -20,15 +21,15 @@ const script: PointerStep[] = [
 ];
 
 /**
- * The edge, through the card's own color property: on a stage of the card's own fill, it keeps the
- * card's shape in view.
+ * The card's edge, set through its own color property: on a stage of the card's own fill, it keeps
+ * the card's shape visible.
  */
 const outlined: CSSProperties = { '--env-card-outline': 'var(--env-color-border-muted)' };
 
 /**
- * A project's card that is one button, as a list of projects opens each from its card: its name and
- * when it was last updated; small enough for a phone's stage at its own size. As it plays, the
- * pointer hovers and presses it, so the whole card reads as the target.
+ * A project's card that is one button, as a list of projects opens each project from its card: its
+ * name and when it was last updated, small enough for a phone's stage at its own size. While it
+ * plays, the pointer hovers and presses it, so the whole card reads as the target.
  */
 export default function CardTile() {
   usePointer(script);

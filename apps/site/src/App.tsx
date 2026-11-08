@@ -19,6 +19,7 @@ import {
   type RoutePage,
 } from './routes/SiteRoutes';
 import { PageBoundary } from './banner/PageBoundary';
+import { retryDocument } from './pages/PageContent';
 import { SiteBanner } from './banner/SiteBanner';
 import { HasContents, PageContents } from './banner/PageContents';
 import { PageFooter } from './banner/PageFooter';
@@ -165,7 +166,13 @@ function PageColumns({
       <div className="site-page-grid" data-contents={contents || undefined}>
         <div className="site-page-column">
           <HasContents value={contents}>
-            <PageBoundary title={page?.title ?? 'Page not found'} route={route}>
+            <PageBoundary
+              title={page?.title ?? 'Page not found'}
+              route={route}
+              onRetry={() => {
+                if (page?.document) retryDocument(page.document.id);
+              }}
+            >
               {/* A page's content loads with it (useDocument), which the first page and a link's
                 page wait for before they render; a page gone back to, or opened from search,
                 before it has loaded shows as a skeleton of its shape meanwhile. A boundary of

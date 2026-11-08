@@ -6,7 +6,7 @@ import { narrowGallery } from './Tiles';
 
 const answer = '.env-message[data-from="other"] .env-message-content';
 
-/** The answer copied with its action: its icon turns to a check and Copied shows, for a moment. */
+/** Copies the answer with its action: its icon turns to a check and Copied shows, for a moment. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: answer, x: 0.5, y: 0.5 },
@@ -23,9 +23,9 @@ const script: PointerStep[] = [
 
 /**
  * The assistant's answer, with an action to copy it at its end, so Copied, above the action, shows
- * beside the answer's line rather than over it.
- * In a phone's narrower tile it is narrower too, so it is drawn at about its own size there, and
- * its action is the icon alone, named in its tooltip, so Copied still shows beside the line.
+ * beside the answer's line rather than over it. In a phone's narrower tile the message is narrower
+ * too, so it is drawn at about its own size there, and its action is the icon alone, named in its
+ * tooltip, so Copied still shows beside the line.
  */
 export default function MessageTile() {
   const narrow = useMedia(narrowGallery);

@@ -3,16 +3,17 @@ import { createPortal } from 'react-dom';
 import { Kbd } from '@envsemble/envui';
 import { useStageLayer } from './Playback';
 
-/** The room kept between the cap and what it sits beside, in px. */
+/** The space kept between the key cap and the element it sits beside, in px. */
 const gap = 12;
 
 /**
- * The keys an animated figure's keyboard presses, such as Ctrl+K or Enter, as a key cap in the top
- * start corner of its stage, over what opens there, backdrop included, since nothing else shows a key
- * that a pointer no one sees presses. `press` counts the presses, so the cap comes again with each;
- * `keys` null shows none. With `beside`, a selector of what the keys go to, such as a palette's
- * field, the cap sits beside it instead, outside the popup it is in where the stage has room at
- * its start, else inside its end, so it shows by what it acts on.
+ * Shows the keys an animated figure's keyboard presses, such as Ctrl+K or Enter, as a key cap in
+ * the top start corner of its stage, above whatever opens there, backdrop included. Nothing else
+ * shows a key that the virtual pointer presses. `press` counts the presses, so the cap appears
+ * again with each one; `keys` null shows nothing. With `beside`, a selector of the element the keys
+ * go to, such as a palette's field, the cap sits beside that element instead: outside the popup it
+ * is in, where the stage has room at its start, else inside the popup's end, so it shows next to
+ * what it acts on.
  *
  *     const [pressed, setPressed] = useState<{ keys: string[]; press: number } | null>(null);
  *     <PressedKeys keys={pressed?.keys ?? null} press={pressed?.press ?? 0} />
@@ -39,7 +40,8 @@ export function PressedKeys({
     }
     const own = layer.getBoundingClientRect();
     const box = target.getBoundingClientRect();
-    // Across, by the popup it is in, such as the palette's panel, so the cap sits outside it.
+    // Horizontally, next to the popup it is in, such as the palette's panel, so the cap sits
+    // outside it.
     const across = (target.closest('[role="dialog"]') ?? target).getBoundingClientRect();
     const width = element.offsetWidth;
     const top = box.top - own.top + (box.height - element.offsetHeight) / 2;

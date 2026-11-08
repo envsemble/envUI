@@ -3,13 +3,14 @@ import { Breadcrumbs, Column, Link, List, PageHeader, Surface } from '@envsemble
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
 
 const row = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) [data-row-target]`;
 const level = (index: number) =>
   `.env-breadcrumbs-item:nth-child(${index}) > .env-breadcrumbs-link`;
 
-/** Down into Files, the trail and the title following, and back up by the trail. */
+/** Goes down into Files, with the trail and the title following, and back up by the trail. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: row(1) },
@@ -33,7 +34,10 @@ const contents: Record<string, string[]> = {
 /** A tile's links lead nowhere; a choice stands in for the router. */
 const stay = (event: { preventDefault: () => void }) => event.preventDefault();
 
-/** A page two levels down: the trail back up, its title, and what it holds, each a way down. */
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 15, height: 11.25 };
+
+/** A page two levels down: the trail back up, its title, and what it holds, each a link down. */
 export default function NavigationTile() {
   const [path, setPath] = useState(['Projects', 'Website']);
   usePointer(script);

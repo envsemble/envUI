@@ -8,7 +8,7 @@ const shortcuts = [
 ];
 
 /**
- * A short list of shortcuts: what each does, and its keys. It stays still as it plays: a key has
+ * A short list of shortcuts: what each does, and its keys. It stays still while it plays: a key has
  * no pressed or other state of its own to show.
  */
 export default function KbdTile() {

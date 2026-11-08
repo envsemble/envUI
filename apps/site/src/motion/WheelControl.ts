@@ -1,11 +1,11 @@
 /*
- * The wheel of the pointer no one sees (VirtualPointer.ts): a turn scrolls the nearest box around
- * what the pointer is over that can scroll, as a mouse's wheel does, never the page.
+ * The virtual pointer's wheel (VirtualPointer.ts). A turn scrolls the nearest scrollable box around
+ * the element under the pointer, as a mouse wheel does, never the page.
  */
 import type { PointerSpot } from './pointer/PointerTargets';
 
 export class WheelControl {
-  /** The box a turn of the wheel scrolls, and where it started, while it turns. */
+  /** The box a turn of the wheel scrolls, and its scroll position when the turn started. */
   private turn: {
     target: Element;
     box: HTMLElement | null;
@@ -18,8 +18,8 @@ export class WheelControl {
   constructor(private readonly spot: PointerSpot) {}
 
   /**
-   * Starts turning the wheel over the element under the pointer: it scrolls the nearest box around
-   * it in the stage that can scroll along the axis, never the page.
+   * Starts turning the wheel over the element under the pointer. It scrolls the nearest box around
+   * that element, inside the stage, that can scroll along the axis; never the page.
    */
   start(axis: 'x' | 'y') {
     this.end();
@@ -41,7 +41,8 @@ export class WheelControl {
         break;
       }
     }
-    // A box that snaps would snap at each step of the turn: it snaps once the turn ends.
+    // A box with scroll snapping would snap at each step of the turn, so snapping is off until the
+    // turn ends.
     const snap = box?.style.scrollSnapType ?? '';
     if (box) box.style.scrollSnapType = 'none';
     const from = box ? (axis === 'y' ? box.scrollTop : box.scrollLeft) : 0;
@@ -49,8 +50,8 @@ export class WheelControl {
   }
 
   /**
-   * Turns the wheel on to `distance` px from where the turn started: the element under the pointer
-   * hears the wheel, and unless it takes the turn for itself, the box scrolls there.
+   * Turns the wheel to `distance` px from where the turn started. The element under the pointer
+   * receives the wheel events, and unless it handles the turn itself, the box scrolls there.
    */
   to(distance: number) {
     const turn = this.turn;
@@ -78,7 +79,7 @@ export class WheelControl {
     turn.box.scrollTo({ [turn.axis === 'y' ? 'top' : 'left']: to, behavior: 'instant' });
   }
 
-  /** Ends a turn of the wheel: a box that snaps snaps again. */
+  /** Ends a turn of the wheel: a box with scroll snapping snaps again. */
   end() {
     const turn = this.turn;
     this.turn = null;

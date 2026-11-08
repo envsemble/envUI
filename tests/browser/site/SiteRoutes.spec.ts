@@ -75,13 +75,19 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'patterns/account-menu': 'patterns/account-and-organizations',
     'patterns/organization-switcher': 'patterns/account-and-organizations',
     'docs/patterns/organization-switcher': 'docs/patterns/account-and-organizations',
+    // Old addresses that name a document that is gone open the page it became.
+    'overview/get-started?document=dev-mode-overview': 'docs/dev-mode',
+    'overview/get-started?document=agent-skills': 'docs?section=coding-agents',
+    'overview/get-started?document=full-changelog': 'docs/changelog',
+    'get-started/scale?section=density': 'foundations/spacing?section=density',
+    'get-started/composition': 'docs/customizing',
     // The content guidelines are the Writing guide in the Docs.
     'foundations/content': 'docs/writing',
     'docs/foundations/content': 'docs/writing',
   };
   for (const [from, to] of Object.entries(routes)) expect(normalizeRoute(from), from).toBe(to);
-  // A link to dev mode's page in the catalogue opens its guide in the Docs.
-  expect(routeOfDocument('dev-mode-overview')).toBe('docs/dev-mode');
+  // The ids of documents that are gone are old addresses' alone.
+  expect(routeOfDocument('dev-mode-overview')).toBeUndefined();
   // Every page of both areas is its own route.
   for (const { path } of allPages) expect(normalizeRoute(path)).toBe(path);
 });

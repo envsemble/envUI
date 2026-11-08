@@ -21,6 +21,11 @@
    inert, so no reader's pointer reaches it; a tile's own pointer, which no one sees, follows what
    its parts let through (VirtualPointer.ts). */
 .catalogue-tile-canvas {
+  /* The tiles' one window, in which a page's own tile lays out, unless it declares another
+     (tileWindow, tiles/Tiles.ts), and which sizes what a canvas drawn at its own size opens. */
+  --catalogue-tile-width: 14rem;
+  --catalogue-tile-height: 10.5rem;
+
   position: absolute;
   inset-block-start: 50%;
   inset-inline-start: 50%;
@@ -67,14 +72,14 @@
   min-block-size: 28rem;
 }
 
-/* A page's own tile (tiles/Tiles.ts) lays out in a window of its own, which counts whole: one
-   window for every tile, so every component is drawn at one scale, about its own size. Its
-   popups open inside it, with no more room than that. A component too large for it, such as a
-   calendar, takes a larger window (tileWindows, Tiles.ts), drawn smaller. */
+/* A page's own tile (tiles/Tiles.ts) lays out in its window, which counts whole: one window for
+   every tile, so every component is drawn at one scale, about its own size. Its popups open
+   inside it, with no more room than that. A component too large for it, such as a calendar,
+   declares a larger window (tileWindow), drawn smaller. */
 .catalogue-tile-stage > .catalogue-tile-canvas[data-tile],
 .catalogue-gallery-stage.catalogue-gallery-stage > .catalogue-tile-canvas[data-tile] {
-  inline-size: var(--catalogue-tile-width, 14rem);
-  block-size: var(--catalogue-tile-height, 10.5rem);
+  inline-size: var(--catalogue-tile-width);
+  block-size: var(--catalogue-tile-height);
   min-block-size: 0;
 }
 
@@ -82,10 +87,7 @@
    height (CommandPalette.css), measured on the tile's window rather than on the browser's, which
    the tile stands in for: the palette's own rule, with the tile's height for the window's. */
 .catalogue-tile-canvas[data-tile] .env-command-palette-positioner {
-  padding-block: max(
-      var(--env-viewport-gutter),
-      min(0.12 * var(--catalogue-tile-height, 10.5rem), 6rem)
-    )
+  padding-block: max(var(--env-viewport-gutter), min(0.12 * var(--catalogue-tile-height), 6rem))
     var(--env-viewport-gutter);
 }
 
