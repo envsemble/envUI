@@ -7,9 +7,11 @@ import {
   useState,
   type CSSProperties,
   type ReactNode,
+  type RefObject,
 } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '../shared/DocumentationTypes';
+import { remPixels } from '../shared/Lengths';
 import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender, leastFitScale } from './LiveExample';
 import { OpenExample } from './OpenExample';
@@ -60,7 +62,7 @@ function FitFrame({ width, children }: { width: number; children: ReactNode }) {
     const subject = fit.current?.parentElement;
     if (!frame || !subject) return;
     const measure = () => {
-      const needed = width * parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const needed = width * remPixels();
       const scale = subject.clientWidth / needed;
       const next =
         scale < 1 && scale >= leastFitScale
@@ -106,52 +108,27 @@ function FitFrame({ width, children }: { width: number; children: ReactNode }) {
   );
 }
 
-/**
- * The component in the theme the reader has chosen, on the recessed canvas, following it as it
- * changes, with its callouts measured from its live parts.
- */
-function AnatomyStage({
-  page,
-  name,
-  legend,
-  open,
-  enlarged,
-  specimen,
-  stage: fill,
-  variants,
-  width,
-  onOrder,
-  uses,
-  onBeside,
-}: {
-  page: string;
-  name: string;
+/** What an anatomy figure's callouts are measured for (useCallouts), as AnatomyStage takes it. */
+interface CalloutOptions {
   legend: AnatomyLegendItem[];
-  /** In a variants figure, what each legend item's variant is for, in lines (measureVariants). */
-  uses?: (string[] | undefined)[];
-  /** Hears whether what each variant is for shows beside it. */
-  onBeside?: (beside: boolean) => void;
-  /**
-   * Hears the legend's items in the order the callouts number them, and those the legend names
-   * alone, such as a field around its control.
-   */
-  onOrder: (order: number[], whole: number[]) => void;
   open: boolean;
-  /** Whether the subject shows half as large again, though it isn't small. */
   enlarged: boolean;
-  /** Whether the subject is the example's specimen of the same name, held in a moment. */
-  specimen: boolean;
-  stage?: StageFill;
-  /** Whether the callouts name the variants rather than number the parts. */
   variants: boolean;
-  /** The width, in rem, the subject needs to show its parts. */
-  width?: number;
-}) {
-  const theme = useTheme();
-  // An id for the outlines' masks that a url() reference takes as it is.
-  const maskId = `anatomy${useId().replace(/[^\w-]/g, '')}`;
-  const stage = useRef<HTMLDivElement>(null);
-  const subject = useRef<HTMLDivElement>(null);
+  uses?: (string[] | undefined)[];
+  onOrder: (order: number[], whole: number[]) => void;
+  onBeside?: (beside: boolean) => void;
+}
+
+/**
+ * The callouts of an anatomy figure, measured from its live parts, and in a variants figure the
+ * room its names take: they follow the figure as it resizes, its example loads, its fonts arrive
+ * and its parts settle where they enter with motion. Only a change of place re-renders them.
+ */
+function useCallouts(
+  stage: RefObject<HTMLDivElement | null>,
+  subject: RefObject<HTMLDivElement | null>,
+  { legend, open, enlarged, variants, uses, onOrder, onBeside }: CalloutOptions,
+) {
   const [callouts, setCallouts] = useState<Callout[]>([]);
   const [room, setRoom] = useState<Room>({ start: 0, bottom: 0 });
   useLayoutEffect(() => {
@@ -218,7 +195,145 @@ function AnatomyStage({
       subjectElement.removeEventListener('animationend', update);
       subjectElement.removeEventListener('transitionend', update);
     };
-  }, [legend, open, enlarged, variants, onOrder, uses, onBeside]);
+  }, [stage, subject, legend, open, enlarged, variants, onOrder, uses, onBeside]);
+  return { callouts, room };
+}
+
+/**
+ * The callouts' lines, each from its badge to its part, with a region's outline, which gives way
+ * across a label it runs through, such as a floated label (`maskId` names the masks).
+ */
+function CalloutLines({ callouts, maskId }: { callouts: Callout[]; maskId: string }) {
+  return (
+    <svg className="site-anatomy-lines" aria-hidden="true">
+      {callouts.map(({ number, badge, anchor, box, gaps }) => (
+        <g key={number}>
+          {/* The outline gives way across a label it runs through, such as a floated label. */}
+          {gaps && (
+            <mask id={`${maskId}-${number}`} maskUnits="userSpaceOnUse">
+              <rect x="0" y="0" width="100%" height="100%" fill="white" />
+              {gaps.map((gap, index) => (
+                <rect key={index} {...gap} fill="black" />
+              ))}
+            </mask>
+          )}
+          {box && (
+            <g mask={gaps && `url(#${maskId}-${number})`}>
+              {['site-anatomy-box-rim', 'site-anatomy-box'].map((className) => (
+                <rect
+                  key={className}
+                  className={className}
+                  x={box.x}
+                  y={box.y}
+                  width={box.width}
+                  height={box.height}
+                  rx={3}
+                />
+              ))}
+            </g>
+          )}
+          <line x1={badge.x} y1={badge.y} x2={anchor.x} y2={anchor.y} />
+          <circle cx={anchor.x} cy={anchor.y} r={3} />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+/**
+ * The callouts' badges, or a variants figure's names, and beside or under each variant what it
+ * is for, placed in physical coordinates, in either direction.
+ */
+function CalloutLabels({ callouts }: { callouts: Callout[] }) {
+  return (
+    <>
+      {callouts.map(({ number, badge, label, side }) => (
+        <span
+          key={number}
+          className={label === undefined ? 'site-anatomy-badge' : 'catalogue-variant-label'}
+          data-side={side}
+          aria-hidden="true"
+          // Measured in physical coordinates, in either direction.
+          style={{ left: badge.x, top: badge.y }}
+        >
+          {label ?? number}
+        </span>
+      ))}
+      {callouts.map(
+        ({ number, use }) =>
+          use && (
+            <span
+              key={`use-${number}`}
+              className="catalogue-variant-use"
+              data-side={use.side}
+              aria-hidden="true"
+              style={{ left: use.x, top: use.y, inlineSize: use.width }}
+            >
+              {use.lines.map((line) => (
+                <span key={line}>{line}</span>
+              ))}
+            </span>
+          ),
+      )}
+    </>
+  );
+}
+
+/**
+ * The component in the theme the reader has chosen, on the recessed canvas, following it as it
+ * changes, with its callouts measured from its live parts.
+ */
+function AnatomyStage({
+  page,
+  name,
+  legend,
+  open,
+  enlarged,
+  specimen,
+  stage: fill,
+  variants,
+  width,
+  onOrder,
+  uses,
+  onBeside,
+}: {
+  page: string;
+  name: string;
+  legend: AnatomyLegendItem[];
+  /** In a variants figure, what each legend item's variant is for, in lines (measureVariants). */
+  uses?: (string[] | undefined)[];
+  /** Hears whether what each variant is for shows beside it. */
+  onBeside?: (beside: boolean) => void;
+  /**
+   * Hears the legend's items in the order the callouts number them, and those the legend names
+   * alone, such as a field around its control.
+   */
+  onOrder: (order: number[], whole: number[]) => void;
+  open: boolean;
+  /** Whether the subject shows half as large again, though it isn't small. */
+  enlarged: boolean;
+  /** Whether the subject is the example's specimen of the same name, held in a moment. */
+  specimen: boolean;
+  stage?: StageFill;
+  /** Whether the callouts name the variants rather than number the parts. */
+  variants: boolean;
+  /** The width, in rem, the subject needs to show its parts. */
+  width?: number;
+}) {
+  const theme = useTheme();
+  // An id for the outlines' masks that a url() reference takes as it is.
+  const maskId = `anatomy${useId().replace(/[^\w-]/g, '')}`;
+  const stage = useRef<HTMLDivElement>(null);
+  const subject = useRef<HTMLDivElement>(null);
+  const { callouts, room } = useCallouts(stage, subject, {
+    legend,
+    open,
+    enlarged,
+    variants,
+    uses,
+    onOrder,
+    onBeside,
+  });
   const example = specimen ? (
     <SpecimenRender page={page} name={name} onStage />
   ) : (
@@ -255,68 +370,8 @@ function AnatomyStage({
         {width ? <FitFrame width={width}>{render}</FitFrame> : render}
       </div>
       {/* A variants figure's names are plain text by their items, with no lines or outlines. */}
-      {!variants && (
-        <svg className="site-anatomy-lines" aria-hidden="true">
-          {callouts.map(({ number, badge, anchor, box, gaps }) => (
-            <g key={number}>
-              {/* The outline gives way across a label it runs through, such as a floated label. */}
-              {gaps && (
-                <mask id={`${maskId}-${number}`} maskUnits="userSpaceOnUse">
-                  <rect x="0" y="0" width="100%" height="100%" fill="white" />
-                  {gaps.map((gap, index) => (
-                    <rect key={index} {...gap} fill="black" />
-                  ))}
-                </mask>
-              )}
-              {box && (
-                <g mask={gaps && `url(#${maskId}-${number})`}>
-                  {['site-anatomy-box-rim', 'site-anatomy-box'].map((className) => (
-                    <rect
-                      key={className}
-                      className={className}
-                      x={box.x}
-                      y={box.y}
-                      width={box.width}
-                      height={box.height}
-                      rx={3}
-                    />
-                  ))}
-                </g>
-              )}
-              <line x1={badge.x} y1={badge.y} x2={anchor.x} y2={anchor.y} />
-              <circle cx={anchor.x} cy={anchor.y} r={3} />
-            </g>
-          ))}
-        </svg>
-      )}
-      {callouts.map(({ number, badge, label, side }) => (
-        <span
-          key={number}
-          className={label === undefined ? 'site-anatomy-badge' : 'catalogue-variant-label'}
-          data-side={side}
-          aria-hidden="true"
-          // Measured in physical coordinates, in either direction.
-          style={{ left: badge.x, top: badge.y }}
-        >
-          {label ?? number}
-        </span>
-      ))}
-      {callouts.map(
-        ({ number, use }) =>
-          use && (
-            <span
-              key={`use-${number}`}
-              className="catalogue-variant-use"
-              data-side={use.side}
-              aria-hidden="true"
-              style={{ left: use.x, top: use.y, inlineSize: use.width }}
-            >
-              {use.lines.map((line) => (
-                <span key={line}>{line}</span>
-              ))}
-            </span>
-          ),
-      )}
+      {!variants && <CalloutLines callouts={callouts} maskId={maskId} />}
+      <CalloutLabels callouts={callouts} />
     </Theme>
   );
 }
