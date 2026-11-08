@@ -399,6 +399,9 @@ export function unitTestFiles(root = repositoryRoot) {
       /^packages\/[^/]+\/test\/[^/]+$/.test(file),
     ),
   ].sort();
-  const built = files.filter((file) => /packages\/ui\/dist|\['pack'/.test(read(root, file)));
+  // A test reads the build through its path or through the packed consumer, which packs it.
+  const built = files.filter((file) =>
+    /packages\/ui\/dist|support\/packedConsumer\.mjs/.test(read(root, file)),
+  );
   return { built, fast: files.filter((file) => !built.includes(file)) };
 }

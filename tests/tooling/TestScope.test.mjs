@@ -208,7 +208,8 @@ test('servers follow the specs that need them', () => {
 
 test('unit tests that read the library build are kept apart', () => {
   const { built, fast: quick } = unitTestFiles();
-  assert.ok(built.includes('tests/library/Package.test.mjs'));
+  for (const part of ['Contents', 'Resolution', 'Rendering'])
+    assert.ok(built.includes(`tests/library/Package${part}.test.mjs`), part);
   assert.ok(quick.includes('tests/tooling/TestScope.test.mjs'));
   assert.ok(!quick.some((file) => built.includes(file)));
 });
