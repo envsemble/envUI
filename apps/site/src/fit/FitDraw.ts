@@ -153,7 +153,32 @@ function trimRows(
     return;
   }
   const { top, height } = crop.getBoundingClientRect();
-  const fade = cropFade(crop);
+  const { length, hides } = cropTrim(height, cropFade(crop), fadeFrom, edge, played, remPixels());
+  for (const row of canvas.querySelectorAll<HTMLElement>(rowSelector)) {
+    const box = row.getBoundingClientRect();
+    const hidden = !row.querySelector(rowSelector) && hides(box.top - top, box.bottom - top);
+    if (hidden) row.dataset.cataloguePast = '';
+    else if (hidden === false) delete row.dataset.cataloguePast;
+  }
+  if (edge) crop.style.setProperty('--catalogue-crop-bottom', '0px');
+  else if (fadeFrom === null) crop.style.removeProperty('--catalogue-crop-bottom');
+  else crop.style.setProperty('--catalogue-crop-bottom', `${length}px`);
+}
+
+/**
+ * How a crop `height` px tall trims its rows (trimRows), with a fade `fade` px long and `rem` px
+ * to a rem: the fade's `length`, and whether a row from `top` to `bottom`, in px from the crop's
+ * top, is hidden whole (`hides`: true), shown (false), or keeps its current state (undefined).
+ * @internal
+ */
+export function cropTrim(
+  height: number,
+  fade: number,
+  fadeFrom: number | null,
+  edge: boolean,
+  played: boolean,
+  rem: number,
+) {
   const length = edge
     ? 0
     : fadeFrom === null
@@ -161,28 +186,20 @@ function trimRows(
       : Math.max(0, Math.min(fade, height - fadeFrom));
   // How far above the bottom a row's top must be to show more than a sliver: half the fade, or
   // the whole fade when it is shorter than half a rem and too short to fade a row out.
-  const sliver = length < remPixels() / 2 ? length + pixelTolerance : length / 2;
+  const sliver = length < rem / 2 ? length + pixelTolerance : length / 2;
   // A fade shortened by `fadeFrom` (below what a held view's script acts on) is too short to fade
   // a row out. A row below `fadeFrom` that reaches past the bottom is hidden, so the crop ends on a
   // whole row rather than one cut through its glyphs, also while the tile plays.
   const short = !edge && fadeFrom !== null && length < fade - pixelTolerance;
-  for (const row of canvas.querySelectorAll<HTMLElement>(rowSelector)) {
-    const box = row.getBoundingClientRect();
+  const hides = (top: number, bottom: number) => {
+    const below = short && top >= fadeFrom - rowSlack;
+    if (bottom <= height + rowSlack || !(edge || below || top > height - sliver)) return false;
     // While a tile plays (`played`), a row past the bottom keeps its current state as the view
     // moves, rather than disappearing and coming back; only `edge` and `below` rows are newly
     // hidden.
-    const below = short && box.top - top >= fadeFrom - rowSlack;
-    if (
-      !row.querySelector(rowSelector) &&
-      box.bottom - top > height + rowSlack &&
-      (edge || below || box.top - top > height - sliver)
-    ) {
-      if (!played || edge || below) row.dataset.cataloguePast = '';
-    } else delete row.dataset.cataloguePast;
-  }
-  if (edge) crop.style.setProperty('--catalogue-crop-bottom', '0px');
-  else if (fadeFrom === null) crop.style.removeProperty('--catalogue-crop-bottom');
-  else crop.style.setProperty('--catalogue-crop-bottom', `${length}px`);
+    return !played || edge || below ? true : undefined;
+  };
+  return { length, hides };
 }
 
 /**
