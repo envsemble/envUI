@@ -24,7 +24,7 @@ const script: PointerStep[] = [
 ];
 
 /**
- * What marks focus for the site's :focus-visible rules (VirtualPointer.ts): an animated figure is
+ * What marks focus for the site's :focus-visible rules (KeyboardControl.ts): an animated figure is
  * inert, so the dialog can't take real focus there, as it does outside one.
  */
 const focusMark = 'data-catalogue-focus';

@@ -14,7 +14,7 @@ import { Figure } from './Topic';
 
 /**
  * The marks the pointer no one sees gives what holds focus, which the site's :focus-visible and
- * :focus-within rules follow (VirtualPointer.ts): an animated figure is inert, so it can't hold
+ * :focus-within rules follow (KeyboardControl.ts): an animated figure is inert, so it can't hold
  * real focus.
  */
 const focusMark = 'data-catalogue-focus';

@@ -1,5 +1,6 @@
 import { use, useEffect, useRef, useState, type RefObject } from 'react';
-import { VirtualPointer, type Aimed } from './VirtualPointer';
+import { VirtualPointer } from './VirtualPointer';
+import type { Aimed } from './PointerTargets';
 import { headFor, nameCourse, nameMustShow } from './MustShow';
 import { PlaybackContext, useCountedAnimation } from './Playback';
 import {
