@@ -62,7 +62,7 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 
 ### Style sheets
 
-- Each component's style sheet puts its rules in `@layer env.components`. `src/styles` stays one flat folder, apart from the modules, since `package.json`'s `#styles/*` import, `scripts/build/BuildLibrary.ts`'s rewrite of `../styles/X.css` to `#styles/X.css` and the ordered `src/styles/index.css` rely on it. Its module imports `../styles/Base.css`, then the style sheets of what it builds on, then its own (`tests/library/StyleImports.test.mjs`). No specificity tricks to stay overridable, and nothing `!important`.
+- Each component's style sheet puts its rules in `@layer env.components`. `src/styles` stays one flat folder, apart from the modules, since `package.json`'s `#styles/*` import, `scripts/build/BuildLibrary.ts`'s rewrite of `../styles/X.css` to `#styles/X.css` and the ordered `src/styles/index.css` rely on it. A component's module imports `../styles/Base.css`, then the style sheets of what it builds on, then its own (`tests/library/StyleImports.test.mjs`). No specificity tricks to stay overridable, and nothing `!important`.
 - Colors, `z-index` and font weights come from tokens; lengths that follow the text are rem, px only for hairlines, em only for typography that follows the element's own size (`npm run lint:css`).
 - No drop shadows but Avatar's, the frosted popups' and a segmented control's thumb (`tests/library/NoShadows.test.mjs`); regions part by space and fill, and hairlines only separate the items of one list.
 - Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/library/StableHover.test.mjs`).
