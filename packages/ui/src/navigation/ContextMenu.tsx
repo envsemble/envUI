@@ -16,7 +16,7 @@ import {
   type Ref,
   type TouchEvent,
 } from 'react';
-import { MenuPopup } from './internal/MenuPopup.js';
+import { MenuPopup, menuParts } from './internal/MenuPopup.js';
 import type {
   OpenChangeDetails as MenuOpenChangeDetails,
   OpenChangeReason as MenuOpenChangeReason,
@@ -29,13 +29,6 @@ const contextMenuParts = {
   Portal: BaseContextMenu.Portal,
   Positioner: BaseContextMenu.Positioner,
   Popup: BaseContextMenu.Popup,
-};
-
-/** The Base UI parts of a contained context menu's popup: a menu's, which needn't be modal. */
-const containedMenuParts = {
-  Portal: BaseMenu.Portal,
-  Positioner: BaseMenu.Positioner,
-  Popup: BaseMenu.Popup,
 };
 
 /** What a context menu's onOpenChange receives beside the requested state: a menu's details. */
@@ -365,7 +358,7 @@ function ContainedContextMenu({
     >
       {regionElement}
       <MenuPopup
-        parts={containedMenuParts}
+        parts={menuParts}
         label={label}
         trigger={region}
         anchor={at}

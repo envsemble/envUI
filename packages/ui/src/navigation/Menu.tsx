@@ -26,7 +26,12 @@ import { IconChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
 import { useLinkComponent } from '../internal/LinkComponentContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
-import { MenuPopup, menuPopupInlineInset, menuPopupInset } from './internal/MenuPopup.js';
+import {
+  MenuPopup,
+  menuParts,
+  menuPopupInlineInset,
+  menuPopupInset,
+} from './internal/MenuPopup.js';
 import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
@@ -34,13 +39,6 @@ import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 import type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
 import '../styles/Base.css';
 import '../styles/Menu.css';
-
-/** The Base UI parts every menu's popup is made of. */
-const menuParts = {
-  Portal: BaseMenu.Portal,
-  Positioner: BaseMenu.Positioner,
-  Popup: BaseMenu.Popup,
-};
 
 export type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
 

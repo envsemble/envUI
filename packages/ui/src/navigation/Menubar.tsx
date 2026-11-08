@@ -18,7 +18,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
-import { MenuPopup } from './internal/MenuPopup.js';
+import { MenuPopup, menuParts } from './internal/MenuPopup.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { useDirection } from '../internal/useDirection.js';
 import { flag } from '../internal/flag.js';
@@ -26,13 +26,6 @@ import { useMenubarAccessKeys } from './internal/useMenubarAccessKeys.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import '../styles/Base.css';
 import '../styles/Menubar.css';
-
-/** The Base UI parts of a menubar menu's popup. */
-const menuParts = {
-  Portal: BaseMenu.Portal,
-  Positioner: BaseMenu.Positioner,
-  Popup: BaseMenu.Popup,
-};
 
 interface MenubarContextValue {
   /** Access keys are on, so triggers name theirs in aria-keyshortcuts. */
