@@ -3,6 +3,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, posix, relative, resolve, sep } from 'node:path';
+import { libraryEntryPoints } from '../../scripts/docs/LibraryEntryPoints.ts';
 import { kebab } from '../../scripts/docs/PageStructure.ts';
 
 const require = createRequire(import.meta.url);
@@ -140,7 +141,11 @@ function readLayers(library) {
       else if (![...modules, ...planned].some((module) => module.startsWith(path)))
         problems.push(`${rulesFile} ${where} names ${path}, which holds no module.`);
     }
+  const entryPoints = new Set(
+    libraryEntryPoints().map(({ file }) => relative(sourceRoot, file).split(sep).join('/')),
+  );
   const layerOf = (module) => {
+    if (entryPoints.has(module)) return 'entries';
     if (Object.hasOwn(layeredModules, module)) return layeredModules[module];
     const directory = Object.keys(directories)
       .filter((path) => module.startsWith(path))
