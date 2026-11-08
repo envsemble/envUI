@@ -3,7 +3,7 @@ import { Grid, Page, Surface, type PageWidth } from '@envsemble/envui';
 import { Example } from '../../figures/Example';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
-import { remPixels } from '../../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 
 /** The window the page sits in, in rem: wider than the large column, so Full reads as wider. */
 const frame = { width: 88, height: 17 };
@@ -28,7 +28,7 @@ function Widening() {
   const step = useTimeline(durations);
   const area = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
-  const { width, column, words } = widths[step]!;
+  const { width, column, words } = widths[step];
 
   // The window is drawn at the scale that fits the stage, again as the stage resizes.
   useLayoutEffect(() => {

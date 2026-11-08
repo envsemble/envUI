@@ -8,7 +8,8 @@ import {
 } from 'react';
 import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/envui';
 import { usePlayback } from './Playback';
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
+import { useLatest } from '@envui-internal/internal/useLatest';
 
 /*
  * An Adapting to width figure that plays: the example in one frame whose width sweeps between the
@@ -72,8 +73,8 @@ const orderOf = (count: number) =>
 function widthAt(time: number, stops: readonly number[], hold: number) {
   const order = orderOf(stops.length);
   const legs = order.map((index, leg) => {
-    const from = stops[index]!;
-    const to = stops[order[(leg + 1) % order.length]!]!;
+    const from = stops[index];
+    const to = stops[order[(leg + 1) % order.length]];
     return { from, to, travel: from === to ? 0 : travelTime(from, to) };
   });
   const length = legs.reduce((sum, leg) => sum + hold + leg.travel, 0);
@@ -84,7 +85,7 @@ function widthAt(time: number, stops: readonly number[], hold: number) {
     if (left < leg.travel) return leg.from + (leg.to - leg.from) * ease(left / leg.travel);
     left -= leg.travel;
   }
-  return stops[0]!;
+  return stops[0];
 }
 
 /** Where a sweep stands on its stage: its scale, the widths it sweeps between and its room. */
@@ -378,10 +379,7 @@ export function WidthSweep({
       if (reading.current.textContent !== text) reading.current.textContent = text;
     }
   };
-  const drawRef = useRef(draw);
-  useLayoutEffect(() => {
-    drawRef.current = draw;
-  });
+  const drawRef = useLatest(draw);
   const parts: SweepParts = {
     areaRef: area,
     placeRef: place,

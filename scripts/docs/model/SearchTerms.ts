@@ -4,11 +4,45 @@
 import type MiniSearch from 'minisearch';
 import type { Options, SearchOptions, SearchResult } from 'minisearch';
 
-/** The fields of a search document that are indexed, by weight at query time. */
-const searchFields: string[] = ['title', 'owner', 'aliases', 'keywords', 'text'];
+/** What a search result is. */
+export type SearchKind =
+  'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page';
 
-/** The fields a result carries, to show and open it without the documents themselves. */
-const storeFields: string[] = [
+/**
+ * A document of the search index (scripts/site/SearchIndex.ts): one result, with what it is found
+ * by and where it leads.
+ */
+export interface SearchDocument {
+  id: string;
+  kind: SearchKind;
+  title: string;
+  detail: string;
+  aliases: string;
+  keywords: string;
+  /** The export a prop belongs to, such as Button or Table.Root; empty for anything else. */
+  owner: string;
+  text: string;
+  /** The document id of the page it is on, such as button, or a site page's, such as tokens. */
+  page: string;
+  /** The part that shows it: the catalogue, or the Docs. */
+  area: 'catalogue' | 'docs';
+  /**
+   * The page's view it is in, where the Docs show part of a subject the catalogue shows too:
+   * `props`, a component's page in the Docs, or `usage`, a foundation's guide there.
+   */
+  view?: 'props' | 'usage';
+  /** The id of its element on the page. */
+  section?: string;
+}
+
+/** The fields of a search document that are indexed, by weight at query time. */
+const searchFields: (keyof SearchDocument)[] = ['title', 'owner', 'aliases', 'keywords', 'text'];
+
+/**
+ * The fields a result carries, to show and open it without the documents themselves, with the
+ * names the index gives each document.
+ */
+const storeFields: (keyof SearchDocument | 'names')[] = [
   'kind',
   'title',
   'owner',

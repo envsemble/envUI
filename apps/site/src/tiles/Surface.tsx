@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { outlined } from './Outline';
 import { Surface, Text, type SurfaceRadius } from '@envsemble/envui';
 import { useTimeline } from '../motion/Timeline';
 
@@ -8,15 +8,12 @@ import { useTimeline } from '../motion/Timeline';
  */
 const radii: SurfaceRadius[] = ['xl', 'sm', 'none'];
 
-/** The edge, through the surface's own color property. */
-const outlined = { '--env-surface-outline': 'var(--env-color-border-muted)' } as CSSProperties;
-
 /**
  * A surface holding a plan's name and a line about it, outlined, its corners in turn, each drawn at
  * once, as a Surface draws a change of its props.
  */
 export default function SurfaceTile() {
-  const radius = radii[useTimeline([2000, 2000, 2000])]!;
+  const radius = radii[useTimeline([2000, 2000, 2000])];
   return (
     <Surface
       background="default"

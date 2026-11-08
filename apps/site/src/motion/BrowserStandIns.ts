@@ -5,15 +5,36 @@
  * into view stays inside its stage, and a live example keeps its focus to itself until the reader
  * reaches for it. Outside what each stands in for, the method is the browser's own. Here too, run
  * for one call, the clipboard a copy button writes to and the page's selection a rich text command
- * reads (tests/BrowserStandIns.test.mjs).
+ * reads (tests/site/BrowserStandIns.test.mjs).
  */
-import { focusMark } from './PointerStates';
+import { focusMark } from './pointer/PointerStates';
 
-/** The ids of the pointers no one sees, and what each has captured. */
-export const captures = new Map<number, Element | null>();
+/** Where the page keeps the stand-ins' state, the same for every evaluation of this module. */
+const standInsKey = Symbol.for('catalogue-browser-stand-ins');
 
-/** The stages the keyboard's focus is in, by their scope, and what follows a move of it there. */
-export const keyboardFocused = new Map<Element, (element: Element) => void>();
+/**
+ * What the stand-ins keep, in one place for the whole page: the wrappers installed on a realm's
+ * prototypes live on across a hot reload of this module, so the module, evaluated again, finds the
+ * state they read rather than starting its own.
+ */
+interface StandIns {
+  /** The ids of the pointers no one sees, and what each has captured. */
+  captures: Map<number, Element | null>;
+  /** The stages the keyboard's focus is in, by their scope, and what follows a move of it there. */
+  keyboardFocused: Map<Element, (element: Element) => void>;
+  /** The realms' Element prototypes that have the stand-ins. */
+  installed: WeakSet<object>;
+}
+
+// The page's global object, which declares no such key: the state is this module's own.
+const page = globalThis as { [standInsKey]?: StandIns };
+const state: StandIns = (page[standInsKey] ??= {
+  captures: new Map(),
+  keyboardFocused: new Map(),
+  installed: new WeakSet(),
+});
+
+export const { captures, keyboardFocused } = state;
 
 /** What a stage's own scrolling stays inside: a tile's window and a page's figure. */
 const stages = '.catalogue-tile-canvas, .site-live-example';
@@ -33,17 +54,14 @@ interface Realm {
   HTMLElement: { prototype: HTMLElement };
 }
 
-/** Marks a realm's prototypes as having the stand-ins, across a hot reload of this module too. */
-const installed = Symbol.for('catalogue-browser-stand-ins');
-
 /**
  * Installs the stand-ins on a realm's prototypes, once: a second call changes nothing. Each wraps
  * the browser's own method and calls it for anything it doesn't stand in for.
  */
 export function installBrowserStandIns(realm: Realm = globalThis) {
-  const element = realm.Element.prototype as Element & { [installed]?: true };
-  if (element[installed]) return;
-  element[installed] = true;
+  const element = realm.Element.prototype;
+  if (state.installed.has(element)) return;
+  state.installed.add(element);
   keepCaptures(element);
   keepFocus(element, realm.HTMLElement.prototype);
   keepScrollInStages(element);
@@ -193,6 +211,7 @@ function scrollInExample(
  * pointer no one sees, copies nowhere. Its writes resolve, so it shows that it copied.
  */
 export function keepClipboard(click: () => void) {
+  // Absent outside a secure context, though the DOM's types always have it.
   const clipboard = navigator.clipboard as Clipboard | undefined;
   if (!clipboard) return click();
   const names = ['writeText', 'write'] as const;
@@ -206,6 +225,7 @@ export function keepClipboard(click: () => void) {
     names.forEach((name, index) => {
       const descriptor = own[index];
       if (descriptor) Object.defineProperty(clipboard, name, descriptor);
+      // Its own property, which the clipboard's type doesn't index.
       else delete (clipboard as unknown as Record<string, unknown>)[name];
     });
   }

@@ -29,6 +29,7 @@ const body = () => document.getElementById('site-main');
 
 /** The scroll the current entry kept, if any. */
 function keptScroll(): Kept | undefined {
+  // history.state is the site's own, or nothing.
   const kept = (history.state as State)?.[key] as Kept | undefined;
   return typeof kept?.top === 'number' ? kept : undefined;
 }
@@ -71,6 +72,7 @@ export function saveScroll() {
   const main = body();
   if (!main) return;
   const kept: Kept = { top: main.scrollTop, ...(main.scrollTop > 0 && anchorOf(main)) };
+  // history.state is the site's own, or nothing.
   history.replaceState({ ...(history.state as State), [key]: kept }, '');
 }
 
@@ -138,6 +140,7 @@ export function restoreScroll(main: HTMLElement): (() => void) | undefined {
     if (!ready()) return;
     stop();
     const anchor = () => (kept.anchor === undefined ? null : document.getElementById(kept.anchor));
+    // A place kept by its anchor keeps its offset from it too.
     if (anchor()) hold = holdPlace(main, anchor, kept.offset!);
     else main.scrollTo({ top: kept.top, behavior: 'instant' });
   };

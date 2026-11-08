@@ -5,6 +5,7 @@ import { RouterLink } from './RouterLink';
 import { isAnchor, readingAnchor } from './ScrollRestoration';
 import { counterpartOf } from './Counterparts';
 import type { Area, RoutePage } from './SiteRoutes';
+import { flag } from '@envui-internal/internal/flag';
 
 /**
  * The other part from a page of one, by its name and icon: the Docs, in code, from the catalogue,
@@ -89,7 +90,7 @@ export function PartSwitch({ page }: { page: RoutePage }) {
               key={area}
               href={routeHref(current ? page.path : route)}
               aria-current={current ? 'page' : undefined}
-              data-checked={current ? '' : undefined}
+              data-checked={flag(current)}
               className="env-segmented-control-item"
               onClick={() => {
                 if (!current) keepSection();

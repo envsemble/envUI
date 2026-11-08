@@ -19,10 +19,10 @@ import { PointerCursor } from './PointerCursor';
 import { mirrorPointerStates } from './PointerStates';
 import { hitAt, type Aimed, type Point, type PointerSpot } from './PointerTargets';
 import { holdReaderMoves, PointerControl } from './PointerControl';
-import { KeyboardControl } from './KeyboardControl';
-import { DragControl, type CarriedFile } from './DragControl';
-import { WheelControl } from './WheelControl';
-import { captures, keyboardFocused } from './BrowserStandIns';
+import { KeyboardControl } from '../KeyboardControl';
+import { DragControl, type CarriedFile } from '../DragControl';
+import { WheelControl } from '../WheelControl';
+import { captures, keyboardFocused } from '../BrowserStandIns';
 
 /** The ids of the pointers no one sees count up from here, clear of a real pointer's. */
 let nextId = 9000;

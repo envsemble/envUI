@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import RunCommand from '../../examples/command-palette/RunCommand';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage, roomFor } from '../../motion/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 

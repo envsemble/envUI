@@ -10,7 +10,7 @@ const steps = [1100, 1100, 1700, 350, 1100];
 function Filling() {
   const step = useTimeline(steps);
   const { round, style } = useRounds(step, 4);
-  const value = values[step]!;
+  const value = values[step];
   return (
     <Progress
       key={round}

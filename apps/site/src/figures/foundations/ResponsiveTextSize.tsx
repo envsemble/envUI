@@ -9,7 +9,7 @@ import {
 } from '@envsemble/envui';
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { useTimeline } from '../../motion/Timeline';
-import { remPixels } from '../../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
 import { Figure } from './Topic';
 

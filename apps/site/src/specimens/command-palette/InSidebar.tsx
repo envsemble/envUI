@@ -1,20 +1,17 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { useModifierKey } from '@envsemble/envui';
+import { useModifierKey, type ModifierKey } from '@envsemble/envui';
 import InSidebar from '../../examples/command-palette/InSidebar';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
-import { applePlatform } from '../../search/SearchShortcut';
 
 const input = '.env-command-palette-input';
-const modifier = applePlatform ? 'Meta' : 'Control';
-
 /*
  * The pointer presses Search at the top of the sidebar: the palette opens, and Esc closes it.
  * Then Ctrl+K, ⌘K on Apple platforms, opens it again from the sidebar, and Esc closes it.
  */
-const script: PointerStep[] = [
+const scriptFor = (modifier: ModifierKey['key']): PointerStep[] => [
   { wait: 500 },
   { to: '.env-navigation-drawer-header .env-button', x: 0.4, y: 0.6 },
   { wait: 400 },
@@ -41,7 +38,7 @@ function Opening() {
   const modifierKey = useModifierKey();
   const root = useRef<HTMLDivElement>(null);
   const [pressed, setPressed] = useState<{ keys: string[]; press: number } | null>(null);
-  usePointer(script, {
+  usePointer(scriptFor(modifierKey.key), {
     onCue: (cue) =>
       setPressed((last) =>
         cue === 'none'
@@ -55,7 +52,7 @@ function Opening() {
   // The application's shortcut, which it listens for at its root: here, in the figure alone, so
   // the page's own search shortcut neither hears it nor is taken from the reader.
   const onKeyDown = (event: KeyboardEvent) => {
-    const held = applePlatform ? event.metaKey : event.ctrlKey;
+    const held = modifierKey.key === 'Meta' ? event.metaKey : event.ctrlKey;
     if (!held || event.key.toLowerCase() !== 'k') return;
     event.preventDefault();
     event.stopPropagation();

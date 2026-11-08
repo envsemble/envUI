@@ -13,7 +13,7 @@
 import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { IconDescription } from '@envsemble/envui/icons/Description';
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 
 /** The stages a cursor is drawn in: a gallery's or a Related tile's, and a page's figure's. */
 const stages = '.catalogue-tile-stage, .catalogue-motion-stage';
@@ -52,6 +52,7 @@ export class PointerCursor {
     // The scale the stage is drawn at, as a page drawn smaller would be, and the component in it.
     const stageScale = box.width / (stage.offsetWidth || box.width) || 1;
     const own = this.scope.getBoundingClientRect();
+    // A stage's scope is an element of the page's HTML.
     const scope = this.scope as HTMLElement;
     const scale = (own.width / (scope.offsetWidth || own.width) || 1) / stageScale;
     const x = (point.x - box.left) / stageScale - stage.clientLeft;
@@ -87,7 +88,7 @@ export class PointerCursor {
     }
     const chip = this.chip ?? this.makeChip();
     if (chip.element.parentElement !== cursor) cursor.append(chip.element);
-    const text = files.length > 1 ? `${files[0]} +${files.length - 1}` : files[0]!;
+    const text = files.length > 1 ? `${files[0]} +${files.length - 1}` : files[0];
     if (chip.name.textContent !== text) chip.name.textContent = text;
   }
 

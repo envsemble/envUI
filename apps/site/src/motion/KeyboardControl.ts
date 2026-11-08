@@ -3,9 +3,9 @@
  * field it types into and the element its focus is on, marked as focused, as the inert stage can't
  * focus it.
  */
-import { editorOf, type PointerSelection } from './VirtualSelection';
-import { focusMark, focusWithinMark, mark } from './PointerStates';
-import { chainOf, textFields, type Modifiers } from './PointerTargets';
+import { editorOf, type PointerSelection } from './pointer/VirtualSelection';
+import { focusMark, focusWithinMark, mark } from './pointer/PointerStates';
+import { chainOf, textFields, type Modifiers } from './pointer/PointerTargets';
 import { keyboardFocused, lendSelection } from './BrowserStandIns';
 
 /** The modifier keys, by their key, and the flag a held one sets on every event. */
@@ -39,7 +39,7 @@ export class KeyboardControl {
   /** The flags of the modifier keys held, for an event. */
   get modifiers(): Modifiers {
     const flags = { altKey: false, ctrlKey: false, shiftKey: false, metaKey: false };
-    for (const key of this.held) if (key in modifierFlags) flags[modifierFlags[key]!] = true;
+    for (const key of this.held) if (key in modifierFlags) flags[modifierFlags[key]] = true;
     return flags;
   }
 
@@ -79,6 +79,7 @@ export class KeyboardControl {
       field instanceof HTMLTextAreaElement
         ? HTMLTextAreaElement.prototype
         : HTMLInputElement.prototype;
+    // A field's value is an accessor of its prototype's, with a setter.
     Object.getOwnPropertyDescriptor(prototype, 'value')!.set!.call(field, value);
     if (at !== value.length) field.setSelectionRange(at, at);
     field.dispatchEvent(

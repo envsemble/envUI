@@ -96,12 +96,14 @@ export function editorOf(node: Node | null) {
   const element = node instanceof Element ? node : (node?.parentElement ?? null);
   const content =
     element?.closest('.ProseMirror') ?? element?.querySelector('.ProseMirror') ?? null;
+  // Tiptap puts its editor on the element ProseMirror renders into, an HTML element.
   const editor = (content as (Element & { editor?: RichEditor }) | null)?.editor;
   if (!editor?.view) return null;
   if (!steadied.has(editor)) {
     steadied.add(editor);
     editor.view.setProps({ handleScrollToSelection: () => true });
   }
+  // The element that holds an editor is there, and ProseMirror's, an HTML element.
   return { editor, content: content as HTMLElement };
 }
 
@@ -127,6 +129,7 @@ function highlight() {
  * stage weren't inert and nothing covered it, which changes nothing it shows or sends.
  */
 function caretAt(point: Point, scope: Element) {
+  // Methods some engines lack, which the DOM's types have as always there or not at all.
   const doc = document as Document & {
     caretPositionFromPoint?: (x: number, y: number) => CaretPosition | null;
     caretRangeFromPoint?: (x: number, y: number) => Range | null;
@@ -259,6 +262,7 @@ function paintField(
   if (layer) {
     if (layer.firstChild !== copy) layer.prepend(copy);
   } else {
+    // A field's offset parent is an HTML element.
     const holder = (field.offsetParent as HTMLElement | null) ?? scope;
     if (copy.parentElement !== holder) holder.append(copy);
   }
@@ -277,6 +281,7 @@ function paintField(
   const value = field.value;
   const selected = document.createElement('span');
   selected.textContent = value.slice(start, end);
+  // The copy's one child holds its lines.
   (copy.firstElementChild as HTMLElement).replaceChildren(
     value.slice(0, start),
     selected,
@@ -304,6 +309,7 @@ function shapeLike(copy: HTMLElement, field: Field) {
       parseFloat(style.borderRightWidth);
     copy.style.paddingRight = `${parseFloat(style.paddingRight) + scrollbar}px`;
   }
+  // The copy's one child holds its lines.
   const lines = copy.firstElementChild as HTMLElement;
   lines.style.transform = area
     ? `translateY(${-field.scrollTop}px)`
@@ -323,7 +329,8 @@ export function textPoint(element: Element, text: string, x: number, y: number):
   const within = Math.min(Math.max(position - offset, 0.2), 0.8);
   const along = (start: number) => start + offset;
   const box = element.matches(selectableFields)
-    ? fieldCharacterBox(element as Field, text, along)
+    ? // An element that matches selectableFields is a field.
+      fieldCharacterBox(element as Field, text, along)
     : contentCharacterBox(element, text, along);
   return box && { x: box.left + box.width * within, y: box.top + box.height * y };
 }
@@ -341,6 +348,7 @@ function fieldCharacterBox(field: Field, text: string, along: (start: number) =>
   character.textContent = field.value.charAt(index);
   lines.append(field.value.slice(0, index), character, field.value.slice(index + 1) || '​');
   copy.append(lines);
+  // A field's offset parent is an HTML element.
   const holder = (field.offsetParent as HTMLElement | null) ?? field.parentElement;
   if (!holder) return null;
   holder.append(copy);
@@ -356,6 +364,7 @@ function fieldCharacterBox(field: Field, text: string, along: (start: number) =>
 function contentCharacterBox(element: Element, text: string, along: (start: number) => number) {
   const nodes: Text[] = [];
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  // SHOW_TEXT walks text nodes alone.
   while (walker.nextNode()) nodes.push(walker.currentNode as Text);
   const whole = nodes.map((node) => node.data).join('');
   const start = text ? whole.indexOf(text) : -1;
@@ -593,6 +602,7 @@ export class PointerSelection {
    */
   reveal(field: Element) {
     if (!field.matches(selectableFields)) return;
+    // It matches selectableFields, so it is a field.
     const { selectionStart: start, selectionEnd: end } = field as Field;
     if (start === null || end === null || start === end) return;
     this.selected = { field: field as Field, start, end };

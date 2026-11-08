@@ -1,7 +1,7 @@
 import { Button, ButtonGroup, Column, IconButton } from '@envsemble/envui';
 import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 
 /** Along the connected buttons to Edit, then to the split button's menu button. */
 const script: PointerStep[] = [

@@ -2,7 +2,7 @@
  * Where a picture is cut off (useFit.ts): the crop's fade at its foot, the rows hidden whole there,
  * and the regions that scroll as it plays, which fade at their own foot.
  */
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 import { rowSlack } from './HeldView';
 import { moving, pictures } from './PaintedBoxes';
 

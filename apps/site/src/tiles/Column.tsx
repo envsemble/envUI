@@ -11,7 +11,7 @@ const aligns: LayoutAlign[] = ['start', 'center', 'end'];
  * change.
  */
 export default function ColumnTile() {
-  const align = aligns[useTimeline([2000, 2000, 2000])]!;
+  const align = aligns[useTimeline([2000, 2000, 2000])];
   return (
     <Surface background="default" radius="sm" padding={3} style={outlined}>
       <Column align={align} gap={2} style={{ inlineSize: '9rem' }}>

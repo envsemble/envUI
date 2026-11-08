@@ -3,11 +3,8 @@
 // MiniSearch index the site loads, written to apps/site/src/generated/SearchIndex.json by
 // GenerateDocumentation.ts. The site opens it with ⌘K or Ctrl+K, in the catalogue and the Docs.
 //
-// searchDocuments() is plain data, so other tools can index the same documents: each names the page
-// it is found on by its document id (the file name in docs/, or a site page such as `tokens`), the
-// area that shows it, the catalogue or the Docs, and, where it is part of a page, the page's view and the
-// element id of its place there. A view picks the Docs' part of a subject the catalogue shows too:
-// `props` a component's page in the Docs, `usage` a foundation's guide there.
+// searchDocuments() is plain data, so other tools can index the same documents, each a
+// SearchDocument (docs/model/SearchTerms.ts) that names the page it is found on and its place there.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,7 +13,12 @@ import MiniSearch from 'minisearch';
 import { plainText } from '../docs/MarkdownHeadings.ts';
 import type { DocumentRecord } from '../docs/Reader.ts';
 import type { PropsFile } from '../docs/Schema.ts';
-import { indexOptions, nameKey } from '../docs/model/SearchTerms.ts';
+import {
+  indexOptions,
+  nameKey,
+  type SearchDocument,
+  type SearchKind,
+} from '../docs/model/SearchTerms.ts';
 import {
   exportSection,
   headingSlugger,
@@ -41,26 +43,6 @@ const searchIndexFile = fileURLToPath(
 const tokensFile = fileURLToPath(
   new URL('../../packages/ui/src/generated/tokens.json', import.meta.url),
 );
-
-/** What a search result is. */
-type SearchKind =
-  'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page';
-
-/** A document of the search index: one result, with what it is found by and where it leads. */
-export interface SearchDocument {
-  id: string;
-  kind: SearchKind;
-  title: string;
-  detail: string;
-  aliases: string;
-  keywords: string;
-  owner: string;
-  text: string;
-  page: string;
-  area: 'catalogue' | 'docs';
-  view?: 'props' | 'usage';
-  section?: string;
-}
 
 /** Pages of the site that no file in docs/ writes, each in its area. */
 export const standalonePages: {
@@ -329,8 +311,10 @@ export function buildSearchIndex({ documents, props, tokens = readTokens() }: Se
 
 /**
  * A search document with the names a query may give it whole, folded as queries are: its title,
- * each topic of a page's title, an export's name written out in words, its aliases, a prop as its export and name (Button variant), never its name alone, and a token as
- * its name too (color.fg.muted), a color by its role words too (fg muted). A query that is one of them ranks the document first.
+ * each topic of a page's title, an export's name written out in words, its aliases, a prop as its
+ * export and name (Button variant), never its name alone, and a token as its name too
+ * (color.fg.muted), a color by its role words too (fg muted). A query that is one of them ranks the
+ * document first.
  */
 function withNames(document: SearchDocument) {
   const parted = !['export', 'prop', 'token'].includes(document.kind);

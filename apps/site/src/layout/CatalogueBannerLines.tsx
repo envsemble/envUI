@@ -10,7 +10,7 @@ import { bannerDrawingIndex } from './CatalogueBannerOrder';
  * the same (CatalogueBannerOrder.ts).
  */
 export function CatalogueBannerLines({ subject }: { subject?: string }) {
-  const drawing = lineArtDrawings[bannerDrawingIndex(subject, lineArtDrawings.length)]!;
+  const drawing = lineArtDrawings[bannerDrawingIndex(subject, lineArtDrawings.length)];
   const motion = useBannerAppear(subject ?? '');
   return (
     <span className="site-banner-shapes" aria-hidden="true">

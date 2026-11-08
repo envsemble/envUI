@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { RichTextEditor } from '@envsemble/envui/rich-text';
 import { useMedia } from '../motion/Autoplay';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { Renew } from '../motion/Renew';
 import { narrowGallery } from './Tiles';
 

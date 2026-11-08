@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Checkbox, Column, IconButton, List, Row, Sheet, Text } from '@envsemble/envui';
 import { IconFilterList } from '@envsemble/envui/icons/FilterList';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 /** Closed by its cross, toward its edge; opened again from its button. */
 const script: PointerStep[] = [

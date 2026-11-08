@@ -1,7 +1,7 @@
 import SortAndPaginate from '../../examples/data-tables/SortAndPaginate';
 import { Example } from '../../figures/Example';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 /** A column's sort button: Name is the first column, Updated the fourth. */

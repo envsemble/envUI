@@ -6,7 +6,7 @@ const seats = [2, 3, 4, 5];
 
 /** A meter of the seats assigned in a plan, which fills as they are assigned. */
 export default function MeterTile() {
-  const value = seats[useTimeline([800, 800, 800, 1400])]!;
+  const value = seats[useTimeline([800, 800, 800, 1400])];
   return (
     <Meter
       label="Seats"

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Dialog, DialogClose, IconButton, Row, Text, TextField } from '@envsemble/envui';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const field = '.env-dialog input';
 

@@ -4,8 +4,8 @@ import { IconViewList } from '@envsemble/envui/icons/ViewList';
 import { IconViewModule } from '@envsemble/envui/icons/ViewModule';
 import { Example, SpecimenGrid } from '../../figures/Example';
 import { SpecimenPart } from '../../figures/Specimen';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 

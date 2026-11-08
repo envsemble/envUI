@@ -22,17 +22,17 @@ const sizes: Record<SpaceStep, string> = {
  * themes, where the stage is lighter than the page and a row's white barely shows on it, and a
  * row's in the dark ones.
  */
-const block = {
+const block: CSSProperties = {
   '--env-surface-container-default':
     'light-dark(var(--env-color-bg-page), var(--env-color-bg-muted))',
-} as CSSProperties;
+};
 
 /** Up the scale a step at a time, from 1 to 9, and back down to 1. */
 const order: SpaceStep[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2];
 const steps = order.map((step) => (step === 1 || step === 9 ? 1300 : 700));
 
 function Stepping() {
-  const step = order[useTimeline(steps)]!;
+  const step = order[useTimeline(steps)];
   return (
     <Row gap={6} align="start" style={{ inlineSize: 'min(100%, 22rem)' }}>
       <Column gap={1} style={{ inlineSize: '5rem' }}>

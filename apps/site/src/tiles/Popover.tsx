@@ -3,8 +3,8 @@ import { Button, Column, IconButton, Popover, Text } from '@envsemble/envui';
 import { IconInfo } from '@envsemble/envui/icons/Info';
 import { useMedia } from '../motion/Autoplay';
 import { useHeldView } from '../motion/Playback';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const trigger = '.env-button[aria-haspopup]';

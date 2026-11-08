@@ -3,7 +3,7 @@ import type { LegendEntry } from './Topic';
 import { loadOnce } from '../../loading/LoadOnce';
 
 /**
- * A foundation's figure: the picture alone, which the page's
+ * A foundation's or a guide's figure: the picture alone, which the page's
  * Markdown places by name (```tsx figure=Name```) and gives its words, the legend that follows the
  * fence: each numbered mark's, or each picture's, name and what it means. `wide` keeps it across
  * the whole column rather than beside the text before it.
@@ -15,7 +15,7 @@ export interface FoundationFigure {
 
 type Figures = Record<string, FoundationFigure>;
 
-/** Each foundation's figures, by its page's id, which load with the page. */
+/** Each foundation's figures, which load with the page, and a guide's, by the page's id. */
 const loaders: Record<string, () => Promise<Figures>> = {
   colors: () => import('./Colors').then((module) => module.colorsFigures),
   typography: () => import('./Typography').then((module) => module.typographyFigures),
@@ -23,6 +23,7 @@ const loaders: Record<string, () => Promise<Figures>> = {
   responsive: () => import('./Responsive').then((module) => module.responsiveFigures),
   icons: () => import('./Icons').then((module) => module.iconsFigures),
   accessibility: () => import('./Accessibility').then((module) => module.accessibilityFigures),
+  'dev-mode': () => import('../dev-mode/DevModeFigures').then((module) => module.devModeFigures),
 };
 const loads = new Map<string, Promise<Figures>>();
 

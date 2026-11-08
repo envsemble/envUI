@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import { Card, Column, Text } from '@envsemble/envui';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 /**
  * The card hovered, its fill taking the hover layer; pressed and held a moment, the pressed layer
@@ -23,7 +23,7 @@ const script: PointerStep[] = [
  * The edge, through the card's own color property: on a stage of the card's own fill, it keeps the
  * card's shape in view.
  */
-const outlined = { '--env-card-outline': 'var(--env-color-border-muted)' } as CSSProperties;
+const outlined: CSSProperties = { '--env-card-outline': 'var(--env-color-border-muted)' };
 
 /**
  * A project's card that is one button, as a list of projects opens each from its card: its name and

@@ -1,6 +1,6 @@
 import { use, useEffect, useRef, useState } from 'react';
 import { PlaybackContext, useCountedAnimation } from './Playback';
-import { firstWait, waitPace } from './PointerPlan';
+import { firstWait, waitPace } from './pointer/PointerPlan';
 
 /*
  * Timelines: the steps of a stage's animation where something other than a pointer changes it,
@@ -95,16 +95,16 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
     const total = lengths.reduce((sum, length) => sum + length, 0);
     if (!playing || lengths.length < 2) return;
     // A new clock leaves the still at once, as a timeline that starts playing does.
-    const own = joinClock(clock, Math.max(0, lengths[0]! - firstWait * 2));
+    const own = joinClock(clock, Math.max(0, lengths[0] - firstWait * 2));
     let timer: number;
     const tick = () => {
       const time = own.time() % total;
       let start = 0;
       let index = 0;
-      while (index < lengths.length - 1 && start + lengths[index]! <= time)
-        start += lengths[index++]!;
+      while (index < lengths.length - 1 && start + lengths[index] <= time)
+        start += lengths[index++];
       setStep(index);
-      timer = window.setTimeout(tick, start + lengths[index]! - time + 1);
+      timer = window.setTimeout(tick, start + lengths[index] - time + 1);
     };
     timer = window.setTimeout(tick);
     return () => {

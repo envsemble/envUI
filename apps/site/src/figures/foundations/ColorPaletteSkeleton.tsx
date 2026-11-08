@@ -1,7 +1,7 @@
 import { Button, Column, Text } from '@envsemble/envui';
 import { Example } from '../Example';
 import { colorGroups, colorVariable } from '../../theme/Palette';
-import { PartSkeleton, placeholderText } from '../../loading/Loading';
+import { PartSkeleton, placeholderText } from '../../loading/Skeletons';
 
 /**
  * The editable palette while it loads with its color picker (ColorPalette.tsx): each group under

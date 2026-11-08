@@ -27,8 +27,9 @@ export async function importSource(name, sources) {
     platform: 'node',
     format: 'esm',
     packages: 'external',
-    // The documentation's model, as the site imports it (apps/site/tsconfig.json).
-    alias: { '@docs-model': './scripts/docs/model' },
+    // The documentation's model and the library's internals, as the site imports them
+    // (apps/site/tsconfig.json).
+    alias: { '@docs-model': './scripts/docs/model', '@envui-internal': './packages/ui/src' },
     jsx: 'automatic',
     outfile: output,
     logLevel: 'error',

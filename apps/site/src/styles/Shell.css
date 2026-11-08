@@ -53,7 +53,7 @@ body {
    chosen destination's pages, or the Docs' drawer, flush on the navigation's background with no line
    between them, as tall as the window. The drawer keeps its top and foot in view and scrolls its
    list; the reader resizes it by its end edge, and the catalogue keeps the width it starts at and
-   its bounds (SiteNavigation.tsx). In the sheet of a narrower window they take the
+   its bounds (SiteDrawer.tsx). In the sheet of a narrower window they take the
    sheet's width, and the sheet takes their color. */
 .site-navigation {
   display: flex;
@@ -72,7 +72,7 @@ body {
   block-size: 100%;
   padding: var(--env-space-4) var(--env-space-3);
 }
-/* The drawer coming and going beside the rail (useDrawerMotion, SiteNavigation.tsx): the page
+/* The drawer coming and going beside the rail (useDrawerMotion.ts): the page
    beside it takes its room at once, so nothing on it moves. Coming in, its panel fades in and its
    list slides out of the rail's edge a short way as it fades in; its header, search, stays still,
    where the page without the drawer has it. Going, it is laid over the page's start, its header
@@ -165,13 +165,6 @@ body {
 .site-drawer-search {
   max-inline-size: 100%;
 }
-/* A component a page documents besides its own, such as IconButton under Button, is an entry of the
-   same list after the page's, set in further than a section's pages are from their heading, so it
-   reads as the page's rather than a sibling; only these entries lead to a heading, so their
-   address's fragment marks them (SiteNavigation.tsx). */
-.site-sidebar .env-navigation-drawer-item[href*='#'] {
-  padding-inline-start: calc(var(--env-space-3) + var(--env-space-5));
-}
 /* Under a fine pointer, the drawer's rows are the scale's row height, as a tree's are, so the long
    lists of pages stay dense; under a coarse pointer they keep the touch height (NavigationDrawer). */
 @media (pointer: fine) {
@@ -235,7 +228,7 @@ body {
 }
 .site-sidebar .env-navigation-drawer-list {
   /* The fade's length, which the list scrolls the current page's group heading clear of
-     (SiteNavigation.tsx). */
+     (useCurrentInView.ts). */
   --site-drawer-fade-length: var(--env-space-6);
 }
 @supports (animation-timeline: scroll()) {
@@ -346,14 +339,6 @@ body {
 .site-wide-only {
   display: none;
 }
-@container env-scaffold (width >= 52.5rem) {
-  .site-narrow-only {
-    display: none;
-  }
-  .site-wide-only {
-    display: contents;
-  }
-}
 /* A wide window's page with no drawer beside the rail, such as Overview, has search at its top
    start, level with the page's actions across from it: a row of no height that sticks to the
    body's top, as the compact controls below do. */
@@ -369,11 +354,6 @@ body {
   /* Level with search at the top of a drawer: the drawer's top padding. */
   inset-block-start: var(--env-space-4);
   inset-inline-start: calc(var(--site-search-start) - var(--site-rail-width));
-}
-@container env-scaffold (width >= 52.5rem) {
-  .site-page-search {
-    display: block;
-  }
 }
 /* Below an expanded window, where the navigation is in a sheet, the menu button, the wordmark and
    search start one bar across the top of the page, in the page's color, which the other area and
@@ -407,7 +387,18 @@ body {
 .site-compact-controls-bar .docs-brand-docs {
   block-size: 0.768rem;
 }
+/* From an expanded window, as the library's windowClasses.expanded starts it (CSS can't read a
+   custom property in a query): the drawer beside the rail in place of the sheet and its bar. */
 @container env-scaffold (width >= 52.5rem) {
+  .site-narrow-only {
+    display: none;
+  }
+  .site-wide-only {
+    display: contents;
+  }
+  .site-page-search {
+    display: block;
+  }
   .site-compact-controls {
     display: none;
   }

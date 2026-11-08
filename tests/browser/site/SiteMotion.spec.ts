@@ -310,7 +310,7 @@ async function withPointer<T>(page: Page, html: string, run: string): Promise<T>
   await page.goto(`${siteDevUrl}/components`);
   return page.evaluate(
     async ([html, run]) => {
-      const module = '/src/motion/VirtualPointer.ts';
+      const module = '/src/motion/pointer/VirtualPointer.ts';
       const { VirtualPointer } = await import(/* @vite-ignore */ module);
       const box = document.createElement('div');
       box.setAttribute('inert', '');
@@ -336,7 +336,7 @@ test('a script finds a word by its text, in a field and in content, wherever it 
     page,
     '<textarea id="note" rows="3" style="width: 120px; font: 16px monospace; padding: 0; border: 0">Ask Sam Lee to review the copy.</textarea><p id="text" style="width: 120px; font: 16px monospace">See the launch plan first.</p>',
     `
-      const module = '/src/motion/VirtualSelection.ts';
+      const module = '/src/motion/pointer/VirtualSelection.ts';
       const { textPoint } = await import(/* @vite-ignore */ module);
       const field = box.querySelector('#note');
       const text = box.querySelector('#text');

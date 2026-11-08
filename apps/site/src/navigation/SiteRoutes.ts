@@ -142,7 +142,7 @@ const cataloguePages: RoutePage[] = [
       section: 'Foundations',
       kind: 'foundation',
       summary: document.summary,
-      document: document as DocumentSummary,
+      document,
     })),
   {
     path: 'components',
@@ -164,7 +164,7 @@ const cataloguePages: RoutePage[] = [
         group,
         kind: 'component',
         summary: document.summary,
-        document: document as DocumentSummary,
+        document,
       })),
   ),
   {
@@ -231,7 +231,7 @@ const docsPages: RoutePage[] = [
           section: 'Guides',
           kind: 'reference',
           summary: field.summary,
-          document: field as DocumentSummary,
+          document: field,
         } satisfies RoutePage,
       ]
     : []),
@@ -242,7 +242,7 @@ const docsPages: RoutePage[] = [
     section: 'Foundations',
     kind: 'foundation-guide',
     summary: document.summary,
-    document: document as DocumentSummary,
+    document,
   })),
   {
     path: 'docs/tokens',
@@ -263,7 +263,7 @@ const docsPages: RoutePage[] = [
         group,
         kind: 'reference',
         summary: document.summary,
-        document: document as DocumentSummary,
+        document,
       })),
   ),
   // Each pattern's guide, in the catalogue's order and by its intent: how to build it in code.
@@ -303,6 +303,7 @@ export const pagesOf = (area: Area) => allPages.filter((page) => page.area === a
 
 /** The first page of a catalogue destination, which its rail item opens. */
 export function sectionHome(section: CatalogueSection) {
+  // Every destination has pages.
   return cataloguePages.find((page) => page.section === section)!;
 }
 

@@ -6,7 +6,7 @@ import { normalizeRoute } from './OldAddresses';
 import { pageLoaded, preloadPage } from '../pages/PreloadPage';
 
 /** The page of a route, such as components/button?section=props. */
-const pageOfRoute = (route: string) => findPage(route.split('?')[0]!);
+const pageOfRoute = (route: string) => findPage(route.split('?')[0]);
 
 /** Starts loading what the page a link leads to needs, as a press on it is coming. */
 function preload(href: string | undefined) {

@@ -25,7 +25,7 @@ import { IconInkEraser } from '@envsemble/envui/icons/InkEraser';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import { IconRepeat } from '@envsemble/envui/icons/Repeat';
 import { SpecimenGrid, SpecimenHeadingLevel } from '../../figures/Example';
-import { prefersReducedMotion } from '../../../../../packages/ui/src/internal/reducedMotion';
+import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
 
 /** Each drawing's name, as people say it. */
 const names: Record<LineArtDrawing, string> = {
@@ -118,10 +118,10 @@ const area: CSSProperties = { position: 'relative', overflow: 'hidden', aspectRa
 const room: CSSProperties = { position: 'absolute', inset: '6%', containerType: 'size' };
 
 /** A drawing's card: its fill, a step lighter than the stage in every theme. */
-const card = {
+const card: CSSProperties = {
   '--env-surface-container-default':
     'light-dark(var(--env-color-bg-muted), var(--env-color-bg-default))',
-} as CSSProperties;
+};
 
 /** A card's place in the gallery: its card, its name and its line, each a row of the gallery's. */
 const row: CSSProperties = {

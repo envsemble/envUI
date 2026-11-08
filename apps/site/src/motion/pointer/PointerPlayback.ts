@@ -1,8 +1,8 @@
 import { use, useEffect, useRef, useState, type RefObject } from 'react';
 import { VirtualPointer } from './VirtualPointer';
 import type { Aimed } from './PointerTargets';
-import { headFor, nameCourse, nameMustShow } from './MustShow';
-import { PlaybackContext, useCountedAnimation } from './Playback';
+import { headFor, nameCourse, nameMustShow } from '../MustShow';
+import { PlaybackContext, useCountedAnimation } from '../Playback';
 import {
   aimsOf,
   ease,
@@ -13,7 +13,8 @@ import {
   type AimPoints,
   type PointerStep,
 } from './PointerPlan';
-import { joinClock } from './Timeline';
+import { joinClock } from '../Timeline';
+import { useLatest } from '@envui-internal/internal/useLatest';
 
 /*
  * A pointer's script played over a stage's live component (usePointer): a pointer no one sees
@@ -42,7 +43,8 @@ function writePointerFrames() {
     pointerFramesRun = false;
     return;
   }
-  // Posted first, so the reads come before any rendering that the moves below schedule.
+  // Posted first, so the reads come before any rendering that the moves below schedule; the
+  // channel is made as the first frame joins (joinPointerFrames).
   afterFrame!.postMessage(undefined);
   const frames = [...pointerFrames];
   // A pointer whose stage stopped on another's move stops here too.
@@ -82,6 +84,8 @@ function send(
   happening: Plan['happenings'][number],
   onCue: ((cue: string) => void) | undefined,
 ) {
+  // planOf gives each kind what it acts on: a cue or a key its cue, a typing its target and a
+  // carry its files.
   switch (happening.kind) {
     case 'cue':
       return onCue?.(happening.cue!);
@@ -296,12 +300,8 @@ export function usePointer(
 ) {
   const { playing, rest, root, claimRest } = use(PlaybackContext);
   useCountedAnimation();
-  const cueTo = useRef(onCue);
-  const restTo = useRef(onRest);
-  useEffect(() => {
-    cueTo.current = onCue;
-    restTo.current = onRest;
-  });
+  const cueTo = useLatest(onCue);
+  const restTo = useLatest(onRest);
   const rests = Boolean(onRest);
   useEffect(() => (rests ? claimRest?.() : undefined), [rests, claimRest]);
   const pointer = useRef<VirtualPointer | null>(null);
@@ -327,10 +327,10 @@ export function usePointer(
       pointer.current?.leave();
       restTo.current?.();
     });
-  }, [playing, rest]);
+  }, [playing, rest, restTo]);
   useEffect(() => {
     if (!playing || !root) return;
     const current = (pointer.current ??= new VirtualPointer(root));
     return playPointer(root, current, plan, { clockRef: clock, cueRef: cueTo, clockName });
-  }, [playing, root, plan, clockName]);
+  }, [playing, root, plan, clockName, cueTo]);
 }

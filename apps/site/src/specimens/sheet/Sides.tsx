@@ -1,7 +1,7 @@
 import { Button, Column, DescriptionList, Row, Sheet } from '@envsemble/envui';
 import { Example } from '../../figures/Example';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const trigger = (index: number) => `.catalogue-sheet-sides > .env-button:nth-child(${index})`;

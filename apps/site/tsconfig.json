@@ -15,7 +15,8 @@
     "customConditions": ["envui-source"],
     "paths": {
       "envui-icon-list": ["../../packages/ui/src/icons/index.ts"],
-      "@docs-model/*": ["../../scripts/docs/model/*"]
+      "@docs-model/*": ["../../scripts/docs/model/*"],
+      "@envui-internal/*": ["../../packages/ui/src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]

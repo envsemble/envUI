@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Column, Surface, Text } from '@envsemble/envui';
+import { Button, Column, Grid, Surface, Text } from '@envsemble/envui';
 import { IconLock } from '@envsemble/envui/icons/Lock';
 
 export default function NoAccess() {
@@ -20,9 +20,10 @@ export default function NoAccess() {
       <Surface
         ref={region}
         tabIndex={-1}
+        render={<Grid />}
         background="default"
         padding={0}
-        style={{ display: 'grid', minBlockSize: '16rem' }}
+        style={{ minBlockSize: '16rem' }}
       >
         {/* Centred in the room the documents would take, with a larger icon. */}
         <Column gap={4} padding={5} align="center" justify="center" style={{ textAlign: 'center' }}>

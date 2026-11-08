@@ -26,7 +26,11 @@ const contentsLevels = [2] as const;
  * or a copied address names it, and the route follows without scrolling again.
  */
 const followed = (event: MouseEvent<HTMLElement>) => {
-  if (event.defaultPrevented && (event.target as Element).closest('a[href^="#"]'))
+  if (
+    event.defaultPrevented &&
+    event.target instanceof Element &&
+    event.target.closest('a[href^="#"]')
+  )
     announceShownAddress();
 };
 

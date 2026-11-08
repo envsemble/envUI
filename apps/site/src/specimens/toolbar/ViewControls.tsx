@@ -1,7 +1,7 @@
 import { Surface, Text } from '@envsemble/envui';
 import ViewControls from '../../examples/toolbar/ViewControls';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const button = (label: string) => `.env-toolbar-button[aria-label="${label}"]`;

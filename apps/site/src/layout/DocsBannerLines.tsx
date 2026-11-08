@@ -25,7 +25,7 @@ export function DocsBannerLines({ title }: { title: string }) {
       : bannerDrawingIndex(subject, lineArtDrawings.length);
   return (
     <span className="site-banner-shapes" aria-hidden="true">
-      <LineArt drawing={lineArtDrawings[index]!} className="docs-banner-lines" />
+      <LineArt drawing={lineArtDrawings[index]} className="docs-banner-lines" />
     </span>
   );
 }

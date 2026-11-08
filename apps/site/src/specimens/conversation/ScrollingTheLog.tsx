@@ -1,9 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Column, Composer, Grid, Message, MessageList } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
 import { IconArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
 
@@ -101,18 +101,16 @@ function Log({ replying }: { replying: boolean }) {
             onClick={() =>
               log.current?.scrollTo({ top: log.current.scrollHeight, behavior: 'smooth' })
             }
-            style={
-              {
-                // Over the log, whose list items are positioned and would otherwise paint above it.
-                position: 'relative',
-                gridArea: '1 / 1',
-                alignSelf: 'end',
-                justifySelf: 'center',
-                marginBlockEnd: '0.5rem',
-                // Filled with the page's color, so the messages it floats over don't show through.
-                '--env-button-container': 'var(--env-color-bg-page)',
-              } as CSSProperties
-            }
+            style={{
+              // Over the log, whose list items are positioned and would otherwise paint above it.
+              position: 'relative',
+              gridArea: '1 / 1',
+              alignSelf: 'end',
+              justifySelf: 'center',
+              marginBlockEnd: '0.5rem',
+              // Filled with the page's color, so the messages it floats over don't show through.
+              '--env-button-container': 'var(--env-color-bg-page)',
+            }}
           >
             Latest
           </Button>

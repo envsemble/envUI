@@ -182,7 +182,7 @@
   mask-composite: intersect;
 }
 
-/* A tile's skeleton (TileSkeleton in loading/Loading.tsx): over the whole stage, which pulses as
+/* A tile's skeleton (TileSkeleton in loading/Skeletons.tsx): over the whole stage, which pulses as
    envUI's skeleton surfaces do, from a moment after the tile nears the view until the picture is
    fitted on the stage and fades in over it. */
 .catalogue-tile-loading {

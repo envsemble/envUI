@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Column, DropZone, List, Progress, Surface } from '@envsemble/envui';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
 
 /*

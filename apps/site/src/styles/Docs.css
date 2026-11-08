@@ -188,7 +188,7 @@
   border-radius: var(--env-radius-full);
 }
 /* Whole on one line where it fits; where it doesn't, as on a phone, it wraps, the address after
-   its slash (DocsPages.tsx), rather than cut off before the address. */
+   its slash (AgentSetup.tsx), rather than cut off before the address. */
 .docs-agent-prompt-text {
   min-inline-size: 0;
   font: var(--env-font-size-body-sm) / 1.5 var(--site-code-font-family);

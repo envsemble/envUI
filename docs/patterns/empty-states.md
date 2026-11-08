@@ -44,6 +44,7 @@ composes:
   - Surface
   - Column
   - Row
+  - Grid
   - Text
 examples:
   FirstUse:

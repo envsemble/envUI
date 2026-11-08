@@ -2,8 +2,8 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { CalendarHeatmap, type CalendarHeatmapDay } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
 import { useHeldView } from '../motion/Playback';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 /** Nine weeks of edits from Monday 2 February 2026, busier in waves. */

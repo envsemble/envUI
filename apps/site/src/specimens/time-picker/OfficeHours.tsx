@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import OfficeHours from '../../examples/time-picker/OfficeHours';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage, rowsAnd } from '../../motion/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 import { Renew } from '../../motion/Renew';
-import { remPixels } from '../../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 
 const field = '.env-date-picker-control';
 const hours = '.env-time-list-column[data-part="hour"]';

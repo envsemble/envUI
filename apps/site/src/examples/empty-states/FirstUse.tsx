@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, List, Column, Row, Surface, Text } from '@envsemble/envui';
+import { Button, Grid, List, Column, Row, Surface, Text } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
 
@@ -48,9 +48,10 @@ export default function FirstUse() {
       ) : (
         // envUI has no region height for an example: the state fills the place the list will.
         <Surface
+          render={<Grid />}
           background="default"
           padding={0}
-          style={{ display: 'grid', minBlockSize: '18rem' }}
+          style={{ minBlockSize: '18rem' }}
         >
           {/* An icon, a heading of the level the page's outline needs, a sentence and the one
               action, centred in the room the list will take. */}

@@ -1,6 +1,6 @@
 import PrimaryNavigation from '../../examples/navigation/PrimaryNavigation';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { useStayOnPage } from './StayOnPage';
 

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { IconButton, Row, Tabs, Text } from '@envsemble/envui';
 import { IconUpload } from '@envsemble/envui/icons/Upload';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
 

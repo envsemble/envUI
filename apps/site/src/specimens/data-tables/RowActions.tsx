@@ -1,6 +1,6 @@
 import RowActions from '../../examples/data-tables/RowActions';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const trigger = '[aria-label="More actions for Website refresh"]';

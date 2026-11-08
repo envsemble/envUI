@@ -1,4 +1,4 @@
-import type { PointerStep } from '../../motion/PointerPlan';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { useSharedTimeline } from '../../motion/Timeline';
 
 /** The pair's widths, in rem: a medium window, side by side, and a compact one. */

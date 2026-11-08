@@ -3,8 +3,8 @@
  * for what it opens.
  */
 import { headingOf, holdsView, mustShowOf } from '../motion/MustShow';
-import { aimedElement } from '../motion/PointerPlan';
-import { remPixels } from '../shared/Lengths';
+import { aimedElement } from '../motion/pointer/PointerPlan';
+import { remPixels } from '@envui-internal/internal/lengths';
 import { cropFade } from './Crop';
 import {
   contain,

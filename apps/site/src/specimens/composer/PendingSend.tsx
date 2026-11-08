@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PendingSend from '../../examples/composer/PendingSend';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const field = '.env-composer-input';

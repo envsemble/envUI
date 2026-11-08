@@ -81,7 +81,7 @@ examples: # Each example file once, by its name, with its role and, where it has
 - **`statuses`** gives an export listed in `components` a status other than the page's, such as a beta editor on a page whose renderer is stable.
 - **`avoidWhen`** is the page's one list of related components and pages, its **Related** section: each entry names an export in `use` or an indexed page in `see`, never both, with a line saying when to pick it instead. Name each export or page once. Relate only what a reader might pick instead: a page that is only used alongside, such as Accessibility or Icons, is linked from the sentence that needs it.
 - **`components`** lists a family's members, such as IconButton on the button page. A namespace, such as `Menu`, covers all its parts; list the namespace, never a part such as `Menu.Item`.
-- **Guides**, the pages at the top of `docs/`, may take only `status`, `components`, `aliases`, `exportAliases` and `statuses`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page. A guide's exports take its status, else `stable`; `statuses` gives one another, such as `useContainerSize: beta`.
+- **Guides**, the pages at the top of `docs/`, may take only `status`, `components`, `aliases`, `exportAliases` and `statuses`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page. A guide's exports take its status, else `stable`; `statuses` gives one another, such as `useContainerSize: beta`. A guide's pictures are the catalogue's own, registered for its page in `apps/site/src/figures/foundations/FoundationFigures.ts` and placed with an empty ` ```tsx figure=Name ` fence, which the package leaves out.
 
 Register the page in [the index](../docs/index.md) under its group, with only its title and path: `- [TextField](components/text-field.md)`. The index orders the pages; the summary comes from the frontmatter.
 
@@ -308,7 +308,7 @@ The visual baseline captures a page's specimens, or its first example when it ha
 
 ### Animated specimens and playbacks
 
-Where a section is about a change, such as a slider stretching past its ends or a reply arriving, a specimen plays it: the live component on a `MotionStage` (`apps/site/src/motion/MotionStage.tsx`), driven by a script of a pointer no one sees (`usePointer`, `apps/site/src/motion/PointerPlayback.ts`) or by steps of its props (`useTimeline`, `apps/site/src/motion/Timeline.ts`).
+Where a section is about a change, such as a slider stretching past its ends or a reply arriving, a specimen plays it: the live component on a `MotionStage` (`apps/site/src/motion/MotionStage.tsx`), driven by a script of a pointer no one sees (`usePointer`, `apps/site/src/motion/pointer/PointerPlayback.ts`) or by steps of its props (`useTimeline`, `apps/site/src/motion/Timeline.ts`).
 
 - **The component's own behaviour.** The pointer hovers, presses, drags, types and uses keys as a person would, so the component shows its own states; change props only where no person could.
 - **It loops**, ending where it began, at one height, so the page never moves; give `MotionStage` a `height` that holds what opens, or `roomFor` where wrapped rows grow it, and `top` where that room is for what opens below the control, such as a select's list.

@@ -1,5 +1,5 @@
 import AppliedAtOnce from '../../examples/filtering/AppliedAtOnce';
-import { usePointer } from '../../motion/PointerPlayback';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { statusClock, statusScript } from './Status';
 

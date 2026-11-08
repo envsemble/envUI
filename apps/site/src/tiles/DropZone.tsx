@@ -3,8 +3,8 @@ import { DropZone, IconButton, Row, Text } from '@envsemble/envui';
 import { IconCheckCircle } from '@envsemble/envui/icons/CheckCircle';
 import { IconClose } from '@envsemble/envui/icons/Close';
 import { useMedia } from '../motion/Autoplay';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const zone = '.env-drop-zone-target';

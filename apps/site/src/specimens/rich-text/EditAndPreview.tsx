@@ -1,6 +1,6 @@
 import EditAndPreview from '../../examples/rich-text/EditAndPreview';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const editor = '.env-rich-text-editor';

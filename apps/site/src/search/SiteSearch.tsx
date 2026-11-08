@@ -4,6 +4,7 @@ import {
   CommandPalette,
   type CommandPaletteItem,
   type CommandPaletteProps,
+  useModifierKey,
 } from '@envsemble/envui';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconExtension } from '@envsemble/envui/icons/Extension';
@@ -20,7 +21,6 @@ import { otherPart } from '../navigation/OtherPart';
 import { docsRoute, navigate, routeHref } from '../navigation/Address';
 import { canRetryLoad, reloadModule, reloadPage } from '../loading/LoadBoundary';
 import type { SearchResult } from './SearchIndex';
-import { commandKey } from './SearchShortcut';
 
 /** The search index's module, by its path in the site app, as module-files.json names it. */
 const indexModule = 'src/search/SearchIndex.ts';
@@ -237,6 +237,7 @@ function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<st
     (a, b) => tier(a) - tier(b),
   );
   return order.map((name) => {
+    // The order lists the groups the results were put in.
     const members = grouped.get(name)!;
     const folds = shortGroups.has(name) || name === mentions;
     // Props show as many as the query names by their own name, the best first; with none, such as
@@ -276,6 +277,7 @@ export function SiteSearch({
   /** The page the reader is on, whose counterpart search suggests. */
   page: RoutePage | undefined;
 }) {
+  const modifier = useModifierKey();
   const [query, setQuery] = useState('');
   // The short groups shown whole, for the query they were expanded for.
   const [expanded, setExpanded] = useState({ query: '', groups: noGroups });
@@ -313,7 +315,7 @@ export function SiteSearch({
         id: result.id,
         label: result.title,
         description:
-          readings.get(reads(result))! > 1
+          (readings.get(reads(result)) ?? 0) > 1
             ? `${areas[result.area]} · ${result.detail}`
             : result.detail,
         icon: icons[result.kind],
@@ -379,7 +381,7 @@ export function SiteSearch({
       {...empty}
       hints={[
         { keys: ['Enter'], label: 'Open' },
-        { keys: [commandKey, 'Enter'], label: 'Open in a new tab' },
+        { keys: [modifier.label, 'Enter'], label: 'Open in a new tab' },
         { keys: ['Esc'], label: 'Close' },
       ]}
       // A result closes the palette as it opens; the row that shows the rest of a group keeps it

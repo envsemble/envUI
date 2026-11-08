@@ -18,6 +18,8 @@ import {
   Sheet,
   Text,
   Tooltip,
+  useModifierKey,
+  windowClasses,
 } from '@envsemble/envui';
 import { IconMenu } from '@envsemble/envui/icons/Menu';
 import {
@@ -47,13 +49,10 @@ import {
   GuidePage,
   TokensPage,
 } from './pages/DocsPages';
-import {
-  Brand,
-  DocsNavigation,
-  PageActions,
-  CatalogueNavigation,
-  drawerless,
-} from './navigation/SiteNavigation';
+import { Brand } from './brand/Brand';
+import { DocsNavigation, CatalogueNavigation } from './navigation/SiteNavigation';
+import { drawerless } from './navigation/CatalogueDestinations';
+import { PageActions } from './navigation/PageActions';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink, usePendingRoute } from './navigation/RouterLink';
 import { RouteProgress } from './navigation/RouteProgress';
@@ -71,7 +70,7 @@ import { SearchButton } from './search/SearchButton';
 import { useSiteRoute } from './navigation/useSiteRoute';
 import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
-import { LoadingStatus } from './loading/Loading';
+import { LoadingStatus } from './loading/LoadingStore';
 import { restoreScroll, scrolled } from './navigation/ScrollRestoration';
 import { PageSkeleton } from './loading/PageSkeleton';
 
@@ -116,15 +115,16 @@ const pagesWithoutContents = new Set<RoutePage['kind']>([
  * that handles the keys itself, such as for a link, keeps them.
  */
 function useSearchShortcut(setSearchOpen: Dispatch<SetStateAction<boolean>>) {
+  const { key } = useModifierKey();
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || !isSearchShortcut(event)) return;
+      if (event.defaultPrevented || !isSearchShortcut(event, key)) return;
       event.preventDefault();
       setSearchOpen((open) => !open);
     };
     addEventListener('keydown', onKeyDown);
     return () => removeEventListener('keydown', onKeyDown);
-  }, [setSearchOpen]);
+  }, [key, setSearchOpen]);
 }
 
 /**
@@ -147,7 +147,7 @@ function usePagePlace(route: string, title: string, main: RefObject<HTMLElement 
     else queueMicrotask(() => main.current?.focus({ preventScroll: true }));
     // The Design and Code switch keeps the reader's section where the page it shows has it too,
     // and names it in the address; elsewhere the page opens at its top.
-    const switched = main.current && showKeptSection(main.current, route.split('?')[0]!);
+    const switched = main.current && showKeptSection(main.current, route.split('?')[0]);
     if (switched) return switched;
     // Back, Forward and a reload return to where the reader was on the page.
     const restoring = main.current && restoreScroll(main.current);
@@ -167,7 +167,7 @@ function usePagePlace(route: string, title: string, main: RefObject<HTMLElement 
 function useSheetClosesWhenWide(open: boolean, setOpen: (open: boolean) => void) {
   useEffect(() => {
     if (!open) return;
-    const wide = window.matchMedia('(width >= 52.5rem)');
+    const wide = window.matchMedia(`(width >= ${windowClasses.expanded})`);
     const close = () => wide.matches && setOpen(false);
     close();
     wide.addEventListener('change', close);
@@ -283,7 +283,7 @@ function Shell() {
   // A destination chosen in the navigation's sheet sends focus to the page, not back to the button.
   const choseDestination = useRef(false);
   const mainElement = useRef<HTMLElement>(null);
-  const routePath = route.split('?')[0]!;
+  const routePath = route.split('?')[0];
   const page = findPage(routePath);
   const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'catalogue');
   const contents = Boolean(page && !pagesWithoutContents.has(page.kind));

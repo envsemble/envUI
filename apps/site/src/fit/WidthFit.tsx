@@ -6,7 +6,7 @@
  * resized.
  */
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 import { pixelTolerance } from './FitMath';
 
 /** The least a width frame is drawn at to fit its stage; one that would need less scrolls. */

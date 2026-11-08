@@ -1,6 +1,6 @@
 // Records the size of every figure's subject that loads with its page, an example, a specimen or a
-// guide's demo, in apps/site/src/loading/PartSizes.json: its skeleton keeps that size while it
-// loads (StageSkeleton in loading/Loading.tsx), so the page doesn't move when it lands. Of an
+// guide's figure, in apps/site/src/generated/PartSizes.json: its skeleton keeps that size while it
+// loads (StageSkeleton in loading/Skeletons.tsx), so the page doesn't move when it lands. Of an
 // example shown open, it records its stage too, which keeps that height until its overlays rest
 // open in it (reserveStage in OpenExample.tsx). It opens every page of the catalogue and the Docs
 // in a desktop window with the parts held back, notes where each skeleton is, lets the parts load
@@ -20,7 +20,7 @@ import { defaultPorts } from '../test/CheckoutMarker.ts';
 
 const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 const recordFile = fileURLToPath(
-  new URL('../../apps/site/src/loading/PartSizes.json', import.meta.url),
+  new URL('../../apps/site/src/generated/PartSizes.json', import.meta.url),
 );
 /** The window the sizes are recorded in, a desktop's, beside the page's contents. */
 const window = { width: 1440, height: 1000 };

@@ -11,8 +11,8 @@ import {
 } from '@envsemble/envui';
 import { IconTrendingDown } from '@envsemble/envui/icons/TrendingDown';
 import { IconTrendingUp } from '@envsemble/envui/icons/TrendingUp';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
 
 const periods = {

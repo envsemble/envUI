@@ -3,9 +3,9 @@
  * writes, and the plan they make of its time, where the pointer is and what it does when, at the
  * site's brisk pace.
  */
-import type { CarriedFile } from './DragControl';
+import type { CarriedFile } from '../DragControl';
 import { textPoint } from './VirtualSelection';
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 
 /**
  * One step of what the pointer no one sees does, or of what happens around it:
@@ -150,7 +150,7 @@ export function planOf(script: readonly PointerStep[]): Plan {
    * say `stay`, the pointer steps aside over that wait, on what it pressed.
    */
   const stepAside = (index: number) => {
-    const step = script[index]!;
+    const step = script[index];
     const next = script[index + 1];
     if (!at || at.aside || at.text !== undefined || ('stay' in step && step.stay)) return;
     if (!next || !('wait' in next) || next.wait * waitPace < asideAfter + asideTook) return;
@@ -265,7 +265,8 @@ export type AimPoints = Map<Aim, { x: number; y: number } | null>;
 
 /** Where an aim is in the viewport now, or nothing where its element isn't shown. */
 function pointOf(scope: Element, aim: Aim, known?: AimPoints) {
-  if (known?.has(aim)) return known.get(aim)!;
+  const read = known?.get(aim);
+  if (read !== undefined) return read;
   const point = readPoint(scope, aim);
   known?.set(aim, point);
   return point;
@@ -295,7 +296,7 @@ export function aimedElement(scope: Element, selector: string) {
     }
     return true;
   };
-  return found.length > 1 ? (found.find(shows) ?? found[0]!) : (found[0] ?? null);
+  return found.length > 1 ? (found.find(shows) ?? found[0]) : (found[0] ?? null);
 }
 
 function readPoint(scope: Element, aim: Aim) {

@@ -12,7 +12,9 @@ import {
   retrySource,
 } from './ExampleRegistry';
 import { OpenExample } from './OpenExample';
-import { CodeSkeleton, exampleLines, HoldPlaceholder, StageSkeleton } from '../loading/Loading';
+import { CodeSkeleton, StageSkeleton } from '../loading/Skeletons';
+import { exampleLines } from '../loading/RecordedSizes';
+import { HoldPlaceholder } from '../loading/LoadingStore';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
 import { WidthBox } from '../fit/WidthFit';

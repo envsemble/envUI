@@ -14,7 +14,8 @@ import { installBrowserStandIns } from './motion/BrowserStandIns';
 installBrowserStandIns();
 // The site renders once what the page it opens on needs has loaded, which started as it did, so
 // its first paint has the whole page rather than the frame and then the page.
-void preloadPage(findPage(currentRoute().split('?')[0]!)).then(() =>
+void preloadPage(findPage(currentRoute().split('?')[0])).then(() =>
+  // index.html holds the root.
   createRoot(document.getElementById('root')!).render(
     <PaletteCustomizationProvider>
       <App />

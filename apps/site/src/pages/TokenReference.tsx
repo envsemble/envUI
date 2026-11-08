@@ -2,7 +2,7 @@ import { ColorSwatch } from '@envsemble/envui/color';
 import { PlainCode } from './SimpleTable';
 // Every token with its value in each theme and scale, as the token build writes it; no entry of
 // the package exports this data, so the reference reads the generated file.
-import tokenList from '../../../../packages/ui/src/generated/tokens.json';
+import tokenList from '@envsemble/envui/tokens.json';
 // The ids search leads to, as the search index writes them.
 import { tokenSection } from '@docs-model/SearchAnchors';
 import { groupOf, themes, tokenGroups, tokenValueText } from './TokenGroups';

@@ -38,15 +38,25 @@ export const providesHeadings = { envui: 'envUI provides', app: 'You provide' } 
 /** The section that holds those lists, on either kind of page. */
 const providesSections = new Set(['accessibility']);
 
-/** Markdown cut at its `###` and `##` headings, outside code fences. */
-export function subsections(markdown: string): string[] {
-  const chunks = [''];
+/**
+ * Markdown's lines, each with whether it is inside a code fence, the line that opens one included,
+ * so a heading inside a fence's code is no heading.
+ */
+export function fencedLines(markdown: string): { line: string; fenced: boolean }[] {
   let fence: string | undefined;
-  for (const line of markdown.split('\n')) {
+  return markdown.split('\n').map((line) => {
     const marker = line.match(/^\s{0,3}(`{3,}|~{3,})/)?.[1];
     if (marker && (!fence || (marker[0] === fence[0] && marker.length >= fence.length)))
       fence = fence ? undefined : marker;
-    if (!fence && /^#{2,3} /.test(line)) chunks.push('');
+    return { line, fenced: fence !== undefined };
+  });
+}
+
+/** Markdown cut at its `###` and `##` headings, outside code fences. */
+export function subsections(markdown: string): string[] {
+  const chunks = [''];
+  for (const { line, fenced } of fencedLines(markdown)) {
+    if (!fenced && /^#{2,3} /.test(line)) chunks.push('');
     chunks[chunks.length - 1] += `${line}\n`;
   }
   return chunks;
@@ -131,13 +141,26 @@ export function codeColumns(markdown: string): string {
 }
 
 /** A section's Markdown as the catalogue shows it: without what envUI and the application provide. */
-export function catalogueMarkdown(
-  section: Pick<DocumentationSection, 'id'>,
-  markdown: string,
-): string {
+function catalogueMarkdown(section: Pick<DocumentationSection, 'id'>, markdown: string): string {
   return withoutCodeColumns(
     providesSections.has(section.id) ? withoutProvides(markdown) : markdown,
   );
+}
+
+/**
+ * A section as the catalogue shows it (catalogueMarkdown), and nothing where that leaves only its
+ * heading.
+ */
+export function catalogueSection(section: DocumentationSection): DocumentationSection | undefined {
+  const blocks = section.blocks.map((block) =>
+    block.kind === 'markdown'
+      ? { ...block, markdown: catalogueMarkdown(section, block.markdown) }
+      : block,
+  );
+  const empty = blocks.every(
+    (block) => block.kind === 'markdown' && !block.markdown.replace(/^## .*$/m, '').trim(),
+  );
+  return empty ? undefined : { ...section, blocks };
 }
 
 /** What envUI provides and what the application provides, each a Markdown list, from a page. */

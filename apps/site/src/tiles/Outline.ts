@@ -7,6 +7,6 @@ import type { CSSProperties } from 'react';
  * through Surface's and Card's public outline color property, as an application sets it, so it
  * shows at rest and as the scene plays.
  */
-export const outlined = {
+export const outlined: CSSProperties = {
   '--env-surface-outline': 'var(--env-color-border-muted)',
-} as CSSProperties;
+};

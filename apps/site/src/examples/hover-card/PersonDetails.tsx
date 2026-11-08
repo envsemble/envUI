@@ -1,7 +1,4 @@
-import { Avatar, HoverCard, Link, Column, Text } from '@envsemble/envui';
-
-/** The avatar beside the name and role. */
-const person = { display: 'flex', alignItems: 'center', gap: '0.75rem' } as const;
+import { Avatar, HoverCard, Link, Column, Row, Text } from '@envsemble/envui';
 
 export default function PersonDetails() {
   return (
@@ -14,7 +11,8 @@ export default function PersonDetails() {
         trigger={<Link href="/people/priya-shah">Priya Shah</Link>}
       >
         <Column gap={3}>
-          <div style={person}>
+          {/* The avatar beside the name and role. */}
+          <Row align="center" gap={3}>
             <Avatar name="Priya Shah" size="lg" />
             <div>
               <Text render={<strong />} variant="title">
@@ -22,7 +20,7 @@ export default function PersonDetails() {
               </Text>
               <Text variant="body-sm">Research lead · Northwind</Text>
             </div>
-          </div>
+          </Row>
           <Text emphasis="muted">Owns 4 plans. Usually replies within a day.</Text>
         </Column>
       </HoverCard>

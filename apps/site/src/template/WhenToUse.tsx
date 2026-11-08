@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { pageOf } from './RelatedPages';
@@ -43,7 +42,7 @@ export function WhenToUse({ metadata, path }: { metadata: DocumentationMetadata;
         className={
           metadata.useWhen.length > 3 ? 'site-when-use catalogue-when-columns' : 'site-when-use'
         }
-        style={{ '--catalogue-when-rows': Math.ceil(metadata.useWhen.length / 2) } as CSSProperties}
+        style={{ '--catalogue-when-rows': Math.ceil(metadata.useWhen.length / 2) }}
       >
         <Documentation markdown={`### Use it when\n\n${list(metadata.useWhen)}`} path={path} />
       </div>

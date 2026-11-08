@@ -13,7 +13,7 @@ import {
 } from '@envsemble/envui';
 import { IconTune } from '@envsemble/envui/icons/Tune';
 import { displayStorageKeys } from './DisplayStorage';
-import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
+import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
 
 const themes: readonly ThemePreference[] = ['system', 'light', 'dark'];
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];
@@ -190,6 +190,7 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
         label="Theme"
         value={preference}
         onValueChange={(next) =>
+          // The group's values are the themes'.
           switchColors(() => setPreference(themes.find((value) => value === next)!))
         }
       >
@@ -208,6 +209,7 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
         label="Contrast"
         value={contrast}
         onValueChange={(next) =>
+          // The group's values are the contrasts'.
           switchColors(() => setContrast(contrasts.find((value) => value === next)!))
         }
       >
@@ -225,6 +227,7 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
       <Menu.RadioGroup
         label="Scale"
         value={scale}
+        // The group's values are the scales'.
         onValueChange={(next) => setScale(scales.find((value) => value === next)!)}
       >
         <Menu.RadioItem value="system" closeOnClick={false}>

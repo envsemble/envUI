@@ -1,6 +1,6 @@
 import SelectAndBulkActions from '../../examples/data-tables/SelectAndBulkActions';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const tick = (row: number) => `tbody tr:nth-child(${row}) .env-checkbox`;

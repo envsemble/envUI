@@ -1,8 +1,7 @@
 /*
  * The motion tokens as the page's root sets them, for motion the site starts from script: the
- * library's reading of them (packages/ui/src/internal/motionTokens.ts), on the document's root, so a
- * theme that changes a token changes the site's script motion with it. Outside a browser, where
- * there is no root, nothing animates.
+ * library's reading of them, on the document's root, so a theme that changes a token changes the
+ * site's script motion with it. Outside a browser, where there is no root, nothing animates.
  */
 import {
   easingFunction,
@@ -10,7 +9,7 @@ import {
   motionEasing,
   type MotionDuration,
   type MotionEasing,
-} from '../../../../packages/ui/src/internal/motionTokens';
+} from '@envui-internal/internal/motionTokens';
 
 const root = () => (typeof document === 'undefined' ? null : document.documentElement);
 

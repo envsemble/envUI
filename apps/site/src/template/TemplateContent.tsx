@@ -4,8 +4,7 @@ import { Documentation, GuidanceLists } from '../pages/Documentation';
 import type { Documentation as Document } from '../pages/PageModel';
 import type { DocumentationMetadata, DocumentationSection } from '@docs-model/DocumentationTypes';
 import { FigureSection } from '../figures/Figures';
-import { catalogueSection } from './Provides';
-import { docsOnlySections } from '@docs-model/CatalogueContent';
+import { catalogueSection, docsOnlySections } from '@docs-model/CatalogueContent';
 import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';
@@ -169,7 +168,7 @@ function Sections({
         group.length ? (
           <div key={index} className="site-article site-template site-figures site-section-group">
             {group.map((section, at) => (
-              <SectionOutline key={section.id} value={before[index]! + at >= revealed}>
+              <SectionOutline key={section.id} value={before[index] + at >= revealed}>
                 {elements.get(section.id)}
               </SectionOutline>
             ))}
@@ -227,10 +226,11 @@ function changelogEntries(markdown: string) {
   for (const line of markdown.split('\n')) {
     if (!line.trim() || /^#{2,} /.test(line)) continue;
     const entry = /^- \*\*([^*]+)\*\*:\s*(.*)$/.exec(line);
+    const last = entries.at(-1);
     // A version listed twice in a row is one entry, each change a paragraph of its own.
-    if (entry && entries.at(-1)?.version === entry[1]) entries.at(-1)!.text += `\n\n${entry[2]}`;
+    if (entry && last?.version === entry[1]) last.text += `\n\n${entry[2]}`;
     else if (entry) entries.push({ version: entry[1], text: entry[2] });
-    else if (/^\s/.test(line) && entries.length) entries.at(-1)!.text += `\n${line.trim()}`;
+    else if (/^\s/.test(line) && last) last.text += `\n${line.trim()}`;
     else return undefined;
   }
   return entries.length ? entries : undefined;

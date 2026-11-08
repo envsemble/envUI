@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Column, List, SearchField } from '@envsemble/envui';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 import { useHeldView } from '../../motion/Playback';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 
 const projects = ['Website refresh', 'Pricing page'];
 

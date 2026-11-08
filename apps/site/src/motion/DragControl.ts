@@ -3,7 +3,7 @@
  * (VirtualPointer.ts): while it carries them, its moves are a drag, which the elements it enters,
  * leaves and is over hear, until it drops them.
  */
-import { chainOf, hitAt, type Aimed, type Point, type PointerSpot } from './PointerTargets';
+import { chainOf, hitAt, type Aimed, type Point, type PointerSpot } from './pointer/PointerTargets';
 
 /** A file the pointer carries in, as from the desktop: its name, its type and its size in bytes. */
 export interface CarriedFile {

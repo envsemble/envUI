@@ -1,9 +1,9 @@
 import { useEffect, useId, useRef, type MouseEvent } from 'react';
 import { TableOfContents } from '@envsemble/envui';
 import { useHeldView } from '../motion/Playback';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
-import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
 
 /** How tall the unseen article's view and each of its sections are, in px. */
 const view = 100;
@@ -59,7 +59,7 @@ export default function TableOfContentsTile() {
   const section = (name: string) => `${id}-${name}`;
   /** Scrolls the unseen article to a section, as a link on a page does, at a reader's pace. */
   const go = (event: MouseEvent<HTMLElement>) => {
-    const target = (event.target as HTMLElement).closest('a');
+    const target = event.target instanceof Element ? event.target.closest('a') : null;
     const area = scroller.current;
     if (!target || !area) return;
     event.preventDefault();

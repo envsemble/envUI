@@ -16,12 +16,12 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 // @envsemble/envui/theme-bootstrap, is its build in dist/, which a checkout has only after
 // npm run build, so the library's source module is imported instead.
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
+import { displayStorageKeys } from './src/theme/DisplayStorage.ts';
 import {
   createDisplayBootstrapScript,
   createFirstPaintStyle,
   createStorageMigrationScript,
-  displayStorageKeys,
-} from './src/theme/DisplayStorage.ts';
+} from './src/theme/HeadScripts.ts';
 import { checkoutMarker } from '../../scripts/test/CheckoutMarker.ts';
 import { resetClosedConnections } from '../../scripts/test/ServerSockets.ts';
 import { readReleaseNotes, releaseNotesSources } from '../../scripts/site/ReleaseNotes.ts';
@@ -40,7 +40,7 @@ import { withoutComments } from '../../scripts/site/CssComments.ts';
 let building = false;
 
 /** The recorded size of each part that loads with a page (scripts/site/RecordPartSizes.ts). */
-const partSizesFile = fileURLToPath(new URL('./src/loading/PartSizes.json', import.meta.url));
+const partSizesFile = fileURLToPath(new URL('./src/generated/PartSizes.json', import.meta.url));
 function readPartSizes(): Record<string, [number, number]> {
   const { $comment: _comment, ...sizes } = JSON.parse(readFileSync(partSizesFile, 'utf8'));
   return sizes;
@@ -51,10 +51,10 @@ let pageParts: { sizes: Record<string, [number, number]>; lines: Record<string, 
   lines: {},
 };
 /**
- * The key of a part of one page, an example, a specimen or the stage of an example shown open, with
- * the page's id.
+ * The key of a part of one page, an example, a specimen, the stage of an example shown open or a
+ * guide's figure, with the page's id.
  */
-const pagePart = /^(?:example|specimen|open):([^/]+)\//;
+const pagePart = /^(?:example|specimen|open|figure):([^/]+)\//;
 
 /**
  * Data the site's pages read from the repository when the site app builds or serves, as
@@ -98,6 +98,8 @@ const resolvedId = (id: string) => `\0${id}`;
 const iconList = fileURLToPath(new URL('../../packages/ui/src/icons/index.ts', import.meta.url));
 /** The documentation's model (scripts/docs/model), which the site imports as @docs-model. */
 const docsModel = fileURLToPath(new URL('../../scripts/docs/model', import.meta.url));
+/** The library's source, the site's only door into what its entry points don't export. */
+const libraryInternals = fileURLToPath(new URL('../../packages/ui/src', import.meta.url));
 
 /** The files for coding agents at the site's root, with the type each is served as. */
 const agentFileTypes = {
@@ -314,6 +316,8 @@ export default defineConfig(() => {
         'envui-icon-list': iconList,
         // The documentation's model, which the site and the scripts that build it both read.
         '@docs-model': docsModel,
+        // What the library's entry points don't export, such as its reduced-motion query.
+        '@envui-internal': libraryInternals,
       },
     },
     // That list has thousands of modules; serve it as one lazy dependency in dev.

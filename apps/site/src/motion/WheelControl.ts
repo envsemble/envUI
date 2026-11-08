@@ -2,7 +2,7 @@
  * The wheel of the pointer no one sees (VirtualPointer.ts): a turn scrolls the nearest box around
  * what the pointer is over that can scroll, as a mouse's wheel does, never the page.
  */
-import type { PointerSpot } from './PointerTargets';
+import type { PointerSpot } from './pointer/PointerTargets';
 
 export class WheelControl {
   /** The box a turn of the wheel scrolls, and where it started, while it turns. */

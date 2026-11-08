@@ -3,8 +3,8 @@ import { DocumentTabs, IconButton, Surface, Text, type DocumentTabsItem } from '
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { useMedia } from '../motion/Autoplay';
 import { useHeldView, useMustShow } from '../motion/Playback';
-import type { PointerStep } from '../motion/PointerPlan';
-import { usePointer } from '../motion/PointerPlayback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const documents: DocumentTabsItem[] = ['Plan', 'Spec'].map((label) => ({
@@ -88,11 +88,11 @@ export default function DocumentTabsTile() {
 function Strip({ narrow }: { narrow: boolean }) {
   const open = narrow ? documents.slice(0, 1) : documents;
   const [tabs, setTabs] = useState(open);
-  const [value, setValue] = useState<string | null>(documents[0]!.value);
+  const [value, setValue] = useState<string | null>(documents[0].value);
   usePointer(narrow ? short : script, {
     onRest: () => {
       setTabs(open);
-      setValue(documents[0]!.value);
+      setValue(documents[0].value);
     },
   });
   return (

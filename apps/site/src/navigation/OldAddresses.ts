@@ -137,8 +137,8 @@ function mergedPage({ path, rest }: OldAddress) {
   // Patterns merged into others open the pattern they joined, in the catalogue and the Docs, and the
   // content guidelines are the Writing guide in the Docs.
   const merged = /^(docs\/)?patterns\/([a-z-]+)$/.exec(path);
-  if (merged && Object.hasOwn(mergedPatterns, merged[2]!))
-    return `${merged[1] ?? ''}patterns/${mergedPatterns[merged[2]!]}${rest()}`;
+  if (merged && Object.hasOwn(mergedPatterns, merged[2]))
+    return `${merged[1] ?? ''}patterns/${mergedPatterns[merged[2]]}${rest()}`;
   if (/^(?:docs\/)?foundations\/content(?:\/|$)/.test(path)) return `docs/writing${rest()}`;
   // Components that became patterns open their pattern.
   const slug = path.split('/')[1] ?? '';
@@ -196,7 +196,7 @@ function pageView(path: string, { section, rest }: OldAddress) {
       : view === 'usage' &&
         !(section && grouped.document.outline?.some((part) => part.anchors.includes(section)));
   return (
-    routeOfDocument(id!, {
+    routeOfDocument(id ?? '', {
       view: toDocs ? (grouped.section === 'Components' ? 'props' : 'usage') : undefined,
     }) + rest()
   );

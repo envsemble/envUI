@@ -22,7 +22,7 @@ export function FoundationCatalogue() {
     <div className="site-foundation-stage catalogue-foundation-sheet" data-figure="example">
       {foundations.map((page) => {
         const id = page.document.id;
-        const Picture = glancePictures[id]!;
+        const Picture = glancePictures[id];
         return (
           <Link
             key={id}

@@ -1,6 +1,6 @@
 import { createElement, useState, type ReactNode } from 'react';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 
 /*
  * The do and the don't of a full meter play one script, side by side, on one clock: the pointer

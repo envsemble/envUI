@@ -1,7 +1,7 @@
 import { Button, PageHeader } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 
 /** The pointer on the page's action, which takes its hover fill. */
 const script: PointerStep[] = [

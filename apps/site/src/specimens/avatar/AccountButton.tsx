@@ -1,6 +1,6 @@
 import AccountButton from '../../examples/avatar/AccountButton';
-import type { PointerStep } from '../../motion/PointerPlan';
-import { usePointer } from '../../motion/PointerPlayback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 /* The pointer rests on the avatar: the name's tooltip appears, and goes as the pointer leaves. */
