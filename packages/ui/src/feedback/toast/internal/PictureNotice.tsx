@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { flag } from '../../internal/flag.js';
-import type { ToastEntry } from './toastInternals.js';
+import { flag } from '../../../internal/flag.js';
+import type { ToastEntry } from './toastEntry.js';
 import type { ToastController } from './useToastController.js';
-import '../../styles/Base.css';
-import '../../styles/Toast.css';
+import '../../../styles/Base.css';
+import '../../../styles/Toast.css';
 
 /**
  * A notice of a contained region's picture: it arrives and leaves with a live notice's motion, from

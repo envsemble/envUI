@@ -2,25 +2,25 @@
 
 import { useCallback, useLayoutEffect, useState } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
-import { Badge } from '../../data-display/Badge.js';
-import { Theme, useTheme } from '../../foundations/Theme.js';
-import { toast as toastMessages } from '../../foundations/messages/toast.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
-import { useFormatters } from '../../internal/useFormatters.js';
-import { useDirection } from '../../internal/useDirection.js';
+import { Badge } from '../../../data-display/Badge.js';
+import { Theme, useTheme } from '../../../foundations/Theme.js';
+import { toast as toastMessages } from '../../../foundations/messages/toast.js';
+import { useMessages } from '../../../internal/EnvUIContext.js';
+import { useFormatters } from '../../../internal/useFormatters.js';
+import { useDirection } from '../../../internal/useDirection.js';
 import type { ToastController } from './useToastController.js';
-import type { ToastEntry } from './toastInternals.js';
-import type { ToastPlacement } from './toastTypes.js';
-import { usePortalContainer } from '../../internal/PortalContainerContext.js';
-import { useModalOpen } from '../../internal/useModalPresence.js';
-import { Button, IconButton } from '../../actions/Button.js';
-import { IconClose } from '../../icons/Close.js';
-import { flag } from '../../internal/flag.js';
+import type { ToastEntry } from './toastEntry.js';
+import type { ToastPlacement } from '../toastTypes.js';
+import { usePortalContainer } from '../../../internal/PortalContainerContext.js';
+import { useModalOpen } from '../../../internal/useModalPresence.js';
+import { Button, IconButton } from '../../../actions/Button.js';
+import { IconClose } from '../../../icons/Close.js';
+import { flag } from '../../../internal/flag.js';
 import { ToastBody } from './ToastBody.js';
 import { PictureNotice } from './PictureNotice.js';
 import { useToastGlide } from './useToastGlide.js';
-import '../../styles/Base.css';
-import '../../styles/Toast.css';
+import '../../../styles/Base.css';
+import '../../../styles/Toast.css';
 
 type ToastObject = BaseToast.Root.ToastObject<ToastEntry>;
 

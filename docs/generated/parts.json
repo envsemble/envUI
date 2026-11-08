@@ -897,6 +897,7 @@
         }
       ],
       "uses": [
+        "Skeleton",
         "Surface",
         "Text"
       ],
@@ -6712,6 +6713,7 @@
         "Alert",
         "Breadcrumbs",
         "CalendarHeatmap",
+        "Card",
         "ColorPickerButton",
         "Combobox",
         "CommandPalette",

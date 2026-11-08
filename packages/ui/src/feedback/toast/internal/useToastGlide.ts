@@ -2,10 +2,10 @@
 
 import { useCallback, useLayoutEffect, useRef } from 'react';
 import type { Toast as BaseToast } from '@base-ui/react/toast';
-import { motionDuration, motionEasing } from '../../internal/motionTokens.js';
-import { prefersReducedMotion } from '../../internal/reducedMotion.js';
-import type { ToastEntry } from './toastInternals.js';
-import type { ToastPlacement } from './toastTypes.js';
+import { motionDuration, motionEasing } from '../../../internal/motionTokens.js';
+import { prefersReducedMotion } from '../../../internal/reducedMotion.js';
+import type { ToastEntry } from './toastEntry.js';
+import type { ToastPlacement } from '../toastTypes.js';
 
 const glideId = 'env-toast-glide';
 const revealId = 'env-toast-reveal';

@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import { IconCheckCircle } from '../../icons/CheckCircle.js';
-import { IconError } from '../../icons/Error.js';
-import { IconInfo } from '../../icons/Info.js';
-import type { ToastTone } from './toastTypes.js';
-import '../../styles/Base.css';
-import '../../styles/Toast.css';
+import { IconCheckCircle } from '../../../icons/CheckCircle.js';
+import { IconError } from '../../../icons/Error.js';
+import { IconInfo } from '../../../icons/Info.js';
+import type { ToastTone } from '../toastTypes.js';
+import '../../../styles/Base.css';
+import '../../../styles/Toast.css';
 
 function StatusIcon({ tone }: { tone: ToastTone }) {
   if (tone === 'neutral') return null;
