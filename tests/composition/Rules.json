@@ -97,6 +97,8 @@
       "forms/Combobox.tsx": "composites",
       "forms/internal/ComboboxPopup.tsx": "composites",
       "forms/internal/comboboxItems.ts": "composites",
+      "forms/internal/useComboboxOptions.ts": "composites",
+      "forms/internal/useComboboxSelection.ts": "composites",
       "forms/Composer.tsx": "composites",
       "forms/DatePicker.tsx": "composites",
       "forms/TimePicker.tsx": "composites",
@@ -130,6 +132,10 @@
       "navigation/Tabs.tsx": "composites",
       "navigation/TopBar.tsx": "composites",
       "navigation/Tree.tsx": "composites",
+      "navigation/internal/TreeRow.tsx": "composites",
+      "navigation/internal/treeModel.ts": "composites",
+      "navigation/internal/useTreeTransitions.ts": "composites",
+      "navigation/internal/useTreeViewport.ts": "composites",
       "internal/PopupSurface.tsx": "foundations",
       "internal/TooltipPopup.tsx": "base",
       "messages.ts": "entries"
@@ -175,7 +181,8 @@
       "forms/Radio.tsx": ["input"],
       "forms/Switch.tsx": ["input"],
       "actions/SegmentedControl.tsx": ["button"],
-      "navigation/Tree.tsx": ["role=\"tree\"", "role=\"treeitem\""],
+      "navigation/Tree.tsx": ["role=\"tree\""],
+      "navigation/internal/TreeRow.tsx": ["role=\"treeitem\""],
       "forms/Calendar.tsx": ["role=\"grid\""],
       "forms/internal/MonthGrid.tsx": ["role=\"grid\""],
       "content/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
@@ -288,7 +295,12 @@
         "modules": ["content/internal/ColumnResizeHandle.tsx"]
       },
       "Combobox": {
-        "modules": ["forms/internal/ComboboxPopup.tsx", "forms/internal/comboboxItems.ts"]
+        "modules": [
+          "forms/internal/ComboboxPopup.tsx",
+          "forms/internal/comboboxItems.ts",
+          "forms/internal/useComboboxOptions.ts",
+          "forms/internal/useComboboxSelection.ts"
+        ]
       },
       "Dialog": {
         "modules": [
@@ -368,7 +380,14 @@
         "modules": ["foundations/internal/ThemePreferenceContext.ts"]
       },
       "Breadcrumbs": {},
-      "DocumentTabs": {},
+      "DocumentTabs": {
+        "modules": [
+          "navigation/internal/tabStrip.ts",
+          "navigation/internal/useTabCloseFocus.ts",
+          "navigation/internal/useTabDrag.ts",
+          "navigation/internal/useTabStripScrolling.ts"
+        ]
+      },
       "NavigationBar": { "classes": ["env-navigation-bar"] },
       "NavigationDrawer": { "classes": ["env-navigation-drawer"] },
       "NavigationRail": { "classes": ["env-navigation-rail"] },
@@ -383,7 +402,28 @@
           "navigation/panel-dock/internal/PanelTab.tsx",
           "navigation/panel-dock/internal/dockLayout.ts",
           "navigation/panel-dock/internal/useEntrance.ts",
-          "navigation/panel-dock/internal/PanelDockPanelContext.ts"
+          "navigation/panel-dock/internal/PanelDockPanelContext.ts",
+          "navigation/panel-dock/internal/useDockArrangement.ts",
+          "navigation/panel-dock/internal/useDockFocus.ts",
+          "navigation/panel-dock/internal/useDockMeasurements.ts",
+          "navigation/panel-dock/internal/usePanelHeights.ts",
+          "navigation/panel-dock/internal/useRecency.ts",
+          "navigation/panel-dock/internal/useScrollPreservation.ts"
+        ]
+      },
+      "TableOfContents": {
+        "modules": [
+          "navigation/internal/sectionScroll.ts",
+          "navigation/internal/useContentsHeadings.ts",
+          "navigation/internal/waveDrawer.ts"
+        ]
+      },
+      "Tree": {
+        "modules": [
+          "navigation/internal/TreeRow.tsx",
+          "navigation/internal/treeModel.ts",
+          "navigation/internal/useTreeTransitions.ts",
+          "navigation/internal/useTreeViewport.ts"
         ]
       },
       "Tabs": {},
@@ -423,6 +463,9 @@
           "forms/internal/PickerPopup.tsx",
           "forms/internal/TimeList.tsx",
           "forms/internal/TimeWheel.tsx",
+          "forms/internal/useWheelGestures.ts",
+          "forms/internal/useWheelTurn.ts",
+          "forms/internal/wheelRows.ts",
           "forms/internal/MonthGrid.tsx",
           "forms/TimePicker.tsx",
           "forms/MonthPicker.tsx"

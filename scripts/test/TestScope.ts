@@ -31,7 +31,7 @@ export const aliases: Record<string, string[]> = {
   sectionScroll: ['TableOfContents'],
   useContentsHeadings: ['TableOfContents'],
   waveDrawer: ['TableOfContents'],
-  treeRows: ['Tree'],
+  treeModel: ['Tree'],
   TreeRow: ['Tree'],
   useTreeTransitions: ['Tree'],
   useTreeViewport: ['Tree'],
@@ -139,8 +139,6 @@ export const aliases: Record<string, string[]> = {
   ComboboxPopup: ['Combobox'],
   comboboxItems: ['Combobox'],
   useCheckedInput: ['Checkbox', 'Switch'],
-  ComboboxActions: ['Combobox'],
-  ComboboxChips: ['Combobox'],
   useComboboxOptions: ['Combobox'],
   useComboboxSelection: ['Combobox'],
   useFormReset: [
