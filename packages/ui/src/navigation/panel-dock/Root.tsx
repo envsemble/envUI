@@ -29,7 +29,7 @@ import { useDockOverflow } from './internal/useDockOverflow.js';
 import { usePanelHeights } from './internal/usePanelHeights.js';
 import { useRecency } from './internal/useRecency.js';
 import { useScrollPreservation } from './internal/useScrollPreservation.js';
-import { useStripWheel } from './internal/useStripWheel.js';
+import { useStripWheel } from '../internal/useStripWheel.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/PanelDock.css';
