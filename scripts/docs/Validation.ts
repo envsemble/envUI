@@ -120,11 +120,11 @@ function readToken(page: PageReading, token: Token) {
     return;
   }
   if (figure) {
-    placeFigure(page, current, token as Tokens.Code, figure[1]!, figure[2]!);
+    placeFigure(page, current, token as Tokens.Code, figure[1], figure[2]);
     return;
   }
   if (token.type === 'html' && specimenPattern.test(token.raw.trim())) {
-    const name = token.raw.trim().match(specimenPattern)![1]!;
+    const name = token.raw.trim().match(specimenPattern)![1];
     if (!page.context.specimens.has(name))
       problems.push(
         `specimen ${name} has no file apps/site/src/specimens/${page.document.id}/${name}.tsx`,
@@ -153,7 +153,7 @@ function readComposeToken(page: PageReading, current: ReadSection, token: Token)
     else if (codeOrder.includes(index)) problems.push(`"### ${token.text}" appears twice`);
     else if (codeOrder.some((other) => other > index))
       problems.push(
-        `"### ${token.text}" must come before "### ${codeSubsections[Math.max(...codeOrder)]!.title}" in "## ${codeTitle}"`,
+        `"### ${token.text}" must come before "### ${codeSubsections[Math.max(...codeOrder)].title}" in "## ${codeTitle}"`,
       );
     codeOrder.push(index);
   } else if (token.type !== 'space' && !codeOrder.length)

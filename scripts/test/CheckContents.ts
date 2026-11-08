@@ -16,7 +16,7 @@ import { defaultPorts } from './CheckoutMarker.ts';
 
 const args = process.argv.slice(2).filter((arg) => arg !== '--');
 const onlyIndex = args.indexOf('--only');
-const only = onlyIndex === -1 ? undefined : args.splice(onlyIndex, 2)[1]!.split(',');
+const only = onlyIndex === -1 ? undefined : args.splice(onlyIndex, 2)[1].split(',');
 const site = (args[0] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 /** A desktop window, wide enough for the contents beside the page. */
 const window = { width: 1440, height: 1000 };
@@ -36,7 +36,7 @@ async function routes(browser: Browser) {
     const links = await page
       .locator('.site-page-column a[href^="/"], .env-scaffold-navigation a[href^="/"]')
       .evaluateAll((anchors) => anchors.map((anchor) => anchor.getAttribute('href')!));
-    for (const href of links) found.add(href.slice(1).split(/[?#]/)[0]!);
+    for (const href of links) found.add(href.slice(1).split(/[?#]/)[0]);
   }
   await page.close();
   found.delete('');
@@ -48,7 +48,7 @@ const readContents = () =>
   [...document.querySelectorAll<HTMLAnchorElement>('.site-contents-list a')].map((link) => {
     let depth = 0;
     for (let item = link.closest('li'); item; item = item.parentElement!.closest('li')) depth++;
-    return `${'  '.repeat(depth - 1)}${link.getAttribute('href')} ${link.textContent!.trim()}`;
+    return `${'  '.repeat(depth - 1)}${link.getAttribute('href')} ${link.textContent.trim()}`;
   });
 
 /** The contents of one page at its first render and once it has loaded, as lines. */

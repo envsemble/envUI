@@ -348,7 +348,7 @@ function declaredNames(file: ts.SourceFile): Set<string> {
       ts.isTypeParameterDeclaration(node) ||
       ts.isModuleDeclaration(node)
     )
-      bind((node as { name?: ts.BindingName }).name as ts.BindingName | undefined);
+      bind((node as { name?: ts.BindingName }).name);
     ts.forEachChild(node, visit);
   };
   visit(file);

@@ -36,7 +36,7 @@ async function routes(page: Page) {
     const links = await page
       .locator('.site-page-column a[href^="/"], .env-scaffold-navigation a[href^="/"]')
       .evaluateAll((anchors) => anchors.map((anchor) => anchor.getAttribute('href')!));
-    for (const href of links) found.add(href.slice(1).split(/[?#]/)[0]!);
+    for (const href of links) found.add(href.slice(1).split(/[?#]/)[0]);
   }
   found.delete('');
   return [...found].sort();

@@ -26,9 +26,9 @@ function importsOf(source: string): Import[] {
       found.push({ specifier: bare, names: 'all' });
       continue;
     }
-    const named = /\{([^}]*)\}/.exec(clause!)?.[1];
+    const named = /\{([^}]*)\}/.exec(clause)?.[1];
     const names =
-      named === undefined || /\*/.test(clause!)
+      named === undefined || /\*/.test(clause)
         ? 'all'
         : named
             .split(',')
@@ -36,11 +36,11 @@ function importsOf(source: string): Import[] {
               name
                 .trim()
                 .replace(/^type\s+/, '')
-                .split(/\s+as\s+/)[0]!
+                .split(/\s+as\s+/)[0]
                 .trim(),
             )
             .filter(Boolean);
-    found.push({ specifier: specifier!, names });
+    found.push({ specifier: specifier, names });
   }
   return found;
 }
@@ -95,9 +95,9 @@ class Sources {
     const source = this.text(path) ?? '';
     const own =
       /\bexport\s+(?:declare\s+)?(?:default\s+)?(?:async\s+)?(?:function\*?|const|let|var|class|interface|type|enum)\s+(\w+)/g;
-    for (const [, name] of source.matchAll(own)) exported.set(name!, [path]);
+    for (const [, name] of source.matchAll(own)) exported.set(name, [path]);
     for (const [, local] of source.matchAll(/\bexport\s*\{([^}]*)\}\s*;/g))
-      for (const name of local!.split(','))
+      for (const name of local.split(','))
         if (name.trim())
           exported.set(
             name
@@ -109,15 +109,15 @@ class Sources {
     for (const [, clause, specifier] of source.matchAll(
       /\bexport\s+(?:type\s+)?(\*(?:\s+as\s+\w+)?|\{[^}]*\})\s*from\s*['"]([^'"]+)['"]/g,
     )) {
-      const target = this.relative(path, specifier!);
+      const target = this.relative(path, specifier);
       if (!target) continue;
-      const namespace = /^\*\s+as\s+(\w+)/.exec(clause!)?.[1];
+      const namespace = /^\*\s+as\s+(\w+)/.exec(clause)?.[1];
       if (namespace) exported.set(namespace, [target]);
       else if (clause === '*') {
         for (const [name, declared] of this.exportsOf(target))
           if (!exported.has(name)) exported.set(name, declared);
       } else
-        for (const name of clause!.slice(1, -1).split(',')) {
+        for (const name of clause.slice(1, -1).split(',')) {
           const [original, alias] = name
             .trim()
             .replace(/^type\s+/, '')
@@ -180,13 +180,13 @@ function appFixtures(sources: Sources) {
   for (const [, quoted, plain, component] of standalone.matchAll(
     /(?:'([a-z][a-z-]*)'|\b([a-z]\w*)):\s*(\w+)/g,
   ))
-    add((quoted ?? plain)!, component!);
+    add(quoted ?? plain, component);
   // The rest, `fixture === 'name'` or `includes('name')` in App: each name's code runs from where
   // it is named to where the next one is.
   const app = text.slice(Math.max(0, text.indexOf('export default function App')));
   const marks = [...app.matchAll(/(?:includes\(|fixture === )'([a-z][a-z-]*)'/g)];
   marks.forEach((mark, index) =>
-    add(mark[1]!, app.slice(mark.index, marks[index + 1]?.index ?? app.length)),
+    add(mark[1], app.slice(mark.index, marks[index + 1]?.index ?? app.length)),
   );
   return byName;
 }
@@ -202,11 +202,11 @@ function specRoots(sources: Sources, name: string, fixtureModules: Map<string, S
   for (const file of [path, ...helpers]) {
     const text = sources.text(file) ?? '';
     for (const [, fixture] of text.matchAll(/[?&]fixture=([a-z][a-z-]*)/g))
-      for (const module of fixtureModules.get(fixture!) ?? []) roots.add(module);
+      for (const module of fixtureModules.get(fixture) ?? []) roots.add(module);
     for (const [page] of text.matchAll(/\b[A-Z]\w*\.html\b/g)) {
       const html = sources.text(`${fixtures}/${page}`) ?? '';
       for (const [, script] of html.matchAll(/<script[^>]*\bsrc="\/?([^"]+)"/g))
-        if (!/^main\.tsx$/.test(script!)) roots.add(`${fixtures}/${script}`);
+        if (!/^main\.tsx$/.test(script)) roots.add(`${fixtures}/${script}`);
     }
     // Imports of the fixture's modules and of the library, also those of source it writes out to
     // render, as a module in a template string.

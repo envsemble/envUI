@@ -111,7 +111,7 @@ const median = (values: number[]) => {
   const sorted = values.filter((value) => Number.isFinite(value)).sort((a, b) => a - b);
   if (!sorted.length) return NaN;
   const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? sorted[middle]! : (sorted[middle - 1]! + sorted[middle]!) / 2;
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
 };
 
 /** A command line for the shell, which npm's commands need on Windows. */
@@ -633,7 +633,7 @@ async function main() {
     await mkdir(cache, { recursive: true });
     const save = () => writeFile(file, `${JSON.stringify(record, null, 2)}\n`);
     // A first load, not counted, so the server and the browser have started.
-    await retried(() => coverage(pages[only[0]!]!.path, 'desktop'), undefined);
+    await retried(() => coverage(pages[only[0]].path, 'desktop'), undefined);
     const failed = numbers({ audits: {} });
     const nothing = Object.fromEntries(Object.keys(failed).map((key) => [key, NaN])) as Numbers;
     for (const form of chosenForms)
@@ -641,7 +641,7 @@ async function main() {
         const entry = { cold: [] as Numbers[], warm: [] as Numbers[] };
         (record.results[form] ??= {})[name] = entry;
         for (let index = 0; index < runs; index++) {
-          const path = pages[name]!.path;
+          const path = pages[name].path;
           entry.cold.push(await retried(() => lighthouse(path, form, false), nothing));
           entry.warm.push(await retried(() => lighthouse(path, form, true), nothing));
           await save();
@@ -649,7 +649,7 @@ async function main() {
         }
       }
     for (const name of only) {
-      const unused = await retried(() => coverage(pages[name]!.path, 'desktop'), undefined);
+      const unused = await retried(() => coverage(pages[name].path, 'desktop'), undefined);
       if (unused) record.unused[name] = unused;
     }
     await save();

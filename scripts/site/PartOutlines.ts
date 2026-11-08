@@ -75,7 +75,7 @@ export function readChangelogOutline(file = changelogFile) {
     .filter((release) => release.startsWith('### '))
     .map((release) => {
       const [heading, ...body] = release.split('\n');
-      return { heading: heading!, shape: markdownShape(body.join('\n').trim()) };
+      return { heading: heading, shape: markdownShape(body.join('\n').trim()) };
     });
 }
 export const changelogOutlineSources = [changelogFile];
@@ -105,7 +105,7 @@ export function readTokenOutline(file = tokensFile) {
   return tokenGroups.flatMap((group) => {
     const members = tokens.filter((token) => groupOf(token) === group);
     if (!members.length) return [];
-    const colors = members[0]!.type === 'color';
+    const colors = members[0].type === 'color';
     return [
       {
         title: group.title,

@@ -185,7 +185,7 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
         ? []
         : [name, name.replace(/e?s$/, ''), name.replace(/s$/, ''), folder];
       const specsOf = (each: string) =>
-        Object.hasOwn(aliases, each) ? aliases[each]! : exists(each) ? [each] : [];
+        Object.hasOwn(aliases, each) ? aliases[each] : exists(each) ? [each] : [];
       const component = candidates.find((each) => specsOf(each).length);
       const named = component ? specsOf(component) : [];
       for (const spec of named) found = add(spec, `about ${component} (${path})`) || found;
@@ -308,12 +308,12 @@ export function parseNameStatus(text: string): Change[] {
   const fields = text.split('\0').filter((field) => field !== '');
   const entries: Change[] = [];
   for (let index = 0; index < fields.length;) {
-    const status = fields[index++]!;
+    const status = fields[index++];
     if (/^[RC]/.test(status)) {
       const from = fields[index++];
-      const path = fields[index++]!;
-      entries.push({ status: status[0]!, from, path });
-    } else entries.push({ status: status[0]!, path: fields[index++]! });
+      const path = fields[index++];
+      entries.push({ status: status[0], from, path });
+    } else entries.push({ status: status[0], path: fields[index++] });
   }
   return entries;
 }

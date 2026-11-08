@@ -254,7 +254,7 @@ function importedIn(sections: readonly PageSection[]): Set<string> {
       for (const [, list] of (block.kind === 'markdown' ? block.markdown : '').matchAll(
         /^import\s*\{([^}]*)\}\s*from/gm,
       ))
-        for (const name of list!.split(',')) if (name.trim()) imported.add(name.trim());
+        for (const name of list.split(',')) if (name.trim()) imported.add(name.trim());
   return imported;
 }
 
@@ -288,13 +288,13 @@ export function withImport<Section extends PageSection>(
     } as Section;
     return [...sections.slice(0, after + 1), code, ...sections.slice(after + 1)];
   }
-  const [first, ...rest] = sections[index]!.blocks as [
+  const [first, ...rest] = sections[index].blocks as [
     Extract<DocumentationBlock, { kind: 'markdown' }>,
     ...DocumentationBlock[],
   ];
   const markdown = first.markdown.replace(/^## Compose\n+/, `## Compose\n\n${imports}`);
   return sections.with(index, {
-    ...sections[index]!,
+    ...sections[index],
     blocks: [{ ...first, markdown }, ...rest],
   });
 }

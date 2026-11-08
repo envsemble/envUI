@@ -126,20 +126,20 @@ function figureAttributesOf(page: PageReading, name: string, listed: ExampleEntr
   )) {
     if (key === 'caption')
       problems.push(`figure ${name} has a caption on its fence; it goes under examples`);
-    else if (!figureAttributes[role]!.allowed.includes(key!))
+    else if (!figureAttributes[role].allowed.includes(key))
       problems.push(
-        `${role} ${name} takes no ${key}${figureAttributes[role]!.allowed.length ? `; it takes ${figureAttributes[role]!.allowed.join(', ')}` : ''}`,
+        `${role} ${name} takes no ${key}${figureAttributes[role].allowed.length ? `; it takes ${figureAttributes[role].allowed.join(', ')}` : ''}`,
       );
-    else if (figureFlags.has(key!) && value)
+    else if (figureFlags.has(key) && value)
       problems.push(`${role} ${name} has ${key}${value}; write the flag ${key} alone`);
-    else if (!figureFlags.has(key!) && !value)
+    else if (!figureFlags.has(key) && !value)
       problems.push(`${role} ${name} has ${key} without a value; write ${key}="…"`);
-    if (key! in attributes) problems.push(`${role} ${name} repeats ${key}`);
-    attributes[key!] = value ? (quoted ?? plain)!.trim() : true;
+    if (key in attributes) problems.push(`${role} ${name} repeats ${key}`);
+    attributes[key] = value ? (quoted ?? plain).trim() : true;
   }
   delete attributes.caption;
   if (listed.caption) attributes.caption = listed.caption;
-  for (const key of figureAttributes[role]!.required)
+  for (const key of figureAttributes[role].required)
     if (!attributes[key]) problems.push(`${role} ${name} needs a ${key}, one sentence`);
   return attributes;
 }

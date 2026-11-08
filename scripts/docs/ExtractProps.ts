@@ -448,7 +448,7 @@ class ExportReader {
           type,
           optional: (symbol.flags & ts.SymbolFlags.Optional) !== 0,
           absent: isUndefinedOnly(type),
-          origin: declarations.length ? originOf(declarations[0]!) : 'envui',
+          origin: declarations.length ? originOf(declarations[0]) : 'envui',
         };
         if (!byName.has(symbol.name)) byName.set(symbol.name, []);
         byName.get(symbol.name)!.push(property);
@@ -571,9 +571,8 @@ class ExportReader {
       const inside = [...requiredIn].map((index) => properties[index]);
       if (!inside.every((property) => property && !property.optional)) continue;
       const values = inside.map(literalTexts);
-      if (!values.every((members) => members.length === 1 && members[0] === values[0]![0]))
-        continue;
-      const value = values[0]![0]!;
+      if (!values.every((members) => members.length === 1 && members[0] === values[0][0])) continue;
+      const value = values[0][0];
       const outside = properties.filter((_, index) => !requiredIn.has(index));
       if (outside.every((property) => !literalTexts(property).includes(value)))
         return { required: false, requiredWhen: `${code(candidate)} is ${code(value)}` };
@@ -583,8 +582,8 @@ class ExportReader {
     const insideValues = [...requiredIn].map((index) => literalTexts(own[index]));
     const literal = [...requiredIn].every(
       (index, position) =>
-        insideValues[position]!.length > 0 &&
-        insideValues[position]!.length === withoutUndefined(own[index]!.type).length,
+        insideValues[position].length > 0 &&
+        insideValues[position].length === withoutUndefined(own[index]!.type).length,
     );
     const values = new Set(insideValues.flat());
     const selects = own.every((property, index) => {
@@ -628,9 +627,9 @@ class ExportReader {
     if (Node.isSourceFile(declaration)) {
       const parts: string[] = [];
       for (const [partName, [partDeclaration]] of declaration.getExportedDeclarations()) {
-        if (!isRuntime(partDeclaration!)) continue;
+        if (!isRuntime(partDeclaration)) continue;
         parts.push(`${name}.${partName}`);
-        this.describe(`${name}.${partName}`, partDeclaration!, entry);
+        this.describe(`${name}.${partName}`, partDeclaration, entry);
       }
       this.record(name, entry, {
         kind: 'namespace',
@@ -721,7 +720,7 @@ export function extractProps() {
   for (const [file, entry] of entries) {
     const sourceFile = project.getSourceFileOrThrow(resolve(sourceDirectory, file));
     for (const [name, [declaration]] of sourceFile.getExportedDeclarations())
-      if (isRuntime(declaration!)) reader.describe(name, declaration!, entry);
+      if (isRuntime(declaration)) reader.describe(name, declaration, entry);
   }
   const sorted = [...reader.exportsByName].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
   return {

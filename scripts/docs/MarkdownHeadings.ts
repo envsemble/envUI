@@ -26,7 +26,7 @@ export function plainText(tokens: readonly Token[] | undefined): string {
         ? text
         : text.replace(
             /&(amp|lt|gt|quot|#39|apos|nbsp);/g,
-            (_: string, name: string) => entities[name]!,
+            (_: string, name: string) => entities[name],
           );
     })
     .join('');

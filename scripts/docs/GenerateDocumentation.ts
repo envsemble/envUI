@@ -124,7 +124,7 @@ function membersOf(
     parts.find((part) => part.id && part.plain === plain && names(part.text, name))?.id;
   // A guide's component that no heading's text names has no place to lead to, and no entry.
   const placed = members.flatMap((name) => {
-    const entry = props.exports[name]!;
+    const entry = props.exports[name];
     if (!document.sections) {
       const docs = firstNaming(name, false);
       return docs ? [{ name, docs }] : [];

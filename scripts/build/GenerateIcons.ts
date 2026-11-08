@@ -54,7 +54,7 @@ if (
 function toModuleName(name: string) {
   return name
     .split('_')
-    .map((word) => word[0]!.toUpperCase() + word.slice(1))
+    .map((word) => word[0].toUpperCase() + word.slice(1))
     .join('');
 }
 async function readVerifiedGeometry(variant: IconVariant): Promise<Geometry> {
@@ -87,7 +87,7 @@ function renderPaths(paths: string[]) {
 /** The start two single paths share, when it is long enough to be worth writing once. */
 function shareableStart(unfilled: string[], filled: string[]) {
   if (unfilled.length !== 1 || filled.length !== 1) return '';
-  const [a, b] = [unfilled[0]!, filled[0]!];
+  const [a, b] = [unfilled[0], filled[0]];
   let length = 0;
   while (length < a.length && length < b.length && a[length] === b[length]) length += 1;
   return length >= 64 ? a.slice(0, length) : '';
@@ -141,10 +141,10 @@ const iconEntries = manifest.icons.map((icon) => {
 let nextIconIndex = 0;
 async function generateIconModules() {
   while (nextIconIndex < iconEntries.length) {
-    const { module, name, icon } = iconEntries[nextIconIndex++]!;
+    const { module, name, icon } = iconEntries[nextIconIndex++];
     const [unfilled, filled] = await Promise.all([
-      readVerifiedGeometry(icon.variants['0']!),
-      readVerifiedGeometry(icon.variants['1']!),
+      readVerifiedGeometry(icon.variants['0']),
+      readVerifiedGeometry(icon.variants['1']),
     ]);
     writeModule(
       resolve(outputDirectory, module + '.tsx'),

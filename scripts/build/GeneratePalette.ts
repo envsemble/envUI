@@ -163,7 +163,7 @@ export function gradeBand(grade: number) {
 
 /** A hue's grades: every grade, with its in-between ones, white and black only in neutral. */
 export function hueGrades(name: string) {
-  const hue = hues[name]!;
+  const hue = hues[name];
   return [...grades, ...(hue.between ?? [])]
     .filter((grade) => name === 'neutral' || (grade !== 0 && grade !== 100))
     .sort((a, b) => a - b);
@@ -223,10 +223,10 @@ function solve(grade: number, { h, c }: { h: number; c: number }) {
 
 /** Hue and chroma at a grade, interpolated between a hue's seeds. */
 function seedAt(seeds: Seed[], grade: number) {
-  if (grade <= seeds[0]!.grade) return seeds[0]!;
+  if (grade <= seeds[0].grade) return seeds[0];
   if (grade >= seeds.at(-1)!.grade) return seeds.at(-1)!;
   const index = seeds.findIndex((seed) => seed.grade > grade);
-  const [a, b] = [seeds[index - 1]!, seeds[index]!];
+  const [a, b] = [seeds[index - 1], seeds[index]];
   const t = (grade - a.grade) / (b.grade - a.grade);
   const turn = ((((b.h - a.h) % 360) + 540) % 360) - 180;
   return { h: (a.h + turn * t + 360) % 360, c: a.c + (b.c - a.c) * t };
@@ -262,7 +262,7 @@ export function generatePalette() {
       const hex =
         grade === 0 ? '#ffffff' : grade === 100 ? '#000000' : solve(grade, seedAt(seeds, grade));
       const luminance = hexLuminance(hex);
-      palette[name]![gradeKey(grade)] = {
+      palette[name][gradeKey(grade)] = {
         hex,
         oklch: oklchComponents(hex),
         luminance,
@@ -296,7 +296,7 @@ export function paletteDocument(palette = generatePalette()) {
     },
   };
   for (const [name, scale] of Object.entries(palette)) {
-    const group: Record<string, unknown> = { $description: hues[name]!.description };
+    const group: Record<string, unknown> = { $description: hues[name].description };
     for (const [grade, color] of Object.entries(scale))
       group[grade] = {
         $value: { colorSpace: 'oklch', components: color.oklch, hex: color.hex },

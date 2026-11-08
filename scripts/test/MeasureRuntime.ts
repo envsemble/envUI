@@ -83,11 +83,10 @@ const tenth = (value: number) => Math.round(value * 10) / 10;
 function summarize(results: Record<string, number>[]) {
   const summary: Record<string, { median: number; min: number; max: number }> = {};
   for (const key of Object.keys(results[0] ?? {})) {
-    const values = results.map((result) => result[key]!).sort((a, b) => a - b);
+    const values = results.map((result) => result[key]).sort((a, b) => a - b);
     const middle = Math.floor(values.length / 2);
-    const median =
-      values.length % 2 ? values[middle]! : (values[middle - 1]! + values[middle]!) / 2;
-    summary[key] = { median: tenth(median), min: tenth(values[0]!), max: tenth(values.at(-1)!) };
+    const median = values.length % 2 ? values[middle] : (values[middle - 1] + values[middle]) / 2;
+    summary[key] = { median: tenth(median), min: tenth(values[0]), max: tenth(values.at(-1)!) };
   }
   return summary;
 }
@@ -265,7 +264,7 @@ async function metrics(page: Page) {
 
 function difference<T extends Record<string, number>>(after: T, before: T) {
   return Object.fromEntries(
-    Object.entries(after).map(([key, value]) => [key, value - before[key]!]),
+    Object.entries(after).map(([key, value]) => [key, value - before[key]]),
   ) as T;
 }
 
@@ -648,7 +647,7 @@ async function resizeDrawer(browser: Browser, path: string) {
     await mouse('mouseReleased', x + direction * moves * step, y, 0);
     direction = -direction;
     await settle(page, 300);
-    const gaps = record.frames.slice(1).map((time, index) => time - record.frames[index]!);
+    const gaps = record.frames.slice(1).map((time, index) => time - record.frames[index]);
     const frames = Math.max(1, gaps.length);
     const perMove = Math.max(1, record.moves);
     return {

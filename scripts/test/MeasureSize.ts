@@ -102,12 +102,12 @@ async function bundle(source: string, ownCode = false) {
   const key = (path: string) => relative(root, path).replaceAll('\\', '/');
   // What the page loads first: the entry and, transitively, the chunks it imports statically.
   // A lazily imported module is an entry point of its own; the page's is the consumer's source.
-  const entry = Object.keys(outputs).find((path) => outputs[path]!.entryPoint === 'consumer.js')!;
+  const entry = Object.keys(outputs).find((path) => outputs[path].entryPoint === 'consumer.js')!;
   const initial = new Set<string>();
   const visit = (path: string) => {
     if (initial.has(path)) return;
     initial.add(path);
-    for (const { path: imported, kind } of outputs[path]!.imports)
+    for (const { path: imported, kind } of outputs[path].imports)
       if (kind === 'import-statement' && outputs[imported]) visit(imported);
   };
   visit(entry);
@@ -122,7 +122,7 @@ async function bundle(source: string, ownCode = false) {
   // Where the first load's bytes come from: envUI, Base UI, or the rest (Floating UI and helpers).
   const parts = { envUI: 0, baseUI: 0, other: 0 };
   for (const path of initial)
-    for (const [input, { bytesInOutput }] of Object.entries(outputs[path]!.inputs)) {
+    for (const [input, { bytesInOutput }] of Object.entries(outputs[path].inputs)) {
       const file = input.replaceAll('\\', '/');
       if (file.includes('@base-ui/')) parts.baseUI += bytesInOutput;
       else if (file.includes('packages/ui/')) parts.envUI += bytesInOutput;
@@ -132,11 +132,11 @@ async function bundle(source: string, ownCode = false) {
   // The style sheets the first load's envUI modules import, in the order they come, each once.
   const stylesheets: string[] = [];
   for (const path of initial)
-    for (const [input, { bytesInOutput }] of Object.entries(outputs[path]!.inputs)) {
+    for (const [input, { bytesInOutput }] of Object.entries(outputs[path].inputs)) {
       const file = input.replaceAll('\\', '/');
       if (bytesInOutput === 0 || !file.includes('packages/ui/dist/')) continue;
       for (const [, name] of readFileSync(resolve(root, file), 'utf8').matchAll(stylesheetImport))
-        if (!stylesheets.includes(name!)) stylesheets.push(name!);
+        if (!stylesheets.includes(name)) stylesheets.push(name);
     }
   const css = (
     await transform(
