@@ -11,6 +11,7 @@ import {
   resolveVariable,
   spreadsProps,
   staticValue,
+  unwrapExpression,
   walk,
 } from '../utilities.js';
 
@@ -119,22 +120,6 @@ function hasLinkComponentProps(fn, visitorKeys) {
     Boolean(holder.id.typeAnnotation) &&
     namesLinkComponentProps(holder.id.typeAnnotation, visitorKeys)
   );
-}
-
-/**
- * An expression without the TypeScript `as`, `satisfies` and `!` around it, and without the chain
- * that optional chaining wraps around `adapters?.link`.
- */
-function unwrap(expression) {
-  let node = expression;
-  while (
-    node?.type === 'TSAsExpression' ||
-    node?.type === 'TSSatisfiesExpression' ||
-    node?.type === 'TSNonNullExpression' ||
-    node?.type === 'ChainExpression'
-  )
-    node = node.expression;
-  return node;
 }
 
 /** How the message names what was found, such as `a raw <input type="email">`. */
@@ -267,7 +252,7 @@ export default {
 
     /** The object literals an expression stands for, through variables and members. */
     function objectsOf(expression, seen) {
-      const node = unwrap(expression);
+      const node = unwrapExpression(expression);
       if (!node || seen.has(node)) return [];
       seen.add(node);
       if (node.type === 'ObjectExpression') return [node];
@@ -280,7 +265,7 @@ export default {
 
     /** The functions an expression stands for: itself, a wrapped one, a variable's or a member's. */
     function functionsOf(expression, seen = new Set()) {
-      const node = unwrap(expression);
+      const node = unwrapExpression(expression);
       if (!node || seen.has(node)) return [];
       seen.add(node);
       if (isFunction(node)) return [node];

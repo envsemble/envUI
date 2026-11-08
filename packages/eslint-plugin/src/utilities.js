@@ -131,6 +131,23 @@ export function propertyName(property) {
   return undefined;
 }
 
+/**
+ * An expression without what wraps it but leaves its value as it is: the TypeScript `as`,
+ * `satisfies` and `!`, as in `{ … } as const`, and the chain that optional chaining wraps around
+ * `adapters?.link`.
+ */
+export function unwrapExpression(expression) {
+  let node = expression;
+  while (
+    node?.type === 'TSAsExpression' ||
+    node?.type === 'TSSatisfiesExpression' ||
+    node?.type === 'TSNonNullExpression' ||
+    node?.type === 'ChainExpression'
+  )
+    node = node.expression;
+  return node;
+}
+
 /** Whether a node is a function: a declaration, an expression or an arrow function. */
 export function isFunction(node) {
   return (
