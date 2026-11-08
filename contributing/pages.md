@@ -51,7 +51,7 @@ status: beta # alpha, beta, stable or deprecated.
 statuses: # Optional: the exports whose status differs from the page's.
   SearchField: stable
 since: 1.0.0 # The release that added the component, under any earlier name: a released version, or the next.
-category: Forms & selection # The index group the page is listed under.
+category: Forms & selection # The index group the page is listed under, and the family folder of its exports.
 aliases: # Words people and agents search for, including earlier names; at least one.
   - Input
   - text input
