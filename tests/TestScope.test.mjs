@@ -163,9 +163,15 @@ test('a module of the documentation generator runs the specs of the site', () =>
 test('the site runs its specs and live development, with the builds they open', () => {
   const scope = selectScope(['apps/site/src/main.tsx']);
   assert.deepEqual([...scope.specs.keys()].sort(), [
-    'CataloguePages',
+    'CatalogueBanners',
+    'CatalogueComponentPages',
+    'CatalogueFigures',
+    'CatalogueGallery',
+    'CatalogueOverlays',
     'CataloguePlainLanguage',
+    'CatalogueRelated',
     'CatalogueSearch',
+    'CatalogueTilePlayback',
     'DocsPages',
     'LiveDevelopment',
     'SiteFailures',

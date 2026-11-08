@@ -1,4 +1,4 @@
-import { type Page } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 
 /** Helpers the specs of the site share. */
 
@@ -12,3 +12,10 @@ export async function goTo(page: Page, path: string) {
     dispatchEvent(new PopStateEvent('popstate'));
   }, path);
 }
+
+/**
+ * Brings a gallery tile wholly into view, in the middle of the window: a large tile only partly in
+ * view counts as visible to scrollIntoViewIfNeeded, and a pointer aimed at its edge would miss it.
+ */
+export const showTile = (tile: Locator) =>
+  tile.evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
