@@ -4,14 +4,9 @@ import {
   useEffect,
   useRef,
   useState,
-  useSyncExternalStore,
-  type FocusEvent,
-  type KeyboardEvent,
-  type MouseEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
-import { flushSync } from 'react-dom';
 import { IconButton, Tooltip } from '@envsemble/envui';
 import { IconPause } from '@envsemble/envui/icons/Pause';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
@@ -25,154 +20,8 @@ import { pixelTolerance, remeasure } from '../shared/Remeasure';
 import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 import { flag } from '@envui-internal/internal/flag';
 import { useBrowserStandIns } from './BrowserStandIns';
+import { useReaderTakeover } from './ReaderTakeover';
 import { classNames } from '@envui-internal/internal/classNames';
-
-/**
- * The elements a reader can operate in a figure. A stage that has none of them stays a recording.
- */
-const operable =
-  'a[href], button:not(:disabled), input:not(:disabled, [type="hidden"]), select:not(:disabled), textarea:not(:disabled), [contenteditable="true"], [tabindex]:not([tabindex="-1"])';
-
-/**
- * Replays a reader's first click on a recording, once the example is live: a press, and a click, on
- * the element under the pointer.
- */
-function pressAt(x: number, y: number, subject: HTMLElement) {
-  const target = document.elementFromPoint(x, y);
-  if (!target || !subject.contains(target)) return;
-  const init = {
-    bubbles: true,
-    cancelable: true,
-    composed: true,
-    clientX: x,
-    clientY: y,
-    view: window,
-  };
-  const pointer = { ...init, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0 };
-  target.dispatchEvent(new PointerEvent('pointerdown', { ...pointer, buttons: 1 }));
-  const down = target.dispatchEvent(
-    new MouseEvent('mousedown', { ...init, buttons: 1, detail: 1 }),
-  );
-  const focusable = target.closest<HTMLElement>(operable);
-  if (down && focusable && subject.contains(focusable)) focusable.focus({ preventScroll: true });
-  target.dispatchEvent(new PointerEvent('pointerup', pointer));
-  target.dispatchEvent(new MouseEvent('mouseup', { ...init, detail: 1 }));
-  target.dispatchEvent(new MouseEvent('click', { ...init, detail: 1 }));
-}
-
-/**
- * How many figures on the page the reader has taken over. While there is one, the other figures
- * hold still: their virtual pointers' presses would reach the page as a press outside what the
- * reader opened, such as a calendar, and close it.
- */
-let takenOver = 0;
-const takeoverListeners = new Set<() => void>();
-function subscribeTakeovers(listener: () => void) {
-  takeoverListeners.add(listener);
-  return () => {
-    takeoverListeners.delete(listener);
-  };
-}
-function useTakeover(live: boolean) {
-  useEffect(() => {
-    if (!live) return;
-    takenOver++;
-    for (const listener of takeoverListeners) listener();
-    return () => {
-      takenOver--;
-      for (const listener of takeoverListeners) listener();
-    };
-  }, [live]);
-  return useSyncExternalStore(
-    subscribeTakeovers,
-    () => takenOver > 0,
-    () => false,
-  );
-}
-
-/** Whether a press on a stage is on its pause button, which the reader's takeover ignores. */
-const onPause = (event: { target: EventTarget }) =>
-  event.target instanceof Element && Boolean(event.target.closest('.catalogue-motion-pause'));
-
-/**
- * Lets the reader take over a figure's example (MotionStage). Returns whether the example is `live`
- * (the reader's), whether it is `takeable` (it has something to operate and no timeline that sets
- * its props; `countTimeline` counts the timelines), and the stage's event `handlers`. A click on
- * the recording, or the keyboard reaching the stage, makes it live. The keyboard leaving a live
- * example that the reader did nothing with makes it a recording again.
- */
-function useReaderTakeover(stage: RefObject<HTMLDivElement | null>, subject: HTMLElement | null) {
-  // Whether the reader has the example, and whether they did anything with it.
-  const [live, setLive] = useState(false);
-  const touched = useRef(false);
-  const timelines = useRef(0);
-  const [countTimeline] = useState(() => () => {
-    timelines.current++;
-    return () => {
-      timelines.current--;
-    };
-  });
-  const [takeable, setTakeable] = useState(false);
-  useEffect(() => {
-    if (!subject || live) return;
-    const check = () =>
-      setTakeable(timelines.current === 0 && Boolean(subject.querySelector(operable)));
-    check();
-    // An example that loads late is checked again a moment later.
-    const timer = setTimeout(check, 1000);
-    return () => clearTimeout(timer);
-  }, [subject, live]);
-  const goLive = () => {
-    touched.current = false;
-    flushSync(() => setLive(true));
-  };
-  const recordingHandlers = takeable &&
-    !live && {
-      // A click on the recording, by mouse or by touch, reaches the stage, because its content is
-      // inert: the example goes live and the click is replayed on what is under it.
-      onClick: (event: MouseEvent) => {
-        if (onPause(event) || !event.nativeEvent.isTrusted || !subject) return;
-        goLive();
-        touched.current = true;
-        pressAt(event.clientX, event.clientY, subject);
-      },
-      // The keyboard reaching the stage: the example goes live and focus moves into it, to its
-      // first stop, or to its last when the keyboard came back from after it.
-      onFocus: (event: FocusEvent) => {
-        const element = stage.current;
-        if (event.target !== element || !element.matches(':focus-visible') || !subject) return;
-        const back =
-          event.relatedTarget instanceof Node &&
-          Boolean(element.compareDocumentPosition(event.relatedTarget) & 4);
-        goLive();
-        const stops = [...subject.querySelectorAll<HTMLElement>(operable)].filter(
-          (stop) => stop.tabIndex >= 0 && stop.getClientRects().length > 0,
-        );
-        (back ? stops.at(-1) : stops[0])?.focus();
-      },
-    };
-  const liveHandlers = live && {
-    onPointerDown: (event: { target: EventTarget }) => {
-      if (!onPause(event)) touched.current = true;
-    },
-    onKeyDown: (event: KeyboardEvent) => {
-      if (!['Tab', 'Shift'].includes(event.key) && !onPause(event)) touched.current = true;
-    },
-    // The keyboard leaving an example the reader did nothing with: the recording plays again.
-    onBlur: (event: FocusEvent) => {
-      const next = event.relatedTarget;
-      if (touched.current || (next instanceof Node && stage.current?.contains(next))) return;
-      setLive(false);
-    },
-  };
-  return {
-    live,
-    setLive,
-    takeable,
-    countTimeline,
-    handlers: { ...recordingHandlers, ...liveHandlers },
-  };
-}
 
 /**
  * Whether an animated figure plays the example of a do or don't figure. Its stage is then that
@@ -202,7 +51,7 @@ export const VerdictMotion = createContext<false | 'square' | 'wide'>(false);
  * on what it was on. Its overlays then open as they do in an application. The play button plays it
  * again, and so does the keyboard leaving it untouched. A figure whose timeline sets its props, or
  * that has nothing to operate, stays a recording. While the reader has one figure, the page's other
- * figures hold still (useTakeover), so their pointers' presses never close what the reader opened.
+ * figures hold still (ReaderTakeover.ts), so their pointers' presses never close what the reader opened.
  *
  * While it plays, its overlays, such as a menu, a dialog or a tooltip, open inside the stage, as a
  * tile's do (StageOverlays): a dialog's backdrop covers the stage, not the page, and nothing leaves
@@ -236,7 +85,10 @@ export function MotionStage({
   const stage = useRef<HTMLDivElement>(null);
   const [subject, setSubject] = useState<HTMLDivElement | null>(null);
   const inView = useInView(stage);
-  const { live, setLive, takeable, countTimeline, handlers } = useReaderTakeover(stage, subject);
+  const { live, setLive, takeable, countTimeline, held, handlers } = useReaderTakeover(
+    stage,
+    subject,
+  );
   // On a do or don't figure's square, the subject keeps its tallest height in a box that is drawn
   // smaller where it needs more room than the square (useVerdictFit), so the stage doesn't grow.
   const square = verdict === 'square';
@@ -245,9 +97,8 @@ export function MotionStage({
   useVerdictFit(stage, box, { on: square, shape: 'square' });
   useTallest(square ? tallest : stage, height);
   useThemeFade(subject);
-  // While the reader has taken over another figure, this one holds still, unless the reader plays
-  // it.
-  const held = useTakeover(live);
+  // While the reader has taken over another figure, this one holds still (held), unless the reader
+  // plays it.
   const paused = live || (own && own.over === motionPaused ? own.paused : held || motionPaused);
   const action = paused ? `Play ${label}` : `Pause ${label}`;
   // Live, the example starts from its start, as the reader would find it in an application.

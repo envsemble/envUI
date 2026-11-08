@@ -216,6 +216,21 @@ test('a click on an animated figure hands its example to the reader, the click g
   await expect(stage.locator('.catalogue-motion-subject')).toHaveAttribute('inert');
 });
 
+test('an animated figure whose example loads late can still be taken over', async ({ page }) => {
+  // The example inside a width sweep's stage arrives well after the stage has mounted.
+  await page.route('**/examples/button/NarrowActions.tsx*', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await route.continue();
+  });
+  await page.goto(`${siteDevUrl}/components/button`);
+  const stage = page.locator('[data-example="NarrowActions"] .catalogue-motion-stage');
+  await stage.scrollIntoViewIfNeeded();
+  await expect(stage.locator('button:not(.catalogue-motion-pause)').first()).toBeAttached({
+    timeout: 10_000,
+  });
+  await expect(stage).toHaveAttribute('tabindex', '0');
+});
+
 test('the keyboard reaching an animated figure takes it over, and leaving it untouched plays it again', async ({
   page,
 }) => {
