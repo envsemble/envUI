@@ -29,6 +29,7 @@ import {
   OverlayTheme,
 } from './internal/DialogParts.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import { useOpenState } from '../internal/useOpenState.js';
 import '../styles/Base.css';
 import '../styles/Dialog.css';
 
@@ -162,15 +163,10 @@ export function ConfirmDialog({
   // An alert dialog is always modal; a contained one is a dialog that isn't, with the alert
   // dialog's role, and a press outside still doesn't close it.
   const Root = portal.contained ? ContainedRoot : BaseAlertDialog.Root;
-  const [ownOpen, setOwnOpen] = useState(defaultOpen);
-  const isOpen = open ?? ownOpen;
+  const [isOpen, change] = useOpenState({ open, defaultOpen, onOpenChange });
   const [pending, setPending] = useState(false);
   const cancel = useRef<HTMLButtonElement>(null);
   const confirm = useRef<HTMLButtonElement>(null);
-  const change = (next: boolean, details: DialogOpenChangeDetails) => {
-    if (open === undefined) setOwnOpen(next);
-    onOpenChange?.(next, details);
-  };
   // Set before onConfirm runs, so a second press in the same tick or during the closing animation
   // doesn't run the action again; cleared when it fails, when the dialog opens again, and when it
   // succeeds but the application keeps a controlled dialog open.
