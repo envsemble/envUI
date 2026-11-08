@@ -97,3 +97,28 @@ export function useVerdictFit(
     };
   }, [stage, box, on, shape]);
 }
+
+/**
+ * Keeps a do or don't figure's example clear of its caption, which lies over the top of its stage:
+ * the caption's height, as `--site-verdict-top` on the figure, which the stage's box adds to its
+ * room at the top (Verdicts.css), and measured afresh as the caption wraps.
+ */
+export function useCaptionRoom(
+  figure: RefObject<HTMLElement | null>,
+  caption: RefObject<HTMLElement | null>,
+) {
+  useLayoutEffect(() => {
+    const figureElement = figure.current;
+    const captionElement = caption.current;
+    if (!figureElement || !captionElement || typeof ResizeObserver === 'undefined') return;
+    const measure = () =>
+      figureElement.style.setProperty('--site-verdict-top', `${captionElement.offsetHeight}px`);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(captionElement);
+    return () => {
+      observer.disconnect();
+      figureElement.style.removeProperty('--site-verdict-top');
+    };
+  }, [figure, caption]);
+}

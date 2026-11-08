@@ -119,30 +119,34 @@ test('a component page shows plain sections, equal cells and the parts of its an
     'Accessibility',
   ]);
   await expect(page.locator('.site-figures .env-message')).toHaveCount(0);
-  // Do and don't figures are cells as a gallery's are: a square-cornered stage with no frame, and
-  // under it their mark with their one sentence beside it, and the code switch on the row below.
+  // Do and don't figures are cells as a gallery's are: a square-cornered stage with no frame, its
+  // tag at its top start with the sentence beside or under it, the example clear of them, and the
+  // code switch under the whole cell.
   const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
   await expect(verdict.locator('.site-verdict-caption .site-verdict-mark')).toHaveText('Do');
   await expect(verdict.locator('details summary')).toHaveText('Show code, OnePrimaryAction.tsx');
   const cell = await verdict.evaluate((figure) => {
-    const stage = getComputedStyle(figure.querySelector('.site-verdict-stage')!);
-    const box = (selector: string) => figure.querySelector(selector)!.getBoundingClientRect();
-    const [mark, sentence, caption, code] = [
-      '.site-verdict-mark',
-      '.site-verdict-sentence',
-      '.site-verdict-caption',
-      'details summary',
+    const stage = figure.querySelector('.site-verdict-stage')!;
+    const box = (element: Element) => element.getBoundingClientRect();
+    const [cellBox, mark, caption, example, code] = [
+      stage,
+      figure.querySelector('.site-verdict-mark')!,
+      figure.querySelector('.site-verdict-caption')!,
+      stage.querySelector('.site-verdict-fit > *')!,
+      figure.querySelector('details summary')!,
     ].map(box);
     return {
-      corner: stage.borderTopLeftRadius,
-      shadow: stage.boxShadow,
-      // The sentence starts on the mark's line, after it.
-      beside: Math.abs(sentence.top - mark.top) < mark.height && sentence.left > mark.right,
-      // The switch alone below the caption, from its start.
-      below: code.top >= caption.bottom - 1 && Math.abs(code.left - caption.left) < 1,
+      corner: getComputedStyle(stage).borderTopLeftRadius,
+      shadow: getComputedStyle(stage).boxShadow,
+      // The tag at the cell's top start, inside it.
+      tag: mark.top - cellBox.top < 24 && mark.left - cellBox.left < 24 && mark.top >= cellBox.top,
+      // The example below the tag and its sentence.
+      clear: example.top >= caption.bottom - 1,
+      // The switch under the whole cell.
+      below: code.top >= cellBox.bottom - 1,
     };
   });
-  expect(cell).toEqual({ corner: '0px', shadow: 'none', beside: true, below: true });
+  expect(cell).toEqual({ corner: '0px', shadow: 'none', tag: true, clear: true, below: true });
   // When to use is a guidance list, marked with sparks, where a component named at an item's end
   // follows it after a muted dot: the Button family's own page, so not a link.
   const useWhen = page.locator('.site-when .site-guidance li');
