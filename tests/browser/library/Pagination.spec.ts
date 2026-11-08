@@ -1,7 +1,7 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const fixture = `${fixtureUrl}/?fixture=paginations`;
+const fixture = `${fixtureUrl}/?fixture=pagination`;
 
 /** The range text and whether each button can be pressed. */
 async function state(pager: Locator) {

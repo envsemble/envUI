@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import { Button, Dialog, TableOfContents } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 const tall = { blockSize: '40rem', margin: 0 };
 const short = { blockSize: '3rem', margin: 0 };
 
@@ -10,7 +12,7 @@ const short = { blockSize: '3rem', margin: 0 };
  * at half its size; and a modal dialog that adds a section while the page behind it is hidden.
  * Mounted with ?fixture=table-of-contents.
  */
-export function TableOfContentsFixture() {
+export default function TableOfContentsFixture() {
   const article = useRef<HTMLElement>(null);
   const [extra, setExtra] = useState(false);
   // Renders the review's sections anew, the same ids on new elements, as a page that renders again.

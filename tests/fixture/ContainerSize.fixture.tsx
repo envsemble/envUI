@@ -1,8 +1,10 @@
 import { useRef, useState } from 'react';
 import { Button, Column, useContainerSize } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 /** A box whose width the test changes, with its content and border sizes, and one in vertical text. */
-export function ContainerSizeFixture() {
+export default function ContainerSizeFixture() {
   const [width, setWidth] = useState(300);
   const box = useRef<HTMLDivElement>(null);
   const content = useContainerSize(box);

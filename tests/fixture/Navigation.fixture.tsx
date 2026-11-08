@@ -23,6 +23,8 @@ import { IconSend } from '@envsemble/envui/icons/Send';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { IconStar } from '@envsemble/envui/icons/Star';
 
+export const themes = true;
+
 /** A router's link: it marks the anchors it renders, so a test sees that destinations use it. */
 function RouterLink(props: ComponentPropsWithRef<'a'> & { href: string }) {
   return <a {...props} data-router-link="" />;
@@ -42,7 +44,7 @@ function useDestinations(start: string) {
  * NavigationBar, NavigationRail and NavigationDrawer over the same destinations, in both themes, mounted with
  * ?fixture=navigation: icon fill, counts, groups, the NavigationBar's More menu, landmark names and routing.
  */
-export function NavigationFixture({ theme }: { theme: ColorScheme }) {
+export default function NavigationFixture({ theme }: { theme: ColorScheme }) {
   const icons = useDestinations('Home');
   const mail = useDestinations('Inbox');
   const many = useDestinations('Labels');

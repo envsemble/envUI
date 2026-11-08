@@ -18,7 +18,7 @@ const heights = {
 } as const;
 
 async function openSection(page: Page, section: string, theme = 'light') {
-  await page.goto(`${fixtureUrl}/?fixture=density&section=${section}&theme=${theme}`);
+  await page.goto(`${fixtureUrl}/?fixture=scale&section=${section}&theme=${theme}`);
   await expect(page.locator(`[data-density-section="${section}"]`)).toBeVisible();
   await settle(page);
 }
@@ -168,7 +168,7 @@ for (const touch of [false, true])
   }) => {
     const context = await browser.newContext({ hasTouch: touch });
     const page = await context.newPage();
-    await page.goto(`${fixtureUrl}/?fixture=density&section=sizes&scale=system`);
+    await page.goto(`${fixtureUrl}/?fixture=scale&section=sizes&scale=system`);
     expect(await page.evaluate(() => matchMedia('(pointer: fine)').matches)).toBe(!touch);
     const rowHeight = (locator: Locator) =>
       locator.evaluate((element) => getComputedStyle(element).getPropertyValue('--env-row-height'));

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Accordion, Button, Column, Theme } from '@envsemble/envui';
 
-/** Single, multiple, controlled and skeleton accordions, mounted with ?fixture=accordions. */
-export function AccordionsFixture() {
+export const mount = 'standalone';
+
+/** Single, multiple, controlled and skeleton accordions, mounted with ?fixture=accordion. */
+export default function AccordionFixture() {
   const [open, setOpen] = useState<string[]>([]);
   const [changes, setChanges] = useState<string[]>([]);
   return (

@@ -24,6 +24,8 @@ import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
+export const themes = true;
+
 /** A panel with a chat, whose messages the application adds, and which it can rewind to the start. */
 type FixturePanel = PanelDockPanel & { messages?: number; rewinds?: number };
 
@@ -52,7 +54,7 @@ const initialPanels: FixturePanel[] = [
 const extraTitles = ['Roadmap', 'Release checklist', 'Interview notes', 'Design review'];
 
 /** Panels over a page in a positioned frame, with the application's own state and shortcuts. */
-export function PanelDockFixture({ theme }: { theme: ColorScheme }) {
+export default function PanelDockFixture({ theme }: { theme: ColorScheme }) {
   const [panels, setPanels] = useState(initialPanels);
   const [stacked, setStacked] = useState(false);
   const [log, setLog] = useState<string[]>([]);

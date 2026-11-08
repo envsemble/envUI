@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Dialog, DialogClose, ToastProvider, useToast } from '@envsemble/envui';
 
-export function ToastTriggers() {
+function ToastTriggers() {
   const toast = useToast();
   const [actionCount, setActionCount] = useState(0);
   return (
@@ -136,7 +136,7 @@ function MountNotice() {
   );
 }
 
-export function StrictToastFixture() {
+function StrictToastFixture() {
   const [stress, setStress] = useState(false);
   return (
     <>
@@ -146,6 +146,18 @@ export function StrictToastFixture() {
           <MountNotice />
         </ToastProvider>
       )}
+    </>
+  );
+}
+
+/** Toast triggers under a provider, and a provider mounted later in strict mode. */
+export default function ToastFixture() {
+  return (
+    <>
+      <ToastProvider>
+        <ToastTriggers />
+      </ToastProvider>
+      <StrictToastFixture />
     </>
   );
 }

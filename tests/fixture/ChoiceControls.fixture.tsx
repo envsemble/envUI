@@ -1,13 +1,15 @@
 import { useRef, useState } from 'react';
 import { Checkbox, Radio, RadioGroup, Column, Switch } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 /**
  * Checkbox, Switch and Radio with a class, a style and a ref each, for
  * tests/browser/library/Checkbox.spec.ts, Switch.spec.ts and Radio.spec.ts: the class and the style reach
  * the root, the label around the control; the ref and the other native props reach the input. A
  * checkbox without a visible label shows its hit area.
  */
-export function ChoiceControlsFixture() {
+export default function ChoiceControlsFixture() {
   const checkbox = useRef<HTMLInputElement>(null);
   const toggle = useRef<HTMLInputElement>(null);
   const radio = useRef<HTMLInputElement>(null);

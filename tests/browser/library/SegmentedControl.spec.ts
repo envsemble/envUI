@@ -4,7 +4,7 @@ import { fixtureUrl } from '../helpers/Servers';
 test('segmented controls choose one option with the pointer and arrow keys', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto(`${fixtureUrl}/?fixture=segments`);
+  await page.goto(`${fixtureUrl}/?fixture=segmented-control`);
   for (const theme of ['light', 'dark']) {
     const group = page.getByRole('radiogroup', { name: `Work items ${theme}` });
     const value = page.getByTestId(`segments-value-${theme}`);
@@ -76,7 +76,7 @@ test('a full-width control splits its container evenly and cuts long labels shor
   page,
 }) => {
   await page.clock.install();
-  await page.goto(`${fixtureUrl}/?fixture=segments`);
+  await page.goto(`${fixtureUrl}/?fixture=segmented-control`);
   const narrow = page.getByTestId('segments-narrow-light');
   const control = narrow.getByRole('radiogroup', { name: 'Assignments light' });
   const segments = control.getByRole('radio');
@@ -145,7 +145,7 @@ test('on touch screens a full-width label too long for its share wraps, as no to
     viewport: { width: 1024, height: 900 },
   });
   const page = await context.newPage();
-  await page.goto(`${fixtureUrl}/?fixture=segments`);
+  await page.goto(`${fixtureUrl}/?fixture=segmented-control`);
   expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
   const narrow = page.getByTestId('segments-narrow-light');
   const control = narrow.getByRole('radiogroup', { name: 'Assignments light' });

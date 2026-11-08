@@ -14,7 +14,7 @@ import {
 } from '@envsemble/envui';
 import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
-export function LayoutFixture() {
+export default function LayoutFixture() {
   const [cardActivations, setCardActivations] = useState(0);
   return (
     <>

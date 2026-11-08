@@ -524,7 +524,7 @@ test.describe('density', () => {
   for (const { section, theme } of densityShots) {
     test(`${section} (${theme})`, async ({ page }) => {
       await page.clock.setFixedTime(now);
-      await page.goto(`${fixtureUrl}/?fixture=density&section=${section}&theme=${theme}`);
+      await page.goto(`${fixtureUrl}/?fixture=scale&section=${section}&theme=${theme}`);
       const specimen = page.locator(`[data-density-section="${section}"]`);
       await specimen.waitFor();
       await expect(specimen).not.toContainText('Unknown density section');

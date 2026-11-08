@@ -10,9 +10,11 @@ import {
 } from '@envsemble/envui';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 
+export const themes = true;
+
 const tones: BadgeTone[] = ['neutral', 'primary', 'accent', 'success', 'warning', 'danger', 'done'];
 
-export function BadgesFixture({ theme }: { theme: ColorScheme }) {
+export default function BadgeFixture({ theme }: { theme: ColorScheme }) {
   return (
     <Theme theme={theme} data-testid={`badges-${theme}`} className="fixture-section">
       {(['canvas', 'pane', 'row'] as const).map((surface) => (

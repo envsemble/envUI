@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, DropZone, Text, Theme, type ColorScheme } from '@envsemble/envui';
 
+export const themes = true;
+
 const names = (files: File[]) => files.map((file) => file.name).join(' ');
 
 /**
@@ -59,7 +61,7 @@ function AvatarPicker({ theme }: { theme: ColorScheme }) {
   );
 }
 
-export function DropZonesFixture({ theme }: { theme: ColorScheme }) {
+export default function DropZoneFixture({ theme }: { theme: ColorScheme }) {
   const [taken, setTaken] = useState('');
   const [rejected, setRejected] = useState('');
   const [documents, setDocuments] = useState('');

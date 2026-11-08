@@ -5,7 +5,9 @@ import { IconCheck } from '@envsemble/envui/icons/Check';
 import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
-export function ButtonGroupsFixture({ theme }: { theme: ColorScheme }) {
+export const themes = true;
+
+export default function ButtonGroupFixture({ theme }: { theme: ColorScheme }) {
   const [activations, setActivations] = useState(0);
   const [ends, setEnds] = useState(true);
   return (

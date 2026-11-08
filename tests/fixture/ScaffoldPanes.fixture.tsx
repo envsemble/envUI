@@ -17,6 +17,8 @@ import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
+export const mount = 'standalone';
+
 const destinations: Destination[] = [
   { label: 'Home', icon: <IconHome />, href: '#home' },
   { label: 'Inbox', icon: <IconInbox />, href: '#inbox', current: true },
@@ -30,7 +32,7 @@ const destinations: Destination[] = [
  * header whose content is supporting Panes. The main pane is a long list of messages, each a
  * button, and the supporting pane, a sheet below expanded, holds a message's details.
  */
-export function ScaffoldPanesFixture() {
+export default function ScaffoldPanesFixture() {
   const [open, setOpen] = useState(false);
   return (
     <Scaffold

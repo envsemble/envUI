@@ -293,7 +293,7 @@ test.describe('DocumentTabs', () => {
     'in right-to-left text the arrow keys and the wheel run toward the end',
     { tag: '@engines' },
     async ({ page }) => {
-      await page.goto(`${fixtureUrl}/?fixture=rtl-document-tabs`);
+      await page.goto(`${fixtureUrl}/?fixture=document-tabs-rtl`);
       const strip = page.getByRole('tablist', { name: 'Right-to-left documents' });
       const roadmap = strip.getByRole('tab', { name: 'Roadmap.md', exact: true });
       const decisions = strip.getByRole('tab', { name: 'Decisions.md', exact: true });

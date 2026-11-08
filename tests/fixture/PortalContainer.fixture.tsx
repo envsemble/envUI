@@ -17,6 +17,8 @@ import {
 } from '@envsemble/envui';
 import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 
+export const mount = 'standalone';
+
 /** A toast shown as the preview mounts, kept until it is dismissed. */
 function SavedNotice() {
   const toast = useToast();
@@ -45,7 +47,7 @@ function NotifyButton() {
  * seventh a date picker, closed.
  * The page is taller than the window, so its scroll can be checked.
  */
-export function PortalContainersFixture() {
+export default function PortalContainerFixture() {
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   const [dialogLayer, setDialogLayer] = useState<HTMLDivElement | null>(null);
   const [comboboxLayer, setComboboxLayer] = useState<HTMLDivElement | null>(null);

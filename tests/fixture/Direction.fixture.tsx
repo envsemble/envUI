@@ -17,6 +17,8 @@ import { IconFormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
 import { ResizeHandle } from '../../packages/ui/src/internal/ResizeHandle.js';
 import { useRovingFocus } from '../../packages/ui/src/internal/useRovingFocus.js';
 
+export const mount = 'standalone';
+
 const cells = Array.from({ length: 7 }, (_, index) => `${index + 1}`);
 
 /**
@@ -96,7 +98,7 @@ function BaseDirectionProbe({ testId }: { testId: string }) {
  * EnvUIProvider's dir, mounted with ?fixture=direction; a region whose dir attribute changes; and
  * what Base UI's parts read inside a toolbar.
  */
-export function DirectionFixture() {
+export default function DirectionFixture() {
   return (
     <>
       {/* The test switches this region's dir while focus stays in its toolbar. */}

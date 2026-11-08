@@ -33,11 +33,10 @@ async function geometry(group: Locator) {
 }
 
 test('mixed buttons connect in rows and columns with variant outer corners', async ({ page }) => {
-  // This composition check retains the shared host's intrinsic grid sizing.
-  // The focused fixture is used below for independent interaction checks.
-  await page.goto(fixtureUrl);
-  // The narrow width still fits both groups on one line: the host's column used to be held wider
-  // than a phone by a static toast, and a group squeezed below its content wraps its labels.
+  // The groups in the host page's grid, sized by their content.
+  await page.goto(`${fixtureUrl}/?fixture=button-group`);
+  // A phone's width still fits both groups on one line: a group squeezed below its content would
+  // wrap its labels.
   for (const width of [1440, 480]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const theme of ['light', 'dark']) {
@@ -115,7 +114,7 @@ test('mixed buttons connect in rows and columns with variant outer corners', asy
 test('single, hidden and removed buttons retain normal corners and RTL follows the row', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=button-groups`);
+  await page.goto(`${fixtureUrl}/?fixture=button-group`);
   const scope = page.getByTestId('button-groups-light');
   const standaloneRadius = await scope
     .getByTestId('standalone')
@@ -155,7 +154,7 @@ test('grouped actions preserve native focus, activation, links and disabled beha
 }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto(`${fixtureUrl}/?fixture=button-groups`);
+  await page.goto(`${fixtureUrl}/?fixture=button-group`);
   const scope = page.getByTestId('button-groups-light');
   const action = scope.getByRole('button', { name: 'Native action' });
   await action.focus();
@@ -184,7 +183,7 @@ test('grouped actions preserve native focus, activation, links and disabled beha
 test('narrow groups wrap labels and scale their shared corners with text size', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=button-groups`);
+  await page.goto(`${fixtureUrl}/?fixture=button-group`);
   const scope = page.getByTestId('button-groups-light');
   const row = scope.getByTestId('horizontal');
   await page.evaluate(() => {
@@ -208,7 +207,7 @@ test('narrow groups wrap labels and scale their shared corners with text size', 
 test('a full-width group fills its container, where its labelled button takes the room', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=button-groups`);
+  await page.goto(`${fixtureUrl}/?fixture=button-group`);
   for (const theme of ['light', 'dark']) {
     const sidebar = page.getByTestId(`button-groups-${theme}`).getByTestId('sidebar');
     const row = sidebar.getByRole('group', { name: 'Start a document' });

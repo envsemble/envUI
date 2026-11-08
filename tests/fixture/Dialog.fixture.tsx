@@ -2,7 +2,8 @@ import { useRef, useState } from 'react';
 import { Theme, Dialog, Button, TextField, Select, Sheet, Text } from '@envsemble/envui';
 import { dialogOptions } from './SelectOptions.fixture.js';
 
-export function DialogFixture() {
+/** A dialog in a nested dark theme, which its portal keeps. */
+function DarkDialog() {
   const [open, setOpen] = useState(false);
   const firstField = useRef<HTMLInputElement>(null);
   return (
@@ -26,7 +27,8 @@ export function DialogFixture() {
   );
 }
 
-export function DialogVariantsFixture() {
+/** Dialogs and sheets of each size and placement. */
+function DialogVariants() {
   return (
     <Theme theme="light" className="fixture-section">
       <div className="fixture-actions">
@@ -61,5 +63,14 @@ export function DialogVariantsFixture() {
         </Sheet>
       </div>
     </Theme>
+  );
+}
+
+export default function DialogFixture() {
+  return (
+    <>
+      <DarkDialog />
+      <DialogVariants />
+    </>
   );
 }

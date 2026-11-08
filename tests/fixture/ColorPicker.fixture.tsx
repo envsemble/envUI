@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Checkbox, Column, Row, Theme } from '@envsemble/envui';
 import { ColorPicker, ColorPickerButton, ColorSwatch } from '@envsemble/envui/color';
 
-export function ColorPickerFixture() {
+export default function ColorPickerFixture() {
   const [color, setColor] = useState('#1a73e8');
   const [changes, setChanges] = useState(0);
   const [last, setLast] = useState('');

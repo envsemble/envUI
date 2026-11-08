@@ -23,7 +23,7 @@ const openPopup = (page: Page) => page.locator('.env-date-picker-popup[data-open
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(today);
-  await page.goto(`${fixtureUrl}/?fixture=month-pickers`);
+  await page.goto(`${fixtureUrl}/?fixture=month-picker`);
 });
 
 test('the field shows its month in the locale and the grid follows the calendar keys', async ({

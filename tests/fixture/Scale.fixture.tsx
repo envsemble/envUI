@@ -51,10 +51,12 @@ import {
   type DensitySection,
 } from './ScaleSections.fixture.js';
 
+export const mount = 'standalone';
+
 /*
  * The same content in the comfortable and the compact scale, one above the other. The visual
  * baseline captures each section in both themes, and the browser tests measure the sizes section;
- * open one with ?fixture=density&section=<name>&theme=<light|dark>.
+ * open one with ?fixture=scale&section=<name>&theme=<light|dark>.
  */
 
 const plans = [
@@ -645,7 +647,7 @@ function ScaledSection({ name, theme }: { name: string; theme: ColorScheme }) {
   );
 }
 
-export function DensityFixture() {
+export default function ScaleFixture() {
   const query = new URLSearchParams(location.search);
   const section = query.get('section');
   const theme = query.get('theme');

@@ -10,6 +10,8 @@ import { FeedbackSheet } from './ContactSheetFeedback.fixture.js';
 import { OverlaysSheet } from './ContactSheetOverlays.fixture.js';
 import { LayoutSheet } from './ContactSheetLayout.fixture.js';
 
+export const mount = 'standalone';
+
 /** The catalogue's component groups (docs/components/*.md `category`), by their URL name. */
 const contactSheetFamilies: Record<string, { title: string; render: () => ReactNode }> = {
   actions: { title: 'Actions', render: ActionsSheet },
@@ -26,7 +28,7 @@ const contactSheetFamilies: Record<string, { title: string; render: () => ReactN
  * A family's contact sheet (ContactSheetParts.fixture.tsx says how its states are shown), in the theme
  * and scale the URL names: `?fixture=contact-sheet&family=actions&theme=dark&scale=system`.
  */
-export function ContactSheetFixture() {
+export default function ContactSheetFixture() {
   const params = new URLSearchParams(location.search);
   const name = params.get('family') ?? 'actions';
   const theme = params.get('theme') === 'dark' ? 'dark' : 'light';

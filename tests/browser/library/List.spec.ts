@@ -1,7 +1,7 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const lists = `${fixtureUrl}/?fixture=lists`;
+const lists = `${fixtureUrl}/?fixture=list`;
 
 /** The live regions the first reorderable list announces through, one at a time. */
 const announcer = (page: Page) => page.locator('.env-list-announcer').first();

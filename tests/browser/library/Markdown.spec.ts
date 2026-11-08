@@ -1,7 +1,7 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const fixture = `${fixtureUrl}/?fixture=markdown-tables`;
+const fixture = `${fixtureUrl}/?fixture=markdown`;
 
 /** Expects the elements a locator finds to have these accessible names, in order. */
 async function expectNames(locator: Locator, names: string[]) {

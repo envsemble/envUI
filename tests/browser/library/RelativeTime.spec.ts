@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const fixture = `${fixtureUrl}/?fixture=relative-times`;
+const fixture = `${fixtureUrl}/?fixture=relative-time`;
 const opened = new Date('2026-10-14T09:00:00Z').getTime();
 
 test.use({ locale: 'en-US', timezoneId: 'UTC' });

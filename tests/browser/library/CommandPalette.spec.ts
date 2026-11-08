@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const paletteFixture = `${fixtureUrl}/?fixture=palette`;
+const paletteFixture = `${fixtureUrl}/?fixture=command-palette`;
 
 function highlighted(page: Page) {
   return page

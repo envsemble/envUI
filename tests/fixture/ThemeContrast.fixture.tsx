@@ -14,8 +14,6 @@ import {
   Select,
   Text,
   Theme,
-  ThemePreferenceProvider,
-  ThemeToggle,
   ToastProvider,
   Tooltip,
   useToast,
@@ -23,6 +21,8 @@ import {
   type ColorScheme,
   Sheet,
 } from '@envsemble/envui';
+
+export const mount = 'root';
 
 const statusOptions = [
   { value: 'open', label: 'Open' },
@@ -40,7 +40,7 @@ const commands = [{ id: 'rename', label: 'Rename' }];
  * hover card, a tooltip, dialogs (centered and at the edge), the command palette and a toast. Toasts
  * take the theme of their provider, so each boundary has one.
  */
-function Popups({ name }: { name: string }) {
+export function Popups({ name }: { name: string }) {
   return (
     <ToastProvider>
       <PopupTriggers name={name} />
@@ -143,9 +143,9 @@ function Boundary({
 
 /**
  * Theme boundaries of each contrast, at the top of the page with no Theme around them, so the
- * boundaries without a contrast take the default. Mounted with ?fixture=theme-contrast.
+ * boundaries without a contrast take the default.
  */
-export function ThemeContrastFixture() {
+export default function ThemeContrastFixture() {
   return (
     <>
       <Boundary name="high" theme="light" contrast="high" />
@@ -158,91 +158,6 @@ export function ThemeContrastFixture() {
       <Theme theme="light" contrast="standard">
         <Boundary name="nested standard" theme="dark" />
       </Theme>
-    </>
-  );
-}
-
-/** A provider that sets the application's contrast. Mounted with ?fixture=theme-contrast-provider. */
-export function ThemeContrastProviderFixture() {
-  const [contrast, setContrast] = useState<ThemeContrast>('high');
-  return (
-    <ThemePreferenceProvider
-      storageKey="fixture-contrast-theme"
-      defaultPreference="dark"
-      contrast={contrast}
-      className="fixture-main"
-    >
-      <div data-testid="contrast-provider">
-        <Popups name="provider" />
-        <Button onClick={() => setContrast('system')}>Follow the system contrast</Button>
-      </div>
-    </ThemePreferenceProvider>
-  );
-}
-
-const users = [
-  { id: 'first', contrast: 'high' },
-  { id: 'second', contrast: 'system' },
-] as const;
-
-/**
- * A provider keyed by the signed-in user, whose stored contrast it applies, so switching users
- * mounts a new provider. Mounted with ?fixture=theme-contrast-remount.
- */
-export function ThemeContrastRemountFixture() {
-  const [user, setUser] = useState<(typeof users)[number]>(users[0]);
-  return (
-    <ThemePreferenceProvider
-      key={user.id}
-      storageKey="fixture-remount-theme"
-      contrast={user.contrast}
-      className="fixture-main"
-    >
-      <Button onClick={() => setUser(users[1])}>Switch to the second user</Button>
-    </ThemePreferenceProvider>
-  );
-}
-
-/**
- * Two providers that both apply to the document, against the advice to let one: an outer one at
- * high contrast and the compact scale, and an inner one at system contrast without a scale. Mounted with ?fixture=theme-contrast-nested.
- */
-export function ThemeContrastNestedFixture() {
-  return (
-    <ThemePreferenceProvider storageKey="fixture-outer-theme" contrast="high" scale="compact">
-      <ThemePreferenceProvider
-        storageKey="fixture-inner-theme"
-        contrast="system"
-        className="fixture-main"
-      >
-        <ThemeToggle data-testid="inner-theme-toggle" />
-      </ThemePreferenceProvider>
-    </ThemePreferenceProvider>
-  );
-}
-
-/**
- * A provider at high contrast and the compact scale, which the application stops applying to the
- * document, or unmounts. Mounted with ?fixture=theme-release.
- */
-export function ThemeReleaseFixture() {
-  const [mounted, setMounted] = useState(true);
-  const [applies, setApplies] = useState(true);
-  return (
-    <>
-      <Button onClick={() => setApplies(false)}>Stop applying to the document</Button>
-      <Button onClick={() => setMounted(false)}>Unmount the provider</Button>
-      {mounted && (
-        <ThemePreferenceProvider
-          storageKey="fixture-release-theme"
-          contrast="high"
-          scale="compact"
-          applyToDocument={applies}
-          className="fixture-main"
-        >
-          <p>Provider content</p>
-        </ThemePreferenceProvider>
-      )}
     </>
   );
 }

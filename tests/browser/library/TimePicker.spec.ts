@@ -42,7 +42,7 @@ const openPopup = (page: Page) => page.locator('.env-date-picker-popup[data-open
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(today);
-  await page.goto(`${fixtureUrl}/?fixture=time-pickers`);
+  await page.goto(`${fixtureUrl}/?fixture=time-picker`);
 });
 
 test('the field shows its time in the locale and each wheel follows the spinbutton keys', async ({

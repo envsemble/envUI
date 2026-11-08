@@ -8,6 +8,8 @@ import {
   type ColorScheme,
 } from '@envsemble/envui';
 
+export const themes = true;
+
 const ignore = () => undefined;
 
 /**
@@ -47,7 +49,7 @@ function EffectLoadedPages({ theme }: { theme: ColorScheme }) {
   );
 }
 
-export function PaginationsFixture({ theme }: { theme: ColorScheme }) {
+export default function PaginationFixture({ theme }: { theme: ColorScheme }) {
   const [page, setPage] = useState(1);
   // The page asked for while it loads; the fixture finishes loading on request.
   const [requested, setRequested] = useState<number | null>(null);

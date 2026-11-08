@@ -46,7 +46,7 @@ async function box(locator: Locator) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=graphics`);
+  await page.goto(`${fixtureUrl}/?fixture=graphic`);
   await expect(page.getByTestId('graphics')).toBeVisible();
   // The files are data URLs: wait until every picture has decoded, so a box that followed the
   // file would show.

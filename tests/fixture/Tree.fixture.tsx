@@ -3,6 +3,8 @@ import { Menu, Theme, Tree, type ColorScheme, type TreeItem } from '@envsemble/e
 import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 
+export const themes = true;
+
 interface FileNode {
   id: string;
   name: string;
@@ -56,7 +58,7 @@ function flatten(nodes: FileNode[], expanded: Set<string>, depth = 0, rows: File
   return rows;
 }
 
-export function TreeFixture({ theme }: { theme: ColorScheme }) {
+export default function TreeFixture({ theme }: { theme: ColorScheme }) {
   const files = useMemo(sampleFiles, []);
   const [expanded, setExpanded] = useState(() => new Set(['folder-1', 'folder-2']));
   const [selectedId, setSelectedId] = useState<string | null>(null);

@@ -4,7 +4,7 @@ import { fixtureUrl } from '../helpers/Servers';
 test('the previous link comes first and the next link last, with strings from messages', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=pagers`);
+  await page.goto(`${fixtureUrl}/?fixture=pager`);
   // A Pager.Next child renders after the previous prop's link, not before it.
   const mixed = page.getByRole('navigation', { name: 'Mixed pager' });
   await expect(mixed.getByRole('link')).toHaveText(['PreviousIntroduction', 'Up nextSetup']);

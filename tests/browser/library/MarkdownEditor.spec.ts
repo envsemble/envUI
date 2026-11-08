@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { fixtureUrl as fixtureServer } from '../helpers/Servers';
 
-const fixtureUrl = `${fixtureServer}/?fixture=markdown`;
+const fixtureUrl = `${fixtureServer}/?fixture=markdown-editor`;
 
 test('inactive preview avoids rendering and highlighting work while retaining custom link state', async ({
   page,

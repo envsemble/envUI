@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Button, DatePicker, TimePicker } from '@envsemble/envui';
 
-export function TimePickersFixture() {
+export const mount = 'standalone';
+
+export default function TimePickerFixture() {
   const [submitted, setSubmitted] = useState('');
   const [reminder, setReminder] = useState<string | null>('14:00');
   const [changes, setChanges] = useState<(string | null)[]>([]);

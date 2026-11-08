@@ -13,7 +13,7 @@ import { IconDescription } from '@envsemble/envui/icons/Description';
 const recent = ['Roadmap.md', 'Decisions.md'];
 const documents = Array.from({ length: 60 }, (_, index) => `Document ${index + 1}.md`);
 
-export function CommandPaletteFixture({ theme }: { theme: ColorScheme }) {
+function ThemedPalette({ theme }: { theme: ColorScheme }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [log, setLog] = useState('');
@@ -123,7 +123,7 @@ function EmptyPalette({
  * language from EnvUIProvider's messages, default items with the application's own words and
  * no icon, and a palette whose results are always on their way.
  */
-export function CommandPaletteEmptyFixture() {
+function EmptyStates() {
   return (
     <div className="fixture-section" data-testid="palette-empty">
       <EmptyPalette name="Find a page" />
@@ -147,5 +147,16 @@ export function CommandPaletteEmptyFixture() {
       />
       <EmptyPalette name="Search the server" loading />
     </div>
+  );
+}
+
+/** The palette in light and in dark, and its empty states. */
+export default function CommandPaletteFixture() {
+  return (
+    <>
+      <ThemedPalette theme="light" />
+      <ThemedPalette theme="dark" />
+      <EmptyStates />
+    </>
   );
 }

@@ -2,7 +2,7 @@ import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 import { openServerMarkup } from '../helpers/ServerMarkup';
 
-const tablesFixture = `${fixtureUrl}/?fixture=tables`;
+const tablesFixture = `${fixtureUrl}/?fixture=table`;
 const themes = ['light', 'dark'] as const;
 
 /** Text contrast as painted: the text color over every fill between it and the theme canvas. */

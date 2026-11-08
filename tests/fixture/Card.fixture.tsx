@@ -1,6 +1,6 @@
 import { Button, Card, Text } from '@envsemble/envui';
 
-export function CardsFixture() {
+export default function CardFixture() {
   return (
     <section className="fixture-section">
       <h2>Headings and elements</h2>

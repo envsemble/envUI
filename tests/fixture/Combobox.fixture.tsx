@@ -13,6 +13,8 @@ import {
 import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 
+export const themes = true;
+
 const names = [
   'Alex Morgan',
   'Sam Lee',
@@ -114,7 +116,7 @@ function ServerSearch({ theme }: { theme: ColorScheme }) {
   );
 }
 
-export function ComboboxFixture({ theme }: { theme: ColorScheme }) {
+export default function ComboboxFixture({ theme }: { theme: ColorScheme }) {
   const [submitted, setSubmitted] = useState('');
   const [authorChanges, setAuthorChanges] = useState<(string | null)[]>([]);
   const [owner, setOwner] = useState<string | null>('riley-chen');

@@ -47,7 +47,7 @@ test(
     );
     await adoption.context().close();
 
-    const palette = await openOnTouchScreen(browser, '/?fixture=palette');
+    const palette = await openOnTouchScreen(browser, '/?fixture=command-palette');
     await palette.getByRole('button', { name: 'Quick open light' }).click();
     await expect(palette.locator('.env-command-palette-input')).toHaveCSS('font-size', '16px');
     await palette.context().close();
@@ -59,7 +59,7 @@ test(
     );
     await composer.context().close();
 
-    const markdown = await openOnTouchScreen(browser, '/?fixture=markdown');
+    const markdown = await openOnTouchScreen(browser, '/?fixture=markdown-editor');
     await expect(markdown.getByRole('textbox', { name: 'Workload source' })).toHaveCSS(
       'font-size',
       '16px',

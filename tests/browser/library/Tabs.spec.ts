@@ -12,7 +12,7 @@ function panelDisplays(page: Page, list: string) {
 }
 
 test('compact tabs make the whole rail as tall as a compact control', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=compact-tabs`);
+  await page.goto(`${fixtureUrl}/?fixture=tabs-compact`);
   for (const theme of ['light', 'dark']) {
     const scope = page.getByTestId(`compact-tabs-${theme}`);
     const control = (await scope.getByTestId(`compact-control-${theme}`).boundingBox())!;
@@ -38,7 +38,7 @@ test('compact tabs make the whole rail as tall as a compact control', async ({ p
 test('the arrow keys follow the text direction, from dir or from EnvUIProvider', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=rtl-tabs`);
+  await page.goto(`${fixtureUrl}/?fixture=tabs-rtl`);
   for (const name of ['Right-to-left tabs', 'Provider tabs']) {
     const list = page.getByRole('tablist', { name });
     await list.getByRole('tab', { name: 'One' }).focus();
@@ -52,7 +52,7 @@ test('the arrow keys follow the text direction, from dir or from EnvUIProvider',
 });
 
 test('a panel keeps the direction around it, not the tab list’s', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=rtl-tabs`);
+  await page.goto(`${fixtureUrl}/?fixture=tabs-rtl`);
   const slider = page.getByRole('slider', { name: 'Volume' });
   await slider.focus();
   // The slider is in a left-to-right region, so → raises it.
@@ -63,7 +63,7 @@ test('a panel keeps the direction around it, not the tab list’s', async ({ pag
 test('a rail with more tabs than fit starts at its chosen first tab @engines', async ({ page }) => {
   // The rail measures its tabs from its own start: in a positioned frame set in from the page's
   // start, it once measured them from the frame's and rested scrolled past the chosen tab.
-  await page.goto(`${fixtureUrl}/?fixture=scrolling-tabs`);
+  await page.goto(`${fixtureUrl}/?fixture=tabs-scrolling`);
   const list = page.getByRole('tablist', { name: 'Project views' });
   await expect(list.getByRole('tab', { name: 'Summary' })).toHaveAttribute('aria-selected', 'true');
   const place = () =>
@@ -105,7 +105,7 @@ test('filling tabs give the selected panel the height left below the list', asyn
 test('filling tabs that keep inactive panels mounted display only the selected panel', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=fill-tabs`);
+  await page.goto(`${fixtureUrl}/?fixture=tabs`);
   for (const theme of ['light', 'dark']) {
     // Tabs nested in a filling panel keep their own layout, and their hidden panel stays hidden.
     await expect
@@ -125,7 +125,7 @@ test('filling tabs that keep inactive panels mounted display only the selected p
 });
 
 test('every tab is a text tab, the selected one with an indicator under it', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=compact-tabs`);
+  await page.goto(`${fixtureUrl}/?fixture=tabs-compact`);
   const scope = page.getByTestId('compact-tabs-light');
   const rail = scope.getByRole('tablist');
   // No rail fill, and no fill or edge on any tab, whatever its button's variant.

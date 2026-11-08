@@ -48,6 +48,8 @@ import {
 import { useMessages } from '../../packages/ui/src/internal/EnvUIContext.js';
 import { common } from '../../packages/ui/src/foundations/messages/common.js';
 
+export const mount = 'standalone';
+
 /**
  * Every message replaced by ⟦namespace.key⟧, functions too, so a test can tell an overridable
  * string from an English default left in the markup.
@@ -166,10 +168,10 @@ function InlineMessages() {
 
 /**
  * The components whose strings come from EnvUIProvider's messages, under the pseudo-locale,
- * mounted with ?fixture=message-strings. Each batch that moves a family's strings adds its components
+ * mounted with ?fixture=messages. Each batch that moves a family's strings adds its components
  * here; tests/browser/library/Messages.spec.ts fails on any English default left in them.
  */
-export function MessageStringsFixture() {
+export default function MessagesFixture() {
   return (
     <ThemePreferenceProvider storageKey="fixture-messages-theme">
       <EnvUIProvider messages={pseudoMessages} locale="en-XA">

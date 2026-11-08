@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Button, Panes, Surface, Text } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 const params = () => new URLSearchParams(location.search);
 
 const projects = ['Northwind launch', 'Website refresh', 'Annual report'];
@@ -12,7 +14,7 @@ const projects = ['Northwind launch', 'Website refresh', 'Annual report'];
  * ?size= the default width, ?divider=none leaves out both dividers, ?uncontrolled leaves the
  * supporting Panes' open state to them and ?dir=rtl mirrors them.
  */
-export function PanesFixture() {
+export default function PanesFixture() {
   const query = params();
   const splitAt = (query.get('split') ?? undefined) as Panes.SplitAt | undefined;
   const divider = query.get('divider') !== 'none';

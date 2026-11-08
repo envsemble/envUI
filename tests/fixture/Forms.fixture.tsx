@@ -14,7 +14,7 @@ import {
 } from '@envsemble/envui';
 import { planOptions, dialogOptions } from './SelectOptions.fixture.js';
 
-export function FormsFixture() {
+export default function FormsFixture() {
   const [controlled, setControlled] = useState<CheckboxState>('mixed');
   const [frozenRequest, setFrozenRequest] = useState('none');
   const [values, setValues] = useState<Record<string, string>>({});

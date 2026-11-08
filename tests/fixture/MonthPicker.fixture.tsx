@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Button, MonthPicker } from '@envsemble/envui';
 
-export function MonthPickersFixture() {
+export const mount = 'standalone';
+
+export default function MonthPickerFixture() {
   const [submitted, setSubmitted] = useState('');
   const [billing, setBilling] = useState<string | null>('2026-03');
   const [changes, setChanges] = useState<(string | null)[]>([]);

@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const tooltips = `${fixtureUrl}/?fixture=tooltips`;
+const tooltips = `${fixtureUrl}/?fixture=tooltip`;
 
 // Wide enough that the fixture's first row holds every trigger up to the right-to-left ones, so a
 // popover has room at their end, and the menu and popover triggers below sit under no text.

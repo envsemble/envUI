@@ -1,7 +1,7 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const sheets = `${fixtureUrl}/?fixture=sheets`;
+const sheets = `${fixtureUrl}/?fixture=sheet`;
 
 /** Whether focus is inside the element. */
 const holdsFocus = (page: Page, name: string) =>

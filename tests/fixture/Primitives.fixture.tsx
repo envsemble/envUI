@@ -30,6 +30,8 @@ import { ResizeHandle } from '../../packages/ui/src/internal/ResizeHandle.js';
 import { useRovingFocus } from '../../packages/ui/src/internal/useRovingFocus.js';
 import { useCopy } from '../../packages/ui/src/internal/useCopy.js';
 
+export const mount = 'standalone';
+
 /** Toolbar: roving focus, tooltips, a pressed toggle, a disabled button and a link. */
 function ToolbarSample() {
   const [bold, setBold] = useState(false);
@@ -393,7 +395,7 @@ function LocaleProbe() {
 }
 
 /** The primitives batch A adds, mounted with ?fixture=primitives. */
-export function PrimitivesFixture() {
+export default function PrimitivesFixture() {
   return (
     <Column gap={6}>
       <ToolbarSample />

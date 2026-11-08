@@ -12,6 +12,8 @@ import {
 } from '@envsemble/envui';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
+export const themes = true;
+
 /** Person pictures, which pile closer and turn as cards do; initials, below, rest looser. */
 const people = [
   { id: 'alex', name: 'Alex Morgan', fallback: 'person' as const },
@@ -44,7 +46,7 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   );
 }
 
-export function AvatarGroupsFixture({ theme }: { theme: ColorScheme }) {
+export default function AvatarGroupFixture({ theme }: { theme: ColorScheme }) {
   const [pressed, setPressed] = useState('');
   return (
     <Theme theme={theme} data-testid={`avatar-groups-${theme}`} className="fixture-section">

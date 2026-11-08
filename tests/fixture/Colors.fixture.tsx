@@ -34,7 +34,7 @@ const emphasis = {
   text: { variant: 'text' },
 } as const;
 
-export function ColorControls({ theme }: { theme: ColorScheme }) {
+function ColorControls({ theme }: { theme: ColorScheme }) {
   const variants: readonly (keyof typeof emphasis)[] = [
     'primary',
     'secondary',
@@ -181,7 +181,7 @@ export function ColorControls({ theme }: { theme: ColorScheme }) {
  * Overrides of the semantic tokens on a nested Theme, which recolor its area alone, beside the same
  * controls outside it; and a button given its own colors through its color properties.
  */
-export function ColorOverrides() {
+function ColorOverrides() {
   return (
     <Theme theme="light" className="fixture-section" data-testid="color-overrides">
       <h2>Color overrides</h2>
@@ -210,5 +210,16 @@ export function ColorOverrides() {
         </Button>
       </div>
     </Theme>
+  );
+}
+
+/** The controls in light and in dark, and overrides of their colors. */
+export default function ColorsFixture() {
+  return (
+    <>
+      <ColorControls theme="light" />
+      <ColorControls theme="dark" />
+      <ColorOverrides />
+    </>
   );
 }

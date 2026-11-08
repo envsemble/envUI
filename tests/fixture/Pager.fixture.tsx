@@ -1,10 +1,12 @@
 import { EnvUIProvider, Pager } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 /**
  * A pager that mixes the previous prop with a Pager.Next child, and one whose strings come from
- * EnvUIProvider, mounted with ?fixture=pagers.
+ * EnvUIProvider, mounted with ?fixture=pager.
  */
-export function PagersFixture() {
+export default function PagerFixture() {
   return (
     <div data-testid="pagers">
       <Pager.Root aria-label="Mixed pager">

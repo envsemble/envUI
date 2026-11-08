@@ -5,7 +5,7 @@ import type { LayoutProblem } from '@envsemble/envui/dev';
 
 /** The skeletons fixture, once dev mode has installed `envui.layout`. */
 async function open(page: Page) {
-  await page.goto(`${fixtureUrl}/?fixture=skeletons`);
+  await page.goto(`${fixtureUrl}/?fixture=skeleton`);
   await page.waitForFunction(() => window.envui?.layout !== undefined);
   // The bars are measured from the text, which the web font widens when it arrives, after the page
   // has loaded on a busy machine: wait for it, and for the frame in which the bars are drawn again.

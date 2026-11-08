@@ -9,7 +9,9 @@ import {
   type ColorScheme,
 } from '@envsemble/envui';
 
-export function PopoverFixture({ theme }: { theme: ColorScheme }) {
+export const themes = true;
+
+export default function PopoverFixture({ theme }: { theme: ColorScheme }) {
   const [saved, setSaved] = useState('');
   return (
     <Theme theme={theme} data-testid={`popover-${theme}`} className="fixture-section">

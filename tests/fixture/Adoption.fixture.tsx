@@ -29,6 +29,8 @@ import { IconLogout } from '@envsemble/envui/icons/Logout';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 
+export const mount = 'root';
+
 /** Stands in for a router link: it records client navigation instead of loading a page. */
 function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   return (
@@ -47,7 +49,7 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
 }
 
 /** Components added for application adoption, mounted with ?fixture=adoption. */
-export function AdoptionFixture() {
+export default function AdoptionFixture() {
   const [query, setQuery] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [pending, setPending] = useState(false);

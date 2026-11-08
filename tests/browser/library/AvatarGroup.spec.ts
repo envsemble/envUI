@@ -1,7 +1,7 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const fixture = `${fixtureUrl}/?fixture=avatar-groups`;
+const fixture = `${fixtureUrl}/?fixture=avatar-group`;
 
 /** The left edge and width of each avatar and chip in a group, in document order. */
 async function boxes(group: Locator) {
