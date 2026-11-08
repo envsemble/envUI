@@ -277,7 +277,8 @@ export function CalendarHeatmap({
           anchor={tip?.anchor}
           sideOffset={tip?.offset ?? 0}
           positionerClassName="env-calendar-heatmap-tooltip-positioner"
-          popupProps={{ ...popupProps, className: 'env-calendar-heatmap-tooltip' }}
+          className="env-calendar-heatmap-tooltip"
+          popupProps={popupProps}
           content={
             shown &&
             (renderTooltip

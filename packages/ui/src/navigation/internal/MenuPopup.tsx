@@ -7,6 +7,7 @@ import { Grid } from '../../foundations/Layout.js';
 import {
   PopupSurface,
   type PopupAlign,
+  type PopupElementProps,
   type PopupParts,
   type PopupSide,
   type PopupSurfaceProps,
@@ -58,8 +59,8 @@ export interface MenuPopupProps {
   className?: string;
   /** The popup element's ref. */
   popupRef?: Ref<HTMLDivElement>;
-  /** More props for the popup element, such as style and data attributes. */
-  popupProps?: Record<string, unknown>;
+  /** More props for the popup element, such as style and handlers. */
+  popupProps?: PopupElementProps;
   skeleton?: boolean;
   children?: ReactNode;
 }

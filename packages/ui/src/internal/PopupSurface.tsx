@@ -1,15 +1,15 @@
 'use client';
 
 import { DirectionProvider, useDirection } from '@base-ui/react/direction-provider';
+import type { Popover } from '@base-ui/react/popover';
 import {
   useCallback,
   useLayoutEffect,
   useRef,
   useState,
-  type FocusEvent,
-  type Ref,
+  type ComponentPropsWithRef,
   type ComponentType,
-  type CSSProperties,
+  type FocusEvent,
   type ReactElement,
   type ReactNode,
   type RefObject,
@@ -46,20 +46,51 @@ interface OffsetData {
 /** An element, a ref to one, or Base UI's virtual element, for a popup that opens away from its trigger. */
 type Anchor = Element | RefObject<Element | null> | { getBoundingClientRect(): DOMRect };
 
-/** Where focus goes as the popup opens or closes, as Base UI's popups take it. */
-type FocusTarget = boolean | RefObject<HTMLElement | null> | ((type: string) => unknown);
+/** Where focus goes as the popup opens or closes, as each Base UI popup that moves focus takes it. */
+type FocusTarget = NonNullable<Popover.Popup.Props['initialFocus']>;
 
 /**
- * The parts of a Base UI popup: Portal, Positioner and Popup of Popover, Menu, Select, Combobox,
- * Tooltip or PreviewCard.
+ * The popup element's props that its owner passes on, such as its name, id, ref, style, data
+ * attributes and handlers: a div's, which every Base UI popup renders, and Base UI's render. Its
+ * class is PopupSurface's className.
+ */
+export type PopupElementProps = Omit<ComponentPropsWithRef<'div'>, 'children' | 'className'> & {
+  render?: ReactElement | ((props: ComponentPropsWithRef<'div'>) => ReactElement);
+  [attribute: `data-${string}`]: string | boolean | undefined;
+};
+
+/** What PopupSurface gives a Base UI positioner: props every one of them takes. */
+interface PositionerProps {
+  side?: PopupSide;
+  align?: PopupAlign;
+  sideOffset: number | ((data: OffsetData) => number);
+  alignOffset?: number | ((data: OffsetData) => number);
+  collisionPadding: number;
+  collisionAvoidance?: typeof containedCollisionAvoidance;
+  anchor?: Anchor;
+  className: string;
+  children: ReactNode;
+}
+
+/**
+ * What PopupSurface gives a Base UI popup. Tooltip's and PreviewCard's take no focus targets, which
+ * PopupSurface passes only where an owner gives them.
+ */
+interface PopupProps extends PopupElementProps {
+  initialFocus?: FocusTarget;
+  finalFocus?: FocusTarget;
+  className: string;
+  children: ReactNode;
+}
+
+/**
+ * The parts of a Base UI popup: Portal, Positioner and Popup of Popover, Menu, ContextMenu, Select,
+ * Combobox, Tooltip or PreviewCard.
  */
 export interface PopupParts {
   Portal: ComponentType<{ container?: HTMLElement | null; children?: ReactNode }>;
-  // Each Base UI positioner takes more than the props PopupSurface passes.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Positioner: ComponentType<any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Popup: ComponentType<any>;
+  Positioner: ComponentType<PositionerProps>;
+  Popup: ComponentType<PopupProps>;
 }
 
 export interface PopupSurfaceProps {
@@ -106,8 +137,8 @@ export interface PopupSurfaceProps {
   layout?: ReactElement;
   /** The owner's positioner class. */
   positionerClassName?: string;
-  /** More props for the Popup part: aria-label, ref, render, data attributes and handlers. */
-  popupProps?: Record<string, unknown>;
+  /** More props for the Popup part, such as aria-label, ref, render, style and handlers. */
+  popupProps?: PopupElementProps;
   /**
    * Shows the content as a skeleton: the popup is the busy root and keeps focus, so people can
    * still close it, while its content is inert.
@@ -115,6 +146,16 @@ export interface PopupSurfaceProps {
   skeleton?: boolean;
   children?: ReactNode;
 }
+
+/**
+ * Milliseconds after a popup appears in which focus that arrives in it is the focus Base UI moves
+ * as it opens. Base UI moves it once the popup is placed, a few animation frames after it appears,
+ * from no event of its own that tells it apart from focus people move: in Chromium about 20 ms,
+ * six frames, after the popup element attaches. The window leaves room for a slow machine and ends
+ * before people can reach into a popup that has just appeared. tests/browser/library/PortalContainer.spec.ts
+ * checks both sides: Base UI's opening focus goes back, and focus moved in after the window stays.
+ */
+const openingFocusWindow = 500;
 
 /** The element an anchor stands for, if it is one. */
 function anchorElement(anchor: Anchor | undefined): Element | null {
@@ -193,15 +234,11 @@ export function PopupSurface({
 }: PopupSurfaceProps) {
   const theme = useTheme();
   const { container, contained } = usePortalContainer();
-  // popupProps are the popup's props, loosely typed for each popup that passes them.
-  const ownStyle = popupProps?.style as CSSProperties | undefined;
-  const ownRef = popupProps?.ref as Ref<HTMLElement> | undefined;
-  const ownFocusCapture = popupProps?.onFocusCapture as
-    ((event: FocusEvent<HTMLElement>) => void) | undefined;
+  const { style: ownStyle, ref: ownRef, onFocusCapture: ownFocusCapture } = popupProps ?? {};
   // When the popup appeared, to tell the focus Base UI moves into it as it opens.
   const openedAt = useRef(0);
   const attachPopup = useCallback(
-    (node: HTMLElement | null) => {
+    (node: HTMLDivElement | null) => {
       openedAt.current = node ? performance.now() : 0;
       setRef(ownRef, node);
     },
@@ -209,12 +246,12 @@ export function PopupSurface({
   );
   /**
    * In a contained container a popup takes no focus as it opens, such as a menu open from the
-   * start: focus that arrives in its first moments from outside the container and the trigger goes
-   * back where it was. Focus from the trigger, or that people move in later, stays.
+   * start: focus that arrives within openingFocusWindow from outside the container and the trigger
+   * goes back where it was. Focus from the trigger, or that people move in later, stays.
    */
-  const keepFocusOut = (event: FocusEvent<HTMLElement>) => {
+  const keepFocusOut = (event: FocusEvent<HTMLDivElement>) => {
     ownFocusCapture?.(event);
-    if (performance.now() - openedAt.current > 500) return;
+    if (performance.now() - openedAt.current > openingFocusWindow) return;
     const from = event.relatedTarget;
     const own = [container, trigger?.current, anchorElement(anchor), event.currentTarget];
     if (from instanceof Node && own.some((element) => element?.contains(from))) return;

@@ -412,7 +412,8 @@ function TooltipTrigger({
           side={side}
           align={align}
           trigger={triggerRef}
-          popupProps={{ id: popupId, className: popupClassName }}
+          className={popupClassName}
+          popupProps={{ id: popupId }}
         />
       </BaseTooltip.Root>
     </TooltipNestingContext>
