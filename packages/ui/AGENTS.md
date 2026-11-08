@@ -38,7 +38,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 ## Changing a component touches
 
 - Its module in its family and its style sheet, `packages/ui/src/styles/<Name>.css`; a new component also its entry point's export.
-- `packages/ui/src/parts.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
+- `packages/ui/src/partDescriptions.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
 - Its strings in `packages/ui/src/foundations/messages/`.
 - Its page, `docs/components/<name>.md` or `docs/patterns/`, with its examples in `apps/site/src/examples/<page>/` and its gallery tile in `apps/site/src/tiles/`.
 - Its spec and fixture, named as [Fixtures](../../AGENTS.md#fixtures) says.
@@ -75,7 +75,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 ## Part names and color properties
 
 - A component's part classes (`env-<component>-<part>`), state attributes (`data-*`), color properties and the custom properties listed under `properties` are public and versioned.
-- `npm run docs:parts` (`scripts/docs/GenerateParts.ts`) derives them from the source into `docs/generated/parts.json`; `packages/ui/src/parts.json` holds what can't be derived, such as a description of every part and property, and generation fails without one.
+- `npm run docs:parts` (`scripts/docs/GenerateParts.ts`) derives them from the source into `docs/generated/parts.json`; `packages/ui/src/partDescriptions.json` holds what can't be derived, such as a description of every part and property, and generation fails without one.
 - A state that is on or off is present as `''` or absent, set through `flag()` (`packages/ui/src/internal/flag.ts`), which ESLint holds the library to.
 - `data-env-ssr-*` attributes are private.
 - Each attribute keeps one meaning: `data-active` what shows, `data-current` the page's destination, `data-selected` what is chosen, `data-highlighted` the list's cursor, and for a drag `data-dragging`, `data-moving`, `data-resizing` or `data-drag-over`.

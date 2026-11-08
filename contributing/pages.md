@@ -370,7 +370,7 @@ Document only the props envUI declares or narrows; native props are summarised b
 
 ## Write a new page
 
-1. Read the component's source, its CSS for the part classes, its entry in `parts.json` and its browser tests.
+1. Read the component's source, its CSS for the part classes, its entry in `docs/generated/parts.json` and its browser tests.
 2. Write the example files: the overview, the variants and anatomy examples, the do and don't pairs, and an example for `widths` where it adapts.
 3. Write the frontmatter, then the sections in order, each block a lead and its rules, with the developer detail in Compose. Register the page in the index.
 4. Regenerate with `npm run docs:props && npm run docs:parts && node scripts/docs/GenerateDocumentation.ts`, then run `npm run check`.

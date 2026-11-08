@@ -24,13 +24,13 @@
 // - the components: every component and namespace the public entries export, whose parts are the
 //   classes that start with `env-<its name in kebab case>`.
 //
-// What it merges from packages/ui/src/parts.json, written by hand: the description of every part,
+// What it merges from packages/ui/src/partDescriptions.json, written by hand: the description of every part,
 // the root of a component whose root is not `env-<name>`, the shared groups (anatomy that several
 // components render, such as the list row of menus and selects) and where a class goes when no
 // name places it. A part without a description, or a description without a part, fails.
 //
 // The color properties: each component's public custom properties for its colors, such as
-// --env-button-container, from `colors` in packages/ui/src/parts.json, with what each colors. Each
+// --env-button-container, from `colors` in packages/ui/src/partDescriptions.json, with what each colors. Each
 // must be registered in the style sheets as a property that doesn't inherit
 // (`@property --env-… { syntax: '*'; inherits: false; }`), and every property registered so must
 // be listed; they are public and versioned like the parts.

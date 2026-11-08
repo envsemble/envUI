@@ -34,7 +34,7 @@ test('a component lists its root, its part classes and the states it is styled b
     'env-menu-choice',
     'env-menu-item',
   ]);
-  // A component whose root is not env-<name> takes it from packages/ui/src/parts.json.
+  // A component whose root is not env-<name> takes it from packages/ui/src/partDescriptions.json.
   assert.equal(component('Dialog').root, 'env-dialog');
 });
 
