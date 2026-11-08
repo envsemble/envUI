@@ -2,6 +2,7 @@
  * What a picture paints, measured in its canvas's own px (FitMeasure.ts): what is centred is what
  * shows, rather than the boxes that lay it out.
  */
+import { paintsOf } from '@envui-internal/dev/measure';
 import type { Box } from './FitGeometry';
 
 /** The layer a picture's popups open in (StageOverlays, motion/Playback.tsx). */
@@ -21,10 +22,6 @@ export function elementsOf(canvas: Element, selector: string) {
     return [];
   }
 }
-
-/** Whether a color paints anything: not transparent, nor of no alpha. */
-const opaque = (color: string) =>
-  color !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(color) && !/\/\s*0\)$/.test(color);
 
 /**
  * Whether an element is clipped away whole, as a visually hidden one is (`clip-path: inset(50%)`),
@@ -58,21 +55,13 @@ export function settling(element: Element, canvas: Element) {
 export const pictures = /^(img|svg|canvas|video|input|textarea|select|hr)$/i;
 
 /**
- * Whether an element paints something of its own: a fill, an image, an edge, a shadow, text, or a
- * picture such as an icon. A box that only lays out others, such as an avatar group's row, which
- * keeps the room its avatars spread into, paints nothing, so what it holds is measured instead.
+ * Whether an element paints something of its own: a fill, an image, an edge or a shadow, as dev
+ * mode counts them (paintsOf), text, or a picture such as an icon. A box that only lays out
+ * others, such as an avatar group's row, which keeps the room its avatars spread into, paints
+ * nothing, so what it holds is measured instead.
  */
 function paints(element: Element, style: CSSStyleDeclaration) {
-  if (pictures.test(element.localName)) return true;
-  if (opaque(style.backgroundColor) || style.backgroundImage !== 'none') return true;
-  if (style.boxShadow !== 'none') return true;
-  for (const side of ['Top', 'Right', 'Bottom', 'Left'] as const)
-    if (
-      parseFloat(style.getPropertyValue(`border-${side.toLowerCase()}-width`)) > 0 &&
-      style.getPropertyValue(`border-${side.toLowerCase()}-style`) !== 'none' &&
-      opaque(style.getPropertyValue(`border-${side.toLowerCase()}-color`))
-    )
-      return true;
+  if (pictures.test(element.localName) || paintsOf(style).length) return true;
   return [...element.childNodes].some(
     (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
   );
