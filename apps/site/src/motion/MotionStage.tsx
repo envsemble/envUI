@@ -182,9 +182,9 @@ export const VerdictMotion = createContext<false | 'square' | 'wide'>(false);
 
 /**
  * The stage of an animated figure on a page, such as a slider stretching past its ends. It shows
- * the live component on the recessed canvas, plays its timeline (useTimeline) in a loop while it is
- * in view, and has a small pause button in its bottom end corner that shows when the pointer or the
- * keyboard reaches the figure (Stage.css).
+ * the live component on the recessed canvas, plays its pointer script (usePointer) or timeline
+ * (useTimeline) in a loop while it is in view, and has a small pause button in its bottom end
+ * corner that shows when the pointer or the keyboard reaches the figure (Stage.css).
  *
  * The Display menu's Motion setting pauses every figure. A figure's own button overrides that for
  * the figure until the menu's setting or the page changes. A paused figure holds where it is.

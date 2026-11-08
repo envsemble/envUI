@@ -7,9 +7,11 @@ import { moduleRegistry } from '../loading/ModuleRegistry';
  * id in PascalCase (segmented-control is SegmentedControl.tsx). The file default-exports the
  * picture's component, and exports `tileWindow` where the tile needs another window than the
  * tiles' (TileWindow). The picture shows the component alone, large and centred, with as little
- * else as it needs to be recognised. Its animation is a timeline (useTimeline in
- * motion/Timeline.ts) that plays from that still on hover. A page without a tile of its own shows
- * the example its tile picks (Gallery.tsx, Related.tsx).
+ * else as it needs to be recognised. Its animation plays from that still on hover: a script of a
+ * pointer no one sees (usePointer in motion/pointer/PointerPlayback.ts, its steps in
+ * PointerPlan.ts), or a timeline of its props (useTimeline in motion/Timeline.ts) where nothing is
+ * pointed at. A page without a tile of its own shows the example its tile picks (Gallery.tsx,
+ * Related.tsx).
  */
 
 /** What a tile's file exports: its picture, and its window where it isn't the tiles'. */
