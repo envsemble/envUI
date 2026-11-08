@@ -9,8 +9,11 @@
 // The reading is type-aware: a handler passed by name (`onMouseDown={focusControl}`), one in a
 // spread object or in createElement's props, and a hook imported under another name all count,
 // while a function the module only passes on from its own props does not, since a server parent
-// cannot have given it one. A module that needs the directive for a reason this cannot see says
-// so in a comment, `// @client-module <why>`, which the check reads as its reason.
+// cannot have given it one. A check of names alone would miss the handlers and the renamed hook,
+// each a server render that fails, and would flag the passed-on function, keeping a module the
+// server can render on the client: that is why the reading stays type-aware. A module that needs
+// the directive for a reason this cannot see says so in a comment, `// @client-module <why>`,
+// which the check reads as its reason.
 //
 //   node scripts/build/ClientModules.ts           add the directive where a module needs it
 //   node scripts/build/ClientModules.ts --check   fail when a module lacks it or has it without need
