@@ -124,8 +124,8 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
         .find(Boolean);
       return items.flatMap((tile) => {
         const name = tile.querySelector('.catalogue-gallery-name')?.textContent ?? '';
-        const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
-        const canvas = tile.querySelector<HTMLElement>('.catalogue-related-canvas[data-fitted]');
+        const stage = tile.querySelector('.catalogue-tile-stage')!.getBoundingClientRect();
+        const canvas = tile.querySelector<HTMLElement>('.catalogue-tile-canvas[data-fitted]');
         if (!canvas || !/scale\(/.test(canvas.style.transform)) return [`${name}: not fitted`];
         // What shows, as the fit measures it (Related.tsx): what paints something of its own,
         // a fill, an edge, a shadow, text or a picture, and not a visually hidden pixel, such as
@@ -242,7 +242,7 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
         }
         if (canvas.hasAttribute('data-own-size'))
           return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
-        if (canvas.parentElement?.classList.contains('catalogue-related-crop'))
+        if (canvas.parentElement?.classList.contains('catalogue-tile-crop'))
           return Number(scaleOf(canvas)) >= 0.95 ? [] : [`${name}: too small to read`];
         const outside =
           Math.min(...shown.map((box) => box.left)) < stage.left - 1 ||
@@ -264,9 +264,9 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
     // rem, rather than ending in a slice through it.
     const cutRows = await tiles.evaluateAll((items) =>
       items.flatMap((tile) => {
-        const canvas = tile.querySelector('.catalogue-related-canvas[data-cut~="bottom"]');
+        const canvas = tile.querySelector('.catalogue-tile-canvas[data-cut~="bottom"]');
         if (!canvas) return [];
-        const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
+        const stage = tile.querySelector('.catalogue-tile-stage')!.getBoundingClientRect();
         const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
         const length = getComputedStyle(canvas.parentElement!)
           .getPropertyValue('--catalogue-crop-bottom')
@@ -294,10 +294,10 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
     // than its stage's screen, framed down it on what its script acts on, at its top too.
     const cutPopups = await tiles.evaluateAll((items) =>
       items.flatMap((tile) => {
-        const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
+        const stage = tile.querySelector('.catalogue-tile-stage')!.getBoundingClientRect();
         const layer = tile.querySelector('.catalogue-overlay-layer');
         if (!layer) return [];
-        const cut = tile.querySelector<HTMLElement>('.catalogue-related-canvas')?.dataset.cut ?? '';
+        const cut = tile.querySelector<HTMLElement>('.catalogue-tile-canvas')?.dataset.cut ?? '';
         // A card: the outermost popup or dialog, such as a menu, a palette or a hover card.
         const card =
           ".env-popup, [role='menu'], [role='dialog'], [role='alertdialog'], [role='tooltip']";
@@ -334,7 +334,7 @@ test('on a phone, no gallery tile breaks a word across lines', async ({ page }) 
   const broken = () =>
     tiles.evaluateAll((items) =>
       items.flatMap((tile) => {
-        const canvas = tile.querySelector('.catalogue-related-canvas[data-fitted]');
+        const canvas = tile.querySelector('.catalogue-tile-canvas[data-fitted]');
         if (!canvas) return [`${tile.textContent}: not fitted`];
         const name = tile.querySelector('.catalogue-gallery-name')?.textContent;
         const walker = document.createTreeWalker(canvas, NodeFilter.SHOW_TEXT);
@@ -368,7 +368,7 @@ test('the gallery renders its tiles ahead of the scroll, before they come into v
   for (const route of ['/components', '/patterns']) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${siteDevUrl}${route}`);
-    await expect(page.locator('.catalogue-related-canvas[data-fitted]').first()).toBeVisible();
+    await expect(page.locator('.catalogue-tile-canvas[data-fitted]').first()).toBeVisible();
     // The tiles whose stage starts within a screen below the fold, unscrolled.
     const below = () =>
       page.locator('.catalogue-gallery-tile').evaluateAll((tiles) =>
@@ -377,7 +377,7 @@ test('the gallery renders its tiles ahead of the scroll, before they come into v
             const { top } = tile.getBoundingClientRect();
             return top > innerHeight && top < innerHeight + 400;
           })
-          .map((tile) => Boolean(tile.querySelector('.catalogue-related-canvas[data-fitted]'))),
+          .map((tile) => Boolean(tile.querySelector('.catalogue-tile-canvas[data-fitted]'))),
       );
     expect((await below()).length, route).toBeGreaterThan(0);
     await expect.poll(async () => (await below()).every(Boolean), { message: route }).toBe(true);
@@ -396,14 +396,14 @@ const stillTiles = (page: Page, from: number) =>
     const tiles = [...document.querySelectorAll<HTMLElement>('.catalogue-gallery-tile')];
     const whole = () =>
       tiles.filter((tile) => {
-        const box = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
+        const box = tile.querySelector('.catalogue-tile-stage')!.getBoundingClientRect();
         return (
           box.top >= 0 && box.bottom <= innerHeight && box.left >= 0 && box.right <= innerWidth
         );
       });
     const nameOf = (tile: Element) => tile.querySelector('.catalogue-gallery-name')!.textContent!;
     const viewOf = (tile: Element) =>
-      tile.querySelector<HTMLElement>('.catalogue-related-canvas[data-fitted]')?.style.transform;
+      tile.querySelector<HTMLElement>('.catalogue-tile-canvas[data-fitted]')?.style.transform;
     tiles[from]!.scrollIntoView({ block: 'start' });
     const shown = whole();
     // Still for 30 frames running, within four seconds.
@@ -463,7 +463,7 @@ for (const [width, scale] of [
       for (const route of ['/components', '/patterns']) {
         await page.goto(`${siteDevUrl}${route}`);
         await page.mouse.move(0, 0);
-        await expect(page.locator('.catalogue-related-canvas[data-fitted]').first()).toBeVisible();
+        await expect(page.locator('.catalogue-tile-canvas[data-fitted]').first()).toBeVisible();
         const moving: string[] = [];
         const reframed: string[] = [];
         for (let from = 0, count = 1; from < count;) {

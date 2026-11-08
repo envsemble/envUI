@@ -66,7 +66,7 @@ async function settle(page: Page, end: string) {
   await page.waitForFunction(() =>
     [...document.querySelectorAll('.catalogue-gallery-tile')]
       .filter((tile) => tile.getBoundingClientRect().top < innerHeight)
-      .every((tile) => tile.querySelector('.catalogue-related-canvas[data-fitted]')),
+      .every((tile) => tile.querySelector('.catalogue-tile-canvas[data-fitted]')),
   );
   // The fonts and every entrance settle before the picture is taken; an animation that runs
   // forever, follows the scroll, as the drawer's fade does, is held still, as a tile's picture is

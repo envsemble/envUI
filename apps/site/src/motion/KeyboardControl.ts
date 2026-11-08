@@ -6,7 +6,7 @@
 import { editorOf, type PointerSelection } from './VirtualSelection';
 import { focusMark, focusWithinMark, mark } from './PointerStates';
 import { chainOf, textFields, type Modifiers } from './PointerTargets';
-import { keepFocus, keyboardFocused, lendSelection } from './StandIns';
+import { keyboardFocused, lendSelection } from './BrowserStandIns';
 
 /** The modifier keys, by their key, and the flag a held one sets on every event. */
 const modifierFlags: Record<string, keyof Modifiers> = {
@@ -146,7 +146,6 @@ export class KeyboardControl {
     const from = this.focused;
     if (from === element) return;
     this.focus(element);
-    keepFocus();
     if (element) keyboardFocused.set(this.scope, (next) => this.keyboardFocus(next));
     else keyboardFocused.delete(this.scope);
     const events = (target: Element, out: boolean, relatedTarget: Element | null) => {

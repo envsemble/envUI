@@ -31,7 +31,7 @@
 
 /* A subject that needs a width to show its parts (`width` on its fence): it fills the stage, or,
    where the stage is narrower, is laid out at that width and drawn smaller from its start corner
-   into the scaled place it takes (FitFrame in AnatomyFigure.tsx). */
+   into the scaled place it takes (FitFrame, fit/WidthFit.tsx). */
 .catalogue-anatomy-fit {
   inline-size: 100%;
 }

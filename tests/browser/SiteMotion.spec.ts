@@ -24,7 +24,7 @@ const tile = (page: Page, name: string) =>
 /** Whether the Switch tile's switch is on. */
 const switchOn = (tileOf: Locator) =>
   tileOf
-    .locator('.catalogue-related-canvas input')
+    .locator('.catalogue-tile-canvas input')
     .evaluate((input) => (input as HTMLInputElement).checked);
 
 /** The Slider page's figure of a slider under the pointer, whose value starts at 30, by its own
@@ -44,7 +44,7 @@ test('a tile plays its preview while the pointer is on it, and rests at its stil
   await page.goto(`${siteDevUrl}/components`);
   const switchTile = tile(page, 'Switch');
   await switchTile.scrollIntoViewIfNeeded();
-  await expect(switchTile.locator('.catalogue-related-canvas[data-fitted]')).toBeVisible();
+  await expect(switchTile.locator('.catalogue-tile-canvas[data-fitted]')).toBeVisible();
   // The still is the switch off, and nothing moves at rest.
   expect(await switchOn(switchTile)).toBe(false);
   await page.waitForTimeout(800);
@@ -55,7 +55,7 @@ test('a tile plays its preview while the pointer is on it, and rests at its stil
   // Off it, it shows its still at once, with no copy of the picture as it played over it.
   await page.mouse.move(1, 1);
   await expect.poll(() => switchOn(switchTile)).toBe(false);
-  await expect(switchTile.locator('.catalogue-related-canvas')).toHaveCount(1);
+  await expect(switchTile.locator('.catalogue-tile-canvas')).toHaveCount(1);
 });
 
 test('an animated figure plays by itself, and its pause button holds it where it is', async ({
@@ -97,7 +97,7 @@ test("the Display menu's Motion pauses every animation and is kept, and a figure
   await page.goto(`${siteDevUrl}/components`);
   const switchTile = tile(page, 'Switch');
   await switchTile.scrollIntoViewIfNeeded();
-  await expect(switchTile.locator('.catalogue-related-canvas[data-fitted]')).toBeVisible();
+  await expect(switchTile.locator('.catalogue-tile-canvas[data-fitted]')).toBeVisible();
   await switchTile.hover();
   await page.waitForTimeout(1500);
   expect(await switchOn(switchTile)).toBe(false);
@@ -125,9 +125,7 @@ test('the Toast tile shows one notice at a time: Undo hands the archived one ove
   await page.goto(`${siteDevUrl}/components`);
   const toastTile = tile(page, 'Toast');
   await toastTile.scrollIntoViewIfNeeded();
-  await expect(
-    toastTile.locator('.catalogue-related-canvas[data-fitted] .env-toast'),
-  ).toBeVisible();
+  await expect(toastTile.locator('.catalogue-tile-canvas[data-fitted] .env-toast')).toBeVisible();
   await page.waitForTimeout(500);
   await toastTile.hover();
   // Every frame until the restored notice shows: never more than one notice that isn't leaving.

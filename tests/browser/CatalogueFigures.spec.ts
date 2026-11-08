@@ -104,7 +104,7 @@ test('every stage is the only frame of its figure', async ({ page }) => {
     await expect(page.locator('.site-loading')).toHaveCount(0);
     const framed = await page.evaluate(() => {
       const stages = document.querySelectorAll(
-        '.site-figures :is(.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-related-stage, .catalogue-specimen-grid, .catalogue-matrix-scroll)',
+        '.site-figures :is(.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-tile-stage, .catalogue-specimen-grid, .catalogue-matrix-scroll)',
       );
       // A grid of specimens that plays takes its figure's stage as its canvas, and is no frame.
       const playing =

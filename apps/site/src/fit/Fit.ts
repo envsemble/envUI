@@ -1,6 +1,7 @@
 /*
- * One fit of a picture to its stage (useFit.ts): what it shows is measured, a scale chosen, and
- * the view placed, at rest or as it plays.
+ * One fit of a picture to its stage (useFit.ts), in three steps: what it shows is measured, the fit
+ * is decided on that, by what the picture is fitted as (FitKind) and how it is placed now
+ * (FitMode), and the decision is drawn on the canvas.
  */
 import { holdsFromTop, holdsView, mustShowOf } from '../motion/MustShow';
 import { remPixels } from '../shared/Lengths';
@@ -16,15 +17,23 @@ import {
   join,
   legibleScale,
   margin,
-  most,
+  ownScale,
   phoneSteps,
+  pixelTolerance,
   popupRoom,
+  restingScale,
+  scalePrecision,
+  scaleTolerance,
   stepDown,
+  union,
   wholeRoom,
+  windowScale,
   type Box,
+  type Extent,
+  type OwnScales,
   type Padded,
 } from './FitMath';
-import { trim, type Fitting } from './Fitting';
+import { cropped, fitModeOf, trim, type Fitting, type Moment } from './Fitting';
 import { heldElements, shapeOf } from './HeldPopups';
 import {
   heldNextLeast,
@@ -46,16 +55,25 @@ import { onCourse, restingAims } from './PointerCourse';
 import { modal, screenFit } from './ScreenFit';
 import { settle } from './ViewEasing';
 
+/** The overlay layer a picture's popups open in (StageOverlays, Motion.tsx). */
+const overlayLayer = '.catalogue-overlay-layer';
+
+/** Whether an element is in a picture's overlay layer, a popup. */
+const inPopup = (element: Element) => element.closest(overlayLayer) !== null;
+
 /**
  * Fits a picture to its stage: at rest, centred on what it paints, or held where it was framed;
  * a gallery's tile as it plays, drawn out for what it opens (playFit); a modal on its screen
  * (screenFit).
  */
 export function fit(f: Fitting) {
-  const { stage, canvas } = f;
-  const playing = f.playing.current;
+  const { canvas, kind } = f;
+  const moment: Moment = {
+    playing: f.playing.current,
+    shown: canvas.dataset.fitted !== undefined,
+  };
   // Rested, it plays from its still again the next time.
-  if (f.run && !playing) f.run = null;
+  if (f.run && !moment.playing) f.run = null;
   // A tile that grows as it plays lays out from its window's top (`data-from-top`, Gallery.css).
   const growsDown = holdsFromTop(canvas);
   if (canvas.hasAttribute('data-from-top') !== growsDown)
@@ -63,46 +81,46 @@ export function fit(f: Fitting) {
   const boxes = shownBoxes(canvas);
   if (!boxes.length) return;
   // At rest, what scrolls shows its still as it was written, ending on a whole line.
-  if (!playing)
+  if (!moment.playing)
     for (const region of canvas.querySelectorAll<HTMLElement>('[data-catalogue-runs-on]'))
       delete region.dataset.catalogueRunsOn;
-  const fitted = canvas.dataset.fitted !== undefined;
   // At rest, a tile in place waits for what is still coming or going, such as a popup rising into
   // place, and fits once it ends (transitionend): measured on the way, the view would ease toward
   // it and back.
-  if (f.tile && !playing && fitted && boxes.some(({ element }) => settling(element, canvas))) {
+  if (
+    kind.tile &&
+    !moment.playing &&
+    moment.shown &&
+    boxes.some(({ element }) => settling(element, canvas))
+  ) {
     // What comes in meanwhile, such as a palette's results, is trimmed where it stands.
     trim(f);
     return;
   }
   // At rest, a picture framed on what it shows holds that view, and after it played, eases back to
   // it, rather than framing it again on where its popups were placed meanwhile (holdsFrame).
-  f.measured = playing ? null : shapeOf(stage, canvas, boxes);
-  if (f.measured && fitted && f.framed && holdsFrame(f.framed.shape, f.measured, f.follow)) {
-    // Cut off where its still was, also where its play, in the same view, showed less, such as a
-    // palette's one result; and what it shows anew there, its results cleared, is trimmed.
-    const { scale, toX, toY, cut, fadeAt } = f.framed;
-    if (cut) canvas.dataset.cut = cut;
-    else delete canvas.dataset.cut;
-    f.fadeAt = fadeAt;
-    const { view } = f;
-    if (view.toX !== toX || view.toY !== toY || view.toScale !== scale)
-      settle(f, scale, toX, toY, boxes);
-    trim(f);
+  f.measured = moment.playing ? null : shapeOf(f.stage, canvas, boxes);
+  if (f.measured && moment.shown && f.framed && holdsFrame(f.framed.shape, f.measured, f.follow)) {
+    holdFrame(f, boxes);
     return;
   }
-  frame(f, boxes, growsDown);
+  frame(f, boxes, moment, growsDown);
 }
 
-/** What a picture shows, in its canvas's own px, and the room its stage has for it. */
-interface Extent {
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-  /** The stage's room, less the inset. */
-  width: number;
-  height: number;
+/**
+ * Keeps the view where it was framed: cut off where its still was, also where its play, in the
+ * same view, showed less, such as a palette's one result; and what it shows anew there, its
+ * results cleared, is trimmed.
+ */
+function holdFrame(f: Fitting, boxes: Shown[]) {
+  const { canvas, view } = f;
+  const { scale, toX, toY, cut, fadeAt } = f.framed!;
+  if (cut) canvas.dataset.cut = cut;
+  else delete canvas.dataset.cut;
+  f.fadeAt = fadeAt;
+  if (view.toX !== toX || view.toY !== toY || view.toScale !== scale)
+    settle(f, scale, toX, toY, boxes);
+  trim(f);
 }
 
 /**
@@ -121,10 +139,8 @@ interface Held {
  * across (`--catalogue-own-least`, in px) and down (`--catalogue-own-least-block`), a phone's
  * floor, a popup's least, and an overlay's scale where it is one.
  */
-interface Scales extends HeldScales {
-  least: number;
-  leastBlock: number;
-  floor: number;
+interface Scales extends HeldScales, OwnScales {
+  /** The overlays' scale where the picture is an overlay, else 0. */
   overlay: number;
 }
 
@@ -148,14 +164,29 @@ function scalesOf(canvas: HTMLElement): Scales {
   };
 }
 
-/**
- * The fit past its waits and holds: what it shows is measured, and it is drawn on its screen, as
- * it plays, or at rest.
- */
-function frame(f: Fitting, boxes: Shown[], growsDown: boolean) {
-  const { stage, canvas, tile, ownSize, legible } = f;
-  const playing = f.playing.current;
-  const fitted = canvas.dataset.fitted !== undefined;
+/** What a fit past its waits and holds is decided on, measured before it moves anything. */
+interface Measured {
+  extent: Extent;
+  /**
+   * The parts a tile that holds its view is framed on (heldElements), what of them is laid out
+   * elsewhere as it plays (laidOutOf), and the rows after them (rowsAfter).
+   */
+  heldParts: Element[];
+  laidOut: Box[];
+  below: Box[];
+  further: Box[];
+  /** The scale its window fits the stage at (windowScale). */
+  window: number;
+  scales: Scales;
+  /** The scale a component is drawn at, at its own size (ownScale). */
+  own: number;
+  /** Whether it shows a popup open, in its overlay layer. */
+  popup: boolean;
+}
+
+/** Measures what a fit past its waits and holds is decided on (Measured). */
+function measure(f: Fitting, boxes: Shown[]): Measured {
+  const { stage, canvas } = f;
   // A tile that holds its view is framed on its largest state (heldElements).
   const heldParts = heldElements(canvas);
   // Below what is chosen in a picker's grid or wheel, the rows after it show whole too, so the
@@ -165,126 +196,131 @@ function frame(f: Fitting, boxes: Shown[], growsDown: boolean) {
   const below = after.flatMap((rows) => rows.slice(0, 1)).filter(filled);
   const further = after.flatMap((rows) => rows.slice(1, 2)).filter(filled);
   const laidOut = heldParts.flatMap((element) => laidOutOf(element, canvas) ?? []).filter(filled);
-  const shows = [...boxes.map(({ box }) => box), ...laidOut];
   const extent: Extent = {
-    left: Math.min(...shows.map((box) => box.left)),
-    top: Math.min(...shows.map((box) => box.top)),
-    right: Math.max(...shows.map((box) => box.right)),
-    bottom: Math.max(...shows.map((box) => box.bottom)),
+    ...union([...boxes.map(({ box }) => box), ...laidOut]),
     width: stage.clientWidth - 2 * inset,
     height: stage.clientHeight - 2 * inset,
   };
-  const { left, right, width, height } = extent;
-  // A window that counts whole, a gallery's or a tile's, sets the scale, so every tile of its kind
-  // is drawn at one scale; a gallery's draws what overflows it smaller. A page's own tile is
-  // written for its window, so its scale is the window's alone: one that followed its popups would
-  // move them, as they are placed again at each scale, and never settle. Either way, what the
-  // picture paints is centred, not its window.
-  const windowScale = Math.min(
-    tile ? most : 1,
-    width / canvas.offsetWidth,
-    height / canvas.offsetHeight,
-  );
-  // At its own size, unless the stage's room is smaller than the least box it is drawn whole in,
-  // `--catalogue-own-least` across, as five to a row, and `--catalogue-own-least-block` down, as a
-  // menu open under its button (Gallery.css): then drawn smaller, by one scale for every tile, as
-  // every stage is as large, so nothing reaches the stage's edge. On a phone, each is drawn at one
-  // of a few scales (phoneSteps): its own size where it fits its stage's width and that height,
-  // else `--catalogue-own-floor`, and what is larger still is cut off.
   const scales = scalesOf(canvas);
-  const { phone, steps, popupLeast, overlay } = scales;
-  const downScale = scales.leastBlock > 0 ? height / scales.leastBlock : 1;
-  // A popup shown open, such as a menu beside its button, lays out in its tile's own window
-  // (`data-popup`, Gallery.css), as wide as it was written for, also in a pattern's scene. It is
-  // drawn whole, its edges and corners in view, where that takes a scale no smaller than the least
-  // every popup is drawn at, `--catalogue-own-popup-least` (Gallery.css), or a scene's legible
-  // one: its words stay legible beside the other tiles'. A larger one, such as a picker, is a
-  // window onto it from its top, fading out at its foot, drawn whole across where that scale
-  // allows, else at the one scale and cut off at its end. A modal, such as a dialog, has the stage
-  // for its screen (screenFit). As it plays, it is drawn smaller only where what opens needs it
-  // (playFit).
-  const popup = boxes.some(({ element }) => element.closest('.catalogue-overlay-layer'));
-  if ((ownSize || legible) && popup && !fitted) canvas.dataset.popup = '';
-  const held = heldOf(f, heldParts, laidOut, below, further, extent.top);
-  const own = phone
-    ? stepDown(steps, Math.min(1, width / (right - left), downScale), scales.floor)
-    : Math.min(1, width / scales.least, downScale);
+  return {
+    extent,
+    heldParts,
+    laidOut,
+    below,
+    further,
+    window: windowScale(f.kind, extent, f.canvas),
+    scales,
+    own: ownScale(extent, scales),
+    popup: boxes.some(({ element }) => inPopup(element)),
+  };
+}
+
+/**
+ * The fit past its waits and holds: what it shows is measured, and it is drawn on its screen, as
+ * it plays, or at rest (FitMode).
+ *
+ * A popup shown open, such as a menu beside its button, lays out in its tile's own window
+ * (`data-popup`, Gallery.css), as wide as it was written for, also in a pattern's scene. It is
+ * drawn whole, its edges and corners in view, where that takes a scale no smaller than the least
+ * every popup is drawn at, `--catalogue-own-popup-least` (Gallery.css), or a scene's legible one:
+ * its words stay legible beside the other tiles'. A larger one, such as a picker, is a window onto
+ * it from its top, fading out at its foot, drawn whole across where that scale allows, else at the
+ * one scale and cut off at its end. A modal, such as a dialog, has the stage for its screen
+ * (screenFit). As it plays, it is drawn smaller only where what opens needs it (playFit).
+ */
+function frame(f: Fitting, boxes: Shown[], moment: Moment, growsDown: boolean) {
+  const { canvas, kind } = f;
+  const measured = measure(f, boxes);
+  // Laid out in its window, what follows is measured there.
+  if (cropped(kind) && measured.popup && !moment.shown) canvas.dataset.popup = '';
   // A component's modal, such as a dialog, a sheet or a command palette, over its backdrop: the
   // stage is its screen, decided on its still, so it stays one as the modal closes. A tile first
   // fitted as it plays, its picture loaded while the pointer is on it, decides it then, so its
   // modal's screen and backdrop fill the stage as at rest.
-  if (ownSize && tile && (!playing || !fitted) && canvas.querySelector(modal)) f.screen = true;
-  if (!playing) f.fadeAt = null;
-  if (f.screen) {
-    // A modal overlay, such as a dialog, is drawn at the overlays' one scale, or smaller as far as
-    // it needs to show whole, down to its window's least (Tiles.ts), shown from its top where it
-    // is taller than the stage still.
-    if (overlay)
-      screenFit(f, boxes, overlay, (scale) => Math.max(Math.min(overlay, popupLeast), scale), true);
-    else
-      screenFit(f, boxes, phone ? 1 : own, (scale) =>
-        phone ? stepDown(steps, scale, popupLeast) : Math.max(Math.min(own, popupLeast), scale),
-      );
-    return;
-  }
-  const popups = popupFit(f, boxes, extent, popup, scales);
-  const scene = Math.max(legibleScale, Math.min(1, windowScale));
-  // As a gallery's tile plays, its view is drawn out for all it shows (playFit), never below the
-  // least it is drawn at (its popup's or a scene's), so its words stay legible.
-  if ((ownSize || legible) && tile && playing && fitted) {
-    const low = Math.min(f.view.rest, ownSize ? popupLeast : legibleScale);
-    // A component's is drawn at its still's scale or at that least, never between.
-    playFit(f, boxes, low, (scale) =>
-      ownSize ? (scale >= f.view.rest - 0.0005 ? f.view.rest : low) : scale,
+  if (
+    kind.scale === 'own' &&
+    kind.tile &&
+    (!moment.playing || !moment.shown) &&
+    canvas.querySelector(modal)
+  )
+    f.screen = true;
+  if (!moment.playing) f.fadeAt = null;
+  const mode = fitModeOf(f, moment);
+  if (mode === 'screen') return fitScreen(f, boxes, measured);
+  const popups = popupFit(f, boxes, measured, moment);
+  if (mode === 'playing') return fitPlaying(f, boxes, measured.scales);
+  fitResting(f, boxes, measured, popups, moment, growsDown);
+}
+
+/**
+ * A modal on its screen (screenFit): an overlay, such as a dialog, is drawn at the overlays' one
+ * scale, or smaller as far as it needs to show whole, down to its window's least (Tiles.ts), shown
+ * from its top where it is taller than the stage still; any other modal at its own size, as far
+ * smaller as it needs, down to the popups' least, or on a phone at one of a phone's scales.
+ */
+function fitScreen(f: Fitting, boxes: Shown[], { scales, own }: Measured) {
+  const { overlay, phone, steps, popupLeast } = scales;
+  if (overlay)
+    screenFit(f, boxes, overlay, (scale) => Math.max(Math.min(overlay, popupLeast), scale), true);
+  else
+    screenFit(f, boxes, phone ? 1 : own, (scale) =>
+      phone ? stepDown(steps, scale, popupLeast) : Math.max(Math.min(own, popupLeast), scale),
     );
-    return;
-  }
+}
+
+/**
+ * As a gallery's tile plays, its view is drawn out for all it shows (playFit), never below the
+ * least it is drawn at (its popup's or a scene's), so its words stay legible. A component's is
+ * drawn at its still's scale or at that least, never between.
+ */
+function fitPlaying(f: Fitting, boxes: Shown[], { popupLeast }: Scales) {
+  const { kind, view } = f;
+  const component = kind.scale === 'own';
+  const low = Math.min(view.rest, component ? popupLeast : legibleScale);
+  playFit(f, boxes, low, (scale) =>
+    component ? (scale >= view.rest - scaleTolerance ? view.rest : low) : scale,
+  );
+}
+
+/** A picture at rest: its scale decided, and its view placed and cut off there (placeAtRest). */
+function fitResting(
+  f: Fitting,
+  boxes: Shown[],
+  measured: Measured,
+  popups: Popups,
+  moment: Moment,
+  growsDown: boolean,
+) {
+  const held = heldOf(f, measured);
   // An overlay, such as a notification, is measured by its own surface, which keeps a popup's room
   // from the stage's edges, not by the inset a trigger keeps: the largest scale it shows whole
   // across at (anchoredScale). Where it doesn't at its scale, it is drawn as much smaller as that
   // takes, down to the popups' least.
   const overlayWhole =
-    overlay && popups.anchored
-      ? anchoredScale(popups.anchored, stage.clientWidth, Infinity)
+    measured.scales.overlay && popups.anchored
+      ? anchoredScale(popups.anchored, f.stage.clientWidth, Infinity)
       : Infinity;
-  const drawn = ownSize
-    ? popup
-      ? overlay
-        ? Math.min(overlay, popups.scale(phone ? 1 : own), Math.max(popupLeast, overlayWhole))
-        : popups.scale(phone ? 1 : own)
-      : own
-    : legible
-      ? popup
-        ? popups.scale(scene)
-        : scene
-      : tile
-        ? windowScale
-        : Math.min(
-            f.whole ? windowScale : 1,
-            width / (right - left),
-            height / (extent.bottom - extent.top),
-          );
-  const { scale, drawnWhole } = heldViewScale(f, drawn, extent, popup, popups, held, scales);
-  placeAtRest(f, boxes, scale, {
-    extent,
+  const drawn = restingScale(f.kind, {
+    ...measured,
+    popupScale: popups.scale,
+    overlayWhole,
+  });
+  const drawnAt = heldViewScale(f, drawn, measured, popups, held, moment);
+  drawHeldScale(f.canvas, drawnAt);
+  placeAtRest(f, boxes, drawnAt.scale, {
+    extent: measured.extent,
     growsDown,
     held,
     popups,
-    drawnWhole,
-    overlay,
+    drawnWhole: drawnAt.drawnWhole,
+    overlay: measured.scales.overlay,
     overlayWhole,
+    moment,
   });
 }
 
 /** What a tile that holds its view shows of what its script acts on, as Held says. */
-function heldOf(
-  f: Fitting,
-  held: Element[],
-  laidOut: Box[],
-  below: Box[],
-  further: Box[],
-  top: number,
-): Held {
+function heldOf(f: Fitting, { heldParts, laidOut, below, further, extent }: Measured): Held {
   const { canvas } = f;
   // A tile that holds its view is framed once on its still, the largest it shows: what its script
   // acts on there, such as a time picker's chosen hour under its field, a menu's items or a
@@ -292,7 +328,7 @@ function heldOf(
   // in it from its top, above the fade at its foot, with the cursor on it.
   const aims = holdsView(canvas) ? restingAims(canvas) : [];
   const acted = [
-    ...held.map((element) => partOf(element, canvas)).filter(filled),
+    ...heldParts.map((element) => partOf(element, canvas)).filter(filled),
     ...laidOut,
     ...aims.map(({ box }) => box),
   ];
@@ -300,14 +336,11 @@ function heldOf(
   return {
     rows,
     // The top of the lowest of them, such as a date picker's chosen week.
-    lowest: acted.reduce<Box | null>(
-      (low, box) => (!low || box.bottom > low.bottom ? box : low),
-      null,
-    ),
+    lowest: lowestOf(acted),
     ways: rows ? heldWays(rows) : [],
     room: {
       size: f.stage.clientHeight,
-      top,
+      top: extent.top,
       // The lowest point the pointer presses at rest, where its cursor's tip is.
       pointerFoot: aims.length ? Math.max(...aims.map(({ y }) => y)) : null,
       cursor: cursorLength * remPixels(),
@@ -317,6 +350,10 @@ function heldOf(
 
 /** Whether a box holds anything. */
 const filled = (box: Box) => box.right > box.left && box.bottom > box.top;
+
+/** The box that reaches lowest, or none. */
+const lowestOf = (boxes: readonly Box[]) =>
+  boxes.reduce<Box | null>((low, box) => (!low || box.bottom > low.bottom ? box : low), null);
 
 /** How a popup shown open is drawn in its stage (popupFit). */
 interface Popups {
@@ -343,26 +380,24 @@ interface Popups {
 function popupFit(
   f: Fitting,
   boxes: Shown[],
-  { left, top, right, bottom, width, height }: Extent,
-  popup: boolean,
-  { phone, popupLeast }: Scales,
+  { extent, popup, scales }: Measured,
+  moment: Moment,
 ): Popups {
-  const { stage, canvas, ownSize } = f;
+  const { stage, canvas, kind } = f;
+  const { left, top, right, bottom, width, height } = extent;
+  const component = kind.scale === 'own';
   const wholeScale = Math.min(width / (right - left), height / (bottom - top));
-  const dialog = canvas.querySelector('.catalogue-overlay-layer .env-dialog-backdrop') !== null;
+  const dialog = canvas.querySelector(`${overlayLayer} .env-dialog-backdrop`) !== null;
   const room = {
     width: stage.clientWidth - 2 * margin,
     height: stage.clientHeight - 2 * margin,
   };
   const anchored =
-    ownSize && popup && !dialog
-      ? boxes.map(({ element, box }) => ({
-          box,
-          pad: element.closest('.catalogue-overlay-layer') ? popupRoom : inset,
-        }))
+    component && popup && !dialog
+      ? boxes.map(({ element, box }) => ({ box, pad: inPopup(element) ? popupRoom : inset }))
       : null;
   // A component's own popup, or a dialog in a scene too.
-  const roomy = dialog || (ownSize && popup);
+  const roomy = dialog || (component && popup);
   const marginScale = roomy
     ? Math.min(room.width / (right - left), room.height / (bottom - top))
     : 0;
@@ -379,9 +414,9 @@ function popupFit(
   // at the stage's edge; it lays out as wide as at the popups' least, so its width doesn't follow
   // its scale (placeAtRest). On a wider page a popup is drawn at one of two scales, never between.
   const stageRoom = `${stage.clientWidth} ${stage.clientHeight}`;
-  if (canvas.dataset.fitted === undefined || f.wholeFor?.room !== stageRoom) {
+  if (!moment.shown || f.wholeFor?.room !== stageRoom) {
     const whole =
-      anchored && holdsView(canvas) && (phone || matchMedia(narrowGallery).matches)
+      anchored && holdsView(canvas) && (scales.phone || matchMedia(narrowGallery).matches)
         ? anchoredScale(
             anchored.map(({ box }) => ({ box, pad: wholeRoom })),
             stage.clientWidth,
@@ -392,10 +427,10 @@ function popupFit(
       room: stageRoom,
       whole,
       narrower:
-        roomScale < popupLeast - 0.0005 &&
-        whole < popupLeast - 0.0005 &&
-        whole >= heldNextLeast - 0.0005
-          ? Math.floor(whole * 1000) / 1000
+        roomScale < scales.popupLeast - scaleTolerance &&
+        whole < scales.popupLeast - scaleTolerance &&
+        whole >= heldNextLeast - scaleTolerance
+          ? Math.floor(whole * scalePrecision) / scalePrecision
           : null,
     };
   }
@@ -407,38 +442,48 @@ function popupFit(
     narrower,
     whole,
     scale: (atMost) => {
-      if (Math.max(wholeScale, roomScale) >= atMost - 0.0005) return atMost;
-      return narrower ?? Math.min(atMost, popupLeast);
+      if (Math.max(wholeScale, roomScale) >= atMost - scaleTolerance) return atMost;
+      return narrower ?? Math.min(atMost, scales.popupLeast);
     },
   };
 }
 
 /**
- * The scale a picture is drawn at once a held view or a held subject is drawn smaller, where it
- * must, than the scale it is `drawn` at (heldScale, subjectScale).
+ * The scale a resting picture is drawn at once a held view or a held subject is drawn smaller,
+ * where it must, than the scale it is `drawn` at (heldScale, subjectScale); whether its subject is
+ * drawn smaller so (`data-held-scale`); and on a phone, the scale a popup shown open lays out at
+ * (`--catalogue-canvas-scale`), or null where its canvas keeps the one it has.
  */
+interface HeldViewScale {
+  scale: number;
+  drawnWhole: boolean;
+  heldSmaller: boolean;
+  layoutScale: string | null;
+}
+
 function heldViewScale(
   f: Fitting,
   drawn: number,
-  { left, top, right, bottom, height }: Extent,
-  popup: boolean,
+  { extent, popup, scales }: Measured,
   popups: Popups,
   held: Held,
-  scales: Scales,
-) {
-  const { stage, canvas, ownSize, legible, view } = f;
+  moment: Moment,
+): HeldViewScale {
+  const { stage, canvas, kind, view } = f;
+  const { left, top, right, bottom, height } = extent;
+  const component = kind.scale === 'own';
   // A held component view that names what it shows (useMustShow), such as a docked panel or a
   // strip of tabs written as wide as its largest state, shows whole in the stage's room, a margin
   // from its edges, as a component a little larger than the inset leaves room for is (inRoom):
   // where the one scale doesn't allow that, it is drawn at the largest of the scales tiles are
   // drawn at that does, as a held picker is (heldScale), else as much smaller as it needs, down to
   // a held view's least, through its whole loop (`data-held-scale`).
-  const subject = ownSize && !popup && holdsView(canvas) && mustShowOf(canvas, true).length > 0;
+  const subject = component && !popup && holdsView(canvas) && mustShowOf(canvas, true).length > 0;
   // Drawn whole a little smaller (narrower), or at the overlays' scale where that shows it whole
   // so too, it is framed whole, centred, as it is.
-  const drawnWhole = popups.narrower !== null && drawn <= popups.whole + 0.0005;
+  const drawnWhole = popups.narrower !== null && drawn <= popups.whole + scaleTolerance;
   const framedAt =
-    (ownSize || legible) && !drawnWhole
+    cropped(kind) && !drawnWhole
       ? heldScale(drawn, held.ways, held.room, { tall: bottom - top, height }, scales)
       : drawn;
   const fitted = subject
@@ -454,31 +499,37 @@ function heldViewScale(
         ),
       )
     : framedAt;
-  const heldSmaller = subject && fitted < drawn - 0.0005;
-  if (canvas.hasAttribute('data-held-scale') !== heldSmaller)
-    canvas.toggleAttribute('data-held-scale', heldSmaller);
   // Measured again, a box may come out a hair larger or smaller, a ten-millionth of the scale:
   // that is the same scale, so the view holds still and a tile shows as soon as it is fitted.
-  const scale = Math.abs(fitted - view.rest) < 0.0005 ? view.rest : fitted;
+  const scale = Math.abs(fitted - view.rest) < scaleTolerance ? view.rest : fitted;
   // On a phone, a popup shown open lays out as wide as the stage's room shows at the scale it is
   // drawn at (`--catalogue-canvas-scale`, Gallery.css), so what is as wide as its window, such as
   // a field, keeps the inset from both edges.
-  if (
+  const laysOut =
     scales.phone &&
-    ownSize &&
+    component &&
     !scales.overlay &&
-    !f.playing.current &&
-    canvas.dataset.popup !== undefined
-  ) {
-    const drawnAt = String(
-      Math.round(
-        (popups.narrower !== null && scale === popups.narrower ? scales.popupLeast : scale) * 1000,
-      ) / 1000,
-    );
-    if (canvas.style.getPropertyValue('--catalogue-canvas-scale') !== drawnAt)
-      canvas.style.setProperty('--catalogue-canvas-scale', drawnAt);
-  }
-  return { scale, drawnWhole };
+    !moment.playing &&
+    canvas.dataset.popup !== undefined;
+  const layoutAt =
+    popups.narrower !== null && scale === popups.narrower ? scales.popupLeast : scale;
+  return {
+    scale,
+    drawnWhole,
+    heldSmaller: subject && fitted < drawn - scaleTolerance,
+    layoutScale: laysOut ? String(Math.round(layoutAt * scalePrecision) / scalePrecision) : null,
+  };
+}
+
+/** Draws a held view's scale on its canvas (heldViewScale), before its view is placed there. */
+function drawHeldScale(canvas: HTMLElement, { heldSmaller, layoutScale }: HeldViewScale) {
+  if (canvas.hasAttribute('data-held-scale') !== heldSmaller)
+    canvas.toggleAttribute('data-held-scale', heldSmaller);
+  if (
+    layoutScale !== null &&
+    canvas.style.getPropertyValue('--catalogue-canvas-scale') !== layoutScale
+  )
+    canvas.style.setProperty('--catalogue-canvas-scale', layoutScale);
 }
 
 /** What placing a picture at rest goes by (placeAtRest). */
@@ -490,16 +541,16 @@ interface Placing {
   drawnWhole: boolean;
   overlay: number;
   overlayWhole: number;
+  moment: Moment;
 }
 
 /** Places a picture's view at a scale, centred on what it paints, as it shows best there. */
 function placeAtRest(f: Fitting, boxes: Shown[], scale: number, placing: Placing) {
-  const { stage, canvas, tile, ownSize, legible, view } = f;
-  const { extent, popups, drawnWhole, overlay, overlayWhole } = placing;
+  const { stage, canvas, kind, view } = f;
+  const { extent, popups, drawnWhole, overlay, overlayWhole, moment } = placing;
   const { left, top, right, bottom, width, height } = extent;
   const { rows, lowest, ways, room: heldRoom } = placing.held;
   const keep = rows?.keep;
-  const playing = f.playing.current;
   let toX = ((left + right) / 2) * scale;
   let toY = ((top + bottom) / 2) * scale;
   // Drawn at its own size, what is larger than the stage shows from its start, as a window onto
@@ -516,26 +567,26 @@ function placeAtRest(f: Fitting, boxes: Shown[], scale: number, placing: Placing
   const inRoom =
     drawnWhole ||
     (popups.anchored
-      ? (overlay > 0 && scale <= overlayWhole + 0.0005 && down <= height + insetSlack) ||
+      ? (overlay > 0 && scale <= overlayWhole + scaleTolerance && down <= height + insetSlack) ||
         (down <= height + insetSlack && across <= width + insetSlack)
-      : down <= popups.room.height + 0.5 && across <= popups.room.width + 0.5);
+      : down <= popups.room.height + pixelTolerance &&
+        across <= popups.room.width + pixelTolerance);
   // So is a component a little wider than the inset leaves room for, such as a strip of tabs,
   // across: it is cut off at its foot alone, as every other one is, not at its side.
-  const acrossRoom = across <= (popups.anchored ? width + insetSlack : popups.room.width + 0.5);
+  const acrossRoom =
+    across <= (popups.anchored ? width + insetSlack : popups.room.width + pixelTolerance);
   // It starts at the component's own start, rather than its popups': a popup shifts to stay in
   // the window, and a view that followed it would shift it again. A dialog, over its backdrop, is
   // placed by the window alone and covers what opens it: it starts at its own.
-  if (ownSize && across > width && !inRoom && !acrossRoom) {
-    const ownBoxes = boxes.filter(
-      ({ element }) => popups.dialog || !element.closest('.catalogue-overlay-layer'),
-    );
+  if (kind.scale === 'own' && across > width && !inRoom && !acrossRoom) {
+    const ownBoxes = boxes.filter(({ element }) => popups.dialog || !inPopup(element));
     const start = ownBoxes.length ? Math.min(...ownBoxes.map(({ box }) => box.left)) : left;
     toX = start * scale + width / 2;
   }
   // A scene drawn at a legible scale shows from its top too, where it starts, such as a search
   // above the results it filters, and stays centred across. A tile that holds its view shows from
   // its top down to what its script acts on, whole above the fade at its foot.
-  const fromTop = (ownSize || legible) && down > height && !inRoom;
+  const fromTop = cropped(kind) && down > height && !inRoom;
   if (fromTop && keep) {
     // What it shows from, such as a picker's field, the inset from the stage's top, or as much
     // nearer it as keeps what its script acts on, with the row below a picker's chosen one where
@@ -553,7 +604,7 @@ function placeAtRest(f: Fitting, boxes: Shown[], scale: number, placing: Placing
   // A tile that grows as it plays is shown from its top, so what it adds below has the room the
   // still leaves under it: its still, written as its largest state, centred where it fits the
   // stage, as other tiles are, else the inset from the stage's top (useHeldView).
-  if (placing.growsDown && (ownSize || legible))
+  if (placing.growsDown && cropped(kind))
     toY =
       top * scale +
       stage.clientHeight / 2 -
@@ -564,13 +615,14 @@ function placeAtRest(f: Fitting, boxes: Shown[], scale: number, placing: Placing
   // fitted as it plays, its picture loaded while the pointer is on it, is framed so too, as at
   // rest.
   const course =
-    (ownSize || legible) && tile && (!playing || canvas.dataset.fitted === undefined)
+    cropped(kind) && kind.tile && (!moment.playing || !moment.shown)
       ? { ...onCourse(stage, canvas, toX, toY, scale), ...(fromTop && keep ? { toY } : {}) }
       : null;
   const shifted =
-    course !== null && (Math.abs(course.toX - toX) >= 0.5 || Math.abs(course.toY - toY) >= 0.5);
+    course !== null &&
+    (Math.abs(course.toX - toX) >= pixelTolerance || Math.abs(course.toY - toY) >= pixelTolerance);
   if (course) ({ toX, toY } = course);
-  if (ownSize || legible) {
+  if (cropped(kind)) {
     cutAtRest(f, boxes, scale, toX, toY, {
       extent,
       inRoom,
@@ -583,7 +635,7 @@ function placeAtRest(f: Fitting, boxes: Shown[], scale: number, placing: Placing
   }
   // As a page's own tile plays, the view stays where it is while what it shows stays in the stage,
   // else moves just far enough to keep it in.
-  if (tile && playing && view.scale === scale) {
+  if (kind.tile && moment.playing && view.scale === scale) {
     toX = contain(view.toX, left * scale, right * scale, stage.clientWidth / 2 - inset);
     toY = contain(view.toY, top * scale, bottom * scale, stage.clientHeight / 2 - inset);
   }
@@ -609,14 +661,18 @@ function cutAtRest(
     course: boolean;
   },
 ) {
-  const { stage, canvas, legible } = f;
+  const { stage, canvas, kind } = f;
+  const scene = kind.scale === 'legible';
   const { left, top, right, bottom, width, height } = how.extent;
   const across = (right - left) * scale;
   const down = (bottom - top) * scale;
   // Drawn at a legible scale, a scene wider than the stage is cut off on both sides, fading out
   // there too. A held view's top reaching a row's slack past the stage's, its leading clear, isn't
   // cut.
-  const held = f.fadeAt !== null && top * scale - toY + stage.clientHeight / 2 >= -rowSlack - 0.5;
+  const held =
+    f.fadeAt !== null && top * scale - toY + stage.clientHeight / 2 >= -rowSlack - pixelTolerance;
+  // What may reach past the room before it is cut off: a popup a little, anything else the inset.
+  const slack = how.anchored ? insetSlack : inset;
   const cut =
     how.shifted || f.fadeAt !== null
       ? cutSides(
@@ -630,14 +686,9 @@ function cutAtRest(
           .split(' ')
           .filter((side) => !(held && side === 'top'))
       : [
-          down > height + (how.anchored ? insetSlack : inset) && !how.inRoom ? 'bottom' : '',
-          !legible &&
-          across > width + (how.anchored ? insetSlack : inset) &&
-          !how.inRoom &&
-          !how.acrossRoom
-            ? 'end'
-            : '',
-          legible && across > stage.clientWidth ? 'start end' : '',
+          down > height + slack && !how.inRoom ? 'bottom' : '',
+          !scene && across > width + slack && !how.inRoom && !how.acrossRoom ? 'end' : '',
+          scene && across > stage.clientWidth ? 'start end' : '',
         ];
   const sides = cut.filter(Boolean).join(' ');
   if (sides) canvas.dataset.cut = sides;
@@ -669,10 +720,8 @@ function feetInFade(f: Fitting, boxes: Shown[], scale: number, toY: number) {
     .filter(inFade);
   const rows = [...canvas.querySelectorAll(rowSelector)]
     .filter((row) => !row.querySelector(rowSelector) && row.checkVisibility())
-    .map((row) => ({ row, box: partOf(row, canvas) }));
-  const last = rows
-    .filter(({ box }) => box.bottom > box.top && inFade(box.bottom))
-    .reduce<Box | null>((low, { box }) => (!low || box.bottom > low.bottom ? box : low), null);
+    .map((row) => partOf(row, canvas));
+  const last = lowestOf(rows.filter((box) => box.bottom > box.top && inFade(box.bottom)));
   const onlyRows =
     last !== null &&
     boxes.every(({ element, box }) => {

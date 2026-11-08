@@ -132,12 +132,12 @@ test('a component page shows plain sections, equal cells and the parts of its an
   ]);
   await tiles.first().scrollIntoViewIfNeeded();
   const tileStages = () =>
-    tiles.locator('.catalogue-related-stage').evaluateAll((stages) => ({
+    tiles.locator('.catalogue-tile-stage').evaluateAll((stages) => ({
       widths: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().width))).size,
       heights: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().height)))
         .size,
       fitted: stages.filter((stage) =>
-        stage.querySelector('.catalogue-related-canvas[data-fitted][inert]'),
+        stage.querySelector('.catalogue-tile-canvas[data-fitted][inert]'),
       ).length,
     }));
   await expect.poll(tileStages).toEqual({ widths: 1, heights: 1, fitted: 5 });

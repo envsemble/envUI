@@ -45,12 +45,10 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
           picture={galleryPictureOf(page)}
           near={near}
           playing={playing || autoplay}
-          className="catalogue-related-stage catalogue-gallery-stage"
-          whole
+          className="catalogue-tile-stage catalogue-gallery-stage"
           // Components show at their own size, one scale for all; a pattern's scene at a legible
           // scale, cropped to its middle.
-          ownSize={frameOf(page.document?.id) === 'own'}
-          legible={frameOf(page.document?.id) === 'legible'}
+          frame={frameOf(page.document?.id)}
         />
       </div>
       <Row align="center" justify="between" gap={2} className="catalogue-gallery-meta">

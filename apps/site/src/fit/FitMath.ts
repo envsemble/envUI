@@ -2,8 +2,9 @@
  * The fit's pure calculations (useFit.ts): boxes in a canvas's own px, the scales a picture is
  * drawn at, and where its view goes. Nothing here reads the page (tests/site/Fit.test.mjs).
  */
+import type { FitKind } from './Fitting';
 
-/** A box in a canvas's own px. */
+/** A box, by its edges: in a canvas's own px here, in whatever px its user measures elsewhere. */
 export interface Box {
   left: number;
   top: number;
@@ -11,10 +12,28 @@ export interface Box {
   bottom: number;
 }
 
+/**
+ * Scales closer than this are one scale: measured again, a box may come out a hair larger or
+ * smaller, a ten-millionth of the scale.
+ */
+export const scaleTolerance = 0.0005;
+
+/**
+ * Lengths closer than this, in px, are one length: what is placed at whole pixels, or measured
+ * again, comes out a fraction off.
+ */
+export const pixelTolerance = 0.5;
+
+/** The steps a scale is kept to where it is written down or held, thousandths. */
+export const scalePrecision = 1000;
+
 /** The least room, in px, between a picture and its stage's edges. */
 export const inset = 16;
 
-/** The most a page's own tile is enlarged: written for its small window, it is drawn large. */
+/**
+ * The most a page's own tile is enlarged: written for its small window, it is drawn large.
+ * @internal
+ */
 export const most = 2;
 
 /** The least a pattern's scene is drawn at in a gallery, so its words stay legible. */
@@ -55,16 +74,18 @@ export const cursorLength = 1.25;
 /** The least room, in px, the cursor keeps from its stage's foot. */
 export const cursorRoom = 0;
 
-/** The least box around boxes, or nothing for none. */
+/** The least box around one box or more. */
+export const union = (boxes: readonly Box[]): Box => ({
+  left: Math.min(...boxes.map((box) => box.left)),
+  top: Math.min(...boxes.map((box) => box.top)),
+  right: Math.max(...boxes.map((box) => box.right)),
+  bottom: Math.max(...boxes.map((box) => box.bottom)),
+});
+
+/** The least box around the boxes there are, or nothing for none. */
 export function join(...boxes: (Box | null)[]): Box | null {
   const some = boxes.filter((box): box is Box => box !== null);
-  if (!some.length) return null;
-  return {
-    left: Math.min(...some.map((box) => box.left)),
-    top: Math.min(...some.map((box) => box.top)),
-    right: Math.max(...some.map((box) => box.right)),
-    bottom: Math.max(...some.map((box) => box.bottom)),
-  };
+  return some.length ? union(some) : null;
 }
 
 /** Whether a box holds another, to a couple of px, as a popup ends its entrance. */
@@ -156,7 +177,112 @@ export const phoneSteps = (floor: number, popupLeast: number) =>
 
 /** On a phone, the largest of its scales (phoneSteps) a picture fits at, no smaller than `low`. */
 export const stepDown = (steps: readonly number[], scale: number, low: number) =>
-  steps.find((each) => each >= low - 0.0005 && each <= scale + 0.0005) ?? low;
+  steps.find((each) => each >= low - scaleTolerance && each <= scale + scaleTolerance) ?? low;
+
+/** What a picture shows, in its canvas's own px, and the room its stage has for it, less the inset. */
+export interface Extent extends Box {
+  width: number;
+  height: number;
+}
+
+/**
+ * The scale a picture's window, `canvas` at its own size, fits the stage at. A window that counts
+ * whole, a gallery's or a tile's, sets the scale, so every tile of its kind is drawn at one scale;
+ * a gallery's draws what overflows it smaller. A page's own tile is written for its window, so its
+ * scale is the window's alone, up to `most`: one that followed its popups would move them, as they
+ * are placed again at each scale, and never settle. Either way, what the picture paints is
+ * centred, not its window.
+ */
+export const windowScale = (
+  kind: FitKind,
+  { width, height }: Extent,
+  canvas: { offsetWidth: number; offsetHeight: number },
+) => Math.min(kind.tile ? most : 1, width / canvas.offsetWidth, height / canvas.offsetHeight);
+
+/**
+ * The scales its style sets a component's tile at (Gallery.css): the least box it is drawn whole in
+ * across (`--catalogue-own-least`, in px) and down (`--catalogue-own-least-block`), and on a phone,
+ * its floor and the scales it is drawn at (phoneSteps).
+ */
+export interface OwnScales {
+  least: number;
+  leastBlock: number;
+  floor: number;
+  phone: boolean;
+  steps: readonly number[];
+}
+
+/**
+ * The scale a component is drawn at, at its own size, unless the stage's room is smaller than the
+ * least box it is drawn whole in, `--catalogue-own-least` across, as five to a row, and
+ * `--catalogue-own-least-block` down, as a menu open under its button: then drawn smaller, by one
+ * scale for every tile, as every stage is as large, so nothing reaches the stage's edge. On a
+ * phone, each is drawn at one of a few scales (phoneSteps): its own size where it fits its stage's
+ * width and that height, else `--catalogue-own-floor`, and what is larger still is cut off.
+ */
+export function ownScale({ left, right, width, height }: Extent, scales: OwnScales) {
+  const downScale = scales.leastBlock > 0 ? height / scales.leastBlock : 1;
+  return scales.phone
+    ? stepDown(scales.steps, Math.min(1, width / (right - left), downScale), scales.floor)
+    : Math.min(1, width / scales.least, downScale);
+}
+
+/** What the scale a resting picture is drawn at is decided on (restingScale). */
+export interface Resting {
+  extent: Extent;
+  /** The scale its window fits the stage at (windowScale). */
+  window: number;
+  /** The scale a component is drawn at, at its own size (ownScale). */
+  own: number;
+  /** Whether it shows a popup open. */
+  popup: boolean;
+  /** Whether it is on a phone, the popups' least scale, and the overlays' where it is one, or 0. */
+  scales: { phone: boolean; popupLeast: number; overlay: number };
+  /** The scale a popup shown open is drawn at, at most `atMost` (popupFit, Fit.ts). */
+  popupScale: (atMost: number) => number;
+  /** The largest scale an overlay shows whole across at, or Infinity for any other picture. */
+  overlayWhole: number;
+}
+
+/** The scale a resting picture is drawn at, by what it is fitted as (FitKind). */
+export function restingScale(kind: FitKind, resting: Resting) {
+  switch (kind.scale) {
+    case 'own':
+      return componentScale(resting);
+    case 'legible':
+      return sceneScale(resting);
+    case 'window':
+      return resting.window;
+    case 'content':
+      return contentScale(resting);
+  }
+}
+
+/**
+ * A component at its own size; a popup shown open as popupFit draws it, at most its own size, or
+ * on a phone, where its own size is one of the phone's scales, at most 1; and an overlay, such as a
+ * notification, at the overlays' scale, or as much smaller as shows it whole across, down to the
+ * popups' least.
+ */
+function componentScale({ own, popup, scales, popupScale, overlayWhole }: Resting) {
+  if (!popup) return own;
+  const drawn = popupScale(scales.phone ? 1 : own);
+  return scales.overlay
+    ? Math.min(scales.overlay, drawn, Math.max(scales.popupLeast, overlayWhole))
+    : drawn;
+}
+
+/** A pattern's scene: its window's scale, no larger than its own size nor smaller than legible. */
+function sceneScale({ window, popup, popupScale }: Resting) {
+  const scene = Math.max(legibleScale, Math.min(1, window));
+  return popup ? popupScale(scene) : scene;
+}
+
+/** An example or a specimen: as large as what it paints fits the stage, no larger than its window. */
+function contentScale({ extent, window }: Resting) {
+  const { left, top, right, bottom, width, height } = extent;
+  return Math.min(window, width / (right - left), height / (bottom - top));
+}
 
 /** Where a playing tile's view stands as it opens something, and what it needs to show. */
 export interface DrawOut {

@@ -17,12 +17,12 @@ test('a Related tile of a page without an example shows its specimen', async ({ 
     'href',
     '/foundations/icons',
   );
-  await expect(tile.locator('.catalogue-related-stage')).toHaveAttribute(
+  await expect(tile.locator('.catalogue-tile-stage')).toHaveAttribute(
     'data-catalogue-specimen',
     'icons',
   );
-  await expect(tile.locator('.catalogue-related-canvas[data-fitted] svg')).toHaveCount(6);
-  await expect(page.locator('.catalogue-related-placeholder')).toHaveCount(0);
+  await expect(tile.locator('.catalogue-tile-canvas[data-fitted] svg')).toHaveCount(6);
+  await expect(page.locator('.catalogue-tile-placeholder')).toHaveCount(0);
 });
 
 test('each Related tile shows the component it names, also one documented on another page', async ({

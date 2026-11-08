@@ -51,7 +51,7 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
               links.filter(
                 (link) =>
                   !link.closest(
-                    '.site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-open-example, .catalogue-related-stage, .catalogue-specimen',
+                    '.site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-open-example, .catalogue-tile-stage, .catalogue-specimen',
                   ),
               ).length,
           ),

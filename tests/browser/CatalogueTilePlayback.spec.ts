@@ -31,7 +31,7 @@ async function playTile(page: Page, name: string, targets: string[], duration = 
   const tile = page.locator('.catalogue-gallery-tile').filter({
     has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
   });
-  const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
+  const canvas = tile.locator('.catalogue-tile-canvas[data-fitted]');
   await showTile(tile);
   await expect(canvas).toHaveCount(1);
   await page.mouse.move(0, 0);
@@ -48,7 +48,7 @@ async function playTile(page: Page, name: string, targets: string[], duration = 
     };
     const frames: PlayFrame[] = [];
     (element as HTMLElement & { frames?: PlayFrame[] }).frames = frames;
-    const stage = element.querySelector('.catalogue-related-stage')!;
+    const stage = element.querySelector('.catalogue-tile-stage')!;
     const start = performance.now();
     const reach = (boxes: DOMRect[]) => {
       const edge = stage.getBoundingClientRect();
@@ -64,7 +64,7 @@ async function playTile(page: Page, name: string, targets: string[], duration = 
     // opens as it plays is judged.
     const rested = new Set(element.querySelectorAll('.catalogue-overlay-layer *'));
     const sample = () => {
-      const canvas = element.querySelector<HTMLElement>('.catalogue-related-canvas');
+      const canvas = element.querySelector<HTMLElement>('.catalogue-tile-canvas');
       if (canvas && element.querySelector('[data-playing]')) {
         // What shows of each, as a scrolled row doesn't.
         const boxes = targets
@@ -208,10 +208,10 @@ test('a popup tile rests open and holds one view from its still through its play
             .first(),
           name,
         ).toBeVisible();
-        await expect(
-          tile.locator('.catalogue-related-canvas[data-fitted]'),
-          name,
-        ).not.toHaveAttribute('data-cut', width === 390 ? /top|start/ : /./);
+        await expect(tile.locator('.catalogue-tile-canvas[data-fitted]'), name).not.toHaveAttribute(
+          'data-cut',
+          width === 390 ? /top|start/ : /./,
+        );
       }
       const { rest, frames } = await playTile(page, name, [], 4500);
       expect(frames.length, name).toBeGreaterThan(20);
@@ -258,7 +258,7 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
   test.setTimeout(150_000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${siteDevUrl}/components`);
-  await expect(page.locator('.catalogue-related-canvas[data-fitted]').first()).toBeVisible();
+  await expect(page.locator('.catalogue-tile-canvas[data-fitted]').first()).toBeVisible();
   for (const name of [
     'Avatar',
     'Menu',
@@ -272,7 +272,7 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
     const tile = page.locator('.catalogue-gallery-tile').filter({
       has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
     });
-    const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
+    const canvas = tile.locator('.catalogue-tile-canvas[data-fitted]');
     await showTile(tile);
     await page.mouse.move(0, 0);
     await expect(canvas).toHaveCount(1);
@@ -297,16 +297,14 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
       [0.97, 0.7],
     ] as const) {
       await showTile(tile);
-      const box = (await tile.locator('.catalogue-related-stage').boundingBox())!;
+      const box = (await tile.locator('.catalogue-tile-stage').boundingBox())!;
       await page.mouse.move(box.x + box.width * x, box.y + box.height * y);
       await expect(tile.locator('[data-playing]')).toHaveCount(1);
       const { views, cut } = await tile.evaluate(
         (element, name) =>
           new Promise<{ views: string[]; cut: string[] }>((resolve) => {
-            const canvas = element.querySelector<HTMLElement>('.catalogue-related-canvas')!;
-            const stage = element
-              .querySelector('.catalogue-related-stage')!
-              .getBoundingClientRect();
+            const canvas = element.querySelector<HTMLElement>('.catalogue-tile-canvas')!;
+            const stage = element.querySelector('.catalogue-tile-stage')!.getBoundingClientRect();
             const views = new Set<string>();
             const cut = new Set<string>();
             const start = performance.now();
@@ -432,7 +430,7 @@ async function deadClicks(page: Page, names: string[]) {
     const tile = page.locator('.catalogue-gallery-tile').filter({
       has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
     });
-    const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
+    const canvas = tile.locator('.catalogue-tile-canvas[data-fitted]');
     await showTile(tile);
     await expect(canvas, name).toHaveCount(1);
     await page.mouse.move(0, 0);
@@ -548,17 +546,17 @@ test("a playing preview draws its pointer's cursor over its stage, gone at rest 
     has: page.locator('.catalogue-gallery-name', { hasText: /^Select$/ }),
   });
   await showTile(tile);
-  await expect(tile.locator('.catalogue-related-canvas[data-fitted]')).toHaveCount(1);
+  await expect(tile.locator('.catalogue-tile-canvas[data-fitted]')).toHaveCount(1);
   const cursor = page.locator('.catalogue-pointer-cursor');
   await expect(cursor).toHaveCount(0);
   const box = (await tile.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + 8);
   const onStage = tile.locator(
-    '.catalogue-related-stage > .catalogue-pointer-layer > .catalogue-pointer-cursor',
+    '.catalogue-tile-stage > .catalogue-pointer-layer > .catalogue-pointer-cursor',
   );
   await expect(onStage).toBeVisible();
   // Its tip is where the pointer no one sees is, inside the stage.
-  const stage = (await tile.locator('.catalogue-related-stage').boundingBox())!;
+  const stage = (await tile.locator('.catalogue-tile-stage').boundingBox())!;
   const tip = (await onStage.boundingBox())!;
   expect(tip.x).toBeGreaterThanOrEqual(stage.x - 1);
   expect(tip.x).toBeLessThanOrEqual(stage.x + stage.width);
@@ -586,7 +584,7 @@ test('a playing pointer that carries a file names it in a chip beside its cursor
     has: page.locator('.catalogue-gallery-name', { hasText: /^DropZone$/ }),
   });
   await showTile(tile);
-  await expect(tile.locator('.catalogue-related-canvas[data-fitted]')).toHaveCount(1);
+  await expect(tile.locator('.catalogue-tile-canvas[data-fitted]')).toHaveCount(1);
   const chip = tile.locator('.catalogue-pointer-cursor .catalogue-pointer-file');
   await expect(chip).toHaveCount(0);
   const box = (await tile.boundingBox())!;

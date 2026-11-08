@@ -15,6 +15,7 @@ import { ExampleRender } from './LiveExample';
 import { FoundationTile } from '../tiles/foundations/FoundationTiles';
 import type { TilePicture } from '../template/RelatedPages';
 import { TileSkeleton } from '../loading/Loading';
+import { cropped, fitKindOf } from '../fit/Fitting';
 import { useFit } from '../fit/useFit';
 import { AppScreen } from './AppTile';
 import { useAppFit } from '../fit/useAppFit';
@@ -46,29 +47,21 @@ export function TileStage({
   picture,
   near,
   playing = false,
-  className = 'catalogue-related-stage',
-  whole = false,
-  ownSize: atOwnSize = false,
-  legible = false,
+  className = 'catalogue-tile-stage',
+  frame,
 }: {
   picture?: TilePicture;
   near: boolean;
   /** Whether the pointer or the keyboard is on the tile, which plays its animation. */
   playing?: boolean;
   className?: string;
-  /** Whether the window it lays out in counts whole as it is fitted, as a gallery's does. */
-  whole?: boolean;
   /**
-   * Whether it is drawn at its own size, cropped by its stage, as the components' gallery draws
-   * every component at one scale; a drawing, whose window is smaller than the tiles' (Tiles.ts),
-   * is drawn larger still.
+   * How its page's tile is framed (frameOf, RelatedPages.ts): a component at its own size, cropped
+   * by its stage, as the components' gallery draws every component at one scale, a drawing, whose
+   * window is smaller than the tiles' (Tiles.ts), larger still; a pattern's scene no smaller than a
+   * legible scale, cropped by its stage, so its words can be read (fitKindOf).
    */
-  ownSize?: boolean;
-  /**
-   * Whether it is drawn no smaller than a legible scale, cropped by its stage, as the patterns'
-   * gallery draws each scene, so its words can be read.
-   */
-  legible?: boolean;
+  frame?: 'own' | 'legible';
 }) {
   const Composition = picture?.composition;
   const theme = useTheme();
@@ -109,22 +102,14 @@ export function TileStage({
     ) : (
       <ExampleRender page={picture.page} name={picture.name} fallback={null} />
     ));
-  const tile = Boolean(picture?.tile);
-  const drawing = Boolean(picture?.window && picture.window.width < 14);
   // A piece of an application's frame fills its card instead (AppTile.tsx).
   const app = picture?.window?.app;
-  const ownSize = atOwnSize && !drawing && !app;
-  const scene = legible && !app;
-  useFit(stage, canvas, {
-    on: shown && !app,
-    whole: whole || tile,
-    tile,
-    playing: plays,
-    ownSize,
-    legible: scene,
-  });
+  const kind = fitKindOf(picture, app ? undefined : frame);
+  const ownSize = kind.scale === 'own';
+  const scene = kind.scale === 'legible';
+  useFit(stage, canvas, { on: shown && !app, kind, playing: plays });
   useAppFit(stage, canvas, shown && Boolean(app), app?.least);
-  useStillAtRest(canvasElement, tile && !plays);
+  useStillAtRest(canvasElement, kind.tile && !plays);
   return (
     <Theme
       {...theme}
@@ -139,17 +124,17 @@ export function TileStage({
       data-still={Composition && animations > 0 ? undefined : ''}
     >
       {!picture ? (
-        <IconArticle className="catalogue-related-placeholder" aria-hidden />
+        <IconArticle className="catalogue-tile-placeholder" aria-hidden />
       ) : (
         shown &&
         crop(
-          ownSize || scene,
+          cropped(kind),
           <div
             ref={(element) => {
               canvas.current = element;
               setCanvasElement(element);
             }}
-            className="catalogue-related-canvas"
+            className="catalogue-tile-canvas"
             data-tile={picture.tile ? '' : undefined}
             data-own-size={ownSize ? '' : undefined}
             data-overlay={ownSize && picture.window?.overlay ? '' : undefined}
@@ -173,7 +158,7 @@ export function TileStage({
           </div>,
         )
       )}
-      {/* After the canvas, which hides it once the picture is fitted (Related.css). Only as the
+      {/* After the canvas, which hides it once the picture is fitted (Tile.css). Only as the
           tile nears the view, as its picture starts loading: a skeleton pulses on every frame,
           and a gallery's tiles far from the view would keep the page busy restyling them. */}
       {shown && <TileSkeleton />}
@@ -183,11 +168,11 @@ export function TileStage({
 
 /**
  * A canvas drawn at its own size, in a box the stage's size that fades out what is cut off at its
- * bottom and its end (Gallery.css): a mask on the box rather than on the canvas, whose own box
+ * bottom and its end (Tile.css): a mask on the box rather than on the canvas, whose own box
  * doesn't hold what opens past it, and not on the stage, whose fill stays whole.
  */
 const crop = (ownSize: boolean, canvas: ReactNode) =>
-  ownSize ? <div className="catalogue-related-crop">{canvas}</div> : canvas;
+  ownSize ? <div className="catalogue-tile-crop">{canvas}</div> : canvas;
 
 /** A piece of an application's frame, on the screen its card shows it on (AppTile.tsx). */
 const wrapApp = (app: boolean, subject: ReactNode) =>

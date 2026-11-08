@@ -6,14 +6,13 @@ import {
   useRef,
   useState,
   type CSSProperties,
-  type ReactNode,
   type RefObject,
 } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '@docs-model/DocumentationTypes';
-import { remPixels } from '../shared/Lengths';
 import { Documentation } from '../pages/Documentation';
-import { ExampleCode, ExampleRender, leastFitScale } from './LiveExample';
+import { ExampleCode, ExampleRender } from './LiveExample';
+import { FitFrame } from '../fit/WidthFit';
 import { OpenExample } from './OpenExample';
 import { legendOf, partDescription } from '../template/Parts';
 import { legendName } from '@docs-model/CatalogueContent';
@@ -45,67 +44,6 @@ function enlarge(subject: HTMLElement, always: boolean) {
   if (Math.abs(zoom - current) < 0.01) return;
   if (zoom === 1) scaled.style.removeProperty('zoom');
   else scaled.style.setProperty('zoom', zoom.toFixed(2));
-}
-
-/**
- * A subject that shows all its parts only from a width, such as panes side by side, laid out at
- * that width, in rem, and drawn smaller where the stage is narrower, down to `leastFitScale`, as a
- * width frame is; the callouts measure the parts as drawn. On a stage narrower still, it lays out
- * at the stage's width, and shows the parts that width has.
- */
-function FitFrame({ width, children }: { width: number; children: ReactNode }) {
-  const fit = useRef<HTMLDivElement>(null);
-  const box = useRef<HTMLDivElement>(null);
-  const [scaled, setScaled] = useState<{ scale: number; width: number; height: number }>();
-  useLayoutEffect(() => {
-    const frame = box.current;
-    const subject = fit.current?.parentElement;
-    if (!frame || !subject) return;
-    const measure = () => {
-      const needed = width * remPixels();
-      const scale = subject.clientWidth / needed;
-      const next =
-        scale < 1 && scale >= leastFitScale
-          ? { scale, width: needed * scale, height: frame.offsetHeight * scale }
-          : undefined;
-      // Unchanged sizes keep the state, so the stage, which grows with the frame, settles.
-      setScaled((current) =>
-        current &&
-        next &&
-        Math.abs(current.width - next.width) < 0.5 &&
-        Math.abs(current.height - next.height) < 0.5
-          ? current
-          : next,
-      );
-    };
-    let request = 0;
-    const observer = new ResizeObserver(() => {
-      cancelAnimationFrame(request);
-      request = requestAnimationFrame(measure);
-    });
-    observer.observe(subject);
-    observer.observe(frame);
-    return () => {
-      cancelAnimationFrame(request);
-      observer.disconnect();
-    };
-  }, [width]);
-  return (
-    <div
-      ref={fit}
-      className="catalogue-anatomy-fit"
-      data-scaled={scaled ? '' : undefined}
-      style={scaled && { inlineSize: scaled.width, blockSize: scaled.height }}
-    >
-      <div
-        ref={box}
-        className="catalogue-anatomy-fit-box"
-        style={scaled && { inlineSize: `${width}rem`, transform: `scale(${scaled.scale})` }}
-      >
-        {children}
-      </div>
-    </div>
-  );
 }
 
 /** What an anatomy figure's callouts are measured for (useCallouts), as AnatomyStage takes it. */

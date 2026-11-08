@@ -13,7 +13,7 @@ import {
   type Point,
   type PointerSpot,
 } from './PointerTargets';
-import { captures, keepClipboard, keyboardFocused } from './StandIns';
+import { captures, keepClipboard, keyboardFocused } from './BrowserStandIns';
 
 /**
  * The id of the pointer holding its button down, if any: a page has one mouse, so a component that follows

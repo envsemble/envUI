@@ -12,7 +12,7 @@
 
 /* The place the device holds on the stage, its view at its scale, centred. A device too large to
    show whole at a legible scale is cut off there (DeviceStage), out to the stage's edge, and what
-   is cut off at an edge fades out over the last stretch, as a tile's crop does (Gallery.css),
+   is cut off at an edge fades out over the last stretch, as a tile's crop does (Tile.css),
    rather than ending in a slice through a line. Every cut edge, a side or the foot, fades alike,
    over a stretch long enough that a line of text cut at a side, such as a page beside a window's
    navigation, reads as running on past it. The fade eases in and out, so the window's own

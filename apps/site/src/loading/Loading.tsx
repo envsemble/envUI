@@ -469,7 +469,7 @@ export function CodeSkeleton({ label, lines }: { label: string; lines: number })
 /**
  * A gallery's or Related's tile while its picture loads, once it has come near enough to load:
  * a skeleton over the whole stage, which pulses in its place until the picture is fitted on it
- * (Related.css). The picture is decorative, as the tile's name leads to the page, so its skeleton
+ * (Tile.css). The picture is decorative, as the tile's name leads to the page, so its skeleton
  * is hidden from assistive technology and says nothing.
  */
 export function TileSkeleton() {

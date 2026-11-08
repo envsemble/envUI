@@ -134,7 +134,7 @@
   border-radius: 0;
   box-shadow: none;
 }
-:is(.catalogue-gallery-grid, .catalogue-related-tiles) .catalogue-related-crop {
+:is(.catalogue-gallery-grid, .catalogue-related-tiles) .catalogue-tile-crop {
   clip-path: inset(0);
 }
 
@@ -151,7 +151,7 @@
 /* The stage of a gallery tile: 4:3, the shape of a tile's window (Tiles.ts) and of a pattern's
    stage, so what a component opens below it has room and the cells are as tall as a pattern's;
    what is taller still, such as a calendar, is cut off at its foot, fading out through the rows
-   there. Each page's own tile lays out in its own window (tiles/Tiles.ts, Related.css); a page
+   there. Each page's own tile lays out in its own window (tiles/Tiles.ts, Tile.css); a page
    without one shows its example in a window that counts whole (TileStage.tsx), so it is drawn at
    the tiles' scale. */
 .catalogue-gallery-stage.catalogue-gallery-stage {
@@ -186,8 +186,8 @@
    rest the view centres what it paints either way (useFit.ts), and as it plays, what grows or
    shrinks in it, such as a list a filter narrows or files added, changes below what stays, which
    holds still. */
-.catalogue-gallery-stage[data-scene] .catalogue-related-canvas,
-.catalogue-gallery-stage[data-scene] .catalogue-related-canvas:has(> .catalogue-overlay-layer) {
+.catalogue-gallery-stage[data-scene] .catalogue-tile-canvas,
+.catalogue-gallery-stage[data-scene] .catalogue-tile-canvas:has(> .catalogue-overlay-layer) {
   place-content: start stretch;
 }
 
@@ -215,7 +215,7 @@
     }
     .catalogue-gallery-grid:not([data-scenes])
       .catalogue-gallery-stage.catalogue-gallery-stage
-      .catalogue-related-canvas[data-own-size] {
+      .catalogue-tile-canvas[data-own-size] {
       inline-size: min(14rem, (100% - 2rem) / var(--catalogue-own-floor));
     }
     /* A popup shown open lays out no wider than the stage's room shows at the scale it is drawn
@@ -223,7 +223,7 @@
        edges, so what fits its window fits the stage; one narrower is drawn larger. */
     .catalogue-gallery-grid:not([data-scenes])
       .catalogue-gallery-stage.catalogue-gallery-stage
-      .catalogue-related-canvas[data-own-size][data-popup] {
+      .catalogue-tile-canvas[data-own-size][data-popup] {
       inline-size: min(
         var(--catalogue-tile-width, 14rem),
         (100% - 2rem) / var(--catalogue-canvas-scale, var(--catalogue-own-popup-least))
@@ -234,12 +234,12 @@
        the fit's inset from the stage's edges, so it shows its message on one line (useFit.ts). */
     .catalogue-gallery-grid:not([data-scenes])
       .catalogue-gallery-stage.catalogue-gallery-stage
-      .catalogue-related-canvas[data-own-size][data-popup][data-overlay] {
+      .catalogue-tile-canvas[data-own-size][data-popup][data-overlay] {
       inline-size: calc((100% - 2rem) / var(--catalogue-overlay-scale));
     }
     .catalogue-gallery-grid:not([data-scenes])
       .catalogue-gallery-stage.catalogue-gallery-stage
-      .catalogue-related-canvas[data-own-size][data-popup][data-overlay]:has(.env-toast-viewport) {
+      .catalogue-tile-canvas[data-own-size][data-popup][data-overlay]:has(.env-toast-viewport) {
       inline-size: calc((100% - 1.75rem) / var(--catalogue-overlay-scale) + 1.5rem);
     }
   }
@@ -254,8 +254,8 @@
   }
 }
 
-.catalogue-gallery-stage .catalogue-related-canvas,
-.catalogue-gallery-stage .catalogue-related-canvas:has(> .catalogue-overlay-layer) {
+.catalogue-gallery-stage .catalogue-tile-canvas,
+.catalogue-gallery-stage .catalogue-tile-canvas:has(> .catalogue-overlay-layer) {
   place-content: center stretch;
   inline-size: 16rem;
   block-size: 12rem;
@@ -264,8 +264,8 @@
 
 /* So does a tile that grows as it plays, such as a note gaining a line (useHeldView, Playback.tsx):
    what it adds grows below what stays. */
-.catalogue-gallery-stage .catalogue-related-canvas[data-from-top],
-.catalogue-gallery-stage .catalogue-related-canvas[data-from-top]:has(> .catalogue-overlay-layer) {
+.catalogue-gallery-stage .catalogue-tile-canvas[data-from-top],
+.catalogue-gallery-stage .catalogue-tile-canvas[data-from-top]:has(> .catalogue-overlay-layer) {
   place-content: start stretch;
 }
 
@@ -326,7 +326,7 @@
    every tile (useFit.ts), but on a phone; and at least as tall as its tile's window, so what opens
    below it has the room it was written for. What is larger, such as a calendar, is cut off at its
    end. */
-.catalogue-gallery-stage.catalogue-gallery-stage .catalogue-related-canvas[data-own-size] {
+.catalogue-gallery-stage.catalogue-gallery-stage .catalogue-tile-canvas[data-own-size] {
   inline-size: max(100% - 2rem, var(--catalogue-own-least));
   block-size: max(100% - 2rem, var(--catalogue-tile-height, 10.5rem));
   min-block-size: 0;
@@ -336,66 +336,6 @@
    menu beside its button, also on a phone (useFit.ts). */
 :is(.catalogue-gallery-grid, .catalogue-related-tiles)
   .catalogue-gallery-stage.catalogue-gallery-stage
-  .catalogue-related-canvas[data-own-size][data-popup] {
+  .catalogue-tile-canvas[data-own-size][data-popup] {
   inline-size: max(100% - 2rem, var(--catalogue-tile-width, 14rem));
-}
-
-/* The box of a component drawn at its own size, or a pattern's scene at a legible scale, as large
-   as the stage (TileStage.tsx): what is cut off at an edge, the bottom and the end for a component, any
-   side for a scene centred on what it paints, fades out over the last stretch, rather than ending in
-   a slice through a line, and the stage's fill shows through. */
-.catalogue-related-crop {
-  --catalogue-crop-fade: 1.75rem;
-  /* Any opaque color: the mask reads only its alpha. */
-  --catalogue-crop-opaque: var(--env-color-fg-default);
-  --catalogue-crop-top: 0rem;
-  --catalogue-crop-bottom: 0rem;
-  --catalogue-crop-start: 0rem;
-  --catalogue-crop-end: 0rem;
-  position: absolute;
-  inset: 0;
-}
-
-.catalogue-related-crop:has(> [data-cut~='top']) {
-  --catalogue-crop-top: var(--catalogue-crop-fade);
-}
-
-.catalogue-related-crop:has(> [data-cut~='bottom']) {
-  --catalogue-crop-bottom: var(--catalogue-crop-fade);
-}
-
-.catalogue-related-crop:has(> [data-cut~='start']) {
-  --catalogue-crop-start: var(--catalogue-crop-fade);
-}
-
-.catalogue-related-crop:has(> [data-cut~='end']) {
-  --catalogue-crop-end: var(--catalogue-crop-fade);
-}
-
-/* A row that would show only a sliver in the fade's faint end is hidden whole (useFit.ts); the
-   others fade out through the foot. */
-.catalogue-related-crop [data-catalogue-past] {
-  visibility: hidden;
-}
-
-/* The fade is gone a quarter of its length before the edge, so what it fades out, such as a
-   picker's popup, ends in the stage's own fill rather than at its edge, where it would read as
-   cut off there, also in light, where a popup is as light as the stage. */
-.catalogue-related-crop:has(> [data-cut]) {
-  mask-image:
-    linear-gradient(
-      to bottom,
-      transparent calc(var(--catalogue-crop-top) / 4),
-      var(--catalogue-crop-opaque) var(--catalogue-crop-top),
-      var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-bottom)),
-      transparent calc(100% - var(--catalogue-crop-bottom) / 4)
-    ),
-    linear-gradient(
-      to right,
-      transparent calc(var(--catalogue-crop-start) / 4),
-      var(--catalogue-crop-opaque) var(--catalogue-crop-start),
-      var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-end)),
-      transparent calc(100% - var(--catalogue-crop-end) / 4)
-    );
-  mask-composite: intersect;
 }
