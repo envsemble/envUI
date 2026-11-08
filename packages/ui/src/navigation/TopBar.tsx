@@ -10,6 +10,7 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/TopBar.css';
 
@@ -110,9 +111,9 @@ export function TopBar({
       {...props}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-top-bar', className)}
-      data-sticky={sticky ? '' : undefined}
-      data-title-bar={titleBar ? '' : undefined}
-      data-loading={loading ? '' : undefined}
+      data-sticky={flag(sticky)}
+      data-title-bar={flag(titleBar)}
+      data-loading={flag(loading)}
       data-background={backgroundAttribute(background)}
     >
       {/* In a title bar, buttons that set no variant are ghost, and controls take the small

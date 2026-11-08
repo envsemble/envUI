@@ -21,6 +21,7 @@ import {
   type DestinationClasses,
 } from './internal/Destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationBar.css';
 
@@ -90,7 +91,7 @@ export function NavigationBar({
   const restName = countedName(messages.more, restCount, messages) ?? messages.more;
   // As on the destinations, the current state is an attribute of the item, and its name says it.
   const moreState = {
-    'data-current': restCurrent ? '' : undefined,
+    'data-current': flag(restCurrent),
     'aria-label': restCurrent ? messages.moreCurrent({ name: restName }) : restName,
   };
   return (

@@ -21,6 +21,7 @@ import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
 import { acceptsFile } from './internal/acceptsFile.js';
 import { useFormReset } from './internal/useFormReset.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/DropZone.css';
 
@@ -201,9 +202,9 @@ export function DropZone({
       invalid={error != null || undefined}
       className={classNames('env-drop-zone', className)}
       data-size={size}
-      data-drag-over={dragging ? '' : undefined}
-      data-pending={pending ? '' : undefined}
-      data-invalid={error != null ? '' : undefined}
+      data-drag-over={flag(dragging)}
+      data-pending={flag(pending)}
+      data-invalid={flag(error != null)}
       onDragEnter={(event) => {
         if (!carriesFiles(event)) return;
         event.preventDefault();

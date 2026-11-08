@@ -25,6 +25,7 @@ import { followOverdrag } from './internal/sliderOverdrag.js';
 import { followDrag } from './internal/sliderGlide.js';
 import { useSliderReveal } from './internal/useSliderReveal.js';
 import { useSliderVeil } from './internal/useSliderVeil.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Slider.css';
 
@@ -197,7 +198,7 @@ export function Slider({
             ...style,
           } as CSSProperties
         }
-        data-ticks={ticks > 1 ? '' : undefined}
+        data-ticks={flag(ticks > 1)}
         value={current}
         onValueChange={(next) => {
           if (value === undefined) setUncontrolledValue(next);
@@ -217,9 +218,9 @@ export function Slider({
           <BaseSlider.Control
             ref={control}
             className="env-slider-control"
-            data-dragging={pressed && !disabled ? '' : undefined}
-            data-handle={reveal.handle ? '' : undefined}
-            data-ruler={reveal.ruler ? '' : undefined}
+            data-dragging={flag(pressed && !disabled)}
+            data-handle={flag(reveal.handle)}
+            data-ruler={flag(reveal.ruler)}
             {...handlers}
           >
             <BaseSlider.Track className="env-slider-track">

@@ -31,6 +31,7 @@ import { devStats } from './stats.js';
 import type { LivePage } from './useLivePage.js';
 import { ViewCorners, ViewToolbar, type ShowOptions } from './ViewToolbar.js';
 import { useViewWheel } from './useViewWheel.js';
+import { flag } from '../../internal/flag.js';
 
 export interface View3DProps {
   live: LivePage;
@@ -242,7 +243,7 @@ export const View3D = memo(function View3D({
       ref={view}
       className="env-dev-view"
       data-color={show.colorBy}
-      data-dragging={dragging ? '' : undefined}
+      data-dragging={flag(dragging)}
       onPointerDown={orbit.down}
       onPointerMove={(event) => {
         orbit.move(event);

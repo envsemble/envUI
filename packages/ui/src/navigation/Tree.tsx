@@ -28,6 +28,7 @@ import {
 import { placeRows, TreeRow } from './internal/TreeRow.js';
 import { useTreeTransitions } from './internal/useTreeTransitions.js';
 import { useTreeViewport } from './internal/useTreeViewport.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Tree.css';
 
@@ -275,7 +276,7 @@ export function Tree<Item extends TreeItem>({
       tabIndex={0}
       className={classNames('env-tree', className)}
       data-density={density}
-      data-focus-visible={focusVisible ? '' : undefined}
+      data-focus-visible={flag(focusVisible)}
       onKeyDown={(event) => {
         ownKeyDown?.(event);
         if (!event.defaultPrevented) onKeyDown(event);

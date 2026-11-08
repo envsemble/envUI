@@ -7,6 +7,7 @@ import type { LayoutProblem, NodeData, Snapshot } from '../model.js';
 import { queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
 import { round, toRem, windowClasses, windowClassOf } from '../units.js';
+import { flag } from '../../internal/flag.js';
 
 /** The hovered node in a few lines: its name, size, level, container and problems. */
 export function NodeHoverCard({
@@ -85,7 +86,7 @@ export function Ruler({
             key={windowClass.name}
             className="env-dev-ruler-band"
             data-window={windowClass.name}
-            data-current={windowClass.name === windowClassOf(width) ? '' : undefined}
+            data-current={flag(windowClass.name === windowClassOf(width))}
             style={{ left: x(windowClass.from), width: x(until - windowClass.from) }}
           >
             {windowClass.name}

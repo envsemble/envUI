@@ -11,6 +11,7 @@ import { useDirectionScope } from '../internal/useDirection.js';
 import { NavigationIconState } from '../foundations/NavigationIconState.js';
 import { Surface } from '../foundations/Surface.js';
 import { Button } from '../actions/Button.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Tabs.css';
 
@@ -238,7 +239,7 @@ export function Tabs({
         onFocus?.(event);
       }}
       className={classNames('env-tabs', className)}
-      data-fill={fill ? '' : undefined}
+      data-fill={flag(fill)}
       value={value}
       defaultValue={initialValue}
       onValueChange={onValueChange}
