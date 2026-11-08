@@ -1,21 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { useResolvedLocale } from '../internal/useFormatters.js';
 import { timePicker as timePickerMessages } from '../foundations/messages/timePicker.js';
 import { Button } from '../actions/Button.js';
 import { IconSchedule } from '../icons/Schedule.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import { TimeList, timeListFirstColumn } from './internal/TimeList.js';
-import {
-  dateFormat,
-  formatTime,
-  now,
-  parseTime,
-  toUtcDate,
-  withHourCycle,
-} from '../internal/calendarDays.js';
+import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
+import { formatTime, now, parseTime, toUtcDate } from '../internal/calendarDays.js';
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 import '../styles/TimePicker.css';
@@ -96,29 +88,17 @@ export function TimePicker({
     disabled,
     readOnly,
   });
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const current = parseTime(value === undefined ? uncontrolledValue : value);
+  const picked = usePickerValue({ value, defaultValue, onValueChange });
+  const current = parseTime(picked.raw);
   const serialized = current === undefined ? '' : formatTime(current);
   const minMinutes = parseTime(min);
   const maxMinutes = parseTime(max);
 
-  // On the server, and while its output hydrates, a field without a locale shows the value as every
-  // browser shows it, then in the reader's language.
-  const shownLocale = useResolvedLocale(locale);
-  const formatOptionsKey = JSON.stringify(formatOptions ?? null);
-  const formatter = useMemo(
-    () =>
-      // Values are wall-clock times, formatted in UTC so no zone shifts them.
-      dateFormat(
-        shownLocale,
-        withHourCycle(
-          (JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ?? {
-            timeStyle: 'short',
-          },
-          hourCycle,
-        ),
-      ),
-    [shownLocale, formatOptionsKey, hourCycle],
+  const { formatter } = usePickerFormatter(
+    locale,
+    formatOptions,
+    { timeStyle: 'short' },
+    hourCycle,
   );
   const display = current === undefined ? '' : formatter.format(toUtcDate(0, current));
 
@@ -130,9 +110,7 @@ export function TimePicker({
       if (maxMinutes !== undefined) kept = Math.min(kept, maxMinutes);
       result = formatTime(kept);
     }
-    if ((result ?? '') === serialized) return;
-    if (value === undefined) setUncontrolledValue(result);
-    onValueChange?.(result);
+    picked.change(result, serialized);
   }
 
   function clear() {
@@ -175,9 +153,7 @@ export function TimePicker({
       }
       clearLabel={clearLabel ?? messages.clear}
       onClear={() => commit(null)}
-      onFormReset={() => {
-        if (value === undefined) setUncontrolledValue(defaultValue);
-      }}
+      onFormReset={picked.reset}
       open={open}
       setOpen={setOpen}
       disabled={disabled}

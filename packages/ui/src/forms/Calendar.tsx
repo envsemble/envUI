@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ComponentPropsWithRef,
-  type KeyboardEvent,
-} from 'react';
+import { useId, useMemo, useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { useHydrated } from '../internal/useHydrated.js';
@@ -31,7 +23,7 @@ import {
   toUtcDate,
   type Weekday,
 } from '../internal/calendarDays.js';
-import { isRightToLeft } from '../internal/direction.js';
+import { useActiveCell } from './internal/useActiveCell.js';
 import '../styles/Base.css';
 import '../styles/Calendar.css';
 
@@ -131,8 +123,6 @@ export function Calendar({
   const previousName = previousMonthLabel ?? messages.previousMonth;
   const nextName = nextMonthLabel ?? messages.nextMonth;
   const headingId = useId();
-  const grid = useRef<HTMLTableElement>(null);
-  const focusActive = useRef(false);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const selectedDay = parseDay(value === undefined ? uncontrolledValue : value);
   const minDay = parseDay(min);
@@ -146,15 +136,33 @@ export function Calendar({
   const localeStart = useMemo(() => localeWeekStart(shownLocale), [shownLocale]);
   const firstWeekday = weekStart ?? localeStart;
 
-  // The active day is the grid's one tab stop; the month that holds it is shown. It follows the
-  // chosen day when that changes.
-  const [activeState, setActiveState] = useState(() => selectedDay ?? now().day);
-  const [trackedDay, setTrackedDay] = useState(selectedDay);
-  if (trackedDay !== selectedDay) {
-    setTrackedDay(selectedDay);
-    if (selectedDay !== undefined) setActiveState(selectedDay);
-  }
-  const active = clampDay(activeState, minDay, maxDay);
+  const isUnavailable = (day: number) =>
+    (minDay !== undefined && day < minDay) || (maxDay !== undefined && day > maxDay);
+  // The active day is the grid's one tab stop; the month that holds it is shown.
+  const { active, grid, moveTo, choose, handleKeyDown, focusCell } = useActiveCell({
+    chosen: selectedDay,
+    initial: () => now().day,
+    clamp: (day) => clampDay(day, minDay, maxDay),
+    isUnavailable,
+    onChoose: (day) => {
+      const chosen = formatDay(day);
+      if (value === undefined) setUncontrolledValue(chosen);
+      onValueChange?.(chosen);
+    },
+    moves: (day, event, rtl) => {
+      const column = (dayParts(day).weekday - firstWeekday + 7) % 7;
+      return {
+        ArrowLeft: day + (rtl ? 1 : -1),
+        ArrowRight: day + (rtl ? -1 : 1),
+        ArrowUp: day - 7,
+        ArrowDown: day + 7,
+        Home: day - column,
+        End: day + 6 - column,
+        PageUp: addMonths(day, event.shiftKey ? -12 : -1),
+        PageDown: addMonths(day, event.shiftKey ? 12 : 1),
+      };
+    },
+  });
   // Without a chosen day the month is today's, so the server leaves the days to the browser, and
   // with them whether the month buttons reach past min and max.
   const daysShown = hydrated || selectedDay !== undefined;
@@ -175,57 +183,6 @@ export function Calendar({
     }),
     [shownLocale],
   );
-
-  useLayoutEffect(() => {
-    if (!focusActive.current) return;
-    focusActive.current = false;
-    grid.current?.querySelector<HTMLElement>('td[tabindex="0"]')?.focus();
-  });
-
-  const isUnavailable = (day: number) =>
-    (minDay !== undefined && day < minDay) || (maxDay !== undefined && day > maxDay);
-
-  function moveTo(day: number, focus: boolean) {
-    const next = clampDay(day, minDay, maxDay);
-    // A key that keeps the day, such as Home on the week's first day, has nothing to render, so it
-    // leaves no request behind that would take focus back at some later render.
-    if (next === active) return;
-    focusActive.current = focus;
-    setActiveState(next);
-  }
-
-  function choose(day: number) {
-    if (isUnavailable(day)) return;
-    setActiveState(day);
-    const chosen = formatDay(day);
-    if (value === undefined) setUncontrolledValue(chosen);
-    onValueChange?.(chosen);
-  }
-
-  function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
-    if (event.altKey || event.ctrlKey || event.metaKey) return;
-    const rtl = isRightToLeft(event.currentTarget);
-    const column = (dayParts(active).weekday - firstWeekday + 7) % 7;
-    const moves: Record<string, number> = {
-      ArrowLeft: active + (rtl ? 1 : -1),
-      ArrowRight: active + (rtl ? -1 : 1),
-      ArrowUp: active - 7,
-      ArrowDown: active + 7,
-      Home: active - column,
-      End: active + 6 - column,
-      PageUp: addMonths(active, event.shiftKey ? -12 : -1),
-      PageDown: addMonths(active, event.shiftKey ? 12 : 1),
-    };
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      choose(active);
-      return;
-    }
-    const next = moves[event.key];
-    if (next === undefined) return;
-    event.preventDefault();
-    moveTo(next, true);
-  }
 
   const first = monthStart(active);
   const shownMonth = dayParts(first).month;
@@ -326,13 +283,8 @@ export function Calendar({
                     data-date={formatDay(day)}
                     // A press on an unavailable day leaves focus where it was.
                     onMouseDown={unavailable ? (event) => event.preventDefault() : undefined}
-                    onClick={() => {
-                      if (unavailable) return;
-                      choose(day);
-                    }}
-                    onFocus={() => {
-                      if (day !== active) setActiveState(day);
-                    }}
+                    onClick={() => choose(day)}
+                    onFocus={() => focusCell(day)}
                   >
                     <span className="env-calendar-day-mark">
                       {formats.number.format(dayParts(day).date)}

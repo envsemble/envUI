@@ -1,15 +1,7 @@
 'use client';
 
-import {
-  useId,
-  useMemo,
-  useState,
-  type ButtonHTMLAttributes,
-  type CSSProperties,
-  type Ref,
-} from 'react';
+import { useId, type ButtonHTMLAttributes, type CSSProperties, type Ref } from 'react';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { useResolvedLocale } from '../internal/useFormatters.js';
 import { type ControlSize } from '../foundations/Theme.js';
 import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
 import { Button } from '../actions/Button.js';
@@ -24,9 +16,9 @@ import {
   type PickerOpenChangeDetails,
 } from './internal/PickerField.js';
 import { TimeList } from './internal/TimeList.js';
+import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
 import {
   clampDay,
-  dateFormat,
   formatDateTime,
   formatDay,
   fromMoment,
@@ -36,7 +28,6 @@ import {
   parseDay,
   parseTime,
   toUtcDate,
-  withHourCycle,
   type Weekday,
 } from '../internal/calendarDays.js';
 import '../styles/Base.css';
@@ -241,12 +232,8 @@ export function DatePicker({
   });
   const defaultMinutes = parseTime(placeholderTime) ?? 0;
 
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const current = parseValue(
-    value === undefined ? uncontrolledValue : value,
-    withTime,
-    defaultMinutes,
-  );
+  const picked = usePickerValue({ value, defaultValue, onValueChange });
+  const current = parseValue(picked.raw, withTime, defaultMinutes);
   const serialized = current
     ? withTime
       ? formatDateTime(current.day, current.minutes)
@@ -258,22 +245,11 @@ export function DatePicker({
   const minDay = minMoment === undefined ? undefined : fromMoment(minMoment).day;
   const maxDay = maxMoment === undefined ? undefined : fromMoment(maxMoment).day;
 
-  // On the server, and while its output hydrates, a field without a locale shows the value as every
-  // browser shows it, then in the reader's language.
-  const shownLocale = useResolvedLocale(locale);
-  const formatOptionsKey = JSON.stringify(formatOptions ?? null);
-  const formatter = useMemo(
-    () =>
-      // Values are wall-clock dates and times, formatted in UTC so no zone shifts them.
-      dateFormat(
-        shownLocale,
-        withHourCycle(
-          (JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ??
-            (withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' }),
-          hourCycle,
-        ),
-      ),
-    [shownLocale, withTime, formatOptionsKey, hourCycle],
+  const { formatter } = usePickerFormatter(
+    locale,
+    formatOptions,
+    withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' },
+    hourCycle,
   );
   const display = current ? formatter.format(toUtcDate(current.day, current.minutes)) : '';
 
@@ -290,9 +266,7 @@ export function DatePicker({
         result = formatDay(clampDay(next.day, minDay, maxDay));
       }
     }
-    if ((result ?? '') === serialized) return;
-    if (value === undefined) setUncontrolledValue(result);
-    onValueChange?.(result);
+    picked.change(result, serialized);
   }
 
   function chooseDay(day: string) {
@@ -365,9 +339,7 @@ export function DatePicker({
       }
       clearLabel={clearLabel ?? messages.clear}
       onClear={() => commit(null)}
-      onFormReset={() => {
-        if (value === undefined) setUncontrolledValue(defaultValue);
-      }}
+      onFormReset={picked.reset}
       open={open}
       setOpen={setOpen}
       disabled={disabled}
