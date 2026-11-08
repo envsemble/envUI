@@ -10,7 +10,7 @@ import { inset, union, type Box } from '../FitGeometry';
 /**
  * The box that places the figure's dialogs, sheets and toasts: the stage, or in an anatomy figure,
  * the room, which keeps them clear of the stage's padding, where the callouts go, or on a do or
- * don't figure's square, the box over it that is drawn smaller to fit it (figures/useVerdictFit.ts).
+ * don't figure's square, the box over it that is drawn smaller to fit it (useVerdictFit.ts).
  */
 const stageOf = (element: HTMLElement) => {
   const room = element.closest<HTMLElement>('.catalogue-open-example');

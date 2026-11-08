@@ -1,5 +1,5 @@
 import { useLayoutEffect, type RefObject } from 'react';
-import { remeasure, type Change } from '../fit/Remeasure';
+import { remeasure, type Change } from '../Remeasure';
 
 /**
  * Draws a do or don't figure's example smaller where it must to fit its stage, as a tile
@@ -21,8 +21,7 @@ import { remeasure, type Change } from '../fit/Remeasure';
 export function useVerdictFit(
   stage: RefObject<HTMLElement | null>,
   box: RefObject<HTMLElement | null>,
-  on = true,
-  shape: 'square' | 'fit' = 'square',
+  { on, shape }: { on: boolean; shape: 'square' | 'fit' },
 ) {
   useLayoutEffect(() => {
     const stageElement = stage.current;

@@ -34,7 +34,7 @@ import {
 } from './foundations/FoundationFigures';
 import { FigureCode } from './foundations/Figure';
 import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
-import { useVerdictFit } from './useVerdictFit';
+import { useVerdictFit } from '../fit/standalone/useVerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
@@ -72,45 +72,45 @@ const verdicts = {
  * Caution in green, red or amber, a caution being acceptable with care rather than a mistake, and
  * its one sentence beside it; and under that, the example's code (Verdicts.css). The stage is as tall as
  * the example, or square where the example shows open or playing, and the example is drawn smaller
- * where it needs more room than the stage's width (useVerdictFit). With `motion`, its animated specimen of the same
- * name plays it on the stage. A `wide` figure, whose point is a change across the column's width,
- * keeps a stage as wide as the column and as tall as its example. A foundation page's figure
- * passes what it shows as `children` instead, which has no code of its own.
+ * where it needs more room than the stage's width (useVerdictFit). A `wide` figure, whose point is
+ * a change across the column's width, keeps a stage as wide as the column and as tall as its
+ * example.
  */
 function VerdictFigure({
   page,
   name,
   verdict,
   caption,
-  open = false,
-  motion = false,
-  wide = false,
-  children,
+  shows,
+  wide,
   stage,
 }: {
+  page: string;
+  name: string;
   verdict: 'do' | 'dont' | 'caution';
   caption: string;
-  /** Whether the example's overlays are shown open, as a picture. */
-  open?: boolean;
-  /** Whether its animated specimen of the same name plays the example in place of the stage. */
-  motion?: boolean;
+  /**
+   * What the stage shows: the example; its overlays open, as a picture; or its animated specimen of
+   * the same name playing it.
+   */
+  shows: 'example' | 'open' | 'motion';
   /** Whether it keeps a stage as wide as the column, rather than a square. */
-  wide?: boolean;
+  wide: boolean;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
-} & (
-  | { page: string; name: string; children?: never }
-  | { page?: never; name?: never; children: ReactNode }
-)) {
+}) {
   const theme = useTheme();
   const { label, icon } = verdicts[verdict];
   const id = useId();
   const stageRef = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
   // A figure that shows its example open or playing keeps a square, the room what opens in it
-  // needs; any other is as tall as its example.
-  const shape = wide ? 'wide' : open || motion ? 'square' : 'fit';
-  useVerdictFit(stageRef, box, !wide && !(motion && page), shape === 'fit' ? 'fit' : 'square');
+  // needs; any other is as tall as its example. A playing one is fitted by its motion's stage.
+  const shape = wide ? 'wide' : shows === 'example' ? 'fit' : 'square';
+  useVerdictFit(stageRef, box, {
+    on: shape !== 'wide' && shows !== 'motion',
+    shape: shape === 'fit' ? 'fit' : 'square',
+  });
   return (
     // Named by its mark and its sentence, each read once.
     <figure
@@ -119,9 +119,9 @@ function VerdictFigure({
       data-shape={shape}
       aria-labelledby={`${id}-verdict ${id}-caption`}
     >
-      {motion && page ? (
+      {shows === 'motion' ? (
         <VerdictMotion value={wide ? 'wide' : 'square'}>
-          <ExamplePlayback page={page} name={name ?? ''} />
+          <ExamplePlayback page={page} name={name} />
         </VerdictMotion>
       ) : (
         <Column
@@ -134,14 +134,12 @@ function VerdictFigure({
           {...keepLinksInPlace}
         >
           <div ref={box} className="site-verdict-fit">
-            {!page ? (
-              children
-            ) : open ? (
-              <OpenExample name={name ?? ''}>
-                <ExampleRender page={page} name={name ?? ''} />
+            {shows === 'open' ? (
+              <OpenExample name={name}>
+                <ExampleRender page={page} name={name} />
               </OpenExample>
             ) : (
-              <ExampleRender page={page} name={name ?? ''} />
+              <ExampleRender page={page} name={name} />
             )}
           </div>
         </Column>
@@ -156,7 +154,7 @@ function VerdictFigure({
           {caption}
         </span>
       </figcaption>
-      {page && <ExampleCode page={page} name={name ?? ''} />}
+      <ExampleCode page={page} name={name} />
     </figure>
   );
 }
@@ -187,9 +185,8 @@ function Figure({
         name={block.name}
         verdict={block.role}
         caption={block.caption ?? ''}
-        open={block.open}
-        motion={block.motion}
-        wide={block.wide}
+        shows={block.motion ? 'motion' : block.open ? 'open' : 'example'}
+        wide={Boolean(block.wide)}
         stage={block.stage}
       />
     );
