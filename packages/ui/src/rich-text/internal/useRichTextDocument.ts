@@ -6,6 +6,10 @@ import type { PluginKey } from '@tiptap/pm/state';
 import { useEditor } from '@tiptap/react';
 import { exitSuggestion } from '@tiptap/suggestion';
 import type { RichTextEditorProps } from '../types.js';
+import '../../styles/Base.css';
+// Rich text's rules refine the prose typography, so Prose.css comes first.
+import '../../styles/Prose.css';
+import '../../styles/RichText.css';
 
 /** What the document reads as it runs, from the editor's latest render. */
 export interface RichTextDocumentLatest extends Pick<
