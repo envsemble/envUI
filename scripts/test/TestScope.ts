@@ -239,8 +239,9 @@ const baseName = (path: string) =>
 /** fixtureUse reads every fixture and library module: once per checkout and process. */
 const fixtureUses = new Map<string, ReturnType<typeof fixtureUse>>();
 function cachedFixtureUse(root: string) {
-  if (!fixtureUses.has(root)) fixtureUses.set(root, fixtureUse(root));
-  return fixtureUses.get(root)!;
+  const cached = fixtureUses.get(root) ?? fixtureUse(root);
+  fixtureUses.set(root, cached);
+  return cached;
 }
 
 /** What a spec needs beyond the development servers, read from its source. */
@@ -282,8 +283,7 @@ export function specsFor(
   const exists = (name: string) => written.has(name);
   const add = (name: string, reason: string) => {
     if (!exists(name)) return false;
-    if (!specs.has(name)) specs.set(name, new Set());
-    specs.get(name)!.add(reason);
+    specs.set(name, (specs.get(name) ?? new Set()).add(reason));
     return true;
   };
   const helpers = new Map<string, string[]>();

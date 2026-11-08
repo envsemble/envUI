@@ -326,12 +326,10 @@ export function fixtureUse(root: string) {
   for (const [name, path] of specPaths(root)) {
     const pending = [...specRoots(sources, path, fixtureModules)];
     const seen = new Set<string>();
-    while (pending.length) {
-      const path = pending.pop()!;
+    for (let path = pending.pop(); path !== undefined; path = pending.pop()) {
       if (seen.has(path)) continue;
       seen.add(path);
-      if (!users.has(path)) users.set(path, new Set());
-      users.get(path)!.add(name);
+      users.set(path, (users.get(path) ?? new Set()).add(name));
       // A fixture module leads on to what it imports; a library module is used where it is named.
       if (path.startsWith(`${fixtures}/`) && /\.tsx?$/.test(path))
         pending.push(...sources.importsOf(path));
@@ -355,8 +353,7 @@ export function fixtureUse(root: string) {
     const found = new Set<string>();
     const pending = [path];
     const seen = new Set<string>();
-    while (pending.length) {
-      const module = pending.pop()!;
+    for (let module = pending.pop(); module !== undefined; module = pending.pop()) {
       if (seen.has(module)) continue;
       seen.add(module);
       const direct = users.get(module);

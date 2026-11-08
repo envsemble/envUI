@@ -83,7 +83,7 @@ const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpec
 // The site build takes seconds, so the fast tier builds it when its specs open it.
 const builds = {
   library: affected && scope.build.library,
-  site: browserSpecs.some((name) => needs.get(name)!.site),
+  site: [...needs].some(([name, need]) => need.site && browserSpecs.includes(name)),
 };
 
 // What runs, and why.
