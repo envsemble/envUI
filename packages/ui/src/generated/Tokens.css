@@ -3,7 +3,7 @@
  * ------------------------------------------- */
 
 /* Built from packages/ui/tokens by `npm run tokens:build`. The values DTCG can't express yet
-   are in TokensHandwritten.css. */
+   are in ../styles/TokensHandwritten.css. */
 .env-theme {
   color-scheme: light;
   --env-badge-count-height: 1.25rem;

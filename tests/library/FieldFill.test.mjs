@@ -13,7 +13,7 @@ const styles = fileURLToPath(new URL('../../packages/ui/src/styles/', import.met
 test('no style sheet paints with the field fill', () => {
   const uses = [];
   for (const name of readdirSync(styles))
-    if (name.endsWith('.css') && name !== 'Tokens.css') {
+    if (name.endsWith('.css')) {
       const css = readFileSync(join(styles, name), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
       for (const [index, line] of css.split('\n').entries())
         if (line.includes('var(--env-color-bg-field)'))

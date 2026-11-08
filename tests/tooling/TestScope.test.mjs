@@ -109,7 +109,7 @@ test('a file many fixtures use runs the most specific few, and says how many use
 });
 
 test('a shared file runs the shared set, and a file no fixture uses runs no spec', () => {
-  assert.deepEqual(specs('packages/ui/src/styles/Tokens.css'), [
+  assert.deepEqual(specs('packages/ui/src/generated/Tokens.css'), [
     'Colors',
     'Contrast',
     'Scale',

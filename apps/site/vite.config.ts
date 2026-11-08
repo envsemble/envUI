@@ -134,7 +134,7 @@ export default defineConfig(() => {
                 }</script>
     <style>${createFirstPaintStyle(
       readFileSync(
-        fileURLToPath(new URL('../../packages/ui/src/styles/Tokens.css', import.meta.url)),
+        fileURLToPath(new URL('../../packages/ui/src/generated/Tokens.css', import.meta.url)),
         'utf8',
       ),
     )}</style>`,

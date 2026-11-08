@@ -108,11 +108,11 @@ function withoutRepeatedDeclarations(plugin: Plugin): Plugin {
 }
 
 const header =
-  "/* Built from packages/ui/tokens by `npm run tokens:build`. The values DTCG can't express yet\n   are in TokensHandwritten.css. */\n";
+  "/* Built from packages/ui/tokens by `npm run tokens:build`. The values DTCG can't express yet\n   are in ../styles/TokensHandwritten.css. */\n";
 const block = (selector: string, contents: string) => `${selector} {\n  ${contents}\n}`;
 
 /**
- * The plugin that writes styles/Tokens.css: the base set on `.env-theme`, then a rule for what each
+ * The plugin that writes generated/Tokens.css: the base set on `.env-theme`, then a rule for what each
  * scheme, contrast and scale changes, given as the token IDs each modifier context overrides.
  */
 export function tokensCss({
@@ -127,7 +127,7 @@ export function tokensCss({
   return withoutRepeatedDeclarations(
     withoutDescriptions(
       css({
-        filename: 'styles/Tokens.css',
+        filename: 'generated/Tokens.css',
         // Every property takes the prefix. plugin-css also passes this the parts that an alias
         // of a composite token reads, as `type.label-fontSize`, which makeCSSVar() writes as
         // `--env-type-label-font-size`, the part's own property.

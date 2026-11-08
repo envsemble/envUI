@@ -41,7 +41,7 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 - **Props.** A boolean defaults to false, unless it turns off a feature shown by default: then it is named after the feature, such as `header` or `closeButton`, and defaults to true; `show*` is for an opt-in display, such as Spinner's `showLabel`. Signatures use envUI's own types, but a third-party type stays where it is the point of a prop, such as Tiptap's `Editor` on RichTextEditor.
 - **Messages.** A component's strings live in `foundations/messages/`, one namespace per component or family, named after it (`copyButton`) or after the concept a family sets (`themePreference`). A prop that overrides one is named after its key: `<x>Label` reads `messages.<namespace>.<x>`. A number that picks a plural form arrives as `count` with `countText`, the count in the locale's digits; any other number arrives as locale text.
 - **What belongs in envUI.** A variant, slot or component every application needs, built on envUI's primitives and tokens; routing, authorization, validation, preferences and persistence stay in the application.
-- **Generated files.** Icons, tokens, props, parts, the catalogue's data and packaged copies have sources: edit those and regenerate (`npm run tokens:build`, `docs:props`, `docs:parts`, `icons:generate`); `npm run check` fails while a generated file is stale.
+- **Generated files.** Icons, tokens, props, parts, the catalogue's data and packaged copies have sources: edit those and regenerate (`npm run tokens:build`, `docs:props`, `docs:parts`, `icons:generate`); `npm run check` fails while a generated file is stale. `src/generated/` holds the token build's output, `Tokens.css` and `tokens.json`: never edit it.
 
 ### Changing a component touches
 

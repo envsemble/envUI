@@ -1,5 +1,5 @@
 // Builds envUI's design tokens: packages/ui/tokens (DTCG 2025.10 and its resolver) through
-// Terrazzo into packages/ui/src/styles/Tokens.css and the token list,
+// Terrazzo into packages/ui/src/generated/Tokens.css and the token list,
 // packages/ui/src/generated/tokens.json, formatted with Prettier. Terrazzo lints the tokens first;
 // the config and its plugins are in scripts/build/tokens/.
 //
