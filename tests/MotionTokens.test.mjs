@@ -65,8 +65,8 @@ test("the site's script motion follows an easing token set to any CSS easing", (
       /^(linear|ease(-in|-out|-in-out)?|(cubic-bezier|steps)\(.*\))$/.test(value),
   };
   try {
-    // Unset, the designed curve.
-    assert.equal(site.motionEase('ease-exit'), 'cubic-bezier(0.4, 0, 1, 1)');
+    // Unset, as outside a Theme, CSS's ease, as the library's script motion takes it.
+    assert.equal(site.motionEase('ease-exit'), 'ease');
     for (const value of ['linear', 'ease-out', 'steps(4)', 'cubic-bezier(0.2, 0, 0, 1)']) {
       tokens['--env-motion-ease'] = ` ${value}`;
       assert.equal(site.motionEase(), value);
@@ -76,9 +76,10 @@ test("the site's script motion follows an easing token set to any CSS easing", (
     assert.ok(Math.abs(site.motionEasing()(0.3) - 0.3) < 1e-4);
     tokens['--env-motion-ease'] = 'ease-out';
     assert.ok(Math.abs(site.motionEasing()(0.5) - easingFunction('ease-out')(0.5)) < 1e-4);
-    // What isn't an easing reads as the designed curve.
+    // What isn't an easing reads as ease.
     tokens['--env-motion-ease'] = 'fast';
-    assert.equal(site.motionEase(), 'cubic-bezier(0.45, 0, 0.2, 1)');
+    assert.equal(site.motionEase(), 'ease');
+    assert.ok(Math.abs(site.motionEasing()(0.5) - easingFunction('ease')(0.5)) < 1e-4);
   } finally {
     delete globalThis.document;
     delete globalThis.getComputedStyle;

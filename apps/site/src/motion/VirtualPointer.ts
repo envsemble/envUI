@@ -1,7 +1,7 @@
 /*
- * A pointer no one sees, which a preview's animation moves over its live component: it hovers,
+ * A pointer no one sees, which a stage's animation moves over its live component: it hovers,
  * presses, drags and releases by the same events a mouse sends, so the component answers as it
- * does a person, with its own hover, press and drag, rather than a picture of them. The preview is
+ * does a person, with its own hover, press and drag, rather than a picture of them. The stage is
  * inert, so only these events reach it.
  *
  * What a stylesheet shows under a real pointer, `:hover` and `:active`, no event can set; the
@@ -126,7 +126,7 @@ function pictureOf(type: string, scope: Element) {
   return Uint8Array.from(atob(data), (character) => character.charCodeAt(0));
 }
 
-/** A layer over a whole preview, which no pointer is over: it only holds the preview's popups. */
+/** A layer over a whole stage, which no pointer is over: it only holds the stage's popups. */
 const passThrough = '.catalogue-overlay-layer';
 
 /** A point a move goes to, and the element under it, read ahead of the move (VirtualPointer.aim). */
@@ -138,7 +138,7 @@ export interface Aimed {
 /** The ids of the pointers no one sees count up from here, clear of a real pointer's. */
 let nextId = 9000;
 
-/** The pointer no one sees, over one preview's elements, `scope`. */
+/** The pointer no one sees, over one stage's elements, `scope`. */
 export class VirtualPointer {
   readonly id = nextId++;
   private at: Point | null = null;
@@ -156,11 +156,11 @@ export class VirtualPointer {
   /** Whether the press may select text by dragging: no one took it for itself. */
   private selects = false;
 
-  /** Where the preview was, in the viewport, as the pointer last moved over it. */
+  /** Where the stage was, in the viewport, as the pointer last moved over it. */
   private scopeAt: Point | null = null;
 
   /**
-   * The reader's scroll of the page carries the pointer with the preview, as a hand on it would
+   * The reader's scroll of the page carries the pointer with the stage, as a hand on it would
    * be, rather than leaving it where it was in the window: what it is over and drags stays the
    * same, also between the moves of its script and while it waits. A real mouse stays where it is
    * in the window, and the components follow it there, such as a list's lifted row, which would
@@ -176,7 +176,7 @@ export class VirtualPointer {
     this.moveTo({ x: at.x + dx, y: at.y + dy });
   };
 
-  /** Notes where the preview is, as the pointer moves over it. */
+  /** Notes where the stage is, as the pointer moves over it. */
   private noteScope() {
     const box = this.scope.getBoundingClientRect();
     this.scopeAt = { x: box.left, y: box.top };
@@ -192,18 +192,18 @@ export class VirtualPointer {
     this.cursor = new PointerCursor(scope);
   }
 
-  /** Its cursor, drawn over the preview's stage while it plays (PointerCursor.ts). */
+  /** Its cursor, drawn over its stage while it plays (PointerCursor.ts). */
   private readonly cursor: PointerCursor;
-  /** Whether its cursor is drawn: while its preview plays. */
+  /** Whether its cursor is drawn: while its stage plays. */
   private cursorShown = false;
 
-  /** Draws its cursor while its preview plays, or takes it away. */
+  /** Draws its cursor while its stage plays, or takes it away. */
   showCursor(on: boolean) {
     this.cursorShown = on;
     this.drawCursor();
   }
 
-  /** Draws its cursor where it is, pressed or not, or none while it is off the preview. */
+  /** Draws its cursor where it is, pressed or not, or none while it is off the stage. */
   private drawCursor() {
     const files = this.carried ? [...this.carried.files].map((file) => file.name) : [];
     if (this.cursorShown) this.cursor.place(this.at, this.buttons > 0, files);
@@ -242,7 +242,7 @@ export class VirtualPointer {
       if (/^inset\((50|100)%/.test(style.clipPath)) continue;
       if (style.visibility === 'hidden') continue;
       // What lets the pointer through, such as a slider's label over its track, isn't hit; what
-      // only takes that from the preview's overlay layer, such as a popup in it, is.
+      // only takes that from the stage's overlay layer, such as a popup in it, is.
       if (style.pointerEvents === 'none' && !this.fromLayer(element)) continue;
       return element;
     }
@@ -250,10 +250,10 @@ export class VirtualPointer {
   }
 
   /**
-   * Whether a point of an element is clipped away by a box around it inside the preview that clips
+   * Whether a point of an element is clipped away by a box around it inside the stage that clips
    * what overflows it, as a browser's own hit test leaves it out. A box placed out of flow escapes
    * the clips between it and the box that places it: an absolute one those up to its nearest
-   * positioned ancestor, a fixed one every clip inside the preview, whose canvas places it.
+   * positioned ancestor, a fixed one every clip inside the stage, whose canvas places it.
    */
   private clippedAt(element: Element, point: Point) {
     let escapes: 'none' | 'absolute' | 'fixed' = 'none';
@@ -303,7 +303,7 @@ export class VirtualPointer {
     return inherited;
   }
 
-  /** The element and those around it, inside the preview, as :hover marks them all. */
+  /** The element and those around it, inside the stage, as :hover marks them all. */
   private chain(element: Element) {
     const chain: Element[] = [];
     for (let node: Element | null = element; node && node !== this.scope; node = node.parentElement)
@@ -362,7 +362,7 @@ export class VirtualPointer {
   /**
    * Picks up files, as a person drags them in from the desktop: its moves are a drag now. Each is
    * as large as its `size` in bytes; without one, an image is a real picture, a mark in the theme's
-   * brand color, so a preview of it shows something, and anything else a few bytes. Picked up again
+   * brand color, so a thumbnail of it shows something, and anything else a few bytes. Picked up again
    * before a drop, it carries them all together.
    */
   carry(files: readonly CarriedFile[]) {
@@ -404,7 +404,7 @@ export class VirtualPointer {
     this.drawCursor();
   }
 
-  /** Moves a carried file over the preview: the elements it enters, leaves and is over hear it. */
+  /** Moves a carried file over the stage: the elements it enters, leaves and is over hear it. */
   private dragTo(point: Point, aimed: Aimed | null) {
     this.at = point;
     this.noteScope();
@@ -435,7 +435,7 @@ export class VirtualPointer {
   }
 
   /**
-   * Moves the pointer to a point, coming over the preview there if it wasn't; `aimed`, what aim
+   * Moves the pointer to a point, coming over the stage there if it wasn't; `aimed`, what aim
    * read for the point, saves reading the layout again.
    */
   moveTo(point: Point, aimed: Aimed | null = null) {
@@ -471,12 +471,12 @@ export class VirtualPointer {
   }
 
   /** Whether this pointer may go on now: no other is holding its button down on the page. */
-  /** Whether its press was let go of the page's lock while its preview was paused. */
+  /** Whether its press was let go of the page's lock while its stage was paused. */
   private suspended = false;
 
   /**
-   * Its preview is paused: a press it holds lets the page's lock go, so nothing waits on a paused
-   * preview, and the reader's moves reach the page again.
+   * Its stage is paused: a press it holds lets the page's lock go, so nothing waits on a paused
+   * stage, and the reader's moves reach the page again.
    */
   suspend() {
     if (!this.buttons || pressing !== this.id) return;
@@ -485,7 +485,7 @@ export class VirtualPointer {
   }
 
   /**
-   * Its preview plays again: a press it held is taken up where it is, as a hand pressing again,
+   * Its stage plays again: a press it held is taken up where it is, as a hand pressing again,
    * so a drag the page ended meanwhile goes on. Returns whether it may go on, once the lock is free.
    */
   resume() {
@@ -609,7 +609,7 @@ export class VirtualPointer {
   /** The last click, which a second one soon after on the same element makes a double click. */
   private lastClick: { target: Element; time: number } | null = null;
 
-  /** The field typed into, marked as focused, as an inert preview can't focus it. */
+  /** The field typed into, marked as focused, as an inert stage can't focus it. */
   private focused: Element | null = null;
 
   /** Marks a field as focused, and what holds it as holding focus. */
@@ -627,7 +627,7 @@ export class VirtualPointer {
   }
 
   /**
-   * Types into a field of the preview as a keyboard does: a key down, the text going in, which
+   * Types into a field of the stage as a keyboard does: a key down, the text going in, which
    * a component that holds the field's value hears as an input event, and the key up. `text` is
    * the characters to add, or `null` to delete the last one.
    */
@@ -699,14 +699,14 @@ export class VirtualPointer {
     };
   }
 
-  /** What a key goes to: an element of the preview, or what is focused, or the preview. */
+  /** What a key goes to: an element of the stage, or what is focused, or the stage. */
   private keyTarget(selector?: string) {
     return (selector && this.scope.querySelector(selector)) || this.focused || this.scope;
   }
 
   /**
-   * The keyboard's focus arrives on an element of the preview, as a Tab brings it, or with
-   * nothing leaves it: the element is marked as focused, as the inert preview can't focus it, and
+   * The keyboard's focus arrives on an element of the stage, as a Tab brings it, or with
+   * nothing leaves it: the element is marked as focused, as the inert stage can't focus it, and
    * hears the focus events a browser sends, as does the element it leaves.
    */
   keyboardFocus(selector: string | Element | null) {
@@ -733,7 +733,7 @@ export class VirtualPointer {
   }
 
   /**
-   * Presses a key on an element of the preview, or on the field typed into or focused, with what a
+   * Presses a key on an element of the stage, or on the field typed into or focused, with what a
    * browser does for it there: Tab leaves the field typed into, which hears its blur, and Enter in
    * a single-line field submits its form.
    */
@@ -759,7 +759,7 @@ export class VirtualPointer {
   }
 
   /**
-   * Holds a key down, such as Alt, on an element of the preview or the field typed into: while it
+   * Holds a key down, such as Alt, on an element of the stage or the field typed into: while it
    * is held, every event the pointer and the keyboard send carries its flag, as Alt with a letter.
    */
   keyDown(key: string, selector?: string) {
@@ -786,7 +786,7 @@ export class VirtualPointer {
 
   /**
    * Starts turning the wheel over the element under the pointer: it scrolls the nearest box around
-   * it in the preview that can scroll along the axis, never the page.
+   * it in the stage that can scroll along the axis, never the page.
    */
   startWheel(axis: 'x' | 'y') {
     this.endWheel();
@@ -852,7 +852,7 @@ export class VirtualPointer {
     if (turn?.box) turn.box.style.scrollSnapType = turn.snap;
   }
 
-  /** Takes the pointer off the preview, releasing its button and the keys it holds first. */
+  /** Takes the pointer off the stage, releasing its button and the keys it holds first. */
   leave() {
     for (const key of [...this.held]) this.keyUp(key);
     if (this.carried) {
@@ -879,7 +879,7 @@ export class VirtualPointer {
     this.over = [];
   }
 
-  /** Whether the pointer is over the preview. */
+  /** Whether the pointer is over the stage. */
   get present() {
     return Boolean(this.at);
   }

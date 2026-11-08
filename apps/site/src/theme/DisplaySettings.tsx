@@ -53,15 +53,13 @@ function requestedScale(): ThemeScale | undefined {
  * play them.
  */
 function initialMotion() {
-  const reduced =
-    typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  return readStored(displayStorageKeys.motion, motions, reduced ? 'paused' : 'playing');
+  return readStored(displayStorageKeys.motion, motions, reducedMotion() ? 'paused' : 'playing');
 }
 
 interface DisplaySettingsValue {
   contrast: ThemeContrast;
   scale: ThemeScale;
-  /** Whether every animation of the site is paused, the previews' and the figures'. */
+  /** Whether every animation of the site is paused, the tiles' and the figures'. */
   motionPaused: boolean;
   setContrast: (contrast: ThemeContrast) => void;
   setScale: (scale: ThemeScale) => void;

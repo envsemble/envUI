@@ -14,17 +14,17 @@
  * anywhere, such as a panel that opens in place.
  */
 
-/** A preview's named selectors, and whether they count outside its popups too. */
+/** A stage's named selectors, and whether they count outside its popups too. */
 interface Named {
   selectors: readonly string[];
   anywhere: boolean;
 }
 
-/** The selectors each preview's animations name, by the preview's root element. */
+/** The selectors each stage's animations name, by the stage's root element. */
 const named = new WeakMap<Element, Set<Named>>();
 
 /**
- * Names selectors of a preview's elements its animation acts on, in its popups or, `anywhere`,
+ * Names selectors of a stage's elements its animation acts on, in its popups or, `anywhere`,
  * also outside them; returns the release.
  */
 export function nameMustShow(root: Element, selectors: readonly string[], anywhere = false) {
@@ -37,7 +37,7 @@ export function nameMustShow(root: Element, selectors: readonly string[], anywhe
 }
 
 /**
- * The selectors of the elements a preview's animations act on; with `anywhere`, only those that
+ * The selectors of the elements a stage's animations act on; with `anywhere`, only those that
  * count outside its popups too.
  */
 export function mustShowOf(root: Element, anywhere = false): string[] {
@@ -52,14 +52,14 @@ export function mustShowOf(root: Element, anywhere = false): string[] {
  * and opening again, happens in place, with nothing drawn smaller or moved.
  */
 
-/** How many of each preview's parts hold its view, by the preview's root element. */
+/** How many of each stage's parts hold its view, by the stage's root element. */
 const holding = new WeakMap<Element, number>();
 
-/** How many of them lay it out from its window's top, by the preview's root element. */
+/** How many of them lay it out from its window's top, by the stage's root element. */
 const fromTop = new WeakMap<Element, number>();
 
 /**
- * Holds a preview's view while it plays, and with `top`, lays it out from its window's top, so what
+ * Holds a stage's view while it plays, and with `top`, lays it out from its window's top, so what
  * it adds as it plays, such as a list's next item, grows below what stays; returns the release.
  */
 export function holdView(root: Element, top = false) {
@@ -71,17 +71,17 @@ export function holdView(root: Element, top = false) {
   };
 }
 
-/** Whether a preview's view holds while it plays. */
+/** Whether a stage's view holds while it plays. */
 export const holdsView = (root: Element) => (holding.get(root) ?? 0) > 0;
 
-/** Whether a preview lays out from its window's top (holdView). */
+/** Whether a stage lays out from its window's top (holdView). */
 export const holdsFromTop = (root: Element) => (fromTop.get(root) ?? 0) > 0;
 
 /*
  * Where a playing tile's pointer is heading (usePointer, Motion.tsx): the point of its current move,
  * or of the last it made, as an element's selector and fractions of its box. A tile's view pans to
  * keep it in the stage, so what the pointer goes to, and presses there, is in view before the press
- * (useFit.ts). Each change is announced to the preview's root as a `headingEvent`.
+ * (useFit.ts). Each change is announced to the stage's root as a `headingEvent`.
  */
 
 /** A point the pointer heads to: an element, by its selector, and fractions of its box. */
@@ -91,13 +91,13 @@ export interface Heading {
   y: number;
 }
 
-/** Where each preview's pointer is heading, by the preview's root element. */
+/** Where each stage's pointer is heading, by the stage's root element. */
 const headings = new WeakMap<Element, Heading>();
 
-/** The event a preview's root hears as its pointer heads somewhere else. */
+/** The event a stage's root hears as its pointer heads somewhere else. */
 export const headingEvent = 'catalogue-heading';
 
-/** Says where a preview's pointer is heading, or with null that it heads nowhere. */
+/** Says where a stage's pointer is heading, or with null that it heads nowhere. */
 export function headFor(root: Element, heading: Heading | null) {
   const was = headings.get(root) ?? null;
   if (was === heading) return;
@@ -114,19 +114,19 @@ export function headFor(root: Element, heading: Heading | null) {
   root.dispatchEvent(new Event(headingEvent));
 }
 
-/** Where a preview's pointer is heading, if anywhere. */
+/** Where a stage's pointer is heading, if anywhere. */
 export const headingOf = (root: Element) => headings.get(root) ?? null;
 
 /*
- * Every point a preview's pointer heads to over its script, in its order: a tile's still is framed
+ * Every point a stage's pointer heads to over its script, in its order: a tile's still is framed
  * as its play is, with each of them in view that fits, so the pointer coming in moves nothing
  * (useFit.ts).
  */
 
-/** The points each preview's pointer heads to, by the preview's root element. */
+/** The points each stage's pointer heads to, by the stage's root element. */
 const courses = new WeakMap<Element, Set<readonly Heading[]>>();
 
-/** Names the points a preview's pointer heads to, in order; returns the release. */
+/** Names the points a stage's pointer heads to, in order; returns the release. */
 export function nameCourse(root: Element, points: readonly Heading[]) {
   let set = courses.get(root);
   if (!set) courses.set(root, (set = new Set()));
@@ -135,5 +135,5 @@ export function nameCourse(root: Element, points: readonly Heading[]) {
   return () => void own.delete(points);
 }
 
-/** The points a preview's pointer heads to over its script, in order. */
+/** The points a stage's pointer heads to over its script, in order. */
 export const courseOf = (root: Element): Heading[] => [...(courses.get(root) ?? [])].flat();

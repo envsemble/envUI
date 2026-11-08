@@ -1,5 +1,6 @@
 import { useEffect, useSyncExternalStore, type RefObject } from 'react';
 import { useDisplaySettings } from '../theme/DisplaySettings';
+import { reducedMotionQuery } from './MotionTokens';
 
 /*
  * Tiles that play by themselves where the reader can't hover, as on a phone, where the galleries
@@ -11,7 +12,6 @@ import { useDisplaySettings } from '../theme/DisplaySettings';
 
 /** A device without hover: a touch screen. A mouse, at any width, keeps hover and focus. */
 const touchQuery = '(hover: none), (pointer: coarse)';
-const reducedQuery = '(prefers-reduced-motion: reduce)';
 /** How long scrolling rests before a tile starts, in ms, so a fling plays nothing on its way. */
 const settle = 150;
 /** The share of a tile in view that counts as mostly in view. */
@@ -135,7 +135,7 @@ export function useMedia(query: string) {
 export function useAutoplay(element: RefObject<HTMLElement | null>, held = false) {
   const { motionPaused } = useDisplaySettings();
   const touch = useMedia(touchQuery);
-  const reduced = useMedia(reducedQuery);
+  const reduced = useMedia(reducedMotionQuery);
   const active = touch && !reduced && !motionPaused;
   useEffect(() => {
     const target = element.current;

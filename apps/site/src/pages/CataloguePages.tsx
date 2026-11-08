@@ -1,7 +1,7 @@
 import { Alert, Column, Link } from '@envsemble/envui';
-import { PageHeader } from '../layout/PageHeader';
-import { catalogueTrail } from '../navigation/CatalogueTrail';
-import type { RoutePage } from '../navigation/SiteRoutes';
+import { SiteBanner } from '../layout/SiteBanner';
+import { catalogueTrail } from '../navigation/Trails';
+import type { DocumentPage, RoutePage } from '../navigation/SiteRoutes';
 import { PartSwitch } from '../navigation/OtherPart';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import { Catalogue } from './Catalogue';
@@ -14,11 +14,11 @@ import { useDocument } from './PageContent';
  * with the code under each, and a link to its page in the Docs, its guide to using it in code with
  * its props, part names and changelog.
  */
-export function ComponentPage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
+export function ComponentPage({ page }: { page: DocumentPage }) {
+  const document = useDocument(page.document);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
@@ -35,11 +35,11 @@ export function ComponentPage({ page }: { page: RoutePage }) {
  * A pattern's page: every section of the template, in the page's order, and a link to its guide in
  * the Docs.
  */
-export function PatternPage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
+export function PatternPage({ page }: { page: DocumentPage }) {
+  const document = useDocument(page.document);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
@@ -75,11 +75,11 @@ function IconsCredit() {
  * A foundation's page in the catalogue: how envUI handles its subject, in pictures and plain
  * words. Its page in the Docs, which Docs opens, holds the tokens and code behind them.
  */
-export function FoundationPage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
+export function FoundationPage({ page }: { page: DocumentPage }) {
+  const document = useDocument(page.document);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
@@ -97,7 +97,7 @@ export function FoundationPage({ page }: { page: RoutePage }) {
 export function FoundationsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
@@ -114,7 +114,7 @@ export function FoundationsPage({ page }: { page: RoutePage }) {
 export function ComponentsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
@@ -131,7 +131,7 @@ export function ComponentsPage({ page }: { page: RoutePage }) {
 export function PatternsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}

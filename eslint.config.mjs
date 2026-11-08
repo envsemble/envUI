@@ -25,6 +25,28 @@ const confusingBrowserGlobals = [
   'top',
 ];
 
+/**
+ * Names the site declares with "preview" in them: the site's words for what it shows are example,
+ * specimen, tile, figure and stage (AGENTS.md), and preview is an older name. Names it only reads,
+ * such as a library prop or an example's import, are left to where they are declared.
+ */
+const previewNames = [
+  'VariableDeclarator > Identifier.id',
+  'FunctionDeclaration > Identifier.id',
+  'ClassDeclaration > Identifier.id',
+  'TSTypeAliasDeclaration > Identifier.id',
+  'TSInterfaceDeclaration > Identifier.id',
+  'TSPropertySignature > Identifier.key',
+  'MethodDefinition > Identifier.key',
+  'PropertyDefinition > Identifier.key',
+  'ObjectExpression > Property > Identifier.key',
+  ':function > Identifier.params',
+].map((declared) => ({
+  selector: `${declared}[name=/preview/i]`,
+  message:
+    'Name it with the site’s words, example, specimen, tile, figure or stage (AGENTS.md): preview is an older name.',
+}));
+
 export default defineConfig(
   globalIgnores([
     '**/dist/**',
@@ -101,6 +123,19 @@ export default defineConfig(
       'no-implied-eval': 'error',
       'no-new-func': 'error',
     },
+  },
+  {
+    // The site's own code. Examples are application code, where a preview is the product's word,
+    // such as a file's or the Markdown editor's.
+    files: ['apps/site/src/**/*.{ts,tsx}'],
+    ignores: ['apps/site/src/examples/**', 'apps/site/src/figures/**', 'apps/site/src/template/**'],
+    rules: { 'no-restricted-syntax': ['error', ...previewNames] },
+  },
+  {
+    // A warning until the figures' and the template's names follow the rule too; then the block
+    // above covers them.
+    files: ['apps/site/src/figures/**/*.{ts,tsx}', 'apps/site/src/template/**/*.{ts,tsx}'],
+    rules: { 'no-restricted-syntax': ['warn', ...previewNames] },
   },
   {
     // Examples and templates are the code applications and agents copy, so they follow the rules

@@ -12,7 +12,7 @@ export const componentGroups = [
   'Overlays',
   'App frame & layout',
 ] as const;
-export type ComponentGroup = (typeof componentGroups)[number];
+type ComponentGroup = (typeof componentGroups)[number];
 /** The id of a component group's heading on the overview, such as components-app-frame-layout. */
 export const componentGroupId = (group: string) =>
   `components-${group.toLowerCase().replace(/[^a-z]+/g, '-')}`;

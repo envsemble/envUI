@@ -2,15 +2,14 @@ import { test, expect, type Locator, type Route } from '@playwright/test';
 import { siteDevUrl } from './helpers/Servers';
 import {
   allPages,
-  counterpartOf,
-  docsTrail,
-  docsTree,
   findPage,
-  normalizeRoute,
-  otherPartRoute,
   pagesOf,
   routeOfDocument,
 } from '../../apps/site/src/navigation/SiteRoutes';
+import { counterpartOf, otherPartRoute } from '../../apps/site/src/navigation/Counterparts';
+import { docsTree } from '../../apps/site/src/navigation/DocsTree';
+import { normalizeRoute } from '../../apps/site/src/navigation/OldAddresses';
+import { docsTrail } from '../../apps/site/src/navigation/Trails';
 import { componentGroups } from '../../apps/site/src/pages/PageModel';
 import { goTo } from './helpers/SiteSpecHelpers';
 

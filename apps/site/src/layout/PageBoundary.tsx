@@ -1,7 +1,7 @@
 import { Component, createRef, type ReactNode } from 'react';
 import { Alert, Button, Link, Column } from '@envsemble/envui';
 import { errorMessage, focusDropped, focusedElement, reloadPage } from '../template/LoadBoundary';
-import { PageHeader } from './PageHeader';
+import { SiteBanner } from './SiteBanner';
 import { homeRoute, routeHref } from '../navigation/Address';
 
 interface PageBoundaryProps {
@@ -56,7 +56,7 @@ export class PageBoundary extends Component<PageBoundaryProps, PageBoundaryState
     const overview = this.props.route.split(/[/?]/)[0] === 'overview';
     return (
       <Column gap={7} className="site-article">
-        <PageHeader title={this.props.title} breadcrumb="envUI" />
+        <SiteBanner title={this.props.title} breadcrumb="envUI" />
         <Alert
           ref={this.alert}
           tabIndex={-1}

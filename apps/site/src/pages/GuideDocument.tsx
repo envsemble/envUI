@@ -9,7 +9,7 @@ import { StageSkeleton } from '../template/Loading';
  * that shows it. The dev mode demo loads `@envsemble/envui/dev`, which no other page loads:
  * scripts/site/SiteDevMode.ts checks the hosted build for it.
  */
-export const demos = {
+const demos = {
   DevModeDemo: lazyPart(
     () => import('../figures/dev-mode/DevModeDemo'),
     (module) => module.DevModeDemo,
@@ -54,9 +54,9 @@ export const demos = {
 };
 
 /** A `<!-- demo: Name -->` line; the packaged page keeps it as a comment, which shows nothing. */
-export const demoLine = /^<!--\s*demo:\s*([A-Za-z]\w*)\s*-->[ \t]*$/m;
+const demoLine = /^<!--\s*demo:\s*([A-Za-z]\w*)\s*-->[ \t]*$/m;
 
-export function Demo({ name }: { name: string }) {
+function Demo({ name }: { name: string }) {
   const [, setAttempt] = useState(0);
   const part = demos[name as keyof typeof demos];
   if (!part) throw new Error(`No demo ${name} in apps/site/src/pages/GuideDocument.tsx`);

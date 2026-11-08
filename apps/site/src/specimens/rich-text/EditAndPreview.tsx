@@ -48,6 +48,7 @@ function Editing() {
 }
 
 /** The notes edited, each change mirrored in the preview below, by a pointer no one sees. */
+// eslint-disable-next-line no-restricted-syntax -- named after its example, whose preview is the editor's own
 export default function EditAndPreviewMotion() {
   return (
     <MotionStage label="the preview following the edits">

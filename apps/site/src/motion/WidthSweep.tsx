@@ -1,6 +1,14 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/envui';
 import { usePlayback } from './Motion';
+import { remPixels } from '../shared/Lengths';
 
 /*
  * An Adapting to width figure that plays: the example in one frame whose width sweeps between the
@@ -79,9 +87,226 @@ function widthAt(time: number, stops: readonly number[], hold: number) {
   return stops[0]!;
 }
 
+/** Where a sweep stands on its stage: its scale, the widths it sweeps between and its room. */
+interface SweepLayout {
+  /** The scale the frame is drawn at. */
+  scale: number;
+  /** The widths it sweeps between on this stage, in rem. */
+  stops: readonly number[];
+  /** The room it shows in, in px, inside its outline. */
+  room: number;
+  /** Whether it is cut off at the stage's end (`crop`). */
+  cropped: boolean;
+}
+
+/**
+ * The scale that shows the widest width in `space` px, or the least one with a narrower sweep,
+ * and the widths the sweep reaches at it; with `crop`, a frame that doesn't fit is cut off instead.
+ */
+function fitSweep(
+  stops: readonly number[],
+  space: number,
+  rem: number,
+  { fit, crop }: { fit: boolean; crop: boolean },
+): SweepLayout {
+  const least = fit ? leastFitScale : leastScale;
+  let scale = Math.min(1, space / (Math.max(...stops) * rem));
+  let limit = Infinity;
+  const cropped = crop && scale < least;
+  if (cropped) {
+    // Cut off, at the scale that keeps its text legible, rather than at a fit's least.
+    scale = leastScale;
+  } else if (scale < least) {
+    scale = least;
+    // In whole rem, so the ruler names the narrower width as it names the others.
+    limit = Math.floor(space / (least * rem));
+  }
+  return { scale, stops: stops.map((width) => Math.min(width, limit)), room: space, cropped };
+}
+
+/** The tallest the example in `box` is at any width from `narrowest` to `most` rem. */
+function tallestAlong(box: HTMLElement, narrowest: number, most: number) {
+  let tallest = 0;
+  for (let width = narrowest; width < most + sampleStep; width += sampleStep) {
+    box.style.inlineSize = `${Math.min(width, most)}rem`;
+    tallest = Math.max(tallest, box.offsetHeight);
+  }
+  return tallest;
+}
+
+/**
+ * The ruler's words for a width: at a width the page gives, its exact value; on the way, and at a
+ * width the stage narrowed, whole rem, which change calmly. `classes` names its window class
+ * beside it, or in its place with `'only'`.
+ */
+function rulerWords(
+  width: number,
+  {
+    stops,
+    widths,
+    classes,
+  }: { stops: readonly number[]; widths: readonly number[]; classes: boolean | 'only' },
+) {
+  const exact = stops.find((stop) => Math.abs(stop - width) < 0.01 && widths.includes(stop));
+  const words = `${exact ?? Math.round(width)} rem`;
+  const name = classNames[classOf(width)];
+  return classes === 'only' ? name : classes ? `${words} · ${name}` : words;
+}
+
+/** The parts of a sweep that its effects draw into, and the state they share. */
+interface SweepParts {
+  areaRef: RefObject<HTMLDivElement | null>;
+  placeRef: RefObject<HTMLDivElement | null>;
+  frameRef: RefObject<HTMLDivElement | null>;
+  layoutRef: RefObject<SweepLayout>;
+  /** The width the frame shows now, in rem. */
+  shownRef: RefObject<number>;
+  /** Draws the frame at a width: WidthSweep's latest drawing. */
+  drawRef: RefObject<(width: number) => void>;
+}
+
+/**
+ * Chooses the scale and the height once for the stage, and again only as the stage or the example
+ * changes: the scale that shows the widest width, or the least one with a narrower sweep, and the
+ * tallest the example is anywhere along it.
+ */
+function useSweepLayout(
+  { areaRef, placeRef, frameRef, layoutRef, shownRef, drawRef }: SweepParts,
+  key: string,
+  { fit, crop }: { fit: boolean; crop: boolean },
+) {
+  useLayoutEffect(() => {
+    const room = areaRef.current;
+    const box = frameRef.current;
+    const spot = placeRef.current;
+    if (!room || !box || !spot) return;
+    const stops = key.split(' ').map(Number);
+    /** The tallest the example is along a sweep, by the root's font size and the sweep's ends. */
+    const tallestOf = new Map<string, number>();
+    const measure = () => {
+      const rem = remPixels();
+      const outline = getComputedStyle(box);
+      const edge = parseFloat(outline.outlineOffset) + parseFloat(outline.outlineWidth) || 0;
+      const space = room.clientWidth - 2 * edge;
+      const fitted = fitSweep(stops, space, rem, { fit, crop });
+      const { scale, cropped } = fitted;
+      const narrowest = Math.min(...fitted.stops);
+      const most = Math.max(...fitted.stops);
+      // The frame's height follows its own width alone, not the stage's, so a sweep already
+      // sampled keeps its tallest as the stage resizes, such as while the drawer beside the page
+      // is dragged: a layout for each sample, every frame, made that drag lag.
+      const range = `${rem} ${narrowest} ${most}`;
+      const tallest = tallestOf.get(range) ?? tallestAlong(box, narrowest, most);
+      tallestOf.set(range, tallest);
+      layoutRef.current = fitted;
+      if (cropped) spot.dataset.cropped = '';
+      else {
+        delete spot.dataset.cropped;
+        delete spot.dataset.cut;
+        box.style.removeProperty('translate');
+      }
+      // Cropped, the place is the stage's width, and the frame runs out past it.
+      spot.style.setProperty(
+        '--catalogue-sweep-widest',
+        `${cropped ? space / rem : most * scale}rem`,
+      );
+      spot.style.setProperty('--catalogue-sweep-height', `${tallest * scale}px`);
+      spot.style.setProperty('--catalogue-sweep-scale', String(scale));
+      drawRef.current(Math.min(Math.max(shownRef.current, narrowest), most));
+    };
+    measure();
+    // Measured again in the next frame where the stage's width changes, or the example's content,
+    // such as once it has loaded, and once the fonts have.
+    let request = 0;
+    const later = () => {
+      cancelAnimationFrame(request);
+      request = requestAnimationFrame(measure);
+    };
+    /** As later, sampling the example's height afresh, which its content and fonts change. */
+    const afresh = () => {
+      tallestOf.clear();
+      later();
+    };
+    let width = room.clientWidth;
+    const resize = new ResizeObserver(() => {
+      if (room.clientWidth === width) return;
+      width = room.clientWidth;
+      later();
+    });
+    resize.observe(room);
+    const content = new MutationObserver(afresh);
+    content.observe(box, { childList: true, subtree: true, characterData: true });
+    void document.fonts?.ready.then(afresh);
+    return () => {
+      cancelAnimationFrame(request);
+      resize.disconnect();
+      content.disconnect();
+    };
+  }, [areaRef, placeRef, frameRef, layoutRef, shownRef, drawRef, key, fit, crop]);
+}
+
+/**
+ * Plays the sweep on its own clock, which runs only while its stage plays, or, given `at`, moves
+ * it to that width whenever `at` changes. Stopped, a stage that rests at its start is back at its
+ * first width, and a paused one holds where it is.
+ */
+function useSweepPlayback(
+  { layoutRef, shownRef, drawRef }: SweepParts,
+  { at, hold }: { at: number | undefined; hold: number },
+) {
+  const { playing, rest } = usePlayback();
+  /** Where the sweep is in its loop, in ms of play; below 0 before it first plays. */
+  const clock = useRef(-1);
+  /** A move to the width `at` names, under way. */
+  const move = useRef<{ from: number; to: number; elapsed: number; duration: number } | null>(null);
+
+  useEffect(() => {
+    if (at === undefined) return;
+    const to = layoutRef.current.stops[at] ?? shownRef.current;
+    if (to === shownRef.current) return;
+    move.current = {
+      from: shownRef.current,
+      to,
+      elapsed: 0,
+      duration: travelTime(shownRef.current, to),
+    };
+  }, [layoutRef, shownRef, at]);
+
+  useEffect(() => {
+    if (!playing) {
+      if (rest === 'start') {
+        clock.current = -1;
+        move.current = null;
+        drawRef.current(layoutRef.current.stops[at ?? 0] ?? shownRef.current);
+      }
+      return;
+    }
+    let last = performance.now();
+    let request = 0;
+    const tick = (now: number) => {
+      const passed = now - last;
+      last = now;
+      if (at === undefined) {
+        if (clock.current < 0) clock.current = hold - firstHold;
+        clock.current += passed;
+        drawRef.current(widthAt(clock.current, layoutRef.current.stops, hold));
+      } else if (move.current) {
+        const current = move.current;
+        current.elapsed = Math.min(current.duration, current.elapsed + passed);
+        const progress = ease(current.elapsed / current.duration);
+        drawRef.current(current.from + (current.to - current.from) * progress);
+        if (current.elapsed >= current.duration) move.current = null;
+      }
+      request = requestAnimationFrame(tick);
+    };
+    request = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(request);
+  }, [layoutRef, shownRef, drawRef, playing, rest, at, hold]);
+}
+
 /**
  * The example in a frame whose width sweeps between `widths`, in rem, the first its still: on
- * through them and back again, held `hold` ms at each, while its preview plays (Playback), and
+ * through them and back again, held `hold` ms at each, while its stage plays (Playback), and
  * held where it is when paused. Place it in a MotionStage. With `at`, it sweeps by itself no
  * longer: it moves to the width at that index whenever `at` changes, for a figure that does more
  * at a width, such as opening a sheet at the narrow end, driven by a useTimeline step or a cue.
@@ -116,7 +341,6 @@ export function WidthSweep({
   outline?: boolean;
   children: ReactNode;
 }) {
-  const { playing, rest } = usePlayback();
   const area = useRef<HTMLDivElement>(null);
   const place = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLDivElement>(null);
@@ -124,18 +348,8 @@ export function WidthSweep({
   const reading = useRef<HTMLSpanElement>(null);
   /** The layer in the frame that the example's overlays render into. */
   const [overlays, setOverlays] = useState<HTMLDivElement | null>(null);
-  /**
-   * The scale the frame is drawn at, the widths it sweeps between on this stage, whether it is cut
-   * off at the stage's edges (`crop`), and the room it shows in, in px, inside its outline.
-   */
-  const layout = useRef({ scale: 1, stops: widths, room: 0, cropped: false });
-  /** The width the frame shows now, in rem. */
+  const layout = useRef<SweepLayout>({ scale: 1, stops: widths, room: 0, cropped: false });
   const shown = useRef(widths[at ?? 0] ?? 0);
-  /** Where the sweep is in its loop, in ms of play; below 0 before it first plays. */
-  const clock = useRef(-1);
-  /** A move to the width `at` names, under way. */
-  const move = useRef<{ from: number; to: number; elapsed: number; duration: number } | null>(null);
-  const key = widths.join(' ');
 
   /**
    * Draws the frame at a width: its size, the ruler's, and the ruler's words; cropped, whether its
@@ -147,7 +361,7 @@ export function WidthSweep({
     frame.current?.style.setProperty('inline-size', `${width}rem`);
     let rulerWidth = width * scale;
     if (cropped && place.current) {
-      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      const rem = remPixels();
       // How far the frame, centred, runs out past the room: moved by half of that, it shows from
       // its start.
       const over = Math.max(0, width * scale * rem - room);
@@ -158,12 +372,7 @@ export function WidthSweep({
     }
     ruler.current?.style.setProperty('--catalogue-sweep-width', `${rulerWidth}rem`);
     if (reading.current) {
-      // At a width the page gives, its exact value; on the way, and at a width the stage narrowed,
-      // whole rem, which change calmly.
-      const exact = stops.find((stop) => Math.abs(stop - width) < 0.01 && widths.includes(stop));
-      const words = `${exact ?? Math.round(width)} rem`;
-      const name = classNames[classOf(width)];
-      const text = classes === 'only' ? name : classes ? `${words} · ${name}` : words;
+      const text = rulerWords(width, { stops, widths, classes });
       // The same words leave the text as it is: setting it replaces the text node, which the
       // page's :has() rules restyle much of the page for, on each frame the stage resizes.
       if (reading.current.textContent !== text) reading.current.textContent = text;
@@ -173,138 +382,16 @@ export function WidthSweep({
   useLayoutEffect(() => {
     drawRef.current = draw;
   });
-
-  // The scale and the height, chosen once for the stage, again only as the stage or the example
-  // changes: the scale that shows the widest width, or the least one with a narrower sweep, and
-  // the tallest the example is anywhere along it.
-  useLayoutEffect(() => {
-    const room = area.current;
-    const box = frame.current;
-    const spot = place.current;
-    if (!room || !box || !spot) return;
-    const stops = key.split(' ').map(Number);
-    /** The tallest the example is along a sweep, by the root's font size and the sweep's ends. */
-    const tallestOf = new Map<string, number>();
-    const measure = () => {
-      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-      const outline = getComputedStyle(box);
-      const edge = parseFloat(outline.outlineOffset) + parseFloat(outline.outlineWidth) || 0;
-      const space = room.clientWidth - 2 * edge;
-      const widest = Math.max(...stops);
-      const least = fit ? leastFitScale : leastScale;
-      let scale = Math.min(1, space / (widest * rem));
-      let limit = Infinity;
-      const cropped = crop && scale < least;
-      if (cropped) {
-        // Cut off, at the scale that keeps its text legible, rather than at a fit's least.
-        scale = leastScale;
-      } else if (scale < least) {
-        scale = least;
-        // In whole rem, so the ruler names the narrower width as it names the others.
-        limit = Math.floor(space / (least * rem));
-      }
-      const shownStops = stops.map((width) => Math.min(width, limit));
-      const narrowest = Math.min(...shownStops);
-      const most = Math.max(...shownStops);
-      // The frame's height follows its own width alone, not the stage's, so a sweep already
-      // sampled keeps its tallest as the stage resizes, such as while the drawer beside the page
-      // is dragged: a layout for each sample, every frame, made that drag lag.
-      const range = `${rem} ${narrowest} ${most}`;
-      let tallest = tallestOf.get(range);
-      if (tallest === undefined) {
-        tallest = 0;
-        for (let width = narrowest; width < most + sampleStep; width += sampleStep) {
-          box.style.inlineSize = `${Math.min(width, most)}rem`;
-          tallest = Math.max(tallest, box.offsetHeight);
-        }
-        tallestOf.set(range, tallest);
-      }
-      layout.current = { scale, stops: shownStops, room: space, cropped };
-      if (cropped) spot.dataset.cropped = '';
-      else {
-        delete spot.dataset.cropped;
-        delete spot.dataset.cut;
-        box.style.removeProperty('translate');
-      }
-      // Cropped, the place is the stage's width, and the frame runs out past it.
-      spot.style.setProperty(
-        '--catalogue-sweep-widest',
-        `${cropped ? space / rem : most * scale}rem`,
-      );
-      spot.style.setProperty('--catalogue-sweep-height', `${tallest * scale}px`);
-      spot.style.setProperty('--catalogue-sweep-scale', String(scale));
-      drawRef.current(Math.min(Math.max(shown.current, narrowest), most));
-    };
-    measure();
-    // Measured again in the next frame where the stage's width changes, or the example's content,
-    // such as once it has loaded, and once the fonts have.
-    let request = 0;
-    const later = () => {
-      cancelAnimationFrame(request);
-      request = requestAnimationFrame(measure);
-    };
-    /** As later, sampling the example's height afresh, which its content and fonts change. */
-    const afresh = () => {
-      tallestOf.clear();
-      later();
-    };
-    let width = room.clientWidth;
-    const resize = new ResizeObserver(() => {
-      if (room.clientWidth === width) return;
-      width = room.clientWidth;
-      later();
-    });
-    resize.observe(room);
-    const content = new MutationObserver(afresh);
-    content.observe(box, { childList: true, subtree: true, characterData: true });
-    void document.fonts?.ready.then(afresh);
-    return () => {
-      cancelAnimationFrame(request);
-      resize.disconnect();
-      content.disconnect();
-    };
-  }, [key, fit, crop]);
-
-  // Given `at`, the frame moves to its width whenever it changes.
-  useEffect(() => {
-    if (at === undefined) return;
-    const to = layout.current.stops[at] ?? shown.current;
-    if (to === shown.current) return;
-    move.current = { from: shown.current, to, elapsed: 0, duration: travelTime(shown.current, to) };
-  }, [at]);
-
-  // The sweep's clock runs only while the preview plays; stopped, a preview that rests at its
-  // start is back at its first width, and a paused one holds where it is.
-  useEffect(() => {
-    if (!playing) {
-      if (rest === 'start') {
-        clock.current = -1;
-        move.current = null;
-        drawRef.current(layout.current.stops[at ?? 0] ?? shown.current);
-      }
-      return;
-    }
-    let last = performance.now();
-    let request = 0;
-    const tick = (now: number) => {
-      const passed = now - last;
-      last = now;
-      if (at === undefined) {
-        if (clock.current < 0) clock.current = hold - firstHold;
-        clock.current += passed;
-        drawRef.current(widthAt(clock.current, layout.current.stops, hold));
-      } else if (move.current) {
-        const current = move.current;
-        current.elapsed = Math.min(current.duration, current.elapsed + passed);
-        const progress = ease(current.elapsed / current.duration);
-        drawRef.current(current.from + (current.to - current.from) * progress);
-        if (current.elapsed >= current.duration) move.current = null;
-      }
-      request = requestAnimationFrame(tick);
-    };
-    request = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(request);
-  }, [playing, rest, at, hold]);
+  const parts: SweepParts = {
+    areaRef: area,
+    placeRef: place,
+    frameRef: frame,
+    layoutRef: layout,
+    shownRef: shown,
+    drawRef,
+  };
+  useSweepLayout(parts, widths.join(' '), { fit, crop });
+  useSweepPlayback(parts, { at, hold });
 
   return (
     <div ref={area} className="catalogue-width-sweep">

@@ -16,7 +16,7 @@ import { IconArticle } from '@envsemble/envui/icons/Article';
 import type { DocumentationMetadata } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { useAutoplay } from '../motion/Autoplay';
-import { Playback, PreviewOverlays, usePlaying } from '../motion/Motion';
+import { Playback, StageOverlays, usePlaying } from '../motion/Motion';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { ExampleRender } from '../figures/LiveExample';
 import { PageSpecimen } from '../figures/PageSpecimens';
@@ -167,7 +167,7 @@ export function TilePreview({
             aria-hidden
           >
             {preview.open ? (
-              <PreviewOverlays>{wrapApp(Boolean(app), subject)}</PreviewOverlays>
+              <StageOverlays>{wrapApp(Boolean(app), subject)}</StageOverlays>
             ) : (
               wrapApp(Boolean(app), subject)
             )}

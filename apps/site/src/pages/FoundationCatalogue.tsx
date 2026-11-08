@@ -6,10 +6,10 @@ import { glancePictures } from '../figures/foundations/Glance';
 
 /** The foundations, the type first, across the sheet's top, then the rest in the catalogue's order. */
 const foundations = pagesOf('catalogue')
-  .filter((page) => page.kind === 'foundation' && page.document)
+  .filter((page) => page.kind === 'foundation')
   .sort(
     (one, other) =>
-      Number(other.document!.id === 'typography') - Number(one.document!.id === 'typography'),
+      Number(other.document.id === 'typography') - Number(one.document.id === 'typography'),
   );
 
 /**
@@ -21,7 +21,7 @@ export function FoundationCatalogue() {
   return (
     <div className="site-foundation-stage catalogue-foundation-sheet" data-figure="example">
       {foundations.map((page) => {
-        const id = page.document!.id;
+        const id = page.document.id;
         const Picture = glancePictures[id]!;
         return (
           <Link

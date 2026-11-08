@@ -25,7 +25,7 @@ export const drawerWidthKey = (area: 'catalogue' | 'docs') => `envui-site-drawer
  * The keys the site stored settings under before, each with the key that holds it now. The site
  * was once called the catalogue, and the catalogue's drawer the site's.
  */
-export const renamedStorageKeys: readonly (readonly [before: string, now: string])[] = [
+const renamedStorageKeys: readonly (readonly [before: string, now: string])[] = [
   ['envui-catalogue-theme', displayStorageKeys.theme],
   ['envui-catalogue-contrast', displayStorageKeys.contrast],
   ['envui-catalogue-scale', displayStorageKeys.scale],

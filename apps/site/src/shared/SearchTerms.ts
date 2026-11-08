@@ -5,10 +5,10 @@ import type MiniSearch from 'minisearch';
 import type { Options, SearchOptions, SearchResult } from 'minisearch';
 
 /** The fields of a search document that are indexed, by weight at query time. */
-export const searchFields: string[] = ['title', 'owner', 'aliases', 'keywords', 'text'];
+const searchFields: string[] = ['title', 'owner', 'aliases', 'keywords', 'text'];
 
 /** The fields a result carries, to show and open it without the documents themselves. */
-export const storeFields: string[] = [
+const storeFields: string[] = [
   'kind',
   'title',
   'owner',

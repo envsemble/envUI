@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Breadcrumbs, Card, Column, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
-import type { TrailStep } from '../navigation/SiteRoutes';
+import type { TrailStep } from '../navigation/Trails';
 import { BannerMotif, motifOf } from './BannerMotif';
 import { CatalogueBannerLines } from './CatalogueBannerLines';
 import { DocsBannerLines } from './DocsBannerLines';
@@ -13,10 +13,10 @@ import { CompactContents } from './PageContents';
  * for the few with one is a motif drawn from what the page shows (BannerMotif.tsx); a Docs page's
  * is the same drawing, still.
  */
-export type BannerKind = 'catalogue' | 'docs';
+type BannerKind = 'catalogue' | 'docs';
 
-/** Documentation banner composed from the library's card, text and layout primitives. */
-export function PageHeader({
+/** A page's banner, composed from the library's card, text and layout primitives. */
+export function SiteBanner({
   title,
   breadcrumb,
   trail,

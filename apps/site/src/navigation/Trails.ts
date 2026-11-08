@@ -1,6 +1,13 @@
 import { componentGroupId } from '../pages/PageModel';
-import { homeRoute } from './Address';
-import { sectionHome, type RoutePage, type TrailStep, type CatalogueSection } from './SiteRoutes';
+import { docsRoute, homeRoute } from './Address';
+import { docsTree } from './DocsTree';
+import { sectionHome, type RoutePage, type CatalogueSection } from './SiteRoutes';
+
+/** One level of a page's trail: its name, and the route it leads to, where it leads to one. */
+export interface TrailStep {
+  label: string;
+  route?: string;
+}
 
 /**
  * The trail from the catalogue's home down to one of its pages, for its breadcrumbs, as the Docs'
@@ -23,6 +30,25 @@ export function catalogueTrail(page: RoutePage): TrailStep[] {
       label: page.group,
       route: `${section.path}?${new URLSearchParams({ section: componentGroupId(page.group) })}`,
     });
+  steps.push({ label: page.title, route: page.path });
+  return steps;
+}
+
+/**
+ * The trail from the Docs' home down to a page of the Docs, for its breadcrumbs: Docs, leading to
+ * their home, its section and its group, which say where the page is and lead nowhere, as the
+ * navigation beside the page lists their pages, then the page itself, such as Docs / Components /
+ * Actions / Button. A section named as its one page, such as Changelog, is left out, and on the
+ * home Docs leads nowhere either, as the page is their home.
+ */
+export function docsTrail(page: RoutePage): TrailStep[] {
+  const steps: TrailStep[] = [
+    { label: 'Docs', route: page.path === docsRoute ? undefined : docsRoute },
+  ];
+  const section = docsTree.find((entry) => entry.label === page.section);
+  if (section && section.label !== page.title) steps.push({ label: section.label });
+  const group = section?.groups.find((entry) => entry.label === page.group);
+  if (group) steps.push({ label: group.label });
   steps.push({ label: page.title, route: page.path });
   return steps;
 }

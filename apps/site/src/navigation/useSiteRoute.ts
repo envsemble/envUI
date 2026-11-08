@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { normalizeRoute } from './SiteRoutes';
+import { normalizeRoute } from './OldAddresses';
 import { oldHashRoute, replaceAddress, subscribeToAddress, writtenRoute } from './Address';
 
 function readRoute() {

@@ -14,6 +14,7 @@ function Opening() {
 }
 
 /** The overview's preview, loading and then shown, opened again and again. */
+// eslint-disable-next-line no-restricted-syntax -- named after its example, a file's preview loading
 export default function LoadingPreviewMotion() {
   return (
     <MotionStage label="the preview loading and taking the spinner's place">

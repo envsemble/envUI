@@ -1,5 +1,5 @@
 export type PaletteTheme = 'light' | 'dark';
-export type PaletteChanges = Record<string, string>;
+type PaletteChanges = Record<string, string>;
 export type ThemePalettes = Record<PaletteTheme, PaletteChanges>;
 
 export const colorGroups: [string, [string, string][]][] = [

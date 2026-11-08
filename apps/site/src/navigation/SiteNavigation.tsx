@@ -31,18 +31,18 @@ import { drawerWidthKey } from '../theme/DisplayStorage';
 import { motionDuration, motionEase, reducedMotion } from '../motion/MotionTokens';
 import { pageBadge } from './PageBadges';
 import {
-  docsTree,
-  otherPartRoute,
   pagesOf,
   sectionHome,
   catalogueSections,
   type Area,
-  type DocsGroup,
   type RoutePage,
   type CatalogueSection,
 } from './SiteRoutes';
+import { otherPartRoute } from './Counterparts';
+import { docsTree, type DocsGroup } from './DocsTree';
 import { docsRoute, homeRoute, routeHref } from './Address';
 import { keepSection, otherPart } from './OtherPart';
+import { remPixels } from '../shared/Lengths';
 
 /** The icon of each of the catalogue's destinations in its rail. */
 const sectionIcons: Record<CatalogueSection, typeof IconHome> = {
@@ -53,7 +53,7 @@ const sectionIcons: Record<CatalogueSection, typeof IconHome> = {
 };
 
 /** The catalogue's destinations, for its rail: each opens its first page. */
-export function catalogueDestinations(current: string | undefined, onChoose?: () => void) {
+function catalogueDestinations(current: string | undefined, onChoose?: () => void) {
   return catalogueSections.map((section): Destination => {
     const Icon = sectionIcons[section];
     return {
@@ -67,7 +67,7 @@ export function catalogueDestinations(current: string | undefined, onChoose?: ()
 }
 
 /** The catalogue's destination a page is in, Overview for one outside the catalogue. */
-export function catalogueSectionOf(page: RoutePage | undefined): CatalogueSection {
+function catalogueSectionOf(page: RoutePage | undefined): CatalogueSection {
   return (page?.area === 'catalogue' ? page.section : 'Overview') as CatalogueSection;
 }
 
@@ -87,7 +87,7 @@ export const drawerless = (page: RoutePage | undefined) =>
  * All components, then each group, such as a kind of component or a pattern's intent, as a section
  * of its pages that opens and closes, open while it holds the current page, as in the Docs.
  */
-export function pageDestinations(
+function pageDestinations(
   pages: readonly RoutePage[],
   currentPath: string,
   onChoose?: () => void,
@@ -135,8 +135,7 @@ function useCurrentInView() {
     const at = (item: Element) => item.getBoundingClientRect().top - frame.top + list.scrollTop;
     const linkAt = at(link);
     const fade = parseFloat(getComputedStyle(list).getPropertyValue('--site-drawer-fade-length'));
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const clear = (fade || 0) * rem;
+    const clear = (fade || 0) * remPixels();
     const heading = link
       .closest('.env-navigation-drawer-section')
       ?.querySelector('.env-navigation-drawer-group-label');
@@ -178,7 +177,7 @@ function PageBadgeOf({ page }: { page: RoutePage }) {
  * each a section of their pages that opens and closes, open while it holds the current page. A
  * section that is one page of its name, such as Changelog, is that page alone, under no heading.
  */
-export function docsDestinations(
+function docsDestinations(
   currentPath: string,
   onChoose?: () => void,
 ): NavigationDrawerDestination[] {

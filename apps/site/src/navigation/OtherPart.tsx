@@ -3,7 +3,8 @@ import { IconMenuBook } from '@envsemble/envui/icons/MenuBook';
 import { replaceAddress, revealSection, routeHref } from './Address';
 import { RouterLink } from './RouterLink';
 import { isAnchor, readingAnchor } from './ScrollRestoration';
-import { counterpartOf, type Area, type RoutePage } from './SiteRoutes';
+import { counterpartOf } from './Counterparts';
+import type { Area, RoutePage } from './SiteRoutes';
 
 /**
  * The other part from a page of one, by its name and icon: the Docs, in code, from the catalogue,

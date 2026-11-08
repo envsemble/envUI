@@ -129,6 +129,7 @@ function Opening() {
 }
 
 /** A file previewed by a click and opened by a double click, and a folder opened by its chevron. */
+// eslint-disable-next-line no-restricted-syntax -- previewing is the tree's own word, its action's `preview`
 export default function OpeningAndPreviewing() {
   return (
     <Example size="wide">

@@ -7,12 +7,12 @@ import { PaletteCustomizationProvider } from './theme/PaletteCustomization';
 import { findPage } from './navigation/SiteRoutes';
 import { currentRoute } from './navigation/useSiteRoute';
 import { preloadPage } from './pages/PreloadPage';
-import { keepScrollInPreviews } from './motion/StandIns';
+import { keepScrollInStages } from './motion/StandIns';
 
 // The site renders once what the page it opens on needs has loaded, which started as it did, so
 // its first paint has the whole page rather than the frame and then the page.
-// A preview's components scroll only inside it, never the page, from its first render on.
-keepScrollInPreviews();
+// A stage's components scroll only inside it, never the page, from its first render on.
+keepScrollInStages();
 void preloadPage(findPage(currentRoute().split('?')[0]!)).then(() =>
   createRoot(document.getElementById('root')!).render(
     <PaletteCustomizationProvider>

@@ -2,8 +2,9 @@ import { Fragment, useMemo } from 'react';
 import { Column, CopyButton, DescriptionList, Row, Surface, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import { AgentLogos } from '../brand/AgentLogos';
-import { PageHeader } from '../layout/PageHeader';
-import { docsTrail, pagesOf, type RoutePage } from '../navigation/SiteRoutes';
+import { SiteBanner } from '../layout/SiteBanner';
+import { pagesOf, type DocumentPage, type RoutePage } from '../navigation/SiteRoutes';
+import { docsTrail } from '../navigation/Trails';
 import { docsRoute } from '../navigation/Address';
 import { PartSwitch } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
@@ -43,7 +44,7 @@ const colorPalette = lazyPart(
 );
 
 /** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
-export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
+const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
 
 /** The setup guide's closing note on coding agents, which the Docs' home shows under its prompt. */
 const agentNote = /^## Coding agents\n([\s\S]*?)(?=^## |(?![\s\S]))/m;
@@ -102,8 +103,8 @@ function AgentSetup({ note, path = '' }: { note?: string; path?: string }) {
  * A guide of docs/, such as migration, with its live demos in place. The setup guide is the Docs'
  * home, with the prompt that sets envUI up with a coding agent at its top.
  */
-export function GuidePage({ page }: { page: RoutePage }) {
-  const whole = useDocument(page.document!);
+export function GuidePage({ page }: { page: DocumentPage }) {
+  const whole = useDocument(page.document);
   const home = page.path === docsRoute;
   // On the Docs' home, the guide's note on coding agents moves up under the prompt.
   const note = home ? whole.markdown?.match(agentNote)?.[1]?.trim() : undefined;
@@ -113,12 +114,12 @@ export function GuidePage({ page }: { page: RoutePage }) {
   );
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
         kind="docs"
-        meta={<MetadataBadges metadata={{ status: page.document?.status }} />}
+        meta={<MetadataBadges metadata={{ status: page.document.status }} />}
         corner={<PartSwitch page={page} />}
       />
       <Column gap={7} className="site-article">
@@ -133,7 +134,7 @@ export function GuidePage({ page }: { page: RoutePage }) {
 export function TokensPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
@@ -164,7 +165,7 @@ const changelog = lazyPart(
 export function ChangelogDocsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
@@ -214,11 +215,11 @@ function PaletteSection() {
  * the same file: Compose, the words of the page mapped to code, and what the application and envUI
  * provide. No Related.
  */
-export function FoundationGuidePage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
+export function FoundationGuidePage({ page }: { page: DocumentPage }) {
+  const document = useDocument(page.document);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         kind="docs"
         trail={docsTrail(page)}
@@ -381,10 +382,16 @@ function guideSubsections(document: Document) {
 /**
  * The guide at the top of a page in the Docs, from the page's "## Compose": how to import it, its
  * common uses in code, how its parts compose and how to customize it, each a section of its own,
- * with an example file of the page shown as code where the page names one. With `preview`, as a
+ * with an example file of the page shown as code where the page names one. With `showExample`, as a
  * component's, Usage opens with the component, live and compact (UsagePreview).
  */
-function CodeGuide({ document, preview = false }: { document: Document; preview?: boolean }) {
+function CodeGuide({
+  document,
+  showExample = false,
+}: {
+  document: Document;
+  showExample?: boolean;
+}) {
   return guideSubsections(document).map(({ title, content }) => {
     const id = headingSlug(title);
     return (
@@ -392,7 +399,7 @@ function CodeGuide({ document, preview = false }: { document: Document; preview?
         <Text render={<h2 />} variant="title" className="site-section-title" id={id}>
           {title}
         </Text>
-        {preview && title === 'Usage' && <UsagePreview page={document} />}
+        {showExample && title === 'Usage' && <UsagePreview page={document} />}
         {content.map((part, index) =>
           part.kind === 'source' ? (
             <ExampleSource key={index} page={document.id} name={part.name} />
@@ -535,18 +542,18 @@ function Strings({ document }: { document: Document }) {
  * application and envUI provide, which the catalogue leaves out; then, as reference, its props,
  * part names and color properties, and its changelog. It repeats no section of the catalogue and
  * shows no Related: the page goes from its header to Import and Usage, which a component's opens
- * with a compact preview of the component, its catalogue's first overview example. Field, which has no page in the catalogue, shows its whole page here, on
- * the page, as "Build your own field".
+ * with the component, live and compact: its catalogue's first overview example. Field, which has
+ * no page in the catalogue, shows its whole page here, on the page, as "Build your own field".
  */
-export function DocsReferencePage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
+export function DocsReferencePage({ page }: { page: DocumentPage }) {
+  const document = useDocument(page.document);
   const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
   const metadata = document.metadata;
   const pattern = cataloguePage?.kind === 'pattern';
   // The guide, then once it has painted its reference, together: each step lays the whole page out
   // again, which costs more here than a step saves (useRevealed).
   const guide = useMemo(
-    () => <CodeGuide document={document} preview={!!cataloguePage && !pattern} />,
+    () => <CodeGuide document={document} showExample={!!cataloguePage && !pattern} />,
     [document, cataloguePage, pattern],
   );
   const parts = useMemo(
@@ -567,7 +574,7 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
   const revealed = useRevealed(2);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         kind="docs"
         trail={docsTrail(page)}

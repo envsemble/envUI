@@ -1,6 +1,6 @@
 /*
  * The text a pointer no one sees selects by dragging across it, as a mouse does
- * (VirtualPointer.ts). A preview is inert, so neither the page's selection nor focus can reach it,
+ * (VirtualPointer.ts). A stage is inert, so neither the page's selection nor focus can reach it,
  * and the reader's own selection on the page is theirs to keep:
  * - in a text field, the selection is the field's own (setSelectionRange), which a component reads
  *   as it would a person's, such as a formatting button; an unfocused field doesn't paint it, so a
@@ -77,7 +77,7 @@ interface EditorView {
 }
 
 /** The editor Tiptap keeps on its content element, as the pointer drives it. */
-export interface RichEditor {
+interface RichEditor {
   view: EditorView;
   commands: { setTextSelection(range: number | { from: number; to: number }): boolean };
   on(event: 'transaction', listener: () => void): void;
@@ -121,10 +121,10 @@ function highlight() {
 }
 
 /**
- * Where the caret would go for a point in a preview: a node and an offset in it, as a press puts it
- * there. The browser finds no caret in what is inert, as a preview is, nor under what covers it,
- * such as a gallery tile's link stretched over its preview, so it is found for a moment as if the
- * preview weren't inert and nothing covered it, which changes nothing it shows or sends.
+ * Where the caret would go for a point in a stage: a node and an offset in it, as a press puts it
+ * there. The browser finds no caret in what is inert, as a stage is, nor under what covers it,
+ * such as a gallery tile's link stretched over its stage, so it is found for a moment as if the
+ * stage weren't inert and nothing covered it, which changes nothing it shows or sends.
  */
 function caretAt(point: Point, scope: Element) {
   const doc = document as Document & {
@@ -235,10 +235,10 @@ const copied = [
 /**
  * Paints a field's selection over it: a copy of its text, in the field's place and box, whose
  * selected part takes the selection's colours and whose rest is transparent, so the field shows
- * through. A field of the preview's content has it in the preview's overlay layer, first, under
+ * through. A field of the stage's content has it in the stage's overlay layer, first, under
  * what opens there, so a dialog and its backdrop cover it as they cover the field (Stage.css hides it
  * while a modal one is open, which takes the field's focus); a field in what opens there, such as
- * a dialog, or a preview without that layer, has it in the box the field is placed in. The
+ * a dialog, or a stage without that layer, has it in the box the field is placed in. The
  * component's own elements stay as they are.
  */
 function paintField(
@@ -264,7 +264,7 @@ function paintField(
   }
   shapeLike(copy, field);
   if (layer) {
-    // In layout pixels, as the preview may be drawn scaled.
+    // In layout pixels, as the stage may be drawn scaled.
     const frame = layer.getBoundingClientRect();
     const box = field.getBoundingClientRect();
     const scale = frame.width / layer.offsetWidth || 1;
@@ -397,7 +397,7 @@ interface Caret {
   offset: number;
 }
 
-/** The selection one pointer no one sees makes in its preview. */
+/** The selection one pointer no one sees makes in its stage. */
 export class PointerSelection {
   /** The field it selects in, its anchor's offset and its painted copy, while it selects there. */
   private field: Field | null = null;
@@ -415,7 +415,7 @@ export class PointerSelection {
 
   /**
    * A press at a point: what was selected is no longer, and the press marks where a drag would
-   * select from, in a field or in text of the preview whose text can be selected.
+   * select from, in a field or in text of the stage whose text can be selected.
    */
   begin(point: Point, target: Element) {
     this.clear();
@@ -602,7 +602,7 @@ export class PointerSelection {
   /** Where typing goes on in a field, after it typed over a selection there. */
   private caret: { field: Field; at: number } | null = null;
 
-  /** Nothing is selected any more, as a press elsewhere or the preview's end leaves it. */
+  /** Nothing is selected any more, as a press elsewhere or the stage's end leaves it. */
   clear() {
     if (this.editor) this.editor.editor.off('transaction', this.editor.follow);
     this.editor = null;

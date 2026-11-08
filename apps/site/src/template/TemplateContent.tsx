@@ -191,7 +191,7 @@ function Sections({
  * the Docs. For Field, whose whole page is in the Docs, `provides` keeps what envUI and the
  * application provide in Accessibility and `related={false}` leaves out Related, which the Docs
  * don't have. `overviewHeading={false}` hides Overview's heading where the page's title, on the page
- * rather than in a card, heads its figure (PageHeader.tsx).
+ * rather than in a card, heads its figure (SiteBanner.tsx).
  */
 export function TemplateContent({
   document,

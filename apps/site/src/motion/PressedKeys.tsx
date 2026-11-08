@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { Kbd } from '@envsemble/envui';
-import { usePreviewLayer } from './Motion';
+import { useStageLayer } from './Motion';
 
 /** The room kept between the cap and what it sits beside, in px. */
 const gap = 12;
@@ -26,7 +26,7 @@ export function PressedKeys({
   press: number;
   beside?: string;
 }) {
-  const layer = usePreviewLayer();
+  const layer = useStageLayer();
   const cap = useRef<HTMLSpanElement>(null);
   const [place, setPlace] = useState<CSSProperties>();
   const shown = Boolean(layer && keys);

@@ -80,7 +80,7 @@ export function oldHashRoute(): string | undefined {
 }
 
 /** The part of the address that routes are written in. */
-export function currentHref() {
+function currentHref() {
   return `${location.pathname}${location.search}${location.hash}`;
 }
 
@@ -172,7 +172,7 @@ export function revealSection(id: string) {
  * would: its section, scrolled to and focused, or else the top of the page, with focus on its
  * content.
  */
-export function revealRoute(route: string) {
+function revealRoute(route: string) {
   const section = splitRoute(route).params.get('section');
   if (section) {
     revealSection(section);

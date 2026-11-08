@@ -7,7 +7,6 @@ import {
   type GroupedDocument,
 } from '../pages/PageModel';
 import { docsRoute, homeRoute, routeHref } from './Address';
-import { headingSlug } from '../shared/SearchAnchors';
 
 /**
  * The two parts of the site: the catalogue, at the root, shows envUI to people, what each part
@@ -22,23 +21,18 @@ export type Area = 'catalogue' | 'docs';
 export const catalogueSections = ['Overview', 'Foundations', 'Components', 'Patterns'] as const;
 export type CatalogueSection = (typeof catalogueSections)[number];
 
-/** What a page shows, which decides how it renders. */
-export type PageKind =
-  | 'home'
-  | 'foundations'
-  | 'components'
-  | 'component'
-  | 'patterns'
-  | 'pattern'
-  | 'foundation'
-  | 'guide'
-  | 'docs-changelog'
-  | 'tokens'
-  | 'foundation-guide'
-  | 'reference';
+/** What a page shows from docs/, which decides how it renders: each has its document. */
+type DocumentKind =
+  'component' | 'pattern' | 'foundation' | 'guide' | 'foundation-guide' | 'reference';
 
-/** One page of the catalogue or the Docs, at the route `path`. */
-export interface RoutePage {
+/** What a page of the site's own shows, with no document: a home, a gallery, the tokens, the changelog. */
+type OwnKind = 'home' | 'foundations' | 'components' | 'patterns' | 'docs-changelog' | 'tokens';
+
+/** What a page shows, which decides how it renders. */
+export type PageKind = DocumentKind | OwnKind;
+
+/** One page of the catalogue or the Docs of a kind, at the route `path`. */
+export type PageOfKind<Kind extends PageKind> = {
   path: string;
   title: string;
   /** The page's name in the navigation, where it differs from its title. */
@@ -54,17 +48,26 @@ export interface RoutePage {
    * as a kind of component, and in the Docs' navigation a section that opens and closes.
    */
   group?: string;
-  kind: PageKind;
+  kind: Kind;
   summary?: string;
-  /** The page of docs/ the page shows. */
-  document?: DocumentSummary;
-}
+} & (Kind extends DocumentKind
+  ? {
+      /** The page of docs/ the page shows. */
+      document: DocumentSummary;
+    }
+  : { document?: undefined });
+
+/** One page of the catalogue or the Docs; its kind says whether it shows a page of docs/. */
+export type RoutePage = { [Kind in PageKind]: PageOfKind<Kind> }[PageKind];
+
+/** A page that shows a page of docs/. */
+export type DocumentPage = PageOfKind<DocumentKind>;
 
 /**
  * A component or foundation page of docs/ with the page that shows it: the catalogue's, or for
  * Field, which has no page in the catalogue, its page in the Docs.
  */
-export interface GroupedPage {
+interface GroupedPage {
   document: GroupedDocument;
   section: 'Foundations' | 'Components';
   path: string;
@@ -74,7 +77,7 @@ export interface GroupedPage {
 const docsOnlyComponents = new Set(['field']);
 
 /** Pages of docs/ that neither the catalogue nor the Docs show: the agents' index of the pages. */
-export const unlistedDocuments = new Set(['index']);
+const unlistedDocuments = new Set(['index']);
 
 /** The component and foundation pages, each at the address of the page that shows it. */
 export const groupedPages: GroupedPage[] = [
@@ -265,9 +268,9 @@ const docsPages: RoutePage[] = [
   ),
   // Each pattern's guide, in the catalogue's order and by its intent: how to build it in code.
   ...cataloguePages
-    .filter((page) => page.kind === 'pattern' && page.document)
+    .filter((page) => page.kind === 'pattern')
     .map(({ document, title, summary, group }): RoutePage => ({
-      path: patternDocsRoute(document!.id),
+      path: patternDocsRoute(document.id),
       title,
       area: 'docs',
       section: 'Patterns',
@@ -303,109 +306,8 @@ export function sectionHome(section: CatalogueSection) {
   return cataloguePages.find((page) => page.section === section)!;
 }
 
-/** The route of the Docs' page of a subject the catalogue shows, by the kind of its page there. */
-const docsRouteOf: Partial<Record<PageKind, (id: string) => string>> = {
-  component: componentDocsRoute,
-  pattern: patternDocsRoute,
-  foundation: foundationDocsRoute,
-};
-
-/**
- * The pages of one subject in the two parts, each the other's counterpart, by their paths: a
- * component's, pattern's or foundation's page in the catalogue and its page in the Docs.
- */
-const pairs = [
-  ...cataloguePages.flatMap(({ path, kind, document }): [string, string][] => {
-    const docs = document && docsRouteOf[kind];
-    return docs ? [[path, docs(document.id)]] : [];
-  }),
-].filter(([catalogue, docs]) => findPage(catalogue) && findPage(docs));
-const counterparts = new Map(
-  pairs.flatMap(([catalogue, docs]) => [
-    [catalogue, docs],
-    [docs, catalogue],
-  ]),
-);
-
-/** The path of the page of the same subject in the other part, if the page has one. */
-export const counterpartOf = (page: RoutePage) => counterparts.get(page.path);
-
-/**
- * Where a way to the other part leads from a page, such as the switch at its top end: the page of
- * the same subject there, or, from a page without one, the other part's start: the Docs' home from
- * the catalogue, such as from its Overview or a gallery, and the catalogue's Overview from the
- * Docs, such as from a guide or the changelog.
- */
-export function otherPartRoute(page: RoutePage | undefined, area: Area) {
-  return (page && counterpartOf(page)) ?? (area === 'docs' ? homeRoute : docsRoute);
-}
-
-/**
- * A group of the Docs' navigation, such as Guides, or Actions within Components: its pages, then
- * its own groups, with the id of its heading on the Docs' home.
- */
-export interface DocsGroup {
-  label: string;
-  id: string;
-  pages: RoutePage[];
-  groups: DocsGroup[];
-}
-
-/**
- * The Docs' pages as a tree, in reading order: each section of the navigation, such as Get started
- * or Components, with its pages and its groups, such as the kinds of component and the patterns'
- * intents.
- */
-export const docsTree: DocsGroup[] = (() => {
-  const sections: DocsGroup[] = [];
-  for (const page of docsPages) {
-    let section = sections.find((entry) => entry.label === page.section);
-    if (!section) {
-      section = { label: page.section, id: headingSlug(page.section), pages: [], groups: [] };
-      sections.push(section);
-    }
-    if (!page.group) {
-      section.pages.push(page);
-      continue;
-    }
-    let group = section.groups.find((entry) => entry.label === page.group);
-    if (!group) {
-      const id = `${section.id}-${headingSlug(page.group)}`;
-      group = { label: page.group, id, pages: [], groups: [] };
-      section.groups.push(group);
-    }
-    group.pages.push(page);
-  }
-  return sections;
-})();
-
-/** One level of a page's trail: its name, and the route it leads to, where it leads to one. */
-export interface TrailStep {
-  label: string;
-  route?: string;
-}
-
-/**
- * The trail from the Docs' home down to a page of the Docs, for its breadcrumbs: Docs, leading to
- * their home, its section and its group, which say where the page is and lead nowhere, as the
- * navigation beside the page lists their pages, then the page itself, such as Docs / Components /
- * Actions / Button. A section named as its one page, such as Changelog, is left out, and on the
- * home Docs leads nowhere either, as the page is their home.
- */
-export function docsTrail(page: RoutePage): TrailStep[] {
-  const steps: TrailStep[] = [
-    { label: 'Docs', route: page.path === docsRoute ? undefined : docsRoute },
-  ];
-  const section = docsTree.find((entry) => entry.label === page.section);
-  if (section && section.label !== page.title) steps.push({ label: section.label });
-  const group = section?.groups.find((entry) => entry.label === page.group);
-  if (group) steps.push({ label: group.label });
-  steps.push({ label: page.title, route: page.path });
-  return steps;
-}
-
 /** The component or foundation page of a document id, such as button. */
-const groupedPageOf = (id: string) => groupedPages.find((page) => page.document.id === id);
+export const groupedPageOf = (id: string) => groupedPages.find((page) => page.document.id === id);
 
 /**
  * The route of a page by its document id, such as `button`, or by a site page's, such as `tokens`,
@@ -454,183 +356,4 @@ export function routeOfDocument(
     (entry) => entry.document?.id === id && (entry.kind === 'pattern' || entry.kind === 'guide'),
   );
   return page && `${page.path}${query}`;
-}
-
-/** Component pages that became patterns, by their slug: the pattern each one opens. */
-const componentPatterns: Record<string, string> = {
-  'window-frame': 'app-frame',
-  'account-menu': 'account-and-organizations',
-  stat: 'key-figures',
-  stats: 'key-figures',
-  'empty-state': 'empty-states',
-};
-
-/**
- * Pages folded into another page, by their path in the catalogue: the page that holds them now, and the
- * section of it that does, if one. Their pages in the Docs open the other's.
- */
-const foldedPages: Record<string, { page: string; section?: string }> = {
-  'components/bar': { page: 'components/navigation-drawer' },
-  'components/rail': { page: 'components/navigation-drawer' },
-  'components/page-header': { page: 'components/page' },
-  'patterns/feature-cards': { page: 'components/card', section: 'feature-card' },
-  'patterns/search-trigger': {
-    page: 'components/command-palette',
-    section: 'opening-it-the-button-and-the-shortcut',
-  },
-  // SearchTrigger was a component before it was a pattern.
-  'components/search-trigger': {
-    page: 'components/command-palette',
-    section: 'opening-it-the-button-and-the-shortcut',
-  },
-};
-
-/** Patterns that merged into another, by their slug: the pattern each one is part of now. */
-const mergedPatterns: Record<string, string> = {
-  'window-frame': 'app-frame',
-  'account-menu': 'account-and-organizations',
-  'organization-switcher': 'account-and-organizations',
-};
-
-/** Whether an element id is a place on a component's page in the Docs: an export's or a prop's. */
-const apiSection = (section: string | null) => section?.startsWith('props-') ?? false;
-
-/**
- * Keeps old addresses working: the views pages had before the catalogue and the Docs split, the
- * old names of pages and the pages that moved, each opens the page it became.
- */
-export function normalizeRoute(route: string): string {
-  const [originalPath, ...query] = route.split('?');
-  const search = new URLSearchParams(query.join('?'));
-  const rest = () => (search.size ? `?${search}` : '');
-  const section = search.get('section');
-  if (!originalPath) return `${homeRoute}${rest()}`;
-  // The overview's views: the components and Get started, which held the setup guide, the agents'
-  // skills and the guides by their document's id. The catalogue's Get started page that followed
-  // is the setup guide too.
-  if (/^overview\/components(?:\/|$)/.test(originalPath))
-    return section && section !== 'overview-components'
-      ? `components${rest()}`
-      : section
-        ? 'components'
-        : homeRoute;
-  if (
-    /^(?:overview\/get-started|overview\/usage|getting-started)(?:\/|$)|^get-started$/.test(
-      originalPath,
-    )
-  ) {
-    const shown = search.get('document');
-    search.delete('document');
-    if (shown) {
-      search.delete('section');
-      return routeOfDocument(shown) ?? docsRoute;
-    }
-    if (search.has('skill') || section === 'local-development')
-      return `${docsRoute}?section=coding-agents`;
-    if (section === 'documentation') return docsRoute;
-    if (section === 'setup') search.delete('section');
-    return `${docsRoute}${rest()}`;
-  }
-  if (/^overview\//.test(originalPath)) return `${homeRoute}${rest()}`;
-  // The guides of Get started moved to the Docs, and the contributing pages are gone.
-  const guide = /^get-started\/(.+)$/.exec(originalPath)?.[1];
-  if (guide) return routeOfDocument(guide, { section: section ?? undefined }) ?? docsRoute;
-  if (/^contributing(?:\/|$)/.test(originalPath)) return homeRoute;
-  // The agent skills' page is gone with the skills, and so is the guide for agents: setup's
-  // section on coding agents leads to the skill.
-  if (originalPath === 'docs/agent-skills' || originalPath === 'docs/agent-tooling')
-    return `${docsRoute}?section=coding-agents`;
-  // The setup guide is the Docs' home, which its Introduction was before.
-  if (originalPath === 'docs/setup') return `${docsRoute}${rest()}`;
-  // The codemods are gone: their page opens the migration guide.
-  if (originalPath === 'docs/codemods') return `docs/migration${rest()}`;
-  // Developing envUI locally is a contributor's guide now, in the repository.
-  if (originalPath === 'docs/local-development') return `${docsRoute}${rest()}`;
-  // The agent benchmark is gone: its page opens the overview.
-  if (originalPath === 'benchmark') return `${homeRoute}${rest()}`;
-  // The catalogue's changelog moved to the Docs, with its release notes.
-  if (originalPath === 'changelog') return `docs/changelog${rest()}`;
-  // Dev mode's page in the catalogue folded into its guide in the Docs, which shows its pictures.
-  if (originalPath === 'dev-mode') return `docs/dev-mode${rest()}`;
-  // What every pattern needs was one page in the Docs; each pattern's guide says it now, and the
-  // Docs' home lists the guides under Patterns.
-  if (originalPath === 'docs/patterns') return `${docsRoute}${rest()}`;
-  if (originalPath === 'foundations/tokens') return `docs/tokens${rest()}`;
-  // Pages folded into another open it: in the catalogue at the section that holds them, unless the
-  // address names one, and in the Docs the other's page there.
-  const [, foldedArea, foldedId, foldedView] =
-    /^(?:docs\/)?(components|patterns)\/([^/]+)(?:\/(.+))?$/.exec(originalPath) ?? [];
-  const folded = foldedArea && foldedPages[`${foldedArea}/${foldedId}`];
-  if (folded) {
-    if (originalPath.startsWith('docs/') || foldedView === 'props' || apiSection(section))
-      return `docs/${folded.page}${rest()}`;
-    if (!section && folded.section) search.set('section', folded.section);
-    return `${folded.page}${rest()}`;
-  }
-  // Nine foundations became six: Scale & density joined Spacing & density, and Composition &
-  // extension, with Customize colors, became the Docs' guide Customize and extend.
-  if (/^(?:docs\/)?foundations\/composition(?:\/|$)|^docs\/customizing-colors$/.test(originalPath))
-    return `docs/customizing${rest()}`;
-  if (originalPath === 'docs/foundations/scale') return `docs/foundations/spacing${rest()}`;
-  // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
-  if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest()}`;
-  if (/^templates(?:\/|$)/.test(originalPath)) return `${homeRoute}${rest()}`;
-  // Patterns merged into others open the pattern they joined, in the catalogue and the Docs, and the
-  // content guidelines are the Writing guide in the Docs.
-  const merged = /^(docs\/)?patterns\/([a-z-]+)$/.exec(originalPath);
-  if (merged && Object.hasOwn(mergedPatterns, merged[2]!))
-    return `${merged[1] ?? ''}patterns/${mergedPatterns[merged[2]!]}${rest()}`;
-  if (/^(?:docs\/)?foundations\/content(?:\/|$)/.test(originalPath)) return `docs/writing${rest()}`;
-  // Components that became patterns open their pattern.
-  const slug = originalPath.split('/')[1] ?? '';
-  if (originalPath.startsWith('components/') && Object.hasOwn(componentPatterns, slug))
-    return `patterns/${componentPatterns[slug]}${rest()}`;
-  if (findPage(originalPath)) return `${originalPath}${rest()}`;
-  const path = originalPath
-    .replace(/^components\/text(?=\/|$)/, 'foundations/typography')
-    .replace(/^components\/notes(?=\/|$)/, 'components/disclosure')
-    .replace(/^components\/(icon-buttons|buttons|close-button)(?=\/|$)/, 'components/button')
-    .replace(/^components\/badges(?=\/|$)/, 'components/badge')
-    .replace(/^components\/chips(?=\/|$)/, 'components/badge')
-    .replace(/^components\/tables(?=\/|$)/, 'components/table')
-    .replace(/^components\/toasts(?=\/|$)/, 'components/toast')
-    .replace(/^components\/dialogs(?=\/|$)/, 'components/dialog')
-    .replace(/^components\/meters(?=\/|$)/, 'components/meter')
-    .replace(/^components\/messages(?=\/|$)/, 'components/message')
-    .replace(/^components\/cards(?=\/|$)/, 'components/card')
-    .replace(/^components\/keyboard(?=\/|$)/, 'components/kbd')
-    .replace(/^components\/(layout|stack)(?=\/|$)/, 'components/column')
-    .replace(/^components\/(loading|skeleton)(?=\/|$)/, 'patterns/loading')
-    .replace(/^components\/markdown-editor(?=\/|$)/, 'components/markdown')
-    .replace(/^components\/(input|textarea)(?=\/|$)/, 'components/text-field')
-    .replace(/^components\/fields(?=\/|$)/, 'components/text-field')
-    .replace(/^components\/date-time-field(?=\/|$)/, 'components/date-picker')
-    .replace(/^components\/file-dropzone(?=\/|$)/, 'components/drop-zone')
-    .replace(/^components\/disclosures(?=\/|$)/, 'components/disclosure')
-    .replace(/^components\/notices(?=\/|$)/, 'components/alert')
-    .replace(/^components\/heatmap(?=\/|$)/, 'components/calendar-heatmap')
-    .replace(/^components\/rows(?=\/|$)/, 'components/list')
-    .replace(/^components\/(split-view|split-pane|list-detail)(?=\/|$)/, 'components/panes')
-    .replace(/^components\/app-shell(?=\/|$)/, 'components/scaffold')
-    .replace(/^components\/(sidebar|drawer)(?=\/|$)/, 'components/navigation-drawer')
-    .replace(/^components\/(navigation|nav-list)(?=\/|$)/, 'components/navigation-drawer')
-    .replace(/^components\/direction-links(?=\/|$)/, 'components/pager')
-    .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility')
-    .replace(/^foundations\/scale(?=\/|$)/, 'foundations/spacing');
-  if (path.startsWith('patterns/')) return `${path}${rest()}`;
-  // A page's views are gone: its props are on its page in the Docs, a foundation's guidance in its
-  // guide there, and every other view is the catalogue's page.
-  const [area, id, view] = path.split('/');
-  const grouped = (area === 'components' || area === 'foundations') && groupedPageOf(id ?? '');
-  if (!grouped) return `${path}${rest()}`;
-  const toDocs =
-    grouped.section === 'Components'
-      ? view === 'props' || apiSection(section)
-      : view === 'usage' &&
-        !(section && grouped.document.outline?.some((part) => part.anchors.includes(section)));
-  return (
-    routeOfDocument(id!, {
-      view: toDocs ? (grouped.section === 'Components' ? 'props' : 'usage') : undefined,
-    }) + rest()
-  );
 }

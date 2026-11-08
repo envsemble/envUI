@@ -89,11 +89,23 @@ One word for each thing the site shows, and one folder in `apps/site/src` for ea
 | specimen      | A picture of the catalogue's own, with no code                  | `specimens/<page>/`                                  |
 | tile          | A gallery's small live picture of a page                        | `tiles/`                                             |
 | figure        | The frame that shows an example or a specimen on a page         | `figures/`; a foundation's in `figures/foundations/` |
-| motion        | Scripted playback: the pointer no one sees, timelines, autoplay | `motion/`                                            |
+| motion        | Scripted playback on a stage, where a tile or figure plays live | `motion/`                                            |
+| page          | A route's page in the catalogue or the Docs, and its data       | `pages/`                                             |
+| route         | Addresses old and new, the rail, drawers, trails and the pager  | `navigation/`                                        |
+| banner        | A page's banner, contents, footer and failure                   | `layout/`                                            |
+| display       | The Display menu: theme, contrast, scale, motion and palette    | `theme/`                                             |
+| search        | The site's search and its index                                 | `search/`                                            |
+| brand         | The wordmarks and logos                                         | `brand/`                                             |
+| release notes | The highlights on the Docs' Changelog page                      | `releases/release-notes.md`                          |
+| shared        | What the site and its build scripts both read                   | `shared/`                                            |
+| style         | The site's style sheets                                         | `styles/`                                            |
+| generated     | The site's data, written by `scripts/`: never edit it           | `generated/`                                         |
 | documentation | The Markdown in `docs/` and the model generated from it         | `scripts/docs/`, `shared/DocumentationTypes.ts`      |
 | Docs          | The part under /docs, and nothing else                          | `docs-` classes, `Docs*` names                       |
 
 Other words for these, such as preview, demo, showcase and sample, are older names; don't add new uses.
+
+Every folder of `apps/site/src` has its row above, and ESLint rejects a name the site declares with preview in it.
 
 ## Releases
 

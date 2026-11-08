@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
-import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
+import { usePointer, useStageLayer, type PointerStep } from '../motion/Motion';
 
 /*
  * Undo pressed on the notification of an archived project: it leaves, and a notification that the
@@ -82,7 +82,7 @@ function Notices() {
  * corner.
  */
 export default function ToastTile() {
-  const layer = usePreviewLayer();
+  const layer = useStageLayer();
   if (!layer) return null;
   return (
     <PortalContainer container={layer}>
