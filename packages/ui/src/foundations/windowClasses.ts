@@ -1,3 +1,5 @@
+import { remPixels } from '../internal/lengths.js';
+
 /**
  * The window classes: ranges of a container's width at which arrangement may change, each given by
  * the width where it starts. compact is narrower than 37.5 rem, medium from 37.5 rem, expanded from
@@ -18,3 +20,19 @@ export const windowClasses = {
 
 /** A window class: compact (< 37.5 rem), medium (< 52.5 rem), expanded (< 75 rem) or large. */
 export type WindowClass = keyof typeof windowClasses;
+
+/**
+ * The window class of a width in CSS pixels, such as useContainerSize's inlineSize, at the
+ * document's root font size, as the window classes are in rem. Prefer a container query where only
+ * styles change.
+ *
+ *   const size = useContainerSize(panel);
+ *   const compact = size !== undefined && windowClassOf(size.inlineSize) === 'compact';
+ */
+export function windowClassOf(inlineSize: number): WindowClass {
+  const rem = inlineSize / remPixels();
+  let found: WindowClass = 'compact';
+  for (const [name, start] of Object.entries(windowClasses) as [WindowClass, string][])
+    if (rem >= Number.parseFloat(start)) found = name;
+  return found;
+}

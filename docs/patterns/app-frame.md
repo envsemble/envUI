@@ -53,6 +53,7 @@ composes:
   - Column
   - Text
   - useContainerSize
+  - windowClassOf
 examples:
   AppFrame:
     role: overview

@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { importSource, repository } from './support/importSource.mjs';
 
 const styles = join(repository, 'packages/ui/src/styles');
-const { windowClasses } = await importSource(
+const { windowClasses, windowClassOf } = await importSource(
   'WindowClasses',
   'packages/ui/src/foundations/windowClasses.ts',
 );
@@ -55,6 +55,27 @@ test('windowClasses holds the widths of the window-class tokens, from compact up
   assert.equal(compact, '0rem');
   assert.deepEqual(fromTokens, starts);
   assert.ok(!tokens.some((token) => token.id.startsWith('breakpoint.')), 'no breakpoint tokens');
+});
+
+test('windowClassOf gives the window class of a width in CSS pixels, at the root font size', () => {
+  const kept = { document: globalThis.document, getComputedStyle: globalThis.getComputedStyle };
+  let fontSize = '16px';
+  globalThis.document = { documentElement: {} };
+  globalThis.getComputedStyle = () => ({ fontSize });
+  try {
+    assert.equal(windowClassOf(0), 'compact');
+    assert.equal(windowClassOf(599.5), 'compact');
+    assert.equal(windowClassOf(600), 'medium');
+    assert.equal(windowClassOf(839), 'medium');
+    assert.equal(windowClassOf(840), 'expanded');
+    assert.equal(windowClassOf(1200), 'large');
+    // Larger text makes the same width a narrower class.
+    fontSize = '20px';
+    assert.equal(windowClassOf(600), 'compact');
+    assert.equal(windowClassOf(750), 'medium');
+  } finally {
+    Object.assign(globalThis, kept);
+  }
 });
 
 test('the outermost theme boundary is the env-window container, and takes its width', () => {

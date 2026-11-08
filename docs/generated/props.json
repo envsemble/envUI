@@ -1907,6 +1907,13 @@
           "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
+          "name": "pending",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Its work is running: a spinner turns over it, it keeps its width and name, and presses do nothing."
+        },
+        {
           "name": "underline",
           "type": "boolean",
           "required": false,
@@ -1931,13 +1938,6 @@
           "type": "ReactNode",
           "required": false,
           "description": "A decorative icon after the label, such as a ChevronRight for a next step."
-        },
-        {
-          "name": "pending",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Its work is running: a spinner turns over it, it keeps its width and name, and presses do nothing."
         },
         {
           "name": "aria-label",
@@ -4025,17 +4025,17 @@
           "description": "The field's class, on its root element, beside env-field, env-text-field and env-textarea."
         },
         {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
+        },
+        {
           "name": "rows",
           "type": "number",
           "required": false,
           "default": "8",
           "description": "The lines the field shows: with fixed sizing, its height in rows, which resizes down to them or to 7.5 rem, whichever is less; with content sizing, the lines it starts at and shrinks back to. Without rows, both start at 7.5 rem."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "variant",
@@ -6936,16 +6936,16 @@
           "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
         },
         {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
-        },
-        {
           "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
         },
         {
           "name": "variant",
@@ -9155,7 +9155,7 @@
     "readPanesWidth": {
       "kind": "function",
       "source": "packages/ui/src/layout/panesSize.ts",
-      "description": "The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's on the server, or from `document.cookie`. Render Panes.Root with it as `persistedWidth`, on the server and in the browser alike, so the server's markup has the width people chose and nothing moves as the page hydrates: <Panes.Root persist=\"inbox\" persistedWidth={readPanesWidth(cookieHeader, 'inbox')}> Returns undefined where no width is kept under the key.",
+      "description": "The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's on the server, or from `document.cookie`. Render Panes.Root with it as `persistedWidth`, on the server and in the browser alike, so the server's markup has the width people chose and nothing moves as the page hydrates: <Panes.Root persist=\"inbox\" persistedWidth={readPanesWidth(cookieHeader, 'inbox')}> Returns undefined where no width is kept under the key, or what is kept there is no width.",
       "signature": "(cookies: string | null | undefined, key: string): number | undefined",
       "entries": [
         "@envsemble/envui"
@@ -9220,6 +9220,15 @@
       "source": "packages/ui/src/feedback/toast/useToast.ts",
       "description": "Shows and dismisses notifications through the nearest ToastProvider: show, dismiss and clear. Throws outside a provider.",
       "signature": "(): ToastManager",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "windowClassOf": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/windowClasses.ts",
+      "description": "The window class of a width in CSS pixels, such as useContainerSize's inlineSize, at the document's root font size, as the window classes are in rem. Prefer a container query where only styles change. const size = useContainerSize(panel); const compact = size !== undefined && windowClassOf(size.inlineSize) === 'compact';",
+      "signature": "(inlineSize: number): WindowClass",
       "entries": [
         "@envsemble/envui"
       ]

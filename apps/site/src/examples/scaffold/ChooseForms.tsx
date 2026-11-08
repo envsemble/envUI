@@ -9,7 +9,7 @@ import {
   Text,
   TopBar,
   useContainerSize,
-  windowClasses,
+  windowClassOf,
   type NavigationDrawerDestination,
 } from '@envsemble/envui';
 import { IconHome } from '@envsemble/envui/icons/Home';
@@ -24,15 +24,11 @@ const destinations: NavigationDrawerDestination[] = [
   { label: 'Advanced', icon: <IconSettings />, href: '#advanced' },
 ];
 
-/** A width in rem, such as a window class's, in CSS pixels at the document's font size. */
-const remToPixels = (width: string) =>
-  Number.parseFloat(width) * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-
 export default function ChooseForms() {
   const [menu, setMenu] = useState(false);
   const frame = useRef<HTMLDivElement>(null);
   const size = useContainerSize(frame);
-  const compact = size !== undefined && size.inlineSize < remToPixels(windowClasses.medium);
+  const compact = size !== undefined && windowClassOf(size.inlineSize) === 'compact';
   return (
     // An application with a drawer only: it shows from medium, and a compact width shows none,
     // where a menu button in the top bar opens the same drawer in a sheet.

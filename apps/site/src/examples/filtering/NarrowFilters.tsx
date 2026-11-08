@@ -12,7 +12,7 @@ import {
   Row,
   Text,
   useContainerSize,
-  windowClasses,
+  windowClassOf,
   Badge,
 } from '@envsemble/envui';
 import { IconFilterList } from '@envsemble/envui/icons/FilterList';
@@ -20,16 +20,12 @@ import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const projectCount = (count: number) => (count === 1 ? '1 project' : `${count} projects`);
 
-/** A width in rem, such as a window class's, in CSS pixels at the document's font size. */
-const remToPixels = (width: string) =>
-  Number.parseFloat(width) * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-
 export default function NarrowFilters() {
   // From the medium window class up, measured on the filters' own width, they sit in the toolbar;
   // in a compact one they move into a sheet, and the search stays in view.
   const filters = useRef<HTMLDivElement>(null);
   const size = useContainerSize(filters);
-  const wide = size === undefined || size.inlineSize >= remToPixels(windowClasses.medium);
+  const wide = size === undefined || windowClassOf(size.inlineSize) !== 'compact';
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('any');
   const [owner, setOwner] = useState<string | null>('anyone');
