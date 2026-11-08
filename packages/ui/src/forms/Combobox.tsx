@@ -3,6 +3,7 @@
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
+  useMemo,
   useRef,
   useState,
   type ComponentPropsWithoutRef,
@@ -250,7 +251,11 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     },
     form,
   );
-  const selectedValues = typeof selection === 'string' ? [selection] : (selection ?? []);
+  // One array per selection, so the options known by value are rebuilt only when it changes.
+  const selectedValues = useMemo(
+    () => (typeof selection === 'string' ? [selection] : (selection ?? [])),
+    [selection],
+  );
 
   const {
     known,

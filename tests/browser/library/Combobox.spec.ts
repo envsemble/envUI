@@ -373,7 +373,7 @@ test('a server search shows its loading state and keeps the chosen label', async
   await expect(contact).toHaveValue('Morgan Diaz');
   await expect
     .poll(async () => JSON.parse((await output.textContent())!))
-    .toEqual({ chosen: 'morgan-diaz', chosenLabel: 'Morgan Diaz', queries: ['m', 'mo', ''] });
+    .toEqual({ chosen: 'morgan\u0000diaz', chosenLabel: 'Morgan Diaz', queries: ['m', 'mo', ''] });
   // New results without the chosen option keep its label in the field.
   await contact.fill('ri');
   await expect(page.getByRole('option').locator('.env-list-row-text')).toHaveText([
@@ -713,7 +713,9 @@ test('a server search ends its query with a choice or when the label returns, so
   await expect(page.getByRole('option')).toHaveCount(0);
   await page.keyboard.press('Enter');
   await expect(contact).toHaveValue('Morgan Diaz');
-  await expect.poll(state).toMatchObject({ chosen: 'morgan-diaz', chosenLabel: 'Morgan Diaz' });
+  await expect
+    .poll(state)
+    .toMatchObject({ chosen: 'morgan\u0000diaz', chosenLabel: 'Morgan Diaz' });
 });
 
 test('Esc clears a closed single field only while it has a value, and never removes chips', async ({
