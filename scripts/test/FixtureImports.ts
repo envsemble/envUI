@@ -1,10 +1,12 @@
 // Which browser specs a source file concerns, by what their fixtures import. A spec opens fixtures,
 // `?fixture=<name>` of tests/fixture/App.tsx or a page such as RichText.html, or renders library
 // source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
-// components by name, and those import the modules and style sheets they draw with. TestScope.ts
+// components by name, and those import the modules and style sheets they draw with, all read with
+// the TypeScript parser, so how an import is written doesn't change what it finds. TestScope.ts
 // selects specs with it; tests/tooling/TestScope.test.mjs covers it.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
+import ts from 'typescript';
 
 const library = 'packages/ui/src';
 const fixtures = 'tests/fixture';
@@ -13,37 +15,65 @@ const specs = 'tests/browser';
 const specFolders = [`${specs}/library`, `${specs}/site`];
 
 /** An import of a module: its specifier and the names it imports, or all of them. */
-interface Import {
+export interface Import {
   specifier: string;
   names: string[] | 'all';
 }
 
-/** The imports of a module's source, `import type` and `export type` left out. */
-function importsOf(source: string): Import[] {
+/** A module's syntax tree, parsed as TSX so fixtures, specs and library modules all read. */
+const parse = (source: string) =>
+  ts.createSourceFile('module.tsx', source, ts.ScriptTarget.Latest, false, ts.ScriptKind.TSX);
+
+/**
+ * The imports of a module's source, and of the modules it writes out in template literals to
+ * render, as a spec does: static imports, re-exports and `import()`, with what is imported only
+ * as a type left out.
+ */
+export function importsOf(source: string): Import[] {
   const found: Import[] = [];
-  const statement =
-    /\b(?:import|export)\s+(?!type\b)([^'";]*?)\s*\bfrom\s*['"]([^'"]+)['"]|\bimport\s*\(?\s*['"]([^'"]+)['"]/g;
-  for (const [, clause, specifier, bare] of source.matchAll(statement)) {
-    if (bare) {
-      found.push({ specifier: bare, names: 'all' });
-      continue;
+  const add = (specifier: ts.Expression | undefined, names: Import['names']) => {
+    if (specifier && ts.isStringLiteralLike(specifier) && names.length)
+      found.push({ specifier: specifier.text, names });
+  };
+  /** The names a list imports or re-exports, by their name in the module that declares them. */
+  const valueNames = (elements: ts.NodeArray<ts.ImportSpecifier | ts.ExportSpecifier>) =>
+    elements
+      .filter((element) => !element.isTypeOnly)
+      .map((element) => (element.propertyName ?? element.name).text);
+  const visit = (node: ts.Node) => {
+    if (ts.isImportDeclaration(node)) {
+      const clause = node.importClause;
+      const bindings = clause?.namedBindings;
+      if (clause?.isTypeOnly) return;
+      add(
+        node.moduleSpecifier,
+        !clause || clause.name || !bindings || ts.isNamespaceImport(bindings)
+          ? 'all'
+          : valueNames(bindings.elements),
+      );
+      return;
     }
-    const named = /\{([^}]*)\}/.exec(clause)?.[1];
-    const names =
-      named === undefined || /\*/.test(clause)
-        ? 'all'
-        : named
-            .split(',')
-            .map((name) =>
-              name
-                .trim()
-                .replace(/^type\s+/, '')
-                .split(/\s+as\s+/)[0]
-                .trim(),
-            )
-            .filter(Boolean);
-    found.push({ specifier: specifier, names });
-  }
+    if (ts.isExportDeclaration(node)) {
+      const clause = node.exportClause;
+      if (!node.isTypeOnly)
+        add(
+          node.moduleSpecifier,
+          !clause || ts.isNamespaceExport(clause) ? 'all' : valueNames(clause.elements),
+        );
+      return;
+    }
+    if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword)
+      add(node.arguments[0], 'all');
+    // A module a spec writes out to render, its expressions standing in as values.
+    const written = ts.isNoSubstitutionTemplateLiteral(node)
+      ? node.text
+      : ts.isTemplateExpression(node)
+        ? [node.head.text, ...node.templateSpans.map((span) => span.literal.text)].join('0')
+        : undefined;
+    if (written !== undefined && /\bimport\b/.test(written)) found.push(...importsOf(written));
+    ts.forEachChild(node, visit);
+  };
+  visit(parse(source));
   return found;
 }
 
@@ -94,39 +124,43 @@ class Sources {
     if (cached) return cached;
     const exported = new Map<string, string[]>();
     this.#exports.set(path, exported);
-    const source = this.text(path) ?? '';
-    const own =
-      /\bexport\s+(?:declare\s+)?(?:default\s+)?(?:async\s+)?(?:function\*?|const|let|var|class|interface|type|enum)\s+(\w+)/g;
-    for (const [, name] of source.matchAll(own)) exported.set(name, [path]);
-    for (const [, local] of source.matchAll(/\bexport\s*\{([^}]*)\}\s*;/g))
-      for (const name of local.split(','))
-        if (name.trim())
-          exported.set(
-            name
-              .trim()
-              .split(/\s+as\s+/)
-              .at(-1)!,
-            [path],
-          );
-    for (const [, clause, specifier] of source.matchAll(
-      /\bexport\s+(?:type\s+)?(\*(?:\s+as\s+\w+)?|\{[^}]*\})\s*from\s*['"]([^'"]+)['"]/g,
-    )) {
-      const target = this.relative(path, specifier);
-      if (!target) continue;
-      const namespace = /^\*\s+as\s+(\w+)/.exec(clause)?.[1];
-      if (namespace) exported.set(namespace, [target]);
-      else if (clause === '*') {
-        for (const [name, declared] of this.exportsOf(target))
-          if (!exported.has(name)) exported.set(name, declared);
-      } else
-        for (const name of clause.slice(1, -1).split(',')) {
-          const [original, alias] = name
-            .trim()
-            .replace(/^type\s+/, '')
-            .split(/\s+as\s+/);
-          if (original)
-            exported.set(alias ?? original, this.exportsOf(target).get(original) ?? [target]);
+    const exports = (node: ts.Node) =>
+      ts.canHaveModifiers(node) &&
+      Boolean(ts.getModifiers(node)?.some((each) => each.kind === ts.SyntaxKind.ExportKeyword));
+    for (const statement of parse(this.text(path) ?? '').statements) {
+      if (ts.isVariableStatement(statement) && exports(statement)) {
+        for (const declaration of statement.declarationList.declarations)
+          if (ts.isIdentifier(declaration.name)) exported.set(declaration.name.text, [path]);
+      } else if (
+        (ts.isFunctionDeclaration(statement) ||
+          ts.isClassDeclaration(statement) ||
+          ts.isInterfaceDeclaration(statement) ||
+          ts.isTypeAliasDeclaration(statement) ||
+          ts.isEnumDeclaration(statement)) &&
+        statement.name &&
+        exports(statement)
+      )
+        exported.set(statement.name.text, [path]);
+      else if (ts.isExportDeclaration(statement)) {
+        const clause = statement.exportClause;
+        if (!statement.moduleSpecifier || !ts.isStringLiteral(statement.moduleSpecifier)) {
+          // `export { a, b as c }` of the module's own names.
+          if (clause && ts.isNamedExports(clause))
+            for (const element of clause.elements) exported.set(element.name.text, [path]);
+          continue;
         }
+        const target = this.relative(path, statement.moduleSpecifier.text);
+        if (!target) continue;
+        if (!clause) {
+          for (const [name, declared] of this.exportsOf(target))
+            if (!exported.has(name)) exported.set(name, declared);
+        } else if (ts.isNamespaceExport(clause)) exported.set(clause.name.text, [target]);
+        else
+          for (const element of clause.elements) {
+            const original = (element.propertyName ?? element.name).text;
+            exported.set(element.name.text, this.exportsOf(target).get(original) ?? [target]);
+          }
+      }
     }
     return exported;
   }
@@ -170,25 +204,64 @@ function appFixtures(sources: Sources) {
     if (item.names !== 'all')
       for (const name of item.names)
         imported.set(name, sources.resolve(appFile, { ...item, names: [name] }));
+  const tree = parse(text);
+  // The names the module uses, with where each is.
+  const used: { name: string; start: number }[] = [];
+  const collect = (node: ts.Node) => {
+    if (ts.isIdentifier(node)) used.push({ name: node.text, start: node.getStart(tree) });
+    ts.forEachChild(node, collect);
+  };
+  collect(tree);
   const byName = new Map<string, Set<string>>();
-  const add = (name: string, code: string) => {
-    const modules = byName.get(name) ?? new Set<string>();
-    for (const [identifier] of code.matchAll(/\b[A-Z]\w*/g))
-      for (const module of imported.get(identifier) ?? []) modules.add(module);
-    byName.set(name, modules);
+  /** Adds to a fixture name's modules those of the names used from `start` to `end`. */
+  const add = (fixture: string, start: number, end: number) => {
+    const modules = byName.get(fixture) ?? new Set<string>();
+    for (const { name } of used.filter((each) => each.start >= start && each.start < end))
+      for (const module of imported.get(name) ?? []) modules.add(module);
+    byName.set(fixture, modules);
   };
   // The fixtures mounted on their own, `name: Component` in standaloneFixtures.
-  const standalone = /\bconst standaloneFixtures\b[^{]*\{([\s\S]*?)\n\};/.exec(text)?.[1] ?? '';
-  for (const [, quoted, plain, component] of standalone.matchAll(
-    /(?:'([a-z][a-z-]*)'|\b([a-z]\w*)):\s*(\w+)/g,
-  ))
-    add(quoted ?? plain, component);
+  for (const statement of tree.statements)
+    if (ts.isVariableStatement(statement))
+      for (const declaration of statement.declarationList.declarations)
+        if (
+          ts.isIdentifier(declaration.name) &&
+          declaration.name.text === 'standaloneFixtures' &&
+          declaration.initializer &&
+          ts.isObjectLiteralExpression(declaration.initializer)
+        )
+          for (const property of declaration.initializer.properties)
+            if (ts.isPropertyAssignment(property) && !ts.isComputedPropertyName(property.name))
+              add(
+                property.name.text,
+                property.initializer.getStart(tree),
+                property.initializer.end,
+              );
   // The rest, `fixture === 'name'` or `includes('name')` in App: each name's code runs from where
   // it is named to where the next one is.
-  const app = text.slice(Math.max(0, text.indexOf('export default function App')));
-  const marks = [...app.matchAll(/(?:includes\(|fixture === )'([a-z][a-z-]*)'/g)];
-  marks.forEach((mark, index) =>
-    add(mark[1], app.slice(mark.index, marks[index + 1]?.index ?? app.length)),
+  const marks: { name: string; start: number }[] = [];
+  const mark = (node: ts.Node) => {
+    const named =
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken &&
+      ts.isIdentifier(node.left) &&
+      node.left.text === 'fixture'
+        ? node.right
+        : ts.isCallExpression(node) &&
+            ts.isIdentifier(node.expression) &&
+            node.expression.text === 'includes'
+          ? node.arguments[0]
+          : undefined;
+    if (named && ts.isStringLiteral(named))
+      marks.push({ name: named.text, start: node.getStart(tree) });
+    ts.forEachChild(node, mark);
+  };
+  const app = tree.statements.find(
+    (statement) => ts.isFunctionDeclaration(statement) && statement.name?.text === 'App',
+  );
+  if (app) mark(app);
+  marks.forEach(({ name, start }, index) =>
+    add(name, start, marks[index + 1]?.start ?? text.length),
   );
   return byName;
 }

@@ -56,7 +56,7 @@ if (!paths.length) {
   process.exit(0);
 }
 
-const scope = selectScope(paths);
+const scope = selectScope(paths, { affected });
 // A list of changed files too long for one command line (Windows takes about 32,000 characters)
 // is checked as the whole repository instead, as a branch that moved many files needs anyway.
 const tooLong = (paths: readonly string[]) =>
@@ -117,11 +117,9 @@ if (deferred.length)
   );
 for (const [helper, users] of scope.helpers)
   if (!users.some((name) => scope.specs.has(name)) && users.length)
-    console.log(dim(`  ${helper}: ${users.length} specs import it; verify covers them`));
+    console.log(dim(`  ${helper}: ${users.length} specs import it; check:affected runs them`));
 for (const [path, count] of scope.widelyUsed)
-  console.log(
-    dim(`  ${path}: ${count} specs' fixtures use it; verify covers those that don't run`),
-  );
+  console.log(dim(`  ${path}: ${count} specs' fixtures use it; check:affected runs them all`));
 const unmatched = scope.unmatched.filter((path) => !scope.helpers.has(path));
 if (unmatched.length) console.log(dim(`  no spec for ${list(unmatched)}; verify covers it`));
 console.log('');
