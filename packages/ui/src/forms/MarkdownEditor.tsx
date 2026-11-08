@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type Ref } from 'react';
+import { useCallback, useState, type Ref } from 'react';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { flushSync } from 'react-dom';
 import { Button } from '../actions/Button.js';
@@ -18,13 +18,12 @@ import { LinkDialog } from './internal/LinkDialog.js';
 import { TextareaControl } from './internal/TextareaControl.js';
 import { MarkdownPreview } from './internal/markdown/MarkdownPreview.js';
 import { useMarkdownEditing } from './internal/markdown/useMarkdownEditing.js';
+import { useMarkdownLink } from './internal/markdown/useMarkdownLink.js';
 import {
   formatMarkdown,
-  insertMarkdownLink,
   isMarkdownHref,
   type MarkdownCommand,
   type MarkdownLink,
-  type MarkdownSelection,
 } from './internal/markdown/markdownFormatting.js';
 import '../styles/Base.css';
 import '../styles/MarkdownEditor.css';
@@ -74,6 +73,24 @@ export interface MarkdownEditorProps extends Omit<
 }
 
 /**
+ * What a key with Ctrl or ⌘ does in the source: Z undoes and, with Shift, redoes, Y redoes, and B,
+ * I and K format as the toolbar's bold, italic and link do. Keys with Alt are the application's.
+ */
+function markdownShortcut(event: {
+  key: string;
+  altKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  shiftKey: boolean;
+}): 'undo' | 'redo' | 'bold' | 'italic' | 'link' | null {
+  if (event.altKey || (!event.metaKey && !event.ctrlKey)) return null;
+  const key = event.key.toLowerCase();
+  if (key === 'z') return event.shiftKey ? 'redo' : 'undo';
+  if (key === 'y') return 'redo';
+  return key === 'b' ? 'bold' : key === 'i' ? 'italic' : key === 'k' ? 'link' : null;
+}
+
+/**
  * Native Markdown source editing, shared formatting history, and optional preview. Its toolbar,
  * views and status come from EnvUIProvider's messages: markdownEditor, editor and linkDialog.
  */
@@ -119,15 +136,15 @@ export function MarkdownEditor({
   const composingRef = editing.composing;
   const [mode, setMode] = useState('write');
   const [status, setStatus] = useState('');
-  const [linkSelection, setLinkSelection] = useState<MarkdownSelection | null>(null);
-  const [linkPending, setLinkPending] = useState(false);
-  const linkRequestVersion = useRef(0);
-  useEffect(
-    () => () => {
-      linkRequestVersion.current++;
-    },
-    [],
-  );
+  const { linkSelection, linkPending, requestLink, insertDialogLink, closeDialog } =
+    useMarkdownLink({
+      inputRef: editing.inputRef,
+      apply: editing.apply,
+      pickLink,
+      showSource: () => setMode('write'),
+      setStatus,
+      messages,
+    });
   const { attachInput: attachEditingInput } = editing;
   const attachInput = useCallback(
     (input: HTMLTextAreaElement | null) => {
@@ -137,42 +154,6 @@ export function MarkdownEditor({
     [attachEditingInput, forwardedRef],
   );
 
-  function insertLink(selection: MarkdownSelection, link: MarkdownLink) {
-    if (editing.inputRef.current?.value !== selection.value) {
-      setStatus(messages.changedWhilePicking);
-      return;
-    }
-    if (!isMarkdownHref(link.href)) {
-      setStatus(messages.linkFailed);
-      return;
-    }
-    try {
-      flushSync(() => setMode('write'));
-      if (!editing.apply(selection, insertMarkdownLink(selection, link))) {
-        setStatus(messages.tooLong);
-      }
-    } catch {
-      setStatus(messages.linkFailed);
-    }
-  }
-  async function requestLink(selection: MarkdownSelection) {
-    if (!pickLink) {
-      setLinkSelection(selection);
-      return;
-    }
-    const version = ++linkRequestVersion.current;
-    setLinkPending(true);
-    try {
-      const result = await pickLink({
-        selectedText: selection.value.slice(selection.start, selection.end),
-      });
-      if (linkRequestVersion.current === version && result) insertLink(selection, result);
-    } catch {
-      if (linkRequestVersion.current === version) setStatus(messages.pickerFailed);
-    } finally {
-      if (linkRequestVersion.current === version) setLinkPending(false);
-    }
-  }
   function runCommand(command: MarkdownCommand) {
     if (disabled || readOnly || linkPending || composingRef.current) return;
     const selection = editing.captureSelection();
@@ -229,25 +210,15 @@ export function MarkdownEditor({
           }}
           onKeyDown={(event) => {
             onKeyDown?.(event);
-            if (
-              event.defaultPrevented ||
-              event.nativeEvent.isComposing ||
-              disabled ||
-              readOnly ||
-              event.altKey
-            )
+            if (event.defaultPrevented || event.nativeEvent.isComposing || disabled || readOnly)
               return;
-            if (!event.metaKey && !event.ctrlKey) return;
-            const key = event.key.toLowerCase();
-            if (key === 'z' || key === 'y') {
+            const shortcut = markdownShortcut(event);
+            if (shortcut === 'undo' || shortcut === 'redo') {
               event.preventDefault();
-              editing.moveHistory(key === 'y' || event.shiftKey ? 1 : -1);
-            } else if (toolbar !== false && (key === 'b' || key === 'i' || key === 'k')) {
-              const command = key === 'b' ? 'bold' : key === 'i' ? 'italic' : 'link';
-              if (toolbar.includes(command)) {
-                event.preventDefault();
-                runCommand(command);
-              }
+              editing.moveHistory(shortcut === 'redo' ? 1 : -1);
+            } else if (shortcut && toolbar !== false && toolbar.includes(shortcut)) {
+              event.preventDefault();
+              runCommand(shortcut);
             }
           }}
         />
@@ -309,11 +280,8 @@ export function MarkdownEditor({
           isValid={isMarkdownHref}
           finalFocus={editing.inputRef}
           selectedText={linkSelection.value.slice(linkSelection.start, linkSelection.end)}
-          onCancel={() => setLinkSelection(null)}
-          onInsert={(link) => {
-            insertLink(linkSelection, link);
-            setLinkSelection(null);
-          }}
+          onCancel={closeDialog}
+          onInsert={insertDialogLink}
         />
       )}
     </>
