@@ -28,6 +28,7 @@ export function resolveNavigationForms(
   forms: ScaffoldForms | undefined,
 ): Record<WindowClass, ScaffoldNavigationForm | 'none'> {
   const given = (form: ScaffoldNavigationForm) => navigation?.[form] != null;
+  // Filled for every window class below.
   const resolved = {} as Record<WindowClass, ScaffoldNavigationForm | 'none'>;
   for (const windowClass of classes) {
     const asked = forms?.[windowClass] ?? defaultForms[windowClass];

@@ -177,11 +177,11 @@ export function calendarHeatmapModel({
     const parts = dayParts(day);
     if (parts.date === 1) monthColumns.set(Math.floor((day - first) / 7), parts.month);
   }
-  const columns = [...monthColumns.keys()].sort((a, b) => a - b);
-  const months = columns.map((column, index) => ({
+  const columns = [...monthColumns].sort(([a], [b]) => a - b);
+  const months = columns.map(([column, month], index) => ({
     column,
-    span: (columns[index + 1] ?? weeks) - column,
-    label: monthLabels[monthColumns.get(column)!] ?? '',
+    span: (columns[index + 1]?.[0] ?? weeks) - column,
+    label: monthLabels[month] ?? '',
   }));
   return { invalid, start, end, first, weeks, levelCount, days, months };
 }

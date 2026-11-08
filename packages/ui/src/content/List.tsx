@@ -21,6 +21,7 @@ import {
 } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ListReorderHandle, ReorderableList } from './internal/ReorderableList.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/List.css';
 import '../styles/ConnectedRows.css';
@@ -104,6 +105,7 @@ function markReorderable(children: ReactNode): ReactNode {
     if (!isValidElement<{ children?: ReactNode }>(child)) return child;
     if (child.type === Fragment)
       return cloneElement(child, undefined, markReorderable(child.props.children));
+    // An item of any type takes the private prop that marks it reorderable.
     return cloneElement(child, { [reorderableProp]: true } as object);
   });
 }
@@ -162,6 +164,7 @@ function markCurrent(node: ReactNode): [ReactNode, boolean] {
   let found = false;
   const visit = (each: ReactNode): ReactNode => {
     if (found || !isValidElement<TargetProps>(each)) return each;
+    // isValidElement narrows to the element, not its props.
     const element = each as ReactElement<TargetProps>;
     if (element.props['data-row-target'] != null && element.props['data-row-target'] !== false) {
       found = true;
@@ -183,6 +186,7 @@ function markCurrent(node: ReactNode): [ReactNode, boolean] {
  * reorderable row needs the browser.
  */
 function Item(props: ItemProps) {
+  // markReorderable adds the private prop, which ItemProps does not list.
   const {
     label,
     description,
@@ -225,9 +229,9 @@ function Item(props: ItemProps) {
           {...rest}
           {...skeletonAttributes(skeleton)}
           className={classNames('env-list-item', 'env-connected-row', className)}
-          data-interactive={interactive ? '' : undefined}
-          data-selected={current ? '' : undefined}
-          data-start={hasStart ? '' : undefined}
+          data-interactive={flag(interactive)}
+          data-selected={flag(current)}
+          data-start={flag(hasStart)}
         />
       }
     >

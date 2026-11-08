@@ -9,9 +9,10 @@ import { classNames } from '../internal/classNames.js';
 import { Text } from '../foundations/Text.js';
 import { Column, Row, type SpaceStep } from '../foundations/Layout.js';
 import { Surface } from '../foundations/Surface.js';
-import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
+import { ActionElement } from '../internal/ActionElement.js';
 import { given, type SkeletonProps } from '../internal/skeleton.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Card.css';
 
@@ -133,7 +134,7 @@ function InteractiveCard({
       render={
         <Column
           gap={4}
-          render={<ActionElement {...(props as ActionElementProps)} />}
+          render={<ActionElement {...props} />}
           className={classNames('env-card', className)}
           style={style}
           data-interactive=""
@@ -239,7 +240,7 @@ function ContentCardLayout({
           gap={hasActions ? 0 : 4}
           className={classNames('env-card', className)}
           style={style}
-          data-actions={hasActions ? '' : undefined}
+          data-actions={flag(hasActions)}
         />
       }
     >

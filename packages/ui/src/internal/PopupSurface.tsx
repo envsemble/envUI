@@ -193,6 +193,7 @@ export function PopupSurface({
 }: PopupSurfaceProps) {
   const theme = useTheme();
   const { container, contained } = usePortalContainer();
+  // popupProps are the popup's props, loosely typed for each popup that passes them.
   const ownStyle = popupProps?.style as CSSProperties | undefined;
   const ownRef = popupProps?.ref as Ref<HTMLElement> | undefined;
   const ownFocusCapture = popupProps?.onFocusCapture as

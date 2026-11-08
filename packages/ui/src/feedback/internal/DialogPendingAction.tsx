@@ -20,6 +20,7 @@ export function withPendingAction(actions: ReactNode, pending: boolean): ReactNo
   const last = items[index];
   if (!isValidElement(last)) return items;
   if (last.type === Fragment) {
+    // isValidElement narrows to the element, not its props: a Fragment, as checked above.
     const fragment = last as ReactElement<{ children?: ReactNode }>;
     items[index] = cloneElement(
       fragment,
@@ -27,6 +28,7 @@ export function withPendingAction(actions: ReactNode, pending: boolean): ReactNo
       withPendingAction(fragment.props.children, pending),
     );
   } else if (pending && last.type === Button) {
+    // A Button, as checked above.
     const button = last as ReactElement<ButtonProps>;
     if (button.props.pending === undefined) items[index] = cloneElement(button, { pending: true });
   }

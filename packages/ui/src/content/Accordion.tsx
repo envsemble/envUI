@@ -79,6 +79,7 @@ function Root({
         {...props}
         {...skeletonAttributes(skeleton)}
         className={classNames('env-accordion', className)}
+        // Base UI takes a mutable list and never changes it; the items' values are strings.
         value={value as string[] | undefined}
         defaultValue={defaultValue as string[] | undefined}
         onValueChange={onValueChange ? (next) => onValueChange(next as string[]) : undefined}

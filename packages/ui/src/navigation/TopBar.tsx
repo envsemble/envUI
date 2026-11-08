@@ -9,7 +9,7 @@ import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
-import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/TopBar.css';

@@ -80,6 +80,7 @@ export function useCopy({ write, resetAfter = 2000, onCopied, fieldClassName }: 
   const reset = useCallback(() => setResult(undefined), []);
   return {
     copy,
+    // The status, copied or failed, as copy sets it.
     status: (result?.status ?? 'idle') as CopyStatus,
     round: result?.round ?? 0,
     copying: phase !== 'idle',
@@ -174,6 +175,7 @@ function copyWithSelection(text: string, anchor: HTMLElement, fieldClassName?: s
     copied = false;
   }
   field.remove();
+  // The element that had focus, which is an HTML or SVG element.
   (focused as HTMLElement | null)?.focus({ preventScroll: true });
   if (selection) {
     selection.removeAllRanges();

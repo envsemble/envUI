@@ -31,7 +31,7 @@ export * from './layout/PageHeader.js';
 export * from './layout/LineArt.js';
 
 // What every resize callback receives, Panes', Sheet's and NavigationDrawer's alike.
-export type { ResizeDetails } from './internal/resizeDetails.js';
+export type { ResizeDetails } from './layout/resizeDetails.js';
 
 // Actions: buttons, links and the controls that act at once.
 export * from './actions/Button.js';
@@ -48,11 +48,8 @@ export * from './navigation/TopBar.js';
 export * from './navigation/NavigationBar.js';
 export * from './navigation/NavigationRail.js';
 export * from './navigation/NavigationDrawer.js';
-export type {
-  Destination,
-  NavigationDrawerDestination,
-} from './navigation/internal/Destinations.js';
-export type { NavigationBackground } from './navigation/internal/background.js';
+export type { Destination, NavigationDrawerDestination } from './navigation/destinations.js';
+export type { NavigationBackground } from './navigation/navigationBackground.js';
 export * as Pager from './navigation/Pager.js';
 export * from './navigation/Tabs.js';
 export {

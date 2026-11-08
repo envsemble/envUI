@@ -26,6 +26,7 @@ export type Placeholder<Item = object> = { id: string; readonly [placeholderMark
 export function placeholders<Item = object>(count: number): Placeholder<Item>[] {
   return Array.from(
     { length: Math.max(0, Math.floor(count)) },
+    // The mark is in the type only, which tells a placeholder from an item.
     (_, index) => ({ id: `${placeholderPrefix}${index}` }) as Placeholder<Item>,
   );
 }

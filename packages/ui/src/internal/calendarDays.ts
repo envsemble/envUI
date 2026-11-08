@@ -21,6 +21,7 @@ export function dayParts(day: number) {
     year: date.getUTCFullYear(),
     month: date.getUTCMonth(),
     date: date.getUTCDate(),
+    // getUTCDay gives 0 to 6.
     weekday: date.getUTCDay() as Weekday,
   };
 }
@@ -210,6 +211,7 @@ type LocaleWithWeekInfo = Intl.Locale & {
 export function localeWeekStart(locale: string | undefined): Weekday {
   try {
     const resolved = new Intl.DateTimeFormat(locale).resolvedOptions().locale;
+    // TypeScript's Intl types don't have the week's information yet.
     const info = new Intl.Locale(resolved) as LocaleWithWeekInfo;
     // Week info numbers Monday 1 through Sunday 7.
     const firstDay = (info.getWeekInfo?.() ?? info.weekInfo)?.firstDay;

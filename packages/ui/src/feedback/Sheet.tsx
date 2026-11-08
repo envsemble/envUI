@@ -22,11 +22,7 @@ import { setRef } from '../internal/setRef.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { useTheme } from '../foundations/Theme.js';
-import type {
-  DialogFocusTarget,
-  DialogOpenChangeDetails,
-  DialogOpenChangeReason,
-} from './Dialog.js';
+import type { DialogFocusTarget, DialogOpenChangeDetails } from './Dialog.js';
 import {
   DialogActions,
   DialogBackdrop,
@@ -47,7 +43,9 @@ import {
 } from '../internal/PortalContainerContext.js';
 import { computedDirection } from '../internal/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
-import type { ResizeDetails } from '../internal/resizeDetails.js';
+import type { ResizeDetails } from '../layout/resizeDetails.js';
+import { flag } from '../internal/flag.js';
+import { useOpenState } from '../internal/useOpenState.js';
 import '../styles/Base.css';
 import '../styles/Sheet.css';
 
@@ -223,6 +221,53 @@ const roomFor = (handle: HTMLElement) => {
 };
 
 /**
+ * A sheet's width: md or lg by name, else a length as its custom width; a resizable side sheet's in
+ * rem, which its handle changes.
+ */
+function useSheetWidth({
+  side,
+  width,
+  resizable: resizableOption,
+  defaultWidth,
+  onWidthChange,
+  minWidth,
+  maxWidth,
+  widthText,
+}: Required<Pick<SheetProps, 'width' | 'resizable' | 'minWidth' | 'maxWidth'>> &
+  Pick<SheetProps, 'defaultWidth' | 'onWidthChange'> & {
+    side: SheetSide;
+    widthText: (width: string) => string;
+  }) {
+  const named = width === 'md' || width === 'lg';
+  // A bottom sheet is as tall as its content and as wide as the window, so only a side sheet
+  // resizes: its width in rem, the application's where width is a number.
+  const resizable = resizableOption && side !== 'bottom';
+  const cssWidth = resizable && typeof width === 'string' && !named ? width : undefined;
+  useEffect(() => {
+    if (cssWidth !== undefined) reportCssWidth(cssWidth);
+  }, [cssWidth]);
+  const resize = useResizableWidth({
+    width: typeof width === 'number' ? width : undefined,
+    defaultWidth: defaultWidth ?? (width === 'lg' ? 44 : 24),
+    minWidth,
+    maxWidth,
+    onWidthChange,
+    room: roomFor,
+    // A sheet at the end grows as its inner edge, its start, moves toward the start.
+    reverse: side === 'end',
+    widthText,
+  });
+  const customWidth = resizable
+    ? `${resize.width}rem`
+    : typeof width === 'number'
+      ? `${width}rem`
+      : named
+        ? undefined
+        : width;
+  return { named, resizable, resize, customWidth };
+}
+
+/**
  * A panel that slides in over the page from an edge of the window, for filters, details, an
  * inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a
  * modal by default, which traps focus and returns it on close, or beside the page with modal
@@ -265,8 +310,7 @@ export function Sheet({
   const messages = useMessages('dialog', dialog);
   const provided = useEnvUI().dir;
   // Whether it shows, also where the application doesn't control it.
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
-  const shown = open ?? uncontrolledOpen;
+  const [shown, setShown] = useOpenState({ open, defaultOpen, onOpenChange });
   // The touch swipe that closes a side sheet runs toward its edge, which is physical, so it follows the
   // direction where the sheet opens: the provider's, else its trigger's, read as it opens.
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -292,32 +336,16 @@ export function Sheet({
   );
   const towardEnd = (side === 'end') === (direction === 'ltr');
   const swipeDirection = side === 'bottom' ? 'down' : towardEnd ? 'right' : 'left';
-  const named = width === 'md' || width === 'lg';
-  // A bottom sheet is as tall as its content and as wide as the window, so only a side sheet
-  // resizes: its width in rem, the application's where width is a number.
-  const resizable = resizableProp && side !== 'bottom';
-  const cssWidth = resizable && typeof width === 'string' && !named ? width : undefined;
-  useEffect(() => {
-    if (cssWidth !== undefined) reportCssWidth(cssWidth);
-  }, [cssWidth]);
-  const resize = useResizableWidth({
-    width: typeof width === 'number' ? width : undefined,
-    defaultWidth: defaultWidth ?? (width === 'lg' ? 44 : 24),
+  const { named, resizable, resize, customWidth } = useSheetWidth({
+    side,
+    width,
+    resizable: resizableProp,
+    defaultWidth,
+    onWidthChange,
     minWidth,
     maxWidth,
-    onWidthChange,
-    room: roomFor,
-    // A sheet at the end grows as its inner edge, its start, moves toward the start.
-    reverse: side === 'end',
     widthText: (value) => messages.width({ width: value }),
   });
-  const customWidth = resizable
-    ? `${resize.width}rem`
-    : typeof width === 'number'
-      ? `${width}rem`
-      : named
-        ? undefined
-        : width;
   const portal = usePortalContainer();
   return (
     <BaseDrawer.Root
@@ -328,8 +356,7 @@ export function Sheet({
           eventDetails.cancel();
           return;
         }
-        if (open === undefined) setUncontrolledOpen(next);
-        onOpenChange?.(next, { reason: eventDetails.reason as DialogOpenChangeReason });
+        setShown(next, { reason: eventDetails.reason });
       }}
       modal={containedModal(portal, modal)}
       disablePointerDismissal={disablePointerDismissal}
@@ -360,10 +387,10 @@ export function Sheet({
                 }
                 data-side={side}
                 data-width={named ? width : 'custom'}
-                data-resizable={resizable ? '' : undefined}
+                data-resizable={flag(resizable)}
                 aria-label={title == null ? label : undefined}
                 aria-busy={pending || skeleton || undefined}
-                data-env-skeleton={skeleton ? '' : undefined}
+                data-env-skeleton={flag(skeleton)}
                 initialFocus={portal.contained ? false : (initialFocus ?? defaultFocus)}
                 finalFocus={portal.contained ? false : finalFocus}
               >

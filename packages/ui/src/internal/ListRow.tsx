@@ -46,6 +46,7 @@ export function ListRow({
   shortcut,
   className,
 }: ListRowProps) {
+  // isValidElement narrows to the element, not its props.
   const own = isValidElement(render) ? (render.props as { className?: string }) : {};
   const children = (
     <>
@@ -64,6 +65,7 @@ export function ListRow({
     </>
   );
   return cloneElement(
+    // render is an element that takes a class name and children.
     render as ReactElement<{ className?: string; children?: ReactNode }>,
     {
       className: classNames('env-list-row', className, own.className),

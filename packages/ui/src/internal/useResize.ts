@@ -10,8 +10,9 @@ import {
 } from 'react';
 import { useEnvUI } from './EnvUIContext.js';
 import { remPixels, roundToHundredth } from './lengths.js';
-import type { ResizeDetails } from './resizeDetails.js';
+import type { ResizeDetails } from '../layout/resizeDetails.js';
 import { scrolledBy } from './scrolledBy.js';
+import { flag } from './flag.js';
 
 export interface ResizeOptions {
   /**
@@ -278,7 +279,7 @@ export function useResize({
       ...(disabled && { 'aria-disabled': true as const }),
       tabIndex: disabled ? -1 : 0,
       'data-axis': axis,
-      ...(dragging && { 'data-resizing': '' as const }),
+      'data-resizing': flag(dragging),
       onPointerDown,
       onPointerMove,
       onPointerUp: end,

@@ -50,12 +50,6 @@
         "terrazzo.config.mjs",
       ],
       "project": ["src/**/*.{ts,tsx}"],
-      // Pending, for the library's refactor.
-      "ignoreIssues": {
-        "src/content/internal/codeColors.ts": ["types"],
-        "src/internal/motionTokens.ts": ["exports"],
-        "src/foundations/messages/*.ts": ["types"],
-      },
     },
     "packages/eslint-plugin": {
       "entry": ["scripts/*.mjs", "test/*.test.mjs"],

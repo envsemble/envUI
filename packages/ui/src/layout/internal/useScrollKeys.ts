@@ -98,6 +98,7 @@ function scrollStep(event: KeyboardEvent, scroller: HTMLElement): ScrollStep | n
 }
 
 function isElement(node: EventTarget | null): node is Element {
+  // Any target, read for its node type.
   return (node as Node | null)?.nodeType === Node.ELEMENT_NODE;
 }
 
@@ -109,6 +110,7 @@ function ancestors(element: Element) {
     if (isElement(node)) chain.push(node);
     node =
       node.parentNode ??
+      // A fragment with no parent is a shadow root.
       (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? (node as ShadowRoot).host : null);
   }
   return chain;

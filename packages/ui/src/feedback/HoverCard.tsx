@@ -4,7 +4,6 @@ import { PreviewCard as BasePreviewCard } from '@base-ui/react/preview-card';
 import {
   isValidElement,
   useRef,
-  useState,
   type ComponentPropsWithRef,
   type FocusEvent,
   type ReactElement,
@@ -19,6 +18,7 @@ import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import { useOpenState } from '../internal/useOpenState.js';
 import '../styles/Base.css';
 import '../styles/Popover.css';
 
@@ -112,9 +112,8 @@ export function HoverCard({
   className,
   ...popupProps
 }: HoverCardProps) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+  const [open, changeOpen] = useOpenState({ open: controlledOpen, defaultOpen, onOpenChange });
   const portal = usePortalContainer();
-  const open = controlledOpen ?? uncontrolledOpen;
   const openRef = useRef(open);
   // The card takes the text direction at its trigger.
   const triggerRef = useRef<HTMLAnchorElement>(null);
@@ -137,8 +136,7 @@ export function HoverCard({
   function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
     if (next === openRef.current) return;
     openRef.current = next;
-    if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next, { reason });
+    changeOpen(next, { reason });
   }
   // Base UI waits for the hover delay on focus too; keyboard focus opens the card at once.
   function openOnKeyboardFocus(event: FocusEvent<HTMLElement>) {
@@ -149,7 +147,7 @@ export function HoverCard({
       open={open}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
-        else setOpen(next, details.reason as PopoverOpenChangeReason);
+        else setOpen(next, details.reason);
       }}
     >
       {/* A Tooltip as the trigger, or around the HoverCard, shows no tooltip (see Tooltip). */}

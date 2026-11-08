@@ -35,6 +35,7 @@ function loadHighContrast() {
     import('shiki/themes/github-dark-high-contrast.mjs'),
   ]).then(
     ([light, dark]) => ({
+      // Shiki's bundled themes are typed loosely; each is a theme registration.
       light: light.default as ThemeRegistration,
       dark: dark.default as ThemeRegistration,
     }),
@@ -72,6 +73,7 @@ function withColors(
   const replace = (color: string | undefined) =>
     color === undefined ? color : (replacements[color.toLowerCase()] ?? color);
   const foreground = theme.colors?.['editor.foreground'];
+  // The theme with its colors replaced, still a theme registration.
   return {
     ...theme,
     name,
@@ -93,15 +95,15 @@ const memo = <Built>(build: (scheme: ColorScheme, contrast: CodeContrast) => Pro
   const built = new Map<string, Promise<Built>>();
   return (scheme: ColorScheme, contrast: CodeContrast = 'standard') => {
     const key = `${scheme}-${contrast}`;
-    if (!built.has(key))
-      built.set(
-        key,
-        build(scheme, contrast).catch((error: unknown) => {
-          built.delete(key);
-          throw error;
-        }),
-      );
-    return built.get(key)!;
+    let theme = built.get(key);
+    if (!theme) {
+      theme = build(scheme, contrast).catch((error: unknown) => {
+        built.delete(key);
+        throw error;
+      });
+      built.set(key, theme);
+    }
+    return theme;
   };
 };
 

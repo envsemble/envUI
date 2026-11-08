@@ -54,7 +54,7 @@ html.env-theme > body {
 }
 /* A switch for the high-contrast looks of components, set by each boundary as the tokens' contrast
    is: empty under high contrast, and invalid otherwise, so a custom property that starts with it,
-   such as Alert's --env-alert-high-contrast-fill, holds its high-contrast value or nothing, and the
+   such as Alert's --env-alert-high-contrast-edge, holds its high-contrast value or nothing, and the
    standard look applies. Every boundary sets it again, standard in its first rule, so the nearest
    one decides. */
 .env-theme[data-env-contrast='high'] {

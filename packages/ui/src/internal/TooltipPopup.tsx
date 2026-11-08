@@ -69,6 +69,7 @@ export function TooltipPopup({
       anchor={anchor}
       sideOffset={sideOffset}
       positionerClassName={classNames('env-tooltip-positioner', positionerClassName)}
+      // popupProps are the popup's props, loosely typed; its className is a string.
       className={classNames('env-tooltip', className as string | undefined)}
       popupProps={{ role: 'tooltip', ...rest }}
     >

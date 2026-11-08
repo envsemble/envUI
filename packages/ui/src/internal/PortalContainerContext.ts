@@ -48,8 +48,10 @@ export function keepsOpen(
   if (details.reason?.startsWith('trigger-')) return false;
   const origin = originOf(details.event);
   if (!isNode(origin)) return details.reason !== 'imperative-action';
-  const own = [container, trigger, details.trigger].filter((element) => element instanceof Node);
-  return !own.some((element) => element!.contains(origin));
+  const own = [container, trigger, details.trigger].filter(
+    (element): element is Element => element instanceof Node,
+  );
+  return !own.some((element) => element.contains(origin));
 }
 
 /**

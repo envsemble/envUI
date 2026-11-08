@@ -104,8 +104,8 @@ export async function highlightCode(
     .map((line) =>
       line.map((token) => ({
         content: token.content,
-        light: token.variants.light!,
-        dark: token.variants.dark!,
+        light: token.variants.light,
+        dark: token.variants.dark,
         lightHigh: token.variants.lightHigh,
         darkHigh: token.variants.darkHigh,
       })),

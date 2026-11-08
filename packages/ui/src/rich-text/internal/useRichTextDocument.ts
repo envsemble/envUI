@@ -67,6 +67,7 @@ export function useRichTextDocument(
       editorProps: {
         attributes: documentAttributes,
         handleClick: (_view, _position, event) => {
+          // A click in the document has an element as its target.
           const anchor = (event.target as Element).closest<HTMLAnchorElement>('a[href]');
           if (anchor && !anchor.closest('[data-reference-id]')) {
             if (!latest.current.readOnly || latest.current.disabled) event.preventDefault();

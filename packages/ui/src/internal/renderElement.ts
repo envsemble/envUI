@@ -44,10 +44,12 @@ export function renderElement(tag: string, render: ReactElement | undefined, pro
     if (!handlerName.test(name) || typeof ours !== 'function' || typeof theirs !== 'function')
       continue;
     merged[name] = (...args: unknown[]) => {
+      // Both are functions, as checked above.
       (theirs as (...values: unknown[]) => unknown)(...args);
       (ours as (...values: unknown[]) => unknown)(...args);
     };
   }
+  // In React 19 an element's ref is one of its props.
   const ownRef = (render as { props: { ref?: Ref<unknown> } }).props.ref;
   const ref = props.ref as Ref<unknown> | undefined;
   return cloneElement(render as ReactElement<Props>, {

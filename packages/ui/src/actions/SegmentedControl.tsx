@@ -105,7 +105,7 @@ export function SegmentedControl({
         }}
         value={value}
         defaultValue={defaultValue}
-        onValueChange={(next) => onValueChange?.(next as string)}
+        onValueChange={(next) => onValueChange?.(next)}
         disabled={disabled}
         aria-label={label}
         className={classNames('env-segmented-control', className)}

@@ -31,6 +31,7 @@
       "dev.ts": "entries",
       "icons/index.ts": "entries",
       "navigation/LinkProvider.tsx": "foundations",
+      "layout/resizeDetails.ts": "internal",
       "foundations/ThemePreference.tsx": "composites",
       "foundations/ThemeToggle.tsx": "composites",
       "foundations/ThemeMenuRadioGroup.tsx": "composites",
@@ -86,6 +87,7 @@
       "feedback/internal/SpinnerLabel.tsx": "base",
       "feedback/internal/SpinnerArc.tsx": "base",
       "feedback/Tooltip.tsx": "base",
+      "feedback/internal/tooltipTriggerName.ts": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
       "feedback/toast/PictureNotice.tsx": "composites",
       "feedback/toast/ToastBody.tsx": "composites",
@@ -300,6 +302,9 @@
           "layout/internal/useScaffoldBarSizes.ts"
         ]
       },
+      "Panes": {
+        "modules": ["layout/internal/useSupportingSheet.ts"]
+      },
       "List": {
         "modules": ["content/internal/ReorderableList.tsx"]
       },
@@ -335,7 +340,7 @@
         "styles": ["Popover.css"]
       },
       "Tooltip": {
-        "modules": ["internal/TooltipPopup.tsx"],
+        "modules": ["internal/TooltipPopup.tsx", "feedback/internal/tooltipTriggerName.ts"],
         "slots": ["env-tooltip-disabled-target"]
       },
       "CommandPalette": {

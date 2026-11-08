@@ -10,6 +10,7 @@ import {
 } from 'react';
 import type { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { tooltipDelay } from '../../internal/TooltipPopup.js';
+import { flag } from '../../internal/flag.js';
 
 /** How far, in px, the pointer moves away from the days before a tooltip focus opened closes. */
 const focusTipSlack = 4;
@@ -74,6 +75,7 @@ export function useHeatmapTooltip(
     const document = grid.current?.ownerDocument;
     let origin: { x: number; y: number } | undefined;
     const move = (event: globalThis.PointerEvent) => {
+      // A pointer event on the document has a node as its target.
       if (event.pointerType !== 'mouse' || grid.current?.contains(event.target as Node)) return;
       origin ??= { x: event.clientX, y: event.clientY };
       if (Math.hypot(event.clientX - origin.x, event.clientY - origin.y) > focusTipSlack) hide();
@@ -140,7 +142,7 @@ export function useHeatmapTooltip(
       show(cell, !byMouse);
     },
     onBlur(event: FocusEvent<HTMLTableElement>) {
-      if (grid.current?.contains(event.relatedTarget as Node | null)) return;
+      if (grid.current?.contains(event.relatedTarget)) return;
       // A tooltip the pointer rests on stays, on the days or on the tooltip itself.
       if (!grid.current?.matches(':hover') && !popup.current?.matches(':hover')) hide();
     },
@@ -161,7 +163,7 @@ export function useHeatmapTooltip(
 
   const popupProps = {
     ref: popup,
-    'data-focus-opened': tip?.focused ? '' : undefined,
+    'data-focus-opened': flag(tip?.focused),
     onPointerLeave: (event: PointerEvent<HTMLDivElement>) => {
       // Back on the days, the day under the pointer takes the tooltip.
       if (!grid.current?.contains(event.relatedTarget as Node | null)) hide();

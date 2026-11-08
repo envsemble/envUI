@@ -27,6 +27,7 @@ import {
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Dialog.css';
 
@@ -165,6 +166,7 @@ export function DialogClose({ variant = 'secondary', ref, disabled, ...props }: 
   return (
     <BaseDialog.Close
       ref={ref}
+      // ButtonProps is a union of a button's and a link's; a close button takes the button's.
       render={<Button {...({ ...props, variant, disabled: disabled || pending } as ButtonProps)} />}
     />
   );
@@ -210,7 +212,7 @@ export function Dialog({
           eventDetails.cancel();
           return;
         }
-        onOpenChange?.(next, { reason: eventDetails.reason as DialogOpenChangeReason });
+        onOpenChange?.(next, { reason: eventDetails.reason });
       }}
       modal={containedModal(portal, modal)}
       disablePointerDismissal={disablePointerDismissal}
@@ -228,7 +230,7 @@ export function Dialog({
                 data-placement={placement}
                 data-width={width}
                 aria-busy={pending || skeleton || undefined}
-                data-env-skeleton={skeleton ? '' : undefined}
+                data-env-skeleton={flag(skeleton)}
                 initialFocus={portal.contained ? false : initialFocus}
                 finalFocus={portal.contained ? false : finalFocus}
               >

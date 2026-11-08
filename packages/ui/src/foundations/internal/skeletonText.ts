@@ -155,6 +155,7 @@ function draw(root: HTMLElement) {
   const range = document.createRange();
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    // The walker shows text nodes only.
     const text = node as Text;
     if (!text.data.trim()) continue;
     const parent = text.parentElement;

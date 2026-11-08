@@ -16,10 +16,10 @@
      and the skeleton's own surfaces take a faint tint that barely moves with them. A component whose generic look isn't
      right, such as a chart's, gives its own in its style sheet.
 
-     These rules win their ties with the components' rules: last in styles.css, they did by order. A
-     bundler may put this style sheet before a component's, which its module imports later, so each
-     rule takes one type selector more, :not(env-none), which every element matches. It wins those
-     ties whatever the order, and still loses to a rule that outweighs it by more, as before. */
+     These rules win their ties with the components' rules whatever the order: last in styles.css
+     they would by order, but a bundler may put this style sheet before a component's, which its
+     module imports later, so each rule takes one type selector more, :not(env-none), which every
+     element matches. A rule that outweighs it by more still wins. */
 
   /* Where the pulse is, from the strong tone (0) to the faint one (1). The root animates it, and
      everything inside inherits the paint it sets. Registered, so it interpolates; its keyframes are

@@ -6,7 +6,11 @@
 export type MotionDuration = 'fast' | 'medium' | 'slow';
 export type MotionEasing = 'ease' | 'ease-enter' | 'ease-exit';
 
-/** A CSS time, such as `0.24s` or `240ms`, in milliseconds; 0 for anything else. */
+/**
+ * A CSS time, such as `0.24s` or `240ms`, in milliseconds; 0 for anything else.
+ *
+ * @internal Exported for tests/library/MotionTokens.test.mjs.
+ */
 export function parseTime(value: string): number {
   const time = value.trim();
   const amount = Number.parseFloat(time);
@@ -56,12 +60,12 @@ export function easingFunction(easing: string): (progress: number) => number {
   const value = easing.trim();
   if (value === 'linear') return (progress) => clamp(progress);
   const match = /^cubic-bezier\(([^)]*)\)$/.exec(value);
-  const points = match?.[1]!.split(',').map(Number.parseFloat);
+  const points = match?.[1]?.split(',').map(Number.parseFloat);
   const [x1, y1, x2, y2] =
     points?.length === 4 && points.every(Number.isFinite)
       ? points
-      : (keywords[value] ?? keywords.ease!);
-  return (progress) => bezier(clamp(progress), x1!, y1!, x2!, y2!);
+      : (keywords[value] ?? keywords.ease);
+  return (progress) => bezier(clamp(progress), x1, y1, x2, y2);
 }
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));

@@ -42,9 +42,11 @@ function sameMessages(a: EnvUIMessagesInput | undefined, b: EnvUIMessagesInput |
     const keys = Object.keys(x);
     return (
       keys.length === Object.keys(y).length &&
+      // Object.keys gives strings; these are the keys of x.
       keys.every((key) => Object.is(x[key as keyof typeof x], y[key as keyof typeof y]))
     );
   };
+  // Object.keys gives strings; these are the namespaces of a.
   const namespaces = Object.keys(a) as (keyof EnvUIMessagesInput)[];
   return (
     namespaces.length === Object.keys(b).length &&

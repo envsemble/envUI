@@ -1,19 +1,14 @@
 'use client';
 
 import { Popover as BasePopover } from '@base-ui/react/popover';
-import {
-  useRef,
-  useState,
-  type ComponentPropsWithRef,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import { useRef, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { Grid } from '../foundations/Layout.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
+import { useOpenState } from '../internal/useOpenState.js';
 import '../styles/Base.css';
 import '../styles/Popover.css';
 
@@ -111,12 +106,8 @@ export function Popover({
   className,
   ...popupProps
 }: PopoverProps) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
-  const open = controlledOpen ?? uncontrolledOpen;
-  function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
-    if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next, { reason });
-  }
+  const [open, changeOpen] = useOpenState({ open: controlledOpen, defaultOpen, onOpenChange });
+  const setOpen = (next: boolean, reason: PopoverOpenChangeReason) => changeOpen(next, { reason });
   const close = () => setOpen(false, 'close-press');
   // The popup takes the text direction at its trigger.
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -126,7 +117,7 @@ export function Popover({
       open={open}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
-        else setOpen(next, details.reason as PopoverOpenChangeReason);
+        else setOpen(next, details.reason);
       }}
     >
       <BasePopover.Trigger ref={triggerRef} render={trigger} />

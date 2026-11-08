@@ -22,11 +22,13 @@ import { useToastGlide } from './useToastGlide.js';
 import '../../styles/Base.css';
 import '../../styles/Toast.css';
 
+type ToastObject = BaseToast.Root.ToastObject<ToastEntry>;
+
 /**
  * The notices that wait behind the count of hidden ones: the oldest beyond the visible limit. Danger
  * notices are never among them; they take their places first.
  */
-function limitedIds(toasts: readonly BaseToast.Root.ToastObject<ToastEntry>[], limit: number) {
+function limitedIds(toasts: readonly ToastObject[], limit: number) {
   const active = toasts.filter((toast) => toast.transitionStatus !== 'ending');
   const dangers = active.filter((toast) => toast.data?.tone === 'danger').length;
   let room = Math.max(limit - dangers, 0);
@@ -38,6 +40,44 @@ function limitedIds(toasts: readonly BaseToast.Root.ToastObject<ToastEntry>[], l
     else limited.add(toast.id);
   }
   return limited;
+}
+
+/**
+ * Which notices wait, hidden and paused, and which showed: the controller hears which show, so only
+ * their time runs.
+ */
+function useWaitingToasts(
+  toasts: readonly ToastObject[],
+  container: HTMLElement | null | undefined,
+  visibleLimit: number,
+  controller: ToastController,
+  placement: ToastPlacement,
+) {
+  // While a modal surface is open in the same container, every notice waits, hidden and paused as
+  // the ones past the limit are, and shows for its full duration once the last one has closed: over
+  // the modal it would cover its actions, and the page around a modal can't be reached.
+  const held = useModalOpen(container);
+  const limited = held
+    ? new Set(toasts.map((toast) => toast.id))
+    : limitedIds(toasts, visibleLimit);
+  useLayoutEffect(() => {
+    const visibleIds = new Set(
+      toasts
+        .filter((toast) => !limited.has(toast.id) && toast.transitionStatus !== 'ending')
+        .map((toast) => toast.id),
+    );
+    controller.setVisibleNotifications(placement, visibleIds);
+    // The limited set follows from the toasts and the limit, which the dependencies cover.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [controller, placement, toasts, visibleLimit, held]);
+  // The notices that showed while no modal was open: the status reads them as they arrive, and one
+  // that arrives while a modal is open is read once it shows.
+  const [shown, setShown] = useState<ReadonlySet<string>>(() => new Set());
+  useLayoutEffect(() => {
+    if (held || toasts.every((toast) => shown.has(toast.id))) return;
+    setShown(new Set(toasts.map((toast) => toast.id)));
+  }, [held, shown, toasts]);
+  return { held, limited, shown };
 }
 
 export function ToastRegion({
@@ -54,18 +94,6 @@ export function ToastRegion({
   const { container, contained } = usePortalContainer();
   const messages = useMessages('toast', toastMessages);
   const number = useFormatters().number();
-  // While a modal surface is open in the same container, every notice waits, hidden and paused as
-  // the ones past the limit are, and shows for its full duration once the last one has closed: over
-  // the modal it would cover its actions, and the page around a modal can't be reached.
-  const held = useModalOpen(container);
-  const limited = held
-    ? new Set(toastStore.toasts.map((toast) => toast.id))
-    : limitedIds(toastStore.toasts, visibleLimit);
-  const hiddenCount = held ? 0 : limited.size;
-  const hiddenLabel =
-    hiddenCount > 0
-      ? messages.hidden({ count: hiddenCount, countText: number.format(hiddenCount) })
-      : undefined;
   // The notices of a picture that have left; Base UI's own notices leave by themselves.
   const [gone, setGone] = useState<ReadonlySet<string>>(() => new Set());
   const leave = useCallback((id: string) => setGone((current) => new Set(current).add(id)), []);
@@ -77,23 +105,19 @@ export function ToastRegion({
       }),
     [controller, placement, toastStore.add, toastStore.close],
   );
-  useLayoutEffect(() => {
-    const visibleIds = new Set(
-      toastStore.toasts
-        .filter((toast) => !limited.has(toast.id) && toast.transitionStatus !== 'ending')
-        .map((toast) => toast.id),
-    );
-    controller.setVisibleNotifications(placement, visibleIds);
-    // The limited set follows from the toasts and the limit, which the dependencies cover.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [controller, placement, toastStore.toasts, visibleLimit, held]);
-  // The notices that showed while no modal was open: the status reads them as they arrive, and one
-  // that arrives while a modal is open is read once it shows.
-  const [shown, setShown] = useState<ReadonlySet<string>>(() => new Set());
-  useLayoutEffect(() => {
-    if (held || toastStore.toasts.every((toast) => shown.has(toast.id))) return;
-    setShown(new Set(toastStore.toasts.map((toast) => toast.id)));
-  }, [held, shown, toastStore.toasts]);
+  // Its effects run after the registration, which delivers the notices that waited for the store.
+  const { held, limited, shown } = useWaitingToasts(
+    toastStore.toasts,
+    container,
+    visibleLimit,
+    controller,
+    placement,
+  );
+  const hiddenCount = held ? 0 : limited.size;
+  const hiddenLabel =
+    hiddenCount > 0
+      ? messages.hidden({ count: hiddenCount, countText: number.format(hiddenCount) })
+      : undefined;
   const [viewport, attachViewport] = useToastGlide(toastStore.toasts, placement, hiddenCount, held);
   // A swipe toward the end of the line dismisses, so it is to the left in right-to-left text.
   const [direction] = useDirection(viewport, toastStore.toasts.length);
@@ -128,47 +152,17 @@ export function ToastRegion({
             )}
             {toastStore.toasts
               .filter((toast) => !gone.has(toast.id))
-              .map((toast) => {
-                const entry = toast.data!;
-                return (
-                  <PictureNotice
-                    key={toast.id}
-                    id={toast.id}
-                    tone={entry.tone}
-                    limited={limited.has(toast.id)}
-                    ending={toast.transitionStatus === 'ending'}
-                    controller={controller}
-                    onGone={leave}
-                  >
-                    <ToastBody
-                      tone={entry.tone}
-                      message={<div className="env-toast-message">{entry.message}</div>}
-                      action={
-                        entry.action && (
-                          <Button
-                            variant="outline"
-                            className="env-toast-action"
-                            onClick={entry.action.onClick}
-                          >
-                            {entry.action.label}
-                          </Button>
-                        )
-                      }
-                      dismiss={
-                        entry.dismissible !== false && (
-                          <IconButton
-                            variant="ghost"
-                            icon={<IconClose />}
-                            className="env-toast-dismiss"
-                            aria-label={messages.dismiss}
-                            onClick={() => toastStore.close(toast.id)}
-                          />
-                        )
-                      }
-                    />
-                  </PictureNotice>
-                );
-              })}
+              .map((toast) => (
+                <PictureToast
+                  key={toast.id}
+                  toast={toast}
+                  limited={limited.has(toast.id)}
+                  controller={controller}
+                  dismissLabel={messages.dismiss}
+                  onClose={toastStore.close}
+                  onGone={leave}
+                />
+              ))}
           </div>
         </Theme>
       </BaseToast.Portal>
@@ -208,72 +202,16 @@ export function ToastRegion({
               aria-label={hiddenLabel}
             />
           )}
-          {toastStore.toasts.map((toast) => {
-            const entry = toast.data!;
-            const isLimited = limited.has(toast.id);
-            const danger = entry.tone === 'danger';
-            return (
-              <BaseToast.Root
-                key={toast.id}
-                toast={toast}
-                data-toast-id={toast.id}
-                className="env-toast"
-                data-tone={entry.tone}
-                swipeDirection={swipeDirection}
-                data-limited={flag(isLimited)}
-                inert={isLimited || undefined}
-                // A danger notice interrupts: it is an alert as it appears, outside any polite region, and
-                // stays readable.
-                {...(danger && { role: 'alert', 'aria-modal': undefined })}
-                onMouseEnter={() => controller.pause(toast.id, 'hover')}
-                onMouseLeave={() => controller.resume(toast.id, 'hover')}
-                onFocusCapture={(event) => {
-                  if (event.target instanceof Element && event.target.matches(':focus-visible'))
-                    controller.pause(toast.id, 'focus');
-                  else controller.resume(toast.id, 'focus');
-                }}
-                onBlurCapture={(event) => {
-                  if (!event.currentTarget.contains(event.relatedTarget))
-                    controller.resume(toast.id, 'focus');
-                }}
-              >
-                <ToastBody
-                  tone={entry.tone}
-                  message={<BaseToast.Title className="env-toast-message" title={entry.message} />}
-                  action={
-                    entry.action && (
-                      <BaseToast.Action
-                        render={
-                          <Button
-                            variant="outline"
-                            className="env-toast-action"
-                            onClick={entry.action.onClick}
-                          />
-                        }
-                      >
-                        {entry.action.label}
-                      </BaseToast.Action>
-                    )
-                  }
-                  dismiss={
-                    entry.dismissible !== false && (
-                      <BaseToast.Close
-                        aria-hidden={false}
-                        render={
-                          <IconButton
-                            variant="ghost"
-                            icon={<IconClose />}
-                            className="env-toast-dismiss"
-                            aria-label={messages.dismiss}
-                          />
-                        }
-                      />
-                    )
-                  }
-                />
-              </BaseToast.Root>
-            );
-          })}
+          {toastStore.toasts.map((toast) => (
+            <LiveToast
+              key={toast.id}
+              toast={toast}
+              limited={limited.has(toast.id)}
+              swipeDirection={swipeDirection}
+              controller={controller}
+              dismissLabel={messages.dismiss}
+            />
+          ))}
         </BaseToast.Viewport>
         {/* The ordinary notices, read politely as they arrive; a danger notice is an alert. */}
         <div className="env-toast-announcer" role="status" aria-live="polite" aria-atomic="false">
@@ -284,11 +222,150 @@ export function ToastRegion({
                 toast.transitionStatus !== 'ending' &&
                 (!held || shown.has(toast.id)),
             )
+            // Every notice carries its entry as the data (useToastController).
             .map((toast) => (
               <div key={toast.id}>{toast.data!.message}</div>
             ))}
         </div>
       </Theme>
     </BaseToast.Portal>
+  );
+}
+
+/**
+ * A notice of a contained region's picture: its look, action, dismiss button and duration, without
+ * Base UI's parts.
+ */
+function PictureToast({
+  toast,
+  limited,
+  controller,
+  dismissLabel,
+  onClose,
+  onGone,
+}: {
+  toast: ToastObject;
+  limited: boolean;
+  controller: ToastController;
+  dismissLabel: string;
+  onClose: (id: string) => void;
+  onGone: (id: string) => void;
+}) {
+  // Every notice carries its entry as the data (useToastController).
+  const entry = toast.data!;
+  return (
+    <PictureNotice
+      id={toast.id}
+      tone={entry.tone}
+      limited={limited}
+      ending={toast.transitionStatus === 'ending'}
+      controller={controller}
+      onGone={onGone}
+    >
+      <ToastBody
+        tone={entry.tone}
+        message={<div className="env-toast-message">{entry.message}</div>}
+        action={
+          entry.action && (
+            <Button variant="outline" className="env-toast-action" onClick={entry.action.onClick}>
+              {entry.action.label}
+            </Button>
+          )
+        }
+        dismiss={
+          entry.dismissible !== false && (
+            <IconButton
+              variant="ghost"
+              icon={<IconClose />}
+              className="env-toast-dismiss"
+              aria-label={dismissLabel}
+              onClick={() => onClose(toast.id)}
+            />
+          )
+        }
+      />
+    </PictureNotice>
+  );
+}
+
+/**
+ * A notice in Base UI's viewport, whose time stops while the pointer rests on it or keyboard focus
+ * is in it; one past the visible limit waits, hidden and inert.
+ */
+function LiveToast({
+  toast,
+  limited,
+  swipeDirection,
+  controller,
+  dismissLabel,
+}: {
+  toast: ToastObject;
+  limited: boolean;
+  swipeDirection: ('down' | 'left' | 'right')[];
+  controller: ToastController;
+  dismissLabel: string;
+}) {
+  // Every notice carries its entry as the data (useToastController).
+  const entry = toast.data!;
+  const danger = entry.tone === 'danger';
+  return (
+    <BaseToast.Root
+      toast={toast}
+      data-toast-id={toast.id}
+      className="env-toast"
+      data-tone={entry.tone}
+      swipeDirection={swipeDirection}
+      data-limited={flag(limited)}
+      inert={limited || undefined}
+      // A danger notice interrupts: it is an alert as it appears, outside any polite region, and
+      // stays readable.
+      {...(danger && { role: 'alert', 'aria-modal': undefined })}
+      onMouseEnter={() => controller.pause(toast.id, 'hover')}
+      onMouseLeave={() => controller.resume(toast.id, 'hover')}
+      onFocusCapture={(event) => {
+        if (event.target instanceof Element && event.target.matches(':focus-visible'))
+          controller.pause(toast.id, 'focus');
+        else controller.resume(toast.id, 'focus');
+      }}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget))
+          controller.resume(toast.id, 'focus');
+      }}
+    >
+      <ToastBody
+        tone={entry.tone}
+        message={<BaseToast.Title className="env-toast-message" title={entry.message} />}
+        action={
+          entry.action && (
+            <BaseToast.Action
+              render={
+                <Button
+                  variant="outline"
+                  className="env-toast-action"
+                  onClick={entry.action.onClick}
+                />
+              }
+            >
+              {entry.action.label}
+            </BaseToast.Action>
+          )
+        }
+        dismiss={
+          entry.dismissible !== false && (
+            <BaseToast.Close
+              aria-hidden={false}
+              render={
+                <IconButton
+                  variant="ghost"
+                  icon={<IconClose />}
+                  className="env-toast-dismiss"
+                  aria-label={dismissLabel}
+                />
+              }
+            />
+          )
+        }
+      />
+    </BaseToast.Root>
   );
 }

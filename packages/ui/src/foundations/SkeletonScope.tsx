@@ -23,6 +23,7 @@ export function useSkeleton(): boolean {
 export function alignPulses() {
   if (typeof document === 'undefined' || typeof document.getAnimations !== 'function') return;
   for (const animation of document.getAnimations()) {
+    // A CSS animation's effect is a keyframe effect.
     const target = (animation.effect as KeyframeEffect | null)?.target;
     // Only a pulse, on the document's timeline: a scroll-driven animation on the same root, such as
     // a table region's edge fade, takes no start time.

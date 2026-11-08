@@ -71,6 +71,7 @@ function relativeFormatter(
   numeric: 'always' | 'auto',
 ) {
   const key = `relative|${String(locale ?? '')}|${style}|${numeric}`;
+  // The key's prefix says which formatter it holds, and the locale is the one Intl takes.
   let formatter = formatters.get(key) as Intl.RelativeTimeFormat | undefined;
   if (!formatter) {
     formatter = new Intl.RelativeTimeFormat(locale as Intl.LocalesArgument, { style, numeric });
@@ -81,6 +82,7 @@ function relativeFormatter(
 
 export function dateTimeFormatter(locale: RelativeTimeOptions['locale']) {
   const key = `absolute|${String(locale ?? '')}`;
+  // The key's prefix says which formatter it holds, and the locale is the one Intl takes.
   let formatter = formatters.get(key) as Intl.DateTimeFormat | undefined;
   if (!formatter) {
     formatter = new Intl.DateTimeFormat(locale as Intl.LocalesArgument, {

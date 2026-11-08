@@ -115,9 +115,9 @@ test('a shared file runs the shared set, and a file no fixture uses runs no spec
     'Scale',
     'ThemeContrast',
   ]);
-  const { specs: none, unmatched } = specsFor(['packages/ui/src/internal/resizeDetails.ts']);
+  const { specs: none, unmatched } = specsFor(['packages/ui/src/foundations/headingLevel.ts']);
   assert.equal(none.size, 0);
-  assert.deepEqual(unmatched, ['packages/ui/src/internal/resizeDetails.ts']);
+  assert.deepEqual(unmatched, ['packages/ui/src/foundations/headingLevel.ts']);
 });
 
 test("the catalogue's playback runs the motion specs", () => {

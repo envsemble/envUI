@@ -25,6 +25,7 @@ import { setRef } from '../internal/setRef.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { avatarGroup as avatarGroupMessages } from '../foundations/messages/avatarGroup.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/AvatarGroup.css';
 
@@ -138,6 +139,7 @@ function useTapSpread(group: RefObject<HTMLDivElement | null>) {
     const bunch = () => setTapped(false);
     const timer = setTimeout(bunch, tapSpreadDuration);
     const outside = (event: PointerEvent) => {
+      // A pointer event on the document has a node as its target.
       if (!group.current?.contains(event.target as Node)) bunch();
     };
     document.addEventListener('pointerdown', outside, true);
@@ -235,8 +237,8 @@ export function AvatarGroup({
       style={style}
       data-size={size}
       data-align={align}
-      data-interactive={interactive ? '' : undefined}
-      data-spread={tapped ? '' : undefined}
+      data-interactive={flag(interactive)}
+      data-spread={flag(tapped)}
       // At rest the pile is one target, the group itself under the style sheet's cover: a tap on it
       // spreads the group, and only then do taps reach the avatars.
       onClick={(event) => {

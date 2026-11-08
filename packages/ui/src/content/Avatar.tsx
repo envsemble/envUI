@@ -5,6 +5,7 @@ import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { IconCheck } from '../icons/Check.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Avatar.css';
 
@@ -135,7 +136,7 @@ export function Avatar({
       className={classNames('env-avatar', className)}
       data-size={size}
       data-hue={hue ?? avatarHue(name)}
-      data-selected={selected ? '' : undefined}
+      data-selected={flag(selected)}
       role={named ? 'img' : undefined}
       aria-label={named ? name : undefined}
       aria-hidden={named ? undefined : true}

@@ -59,7 +59,7 @@ export function PictureNotice({
       data-tone={tone}
       data-limited={flag(limited)}
       data-starting-style=""
-      data-ending-style={ending ? '' : undefined}
+      data-ending-style={flag(ending)}
       role={tone === 'danger' ? 'alert' : 'status'}
       onMouseEnter={() => controller.pause(id, 'hover')}
       onMouseLeave={() => controller.resume(id, 'hover')}

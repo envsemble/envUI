@@ -31,10 +31,10 @@ import {
   destinationSections,
   useNavigationMessages,
   type DestinationClasses,
-  type NavigationDrawerDestination,
-} from './internal/Destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
-import type { ResizeDetails } from '../internal/resizeDetails.js';
+} from './internal/DestinationItem.js';
+import type { NavigationDrawerDestination } from './destinations.js';
+import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import type { ResizeDetails } from '../layout/resizeDetails.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';

@@ -21,6 +21,7 @@ interface Lazy {
 }
 
 const isLazy = (type: unknown): type is Lazy =>
+  // Any object, read for the field that marks a lazy component.
   typeof type === 'object' && type !== null && (type as Lazy).$$typeof === lazyType;
 
 /**
@@ -43,6 +44,7 @@ function resolve(type: unknown): unknown {
 
 const marked = (type: unknown, key: symbol) =>
   (typeof type === 'function' || (typeof type === 'object' && type !== null)) &&
+  // Any component, read for the mark.
   (type as Record<symbol, unknown>)[key] === true;
 
 /**

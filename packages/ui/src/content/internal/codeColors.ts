@@ -12,7 +12,7 @@ export type CodeContrast = 'standard' | 'high';
 export const codeContrastTargets: Record<CodeContrast, number> = { standard: 4.55, high: 7.05 };
 
 /** A fill: a color at an opacity, laid over whatever surface the code sits on. */
-export interface CodeLayer {
+interface CodeLayer {
   color: string;
   alpha: number;
 }
