@@ -3,39 +3,54 @@
   <img src="assets/brand/envUI/envUI-lockup-black.svg" alt="envUI" width="240">
 </picture>
 
-**The shared interface library for envsemble.**
+**A React design system for clear, accessible interfaces.**
 
 [![CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
-![React 19](https://img.shields.io/badge/React-19-149eca)
-![Node.js 22.13+ or 24+](https://img.shields.io/badge/Node.js-22.13%2B%20%7C%2024%2B-417e38)
-![Private package](https://img.shields.io/badge/GitHub_Packages-private-6e40c9)
 
-envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and documentation that people and coding agents read alike.
+envUI gives B2B SaaS products and AI developer tools one consistent interface: themes, components and patterns, from a button or a form to an app frame, a data table or a conversation with an agent. Its documentation is written for the people and the coding agents who build with it, and ships in the package.
 
-[Set up](docs/setup.md) · [Move an app to envUI](docs/migration.md) · [Changelog](packages/ui/CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
+[Website](https://envui.envsemble.com) · [Docs](https://envui.envsemble.com/docs) · [Changelog](packages/ui/CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/catalogue-dark.png">
-  <img src="assets/readme/catalogue-light.png" alt="The Button page of the envUI catalogue, with its navigation, its examples and the page's contents" width="1440">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/overview-dark.png">
+  <img src="assets/readme/overview-light.png" alt="The overview of the envUI website: its banner, with Get started beside the install command, over a fan of cards built with envUI: a pull request, a conversation with an assistant, a heatmap of deploys and a calendar" width="1440">
 </picture>
+
+## Get started
+
+envUI is published privately to GitHub Packages, so installing it needs access to that registry. [Install and set up](https://envui.envsemble.com/docs) walks through it, with styles, theme and router. A coding agent can do the setup with you from one prompt:
+
+```text
+Set up envUI in my app: envui.envsemble.com/SKILL.md
+```
+
+For an app that already has an interface of its own, read [Move an app to envUI](https://envui.envsemble.com/docs/migration) first.
 
 ## What’s inside
 
-- **Foundations:** scoped light, dark and high-contrast themes, design tokens, Geist, typography, spacing and density, surfaces and layout primitives.
-- **Everyday interactions:** actions, navigation, native form controls, selection, color picking, dialogs and toasts, with Base UI underpinning complex interactions.
-- **Patterns:** forms and validation, settings, app frames, conversations and more, each composed from the components.
-- **Content tools:** Markdown, code highlighting and Tiptap rich text on separate entry points.
-- **Local assets:** Geist and the official Material Symbols Rounded icons, with no font or icon CDN required.
-- **Dev mode:** a page's layout described and checked as text for agents, and taken apart in 3D for people, from its own entry point, `@envsemble/envui/dev`.
-- **A website in two parts:** the catalogue shows each component, pattern and foundation to people, and the Docs at `/docs` are the developer reference: setup, guides, props, part names and the changelog. Each page links to its counterpart in the other part.
+- **Foundations:** light, dark and high-contrast themes, design tokens, typography, spacing and density.
+- **Components:** actions, navigation, native form controls, selection, data display, dialogs and notifications, with Base UI under the complex interactions.
+- **Patterns:** components put together for what people do, such as forms, settings, data tables, app frames and conversations.
+- **Content:** Markdown, code highlighting, diffs and Tiptap rich text, on entry points of their own.
+- **Local assets:** the Geist fonts and Material Symbols Rounded icons ship in the package, with no CDN.
+- **Dev mode:** a page's layout described as text for agents and taken apart in 3D for people, from `@envsemble/envui/dev`.
+- **Lint rules:** an [ESLint plugin and a Stylelint config](https://envui.envsemble.com/docs?section=lint-rules) that name the envUI component or token to use instead of hand-built controls and raw colors.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/docs-dark.png">
-  <img src="assets/readme/docs-light.png" alt="The Button page of the envUI Docs, with its navigation, its code and the page's contents" width="1440">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/gallery-dark.png">
+  <img src="assets/readme/gallery-light.png" alt="The components gallery of the envUI website: a live tile for each component, grouped by what it is for, starting with the actions: Button, Link, Toolbar, Menu, Menubar and CommandPalette" width="1920">
 </picture>
+
+## Documentation
+
+The [website](https://envui.envsemble.com) has two parts. The catalogue shows every foundation, component and pattern, live. The [Docs](https://envui.envsemble.com/docs) are the developer reference: setup, guides, props, part names and the changelog. The same pages ship in the package under `docs/`, so an agent reads the ones for the version it has installed.
+
+## Contributing
+
+To work on envUI itself, start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Versions and license
 
-Published versions are immutable; breaking changes come in a new major version. Prereleases are published under their own name as the dist-tag, such as `prerelease` for `1.0.0-prerelease.4` (`npm install @envsemble/envui@prerelease`), and stable releases under `latest`.
+A published version never changes, and breaking changes come only in a new major version. Prereleases are published under the `prerelease` dist-tag, and stable releases under `latest`.
 
-envUI is proprietary and distributed privately. Bundled third-party assets and dependencies retain their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).
+envUI is proprietary and distributed privately. Bundled third-party assets and dependencies keep their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).
