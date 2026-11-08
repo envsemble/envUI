@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useLayoutEffect, type ReactNode, type RefObject } from 'react';
+import '../../styles/Base.css';
+import '../../styles/Slider.css';
 
 /**
  * Marks where the slider's indicators pass under the label or the value, within half a line of

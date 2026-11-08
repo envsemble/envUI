@@ -494,14 +494,12 @@
   }
   @media (prefers-reduced-motion: no-preference) {
     .env-panel-dock-panel[data-entering][data-placement='row'] {
-      --env-panel-dock-rise: 1.5rem;
       animation: env-panel-dock-rise var(--env-motion-duration-slow) var(--env-motion-ease-enter);
     }
     .env-panel-dock-panel[data-entering][data-placement='fill'] {
       animation: env-panel-dock-grow var(--env-motion-duration-slow) var(--env-motion-ease-enter);
     }
     .env-panel-dock-tab[data-entering] {
-      --env-panel-dock-rise: 0.75rem;
       animation: env-panel-dock-tab-rise var(--env-motion-duration-medium)
         var(--env-motion-ease-enter);
     }
@@ -511,10 +509,11 @@
       opacity: 0;
     }
   }
+  /* A panel rises 1.5 rem into place and a tab 0.75 rem: six and three of the smallest space. */
   @keyframes env-panel-dock-rise {
     from {
       opacity: 0;
-      transform: translateY(var(--env-panel-dock-rise));
+      transform: translateY(calc(6 * var(--env-space-1)));
     }
   }
   @keyframes env-panel-dock-grow {
@@ -526,7 +525,7 @@
   @keyframes env-panel-dock-tab-rise {
     from {
       opacity: 0;
-      transform: translateY(var(--env-panel-dock-rise));
+      transform: translateY(calc(3 * var(--env-space-1)));
     }
   }
 

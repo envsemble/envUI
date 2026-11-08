@@ -1,6 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useState, type RefObject } from 'react';
+import '../../styles/Base.css';
+import '../../styles/Menubar.css';
 
 /** The letters a key event may stand for: the character typed and the letter key's own name. */
 function pressedLetters(event: KeyboardEvent) {
