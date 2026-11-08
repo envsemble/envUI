@@ -22,7 +22,7 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 
 ### Write tests that stay fast
 
-- Prefer a unit test (`node --test`) to a browser spec, and a computed-style or DOM assertion to a screenshot. A unit test goes in the folder of what it tests: `tests/library/`, `tests/site/`, `tests/docs/` (the documentation and its generators) or `tests/tooling/` (the checks and the release).
+- Prefer a unit test (`node --test`) to a browser spec, and a computed-style or DOM assertion to a screenshot. A unit test goes in the folder of what it tests: `tests/library/`, `tests/site/`, `tests/docs/` (the documentation and its generators), `tests/tooling/` (the checks and the release) or `tests/lint/` (cases both lint packages' tests read; each package's own tests are in its `test/`).
 - Give a browser spec its own fixture (`?fixture=<name>` in `tests/fixture`) and name it after the component it covers. Test a behaviour once, in its component's spec; leave colour to the contrast gate and appearance to the visual baseline.
 - Tag a test `@engines` when it depends on the engine (scrolling, focus, pointer and input methods, native forms, platform keys); Firefox and WebKit run only those.
 - No fixed sleeps: wait for a condition, such as `expect.poll` or the element's animations finishing. Where a test proves nothing happens for a while, wait just past the delay and say so.
@@ -75,6 +75,18 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 - A state that is on or off is present as `''` or absent, set through `flag()` (`src/internal/flag.ts`); `data-env-ssr-*` attributes are private. Each attribute keeps one meaning: `data-active` what shows, `data-current` the page's destination, `data-selected` what is chosen, `data-highlighted` the list's cursor, and for a drag `data-dragging`, `data-moving`, `data-resizing` or `data-drag-over`.
 - Color properties are `--env-<component>-<role>`, or the item's for a collection's rows, with the roles `container`, `content`, `outline`, `icon`, `selected`, `selected-content` and `indicator`. Each is registered at the top of its style sheet as `@property … { syntax: '*'; inherits: false; }` and only read, with the designed token as its fallback, so the default colors never change (`tests/browser/DefaultColors.spec.ts`) and states follow what an application sets as layers of the content over the container.
 - Renaming or removing any of these is a `major` change, and `npm run docs:check` fails without a major changeset that names it; a new color property is `minor`.
+
+### Dev mode
+
+- `@envsemble/envui/dev`, entry point `src/dev.ts`, gives agents `envui.layout`, a readout of the page's layout and its problems, and people a 3D view with an inspector; [docs/dev-mode.md](docs/dev-mode.md) documents it. No other entry point imports it (`tests/library/DevMode.test.mjs`), so a production build holds none of it.
+- Its code is in `src/dev/`: measuring the page (`measure.ts`), the data (`model.ts`) and the readout and its checks as plain functions of that data (`readout.ts`), the API (`api.ts`). The view is in `src/dev/ui/`, with its own style sheet, `DevMode.css`, which `install.tsx` imports as text and adds to the page, outside `src/styles`.
+- A readout check gets a unit test on data in `tests/library/DevMode.test.mjs`; the view and `envui.layout` on a page in `tests/browser/DevMode.spec.ts`. The layout check runs the readout on every figure of the site.
+
+## The lint packages
+
+- `packages/eslint-plugin` and `packages/stylelint-config` hold applications to envUI's components and tokens; their READMEs document the rules and how to run their tests.
+- A new ESLint rule is a file of `packages/eslint-plugin/src/rules/` named after it, registered in `src/index.js` and its recommended config, with its test in `test/<rule>.test.mjs` through `test/RuleTester.mjs`, and its section in the README. A Stylelint rule is configured in `packages/stylelint-config/index.js` and tested in `test/config.test.mjs`.
+- Each package ships its own `tokens.js` and `data/tokens.json`, copies that `npm run tokens:build` writes (`scripts/build/SyncLintPackages.ts`): `tokens.js` from `scripts/build/LintPackageTokens.js`, the data from the library's `src/generated/tokens.json`. Edit the sources, never the copies; `npm run tokens:check` fails on a stale one.
 
 ## Record the change
 
