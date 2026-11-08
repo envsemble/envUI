@@ -1,0 +1,24 @@
+import { Documentation } from '../pages/Documentation';
+import { optionPieces } from '@docs-model/CatalogueContent';
+import { OptionLegend } from './OptionLegend';
+import { useSectionOutline } from './SectionOutline';
+
+/** Markdown with its option tables shown as legends, and the rest as it is written. */
+export function SiteMarkdown({ markdown, path }: { markdown: string; path: string }) {
+  const pieces = optionPieces(markdown);
+  // A section waiting its turn to show renders its headings alone (SectionOutline).
+  const outline = useSectionOutline();
+  if (pieces.length === 1 && 'markdown' in pieces[0])
+    return <Documentation markdown={markdown} path={path} />;
+  return (
+    <>
+      {pieces.map((piece, index) =>
+        'options' in piece
+          ? !outline && <OptionLegend key={index} table={piece.options} path={path} />
+          : piece.markdown.trim() && (
+              <Documentation key={index} markdown={piece.markdown} path={path} />
+            ),
+      )}
+    </>
+  );
+}
