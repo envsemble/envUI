@@ -531,6 +531,77 @@ test('the page of all foundations is one sheet, each pane a single link to its f
   await expect(page).toHaveURL(`${siteDevUrl}/foundations/icons`);
 });
 
+test('a gallery card and a Related card are each one link over the whole card, its live picture included', async ({
+  page,
+  context,
+}) => {
+  // Where on a card a press lands, as fractions of its box: the middle of its live picture, a
+  // corner of it, and the name's row that slides in under it.
+  const points = [
+    [0.5, 0.4],
+    [0.06, 0.06],
+    [0.5, 0.97],
+  ];
+  for (const [from, tiles, link] of [
+    ['components', '.catalogue-gallery-tile', '.catalogue-gallery-link'],
+    ['patterns', '.catalogue-gallery-tile', '.catalogue-gallery-link'],
+    ['components/button', '.catalogue-related-tile', '.catalogue-related-link'],
+  ] as const) {
+    for (const [index, [x, y]] of points.entries()) {
+      await page.goto(`${siteDevUrl}/${from}`);
+      const card = page.locator(tiles).nth(index + 1);
+      await showTile(card);
+      // One link, named by the card's name, and nothing else in the card to use.
+      await expect(card.getByRole('link')).toHaveCount(1);
+      const href = (await card.locator(link).getAttribute('href'))!;
+      const box = (await card.boundingBox())!;
+      await page.mouse.move(box.x + box.width * x, box.y + box.height * y);
+      await expect(card.locator(link)).toHaveCSS('cursor', 'pointer');
+      await page.mouse.down();
+      await page.mouse.up();
+      await expect(page).toHaveURL(`${siteDevUrl}${href}`);
+    }
+  }
+  // A Related card's link is named by its name and described by when to pick it.
+  await page.goto(`${siteDevUrl}/components/button`);
+  const related = page.locator('.catalogue-related-tile').first();
+  await showTile(related);
+  const relatedLink = related.locator('.catalogue-related-link');
+  await expect(relatedLink).toHaveAccessibleName('Link');
+  await expect(relatedLink).toHaveAccessibleDescription('A destination inside running text.');
+  // From the keyboard the ring is around the whole card, and Enter opens it.
+  await page.goto(`${siteDevUrl}/components`);
+  const card = page.locator('.catalogue-gallery-tile').nth(1);
+  await showTile(card);
+  const cardLink = card.locator('.catalogue-gallery-link');
+  await cardLink.focus();
+  expect(await cardLink.evaluate((element) => element.matches(':focus-visible'))).toBe(true);
+  const ring = await cardLink.evaluate((element) => {
+    const cover = getComputedStyle(element, '::after');
+    const box = element.closest('li')!.getBoundingClientRect();
+    return {
+      outline: cover.outlineStyle,
+      width: Math.round(parseFloat(cover.width)),
+      card: Math.round(box.width),
+    };
+  });
+  expect(ring).toEqual({ outline: 'solid', width: ring.card, card: ring.card });
+  const href = (await cardLink.getAttribute('href'))!;
+  // A press with a modifier opens it in a new tab, as a link's does, and leaves this page.
+  const box = (await card.boundingBox())!;
+  const opened = context.waitForEvent('page');
+  await page.keyboard.down(process.platform === 'darwin' ? 'Meta' : 'Control');
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height * 0.4);
+  await page.keyboard.up(process.platform === 'darwin' ? 'Meta' : 'Control');
+  const tab = await opened;
+  await expect(tab).toHaveURL(`${siteDevUrl}${href}`);
+  await tab.close();
+  await expect(page).toHaveURL(`${siteDevUrl}/components`);
+  await cardLink.focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(`${siteDevUrl}${href}`);
+});
+
 test('a Related tile of a page without an example shows its specimen', async ({ page }) => {
   // Icon is documented on the Icons foundation's page, which has no example: its tile links there
   // and shows a few of the icons, fitted to its stage as an example is.

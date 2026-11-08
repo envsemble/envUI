@@ -237,7 +237,11 @@ function OutlineHeadings({ markdown }: { markdown: string }) {
  * paragraph (SiteText.css).
  */
 export function Documentation(
-  props: ({ document: Document } | { markdown: string; path: string }) & { className?: string },
+  props: ({ document: Document } | { markdown: string; path: string }) & {
+    className?: string;
+    /** Whether its links show as their words alone, as inside a tile that is a link itself. */
+    linkless?: boolean;
+  },
 ) {
   const [written, path] =
     'document' in props
@@ -259,9 +263,15 @@ export function Documentation(
         [guidance && 'site-guidance', props.className].filter(Boolean).join(' ') || undefined
       }
       rehypePlugins={plugins}
-      renderLink={({ href, ...link }: MarkdownLinkProps) => (
-        <Link {...link} href={documentationHref(href, path)} />
-      )}
+      renderLink={({ href, children, ...link }: MarkdownLinkProps) =>
+        props.linkless ? (
+          <span>{children}</span>
+        ) : (
+          <Link {...link} href={documentationHref(href, path)}>
+            {children}
+          </Link>
+        )
+      }
     >
       {markdown}
     </Markdown>

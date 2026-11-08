@@ -53,13 +53,20 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
         />
       </div>
       <Row align="center" justify="between" gap={2} className="catalogue-gallery-meta">
-        {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
+        {/* The name is the cell's one link; it stretches over the whole cell, picture and name, so
+            the cell is one target and one box (Gallery.css). Its words slide, not the link, which
+            would otherwise hold the stretch to the row it slides in. */}
         <Text render={<Heading />} className="catalogue-gallery-name">
           <Link href={routeHref(page.path)} underline={false} className="catalogue-gallery-link">
-            {page.label ?? page.title}
+            <span className="catalogue-gallery-label catalogue-gallery-slide">
+              {page.label ?? page.title}
+            </span>
           </Link>
         </Text>
-        <IconArrowForward className="catalogue-gallery-arrow" aria-hidden="true" />
+        <IconArrowForward
+          className="catalogue-gallery-arrow catalogue-gallery-slide"
+          aria-hidden="true"
+        />
       </Row>
     </li>
   );
