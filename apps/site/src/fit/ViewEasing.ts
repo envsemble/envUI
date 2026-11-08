@@ -110,7 +110,7 @@ export function glideTo(f: Fitting) {
 export function settle(f: Fitting, scale: number, toX: number, toY: number, boxes: Shown[]) {
   const { canvas, view } = f;
   // A tile in place eases to where it is fitted next; anything else is placed at once.
-  const eases = f.tile && canvas.dataset.fitted !== undefined && !reducedMotion();
+  const eases = f.kind.tile && canvas.dataset.fitted !== undefined && !reducedMotion();
   // Until it shows, it is placed at once, and shows only once its place has held for a few
   // frames, or after a quarter of a second, whatever is still moving, such as a popup placed again
   // against the stage's edges as the view moves: it appears in place, as every picture does, by

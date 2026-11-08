@@ -1,5 +1,5 @@
-// The fit's pure calculations (apps/site/src/fit/): boxes, the scales a tile's picture is drawn
-// at, where a playing tile's view goes, a held view's scale and place, whether a resting picture
+// The fit's pure calculations (apps/site/src/fit/): what a picture is fitted as and how its view
+// is placed, boxes, the scales a tile's picture is drawn at, where a playing tile's view goes, a held view's scale and place, whether a resting picture
 // holds its frame, and the view's glide.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -8,11 +8,96 @@ import { importSource } from './support/importSource.mjs';
 const math = await importSource('FitMath', 'apps/site/src/fit/FitMath.ts');
 const held = await importSource('HeldView', 'apps/site/src/fit/HeldView.ts');
 const easing = await importSource('ViewEasing', 'apps/site/src/fit/ViewEasing.ts');
+const fitting = await importSource('Fitting', 'apps/site/src/fit/Fitting.ts');
 
 const box = (left, top, right, bottom) => ({ left, top, right, bottom });
 
+test('a tile is fitted as one of four kinds, by how its page frames it and what it is', () => {
+  const tile = { tile: true };
+  const drawing = { tile: true, window: { width: 10 } };
+  assert.deepEqual(fitting.fitKindOf(tile, 'own'), { scale: 'own', tile: true });
+  assert.deepEqual(fitting.fitKindOf({}, 'own'), { scale: 'own', tile: false });
+  // A drawing, whose window is narrower than the tiles', is drawn at its window's scale.
+  assert.deepEqual(fitting.fitKindOf(drawing, 'own'), { scale: 'window', tile: true });
+  assert.deepEqual(fitting.fitKindOf(drawing, 'legible'), { scale: 'legible', tile: true });
+  assert.deepEqual(fitting.fitKindOf({}, 'legible'), { scale: 'legible', tile: false });
+  assert.deepEqual(fitting.fitKindOf(tile, undefined), { scale: 'window', tile: true });
+  assert.deepEqual(fitting.fitKindOf(undefined, undefined), { scale: 'content', tile: false });
+  assert.ok(fitting.cropped({ scale: 'own', tile: false }));
+  assert.ok(fitting.cropped({ scale: 'legible', tile: true }));
+  assert.ok(!fitting.cropped({ scale: 'window', tile: true }));
+  assert.ok(!fitting.cropped({ scale: 'content', tile: false }));
+});
+
+test('a fit is placed on its screen, drawn out as a cropped tile plays once shown, else at rest', () => {
+  const mode = (kind, moment, screen = false) => fitting.fitModeOf({ kind, screen }, moment);
+  const component = { scale: 'own', tile: true };
+  const playing = { playing: true, shown: true };
+  assert.equal(mode(component, playing, true), 'screen');
+  assert.equal(mode(component, { playing: false, shown: true }, true), 'screen');
+  assert.equal(mode(component, playing), 'playing');
+  assert.equal(mode({ scale: 'legible', tile: true }, playing), 'playing');
+  // First fitted as it plays, it is framed as at rest.
+  assert.equal(mode(component, { playing: true, shown: false }), 'resting');
+  // A tile at its window's scale, and an example, are placed at rest as they play too.
+  assert.equal(mode({ scale: 'window', tile: true }, playing), 'resting');
+  assert.equal(mode({ scale: 'own', tile: false }, playing), 'resting');
+});
+
+test('each kind is drawn at rest at its own scale', () => {
+  const extent = { ...box(0, 0, 200, 100), width: 300, height: 120 };
+  const resting = {
+    extent,
+    window: 0.9,
+    own: 0.85,
+    popup: false,
+    scales: { phone: false, popupLeast: 0.8, overlay: 0 },
+    popupScale: (atMost) => Math.min(atMost, 0.75),
+    overlayWhole: Infinity,
+  };
+  const scale = (kind, change = {}) => math.restingScale(kind, { ...resting, ...change });
+  assert.equal(scale({ scale: 'own', tile: true }), 0.85);
+  // A component's popup is drawn as popupFit says, at most its own size.
+  assert.equal(scale({ scale: 'own', tile: true }, { popup: true }), 0.75);
+  // An overlay at the overlays' scale, or smaller where it shows whole across only so, down to
+  // the popups' least.
+  const overlay = {
+    popup: true,
+    scales: { ...resting.scales, popupLeast: 0.5, overlay: 0.7 },
+    popupScale: (at) => at,
+  };
+  assert.equal(scale({ scale: 'own', tile: true }, overlay), 0.7);
+  assert.equal(scale({ scale: 'own', tile: true }, { ...overlay, overlayWhole: 0.6 }), 0.6);
+  assert.equal(scale({ scale: 'own', tile: true }, { ...overlay, overlayWhole: 0.2 }), 0.5);
+  // A scene no smaller than legible, nor larger than its own size.
+  assert.equal(scale({ scale: 'legible', tile: true }), 0.9);
+  assert.equal(scale({ scale: 'legible', tile: true }, { window: 0.5 }), math.legibleScale);
+  assert.equal(scale({ scale: 'legible', tile: true }, { window: 1.5 }), 1);
+  assert.equal(scale({ scale: 'window', tile: true }, { window: 1.5 }), 1.5);
+  // An example as large as what it paints fits, no larger than its window.
+  assert.equal(scale({ scale: 'content', tile: false }), 0.9);
+  assert.equal(scale({ scale: 'content', tile: false }, { window: 2 }), 1.2);
+});
+
+test("a component's own size follows its least box, and on a phone takes one of its steps", () => {
+  const extent = { ...box(0, 0, 400, 100), width: 300, height: 120 };
+  const scales = { least: 240, leastBlock: 0, floor: 0, phone: false, steps: [1] };
+  assert.equal(math.ownScale(extent, scales), 1);
+  assert.equal(math.ownScale(extent, { ...scales, least: 600 }), 0.5);
+  assert.equal(math.ownScale(extent, { ...scales, leastBlock: 240 }), 0.5);
+  const phone = { ...scales, floor: 0.85, phone: true, steps: math.phoneSteps(0.85, 0.7) };
+  // 300 of room for 400 across: the floor.
+  assert.equal(math.ownScale(extent, phone), 0.85);
+  assert.equal(math.ownScale({ ...extent, width: 500 }, phone), 1);
+  // A tile's window is drawn up to `most`, any other's no larger than its own size.
+  const canvas = { offsetWidth: 100, offsetHeight: 50 };
+  assert.equal(math.windowScale({ scale: 'window', tile: true }, extent, canvas), math.most);
+  assert.equal(math.windowScale({ scale: 'content', tile: false }, extent, canvas), 1);
+});
+
 test('boxes join into the least box around them, and cover one another to a couple of px', () => {
   assert.equal(math.join(null, null), null);
+  assert.deepEqual(math.union([box(0, 5, 10, 20), box(-4, 8, 6, 30)]), box(-4, 5, 10, 30));
   assert.deepEqual(math.join(box(0, 5, 10, 20), null, box(-4, 8, 6, 30)), box(-4, 5, 10, 30));
   assert.ok(math.covers(box(0, 0, 100, 100), box(-2, -2, 102, 102)));
   assert.ok(!math.covers(box(0, 0, 100, 100), box(-3, 0, 100, 100)));

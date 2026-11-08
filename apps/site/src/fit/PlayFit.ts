@@ -15,6 +15,7 @@ import {
   drawOut,
   join,
   margin,
+  scaleTolerance,
   type Box,
 } from './FitMath';
 import { trim, type Fitting } from './Fitting';
@@ -87,7 +88,7 @@ export function playFit(
   run.moved ||=
     Math.abs(view.toX - run.at.x) >= 0.5 ||
     Math.abs(view.toY - run.at.y) >= 0.5 ||
-    Math.abs(view.toScale - run.at.scale) >= 0.0005;
+    Math.abs(view.toScale - run.at.scale) >= scaleTolerance;
   // A held view is cut off where its still was, also as what it shows moves within it.
   const sides = new Set(
     holds

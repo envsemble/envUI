@@ -4,7 +4,7 @@
  * script acts on shows whole in it from its top, above the fade at its foot, with the cursor on
  * it. Nothing here reads the page (tests/Fit.test.mjs).
  */
-import { cursorRoom, inset, join, type Box } from './FitMath';
+import { cursorRoom, inset, join, scaleTolerance, type Box } from './FitMath';
 
 /** How far, in px, a row may reach past the crop's foot and still count as whole (trimRows). */
 export const rowSlack = 2;
@@ -204,7 +204,7 @@ export function heldScale(
   if (heldTop(scale, alone, room)) return scale;
   const least = overlayScale || scale;
   const lower = [...(phone ? steps : [popupLeast]), least]
-    .filter((each) => each < scale - 0.0005 && each >= least - 0.0005)
+    .filter((each) => each < scale - scaleTolerance && each >= least - scaleTolerance)
     .sort((a, b) => b - a);
   const found = lower.find((each) => heldTop(each, alone, room) !== null);
   if (found !== undefined) return found;
@@ -228,12 +228,12 @@ export function subjectScale(
   wants: number,
   { phone, steps, popupLeast, overlayScale }: HeldScales,
 ) {
-  if (wants >= scale - 0.0005) return scale;
+  if (wants >= scale - scaleTolerance) return scale;
   const overlayLeast = overlayScale || scale;
   const found = [...(phone ? steps : [popupLeast]), overlayLeast]
-    .filter((each) => each < scale - 0.0005)
+    .filter((each) => each < scale - scaleTolerance)
     .sort((a, b) => b - a)
-    .find((each) => each <= wants + 0.0005);
+    .find((each) => each <= wants + scaleTolerance);
   return found ?? Math.max(heldLeast, Math.floor(wants * 1000) / 1000);
 }
 

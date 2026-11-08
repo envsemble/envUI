@@ -39,9 +39,7 @@ function RelatedTile({
           near={near}
           playing={playing || autoplay}
           className="catalogue-tile-stage catalogue-gallery-stage"
-          whole
-          ownSize={frame === 'own'}
-          legible={frame === 'legible'}
+          frame={frame}
         />
       </div>
       <div className="catalogue-gallery-meta catalogue-related-meta">{children}</div>

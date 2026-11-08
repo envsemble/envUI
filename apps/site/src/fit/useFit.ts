@@ -5,13 +5,11 @@ import { fit } from './Fit';
 import { newFitting, type FitKind } from './Fitting';
 
 /** How a picture is fitted to its stage (useFit). */
-export interface FitOptions extends Partial<Pick<FitKind, 'ownSize' | 'legible'>> {
+export interface FitOptions {
   /** Whether it is fitted at all: its picture is shown. */
   on: boolean;
-  /** Whether the window it lays out in counts whole, as a gallery's does. */
-  whole: boolean;
-  /** Whether it is a page's own tile, drawn at its window's scale. */
-  tile: boolean;
+  /** What it is fitted as (fitKindOf). */
+  kind: FitKind;
   /** Whether it plays now, which draws it out for what it opens. */
   playing: boolean;
 }
@@ -33,8 +31,10 @@ export interface FitOptions extends Partial<Pick<FitKind, 'ownSize' | 'legible'>
 export function useFit(
   stage: RefObject<HTMLElement | null>,
   canvas: RefObject<HTMLElement | null>,
-  { on, whole, tile, playing, ownSize = false, legible = false }: FitOptions,
+  { on, kind, playing }: FitOptions,
 ) {
+  // The effect follows the kind's parts, not the object, which a render makes anew.
+  const { scale, tile } = kind;
   const playingNow = useRef(playing);
   const refit = useRef<(() => void) | null>(null);
   useLayoutEffect(() => {
@@ -55,7 +55,7 @@ export function useFit(
     const fitting = newFitting(
       stageElement,
       canvasElement,
-      { whole, tile, ownSize, legible },
+      { scale, tile } as FitKind,
       playingNow,
       update,
     );
@@ -112,5 +112,5 @@ export function useFit(
       resize.disconnect();
       refit.current = null;
     };
-  }, [stage, canvas, on, whole, tile, ownSize, legible]);
+  }, [stage, canvas, on, scale, tile]);
 }
