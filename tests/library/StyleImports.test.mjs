@@ -3,6 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, posix, relative, sep } from 'node:path';
 import { test } from 'node:test';
+import { libraryEntryPoints } from '../../scripts/docs/LibraryEntryPoints.ts';
 import { analyze, cssSelectors } from '../composition/Analysis.mjs';
 
 // Each module imports the style sheets it draws with, and a bundler puts in the page those of the
@@ -86,20 +87,11 @@ function emits(list, seen = new Set(), out = []) {
  * after the requests that precede it in each module importing it.
  */
 function guaranteedBefore() {
-  const barrels = new Set(
-    [
-      'index.ts',
-      'code.ts',
-      'markdown.ts',
-      'rich-text.ts',
-      'diff.ts',
-      'color.ts',
-      'dev.ts',
-      'messages.ts',
-      'theme-bootstrap.ts',
-      'icons/index.ts',
-    ].filter((module) => known.has(module)),
-  );
+  // With the icons' index, which the site's icon list loads, though the package exports each icon.
+  const barrels = new Set([
+    ...libraryEntryPoints().map(({ file }) => relative(sourceRoot, file).split(sep).join('/')),
+    'icons/index.ts',
+  ]);
   const importers = new Map(modules.map((module) => [module, []]));
   for (const module of modules)
     requests.get(module).forEach((request, index) => {

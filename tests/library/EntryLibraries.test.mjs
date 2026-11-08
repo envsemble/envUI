@@ -2,30 +2,34 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import {
-  documentedLibraries,
-  importedLibraries,
-  libraryEntries,
-} from '../../scripts/build/EntryLibraries.ts';
+import { documentedLibraries, importedLibraries } from '../../scripts/build/EntryLibraries.ts';
+import { libraryEntryPoints } from '../../scripts/docs/LibraryEntryPoints.ts';
 
 const repository = fileURLToPath(new URL('../../', import.meta.url));
+const entryPoints = libraryEntryPoints();
+const entryFile = (specifier) => entryPoints.find((entry) => entry.specifier === specifier).file;
 const manifest = JSON.parse(
   await readFile(new URL('../../packages/ui/package.json', import.meta.url), 'utf8'),
 );
 
 test('the main entry imports no library beyond React and Base UI', async function () {
-  assert.deepEqual([...(await importedLibraries(repository, 'main'))], []);
+  assert.deepEqual([...(await importedLibraries(entryFile('@envsemble/envui')))], []);
 });
 
-test("the setup guide's install commands name exactly the libraries each entry imports", async function () {
+test("the setup guide's install commands name exactly the libraries each entry point imports", async function () {
   const documented = await documentedLibraries(repository);
-  for (const entry of libraryEntries) {
+  for (const { specifier, file } of entryPoints)
     assert.deepEqual(
-      documented[entry].map(({ name }) => name).sort(),
-      [...(await importedLibraries(repository, entry))].sort(),
-      entry,
+      (documented[specifier] ?? []).map(({ name }) => name).sort(),
+      [...(await importedLibraries(file))].sort(),
+      specifier,
     );
-  }
+  const listed = new Set(entryPoints.map(({ specifier }) => specifier));
+  assert.deepEqual(
+    Object.keys(documented).filter((specifier) => !listed.has(specifier)),
+    [],
+    'Install commands for entry points the package does not export.',
+  );
 });
 
 test('the documented versions start at the versions envUI is built and tested with', async function () {
@@ -41,8 +45,7 @@ test('the entries’ libraries are neither dependencies nor peers', function () 
 });
 
 test('the color entry imports React Aria’s color hooks and nothing else', async function () {
-  assert.ok(libraryEntries.includes('color'));
-  assert.deepEqual([...(await importedLibraries(repository, 'color'))].sort(), [
+  assert.deepEqual([...(await importedLibraries(entryFile('@envsemble/envui/color')))].sort(), [
     '@react-aria/color',
     '@react-aria/i18n',
     '@react-stately/color',

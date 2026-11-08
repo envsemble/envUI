@@ -2,10 +2,11 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, relative, sep } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { clientReasonsOf, libraryModules } from '../../scripts/build/ClientModules.ts';
+import { libraryEntryPoints } from '../../scripts/docs/LibraryEntryPoints.ts';
 
 // envUI and React Server Components: each module that uses client-only React APIs starts with
 // 'use client', the entry points carry no directive, the build keeps the directives where they
@@ -16,16 +17,9 @@ const dist = join(repository, 'packages/ui/dist');
 const modules = await libraryModules();
 
 /** The entry points, whose `export *` and `export * as` lines a server component imports through. */
-const entries = [
-  'index',
-  'code',
-  'markdown',
-  'diff',
-  'color',
-  'rich-text',
-  'theme-bootstrap',
-  'dev',
-];
+const entries = libraryEntryPoints().map(({ file }) =>
+  relative(join(repository, 'packages/ui/src'), file).split(sep).join('/'),
+);
 
 const startsWithDirective = (code) => /^\s*(['"])use client\1;?/.test(code);
 
@@ -43,7 +37,7 @@ test("every module that uses client-only APIs, and only such a module, says 'use
   );
   assert.deepEqual(needless, [], 'These modules use nothing client-only.');
   for (const entry of entries) {
-    const module = modules.find(({ file }) => file.replace(/\.tsx?$/, '') === entry);
+    const module = modules.find(({ file }) => file === entry);
     assert.ok(module, entry);
     assert.equal(module.client, false, `${entry} stays a server module`);
   }

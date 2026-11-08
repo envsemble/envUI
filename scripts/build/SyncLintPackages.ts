@@ -2,15 +2,17 @@
 // data/tokens.json, the envUI tokens their messages name, from the library's generated token list
 // (packages/ui/src/generated/tokens.json); tokens.js, the helper that reads it, from
 // scripts/build/LintPackageTokens.js; and colorPolicy.js, what both count as a raw color, from
-// scripts/build/LintPackageColorPolicy.js. Each package ships its own copies, so it works on its
-// own once installed; a published package names the tokens of its own envUI release, as each
-// pack runs this first.
+// scripts/build/LintPackageColorPolicy.js; and in the ESLint plugin, data/entryPoints.json, the
+// specifiers of the library's entry points, from the exports of packages/ui/package.json. Each
+// package ships its own copies, so it works on its own once installed; a published package names
+// the tokens and entry points of its own envUI release, as each pack runs this first.
 //
 //   node scripts/build/SyncLintPackages.ts           write the copies
 //   node scripts/build/SyncLintPackages.ts --check   fail when a copy differs from its source
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
+import { libraryEntryPoints } from '../docs/LibraryEntryPoints.ts';
 
 const repository = new URL('../../', import.meta.url);
 const libraryTokens = 'packages/ui/src/generated/tokens.json';
@@ -25,6 +27,8 @@ export const lintPackages = {
   '@envsemble/eslint-plugin-envui': 'packages/eslint-plugin/src',
   '@envsemble/stylelint-config-envui': 'packages/stylelint-config',
 };
+
+const entryPointsComment = `The specifiers of envUI's entry points, whose exports no-html-elements counts as envUI's. scripts/build/SyncLintPackages.ts writes this file from the exports of packages/ui/package.json before every pack.`;
 
 const comment = `The custom properties of envUI's public tokens, by DTCG type, that the package's messages suggest. scripts/build/SyncLintPackages.ts writes this file from the library's generated token list (${libraryTokens}) before every pack; source says where the names came from.`;
 
@@ -85,6 +89,12 @@ export function expectedFiles(): Map<string, string> {
     files.set(`${directory}/data/tokens.json`, tokens);
     for (const [name, copy] of copies) files.set(`${directory}/${name}`, copy);
   }
+  const entryPoints = libraryEntryPoints().map(({ specifier }) => specifier);
+  files.set(
+    `${lintPackages['@envsemble/eslint-plugin-envui']}/data/entryPoints.json`,
+    `${JSON.stringify({ $comment: entryPointsComment, entryPoints }, null, 2)}
+`,
+  );
   return files;
 }
 

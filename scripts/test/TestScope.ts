@@ -145,10 +145,13 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
     needs: ['tokens', 'docs'],
     specs: shared,
   },
-  // The lint packages' copies of the tokens and the color policy, and their sources.
+  // The lint packages' copies of the tokens, the color policy and the entry points, and their sources.
   {
     paths: [
       'scripts/build/SyncLintPackages.ts',
+      'scripts/docs/LibraryEntryPoints.ts',
+      'packages/ui/package.json',
+      'packages/eslint-plugin/src/data/entryPoints.json',
       'scripts/build/LintPackageTokens.js',
       'scripts/build/LintPackageColorPolicy.js',
       'packages/eslint-plugin/src/tokens.js',
