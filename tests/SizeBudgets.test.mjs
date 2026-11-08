@@ -29,8 +29,9 @@ const cssBudgets = {
 
 /** The JavaScript a page loads first. */
 const jsBudgets = [
-  // 32,296 measured; raising it is a deliberate decision, recorded in the commit.
-  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 33350 },
+  // 34,013 measured (2026-11-08, Table's column resize handle on the shared useResize; was 32,296);
+  // raising it is a deliberate decision, recorded in the commit.
+  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 35050 },
   // 4,701 measured; raising it is a deliberate decision, recorded in the commit.
   { set: 'Theme + Button + Icon', measure: 'minified', budget: 4850 },
 ];
