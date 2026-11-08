@@ -28,7 +28,7 @@ export const columnResizeStep = 1;
 export const columnResizeLargeStep = 5;
 
 /** One minimum per column, from a single value for every column or a list in column order. */
-export function columnMinimums(minimum: number | readonly number[] | undefined, count: number) {
+function columnMinimums(minimum: number | readonly number[] | undefined, count: number) {
   return Array.from({ length: count }, (_, index) =>
     typeof minimum === 'number' ? minimum : (minimum?.[index] ?? defaultMinColumnWidth),
   );
