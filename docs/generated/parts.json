@@ -86,6 +86,7 @@
         }
       ],
       "uses": [
+        "Icon",
         "Skeleton"
       ]
     },
@@ -285,6 +286,9 @@
             "env-avatar"
           ]
         }
+      ],
+      "uses": [
+        "Icon"
       ],
       "colors": [
         {
@@ -709,6 +713,7 @@
         }
       ],
       "uses": [
+        "Icon",
         "IconButton"
       ]
     },
@@ -998,6 +1003,7 @@
         }
       ],
       "uses": [
+        "Icon",
         "IconButton"
       ]
     },
@@ -1250,6 +1256,7 @@
         "Button",
         "CopyButton",
         "Field",
+        "Icon",
         "IconButton",
         "Menu",
         "Tooltip"
@@ -1653,6 +1660,7 @@
         }
       ],
       "uses": [
+        "Icon",
         "IconButton",
         "TextField",
         "Textarea"
@@ -2300,6 +2308,9 @@
             "env-field-control"
           ]
         }
+      ],
+      "uses": [
+        "Icon"
       ]
     },
     "Graphic": {
@@ -2393,7 +2404,7 @@
     },
     "Icon": {
       "root": "env-icon",
-      "source": "packages/ui/src/Icon.tsx",
+      "source": "packages/ui/src/foundations/Icon.tsx",
       "parts": [
         {
           "class": "env-icon",
@@ -2728,6 +2739,7 @@
       ],
       "uses": [
         "ConnectedRows",
+        "Icon",
         "IconButton",
         "Skeleton",
         "Text"
@@ -3719,6 +3731,7 @@
         }
       ],
       "uses": [
+        "Icon",
         "IconButton",
         "Tooltip"
       ]
@@ -4018,6 +4031,7 @@
       ],
       "uses": [
         "Button",
+        "Icon",
         "IconButton",
         "ResizeHandle",
         "Skeleton"
@@ -4135,7 +4149,8 @@
         }
       ],
       "uses": [
-        "ConnectedRows"
+        "ConnectedRows",
+        "Icon"
       ],
       "colors": [
         {
@@ -4182,7 +4197,8 @@
         }
       ],
       "uses": [
-        "ConnectedRows"
+        "ConnectedRows",
+        "Icon"
       ]
     },
     "Rating": {
@@ -4221,6 +4237,9 @@
             "env-rating-star"
           ]
         }
+      ],
+      "uses": [
+        "Icon"
       ]
     },
     "RelativeTime": {
@@ -4831,6 +4850,7 @@
       "uses": [
         "Button",
         "Dialog",
+        "Icon",
         "IconButton",
         "Overlay",
         "ResizeHandle",
@@ -5767,6 +5787,7 @@
       ],
       "states": [],
       "uses": [
+        "Icon",
         "IconButton"
       ]
     },
