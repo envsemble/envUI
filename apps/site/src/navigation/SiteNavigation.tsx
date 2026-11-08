@@ -31,16 +31,15 @@ import { drawerWidthKey } from '../theme/DisplayStorage';
 import { motionDuration, motionEase, reducedMotion } from '../motion/MotionTokens';
 import { pageBadge } from './PageBadges';
 import {
-  docsTree,
-  otherPartRoute,
   pagesOf,
   sectionHome,
   catalogueSections,
   type Area,
-  type DocsGroup,
   type RoutePage,
   type CatalogueSection,
 } from './SiteRoutes';
+import { otherPartRoute } from './Counterparts';
+import { docsTree, type DocsGroup } from './DocsTree';
 import { docsRoute, homeRoute, routeHref } from './Address';
 import { keepSection, otherPart } from './OtherPart';
 

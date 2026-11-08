@@ -1,7 +1,8 @@
 import { useSyncExternalStore } from 'react';
 import type { LinkComponentProps } from '@envsemble/envui';
 import { navigate, routeOfLink } from './Address';
-import { findPage, normalizeRoute } from './SiteRoutes';
+import { findPage } from './SiteRoutes';
+import { normalizeRoute } from './OldAddresses';
 import { pageLoaded, preloadPage } from '../pages/PreloadPage';
 
 /** The page of a route, such as components/button?section=props. */

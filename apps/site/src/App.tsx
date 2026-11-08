@@ -11,7 +11,13 @@ import {
   Tooltip,
 } from '@envsemble/envui';
 import { IconMenu } from '@envsemble/envui/icons/Menu';
-import { findPage, type Area, type RoutePage } from './navigation/SiteRoutes';
+import {
+  findPage,
+  type Area,
+  type PageKind,
+  type PageOfKind,
+  type RoutePage,
+} from './navigation/SiteRoutes';
 import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
 import { HasContents, PageContents } from './layout/PageContents';
@@ -61,7 +67,7 @@ import { restoreScroll, scrolled } from './navigation/ScrollRestoration';
 import { PageSkeleton } from './template/PageSkeleton';
 
 /** What each kind of page renders. */
-const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => ReactNode> = {
+const pageContent: { [Kind in PageKind]: (props: { page: PageOfKind<Kind> }) => ReactNode } = {
   home: Overview,
   foundations: FoundationsPage,
   components: ComponentsPage,
@@ -165,7 +171,9 @@ function Shell() {
     wide.addEventListener('change', close);
     return () => wide.removeEventListener('change', close);
   }, [navigationOpen]);
-  const Content = page && pageContent[page.kind];
+  // Each kind's component takes that kind's page (pageContent), which TypeScript can't follow
+  // through the lookup.
+  const Content = page && (pageContent[page.kind] as (props: { page: RoutePage }) => ReactNode);
   const content = Content ? (
     // The page's component is looked up among module-level components, not created here.
     // eslint-disable-next-line react-hooks/static-components

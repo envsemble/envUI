@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Breadcrumbs, Card, Column, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
-import type { TrailStep } from '../navigation/SiteRoutes';
+import type { TrailStep } from '../navigation/Trails';
 import { BannerMotif, motifOf } from './BannerMotif';
 import { CatalogueBannerLines } from './CatalogueBannerLines';
 import { DocsBannerLines } from './DocsBannerLines';

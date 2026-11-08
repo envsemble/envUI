@@ -3,7 +3,8 @@ import { Column, CopyButton, DescriptionList, Row, Surface, Text } from '@envsem
 import { Code } from '@envsemble/envui/content';
 import { AgentLogos } from '../brand/AgentLogos';
 import { PageHeader } from '../layout/PageHeader';
-import { docsTrail, pagesOf, type RoutePage } from '../navigation/SiteRoutes';
+import { pagesOf, type DocumentPage, type RoutePage } from '../navigation/SiteRoutes';
+import { docsTrail } from '../navigation/Trails';
 import { docsRoute } from '../navigation/Address';
 import { PartSwitch } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
@@ -102,8 +103,8 @@ function AgentSetup({ note, path = '' }: { note?: string; path?: string }) {
  * A guide of docs/, such as migration, with its live demos in place. The setup guide is the Docs'
  * home, with the prompt that sets envUI up with a coding agent at its top.
  */
-export function GuidePage({ page }: { page: RoutePage }) {
-  const whole = useDocument(page.document!);
+export function GuidePage({ page }: { page: DocumentPage }) {
+  const whole = useDocument(page.document);
   const home = page.path === docsRoute;
   // On the Docs' home, the guide's note on coding agents moves up under the prompt.
   const note = home ? whole.markdown?.match(agentNote)?.[1]?.trim() : undefined;
@@ -118,7 +119,7 @@ export function GuidePage({ page }: { page: RoutePage }) {
         trail={docsTrail(page)}
         description={page.summary}
         kind="docs"
-        meta={<MetadataBadges metadata={{ status: page.document?.status }} />}
+        meta={<MetadataBadges metadata={{ status: page.document.status }} />}
         corner={<PartSwitch page={page} />}
       />
       <Column gap={7} className="site-article">
@@ -214,8 +215,8 @@ function PaletteSection() {
  * the same file: Compose, the words of the page mapped to code, and what the application and envUI
  * provide. No Related.
  */
-export function FoundationGuidePage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
+export function FoundationGuidePage({ page }: { page: DocumentPage }) {
+  const document = useDocument(page.document);
   return (
     <>
       <PageHeader
@@ -538,8 +539,8 @@ function Strings({ document }: { document: Document }) {
  * with a compact preview of the component, its catalogue's first overview example. Field, which has no page in the catalogue, shows its whole page here, on
  * the page, as "Build your own field".
  */
-export function DocsReferencePage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
+export function DocsReferencePage({ page }: { page: DocumentPage }) {
+  const document = useDocument(page.document);
   const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
   const metadata = document.metadata;
   const pattern = cataloguePage?.kind === 'pattern';

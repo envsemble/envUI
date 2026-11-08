@@ -9,7 +9,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { siteDevUrl } from './helpers/Servers';
 import { moduleFiles, requireSite, serveSite, site, siteUrl } from './helpers/HostedSite';
-import { normalizeRoute, routeOfDocument } from '../../apps/site/src/navigation/SiteRoutes';
+import { routeOfDocument } from '../../apps/site/src/navigation/SiteRoutes';
+import { normalizeRoute } from '../../apps/site/src/navigation/OldAddresses';
 
 const dialog = (page: Page) => page.getByRole('dialog', { name: 'Search envUI' });
 const field = (page: Page) => dialog(page).getByRole('combobox', { name: 'Search envUI' });
