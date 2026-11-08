@@ -1,13 +1,9 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import {
-  buildParts,
-  isPrivateState,
-  partsFile,
-  removedParts,
-  serializeParts,
-} from '../scripts/docs/GenerateParts.ts';
+import { buildParts, partsFile, serializeParts } from '../scripts/docs/parts/Contract.ts';
+import { removedParts } from '../scripts/docs/parts/ContractComparison.ts';
+import { isPrivateState } from '../scripts/docs/parts/Library.ts';
 
 const { parts, problems } = buildParts();
 const component = (name) => parts.components[name];
