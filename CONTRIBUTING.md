@@ -1,6 +1,6 @@
 # Contributing to envUI
 
-How to work on envUI itself. The rules every change follows are in [AGENTS.md](AGENTS.md), and how to write a component, pattern or foundation page in [contributing/pages.md](contributing/pages.md).
+How to work on envUI itself. The rules every change follows are in [AGENTS.md](AGENTS.md), which leads to the library's and the site's, and how to write a component, pattern or foundation page in [contributing/pages.md](contributing/pages.md).
 
 ## Set up
 

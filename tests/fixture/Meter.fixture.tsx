@@ -1,7 +1,9 @@
 import { Meter, Progress, Spinner, Column } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 /** Meters and progress bars with and without value texts, and spinners with and without a name. */
-export function MetersFixture() {
+export default function MeterFixture() {
   return (
     <Column gap={4} className="fixture-section">
       <Meter label="Storage used" value={40} />

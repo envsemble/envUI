@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const confirmDialogs = `${fixtureUrl}/?fixture=confirm-dialogs`;
+const confirmDialogs = `${fixtureUrl}/?fixture=confirm-dialog`;
 
 test.describe('ConfirmDialog', () => {
   test(

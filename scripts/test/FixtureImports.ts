@@ -1,12 +1,13 @@
 // Which browser specs a source file concerns, by what their fixtures import. A spec opens fixtures,
-// `?fixture=<name>` of tests/fixture/App.tsx or a page such as RichText.html, or renders library
-// source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
+// `?fixture=<name>` of tests/fixture/App.tsx, which is `<Name>.fixture.tsx`, or a page such as
+// RichText.html, or renders library source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
 // components by name, and those import the modules and style sheets they draw with, all read with
 // the TypeScript parser, so how an import is written doesn't change what it finds. TestScope.ts
 // selects specs with it; tests/tooling/TestScope.test.mjs covers it.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import ts from 'typescript';
+import { fixtureName } from '../../tests/fixture/FixtureName.ts';
 
 const library = 'packages/ui/src';
 const fixtures = 'tests/fixture';
@@ -192,82 +193,17 @@ class Sources {
   }
 }
 
-/**
- * The fixture modules each name of App.tsx renders, `?fixture=<name>`: the components the code
- * that name selects uses, by the modules App.tsx imports them from.
- */
-function appFixtures(sources: Sources) {
-  const appFile = `${fixtures}/App.tsx`;
-  const text = sources.text(appFile) ?? '';
-  const imported = new Map<string, string[]>();
-  for (const item of importsOf(text))
-    if (item.names !== 'all')
-      for (const name of item.names)
-        imported.set(name, sources.resolve(appFile, { ...item, names: [name] }));
-  const tree = parse(text);
-  // The names the module uses, with where each is.
-  const used: { name: string; start: number }[] = [];
-  const collect = (node: ts.Node) => {
-    if (ts.isIdentifier(node)) used.push({ name: node.text, start: node.getStart(tree) });
-    ts.forEachChild(node, collect);
-  };
-  collect(tree);
-  const byName = new Map<string, Set<string>>();
-  /** Adds to a fixture name's modules those of the names used from `start` to `end`. */
-  const add = (fixture: string, start: number, end: number) => {
-    const modules = byName.get(fixture) ?? new Set<string>();
-    for (const { name } of used.filter((each) => each.start >= start && each.start < end))
-      for (const module of imported.get(name) ?? []) modules.add(module);
-    byName.set(fixture, modules);
-  };
-  // The fixtures mounted on their own, `name: Component` in standaloneFixtures.
-  for (const statement of tree.statements)
-    if (ts.isVariableStatement(statement))
-      for (const declaration of statement.declarationList.declarations)
-        if (
-          ts.isIdentifier(declaration.name) &&
-          declaration.name.text === 'standaloneFixtures' &&
-          declaration.initializer &&
-          ts.isObjectLiteralExpression(declaration.initializer)
-        )
-          for (const property of declaration.initializer.properties)
-            if (ts.isPropertyAssignment(property) && !ts.isComputedPropertyName(property.name))
-              add(
-                property.name.text,
-                property.initializer.getStart(tree),
-                property.initializer.end,
-              );
-  // The rest, `fixture === 'name'` or `includes('name')` in App: each name's code runs from where
-  // it is named to where the next one is.
-  const marks: { name: string; start: number }[] = [];
-  const mark = (node: ts.Node) => {
-    const named =
-      ts.isBinaryExpression(node) &&
-      node.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken &&
-      ts.isIdentifier(node.left) &&
-      node.left.text === 'fixture'
-        ? node.right
-        : ts.isCallExpression(node) &&
-            ts.isIdentifier(node.expression) &&
-            node.expression.text === 'includes'
-          ? node.arguments[0]
-          : undefined;
-    if (named && ts.isStringLiteral(named))
-      marks.push({ name: named.text, start: node.getStart(tree) });
-    ts.forEachChild(node, mark);
-  };
-  const app = tree.statements.find(
-    (statement) => ts.isFunctionDeclaration(statement) && statement.name?.text === 'App',
+/** The fixture module each `?fixture=<name>` of App.tsx mounts: `<Name>.fixture.tsx`. */
+function fixtureFiles(root: string) {
+  return new Map(
+    readdirSync(resolve(root, fixtures))
+      .filter((file) => file.endsWith('.fixture.tsx'))
+      .map((file) => [fixtureName(file), `${fixtures}/${file}`]),
   );
-  if (app) mark(app);
-  marks.forEach(({ name, start }, index) =>
-    add(name, start, marks[index + 1]?.start ?? text.length),
-  );
-  return byName;
 }
 
 /** The modules a spec opens or renders, by what its source and the helpers it imports name. */
-function specRoots(sources: Sources, path: string, fixtureModules: Map<string, Set<string>>) {
+function specRoots(sources: Sources, path: string, fixtureModules: Map<string, string>) {
   const helpers = importsOf(sources.text(path) ?? '')
     .map(({ specifier }) => specifier)
     .filter((specifier) => specifier.startsWith('../helpers/'))
@@ -275,8 +211,10 @@ function specRoots(sources: Sources, path: string, fixtureModules: Map<string, S
   const roots = new Set<string>();
   for (const file of [path, ...helpers]) {
     const text = sources.text(file) ?? '';
-    for (const [, fixture] of text.matchAll(/[?&]fixture=([a-z][a-z-]*)/g))
-      for (const module of fixtureModules.get(fixture) ?? []) roots.add(module);
+    for (const [, fixture] of text.matchAll(/[?&]fixture=([a-z][a-z-]*)/g)) {
+      const module = fixtureModules.get(fixture);
+      if (module) roots.add(module);
+    }
     for (const [page] of text.matchAll(/\b[A-Z]\w*\.html\b/g)) {
       const html = sources.text(`${fixtures}/${page}`) ?? '';
       for (const [, script] of html.matchAll(/<script[^>]*\bsrc="\/?([^"]+)"/g))
@@ -321,7 +259,7 @@ function libraryModules(root: string, directory = library): string[] {
  */
 export function fixtureUse(root: string) {
   const sources = new Sources(root);
-  const fixtureModules = appFixtures(sources);
+  const fixtureModules = fixtureFiles(root);
   const users = new Map<string, Set<string>>();
   for (const [name, path] of specPaths(root)) {
     const pending = [...specRoots(sources, path, fixtureModules)];

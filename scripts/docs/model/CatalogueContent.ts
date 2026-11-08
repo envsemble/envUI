@@ -124,7 +124,7 @@ export function withoutCodeColumns(markdown: string): string {
     .lexer(markdown)
     .map((token) => {
       if (token.type !== 'table') return token.raw;
-      const table = token as Tokens.Table;
+      const table = token as Tokens.Table; // Tokens.Generic keeps the type from narrowing.
       const keep = table.header.map((cell) => cell.text.trim() !== codeColumnHeading);
       if (keep.every(Boolean)) return table.raw;
       const row = (cells: readonly { text: string }[]) =>
@@ -155,7 +155,7 @@ export function codeColumns(markdown: string): string {
     .lexer(markdown)
     .flatMap((token) => {
       if (token.type !== 'table') return [];
-      const table = token as Tokens.Table;
+      const table = token as Tokens.Table; // Tokens.Generic keeps the type from narrowing.
       const code = table.header.findIndex((cell) => cell.text.trim() === codeColumnHeading);
       if (code < 1) return [];
       const row = (cells: readonly { text: string }[]) =>
@@ -327,8 +327,9 @@ export interface OptionTable {
 
 export function optionTable(token: Token | undefined): OptionTable | undefined {
   if (token?.type !== 'table') return undefined;
-  const table = token as Tokens.Table;
+  const table = token as Tokens.Table; // Tokens.Generic keeps the type from narrowing.
   if (table.header.length < 2) return undefined;
+  // Two columns at least, so the last is there.
   if (table.header.at(-1)!.text.trim() !== optionUseHeading) return undefined;
   const titles = table.header.map((cell) => plainText(cell.tokens));
   return {
@@ -340,7 +341,7 @@ export function optionTable(token: Token | undefined): OptionTable | undefined {
         title: titles[index + 1],
         markdown: cell.text.trim(),
       })),
-      use: row.at(-1)!.text.trim(),
+      use: row.at(-1)!.text.trim(), // A row has the header's cells.
     })),
   };
 }

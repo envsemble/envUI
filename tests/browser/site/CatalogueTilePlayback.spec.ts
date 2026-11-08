@@ -477,7 +477,7 @@ async function deadClicks(page: Page, names: string[]) {
         },
         true,
       );
-      // The script ends as its pointer leaves the preview, with no element it goes to.
+      // The script ends as its pointer leaves the tile, with no element it goes to.
       element.addEventListener(
         'pointerout',
         (event) => {
@@ -536,7 +536,7 @@ for (const [route, parts] of [
       expect(await deadClicks(page, names)).toEqual([]);
     });
 
-test("a playing preview draws its pointer's cursor over its stage, gone at rest and when paused", async ({
+test("a playing tile draws its pointer's cursor over its stage, gone at rest and when paused", async ({
   page,
 }) => {
   // A gallery's card: the cursor shows on its stage while the card plays, and goes as it rests.

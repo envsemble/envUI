@@ -5,6 +5,7 @@ import '@envsemble/envui/styles.css';
 import './Fixture.css';
 import { RichTextEditingFixture } from './RichTextEditor.fixture.js';
 
+// RichText.html has the #root.
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Theme theme="light">

@@ -15,7 +15,7 @@ const englishDefaults = new Set(
 );
 
 test('no English default is left under a provider that sets every message', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=message-strings`);
+  await page.goto(`${fixtureUrl}/?fixture=messages`);
   const root = page.getByTestId('messages');
   await expect(root).toBeVisible();
   // ConfirmButton announces its armed state.
@@ -114,7 +114,7 @@ test('no English default is left under a provider that sets every message', asyn
 test('the app parts take their names, labels and announcements from the provider', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=message-strings`);
+  await page.goto(`${fixtureUrl}/?fixture=messages`);
   const root = page.getByTestId('messages');
   // A reorderable list names its handles and announces a move.
   const handle = root.getByRole('list', { name: 'Order' }).getByRole('button').first();
@@ -136,7 +136,7 @@ test('the app parts take their names, labels and announcements from the provider
 });
 
 test('messages written inline keep the context while they stay the same', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=message-strings`);
+  await page.goto(`${fixtureUrl}/?fixture=messages`);
   const probe = page.getByTestId('inline-probe');
   await expect(probe).toHaveText('⟦inline.loading⟧');
   // The count is written in an effect, after the first paint.

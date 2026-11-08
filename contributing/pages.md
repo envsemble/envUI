@@ -287,7 +287,7 @@ Examples, screenshots and tests share one neutral set of sample data:
 - **Organisation and application:** Northwind.
 - **Things:** projects, such as Website refresh, Quarterly report, Onboarding guide, Mobile release, Data migration and Annual review; documents; tasks; teams.
 - **Dates:** absolute dates in February and March 2026, so relative times read naturally.
-- **No names of applications built on envUI, and no logos** ([AGENTS.md](../AGENTS.md)).
+- **No names of applications built on envUI, and no logos** ([AGENTS.md](../AGENTS.md#never-name-the-applications-built-on-envui)).
 
 Its words follow the [writing guide](../docs/writing.md).
 

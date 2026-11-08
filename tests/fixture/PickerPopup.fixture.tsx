@@ -1,7 +1,9 @@
 import { DatePicker, MonthPicker, TimePicker } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 /** One of each picker, each with a value and a clear button, so every card shows both actions. */
-export function PickerPopupsFixture() {
+export default function PickerPopupFixture() {
   return (
     <div className="fixture-section">
       <DatePicker label="Card date" defaultValue="2026-10-20" locale="en-GB" clearable />

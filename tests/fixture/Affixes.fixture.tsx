@@ -3,7 +3,9 @@ import { IconButton, TextField, SearchField, Theme, type ColorScheme } from '@en
 import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
 import { IconSell } from '@envsemble/envui/icons/Sell';
 
-export function AffixesFixture({ theme }: { theme: ColorScheme }) {
+export const themes = true;
+
+export default function AffixesFixture({ theme }: { theme: ColorScheme }) {
   const [submitted, setSubmitted] = useState('');
   return (
     <Theme theme={theme} data-testid={`affixes-${theme}`} className="fixture-section">

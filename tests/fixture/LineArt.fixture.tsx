@@ -1,6 +1,8 @@
 import { useState, type CSSProperties } from 'react';
 import { LineArt, type LineArtMotion } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 const motions: LineArtMotion[] = ['appear', 'disappear', 'play', 'loop'];
 
 /** A drawing whose motion the buttons set, with the motions that have ended, in order. */
@@ -31,7 +33,7 @@ function Moving({ box }: { box: CSSProperties }) {
  * LineArt in banner-shaped boxes: at the end by default, at the start, in a right-to-left box, and
  * labelled as an image; and one whose motion the buttons set.
  */
-export function LineArtsFixture() {
+export default function LineArtFixture() {
   // Taller than the drawing's sheet, so the box crops it from the side away from where it sits.
   const box = { inlineSize: '12rem', blockSize: '12rem' };
   return (

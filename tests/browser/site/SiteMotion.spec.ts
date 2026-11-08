@@ -3,11 +3,10 @@ import { siteDevUrl } from '../helpers/Servers';
 import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
 
 /*
- * The site's animations (apps/site/src/motion/): a tile plays its own preview while
- * the pointer is on it and rests at its still, the animation's first step, once it leaves; an
- * animated figure on a page plays by itself, with a pause button that holds it where it is; the
- * Display menu's Motion pauses them all, is stored, and is what a reader who prefers reduced motion
- * starts with.
+ * The site's animations (apps/site/src/motion/): a tile plays while the pointer is on it and rests
+ * at its still, the animation's first step, once it leaves; an animated figure on a page plays by
+ * itself, with a pause button that holds it where it is; the Display menu's Motion pauses them all,
+ * is stored, and is what a reader who prefers reduced motion starts with.
  */
 
 /** The Display menu's Motion choice, Play or Pause, opening the menu to reach it. */
@@ -38,9 +37,7 @@ const sliderFigure = (page: Page) =>
 const figureValue = (page: Page) =>
   sliderFigure(page).locator('.env-slider-value').first().textContent();
 
-test('a tile plays its preview while the pointer is on it, and rests at its still after', async ({
-  page,
-}) => {
+test('a tile plays while the pointer is on it, and rests at its still after', async ({ page }) => {
   await page.goto(`${siteDevUrl}/components`);
   const switchTile = tile(page, 'Switch');
   await switchTile.scrollIntoViewIfNeeded();
@@ -251,7 +248,7 @@ test("a figure's right click opens its context menu inside the stage, and the pa
   await expect(menu).toBeVisible({ timeout: 4000 });
   expect(inside((await menu.boundingBox())!, (await stage.boundingBox())!)).toBe(true);
   await expect(menu.locator('.env-menu-item', { hasText: 'Duplicate' })).toBeVisible();
-  // A preview's context menu neither hides the page nor locks or moves its scroll.
+  // A tile's context menu neither hides the page nor locks or moves its scroll.
   await expect(page.locator('.site-contents')).not.toHaveAttribute('aria-hidden', 'true');
   expect(await page.evaluate(() => document.body.style.overflow)).toBe('');
   expect(await pageScroll(page)).toBe(scrolled);

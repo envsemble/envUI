@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const fixture = `${fixtureUrl}/?fixture=fields`;
+const fixture = `${fixtureUrl}/?fixture=field`;
 
 /**
  * Parts that paint a fill as content or by design, not as a field's well: a color picker's area,

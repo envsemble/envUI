@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button, Disclosure, Column } from '@envsemble/envui';
 
-/** Controlled and uncontrolled disclosures, mounted with ?fixture=disclosures. */
-export function DisclosuresFixture() {
+/** Controlled and uncontrolled disclosures. */
+export default function DisclosureFixture() {
   const [open, setOpen] = useState(false);
   const [changes, setChanges] = useState<boolean[]>([]);
   const [requests, setRequests] = useState<boolean[]>([]);

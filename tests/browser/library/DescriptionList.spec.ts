@@ -1,7 +1,7 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const fixture = `${fixtureUrl}/?fixture=description-lists`;
+const fixture = `${fixtureUrl}/?fixture=description-list`;
 
 const box = async (locator: Locator) => (await locator.boundingBox())!;
 

@@ -5,9 +5,11 @@ import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconHistory } from '@envsemble/envui/icons/History';
 
+export const themes = true;
+
 const documents = ['Alpha', 'Beta', 'Gamma'];
 
-export function MenusFixture({ theme }: { theme: ColorScheme }) {
+export default function MenuFixture({ theme }: { theme: ColorScheme }) {
   const [log, setLog] = useState('');
   const [sort, setSort] = useState('name');
   const [hidden, setHidden] = useState(false);

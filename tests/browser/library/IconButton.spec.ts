@@ -55,7 +55,7 @@ function contrast(first: string, second: string) {
 test('quiet buttons take the icon color, a state layer and the focus ring in both themes', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=quiet-buttons`);
+  await page.goto(`${fixtureUrl}/?fixture=icon-button`);
   for (const theme of ['light', 'dark']) {
     const scope = page.getByTestId(`quiet-${theme}`);
     const toggle = scope.getByRole('button', { name: `Toggle sidebar ${theme}` });

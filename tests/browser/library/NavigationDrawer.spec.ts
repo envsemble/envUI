@@ -55,7 +55,7 @@ test('Drawer heads each run of a group, and Rail and Bar keep the order without 
 });
 
 test.describe('Drawer resizable', () => {
-  const resizable = `${fixtureUrl}/?fixture=resizable-drawers`;
+  const resizable = `${fixtureUrl}/?fixture=navigation-drawer`;
   const widthOf = async (drawer: Locator) => (await drawer.boundingBox())!.width;
 
   test('resizes with the arrow keys, Home and End, and a double click resets it', async ({
@@ -253,7 +253,7 @@ async function expectClosed(link: Locator) {
 
 test.describe('Drawer nested sections', () => {
   // Drawers with sections, in tests/fixture/NavigationDrawer.fixture.tsx.
-  const nested = `${fixtureUrl}/?fixture=nested-drawers`;
+  const nested = `${fixtureUrl}/?fixture=navigation-drawer-nested`;
 
   test('the current page’s sections start open, the rest closed with their links in the page', async ({
     page,

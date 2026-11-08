@@ -67,7 +67,7 @@ function Toasts() {
  * each control into its states and compares the colors it paints with those the integration branch
  * painted, so envUI's own colors can't drift.
  */
-export function DefaultColors() {
+export default function DefaultColorsFixture() {
   return (
     <Theme theme="light" className="fixture-section" data-testid="default-colors">
       <h2>Default colors</h2>

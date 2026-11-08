@@ -2,6 +2,8 @@ import { ThemePreferenceProvider, ToastProvider } from '@envsemble/envui';
 import { ProjectsScreen } from './AppScreenProjects.fixture.js';
 import { AgentScreen } from './AppScreenAgent.fixture.js';
 
+export const mount = 'root';
+
 /**
  * Two product screens built only from envUI's public components, for reviewing how the library
  * holds up in an application rather than for a spec: mounted with
@@ -9,7 +11,7 @@ import { AgentScreen } from './AppScreenAgent.fixture.js';
  * compact|comfortable|system (system by default). The agent screen takes &overlay=dialog|palette|
  * none, the settings dialog by default.
  */
-export function AppScreenFixture() {
+export default function AppScreenFixture() {
   const query = new URLSearchParams(location.search);
   const theme = query.get('theme') === 'dark' ? 'dark' : 'light';
   const requested = query.get('scale');

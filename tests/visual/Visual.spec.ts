@@ -1,6 +1,6 @@
 /**
  * Visual baseline: screenshots of today's identity, so that later changes are deliberate and
- * reviewed as image diffs. Every catalogue page's preview specimens and forced interaction states
+ * reviewed as image diffs. Every catalogue page's specimens and forced interaction states
  * are captured in light, and its first example where it has no specimen or only animated ones; an
  * animated figure is captured as its still, with the catalogue's animations paused. The theme
  * sample of samplePages (CatalogueThemes.ts) is captured in dark and high contrast as well. So are a few density specimens of the test fixture, and a few lists, a tooltip and the
@@ -524,7 +524,7 @@ test.describe('density', () => {
   for (const { section, theme } of densityShots) {
     test(`${section} (${theme})`, async ({ page }) => {
       await page.clock.setFixedTime(now);
-      await page.goto(`${fixtureUrl}/?fixture=density&section=${section}&theme=${theme}`);
+      await page.goto(`${fixtureUrl}/?fixture=scale&section=${section}&theme=${theme}`);
       const specimen = page.locator(`[data-density-section="${section}"]`);
       await specimen.waitFor();
       await expect(specimen).not.toContainText('Unknown density section');

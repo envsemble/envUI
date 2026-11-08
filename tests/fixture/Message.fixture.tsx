@@ -11,7 +11,9 @@ import {
 } from '@envsemble/envui';
 import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
 
-export function MessagesFixture({ theme }: { theme: ColorScheme }) {
+export const themes = true;
+
+export default function MessageFixture({ theme }: { theme: ColorScheme }) {
   const [copied, setCopied] = useState(0);
   const [retried, setRetried] = useState(0);
   const [sent, setSent] = useState<string[]>([]);

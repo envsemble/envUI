@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import { Button, Dialog, TableOfContents } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 const tall = { blockSize: '40rem', margin: 0 };
 const short = { blockSize: '3rem', margin: 0 };
 
@@ -8,9 +10,8 @@ const short = { blockSize: '3rem', margin: 0 };
  * A page under a sticky bar that reads its article's headings, h2 and h3, leaving out an example's
  * own heading and an h4; and sections of its own, cards in a box that scrolls, also in a box drawn
  * at half its size; and a modal dialog that adds a section while the page behind it is hidden.
- * Mounted with ?fixture=table-of-contents.
  */
-export function TableOfContentsFixture() {
+export default function TableOfContentsFixture() {
   const article = useRef<HTMLElement>(null);
   const [extra, setExtra] = useState(false);
   // Renders the review's sections anew, the same ids on new elements, as a page that renders again.

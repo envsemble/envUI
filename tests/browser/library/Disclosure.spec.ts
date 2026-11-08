@@ -4,7 +4,7 @@ import { fixtureUrl } from '../helpers/Servers';
 test('a disclosure reports each change through onOpenChange, controlled or on its own', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=disclosures`);
+  await page.goto(`${fixtureUrl}/?fixture=disclosure`);
   const scope = page.getByTestId('disclosures');
   const controlled = scope.locator('details').filter({ hasText: 'Controlled' });
   const changes = scope.getByTestId('disclosure-changes');
@@ -39,7 +39,7 @@ test('a disclosure reports each change through onOpenChange, controlled or on it
 test('a controlled disclosure whose parent refuses the change never opens, not for a frame', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=disclosures`);
+  await page.goto(`${fixtureUrl}/?fixture=disclosure`);
   const scope = page.getByTestId('disclosures');
   const kept = scope.locator('details').filter({ hasText: 'Kept closed' });
   await kept.evaluate((details) => {

@@ -1,5 +1,6 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import { PortalContainer } from '@envsemble/envui';
+import { flag } from '../../packages/ui/src/internal/flag.js';
 
 /**
  * The library's contact sheets: every component of one family of the catalogue, in its variants,
@@ -49,7 +50,7 @@ export function Cell({
       data-cs-highlight={highlight}
       data-cs-mark-as={markAs}
       data-cs-click={click}
-      data-cs-tooltip-room={tooltipRoom ? '' : undefined}
+      data-cs-tooltip-room={flag(tooltipRoom)}
       style={width === undefined ? undefined : { inlineSize: width }}
     >
       <div className="cs-cell-body">{children}</div>
@@ -75,7 +76,7 @@ export function Strip({
   return (
     <div className="cs-strip">
       <div className="cs-strip-label">{label}</div>
-      <div className="cs-strip-cells" data-cs-middle={middle ? '' : undefined}>
+      <div className="cs-strip-cells" data-cs-middle={flag(middle)}>
         {children}
       </div>
     </div>

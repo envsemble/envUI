@@ -11,6 +11,8 @@ import {
   Row,
 } from '@envsemble/envui';
 
+export const themes = true;
+
 /** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
 const emphasis = {
   primary: { variant: 'primary' },
@@ -22,8 +24,8 @@ const emphasis = {
 } as const;
 const variants = ['primary', 'secondary', 'outlined', 'text', 'important'] as const;
 
-/** Counts, badges and numbers inside buttons and tabs, mounted with ?fixture=button-counts. */
-export function ButtonCountsFixture({ theme }: { theme: ColorScheme }) {
+/** Counts, badges and numbers inside buttons and tabs. */
+export default function ButtonCountsFixture({ theme }: { theme: ColorScheme }) {
   const [tab, setTab] = useState('submissions');
   const [view, setView] = useState('editor');
   return (

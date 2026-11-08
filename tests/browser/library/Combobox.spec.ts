@@ -798,7 +798,7 @@ test('typing reads no styles for the text direction, which is read as the popup 
 test('open in a contained PortalContainer, the list leaves the rest of the page in reach', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=portal-containers`);
+  await page.goto(`${fixtureUrl}/?fixture=portal-container`);
   await expect(page.getByTestId('combobox-layer').getByRole('listbox')).toBeVisible();
   // Base UI hides the page around an open list from assistive technology, modal or not; in a
   // contained PortalContainer, the field, the other previews and the page stay in reach.

@@ -3,6 +3,8 @@ import { Button, Card, Column, Theme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
 import { CodeDiff } from '@envsemble/envui/diff';
 
+export const mount = 'standalone';
+
 const before = '{\n  "theme": "light",\n  "density": "standard"\n}';
 const after = '{\n  "theme": "system",\n  "density": "standard",\n  "language": "en"\n}';
 
@@ -26,9 +28,9 @@ function SwitchedDiff() {
 
 /**
  * A code block above a diff of the same JSON, on the page and on a card, in the light and the dark
- * theme, and a diff whose theme switches, mounted with ?fixture=code-diff.
+ * theme, and a diff whose theme switches.
  */
-export function CodeDiffFixture() {
+export default function CodeDiffFixture() {
   return (
     <Column gap={4}>
       {(['light', 'dark'] as const).map((theme) => (

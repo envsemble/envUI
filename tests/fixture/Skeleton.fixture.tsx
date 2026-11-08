@@ -30,6 +30,8 @@ import {
 import { installDevMode } from '@envsemble/envui/dev';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 
+export const mount = 'standalone';
+
 interface Project {
   id: string;
   name: string;
@@ -78,7 +80,7 @@ function Reader() {
  * Surfaces as skeletons, over placeholder items and over real content; a loaded copy of the same
  * surfaces for the shift check; popups that open as skeletons.
  */
-export function SkeletonsFixture() {
+export default function SkeletonFixture() {
   const [loaded, setLoaded] = useState(false);
   const items = loaded ? projects : undefined;
   const list = items ?? placeholders<Project>(3);

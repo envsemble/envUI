@@ -15,7 +15,7 @@ const starAndHalf = (star: Locator) =>
   });
 
 test('a rating fills its stars to the value in half steps and is named once', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=ratings`);
+  await page.goto(`${fixtureUrl}/?fixture=rating`);
   for (const theme of ['light', 'dark']) {
     const half = page.getByTestId(`rating-half-${theme}`);
     // One image named by the rating; the number beside it is hidden from assistive technology.
@@ -57,7 +57,7 @@ test('a rating fills its stars to the value in half steps and is named once', as
 test("ratings, changes and rolling numbers follow the provider's locale and messages", async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=ratings`);
+  await page.goto(`${fixtureUrl}/?fixture=rating`);
   const scope = page.getByTestId('ratings-light');
   const rating = scope.getByTestId('rating-de-light');
   await expect(rating.locator('.env-rating-value')).toHaveText('4,5');

@@ -15,6 +15,8 @@ import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { IconEvent } from '@envsemble/envui/icons/Event';
 import { IconPriorityHigh } from '@envsemble/envui/icons/PriorityHigh';
 
+export const themes = true;
+
 const reports = [
   { id: 'quarterly', title: 'Quarterly report', owner: 'Aurora', reviews: 12, status: 'Ready' },
   {
@@ -36,7 +38,7 @@ function compare(key: SortKey) {
     key === 'reviews' ? first.reviews - second.reviews : first.title.localeCompare(second.title);
 }
 
-export function TablesFixture({ theme }: { theme: ColorScheme }) {
+export default function TableFixture({ theme }: { theme: ColorScheme }) {
   const [sort, setSort] = useState<{ key: SortKey; direction: 'ascending' | 'descending' }>();
   const [selected, setSelected] = useState(['tokens']);
   const [widths, setWidths] = useState([40, 30, 15, 15]);

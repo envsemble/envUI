@@ -1,7 +1,7 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const fixture = `${fixtureUrl}/?fixture=accordions`;
+const fixture = `${fixtureUrl}/?fixture=accordion`;
 
 /** Which of the indicator's two icons shows: plus while closed, minus while open. */
 const indicator = (trigger: Locator) =>

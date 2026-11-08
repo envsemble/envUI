@@ -35,7 +35,7 @@ function IconPipeline() {
 
 const sizes: GraphicSize[] = ['icon', 'sm', 'md', 'lg', 'xl'];
 
-export function GraphicsFixture() {
+export default function GraphicFixture() {
   return (
     <section className="fixture-section" data-testid="graphics">
       <div data-testid="graphic-sizes">

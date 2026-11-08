@@ -1,15 +1,10 @@
-import { useEffect, useState } from 'react';
-import {
-  DocumentTabs,
-  Menu,
-  Menubar,
-  Theme,
-  type DocumentTabsItem,
-  type ColorScheme,
-} from '@envsemble/envui';
+import { useState } from 'react';
+import { DocumentTabs, Theme, type DocumentTabsItem, type ColorScheme } from '@envsemble/envui';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 
-const initialTabs: DocumentTabsItem[] = [
+export const themes = true;
+
+export const initialTabs: DocumentTabsItem[] = [
   { value: 'plans/roadmap.md', label: 'Roadmap.md' },
   { value: 'plans/decisions.md', label: 'Decisions.md' },
   { value: 'plans/retrospective.md', label: 'Retrospective.md', preview: true },
@@ -19,7 +14,7 @@ const initialTabs: DocumentTabsItem[] = [
   })),
 ].map((tab) => ({ ...tab, icon: <IconDescription />, tooltip: tab.value }));
 
-export function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
+export default function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
   const [tabs, setTabs] = useState(initialTabs);
   const [value, setValue] = useState<string | null>('plans/roadmap.md');
   const [log, setLog] = useState<string[]>([]);
@@ -81,62 +76,5 @@ export function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
       </button>
       <output data-testid={`document-tabs-log-${theme}`}>{log.join('\n')}</output>
     </Theme>
-  );
-}
-
-/** An overflowing DocumentTabs strip in right-to-left text, mounted with ?fixture=rtl-document-tabs. */
-export function RtlDocumentTabsFixture() {
-  const [value, setValue] = useState<string | null>(initialTabs[0]!.value);
-  return (
-    <div dir="rtl" style={{ inlineSize: '30rem' }}>
-      <DocumentTabs
-        aria-label="Right-to-left documents"
-        items={initialTabs}
-        value={value}
-        onValueChange={setValue}
-        onClose={() => undefined}
-      />
-    </div>
-  );
-}
-
-/**
- * A parent that re-renders DocumentTabs with a new inline items array as its menu opens, as its
- * input changes and on a timer, mounted with ?fixture=document-tabs-rerender.
- */
-export function DocumentTabsRerenderFixture() {
-  const [tabs, setTabs] = useState(['one', 'two', 'three']);
-  const [value, setValue] = useState<string | null>('one');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [draft, setDraft] = useState('');
-  const [renders, setRenders] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => setRenders((count) => count + 1), 50);
-    return () => clearInterval(timer);
-  }, []);
-  return (
-    <div>
-      <DocumentTabs
-        aria-label="Re-rendered documents"
-        items={tabs.map((id) => ({ value: id, label: `${id}.md` }))}
-        value={value}
-        onValueChange={setValue}
-        onClose={(id) => {
-          const index = tabs.indexOf(id);
-          const remaining = tabs.filter((tab) => tab !== id);
-          setTabs(remaining);
-          if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)] ?? null);
-        }}
-      />
-      <Menubar.Root aria-label="Rerender menubar">
-        <Menubar.Menu label="File" onOpenChange={setMenuOpen}>
-          <Menu.Item>First action</Menu.Item>
-          <Menu.Item>Second action</Menu.Item>
-        </Menubar.Menu>
-      </Menubar.Root>
-      <input aria-label="Draft" value={draft} onChange={(event) => setDraft(event.target.value)} />
-      <output data-testid="rerender-state">{menuOpen ? 'open' : 'closed'}</output>
-      <output data-testid="rerender-count">{renders}</output>
-    </div>
   );
 }

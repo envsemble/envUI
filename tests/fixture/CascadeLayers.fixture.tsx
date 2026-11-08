@@ -5,6 +5,7 @@ import { Button, Checkbox, Link, Text, Theme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './CascadeLayers.css';
 
+// CascadeLayers.html has the #root.
 createRoot(document.getElementById('root')!).render(
   <Theme theme="light">
     <Button variant="primary" className="app-cta" data-testid="override">

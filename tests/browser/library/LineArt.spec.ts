@@ -15,7 +15,7 @@ const boxes = (art: Locator) =>
 test('it covers its box from where it sits, its lines hairlines in the muted edge color', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=line-arts`);
+  await page.goto(`${fixtureUrl}/?fixture=line-art`);
   const end = page.getByTestId('end');
   await expect(end).toHaveCSS('width', '192px');
   await expect(end).toHaveCSS('height', '192px');
@@ -100,7 +100,7 @@ test(
   'its lines draw themselves in and out, a loop ending each turn where the next begins',
   { tag: '@engines' },
   async ({ page }) => {
-    await page.goto(`${fixtureUrl}/?fixture=line-arts`);
+    await page.goto(`${fixtureUrl}/?fixture=line-art`);
     const art = page.getByTestId('moving');
     const ended = page.getByTestId('ended');
     const count = await art.evaluate((svg) => svg.children.length);
@@ -154,7 +154,7 @@ test(
   { tag: '@engines' },
   async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(`${fixtureUrl}/?fixture=line-arts`);
+    await page.goto(`${fixtureUrl}/?fixture=line-art`);
     const art = page.getByTestId('moving');
     const ended = page.getByTestId('ended');
     const count = await art.evaluate((svg) => svg.children.length);

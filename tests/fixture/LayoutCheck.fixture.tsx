@@ -7,6 +7,8 @@ import { layout } from '@envsemble/envui/dev';
 // padding and frame, so the stage is the window the example gets.
 import '../../apps/site/src/styles/Stage.css';
 
+export const mount = 'standalone';
+
 /**
  * Every catalogue example file, loaded on demand: apps/site/src/examples/<page>/<Name>.tsx,
  * as the catalogue's example registry loads them (ExampleRegistry.ts).
@@ -56,7 +58,7 @@ function Rendered() {
  * is the fixture's own, as the catalogue's is, and leaves the document alone. With `&theme=`, the
  * visual baseline (tests/visual) opens the lists of examples the catalogue only plays.
  */
-export function LayoutCheckFixture() {
+export default function LayoutCheckFixture() {
   useEffect(() => {
     const envui = window.envui ?? (window.envui = {});
     envui.layout = layout;

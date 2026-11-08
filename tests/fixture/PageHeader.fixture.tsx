@@ -12,6 +12,8 @@ import {
   Text,
 } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 const trail = [
   { label: 'Workspace', href: '#workspace' },
   { label: 'Projects', href: '#projects' },
@@ -22,7 +24,7 @@ const trail = [
  * Page headers for the layout checks: one in a container the test narrows, one at heading level 2
  * with small controls, and a sticky one on a page in a Scaffold's body, with a field far below.
  */
-export function PageHeadersFixture() {
+export default function PageHeaderFixture() {
   const [width, setWidth] = useState('48rem');
   return (
     <Column gap={5}>

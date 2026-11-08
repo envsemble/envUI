@@ -1,7 +1,7 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const fixture = `${fixtureUrl}/?fixture=copy-buttons`;
+const fixture = `${fixtureUrl}/?fixture=copy-button`;
 
 /**
  * Records what the page writes to the clipboard. available: the asynchronous Clipboard API works;

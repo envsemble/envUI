@@ -2,7 +2,7 @@ import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
 const scaffold = (query = '') => `${fixtureUrl}/?fixture=scaffold${query}`;
-const scrollKeys = `${fixtureUrl}/?fixture=scroll-keys`;
+const scrollKeys = `${fixtureUrl}/?fixture=scaffold-scroll-keys`;
 const scaffoldPanes = `${fixtureUrl}/?fixture=scaffold-panes`;
 
 const box = async (locator: Locator) => (await locator.boundingBox())!;

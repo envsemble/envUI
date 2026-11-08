@@ -11,7 +11,9 @@ import {
 } from '@envsemble/envui';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
-export function CopyButtonsFixture({ theme }: { theme: ColorScheme }) {
+export const themes = true;
+
+export default function CopyButtonFixture({ theme }: { theme: ColorScheme }) {
   const [copied, setCopied] = useState('');
   const [presses, setPresses] = useState(0);
   const [bridged, setBridged] = useState('');

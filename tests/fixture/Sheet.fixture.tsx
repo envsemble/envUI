@@ -11,12 +11,14 @@ import {
   type DialogOpenChangeReason,
 } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 /**
  * Side sheets at both edges, named by a title or by aria-label, one holding a NavigationDrawer, one whose
  * first element is a field,
  * one in right-to-left text, a bottom sheet, and two taller than the window.
  */
-export function SheetsFixture() {
+export default function SheetFixture() {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<DialogOpenChangeReason | ''>('');
   const main = useRef<HTMLElement>(null);

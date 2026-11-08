@@ -77,7 +77,7 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
   expect(await page.evaluate(() => document.fonts.check('1rem "envUI Geist"'))).toBe(true);
 });
 
-test('single previews retain state when the theme changes', async ({ page }) => {
+test('a live example keeps its state when the theme changes', async ({ page }) => {
   // The 0.x preview of text fields opens the TextField page, whose live examples follow the
   // documentation's theme.
   await page.goto(`${siteDevUrl}/components/input/preview`);
@@ -612,7 +612,7 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   await expect(panes).toHaveCount(0);
 });
 
-test("the Display menu stays open while a page's previews play, and they go on once it closes", async ({
+test("the Display menu stays open while a page's figures play, and they go on once it closes", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });

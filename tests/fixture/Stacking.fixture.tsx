@@ -1,5 +1,7 @@
 import { Button, Dialog, Menu, Theme, ToastProvider, Tooltip, useToast } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 /**
  * Every layer the library's style sheets give a z-index, as an element with the classes and the
  * ancestors its rule needs, named by data-layer. They are hidden and out of the way: the spec reads
@@ -77,7 +79,7 @@ function LayeredDialog() {
   );
 }
 
-export function StackingFixture() {
+export default function StackingFixture() {
   return (
     <Theme theme="light" className="fixture-section">
       <ToastProvider>

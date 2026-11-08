@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { Button, Dialog } from '@envsemble/envui';
 import { installDevMode, type DevModeHandle } from '@envsemble/envui/dev';
 
+export const mount = 'standalone';
+
 declare global {
   interface Window {
     /** The fixture's dev mode, for the specs to open over the page with open(). */
@@ -41,7 +43,7 @@ const styles = `
  * A page for dev mode: its readout, its checks at other widths, and its button. `&root=<selector>`
  * gives dev mode a root of its own, as the docs' demo does; `window.envuiDevMode` is its handle.
  */
-export function DevModeFixture() {
+export default function DevModeFixture() {
   const popover = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const root = new URLSearchParams(window.location.search).get('root') ?? undefined;

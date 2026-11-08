@@ -44,7 +44,7 @@ test('the three pickers open the same card, their actions inset alike from its e
   page,
 }) => {
   await page.clock.setFixedTime(today);
-  await page.goto(`${fixtureUrl}/?fixture=picker-popups`);
+  await page.goto(`${fixtureUrl}/?fixture=picker-popup`);
   const cards = [];
   for (const [name, buttons] of [
     ['Card date', ['Today', 'Clear']],

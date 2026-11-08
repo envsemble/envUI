@@ -20,6 +20,8 @@ import { RichTextEditor } from '@envsemble/envui/rich-text';
 import { people } from './Combobox.fixture.js';
 import { dialogOptions } from './SelectOptions.fixture.js';
 
+export const mount = 'standalone';
+
 /** Every field and editor, each in a box named for its kind. */
 function Fields() {
   const fields: [string, ReactNode][] = [
@@ -59,9 +61,9 @@ function Fields() {
 
 /**
  * Every field and editor on the page, a card, a muted surface and a popup surface, as on a sheet
- * or in a dialog, in the light and the dark theme, mounted with ?fixture=fields.
+ * or in a dialog, in the light and the dark theme.
  */
-export function FieldsFixture() {
+export default function FieldFixture() {
   return (
     <Column gap={6}>
       {(['light', 'dark'] as const).map((theme) => (

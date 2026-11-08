@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const preview = `${fixtureUrl}/?fixture=portal-containers`;
+const preview = `${fixtureUrl}/?fixture=portal-container`;
 
 /** Whether a locator's box lies inside the preview region's. */
 async function insidePreview(page: Page, selector: string, preview = 'preview') {

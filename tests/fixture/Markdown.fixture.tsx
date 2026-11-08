@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { EnvUIProvider, Column } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/markdown';
 
+export const mount = 'standalone';
+
 const document = `## Prices
 
 | Plan | Price |
@@ -44,7 +46,7 @@ const keys = `- <kbd>Ctrl</kbd>+<kbd>K</kbd> opens search
 `;
 
 /**
- * Markdown tables, tasks, inline code in a cell and lists, mounted with ?fixture=markdown-tables.
+ * Markdown tables, tasks, inline code in a cell and lists.
  */
 /**
  * Markdown under a parent that renders again, with an inline renderLink, a new function each time,
@@ -66,7 +68,7 @@ See [the prices](#prices).`}
   );
 }
 
-export function MarkdownFixture() {
+export default function MarkdownFixture() {
   return (
     <Column gap={6}>
       <div data-testid="english">

@@ -177,16 +177,8 @@ test("a fixture's specs follow what its imports mean, however they are written",
       'export function Button() {}',
     ],
     'packages/ui/src/styles/Button.css': ['.env-button {}'],
-    'tests/fixture/App.tsx': [
-      "import { Buttons } from './Button.fixture';",
-      'export default function App() {',
-      "  const fixture = new URLSearchParams(location.search).get('fixture');",
-      "  if (fixture === 'buttons') return <Buttons />;",
-      '  return null;',
-      '}',
-    ],
     'tests/browser/library/Button.spec.ts': [
-      "test('x', ({ page }) => page.goto('/?fixture=buttons'));",
+      "test('x', ({ page }) => page.goto('/?fixture=button'));",
     ],
     'tests/browser/library/Table.spec.ts': ["// import { Button } from '@envsemble/envui';"],
   };
@@ -195,7 +187,7 @@ test("a fixture's specs follow what its imports mean, however they are written",
     'packages/ui/src/index.ts': ["export { Button } from './actions/Button.js';"],
     'tests/fixture/Button.fixture.tsx': [
       "import { Button } from '@envsemble/envui';",
-      'export const Buttons = Button;',
+      'export default Button;',
     ],
   });
   const rewritten = checkout({
@@ -206,7 +198,7 @@ test("a fixture's specs follow what its imports mean, however they are written",
       '  type Button as Kind,',
       '  Button as Action,',
       "} from '@envsemble/envui';",
-      'export const Buttons = Action;',
+      'export default Action;',
     ],
   });
   try {

@@ -40,7 +40,6 @@ export {
 export { libraryVersions } from './LibraryVersions.ts';
 export {
   codeSubsections,
-  componentGroups,
   exampleRoles,
   examplesOf,
   frontmatterSchema,

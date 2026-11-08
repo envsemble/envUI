@@ -79,7 +79,7 @@ test('button and link cards provide native keyboard activation, focus and disabl
 test('a card heading takes its level, the element comes from render and a link card is named by its text', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=cards`);
+  await page.goto(`${fixtureUrl}/?fixture=card`);
   await expect(page.getByTestId('card-h3').getByRole('heading', { level: 3 })).toHaveText(
     'Default level',
   );

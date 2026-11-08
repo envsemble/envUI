@@ -4,7 +4,7 @@ import { fixtureUrl } from '../helpers/Servers';
 const adoption = `${fixtureUrl}/?fixture=adoption`;
 
 test('notices use status and alert roles by tone and dismiss on request', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=alerts`);
+  await page.goto(`${fixtureUrl}/?fixture=alert`);
   const scope = page.getByTestId('alerts-light');
   await expect(scope.getByRole('status').filter({ hasText: 'Sync paused' })).toBeVisible();
   await expect(scope.getByRole('status').filter({ hasText: 'published' })).toBeVisible();
@@ -122,7 +122,7 @@ test('popovers size to their content, from 12 rem up to their width, and stay in
 test('dialogs open wide for heavy content and near the top for search-like tasks', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  await page.goto(`${fixtureUrl}/?fixture=dialog`);
   await page.getByRole('button', { name: 'Open wide dialog' }).click();
   const wide = page.getByRole('dialog', { name: 'Wide details' });
   await expect(wide).toBeVisible();
@@ -142,7 +142,7 @@ test('dialogs open wide for heavy content and near the top for search-like tasks
 });
 
 test('right panels keep their width beside the page and fill a narrow window', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  await page.goto(`${fixtureUrl}/?fixture=dialog`);
   const open = async (trigger: string, title: string) => {
     await page.getByRole('button', { name: trigger }).click();
     const panel = page.getByRole('dialog', { name: title });
@@ -185,7 +185,7 @@ test('a panel across the whole width keeps clear of the safe areas on both sides
   browserName,
 }) => {
   test.skip(browserName !== 'chromium', 'Only one engine emulates safe-area insets.');
-  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  await page.goto(`${fixtureUrl}/?fixture=dialog`);
   const session = await page.context().newCDPSession(page);
   await session.send('Emulation.setSafeAreaInsetsOverride', {
     insets: { top: 0, left: 44, bottom: 21, right: 44 },
@@ -241,7 +241,7 @@ test('dialogs take the popups’ fill and shadow with no edge, solid over the ba
   expect(popover.shadow).not.toBe('none');
   expect(popover.filter).toMatch(/^blur\(/);
 
-  await page.goto(`${fixtureUrl}/?fixture=palette`);
+  await page.goto(`${fixtureUrl}/?fixture=command-palette`);
   await page.getByRole('button', { name: 'Quick open light' }).focus();
   await page.keyboard.press('Enter');
   // The palette is frosted as a popover is, in a surface's larger corner, as a dialog's.
@@ -251,7 +251,7 @@ test('dialogs take the popups’ fill and shadow with no edge, solid over the ba
 
   // A dialog: the popup color, solid, with the popups' shadow, a surface's corners and no visible
   // edge.
-  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  await page.goto(`${fixtureUrl}/?fixture=dialog`);
   await page.getByRole('button', { name: 'Open wide dialog' }).click();
   const dialog = await surface(page.getByRole('dialog', { name: 'Wide details' }));
   expect(dialog).toEqual({
@@ -263,7 +263,7 @@ test('dialogs take the popups’ fill and shadow with no edge, solid over the ba
 });
 
 test('a dark dialog takes the popup color, a step above the cards', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=forms`);
+  await page.goto(`${fixtureUrl}/?fixture=dialog`);
   await page.getByRole('button', { name: 'Open dark dialog', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Dark theme dialog', exact: true });
   const [fill, card] = await dialog.evaluate((element) => {
@@ -289,7 +289,7 @@ test('where popups are solid, a dialog is too: its edge returns and its shadow g
   page,
 }) => {
   await page.emulateMedia({ contrast: 'more' });
-  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  await page.goto(`${fixtureUrl}/?fixture=dialog`);
   await page.getByRole('button', { name: 'Open wide dialog' }).click();
   const dialog = await surface(page.getByRole('dialog', { name: 'Wide details' }));
   // The solid popup's fill, no shadow or blur, and the dialog's level of edge, which is visible.
@@ -307,7 +307,7 @@ test(
   'Dialog traps and restores focus and its nested Select retains the dark theme',
   { tag: '@engines' },
   async ({ page }) => {
-    await page.goto(`${fixtureUrl}/?fixture=forms`);
+    await page.goto(`${fixtureUrl}/?fixture=dialog`);
     const trigger = page.getByRole('button', { name: 'Open dark dialog', exact: true });
     await trigger.click();
     const dialog = page.getByRole('dialog', { name: 'Dark theme dialog', exact: true });
@@ -351,7 +351,7 @@ test(
 test('Dialog provides an accessible dismissal action and controlled action closure', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=forms`);
+  await page.goto(`${fixtureUrl}/?fixture=dialog`);
   const trigger = page.getByRole('button', { name: 'Open dark dialog', exact: true });
   await trigger.click();
   await page.getByRole('dialog').getByRole('button', { name: 'Cancel', exact: true }).click();

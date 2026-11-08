@@ -3,7 +3,7 @@ import { fixtureUrl } from '../helpers/Servers';
 import { collectErrors } from '../helpers/PageErrors';
 
 const adoption = `${fixtureUrl}/?fixture=adoption`;
-const menusFixture = `${fixtureUrl}/?fixture=menus`;
+const menusFixture = `${fixtureUrl}/?fixture=menu`;
 
 /** Computed colors of theme tokens, read beside an element so they resolve in its theme. */
 async function tokenColors(locator: Locator, tokens: string[]) {

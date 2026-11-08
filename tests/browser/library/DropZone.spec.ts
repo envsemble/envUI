@@ -75,7 +75,7 @@ test.beforeEach(async ({ page }) => {
   // without waiting as a listener is added. Kept on for the whole test, a press right after a
   // waitForEvent('filechooser') can't open a real picker, which headless Chromium cancels at once.
   page.on('filechooser', () => {});
-  await page.goto(`${fixtureUrl}/?fixture=drop-zones`);
+  await page.goto(`${fixtureUrl}/?fixture=drop-zone`);
 });
 
 test.afterEach(() => {

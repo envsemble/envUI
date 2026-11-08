@@ -12,12 +12,14 @@ import {
 } from '@envsemble/envui';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
+export const themes = true;
+
 const second = 1_000;
 const minute = 60 * second;
 const hour = 60 * minute;
 const day = 24 * hour;
 
-export function RelativeTimesFixture({ theme }: { theme: ColorScheme }) {
+export default function RelativeTimeFixture({ theme }: { theme: ColorScheme }) {
   // Moments relative to when the fixture opens, so they read the same in every run.
   const [openedAt] = useState(() => Date.now());
   const [savedAt, setSavedAt] = useState(() => openedAt - 2 * hour);

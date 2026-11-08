@@ -1,15 +1,17 @@
 import { useRef, useState } from 'react';
 import { Button, ConfirmDialog, Menu, Column, Text, TextField } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 /**
- * Confirm dialogs, mounted with ?fixture=confirm-dialogs: a neutral one that confirms at once, a
+ * Confirm dialogs: a neutral one that confirms at once, a
  * danger one whose action takes a moment and can fail, one whose action resolves at once, one
  * opened from a menu item that returns focus to the menu's button, a controlled one that stays
  * open after its action, and one with a typed name, inside a form of the page's own, whose action
  * waits for the spec and fails the first time, one whose confirm button waits on a typed name, and
  * one that holds a form of its own.
  */
-export function ConfirmDialogsFixture() {
+export default function ConfirmDialogFixture() {
   const [log, setLog] = useState<string[]>([]);
   const [fail, setFail] = useState(true);
   const [error, setError] = useState('');

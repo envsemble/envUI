@@ -5,7 +5,7 @@ import { fixtureUrl } from '../helpers/Servers';
 test('meters and progress bars read their values; spinners hide their drawing', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=meters`);
+  await page.goto(`${fixtureUrl}/?fixture=meter`);
   // Without a text of the application's, Base UI's formatted value stays.
   const storage = page.getByRole('meter', { name: 'Storage used' });
   await expect(storage).toHaveAttribute('aria-valuenow', '40');
@@ -46,7 +46,7 @@ test('meters and progress bars read their values; spinners hide their drawing', 
 });
 
 test('a track is a quiet tint with no outline, and its indicator fills it', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=meters`);
+  await page.goto(`${fixtureUrl}/?fixture=meter`);
   for (const selector of ['.env-meter-track', '.env-progress-track', '.env-progress-segment']) {
     const track = page.locator(selector).first();
     await expect(track).toHaveCSS('box-shadow', 'none');

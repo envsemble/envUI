@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Alert, Button, Link, Theme, type ColorScheme } from '@envsemble/envui';
 
-export function AlertsFixture({ theme }: { theme: ColorScheme }) {
+export const themes = true;
+
+export default function AlertFixture({ theme }: { theme: ColorScheme }) {
   const [dismissed, setDismissed] = useState(false);
   const [failed, setFailed] = useState(false);
   return (

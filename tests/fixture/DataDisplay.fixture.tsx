@@ -18,6 +18,8 @@ import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconMoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
+export const themes = true;
+
 /** A trail too long for its narrow frame: the current page cannot fit beside the earlier levels. */
 const narrowTrail = [
   { label: 'Workspace', href: '/workspace' },
@@ -47,7 +49,7 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   );
 }
 
-export function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
+export default function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
   const [crumb, setCrumb] = useState('');
   const [rowResult, setRowResult] = useState('');
   return (

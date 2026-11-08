@@ -163,7 +163,7 @@ for (const containsLayout of [false, true]) {
       { tag: '@engines' },
       async ({ page }) => {
         await page.setViewportSize({ width: 1024, height: 700 });
-        await open(page, `${fixtureUrl}/?fixture=dialog-variants`);
+        await open(page, `${fixtureUrl}/?fixture=dialog`);
         await page.getByRole('button', { name: 'Open wide dialog' }).click();
         const dialog = page.getByRole('dialog', { name: 'Wide details' });
         await expect(dialog).toBeVisible();
@@ -211,7 +211,7 @@ for (const containsLayout of [false, true]) {
       { tag: '@engines' },
       async ({ page }) => {
         await page.setViewportSize({ width: 1024, height: 700 });
-        await open(page, `${fixtureUrl}/?fixture=menus`, { scroll: false });
+        await open(page, `${fixtureUrl}/?fixture=menu`, { scroll: false });
         await page.evaluate(() => {
           document.body.style.display = 'grid';
           document.body.style.gap = '3rem';
@@ -263,7 +263,7 @@ for (const containsLayout of [false, true]) {
         [1024, 'medium'],
       ] as const) {
         await page.setViewportSize({ width, height: 800 });
-        await open(page, `${fixtureUrl}/?fixture=dialog-variants`, { scroll: false });
+        await open(page, `${fixtureUrl}/?fixture=dialog`, { scroll: false });
         await page.addStyleTag({
           content:
             '@layer env.components { @container env-window (width >= 37.5rem) { .env-dialog { --window-probe: medium; } } }',
@@ -286,7 +286,7 @@ test('under a themed document root, portals measure the root and keep their boxe
   page,
 }) => {
   await page.setViewportSize({ width: 1024, height: 700 });
-  await page.goto(`${fixtureUrl}/?fixture=menus`);
+  await page.goto(`${fixtureUrl}/?fixture=menu`);
   await page.evaluate(() => {
     document.documentElement.classList.add('env-theme');
     document.documentElement.dataset.envTheme = 'light';

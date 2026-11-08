@@ -176,6 +176,20 @@ export interface DocumentationSection {
   anchors?: string[];
 }
 
+/** The index's component groups, in its order; a component page's category is one of them. */
+export const componentGroups = [
+  'Actions',
+  'Forms & selection',
+  'Navigation',
+  'Data display',
+  'Text & content',
+  'Feedback',
+  'Overlays',
+  'App frame & layout',
+] as const;
+/** A component group of the index, such as Overlays. */
+export type ComponentGroup = (typeof componentGroups)[number];
+
 /** A page's or an export's status, a ladder from alpha to stable, then deprecated. */
 export const pageStatuses = ['alpha', 'beta', 'stable', 'deprecated'] as const;
 /** A page's or an export's status: alpha, beta, stable or deprecated. */

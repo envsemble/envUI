@@ -55,7 +55,7 @@ async function uploadIndex(page: Page, file: string) {
 test('formatting toolbar uses named SVG icon buttons and wraps its groups at narrow widths', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}?fixture=upload`);
+  await page.goto(`${fixtureUrl}?section=upload`);
   const scope = page.getByTestId('rich-text-upload');
   const toolbar = scope.getByRole('toolbar', { name: 'Rich text formatting' });
   const labels = [
@@ -132,7 +132,7 @@ test('formatting toolbar uses named SVG icon buttons and wraps its groups at nar
 test('theme and renderer changes preserve uncontrolled content, history and keyboard reference actions', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}?fixture=themed`);
+  await page.goto(`${fixtureUrl}?section=themed`);
   const scope = page.getByTestId('rich-text-themed');
   const editor = scope.getByRole('textbox');
   await replace(editor, '@');
@@ -168,7 +168,7 @@ test(
   "a code block scrolls rather than wraps: the document's styles win over ProseMirror's base",
   { tag: '@engines' },
   async ({ page }) => {
-    await page.goto(`${fixtureUrl}?fixture=form`);
+    await page.goto(`${fixtureUrl}?section=form`);
     const editor = page
       .getByTestId('rich-text-form')
       .getByRole('textbox', { name: 'Rich source', exact: true });
@@ -188,7 +188,7 @@ test(
   { tag: '@engines' },
   async ({ page, browserName }) => {
     test.skip(browserName === 'firefox', 'ProseMirror adds the separator in Chromium and WebKit');
-    await page.goto(`${fixtureUrl}?fixture=form`);
+    await page.goto(`${fixtureUrl}?section=form`);
     const editor = page
       .getByTestId('rich-text-form')
       .getByRole('textbox', { name: 'Rich source', exact: true });
@@ -214,7 +214,7 @@ test(
 test('a task item keeps its checkbox beside its text in the editor and in the view', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}?fixture=form`);
+  await page.goto(`${fixtureUrl}?section=form`);
   const editor = page
     .getByTestId('rich-text-form')
     .getByRole('textbox', { name: 'Rich source', exact: true });
@@ -252,7 +252,7 @@ test(
   'formatting, native history, form submission and reset use Markdown values',
   { tag: '@engines' },
   async ({ page }) => {
-    await page.goto(`${fixtureUrl}?fixture=form`);
+    await page.goto(`${fixtureUrl}?section=form`);
     const form = page.getByTestId('rich-text-form');
     const editor = form.getByRole('textbox', { name: 'Rich source', exact: true });
     await editor.focus();
@@ -279,7 +279,7 @@ test(
 test('references preserve punctuation and stable identities through editor and shared view Markdown roundtrips', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}?fixture=form`);
+  await page.goto(`${fixtureUrl}?section=form`);
   const editor = page
     .getByTestId('rich-text-form')
     .getByRole('textbox', { name: 'Rich source', exact: true });
@@ -310,7 +310,7 @@ test(
   'generic at, hash and slash sources support arrow selection, Escape and IME Enter',
   { tag: '@engines' },
   async ({ page }) => {
-    await page.goto(`${fixtureUrl}?fixture=form`);
+    await page.goto(`${fixtureUrl}?section=form`);
     const editor = page
       .getByTestId('rich-text-form')
       .getByRole('textbox', { name: 'Rich source', exact: true });
@@ -367,7 +367,7 @@ test(
 );
 
 test('slash commands execute standard Tiptap blocks and application actions', async ({ page }) => {
-  await page.goto(`${fixtureUrl}?fixture=commands`);
+  await page.goto(`${fixtureUrl}?section=commands`);
   const editor = page.getByTestId('rich-text-commands').getByRole('textbox');
   await replace(editor, '/heading');
   await page.getByRole('option', { name: 'Heading', exact: true }).click();
@@ -395,7 +395,7 @@ test('slash commands execute standard Tiptap blocks and application actions', as
 test('async sources handle loading, stale resolutions, empty results, failures and cancellation', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}?fixture=remote`);
+  await page.goto(`${fixtureUrl}?section=remote`);
   const scope = page.getByTestId('rich-text-remote');
   const editor = scope.getByRole('textbox');
   // Records the text each suggestions status has as it mounts.
@@ -472,7 +472,7 @@ test('async sources handle loading, stale resolutions, empty results, failures a
 test('controlled replacements and rejected edits stay authoritative, and links use host callbacks', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}?fixture=controlled&fixture=form`);
+  await page.goto(`${fixtureUrl}?section=controlled&section=form`);
   const scope = page.getByTestId('rich-text-controlled');
   const editor = scope.getByRole('textbox');
   await replace(editor, 'accepted edit');
@@ -505,7 +505,7 @@ test('controlled replacements and rejected edits stay authoritative, and links u
 test('upload hooks insert safe images and file references, accept host cancellation and reject unsafe URLs', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}?fixture=upload`);
+  await page.goto(`${fixtureUrl}?section=upload`);
   const scope = page.getByTestId('rich-text-upload');
   const files = scope.locator('input[type=file]');
   await files.setInputFiles({
@@ -579,7 +579,7 @@ test('upload hooks insert safe images and file references, accept host cancellat
 test('pending uploads cancel on read-only changes and refuse to insert into changed documents', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}?fixture=upload`);
+  await page.goto(`${fixtureUrl}?section=upload`);
   const scope = page.getByTestId('rich-text-upload');
   const files = scope.locator('input[type=file]');
   await files.setInputFiles({
@@ -623,7 +623,7 @@ test('pending uploads cancel on read-only changes and refuse to insert into chan
 test('the document takes the field look: border, variants, error and a disabled field with a readable label', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}?fixture=field`);
+  await page.goto(`${fixtureUrl}?section=field`);
   const scope = page.getByTestId('rich-text-field');
   const box = (name: string) =>
     scope
@@ -690,7 +690,7 @@ test(
   'suggestions show above a Dialog the editor sits in and close as Tab leaves the editor',
   { tag: '@engines' },
   async ({ page }) => {
-    await page.goto(`${fixtureUrl}?fixture=field`);
+    await page.goto(`${fixtureUrl}?section=field`);
     await page.getByRole('button', { name: 'Open notes dialog' }).click();
     const dialog = page.getByRole('dialog', { name: 'Notes dialog' });
     const editor = dialog.getByRole('textbox', { name: 'Dialog notes' });
@@ -727,7 +727,7 @@ test('a controlled editor replaces documents with references and tasks without a
   page.on('console', (message) => {
     if (message.type() === 'error' || message.type() === 'warning') errors.push(message.text());
   });
-  await page.goto(`${fixtureUrl}?fixture=field`);
+  await page.goto(`${fixtureUrl}?section=field`);
   const scope = page.getByTestId('rich-text-field');
   const editor = scope.getByRole('textbox', { name: 'Controlled notes' });
   await expect(editor.locator('[data-reference-id="person-2"]').first()).toBeVisible();
@@ -744,7 +744,7 @@ test('a controlled editor replaces documents with references and tasks without a
 });
 
 test('the formatting toolbar is one tab stop, in groups the arrow keys cross', async ({ page }) => {
-  await page.goto(`${fixtureUrl}?fixture=upload`);
+  await page.goto(`${fixtureUrl}?section=upload`);
   const scope = page.getByTestId('rich-text-upload');
   const toolbar = scope.getByRole('toolbar', { name: 'Rich text formatting' });
   const button = (name: string) => toolbar.getByRole('button', { name, exact: true });

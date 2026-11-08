@@ -19,6 +19,8 @@ import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { IconPin } from '@envsemble/envui/icons/Pin';
 import { IconSave } from '@envsemble/envui/icons/Save';
 
+export const mount = 'standalone';
+
 /** A control of the application's own with a `trigger` prop, which a Tooltip doesn't move onto. */
 function BadgeButton({
   trigger,
@@ -43,7 +45,7 @@ function RefLessButton() {
  * ones that show nothing and say so while developing: around a HoverCard or as its trigger, and
  * children a Tooltip can't take.
  */
-export function TooltipsFixture() {
+export default function TooltipFixture() {
   const [seats, setSeats] = useState(false);
   const [pinned, setPinned] = useState(true);
   const [presses, setPresses] = useState(0);

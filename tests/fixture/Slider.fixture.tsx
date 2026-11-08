@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Button, Slider, Theme, type ColorScheme } from '@envsemble/envui';
 
-export function SlidersFixture({ theme }: { theme: ColorScheme }) {
+export const themes = true;
+
+export default function SliderFixture({ theme }: { theme: ColorScheme }) {
   const [opacity, setOpacity] = useState(40);
   const [commits, setCommits] = useState<number[]>([]);
   const [submitted, setSubmitted] = useState('');

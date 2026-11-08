@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Button, HoverCard, Link, Text, Theme, type ColorScheme } from '@envsemble/envui';
 
-export function HoverCardFixture({ theme }: { theme: ColorScheme }) {
+export const themes = true;
+
+export default function HoverCardFixture({ theme }: { theme: ColorScheme }) {
   const [changes, setChanges] = useState<string[]>([]);
   return (
     <Theme theme={theme} data-testid={`hover-card-${theme}`} className="fixture-section">

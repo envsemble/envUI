@@ -1,10 +1,12 @@
 import { EnvUIProvider, Column } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
 
+export const mount = 'standalone';
+
 const source = 'npm install @envsemble/envui\nnpm run build';
 
-/** Code blocks to copy, in English and with the provider's words, mounted with ?fixture=code-block. */
-export function CodeBlockFixture() {
+/** Code blocks to copy, in English and with the provider's words. */
+export default function CodeBlockFixture() {
   return (
     <Column gap={4}>
       <CodeBlock copyable language="sh" data-testid="install">

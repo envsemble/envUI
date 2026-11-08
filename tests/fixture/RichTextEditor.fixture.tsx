@@ -89,7 +89,7 @@ const slashCommands: RichTextSlashCommand[] = [
 const originalControlled = 'Original [guide](/guide)';
 
 export function RichTextEditingFixture() {
-  const fixtures = new URLSearchParams(location.search).getAll('fixture');
+  const fixtures = new URLSearchParams(location.search).getAll('section');
   const includes = (name: string) => fixtures.length === 0 || fixtures.includes(name);
   const [source, setSource] = useState('alpha');
   const [submitted, setSubmitted] = useState('');
@@ -301,7 +301,7 @@ const controlledWithViews = [
 /**
  * The editor as a field: its variants, an error, a disabled editor, suggestions inside a Dialog,
  * a controlled editor whose content the application replaces, and the provider's words, mounted
- * with ?fixture=field.
+ * with ?section=field.
  */
 function FieldStates() {
   const [open, setOpen] = useState(false);

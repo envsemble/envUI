@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Badge, Button, DescriptionList, Select, Column, Row } from '@envsemble/envui';
 
+export const mount = 'standalone';
+
 /** Description lists: one whose container the test narrows, a stacked one, and one with controls. */
-export function DescriptionListsFixture() {
+export default function DescriptionListFixture() {
   const [width, setWidth] = useState('40rem');
   return (
     <Column gap={5} className="fixture-section">

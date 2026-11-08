@@ -6,7 +6,7 @@ let errors: string[] = [];
 test.beforeEach(async ({ page }) => {
   errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto(`${fixtureUrl}/?fixture=sliders`);
+  await page.goto(`${fixtureUrl}/?fixture=slider`);
 });
 
 test.afterEach(() => {
@@ -157,7 +157,7 @@ test('coarse pointers get the touch height, the whole field taking the finger', 
     viewport: { width: 390, height: 900 },
   });
   const page = await context.newPage();
-  await page.goto(`${fixtureUrl}/?fixture=sliders`);
+  await page.goto(`${fixtureUrl}/?fixture=slider`);
   expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
   const scope = page.getByTestId('sliders-light');
   await expect(scope.locator('.env-slider-control').first()).toHaveCSS('height', '44px');
@@ -445,7 +445,7 @@ test('a finger shows the handle and the ticks only while it is down', async ({ b
     viewport: { width: 390, height: 900 },
   });
   const page = await context.newPage();
-  await page.goto(`${fixtureUrl}/?fixture=sliders`);
+  await page.goto(`${fixtureUrl}/?fixture=slider`);
   const state = stateOf(page);
   const box = (await state.control.boundingBox())!;
   const point = { x: Math.round(box.x + box.width * 0.6), y: Math.round(box.y + box.height / 2) };

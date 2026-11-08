@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-const messagesFixture = `${fixtureUrl}/?fixture=messages`;
+const messagesFixture = `${fixtureUrl}/?fixture=message`;
 
 function collectErrors(page: Page) {
   const errors: string[] = [];
