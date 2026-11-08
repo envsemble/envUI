@@ -5,7 +5,7 @@ import { ActionElement } from '../../internal/ActionElement.js';
 import { Column, Row } from '../../foundations/Layout.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
-import { NavigationIconState } from '../../SymbolIconState.js';
+import { NavigationIconState } from '../../foundations/NavigationIconState.js';
 import { navigation, type NavigationMessages } from '../../foundations/messages/navigation.js';
 
 /** What every destination has, whichever navigation form shows it. */

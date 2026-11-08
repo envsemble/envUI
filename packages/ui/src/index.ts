@@ -75,7 +75,7 @@ export type {
   ToastNotification,
   ToastManager,
 } from './feedback/toast/toastTypes.js';
-export * from './Icon.js';
+export * from './foundations/Icon.js';
 export {
   LinkProvider,
   type LinkProviderProps,

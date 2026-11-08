@@ -84,6 +84,7 @@ export const aliases: Record<string, string[]> = {
   Avatar: ['AvatarGroup'],
   // The icon wrapper sizes whatever every icon slot holds, a Graphic's included.
   Icon: ['Graphic', 'Button', 'IconButton', 'Skeleton'],
+  NavigationIconState: ['Navigation', 'Tabs'],
   Calendar: ['DatePicker'],
   calendarDays: ['DatePicker', 'TimePicker', 'MonthPicker', 'CalendarHeatmap'],
   PickerField: ['DatePicker', 'TimePicker', 'MonthPicker', 'PickerPopup'],
@@ -103,6 +104,10 @@ export const aliases: Record<string, string[]> = {
   referenceExtension: ['RichTextEditor'],
   suggestions: ['RichTextEditor'],
   taskItem: ['RichTextEditor'],
+  useDocumentAttributes: ['RichTextEditor'],
+  useLinksAndUploads: ['RichTextEditor'],
+  useRichTextDocument: ['RichTextEditor'],
+  useRichTextExtensions: ['RichTextEditor'],
   TooltipPopup: ['Tooltip'],
   accessibleName: ['Tooltip'],
   sliderOverdrag: ['Slider'],

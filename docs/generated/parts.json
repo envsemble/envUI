@@ -86,7 +86,6 @@
         }
       ],
       "uses": [
-        "Icon",
         "Skeleton"
       ]
     },
@@ -286,9 +285,6 @@
             "env-avatar"
           ]
         }
-      ],
-      "uses": [
-        "Icon"
       ],
       "colors": [
         {
@@ -713,7 +709,6 @@
         }
       ],
       "uses": [
-        "Icon",
         "IconButton"
       ]
     },
@@ -1003,7 +998,6 @@
         }
       ],
       "uses": [
-        "Icon",
         "IconButton"
       ]
     },
@@ -1256,7 +1250,6 @@
         "Button",
         "CopyButton",
         "Field",
-        "Icon",
         "IconButton",
         "Menu",
         "Tooltip"
@@ -1660,7 +1653,6 @@
         }
       ],
       "uses": [
-        "Icon",
         "IconButton",
         "TextField",
         "Textarea"
@@ -2308,9 +2300,6 @@
             "env-field-control"
           ]
         }
-      ],
-      "uses": [
-        "Icon"
       ]
     },
     "Graphic": {
@@ -2739,7 +2728,6 @@
       ],
       "uses": [
         "ConnectedRows",
-        "Icon",
         "IconButton",
         "Skeleton",
         "Text"
@@ -3731,7 +3719,6 @@
         }
       ],
       "uses": [
-        "Icon",
         "IconButton",
         "Tooltip"
       ]
@@ -4031,7 +4018,6 @@
       ],
       "uses": [
         "Button",
-        "Icon",
         "IconButton",
         "ResizeHandle",
         "Skeleton"
@@ -4149,8 +4135,7 @@
         }
       ],
       "uses": [
-        "ConnectedRows",
-        "Icon"
+        "ConnectedRows"
       ],
       "colors": [
         {
@@ -4197,8 +4182,7 @@
         }
       ],
       "uses": [
-        "ConnectedRows",
-        "Icon"
+        "ConnectedRows"
       ]
     },
     "Rating": {
@@ -4237,9 +4221,6 @@
             "env-rating-star"
           ]
         }
-      ],
-      "uses": [
-        "Icon"
       ]
     },
     "RelativeTime": {
@@ -4850,7 +4831,6 @@
       "uses": [
         "Button",
         "Dialog",
-        "Icon",
         "IconButton",
         "Overlay",
         "ResizeHandle",
@@ -5787,7 +5767,6 @@
       ],
       "states": [],
       "uses": [
-        "Icon",
         "IconButton"
       ]
     },

@@ -31,8 +31,6 @@
       "theme-bootstrap.ts": "entries",
       "dev.ts": "entries",
       "icons/index.ts": "entries",
-      "Icon.tsx": "foundations",
-      "SymbolIconState.tsx": "foundations",
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
       "foundations/ThemeToggle.tsx": "composites",
@@ -396,6 +394,10 @@
           "rich-text/internal/suggestions.tsx",
           "rich-text/internal/taskItem.tsx",
           "rich-text/internal/commands.ts",
+          "rich-text/internal/useDocumentAttributes.ts",
+          "rich-text/internal/useLinksAndUploads.ts",
+          "rich-text/internal/useRichTextDocument.ts",
+          "rich-text/internal/useRichTextExtensions.ts",
           "rich-text/extensions.ts",
           "rich-text/types.ts"
         ]

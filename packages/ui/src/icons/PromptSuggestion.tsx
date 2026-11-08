@@ -1,6 +1,6 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
-import { Icon, type SymbolIconProps } from '../Icon.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
 
 export function IconPromptSuggestion({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="M687-400H300q-75 0-127.5-52.5T120-580q0-75 52.5-127.5T300-760q17 0 28.5 11.5T340-720q0 17-11.5 28.5T300-680q-42 0-71 29t-29 71q0 42 29 71t71 29h387L572-596q-11-11-11.5-27.5T572-652q11-11 28-11t28 11l184 184q12 12 12 28t-12 28L628-228q-12 12-28 11.5T572-229q-11-12-11.5-28t11.5-28l115-115Z" /></Icon>;

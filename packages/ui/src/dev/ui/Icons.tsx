@@ -5,7 +5,7 @@
 // They belong to dev mode alone and are not exported.
 
 import type { ReactNode } from 'react';
-import { Icon } from '../../Icon.js';
+import { Icon } from '../../foundations/Icon.js';
 
 /** The cube seen from the front, its depth going up to the right, or up to the left when mirrored. */
 const cube = {

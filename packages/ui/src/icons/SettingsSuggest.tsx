@@ -2,8 +2,8 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type SymbolIconProps } from '../Icon.js';
-import { useSymbolIconFill } from '../SymbolIconState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../foundations/NavigationIconState.js';
 
 /** The path both styles start with. */
 const start = "M18.525 8.3q-.125 0-.262-.075-.138-.075-.188-.225l-.65-1.4-1.4-.65q-.15-.05-.225-.188-.075-.137-.075-.262t.075-.263q.075-.137.225-.187l1.4-.65.65-1.4q.05-.15.188-.225.137-.075.262-.075t.263.075q.137.075.187.225l.65 1.4 1.4.65q.15.05.225.187.075.138.075.263t-.075.262q-.075.138-.225.188l-1.4.65-.65 1.4q-.05.15-.187.225-.138.075-.263.075Zm2 7.025q-.125 0-.25-.075t-.2-.2l-.35-.75-.75-.35q-.075-.05-.275-.45 0-.125.075-.25t.2-.2l.75-.35.35-.75q.05-.075.45-.275.125 0 .25.075t.2.2l.35.75.75.35q.075.05.275.45 0 .125-.075.25t-.2.2l-.75.35-.35.75q-.05.075-.45.275ZM8.4 22q-.375 0-.65-.25t-.325-.625l-.2-1.475q-.2-.075-.387-.2-.188-.125-.313-.25l-1.375.6q-.35.1";
