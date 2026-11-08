@@ -194,6 +194,7 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
         !reported.has(element) &&
         element.matches('img, video, iframe') &&
         getComputedStyle(element).aspectRatio === 'auto' &&
+        // An img, video or iframe, as matched above.
         !sizedByItsBox(element as HTMLElement),
     )
     .map((element): LayoutProblem => ({
