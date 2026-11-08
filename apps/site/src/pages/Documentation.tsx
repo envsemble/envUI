@@ -37,7 +37,7 @@ const decodedFragment = (hash: string) => {
  * in the Docs, so a link to one of its headings, or any link to it from the Docs, opens the guide,
  * and others its visual page in the catalogue.
  */
-export function documentationHref(href: string, sourcePath: string) {
+function documentationHref(href: string, sourcePath: string) {
   if (/^#./.test(href)) return routeHref(sectionOfCurrentRoute(decodedFragment(href)));
   if (/^(?:[a-z][a-z\d+.-]*:|#)/i.test(href)) return href;
   const url = new URL(href, `https://envui.invalid/docs/${sourcePath}`);

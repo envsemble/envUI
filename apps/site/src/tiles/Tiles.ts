@@ -135,7 +135,7 @@ const shownByPageTile: Readonly<Record<string, string>> = {
 };
 
 /** The windows of the member tiles that need a larger one than the tiles', by export. */
-export const memberTileWindows: Readonly<Record<string, { width: number; height: number }>> = {
+const memberTileWindows: Readonly<Record<string, { width: number; height: number }>> = {
   MarkdownEditor: { width: 16, height: 12 },
   PageHeader: { width: 16, height: 12 },
 };

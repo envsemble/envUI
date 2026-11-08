@@ -44,7 +44,7 @@ const colorPalette = lazyPart(
 );
 
 /** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
-export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
+const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
 
 /** The setup guide's closing note on coding agents, which the Docs' home shows under its prompt. */
 const agentNote = /^## Coding agents\n([\s\S]*?)(?=^## |(?![\s\S]))/m;

@@ -7,7 +7,7 @@
  */
 
 /** A page's status, from its frontmatter. */
-export type PageStatus = 'alpha' | 'beta' | 'stable' | 'deprecated';
+type PageStatus = 'alpha' | 'beta' | 'stable' | 'deprecated';
 
 /**
  * The tone of each status's Badge, the same wherever a status shows: under a page's title and
@@ -24,7 +24,7 @@ export const statusTones = {
 const newTone = 'accent';
 
 /** The badge a page shows: its words and the tone of envUI's Badge. */
-export interface PageBadge {
+interface PageBadge {
   label: 'Deprecated' | 'Alpha' | 'New';
   tone: (typeof statusTones)[PageStatus] | typeof newTone;
 }

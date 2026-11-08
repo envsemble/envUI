@@ -77,7 +77,7 @@ interface EditorView {
 }
 
 /** The editor Tiptap keeps on its content element, as the pointer drives it. */
-export interface RichEditor {
+interface RichEditor {
   view: EditorView;
   commands: { setTextSelection(range: number | { from: number; to: number }): boolean };
   on(event: 'transaction', listener: () => void): void;

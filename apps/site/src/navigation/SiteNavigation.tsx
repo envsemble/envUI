@@ -53,7 +53,7 @@ const sectionIcons: Record<CatalogueSection, typeof IconHome> = {
 };
 
 /** The catalogue's destinations, for its rail: each opens its first page. */
-export function catalogueDestinations(current: string | undefined, onChoose?: () => void) {
+function catalogueDestinations(current: string | undefined, onChoose?: () => void) {
   return catalogueSections.map((section): Destination => {
     const Icon = sectionIcons[section];
     return {
@@ -67,7 +67,7 @@ export function catalogueDestinations(current: string | undefined, onChoose?: ()
 }
 
 /** The catalogue's destination a page is in, Overview for one outside the catalogue. */
-export function catalogueSectionOf(page: RoutePage | undefined): CatalogueSection {
+function catalogueSectionOf(page: RoutePage | undefined): CatalogueSection {
   return (page?.area === 'catalogue' ? page.section : 'Overview') as CatalogueSection;
 }
 
@@ -87,7 +87,7 @@ export const drawerless = (page: RoutePage | undefined) =>
  * All components, then each group, such as a kind of component or a pattern's intent, as a section
  * of its pages that opens and closes, open while it holds the current page, as in the Docs.
  */
-export function pageDestinations(
+function pageDestinations(
   pages: readonly RoutePage[],
   currentPath: string,
   onChoose?: () => void,
@@ -177,7 +177,7 @@ function PageBadgeOf({ page }: { page: RoutePage }) {
  * each a section of their pages that opens and closes, open while it holds the current page. A
  * section that is one page of its name, such as Changelog, is that page alone, under no heading.
  */
-export function docsDestinations(
+function docsDestinations(
   currentPath: string,
   onChoose?: () => void,
 ): NavigationDrawerDestination[] {

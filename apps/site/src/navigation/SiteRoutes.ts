@@ -67,7 +67,7 @@ export type DocumentPage = PageOfKind<DocumentKind>;
  * A component or foundation page of docs/ with the page that shows it: the catalogue's, or for
  * Field, which has no page in the catalogue, its page in the Docs.
  */
-export interface GroupedPage {
+interface GroupedPage {
   document: GroupedDocument;
   section: 'Foundations' | 'Components';
   path: string;
@@ -77,7 +77,7 @@ export interface GroupedPage {
 const docsOnlyComponents = new Set(['field']);
 
 /** Pages of docs/ that neither the catalogue nor the Docs show: the agents' index of the pages. */
-export const unlistedDocuments = new Set(['index']);
+const unlistedDocuments = new Set(['index']);
 
 /** The component and foundation pages, each at the address of the page that shows it. */
 export const groupedPages: GroupedPage[] = [

@@ -69,7 +69,7 @@ export type PointerStep =
   | { drop: true };
 
 /** A point of an element of the stage, as fractions of its box, or of a text in it. */
-export interface Aim {
+interface Aim {
   selector: string;
   text?: string;
   x: number;

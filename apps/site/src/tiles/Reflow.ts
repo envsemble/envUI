@@ -131,28 +131,3 @@ export const gap = (
           ],
         ],
       };
-
-/**
- * A straight line along the length of its box, down it or across it, through the middle of the
- * box's other side, which is space-1 wide (`line`), so the box is something to draw in.
- */
-export const along = {
-  block: [
-    [
-      ['50%', '0'],
-      ['50%', '100%'],
-    ],
-  ],
-  inline: [
-    [
-      ['0', '50%'],
-      ['100%', '50%'],
-    ],
-  ],
-} as const satisfies Record<string, readonly (readonly [Point, Point])[]>;
-
-/** The box of a straight line down from `top` (`block`) or across from `left` (`inline`), at `at`. */
-export const line = (direction: 'block' | 'inline', at: string): CSSProperties =>
-  direction === 'block'
-    ? { left: at, width: 'var(--env-space-1)', marginLeft: 'calc(var(--env-space-1) / -2)' }
-    : { top: at, height: 'var(--env-space-1)', marginTop: 'calc(var(--env-space-1) / -2)' };

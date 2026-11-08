@@ -13,7 +13,7 @@ import { CompactContents } from './PageContents';
  * for the few with one is a motif drawn from what the page shows (BannerMotif.tsx); a Docs page's
  * is the same drawing, still.
  */
-export type BannerKind = 'catalogue' | 'docs';
+type BannerKind = 'catalogue' | 'docs';
 
 /** A page's banner, composed from the library's card, text and layout primitives. */
 export function SiteBanner({
