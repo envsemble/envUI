@@ -45,16 +45,20 @@ const colorPalette = lazyPart(
 /** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
 export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
 
+/** The setup guide's closing note on coding agents, which the Docs' home shows under its prompt. */
+const agentNote = /^## Coding agents\n([\s\S]*?)(?=^## |(?![\s\S]))/m;
+
 /**
- * The prompt that sets envUI up with a coding agent, at the top of the Docs' home, the setup guide,
- * whose sections set it up by hand.
+ * The prompt that sets envUI up with a coding agent, centred at the top of the Docs' home, the setup
+ * guide, whose sections set it up by hand; under it, the guide's note on what the agent does, which
+ * keeps its old address (`coding-agents`) for the links and search results that lead to it.
  */
-function AgentSetup() {
+function AgentSetup({ note, path = '' }: { note?: string; path?: string }) {
   return (
     <Column
       render={<section aria-labelledby="agent-setup" />}
       gap={3}
-      align="start"
+      align="center"
       className="docs-agent-setup"
     >
       <Text render={<h2 id="agent-setup" />} variant="title" className="site-section-title">
@@ -85,6 +89,11 @@ function AgentSetup() {
         </Text>
         <CopyButton value={setupPrompt} variant="ghost" size="sm" aria-label="Copy prompt" />
       </Surface>
+      {note && (
+        <div id="coding-agents" className="docs-agent-note">
+          <Documentation markdown={note} path={path} />
+        </div>
+      )}
     </Column>
   );
 }
@@ -94,7 +103,14 @@ function AgentSetup() {
  * home, with the prompt that sets envUI up with a coding agent at its top.
  */
 export function GuidePage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
+  const whole = useDocument(page.document!);
+  const home = page.path === docsRoute;
+  // On the Docs' home, the guide's note on coding agents moves up under the prompt.
+  const note = home ? whole.markdown?.match(agentNote)?.[1]?.trim() : undefined;
+  const document = useMemo(
+    () => (note ? { ...whole, markdown: whole.markdown!.replace(agentNote, '') } : whole),
+    [whole, note],
+  );
   return (
     <>
       <PageHeader
@@ -106,7 +122,7 @@ export function GuidePage({ page }: { page: RoutePage }) {
         corner={<PartSwitch page={page} />}
       />
       <Column gap={7} className="site-article">
-        {page.path === docsRoute && <AgentSetup />}
+        {home && <AgentSetup note={note} path={whole.path} />}
         <GuideDocument document={document} />
       </Column>
     </>

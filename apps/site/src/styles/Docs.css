@@ -160,15 +160,26 @@
   font-family: var(--site-code-font-family);
   font-size: 0.85em;
 }
-/* The setup prompt at the top of the Docs' home, from the start of the page's column as the banner
-   above it is: a compact pill of the agents' marks, the prompt in monospace and a ghost copy
-   button. */
+/* The setup prompt at the top of the Docs' home, centred in the page's column: a compact pill of
+   the agents' marks, the prompt in monospace and a ghost copy button, with the note on what the
+   agent does under it. */
+.docs-agent-setup {
+  text-align: center;
+}
 .docs-agent-setup > * {
   margin: 0;
 }
-.docs-agent-setup-text {
+.docs-agent-setup-text,
+.docs-agent-note {
   max-inline-size: 38rem;
   text-wrap: pretty;
+}
+.docs-agent-note {
+  margin-block-start: var(--env-space-2);
+  color: var(--env-color-fg-muted);
+}
+.docs-agent-note :where(p) {
+  margin: 0;
 }
 .docs-agent-prompt {
   max-inline-size: 100%;
