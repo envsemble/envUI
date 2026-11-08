@@ -115,7 +115,14 @@ export function TileStage({
   const app = preview?.window?.app;
   const ownSize = atOwnSize && !drawing && !app;
   const scene = legible && !app;
-  useFit(stage, canvas, shown && !app, whole || tile, tile, plays, ownSize, scene);
+  useFit(stage, canvas, {
+    on: shown && !app,
+    whole: whole || tile,
+    tile,
+    playing: plays,
+    ownSize,
+    legible: scene,
+  });
   useAppFit(stage, canvas, shown && Boolean(app), app?.least);
   useStillAtRest(canvasElement, tile && !plays);
   return (
