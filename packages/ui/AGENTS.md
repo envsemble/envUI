@@ -48,14 +48,24 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 
 - The tokens are DTCG files in `packages/ui/tokens`, with `envui.resolver.json` for the themes.
 - A token's path names its custom property, `color.fg.muted` as `--env-color-fg-muted`. Every custom property takes the `--env-` prefix.
-- `palette.tokens.json` is generated (`npm run palette:generate`) and internal: roles alias its grades, and grades 40, 50 and 70 apart give 3:1, 4.5:1 and 7:1.
+- `palette.tokens.json` is internal: roles alias its grades, and grades 40, 50 and 70 apart give 3:1, 4.5:1 and 7:1.
 - Colors are roles, `color.{bg|fg|border}.{role}.{emphasis}[.{state}]`, each with its dark, high-contrast and hover and pressed values.
 - A size that follows the compact scale is a token.
 - A component's own custom properties, such as `--env-card-padding`, take its name and are private.
 - Change a color by choosing another grade for its role, then run `npm run test:contrast`.
 - List a pair that leaves `tests/contrast/Pairs.ts` as dropped or renamed, and one held to less as `relaxed`, each with its reason; `npm run test:contrast -- --update-snapshots` records the change (`tests/contrast/Snapshot.ts` says how the record and the base branches hold it).
 - What DTCG can't express is in `packages/ui/src/styles/TokensHandwritten.css`, its public tokens listed in `packages/ui/tokens/handwritten.json`.
-- `packages/ui/src/generated/` holds the token build's output, `Tokens.css` and `tokens.json`: never edit it.
+
+## Generated and vendored files
+
+Never edit these; change their source and run their command.
+
+- `packages/ui/src/generated/`: the token build's output, `Tokens.css` and `tokens.json` (`npm run tokens:build`).
+- `packages/ui/tokens/palette.tokens.json`: the palette's grades (`npm run palette:generate`).
+- `packages/ui/src/icons/`: one module per icon, from the SVGs `icon-manifest.json` lists (`npm run icons:generate`).
+- `packages/ui/vendor/material-symbols-rounded/`: Material Symbols' SVGs, vendored unchanged, and `packages/ui/icon-manifest.json`, their pinned revision and hashes (`npm run icons:sync`).
+- `docs/generated/`: `exports.json`, `props.json` and `parts.json` (`npm run docs:exports`, `docs:props`, `docs:parts`).
+- `packages/ui/licenses/Runtime-Dependencies-LICENSE.txt`, and the git-ignored `packages/ui/README.md` and `packages/ui/docs/`: written by the library's build (`scripts/build/BuildLibrary.ts`).
 
 ## Style sheets
 

@@ -175,6 +175,7 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
   {
     paths: [
       'packages/ui/src/icons/**',
+      'packages/ui/vendor/**',
       'packages/ui/icon-manifest.json',
       'scripts/build/GenerateIcons.ts',
       'scripts/build/SyncIcons.ts',
