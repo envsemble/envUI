@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { IconCheck } from '../icons/Check.js';
 import '../styles/Base.css';
 import '../styles/Badge.css';

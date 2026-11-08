@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { IconSearch } from '../icons/Search.js';
 import { IconClose } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { searchField as searchFieldMessages } from '../foundations/messages/searchField.js';
 import { TextField, type TextFieldProps } from './TextField.js';

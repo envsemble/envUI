@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { flushSync } from 'react-dom';
 import { EnvUIContext, type Direction } from './EnvUIContext.js';
-import { setRef } from '../setRef.js';
+import { setRef } from '../react/setRef.js';
 import { computedDirection } from '../dom/direction.js';
 
 /**

@@ -12,8 +12,8 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
-import { setRef } from '../../internal/setRef.js';
-import { useHydrated } from '../../internal/useHydrated.js';
+import { setRef } from '../../internal/react/setRef.js';
+import { useHydrated } from '../../internal/react/useHydrated.js';
 import { useOpenState } from '../../internal/popup/useOpenState.js';
 import { useDirection } from '../../internal/provider/useDirection.js';
 import {

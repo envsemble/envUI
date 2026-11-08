@@ -21,7 +21,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/popup/hoverDetail.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import {
   HoverCardTriggerContext,
   isTriggerOwner,

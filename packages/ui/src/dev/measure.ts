@@ -2,26 +2,21 @@
 // the open overlays, with what the readout and the 3D view need of each. It writes nothing to the
 // page, so it never forces a layout of its own beyond the first read.
 
-import type {
-  Box,
-  ChildData,
-  InnerData,
-  LayoutKind,
-  NodeData,
-  ScrollData,
-  Snapshot,
-  StickyData,
-} from './model.js';
+import type { Box, ChildData, LayoutKind, NodeData, Snapshot } from './model.js';
 import { layoutKinds } from './model.js';
 import { partClassOf } from './parts.js';
 import { pageContainerQueries } from './queries.js';
-import { remPixels } from '../internal/dom/lengths.js';
+import {
+  describeElement,
+  isDevElement,
+  labelFor,
+  layoutAttribute,
+  nearestNodeOf,
+} from './elements.js';
+import { measureInner, scrollOf, stickyOf, transformReach } from './inner.js';
+import { pixelsOf, remPixels } from '../internal/dom/lengths.js';
+import { paintsOf } from '../internal/dom/paints.js';
 import { isOpenOverlay, outermost, overlayKind, overlaySelector } from './overlays.js';
-
-/** The attribute every primitive and scaffold renders on its root, with its kind. */
-export const layoutAttribute = 'data-env-layout';
-/** The attribute on dev mode's own UI, which the readout leaves out. */
-export const devAttribute = 'data-env-dev';
 
 export interface MeasureOptions {
   /** Also read what sticks, scrolls or holds squeezed text inside the nodes; the readout does. */
@@ -42,21 +37,13 @@ export function keyOf(element: Element): number {
   return id;
 }
 
-const px = (value: string) => Number.parseFloat(value) || 0;
-const toBox = (rect: DOMRect): Box => ({
+/** A DOM rectangle as a Box. */
+export const toBox = (rect: DOMRect): Box => ({
   x: rect.left,
   y: rect.top,
   w: rect.width,
   h: rect.height,
 });
-const scrollsAlong = (overflow: string) => overflow === 'auto' || overflow === 'scroll';
-/**
- * Whether a color paints nothing: transparent, or of no alpha, as `rgba(0, 0, 0, 0)` or
- * `oklch(0.5 0.1 200 / 0)`. An opaque `rgb(255, 0, 0)` ends in a 0 too, its blue.
- */
-const isTransparent = (color: string) =>
-  color === 'transparent' || /^rgba\([^)]*,\s*0\s*\)$/.test(color) || /\/\s*0%?\s*\)$/.test(color);
-
 function intersect(a: Box, b: Box): Box {
   const x = Math.max(a.x, b.x);
   const y = Math.max(a.y, b.y);
@@ -66,35 +53,6 @@ function intersect(a: Box, b: Box): Box {
     w: Math.max(0, Math.min(a.x + a.w, b.x + b.w) - x),
     h: Math.max(0, Math.min(a.y + a.h, b.y + b.h) - y),
   };
-}
-
-/** Whether an element belongs to dev mode's own UI. */
-export const isDevElement = (element: Element) => element.closest(`[${devAttribute}]`) !== null;
-
-/** A short description of an element that is not a node: its tag and part class, or its label. */
-export function describeElement(element: Element): string {
-  const part = partClassOf(element);
-  const label = element.getAttribute('aria-label');
-  return `${element.tagName.toLowerCase()}${part ? `.${part}` : ''}${label ? ` "${label}"` : ''}`;
-}
-
-/**
- * What an element paints: a background, a border or a shadow. A border of a transparent color
- * paints nothing, though it takes room. The site's fit measures what a picture paints by it too.
- */
-export function paintsOf(style: CSSStyleDeclaration): string[] {
-  const paints: string[] = [];
-  if (!isTransparent(style.backgroundColor)) paints.push(`background ${style.backgroundColor}`);
-  if (style.backgroundImage !== 'none') paints.push('a background image');
-  const sides = (['top', 'right', 'bottom', 'left'] as const).filter(
-    (side) =>
-      px(style.getPropertyValue(`border-${side}-width`)) > 0 &&
-      !['none', 'hidden'].includes(style.getPropertyValue(`border-${side}-style`)) &&
-      !isTransparent(style.getPropertyValue(`border-${side}-color`)),
-  );
-  if (sides.length) paints.push(`a border (${sides.join(', ')})`);
-  if (style.boxShadow !== 'none') paints.push('a shadow');
-  return paints;
 }
 
 /** The element children of an element, looking through `display: contents`. */
@@ -181,15 +139,6 @@ function collectElements(root: HTMLElement): Collected {
   return { elements, indexOf, overlaySet: new Set<Element>(overlays), outerOverlays };
 }
 
-/** The node an element is in: its nearest ancestor that is a node. */
-function nearestNodeOf(element: Element, indexOf: Map<Element, number>): number | null {
-  for (let at = element.parentElement; at; at = at.parentElement) {
-    const index = indexOf.get(at);
-    if (index !== undefined) return index;
-  }
-  return null;
-}
-
 /**
  * The visible part of each element on the way up, inside every ancestor that clips, up to the
  * root: what is around the root, and the window, cut nothing off, as a window of the root's size
@@ -251,18 +200,18 @@ function readNode(
     flexWrap: style.flexWrap,
     alignItems: style.alignItems,
     justifyContent: style.justifyContent,
-    gap: [px(style.rowGap), px(style.columnGap)],
+    gap: [pixelsOf(style.rowGap), pixelsOf(style.columnGap)],
     padding: [
-      px(style.paddingTop),
-      px(style.paddingRight),
-      px(style.paddingBottom),
-      px(style.paddingLeft),
+      pixelsOf(style.paddingTop),
+      pixelsOf(style.paddingRight),
+      pixelsOf(style.paddingBottom),
+      pixelsOf(style.paddingLeft),
     ],
     border: [
-      px(style.borderTopWidth),
-      px(style.borderRightWidth),
-      px(style.borderBottomWidth),
-      px(style.borderLeftWidth),
+      pixelsOf(style.borderTopWidth),
+      pixelsOf(style.borderRightWidth),
+      pixelsOf(style.borderBottomWidth),
+      pixelsOf(style.borderLeftWidth),
     ],
     grid: null,
     container: null,
@@ -290,7 +239,7 @@ function gridOf(style: CSSStyleDeclaration): NodeData['grid'] {
     list
       .split(/\s+/)
       .filter((value) => value.endsWith('px'))
-      .map(px);
+      .map(pixelsOf);
   return {
     columns: tracks(style.gridTemplateColumns),
     rows: tracks(style.gridTemplateRows),
@@ -308,7 +257,7 @@ function kidsOf(element: HTMLElement, collected: Collected, nodes: NodeData[]): 
     const childStyle = getComputedStyle(child);
     const rect = child.getBoundingClientRect();
     const turned = transformReach(child, childStyle, rect);
-    const outset = (margin: string, reach: number) => Math.max(0, -px(margin)) + reach;
+    const outset = (margin: string, reach: number) => Math.max(0, -pixelsOf(margin)) + reach;
     return {
       label: childIndex === undefined ? describeElement(child) : labelFor(nodes, childIndex, child),
       box: toBox(rect),
@@ -433,15 +382,6 @@ export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapsh
   };
 }
 
-/** A node's label for its parent's children, before the readout formats it. */
-function labelFor(nodes: NodeData[], index: number, element: Element): string {
-  const node = nodes[index];
-  if (node) return node.name === node.kind ? node.kind : `${node.kind} "${node.name}"`;
-  const kind = element.getAttribute(layoutAttribute) ?? 'node';
-  const name = partClassOf(element) ?? element.getAttribute('data-env-name') ?? kind;
-  return name === kind ? kind : `${kind} "${name}"`;
-}
-
 function hiddenReason(
   element: HTMLElement,
   style: CSSStyleDeclaration,
@@ -457,208 +397,4 @@ function hiddenReason(
     return `hidden: inside ${index === undefined ? describeElement(at) : labelFor(nodes, index, at)}, which is display: none`;
   }
   return 'hidden';
-}
-
-function scrollOf(element: Element, style: CSSStyleDeclaration): ScrollData | null {
-  const x = scrollsAlong(style.overflowX);
-  const y = scrollsAlong(style.overflowY);
-  if (!x && !y) return null;
-  return {
-    axes: x && y ? 'both' : x ? 'x' : 'y',
-    content: { w: element.scrollWidth, h: element.scrollHeight },
-    client: { w: element.clientWidth, h: element.clientHeight },
-    at: { x: element.scrollLeft, y: element.scrollTop },
-  };
-}
-
-type Edge = StickyData['edge'];
-type Edges = Record<Edge, number>;
-
-/**
- * Where a scroll container shows its content, in viewport px, inside its borders and scrollbars,
- * and how far its content reaches past each of those edges, hidden.
- */
-interface Scrollport {
-  edges: Edges;
-  hidden: Edges;
-}
-
-/**
- * Whether an element sticky at `edge` is stuck: it sits `offset` inside that edge of the
- * scrollport while content is hidden past the edge, so it has left the place it would scroll to.
- * @internal
- */
-export function isStuck(edge: Edge, offset: number, rect: Edges, port: Scrollport): boolean {
-  const line =
-    edge === 'top' || edge === 'left' ? port.edges[edge] + offset : port.edges[edge] - offset;
-  return port.hidden[edge] > 0.5 && Math.abs(rect[edge] - line) < 1;
-}
-
-/** The scrollport of a scroll container, or of the document's own scrolling. */
-function scrollportOf(scroller: Element | null): Scrollport {
-  const page = document.scrollingElement ?? document.documentElement;
-  const element = scroller ?? page;
-  // The document's scrollport is the viewport; a container's starts inside its border and, in a
-  // right-to-left container, its scrollbar, which clientLeft counts.
-  const box = scroller?.getBoundingClientRect() ?? { left: 0, top: 0 };
-  const left = box.left + (scroller?.clientLeft ?? 0);
-  const top = box.top + (scroller?.clientTop ?? 0);
-  // scrollLeft runs from 0 to negative in a right-to-left scroller, whose start is its right edge.
-  const across = element.scrollWidth - element.clientWidth;
-  const rtl = getComputedStyle(element).direction === 'rtl';
-  const hiddenLeft = rtl ? across + element.scrollLeft : element.scrollLeft;
-  return {
-    edges: {
-      top,
-      left,
-      bottom: top + element.clientHeight,
-      right: left + element.clientWidth,
-    },
-    hidden: {
-      top: element.scrollTop,
-      bottom: element.scrollHeight - element.clientHeight - element.scrollTop,
-      left: hiddenLeft,
-      right: across - hiddenLeft,
-    },
-  };
-}
-
-/** Where an element sticks, in what, and whether it is stuck now. */
-function stickyOf(
-  element: HTMLElement,
-  style: CSSStyleDeclaration,
-  indexOf: Map<Element, number>,
-  nodes: NodeData[],
-): StickyData {
-  const edge =
-    (['top', 'bottom', 'left', 'right'] as const).find(
-      (side) => style.getPropertyValue(side) !== 'auto',
-    ) ?? 'right';
-  const offset = px(style.getPropertyValue(edge));
-  let scroller: Element | null = null;
-  // It sticks in the nearest scroll container: overflow hidden, auto or scroll. `clip` makes none.
-  const container = (overflow: string) => overflow === 'hidden' || scrollsAlong(overflow);
-  for (let at = element.parentElement; at && at !== document.body; at = at.parentElement) {
-    const around = getComputedStyle(at);
-    if (container(around.overflowX) || container(around.overflowY)) {
-      scroller = at;
-      break;
-    }
-  }
-  const stuck = isStuck(edge, offset, element.getBoundingClientRect(), scrollportOf(scroller));
-  if (!scroller) return { edge, offset, scroller: 'the document', scrolls: true, stuck };
-  const around = getComputedStyle(scroller);
-  const index = indexOf.get(scroller);
-  return {
-    edge,
-    offset,
-    scroller: index === undefined ? describeElement(scroller) : labelFor(nodes, index, scroller),
-    scrolls: scrollsAlong(around.overflowX) || scrollsAlong(around.overflowY),
-    stuck,
-  };
-}
-
-/**
- * What sticks, scrolls or holds squeezed text inside the nodes without being a node, told on the
- * line of the node it is in: the scroll regions and sticky headers of components, for one.
- */
-function measureInner(
-  root: HTMLElement,
-  overlays: HTMLElement[],
-  nodes: NodeData[],
-  indexOf: Map<Element, number>,
-  minTextCharacters: number,
-  rootPx: number,
-) {
-  const nearestNode = (element: Element) => nearestNodeOf(element, indexOf);
-  const scopes = [root, ...overlays.filter((overlay) => !root.contains(overlay))];
-  for (const scope of scopes) {
-    for (const element of Array.from(scope.getElementsByTagName('*'))) {
-      const style = getComputedStyle(element);
-      if (style.display === 'none' || style.display === 'contents') continue;
-      const outset = outsetOf(element, style);
-      if (outset > 0)
-        for (let at = nearestNode(element); at !== null; at = nodes[at].parent)
-          nodes[at].outsetInside = Math.max(nodes[at].outsetInside ?? 0, outset);
-      if (indexOf.has(element) || !(element instanceof HTMLElement)) continue;
-      const sticky = style.position === 'sticky';
-      const scroll = scrollOf(element, style);
-      const squeezed = squeezedText(element, style, minTextCharacters, rootPx);
-      if (!sticky && !scroll && !squeezed) continue;
-      const index = nearestNode(element);
-      if (index === null || nodes[index].hidden !== null || isDevElement(element)) continue;
-      if (element.getClientRects().length === 0) continue;
-      const inner: InnerData = { label: describeElement(element) };
-      if (sticky) inner.sticky = stickyOf(element, style, indexOf, nodes);
-      if (scroll) inner.scroll = scroll;
-      if (squeezed) inner.squeezed = squeezed;
-      nodes[index].inner.push(inner);
-    }
-  }
-}
-
-/**
- * How far an element reaches sideways past its place in the layout, on purpose, in px: set out by
- * a negative margin, such as a text button's hit area past its label; by an absolute pseudo-element,
- * such as an invisible hit area; or by a transform, such as a turning spinner's corners. The
- * content of every node around it may be that much wider without overflowing.
- */
-function outsetOf(element: Element, style: CSSStyleDeclaration): number {
-  let outset = Math.max(0, -px(style.marginLeft), -px(style.marginRight));
-  if (style.position !== 'static')
-    for (const pseudo of ['::before', '::after']) {
-      const reach = getComputedStyle(element, pseudo);
-      if (reach.position === 'absolute' && !['none', 'normal'].includes(reach.content))
-        outset = Math.max(outset, -px(reach.left), -px(reach.right));
-    }
-  return Math.max(outset, transformReach(element, style, element.getBoundingClientRect()).x);
-}
-
-/**
- * How far a transform, such as a turn or a scale, takes an element's box past its laid-out box on
- * each side, in px, sideways and up and down.
- */
-function transformReach(
-  element: Element,
-  style: CSSStyleDeclaration,
-  rect: DOMRect,
-): { x: number; y: number } {
-  if (style.transform === 'none') return { x: 0, y: 0 };
-  const [width, height] =
-    element instanceof HTMLElement
-      ? [element.offsetWidth, element.offsetHeight]
-      : [px(style.width), px(style.height)];
-  return { x: Math.max(0, (rect.width - width) / 2), y: Math.max(0, (rect.height - height) / 2) };
-}
-
-/**
- * Text squeezed so narrow that it wraps at fewer than `minTextCharacters` characters a line: an element
- * holding text of its own that is longer than that, and wraps, in a box narrower than that many
- * characters of its font (a character taken as half the font size).
- */
-function squeezedText(
-  element: HTMLElement,
-  style: CSSStyleDeclaration,
-  minTextCharacters: number,
-  rootPx: number,
-): { chars: number; width: number } | null {
-  const width = element.clientWidth - px(style.paddingLeft) - px(style.paddingRight);
-  const fontSize = px(style.fontSize) || rootPx;
-  const charWidth = fontSize / 2;
-  if (width <= 0 || width >= minTextCharacters * charWidth) return null;
-  let text = '';
-  for (const child of Array.from(element.childNodes))
-    if (child.nodeType === Node.TEXT_NODE) text += child.textContent ?? '';
-  text = text.trim();
-  if (
-    text.length <= minTextCharacters ||
-    style.whiteSpace === 'nowrap' ||
-    style.whiteSpace === 'pre'
-  )
-    return null;
-  const lineHeight = px(style.lineHeight) || fontSize * 1.4;
-  // The content's height, without the padding, holds the lines.
-  const height = element.clientHeight - px(style.paddingTop) - px(style.paddingBottom);
-  if (height < lineHeight * 1.5) return null;
-  return { chars: Math.max(1, Math.floor(width / charWidth)), width };
 }

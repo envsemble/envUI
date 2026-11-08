@@ -18,7 +18,7 @@ import { Theme, useTheme } from '../../foundations/Theme.js';
 import { classNames } from '../classNames.js';
 import { ResetControlDefaults } from '../control/ControlDefaults.js';
 import { useEnvUI, type Direction } from '../provider/EnvUIContext.js';
-import { setRef } from '../setRef.js';
+import { setRef } from '../react/setRef.js';
 import {
   containedCollisionAvoidance,
   containedPopupStyle,

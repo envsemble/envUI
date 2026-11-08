@@ -11,7 +11,7 @@ The selected assets use Rounded, weight 400, grade 0, optical size 24, fill 0
 and fill 1. `icon-manifest.json` records the exact pinned upstream revision,
 complete catalogue, upstream paths, source SHA-256 hashes, Git blob hashes, and
 the upstream catalogue tree hash. Source SVGs are retained unchanged in the
-repository at `src/assets/material-symbols-rounded`; generated adapters add React props,
+repository at `vendor/material-symbols-rounded`; generated adapters add React props,
 relative dimensions, accessible SVG defaults, and `currentColor`.
 
 Snake case upstream names become the PascalCase name of their module, and their

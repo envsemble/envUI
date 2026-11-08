@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, type Ref, type TextareaHTMLAttributes } from 'react';
 import { classNames } from '../classNames.js';
-import { setRef } from '../setRef.js';
+import { setRef } from '../react/setRef.js';
 import { TextareaResizeEdge } from './TextareaResizeEdge.js';
 import { flag } from '../flag.js';
 import '../../styles/Base.css';

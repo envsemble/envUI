@@ -1,6 +1,6 @@
 'use client';
 
-import { useHydrated } from '../internal/useHydrated.js';
+import { useHydrated } from '../internal/react/useHydrated.js';
 
 /** The platform's modifier for shortcuts such as ⌘K or Ctrl+K. */
 export interface ModifierKey {

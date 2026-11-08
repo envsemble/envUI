@@ -1,5 +1,6 @@
 packages/ui/src/icons
 packages/ui/src/assets
+packages/ui/vendor
 packages/ui/icon-manifest.json
 packages/ui/README.md
 packages/ui/docs

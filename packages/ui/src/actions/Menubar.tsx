@@ -17,7 +17,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { MenuPopup, menuParts } from './internal/MenuPopup.js';
 import {
   containedOpenChange,
@@ -26,7 +26,7 @@ import {
 import { useDirection } from '../internal/provider/useDirection.js';
 import { flag } from '../internal/flag.js';
 import { useMenubarAccessKeys } from './internal/useMenubarAccessKeys.js';
-import { withDisplayName } from '../internal/withDisplayName.js';
+import { withDisplayName } from '../internal/react/withDisplayName.js';
 import '../styles/Base.css';
 import '../styles/Menubar.css';
 

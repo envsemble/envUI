@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, type PointerEvent, type RefObject } from 'react';
 import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
-import type { useWheelTurn } from './useWheelTurn.js';
-import { centredRow, wheelMetrics } from './wheelRows.js';
+import type { useTimeWheelTurn } from './useTimeWheelTurn.js';
+import { centredRow, wheelMetrics } from './timeWheelRows.js';
 
 /**
  * A wheel event of at least this many pixels is one notch of a mouse wheel, which turns the wheel
@@ -25,7 +25,7 @@ const flingRestMs = 80;
 const speedSmoothing = 0.6;
 
 /** A mouse dragging the wheel, from the press of its button until it is let go. */
-export interface WheelDrag {
+export interface TimeWheelDrag {
   pointer: number;
   startY: number;
   y: number;
@@ -40,7 +40,7 @@ export interface WheelDrag {
  * and eases into the nearest row; a press that doesn't move still presses a row. Touch keeps the
  * browser's own scrolling. Returns the wheel element's pointer handlers.
  */
-export function useWheelGestures({
+export function useTimeWheelGestures({
   wheelRef,
   dragRef,
   turning,
@@ -49,8 +49,8 @@ export function useWheelGestures({
   copies,
 }: {
   wheelRef: RefObject<HTMLDivElement | null>;
-  dragRef: RefObject<WheelDrag | null>;
-  turning: ReturnType<typeof useWheelTurn>;
+  dragRef: RefObject<TimeWheelDrag | null>;
+  turning: ReturnType<typeof useTimeWheelTurn>;
   loop: boolean;
   count: number;
   copies: number;

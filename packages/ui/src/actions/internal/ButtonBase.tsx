@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import { ActionElement, type ActionElementProps } from '../../internal/control/ActionElement.js';
 import { SpinnerArc } from '../../internal/control/SpinnerArc.js';
 import { textRuns } from '../../internal/control/textRuns.js';

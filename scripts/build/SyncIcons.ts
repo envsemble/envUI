@@ -75,8 +75,10 @@ if (!web) throw new Error('Official symbols/web directory is missing');
 const catalogue = (await tree(web.sha))
   .filter((entry) => entry.type === 'tree')
   .sort((a, b) => (a.path < b.path ? -1 : 1));
-const assets = resolve(packageRoot, 'src/assets/material-symbols-rounded');
-await mkdir(assets, { recursive: true });
+// The upstream SVGs, kept unchanged in the package's vendor/ folder, outside its source.
+const vendorFolder = 'vendor/material-symbols-rounded';
+const vendored = resolve(packageRoot, vendorFolder);
+await mkdir(vendored, { recursive: true });
 const previousIcons = new Map(previous?.icons.map((icon) => [icon.name, icon]) ?? []);
 let completed = 0;
 const icons: ManifestIcon[] = new Array(catalogue.length);
@@ -89,7 +91,7 @@ async function worker() {
     for (const fill of [0, 1]) {
       const filename = `${entry.path}${fill ? '_fill1' : ''}_24px.svg`;
       const upstreamPath = `symbols/web/${entry.path}/materialsymbolsrounded/${filename}`;
-      const source = `src/assets/material-symbols-rounded/${filename}`;
+      const source = `${vendorFolder}/${filename}`;
       const saved =
         previous?.upstream.revision === revision &&
         previousIcons.get(entry.path)?.variants[String(fill)];
@@ -145,8 +147,8 @@ const expected = new Set(
     Object.values(icon.variants).map((variant) => variant.source.split('/').at(-1)),
   ),
 );
-for (const file of await readdir(assets)) {
-  if (file.endsWith('.svg') && !expected.has(file)) await unlink(resolve(assets, file));
+for (const file of await readdir(vendored)) {
+  if (file.endsWith('.svg') && !expected.has(file)) await unlink(resolve(vendored, file));
 }
 console.log(
   `Pinned ${manifest.sourceCount} SVGs at ${revision}. Run node scripts/build/GenerateIcons.ts.`,

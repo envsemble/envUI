@@ -4,7 +4,7 @@
 // surfaces, its padding and gaps hatched, and its name.
 
 import { memo, useLayoutEffect, useRef } from 'react';
-import type { NodeData } from '../model.js';
+import type { Box, NodeData } from '../model.js';
 import { labelOf } from '../readout.js';
 import { windowClassOf } from '../units.js';
 import { devStats, timed } from './stats.js';
@@ -191,11 +191,9 @@ export const Plane = memo(
     a.rootPx === b.rootPx,
 );
 
-type Rect = { x: number; y: number; w: number; h: number };
+const sameBox = (a: Box, b: Box) => a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
 
-const sameBox = (a: Rect, b: Rect) => a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
-
-const rectPath = ({ x, y, w, h }: Rect) => `M${x} ${y}h${w}v${h}h${-w}Z`;
+const rectPath = ({ x, y, w, h }: Box) => `M${x} ${y}h${w}v${h}h${-w}Z`;
 
 /**
  * Padding hatched one way, the space between and around the children the other, the children

@@ -5,7 +5,8 @@
 // for the inspector and the planes' surfaces.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { isDevElement, keyOf, layoutAttribute, measure } from '../measure.js';
+import { isDevElement, layoutAttribute } from '../elements.js';
+import { keyOf, measure } from '../measure.js';
 import { overlaySelector } from '../overlays.js';
 import type { LayoutProblem, Snapshot } from '../model.js';
 import { onPartsChange } from '../parts.js';

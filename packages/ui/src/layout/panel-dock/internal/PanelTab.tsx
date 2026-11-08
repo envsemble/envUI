@@ -5,7 +5,7 @@ import { IconButton } from '../../../actions/Button.js';
 import { IconClose } from '../../../icons/Close.js';
 import { Tooltip } from '../../../overlays/Tooltip.js';
 import { ActionElement } from '../../../internal/control/ActionElement.js';
-import { DecorativeIcon } from '../../../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../../../internal/icon/DecorativeIcon.js';
 import { Row } from '../../Layout.js';
 import type { PanelDockPanel } from '../panelDockTypes.js';
 import { useEntrance } from './useEntrance.js';

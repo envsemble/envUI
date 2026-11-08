@@ -3,7 +3,7 @@
 import { useId, useMemo, useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { useHydrated } from '../internal/useHydrated.js';
+import { useHydrated } from '../internal/react/useHydrated.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/provider/useFormatters.js';
 import { calendar as calendarMessages } from '../foundations/messages/calendar.js';

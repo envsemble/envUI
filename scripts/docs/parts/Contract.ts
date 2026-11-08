@@ -1,7 +1,7 @@
 // The part contract, docs/generated/parts.json: for each component its root class, its parts
 // (class names with a one-line description), its state attributes (`data-*`) with their values,
 // and its color properties, assembled from what the extractions read in the library and the
-// hand-written packages/ui/src/parts.json.
+// hand-written packages/ui/src/partDescriptions.json.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { kebab, type PropsFile } from '../PageStructure.ts';
@@ -31,19 +31,20 @@ export interface PartsContract {
 
 export const partsPath = 'docs/generated/parts.json';
 export const partsFile = resolve(root, partsPath);
-const partsSourceFile = resolve(sourceDirectory, 'parts.json');
+const partDescriptionsFile = resolve(sourceDirectory, 'partDescriptions.json');
 const propsFile = resolve(root, 'docs/generated/props.json');
 
 const partsSchemaVersion = 1;
 
 const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
-/** packages/ui/src/parts.json: the hand-written part of the contract. */
+/** packages/ui/src/partDescriptions.json: the hand-written part of the contract. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- hand-written JSON, checked as buildParts reads it
-type PartsSource = Record<string, any>;
+type PartDescriptions = Record<string, any>;
 
 /** The hand-written part of the contract. */
-const readPartsSource = (): PartsSource => JSON.parse(readFileSync(partsSourceFile, 'utf8'));
+const readPartDescriptions = (): PartDescriptions =>
+  JSON.parse(readFileSync(partDescriptionsFile, 'utf8'));
 
 /** A component, namespace or shared anatomy, whose classes take its prefix. */
 interface Group {
@@ -65,7 +66,7 @@ type SourceReading = ReturnType<typeof readSource>;
 type StateReading = SourceReading['states'][number] | ReturnType<typeof readStyles>[number];
 
 /** The groups: every exported component and namespace, and the shared anatomy, by name. */
-function readGroups(props: PropsFile, source: PartsSource) {
+function readGroups(props: PropsFile, source: PartDescriptions) {
   const groups = new Map<string, Group>();
   for (const [name, entry] of Object.entries(props.exports)) {
     if (name.includes('.') || !['component', 'namespace'].includes(entry.kind)) continue;
@@ -93,7 +94,7 @@ function placeClasses(
     const group = groupOf(name);
     if (!group || !groups.has(group)) {
       problems.push(
-        `${name} belongs to no component: add it to "placed" in packages/ui/src/parts.json`,
+        `${name} belongs to no component: add it to "placed" in packages/ui/src/partDescriptions.json`,
       );
       continue;
     }
@@ -164,10 +165,12 @@ function checkProperties(
         problems.push(`${group}: its property ${property} is in none of the style sheets`);
       if (use !== 'set' && use !== 'read')
         problems.push(
-          `${group}: ${property} needs a use, set or read, in packages/ui/src/parts.json`,
+          `${group}: ${property} needs a use, set or read, in packages/ui/src/partDescriptions.json`,
         );
       if (typeof description !== 'string' || !description.trim())
-        problems.push(`${group}: ${property} has no description in packages/ui/src/parts.json`);
+        problems.push(
+          `${group}: ${property} has no description in packages/ui/src/partDescriptions.json`,
+        );
     }
 }
 
@@ -183,12 +186,14 @@ function checkColors(colors: Record<string, Record<string, string>>, problems: s
           `${group}: its color property ${property} is not registered in the style sheets as a property that doesn't inherit`,
         );
       if (typeof description !== 'string' || !description.trim())
-        problems.push(`${group}: ${property} has no description in packages/ui/src/parts.json`);
+        problems.push(
+          `${group}: ${property} has no description in packages/ui/src/partDescriptions.json`,
+        );
     }
   for (const property of registered.keys())
     if (!listedColors.has(property))
       problems.push(
-        `${property}, registered in ${registered.get(property)}, is listed under no component's colors in packages/ui/src/parts.json`,
+        `${property}, registered in ${registered.get(property)}, is listed under no component's colors in packages/ui/src/partDescriptions.json`,
       );
 }
 
@@ -201,15 +206,17 @@ function checkDescriptions(
 ) {
   for (const name of parts)
     if (typeof described[name] !== 'string' || !described[name].trim())
-      problems.push(`${group}: ${name} has no description in packages/ui/src/parts.json`);
+      problems.push(
+        `${group}: ${name} has no description in packages/ui/src/partDescriptions.json`,
+      );
   for (const name of Object.keys(described))
     if (!parts.includes(name))
       problems.push(
-        `${group}: ${name} is described in packages/ui/src/parts.json but is not one of its parts`,
+        `${group}: ${name} is described in packages/ui/src/partDescriptions.json but is not one of its parts`,
       );
 }
 
-/** The problems of what packages/ui/src/parts.json lists for a name the contract has no entry of. */
+/** The problems of what packages/ui/src/partDescriptions.json lists for a name the contract has no entry of. */
 function checkListedGroups(
   output: Pick<PartsContract, 'components' | 'shared'>,
   { properties, colors, descriptions }: Record<'properties' | 'colors' | 'descriptions', object>,
@@ -218,21 +225,23 @@ function checkListedGroups(
   for (const name of Object.keys(properties))
     if (!(name in output.components) && !(name in output.shared))
       problems.push(
-        `packages/ui/src/parts.json lists properties of ${name}, which is no component`,
+        `packages/ui/src/partDescriptions.json lists properties of ${name}, which is no component`,
       );
   for (const name of Object.keys(colors))
     if (!(name in output.components))
-      problems.push(`packages/ui/src/parts.json lists colors of ${name}, which is no component`);
+      problems.push(
+        `packages/ui/src/partDescriptions.json lists colors of ${name}, which is no component`,
+      );
   for (const name of Object.keys(descriptions))
     if (!(name in output.components) && !(name in output.shared))
-      problems.push(`packages/ui/src/parts.json describes ${name}, which has no parts`);
+      problems.push(`packages/ui/src/partDescriptions.json describes ${name}, which has no parts`);
 }
 
-/** The part contract, from the library's source, its style sheets and packages/ui/src/parts.json. */
+/** The part contract, from the library's source, its style sheets and packages/ui/src/partDescriptions.json. */
 export function buildParts({
-  source = readPartsSource(),
+  source = readPartDescriptions(),
   props = JSON.parse(readFileSync(propsFile, 'utf8')),
-}: { source?: PartsSource; props?: PropsFile } = {}) {
+}: { source?: PartDescriptions; props?: PropsFile } = {}) {
   const {
     classes,
     states: sourceStates,
@@ -371,7 +380,7 @@ export function buildParts({
   return {
     parts: {
       $comment:
-        'Generated by scripts/docs/GenerateParts.ts from packages/ui/src and the descriptions in packages/ui/src/parts.json; do not edit. Part classes, state attributes and color properties are public and versioned. In a state, values lists what the attribute takes; "" is an attribute set without a value, and an empty list one that takes any value or is selected by its presence alone. colors lists the custom properties that set a component’s colors on one instance, through style or CSS; they don’t inherit.',
+        'Generated by scripts/docs/GenerateParts.ts from packages/ui/src and the descriptions in packages/ui/src/partDescriptions.json; do not edit. Part classes, state attributes and color properties are public and versioned. In a state, values lists what the attribute takes; "" is an attribute set without a value, and an empty list one that takes any value or is selected by its presence alone. colors lists the custom properties that set a component’s colors on one instance, through style or CSS; they don’t inherit.',
       schemaVersion: partsSchemaVersion,
       ...output,
     },

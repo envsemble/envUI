@@ -7,7 +7,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 - Put a component in the family folder of its page's category under `packages/ui/src`, such as Overlays in `overlays/`; `tests/library/ComponentFolders.test.mjs` maps them.
 - Name its file after its main export: PascalCase for a component, a context or a namespace; `useX` for a hook; camelCase for other modules; entry points lowercase.
 - Keep a namespace's parts in its file, or, when they are many, in a folder of its own whose entry is the namespace's file and holds the parts' names, as `actions/menu/Menu.tsx` does.
-- Put code one family uses in its `internal/` folder, and code two families use in the top-level `internal/`, grouped by concern, such as `internal/field/`. ESLint rejects an import of another family's `internal/`.
+- Put code one family uses in its `internal/` folder, and code two families use in the top-level `internal/`, grouped by concern, such as `internal/field/`; only a helper most families use, such as `flag.ts`, or a module whose concern no other shares, such as `useCopy.ts`, stays at its top. ESLint rejects an import of another family's `internal/`.
 - A component with many private modules may take its own folder in its family, with its own `internal/`, such as `feedback/toast/` and `forms/color/`.
 
 ## Entry points
@@ -38,7 +38,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 ## Changing a component touches
 
 - Its module in its family and its style sheet, `packages/ui/src/styles/<Name>.css`; a new component also its entry point's export.
-- `packages/ui/src/parts.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
+- `packages/ui/src/partDescriptions.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
 - Its strings in `packages/ui/src/foundations/messages/`.
 - Its page, `docs/components/<name>.md` or `docs/patterns/`, with its examples in `apps/site/src/examples/<page>/` and its gallery tile in `apps/site/src/tiles/`.
 - Its spec and fixture, named as [Fixtures](../../AGENTS.md#fixtures) says.
@@ -48,14 +48,24 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 
 - The tokens are DTCG files in `packages/ui/tokens`, with `envui.resolver.json` for the themes.
 - A token's path names its custom property, `color.fg.muted` as `--env-color-fg-muted`. Every custom property takes the `--env-` prefix.
-- `palette.tokens.json` is generated (`npm run palette:generate`) and internal: roles alias its grades, and grades 40, 50 and 70 apart give 3:1, 4.5:1 and 7:1.
+- `palette.tokens.json` is internal: roles alias its grades, and grades 40, 50 and 70 apart give 3:1, 4.5:1 and 7:1.
 - Colors are roles, `color.{bg|fg|border}.{role}.{emphasis}[.{state}]`, each with its dark, high-contrast and hover and pressed values.
 - A size that follows the compact scale is a token.
 - A component's own custom properties, such as `--env-card-padding`, take its name and are private.
 - Change a color by choosing another grade for its role, then run `npm run test:contrast`.
 - List a pair that leaves `tests/contrast/Pairs.ts` as dropped or renamed, and one held to less as `relaxed`, each with its reason; `npm run test:contrast -- --update-snapshots` records the change (`tests/contrast/Snapshot.ts` says how the record and the base branches hold it).
 - What DTCG can't express is in `packages/ui/src/styles/TokensHandwritten.css`, its public tokens listed in `packages/ui/tokens/handwritten.json`.
-- `packages/ui/src/generated/` holds the token build's output, `Tokens.css` and `tokens.json`: never edit it.
+
+## Generated and vendored files
+
+Never edit these; change their source and run their command.
+
+- `packages/ui/src/generated/`: the token build's output, `Tokens.css` and `tokens.json` (`npm run tokens:build`).
+- `packages/ui/tokens/palette.tokens.json`: the palette's grades (`npm run palette:generate`).
+- `packages/ui/src/icons/`: one module per icon, from the SVGs `icon-manifest.json` lists (`npm run icons:generate`).
+- `packages/ui/vendor/material-symbols-rounded/`: Material Symbols' SVGs, vendored unchanged, and `packages/ui/icon-manifest.json`, their pinned revision and hashes (`npm run icons:sync`).
+- `docs/generated/`: `exports.json`, `props.json` and `parts.json` (`npm run docs:exports`, `docs:props`, `docs:parts`).
+- `packages/ui/licenses/Runtime-Dependencies-LICENSE.txt`, and the git-ignored `packages/ui/README.md` and `packages/ui/docs/`: written by the library's build (`scripts/build/BuildLibrary.ts`).
 
 ## Style sheets
 
@@ -75,7 +85,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 ## Part names and color properties
 
 - A component's part classes (`env-<component>-<part>`), state attributes (`data-*`), color properties and the custom properties listed under `properties` are public and versioned.
-- `npm run docs:parts` (`scripts/docs/GenerateParts.ts`) derives them from the source into `docs/generated/parts.json`; `packages/ui/src/parts.json` holds what can't be derived, such as a description of every part and property, and generation fails without one.
+- `npm run docs:parts` (`scripts/docs/GenerateParts.ts`) derives them from the source into `docs/generated/parts.json`; `packages/ui/src/partDescriptions.json` holds what can't be derived, such as a description of every part and property, and generation fails without one.
 - A state that is on or off is present as `''` or absent, set through `flag()` (`packages/ui/src/internal/flag.ts`), which ESLint holds the library to.
 - `data-env-ssr-*` attributes are private.
 - Each attribute keeps one meaning: `data-active` what shows, `data-current` the page's destination, `data-selected` what is chosen, `data-highlighted` the list's cursor, and for a drag `data-dragging`, `data-moving`, `data-resizing` or `data-drag-over`.
@@ -87,6 +97,6 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 
 - `@envsemble/envui/dev`, entry point `packages/ui/src/dev.ts`, gives agents `envui.layout`, a readout of the page's layout and its problems, and people a 3D view with an inspector; [docs/dev-mode.md](../../docs/dev-mode.md) documents it.
 - No other entry point imports it (`tests/library/DevMode.test.mjs`), so a production build holds none of it.
-- Its code is in `packages/ui/src/dev/`: measuring the page (`measure.ts`), the data (`model.ts`), the readout and its checks as plain functions of that data (`readout.ts`), and the API (`api.ts`).
+- Its code is in `packages/ui/src/dev/`: measuring the page (`measure.ts`, with what nodes hold inside in `inner.ts` and the attributes and labels of elements in `elements.ts`), the data (`model.ts`), the readout and its checks as plain functions of that data (`readout.ts`), and the API (`api.ts`).
 - The view is in `packages/ui/src/dev/ui/`, with its own style sheet, `DevMode.css`, which `install.tsx` imports as text and adds to the page, outside `packages/ui/src/styles`.
 - Give a readout check a unit test on data in `tests/library/DevMode.test.mjs`; test the view and `envui.layout` on a page in `tests/browser/library/DevMode.spec.ts`.

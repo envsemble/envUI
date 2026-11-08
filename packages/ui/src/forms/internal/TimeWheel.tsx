@@ -5,9 +5,16 @@ import { matchTyped } from '../../internal/time/calendarDays.js';
 import { typeaheadTimeout } from '../../internal/typeahead.js';
 import { isRightToLeft } from '../../internal/dom/direction.js';
 import { flag } from '../../internal/flag.js';
-import { useWheelGestures, type WheelDrag } from './useWheelGestures.js';
-import { useWheelTurn } from './useWheelTurn.js';
-import { copiesOf, nearestAvailable, shownRows, wrap, type Entry, type Part } from './wheelRows.js';
+import { useTimeWheelGestures, type TimeWheelDrag } from './useTimeWheelGestures.js';
+import { useTimeWheelTurn } from './useTimeWheelTurn.js';
+import {
+  copiesOf,
+  nearestAvailable,
+  shownRows,
+  wrap,
+  type Entry,
+  type Part,
+} from './timeWheelRows.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
 
@@ -47,7 +54,7 @@ export function TimeWheel({
   onSideways,
 }: TimeWheelProps) {
   const wheelRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef<WheelDrag | null>(null);
+  const dragRef = useRef<TimeWheelDrag | null>(null);
   const typed = useRef({ text: '', at: 0 });
   const count = entries.length;
   // Hours and minutes wrap around under the keys; they loop on the wheel where they fill it.
@@ -58,7 +65,7 @@ export function TimeWheel({
     0,
     entries.findIndex((entry) => entry.value === current),
   );
-  const turning = useWheelTurn({
+  const turning = useTimeWheelTurn({
     wheelRef,
     dragRef,
     entries,
@@ -67,7 +74,7 @@ export function TimeWheel({
     loop,
     copies,
   });
-  const gestures = useWheelGestures({
+  const gestures = useTimeWheelGestures({
     wheelRef,
     dragRef,
     turning,
@@ -80,6 +87,7 @@ export function TimeWheel({
   function step(index: number, direction: 1 | -1) {
     const next = wraps ? wrap(index, count) : Math.min(Math.max(index, 0), count - 1);
     const available = nearestAvailable(entries, next, wraps, direction);
+    // An index nearestAvailable found, so an entry.
     if (available !== -1 && available !== currentIndex) onChoose(entries[available]!.value);
   }
 
@@ -105,6 +113,7 @@ export function TimeWheel({
         kept = key;
       }
       typed.current = { text: kept, at };
+      // An index matchTyped found, so an entry.
       if (index !== -1 && index !== currentIndex) onChoose(entries[index]!.value);
       return;
     }

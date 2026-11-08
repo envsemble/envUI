@@ -13,7 +13,7 @@ import { IconButton } from '../actions/Button.js';
 import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { useDirection } from '../internal/provider/useDirection.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { documentTabs } from '../foundations/messages/documentTabs.js';

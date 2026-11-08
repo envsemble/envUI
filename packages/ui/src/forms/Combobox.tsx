@@ -12,7 +12,7 @@ import {
   type Ref,
   type RefObject,
 } from 'react';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { useDirection } from '../internal/provider/useDirection.js';
 import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { IconButton } from '../actions/Button.js';

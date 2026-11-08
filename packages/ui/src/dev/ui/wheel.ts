@@ -2,7 +2,7 @@
 // as the browser's own smooth scrolling does, and how the panel keeps it from reaching the page
 // it covers.
 
-import { layoutAttribute } from '../measure.js';
+import { layoutAttribute } from '../elements.js';
 import { overlaySelector } from '../overlays.js';
 import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
 

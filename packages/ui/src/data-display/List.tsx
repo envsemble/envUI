@@ -20,7 +20,7 @@ import {
   skeletonListAttributes,
   type SkeletonProps,
 } from '../internal/skeleton.js';
-import { withDisplayName } from '../internal/withDisplayName.js';
+import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { ListReorderHandle, ReorderableList } from './internal/ReorderableList.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';

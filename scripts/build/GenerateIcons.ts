@@ -98,7 +98,7 @@ function renderIconModule(name: string, unfilled: Geometry, filled: Geometry) {
   const identicalViewBox = unfilled.viewBox === filled.viewBox;
   const hasFillVariant = !identicalPaths || !identicalViewBox;
   const fillImport = hasFillVariant
-    ? "import { useSymbolIconFill } from '../internal/SymbolIconFill.js';\n"
+    ? "import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';\n"
     : '';
   const fillParameter = hasFillVariant ? 'requestedFill' : '_filled = false';
   const fillState = hasFillVariant ? '  const filled = useSymbolIconFill(requestedFill);\n' : '';

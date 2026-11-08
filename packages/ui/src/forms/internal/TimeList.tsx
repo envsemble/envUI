@@ -15,7 +15,7 @@ import {
   withHourCycle,
 } from '../../internal/time/calendarDays.js';
 import { TimeWheel } from './TimeWheel.js';
-import type { Entry, Part } from './wheelRows.js';
+import type { Entry, Part } from './timeWheelRows.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
 import '../../styles/DatePicker.css';

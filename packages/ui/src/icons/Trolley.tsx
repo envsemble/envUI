@@ -3,7 +3,7 @@
 'use client';
 
 import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
-import { useSymbolIconFill } from '../internal/SymbolIconFill.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
 /** The path both styles start with. */
 const start = "M800-280H240q-33 0-56.5-23.5T160-360v-400h-40q-17 0-28.5-11.5T80-800q0-17 11.5-28.5T120-840h40q33 0 56.5 23.5T240-760v400h560q17 0 28.5 11.5T840-320q0 17-11.5 28.5T800-280ZM240-80q-33 0-56.5-23.5T160-160q0-33 23.5-56.5T240-240q33 0 56.5 23.5T320-160q0 33-23.5 56.5T240-80Zm80-320q-17 0-28.5-11.5T280-440v-160q0-17 11.5-28.5T320-640h160q17 0 28.5 11.5T520-600v160q0 17-11.5 28.5T480-400H320Zm";

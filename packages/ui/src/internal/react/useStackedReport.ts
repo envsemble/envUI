@@ -1,7 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useRef } from 'react';
-import { useLatest } from './useLatest.js';
+import { useLatest } from '../useLatest.js';
 
 /**
  * Reports whether a layout stacks to its handler before paint, so an application can show the

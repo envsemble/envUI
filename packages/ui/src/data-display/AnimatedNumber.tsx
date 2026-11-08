@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ComponentPropsWithRe
 import { classNames } from '../internal/classNames.js';
 import { motionDuration, motionEasing, motionTime } from '../internal/motion/motionTokens.js';
 import { prefersReducedMotion } from '../internal/motion/reducedMotion.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { runsInText } from '../internal/control/textRuns.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
 import '../styles/Base.css';

@@ -52,9 +52,9 @@ export const aliases: Record<string, string[]> = {
   MonthPicker: ['MonthPicker', 'PickerPopup'],
   TimeList: ['DatePicker', 'TimePicker', 'ForcedColors'],
   TimeWheel: ['DatePicker', 'TimePicker', 'ForcedColors'],
-  wheelRows: ['DatePicker', 'TimePicker'],
-  useWheelTurn: ['DatePicker', 'TimePicker'],
-  useWheelGestures: ['DatePicker', 'TimePicker'],
+  timeWheelRows: ['DatePicker', 'TimePicker'],
+  useTimeWheelTurn: ['DatePicker', 'TimePicker'],
+  useTimeWheelGestures: ['DatePicker', 'TimePicker'],
   MonthGrid: ['MonthPicker', 'ForcedColors'],
   Code: ['CodeBlock'],
   TooltipPopup: ['Tooltip'],
@@ -175,6 +175,7 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
   {
     paths: [
       'packages/ui/src/icons/**',
+      'packages/ui/vendor/**',
       'packages/ui/icon-manifest.json',
       'scripts/build/GenerateIcons.ts',
       'scripts/build/SyncIcons.ts',

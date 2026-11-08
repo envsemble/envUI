@@ -12,7 +12,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import { setRef } from '../../internal/setRef.js';
+import { setRef } from '../../internal/react/setRef.js';
 import type { LineArtDrawing, LineArtMotion } from '../LineArt.js';
 import { lineArtShapes } from './lineArtShapes.js';
 

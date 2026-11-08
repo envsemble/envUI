@@ -16,7 +16,7 @@ import { classNames } from '../internal/classNames.js';
 import { Column, Row } from '../layout/Layout.js';
 import { DirectedToolbarRoot } from './internal/DirectedToolbarRoot.js';
 import { keyShortcuts, shortcutChords } from './internal/shortcuts.js';
-import { withDisplayName } from '../internal/withDisplayName.js';
+import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';

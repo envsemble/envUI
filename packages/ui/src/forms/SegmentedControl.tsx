@@ -14,7 +14,7 @@ import {
 import type { ControlSize } from '../foundations/Theme.js';
 import { TooltipPopup, tooltipDelay } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
 import { flag } from '../internal/flag.js';

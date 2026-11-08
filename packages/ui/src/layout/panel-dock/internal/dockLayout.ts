@@ -1,5 +1,6 @@
 import type { PanelDockPanel } from '../panelDockTypes.js';
 import { isRightToLeft } from '../../../internal/dom/direction.js';
+import { pixelsOf } from '../../../internal/dom/lengths.js';
 import '../../../styles/Base.css';
 import '../../../styles/PanelDock.css';
 
@@ -270,19 +271,18 @@ export function fitsInRow(room: { size: number; gap: number }, widths: readonly 
 export function minimumWidth(frame: HTMLElement | undefined) {
   if (!frame) return 0;
   const style = getComputedStyle(frame);
-  const length = (value: string) => parseFloat(value) || 0;
   const edges =
     style.boxSizing === 'border-box'
       ? 0
-      : length(style.borderInlineStartWidth) +
-        length(style.borderInlineEndWidth) +
-        length(style.paddingInlineStart) +
-        length(style.paddingInlineEnd);
+      : pixelsOf(style.borderInlineStartWidth) +
+        pixelsOf(style.borderInlineEndWidth) +
+        pixelsOf(style.paddingInlineStart) +
+        pixelsOf(style.paddingInlineEnd);
   return (
-    length(style.minInlineSize) +
+    pixelsOf(style.minInlineSize) +
     edges +
-    length(style.marginInlineStart) +
-    length(style.marginInlineEnd)
+    pixelsOf(style.marginInlineStart) +
+    pixelsOf(style.marginInlineEnd)
   );
 }
 

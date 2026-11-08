@@ -11,7 +11,7 @@ import type {
 import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
 import '../styles/Base.css';

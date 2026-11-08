@@ -26,7 +26,8 @@ const {
   "export * from './packages/ui/src/dev/parts.ts';",
   "export * from './packages/ui/src/dev/readout.ts';",
   "export * from './packages/ui/src/dev/units.ts';",
-  "export { isStuck, paintsOf } from './packages/ui/src/dev/measure.ts';",
+  "export { isStuck } from './packages/ui/src/dev/inner.ts';",
+  "export { paintsOf } from './packages/ui/src/internal/dom/paints.ts';",
 ]);
 
 test('container conditions: the widths they test and whether they hold', () => {
