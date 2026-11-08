@@ -5,7 +5,7 @@ import { ActionElement } from '../../internal/ActionElement.js';
 import { Column, Row } from '../../foundations/Layout.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
-import { NavigationIconState } from '../../foundations/NavigationIconState.js';
+import { SymbolIconFill } from '../../internal/SymbolIconFill.js';
 import { navigation, type NavigationMessages } from '../../foundations/messages/navigation.js';
 
 /** What every destination has, whichever navigation form shows it. */
@@ -216,9 +216,9 @@ export function DestinationItem({
   const shown = shownCount(count);
   const icons =
     icon == null ? null : (
-      <NavigationIconState selected={marked}>
+      <SymbolIconFill selected={marked}>
         <DecorativeIcon>{icon}</DecorativeIcon>
-      </NavigationIconState>
+      </SymbolIconFill>
     );
   // The count is part of the item's name, so the badge that shows it is hidden.
   const badge = shown !== undefined && (
