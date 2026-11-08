@@ -32,6 +32,7 @@ export type WindowClass = keyof typeof windowClasses;
 export function windowClassOf(inlineSize: number): WindowClass {
   const rem = inlineSize / remPixels();
   let found: WindowClass = 'compact';
+  // Object.entries types its keys as any string; these are windowClasses' own, from compact up.
   for (const [name, start] of Object.entries(windowClasses) as [WindowClass, string][])
     if (rem >= Number.parseFloat(start)) found = name;
   return found;
