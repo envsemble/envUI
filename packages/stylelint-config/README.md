@@ -1,6 +1,6 @@
 # @envsemble/stylelint-config-envui
 
-A Stylelint config for applications built with envUI. It reports raw colors, literal stacking order, and px where the size should follow the reader's font size. Each message says what to use instead. The [ESLint plugin](../eslint-plugin/README.md) does the same for components, class names and inline styles.
+A Stylelint config for applications built with envUI. It reports raw colors, literal stacking order, and px where the size should follow the reader's font size. Each message says what to use instead. The [ESLint plugin](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin) does the same for components, class names and inline styles.
 
 ## Install
 
