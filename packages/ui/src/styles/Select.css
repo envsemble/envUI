@@ -201,14 +201,18 @@
     }
   }
 
-  /* Motion: the chevron turns. Movement only without a reduced-motion preference. The chevron,
-     always in the field, doesn't settle in as the field's other actions do. */
+  /* Motion: the chevron turns, as the list opens and quickly back as it closes, done when the list
+     is. Movement only without a reduced-motion preference. The chevron, always in the field,
+     doesn't settle in as the field's other actions do. */
   .env-select-icon {
     animation: none;
   }
   @media (prefers-reduced-motion: no-preference) {
     .env-select-end .env-select-icon {
-      transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+      transition: transform var(--env-motion-duration-fast) var(--env-motion-ease-exit);
+    }
+    .env-select-control:has(> [aria-expanded='true']) .env-select-end .env-select-icon {
+      transition: transform var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     }
   }
 
