@@ -255,25 +255,30 @@
       --env-slider-height: max(var(--env-control-height), var(--env-control-height-touch));
     }
   }
-  /* The fill and the handle glide to a value a press on the track or a key chooses, and follow a
-     drag at once: while a pressed pointer moves, Slider sets --env-slider-glide to 0s. Movement only
-     without a reduced-motion preference. */
+  /* The fill and the handle reach a value a press on the track or a key chooses quickly, so they
+     agree with the value shown from the first frames, and follow a drag at once: while a pressed
+     pointer moves, Slider sets --env-slider-glide to 0s. A pressed handle grows a little, so the
+     press is felt before anything moves. Movement only without a reduced-motion preference. */
   @media (prefers-reduced-motion: no-preference) {
     .env-slider {
-      transition: --env-slider-fraction var(--env-slider-glide, var(--env-motion-duration-medium))
-        var(--env-motion-ease);
+      transition: --env-slider-fraction var(--env-slider-glide, var(--env-motion-duration-fast))
+        var(--env-motion-ease-enter);
     }
     .env-slider-indicator {
       transition:
-        width var(--env-slider-glide, var(--env-motion-duration-medium)) var(--env-motion-ease),
-        inset-inline-start var(--env-slider-glide, var(--env-motion-duration-medium))
-          var(--env-motion-ease);
+        width var(--env-slider-glide, var(--env-motion-duration-fast)) var(--env-motion-ease-enter),
+        inset-inline-start var(--env-slider-glide, var(--env-motion-duration-fast))
+          var(--env-motion-ease-enter);
     }
     .env-slider-thumb {
       transition:
         opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter),
-        inset-inline-start var(--env-slider-glide, var(--env-motion-duration-medium))
-          var(--env-motion-ease);
+        scale var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+        inset-inline-start var(--env-slider-glide, var(--env-motion-duration-fast))
+          var(--env-motion-ease-enter);
+    }
+    .env-slider-control[data-dragging] .env-slider-thumb {
+      scale: 1.5 1.2;
     }
   }
   @media (prefers-reduced-motion: reduce) {
