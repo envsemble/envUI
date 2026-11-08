@@ -28,7 +28,7 @@ import { withDisplayName } from '../internal/withDisplayName.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { readPanesWidth, writePanesWidth } from './panesSize.js';
-import type { ResizeDetails } from '../internal/resizeDetails.js';
+import type { ResizeDetails } from './resizeDetails.js';
 import { IconClose } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/lengths.js';
 import { useResizableWidth } from '../internal/useResizableWidth.js';

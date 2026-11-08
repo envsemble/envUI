@@ -17,10 +17,10 @@ import {
   holdsCurrent,
   shownCount,
   useNavigationMessages,
-  type Destination,
   type DestinationClasses,
-} from './internal/Destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+} from './internal/DestinationItem.js';
+import type { Destination } from './destinations.js';
+import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationBar.css';

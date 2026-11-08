@@ -31,7 +31,7 @@ import { withDisplayName } from '../internal/withDisplayName.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
-import type { ResizeDetails } from '../internal/resizeDetails.js';
+import type { ResizeDetails } from '../layout/resizeDetails.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Table.css';

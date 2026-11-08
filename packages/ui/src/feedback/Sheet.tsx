@@ -47,7 +47,7 @@ import {
 } from '../internal/PortalContainerContext.js';
 import { computedDirection } from '../internal/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
-import type { ResizeDetails } from '../internal/resizeDetails.js';
+import type { ResizeDetails } from '../layout/resizeDetails.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Sheet.css';
