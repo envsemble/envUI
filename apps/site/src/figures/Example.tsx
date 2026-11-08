@@ -13,7 +13,7 @@ export const SpecimenHeadingLevel = createContext<2 | 3>(2);
  * specimen's own level where it has none, so no level is skipped. Unset, they take the level below
  * the specimen's.
  */
-const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
+export const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
 
 /**
  * Whether an Example shows its content on a stage, as a foundation page's figure does; its caption
@@ -118,30 +118,6 @@ export function SpecimenGrid({
     <div className="catalogue-specimen-grid" data-size={size}>
       {children}
     </div>
-  );
-}
-
-export function Specimen({
-  title,
-  children,
-  caption,
-}: {
-  title: string;
-  children: ReactNode;
-  caption?: ReactNode;
-}) {
-  const specimenLevel = useContext(SpecimenHeadingLevel);
-  const level = useContext(PartHeadingLevel) ?? ((specimenLevel + 1) as 3 | 4);
-  const Heading = `h${level}` as const;
-  return (
-    <Column render={<section />} gap={2} className="catalogue-specimen">
-      {/* A small muted label, as the state matrix names its rows, quieter than the section's heading. */}
-      <Text render={<Heading />} variant="body-sm">
-        {title}
-      </Text>
-      {children}
-      {caption && <Text variant="caption">{caption}</Text>}
-    </Column>
   );
 }
 

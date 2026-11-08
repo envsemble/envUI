@@ -1,7 +1,8 @@
 import { Button, IconButton, Row, type ControlSize } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { Example, SpecimenGrid } from '../../figures/Example';
+import { SpecimenPart } from '../../figures/Specimen';
 
 const sizes: readonly { size: ControlSize; title: string; caption?: string }[] = [
   { size: 'sm', title: 'Small' },
@@ -18,14 +19,14 @@ export default function Sizes() {
     <Example size="collection">
       <SpecimenGrid size="compact">
         {sizes.map(({ size, title, caption }) => (
-          <Specimen key={size} title={title} caption={caption}>
+          <SpecimenPart key={size} title={title} caption={caption}>
             <Row align="center" gap={3}>
               <Button size={size} startIcon={<IconAdd />}>
                 New
               </Button>
               <IconButton size={size} icon={<IconEdit />} aria-label="Edit" />
             </Row>
-          </Specimen>
+          </SpecimenPart>
         ))}
       </SpecimenGrid>
     </Example>

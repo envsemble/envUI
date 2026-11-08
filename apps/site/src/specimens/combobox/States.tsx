@@ -1,5 +1,6 @@
 import { Avatar, Combobox, type ComboboxItem } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { Example, SpecimenGrid } from '../../figures/Example';
+import { SpecimenPart } from '../../figures/Specimen';
 
 const people: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Ellis'].map(
   (name) => {
@@ -13,13 +14,13 @@ export default function States() {
   return (
     <Example size="collection">
       <SpecimenGrid>
-        <Specimen title="Nothing chosen">
+        <SpecimenPart title="Nothing chosen">
           <Combobox label="Owner" placeholder="Type a name" items={people} />
-        </Specimen>
-        <Specimen title="Invalid">
+        </SpecimenPart>
+        <SpecimenPart title="Invalid">
           <Combobox label="Approver" items={people} required error="Choose an approver." />
-        </Specimen>
-        <Specimen title="Read only">
+        </SpecimenPart>
+        <SpecimenPart title="Read only">
           <Combobox
             multiple
             label="Reviewers"
@@ -27,10 +28,10 @@ export default function States() {
             defaultValue={['sam.lee', 'priya.shah']}
             readOnly
           />
-        </Specimen>
-        <Specimen title="Disabled">
+        </SpecimenPart>
+        <SpecimenPart title="Disabled">
           <Combobox label="Owner" items={people} defaultValue="jordan.ellis" disabled />
-        </Specimen>
+        </SpecimenPart>
       </SpecimenGrid>
     </Example>
   );

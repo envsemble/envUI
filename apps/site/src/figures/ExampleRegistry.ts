@@ -16,6 +16,9 @@ const sources = moduleRegistry(
 
 const pathOf = (page: string, name: string) => `/src/examples/${page}/${name}.tsx`;
 
+/** Whether a page has an example of this name. */
+export const hasExample = (page: string, name: string) => examples.has(pathOf(page, name));
+
 /** An example's module, as the site serves it, for LoadBoundary to name. */
 export const exampleModule = (page: string, name: string) => examples.module(pathOf(page, name));
 

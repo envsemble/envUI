@@ -15,7 +15,7 @@ import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './Liv
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from '../template/OptionLegend';
 import { optionPieces, type OptionTable } from '../../../../scripts/docs/model/CatalogueContent';
-import { Specimen, SpecimenRender } from './Specimen';
+import { ExamplePlayback, Specimen } from './Specimen';
 import { VerdictMotion } from '../motion/MotionStage';
 import {
   useFoundationFigures,
@@ -110,7 +110,7 @@ export function VerdictFigure({
     >
       {motion && page ? (
         <VerdictMotion value={wide ? 'wide' : 'square'}>
-          <SpecimenRender page={page} name={name ?? ''} />
+          <ExamplePlayback page={page} name={name ?? ''} />
         </VerdictMotion>
       ) : (
         <Column

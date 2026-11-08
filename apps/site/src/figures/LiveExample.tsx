@@ -23,7 +23,7 @@ import { OpenExample } from './OpenExample';
 import { CodeSkeleton, exampleLines, HoldPlaceholder, StageSkeleton } from '../loading/Loading';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
-import { SpecimenRender } from './Specimen';
+import { ExamplePlayback } from './Specimen';
 import { StillMark } from './StillMark';
 
 /**
@@ -318,7 +318,7 @@ export function LiveExample({
     <Column gap={3} className="site-live-example-entry">
       {motion ? (
         <FigureDevice value={device}>
-          <SpecimenRender page={page} name={name} />
+          <ExamplePlayback page={page} name={name} />
         </FigureDevice>
       ) : widths && sweep ? (
         // On the page's own theme: a theme boundary around it would paint over the page.

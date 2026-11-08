@@ -205,8 +205,38 @@ test('every specimen file is placed by its page, or plays or holds the example i
   for (const { page, name } of files(specimensDirectory))
     assert.ok(
       placed.has(`${page}/${name}`),
-      `specimens/${page}/${name}.tsx is not placed on its page.`,
+      `specimens/${page}/${name}.tsx is not placed on its page, nor the playback of an example of its name: rename a playback with its example.`,
     );
+});
+
+test('every playback is named after an example of its page, and plays no other', () => {
+  const examples = new Set(files(examplesDirectory).map(({ page, name }) => `${page}/${name}`));
+  // An example's playback: the specimen its figure plays (`motion`) or numbers (`specimen`), and
+  // any specimen named after an example of its page.
+  const playbacks = new Set(
+    files(specimensDirectory)
+      .map(({ page, name }) => `${page}/${name}`)
+      .filter((key) => examples.has(key)),
+  );
+  for (const document of sectioned)
+    for (const section of document.sections ?? [])
+      for (const block of section.blocks)
+        if (block.kind === 'example' && (block.motion || block.specimen))
+          playbacks.add(`${document.id}/${block.name}`);
+  for (const key of playbacks) {
+    assert.ok(
+      examples.has(key),
+      `specimens/${key}.tsx plays examples/${key}.tsx, which is missing.`,
+    );
+    const source = readFileSync(join(specimensDirectory, `${key}.tsx`), 'utf8');
+    for (const specifier of moduleSpecifiers(source)) {
+      const example = /\/examples\/([\w-]+\/\w+)$/.exec(specifier)?.[1];
+      assert.ok(
+        !example || example === key,
+        `specimens/${key}.tsx plays examples/${key}.tsx but imports examples/${example}.tsx.`,
+      );
+    }
+  }
 });
 
 /** The names a source imports from envUI's entries, icons apart: `import { Button, Row } …`. */

@@ -9,16 +9,16 @@ import { IconSearch } from '@envsemble/envui/icons/Search';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 /*
- * A small, characteristic specimen of each foundation, for a Related tile that points to a page
- * without an example of its own: what the page is about, drawn with envUI, so its tile reads as
- * the tiles of components do rather than as a missing picture. The tile scales it to fit its
- * stage, as it does an example (TileStage.tsx); its styles are in Related.css.
+ * The tile of each foundation, for a Related card that points to a page without an example of its
+ * own: a small, characteristic picture of what the page is about, drawn with envUI, so its tile
+ * reads as the tiles of components do rather than as a missing picture. The tile scales it to fit
+ * its stage, as it does an example (figures/TileStage.tsx); its styles are in Related.css.
  */
 
 /** A few real icons from the set, outline and filled. */
-function IconsSpecimen() {
+function IconsTile() {
   return (
-    <Row gap={5} align="center" className="catalogue-page-specimen-icons">
+    <Row gap={5} align="center" className="catalogue-foundation-tile-icons">
       <IconHome filled width="2.5rem" height="2.5rem" />
       <IconSearch width="2.5rem" height="2.5rem" />
       <IconFolder width="2.5rem" height="2.5rem" />
@@ -30,7 +30,7 @@ function IconsSpecimen() {
 }
 
 /** The type scale, from display down to caption. */
-function TypographySpecimen() {
+function TypographyTile() {
   return (
     <Row gap={6} align="center">
       <Text variant="display" render={<span />}>
@@ -53,9 +53,9 @@ function TypographySpecimen() {
 }
 
 /** The theme's roles: primary, accent and the status colors. */
-function ColorsSpecimen() {
+function ColorsTile() {
   return (
-    <Row gap={3} className="catalogue-page-specimen-swatches">
+    <Row gap={3} className="catalogue-foundation-tile-swatches">
       {['primary', 'accent', 'success', 'warning', 'danger', 'neutral'].map((role) => (
         <span key={role} data-role={role} />
       ))}
@@ -64,9 +64,9 @@ function ColorsSpecimen() {
 }
 
 /** The spacing steps, each a bar as long as its step. */
-function SpacingSpecimen() {
+function SpacingTile() {
   return (
-    <Column gap={2} className="catalogue-page-specimen-spacing">
+    <Column gap={2} className="catalogue-foundation-tile-spacing">
       {[1, 2, 3, 4, 5, 6, 7, 8].map((step) => (
         <span key={step} data-step={step} />
       ))}
@@ -75,7 +75,7 @@ function SpacingSpecimen() {
 }
 
 /** The control sizes, which follow the scale. */
-function ScaleSpecimen() {
+function ScaleTile() {
   return (
     <Row gap={3} align="center">
       <Button size="sm" variant="secondary">
@@ -92,9 +92,9 @@ function ScaleSpecimen() {
 }
 
 /** The window classes: compact, medium and expanded windows, side by side. */
-function ResponsiveSpecimen() {
+function ResponsiveTile() {
   return (
-    <Row gap={4} align="end" className="catalogue-page-specimen-windows">
+    <Row gap={4} align="end" className="catalogue-foundation-tile-windows">
       {['compact', 'medium', 'expanded'].map((size) => (
         <span key={size} data-size={size}>
           <Text variant="caption" render={<span />}>
@@ -107,7 +107,7 @@ function ResponsiveSpecimen() {
 }
 
 /** Shared parts composed into a product's own: a card of an avatar, text and a button. */
-function CompositionSpecimen() {
+function CompositionTile() {
   return (
     <Card padding={4}>
       <Row gap={3} align="center">
@@ -129,11 +129,11 @@ function CompositionSpecimen() {
 }
 
 /** A labelled field and a button showing the focus ring that keyboard use shows. */
-function AccessibilitySpecimen() {
+function AccessibilityTile() {
   return (
     <Column gap={4} align="start">
       <TextField label="Email" defaultValue="alex.morgan@example.com" />
-      <Button startIcon={<IconAdd />} className="catalogue-page-specimen-focus">
+      <Button startIcon={<IconAdd />} className="catalogue-foundation-tile-focus">
         Add member
       </Button>
     </Column>
@@ -141,9 +141,9 @@ function AccessibilitySpecimen() {
 }
 
 /** Clear, short words: an empty state's title, its next step and its action. */
-function ContentSpecimen() {
+function ContentTile() {
   return (
-    <Column gap={2} align="center" className="catalogue-page-specimen-content">
+    <Column gap={2} align="center" className="catalogue-foundation-tile-content">
       <Text variant="title" render={<span />}>
         No projects yet
       </Text>
@@ -155,23 +155,23 @@ function ContentSpecimen() {
   );
 }
 
-const specimens: Record<string, ComponentType> = {
-  icons: IconsSpecimen,
-  typography: TypographySpecimen,
-  colors: ColorsSpecimen,
-  spacing: SpacingSpecimen,
-  scale: ScaleSpecimen,
-  responsive: ResponsiveSpecimen,
-  composition: CompositionSpecimen,
-  accessibility: AccessibilitySpecimen,
-  content: ContentSpecimen,
+const tiles: Record<string, ComponentType> = {
+  icons: IconsTile,
+  typography: TypographyTile,
+  colors: ColorsTile,
+  spacing: SpacingTile,
+  scale: ScaleTile,
+  responsive: ResponsiveTile,
+  composition: CompositionTile,
+  accessibility: AccessibilityTile,
+  content: ContentTile,
 };
 
-/** Whether a page has a specimen for a tile. */
-export const hasPageSpecimen = (id: string) => id in specimens;
+/** Whether a foundation page has a tile. */
+export const hasFoundationTile = (id: string) => id in tiles;
 
-/** The specimen of a page, by its id, such as icons. */
-export function PageSpecimen({ id }: { id: string }) {
-  const Specimen = specimens[id];
-  return Specimen ? <Specimen /> : null;
+/** The tile of a foundation page, by its id, such as icons. */
+export function FoundationTile({ id }: { id: string }) {
+  const Tile = tiles[id];
+  return Tile ? <Tile /> : null;
 }

@@ -21,7 +21,7 @@ import { OpenExample } from './OpenExample';
 import { legendOf, partDescription } from '../template/Parts';
 import { legendName } from '../../../../scripts/docs/model/CatalogueContent';
 import { OptionLegend } from '../template/OptionLegend';
-import { SpecimenRender } from './Specimen';
+import { ExamplePlayback } from './Specimen';
 import { measure, measureVariants } from './AnatomyLayout';
 import type { Callout, Room } from './AnatomyPlacement';
 import type { OptionTable } from '../../../../scripts/docs/model/CatalogueContent';
@@ -338,7 +338,7 @@ function AnatomyStage({
     onBeside,
   });
   const example = specimen ? (
-    <SpecimenRender page={page} name={name} onStage />
+    <ExamplePlayback page={page} name={name} onStage />
   ) : (
     <ExampleRender page={page} name={name} />
   );

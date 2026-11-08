@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { Column, Surface, Text } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { Example, SpecimenGrid } from '../../figures/Example';
+import { SpecimenPart } from '../../figures/Specimen';
 
 const backgrounds = [
   { background: 'default', title: 'Default' },
@@ -29,7 +30,7 @@ export default function Backgrounds() {
     <Example size="collection">
       <SpecimenGrid size="compact">
         {backgrounds.map(({ background, title }) => (
-          <Specimen key={background} title={title}>
+          <SpecimenPart key={background} title={title}>
             <Surface background="page" padding={2} radius="sm">
               <Surface background={background} padding={4}>
                 <Text>On the page</Text>
@@ -40,16 +41,16 @@ export default function Backgrounds() {
                 <Text>On a pane</Text>
               </Surface>
             </Surface>
-          </Specimen>
+          </SpecimenPart>
         ))}
-        <Specimen title="Recessed">
+        <SpecimenPart title="Recessed">
           <Surface background="page" padding={3} radius="sm">
             <Surface background="recessed" padding={4} radius="sm">
               <Text>In the page</Text>
             </Surface>
           </Surface>
-        </Specimen>
-        <Specimen title="Raised">
+        </SpecimenPart>
+        <SpecimenPart title="Raised">
           <Surface background="page" padding={2} radius="sm">
             <Surface background="raised" padding={4}>
               <Text>On the page</Text>
@@ -66,7 +67,7 @@ export default function Backgrounds() {
               <Text>Over a pane</Text>
             </Surface>
           </Surface>
-        </Specimen>
+        </SpecimenPart>
       </SpecimenGrid>
     </Example>
   );

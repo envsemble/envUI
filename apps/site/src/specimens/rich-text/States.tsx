@@ -1,5 +1,6 @@
 import { RichTextEditor } from '@envsemble/envui/rich-text';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { Example, SpecimenGrid } from '../../figures/Example';
+import { SpecimenPart } from '../../figures/Specimen';
 
 const notes = 'Send the **press kit** to Priya Shah by Friday.';
 
@@ -8,15 +9,15 @@ export default function States() {
   return (
     <Example size="collection">
       <SpecimenGrid size="compact">
-        <Specimen title="Outline">
+        <SpecimenPart title="Outline">
           <RichTextEditor
             className="catalogue-short-editor"
             label="Outline notes"
             defaultValue={notes}
             toolbar={false}
           />
-        </Specimen>
-        <Specimen title="Ghost">
+        </SpecimenPart>
+        <SpecimenPart title="Ghost">
           <RichTextEditor
             className="catalogue-short-editor"
             label="Ghost notes"
@@ -24,16 +25,16 @@ export default function States() {
             defaultValue={notes}
             toolbar={false}
           />
-        </Specimen>
-        <Specimen title="Empty, with a placeholder">
+        </SpecimenPart>
+        <SpecimenPart title="Empty, with a placeholder">
           <RichTextEditor
             className="catalogue-short-editor"
             label="Empty notes"
             placeholder="Write the notes"
             toolbar={false}
           />
-        </Specimen>
-        <Specimen title="Invalid">
+        </SpecimenPart>
+        <SpecimenPart title="Invalid">
           <RichTextEditor
             className="catalogue-short-editor"
             label="Invalid notes"
@@ -41,8 +42,8 @@ export default function States() {
             error="Add at least one decision."
             toolbar={false}
           />
-        </Specimen>
-        <Specimen title="Read only" caption="The toolbar is disabled, and so is editing.">
+        </SpecimenPart>
+        <SpecimenPart title="Read only" caption="The toolbar is disabled, and so is editing.">
           <RichTextEditor
             className="catalogue-short-editor"
             label="Read-only notes"
@@ -50,7 +51,7 @@ export default function States() {
             toolbar={['bold', 'italic', 'link']}
             readOnly
           />
-        </Specimen>
+        </SpecimenPart>
       </SpecimenGrid>
     </Example>
   );
