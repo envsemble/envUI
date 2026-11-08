@@ -140,6 +140,22 @@ export function catalogueMarkdown(
   );
 }
 
+/**
+ * A section as the catalogue shows it (catalogueMarkdown), and nothing where that leaves only its
+ * heading.
+ */
+export function catalogueSection(section: DocumentationSection): DocumentationSection | undefined {
+  const blocks = section.blocks.map((block) =>
+    block.kind === 'markdown'
+      ? { ...block, markdown: catalogueMarkdown(section, block.markdown) }
+      : block,
+  );
+  const empty = blocks.every(
+    (block) => block.kind === 'markdown' && !block.markdown.replace(/^## .*$/m, '').trim(),
+  );
+  return empty ? undefined : { ...section, blocks };
+}
+
 /** What envUI provides and what the application provides, each a Markdown list, from a page. */
 export function providesOf(sections: readonly DocumentationSection[]): {
   envui: string | undefined;
