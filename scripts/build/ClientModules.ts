@@ -97,6 +97,17 @@ function createReader(checker: ts.TypeChecker | undefined) {
     return symbol?.valueDeclaration ?? symbol?.declarations?.[0];
   };
 
+  /**
+   * The value a variable declaration is set to, the first time it is followed: what a const
+   * holds counts as the const, and `seen` stops a cycle.
+   */
+  const initializerOf = (declaration: ts.Node | undefined, seen: Set<ts.Node>) => {
+    if (!declaration || !ts.isVariableDeclaration(declaration) || !declaration.initializer) return;
+    if (seen.has(declaration)) return;
+    seen.add(declaration);
+    return declaration.initializer;
+  };
+
   /** Whether a value's type can be called: a function, or a union with one. */
   const isCallable = (node: ts.Node) => {
     if (!checker) return false;
@@ -171,20 +182,11 @@ function createReader(checker: ts.TypeChecker | undefined) {
     )
       return createsFunction(expression.left, seen) || createsFunction(expression.right, seen);
     if (!isCallable(expression) || isPassedOn(expression)) return false;
-    if (ts.isIdentifier(expression)) {
-      const declaration = declarationOf(expression);
-      // A const counts as what it holds: a function it makes, or one only passed on.
-      if (
-        declaration &&
-        ts.isVariableDeclaration(declaration) &&
-        declaration.initializer &&
-        !seen.has(declaration)
-      ) {
-        seen.add(declaration);
-        return createsFunction(declaration.initializer, seen);
-      }
-    }
-    return true;
+    // A const counts as what it holds: a function it makes, or one only passed on.
+    const held = ts.isIdentifier(expression)
+      ? initializerOf(declarationOf(expression), seen)
+      : undefined;
+    return held ? createsFunction(held, seen) : true;
   };
 
   /** Whether props, as an object literal or a variable holding one, carry a function. */
@@ -199,15 +201,8 @@ function createReader(checker: ts.TypeChecker | undefined) {
           const value = checker?.getShorthandAssignmentValueSymbol(property);
           const declaration = value?.valueDeclaration ?? value?.declarations?.[0];
           if (holdsPassedOn(declaration)) return false;
-          if (
-            declaration &&
-            ts.isVariableDeclaration(declaration) &&
-            declaration.initializer &&
-            !seen.has(declaration)
-          ) {
-            seen.add(declaration);
-            return createsFunction(declaration.initializer, seen);
-          }
+          const held = initializerOf(declaration, seen);
+          if (held) return createsFunction(held, seen);
           return checker ? isCallable(property.name) : true;
         }
         if (ts.isSpreadAssignment(property)) return propsCarryFunction(property.expression, seen);
@@ -218,19 +213,10 @@ function createReader(checker: ts.TypeChecker | undefined) {
         propsCarryFunction(expression.whenTrue, seen) ||
         propsCarryFunction(expression.whenFalse, seen)
       );
-    if (ts.isIdentifier(expression)) {
-      const declaration = declarationOf(expression);
-      if (
-        declaration &&
-        ts.isVariableDeclaration(declaration) &&
-        declaration.initializer &&
-        !seen.has(declaration)
-      ) {
-        seen.add(declaration);
-        return propsCarryFunction(declaration.initializer, seen);
-      }
-    }
-    return false;
+    const held = ts.isIdentifier(expression)
+      ? initializerOf(declarationOf(expression), seen)
+      : undefined;
+    return held ? propsCarryFunction(held, seen) : false;
   };
 
   /** The name a call is made by: its imported name for an aliased import, as useState for state. */
