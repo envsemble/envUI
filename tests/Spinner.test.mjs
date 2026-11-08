@@ -3,6 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from './support/importSource.mjs';
+import { elementsOf, firstElement, hasClass, textOf } from './support/markup.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -11,35 +12,45 @@ const { Spinner, EnvUIProvider } = await importSource('Spinner', [
   "export { EnvUIProvider } from './packages/ui/src/foundations/EnvUIProvider.tsx';",
 ]);
 
+const render = (element) => firstElement(renderToStaticMarkup(element));
+/** The label shown beside the arc, if the spinner shows one. */
+const shownLabel = (spinner) =>
+  elementsOf(spinner).find((element) => hasClass(element, 'env-spinner-label'));
+
 test('a spinner without a label is hidden, and with one a progress bar it names', () => {
-  assert.match(
-    renderToStaticMarkup(h(Spinner)),
-    /^<span aria-hidden="true" data-label-hidden="" class="env-spinner"/,
-  );
-  const named = renderToStaticMarkup(h(Spinner, { label: 'Refreshing members' }));
-  assert.match(named, /role="progressbar" aria-label="Refreshing members"/);
-  assert.doesNotMatch(named, /env-spinner-label/);
+  const hidden = render(h(Spinner));
+  assert.ok(hasClass(hidden, 'env-spinner'));
+  assert.equal(hidden.attributes['aria-hidden'], 'true');
+  assert.equal(hidden.attributes['data-label-hidden'], '');
+  const named = render(h(Spinner, { label: 'Refreshing members' }));
+  assert.equal(named.attributes.role, 'progressbar');
+  assert.equal(named.attributes['aria-label'], 'Refreshing members');
+  assert.equal(shownLabel(named), undefined);
 });
 
 test('with showLabel, a busy status shows the label beside the arc', () => {
-  const markup = renderToStaticMarkup(h(Spinner, { label: 'Loading project', showLabel: true }));
-  assert.match(markup, /^<span role="status" aria-busy="true" class="env-spinner" data-size="md">/);
-  assert.doesNotMatch(markup, /aria-label|progressbar/);
-  assert.match(markup, /<svg [^>]*aria-hidden="true">/);
-  assert.match(markup, /<span class="env-spinner-label">Loading project<\/span><\/span>$/);
+  const spinner = render(h(Spinner, { label: 'Loading project', showLabel: true }));
+  assert.ok(hasClass(spinner, 'env-spinner'));
+  assert.equal(spinner.attributes.role, 'status');
+  assert.equal(spinner.attributes['aria-busy'], 'true');
+  assert.equal(spinner.attributes['data-size'], 'md');
+  for (const element of elementsOf(spinner)) {
+    assert.equal(element.attributes['aria-label'], undefined);
+    assert.notEqual(element.attributes.role, 'progressbar');
+  }
+  const arc = elementsOf(spinner).find((element) => element.tag === 'svg');
+  assert.equal(arc.attributes['aria-hidden'], 'true');
+  assert.equal(textOf(shownLabel(spinner)), 'Loading project');
 });
 
 test("without a label, showLabel says Loading, in the provider's language", () => {
-  assert.match(
-    renderToStaticMarkup(h(Spinner, { showLabel: true })),
-    /<span class="env-spinner-label">Loading<\/span>/,
-  );
-  const translated = renderToStaticMarkup(
+  assert.equal(textOf(shownLabel(render(h(Spinner, { showLabel: true })))), 'Loading');
+  const translated = render(
     h(
       EnvUIProvider,
       { messages: { common: { loading: 'Wird geladen' } } },
       h(Spinner, { showLabel: true }),
     ),
   );
-  assert.match(translated, /<span class="env-spinner-label">Wird geladen<\/span>/);
+  assert.equal(textOf(shownLabel(translated)), 'Wird geladen');
 });
