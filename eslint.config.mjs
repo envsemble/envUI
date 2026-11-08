@@ -10,7 +10,7 @@ import tseslint from 'typescript-eslint';
 
 /**
  * The library's families, the folders of packages/ui/src that hold components. A family's
- * internal/ folder is its own: code two families use sits in the top-level internal/ (AGENTS.md).
+ * internal/ folder is its own: code two families use sits in the top-level internal/ (packages/ui/AGENTS.md).
  */
 const families = readdirSync(new URL('packages/ui/src/', import.meta.url), { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
@@ -37,7 +37,7 @@ const confusingBrowserGlobals = [
 
 /**
  * Names the site declares with "preview" in them: the site's words for what it shows are example,
- * specimen, tile, figure and stage (AGENTS.md), and preview is an older name. Names it only reads,
+ * specimen, tile, figure and stage (apps/site/AGENTS.md), and preview is an older name. Names it only reads,
  * such as a library prop or an example's import, are left to where they are declared.
  */
 const previewNames = [
@@ -54,12 +54,12 @@ const previewNames = [
 ].map((declared) => ({
   selector: `${declared}[name=/preview/i]`,
   message:
-    'Name it with the site’s words, example, specimen, tile, figure or stage (AGENTS.md): preview is an older name.',
+    'Name it with the site’s words, example, specimen, tile, figure or stage (apps/site/AGENTS.md): preview is an older name.',
 }));
 
 /**
  * A `data-*` attribute set by a conditional between `''` and `undefined`, in JSX or in an object of
- * props: a state that is on or off goes through `flag()` (AGENTS.md).
+ * props: a state that is on or off goes through `flag()` (packages/ui/AGENTS.md).
  */
 const emptyOrUndefined = `ConditionalExpression:matches([consequent.value=''][alternate.name='undefined'], [consequent.name='undefined'][alternate.value=''])`;
 const inlineFlags = [
@@ -162,7 +162,7 @@ export default defineConfig(
               regex: String.raw`^(\.\./)+(${families
                 .filter((other) => other !== family)
                 .join('|')})/([\w-]+/)*internal(/|$)`,
-              message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/ (AGENTS.md).`,
+              message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/ (packages/ui/AGENTS.md).`,
             },
           ],
         },
@@ -178,8 +178,8 @@ export default defineConfig(
   },
   {
     // The site reaches the library through its entry points, and what they don't export through
-    // @envui-internal, the scripts' documentation model through @docs-model (AGENTS.md): a relative
-    // path into either would break unseen when a file there moves.
+    // @envui-internal, the scripts' documentation model through @docs-model (apps/site/AGENTS.md): a
+    // relative path into either would break unseen when a file there moves.
     files: ['apps/site/src/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [
@@ -189,7 +189,7 @@ export default defineConfig(
             {
               regex: String.raw`^(\.\./)+(packages/ui/src|scripts)(/|$)`,
               message:
-                'Import the library from @envsemble/envui, its internals from @envui-internal/* and the documentation model from @docs-model/* (AGENTS.md).',
+                'Import the library from @envsemble/envui, its internals from @envui-internal/* and the documentation model from @docs-model/* (apps/site/AGENTS.md).',
             },
           ],
         },

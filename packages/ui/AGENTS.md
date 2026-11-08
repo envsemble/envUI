@@ -1,0 +1,91 @@
+# The library: rules for working on it
+
+The rules for `packages/ui`, beside [the rules for the whole repository](../../AGENTS.md), which this file doesn't repeat. Paths are from the repository's root.
+
+## Files
+
+- Put a component in the family folder of its page's category under `packages/ui/src`, such as Overlays in `overlays/`; `tests/library/ComponentFolders.test.mjs` maps them.
+- Name its file after its main export: PascalCase for a component, a context or a namespace; `useX` for a hook; camelCase for other modules; entry points lowercase.
+- Give a namespace's parts a file of their own, as Menu's are.
+- Put code one family uses in its `internal/` folder, and code two families use in the top-level `internal/`, grouped by concern, such as `internal/field/`. ESLint rejects an import of another family's `internal/`.
+- A component with many private modules may take its own folder in its family, with its own `internal/`, such as `feedback/toast/` and `forms/color/`.
+
+## Entry points
+
+- Public exports go through the entry points, such as `index.ts`, `markdown.ts` and `rich-text.ts`.
+- An entry point other than `index.ts` holds what loads an optional dependency, and is named after what it holds, such as `code` for Code and CodeBlock on Shiki.
+- Whatever a module the entry points `export *` exports is public: `docs/generated/exports.json` records every name and its kind (`npm run docs:exports`).
+- `npm run docs:check` fails on a change to the exports without a changeset, major for a name that goes.
+
+## Props
+
+- A boolean defaults to false, unless it turns off a feature shown by default: then name it after the feature, such as `header`, `closeButton` or a field's `visibleLabel`, and default it to true.
+- `show*` is for an opt-in display, such as Spinner's `showLabel`.
+- Signatures use envUI's own types; a third-party type stays where it is the point of a prop, such as Tiptap's `Editor` on RichTextEditor.
+
+## Messages
+
+- A component's strings live in `packages/ui/src/foundations/messages/`, one namespace per component or family, named after it (`copyButton`) or after the concept a family sets (`themePreference`).
+- Name a prop that overrides a string after its key: `<x>Label` reads `messages.<namespace>.<x>`.
+- A number that picks a plural form arrives as `count` with `countText`, the count in the locale's digits; any other number arrives as locale text.
+
+## What belongs in envUI
+
+- A variant, slot or component every application needs, built on envUI's primitives and tokens.
+- Routing, authorization, validation, preferences and persistence stay in the application.
+- The one supported exception is Panes' `persist`, the width people chose kept in a cookie, which `packages/ui/src/layout/panesSize.ts` reads and writes.
+
+## Changing a component touches
+
+- Its module in its family and its style sheet, `packages/ui/src/styles/<Name>.css`; a new component also its entry point's export.
+- `packages/ui/src/parts.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
+- Its strings in `packages/ui/src/foundations/messages/`.
+- Its page, `docs/components/<name>.md` or `docs/patterns/`, with its examples in `apps/site/src/examples/<page>/` and its gallery tile in `apps/site/src/tiles/`.
+- Its spec and fixture, named as [Fixtures](../../AGENTS.md#fixtures) says.
+- A changeset, when people using envUI notice the change ([Record the change](../../AGENTS.md#record-the-change)).
+
+## Tokens
+
+- The tokens are DTCG files in `packages/ui/tokens`, with `envui.resolver.json` for the themes.
+- A token's path names its custom property, `color.fg.muted` as `--env-color-fg-muted`. Every custom property takes the `--env-` prefix.
+- `palette.tokens.json` is generated (`npm run palette:generate`) and internal: roles alias its grades, and grades 40, 50 and 70 apart give 3:1, 4.5:1 and 7:1.
+- Colors are roles, `color.{bg|fg|border}.{role}.{emphasis}[.{state}]`, each with its dark, high-contrast and hover and pressed values.
+- A size that follows the compact scale is a token.
+- A component's own custom properties, such as `--env-card-padding`, take its name and are private.
+- Change a color by choosing another grade for its role, then run `npm run test:contrast`.
+- List a pair that leaves `tests/contrast/Pairs.ts` as dropped or renamed, and one held to less as `relaxed`, each with its reason; `npm run test:contrast -- --update-snapshots` records the change (`tests/contrast/Snapshot.ts` says how the record and the base branches hold it).
+- What DTCG can't express is in `packages/ui/src/styles/TokensHandwritten.css`, its public tokens listed in `packages/ui/tokens/handwritten.json`.
+- `packages/ui/src/generated/` holds the token build's output, `Tokens.css` and `tokens.json`: never edit it.
+
+## Style sheets
+
+- Each component's CSS is a file of `packages/ui/src/styles` in `@layer env.components`.
+- Its module imports `../styles/Base.css`, then the style sheets of what it builds on, then its own (`tests/library/StyleImports.test.mjs`).
+- No specificity tricks to stay overridable, and nothing `!important`.
+- Colors, `z-index` and font weights come from tokens.
+- Lengths that follow the text are rem; px only for hairlines; em only for typography that follows the element's own size (`npm run lint:css`).
+- No drop shadows but Avatar's, the frosted popups' and a segmented control's thumb (`tests/library/NoShadows.test.mjs`).
+- Regions part by space and fill; hairlines only separate the items of one list.
+- Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/library/StableHover.test.mjs`).
+- A pill is `var(--env-radius-full)`, so a tall element becomes a rounded rectangle; `50%` only on parts that are always square (`tests/library/Corners.test.mjs`).
+- Motion uses the motion tokens, and movement only under `prefers-reduced-motion: no-preference`.
+- Under `forced-colors: active`, a state a fill or shadow carries takes system colors (`tests/browser/library/ForcedColors.spec.ts`).
+
+## Part names and color properties
+
+- A component's part classes (`env-<component>-<part>`), state attributes (`data-*`), color properties and the custom properties listed under `properties` are public and versioned.
+- `npm run docs:parts` (`scripts/docs/GenerateParts.ts`) derives them from the source into `docs/generated/parts.json`; `packages/ui/src/parts.json` holds what can't be derived, such as a description of every part and property, and generation fails without one.
+- A state that is on or off is present as `''` or absent, set through `flag()` (`packages/ui/src/internal/flag.ts`), which ESLint holds the library to.
+- `data-env-ssr-*` attributes are private.
+- Each attribute keeps one meaning: `data-active` what shows, `data-current` the page's destination, `data-selected` what is chosen, `data-highlighted` the list's cursor, and for a drag `data-dragging`, `data-moving`, `data-resizing` or `data-drag-over`.
+- Color properties are `--env-<component>-<role>`, or the item's for a collection's rows, with the roles `container`, `content`, `outline`, `icon`, `selected`, `selected-content` and `indicator`.
+- Register each at the top of its style sheet as `@property … { syntax: '*'; inherits: false; }` and only read it, with the designed token as its fallback, so the default colors never change (`tests/browser/library/DefaultColors.spec.ts`) and states follow what an application sets as layers of the content over the container.
+- Renaming or removing any of these is a `major` change, and `npm run docs:check` fails without a major changeset that names it; a new color property is `minor`.
+
+## Dev mode
+
+- `@envsemble/envui/dev`, entry point `packages/ui/src/dev.ts`, gives agents `envui.layout`, a readout of the page's layout and its problems, and people a 3D view with an inspector; [docs/dev-mode.md](../../docs/dev-mode.md) documents it.
+- No other entry point imports it (`tests/library/DevMode.test.mjs`), so a production build holds none of it.
+- Its code is in `packages/ui/src/dev/`: measuring the page (`measure.ts`), the data (`model.ts`), the readout and its checks as plain functions of that data (`readout.ts`), and the API (`api.ts`).
+- The view is in `packages/ui/src/dev/ui/`, with its own style sheet, `DevMode.css`, which `install.tsx` imports as text and adds to the page, outside `packages/ui/src/styles`.
+- Give a readout check a unit test on data in `tests/library/DevMode.test.mjs`; test the view and `envui.layout` on a page in `tests/browser/library/DevMode.spec.ts`.

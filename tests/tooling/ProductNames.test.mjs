@@ -42,6 +42,8 @@ const sources = [
   { path: 'README.md', read: 'whole' },
   { path: 'CONTRIBUTING.md', read: 'whole' },
   { path: 'AGENTS.md', read: 'whole' },
+  { path: 'packages/ui/AGENTS.md', read: 'whole' },
+  { path: 'apps/site/AGENTS.md', read: 'whole' },
   { directory: 'contributing', extensions: ['.md'], read: 'whole' },
   { path: 'packages/ui/CHANGELOG.md', read: 'whole' },
   { directory: '.changeset', extensions: ['.md'], read: 'whole' },

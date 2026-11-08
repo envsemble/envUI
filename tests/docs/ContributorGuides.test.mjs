@@ -8,7 +8,14 @@ import { marked } from 'marked';
 
 test("the contributor guides' relative links reach files, and headings, that exist", async () => {
   const { headingsOf } = await import('../../scripts/docs/MarkdownHeadings.ts');
-  const guides = ['README.md', 'CONTRIBUTING.md', 'AGENTS.md', 'contributing/pages.md'];
+  const guides = [
+    'README.md',
+    'CONTRIBUTING.md',
+    'AGENTS.md',
+    'packages/ui/AGENTS.md',
+    'apps/site/AGENTS.md',
+    'contributing/pages.md',
+  ];
   const broken = [];
   for (const guide of guides) {
     const source = await readFile(resolve(guide), 'utf8');

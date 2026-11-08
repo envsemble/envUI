@@ -1,7 +1,7 @@
 // Stylelint for the library's and the site's CSS. Existing violations of the rules that the
-// token work removes are recorded in stylelint-suppressions.json, and tests/StylelintSuppressions
-// requires the recorded counts to match the CSS exactly; anything new fails. See
-// AGENTS.md.
+// token work removes are recorded in stylelint-suppressions.json, and
+// tests/tooling/StylelintSuppressions.test.mjs requires the recorded counts to match the CSS
+// exactly; anything new fails. See "Ports, workers and recorded lists" in AGENTS.md.
 import stylelint from 'stylelint';
 // The px allowlist, the raw color functions and the z-index values are the ones envUI's Stylelint
 // config ships, so applications and the library follow the same rules.
@@ -171,8 +171,8 @@ export default {
       },
     },
     {
-      // The site's classes and custom properties say which part they belong to (AGENTS.md); env-
-      // are the library's, which the site styles through its part classes and reads as tokens.
+      // The site's classes and custom properties say which part they belong to (apps/site/AGENTS.md);
+      // env- are the library's, which the site styles through its part classes and reads as tokens.
       files: ['apps/site/src/**/*.css'],
       rules: {
         'selector-class-pattern': sitePrefixed,
