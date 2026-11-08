@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   List,
   NavigationDrawer,
+  NavigationRail,
   Page,
   PageHeader,
   Scaffold,
@@ -48,10 +49,13 @@ export default function AppDestinations() {
   const title = destinations.find((item) => item.current)?.label ?? 'Inbox';
   return (
     // The drawer is the Scaffold's navigation, beside the page of the destination it marks.
+    // On a phone the same destinations stand in a rail, so the page keeps its width.
     <Scaffold
       scroll="body"
       landmarks={false}
+      navigationForms={{ compact: 'rail', medium: 'drawer' }}
       navigation={{
+        rail: <NavigationRail destinations={destinations} />,
         drawer: (
           <NavigationDrawer
             destinations={destinations}
