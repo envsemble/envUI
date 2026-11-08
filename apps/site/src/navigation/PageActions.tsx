@@ -1,9 +1,9 @@
 import { Button } from '@envsemble/envui';
 import { DisplayMenu } from '../display/DisplaySettings';
-import type { Area, RoutePage } from './SiteRoutes';
-import { otherPartRoute } from './Counterparts';
-import { routeHref } from './Address';
-import { keepSection, otherPart } from './OtherPart';
+import type { Area, RoutePage } from '../routes/SiteRoutes';
+import { otherPartRoute } from '../routes/Counterparts';
+import { routeHref } from '../routes/Address';
+import { keepSection, otherPart } from '../routes/OtherPart';
 
 /**
  * The page's own controls at its top end, quiet ghost buttons that stay in the corner as the page

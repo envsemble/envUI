@@ -1,9 +1,9 @@
 import { Badge, type NavigationDrawerDestination } from '@envsemble/envui';
 import { version } from '@envsemble/envui/package.json';
-import { pageBadge } from './PageBadges';
-import type { RoutePage } from './SiteRoutes';
-import { docsTree, type DocsGroup } from './DocsTree';
-import { routeHref } from './Address';
+import { pageBadge } from '../routes/PageBadges';
+import type { RoutePage } from '../routes/SiteRoutes';
+import { docsTree, type DocsGroup } from '../routes/DocsTree';
+import { routeHref } from '../routes/Address';
 
 /**
  * The badge after a page's name in the Docs' navigation, such as Alpha or New, from its

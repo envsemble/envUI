@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useState, type RefObject } from 'react';
 import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
 import { rootMotionDuration, rootMotionEasing } from '../shared/RootMotionTokens';
-import type { CatalogueSection } from './SiteRoutes';
+import type { CatalogueSection } from '../routes/SiteRoutes';
 import { useLatest } from '@envui-internal/internal/useLatest';
 
 /** How the catalogue's drawer is moving, if it is (useDrawerMotion). */
