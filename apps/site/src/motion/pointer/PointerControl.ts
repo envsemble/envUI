@@ -30,8 +30,11 @@ let pressing: number | null = null;
  * The reader's presses and clicks still go through.
  */
 export function holdReaderMoves() {
-  if ((window as { catalogueHoldsMoves?: boolean }).catalogueHoldsMoves) return;
-  (window as { catalogueHoldsMoves?: boolean }).catalogueHoldsMoves = true;
+  // A flag on the window, whose type declares none, so the listeners are added once per page,
+  // also after a hot reload of this module.
+  const page = window as { catalogueHoldsMoves?: boolean };
+  if (page.catalogueHoldsMoves) return;
+  page.catalogueHoldsMoves = true;
   const hold = (event: Event) => {
     if (event.isTrusted && pressing !== null) event.stopImmediatePropagation();
   };

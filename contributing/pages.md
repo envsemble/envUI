@@ -326,7 +326,7 @@ The galleries and Related show each page by a tile: `apps/site/src/tiles/<Page>.
 
 - **The component alone, large and centred**, with as little else as it needs to be recognised.
 - **A still that is its animation's first frame.** On hover or focus it plays a short script of the component in use, and on a touch screen the tile nearest the middle plays once scrolling settles. The script ends where it began.
-- **Its window** is 14 by 10.5 rem, the same for every tile, so components show at one scale; only a component too large for it takes a larger one in `tileWindows` (`apps/site/src/tiles/Tiles.ts`).
+- **Its window** is the same for every tile (`--catalogue-tile-width` and `--catalogue-tile-height` in `apps/site/src/styles/Tile.css`), so components show at one scale; only a component too large for it exports a larger `tileWindow` next to its default export (`TileWindow` in `apps/site/src/tiles/Tiles.ts`).
 - **A still with a popup open** keeps it in state and puts it back with `usePointer`'s `onRest`.
 - **A popup whose script opens, closes and changes it**, such as a select's list, rests open in its largest state, through the component's own `defaultOpen` or `open`, and calls `useHeldView` (`apps/site/src/motion/Playback.tsx`): framed on that still, its view holds while it plays. Where it is taller than the stage, such as a picker, it shows from its field down to what its script acts on and what is chosen, whole above the fade at the stage's foot, so the script aims only at what shows whole.
 - **A tile that grows as it plays**, such as a note gaining a line, calls `useHeldView(true)`: it lays out from its window's top and is shown from its top, so what it adds grows downward.
