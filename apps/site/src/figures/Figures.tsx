@@ -13,7 +13,7 @@ import type { Documentation as Document } from '../pages/PageModel';
 import { AnatomyFigure } from './anatomy/AnatomyFigure';
 import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
-import { SiteMarkdown } from '../template/OptionLegend';
+import { SiteMarkdown } from '../template/SiteMarkdown';
 import {
   lastSubsection,
   leadParagraph,

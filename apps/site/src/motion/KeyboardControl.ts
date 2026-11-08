@@ -3,7 +3,8 @@
  * field it types into and the element its focus is on, marked as focused, as the inert stage can't
  * focus it.
  */
-import { editorOf, type PointerSelection } from './pointer/VirtualSelection';
+import type { PointerSelection } from './pointer/VirtualSelection';
+import type { StageEditors } from './pointer/StageEditors';
 import { focusMark, focusWithinMark, mark } from './pointer/PointerStates';
 import { chainOf, textFields, type Modifiers } from './pointer/PointerTargets';
 import { keyboardFocused, lendSelection } from './BrowserStandIns';
@@ -34,6 +35,7 @@ export class KeyboardControl {
   constructor(
     private readonly scope: Element,
     private readonly selection: PointerSelection,
+    private readonly editors: StageEditors,
   ) {}
 
   /** The flags of the modifier keys held, for an event. */
@@ -99,7 +101,7 @@ export class KeyboardControl {
    * text, so its input rules and suggestions see it, and the key up.
    */
   private typeInEditor(element: Element, text: string | null) {
-    const found = editorOf(element);
+    const found = this.editors.use(element);
     if (!found) return;
     const { editor, content } = found;
     this.focus(content);
@@ -108,13 +110,11 @@ export class KeyboardControl {
       const { view } = editor;
       const { from, to } = view.state.selection;
       if (text === null) view.dispatch(view.state.tr.delete(from === to ? from - 1 : from, to));
-      else if (
-        !view.someProp<(view: unknown, from: number, to: number, text: string) => boolean>(
-          'handleTextInput',
-          (handle) => handle(view, from, to, text),
-        )
-      )
-        view.dispatch(view.state.tr.insertText(text, from, to));
+      else {
+        const insert = () => view.state.tr.insertText(text, from, to);
+        if (!view.someProp('handleTextInput', (handle) => handle(view, from, to, text, insert)))
+          view.dispatch(insert());
+      }
     }
     content.dispatchEvent(new KeyboardEvent('keyup', keyboard));
   }
@@ -171,7 +171,7 @@ export class KeyboardControl {
   key(key: string, selector?: string) {
     const target = this.keyTarget(selector);
     let allowed = true;
-    lendSelection(editorOf(target) ? this.scope : undefined, () => {
+    lendSelection(this.editors.use(target) ? this.scope : undefined, () => {
       allowed = target.dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key)));
     });
     if (allowed && key === 'Tab' && target === this.focused) {

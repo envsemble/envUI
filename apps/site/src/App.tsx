@@ -1,13 +1,4 @@
-import {
-  Suspense,
-  useEffect,
-  useRef,
-  useState,
-  type Dispatch,
-  type ReactNode,
-  type RefObject,
-  type SetStateAction,
-} from 'react';
+import { Suspense, useRef, useState, type ReactNode } from 'react';
 import {
   Column,
   EnvUIProvider,
@@ -18,8 +9,6 @@ import {
   Sheet,
   Text,
   Tooltip,
-  useModifierKey,
-  windowClasses,
 } from '@envsemble/envui';
 import { IconMenu } from '@envsemble/envui/icons/Menu';
 import {
@@ -56,22 +45,15 @@ import { PageActions } from './navigation/PageActions';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink, usePendingRoute } from './navigation/RouterLink';
 import { RouteProgress } from './navigation/RouteProgress';
-import {
-  docsRoute,
-  homeRoute,
-  inDocs,
-  revealSection,
-  routeHref,
-  takeShownAddress,
-} from './navigation/Address';
-import { showKeptSection } from './navigation/OtherPart';
-import { isSearchShortcut } from './search/SearchShortcut';
+import { docsRoute, homeRoute, inDocs, routeHref } from './navigation/Address';
+import { usePagePlace } from './navigation/usePagePlace';
+import { useSheetClosesWhenWide } from './navigation/useSheetClosesWhenWide';
+import { useSearchShortcut } from './search/useSearchShortcut';
 import { SearchButton } from './search/SearchButton';
 import { useSiteRoute } from './navigation/useSiteRoute';
 import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
 import { LoadingStatus } from './loading/LoadingStore';
-import { restoreScroll, scrolled } from './navigation/ScrollRestoration';
 import { PageSkeleton } from './loading/PageSkeleton';
 
 /** What each kind of page renders. */
@@ -109,71 +91,6 @@ const pagesWithoutContents = new Set<RoutePage['kind']>([
   'components',
   'patterns',
 ]);
-
-/**
- * ⌘K, or Ctrl+K, opens search from anywhere, text fields included, and closes it again; an editor
- * that handles the keys itself, such as for a link, keeps them.
- */
-function useSearchShortcut(setSearchOpen: Dispatch<SetStateAction<boolean>>) {
-  const { key } = useModifierKey();
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || !isSearchShortcut(event, key)) return;
-      event.preventDefault();
-      setSearchOpen((open) => !open);
-    };
-    addEventListener('keydown', onKeyDown);
-    return () => removeEventListener('keydown', onKeyDown);
-  }, [key, setSearchOpen]);
-}
-
-/**
- * Titles the tab after the page and, as the route changes, moves focus to the page and shows where
- * the reader goes on it: the section the Design and Code switch kept, where they were on a page
- * gone back to, the section the address names, else the page's top. Each step of the history keeps
- * where the reader is on its page (ScrollRestoration.ts).
- */
-function usePagePlace(route: string, title: string, main: RefObject<HTMLElement | null>) {
-  // The first page loaded leaves focus at the start of the document, as any page does; a route
-  // change after it moves focus to the page.
-  const firstLoad = useRef(true);
-  useEffect(() => {
-    document.title = title;
-    // An address that a link of the page's contents wrote has shown its section already.
-    if (takeShownAddress()) return;
-    if (firstLoad.current) firstLoad.current = false;
-    // After the microtasks of the commit, in which a popup of the page that left hands the focus
-    // back to what it was opened from, so the page keeps it.
-    else queueMicrotask(() => main.current?.focus({ preventScroll: true }));
-    // The Design and Code switch keeps the reader's section where the page it shows has it too,
-    // and names it in the address; elsewhere the page opens at its top.
-    const switched = main.current && showKeptSection(main.current, route.split('?')[0]);
-    if (switched) return switched;
-    // Back, Forward and a reload return to where the reader was on the page.
-    const restoring = main.current && restoreScroll(main.current);
-    if (restoring) return restoring;
-    const section = new URLSearchParams(route.split('?')[1]).get('section');
-    if (section) return revealSection(section);
-    main.current?.scrollTo({ top: 0 });
-  }, [route, title, main]);
-  useEffect(() => {
-    const element = main.current;
-    element?.addEventListener('scroll', scrolled, { passive: true });
-    return () => element?.removeEventListener('scroll', scrolled);
-  }, [main]);
-}
-
-/** The navigation's sheet is for narrower windows: one wide enough for the drawer closes it. */
-function useSheetClosesWhenWide(open: boolean, setOpen: (open: boolean) => void) {
-  useEffect(() => {
-    if (!open) return;
-    const wide = window.matchMedia(`(width >= ${windowClasses.expanded})`);
-    const close = () => wide.matches && setOpen(false);
-    close();
-    wide.addEventListener('change', close);
-    return () => wide.removeEventListener('change', close);
-  }, [open, setOpen]);
-}
 
 /** The page at an address that names none, with a way back to its part's home. */
 function PageNotFound({ area }: { area: Area }) {

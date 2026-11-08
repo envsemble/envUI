@@ -15,6 +15,7 @@
  */
 
 import { PointerSelection } from './VirtualSelection';
+import { StageEditors } from './StageEditors';
 import { PointerCursor } from './PointerCursor';
 import { mirrorPointerStates } from './PointerStates';
 import { hitAt, type Aimed, type Point, type PointerSpot } from './PointerTargets';
@@ -32,6 +33,8 @@ export class VirtualPointer {
   readonly id = nextId++;
   /** Where it is and what it is over, which its controllers share. */
   private readonly spot: PointerSpot;
+  /** The stage's rich text editors, which it selects and types in. */
+  private readonly editors = new StageEditors();
   /** What a drag across text selects. */
   private readonly selection: PointerSelection;
   private readonly pointer: PointerControl;
@@ -69,9 +72,9 @@ export class VirtualPointer {
     holdReaderMoves();
     captures.set(this.id, null);
     mirrorPointerStates();
-    this.selection = new PointerSelection(scope);
+    this.selection = new PointerSelection(scope, this.editors);
     this.cursor = new PointerCursor(scope);
-    const keyboard = new KeyboardControl(scope, this.selection);
+    const keyboard = new KeyboardControl(scope, this.selection, this.editors);
     this.spot = {
       scope,
       at: null,
@@ -231,6 +234,7 @@ export class VirtualPointer {
     this.keyboard.focus(null);
     this.leave();
     this.selection.clear();
+    this.editors.dispose();
     this.cursor.remove();
     captures.delete(this.id);
   }

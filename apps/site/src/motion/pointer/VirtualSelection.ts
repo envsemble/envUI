@@ -5,15 +5,17 @@
  * - in a text field, the selection is the field's own (setSelectionRange), which a component reads
  *   as it would a person's, such as a formatting button; an unfocused field doesn't paint it, so a
  *   copy of the field's text over it, transparent but the selected part, paints it in the
- *   selection's colours (`.catalogue-field-selection`, Stage.css);
+ *   selection's colours (FieldCopy.ts);
  * - in content, it is a range in a highlight of the catalogue's (`::highlight(catalogue-selection)`),
  *   painted as a selection is;
- * - in a rich text editor (ProseMirror, through Tiptap), it is also the editor's own selection, set
+ * - in a rich text editor (StageEditors.ts), it is also the editor's own selection, set
  *   through its state, so its toolbar shows what is on there and typing goes there; the highlight
  *   then follows the editor's selection as its content changes, such as when the text is bolded.
  * A drag selects whole words, as a person selecting a word or a phrase does: from the start of the
  * word it begins in to the end of the word it ends in, without the space after it.
  */
+import { fieldCharacterBox, paintField, type Field } from './FieldCopy';
+import type { RichEditor, StageEditors } from './StageEditors';
 
 /** A character of a word: a letter, a digit, or an apostrophe or underscore inside one. */
 const wordCharacter = /[\p{L}\p{N}\p{M}_'’]/u;
@@ -57,55 +59,6 @@ interface Point {
 /** Fields whose text a drag selects. */
 const selectableFields =
   'input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"], [type="color"], [type="file"]), textarea';
-
-type Field = HTMLInputElement | HTMLTextAreaElement;
-
-/** A rich text editor's view, as ProseMirror gives it: its state, and how to change it. */
-interface EditorView {
-  state: {
-    selection: { from: number; to: number; empty: boolean };
-    tr: {
-      insertText(text: string, from: number, to: number): unknown;
-      delete(from: number, to: number): unknown;
-    };
-  };
-  dispatch(transaction: unknown): void;
-  posAtDOM(node: Node, offset: number): number;
-  domAtPos(position: number): { node: Node; offset: number };
-  someProp<T>(name: string, run: (handler: T) => unknown): unknown;
-  setProps(props: { handleScrollToSelection: () => boolean }): void;
-}
-
-/** The editor Tiptap keeps on its content element, as the pointer drives it. */
-interface RichEditor {
-  view: EditorView;
-  commands: { setTextSelection(range: number | { from: number; to: number }): boolean };
-  on(event: 'transaction', listener: () => void): void;
-  off(event: 'transaction', listener: () => void): void;
-}
-
-/** The editors the pointer has used, kept from scrolling the page. */
-const steadied = new WeakSet<RichEditor>();
-
-/**
- * The rich text editor a node is in, or its content element holds: Tiptap keeps the editor on the
- * element ProseMirror edits. An editor the pointer uses no longer scrolls its selection into view,
- * as a command does after it edits, since that would scroll the reader's page.
- */
-export function editorOf(node: Node | null) {
-  const element = node instanceof Element ? node : (node?.parentElement ?? null);
-  const content =
-    element?.closest('.ProseMirror') ?? element?.querySelector('.ProseMirror') ?? null;
-  // Tiptap puts its editor on the element ProseMirror renders into, an HTML element.
-  const editor = (content as (Element & { editor?: RichEditor }) | null)?.editor;
-  if (!editor?.view) return null;
-  if (!steadied.has(editor)) {
-    steadied.add(editor);
-    editor.view.setProps({ handleScrollToSelection: () => true });
-  }
-  // The element that holds an editor is there, and ProseMirror's, an HTML element.
-  return { editor, content: content as HTMLElement };
-}
 
 /** The name of the highlight that paints the selections in content. */
 const highlightName = 'catalogue-selection';
@@ -201,121 +154,6 @@ function fieldOffsetAt(field: Field, point: Point) {
   return field.value.length;
 }
 
-/** The properties a copy of a field's text takes from the field, so its text lies on the field's. */
-const copied = [
-  'boxSizing',
-  'fontFamily',
-  'fontSize',
-  'fontWeight',
-  'fontStyle',
-  'fontStretch',
-  'fontVariant',
-  'fontFeatureSettings',
-  'fontVariationSettings',
-  'fontKerning',
-  'letterSpacing',
-  'wordSpacing',
-  'lineHeight',
-  'textAlign',
-  'textIndent',
-  'textTransform',
-  'tabSize',
-  'direction',
-  'paddingTop',
-  'paddingRight',
-  'paddingBottom',
-  'paddingLeft',
-  'borderTopWidth',
-  'borderRightWidth',
-  'borderBottomWidth',
-  'borderLeftWidth',
-  'borderTopLeftRadius',
-  'borderTopRightRadius',
-  'borderBottomLeftRadius',
-  'borderBottomRightRadius',
-] as const;
-
-/**
- * Paints a field's selection over it: a copy of its text, in the field's place and box, whose
- * selected part takes the selection's colours and whose rest is transparent, so the field shows
- * through. A field of the stage's content has it in the stage's overlay layer, first, under
- * what opens there, so a dialog and its backdrop cover it as they cover the field (Stage.css hides it
- * while a modal one is open, which takes the field's focus); a field in what opens there, such as
- * a dialog, or a stage without that layer, has it in the box the field is placed in. The
- * component's own elements stay as they are.
- */
-function paintField(
-  field: Field,
-  start: number,
-  end: number,
-  mirror: HTMLElement | null,
-  scope: Element,
-) {
-  const copy = mirror ?? document.createElement('div');
-  if (!mirror) {
-    copy.className = 'catalogue-field-selection';
-    copy.setAttribute('aria-hidden', 'true');
-    copy.append(document.createElement('div'));
-  }
-  const overlays = scope.querySelector<HTMLElement>(':scope > .catalogue-overlay-layer');
-  const layer = overlays && !overlays.contains(field) ? overlays : null;
-  if (layer) {
-    if (layer.firstChild !== copy) layer.prepend(copy);
-  } else {
-    // A field's offset parent is an HTML element.
-    const holder = (field.offsetParent as HTMLElement | null) ?? scope;
-    if (copy.parentElement !== holder) holder.append(copy);
-  }
-  shapeLike(copy, field);
-  if (layer) {
-    // In layout pixels, as the stage may be drawn scaled.
-    const frame = layer.getBoundingClientRect();
-    const box = field.getBoundingClientRect();
-    const scale = frame.width / layer.offsetWidth || 1;
-    copy.style.left = `${(box.left - frame.left) / scale - layer.clientLeft}px`;
-    copy.style.top = `${(box.top - frame.top) / scale - layer.clientTop}px`;
-  } else {
-    copy.style.left = `${field.offsetLeft}px`;
-    copy.style.top = `${field.offsetTop}px`;
-  }
-  const value = field.value;
-  const selected = document.createElement('span');
-  selected.textContent = value.slice(start, end);
-  // The copy's one child holds its lines.
-  (copy.firstElementChild as HTMLElement).replaceChildren(
-    value.slice(0, start),
-    selected,
-    value.slice(end) || '​',
-  );
-  return copy;
-}
-
-/** Gives a copy of a field's text the field's box, type and scroll, so its text lies on the field's. */
-function shapeLike(copy: HTMLElement, field: Field) {
-  const style = getComputedStyle(field);
-  for (const property of copied) copy.style[property] = style[property];
-  copy.style.borderStyle = 'solid';
-  copy.style.borderColor = 'transparent';
-  copy.style.width = `${field.offsetWidth}px`;
-  copy.style.height = `${field.offsetHeight}px`;
-  const area = field instanceof HTMLTextAreaElement;
-  copy.dataset.field = area ? 'textarea' : 'input';
-  // A textarea's scrollbar takes from the width its lines wrap in.
-  if (area) {
-    const scrollbar =
-      field.offsetWidth -
-      field.clientWidth -
-      parseFloat(style.borderLeftWidth) -
-      parseFloat(style.borderRightWidth);
-    copy.style.paddingRight = `${parseFloat(style.paddingRight) + scrollbar}px`;
-  }
-  // The copy's one child holds its lines.
-  const lines = copy.firstElementChild as HTMLElement;
-  lines.style.transform = area
-    ? `translateY(${-field.scrollTop}px)`
-    : `translateX(${-field.scrollLeft}px)`;
-}
-
 /**
  * Where a text is in an element's text, or in a field's value, for the pointer to go to: `x` along
  * it, by its characters, so 0 is just inside its start and 1 just inside its end, and `y` down its
@@ -333,31 +171,6 @@ export function textPoint(element: Element, text: string, x: number, y: number):
       fieldCharacterBox(element as Field, text, along)
     : contentCharacterBox(element, text, along);
   return box && { x: box.left + box.width * within, y: box.top + box.height * y };
-}
-
-/** The box of a character of a text in a field's value, measured on a hidden copy of its text. */
-function fieldCharacterBox(field: Field, text: string, along: (start: number) => number) {
-  const start = text ? field.value.indexOf(text) : -1;
-  if (start < 0) return null;
-  const index = along(start);
-  const copy = document.createElement('div');
-  copy.className = 'catalogue-field-selection';
-  copy.style.visibility = 'hidden';
-  const lines = document.createElement('div');
-  const character = document.createElement('span');
-  character.textContent = field.value.charAt(index);
-  lines.append(field.value.slice(0, index), character, field.value.slice(index + 1) || '​');
-  copy.append(lines);
-  // A field's offset parent is an HTML element.
-  const holder = (field.offsetParent as HTMLElement | null) ?? field.parentElement;
-  if (!holder) return null;
-  holder.append(copy);
-  shapeLike(copy, field);
-  copy.style.left = `${field.offsetLeft}px`;
-  copy.style.top = `${field.offsetTop}px`;
-  const box = character.getBoundingClientRect();
-  copy.remove();
-  return box;
 }
 
 /** The box of a character of a text in an element's text, across its text nodes. */
@@ -420,7 +233,10 @@ export class PointerSelection {
   /** The rich text editor it selects in, and the listener that paints its selection. */
   private editor: { editor: RichEditor; follow: () => void } | null = null;
 
-  constructor(private readonly scope: Element) {}
+  constructor(
+    private readonly scope: Element,
+    private readonly editors: StageEditors,
+  ) {}
 
   /**
    * A press at a point: what was selected is no longer, and the press marks where a drag would
@@ -438,7 +254,7 @@ export class PointerSelection {
     // In text, the caret is found once a drag needs it, so a click reads no layout; a rich text
     // editor takes its caret at once.
     this.pressed = point;
-    if (editorOf(target)) this.anchorAt();
+    if (this.editors.use(target)) this.anchorAt();
   }
 
   /** Where a press in text was, until a drag from it finds its caret. */
@@ -457,7 +273,7 @@ export class PointerSelection {
     this.anchor = caret;
     // In a rich text editor, the press puts the editor's caret there, and the editor's selection
     // is painted from then on, as it changes.
-    const found = editorOf(caret.node);
+    const found = this.editors.use(caret.node);
     if (!found) return;
     const { editor } = found;
     const follow = () => this.follow(editor);
@@ -600,12 +416,13 @@ export class PointerSelection {
    * A field's own selection shown again as the field takes focus again, as a browser shows it,
    * such as a word left selected while a menu's command ran.
    */
-  reveal(field: Element) {
-    if (!field.matches(selectableFields)) return;
+  reveal(element: Element) {
+    if (!element.matches(selectableFields)) return;
     // It matches selectableFields, so it is a field.
-    const { selectionStart: start, selectionEnd: end } = field as Field;
+    const field = element as Field;
+    const { selectionStart: start, selectionEnd: end } = field;
     if (start === null || end === null || start === end) return;
-    this.selected = { field: field as Field, start, end };
+    this.selected = { field, start, end };
     this.paint();
   }
 

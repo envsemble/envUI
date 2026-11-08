@@ -147,39 +147,48 @@ function mergedPage({ path, rest }: OldAddress) {
   return undefined;
 }
 
-/** The old names of pages, each with its page now, in the order they apply. */
-const renamedPages: [RegExp, string][] = [
-  [/^components\/text(?=\/|$)/, 'foundations/typography'],
-  [/^components\/notes(?=\/|$)/, 'components/disclosure'],
-  [/^components\/(icon-buttons|buttons|close-button)(?=\/|$)/, 'components/button'],
-  [/^components\/badges(?=\/|$)/, 'components/badge'],
-  [/^components\/chips(?=\/|$)/, 'components/badge'],
-  [/^components\/tables(?=\/|$)/, 'components/table'],
-  [/^components\/toasts(?=\/|$)/, 'components/toast'],
-  [/^components\/dialogs(?=\/|$)/, 'components/dialog'],
-  [/^components\/meters(?=\/|$)/, 'components/meter'],
-  [/^components\/messages(?=\/|$)/, 'components/message'],
-  [/^components\/cards(?=\/|$)/, 'components/card'],
-  [/^components\/keyboard(?=\/|$)/, 'components/kbd'],
-  [/^components\/(layout|stack)(?=\/|$)/, 'components/column'],
-  [/^components\/(loading|skeleton)(?=\/|$)/, 'patterns/loading'],
-  [/^components\/markdown-editor(?=\/|$)/, 'components/markdown'],
-  [/^components\/(input|textarea)(?=\/|$)/, 'components/text-field'],
-  [/^components\/fields(?=\/|$)/, 'components/text-field'],
-  [/^components\/date-time-field(?=\/|$)/, 'components/date-picker'],
-  [/^components\/file-dropzone(?=\/|$)/, 'components/drop-zone'],
-  [/^components\/disclosures(?=\/|$)/, 'components/disclosure'],
-  [/^components\/notices(?=\/|$)/, 'components/alert'],
-  [/^components\/heatmap(?=\/|$)/, 'components/calendar-heatmap'],
-  [/^components\/rows(?=\/|$)/, 'components/list'],
-  [/^components\/(split-view|split-pane|list-detail)(?=\/|$)/, 'components/panes'],
-  [/^components\/app-shell(?=\/|$)/, 'components/scaffold'],
-  [/^components\/(sidebar|drawer)(?=\/|$)/, 'components/navigation-drawer'],
-  [/^components\/(navigation|nav-list)(?=\/|$)/, 'components/navigation-drawer'],
-  [/^components\/direction-links(?=\/|$)/, 'components/pager'],
-  [/^foundations\/motion(?=\/|$)/, 'foundations/accessibility'],
-  [/^foundations\/scale(?=\/|$)/, 'foundations/spacing'],
-];
+/** The old names of pages, by the first two parts of their path: the page each one is now. */
+const renamedPages: Partial<Record<string, string>> = {
+  'components/text': 'foundations/typography',
+  'components/notes': 'components/disclosure',
+  'components/icon-buttons': 'components/button',
+  'components/buttons': 'components/button',
+  'components/close-button': 'components/button',
+  'components/badges': 'components/badge',
+  'components/chips': 'components/badge',
+  'components/tables': 'components/table',
+  'components/toasts': 'components/toast',
+  'components/dialogs': 'components/dialog',
+  'components/meters': 'components/meter',
+  'components/messages': 'components/message',
+  'components/cards': 'components/card',
+  'components/keyboard': 'components/kbd',
+  'components/layout': 'components/column',
+  'components/stack': 'components/column',
+  'components/loading': 'patterns/loading',
+  'components/skeleton': 'patterns/loading',
+  'components/markdown-editor': 'components/markdown',
+  'components/input': 'components/text-field',
+  'components/textarea': 'components/text-field',
+  'components/fields': 'components/text-field',
+  'components/date-time-field': 'components/date-picker',
+  'components/file-dropzone': 'components/drop-zone',
+  'components/disclosures': 'components/disclosure',
+  'components/notices': 'components/alert',
+  'components/heatmap': 'components/calendar-heatmap',
+  'components/rows': 'components/list',
+  'components/split-view': 'components/panes',
+  'components/split-pane': 'components/panes',
+  'components/list-detail': 'components/panes',
+  'components/app-shell': 'components/scaffold',
+  'components/sidebar': 'components/navigation-drawer',
+  'components/drawer': 'components/navigation-drawer',
+  'components/navigation': 'components/navigation-drawer',
+  'components/nav-list': 'components/navigation-drawer',
+  'components/direction-links': 'components/pager',
+  'foundations/motion': 'foundations/accessibility',
+  'foundations/scale': 'foundations/spacing',
+};
 
 /**
  * A page's views are gone: its props are on its page in the Docs, a foundation's guidance in its
@@ -225,6 +234,8 @@ export function normalizeRoute(route: string): string {
   const moved = foldedPage(address) ?? mergedPage(address);
   if (moved !== undefined) return moved;
   if (findPage(path)) return `${path}${address.rest()}`;
-  const renamed = renamedPages.reduce((name, [old, now]) => name.replace(old, now), path);
-  return pageView(renamed, address);
+  const [area, id, ...view] = path.split('/');
+  // A key holds a slash, so no property every object has reads as one.
+  const renamed = renamedPages[`${area}/${id}`];
+  return pageView(renamed ? [renamed, ...view].join('/') : path, address);
 }
