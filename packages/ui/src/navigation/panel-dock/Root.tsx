@@ -12,7 +12,7 @@ import {
 } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { Column, Row } from '../../foundations/Layout.js';
-import { remLength } from '../../internal/cssLength.js';
+import { remLength } from '../../internal/lengths.js';
 import { setRef } from '../../internal/setRef.js';
 import { useLatest } from '../../internal/useLatest.js';
 import { useMessages } from '../../internal/EnvUIContext.js';

@@ -17,7 +17,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { remLength } from '../internal/cssLength.js';
+import { remLength } from '../internal/lengths.js';
 import { setRef } from '../internal/setRef.js';
 import { useStackedReport } from '../internal/useStackedReport.js';
 import { IconArrowDownward } from '../icons/ArrowDownward.js';
