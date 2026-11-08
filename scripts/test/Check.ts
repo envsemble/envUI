@@ -111,6 +111,10 @@ if (deferred.length)
 for (const [helper, users] of scope.helpers)
   if (!users.some((name) => scope.specs.has(name)) && users.length)
     console.log(dim(`  ${helper}: ${users.length} specs import it; verify covers them`));
+for (const [path, count] of scope.widelyUsed)
+  console.log(
+    dim(`  ${path}: ${count} specs' fixtures use it; verify covers those that don't run`),
+  );
 const unmatched = scope.unmatched.filter((path) => !scope.helpers.has(path));
 if (unmatched.length) console.log(dim(`  no spec for ${list(unmatched)}; verify covers it`));
 console.log('');
