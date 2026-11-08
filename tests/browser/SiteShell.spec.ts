@@ -339,6 +339,74 @@ test('the navigation shows the current page, and focus moves to the page only on
   await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
 });
 
+test("the catalogue's drawer comes in beside the rail and goes again, and the page beside it never moves", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto(`${siteDevUrl}/components`);
+  const drawer = page.locator('.site-sidebar');
+  const list = drawer.locator('.env-navigation-drawer-list');
+  const rail = page.getByRole('navigation', { name: 'Catalogue' });
+  const bodyStart = () =>
+    page.locator('.env-scaffold-body').evaluate((body) => body.getBoundingClientRect().left);
+  // The first page shows it at once.
+  await expect(list).toBeVisible();
+  await expect(drawer).not.toHaveAttribute('data-site-drawer');
+  const besideDrawer = await bodyStart();
+  // Records, on every frame from now on, the drawer's motion, its list's opacity and where the
+  // page beside it starts.
+  const record = () =>
+    page.evaluate(() => {
+      const frames: [string, number, number][] = [];
+      (window as unknown as { frames: typeof frames }).frames = frames;
+      const tick = () => {
+        const sidebar = document.querySelector<HTMLElement>('.site-sidebar');
+        const items = sidebar?.querySelector('.env-navigation-drawer-list');
+        frames.push([
+          sidebar ? (sidebar.dataset.siteDrawer ?? 'still') : 'none',
+          items ? Number(getComputedStyle(items).opacity) : 0,
+          document.querySelector('.env-scaffold-body')!.getBoundingClientRect().left,
+        ]);
+        if (frames.length < 90) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  const frames = () =>
+    page.evaluate(() => (window as unknown as { frames: [string, number, number][] }).frames);
+  // To the Overview, which has none, it fades out laid over the page, which takes its room at once.
+  await record();
+  await rail.getByRole('link', { name: 'Overview', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toBeAttached();
+  await expect(drawer).toHaveCount(0);
+  const out = await frames();
+  const leaving = out.filter(([motion]) => motion === 'leaving');
+  expect(leaving.length).toBeGreaterThan(0);
+  expect(leaving.some(([, opacity]) => opacity > 0 && opacity < 1)).toBe(true);
+  const besideRail = out.at(-1)![2];
+  expect(besideRail).toBeLessThan(besideDrawer);
+  expect(leaving.every(([, , start]) => start === besideRail)).toBe(true);
+  // Back to Components, it fades in beside the rail, and the page starts beside it from its first
+  // frame.
+  await record();
+  await rail.getByRole('link', { name: 'Components', exact: true }).click();
+  await expect
+    .poll(async () => (await frames()).some(([motion]) => motion === 'entering'))
+    .toBe(true);
+  await expect(drawer).not.toHaveAttribute('data-site-drawer');
+  const back = (await frames()).filter(([motion]) => motion !== 'none');
+  expect(back.some(([, opacity]) => opacity > 0 && opacity < 1)).toBe(true);
+  expect(back.every(([, , start]) => start === besideDrawer)).toBe(true);
+  // To Patterns, which has a drawer too, its list changes in place, with no entrance.
+  await record();
+  await rail.getByRole('link', { name: 'Patterns', exact: true }).click();
+  await expect(page.getByRole('navigation', { name: 'Patterns' })).toBeVisible();
+  await page.evaluate(() => new Promise(requestAnimationFrame));
+  expect((await frames()).every(([motion, opacity]) => motion === 'still' && opacity === 1)).toBe(
+    true,
+  );
+  expect(await bodyStart()).toBe(besideDrawer);
+});
+
 test("a catalogue page has its contents beside it from 56rem, in the Docs' column, and a banner as wide as theirs", async ({
   page,
 }) => {

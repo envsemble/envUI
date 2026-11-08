@@ -73,6 +73,47 @@ test('on a touch screen, the tile in the middle plays, one at a time, and the ne
   await expect.poll(() => page.locator('.catalogue-related [data-playing]').count()).toBe(1);
 });
 
+test('on a touch screen the galleries and Related are one card to a row, so the one in the middle plays', async ({
+  page,
+}) => {
+  // A phone either way up and a tablet: never two cards side by side, which would leave none in
+  // the middle of the view to play.
+  const viewports = [
+    { width: 390, height: 844 },
+    { width: 844, height: 390 },
+    { width: 820, height: 1180 },
+  ];
+  const columns = (route: string) =>
+    page
+      .locator('.catalogue-gallery-grid, .catalogue-related-tiles')
+      .evaluateAll(
+        (grids, route) =>
+          grids.map(
+            (grid) => `${route}: ${getComputedStyle(grid).gridTemplateColumns.split(' ').length}`,
+          ),
+        route,
+      );
+  for (const route of ['patterns', 'components/button', 'components']) {
+    await page.goto(`${siteDevUrl}/${route}`);
+    if (route === 'components/button')
+      await page.locator('.catalogue-related').scrollIntoViewIfNeeded();
+    await expect.poll(async () => (await columns(route)).length).toBeGreaterThan(0);
+    for (const viewport of viewports) {
+      await page.setViewportSize(viewport);
+      for (const count of await columns(route))
+        expect(count, `${viewport.width}`).toBe(`${route}: 1`);
+    }
+  }
+  // The card brought to the middle of the view is the one that plays, at every size.
+  for (const [index, viewport] of viewports.entries()) {
+    await page.setViewportSize(viewport);
+    const card = page.locator('.catalogue-gallery-tile').nth(3 + index * 2);
+    await card.evaluate((element) => element.scrollIntoView({ block: 'center' }));
+    const name = await card.locator('.catalogue-gallery-link').textContent();
+    await expect.poll(() => playing(page)).toEqual([name]);
+  }
+});
+
 test('nothing plays by itself where the animations are paused', async ({ page }) => {
   await page.addInitScript((key) => localStorage.setItem(key, 'paused'), displayStorageKeys.motion);
   await page.goto(`${siteDevUrl}/components`);

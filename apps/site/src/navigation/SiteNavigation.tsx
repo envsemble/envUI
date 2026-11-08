@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type ComponentProps, type PointerEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ComponentProps,
+  type PointerEvent,
+  type RefObject,
+} from 'react';
 import {
   Badge,
   Button,
@@ -346,6 +353,7 @@ export function CatalogueNavigation({
   const element = useCurrentInView();
   const section = catalogueSectionOf(page);
   const pages = sectionPages(section);
+  const drawer = useDrawerMotion(element, inSheet || pages.length > 1, section, routePath);
   return (
     <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
       <NavigationRail
@@ -354,12 +362,16 @@ export function CatalogueNavigation({
         header={<Brand area="catalogue" />}
         destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}
       />
-      {(inSheet || pages.length > 1) && (
+      {drawer.drawn && (
         <SiteDrawer
           area="catalogue"
           inSheet={inSheet}
-          aria-label={section}
+          aria-label={drawer.drawn.section}
           className="site-sidebar"
+          data-site-drawer={drawer.motion}
+          // On its way out it is a picture of what was there, which nothing reaches.
+          inert={drawer.motion === 'leaving' || undefined}
+          aria-hidden={drawer.motion === 'leaving' || undefined}
           header={
             onClose ? (
               <div className="site-drawer-top">
@@ -370,11 +382,80 @@ export function CatalogueNavigation({
               <SearchButton onClick={onSearch} className="site-drawer-search" />
             )
           }
-          destinations={pageDestinations(pages, routePath, onChoose)}
+          destinations={pageDestinations(
+            sectionPages(drawer.drawn.section),
+            drawer.drawn.routePath,
+            onChoose,
+          )}
         />
       )}
     </div>
   );
+}
+
+/** The drawer the catalogue's navigation draws: its destination's pages, and which is current. */
+interface DrawnDrawer {
+  section: CatalogueSection;
+  routePath: string;
+}
+
+/**
+ * The catalogue's drawer as the reader goes between a destination without it, such as Overview,
+ * and one with it: it comes in beside the rail, its panel fading in and its list sliding a little
+ * out of the rail's edge and fading in, and goes again quicker, laid over the page's start while
+ * it fades, so the page beside it takes its place at once and never moves (Shell.css). The page
+ * the reader opened first shows it at once, and going between two destinations that both have it
+ * changes its list in place. `motion` is `arriving` until the page beside it has painted, then
+ * `entering` while it comes in, and `leaving` while it goes, when `drawn` is the drawer that was
+ * there; it ends with its transitions, at once where there are none, such as in a narrower
+ * window, where this drawer isn't shown.
+ */
+function useDrawerMotion(
+  navigation: RefObject<HTMLElement | null>,
+  shows: boolean,
+  section: CatalogueSection,
+  routePath: string,
+) {
+  const [state, setState] = useState(() => ({
+    shows,
+    motion: undefined as 'arriving' | 'entering' | 'leaving' | undefined,
+    last: { section, routePath } as DrawnDrawer,
+  }));
+  // Adjusted as the route changes, in the render it changes in, so the drawer comes and goes on
+  // the page's first frame.
+  let next = state;
+  if (shows && (state.last.section !== section || state.last.routePath !== routePath))
+    next = { ...next, last: { section, routePath } };
+  if (shows !== state.shows) next = { ...next, shows, motion: shows ? 'arriving' : 'leaving' };
+  if (next !== state) setState(next);
+  const { motion } = next;
+  useEffect(() => {
+    if (!motion) return;
+    // Arriving, it starts its entrance on the frame after the one that paints the page.
+    if (motion === 'arriving') {
+      let frame = requestAnimationFrame(() => {
+        frame = requestAnimationFrame(() =>
+          setState((now) => (now.motion === 'arriving' ? { ...now, motion: 'entering' } : now)),
+        );
+      });
+      return () => cancelAnimationFrame(frame);
+    }
+    const drawer = navigation.current?.querySelector('.site-sidebar[data-site-drawer]');
+    const transitions = (drawer?.getAnimations({ subtree: true }) ?? []).filter(
+      (animation) => animation instanceof CSSTransition,
+    );
+    let current = true;
+    void Promise.allSettled(transitions.map((transition) => transition.finished)).then(() => {
+      if (current) setState((now) => (now.motion === motion ? { ...now, motion: undefined } : now));
+    });
+    return () => {
+      current = false;
+    };
+  }, [navigation, motion]);
+  return {
+    drawn: next.shows || motion === 'leaving' ? next.last : undefined,
+    motion,
+  };
 }
 
 /**

@@ -3,6 +3,7 @@ import {
   startTransition,
   Suspense,
   useEffect,
+  useId,
   useRef,
   useState,
   type CSSProperties,
@@ -409,6 +410,7 @@ function RelatedTile({
 function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: string }) {
   const list = useRef<HTMLUListElement>(null);
   const near = useNear(list);
+  const id = useId();
   return (
     <ul
       ref={list}
@@ -417,24 +419,35 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
       // A scene's tile takes a larger stage, as in its gallery: so does every tile beside it.
       data-scenes={alternatives.some(({ frame }) => frame === 'legible') ? '' : undefined}
     >
-      {alternatives.map(({ key, name, href, preview, line, frame }) => (
+      {alternatives.map(({ key, name, href, preview, line, frame }, index) => (
         <RelatedTile key={key} preview={preview} near={near} frame={frame}>
-          {/* The name is the link; it stretches over the picture, so a pointer can follow it from
-              there too without a link around the preview, whose example may hold links itself. */}
+          {/* The name is the tile's one link, described by when to pick it; it stretches over the
+              whole tile, picture, name and why, so the tile is one target and one box
+              (Gallery.css). Its words slide, not the link, which would otherwise hold the stretch
+              to the row it slides in. */}
           <Row align="center" justify="between" gap={2}>
             <Text render={<span />} className="catalogue-related-name">
               {href ? (
-                <Link href={href} underline={false} className="catalogue-related-link">
-                  {name}
+                <Link
+                  href={href}
+                  underline={false}
+                  className="catalogue-related-link"
+                  aria-describedby={`${id}-${index}`}
+                >
+                  <span className="catalogue-gallery-label catalogue-gallery-slide">{name}</span>
                 </Link>
               ) : (
-                name
+                <span className="catalogue-gallery-label catalogue-gallery-slide">{name}</span>
               )}
             </Text>
-            <IconArrowForward className="catalogue-gallery-arrow" aria-hidden="true" />
+            <IconArrowForward
+              className="catalogue-gallery-arrow catalogue-gallery-slide"
+              aria-hidden="true"
+            />
           </Row>
-          <div className="catalogue-related-line">
-            <Documentation markdown={line} path={path} />
+          {/* Words alone, its links as text: the tile holds one link, its name's. */}
+          <div className="catalogue-related-line catalogue-gallery-slide" id={`${id}-${index}`}>
+            <Documentation markdown={line} path={path} linkless />
           </div>
         </RelatedTile>
       ))}
