@@ -57,13 +57,11 @@ execFileSync(
   ],
   { stdio: 'inherit' },
 );
-// The generated token module is internal: no export reaches it, so it does not ship. The token list
-// does, as `@envsemble/envui/tokens.json`.
+// The token list ships as `@envsemble/envui/tokens.json`.
 await cp(
   resolve(sourceDirectory, 'generated/tokens.json'),
   resolve(outputDirectory, 'tokens.json'),
 );
-await rm(resolve(outputDirectory, 'generated'), { recursive: true, force: true });
 // Each module imports the style sheets it draws with, as ../styles/Button.css in the source. In the
 // package they become #styles/Button.css, the package's own import (package.json "imports"): a
 // bundler, which sets the `module` condition, loads dist/styles/Button.css, and Node, which can't

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { highlightCode } from '../packages/ui/dist/content/internal/codeHighlighting.js';
 import { tokenStyle } from '../packages/ui/dist/content/internal/codeTokenStyle.js';
@@ -59,7 +60,10 @@ test('every highlighted token is readable on its code background, in code blocks
     await import('../packages/ui/dist/content/internal/codeThemes.js');
   const { codeBackgrounds, codeColors, codeContrastTargets, diffTintOpacity } =
     await import('../packages/ui/dist/content/internal/codeColors.js');
-  const { tokens } = await import('../packages/ui/src/generated/tokens.ts');
+  const tokenList = JSON.parse(
+    await readFile(new URL('../packages/ui/src/generated/tokens.json', import.meta.url), 'utf8'),
+  );
+  const tokens = Object.fromEntries(tokenList.tokens.map((token) => [token.id, token]));
   const { over, readableReplacements } =
     await import('../packages/ui/dist/content/internal/readableColors.js');
   const theme = async (name) => (await import(`shiki/themes/${name}.mjs`)).default;
@@ -131,7 +135,7 @@ test('every highlighted token is readable on its code background, in code blocks
       // Code sits on the page, a pane or card, a raised surface, a popup, a muted fill or a list
       // item, as the tokens give them; inline code's layer is the neutral muted fill.
       const tokenTheme = `${scheme}${contrast === 'high' ? '-high-contrast' : ''}`;
-      const value = (id) => tokens[id].values[tokenTheme];
+      const value = (id) => tokens[id].values[tokenTheme].resolved;
       assert.deepEqual(
         [...colors.surfaces].sort(),
         [

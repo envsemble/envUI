@@ -1,6 +1,7 @@
 // Builds envUI's design tokens: packages/ui/tokens (DTCG 2025.10 and its resolver) through
-// Terrazzo into packages/ui/src/styles/Tokens.css, packages/ui/src/generated/tokens.ts and
-// packages/ui/src/generated/tokens.json, formatted with Prettier. Terrazzo lints the tokens first.
+// Terrazzo into packages/ui/src/styles/Tokens.css and the token list,
+// packages/ui/src/generated/tokens.json, formatted with Prettier. Terrazzo lints the tokens first;
+// the config and its plugins are in scripts/build/tokens/.
 //
 //   node scripts/build/BuildTokens.ts [--check]
 //
@@ -13,12 +14,11 @@ import { isAbsolute, relative, resolve } from 'node:path';
 import { build, defineConfig, Logger, parse } from '@terrazzo/parser';
 import { format, resolveConfig } from 'prettier';
 import type { ViteDevServer } from 'vite';
-import { createConfig } from '../../packages/ui/terrazzo.config.mjs';
+import { createConfig } from './tokens/Config.ts';
 
 const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
 const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 export const tokensDirectory = resolve(libraryDirectory, 'tokens');
-const configFile = pathToFileURL(resolve(libraryDirectory, 'terrazzo.config.mjs'));
 
 /** `contents` as Prettier formats the file at `path`. */
 export async function formatted(path: string, contents: string) {
@@ -38,12 +38,12 @@ export async function buildTokens({
 }: {
   check?: boolean;
   logger?: Logger;
-  tokensDirectory?: string | URL;
-  outDir?: string | URL;
+  tokensDirectory?: URL;
+  outDir?: URL;
 } = {}) {
   // A fresh config per build, so a running dev server reads the token files anew.
   const rawConfig = createConfig({ tokensDirectory, outDir });
-  const config = defineConfig(rawConfig, { cwd: new URL('./', configFile), logger });
+  const config = defineConfig(rawConfig, { cwd: pathToFileURL(`${libraryDirectory}/`), logger });
   const sources = await Promise.all(
     config.tokens.map(async (filename) => ({ filename, src: await readFile(filename, 'utf8') })),
   );

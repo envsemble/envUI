@@ -2,7 +2,7 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "color": {
     "$type": "color",
-    "$description": "Semantic colors: {bg|fg|border}.{role}.{emphasis}[.{state}], aliasing the palette. Every fg.on-X pairs with its bg.X, and every hover and pressed state is its own token, so the contrast gate, the docs and the generated modules see the real values. This file holds the light scheme at standard contrast; color-scheme/dark.tokens.json and contrast/high.tokens.json override it. The flat names after the groups are the 0.7 custom properties, kept as aliases until components move to the semantic names.",
+    "$description": "Semantic colors: {bg|fg|border}.{role}.{emphasis}[.{state}], aliasing the palette. Every fg.on-X pairs with its bg.X, and every hover and pressed state is its own token, so the contrast gate, the docs and the token list see the real values. This file holds the light scheme at standard contrast; color-scheme/dark.tokens.json and contrast/high.tokens.json override it. The flat names after the groups are the 0.7 custom properties, kept as aliases until components move to the semantic names.",
     "bg": {
       "page": {
         "$root": {

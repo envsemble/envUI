@@ -5,14 +5,12 @@ import { tmpdir } from 'node:os';
 import { join, posix, relative } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import ts from 'typescript';
 import {
-  contextTokens,
   cssDeclarations,
-  duplicateTokens,
   overridingCustomProperties,
-  withoutRepeatedValues,
-} from '../packages/ui/terrazzo.config.mjs';
+} from '../scripts/build/tokens/CssDeclarations.ts';
+import { contextTokens, duplicateTokens } from '../scripts/build/tokens/TokenSources.ts';
+import { withoutRepeatedValues } from '../scripts/build/tokens/TokensCss.ts';
 import { buildTokens } from '../scripts/build/BuildTokens.ts';
 
 // The token build's guards, on copies of the tokens built into a scratch folder, and the custom
@@ -254,19 +252,6 @@ test('a typography token builds, with a custom property for each part', async ()
     'line-height': '1.4',
     'letter-spacing': '0rem',
   });
-  // The typed module still type-checks with a composite value.
-  const module = join(directory, 'src/generated/tokens.ts');
-  const program = ts.createProgram([module], {
-    strict: true,
-    noEmit: true,
-    target: ts.ScriptTarget.ES2022,
-    types: [],
-    skipLibCheck: true,
-  });
-  const problems = ts
-    .getPreEmitDiagnostics(program)
-    .map((diagnostic) => ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
-  assert.deepEqual(problems, []);
 });
 
 /** A typography token for text.label, with the parts in `extra` besides the five DTCG requires. */
