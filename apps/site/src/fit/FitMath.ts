@@ -3,13 +3,28 @@
  * drawn at, and where its view goes. Nothing here reads the page (tests/Fit.test.mjs).
  */
 
-/** A box in a canvas's own px. */
+/** A box, by its edges: in a canvas's own px here, in whatever px its user measures elsewhere. */
 export interface Box {
   left: number;
   top: number;
   right: number;
   bottom: number;
 }
+
+/**
+ * Scales closer than this are one scale: measured again, a box may come out a hair larger or
+ * smaller, a ten-millionth of the scale.
+ */
+export const scaleTolerance = 0.0005;
+
+/**
+ * Lengths closer than this, in px, are one length: what is placed at whole pixels, or measured
+ * again, comes out a fraction off.
+ */
+export const pixelTolerance = 0.5;
+
+/** The steps a scale is kept to where it is written down or held, thousandths. */
+export const scalePrecision = 1000;
 
 /** The least room, in px, between a picture and its stage's edges. */
 export const inset = 16;
@@ -55,16 +70,18 @@ export const cursorLength = 1.25;
 /** The least room, in px, the cursor keeps from its stage's foot. */
 export const cursorRoom = 0;
 
-/** The least box around boxes, or nothing for none. */
+/** The least box around one box or more. */
+export const union = (boxes: readonly Box[]): Box => ({
+  left: Math.min(...boxes.map((box) => box.left)),
+  top: Math.min(...boxes.map((box) => box.top)),
+  right: Math.max(...boxes.map((box) => box.right)),
+  bottom: Math.max(...boxes.map((box) => box.bottom)),
+});
+
+/** The least box around the boxes there are, or nothing for none. */
 export function join(...boxes: (Box | null)[]): Box | null {
   const some = boxes.filter((box): box is Box => box !== null);
-  if (!some.length) return null;
-  return {
-    left: Math.min(...some.map((box) => box.left)),
-    top: Math.min(...some.map((box) => box.top)),
-    right: Math.max(...some.map((box) => box.right)),
-    bottom: Math.max(...some.map((box) => box.bottom)),
-  };
+  return some.length ? union(some) : null;
 }
 
 /** Whether a box holds another, to a couple of px, as a popup ends its entrance. */

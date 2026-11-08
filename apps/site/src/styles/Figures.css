@@ -196,7 +196,7 @@
 }
 
 /* A frame wider than its stage, such as beside the page's contents, is drawn smaller to fit, not
-   resized (WidthBox in LiveExample.tsx): its place on the stage takes the scaled size, and the
+   resized (WidthBox, fit/WidthFit.tsx): its place on the stage takes the scaled size, and the
    frame, at its own width, is scaled from its start corner into it. */
 .catalogue-width-fit[data-scaled] {
   position: relative;

@@ -6,14 +6,8 @@
 import type { AnatomyLegendItem } from '../../../../scripts/docs/model/DocumentationTypes';
 import { remPixels } from '../shared/Lengths';
 import { partSelector } from '../template/Parts';
-import type {
-  AnatomyGeometry,
-  Box,
-  Corners,
-  Part,
-  UseSize,
-  VariantGeometry,
-} from './AnatomyPlacement';
+import { union, type Box } from '../fit/FitMath';
+import type { AnatomyGeometry, Corners, Part, UseSize, VariantGeometry } from './AnatomyPlacement';
 import { openerBox } from './OpenExample';
 
 /**
@@ -118,11 +112,12 @@ function boxOf(element: Element, text: boolean, origin: DOMRect): Box | undefine
   }
   rects = rects.filter((rect) => rect.width || rect.height);
   if (!rects.length) return undefined;
+  const all = union(rects);
   return {
-    left: Math.min(...rects.map((rect) => rect.left)) - origin.left,
-    top: Math.min(...rects.map((rect) => rect.top)) - origin.top,
-    right: Math.max(...rects.map((rect) => rect.right)) - origin.left,
-    bottom: Math.max(...rects.map((rect) => rect.bottom)) - origin.top,
+    left: all.left - origin.left,
+    top: all.top - origin.top,
+    right: all.right - origin.left,
+    bottom: all.bottom - origin.top,
   };
 }
 

@@ -4,15 +4,9 @@
  * variant's name beside its item. Nothing here reads the page (tests/AnatomyPlacement.test.mjs).
  */
 
-type Side = 'top' | 'bottom' | 'left' | 'right';
+import { union, type Box } from '../fit/FitMath';
 
-/** A box in the stage's coordinates. */
-export interface Box {
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-}
+type Side = 'top' | 'bottom' | 'left' | 'right';
 
 /** A part's corner radii, in px, as drawn: none for the text of a part. */
 export interface Corners {
@@ -106,14 +100,6 @@ const fenced = (box: Box): Box => ({
 
 /** The corners of a part's box, which is square. */
 const square: Corners = { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 };
-
-/** The least box around boxes. */
-const around = (boxes: Box[]): Box => ({
-  left: Math.min(...boxes.map((box) => box.left)),
-  top: Math.min(...boxes.map((box) => box.top)),
-  right: Math.max(...boxes.map((box) => box.right)),
-  bottom: Math.max(...boxes.map((box) => box.bottom)),
-});
 
 /** Whether a box lies inside another, to half a px. */
 const inside = (outer: Box, inner: Box) =>
@@ -276,13 +262,13 @@ export function placeCallouts(geometry: AnatomyGeometry): { callouts: Callout[];
   const found = all.filter((part) => !whole.includes(part));
   const wholeItems = whole.map(({ number }) => number - 1);
   if (!found.length) return { callouts: [], whole: wholeItems };
-  const outer = around(all.map(({ box }) => box));
+  const outer = union(all.map(({ box }) => box));
   const { opener } = geometry;
   const layout: Layout = {
     geometry,
     found,
     outer,
-    reachOuter: opener ? around([outer, opener]) : outer,
+    reachOuter: opener ? union([outer, opener]) : outer,
   };
   const placed = placeSides(layout);
   const callouts = (['top', 'bottom', 'left', 'right'] as const).flatMap((side) =>
@@ -580,7 +566,7 @@ export function stackedItems(items: VariantItem[]) {
  * being their names' widths.
  */
 export function variantsInRow(items: VariantItem[], widths: number[]) {
-  const outer = around(items.map(({ box }) => box));
+  const outer = union(items.map(({ box }) => box));
   const order = items
     .map((_, index) => index)
     .sort((a, b) => items[a]!.box.left - items[b]!.box.left);
@@ -613,7 +599,7 @@ export const nameRoom = (widths: number[]) => Math.ceil(Math.max(...widths) + na
  */
 export function roomsForUses(geometry: VariantGeometry, start: number) {
   const { inner, rem, items } = geometry;
-  const outer = around(items.map(({ box }) => box));
+  const outer = union(items.map(({ box }) => box));
   const across = Math.floor(
     Math.min(useMeasure * rem, inner - start - (outer.right - outer.left) - nameGap),
   );
@@ -673,7 +659,7 @@ export function stackedVariants(
   const { items, rtl } = geometry;
   const { beside, under } = uses;
   const side: Side = rtl ? 'right' : 'left';
-  const outer = around(items.map(({ box }) => box));
+  const outer = union(items.map(({ box }) => box));
   const end = beside && Math.ceil(Math.max(...beside.map(({ width }) => width)) + nameGap);
   const innerStart = geometry.paddingStart + (uses.column ? start : 0);
   const callouts = items.map(({ number, box, label }, index): Callout => {
