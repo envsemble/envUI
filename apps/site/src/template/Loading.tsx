@@ -21,14 +21,18 @@ import sharedLines from 'virtual:envui-example-lines';
  * busy region whose content assistive technology skips, and one polite status for the whole page,
  * LoadingStatus, says what is loading. A placeholder shows only once a load has taken a noticeable
  * moment, and keeps its space meanwhile, so a quick load never flashes it; once shown, it stays a
- * moment too (HoldPlaceholder), so it never flickers. What it stood for fades in as it lands.
+ * moment too (HoldPlaceholder), so it never flickers. As what it stood for lands and shows, the
+ * two crossfade, so the place is never seen empty.
  */
 
 /** How long a part may take before its skeleton shows: quick loads never flash it. */
 const placeholderDelay = 240;
 
-/** How long a skeleton that shows stays at least, so it never flickers. */
-const placeholderLeast = 240;
+/**
+ * How long a skeleton that shows stays at least, so it never flickers: a moment, then it fades out
+ * as what it stood for fades in (useArrival).
+ */
+const placeholderLeast = 120;
 
 /** When each part's skeleton showed, by the part's key, while it shows. */
 const shownAt = new Map<string, number>();
@@ -63,8 +67,111 @@ export function HoldPlaceholder({ part, children }: { part: string; children: Re
 }
 
 /**
- * Fades in what took a skeleton's place in its parent, once, as the skeleton leaves for it: the
- * parts the parent didn't hold before. In the motion tokens' time; with motion reduced, at once.
+ * A skeleton that leaves while it shows, kept in its place as a copy, unseen by assistive
+ * technology and no longer counted as loading, over what takes its place, until that shows: then it fades out as what it stood for
+ * fades in, in the same frame, so the stage is never seen empty between them. Measured as it
+ * leaves, while still in place; `place` lays the copy over the same box in a container, where its
+ * pulse goes on where it was, `fade` fades it out in the fast time and removes it, at once with
+ * motion reduced.
+ */
+function leaveInPlace(element: HTMLElement) {
+  const box = element.getBoundingClientRect();
+  const width = element.offsetWidth;
+  const height = element.offsetHeight;
+  const times = element.getAnimations({ subtree: true }).map((animation) => animation.currentTime);
+  const fill = getComputedStyle(element).backgroundColor;
+  const copy = element.cloneNode(true) as HTMLElement;
+  for (const node of [copy, ...copy.querySelectorAll('[id]')]) node.removeAttribute('id');
+  // No longer a part that loads, for the page and the tests (`.site-loading`), but drawn as it was.
+  copy.classList.replace('site-loading', 'site-loading-leaving');
+  copy.style.backgroundColor = fill;
+  copy.removeAttribute('data-site-part');
+  copy.removeAttribute('aria-busy');
+  copy.setAttribute('aria-hidden', 'true');
+  copy.inert = true;
+  Object.assign(copy.style, {
+    position: 'absolute',
+    left: '0',
+    top: '0',
+    margin: '0',
+    boxSizing: 'border-box',
+    inlineSize: `${width}px`,
+    blockSize: `${height}px`,
+    minInlineSize: '0',
+    minBlockSize: '0',
+    maxInlineSize: 'none',
+    pointerEvents: 'none',
+  });
+  let gone = false;
+  const remove = () => {
+    gone = true;
+    copy.remove();
+  };
+  // However what it waits for goes, the copy goes too.
+  const timer = window.setTimeout(remove, leaveLongest);
+  return {
+    place(container: HTMLElement) {
+      container.append(copy);
+      const at = copy.getBoundingClientRect();
+      const scale = (width && at.width / width) || 1;
+      copy.style.left = `${(box.left - at.left) / scale}px`;
+      copy.style.top = `${(box.top - at.top) / scale}px`;
+      const animations = copy.getAnimations({ subtree: true });
+      if (animations.length === times.length)
+        animations.forEach((animation, index) => (animation.currentTime = times[index] ?? null));
+    },
+    fade() {
+      window.clearTimeout(timer);
+      if (gone) return;
+      if (!copy.isConnected || reducedMotion()) return remove();
+      copy
+        .animate([{ opacity: 1 }, { opacity: 0 }], {
+          duration: motionDuration('fast'),
+          easing: motionEase('ease-exit'),
+          fill: 'forwards',
+        })
+        .finished.then(remove, remove);
+    },
+  };
+}
+
+/** How long, in ms, a skeleton's copy may wait for what took its place to show. */
+const leaveLongest = 2000;
+
+/**
+ * Runs `then` once an open example's room shows, made for its overlays (OpenExample.tsx), or once
+ * the wait is over.
+ */
+function whenPlaced(room: HTMLElement, then: () => void) {
+  const watch = new MutationObserver(() => {
+    if (room.dataset.placed === undefined) return;
+    watch.disconnect();
+    window.clearTimeout(timer);
+    then();
+  });
+  watch.observe(room, { attributes: true, attributeFilter: ['data-placed'] });
+  const timer = window.setTimeout(() => {
+    watch.disconnect();
+    then();
+  }, leaveLongest);
+}
+
+/**
+ * Whether a figure's subject's skeleton is seen (StageSkeleton): once it shows, or as a stage,
+ * which is there from the first frame. Only such a skeleton, a shape with no content of its own,
+ * stays as a copy as it leaves; any other, such as a code block's, which is the part it stands for
+ * over placeholder text, gives way to it at once, as it fades in.
+ */
+const seen = (element: HTMLElement) =>
+  element.classList.contains('site-loading-stage') ||
+  (element.classList.contains('site-loading-subject') && element.dataset.shown !== undefined);
+
+/**
+ * Crossfades a skeleton with what takes its place in its parent, once, as it leaves: the skeleton
+ * fades out in the fast time as it leaves the page, and the parts the parent didn't hold before
+ * fade in in the medium one, entering, in the same frame (leaveInPlace). In an open example's room
+ * that isn't made yet, which shows as a whole once its overlays rest open, the skeleton stays
+ * until the room shows and fades in. With motion reduced, it is all at once.
  */
 function useArrival(skeleton: { current: HTMLElement | null }) {
   useLayoutEffect(() => {
@@ -73,16 +180,37 @@ function useArrival(skeleton: { current: HTMLElement | null }) {
     if (!element || !parent) return;
     return () => {
       const before = new Set(parent.children);
+      // Now, while it is still in place: React removes it after this.
+      const leaving = element.isConnected && seen(element) ? leaveInPlace(element) : undefined;
       // Once React has put what it stands for in its place, before the page paints.
       queueMicrotask(() => {
-        if (!parent.isConnected || reducedMotion()) return;
-        const easing = motionEase();
-        for (const child of parent.children)
-          if (!before.has(child) && !child.classList.contains('site-loading'))
-            child.animate([{ opacity: 0 }, { opacity: 1 }], {
-              duration: motionDuration('medium'),
-              easing,
-            });
+        if (!parent.isConnected) return;
+        const arrived = [...parent.children].filter(
+          (child) =>
+            !before.has(child) &&
+            !child.classList.contains('site-loading') &&
+            !child.classList.contains('site-loading-leaving'),
+        );
+        const room = parent.closest<HTMLElement>('.catalogue-open-example:not([data-placed])');
+        if (room) {
+          // Outside the room, which stays unseen until it is made.
+          if (leaving && room.parentElement) {
+            leaving.place(room.parentElement);
+            whenPlaced(room, leaving.fade);
+          }
+          return;
+        }
+        if (leaving) {
+          leaving.place(parent);
+          leaving.fade();
+        }
+        if (reducedMotion()) return;
+        const easing = motionEase('ease-enter');
+        for (const child of arrived)
+          child.animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: motionDuration('medium'),
+            easing,
+          });
       });
     };
   }, [skeleton]);
