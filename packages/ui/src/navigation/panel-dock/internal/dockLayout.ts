@@ -57,6 +57,16 @@ export function locateFocus(dock: HTMLElement | null, focusedPanel: FocusedPanel
 }
 
 /**
+ * The panels that can fill the region: in a stacked dock every panel not minimized, in a wide one
+ * the maximized panel. The dock fills the region where there is one.
+ */
+export function fillCandidates<T extends PanelDockPanel>(panels: readonly T[], stacked: boolean) {
+  return stacked
+    ? panels.filter((panel) => panel.mode !== 'minimized')
+    : panels.filter((panel) => panel.mode === 'maximized');
+}
+
+/**
  * The panel a tab asked a stacked dock to show, while that choice holds, as long as the same panel
  * is active: that panel while it is there, or the panel that appeared or was brought forward last
  * since, which takes the choice over, so a panel that opens shows. A panel not recorded yet has just
