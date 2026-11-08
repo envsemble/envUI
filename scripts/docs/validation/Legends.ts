@@ -7,7 +7,7 @@ import type { Tokens } from 'marked';
 import { documentationDirectory } from '../Schema.ts';
 import type { ExampleBlock, FigureBlock, PageReading, PartNames } from './PageReading.ts';
 
-const stylesDirectory = fileURLToPath(new URL('../../packages/ui/src/styles/', import.meta.url));
+const stylesDirectory = fileURLToPath(new URL('../../../packages/ui/src/styles/', import.meta.url));
 
 /**
  * The part class names an anatomy legend may name: every `env-*` class of packages/ui's style
