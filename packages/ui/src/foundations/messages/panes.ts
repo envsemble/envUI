@@ -12,5 +12,3 @@ export const panes = {
   /** The close button of the supporting pane while it is a sheet. */
   close: 'Close',
 };
-
-export type PanesMessages = typeof panes;

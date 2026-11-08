@@ -32,6 +32,7 @@ import { readPanesWidth, writePanesWidth } from './panesSize.js';
 import type { ResizeDetails } from '../internal/resizeDetails.js';
 import { IconClose } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/lengths.js';
+import { useLatest } from '../internal/useLatest.js';
 import '../styles/Base.css';
 import '../styles/Panes.css';
 
@@ -286,17 +287,19 @@ function Root({
     if (kept !== undefined) setChosenSize(kept);
   }, [persist]);
 
-  const latest = useRef({ size, controlledSize, onSizeChange, persist, defaultSize, clamp });
-  latest.current = { size, controlledSize, onSizeChange, persist, defaultSize, clamp };
-  const change = useCallback((next: number, committed: boolean) => {
-    const current = latest.current;
-    const value = current.clamp(next);
-    if (current.controlledSize === undefined) {
-      setChosenSize(value);
-      if (committed && current.persist) writePanesWidth(current.persist, value);
-    }
-    if (committed || value !== current.size) current.onSizeChange?.(value, { committed });
-  }, []);
+  const latest = useLatest({ size, controlledSize, onSizeChange, persist, defaultSize, clamp });
+  const change = useCallback(
+    (next: number, committed: boolean) => {
+      const current = latest.current;
+      const value = current.clamp(next);
+      if (current.controlledSize === undefined) {
+        setChosenSize(value);
+        if (committed && current.persist) writePanesWidth(current.persist, value);
+      }
+      if (committed || value !== current.size) current.onSizeChange?.(value, { committed });
+    },
+    [latest],
+  );
   const reset = useCallback(() => {
     const current = latest.current;
     const value = current.clamp(current.defaultSize);
@@ -306,16 +309,18 @@ function Root({
       if (current.persist) writePanesWidth(current.persist, undefined);
     }
     current.onSizeChange?.(value, { committed: true });
-  }, []);
+  }, [latest]);
 
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
-  const latestOpen = useRef({ controlled: controlledOpen !== undefined, onOpenChange });
-  latestOpen.current = { controlled: controlledOpen !== undefined, onOpenChange };
-  const setOpen = useCallback((next: boolean, reason: OpenChangeReason) => {
-    if (!latestOpen.current.controlled) setUncontrolledOpen(next);
-    latestOpen.current.onOpenChange?.(next, { reason });
-  }, []);
+  const latestOpen = useLatest({ controlled: controlledOpen !== undefined, onOpenChange });
+  const setOpen = useCallback(
+    (next: boolean, reason: OpenChangeReason) => {
+      if (!latestOpen.current.controlled) setUncontrolledOpen(next);
+      latestOpen.current.onOpenChange?.(next, { reason });
+    },
+    [latestOpen],
+  );
   const close = useCallback((reason: OpenChangeReason) => setOpen(false, reason), [setOpen]);
   const show = useCallback(() => setOpen(true, 'trigger-press'), [setOpen]);
   const resizedId = `${useId()}-resized`;

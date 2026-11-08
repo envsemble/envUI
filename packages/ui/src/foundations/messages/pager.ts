@@ -10,5 +10,3 @@ export const pager = {
   /** The caption above the next link. */
   next: 'Up next',
 };
-
-export type PagerMessages = typeof pager;

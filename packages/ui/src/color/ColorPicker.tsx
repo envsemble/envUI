@@ -9,10 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { Color } from '@react-stately/color';
-import { CopyButton } from '../actions/CopyButton.js';
-import { Button, IconButton } from '../actions/Button.js';
-import * as Menu from '../navigation/Menu.js';
-import { IconExpandMore } from '../icons/ExpandMore.js';
+import { IconButton } from '../actions/Button.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { colorPicker as colorPickerMessages } from '../foundations/messages/colorPicker.js';
 import { IconColorize } from '../icons/Colorize.js';
@@ -21,9 +18,9 @@ import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
 import { ColorArea } from './internal/ColorArea.js';
-import { ColorFields } from './internal/ColorFields.js';
-import { ColorLocale, displayColor } from './internal/ColorLocale.js';
+import { ColorLocale } from './internal/ColorLocale.js';
 import { ColorSlider } from './internal/ColorSlider.js';
+import { ColorValues } from './internal/ColorValues.js';
 import { SwatchList } from './internal/SwatchList.js';
 import { useEyeDropper } from './internal/useEyeDropper.js';
 import type { ColorPickerValueProps } from './internal/colorPickerValueProps.js';
@@ -120,27 +117,6 @@ export function ColorPicker({
     if (!sameColor(normalized, color)) onValueChange?.(formatColor(normalized, valueFormat));
   }
 
-  const shorts = {
-    red: messages.redShort,
-    green: messages.greenShort,
-    blue: messages.blueShort,
-    hue: messages.hueShort,
-    saturation: messages.saturationShort,
-    lightness: messages.lightnessShort,
-    alpha: messages.alphaShort,
-  };
-  const fields = (each: ColorFormat) => (
-    <ColorFields
-      format={each}
-      alpha={alpha}
-      hexLabel={messages.hexField}
-      shorts={shorts}
-      value={color}
-      onChange={change}
-      disabled={disabled}
-      readOnly={readOnly}
-    />
-  );
   const eyeDropperButton = eyeDropper && pick && !inactive && (
     <Tooltip content={messages.eyeDropper}>
       <IconButton
@@ -193,87 +169,19 @@ export function ColorPicker({
             )}
           </div>
         </div>
-        {together ? (
-          // Each format on a row of its own, named after it, its fields and its copy button in
-          // columns that line up from row to row; the eyedropper ends the first row. The channels'
-          // letters, and the hex value's #, say which format a row is.
-          <div
-            className="env-color-picker-values"
-            data-formats="together"
-            data-alpha={flag(alpha)}
-            data-eye-dropper={flag(eyeDropperButton)}
-          >
-            {formats.map((each, index) => (
-              <div
-                key={each}
-                role="group"
-                aria-label={messages[each]}
-                className="env-color-picker-row"
-                data-format={each}
-              >
-                {fields(each)}
-                {index === 0 && eyeDropperButton}
-                {copyable && (
-                  <div className="env-color-picker-copy">
-                    <CopyButton
-                      variant="ghost"
-                      size="sm"
-                      aria-label={messages.copyFormat({ format: messages[each] })}
-                      value={() => displayColor(color, each)}
-                      disabled={disabled}
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="env-color-picker-values" data-format={format} data-alpha={flag(alpha)}>
-            {formats.length > 1 && (
-              <div className="env-color-picker-format">
-                <Menu.Root
-                  aria-label={messages.format}
-                  align="start"
-                  trigger={
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      endIcon={<IconExpandMore />}
-                      disabled={disabled}
-                      aria-label={messages.formatButton({ format: messages[format] })}
-                    >
-                      {messages[format]}
-                    </Button>
-                  }
-                >
-                  <Menu.RadioGroup
-                    value={format}
-                    onValueChange={(next) => setFormat(next as ColorFormat)}
-                  >
-                    {formats.map((each) => (
-                      <Menu.RadioItem key={each} value={each}>
-                        {messages[each]}
-                      </Menu.RadioItem>
-                    ))}
-                  </Menu.RadioGroup>
-                </Menu.Root>
-              </div>
-            )}
-            {fields(format)}
-            {eyeDropperButton}
-            {copyable && (
-              <div className="env-color-picker-copy">
-                <CopyButton
-                  variant="ghost"
-                  size="sm"
-                  aria-label={messages.copy}
-                  value={() => displayColor(color, format)}
-                  disabled={disabled}
-                />
-              </div>
-            )}
-          </div>
-        )}
+        <ColorValues
+          color={color}
+          onChange={change}
+          formats={formats}
+          format={format}
+          onFormatChange={setFormat}
+          together={together}
+          alpha={alpha}
+          copyable={copyable}
+          eyeDropperButton={eyeDropperButton}
+          disabled={disabled}
+          readOnly={readOnly}
+        />
         {swatches && swatches.length > 0 && (
           <SwatchList
             swatches={swatches}

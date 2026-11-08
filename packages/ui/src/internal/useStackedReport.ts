@@ -1,6 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useRef } from 'react';
+import { useLatest } from './useLatest.js';
 
 /**
  * Reports whether a layout stacks to its handler before paint, so an application can show the
@@ -13,9 +14,8 @@ export function useStackedReport(
   onStackedChange: ((stacked: boolean) => void) | undefined,
 ) {
   const reported = useRef(false);
-  const handler = useRef(onStackedChange);
+  const handler = useLatest(onStackedChange);
   useLayoutEffect(() => {
-    handler.current = onStackedChange;
     if (!onStackedChange) {
       reported.current = false;
       return;
@@ -30,6 +30,6 @@ export function useStackedReport(
       reported.current = false;
       handler.current?.(false);
     },
-    [],
+    [handler],
   );
 }

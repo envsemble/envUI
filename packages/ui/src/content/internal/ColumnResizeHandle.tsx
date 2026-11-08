@@ -49,7 +49,7 @@ export function ColumnResizeHandle({
     widths: readonly number[];
     direction: number;
   } | null>(null);
-  const width = widths[column]!;
+  const width = widths[column];
   const { min, max } = columnBounds(widths, minimums, column);
 
   /**

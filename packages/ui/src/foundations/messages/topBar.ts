@@ -6,5 +6,3 @@ export const topBar = {
   /** Names the page progress bar along the bar's bottom edge while a page loads. */
   loading: 'Loading page',
 };
-
-export type TopBarMessages = typeof topBar;

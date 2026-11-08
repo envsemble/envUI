@@ -3568,7 +3568,7 @@
     },
     "Icon": {
       "kind": "component",
-      "source": "packages/ui/src/Icon.tsx",
+      "source": "packages/ui/src/foundations/Icon.tsx",
       "description": "The SVG that envUI's symbols render: 1 em, `currentColor`, and hidden from assistive technology unless labelled. An application's own icons and logos go in Graphic, as a file or an SVG component inside it.",
       "props": [
         {

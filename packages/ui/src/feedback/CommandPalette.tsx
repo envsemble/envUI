@@ -2,28 +2,16 @@
 
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
-import {
-  useId,
-  useRef,
-  type ComponentPropsWithRef,
-  type KeyboardEvent,
-  type MouseEvent,
-  type ReactNode,
-} from 'react';
+import { useId, useRef, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Column, Grid, Row } from '../foundations/Layout.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { ListRow } from '../internal/ListRow.js';
+import { Column, Row } from '../foundations/Layout.js';
 import { FieldFrame } from '../forms/internal/FieldFrame.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
-import { useFormatters } from '../internal/useFormatters.js';
-import { commandPalette } from '../foundations/messages/commandPalette.js';
 import { useTheme } from '../foundations/Theme.js';
 import { IconSearch } from '../icons/Search.js';
 import { IconClose } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
 import { dialog } from '../foundations/messages/dialog.js';
-import { Kbd } from '../content/Kbd.js';
 import { Spinner } from './Spinner.js';
 import { DialogBackdrop, OverlayTheme } from './internal/DialogParts.js';
 import type { DialogOpenChangeReason } from './Dialog.js';
@@ -33,7 +21,10 @@ import {
   keepsOpen,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
-import { flag } from '../internal/flag.js';
+import { CommandPaletteFooter } from './internal/CommandPaletteFooter.js';
+import { CommandPaletteOptions, sectionsOf, textOf } from './internal/CommandPaletteOptions.js';
+import { CommandPaletteStatus } from './internal/CommandPaletteStatus.js';
+import { useCommandPaletteKeys } from './internal/useCommandPaletteKeys.js';
 import '../styles/Base.css';
 import '../styles/CommandPalette.css';
 
@@ -148,27 +139,6 @@ export interface CommandPaletteProps extends Omit<
   footer?: ReactNode;
 }
 
-interface Section {
-  id: string;
-  label: string | undefined;
-  items: CommandPaletteItem[];
-}
-
-/** Consecutive items with the same group share a labelled group. */
-function sectionsOf(items: readonly CommandPaletteItem[]) {
-  const sections: Section[] = [];
-  for (const item of items) {
-    const current = sections.at(-1);
-    if (current && current.label === item.group) current.items.push(item);
-    else sections.push({ id: `section-${sections.length}`, label: item.group, items: [item] });
-  }
-  return sections;
-}
-
-function textOf(item: CommandPaletteItem) {
-  return item.textValue ?? (typeof item.label === 'string' ? item.label : item.id);
-}
-
 /**
  * A quick-open dialog near the top of the window: a search field over a list of options the
  * application filters and ranks, built on Base UI's Autocomplete inside a dialog. The arrow keys
@@ -199,95 +169,23 @@ export function CommandPalette({
   const theme = useTheme();
   const portal = usePortalContainer();
   const locale = useLocale();
-  const messages = useMessages('commandPalette', commandPalette);
   const dialogMessages = useMessages('dialog', dialog);
-  const number = useFormatters().number();
   const input = useRef<HTMLInputElement>(null);
   const searchId = useId();
-  const highlighted = useRef<{ item?: CommandPaletteItem; index: number }>({ index: -1 });
   const list = useRef<HTMLDivElement>(null);
   const query = inputValue.trim();
   // Until people type, the default items, where there are any, show in place of the results.
   const items = query === '' && suggestedItems ? suggestedItems : results;
   const sections = sectionsOf(items);
   const grouped = sections.some((section) => section.label !== undefined);
-  // With no options, the empty state invites a search before people type, and says what to try
-  // when the text finds nothing.
   const empty = items.length === 0;
-  const typed = query !== '';
-  // A hint for Enter, alone or with a modifier, chooses the highlighted option: with none to
-  // choose, while results load or when nothing matches, it would promise what can't run.
-  const shownHints = empty ? hints?.filter((hint) => !hint.keys.includes('Enter')) : hints;
-  // While loading, the empty state's line says so, with no icon: the spinner is at the search
-  // field's end.
-  const icon = loading ? null : emptyIcon;
-  const title = loading
-    ? (loadingLabel ?? messages.loading)
-    : (emptyLabel ?? (typed ? messages.empty : messages.emptyQuery));
-  const description = loading
-    ? null
-    : emptyDescription === undefined
-      ? typed
-        ? messages.emptyHint({ query })
-        : null
-      : emptyDescription;
 
   function act(item: CommandPaletteItem, modifier: boolean) {
     if (item.disabled) return;
     onAction(item, { modifier });
     if (closeOnAction) onOpenChange(false, { reason: 'item-press' });
   }
-
-  /** Options that fit in the list's height, for Page Up and Page Down. */
-  function pageSize() {
-    const container = list.current;
-    const option = container?.querySelector<HTMLElement>('[role="option"]');
-    return container && option
-      ? Math.max(1, Math.floor(container.clientHeight / option.offsetHeight) - 1)
-      : 8;
-  }
-
-  function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.nativeEvent.isComposing) return;
-    const { item, index } = highlighted.current;
-    // Base UI leaves Enter with a modifier to the application: it chooses the highlighted option.
-    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && item) {
-      event.preventDefault();
-      act(item, true);
-      return;
-    }
-    // Page Up and Page Down move the highlight a list's height, stopping at the ends, as that many
-    // presses of the arrow keys would, so Base UI keeps the highlight and its scrolling.
-    if ((event.key === 'PageDown' || event.key === 'PageUp') && items.length > 0) {
-      event.preventDefault();
-      const down = event.key === 'PageDown';
-      const steps = Math.min(pageSize(), down ? items.length - 1 - index : index);
-      for (let step = 0; step < steps; step += 1)
-        event.currentTarget.dispatchEvent(
-          new KeyboardEvent('keydown', { key: down ? 'ArrowDown' : 'ArrowUp', bubbles: true }),
-        );
-    }
-  }
-
-  const renderItem = (item: CommandPaletteItem) => (
-    <ListRow
-      key={item.id}
-      className="env-command-palette-item"
-      icon={item.icon}
-      label={item.label}
-      description={item.description}
-      end={item.end}
-      render={
-        <BaseAutocomplete.Item
-          value={item}
-          disabled={item.disabled}
-          data-item-id={item.id}
-          aria-label={item.textValue}
-          onClick={(event: MouseEvent) => act(item, event.ctrlKey || event.metaKey)}
-        />
-      }
-    />
-  );
+  const keys = useCommandPaletteKeys({ list, count: items.length, onAct: act });
 
   return (
     <BaseDialog.Root
@@ -329,9 +227,9 @@ export function CommandPalette({
                     if (details.reason === 'item-press') return;
                     onInputValueChange(next);
                   }}
-                  onItemHighlighted={(item: CommandPaletteItem | undefined, details) => {
-                    highlighted.current = { item, index: item ? details.index : -1 };
-                  }}
+                  onItemHighlighted={(item: CommandPaletteItem | undefined, details) =>
+                    keys.onHighlight(item, details.index)
+                  }
                 >
                   {/* The search is a ghost TextField's frame around Autocomplete's input, kept
                     solid on the frosted palette (CommandPalette.css). Under a coarse pointer, where
@@ -355,7 +253,7 @@ export function CommandPalette({
                         autoCorrect="off"
                         spellCheck={false}
                         placeholder={placeholder}
-                        onKeyDown={onKeyDown}
+                        onKeyDown={keys.onKeyDown}
                       />
                     </FieldFrame>
                     <BaseDialog.Close
@@ -369,93 +267,25 @@ export function CommandPalette({
                       }
                     />
                   </Row>
-                  <BaseAutocomplete.List
-                    ref={list}
-                    render={<Grid />}
-                    className="env-command-palette-list"
-                    aria-label={label}
-                    aria-busy={loading || undefined}
-                    hidden={empty}
-                  >
-                    {grouped
-                      ? (section: Section) =>
-                          section.label === undefined ? (
-                            <BaseAutocomplete.Group key={section.id} items={section.items}>
-                              <BaseAutocomplete.Collection>
-                                {renderItem}
-                              </BaseAutocomplete.Collection>
-                            </BaseAutocomplete.Group>
-                          ) : (
-                            <BaseAutocomplete.Group
-                              key={section.id}
-                              items={section.items}
-                              render={<Grid />}
-                              className="env-command-palette-group"
-                            >
-                              <BaseAutocomplete.GroupLabel className="env-command-palette-group-label">
-                                {section.label}
-                              </BaseAutocomplete.GroupLabel>
-                              <BaseAutocomplete.Collection>
-                                {renderItem}
-                              </BaseAutocomplete.Collection>
-                            </BaseAutocomplete.Group>
-                          )
-                      : renderItem}
-                  </BaseAutocomplete.List>
-                  {/* One polite status: the number of results as they change, or the loading label
-                    while they load, read by assistive technology only, or the empty state, one
-                    muted line in place of the list, so the palette keeps about its height: its
-                    title and description are announced, and its icon is decorative. */}
-                  <BaseAutocomplete.Status
-                    className="env-command-palette-status"
-                    data-empty={flag(empty)}
-                  >
-                    {empty ? (
-                      <>
-                        {icon != null && icon !== false && (
-                          <span className="env-command-palette-empty-icon">
-                            <DecorativeIcon>{icon}</DecorativeIcon>
-                          </span>
-                        )}
-                        <span className="env-command-palette-empty-title">{title}</span>
-                        {description != null && description !== false && (
-                          <>
-                            {/* A space between the lines, so they are read as two. */}{' '}
-                            <span className="env-command-palette-empty-description">
-                              {description}
-                            </span>
-                          </>
-                        )}
-                      </>
-                    ) : loading ? (
-                      (loadingLabel ?? messages.loading)
-                    ) : (
-                      messages.results({
-                        count: items.length,
-                        countText: number.format(items.length),
-                      })
-                    )}
-                  </BaseAutocomplete.Status>
+                  <CommandPaletteOptions
+                    grouped={grouped}
+                    label={label}
+                    loading={loading}
+                    empty={empty}
+                    listRef={list}
+                    onAct={act}
+                  />
+                  <CommandPaletteStatus
+                    count={items.length}
+                    query={query}
+                    loading={loading}
+                    loadingLabel={loadingLabel}
+                    emptyLabel={emptyLabel}
+                    emptyDescription={emptyDescription}
+                    emptyIcon={emptyIcon}
+                  />
                 </BaseAutocomplete.Root>
-                {(Boolean(shownHints?.length) || footer != null) && (
-                  <Row wrap align="center" className="env-command-palette-footer">
-                    {shownHints?.map((hint, hintIndex) => (
-                      <Row
-                        key={hintIndex}
-                        render={<span />}
-                        align="center"
-                        gap={2}
-                        className="env-command-palette-hint"
-                      >
-                        <Kbd keys={hint.keys} />
-                        <span>{hint.label}</span>
-                      </Row>
-                    ))}
-                    {footer != null && (
-                      <span className="env-command-palette-footer-content">{footer}</span>
-                    )}
-                  </Row>
-                )}
+                <CommandPaletteFooter hints={hints} footer={footer} empty={empty} />
               </BaseDialog.Popup>
             </div>
           </ResetControlDefaults>

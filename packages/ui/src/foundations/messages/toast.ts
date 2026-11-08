@@ -18,5 +18,3 @@ export const toast = {
   /** A notification's dismiss button. */
   dismiss: 'Dismiss notification',
 };
-
-export type ToastMessages = typeof toast;

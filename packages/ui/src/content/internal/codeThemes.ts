@@ -143,7 +143,7 @@ export const codeTheme = memo(async (scheme, contrast) => {
     theme,
     codeThemeName(scheme, contrast),
     readableReplacements(textColors(theme), backgrounds, target, direction(scheme)),
-    { ...changeColors, 'editor.background': backgrounds[0]!, 'editor.foreground': foreground },
+    { ...changeColors, 'editor.background': backgrounds[0], 'editor.foreground': foreground },
   );
 });
 

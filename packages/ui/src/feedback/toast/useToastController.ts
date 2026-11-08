@@ -8,6 +8,7 @@ import {
   type ToastTimer,
 } from './toastInternals.js';
 import type { ToastNotification, ToastPlacement } from './toastTypes.js';
+import { useLatest } from '../../internal/useLatest.js';
 
 /** Delivers notifications immediately and tracks pause-aware visible lifetimes. */
 export function useToastController(defaultPlacement: ToastPlacement) {
@@ -19,8 +20,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
   const dismissalTimers = useRef(new Map<string, ToastTimer>());
   const focusedViewports = useRef(new Set<ToastPlacement>());
   const isWindowPaused = useRef(false);
-  const currentDefaultPlacement = useRef(defaultPlacement);
-  currentDefaultPlacement.current = defaultPlacement;
+  const currentDefaultPlacement = useLatest(defaultPlacement);
   const isMounted = useRef(true);
   const controller = useMemo(() => {
     function cancelTimer(id: string) {
@@ -175,7 +175,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
       setWindowPaused,
       cancelTimer,
     };
-  }, [notificationIdPrefix]);
+  }, [notificationIdPrefix, currentDefaultPlacement]);
   useEffect(() => {
     // The refs hold the same collections for the controller's lifetime.
     const entries = notifications.current;

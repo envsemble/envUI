@@ -76,6 +76,8 @@ function isTextElement(element: ReactElement<TextLikeProps>): boolean {
         /(?:^|\s)env-text(?:\s|$)/.test(element.props.className))
     );
   if ((typeof type !== 'function' && typeof type !== 'object') || type === null) return false;
+  // A component, function or object alike, that markText marked carries the key, which React's
+  // types know nothing of.
   if ((type as unknown as Record<symbol, unknown>)[textKey] !== true) return false;
   const render = element.props.render;
   if (!isValidElement(render)) return true;

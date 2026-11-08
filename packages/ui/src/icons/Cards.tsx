@@ -2,8 +2,8 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type SymbolIconProps } from '../Icon.js';
-import { useSymbolIconFill } from '../SymbolIconState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../foundations/NavigationIconState.js';
 
 /** The path both styles start with. */
 const start = "M420-500H280q-17 0-28.5-11.5T240-540v-140q0-17 11.5-28.5T280-720h140q17 0 28.5 11.5T460-680v140q0 17-11.5 28.5T420-500Zm0 260H280q-17 0-28.5-11.5T240-280v-140q0-17 11.5-28.5T280-460h140q17 0 28.5 11.5T460-420v140q0 17-11.5 28.5T420-240Zm260-260H540q-17 0-28.5-11.5T500-540v-140q0-17 11.5-28.5T540-720h140q17 0 28.5 11.5T720-680v140q0 17-11.5 28.5T680-500Zm0 260H540q-17 0-28.5-11.5T500-280v-140q0-17 11.5-28.5T540-460h140q17 0 28.5 11.5T720-420v140q0 17-11.5 28.5T680-240ZM";

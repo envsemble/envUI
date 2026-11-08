@@ -8,7 +8,7 @@ import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Column, Grid, Row } from '../foundations/Layout.js';
 import { useDirectionScope } from '../internal/useDirection.js';
-import { NavigationIconState } from '../SymbolIconState.js';
+import { NavigationIconState } from '../foundations/NavigationIconState.js';
 import { Surface } from '../foundations/Surface.js';
 import { Button } from '../actions/Button.js';
 import '../styles/Base.css';

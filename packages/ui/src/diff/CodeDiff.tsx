@@ -113,9 +113,8 @@ function registerThemes() {
   themesRegistered = true;
   for (const contrast of ['standard', 'high'] as const)
     for (const scheme of ['light', 'dark'] as const)
-      registerCustomTheme(
-        codeThemeName(scheme, contrast),
-        async () => (await loadCodeThemes()).codeTheme(scheme, contrast) as never,
+      registerCustomTheme(codeThemeName(scheme, contrast), async () =>
+        (await loadCodeThemes()).codeTheme(scheme, contrast),
       );
 }
 
@@ -134,7 +133,7 @@ function prepareHighlighter(language: string, contrast: CodeContrast) {
   registerThemes();
   const contrasts = new Set([...loadedContrasts, contrast]);
   highlighterReady = preloadHighlighter({
-    langs: [...loadedLanguages, language] as never,
+    langs: [...loadedLanguages, language],
     themes: [...contrasts].flatMap((each) => Object.values(diffThemeNames(each))),
   }).then(
     () => {
@@ -230,8 +229,8 @@ export function CodeDiff({
 
   const fileDiff = useMemo(() => {
     const diff = parseDiffFromFile(
-      { name: filename, contents: before, lang: lang as never },
-      { name: filename, contents: after, lang: lang as never },
+      { name: filename, contents: before, lang: lang },
+      { name: filename, contents: after, lang: lang },
     );
     // Diffs otherwise keys its render cache by the file names alone, which stay the same while the
     // contents change, as in a live draft.
@@ -277,7 +276,7 @@ export function CodeDiff({
         <Spinner label={messages.loading} showLabel />
       ) : before === after ? (
         <File
-          file={{ name: filename, contents: after, lang: lang as never }}
+          file={{ name: filename, contents: after, lang: lang }}
           disableWorkerPool
           options={{
             overflow: 'wrap',

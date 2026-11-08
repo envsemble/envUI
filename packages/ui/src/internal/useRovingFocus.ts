@@ -196,6 +196,15 @@ export function useRovingFocus<Item>(options: RovingOptions<Item>) {
 }
 
 /**
+ * The parts of a key press that moving through a list reads, so that a React event and the DOM's
+ * own, as an editor plugin receives, both serve.
+ */
+export type ListKeyPress = Pick<
+  KeyboardEvent,
+  'key' | 'ctrlKey' | 'metaKey' | 'defaultPrevented' | 'preventDefault'
+>;
+
+/**
  * The listbox pattern where focus stays in a text input, such as suggestions under an editor or a
  * search: the arrow keys, Page Up and Page Down move the active option, which the input names in
  * aria-activedescendant, and Enter picks it. Options keep the input's focus when pressed.
@@ -215,7 +224,7 @@ export function useActiveDescendant<Item>(
     /** Props for the text input that keeps focus. */
     getInputProps: () => ({
       'aria-activedescendant': activeIndex === -1 ? undefined : idOf(activeKey as string),
-      onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => {
+      onKeyDown: (event: ListKeyPress) => {
         if (event.defaultPrevented || items.length === 0) return;
         if (event.key === 'Enter') {
           if (activeIndex === -1) return;

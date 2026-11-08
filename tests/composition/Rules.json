@@ -31,8 +31,6 @@
       "theme-bootstrap.ts": "entries",
       "dev.ts": "entries",
       "icons/index.ts": "entries",
-      "Icon.tsx": "foundations",
-      "SymbolIconState.tsx": "foundations",
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
       "foundations/ThemeToggle.tsx": "composites",
@@ -72,6 +70,10 @@
       "content/formatRelativeTime.ts": "base",
       "feedback/Alert.tsx": "composites",
       "feedback/CommandPalette.tsx": "composites",
+      "feedback/internal/CommandPaletteFooter.tsx": "composites",
+      "feedback/internal/CommandPaletteOptions.tsx": "composites",
+      "feedback/internal/CommandPaletteStatus.tsx": "composites",
+      "feedback/internal/useCommandPaletteKeys.ts": "composites",
       "feedback/ConfirmDialog.tsx": "composites",
       "feedback/Dialog.tsx": "composites",
       "feedback/Sheet.tsx": "composites",
@@ -85,6 +87,7 @@
       "feedback/internal/SpinnerArc.tsx": "base",
       "feedback/Tooltip.tsx": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
+      "feedback/toast/PictureNotice.tsx": "composites",
       "feedback/toast/ToastBody.tsx": "composites",
       "feedback/toast/toastInternals.ts": "composites",
       "feedback/toast/ToastProvider.tsx": "composites",
@@ -92,6 +95,7 @@
       "feedback/toast/toastTypes.ts": "composites",
       "feedback/toast/useToast.ts": "composites",
       "feedback/toast/useToastController.ts": "composites",
+      "feedback/toast/useToastGlide.ts": "composites",
       "forms/Calendar.tsx": "composites",
       "forms/Checkbox.tsx": "base",
       "forms/Combobox.tsx": "composites",
@@ -286,7 +290,12 @@
         "modules": ["feedback/internal/SpinnerLabel.tsx", "feedback/internal/SpinnerArc.tsx"]
       },
       "Scaffold": {
-        "modules": ["layout/internal/useScrollKeys.ts"]
+        "modules": [
+          "layout/internal/useScrollKeys.ts",
+          "layout/internal/scaffoldFocus.ts",
+          "layout/internal/useNavigationFocusHandoff.ts",
+          "layout/internal/useScaffoldBarSizes.ts"
+        ]
       },
       "List": {
         "modules": ["content/internal/ReorderableList.tsx"]
@@ -320,6 +329,14 @@
         "modules": ["internal/TooltipPopup.tsx"],
         "slots": ["env-tooltip-disabled-target"]
       },
+      "CommandPalette": {
+        "modules": [
+          "feedback/internal/CommandPaletteFooter.tsx",
+          "feedback/internal/CommandPaletteOptions.tsx",
+          "feedback/internal/CommandPaletteStatus.tsx",
+          "feedback/internal/useCommandPaletteKeys.ts"
+        ]
+      },
       "Toast": {
         "classes": ["env-toast"],
         "styles": ["Toast.css"],
@@ -330,7 +347,9 @@
           "feedback/toast/ToastRegion.tsx",
           "feedback/toast/toastTypes.ts",
           "feedback/toast/useToast.ts",
-          "feedback/toast/useToastController.ts"
+          "feedback/toast/useToastController.ts",
+          "feedback/toast/useToastGlide.ts",
+          "feedback/toast/PictureNotice.tsx"
         ]
       },
       "ChoiceControl": {
@@ -436,6 +455,10 @@
           "rich-text/internal/suggestions.tsx",
           "rich-text/internal/taskItem.tsx",
           "rich-text/internal/commands.ts",
+          "rich-text/internal/useDocumentAttributes.ts",
+          "rich-text/internal/useLinksAndUploads.ts",
+          "rich-text/internal/useRichTextDocument.ts",
+          "rich-text/internal/useRichTextExtensions.ts",
           "rich-text/extensions.ts",
           "rich-text/types.ts"
         ]
@@ -451,6 +474,7 @@
           "color/internal/ColorSlider.tsx",
           "color/internal/ColorFields.tsx",
           "color/internal/ColorLocale.tsx",
+          "color/internal/ColorValues.tsx",
           "color/internal/SwatchList.tsx",
           "color/internal/colorValue.ts",
           "color/internal/useColorState.ts",

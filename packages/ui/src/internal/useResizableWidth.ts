@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback, useRef, useState, type MouseEvent } from 'react';
+import { useCallback, useState, type MouseEvent } from 'react';
 import type { ResizeHandleProps } from './ResizeHandle.js';
 import { useFormatters } from './useFormatters.js';
 import { remPixels, roundToHundredth } from './lengths.js';
 import type { ResizeDetails } from './resizeDetails.js';
+import { useLatest } from './useLatest.js';
 
 /** A number that is finite, else undefined. */
 const finite = (value: number | undefined) =>
@@ -70,19 +71,21 @@ export function useResizableWidth({
   const defaultWidth = finite(givenDefault) ?? min;
   const width = clamp(controlled ?? chosen ?? defaultWidth);
 
-  const latest = useRef({ width, controlled, onWidthChange, defaultWidth, clamp });
-  latest.current = { width, controlled, onWidthChange, defaultWidth, clamp };
-  const change = useCallback((next: number, committed: boolean) => {
-    const current = latest.current;
-    const value = current.clamp(next);
-    if (current.controlled === undefined) setChosen(value);
-    if (committed || value !== current.width) current.onWidthChange?.(value, { committed });
-  }, []);
+  const latest = useLatest({ width, controlled, onWidthChange, defaultWidth, clamp });
+  const change = useCallback(
+    (next: number, committed: boolean) => {
+      const current = latest.current;
+      const value = current.clamp(next);
+      if (current.controlled === undefined) setChosen(value);
+      if (committed || value !== current.width) current.onWidthChange?.(value, { committed });
+    },
+    [latest],
+  );
   const reset = useCallback(() => {
     const current = latest.current;
     if (current.controlled === undefined) setChosen(undefined);
     current.onWidthChange?.(current.clamp(current.defaultWidth), { committed: true });
-  }, []);
+  }, [latest]);
 
   const handleProps = {
     axis: 'inline',

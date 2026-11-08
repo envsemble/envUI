@@ -42,5 +42,3 @@ export const colorPicker = {
   /** Names ColorPickerButton after the picker's label and the color, such as Accent, #6750A4. */
   button: ({ label, value }: { label: string; value: string }) => `${label}, ${value}`,
 };
-
-export type ColorPickerMessages = typeof colorPicker;

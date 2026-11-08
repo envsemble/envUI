@@ -1,6 +1,6 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
-import { Icon, type SymbolIconProps } from '../Icon.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
 
 export function IconSignalCellularAltOff({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="M457.5-177.5Q440-195 440-220v-186L83-763q-12-12-12-28.5T83-820q12-12 28.5-12t28.5 12l680 680q12 12 12 28t-12 28q-12 12-28.5 12T763-84L560-286v66q0 25-17.5 42.5T500-160q-25 0-42.5-17.5ZM740-359q-23-1-41.5-16T680-419v-321q0-25 17.5-42.5T740-800q25 0 42.5 17.5T800-740v321q0 30-18.5 45.5T740-359Zm-437.5-23.5Q320-365 320-340v120q0 25-17.5 42.5T260-160q-25 0-42.5-17.5T200-220v-120q0-25 17.5-42.5T260-400q25 0 42.5 17.5Z" /></Icon>;

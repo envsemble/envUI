@@ -2404,7 +2404,7 @@
     },
     "Icon": {
       "root": "env-icon",
-      "source": "packages/ui/src/Icon.tsx",
+      "source": "packages/ui/src/foundations/Icon.tsx",
       "parts": [
         {
           "class": "env-icon",

@@ -6,5 +6,3 @@ export const common = {
   /** Names a region or a bar while its content loads. */
   loading: 'Loading',
 };
-
-export type CommonMessages = typeof common;

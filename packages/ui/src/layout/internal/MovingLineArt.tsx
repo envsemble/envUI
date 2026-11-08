@@ -41,7 +41,8 @@ function movingShapes(drawing: LineArtDrawing) {
       style: { '--env-line-art-at': at[index] } as CSSProperties,
     }),
   );
-  found = { shapes, last: { in: beats.at(-1)!.at(-1)!, out: beats[0]!.at(-1)! } };
+  // Every drawing has a beat, and every beat a line.
+  found = { shapes, last: { in: beats.at(-1)!.at(-1)!, out: beats[0].at(-1)! } };
   moving.set(drawing, found);
   return found;
 }

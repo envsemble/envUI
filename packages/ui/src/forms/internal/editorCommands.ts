@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import type { SymbolIconProps } from '../../Icon.js';
+import type { SymbolIconProps } from '../../foundations/Icon.js';
 import type { EditorMessages } from '../../foundations/messages/editor.js';
 import { IconChecklist } from '../../icons/Checklist.js';
 import { IconCode } from '../../icons/Code.js';

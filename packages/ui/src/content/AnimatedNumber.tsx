@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { motionDuration, motionEasing, motionTime } from '../internal/motionTokens.js';
+import { prefersReducedMotion } from '../internal/reducedMotion.js';
 import { setRef } from '../internal/setRef.js';
 import { runsInText } from '../internal/textRuns.js';
 import { useFormatters } from '../internal/useFormatters.js';
@@ -90,8 +91,8 @@ export function AnimatedNumber({
     const to = width(element);
     const from = easedWidth ?? to + width(before) - width(after);
     const duration = motionDuration(element, 'medium');
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (!duration || reduced || !Number.isFinite(from) || Math.abs(from - to) < 0.5) return;
+    if (!duration || prefersReducedMotion() || !Number.isFinite(from) || Math.abs(from - to) < 0.5)
+      return;
     element.animate(
       { inlineSize: [`${from}px`, `${to}px`] },
       { duration, easing: motionEasing(element, 'ease'), id: widthAnimation },

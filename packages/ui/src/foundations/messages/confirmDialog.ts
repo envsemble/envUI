@@ -6,5 +6,3 @@ export const confirmDialog = {
   /** The button that closes the dialog without confirming. */
   cancel: 'Cancel',
 };
-
-export type ConfirmDialogMessages = typeof confirmDialog;

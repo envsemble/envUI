@@ -3,7 +3,6 @@
 import {
   useEffect,
   useLayoutEffect,
-  useRef,
   useState,
   type KeyboardEvent,
   type MouseEvent,
@@ -11,6 +10,16 @@ import {
   type RefObject,
 } from 'react';
 import { scrolledBy } from '../../internal/scrolledBy.js';
+import { useLatest } from '../../internal/useLatest.js';
+import {
+  edgeScrollDelta,
+  measureRows,
+  pointerTarget,
+  rowOffset,
+  rowsOf,
+  scrollerOf,
+  type Move,
+} from './reorderGeometry.js';
 
 type AnnouncementValues = { label: string; position: string; count: string };
 
@@ -42,66 +51,8 @@ interface ReorderOptions {
   formatNumber: (value: number) => string;
 }
 
-/** A row being moved, from the press or key that lifted it until it is dropped or put back. */
-interface Move {
-  list: HTMLElement;
-  row: HTMLElement;
-  /** The handle that lifted it, which keeps focus. */
-  handle: HTMLElement;
-  label: string;
-  from: number;
-  to: number;
-  rows: HTMLElement[];
-  /** Each row's top and height in the list, measured as the move starts. */
-  tops: number[];
-  heights: number[];
-  /** The space between two rows. */
-  gap: number;
-  mode: 'keyboard' | 'pointer';
-  pointer?: {
-    id: number;
-    startY: number;
-    lastY: number;
-    scroller: Element;
-    /** The row, and how far the boxes around it had scrolled it as the press began. */
-    row: HTMLElement;
-    startScrolled: number;
-    /** Whether the pointer has moved far enough to start dragging, rather than pressing. */
-    dragging: boolean;
-  };
-}
-
 /** How far, in CSS pixels, a press moves before it drags the row. */
 const dragThreshold = 4;
-/** The band at each edge of the scroll area, in CSS pixels, where a drag scrolls it. */
-const scrollEdge = 48;
-/** The most a drag scrolls in a frame, in CSS pixels. */
-const scrollStep = 16;
-
-/** The rows of a list: its `li` children. */
-function rowsOf(list: HTMLElement) {
-  return Array.from(list.children).filter(
-    (child): child is HTMLElement => child instanceof HTMLElement && child.tagName === 'LI',
-  );
-}
-
-/** The nearest ancestor that scrolls vertically, or the document's scrolling element. */
-function scrollerOf(element: HTMLElement): Element {
-  for (let node = element.parentElement; node; node = node.parentElement) {
-    const { overflowY } = getComputedStyle(node);
-    if (/(auto|scroll|overlay)/.test(overflowY) && node.scrollHeight > node.clientHeight)
-      return node;
-  }
-  return document.scrollingElement ?? document.documentElement;
-}
-
-/**
- * How far the pointer has moved the row, with what the boxes around it, the page among them,
- * scrolled meanwhile: the row stays under a pointer held still while one of them scrolls.
- */
-function pointerOffset(pointer: NonNullable<Move['pointer']>) {
-  return pointer.lastY - pointer.startY + scrolledBy(pointer.row, 'y') - pointer.startScrolled;
-}
 
 /**
  * The moves of one list, outside React's render: the rows shift with the CSS `translate` property
@@ -129,19 +80,8 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
 
   /** Shows the rows where they would be with the moving row at its target. */
   const paint = (current: Move) => {
-    const { rows, tops, heights, from, to, gap } = current;
-    const shift = heights[from]! + gap;
-    rows.forEach((row, index) => {
-      let offset = 0;
-      if (index === from)
-        offset =
-          current.mode === 'pointer' && current.pointer
-            ? pointerOffset(current.pointer)
-            : to > from
-              ? tops[to]! + heights[to]! - (tops[from]! + heights[from]!)
-              : tops[to]! - tops[from]!;
-      else if (from < to && index > from && index <= to) offset = -shift;
-      else if (to < from && index >= to && index < from) offset = shift;
+    current.rows.forEach((row, index) => {
+      const offset = rowOffset(current, index);
       row.style.translate = offset === 0 ? '' : `0 ${offset}px`;
     });
   };
@@ -176,21 +116,7 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
     const rows = rowsOf(list);
     const from = rows.indexOf(row);
     if (from === -1) return null;
-    const origin = list.getBoundingClientRect().top;
-    const boxes = rows.map((each) => each.getBoundingClientRect());
-    move = {
-      list,
-      row,
-      handle,
-      label,
-      from,
-      to: from,
-      rows,
-      tops: boxes.map((box) => box.top - origin),
-      heights: boxes.map((box) => box.height),
-      gap: boxes.length > 1 ? Math.max(0, boxes[1]!.top - boxes[0]!.bottom) : 0,
-      mode,
-    };
+    move = { list, row, handle, label, from, to: from, rows, ...measureRows(list, rows), mode };
     // A press on the handle shows nothing until the pointer drags; a key lifts the row at once.
     if (mode === 'keyboard') show(move);
     return move;
@@ -236,13 +162,7 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
   const follow = () => {
     const pointer = move?.pointer;
     if (!move || !pointer) return;
-    const { tops, heights, from } = move;
-    const centre = tops[from]! + heights[from]! / 2 + pointerOffset(pointer);
-    let to = from;
-    for (let index = from + 1; index < tops.length; index++)
-      if (centre > tops[index]! + heights[index]! / 2) to = index;
-    for (let index = from - 1; index >= 0; index--)
-      if (centre < tops[index]! + heights[index]! / 2) to = index;
+    const to = pointerTarget(move, pointer);
     if (to !== move.to) {
       move.to = to;
       say('moved', move.label, to, move.rows.length);
@@ -256,17 +176,7 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
     const pointer = move?.pointer;
     if (!pointer?.dragging) return;
     const { scroller } = pointer;
-    const viewport =
-      scroller === document.scrollingElement || scroller === document.documentElement
-        ? { top: 0, bottom: window.innerHeight }
-        : scroller.getBoundingClientRect();
-    let delta = 0;
-    if (pointer.lastY < viewport.top + scrollEdge)
-      delta = -Math.ceil(((viewport.top + scrollEdge - pointer.lastY) / scrollEdge) * scrollStep);
-    else if (pointer.lastY > viewport.bottom - scrollEdge)
-      delta = Math.ceil(
-        ((pointer.lastY - (viewport.bottom - scrollEdge)) / scrollEdge) * scrollStep,
-      );
+    const delta = edgeScrollDelta(scroller, pointer.lastY);
     if (delta === 0) return;
     const before = scroller.scrollTop;
     scroller.scrollTop = before + delta;
@@ -479,10 +389,7 @@ export function useReorder(
   formatNumber: (value: number) => string,
 ) {
   const [announcement, setAnnouncement] = useState<Announcement>({ text: '', count: 0 });
-  const latest = useRef({ onReorder, announcements, formatNumber });
-  useLayoutEffect(() => {
-    latest.current = { onReorder, announcements, formatNumber };
-  });
+  const latest = useLatest({ onReorder, announcements, formatNumber });
   const [controller] = useState(() =>
     createReorder(
       () => ({ list: list.current, ...latest.current }),
