@@ -4,7 +4,7 @@
  * spread so that none overlap. A variants figure's names are placed in PlaceVariants.ts. Nothing
  * here reads the page (tests/site/PlaceCallouts.test.mjs).
  */
-import { union, type Box } from '../../fit/FitGeometry';
+import { inside, union, type Box } from '../../fit/FitGeometry';
 import { pixelTolerance } from '../../shared/Remeasure';
 
 export type Side = 'top' | 'bottom' | 'left' | 'right';
@@ -102,13 +102,6 @@ const fenced = (box: Box): Box => ({
 /** The corners of a part's box, which is square. */
 const square: Corners = { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 };
 
-/** Whether a box lies inside another, to half a px. */
-const inside = (outer: Box, inner: Box) =>
-  inner.left >= outer.left - pixelTolerance &&
-  inner.right <= outer.right + pixelTolerance &&
-  inner.top >= outer.top - pixelTolerance &&
-  inner.bottom <= outer.bottom + pixelTolerance;
-
 /**
  * Where a part's outline gives way: across the labels its edge runs through, such as a field's
  * label floated into its outline, which the outline would otherwise strike through. A label
@@ -122,12 +115,7 @@ export function gapsIn(box: Box, labels: Box[]) {
       label.right > box.left &&
       label.top < box.bottom &&
       label.bottom > box.top &&
-      !(
-        label.left >= box.left - pixelTolerance &&
-        label.right <= box.right + pixelTolerance &&
-        label.top >= box.top - pixelTolerance &&
-        label.bottom <= box.bottom + pixelTolerance
-      ),
+      !inside(box, label),
   );
   return gaps.length
     ? gaps.map((gap) => ({

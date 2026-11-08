@@ -99,6 +99,13 @@ export function join(...boxes: (Box | null)[]): Box | null {
 export const stagePoint = (point: number, to: number, size: number, scale: number) =>
   size / 2 - to + point * scale;
 
+/** Whether `inner` lies inside `outer`, to the site's pixel tolerance. */
+export const inside = (outer: Box, inner: Box) =>
+  inner.left >= outer.left - pixelTolerance &&
+  inner.top >= outer.top - pixelTolerance &&
+  inner.right <= outer.right + pixelTolerance &&
+  inner.bottom <= outer.bottom + pixelTolerance;
+
 /**
  * Whether `outer` contains `inner`, allowing 2 px on each edge. Used to tell when a popup has
  * finished its entrance and stopped moving.
