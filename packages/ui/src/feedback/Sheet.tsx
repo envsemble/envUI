@@ -48,6 +48,7 @@ import {
 import { computedDirection } from '../internal/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import type { ResizeDetails } from '../internal/resizeDetails.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Sheet.css';
 
@@ -360,10 +361,10 @@ export function Sheet({
                 }
                 data-side={side}
                 data-width={named ? width : 'custom'}
-                data-resizable={resizable ? '' : undefined}
+                data-resizable={flag(resizable)}
                 aria-label={title == null ? label : undefined}
                 aria-busy={pending || skeleton || undefined}
-                data-env-skeleton={skeleton ? '' : undefined}
+                data-env-skeleton={flag(skeleton)}
                 initialFocus={portal.contained ? false : (initialFocus ?? defaultFocus)}
                 finalFocus={portal.contained ? false : finalFocus}
               >

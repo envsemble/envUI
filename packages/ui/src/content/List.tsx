@@ -21,6 +21,7 @@ import {
 } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ListReorderHandle, ReorderableList } from './internal/ReorderableList.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/List.css';
 import '../styles/ConnectedRows.css';
@@ -225,9 +226,9 @@ function Item(props: ItemProps) {
           {...rest}
           {...skeletonAttributes(skeleton)}
           className={classNames('env-list-item', 'env-connected-row', className)}
-          data-interactive={interactive ? '' : undefined}
-          data-selected={current ? '' : undefined}
-          data-start={hasStart ? '' : undefined}
+          data-interactive={flag(interactive)}
+          data-selected={flag(current)}
+          data-start={flag(hasStart)}
         />
       }
     >

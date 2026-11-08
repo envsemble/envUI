@@ -32,6 +32,7 @@ import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
 import type { ResizeDetails } from '../internal/resizeDetails.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Table.css';
 
@@ -235,9 +236,9 @@ function Root({
       tabIndex={0}
       aria-label={labelledBy === undefined ? label : undefined}
       aria-labelledby={labelledBy}
-      data-sticky-header={stickyHeader ? '' : undefined}
+      data-sticky-header={flag(stickyHeader)}
       data-narrow-layout={stack ? 'stack' : undefined}
-      data-stacked={stacked ? '' : undefined}
+      data-stacked={flag(stacked)}
       // The container query compares the region with 37.5em, an em of stackBelow / 37.5: in a
       // query, em is the container's own.
       style={
@@ -257,8 +258,8 @@ function Root({
           aria-label={caption == null ? label : undefined}
           className={classNames('env-table', className)}
           data-density={density}
-          data-fixed-layout={widths ? '' : undefined}
-          data-resizing={resizing ? '' : undefined}
+          data-fixed-layout={flag(widths)}
+          data-resizing={flag(resizing)}
         >
           {caption != null && (
             <caption id={captionId} className="env-table-caption">
@@ -336,7 +337,7 @@ function Row({ interactive = false, selected, className, ...props }: RowProps) {
       aria-selected={selected}
       {...props}
       className={classNames('env-table-row', className)}
-      data-interactive={interactive ? '' : undefined}
+      data-interactive={flag(interactive)}
     />
   );
 }
@@ -364,8 +365,8 @@ interface TableCellLayout {
 function cellAttributes({ align, numeric, nowrap }: TableCellLayout) {
   return {
     'data-align': (align ?? (numeric ? 'end' : 'start')) as string,
-    'data-numeric': numeric ? '' : undefined,
-    'data-nowrap': nowrap ? '' : undefined,
+    'data-numeric': flag(numeric),
+    'data-nowrap': flag(nowrap),
   };
 }
 
@@ -482,8 +483,8 @@ function HeaderCell({
       ref={setCell}
       scope={scope}
       className={classNames('env-table-header-cell', className)}
-      data-sortable={sortable ? '' : undefined}
-      data-resizable={handle ? '' : undefined}
+      data-sortable={flag(sortable)}
+      data-resizable={flag(handle)}
       {...cellAttributes({ align, numeric, nowrap })}
     >
       {sortable ? (
@@ -543,7 +544,7 @@ function Cell({ align, numeric, nowrap, label, className, children, ...props }: 
       role={stack ? 'cell' : undefined}
       {...props}
       className={classNames('env-table-cell', className)}
-      data-labelled={labelled ? '' : undefined}
+      data-labelled={flag(labelled)}
       {...cellAttributes({ align, numeric, nowrap })}
     >
       {labelled ? (

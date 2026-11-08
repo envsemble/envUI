@@ -20,6 +20,7 @@ import { classNames } from '../internal/classNames.js';
 import { useButtonEmphasis } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { confirmButton } from '../foundations/messages/confirmButton.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Button.css';
 
@@ -127,7 +128,7 @@ export function ConfirmButton({
     disabled,
     pending,
     className: classNames('env-confirm-button', className),
-    'data-armed': armed ? '' : undefined,
+    'data-armed': flag(armed),
     onClick: (event: MouseEvent<HTMLElement>) => {
       if (armedAt === null) {
         setArmedAt(event.timeStamp);

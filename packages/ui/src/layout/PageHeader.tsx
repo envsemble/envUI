@@ -5,6 +5,7 @@ import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { StickyHeaderSize } from './internal/StickyHeaderSize.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/PageHeader.css';
 
@@ -77,7 +78,7 @@ export function PageHeader({
       gap={3}
       {...props}
       className={classNames('env-page-header', className)}
-      data-sticky={sticky ? '' : undefined}
+      data-sticky={flag(sticky)}
     >
       {sticky && <StickyHeaderSize />}
       {breadcrumbs != null && <div className="env-page-header-breadcrumbs">{breadcrumbs}</div>}

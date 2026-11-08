@@ -10,6 +10,7 @@ import {
 } from 'react';
 import type { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { tooltipDelay } from '../../internal/TooltipPopup.js';
+import { flag } from '../../internal/flag.js';
 
 /** How far, in px, the pointer moves away from the days before a tooltip focus opened closes. */
 const focusTipSlack = 4;
@@ -161,7 +162,7 @@ export function useHeatmapTooltip(
 
   const popupProps = {
     ref: popup,
-    'data-focus-opened': tip?.focused ? '' : undefined,
+    'data-focus-opened': flag(tip?.focused),
     onPointerLeave: (event: PointerEvent<HTMLDivElement>) => {
       // Back on the days, the day under the pointer takes the tooltip.
       if (!grid.current?.contains(event.relatedTarget as Node | null)) hide();

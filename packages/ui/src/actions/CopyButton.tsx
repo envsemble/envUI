@@ -20,6 +20,7 @@ import { useCopy } from '../internal/useCopy.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { copyButton as copyButtonMessages } from '../foundations/messages/copyButton.js';
 import type { ControlSize } from '../foundations/Theme.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/CopyButton.css';
 
@@ -158,8 +159,8 @@ export function CopyButton({
     onClick: press,
     className: classNames('env-copy-button', className),
     size,
-    'data-copied': result?.copied ? '' : undefined,
-    'data-failed': result && !result.copied ? '' : undefined,
+    'data-copied': flag(result?.copied),
+    'data-failed': flag(result && !result.copied),
   };
   const button = iconOnly ? (
     <ButtonBase

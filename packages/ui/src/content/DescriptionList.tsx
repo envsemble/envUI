@@ -1,6 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/DescriptionList.css';
 
@@ -42,7 +43,7 @@ function Root({ layout = 'auto', size = 'sm', controls = false, className, ...pr
       className={classNames('env-description-list', className)}
       data-layout={layout}
       data-size={size}
-      data-controls={controls ? '' : undefined}
+      data-controls={flag(controls)}
     />
   );
 }

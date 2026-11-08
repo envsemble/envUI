@@ -47,6 +47,19 @@ const previewNames = [
     'Name it with the site’s words, example, specimen, tile, figure or stage (AGENTS.md): preview is an older name.',
 }));
 
+/**
+ * A `data-*` attribute set by a conditional between `''` and `undefined`, in JSX or in an object of
+ * props: a state that is on or off goes through `flag()` (AGENTS.md).
+ */
+const emptyOrUndefined = `ConditionalExpression:matches([consequent.value=''][alternate.name='undefined'], [consequent.name='undefined'][alternate.value=''])`;
+const inlineFlags = [
+  `JSXAttribute[name.name=/^data-/] > JSXExpressionContainer > ${emptyOrUndefined}`,
+  `Property[key.value=/^data-/] > ${emptyOrUndefined}`,
+].map((selector) => ({
+  selector,
+  message: 'Set a state attribute that is on or off with flag() (src/internal/flag.ts).',
+}));
+
 export default defineConfig(
   globalIgnores([
     '**/dist/**',
@@ -123,6 +136,10 @@ export default defineConfig(
       'no-implied-eval': 'error',
       'no-new-func': 'error',
     },
+  },
+  {
+    files: ['packages/ui/src/**/*.{ts,tsx}'],
+    rules: { 'no-restricted-syntax': ['error', ...inlineFlags] },
   },
   {
     // The site's own code. Examples are application code, where a preview is the product's word,

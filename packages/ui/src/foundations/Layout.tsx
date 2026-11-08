@@ -155,7 +155,7 @@ function primitive(
     ...extra,
     'data-env-layout': kind,
     'data-env-name': name,
-    'data-env-container': container ? '' : undefined,
+    'data-env-container': flag(container),
     'data-padding': padding,
     'data-gap': gap,
     'data-align': align,
@@ -218,7 +218,7 @@ export function Grid<RenderedElement extends HTMLElement = HTMLDivElement>({
     'grid',
     render,
     props as AnyPrimitiveProps,
-    { 'data-columns': columns === undefined ? undefined : '' },
+    { 'data-columns': flag(columns !== undefined) },
     columns === undefined ? {} : { '--env-grid-columns': gridTemplate(columns) },
   );
 }

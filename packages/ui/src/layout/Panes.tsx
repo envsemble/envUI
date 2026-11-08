@@ -33,6 +33,7 @@ import { IconClose } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/lengths.js';
 import { useResizableWidth } from '../internal/useResizableWidth.js';
 import { useLatest } from '../internal/useLatest.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Panes.css';
 
@@ -336,7 +337,7 @@ function Root({
         data-env-name={name}
         data-behavior={behavior}
         data-split-at={splitAt}
-        data-open={open ? '' : undefined}
+        data-open={flag(open)}
       >
         {children}
         {behavior === 'supporting' && (

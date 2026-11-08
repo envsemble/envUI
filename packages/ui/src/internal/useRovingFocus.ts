@@ -10,6 +10,7 @@ import {
 import { useEnvUI, type Direction } from './EnvUIContext.js';
 import { computedDirection } from './direction.js';
 import { typeaheadTimeout } from './typeahead.js';
+import { flag } from './flag.js';
 
 export interface RovingOptions<Item> {
   /** The items, in the order they are laid out. */
@@ -182,7 +183,7 @@ export function useRovingFocus<Item>(options: RovingOptions<Item>) {
       const key = getKey(item);
       return {
         tabIndex: key === stopKey ? 0 : -1,
-        'data-active': key === stopKey ? '' : undefined,
+        'data-active': flag(key === stopKey),
         onFocus: () => {
           if (key !== activeKey) onActiveKeyChange(key);
         },
@@ -255,7 +256,7 @@ export function useActiveDescendant<Item>(
         id: idOf(key),
         'aria-selected': key === activeKey,
         'aria-disabled': options.isDisabled?.(item) || undefined,
-        'data-highlighted': key === activeKey ? '' : undefined,
+        'data-highlighted': flag(key === activeKey),
         onPointerMove: () => {
           if (key !== activeKey && !options.isDisabled?.(item)) onActiveKeyChange(key);
         },

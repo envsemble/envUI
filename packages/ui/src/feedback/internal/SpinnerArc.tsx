@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
+import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/Spinner.css';
 
@@ -19,7 +20,7 @@ export function SpinnerArc({ size = 'md', className, children, ...props }: Spinn
   return (
     <span
       {...props}
-      data-label-hidden={children == null ? '' : undefined}
+      data-label-hidden={flag(children == null)}
       className={classNames('env-spinner', className)}
       data-size={size}
     >

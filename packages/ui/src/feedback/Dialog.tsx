@@ -27,6 +27,7 @@ import {
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Dialog.css';
 
@@ -228,7 +229,7 @@ export function Dialog({
                 data-placement={placement}
                 data-width={width}
                 aria-busy={pending || skeleton || undefined}
-                data-env-skeleton={skeleton ? '' : undefined}
+                data-env-skeleton={flag(skeleton)}
                 initialFocus={portal.contained ? false : initialFocus}
                 finalFocus={portal.contained ? false : finalFocus}
               >

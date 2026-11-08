@@ -5,6 +5,7 @@ import { classNames } from './classNames.js';
 import { setRef } from './setRef.js';
 import { useResize, type ResizeOptions } from './useResize.js';
 import { useLatest } from './useLatest.js';
+import { flag } from './flag.js';
 import '../styles/Base.css';
 import '../styles/ResizeHandle.css';
 
@@ -83,7 +84,7 @@ export function ResizeHandle({
         setRef(ref, node);
       }}
       aria-label={label}
-      data-grip={grip ? '' : undefined}
+      data-grip={flag(grip)}
       className={classNames('env-resize-handle', className)}
     />
   );

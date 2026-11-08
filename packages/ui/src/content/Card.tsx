@@ -12,6 +12,7 @@ import { Surface } from '../foundations/Surface.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 import { given, type SkeletonProps } from '../internal/skeleton.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Card.css';
 
@@ -239,7 +240,7 @@ function ContentCardLayout({
           gap={hasActions ? 0 : 4}
           className={classNames('env-card', className)}
           style={style}
-          data-actions={hasActions ? '' : undefined}
+          data-actions={flag(hasActions)}
         />
       }
     >

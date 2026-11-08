@@ -18,6 +18,7 @@ import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
 import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Breadcrumbs.css';
 
@@ -133,7 +134,7 @@ export function Breadcrumbs({
       {...props}
       aria-label={label ?? messages.label}
       className={classNames('env-breadcrumbs', className)}
-      data-nowrap={wrap ? undefined : ''}
+      data-nowrap={flag(!wrap)}
     >
       <Row render={<ol />} wrap={wrap} align="center" gap={1} className="env-breadcrumbs-list">
         {items.map((item, index) => {
