@@ -6,8 +6,8 @@ import {
   containedOpenChange,
   useKeepPageVisible,
   usePortalContainer,
-} from '../../internal/PortalContainerContext.js';
-import { useOpenState } from '../../internal/useOpenState.js';
+} from '../../internal/popup/PortalContainerContext.js';
+import { useOpenState } from '../../internal/popup/useOpenState.js';
 import type { ComboboxOpenChangeDetails, ComboboxProps } from '../Combobox.js';
 
 /**

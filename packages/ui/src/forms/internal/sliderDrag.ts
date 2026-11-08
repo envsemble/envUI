@@ -1,6 +1,6 @@
 // What a pointer dragging a slider does to it: the fill and the handle follow at once, and past
 // either end the slider stretches after the pointer, as a rubber band.
-import { prefersReducedMotion } from '../../internal/reducedMotion.js';
+import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
 
 /**
  * The most a slider stretches, as a fraction of its length, and, so that a wide one stays calm, at

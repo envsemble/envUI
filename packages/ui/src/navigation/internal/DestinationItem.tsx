@@ -1,10 +1,10 @@
 'use client';
 
 import type { HTMLAttributes, ReactNode, Ref } from 'react';
-import { ActionElement } from '../../internal/ActionElement.js';
+import { ActionElement } from '../../internal/control/ActionElement.js';
 import { Column, Row } from '../../layout/Layout.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
+import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { SymbolIconFill } from '../../internal/SymbolIconFill.js';
 import { navigation, type NavigationMessages } from '../../foundations/messages/navigation.js';
 import { flag } from '../../internal/flag.js';

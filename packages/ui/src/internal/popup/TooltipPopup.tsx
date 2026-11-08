@@ -2,15 +2,15 @@
 
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { createContext, type ReactNode, type RefObject } from 'react';
-import { classNames } from './classNames.js';
+import { classNames } from '../classNames.js';
 import {
   PopupSurface,
   type PopupElementProps,
   type PopupSide,
   type PopupSurfaceProps,
 } from './PopupSurface.js';
-import '../styles/Base.css';
-import '../styles/Tooltip.css';
+import '../../styles/Base.css';
+import '../../styles/Tooltip.css';
 
 export type TooltipSide = PopupSide;
 

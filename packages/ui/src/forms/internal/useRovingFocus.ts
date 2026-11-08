@@ -7,10 +7,10 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
 } from 'react';
-import { useEnvUI, type Direction } from './EnvUIContext.js';
-import { computedDirection } from './direction.js';
-import { typeaheadTimeout } from './typeahead.js';
-import { flag } from './flag.js';
+import { useEnvUI, type Direction } from '../../internal/provider/EnvUIContext.js';
+import { computedDirection } from '../../internal/dom/direction.js';
+import { typeaheadTimeout } from '../../internal/typeahead.js';
+import { flag } from '../../internal/flag.js';
 
 export interface RovingOptions<Item> {
   /** The items, in the order they are laid out. */

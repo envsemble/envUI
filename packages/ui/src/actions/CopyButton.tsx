@@ -11,13 +11,13 @@ import {
 } from 'react';
 import type { IconButtonEmphasisProps } from './Button.js';
 import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
-import { TooltipNestingContext, TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
+import { TooltipNestingContext, TooltipPopup, tooltipDelay } from '../internal/popup/TooltipPopup.js';
 import { IconCheck } from '../icons/Check.js';
 import { IconContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
-import { useButtonEmphasis } from '../internal/ControlDefaults.js';
+import { useButtonEmphasis } from '../internal/control/ControlDefaults.js';
 import { useCopy } from '../internal/useCopy.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { copyButton as copyButtonMessages } from '../foundations/messages/copyButton.js';
 import type { ControlSize } from '../foundations/Theme.js';
 import { flag } from '../internal/flag.js';

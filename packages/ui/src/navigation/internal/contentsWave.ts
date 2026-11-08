@@ -1,4 +1,4 @@
-import { roundToHundredth } from '../../internal/lengths.js';
+import { roundToHundredth } from '../../internal/dom/lengths.js';
 /**
  * The shape beside the contents that marks the reader's place: one stroke down the list, swelling
  * into a broad bulge at the reader's place and running thin a few entries away, like a brush's.

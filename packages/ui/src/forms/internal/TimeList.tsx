@@ -2,8 +2,8 @@
 
 import { useMemo, useRef, useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
-import { useResolvedLocale } from '../../internal/useFormatters.js';
+import { useMessages } from '../../internal/provider/EnvUIContext.js';
+import { useResolvedLocale } from '../../internal/provider/useFormatters.js';
 import { timePicker as timePickerMessages } from '../../foundations/messages/timePicker.js';
 import {
   dateFormat,
@@ -13,7 +13,7 @@ import {
   roundToStep,
   toUtcDate,
   withHourCycle,
-} from '../../internal/calendarDays.js';
+} from '../../internal/time/calendarDays.js';
 import { TimeWheel } from './TimeWheel.js';
 import type { Entry, Part } from './wheelRows.js';
 import '../../styles/Base.css';

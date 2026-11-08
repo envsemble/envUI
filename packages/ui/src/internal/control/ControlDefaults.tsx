@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import type { ControlSize } from './controlTypes.js';
-import { reportOnce } from './developmentReport.js';
+import { reportOnce } from '../developmentReport.js';
 
 /** The emphasis of a button: its variant. */
 export type ControlVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'text';

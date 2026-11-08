@@ -1,4 +1,4 @@
-import { day, hour, minute, second } from '../../internal/durations.js';
+import { day, hour, minute, second } from '../../internal/time/durations.js';
 
 /** Each mounted RelativeTime: what to call on a tick, and the moment it shows. */
 const subscribers = new Map<() => void, number>();

@@ -17,8 +17,8 @@ import {
 } from './Button.js';
 import { ButtonBase } from './internal/ButtonBase.js';
 import { classNames } from '../internal/classNames.js';
-import { useButtonEmphasis } from '../internal/ControlDefaults.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useButtonEmphasis } from '../internal/control/ControlDefaults.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { confirmButton } from '../foundations/messages/confirmButton.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';

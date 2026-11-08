@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { reducedMotionQuery } from '../../internal/reducedMotion.js';
+import { reducedMotionQuery } from '../../internal/motion/reducedMotion.js';
 
 /** Roles of widgets that handle the scrolling keys themselves. */
 const widgetRoles = [

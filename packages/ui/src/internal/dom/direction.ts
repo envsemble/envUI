@@ -1,4 +1,4 @@
-import type { Direction } from './EnvUIContext.js';
+import type { Direction } from '../provider/EnvUIContext.js';
 
 /**
  * The element's computed text direction, which follows dir attributes and CSS alike. Reading it

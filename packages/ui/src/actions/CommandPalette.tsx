@@ -6,21 +6,21 @@ import { useId, useRef, type ComponentPropsWithRef, type ReactNode } from 'react
 import { classNames } from '../internal/classNames.js';
 import { Column, Row } from '../layout/Layout.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
-import { useLocale, useMessages } from '../internal/EnvUIContext.js';
+import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { useTheme } from '../foundations/Theme.js';
 import { IconSearch } from '../icons/Search.js';
 import { IconClose } from '../icons/Close.js';
 import { IconButton } from './Button.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { Spinner } from '../feedback/Spinner.js';
-import { DialogBackdrop, OverlayTheme } from '../internal/DialogParts.js';
+import { DialogBackdrop, OverlayTheme } from '../internal/popup/DialogParts.js';
 import type { DialogOpenChangeReason } from '../overlays/Dialog.js';
-import { ResetControlDefaults } from '../internal/ControlDefaults.js';
+import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import {
   containedModal,
   containedOpenChange,
   usePortalContainer,
-} from '../internal/PortalContainerContext.js';
+} from '../internal/popup/PortalContainerContext.js';
 import { CommandPaletteFooter } from './internal/CommandPaletteFooter.js';
 import { CommandPaletteOptions, sectionsOf, textOf } from './internal/CommandPaletteOptions.js';
 import { CommandPaletteStatus } from './internal/CommandPaletteStatus.js';

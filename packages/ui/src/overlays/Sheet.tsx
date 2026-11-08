@@ -16,9 +16,9 @@ import { IconButton } from '../actions/Button.js';
 import { Column } from '../layout/Layout.js';
 import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
-import { markTriggerOwner } from '../internal/triggerOwner.js';
+import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
 import { setRef } from '../internal/setRef.js';
-import { useEnvUI, useMessages, type Direction } from '../internal/EnvUIContext.js';
+import { useEnvUI, useMessages, type Direction } from '../internal/provider/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { useTheme } from '../foundations/Theme.js';
 import type { DialogFocusTarget, DialogOpenChangeDetails } from './Dialog.js';
@@ -30,21 +30,21 @@ import {
   DialogPendingContext,
   DialogSurface,
   OverlayTheme,
-} from '../internal/DialogParts.js';
+} from '../internal/popup/DialogParts.js';
 import { withPendingAction } from './internal/DialogPendingAction.js';
-import { ResetControlDefaults } from '../internal/ControlDefaults.js';
-import { ResizeHandle } from '../internal/ResizeHandle.js';
-import { useResizableWidth, widthInRem } from '../internal/useResizableWidth.js';
+import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
+import { ResizeHandle } from '../internal/resize/ResizeHandle.js';
+import { useResizableWidth, widthInRem } from '../internal/resize/useResizableWidth.js';
 import {
   containedModal,
   containedOpenChange,
   usePortalContainer,
-} from '../internal/PortalContainerContext.js';
-import { computedDirection } from '../internal/direction.js';
+} from '../internal/popup/PortalContainerContext.js';
+import { computedDirection } from '../internal/dom/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import type { ResizeDetails } from '../layout/resizeDetails.js';
 import { flag } from '../internal/flag.js';
-import { useOpenState } from '../internal/useOpenState.js';
+import { useOpenState } from '../internal/popup/useOpenState.js';
 import '../styles/Base.css';
 import '../styles/Sheet.css';
 

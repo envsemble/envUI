@@ -4,7 +4,7 @@ import { useId, useRef } from 'react';
 import { IconButton } from '../../../actions/Button.js';
 import { IconClose } from '../../../icons/Close.js';
 import { Tooltip } from '../../../overlays/Tooltip.js';
-import { ActionElement } from '../../../internal/ActionElement.js';
+import { ActionElement } from '../../../internal/control/ActionElement.js';
 import { DecorativeIcon } from '../../../internal/DecorativeIcon.js';
 import { Row } from '../../Layout.js';
 import type { PanelDockPanel } from '../panelDockTypes.js';

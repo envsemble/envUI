@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { useLatest } from './useLatest.js';
+import { useLatest } from '../useLatest.js';
 
 /**
  * Whether a popup is open: as `open` says while it is given, else as the component keeps it,

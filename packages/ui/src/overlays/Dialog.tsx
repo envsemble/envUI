@@ -4,10 +4,10 @@ import { useContext } from 'react';
 import type { ComponentPropsWithRef, ReactElement, ReactNode, RefObject } from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { classNames } from '../internal/classNames.js';
-import { markTriggerOwner } from '../internal/triggerOwner.js';
+import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
 import { Button } from '../actions/Button.js';
 import type { ButtonProps, ButtonVariant } from '../actions/Button.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { useTheme } from '../foundations/Theme.js';
 import {
@@ -18,15 +18,15 @@ import {
   DialogPendingContext,
   DialogSurface,
   OverlayTheme,
-} from '../internal/DialogParts.js';
+} from '../internal/popup/DialogParts.js';
 import { withPendingAction } from './internal/DialogPendingAction.js';
-import { ResetControlDefaults } from '../internal/ControlDefaults.js';
+import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import {
   containedModal,
   containedOpenChange,
   usePortalContainer,
-} from '../internal/PortalContainerContext.js';
-import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
+} from '../internal/popup/PortalContainerContext.js';
+import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';

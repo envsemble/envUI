@@ -5,7 +5,7 @@
 import { describeElement, isDevElement, resolveRoot } from './measure.js';
 import type { LayoutProblem } from './model.js';
 import { partClassOf } from './parts.js';
-import { remPixels } from '../internal/lengths.js';
+import { remPixels } from '../internal/dom/lengths.js';
 import { toRem } from './units.js';
 import { alignPulses } from '../foundations/SkeletonScope.js';
 

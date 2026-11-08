@@ -4,9 +4,9 @@ import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import type { ReactNode } from 'react';
 import { commandPalette } from '../../foundations/messages/commandPalette.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
+import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { flag } from '../../internal/flag.js';
-import { useFormatters } from '../../internal/useFormatters.js';
+import { useFormatters } from '../../internal/provider/useFormatters.js';
 import type { CommandPaletteProps } from '../CommandPalette.js';
 import '../../styles/Base.css';
 // The options' ListRow.css ties with the palette's rules, so it comes first in any bundle.

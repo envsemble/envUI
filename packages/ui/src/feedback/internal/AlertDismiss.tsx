@@ -2,7 +2,7 @@
 
 import { IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
+import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { alert } from '../../foundations/messages/alert.js';
 import '../../styles/Base.css';
 import '../../styles/Alert.css';

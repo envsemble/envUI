@@ -1,4 +1,4 @@
-import { remPixels } from '../internal/lengths.js';
+import { remPixels } from '../internal/dom/lengths.js';
 
 /**
  * The window classes: ranges of a container's width at which arrangement may change, each given by

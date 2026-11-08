@@ -4,7 +4,7 @@
 import type { ReactNode } from 'react';
 import { Row } from '../../layout/Layout.js';
 import { Text } from '../../foundations/Text.js';
-import { roundToHundredth } from '../../internal/lengths.js';
+import { roundToHundredth } from '../../internal/dom/lengths.js';
 import { windowClasses } from '../units.js';
 
 /** One entry of a legend: a swatch drawn as a plane is, and its name. */

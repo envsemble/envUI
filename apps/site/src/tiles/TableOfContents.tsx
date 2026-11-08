@@ -3,7 +3,7 @@ import { TableOfContents } from '@envsemble/envui';
 import { useHeldView } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
-import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
+import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
 
 /** How tall the unseen article's view and each of its sections are, in px. */
 const view = 100;

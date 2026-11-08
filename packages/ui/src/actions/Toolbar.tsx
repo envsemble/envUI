@@ -11,11 +11,11 @@ import {
 import { IconButton, type IconButtonProps, type ButtonVariant } from './Button.js';
 import { Tooltip } from '../overlays/Tooltip.js';
 import { Kbd } from '../content/Kbd.js';
-import { ControlDefaults } from '../internal/ControlDefaults.js';
+import { ControlDefaults } from '../internal/control/ControlDefaults.js';
 import { classNames } from '../internal/classNames.js';
 import { Column, Row } from '../layout/Layout.js';
 import { DirectedToolbarRoot } from './internal/DirectedToolbarRoot.js';
-import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
+import { keyShortcuts, shortcutChords } from './internal/shortcuts.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
 import { flag } from '../internal/flag.js';

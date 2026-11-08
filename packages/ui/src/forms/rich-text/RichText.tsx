@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { MarkdownManager } from '@tiptap/markdown';
 import { renderToReactElement } from '@tiptap/static-renderer/pm/react';
 import { classNames } from '../../internal/classNames.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
+import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { richText as richTextMessages } from '../../foundations/messages/richText.js';
 import { Link } from '../../actions/Link.js';
 import { Code } from '../../content/Code.js';

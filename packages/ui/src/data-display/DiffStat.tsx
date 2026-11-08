@@ -2,8 +2,8 @@
 
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { useFormatters } from '../internal/useFormatters.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { useFormatters } from '../internal/provider/useFormatters.js';
 import { diffStat as diffStatMessages } from '../foundations/messages/diffStat.js';
 import '../styles/Base.css';
 import '../styles/Badge.css';

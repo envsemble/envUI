@@ -2,10 +2,10 @@
 
 import { useCallback, useContext, useSyncExternalStore, type ComponentPropsWithRef } from 'react';
 import { Tooltip } from '../overlays/Tooltip.js';
-import { TooltipNestingContext } from '../internal/TooltipPopup.js';
+import { TooltipNestingContext } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
-import { hoverDetailClass } from '../internal/hoverDetail.js';
-import { useEnvUI } from '../internal/EnvUIContext.js';
+import { hoverDetailClass } from '../internal/popup/hoverDetail.js';
+import { useEnvUI } from '../internal/provider/EnvUIContext.js';
 import { useHydrated } from '../internal/useHydrated.js';
 import { subscribeToClock } from './internal/relativeTimeClock.js';
 import {

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useMemo } from 'react';
-import type { EnvUIMessages } from '../foundations/messages/defaultMessages.js';
+import type { EnvUIMessages } from '../../foundations/messages/defaultMessages.js';
 
 /** A text direction. */
 export type Direction = 'ltr' | 'rtl';

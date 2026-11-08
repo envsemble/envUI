@@ -9172,7 +9172,7 @@
     },
     "useLocale": {
       "kind": "function",
-      "source": "packages/ui/src/internal/EnvUIContext.ts",
+      "source": "packages/ui/src/internal/provider/EnvUIContext.ts",
       "description": "The locale of the nearest EnvUIProvider, for formatting in step with envUI, or undefined where no provider sets one: the runtime's locale applies then.",
       "signature": "(): string | undefined",
       "entries": [

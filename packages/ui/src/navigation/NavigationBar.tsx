@@ -5,7 +5,7 @@ import { Column, Row } from '../layout/Layout.js';
 import { Badge } from '../data-display/Badge.js';
 import { classNames } from '../internal/classNames.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
-import { ActionElement } from '../internal/ActionElement.js';
+import { ActionElement } from '../internal/control/ActionElement.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { IconMoreHoriz } from '../icons/MoreHoriz.js';
 import * as Menu from '../actions/Menu.js';

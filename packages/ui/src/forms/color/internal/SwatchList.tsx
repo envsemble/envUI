@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useLocale } from '@react-aria/i18n';
 import type { Color } from '@react-stately/color';
-import { useRovingFocus } from '../../../internal/useRovingFocus.js';
+import { useRovingFocus } from '../../internal/useRovingFocus.js';
 import { sameColor, toColor, type ColorValue } from './colorValue.js';
 import { flag } from '../../../internal/flag.js';
 import '../../../styles/Base.css';

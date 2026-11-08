@@ -6,7 +6,7 @@ import { Text } from '../../foundations/Text.js';
 import type { LayoutProblem, NodeData, Snapshot } from '../model.js';
 import { queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
-import { roundToHundredth } from '../../internal/lengths.js';
+import { roundToHundredth } from '../../internal/dom/lengths.js';
 import { toRem, windowClasses, windowClassOf } from '../units.js';
 import { flag } from '../../internal/flag.js';
 

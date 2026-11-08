@@ -7,7 +7,7 @@ import { cloneElement, type ComponentPropsWithRef, type ReactElement, type React
 import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Column, Grid, Row } from '../layout/Layout.js';
-import { useDirectionScope } from '../internal/useDirection.js';
+import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { SymbolIconFill } from '../internal/SymbolIconFill.js';
 import { Surface } from '../layout/Surface.js';
 import { Button } from '../actions/Button.js';

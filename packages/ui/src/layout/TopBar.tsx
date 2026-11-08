@@ -5,8 +5,8 @@ import { LoadingBar } from './internal/LoadingBar.js';
 import { Row } from './Layout.js';
 import { topBar } from '../foundations/messages/topBar.js';
 import { classNames } from '../internal/classNames.js';
-import { ControlDefaults } from '../internal/ControlDefaults.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { ControlDefaults } from '../internal/control/ControlDefaults.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import {
   backgroundAttribute,

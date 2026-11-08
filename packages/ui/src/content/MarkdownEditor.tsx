@@ -8,7 +8,7 @@ import { Tabs } from '../navigation/Tabs.js';
 import { markdownEditor as markdownEditorMessages } from '../foundations/messages/markdownEditor.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
 import type { TextareaProps } from '../forms/Textarea.js';
 import { EditorStatus } from '../internal/editor/EditorStatus.js';

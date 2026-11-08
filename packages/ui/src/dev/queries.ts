@@ -1,7 +1,7 @@
 // Container queries, read from the page's style sheets: which `@container` rules ask about a
 // container, the widths they test and whether each holds at a width.
 
-import { roundToHundredth } from '../internal/lengths.js';
+import { roundToHundredth } from '../internal/dom/lengths.js';
 
 /** One condition of `@container` rules, with every rule that asks it about one container name. */
 export interface ContainerQuery {

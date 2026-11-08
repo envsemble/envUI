@@ -18,7 +18,7 @@ import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { setRef } from '../internal/setRef.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { TextareaControl } from '../internal/field/TextareaControl.js';

@@ -6,7 +6,7 @@ import { CopyButton } from '../../../actions/CopyButton.js';
 import { Button } from '../../../actions/Button.js';
 import { colorPicker as colorPickerMessages } from '../../../foundations/messages/colorPicker.js';
 import { IconExpandMore } from '../../../icons/ExpandMore.js';
-import { useMessages } from '../../../internal/EnvUIContext.js';
+import { useMessages } from '../../../internal/provider/EnvUIContext.js';
 import { flag } from '../../../internal/flag.js';
 import * as Menu from '../../../actions/Menu.js';
 import { ColorFields } from './ColorFields.js';

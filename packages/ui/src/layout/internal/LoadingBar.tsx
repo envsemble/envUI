@@ -2,9 +2,9 @@
 
 import { useEffect, useReducer, useRef } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
+import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { common } from '../../foundations/messages/common.js';
-import { motionTime } from '../../internal/motionTokens.js';
+import { motionTime } from '../../internal/motion/motionTokens.js';
 import '../../styles/Base.css';
 import '../../styles/LoadingBar.css';
 

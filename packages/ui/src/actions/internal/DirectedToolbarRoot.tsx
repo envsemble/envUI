@@ -5,7 +5,7 @@ import {
   useDirection as useBaseDirection,
 } from '@base-ui/react/direction-provider';
 import { Toolbar as BaseToolbar } from '@base-ui/react/toolbar';
-import { useDirectionScope } from '../../internal/useDirection.js';
+import { useDirectionScope } from '../../internal/provider/useDirection.js';
 
 /**
  * Base UI's Toolbar.Root told the text direction, so a horizontal toolbar's arrow keys follow it:

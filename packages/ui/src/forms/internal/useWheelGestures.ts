@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type PointerEvent, type RefObject } from 'react';
-import { prefersReducedMotion } from '../../internal/reducedMotion.js';
+import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
 import type { useWheelTurn } from './useWheelTurn.js';
 import { centredRow, wheelMetrics } from './wheelRows.js';
 

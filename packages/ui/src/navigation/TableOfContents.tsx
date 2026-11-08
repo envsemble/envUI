@@ -10,9 +10,9 @@ import {
   type MouseEvent,
   type RefObject,
 } from 'react';
-import { ActionElement } from '../internal/ActionElement.js';
+import { ActionElement } from '../internal/control/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { tableOfContents } from '../foundations/messages/tableOfContents.js';
 import {
   currentSection,
@@ -23,7 +23,7 @@ import {
 import { focusSection, readSections } from './internal/sectionScroll.js';
 import { useContentsHeadings } from './internal/useContentsHeadings.js';
 import { createWaveDrawer } from './internal/waveDrawer.js';
-import { prefersReducedMotion, reducedMotionQuery } from '../internal/reducedMotion.js';
+import { prefersReducedMotion, reducedMotionQuery } from '../internal/motion/reducedMotion.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';

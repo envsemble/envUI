@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useFormatters, useResolvedLocale } from '../../internal/useFormatters.js';
-import { dayParts, localeWeekStart, parseDay, type Weekday } from '../../internal/calendarDays.js';
-import { day as dayMilliseconds } from '../../internal/durations.js';
+import { useFormatters, useResolvedLocale } from '../../internal/provider/useFormatters.js';
+import { dayParts, localeWeekStart, parseDay, type Weekday } from '../../internal/time/calendarDays.js';
+import { day as dayMilliseconds } from '../../internal/time/durations.js';
 import { localeNames } from './calendarHeatmapModel.js';
 
 interface HeatmapLabelOptions {

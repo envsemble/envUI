@@ -6,7 +6,7 @@
  */
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
 import { courseOf, headingOf, mustShowOf, type Heading } from '../../motion/MustShow';
-import { remPixels } from '@envui-internal/internal/lengths';
+import { remPixels } from '@envui-internal/internal/dom/lengths';
 import type { Box } from '../FitGeometry';
 
 /**

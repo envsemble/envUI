@@ -14,8 +14,8 @@ import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
 import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
 import { IconFormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
 // Internal primitives, which envUI's own components build on: the fixture mounts them directly.
-import { ResizeHandle } from '../../packages/ui/src/internal/ResizeHandle.js';
-import { useRovingFocus } from '../../packages/ui/src/internal/useRovingFocus.js';
+import { ResizeHandle } from '../../packages/ui/src/internal/resize/ResizeHandle.js';
+import { useRovingFocus } from '../../packages/ui/src/forms/internal/useRovingFocus.js';
 
 const cells = Array.from({ length: 7 }, (_, index) => `${index + 1}`);
 

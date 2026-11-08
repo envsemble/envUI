@@ -4,7 +4,7 @@
  * hidden whole there and the regions that scroll as it plays, which fade at their own foot. Where
  * the view goes, it eases to (settle, ViewEasing.ts). It writes the page, never what the fit keeps.
  */
-import { remPixels } from '@envui-internal/internal/lengths';
+import { remPixels } from '@envui-internal/internal/dom/lengths';
 import type { Fitting } from './useFit';
 import { rowSlack } from './HeldView';
 import { moving, pictures } from './PaintedBoxes';

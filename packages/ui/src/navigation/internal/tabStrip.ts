@@ -1,4 +1,4 @@
-import { isRightToLeft } from '../../internal/direction.js';
+import { isRightToLeft } from '../../internal/dom/direction.js';
 import '../../styles/Base.css';
 import '../../styles/DocumentTabs.css';
 

@@ -14,7 +14,7 @@ import {
 import ReactMarkdown, { type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { classNames } from '../internal/classNames.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import {
   markdown as markdownMessages,
   type MarkdownMessages,

@@ -1,13 +1,13 @@
 'use client';
 
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { timePicker as timePickerMessages } from '../foundations/messages/timePicker.js';
 import { Button } from '../actions/Button.js';
 import { IconSchedule } from '../icons/Schedule.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import { TimeList, timeListFirstColumn } from './internal/TimeList.js';
 import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
-import { formatTime, now, parseTime, toUtcDate } from '../internal/calendarDays.js';
+import { formatTime, now, parseTime, toUtcDate } from '../internal/time/calendarDays.js';
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 import '../styles/TimePicker.css';

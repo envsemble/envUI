@@ -5,7 +5,7 @@
  * for the fit to keep and to ease the view to (glideTo, ViewEasing.ts), and writes nothing: a step
  * goes from where the one before left the view.
  */
-import { remPixels } from '@envui-internal/internal/lengths';
+import { remPixels } from '@envui-internal/internal/dom/lengths';
 import { cropFade } from './FitDraw';
 import {
   contain,

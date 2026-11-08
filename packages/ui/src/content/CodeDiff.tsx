@@ -28,8 +28,8 @@ import { Spinner } from '../feedback/Spinner.js';
 import { IconRefresh } from '../icons/Refresh.js';
 import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { remPixels } from '../internal/lengths.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { remPixels } from '../internal/dom/lengths.js';
 import '../styles/Base.css';
 import '../styles/Code.css';
 

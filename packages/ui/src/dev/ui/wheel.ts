@@ -4,7 +4,7 @@
 
 import { layoutAttribute } from '../measure.js';
 import { overlaySelector } from '../overlays.js';
-import { prefersReducedMotion } from '../../internal/reducedMotion.js';
+import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
 
 /**
  * Whether an element scrolls on the wheel's axis: 'room' where it can go further the wheel's way,

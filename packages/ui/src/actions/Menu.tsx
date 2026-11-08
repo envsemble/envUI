@@ -15,16 +15,16 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import type { PopupSide } from '../internal/PopupSurface.js';
+import type { PopupSide } from '../internal/popup/PopupSurface.js';
 import {
   containedModal,
   containedOpenChange,
   usePortalContainer,
-} from '../internal/PortalContainerContext.js';
+} from '../internal/popup/PortalContainerContext.js';
 import { IconCheck } from '../icons/Check.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
-import { useLinkComponent } from '../internal/LinkComponentContext.js';
+import { useLinkComponent } from '../internal/provider/LinkComponentContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 import {
   MenuPopup,
@@ -34,8 +34,8 @@ import {
 } from './internal/MenuPopup.js';
 import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { markTriggerOwner } from '../internal/triggerOwner.js';
-import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
+import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
+import { keyShortcuts, shortcutChords } from './internal/shortcuts.js';
 import type { OpenChangeDetails } from './internal/menuOpenChange.js';
 import '../styles/Base.css';
 import '../styles/Menu.css';

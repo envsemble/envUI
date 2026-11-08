@@ -18,9 +18,9 @@ import {
 } from 'react';
 import { MenuPopup, menuParts } from './internal/MenuPopup.js';
 import type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
-import { containedOpenChange, usePortalContainer } from '../internal/PortalContainerContext.js';
-import { isRightToLeft } from '../internal/direction.js';
-import { useOpenState } from '../internal/useOpenState.js';
+import { containedOpenChange, usePortalContainer } from '../internal/popup/PortalContainerContext.js';
+import { isRightToLeft } from '../internal/dom/direction.js';
+import { useOpenState } from '../internal/popup/useOpenState.js';
 
 /** The Base UI parts of a context menu's popup. */
 const contextMenuParts = {

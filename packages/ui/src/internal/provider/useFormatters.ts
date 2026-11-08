@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useLocale } from './EnvUIContext.js';
 import { defaultServerLocale } from './locale.js';
-import { useHydrated } from './useHydrated.js';
+import { useHydrated } from '../useHydrated.js';
 
 /** Intl formatters, cached per locale and options, so components share them. */
 const cache = new Map<string, unknown>();

@@ -11,7 +11,7 @@ import {
   useRef,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
-import { prefersReducedMotion } from '../../internal/reducedMotion.js';
+import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
 
 export interface Camera {
   /** The turn about the horizontal and the vertical axis, in degrees. */

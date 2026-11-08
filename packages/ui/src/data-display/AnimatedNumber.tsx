@@ -2,11 +2,11 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { motionDuration, motionEasing, motionTime } from '../internal/motionTokens.js';
-import { prefersReducedMotion } from '../internal/reducedMotion.js';
+import { motionDuration, motionEasing, motionTime } from '../internal/motion/motionTokens.js';
+import { prefersReducedMotion } from '../internal/motion/reducedMotion.js';
 import { setRef } from '../internal/setRef.js';
-import { runsInText } from '../internal/textRuns.js';
-import { useFormatters } from '../internal/useFormatters.js';
+import { runsInText } from '../internal/control/textRuns.js';
+import { useFormatters } from '../internal/provider/useFormatters.js';
 import '../styles/Base.css';
 import '../styles/Text.css';
 

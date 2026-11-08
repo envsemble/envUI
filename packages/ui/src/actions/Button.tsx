@@ -1,5 +1,5 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
-import type { ActionElementProps } from '../internal/ActionElement.js';
+import type { ActionElementProps } from '../internal/control/ActionElement.js';
 import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
 import type { ControlSize } from '../foundations/Theme.js';
 

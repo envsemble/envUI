@@ -1,6 +1,6 @@
 'use client';
 
-import { useMessages } from '../../internal/EnvUIContext.js';
+import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { common } from '../../foundations/messages/common.js';
 
 /**

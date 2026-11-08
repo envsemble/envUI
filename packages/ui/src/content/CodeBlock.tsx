@@ -8,7 +8,7 @@ import { useTheme } from '../foundations/Theme.js';
 import { codeBlock as codeBlockMessages } from '../foundations/messages/codeBlock.js';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useCopy } from '../internal/useCopy.js';
 import { codeThemeStyle } from './internal/codeColors.js';
 import { useCodeContrast } from './internal/useCodeContrast.js';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useState, type ReactNode, type RefObject } from 'react';
-import { accessibleName } from '../../internal/accessibleName.js';
+import { accessibleName } from './accessibleName.js';
 
 /** The props a control's own name can come from. */
 interface NamingProps {

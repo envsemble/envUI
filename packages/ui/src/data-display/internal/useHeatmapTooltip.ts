@@ -9,7 +9,7 @@ import {
   type RefObject,
 } from 'react';
 import type { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
-import { tooltipDelay } from '../../internal/TooltipPopup.js';
+import { tooltipDelay } from '../../internal/popup/TooltipPopup.js';
 import { flag } from '../../internal/flag.js';
 
 /** How far, in px, the pointer moves away from the days before a tooltip focus opened closes. */

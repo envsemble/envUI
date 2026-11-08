@@ -1,7 +1,7 @@
 // formatRelativeTime and what RelativeTime shares with it. It uses nothing but Intl, so a server
 // component can call it: it is no client module, unlike RelativeTime, which follows the clock.
 import { relativeTime as relativeTimeMessages } from '../foundations/messages/relativeTime.js';
-import { day, hour, minute, second } from '../internal/durations.js';
+import { day, hour, minute, second } from '../internal/time/durations.js';
 
 /** A moment: a Date, milliseconds since 1970 or a date string such as an ISO 8601 timestamp. */
 export type RelativeTimeValue = Date | number | string;
