@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { Column, Text } from '@envsemble/envui';
 import tokenOutline from 'virtual:envui-token-outline';
-import { PlainCode, SimpleTable, type SimpleRow } from '../template/SimpleTable';
-import { LongPartSkeleton, placeholderText, recordedSize } from '../template/Loading';
+import { PlainCode, SimpleTable, type SimpleRow } from './SimpleTable';
+import { LongPartSkeleton, placeholderText, recordedSize } from '../loading/Loading';
 import { themes } from './TokenGroups';
 
 /*

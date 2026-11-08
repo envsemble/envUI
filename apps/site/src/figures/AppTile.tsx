@@ -1,5 +1,5 @@
 import { useRef, type ReactNode } from 'react';
-import { DeviceFrame, useFill } from '../figures/DeviceFrame';
+import { DeviceFrame, useFill } from './DeviceFrame';
 import { appTileFrame } from '../tiles/Tiles';
 
 /*

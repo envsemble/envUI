@@ -4,7 +4,7 @@ import { catalogueTrail } from '../navigation/CatalogueTrail';
 import { docsTrail, type RoutePage } from '../navigation/SiteRoutes';
 import { PartSwitch } from '../navigation/OtherPart';
 import { PartSkeleton, placeholderText, recordedSize } from './Loading';
-import { MetadataBadges } from './TemplateContent';
+import { MetadataBadges } from '../template/TemplateContent';
 
 /**
  * An example's height where its size wasn't recorded, the stage's room around it and its least

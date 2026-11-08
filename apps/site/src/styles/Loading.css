@@ -1,4 +1,4 @@
-/* A part of a page while it loads (template/Loading.tsx): envUI's skeleton of its shape, in its
+/* A part of a page while it loads (loading/Loading.tsx): envUI's skeleton of its shape, in its
    place and at its size, as the Loading pattern asks. It shows only once the load has taken a
    moment, and keeps its space until then. */
 .site-loading:not([data-shown]) {
@@ -93,7 +93,7 @@
 }
 
 /* The layer over the scrolling page that holds the copies of placeholders on their way out, each
-   where its placeholder was, as they fade out over what took their place (template/Loading.tsx):
+   where its placeholder was, as they fade out over what took their place (loading/Loading.tsx):
    clipped to the page, so they never add to its length, and over its content. */
 .site-loading-leaving-layer {
   position: absolute;

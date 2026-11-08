@@ -1,5 +1,5 @@
 import { lazy, type ComponentType } from 'react';
-import { loadModule } from '../template/LoadBoundary';
+import { loadModule } from '../loading/LoadBoundary';
 
 /*
  * The tiles' own previews: for a component or pattern, a small live picture written for its tile

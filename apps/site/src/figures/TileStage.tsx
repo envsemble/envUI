@@ -1,0 +1,224 @@
+import {
+  Component,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
+import { Theme, useTheme } from '@envsemble/envui';
+import { IconArticle } from '@envsemble/envui/icons/Article';
+import { Playback, PreviewOverlays } from '../motion/Motion';
+import { useDisplaySettings } from '../theme/DisplaySettings';
+import { ExampleRender } from './LiveExample';
+import { PageSpecimen } from './PageSpecimens';
+import type { Preview } from '../template/RelatedPages';
+import { TileSkeleton } from '../loading/Loading';
+import { useFit } from '../fit/useFit';
+import { AppScreen } from './AppTile';
+import { useAppFit } from '../fit/useAppFit';
+import { appTileFrame } from '../tiles/Tiles';
+
+/**
+ * Keeps a tile that fails to render to itself: it shows nothing, and the gallery around it its
+ * other tiles, rather than the page failing.
+ */
+class TileBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
+/**
+ * A tiny live picture of an alternative on the recessed canvas: its example, inert and scaled down
+ * to fit, rendered once the tiles near the viewport; for a page without one, its specimen, in the
+ * same way, and from then until it shows, a skeleton of the stage. Without either, a page icon. A page's own
+ * tile, or a gallery's composition, takes the example's place. A gallery's tile passes its own
+ * stage class. While `playing`, unless the sidebar paused every animation, its animation plays
+ * (motion/Motion.tsx), and it rests at its still once that ends.
+ */
+export function TileStage({
+  preview,
+  near,
+  playing = false,
+  className = 'catalogue-related-stage',
+  whole = false,
+  ownSize: atOwnSize = false,
+  legible = false,
+}: {
+  preview?: Preview;
+  near: boolean;
+  /** Whether the pointer or the keyboard is on the tile, which plays its animation. */
+  playing?: boolean;
+  className?: string;
+  /** Whether the window it lays out in counts whole as it is fitted, as a gallery's does. */
+  whole?: boolean;
+  /**
+   * Whether it is drawn at its own size, cropped by its stage, as the components' gallery draws
+   * every component at one scale; a drawing, whose window is smaller than the tiles' (Tiles.ts),
+   * is drawn larger still.
+   */
+  ownSize?: boolean;
+  /**
+   * Whether it is drawn no smaller than a legible scale, cropped by its stage, as the patterns'
+   * gallery draws each scene, so its words can be read.
+   */
+  legible?: boolean;
+}) {
+  const Composition = preview?.composition;
+  const theme = useTheme();
+  const { motionPaused } = useDisplaySettings();
+  // As it stops, a picture that played shows its still at once, drawn anew (Playback's `redraw`):
+  // a crossfade from it as it played would show both, such as a spinner over the label it hid.
+  const plays = playing && !motionPaused;
+  const stage = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLDivElement>(null);
+  // The canvas, for the pointer no one sees, which finds the preview's elements in it.
+  const [canvasElement, setCanvasElement] = useState<HTMLDivElement | null>(null);
+  const shown = Boolean(preview && near);
+  // How many animations its picture has, a pointer's script or a timeline: one without any, such
+  // as a list of shortcuts, has no play to promise, and draws no ring under the pointer.
+  const [animations, setAnimations] = useState(0);
+  const [countAnimation] = useState(() => () => {
+    setAnimations((count) => count + 1);
+    return () => setAnimations((count) => count - 1);
+  });
+  const subject =
+    preview &&
+    (Composition ? (
+      <TileBoundary>
+        <Suspense fallback={null}>
+          <Playback
+            playing={plays}
+            rest="start"
+            root={canvasElement}
+            countAnimation={countAnimation}
+            redraw
+          >
+            <Composition />
+          </Playback>
+        </Suspense>
+      </TileBoundary>
+    ) : preview.specimen ? (
+      <PageSpecimen id={preview.specimen} />
+    ) : (
+      <ExampleRender page={preview.page} name={preview.name} fallback={null} />
+    ));
+  const tile = Boolean(preview?.tile);
+  const drawing = Boolean(preview?.window && preview.window.width < 14);
+  // A piece of an application's frame fills its card instead (AppTile.tsx).
+  const app = preview?.window?.app;
+  const ownSize = atOwnSize && !drawing && !app;
+  const scene = legible && !app;
+  useFit(stage, canvas, shown && !app, whole || tile, tile, plays, ownSize, scene);
+  useAppFit(stage, canvas, shown && Boolean(app), app?.least);
+  useStillAtRest(canvasElement, tile && !plays);
+  return (
+    <Theme
+      {...theme}
+      ref={stage}
+      className={className}
+      data-example={preview?.specimen || Composition ? undefined : preview?.name}
+      data-catalogue-specimen={preview?.specimen}
+      data-stage={preview?.stage}
+      data-empty={preview ? undefined : ''}
+      data-playing={plays ? '' : undefined}
+      data-scene={scene ? '' : undefined}
+      data-still={Composition && animations > 0 ? undefined : ''}
+    >
+      {!preview ? (
+        <IconArticle className="catalogue-related-placeholder" aria-hidden />
+      ) : (
+        shown &&
+        crop(
+          ownSize || scene,
+          <div
+            ref={(element) => {
+              canvas.current = element;
+              setCanvasElement(element);
+            }}
+            className="catalogue-related-canvas"
+            data-tile={preview.tile ? '' : undefined}
+            data-own-size={ownSize ? '' : undefined}
+            data-overlay={ownSize && preview.window?.overlay ? '' : undefined}
+            data-app={app ? appTileFrame : undefined}
+            style={
+              preview.window &&
+              ({
+                '--catalogue-tile-width': `${preview.window.width}rem`,
+                '--catalogue-tile-height': `${preview.window.height}rem`,
+                '--catalogue-own-popup-least': preview.window.popupLeast,
+              } as CSSProperties)
+            }
+            inert
+            aria-hidden
+          >
+            {preview.open ? (
+              <PreviewOverlays>{wrapApp(Boolean(app), subject)}</PreviewOverlays>
+            ) : (
+              wrapApp(Boolean(app), subject)
+            )}
+          </div>,
+        )
+      )}
+      {/* After the canvas, which hides it once the picture is fitted (Related.css). Only as the
+          tile nears the view, as its picture starts loading: a skeleton pulses on every frame,
+          and a gallery's tiles far from the view would keep the page busy restyling them. */}
+      {shown && <TileSkeleton />}
+    </Theme>
+  );
+}
+
+/**
+ * A canvas drawn at its own size, in a box the stage's size that fades out what is cut off at its
+ * bottom and its end (Gallery.css): a mask on the box rather than on the canvas, whose own box
+ * doesn't hold what opens past it, and not on the stage, whose fill stays whole.
+ */
+const crop = (ownSize: boolean, canvas: ReactNode) =>
+  ownSize ? <div className="catalogue-related-crop">{canvas}</div> : canvas;
+
+/** A piece of an application's frame, on the screen its card shows it on (AppTile.tsx). */
+const wrapApp = (app: boolean, subject: ReactNode) =>
+  app ? <AppScreen>{subject}</AppScreen> : subject;
+
+/** Whether an animation loops for ever, as a skeleton's pulse or a spinner's turn does. */
+const loops = (animation: Animation) =>
+  animation.effect?.getComputedTiming().iterations === Infinity;
+
+/**
+ * Holds a resting tile still: the animations in it that loop for ever, such as a skeleton's
+ * pulse, pause until it plays, also those that start while it rests. An entrance, which ends,
+ * runs on, so nothing is left halfway in.
+ */
+function useStillAtRest(canvas: HTMLElement | null, resting: boolean) {
+  useEffect(() => {
+    if (!canvas) return;
+    const looping = () => canvas.getAnimations({ subtree: true }).filter(loops);
+    if (!resting) {
+      for (const animation of looping()) animation.play();
+      return;
+    }
+    const pause = () => {
+      for (const animation of looping()) animation.pause();
+    };
+    pause();
+    // A loop that starts later, such as a skeleton drawn anew, pauses as it starts.
+    canvas.addEventListener('animationstart', pause);
+    const changes = new MutationObserver(pause);
+    changes.observe(canvas, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    return () => {
+      canvas.removeEventListener('animationstart', pause);
+      changes.disconnect();
+    };
+  }, [canvas, resting]);
+}

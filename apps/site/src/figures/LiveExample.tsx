@@ -13,9 +13,9 @@ import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import type { DeviceKind, StageFill } from '../shared/DocumentationTypes';
 import { FigureDevice, OnDevice } from './DeviceFrame';
-import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
+import { LoadBoundary, loadModule, reloadModule } from '../loading/LoadBoundary';
 import { OpenExample } from './OpenExample';
-import { CodeSkeleton, exampleLines, HoldPlaceholder, StageSkeleton } from '../template/Loading';
+import { CodeSkeleton, exampleLines, HoldPlaceholder, StageSkeleton } from '../loading/Loading';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
 import { SpecimenRender } from './Specimen';
@@ -172,7 +172,7 @@ export function ExampleRender({
   name: string;
   /**
    * What shows while the file loads: a skeleton at the example's size in its place on the stage.
-   * A tile's picture shows nothing, as its whole stage is a skeleton meanwhile (Related.tsx).
+   * A tile's picture shows nothing, as its whole stage is a skeleton meanwhile (TileStage.tsx).
    */
   fallback?: ReactNode;
 }) {

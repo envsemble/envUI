@@ -5,7 +5,8 @@ import { routeHref } from '../navigation/Address';
 import type { RoutePage } from '../navigation/SiteRoutes';
 import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/Motion';
-import { TilePreview, useNear } from '../template/Related';
+import { TileStage } from './TileStage';
+import { useNear } from './useNear';
 import { frameOf, previewOf, type Preview } from '../template/RelatedPages';
 import { preloadTile } from '../tiles/Tiles';
 
@@ -18,7 +19,7 @@ export interface GalleryGroup {
   pages: RoutePage[];
 }
 
-/** What a gallery tile shows of a page: its own tile, as a Related tile does (Related.tsx). */
+/** What a gallery tile shows of a page: its own tile, as a Related tile does (TileStage.tsx). */
 export function galleryPreviewOf(page: RoutePage): Preview | undefined {
   return page.document && previewOf(page.document);
 }
@@ -40,7 +41,7 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   return (
     <li ref={tile} className="catalogue-gallery-tile" {...playOn}>
       <div className="catalogue-gallery-picture">
-        <TilePreview
+        <TileStage
           preview={galleryPreviewOf(page)}
           near={near}
           playing={playing || autoplay}

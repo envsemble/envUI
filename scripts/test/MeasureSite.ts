@@ -78,7 +78,7 @@ const contextOptions = (form: Form) =>
     : { viewport: { width: 1350, height: 940 } };
 /**
  * What a page shows while a part of it loads, which the measures wait for until none is in view: a
- * part's or the whole page's skeleton (template/Loading.tsx, template/PageSkeleton.tsx), a tile's
+ * part's or the whole page's skeleton (template/Loading.tsx, loading/PageSkeleton.tsx), a tile's
  * skeleton, and a section still to show, hidden as its outline (template/SectionOutline.ts).
  */
 const loadingSelector = '.site-loading, .catalogue-tile-loading, [data-site-pending]';

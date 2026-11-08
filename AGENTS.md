@@ -87,9 +87,12 @@ One word for each thing the site shows, and one folder in `apps/site/src` for ea
 | ------------- | --------------------------------------------------------------- | ---------------------------------------------------- |
 | example       | A page's usage file, live with its code, placed by `figure=`    | `examples/<page>/`                                   |
 | specimen      | A picture of the catalogue's own, with no code                  | `specimens/<page>/`                                  |
-| tile          | A gallery's small live picture of a page                        | `tiles/`                                             |
+| tile          | A gallery's small live picture of a page                        | `tiles/`; its stage in `figures/TileStage.tsx`       |
 | figure        | The frame that shows an example or a specimen on a page         | `figures/`; a foundation's in `figures/foundations/` |
+| fit           | Drawing a tile's or a figure's picture to fit its stage         | `fit/`                                               |
 | motion        | Scripted playback: the pointer no one sees, timelines, autoplay | `motion/`                                            |
+| loading       | Skeletons, load boundaries and retries while a part loads       | `loading/`                                           |
+| template      | The sections of a component or pattern page, in their order     | `template/`                                          |
 | documentation | The Markdown in `docs/` and the model generated from it         | `scripts/docs/`, `shared/DocumentationTypes.ts`      |
 | Docs          | The part under /docs, and nothing else                          | `docs-` classes, `Docs*` names                       |
 

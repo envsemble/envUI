@@ -115,7 +115,7 @@
 }
 
 /* The window the example lays out in, at a width it was written for, then scaled down and centred
-   (Related.tsx). It contains its fixed overlays, such as a dialog, and is transparent until it
+   (TileStage.tsx). It contains its fixed overlays, such as a dialog, and is transparent until it
    fits, rather than hidden, so what hides by itself inside it can be told from what shows. It is
    inert, so no reader's pointer reaches it; a tile's own pointer, which no one sees, follows what
    its parts let through (VirtualPointer.ts). */

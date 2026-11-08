@@ -59,10 +59,10 @@ async function settle(page: Page, end: string) {
   await page.locator('main h1').first().waitFor();
   await page.locator(end).first().waitFor();
   // No outline of a section is left (template/SectionOutline.ts), nor a skeleton of a part
-  // (template/Loading.tsx).
+  // (loading/Loading.tsx).
   await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
   await page.locator('.site-loading').first().waitFor({ state: 'detached' });
-  // Every gallery tile in the window shows its picture, fitted to its stage (template/Related.tsx).
+  // Every gallery tile in the window shows its picture, fitted to its stage (figures/TileStage.tsx).
   await page.waitForFunction(() =>
     [...document.querySelectorAll('.catalogue-gallery-tile')]
       .filter((tile) => tile.getBoundingClientRect().top < innerHeight)
