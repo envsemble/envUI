@@ -1,5 +1,5 @@
 import SortAndPaginate from '../../examples/data-tables/SortAndPaginate';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -19,7 +19,7 @@ const script: PointerStep[] = [
   { wait: 300 },
   { click: true },
   { wait: 1300 },
-  { to: '.env-pagination-button:last-of-type', x: 0.5, y: 0.55, duration: 700 },
+  { to: '.env-pagination-button[data-direction="next"]', x: 0.5, y: 0.55, duration: 700 },
   { wait: 300 },
   { click: true },
   { wait: 1500 },
@@ -53,10 +53,10 @@ function Sorting() {
 /** The projects table sorted by name and paged by a pointer no one sees, then put back. */
 export default function SortingAndPaging() {
   return (
-    <Example size="content">
+    <SpecimenFrame size="content">
       <MotionStage label="the table sorted and paged">
         <Sorting />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

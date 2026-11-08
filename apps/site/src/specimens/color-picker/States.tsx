@@ -1,6 +1,5 @@
 import { ColorPicker } from '@envsemble/envui/color';
-import { Example, SpecimenGrid } from '../../figures/Example';
-import { SpecimenPart } from '../../figures/Specimen';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 /** Small pickers, centred in their cells, so the four states take little room. */
 const small = { inlineSize: 'min(100%, 11rem)', marginInline: 'auto' };
@@ -8,7 +7,7 @@ const small = { inlineSize: 'min(100%, 11rem)', marginInline: 'auto' };
 /** Read-only, disabled and invalid pickers beside an editable one. */
 export default function States() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid size="compact">
         <SpecimenPart title="Editable">
           <ColorPicker label="Accent color" defaultValue="#3b6fd4" style={small} />
@@ -34,6 +33,6 @@ export default function States() {
           />
         </SpecimenPart>
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

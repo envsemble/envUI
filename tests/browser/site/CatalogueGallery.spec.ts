@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { siteDevUrl } from '../helpers/Servers';
-import { pagesOf } from '../../../apps/site/src/navigation/SiteRoutes';
+import { pagesOf } from '../../../apps/site/src/routes/SiteRoutes';
 import { showTile } from '../helpers/SiteSpecHelpers';
 
 // The galleries of foundations, components and patterns, and their fitted tiles at rest.

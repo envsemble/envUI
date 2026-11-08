@@ -1,5 +1,5 @@
 import { Button } from '@envsemble/envui';
-import { DisplayMenu } from '../theme/DisplaySettings';
+import { DisplayMenu } from '../display/DisplaySettings';
 import type { Area, RoutePage } from './SiteRoutes';
 import { otherPartRoute } from './Counterparts';
 import { routeHref } from './Address';

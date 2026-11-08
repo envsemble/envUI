@@ -1,8 +1,8 @@
 import { Link } from '@envsemble/envui';
 import { EnvUIDocsLogo } from './EnvUIDocsLogo';
 import { EnvUILogo } from './EnvUILogo';
-import type { Area } from '../navigation/SiteRoutes';
-import { docsRoute, homeRoute, routeHref } from '../navigation/Address';
+import type { Area } from '../routes/SiteRoutes';
+import { docsRoute, homeRoute, routeHref } from '../routes/Address';
 
 /** The envUI wordmark, which leads to the area's home, and the envUI Docs lockup in the Docs. */
 export function Brand({ area }: { area: Area }) {

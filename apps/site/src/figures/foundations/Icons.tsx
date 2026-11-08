@@ -27,7 +27,7 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { useTimeline } from '../../motion/Timeline';
 import { LoadBoundary, lazyPart } from '../../loading/LoadBoundary';
 import { PartSkeleton, placeholderText } from '../../loading/Skeletons';
-import { Example } from '../Example';
+import { SpecimenFrame } from '../SpecimenFrame';
 import type { FoundationFigure } from './FoundationFigures';
 import { Figure } from './Figure';
 
@@ -155,7 +155,7 @@ const nameLengths = [6, 4, 4, 5, 8, 12, 8, 3, 6, 10, 4, 13];
 function IconCatalogueSkeleton() {
   return (
     <PartSkeleton what="icons">
-      <Example size="collection">
+      <SpecimenFrame size="collection">
         <div className="catalogue-icon-toolbar">
           <SearchField size="lg" label="Search icons" showLabel />
           <Switch label="Filled icons" />
@@ -182,7 +182,7 @@ function IconCatalogueSkeleton() {
           <Text variant="caption">Page 1 of 99</Text>
           <Button variant="secondary">Next</Button>
         </Row>
-      </Example>
+      </SpecimenFrame>
     </PartSkeleton>
   );
 }

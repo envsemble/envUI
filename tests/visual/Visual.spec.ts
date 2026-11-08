@@ -33,8 +33,8 @@ import {
   type CatalogueTheme,
   type ThemeName,
 } from '../browser/helpers/CatalogueThemes';
-import { groupedPages } from '../../apps/site/src/navigation/SiteRoutes';
-import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
+import { groupedPages } from '../../apps/site/src/routes/SiteRoutes';
+import { displayStorageKeys } from '../../apps/site/src/display/DisplayStorage';
 
 /**
  * The density fixture's sections captured, each with a theme its boundaries take from the address:

@@ -4,8 +4,8 @@
  */
 import type { ComponentType } from 'react';
 import type { DocumentationMetadata, StageFill } from '@docs-model/DocumentationTypes';
-import { routeHref } from '../navigation/Address';
-import { pageHref, groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
+import { routeHref } from '../routes/Address';
+import { pageHref, groupedPages, routeOfDocument } from '../routes/SiteRoutes';
 import { documents, type DocumentSummary } from '../pages/PageModel';
 import { hasFoundationTile } from '../tiles/foundations/FoundationTiles';
 import {

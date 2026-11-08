@@ -43,7 +43,7 @@ const start: PanelDockPanel[] = [
 ];
 
 /**
- * The region the panels dock in, the page under its top line, filling its card (AppTile.tsx): the
+ * The region the panels dock in, the page under its top line, filling its card (TileStage.tsx): the
  * open panel stands on its bottom edge, at the end, as on a desktop. Its dock is wider than
  * `stackBelow`, so the open panel keeps its own width there.
  */

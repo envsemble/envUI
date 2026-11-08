@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { Button, Column, IconButton, Tabs, Text } from '@envsemble/envui';
 import { IconUpload } from '@envsemble/envui/icons/Upload';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -99,10 +99,10 @@ function Choosing() {
 /** Tabs chosen with the arrow keys: each panel at once, and a disabled tab reached, not chosen. */
 export default function ChoosingATab() {
   return (
-    <Example size="content">
+    <SpecimenFrame size="content">
       <MotionStage label="the arrow keys choosing tabs">
         <Choosing />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

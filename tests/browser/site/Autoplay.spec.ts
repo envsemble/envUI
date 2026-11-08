@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { siteDevUrl } from '../helpers/Servers';
-import { displayStorageKeys } from '../../../apps/site/src/theme/DisplayStorage';
+import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
 
 /*
  * Tiles that play by themselves where the reader can't hover (apps/site/src/motion/Autoplay.ts):

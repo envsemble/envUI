@@ -7,7 +7,7 @@ import {
   type CalendarHeatmapDay,
   type CalendarHeatmapProps,
 } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
@@ -58,10 +58,10 @@ function Stepping() {
 /** One heatmap through the tones, then from two color steps to ten. */
 export default function TonesAndSteps() {
   return (
-    <Example size="content">
+    <SpecimenFrame size="content">
       <MotionStage label="the heatmap through its tones and color steps">
         <Stepping />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

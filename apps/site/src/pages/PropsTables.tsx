@@ -3,7 +3,7 @@ import { Column, Table, Text } from '@envsemble/envui';
 import { PlainCode } from './SimpleTable';
 import type { ExportEntry, PropEntry } from '@docs-model/DocumentationTypes';
 import { nativePropsSentence, propDescription } from '@docs-model/PropWording';
-import type { Documentation } from './PageModel';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 // The ids search leads to, as the search index writes them.
 import { exportSection, propSection } from '@docs-model/SearchAnchors';
 import { useSectionOutline } from '../template/SectionOutline';
@@ -146,7 +146,7 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
 }
 
 /** The Props view: every component and part the page documents, generated from their types. */
-export function PropsTables({ document }: { document: Documentation }) {
+export function PropsTables({ document }: { document: DocumentationEntry }) {
   return (
     <Column gap={7}>
       {Object.entries(document.props ?? {}).map(([name, entry]) => (

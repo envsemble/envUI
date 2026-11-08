@@ -1,16 +1,15 @@
 /* A card's picture of a piece of an application's frame, such as a Scaffold or a top bar
-   (figures/AppTile.tsx): it fills the picture as the application fills its window, in the
-   browser's window a page's figure is drawn in, an even margin around it (`window`), or edge to
-   edge, as a cropped screenshot (`bleed`). Its canvas is laid out at the picture's size, less the
-   margin, at its own size (useAppFit), from the stage's top left corner, and clips what runs past
-   its edges. */
+   (wrapApp in figures/TileStage.tsx): it fills the picture as the application fills its window,
+   in the browser's window a page's figure is drawn in, an even margin around it. Its canvas is
+   laid out at the picture's size, less the margin, at its own size (useAppFit), from the stage's
+   top left corner, and clips what runs past its edges. */
 .catalogue-tile-stage:has(> .catalogue-tile-canvas[data-app]) {
   container: catalogue-app-stage / inline-size;
 }
 
 .catalogue-tile-canvas[data-app] {
   /* The room the frame keeps from the picture's edges, in rem, and the scale it is drawn at. */
-  --catalogue-app-margin: 0;
+  --catalogue-app-margin: 1;
   --catalogue-app-scale: 1;
   inset: 0 auto auto 0;
   display: flex;
@@ -18,18 +17,10 @@
   overflow: clip;
 }
 
-.catalogue-tile-canvas[data-app='window'] {
-  --catalogue-app-margin: 1;
-}
-
-/* The window or the screen fills the canvas, and the tile fills the screen (useFill). */
+/* The window fills the canvas, and the tile fills its screen (useFill). */
 .catalogue-tile-canvas[data-app] > :not(.catalogue-overlay-layer) {
   flex: 1 1 auto;
   min-block-size: 0;
-}
-
-.catalogue-app-screen {
-  inline-size: 100%;
 }
 
 /* A tile with a least width, such as panes side by side, lays out no narrower, and where the card
@@ -78,11 +69,8 @@
    bar. */
 @container catalogue-app-stage (width < 16rem) {
   .catalogue-tile-canvas[data-app] {
-    --catalogue-app-scale: 0.75;
-  }
-
-  .catalogue-tile-canvas[data-app='window'] {
     --catalogue-app-margin: 0.5;
+    --catalogue-app-scale: 0.75;
   }
 
   .catalogue-tile-canvas[data-app] .site-device[data-fill] {

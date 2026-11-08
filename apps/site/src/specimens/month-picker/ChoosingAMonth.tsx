@@ -1,6 +1,6 @@
 import { Column } from '@envsemble/envui';
 import ReportMonth from '../../examples/month-picker/ReportMonth';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage, rowsAnd } from '../../motion/MotionStage';
@@ -53,10 +53,10 @@ function Choosing() {
 /** Report month chosen from its popup by a pointer no one sees. */
 export default function ChoosingAMonth() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="a month chosen">
         <Choosing />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Column, Surface, Text } from '@envsemble/envui';
-import { Example, SpecimenGrid } from '../../figures/Example';
-import { SpecimenPart } from '../../figures/Specimen';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 const backgrounds = [
   { background: 'default', title: 'Default' },
@@ -27,7 +26,7 @@ const popup: CSSProperties = {
  */
 export default function Backgrounds() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid size="compact">
         {backgrounds.map(({ background, title }) => (
           <SpecimenPart key={background} title={title}>
@@ -69,6 +68,6 @@ export default function Backgrounds() {
           </Surface>
         </SpecimenPart>
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

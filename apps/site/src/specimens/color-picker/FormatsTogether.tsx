@@ -4,7 +4,7 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const area = '.env-color-picker-area';
-const thumb = `${area} > .env-color-picker-thumb`;
+const thumb = `${area} .env-color-picker-thumb`;
 
 /*
  * The pointer takes the area's thumb and drags it to a pale violet and on to a deep one: the hex,

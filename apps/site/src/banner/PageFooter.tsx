@@ -1,7 +1,7 @@
 import { Link, Row, Text } from '@envsemble/envui';
 import { version } from '@envsemble/envui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
-import { docsRoute, homeRoute, routeHref } from '../navigation/Address';
+import { docsRoute, homeRoute, routeHref } from '../routes/Address';
 
 const repository = 'https://github.com/envsemble/envUI';
 

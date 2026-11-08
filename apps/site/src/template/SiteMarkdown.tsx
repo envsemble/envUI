@@ -1,4 +1,4 @@
-import { Documentation } from '../pages/Documentation';
+import { PageMarkdown } from '../pages/PageMarkdown';
 import { optionPieces } from '@docs-model/CatalogueContent';
 import { OptionLegend } from './OptionLegend';
 import { useSectionOutline } from './SectionOutline';
@@ -9,14 +9,14 @@ export function SiteMarkdown({ markdown, path }: { markdown: string; path: strin
   // A section waiting its turn to show renders its headings alone (SectionOutline).
   const outline = useSectionOutline();
   if (pieces.length === 1 && 'markdown' in pieces[0])
-    return <Documentation markdown={markdown} path={path} />;
+    return <PageMarkdown markdown={markdown} path={path} />;
   return (
     <>
       {pieces.map((piece, index) =>
         'options' in piece
           ? !outline && <OptionLegend key={index} table={piece.options} path={path} />
           : piece.markdown.trim() && (
-              <Documentation key={index} markdown={piece.markdown} path={path} />
+              <PageMarkdown key={index} markdown={piece.markdown} path={path} />
             ),
       )}
     </>

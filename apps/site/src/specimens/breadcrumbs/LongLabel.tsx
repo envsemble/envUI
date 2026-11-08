@@ -1,5 +1,5 @@
 import OneLine from '../../examples/breadcrumbs/OneLine';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -21,10 +21,10 @@ function Hovering() {
 /** A trail on one line, its cut-short current page shown whole in a tooltip on hover. */
 export default function LongLabel() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="the whole label in a tooltip" height="10rem">
         <Hovering />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

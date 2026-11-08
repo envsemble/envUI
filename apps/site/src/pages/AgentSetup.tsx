@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { Column, CopyButton, Row, Surface, Text } from '@envsemble/envui';
 import { AgentLogos } from '../brand/AgentLogos';
-import { Documentation } from './Documentation';
+import { PageMarkdown } from './PageMarkdown';
 
 /** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
 const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
@@ -49,7 +49,7 @@ export function AgentSetup({ note, path = '' }: { note?: string; path?: string }
       </Surface>
       {note && (
         <div id="coding-agents" className="docs-agent-note">
-          <Documentation markdown={note} path={path} />
+          <PageMarkdown markdown={note} path={path} />
         </div>
       )}
     </Column>

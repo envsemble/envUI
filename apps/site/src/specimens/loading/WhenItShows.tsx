@@ -1,5 +1,5 @@
 import { Card, Column, Grid, Text } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
@@ -77,10 +77,10 @@ function Loads() {
 /** A quick load and a slow one side by side: only the slow one shows its skeleton. */
 export default function WhenItShows() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="a quick load and a slow one">
         <Loads />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

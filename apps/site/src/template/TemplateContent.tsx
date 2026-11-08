@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Badge, Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
-import { Documentation, GuidanceLists } from '../pages/Documentation';
-import type { Documentation as Document } from '../pages/PageModel';
+import { PageMarkdown, GuidanceLists } from '../pages/PageMarkdown';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import type { DocumentationMetadata, DocumentationSection } from '@docs-model/DocumentationTypes';
 import { FigureSection } from '../figures/Figures';
 import { catalogueSection, docsOnlySections } from '@docs-model/CatalogueContent';
@@ -9,8 +9,8 @@ import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';
 import { pendingAttribute, SectionOutline, useSectionOutline } from './SectionOutline';
-import { subscribeToAddress } from '../navigation/Address';
-import { statusTones } from '../navigation/PageBadges';
+import { subscribeToAddress } from '../routes/Address';
+import { statusTones } from '../routes/PageBadges';
 
 /**
  * Status and first release under the title of a component's or pattern's page, and after them
@@ -63,7 +63,7 @@ function Section({
   section,
   overviewHeading,
 }: {
-  page: Document;
+  page: DocumentationEntry;
   section: DocumentationSection;
   overviewHeading: boolean;
 }) {
@@ -121,7 +121,7 @@ function Sections({
   related,
   overviewHeading,
 }: {
-  page: Document;
+  page: DocumentationEntry;
   sections: DocumentationSection[];
   provides: boolean;
   related: boolean;
@@ -198,7 +198,7 @@ export function TemplateContent({
   related = true,
   overviewHeading = true,
 }: {
-  document: Document;
+  document: DocumentationEntry;
   provides?: boolean;
   related?: boolean;
   overviewHeading?: boolean;
@@ -245,7 +245,7 @@ const namesChangelog = () => location.hash === '#changelog';
  * loading the page and on following a link to it; each version is a muted label beside what
  * changed in it, in small muted type.
  */
-export function PageChangelog({ document }: { document: Document }) {
+export function PageChangelog({ document }: { document: DocumentationEntry }) {
   // Waiting its turn to show, it is its heading alone (SectionOutline).
   const outline = useSectionOutline();
   const [open, setOpen] = useState(namesChangelog);
@@ -284,13 +284,13 @@ export function PageChangelog({ document }: { document: Document }) {
           <DescriptionList.Root className="docs-changelog-entries">
             {entries.map(({ version, text }, index) => (
               <DescriptionList.Item key={`${index}-${version}`} label={version}>
-                <Documentation markdown={text} path={document.path} />
+                <PageMarkdown markdown={text} path={document.path} />
               </DescriptionList.Item>
             ))}
           </DescriptionList.Root>
         ) : (
           // A changelog written another way shows as its Markdown, below the same heading.
-          <Documentation markdown={markdown.replace(/^#{2,} .*$/m, '')} path={document.path} />
+          <PageMarkdown markdown={markdown.replace(/^#{2,} .*$/m, '')} path={document.path} />
         )}
       </Disclosure>
     </Column>

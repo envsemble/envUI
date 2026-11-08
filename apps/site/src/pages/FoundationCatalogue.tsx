@@ -1,7 +1,7 @@
 import { Link, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { routeHref } from '../navigation/Address';
-import { pagesOf } from '../navigation/SiteRoutes';
+import { routeHref } from '../routes/Address';
+import { pagesOf } from '../routes/SiteRoutes';
 import { glancePictures } from '../figures/foundations/Glance';
 
 /** The foundations, the type first, across the sheet's top, then the rest in the catalogue's order. */

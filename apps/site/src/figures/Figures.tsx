@@ -8,8 +8,8 @@ import type {
   DocumentationSection,
   StageFill,
 } from '@docs-model/DocumentationTypes';
-import { Documentation } from '../pages/Documentation';
-import type { Documentation as Document } from '../pages/PageModel';
+import { PageMarkdown } from '../pages/PageMarkdown';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { AnatomyFigure } from './anatomy/AnatomyFigure';
 import {
   ExampleCode,
@@ -44,7 +44,7 @@ type FigureBlock = ExampleBlock | FoundationBlock;
  * A foundation's figure: the catalogue's own, registered for its page (FoundationFigures.ts),
  * with the legend its Markdown gives it, and its code where it has an example file of its name.
  */
-function FoundationFigure({ page, block }: { page: Document; block: FoundationBlock }) {
+function FoundationFigure({ page, block }: { page: DocumentationEntry; block: FoundationBlock }) {
   const figure = useFoundationFigures(page.id)?.[block.name];
   const code = useMemo(
     () => (block.code ? { page: page.id, name: block.name } : null),
@@ -70,12 +70,13 @@ const verdicts = {
  * A do, don't or caution figure, as a gallery's cells: the live example on its stage; under it, a
  * strip of the same fill with its tag, a check, a cross or a warning with the word Do, Don't or
  * Caution in green, red or amber, a caution being acceptable with care rather than a mistake, and
- * its one sentence beside it; and under that, the example's code (Verdicts.css). The stage is as tall as
- * the example, or square where the example shows open or playing, and the example is drawn smaller
- * where it needs more room than the stage's width (useVerdictFit). With `motion`, its animated specimen of the same
- * name plays it on the stage. A `wide` figure, whose point is a change across the column's width,
- * keeps a stage as wide as the column and as tall as its example. A foundation page's figure
- * passes what it shows as `children` instead, which has no code of its own.
+ * its one sentence beside it; and under that, the example's code (Verdicts.css). The stage is as
+ * tall as the example, or square where the example shows open or playing, and the example is
+ * drawn smaller where it needs more room than the stage's width (useVerdictFit). With `motion`,
+ * its animated specimen of the same name plays it on the stage. A `wide` figure, whose point is a
+ * change across the column's width, keeps a stage as wide as the column and as tall as its
+ * example. A foundation page's figure passes what it shows as `children` instead, which has no
+ * code of its own.
  */
 function VerdictFigure({
   page,
@@ -171,7 +172,7 @@ function Figure({
   options,
   live = false,
 }: {
-  page: Document;
+  page: DocumentationEntry;
   block: FigureBlock;
   options?: OptionTable;
   /** Whether a figure shown open is live, as the Overview's are: the component, open, to use. */
@@ -243,7 +244,7 @@ function presentationOf(block: ExampleBlock, live: boolean): Presentation | unde
  * is the one figure a Docs page shows, so a reader sees what the code makes without switching
  * parts; the catalogue's Overview section itself isn't repeated.
  */
-export function UsageFigure({ page }: { page: Document }) {
+export function UsageFigure({ page }: { page: DocumentationEntry }) {
   const block = page.sections
     ?.find((section) => section.id === 'overview')
     ?.blocks.find((item): item is ExampleBlock => item.kind === 'example');
@@ -304,7 +305,7 @@ export function FigureSection({
   leadAfter = false,
   headingHidden = false,
 }: {
-  page: Document;
+  page: DocumentationEntry;
   section: DocumentationSection;
   lead?: ReactNode;
   leadAfter?: boolean;
@@ -365,7 +366,7 @@ export function FigureSection({
       content.push(
         <div key={index} className="site-figure-split">
           <div>
-            <Documentation markdown={text} path={page.path} />
+            <PageMarkdown markdown={text} path={page.path} />
           </div>
           {figure(group[0])}
         </div>,
@@ -393,7 +394,7 @@ export function FigureSection({
       const lead = index === 0 && leadParagraph(text);
       if (lead) {
         content.push(
-          <Documentation
+          <PageMarkdown
             key="section-lead"
             markdown={lead[0]}
             path={page.path}
@@ -413,7 +414,7 @@ export function FigureSection({
         leadParagraph(text)?.[1].trim() === ''
       ) {
         content.push(
-          <Documentation
+          <PageMarkdown
             key={index}
             markdown={text}
             path={page.path}
@@ -447,7 +448,7 @@ export function FigureSection({
   if (section.id === 'changelog')
     return (
       <section data-section={section.id} {...pendingAttribute(outline)}>
-        <Documentation markdown={title} path={page.path} />
+        <PageMarkdown markdown={title} path={page.path} />
         {content}
       </section>
     );
@@ -458,7 +459,7 @@ export function FigureSection({
       {...pendingAttribute(outline)}
     >
       <div className={`site-figure-section-heading${headingHidden ? ' site-visually-hidden' : ''}`}>
-        <Documentation markdown={title} path={page.path} />
+        <PageMarkdown markdown={title} path={page.path} />
       </div>
       {content}
     </section>

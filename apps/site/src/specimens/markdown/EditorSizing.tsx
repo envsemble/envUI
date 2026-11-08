@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Grid } from '@envsemble/envui';
 import { MarkdownEditor } from '@envsemble/envui/markdown';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -64,7 +64,7 @@ function Typed({ label, sizing }: { label: string; sizing: 'fixed' | 'content' }
 /** Editor sizing: a fixed height beside one that grows, the same agenda typed into both. */
 export default function EditorSizing() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="text typed into both editors">
         {/* As tall as the grown editor from the start, the editors at its top. */}
         <Grid
@@ -77,6 +77,6 @@ export default function EditorSizing() {
           <Typed label="Grows with its text" sizing="content" />
         </Grid>
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

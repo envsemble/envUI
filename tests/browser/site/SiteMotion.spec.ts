@@ -1,6 +1,6 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { siteDevUrl } from '../helpers/Servers';
-import { displayStorageKeys } from '../../../apps/site/src/theme/DisplayStorage';
+import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
 
 /*
  * The site's animations (apps/site/src/motion/): a tile plays its own preview while

@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { siteDevUrl } from '../helpers/Servers';
 import { moduleFiles, requireSite, serveSite, siteUrl } from '../helpers/HostedSite';
-import { displayStorageKeys } from '../../../apps/site/src/theme/DisplayStorage';
+import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
 /**

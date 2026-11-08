@@ -4,7 +4,7 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-item) .env-button`;
-const close = '.env-sheet .env-dialog-heading > .env-button';
+const close = '.env-sheet [aria-label="Close details"]';
 
 /*
  * The pointer opens Mobile release: the sheet slides over with its details while the list stays

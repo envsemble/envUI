@@ -1,6 +1,6 @@
 import { Button, Column, Text } from '@envsemble/envui';
-import { Example } from '../Example';
-import { colorGroups, colorVariable } from '../../theme/Palette';
+import { SpecimenFrame } from '../SpecimenFrame';
+import { colorGroups, colorVariable } from '../../display/Palette';
 import { PartSkeleton, placeholderText } from '../../loading/Skeletons';
 
 /**
@@ -12,7 +12,7 @@ export function ColorPaletteSkeleton() {
   return (
     <Column gap={0} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
-        <Example key={group} title={group} size="collection" explains>
+        <SpecimenFrame key={group} title={group} size="collection">
           <PartSkeleton what="palette">
             <Column gap={0}>
               {tokens.map(([token, label]) => (
@@ -30,7 +30,7 @@ export function ColorPaletteSkeleton() {
               ))}
             </Column>
           </PartSkeleton>
-        </Example>
+        </SpecimenFrame>
       ))}
     </Column>
   );

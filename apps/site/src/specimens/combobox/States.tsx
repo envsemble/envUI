@@ -1,6 +1,5 @@
 import { Avatar, Combobox, type ComboboxItem } from '@envsemble/envui';
-import { Example, SpecimenGrid } from '../../figures/Example';
-import { SpecimenPart } from '../../figures/Specimen';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 const people: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Ellis'].map(
   (name) => {
@@ -12,7 +11,7 @@ const people: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan 
 /** A field with nothing chosen, and an invalid, a read-only and a disabled one. */
 export default function States() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid>
         <SpecimenPart title="Nothing chosen">
           <Combobox label="Owner" placeholder="Type a name" items={people} />
@@ -33,6 +32,6 @@ export default function States() {
           <Combobox label="Owner" items={people} defaultValue="jordan.ellis" disabled />
         </SpecimenPart>
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

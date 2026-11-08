@@ -116,9 +116,9 @@ One word for each thing the site shows, and one folder in `apps/site/src` for ea
 | loading       | Skeletons, load boundaries and retries while a part loads        | `loading/`                                           |
 | template      | The sections of a component or pattern page, in their order      | `template/`                                          |
 | page          | A route's page in the catalogue or the Docs, and its data        | `pages/`                                             |
-| route         | Addresses old and new, the rail, drawers, trails and the pager   | `navigation/`                                        |
-| banner        | A page's banner, contents, footer and failure                    | `layout/`                                            |
-| display       | The Display menu: theme, contrast, scale, motion and palette     | `theme/`                                             |
+| route         | Addresses old and new, the rail, drawers, trails and the pager   | `routes/`                                            |
+| banner        | A page's banner, contents, footer and failure                    | `banner/`                                            |
+| display       | The Display menu: theme, contrast, scale, motion and palette     | `display/`                                           |
 | search        | The site's search and its index                                  | `search/`                                            |
 | brand         | The wordmarks and logos                                          | `brand/`                                             |
 | release notes | The highlights on the Docs' Changelog page                       | `releases/release-notes.md`                          |

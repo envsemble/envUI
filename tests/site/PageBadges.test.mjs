@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { isNew, pageBadge } from '../../apps/site/src/navigation/PageBadges.ts';
+import { isNew, pageBadge } from '../../apps/site/src/routes/PageBadges.ts';
 
 test('a page is New in the minor release it came in, but never in 1.0', () => {
   // A 1.1 page in a 1.1 release, a prerelease or a patch of it included.

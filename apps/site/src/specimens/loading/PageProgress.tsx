@@ -4,8 +4,7 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { useStayOnPage } from '../navigation/StayOnPage';
 
-const place = (index: number) =>
-  `.env-navigation-rail-list > li:nth-child(${index}) .env-navigation-rail-item`;
+const place = (href: string) => `.env-navigation-rail-item[href="${href}"]`;
 
 /*
  * The pointer presses Projects in the rail: the top bar's progress runs while Home stays, and
@@ -14,16 +13,16 @@ const place = (index: number) =>
  */
 const script: PointerStep[] = [
   { wait: 500 },
-  { to: place(2), x: 1.6, y: 0.5 },
-  { to: place(2), x: 0.5, y: 0.4, duration: 450 },
+  { to: place('/projects'), x: 1.6, y: 0.5 },
+  { to: place('/projects'), x: 0.5, y: 0.4, duration: 450 },
   { wait: 300 },
   { click: true },
   { wait: 3600 },
-  { to: place(1), x: 0.5, y: 0.4, duration: 450 },
+  { to: place('/'), x: 0.5, y: 0.4, duration: 450 },
   { wait: 300 },
   { click: true },
   { wait: 3200 },
-  { to: place(1), x: 1.6, y: 0.5, duration: 400 },
+  { to: place('/'), x: 1.6, y: 0.5, duration: 400 },
   { leave: true },
   { wait: 500 },
 ];

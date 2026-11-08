@@ -16,12 +16,12 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 // @envsemble/envui/theme-bootstrap, is its build in dist/, which a checkout has only after
 // npm run build, so the library's source module is imported instead.
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
-import { displayStorageKeys } from './src/theme/DisplayStorage.ts';
+import { displayStorageKeys } from './src/display/DisplayStorage.ts';
 import {
   createDisplayBootstrapScript,
   createFirstPaintStyle,
   createStorageMigrationScript,
-} from './src/theme/HeadScripts.ts';
+} from './src/display/HeadScripts.ts';
 import { checkoutMarker } from '../../scripts/test/CheckoutMarker.ts';
 import { resetClosedConnections } from '../../scripts/test/ServerSockets.ts';
 import { readReleaseNotes, releaseNotesSources } from '../../scripts/site/ReleaseNotes.ts';

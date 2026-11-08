@@ -2,15 +2,16 @@
  * The site's search and navigation: search in envUI's CommandPalette, opened with ⌘K or Ctrl+K,
  * which finds pages of the catalogue and the Docs, each page once; path routes in the hosted
  * build, served through the hosted Worker script, with deep links into both areas, refreshes and
- * the redirects from old hash addresses. tests/site/SearchIndex.test.mjs checks that every result leads to a section.
+ * the redirects from old hash addresses. tests/site/BuildSearchIndex.test.mjs checks that every
+ * result leads to a section.
  */
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { siteDevUrl } from '../helpers/Servers';
 import { moduleFiles, requireSite, serveSite, site, siteUrl } from '../helpers/HostedSite';
-import { routeOfDocument } from '../../../apps/site/src/navigation/SiteRoutes';
-import { normalizeRoute } from '../../../apps/site/src/navigation/OldAddresses';
+import { routeOfDocument } from '../../../apps/site/src/routes/SiteRoutes';
+import { normalizeRoute } from '../../../apps/site/src/routes/OldAddresses';
 
 const dialog = (page: Page) => page.getByRole('dialog', { name: 'Search envUI' });
 const field = (page: Page) => dialog(page).getByRole('combobox', { name: 'Search envUI' });

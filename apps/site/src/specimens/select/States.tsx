@@ -1,6 +1,5 @@
 import { Select } from '@envsemble/envui';
-import { Example, SpecimenGrid } from '../../figures/Example';
-import { SpecimenPart } from '../../figures/Specimen';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 const ownerOptions = [
   { value: 'alex', label: 'Alex Morgan' },
@@ -10,7 +9,7 @@ const ownerOptions = [
 /** Nothing chosen, chosen, invalid and disabled selects, side by side. */
 export default function States() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid>
         <SpecimenPart title="Nothing chosen">
           <Select label="Owner" placeholder="Choose an owner" items={ownerOptions} />
@@ -31,6 +30,6 @@ export default function States() {
           <Select label="Owner" items={ownerOptions} defaultValue="sam" disabled />
         </SpecimenPart>
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

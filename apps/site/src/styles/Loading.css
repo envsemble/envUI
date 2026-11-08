@@ -102,7 +102,7 @@
   pointer-events: none;
 }
 
-/* The sign that a pressed link's page is loading (navigation/RouteProgress.tsx): envUI's loading
+/* The sign that a pressed link's page is loading (routes/RouteProgress.tsx): envUI's loading
    bar, as a TopBar shows it, along the window's top, which creeps forward while the page loads,
    then completes and fades out. With motion reduced, it is at its full width, and appears and
    leaves at once. */

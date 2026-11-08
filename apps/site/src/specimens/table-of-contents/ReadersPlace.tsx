@@ -1,6 +1,6 @@
 import { useRef, type MouseEvent } from 'react';
 import { Column, Row, Surface, TableOfContents, Text } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -119,10 +119,10 @@ function Reading() {
 /** TableOfContents beside a guide as it scrolls: the shape beside it marks the reader's place. */
 export default function ReadersPlace() {
   return (
-    <Example size="content">
+    <SpecimenFrame size="content">
       <MotionStage label="the contents following the reader" stage="shaded">
         <Reading />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

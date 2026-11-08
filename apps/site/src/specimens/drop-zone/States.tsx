@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DropZone } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -94,10 +94,10 @@ function Dropping() {
 /** A zone that turns away a file it can't take, then is pending while an image uploads. */
 export default function States() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="the zone turning a file away, then pending">
         <Dropping />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

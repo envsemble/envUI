@@ -1,4 +1,4 @@
-import type { RoutePage } from '../navigation/SiteRoutes';
+import type { RoutePage } from '../routes/SiteRoutes';
 import { loadFoundationFigures } from '../figures/foundations/FoundationFigures';
 import { loadDocument } from './PageContent';
 import { settled } from '../loading/LoadOnce';

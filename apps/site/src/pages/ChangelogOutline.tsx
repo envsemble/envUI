@@ -1,7 +1,7 @@
 import releases from 'virtual:envui-changelog-outline';
 import { LongPartSkeleton, placeholderText } from '../loading/Skeletons';
 import { recordedSize } from '../loading/RecordedSizes';
-import { Documentation } from './Documentation';
+import { PageMarkdown } from './PageMarkdown';
 
 const changelogPath = '../packages/ui/CHANGELOG.md';
 
@@ -27,17 +27,17 @@ export function ChangelogSkeleton() {
         className="docs-changelog-outline"
         style={size && { blockSize: `${size[1]}rem` }}
       >
-        <Documentation markdown={heading} path={changelogPath} />
+        <PageMarkdown markdown={heading} path={changelogPath} />
         <LongPartSkeleton
           what="the changelog"
           start={
-            <Documentation
+            <PageMarkdown
               markdown={placeholderMarkdown(shape.split('\n').slice(0, skeletonLines).join('\n'))}
               path={changelogPath}
             />
           }
           whole={
-            !size && <Documentation markdown={placeholderMarkdown(shape)} path={changelogPath} />
+            !size && <PageMarkdown markdown={placeholderMarkdown(shape)} path={changelogPath} />
           }
         />
       </div>

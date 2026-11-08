@@ -6,7 +6,7 @@ import { useCallback, useId, useMemo, useRef, useState, type CSSProperties } fro
 import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '@docs-model/DocumentationTypes';
 import { legendName, type OptionTable } from '@docs-model/CatalogueContent';
-import { Documentation } from '../../pages/Documentation';
+import { PageMarkdown } from '../../pages/PageMarkdown';
 import { FitFrame } from '../../fit/standalone/WidthFit';
 import { OptionLegend } from '../../template/OptionLegend';
 import { legendOf, partDescription } from '../../template/Parts';
@@ -346,10 +346,7 @@ export function AnatomyFigure({
                 <span className="site-anatomy-number" aria-hidden="true">
                   {rank + 1}
                 </span>
-                <Documentation
-                  markdown={legendText(items[index]!)}
-                  path={`components/${page}.md`}
-                />
+                <PageMarkdown markdown={legendText(items[index]!)} path={`components/${page}.md`} />
               </li>
             ))}
           </ol>

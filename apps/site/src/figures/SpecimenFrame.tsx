@@ -9,29 +9,18 @@ import { StillMark } from './StillMark';
 export const SpecimenHeadingLevel = createContext<2 | 3>(2);
 
 /**
- * The level of the titles of a specimen's parts inside an Example: below its title, or at the
+ * The level of the titles of a specimen's parts inside a SpecimenFrame: below its title, or at the
  * specimen's own level where it has none, so no level is skipped. Unset, they take the level below
  * the specimen's.
  */
-export const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
+const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
 
 /**
- * Whether an Example shows its content on a stage, as a foundation page's figure does; its caption
- * stays below the stage.
+ * The frame of a specimen, or of a foundation's figure drawn from the catalogue's own data: its
+ * title and actions, what it shows, and its caption. What it shows is composed from envUI's public
+ * components.
  */
-const ExampleStage = createContext(false);
-
-/** A foundation's figure that shows envUI at work, on its stage. */
-function FoundationStage({ children }: { children: ReactNode }) {
-  return (
-    <div className="site-foundation-stage" data-figure="example">
-      {children}
-    </div>
-  );
-}
-
-/** Documentation specimen framing; product UI is composed from public envUI components. */
-export function Example({
+export function SpecimenFrame({
   title,
   actions,
   children,
@@ -39,7 +28,6 @@ export function Example({
   className,
   gap = 4,
   size = 'content',
-  explains = false,
   still = false,
 }: {
   title?: string;
@@ -49,18 +37,11 @@ export function Example({
   className?: string;
   gap?: SpaceStep;
   size?: 'compact' | 'field' | 'content' | 'wide' | 'collection';
-  /**
-   * Whether the figure explains the system, such as a scale of tokens or the palette, rather than
-   * shows envUI at work: it then sits on the page itself, under its title and in line with the
-   * text, rather than on the recessed canvas of an example.
-   */
-  explains?: boolean;
   /** Whether it shows the component still, such as in forced states, so it doesn't take input. */
   still?: boolean;
 }) {
   const level = useContext(SpecimenHeadingLevel);
   const Heading = `h${level}` as const;
-  const staged = useContext(ExampleStage);
   return (
     <Column
       render={<section />}
@@ -80,23 +61,38 @@ export function Example({
           {title}
         </Text>
       ) : null}
-      <PartHeadingLevel value={title ? ((level + 1) as 3 | 4) : level}>
-        {staged && explains ? (
-          <div className="site-foundation-stage" data-figure="explanation">
-            {children}
-          </div>
-        ) : staged ? (
-          <FoundationStage>{children}</FoundationStage>
-        ) : (
-          children
-        )}
-      </PartHeadingLevel>
+      <PartHeadingLevel value={title ? ((level + 1) as 3 | 4) : level}>{children}</PartHeadingLevel>
       {still && <StillMark />}
       {caption && (
         <Text variant="caption" className="catalogue-caption">
           {caption}
         </Text>
       )}
+    </Column>
+  );
+}
+
+/** A titled part of a specimen, such as one state of a matrix, under a small muted label. */
+export function SpecimenPart({
+  title,
+  children,
+  caption,
+}: {
+  title: string;
+  children: ReactNode;
+  caption?: ReactNode;
+}) {
+  const specimenLevel = useContext(SpecimenHeadingLevel);
+  const level = useContext(PartHeadingLevel) ?? ((specimenLevel + 1) as 3 | 4);
+  const Heading = `h${level}` as const;
+  return (
+    <Column render={<section />} gap={2} className="catalogue-specimen">
+      {/* A small muted label, as the state matrix names its rows, quieter than the section's heading. */}
+      <Text render={<Heading />} variant="body-sm">
+        {title}
+      </Text>
+      {children}
+      {caption && <Text variant="caption">{caption}</Text>}
     </Column>
   );
 }

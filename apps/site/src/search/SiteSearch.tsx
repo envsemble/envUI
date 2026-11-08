@@ -15,10 +15,10 @@ import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconArticle } from '@envsemble/envui/icons/Article';
 import { IconError } from '@envsemble/envui/icons/Error';
 import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
-import { findPage, routeOfDocument, type RoutePage } from '../navigation/SiteRoutes';
-import { counterpartOf } from '../navigation/Counterparts';
-import { otherPart } from '../navigation/OtherPart';
-import { docsRoute, navigate, routeHref } from '../navigation/Address';
+import { findPage, routeOfDocument, type RoutePage } from '../routes/SiteRoutes';
+import { counterpartOf } from '../routes/Counterparts';
+import { otherPart } from '../routes/OtherPart';
+import { docsRoute, navigate, routeHref } from '../routes/Address';
 import { canRetryLoad, reloadModule, reloadPage } from '../loading/LoadBoundary';
 import type { SearchResult } from './SearchIndex';
 

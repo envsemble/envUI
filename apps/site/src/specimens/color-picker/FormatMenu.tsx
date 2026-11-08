@@ -1,5 +1,5 @@
 import { ColorPicker } from '@envsemble/envui/color';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -55,10 +55,10 @@ function Switching() {
 /** The format menu switching the picker's fields from hex to RGB, HSL and back. */
 export default function FormatMenu() {
   return (
-    <Example size="field">
+    <SpecimenFrame size="field">
       <MotionStage label="the format menu switching the fields">
         <Switching />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

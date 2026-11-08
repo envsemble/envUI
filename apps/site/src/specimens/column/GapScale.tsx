@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Column, Row, Surface, Text, type SpaceStep } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
@@ -58,10 +58,10 @@ function Stepping() {
 /** One column whose gap steps up the spacing scale and back down. */
 export default function GapScale() {
   return (
-    <Example size="content">
+    <SpecimenFrame size="content">
       <MotionStage label="the gap stepping through the scale">
         <Stepping />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

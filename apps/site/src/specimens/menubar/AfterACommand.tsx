@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import NotesMenubar from '../../examples/menubar/NotesMenubar';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -61,10 +61,10 @@ function Copying() {
 /** Copy acting on the word selected in the note, focus returning there after. */
 export default function AfterACommand() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="Copy acting on the selected word">
         <Copying />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

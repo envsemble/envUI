@@ -3,8 +3,10 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
+// What a crumb shows: a link, or the current page.
+const crumbElement = ':is(.env-breadcrumbs-link, .env-breadcrumbs-current)';
 const crumb = (index: number) =>
-  `.env-breadcrumbs-item:nth-child(${index} of .env-breadcrumbs-item) > :first-child`;
+  `.env-breadcrumbs-item:nth-child(${index} of .env-breadcrumbs-item) ${crumbElement}`;
 
 /*
  * The pointer presses Open beside Interviews: the trail grows by Interviews, its folder is empty.
@@ -12,7 +14,7 @@ const crumb = (index: number) =>
  */
 const script: PointerStep[] = [
   { wait: 500 },
-  { to: '.env-list-item:nth-child(1 of .env-list-item) .env-button', x: 0.5, y: 0.6 },
+  { to: '[aria-label="Open Interviews"]', x: 0.5, y: 0.6 },
   { wait: 400 },
   { click: true },
   { wait: 1700 },

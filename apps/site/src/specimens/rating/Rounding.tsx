@@ -1,5 +1,5 @@
 import { Column, Rating, Text } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
@@ -23,10 +23,10 @@ function Rounding() {
 /** A rating given 4.3, 4.6, 4.8 and 5.4, shown to the nearest half star within the scale. */
 export default function RoundingMotion() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="the value rounding to half stars">
         <Rounding />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

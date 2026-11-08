@@ -82,7 +82,7 @@
   font-weight: var(--env-font-weight-regular);
   padding: 0.5rem 0.75rem 1rem;
   /* A name breaks between words alone, and a cell's content not at all: what doesn't fit its
-     column runs past it, and the matrix stacks instead (MatrixScroll in Example.tsx). */
+     column runs past it, and the matrix stacks instead (MatrixScroll in SpecimenFrame.tsx). */
   overflow-wrap: normal;
 }
 .catalogue-matrix tbody th {
@@ -94,7 +94,7 @@
   white-space: nowrap;
 }
 
-/* A matrix whose columns don't fit, as on a phone (MatrixScroll in Example.tsx): a block for each
+/* A matrix whose columns don't fit, as on a phone (MatrixScroll in SpecimenFrame.tsx): a block for each
    row, its name over its cells listed down, each cell after its column's name. */
 .site-figures .catalogue-matrix-scroll[data-stacked] :is(.catalogue-matrix, tbody) {
   display: grid;

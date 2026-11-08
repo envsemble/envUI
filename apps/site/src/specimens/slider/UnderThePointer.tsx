@@ -1,5 +1,5 @@
 import { Slider } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -39,10 +39,10 @@ function Hovered() {
 /** Slider under the pointer: its handle and ticks come with the pointer and go once let go. */
 export default function UnderThePointer() {
   return (
-    <Example size="field">
+    <SpecimenFrame size="field">
       <MotionStage label="the slider under the pointer">
         <Hovered />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

@@ -26,7 +26,7 @@ import { flag } from '@envui-internal/internal/flag';
  * status bar and home indicator, a window's address bar; what its screen shows is the figure as it
  * is. A page's figure takes one with `device` on its fence (LiveExample.tsx); a gallery's or
  * Related's card takes a window filling its picture around a tile of an application's frame
- * (AppTile.tsx).
+ * (TileStage.tsx).
  */
 
 /**
@@ -145,7 +145,7 @@ function AddressBar({ address }: { address: string }) {
  * part or the box that set its height, such as a Scaffold standing a 22 rem box in for the window.
  * It holds as the figure loads, goes live and comes back.
  */
-export function useFill(screen: RefObject<HTMLDivElement | null>) {
+function useFill(screen: RefObject<HTMLDivElement | null>) {
   useLayoutEffect(() => {
     const element = screen.current;
     if (!element) return;
@@ -181,7 +181,7 @@ export interface DeviceFrameProps {
   label?: string;
   /**
    * Whether it fills the box it is in, its screen taking what its bar leaves, rather than being
-   * drawn at its kind's own size: a card's window around an application's frame (AppTile.tsx).
+   * drawn at its kind's own size: a card's window around an application's frame (TileStage.tsx).
    */
   fill?: boolean;
 }

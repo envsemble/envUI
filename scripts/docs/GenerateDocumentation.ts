@@ -24,7 +24,7 @@ import { marked } from 'marked';
 import { headingsOf, plainText } from './MarkdownHeadings.ts';
 import { exportSection, headingSlugger } from './model/SearchAnchors.ts';
 import { providesHeadings } from './model/CatalogueContent.ts';
-import { writeSearchIndex } from '../site/SearchIndex.ts';
+import { writeSearchIndex } from '../site/BuildSearchIndex.ts';
 import { documentationDirectory, generatedFile } from './DocumentationPaths.ts';
 import { pageKindOf, readProps } from './PageStructure.ts';
 import { readDocumentation } from './DocumentationReader.ts';
