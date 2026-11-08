@@ -6,5 +6,3 @@ export const tableOfContents = {
   /** Names the navigation of the page's sections. */
   label: 'On this page',
 };
-
-export type TableOfContentsMessages = typeof tableOfContents;

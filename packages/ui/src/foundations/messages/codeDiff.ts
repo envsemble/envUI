@@ -12,5 +12,3 @@ export const codeDiff = {
   /** Names the region while the changes load. */
   loading: 'Loading changes',
 };
-
-export type CodeDiffMessages = typeof codeDiff;

@@ -14,5 +14,3 @@ export const documentTabs = {
   /** Names a tab's menu of actions. */
   contextMenu: 'Tab actions',
 };
-
-export type DocumentTabsMessages = typeof documentTabs;

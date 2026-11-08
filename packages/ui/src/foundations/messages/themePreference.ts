@@ -14,5 +14,3 @@ export const themePreference = {
   /** The dark theme's choice. */
   dark: 'Dark',
 };
-
-export type ThemePreferenceMessages = typeof themePreference;

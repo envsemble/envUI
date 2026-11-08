@@ -12,5 +12,3 @@ export const datePicker = {
   /** Names the time field. */
   time: 'Time',
 };
-
-export type DatePickerMessages = typeof datePicker;

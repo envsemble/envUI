@@ -8,5 +8,3 @@ export const scaffold = {
   /** The skip link to the navigation that shows. */
   skipToNavigation: 'Skip to navigation',
 };
-
-export type ScaffoldMessages = typeof scaffold;

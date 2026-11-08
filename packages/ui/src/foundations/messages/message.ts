@@ -10,5 +10,3 @@ export const message = {
   /** Beside the spinner of a MessageList while a reply is on its way. */
   working: 'Working',
 };
-
-export type MessageMessages = typeof message;

@@ -15,5 +15,3 @@ export const timePicker = {
   /** Names the column of the day's halves, on a 12-hour clock. */
   dayPeriod: 'AM/PM',
 };
-
-export type TimePickerMessages = typeof timePicker;

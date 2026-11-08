@@ -41,5 +41,3 @@ export const list = {
   cancelled: ({ label, position, count }: { label: string; position: string; count: string }) =>
     `Move cancelled. ${label} is back at position ${position} of ${count}.`,
 };
-
-export type ListMessages = typeof list;
