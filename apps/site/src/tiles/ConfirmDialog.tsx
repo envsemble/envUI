@@ -3,6 +3,7 @@ import { Button, ConfirmDialog, IconButton, Row, Text } from '@envsemble/envui';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 /**
  * Confirmed, which waits for the action, pending, and closes on the plan's row, which says it is
@@ -33,6 +34,13 @@ const closing = 300;
 
 /** The dialog as narrow as its actions allow, so they leave it room. */
 const narrow = { inlineSize: '12rem' } as const;
+
+/**
+ * A larger window than the tiles' (Tile.css), as an overlay, with a lower least scale for its
+ * popup: a confirm dialog with its button beside it is wider than a tile's stage at a popup's
+ * least.
+ */
+export const tileWindow: TileWindow = { width: 15, height: 11.25, popupLeast: 0.56, overlay: true };
 
 /**
  * A confirm dialog, open over the row of the plan it deletes, its name and the button that opens

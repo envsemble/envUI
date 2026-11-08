@@ -3,6 +3,7 @@ import { PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
 import { useStageLayer } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 /*
  * Undo pressed on the notification of an archived project: it leaves, and a notification that the
@@ -77,6 +78,9 @@ function Notices() {
   }, [archive, toast]);
   return null;
 }
+
+/** The tiles' window (Tile.css), as an overlay: drawn at the overlays' one scale. */
+export const tileWindow: TileWindow = { overlay: true };
 
 /**
  * A notification in the live region rather than a picture of one, so it arrives and leaves with

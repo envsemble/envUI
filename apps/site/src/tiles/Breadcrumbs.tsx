@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@envsemble/envui';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { rootMotionDuration, rootMotionEasing } from '../motion/RootMotionTokens';
+import type { TileWindow } from './Tiles';
 
 const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .env-breadcrumbs-link`;
 
@@ -138,6 +139,9 @@ function Trail() {
     />
   );
 }
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 15, height: 11.25 };
 
 /**
  * A trail of three levels, the last the current page, on one line at every width. The trail keeps

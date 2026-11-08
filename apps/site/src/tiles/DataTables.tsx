@@ -4,6 +4,7 @@ import { IconArchive } from '@envsemble/envui/icons/Archive';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const projects = [
   { id: 'website', name: 'Website refresh', tasks: 12 },
@@ -39,6 +40,9 @@ const script: PointerStep[] = [
 ];
 
 const count = (selected: number) => (selected === 1 ? '1 project' : `${selected} projects`);
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 19, height: 14.25 };
 
 /** A table of projects, sortable by name, whose selected rows a bar counts and acts on. */
 export default function DataTablesTile() {

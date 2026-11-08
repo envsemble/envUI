@@ -3,6 +3,7 @@ import { DatePicker } from '@envsemble/envui';
 import { useHeldView } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const day = (date: string) => `.env-calendar-day[data-date="${date}"]`;
 const field = '.env-date-picker-trigger';
@@ -44,6 +45,9 @@ const script: PointerStep[] = [
   { leave: true },
   { wait: 400 },
 ];
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 20, height: 15 };
 
 /**
  * A date picker on March 4th, its label hidden and its field small, as a field whose purpose is

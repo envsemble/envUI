@@ -10,6 +10,7 @@ import { useMedia } from '../motion/Autoplay';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
+import type { TileWindow } from './Tiles';
 
 const item = (index: number) =>
   `.env-navigation-drawer-list > li:nth-child(${index}) > .env-navigation-drawer-item`;
@@ -64,6 +65,9 @@ const scripts = { wide: scriptOf(wide), narrow: scriptOf(narrow) };
  */
 const frameOf = (width: number) =>
   ({ inlineSize: `${width}rem`, blockSize: '6.5rem', display: 'flex' }) as const;
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 17, height: 12.75 };
 
 /**
  * A mail application's drawer of two destinations, Inbox current, both rows whole: labels without

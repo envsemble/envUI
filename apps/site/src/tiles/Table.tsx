@@ -4,6 +4,7 @@ import { useMedia } from '../motion/Autoplay';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
+import type { TileWindow } from './Tiles';
 
 /** Two projects, so the table shows whole, its frame in view, in a gallery's low tile. */
 const projects = [
@@ -41,6 +42,9 @@ const script: PointerStep[] = [
   { leave: true },
   { wait: 500 },
 ];
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 16, height: 12 };
 
 /** A table of projects and their open tasks, sortable by the tasks, whose rows can be chosen. */
 export default function TableTile() {

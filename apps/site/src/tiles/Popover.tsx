@@ -6,6 +6,7 @@ import { useHeldView } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
+import type { TileWindow } from './Tiles';
 
 const trigger = '.env-button[aria-haspopup]';
 const action = '.env-popover .env-button';
@@ -31,6 +32,9 @@ const script: PointerStep[] = [
 
 const periods = { monthly: 'Monthly', yearly: 'Yearly' } as const;
 type Period = keyof typeof periods;
+
+/** The tiles' window (Tile.css), as an overlay: drawn at the overlays' one scale. */
+export const tileWindow: TileWindow = { overlay: true };
 
 /**
  * A popover that tells the billing period, open beside the icon button that opens it, so it shows

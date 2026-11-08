@@ -13,6 +13,7 @@ import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const item = (index: number) =>
   `.env-navigation-bar-list > li:nth-child(${index}) .env-navigation-bar-item`;
@@ -36,6 +37,12 @@ const places = [
   { label: 'Home', icon: <IconHome />, line: 'Welcome back.' },
   { label: 'Inbox', icon: <IconInbox />, line: '2 unread.' },
 ];
+
+/**
+ * The tiles' window (Tile.css), as a piece of an application's frame: it fills its card in a
+ * browser's window (`app`).
+ */
+export const tileWindow: TileWindow = { app: {} };
 
 /**
  * An application's frame filling its card (TileStage.tsx): the top bar, titled with the place, over

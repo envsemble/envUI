@@ -12,6 +12,7 @@ import { IconArchive } from '@envsemble/envui/icons/Archive';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
 
 const projects = ['Launch plan', 'Annual report', 'Press kit'];
 
@@ -95,6 +96,9 @@ function NotificationArea({ children }: { children: (area: HTMLElement | null) =
     </>
   );
 }
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 20, height: 17 };
 
 /** A list whose rows are archived at once, each with Undo in a notification below it. */
 export default function DestructiveActionsTile() {

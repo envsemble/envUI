@@ -3,6 +3,7 @@ import { Column, Composer, Message, MessageList } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/markdown';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 interface Entry {
   id: number;
@@ -45,6 +46,9 @@ const script: PointerStep[] = [
   { leave: true },
   { wait: 500 },
 ];
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 19, height: 14.25 };
 
 /** An exchange with an assistant above the composer, its reply streaming in as it is written. */
 export default function ConversationTile() {

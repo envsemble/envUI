@@ -3,6 +3,7 @@ import { IconButton, Row, Tabs, Text } from '@envsemble/envui';
 import { IconUpload } from '@envsemble/envui/icons/Upload';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
 
@@ -20,6 +21,9 @@ const script: PointerStep[] = [
   { leave: true },
   { wait: 2500 },
 ];
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 15, height: 11.25 };
 
 /**
  * Three tabs of a project, Plan chosen, over its panel, filling a box of the height of the tallest

@@ -2,6 +2,7 @@ import { MarkdownEditor } from '@envsemble/envui/markdown';
 import { useHeldView } from '../../motion/Playback';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
+import type { TileWindow } from '../Tiles';
 
 const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
 
@@ -22,6 +23,9 @@ const script: PointerStep[] = [
   { leave: true },
   { wait: 1200 },
 ];
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 16, height: 12 };
 
 /**
  * A Markdown editor without its toolbar, so it shows whole: a short note whose phrase is marked

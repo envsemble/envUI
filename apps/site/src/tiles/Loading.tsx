@@ -1,6 +1,10 @@
 import { Button, Card } from '@envsemble/envui';
 import { useTimeline } from '../motion/Timeline';
 import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 17, height: 12.75 };
 
 /**
  * In the shape of what is coming: a card with its item at rest; as it plays, it loads, its title

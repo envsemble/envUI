@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { PanelDock, Surface, Text, type PanelDockPanel } from '@envsemble/envui';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const minimize = '.env-panel-dock-panel[data-panel-id="notes"] [aria-label="Minimize"]';
 const notesTab = '.env-panel-dock-tab[data-panel-id="notes"] .env-panel-dock-tab-restore';
@@ -48,6 +49,12 @@ const start: PanelDockPanel[] = [
  * `stackBelow`, so the open panel keeps its own width there.
  */
 const region = { position: 'relative', blockSize: '100%', overflow: 'hidden' } as const;
+
+/**
+ * The tiles' window (Tile.css), as a piece of an application's frame: it fills its card in a
+ * browser's window (`app`).
+ */
+export const tileWindow: TileWindow = { app: {} };
 
 /**
  * A notes panel docked at the bottom end of a page, at rest, whose tab takes its place there

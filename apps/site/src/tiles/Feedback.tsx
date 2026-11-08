@@ -11,6 +11,7 @@ import { IconSend } from '@envsemble/envui/icons/Send';
 import { useStageLayer } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 /**
  * The last invitation's notification dismissed, then another sent: the button works a moment, and
@@ -62,6 +63,9 @@ function Invite() {
     </Column>
   );
 }
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 18, height: 16 };
 
 /**
  * A small form whose action says how it went: the button while it works, then a notification,

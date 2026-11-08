@@ -3,6 +3,7 @@ import { Button, Column, DropZone, List, Progress, Surface } from '@envsemble/en
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
 
 /*
  * A photo removed from the files and dragged in again, its file chip beside the hand: dropped,
@@ -30,6 +31,9 @@ const script: PointerStep[] = [
 
 /** How much of the photo has gone up, in MB, of 1.1. */
 const size = 1.1;
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 19, height: 14.25 };
 
 /**
  * Adding files: a drop zone over the files added, each with its Remove action, one uploading as it

@@ -14,6 +14,7 @@ import { IconTrendingUp } from '@envsemble/envui/icons/TrendingUp';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
 
 const periods = {
   week: { lead: 2.5, faster: 0.5, done: 42, more: 6 },
@@ -37,6 +38,9 @@ const script: PointerStep[] = [
   { leave: true },
   { wait: 400 },
 ];
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 18, height: 13.5 };
 
 /** Two key figures on a surface, with how each changed over the period chosen. */
 export default function KeyFiguresTile() {

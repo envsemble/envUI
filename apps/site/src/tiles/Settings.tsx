@@ -2,6 +2,7 @@ import { Column, List, Surface, Switch, Text } from '@envsemble/envui';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
 
 const toggle = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) .env-switch-input`;
@@ -25,6 +26,9 @@ const script: PointerStep[] = [
   { leave: true },
   { wait: 400 },
 ];
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 17, height: 12.75 };
 
 /** A section of settings: preferences that apply as they change. */
 export default function SettingsTile() {

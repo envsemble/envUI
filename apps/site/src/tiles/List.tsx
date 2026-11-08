@@ -4,6 +4,7 @@ import { useMedia } from '../motion/Autoplay';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
+import type { TileWindow } from './Tiles';
 
 const people = [
   { id: 'alex', name: 'Alex Morgan', role: 'Design' },
@@ -35,6 +36,9 @@ const script: PointerStep[] = [
   { leave: true },
   { wait: 500 },
 ];
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 16, height: 12 };
 
 /**
  * A list of people, each row opening that person, Sam Lee's the current one: its first two rows

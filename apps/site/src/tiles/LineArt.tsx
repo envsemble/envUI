@@ -1,8 +1,12 @@
 import { LineArt } from '@envsemble/envui';
 import { useTimeline } from '../motion/Timeline';
+import type { TileWindow } from './Tiles';
 
 /** The drawing at rest, then playing, a little longer than its motion takes, which ends still. */
 const durations = [600, 6500];
+
+/** A smaller window than the tiles' (Tile.css), drawn larger: a drawing has no size of its own. */
+export const tileWindow: TileWindow = { width: 6, height: 3.75 };
 
 /**
  * The golden section on its own, straight on the tile's stage, with nothing framing it, as the

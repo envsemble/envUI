@@ -4,6 +4,7 @@ import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
 
 const projects = ['Northwind launch', 'Pricing research'];
 
@@ -27,6 +28,9 @@ const script: PointerStep[] = [
   { leave: true },
   { wait: 500 },
 ];
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 18, height: 13.5 };
 
 /** A search with no results, its empty state offering the one way on. */
 export default function EmptyStatesTile() {

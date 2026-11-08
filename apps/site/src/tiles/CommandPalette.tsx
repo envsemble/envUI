@@ -7,6 +7,7 @@ import { useHeldView } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
+import type { TileWindow } from './Tiles';
 
 const items: CommandPaletteItem[] = [
   { id: 'new', label: 'New document', icon: <IconNoteAdd /> },
@@ -39,6 +40,12 @@ const narrowScript: PointerStep[] = [
   { erase: 3, into: input, every: 120 },
   { wait: 1200 },
 ];
+
+/**
+ * The tiles' window (Tile.css), with a lower least scale for its popup: a palette with its two
+ * commands is taller than a phone's stage at a popup's least.
+ */
+export const tileWindow: TileWindow = { popupLeast: 0.7 };
 
 /**
  * A command palette, open with its two commands under its search, which a phone's lower stage

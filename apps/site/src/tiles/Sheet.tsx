@@ -3,6 +3,7 @@ import { Checkbox, Column, IconButton, List, Row, Sheet, Text } from '@envsemble
 import { IconFilterList } from '@envsemble/envui/icons/FilterList';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 /** Closed by its cross, toward its edge; opened again from its button. */
 const script: PointerStep[] = [
@@ -30,6 +31,12 @@ const page = {
 
 /** Two projects, as many as the stage shows whole, with names short enough to read beside the sheet. */
 const projects = ['Billing', 'Search'];
+
+/**
+ * A lower window than the tiles' (Tile.css), as an overlay: a sheet of a title and a filter is
+ * as tall as its window, so it shows whole.
+ */
+export const tileWindow: TileWindow = { width: 14, height: 7, overlay: true };
 
 /**
  * A side sheet that filters a list of projects, open at the end edge over the page: its title, its

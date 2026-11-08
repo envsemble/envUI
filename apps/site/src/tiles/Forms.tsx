@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Column, Row, TextField } from '@envsemble/envui';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const email = '.env-text-field:nth-child(2 of .env-text-field) .env-text-field-input';
 
@@ -36,6 +37,9 @@ const script: PointerStep[] = [
 ];
 
 const whole = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 20, height: 15 };
 
 /** A short form, checked as it is submitted, whose error goes as soon as it is put right. */
 export default function FormsTile() {
