@@ -21,7 +21,7 @@ import { useLocale } from '../internal/EnvUIContext.js';
 import { useDirectionScope } from '../internal/useDirection.js';
 import { FieldFrame } from './internal/FieldFrame.js';
 import { fieldMessageIds } from './internal/useFieldMetadata.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { useFormReset } from './internal/useFormReset.js';
 import { followOverdrag } from './internal/sliderOverdrag.js';
 import { followDrag } from './internal/sliderGlide.js';
 import '../styles/Base.css';
@@ -192,18 +192,14 @@ export function Slider({
   );
   const reveal = sliderReveal({ pressed, hover, keyboard, disabled });
   const current = value ?? uncontrolledValue;
-  useEffect(
-    function subscribeToFormReset() {
-      const element = input.current;
-      const owner = element?.form;
-      if (!element || !owner) return;
-      return subscribeFormReset(owner, function applyReset() {
-        const reset = value ?? defaultValue ?? min;
-        if (value === undefined) setUncontrolledValue(reset);
-        element.value = String(reset);
-      });
+  useFormReset(
+    input,
+    function applyReset() {
+      const reset = value ?? defaultValue ?? min;
+      if (value === undefined) setUncontrolledValue(reset);
+      if (input.current) input.current.value = String(reset);
     },
-    [value, defaultValue, min, form],
+    form,
   );
   // Where the fill's end and the handle pass under the label or the value, they fade while they show,
   // so the text stays legible at full strength: measured again as the value moves and as the slider

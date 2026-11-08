@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  useEffect,
   useId,
   useRef,
   useState,
@@ -31,7 +30,7 @@ import { ListRow } from '../internal/ListRow.js';
 import { setRef } from '../internal/setRef.js';
 import { classNames } from '../internal/classNames.js';
 import { flag } from '../internal/flag.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { useFormReset } from './internal/useFormReset.js';
 import '../styles/Base.css';
 import '../styles/Select.css';
 
@@ -208,18 +207,15 @@ export function Select({
   const open = controlledOpen ?? uncontrolledOpen;
   // The label floats into the outline while the field holds a value or its list is open.
   const labelFloats = selectedValue != null || open;
-  useEffect(
-    function subscribeToFormReset() {
+  useFormReset(
+    inputRef,
+    function applyReset() {
       const input = inputRef.current;
-      const ownerForm = input?.form;
-      if (!input || !ownerForm) return;
-      return subscribeFormReset(ownerForm, function applyReset() {
-        const resetValue = value === undefined ? (defaultValue ?? null) : value;
-        if (value === undefined) setUncontrolledValue(resetValue);
-        input.value = resetValue ?? '';
-      });
+      const resetValue = value === undefined ? (defaultValue ?? null) : value;
+      if (value === undefined) setUncontrolledValue(resetValue);
+      if (input) input.value = resetValue ?? '';
     },
-    [value, defaultValue, form],
+    form,
   );
   function handleValueChange(nextValue: string | null) {
     if (value === undefined) setUncontrolledValue(nextValue);

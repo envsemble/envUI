@@ -12,7 +12,7 @@ import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { useFormReset } from './internal/useFormReset.js';
 import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import '../styles/Base.css';
 import '../styles/Radio.css';
@@ -116,20 +116,18 @@ export function RadioGroup({
     ]
       .filter(Boolean)
       .join(' ') || undefined;
-  useEffect(
-    function subscribeToFormReset() {
+  useFormReset(
+    fieldsetRef,
+    function applyReset() {
+      const resetValue = controlled ? value : defaultValue;
+      if (!controlled) setUncontrolledValue(resetValue);
       const fieldset = fieldsetRef.current;
-      const form = fieldset?.form;
-      if (!fieldset || !form) return;
-      return subscribeFormReset(form, function applyReset() {
-        const resetValue = controlled ? value : defaultValue;
-        if (!controlled) setUncontrolledValue(resetValue);
-        for (const input of fieldset.querySelectorAll<HTMLInputElement>('input[type="radio"]')) {
-          if (input.name === name) input.checked = input.value === resetValue;
-        }
-      });
+      for (const input of fieldset?.querySelectorAll<HTMLInputElement>('input[type="radio"]') ??
+        []) {
+        if (input.name === name) input.checked = input.value === resetValue;
+      }
     },
-    [controlled, value, defaultValue, name, props.form],
+    props.form,
   );
   function select(nextValue: string) {
     if (!controlled) setUncontrolledValue(nextValue);

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  useEffect,
   useId,
   useLayoutEffect,
   useRef,
@@ -21,8 +20,7 @@ import { Spinner } from '../feedback/Spinner.js';
 import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
 import { acceptsFile } from './internal/acceptsFile.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
-import { useLatest } from '../internal/useLatest.js';
+import { useFormReset } from './internal/useFormReset.js';
 import '../styles/Base.css';
 import '../styles/DropZone.css';
 
@@ -118,7 +116,6 @@ export function DropZone({
   const [dragging, setDragging] = useState(false);
   // Entering a child of the zone leaves its parent first, so count the elements under the files.
   const depth = useRef(0);
-  const latestFiles = useLatest(files);
   const available = !disabled && !pending;
 
   /** Native forms submit exactly these files, also when they were dropped. */
@@ -134,16 +131,13 @@ export function DropZone({
     if (files !== undefined) hold(files);
   }, [files, name]);
 
-  useEffect(
+  // The browser empties the named input; files the application keeps stay.
+  useFormReset(
+    field,
     function keepFilesAfterFormReset() {
-      const owner = field.current?.form;
-      if (!owner) return;
-      // The browser empties the named input; files the application keeps stay.
-      return subscribeFormReset(owner, () => {
-        if (latestFiles.current !== undefined) hold(latestFiles.current);
-      });
+      if (files !== undefined) hold(files);
     },
-    [form, name, latestFiles],
+    form,
   );
 
   function take(chosen: File[]) {

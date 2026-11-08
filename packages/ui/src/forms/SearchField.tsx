@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { IconSearch } from '../icons/Search.js';
 import { IconClose } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
@@ -8,7 +8,7 @@ import { setRef } from '../internal/setRef.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { searchField as searchFieldMessages } from '../foundations/messages/searchField.js';
 import { TextField, type TextFieldProps } from './TextField.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { useFormReset } from './internal/useFormReset.js';
 
 export interface SearchFieldProps extends Omit<
   TextFieldProps,
@@ -71,11 +71,13 @@ export function SearchField({
   const query = value ?? uncontrolledValue;
   // The field renders its query itself, so a form reset, which resets only the native input,
   // restores an uncontrolled field's default query here.
-  useEffect(() => {
-    const input = inputRef.current;
-    if (!input?.form || value !== undefined) return;
-    return subscribeFormReset(input.form, () => setUncontrolledValue(defaultValue));
-  }, [value, defaultValue, props.form]);
+  useFormReset(
+    inputRef,
+    () => {
+      if (value === undefined) setUncontrolledValue(defaultValue);
+    },
+    props.form,
+  );
   function update(next: string) {
     if (value === undefined) setUncontrolledValue(next);
     onValueChange?.(next);

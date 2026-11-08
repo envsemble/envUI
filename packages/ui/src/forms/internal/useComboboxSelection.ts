@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, type RefObject } from 'react';
-import { subscribeFormReset } from './subscribeFormReset.js';
+import { useState, type RefObject } from 'react';
+import { useFormReset } from './useFormReset.js';
 
 /**
  * A combobox's chosen value: the one it is given, or one it keeps itself, which a native form reset
@@ -24,23 +24,18 @@ export function useComboboxSelection({
   const defaultSelection = multiple
     ? [...((defaultValue as readonly string[] | undefined) ?? [])]
     : ((defaultValue as string | null | undefined) ?? null);
-  const defaultKey = JSON.stringify(defaultSelection);
   const [uncontrolledValue, setUncontrolledValue] = useState<readonly string[] | string | null>(
     defaultSelection,
   );
   const controlled = value !== undefined;
   const selection = controlled ? (multiple ? value : (value ?? null)) : uncontrolledValue;
 
-  useEffect(
-    function subscribeToFormReset() {
-      const input = nativeRef.current;
-      const ownerForm = input?.form;
-      if (!input || !ownerForm) return;
-      return subscribeFormReset(ownerForm, function applyReset() {
-        if (!controlled) setUncontrolledValue(JSON.parse(defaultKey));
-      });
+  useFormReset(
+    nativeRef,
+    function applyReset() {
+      if (!controlled) setUncontrolledValue(defaultSelection);
     },
-    [nativeRef, controlled, defaultKey, form],
+    form,
   );
 
   return {

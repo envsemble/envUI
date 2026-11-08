@@ -2,7 +2,6 @@
 
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import {
-  useEffect,
   useRef,
   useState,
   type ButtonHTMLAttributes,
@@ -21,8 +20,7 @@ import { IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
 import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './FieldFrame.js';
 import { PickerPopup, type PickerName } from './PickerPopup.js';
-import { subscribeFormReset } from './subscribeFormReset.js';
-import { useLatest } from '../../internal/useLatest.js';
+import { useFormReset } from './useFormReset.js';
 import { useFieldMetadata } from './useFieldMetadata.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
@@ -193,7 +191,6 @@ export function PickerField({
   const popupRef = useRef<HTMLDivElement>(null);
   // Whether the popup was open when a press on the label began, which closes it.
   const labelPressOpen = useRef(false);
-  const resetRef = useLatest(onFormReset);
   // Read as the popup opens, which takes the field's direction into its portal.
   const [direction] = useDirection(triggerRef, open);
   const hydrated = useHydrated();
@@ -204,15 +201,7 @@ export function PickerField({
     'aria-label': labelledBy == null && label == null ? ariaLabel : undefined,
   };
 
-  useEffect(
-    function subscribeToFormReset() {
-      const input = nativeRef.current;
-      const ownerForm = input?.form;
-      if (!input || !ownerForm) return;
-      return subscribeFormReset(ownerForm, () => resetRef.current());
-    },
-    [form, resetRef],
-  );
+  useFormReset(nativeRef, onFormReset, form);
 
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
     onKeyDown?.(event);

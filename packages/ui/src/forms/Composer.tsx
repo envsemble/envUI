@@ -21,7 +21,7 @@ import { Grid, Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { useFormReset } from './internal/useFormReset.js';
 import { TextareaControl } from './internal/TextareaControl.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
@@ -190,11 +190,13 @@ export function Composer({
   const canSend = onSend !== undefined || inForm;
 
   // The browser resets the native field; an uncontrolled composer follows with its own text.
-  useEffect(() => {
-    const input = inputRef.current;
-    if (!input?.form || value !== undefined) return;
-    return subscribeFormReset(input.form, () => setUncontrolledValue(defaultValue));
-  }, [value, defaultValue, form]);
+  useFormReset(
+    inputRef,
+    () => {
+      if (value === undefined) setUncontrolledValue(defaultValue);
+    },
+    form,
+  );
 
   function change(next: string) {
     if (value === undefined) setUncontrolledValue(next);
