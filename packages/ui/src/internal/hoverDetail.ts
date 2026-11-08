@@ -76,7 +76,7 @@ function isTextElement(element: ReactElement<TextLikeProps>): boolean {
         /(?:^|\s)env-text(?:\s|$)/.test(element.props.className))
     );
   if ((typeof type !== 'function' && typeof type !== 'object') || type === null) return false;
-  if ((type as unknown as Record<symbol, unknown>)[textKey] !== true) return false;
+  if (Reflect.get(type, textKey) !== true) return false;
   const render = element.props.render;
   if (!isValidElement(render)) return true;
   return render.type === 'p' || (typeof render.type === 'string' && textTags.has(render.type));

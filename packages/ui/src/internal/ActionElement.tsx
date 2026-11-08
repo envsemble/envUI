@@ -52,7 +52,7 @@ export function ActionElement({
   ...given
 }: ActionElementProps & { pending?: boolean; emphasis?: ActionEmphasis }) {
   const defaults = useControlDefaults();
-  let rest = given;
+  let rest: typeof given & { [attribute: `data-${string}`]: string | undefined } = given;
   if (emphasis) {
     const { variant, tone } = resolveEmphasis(emphasis, defaults.variant);
     rest = {
@@ -61,7 +61,7 @@ export function ActionElement({
       'data-tone': tone,
       'data-size': emphasis.size ?? defaults.size,
       'data-underline': flag(variant === 'text' && emphasis.underline),
-    } as unknown as typeof given;
+    };
   }
   const props = (
     pending
