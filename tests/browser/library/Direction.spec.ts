@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
 // The direction check: components whose keyboard or placement follows the text direction read it
-// from EnvUIProvider's dir, or else from the dir at their element. tests/fixture/Direction.tsx
+// from EnvUIProvider's dir, or else from the dir at their element. tests/fixture/Direction.fixture.tsx
 // mounts them in RTL both ways; as each batch moves a component onto useDirection, it adds it.
 
 test("the arrow keys turn as soon as the region's dir changes, with focus inside", async ({

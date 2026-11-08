@@ -51,7 +51,7 @@ import { IconSmartToy } from '@envsemble/envui/icons/SmartToy';
 import { IconTerminal } from '@envsemble/envui/icons/Terminal';
 import { IconTune } from '@envsemble/envui/icons/Tune';
 import { IconVisibility } from '@envsemble/envui/icons/Visibility';
-import { AppFrame, minutesAgo } from './AppScreenFrame.js';
+import { AppFrame, minutesAgo } from './AppScreenFrame.fixture.js';
 
 const before = `export async function deliver(event: WebhookEvent) {
   const response = await fetch(event.url, {

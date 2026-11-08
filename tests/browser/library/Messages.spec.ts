@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 import { defaultMessages } from '../../../packages/ui/src/foundations/messages/defaultMessages';
 
-// The pseudo-locale check: tests/fixture/MessageStrings.tsx renders the components whose strings come
+// The pseudo-locale check: tests/fixture/Messages.fixture.tsx renders the components whose strings come
 // from EnvUIProvider's messages with every message replaced by ⟦namespace.key⟧. No English default
 // may be left in their text, names, descriptions, titles, placeholders or value texts. As each
 // batch moves a family's strings into messages, it adds the family's components to the fixture.

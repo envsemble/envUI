@@ -22,7 +22,7 @@ import {
 } from '@envsemble/envui';
 import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { IconHome } from '@envsemble/envui/icons/Home';
-import { planOptions } from './SelectOptions.js';
+import { planOptions } from './SelectOptions.fixture.js';
 
 /** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
 const emphasis = {

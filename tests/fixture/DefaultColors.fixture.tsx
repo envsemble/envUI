@@ -39,7 +39,7 @@ import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
-import { planOptions } from './SelectOptions.js';
+import { planOptions } from './SelectOptions.fixture.js';
 
 const destinations: Destination[] = [
   { label: 'Home', icon: <IconHome />, href: '#home', current: true },

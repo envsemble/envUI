@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react';
 import { Theme } from '@envsemble/envui';
 import './ContactSheet.css';
-import { ActionsSheet } from './ContactSheetActions.js';
-import { FormsSheet } from './ContactSheetForms.js';
-import { NavigationSheet } from './ContactSheetNavigation.js';
-import { DataDisplaySheet } from './ContactSheetDataDisplay.js';
-import { ContentSheet } from './ContactSheetContent.js';
-import { FeedbackSheet } from './ContactSheetFeedback.js';
-import { OverlaysSheet } from './ContactSheetOverlays.js';
-import { LayoutSheet } from './ContactSheetLayout.js';
+import { ActionsSheet } from './ContactSheetActions.fixture.js';
+import { FormsSheet } from './ContactSheetForms.fixture.js';
+import { NavigationSheet } from './ContactSheetNavigation.fixture.js';
+import { DataDisplaySheet } from './ContactSheetDataDisplay.fixture.js';
+import { ContentSheet } from './ContactSheetContent.fixture.js';
+import { FeedbackSheet } from './ContactSheetFeedback.fixture.js';
+import { OverlaysSheet } from './ContactSheetOverlays.fixture.js';
+import { LayoutSheet } from './ContactSheetLayout.fixture.js';
 
 /** The catalogue's component groups (docs/components/*.md `category`), by their URL name. */
 const contactSheetFamilies: Record<string, { title: string; render: () => ReactNode }> = {
@@ -23,7 +23,7 @@ const contactSheetFamilies: Record<string, { title: string; render: () => ReactN
 };
 
 /**
- * A family's contact sheet (ContactSheetParts.tsx says how its states are shown), in the theme
+ * A family's contact sheet (ContactSheetParts.fixture.tsx says how its states are shown), in the theme
  * and scale the URL names: `?fixture=contact-sheet&family=actions&theme=dark&scale=system`.
  */
 export function ContactSheetFixture() {

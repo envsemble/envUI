@@ -7,6 +7,7 @@
 // --base       the branch to compare with; else ENVUI_BASE, else origin/envui-1.0, else origin/dev
 // --files      check these paths instead of the branch's changes, such as to try the selection
 // --dry-run    print the selection and stop
+import { parseArgs } from 'node:util';
 import {
   changedFiles,
   selectScope,
@@ -29,22 +30,24 @@ import {
 } from './TestTasks.ts';
 
 const started = performance.now();
-const argv = process.argv.slice(2);
-const option = (name: string) => {
-  const index = argv.indexOf(name);
-  return index === -1 ? undefined : argv[index + 1];
-};
-const affected = argv.includes('--affected');
-const dryRun = argv.includes('--dry-run');
+const {
+  values: { affected, 'dry-run': dryRun, base: baseOption, files },
+} = parseArgs({
+  options: {
+    affected: { type: 'boolean', default: false },
+    'dry-run': { type: 'boolean', default: false },
+    base: { type: 'string' },
+    files: { type: 'string' },
+  },
+});
 const tier = affected ? 'check:affected' : 'check';
 
 let paths: string[];
-const files = option('--files');
 if (files) {
   paths = files.split(',').filter(Boolean);
   console.log(bold(`${tier}: ${paths.length} given files`));
 } else {
-  const { base, mergeBase, changes } = changedFiles({ base: option('--base') });
+  const { base, mergeBase, changes } = changedFiles({ base: baseOption });
   paths = changes.map((change) => change.path);
   console.log(
     bold(`${tier}: ${paths.length} files changed against ${base}`) +
@@ -80,7 +83,7 @@ const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpec
 // The site build takes seconds, so the fast tier builds it when its specs open it.
 const builds = {
   library: affected && scope.build.library,
-  site: browserSpecs.some((name) => needs.get(name)!.site),
+  site: [...needs].some(([name, need]) => need.site && browserSpecs.includes(name)),
 };
 
 // What runs, and why.
@@ -200,7 +203,7 @@ if (scope.generated.has('docs'))
       node(
         'scripts/docs/GenerateParts.ts',
         '--check',
-        ...(option('--base') ? ['--base', option('--base')!] : []),
+        ...(baseOption ? ['--base', baseOption] : []),
       ),
     ),
     task(
@@ -208,7 +211,7 @@ if (scope.generated.has('docs'))
       node(
         'scripts/docs/GenerateExports.ts',
         '--check',
-        ...(option('--base') ? ['--base', option('--base')!] : []),
+        ...(baseOption ? ['--base', baseOption] : []),
       ),
     ),
     task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),

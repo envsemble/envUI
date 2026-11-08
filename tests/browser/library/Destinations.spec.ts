@@ -2,7 +2,7 @@ import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
 // What NavigationBar, NavigationRail and NavigationDrawer share, over the same destinations in
-// tests/fixture/Navigation.tsx.
+// tests/fixture/Navigation.fixture.tsx.
 
 const iconPaths = (item: Locator) =>
   item

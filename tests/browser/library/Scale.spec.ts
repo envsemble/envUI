@@ -8,7 +8,7 @@
  * always reaches the control it lands on, whatever the layout.
  */
 import { expect, test, type Locator, type Page } from '@playwright/test';
-import { controlSizes, densityScales } from '../../fixture/DensitySections';
+import { controlSizes, densityScales } from '../../fixture/ScaleSections.fixture';
 import { fixtureUrl } from '../helpers/Servers';
 
 /** The control heights of each scale, in CSS pixels at the default 16 px root. */

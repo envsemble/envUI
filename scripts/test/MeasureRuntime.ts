@@ -33,6 +33,7 @@ import { mkdir, readFile } from 'node:fs/promises';
 import { SourceMap } from 'node:module';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
 import { chromium, type Browser, type Page } from '@playwright/test';
 import { build, preview, type PreviewServer } from 'vite';
 
@@ -60,18 +61,20 @@ const ports = {
   fixture: Number(process.env.ENVUI_FIXTURE_PORT || 8779),
 };
 
-const args = process.argv.slice(2);
-const option = (name: string) => {
-  const index = args.indexOf(name);
-  return index === -1 ? undefined : args[index + 1];
-};
-const runs = Number(option('--runs') ?? 7);
+const { values: options } = parseArgs({
+  options: {
+    runs: { type: 'string', default: '7' },
+    only: { type: 'string' },
+    'no-build': { type: 'boolean', default: false },
+  },
+});
+const runs = Number(options.runs);
 const allScenarios = ['table', 'list', 'popups', 'theme', 'idle', 'resize'];
-const only = (option('--only') ?? allScenarios.join(',')).split(',');
+const only = (options.only ?? allScenarios.join(',')).split(',');
 for (const name of only)
   if (!allScenarios.includes(name))
     throw new Error(`Unknown scenario ${name}: ${allScenarios.join(', ')}.`);
-const fresh = !args.includes('--no-build');
+const fresh = !options['no-build'];
 const wants = (name: string) => only.includes(name);
 const needsSite = wants('theme') || wants('idle') || wants('resize');
 const needsFixture = wants('table') || wants('list') || wants('popups');

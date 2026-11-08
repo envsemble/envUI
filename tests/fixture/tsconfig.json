@@ -12,5 +12,5 @@
     "noEmit": true,
     "customConditions": ["envui-source"]
   },
-  "include": ["*.tsx", "hydration/*.tsx"]
+  "include": ["*.tsx"]
 }

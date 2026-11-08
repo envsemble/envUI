@@ -38,6 +38,7 @@ import { createSecureServer } from 'node:http2';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
 import { chromium } from '@playwright/test';
 
 const lighthouseVersion = '13.6.0';
@@ -90,22 +91,30 @@ const noneInView = (selector: string) =>
     return box.bottom > 0 && box.top < innerHeight && box.width > 0;
   });
 
-const args = process.argv.slice(2);
-const option = (name: string) => {
-  const index = args.indexOf(name);
-  return index === -1 ? undefined : args[index + 1];
-};
-const runs = Number(option('--runs') ?? 3);
-const only = (option('--only') ?? Object.keys(pages).join(',')).split(',');
+const { values: options } = parseArgs({
+  options: {
+    runs: { type: 'string', default: '3' },
+    only: { type: 'string' },
+    forms: { type: 'string' },
+    label: { type: 'string' },
+    site: { type: 'string' },
+    report: { type: 'string' },
+    'no-build': { type: 'boolean', default: false },
+    'no-navigation': { type: 'boolean', default: false },
+    serve: { type: 'boolean', default: false },
+  },
+});
+const runs = Number(options.runs);
+const only = (options.only ?? Object.keys(pages).join(',')).split(',');
 for (const name of only)
   if (!Object.hasOwn(pages, name))
     throw new Error(`Unknown page ${name}: ${Object.keys(pages).join(', ')}.`);
-const chosenForms = (option('--forms') ?? forms.join(',')).split(',') as Form[];
+const chosenForms = (options.forms ?? forms.join(',')).split(',') as Form[];
 for (const form of chosenForms)
   if (!forms.includes(form)) throw new Error(`Unknown form ${form}: ${forms.join(', ')}.`);
-const label = option('--label') ?? new Date().toISOString().replace(/[:.]/g, '-');
+const label = options.label ?? new Date().toISOString().replace(/[:.]/g, '-');
 /** The build served: dist/site, or --site's. */
-const site = resolve(root, option('--site') ?? 'dist/site');
+const site = resolve(root, options.site ?? 'dist/site');
 
 const median = (values: number[]) => {
   const sorted = values.filter((value) => Number.isFinite(value)).sort((a, b) => a - b);
@@ -579,12 +588,12 @@ async function retried<T>(step: () => Promise<T>, failed: T): Promise<T> {
 
 async function main() {
   const file = resolve(cache, `${label}.json`);
-  const from = option('--report');
+  const from = options.report;
   if (from) {
     console.log(report(JSON.parse(await readFile(resolve(cache, `${from}.json`), 'utf8'))));
     return;
   }
-  if (!args.includes('--no-build') && !option('--site')) await run(['npm', 'run', 'build:site']);
+  if (!options['no-build'] && !options.site) await run(['npm', 'run', 'build:site']);
   const wrangler = startWrangler();
   const { server, spki } = await startProxy();
   const profile = join(tmpdir(), `envui-site-perf-profile-${process.pid}`);
@@ -616,7 +625,7 @@ async function main() {
   try {
     await waitFor(`http://127.0.0.1:${wranglerPort}/`);
     await waitFor(`http://127.0.0.1:${debuggingPort}/json/version`);
-    if (args.includes('--serve')) {
+    if (options.serve) {
       console.log(`Serving ${site} at ${origin}, Chromium's DevTools on port ${debuggingPort}.`);
       await new Promise(() => {});
     }
@@ -653,7 +662,7 @@ async function main() {
       if (unused) record.unused[name] = unused;
     }
     await save();
-    if (!args.includes('--no-navigation'))
+    if (!options['no-navigation'])
       for (const form of chosenForms)
         for (const [key, start, to] of [
           ['catalogue link', '/components/button', undefined],

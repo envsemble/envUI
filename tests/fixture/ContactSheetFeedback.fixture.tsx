@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Alert, Button, Progress, Spinner, ToastProvider, useToast } from '@envsemble/envui';
-import { Cell, Section, Stage, Strip } from './ContactSheetParts.js';
+import { Cell, Section, Stage, Strip } from './ContactSheetParts.fixture.js';
 
 const alertTones = ['info', 'success', 'warning', 'danger'] as const;
 

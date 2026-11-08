@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-// envUI's controls in a native form, tests/fixture/Forms.tsx: what a form submits, and what its
+// envUI's controls in a native form, tests/fixture/Forms.fixture.tsx: what a form submits, and what its
 // reset restores.
 
 test.beforeEach(async ({ page }) => {

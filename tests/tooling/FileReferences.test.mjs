@@ -13,13 +13,6 @@ import { codeText, cssComments, listFiles } from '../support/sourceText.mjs';
 /** The folders whose comments are checked. */
 const checked = ['packages/ui/src', 'apps/site/src', 'scripts', 'tests'];
 
-/**
- * Folders whose agents fix their own dangling names in this round: checked by a test marked todo,
- * which reports without failing. Empty this list to make the check strict everywhere.
- */
-/** @type {string[]} */
-const pending = [];
-
 /** Generated from pinned inputs, and the fixtures' sample code: no comments of the repository's. */
 const skipped = ['packages/ui/src/icons/', 'apps/site/src/generated/', 'tests/visual/snapshots/'];
 
@@ -89,30 +82,12 @@ async function checkedFiles() {
   return files;
 }
 
-const isPending = (path) => pending.some((folder) => path.startsWith(`${folder}/`));
-
-async function danglingIn(select) {
-  const found = [];
-  for (const path of (await checkedFiles()).filter(select))
-    found.push(...danglingNames(path, await readFile(join(repository, path), 'utf8')));
-  return found;
-}
-
 test('comments name only files that exist', async () => {
-  assert.deepEqual(
-    await danglingIn((path) => !isPending(path)),
-    [],
-    'Update the comment to where the file is now, or drop the name.',
-  );
+  const found = [];
+  for (const path of await checkedFiles())
+    found.push(...danglingNames(path, await readFile(join(repository, path), 'utf8')));
+  assert.deepEqual(found, [], 'Update the comment to where the file is now, or drop the name.');
 });
-
-test(
-  'comments name only files that exist, in the folders fixing theirs',
-  { todo: pending.length > 0 && `pending in ${pending.join(', ')}` },
-  async () => {
-    assert.deepEqual(await danglingIn(isPending), []);
-  },
-);
 
 test('the check finds a moved file and passes one that is there', () => {
   const text = [

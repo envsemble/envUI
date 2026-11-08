@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-/** tests/fixture/Primitives.tsx, which mounts its toolbars among envUI's primitives. */
+/** tests/fixture/Primitives.fixture.tsx, which mounts its toolbars among envUI's primitives. */
 async function open(page: Page) {
   await page.goto(`${fixtureUrl}/?fixture=primitives`);
   await expect(page.getByTestId('toolbar')).toBeVisible();

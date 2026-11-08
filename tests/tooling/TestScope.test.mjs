@@ -105,8 +105,8 @@ test('a file runs the specs whose fixtures use it, and a fixture the specs that 
   // Through the module that imports it: Calendar is in the date picker's popup.
   assert.ok(specs('packages/ui/src/forms/Calendar.tsx').includes('DatePicker'));
   // A fixture runs the specs that open it, also through the fixtures that import it.
-  assert.deepEqual(specs('tests/fixture/Comboboxes.tsx'), ['Combobox', 'Field']);
-  assert.ok(specs('tests/fixture/Palette.tsx').includes('CommandPalette'));
+  assert.deepEqual(specs('tests/fixture/Combobox.fixture.tsx'), ['Combobox', 'Field']);
+  assert.ok(specs('tests/fixture/CommandPalette.fixture.tsx').includes('CommandPalette'));
   // An icon's name names a symbol: icons/Palette.tsx is not about CommandPalette.
   assert.ok(!specs('packages/ui/src/icons/Palette.tsx').includes('CommandPalette'));
 });
@@ -178,7 +178,7 @@ test("a fixture's specs follow what its imports mean, however they are written",
     ],
     'packages/ui/src/styles/Button.css': ['.env-button {}'],
     'tests/fixture/App.tsx': [
-      "import { Buttons } from './Buttons';",
+      "import { Buttons } from './Button.fixture';",
       'export default function App() {',
       "  const fixture = new URLSearchParams(location.search).get('fixture');",
       "  if (fixture === 'buttons') return <Buttons />;",
@@ -193,7 +193,7 @@ test("a fixture's specs follow what its imports mean, however they are written",
   const plain = checkout({
     ...common,
     'packages/ui/src/index.ts': ["export { Button } from './actions/Button.js';"],
-    'tests/fixture/Buttons.tsx': [
+    'tests/fixture/Button.fixture.tsx': [
       "import { Button } from '@envsemble/envui';",
       'export const Buttons = Button;',
     ],
@@ -201,7 +201,7 @@ test("a fixture's specs follow what its imports mean, however they are written",
   const rewritten = checkout({
     ...common,
     'packages/ui/src/index.ts': ["export * from './actions/Button.js';"],
-    'tests/fixture/Buttons.tsx': [
+    'tests/fixture/Button.fixture.tsx': [
       'import {',
       '  type Button as Kind,',
       '  Button as Action,',
@@ -213,7 +213,7 @@ test("a fixture's specs follow what its imports mean, however they are written",
     for (const root of [plain, rewritten]) {
       const specsOf = fixtureUse(root);
       assert.deepEqual(specsOf('packages/ui/src/styles/Button.css'), ['Button'], root);
-      assert.deepEqual(specsOf('tests/fixture/Buttons.tsx'), ['Button'], root);
+      assert.deepEqual(specsOf('tests/fixture/Button.fixture.tsx'), ['Button'], root);
     }
   } finally {
     rmSync(plain, { recursive: true, force: true });
