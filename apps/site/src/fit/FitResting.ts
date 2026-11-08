@@ -14,7 +14,6 @@ import {
   insetSlack,
   join,
   margin,
-  pixelTolerance,
   popupRoom,
   restingScale,
   scalePrecision,
@@ -36,6 +35,7 @@ import {
 import { inPopup, partOf, type Shown } from './PaintedBoxes';
 import { onCourse, restingAims } from './PointerCourse';
 import type { View } from './ViewEasing';
+import { pixelTolerance } from '../shared/Remeasure';
 
 /** A stage's size, in px. */
 interface Room {

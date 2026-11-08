@@ -6,6 +6,7 @@
  */
 import { recordedSize } from '../../loading/RecordedSizes';
 import { inset, union, type Box } from '../FitGeometry';
+import { pixelTolerance } from '../../shared/Remeasure';
 
 /**
  * The box that places the figure's dialogs, sheets and toasts: the stage, or in an anatomy figure,
@@ -243,7 +244,7 @@ export function makeRoom(room: HTMLElement, layer: HTMLElement, hold: boolean) {
       changed = true;
     }
   // The room grows, or shrinks back, by what the stage lacks or has to spare.
-  if (grow !== undefined && Math.abs(grow) > 0.5) {
+  if (grow !== undefined && Math.abs(grow) > pixelTolerance) {
     const height = (room.getBoundingClientRect().height + grow) / scale;
     const next = `${Math.max(0, Math.ceil(height))}px`;
     if (room.style.minBlockSize !== next) {

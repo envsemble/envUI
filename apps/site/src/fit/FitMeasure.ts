@@ -35,6 +35,7 @@ import {
   type Shown,
 } from './PaintedBoxes';
 import { restingAims } from './PointerCourse';
+import { pixelTolerance } from '../shared/Remeasure';
 
 /**
  * What every fit starts from: what the picture paints, when it runs, whether it grows as it plays
@@ -238,10 +239,10 @@ export function shapeOf(stage: HTMLElement, canvas: HTMLElement, boxes: Shown[])
 function wholeInView(element: Element) {
   const box = element.getBoundingClientRect();
   const inside = (around: { left: number; top: number; right: number; bottom: number }) =>
-    box.left >= around.left - 0.5 &&
-    box.top >= around.top - 0.5 &&
-    box.right <= around.right + 0.5 &&
-    box.bottom <= around.bottom + 0.5;
+    box.left >= around.left - pixelTolerance &&
+    box.top >= around.top - pixelTolerance &&
+    box.right <= around.right + pixelTolerance &&
+    box.bottom <= around.bottom + pixelTolerance;
   if (!inside({ left: 0, top: 0, right: innerWidth, bottom: innerHeight })) return false;
   for (let node = element.parentElement; node; node = node.parentElement) {
     const style = getComputedStyle(node);

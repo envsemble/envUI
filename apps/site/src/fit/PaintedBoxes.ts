@@ -4,6 +4,7 @@
  */
 import { paintsOf } from '@envui-internal/dev/measure';
 import type { Box } from './FitGeometry';
+import { pixelTolerance } from '../shared/Remeasure';
 
 /** The layer a picture's popups open in (StageOverlays, motion/Playback.tsx). */
 export const overlayLayer = '.catalogue-overlay-layer';
@@ -120,7 +121,12 @@ export function shownBoxes(canvas: HTMLElement) {
         box.height >= area.height - 1 &&
         /absolute|fixed/.test(style.position);
       // A hairline counts, such as a toolbar's separator a px wide, whatever the scale rounds it to.
-      if (box.width > 0.5 && box.height > 0.5 && !covers && paints(child, style))
+      if (
+        box.width > pixelTolerance &&
+        box.height > pixelTolerance &&
+        !covers &&
+        paints(child, style)
+      )
         found.push({ element: child, box });
       // Text counts as far as it runs, also past a box narrower than it, such as a heatmap's
       // month names over columns of no width.

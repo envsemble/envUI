@@ -1,5 +1,5 @@
 import { useLayoutEffect, type RefObject } from 'react';
-import { remeasure, type Change } from '../../shared/Remeasure';
+import { pixelTolerance, remeasure, type Change } from '../../shared/Remeasure';
 
 /**
  * Draws a do or don't figure's example smaller where it must to fit its stage, as a tile
@@ -47,7 +47,7 @@ export function useVerdictFit(
       if (changed.has('mutation')) for (const child of boxElement.children) fits.observe(child);
       const width = stageElement.clientWidth;
       if (!width) return;
-      if (Math.abs(width - side) > 0.5) {
+      if (Math.abs(width - side) > pixelTolerance) {
         side = width;
         set(width);
         settle();
@@ -67,7 +67,7 @@ export function useVerdictFit(
       const tall = boxElement.offsetHeight;
       const wide = Math.max(widest + padding, boxElement.scrollWidth);
       const needed = Math.ceil(fit ? wide : Math.max(tall, wide));
-      if (needed > room + 0.5) set(needed);
+      if (needed > room + pixelTolerance) set(needed);
       settle();
     };
     const fits = remeasure(measure, {

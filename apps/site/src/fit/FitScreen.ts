@@ -17,6 +17,7 @@ import type { StageScript } from './FitKind';
 import type { Measured } from './FitMeasure';
 import { overlayLayer, partOf, type Shown } from './PaintedBoxes';
 import { heading, onCourse } from './PointerCourse';
+import { pixelTolerance } from '../shared/Remeasure';
 
 /** A component's modal over its backdrop, open in its tile's overlay layer. */
 export const modal = `${overlayLayer} .env-dialog-backdrop`;
@@ -73,7 +74,7 @@ export function modalRoom(canvas: HTMLElement): ModalRoom {
       px(itself.marginRight) +
       px(around.paddingLeft) +
       px(around.paddingRight);
-    if (wide > canvas.offsetWidth + 0.5) needWidth = Math.max(needWidth, wide);
+    if (wide > canvas.offsetWidth + pixelTolerance) needWidth = Math.max(needWidth, wide);
   }
   return { needHeight, needWidth, surfaceHeight };
 }

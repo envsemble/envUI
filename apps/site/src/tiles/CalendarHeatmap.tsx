@@ -5,6 +5,7 @@ import { useHeldView } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
+import { remeasure } from '../shared/Remeasure';
 
 /** Nine weeks of edits from Monday 2 February 2026, busier in waves. */
 const data: CalendarHeatmapDay[] = Array.from({ length: 63 }, (_, index) => ({
@@ -57,10 +58,7 @@ export default function CalendarHeatmapTile() {
       const scale = box.width / element.offsetWidth || 1;
       setHeight(Math.ceil((last.getBoundingClientRect().bottom - box.top) / scale) + 1);
     };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(last);
-    return () => observer.disconnect();
+    return remeasure(measure, { first: 'now', resize: [last] }).stop;
   }, [narrow]);
   return (
     <div ref={crop} style={{ blockSize: height, overflow: 'hidden' }}>

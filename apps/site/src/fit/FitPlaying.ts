@@ -26,6 +26,7 @@ import type { Scales } from './FitMeasure';
 import { elementsOf, inkOf, inPopup, partOf, settling, type Shown } from './PaintedBoxes';
 import { heading } from './PointerCourse';
 import type { Target } from './ViewEasing';
+import { pixelTolerance } from '../shared/Remeasure';
 
 /**
  * A playing tile's run: the elements its still showed, in the canvas's own px; the scale it is
@@ -220,8 +221,8 @@ export function decidePlayCut(
 ): { cut: string; run: Run } {
   const moved =
     run.moved ||
-    Math.abs(view.toX - run.at.x) >= 0.5 ||
-    Math.abs(view.toY - run.at.y) >= 0.5 ||
+    Math.abs(view.toX - run.at.x) >= pixelTolerance ||
+    Math.abs(view.toY - run.at.y) >= pixelTolerance ||
     Math.abs(view.toScale - run.at.scale) >= scaleTolerance;
   const sides = new Set(
     holdsView

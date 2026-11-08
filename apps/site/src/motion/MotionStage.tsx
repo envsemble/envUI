@@ -21,6 +21,7 @@ import { useDisplaySettings } from '../display/DisplaySettings';
 import { Playback, StageOverlays } from './Playback';
 import { useInView } from './useInView';
 import { rootMotionDuration } from '../shared/RootMotionTokens';
+import { pixelTolerance, remeasure } from '../shared/Remeasure';
 import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 import { flag } from '@envui-internal/internal/flag';
 
@@ -365,27 +366,28 @@ function useTallest(stage: RefObject<HTMLDivElement | null>, height: string | un
     // such as rows that stack on a phone, does so a moment later: the stage lets go of its hold
     // and takes it again from what it needs once the figure has settled.
     let settle: ReturnType<typeof setTimeout> | undefined;
-    const observer = new ResizeObserver(() => {
-      const stageWidth = element.getBoundingClientRect().width;
-      if (Math.abs(stageWidth - width) > 0.5) {
-        width = stageWidth;
-        hold(0);
-        clearTimeout(settle);
-        settle = setTimeout(() => {
-          settle = undefined;
-          hold(needed());
-        }, 400);
-        return;
-      }
-      if (settle !== undefined) return;
-      const need = needed();
-      if (need > tallest + 0.5) hold(need);
-    });
-    observer.observe(element);
     const subject = element.querySelector('.catalogue-motion-subject');
-    if (subject) observer.observe(subject);
+    const sizes = remeasure(
+      () => {
+        const stageWidth = element.getBoundingClientRect().width;
+        if (Math.abs(stageWidth - width) > pixelTolerance) {
+          width = stageWidth;
+          hold(0);
+          clearTimeout(settle);
+          settle = setTimeout(() => {
+            settle = undefined;
+            hold(needed());
+          }, 400);
+          return;
+        }
+        if (settle !== undefined) return;
+        const need = needed();
+        if (need > tallest + pixelTolerance) hold(need);
+      },
+      { resize: subject ? [element, subject] : [element] },
+    );
     return () => {
-      observer.disconnect();
+      sizes.stop();
       clearTimeout(settle);
       element.style.minBlockSize = own;
     };

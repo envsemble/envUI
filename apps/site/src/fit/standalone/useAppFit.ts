@@ -1,5 +1,6 @@
 import { useLayoutEffect, type RefObject } from 'react';
 import { remPixels } from '@envui-internal/internal/lengths';
+import { pixelTolerance, remeasure } from '../../shared/Remeasure';
 
 /**
  * Lays the canvas of an application's tile out over its stage, less the margin the frame keeps
@@ -18,10 +19,7 @@ export function useAppFit(
     const canvasElement = canvas.current;
     if (!on || !stageElement || !canvasElement) return;
     const fit = () => fitApp(stageElement, canvasElement, least);
-    fit();
-    const observer = new ResizeObserver(fit);
-    observer.observe(stageElement);
-    return () => observer.disconnect();
+    return remeasure(fit, { first: 'now', resize: [stageElement] }).stop;
   }, [stage, canvas, on, least]);
 }
 
@@ -35,7 +33,7 @@ function fitApp(stage: HTMLElement, canvas: HTMLElement, least: number) {
   if (width <= 0 || height <= 0) return;
   const scale = parseFloat(style.getPropertyValue('--catalogue-app-scale')) || 1;
   // Wider than the card, it is cut off at its end, fading out there, as a screenshot is cropped.
-  if (least * rem * scale > width + 0.5) canvas.dataset.cut = 'end';
+  if (least * rem * scale > width + pixelTolerance) canvas.dataset.cut = 'end';
   else delete canvas.dataset.cut;
   canvas.style.setProperty('--catalogue-app-least', `${least}rem`);
   canvas.style.inlineSize = `${width / scale}px`;

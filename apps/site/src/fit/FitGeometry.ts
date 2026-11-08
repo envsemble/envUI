@@ -3,6 +3,7 @@
  * drawn at, and where its view goes. Nothing here reads the page (tests/site/Fit.test.mjs).
  */
 import type { FitKind } from './FitKind';
+import { pixelTolerance } from '../shared/Remeasure';
 
 /** A box, by its edges: in a canvas's own px here, in whatever px its user measures elsewhere. */
 export interface Box {
@@ -17,12 +18,6 @@ export interface Box {
  * smaller, a ten-millionth of the scale.
  */
 export const scaleTolerance = 0.0005;
-
-/**
- * Lengths closer than this, in px, are one length: what is placed at whole pixels, or measured
- * again, comes out a fraction off.
- */
-export const pixelTolerance = 0.5;
 
 /** The steps a scale is kept to where it is written down or held, thousandths. */
 export const scalePrecision = 1000;
@@ -159,8 +154,8 @@ export function frameOnCourse(
     // in moves nothing.
     let box = found;
     if (!held) {
-      const right = found.left + (2 * (halfAcross - margin) - 0.5) / scale;
-      const bottom = found.top + (2 * (halfDown - margin) - 0.5) / scale;
+      const right = found.left + (2 * (halfAcross - margin) - pixelTolerance) / scale;
+      const bottom = found.top + (2 * (halfDown - margin) - pixelTolerance) / scale;
       fromStart = { x: found.right > right, y: found.bottom > bottom };
       box = {
         ...found,
@@ -213,7 +208,7 @@ export function anchoredScale(parts: readonly Padded[], across: number, down: nu
   const fits = (scale: number) => {
     const x = paddedExtent(parts, scale, 'x');
     const y = paddedExtent(parts, scale, 'y');
-    return x.high - x.low <= across + 0.5 && y.high - y.low <= down + 0.5;
+    return x.high - x.low <= across + pixelTolerance && y.high - y.low <= down + pixelTolerance;
   };
   if (fits(most)) return most;
   let low = 0;
@@ -421,7 +416,7 @@ export function drawOut({ must, anchor, at, across, down, scale: drawn, least, s
     keepLow?: number,
     keepHigh?: number,
   ) => {
-    if ((high - low) * scale > size - 2 * playMargin + 0.5) {
+    if ((high - low) * scale > size - 2 * playMargin + pixelTolerance) {
       const start = size / 2 + low * scale - playMargin;
       if (keepLow === undefined || keepHigh === undefined) return start;
       return Math.min(

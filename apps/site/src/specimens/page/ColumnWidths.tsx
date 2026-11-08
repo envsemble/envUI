@@ -4,6 +4,7 @@ import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 import { remPixels } from '@envui-internal/internal/lengths';
+import { remeasure } from '../../shared/Remeasure';
 
 /** The window the page sits in, in rem: wider than the large column, so Full reads as wider. */
 const frame = { width: 88, height: 17 };
@@ -39,10 +40,7 @@ function Widening() {
       // A little room on either side, so the window reads as one on the stage.
       setScale(Math.min(1, (0.92 * element.clientWidth) / (frame.width * rem)));
     };
-    fit();
-    const resize = new ResizeObserver(fit);
-    resize.observe(element);
-    return () => resize.disconnect();
+    return remeasure(fit, { first: 'now', resize: [element] }).stop;
   }, []);
 
   const ruler: CSSProperties = { inlineSize: `calc(${scale} * ${column}rem)` };

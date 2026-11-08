@@ -8,6 +8,7 @@ import { rootEasingFunction, rootMotionDuration } from '../shared/RootMotionToke
 import { place } from './FitDraw';
 import type { Seen } from './FitMeasure';
 import type { Fitting } from './useFit';
+import { pixelTolerance } from '../shared/Remeasure';
 
 type Point = [x: number, y: number, scale: number];
 
@@ -183,8 +184,8 @@ export function settle(
     const held =
       first.calm > 0 &&
       view.scale === scale &&
-      Math.abs(view.x - toX) < 0.5 &&
-      Math.abs(view.y - toY) < 0.5;
+      Math.abs(view.x - toX) < pixelTolerance &&
+      Math.abs(view.y - toY) < pixelTolerance;
     first.calm = held ? first.calm + 1 : 1;
     first.start ||= performance.now();
     view.x = view.toX = toX;

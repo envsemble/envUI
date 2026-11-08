@@ -5,6 +5,7 @@
  * it. Nothing here reads the page (tests/site/Fit.test.mjs).
  */
 import { cursorRoom, inset, join, scaleTolerance, type Box } from './FitGeometry';
+import { pixelTolerance } from '../shared/Remeasure';
 
 /** How far, in px, a row may reach past the crop's foot and still count as whole (trimRows). */
 export const rowSlack = 2;
@@ -143,7 +144,7 @@ export function heldTop(scale: number, way: HeldWay, room: HeldRoom) {
     size + way.slack - (way.reach.bottom - top) * scale,
     size - cursorRoom - cursorFoot,
   );
-  return at >= heldTopLeast - 0.5 ? { at, fadeAt: way.whole.bottom } : null;
+  return at >= heldTopLeast - pixelTolerance ? { at, fadeAt: way.whole.bottom } : null;
 }
 
 /** The first way a held view shows as at a scale, and where it is placed for it (heldTop). */
@@ -304,7 +305,7 @@ export function holdsFrame(was: Shape, now: Shape, follow: Follow) {
   const parts = (boxes: Shape['boxes'], inPopup: boolean) =>
     boxes.filter(({ popup }) => (popup !== null) === inPopup);
   if (
-    !near(was.room, now.room, 0.5) ||
+    !near(was.room, now.room, pixelTolerance) ||
     was.popups !== now.popups ||
     !same(parts(was.boxes, false), parts(now.boxes, false), 1)
   )

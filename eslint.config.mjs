@@ -36,6 +36,27 @@ const confusingBrowserGlobals = [
 ];
 
 /**
+ * The site reaches the library through its entry points, and what they don't export through
+ * @envui-internal, the scripts' documentation model through @docs-model (AGENTS.md): a relative
+ * path into either would break unseen when a file there moves.
+ */
+const siteImports = {
+  regex: String.raw`^(\.\./)+(packages/ui/src|scripts)(/|$)`,
+  message:
+    'Import the library from @envsemble/envui, its internals from @envui-internal/* and the documentation model from @docs-model/* (AGENTS.md).',
+};
+
+/**
+ * The site measures sizes through its one measuring loop, remeasure (apps/site/src/shared/
+ * Remeasure.ts), which owns the site's only ResizeObserver.
+ */
+const siteResizeObserver = {
+  selector: "NewExpression[callee.name='ResizeObserver']",
+  message:
+    'Measure through remeasure (apps/site/src/shared/Remeasure.ts), the site’s one measuring loop.',
+};
+
+/**
  * Names the site declares with "preview" in them: the site's words for what it shows are example,
  * specimen, tile, figure and stage (AGENTS.md), and preview is an older name. Names it only reads,
  * such as a library prop or an example's import, are left to where they are declared.
@@ -171,25 +192,34 @@ export default defineConfig(
   })),
   {
     // The site's own code. Examples are application code, where a preview is the product's word,
-    // such as a file's or the Markdown editor's.
+    // such as a file's or the Markdown editor's, and where a ResizeObserver is the application's.
     files: ['apps/site/src/**/*.{ts,tsx}'],
     ignores: ['apps/site/src/examples/**'],
+    rules: { 'no-restricted-syntax': ['error', ...previewNames, siteResizeObserver] },
+  },
+  {
+    // The measuring loop is the one place in the site that creates a ResizeObserver.
+    files: ['apps/site/src/shared/Remeasure.ts'],
     rules: { 'no-restricted-syntax': ['error', ...previewNames] },
   },
   {
-    // The site reaches the library through its entry points, and what they don't export through
-    // @envui-internal, the scripts' documentation model through @docs-model (AGENTS.md): a relative
-    // path into either would break unseen when a file there moves.
     files: ['apps/site/src/**/*.{ts,tsx}'],
+    rules: { 'no-restricted-imports': ['error', { patterns: [siteImports] }] },
+  },
+  {
+    // Imports between fit/ and motion/ run one way: motion/ may use fit/, and fit/ takes what a
+    // script tells it through the ScriptReader the figures pass in (fit/README.md).
+    files: ['apps/site/src/fit/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [
         'error',
         {
           patterns: [
+            siteImports,
             {
-              regex: String.raw`^(\.\./)+(packages/ui/src|scripts)(/|$)`,
+              regex: String.raw`^(\.\./)+motion(/|$)`,
               message:
-                'Import the library from @envsemble/envui, its internals from @envui-internal/* and the documentation model from @docs-model/* (AGENTS.md).',
+                'fit/ does not import motion/: take what a script tells the fit through a ScriptReader (fit/FitKind.ts).',
             },
           ],
         },

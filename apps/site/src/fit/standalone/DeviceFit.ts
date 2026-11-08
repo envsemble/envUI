@@ -8,6 +8,7 @@ import type { DeviceKind } from '@docs-model/DocumentationTypes';
 import { remPixels } from '@envui-internal/internal/lengths';
 import type { Box } from '../FitGeometry';
 import type { Aim, ScriptReader } from '../FitKind';
+import { pixelTolerance } from '../../shared/Remeasure';
 
 /**
  * The least each kind is drawn at, and the least its small text (body-sm) is drawn at, about
@@ -163,8 +164,8 @@ function cutCost(
       else if (word.right > band[0] && word.left < band[1]) cost += 2;
     }
   };
-  if (start > 0.5) edge(start, 1);
-  if (end < whole - 0.5) edge(end, -1);
+  if (start > pixelTolerance) edge(start, 1);
+  if (end < whole - pixelTolerance) edge(end, -1);
   return cost;
 }
 
@@ -228,12 +229,12 @@ export interface DeviceFit {
 export const sameFit = (a: DeviceFit, b: DeviceFit) =>
   a.scale === b.scale &&
   a.cut === b.cut &&
-  Math.abs(a.outset.start - b.outset.start) < 0.5 &&
-  Math.abs(a.outset.end - b.outset.end) < 0.5 &&
-  Math.abs(a.width - b.width) < 0.5 &&
-  Math.abs(a.height - b.height) < 0.5 &&
-  Math.abs(a.x - b.x) < 0.5 &&
-  Math.abs(a.y - b.y) < 0.5;
+  Math.abs(a.outset.start - b.outset.start) < pixelTolerance &&
+  Math.abs(a.outset.end - b.outset.end) < pixelTolerance &&
+  Math.abs(a.width - b.width) < pixelTolerance &&
+  Math.abs(a.height - b.height) < pixelTolerance &&
+  Math.abs(a.x - b.x) < pixelTolerance &&
+  Math.abs(a.y - b.y) < pixelTolerance;
 
 /** A device stage's elements, as its fit reads them, and what it keeps from one fit to the next. */
 export interface DeviceFitting {
@@ -280,7 +281,7 @@ function deviceScale({ kind, stage, box, row }: DeviceFitting) {
     start: hostStyle ? parseFloat(hostStyle.paddingLeft) || 0 : 0,
     end: hostStyle ? parseFloat(hostStyle.paddingRight) || 0 : 0,
   };
-  const across = width * scale > room + 0.5;
+  const across = width * scale > room + pixelTolerance;
   return {
     fade,
     width,
@@ -385,7 +386,11 @@ function viewAcross(
   const kept = held.state === state ? held.across : undefined;
   const keeps = (place: NonNullable<Held['across']>) => {
     const span = needed(place.width / scale);
-    return !span || (span[0] >= place.x - 0.5 && span[1] <= place.x + place.width / scale + 0.5);
+    return (
+      !span ||
+      (span[0] >= place.x - pixelTolerance &&
+        span[1] <= place.x + place.width / scale + pixelTolerance)
+    );
   };
   if (kept && keeps(kept)) return { x: kept.x, width: kept.width, outset: { ...kept.outset } };
   let x = along(shownWidth);
@@ -397,8 +402,8 @@ function viewAcross(
     x = 0;
   } else if (across) {
     // A side that isn't cut keeps the stage's padding.
-    const startCut = x > 0.5;
-    const endCut = x + viewWidth / scale < width - 0.5;
+    const startCut = x > pixelTolerance;
+    const endCut = x + viewWidth / scale < width - pixelTolerance;
     outset.start = startCut ? pad.start : 0;
     outset.end = endCut ? pad.end : 0;
     viewWidth = room + outset.start + outset.end;
@@ -442,10 +447,10 @@ export function deviceFit(f: DeviceFitting, fromMutation: boolean): DeviceFit | 
   shown.width = placed.width;
   view.x = placed.x;
   const cut = [
-    view.y > 0.5 && 'top',
-    view.y + shown.height / scale < height - 0.5 && 'bottom',
-    view.x > 0.5 && 'start',
-    view.x + shown.width / scale < width - 0.5 && 'end',
+    view.y > pixelTolerance && 'top',
+    view.y + shown.height / scale < height - pixelTolerance && 'bottom',
+    view.x > pixelTolerance && 'start',
+    view.x + shown.width / scale < width - pixelTolerance && 'end',
   ]
     .filter(Boolean)
     .join(' ');

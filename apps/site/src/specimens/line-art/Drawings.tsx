@@ -26,6 +26,7 @@ import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import { IconRepeat } from '@envsemble/envui/icons/Repeat';
 import { SpecimenGrid, SpecimenHeadingLevel } from '../../figures/SpecimenFrame';
 import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
+import { remeasure } from '../../shared/Remeasure';
 
 /** Each drawing's name, as people say it. */
 const names: Record<LineArtDrawing, string> = {
@@ -244,11 +245,7 @@ function useColumns(list: RefObject<HTMLUListElement | null>) {
       const between = Number.parseFloat(getComputedStyle(ul).columnGap) || 0;
       setColumns(space >= 4 * need + 3 * between ? 4 : space >= 2 * need + between ? 2 : 1);
     };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(ul);
-    observer.observe(toolbar);
-    return () => observer.disconnect();
+    return remeasure(measure, { first: 'now', resize: [ul, toolbar] }).stop;
   }, [list]);
   return columns;
 }

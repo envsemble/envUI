@@ -8,6 +8,7 @@ import { remPixels } from '@envui-internal/internal/lengths';
 import type { Fitting } from './useFit';
 import { rowSlack } from './HeldView';
 import { moving, pictures } from './PaintedBoxes';
+import { pixelTolerance } from '../shared/Remeasure';
 
 /**
  * Where a decision places a picture's view (FitResting.ts, FitScreen.ts): the scale it is drawn at
@@ -152,11 +153,11 @@ function trimRows(
       : Math.max(0, Math.min(fade, height - fadeFrom));
   // How far up from the foot a row's top shows no more than a sliver: in a fade's faint end, or
   // anywhere in a fade too short to fade a row out.
-  const sliver = length < remPixels() / 2 ? length + 0.5 : length / 2;
+  const sliver = length < remPixels() / 2 ? length + pixelTolerance : length / 2;
   // A fade shortened below what a held view's script acts on is too short to fade a row out: a
   // row below it that reaches past the foot is hidden whole, so the window stops on a whole row
   // rather than on one cut through its glyphs, also as the tile plays, its view held.
-  const short = !edge && fadeFrom !== null && length < fade - 0.5;
+  const short = !edge && fadeFrom !== null && length < fade - pixelTolerance;
   for (const row of canvas.querySelectorAll<HTMLElement>(rowSelector)) {
     const box = row.getBoundingClientRect();
     // As a tile plays, its view drawn out for all it shows, a row it showed stays as the view
@@ -209,7 +210,7 @@ export function markRunsOn(regions: Iterable<Element>) {
 function inkPastFoot(region: HTMLElement) {
   const box = region.getBoundingClientRect();
   const ratio = box.height / region.offsetHeight || 1;
-  const foot = box.top + (region.clientTop + region.clientHeight) * ratio + 0.5 * ratio;
+  const foot = box.top + (region.clientTop + region.clientHeight) * ratio + pixelTolerance * ratio;
   const walker = document.createTreeWalker(region, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     if (node instanceof Element) {
