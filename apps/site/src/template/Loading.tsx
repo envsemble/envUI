@@ -67,40 +67,58 @@ export function HoldPlaceholder({ part, children }: { part: string; children: Re
 }
 
 /**
- * A skeleton that leaves while it shows, kept in its place as a copy, unseen by assistive
- * technology and no longer counted as loading, over what takes its place, until that shows: then it fades out as what it stood for
- * fades in, in the same frame, so the stage is never seen empty between them. Measured as it
- * leaves, while still in place; `place` lays the copy over the same box in a container, where its
- * pulse goes on where it was, `fade` fades it out in the fast time and removes it, at once with
- * motion reduced.
+ * The layer over a page that holds the copies of skeletons on their way out (leaveInPlace): over
+ * the whole scrolling page, which it scrolls with, and clipped to it, so a copy never adds to the
+ * page's length; out of the page's flow, so it changes no part's layout, as a copy among the part's
+ * own siblings would, such as which of them is the last. Made the first time it is needed.
+ */
+function leavingLayer(element: HTMLElement) {
+  const page = element.closest<HTMLElement>('.site-main');
+  if (!page) return undefined;
+  let layer = page.querySelector<HTMLElement>(':scope > .site-loading-leaving-layer');
+  if (!layer) {
+    layer = document.createElement('div');
+    layer.className = 'site-loading-leaving-layer';
+    layer.setAttribute('aria-hidden', 'true');
+    layer.inert = true;
+    page.append(layer);
+  }
+  return layer;
+}
+
+/**
+ * A skeleton that leaves while it shows, kept as a copy where it was, unseen by assistive
+ * technology and no longer counted as loading, over what takes its place, until that shows: then
+ * it fades out as what it stood for fades in, in the same frame, so the stage is never seen empty
+ * between them. Measured as it leaves, while still in place, and drawn as it was, its fill and
+ * corners as its place gave them, its pulse going on where it was; `place` lays the copy over the
+ * same box in the page's leaving layer, and `fade` fades it out in the fast time and removes it,
+ * at once with motion reduced. A skeleton outside the page, or not laid out, leaves no copy.
  */
 function leaveInPlace(element: HTMLElement) {
+  const layer = leavingLayer(element);
   const box = element.getBoundingClientRect();
-  const width = element.offsetWidth;
-  const height = element.offsetHeight;
+  if (!layer || !box.width || !box.height) return undefined;
+  const style = getComputedStyle(element);
   const times = element.getAnimations({ subtree: true }).map((animation) => animation.currentTime);
-  const fill = getComputedStyle(element).backgroundColor;
   const copy = element.cloneNode(true) as HTMLElement;
   for (const node of [copy, ...copy.querySelectorAll('[id]')]) node.removeAttribute('id');
-  // No longer a part that loads, for the page and the tests (`.site-loading`), but drawn as it was.
+  // No longer a part that loads, for the page and the tests (`.site-loading`).
   copy.classList.replace('site-loading', 'site-loading-leaving');
-  copy.style.backgroundColor = fill;
   copy.removeAttribute('data-site-part');
   copy.removeAttribute('aria-busy');
-  copy.setAttribute('aria-hidden', 'true');
-  copy.inert = true;
   Object.assign(copy.style, {
     position: 'absolute',
-    left: '0',
-    top: '0',
     margin: '0',
     boxSizing: 'border-box',
-    inlineSize: `${width}px`,
-    blockSize: `${height}px`,
+    inlineSize: `${box.width}px`,
+    blockSize: `${box.height}px`,
     minInlineSize: '0',
     minBlockSize: '0',
     maxInlineSize: 'none',
-    pointerEvents: 'none',
+    backgroundColor: style.backgroundColor,
+    borderRadius: style.borderRadius,
+    boxShadow: style.boxShadow,
   });
   let gone = false;
   const remove = () => {
@@ -110,12 +128,11 @@ function leaveInPlace(element: HTMLElement) {
   // However what it waits for goes, the copy goes too.
   const timer = window.setTimeout(remove, leaveLongest);
   return {
-    place(container: HTMLElement) {
-      container.append(copy);
-      const at = copy.getBoundingClientRect();
-      const scale = (width && at.width / width) || 1;
-      copy.style.left = `${(box.left - at.left) / scale}px`;
-      copy.style.top = `${(box.top - at.top) / scale}px`;
+    place() {
+      const at = layer.getBoundingClientRect();
+      copy.style.left = `${box.left - at.left}px`;
+      copy.style.top = `${box.top - at.top}px`;
+      layer.append(copy);
       const animations = copy.getAnimations({ subtree: true });
       if (animations.length === times.length)
         animations.forEach((animation, index) => (animation.currentTime = times[index] ?? null));
@@ -186,24 +203,15 @@ function useArrival(skeleton: { current: HTMLElement | null }) {
       queueMicrotask(() => {
         if (!parent.isConnected) return;
         const arrived = [...parent.children].filter(
-          (child) =>
-            !before.has(child) &&
-            !child.classList.contains('site-loading') &&
-            !child.classList.contains('site-loading-leaving'),
+          (child) => !before.has(child) && !child.classList.contains('site-loading'),
         );
         const room = parent.closest<HTMLElement>('.catalogue-open-example:not([data-placed])');
+        leaving?.place();
         if (room) {
-          // Outside the room, which stays unseen until it is made.
-          if (leaving && room.parentElement) {
-            leaving.place(room.parentElement);
-            whenPlaced(room, leaving.fade);
-          }
+          if (leaving) whenPlaced(room, leaving.fade);
           return;
         }
-        if (leaving) {
-          leaving.place(parent);
-          leaving.fade();
-        }
+        leaving?.fade();
         if (reducedMotion()) return;
         const easing = motionEase('ease-enter');
         for (const child of arrived)
