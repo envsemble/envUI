@@ -1,8 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { Column, Page, PageHeader, Text } from '@envsemble/envui';
-import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { narrowGallery } from './Tiles';
 
 /**
  * The page's sections, each with its own line, short enough to fit on one at a phone's width: an
@@ -43,17 +41,15 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A page in a box that scrolls, as a window does, at its own size and as low as its header and one
- * whole section: its still is scrolled past the overview to Summary, under the header stuck at the
+ * A page in a box that scrolls, as a window does: its still is scrolled past the overview to Summary, under the header stuck at the
  * top with the fill it takes once content scrolls beneath it. As it plays, the pointer's wheel
  * scrolls it a section at a time and back; the box snaps to the sections' starts, each held clear
  * of the header by the Page's own scroll margin, so each turn rests with one whole section under
  * it; each section ends in room as deep as that margin's, so the one above is wholly past the
- * header's top. Room after the last lets it scroll there too. In a phone's narrower tile the box is
- * narrower, so the page is drawn at about its own size there.
+ * header's top. Room after the last lets it scroll there too. The box fills its card, as a window's
+ * page fills it (AppTile.tsx).
  */
 export default function PageTile() {
-  const narrow = useMedia(narrowGallery);
   const box = useRef<HTMLDivElement>(null);
   usePointer(script);
   // Its still is drawn at Summary's start at once.
@@ -68,18 +64,16 @@ export default function PageTile() {
       element.scrollTop -
       parseFloat(getComputedStyle(section).scrollMarginBlockStart || '0');
     element.scrollTop = Math.round(top);
-  }, [narrow]);
+  }, []);
   return (
     <div
       ref={box}
       style={{
-        inlineSize: narrow ? '10rem' : '12.5rem',
-        blockSize: narrow ? '6.875rem' : '7.25rem',
+        blockSize: '100%',
         overflowY: 'auto',
         // The window's own scrollbar, as a page scrolled in an application shows it.
         scrollbarWidth: 'thin',
         scrollSnapType: 'y mandatory',
-        borderRadius: 'var(--env-radius-lg)',
         background: 'var(--env-color-bg-page)',
       }}
     >

@@ -22,6 +22,9 @@ import { PageSpecimen } from '../figures/PageSpecimens';
 import { alternativesOf, type Alternative, type Preview } from './RelatedPages';
 import { TileSkeleton } from './Loading';
 import { useFit } from './useFit';
+import { AppScreen } from './AppTile';
+import { useAppFit } from './useAppFit';
+import { appTileFrame } from '../tiles/Tiles';
 import { pendingAttribute, useSectionOutline } from './SectionOutline';
 
 /**
@@ -115,8 +118,12 @@ export function TilePreview({
     ));
   const tile = Boolean(preview?.tile);
   const drawing = Boolean(preview?.window && preview.window.width < 14);
-  const ownSize = atOwnSize && !drawing;
-  useFit(stage, canvas, shown, whole || tile, tile, plays, ownSize, legible);
+  // A piece of an application's frame fills its card instead (AppTile.tsx).
+  const app = preview?.window?.app;
+  const ownSize = atOwnSize && !drawing && !app;
+  const scene = legible && !app;
+  useFit(stage, canvas, shown && !app, whole || tile, tile, plays, ownSize, scene);
+  useAppFit(stage, canvas, shown && Boolean(app), app?.least);
   useStillAtRest(canvasElement, tile && !plays);
   return (
     <Theme
@@ -128,7 +135,7 @@ export function TilePreview({
       data-stage={preview?.stage}
       data-empty={preview ? undefined : ''}
       data-playing={plays ? '' : undefined}
-      data-scene={legible ? '' : undefined}
+      data-scene={scene ? '' : undefined}
       data-still={Composition && animations > 0 ? undefined : ''}
     >
       {!preview ? (
@@ -136,7 +143,7 @@ export function TilePreview({
       ) : (
         shown &&
         crop(
-          ownSize || legible,
+          ownSize || scene,
           <div
             ref={(element) => {
               canvas.current = element;
@@ -146,6 +153,7 @@ export function TilePreview({
             data-tile={preview.tile ? '' : undefined}
             data-own-size={ownSize ? '' : undefined}
             data-overlay={ownSize && preview.window?.overlay ? '' : undefined}
+            data-app={app ? appTileFrame : undefined}
             style={
               preview.window &&
               ({
@@ -157,7 +165,11 @@ export function TilePreview({
             inert
             aria-hidden
           >
-            {preview.open ? <PreviewOverlays>{subject}</PreviewOverlays> : subject}
+            {preview.open ? (
+              <PreviewOverlays>{wrapApp(Boolean(app), subject)}</PreviewOverlays>
+            ) : (
+              wrapApp(Boolean(app), subject)
+            )}
           </div>,
         )
       )}
@@ -176,6 +188,10 @@ export function TilePreview({
  */
 const crop = (ownSize: boolean, canvas: ReactNode) =>
   ownSize ? <div className="catalogue-related-crop">{canvas}</div> : canvas;
+
+/** A piece of an application's frame, on the screen its card shows it on (AppTile.tsx). */
+const wrapApp = (app: boolean, subject: ReactNode) =>
+  app ? <AppScreen>{subject}</AppScreen> : subject;
 
 /** Whether an animation loops for ever, as a skeleton's pulse or a spinner's turn does. */
 const loops = (animation: Animation) =>

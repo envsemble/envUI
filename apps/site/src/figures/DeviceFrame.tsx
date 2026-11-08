@@ -24,8 +24,9 @@ import { courseOf, headingEvent, headingOf, mustShowOf, type Heading } from '../
  * its own, at a real width, so a frame of an application, such as a Scaffold, lays out as it does
  * on that device. The device is a plain drawing: one solid stroke around the whole body, a phone's
  * status bar and home indicator, a window's address bar; what its screen shows is the figure as it
- * is. A page's figure takes one with `device` on its fence (LiveExample.tsx); the gallery's and
- * Related's cards never do.
+ * is. A page's figure takes one with `device` on its fence (LiveExample.tsx); a gallery's or
+ * Related's card takes a window filling its picture around a tile of an application's frame
+ * (AppTile.tsx).
  */
 
 /**
@@ -578,7 +579,7 @@ function AddressBar({ address }: { address: string }) {
  * part or the box that set its height, such as a Scaffold standing a 22 rem box in for the window.
  * It holds as the figure loads, goes live and comes back.
  */
-function useFill(screen: RefObject<HTMLDivElement | null>) {
+export function useFill(screen: RefObject<HTMLDivElement | null>) {
   useLayoutEffect(() => {
     const element = screen.current;
     if (!element) return;
@@ -612,6 +613,11 @@ export interface DeviceFrameProps {
   address?: string;
   /** What the device is named for assistive technology, such as the figure's subject. */
   label?: string;
+  /**
+   * Whether it fills the box it is in, its screen taking what its bar leaves, rather than being
+   * drawn at its kind's own size: a card's window around an application's frame (AppTile.tsx).
+   */
+  fill?: boolean;
 }
 
 /**
@@ -619,7 +625,13 @@ export interface DeviceFrameProps {
  * is the figure's window, a size container named env-window as a width frame is (Stage.css), and
  * the containing block of its fixed overlays; the figure fills it.
  */
-export function DeviceFrame({ kind, children, address = 'example.com', label }: DeviceFrameProps) {
+export function DeviceFrame({
+  kind,
+  children,
+  address = 'example.com',
+  label,
+  fill = false,
+}: DeviceFrameProps) {
   const screen = useRef<HTMLDivElement>(null);
   useFill(screen);
   const size = screens[kind];
@@ -627,6 +639,7 @@ export function DeviceFrame({ kind, children, address = 'example.com', label }: 
     <div
       className="site-device"
       data-kind={kind}
+      data-fill={fill ? '' : undefined}
       role={label ? 'group' : undefined}
       aria-label={label}
     >
@@ -634,7 +647,9 @@ export function DeviceFrame({ kind, children, address = 'example.com', label }: 
       <div
         ref={screen}
         className="site-device-screen"
-        style={{ inlineSize: `${size.width}rem`, blockSize: `${size.height}rem` }}
+        style={
+          fill ? undefined : { inlineSize: `${size.width}rem`, blockSize: `${size.height}rem` }
+        }
       >
         <OnScreen value>{children}</OnScreen>
       </div>

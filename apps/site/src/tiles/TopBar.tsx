@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { AvatarButton, IconButton, Surface, Text, TopBar } from '@envsemble/envui';
 import { IconRefresh } from '@envsemble/envui/icons/Refresh';
-import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { outlined } from './Outline';
-import { narrowGallery } from './Tiles';
 
 const refresh = '.env-top-bar-actions .env-icon-button';
 
@@ -27,14 +24,10 @@ const script: PointerStep[] = [
 ];
 
 /**
- * An application's top bar over the top of its page, as wide as a gallery's tile shows: the title,
- * and the actions at the end, the page under it saying when it was updated. Both are on a surface
- * whose edge is drawn, so the progress, along the bar's bottom edge, runs across the whole of it,
- * between the bar and the page. In a phone's narrower tile the bar keeps only the refresh, so it
- * is drawn at about its own size there.
+ * An application's top bar over the top of its page, filling its card (AppTile.tsx): the title,
+ * and the actions at the end, the page under it saying when it was updated.
  */
 export default function TopBarTile() {
-  const narrow = useMedia(narrowGallery);
   const [loading, setLoading] = useState(false);
   const [updated, setUpdated] = useState(false);
   usePointer(script, {
@@ -44,19 +37,14 @@ export default function TopBarTile() {
     },
   });
   return (
-    <Surface
-      background="default"
-      radius="xl"
-      padding={0}
-      style={{ inlineSize: narrow ? '10rem' : '13rem', overflow: 'hidden', ...outlined }}
-    >
+    <Surface background="page" radius="none" padding={0} style={{ blockSize: '100%' }}>
       <TopBar
         loading={loading}
         title="Reports"
         actions={
           <>
             <IconButton icon={<IconRefresh />} aria-label="Refresh" variant="ghost" />
-            {!narrow && <AvatarButton name="Alex Morgan" />}
+            <AvatarButton name="Alex Morgan" />
           </>
         }
       />

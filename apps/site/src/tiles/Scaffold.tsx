@@ -4,15 +4,14 @@ import {
   Page,
   NavigationBar,
   Scaffold,
+  Text,
   TopBar,
   type Destination,
 } from '@envsemble/envui';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSearch } from '@envsemble/envui/icons/Search';
-import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { narrowGallery } from './Tiles';
 
 const item = (index: number) =>
   `.env-navigation-bar-list > li:nth-child(${index}) .env-navigation-bar-item`;
@@ -33,19 +32,17 @@ const script: PointerStep[] = [
 ];
 
 const places = [
-  { label: 'Home', icon: <IconHome /> },
-  { label: 'Inbox', icon: <IconInbox /> },
+  { label: 'Home', icon: <IconHome />, line: 'Welcome back.' },
+  { label: 'Inbox', icon: <IconInbox />, line: '2 unread.' },
 ];
 
 /**
- * An application's frame at its own size, as wide as a gallery's tile shows: the top bar, titled
- * with the place, over the navigation bar, the form a compact window's navigation takes, its places
- * side by side, so both show whole in the low stage; on a phone's narrower tile, narrower, so its
- * end shows there too.
+ * An application's frame filling its card (AppTile.tsx): the top bar, titled with the place, over
+ * its page, and the navigation bar, the form a compact window's navigation takes, its places side
+ * by side at the foot.
  */
 export default function ScaffoldTile() {
   const [current, setCurrent] = useState('Home');
-  const narrow = useMedia(narrowGallery);
   usePointer(script);
   const destinations: Destination[] = places.map(({ label, icon }) => ({
     label,
@@ -58,7 +55,6 @@ export default function ScaffoldTile() {
       scroll="body"
       landmarks={false}
       navigationForms={{ compact: 'bar', medium: 'bar', expanded: 'bar', large: 'bar' }}
-      style={{ inlineSize: narrow ? '10rem' : '12.5rem', blockSize: '7rem' }}
       topBar={
         <TopBar
           title={current}
@@ -67,7 +63,9 @@ export default function ScaffoldTile() {
       }
       navigation={{ bar: <NavigationBar destinations={destinations} /> }}
     >
-      <Page />
+      <Page>
+        <Text emphasis="muted">{places.find((place) => place.label === current)?.line}</Text>
+      </Page>
     </Scaffold>
   );
 }
