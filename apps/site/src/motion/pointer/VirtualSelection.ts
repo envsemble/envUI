@@ -416,12 +416,13 @@ export class PointerSelection {
    * A field's own selection shown again as the field takes focus again, as a browser shows it,
    * such as a word left selected while a menu's command ran.
    */
-  reveal(field: Element) {
-    if (!field.matches(selectableFields)) return;
+  reveal(element: Element) {
+    if (!element.matches(selectableFields)) return;
     // It matches selectableFields, so it is a field.
-    const { selectionStart: start, selectionEnd: end } = field as Field;
+    const field = element as Field;
+    const { selectionStart: start, selectionEnd: end } = field;
     if (start === null || end === null || start === end) return;
-    this.selected = { field: field as Field, start, end };
+    this.selected = { field, start, end };
     this.paint();
   }
 

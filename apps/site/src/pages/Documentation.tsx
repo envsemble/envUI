@@ -225,8 +225,10 @@ function OutlineHeadings({ markdown }: { markdown: string }) {
   return marked.lexer(headingsOnly(markdown)).flatMap((token, index) => {
     if (token.type !== 'heading') return [];
     // marked's generic token keeps the type check above from narrowing it.
-    const text = inlineText((token as Tokens.Heading).tokens);
-    const Heading = `h${(token as Tokens.Heading).depth}` as 'h2';
+    const heading = token as Tokens.Heading;
+    const text = inlineText(heading.tokens);
+    // A heading's level is 1 to 6, which its element's name takes.
+    const Heading = `h${heading.depth}` as 'h2';
     return [
       <Heading key={index} id={slug(text)}>
         {text}
