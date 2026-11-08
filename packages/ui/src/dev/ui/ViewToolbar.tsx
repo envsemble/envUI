@@ -26,7 +26,7 @@ import { IconStayCurrentLandscape } from '../../icons/StayCurrentLandscape.js';
 import { IconStayCurrentPortrait } from '../../icons/StayCurrentPortrait.js';
 import { IconTune } from '../../icons/Tune.js';
 import { IconViewInAr } from '../../icons/ViewInAr.js';
-import * as Menu from '../../actions/Menu.js';
+import * as Menu from '../../actions/menu/Menu.js';
 import { angles, type Angle } from './camera.js';
 import { HintedIconButton, SidebarToggle, instant, type Side } from './Controls.js';
 import { deviceGroups } from './devices.js';

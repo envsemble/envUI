@@ -19,7 +19,7 @@ import { IconLightMode } from '../../icons/LightMode.js';
 import { ResizeHandle } from '../../internal/resize/ResizeHandle.js';
 import { useResizableWidth } from '../../internal/resize/useResizableWidth.js';
 import { remPixels } from '../../internal/dom/lengths.js';
-import * as Menu from '../../actions/Menu.js';
+import * as Menu from '../../actions/menu/Menu.js';
 import { Tabs } from '../../navigation/Tabs.js';
 import { Tree, type TreeItem } from '../../navigation/Tree.js';
 import type { NodeData } from '../model.js';

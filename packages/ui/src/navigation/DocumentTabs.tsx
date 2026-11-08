@@ -18,7 +18,7 @@ import { useDirection } from '../internal/provider/useDirection.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { documentTabs } from '../foundations/messages/documentTabs.js';
 import { ContextMenu } from '../actions/ContextMenu.js';
-import * as Menu from '../actions/Menu.js';
+import * as Menu from '../actions/menu/Menu.js';
 import { isRightToLeft } from '../internal/dom/direction.js';
 import { moveValue } from './internal/tabStrip.js';
 import { useTabCloseFocus } from './internal/useTabCloseFocus.js';

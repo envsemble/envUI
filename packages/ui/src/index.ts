@@ -28,7 +28,7 @@ export * from './actions/Link.js';
 export * from './actions/ButtonGroup.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
-export * as Menu from './actions/Menu.js';
+export * as Menu from './actions/menu/Menu.js';
 export * from './actions/ContextMenu.js';
 export * as Menubar from './actions/Menubar.js';
 export * from './actions/CommandPalette.js';

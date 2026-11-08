@@ -2821,7 +2821,7 @@
     },
     "Menu": {
       "root": "env-menu",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "parts": [
         {
           "class": "env-menu",

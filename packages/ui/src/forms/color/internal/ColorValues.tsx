@@ -8,7 +8,7 @@ import { colorPicker as colorPickerMessages } from '../../../foundations/message
 import { IconExpandMore } from '../../../icons/ExpandMore.js';
 import { useMessages } from '../../../internal/provider/EnvUIContext.js';
 import { flag } from '../../../internal/flag.js';
-import * as Menu from '../../../actions/Menu.js';
+import * as Menu from '../../../actions/menu/Menu.js';
 import { ColorFields } from './ColorFields.js';
 import { displayColor } from './ColorLocale.js';
 import type { ColorFormat } from './colorValue.js';

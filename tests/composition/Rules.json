@@ -20,6 +20,7 @@
       "layout/panel-dock/": "shell",
       "forms/color/": "composites",
       "forms/rich-text/": "composites",
+      "actions/menu/": "composites",
       "dev/": "shell"
     },
     "modules": {
@@ -130,7 +131,6 @@
       "navigation/Breadcrumbs.tsx": "composites",
       "actions/ContextMenu.tsx": "base",
       "navigation/DocumentTabs.tsx": "composites",
-      "actions/Menu.tsx": "composites",
       "actions/Menubar.tsx": "base",
       "navigation/NavigationBar.tsx": "composites",
       "navigation/NavigationDrawer.tsx": "base",
@@ -449,7 +449,13 @@
         "classes": ["env-navigation-rail"]
       },
       "Menu": {
-        "modules": ["actions/ContextMenu.tsx", "actions/internal/MenuPopup.tsx"]
+        "modules": [
+          "actions/ContextMenu.tsx",
+          "actions/internal/MenuPopup.tsx",
+          "actions/menu/MenuItem.tsx",
+          "actions/menu/MenuSubmenu.tsx",
+          "actions/menu/MenuChoices.tsx"
+        ]
       },
       "Menubar": {
         "modules": ["actions/internal/useMenubarAccessKeys.ts"]
