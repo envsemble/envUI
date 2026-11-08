@@ -24,7 +24,6 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { usePortalContainer } from '../internal/PortalContainerContext.js';
 import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { setRef } from '../internal/setRef.js';
-import { useFormatters } from '../internal/useFormatters.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
@@ -32,6 +31,7 @@ import { readPanesWidth, writePanesWidth } from './panesSize.js';
 import type { ResizeDetails } from '../internal/resizeDetails.js';
 import { IconClose } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/lengths.js';
+import { useResizableWidth } from '../internal/useResizableWidth.js';
 import { useLatest } from '../internal/useLatest.js';
 import '../styles/Base.css';
 import '../styles/Panes.css';
@@ -199,11 +199,8 @@ interface PanesContextValue {
   show: () => void;
   backLabel: string | undefined;
   closeLabel: string | undefined;
-  size: number;
-  min: number;
-  max: number;
-  change: (size: number, committed: boolean) => void;
-  reset: () => void;
+  /** The divider's ResizeHandle props, which size the resized pane. */
+  divider: ReturnType<typeof useResizableWidth>['handleProps'];
   /** The pane the divider resizes, which it names in aria-controls. */
   resizedId: string;
   listRef: RefObject<HTMLDivElement | null>;
@@ -216,8 +213,6 @@ function usePanes(part: string) {
   if (!context) throw new Error(`Panes.${part} must be inside Panes.Root.`);
   return context;
 }
-
-/** Sizes are kept to a hundredth of a rem. */
 
 /** Whether an element shows, as CSS decided: it has a box. */
 const shows = (element: HTMLElement | null) => element !== null && element.offsetParent !== null;
@@ -256,60 +251,48 @@ function Root({
   onOpenChange,
   backLabel,
   closeLabel,
-  width: controlledSize,
-  defaultWidth: defaultSize = 22.5,
-  onWidthChange: onSizeChange,
-  minWidth: minSize = 16,
-  maxWidth: maxSize = 40,
+  width,
+  defaultWidth = 22.5,
+  onWidthChange,
+  minWidth = 16,
+  maxWidth = 40,
   persist,
-  persistedWidth: persistedSize,
+  persistedWidth,
   name,
   className,
   style,
   children,
   ...props
 }: RootProps) {
-  const min = Math.max(0, minSize);
-  const max = Math.max(min, maxSize);
-  const clamp = useCallback(
-    (value: number) => roundToHundredth(Math.min(max, Math.max(min, value))),
-    [min, max],
+  const sizeText = useMessages('panes', panes).size;
+  const keep = useCallback(
+    (kept: number | undefined) => {
+      if (persist) writePanesWidth(persist, kept);
+    },
+    [persist],
   );
-  // A size chosen by resizing or read from the cookie, or 'default' once a double click forgot it;
-  // until then the width the server read, else the default, applies.
-  const [chosenSize, setChosenSize] = useState<number | 'default'>();
-  const size = clamp(
-    controlledSize ??
-      (chosenSize === 'default' ? defaultSize : (chosenSize ?? persistedSize ?? defaultSize)),
-  );
+  const resize = useResizableWidth({
+    width,
+    defaultWidth,
+    onWidthChange,
+    minWidth,
+    maxWidth,
+    // Until people choose a width, the one the server read from the cookie; a double click forgets
+    // both and returns to the default.
+    keptWidth: persistedWidth,
+    keep,
+    // The widest the resized pane can be in the Panes' width, leaving the other pane its room,
+    // read as a drag starts or a key moves the divider: a drag starts at the width that shows.
+    room: roomFor,
+    // The supporting pane is at the end, so it grows as the divider moves toward the start.
+    reverse: behavior === 'supporting',
+    widthText: (size) => sizeText({ size }),
+  });
+  const { restore } = resize;
   useLayoutEffect(() => {
     const kept = persist ? readPanesWidth(document.cookie, persist) : undefined;
-    if (kept !== undefined) setChosenSize(kept);
-  }, [persist]);
-
-  const latest = useLatest({ size, controlledSize, onSizeChange, persist, defaultSize, clamp });
-  const change = useCallback(
-    (next: number, committed: boolean) => {
-      const current = latest.current;
-      const value = current.clamp(next);
-      if (current.controlledSize === undefined) {
-        setChosenSize(value);
-        if (committed && current.persist) writePanesWidth(current.persist, value);
-      }
-      if (committed || value !== current.size) current.onSizeChange?.(value, { committed });
-    },
-    [latest],
-  );
-  const reset = useCallback(() => {
-    const current = latest.current;
-    const value = current.clamp(current.defaultSize);
-    if (current.controlledSize === undefined) {
-      // The default, also where the width the server read came from the cookie just forgotten.
-      setChosenSize('default');
-      if (current.persist) writePanesWidth(current.persist, undefined);
-    }
-    current.onSizeChange?.(value, { committed: true });
-  }, [latest]);
+    if (kept !== undefined) restore(kept);
+  }, [persist, restore]);
 
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
@@ -333,22 +316,18 @@ function Root({
       show,
       backLabel,
       closeLabel,
-      size,
-      min,
-      max,
-      change,
-      reset,
+      divider: resize.handleProps,
       resizedId,
       listRef,
     }),
-    [behavior, open, close, show, backLabel, closeLabel, size, min, max, change, reset, resizedId],
+    [behavior, open, close, show, backLabel, closeLabel, resize.handleProps, resizedId],
   );
   return (
     <PanesContext value={context}>
       <div
         {...props}
         className={classNames('env-panes', className)}
-        style={{ '--env-panes-size': `${size}rem`, ...style } as CSSProperties}
+        style={{ '--env-panes-size': `${resize.width}rem`, ...style } as CSSProperties}
         data-env-layout="panes"
         data-env-name={name}
         data-behavior={behavior}
@@ -627,42 +606,24 @@ function Detail({ label, className, children, ref, ...props }: DetailProps) {
  * The divider between the panes, which resizes the supporting pane or the list: the gap between
  * them, with a small grip and no line. It is a focusable separator that the pointer drags and the
  * arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls.
- * A double click returns it to the default width. It shows only while the panes sit side by side,
- * and measures nothing until it is dragged. Place it between two surfaces, each pane's own, such as
- * a Surface as tall as the pane, never beside content on the page.
+ * A double click returns it to the default width. It shows only while the panes sit side by side.
+ * Place it between two surfaces, each pane's own, such as a Surface as tall as the pane, never
+ * beside content on the page.
  */
 function Divider({ label, className, onDoubleClick, ...props }: DividerProps) {
-  const { behavior, size, min, max, change, reset, resizedId } = usePanes('Divider');
+  const { divider, resizedId } = usePanes('Divider');
   const messages = useMessages('panes', panes);
-  const formatters = useFormatters();
   return (
     <ResizeHandle
       {...props}
-      axis="inline"
-      unit="rem"
-      // The supporting pane is at the end, so it grows as the divider moves toward the start.
-      reverse={behavior === 'supporting'}
-      value={size}
-      min={min}
-      max={max}
-      // The widest the resized pane can be in the Panes' width, leaving the other pane its room,
-      // read as a drag starts or a key moves the divider: a drag starts at the width that shows.
-      room={roomFor}
-      step={1}
-      largeStep={5}
-      onChange={(value, { committed }) => change(value, committed)}
-      valueText={(value) =>
-        messages.size({
-          size: formatters.number({ maximumFractionDigits: 1 }).format(roundToHundredth(value)),
-        })
-      }
+      {...divider}
       label={label ?? messages.resize}
       grip
       aria-controls={resizedId}
       className={classNames('env-panes-divider', className)}
       onDoubleClick={(event) => {
         onDoubleClick?.(event);
-        if (!event.defaultPrevented) reset();
+        divider.onDoubleClick(event);
       }}
     />
   );
