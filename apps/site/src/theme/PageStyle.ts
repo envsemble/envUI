@@ -2,8 +2,8 @@
  * A design exploration of the catalogue's component and pattern pages: one of three looks, chosen
  * by `?pagestyle=a`, `b` or `c` and kept for the tab's session as the reader moves between pages;
  * `?pagestyle=` with another value or none goes back to the current look. The look is the
- * `data-page-style` attribute on the document's root, which PageStyles.css reads; without it the
- * pages are as they are.
+ * `data-page-style` attribute on the document's root, which PageStyles.css reads. The style sheet
+ * loads only once a look is chosen, so without one the pages are exactly as they are.
  */
 const pageStyles = ['a', 'b', 'c'] as const;
 const pageStyleKey = 'envui-site-page-style';
@@ -20,6 +20,8 @@ export function applyPageStyle(): void {
   } catch {
     // Without storage the look holds for the page it was asked on.
   }
-  if (style && (pageStyles as readonly string[]).includes(style))
+  if (style && (pageStyles as readonly string[]).includes(style)) {
     document.documentElement.setAttribute('data-page-style', style);
+    void import('../styles/PageStyles.css');
+  }
 }
