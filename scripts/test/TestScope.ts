@@ -212,7 +212,8 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
   {
     paths: [
       'apps/site/src/examples/**',
-      'apps/site/src/styles/Stage.css',
+      'apps/site/src/figures/Stage.css',
+      'apps/site/src/motion/MotionStage.css',
       'docs/components/**',
       'docs/patterns/**',
       'packages/ui/src/dev.ts',

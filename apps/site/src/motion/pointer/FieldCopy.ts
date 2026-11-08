@@ -1,8 +1,8 @@
 /*
  * A copy of a field's text, laid over the field with the field's box and font, so that its text
  * sits exactly on the field's. It is used to paint a field's selection, which an unfocused field
- * doesn't paint (`.catalogue-field-selection`, Stage.css), and to measure where a character of the
- * field's value is (VirtualSelection.ts).
+ * doesn't paint (`.catalogue-field-selection`, MotionStage.css), and to measure where a character
+ * of the field's value is (VirtualSelection.ts).
  */
 
 /** A field whose text a drag selects. */
@@ -49,9 +49,9 @@ const copied = [
  * selected part takes the selection's colours and whose rest is transparent, so the field shows
  * through. For a field in the stage's content, the copy goes first in the stage's overlay layer,
  * under whatever opens there, so a dialog and its backdrop cover it as they cover the field
- * (Stage.css hides it while a modal is open, which takes the field's focus). For a field inside
- * what opens there, such as a dialog, or in a stage without that layer, the copy goes in the box
- * the field is positioned in. The component's own elements are left as they are.
+ * (MotionStage.css hides it while a modal is open, which takes the field's focus). For a field
+ * inside what opens there, such as a dialog, or in a stage without that layer, the copy goes in the
+ * box the field is positioned in. The component's own elements are left as they are.
  */
 export function paintField(
   field: Field,

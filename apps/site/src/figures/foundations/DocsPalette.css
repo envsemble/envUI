@@ -52,3 +52,16 @@
     monospace;
   overflow-wrap: anywhere;
 }
+/* In a narrow container, each row stacks its label over its swatches, which take a touch
+   target's height. */
+@container (width < 24rem) {
+  .docs-palette-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .docs-palette-label {
+    padding-inline-end: 0;
+  }
+  .docs-swatch {
+    min-block-size: var(--env-control-height-touch);
+  }
+}

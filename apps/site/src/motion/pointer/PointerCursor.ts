@@ -5,11 +5,11 @@
  * It is drawn beside the live component, not inside it, so it changes nothing in the component,
  * isn't measured by a tile's fit and is never under the pointer itself. It takes the scale the
  * component is drawn at, so it sits on what it points at, and shrinks a little while it presses
- * (Stage.css). While it carries files in, as from the desktop, a small chip beside it names them,
- * with a file icon, as a drag image does, on whichever side of it the stage has room. Both are
- * drawn in a layer the size of the stage that clips them, so neither is ever drawn past the stage's
- * edges, such as over the tile's name below it. Without motion the stages don't play, and the
- * cursor isn't drawn.
+ * (MotionStage.css). While it carries files in, as from the desktop, a small chip beside it names
+ * them, with a file icon, as a drag image does, on whichever side of it the stage has room. Both
+ * are drawn in a layer the size of the stage that clips them, so neither is ever drawn past the
+ * stage's edges, such as over the tile's name below it. Without motion the stages don't play, and
+ * the cursor isn't drawn.
  */
 import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';

@@ -31,12 +31,13 @@ Each has one folder in `apps/site/src`:
 | search        | The site's search and its index                                  | `search/`                                            |
 | brand         | The wordmarks and logos                                          | `brand/`                                             |
 | release notes | The highlights on the Docs' Changelog page                       | `releases/release-notes.md`                          |
-| style         | The site's style sheets                                          | `styles/`                                            |
+| style         | The site-wide sheets, and `index.css`: every sheet, in its order | `styles/`; any other sheet beside the code it styles |
 | generated     | The site's data, written by `scripts/`: never edit it            | `generated/`                                         |
 | documentation | The Markdown in `docs/` and the model generated from it          | `scripts/docs/`, its model in `scripts/docs/model/`  |
 | Docs          | The part under /docs, and nothing else                           | `docs-` classes, `Docs*` names                       |
 
 - Give every folder of `apps/site/src` its row above.
+- Put a style sheet beside the code it styles, named after it, and import it in `styles/index.css` at its place, never from a module: the site's sheets are outside cascade layers, so their order decides between rules that weigh the same, and one list keeps that order whatever loads first.
 - Other words for these, such as preview, demo, showcase and sample, are older names; don't add new uses. ESLint rejects a name the site declares with preview in it.
 - A playback depends on its example: change or rename the two together.
 

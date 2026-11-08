@@ -1,0 +1,254 @@
+/* An animated figure's stage (MotionStage.tsx) and what plays on it: the crossfade of an example
+   drawn anew, the keys pressed, the pointer no one sees and the text it selects. */
+
+/* An animated figure's example as it is drawn anew with a crossfade (Renew.tsx): the one that ends
+   fades out over the new one. */
+@keyframes catalogue-renew-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* An animated figure (MotionStage.tsx): its subject centred on the stage as an example's is, and
+   its pause button at the stage's bottom end, inside its padding.
+   Its overlays open in a layer over the whole stage, which its layout containment makes their
+   containing block, so a dialog's backdrop covers the stage and a notification sits at its edge; it
+   clips them to its corners. The subject is a stacking context of its own, below the pause
+   button, which stays on top of what opens. Nothing in it anchors the page's scrolling: a popup
+   placed as it opens would otherwise move the page with it. */
+.catalogue-motion-stage {
+  position: relative;
+  contain: layout;
+  overflow: clip;
+  overflow-anchor: none;
+  /* One column, the stage's width, which what it shows never widens. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.catalogue-motion-subject {
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  inline-size: 100%;
+}
+
+/* What it shows keeps to the stage's width, as wide as its content up to that, so in a narrow
+   window a table scrolls, text wraps and a row of parts lays out narrower, rather than being cut
+   off at both edges. */
+.catalogue-motion-subject > :not(.catalogue-overlay-layer) {
+  max-inline-size: 100%;
+}
+
+/* Its own size, square, which a stage's rule for its content would otherwise take, as on a
+   foundation's stage. */
+.catalogue-motion-pause {
+  position: absolute;
+  inline-size: var(--env-button-height);
+  inset-block-end: var(--env-space-2);
+  inset-inline-end: var(--env-space-2);
+}
+
+/* The pause button stays out of sight until the reader reaches for the figure: it shows while the
+   pointer is over the stage or the keyboard is on the button, and always where there is no hover,
+   as on a phone. The sidebar's pause stops every figure at once. */
+@media (hover: hover) {
+  .catalogue-motion-pause {
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+
+  .catalogue-motion-stage:not(:hover, :focus-within) .catalogue-motion-pause {
+    opacity: 0;
+  }
+}
+
+/* A grid of specimens that plays, such as states the pointer goes through: the figure's stage is
+   its canvas, so it has none of its own, and it spans the stage as a still grid does. */
+.site-figures .catalogue-motion-subject :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
+  justify-self: stretch;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* The keys a figure's keyboard presses (PressedKeys.tsx), over what opens in it, backdrop included. */
+.catalogue-pressed-keys {
+  z-index: var(--env-z-tooltip);
+}
+
+/* Notifications at a figure's bottom end arrive beside its pause button, which keeps that corner,
+   as an application's would beside a control fixed there, and keep to the room left beside it, so
+   a long one wraps rather than reaching past the stage's start in a narrow window. */
+.catalogue-motion-subject .env-toast-viewport[data-placement='bottom-end'] {
+  --catalogue-toast-end: calc(2 * var(--env-space-2) + var(--env-control-height-sm));
+  inset-inline-end: var(--catalogue-toast-end);
+  max-inline-size: calc(100% - var(--env-space-4) - var(--catalogue-toast-end));
+}
+
+/* A sheet at a figure's end keeps its actions beside the pause button too, rather than under it:
+   the room the button takes at the stage's end, less the sheet's own padding. */
+.catalogue-motion-subject .env-sheet[data-side='end'] .env-dialog-actions {
+  padding-inline-end: max(
+    0rem,
+    2 * var(--env-space-2) + var(--env-control-height-sm) - var(--env-surface-padding, 0rem)
+  );
+}
+
+/* Text the pointer no one sees selects by dragging (motion/pointer/VirtualSelection.ts), painted
+   as the browser paints a selection: in content, a highlight; in a field, which an inert stage
+   can't focus, a copy of its text over it, transparent but its selected part. */
+::highlight(catalogue-selection) {
+  background-color: Highlight;
+  color: HighlightText;
+}
+
+/* The copy lies over its field, and under what opens over the field, such as a menu or a dialog
+   and its backdrop. */
+.catalogue-field-selection {
+  position: absolute;
+  z-index: var(--env-z-raised);
+  overflow: hidden;
+  margin: 0;
+  color: transparent;
+  background: none;
+  pointer-events: none;
+}
+
+.catalogue-field-selection > div {
+  white-space: pre;
+}
+
+.catalogue-field-selection[data-field='input'] {
+  display: flex;
+  align-items: center;
+}
+
+.catalogue-field-selection[data-field='textarea'] > div {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.catalogue-field-selection span {
+  color: HighlightText;
+  background-color: Highlight;
+}
+
+/* A modal dialog or sheet takes focus from a field of the content under it, which then paints no
+   selection, as a browser paints none in a field without focus. */
+.catalogue-overlay-layer:has(.env-dialog-backdrop, .env-sheet-backdrop)
+  > .catalogue-field-selection {
+  visibility: hidden;
+}
+
+/* A figure whose room is for what opens below what it shows, such as a select's list: what it
+   shows sits at the stage's top, so the room is where the list opens (`top` on MotionStage). */
+.catalogue-motion-stage[data-top] {
+  align-content: start;
+}
+
+/* The layer the cursor is drawn in, as large as the stage and clipping it to the stage's corners,
+   so neither the cursor nor its chip is drawn past the stage, also where the stage itself lets
+   what it shows reach past it (Gallery.css). */
+.catalogue-pointer-layer {
+  position: absolute;
+  inset: 0;
+  z-index: var(--env-z-raised);
+  overflow: clip;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* The cursor of the pointer no one sees (motion/pointer/PointerCursor.ts), over a playing stage:
+   a plain arrow in the text's color, edged in the page's, at the scale the stage is drawn at, its
+   tip where the pointer is, a little smaller while it presses. */
+.catalogue-pointer-cursor {
+  --catalogue-cursor-scale: 1;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: var(--env-z-raised);
+  inline-size: 0.875rem;
+  block-size: 1.25rem;
+  pointer-events: none;
+  transform-origin: 0 0;
+  scale: var(--catalogue-cursor-scale);
+}
+.catalogue-pointer-cursor > svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  fill: var(--env-color-fg-default);
+  stroke: var(--env-color-bg-default);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  transform-origin: 0 0;
+}
+.catalogue-pointer-cursor[data-pressed] > svg {
+  scale: 0.85;
+}
+/* While the pointer carries files in, as from the desktop, a chip beside its cursor names them, as
+   a drag image does (PointerCursor.ts): below and after the arrow's tip, scaled with it. */
+.catalogue-pointer-file {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-start: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-1);
+  max-inline-size: 10rem;
+  padding: var(--env-space-1) var(--env-space-2);
+  border: 1px solid var(--env-color-border-default);
+  border-radius: var(--env-radius-md);
+  background: var(--env-color-bg-raised);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body-sm);
+  white-space: nowrap;
+}
+/* Near the stage's end, the chip goes before the arrow's tip, and near its foot, above it. */
+.catalogue-pointer-file[data-before] {
+  inset-inline: auto calc(100% + 0.25rem);
+}
+.catalogue-pointer-file[data-above] {
+  inset-block: auto calc(100% + 0.25rem);
+}
+.catalogue-pointer-file-icon {
+  display: flex;
+  flex: none;
+  color: var(--env-color-fg-muted);
+}
+.catalogue-pointer-file-icon > svg {
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+.catalogue-pointer-file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-pointer-cursor > svg {
+    transition: scale var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-pointer-cursor {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .catalogue-pointer-cursor > svg {
+    forced-color-adjust: none;
+    fill: CanvasText;
+    stroke: Canvas;
+  }
+  .catalogue-pointer-file {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+  .catalogue-pointer-file-icon {
+    color: CanvasText;
+  }
+}

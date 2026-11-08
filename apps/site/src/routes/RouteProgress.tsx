@@ -37,8 +37,8 @@ function reduce(state: State, event: 'start' | 'show' | 'stop' | 'hide'): State 
  * A quiet sign that the page a link leads to is loading, once it has taken a moment: a thin bar
  * along the top of the page, beside the navigation, that creeps forward while the page loads, then
  * completes and fades out as it shows, as envUI's LoadingBar on a TopBar does (the site has no top
- * bar, so it draws its own, Loading.css). With motion reduced, it appears at its full width and
- * leaves at once.
+ * bar, so it draws its own, RouteProgress.css). With motion reduced, it appears at its full width
+ * and leaves at once.
  */
 export function RouteProgress() {
   const pending = usePendingRoute() !== undefined;

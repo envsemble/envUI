@@ -1,29 +1,35 @@
-/* Keep this order: page framing precedes specimen and responsive overrides. */
+/* The site's style sheets, in the one order of their cascade: all but ThemeFade.css are outside
+   cascade layers, so where two rules weigh the same the later wins. Page framing precedes the
+   figures, and printing comes late. Each sheet lives beside the code it styles; this folder holds
+   the site-wide ones. */
 @import './Shell.css';
-@import './Docs.css';
-@import './Banners.css';
-@import './BannerMotifs.css';
-@import './Examples.css';
-@import './Overview.css';
-@import './DocsPalette.css';
-@import './Foundations.css';
-@import './InteractionStates.css';
-@import './Template.css';
-@import './Stage.css';
-@import './DeviceFrame.css';
-@import './Loading.css';
-@import './Figures.css';
-@import './Verdicts.css';
-@import './Anatomy.css';
-@import './DocsDevMode.css';
+@import '../pages/Docs.css';
+@import '../banner/Banners.css';
+@import '../banner/BannerMotifs.css';
+@import '../figures/Examples.css';
+@import '../pages/Overview.css';
+@import '../figures/foundations/DocsPalette.css';
+@import '../figures/foundations/Foundations.css';
+@import '../specimens/InteractionStates.css';
+@import '../template/Template.css';
+@import '../figures/Stage.css';
+@import '../motion/MotionStage.css';
+@import '../figures/DeviceFrame.css';
+@import '../loading/Loading.css';
+@import '../routes/RouteProgress.css';
+@import '../figures/Figures.css';
+@import '../figures/Verdicts.css';
+@import '../figures/anatomy/Anatomy.css';
+@import '../figures/dev-mode/DocsDevMode.css';
 @import './SiteText.css';
-@import './Tile.css';
-@import './Related.css';
-@import './Gallery.css';
-@import './AppTile.css';
-@import './FoundationCatalogue.css';
-@import './OverviewFan.css';
-@import './WhenToUse.css';
-@import './Changelog.css';
-@import './Responsive.css';
-@import './ThemeFade.css';
+@import '../figures/Tile.css';
+@import '../template/Related.css';
+@import '../figures/Gallery.css';
+@import '../figures/AppTile.css';
+@import '../pages/FoundationCatalogue.css';
+@import '../pages/OverviewFan.css';
+@import '../template/WhenToUse.css';
+@import '../pages/Changelog.css';
+@import './Print.css';
+@import '../motion/ThemeFade.css';
+@import '../display/DisplaySettings.css';
