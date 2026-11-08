@@ -2,7 +2,7 @@
  * An anatomy figure (Figures.tsx): the live component on its stage, the callouts on its parts
  * (useAnatomyLayout.ts) and its legend of part names, or a variants figure's names by its items.
  */
-import { useCallback, useId, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useId, useMemo, useRef, useState } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '@docs-model/DocumentationTypes';
 import { legendName, type OptionTable } from '@docs-model/CatalogueContent';
@@ -339,7 +339,7 @@ export function AnatomyFigure({
         {!variants && items.length > 0 && (
           <ol
             className="site-anatomy-legend"
-            style={{ '--site-anatomy-columns': legendColumns(ordered.length) } as CSSProperties}
+            style={{ '--site-anatomy-columns': legendColumns(ordered.length) }}
           >
             {ordered.map((index, rank) => (
               <li key={`${index}-${items[index]!.part}`}>

@@ -2,8 +2,8 @@ import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
 import { reloadModule } from './LoadBoundary';
 import { loadOnce } from './LoadOnce';
 
-/** A glob's files, each a component as its default export. */
-type ComponentModule = { default: ComponentType };
+/** The error of a path a glob has no file at. */
+const noFile = (path: string) => new Error(`No file apps/site${path}`);
 
 /**
  * The files of a glob of the site's own, such as `import.meta.glob('/src/examples/*\/*.tsx')`, each
@@ -19,12 +19,11 @@ export function moduleRegistry<T>(
 ) {
   const loaders = new Map(Object.entries(glob));
   const loads = new Map<string, Promise<T>>();
-  const components = new Map<string, LazyExoticComponent<ComponentType>>();
 
   /** The loader of a file, or an error that names the file missing. */
   const loaderOf = (path: string) => {
     const load = loaders.get(path);
-    if (!load) throw new Error(`No file apps/site${path}`);
+    if (!load) throw noFile(path);
     return load;
   };
 
@@ -37,20 +36,6 @@ export function moduleRegistry<T>(
     preload(path: string) {
       if (loaders.has(path)) registry.load(path).catch(() => undefined);
     },
-    /**
-     * The default export of the file at `path` as a lazy component, the same one until a retry; it
-     * throws for a path with no file.
-     */
-    component(path: string): LazyExoticComponent<ComponentType> {
-      loaderOf(path);
-      let component = components.get(path);
-      if (!component) {
-        // The registry's files are components' modules, which default-export one.
-        component = lazy(() => registry.load(path) as Promise<ComponentModule>);
-        components.set(path, component);
-      }
-      return component;
-    },
     /** The file at `path` as the site app serves it, for LoadBoundary to name. */
     module: (path: string) => path.slice(1),
     /** Drops a file that failed to load, so that its next render loads it again. */
@@ -58,8 +43,37 @@ export function moduleRegistry<T>(
       const root = new URL(import.meta.env.BASE_URL, window.location.href).href;
       loaders.set(path, reloadModule(loaderOf(path), path.slice(1), root, reload));
       loads.delete(path);
-      components.delete(path);
     },
   };
   return registry;
+}
+
+/**
+ * A moduleRegistry of a glob of components' files, each default-exporting one, which also gives
+ * each file's component as a lazy one.
+ */
+export function componentRegistry(glob: Record<string, () => Promise<{ default: ComponentType }>>) {
+  const files = moduleRegistry(glob);
+  const components = new Map<string, LazyExoticComponent<ComponentType>>();
+  return {
+    ...files,
+    /**
+     * The default export of the file at `path` as a lazy component, the same one until a retry; it
+     * throws for a path with no file.
+     */
+    component(path: string): LazyExoticComponent<ComponentType> {
+      if (!files.has(path)) throw noFile(path);
+      let component = components.get(path);
+      if (!component) {
+        component = lazy(() => files.load(path));
+        components.set(path, component);
+      }
+      return component;
+    },
+    /** Drops a file that failed to load, and its component, so that its next render loads it again. */
+    retry(path: string) {
+      files.retry(path);
+      components.delete(path);
+    },
+  };
 }

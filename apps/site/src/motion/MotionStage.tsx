@@ -16,7 +16,7 @@ import { IconButton, Tooltip } from '@envsemble/envui';
 import { IconPause } from '@envsemble/envui/icons/Pause';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '@docs-model/DocumentationTypes';
-import { useVerdictFit } from '../figures/useVerdictFit';
+import { useVerdictFit } from '../fit/standalone/useVerdictFit';
 import { useDisplaySettings } from '../display/DisplaySettings';
 import { Playback, StageOverlays } from './Playback';
 import { useInView } from './useInView';
@@ -229,7 +229,7 @@ export function MotionStage({
   const square = verdict === 'square';
   const box = useRef<HTMLDivElement>(null);
   const tallest = useRef<HTMLDivElement>(null);
-  useVerdictFit(stage, box, square);
+  useVerdictFit(stage, box, { on: square, shape: 'square' });
   useTallest(square ? tallest : stage, height);
   useThemeFade(subject);
   // Another figure the reader has taken over holds this one where it is, unless the reader plays it.

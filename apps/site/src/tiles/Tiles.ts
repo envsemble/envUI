@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { moduleRegistry } from '../loading/ModuleRegistry';
+import { componentRegistry } from '../loading/ModuleRegistry';
 
 /*
  * The tiles' own pictures: for a component or pattern, a small live picture written for its tile
@@ -9,7 +9,7 @@ import { moduleRegistry } from '../loading/ModuleRegistry';
  * and its animation, a timeline (useTimeline in motion/Timeline.ts) that plays on hover from that
  * still. A page without one shows the example its tile picks (Gallery.tsx, Related.tsx).
  */
-const tiles = moduleRegistry(import.meta.glob<{ default: ComponentType }>('/src/tiles/*.tsx'));
+const tiles = componentRegistry(import.meta.glob<{ default: ComponentType }>('/src/tiles/*.tsx'));
 
 /** A page's id in PascalCase, as its tile's file is named: segmented-control, SegmentedControl. */
 const pascal = (id: string) =>
@@ -114,7 +114,7 @@ export const tileOf = (page: string): ComponentType | undefined =>
  * small live picture of the export alone, written as a page's own tile is, where the page's
  * examples show it in a larger scene than a card holds whole, or hold still where it acts.
  */
-const memberTiles = moduleRegistry(
+const memberTiles = componentRegistry(
   import.meta.glob<{ default: ComponentType }>('/src/tiles/members/*.tsx'),
 );
 

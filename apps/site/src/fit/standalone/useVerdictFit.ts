@@ -1,4 +1,5 @@
 import { useLayoutEffect, type RefObject } from 'react';
+import { remeasure, type Change } from '../Remeasure';
 
 /**
  * Draws a do or don't figure's example smaller where it must to fit its stage, as a tile
@@ -16,15 +17,11 @@ import { useLayoutEffect, type RefObject } from 'react';
  * rather than square: the box lays out as wide as the stage, wider only where a part can't be
  * narrower, then drawn smaller to the stage's width, and keeps the room it takes drawn so, its
  * margins taking back what the transform leaves.
- *
- * It follows the figure until it goes or changes: what comes after that, such as the fonts
- * arriving, measures nothing.
  */
 export function useVerdictFit(
   stage: RefObject<HTMLElement | null>,
   box: RefObject<HTMLElement | null>,
-  on = true,
-  shape: 'square' | 'fit' = 'square',
+  { on, shape }: { on: boolean; shape: 'square' | 'fit' },
 ) {
   useLayoutEffect(() => {
     const stageElement = stage.current;
@@ -45,9 +42,9 @@ export function useVerdictFit(
     const settle = () => {
       if (fit) boxElement.style.marginBlockEnd = `${boxElement.offsetHeight * (side / room - 1)}px`;
     };
-    let frame = 0;
-    let active = true;
-    const measure = () => {
+    const measure = (changed: ReadonlySet<Change>) => {
+      // What renders later, such as an example whose module loads, is measured once it is there.
+      if (changed.has('mutation')) for (const child of boxElement.children) fits.observe(child);
       const width = stageElement.clientWidth;
       if (!width) return;
       if (Math.abs(width - side) > 0.5) {
@@ -73,28 +70,14 @@ export function useVerdictFit(
       if (needed > room + 0.5) set(needed);
       settle();
     };
-    const update = () => {
-      if (!active) return;
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(measure);
-    };
-    measure();
-    const observer = new ResizeObserver(update);
-    observer.observe(stageElement);
-    observer.observe(boxElement);
-    for (const child of boxElement.children) observer.observe(child);
-    // What renders later, such as an example whose module loads, is measured once it is there.
-    const changes = new MutationObserver(() => {
-      for (const child of boxElement.children) observer.observe(child);
-      update();
+    const fits = remeasure(measure, {
+      first: 'now',
+      resize: [stageElement, boxElement, ...boxElement.children],
+      mutation: { target: boxElement, options: { childList: true } },
+      fonts: true,
     });
-    changes.observe(boxElement, { childList: true });
-    void document.fonts?.ready.then(update);
     return () => {
-      active = false;
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-      changes.disconnect();
+      fits.stop();
       boxElement.style.inlineSize = '';
       boxElement.style.minBlockSize = '';
       boxElement.style.marginInlineEnd = '';

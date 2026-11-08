@@ -7,6 +7,7 @@ import {
   type RefObject,
 } from 'react';
 import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/envui';
+import { remeasure } from '../fit/Remeasure';
 import { usePlayback } from './Playback';
 import { remPixels } from '@envui-internal/internal/lengths';
 import { useLatest } from '@envui-internal/internal/useLatest';
@@ -184,6 +185,8 @@ function useSweepLayout(
     const stops = key.split(' ').map(Number);
     /** The tallest the example is along a sweep, by the root's font size and the sweep's ends. */
     const tallestOf = new Map<string, number>();
+    /** The stage's width as last measured, which a resize must change to measure again. */
+    let width = 0;
     const measure = () => {
       const rem = remPixels();
       const outline = getComputedStyle(box);
@@ -215,34 +218,23 @@ function useSweepLayout(
       spot.style.setProperty('--catalogue-sweep-scale', String(scale));
       drawRef.current(Math.min(Math.max(shownRef.current, narrowest), most));
     };
-    measure();
     // Measured again in the next frame where the stage's width changes, or the example's content,
-    // such as once it has loaded, and once the fonts have.
-    let request = 0;
-    const later = () => {
-      cancelAnimationFrame(request);
-      request = requestAnimationFrame(measure);
-    };
-    /** As later, sampling the example's height afresh, which its content and fonts change. */
-    const afresh = () => {
-      tallestOf.clear();
-      later();
-    };
-    let width = room.clientWidth;
-    const resize = new ResizeObserver(() => {
-      if (room.clientWidth === width) return;
-      width = room.clientWidth;
-      later();
-    });
-    resize.observe(room);
-    const content = new MutationObserver(afresh);
-    content.observe(box, { childList: true, subtree: true, characterData: true });
-    void document.fonts?.ready.then(afresh);
-    return () => {
-      cancelAnimationFrame(request);
-      resize.disconnect();
-      content.disconnect();
-    };
+    // such as once it has loaded, and once the fonts have, which sample its height afresh.
+    const sweep = remeasure(
+      (changed) => {
+        if (changed.has('mutation') || changed.has('fonts')) tallestOf.clear();
+        else if (changed.size === 1 && changed.has('resize') && room.clientWidth === width) return;
+        width = room.clientWidth;
+        measure();
+      },
+      {
+        first: 'now',
+        resize: [room],
+        mutation: { target: box, options: { childList: true, subtree: true, characterData: true } },
+        fonts: true,
+      },
+    );
+    return sweep.stop;
   }, [areaRef, placeRef, frameRef, layoutRef, shownRef, drawRef, key, fit, crop]);
 }
 

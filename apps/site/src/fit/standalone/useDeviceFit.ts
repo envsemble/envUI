@@ -1,6 +1,7 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
 import { headingEvent } from '../../motion/MustShow';
+import { remeasure } from '../Remeasure';
 import { deviceFit, sameFit, type DeviceFit, type DeviceFitting } from './DeviceFit';
 
 /**
@@ -28,36 +29,36 @@ export function useDeviceFit(
       view: { x: 0, y: 0 },
       held: { size: '' },
     };
-    // `fromMutation`: whether it follows a change on the screen as the figure plays, not its layout.
-    const update = (fromMutation = false) => {
-      const next = deviceFit(fitting, fromMutation);
-      if (next) setFit((current) => (current && sameFit(current, next) ? current : next));
-    };
-    update();
-    // Measured in the next frame: the size it sets resizes the stage it observes.
-    let request = 0;
-    const later = (mutation = false) => {
-      cancelAnimationFrame(request);
-      request = requestAnimationFrame(() => update(mutation));
-    };
-    const observer = new ResizeObserver(() => later());
-    observer.observe(stageElement);
-    observer.observe(rowElement);
     const { root } = fitting;
-    const heads = () => later(true);
-    root?.addEventListener(headingEvent, heads);
-    // What opens and closes on the screen, such as a pane the pointer heads into, moves the view
-    // to what is left of its points.
-    const mutations = new MutationObserver(() => later(true));
-    if (root) mutations.observe(rowElement, { childList: true, attributes: true, subtree: true });
+    // Measured at once, then in the next frame: the size it sets resizes the stage it observes.
+    const fits = remeasure(
+      (changed) => {
+        // Whether it follows only a change on the screen as the figure plays, not its layout.
+        const fromMutation = [...changed].every(
+          (change) => change === 'mutation' || change === 'event',
+        );
+        const next = deviceFit(fitting, fromMutation);
+        if (next) setFit((current) => (current && sameFit(current, next) ? current : next));
+      },
+      {
+        first: 'now',
+        resize: [stageElement, rowElement],
+        // What opens and closes on the screen, such as a pane the pointer heads into, moves the
+        // view to what is left of its points, as the pointer heading somewhere else does.
+        ...(root && {
+          mutation: {
+            target: rowElement,
+            options: { childList: true, attributes: true, subtree: true },
+          },
+          events: [{ target: root, types: [headingEvent] }],
+        }),
+      },
+    );
     // The pointer's script names its points as its picture starts, a moment after.
-    const timer = setTimeout(() => later(), 600);
+    const timer = setTimeout(fits.update, 600);
     return () => {
-      cancelAnimationFrame(request);
+      fits.stop();
       clearTimeout(timer);
-      observer.disconnect();
-      mutations.disconnect();
-      root?.removeEventListener(headingEvent, heads);
     };
   }, [stage, row, kind]);
   return fit;

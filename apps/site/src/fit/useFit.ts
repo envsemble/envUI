@@ -32,6 +32,7 @@ import {
 import { decideScreenPlace, decideScreenScale, modal, modalRoom } from './FitScreen';
 import { holdsFrame, type Follow, type Framed } from './HeldView';
 import { settling, shownBoxes, type Shown } from './PaintedBoxes';
+import { remeasure } from './Remeasure';
 import { glideTo, newView, settle, type View } from './ViewEasing';
 
 /** What a picture's fits decided that the next one goes by. */
@@ -70,8 +71,8 @@ export interface Fitting {
   readScript: (canvas: HTMLElement) => StageScript;
   /** Fits it again in the next frame. */
   update: () => void;
-  /** Fits it again as what it observes resizes. */
-  resize: ResizeObserver;
+  /** Fits it again as an element resizes too, such as a box it paints. */
+  observe: (element: Element) => void;
   kept: Kept;
   view: View;
 }
@@ -94,17 +95,15 @@ export interface FitOptions {
 /**
  * Scales the picture down until what it shows fits its stage, and centres it there: CSS can't
  * size a box to what its content measures. It follows the stage's width, the picture as it loads
- * and resizes, and the overlays as they open, are placed and finish their transitions: each change
- * fits it again in the next frame, however late it comes, so no timing decides whether it fits.
- * A page's own tile is drawn at its window's scale. At rest it is centred on what it paints, and a
+ * and resizes, and the overlays as they open, are placed and finish their transitions. A page's own tile is drawn at its window's scale. At rest it is centred on what it paints, and a
  * gallery's tile framed as it plays, with what its pointer heads to in view (onCourse). As it
  * plays, its view stays where it is, so what happens in it, such as notifications stacking, happens
  * in place; it moves only when something would leave the stage, easing just far enough to keep it
  * in. In a gallery, it is drawn out once for all its animation acts on and opens (FitPlaying.ts),
  * and eases back to centre the still at its scale once the tile rests.
  *
- * fitPicture fits it once; this hook fits it again as anything that changes it does, until the
- * picture goes or changes: what comes after that, such as the fonts arriving, fits nothing.
+ * fitPicture fits it once; this hook fits it again as anything that changes it does, in the next
+ * frame (remeasure).
  */
 export function useFit(
   stage: RefObject<HTMLElement | null>,
@@ -126,14 +125,40 @@ export function useFit(
     const stageElement = stage.current;
     const canvasElement = canvas.current;
     if (!on || !stageElement || !canvasElement) return;
-    let frame = 0;
-    let active = true;
-    const update = () => {
-      if (!active) return;
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => fitPicture(fitting));
-    };
-    refit.current = update;
+    const fits = remeasure(() => fitPicture(fitting), {
+      first: 'frame',
+      resize: [stageElement, canvasElement],
+      // The example renders once its module loads, and its overlays open into a canvas that keeps
+      // its size; a popup is placed by its style a frame or two later, without changing size. The
+      // canvas's own attributes are the fit's; what is added to it or removed from it, such as the
+      // example as its module loads, is the picture's, and fits it again.
+      // As a tile plays, only what settles moves its view: what is added or removed, a transition
+      // or an animation that ends, a resize. Not each step of a motion, such as a notification
+      // sliding in from the edge, nor a popup placed again as the view moves.
+      mutation: {
+        target: canvasElement,
+        options: {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['style', 'class', 'hidden'],
+        },
+        counts: (records) => {
+          const added = records.some((record) => record.type === 'childList');
+          if (tile && playingNow.current && !added) return false;
+          return added || records.some((record) => record.target !== canvasElement);
+        },
+      },
+      events: [
+        // An overlay that opens with a transition measures its final box once it ends; as the
+        // pointer heads somewhere else, the view keeps where it goes in the stage.
+        { target: canvasElement, types: ['transitionend', 'animationend', heading] },
+        // An overlay may size to the window, such as a sheet as tall as it.
+        { target: window, types: ['resize'] },
+      ],
+      fonts: true,
+    });
+    refit.current = fits.update;
     const fitting: Fitting = {
       stage: stageElement,
       canvas: canvasElement,
@@ -141,8 +166,8 @@ export function useFit(
       kind: { scale, tile } as FitKind,
       playing: playingNow,
       readScript: read,
-      update,
-      resize: new ResizeObserver(update),
+      update: fits.update,
+      observe: fits.observe,
       kept: {
         screen: false,
         framed: null,
@@ -153,48 +178,15 @@ export function useFit(
       },
       view: newView(),
     };
-    const { resize, view } = fitting;
-    resize.observe(stageElement);
-    resize.observe(canvasElement);
-    // The example renders once its module loads, and its overlays open into a canvas that keeps
-    // its size; a popup is placed by its style a frame or two later, without changing size. The
-    // canvas's own attributes are the fit's; what is added to it or removed from it, such as the
-    // example as its module loads, is the picture's, and fits it again.
-    // As a tile plays, only what settles moves its view: what is added or removed, a transition or
-    // an animation that ends, a resize. Not each step of a motion, such as a notification sliding
-    // in from the edge, nor a popup placed again as the view moves.
-    const changes = new MutationObserver((records) => {
-      const added = records.some((record) => record.type === 'childList');
-      if (tile && playingNow.current && !added) return;
-      if (added || records.some((record) => record.target !== canvasElement)) update();
-    });
-    changes.observe(canvasElement, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['style', 'class', 'hidden'],
-    });
+    const { view } = fitting;
     // A region that scrolls as the tile plays fades at its foot while its content runs on past it.
     const scrolled = ({ target }: Event) => {
       if (target instanceof Element) markRunsOn([target]);
     };
     canvasElement.addEventListener('scroll', scrolled, true);
-    // An overlay that opens with a transition measures its final box once it ends.
-    canvasElement.addEventListener('transitionend', update);
-    canvasElement.addEventListener('animationend', update);
-    // As the pointer heads somewhere else, the view keeps where it goes in the stage.
-    canvasElement.addEventListener(heading, update);
-    void document.fonts?.ready.then(update);
-    // An overlay may size to the window, such as a sheet as tall as it.
-    window.addEventListener('resize', update);
-    update();
     return () => {
-      active = false;
-      window.removeEventListener('resize', update);
+      fits.stop();
       canvasElement.removeEventListener('scroll', scrolled, true);
-      canvasElement.removeEventListener('transitionend', update);
-      canvasElement.removeEventListener('animationend', update);
-      canvasElement.removeEventListener(heading, update);
       for (const property of [
         'inline-size',
         'block-size',
@@ -203,10 +195,7 @@ export function useFit(
       ])
         canvasElement.style.removeProperty(property);
       canvasElement.parentElement?.style.removeProperty('--catalogue-crop-top');
-      cancelAnimationFrame(frame);
       cancelAnimationFrame(view.frame);
-      changes.disconnect();
-      resize.disconnect();
       refit.current = null;
     };
   }, [stage, canvas, on, scale, tile, read, heading]);
@@ -373,7 +362,7 @@ function fitPlaying(f: Fitting, boxes: Shown[], script: StageScript, { scales }:
   );
   kept.run = run;
   drawCut(f, { cut, played: true });
-  for (const { element } of boxes) f.resize.observe(element);
+  for (const { element } of boxes) f.observe(element);
 }
 
 /**

@@ -33,13 +33,12 @@ const tones = [
   { id: 'neutral', name: 'Neutral' },
 ] as const;
 
-const toneStyle = (tone: string) =>
-  ({
-    '--catalogue-tone-muted': `var(--env-color-bg-${tone}-muted)`,
-    '--catalogue-tone-emphasis': `var(--env-color-bg-${tone}-${tone === 'primary' || tone === 'accent' ? 'solid' : 'emphasis'})`,
-    '--catalogue-tone-strong':
-      tone === 'neutral' ? 'var(--env-color-fg-default)' : `var(--env-color-fg-${tone})`,
-  }) as CSSProperties;
+const toneStyle = (tone: string): CSSProperties => ({
+  '--catalogue-tone-muted': `var(--env-color-bg-${tone}-muted)`,
+  '--catalogue-tone-emphasis': `var(--env-color-bg-${tone}-${tone === 'primary' || tone === 'accent' ? 'solid' : 'emphasis'})`,
+  '--catalogue-tone-strong':
+    tone === 'neutral' ? 'var(--env-color-fg-default)' : `var(--env-color-fg-${tone})`,
+});
 
 /** A row for each tone: its name, then its soft fill, its solid fill and its text. */
 function ColorsPicture() {

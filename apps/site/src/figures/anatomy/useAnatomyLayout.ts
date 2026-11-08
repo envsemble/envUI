@@ -6,6 +6,7 @@
  */
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
+import { remeasure, type Change } from '../../fit/Remeasure';
 import { labelWidths, measureParts, measureVariantItems, sizesOfUses } from './MeasureAnatomy';
 import {
   fitsBeside,
@@ -57,9 +58,8 @@ interface LayoutOptions {
 
 /**
  * The callouts of an anatomy figure, measured from its live parts, and in a variants figure the
- * room its names take: they follow the figure as it resizes, its example loads, its fonts arrive
- * and its parts settle where they enter with motion, until the figure goes or changes: what comes
- * after that, such as the fonts arriving, measures nothing. Only a change of place re-renders them.
+ * room its names take, following the figure until it goes or changes (remeasure). Only a change of
+ * place re-renders them.
  */
 export function useAnatomyLayout(
   stage: RefObject<HTMLDivElement | null>,
@@ -72,70 +72,48 @@ export function useAnatomyLayout(
     const stageElement = stage.current;
     const subjectElement = subject.current;
     if (!stageElement || !subjectElement) return;
-    let frame = 0;
-    let active = true;
     /** The variants' names' widths, measured once, and again as the fonts arrive. */
     const labels = new Map<string, number>();
-    const update = () => {
-      if (!active) return;
-      cancelAnimationFrame(frame);
-      // Only a change of place re-renders the callouts.
-      frame = requestAnimationFrame(() => {
-        // Open overlays take the room they need; they are never small.
-        if (!open && !variants) enlarge(subjectElement, enlarged);
-        const measured = variants
-          ? { ...layOutVariants(stageElement, subjectElement, legend, labels, uses), whole: [] }
-          : { ...layOutCallouts(stageElement, subjectElement, legend), room: undefined };
-        const next = measured.callouts;
-        setCallouts((current) =>
-          JSON.stringify(current) === JSON.stringify(next) ? current : next,
+    const measure = (changed: ReadonlySet<Change>) => {
+      if (changed.has('fonts')) labels.clear();
+      // Open overlays take the room they need; they are never small.
+      if (!open && !variants) enlarge(subjectElement, enlarged);
+      const measured = variants
+        ? { ...layOutVariants(stageElement, subjectElement, legend, labels, uses), whole: [] }
+        : { ...layOutCallouts(stageElement, subjectElement, legend), room: undefined };
+      const next = measured.callouts;
+      setCallouts((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
+      if (!variants)
+        onOrder(
+          next.map(({ index }) => index),
+          measured.whole,
         );
-        if (!variants)
-          onOrder(
-            next.map(({ index }) => index),
-            measured.whole,
-          );
-        if (variants) onBeside?.('beside' in measured && Boolean(measured.beside));
-        const needed = measured.room;
-        if (needed)
-          setRoom((current) =>
-            current.start === needed.start &&
-            current.bottom === needed.bottom &&
-            current.end === needed.end &&
-            current.under === needed.under
-              ? current
-              : needed,
-          );
-      });
+      if (variants) onBeside?.('beside' in measured && Boolean(measured.beside));
+      const needed = measured.room;
+      if (needed)
+        setRoom((current) =>
+          current.start === needed.start &&
+          current.bottom === needed.bottom &&
+          current.end === needed.end &&
+          current.under === needed.under
+            ? current
+            : needed,
+        );
     };
-    update();
-    // The callouts follow the figure as it resizes, its example loads and its fonts arrive.
-    const resize = new ResizeObserver(update);
-    resize.observe(stageElement);
-    resize.observe(subjectElement);
-    const mutation = new MutationObserver(update);
-    mutation.observe(subjectElement, {
-      childList: true,
-      subtree: true,
-      attributeFilter: ['class', 'style'],
+    // The callouts follow the figure as it resizes, its example loads and its fonts arrive, and as
+    // its parts settle where they enter with motion, such as a dock's panel rising into place,
+    // which moves them without resizing them.
+    const layout = remeasure(measure, {
+      first: 'frame',
+      resize: [stageElement, subjectElement],
+      mutation: {
+        target: subjectElement,
+        options: { childList: true, subtree: true, attributeFilter: ['class', 'style'] },
+      },
+      events: [{ target: subjectElement, types: ['animationend', 'transitionend'] }],
+      fonts: true,
     });
-    void document.fonts?.ready.then(() => {
-      if (!active) return;
-      labels.clear();
-      update();
-    });
-    // And as its parts settle where they enter with motion, such as a dock's panel rising into
-    // place, which moves them without resizing them.
-    subjectElement.addEventListener('animationend', update);
-    subjectElement.addEventListener('transitionend', update);
-    return () => {
-      active = false;
-      cancelAnimationFrame(frame);
-      resize.disconnect();
-      mutation.disconnect();
-      subjectElement.removeEventListener('animationend', update);
-      subjectElement.removeEventListener('transitionend', update);
-    };
+    return layout.stop;
   }, [stage, subject, legend, open, enlarged, variants, onOrder, uses, onBeside]);
   return { callouts, room };
 }

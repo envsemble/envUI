@@ -87,25 +87,23 @@ export function steer(
   // Late in a glide, a new one; before then, the same, bent to the new place: from a start that
   // puts the view where it is now at this point of the curve.
   if (share > 0.85) return { from: at, to, start: now, length };
-  return {
-    ...course,
-    to,
-    from: at.map((value, index) => (value - to[index]! * share) / (1 - share)) as Point,
-  };
+  const back = (index: 0 | 1 | 2) => (at[index] - to[index] * share) / (1 - share);
+  return { ...course, to, from: [back(0), back(1), back(2)] };
 }
 
 /** Where a glide has the view at the time `now`, and whether it has settled there.
  * @internal
  */
-export function glideAt(course: Course, now: number, ease: (time: number) => number) {
+export function glideAt(
+  course: Course,
+  now: number,
+  ease: (time: number) => number,
+): { at: Point; settled: boolean } {
   const share = ease((now - course.start) / course.length);
   const { from, to } = course;
+  const along = (index: 0 | 1 | 2) => from[index] + (to[index] - from[index]) * share;
   return {
-    at: [
-      from[0] + (to[0] - from[0]) * share,
-      from[1] + (to[1] - from[1]) * share,
-      from[2] + (to[2] - from[2]) * share,
-    ] as Point,
+    at: [along(0), along(1), along(2)],
     settled: now - course.start >= course.length,
   };
 }
@@ -193,7 +191,7 @@ export function settle(
     view.y = view.toY = toY;
     view.scale = view.toScale = view.rest = scale;
     place(f);
-    for (const { element } of boxes) f.resize.observe(element);
+    for (const { element } of boxes) f.observe(element);
     if (first.calm >= 3 || performance.now() - first.start >= 250) canvas.dataset.fitted = '';
     else f.update();
     return;
@@ -222,5 +220,5 @@ export function settle(
     jump(f);
   }
   canvas.dataset.fitted = '';
-  for (const { element } of boxes) f.resize.observe(element);
+  for (const { element } of boxes) f.observe(element);
 }

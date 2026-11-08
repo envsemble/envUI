@@ -29,15 +29,15 @@ const tones: readonly {
       soft: {
         '--env-badge-container': 'var(--env-color-bg-primary-muted)',
         '--env-badge-content': 'var(--env-color-fg-primary)',
-      } as CSSProperties,
+      },
       solid: {
         '--env-badge-container': 'var(--env-color-bg-info-strong)',
         '--env-badge-content': 'var(--env-color-fg-on-strong)',
-      } as CSSProperties,
+      },
       outline: {
         '--env-badge-content': 'var(--env-color-fg-primary)',
         '--env-badge-outline': 'var(--env-color-border-primary)',
-      } as CSSProperties,
+      },
     },
     icon: <IconInfo />,
     word: 'Tip',

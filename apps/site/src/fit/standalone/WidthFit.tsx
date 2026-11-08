@@ -8,6 +8,7 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { remPixels } from '@envui-internal/internal/lengths';
 import { pixelTolerance } from '../FitGeometry';
+import { remeasure } from '../Remeasure';
 import { flag } from '@envui-internal/internal/flag';
 
 /** The least a width frame is drawn at to fit its stage; one that would need less scrolls. */
@@ -34,23 +35,6 @@ const keepSize = (next: Scaled | undefined) => (current: Scaled | undefined) =>
   Math.abs(current.height - next.height) < pixelTolerance
     ? current
     : next;
-
-/**
- * Measures in the next frame as any of the elements resizes, as resizing the frame's place resizes
- * the stage it observes; returns what stops it.
- */
-function measureOnResize(elements: Element[], measure: () => void) {
-  let request = 0;
-  const observer = new ResizeObserver(() => {
-    cancelAnimationFrame(request);
-    request = requestAnimationFrame(measure);
-  });
-  for (const element of elements) observer.observe(element);
-  return () => {
-    cancelAnimationFrame(request);
-    observer.disconnect();
-  };
-}
 
 /**
  * A frame of a given width for an example, drawn smaller where its stage is narrower than the
@@ -98,11 +82,12 @@ export function WidthBox({ width, children }: { width: number; children: ReactNo
       markCuts();
       setScaled(keepSize(scaledAt(scale, frame.offsetWidth, frame.offsetHeight)));
     };
-    // Its place too, which takes the stage's width once the frame is cropped.
-    const stop = measureOnResize([stage, frame, place], measure);
+    // Measured in the next frame as any of these resizes, as resizing the frame's place resizes
+    // the stage it observes; its place too, which takes the stage's width once the frame is cropped.
+    const widths = remeasure(measure, { resize: [stage, frame, place] });
     place.addEventListener('scroll', markCuts, { passive: true });
     return () => {
-      stop();
+      widths.stop();
       place.removeEventListener('scroll', markCuts);
     };
   }, []);
@@ -145,7 +130,7 @@ export function FitFrame({ width, children }: { width: number; children: ReactNo
       const needed = width * remPixels();
       setScaled(keepSize(scaledAt(subject.clientWidth / needed, needed, frame.offsetHeight)));
     };
-    return measureOnResize([subject, frame], measure);
+    return remeasure(measure, { resize: [subject, frame] }).stop;
   }, [width]);
   return (
     <div

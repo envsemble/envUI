@@ -1,40 +1,6 @@
 /*
- * What a picture is fitted as, what its script tells the fit, and how its view is placed now.
- * Each figure kind has its fitter:
- *
- * - a gallery's tile, a page's own tile, and an example's or a specimen's picture: useFit.ts, by
- *   the FitKind below, deciding in FitScreen.ts, FitPlaying.ts and FitResting.ts;
- * - an application's tile, which fills its card: standalone/useAppFit.ts;
- * - a device figure, a phone or a window around its example: standalone/useDeviceFit.ts;
- * - an Adapting to width figure's frames and an anatomy figure's subject drawn from a width:
- *   standalone/WidthFit.tsx;
- * - an open example's room for the overlays it rests open on: standalone/OverlayRoom.ts;
- * - a do or don't figure's example: figures/useVerdictFit.ts, outside this folder, as the motion
- *   figures' stage uses it too (AGENTS.md).
- *
- * The words this folder's comments use:
- *
- * - picture: what a tile or a figure shows, rendered in its canvas; stage: the box it is shown in;
- *   canvas: the box the picture lays out in, moved and scaled to its place; crop: the box around a
- *   tile's canvas, which clips it at the stage and fades out at its foot (TileStage.tsx).
- * - view: where the canvas is drawn in its stage, the point it centres and its scale, and where it
- *   eases to (ViewEasing.ts). Framed: the view a resting picture was placed at, with what it was
- *   measured as then, which it holds while only its popups move (holdsFrame, HeldView.ts).
- * - still, at rest: a tile that isn't playing, and what it shows then; playing: its script runs,
- *   on hover or by itself. Shown (`data-fitted`): once its first fit has held, it fades in.
- * - what it paints: the boxes that show something of their own, such as a fill, an edge or text,
- *   rather than boxes that only lay others out (shownBoxes, PaintedBoxes.ts).
- * - the script: what a tile's animation tells its fit (StageScript): what it acts on, which the
- *   view keeps in view (it names them), where its pointer heads now (heading) and over the whole
- *   script (course). A held view: a tile whose still is written as its largest state, such as a
- *   picker resting open, holds its view as it plays, framed once on its still.
- * - drawn out: a playing tile's view moved and drawn smaller, once, so what it opened fits.
- * - cut: the sides a picture reaches past its stage at (`data-cut`), where it fades out; trimmed:
- *   the rows past the crop's foot hidden whole (trimRows, FitDraw.ts).
- * - popup: what opens in a picture's overlay layer; an overlay: a tile that is one, such as a
- *   notification, drawn at the overlays' scale; a modal: a dialog, a sheet or a palette over its
- *   backdrop, whose screen is the stage (FitScreen.ts).
- * - kept: what one fit decides that the next goes by (`kept`, useFit.ts).
+ * What a picture is fitted as, what its script tells the fit, and how its view is placed now. The
+ * words this folder's comments use, and which fitter fits what: README.md.
  */
 
 /**

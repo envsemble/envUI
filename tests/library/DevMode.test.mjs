@@ -15,6 +15,7 @@ const {
   readContainerQueries,
   queriesFor,
   indexParts,
+  paintsOf,
   partClassOf,
   read,
   toPx,
@@ -24,6 +25,7 @@ const {
   "export * from './packages/ui/src/dev/parts.ts';",
   "export * from './packages/ui/src/dev/readout.ts';",
   "export * from './packages/ui/src/dev/units.ts';",
+  "export { paintsOf } from './packages/ui/src/dev/measure.ts';",
 ]);
 
 test('container conditions: the widths they test and whether they hold', () => {
@@ -287,6 +289,38 @@ test('the readout lists each node with its layout, and folds identical siblings'
     'problems: none',
   ]);
   assert.deepEqual(reading.problems, []);
+});
+
+test('what an element paints: a fill, an image, a shadow, or an edge of a color that shows', () => {
+  const style = (values) => {
+    const all = {
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      backgroundImage: 'none',
+      boxShadow: 'none',
+      ...values,
+    };
+    return { ...all, getPropertyValue: (name) => all[name] ?? '' };
+  };
+  const edge = (color, width = '1px', kind = 'solid') =>
+    Object.fromEntries(
+      ['top', 'right', 'bottom', 'left'].flatMap((side) => [
+        [`border-${side}-width`, width],
+        [`border-${side}-style`, kind],
+        [`border-${side}-color`, color],
+      ]),
+    );
+  assert.deepEqual(paintsOf(style({})), []);
+  assert.deepEqual(paintsOf(style({ backgroundColor: 'oklch(0.5 0.1 200 / 0)' })), []);
+  // Opaque, though it ends in a 0, its blue.
+  assert.deepEqual(paintsOf(style({ backgroundColor: 'rgb(255, 0, 0)' })), [
+    'background rgb(255, 0, 0)',
+  ]);
+  assert.deepEqual(paintsOf(style(edge('rgb(0, 0, 0)'))), ['a border (top, right, bottom, left)']);
+  // An edge that only takes room paints nothing: of no width, hidden or transparent.
+  assert.deepEqual(paintsOf(style(edge('rgb(0, 0, 0)', '0px'))), []);
+  assert.deepEqual(paintsOf(style(edge('rgb(0, 0, 0)', '1px', 'hidden'))), []);
+  assert.deepEqual(paintsOf(style(edge('rgba(0, 0, 0, 0)'))), []);
+  assert.deepEqual(paintsOf(style(edge('transparent'))), []);
 });
 
 test('the readout finds what paints, spills, overflows, never sticks, leaves the window or is squeezed', () => {

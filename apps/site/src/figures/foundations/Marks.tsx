@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { remeasure } from '../../fit/Remeasure';
 
 /**
  * A real envUI example with numbered marks measured from its live layout, as an anatomy figure's
@@ -292,10 +293,8 @@ export function MarkedSubject({
     const stageElement = stage.current;
     const subjectElement = subject.current;
     if (!stageElement || !subjectElement) return;
-    let frame = 0;
-    const update = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
+    const marks = remeasure(
+      () => {
         const next = isNamed
           ? {
               marks: [],
@@ -304,17 +303,10 @@ export function MarkedSubject({
             }
           : { ...measure(stageElement, subjectElement), callouts: [] };
         setState((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
-      });
-    };
-    update();
-    const resize = new ResizeObserver(update);
-    resize.observe(stageElement);
-    resize.observe(subjectElement);
-    void document.fonts?.ready.then(update);
-    return () => {
-      cancelAnimationFrame(frame);
-      resize.disconnect();
-    };
+      },
+      { first: 'frame', resize: [stageElement, subjectElement], fonts: true },
+    );
+    return marks.stop;
   }, [isNamed]);
   const placed = new Map(state.callouts.map((callout) => [callout.number, callout.name.y]));
   return (
