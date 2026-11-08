@@ -8,7 +8,9 @@ import { layout, type LayoutApi } from './api.js';
 import { devAttribute } from './measure.js';
 import { loadParts, setParts, type PartsFile } from './parts.js';
 import { DevMode, type DevModeController } from './ui/DevMode.js';
-import { devStyles } from './ui/styles.js';
+// Its own style sheet, as text: Vite reads `?raw`, esbuild the `type`, and the library build puts
+// the text in the module (scripts/build/BuildLibrary.ts).
+import devStyles from './ui/DevMode.css?raw' with { type: 'text' };
 
 export interface DevModeOptions {
   /**

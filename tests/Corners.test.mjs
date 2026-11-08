@@ -11,20 +11,20 @@ import { fileURLToPath } from 'node:url';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 
-/** The style sheets envUI ships, the catalogue's and dev mode's, which embeds its own. */
+/** The style sheets envUI ships, dev mode's and the catalogue's. */
 function styleSheets() {
   const sheets = [];
-  for (const directory of ['packages/ui/src/styles', 'apps/site/src/styles'])
+  for (const directory of [
+    'packages/ui/src/styles',
+    'packages/ui/src/dev/ui',
+    'apps/site/src/styles',
+  ])
     for (const name of readdirSync(join(repository, directory)))
       if (name.endsWith('.css') && name !== 'Tokens.css')
         sheets.push({
           file: `${directory}/${name}`,
           css: readFileSync(join(repository, directory, name), 'utf8'),
         });
-  // Dev mode writes its style sheet from a template literal.
-  const devStyles = readFileSync(join(repository, 'packages/ui/src/dev/ui/styles.ts'), 'utf8');
-  for (const [, css] of devStyles.matchAll(/`([^`]*)`/g))
-    sheets.push({ file: 'packages/ui/src/dev/ui/styles.ts', css });
   return sheets;
 }
 
