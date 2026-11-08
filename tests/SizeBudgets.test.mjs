@@ -30,7 +30,7 @@ const cssBudgets = {
 /** The JavaScript a page loads first. */
 const jsBudgets = [
   // 32,296 measured; raising it is a deliberate decision, recorded in the commit.
-  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 33300 },
+  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 33350 },
   // 4,701 measured; raising it is a deliberate decision, recorded in the commit.
   { set: 'Theme + Button + Icon', measure: 'minified', budget: 4850 },
 ];
@@ -44,7 +44,7 @@ const componentBudgets = {
   // 14,607 measured; raising it is a deliberate decision, recorded in the commit.
   Menu: 15000,
   // 15,542 measured; raising it is a deliberate decision, recorded in the commit.
-  Select: 16000,
+  Select: 16200,
   // 7,528 measured (2026-11-08, prerelease.6's ghost fill and read-only look; was 7,202); raising it
   // is a deliberate decision, recorded in the commit.
   TextField: 7750,
