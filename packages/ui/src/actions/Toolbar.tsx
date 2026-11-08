@@ -236,6 +236,7 @@ function ToolbarButton({
       focusableWhenDisabled={false}
       render={
         <IconButton
+          // IconButtonProps is a union of a button's and a link's; this is the button's.
           {...({
             ...props,
             variant,

@@ -164,6 +164,7 @@ export function CopyButton({
   };
   const button = iconOnly ? (
     <ButtonBase
+      // ButtonBaseProps is a union by iconOnly, which the shared props alone do not pick.
       {...({
         ...shared,
         fallbackVariant: 'primary',
@@ -174,6 +175,7 @@ export function CopyButton({
     />
   ) : (
     <ButtonBase
+      // ButtonBaseProps is a union by iconOnly, which the shared props alone do not pick.
       {...({
         ...shared,
         fallbackVariant: 'primary',

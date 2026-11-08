@@ -75,6 +75,7 @@ export function useHeatmapTooltip(
     const document = grid.current?.ownerDocument;
     let origin: { x: number; y: number } | undefined;
     const move = (event: globalThis.PointerEvent) => {
+      // A pointer event on the document has a node as its target.
       if (event.pointerType !== 'mouse' || grid.current?.contains(event.target as Node)) return;
       origin ??= { x: event.clientX, y: event.clientY };
       if (Math.hypot(event.clientX - origin.x, event.clientY - origin.y) > focusTipSlack) hide();

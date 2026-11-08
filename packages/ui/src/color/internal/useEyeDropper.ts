@@ -7,6 +7,7 @@ interface EyeDropperConstructor {
   new (): { open(options?: { signal?: AbortSignal }): Promise<{ sRGBHex: string }> };
 }
 
+// The EyeDropper API is in Chromium only, so TypeScript's DOM types leave it out.
 const eyeDropper = () => (globalThis as { EyeDropper?: EyeDropperConstructor }).EyeDropper ?? null;
 
 const subscribe = () => () => {};

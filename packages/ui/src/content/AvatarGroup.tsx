@@ -139,6 +139,7 @@ function useTapSpread(group: RefObject<HTMLDivElement | null>) {
     const bunch = () => setTapped(false);
     const timer = setTimeout(bunch, tapSpreadDuration);
     const outside = (event: PointerEvent) => {
+      // A pointer event on the document has a node as its target.
       if (!group.current?.contains(event.target as Node)) bunch();
     };
     document.addEventListener('pointerdown', outside, true);

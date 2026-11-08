@@ -193,6 +193,7 @@ export function Tooltip(props: TooltipProps) {
   const owner = children.props;
   if (isTriggerOwner(children.type, owner) && isValidElement(owner.trigger))
     return cloneElement(children, {
+      // isValidElement narrows to the element, not its props.
       trigger: <Tooltip {...props}>{owner.trigger as ReactElement<TriggerProps>}</Tooltip>,
     });
   // A HoverCard's trigger opens the card on the same hover and focus, which the tooltip would
@@ -363,6 +364,7 @@ function TooltipTrigger({
           if (next && expanded) return;
           if (next && focusReturning(details.reason, details.event)) return;
           if (next && !isDisabled) setName(accessibleName(triggerRef.current) ?? ownName(trigger));
+          // Base UI's tooltip reasons, which a popover's reason type names.
           setOpen(next, details.reason as PopoverOpenChangeReason);
         }}
       >
@@ -382,6 +384,7 @@ function TooltipTrigger({
                 aria-label={standsIn ? stand.name : undefined}
                 aria-disabled={standsIn || undefined}
                 tabIndex={standsIn ? 0 : undefined}
+                // The copied states are ARIA attributes with their values as the control had them.
                 {...((standsIn ? stand.states : {}) as AriaAttributes)}
               />
             ) : (
@@ -391,6 +394,7 @@ function TooltipTrigger({
                 'aria-describedby': describedBy,
                 ...(isTextTrigger(children) && {
                   className: classNames(
+                    // A text trigger is an element that takes a class name (isTextTrigger).
                     (control.props as { className?: string }).className,
                     hoverDetailClass,
                   ),
@@ -399,9 +403,12 @@ function TooltipTrigger({
             )
           }
         >
-          {isDisabled
-            ? cloneElement(control, standsIn ? ({ 'aria-hidden': true } as object) : {})
-            : undefined}
+          {
+            // aria-hidden goes on whatever element the control is.
+            isDisabled
+              ? cloneElement(control, standsIn ? ({ 'aria-hidden': true } as object) : {})
+              : undefined
+          }
         </BaseTooltip.Trigger>
         <TooltipPopup
           content={content}

@@ -327,6 +327,7 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
     rowKeyDown(event: KeyboardEvent<HTMLElement>, row: HTMLElement, label: string) {
       if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || move) return;
       if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+      // A key press on a row reaches it from an element inside it.
       const target = event.target as HTMLElement;
       const { list, onReorder } = read();
       if (!target.closest('[data-row-target]') || !list) return;

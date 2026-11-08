@@ -34,6 +34,7 @@ function movingShapes(drawing: LineArtDrawing) {
   beats.forEach((lines, beat) => {
     for (const line of lines) at[line] = beats.length > 1 ? beat / (beats.length - 1) : 0;
   });
+  // A drawing is a Fragment of its shapes, each an SVG element.
   const drawn = (fragment as ReactElement<{ children: ReactNode }>).props.children;
   const shapes = Children.toArray(drawn).map((shape, index) =>
     cloneElement(shape as ReactElement<{ pathLength?: number; style?: CSSProperties }>, {

@@ -105,6 +105,7 @@ function markReorderable(children: ReactNode): ReactNode {
     if (!isValidElement<{ children?: ReactNode }>(child)) return child;
     if (child.type === Fragment)
       return cloneElement(child, undefined, markReorderable(child.props.children));
+    // An item of any type takes the private prop that marks it reorderable.
     return cloneElement(child, { [reorderableProp]: true } as object);
   });
 }
@@ -163,6 +164,7 @@ function markCurrent(node: ReactNode): [ReactNode, boolean] {
   let found = false;
   const visit = (each: ReactNode): ReactNode => {
     if (found || !isValidElement<TargetProps>(each)) return each;
+    // isValidElement narrows to the element, not its props.
     const element = each as ReactElement<TargetProps>;
     if (element.props['data-row-target'] != null && element.props['data-row-target'] !== false) {
       found = true;
@@ -184,6 +186,7 @@ function markCurrent(node: ReactNode): [ReactNode, boolean] {
  * reorderable row needs the browser.
  */
 function Item(props: ItemProps) {
+  // markReorderable adds the private prop, which ItemProps does not list.
   const {
     label,
     description,

@@ -52,6 +52,7 @@ export function accessibleName(element: Element | null | undefined): string | un
   }
   const label = clean(element.getAttribute('aria-label'));
   if (label) return label;
+  // A labelable element has labels; any other has none.
   const labels = Array.from((element as HTMLInputElement).labels ?? []).filter(
     (each) => !hiddenFromAccessibility(each),
   );

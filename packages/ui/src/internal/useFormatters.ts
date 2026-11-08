@@ -16,6 +16,7 @@ function cached<Formatter>(
 ): Formatter {
   const key = `${kind}\u0000${locale ?? ''}\u0000${JSON.stringify(options ?? {})}`;
   if (!cache.has(key)) cache.set(key, create());
+  // The key says what create made, set on the line above.
   return cache.get(key) as Formatter;
 }
 

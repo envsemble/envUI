@@ -410,6 +410,7 @@ function useColumnIndex(cell: RefObject<HTMLTableCellElement | null>, enabled: b
     if (!enabled || !element?.parentElement) return;
     let end = -1;
     for (const sibling of element.parentElement.children) {
+      // A TH or TD is a table cell, which spans columns.
       if (sibling.tagName === 'TH' || sibling.tagName === 'TD')
         end += (sibling as HTMLTableCellElement).colSpan;
       if (sibling === element) break;

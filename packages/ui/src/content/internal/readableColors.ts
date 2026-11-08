@@ -15,6 +15,7 @@ const fromLinear = (channel: number) =>
 function parseHex(hex: string): Rgb {
   let digits = hex.replace('#', '');
   if (digits.length <= 4) digits = [...digits].map((digit) => digit + digit).join('');
+  // Three channels in, three out.
   return [0, 2, 4].map((start) => Number.parseInt(digits.slice(start, start + 2), 16) / 255) as Rgb;
 }
 
@@ -80,6 +81,7 @@ function fromOklch(lightness: number, chroma: number, hue: number) {
       if (inGamut(oklabToLinear(at(middle)))) fits = middle;
       else misses = middle;
     }
+  // Three channels in, three out.
   return formatHex(oklabToLinear(at(fits)).map(fromLinear) as Rgb);
 }
 
@@ -93,6 +95,7 @@ export function scaleChroma(color: string, factor: number) {
 export function over(color: string, alpha: number, background: string) {
   const [top, bottom] = [parseHex(color), parseHex(background)];
   return formatHex(
+    // Three channels in, three out.
     top.map((channel, index) => channel * alpha + bottom[index] * (1 - alpha)) as Rgb,
   );
 }

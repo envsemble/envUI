@@ -166,6 +166,7 @@ export function DialogClose({ variant = 'secondary', ref, disabled, ...props }: 
   return (
     <BaseDialog.Close
       ref={ref}
+      // ButtonProps is a union of a button's and a link's; a close button takes the button's.
       render={<Button {...({ ...props, variant, disabled: disabled || pending } as ButtonProps)} />}
     />
   );

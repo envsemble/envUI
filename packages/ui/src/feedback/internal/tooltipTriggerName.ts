@@ -35,6 +35,7 @@ const buttonTypes = ['button', 'submit', 'reset', 'image'];
 function standInRole(element: Element | null | undefined): StandInRole | undefined {
   if (!element) return undefined;
   const tag = element.tagName.toLowerCase();
+  // An input's type; undefined on any other element.
   const type = (element as HTMLInputElement).type;
   let role = element.getAttribute('role')?.split(/\s+/)[0];
   if (!role && (tag === 'button' || (tag === 'input' && buttonTypes.includes(type))))
