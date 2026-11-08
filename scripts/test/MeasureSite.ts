@@ -80,7 +80,7 @@ const contextOptions = (form: Form) =>
 /**
  * What a page shows while a part of it loads, which the measures wait for until none is in view: a
  * part's or the whole page's skeleton (loading/Skeletons.tsx, loading/PageSkeleton.tsx), a tile's
- * skeleton, and a section still to show, hidden as its outline (template/SectionOutline.ts).
+ * skeleton, and a section still to show, hidden as its outline (markdown/SectionOutline.ts).
  */
 const loadingSelector = '.site-loading, .catalogue-tile-loading, [data-site-pending]';
 

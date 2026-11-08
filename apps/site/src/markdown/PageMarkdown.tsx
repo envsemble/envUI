@@ -3,12 +3,12 @@ import { CopyButton, Link } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
 import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/markdown';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
-import { documents } from './PageModel';
+import { documents } from '../pages/PageModel';
 import { groupedPages, routeOfDocument } from '../routes/SiteRoutes';
 import { inDocs, routeHref } from '../routes/Address';
 import { currentRoute } from '../routes/useSiteRoute';
 import { headingSlugger } from '@docs-model/SearchAnchors';
-import { headingsOnly, useSectionOutline } from '../template/SectionOutline';
+import { headingsOnly, useSectionOutline } from './SectionOutline';
 import { marked, type Token, type Tokens } from 'marked';
 
 /** The current route scrolled to `section`, keeping its other parameters. */

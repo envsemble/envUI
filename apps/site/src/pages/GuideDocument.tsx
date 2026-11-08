@@ -1,6 +1,6 @@
 import { Fragment, Suspense } from 'react';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
-import { PageMarkdown } from './PageMarkdown';
+import { PageMarkdown } from '../markdown/PageMarkdown';
 import { StageSkeleton } from '../loading/Skeletons';
 import { useFoundationFigures } from '../figures/foundations/FoundationFigures';
 

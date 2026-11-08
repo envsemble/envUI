@@ -8,7 +8,7 @@ import { PartSwitch } from '../routes/OtherPart';
 import { lazyPart } from '../loading/LoadBoundary';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import { useRevealed } from '../template/useRevealed';
-import { SectionOutline } from '../template/SectionOutline';
+import { SectionOutline } from '../markdown/SectionOutline';
 import { useDocument } from './PageContent';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';

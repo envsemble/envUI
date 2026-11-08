@@ -8,7 +8,7 @@ import type {
   DocumentationSection,
   StageFill,
 } from '@docs-model/DocumentationTypes';
-import { PageMarkdown } from '../pages/PageMarkdown';
+import { PageMarkdown } from '../markdown/PageMarkdown';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { AnatomyFigure } from './anatomy/AnatomyFigure';
 import {
@@ -19,7 +19,7 @@ import {
   type Presentation,
 } from './LiveExample';
 import { OpenExample } from './OpenExample';
-import { SiteMarkdown } from '../template/SiteMarkdown';
+import { MarkdownWithLegends } from '../markdown/MarkdownWithLegends';
 import {
   lastSubsection,
   leadParagraph,
@@ -33,7 +33,7 @@ import {
   type FoundationFigure as Figure,
 } from './foundations/FoundationFigures';
 import { FigureCode } from './foundations/Figure';
-import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
+import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
 import { useVerdictFit } from '../fit/standalone/useVerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
@@ -348,7 +348,7 @@ export function FigureSection({
     leadShown = true;
   };
   const markdown = (key: number, text: string) => (
-    <SiteMarkdown key={key} markdown={text} path={page.path} />
+    <MarkdownWithLegends key={key} markdown={text} path={page.path} />
   );
   groups.forEach((group, index) => {
     const opensWithLead =

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Badge, Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
-import { PageMarkdown, GuidanceLists } from '../pages/PageMarkdown';
+import { PageMarkdown, GuidanceLists } from '../markdown/PageMarkdown';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import type { DocumentationMetadata, DocumentationSection } from '@docs-model/DocumentationTypes';
 import { FigureSection } from '../figures/Figures';
@@ -8,7 +8,7 @@ import { catalogueSection, docsOnlySections } from '@docs-model/CatalogueContent
 import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';
-import { pendingAttribute, SectionOutline, useSectionOutline } from './SectionOutline';
+import { pendingAttribute, SectionOutline, useSectionOutline } from '../markdown/SectionOutline';
 import { subscribeToAddress } from '../routes/Address';
 import { statusTones } from '../routes/PageBadges';
 
