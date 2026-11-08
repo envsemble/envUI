@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import { Column, IconButton, Surface, Text, useTheme } from '@envsemble/envui';
 import { IconViewInAr } from '@envsemble/envui/icons/ViewInAr';
-import { Figure } from '../foundations/Topic';
+import { Figure } from '../foundations/Figure';
 // Pictures of the real dev mode at work on the demo application, captured by
 // scripts/docs/CaptureDevModeImage.ts (npm run docs:dev-mode-image) in each theme.
 import wholeLight from './dev-mode-whole-light.webp';

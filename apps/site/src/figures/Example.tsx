@@ -19,7 +19,7 @@ export const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
  * Whether an Example shows its content on a stage, as a foundation page's figure does; its caption
  * stays below the stage.
  */
-export const ExampleStage = createContext(false);
+const ExampleStage = createContext(false);
 
 /** A foundation's figure that shows envUI at work, on its stage. */
 function FoundationStage({ children }: { children: ReactNode }) {

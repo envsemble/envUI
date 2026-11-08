@@ -66,7 +66,7 @@ export const useOnScreen = () => use(OnScreen);
  * the state does, at once. A side that is cut off runs out over the stage's padding to its edge.
  * The place it holds on the stage is its view, so the stage is as tall as what it shows.
  */
-export function DeviceStage({ kind, children }: { kind: DeviceKind; children: ReactNode }) {
+function DeviceStage({ kind, children }: { kind: DeviceKind; children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
   const row = useRef<HTMLDivElement>(null);
   const fit = useDeviceFit(stage, row, kind);

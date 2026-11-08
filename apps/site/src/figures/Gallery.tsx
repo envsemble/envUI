@@ -20,7 +20,7 @@ export interface GalleryGroup {
 }
 
 /** What a gallery tile shows of a page: its own tile, as a Related tile does (TileStage.tsx). */
-export function galleryPictureOf(page: RoutePage): TilePicture | undefined {
+function galleryPictureOf(page: RoutePage): TilePicture | undefined {
   return page.document && tilePictureOf(page.document);
 }
 

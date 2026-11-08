@@ -31,7 +31,7 @@ import type { PointerStep } from '../../motion/PointerPlan';
 import { usePointer } from '../../motion/PointerPlayback';
 import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel, StepStack } from './Steps';
-import { Figure, NumberedLegend, type LegendEntry } from './Topic';
+import { Figure, NumberedLegend, type LegendEntry } from './Figure';
 
 /*
  * The figures of the Spacing & density foundation. Its words are in docs/foundations/spacing.md,

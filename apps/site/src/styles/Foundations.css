@@ -77,24 +77,8 @@
     padding-inline-end: 24rem;
   }
 }
-/* Topics of the catalogue's own pages, such as Dev mode, and the parts of foundations' figures
-   (figures/foundations/Topic.tsx): sections under their h2, each opened by a paragraph, then
-   titled blocks beside their figures, a sub-topic apart from the next. */
-.catalogue-topic {
-  --catalogue-subtopic-gap: var(--env-space-7);
-}
-.catalogue-topic > h2 {
-  margin: 0 0 var(--env-space-4);
-}
-.catalogue-topic-lead {
-  margin: 0 0 var(--env-space-5);
-}
-.catalogue-topic-blocks {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--catalogue-subtopic-gap);
-  min-inline-size: 0;
-}
+/* The parts of foundations' figures (figures/foundations/Figure.tsx): a figure, the text of an
+   entry beside it, and the numbered legend under it. */
 .catalogue-topic-text {
   display: grid;
   align-content: start;
@@ -103,14 +87,6 @@
 }
 .catalogue-topic-text :is(h3, h4, p) {
   margin: 0;
-}
-.catalogue-topic-block {
-  display: grid;
-  gap: var(--env-space-4);
-  min-inline-size: 0;
-}
-.catalogue-topic-block.site-figure-split {
-  gap: var(--env-space-5) var(--env-space-7);
 }
 .site-topic-figure {
   display: grid;

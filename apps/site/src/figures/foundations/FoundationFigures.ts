@@ -1,5 +1,5 @@
 import { use, type ComponentType } from 'react';
-import type { LegendEntry } from './Topic';
+import type { LegendEntry } from './Figure';
 import { loadOnce } from '../../loading/LoadOnce';
 
 /**

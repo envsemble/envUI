@@ -9,7 +9,7 @@ import { IconTaskAlt } from '@envsemble/envui/icons/TaskAlt';
 import { IconWarning } from '@envsemble/envui/icons/Warning';
 import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel } from './Steps';
-import { Figure } from './Topic';
+import { Figure } from './Figure';
 
 /**
  * Each tone as a badge paints it, with a word in the tone and its icon:

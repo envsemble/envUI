@@ -5,7 +5,7 @@ import type { PointerStep } from '../../motion/PointerPlan';
 import { usePointer } from '../../motion/PointerPlayback';
 import type { FoundationFigure } from './FoundationFigures';
 import { CornerLabel } from './Steps';
-import { Figure } from './Topic';
+import { Figure } from './Figure';
 
 /*
  * The figures of the Accessibility foundation. Its words are in docs/foundations/accessibility.md,

@@ -29,7 +29,7 @@ import { LoadBoundary, lazyPart } from '../../loading/LoadBoundary';
 import { PartSkeleton, placeholderText } from '../../loading/Loading';
 import { Example } from '../Example';
 import type { FoundationFigure } from './FoundationFigures';
-import { Figure } from './Topic';
+import { Figure } from './Figure';
 
 /*
  * The figures of the Icons foundation. Its words are in docs/foundations/icons.md, the page's one

@@ -1,83 +1,13 @@
+/*
+ * A foundation's figure (FoundationFigures.ts), on the same rules as a component page's: envUI at
+ * work on the recessed canvas, with its legend, caption and code, and the numbered legend under
+ * one. Every word in them is plain language for people looking at envUI: no token names, values or
+ * units, which the foundation's guide in the Docs holds.
+ */
 import { createContext, useContext, type ReactNode } from 'react';
-import { Column, Text } from '@envsemble/envui';
+import { Text } from '@envsemble/envui';
 import { ExampleCode } from '../LiveExample';
 import { MotionStage } from '../../motion/MotionStage';
-
-/**
- * The parts a foundation page is written in, on the same rules as a component page's: a section
- * under its h2 with the lead that opens it, titled blocks of a heading and a short paragraph or two
- * beside their figure, figures that show envUI at work on the recessed canvas, and the system's
- * own specimens, such as swatches, on the page. Every word in them is plain language for people
- * looking at envUI: no token names, values or units, which the foundation's guide in the Docs
- * holds.
- *
- * The parts set the catalogue's type hierarchy (SiteText.css), so a page never has to: the
- * section's title large, its lead a step larger than body text, a block's title in the title style
- * and its paragraphs quieter, in the muted color, and the notes of figures and legends smaller
- * still, each in a readable measure.
- */
-
-/**
- * A section of a foundation page: its h2 title, its lead, the one or two sentences that open it and
- * say what matters most, and its blocks.
- */
-export function Topic({
-  title,
-  lead,
-  children,
-}: {
-  title: string;
-  lead?: ReactNode;
-  children: ReactNode;
-}) {
-  return (
-    <Column render={<section />} gap={0} data-size="wide" className="site-example catalogue-topic">
-      <Text render={<h2 />} variant="headline">
-        {title}
-      </Text>
-      {lead && <Text className="site-lead catalogue-topic-lead">{lead}</Text>}
-      <div className="catalogue-topic-blocks">{children}</div>
-    </Column>
-  );
-}
-
-/**
- * A titled block: a heading and a short paragraph, or a few short ones given as a list, beside its
- * one figure on a wide page, or above a figure that needs the whole column (`stacked`). Without a
- * figure it is the text alone. Its paragraphs support the figure, so they are the quieter color.
- */
-export function Block({
-  title,
-  text,
-  children,
-  stacked = false,
-}: {
-  title: string;
-  text: ReactNode | readonly ReactNode[];
-  children?: ReactNode;
-  stacked?: boolean;
-}) {
-  const paragraphs: readonly ReactNode[] = Array.isArray(text) ? text : [text];
-  const words = (
-    <div className="catalogue-topic-text">
-      <Text render={<h3 />} variant="title">
-        {title}
-      </Text>
-      {paragraphs.map((paragraph, index) => (
-        <Text key={index} render={<p />} emphasis="muted" className="catalogue-supporting">
-          {paragraph}
-        </Text>
-      ))}
-    </div>
-  );
-  if (!children) return words;
-  return (
-    <div className={stacked ? 'catalogue-topic-block' : 'catalogue-topic-block site-figure-split'}>
-      {words}
-      {children}
-    </div>
-  );
-}
 
 /**
  * The example file whose source a foundation's figure shows as its code: the file of its name in

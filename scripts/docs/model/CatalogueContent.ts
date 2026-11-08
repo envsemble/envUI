@@ -52,6 +52,37 @@ export function subsections(markdown: string): string[] {
   return chunks;
 }
 
+/**
+ * Markdown cut before its last `###` subsection, when that subsection is text a figure can sit
+ * beside: no table, no fence, and not only a list.
+ */
+export function lastSubsection(markdown: string): [string, string] | undefined {
+  const lines = markdown.split('\n');
+  let fence = false;
+  let start = -1;
+  lines.forEach((line, index) => {
+    if (/^\s{0,3}(`{3,}|~{3,})/.test(line)) fence = !fence;
+    if (!fence && /^### /.test(line)) start = index;
+  });
+  if (start === -1) return undefined;
+  const body = lines.slice(start + 1).filter((line) => line.trim());
+  if (!body.length || body.some((line) => /^\s*(\||`{3,}|~{3,})/.test(line))) return undefined;
+  if (/^([-*+]|\d+[.)]) /.test(body[0])) return undefined;
+  return [lines.slice(0, start).join('\n'), lines.slice(start).join('\n')];
+}
+
+/**
+ * Markdown cut after the paragraph that opens it, when it opens with one: a section's lead, which
+ * the catalogue sets larger than the text below it (SiteText.css, FigureSection in Figures.tsx).
+ */
+export function leadParagraph(markdown: string): [string, string] | undefined {
+  const text = markdown.replace(/^(?:[ \t]*\n)+/, '');
+  if (!text.trim() || /^\s{0,3}(#|\||[-*+] |\d+[.)] |`{3,}|~{3,}|<!--)/.test(text))
+    return undefined;
+  const end = text.search(/\n[ \t]*\n/);
+  return end === -1 ? [text, ''] : [text.slice(0, end), text.slice(end)];
+}
+
 const headingOf = (chunk: string) => /^#{2,3} (.*)/.exec(chunk)?.[1].trim();
 const isProvides = (chunk: string) =>
   (Object.values(providesHeadings) as string[]).includes(headingOf(chunk) ?? '');
