@@ -2,7 +2,10 @@ import { test, expect } from '@playwright/test';
 import { siteDevUrl } from '../helpers/Servers';
 import { componentDocuments } from '../../../apps/site/src/pages/PageModel';
 import { pagesOf } from '../../../apps/site/src/navigation/SiteRoutes';
-import { bannerDrawingIndex, bannerSubject } from '../../../apps/site/src/layout/CatalogueBannerOrder';
+import {
+  bannerDrawingIndex,
+  bannerSubject,
+} from '../../../apps/site/src/layout/CatalogueBannerOrder';
 
 // What the top of a catalogue page shows: the overview's hero, the banners and their credits.
 
