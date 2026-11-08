@@ -10,7 +10,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
-.catalogue-icon-detail-preview {
+.catalogue-icon-detail-symbol {
   display: grid;
   place-items: center;
   padding-block: var(--env-space-4);

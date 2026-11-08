@@ -13,7 +13,7 @@ import { Playback, PreviewOverlays } from '../motion/Motion';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { ExampleRender } from './LiveExample';
 import { PageSpecimen } from './PageSpecimens';
-import type { Preview } from '../template/RelatedPages';
+import type { TilePicture } from '../template/RelatedPages';
 import { TileSkeleton } from '../loading/Loading';
 import { useFit } from '../fit/useFit';
 import { AppScreen } from './AppTile';
@@ -43,7 +43,7 @@ class TileBoundary extends Component<{ children: ReactNode }, { failed: boolean 
  * (motion/Motion.tsx), and it rests at its still once that ends.
  */
 export function TileStage({
-  preview,
+  picture,
   near,
   playing = false,
   className = 'catalogue-related-stage',
@@ -51,7 +51,7 @@ export function TileStage({
   ownSize: atOwnSize = false,
   legible = false,
 }: {
-  preview?: Preview;
+  picture?: TilePicture;
   near: boolean;
   /** Whether the pointer or the keyboard is on the tile, which plays its animation. */
   playing?: boolean;
@@ -70,7 +70,7 @@ export function TileStage({
    */
   legible?: boolean;
 }) {
-  const Composition = preview?.composition;
+  const Composition = picture?.composition;
   const theme = useTheme();
   const { motionPaused } = useDisplaySettings();
   // As it stops, a picture that played shows its still at once, drawn anew (Playback's `redraw`):
@@ -78,9 +78,9 @@ export function TileStage({
   const plays = playing && !motionPaused;
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLDivElement>(null);
-  // The canvas, for the pointer no one sees, which finds the preview's elements in it.
+  // The canvas, for the pointer no one sees, which finds the picture's elements in it.
   const [canvasElement, setCanvasElement] = useState<HTMLDivElement | null>(null);
-  const shown = Boolean(preview && near);
+  const shown = Boolean(picture && near);
   // How many animations its picture has, a pointer's script or a timeline: one without any, such
   // as a list of shortcuts, has no play to promise, and draws no ring under the pointer.
   const [animations, setAnimations] = useState(0);
@@ -89,7 +89,7 @@ export function TileStage({
     return () => setAnimations((count) => count - 1);
   });
   const subject =
-    preview &&
+    picture &&
     (Composition ? (
       <TileBoundary>
         <Suspense fallback={null}>
@@ -104,15 +104,15 @@ export function TileStage({
           </Playback>
         </Suspense>
       </TileBoundary>
-    ) : preview.specimen ? (
-      <PageSpecimen id={preview.specimen} />
+    ) : picture.specimen ? (
+      <PageSpecimen id={picture.specimen} />
     ) : (
-      <ExampleRender page={preview.page} name={preview.name} fallback={null} />
+      <ExampleRender page={picture.page} name={picture.name} fallback={null} />
     ));
-  const tile = Boolean(preview?.tile);
-  const drawing = Boolean(preview?.window && preview.window.width < 14);
+  const tile = Boolean(picture?.tile);
+  const drawing = Boolean(picture?.window && picture.window.width < 14);
   // A piece of an application's frame fills its card instead (AppTile.tsx).
-  const app = preview?.window?.app;
+  const app = picture?.window?.app;
   const ownSize = atOwnSize && !drawing && !app;
   const scene = legible && !app;
   useFit(stage, canvas, {
@@ -130,15 +130,15 @@ export function TileStage({
       {...theme}
       ref={stage}
       className={className}
-      data-example={preview?.specimen || Composition ? undefined : preview?.name}
-      data-catalogue-specimen={preview?.specimen}
-      data-stage={preview?.stage}
-      data-empty={preview ? undefined : ''}
+      data-example={picture?.specimen || Composition ? undefined : picture?.name}
+      data-catalogue-specimen={picture?.specimen}
+      data-stage={picture?.stage}
+      data-empty={picture ? undefined : ''}
       data-playing={plays ? '' : undefined}
       data-scene={scene ? '' : undefined}
       data-still={Composition && animations > 0 ? undefined : ''}
     >
-      {!preview ? (
+      {!picture ? (
         <IconArticle className="catalogue-related-placeholder" aria-hidden />
       ) : (
         shown &&
@@ -150,22 +150,22 @@ export function TileStage({
               setCanvasElement(element);
             }}
             className="catalogue-related-canvas"
-            data-tile={preview.tile ? '' : undefined}
+            data-tile={picture.tile ? '' : undefined}
             data-own-size={ownSize ? '' : undefined}
-            data-overlay={ownSize && preview.window?.overlay ? '' : undefined}
+            data-overlay={ownSize && picture.window?.overlay ? '' : undefined}
             data-app={app ? appTileFrame : undefined}
             style={
-              preview.window &&
+              picture.window &&
               ({
-                '--catalogue-tile-width': `${preview.window.width}rem`,
-                '--catalogue-tile-height': `${preview.window.height}rem`,
-                '--catalogue-own-popup-least': preview.window.popupLeast,
+                '--catalogue-tile-width': `${picture.window.width}rem`,
+                '--catalogue-tile-height': `${picture.window.height}rem`,
+                '--catalogue-own-popup-least': picture.window.popupLeast,
               } as CSSProperties)
             }
             inert
             aria-hidden
           >
-            {preview.open ? (
+            {picture.open ? (
               <PreviewOverlays>{wrapApp(Boolean(app), subject)}</PreviewOverlays>
             ) : (
               wrapApp(Boolean(app), subject)

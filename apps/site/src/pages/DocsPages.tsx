@@ -8,7 +8,7 @@ import { docsRoute } from '../navigation/Address';
 import { PartSwitch } from '../navigation/OtherPart';
 import { lazyPart } from '../loading/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
-import { UsagePreview } from '../figures/Figures';
+import { UsageFigure } from '../figures/Figures';
 import { partsOf } from '../template/Parts';
 import { providesOf } from '../template/Provides';
 import { PropsTables } from './PropsTables';
@@ -382,7 +382,7 @@ function guideSubsections(document: Document) {
  * The guide at the top of a page in the Docs, from the page's "## Compose": how to import it, its
  * common uses in code, how its parts compose and how to customize it, each a section of its own,
  * with an example file of the page shown as code where the page names one. With `preview`, as a
- * component's, Usage opens with the component, live and compact (UsagePreview).
+ * component's, Usage opens with the component, live and compact (UsageFigure).
  */
 function CodeGuide({ document, preview = false }: { document: Document; preview?: boolean }) {
   return guideSubsections(document).map(({ title, content }) => {
@@ -392,7 +392,7 @@ function CodeGuide({ document, preview = false }: { document: Document; preview?
         <Text render={<h2 />} variant="title" className="site-section-title" id={id}>
           {title}
         </Text>
-        {preview && title === 'Usage' && <UsagePreview page={document} />}
+        {preview && title === 'Usage' && <UsageFigure page={document} />}
         {content.map((part, index) =>
           part.kind === 'source' ? (
             <ExampleSource key={index} page={document.id} name={part.name} />

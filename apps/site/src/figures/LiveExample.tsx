@@ -76,7 +76,7 @@ export function ExampleSource({ page, name }: { page: string; name: string }) {
 
 /**
  * An example's source in a disclosure right under its figure, Show code until it opens and Hide code
- * while it is, with a copy button once open; a template preview shows it too.
+ * while it is, with a copy button once open; a template page's screen shows it too.
  */
 export function ExampleCode({ page, name }: { page: string; name: string }) {
   const [open, setOpen] = useState(false);
@@ -261,7 +261,7 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
  * `motion`, the stage plays it: its animated specimen of the same name, which uses the example as a
  * person would, takes the stage's place, above its caption and code. With `open` and `live`, as an
  * overview's, it rests with its overlay open, and people can use it; without `live`, it is a still
- * picture, marked as one. Without `code`, as the preview at the top of a Docs page's Usage, whose
+ * picture, marked as one. Without `code`, as the figure at the top of a Docs page's Usage (UsageFigure), whose
  * code follows it, it shows no code of its own. With `device`, it shows on a phone's or a window's
  * screen at the device's real width, filling it, the device drawn to fit the stage (DeviceFrame),
  * an animated one too: its stage puts the device around what it plays.

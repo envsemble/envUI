@@ -133,7 +133,7 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   await expect(shown).toHaveCount(1);
   await expect(shown.getByRole('button', { name: 'Create project' })).toBeVisible();
   await expect(shown.locator('.site-live-example-code')).toHaveCount(0);
-  await expect(page.locator('#usage + .docs-usage-preview')).toHaveCount(1);
+  await expect(page.locator('#usage + .docs-usage-figure')).toHaveCount(1);
   const headings = main.getByRole('heading', { level: 2 });
   await expect(headings.nth(0)).toHaveText('Import');
   await expect(headings.nth(1)).toHaveText('Usage');

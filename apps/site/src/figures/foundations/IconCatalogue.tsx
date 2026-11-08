@@ -62,7 +62,7 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
     <Column gap={5}>
       <Column gap={3}>
         <Text variant="caption">Material Symbols Rounded · {filled ? 'Filled' : 'Outline'}</Text>
-        <div className="catalogue-icon-detail-preview">
+        <div className="catalogue-icon-detail-symbol">
           <Symbol filled={filled} width="4rem" height="4rem" />
         </div>
       </Column>

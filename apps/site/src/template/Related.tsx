@@ -7,23 +7,23 @@ import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/Motion';
 import { TileStage } from '../figures/TileStage';
 import { useNear } from '../figures/useNear';
-import { alternativesOf, type Alternative, type Preview } from './RelatedPages';
+import { alternativesOf, type Alternative, type TilePicture } from './RelatedPages';
 import { pendingAttribute, useSectionOutline } from './SectionOutline';
 
 /**
- * One alternative's tile, whose preview plays while the pointer or the keyboard is on it, and where
+ * One alternative's tile, whose picture plays while the pointer or the keyboard is on it, and where
  * the reader can't hover, while it is the tile in the middle of the viewport, as a gallery's does.
  * It is a gallery's cell (Gallery.tsx, Gallery.css): on a stage of one shape, a component at its
  * own size and a pattern's scene at a legible scale, and under it its name and when to pick it,
  * which slide into view with the picture as the pointer comes on.
  */
 function RelatedTile({
-  preview,
+  picture,
   near,
   frame,
   children,
 }: {
-  preview?: Preview;
+  picture?: TilePicture;
   near: boolean;
   frame?: Alternative['frame'];
   children: ReactNode;
@@ -35,7 +35,7 @@ function RelatedTile({
     <li ref={tile} className="catalogue-related-tile catalogue-gallery-tile" {...playOn}>
       <div className="catalogue-gallery-picture">
         <TileStage
-          preview={preview}
+          picture={picture}
           near={near}
           playing={playing || autoplay}
           className="catalogue-related-stage catalogue-gallery-stage"
@@ -49,7 +49,7 @@ function RelatedTile({
   );
 }
 
-/** The alternatives as tiles of one size: a preview on its stage, the name and its situations. */
+/** The alternatives as tiles of one size: a picture on its stage, the name and its situations. */
 function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: string }) {
   const list = useRef<HTMLUListElement>(null);
   const near = useNear(list);
@@ -62,8 +62,8 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
       // A scene's tile takes a larger stage, as in its gallery: so does every tile beside it.
       data-scenes={alternatives.some(({ frame }) => frame === 'legible') ? '' : undefined}
     >
-      {alternatives.map(({ key, name, href, preview, line, frame }, index) => (
-        <RelatedTile key={key} preview={preview} near={near} frame={frame}>
+      {alternatives.map(({ key, name, href, picture, line, frame }, index) => (
+        <RelatedTile key={key} picture={picture} near={near} frame={frame}>
           {/* The name is the tile's one link, described by when to pick it; it stretches over the
               whole tile, picture, name and why, so the tile is one target and one box
               (Gallery.css). Its words slide, not the link, which would otherwise hold the stretch
