@@ -27,7 +27,7 @@ import {
   type ScriptReader,
   type StageScript,
 } from './FitKind';
-import { measure, measureHeld, shapeOf, type Measured, type Seen } from './FitMeasure';
+import { measure, measureHeld, shapeOf, stageSize, type Measured, type Seen } from './FitMeasure';
 import { decideDrawOut, decideHeading, decidePlayCut, startRun, type Run } from './FitPlaying';
 import {
   decidePopups,
@@ -36,7 +36,7 @@ import {
   type Popups,
   type WholeFor,
 } from './FitResting';
-import { decideScreenPlace, decideScreenScale, modal, modalRoom } from './FitScreen';
+import { decideScreenPlace, decideScreenScale, modal, modalNeeds } from './FitScreen';
 import { holdsFrame, type Follow, type Framed } from './HeldView';
 import { settling, shownBoxes, type Shown } from './PaintedBoxes';
 import { remeasure } from '../shared/Remeasure';
@@ -304,8 +304,7 @@ function frame(f: Fitting, seen: Seen, script: StageScript) {
   const mode = fitModeOf(kind, kept.screen, moment);
   if (mode === 'screen') return fitScreen(f, seen, script, measured);
   // Decided as it plays too: what it keeps for its stage's size follows the stage as it resizes.
-  const room = { across: stage.clientWidth, down: stage.clientHeight };
-  const popups = decidePopups(room, kind, measured, script, {
+  const popups = decidePopups(stageSize(stage), kind, measured, script, {
     shown: moment.shown,
     wholeFor: kept.wholeFor,
   });
@@ -319,9 +318,9 @@ function fitScreen(f: Fitting, seen: Seen, script: StageScript, measured: Measur
   const { stage, canvas, view, kept } = f;
   const { moment } = seen;
   const screen = decideScreenScale(
-    { across: stage.clientWidth, down: stage.clientHeight },
+    stageSize(stage),
     measured,
-    modalRoom(canvas),
+    modalNeeds(canvas),
     // As it plays, the screen stays as it was at rest, as the modal closes and opens again.
     { played: moment.playing && moment.shown ? canvas.offsetHeight : null, rest: view.rest },
   );
@@ -357,13 +356,7 @@ function fitPlaying(f: Fitting, boxes: Shown[], script: StageScript, { scales }:
     const headed = decideHeading(f, script, view);
     if (headed) glideTo(f, headed);
   }
-  const { cut, run } = decidePlayCut(
-    { across: stage.clientWidth, down: stage.clientHeight },
-    boxes,
-    kept.run,
-    view,
-    script.holdsView,
-  );
+  const { cut, run } = decidePlayCut(stageSize(stage), boxes, kept.run, view, script.holdsView);
   kept.run = run;
   drawCut(f, { cut, played: true });
   for (const { element } of boxes) f.observe(element);
@@ -382,19 +375,11 @@ function fitResting(
 ) {
   const { stage, canvas, kind, view, kept } = f;
   const held = measureHeld(f, measured, script);
-  const scale = decideRestingScale(
-    { across: stage.clientWidth, down: stage.clientHeight },
-    kind,
-    measured,
-    popups,
-    held,
-    script,
-    {
-      playing: seen.moment.playing,
-      rest: view.rest,
-      laidOut: canvas.dataset.popup !== undefined,
-    },
-  );
+  const scale = decideRestingScale(stageSize(stage), kind, measured, popups, held, script, {
+    playing: seen.moment.playing,
+    rest: view.rest,
+    laidOut: canvas.dataset.popup !== undefined,
+  });
   drawLayoutScale(canvas, scale);
   const placement = decideRestingPlace(f, script, seen, measured, popups, held, scale, {
     view,

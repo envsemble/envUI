@@ -23,7 +23,7 @@ import {
   type Padded,
 } from './FitGeometry';
 import { cropped, type FitKind, type StageScript } from './FitKind';
-import { lowestOf, type Held, type Measured, type Seen } from './FitMeasure';
+import { lowestOf, type Held, type Measured, type Seen, type StageSize } from './FitMeasure';
 import {
   heldNextLeast,
   heldPlace,
@@ -36,12 +36,6 @@ import { inPopup, partOf, type Shown } from './PaintedBoxes';
 import { onCourse, restingAims } from './PointerCourse';
 import type { View } from './ViewEasing';
 import { pixelTolerance } from '../shared/Remeasure';
-
-/** A stage's size, in px. */
-interface Room {
-  across: number;
-  down: number;
-}
 
 /** A picture's stage and canvas, and what it is fitted as. */
 interface Picture {
@@ -57,7 +51,7 @@ interface Picture {
  * followed it would go back and forth.
  */
 export interface WholeFor {
-  room: string;
+  stage: string;
   narrower: number | null;
   whole: number;
 }
@@ -67,7 +61,7 @@ export interface Popups {
   /** Whether it is a dialog over its backdrop, in a scene too. */
   dialog: boolean;
   /** The stage's room, a margin from its edges. */
-  room: { width: number; height: number };
+  room: StageSize;
   /** What a component's popup paints, each with the room it keeps from the stage's edges. */
   anchored: Padded[] | null;
   /** The scale a held popup is drawn whole at a little smaller, and whether it is. */
@@ -87,7 +81,7 @@ export interface Popups {
  * such as a picker, stays a window onto it from its top.
  */
 export function decidePopups(
-  { across, down }: Room,
+  { across, down }: StageSize,
   kind: FitKind,
   { extent, painted, popup, dialog, scales }: Measured,
   script: Pick<StageScript, 'holdsView' | 'narrow'>,
@@ -97,7 +91,7 @@ export function decidePopups(
   const { left, top, right, bottom, width, height } = extent;
   const component = kind.scale === 'own';
   const wholeScale = Math.min(width / (right - left), height / (bottom - top));
-  const room = { width: across - 2 * margin, height: down - 2 * margin };
+  const room = { across: across - 2 * margin, down: down - 2 * margin };
   const anchored =
     component && popup && !dialog
       ? painted.map(({ box, popup: inOne }) => ({ box, pad: inOne ? popupRoom : inset }))
@@ -105,7 +99,7 @@ export function decidePopups(
   // A component's own popup, or a dialog in a scene too.
   const roomy = dialog || (component && popup);
   const marginScale = roomy
-    ? Math.min(room.width / (right - left), room.height / (bottom - top))
+    ? Math.min(room.across / (right - left), room.down / (bottom - top))
     : 0;
   const roomScale = anchored ? anchoredScale(anchored, across, down) : marginScale;
   // One of two scales, so the popups read as one row beside the other tiles: its own, where it
@@ -118,11 +112,11 @@ export function decidePopups(
   // at the stage's edge; it lays out as wide as at the popups' least, so its width doesn't follow
   // its scale (decideRestingScale). On a wider page a popup is drawn at one of two scales, never
   // between. It is decided as the picture first shows, and again only for another stage size.
-  const stageRoom = `${across} ${down}`;
+  const stageKey = `${across} ${down}`;
   const wholeFor =
-    shown && kept?.room === stageRoom
+    shown && kept?.stage === stageKey
       ? kept
-      : wholeAtStage({ across, down }, script, anchored, roomScale, scales, stageRoom);
+      : wholeAtStage({ across, down }, script, anchored, roomScale, scales, stageKey);
   const { narrower, whole } = wholeFor;
   return {
     dialog,
@@ -140,12 +134,12 @@ export function decidePopups(
 
 /** Whether a held popup is drawn whole a little smaller at a stage's size, and at what scale. */
 function wholeAtStage(
-  { across, down }: Room,
+  { across, down }: StageSize,
   { holdsView, narrow }: Pick<StageScript, 'holdsView' | 'narrow'>,
   anchored: Padded[] | null,
   roomScale: number,
   { phone, popupLeast }: Measured['scales'],
-  room: string,
+  stage: string,
 ): WholeFor {
   const whole =
     anchored && holdsView && (phone || narrow)
@@ -156,7 +150,7 @@ function wholeAtStage(
         )
       : 0;
   return {
-    room,
+    stage,
     whole,
     narrower:
       roomScale < popupLeast - scaleTolerance &&
@@ -183,7 +177,7 @@ export interface RestingScale {
 }
 
 export function decideRestingScale(
-  { across, down }: Room,
+  { across, down }: StageSize,
   kind: FitKind,
   measured: Measured,
   popups: Popups,
@@ -217,7 +211,7 @@ export function decideRestingScale(
   const drawnWhole = popups.narrower !== null && drawn <= popups.whole + scaleTolerance;
   const framedAt =
     cropped(kind) && !drawnWhole
-      ? heldScale(drawn, held.ways, held.room, { tall: bottom - top, height }, scales)
+      ? heldScale(drawn, held.ways, held.heights, { tall: bottom - top, height }, scales)
       : drawn;
   const fitted = subject
     ? Math.min(
@@ -293,12 +287,11 @@ export function decideRestingPlace(
           scale <= overlayWhole + scaleTolerance &&
           down <= height + insetSlack) ||
         (down <= height + insetSlack && across <= width + insetSlack)
-      : down <= popups.room.height + pixelTolerance &&
-        across <= popups.room.width + pixelTolerance);
+      : down <= popups.room.down + pixelTolerance && across <= popups.room.across + pixelTolerance);
   // So is a component a little wider than the inset leaves room for, such as a strip of tabs,
   // across: it is cut off at its foot alone, as every other one is, not at its side.
   const acrossRoom =
-    across <= (popups.anchored ? width + insetSlack : popups.room.width + pixelTolerance);
+    across <= (popups.anchored ? width + insetSlack : popups.room.across + pixelTolerance);
   // It starts at the component's own start, rather than its popups': a popup shifts to stay in
   // the window, and a view that followed it would shift it again. A dialog, over its backdrop, is
   // placed by the window alone and covers what opens it: it starts at its own.
@@ -320,7 +313,7 @@ export function decideRestingPlace(
     // fades out through the stage's foot rather than being cut there.
     // What its script acts on is there wherever its rows are kept (measureHeld).
     const lowest = held.lowest!;
-    const placed = heldPlace(scale, held.ways, held.room) ?? {
+    const placed = heldPlace(scale, held.ways, held.heights) ?? {
       at: heldTopLeast,
       fadeAt: Math.max(lowest.top + rowSlack + 1, (lowest.top + lowest.bottom) / 2),
     };

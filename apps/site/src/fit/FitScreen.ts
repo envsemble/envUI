@@ -14,7 +14,7 @@
 import type { Placement } from './FitDraw';
 import { contain, join, margin, stepDown } from './FitGeometry';
 import type { StageScript } from './FitKind';
-import type { Measured } from './FitMeasure';
+import { stageSize, type Measured, type StageSize } from './FitMeasure';
 import { overlayLayer, partOf, type Shown } from './PaintedBoxes';
 import { heading, onCourse } from './PointerCourse';
 import { pixelTolerance } from '../shared/Remeasure';
@@ -38,14 +38,14 @@ const open = (surface: Element) =>
  * around it, a sheet as tall as the screen it spans, and as wide where one is wider than the
  * screen; and how tall a surface is alone.
  */
-export interface ModalRoom {
+export interface ModalNeeds {
   needHeight: number;
   needWidth: number;
   surfaceHeight: number;
 }
 
-/** Measures the room the modals in a canvas need (ModalRoom). */
-export function modalRoom(canvas: HTMLElement): ModalRoom {
+/** Measures the room the modals in a canvas need (ModalNeeds). */
+export function modalNeeds(canvas: HTMLElement): ModalNeeds {
   const px = (value: string) => parseFloat(value) || 0;
   let needHeight = 0;
   let needWidth = 0;
@@ -102,9 +102,9 @@ export interface ScreenScale {
  * shown plays, how tall its screen is, which it keeps, at the scale it rested at, `rest`.
  */
 export function decideScreenScale(
-  { across, down }: { across: number; down: number },
+  { across, down }: StageSize,
   { scales, own }: Pick<Measured, 'scales' | 'own'>,
-  { needHeight, needWidth, surfaceHeight }: ModalRoom,
+  { needHeight, needWidth, surfaceHeight }: ModalNeeds,
   { played, rest }: { played: number | null; rest: number },
 ): ScreenScale {
   const { overlay, phone, steps, popupLeast } = scales;
@@ -144,8 +144,7 @@ export function decideScreenPlace(
   { scale, tall, plays, surfaceHeight, centred }: ScreenScale,
   { toY: viewY, fadeAt, playing }: { toY: number; fadeAt: number | null; playing: boolean },
 ): Placement {
-  const across = stage.clientWidth;
-  const down = stage.clientHeight;
+  const { across, down } = stageSize(stage);
   // From the screen's top to its foot: where the stage's middle is along it.
   const highest = down / 2;
   const lowest = Math.max(highest, tall * scale - down / 2);

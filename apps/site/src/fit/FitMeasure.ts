@@ -20,7 +20,7 @@ import {
 import {
   heldRows,
   heldWays,
-  type HeldRoom,
+  type HeldHeights,
   type HeldScales,
   type HeldWay,
   type Shape,
@@ -36,6 +36,18 @@ import {
 } from './PaintedBoxes';
 import { restingAims } from './PointerCourse';
 import { pixelTolerance } from '../shared/Remeasure';
+
+/** A stage's size in px: its inner width (`across`) and height (`down`). */
+export interface StageSize {
+  across: number;
+  down: number;
+}
+
+/** The size of a stage's box inside its borders (clientWidth and clientHeight). */
+export const stageSize = (stage: HTMLElement): StageSize => ({
+  across: stage.clientWidth,
+  down: stage.clientHeight,
+});
 
 /**
  * What every fit starts from: what the picture paints, when it runs, whether it grows as it plays
@@ -116,10 +128,11 @@ export function measure(
   const below = after.flatMap((rows) => rows.slice(0, 1)).filter(filled);
   const further = after.flatMap((rows) => rows.slice(1, 2)).filter(filled);
   const laidOut = heldParts.flatMap((element) => laidOutOf(element, canvas) ?? []).filter(filled);
+  const { across, down } = stageSize(stage);
   const extent: Extent = {
     ...union([...boxes.map(({ box }) => box), ...laidOut]),
-    width: stage.clientWidth - 2 * inset,
-    height: stage.clientHeight - 2 * inset,
+    width: across - 2 * inset,
+    height: down - 2 * inset,
   };
   const scales = scalesOf(canvas);
   const painted = boxes.map(({ element, box }) => ({ box, popup: inPopup(element) }));
@@ -146,7 +159,7 @@ export interface Held {
   rows: ReturnType<typeof heldRows>;
   lowest: Box | null;
   ways: HeldWay[];
-  room: HeldRoom;
+  heights: HeldHeights;
 }
 
 /**
@@ -174,8 +187,8 @@ export function measureHeld(
     // The top of the lowest of them, such as a date picker's chosen week.
     lowest: lowestOf(acted),
     ways: rows ? heldWays(rows) : [],
-    room: {
-      size: stage.clientHeight,
+    heights: {
+      stage: stage.clientHeight,
       top: extent.top,
       // The lowest point the pointer presses at rest, where its cursor's tip is.
       pointerFoot: aims.length ? Math.max(...aims.map(({ y }) => y)) : null,
@@ -224,7 +237,7 @@ export function shapeOf(stage: HTMLElement, canvas: HTMLElement, boxes: Shown[])
   const canvasBox = canvas.getBoundingClientRect();
   const stageBox = stage.getBoundingClientRect();
   return {
-    room: [stage.clientWidth, stage.clientHeight, canvas.offsetWidth, canvas.offsetHeight],
+    sizes: [stage.clientWidth, stage.clientHeight, canvas.offsetWidth, canvas.offsetHeight],
     whole: wholeInView(stage),
     view: [canvasBox.left - stageBox.left, canvasBox.top - stageBox.top],
     boxes: boxes.map((shown) => ({ ...shown, popup: layerRoot(shown.element) })),

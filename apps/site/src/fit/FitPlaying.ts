@@ -22,7 +22,7 @@ import {
   type Box,
 } from './FitGeometry';
 import type { FitKind, StageScript } from './FitKind';
-import type { Scales } from './FitMeasure';
+import { stageSize, type Scales, type StageSize } from './FitMeasure';
 import { elementsOf, inkOf, inPopup, partOf, settling, type Shown } from './PaintedBoxes';
 import { heading } from './PointerCourse';
 import type { Target } from './ViewEasing';
@@ -101,8 +101,7 @@ export function decideDrawOut(
   const least = Math.min(view.rest, component ? popupLeast : legibleScale);
   const stepped = (scale: number) =>
     component ? (scale >= view.rest - scaleTolerance ? view.rest : least) : scale;
-  const across = stage.clientWidth;
-  const down = stage.clientHeight;
+  const { across, down } = stageSize(stage);
   // What the script acts on in a popup, such as a select's options, and what the tile names
   // anywhere, such as a panel it opens (StageScript).
   const query = (selector: string) => elementsOf(canvas, selector);
@@ -179,8 +178,7 @@ export function decideHeading(
 ): Target | null {
   const box = heading(canvas, script);
   if (!box) return null;
-  const across = stage.clientWidth;
-  const down = stage.clientHeight;
+  const { across, down } = stageSize(stage);
   const toX = contain(view.toX, box.left * view.toScale, box.right * view.toScale, across / 2 - 4);
   const scale = view.toScale;
   // The fade as long as it is drawn, shortened below what its pointer heads to at rest. A tile's
@@ -213,7 +211,7 @@ export function decideHeading(
  * marked as moved once its view has. `room` is the stage's size.
  */
 export function decidePlayCut(
-  { across, down }: { across: number; down: number },
+  { across, down }: StageSize,
   boxes: { box: Box }[],
   run: Run,
   view: Target,

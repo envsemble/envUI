@@ -7,6 +7,7 @@ import { remPixels } from '@envui-internal/internal/lengths';
 import { rowSelector } from './FitDraw';
 import { frameOnCourse, type Box } from './FitGeometry';
 import type { Aim, StageScript } from './FitKind';
+import { stageSize } from './FitMeasure';
 import { inkOf, partOf } from './PaintedBoxes';
 
 /**
@@ -70,5 +71,6 @@ export function onCourse(
     return element?.checkVisibility() ? [inkOf(element, canvas)] : [];
   });
   const aims = script.course.map((aim) => aimBox(canvas, script, aim));
-  return frameOnCourse([...named, ...aims], stage.clientWidth, stage.clientHeight, toX, toY, scale);
+  const { across, down } = stageSize(stage);
+  return frameOnCourse([...named, ...aims], across, down, toX, toY, scale);
 }

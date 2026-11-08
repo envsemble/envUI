@@ -55,9 +55,9 @@ export interface HeldWay {
 }
 
 /** What a held view shows, its stage's height, and where its pointer presses at rest. */
-export interface HeldRoom {
+export interface HeldHeights {
   /** The stage's height. */
-  size: number;
+  stage: number;
   /** The top of what the picture shows, in the canvas's own px. */
   top: number;
   /** The lowest point the pointer presses at rest, where its cursor's tip is, if any. */
@@ -135,22 +135,22 @@ export function heldRows(acted: readonly Box[], below: readonly Box[], further: 
  * (trimRows).
  * @internal
  */
-export function heldTop(scale: number, way: HeldWay, room: HeldRoom) {
-  const { size, top, pointerFoot, cursor } = room;
+export function heldTop(scale: number, way: HeldWay, heights: HeldHeights) {
+  const { stage, top, pointerFoot, cursor } = heights;
   const cursorFoot = pointerFoot === null ? -Infinity : (pointerFoot - top + cursor) * scale;
   const at = Math.min(
     inset,
-    size - way.fade - (way.whole.bottom - top) * scale + (way.fade ? 0 : way.slack),
-    size + way.slack - (way.reach.bottom - top) * scale,
-    size - cursorRoom - cursorFoot,
+    stage - way.fade - (way.whole.bottom - top) * scale + (way.fade ? 0 : way.slack),
+    stage + way.slack - (way.reach.bottom - top) * scale,
+    stage - cursorRoom - cursorFoot,
   );
   return at >= heldTopLeast - pixelTolerance ? { at, fadeAt: way.whole.bottom } : null;
 }
 
 /** The first way a held view shows as at a scale, and where it is placed for it (heldTop). */
-export function heldPlace(scale: number, ways: readonly HeldWay[], room: HeldRoom) {
+export function heldPlace(scale: number, ways: readonly HeldWay[], heights: HeldHeights) {
   for (const way of ways) {
-    const placed = heldTop(scale, way, room);
+    const placed = heldTop(scale, way, heights);
     if (placed) return placed;
   }
   return null;
@@ -159,13 +159,13 @@ export function heldPlace(scale: number, ways: readonly HeldWay[], room: HeldRoo
 /** The largest scale from `low` to `high` at which a held view shows as a way says.
  * @internal
  */
-export function heldAtMost(low: number, high: number, way: HeldWay, room: HeldRoom) {
+export function heldAtMost(low: number, high: number, way: HeldWay, heights: HeldHeights) {
   if (high < low) return null;
-  if (heldTop(high, way, room)) return high;
-  if (!heldTop(low, way, room)) return null;
+  if (heldTop(high, way, heights)) return high;
+  if (!heldTop(low, way, heights)) return null;
   for (let count = 0; count < 16; count++) {
     const middle = (low + high) / 2;
-    if (heldTop(middle, way, room)) low = middle;
+    if (heldTop(middle, way, heights)) low = middle;
     else high = middle;
   }
   return Math.floor(low * 1000) / 1000;
@@ -190,7 +190,7 @@ export interface HeldScales {
 export function heldScale(
   scale: number,
   ways: readonly HeldWay[],
-  room: HeldRoom,
+  heights: HeldHeights,
   { tall, height }: { tall: number; height: number },
   { phone, steps, popupLeast, overlayScale }: HeldScales,
 ) {
@@ -199,23 +199,25 @@ export function heldScale(
   // to its least (heldWays).
   const [alone, bare] = ways.slice(-2) as [HeldWay, HeldWay];
   for (const way of ways.slice(0, -2)) {
-    const found = heldAtMost(way.least, scale, way, room);
+    const found = heldAtMost(way.least, scale, way, heights);
     if (found !== null) return found;
   }
   // Else as large as shows the chosen row whole above the foot.
-  if (heldTop(scale, alone, room)) return scale;
+  if (heldTop(scale, alone, heights)) return scale;
   const least = overlayScale || scale;
   const lower = [...(phone ? steps : [popupLeast]), least]
     .filter((each) => each < scale - scaleTolerance && each >= least - scaleTolerance)
     .sort((a, b) => b - a);
-  const found = lower.find((each) => heldTop(each, alone, room) !== null);
+  const found = lower.find((each) => heldTop(each, alone, heights) !== null);
   if (found !== undefined) return found;
   // Where even that scale doesn't, it is drawn just as much smaller as it needs, with its fade,
   // else without it, no smaller than `heldLeast`, where it shows from the stage's top and the
   // lowest row its script acts on fades out through the foot.
   const high = lower.at(-1) ?? scale;
   return (
-    heldAtMost(heldLeast, high, alone, room) ?? heldAtMost(heldLeast, high, bare, room) ?? heldLeast
+    heldAtMost(heldLeast, high, alone, heights) ??
+    heldAtMost(heldLeast, high, bare, heights) ??
+    heldLeast
   );
 }
 
@@ -254,7 +256,7 @@ const followsAtMost = 30;
  * canvas was in it.
  */
 export interface Shape {
-  room: number[];
+  sizes: number[];
   /** Whether the stage shows whole (wholeInView), and where the canvas is in it. */
   whole: boolean;
   view: number[];
@@ -305,7 +307,7 @@ export function holdsFrame(was: Shape, now: Shape, follow: Follow) {
   const parts = (boxes: Shape['boxes'], inPopup: boolean) =>
     boxes.filter(({ popup }) => (popup !== null) === inPopup);
   if (
-    !near(was.room, now.room, pixelTolerance) ||
+    !near(was.sizes, now.sizes, pixelTolerance) ||
     was.popups !== now.popups ||
     !same(parts(was.boxes, false), parts(now.boxes, false), 1)
   )
