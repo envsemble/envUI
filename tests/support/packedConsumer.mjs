@@ -5,16 +5,14 @@
 // One installation serves every test file and run while the pack and the dependencies stay the
 // same: it is kept in .cache/package-consumer/<hash>/, and a lock lets one process install it while
 // the others wait. Needs the library build (npm run build).
-import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { copyFile, mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { basename, delimiter, dirname, join, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { basename, dirname, join } from 'node:path';
 import { documentedLibraries } from '../../scripts/build/EntryLibraries.ts';
 import { repository } from './importSource.mjs';
+import { npmCli, npmPack, runNode } from './npm.mjs';
 
 const consumersDirectory = join(repository, '.cache/package-consumer');
 /** Written once the installation is complete. */
@@ -24,66 +22,13 @@ const lockTimeout = 5 * 60 * 1000;
 /** The time the package tests' before() hooks allow for packing and installing. */
 export const installTimeout = lockTimeout + 60 * 1000;
 
-function npmCli() {
-  const candidates = [
-    process.env.npm_execpath,
-    join(dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js'),
-    resolve(dirname(process.execPath), '../lib/node_modules/npm/bin/npm-cli.js'),
-    '/usr/share/nodejs/npm/bin/npm-cli.js',
-    ...(process.env.PATH ?? '')
-      .split(delimiter)
-      .map((directory) => join(directory, 'node_modules/npm/bin/npm-cli.js')),
-  ];
-  const candidate = candidates.find((path) => path?.endsWith('.js') && existsSync(path));
-  assert.ok(
-    candidate,
-    'Run this suite through npm test, or provide a Node installation containing npm.',
-  );
-  return candidate;
-}
-
-/** Runs a Node script in `cwd` without npm's environment, and returns what it prints. */
-function runNode(script, args, cwd, hook) {
-  try {
-    return execFileSync(
-      process.execPath,
-      [...(hook ? ['--import', pathToFileURL(hook).href] : []), script, ...args],
-      {
-        cwd,
-        encoding: 'utf8',
-        maxBuffer: 16 * 1024 * 1024,
-        stdio: ['ignore', 'pipe', 'pipe'],
-        env: {
-          ...Object.fromEntries(
-            Object.entries(process.env).filter(([name]) => !/^npm_/i.test(name)),
-          ),
-          NODE_OPTIONS: '',
-          npm_config_audit: 'false',
-          npm_config_fund: 'false',
-        },
-      },
-    );
-  } catch (error) {
-    const detail = [error.stdout, error.stderr].filter(Boolean).join('\n').slice(-12000);
-    throw new Error(`Consumer command failed: ${script}\n${detail}`, { cause: error });
-  }
-}
-
 /** Packs the library into `directory`: the tarball's path and the files it holds. */
 function pack(directory) {
-  const result = JSON.parse(
-    runNode(
-      npmCli(),
-      ['pack', '--json', '--pack-destination', directory],
-      join(repository, 'packages/ui'),
-    ),
-  );
-  const packed = Array.isArray(result) ? result : Object.values(result);
-  assert.equal(packed.length, 1);
-  return {
-    tarball: join(directory, packed[0].filename),
-    files: packed[0].files.map((file) => file.path.replaceAll('\\', '/')),
-  };
+  const { filename, files } = npmPack(join(repository, 'packages/ui'), [
+    '--pack-destination',
+    directory,
+  ]);
+  return { tarball: join(directory, filename), files };
 }
 
 /**
