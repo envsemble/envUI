@@ -92,8 +92,7 @@ export function expectedFiles(): Map<string, string> {
   const entryPoints = libraryEntryPoints().map(({ specifier }) => specifier);
   files.set(
     `${lintPackages['@envsemble/eslint-plugin-envui']}/data/entryPoints.json`,
-    `${JSON.stringify({ $comment: entryPointsComment, entryPoints }, null, 2)}
-`,
+    `${JSON.stringify({ $comment: entryPointsComment, entryPoints }, null, 2)}\n`,
   );
   return files;
 }
