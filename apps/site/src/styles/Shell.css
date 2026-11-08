@@ -53,7 +53,7 @@ body {
    chosen destination's pages, or the Docs' drawer, flush on the navigation's background with no line
    between them, as tall as the window. The drawer keeps its top and foot in view and scrolls its
    list; the reader resizes it by its end edge, and the catalogue keeps the width it starts at and
-   its bounds (SiteNavigation.tsx). In the sheet of a narrower window they take the
+   its bounds (SiteDrawer.tsx). In the sheet of a narrower window they take the
    sheet's width, and the sheet takes their color. */
 .site-navigation {
   display: flex;
@@ -72,7 +72,7 @@ body {
   block-size: 100%;
   padding: var(--env-space-4) var(--env-space-3);
 }
-/* The drawer coming and going beside the rail (useDrawerMotion, SiteNavigation.tsx): the page
+/* The drawer coming and going beside the rail (useDrawerMotion.ts): the page
    beside it takes its room at once, so nothing on it moves. Coming in, its panel fades in and its
    list slides out of the rail's edge a short way as it fades in; its header, search, stays still,
    where the page without the drawer has it. Going, it is laid over the page's start, its header
@@ -165,13 +165,6 @@ body {
 .site-drawer-search {
   max-inline-size: 100%;
 }
-/* A component a page documents besides its own, such as IconButton under Button, is an entry of the
-   same list after the page's, set in further than a section's pages are from their heading, so it
-   reads as the page's rather than a sibling; only these entries lead to a heading, so their
-   address's fragment marks them (SiteNavigation.tsx). */
-.site-sidebar .env-navigation-drawer-item[href*='#'] {
-  padding-inline-start: calc(var(--env-space-3) + var(--env-space-5));
-}
 /* Under a fine pointer, the drawer's rows are the scale's row height, as a tree's are, so the long
    lists of pages stay dense; under a coarse pointer they keep the touch height (NavigationDrawer). */
 @media (pointer: fine) {
@@ -235,7 +228,7 @@ body {
 }
 .site-sidebar .env-navigation-drawer-list {
   /* The fade's length, which the list scrolls the current page's group heading clear of
-     (SiteNavigation.tsx). */
+     (useCurrentInView.ts). */
   --site-drawer-fade-length: var(--env-space-6);
 }
 @supports (animation-timeline: scroll()) {

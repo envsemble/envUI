@@ -49,13 +49,10 @@ import {
   GuidePage,
   TokensPage,
 } from './pages/DocsPages';
-import {
-  Brand,
-  DocsNavigation,
-  PageActions,
-  CatalogueNavigation,
-  drawerless,
-} from './navigation/SiteNavigation';
+import { Brand } from './brand/Brand';
+import { DocsNavigation, CatalogueNavigation } from './navigation/SiteNavigation';
+import { drawerless } from './navigation/CatalogueDestinations';
+import { PageActions } from './navigation/PageActions';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink, usePendingRoute } from './navigation/RouterLink';
 import { RouteProgress } from './navigation/RouteProgress';
