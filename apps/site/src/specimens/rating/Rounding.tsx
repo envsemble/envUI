@@ -9,7 +9,7 @@ const steps = [1500, 1500, 1500, 1700];
 
 function Rounding() {
   const step = useTimeline(steps);
-  const value = values[step]!;
+  const value = values[step];
   return (
     <Column gap={2} align="center">
       <Rating value={value} showValue />

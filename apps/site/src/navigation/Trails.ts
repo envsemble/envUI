@@ -20,6 +20,7 @@ export interface TrailStep {
 export function catalogueTrail(page: RoutePage): TrailStep[] {
   const steps: TrailStep[] = [{ label: 'envUI', route: homeRoute }];
   if (page.kind === 'home') return steps;
+  // A catalogue page's section is one of its destinations.
   const section = sectionHome(page.section as CatalogueSection);
   const sectionIndex =
     page.kind === 'foundations' || page.kind === 'components' || page.kind === 'patterns';

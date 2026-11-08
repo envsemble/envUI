@@ -40,7 +40,7 @@ function Reading() {
     <div
       style={{ inlineSize: '100%' }}
       onClickCapture={(event) => {
-        if ((event.target as Element).closest('a')) event.preventDefault();
+        if (event.target instanceof Element && event.target.closest('a')) event.preventDefault();
       }}
     >
       <ListAndDetail />

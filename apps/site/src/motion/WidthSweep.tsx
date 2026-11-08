@@ -73,8 +73,8 @@ const orderOf = (count: number) =>
 function widthAt(time: number, stops: readonly number[], hold: number) {
   const order = orderOf(stops.length);
   const legs = order.map((index, leg) => {
-    const from = stops[index]!;
-    const to = stops[order[(leg + 1) % order.length]!]!;
+    const from = stops[index];
+    const to = stops[order[(leg + 1) % order.length]];
     return { from, to, travel: from === to ? 0 : travelTime(from, to) };
   });
   const length = legs.reduce((sum, leg) => sum + hold + leg.travel, 0);
@@ -85,7 +85,7 @@ function widthAt(time: number, stops: readonly number[], hold: number) {
     if (left < leg.travel) return leg.from + (leg.to - leg.from) * ease(left / leg.travel);
     left -= leg.travel;
   }
-  return stops[0]!;
+  return stops[0];
 }
 
 /** Where a sweep stands on its stage: its scale, the widths it sweeps between and its room. */

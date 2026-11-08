@@ -147,7 +147,7 @@ function usePagePlace(route: string, title: string, main: RefObject<HTMLElement 
     else queueMicrotask(() => main.current?.focus({ preventScroll: true }));
     // The Design and Code switch keeps the reader's section where the page it shows has it too,
     // and names it in the address; elsewhere the page opens at its top.
-    const switched = main.current && showKeptSection(main.current, route.split('?')[0]!);
+    const switched = main.current && showKeptSection(main.current, route.split('?')[0]);
     if (switched) return switched;
     // Back, Forward and a reload return to where the reader was on the page.
     const restoring = main.current && restoreScroll(main.current);
@@ -283,7 +283,7 @@ function Shell() {
   // A destination chosen in the navigation's sheet sends focus to the page, not back to the button.
   const choseDestination = useRef(false);
   const mainElement = useRef<HTMLElement>(null);
-  const routePath = route.split('?')[0]!;
+  const routePath = route.split('?')[0];
   const page = findPage(routePath);
   const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'catalogue');
   const contents = Boolean(page && !pagesWithoutContents.has(page.kind));

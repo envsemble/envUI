@@ -1,4 +1,4 @@
-import { useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
+import { useSyncExternalStore, type ReactNode } from 'react';
 import {
   AvatarGroup,
   Badge,
@@ -202,14 +202,12 @@ export function OverviewFan() {
             padding={5}
             data-narrow={card.narrowPlace === undefined ? 'hidden' : undefined}
             data-compact={card.compactPlace === undefined ? 'hidden' : undefined}
-            style={
-              {
-                '--catalogue-fan-place': card.place,
-                '--catalogue-fan-narrow-place': card.narrowPlace ?? 0,
-                '--catalogue-fan-compact-place': card.compactPlace ?? 0,
-                '--catalogue-fan-lift': `${card.lift}rem`,
-              } as CSSProperties
-            }
+            style={{
+              '--catalogue-fan-place': card.place,
+              '--catalogue-fan-narrow-place': card.narrowPlace ?? 0,
+              '--catalogue-fan-compact-place': card.compactPlace ?? 0,
+              '--catalogue-fan-lift': `${card.lift}rem`,
+            }}
           >
             {card.content}
           </Card>

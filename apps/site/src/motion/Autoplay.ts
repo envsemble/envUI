@@ -68,7 +68,7 @@ function schedule() {
 }
 
 function start() {
-  observer = new IntersectionObserver(
+  const watching = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
         if (entry.isIntersecting) inView.set(entry.target, entry.intersectionRatio);
@@ -83,6 +83,7 @@ function start() {
   // Scrolling anywhere, the page or a box it scrolls in, moves the tiles.
   addEventListener('scroll', schedule, { capture: true, passive: true });
   addEventListener('resize', schedule);
+  return (observer = watching);
 }
 
 function stop() {
@@ -97,8 +98,7 @@ function stop() {
 /** Adds a tile to those that play by themselves; returns its removal. */
 function register(element: Element) {
   tiles.add(element);
-  if (!observer) start();
-  observer!.observe(element);
+  (observer ?? start()).observe(element);
   return () => {
     tiles.delete(element);
     observer?.unobserve(element);

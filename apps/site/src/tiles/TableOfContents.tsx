@@ -59,7 +59,7 @@ export default function TableOfContentsTile() {
   const section = (name: string) => `${id}-${name}`;
   /** Scrolls the unseen article to a section, as a link on a page does, at a reader's pace. */
   const go = (event: MouseEvent<HTMLElement>) => {
-    const target = (event.target as HTMLElement).closest('a');
+    const target = event.target instanceof Element ? event.target.closest('a') : null;
     const area = scroller.current;
     if (!target || !area) return;
     event.preventDefault();

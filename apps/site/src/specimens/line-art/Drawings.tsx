@@ -118,10 +118,10 @@ const area: CSSProperties = { position: 'relative', overflow: 'hidden', aspectRa
 const room: CSSProperties = { position: 'absolute', inset: '6%', containerType: 'size' };
 
 /** A drawing's card: its fill, a step lighter than the stage in every theme. */
-const card = {
+const card: CSSProperties = {
   '--env-surface-container-default':
     'light-dark(var(--env-color-bg-muted), var(--env-color-bg-default))',
-} as CSSProperties;
+};
 
 /** A card's place in the gallery: its card, its name and its line, each a row of the gallery's. */
 const row: CSSProperties = {

@@ -52,6 +52,7 @@ export function moduleRegistry<T>(
       loaderOf(path);
       let component = components.get(path);
       if (!component) {
+        // The registry's files are components' modules, which default-export one.
         component = lazy(() => registry.load(path) as Promise<ComponentModule>);
         components.set(path, component);
       }

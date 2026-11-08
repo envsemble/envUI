@@ -41,7 +41,7 @@ export function docsDestinations(
   const lone = (section: DocsGroup) =>
     !section.groups.length &&
     section.pages.length === 1 &&
-    section.pages[0]!.title === section.label;
+    section.pages[0].title === section.label;
   return docsTree.flatMap((section) => [
     ...section.pages.flatMap((page) => link(page, lone(section) ? undefined : section.label)),
     ...section.groups.map((group): NavigationDrawerDestination => ({

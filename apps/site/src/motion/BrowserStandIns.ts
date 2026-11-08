@@ -211,6 +211,7 @@ function scrollInExample(
  * pointer no one sees, copies nowhere. Its writes resolve, so it shows that it copied.
  */
 export function keepClipboard(click: () => void) {
+  // Absent outside a secure context, though the DOM's types always have it.
   const clipboard = navigator.clipboard as Clipboard | undefined;
   if (!clipboard) return click();
   const names = ['writeText', 'write'] as const;
@@ -224,6 +225,7 @@ export function keepClipboard(click: () => void) {
     names.forEach((name, index) => {
       const descriptor = own[index];
       if (descriptor) Object.defineProperty(clipboard, name, descriptor);
+      // Its own property, which the clipboard's type doesn't index.
       else delete (clipboard as unknown as Record<string, unknown>)[name];
     });
   }

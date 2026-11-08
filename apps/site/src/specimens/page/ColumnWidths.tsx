@@ -28,7 +28,7 @@ function Widening() {
   const step = useTimeline(durations);
   const area = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
-  const { width, column, words } = widths[step]!;
+  const { width, column, words } = widths[step];
 
   // The window is drawn at the scale that fits the stage, again as the stage resizes.
   useLayoutEffect(() => {

@@ -78,7 +78,8 @@ export function SiteDrawer({
 
 /** Gives a drawer label cut short with an ellipsis its full name as its title. */
 function titleCutLabel(event: PointerEvent<HTMLElement>) {
-  const label = (event.target as Element).closest<HTMLElement>('.env-navigation-drawer-label');
+  if (!(event.target instanceof Element)) return;
+  const label = event.target.closest<HTMLElement>('.env-navigation-drawer-label');
   if (!label) return;
   if (label.scrollWidth > label.clientWidth) label.title = label.textContent ?? '';
   else label.removeAttribute('title');

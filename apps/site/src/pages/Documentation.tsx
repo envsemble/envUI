@@ -75,6 +75,7 @@ const headingIds: NonNullable<MarkdownProps['rehypePlugins']>[number] = () => (t
       if (!node.properties?.id) node.properties = { ...node.properties, id: slug(textOf(node)) };
     } else for (const child of node.children ?? []) visit(child as typeof node);
   };
+  // The tree's nodes, as far as this reads them.
   visit(tree as Parameters<typeof visit>[0]);
 };
 
@@ -132,11 +133,12 @@ const componentNames =
     const visit = (node: HastNode) => {
       if (node.type === 'element' && node.tagName === 'li') {
         const end = itemEnd(node);
+        // An item's end is a child of its parent.
         const text = end?.parent.children![end.index];
         const match = text?.value && trailingName.exec(text.value);
         const page = match && componentPage(match[1]);
         if (end && text && match && (page || /[a-z][A-Z]/.test(match[1]))) {
-          text.value = text.value!.slice(0, match.index);
+          text.value = text.value?.slice(0, match.index);
           const own = page && page.document.path === path;
           const name: HastNode = {
             type: 'element',
@@ -147,7 +149,7 @@ const componentNames =
                 : { className: ['catalogue-list-name'] },
             children: [{ type: 'text', value: match[1] }],
           };
-          end.parent.children!.splice(
+          end.parent.children?.splice(
             end.index + 1,
             0,
             {
@@ -162,6 +164,7 @@ const componentNames =
       }
       for (const child of node.children ?? []) visit(child);
     };
+    // The tree's nodes, as far as this reads them.
     visit(tree as HastNode);
   };
 
@@ -221,6 +224,7 @@ function OutlineHeadings({ markdown }: { markdown: string }) {
   const slug = headingSlugger();
   return marked.lexer(headingsOnly(markdown)).flatMap((token, index) => {
     if (token.type !== 'heading') return [];
+    // marked's generic token keeps the type check above from narrowing it.
     const text = inlineText((token as Tokens.Heading).tokens);
     const Heading = `h${(token as Tokens.Heading).depth}` as 'h2';
     return [

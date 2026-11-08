@@ -11,7 +11,7 @@ function Counting() {
   const step = useTimeline(steps);
   return (
     <Text variant="display" render={<span />}>
-      <AnimatedNumber value={values[step]!} /> tasks
+      <AnimatedNumber value={values[step]} /> tasks
     </Text>
   );
 }

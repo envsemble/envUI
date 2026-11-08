@@ -34,7 +34,7 @@ function Cases() {
   // is the first case too, left at once as the figure starts to play.
   const step = useTimeline([10, 5000, 5000, 5000]);
   const index = Math.max(0, step - 1);
-  const shown = cases[index]!;
+  const shown = cases[index];
   return (
     <Scaffold
       scroll="body"

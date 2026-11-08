@@ -36,7 +36,7 @@ const steps = looks.map(() => 1700);
 
 function Stepping() {
   const step = useTimeline(steps);
-  const look = looks[step]!;
+  const look = looks[step];
   return (
     // A theme of its own, the page's, so the colors ease from one look to the next.
     <Theme {...useTheme()}>

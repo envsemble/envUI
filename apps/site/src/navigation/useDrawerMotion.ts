@@ -33,11 +33,9 @@ export function useDrawerMotion(
   section: CatalogueSection,
   routePath: string,
 ) {
-  const [state, setState] = useState(() => ({
-    shows,
-    motion: undefined as DrawerMotion | undefined,
-    last: { section, routePath } as DrawnDrawer,
-  }));
+  const [state, setState] = useState<{ shows: boolean; motion?: DrawerMotion; last: DrawnDrawer }>(
+    () => ({ shows, last: { section, routePath } }),
+  );
   // Adjusted as the route changes, in the render it changes in, so the drawer comes and goes on
   // the page's first frame.
   let next = state;

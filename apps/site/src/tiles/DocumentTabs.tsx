@@ -88,11 +88,11 @@ export default function DocumentTabsTile() {
 function Strip({ narrow }: { narrow: boolean }) {
   const open = narrow ? documents.slice(0, 1) : documents;
   const [tabs, setTabs] = useState(open);
-  const [value, setValue] = useState<string | null>(documents[0]!.value);
+  const [value, setValue] = useState<string | null>(documents[0].value);
   usePointer(narrow ? short : script, {
     onRest: () => {
       setTabs(open);
-      setValue(documents[0]!.value);
+      setValue(documents[0].value);
     },
   });
   return (

@@ -141,7 +141,7 @@ export function codeColumns(markdown: string): string {
 }
 
 /** A section's Markdown as the catalogue shows it: without what envUI and the application provide. */
-export function catalogueMarkdown(
+function catalogueMarkdown(
   section: Pick<DocumentationSection, 'id'>,
   markdown: string,
 ): string {

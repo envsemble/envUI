@@ -9,7 +9,10 @@ import { useEffect } from 'react';
 export function useStayOnPage() {
   useEffect(() => {
     const stay = (event: MouseEvent) => {
-      if ((event.target as Element | null)?.closest?.('.catalogue-motion-subject a[href]'))
+      if (
+        event.target instanceof Element &&
+        event.target.closest('.catalogue-motion-subject a[href]')
+      )
         event.preventDefault();
     };
     window.addEventListener('click', stay, true);

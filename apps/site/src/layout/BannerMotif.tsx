@@ -15,8 +15,10 @@ export function motifOf(id: string | undefined): Motif | undefined {
 }
 
 /** A piece's place in its motif's arrangement, which staggers its entrance, and its own values. */
-const piece = (n: number, values: Record<string, string | number> = {}) =>
-  ({ '--catalogue-motif-place': n, ...values }) as CSSProperties;
+const piece = (n: number, values: CSSProperties = {}): CSSProperties => ({
+  '--catalogue-motif-place': n,
+  ...values,
+});
 
 const tones = ['primary', 'success', 'warning', 'danger', 'done', 'neutral'] as const;
 

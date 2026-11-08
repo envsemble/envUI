@@ -37,6 +37,7 @@ function leaveInPlace(element: HTMLElement) {
   if (!layer || !box.width || !box.height) return undefined;
   const style = getComputedStyle(element);
   const times = element.getAnimations({ subtree: true }).map((animation) => animation.currentTime);
+  // A clone of an element is one.
   const copy = element.cloneNode(true) as HTMLElement;
   for (const node of [copy, ...copy.querySelectorAll('[id]')]) node.removeAttribute('id');
   // No longer a part that loads, for the page and the tests (`.site-loading`).

@@ -98,7 +98,7 @@ function ResponsiveTile() {
       {['compact', 'medium', 'expanded'].map((size) => (
         <span key={size} data-size={size}>
           <Text variant="caption" render={<span />}>
-            {size[0]!.toUpperCase() + size.slice(1)}
+            {size[0].toUpperCase() + size.slice(1)}
           </Text>
         </span>
       ))}

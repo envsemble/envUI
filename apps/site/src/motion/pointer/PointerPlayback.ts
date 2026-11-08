@@ -43,7 +43,8 @@ function writePointerFrames() {
     pointerFramesRun = false;
     return;
   }
-  // Posted first, so the reads come before any rendering that the moves below schedule.
+  // Posted first, so the reads come before any rendering that the moves below schedule; the
+  // channel is made as the first frame joins (joinPointerFrames).
   afterFrame!.postMessage(undefined);
   const frames = [...pointerFrames];
   // A pointer whose stage stopped on another's move stops here too.
@@ -83,6 +84,8 @@ function send(
   happening: Plan['happenings'][number],
   onCue: ((cue: string) => void) | undefined,
 ) {
+  // planOf gives each kind what it acts on: a cue or a key its cue, a typing its target and a
+  // carry its files.
   switch (happening.kind) {
     case 'cue':
       return onCue?.(happening.cue!);

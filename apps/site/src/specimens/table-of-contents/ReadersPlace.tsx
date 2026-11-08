@@ -14,7 +14,7 @@ const sections = [
 ];
 
 /** A section's entry in the contents, by its place in the guide, from 1. */
-const entry = (index: number) => `.env-table-of-contents-link[href="#${sections[index - 1]!.id}"]`;
+const entry = (index: number) => `.env-table-of-contents-link[href="#${sections[index - 1].id}"]`;
 
 /*
  * The reader scrolls the guide down a section, the shape beside the contents gliding with their
@@ -47,7 +47,7 @@ function Reading() {
     const element = guide.current;
     if (!element) return;
     at.current = index;
-    const section = element.querySelector<HTMLElement>(`#${sections[index]!.id}`);
+    const section = element.querySelector<HTMLElement>(`#${sections[index].id}`);
     // The guide is the sections' offset parent, so a section's offset is its scroll position.
     const top = (section?.offsetTop ?? 0) - (header.current?.offsetHeight ?? 0);
     element.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
@@ -58,7 +58,7 @@ function Reading() {
   // A link scrolls its section to the top of the page and puts it in the address; on the stage,
   // the figure scrolls its guide there instead, as the link does the page.
   const follow = (event: MouseEvent) => {
-    const link = (event.target as Element).closest('a');
+    const link = event.target instanceof Element ? event.target.closest('a') : null;
     const index = sections.findIndex(({ id }) => link?.getAttribute('href') === `#${id}`);
     if (index < 0) return;
     event.preventDefault();

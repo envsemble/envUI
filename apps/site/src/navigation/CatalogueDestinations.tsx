@@ -36,6 +36,7 @@ export function catalogueDestinations(current: string | undefined, onChoose?: ()
 
 /** The catalogue's destination a page is in, Overview for one outside the catalogue. */
 export function catalogueSectionOf(page: RoutePage | undefined): CatalogueSection {
+  // A catalogue page's section is one of its destinations.
   return (page?.area === 'catalogue' ? page.section : 'Overview') as CatalogueSection;
 }
 

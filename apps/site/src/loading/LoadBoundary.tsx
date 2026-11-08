@@ -34,6 +34,7 @@ export function reloadModule<T>(
   load: () => Promise<T>,
   path: string,
   base: string,
+  // Without pick, the module is the T its caller asks for.
   { query, pick = (module) => module as T }: { query?: string; pick?: (module: unknown) => T } = {},
 ): () => Promise<T> {
   if (!canRetryLoad) return load;
@@ -83,7 +84,8 @@ async function moduleFiles(): Promise<Record<string, string[]> | null> {
       cache: 'no-cache',
       signal: AbortSignal.timeout(15_000),
     });
-    // A build without the map, or an answer that isn't one, still reloads.
+    // module-files.json, as SiteModuleFiles.ts writes it; a build without the map, or an answer
+    // that isn't one, still reloads.
     return response.ok ? ((await response.json()) as Record<string, string[]>) : {};
   } catch (error) {
     return error instanceof SyntaxError ? {} : null;

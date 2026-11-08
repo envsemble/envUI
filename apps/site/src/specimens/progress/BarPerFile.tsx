@@ -13,7 +13,7 @@ function Uploading() {
           <Progress
             key={`${file} ${round}`}
             label={file}
-            value={shares[index]!}
+            value={shares[index]}
             valueText={`${shares[index]}%`}
           />
         ))}

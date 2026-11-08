@@ -141,15 +141,15 @@ const wordLengths = [5, 3, 7, 4, 9, 2, 6, 5, 8, 3, 4, 6];
 export function placeholderText(length: number) {
   let text = '';
   for (let word = 0; text.length < length; word++)
-    text += `${text ? ' ' : ''}${'x'.repeat(wordLengths[word % wordLengths.length]!)}`;
+    text += `${text ? ' ' : ''}${'x'.repeat(wordLengths[word % wordLengths.length])}`;
   return text.slice(0, length).trimEnd();
 }
 
 /** A line of code that hasn't loaded, as placeholder text, which the skeleton draws as a bar. */
 function placeholderLine(index: number) {
   // Lines of a few lengths and indents, in a fixed order, so the bars read as code.
-  const indent = [0, 2, 2, 4, 4, 2, 0, 2][index % 8]!;
-  const length = [28, 40, 22, 46, 34, 18, 12, 30][(index * 5) % 8]!;
+  const indent = [0, 2, 2, 4, 4, 2, 0, 2][index % 8];
+  const length = [28, 40, 22, 46, 34, 18, 12, 30][(index * 5) % 8];
   return ' '.repeat(indent) + 'x'.repeat(length);
 }
 

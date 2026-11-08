@@ -237,6 +237,7 @@ function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<st
     (a, b) => tier(a) - tier(b),
   );
   return order.map((name) => {
+    // The order lists the groups the results were put in.
     const members = grouped.get(name)!;
     const folds = shortGroups.has(name) || name === mentions;
     // Props show as many as the query names by their own name, the best first; with none, such as
@@ -314,7 +315,7 @@ export function SiteSearch({
         id: result.id,
         label: result.title,
         description:
-          readings.get(reads(result))! > 1
+          (readings.get(reads(result)) ?? 0) > 1
             ? `${areas[result.area]} · ${result.detail}`
             : result.detail,
         icon: icons[result.kind],

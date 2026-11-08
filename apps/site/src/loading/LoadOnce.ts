@@ -36,4 +36,5 @@ export function loadOnce<T>(cache: Map<string, Promise<T>>, key: string, load: (
 
 /** Whether a load from loadOnce has settled, loaded or failed. */
 export const settled = (promise: Promise<unknown>) =>
+  // Every load loadOnce makes is tracked.
   (promise as Tracked<unknown>).status !== 'pending';

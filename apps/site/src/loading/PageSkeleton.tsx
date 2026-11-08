@@ -24,7 +24,8 @@ const overviewLeast = 'clamp(16rem, 42cqi, 30rem)';
 function CatalogueSection({ page }: { page: RoutePage }) {
   const first = page.document?.outline?.[0];
   const example = first?.examples[0];
-  const size = example && recordedSize(`example:${page.document!.id}/${example.name}`);
+  const size =
+    example && page.document && recordedSize(`example:${page.document.id}/${example.name}`);
   return (
     // The page's own classes for its sections' room and type, not for what is in them, which the
     // page's checks look for.

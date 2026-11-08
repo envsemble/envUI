@@ -52,6 +52,7 @@ const hexPart = (value: number) => Math.round(value).toString(16).padStart(2, '0
 export function tokenValueText(resolved: unknown): string {
   if (resolved === undefined) return '—';
   if (typeof resolved !== 'string')
+    // A composite token's value is an object of its parts.
     return Object.entries(resolved as Record<string, unknown>)
       .map(([property, part]) => `${property}: ${part}`)
       .join('; ');
