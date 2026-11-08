@@ -2,8 +2,8 @@
 // page doesn't move when its content arrives. It toggles the skeleton's attribute, which the
 // styles follow, measures every element in both states, and reports the ones that move or resize.
 
-import { describeElement, isDevElement, resolveRoot } from './measure.js';
-import type { LayoutProblem } from './model.js';
+import { describeElement, isDevElement, resolveRoot, toBox } from './measure.js';
+import type { Box, LayoutProblem } from './model.js';
 import { partClassOf } from './parts.js';
 import { remPixels } from '../internal/dom/lengths.js';
 import { toRem } from './units.js';
@@ -16,18 +16,6 @@ export interface SkeletonShiftOptions {
   /** How far, in px, an element may move or resize before it counts. @default 1 */
   tolerance?: number;
 }
-
-interface Rect {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
-const rectOf = (element: Element): Rect => {
-  const box = element.getBoundingClientRect();
-  return { x: box.x, y: box.y, w: box.width, h: box.height };
-};
 
 /** An element as the check names it: its part class, its name or layout kind, else its tag. */
 function labelOf(element: Element): string {
@@ -144,10 +132,10 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
     surface.toggleAttribute(skeletonAttribute, skeleton);
     if (skeleton) wrapper.wrap();
     else wrapper.unwrap();
-    return elements.map(rectOf);
+    return elements.map((element) => toBox(element.getBoundingClientRect()));
   };
-  let loaded: Rect[];
-  let skeleton: Rect[];
+  let loaded: Box[];
+  let skeleton: Box[];
   try {
     loaded = measure(false);
     skeleton = measure(true);

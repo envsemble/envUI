@@ -43,7 +43,8 @@ export function keyOf(element: Element): number {
 }
 
 const px = (value: string) => Number.parseFloat(value) || 0;
-const toBox = (rect: DOMRect): Box => ({
+/** A DOM rectangle as a Box. */
+export const toBox = (rect: DOMRect): Box => ({
   x: rect.left,
   y: rect.top,
   w: rect.width,
