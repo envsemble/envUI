@@ -1,6 +1,6 @@
 # fit
 
-Drawing a tile's or a figure's picture to fit its stage. Each fitter measures what it shows and sets what follows, and measures again as anything that changes it does (`remeasure`, `Remeasure.ts`), which the anatomy and marked figures and the width sweep use too.
+Drawing a tile's or a figure's picture to fit its stage. Each fitter measures what it shows and sets what follows, and measures again as anything that changes it does through the site's shared measuring loop (`remeasure`, [`shared/Remeasure.ts`](../shared/Remeasure.ts)).
 
 ## The fitters
 

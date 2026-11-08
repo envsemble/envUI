@@ -1,5 +1,5 @@
 import { useLayoutEffect, type RefObject } from 'react';
-import { remeasure, type Change } from '../Remeasure';
+import { remeasure, type Change } from '../../shared/Remeasure';
 
 /**
  * Draws a do or don't figure's example smaller where it must to fit its stage, as a tile

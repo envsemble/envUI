@@ -20,7 +20,7 @@ import { useVerdictFit } from '../fit/standalone/useVerdictFit';
 import { useDisplaySettings } from '../display/DisplaySettings';
 import { Playback, StageOverlays } from './Playback';
 import { useInView } from './useInView';
-import { rootMotionDuration } from './RootMotionTokens';
+import { rootMotionDuration } from '../shared/RootMotionTokens';
 import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 import { flag } from '@envui-internal/internal/flag';
 

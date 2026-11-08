@@ -8,7 +8,7 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { remPixels } from '@envui-internal/internal/lengths';
 import { pixelTolerance } from '../FitGeometry';
-import { remeasure } from '../Remeasure';
+import { remeasure } from '../../shared/Remeasure';
 import { flag } from '@envui-internal/internal/flag';
 
 /** The least a width frame is drawn at to fit its stage; one that would need less scrolls. */

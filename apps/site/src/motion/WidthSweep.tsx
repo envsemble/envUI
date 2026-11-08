@@ -7,7 +7,7 @@ import {
   type RefObject,
 } from 'react';
 import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/envui';
-import { remeasure } from '../fit/Remeasure';
+import { remeasure } from '../shared/Remeasure';
 import { usePlayback } from './Playback';
 import { remPixels } from '@envui-internal/internal/lengths';
 import { useLatest } from '@envui-internal/internal/useLatest';

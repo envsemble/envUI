@@ -32,7 +32,7 @@ import {
 import { decideScreenPlace, decideScreenScale, modal, modalRoom } from './FitScreen';
 import { holdsFrame, type Follow, type Framed } from './HeldView';
 import { settling, shownBoxes, type Shown } from './PaintedBoxes';
-import { remeasure } from './Remeasure';
+import { remeasure } from '../shared/Remeasure';
 import { glideTo, newView, settle, type View } from './ViewEasing';
 
 /** What a picture's fits decided that the next one goes by. */

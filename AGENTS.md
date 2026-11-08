@@ -113,6 +113,7 @@ One word for each thing the site shows, and one folder in `apps/site/src` for ea
 | figure        | The frame that shows an example or a specimen on a page          | `figures/`; a foundation's in `figures/foundations/` |
 | fit           | Drawing a tile's or a figure's picture to fit its stage          | [`fit/`](apps/site/src/fit/README.md), its words     |
 | motion        | Scripts that play a stage, where a tile or figure plays live     | `motion/`                                            |
+| shared        | The measuring loop and motion tokens that several folders use    | `shared/`                                            |
 | loading       | Skeletons, load boundaries and retries while a part loads        | `loading/`                                           |
 | template      | The sections of a component or pattern page, in their order      | `template/`                                          |
 | page          | A route's page in the catalogue or the Docs, and its data        | `pages/`                                             |

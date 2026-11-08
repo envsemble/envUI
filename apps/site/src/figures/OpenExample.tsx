@@ -1,7 +1,7 @@
 import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { makeRoom, overlays, reserveStage } from '../fit/standalone/OverlayRoom';
-import { remeasure } from '../fit/Remeasure';
+import { remeasure } from '../shared/Remeasure';
 import { sitePopupOpen } from '../motion/SitePopup';
 import { press, triggerOf } from './PressTrigger';
 import { flag } from '@envui-internal/internal/flag';

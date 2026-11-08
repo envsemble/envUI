@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState, type CSSProperties, type ReactNode } from 'react';
-import { rootMotionDuration } from './RootMotionTokens';
+import { rootMotionDuration } from '../shared/RootMotionTokens';
 
 /** How long the example takes to fade out, and then in again, as it is drawn anew. */
 const fade = 'medium';
