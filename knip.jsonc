@@ -27,8 +27,12 @@
       // Off: it takes every module in a folder named test, as scripts/test/, for a test file whose
       // exports go unchecked. The entries above list the tests.
       "node": false,
-      // The source the lint packages' tokens.js is copied from (scripts/build/SyncLintPackages.ts).
-      "ignoreFiles": ["scripts/build/LintPackageTokens.js"],
+      // The sources of the lint packages' tokens.js and colorPolicy.js, which
+      // scripts/build/SyncLintPackages.ts copies into them.
+      "ignoreFiles": [
+        "scripts/build/LintPackageTokens.js",
+        "scripts/build/LintPackageColorPolicy.js",
+      ],
       "ignoreDependencies": [
         // Changesets reads .changeset/ with these, which come with @changesets/cli.
         "@changesets/types",
