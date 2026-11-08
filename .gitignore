@@ -8,7 +8,9 @@ output/playwright/
 *.tgz
 /packages/ui/README.md
 /packages/ui/docs/
-/apps/site/src/generated/
+# The site's generated data, but for the part sizes, which a run in a browser records.
+/apps/site/src/generated/*
+!/apps/site/src/generated/PartSizes.json
 .wrangler/
 
 # Local screenshots and scripts.

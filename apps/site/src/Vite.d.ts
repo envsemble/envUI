@@ -7,8 +7,8 @@ declare module 'virtual:envui-release-notes' {
 }
 
 /**
- * The recorded size of each part that loads with a page, by its key (template/PartSizes.json): in a
- * build, only those of no one page's, as each page's content brings its own (vite.config.ts).
+ * The recorded size of each part that loads with a page, by its key (generated/PartSizes.json):
+ * in a build, only those of no one page's, as each page's content brings its own (vite.config.ts).
  */
 declare module 'virtual:envui-part-sizes' {
   const sizes: Record<string, readonly [number, number]>;
