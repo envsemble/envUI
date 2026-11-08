@@ -35,49 +35,23 @@ async function catalogueWords(page: Page) {
 const technicalOf = (words: string[]) =>
   words.flatMap((text) => technicalText(text).map((found) => `${found.kind}: ${found.text}`));
 
+const cataloguePages = allPages.filter(({ area }) => area === 'catalogue');
+
+/** The foundation and pattern pages, held to the plain-language rule with their figures. */
+const plainPages = cataloguePages
+  .filter(({ kind }) => kind === 'foundation' || kind === 'pattern')
+  .map(({ path }) => path);
+
+/** The component pages, held to the plain-language rule. */
+const plainComponentPages = cataloguePages.filter(({ kind }) => kind === 'component');
+
 /**
- * The pages that show no technical text at all: every foundation and every pattern. Every other
- * page of the catalogue is reported until it is rewritten to the same rule, then joins this list.
+ * The first page of each kind the catalogue's templates set in its type hierarchy: a foundation, a
+ * component and a pattern.
  */
-const plainPages = [
-  'foundations/colors',
-  'foundations/typography',
-  'foundations/spacing',
-  'foundations/responsive',
-  'foundations/icons',
-  'foundations/accessibility',
-  // The patterns, each its decision and its compositions.
-  ...[
-    'forms',
-    'settings',
-    'destructive-actions',
-    'feedback',
-    'loading',
-    'empty-states',
-    'key-figures',
-    'navigation',
-    'app-frame',
-    'account-and-organizations',
-    'filtering',
-    'data-tables',
-    'progressive-disclosure',
-    'conversation',
-    'file-upload',
-  ].map((id) => `patterns/${id}`),
-];
-
-/** The component pages of the catalogue held to the plain-language rule. */
-const plainComponentPages = allPages.filter(
-  ({ kind, area }) => area === 'catalogue' && kind === 'component',
+const typographyPages = (['foundation', 'component', 'pattern'] as const).map(
+  (kind) => cataloguePages.find((each) => each.kind === kind)!.path,
 );
-
-/** The pages set in the catalogue's type hierarchy so far, the samples of the typography rework. */
-const typographyPages = [
-  'foundations/spacing',
-  'foundations/typography',
-  'components/button',
-  'patterns/forms',
-];
 
 test("a specimen's titles and captions name options in words, not values", async ({ page }) => {
   // The catalogue speaks plain language in its specimens too: Small rather than sm, Step 1 rather
@@ -153,32 +127,6 @@ test('component pages show no technical text, in their words or their figures', 
     for (const entry of technicalOf(await catalogueWords(page))) found.push(`${path}: ${entry}`);
   }
   expect(found, "Say it in words, and move the value to the page's In code.").toEqual([]);
-});
-
-test('the technical text on every other page of the catalogue is counted, for the rewrite to come', async ({
-  page,
-}, testInfo) => {
-  // Reporting only: the counts say how far each page is from the model pages' rule.
-  test.slow();
-  await page.goto(`${siteDevUrl}/`);
-  const counts: string[] = [];
-  for (const { path, title, kind, area } of allPages) {
-    if (area !== 'catalogue' || plainPages.includes(path)) continue;
-    if (plainComponentPages.some((plain) => plain.path === path)) continue;
-    await goTo(page, path === 'overview' ? '/' : `/${path}`);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
-      kind === 'home' ? 'envUI' : title,
-    );
-    const found = technicalOf(await catalogueWords(page));
-    if (!found.length) continue;
-    const kinds = Map.groupBy(found, (entry) => entry.split(':')[0]!);
-    counts.push(
-      `${path}: ${found.length} (${[...kinds].map(([name, list]) => `${name} ${list.length}`).join(', ')})`,
-    );
-  }
-  const report = counts.length ? counts.join('\n') : 'No technical text on any page.';
-  console.log(`Technical text in the catalogue, by page:\n${report}`);
-  await testInfo.attach('technical-text.txt', { body: report, contentType: 'text/plain' });
 });
 
 test("the catalogue's text keeps a readable measure, and opens each section with a larger lead", async ({

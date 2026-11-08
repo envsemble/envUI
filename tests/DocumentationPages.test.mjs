@@ -478,20 +478,3 @@ test("a component page's catalogue shows no technical text", () => {
     );
   assert.deepEqual(found, [], 'Say it in words, and move the value to "## Compose".');
 });
-
-test("the technical text in each page's catalogue Markdown is counted, for the rewrite to come", (t) => {
-  // Reporting only, like CataloguePlainLanguage.spec.ts's count of the rendered pages: the catalogue shows no
-  // token names, hex colors, lengths, percentages or code, which belong to the page in the Docs.
-  // Inline code is already rejected above; this counts what plain words still carry.
-  const counts = cataloguePages().flatMap((document) => {
-    const found = catalogueTechnicalText(document);
-    return found.length
-      ? [`${document.path}: ${found.length} (${found.map(({ text }) => text).join(', ')})`]
-      : [];
-  });
-  t.diagnostic(
-    counts.length
-      ? `Technical text in the catalogue's Markdown:\n${counts.join('\n')}`
-      : 'No technical text in the catalogue Markdown.',
-  );
-});
