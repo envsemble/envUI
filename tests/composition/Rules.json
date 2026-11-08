@@ -70,6 +70,10 @@
       "content/formatRelativeTime.ts": "base",
       "feedback/Alert.tsx": "composites",
       "feedback/CommandPalette.tsx": "composites",
+      "feedback/internal/CommandPaletteFooter.tsx": "composites",
+      "feedback/internal/CommandPaletteOptions.tsx": "composites",
+      "feedback/internal/CommandPaletteStatus.tsx": "composites",
+      "feedback/internal/useCommandPaletteKeys.ts": "composites",
       "feedback/ConfirmDialog.tsx": "composites",
       "feedback/Dialog.tsx": "composites",
       "feedback/Sheet.tsx": "composites",
@@ -308,6 +312,14 @@
       "Tooltip": {
         "modules": ["internal/TooltipPopup.tsx"],
         "slots": ["env-tooltip-disabled-target"]
+      },
+      "CommandPalette": {
+        "modules": [
+          "feedback/internal/CommandPaletteFooter.tsx",
+          "feedback/internal/CommandPaletteOptions.tsx",
+          "feedback/internal/CommandPaletteStatus.tsx",
+          "feedback/internal/useCommandPaletteKeys.ts"
+        ]
       },
       "Toast": {
         "classes": ["env-toast"],
