@@ -508,3 +508,19 @@ test("a component page's catalogue shows no technical text", () => {
     );
   assert.deepEqual(found, [], 'Say it in words, and move the value to "## Compose".');
 });
+
+test("every namespace of envUI's strings but the shared one shows on a component's page", async () => {
+  const { readMessages } = await import('../../scripts/docs/Messages.ts');
+  const documented = new Set(
+    readDocumentation().flatMap((document) => document.frontmatter?.components ?? []),
+  );
+  for (const { namespace, components, strings } of readMessages()) {
+    assert.ok(strings.length, `${namespace} has strings`);
+    for (const string of strings) assert.ok(string.description, `${namespace}.${string.key}`);
+    if (namespace === 'common') continue;
+    assert.ok(
+      components.some((name) => documented.has(name)),
+      `${namespace} names no documented export: ${components.join(', ')}`,
+    );
+  }
+});
