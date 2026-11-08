@@ -20,11 +20,9 @@ import type { RowDensity } from '../foundations/Theme.js';
 import { ContextMenu } from './ContextMenu.js';
 import { isRightToLeft } from '../internal/direction.js';
 import {
-  findTypedRow,
-  isTyping,
-  parentIndex,
   rowElementId,
   siblingPositions,
+  treeKeyAction,
   type TypedText,
 } from './internal/treeModel.js';
 import { placeRows, TreeRow } from './internal/TreeRow.js';
@@ -207,65 +205,20 @@ export function Tree<Item extends TreeItem>({
     if (event.target !== event.currentTarget || !activeItem) return;
     // Keys with Alt, Ctrl or ⌘ belong to the application, such as Alt+← for going back.
     if (event.altKey || event.ctrlKey || event.metaKey) return;
-    let handled = true;
-    switch (event.key) {
-      case 'ArrowDown':
-        activate(activeIndex + 1);
-        break;
-      case 'ArrowUp':
-        activate(activeIndex - 1);
-        break;
-      case 'Home':
-        activate(0);
-        break;
-      case 'End':
-        activate(items.length - 1);
-        break;
-      case 'PageDown':
-        activate(activeIndex + pageRows);
-        break;
-      case 'PageUp':
-        activate(activeIndex - pageRows);
-        break;
-      case 'ArrowRight':
-      case 'ArrowLeft': {
-        const rtl = isRightToLeft(event.currentTarget);
-        const inward = (event.key === 'ArrowRight') !== rtl;
-        if (inward) {
-          if (activeItem.expandable && !activeItem.expanded) setExpanded(activeItem, true);
-          else if (activeItem.expanded && items[activeIndex + 1]?.depth === activeItem.depth + 1)
-            activate(activeIndex + 1);
-        } else if (activeItem.expandable && activeItem.expanded) {
-          setExpanded(activeItem, false);
-        } else {
-          const parent = parentIndex(items, activeIndex);
-          if (parent !== -1) activate(parent);
-        }
-        break;
-      }
-      case 'Enter':
-        open(activeItem, false);
-        break;
-      case ' ': {
-        // While typing ahead, a space belongs to the typed text.
-        if (isTyping(typeahead.current) && typeahead.current.text) {
-          const index = findTypedRow(items, typeahead.current, event.key, activeIndex);
-          if (index !== -1) activate(index);
-        } else open(activeItem, true);
-        break;
-      }
-      default:
-        handled = false;
-        if (event.key.length === 1) {
-          const index = findTypedRow(items, typeahead.current, event.key, activeIndex);
-          if (index !== -1) activate(index);
-          handled = true;
-        }
-    }
-    if (handled) {
-      event.preventDefault();
-      setFocusVisible(true);
-    }
+    const action = treeKeyAction(
+      event.key,
+      items,
+      activeIndex,
+      pageRows,
+      isRightToLeft(event.currentTarget),
+      typeahead.current,
+    );
+    if (!action) return;
+    if (action.kind === 'move') activate(action.index);
+    else if (action.kind === 'expand') setExpanded(activeItem, action.expanded);
+    else if (action.kind === 'open') open(activeItem, action.preview);
+    event.preventDefault();
+    setFocusVisible(true);
   }
 
   function rowFromEvent(event: MouseEvent<HTMLElement>) {
