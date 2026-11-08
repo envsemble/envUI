@@ -1,6 +1,6 @@
 /* Related, at the end of a page: a tile for each component or page to use
    instead, from its frontmatter, each a tiny live picture of it on its recessed canvas, with its
-   name and when to pick it below. The stage is the tile's one frame. */
+   name and when to pick it below. Each tile is a gallery's cell, on a tile's stage (Tile.css). */
 
 /* Tiles of one size, framed as a gallery's are (Gallery.css). A row is rarely left with one alone:
    one column until two fit, even counts and one two to a row, counts of three, five, six, seven and
@@ -101,109 +101,6 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   overflow: hidden;
-}
-
-/* The stage, as wide as the tile and of one height in a row; what it shows is scaled to fit. */
-.catalogue-related-stage {
-  position: relative;
-  display: grid;
-  place-items: center;
-  inline-size: 100%;
-  aspect-ratio: 16 / 10;
-  max-block-size: 10rem;
-  overflow: clip;
-}
-
-/* The window the example lays out in, at a width it was written for, then scaled down and centred
-   (TileStage.tsx). It contains its fixed overlays, such as a dialog, and is transparent until it
-   fits, rather than hidden, so what hides by itself inside it can be told from what shows. It is
-   inert, so no reader's pointer reaches it; a tile's own pointer, which no one sees, follows what
-   its parts let through (VirtualPointer.ts). */
-.catalogue-related-canvas {
-  position: absolute;
-  inset-block-start: 50%;
-  inset-inline-start: 50%;
-  display: grid;
-  place-content: center stretch;
-  justify-items: center;
-  box-sizing: border-box;
-  inline-size: 36rem;
-  container: env-window / inline-size;
-  contain: layout;
-  transform: scale(1);
-  transform-origin: 0 0;
-  opacity: 0;
-}
-
-/* Once fitted, the picture appears, fading in, rather than from nowhere: by its opacity alone, so
-   the boxes the fit measures keep their place. */
-.catalogue-related-canvas[data-fitted] {
-  opacity: 1;
-  animation: catalogue-tile-appear var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-
-@keyframes catalogue-tile-appear {
-  from {
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .catalogue-related-canvas[data-fitted] {
-    animation: none;
-  }
-}
-
-/* A tile at rest draws its still without motion: drawn anew as it stops (Playback's `redraw`,
-   Motion.tsx), what it shows open, such as a menu or a hover card, is there at once rather than
-   coming in again, and nothing is caught on its way. */
-.catalogue-related-canvas[data-tile]:not([data-playing] *) * {
-  transition: none;
-}
-
-/* Room for an overlay shown open, such as a dialog over the page. */
-.catalogue-related-canvas:has(> .catalogue-overlay-layer) {
-  min-block-size: 28rem;
-}
-
-/* A page's own tile (tiles/Tiles.ts) lays out in a window of its own, which counts whole: one
-   window for every tile, so every component is drawn at one scale, about its own size. Its
-   popups open inside it, with no more room than that. A component too large for it, such as a
-   calendar, takes a larger window (tileWindows, Tiles.ts), drawn smaller. */
-.catalogue-related-stage > .catalogue-related-canvas[data-tile],
-.catalogue-gallery-stage.catalogue-gallery-stage > .catalogue-related-canvas[data-tile] {
-  inline-size: var(--catalogue-tile-width, 14rem);
-  block-size: var(--catalogue-tile-height, 10.5rem);
-  min-block-size: 0;
-}
-
-/* A command palette in a tile keeps the room its stylesheet leaves above it, a share of the window's
-   height (CommandPalette.css), measured on the tile's window rather than on the browser's, which
-   the tile stands in for: the palette's own rule, with the tile's height for the window's. */
-.catalogue-related-canvas[data-tile] .env-command-palette-positioner {
-  padding-block: max(
-      var(--env-viewport-gutter),
-      min(0.12 * var(--catalogue-tile-height, 10.5rem), 6rem)
-    )
-    var(--env-viewport-gutter);
-}
-
-/* A region that scrolls in a tile, such as a page's body in its box, fades out at its foot while
-   its content runs on past it (useFit.ts), as the stage's crop does: it ends in a fade, not in a
-   slice through a line. */
-.catalogue-related-canvas [data-catalogue-runs-on] {
-  mask-image: linear-gradient(
-    to bottom,
-    var(--env-color-fg-default) calc(100% - 1.25rem),
-    transparent
-  );
-}
-
-/* An alternative without an example: a page icon in the middle of the same stage. */
-.catalogue-related-placeholder {
-  inline-size: 2rem;
-  block-size: 2rem;
-  color: var(--env-color-fg-muted);
 }
 
 /* The name, cut short with an ellipsis in its words' own box (Gallery.css); its link covers the
@@ -310,21 +207,4 @@
 
 .catalogue-page-specimen-content {
   text-align: center;
-}
-
-/* A tile's skeleton (TileSkeleton in loading/Loading.tsx): over the whole stage, which pulses as
-   envUI's skeleton surfaces do, from a moment after the tile nears the view until the picture is
-   fitted on the stage and fades in over it. */
-.catalogue-tile-loading {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background-color: transparent;
-}
-.catalogue-tile-loading:not([data-shown]) {
-  opacity: 0;
-}
-.catalogue-related-canvas[data-fitted] ~ .catalogue-tile-loading,
-.catalogue-related-crop:has(> .catalogue-related-canvas[data-fitted]) ~ .catalogue-tile-loading {
-  display: none;
 }

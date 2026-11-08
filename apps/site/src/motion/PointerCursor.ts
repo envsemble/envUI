@@ -16,7 +16,7 @@ import { IconDescription } from '@envsemble/envui/icons/Description';
 import { remPixels } from '../shared/Lengths';
 
 /** The stages a cursor is drawn in: a gallery's or a Related tile's, and a page's figure's. */
-const stages = '.catalogue-related-stage, .catalogue-motion-stage';
+const stages = '.catalogue-tile-stage, .catalogue-motion-stage';
 
 /** An arrow, its tip at the top left, in a box of 14 by 20. */
 const arrow = 'M1 1 V16.5 L5 12.8 L7.8 19 L10.4 17.9 L7.7 11.8 H13 Z';

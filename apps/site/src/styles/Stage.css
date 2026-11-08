@@ -15,7 +15,7 @@
 .site-verdict-stage,
 .site-anatomy-stage,
 .site-loading-stage,
-.catalogue-related-stage,
+.catalogue-tile-stage,
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-fan-card,
@@ -64,7 +64,7 @@
   .site-anatomy-stage,
   .site-loading-stage,
   .site-foundation-stage,
-  .catalogue-related-stage
+  .catalogue-tile-stage
 ):not(.site-figures *) {
   border-radius: var(--env-radius-surface);
 }
@@ -79,7 +79,7 @@
 .site-verdict-caption,
 .site-anatomy-stage,
 .site-loading-stage,
-.catalogue-related-stage,
+.catalogue-tile-stage,
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-fan-card {
@@ -101,7 +101,7 @@
   .site-verdict-stage,
   .site-anatomy-stage,
   .site-loading-stage,
-  .catalogue-related-stage,
+  .catalogue-tile-stage,
   .site-foundation-stage[data-figure='example']
 ):not(.site-figures *) {
   box-shadow: var(--catalogue-card-shadow-recessed);
@@ -147,25 +147,6 @@
   box-shadow: var(--catalogue-card-shadow-subtle);
 }
 
-/* A tile's stage keeps a layer of its own, the stage's last, for the ring the keyboard draws on its
-   picture (Gallery.css); under the pointer a tile's picture slides up instead and draws no ring.
-   Nothing the picture opens, a popup, a dialog's backdrop or a sheet, covers that layer: the stage
-   isolates what it shows, and the ring stands at the top of it. */
-.catalogue-related-stage {
-  isolation: isolate;
-}
-
-.catalogue-related-stage::after {
-  position: absolute;
-  inset: 0;
-  z-index: var(--env-z-tooltip);
-  border: 1px solid transparent;
-  border-radius: inherit;
-  pointer-events: none;
-  content: '';
-  transition: border-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-
 /* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its
    navigation, top bar and body, whose edges must show on the canvas. In the dark themes the
    recessed surface is already deeper than both, the navigation being lighter than the page. In the
@@ -178,7 +159,7 @@
     .site-verdict-stage,
     .site-verdict-caption,
     .site-anatomy-stage,
-    .catalogue-related-stage
+    .catalogue-tile-stage
   ):is([data-stage='shaded'], [data-device]):is(
     [data-env-theme='light'],
     [data-env-theme='light'] :not([data-env-theme])
@@ -187,7 +168,7 @@
 }
 
 /* What the stage shows keeps to its width, however wide its content would be. */
-:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-related-canvas) > * {
+:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-tile-canvas) > * {
   max-inline-size: 100%;
 }
 
@@ -195,7 +176,7 @@
    `container` too), a strip of tabs, a window or a skeleton, has none of its own and would
    collapse if centred: an example that is or holds one fills the stage, unless it sets its
    width. */
-:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-related-canvas)
+:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-tile-canvas)
   > :where(
     .env-description-list[data-layout='auto'],
     .env-page,
@@ -223,7 +204,7 @@
 /* A Scaffold straight on an animated figure's stage stands in for a window there too. */
 .catalogue-motion-subject > .env-scaffold,
 /* A strip of document tabs fills the stage's width. */
-:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-related-canvas)
+:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-tile-canvas)
   > .env-document-tabs {
   inline-size: 100%;
 }
@@ -235,7 +216,7 @@
     .site-verdict-fit,
     .site-anatomy-subject,
     .catalogue-width-box,
-    .catalogue-related-canvas,
+    .catalogue-tile-canvas,
     .catalogue-motion-subject
   )
   > .env-scaffold,
@@ -315,7 +296,7 @@
 
 /* A row of items centres them on the stage, also once it wraps, unless the example aligns it or it
    is a group of choices, whose options start under its label, as in a form. */
-:is(.site-live-example, .site-verdict-fit, .catalogue-related-canvas)
+:is(.site-live-example, .site-verdict-fit, .catalogue-tile-canvas)
   > [data-env-layout='row']:not([data-justify], fieldset) {
   justify-content: center;
 }
@@ -560,7 +541,7 @@
 
 /* A picture: the overlays are shown in place, without the motion that brings them in. A page's own
    tile and an animated figure, which play, keep their motion. */
-:not(.catalogue-related-canvas[data-tile], .catalogue-motion-subject) > .catalogue-overlay-layer * {
+:not(.catalogue-tile-canvas[data-tile], .catalogue-motion-subject) > .catalogue-overlay-layer * {
   transition: none;
   animation: none;
 }
@@ -665,7 +646,7 @@
   .site-verdict-stage,
   .site-anatomy-stage,
   .site-foundation-stage[data-figure='example'],
-  .catalogue-related-stage,
+  .catalogue-tile-stage,
   .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
     border: 1px solid CanvasText;
   }

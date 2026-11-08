@@ -23,14 +23,14 @@ export const rowSelector = [
   '.env-dialog-content .env-checkbox',
 ].join(', ');
 
-/** How long the crop's fade at its foot is, in px, as its style sets it (Gallery.css). */
+/** How long the crop's fade at its foot is, in px, as its style sets it (Tile.css). */
 export const cropFade = (crop: Element) =>
   parseFloat(getComputedStyle(crop).getPropertyValue('--catalogue-crop-fade')) * remPixels();
 
 /**
  * Where a picture is cut off at its foot, it fades out over the last stretch, as a drawer's list
  * does, through the rows it reaches past the foot with, rather than ending in a slice through one
- * (Gallery.css). A row that would show no more than a sliver in the fade's faint end, or in a
+ * (Tile.css). A row that would show no more than a sliver in the fade's faint end, or in a
  * fade too short to fade it out, is hidden whole. Where `fadeFrom` is given, px from the crop's
  * top, such as below a picker's chosen row, the fade starts no higher, so what is above it shows
  * whole. A row that holds others, such as a tree's branch, is left to its rows.
@@ -43,7 +43,7 @@ export function trimRows(
   edge = false,
 ) {
   const crop = canvas.parentElement;
-  if (!crop?.classList.contains('catalogue-related-crop')) return;
+  if (!crop?.classList.contains('catalogue-tile-crop')) return;
   // A screen's edge cuts what reaches past it, also where a box in it clips that first, such as a
   // page's body as tall as the screen: there too a row shows whole or not at all.
   if (!edge && !canvas.dataset.cut?.split(' ').includes('bottom')) {
@@ -87,7 +87,7 @@ export function trimRows(
 
 /**
  * Marks a region of a canvas that scrolls as it plays, such as a page's body in its box, while its
- * content runs on past its foot (`data-catalogue-runs-on`), so it fades out there (Related.css),
+ * content runs on past its foot (`data-catalogue-runs-on`), so it fades out there (Tile.css),
  * as the crop does where the stage cuts a picture off, rather than ending in a slice through a
  * line. Only the foot, and only where text or a picture reaches past it, not the room under its
  * last line: what stays at its top, such as a sticky header, isn't cut. A region on its way open or

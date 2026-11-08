@@ -46,7 +46,7 @@ export function TileStage({
   picture,
   near,
   playing = false,
-  className = 'catalogue-related-stage',
+  className = 'catalogue-tile-stage',
   whole = false,
   ownSize: atOwnSize = false,
   legible = false,
@@ -139,7 +139,7 @@ export function TileStage({
       data-still={Composition && animations > 0 ? undefined : ''}
     >
       {!picture ? (
-        <IconArticle className="catalogue-related-placeholder" aria-hidden />
+        <IconArticle className="catalogue-tile-placeholder" aria-hidden />
       ) : (
         shown &&
         crop(
@@ -149,7 +149,7 @@ export function TileStage({
               canvas.current = element;
               setCanvasElement(element);
             }}
-            className="catalogue-related-canvas"
+            className="catalogue-tile-canvas"
             data-tile={picture.tile ? '' : undefined}
             data-own-size={ownSize ? '' : undefined}
             data-overlay={ownSize && picture.window?.overlay ? '' : undefined}
@@ -173,7 +173,7 @@ export function TileStage({
           </div>,
         )
       )}
-      {/* After the canvas, which hides it once the picture is fitted (Related.css). Only as the
+      {/* After the canvas, which hides it once the picture is fitted (Tile.css). Only as the
           tile nears the view, as its picture starts loading: a skeleton pulses on every frame,
           and a gallery's tiles far from the view would keep the page busy restyling them. */}
       {shown && <TileSkeleton />}
@@ -183,11 +183,11 @@ export function TileStage({
 
 /**
  * A canvas drawn at its own size, in a box the stage's size that fades out what is cut off at its
- * bottom and its end (Gallery.css): a mask on the box rather than on the canvas, whose own box
+ * bottom and its end (Tile.css): a mask on the box rather than on the canvas, whose own box
  * doesn't hold what opens past it, and not on the stage, whose fill stays whole.
  */
 const crop = (ownSize: boolean, canvas: ReactNode) =>
-  ownSize ? <div className="catalogue-related-crop">{canvas}</div> : canvas;
+  ownSize ? <div className="catalogue-tile-crop">{canvas}</div> : canvas;
 
 /** A piece of an application's frame, on the screen its card shows it on (AppTile.tsx). */
 const wrapApp = (app: boolean, subject: ReactNode) =>

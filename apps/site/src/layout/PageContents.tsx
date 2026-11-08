@@ -11,7 +11,7 @@ import type { RoutePage } from '../navigation/SiteRoutes';
  */
 const contentsHeading = (heading: HTMLElement) =>
   !heading.closest(
-    '.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-open-example, .catalogue-specimen, .catalogue-related-stage, .env-dialog',
+    '.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-open-example, .catalogue-specimen, .catalogue-tile-stage, .env-dialog',
   );
 
 /**

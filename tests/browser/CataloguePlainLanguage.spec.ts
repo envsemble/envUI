@@ -17,7 +17,7 @@ async function catalogueWords(page: Page) {
   await expect(page.locator('.site-section-groups[aria-busy]')).toHaveCount(0);
   return page.locator('.site-main').evaluate((main) => {
     const skipped =
-      '.site-live-example-code, pre, .env-code-block, .site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-stage, .catalogue-open-example, [hidden], .catalogue-banner-motif';
+      '.site-live-example-code, pre, .env-code-block, .site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-tile-stage, .catalogue-open-example, [hidden], .catalogue-banner-motif';
     const words: string[] = [];
     const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode())

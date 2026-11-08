@@ -45,7 +45,7 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
           picture={galleryPictureOf(page)}
           near={near}
           playing={playing || autoplay}
-          className="catalogue-related-stage catalogue-gallery-stage"
+          className="catalogue-tile-stage catalogue-gallery-stage"
           whole
           // Components show at their own size, one scale for all; a pattern's scene at a legible
           // scale, cropped to its middle.

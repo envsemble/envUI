@@ -52,7 +52,7 @@ export interface TilePicture {
    * A composition drawn for the tile instead of an example: the page's own tile (tiles/Tiles.ts).
    */
   composition?: ComponentType;
-  /** Whether the composition is the page's own tile, drawn in the tiles' window (Related.css). */
+  /** Whether the composition is the page's own tile, drawn in the tiles' window (Tile.css). */
   tile?: boolean;
   /** The window a tile lays out in, in rem, where it needs a larger one than the tiles'. */
   window?: TileWindow;

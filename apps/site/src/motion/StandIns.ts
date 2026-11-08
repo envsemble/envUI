@@ -114,7 +114,7 @@ export function lendSelection(scope: Element | undefined, run: () => void) {
 }
 
 /** What a stage's own scrolling stays inside: a tile's window and a page's figure. */
-const stages = '.catalogue-related-canvas, .site-live-example';
+const stages = '.catalogue-tile-canvas, .site-live-example';
 
 /** Whether a box scrolls along the block axis, its content taller than it. */
 const scrollsDown = (box: Element) =>

@@ -38,7 +38,7 @@ function RelatedTile({
           picture={picture}
           near={near}
           playing={playing || autoplay}
-          className="catalogue-related-stage catalogue-gallery-stage"
+          className="catalogue-tile-stage catalogue-gallery-stage"
           whole
           ownSize={frame === 'own'}
           legible={frame === 'legible'}
