@@ -52,7 +52,7 @@ import { IconRocketLaunch } from '@envsemble/envui/icons/RocketLaunch';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { IconShare } from '@envsemble/envui/icons/Share';
 import { IconTableRows } from '@envsemble/envui/icons/TableRows';
-import { AppFrame, minutesAgo } from './AppScreenFrame.js';
+import { AppFrame, minutesAgo } from './AppScreenFrame.fixture.js';
 
 type Status = 'healthy' | 'deploying' | 'failing' | 'paused';
 

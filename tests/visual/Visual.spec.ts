@@ -60,7 +60,7 @@ const stateMatrices: Record<string, string[]> = {
 /**
  * A list or other popup the baseline captures open, beside its trigger, from a catalogue example.
  * The catalogue plays these examples, or shows them open in a figure's own room, so each opens as an
- * application's would, highlighted from the keyboard and in each theme, in the test fixture (`?fixture=layout-check`, LayoutCheck.tsx), on the catalogue's canvas, in a page of the
+ * application's would, highlighted from the keyboard and in each theme, in the test fixture (`?fixture=layout-check`, LayoutCheck.fixture.tsx), on the catalogue's canvas, in a page of the
  * theme, where its popups open into the document as an application's do.
  */
 interface OpenList {

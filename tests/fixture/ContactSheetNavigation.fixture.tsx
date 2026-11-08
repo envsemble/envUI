@@ -30,7 +30,7 @@ import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconLabel } from '@envsemble/envui/icons/Label';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { IconStar } from '@envsemble/envui/icons/Star';
-import { Cell, Section, Strip, interactionStates } from './ContactSheetParts.js';
+import { Cell, Section, Strip, interactionStates } from './ContactSheetParts.fixture.js';
 
 const sizes = ['sm', 'md', 'lg'] as const;
 const densities = ['xs', 'sm', 'md', 'lg'] as const;

@@ -21,7 +21,7 @@ import {
 import { IconCheck } from '@envsemble/envui/icons/Check';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
-import { Cell, Section, Strip, interactionStates } from './ContactSheetParts.js';
+import { Cell, Section, Strip, interactionStates } from './ContactSheetParts.fixture.js';
 
 const densities = ['xs', 'sm', 'md', 'lg'] as const;
 const hues = [

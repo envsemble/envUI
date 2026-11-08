@@ -17,7 +17,7 @@ import {
 } from '@envsemble/envui';
 import { IconInfo } from '@envsemble/envui/icons/Info';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
-import { Cell, Section, Stage, Strip } from './ContactSheetParts.js';
+import { Cell, Section, Stage, Strip } from './ContactSheetParts.fixture.js';
 
 const dialogStage = { height: '20rem', width: '33rem' } as const;
 /** Wide enough that a side sheet keeps its own width beside the page it covers. */

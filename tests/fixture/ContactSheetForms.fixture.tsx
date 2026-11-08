@@ -28,7 +28,7 @@ import { IconViewList } from '@envsemble/envui/icons/ViewList';
 import { IconViewModule } from '@envsemble/envui/icons/ViewModule';
 import { IconCalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
 import { IconButton } from '@envsemble/envui';
-import { Cell, Section, Stage, Strip, interactionStates } from './ContactSheetParts.js';
+import { Cell, Section, Stage, Strip, interactionStates } from './ContactSheetParts.fixture.js';
 
 const sizes = ['sm', 'md', 'lg'] as const;
 /** sm is for a field with its label hidden, as in a toolbar: one that shows its label takes md. */

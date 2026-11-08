@@ -1,7 +1,7 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-// The drawer form of tests/fixture/Navigation.tsx, and its resizable and nested drawers.
+// The drawer form of tests/fixture/Navigation.fixture.tsx, and its resizable and nested drawers.
 
 test("a Drawer destination's badge follows its label at the item's end, and names it with the label", async ({
   page,
@@ -252,7 +252,7 @@ async function expectClosed(link: Locator) {
 }
 
 test.describe('Drawer nested sections', () => {
-  // Drawers with sections, in tests/fixture/NestedDrawers.tsx.
+  // Drawers with sections, in tests/fixture/NavigationDrawer.fixture.tsx.
   const nested = `${fixtureUrl}/?fixture=nested-drawers`;
 
   test('the current page’s sections start open, the rest closed with their links in the page', async ({

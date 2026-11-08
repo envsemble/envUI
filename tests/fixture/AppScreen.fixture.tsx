@@ -1,6 +1,6 @@
 import { ThemePreferenceProvider, ToastProvider } from '@envsemble/envui';
-import { ProjectsScreen } from './AppScreenProjects.js';
-import { AgentScreen } from './AppScreenAgent.js';
+import { ProjectsScreen } from './AppScreenProjects.fixture.js';
+import { AgentScreen } from './AppScreenAgent.fixture.js';
 
 /**
  * Two product screens built only from envUI's public components, for reviewing how the library

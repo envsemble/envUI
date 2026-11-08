@@ -5,7 +5,7 @@ import type { DevModeHandle, LayoutProblem } from '@envsemble/envui/dev';
 
 declare global {
   interface Window {
-    /** The fixture's dev mode (tests/fixture/DevMode.tsx). */
+    /** The fixture's dev mode (tests/fixture/DevMode.fixture.tsx). */
     envuiDevMode?: DevModeHandle;
   }
 }

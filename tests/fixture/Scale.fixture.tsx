@@ -49,7 +49,7 @@ import {
   densityScales,
   densitySectionNames,
   type DensitySection,
-} from './DensitySections.js';
+} from './ScaleSections.fixture.js';
 
 /*
  * The same content in the comfortable and the compact scale, one above the other. The visual

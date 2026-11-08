@@ -32,7 +32,6 @@ export const aliases: Record<string, string[]> = {
   AvatarButton: ['Button'],
   LinkProvider: ['Button'],
   ActionElement: ['Button'],
-  QuietButtons: ['Button'],
   MenuPopup: ['Menu', 'Menubar'],
   ResizeHandle: ['ResizeHandle', 'Panes'],
   useResize: ['Panes', 'PanelDock'],
@@ -234,7 +233,7 @@ const fixtureBudget = 6;
 export const specFile = (name: string, root = repositoryRoot) =>
   specPaths(root).get(name) ?? `tests/browser/library/${name}.spec.ts`;
 const baseName = (path: string) =>
-  posix.basename(path).replace(/\.(?:spec\.ts|tsx?|css|m?js|html)$/, '');
+  posix.basename(path).replace(/\.(?:spec\.ts|fixture\.tsx?|tsx?|css|m?js|html)$/, '');
 
 /** fixtureUse reads every fixture and library module: once per checkout and process. */
 const fixtureUses = new Map<string, ReturnType<typeof fixtureUse>>();
@@ -302,16 +301,14 @@ export function specsFor(
       if (affected || users.length <= helperBudget)
         for (const user of users) found = add(user, `imports ${path}`) || found;
     } else if (/^(?:packages\/ui\/src|tests\/fixture)\//.test(path)) {
-      // ButtonGroups.tsx and Comboboxes.tsx are about ButtonGroup and Combobox, Tabs.tsx about
-      // Tabs, and a file in navigation/panel-dock/ about PanelDock. An icon's name names a symbol, not a
-      // component: icons/Palette.tsx is not about CommandPalette.
+      // Combobox.tsx and Combobox.fixture.tsx are about Combobox, and a file in navigation/panel-dock/
+      // about PanelDock. An icon's name names a symbol, not a component: icons/Palette.tsx is not
+      // about CommandPalette.
       const name = baseName(path);
       const folder = posix
         .basename(posix.dirname(path))
         .replace(/(?:^|-)([a-z])/g, (_, letter) => letter.toUpperCase());
-      const candidates = path.startsWith('packages/ui/src/icons/')
-        ? []
-        : [name, name.replace(/e?s$/, ''), name.replace(/s$/, ''), folder];
+      const candidates = path.startsWith('packages/ui/src/icons/') ? [] : [name, folder];
       const specsOf = (each: string) =>
         Object.hasOwn(aliases, each) ? aliases[each] : exists(each) ? [each] : [];
       const component = candidates.find((each) => specsOf(each).length);

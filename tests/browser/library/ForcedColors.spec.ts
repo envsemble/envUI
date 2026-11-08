@@ -5,7 +5,7 @@ import { closePopup, openPopup, popupKinds } from '../helpers/Popups';
 /**
  * Under forced colors the system replaces envUI's colors, drops shadows and paints no fills, so a
  * state shown by a fill alone would vanish. Each stateful component sets system colors for its
- * states instead (tests/fixture/ForcedColors.tsx shows them side by side). This spec compares what
+ * states instead (tests/fixture/ForcedColors.fixture.tsx shows them side by side). This spec compares what
  * is painted for a state and for its rest, from computed styles: the colors, borders, outlines,
  * opacity and decoration of the element, its descendants and their ::before and ::after,
  * with a background in the canvas color counting as none, as it paints nothing on the canvas.

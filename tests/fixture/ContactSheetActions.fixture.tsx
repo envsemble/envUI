@@ -29,7 +29,7 @@ import { IconHelp } from '@envsemble/envui/icons/Help';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { IconShare } from '@envsemble/envui/icons/Share';
-import { Cell, Section, Stage, Strip, interactionStates } from './ContactSheetParts.js';
+import { Cell, Section, Stage, Strip, interactionStates } from './ContactSheetParts.fixture.js';
 
 const variants = ['primary', 'secondary', 'outline', 'ghost', 'text'] as const;
 const sizes = ['sm', 'md', 'lg'] as const;

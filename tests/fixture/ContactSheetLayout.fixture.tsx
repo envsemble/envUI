@@ -35,7 +35,7 @@ import { IconInfo } from '@envsemble/envui/icons/Info';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
-import { Block, Cell, Section, Strip, interactionStates } from './ContactSheetParts.js';
+import { Block, Cell, Section, Strip, interactionStates } from './ContactSheetParts.fixture.js';
 
 const drawings = [
   'golden-section',

@@ -476,7 +476,7 @@ body:has(.density-fixture) {
   inline-size: 22rem;
 }
 
-/* LayoutCheck.tsx: one catalogue example on the catalogue's stage, without the stage's padding,
+/* LayoutCheck.fixture.tsx: one catalogue example on the catalogue's stage, without the stage's padding,
    fill, corners and least height, so the stage is the window the example gets, and paints nothing. */
 body:has(.fixture-layout-check) {
   margin: 0;

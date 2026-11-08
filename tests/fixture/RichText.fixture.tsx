@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Theme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
-import { RichTextEditingFixture } from './RichTextEditors.js';
+import { RichTextEditingFixture } from './RichTextEditor.fixture.js';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

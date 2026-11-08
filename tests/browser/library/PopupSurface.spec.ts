@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
-/** tests/fixture/Primitives.tsx, which mounts popups on a PopupSurface in each direction among envUI's primitives. */
+/** tests/fixture/Primitives.fixture.tsx, which mounts popups on a PopupSurface in each direction among envUI's primitives. */
 async function open(page: Page) {
   await page.goto(`${fixtureUrl}/?fixture=primitives`);
   await expect(page.getByRole('button', { name: 'Open ltr' })).toBeVisible();

@@ -465,7 +465,7 @@ test('a button given its own colors lays state layers of its content color over 
 });
 
 test.describe('Button emphasis', () => {
-  // The buttons of tests/fixture/Primitives.tsx: in a toolbar, in a field, and at rest.
+  // The buttons of tests/fixture/Primitives.fixture.tsx: in a toolbar, in a field, and at rest.
   const open = async (page: Page) => {
     await page.goto(`${fixtureUrl}/?fixture=primitives`);
     await expect(page.getByTestId('toolbar-accent')).toBeVisible();
