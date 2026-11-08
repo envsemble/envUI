@@ -1,12 +1,13 @@
 'use client';
 
 import type { Combobox as BaseCombobox } from '@base-ui/react/combobox';
-import { useCallback, useState, type RefObject } from 'react';
+import { useCallback, type RefObject } from 'react';
 import {
   keepsOpen,
   useKeepPageVisible,
   usePortalContainer,
 } from '../../internal/PortalContainerContext.js';
+import { useOpenState } from '../../internal/useOpenState.js';
 import type { ComboboxProps } from '../Combobox.js';
 
 /**
@@ -24,8 +25,7 @@ export function useComboboxOpen({
   popupRef: RefObject<HTMLElement | null>;
   inputRef: RefObject<HTMLElement | null>;
 }) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
-  const popupOpen = open ?? uncontrolledOpen;
+  const [popupOpen, setOpen] = useOpenState({ open, defaultOpen, onOpenChange });
   const portal = usePortalContainer();
   // Base UI hides the rest of the page while the list is open; a contained one leaves it in reach.
   useKeepPageVisible(
@@ -35,8 +35,7 @@ export function useComboboxOpen({
   );
 
   function changeOpen(next: boolean, reason: string) {
-    if (open === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next, { reason });
+    setOpen(next, { reason });
   }
 
   function handleOpenChange(next: boolean, details: BaseCombobox.Root.ChangeEventDetails) {
