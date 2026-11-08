@@ -18,11 +18,16 @@ import { useOpenState } from '../../internal/useOpenState.js';
 import { useDirection } from '../../internal/useDirection.js';
 import { containedOpenChange, usePortalContainer } from '../../internal/PortalContainerContext.js';
 import type { OverlayOpenChangeReason } from '../../internal/overlayOpenChangeReason.js';
-import { type ControlSize } from '../../foundations/Theme.js';
 import type { PopoverOpenChangeReason } from '../../feedback/Popover.js';
 import { IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
-import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './FieldFrame.js';
+import {
+  FieldFrame,
+  type FieldControlBoxProps,
+  type FieldProps,
+  type FieldSizeProps,
+  type TextFieldDecorationProps,
+} from './FieldFrame.js';
 import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { useFormReset } from './useFormReset.js';
 import { useFieldMetadata } from './useFieldMetadata.js';
@@ -54,7 +59,9 @@ export interface PickerFieldProps
       ButtonHTMLAttributes<HTMLButtonElement>,
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,
-    FieldProps {
+    FieldProps,
+    FieldSizeProps,
+    Pick<TextFieldDecorationProps, 'visibleLabel'> {
   /** The field's button, which shows the value and opens the popup. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element. */
@@ -72,17 +79,6 @@ export interface PickerFieldProps
   readOnly?: boolean;
   /** Shown while the field is empty and its label floats or is hidden. */
   placeholder?: string;
-  /**
-   * The control height, sm, md or lg; without it, the container's, and else md. sm is for a
-   * field with its label hidden.
-   */
-  size?: ControlSize;
-  /**
-   * Show the label inside the field, where it floats into the outline while the field has a value,
-   * focus or its popup open. Set false for a field whose purpose is clear without it.
-   * @default true
-   */
-  showLabel?: boolean;
   /** A clear button in the field and in the popup removes the value. */
   clearable?: boolean;
   /** Whether the popup is open; with `onOpenChange` it controls it. */
@@ -257,7 +253,7 @@ export function PickerField({
   readOnly = false,
   placeholder,
   size,
-  showLabel,
+  visibleLabel,
   clearable = false,
   label,
   description,
@@ -348,7 +344,7 @@ export function PickerField({
         error={error}
         floatingLabel
         size={size}
-        showLabel={showLabel}
+        visibleLabel={visibleLabel}
         className={className ? `${rootClassName} ${className}` : rootClassName}
         style={style}
         renderControlBox={renderControlBox}

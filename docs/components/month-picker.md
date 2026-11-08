@@ -149,7 +149,7 @@ A MonthPicker takes its `label`, a `description` and an `error`, and its value i
 
 #### Sizes and the popup
 
-`size` is `sm`, `md` or `lg`; without it the field takes its container's control height. `showLabel={false}` hides the label for a field whose purpose is clear, and `placeholder` shows while it is empty. `open`, `defaultOpen` and `onOpenChange` control the popup; `onOpenChange` also receives why it opens or closes, `PickerOpenChangeDetails`. `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel` name its buttons.
+`size` is `sm`, `md` or `lg`; without it the field takes its container's control height. `visibleLabel={false}` hides the label for a field whose purpose is clear, and `placeholder` shows while it is empty. `open`, `defaultOpen` and `onOpenChange` control the popup; `onOpenChange` also receives why it opens or closes, `PickerOpenChangeDetails`. `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel` name its buttons.
 
 ### Composition
 
@@ -161,6 +161,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
 - **1.0.0**: MonthPicker, for a month of a year, with `min` and `max`.
 - **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
 - **1.0.0-prerelease.6**: The popup opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.

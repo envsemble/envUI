@@ -33,7 +33,7 @@ import { Cell, Section, Stage, Strip, interactionStates } from './ContactSheetPa
 const sizes = ['sm', 'md', 'lg'] as const;
 /** sm is for a field with its label hidden, as in a toolbar: one that shows its label takes md. */
 const sizeLabel = (size: (typeof sizes)[number]) =>
-  size === 'sm' ? { showLabel: false, caption: 'sm, label hidden' } : { caption: size };
+  size === 'sm' ? { visibleLabel: false, caption: 'sm, label hidden' } : { caption: size };
 const fieldWidth = '15rem';
 
 /** The states a text-like field is shown in, with the props each takes, and its error when invalid. */
@@ -70,27 +70,27 @@ function TextFields() {
       ))}
       <Strip label="Sizes">
         {sizes.map((size) => {
-          const { caption, showLabel } = sizeLabel(size);
+          const { caption, visibleLabel } = sizeLabel(size);
           return (
             <Cell key={size} caption={caption} width={fieldWidth}>
               <TextField
                 size={size}
                 label="Project name"
-                showLabel={showLabel}
+                visibleLabel={visibleLabel}
                 defaultValue="Northwind"
               />
             </Cell>
           );
         })}
         {sizes.map((size) => {
-          const { caption, showLabel } = sizeLabel(size);
+          const { caption, visibleLabel } = sizeLabel(size);
           return (
             <Cell key={`ghost-${size}`} caption={`ghost ${caption}`} width={fieldWidth}>
               <TextField
                 variant="ghost"
                 size={size}
                 label="Project name"
-                showLabel={showLabel}
+                visibleLabel={visibleLabel}
                 defaultValue="Northwind"
               />
             </Cell>
@@ -119,8 +119,8 @@ function TextFields() {
             }
           />
         </Cell>
-        <Cell caption="Label hidden (showLabel false)" width={fieldWidth}>
-          <TextField label="Filter" showLabel={false} placeholder="Filter rows" />
+        <Cell caption="Label hidden (visibleLabel false)" width={fieldWidth}>
+          <TextField label="Filter" visibleLabel={false} placeholder="Filter rows" />
         </Cell>
         <Cell caption="Required" width={fieldWidth}>
           <TextField label="Workspace" required placeholder="northwind" />
@@ -233,13 +233,13 @@ function Selects() {
       </Strip>
       <Strip label="Sizes, open">
         {sizes.map((size) => {
-          const { caption, showLabel } = sizeLabel(size);
+          const { caption, visibleLabel } = sizeLabel(size);
           return (
             <Cell key={size} caption={caption} width={fieldWidth}>
               <Select
                 size={size}
                 label="Plan"
-                showLabel={showLabel}
+                visibleLabel={visibleLabel}
                 items={plans}
                 defaultValue="starter"
               />
@@ -247,7 +247,7 @@ function Selects() {
           );
         })}
         <Cell caption="md, label hidden" width={fieldWidth}>
-          <Select label="Plan" showLabel={false} items={plans} defaultValue="starter" />
+          <Select label="Plan" visibleLabel={false} items={plans} defaultValue="starter" />
         </Cell>
         <Cell caption="Open, cursor on Team" highlight="[role=option]:nth-child(2)">
           <Stage height="16rem" width="18rem">
@@ -296,13 +296,13 @@ function Comboboxes() {
           />
         </Cell>
         {sizes.map((size) => {
-          const { caption, showLabel } = sizeLabel(size);
+          const { caption, visibleLabel } = sizeLabel(size);
           return (
             <Cell key={size} caption={caption} width={fieldWidth}>
               <Combobox
                 size={size}
                 label="Owner"
-                showLabel={showLabel}
+                visibleLabel={visibleLabel}
                 items={people}
                 defaultValue="alex.morgan"
               />
@@ -569,13 +569,13 @@ function Pickers() {
         </Strip>
         <Strip label="Sizes, open">
           {sizes.map((size) => {
-            const { caption, showLabel } = sizeLabel(size);
+            const { caption, visibleLabel } = sizeLabel(size);
             return (
               <Cell key={size} caption={`${caption}, clearable`} width={fieldWidth}>
                 <DatePicker
                   size={size}
                   label="Due date"
-                  showLabel={showLabel}
+                  visibleLabel={visibleLabel}
                   locale="en-GB"
                   defaultValue="2026-11-20"
                   clearable

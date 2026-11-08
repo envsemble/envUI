@@ -14,7 +14,6 @@ import {
 import { setRef } from '../internal/setRef.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
-import { type ControlSize } from '../foundations/Theme.js';
 import { IconButton } from '../actions/Button.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconClose } from '../icons/Close.js';
@@ -24,6 +23,8 @@ import {
   isLabelShown,
   type FieldControlBoxProps,
   type FieldProps,
+  type FieldSizeProps,
+  type TextFieldDecorationProps,
 } from './internal/FieldFrame.js';
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { autoHighlightAlways } from './internal/autoHighlightAlways.js';
@@ -71,7 +72,9 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
       ComponentPropsWithoutRef<'input'>,
       'value' | 'defaultValue' | 'onChange' | 'type' | 'children' | 'multiple' | 'list' | 'size'
     >,
-    FieldProps {
+    FieldProps,
+    FieldSizeProps,
+    Pick<TextFieldDecorationProps, 'visibleLabel'> {
   /** The text input, so that a form library can register it and focus it. */
   ref?: Ref<HTMLInputElement>;
   /** The field's class, on its root element, beside env-field and env-combobox. */
@@ -102,18 +105,6 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
    * @default 'No matches', or EnvUIProvider's messages.combobox.empty
    */
   emptyLabel?: ReactNode;
-  /**
-   * The control height, sm, md or lg; without it, the container's, and else md. sm is for a
-   * field with its label hidden.
-   */
-  size?: ControlSize;
-  /**
-   * Show the label inside the field, where it floats into the outline while the field has focus or
-   * a value. Set false for a field whose purpose is clear without it; a placeholder then gives the
-   * visible guidance.
-   * @default true
-   */
-  showLabel?: boolean;
   /**
    * A clear button removes the value while there is one; Esc on the closed field clears it too.
    * @default false
@@ -191,7 +182,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     loadingLabel,
     emptyLabel,
     size,
-    showLabel,
+    visibleLabel,
     clearable = false,
     clearLabel,
     removeLabel,
@@ -335,7 +326,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   }
 
   const hasChips = isMultiple && selectedValues.length > 0;
-  const labelShown = label != null && isLabelShown({ showLabel });
+  const labelShown = label != null && isLabelShown({ visibleLabel });
   // A floating label needs a blank placeholder to detect the empty state; chips fill the field.
   const fieldPlaceholder = hasChips ? undefined : labelShown ? placeholder || ' ' : placeholder;
   const describedByIds =
@@ -383,7 +374,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           error={error}
           floatingLabel
           size={size}
-          showLabel={showLabel}
+          visibleLabel={visibleLabel}
           className={className ? `env-combobox ${className}` : 'env-combobox'}
           style={style}
           renderControlBox={controlBox({

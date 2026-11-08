@@ -90,7 +90,7 @@ export function DatePickerFixture({ theme }: { theme: ColorScheme }) {
       <Surface padding={2} className="fixture-actions" data-testid={`date-picker-compact-${theme}`}>
         <DatePicker
           size="sm"
-          showLabel={false}
+          visibleLabel={false}
           aria-label={`Compact start ${theme}`}
           placeholder="Start"
           locale="en-GB"
@@ -186,7 +186,7 @@ export function DatePickerFixture({ theme }: { theme: ColorScheme }) {
         >
           <DatePicker
             size="sm"
-            showLabel={false}
+            visibleLabel={false}
             aria-label={`Toolbar due ${theme}`}
             placeholder="Due"
           />
@@ -196,7 +196,7 @@ export function DatePickerFixture({ theme }: { theme: ColorScheme }) {
         </Surface>
       </div>
       <div style={{ inlineSize: '8rem' }} data-testid={`date-picker-narrow-${theme}`}>
-        <DatePicker showLabel={false} aria-label={`Narrow ${theme}`} placeholder="Due" />
+        <DatePicker visibleLabel={false} aria-label={`Narrow ${theme}`} placeholder="Due" />
       </div>
     </Theme>
   );

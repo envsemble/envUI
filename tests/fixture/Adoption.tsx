@@ -127,7 +127,7 @@ export function AdoptionFixture() {
           </Menu.Root>
           <output data-testid="menu-action">{action}</output>
           <div className="fixture-toolbar" data-testid="compact-label-toolbar">
-            <TextField showLabel label="Project filter" data-testid="compact-label" />
+            <TextField visibleLabel label="Project filter" data-testid="compact-label" />
             <Button>Apply</Button>
           </div>
           <Button

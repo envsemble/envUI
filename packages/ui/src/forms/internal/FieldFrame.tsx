@@ -71,13 +71,13 @@ export interface TextFieldDecorationProps {
    */
   endAction?: ReactNode;
   /**
-   * Show the label in the field, where it rests while the field is empty and floats into the
-   * outline while the field has focus or a value. Set false for a field whose purpose is clear
-   * without it, such as a search in a toolbar: the label still names the field for assistive
+   * The label shows in the field, where it rests while the field is empty and floats into the
+   * outline while the field is in use or has a value. false hides it, for a field whose purpose is
+   * clear without it, such as a search in a toolbar: the label still names the field for assistive
    * technology, and a placeholder gives the visible guidance.
    * @default true
    */
-  showLabel?: boolean;
+  visibleLabel?: boolean;
 }
 
 export interface TextFieldAffixProps {
@@ -114,9 +114,9 @@ function labelText(label: ReactNode): ReactNode {
   return isValidElement<{ children?: ReactNode }>(label) ? label.props.children : label;
 }
 
-/** Whether a text field shows its label: unless showLabel is false. */
-export function isLabelShown({ showLabel }: TextFieldDecorationProps) {
-  return showLabel ?? true;
+/** Whether a text field shows its label: unless visibleLabel is false. */
+export function isLabelShown({ visibleLabel }: TextFieldDecorationProps) {
+  return visibleLabel ?? true;
 }
 
 /**
@@ -128,7 +128,7 @@ function reportSmallWithLabel() {
     () =>
       process.env.NODE_ENV !== 'production' &&
       'a field with size="sm" that shows its label takes the md height, so the label and the ' +
-        'value each keep room. Hide the label with showLabel={false}, as in a toolbar, or use ' +
+        'value each keep room. Hide the label with visibleLabel={false}, as in a toolbar, or use ' +
         'size="md".',
     { level: 'warn', key: 'Field size sm with label' },
   );
@@ -154,7 +154,7 @@ export function FieldFrame({
   variant = 'outline',
   startIcon,
   endAction,
-  showLabel,
+  visibleLabel,
   size,
   multiline = false,
   prefix,
@@ -183,7 +183,13 @@ export function FieldFrame({
     renderControlBox?: (props: FieldControlBoxProps) => ReactNode;
   }) {
   const ids = fieldMessageIds(id);
-  if (floatingLabel && !multiline && size === 'sm' && label != null && isLabelShown({ showLabel }))
+  if (
+    floatingLabel &&
+    !multiline &&
+    size === 'sm' &&
+    label != null &&
+    isLabelShown({ visibleLabel })
+  )
     reportSmallWithLabel();
   return (
     <Field.Root
@@ -193,7 +199,7 @@ export function FieldFrame({
       invalid={error != null || undefined}
       data-size={floatingLabel ? size : undefined}
       data-tall={flag(floatingLabel && multiline)}
-      data-label-hidden={flag(floatingLabel && !isLabelShown({ showLabel }))}
+      data-label-hidden={flag(floatingLabel && !isLabelShown({ visibleLabel }))}
     >
       {floatingLabel ? (
         renderControlBox({
@@ -210,7 +216,9 @@ export function FieldFrame({
                   needs no fill of its own to hide the line behind the label. */}
               <fieldset aria-hidden="true" className="env-text-field-border">
                 <legend>
-                  {isLabelShown({ showLabel }) && label != null && <span>{labelText(label)}</span>}
+                  {isLabelShown({ visibleLabel }) && label != null && (
+                    <span>{labelText(label)}</span>
+                  )}
                 </legend>
               </fieldset>
               {/* The control names the prefix and suffix in its description, so they are read once. */}

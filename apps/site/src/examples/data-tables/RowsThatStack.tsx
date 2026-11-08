@@ -68,7 +68,7 @@ export default function RowsThatStack() {
       {stacked && (
         <Select
           label="Sort by"
-          showLabel
+          visibleLabel
           items={orders}
           value={`${sort.column} ${sort.direction}`}
           onValueChange={(value) => {

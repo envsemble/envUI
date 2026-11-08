@@ -43,7 +43,7 @@ export default function ColorPickerTile() {
   return (
     <ColorPicker
       label="Accent color"
-      showLabel={false}
+      visibleLabel={false}
       defaultValue="#3b6fd4"
       formats={['hex']}
       copyable={false}

@@ -75,7 +75,7 @@ export default function DialogTile() {
       >
         <TextField
           label="Name"
-          showLabel={false}
+          visibleLabel={false}
           size="sm"
           value={draft}
           onValueChange={setDraft}

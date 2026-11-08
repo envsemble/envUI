@@ -50,7 +50,7 @@ export function TextField({
   variant,
   startIcon,
   endAction,
-  showLabel,
+  visibleLabel,
   size,
   prefix,
   suffix,
@@ -77,7 +77,7 @@ export function TextField({
       .join(' ') || undefined;
   // A floating label needs a blank placeholder to detect the empty state; hidden labels leave it.
   const fieldPlaceholder =
-    label != null && isLabelShown({ showLabel }) ? placeholder || ' ' : placeholder;
+    label != null && isLabelShown({ visibleLabel }) ? placeholder || ' ' : placeholder;
   return (
     <FieldFrame
       id={id}
@@ -94,7 +94,7 @@ export function TextField({
       variant={variant}
       startIcon={startIcon}
       endAction={endAction}
-      showLabel={showLabel}
+      visibleLabel={visibleLabel}
       size={size}
       prefix={prefix}
       suffix={suffix}
