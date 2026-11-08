@@ -5,7 +5,7 @@
 
    Every sheet stays in this one flat folder, a component's named after it (styles/Menu.css for
    Menu), rather than beside its module: package.json's "#styles/*" import, BuildLibrary.ts's
-   rewrite of ../styles/X.css to #styles/X.css and this list rely on it. */
+   rewrite of a module's sheet imports to that import and this list rely on it. */
 @import './Base.css';
 @import './Popup.css';
 @import './ListRow.css';
