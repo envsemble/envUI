@@ -9,6 +9,7 @@ import {
 } from '@envsemble/envui';
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { useTimeline } from '../../motion/Motion';
+import { remPixels } from '../../shared/Lengths';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
 import { Figure } from './Topic';
 
@@ -55,15 +56,14 @@ const frameWidth = 41;
  * The scale the frame is drawn at, so it fits its stage: smaller on a narrow stage, but measured at
  * its own width, so the profile lays out as it would in a frame that wide.
  */
-function useFit() {
+function useTextFit() {
   const place = useRef<HTMLDivElement>(null);
   const [fit, setFit] = useState(1);
   useLayoutEffect(() => {
     const element = place.current;
     if (!element) return;
     const measure = () => {
-      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-      setFit(Math.min(1, element.clientWidth / ((frameWidth + 1) * rem)));
+      setFit(Math.min(1, element.clientWidth / ((frameWidth + 1) * remPixels())));
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -79,7 +79,7 @@ function useFit() {
  */
 function TextSizeSteps() {
   const step = useTimeline(sizes.map(() => 3000));
-  const [place, fit] = useFit();
+  const [place, fit] = useTextFit();
   return (
     <div ref={place} className="catalogue-class-text-place">
       <CornerLabel>{sizeNames[step]}</CornerLabel>

@@ -134,49 +134,6 @@ export function Figure({
   );
 }
 
-/** One small picture of a run: envUI at work, with its name and a line on what it shows. */
-export interface RunFigure {
-  name: string;
-  text: string;
-  picture: ReactNode;
-}
-
-/**
- * Small pictures side by side, each on its own stage with its name and a line under it, such as
- * the kinds of corner or the two scales. The pictures can't be used, so they take no focus.
- */
-export function FigureRun({
-  figures,
-  className,
-}: {
-  figures: readonly RunFigure[];
-  className?: string;
-}) {
-  return (
-    <div className="site-figure-run" data-count={figures.length}>
-      {figures.map((figure) => (
-        <figure key={figure.name} className="site-topic-figure" aria-label={figure.name}>
-          <div
-            className={['site-foundation-stage', className].filter(Boolean).join(' ')}
-            data-figure="example"
-            inert
-          >
-            {figure.picture}
-          </div>
-          <figcaption className="catalogue-topic-text">
-            <Text render={<p />} variant="title">
-              {figure.name}
-            </Text>
-            <Text variant="body-sm" emphasis="muted">
-              {figure.text}
-            </Text>
-          </figcaption>
-        </figure>
-      ))}
-    </div>
-  );
-}
-
 /** One entry of a numbered legend: the number its mark shows, a name and, where it has one, what it means. */
 export interface LegendEntry {
   name: string;

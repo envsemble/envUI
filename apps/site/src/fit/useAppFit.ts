@@ -1,4 +1,5 @@
 import { useLayoutEffect, type RefObject } from 'react';
+import { remPixels } from '../shared/Lengths';
 
 /**
  * Lays the canvas of an application's tile out over its stage, less the margin the frame keeps
@@ -26,7 +27,7 @@ export function useAppFit(
 
 /** Lays a canvas out over its stage, as useAppFit says. */
 function fitApp(stage: HTMLElement, canvas: HTMLElement, least: number) {
-  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  const rem = remPixels();
   const style = getComputedStyle(canvas);
   const margin = (parseFloat(style.getPropertyValue('--catalogue-app-margin')) || 0) * rem;
   const width = stage.clientWidth - 2 * margin;

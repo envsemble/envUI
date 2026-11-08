@@ -283,7 +283,7 @@ export function variantGeometry(
  * browser lays out once for them all.
  */
 export function labelWidths(stage: HTMLElement, texts: string[], known: Map<string, number>) {
-  const rem = getComputedStyle(document.documentElement).fontSize;
+  const rem = remPixels();
   const keyOf = (text: string) => `${rem} ${text}`;
   const missing = [...new Set(texts.filter((text) => !known.has(keyOf(text))))];
   if (missing.length) {
@@ -313,7 +313,7 @@ export function sizesOfUses(
   room: number,
   known: Map<string, number>,
 ): UseSize[] {
-  const rem = getComputedStyle(document.documentElement).fontSize;
+  const rem = remPixels();
   const keyOf = (lines: string[], axis: string) => `${rem} ${room} ${axis} ${lines.join('|')}`;
   const missing = uses.filter((lines) => !known.has(keyOf(lines, 'width')));
   if (missing.length) {
