@@ -4,7 +4,6 @@ import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
   useRef,
-  useState,
   type ComponentPropsWithoutRef,
   type CSSProperties,
   type ReactNode,
@@ -27,6 +26,7 @@ import {
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
+import { useComboboxQuery } from './internal/useComboboxQuery.js';
 import { useComboboxSelection } from './internal/useComboboxSelection.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import '../styles/Base.css';
@@ -172,9 +172,6 @@ export type ComboboxProps<Item extends ComboboxItem = ComboboxItem> = ComboboxSh
 
 type ChangeDetails = BaseCombobox.Root.ChangeEventDetails;
 
-/** Changes of the typed text that people make, rather than the field filling in a chosen label. */
-const typedChanges = new Set(['input-change', 'input-clear', 'clear-press', 'escape-key']);
-
 /**
  * A text field that filters a list of options as people type, for choosing one option or several.
  * Chosen options show as removable chips; keyboard, focus and announcements follow the WAI-ARIA
@@ -232,8 +229,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const nativeRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const pressFocus = useRef(false);
-  // The query onInputValueChange reported last.
-  const reportedQuery = useRef('');
 
   const { selection, selectedValues, choose } = useComboboxSelection<Item>({
     multiple: isMultiple,
@@ -262,9 +257,13 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
 
-  // The typed text, to show the chosen option's start content only while the field shows its label.
   const singleItem = isMultiple || selection == null ? undefined : known.get(selection as string);
-  const [inputText, setInputText] = useState(() => singleItem?.label ?? '');
+  const { inputText, handleInputValueChange } = useComboboxQuery({
+    initialText: singleItem?.label ?? '',
+    clearable,
+    multiple: isMultiple,
+    onInputValueChange,
+  });
 
   function handleValueChange(next: string[] | string | null, details: ChangeDetails) {
     if (details.isCanceled) return;
@@ -281,25 +280,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       return;
     }
     choose(next, known);
-  }
-
-  function handleInputValueChange(next: string, details: ChangeDetails) {
-    if (details.isCanceled) return;
-    if (details.reason === 'escape-key' && !clearable) {
-      details.cancel();
-      details.allowPropagation();
-      return;
-    }
-    setInputText(next);
-    if (typedChanges.has(details.reason)) {
-      reportedQuery.current = next;
-      onInputValueChange?.(next);
-    } else if (!isMultiple && reportedQuery.current !== '') {
-      // The field shows the chosen label again, after a choice or when people leave a query:
-      // the query is over, so options found for it, such as on a server, go with it.
-      reportedQuery.current = '';
-      onInputValueChange?.('');
-    }
   }
 
   const hasChips = isMultiple && selectedValues.length > 0;
