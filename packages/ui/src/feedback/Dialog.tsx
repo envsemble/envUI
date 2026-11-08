@@ -23,9 +23,10 @@ import { withPendingAction } from './internal/DialogPendingAction.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import {
   containedModal,
-  keepsOpen,
+  containedOpenChange,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
+import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
@@ -35,7 +36,8 @@ import '../styles/Dialog.css';
  * Why a dialog or a sheet asks to open or close: its trigger, Escape, a press outside, focus
  * leaving a non-modal one, a close button, a swipe (sheets) or the application.
  */
-export type DialogOpenChangeReason =
+export type DialogOpenChangeReason = Extract<
+  OverlayOpenChangeReason,
   | 'trigger-press'
   | 'outside-press'
   | 'escape-key'
@@ -44,7 +46,8 @@ export type DialogOpenChangeReason =
   | 'close-watcher'
   | 'imperative-action'
   | 'swipe'
-  | 'none';
+  | 'none'
+>;
 
 /** What onOpenChange receives beside the requested state. */
 export interface DialogOpenChangeDetails {
@@ -207,13 +210,10 @@ export function Dialog({
     <BaseDialog.Root
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={(next, eventDetails) => {
-        if ((!next && pending) || keepsOpen(portal, next, eventDetails)) {
-          eventDetails.cancel();
-          return;
-        }
-        onOpenChange?.(next, { reason: eventDetails.reason });
-      }}
+      onOpenChange={containedOpenChange(portal, null, (next, eventDetails) => {
+        if (!next && pending) eventDetails.cancel();
+        else onOpenChange?.(next, { reason: eventDetails.reason });
+      })}
       modal={containedModal(portal, modal)}
       disablePointerDismissal={disablePointerDismissal}
     >

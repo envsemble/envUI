@@ -18,7 +18,7 @@ import type { DialogOpenChangeReason } from './Dialog.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import {
   containedModal,
-  keepsOpen,
+  containedOpenChange,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
 import { CommandPaletteFooter } from './internal/CommandPaletteFooter.js';
@@ -190,13 +190,9 @@ export function CommandPalette({
   return (
     <BaseDialog.Root
       open={open}
-      onOpenChange={(next, eventDetails) => {
-        if (keepsOpen(portal, next, eventDetails)) {
-          eventDetails.cancel();
-          return;
-        }
-        onOpenChange(next, { reason: eventDetails.reason });
-      }}
+      onOpenChange={containedOpenChange(portal, null, (next, eventDetails) =>
+        onOpenChange(next, { reason: eventDetails.reason }),
+      )}
       modal={containedModal(portal, true)}
     >
       <BaseDialog.Portal container={portal.container}>

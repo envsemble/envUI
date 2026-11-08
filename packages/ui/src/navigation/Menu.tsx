@@ -18,7 +18,7 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import type { PopupSide } from '../internal/PopupSurface.js';
 import {
   containedModal,
-  keepsOpen,
+  containedOpenChange,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
 import { IconCheck } from '../icons/Check.js';
@@ -36,7 +36,7 @@ import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
-import type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
+import type { OpenChangeDetails } from './internal/menuOpenChange.js';
 import '../styles/Base.css';
 import '../styles/Menu.css';
 
@@ -116,10 +116,9 @@ function Root({
     <BaseMenu.Root
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
-        else onOpenChange?.(next, { reason: details.reason as OpenChangeReason });
-      }}
+      onOpenChange={containedOpenChange(portal, triggerRef, (next, details) =>
+        onOpenChange?.(next, { reason: details.reason }),
+      )}
       modal={containedModal(portal, true)}
     >
       <BaseMenu.Trigger ref={triggerRef} render={trigger} />
@@ -406,14 +405,10 @@ function Submenu({
     <BaseMenu.SubmenuRoot
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details, trigger.current)) {
-          details.cancel();
-          return;
-        }
+      onOpenChange={containedOpenChange(portal, trigger, (next, details) => {
         closeReason.current = next ? null : details.reason;
-        onOpenChange?.(next, { reason: details.reason as OpenChangeReason });
-      }}
+        onOpenChange?.(next, { reason: details.reason });
+      })}
     >
       <BaseMenu.SubmenuTrigger
         ref={trigger}

@@ -38,7 +38,7 @@ import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { useResizableWidth, widthInRem } from '../internal/useResizableWidth.js';
 import {
   containedModal,
-  keepsOpen,
+  containedOpenChange,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
 import { computedDirection } from '../internal/direction.js';
@@ -351,13 +351,10 @@ export function Sheet({
     <BaseDrawer.Root
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={(next, eventDetails) => {
-        if ((!next && pending) || keepsOpen(portal, next, eventDetails, triggerRef.current)) {
-          eventDetails.cancel();
-          return;
-        }
-        setShown(next, { reason: eventDetails.reason });
-      }}
+      onOpenChange={containedOpenChange(portal, triggerRef, (next, eventDetails) => {
+        if (!next && pending) eventDetails.cancel();
+        else setShown(next, { reason: eventDetails.reason });
+      })}
       modal={containedModal(portal, modal)}
       disablePointerDismissal={disablePointerDismissal}
       swipeDirection={swipeDirection}

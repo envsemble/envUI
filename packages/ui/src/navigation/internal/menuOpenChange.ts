@@ -1,8 +1,11 @@
+import type { OverlayOpenChangeReason } from '../../internal/overlayOpenChangeReason.js';
+
 /**
  * Why a menu asks to open or close, as Base UI says: its trigger, hover or focus, a press outside,
  * Esc, a chosen item, the arrow keys, focus leaving it, a sibling menu opening, or the application.
  */
-export type OpenChangeReason =
+export type OpenChangeReason = Extract<
+  OverlayOpenChangeReason,
   | 'trigger-press'
   | 'trigger-hover'
   | 'trigger-focus'
@@ -15,7 +18,8 @@ export type OpenChangeReason =
   | 'sibling-open'
   | 'cancel-open'
   | 'imperative-action'
-  | 'none';
+  | 'none'
+>;
 
 /** What a menu's onOpenChange receives beside the requested state. */
 export interface OpenChangeDetails {

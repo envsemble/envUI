@@ -3,6 +3,7 @@ import {
   Button,
   Combobox,
   ContextMenu,
+  DatePicker,
   Dialog,
   IconButton,
   Menu,
@@ -40,7 +41,8 @@ function NotifyButton() {
  * Preview regions of a page, not inert, whose overlays render into a layer of each through a
  * contained PortalContainer, open as the page loads: a menu, a tooltip and a toast in one, a dialog
  * in another, a combobox's list in the third; a fourth holds a context menu, opened by right click,
- * a fifth a menubar, and a sixth supporting Panes too narrow for two panes, open as a sheet.
+ * a fifth a menubar, a sixth supporting Panes too narrow for two panes, open as a sheet, and a
+ * seventh a date picker, closed.
  * The page is taller than the window, so its scroll can be checked.
  */
 export function PortalContainersFixture() {
@@ -50,6 +52,7 @@ export function PortalContainersFixture() {
   const [contextLayer, setContextLayer] = useState<HTMLDivElement | null>(null);
   const [menubarLayer, setMenubarLayer] = useState<HTMLDivElement | null>(null);
   const [panesLayer, setPanesLayer] = useState<HTMLDivElement | null>(null);
+  const [pickerLayer, setPickerLayer] = useState<HTMLDivElement | null>(null);
   const [panesOpen, setPanesOpen] = useState(true);
   const region = {
     position: 'relative',
@@ -138,6 +141,12 @@ export function PortalContainersFixture() {
           </Panes.Root>
         </PortalContainer>
         <div ref={setPanesLayer} data-testid="panes-layer" />
+      </div>
+      <div data-testid="picker-preview" style={region}>
+        <PortalContainer container={pickerLayer} contained>
+          <DatePicker label="Due" />
+        </PortalContainer>
+        <div ref={setPickerLayer} data-testid="picker-layer" />
       </div>
       {/* Taller than the window, so the page scrolls. */}
       <div style={{ blockSize: '150vh' }} />

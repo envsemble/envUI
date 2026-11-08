@@ -40,8 +40,9 @@ const jsBudgets = [
 const componentBudgets = {
   // 12,294 measured; raising it is a deliberate decision, recorded in the commit.
   Tooltip: 12700,
-  // 7,164 measured; raising it is a deliberate decision, recorded in the commit.
-  Popover: 7400,
+  // 7,684 measured (2026-11-08, the shared contained open-change handler and an open state whose
+  // setter stays the same; was 7,371); raising it is a deliberate decision, recorded in the commit.
+  Popover: 7900,
   // 14,607 measured; raising it is a deliberate decision, recorded in the commit.
   Menu: 15000,
   // 16,320 measured (2026-11-08, its open state from the shared useOpenState; was 16,167); raising

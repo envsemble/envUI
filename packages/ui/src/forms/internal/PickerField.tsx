@@ -16,7 +16,8 @@ import { setRef } from '../../internal/setRef.js';
 import { useHydrated } from '../../internal/useHydrated.js';
 import { useOpenState } from '../../internal/useOpenState.js';
 import { useDirection } from '../../internal/useDirection.js';
-import { keepsOpen, usePortalContainer } from '../../internal/PortalContainerContext.js';
+import { containedOpenChange, usePortalContainer } from '../../internal/PortalContainerContext.js';
+import type { OverlayOpenChangeReason } from '../../internal/overlayOpenChangeReason.js';
 import { type ControlSize } from '../../foundations/Theme.js';
 import type { PopoverOpenChangeReason } from '../../feedback/Popover.js';
 import { IconButton } from '../../actions/Button.js';
@@ -35,8 +36,10 @@ import '../../styles/DatePicker.css';
  * item-press for a chosen value, such as a day, a month, Today or Now; or clear-press for the
  * clear button.
  */
-export type PickerOpenChangeReason =
-  PopoverOpenChangeReason | 'list-navigation' | 'item-press' | 'clear-press';
+export type PickerOpenChangeReason = Extract<
+  OverlayOpenChangeReason,
+  PopoverOpenChangeReason | 'list-navigation' | 'item-press' | 'clear-press'
+>;
 
 /** What a date, time or month picker's onOpenChange receives beside the requested state. */
 export interface PickerOpenChangeDetails {
@@ -325,10 +328,9 @@ export function PickerField({
   return (
     <BasePopover.Root
       open={open}
-      onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details)) details.cancel();
-        else setOpen(next, details.reason as PopoverOpenChangeReason);
-      }}
+      onOpenChange={containedOpenChange(portal, triggerRef, (next, details) =>
+        setOpen(next, details.reason),
+      )}
       onOpenChangeComplete={(next) => {
         if (!next) setPopupShown(false);
       }}

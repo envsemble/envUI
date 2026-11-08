@@ -37,6 +37,7 @@ import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { useFormReset } from './internal/useFormReset.js';
+import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';
 
@@ -44,11 +45,25 @@ export type { ComboboxFilter, ComboboxGroup, ComboboxItem };
 
 /** What a combobox's onOpenChange receives beside the requested state. */
 export interface ComboboxOpenChangeDetails {
-  /**
-   * Why it asks to open or close, as Base UI says, such as trigger-press, input-change, item-press,
-   * input-clear or escape-key.
-   */
-  reason: string;
+  /** Why it asks to open or close, such as trigger-press, input-change, item-press or escape-key. */
+  reason: Extract<
+    OverlayOpenChangeReason,
+    | 'trigger-press'
+    | 'input-press'
+    | 'input-change'
+    | 'input-clear'
+    | 'outside-press'
+    | 'escape-key'
+    | 'close-press'
+    | 'focus-out'
+    | 'item-press'
+    | 'list-navigation'
+    | 'clear-press'
+    | 'chip-remove-press'
+    | 'cancel-open'
+    | 'imperative-action'
+    | 'none'
+  >;
 }
 
 interface ComboboxSharedProps<Item extends ComboboxItem>

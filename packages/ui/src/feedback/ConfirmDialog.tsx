@@ -17,7 +17,7 @@ import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { containedOpenChange, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { Alert } from './Alert.js';
 import { DialogClose, type DialogFocusTarget, type DialogOpenChangeDetails } from './Dialog.js';
 import {
@@ -210,15 +210,10 @@ export function ConfirmDialog({
   return (
     <Root
       open={isOpen}
-      onOpenChange={(next, eventDetails) => {
-        if ((!next && pending) || keepsOpen(portal, next, eventDetails)) {
-          eventDetails.cancel();
-          return;
-        }
-        change(next, {
-          reason: eventDetails.reason,
-        });
-      }}
+      onOpenChange={containedOpenChange(portal, null, (next, eventDetails) => {
+        if (!next && pending) eventDetails.cancel();
+        else change(next, { reason: eventDetails.reason });
+      })}
     >
       {trigger && <BaseAlertDialog.Trigger render={trigger} />}
       <BaseAlertDialog.Portal container={portal.container}>

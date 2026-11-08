@@ -5,7 +5,8 @@ import { useRef, type ComponentPropsWithRef, type ReactElement, type ReactNode }
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
-import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { containedOpenChange, usePortalContainer } from '../internal/PortalContainerContext.js';
+import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
 import { Grid } from '../foundations/Layout.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 import { useOpenState } from '../internal/useOpenState.js';
@@ -22,7 +23,8 @@ const parts = {
  * Why a popover or a hover card asks to open or close: a press on or a hover over its trigger, focus
  * on it, Escape, a press outside, focus leaving, its own close, or the application.
  */
-export type PopoverOpenChangeReason =
+export type PopoverOpenChangeReason = Extract<
+  OverlayOpenChangeReason,
   | 'trigger-press'
   | 'trigger-hover'
   | 'trigger-focus'
@@ -31,7 +33,8 @@ export type PopoverOpenChangeReason =
   | 'close-press'
   | 'focus-out'
   | 'imperative-action'
-  | 'none';
+  | 'none'
+>;
 
 /** What a popover's or hover card's onOpenChange receives beside the requested state. */
 export interface PopoverOpenChangeDetails {
@@ -115,10 +118,9 @@ export function Popover({
   return (
     <BasePopover.Root
       open={open}
-      onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
-        else setOpen(next, details.reason);
-      }}
+      onOpenChange={containedOpenChange(portal, triggerRef, (next, details) =>
+        setOpen(next, details.reason),
+      )}
     >
       <BasePopover.Trigger ref={triggerRef} render={trigger} />
       <PopupSurface
