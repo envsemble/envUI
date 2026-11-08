@@ -402,10 +402,16 @@
       transition: none;
     }
   }
-  /* Motion: a section's chevron turns, only without a reduced-motion preference. */
+  /* Motion: a section's chevron turns, and a closing section's destinations fade over its whole
+     closing, so no empty band is left, only without a reduced-motion preference. */
   @media (prefers-reduced-motion: no-preference) {
     .env-navigation-drawer-chevron {
       transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+    }
+    .env-navigation-drawer-children[data-ending-style] {
+      transition:
+        block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease);
     }
   }
   /* Motion: an item settles slightly while it is held, only without a reduced-motion preference. */

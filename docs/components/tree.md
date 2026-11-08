@@ -203,6 +203,7 @@ The tree renders only the rows in view, and is as tall as its parent: give the p
 ## Changelog
 
 - **1.0.0**: `selectedId` is `value` and `onOpen` is `onAction`, with `TreeActionDetails`; a TreeItem's `detail` is `description` and its `trailing` is `end`. The context menu's default name comes from `messages.tree`, and the tree takes `ref` and `style`. A row's class is `env-tree-item` (was `env-tree-row`), and `env-tree-detail` and `-trailing` are `env-tree-description` and `-end`; a description keeps more room from its label.
+- **1.0.0-prerelease.6**: A collapsing row's children fade over the whole collapse, `--env-motion-duration-medium`, so they leave no empty band.
 - **1.0.0-prerelease.6**: A row's children grow from its end and fade in as it expands, and shrink and fade out as it collapses, in `env-tree-group` until they have closed, as an accordion's panel does, while the rows below glide with them; the chevron turns at the pace of the other chevrons.
 - **1.0.0-prerelease.6**: A row under the pointer takes three quarters of `--env-color-bg-row-hover`, and pressed the whole of it, a step quieter than a table's rows, so the light tint of the selected row always reads strongest.
 - **1.0.0-prerelease.5**: A row is keyed by `value`, which the tree's `value` names, where it had `id`, and its native tooltip is `tooltip`, where it was `title`. `TreeActionOptions` is `TreeActionDetails`. The tree takes the native props, such as `id` and `data-*`.

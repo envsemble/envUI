@@ -183,6 +183,11 @@
     .env-tree-group {
       transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
+    /* Closing, the rows fade as long as the rows below take to close the gap, so no empty band is
+       left. */
+    .env-tree-group[data-ending-style] {
+      transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+    }
   }
   /* Under a reduced-motion preference fills change, the chevron turns and revealed rows show at
      once, as an accordion's panel does. */
