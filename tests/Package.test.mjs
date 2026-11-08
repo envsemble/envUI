@@ -1003,7 +1003,9 @@ test('packed rich text statically renders the shared Markdown schema and referen
   assert.doesNotMatch(result.unsafe, /href="javascript:|src="data:/);
   assert.match(result.literalHtml, /&lt;strong&gt;raw HTML&lt;\/strong&gt;/);
   assert.match(result.unknown, /Usable/);
-  assert.match(result.task, /disabled/);
+  // A finished task's checkbox is read-only, in full color, not disabled (readOnlyCheckbox.ts).
+  assert.match(result.task, /aria-readonly="true"/);
+  assert.doesNotMatch(result.task, /disabled/);
   assert.match(result.editor, /name="source"/);
   assert.match(result.module, /\/dist\/rich-text\.js$/);
 });

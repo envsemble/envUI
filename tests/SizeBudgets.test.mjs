@@ -16,12 +16,15 @@ const repository = fileURLToPath(new URL('../', import.meta.url));
 
 /** The CSS a page loads with the bundle set's components, minified, gzip. */
 const cssBudgets = {
-  // 13,119 measured; raising it is a deliberate decision, recorded in the commit.
-  'Small app (Theme, Button, TextField, Card)': 13500,
-  // 26,080 measured; raising it is a deliberate decision, recorded in the commit.
-  'Typical app (23 components, with Base UI)': 26900,
-  // 45,854 measured; raising it is a deliberate decision, recorded in the commit.
-  'Everything, envUI’s own code': 47200,
+  // 15,091 measured (2026-11-08, prerelease.6's states, focus rings and motion; was 13,119);
+  // raising it is a deliberate decision, recorded in the commit.
+  'Small app (Theme, Button, TextField, Card)': 15550,
+  // 30,907 measured (2026-11-08, prerelease.6; was 26,080); raising it is a deliberate decision,
+  // recorded in the commit.
+  'Typical app (23 components, with Base UI)': 31850,
+  // 53,065 measured (2026-11-08, prerelease.6; was 45,854); raising it is a deliberate decision,
+  // recorded in the commit.
+  'Everything, envUI’s own code': 54650,
 };
 
 /** The JavaScript a page loads first. */
@@ -42,8 +45,9 @@ const componentBudgets = {
   Menu: 15000,
   // 15,542 measured; raising it is a deliberate decision, recorded in the commit.
   Select: 16000,
-  // 7,202 measured; raising it is a deliberate decision, recorded in the commit.
-  TextField: 7400,
+  // 7,528 measured (2026-11-08, prerelease.6's ghost fill and read-only look; was 7,202); raising it
+  // is a deliberate decision, recorded in the commit.
+  TextField: 7750,
   // 11,200 measured; raising it is a deliberate decision, recorded in the commit.
   Alert: 11500,
 };
