@@ -23,6 +23,11 @@ export const devStats = {
   viewRenders: 0,
 };
 
+/** Counts a render of the 3D view, which calls it as it renders. */
+export function countViewRender() {
+  devStats.viewRenders += 1;
+}
+
 /** Runs work of a kind, timing it into the stats, and returns what it returns. */
 export function timed<T>(stats: WorkStats, run: () => T): T {
   const start = performance.now();
