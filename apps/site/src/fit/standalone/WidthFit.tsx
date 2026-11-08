@@ -8,6 +8,7 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { remPixels } from '@envui-internal/internal/lengths';
 import { pixelTolerance } from '../FitGeometry';
+import { flag } from '@envui-internal/internal/flag';
 
 /** The least a width frame is drawn at to fit its stage; one that would need less scrolls. */
 const leastFitScale = 0.7;
@@ -109,8 +110,8 @@ export function WidthBox({ width, children }: { width: number; children: ReactNo
     <div
       ref={fit}
       className="catalogue-width-fit"
-      data-scaled={scaled ? '' : undefined}
-      data-cropped={cropped ? '' : undefined}
+      data-scaled={flag(scaled)}
+      data-cropped={flag(cropped)}
       // Cropped, it scrolls across the stage, so the keyboard can scroll it too.
       tabIndex={cropped ? 0 : undefined}
       style={scaled && { inlineSize: scaled.width, blockSize: scaled.height }}
@@ -150,7 +151,7 @@ export function FitFrame({ width, children }: { width: number; children: ReactNo
     <div
       ref={fit}
       className="catalogue-anatomy-fit"
-      data-scaled={scaled ? '' : undefined}
+      data-scaled={flag(scaled)}
       style={scaled && { inlineSize: scaled.width, blockSize: scaled.height }}
     >
       <div
