@@ -126,6 +126,7 @@ export const aliases: Record<string, string[]> = {
   ListRow: ['List'],
   ColumnResizeHandle: ['Table'],
   calendarHeatmapModel: ['CalendarHeatmap'],
+  useHeatmapTooltip: ['CalendarHeatmap'],
   Palette: ['CommandPalette'],
   'rich-text': ['RichTextEditor'],
   color: ['ColorPicker'],

@@ -91,7 +91,8 @@ export function AnimatedNumber({
     const to = width(element);
     const from = easedWidth ?? to + width(before) - width(after);
     const duration = motionDuration(element, 'medium');
-    if (!duration || prefersReducedMotion() || !Number.isFinite(from) || Math.abs(from - to) < 0.5) return;
+    if (!duration || prefersReducedMotion() || !Number.isFinite(from) || Math.abs(from - to) < 0.5)
+      return;
     element.animate(
       { inlineSize: [`${from}px`, `${to}px`] },
       { duration, easing: motionEasing(element, 'ease'), id: widthAnimation },

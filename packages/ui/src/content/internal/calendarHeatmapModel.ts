@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { Formatters } from '../../internal/useFormatters.js';
 import { dayParts, formatDay, parseDay } from '../../internal/calendarDays.js';
 import type { CalendarHeatmapCell, CalendarHeatmapDay } from '../CalendarHeatmap.js';
@@ -38,6 +39,45 @@ export interface CalendarHeatmapModel {
 export function levelMix(level: number, levelCount: number) {
   if (levelCount <= 2) return '100%';
   return `${30 + (70 * (level - 1)) / (levelCount - 2)}%`;
+}
+
+/** A color step's custom property: its strength, on every step above the empty one. */
+export function levelStyle(level: number, levelCount: number): CSSProperties | undefined {
+  return level > 0
+    ? ({ '--env-calendar-heatmap-mix': levelMix(level, levelCount) } as CSSProperties)
+    : undefined;
+}
+
+/**
+ * The day a key moves to from `active`, or undefined for a key the grid doesn't take. As in a grid,
+ * Home and End move along the row, the same weekday in the first and the last week; Page Up and
+ * Page Down along the column, to the week's first and last day; and Ctrl+Home and Ctrl+End to the
+ * first and the last day. Left and Right follow the text direction.
+ */
+export function heatmapKeyTarget(
+  model: CalendarHeatmapModel,
+  active: number,
+  { key, ctrlKey }: { key: string; ctrlKey: boolean },
+  rtl: boolean,
+): number | undefined {
+  const week = rtl ? -7 : 7;
+  const row = (active - model.first) % 7;
+  const weekStartDay = active - row;
+  const firstOfRow = model.first + row;
+  const lastOfRow = model.first + (model.weeks - 1) * 7 + row;
+  const moves: Record<string, number> = ctrlKey
+    ? { Home: model.start, End: model.end }
+    : {
+        ArrowUp: active - 1,
+        ArrowDown: active + 1,
+        ArrowLeft: active - week,
+        ArrowRight: active + week,
+        Home: firstOfRow < model.start ? firstOfRow + 7 : firstOfRow,
+        End: lastOfRow > model.end ? lastOfRow - 7 : lastOfRow,
+        PageUp: Math.max(model.start, weekStartDay),
+        PageDown: Math.min(model.end, weekStartDay + 6),
+      };
+  return moves[key];
 }
 
 interface ModelOptions {

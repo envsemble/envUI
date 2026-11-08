@@ -3,19 +3,15 @@
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   memo,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
-  type FocusEvent,
   type KeyboardEvent,
-  type PointerEvent,
   type ReactNode,
 } from 'react';
-import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
+import { TooltipPopup } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -28,10 +24,12 @@ import { dayParts, localeWeekStart, parseDay, type Weekday } from '../internal/c
 import { day as dayMilliseconds } from '../internal/durations.js';
 import {
   calendarHeatmapModel,
-  levelMix,
+  heatmapKeyTarget,
+  levelStyle,
   localeNames,
   type CalendarHeatmapModel,
 } from './internal/calendarHeatmapModel.js';
+import { useHeatmapTooltip } from './internal/useHeatmapTooltip.js';
 import '../styles/Base.css';
 import '../styles/CalendarHeatmap.css';
 
@@ -233,25 +231,9 @@ export function CalendarHeatmap({
     activeDay !== undefined && activeDay >= model.start && activeDay <= model.end
       ? activeDay
       : model.end;
-  // One tooltip serves every day: it follows the hovered or focused day and leaves no portal at rest.
-  // A closing tooltip keeps its day and anchor while it fades.
-  const [tip, setTip] = useState<{
-    day: number;
-    anchor: HTMLElement;
-    open: boolean;
-    /** Shown for the focused day rather than the hovered one. */
-    focused: boolean;
-    /** The gap between days, which the tooltip keeps from its day. */
-    offset: number;
-  } | null>(null);
-  const hoverTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const popup = useRef<HTMLDivElement>(null);
-  // A mouse press focuses its day as a hover would, so that tooltip takes the pointer too; keyboard
-  // focus and taps open one that takes none.
-  const mousePress = useRef(false);
   const grid = useRef<HTMLTableElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
-  useEffect(() => () => clearTimeout(hoverTimer.current), []);
+  const { tip, gridHandlers, onOpenChange, popupProps } = useHeatmapTooltip(grid, setActiveDay);
 
   // Narrow containers scroll inside the heatmap, starting at the most recent weeks: the scroller is a
   // reversed row, whose scroll origin is its end (CalendarHeatmap.css), so the server's markup and
@@ -264,130 +246,9 @@ export function CalendarHeatmap({
     if (scroller.current) scroller.current.scrollLeft = 0;
   }, [model.end]);
 
-  function cellFrom(target: EventTarget | null) {
-    return target instanceof Element ? target.closest<HTMLElement>('td[data-day]') : null;
-  }
-
-  function show(cell: HTMLElement, focused = false) {
-    clearTimeout(hoverTimer.current);
-    // The tooltip meets its day across the gap between days, so the pointer reaches it from the
-    // day without crossing another day. It reaches a pixel into the gap, so rounding its position
-    // never leaves a sliver of the next day showing.
-    const table = grid.current;
-    const gap = table ? Number.parseFloat(getComputedStyle(table).borderSpacing) || 0 : 0;
-    const offset = Math.max(0, gap - 1);
-    setTip({ day: Number(cell.dataset.day), anchor: cell, open: true, focused, offset });
-  }
-
-  /** Whether the pointer moved onto the tooltip, which keeps it open on its day. */
-  function intoTooltip(target: EventTarget | null) {
-    return target instanceof Node && Boolean(popup.current?.contains(target));
-  }
-
-  function hide() {
-    clearTimeout(hoverTimer.current);
-    setTip((current) => current && { ...current, open: false });
-  }
-
-  // A tooltip opened by focus closes once the pointer moves away from the days, so it never stays
-  // over what people reach for next. Moves of a few pixels, or none, as when the page scrolls under
-  // a resting pointer, keep it.
-  const focusTipOpen = Boolean(tip?.open && tip.focused);
-  useEffect(() => {
-    if (!focusTipOpen) return;
-    const document = grid.current?.ownerDocument;
-    let origin: { x: number; y: number } | undefined;
-    const move = (event: globalThis.PointerEvent) => {
-      if (event.pointerType !== 'mouse' || grid.current?.contains(event.target as Node)) return;
-      origin ??= { x: event.clientX, y: event.clientY };
-      if (Math.hypot(event.clientX - origin.x, event.clientY - origin.y) > 4) hide();
-    };
-    document?.addEventListener('pointermove', move);
-    return () => document?.removeEventListener('pointermove', move);
-  }, [focusTipOpen]);
-
-  // Escape hides an open tooltip wherever focus is, such as on a dialog's close button while the
-  // pointer rests on the tooltip, and goes no further, so an enclosing dialog stays open. With Ctrl,
-  // Alt or Meta it leaves the tooltip and goes on, so an enclosing dialog closes.
-  const tipOpen = Boolean(tip?.open);
-  useEffect(() => {
-    if (!tipOpen) return;
-    const view = grid.current?.ownerDocument.defaultView;
-    const escape = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing) return;
-      // Escape with a modifier belongs to whatever handles it.
-      if (event.ctrlKey || event.altKey || event.metaKey) return;
-      event.preventDefault();
-      event.stopPropagation();
-      hide();
-    };
-    view?.addEventListener('keydown', escape, true);
-    return () => view?.removeEventListener('keydown', escape, true);
-  }, [tipOpen]);
-
-  // A press ends wherever its pointer is released, also outside the grid, or when it is cancelled.
-  useEffect(() => {
-    const page = grid.current?.ownerDocument;
-    const release = () => {
-      mousePress.current = false;
-    };
-    page?.addEventListener('pointerup', release, true);
-    page?.addEventListener('pointercancel', release, true);
-    return () => {
-      page?.removeEventListener('pointerup', release, true);
-      page?.removeEventListener('pointercancel', release, true);
-    };
-  }, []);
-
-  function handlePointerOver(event: PointerEvent<HTMLTableElement>) {
-    if (event.pointerType === 'touch') return;
-    const cell = cellFrom(event.target);
-    if (!cell) return;
-    clearTimeout(hoverTimer.current);
-    if (tip?.open) show(cell);
-    else hoverTimer.current = setTimeout(() => show(cell), tooltipDelay);
-  }
-
-  function handleFocus(event: FocusEvent<HTMLTableElement>) {
-    // A tap focuses its day too, so touch shows the value on tap.
-    const cell = cellFrom(event.target);
-    const byMouse = mousePress.current;
-    mousePress.current = false;
-    if (!cell) return;
-    setActiveDay(Number(cell.dataset.day));
-    show(cell, !byMouse);
-  }
-
-  function handleBlur(event: FocusEvent<HTMLTableElement>) {
-    if (grid.current?.contains(event.relatedTarget as Node | null)) return;
-    // A tooltip the pointer rests on stays, on the days or on the tooltip itself.
-    if (!grid.current?.matches(':hover') && !popup.current?.matches(':hover')) hide();
-  }
-
   function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     if (event.altKey || event.metaKey) return;
-    const rtl = isRightToLeft(event.currentTarget);
-    const week = rtl ? -7 : 7;
-    // As in a grid, Home and End move along the row, the same weekday in the first and the last
-    // week; Page Up and Page Down along the column, to the week's first and last day; and Ctrl+Home
-    // and Ctrl+End to the first and the last day.
-    const row = (active - model.first) % 7;
-    const weekStartDay = active - row;
-    const firstOfRow = model.first + row;
-    const lastOfRow = model.first + (model.weeks - 1) * 7 + row;
-    const moves: Record<string, number> = event.ctrlKey
-      ? { Home: model.start, End: model.end }
-      : {
-          ArrowUp: active - 1,
-          ArrowDown: active + 1,
-          ArrowLeft: active - week,
-          ArrowRight: active + week,
-          Home: firstOfRow < model.start ? firstOfRow + 7 : firstOfRow,
-          End: lastOfRow > model.end ? lastOfRow - 7 : lastOfRow,
-          PageUp: Math.max(model.start, weekStartDay),
-          PageDown: Math.min(model.end, weekStartDay + 6),
-        };
-    const next = moves[event.key];
+    const next = heatmapKeyTarget(model, active, event, isRightToLeft(event.currentTarget));
     if (next === undefined) return;
     event.preventDefault();
     if (next < model.start || next > model.end) return;
@@ -412,15 +273,7 @@ export function CalendarHeatmap({
           aria-labelledby={labelledBy}
           aria-readonly="true"
           className="env-calendar-heatmap-grid"
-          onPointerOver={handlePointerOver}
-          onPointerDown={(event) => {
-            mousePress.current = event.pointerType === 'mouse';
-          }}
-          onPointerLeave={(event) => {
-            if (!intoTooltip(event.relatedTarget)) hide();
-          }}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
+          {...gridHandlers}
           onKeyDown={handleKeyDown}
         >
           <CalendarHeatmapDays
@@ -438,46 +291,18 @@ export function CalendarHeatmap({
             key={level}
             className="env-calendar-heatmap-swatch"
             data-level={level}
-            style={
-              level > 0
-                ? ({
-                    '--env-calendar-heatmap-mix': levelMix(level, model.levelCount),
-                  } as CSSProperties)
-                : undefined
-            }
+            style={levelStyle(level, model.levelCount)}
           />
         ))}
         <span>{moreLabel}</span>
       </Row>
-      <BaseTooltip.Root
-        open={tip?.open ?? false}
-        onOpenChange={(open, details) => {
-          // Escape with a modifier belongs to whatever handles it.
-          const key = details.reason === 'escape-key' ? details.event : undefined;
-          if (key && (key.ctrlKey || key.altKey || key.metaKey)) {
-            details.cancel();
-            details.allowPropagation();
-            return;
-          }
-          // Presses on the days move the tooltip rather than closing it.
-          if (open || (details.event && cellFrom(details.event.target))) return;
-          hide();
-        }}
-      >
+      <BaseTooltip.Root open={tip?.open ?? false} onOpenChange={onOpenChange}>
         <TooltipPopup
           side="top"
           anchor={tip?.anchor}
           sideOffset={tip?.offset ?? 0}
           positionerClassName="env-calendar-heatmap-tooltip-positioner"
-          popupProps={{
-            ref: popup,
-            className: 'env-calendar-heatmap-tooltip',
-            'data-focus-opened': tip?.focused ? '' : undefined,
-            onPointerLeave: (event: PointerEvent<HTMLDivElement>) => {
-              // Back on the days, the day under the pointer takes the tooltip.
-              if (!grid.current?.contains(event.relatedTarget as Node | null)) hide();
-            },
-          }}
+          popupProps={{ ...popupProps, className: 'env-calendar-heatmap-tooltip' }}
           content={
             shown &&
             (renderTooltip
@@ -545,13 +370,7 @@ const CalendarHeatmapDays = memo(function CalendarHeatmapDays({
                     data-day={day}
                     data-date={entry.date}
                     data-level={entry.level}
-                    style={
-                      entry.level > 0
-                        ? ({
-                            '--env-calendar-heatmap-mix': levelMix(entry.level, model.levelCount),
-                          } as CSSProperties)
-                        : undefined
-                    }
+                    style={levelStyle(entry.level, model.levelCount)}
                   />
                 );
               })}
