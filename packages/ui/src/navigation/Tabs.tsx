@@ -49,11 +49,10 @@ type TabsItemControl =
 /** One tab and its panel: `{ value: 'summary', label: 'Summary', content: <Summary /> }`. */
 export type TabsItem = TabsItemFields & TabsItemControl;
 
-export interface TabsProps
-  extends Omit<
-    ComponentPropsWithRef<'div'>,
-    'children' | 'defaultValue' | 'onChange' | 'aria-label'
-  > {
+export interface TabsProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'defaultValue' | 'onChange' | 'aria-label'
+> {
   /** The tabs in order, each with its value, its label or button, and its panel content. */
   items: readonly TabsItem[];
   /** The tab list's accessible name, such as Project views. */

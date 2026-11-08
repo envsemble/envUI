@@ -106,12 +106,10 @@ export function pageDestinations(
     if (page.group) groups.set(page.group, [...(groups.get(page.group) ?? []), page]);
   return [
     ...pages.filter((page) => !page.group).flatMap(link),
-    ...[...groups].map(
-      ([label, members]): NavigationDrawerDestination => ({
-        label,
-        children: members.flatMap(link),
-      }),
-    ),
+    ...[...groups].map(([label, members]): NavigationDrawerDestination => ({
+      label,
+      children: members.flatMap(link),
+    })),
   ];
 }
 
@@ -201,13 +199,11 @@ export function docsDestinations(
     section.pages[0]!.title === section.label;
   return docsTree.flatMap((section) => [
     ...section.pages.flatMap((page) => link(page, lone(section) ? undefined : section.label)),
-    ...section.groups.map(
-      (group): NavigationDrawerDestination => ({
-        group: section.label,
-        label: group.label,
-        children: group.pages.flatMap((page) => link(page)),
-      }),
-    ),
+    ...section.groups.map((group): NavigationDrawerDestination => ({
+      group: section.label,
+      label: group.label,
+      children: group.pages.flatMap((page) => link(page)),
+    })),
   ]);
 }
 

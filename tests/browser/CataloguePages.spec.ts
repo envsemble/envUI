@@ -1202,7 +1202,7 @@ const stillTiles = (page: Page, from: number) =>
     // Still for 30 frames running, within four seconds.
     let calm = 0;
     let last = shown.map(viewOf).join();
-    for (const start = performance.now(); calm < 30 && performance.now() - start < 4000; ) {
+    for (const start = performance.now(); calm < 30 && performance.now() - start < 4000;) {
       await frame();
       const now = shown.map(viewOf).join();
       calm = now === last && !now.includes(',,') && shown.every(viewOf) ? calm + 1 : 0;
@@ -1259,7 +1259,7 @@ for (const [width, scale] of [
         await expect(page.locator('.catalogue-related-canvas[data-fitted]').first()).toBeVisible();
         const moving: string[] = [];
         const reframed: string[] = [];
-        for (let from = 0, count = 1; from < count; ) {
+        for (let from = 0, count = 1; from < count;) {
           const found = await stillTiles(page, from);
           moving.push(...found.moving);
           reframed.push(...found.reframed);

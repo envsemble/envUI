@@ -11,8 +11,10 @@ import '../styles/Base.css';
 import '../styles/Button.css';
 import '../styles/ColorSwatch.css';
 
-export interface ColorSwatchProps
-  extends Omit<ComponentPropsWithRef<'span'>, 'children' | 'color'> {
+export interface ColorSwatchProps extends Omit<
+  ComponentPropsWithRef<'span'>,
+  'children' | 'color'
+> {
   /**
    * The color it shows: a CSS color string, such as #6750a4, rgb(103, 80, 164) or
    * hsl(256, 34%, 48%), with an optional alpha, or React Aria's Color.

@@ -53,7 +53,8 @@ export interface SelectOpenChangeDetails {
 }
 
 export interface SelectProps
-  extends Omit<
+  extends
+    Omit<
       ButtonHTMLAttributes<HTMLButtonElement>,
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,

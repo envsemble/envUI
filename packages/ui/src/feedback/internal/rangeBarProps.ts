@@ -1,8 +1,10 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 
 /** What Meter and Progress share: a label, a range, an optional value text and native passthrough. */
-export interface RangeBarProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-valuetext' | 'defaultValue'> {
+export interface RangeBarProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'aria-valuetext' | 'defaultValue'
+> {
   /** What the bar shows, such as Seats assigned; it is visible above the bar and names it. */
   label: ReactNode;
   /**

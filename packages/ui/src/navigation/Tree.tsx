@@ -76,11 +76,10 @@ export interface TreeActionDetails {
 /** The native events the tree handles itself, for its rows; the others reach its element. */
 type TreeOwnEvents = 'onClick' | 'onDoubleClick' | 'onContextMenu' | 'onPointerDown';
 
-export interface TreeProps<Item extends TreeItem>
-  extends Omit<
-    ComponentPropsWithRef<'div'>,
-    'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu' | TreeOwnEvents
-  > {
+export interface TreeProps<Item extends TreeItem> extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu' | TreeOwnEvents
+> {
   /**
    * The visible rows in order, flattened: an expanded row is followed by its visible descendants.
    * The application owns expansion; collapsing a row removes its descendants from items.

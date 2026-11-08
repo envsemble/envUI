@@ -25,8 +25,7 @@ const railClasses: DestinationClasses = {
 };
 
 export interface NavigationRailProps
-  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
   /**
    * The application's destinations, the same array NavigationBar and NavigationDrawer take, each an icon above a short
    * label. Groups don't show: the destinations follow one another in the array's order. Nested

@@ -48,8 +48,10 @@ const defaultMarkdownCommands: readonly MarkdownCommand[] = [
   'link',
 ];
 
-export interface MarkdownEditorProps
-  extends Omit<TextareaProps, 'children' | 'value' | 'defaultValue' | 'onChange' | 'ref'> {
+export interface MarkdownEditorProps extends Omit<
+  TextareaProps,
+  'children' | 'value' | 'defaultValue' | 'onChange' | 'ref'
+> {
   /** The native text area of the source, so that a form library can register it and focus it. */
   ref?: Ref<HTMLTextAreaElement>;
   /** The Markdown source of a controlled editor; replacing it clears the undo history. */

@@ -44,14 +44,7 @@ export const tokensFile = fileURLToPath(
 
 /** What a search result is. */
 export type SearchKind =
-  | 'component'
-  | 'export'
-  | 'prop'
-  | 'token'
-  | 'foundation'
-  | 'pattern'
-  | 'guide'
-  | 'page';
+  'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page';
 
 /** A document of the search index: one result, with what it is found by and where it leads. */
 export interface SearchDocument {

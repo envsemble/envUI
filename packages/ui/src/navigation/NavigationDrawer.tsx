@@ -46,8 +46,7 @@ const drawerClasses: DestinationClasses = {
 };
 
 export interface NavigationDrawerProps
-  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
   /**
    * The application's destinations, the same array NavigationBar and NavigationRail take: each a row with its icon, its
    * label and its count. A heading starts each run of destinations of one `group`. A destination

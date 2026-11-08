@@ -35,8 +35,7 @@ const parts = {
 };
 
 export interface HoverCardProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue'>, SkeletonProps {
   /**
    * The element that opens the card on hover and keyboard focus; it receives the ref. Text, such
    * as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; give it

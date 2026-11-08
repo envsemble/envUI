@@ -342,7 +342,7 @@ export interface Change {
 export function parseNameStatus(text: string): Change[] {
   const fields = text.split('\0').filter((field) => field !== '');
   const entries: Change[] = [];
-  for (let index = 0; index < fields.length; ) {
+  for (let index = 0; index < fields.length;) {
     const status = fields[index++]!;
     if (/^[RC]/.test(status)) {
       const from = fields[index++];

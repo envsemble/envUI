@@ -25,11 +25,10 @@ import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import '../styles/Base.css';
 import '../styles/DropZone.css';
 
-export interface DropZoneProps
-  extends Omit<
-    ComponentPropsWithRef<'div'>,
-    'children' | 'onDragEnter' | 'onDragOver' | 'onDragLeave' | 'onDrop'
-  > {
+export interface DropZoneProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'onDragEnter' | 'onDragOver' | 'onDragLeave' | 'onDrop'
+> {
   /**
    * What to drop or choose, such as "Drop a logo here, or browse". With the description, it names
    * the zone, as its visible text does.

@@ -196,8 +196,7 @@ export function PopupSurface({
   const ownStyle = popupProps?.style as CSSProperties | undefined;
   const ownRef = popupProps?.ref as Ref<HTMLElement> | undefined;
   const ownFocusCapture = popupProps?.onFocusCapture as
-    | ((event: FocusEvent<HTMLElement>) => void)
-    | undefined;
+    ((event: FocusEvent<HTMLElement>) => void) | undefined;
   // When the popup appeared, to tell the focus Base UI moves into it as it opens.
   const openedAt = useRef(0);
   const attachPopup = useCallback(

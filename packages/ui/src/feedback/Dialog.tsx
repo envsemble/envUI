@@ -60,8 +60,7 @@ export type DialogFocusTarget =
     ) => HTMLElement | boolean | void | null);
 
 export interface DialogProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>, SkeletonProps {
   /** Whether the dialog is open, for a dialog the application controls with onOpenChange. */
   open?: boolean;
   /**

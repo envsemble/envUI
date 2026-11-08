@@ -23,8 +23,10 @@ import type { ControlSize } from '../foundations/Theme.js';
 import '../styles/Base.css';
 import '../styles/CopyButton.css';
 
-interface CopyButtonBaseProps
-  extends Omit<ComponentPropsWithRef<'button'>, 'value' | 'onCopy' | 'children' | 'type'> {
+interface CopyButtonBaseProps extends Omit<
+  ComponentPropsWithRef<'button'>,
+  'value' | 'onCopy' | 'children' | 'type'
+> {
   /** The text to copy, or a function that returns it, also as a promise, when pressed. */
   value: string | (() => string | Promise<string>);
   /** Runs once the text is on the clipboard, with that text. */

@@ -19,7 +19,8 @@ import '../styles/Base.css';
 import '../styles/RelativeTime.css';
 
 export interface RelativeTimeProps
-  extends Omit<ComponentPropsWithRef<'time'>, 'children' | 'dateTime'>,
+  extends
+    Omit<ComponentPropsWithRef<'time'>, 'children' | 'dateTime'>,
     Omit<RelativeTimeOptions, 'now'> {
   /**
    * The moment to describe: a Date, milliseconds since 1970 or a date string such as an ISO 8601

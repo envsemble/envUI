@@ -66,9 +66,9 @@ export function hasClientDirective(sourceFile) {
   const [first] = sourceFile.statements;
   return Boolean(
     first &&
-      ts.isExpressionStatement(first) &&
-      ts.isStringLiteral(first.expression) &&
-      first.expression.text === 'use client',
+    ts.isExpressionStatement(first) &&
+    ts.isStringLiteral(first.expression) &&
+    first.expression.text === 'use client',
   );
 }
 
@@ -131,8 +131,8 @@ function createReader(checker) {
     if (ts.isParameter(variable)) return !makesDefault(variable);
     return Boolean(
       ts.isVariableDeclaration(variable) &&
-        variable.initializer &&
-        isPassedOn(variable.initializer, seen),
+      variable.initializer &&
+      isPassedOn(variable.initializer, seen),
     );
   };
 

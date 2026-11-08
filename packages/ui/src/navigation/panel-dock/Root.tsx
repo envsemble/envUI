@@ -98,8 +98,10 @@ export interface PanelDockPanel {
   tooltip?: ReactNode;
 }
 
-export interface RootProps<Panel extends PanelDockPanel = PanelDockPanel>
-  extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
+export interface RootProps<Panel extends PanelDockPanel = PanelDockPanel> extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children'
+> {
   /**
    * The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the
    * end, and tabs follow in the same order. The application owns them.

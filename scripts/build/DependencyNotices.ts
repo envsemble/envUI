@@ -6,7 +6,7 @@ const shippingWorkspaces = ['packages/ui', 'apps/site'];
 
 /** The lockfile location a dependency of the package at `from` resolves to, as Node finds it. */
 function resolveLocked(packages, from, name) {
-  for (let base = from; ; ) {
+  for (let base = from; ;) {
     const location = `${base ? `${base}/` : ''}node_modules/${name}`;
     if (packages[location]) return location;
     if (!base) return undefined;

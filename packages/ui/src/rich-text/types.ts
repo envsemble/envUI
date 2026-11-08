@@ -120,7 +120,8 @@ export interface RichTextEditorHandle {
   editor: Editor | null;
 }
 export interface RichTextEditorProps
-  extends RichTextRenderOptions,
+  extends
+    RichTextRenderOptions,
     FieldProps,
     Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
   /** Gives the Tiptap editor, as editorRef.current.editor, for commands. */
@@ -205,8 +206,7 @@ export interface RichTextEditorProps
   minRows?: number;
 }
 export interface RichTextProps
-  extends RichTextRenderOptions,
-    Omit<ComponentPropsWithoutRef<'div'>, 'children'> {
+  extends RichTextRenderOptions, Omit<ComponentPropsWithoutRef<'div'>, 'children'> {
   /** The Markdown to show, such as what RichTextEditor saved. */
   children: string;
 }

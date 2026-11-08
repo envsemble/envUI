@@ -38,11 +38,10 @@ export interface SegmentedControlItem {
   disabled?: boolean;
 }
 
-export interface SegmentedControlProps
-  extends Omit<
-    ComponentPropsWithRef<'div'>,
-    'children' | 'onChange' | 'defaultValue' | 'dir' | 'aria-label'
-  > {
+export interface SegmentedControlProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'onChange' | 'defaultValue' | 'dir' | 'aria-label'
+> {
   /** The items, two to five, in the order they show. */
   items: readonly SegmentedControlItem[];
   /** The chosen item's value, for a control the application keeps; update it from onValueChange. */

@@ -36,8 +36,7 @@ const barClasses: DestinationClasses = {
 };
 
 export interface NavigationBarProps
-  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
   /**
    * The application's destinations, the same array NavigationRail and NavigationDrawer take. Give the bar 3 to 5: past
    * 5 it shows the first 4 and a More item that opens the rest in a menu. Groups and nested

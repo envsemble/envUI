@@ -6,13 +6,7 @@ import '../styles/Base.css';
 import '../styles/Badge.css';
 
 export type BadgeTone =
-  | 'neutral'
-  | 'primary'
-  | 'accent'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'done';
+  'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'done';
 
 /** A badge's emphasis: a tinted, a filled or an outlined pill. */
 export type BadgeVariant = 'soft' | 'solid' | 'outline';

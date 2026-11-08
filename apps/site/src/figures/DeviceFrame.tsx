@@ -160,9 +160,10 @@ function spanOf(boxes: Box[], pick: (box: Box) => [number, number]) {
   return boxes.length
     ? boxes
         .map(pick)
-        .reduce<
-          [number, number]
-        >((a, b) => [Math.min(a[0], b[0]), Math.max(a[1], b[1])], [Infinity, -Infinity])
+        .reduce<[number, number]>(
+          (a, b) => [Math.min(a[0], b[0]), Math.max(a[1], b[1])],
+          [Infinity, -Infinity],
+        )
     : undefined;
 }
 

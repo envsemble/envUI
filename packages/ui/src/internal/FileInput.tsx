@@ -2,8 +2,10 @@
 
 import type { ComponentPropsWithRef } from 'react';
 
-export interface FileInputProps
-  extends Omit<ComponentPropsWithRef<'input'>, 'type' | 'onChange' | 'value' | 'hidden'> {
+export interface FileInputProps extends Omit<
+  ComponentPropsWithRef<'input'>,
+  'type' | 'onChange' | 'value' | 'hidden'
+> {
   /**
    * Receives the files chosen in the browser's file picker. The input then forgets them, so
    * choosing the same file again reports it again.

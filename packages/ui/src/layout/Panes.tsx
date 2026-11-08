@@ -49,11 +49,7 @@ export type SplitAt = 'medium' | 'expanded' | 'large';
  * sheet's close button, a press on its backdrop, the detail's back button, or Panes.Trigger.
  */
 export type OpenChangeReason =
-  | 'escape-key'
-  | 'close-press'
-  | 'outside-press'
-  | 'back-press'
-  | 'trigger-press';
+  'escape-key' | 'close-press' | 'outside-press' | 'back-press' | 'trigger-press';
 
 /** What Panes.Root's onOpenChange receives beside the requested state. */
 export interface OpenChangeDetails {
@@ -183,8 +179,10 @@ export interface SupportingProps extends ComponentPropsWithRef<'div'>, SkeletonP
   label: string;
 }
 
-export interface DividerProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'onChange'> {
+export interface DividerProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'aria-label' | 'onChange'
+> {
   /**
    * The divider's name, which says what it resizes, such as Resize project list.
    * @default 'Resize panes', or EnvUIProvider's messages.panes.resize
@@ -438,7 +436,7 @@ function Supporting({
     returnFocus.current = active instanceof HTMLElement ? active : null;
     if (!element.contains(active)) element.focus();
     const others: HTMLElement[] = [];
-    for (let node: Element = element; node.parentElement && node !== document.body; ) {
+    for (let node: Element = element; node.parentElement && node !== document.body;) {
       for (const other of node.parentElement.children)
         if (
           other instanceof HTMLElement &&

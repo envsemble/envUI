@@ -812,7 +812,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   );
   assert.match(
     await readFile(join(installedDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'), 'utf8'),
-    /@base-ui\/react@1\.8\.0/,
+    /@base-ui\/react@1\.9\.0/,
   );
   for (const filename of [
     'Base-UI-LICENSE.txt',

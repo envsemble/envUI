@@ -52,8 +52,7 @@ import '../styles/Base.css';
 import '../styles/Sheet.css';
 
 export interface SheetProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>, SkeletonProps {
   /** Whether the sheet is open, for a sheet the application controls with onOpenChange. */
   open?: boolean;
   /**

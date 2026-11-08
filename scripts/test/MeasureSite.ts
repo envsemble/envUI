@@ -287,8 +287,7 @@ const chainDepth = (chains: Record<string, Chain> | undefined): number =>
 /** The tree of Lighthouse 13's network dependency insight: its first list section's chains. */
 const dependencyTree = (audit: Audit | undefined) => {
   const section = audit?.details?.items?.[0] as
-    | { value?: { chains?: Record<string, Chain> } }
-    | undefined;
+    { value?: { chains?: Record<string, Chain> } } | undefined;
   return section?.value?.chains;
 };
 

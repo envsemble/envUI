@@ -17,8 +17,7 @@ import '../styles/Accordion.css';
 const HeadingLevelContext = createContext<Exclude<HeadingLevel, 1>>(3);
 
 export interface RootProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange'>, SkeletonProps {
   /** The items: Accordion.Item, one for each section. */
   children?: ReactNode;
   /**

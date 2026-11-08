@@ -35,10 +35,7 @@ import '../../styles/DatePicker.css';
  * clear button.
  */
 export type PickerOpenChangeReason =
-  | PopoverOpenChangeReason
-  | 'list-navigation'
-  | 'item-press'
-  | 'clear-press';
+  PopoverOpenChangeReason | 'list-navigation' | 'item-press' | 'clear-press';
 
 /** What a date, time or month picker's onOpenChange receives beside the requested state. */
 export interface PickerOpenChangeDetails {
@@ -47,7 +44,8 @@ export interface PickerOpenChangeDetails {
 }
 
 export interface PickerFieldProps
-  extends Omit<
+  extends
+    Omit<
       ButtonHTMLAttributes<HTMLButtonElement>,
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,

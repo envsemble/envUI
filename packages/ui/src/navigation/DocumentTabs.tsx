@@ -40,11 +40,10 @@ export interface DocumentTabsItem {
   preview?: boolean;
 }
 
-export interface DocumentTabsProps
-  extends Omit<
-    ComponentPropsWithRef<'div'>,
-    'children' | 'defaultValue' | 'onChange' | 'aria-label'
-  > {
+export interface DocumentTabsProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'defaultValue' | 'onChange' | 'aria-label'
+> {
   /** The open documents, in tab order. */
   items: readonly DocumentTabsItem[];
   /** The active tab, or null. */

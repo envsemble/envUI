@@ -15,8 +15,7 @@ import '../styles/Message.css';
 export type MessageStatus = 'sending' | 'failed';
 
 export interface MessageProps
-  extends Omit<ComponentPropsWithRef<'article'>, 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'article'>, 'children'>, SkeletonProps {
   /**
    * self: written by the person using the app, a compact bubble at the inline end. other: from
    * anyone else, such as an assistant or another participant, full-width content without a bubble.

@@ -10,11 +10,10 @@ import { searchField as searchFieldMessages } from '../foundations/messages/sear
 import { TextField, type TextFieldProps } from './TextField.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
-export interface SearchFieldProps
-  extends Omit<
-    TextFieldProps,
-    'type' | 'startIcon' | 'endAction' | 'label' | 'value' | 'defaultValue' | 'onValueChange'
-  > {
+export interface SearchFieldProps extends Omit<
+  TextFieldProps,
+  'type' | 'startIcon' | 'endAction' | 'label' | 'value' | 'defaultValue' | 'onValueChange'
+> {
   /**
    * The field's accessible name, such as Search members. It shows as a floating label only with
    * showLabel; otherwise a placeholder gives the visible guidance.

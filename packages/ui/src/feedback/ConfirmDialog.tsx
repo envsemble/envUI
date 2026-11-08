@@ -32,8 +32,10 @@ import { reportInDevelopment } from '../internal/developmentReport.js';
 import '../styles/Base.css';
 import '../styles/Dialog.css';
 
-export interface ConfirmDialogProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'onError'> {
+export interface ConfirmDialogProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'title' | 'children' | 'onError'
+> {
   /** Whether the dialog is open, for a dialog the application controls with onOpenChange. */
   open?: boolean;
   /**

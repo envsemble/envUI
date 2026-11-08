@@ -55,16 +55,13 @@ test('a token without high-contrast styles takes its standard color at high cont
 test('every highlighted token is readable on its code background, in code blocks and diffs', async () => {
   const { wcagContrast, differenceEuclidean, oklch } = await import('culori');
   const chroma = (color) => oklch(color).c ?? 0;
-  const { codeTheme, diffTintColors } = await import(
-    '../packages/ui/dist/content/internal/codeThemes.js'
-  );
-  const { codeBackgrounds, codeColors, codeContrastTargets, diffTintOpacity } = await import(
-    '../packages/ui/dist/content/internal/codeColors.js'
-  );
+  const { codeTheme, diffTintColors } =
+    await import('../packages/ui/dist/content/internal/codeThemes.js');
+  const { codeBackgrounds, codeColors, codeContrastTargets, diffTintOpacity } =
+    await import('../packages/ui/dist/content/internal/codeColors.js');
   const { tokens } = await import('../packages/ui/src/generated/tokens.ts');
-  const { over, readableReplacements } = await import(
-    '../packages/ui/dist/content/internal/readableColors.js'
-  );
+  const { over, readableReplacements } =
+    await import('../packages/ui/dist/content/internal/readableColors.js');
   const theme = async (name) => (await import(`shiki/themes/${name}.mjs`)).default;
   const github = {
     light: {

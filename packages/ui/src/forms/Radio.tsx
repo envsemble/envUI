@@ -195,11 +195,10 @@ export function RadioGroup({
   );
 }
 
-export interface RadioProps
-  extends Omit<
-    InputHTMLAttributes<HTMLInputElement>,
-    'type' | 'name' | 'checked' | 'defaultChecked' | 'value'
-  > {
+export interface RadioProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'name' | 'checked' | 'defaultChecked' | 'value'
+> {
   /**
    * The native radio input, so that a form library can register it and focus it; the other native
    * props reach it too.

@@ -41,7 +41,8 @@ export type { ColorPickerSwatch } from './internal/SwatchList.js';
 const allFormats: readonly ColorFormat[] = ['hex', 'rgb', 'hsl'];
 
 export interface ColorPickerProps
-  extends ColorPickerValueProps,
+  extends
+    ColorPickerValueProps,
     Omit<
       ComponentPropsWithRef<'div'>,
       'children' | 'defaultValue' | 'onChange' | 'color' | 'role' | keyof ColorPickerValueProps

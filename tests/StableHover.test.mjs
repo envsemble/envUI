@@ -72,7 +72,7 @@ test('no custom property set on hover or with focus inside reaches a layout prop
       rule.walkDecls(/^--/, (declaration) => changing.add(declaration.prop));
     });
     const reads = (value) => [...changing].some((name) => value.includes(`var(${name}`));
-    for (let grew = true; grew; ) {
+    for (let grew = true; grew;) {
       grew = false;
       sheet.walkDecls(/^--/, (declaration) => {
         if (!changing.has(declaration.prop) && reads(declaration.value)) {

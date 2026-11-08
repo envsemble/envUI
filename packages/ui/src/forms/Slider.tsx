@@ -27,8 +27,10 @@ import { followDrag } from './internal/sliderGlide.js';
 import '../styles/Base.css';
 import '../styles/Slider.css';
 
-export interface SliderProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children' | 'ref'> {
+export interface SliderProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'defaultValue' | 'onChange' | 'children' | 'ref'
+> {
   /**
    * The value's name, inside the slider at its start, such as Opacity. It names the slider.
    */

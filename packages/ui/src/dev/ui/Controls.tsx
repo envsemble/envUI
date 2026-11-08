@@ -14,8 +14,10 @@ import { IconRightPanelOpen } from '../../icons/RightPanelOpen.js';
 /** No wait before an icon button's tooltip: its name is all it shows, so it shows at once. */
 export const instant = 0;
 
-export interface HintedIconButtonProps
-  extends Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> {
+export interface HintedIconButtonProps extends Omit<
+  ComponentPropsWithRef<'button'>,
+  'children' | 'aria-label'
+> {
   /** The button's name, which its tooltip shows at once on hover and focus. */
   label: string;
   icon: ReactNode;

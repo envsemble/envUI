@@ -5,8 +5,10 @@ import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react';
 import { subscribeFormReset } from './subscribeFormReset.js';
 
 export type CheckboxState = boolean | 'mixed';
-export interface CheckedProps<State extends CheckboxState>
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'checked' | 'defaultChecked'> {
+export interface CheckedProps<State extends CheckboxState> extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'checked' | 'defaultChecked'
+> {
   label?: ReactNode;
   checked?: State;
   defaultChecked?: State;

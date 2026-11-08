@@ -260,29 +260,32 @@
   --env-tree-row-padding-block-lg: var(--env-row-padding-block-lg);
   --env-tree-row-padding-block-md: var(--env-row-padding-block-md);
   --env-tree-row-padding-block-sm: var(--env-row-padding-block-sm);
-  --env-type-body: var(--env-type-body-font-weight) var(--env-type-body-font-size) /
-    var(--env-type-body-line-height) var(--env-type-body-font-family);
+  --env-type-body: var(--env-type-body-font-weight)
+    var(--env-type-body-font-size)/var(--env-type-body-line-height) var(--env-type-body-font-family);
   --env-type-body-font-family: var(--env-font-family);
   --env-type-body-font-size: var(--env-font-size-body);
   --env-type-body-font-weight: var(--env-font-weight-body);
   --env-type-body-letter-spacing: 0rem;
   --env-type-body-line-height: 1.4em;
-  --env-type-body-sm: var(--env-type-body-sm-font-weight) var(--env-type-body-sm-font-size) /
-    var(--env-type-body-sm-line-height) var(--env-type-body-sm-font-family);
+  --env-type-body-sm: var(--env-type-body-sm-font-weight)
+    var(--env-type-body-sm-font-size)/var(--env-type-body-sm-line-height)
+    var(--env-type-body-sm-font-family);
   --env-type-body-sm-font-family: var(--env-font-family);
   --env-type-body-sm-font-size: var(--env-font-size-body-sm);
   --env-type-body-sm-font-weight: var(--env-font-weight-body);
   --env-type-body-sm-letter-spacing: 0rem;
   --env-type-body-sm-line-height: 1.4em;
-  --env-type-headline: var(--env-type-headline-font-weight) var(--env-type-headline-font-size) /
-    var(--env-type-headline-line-height) var(--env-type-headline-font-family);
+  --env-type-headline: var(--env-type-headline-font-weight)
+    var(--env-type-headline-font-size)/var(--env-type-headline-line-height)
+    var(--env-type-headline-font-family);
   --env-type-headline-font-family: var(--env-font-family);
   --env-type-headline-font-size: var(--env-font-size-headline);
   --env-type-headline-font-weight: var(--env-font-weight-medium);
   --env-type-headline-letter-spacing: -0.0125rem;
   --env-type-headline-line-height: 1.3em;
-  --env-type-title: var(--env-type-title-font-weight) var(--env-type-title-font-size) /
-    var(--env-type-title-line-height) var(--env-type-title-font-family);
+  --env-type-title: var(--env-type-title-font-weight)
+    var(--env-type-title-font-size)/var(--env-type-title-line-height)
+    var(--env-type-title-font-family);
   --env-type-title-font-family: var(--env-font-family);
   --env-type-title-font-size: var(--env-font-size-title);
   --env-type-title-font-weight: var(--env-font-weight-medium);

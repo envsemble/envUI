@@ -19,8 +19,10 @@ import '../../styles/Base.css';
 import '../../styles/TimeList.css';
 import '../../styles/DatePicker.css';
 
-export interface TimeListProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {
+export interface TimeListProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'defaultValue' | 'onChange'
+> {
   /** The chosen time as minutes after midnight, or undefined for none. */
   value: number | undefined;
   /** Receives the chosen time as minutes after midnight. */
@@ -122,15 +124,12 @@ export function TimeList({
           keys: [String(shown), pad(shown)],
         };
       })
-    : Array.from(
-        { length: 24 },
-        (_, hour): Entry => ({
-          value: hour,
-          label: clock.hourLabel(hour),
-          disabled: !overlaps(hour * 60, hour * 60 + 59, min, max),
-          keys: [pad(hour), String(hour)],
-        }),
-      );
+    : Array.from({ length: 24 }, (_, hour): Entry => ({
+        value: hour,
+        label: clock.hourLabel(hour),
+        disabled: !overlaps(hour * 60, hour * 60 + 59, min, max),
+        keys: [pad(hour), String(hour)],
+      }));
   const minutes = minuteSteps(step, value === undefined ? undefined : baseMinute).map(
     (minute): Entry => ({
       value: minute,
@@ -139,14 +138,12 @@ export function TimeList({
       keys: [pad(minute)],
     }),
   );
-  const periods = [0, 1].map(
-    (period): Entry => ({
-      value: period,
-      label: clock.periodLabels[period]!,
-      disabled: !overlaps(period * 720, period * 720 + 719, min, max),
-      keys: [clock.periodLabels[period]!.toLocaleLowerCase(shownLocale), period ? 'p' : 'a'],
-    }),
-  );
+  const periods = [0, 1].map((period): Entry => ({
+    value: period,
+    label: clock.periodLabels[period]!,
+    disabled: !overlaps(period * 720, period * 720 + 719, min, max),
+    keys: [clock.periodLabels[period]!.toLocaleLowerCase(shownLocale), period ? 'p' : 'a'],
+  }));
 
   const columns: Record<
     Part,

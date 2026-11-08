@@ -207,15 +207,13 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
         getComputedStyle(element).aspectRatio === 'auto' &&
         !sizedByItsBox(element as HTMLElement),
     )
-    .map(
-      (element): LayoutProblem => ({
-        rule: 'skeleton-shift',
-        node: labelOf(element),
-        path: pathOf(element, surface),
-        message:
-          'Media without an aspect ratio has no size until it loads. Declare one, with width and height attributes or aspect-ratio, so its skeleton holds its place.',
-      }),
-    );
+    .map((element): LayoutProblem => ({
+      rule: 'skeleton-shift',
+      node: labelOf(element),
+      path: pathOf(element, surface),
+      message:
+        'Media without an aspect ratio has no size until it loads. Declare one, with width and height attributes or aspect-ratio, so its skeleton holds its place.',
+    }));
   return [...deepest.map(([, problem]) => problem), ...media];
 }
 

@@ -78,7 +78,8 @@ export type ComboboxFilter<Item extends ComboboxItem = ComboboxItem> = (
 ) => boolean;
 
 interface ComboboxSharedProps<Item extends ComboboxItem>
-  extends Omit<
+  extends
+    Omit<
       ComponentPropsWithoutRef<'input'>,
       'value' | 'defaultValue' | 'onChange' | 'type' | 'children' | 'multiple' | 'list' | 'size'
     >,

@@ -41,8 +41,7 @@ const TableColumnsContext = createContext<TableColumns | null>(null);
 const TableSectionContext = createContext<'head' | 'body' | null>(null);
 
 export interface RootProps
-  extends Omit<ComponentPropsWithRef<'table'>, 'aria-label'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'table'>, 'aria-label'>, SkeletonProps {
   /**
    * Accessible name of the table and its scroll region when there is no caption. A table needs a
    * caption, an aria-label or an aria-labelledby, which names its region too.
@@ -374,8 +373,7 @@ function cellAttributes({ align, numeric, nowrap }: TableCellLayout) {
 export type SortDirection = 'ascending' | 'descending' | 'none';
 
 export interface HeaderCellProps
-  extends Omit<ComponentPropsWithRef<'th'>, 'align'>,
-    TableCellLayout {
+  extends Omit<ComponentPropsWithRef<'th'>, 'align'>, TableCellLayout {
   /**
    * The column's sort order: aria-sort on the header and the arrow in its sort button. Use it with
    * onSortChange; without it only sets aria-sort.

@@ -45,7 +45,8 @@ import '../styles/DatePicker.css';
 export type { PickerOpenChangeDetails, PickerOpenChangeReason } from './internal/PickerField.js';
 
 export interface DatePickerProps
-  extends Omit<
+  extends
+    Omit<
       ButtonHTMLAttributes<HTMLButtonElement>,
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,

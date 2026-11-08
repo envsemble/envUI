@@ -45,8 +45,7 @@ export interface PopoverOpenChangeDetails {
 }
 
 export interface PopoverProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>, SkeletonProps {
   /**
    * The control that opens and closes the popover, such as a Button or an IconButton. It must take
    * a ref and props: it receives the press handler, aria-haspopup and aria-expanded.

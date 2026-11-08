@@ -132,17 +132,15 @@ const cataloguePages: RoutePage[] = [
   },
   ...groupedPages
     .filter(({ section }) => section === 'Foundations')
-    .map(
-      ({ document, path }): RoutePage => ({
-        path,
-        title: document.title,
-        area: 'catalogue',
-        section: 'Foundations',
-        kind: 'foundation',
-        summary: document.summary,
-        document: document as DocumentSummary,
-      }),
-    ),
+    .map(({ document, path }): RoutePage => ({
+      path,
+      title: document.title,
+      area: 'catalogue',
+      section: 'Foundations',
+      kind: 'foundation',
+      summary: document.summary,
+      document: document as DocumentSummary,
+    })),
   {
     path: 'components',
     title: 'Components',
@@ -155,18 +153,16 @@ const cataloguePages: RoutePage[] = [
   ...componentGroups.flatMap((group) =>
     groupedPages
       .filter(({ document, path }) => document.group === group && !path.startsWith('docs/'))
-      .map(
-        ({ document, path }): RoutePage => ({
-          path,
-          title: document.title,
-          area: 'catalogue',
-          section: 'Components',
-          group,
-          kind: 'component',
-          summary: document.summary,
-          document: document as DocumentSummary,
-        }),
-      ),
+      .map(({ document, path }): RoutePage => ({
+        path,
+        title: document.title,
+        area: 'catalogue',
+        section: 'Components',
+        group,
+        kind: 'component',
+        summary: document.summary,
+        document: document as DocumentSummary,
+      })),
   ),
   {
     path: 'patterns',
@@ -177,18 +173,16 @@ const cataloguePages: RoutePage[] = [
     kind: 'patterns',
     summary: 'Components put together for what people do, by what they are doing.',
   },
-  ...patternDocuments.map(
-    (document): RoutePage => ({
-      path: `patterns/${document.id}`,
-      title: document.title,
-      area: 'catalogue',
-      section: 'Patterns',
-      group: document.metadata?.intent,
-      kind: 'pattern',
-      summary: document.summary,
-      document,
-    }),
-  ),
+  ...patternDocuments.map((document): RoutePage => ({
+    path: `patterns/${document.id}`,
+    title: document.title,
+    area: 'catalogue',
+    section: 'Patterns',
+    group: document.metadata?.intent,
+    kind: 'pattern',
+    summary: document.summary,
+    document,
+  })),
 ];
 
 /**
@@ -238,17 +232,15 @@ const docsPages: RoutePage[] = [
         } satisfies RoutePage,
       ]
     : []),
-  ...foundations.map(
-    (document): RoutePage => ({
-      path: foundationDocsRoute(document.id),
-      title: document.title,
-      area: 'docs',
-      section: 'Foundations',
-      kind: 'foundation-guide',
-      summary: document.summary,
-      document: document as DocumentSummary,
-    }),
-  ),
+  ...foundations.map((document): RoutePage => ({
+    path: foundationDocsRoute(document.id),
+    title: document.title,
+    area: 'docs',
+    section: 'Foundations',
+    kind: 'foundation-guide',
+    summary: document.summary,
+    document: document as DocumentSummary,
+  })),
   {
     path: 'docs/tokens',
     title: 'Design tokens',
@@ -260,34 +252,30 @@ const docsPages: RoutePage[] = [
   ...componentGroups.flatMap((group) =>
     componentDocuments
       .filter((document) => document.group === group && !docsOnlyComponents.has(document.id))
-      .map(
-        (document): RoutePage => ({
-          path: componentDocsRoute(document.id),
-          title: document.title,
-          area: 'docs',
-          section: 'Components',
-          group,
-          kind: 'reference',
-          summary: document.summary,
-          document: document as DocumentSummary,
-        }),
-      ),
+      .map((document): RoutePage => ({
+        path: componentDocsRoute(document.id),
+        title: document.title,
+        area: 'docs',
+        section: 'Components',
+        group,
+        kind: 'reference',
+        summary: document.summary,
+        document: document as DocumentSummary,
+      })),
   ),
   // Each pattern's guide, in the catalogue's order and by its intent: how to build it in code.
   ...cataloguePages
     .filter((page) => page.kind === 'pattern' && page.document)
-    .map(
-      ({ document, title, summary, group }): RoutePage => ({
-        path: patternDocsRoute(document!.id),
-        title,
-        area: 'docs',
-        section: 'Patterns',
-        group,
-        kind: 'reference',
-        summary,
-        document,
-      }),
-    ),
+    .map(({ document, title, summary, group }): RoutePage => ({
+      path: patternDocsRoute(document!.id),
+      title,
+      area: 'docs',
+      section: 'Patterns',
+      group,
+      kind: 'reference',
+      summary,
+      document,
+    })),
   {
     path: 'docs/changelog',
     title: 'Changelog',

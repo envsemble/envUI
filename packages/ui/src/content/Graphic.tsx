@@ -16,8 +16,10 @@ export type GraphicTint = 'own' | 'text';
 /** How a picture takes its box: whole inside it, or covering it and cropped. */
 export type GraphicFit = 'contain' | 'cover';
 
-interface GraphicBaseProps
-  extends Omit<ComponentPropsWithRef<'span'>, 'children' | 'role' | 'aria-label' | 'aria-hidden'> {
+interface GraphicBaseProps extends Omit<
+  ComponentPropsWithRef<'span'>,
+  'children' | 'role' | 'aria-label' | 'aria-hidden'
+> {
   /**
    * What the picture says, such as the company's name for its logo: it names the graphic as an
    * image. `""` when the text beside it already says it, such as a logo before the name: the

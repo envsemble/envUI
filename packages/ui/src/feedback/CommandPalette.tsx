@@ -78,8 +78,10 @@ export interface CommandPaletteOpenChangeDetails {
   reason: DialogOpenChangeReason | 'item-press';
 }
 
-export interface CommandPaletteProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {
+export interface CommandPaletteProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'defaultValue' | 'onChange'
+> {
   /** Whether the palette is open; the application opens it, such as from a shortcut. */
   open: boolean;
   /** Called with false, and why, when Esc, a press on the backdrop or a choice closes the palette. */

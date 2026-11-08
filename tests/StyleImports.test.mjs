@@ -113,7 +113,7 @@ function guaranteedBefore() {
   const before = new Map(
     modules.map((module) => [module, new Set(first(module) ? [] : everySheet)]),
   );
-  for (let changed = true; changed; ) {
+  for (let changed = true; changed;) {
     changed = false;
     for (const module of modules) {
       if (first(module)) continue;

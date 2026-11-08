@@ -46,8 +46,8 @@
     "eslint": "^10.0.0"
   },
   "devDependencies": {
-    "eslint": "10.12.0",
-    "typescript-eslint": "8.71.2"
+    "eslint": "10.14.0",
+    "typescript-eslint": "8.72.1"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

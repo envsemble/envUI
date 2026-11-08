@@ -25,7 +25,7 @@ const initialEntries: Entry[] = [
 
 /** Whether an entry lies inside the folder with the given id, at any depth. */
 function inside(entries: Entry[], entry: Entry, folder: string) {
-  for (let parent = entry.parent; parent !== null; ) {
+  for (let parent = entry.parent; parent !== null;) {
     if (parent === folder) return true;
     const id: string = parent;
     parent = entries.find((candidate) => candidate.id === id)?.parent ?? null;

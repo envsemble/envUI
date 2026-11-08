@@ -16,8 +16,7 @@ import '../styles/Alert.css';
 export type AlertTone = 'info' | 'success' | 'warning' | 'danger';
 
 export interface AlertProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>, SkeletonProps {
   /**
    * What the message means: info, success, warning or danger, for an error or a failure. Sets the
    * tint, the title's and icon's color and the icon; info and success alerts are also status messages.

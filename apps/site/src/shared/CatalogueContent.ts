@@ -23,8 +23,7 @@ interface PageFrontmatter {
 
 /** A piece of a page's catalogue text with where it is: Markdown, or text shown as it is written. */
 export type CataloguePiece = { where: string } & (
-  | { markdown: string; text?: undefined }
-  | { text: string; markdown?: undefined }
+  { markdown: string; text?: undefined } | { text: string; markdown?: undefined }
 );
 
 /**

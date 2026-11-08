@@ -28,8 +28,10 @@ export interface PaginationRange {
   pageCount?: number;
 }
 
-export interface PaginationProps
-  extends Omit<ComponentPropsWithRef<'nav'>, 'children' | 'onChange'> {
+export interface PaginationProps extends Omit<
+  ComponentPropsWithRef<'nav'>,
+  'children' | 'onChange'
+> {
   /**
    * The page shown, counted from 1. It is kept within the pages that exist, so a page beyond the
    * end shows the last one.

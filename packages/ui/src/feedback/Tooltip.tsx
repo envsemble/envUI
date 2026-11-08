@@ -49,8 +49,10 @@ interface TriggerProps {
   'aria-expanded'?: AriaAttributes['aria-expanded'];
 }
 
-export interface TooltipProps
-  extends Omit<ComponentPropsWithoutRef<'button'>, 'content' | 'children' | 'title'> {
+export interface TooltipProps extends Omit<
+  ComponentPropsWithoutRef<'button'>,
+  'content' | 'children' | 'title'
+> {
   /**
    * What the tooltip shows: a short, supplementary text, such as an icon-only control's name or
    * why a control is disabled. While it is open, a control with a name of its own is described by

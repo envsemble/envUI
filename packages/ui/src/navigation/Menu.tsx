@@ -45,7 +45,8 @@ const menuParts = {
 export type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
 
 export interface RootProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'>,
+  extends
+    Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'>,
     SkeletonProps {
   /**
    * The control that opens the menu, such as a Button or an AvatarButton; it receives the menu
@@ -477,8 +478,10 @@ function Group({ label, children, className, ...props }: GroupProps) {
   );
 }
 
-export interface RadioGroupProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {
+export interface RadioGroupProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'defaultValue' | 'onChange'
+> {
   /** Value of the checked item, or null for none, for a group the application controls. */
   value?: string | null;
   /**

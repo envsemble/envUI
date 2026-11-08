@@ -175,8 +175,10 @@ function tooltipContent(label: string, chords: string[][]) {
   );
 }
 
-export interface ButtonProps
-  extends Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label' | 'aria-pressed'> {
+export interface ButtonProps extends Omit<
+  ComponentPropsWithRef<'button'>,
+  'children' | 'aria-label' | 'aria-pressed'
+> {
   /** The icon, such as FormatBold. */
   icon: ReactNode;
   /**

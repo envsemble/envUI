@@ -20,7 +20,8 @@ import '../styles/TextField.css';
 // The prefix prop replaces the native RDFa attribute of the same name, and size the native width in
 // characters: a field's width comes from its layout.
 export interface TextFieldProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'>,
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'>,
     FieldProps,
     TextFieldAppearanceProps,
     TextFieldDecorationProps,

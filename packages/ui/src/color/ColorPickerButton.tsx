@@ -18,7 +18,8 @@ import '../styles/Base.css';
 import '../styles/ColorPicker.css';
 
 export interface ColorPickerButtonProps
-  extends ColorPickerValueProps,
+  extends
+    ColorPickerValueProps,
     Omit<
       ComponentPropsWithRef<'button'>,
       keyof ColorPickerValueProps | 'children' | 'type' | 'color'

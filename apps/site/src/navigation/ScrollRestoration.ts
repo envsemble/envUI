@@ -88,8 +88,7 @@ if (typeof window !== 'undefined') {
     pending = keptScroll();
   });
   const navigation = performance.getEntriesByType?.('navigation')[0] as
-    | PerformanceNavigationTiming
-    | undefined;
+    PerformanceNavigationTiming | undefined;
   if (navigation?.type === 'reload' || navigation?.type === 'back_forward') pending = keptScroll();
   // A press, such as on a link, or leaving the site writes the scroll at once, before the history
   // moves on.

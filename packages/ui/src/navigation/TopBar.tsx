@@ -14,8 +14,7 @@ import '../styles/Base.css';
 import '../styles/TopBar.css';
 
 export interface TopBarProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>, SkeletonProps {
   /**
    * Content before the title, at the inline start: a navigation IconButton, such as one that opens
    * a navigation drawer, a back IconButton, or the application's mark.
