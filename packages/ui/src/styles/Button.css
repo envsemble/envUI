@@ -244,6 +244,12 @@
     ) {
     background: var(--env-button-custom-fill, color-mix(in srgb, currentColor 10%, transparent));
   }
+  /* A row target leaves the press's fill to its row, which darkens as a whole. */
+  .env-button[data-row-target]:where([data-variant='text']):active:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, transparent);
+  }
 
   /* Without a label, a color change alone is too faint; icon-only text buttons such as a field's clear
      action also show a translucent state layer on hover and press. A container whose chrome is quiet,
