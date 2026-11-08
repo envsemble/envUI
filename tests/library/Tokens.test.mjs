@@ -452,7 +452,7 @@ const matchesAll = (part) => part === '*' || part === ':not(env-none)';
 
 /**
  * The var() reads without a fallback in `styleSheets` (file name to CSS) that are not defined for
- * every element that reads them, as `--name in File.css: selector`. A read is defined when, under
+ * every element that reads them, as `--name in <file>.css: selector`. A read is defined when, under
  * the at-rules of the read (a declaration under `@media (pointer: coarse)` defines a read under
  * that media query only; @layer limits nothing), and for each complex selector of its rule:
  *

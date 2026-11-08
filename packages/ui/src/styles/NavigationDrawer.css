@@ -79,7 +79,7 @@
   }
   /* A resizable drawer keeps each label and heading on one line, so its items keep their height as
      people narrow it: what doesn't fit ends in an ellipsis, a label cut short shows in full in a
-     tooltip and a heading in its title (Drawer.tsx). */
+     tooltip and a heading in its title (NavigationDrawer.tsx). */
   .env-navigation-drawer[data-resizable]
     :is(.env-navigation-drawer-label, .env-navigation-drawer-group-label) {
     overflow: hidden;
