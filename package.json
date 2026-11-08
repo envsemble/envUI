@@ -24,7 +24,7 @@
     "check:affected": "node scripts/test/Check.ts --affected",
     "test": "node --test tests/*/*.test.mjs packages/*/test/*.test.mjs",
     "test:browser": "playwright test --project=chromium --project=firefox --project=webkit --project=live-development",
-    "test:contrast": "playwright test tests/browser/Contrast.spec.ts --project=chromium",
+    "test:contrast": "playwright test tests/browser/library/Contrast.spec.ts --project=chromium",
     "test:a11y": "npm run build:site && playwright test --project=a11y",
     "test:a11y:update": "npm run build:site && playwright test --project=a11y --update-snapshots=changed",
     "test:visual": "node scripts/test/VisualTests.ts",

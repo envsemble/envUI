@@ -1,7 +1,7 @@
 // Chooses what `npm run check` and `npm run check:affected` run for a change: which files to lint,
 // whether to typecheck, which generated files to check, and which browser specs to run.
 //
-// A spec is named after its component (tests/browser/Button.spec.ts), and runs when that component
+// A spec is named after its component (tests/browser/library/Button.spec.ts), and runs when that component
 // changes: a library or fixture file runs the spec of its name, or of the name `aliases` gives it,
 // and the specs whose fixtures use it (FixtureImports.ts), all of them when they are few, else the
 // most specific few; a changed spec runs itself; a changed helper runs the specs that import it;
@@ -12,7 +12,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fixtureUse } from './FixtureImports.ts';
+import { fixtureUse, specPaths } from './FixtureImports.ts';
 
 export const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
@@ -117,7 +117,9 @@ const helperBudget = 8;
 /** More specs than this whose fixtures use a changed file run the most specific of them. */
 const fixtureBudget = 6;
 
-const specFile = (name: string) => `tests/browser/${name}.spec.ts`;
+/** A spec's file, by its name: Button for tests/browser/library/Button.spec.ts. */
+export const specFile = (name: string, root = repositoryRoot) =>
+  specPaths(root).get(name) ?? `tests/browser/library/${name}.spec.ts`;
 const baseName = (path: string) =>
   posix.basename(path).replace(/\.(?:spec\.ts|tsx?|css|m?js|html)$/, '');
 
@@ -130,10 +132,10 @@ function cachedFixtureUse(root: string) {
 
 /** What a spec needs beyond the development servers, read from its source. */
 export function specNeeds(name: string, root = repositoryRoot) {
-  const source = read(root, specFile(name));
+  const source = read(root, specFile(name, root));
   return {
     // Opens the hosted build, which npm run build:site writes.
-    site: /from '\.\/helpers\/HostedSite'/.test(source),
+    site: /from '\.\.\/helpers\/HostedSite'/.test(source),
     // Opens a page that the unit tests on the library build render.
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
@@ -144,7 +146,7 @@ export function specNeeds(name: string, root = repositoryRoot) {
 }
 
 /**
- * The browser specs a change runs, by name (Button for tests/browser/Button.spec.ts), each with
+ * The browser specs a change runs, by name (Button for tests/browser/library/Button.spec.ts), each with
  * why; the paths that run none; and the files more specs' fixtures use than run, with how many do.
  */
 export function specsFor(paths: readonly string[], root = repositoryRoot) {
@@ -153,7 +155,7 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
   const widelyUsed = new Map<string, number>();
   let specsUsing: ((path: string) => string[]) | undefined;
   // By name, as written: a file system that ignores case would find Table.spec.ts for table.
-  const written = new Set(walk(root, 'tests/browser', /\.spec\.ts$/).map(baseName));
+  const written = new Set(specPaths(root).keys());
   const exists = (name: string) => written.has(name);
   const add = (name: string, reason: string) => {
     if (!exists(name)) return false;
@@ -164,11 +166,12 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
   const helpers = new Map<string, string[]>();
   for (const path of paths) {
     let found = false;
-    if (/^tests\/browser\/[^/]+\.spec\.ts$/.test(path)) found = add(baseName(path), 'changed spec');
+    if (/^tests\/browser\/(?:library|site)\/[^/]+\.spec\.ts$/.test(path))
+      found = add(baseName(path), 'changed spec');
     else if (/^tests\/browser\/helpers\/[^/]+\.ts$/.test(path)) {
       const helper = baseName(path);
       const users = [...written].filter((spec) =>
-        new RegExp(`from '\\./helpers/${helper}'`).test(read(root, specFile(spec))),
+        new RegExp(`from '\\.\\./helpers/${helper}'`).test(read(root, specFile(spec, root))),
       );
       helpers.set(path, users);
       if (users.length <= helperBudget)
@@ -286,7 +289,7 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
 export function serversFor(names: readonly string[], root = repositoryRoot) {
   const servers = new Set<string>();
   for (const name of names) {
-    const source = read(root, specFile(name));
+    const source = read(root, specFile(name, root));
     if (/\bsiteDevUrl\b/.test(source)) servers.add('site');
     if (/\bfixtureUrl\b/.test(source)) servers.add('fixture');
   }

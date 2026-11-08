@@ -11,6 +11,7 @@ import {
   parseNameStatus,
   selectScope,
   serversFor,
+  specFile,
   specNeeds,
   specsFor,
   unitTestFiles,
@@ -145,12 +146,17 @@ test('every alias names a file and specs that exist, and adds what the imports m
       `the alias ${name} names no file`,
     );
     for (const target of targets)
-      assert.ok(existsSync(`tests/browser/${target}.spec.ts`), `${name}: no spec ${target}`);
+      assert.ok(existsSync(specFile(target)), `${name}: no spec ${target}`);
   }
 });
 
+test("a spec is in the library's or the site's folder", () => {
+  assert.equal(specFile('Button'), 'tests/browser/library/Button.spec.ts');
+  assert.equal(specFile('SiteShell'), 'tests/browser/site/SiteShell.spec.ts');
+});
+
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
-  assert.deepEqual(specs('tests/browser/Tree.spec.ts'), ['Tree']);
+  assert.deepEqual(specs('tests/browser/library/Tree.spec.ts'), ['Tree']);
   assert.deepEqual(specs('tests/browser/helpers/Chevron.ts'), ['Combobox', 'Select']);
   // Every spec imports Servers.ts: verify covers it.
   assert.deepEqual(specs('tests/browser/helpers/Servers.ts'), []);
@@ -181,7 +187,7 @@ test('the site runs its specs and live development, with the builds they open', 
   assert.equal(scope.build.site, true);
   assert.equal(specNeeds('LiveDevelopment').live, true);
   assert.equal(specNeeds('Hydration').library, true);
-  assert.equal(selectScope(['tests/browser/Hydration.spec.ts']).build.library, true);
+  assert.equal(selectScope(['tests/browser/library/Hydration.spec.ts']).build.library, true);
 });
 
 test('the examples, the pages that place them and dev mode run the layout check', () => {

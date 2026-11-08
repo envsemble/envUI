@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 
 // The library's style sheet ships in cascade layers, and names its custom properties with the
-// --env- prefix. tests/browser/CascadeLayers.spec.ts checks the cascade in browsers.
+// --env- prefix. tests/browser/library/CascadeLayers.spec.ts checks the cascade in browsers.
 
 const styles = fileURLToPath(new URL('../../packages/ui/src/styles/', import.meta.url));
 const layerOrder = ['env.reset', 'env.tokens', 'env.base', 'env.components', 'env.utilities'];

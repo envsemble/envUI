@@ -7,7 +7,14 @@
 // --base       the branch to compare with; else ENVUI_BASE, else origin/envui-1.0, else origin/dev
 // --files      check these paths instead of the branch's changes, such as to try the selection
 // --dry-run    print the selection and stop
-import { changedFiles, selectScope, serversFor, specNeeds, unitTestFiles } from './TestScope.ts';
+import {
+  changedFiles,
+  selectScope,
+  serversFor,
+  specFile,
+  specNeeds,
+  unitTestFiles,
+} from './TestScope.ts';
 import {
   bin,
   bold,
@@ -225,7 +232,7 @@ const browserTask = (names: string[], projects: string[], label: string) =>
       // A test that fails once under the load of three engines and passes again is reported as
       // flaky; one that fails twice fails the run.
       ...(affected ? ['--retries=1'] : ['--max-failures=5']),
-      ...names.map((name) => `tests/browser/${name}.spec.ts`),
+      ...names.map((name) => specFile(name)),
     ],
     {
       env: { ENVUI_SERVERS: serversFor(names).join(',') || 'none' },

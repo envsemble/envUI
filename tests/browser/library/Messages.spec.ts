@@ -1,0 +1,151 @@
+import { test, expect } from '@playwright/test';
+import { fixtureUrl } from '../helpers/Servers';
+import { defaultMessages } from '../../../packages/ui/src/foundations/messages/defaultMessages';
+
+// The pseudo-locale check: tests/fixture/MessageStrings.tsx renders the components whose strings come
+// from EnvUIProvider's messages with every message replaced by ⟦namespace.key⟧. No English default
+// may be left in their text, names, descriptions, titles, placeholders or value texts. As each
+// batch moves a family's strings into messages, it adds the family's components to the fixture.
+
+/** Every string default, as people would read it. */
+const englishDefaults = new Set(
+  Object.values(defaultMessages)
+    .flatMap((keys) => Object.values(keys))
+    .filter((value): value is string => typeof value === 'string'),
+);
+
+test('no English default is left under a provider that sets every message', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=message-strings`);
+  const root = page.getByTestId('messages');
+  await expect(root).toBeVisible();
+  // ConfirmButton announces its armed state.
+  await root.getByRole('button', { name: 'Remove', exact: true }).click();
+  await expect(root.getByRole('status').filter({ hasText: '⟦confirmButton.armed⟧' })).toHaveCount(
+    1,
+  );
+  // CopyButton shows its result in a tooltip.
+  await root.getByRole('button', { name: '⟦copyButton.copy⟧' }).hover();
+  const found = await page.evaluate(() => {
+    const texts: string[] = [];
+    const attributes = ['aria-label', 'aria-description', 'title', 'placeholder', 'aria-valuetext'];
+    for (const element of document.querySelectorAll('body *')) {
+      for (const node of element.childNodes)
+        if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
+          texts.push(node.textContent.trim());
+      for (const attribute of attributes) {
+        const value = element.getAttribute(attribute);
+        if (value) texts.push(value.trim());
+      }
+    }
+    return texts;
+  });
+  const left = found.filter((text) => englishDefaults.has(text));
+  expect(left).toEqual([]);
+  expect(found).toContain('⟦dialog.close⟧');
+  expect(found).toContain('⟦themePreference.toDark⟧');
+  for (const key of [
+    'searchField.clear',
+    'textarea.resize',
+    'textarea.resizeDescription',
+    'combobox.clear',
+    'combobox.remove',
+    'datePicker.clear',
+    'timePicker.clear',
+    'monthPicker.clear',
+    'calendar.previousMonth',
+    'calendar.nextMonth',
+    'composer.send',
+    'colorPicker.formatButton',
+    'colorPicker.hex',
+    'colorPicker.hexField',
+    'colorPicker.copy',
+    'colorPicker.swatches',
+    'colorPicker.button',
+    'panelDock.minimize',
+    'panelDock.maximize',
+    'panelDock.closeWindow',
+    'panelDock.minimized',
+    'panelDock.open',
+    'panelDock.close',
+    'panelDock.resize',
+    'codeBlock.title',
+    'codeBlock.copy',
+    'codeBlock.label',
+    'markdown.table',
+    'markdown.taskDone',
+    'markdown.taskOpen',
+    'markdownEditor.views',
+    'markdownEditor.write',
+    'markdownEditor.preview',
+    'markdownEditor.toolbar',
+    'editor.bold',
+    'editor.undo',
+  ])
+    expect(found).toContain(`⟦${key}⟧`);
+  for (const marked of [
+    '⟦avatarGroup.label⟧',
+    '⟦avatarGroup.more⟧',
+    '⟦rating.label⟧',
+    '⟦diffStat.label⟧',
+    '⟦message.sending⟧',
+    '⟦message.failed⟧',
+    '⟦calendarHeatmap.less⟧',
+    '⟦calendarHeatmap.more⟧',
+    '⟦relativeTime.now⟧',
+    '⟦alert.dismiss⟧',
+    '⟦common.loading⟧',
+    '⟦toast.dismiss⟧',
+    '⟦toast.hidden⟧',
+    '⟦toast.regionBottomEnd⟧',
+    '⟦toast.regionTopCenter⟧',
+    '⟦panes.resize⟧',
+    '⟦panes.back⟧',
+    '⟦scaffold.skipToContent⟧',
+    '⟦scaffold.skipToNavigation⟧',
+  ])
+    expect(found).toContain(marked);
+  // CommandPalette invites a search through its status before people type.
+  await root.getByRole('button', { name: 'Open palette' }).click();
+  await expect(page.getByRole('dialog', { name: 'Go to' }).getByRole('status')).toHaveText(
+    '⟦commandPalette.emptyQuery⟧',
+  );
+});
+
+test('the app parts take their names, labels and announcements from the provider', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=message-strings`);
+  const root = page.getByTestId('messages');
+  // A reorderable list names its handles and announces a move.
+  const handle = root.getByRole('list', { name: 'Order' }).getByRole('button').first();
+  await expect(handle).toHaveAccessibleName('⟦list.reorder⟧');
+  await handle.focus();
+  await page.keyboard.press('Space');
+  await expect(page.locator('.env-list-announcer')).toHaveText('⟦list.lifted⟧');
+  await page.keyboard.press('ArrowDown');
+  await expect(page.locator('.env-list-announcer')).toHaveText('⟦list.moved⟧');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.env-list-announcer')).toHaveText('⟦list.cancelled⟧');
+  // The confirm dialog's cancel button.
+  await root.getByRole('button', { name: 'Open confirm' }).click();
+  await expect(
+    page.getByRole('alertdialog').getByRole('button', { name: '⟦confirmDialog.cancel⟧' }),
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('alertdialog')).toBeHidden();
+});
+
+test('messages written inline keep the context while they stay the same', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=message-strings`);
+  const probe = page.getByTestId('inline-probe');
+  await expect(probe).toHaveText('⟦inline.loading⟧');
+  // The count is written in an effect, after the first paint.
+  await expect(probe).toHaveAttribute('data-renders', /^\d+$/);
+  const before = await probe.getAttribute('data-renders');
+  const rerender = page.getByRole('button', { name: /⟦rerender⟧/ });
+  for (const count of [1, 2, 3]) {
+    await rerender.click();
+    await expect(rerender).toHaveText(`⟦rerender⟧ ${count}`);
+  }
+  await expect(probe).toHaveAttribute('data-renders', before ?? '');
+});

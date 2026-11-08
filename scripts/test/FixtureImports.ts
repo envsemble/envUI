@@ -8,7 +8,9 @@ import { posix, resolve } from 'node:path';
 
 const library = 'packages/ui/src';
 const fixtures = 'tests/fixture';
+/** The browser specs' folder: the library's in library/, the site's in site/, helpers in helpers/. */
 const specs = 'tests/browser';
+const specFolders = [`${specs}/library`, `${specs}/site`];
 
 /** An import of a module: its specifier and the names it imports, or all of them. */
 interface Import {
@@ -192,12 +194,11 @@ function appFixtures(sources: Sources) {
 }
 
 /** The modules a spec opens or renders, by what its source and the helpers it imports name. */
-function specRoots(sources: Sources, name: string, fixtureModules: Map<string, Set<string>>) {
-  const path = `${specs}/${name}.spec.ts`;
+function specRoots(sources: Sources, path: string, fixtureModules: Map<string, Set<string>>) {
   const helpers = importsOf(sources.text(path) ?? '')
     .map(({ specifier }) => specifier)
-    .filter((specifier) => specifier.startsWith('./helpers/'))
-    .map((specifier) => `${specs}/${specifier.slice(2)}.ts`);
+    .filter((specifier) => specifier.startsWith('../helpers/'))
+    .map((specifier) => `${specs}/${specifier.slice(3)}.ts`);
   const roots = new Set<string>();
   for (const file of [path, ...helpers]) {
     const text = sources.text(file) ?? '';
@@ -211,20 +212,23 @@ function specRoots(sources: Sources, name: string, fixtureModules: Map<string, S
     // Imports of the fixture's modules and of the library, also those of source it writes out to
     // render, as a module in a template string.
     for (const item of importsOf(text))
-      if (!item.specifier.startsWith('./helpers/'))
+      if (!item.specifier.startsWith('../helpers/'))
         for (const module of sources.resolve(file, item)) roots.add(module);
   }
   return roots;
 }
 
-/** Every spec's name, from tests/browser/<Name>.spec.ts. */
-function specNames(root: string) {
-  const directory = resolve(root, specs);
-  return existsSync(directory)
-    ? readdirSync(directory)
-        .filter((file) => file.endsWith('.spec.ts'))
-        .map((file) => file.slice(0, -'.spec.ts'.length))
-    : [];
+/** Every spec's path from the root, by its name: tests/browser/library/<Name>.spec.ts or site/. */
+export function specPaths(root: string) {
+  const paths = new Map<string, string>();
+  for (const folder of specFolders) {
+    const directory = resolve(root, folder);
+    if (!existsSync(directory)) continue;
+    for (const file of readdirSync(directory))
+      if (file.endsWith('.spec.ts'))
+        paths.set(file.slice(0, -'.spec.ts'.length), `${folder}/${file}`);
+  }
+  return paths;
 }
 
 /** The library's modules, by path from the root, the generated icons left out. */
@@ -246,8 +250,8 @@ export function fixtureUse(root: string) {
   const sources = new Sources(root);
   const fixtureModules = appFixtures(sources);
   const users = new Map<string, Set<string>>();
-  for (const name of specNames(root)) {
-    const pending = [...specRoots(sources, name, fixtureModules)];
+  for (const [name, path] of specPaths(root)) {
+    const pending = [...specRoots(sources, path, fixtureModules)];
     const seen = new Set<string>();
     while (pending.length) {
       const path = pending.pop()!;
