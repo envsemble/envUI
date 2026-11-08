@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  useEffect,
-  useId,
-  useImperativeHandle,
-  useState,
-  type KeyboardEvent as ReactKeyboardEvent,
-  type Ref,
-} from 'react';
+import { useEffect, useId, useImperativeHandle, useState, type Ref } from 'react';
 import { ReactRenderer } from '@tiptap/react';
 import { exitSuggestion, type SuggestionOptions, type SuggestionProps } from '@tiptap/suggestion';
 import { PluginKey } from '@tiptap/pm/state';
@@ -29,7 +22,7 @@ interface MenuHandle {
   onKeyDown: (event: KeyboardEvent) => boolean;
 }
 
-type MenuProps = SuggestionProps<SuggestionItem> & {
+type MenuProps<I extends SuggestionItem> = SuggestionProps<I> & {
   /** The list's name, such as People; the provider's Suggestions where the source names none. */
   label: string | undefined;
   /** Whether the source's items failed to load. */
@@ -39,15 +32,17 @@ type MenuProps = SuggestionProps<SuggestionItem> & {
 };
 
 /** Each option's key: its place in the list, since sources may repeat an identity. */
-const keyOf = (items: readonly SuggestionItem[]) => (item: SuggestionItem) =>
-  String(items.indexOf(item));
+const keyOf =
+  <I,>(items: readonly I[]) =>
+  (item: I) =>
+    String(items.indexOf(item));
 
 /**
  * The suggestions of a trigger, such as @: a listbox beside the caret whose options the editor's
  * arrow keys move through and Enter picks, while focus stays in the document. It closes as focus
  * leaves the editor, also with Tab. Its words come from EnvUIProvider's messages.richText.
  */
-function SuggestionMenu({
+function SuggestionMenu<I extends SuggestionItem>({
   items,
   command,
   loading,
@@ -56,7 +51,7 @@ function SuggestionMenu({
   editor,
   pluginKey,
   ref,
-}: MenuProps) {
+}: MenuProps<I>) {
   const messages = useMessages('richText', richTextMessages);
   const getKey = keyOf(items);
   // New items start at the first, in the render that shows them, so a key pressed as they arrive
@@ -121,11 +116,11 @@ function SuggestionMenu({
         }
         // Enter always belongs to the list while it shows, also while it loads.
         if (event.key === 'Enter') {
-          if (!loading) input.onKeyDown(event as unknown as ReactKeyboardEvent<HTMLElement>);
+          if (!loading) input.onKeyDown(event);
           return true;
         }
         if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return false;
-        input.onKeyDown(event as unknown as ReactKeyboardEvent<HTMLElement>);
+        input.onKeyDown(event);
         return true;
       },
     }),
@@ -187,17 +182,17 @@ export function createSuggestionOptions<I extends SuggestionItem>(source: {
       }
     },
     render: () => {
-      let component: ReactRenderer<MenuHandle, MenuProps> | null = null;
+      let component: ReactRenderer<MenuHandle, MenuProps<I>> | null = null;
       let unmount: (() => void) | undefined;
-      const menuProps = (props: SuggestionProps<I>): MenuProps => ({
-        ...(props as unknown as SuggestionProps<SuggestionItem>),
+      const menuProps = (props: SuggestionProps<I>): MenuProps<I> => ({
+        ...props,
         label: source.label,
         failed: props.loading ? false : failed,
         pluginKey,
       });
       return {
         onStart: (props) => {
-          component = new ReactRenderer(SuggestionMenu, {
+          component = new ReactRenderer(SuggestionMenu<I>, {
             editor: props.editor,
             props: menuProps(props),
             className: 'env-rich-text-suggestions-positioner',

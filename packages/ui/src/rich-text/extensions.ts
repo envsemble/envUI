@@ -27,6 +27,8 @@ export function createRichTextExtensions(
       underline: false,
       link: { openOnClick: false, isAllowedUri: safeRichTextUrl },
     }),
+    // The option is typed as marked's module, but Tiptap reads only what an instance has too: its
+    // Lexer, defaults, lexer, use and setOptions.
     Markdown.configure({ marked: parser as unknown as typeof marked }),
     TaskList,
     TaskItem.extend({ addNodeView: () => createTaskItemNodeView() }).configure({ nested: true }),
