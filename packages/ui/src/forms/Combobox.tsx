@@ -233,7 +233,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
 
-  const { selection, selectedValues, keep } = useComboboxSelection(props, nativeRef);
+  const { value: selection, selectedValues, choose } = useComboboxSelection(props, nativeRef);
 
   const {
     known,
@@ -248,22 +248,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   // onInputValueChange reported last.
   const [inputText, setInputText] = useState(singleItem?.label ?? '');
   const reportedQuery = useRef('');
-
-  /** Keeps a value people chose, where the field keeps its own, and reports it with its options. */
-  function choose(next: ComboboxSelection) {
-    keep(next);
-    // Base UI's selection is a list of values for a field that takes several, else one or none.
-    if (props.multiple) {
-      const values = [...((next as readonly string[] | null) ?? [])];
-      props.onValueChange?.(
-        values,
-        values.map((selected) => known.get(selected) ?? { value: selected, label: selected }),
-      );
-    } else {
-      const single = (next as string | null) ?? null;
-      props.onValueChange?.(single, single == null ? null : (known.get(single) ?? null));
-    }
-  }
 
   function handleValueChange(
     next: ComboboxSelection,
@@ -282,7 +266,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       if (details.reason === 'input-clear' && !popupOpen) changeOpen(true, details.reason);
       return;
     }
-    choose(next);
+    choose(next, known);
   }
 
   /**
@@ -327,8 +311,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       <BaseCombobox.Root<string, boolean, Item>
         items={collection}
         multiple={isMultiple}
-        // Base UI's value type takes a mutable list of values; it only reads this one.
-        value={selection as string[] | string | null}
+        value={selection}
         onValueChange={handleValueChange}
         onInputValueChange={handleInputValueChange}
         itemToStringLabel={labelOf}

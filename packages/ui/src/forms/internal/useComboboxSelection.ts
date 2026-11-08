@@ -5,14 +5,15 @@ import { useFormReset } from '../../internal/field/useFormReset.js';
 import type { ComboboxItem } from './comboboxItems.js';
 import type { ComboboxProps } from '../Combobox.js';
 
-/** The chosen value as Base UI takes it: a list of values, one value, or none. */
+/** The chosen value as Base UI takes and reports it: a list of values, one value, or none. */
 export type ComboboxSelection = readonly string[] | string | null;
 
 /**
  * A combobox's chosen value: the one it is given, or one the field keeps itself, which a native
- * form reset restores to the default; as Base UI takes it, a list of values for a field that takes
- * several. Returns it, the same as a list of values, and a function that keeps a new one where the
- * field keeps its own.
+ * form reset restores to the default. Returns it as Base UI takes it (`value`, a list of values for
+ * a field that takes several), the same as a list of values, and `choose`, which keeps a value
+ * people chose where the field keeps its own and reports it, as one value or several, with the
+ * options `known` by value.
  */
 export function useComboboxSelection<Item extends ComboboxItem>(
   props: ComboboxProps<Item>,
@@ -31,15 +32,28 @@ export function useComboboxSelection<Item extends ComboboxItem>(
     },
     props.form,
   );
-  // One array per selection, so the options known by value are rebuilt only when it changes.
-  const selectedValues = useMemo(
-    () => (typeof selection === 'string' ? [selection] : (selection ?? [])),
-    [selection],
-  );
+  // Base UI's value type takes a mutable list, and the options known by value are rebuilt only as
+  // the list changes: both once per selection.
+  const { value, selectedValues } = useMemo(() => {
+    if (typeof selection === 'string') return { value: selection, selectedValues: [selection] };
+    if (selection === null) return { value: null, selectedValues: [] };
+    const values = [...selection];
+    return { value: values, selectedValues: values };
+  }, [selection]);
 
-  function keep(next: ComboboxSelection) {
+  function choose(next: ComboboxSelection, known: ReadonlyMap<string, Item>) {
     if (!controlled) setUncontrolledValue(next);
+    if (props.multiple) {
+      const values = typeof next === 'string' ? [next] : [...(next ?? [])];
+      props.onValueChange?.(
+        values,
+        values.map((chosen) => known.get(chosen) ?? { value: chosen, label: chosen }),
+      );
+    } else {
+      const single = typeof next === 'string' ? next : null;
+      props.onValueChange?.(single, single === null ? null : (known.get(single) ?? null));
+    }
   }
 
-  return { selection, selectedValues, keep };
+  return { value, selectedValues, choose };
 }
