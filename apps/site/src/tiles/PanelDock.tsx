@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { PanelDock, Surface, Text, type PanelDockPanel } from '@envsemble/envui';
-import { useMedia } from '../motion/Autoplay';
-import { useHeldView, useMustShow, usePointer, type PointerStep } from '../motion/Motion';
-import { outlined } from './Outline';
-import { narrowGallery } from './Tiles';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const minimize = '.env-panel-dock-panel[data-panel-id="notes"] [aria-label="Minimize"]';
 const notesTab = '.env-panel-dock-tab[data-panel-id="notes"] .env-panel-dock-tab-restore';
@@ -45,21 +42,11 @@ const start: PanelDockPanel[] = [
 ];
 
 /**
- * The region the panels dock in, a surface outlined so its bottom edge shows, under the top line of
- * its page: the open panel stands on its bottom edge below that line, so no text lies under the
- * panel, and the region is as low as the line and the panel. It shows whole, drawn a little smaller
- * where its stage is lower (useHeldView, with the panel named to show); on a phone's narrower
- * tile, narrower. Its dock is wider than `stackBelow`, so the open panel keeps its own width at the
- * bottom inline-end edge, as on a desktop.
+ * The region the panels dock in, the page under its top line, filling its card (AppTile.tsx): the
+ * open panel stands on its bottom edge, at the end, as on a desktop. Its dock is wider than
+ * `stackBelow`, so the open panel keeps its own width there.
  */
-const region = {
-  ...outlined,
-  position: 'relative',
-  inlineSize: '12.25rem',
-  blockSize: '8.75rem',
-  overflow: 'hidden',
-} as const;
-const narrowRegion = { ...region, inlineSize: '11rem' } as const;
+const region = { position: 'relative', blockSize: '100%', overflow: 'hidden' } as const;
 
 /**
  * A notes panel docked at the bottom end of a page, at rest, whose tab takes its place there
@@ -68,14 +55,12 @@ const narrowRegion = { ...region, inlineSize: '11rem' } as const;
  */
 export default function PanelDockTile() {
   const [panels, setPanels] = useState(start);
-  const narrow = useMedia(narrowGallery);
-  useHeldView();
-  useMustShow('.env-panel-dock-panel');
   usePointer(script, { onRest: () => setPanels(start) });
   return (
-    <Surface background="default" radius="sm" padding={1} style={narrow ? narrowRegion : region}>
-      <Text variant="caption" style={{ whiteSpace: 'nowrap' }}>
-        Launch plan, due in May
+    <Surface background="page" radius="none" padding={3} style={region}>
+      <Text variant="title">Launch plan</Text>
+      <Text variant="body-sm" emphasis="muted">
+        Due in May.
       </Text>
       <PanelDock.Root
         panels={panels}

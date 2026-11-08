@@ -57,7 +57,6 @@ export default function AppFrameTile() {
       scroll="body"
       landmarks={false}
       navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
-      style={{ inlineSize: '17rem', blockSize: '12.5rem' }}
       topBar={<TopBar title="Northwind" actions={<AvatarButton name="Alex Morgan" />} />}
       navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
