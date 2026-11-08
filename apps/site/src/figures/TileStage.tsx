@@ -1,12 +1,4 @@
-import {
-  Component,
-  Suspense,
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-} from 'react';
+import { Component, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import { IconArticle } from '@envsemble/envui/icons/Article';
 import { Playback, StageOverlays } from '../motion/Playback';
@@ -165,12 +157,11 @@ export function TileStage({
             data-overlay={flag(ownSize && picture.window?.overlay)}
             data-app={app ? appTileFrame : undefined}
             style={
-              picture.window &&
-              ({
+              picture.window && {
                 '--catalogue-tile-width': `${picture.window.width}rem`,
                 '--catalogue-tile-height': `${picture.window.height}rem`,
                 '--catalogue-own-popup-least': picture.window.popupLeast,
-              } as CSSProperties)
+              }
             }
             inert
             aria-hidden

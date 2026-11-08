@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { Text } from '@envsemble/envui';
 import type { FigureWords } from './ColorFigures';
 
@@ -67,11 +66,7 @@ export function SwatchesFigure({ legend }: FigureWords) {
                     <span
                       className="catalogue-role-swatch"
                       aria-hidden="true"
-                      style={
-                        {
-                          '--catalogue-card-fill': `var(--env-color-${colors.at(-1)})`,
-                        } as CSSProperties
-                      }
+                      style={{ '--catalogue-card-fill': `var(--env-color-${colors.at(-1)})` }}
                     >
                       {colors.map((color) => (
                         <span key={color} style={{ background: `var(--env-color-${color})` }} />

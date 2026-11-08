@@ -7,7 +7,7 @@ import {
   PageHeader,
   Surface,
 } from '@envsemble/envui';
-import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { useTimeline } from '../../motion/Timeline';
 import { remPixels } from '@envui-internal/internal/lengths';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
@@ -83,7 +83,7 @@ function TextSizeSteps() {
   return (
     <div ref={place} className="catalogue-class-text-place">
       <CornerLabel>{sizeNames[step]}</CornerLabel>
-      <div style={{ zoom: fit } as CSSProperties}>
+      <div style={{ zoom: fit }}>
         <StepStack
           className="catalogue-fixed-frame catalogue-class-text-frame"
           count={sizes.length}

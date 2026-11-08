@@ -1,12 +1,4 @@
-import {
-  createContext,
-  use,
-  useLayoutEffect,
-  useRef,
-  type CSSProperties,
-  type ReactNode,
-  type RefObject,
-} from 'react';
+import { createContext, use, useLayoutEffect, useRef, type ReactNode, type RefObject } from 'react';
 import { Text } from '@envsemble/envui';
 import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
@@ -75,7 +67,7 @@ function DeviceStage({ kind, children }: { kind: DeviceKind; children: ReactNode
     <div
       ref={stage}
       className="site-device-stage"
-      style={{ '--site-device-scale': fit?.scale ?? 1 } as CSSProperties}
+      style={{ '--site-device-scale': fit?.scale ?? 1 }}
     >
       <div
         className="site-device-fit"

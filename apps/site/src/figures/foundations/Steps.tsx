@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 /*
  * Parts of the foundations' animated figures that step through states, such as a card at each text
@@ -43,5 +43,5 @@ export function CornerLabel({ children }: { children: ReactNode }) {
  * its width, so the content rewraps and its container queries see less room, as they would.
  */
 export function AtTextSize({ size, children }: { size: number; children: ReactNode }) {
-  return <div style={{ zoom: size } as CSSProperties}>{children}</div>;
+  return <div style={{ zoom: size }}>{children}</div>;
 }

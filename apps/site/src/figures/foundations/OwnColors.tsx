@@ -45,7 +45,11 @@ const oklch = (lightness: number, chroma: number, hue: number, alpha?: number) =
  * accent text on it; translucent tinted fills for quiet controls. At high contrast the accent goes
  * a step further from the page, and text and edges keep the theme's own, stronger colors.
  */
-function schemeColors({ hue }: (typeof schemes)[number], theme: ColorScheme, high: boolean) {
+function schemeColors(
+  { hue }: (typeof schemes)[number],
+  theme: ColorScheme,
+  high: boolean,
+): CSSProperties {
   const light = theme === 'light';
   const step = (lightness: number, by: number) => lightness + (light ? -by : by);
   // A fill's hover and press: a step further from the page, or, for the accent, deeper in both
@@ -117,7 +121,7 @@ function schemeColors({ hue }: (typeof schemes)[number], theme: ColorScheme, hig
         '--env-color-border-default': oklch(0.62, 0.035, hue),
         '--env-color-border-muted': oklch(0.4, 0.03, hue),
       };
-  return (high ? fills : { ...fills, ...lines }) as CSSProperties;
+  return high ? fills : { ...fills, ...lines };
 }
 
 /** An area in a scheme, in a theme, at the reader's contrast. */

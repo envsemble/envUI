@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { Column, IconButton, Surface, Text, useTheme } from '@envsemble/envui';
 import { IconViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import { Figure } from '../foundations/Figure';
@@ -105,7 +104,7 @@ function ShotFigure({ shot }: { shot: Shot }) {
         className="docs-dev-mode-shot"
         src={theme === 'dark' ? shot.dark : shot.light}
         // The file holds twice the CSS size: the picture shows at its own size, or narrower.
-        style={{ '--docs-shot-width': `${shot.width / 16}rem` } as CSSProperties}
+        style={{ '--docs-shot-width': `${shot.width / 16}rem` }}
         alt={shot.alt}
         width={shot.width}
         height={shot.height}
