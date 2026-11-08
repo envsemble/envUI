@@ -1,10 +1,8 @@
 'use client';
 
 import {
-  useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -16,14 +14,22 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
-import { typeaheadTimeout } from '../internal/typeahead.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
-import { IconChevronRight } from '../icons/ChevronRight.js';
 import { ContextMenu } from './ContextMenu.js';
-import { remPixels } from '../internal/lengths.js';
 import { isRightToLeft } from '../internal/direction.js';
+import {
+  findTypedRow,
+  isTyping,
+  parentIndex,
+  rowElementId,
+  siblingPositions,
+  type TypedText,
+} from './internal/treeModel.js';
+import { placeRows, TreeRow } from './internal/TreeRow.js';
+import { useTreeTransitions } from './internal/useTreeTransitions.js';
+import { useTreeViewport } from './internal/useTreeViewport.js';
 import '../styles/Base.css';
 import '../styles/Tree.css';
 
@@ -122,84 +128,6 @@ export interface TreeProps<Item extends TreeItem> extends Omit<
   density?: RowDensity;
 }
 
-/** Rows outside the viewport kept rendered above and below it. */
-const overscan = 8;
-/**
- * The rows a tree renders before it has measured its viewport, such as in the server's markup: as
- * many as a tall pane shows, so the first paint is already full and measuring only adds rows.
- */
-const unmeasuredRows = 24;
-/** Each density's row height in rem in the comfortable scale, until a row can be measured. */
-const rowRem: Record<RowDensity, number> = { xs: 1.5, sm: 1.75, md: 2.25, lg: 2.75 };
-/** No rows arriving. */
-const noValues: ReadonlySet<string> = new Set();
-
-/**
- * A row expanding or collapsing: the rows it reveals or hides, which grow or shrink as one group
- * from start, the index of its first row, while the rows below follow the group's end.
- */
-interface TreeMotion<Item extends TreeItem> {
-  kind: 'open' | 'close';
-  start: number;
-  rows: readonly Item[];
-}
-
-/**
- * The motion from one list of rows to the next: rows that arrive as one block among unchanged rows
- * open, and rows that leave as one block close. Any other change, such as new items altogether,
- * has none.
- */
-function treeMotion<Item extends TreeItem>(
-  before: readonly Item[],
-  after: readonly Item[],
-): TreeMotion<Item> | null {
-  const count = after.length - before.length;
-  if (count === 0) return null;
-  const [longer, shorter] = count > 0 ? [after, before] : [before, after];
-  let start = 0;
-  while (start < shorter.length && shorter[start]!.value === longer[start]!.value) start += 1;
-  const size = Math.abs(count);
-  for (let index = start; index < shorter.length; index += 1) {
-    if (shorter[index]!.value !== longer[index + size]!.value) return null;
-  }
-  return { kind: count > 0 ? 'open' : 'close', start, rows: longer.slice(start, start + size) };
-}
-
-/** A row id safe for id references, whatever characters the item id contains. */
-function rowElementId(treeId: string, itemId: string) {
-  return `${treeId}-row-${itemId.replace(
-    /[^A-Za-z0-9-]/g,
-    (character) => `_${character.codePointAt(0)!.toString(16)}_`,
-  )}`;
-}
-
-function itemText(item: TreeItem) {
-  return item.textValue ?? (typeof item.label === 'string' ? item.label : '');
-}
-
-/** Position and size of each row among its siblings, for aria-posinset and aria-setsize. */
-function siblingPositions(items: readonly TreeItem[]) {
-  const positions = new Array<number>(items.length);
-  const sizes = new Array<number>(items.length);
-  // Each open level keeps the indexes of its rows until a shallower row closes it.
-  const levels: number[][] = [];
-  const close = (depth: number) => {
-    while (levels.length > depth) {
-      const rows = levels.pop()!;
-      for (const index of rows) sizes[index] = rows.length;
-    }
-  };
-  items.forEach((item, index) => {
-    close(item.depth + 1);
-    while (levels.length < item.depth + 1) levels.push([]);
-    const rows = levels[item.depth]!;
-    rows.push(index);
-    positions[index] = rows.length;
-  });
-  close(0);
-  return { positions, sizes };
-}
-
 /**
  * A virtualized tree of rows for large hierarchies such as file trees. The application passes the
  * visible rows and owns expansion and selection; the tree owns focus, keyboard navigation and
@@ -224,16 +152,11 @@ export function Tree<Item extends TreeItem>({
   const messages = useMessages('tree', treeMessages);
   const treeId = useId().replace(/[^A-Za-z0-9-]/g, '');
   const container = useRef<HTMLDivElement>(null);
-  const [scrollTop, setScrollTop] = useState(0);
-  const [viewportHeight, setViewportHeight] = useState(0);
-  const [rowHeight, setRowHeight] = useState(rowRem[density] * 16);
   const [activeId, setActiveId] = useState<string | null>(selectedId);
   // Keyboard focus shows a ring on the active row; pointer focus does not.
   const [focusVisible, setFocusVisible] = useState(false);
   const pointerFocus = useRef(false);
-  const typeahead = useRef({ text: '', time: 0 });
-  // The last selection scrolled into view; a new selection is revealed once its row is visible.
-  const revealedSelection = useRef<string | null>(null);
+  const typeahead = useRef<TypedText>({ text: '', time: 0 });
 
   const indexById = useMemo(() => {
     const map = new Map<string, number>();
@@ -241,133 +164,29 @@ export function Tree<Item extends TreeItem>({
     return map;
   }, [items]);
   const { positions, sizes } = useMemo(() => siblingPositions(items), [items]);
-
-  // The rows that arrive with new items fade in from their starting style; the first rows, and rows
-  // that only scroll into view, show at once. Where a row expands or collapses, its rows instead
-  // grow or shrink as one group, as an accordion's panel does, kept until the group has closed.
-  // The same rows passed again, as a new list, keep the change that is playing.
-  const shownItems = useRef<readonly Item[] | null>(null);
-  const lastChange = useRef<{ arriving: ReadonlySet<string>; motion: TreeMotion<Item> | null }>({
-    arriving: noValues,
-    motion: null,
-  });
-  const { arriving, motion } = useMemo(() => {
-    const before = shownItems.current;
-    if (!before) return lastChange.current;
-    const same =
-      before.length === items.length &&
-      before.every((item, index) => item.value === items[index]!.value);
-    if (same) return lastChange.current;
-    const motion = treeMotion(before, items);
-    if (motion) return { arriving: noValues, motion };
-    const values = new Set(before.map((item) => item.value));
-    return {
-      arriving: new Set(items.filter((item) => !values.has(item.value)).map((item) => item.value)),
-      motion: null,
-    };
-  }, [items]);
-  useLayoutEffect(() => {
-    lastChange.current = { arriving, motion };
-  }, [arriving, motion]);
-  useLayoutEffect(() => {
-    shownItems.current = items;
-  }, [items]);
-  useLayoutEffect(function arrive() {
-    const rows = container.current?.querySelectorAll('.env-tree-item[data-starting-style]');
-    if (!rows?.length) return;
-    void getComputedStyle(rows[0]!).opacity;
-    for (const row of rows) row.removeAttribute('data-starting-style');
-  });
-  // A motion renders first from where the rows were, then moves to where they go, and ends once its
-  // transitions have finished: at once under a reduced-motion preference.
-  const rowsElement = useRef<HTMLDivElement>(null);
-  const [movingMotion, setMovingMotion] = useState<TreeMotion<Item> | null>(null);
-  const [settledMotion, setSettledMotion] = useState<TreeMotion<Item> | null>(null);
-  const activeMotion = motion && motion !== settledMotion ? motion : null;
-  const moving = activeMotion !== null && activeMotion === movingMotion;
-  useLayoutEffect(() => {
-    const element = rowsElement.current;
-    if (!activeMotion || !element) return;
-    // Reading the style makes the browser take the starting positions before they change.
-    void getComputedStyle(element).getPropertyValue('--env-tree-shift');
-    if (!moving) {
-      setMovingMotion(activeMotion);
-      return;
-    }
-    const group = element.querySelector('.env-tree-group');
-    const transitions = [...element.getAnimations(), ...(group?.getAnimations() ?? [])];
-    let current = true;
-    const settle = () => {
-      if (current) setSettledMotion(activeMotion);
-    };
-    void Promise.all(transitions.map((transition) => transition.finished)).then(settle, settle);
-    return () => {
-      current = false;
-    };
-  }, [activeMotion, moving]);
+  const { rowsElement, arriving, motion, moving } = useTreeTransitions(items);
 
   // The active row falls back to the selected or first row when it leaves the visible rows.
   const lastActiveIndex = useRef(0);
+  const selectedIndex = selectedId === null ? undefined : indexById.get(selectedId);
   let activeIndex = activeId === null ? -1 : (indexById.get(activeId) ?? -1);
-  if (activeIndex === -1 && items.length > 0) {
-    const selectedIndex = selectedId === null ? -1 : (indexById.get(selectedId) ?? -1);
-    activeIndex =
-      selectedIndex !== -1 ? selectedIndex : Math.min(lastActiveIndex.current, items.length - 1);
-  }
+  if (activeIndex === -1 && items.length > 0)
+    activeIndex = selectedIndex ?? Math.min(lastActiveIndex.current, items.length - 1);
   lastActiveIndex.current = Math.max(activeIndex, 0);
   const activeItem = activeIndex === -1 ? undefined : items[activeIndex];
 
-  // Row height follows the density, the scale, enlarged text and coarse pointers; it is read from
-  // a row.
-  const hasItems = items.length > 0;
-  useLayoutEffect(() => {
-    const element = container.current;
-    if (!element) return;
-    const measure = () => {
-      setViewportHeight(element.clientHeight);
-      const row = element.querySelector<HTMLElement>('.env-tree-item');
-      // The layout height, exact and unaffected by transforms such as a dialog scaling in, which
-      // getBoundingClientRect would include. Rows are border-box with a fixed block size.
-      const height = row ? parseFloat(getComputedStyle(row).blockSize) : 0;
-      if (height) setRowHeight(height);
-      else setRowHeight(rowRem[density] * remPixels());
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [density, hasItems]);
-
-  const scrollToIndex = useCallback(
-    (index: number, block: 'nearest' | 'center' = 'nearest') => {
-      const element = container.current;
-      if (!element || index < 0) return;
-      const top = index * rowHeight;
-      const bottom = top + rowHeight;
-      const height = element.clientHeight;
-      if (block === 'center' && (top < element.scrollTop || bottom > element.scrollTop + height)) {
-        element.scrollTop = Math.max(0, top - (height - rowHeight) / 2);
-      } else if (top < element.scrollTop) element.scrollTop = top;
-      else if (bottom > element.scrollTop + height) element.scrollTop = bottom - height;
-      setScrollTop(element.scrollTop);
-    },
-    [rowHeight],
-  );
+  const { rowHeight, pageRows, indexes, inView, scrollToIndex, onScroll } = useTreeViewport({
+    containerRef: container,
+    density,
+    count: items.length,
+    activeIndex,
+    selectedIndex,
+    selectedId,
+  });
 
   useEffect(() => {
     if (selectedId !== null) setActiveId(selectedId);
   }, [selectedId]);
-
-  // Revealing waits until the row is among the items and the tree has a size, for example while a
-  // collapsed sidebar hides it.
-  useLayoutEffect(() => {
-    if (selectedId === null || selectedId === revealedSelection.current || viewportHeight === 0)
-      return;
-    const index = indexById.get(selectedId);
-    if (index === undefined) return;
-    revealedSelection.current = selectedId;
-    scrollToIndex(index, 'center');
-  }, [selectedId, indexById, scrollToIndex, viewportHeight]);
 
   function activate(index: number) {
     const item = items[Math.max(0, Math.min(items.length - 1, index))];
@@ -384,28 +203,10 @@ export function Tree<Item extends TreeItem>({
     if (!item.disabled) onExpandedChange(item, expanded);
   }
 
-  function findByText(key: string) {
-    const now = performance.now();
-    const state = typeahead.current;
-    state.text = now - state.time > typeaheadTimeout ? key : state.text + key;
-    state.time = now;
-    const query = state.text.toLocaleLowerCase();
-    // A repeated first letter cycles through matches; longer text refines the current match.
-    const repeated = query.length > 1 && [...query].every((character) => character === query[0]);
-    const search = repeated ? query[0]! : query;
-    const start = repeated || query.length === 1 ? activeIndex + 1 : activeIndex;
-    for (let offset = 0; offset < items.length; offset += 1) {
-      const index = (start + offset) % items.length;
-      if (itemText(items[index]!).toLocaleLowerCase().startsWith(search)) return index;
-    }
-    return -1;
-  }
-
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.target !== event.currentTarget || !activeItem) return;
     // Keys with Alt, Ctrl or ⌘ belong to the application, such as Alt+← for going back.
     if (event.altKey || event.ctrlKey || event.metaKey) return;
-    const page = Math.max(1, Math.floor(viewportHeight / rowHeight) - 1);
     let handled = true;
     switch (event.key) {
       case 'ArrowDown':
@@ -421,10 +222,10 @@ export function Tree<Item extends TreeItem>({
         activate(items.length - 1);
         break;
       case 'PageDown':
-        activate(activeIndex + page);
+        activate(activeIndex + pageRows);
         break;
       case 'PageUp':
-        activate(activeIndex - page);
+        activate(activeIndex - pageRows);
         break;
       case 'ArrowRight':
       case 'ArrowLeft': {
@@ -437,12 +238,8 @@ export function Tree<Item extends TreeItem>({
         } else if (activeItem.expandable && activeItem.expanded) {
           setExpanded(activeItem, false);
         } else {
-          for (let index = activeIndex - 1; index >= 0; index -= 1) {
-            if (items[index]!.depth < activeItem.depth) {
-              activate(index);
-              break;
-            }
-          }
+          const parent = parentIndex(items, activeIndex);
+          if (parent !== -1) activate(parent);
         }
         break;
       }
@@ -451,9 +248,8 @@ export function Tree<Item extends TreeItem>({
         break;
       case ' ': {
         // While typing ahead, a space belongs to the typed text.
-        const typing = performance.now() - typeahead.current.time <= typeaheadTimeout;
-        if (typing && typeahead.current.text) {
-          const index = findByText(event.key);
+        if (isTyping(typeahead.current) && typeahead.current.text) {
+          const index = findTypedRow(items, typeahead.current, event.key, activeIndex);
           if (index !== -1) activate(index);
         } else open(activeItem, true);
         break;
@@ -461,7 +257,7 @@ export function Tree<Item extends TreeItem>({
       default:
         handled = false;
         if (event.key.length === 1) {
-          const index = findByText(event.key);
+          const index = findTypedRow(items, typeahead.current, event.key, activeIndex);
           if (index !== -1) activate(index);
           handled = true;
         }
@@ -495,112 +291,23 @@ export function Tree<Item extends TreeItem>({
     open(item, false);
   }
 
-  // Only rows in view, plus overscan and the active row, are in the document.
-  const first = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan);
-  const shownHeight = viewportHeight || unmeasuredRows * rowHeight;
-  const last = Math.min(
-    items.length - 1,
-    Math.ceil((scrollTop + shownHeight) / rowHeight) + overscan,
-  );
-  const inView = (index: number) => index >= first && index <= last;
-  const indexes: number[] = [];
-  for (let index = first; index <= last; index += 1) indexes.push(index);
-  if (activeIndex !== -1 && !inView(activeIndex)) {
-    indexes.push(activeIndex);
-    indexes.sort((a, b) => a - b);
-  }
-
   /** A row at its index, placed top pixels down its parent; a leaving row is only shown. */
-  function row(item: Item, index: number, top: number, leaving = false) {
-    return (
-      <div
-        key={item.value}
-        id={leaving ? undefined : rowElementId(treeId, item.value)}
-        role="treeitem"
-        aria-level={item.depth + 1}
-        aria-posinset={leaving ? undefined : positions[index]}
-        aria-setsize={leaving ? undefined : sizes[index]}
-        aria-expanded={item.expandable ? Boolean(item.expanded) : undefined}
-        aria-selected={item.value === selectedId}
-        aria-disabled={item.disabled || undefined}
-        title={item.tooltip}
-        className="env-tree-item"
-        data-id={item.value}
-        data-highlighted={!leaving && index === activeIndex ? '' : undefined}
-        data-starting-style={arriving.has(item.value) ? '' : undefined}
-        style={
-          {
-            '--env-tree-depth': item.depth,
-            transform: `translateY(${top}px)`,
-          } as CSSProperties
-        }
-      >
-        <span
-          className="env-tree-chevron"
-          aria-hidden="true"
-          data-expanded={item.expanded ? '' : undefined}
-        >
-          {item.expandable && (
-            <span className="env-icon">
-              <IconChevronRight />
-            </span>
-          )}
-        </span>
-        {item.icon != null && (
-          <span className="env-icon env-tree-icon" aria-hidden="true">
-            {item.icon}
-          </span>
-        )}
-        <span className="env-tree-label">{item.label}</span>
-        {item.description != null && (
-          <>
-            {' '}
-            <span className="env-tree-description">{item.description}</span>
-          </>
-        )}
-        {item.end != null && <span className="env-tree-end">{item.end}</span>}
-      </div>
-    );
-  }
+  const row = (item: Item, index: number, top: number, leaving = false) => (
+    <TreeRow
+      key={item.value}
+      item={item}
+      id={rowElementId(treeId, item.value)}
+      position={positions[index]}
+      setSize={sizes[index]}
+      selected={item.value === selectedId}
+      highlighted={index === activeIndex}
+      arriving={arriving.has(item.value)}
+      top={top}
+      leaving={leaving}
+    />
+  );
 
-  // While a row expands or collapses, its rows sit in a group that grows or shrinks from the row's
-  // end, and the rows below follow the group's end: they start where they were, moved by the shift,
-  // which eases to 0.
-  let rows: ReactNode;
-  let shift = 0;
-  if (activeMotion) {
-    const { kind, start, rows: groupRows } = activeMotion;
-    const size = groupRows.length;
-    const groupEnd = kind === 'open' ? start + size : start;
-    if (!moving) shift = (kind === 'open' ? -size : size) * rowHeight;
-    rows = (
-      <>
-        {indexes
-          .filter((index) => index < start)
-          .map((index) => row(items[index]!, index, index * rowHeight))}
-        <div
-          className="env-tree-group"
-          aria-hidden={kind === 'close' || undefined}
-          inert={kind === 'close'}
-          data-starting-style={kind === 'open' && !moving ? '' : undefined}
-          data-ending-style={kind === 'close' && moving ? '' : undefined}
-          style={{
-            transform: `translateY(${start * rowHeight}px)`,
-            blockSize: `calc(${kind === 'open' ? size * rowHeight : 0}px + var(--env-tree-shift))`,
-          }}
-        >
-          {groupRows.map((item, offset) =>
-            inView(start + offset)
-              ? row(item, start + offset, offset * rowHeight, kind === 'close')
-              : null,
-          )}
-        </div>
-        {indexes
-          .filter((index) => index >= groupEnd)
-          .map((index) => row(items[index]!, index, index * rowHeight))}
-      </>
-    );
-  } else rows = indexes.map((index) => row(items[index]!, index, index * rowHeight));
+  const { rows, shift } = placeRows({ items, indexes, motion, moving, rowHeight, inView, row });
 
   const tree = (
     <div
@@ -622,7 +329,7 @@ export function Tree<Item extends TreeItem>({
       }}
       onScroll={(event) => {
         ownScroll?.(event);
-        setScrollTop(event.currentTarget.scrollTop);
+        onScroll(event.currentTarget.scrollTop);
       }}
       onPointerDown={() => {
         pointerFocus.current = true;

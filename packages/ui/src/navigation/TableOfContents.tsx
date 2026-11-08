@@ -3,7 +3,6 @@
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -20,24 +19,12 @@ import {
   currentSection,
   readingPosition,
   flatten,
-  outline,
-  slug,
-  uniqueId,
-  type HeadingEntry,
-  type SectionPosition,
   type TableOfContentsItem,
 } from './internal/contentsOutline.js';
-import {
-  glideAt,
-  glideStep,
-  glideTo,
-  wavePath,
-  wavePlace,
-  type Glide,
-  type WaveLayout,
-} from './internal/contentsWave.js';
+import { focusSection, readSections } from './internal/sectionScroll.js';
+import { useContentsHeadings } from './internal/useContentsHeadings.js';
+import { createWaveDrawer } from './internal/waveDrawer.js';
 import { prefersReducedMotion, reducedMotionQuery } from '../internal/reducedMotion.js';
-import { easingFunction, motionDuration, motionEasing } from '../internal/motionTokens.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/TableOfContents.css';
@@ -77,84 +64,6 @@ const defaultLevels: readonly HeadingLevel[] = [2, 3];
 
 /** How long scrolling must pause before a scroll that a link started counts as finished. */
 const settleDelay = 150;
-
-/** The element `container` names, or the page's main element, or the body. */
-function resolveContainer(container: TableOfContentsProps['container']): HTMLElement | null {
-  if (typeof document === 'undefined') return null;
-  if (typeof container === 'string') return document.querySelector<HTMLElement>(container);
-  if (container) return container.current;
-  return document.querySelector<HTMLElement>('main') ?? document.body;
-}
-
-/** A heading's words, without parts hidden from assistive technology, such as an anchor's mark. */
-function headingText(heading: HTMLElement): string {
-  const copy = heading.cloneNode(true) as HTMLElement;
-  for (const hidden of copy.querySelectorAll('[aria-hidden="true"]')) hidden.remove();
-  return (copy.textContent ?? '').replace(/\s+/g, ' ').trim();
-}
-
-/** Reads the headings in a container, giving those without an id one from their words. */
-function readHeadings(
-  container: HTMLElement,
-  levels: readonly HeadingLevel[],
-  filter: ((heading: HTMLElement) => boolean) | undefined,
-  own: Element | null,
-): HeadingEntry[] {
-  if (levels.length === 0) return [];
-  const selector = levels.map((level) => `h${level}`).join(', ');
-  const entries: HeadingEntry[] = [];
-  for (const heading of container.querySelectorAll<HTMLElement>(selector)) {
-    if (own?.contains(heading)) continue;
-    // A heading the page hides is left out; one hidden only while a popup is open, which marks the
-    // rest of the page inert or aria-hidden for as long as it stays open, is not.
-    const hider = heading.closest('[hidden], [inert], [aria-hidden="true"]');
-    if (hider && (hider.hasAttribute('hidden') || !hider.closest('[data-base-ui-inert]'))) {
-      continue;
-    }
-    if (filter && !filter(heading)) continue;
-    const label = headingText(heading);
-    if (!label) continue;
-    if (!heading.id) {
-      const document = heading.ownerDocument;
-      heading.id = uniqueId(slug(label), (id) => document.getElementById(id) !== null);
-    }
-    entries.push({ id: heading.id, label, level: Number(heading.tagName.slice(1)) });
-  }
-  return entries;
-}
-
-/** The element whose scrolling moves a section, or null for the document. */
-function scrollerOf(element: Element): HTMLElement | null {
-  const document = element.ownerDocument;
-  for (
-    let node = element.parentElement;
-    node && node !== document.body && node !== document.documentElement;
-    node = node.parentElement
-  ) {
-    const { overflowY } = getComputedStyle(node);
-    if (/(auto|scroll|overlay)/.test(overflowY) && node.scrollHeight > node.clientHeight) {
-      return node;
-    }
-  }
-  return null;
-}
-
-/** Moves focus to a section, which takes it from script alone when it takes none otherwise. */
-function focusSection(element: HTMLElement) {
-  if (element.tabIndex < 0 && !element.hasAttribute('tabindex')) element.tabIndex = -1;
-  element.focus({ preventScroll: true });
-}
-
-/** A label or heading text, as a comparable key of the outline. */
-function signature(items: readonly TableOfContentsItem[]): string {
-  return JSON.stringify(
-    items.map((item): unknown => [
-      item.id,
-      typeof item.label === 'string' ? item.label : '',
-      signature(item.children ?? []),
-    ]),
-  );
-}
 
 interface ListProps {
   items: readonly TableOfContentsItem[];
@@ -201,33 +110,6 @@ function List({ items, current, passed, depth, onNavigate }: ListProps) {
 }
 
 /**
- * How far the reader's place may move between two frames, in entries, and still be followed as it
- * is, as the scroll moves it; a larger step, such as a jump to a chosen section, glides there.
- */
-const followStep = 0.2;
-
-/**
- * Where the entries sit beside the shape, in layout pixels from the top of the list's box, which
- * holds the shape and is the links' offset parent, so a transform or zoom around it changes nothing.
- */
-function measureWave(body: HTMLElement, shape: SVGSVGElement): WaveLayout | null {
-  const links = body.querySelectorAll<HTMLElement>('.env-table-of-contents-link');
-  if (links.length === 0) return null;
-  const anchors = Array.from(links, (link) => link.offsetTop + link.offsetHeight / 2);
-  const first = links[0]!;
-  const last = links[links.length - 1]!;
-  // The shape runs past the first and last entries into the room the box leaves around them, where
-  // the bulge tapers whole when the reader is at either end.
-  const room = getComputedStyle(body);
-  return {
-    anchors,
-    top: first.offsetTop - (parseFloat(room.paddingTop) || 0),
-    bottom: last.offsetTop + last.offsetHeight + (parseFloat(room.paddingBottom) || 0),
-    full: parseFloat(getComputedStyle(shape).width) || 0,
-  };
-}
-
-/**
  * The page's sections as links, nested by level, with the one the reader is in marked as they
  * scroll: the headings in a container by default, or sections of your own.
  */
@@ -243,8 +125,7 @@ export function TableOfContents({
   const messages = useMessages('tableOfContents', tableOfContents);
   const root = useRef<HTMLDivElement>(null);
   const shape = useRef<SVGSVGElement>(null);
-  const [readItems, setReadItems] = useState<readonly TableOfContentsItem[]>([]);
-  const items = givenItems ?? readItems;
+  const items = useContentsHeadings({ givenItems, container, levels, filter, own: root });
   const [current, setCurrent] = useState<string>();
   // A section a link scrolls to: while the page scrolls there, the marks follow the scroll through
   // the sections between; once scrolling pauses, the chosen section is current, also where the page
@@ -263,52 +144,8 @@ export function TableOfContents({
     }, delay);
   }, []);
   useEffect(() => () => clearTimeout(settle.current), []);
-  const filterRef = useRef(filter);
-  filterRef.current = filter;
-  const levelKey = levels.join(',');
   const flat = useMemo(() => flatten(items), [items]);
   const ids = flat.map((entry) => entry.id).join('\n');
-
-  // Without items, the headings in the container, read again as its content changes.
-  useLayoutEffect(() => {
-    if (givenItems) return;
-    const element = resolveContainer(container);
-    if (!element) return;
-    const headingLevels = levelKey.split(',').filter(Boolean).map(Number) as HeadingLevel[];
-    let last = '';
-    const read = () => {
-      const next = outline(readHeadings(element, headingLevels, filterRef.current, root.current));
-      const key = signature(next);
-      if (key === last) return;
-      last = key;
-      setReadItems(next);
-    };
-    read();
-    if (typeof MutationObserver === 'undefined' || headingLevels.length === 0) return;
-    // Only a change to a heading, its text or the headings in what comes or goes, changes the
-    // contents; the rest of the page, such as an animated figure, changes nothing to read.
-    const headings = headingLevels.map((level) => `h${level}`).join(', ');
-    const holdsHeadings = (node: Node) =>
-      node.nodeType === Node.ELEMENT_NODE &&
-      ((node as Element).matches(headings) || (node as Element).querySelector(headings) !== null);
-    const changesHeadings = ({ target, addedNodes, removedNodes }: MutationRecord) =>
-      (target.nodeType === Node.ELEMENT_NODE ? (target as Element) : target.parentElement)?.closest(
-        headings,
-      ) ||
-      [...addedNodes].some(holdsHeadings) ||
-      [...removedNodes].some(holdsHeadings);
-    let frame = 0;
-    const observer = new MutationObserver((records) => {
-      if (!records.some(changesHeadings)) return;
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(read);
-    });
-    observer.observe(element, { childList: true, subtree: true, characterData: true });
-    return () => {
-      observer.disconnect();
-      cancelAnimationFrame(frame);
-    };
-  }, [givenItems, container, levelKey]);
 
   // The current section, from where the area that holds the sections has scrolled, and the shape
   // beside the list that marks the reader's place.
@@ -320,94 +157,19 @@ export function TableOfContents({
     const sectionIds = ids.split('\n');
     const first = document.getElementById(sectionIds[0]!);
     const doc = first?.ownerDocument ?? document;
-    const reducedMotion = reducedMotionQuery();
     let frame = 0;
 
-    // The shape: drawn every frame the reader's place moves, by writing its outline directly,
-    // without rendering the list again. It keeps its shape and follows the scroll as it is; a
-    // larger step, such as a chosen section's jump or a mouse wheel's without smooth scrolling,
-    // glides there in the medium duration with the entering easing, never past it, while the label
-    // there takes the text color. The swell under the pointer grows and fades in the fast one. No
-    // frame is drawn once they rest. At once where reduced motion is preferred or the motion
-    // tokens are 0s.
-    let layout: WaveLayout | null = null;
-    let target: number | null = null;
-    const place: Glide = glideAt(0);
-    let placed = false;
-    // How far each entry's swell under the pointer has grown, and the entry under it.
-    let hovers: Glide[] = [];
-    let hovered = -1;
-    let drawFrame = 0;
-    const draw = (now: number) => {
-      drawFrame = 0;
-      const body = root.current;
-      const path = shape.current?.querySelector('path');
-      if (!body || !shape.current || !path) return;
-      if (!layout) {
-        layout = measureWave(body, shape.current);
-        if (!layout) return;
-        hovers = layout.anchors.map((_, index) => glideAt(index === hovered ? 1 : 0));
-      }
-      const instant = reducedMotion?.matches ?? false;
-      const travel = instant ? 0 : motionDuration(body, 'medium');
-      const swell = instant ? 0 : motionDuration(body, 'fast');
-      const arrive = easingFunction(motionEasing(body, 'ease-enter'));
-      const ease = easingFunction(motionEasing(body, 'ease'));
-      let moving = false;
-      if (target === null || !placed) {
-        // The first place, or none: drawn where it is, at rest.
-        placed = target !== null;
-        Object.assign(place, glideAt(target ?? 0));
-      } else {
-        glideTo(place, target, now, followStep);
-        moving = glideStep(place, now, travel, arrive);
-      }
-      hovers.forEach((glide, index) => {
-        glideTo(glide, index === hovered ? 1 : 0, now);
-        if (glideStep(glide, now, swell, ease)) moving = true;
-      });
-      path.setAttribute(
-        'd',
-        wavePath(
-          layout,
-          placed ? place.value : null,
-          hovers.map((glide) => glide.value),
-        ),
-      );
-      if (moving) drawFrame = requestAnimationFrame(draw);
-    };
-    const redraw = () => {
-      if (drawFrame === 0) drawFrame = requestAnimationFrame(draw);
-    };
-    const wave = (position: number | null) => {
-      target = position === null ? null : wavePlace(position);
-      cancelAnimationFrame(drawFrame);
-      draw(performance.now());
-    };
-    const remeasure = () => {
-      layout = null;
-      redraw();
-    };
-    // The entry under a mouse swells the shape a little, as a brush pressed there.
-    const hover = (index: number) => {
-      if (hovered === index) return;
-      hovered = index;
-      redraw();
-    };
-    const onPointerOver = (event: PointerEvent) => {
-      if (event.pointerType !== 'mouse') return;
-      const link = event.target instanceof Element ? event.target.closest('a') : null;
-      const links = root.current?.querySelectorAll('.env-table-of-contents-link');
-      hover(link && links ? Array.prototype.indexOf.call(links, link) : -1);
-    };
-    const onPointerLeave = () => hover(-1);
-
+    const drawer = createWaveDrawer(
+      () => root.current,
+      () => shape.current,
+      reducedMotionQuery(),
+    );
     const update = () => {
       frame = 0;
       const choice = chosen.current;
       if (choice?.settled) {
         setCurrent(choice.id);
-        wave(sectionIds.indexOf(choice.id));
+        drawer.wave(sectionIds.indexOf(choice.id));
         return;
       }
       const elements = sectionIds
@@ -415,32 +177,10 @@ export function TableOfContents({
         .filter((element): element is HTMLElement => element !== null);
       if (elements.length === 0) {
         setCurrent(undefined);
-        wave(null);
+        drawer.wave(null);
         return;
       }
-      const scroller = scrollerOf(elements[0]!);
-      const scrolling = scroller ?? doc.scrollingElement ?? doc.documentElement;
-      const padding =
-        parseFloat(getComputedStyle(scroller ?? doc.documentElement).scrollPaddingTop) || 0;
-      // Where the sections are drawn, in layout pixels of the area that scrolls them, as its
-      // scroll position, height and padding are: a transform or zoom around it scales the drawing.
-      const box = scroller?.getBoundingClientRect();
-      const scale =
-        scroller && box && scroller.offsetHeight > 0 ? box.height / scroller.offsetHeight || 1 : 1;
-      const top = scroller && box ? box.top + scroller.clientTop * scale : 0;
-      const height = scroller ? scroller.clientHeight : (doc.defaultView?.innerHeight ?? 0);
-      const sections: SectionPosition[] = elements.map((element) => ({
-        id: element.id,
-        top:
-          (element.getBoundingClientRect().top - top) / scale -
-          padding -
-          (parseFloat(getComputedStyle(element).scrollMarginTop) || 0),
-      }));
-      const view = {
-        height: Math.max(0, height - padding),
-        scrolled: scrolling.scrollTop,
-        range: scrolling.scrollHeight - scrolling.clientHeight,
-      };
+      const { sections, view } = readSections(elements, doc);
       let next = currentSection(sections, view);
       let position = readingPosition(sections, view);
       if (choice) {
@@ -451,7 +191,7 @@ export function TableOfContents({
         if (next && sectionIds.indexOf(next) > chosenIndex) next = choice.id;
       }
       setCurrent(next);
-      wave(position);
+      drawer.wave(position);
     };
     const schedule = () => {
       if (frame === 0) frame = requestAnimationFrame(update);
@@ -481,19 +221,20 @@ export function TableOfContents({
     if (first?.parentElement) resizes?.observe(first.parentElement);
     // The list's own size: labels that wrap anew, or a font that loads, move its entries.
     const body = root.current;
-    const reshapes = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(remeasure);
+    const reshapes =
+      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(drawer.remeasure);
     if (body) reshapes?.observe(body);
-    body?.addEventListener('pointerover', onPointerOver);
-    body?.addEventListener('pointerleave', onPointerLeave);
+    body?.addEventListener('pointerover', drawer.onPointerOver);
+    body?.addEventListener('pointerleave', drawer.onPointerLeave);
     return () => {
       cancelAnimationFrame(frame);
-      cancelAnimationFrame(drawFrame);
+      drawer.stop();
       doc.removeEventListener('scroll', onScroll, { capture: true });
       window.removeEventListener('resize', onResize);
       resizes?.disconnect();
       reshapes?.disconnect();
-      body?.removeEventListener('pointerover', onPointerOver);
-      body?.removeEventListener('pointerleave', onPointerLeave);
+      body?.removeEventListener('pointerover', drawer.onPointerOver);
+      body?.removeEventListener('pointerleave', drawer.onPointerLeave);
     };
   }, [ids, settleLater]);
 
@@ -539,7 +280,7 @@ export function TableOfContents({
       hidden={items.length === 0 ? true : props.hidden}
     >
       <div className="env-table-of-contents-body" ref={root}>
-        {/* The reader's place: one shape down the list, drawn by the effect above. */}
+        {/* The reader's place: one shape down the list, drawn by the wave drawer. */}
         <svg
           className="env-table-of-contents-wave"
           ref={shape}

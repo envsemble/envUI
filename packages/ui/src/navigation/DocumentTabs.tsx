@@ -2,16 +2,7 @@
 
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ComponentPropsWithRef,
-  type KeyboardEvent,
-  type PointerEvent as ReactPointerEvent,
-  type ReactNode,
-} from 'react';
+import { useRef, type ComponentPropsWithRef, type KeyboardEvent, type ReactNode } from 'react';
 import { IconButton } from '../actions/Button.js';
 import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
@@ -23,9 +14,16 @@ import { documentTabs } from '../foundations/messages/documentTabs.js';
 import { ContextMenu } from './ContextMenu.js';
 import * as Menu from './Menu.js';
 import { isRightToLeft } from '../internal/direction.js';
+import { moveValue } from './internal/tabStrip.js';
+import { useTabCloseFocus } from './internal/useTabCloseFocus.js';
+import { useTabDrag } from './internal/useTabDrag.js';
+import { useTabStripScrolling } from './internal/useTabStripScrolling.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/DocumentTabs.css';
+
+/** How far the floating copy of a dragged tab sits from the pointer, in pixels. */
+const dragImageOffset = 12;
 
 export interface DocumentTabsItem {
   /** The tab's value, a stable identifier, such as the document's path; value names the active one. */
@@ -124,198 +122,9 @@ export function DocumentTabs({
   const [direction] = useDirection(list);
   const focusable = items.some((item) => item.value === value) ? value : (items[0]?.value ?? null);
 
-  function tabElement(id: string | null) {
-    if (id === null || !list.current) return null;
-    for (const tab of list.current.querySelectorAll<HTMLElement>('[role="tab"]'))
-      if (tab.dataset.tabId === id) return tab;
-    return null;
-  }
-
-  // The active tab scrolls into view within the strip, without scrolling the page.
-  useLayoutEffect(() => {
-    function reveal() {
-      const strip = list.current;
-      const tab = tabElement(value)?.parentElement;
-      if (!strip || !tab) return;
-      // The tab clears the fade at the edge it comes in from, so none of it is faded. Only an edge
-      // with more to scroll past it has a fade: at the strip's ends there is no room to leave.
-      const rem = parseFloat(getComputedStyle(strip.ownerDocument.documentElement).fontSize);
-      const fade = parseFloat(getComputedStyle(strip).getPropertyValue('--env-document-tabs-fade'));
-      const room = Number.isFinite(fade) ? fade * rem : 0;
-      const beyond = scrollBeyond(strip);
-      const stripBox = strip.getBoundingClientRect();
-      const tabBox = tab.getBoundingClientRect();
-      const roomLeft = beyond.left ? room : 0;
-      const roomRight = beyond.right ? room : 0;
-      if (tabBox.left < stripBox.left + roomLeft)
-        strip.scrollLeft -= stripBox.left + roomLeft - tabBox.left;
-      else if (tabBox.right > stripBox.right - roomRight)
-        strip.scrollLeft += tabBox.right - (stripBox.right - roomRight);
-    }
-    reveal();
-    // Base UI also scrolls the active tab into view, and the labels may still widen as the font
-    // loads: the whole item, close button included, is revealed again once both have settled.
-    let cancelled = false;
-    const frame = requestAnimationFrame(reveal);
-    void document.fonts?.ready.then(() => {
-      if (!cancelled) reveal();
-    });
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(frame);
-    };
-  }, [value, items]);
-
-  // Closing the focused tab moves focus to the tab that becomes active, however it closed: its
-  // button, Delete, the context menu, or the application's own shortcut such as Ctrl+W. The focused
-  // tab is read before the update is committed, while the closing tab still holds focus. Any other
-  // render, such as a parent passing a new items array, leaves focus where it is. The context menu
-  // holds focus instead when the strip had it as the menu opened.
-  const focusedTab = focusedTabId(list.current);
-  const focusedTabClosed = focusedTab !== null && !items.some((item) => item.value === focusedTab);
-  const menuOpenedInside = useRef(false);
-  const [closedFromMenu, setClosedFromMenu] = useState(false);
-  useLayoutEffect(() => {
-    if (closedFromMenu) setClosedFromMenu(false);
-    else {
-      if (!focusedTabClosed) return;
-      const active = list.current?.ownerDocument.activeElement;
-      if (active && active !== active.ownerDocument.body && active.isConnected) return;
-    }
-    tabElement(focusable)?.focus();
-  }, [items, focusable, focusedTabClosed, closedFromMenu]);
-
-  // A vertical wheel scrolls an overflowing strip sideways, toward its end as the wheel turns down.
-  // In right-to-left text the end is on the left, where scrollLeft runs from 0 down to -max.
-  useEffect(() => {
-    const strip = list.current;
-    if (!strip) return;
-    const onWheel = (event: WheelEvent) => {
-      if (event.deltaX !== 0 || event.deltaY === 0 || event.ctrlKey) return;
-      const max = strip.scrollWidth - strip.clientWidth;
-      if (max <= 0) return;
-      const rtl = isRightToLeft(strip);
-      const next = rtl
-        ? Math.min(0, Math.max(-max, strip.scrollLeft - event.deltaY))
-        : Math.min(max, Math.max(0, strip.scrollLeft + event.deltaY));
-      if (next === strip.scrollLeft) return;
-      event.preventDefault();
-      strip.scrollLeft = next;
-    };
-    strip.addEventListener('wheel', onWheel, { passive: false });
-    return () => strip.removeEventListener('wheel', onWheel);
-  }, []);
-
-  // Tabs that run past an edge of the strip fade out toward that edge, so the strip shows it
-  // scrolls. In right-to-left text scrollLeft runs from 0 down to -max.
-  const [fades, setFades] = useState({ left: false, right: false });
-  useEffect(() => {
-    const strip = list.current;
-    if (!strip) return;
-    const update = () => {
-      const { left, right } = scrollBeyond(strip);
-      setFades((current) =>
-        current.left === left && current.right === right ? current : { left, right },
-      );
-    };
-    update();
-    strip.addEventListener('scroll', update, { passive: true });
-    const observer = new ResizeObserver(update);
-    observer.observe(strip);
-    for (const child of strip.children) observer.observe(child);
-    return () => {
-      strip.removeEventListener('scroll', update);
-      observer.disconnect();
-    };
-  }, [items]);
-
-  // A tab dragged with a mouse or pen follows the pointer as a floating copy, and a line in the
-  // strip marks where it will land; the tabs take their new order when it is let go, and Escape
-  // cancels. Touch scrolls the strip instead, and its long press opens the context menu with Move
-  // left and Move right.
-  const [drag, setDrag] = useState<{ id: string; gap: number; x: number; y: number } | null>(null);
-  const latest = useRef({ items, onReorder });
-  latest.current = { items, onReorder };
-  function onItemPointerDown(event: ReactPointerEvent<HTMLElement>, id: string) {
-    const strip = list.current;
-    if (!onReorder || !strip || event.button !== 0 || event.pointerType === 'touch') return;
-    if ((event.target as Element).closest('.env-document-tabs-close')) return;
-    const startX = event.clientX;
-    const startIndex = items.findIndex((item) => item.value === id);
-    let moved = false;
-    // The gap the tab would drop into: 0 before the first tab, items.length after the last.
-    let gap = startIndex;
-    const view = strip.ownerDocument.defaultView ?? window;
-    const onMove = (move: PointerEvent) => {
-      if (!moved) {
-        if (Math.abs(move.clientX - startX) < 4) return;
-        moved = true;
-      }
-      move.preventDefault();
-      // Near an edge the strip scrolls, so a tab reaches places out of view.
-      const box = strip.getBoundingClientRect();
-      if (move.clientX < box.left + 24) strip.scrollLeft -= 8;
-      else if (move.clientX > box.right - 24) strip.scrollLeft += 8;
-      // The gap nearest the pointer: before the tab under it in that tab's starting half, after it
-      // in the other, also beside the dragged tab itself; past the ends, the nearest tab counts.
-      const current = latest.current.items;
-      const rtl = isRightToLeft(strip);
-      let distance = Infinity;
-      current.forEach((item, position) => {
-        const tab = tabElement(item.value)?.parentElement;
-        if (!tab) return;
-        const itemBox = tab.getBoundingClientRect();
-        const away =
-          move.clientX < itemBox.left
-            ? itemBox.left - move.clientX
-            : Math.max(0, move.clientX - itemBox.right);
-        if (away >= distance) return;
-        distance = away;
-        const middle = itemBox.left + itemBox.width / 2;
-        const startHalf = rtl ? move.clientX > middle : move.clientX < middle;
-        gap = startHalf ? position : position + 1;
-      });
-      setDrag({ id, gap, x: move.clientX, y: move.clientY });
-    };
-    const stop = () => {
-      view.removeEventListener('pointermove', onMove);
-      view.removeEventListener('pointerup', onUp);
-      view.removeEventListener('pointercancel', cancel);
-      view.removeEventListener('keydown', onKeyDown, true);
-      setDrag(null);
-    };
-    const cancel = () => {
-      moved = false;
-      stop();
-    };
-    const onKeyDown = (key: globalThis.KeyboardEvent) => {
-      if (key.key !== 'Escape') return;
-      key.preventDefault();
-      key.stopPropagation();
-      cancel();
-    };
-    const onUp = () => {
-      const dropped = moved;
-      stop();
-      if (!dropped) return;
-      // The click that ends a drag does nothing more. It arrives with the release, if at all, so
-      // the guard goes after it, and a release with no click leaves the next click alone.
-      const swallow = (click: MouseEvent) => click.stopPropagation();
-      view.addEventListener('click', swallow, { capture: true, once: true });
-      view.setTimeout(() => view.removeEventListener('click', swallow, { capture: true }), 0);
-      const { items: current, onReorder: reorder } = latest.current;
-      // A gap beside the tab itself leaves it where it is.
-      const index = gap > startIndex ? gap - 1 : gap;
-      if (index === startIndex) return;
-      const next = current.map((item) => item.value).filter((other) => other !== id);
-      next.splice(index, 0, id);
-      reorder?.(next);
-    };
-    view.addEventListener('pointermove', onMove);
-    view.addEventListener('pointerup', onUp);
-    view.addEventListener('pointercancel', cancel);
-    view.addEventListener('keydown', onKeyDown, true);
-  }
+  const fades = useTabStripScrolling(list, value, items);
+  const closeFocus = useTabCloseFocus(list, items, focusable);
+  const { drag, onItemPointerDown } = useTabDrag({ list, items, onReorder });
 
   // The line shows in the gap the tab would drop into: before the tab after that gap, or after the
   // last tab.
@@ -334,9 +143,13 @@ export function DocumentTabs({
   function moveTab(id: string, side: 'left' | 'right') {
     const target = moveTarget(id, side);
     if (target < 0) return;
-    const next = items.map((item) => item.value).filter((other) => other !== id);
-    next.splice(target, 0, id);
-    onReorder?.(next);
+    onReorder?.(
+      moveValue(
+        items.map((item) => item.value),
+        id,
+        target,
+      ),
+    );
   }
 
   // Keys with Alt, Ctrl or ⌘ belong to the application, such as Ctrl+W or Alt+← for going back.
@@ -439,12 +252,7 @@ export function DocumentTabs({
       >
         <ContextMenu
           aria-label={contextMenuLabel ?? messages.contextMenu}
-          onOpenChange={(open) => {
-            if (open)
-              menuOpenedInside.current = Boolean(
-                list.current?.contains(list.current.ownerDocument.activeElement),
-              );
-          }}
+          onOpenChange={closeFocus.onMenuOpenChange}
           content={(target) => {
             // Read from the tab's item, so the menu keeps its items while it closes after the tab.
             const tab = target
@@ -459,7 +267,7 @@ export function DocumentTabs({
                 {onTab && (
                   <Menu.Item
                     onClick={() => {
-                      if (menuOpenedInside.current) setClosedFromMenu(true);
+                      closeFocus.onCloseFromMenu();
                       onClose(id);
                     }}
                   >
@@ -504,7 +312,7 @@ export function DocumentTabs({
           <div
             className="env-document-tabs-drag-image"
             aria-hidden="true"
-            style={{ left: drag.x + 12, top: drag.y + 12 }}
+            style={{ left: drag.x + dragImageOffset, top: drag.y + dragImageOffset }}
           >
             {dragged.icon != null && <DecorativeIcon>{dragged.icon}</DecorativeIcon>}
             <span className="env-document-tabs-tab-label">{dragged.label}</span>
@@ -512,29 +320,5 @@ export function DocumentTabs({
         )}
       </BaseTabs.Root>
     </DirectionProvider>
-  );
-}
-
-/**
- * Whether the strip has tabs past its left and right edges to scroll to. In right-to-left text
- * scrollLeft runs from 0 down to -max. Less than 1.5 px doesn't count: subpixel rounding can leave a
- * pixel of scroll range, past even the start, that hides nothing.
- */
-function scrollBeyond(strip: HTMLElement) {
-  const max = strip.scrollWidth - strip.clientWidth;
-  const scrolled = strip.scrollLeft;
-  const rtl = isRightToLeft(strip);
-  const leftOver = rtl ? max + scrolled : scrolled;
-  const rightOver = rtl ? -scrolled : max - scrolled;
-  return { left: max > 1.5 && leftOver > 1.5, right: max > 1.5 && rightOver > 1.5 };
-}
-
-/** The id of the tab whose item holds focus within the strip, or null. */
-function focusedTabId(strip: HTMLElement | null) {
-  const active = strip?.ownerDocument.activeElement;
-  if (!strip || !active || !strip.contains(active)) return null;
-  return (
-    active.closest('.env-document-tabs-item')?.querySelector<HTMLElement>('[role="tab"]')?.dataset
-      .tabId ?? null
   );
 }

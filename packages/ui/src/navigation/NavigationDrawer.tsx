@@ -20,6 +20,7 @@ import { Column } from '../foundations/Layout.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
+import { useLatest } from '../internal/useLatest.js';
 import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { containerWidth, useResizableWidth } from '../internal/useResizableWidth.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
@@ -364,29 +365,26 @@ function useExpanded(
     setOwn((open) => joined(open, path));
   }
   const shown = controlled ? expanded : own;
-  const latest = useRef({ shown, onExpandedChange });
-  useEffect(() => {
-    latest.current = { shown, onExpandedChange };
-  });
+  // The latest open sections, so the effect below and setExpanded, one function across renders,
+  // read them: a render that changes neither, such as one for each move of a resize, leaves the
+  // destinations as they are.
+  const latest = useLatest({ shown, controlled, onExpandedChange });
   useEffect(() => {
     if (!controlled) return;
     const { shown: open, onExpandedChange: change } = latest.current;
     const keys = JSON.parse(pathKey) as string[];
     if (keys.some((key) => !open.includes(key))) change?.(joined(open, keys));
-  }, [controlled, pathKey]);
+  }, [latest, controlled, pathKey]);
   const set = useMemo(() => new Set(shown), [shown]);
-  // One function across renders, reading the latest open sections, so a render that changes
-  // neither, such as one for each move of a resize, leaves the destinations as they are.
-  const latestSet = useRef({ shown, controlled, onExpandedChange });
-  useLayoutEffect(() => {
-    latestSet.current = { shown, controlled, onExpandedChange };
-  });
-  const setExpanded = useCallback((key: string, open: boolean) => {
-    const { shown: current, controlled: kept, onExpandedChange: change } = latestSet.current;
-    const next = open ? joined(current, [key]) : current.filter((each) => each !== key);
-    if (!kept) setOwn(next);
-    change?.(next);
-  }, []);
+  const setExpanded = useCallback(
+    (key: string, open: boolean) => {
+      const { shown: current, controlled: kept, onExpandedChange: change } = latest.current;
+      const next = open ? joined(current, [key]) : current.filter((each) => each !== key);
+      if (!kept) setOwn(next);
+      change?.(next);
+    },
+    [latest],
+  );
   return { expanded: set, setExpanded };
 }
 
