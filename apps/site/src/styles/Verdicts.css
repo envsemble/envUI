@@ -1,40 +1,50 @@
 /* Do, don't and caution figures; the frame they share with other figures is in Figures.css. */
 
-/* A do, don't or caution figure: the example on its stage, a quiet strip that says Do, Don't or
-   Caution in green, red or amber, and one sentence. The stage is as tall as the example, and at
-   least 7 rem, or square where the example shows open or playing, the room what
-   opens needs; never wider than `--site-verdict-size`, so a pair side by side stays small beside
-   the text; alone, or in a narrow column, it starts where the text does. A `wide` figure, whose
-   point is a change across the column's width, spans the column instead. */
+/* A do, don't or caution figure: a cell as a gallery's is (Figures.tsx), the example on its stage,
+   flat and square-cornered as every figure of a page, and under it, as a cell's name, its mark and
+   its one sentence, and its code switch on the row below. The stage is as tall as
+   the example, and at least 11 rem, or square where the example shows open or playing, the room
+   what opens needs; never wider than `--site-verdict-size`, so a pair side by side stays small
+   beside the text; alone, or in a narrow column, it starts where the text does. A `wide` figure,
+   whose point is a change across the column's width, spans the column instead. */
 .site-verdict {
-  display: grid;
-  align-content: start;
-  gap: var(--env-space-2);
+  grid-template-rows: auto minmax(0, 1fr) auto;
   min-inline-size: 0;
   margin: 0;
+  /* The cell's top and its stage meet with no gap. */
+  row-gap: 0;
 }
 
 .site-verdict:not([data-shape='wide']) {
   inline-size: min(100%, var(--site-verdict-size));
 }
 
-.site-verdict-frame {
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  /* The stage and the bar are envUI's connected rows (env-connected-rows), which give the outer
-     corners the large radius and the inner corners where they meet the small one; the gap is the
-     one between a list's rows. */
-  gap: 0.125rem;
+/* Side by side, the figures of a row are cells of one size, as a gallery's are: they share the run's
+   rows, so their tops are as tall as the row's tallest, their stages as tall as the row's tallest,
+   what each shows centred in it, and their code starts on one line under them. Stacked, as on a phone, each
+   keeps its own rows. 32 rem is where a run of do and don't figures goes two to a row
+   (Figures.css). */
+@container (width >= 32rem) {
+  .site-figure-run > .site-verdict {
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    align-self: stretch;
+    row-gap: 0;
+  }
+  .site-figure-run > .site-verdict > .site-verdict-stage {
+    align-self: stretch;
+  }
 }
 
-/* The stage is every stage's recessed canvas (Stage.css); its corners are the connected rows'. A
-   square clips what it holds, and its overlays open in the box over it (below). */
+/* The stage is every stage's recessed canvas (Stage.css). A square clips what it holds, and its
+   overlays open in the box over it (below). */
 .site-verdict-stage {
   --site-verdict-inset: var(--env-space-6);
 }
 
 .site-verdict[data-shape='fit'] .site-verdict-stage {
-  min-block-size: 7rem;
+  /* A gallery cell's least height, as every figure of a page has (Stage.css). */
+  min-block-size: 11rem;
   overflow: clip;
 }
 
@@ -63,6 +73,7 @@
 .site-verdict[data-shape='wide'] .site-verdict-stage {
   min-block-size: 10rem;
   padding: var(--env-space-7) var(--env-space-6);
+  padding-block-start: calc(var(--env-space-7) + var(--site-verdict-top, 0rem));
 }
 
 /* The box the example lays out in, centred as on every stage. On a square it covers the stage,
@@ -88,6 +99,11 @@
   max-inline-size: none;
   min-block-size: 100%;
   padding: var(--site-verdict-inset);
+  /* Room at the top past the caption over it, taken at the inverse of the scale the box is drawn
+     at, so it is the caption's height on the stage. */
+  padding-block-start: calc(
+    var(--site-verdict-inset) + var(--site-verdict-top, 0rem) / var(--site-verdict-scale, 1)
+  );
   transform: scale(var(--site-verdict-scale, 1));
   transform-origin: 0 0;
 }
@@ -100,51 +116,92 @@
   inline-size: 100%;
   max-inline-size: none;
   padding: var(--site-verdict-inset);
+  /* Room at the top past the caption over it, taken at the inverse of the scale the box is drawn
+     at, so it is the caption's height on the stage. */
+  padding-block-start: calc(
+    var(--site-verdict-inset) + var(--site-verdict-top, 0rem) / var(--site-verdict-scale, 1)
+  );
   transform: scale(var(--site-verdict-scale, 1));
   transform-origin: 0 0;
 }
 
-/* The verdict: a quiet strip on the stage's own fill, its icon and word in the verdict's text
-   color. Above its stage, so the stage's shadow falls around the figure, not across the strip. */
-.site-verdict-bar {
+/* The top of the cell, over its stage: the verdict's tag at the start, and the sentence beside it
+   where it fits on the tag's line, else under it, quieter. The stage spans the caption's row and
+   the row under it, so the cell is one canvas, and what opens in it, such as a dialog's backdrop,
+   covers it whole; its example keeps clear of the caption by the caption's height,
+   `--site-verdict-top` (useCaptionRoom in VerdictFit.ts), so the two never overlap. The code, under
+   the whole cell, has the third row. */
+.site-verdict > * {
+  grid-row: 3;
+  grid-column: 1 / -1;
+}
+
+.site-verdict > :not(.site-verdict-caption, .site-live-example-code) {
+  grid-row: 1 / span 2;
+}
+
+.site-verdict-caption {
   position: relative;
   z-index: var(--env-z-raised);
   display: flex;
+  flex-wrap: wrap;
+  align-content: start;
   align-items: center;
-  gap: var(--env-space-2);
-  padding: var(--env-space-2) var(--env-space-4);
-  background: var(--env-color-bg-recessed);
+  gap: var(--env-space-1) var(--env-space-2);
+  min-inline-size: 0;
+  padding: var(--env-space-3) var(--env-space-3) 0;
+  color: var(--env-color-fg-muted);
   font: var(--env-type-body-sm);
+}
+
+.site-verdict > .site-verdict-caption {
+  grid-row: 1;
+}
+
+/* The tag: a small pill on the raised surface, its icon and word in the verdict's color. */
+.site-verdict-mark {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--env-space-1);
+  padding: var(--env-space-1) var(--env-space-2);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-raised);
   font-weight: var(--env-font-weight-medium);
 }
 
-.site-verdict-bar > svg {
+.site-verdict-mark > svg {
   flex: none;
   inline-size: 1rem;
   block-size: 1rem;
 }
 
-.site-verdict[data-verdict='do'] .site-verdict-bar {
+.site-verdict[data-verdict='do'] .site-verdict-mark {
   color: var(--env-color-fg-success);
 }
 
-.site-verdict[data-verdict='dont'] .site-verdict-bar {
+.site-verdict[data-verdict='dont'] .site-verdict-mark {
   color: var(--env-color-fg-danger);
 }
 
 /* A caution, acceptable with care. */
-.site-verdict[data-verdict='caution'] .site-verdict-bar {
+.site-verdict[data-verdict='caution'] .site-verdict-mark {
   color: var(--env-color-fg-warning);
 }
 
-.site-verdict-caption {
-  padding-inline: var(--env-space-2);
-  font: var(--env-type-body);
+.site-verdict-sentence {
+  min-inline-size: 0;
+}
+
+/* The code, under the whole cell, stands apart from it. */
+.site-verdict > .site-live-example-code {
+  margin-block-start: var(--env-space-2);
 }
 
 @container (width < 30rem) {
   .site-verdict[data-shape='wide'] .site-verdict-stage {
     padding: var(--env-space-6) var(--env-space-4);
+    padding-block-start: calc(var(--env-space-6) + var(--site-verdict-top, 0rem));
   }
 
   .site-verdict-stage {

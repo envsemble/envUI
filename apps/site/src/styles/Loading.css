@@ -83,12 +83,13 @@
 }
 .site-page-skeleton-stage,
 .site-page-skeleton-code {
-  border-radius: var(--env-radius-md);
   forced-color-adjust: none;
   background-image: var(--env-skeleton-paint);
 }
+/* The stage square-cornered, as a page's figure is (Stage.css). */
 .site-page-skeleton-code {
   block-size: 7.5rem;
+  border-radius: var(--env-radius-md);
 }
 
 /* The layer over the scrolling page that holds the copies of placeholders on their way out, each

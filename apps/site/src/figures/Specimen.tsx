@@ -33,7 +33,7 @@ export function SpecimenRender({
   onStage?: boolean;
 }) {
   const [, setAttempt] = useState(0);
-  // On a do or don't figure, the stage it stands for is the figure's, joined to its bar.
+  // On a do or don't figure, the stage it stands for is the figure's cell.
   const verdict = use(VerdictMotion);
   const path = specimenPath(page, name);
   const Component = specimens.get(path);
@@ -54,7 +54,7 @@ export function SpecimenRender({
             part={`specimen:${page}/${name}`}
             what="specimens"
             stage={!onStage}
-            className={verdict ? 'site-verdict-stage env-connected-row' : undefined}
+            className={verdict ? 'site-verdict-stage' : undefined}
           />
         }
       >

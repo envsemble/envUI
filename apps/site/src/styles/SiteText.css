@@ -19,18 +19,27 @@
   text-wrap: pretty;
 }
 
-/* A section's title, the page's h2, one style in the catalogue and the Docs alike: a component's
-   sections and a foundation's figures, a Docs page's Import or Props, a guide's sections. Below it,
+/* A section's title, the page's h2: a Docs page's Import or Props, a guide's sections. Below it,
    an h3 is the title style everywhere, Markdown's and the Docs' own, so the two levels stand
    clearly apart. */
 .site-section-title,
-.site-figure-section-heading h2,
 .site-example > h2,
-.catalogue-related > h2,
 .site-article > .env-markdown > h2 {
   /* Well below the banner's title, which names the page, and well above an h3's title style. */
   font: var(--env-font-weight-medium) 1.5rem / 1.25 var(--env-font-family);
   letter-spacing: -0.0125em;
+}
+/* A component's, a pattern's or a foundation's sections, as the home page titles its own: a step
+   quieter, so the figures, gallery cells, lead the page; a subsection's title in the title size,
+   medium as the section's. */
+.site-figure-section-heading h2,
+.catalogue-related > h2 {
+  font: var(--env-font-weight-medium) 1.375rem / 1.3 var(--env-font-family);
+  letter-spacing: -0.015em;
+}
+:where(.site-figures) .env-markdown > h3 {
+  font: var(--env-font-weight-medium) var(--env-font-size-title) / 1.4 var(--env-font-family);
+  letter-spacing: -0.01em;
 }
 /* A Docs section's title sits as close to what it heads as a catalogue section's does (Figures.css). */
 .docs-guide > .site-section-title + * {
