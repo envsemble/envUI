@@ -17,7 +17,7 @@ import { IconPause } from '@envsemble/envui/icons/Pause';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '@docs-model/DocumentationTypes';
 import { useVerdictFit } from '../figures/useVerdictFit';
-import { useDisplaySettings } from '../theme/DisplaySettings';
+import { useDisplaySettings } from '../display/DisplaySettings';
 import { Playback, StageOverlays } from './Playback';
 import { useInView } from './useInView';
 import { rootMotionDuration } from './RootMotionTokens';

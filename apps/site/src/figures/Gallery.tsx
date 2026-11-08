@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { Column, Link, Row, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { routeHref } from '../navigation/Address';
-import type { RoutePage } from '../navigation/SiteRoutes';
+import { routeHref } from '../routes/Address';
+import type { RoutePage } from '../routes/SiteRoutes';
 import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/usePlaying';
 import { TileStage } from './TileStage';

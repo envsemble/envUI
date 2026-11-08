@@ -3,7 +3,7 @@ import { siteDevUrl } from '../helpers/Servers';
 import { chooseScheme } from '../helpers/CatalogueThemes';
 import { readReleaseNotes } from '../../../scripts/site/ReleaseNotes.ts';
 import { renderLlmsText, renderSkill } from '../../../scripts/site/SiteAgentFiles.ts';
-import { pagesOf } from '../../../apps/site/src/navigation/SiteRoutes';
+import { pagesOf } from '../../../apps/site/src/routes/SiteRoutes';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
 test('a guide in the Docs renders shared Markdown and follows relative links', async ({ page }) => {

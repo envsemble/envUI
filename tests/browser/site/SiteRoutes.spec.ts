@@ -5,11 +5,11 @@ import {
   findPage,
   pagesOf,
   routeOfDocument,
-} from '../../../apps/site/src/navigation/SiteRoutes';
-import { counterpartOf, otherPartRoute } from '../../../apps/site/src/navigation/Counterparts';
-import { docsTree } from '../../../apps/site/src/navigation/DocsTree';
-import { normalizeRoute } from '../../../apps/site/src/navigation/OldAddresses';
-import { docsTrail } from '../../../apps/site/src/navigation/Trails';
+} from '../../../apps/site/src/routes/SiteRoutes';
+import { counterpartOf, otherPartRoute } from '../../../apps/site/src/routes/Counterparts';
+import { docsTree } from '../../../apps/site/src/routes/DocsTree';
+import { normalizeRoute } from '../../../apps/site/src/routes/OldAddresses';
+import { docsTrail } from '../../../apps/site/src/routes/Trails';
 import { componentGroups } from '../../../apps/site/src/pages/PageModel';
 import { goTo } from '../helpers/SiteSpecHelpers';
 

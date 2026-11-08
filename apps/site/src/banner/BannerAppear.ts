@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { LineArtMotion } from '@envsemble/envui';
-import { useDisplaySettings } from '../theme/DisplaySettings';
+import { useDisplaySettings } from '../display/DisplaySettings';
 
 /** Where the site keeps, for the tab's session, that a banner has drawn itself in. */
 const storageKey = 'envui-site-banner-drawn';

@@ -3,12 +3,8 @@ import { siteDevUrl } from '../helpers/Servers';
 import { requireSite, serveSite, siteUrl } from '../helpers/HostedSite';
 import { chooseScheme } from '../helpers/CatalogueThemes';
 import { renderLlmsText, renderSkill } from '../../../scripts/site/SiteAgentFiles.ts';
-import {
-  allPages,
-  sectionHome,
-  catalogueSections,
-} from '../../../apps/site/src/navigation/SiteRoutes';
-import { displayStorageKeys } from '../../../apps/site/src/theme/DisplayStorage';
+import { allPages, sectionHome, catalogueSections } from '../../../apps/site/src/routes/SiteRoutes';
+import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
 test('the hosted build opens every page of the catalogue and the Docs without network or script errors', async ({

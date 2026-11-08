@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { restoringScroll } from '../navigation/ScrollRestoration';
+import { restoringScroll } from '../routes/ScrollRestoration';
 
 /** What the reader does that shows the rest at once: scrolling, pressing or typing. */
 const interruptions = ['wheel', 'touchstart', 'keydown', 'pointerdown'];

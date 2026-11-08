@@ -1,5 +1,5 @@
 import { useEffect, useSyncExternalStore, type RefObject } from 'react';
-import { useDisplaySettings } from '../theme/DisplaySettings';
+import { useDisplaySettings } from '../display/DisplaySettings';
 import { reducedMotionQuery } from '@envui-internal/internal/reducedMotion';
 
 /*

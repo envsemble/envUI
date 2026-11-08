@@ -2,7 +2,7 @@ import { Component, createRef, type ReactNode } from 'react';
 import { Alert, Button, Link, Column } from '@envsemble/envui';
 import { errorMessage, focusDropped, focusedElement, reloadPage } from '../loading/LoadBoundary';
 import { SiteBanner } from './SiteBanner';
-import { homeRoute, routeHref } from '../navigation/Address';
+import { homeRoute, routeHref } from '../routes/Address';
 
 interface PageBoundaryProps {
   /** The page's title, kept as its heading when the page fails. */

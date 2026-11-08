@@ -9,8 +9,8 @@ import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';
 import { pendingAttribute, SectionOutline, useSectionOutline } from './SectionOutline';
-import { subscribeToAddress } from '../navigation/Address';
-import { statusTones } from '../navigation/PageBadges';
+import { subscribeToAddress } from '../routes/Address';
+import { statusTones } from '../routes/PageBadges';
 
 /**
  * Status and first release under the title of a component's or pattern's page, and after them

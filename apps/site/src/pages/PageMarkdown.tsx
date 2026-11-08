@@ -8,9 +8,9 @@ import {
 } from '@envsemble/envui/content';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { documents } from './PageModel';
-import { groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
-import { inDocs, routeHref } from '../navigation/Address';
-import { currentRoute } from '../navigation/useSiteRoute';
+import { groupedPages, routeOfDocument } from '../routes/SiteRoutes';
+import { inDocs, routeHref } from '../routes/Address';
+import { currentRoute } from '../routes/useSiteRoute';
 import { headingSlugger } from '@docs-model/SearchAnchors';
 import { headingsOnly, useSectionOutline } from '../template/SectionOutline';
 import { marked, type Token, type Tokens } from 'marked';

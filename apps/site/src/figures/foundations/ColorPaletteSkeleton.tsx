@@ -1,6 +1,6 @@
 import { Button, Column, Text } from '@envsemble/envui';
 import { SpecimenFrame } from '../SpecimenFrame';
-import { colorGroups, colorVariable } from '../../theme/Palette';
+import { colorGroups, colorVariable } from '../../display/Palette';
 import { PartSkeleton, placeholderText } from '../../loading/Skeletons';
 
 /**

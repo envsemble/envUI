@@ -1,4 +1,4 @@
-import { pagesOf, type RoutePage } from '../navigation/SiteRoutes';
+import { pagesOf, type RoutePage } from '../routes/SiteRoutes';
 
 /** What a catalogue page's banner is drawn for: its document's id, or its path, such as components. */
 export const bannerSubject = (page: RoutePage) => page.document?.id ?? page.path;

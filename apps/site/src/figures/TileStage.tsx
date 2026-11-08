@@ -10,7 +10,7 @@ import {
 import { Theme, useTheme } from '@envsemble/envui';
 import { IconArticle } from '@envsemble/envui/icons/Article';
 import { Playback, StageOverlays } from '../motion/Playback';
-import { useDisplaySettings } from '../theme/DisplaySettings';
+import { useDisplaySettings } from '../display/DisplaySettings';
 import { ExampleRender } from './LiveExample';
 import { FoundationTile } from '../tiles/foundations/FoundationTiles';
 import type { TilePicture } from '../template/RelatedPages';

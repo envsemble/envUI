@@ -1,4 +1,4 @@
-import { pagesOf } from '../navigation/SiteRoutes';
+import { pagesOf } from '../routes/SiteRoutes';
 import { Gallery, type GalleryGroup } from '../figures/Gallery';
 
 /** The id of a group's heading on the patterns' overview, such as patterns-keep-people-informed. */

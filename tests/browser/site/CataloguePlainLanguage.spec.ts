@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { siteDevUrl } from '../helpers/Servers';
 import { readdirSync, readFileSync } from 'node:fs';
 import { technicalText } from '../../../scripts/docs/model/CatalogueContent.ts';
-import { allPages } from '../../../apps/site/src/navigation/SiteRoutes';
+import { allPages } from '../../../apps/site/src/routes/SiteRoutes';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
 /**

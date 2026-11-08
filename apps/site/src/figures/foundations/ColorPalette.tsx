@@ -2,8 +2,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Dialog, Column, Text, useTheme } from '@envsemble/envui';
 import { ColorPicker } from '@envsemble/envui/color';
 import { SpecimenFrame } from '../SpecimenFrame';
-import { colorGroups, colorVariable } from '../../theme/Palette';
-import { usePaletteCustomization } from '../../theme/PaletteCustomization';
+import { colorGroups, colorVariable } from '../../display/Palette';
+import { usePaletteCustomization } from '../../display/PaletteCustomization';
 
 interface MeasuredColor {
   css: string;

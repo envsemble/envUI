@@ -1,8 +1,8 @@
 import { Alert, Column, Link } from '@envsemble/envui';
-import { SiteBanner } from '../layout/SiteBanner';
-import { catalogueTrail } from '../navigation/Trails';
-import type { DocumentPage, RoutePage } from '../navigation/SiteRoutes';
-import { PartSwitch } from '../navigation/OtherPart';
+import { SiteBanner } from '../banner/SiteBanner';
+import { catalogueTrail } from '../routes/Trails';
+import type { DocumentPage, RoutePage } from '../routes/SiteRoutes';
+import { PartSwitch } from '../routes/OtherPart';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import { Catalogue } from './Catalogue';
 import { FoundationCatalogue } from './FoundationCatalogue';

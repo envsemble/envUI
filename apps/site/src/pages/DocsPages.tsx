@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { Column, Text } from '@envsemble/envui';
-import { SiteBanner } from '../layout/SiteBanner';
-import { pagesOf, type DocumentPage, type RoutePage } from '../navigation/SiteRoutes';
-import { docsTrail } from '../navigation/Trails';
-import { docsRoute } from '../navigation/Address';
-import { PartSwitch } from '../navigation/OtherPart';
+import { SiteBanner } from '../banner/SiteBanner';
+import { pagesOf, type DocumentPage, type RoutePage } from '../routes/SiteRoutes';
+import { docsTrail } from '../routes/Trails';
+import { docsRoute } from '../routes/Address';
+import { PartSwitch } from '../routes/OtherPart';
 import { lazyPart } from '../loading/LoadBoundary';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import { useRevealed } from '../template/useRevealed';

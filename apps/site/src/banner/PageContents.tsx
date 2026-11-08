@@ -1,7 +1,7 @@
 import { createContext, useContext, type MouseEvent } from 'react';
 import { Disclosure, TableOfContents } from '@envsemble/envui';
-import { announceShownAddress } from '../navigation/Address';
-import type { RoutePage } from '../navigation/SiteRoutes';
+import { announceShownAddress } from '../routes/Address';
+import type { RoutePage } from '../routes/SiteRoutes';
 
 /**
  * Whether a heading belongs in the page's contents: one of the page's own, not an example's, a

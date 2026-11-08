@@ -1,5 +1,5 @@
 import { LineArt, lineArtDrawings } from '@envsemble/envui';
-import { pagesOf } from '../navigation/SiteRoutes';
+import { pagesOf } from '../routes/SiteRoutes';
 import { bannerDrawingIndex, bannerSubject } from './CatalogueBannerOrder';
 
 /** Each Docs page's place in the Docs' order, by its title, as its banner names it. */

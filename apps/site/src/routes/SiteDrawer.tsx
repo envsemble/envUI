@@ -1,6 +1,6 @@
 import { useState, type ComponentProps, type PointerEvent } from 'react';
 import { NavigationDrawer } from '@envsemble/envui';
-import { drawerWidthKey } from '../theme/DisplayStorage';
+import { drawerWidthKey } from '../display/DisplayStorage';
 import type { Area } from './SiteRoutes';
 
 /**

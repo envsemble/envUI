@@ -24,7 +24,7 @@ import {
   type CatalogueTheme,
   type ThemeName,
 } from '../browser/helpers/CatalogueThemes';
-import { allPages } from '../../apps/site/src/navigation/SiteRoutes';
+import { allPages } from '../../apps/site/src/routes/SiteRoutes';
 
 /** light on every page, and dark, light-hc and dark-hc on the pages of samplePages. */
 type Theme = ThemeName;
