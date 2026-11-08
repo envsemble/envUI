@@ -97,7 +97,7 @@ export * as Accordion from './content/Accordion.js';
 export * as DescriptionList from './content/DescriptionList.js';
 export * from './content/CalendarHeatmap.js';
 
-// Forms: fields, choices, pickers and the drop zone.
+// Form fields: text, choices, pickers and the drop zone.
 export * as Field from './forms/Field.js';
 export * from './forms/TextField.js';
 export * from './forms/Textarea.js';
