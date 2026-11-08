@@ -43,7 +43,11 @@ export function ColumnResizeHandle({
   const { widths, minimums, change, reset, setResizing } = columns;
   const width = widths[column];
   const { min, max } = columnBounds(widths, minimums, column);
-  const { handleProps, dragging } = useResize({
+  // A column's handle always moves along the inline axis, so its part takes no data-axis.
+  const {
+    handleProps: { 'data-axis': _axis, ...handleProps },
+    dragging,
+  } = useResize({
     axis: 'inline',
     unit: '%',
     percentOf: tableOf,
@@ -67,7 +71,6 @@ export function ColumnResizeHandle({
   return (
     <div
       {...handleProps}
-      data-axis={undefined}
       aria-label={label}
       aria-labelledby={label === undefined ? labelledBy : undefined}
       className="env-table-column-resize-handle"
