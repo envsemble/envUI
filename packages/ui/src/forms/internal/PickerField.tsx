@@ -109,6 +109,39 @@ function ignoreChange() {
   // The visually hidden input only carries the value for native forms.
 }
 
+/** What PickerField takes from its owner beside the field's own props. */
+interface PickerFieldOwnProps extends Omit<
+  PickerFieldProps,
+  'open' | 'defaultOpen' | 'onOpenChange'
+> {
+  /** The value as the form submits it; empty for none. */
+  serialized: string;
+  /** The value as the field shows it. */
+  display: string;
+  /** The icon at the field's end. */
+  icon: ReactNode;
+  /** The owner's classes on the root, beside env-field. */
+  rootClassName: string;
+  /** The owner's class on the popup, beside env-picker-popup and env-date-picker-popup. */
+  popupClassName?: string;
+  /** The action at the start of the popup's footer, such as Today. */
+  popupStart: ReactNode;
+  /** The actions at the end of the popup's footer, such as Clear. */
+  popupEnd?: ReactNode;
+  /** The element focus moves to as the popup opens, from the popup. */
+  initialFocus: (popup: HTMLElement | null) => HTMLElement | null;
+  /** The clear button's name. */
+  clearLabel: string;
+  /** Removes the value. */
+  onClear: () => void;
+  /** Restores the value a form reset gives an uncontrolled field. */
+  onFormReset: () => void;
+  open: boolean;
+  setOpen: (open: boolean, reason: PickerOpenChangeReason) => void;
+  /** The popup's body, or a function of the name the field and popup share, for its parts. */
+  children: ReactNode | ((name: PickerName) => ReactNode);
+}
+
 /**
  * The field of DatePicker, TimePicker and MonthPicker: the shared text field's frame around a
  * combobox button that shows the value in the reader's locale, with a clear button and an icon at
@@ -153,34 +186,7 @@ export function PickerField({
   'aria-labelledby': labelledBy,
   onKeyDown,
   ...triggerProps
-}: Omit<PickerFieldProps, 'open' | 'defaultOpen' | 'onOpenChange'> & {
-  /** The value as the form submits it; empty for none. */
-  serialized: string;
-  /** The value as the field shows it. */
-  display: string;
-  /** The icon at the field's end. */
-  icon: ReactNode;
-  /** The owner's classes on the root, beside env-field. */
-  rootClassName: string;
-  /** The owner's class on the popup, beside env-picker-popup and env-date-picker-popup. */
-  popupClassName?: string;
-  /** The action at the start of the popup's footer, such as Today. */
-  popupStart: ReactNode;
-  /** The actions at the end of the popup's footer, such as Clear. */
-  popupEnd?: ReactNode;
-  /** The element focus moves to as the popup opens, from the popup. */
-  initialFocus: (popup: HTMLElement | null) => HTMLElement | null;
-  /** The clear button's name. */
-  clearLabel: string;
-  /** Removes the value. */
-  onClear: () => void;
-  /** Restores the value a form reset gives an uncontrolled field. */
-  onFormReset: () => void;
-  open: boolean;
-  setOpen: (open: boolean, reason: PickerOpenChangeReason) => void;
-  /** The popup's body, or a function of the name the field and popup share, for its parts. */
-  children: ReactNode | ((name: PickerName) => ReactNode);
-}) {
+}: PickerFieldOwnProps) {
   const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;
   const labelId = `${id}-label`;
