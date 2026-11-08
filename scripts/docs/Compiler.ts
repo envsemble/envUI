@@ -10,7 +10,7 @@ import {
   type PageSection,
   type PropsFile,
 } from './Schema.ts';
-import { cell, fenceFor } from './Validation.ts';
+import { cell, fenceFor } from './validation/MarkdownBlocks.ts';
 import { readMessages, renderStrings, type MessageNamespace } from './Messages.ts';
 import type { AnatomyLegendItem, PropEntry } from './model/DocumentationTypes.ts';
 
