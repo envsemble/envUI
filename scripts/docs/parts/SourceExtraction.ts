@@ -3,14 +3,7 @@
 // for a class), with `env-x-${value}` expanded over the value's type, and the `data-*` attributes set
 // in JSX on an element with a part class, with the values of the attribute's type.
 import { relative, resolve } from 'node:path';
-import {
-  Node,
-  Project,
-  type JsxAttribute,
-  type TemplateExpression,
-  type TemplateSpan,
-  type Type,
-} from 'ts-morph';
+import { Node, Project, SyntaxKind, type JsxAttribute, type SourceFile, type Type } from 'ts-morph';
 import { kebab } from '../Schema.ts';
 import {
   isPrivateState,
@@ -103,10 +96,11 @@ export function readSource() {
     file.forEachDescendant((node) => {
       if (Node.isJsxAttribute(node)) {
         const name = node.getNameNode().getText();
-        if (isClassName(name) && node.getInitializer()) {
-          anchors.push(node.getInitializer());
-          const element = node.getParent().getParent()!;
-          for (const identifier of node.getInitializer()!.getDescendants())
+        const initializer = node.getInitializer();
+        if (isClassName(name) && initializer) {
+          anchors.push(initializer);
+          const element = node.getParent().getParentOrThrow();
+          for (const identifier of initializer.getDescendants())
             if (Node.isIdentifier(identifier))
               for (const declaration of identifier.getSymbol()?.getDeclarations() ?? [])
                 if (Node.isVariableDeclaration(declaration))
@@ -115,7 +109,7 @@ export function readSource() {
                     new Set([...(elementsOfVariable.get(declaration) ?? []), element]),
                   );
         } else if (name.startsWith('data-') && !isPrivateState(name)) {
-          const element = node.getParent().getParent()!;
+          const element = node.getParent().getParentOrThrow();
           const list = statesOnElement.get(element) ?? [];
           list.push({ attribute: name, values: attributeValues(node), path });
           statesOnElement.set(element, list);
@@ -154,8 +148,7 @@ export function readSource() {
       )
         anchors.push(node.getInitializer());
     });
-    const seen = new Set<Node>();
-    const add = (name: string, node: Node) => {
+    for (const { name, node } of classesIn(anchors, path, warnings)) {
       const entry = classes.get(name) ?? { files: new Set<string>() };
       entry.files.add(path);
       classes.set(name, entry);
@@ -163,47 +156,6 @@ export function readSource() {
         const set = classesOnElement.get(element) ?? new Set<string>();
         set.add(name);
         classesOnElement.set(element, set);
-      }
-    };
-    for (const anchor of anchors) {
-      if (!anchor) continue;
-      const pieces = [anchor, ...anchor.getDescendants()];
-      for (const node of pieces) {
-        if (seen.has(node)) continue;
-        seen.add(node);
-        let text: string;
-        let next: Node | undefined;
-        if (
-          Node.isStringLiteral(node) ||
-          Node.isNoSubstitutionTemplateLiteral(node) ||
-          Node.isTemplateTail(node)
-        )
-          text = node.getLiteralText();
-        else if (Node.isTemplateHead(node) || Node.isTemplateMiddle(node)) {
-          text = node.getLiteralText();
-          // The expression that follows the piece completes a class that ends in `-`.
-          if (Node.isTemplateHead(node))
-            next = (node.getParent() as TemplateExpression).getTemplateSpans()[0]?.getExpression();
-          else {
-            const span = node.getParent() as TemplateSpan;
-            const spans = (span.getParent() as TemplateExpression).getTemplateSpans();
-            next = spans[spans.indexOf(span) + 1]?.getExpression();
-          }
-        } else continue;
-        for (const match of text.matchAll(classPattern)) {
-          const [token, dash] = match;
-          if (!dash) {
-            add(token, node);
-            continue;
-          }
-          const ends = match.index + token.length === text.length;
-          const values = ends && next ? literalValues(next.getType()) : undefined;
-          if (!values?.size) {
-            warnings.push(`${path}: ${token}… takes a value that is not a list of strings`);
-            continue;
-          }
-          for (const value of values) add(`${token}${value}`, node);
-        }
       }
     }
   }
@@ -213,9 +165,86 @@ export function readSource() {
     if (!names) continue;
     for (const state of list) states.push({ ...state, classes: [...names] });
   }
-  // A component's files: its own and the internal modules it imports, so shared anatomy, such as
-  // the list row of menus, counts as used by the components that render it.
-  const imports = new Map(
+  return {
+    classes,
+    states,
+    imports: importsOf(files),
+    renders: rendersOf(files),
+    warnings,
+    written,
+    writtenToDataset,
+  };
+}
+
+/**
+ * The part classes the strings in and under `anchors` name, each with the node that names it, a
+ * class that ends in `-` expanded over the values of the expression that completes it. One whose
+ * expression is no list of strings is a warning.
+ */
+function classesIn(anchors: (Node | undefined)[], path: string, warnings: string[]) {
+  const found: { name: string; node: Node }[] = [];
+  const seen = new Set<Node>();
+  for (const anchor of anchors) {
+    if (!anchor) continue;
+    for (const node of [anchor, ...anchor.getDescendants()]) {
+      if (seen.has(node)) continue;
+      seen.add(node);
+      const piece = classText(node);
+      if (!piece) continue;
+      const { text, next } = piece;
+      for (const match of text.matchAll(classPattern)) {
+        const [token, dash] = match;
+        if (!dash) {
+          found.push({ name: token, node });
+          continue;
+        }
+        const ends = match.index + token.length === text.length;
+        const values = ends && next ? literalValues(next.getType()) : undefined;
+        if (!values?.size) {
+          warnings.push(`${path}: ${token}… takes a value that is not a list of strings`);
+          continue;
+        }
+        for (const value of values) found.push({ name: `${token}${value}`, node });
+      }
+    }
+  }
+  return found;
+}
+
+/**
+ * The text of a string or template piece that may hold class names, and for a piece followed by
+ * an expression, that expression, which completes a class that ends in `-`.
+ */
+function classText(node: Node): { text: string; next?: Node } | undefined {
+  if (
+    Node.isStringLiteral(node) ||
+    Node.isNoSubstitutionTemplateLiteral(node) ||
+    Node.isTemplateTail(node)
+  )
+    return { text: node.getLiteralText() };
+  if (Node.isTemplateHead(node))
+    return {
+      text: node.getLiteralText(),
+      next: node
+        .getParentIfKindOrThrow(SyntaxKind.TemplateExpression)
+        .getTemplateSpans()[0]
+        ?.getExpression(),
+    };
+  if (Node.isTemplateMiddle(node)) {
+    const span = node.getParentIfKindOrThrow(SyntaxKind.TemplateSpan);
+    const spans = span.getParentIfKindOrThrow(SyntaxKind.TemplateExpression).getTemplateSpans();
+    return { text: node.getLiteralText(), next: spans[spans.indexOf(span) + 1]?.getExpression() };
+  }
+  return undefined;
+}
+
+/**
+ * The library modules each file imports, by the file: a component's files are its own and the
+ * internal modules it imports, so shared anatomy, such as the list row of menus, counts as used by
+ * the components that render it.
+ */
+function importsOf(files: SourceFile[]) {
+  return new Map(
     files.map((file) => [
       repositoryPath(file.getFilePath()),
       file
@@ -225,27 +254,32 @@ export function readSource() {
         .map((imported) => repositoryPath(imported.getFilePath())),
     ]),
   );
-  // The components each file imports as values, by their module: the names it imports, or every
-  // export of the module for a namespace import, such as Bar's `import * as Menu`.
-  const renders = new Map(
+}
+
+/**
+ * The components each file imports as values, by their module: the names it imports, or every
+ * export of the module for a namespace import, such as Bar's `import * as Menu`.
+ */
+function rendersOf(files: SourceFile[]) {
+  return new Map(
     files.map((file) => [
       repositoryPath(file.getFilePath()),
-      file
-        .getImportDeclarations()
-        .filter(
-          (declaration) => !declaration.isTypeOnly() && declaration.getModuleSpecifierSourceFile(),
-        )
-        .map((declaration) => ({
-          source: repositoryPath(declaration.getModuleSpecifierSourceFile()!.getFilePath()),
-          names: declaration
-            .getNamedImports()
-            .filter((specifier) => !specifier.isTypeOnly())
-            .map((specifier) => specifier.getName()),
-          namespace: declaration.getNamespaceImport() !== undefined,
-        })),
+      file.getImportDeclarations().flatMap((declaration) => {
+        const imported = declaration.getModuleSpecifierSourceFile();
+        if (declaration.isTypeOnly() || !imported) return [];
+        return [
+          {
+            source: repositoryPath(imported.getFilePath()),
+            names: declaration
+              .getNamedImports()
+              .filter((specifier) => !specifier.isTypeOnly())
+              .map((specifier) => specifier.getName()),
+            namespace: declaration.getNamespaceImport() !== undefined,
+          },
+        ];
+      }),
     ]),
   );
-  return { classes, states, imports, renders, warnings, written, writtenToDataset };
 }
 
 /** The values a JSX data attribute takes: its literal, or the string values of its type. */
