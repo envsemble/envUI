@@ -1,7 +1,8 @@
-import { lazy, Suspense, use, useState, type ComponentType } from 'react';
+import { Suspense, use, useState, type ComponentType } from 'react';
 import { SpecimenHeadingLevel } from './Example';
 import { SpecimenArea } from './SpecimenArea';
-import { LoadBoundary, loadModule, reloadModule } from '../loading/LoadBoundary';
+import { LoadBoundary } from '../loading/LoadBoundary';
+import { moduleRegistry } from '../loading/ModuleRegistry';
 import { HoldPlaceholder, StageSkeleton } from '../loading/Loading';
 import { VerdictMotion } from '../motion/MotionStage';
 
@@ -10,12 +11,11 @@ import { VerdictMotion } from '../motion/MotionStage';
  * every variant or forced interaction states. A page places one with `<!-- specimen: Name -->`;
  * the packaged Markdown leaves it out. Each loads with the page that shows it.
  */
-const loaders = import.meta.glob<{ default: ComponentType }>('../specimens/*/*.tsx');
-const specimens = new Map(
-  Object.entries(loaders).map(([path, load]) => [path, lazy(loadModule(load))]),
+const specimens = moduleRegistry(
+  import.meta.glob<{ default: ComponentType }>('/src/specimens/*/*.tsx'),
 );
 
-const specimenPath = (page: string, name: string) => `../specimens/${page}/${name}.tsx`;
+const specimenPath = (page: string, name: string) => `/src/specimens/${page}/${name}.tsx`;
 
 /**
  * A page's specimen file rendered, loaded with the page and loaded again on a retry: the body of a
@@ -36,15 +36,13 @@ export function SpecimenRender({
   // On a do or don't figure, the stage it stands for is the figure's cell.
   const verdict = use(VerdictMotion);
   const path = specimenPath(page, name);
-  const Component = specimens.get(path);
-  if (!Component) throw new Error(`No specimen apps/site/src/specimens/${page}/${name}.tsx`);
+  const Component = specimens.component(path);
   return (
     <LoadBoundary
       what="specimen"
-      modules={[`src/specimens/${page}/${name}.tsx`]}
+      modules={[specimens.module(path)]}
       onRetry={() => {
-        // A failed load stays failed in its lazy component; the retry makes a new one.
-        specimens.set(path, lazy(loadModule(reloadModule(loaders[path], path, import.meta.url))));
+        specimens.retry(path);
         setAttempt((count) => count + 1);
       }}
     >
