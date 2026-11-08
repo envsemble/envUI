@@ -6,8 +6,45 @@ import { linkDialog as linkDialogMessages } from '../../foundations/messages/lin
 import { richText as richTextMessages } from '../../foundations/messages/richText.js';
 import type { EditorLink } from '../../forms/internal/LinkDialog.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
-import type { RichTextEditorProps } from '../types.js';
+import type { RichTextAttachment, RichTextEditorProps } from '../types.js';
 import { safeRichTextUrl } from './referenceAttributes.js';
+
+/** Links the selected text, or inserts the link's label, or else its address, where the cursor is. */
+function insertLink(editor: Editor, selection: Editor['state']['selection'], link: EditorLink) {
+  if (!selection.empty) {
+    editor
+      .chain()
+      .focus()
+      .setTextSelection({ from: selection.from, to: selection.to })
+      .setLink({ href: link.href })
+      .run();
+  } else {
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(selection.from, {
+        type: 'text',
+        text: link.label || link.href,
+        marks: [{ type: 'link', attrs: { href: link.href } }],
+      })
+      .run();
+  }
+}
+
+/** An uploaded file as the document takes it: an image, or a reference to the file. */
+const attachmentContent = (attachment: RichTextAttachment) =>
+  attachment.kind === 'image'
+    ? { type: 'image', attrs: { src: attachment.url, alt: attachment.label } }
+    : {
+        type: 'envReference',
+        attrs: {
+          id: attachment.id ?? attachment.url,
+          label: attachment.label,
+          href: attachment.url,
+          kind: 'file',
+          mentionSuggestionChar: '',
+        },
+      };
 
 /**
  * Insert link and Attach files of RichTextEditor: the link from the built-in dialog or the
@@ -76,24 +113,7 @@ export function useLinksAndUploads({
         setStatus(linkMessages.invalidPath);
         return;
       }
-      if (!selection.empty) {
-        editor
-          .chain()
-          .focus()
-          .setTextSelection({ from: selection.from, to: selection.to })
-          .setLink({ href: link.href })
-          .run();
-      } else {
-        editor
-          .chain()
-          .focus()
-          .insertContentAt(selection.from, {
-            type: 'text',
-            text: link.label || link.href,
-            marks: [{ type: 'link', attrs: { href: link.href } }],
-          })
-          .run();
-      }
+      insertLink(editor, selection, link);
     };
     setStatus('');
     if (!pickLink) {
@@ -130,20 +150,7 @@ export function useLinksAndUploads({
             setStatus(messages.unsafeUpload);
             return;
           }
-          attachments.push(
-            attachment.kind === 'image'
-              ? { type: 'image', attrs: { src: attachment.url, alt: attachment.label } }
-              : {
-                  type: 'envReference',
-                  attrs: {
-                    id: attachment.id ?? attachment.url,
-                    label: attachment.label,
-                    href: attachment.url,
-                    kind: 'file',
-                    mentionSuggestionChar: '',
-                  },
-                },
-          );
+          attachments.push(attachmentContent(attachment));
         }
       }
       if (editor.isDestroyed || !editor.isEditable || !editor.state.doc.eq(document)) {
