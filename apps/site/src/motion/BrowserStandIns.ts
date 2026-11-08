@@ -1,11 +1,23 @@
 /*
- * The site's stand-ins for browser methods, installed once as it starts (installBrowserStandIns,
- * main.tsx), so a stage's components answer as they would on a page of their own: the pointer no
- * one sees (VirtualPointer.ts) captures and focuses as a person's would, a component's scrolling
- * into view stays inside its stage, and a live example keeps its focus to itself until the reader
- * reaches for it. Outside what each stands in for, the method is the browser's own. Here too, run
- * for one call, the clipboard a copy button writes to and the page's selection a rich text command
- * reads (tests/site/BrowserStandIns.test.mjs).
+ * The site's stand-ins for browser methods, so the components of a stage, a tile's or a figure's
+ * that the pointer no one sees plays (VirtualPointer.ts), answer as they would on a page of their
+ * own. installBrowserStandIns, which main.tsx runs once as the site starts, replaces these methods
+ * on the page's Element and HTMLElement prototypes, so every call on the page goes through them;
+ * each changes what a call does only for an element of a stage, or an id of that pointer, and
+ * calls the browser's own method for any other:
+ * - setPointerCapture, releasePointerCapture and hasPointerCapture keep the capture of the pointers
+ *   no one sees, whose ids the browser would throw for.
+ * - focus, inside a stage the keyboard's focus is in, moves that pointer's focus instead, since the
+ *   stage is inert; in a live example the reader hasn't reached for, it does nothing, so an overlay
+ *   open as the page loads doesn't take the reader's focus and scroll the page.
+ * - matches, asked about :focus or :focus-visible inside a stage the keyboard's focus is in, is
+ *   answered by that pointer's mark, as the stage's stylesheets are.
+ * - scrollIntoView, inside a stage or an open example, scrolls only the boxes inside it, never the
+ *   page around it.
+ * Two more apply only for the length of one call: keepClipboard, so a copy button the pointer
+ * presses copies nowhere, and lendSelection, so a rich text command finds the page's selection.
+ * Their state is on the page's global object, so the methods on the prototypes read the same
+ * state after a hot reload of this module (tests/site/BrowserStandIns.test.mjs).
  */
 import { focusMark } from './pointer/PointerStates';
 
