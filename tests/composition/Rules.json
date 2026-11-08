@@ -523,9 +523,9 @@
           "forms/internal/PickerPopup.tsx",
           "forms/internal/TimeList.tsx",
           "forms/internal/TimeWheel.tsx",
-          "forms/internal/useWheelGestures.ts",
-          "forms/internal/useWheelTurn.ts",
-          "forms/internal/wheelRows.ts",
+          "forms/internal/useTimeWheelGestures.ts",
+          "forms/internal/useTimeWheelTurn.ts",
+          "forms/internal/timeWheelRows.ts",
           "forms/internal/MonthGrid.tsx",
           "forms/TimePicker.tsx",
           "forms/MonthPicker.tsx"

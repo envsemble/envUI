@@ -10,7 +10,7 @@ import {
   wheelMetrics,
   wrap,
   type Entry,
-} from './wheelRows.js';
+} from './timeWheelRows.js';
 
 /**
  * How quickly a turn eases into its row: each frame closes the distance left with a time constant of
@@ -29,7 +29,7 @@ const endRows = 3;
  * settles in the middle as scrolling ends is chosen, an unavailable one giving way to the nearest
  * available. A looping wheel moves back to its middle copy, unseen, so it scrolls on in both ways.
  */
-export function useWheelTurn({
+export function useTimeWheelTurn({
   wheelRef,
   dragRef,
   entries,
