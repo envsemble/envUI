@@ -431,6 +431,7 @@
           "color/internal/ColorSlider.tsx",
           "color/internal/ColorFields.tsx",
           "color/internal/ColorLocale.tsx",
+          "color/internal/ColorValues.tsx",
           "color/internal/SwatchList.tsx",
           "color/internal/colorValue.ts",
           "color/internal/useColorState.ts",

@@ -142,6 +142,7 @@ export const aliases: Record<string, string[]> = {
   ColorArea: ['ColorPicker'],
   ColorSlider: ['ColorPicker'],
   ColorFields: ['ColorPicker'],
+  ColorValues: ['ColorPicker'],
   ColorLocale: ['ColorPicker'],
   SwatchList: ['ColorPicker'],
   colorValue: ['ColorPicker'],
