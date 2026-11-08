@@ -59,7 +59,7 @@ export const appTileFrame: 'window' | 'bleed' = 'window';
 export const tileWindows: Readonly<Record<string, TileWindow>> = {
   'line-art': { width: 6, height: 3.75 },
   accordion: { width: 15, height: 11.25 },
-  'navigation-drawer': { width: 17, height: 12.75, app: {} },
+  'navigation-drawer': { width: 17, height: 12.75 },
   tabs: { width: 15, height: 11.25 },
   breadcrumbs: { width: 15, height: 11.25 },
   // The overlays, each drawn at the overlays' one scale. A dialog with a field is taller than a
@@ -92,14 +92,11 @@ export const tileWindows: Readonly<Record<string, TileWindow>> = {
   filtering: { width: 20, height: 15 },
   conversation: { width: 19, height: 14.25 },
   'data-tables': { width: 19, height: 14.25 },
-  'account-and-organizations': { width: 19, height: 14.25, app: {} },
-  'app-frame': { width: 18, height: 13.5, app: {} },
-  // The other pieces of an application's frame, each filling its card (`app`).
+  'account-and-organizations': { width: 19, height: 14.25 },
+  'app-frame': { width: 18, height: 13.5 },
+  // The pieces of an application's frame that fill their card in a browser's window (`app`).
   scaffold: { width: 14, height: 10.5, app: {} },
-  'top-bar': { width: 14, height: 10.5, app: {} },
-  page: { width: 14, height: 10.5, app: {} },
   'panel-dock': { width: 14, height: 10.5, app: {} },
-  panes: { width: 14, height: 10.5, app: { least: 38 } },
   navigation: { width: 15, height: 11.25 },
 };
 

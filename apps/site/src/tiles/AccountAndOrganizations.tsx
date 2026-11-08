@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { AvatarButton, Button, Menu, Page, PageHeader, Text, TopBar } from '@envsemble/envui';
+import { AvatarButton, Button, Menu, TopBar } from '@envsemble/envui';
 import { IconUnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const organizations = [
-  { id: 'northwind', label: 'Northwind Labs', role: 'Admin', line: '4 active.' },
-  { id: 'contoso', label: 'Contoso', role: 'Member', line: '2 active.' },
+  { id: 'northwind', label: 'Northwind Labs', role: 'Admin' },
+  { id: 'contoso', label: 'Contoso', role: 'Member' },
 ];
 
 const organization = (index: number) => `.env-menu-choice:nth-child(${index} of .env-menu-choice)`;
@@ -40,9 +40,8 @@ const script: PointerStep[] = [
 ];
 
 /**
- * An application's top bar with the active organization's switcher at its start, open, and the
- * signed-in person's avatar at its end, over the organization's page, filling its card
- * (AppTile.tsx).
+ * A top bar with the active organization's switcher at its start, open, and the signed-in person's
+ * avatar at its end.
  */
 export default function AccountAndOrganizationsTile() {
   const [open, setOpen] = useState(true);
@@ -55,34 +54,30 @@ export default function AccountAndOrganizationsTile() {
   });
   const active = organizations.find(({ id }) => id === current);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', blockSize: '100%' }}>
-      <TopBar
-        start={
-          <Menu.Root
-            aria-label="Organizations"
-            align="start"
-            open={open}
-            onOpenChange={setOpen}
-            trigger={
-              <Button variant="secondary" endIcon={<IconUnfoldMore />}>
-                {active?.label}
-              </Button>
-            }
-          >
-            <Menu.RadioGroup label="Organizations" value={current} onValueChange={setCurrent}>
-              {organizations.map(({ id, label, role }) => (
-                <Menu.RadioItem key={id} value={id} description={role}>
-                  {label}
-                </Menu.RadioItem>
-              ))}
-            </Menu.RadioGroup>
-          </Menu.Root>
-        }
-        actions={<AvatarButton name="Sam Lee" description="sam.lee@example.com" />}
-      />
-      <Page header={<PageHeader title="Projects" headingLevel={3} />}>
-        <Text emphasis="muted">{active?.line}</Text>
-      </Page>
-    </div>
+    <TopBar
+      style={{ inlineSize: '17rem' }}
+      start={
+        <Menu.Root
+          aria-label="Organizations"
+          align="start"
+          open={open}
+          onOpenChange={setOpen}
+          trigger={
+            <Button variant="secondary" endIcon={<IconUnfoldMore />}>
+              {active?.label}
+            </Button>
+          }
+        >
+          <Menu.RadioGroup label="Organizations" value={current} onValueChange={setCurrent}>
+            {organizations.map(({ id, label, role }) => (
+              <Menu.RadioItem key={id} value={id} description={role}>
+                {label}
+              </Menu.RadioItem>
+            ))}
+          </Menu.RadioGroup>
+        </Menu.Root>
+      }
+      actions={<AvatarButton name="Sam Lee" description="sam.lee@example.com" />}
+    />
   );
 }
