@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { Grid, Page, Surface, type PageWidth } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 import { remPixels } from '@envui-internal/internal/lengths';
@@ -94,10 +94,10 @@ function Widening() {
 /** Page's widths, one after another, in a window drawn small: the column widens to each. */
 export default function ColumnWidths() {
   return (
-    <Example size="wide">
+    <SpecimenFrame size="wide">
       <MotionStage label="the page column widening">
         <Widening />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

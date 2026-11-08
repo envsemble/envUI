@@ -1,13 +1,12 @@
 import { RichTextEditor } from '@envsemble/envui/rich-text';
-import { Example, SpecimenGrid } from '../../figures/Example';
-import { SpecimenPart } from '../../figures/Specimen';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 const notes = 'Send the **press kit** to Priya Shah by Friday.';
 
 /** The editor's looks and states, for review: two to a row, each three lines tall. */
 export default function States() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid size="compact">
         <SpecimenPart title="Outline">
           <RichTextEditor
@@ -53,6 +52,6 @@ export default function States() {
           />
         </SpecimenPart>
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

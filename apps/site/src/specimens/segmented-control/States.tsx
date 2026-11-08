@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { SegmentedControl } from '@envsemble/envui';
 import { IconViewList } from '@envsemble/envui/icons/ViewList';
 import { IconViewModule } from '@envsemble/envui/icons/ViewModule';
-import { Example, SpecimenGrid } from '../../figures/Example';
-import { SpecimenPart } from '../../figures/Specimen';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -114,10 +113,10 @@ function Choosing() {
  */
 export default function States() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <MotionStage label="choosing an option, and the arrow keys skipping a disabled one">
         <Choosing />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

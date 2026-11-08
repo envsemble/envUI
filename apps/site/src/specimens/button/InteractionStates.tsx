@@ -1,5 +1,5 @@
 import { Button } from '@envsemble/envui';
-import { Example, MatrixScroll } from '../../figures/Example';
+import { SpecimenFrame, MatrixScroll } from '../../figures/SpecimenFrame';
 
 /** Each variant in its neutral tone, with the label its row shows it with. */
 const variants = [
@@ -22,7 +22,7 @@ const states = [
 /** Each variant forced into its hover, pressed, focus and disabled looks. */
 export default function InteractionStates() {
   return (
-    <Example size="wide" still>
+    <SpecimenFrame size="wide" still>
       <MatrixScroll label="Button interaction states">
         <table className="catalogue-matrix">
           <thead>
@@ -57,6 +57,6 @@ export default function InteractionStates() {
           </tbody>
         </table>
       </MatrixScroll>
-    </Example>
+    </SpecimenFrame>
   );
 }

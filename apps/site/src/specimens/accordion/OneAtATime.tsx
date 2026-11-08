@@ -1,5 +1,5 @@
 import FrequentQuestions from '../../examples/accordion/FrequentQuestions';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -33,10 +33,10 @@ function Opening() {
 /** Accordion keeping one section open: opening another closes the one that was. */
 export default function OneAtATime() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="one section open at a time">
         <Opening />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

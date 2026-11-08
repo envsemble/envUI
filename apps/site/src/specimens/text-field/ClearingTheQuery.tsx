@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SearchField } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -57,10 +57,10 @@ function Searching() {
 /** A search, emptied by Esc and then by its clear button, by a pointer no one sees. */
 export default function ClearingTheQuery() {
   return (
-    <Example size="wide">
+    <SpecimenFrame size="wide">
       <MotionStage label="Esc and the clear button emptying the search">
         <Searching />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

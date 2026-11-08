@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Alert, Column, Text } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -63,10 +63,10 @@ function Removing() {
 /** Alerts removed as they stop applying: one by itself, one dismissed by a pointer no one sees. */
 export default function RemovingAlerts() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="the alerts going once they no longer apply">
         <Removing />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

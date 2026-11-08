@@ -1,5 +1,5 @@
 import { Column, HoverCard, Link, Text } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -44,10 +44,10 @@ function Hovering() {
 /** A hover card opened by a resting pointer, which it keeps open as the pointer moves onto it. */
 export default function HoverAndFocus() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="the card opening under a resting pointer">
         <Hovering />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

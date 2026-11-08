@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import NotesMenubar from '../../examples/menubar/NotesMenubar';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -47,10 +47,10 @@ function Holding() {
 /** The notes menubar's access keys, shown while Alt is held, and Alt+E opening Edit. */
 export default function AccessKeys() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="access keys while Alt is held">
         <Holding />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

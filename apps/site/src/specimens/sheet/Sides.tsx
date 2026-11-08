@@ -1,5 +1,5 @@
 import { Button, Column, DescriptionList, Row, Sheet } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -75,10 +75,10 @@ function Opening() {
 /** A sheet from each side: the end, the start and the bottom, opened and closed in turn. */
 export default function Sides() {
   return (
-    <Example size="content">
+    <SpecimenFrame size="content">
       <MotionStage label="a sheet from each side" height="22rem">
         <Opening />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

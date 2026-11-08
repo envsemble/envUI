@@ -4,7 +4,7 @@ import { lazyPart } from '../loading/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
 import { UsageFigure } from '../figures/Figures';
 import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleton';
-import { SpecimenHeadingLevel } from '../figures/Example';
+import { SpecimenHeadingLevel } from '../figures/SpecimenFrame';
 import { partsOf } from '../template/Parts';
 import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
 import type { Documentation as Document } from './PageModel';

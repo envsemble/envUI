@@ -1,5 +1,5 @@
 import PagesOfAList from '../../examples/pagination/PagesOfAList';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -52,10 +52,10 @@ function Paging() {
 /** The report's pages, loaded one by one by a pointer no one sees, to the end and back. */
 export default function WhileAPageLoads() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="pages loading">
         <Paging />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

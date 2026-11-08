@@ -5,7 +5,7 @@ import { CodeBlock } from '@envsemble/envui/content';
 // the package doesn't export: applications import each icon by its own path. The site's Vite
 // config and tsconfig point envui-icon-list at packages/ui/src/icons/index.ts.
 import * as symbols from 'envui-icon-list';
-import { Example } from '../Example';
+import { SpecimenFrame } from '../SpecimenFrame';
 import { iconPageSize as pageSize } from './Icons';
 
 const normalizeName = (name: string) => name.toLowerCase().replace(/[\s_-]/g, '');
@@ -92,7 +92,7 @@ export function IconCatalogue() {
   const visibleSymbols = matches.slice(page * pageSize, (page + 1) * pageSize);
 
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <div className="catalogue-icon-toolbar">
         <SearchField
           size="lg"
@@ -173,6 +173,6 @@ export function IconCatalogue() {
       >
         {selectedName && <IconDetails key={selectedName} name={selectedName} filled={filled} />}
       </Sheet>
-    </Example>
+    </SpecimenFrame>
   );
 }

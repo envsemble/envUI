@@ -1,5 +1,5 @@
 import { AnimatedNumber, Text } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
@@ -19,10 +19,10 @@ function Counting() {
 /** AnimatedNumber rolling up as its value grows and down as it shrinks. */
 export default function Rolling() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="the number rolling to its new values">
         <Counting />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

@@ -1,6 +1,6 @@
-import { Suspense, use, useContext, useState, type ComponentType, type ReactNode } from 'react';
-import { Column, Text, Theme, useTheme } from '@envsemble/envui';
-import { PartHeadingLevel, SpecimenHeadingLevel } from './Example';
+import { Suspense, use, useState, type ComponentType } from 'react';
+import { Column, Theme, useTheme } from '@envsemble/envui';
+import { SpecimenHeadingLevel } from './SpecimenFrame';
 import { hasExample } from './ExampleRegistry';
 import { keepLinksInPlace } from './LiveExample';
 import { LoadBoundary } from '../loading/LoadBoundary';
@@ -129,30 +129,5 @@ export function Specimen({
         <SpecimenBody page={page} name={name} />
       </Column>
     </SpecimenHeadingLevel>
-  );
-}
-
-/** A titled part of a specimen, such as one state of a matrix, under a small muted label. */
-export function SpecimenPart({
-  title,
-  children,
-  caption,
-}: {
-  title: string;
-  children: ReactNode;
-  caption?: ReactNode;
-}) {
-  const specimenLevel = useContext(SpecimenHeadingLevel);
-  const level = useContext(PartHeadingLevel) ?? ((specimenLevel + 1) as 3 | 4);
-  const Heading = `h${level}` as const;
-  return (
-    <Column render={<section />} gap={2} className="catalogue-specimen">
-      {/* A small muted label, as the state matrix names its rows, quieter than the section's heading. */}
-      <Text render={<Heading />} variant="body-sm">
-        {title}
-      </Text>
-      {children}
-      {caption && <Text variant="caption">{caption}</Text>}
-    </Column>
   );
 }

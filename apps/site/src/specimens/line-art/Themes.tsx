@@ -1,6 +1,5 @@
 import { LineArt, Surface, Theme, type ThemeContrast, type ColorScheme } from '@envsemble/envui';
-import { Example, SpecimenGrid } from '../../figures/Example';
-import { SpecimenPart } from '../../figures/Specimen';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 const themes: { title: string; theme: ColorScheme; contrast: ThemeContrast }[] = [
   { title: 'Light', theme: 'light', contrast: 'standard' },
@@ -16,7 +15,7 @@ const themes: { title: string; theme: ColorScheme; contrast: ThemeContrast }[] =
  */
 export default function Themes() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid size="small">
         {themes.map(({ title, theme, contrast }) => (
           <SpecimenPart key={title} title={title}>
@@ -40,6 +39,6 @@ export default function Themes() {
           </SpecimenPart>
         ))}
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

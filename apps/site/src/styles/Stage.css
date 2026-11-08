@@ -1,16 +1,15 @@
 /* The stage every figure sits on: live examples, do and don't figures, anatomy figures, the tiles
-   of Related and the specimens of a page alike. An example is envUI itself,
-   in the theme the reader has chosen, on a recessed canvas: envUI's well for a preview, with a
-   surface's corners and no edge, so the example's own surfaces rise out of it and never read as
-   the catalogue's. A figure that explains
-   the system rather than showing envUI at work, on a foundation page, sits on the page itself.
-   Both centre what they show. A device of the documentation, kept out of envUI. */
+   of Related and the specimens of a page alike. An example is envUI itself, in the theme the
+   reader has chosen, on a recessed canvas: envUI's well for a preview, with a surface's corners
+   and no edge, so the example's own surfaces rise out of it and never read as the catalogue's. A
+   figure that explains the system rather than showing envUI at work, on a foundation page, sits on
+   the page itself. Both centre what they show. A device of the documentation, kept out of envUI. */
 /* A very faint shadow, soft and wide, a little below the card and with no edge of its own, that
    lifts it off the page: every recessed canvas, the examples, the tiles of Related and the
-   galleries, and the site's own cards, the catalogue's only shadows, by request. Its color follows the card's own, `--catalogue-card-fill`: a shade of it,
-   darker, and stronger the darker the card, so a dark card casts a dark shadow and a light card a
-   light one. Each card sets its fill below, and the shadow is declared on the card itself, so it
-   reads that card's fill. */
+   galleries, and the site's own cards; the site draws no other shadow. Its color follows the
+   card's own, `--catalogue-card-fill`: a shade of it, darker, and stronger the darker the card, so
+   a dark card casts a dark shadow and a light card a light one. Each card sets its fill below, and
+   the shadow is declared on the card itself, so it reads that card's fill. */
 .site-live-example,
 .site-verdict-stage,
 .site-anatomy-stage,
@@ -242,17 +241,6 @@
   }
 }
 
-/* A foundation's figure that explains the system (`explains`), such as the spacing scale, the
-   palette's swatches and the state layers: on the page itself, with no fill and no inset, so it
-   sits right under its title and lines up with the text, as a section's text does, and never
-   reads as an example. */
-.site-foundation-stage[data-figure='explanation'] {
-  justify-items: start;
-  min-block-size: 0;
-  padding: 0;
-  background: none;
-}
-
 /* A live example's stage is as tall as what it shows, with room around it: a row of buttons takes a
    low stage, its room above and below no more than a control's height, which doesn't push the next
    figure out of view or leave a few small controls adrift, and composed UI a large one by its own
@@ -440,12 +428,7 @@
   margin-inline: auto;
 }
 
-/* A foundation page's figures: each Example's content on the stage, centred, at the Example's
-   width; its caption below. */
-.site-example > .site-foundation-stage:not(h2):not(.catalogue-caption) {
-  max-inline-size: 100%;
-}
-
+/* A foundation page's figure: what it shows on the stage, centred, at the example's width. */
 .site-foundation-stage {
   display: grid;
   justify-items: center;

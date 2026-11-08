@@ -1,11 +1,10 @@
 import { Avatar, avatarHues, Row } from '@envsemble/envui';
-import { Example, SpecimenGrid } from '../../figures/Example';
-import { SpecimenPart } from '../../figures/Specimen';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 /** Every hue an avatar without a picture takes, with initials and with the default person picture. */
 export default function Hues() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid size="compact">
         {avatarHues.map((hue) => (
           <SpecimenPart key={hue} title={hue.charAt(0).toUpperCase() + hue.slice(1)}>
@@ -18,6 +17,6 @@ export default function Hues() {
           </SpecimenPart>
         ))}
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

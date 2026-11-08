@@ -1,6 +1,5 @@
 import { TextField } from '@envsemble/envui';
-import { Example, SpecimenGrid } from '../../figures/Example';
-import { SpecimenPart } from '../../figures/Specimen';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 /**
  * An outline field in each state, side by side: empty, under the pointer and focused as the
@@ -8,7 +7,7 @@ import { SpecimenPart } from '../../figures/Specimen';
  */
 export default function States() {
   return (
-    <Example size="collection" still>
+    <SpecimenFrame size="collection" still>
       <SpecimenGrid size="compact">
         <SpecimenPart title="Empty">
           <TextField label="Project name" placeholder="Enter a name" />
@@ -46,6 +45,6 @@ export default function States() {
           <TextField label="Project name" defaultValue="Northwind launch" disabled />
         </SpecimenPart>
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

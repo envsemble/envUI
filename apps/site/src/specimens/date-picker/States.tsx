@@ -1,11 +1,10 @@
 import { DatePicker } from '@envsemble/envui';
-import { Example, SpecimenGrid } from '../../figures/Example';
-import { SpecimenPart } from '../../figures/Specimen';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 /** Invalid, read-only and disabled fields. */
 export default function States() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid>
         <SpecimenPart title="Invalid">
           <DatePicker label="Ends" required error="Choose a day after the start." />
@@ -22,6 +21,6 @@ export default function States() {
           <DatePicker label="Archived on" defaultValue="2026-08-14" disabled />
         </SpecimenPart>
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

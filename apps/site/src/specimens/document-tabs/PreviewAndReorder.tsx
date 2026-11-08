@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import OpenDocuments from '../../examples/document-tabs/OpenDocuments';
-import { Example } from '../../figures/Example';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
@@ -54,10 +54,10 @@ function Arranging() {
 // eslint-disable-next-line no-restricted-syntax -- a preview tab is the document tabs' own word
 export default function PreviewAndReorderMotion() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="a preview tab kept and a tab dragged into place">
         <Arranging />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }
