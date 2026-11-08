@@ -62,7 +62,7 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 
 ### Style sheets
 
-- Each component's CSS is a file of `src/styles` in `@layer env.components`. Its module imports `../styles/Base.css`, then the style sheets of what it builds on, then its own (`tests/library/StyleImports.test.mjs`). No specificity tricks to stay overridable, and nothing `!important`.
+- Each component's CSS is `src/styles/<Name>.css`, in `@layer env.components`. The folder stays flat, apart from the modules: `package.json`'s `#styles/*` import, `scripts/build/BuildLibrary.ts`'s rewrite of `../styles/X.css` to `#styles/X.css` and the ordered `src/styles/index.css` rely on it. Its module imports `../styles/Base.css`, then the style sheets of what it builds on, then its own (`tests/library/StyleImports.test.mjs`). No specificity tricks to stay overridable, and nothing `!important`.
 - Colors, `z-index` and font weights come from tokens; lengths that follow the text are rem, px only for hairlines, em only for typography that follows the element's own size (`npm run lint:css`).
 - No drop shadows but Avatar's, the frosted popups' and a segmented control's thumb (`tests/library/NoShadows.test.mjs`); regions part by space and fill, and hairlines only separate the items of one list.
 - Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/library/StableHover.test.mjs`).
