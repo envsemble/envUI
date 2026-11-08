@@ -13,7 +13,7 @@
         "scripts/build/GenerateFavicons.ts",
         "scripts/test/CheckContents.ts",
         "tests/*/*.test.mjs",
-        "tests/browser/*.spec.ts",
+        "tests/browser/{library,site}/*.spec.ts",
         "tests/accessibility/*.spec.ts",
         // The fixture's pages, each loading one of these.
         "tests/fixture/{main,perf,RichText,CascadeLayers,ForcedColors}.tsx",

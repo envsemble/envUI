@@ -118,7 +118,7 @@ export function codeColumns(markdown: string): string {
       const code = table.header.findIndex((cell) => cell.text.trim() === codeColumnHeading);
       if (code < 1) return [];
       const row = (cells: readonly { text: string }[]) =>
-        `| ${cells[0]!.text.trim()} | ${cells[code]!.text.trim()} |`;
+        `| ${cells[0].text.trim()} | ${cells[code].text.trim()} |`;
       return [
         [
           row(table.header),
@@ -227,7 +227,7 @@ export function catalogueInlineCode(document: CataloguePage): { where: string; c
   return catalogueText(document).flatMap(({ where, markdown, text }) =>
     (markdown !== undefined
       ? inlineCodeOf(markdown)
-      : [...(text ?? '').matchAll(/`([^`]+)`/g)].map((match) => match[1]!)
+      : [...(text ?? '').matchAll(/`([^`]+)`/g)].map((match) => match[1])
     ).map((code) => ({ where, code })),
   );
 }
@@ -278,12 +278,12 @@ export function optionTable(token: Token | undefined): OptionTable | undefined {
   if (table.header.at(-1)!.text.trim() !== optionUseHeading) return undefined;
   const titles = table.header.map((cell) => plainText(cell.tokens));
   return {
-    column: titles[0]!,
+    column: titles[0],
     options: table.rows.map((row) => ({
-      name: plainText(row[0]!.tokens),
-      nameTokens: row[0]!.tokens,
+      name: plainText(row[0].tokens),
+      nameTokens: row[0].tokens,
       details: row.slice(1, -1).map((cell, index) => ({
-        title: titles[index + 1]!,
+        title: titles[index + 1],
         markdown: cell.text.trim(),
       })),
       use: row.at(-1)!.text.trim(),

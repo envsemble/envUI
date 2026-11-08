@@ -36,7 +36,7 @@ export async function collectDependencyNotices(repositoryRoot: string) {
   );
   const reachable = new Map<string, LockedPackage>();
   const visit = (location: string) => {
-    const { dependencies, optionalDependencies, peerDependencies } = lock.packages[location]!;
+    const { dependencies, optionalDependencies, peerDependencies } = lock.packages[location];
     const names = Object.keys({ ...dependencies, ...optionalDependencies, ...peerDependencies });
     for (const name of names) {
       const found = resolveLocked(lock.packages, location, name);

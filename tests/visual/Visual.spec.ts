@@ -50,7 +50,7 @@ const densityShots = [
 const now = new Date('2026-03-04T10:00:00Z');
 const snapshots = fileURLToPath(new URL('./snapshots/', import.meta.url));
 /**
- * The forced-state matrices of InteractionStates.ts, by catalogue page and matrix label. A page
+ * The forced-state matrices of InteractionStates.tsx, by catalogue page and matrix label. A page
  * must show exactly these, so a matrix that disappears, or a new one, fails until it is listed.
  */
 const stateMatrices: Record<string, string[]> = {
@@ -447,7 +447,7 @@ test.describe('catalogue', () => {
             specimens++;
             if (await example.locator('.catalogue-motion-stage').count()) animated++;
           }
-          // The forced hover, pressed, focus and disabled states of InteractionStates.ts, opened
+          // The forced hover, pressed, focus and disabled states of InteractionStates.tsx, opened
           // where the catalogue keeps them in a closed disclosure.
           const states = page.locator(
             '.catalogue-specimen-area [role="region"][aria-label$="interaction states"]',

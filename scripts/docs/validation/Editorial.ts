@@ -68,7 +68,7 @@ export function changelogProblems(tokens: Token[]) {
     .map((item) => /^\*\*([^*]+)\*\*:/.exec(item.text)?.[1])
     .filter((version): version is string => Boolean(version));
   const misplaced = versions.find(
-    (version, index) => index > 0 && compareChangelogVersions(versions[index - 1]!, version) < 0,
+    (version, index) => index > 0 && compareChangelogVersions(versions[index - 1], version) < 0,
   );
   return misplaced
     ? [`"## Changelog" lists ${misplaced} below an older version: list the newest first`]

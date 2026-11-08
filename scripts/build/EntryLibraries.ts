@@ -77,7 +77,7 @@ export async function documentedLibraries(repositoryRoot: string) {
     );
     const match = setup.match(pattern);
     if (!match) throw new Error(`docs/setup.md has no install command for the ${entry} entry.`);
-    documented[entry] = match[1]!.split(' ').map((spec) => {
+    documented[entry] = match[1].split(' ').map((spec) => {
       const at = spec.lastIndexOf('@');
       return { name: spec.slice(0, at), range: spec.slice(at + 1) };
     });

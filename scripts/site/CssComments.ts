@@ -9,7 +9,7 @@ export function withoutComments(css: string) {
   let result = '';
   let index = 0;
   while (index < css.length) {
-    const character = css[index]!;
+    const character = css[index];
     if (character === '"' || character === "'") {
       let end = index + 1;
       while (end < css.length && css[end] !== character) end += css[end] === '\\' ? 2 : 1;

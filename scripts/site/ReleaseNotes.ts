@@ -41,8 +41,8 @@ export function inlinePieces(text: string): InlinePiece[] {
   for (const match of text.matchAll(pattern)) {
     if (match.index > last) pieces.push({ kind: 'text', text: text.slice(last, match.index) });
     if (match[1] !== undefined)
-      pieces.push({ kind: 'link', href: match[2]!, children: inlinePieces(match[1]) });
-    else pieces.push({ kind: 'code', text: match[3]! });
+      pieces.push({ kind: 'link', href: match[2], children: inlinePieces(match[1]) });
+    else pieces.push({ kind: 'code', text: match[3] });
     last = match.index + match[0].length;
   }
   if (last < text.length) pieces.push({ kind: 'text', text: text.slice(last) });
@@ -80,7 +80,7 @@ export function parseReleaseNotes(markdown: string): ReleaseEntry[] {
     const item = /^- (.+)$/.exec(line);
     if (item) {
       if (!releases.length) throw new Error(`An item before the first release heading: ${line}`);
-      releases.at(-1)![list].push(inlinePieces(item[1]!.trim()));
+      releases.at(-1)![list].push(inlinePieces(item[1].trim()));
     }
   }
   return releases;
@@ -96,7 +96,7 @@ function versionKey(version: string) {
 function compareVersions(a: string, b: string) {
   const [left, right] = [versionKey(a), versionKey(b)];
   for (let index = 0; index < left.length; index += 1)
-    if (left[index] !== right[index]) return left[index]! < right[index]! ? -1 : 1;
+    if (left[index] !== right[index]) return left[index] < right[index] ? -1 : 1;
   return 0;
 }
 
@@ -141,7 +141,7 @@ export function releaseNotesProblems(releases: ReleaseEntry[], targets = linkTar
       if (!linksOf(change).length) problems.push(`${name} has a breaking change without a link.`);
     for (const href of [...release.highlights, ...release.breaking].flatMap(linksOf)) {
       const [path, section] = href.split('#');
-      const ids = targets[path!];
+      const ids = targets[path];
       if (!ids)
         problems.push(`${name} links to ${href}, which is not the migration guide or changelog.`);
       else if (!section || !ids.has(section))

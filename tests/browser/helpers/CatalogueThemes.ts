@@ -35,7 +35,7 @@ export const allThemes: readonly CatalogueTheme[] = [...standardThemes, ...highC
  * light alone. Together they show the color roles, actions with their forced states, a field, table
  * rows, highlighted code, which takes high-contrast token colors of its own, and the Docs' props
  * tables and token swatches. The contrast gate
- * (tests/browser/Contrast.spec.ts) measures every token pair in all four themes, and the visual
+ * (tests/browser/library/Contrast.spec.ts) measures every token pair in all four themes, and the visual
  * baseline's open lists capture menus and selects in dark and high contrast.
  */
 const samplePages: ReadonlySet<string> = new Set([

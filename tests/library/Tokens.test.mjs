@@ -240,7 +240,7 @@ test('a typography token builds, with a custom property for each part', async ()
       };
     },
   });
-  const css = await readFile(join(directory, 'src/styles/Tokens.css'), 'utf8');
+  const css = await readFile(join(directory, 'src/generated/Tokens.css'), 'utf8');
   assert.match(css, /--env-text-label-font-size: var\(--env-font-size-body-sm\);/);
   assert.match(css, /--env-text-label: var\(--env-text-label-font-weight\)/);
   const list = JSON.parse(await readFile(join(directory, 'src/generated/tokens.json'), 'utf8'));
@@ -294,7 +294,7 @@ test('a typography token that aliases another reads the parts the other declares
       };
     },
   });
-  const css = await readFile(join(directory, 'src/styles/Tokens.css'), 'utf8');
+  const css = await readFile(join(directory, 'src/generated/Tokens.css'), 'utf8');
   assert.match(css, /--env-text-caption-font-size: var\(--env-text-label-font-size\);/);
   const declared = new Set([...css.matchAll(/(--[\w-]+)\s*:/g)].map(([, name]) => name));
   const undeclared = [...css.matchAll(/var\((--[\w-]+)\)/g)]
@@ -452,7 +452,7 @@ const matchesAll = (part) => part === '*' || part === ':not(env-none)';
 
 /**
  * The var() reads without a fallback in `styleSheets` (file name to CSS) that are not defined for
- * every element that reads them, as `--name in File.css: selector`. A read is defined when, under
+ * every element that reads them, as `--name in <file>.css: selector`. A read is defined when, under
  * the at-rules of the read (a declaration under `@media (pointer: coarse)` defines a read under
  * that media query only; @layer limits nothing), and for each complex selector of its rule:
  *
@@ -725,7 +725,10 @@ test("every custom property the library's style sheets read is defined", async (
           ]),
       ),
     );
-  const styleSheets = await sources(join(library, 'src/styles'), ['.css']);
+  const styleSheets = {
+    ...(await sources(join(library, 'src/styles'), ['.css'])),
+    'Tokens.css': await readFile(join(library, 'src/generated/Tokens.css'), 'utf8'),
+  };
   const problems = undefinedReads({
     styleSheets,
     modules: await sources(join(library, 'src'), ['.ts', '.tsx']),
@@ -747,7 +750,7 @@ test("every custom property the library's style sheets read is defined", async (
 
 test('the hand-written tokens read only tokens', async () => {
   const handwritten = await readFile(join(library, 'src/styles/TokensHandwritten.css'), 'utf8');
-  const generated = await readFile(join(library, 'src/styles/Tokens.css'), 'utf8');
+  const generated = await readFile(join(library, 'src/generated/Tokens.css'), 'utf8');
   const defined = new Set(
     [...`${generated}\n${handwritten}`.matchAll(/(--[\w-]+)\s*:/g)].map(([, name]) => name),
   );

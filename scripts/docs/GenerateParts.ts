@@ -37,8 +37,7 @@
 //
 // The modules in scripts/docs/parts/ read the TypeScript and the style sheets, assemble the
 // contract and compare it with the base branch's.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
 import { buildParts, partsFile, partsPath, serializeParts } from './parts/Contract.ts';
 import { baseParts, pendingChangesets, removedParts } from './parts/ContractComparison.ts';
 
@@ -51,9 +50,8 @@ if (problems.length) {
   );
   process.exit(1);
 }
-const current = existsSync(partsFile) ? readFileSync(partsFile, 'utf8') : undefined;
 if (check) {
-  if (current !== output) {
+  if (readIfExists(partsFile) !== output) {
     console.error(
       `${partsPath} differs from the library's source. Run \`npm run docs:parts\` and commit the result.`,
     );
@@ -85,8 +83,7 @@ if (check) {
     );
   }
 } else {
-  mkdirSync(dirname(partsFile), { recursive: true });
-  if (current !== output) writeFileSync(partsFile, output);
+  writeIfChanged(partsFile, output);
   console.log(
     `Generated ${partsPath}: ${Object.keys(parts.components).length} components and ${Object.keys(parts.shared).length} shared groups.`,
   );

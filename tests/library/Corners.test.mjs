@@ -20,7 +20,7 @@ function styleSheets() {
     'apps/site/src/styles',
   ])
     for (const name of readdirSync(join(repository, directory)))
-      if (name.endsWith('.css') && name !== 'Tokens.css')
+      if (name.endsWith('.css'))
         sheets.push({
           file: `${directory}/${name}`,
           css: readFileSync(join(repository, directory, name), 'utf8'),

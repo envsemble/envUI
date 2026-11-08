@@ -155,7 +155,10 @@ export default {
     {
       // The token definitions, generated and hand-written: literal values belong here, in custom
       // properties, including the em line heights of the font shorthands.
-      files: ['packages/ui/src/styles/Tokens.css', 'packages/ui/src/styles/TokensHandwritten.css'],
+      files: [
+        'packages/ui/src/generated/Tokens.css',
+        'packages/ui/src/styles/TokensHandwritten.css',
+      ],
       rules: {
         'color-no-hex': null,
         'color-named': null,

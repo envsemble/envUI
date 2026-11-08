@@ -14,7 +14,7 @@ import { chromium } from '@playwright/test';
 const folder = fileURLToPath(new URL('../../assets/brand/envUI/', import.meta.url));
 const svg = readFileSync(`${folder}envUI-favicon.svg`, 'utf8');
 /** The tile's color in the light scheme, which the touch icon fills its square with. */
-const tile = /\.tile\s*\{\s*fill:\s*(#[0-9a-f]+)/i.exec(svg)![1]!;
+const tile = /\.tile\s*\{\s*fill:\s*(#[0-9a-f]+)/i.exec(svg)![1];
 
 /** An ICO file of PNG images, each of its size, as every browser since IE reads them. */
 function ico(images: { size: number; png: Buffer }[]) {

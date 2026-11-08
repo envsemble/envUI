@@ -22,8 +22,8 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 
 ### Write tests that stay fast
 
-- Prefer a unit test (`node --test`) to a browser spec, and a computed-style or DOM assertion to a screenshot. A unit test goes in the folder of what it tests: `tests/library/`, `tests/site/`, `tests/docs/` (the documentation and its generators) or `tests/tooling/` (the checks and the release).
-- Give a browser spec its own fixture (`?fixture=<name>` in `tests/fixture`) and name it after the component it covers. Test a behaviour once, in its component's spec; leave colour to the contrast gate and appearance to the visual baseline.
+- Prefer a unit test (`node --test`) to a browser spec, and a computed-style or DOM assertion to a screenshot. A unit test goes in the folder of what it tests: `tests/library/`, `tests/site/`, `tests/docs/` (the documentation and its generators), `tests/tooling/` (the checks and the release) or `tests/lint/` (cases both lint packages' tests read; each package's own tests are in its `test/`).
+- A browser spec of the library goes in `tests/browser/library/`, one of the site in `tests/browser/site/`, and what several share in `tests/browser/helpers/`. Give a library spec its own fixture (`?fixture=<name>` in `tests/fixture`) and name it after the component it covers. Test a behaviour once, in its component's spec; leave colour to the contrast gate and appearance to the visual baseline.
 - Tag a test `@engines` when it depends on the engine (scrolling, focus, pointer and input methods, native forms, platform keys); Firefox and WebKit run only those.
 - No fixed sleeps: wait for a condition, such as `expect.poll` or the element's animations finishing. Where a test proves nothing happens for a while, wait just past the delay and say so.
 - Check independent states on one page load.
@@ -32,7 +32,7 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 
 - The browser tests start or reuse the site on 8770 and the fixture on 8766, reusing a server only when it answers for this checkout. Beside another checkout's tests, set `ENVUI_SITE_PORT` and `ENVUI_FIXTURE_PORT`, such as 8832 and 8833. `ENVUI_WORKERS` sets the workers (default: half the cores).
 - Lists that only shrink: `stylelint-suppressions.json` (after removing violations, `npm run lint:css -- --suppress`), `tests/accessibility/KnownViolations.json` (`npm run test:a11y:update`) and the visual baseline (`npm run test:visual:update`, then review the images like code). Add to them only for a reviewed reason.
-- The layout check (`tests/browser/LayoutCheck.spec.ts`) runs dev mode on every figure at four widths; a problem an example has on purpose takes an allowance there, with its reason.
+- The layout check (`tests/browser/site/LayoutCheck.spec.ts`) runs dev mode on every figure at four widths; a problem an example has on purpose takes an allowance there, with its reason.
 - Disable a rule on one line with the reason: `// eslint-disable-next-line rule -- reason`, `/* stylelint-disable-next-line rule -- reason */`.
 
 ## The library
@@ -41,7 +41,7 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 - **Props.** A boolean defaults to false, unless it turns off a feature shown by default: then it is named after the feature, such as `header` or `closeButton`, and defaults to true; `show*` is for an opt-in display, such as Spinner's `showLabel`. Signatures use envUI's own types, but a third-party type stays where it is the point of a prop, such as Tiptap's `Editor` on RichTextEditor.
 - **Messages.** A component's strings live in `foundations/messages/`, one namespace per component or family, named after it (`copyButton`) or after the concept a family sets (`themePreference`). A prop that overrides one is named after its key: `<x>Label` reads `messages.<namespace>.<x>`. A number that picks a plural form arrives as `count` with `countText`, the count in the locale's digits; any other number arrives as locale text.
 - **What belongs in envUI.** A variant, slot or component every application needs, built on envUI's primitives and tokens; routing, authorization, validation, preferences and persistence stay in the application.
-- **Generated files.** Icons, tokens, props, parts, the catalogue's data and packaged copies have sources: edit those and regenerate (`npm run tokens:build`, `docs:props`, `docs:parts`, `icons:generate`); `npm run check` fails while a generated file is stale.
+- **Generated files.** Icons, tokens, props, parts, the catalogue's data and packaged copies have sources: edit those and regenerate (`npm run tokens:build`, `docs:props`, `docs:parts`, `icons:generate`); `npm run check` fails while a generated file is stale. `src/generated/` holds the token build's output, `Tokens.css` and `tokens.json`: never edit it.
 
 ### Changing a component touches
 
@@ -49,7 +49,7 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 - `src/parts.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
 - Its strings in `src/foundations/messages/`.
 - Its page, `docs/components/<name>.md` or `docs/patterns/`, with its examples in `apps/site/src/examples/<page>/` and its gallery tile in `apps/site/src/tiles/`.
-- Its spec, `tests/browser/<Name>.spec.ts`, and fixture, `tests/fixture/<Name>s.tsx`, which `tests/fixture/App.tsx` mounts by name. The selection finds both from their names and imports; `npm run check -- --dry-run` shows what runs, and an alias in `scripts/test/TestScope.ts` covers what it misses.
+- Its spec, `tests/browser/library/<Name>.spec.ts`, and fixture, `tests/fixture/<Name>s.tsx`, which `tests/fixture/App.tsx` mounts by name. The selection finds both from their names and imports; `npm run check -- --dry-run` shows what runs, and an alias in `scripts/test/TestScope.ts` covers what it misses.
 - A changeset, when people using envUI notice the change.
 
 ### Tokens
@@ -67,14 +67,26 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 - No drop shadows but Avatar's, the frosted popups' and a segmented control's thumb (`tests/library/NoShadows.test.mjs`); regions part by space and fill, and hairlines only separate the items of one list.
 - Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/library/StableHover.test.mjs`).
 - A pill is `var(--env-radius-full)`, so a tall element becomes a rounded rectangle; `50%` only on parts that are always square (`tests/library/Corners.test.mjs`).
-- Motion uses the motion tokens, movement only under `prefers-reduced-motion: no-preference`; under `forced-colors: active`, a state a fill or shadow carries takes system colors (`tests/browser/ForcedColors.spec.ts`).
+- Motion uses the motion tokens, movement only under `prefers-reduced-motion: no-preference`; under `forced-colors: active`, a state a fill or shadow carries takes system colors (`tests/browser/library/ForcedColors.spec.ts`).
 
 ### Part names and color properties
 
 - A component's part classes (`env-<component>-<part>`), state attributes (`data-*`), color properties and the custom properties listed under `properties` are public and versioned. `npm run docs:parts` (`scripts/docs/GenerateParts.ts`) derives them from the source into `docs/generated/parts.json`; `packages/ui/src/parts.json` holds what can't be derived, such as a description of every part and property, and generation fails without one.
 - A state that is on or off is present as `''` or absent, set through `flag()` (`src/internal/flag.ts`), which ESLint holds the library to; `data-env-ssr-*` attributes are private. Each attribute keeps one meaning: `data-active` what shows, `data-current` the page's destination, `data-selected` what is chosen, `data-highlighted` the list's cursor, and for a drag `data-dragging`, `data-moving`, `data-resizing` or `data-drag-over`.
-- Color properties are `--env-<component>-<role>`, or the item's for a collection's rows, with the roles `container`, `content`, `outline`, `icon`, `selected`, `selected-content` and `indicator`. Each is registered at the top of its style sheet as `@property … { syntax: '*'; inherits: false; }` and only read, with the designed token as its fallback, so the default colors never change (`tests/browser/DefaultColors.spec.ts`) and states follow what an application sets as layers of the content over the container.
+- Color properties are `--env-<component>-<role>`, or the item's for a collection's rows, with the roles `container`, `content`, `outline`, `icon`, `selected`, `selected-content` and `indicator`. Each is registered at the top of its style sheet as `@property … { syntax: '*'; inherits: false; }` and only read, with the designed token as its fallback, so the default colors never change (`tests/browser/library/DefaultColors.spec.ts`) and states follow what an application sets as layers of the content over the container.
 - Renaming or removing any of these is a `major` change, and `npm run docs:check` fails without a major changeset that names it; a new color property is `minor`.
+
+### Dev mode
+
+- `@envsemble/envui/dev`, entry point `src/dev.ts`, gives agents `envui.layout`, a readout of the page's layout and its problems, and people a 3D view with an inspector; [docs/dev-mode.md](docs/dev-mode.md) documents it. No other entry point imports it (`tests/library/DevMode.test.mjs`), so a production build holds none of it.
+- Its code is in `src/dev/`: measuring the page (`measure.ts`), the data (`model.ts`) and the readout and its checks as plain functions of that data (`readout.ts`), the API (`api.ts`). The view is in `src/dev/ui/`, with its own style sheet, `DevMode.css`, which `install.tsx` imports as text and adds to the page, outside `src/styles`.
+- A readout check gets a unit test on data in `tests/library/DevMode.test.mjs`; the view and `envui.layout` on a page in `tests/browser/library/DevMode.spec.ts`. The layout check runs the readout on every figure of the site.
+
+## The lint packages
+
+- `packages/eslint-plugin` and `packages/stylelint-config` hold applications to envUI's components and tokens; their READMEs document the rules and how to run their tests.
+- A new ESLint rule is a file of `packages/eslint-plugin/src/rules/` named after it, registered in `src/index.js` and its recommended config, with its test in `test/<rule>.test.mjs` through `test/RuleTester.mjs`, and its section in the README. A Stylelint rule is configured in `packages/stylelint-config/index.js` and tested in `test/config.test.mjs`.
+- Each package ships its own `tokens.js` and `data/tokens.json`, copies that `npm run tokens:build` writes (`scripts/build/SyncLintPackages.ts`): `tokens.js` from `scripts/build/LintPackageTokens.js`, the data from the library's `src/generated/tokens.json`. Edit the sources, never the copies; `npm run tokens:check` fails on a stale one.
 
 ## Record the change
 

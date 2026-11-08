@@ -47,7 +47,7 @@ export function moduleFiles(manifest: ViteManifest): Record<string, string[]> {
     const keys = [...closure(key)].filter((imported) => imported === key || !page.has(imported));
     map[key] = [
       ...new Set(
-        keys.flatMap((imported) => [manifest[imported]!.file, ...(manifest[imported]!.css ?? [])]),
+        keys.flatMap((imported) => [manifest[imported].file, ...(manifest[imported].css ?? [])]),
       ),
     ];
   }

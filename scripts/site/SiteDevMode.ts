@@ -39,7 +39,7 @@ export function devModeProblems(
   for (const [key, chunk] of Object.entries(manifest))
     if ((chunk.isEntry || chunk.isDynamicEntry) && key !== devEntry) closure(key, others);
   const own = [...closure(devEntry)].filter((key) => !others.has(key));
-  const ownFiles = new Set(own.map((key) => manifest[key]!.file));
+  const ownFiles = new Set(own.map((key) => manifest[key].file));
 
   for (const [key, chunk] of Object.entries(manifest))
     if (chunk.dynamicImports?.includes(devEntry) && key !== tryDevMode)

@@ -407,7 +407,7 @@
       },
       "Theme": {
         "modules": ["foundations/themeBootstrap.ts"],
-        "styles": ["Tokens.css", "TokensHandwritten.css"]
+        "styles": ["TokensHandwritten.css"]
       },
       "ThemePreference": {
         "modules": ["foundations/internal/ThemePreferenceContext.ts"]

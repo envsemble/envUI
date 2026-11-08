@@ -8,7 +8,9 @@ import { posix, resolve } from 'node:path';
 
 const library = 'packages/ui/src';
 const fixtures = 'tests/fixture';
+/** The browser specs' folder: the library's in library/, the site's in site/, helpers in helpers/. */
 const specs = 'tests/browser';
+const specFolders = [`${specs}/library`, `${specs}/site`];
 
 /** An import of a module: its specifier and the names it imports, or all of them. */
 interface Import {
@@ -26,9 +28,9 @@ function importsOf(source: string): Import[] {
       found.push({ specifier: bare, names: 'all' });
       continue;
     }
-    const named = /\{([^}]*)\}/.exec(clause!)?.[1];
+    const named = /\{([^}]*)\}/.exec(clause)?.[1];
     const names =
-      named === undefined || /\*/.test(clause!)
+      named === undefined || /\*/.test(clause)
         ? 'all'
         : named
             .split(',')
@@ -36,11 +38,11 @@ function importsOf(source: string): Import[] {
               name
                 .trim()
                 .replace(/^type\s+/, '')
-                .split(/\s+as\s+/)[0]!
+                .split(/\s+as\s+/)[0]
                 .trim(),
             )
             .filter(Boolean);
-    found.push({ specifier: specifier!, names });
+    found.push({ specifier: specifier, names });
   }
   return found;
 }
@@ -95,9 +97,9 @@ class Sources {
     const source = this.text(path) ?? '';
     const own =
       /\bexport\s+(?:declare\s+)?(?:default\s+)?(?:async\s+)?(?:function\*?|const|let|var|class|interface|type|enum)\s+(\w+)/g;
-    for (const [, name] of source.matchAll(own)) exported.set(name!, [path]);
+    for (const [, name] of source.matchAll(own)) exported.set(name, [path]);
     for (const [, local] of source.matchAll(/\bexport\s*\{([^}]*)\}\s*;/g))
-      for (const name of local!.split(','))
+      for (const name of local.split(','))
         if (name.trim())
           exported.set(
             name
@@ -109,15 +111,15 @@ class Sources {
     for (const [, clause, specifier] of source.matchAll(
       /\bexport\s+(?:type\s+)?(\*(?:\s+as\s+\w+)?|\{[^}]*\})\s*from\s*['"]([^'"]+)['"]/g,
     )) {
-      const target = this.relative(path, specifier!);
+      const target = this.relative(path, specifier);
       if (!target) continue;
-      const namespace = /^\*\s+as\s+(\w+)/.exec(clause!)?.[1];
+      const namespace = /^\*\s+as\s+(\w+)/.exec(clause)?.[1];
       if (namespace) exported.set(namespace, [target]);
       else if (clause === '*') {
         for (const [name, declared] of this.exportsOf(target))
           if (!exported.has(name)) exported.set(name, declared);
       } else
-        for (const name of clause!.slice(1, -1).split(',')) {
+        for (const name of clause.slice(1, -1).split(',')) {
           const [original, alias] = name
             .trim()
             .replace(/^type\s+/, '')
@@ -180,51 +182,53 @@ function appFixtures(sources: Sources) {
   for (const [, quoted, plain, component] of standalone.matchAll(
     /(?:'([a-z][a-z-]*)'|\b([a-z]\w*)):\s*(\w+)/g,
   ))
-    add((quoted ?? plain)!, component!);
+    add(quoted ?? plain, component);
   // The rest, `fixture === 'name'` or `includes('name')` in App: each name's code runs from where
   // it is named to where the next one is.
   const app = text.slice(Math.max(0, text.indexOf('export default function App')));
   const marks = [...app.matchAll(/(?:includes\(|fixture === )'([a-z][a-z-]*)'/g)];
   marks.forEach((mark, index) =>
-    add(mark[1]!, app.slice(mark.index, marks[index + 1]?.index ?? app.length)),
+    add(mark[1], app.slice(mark.index, marks[index + 1]?.index ?? app.length)),
   );
   return byName;
 }
 
 /** The modules a spec opens or renders, by what its source and the helpers it imports name. */
-function specRoots(sources: Sources, name: string, fixtureModules: Map<string, Set<string>>) {
-  const path = `${specs}/${name}.spec.ts`;
+function specRoots(sources: Sources, path: string, fixtureModules: Map<string, Set<string>>) {
   const helpers = importsOf(sources.text(path) ?? '')
     .map(({ specifier }) => specifier)
-    .filter((specifier) => specifier.startsWith('./helpers/'))
-    .map((specifier) => `${specs}/${specifier.slice(2)}.ts`);
+    .filter((specifier) => specifier.startsWith('../helpers/'))
+    .map((specifier) => `${specs}/${specifier.slice(3)}.ts`);
   const roots = new Set<string>();
   for (const file of [path, ...helpers]) {
     const text = sources.text(file) ?? '';
     for (const [, fixture] of text.matchAll(/[?&]fixture=([a-z][a-z-]*)/g))
-      for (const module of fixtureModules.get(fixture!) ?? []) roots.add(module);
+      for (const module of fixtureModules.get(fixture) ?? []) roots.add(module);
     for (const [page] of text.matchAll(/\b[A-Z]\w*\.html\b/g)) {
       const html = sources.text(`${fixtures}/${page}`) ?? '';
       for (const [, script] of html.matchAll(/<script[^>]*\bsrc="\/?([^"]+)"/g))
-        if (!/^main\.tsx$/.test(script!)) roots.add(`${fixtures}/${script}`);
+        if (!/^main\.tsx$/.test(script)) roots.add(`${fixtures}/${script}`);
     }
     // Imports of the fixture's modules and of the library, also those of source it writes out to
     // render, as a module in a template string.
     for (const item of importsOf(text))
-      if (!item.specifier.startsWith('./helpers/'))
+      if (!item.specifier.startsWith('../helpers/'))
         for (const module of sources.resolve(file, item)) roots.add(module);
   }
   return roots;
 }
 
-/** Every spec's name, from tests/browser/<Name>.spec.ts. */
-function specNames(root: string) {
-  const directory = resolve(root, specs);
-  return existsSync(directory)
-    ? readdirSync(directory)
-        .filter((file) => file.endsWith('.spec.ts'))
-        .map((file) => file.slice(0, -'.spec.ts'.length))
-    : [];
+/** Every spec's path from the root, by its name: tests/browser/library/<Name>.spec.ts or site/. */
+export function specPaths(root: string) {
+  const paths = new Map<string, string>();
+  for (const folder of specFolders) {
+    const directory = resolve(root, folder);
+    if (!existsSync(directory)) continue;
+    for (const file of readdirSync(directory))
+      if (file.endsWith('.spec.ts'))
+        paths.set(file.slice(0, -'.spec.ts'.length), `${folder}/${file}`);
+  }
+  return paths;
 }
 
 /** The library's modules, by path from the root, the generated icons left out. */
@@ -246,8 +250,8 @@ export function fixtureUse(root: string) {
   const sources = new Sources(root);
   const fixtureModules = appFixtures(sources);
   const users = new Map<string, Set<string>>();
-  for (const name of specNames(root)) {
-    const pending = [...specRoots(sources, name, fixtureModules)];
+  for (const [name, path] of specPaths(root)) {
+    const pending = [...specRoots(sources, path, fixtureModules)];
     const seen = new Set<string>();
     while (pending.length) {
       const path = pending.pop()!;

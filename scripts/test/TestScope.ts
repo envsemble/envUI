@@ -1,7 +1,7 @@
 // Chooses what `npm run check` and `npm run check:affected` run for a change: which files to lint,
 // whether to typecheck, which generated files to check, and which browser specs to run.
 //
-// A spec is named after its component (tests/browser/Button.spec.ts), and runs when that component
+// A spec is named after its component (tests/browser/library/Button.spec.ts), and runs when that component
 // changes: a library or fixture file runs the spec of its name, or of the name `aliases` gives it,
 // and the specs whose fixtures use it (FixtureImports.ts), all of them when they are few, else the
 // most specific few; a changed spec runs itself; a changed helper runs the specs that import it;
@@ -12,7 +12,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fixtureUse } from './FixtureImports.ts';
+import { fixtureUse, specPaths } from './FixtureImports.ts';
 
 export const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
@@ -90,7 +90,7 @@ const catalogue = [
 /** Paths that name no component, by prefix, and the specs they run. */
 const exceptions: [RegExp, string[]][] = [
   [
-    /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/(?:Tokens\w*|Theme)\.css)|^tests\/contrast\/|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette)\.ts$|tokens\/)/,
+    /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/|src\/styles\/(?:TokensHandwritten|Theme)\.css)|^tests\/contrast\/|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette)\.ts$|tokens\/)/,
     shared,
   ],
   [
@@ -117,7 +117,9 @@ const helperBudget = 8;
 /** More specs than this whose fixtures use a changed file run the most specific of them. */
 const fixtureBudget = 6;
 
-const specFile = (name: string) => `tests/browser/${name}.spec.ts`;
+/** A spec's file, by its name: Button for tests/browser/library/Button.spec.ts. */
+export const specFile = (name: string, root = repositoryRoot) =>
+  specPaths(root).get(name) ?? `tests/browser/library/${name}.spec.ts`;
 const baseName = (path: string) =>
   posix.basename(path).replace(/\.(?:spec\.ts|tsx?|css|m?js|html)$/, '');
 
@@ -130,10 +132,10 @@ function cachedFixtureUse(root: string) {
 
 /** What a spec needs beyond the development servers, read from its source. */
 export function specNeeds(name: string, root = repositoryRoot) {
-  const source = read(root, specFile(name));
+  const source = read(root, specFile(name, root));
   return {
     // Opens the hosted build, which npm run build:site writes.
-    site: /from '\.\/helpers\/HostedSite'/.test(source),
+    site: /from '\.\.\/helpers\/HostedSite'/.test(source),
     // Opens a page that the unit tests on the library build render.
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
@@ -144,7 +146,7 @@ export function specNeeds(name: string, root = repositoryRoot) {
 }
 
 /**
- * The browser specs a change runs, by name (Button for tests/browser/Button.spec.ts), each with
+ * The browser specs a change runs, by name (Button for tests/browser/library/Button.spec.ts), each with
  * why; the paths that run none; and the files more specs' fixtures use than run, with how many do.
  */
 export function specsFor(paths: readonly string[], root = repositoryRoot) {
@@ -153,7 +155,7 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
   const widelyUsed = new Map<string, number>();
   let specsUsing: ((path: string) => string[]) | undefined;
   // By name, as written: a file system that ignores case would find Table.spec.ts for table.
-  const written = new Set(walk(root, 'tests/browser', /\.spec\.ts$/).map(baseName));
+  const written = new Set(specPaths(root).keys());
   const exists = (name: string) => written.has(name);
   const add = (name: string, reason: string) => {
     if (!exists(name)) return false;
@@ -164,18 +166,19 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
   const helpers = new Map<string, string[]>();
   for (const path of paths) {
     let found = false;
-    if (/^tests\/browser\/[^/]+\.spec\.ts$/.test(path)) found = add(baseName(path), 'changed spec');
+    if (/^tests\/browser\/(?:library|site)\/[^/]+\.spec\.ts$/.test(path))
+      found = add(baseName(path), 'changed spec');
     else if (/^tests\/browser\/helpers\/[^/]+\.ts$/.test(path)) {
       const helper = baseName(path);
       const users = [...written].filter((spec) =>
-        new RegExp(`from '\\./helpers/${helper}'`).test(read(root, specFile(spec))),
+        new RegExp(`from '\\.\\./helpers/${helper}'`).test(read(root, specFile(spec, root))),
       );
       helpers.set(path, users);
       if (users.length <= helperBudget)
         for (const user of users) found = add(user, `imports ${path}`) || found;
     } else if (/^(?:packages\/ui\/src|tests\/fixture)\//.test(path)) {
-      // Buttons.tsx and Comboboxes.tsx are about Button and Combobox, Tabs.tsx about Tabs, and
-      // a file in navigation/panel-dock/ about PanelDock. An icon's name names a symbol, not a
+      // ButtonGroups.tsx and Comboboxes.tsx are about ButtonGroup and Combobox, Tabs.tsx about
+      // Tabs, and a file in navigation/panel-dock/ about PanelDock. An icon's name names a symbol, not a
       // component: icons/Palette.tsx is not about CommandPalette.
       const name = baseName(path);
       const folder = posix
@@ -185,7 +188,7 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
         ? []
         : [name, name.replace(/e?s$/, ''), name.replace(/s$/, ''), folder];
       const specsOf = (each: string) =>
-        Object.hasOwn(aliases, each) ? aliases[each]! : exists(each) ? [each] : [];
+        Object.hasOwn(aliases, each) ? aliases[each] : exists(each) ? [each] : [];
       const component = candidates.find((each) => specsOf(each).length);
       const named = component ? specsOf(component) : [];
       for (const spec of named) found = add(spec, `about ${component} (${path})`) || found;
@@ -249,7 +252,7 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
     // Generated files: tokens with the lint packages' copies, icons, and the documentation the
     // sources and docs/ make.
     if (
-      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens|LintPackageColorPolicy)\.[jt]s$|tokens\/)|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|colorPolicy\.js|data\/tokens\.json)$/.test(
+      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/|src\/styles\/TokensHandwritten\.css)|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens|LintPackageColorPolicy)\.[jt]s$|tokens\/)|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|colorPolicy\.js|data\/tokens\.json)$/.test(
         path,
       )
     )
@@ -286,7 +289,7 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
 export function serversFor(names: readonly string[], root = repositoryRoot) {
   const servers = new Set<string>();
   for (const name of names) {
-    const source = read(root, specFile(name));
+    const source = read(root, specFile(name, root));
     if (/\bsiteDevUrl\b/.test(source)) servers.add('site');
     if (/\bfixtureUrl\b/.test(source)) servers.add('fixture');
   }
@@ -308,12 +311,12 @@ export function parseNameStatus(text: string): Change[] {
   const fields = text.split('\0').filter((field) => field !== '');
   const entries: Change[] = [];
   for (let index = 0; index < fields.length;) {
-    const status = fields[index++]!;
+    const status = fields[index++];
     if (/^[RC]/.test(status)) {
       const from = fields[index++];
-      const path = fields[index++]!;
-      entries.push({ status: status[0]!, from, path });
-    } else entries.push({ status: status[0]!, path: fields[index++]! });
+      const path = fields[index++];
+      entries.push({ status: status[0], from, path });
+    } else entries.push({ status: status[0], path: fields[index++] });
   }
   return entries;
 }
@@ -399,6 +402,9 @@ export function unitTestFiles(root = repositoryRoot) {
       /^packages\/[^/]+\/test\/[^/]+$/.test(file),
     ),
   ].sort();
-  const built = files.filter((file) => /packages\/ui\/dist|\['pack'/.test(read(root, file)));
+  // A test reads the build through its path or through the packed consumer, which packs it.
+  const built = files.filter((file) =>
+    /packages\/ui\/dist|support\/packedConsumer\.mjs/.test(read(root, file)),
+  );
   return { built, fast: files.filter((file) => !built.includes(file)) };
 }

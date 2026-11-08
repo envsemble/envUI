@@ -348,7 +348,7 @@ function declaredNames(file: ts.SourceFile): Set<string> {
       ts.isTypeParameterDeclaration(node) ||
       ts.isModuleDeclaration(node)
     )
-      bind((node as { name?: ts.BindingName }).name as ts.BindingName | undefined);
+      bind((node as { name?: ts.BindingName }).name);
     ts.forEachChild(node, visit);
   };
   visit(file);
@@ -394,14 +394,10 @@ export interface Finding {
   message: string;
 }
 
-/** Checks the snippets: one program, every fence a module of it. */
-export function checkSnippets(
-  snippets: readonly Snippet[],
-  root = repositoryRoot,
-): { findings: Finding[]; checked: Snippet[] } {
+/** A compiler host that reads the files of `virtual` from memory and caches the others it reads. */
+function virtualHost(virtual: Map<string, string>) {
   const host = ts.createCompilerHost(compilerOptions, true);
   const cache = new Map<string, ts.SourceFile>();
-  const virtual = new Map<string, string>();
   const getSourceFile = host.getSourceFile.bind(host);
   host.getSourceFile = (fileName, languageVersion, onError, shouldCreate) => {
     const key = resolve(fileName);
@@ -418,41 +414,52 @@ export function checkSnippets(
   host.fileExists = (fileName) => virtual.has(resolve(fileName)) || fileExists(fileName);
   const readFile = host.readFile.bind(host);
   host.readFile = (fileName) => virtual.get(resolve(fileName)) ?? readFile(fileName);
+  return host;
+}
 
-  // The names each entry exports, from a program of the entries alone.
-  const probe = join(root, '.snippets-probe.ts');
-  virtual.set(
-    probe,
-    entries.map((entry, index) => `import * as e${index} from '${entry}';`).join('\n'),
-  );
-  const entryProgram = ts.createProgram([probe], compilerOptions, host);
-  const entryChecker = entryProgram.getTypeChecker();
+/** What a snippet may use without importing it, and where each name comes from. */
+interface ImportableNames {
+  /** The entry point that exports each name of envUI's, and whether it is a type. */
+  exporter: Map<string, { entry: string; type: boolean }>;
+  /** React's hooks and the few other names snippets use from it, each whether it is a type. */
+  fromReact: Map<string, boolean>;
+  /** The DOM's lowercase globals but the browser's APIs, which a snippet means as its own. */
+  domGlobals: Set<string>;
+}
+
+/** The names the entries and React export, read from the program of the entries alone. */
+function importableNames(
+  entryProgram: ts.Program,
+  probe: string,
+  host: ts.CompilerHost,
+): ImportableNames {
+  const checker = entryProgram.getTypeChecker();
   const exporter = new Map<string, { entry: string; type: boolean }>();
   for (const entry of entries) {
     const resolved = ts.resolveModuleName(entry, probe, compilerOptions, host).resolvedModule;
     const source = resolved && entryProgram.getSourceFile(resolved.resolvedFileName);
-    const module = source && entryChecker.getSymbolAtLocation(source);
+    const module = source && checker.getSymbolAtLocation(source);
     if (!module) throw new Error(`can't resolve ${entry} from the library's source`);
-    for (const symbol of entryChecker.getExportsOfModule(module)) {
+    for (const symbol of checker.getExportsOfModule(module)) {
       if (exporter.has(symbol.name)) continue;
       const target =
-        symbol.flags & ts.SymbolFlags.Alias ? entryChecker.getAliasedSymbol(symbol) : symbol;
+        symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
       exporter.set(symbol.name, { entry, type: !(target.flags & ts.SymbolFlags.Value) });
     }
   }
-  // React's hooks and the few other names snippets use from it without importing it.
   const reactResolved = ts.resolveModuleName('react', probe, compilerOptions, host).resolvedModule;
   const reactFile = reactResolved && entryProgram.getSourceFile(reactResolved.resolvedFileName);
-  const reactModule = reactFile && entryChecker.getSymbolAtLocation(reactFile);
+  const reactModule = reactFile && checker.getSymbolAtLocation(reactFile);
   const fromReact = new Map<string, boolean>();
-  for (const symbol of reactModule ? entryChecker.getExportsOfModule(reactModule) : [])
+  for (const symbol of reactModule ? checker.getExportsOfModule(reactModule) : [])
     if (/^use[A-Z]/.test(symbol.name) || reactNames.has(symbol.name))
       fromReact.set(symbol.name, !(symbol.flags & ts.SymbolFlags.Value));
-  // The DOM's lowercase globals but the browser's APIs, such as open, name and status: a snippet
-  // that assumes a variable of that name means its own.
+  // A snippet that assumes a variable of such a name, such as open, name or status, means its own.
+  const probeFile = entryProgram.getSourceFile(probe);
+  if (!probeFile) throw new Error(`the program of the entries lacks ${probe}`);
   const domGlobals = new Set(
-    entryChecker
-      .getSymbolsInScope(entryProgram.getSourceFile(probe)!, ts.SymbolFlags.Value)
+    checker
+      .getSymbolsInScope(probeFile, ts.SymbolFlags.Value)
       .filter(
         (symbol) =>
           /^[a-z]/.test(symbol.name) &&
@@ -463,6 +470,19 @@ export function checkSnippets(
       )
       .map((symbol) => symbol.name),
   );
+  return { exporter, fromReact, domGlobals };
+}
+
+/**
+ * A snippet as a module: its code with what it leaves out on its first line, the imports and the
+ * values it assumes, and whether it holds envUI code by the names it uses.
+ */
+function snippetModule(
+  snippet: Snippet,
+  fileName: string,
+  { exporter, fromReact, domGlobals }: ImportableNames,
+  root: string,
+) {
   // An icon is its module's name with the Icon prefix: IconAdd is icons/Add, Icon10k icons/10k.
   const iconModule = (name: string) => {
     const module = /^Icon(\w+)$/.exec(name)?.[1];
@@ -470,45 +490,109 @@ export function checkSnippets(
       ? `@envsemble/envui/icons/${module}`
       : undefined;
   };
+  const code = snippet.lang === 'tsx' ? wrapSnippet(snippet.code) : snippet.code;
+  const parsed = ts.createSourceFile(fileName, code, ts.ScriptTarget.ES2022, true);
+  const declared = declaredNames(parsed);
+  const imports = new Map<string, Set<string>>();
+  const assumed: string[] = [];
+  const add = (module: string, name: string, type = false) =>
+    imports.set(module, (imports.get(module) ?? new Set()).add(type ? `type ${name}` : name));
+  let envUI = /['"]@envsemble\/envui[/'"]/.test(code);
+  for (const [name, node] of usedNames(parsed)) {
+    if (declared.has(name)) continue;
+    const found = exporter.get(name);
+    const hook = hookValues.get(name);
+    const hookExporter = hook && exporter.get(hook);
+    const icon = iconModule(name);
+    if (found) add(found.entry, name, found.type);
+    else if (icon) add(icon, name);
+    else if (hook && hookExporter) {
+      add(hookExporter.entry, hook);
+      assumed.push(`${name}: ReturnType<typeof ${hook}>`);
+    } else {
+      if (fromReact.has(name)) add('react', name, fromReact.get(name));
+      else if (domGlobals.has(name)) assumed.push(`${name}: any`);
+      // A component no one declares may be one envUI renamed.
+      else if (isComponentTag(node)) envUI = true;
+      continue;
+    }
+    envUI = true;
+  }
+  const prelude = [
+    ...[...imports].map(
+      ([module, names]) => `import { ${[...names].join(', ')} } from '${module}';`,
+    ),
+    ...assumed.map((declaration) => `declare const ${declaration};`),
+  ].join(' ');
+  return { text: `${prelude}\n${code}\n`, envUI };
+}
 
-  // Each snippet as a module, with what it leaves out on its first line: the imports, and the
-  // values it assumes.
+/** What the compiler reports about envUI in a snippet's module, as findings on its page. */
+function snippetFindings(
+  snippet: Snippet,
+  file: ts.SourceFile,
+  program: ts.Program,
+  checker: ts.TypeChecker,
+) {
+  const findings: Finding[] = [];
+  const report = (code: Finding['code'], position: number, message: string) =>
+    findings.push({
+      file: snippet.file,
+      line: snippet.line + file.getLineAndCharacterOfPosition(position).line - 1,
+      code,
+      message,
+    });
+  // A snippet that does not parse is not checked at all: its first syntax error says why.
+  const [syntax] = program.getSyntacticDiagnostics(file);
+  if (syntax) {
+    report(
+      'parse',
+      syntax.start ?? 0,
+      `${ts.flattenDiagnosticMessageText(syntax.messageText, ' ')}; the snippet is not checked until it parses`,
+    );
+    return findings;
+  }
+  for (const diagnostic of program.getSemanticDiagnostics(file)) {
+    // A diagnostic of a source file has a position.
+    const start = diagnostic.start ?? 0;
+    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
+    // A component the snippet neither declares nor imports, and envUI doesn't export.
+    if (diagnostic.code === 2304 || diagnostic.code === 2552) {
+      const node = nodeAt(file, start, diagnostic.length ?? 0);
+      const name = node.getText(file);
+      if (isComponentTag(node) && !applicationComponents.has(name))
+        report(
+          'tag',
+          start,
+          `<${name}> is neither declared nor exported by envUI; a component of the application's own is listed in applicationComponents`,
+        );
+      continue;
+    }
+    if (reportedCodes.has(diagnostic.code) && aboutEnvUI(checker, diagnostic))
+      report(diagnostic.code, start, message);
+  }
+  return findings;
+}
+
+/** Checks the snippets: one program, every fence a module of it. */
+export function checkSnippets(
+  snippets: readonly Snippet[],
+  root = repositoryRoot,
+): { findings: Finding[]; checked: Snippet[] } {
+  const virtual = new Map<string, string>();
+  const host = virtualHost(virtual);
+  // The names each entry exports, from a program of the entries alone.
+  const probe = join(root, '.snippets-probe.ts');
+  virtual.set(
+    probe,
+    entries.map((entry, index) => `import * as e${index} from '${entry}';`).join('\n'),
+  );
+  const entryProgram = ts.createProgram([probe], compilerOptions, host);
+  const names = importableNames(entryProgram, probe, host);
   const modules = snippets.map((snippet, index) => {
     const fileName = join(root, '.snippets', `${index}.${snippet.lang}`);
-    const code = snippet.lang === 'tsx' ? wrapSnippet(snippet.code) : snippet.code;
-    const parsed = ts.createSourceFile(fileName, code, ts.ScriptTarget.ES2022, true);
-    const declared = declaredNames(parsed);
-    const imports = new Map<string, Set<string>>();
-    const assumed: string[] = [];
-    const add = (module: string, name: string, type = false) =>
-      imports.set(module, (imports.get(module) ?? new Set()).add(type ? `type ${name}` : name));
-    let envUI = /['"]@envsemble\/envui[/'"]/.test(code);
-    for (const [name, node] of usedNames(parsed)) {
-      if (declared.has(name)) continue;
-      const found = exporter.get(name);
-      const hook = hookValues.get(name);
-      const icon = iconModule(name);
-      if (found) add(found.entry, name, found.type);
-      else if (icon) add(icon, name);
-      else if (hook && exporter.has(hook)) {
-        add(exporter.get(hook)!.entry, hook);
-        assumed.push(`${name}: ReturnType<typeof ${hook}>`);
-      } else {
-        if (fromReact.has(name)) add('react', name, fromReact.get(name));
-        else if (domGlobals.has(name)) assumed.push(`${name}: any`);
-        // A component no one declares may be one envUI renamed.
-        else if (isComponentTag(node)) envUI = true;
-        continue;
-      }
-      envUI = true;
-    }
-    const prelude = [
-      ...[...imports].map(
-        ([module, names]) => `import { ${[...names].join(', ')} } from '${module}';`,
-      ),
-      ...assumed.map((declaration) => `declare const ${declaration};`),
-    ].join(' ');
-    virtual.set(fileName, `${prelude}\n${code}\n`);
+    const { text, envUI } = snippetModule(snippet, fileName, names, root);
+    virtual.set(fileName, text);
     return { snippet, fileName, envUI };
   });
 
@@ -522,42 +606,13 @@ export function checkSnippets(
   const findings: Finding[] = [];
   const checked: Snippet[] = [];
   for (const { snippet, fileName, envUI } of modules) {
-    const file = program.getSourceFile(fileName)!;
+    const file = program.getSourceFile(fileName);
+    if (!file) throw new Error(`the program of the snippets lacks ${fileName}`);
     // A snippet holds envUI code when it names an envUI module or component, or reaches something
     // envUI declares, such as the global its dev mode installs; the rest is left alone.
     if (!envUI && !reachesEnvUI(checker, file)) continue;
     checked.push(snippet);
-    const lineOf = (position: number) =>
-      snippet.line + file.getLineAndCharacterOfPosition(position).line - 1;
-    const report = (code: Finding['code'], position: number, message: string) =>
-      findings.push({ file: snippet.file, line: lineOf(position), code, message });
-    // A snippet that does not parse is not checked at all: its first syntax error says why.
-    const [syntax] = program.getSyntacticDiagnostics(file);
-    if (syntax) {
-      report(
-        'parse',
-        syntax.start ?? 0,
-        `${ts.flattenDiagnosticMessageText(syntax.messageText, ' ')}; the snippet is not checked until it parses`,
-      );
-      continue;
-    }
-    for (const diagnostic of program.getSemanticDiagnostics(file)) {
-      const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
-      // A component the snippet neither declares nor imports, and envUI doesn't export.
-      if (diagnostic.code === 2304 || diagnostic.code === 2552) {
-        const node = nodeAt(file, diagnostic.start!, diagnostic.length ?? 0);
-        const name = node.getText(file);
-        if (isComponentTag(node) && !applicationComponents.has(name))
-          report(
-            'tag',
-            diagnostic.start!,
-            `<${name}> is neither declared nor exported by envUI; a component of the application's own is listed in applicationComponents`,
-          );
-        continue;
-      }
-      if (reportedCodes.has(diagnostic.code) && aboutEnvUI(checker, diagnostic))
-        report(diagnostic.code, diagnostic.start!, message);
-    }
+    findings.push(...snippetFindings(snippet, file, program, checker));
   }
   return { findings, checked };
 }
@@ -578,7 +633,7 @@ export function snippetPages(root = repositoryRoot): string[] {
   return pages.sort();
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (import.meta.main) {
   const started = performance.now();
   const pages = snippetPages();
   const snippets = pages.flatMap((page) =>

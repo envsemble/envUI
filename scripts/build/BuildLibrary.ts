@@ -86,7 +86,7 @@ for (const file of await findFiles(outputDirectory, /\.js$/)) {
   if (!imports.length) continue;
   let inlined = code;
   for (const [statement, name, specifier] of imports) {
-    const source = resolve(sourceDirectory, relative(outputDirectory, dirname(file)), specifier!);
+    const source = resolve(sourceDirectory, relative(outputDirectory, dirname(file)), specifier);
     const { code: css } = await transform(await readFile(source, 'utf8'), {
       loader: 'css',
       minifyWhitespace: true,

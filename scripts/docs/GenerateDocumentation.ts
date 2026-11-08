@@ -16,9 +16,8 @@
 // Validation.ts (a page read and checked), Reader.ts (every page, its index and links) and
 // Compiler.ts (the props tables and the Markdown the package ships). This file writes the
 // catalogue's data and runs as the command; it exports what the modules did as one file.
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import type { DocumentationEntry, DocumentationSummary } from './model/DocumentationTypes.ts';
 import { marked } from 'marked';
 import { headingsOf, plainText } from './MarkdownHeadings.ts';
@@ -27,6 +26,7 @@ import { providesHeadings } from './model/CatalogueContent.ts';
 import { writeSearchIndex } from '../site/SearchIndex.ts';
 import { documentationDirectory, generatedFile, pageKindOf, readProps } from './Schema.ts';
 import { readDocumentation } from './Reader.ts';
+import { writeIfChanged } from '../build/GeneratedFiles.ts';
 import { documentedExports } from './Compiler.ts';
 import { readMessages, stringsOf } from './Messages.ts';
 
@@ -124,7 +124,7 @@ function membersOf(
     parts.find((part) => part.id && part.plain === plain && names(part.text, name))?.id;
   // A guide's component that no heading's text names has no place to lead to, and no entry.
   const placed = members.flatMap((name) => {
-    const entry = props.exports[name]!;
+    const entry = props.exports[name];
     if (!document.sections) {
       const docs = firstNaming(name, false);
       return docs ? [{ name, docs }] : [];
@@ -138,12 +138,6 @@ function membersOf(
     ];
   });
   return placed.length ? placed : undefined;
-}
-
-/** Writes a generated file only when it changes, so a dev server watching it doesn't reload. */
-function writeIfChanged(file: string, source: string) {
-  mkdirSync(dirname(file), { recursive: true });
-  if (!existsSync(file) || readFileSync(file, 'utf8') !== source) writeFileSync(file, source);
 }
 
 export function generateDocumentation() {
@@ -263,7 +257,7 @@ export function generateDocumentation() {
   return documents;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (import.meta.main) {
   // --check reads and validates the documentation, its links and headings, and writes nothing.
   if (process.argv.includes('--check'))
     console.log(

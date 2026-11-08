@@ -13,10 +13,10 @@ const { windowClasses, windowClassOf } = await importSource(
   'packages/ui/src/foundations/windowClasses.ts',
 );
 
-/** The style sheets envUI ships, by file name, without the generated tokens. */
+/** The library's hand-written style sheets, by file name. */
 const sheets = Object.fromEntries(
   readdirSync(styles)
-    .filter((file) => file.endsWith('.css') && file !== 'Tokens.css')
+    .filter((file) => file.endsWith('.css'))
     .map((file) => [file, readFileSync(join(styles, file), 'utf8')]),
 );
 
