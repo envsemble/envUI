@@ -1,141 +1,20 @@
-import {
-  useCallback,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-  type RefObject,
-} from 'react';
+/*
+ * An anatomy figure (Figures.tsx): the live component on its stage, the callouts on its parts
+ * (useAnatomyLayout.ts) and its legend of part names, or a variants figure's names by its items.
+ */
+import { useCallback, useId, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '@docs-model/DocumentationTypes';
-import { Documentation } from '../pages/Documentation';
-import { ExampleCode, ExampleRender } from './LiveExample';
-import { FitFrame } from '../fit/standalone/WidthFit';
-import { OpenExample } from './OpenExample';
-import { legendOf, partDescription } from '../template/Parts';
-import { legendName } from '@docs-model/CatalogueContent';
-import { OptionLegend } from '../template/OptionLegend';
-import { ExamplePlayback } from './Specimen';
-import { measure, measureVariants } from './AnatomyLayout';
-import type { Callout, Room } from './AnatomyPlacement';
-import type { OptionTable } from '@docs-model/CatalogueContent';
-
-/** A subject at most this wide and tall, in CSS pixels, is small enough to show larger. */
-const smallSubject = { width: 240, height: 48 };
-
-/**
- * Shows a small subject, such as a badge or a checkbox, half as large again, as far as its stage
- * has room, so the callouts on its parts don't crowd; so too any subject its fence marks `enlarge`,
- * whose parts sit close together, such as a bar's item. The callouts measure the enlarged parts.
- */
-function enlarge(subject: HTMLElement, always: boolean) {
-  // The example's root, which sizes to its content when it is small.
-  const scaled = subject.firstElementChild;
-  if (!(scaled instanceof HTMLElement)) return;
-  const current = Number(scaled.style.getPropertyValue('zoom') || 1);
-  const box = scaled.getBoundingClientRect();
-  const width = box.width / current;
-  const height = box.height / current;
-  const small =
-    width > 0 && (always || (width <= smallSubject.width && height <= smallSubject.height));
-  const zoom = small ? Math.max(1, Math.min(1.5, subject.clientWidth / width)) : 1;
-  if (Math.abs(zoom - current) < 0.01) return;
-  if (zoom === 1) scaled.style.removeProperty('zoom');
-  else scaled.style.setProperty('zoom', zoom.toFixed(2));
-}
-
-/** What an anatomy figure's callouts are measured for (useCallouts), as AnatomyStage takes it. */
-interface CalloutOptions {
-  legend: AnatomyLegendItem[];
-  open: boolean;
-  enlarged: boolean;
-  variants: boolean;
-  uses?: (string[] | undefined)[];
-  onOrder: (order: number[], whole: number[]) => void;
-  onBeside?: (beside: boolean) => void;
-}
-
-/**
- * The callouts of an anatomy figure, measured from its live parts, and in a variants figure the
- * room its names take: they follow the figure as it resizes, its example loads, its fonts arrive
- * and its parts settle where they enter with motion. Only a change of place re-renders them.
- */
-function useCallouts(
-  stage: RefObject<HTMLDivElement | null>,
-  subject: RefObject<HTMLDivElement | null>,
-  { legend, open, enlarged, variants, uses, onOrder, onBeside }: CalloutOptions,
-) {
-  const [callouts, setCallouts] = useState<Callout[]>([]);
-  const [room, setRoom] = useState<Room>({ start: 0, bottom: 0 });
-  useLayoutEffect(() => {
-    const stageElement = stage.current;
-    const subjectElement = subject.current;
-    if (!stageElement || !subjectElement) return;
-    let frame = 0;
-    /** The variants' names' widths, measured once, and again as the fonts arrive. */
-    const labels = new Map<string, number>();
-    const update = () => {
-      cancelAnimationFrame(frame);
-      // Only a change of place re-renders the callouts.
-      frame = requestAnimationFrame(() => {
-        // Open overlays take the room they need; they are never small.
-        if (!open && !variants) enlarge(subjectElement, enlarged);
-        const measured = variants
-          ? { ...measureVariants(stageElement, subjectElement, legend, labels, uses), whole: [] }
-          : { ...measure(stageElement, subjectElement, legend), room: undefined };
-        const next = measured.callouts;
-        setCallouts((current) =>
-          JSON.stringify(current) === JSON.stringify(next) ? current : next,
-        );
-        if (!variants)
-          onOrder(
-            next.map(({ index }) => index),
-            measured.whole,
-          );
-        if (variants) onBeside?.('beside' in measured && Boolean(measured.beside));
-        const needed = measured.room;
-        if (needed)
-          setRoom((current) =>
-            current.start === needed.start &&
-            current.bottom === needed.bottom &&
-            current.end === needed.end &&
-            current.under === needed.under
-              ? current
-              : needed,
-          );
-      });
-    };
-    update();
-    // The callouts follow the figure as it resizes, its example loads and its fonts arrive.
-    const resize = new ResizeObserver(update);
-    resize.observe(stageElement);
-    resize.observe(subjectElement);
-    const mutation = new MutationObserver(update);
-    mutation.observe(subjectElement, {
-      childList: true,
-      subtree: true,
-      attributeFilter: ['class', 'style'],
-    });
-    void document.fonts?.ready.then(() => {
-      labels.clear();
-      update();
-    });
-    // And as its parts settle where they enter with motion, such as a dock's panel rising into
-    // place, which moves them without resizing them.
-    subjectElement.addEventListener('animationend', update);
-    subjectElement.addEventListener('transitionend', update);
-    return () => {
-      cancelAnimationFrame(frame);
-      resize.disconnect();
-      mutation.disconnect();
-      subjectElement.removeEventListener('animationend', update);
-      subjectElement.removeEventListener('transitionend', update);
-    };
-  }, [stage, subject, legend, open, enlarged, variants, onOrder, uses, onBeside]);
-  return { callouts, room };
-}
+import { legendName, type OptionTable } from '@docs-model/CatalogueContent';
+import { Documentation } from '../../pages/Documentation';
+import { FitFrame } from '../../fit/standalone/WidthFit';
+import { OptionLegend } from '../../template/OptionLegend';
+import { legendOf, partDescription } from '../../template/Parts';
+import { ExampleCode, ExampleRender } from '../LiveExample';
+import { OpenExample } from '../OpenExample';
+import { ExamplePlayback } from '../Specimen';
+import type { Callout } from './PlaceCallouts';
+import { useAnatomyLayout } from './useAnatomyLayout';
 
 /**
  * The callouts' lines, each from its badge to its part, with a region's outline, which gives way
@@ -238,7 +117,7 @@ function AnatomyStage({
   page: string;
   name: string;
   legend: AnatomyLegendItem[];
-  /** In a variants figure, what each legend item's variant is for, in lines (measureVariants). */
+  /** In a variants figure, what each legend item's variant is for, in lines (layOutVariants). */
   uses?: (string[] | undefined)[];
   /** Hears whether what each variant is for shows beside it. */
   onBeside?: (beside: boolean) => void;
@@ -263,7 +142,7 @@ function AnatomyStage({
   const maskId = `anatomy${useId().replace(/[^\w-]/g, '')}`;
   const stage = useRef<HTMLDivElement>(null);
   const subject = useRef<HTMLDivElement>(null);
-  const { callouts, room } = useCallouts(stage, subject, {
+  const { callouts, room } = useAnatomyLayout(stage, subject, {
     legend,
     open,
     enlarged,

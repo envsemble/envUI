@@ -10,7 +10,7 @@ import type {
 } from '@docs-model/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../pages/PageModel';
-import { AnatomyFigure } from './AnatomyFigure';
+import { AnatomyFigure } from './anatomy/AnatomyFigure';
 import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from '../template/OptionLegend';
