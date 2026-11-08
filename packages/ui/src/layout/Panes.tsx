@@ -216,6 +216,9 @@ function usePanes(part: string) {
   return context;
 }
 
+/** Whether an element is the backdrop, which stays live as a press on it closes the sheet. */
+const isBackdrop = (element: Element) => element.classList.contains('env-panes-backdrop');
+
 /** Whether an element shows, as CSS decided: it has a box. */
 const shows = (element: HTMLElement | null) => element !== null && element.offsetParent !== null;
 
@@ -384,7 +387,7 @@ function Supporting({
   const messages = useMessages('panes', panes);
   const { contained } = usePortalContainer();
   const pane = useRef<HTMLDivElement | null>(null);
-  const { sheet, modal } = useSupportingSheet(pane, open, contained);
+  const { sheet, modal } = useSupportingSheet(pane, open, contained, isBackdrop);
   return (
     <div
       tabIndex={-1}

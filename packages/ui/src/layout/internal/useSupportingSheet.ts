@@ -11,10 +11,10 @@ const tabbables = (element: HTMLElement) =>
   ].filter((candidate) => candidate.tabIndex >= 0 && candidate.getClientRects().length > 0);
 
 /**
- * Makes everything on the page inert but the sheet and what holds it, so aria-modal holds; returns
- * what undoes it.
+ * Makes everything on the page inert but the sheet and what holds it, and what `stays` keeps live,
+ * so aria-modal holds; returns what undoes it.
  */
-function inertOthers(sheet: HTMLElement) {
+function inertOthers(sheet: HTMLElement, stays: (element: Element) => boolean) {
   const document = sheet.ownerDocument;
   const others: HTMLElement[] = [];
   for (let node: Element = sheet; node.parentElement && node !== document.body;) {
@@ -23,9 +23,9 @@ function inertOthers(sheet: HTMLElement) {
         other instanceof HTMLElement &&
         other !== node &&
         !other.inert &&
-        // The backdrop stays live, as a press on it closes the sheet, and so do live regions, such
-        // as toasts, which announce what happens meanwhile.
-        !other.classList.contains('env-panes-backdrop') &&
+        // What `stays` keeps stays live, and so do live regions, such as toasts, which announce
+        // what happens meanwhile.
+        !stays(other) &&
         !other.hasAttribute('aria-live')
       )
         others.push(other);
@@ -59,12 +59,14 @@ function holdPageScroll(sheet: HTMLElement) {
  * whether it is modal, as it is unless it belongs to a contained PortalContainer rather than the
  * window. While it is modal, everything else on the page is inert and focus moves in; as it closes,
  * focus goes back to where it was. A sheet that becomes a pane beside the main one, as the Panes
- * widen, keeps focus where it is. A sheet fixed to the window keeps the page still.
+ * widen, keeps focus where it is. A sheet fixed to the window keeps the page still. What `stays`
+ * keeps, such as the backdrop a press on closes the sheet, stays live.
  */
 export function useSupportingSheet(
   pane: RefObject<HTMLElement | null>,
   open: boolean,
   contained: boolean,
+  stays: (element: Element) => boolean,
 ) {
   const [sheet, setSheet] = useState(false);
   useLayoutEffect(() => {
@@ -94,7 +96,7 @@ export function useSupportingSheet(
     const active = document.activeElement;
     const returnFocus = active instanceof HTMLElement ? active : null;
     if (!element.contains(active)) element.focus();
-    const restoreOthers = inertOthers(element);
+    const restoreOthers = inertOthers(element, stays);
     const releasePage = holdPageScroll(element);
     return () => {
       restoreOthers();
@@ -107,7 +109,7 @@ export function useSupportingSheet(
       returnFocus.getBoundingClientRect();
       returnFocus.focus();
     };
-  }, [pane, modal]);
+  }, [pane, modal, stays]);
   return { sheet, modal };
 }
 
