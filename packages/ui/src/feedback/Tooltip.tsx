@@ -17,6 +17,7 @@ import {
   type ReactElement,
   type ReactNode,
   type Ref,
+  type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
@@ -32,6 +33,7 @@ import {
 import { accessibleName } from '../internal/accessibleName.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import { ownName, useStandIn, useTriggerName } from './internal/tooltipTriggerName.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 import '../styles/Base.css';
 import '../styles/Tooltip.css';
@@ -114,65 +116,6 @@ export interface TooltipProps extends Omit<
 
 /** What a tooltip's onOpenChange receives beside the requested state: a popover's details. */
 export type TooltipOpenChangeDetails = PopoverOpenChangeDetails;
-
-/** The control's own accessible name, where its props give one as text: a first guess. */
-function ownName(props: TriggerProps): string | undefined {
-  if (props['aria-label']) return props['aria-label'];
-  if (typeof props.label === 'string') return props.label;
-  if (typeof props.children === 'string' || typeof props.children === 'number')
-    return String(props.children);
-  return undefined;
-}
-
-/** The attributes that change a control's name or a stand-in's role and states. */
-const nameAttributes = ['aria-label', 'aria-labelledby', 'alt', 'hidden', 'aria-hidden', 'role'];
-
-const standInRoles = ['button', 'link', 'tab', 'menuitem'] as const;
-type StandInRole = (typeof standInRoles)[number];
-const buttonTypes = ['button', 'submit', 'reset', 'image'];
-
-/**
- * The role the wrapper of a disabled control takes in its place, or none. Only roles that require
- * no state stand in: a checkbox, radio, switch, slider or combobox needs its checked, value or
- * expanded state, which a stand-in would have to copy and keep in step. Those get no stand-in: the
- * wrapper is no tab stop, and the control itself stays exposed, disabled, with its own state.
- */
-function standInRole(element: Element | null | undefined): StandInRole | undefined {
-  if (!element) return undefined;
-  const tag = element.tagName.toLowerCase();
-  const type = (element as HTMLInputElement).type;
-  let role = element.getAttribute('role')?.split(/\s+/)[0];
-  if (!role && (tag === 'button' || (tag === 'input' && buttonTypes.includes(type))))
-    role = 'button';
-  if (!role && (tag === 'a' || tag === 'area') && element.hasAttribute('href')) role = 'link';
-  return standInRoles.find((each) => each === role);
-}
-
-/** The states a button or tab stand-in copies from its control: a toggle's, a menu trigger's. */
-const copiedStates = ['aria-pressed', 'aria-expanded', 'aria-haspopup', 'aria-selected'] as const;
-
-/** What a disabled control's wrapper takes from it: its name, role and states. */
-interface StandIn {
-  name?: string;
-  role?: StandInRole;
-  states: Partial<Record<(typeof copiedStates)[number], string>>;
-}
-
-function readStandIn(control: Element | null | undefined, fallbackName?: string): StandIn {
-  const role = standInRole(control);
-  const states: StandIn['states'] = {};
-  if (control && (role === 'button' || role === 'tab'))
-    for (const state of copiedStates) {
-      const value = control.getAttribute(state);
-      if (value !== null) states[state] = value;
-    }
-  return { name: accessibleName(control) ?? fallbackName, role, states };
-}
-
-const sameStandIn = (a: StandIn, b: StandIn) =>
-  a.name === b.name &&
-  a.role === b.role &&
-  copiedStates.every((state) => a.states[state] === b.states[state]);
 
 /** Whether a control's popup, such as its menu, is open, by its aria-expanded state. */
 const isExpanded = (props: TriggerProps) =>
@@ -296,6 +239,48 @@ function ControlWithoutTooltip({
   return useControl(children, forwarded);
 }
 
+/**
+ * Whether focus came to the control back from its popup: from the popup, or from nowhere, as the
+ * popup is gone by the time its focus returns. Focus from elsewhere in the page is no return.
+ */
+function returnsFrom(popupId: string | null, event: Event) {
+  const from = (event as FocusEvent).relatedTarget;
+  if (!(from instanceof Node) || !from.isConnected) return true;
+  return popupId !== null && Boolean(document.getElementById(popupId)?.contains(from));
+}
+
+/**
+ * Once the control's own popup closes, such as on Esc, focus returns to the control: that focus
+ * opens no tooltip, which would take a second Esc. The next key press or pointer entry ends the
+ * wait, so focus from the keyboard opens it again, as does focus that comes from elsewhere in the
+ * page, such as after a click outside moved it away. A ref, as the key press that moves focus comes
+ * before any render. Returns whether an opening is that returning focus, which ends the wait
+ * otherwise.
+ */
+function useFocusReturn(expanded: boolean, trigger: RefObject<HTMLElement | null>) {
+  const returning = useRef(false);
+  const wasExpanded = useRef(expanded);
+  const popupId = useRef<string | null>(null);
+  useLayoutEffect(() => {
+    const closed = wasExpanded.current && !expanded;
+    wasExpanded.current = expanded;
+    if (expanded) popupId.current = trigger.current?.getAttribute('aria-controls') ?? null;
+    if (!closed) return;
+    returning.current = true;
+    const end = () => {
+      returning.current = false;
+    };
+    document.addEventListener('keydown', end, { capture: true, once: true });
+    return () => document.removeEventListener('keydown', end, { capture: true });
+  }, [expanded, trigger]);
+  return (reason: string, event: Event) => {
+    if (!returning.current) return false;
+    if (reason === 'trigger-focus' && returnsFrom(popupId.current, event)) return true;
+    returning.current = false;
+    return false;
+  };
+}
+
 function TooltipTrigger({
   content,
   children,
@@ -336,69 +321,11 @@ function TooltipTrigger({
   const portal = usePortalContainer();
   // The tooltip takes the text direction at its trigger, the control or its wrapper.
   const triggerRef = useRef<HTMLButtonElement>(null);
-  // Once the popup closes, such as on Esc, focus returns to the control: that focus opens no
-  // tooltip, which would take a second Esc. The next key press or pointer entry ends the wait, so
-  // focus from the keyboard opens it again, as does focus that comes from elsewhere in the page,
-  // such as after a click outside moved it away. A ref, as the key press that moves focus comes
-  // before any render.
-  const returning = useRef(false);
-  const wasExpanded = useRef(expanded);
-  const popupIdRef = useRef<string | null>(null);
-  useLayoutEffect(() => {
-    const closed = wasExpanded.current && !expanded;
-    wasExpanded.current = expanded;
-    if (expanded) popupIdRef.current = triggerRef.current?.getAttribute('aria-controls') ?? null;
-    if (!closed) return;
-    returning.current = true;
-    const end = () => {
-      returning.current = false;
-    };
-    document.addEventListener('keydown', end, { capture: true, once: true });
-    return () => document.removeEventListener('keydown', end, { capture: true });
-  }, [expanded]);
-  // The trigger's name, read from the page as the tooltip opens and followed while it is open, so a
-  // control named by its content, such as a Toolbar.Button or a button with an icon and text,
-  // counts as named, and one whose name changes with the tooltip, such as Copy becoming Copied,
-  // keeps counting as named by the tooltip's words.
-  const [name, setName] = useState(() => ownName(trigger));
+  const focusReturning = useFocusReturn(expanded, triggerRef);
   const fallbackName = ownName(trigger);
-  useLayoutEffect(() => {
-    const control = triggerRef.current;
-    if (!open || isDisabled || !control) return;
-    const read = () => setName(accessibleName(control) ?? fallbackName);
-    read();
-    const observer = new MutationObserver(read);
-    observer.observe(control, {
-      attributes: true,
-      attributeFilter: nameAttributes,
-      childList: true,
-      characterData: true,
-      subtree: true,
-    });
-    return () => observer.disconnect();
-  }, [open, isDisabled, fallbackName]);
-  // A disabled control's wrapper stands in for it, read once it is in the page: its name and role,
-  // and, for a button or tab, the states it carries, followed while they change, also as the
-  // control is replaced, rather than read again on each render.
-  const [stand, setStand] = useState<StandIn>({ states: {} });
-  useLayoutEffect(() => {
-    const wrapper = triggerRef.current;
-    if (!isDisabled || !wrapper) return;
-    const read = () => {
-      const next = readStandIn(wrapper.firstElementChild, fallbackName);
-      setStand((current) => (sameStandIn(current, next) ? current : next));
-    };
-    read();
-    const observer = new MutationObserver(read);
-    observer.observe(wrapper, {
-      attributes: true,
-      attributeFilter: [...copiedStates, ...nameAttributes],
-      childList: true,
-      characterData: true,
-      subtree: true,
-    });
-    return () => observer.disconnect();
-  }, [isDisabled, fallbackName]);
+  const [name, setName] = useTriggerName(triggerRef, open, isDisabled, fallbackName);
+  // A disabled control's wrapper stands in for it (see standInRole).
+  const stand = useStandIn(triggerRef, isDisabled, fallbackName);
   // A component that doesn't pass the ref on to its element gives the tooltip nothing to open on.
   const childType = children.type;
   useLayoutEffect(() => {
@@ -434,14 +361,7 @@ function TooltipTrigger({
             return;
           }
           if (next && expanded) return;
-          if (next && returning.current) {
-            if (
-              details.reason === 'trigger-focus' &&
-              returnsFrom(popupIdRef.current, details.event)
-            )
-              return;
-            returning.current = false;
-          }
+          if (next && focusReturning(details.reason, details.event)) return;
           if (next && !isDisabled) setName(accessibleName(triggerRef.current) ?? ownName(trigger));
           setOpen(next, details.reason as PopoverOpenChangeReason);
         }}
@@ -455,7 +375,7 @@ function TooltipTrigger({
               // Disabled controls receive no pointer or focus events, so the wrapper carries them.
               // It takes the control's place for assistive technology, with its role, name and
               // states, disabled, and a tab stop, where it can read them and the role needs no
-              // state it can't carry (see standInRole).
+              // state it can't carry (see standInRole in internal/tooltipTriggerName.ts).
               <span
                 className="env-tooltip-disabled-target"
                 role={standsIn ? stand.role : undefined}
@@ -493,14 +413,4 @@ function TooltipTrigger({
       </BaseTooltip.Root>
     </TooltipNestingContext>
   );
-}
-
-/**
- * Whether focus came to the control back from its popup: from the popup, or from nowhere, as the
- * popup is gone by the time its focus returns. Focus from elsewhere in the page is no return.
- */
-function returnsFrom(popupId: string | null, event: Event) {
-  const from = (event as FocusEvent).relatedTarget;
-  if (!(from instanceof Node) || !from.isConnected) return true;
-  return popupId !== null && Boolean(document.getElementById(popupId)?.contains(from));
 }
