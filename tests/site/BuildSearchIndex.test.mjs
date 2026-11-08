@@ -18,7 +18,7 @@ import {
   readTokens,
   searchDocuments,
   unlistedPages,
-} from '../../scripts/site/SearchIndex.ts';
+} from '../../scripts/site/BuildSearchIndex.ts';
 import {
   indexOptions,
   queryOptionsFor,

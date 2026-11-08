@@ -1,6 +1,6 @@
 import MiniSearch from 'minisearch';
-// Written by scripts/site/SearchIndex.ts when the documentation is generated; read as text, which
-// MiniSearch parses on load.
+// Written by scripts/site/BuildSearchIndex.ts when the documentation is generated; read as text,
+// which MiniSearch parses on load.
 import serializedIndex from '../generated/SearchIndex.json?raw';
 import {
   indexOptions,

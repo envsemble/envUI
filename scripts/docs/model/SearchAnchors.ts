@@ -1,5 +1,6 @@
-// The element ids that routes and search lead to, shared by the search index (SearchIndex.ts) and
-// the catalogue that renders the elements. It runs in Node and in the browser, so it imports nothing.
+// The element ids that routes and search lead to, shared by the search index
+// (scripts/site/BuildSearchIndex.ts) and the catalogue that renders the elements. It runs in Node
+// and in the browser, so it imports nothing.
 
 /** The element id of an export's props on its page's Props view. */
 export const exportSection = (name: string) => `props-${name}`;

@@ -1,6 +1,6 @@
 // How envUI's documentation search reads text: shared by the index the build writes
-// (SearchIndex.ts) and the catalogue that loads and queries it, so both split and fold words alike.
-// It runs in Node and in the browser, so it imports nothing but types.
+// (scripts/site/BuildSearchIndex.ts) and the catalogue that loads and queries it, so both split and
+// fold words alike. It runs in Node and in the browser, so it imports nothing but types.
 import type MiniSearch from 'minisearch';
 import type { Options, SearchOptions, SearchResult } from 'minisearch';
 
@@ -9,7 +9,7 @@ export type SearchKind =
   'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page';
 
 /**
- * A document of the search index (scripts/site/SearchIndex.ts): one result, with what it is found
+ * A document of the search index (scripts/site/BuildSearchIndex.ts): one result, with what it is found
  * by and where it leads.
  */
 export interface SearchDocument {
