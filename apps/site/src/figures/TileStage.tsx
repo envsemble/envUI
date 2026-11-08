@@ -7,36 +7,12 @@ import { ExampleRender } from './LiveExample';
 import { FoundationTile } from '../tiles/foundations/FoundationTiles';
 import type { TilePicture } from '../template/RelatedPages';
 import { TileSkeleton } from '../loading/Skeletons';
-import { cropped, fitKindOf, type StageScript } from '../fit/FitKind';
+import { cropped, fitKindOf } from '../fit/FitKind';
 import { useFit } from '../fit/useFit';
 import { DeviceFrame } from './DeviceFrame';
 import { useAppFit } from '../fit/standalone/useAppFit';
-import { narrowGallery } from '../tiles/Tiles';
-import {
-  courseOf,
-  headingEvent,
-  headingOf,
-  holdsFromTop,
-  holdsView,
-  mustShowOf,
-} from '../motion/MustShow';
-import { aimedElement } from '../motion/pointer/PointerPlan';
+import { stageScript } from './StageScript';
 import { flag } from '@envui-internal/internal/flag';
-
-/** What a tile's script tells its fit, as each fit starts (StageScript), and when it changes. */
-const tileScript = {
-  read: (canvas: HTMLElement): StageScript => ({
-    holdsView: holdsView(canvas),
-    fromTop: holdsFromTop(canvas),
-    named: mustShowOf(canvas),
-    anywhere: mustShowOf(canvas, true),
-    heading: headingOf(canvas),
-    course: courseOf(canvas),
-    aimed: (selector) => aimedElement(canvas, selector),
-    narrow: matchMedia(narrowGallery).matches,
-  }),
-  heading: headingEvent,
-};
 
 /**
  * Keeps a tile that fails to render to itself: it shows nothing, and the gallery around it its
@@ -124,7 +100,7 @@ export function TileStage({
   const kind = fitKindOf(picture, app ? undefined : frame);
   const ownSize = kind.scale === 'own';
   const scene = kind.scale === 'legible';
-  useFit(stage, canvas, { on: shown && !app, kind, playing: plays, script: tileScript });
+  useFit(stage, canvas, { on: shown && !app, kind, playing: plays, script: stageScript });
   useAppFit(stage, canvas, shown && Boolean(app), app?.least);
   useStillAtRest(canvasElement, kind.tile && !plays);
   return (

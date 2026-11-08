@@ -19,7 +19,14 @@ import {
   trim,
   type Placement,
 } from './FitDraw';
-import { cropped, fitModeOf, type FitKind, type Moment, type StageScript } from './FitKind';
+import {
+  cropped,
+  fitModeOf,
+  type FitKind,
+  type Moment,
+  type ScriptReader,
+  type StageScript,
+} from './FitKind';
 import { measure, measureHeld, shapeOf, type Measured, type Seen } from './FitMeasure';
 import { decideDrawOut, decideHeading, decidePlayCut, startRun, type Run } from './FitPlaying';
 import {
@@ -68,7 +75,7 @@ export interface Fitting {
   /** Whether it plays now, as it changes. */
   playing: { readonly current: boolean };
   /** What its script tells it now (StageScript). */
-  readScript: (canvas: HTMLElement) => StageScript;
+  readScript: ScriptReader['read'];
   /** Fits it again in the next frame. */
   update: () => void;
   /** Fits it again as an element resizes too, such as a box it paints. */
@@ -89,7 +96,7 @@ export interface FitOptions {
    * What its script tells it, read as each fit starts, and the event its canvas hears as where its
    * pointer heads changes, which fits it again.
    */
-  script: { read: (canvas: HTMLElement) => StageScript; heading: string };
+  script: ScriptReader;
 }
 
 /**
@@ -110,9 +117,7 @@ export function useFit(
   canvas: RefObject<HTMLElement | null>,
   { on, kind, playing, script }: FitOptions,
 ) {
-  // The effect follows the kind's parts, not the object, which a render makes anew, and the
-  // script's reader and event, which are the same on every render.
-  const { scale, tile } = kind;
+  // The effect follows the reader and the event name, not the object that holds them.
   const { read, heading } = script;
   const playingNow = useRef(playing);
   const refit = useRef<(() => void) | null>(null);
@@ -145,7 +150,7 @@ export function useFit(
         },
         counts: (records) => {
           const added = records.some((record) => record.type === 'childList');
-          if (tile && playingNow.current && !added) return false;
+          if (kind.tile && playingNow.current && !added) return false;
           return added || records.some((record) => record.target !== canvasElement);
         },
       },
@@ -162,8 +167,7 @@ export function useFit(
     const fitting: Fitting = {
       stage: stageElement,
       canvas: canvasElement,
-      // Made again from the parts the effect follows, so it is one of the kinds there are.
-      kind: { scale, tile } as FitKind,
+      kind,
       playing: playingNow,
       readScript: read,
       update: fits.update,
@@ -198,7 +202,7 @@ export function useFit(
       cancelAnimationFrame(view.frame);
       refit.current = null;
     };
-  }, [stage, canvas, on, scale, tile, read, heading]);
+  }, [stage, canvas, on, kind, read, heading]);
 }
 
 /**

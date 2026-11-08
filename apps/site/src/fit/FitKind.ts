@@ -1,37 +1,51 @@
 /*
- * What a picture is fitted as, what its script tells the fit, and how its view is placed now. The
- * words this folder's comments use, and which fitter fits what: README.md.
+ * The types that say how a picture is fitted: its kind (FitKind), what its script tells the fit
+ * (StageScript), and which decider places its view now (FitMode). README.md defines the words
+ * this folder's comments use and lists which fitter fits what.
  */
 
 /**
- * What a picture is fitted as: how its scale is chosen, and whether it is a page's own tile
- * (tiles/Tiles.ts), written for the tiles' window, whose script plays (fitKindOf). These are the
- * cases there are.
+ * How a picture's scale is chosen, and whether it is a page's own tile (tiles/Tiles.ts), written
+ * for the tiles' window and played by its script. fitKindOf returns one of these cases.
  */
 export type FitKind =
   /**
-   * A component at its own size, cropped by its stage, as the components' gallery draws every
-   * component at one scale: its tile, or the example of a component without one.
+   * A component drawn at its own size and cropped by its stage. The components' gallery draws
+   * every component at one scale this way: its tile, or the example of a component without one.
    */
   | { scale: 'own'; tile: boolean }
   /**
-   * A pattern's scene, no smaller than a legible scale, as the patterns' gallery draws each, centred
-   * on what it paints and cropped by its stage where it is larger.
+   * A pattern's scene, drawn no smaller than a legible scale. The patterns' gallery draws each
+   * scene this way, centred on what it paints and cropped by its stage where it is larger.
    */
   | { scale: 'legible'; tile: boolean }
-  /** A page's own tile at its window's scale, such as a drawing, or a foundation's tile. */
+  /** A page's own tile drawn at its window's scale, such as a drawing or a foundation's tile. */
   | { scale: 'window'; tile: true }
-  /** An example or a specimen, as large as what it paints fits its stage, no larger than its window. */
+  /** An example or a specimen, drawn as large as fits what it paints, at most its window's scale. */
   | { scale: 'content'; tile: false };
 
-/** The tiles' window's width, in rem (Tile.css): a tile written for a narrower one is a drawing. */
+/** The tiles' window's width, in rem (Tile.css). A tile written for a narrower one is a drawing. */
 const tileWindowWidth = 14;
 
 /**
- * What a tile's picture is fitted as, by how its page frames it (frameOf, RelatedPages.ts): a
- * component at its own size, but a drawing, whose window is narrower than the tiles', which is
- * drawn larger at its window's scale; a pattern's scene at a legible scale; anything else at its
- * window's scale, or what it paints.
+ * One object per kind. fitKindOf returns these, so the same kind is always the same object and
+ * useFit can restart its fit only when the kind changes.
+ */
+const kinds = {
+  ownTile: { scale: 'own', tile: true },
+  own: { scale: 'own', tile: false },
+  legibleTile: { scale: 'legible', tile: true },
+  legible: { scale: 'legible', tile: false },
+  window: { scale: 'window', tile: true },
+  content: { scale: 'content', tile: false },
+} as const satisfies Record<string, FitKind>;
+
+/**
+ * The kind a tile's picture is fitted as, from how its page frames it (`frame`, frameOf in
+ * RelatedPages.ts). `own` gives a component at its own size, except a drawing (a tile written
+ * for a window narrower than the tiles'), which is drawn larger at its window's scale. `legible`
+ * gives a pattern's scene at a legible scale. Without a frame, a tile is drawn at its window's
+ * scale and anything else as large as what it paints.
  */
 export function fitKindOf(
   picture: { tile?: boolean; window?: { width: number } } | undefined,
@@ -39,14 +53,14 @@ export function fitKindOf(
 ): FitKind {
   const tile = Boolean(picture?.tile);
   const drawing = picture?.window !== undefined && picture.window.width < tileWindowWidth;
-  if (frame === 'own' && !drawing) return { scale: 'own', tile };
-  if (frame === 'legible') return { scale: 'legible', tile };
-  return tile ? { scale: 'window', tile: true } : { scale: 'content', tile: false };
+  if (frame === 'own' && !drawing) return tile ? kinds.ownTile : kinds.own;
+  if (frame === 'legible') return tile ? kinds.legibleTile : kinds.legible;
+  return tile ? kinds.window : kinds.content;
 }
 
 /**
- * Whether a picture is cropped by its stage where it is larger: a component at its own size and a
- * scene at a legible scale, rather than drawn smaller to fit.
+ * Whether a picture is cropped by its stage where it is larger, rather than drawn smaller to
+ * fit. True for a component at its own size and a scene at a legible scale.
  */
 export const cropped = (kind: FitKind) => kind.scale === 'own' || kind.scale === 'legible';
 
@@ -58,34 +72,48 @@ export interface Aim {
 }
 
 /**
- * What a tile's script tells its fit, read as each fit starts (TileStage.tsx reads it from
- * motion/MustShow.ts, where the script names it).
+ * What a tile's script tells its fit. The fit reads it again at the start of every fit, through
+ * a ScriptReader.
  */
 export interface StageScript {
-  /** Whether its view holds as it plays, and whether it lays out from its window's top. */
+  /**
+   * Whether the view holds still while the tile plays (a held view), and whether the picture
+   * lays out from its window's top, so what it adds while playing grows downwards.
+   */
   holdsView: boolean;
   fromTop: boolean;
   /**
-   * The selectors of everything its animation acts on, which count in its popups, and of those it
-   * names to count anywhere too, such as a panel it opens in place.
+   * `named`: selectors of everything the animation acts on. They count only inside popups.
+   * `anywhere`: the named selectors that count outside popups too, such as a panel that opens in
+   * place.
    */
   named: readonly string[];
   anywhere: readonly string[];
-  /** Where its pointer heads now, and every point it heads to over its script, in order. */
+  /** Where the pointer heads now (the heading), and every point it heads to, in order (the course). */
   heading: Aim | null;
   course: readonly Aim[];
-  /** The element of the canvas a selector of its script aims at, as its pointer finds it. */
+  /** The element of the canvas that a selector of the script aims at, found as the pointer finds it. */
   aimed: (selector: string) => Element | null;
   /**
-   * Whether the components' gallery stands two to a row, its stages too narrow for a popup beside
-   * its button (narrowGallery, Tiles.ts).
+   * Whether the components' gallery shows two tiles to a row (narrowGallery, Tiles.ts). Its
+   * stages are then too narrow for a popup beside its button.
    */
   narrow: boolean;
 }
 
 /**
- * When a fit runs: whether its picture plays now, and whether it has shown (`data-fitted`). Until
- * it shows, it is framed as at rest, also a tile whose picture loaded while the pointer was on it.
+ * Reads a stage's script (StageScript) from the stage's root element, and names the event the
+ * root receives when the pointer's heading changes, which makes the fit run again. The figures
+ * pass it in (figures/StageScript.ts), because the script's records live in motion/.
+ */
+export interface ScriptReader {
+  read: (root: Element) => StageScript;
+  heading: string;
+}
+
+/**
+ * When a fit runs: whether the picture plays now, and whether it has shown (`data-fitted`). Until
+ * it has shown, it is framed as at rest, even when its picture loaded while the pointer was on it.
  */
 export interface Moment {
   playing: boolean;
@@ -93,10 +121,13 @@ export interface Moment {
 }
 
 /**
- * How a fit places the view: on a modal's screen, the stage, at rest and as it plays (FitScreen.ts);
- * drawn out for what it opens as a cropped tile plays, once it has shown (FitPlaying.ts); else at
- * rest, centred on what it paints (FitResting.ts), as any other picture is also as it plays.
- * `screen` is whether the picture was decided to be a modal's screen (`kept.screen`, useFit.ts).
+ * Which decider places the view:
+ * - `screen`: a modal's screen fills the stage, at rest and while playing (FitScreen.ts). Chosen
+ *   when the fit decided the picture is a modal's screen (`kept.screen`, useFit.ts).
+ * - `playing`: a cropped tile that plays after it has shown, drawn out for what it opens
+ *   (FitPlaying.ts).
+ * - `resting`: every other case, centred on what it paints (FitResting.ts). This includes any
+ *   picture other than a cropped tile while it plays.
  */
 export type FitMode = 'screen' | 'playing' | 'resting';
 

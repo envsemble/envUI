@@ -9,6 +9,7 @@ import { IconSignalCellular4Bar } from '@envsemble/envui/icons/SignalCellular4Ba
 import { IconSignalWifi4Bar } from '@envsemble/envui/icons/SignalWifi4Bar';
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
 import { useDeviceFit } from '../fit/standalone/useDeviceFit';
+import { stageScript } from './StageScript';
 import { flag } from '@envui-internal/internal/flag';
 
 /*
@@ -62,7 +63,7 @@ export const useOnScreen = () => use(OnScreen);
 function DeviceStage({ kind, children }: { kind: DeviceKind; children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
   const row = useRef<HTMLDivElement>(null);
-  const fit = useDeviceFit(stage, row, kind);
+  const fit = useDeviceFit(stage, row, kind, stageScript);
   return (
     <div
       ref={stage}

@@ -28,6 +28,8 @@ test('a tile is fitted as one of four kinds, by how its page frames it and what 
   assert.deepEqual(kinds.fitKindOf({}, 'legible'), { scale: 'legible', tile: false });
   assert.deepEqual(kinds.fitKindOf(tile, undefined), { scale: 'window', tile: true });
   assert.deepEqual(kinds.fitKindOf(undefined, undefined), { scale: 'content', tile: false });
+  // The same kind is the same object, so the fit restarts only when the kind changes (useFit).
+  assert.equal(kinds.fitKindOf(tile, 'own'), kinds.fitKindOf({ tile: true }, 'own'));
   assert.ok(kinds.cropped({ scale: 'own', tile: false }));
   assert.ok(kinds.cropped({ scale: 'legible', tile: true }));
   assert.ok(!kinds.cropped({ scale: 'window', tile: true }));

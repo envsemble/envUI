@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
-import { headingEvent } from '../../motion/MustShow';
 import { remeasure } from '../../shared/Remeasure';
+import type { ScriptReader } from '../FitKind';
 import { deviceFit, sameFit, type DeviceFit, type DeviceFitting } from './DeviceFit';
 
 /**
@@ -13,8 +13,10 @@ export function useDeviceFit(
   stage: RefObject<HTMLElement | null>,
   row: RefObject<HTMLElement | null>,
   kind: DeviceKind,
+  script: ScriptReader,
 ) {
   const [fit, setFit] = useState<DeviceFit>();
+  const { read, heading } = script;
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const rowElement = row.current;
@@ -26,6 +28,7 @@ export function useDeviceFit(
       box,
       row: rowElement,
       root: stageElement.closest('.catalogue-motion-subject'),
+      readScript: read,
       view: { x: 0, y: 0 },
       held: { size: '' },
     };
@@ -50,7 +53,7 @@ export function useDeviceFit(
             target: rowElement,
             options: { childList: true, attributes: true, subtree: true },
           },
-          events: [{ target: root, types: [headingEvent] }],
+          events: [{ target: root, types: [heading] }],
         }),
       },
     );
@@ -60,6 +63,6 @@ export function useDeviceFit(
       fits.stop();
       clearTimeout(timer);
     };
-  }, [stage, row, kind]);
+  }, [stage, row, kind, read, heading]);
   return fit;
 }

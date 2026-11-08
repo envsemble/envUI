@@ -5,9 +5,9 @@
  * corner.
  */
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
-import { courseOf, headingOf, mustShowOf, type Heading } from '../../motion/MustShow';
 import { remPixels } from '@envui-internal/internal/lengths';
 import type { Box } from '../FitGeometry';
+import type { Aim, ScriptReader } from '../FitKind';
 
 /**
  * The least each kind is drawn at, and the least its small text (body-sm) is drawn at, about
@@ -29,7 +29,7 @@ const pointRoom = 40;
 const footRoom = { words: 96, point: 16 };
 
 /** The point of a heading, in the device's own px, as a box with room around it. */
-function pointBox(row: Element, scale: number, { selector, x, y }: Heading): Box | undefined {
+function pointBox(row: Element, scale: number, { selector, x, y }: Aim): Box | undefined {
   // The first that shows: a pane that is closed may keep its parts, hidden.
   const element = [...row.querySelectorAll(selector)].find(
     (candidate) =>
@@ -54,10 +54,10 @@ function pointBox(row: Element, scale: number, { selector, x, y }: Heading): Box
  * around its content, such as a value's text rather than the width of its row, with room for the
  * fade of a cut edge.
  */
-function namedBoxes(row: Element, scale: number, root: Element): Box[] {
+function namedBoxes(row: Element, scale: number, selectors: readonly string[]): Box[] {
   const own = row.getBoundingClientRect();
   const range = document.createRange();
-  return mustShowOf(root, true).flatMap((selector) =>
+  return selectors.flatMap((selector) =>
     [...row.querySelectorAll(selector)]
       .filter((element) => element.getClientRects().length > 0)
       .map((element) => {
@@ -244,6 +244,8 @@ export interface DeviceFitting {
   row: HTMLElement;
   /** The animated figure's picture, whose pointer's points the view keeps. */
   root: Element | null;
+  /** Reads the script of the figure's picture (StageScript). */
+  readScript: ScriptReader['read'];
   /** Where the view is, in the device's own px. */
   view: { x: number; y: number };
   /** What the view has needed so far at the size it is drawn, and the view each state holds. */
@@ -315,15 +317,16 @@ function deviceNeeds(
   const size = `${width}x${height}@${scale}@${room}`;
   if (f.held.size !== size) f.held = { size };
   const { held } = f;
-  const points = root ? courseOf(root).map((point) => pointBox(row, drawn, point)) : [];
-  const named = root ? namedBoxes(row, drawn, root) : [];
+  const script = root && f.readScript(root);
+  const points = script ? script.course.map((point) => pointBox(row, drawn, point)) : [];
+  const named = script ? namedBoxes(row, drawn, script.anywhere) : [];
   const course = points.filter((box): box is Box => box !== undefined);
   const boxes = [...course, ...named];
   held.y = grown(
     held.y,
     spanOf(boxes, (box) => [box.top, box.bottom]),
   );
-  const heading = root && headingOf(root);
+  const heading = script?.heading;
   const focus = heading ? pointBox(row, drawn, heading) : undefined;
   const state = `${points.map((box) => (box ? 1 : 0)).join('')}/${named.length}`;
   if (!held.words || !fromMutation || held.state !== state) held.words = wordBoxes(row, drawn);
