@@ -296,8 +296,7 @@
         "modules": [
           "layout/internal/useScrollKeys.ts",
           "layout/internal/scaffoldFocus.ts",
-          "layout/internal/useNavigationFocusHandoff.ts",
-          "layout/internal/useScaffoldBarSizes.ts"
+          "layout/internal/useNavigationFocusHandoff.ts"
         ]
       },
       "Panes": {
