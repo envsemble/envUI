@@ -204,6 +204,7 @@ export function pageContainerQueries(rootPx: number): Map<string, ContainerQuery
       key,
       rootPx,
       queries: readContainerQueries(
+        // A CSSRule shares none of RuleLike's optional fields, which only its kinds of rule add.
         sheets as unknown as { cssRules: ArrayLike<RuleLike> }[],
         rootPx,
       ),
