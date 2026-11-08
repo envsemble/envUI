@@ -7,7 +7,7 @@
 // dist/site when it builds.
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { libraryVersion, withLibraryVersion } from '../docs/Schema.ts';
+import { libraryVersion, withLibraryVersion } from '../docs/LibraryVersions.ts';
 
 export { libraryVersion };
 

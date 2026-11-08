@@ -3,7 +3,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, posix, relative, resolve, sep } from 'node:path';
-import { kebab } from '../../scripts/docs/Schema.ts';
+import { kebab } from '../../scripts/docs/PageStructure.ts';
 
 const require = createRequire(import.meta.url);
 const ts = require('typescript');

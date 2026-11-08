@@ -4,7 +4,7 @@
 import { marked, type Token, type Tokens } from 'marked';
 import type { DocumentationBlock } from './model/DocumentationTypes.ts';
 import { optionTable, optionTableProblems } from './model/CatalogueContent.ts';
-import { codeSubsections, pageSections, sourcePattern, type PageSection } from './Schema.ts';
+import { codeSubsections, pageSections, sourcePattern, type PageSection } from './PageStructure.ts';
 import {
   accessibilityProblems,
   changelogProblems,
