@@ -303,7 +303,7 @@ export function specsFor(
         for (const user of users) found = add(user, `imports ${path}`) || found;
     } else if (/^(?:packages\/ui\/src|tests\/fixture)\//.test(path)) {
       // ButtonGroups.tsx and Comboboxes.tsx are about ButtonGroup and Combobox, Tabs.tsx about
-      // Tabs, and a file in navigation/panel-dock/ about PanelDock. An icon's name names a symbol, not a
+      // Tabs, and a file in layout/panel-dock/ about PanelDock. An icon's name names a symbol, not a
       // component: icons/Palette.tsx is not about CommandPalette.
       const name = baseName(path);
       const folder = posix

@@ -12,10 +12,10 @@ const library = await importSource('Skeleton', [
   "export { placeholders, isPlaceholder } from './packages/ui/src/foundations/placeholders.ts';",
   "export { skeletonAttributes, skeletonListAttributes, given } from './packages/ui/src/internal/skeleton.ts';",
   "export { useSkeleton } from './packages/ui/src/foundations/SkeletonScope.tsx';",
-  "export { Surface } from './packages/ui/src/foundations/Surface.tsx';",
+  "export { Surface } from './packages/ui/src/layout/Surface.tsx';",
   "export { Text } from './packages/ui/src/foundations/Text.tsx';",
-  "export { Card } from './packages/ui/src/content/Card.tsx';",
-  "export * as List from './packages/ui/src/content/List.tsx';",
+  "export { Card } from './packages/ui/src/layout/Card.tsx';",
+  "export * as List from './packages/ui/src/data-display/List.tsx';",
   "export { Alert } from './packages/ui/src/feedback/Alert.tsx';",
 ]);
 const { placeholders, isPlaceholder, skeletonAttributes, skeletonListAttributes, given } = library;

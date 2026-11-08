@@ -2,8 +2,8 @@
 
 import { useRef, useState, type RefObject } from 'react';
 import { Button } from '../../actions/Button.js';
-import { Dialog } from '../../feedback/Dialog.js';
-import { Column } from '../../foundations/Layout.js';
+import { Dialog } from '../../overlays/Dialog.js';
+import { Column } from '../../layout/Layout.js';
 import { linkDialog as linkDialogMessages } from '../../foundations/messages/linkDialog.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { TextField } from '../TextField.js';

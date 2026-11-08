@@ -7,7 +7,7 @@ import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 const { HoverCard, Text, IconInfo } = await importSource('HoverDetail', [
-  "export { HoverCard } from './packages/ui/src/feedback/HoverCard.tsx';",
+  "export { HoverCard } from './packages/ui/src/overlays/HoverCard.tsx';",
   "export { Text } from './packages/ui/src/foundations/Text.tsx';",
   "export { IconInfo } from './packages/ui/src/icons/Info.tsx';",
 ]);

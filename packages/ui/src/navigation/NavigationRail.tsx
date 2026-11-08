@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentPropsWithRef, ReactNode } from 'react';
-import { Column } from '../foundations/Layout.js';
+import { Column } from '../layout/Layout.js';
 import { classNames } from '../internal/classNames.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';

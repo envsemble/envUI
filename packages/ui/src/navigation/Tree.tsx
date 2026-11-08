@@ -17,7 +17,7 @@ import { setRef } from '../internal/setRef.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
-import { ContextMenu } from './ContextMenu.js';
+import { ContextMenu } from '../actions/ContextMenu.js';
 import { isRightToLeft } from '../internal/direction.js';
 import {
   rowElementId,

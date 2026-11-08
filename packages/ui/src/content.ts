@@ -2,4 +2,4 @@
 export * from './content/Code.js';
 export * from './content/CodeBlock.js';
 export * from './content/Markdown.js';
-export * from './forms/MarkdownEditor.js';
+export * from './content/MarkdownEditor.js';

@@ -11,7 +11,7 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Grid } from '../foundations/Layout.js';
+import { Grid } from '../layout/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { FileInput } from '../internal/FileInput.js';

@@ -8,7 +8,7 @@ import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 const { Avatar } = await importSource('AvatarSelected', [
-  "export { Avatar } from './packages/ui/src/content/Avatar.tsx';",
+  "export { Avatar } from './packages/ui/src/data-display/Avatar.tsx';",
 ]);
 
 test('a selected avatar marks its state and draws a check hidden from assistive technology', () => {

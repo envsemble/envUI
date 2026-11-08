@@ -4,7 +4,7 @@ import { Field as BaseField } from '@base-ui/react/field';
 import { createContext, useContext, type ComponentProps, type ReactNode } from 'react';
 import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../foundations/Layout.js';
+import { Grid, Row } from '../layout/Layout.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
 import '../styles/Base.css';

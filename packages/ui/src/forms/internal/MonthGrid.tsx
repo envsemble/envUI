@@ -1,7 +1,7 @@
 'use client';
 
 import { useId, useMemo } from 'react';
-import { Grid, Row } from '../../foundations/Layout.js';
+import { Grid, Row } from '../../layout/Layout.js';
 import { IconButton } from '../../actions/Button.js';
 import { IconChevronLeft } from '../../icons/ChevronLeft.js';
 import { IconChevronRight } from '../../icons/ChevronRight.js';

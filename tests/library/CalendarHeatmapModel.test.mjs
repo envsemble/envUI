@@ -1,4 +1,4 @@
-// content/internal/calendarHeatmapModel: which days a CalendarHeatmap shows, read with Calendar's
+// data-display/internal/calendarHeatmapModel: which days a CalendarHeatmap shows, read with Calendar's
 // parser, and the dates it can't read.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -6,7 +6,7 @@ import { importSource } from '../support/importSource.mjs';
 
 const { calendarHeatmapModel } = await importSource(
   'CalendarHeatmapModel',
-  'packages/ui/src/content/internal/calendarHeatmapModel.ts',
+  'packages/ui/src/data-display/internal/calendarHeatmapModel.ts',
 );
 
 const model = (data, options = {}) =>

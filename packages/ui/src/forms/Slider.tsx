@@ -14,7 +14,7 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Row } from '../foundations/Layout.js';
+import { Row } from '../layout/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { setRef } from '../internal/setRef.js';
 import { useLocale } from '../internal/EnvUIContext.js';

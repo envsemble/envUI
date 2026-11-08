@@ -10,7 +10,7 @@ import type {
 } from 'react';
 import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../foundations/Layout.js';
+import { Grid, Row } from '../layout/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { useFormReset } from './internal/useFormReset.js';
 import { fieldMessageIds } from './internal/useFieldMetadata.js';

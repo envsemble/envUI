@@ -39,7 +39,7 @@ test("every module that uses client-only APIs, and only such a module, says 'use
     assert.equal(module.client, false, `${entry} stays a server module`);
   }
   // Menu.Item is a part of a client module; the Menu namespace is an `export * as` in the entry.
-  assert.ok(modules.find(({ file }) => file === 'navigation/Menu.tsx').client);
+  assert.ok(modules.find(({ file }) => file === 'actions/Menu.tsx').client);
 });
 
 test('the check sees what makes a module a client module, also by name and through types', () => {

@@ -5,7 +5,7 @@ import { useId, type ReactNode, type Ref } from 'react';
 import type { Direction } from '../../internal/EnvUIContext.js';
 import { PopupSurface } from '../../internal/PopupSurface.js';
 import { ListRow } from '../../internal/ListRow.js';
-import { Column, Grid } from '../../foundations/Layout.js';
+import { Column, Grid } from '../../layout/Layout.js';
 import { Spinner } from '../../feedback/Spinner.js';
 import { IconCheck } from '../../icons/Check.js';
 import { isGroup, type ComboboxGroup, type ComboboxItem } from './comboboxItems.js';

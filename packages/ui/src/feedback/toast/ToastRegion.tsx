@@ -2,7 +2,7 @@
 
 import { useCallback, useLayoutEffect, useState } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
-import { Badge } from '../../content/Badge.js';
+import { Badge } from '../../data-display/Badge.js';
 import { Theme, useTheme } from '../../foundations/Theme.js';
 import { toast as toastMessages } from '../../foundations/messages/toast.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
@@ -12,7 +12,7 @@ import type { ToastController } from './useToastController.js';
 import type { ToastEntry } from './toastInternals.js';
 import type { ToastPlacement } from './toastTypes.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
-import { useModalOpen } from '../internal/useModalPresence.js';
+import { useModalOpen } from '../../overlays/internal/useModalPresence.js';
 import { Button, IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
 import { flag } from '../../internal/flag.js';

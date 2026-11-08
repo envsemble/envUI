@@ -26,7 +26,7 @@ import {
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
 import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
-import { Grid } from '../foundations/Layout.js';
+import { Grid } from '../layout/Layout.js';
 import { ListRow } from '../internal/ListRow.js';
 import { setRef } from '../internal/setRef.js';
 import { useOpenState } from '../internal/useOpenState.js';

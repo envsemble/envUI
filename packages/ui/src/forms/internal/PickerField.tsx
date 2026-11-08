@@ -19,7 +19,7 @@ import { useDirection } from '../../internal/useDirection.js';
 import { containedOpenChange, usePortalContainer } from '../../internal/PortalContainerContext.js';
 import type { OverlayOpenChangeReason } from '../../internal/overlayOpenChangeReason.js';
 import { type ControlSize } from '../../foundations/Theme.js';
-import type { PopoverOpenChangeReason } from '../../feedback/Popover.js';
+import type { PopoverOpenChangeReason } from '../../overlays/Popover.js';
 import { IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
 import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './FieldFrame.js';

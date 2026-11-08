@@ -3,7 +3,7 @@
 
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { IconButton } from '../../actions/Button.js';
-import { Tooltip } from '../../feedback/Tooltip.js';
+import { Tooltip } from '../../overlays/Tooltip.js';
 import type { TooltipSide } from '../../internal/TooltipPopup.js';
 import type { ControlSize } from '../../foundations/Theme.js';
 import { IconLeftPanelClose } from '../../icons/LeftPanelClose.js';

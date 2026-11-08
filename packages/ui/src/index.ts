@@ -1,10 +1,10 @@
-// The main entry point, grouped by the family folder each export lives in.
+// The main entry point, grouped by what the exports are for.
 
 // Foundations: theme, text, surfaces, icons, window classes and the provider.
 export * from './foundations/Theme.js';
-export * from './foundations/Layout.js';
+export * from './layout/Layout.js';
 export * from './foundations/Text.js';
-export * from './foundations/Surface.js';
+export * from './layout/Surface.js';
 export * from './foundations/windowClasses.js';
 export * from './foundations/useContainerSize.js';
 export * from './foundations/EnvUIProvider.js';
@@ -38,13 +38,13 @@ export * from './actions/Button.js';
 export * as Toolbar from './actions/Toolbar.js';
 export * from './actions/Link.js';
 export * from './actions/ButtonGroup.js';
-export * from './actions/AvatarButton.js';
+export * from './data-display/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
-export * from './actions/SegmentedControl.js';
+export * from './forms/SegmentedControl.js';
 
 // Navigation: bars, rails, drawers, tabs, menus and the ways around a page.
-export * from './navigation/TopBar.js';
+export * from './layout/TopBar.js';
 export * from './navigation/NavigationBar.js';
 export * from './navigation/NavigationRail.js';
 export * from './navigation/NavigationDrawer.js';
@@ -57,48 +57,48 @@ export {
   type LinkProviderProps,
   type LinkComponentProps,
 } from './navigation/LinkProvider.js';
-export * as Menu from './navigation/Menu.js';
-export * from './navigation/ContextMenu.js';
-export * as Menubar from './navigation/Menubar.js';
+export * as Menu from './actions/Menu.js';
+export * from './actions/ContextMenu.js';
+export * as Menubar from './actions/Menubar.js';
 export * from './navigation/Tree.js';
 export * from './navigation/DocumentTabs.js';
-export * as PanelDock from './navigation/panel-dock/PanelDock.js';
-export type { PanelDockMode, PanelDockPanel } from './navigation/panel-dock/Root.js';
+export * as PanelDock from './layout/panel-dock/PanelDock.js';
+export type { PanelDockMode, PanelDockPanel } from './layout/panel-dock/Root.js';
 export * from './navigation/Breadcrumbs.js';
 export * from './navigation/TableOfContents.js';
 export * from './navigation/Pagination.js';
 
 // Content: cards, lists, tables, badges, avatars and the values they show.
-export * from './content/Card.js';
-export * as List from './content/List.js';
+export * from './layout/Card.js';
+export * as List from './data-display/List.js';
 export * from './content/Disclosure.js';
-export * from './content/Badge.js';
-export * from './content/DiffStat.js';
-export * as Table from './content/Table.js';
+export * from './data-display/Badge.js';
+export * from './data-display/DiffStat.js';
+export * as Table from './data-display/Table.js';
 export * from './content/Kbd.js';
 export * from './content/useModifierKey.js';
-export * from './content/Avatar.js';
-export * from './content/AvatarGroup.js';
-export * from './content/Graphic.js';
-export * from './content/AnimatedNumber.js';
-export * from './content/RelativeTime.js';
+export * from './data-display/Avatar.js';
+export * from './data-display/AvatarGroup.js';
+export * from './data-display/Graphic.js';
+export * from './data-display/AnimatedNumber.js';
+export * from './data-display/RelativeTime.js';
 // Plain functions that a server component calls come from modules that are not client modules.
 export {
   formatRelativeTime,
   type RelativeTimeOptions,
   type RelativeTimeValue,
-} from './content/formatRelativeTime.js';
-export * from './content/Rating.js';
+} from './data-display/formatRelativeTime.js';
+export * from './data-display/Rating.js';
 export * from './content/Message.js';
 export * as Accordion from './content/Accordion.js';
-export * as DescriptionList from './content/DescriptionList.js';
-export * from './content/CalendarHeatmap.js';
+export * as DescriptionList from './data-display/DescriptionList.js';
+export * from './data-display/CalendarHeatmap.js';
 
 // Form fields: text, choices, pickers and the drop zone.
 export * as Field from './forms/Field.js';
 export * from './forms/TextField.js';
 export * from './forms/Textarea.js';
-export * from './forms/Composer.js';
+export * from './content/Composer.js';
 export * from './forms/Checkbox.js';
 export * from './forms/Switch.js';
 export * from './forms/Radio.js';
@@ -114,16 +114,16 @@ export * from './forms/DropZone.js';
 export * from './forms/SearchField.js';
 
 // Feedback: dialogs, sheets, popups, alerts, progress and toasts.
-export * from './feedback/Dialog.js';
-export * from './feedback/ConfirmDialog.js';
-export * from './feedback/Sheet.js';
-export * from './feedback/CommandPalette.js';
+export * from './overlays/Dialog.js';
+export * from './overlays/ConfirmDialog.js';
+export * from './overlays/Sheet.js';
+export * from './actions/CommandPalette.js';
 export * from './feedback/Alert.js';
-export * from './feedback/Popover.js';
-export * from './feedback/HoverCard.js';
-export * from './feedback/Tooltip.js';
+export * from './overlays/Popover.js';
+export * from './overlays/HoverCard.js';
+export * from './overlays/Tooltip.js';
 export * from './feedback/Spinner.js';
-export * from './feedback/Meter.js';
+export * from './data-display/Meter.js';
 export * from './feedback/Progress.js';
 export { ToastProvider, type ToastProviderProps } from './feedback/toast/ToastProvider.js';
 export { useToast } from './feedback/toast/useToast.js';

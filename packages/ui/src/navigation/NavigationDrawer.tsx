@@ -16,7 +16,7 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
-import { Column } from '../foundations/Layout.js';
+import { Column } from '../layout/Layout.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';

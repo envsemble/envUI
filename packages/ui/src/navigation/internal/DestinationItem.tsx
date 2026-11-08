@@ -2,7 +2,7 @@
 
 import type { HTMLAttributes, ReactNode, Ref } from 'react';
 import { ActionElement } from '../../internal/ActionElement.js';
-import { Column, Row } from '../../foundations/Layout.js';
+import { Column, Row } from '../../layout/Layout.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { SymbolIconFill } from '../../internal/SymbolIconFill.js';

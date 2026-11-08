@@ -9,11 +9,11 @@ import {
   type ReactNode,
 } from 'react';
 import { IconButton, type IconButtonProps, type ButtonVariant } from './Button.js';
-import { Tooltip } from '../feedback/Tooltip.js';
+import { Tooltip } from '../overlays/Tooltip.js';
 import { Kbd } from '../content/Kbd.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { classNames } from '../internal/classNames.js';
-import { Column, Row } from '../foundations/Layout.js';
+import { Column, Row } from '../layout/Layout.js';
 import { DirectedToolbarRoot } from './internal/DirectedToolbarRoot.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
