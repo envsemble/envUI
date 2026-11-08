@@ -142,7 +142,7 @@
   .env-text-field-border > legend {
     display: block;
     inline-size: auto;
-    max-inline-size: 0rem;
+    max-inline-size: 0;
     block-size: var(--env-text-field-notch);
     padding: 0;
     overflow: hidden;
@@ -217,7 +217,10 @@
   }
   .env-text-field-control > label {
     position: absolute;
-    inset-block-start: calc(var(--env-text-field-clip-start, var(--env-space-4)) + 0.0625rem);
+    /* Where the input's text starts: its top padding, inside the field's edge. */
+    inset-block-start: calc(
+      var(--env-text-field-clip-start, var(--env-space-4)) + var(--env-control-border-width)
+    );
     inset-inline-start: var(--env-text-field-label-start);
     max-width: calc(100% - var(--env-space-6));
     overflow: hidden;
@@ -245,7 +248,12 @@
       [data-label-floating]
     )
     > label {
-    inset-block-start: var(--env-text-field-label-floated, -0.625rem);
+    /* Floated, the label sits on the outline, unless the field's variant places it. */
+    --env-text-field-label-floated-default: -0.625rem;
+    inset-block-start: var(
+      --env-text-field-label-floated,
+      var(--env-text-field-label-floated-default)
+    );
     inset-inline-start: calc(var(--env-text-field-notch-start) + var(--env-space-1));
     padding-inline: var(--env-space-1);
     margin-inline-start: calc(-1 * var(--env-space-1));
@@ -391,7 +399,9 @@
      that runs on never shows in the padding or under the border. While it doesn't scroll, the padding
      is empty and nothing is cut. */
   textarea.env-text-field-input {
-    min-height: 7.5rem;
+    /* A text area's least height, as tall as about four lines. */
+    --env-textarea-min-height: 7.5rem;
+    min-height: var(--env-textarea-min-height);
     field-sizing: fixed;
     overflow-y: auto;
     scrollbar-width: thin;
@@ -418,7 +428,10 @@
   }
   textarea.env-text-field-input[data-sizing='content'] {
     field-sizing: content;
-    min-height: max(7.5rem, calc(var(--env-textarea-rows, 2) * 1lh + var(--env-space-6)));
+    min-height: max(
+      var(--env-textarea-min-height),
+      calc(var(--env-textarea-rows, 2) * 1lh + var(--env-space-6))
+    );
   }
   /* Given rows, a field starts that many lines tall, also when that is less than 7.5 rem: a growing
      one shrinks back to them, and a fixed one resizes down to them or to 7.5 rem, whichever is
@@ -434,7 +447,9 @@
   .env-textarea-resize-handle {
     position: absolute;
     inset-inline: 0;
-    inset-block-end: -0.0625rem;
+    /* Over the bottom border, so the handle covers the field's edge. */
+    --env-textarea-resize-handle-overlap: -0.0625rem;
+    inset-block-end: var(--env-textarea-resize-handle-overlap);
     block-size: var(--env-space-3);
     padding: 0;
     margin: 0;
@@ -644,11 +659,13 @@
     color: var(--env-color-fg-muted);
   }
   .env-text-field[data-label-hidden] .env-text-field-control > label {
+    /* Visually hidden: a pixel's box, clipped away, still read. */
+    --env-text-field-label-hidden-size: 0.0625rem;
     position: absolute;
-    width: 0.0625rem;
-    height: 0.0625rem;
+    width: var(--env-text-field-label-hidden-size);
+    height: var(--env-text-field-label-hidden-size);
     padding: 0;
-    margin: -0.0625rem;
+    margin: calc(-1 * var(--env-text-field-label-hidden-size));
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
@@ -672,7 +689,9 @@
   }
   .env-text-field-control:is([data-prefix], [data-suffix]) > .env-text-field-input {
     flex: 1 1 0;
-    min-inline-size: min(6rem, 50%);
+    /* The room the value keeps beside a long prefix or suffix. */
+    --env-text-field-value-min-width: 6rem;
+    min-inline-size: min(var(--env-text-field-value-min-width), 50%);
   }
   .env-text-field-prefix,
   .env-text-field-suffix {
@@ -698,10 +717,10 @@
     padding-inline-end: var(--env-space-4);
   }
   .env-text-field-control[data-prefix] > .env-text-field-input {
-    padding-inline-start: 0.125rem;
+    padding-inline-start: calc(var(--env-space-1) / 2);
   }
   .env-text-field-control[data-suffix] > .env-text-field-input {
-    padding-inline-end: 0.125rem;
+    padding-inline-end: calc(var(--env-space-1) / 2);
   }
   .env-text-field-control[data-start-icon] > .env-text-field-prefix {
     padding-inline-start: calc(
@@ -715,7 +734,7 @@
   .env-text-field:not([data-tall])
     .env-text-field-control[data-end-action][data-suffix]
     > .env-text-field-input {
-    padding-inline-end: 0.125rem;
+    padding-inline-end: calc(var(--env-space-1) / 2);
   }
   .env-text-field:not([data-tall])
     .env-text-field-control[data-end-action]

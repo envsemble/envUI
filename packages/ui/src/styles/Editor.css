@@ -24,9 +24,11 @@
     margin-inline-start: var(--env-editor-toolbar-lead);
   }
   .env-editor-status:empty {
+    /* Visually hidden: a pixel's box, clipped away, still read. */
+    --env-editor-status-size: 0.0625rem;
     position: absolute;
-    inline-size: 0.0625rem;
-    block-size: 0.0625rem;
+    inline-size: var(--env-editor-status-size);
+    block-size: var(--env-editor-status-size);
     clip-path: inset(50%);
     overflow: hidden;
   }

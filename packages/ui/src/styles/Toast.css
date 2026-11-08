@@ -51,7 +51,8 @@
     padding: var(--env-space-2) var(--env-space-3) var(--env-space-2)
       calc(var(--env-space-4) - var(--env-control-border-width));
     min-width: 0;
-    min-height: 3rem;
+    --env-toast-min-height: 3rem;
+    min-height: var(--env-toast-min-height);
     /* Toasts float over everything at elevation 2, as menus do, set apart by their strong fill, with
        no shadow and no edge, in an alert's corner, the large one of the radius scale. At high
        contrast the strong fill's edge bounds it: on a light page the fill a step darker rather than
@@ -66,6 +67,7 @@
     font: var(--env-type-body-sm);
     color: var(--env-toast-text);
     flex-wrap: nowrap;
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   /* The tone is the status icon, in the tone's light grade. */
   .env-toast:where([data-tone='success']) {
@@ -91,7 +93,8 @@
     min-width: 0;
     /* A fixed measure also bounds the toast's intrinsic width, which percentages cannot do in auto-sized
        layouts such as tables. */
-    max-inline-size: 24rem;
+    --env-toast-message-measure: 24rem;
+    max-inline-size: var(--env-toast-message-measure);
     padding-block: var(--env-space-1);
     /* Up to three lines; the full message remains in the title and the announcement. */
     display: -webkit-box;
@@ -162,8 +165,8 @@
     color: inherit;
   }
   .env-toast-dismiss:focus-visible {
-    outline: 0.125rem solid currentColor;
-    outline-offset: 0.125rem;
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
   }
   /* The toasts need no window, so their portal's boundary is no container: nothing changes for the
      fixed viewport inside it. */
@@ -251,9 +254,6 @@
   .env-toast[data-ending-style] {
     opacity: 0;
   }
-  .env-toast {
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
-  }
   @media (prefers-reduced-motion: reduce) {
     .env-toast {
       transition: none;
@@ -274,11 +274,13 @@
     }
     .env-toast-viewport[data-placement='bottom-end'] > .env-toast[data-starting-style],
     .env-toast-viewport[data-placement='bottom-end'] > .env-toast[data-ending-style] {
-      transform: translateY(0.75rem) scale(0.98);
+      --env-toast-rise: 0.75rem;
+      transform: translateY(var(--env-toast-rise)) scale(0.98);
     }
     .env-toast-viewport[data-placement='top-center'] > .env-toast[data-starting-style],
     .env-toast-viewport[data-placement='top-center'] > .env-toast[data-ending-style] {
-      transform: translateY(-0.75rem) scale(0.98);
+      --env-toast-drop: -0.75rem;
+      transform: translateY(var(--env-toast-drop)) scale(0.98);
     }
     .env-toast-viewport > .env-toast[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);

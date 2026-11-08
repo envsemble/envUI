@@ -467,8 +467,8 @@
   }
 
   .env-button:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
   /* A container that draws the ring inset (ButtonGroup, an active tab) sets --env-button-focus-inner-ring;
      on a solid fill the inset ring would match the fill, so an inner ring in the label color shows it. */
@@ -621,10 +621,12 @@
   }
   /* ConfirmButton announces its armed state from a visually hidden status beside the button. */
   .env-confirm-button-status {
+    /* Visually hidden: a pixel's box, clipped away, still read. */
+    --env-confirm-button-status-size: 0.0625rem;
     position: absolute;
-    inline-size: 0.0625rem;
-    block-size: 0.0625rem;
-    margin: -0.0625rem;
+    inline-size: var(--env-confirm-button-status-size);
+    block-size: var(--env-confirm-button-status-size);
+    margin: calc(-1 * var(--env-confirm-button-status-size));
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;

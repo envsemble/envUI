@@ -56,8 +56,8 @@
     transform: scaleX(-1) rotate(90deg);
   }
   .env-disclosure > summary:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
   .env-disclosure > summary:hover {
     /* The lighter layer of a ghost button with a label, so a press stands apart from it. */

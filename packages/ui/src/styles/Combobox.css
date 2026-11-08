@@ -43,9 +43,11 @@
     --env-combobox-actions: 2;
   }
   .env-combobox .env-combobox-control > .env-combobox-input {
-    flex: 1 1 4rem;
+    /* The room typing keeps beside the chips before it wraps to a line of its own. */
+    --env-combobox-input-min-width: 4rem;
+    flex: 1 1 var(--env-combobox-input-min-width);
     inline-size: auto;
-    min-inline-size: min(4rem, 100%);
+    min-inline-size: min(var(--env-combobox-input-min-width), 100%);
     min-block-size: var(--env-combobox-row);
     padding: 0;
     border-radius: 0;
@@ -164,7 +166,7 @@
     min-inline-size: 0;
     max-inline-size: 100%;
     block-size: var(--env-combobox-row);
-    padding-inline: var(--env-space-2) 0.125rem;
+    padding-inline: var(--env-space-2) calc(var(--env-space-1) / 2);
     border-radius: var(--env-radius-sm);
     background: var(--env-combobox-chip-container, var(--env-color-bg-neutral-muted));
     color: var(--env-combobox-chip-content, var(--env-color-fg-default));
@@ -179,7 +181,9 @@
     padding-inline-end: var(--env-space-2);
   }
   .env-combobox-chip:has(> .env-combobox-start) {
-    padding-inline-start: 0.1875rem;
+    /* The avatar sits close to the chip's rounded start. */
+    --env-combobox-chip-start-inset: 0.1875rem;
+    padding-inline-start: var(--env-combobox-chip-start-inset);
   }
   /* A chip is too short for an avatar's initials, so it leaves an avatar of initials out rather than
      show a blank disc; an icon, a photo or a figure stays. */
@@ -193,8 +197,8 @@
     --env-combobox-start-size: calc(var(--env-combobox-row) - 0.375rem);
   }
   .env-combobox-chip:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.0625rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 1px;
   }
   .env-combobox-chip-label {
     min-inline-size: 0;
@@ -211,7 +215,7 @@
        as one of them. */
     --env-icon-size: 0.75rem;
     flex: 0 0 auto;
-    border-radius: calc(var(--env-radius-sm) - 0.125rem);
+    border-radius: calc(var(--env-radius-sm) - var(--env-space-1) / 2);
   }
 
   /* The popup: at most 20 rem tall, where the options scroll. */
@@ -220,8 +224,10 @@
     --env-list-row-icon-size: var(--env-picture-size-sm);
     width: max-content;
     min-width: min(var(--anchor-width), var(--available-width));
-    max-width: min(22rem, var(--available-width));
-    max-block-size: min(var(--available-height), 20rem);
+    --env-combobox-popup-max-width: 22rem;
+    --env-combobox-popup-max-height: 20rem;
+    max-width: min(var(--env-combobox-popup-max-width), var(--available-width));
+    max-block-size: min(var(--available-height), var(--env-combobox-popup-max-height));
     overflow: hidden;
     padding: var(--env-popup-padding);
     border-radius: var(--env-popup-radius);

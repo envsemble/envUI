@@ -55,7 +55,7 @@
     gap: var(--env-space-1);
     /* With the border, 3 px above and below and 10 px at the sides. */
     padding: calc(var(--env-space-1) / 2) calc(var(--env-space-2) + var(--env-control-border-width));
-    border: var(--env-badge-own-border, var(--env-badge-border, 0.0625rem solid transparent));
+    border: var(--env-badge-own-border, var(--env-badge-border, 1px solid transparent));
     border-radius: var(--env-radius-full);
     /* prettier-ignore */
     background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-layered, var(--env-badge-soft))));
@@ -125,8 +125,7 @@
     background: var(--env-badge-container, var(--env-badge-bg, transparent));
   }
   .env-badge .env-icon {
-    inline-size: 0.875rem;
-    block-size: 0.875rem;
+    --env-icon-size: 0.875rem;
   }
   .env-badge-label {
     min-inline-size: 0;
@@ -144,7 +143,9 @@
     block-size: var(--env-badge-count-height);
     justify-content: center;
     padding-block: 0;
-    padding-inline: 0.375rem;
+    /* A digit's room either side, as a diff stat has. */
+    --env-badge-count-padding-inline: 0.375rem;
+    padding-inline: var(--env-badge-count-padding-inline);
     border: var(--env-badge-own-border, var(--env-badge-count-border, none));
     background: var(--env-badge-container, var(--env-badge-count-bg, var(--env-badge-soft)));
     color: var(--env-badge-content, var(--env-badge-count-fg, var(--env-badge-tone)));
@@ -172,8 +173,10 @@
     block-size: var(--env-badge-count-height);
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    padding-inline: 0.375rem;
+    gap: var(--env-space-1);
+    /* A count's room either side. */
+    --env-diff-stat-padding-inline: 0.375rem;
+    padding-inline: var(--env-diff-stat-padding-inline);
     border: var(--env-diff-stat-border, none);
     border-radius: var(--env-radius-full);
     background: var(--env-diff-stat-bg, var(--env-color-bg-neutral-muted));
@@ -190,10 +193,12 @@
   }
   .env-badge-count-label,
   .env-diff-stat-label {
+    /* Visually hidden: a pixel's box, clipped away, still read. */
+    --env-diff-stat-label-size: 0.0625rem;
     position: absolute;
-    inline-size: 0.0625rem;
-    block-size: 0.0625rem;
-    margin: -0.0625rem;
+    inline-size: var(--env-diff-stat-label-size);
+    block-size: var(--env-diff-stat-label-size);
+    margin: calc(-1 * var(--env-diff-stat-label-size));
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;

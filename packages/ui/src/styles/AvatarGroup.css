@@ -286,8 +286,8 @@
   }
   .env-avatar-group-item:focus-visible,
   .env-avatar-group-overflow:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
 
   /* The count of the rest: a circle the size of the avatars, at the bottom of the pile, set as an

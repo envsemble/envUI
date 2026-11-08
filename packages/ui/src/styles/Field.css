@@ -26,7 +26,7 @@
     flex-shrink: 0;
     width: var(--env-control-icon-size);
     height: var(--env-control-icon-size);
-    margin-block-start: 0.125rem;
+    margin-block-start: calc(var(--env-space-1) / 2);
   }
   .env-field-label {
     inline-size: fit-content;

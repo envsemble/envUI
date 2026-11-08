@@ -19,7 +19,7 @@
     --env-button-overflow-wrap: anywhere;
   }
   .env-button-group > .env-button:focus-visible {
-    outline-offset: -0.125rem;
+    outline-offset: -2px;
   }
 
   .env-button-group > .env-button {

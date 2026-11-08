@@ -103,8 +103,8 @@
   }
   /* The active row shows the focus ring only while the tree has keyboard focus. */
   .env-tree[data-focus-visible]:focus .env-tree-item[data-highlighted] {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: -0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
   }
   .env-tree-item[aria-disabled='true'] {
     opacity: var(--env-state-disabled-opacity);

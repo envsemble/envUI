@@ -1,7 +1,7 @@
 @layer env.components {
   /* An application menubar: a row of small text buttons, each opening a menu below it. */
   .env-menubar {
-    gap: 0.125rem;
+    gap: calc(var(--env-space-1) / 2);
   }
   .env-menubar-trigger {
     box-sizing: border-box;
@@ -30,8 +30,8 @@
     background: var(--env-color-bg-neutral-subtle-pressed);
   }
   .env-menubar-trigger:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: -0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
   }
   .env-menubar-trigger[data-disabled] {
     opacity: var(--env-state-disabled-opacity);
@@ -49,7 +49,7 @@
   /* Access keys are underlined while Alt is held, or while the keyboard has activated the menubar. */
   .env-menubar[data-access-keys-shown] .env-menubar-access-key {
     text-decoration: underline;
-    text-decoration-thickness: 0.0625rem;
+    text-decoration-thickness: 1px;
     text-underline-offset: 0.15em;
   }
 

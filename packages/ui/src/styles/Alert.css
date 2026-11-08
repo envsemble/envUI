@@ -59,8 +59,7 @@
     box-sizing: border-box;
     /* A little less inset above and below than at the sides, as a card's. */
     padding-block: calc(var(--env-space-4) - var(--env-space-1) / 2);
-    border: 0.0625rem solid
-      var(--env-alert-outline, var(--env-alert-high-contrast-edge, transparent));
+    border: 1px solid var(--env-alert-outline, var(--env-alert-high-contrast-edge, transparent));
     border-radius: var(--env-alert-radius);
     background: var(
       --env-alert-container,
@@ -92,12 +91,12 @@
     grid-column: 1;
     display: grid;
     place-items: center;
-    block-size: 1.4em;
+    /* One line of the title tall, so the icon centres on its first line. */
+    block-size: 1lh;
     color: var(--env-alert-icon-color);
   }
   .env-alert-icon .env-icon {
-    inline-size: 1.25rem;
-    block-size: 1.25rem;
+    --env-icon-size: 1.25rem;
   }
   /* The title, in the body size and semibold, sits right above the message, a step smaller. */
   .env-alert-content {
