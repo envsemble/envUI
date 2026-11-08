@@ -506,10 +506,16 @@
    nothing eases, neither a figure's nested theme (ThemeFade.css) nor a part with transitions of its
    own, such as a button's fill or a progress bar's indicator, so every part changes at once. */
 .catalogue-theme-screen,
-.catalogue-theme-screen :is(*, ::before, ::after),
-.catalogue-tone-badges :is(*, ::before, ::after),
+.catalogue-theme-screen *,
+.catalogue-theme-screen ::before,
+.catalogue-theme-screen ::after,
+.catalogue-tone-badges *,
+.catalogue-tone-badges ::before,
+.catalogue-tone-badges ::after,
 .catalogue-scheme-canvas,
-.catalogue-scheme-canvas :is(*, ::before, ::after) {
+.catalogue-scheme-canvas *,
+.catalogue-scheme-canvas ::before,
+.catalogue-scheme-canvas ::after {
   transition: none;
 }
 /* An animated figure's states stacked in one place (Steps.tsx): the place is as large as the
