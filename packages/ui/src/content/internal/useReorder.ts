@@ -54,33 +54,22 @@ interface ReorderOptions {
 /** How far, in CSS pixels, a press moves before it drags the row. */
 const dragThreshold = 4;
 
-/** What a list's moves share: the row that moves, and what the handlers set between events. */
-interface ReorderState {
-  move: Move | null;
-  frame: number;
-  /** The control to focus again once the application has moved the row. */
-  refocus: HTMLElement | null;
-  /** Set as a drag ends, so the click that follows its release doesn't lift the row again. */
-  afterDrag: boolean;
-  /**
-   * Set while the pointer presses the handle of a row it lifted by a press, so the focus some
-   * browsers take from the handle on that press doesn't put the row back before the click drops it.
-   */
-  pressingLifted: boolean;
-}
-
 /**
  * The moves of one list, outside React's render: the rows shift with the CSS `translate` property
  * while a row moves, and nothing moves in the DOM until onReorder.
  */
-function createReorderSession(read: () => ReorderOptions, announce: (text: string) => void) {
-  const state: ReorderState = {
-    move: null,
-    frame: 0,
-    refocus: null,
-    afterDrag: false,
-    pressingLifted: false,
-  };
+function createReorder(read: () => ReorderOptions, announce: (text: string) => void) {
+  let move: Move | null = null;
+  let frame = 0;
+  /** The control to focus again once the application has moved the row. */
+  let refocus: HTMLElement | null = null;
+  /** Set as a drag ends, so the click that follows its release doesn't lift the row again. */
+  let afterDrag = false;
+  /**
+   * Set while the pointer presses the handle of a row it lifted by a press, so the focus some
+   * browsers take from the handle on that press doesn't put the row back before the click drops it.
+   */
+  let pressingLifted = false;
 
   const say = (kind: keyof ReorderAnnouncements, label: string, index: number, count: number) => {
     const { announcements, formatNumber } = read();
@@ -106,7 +95,7 @@ function createReorderSession(read: () => ReorderOptions, announce: (text: strin
 
   /** Ends a move: the rows return to rest, without a transition where the DOM is about to move. */
   const settle = (current: Move, instant: boolean) => {
-    cancelAnimationFrame(state.frame);
+    cancelAnimationFrame(frame);
     for (const row of current.rows) {
       if (instant) row.style.transition = 'none';
       row.style.translate = '';
@@ -118,7 +107,7 @@ function createReorderSession(read: () => ReorderOptions, announce: (text: strin
       requestAnimationFrame(() => {
         for (const row of current.rows) row.style.transition = '';
       });
-    state.move = null;
+    move = null;
   };
 
   const start = (row: HTMLElement, handle: HTMLElement, label: string, mode: Move['mode']) => {
@@ -127,38 +116,28 @@ function createReorderSession(read: () => ReorderOptions, announce: (text: strin
     const rows = rowsOf(list);
     const from = rows.indexOf(row);
     if (from === -1) return null;
-    state.move = {
-      list,
-      row,
-      handle,
-      label,
-      from,
-      to: from,
-      rows,
-      ...measureRows(list, rows),
-      mode,
-    };
+    move = { list, row, handle, label, from, to: from, rows, ...measureRows(list, rows), mode };
     // A press on the handle shows nothing until the pointer drags; a key lifts the row at once.
-    if (mode === 'keyboard') show(state.move);
-    return state.move;
+    if (mode === 'keyboard') show(move);
+    return move;
   };
 
   const drop = () => {
-    if (!state.move) return;
-    const { from, to, label, rows, handle } = state.move;
+    if (!move) return;
+    const { from, to, label, rows, handle } = move;
     const moved = from !== to;
-    settle(state.move, moved);
+    settle(move, moved);
     say('dropped', label, to, rows.length);
     if (moved) {
-      state.refocus = handle;
+      refocus = handle;
       read().onReorder?.(from, to);
     }
   };
 
   const cancel = (quiet = false) => {
-    if (!state.move) return;
-    const { label, from, rows } = state.move;
-    settle(state.move, false);
+    if (!move) return;
+    const { label, from, rows } = move;
+    settle(move, false);
     if (!quiet) say('cancelled', label, from, rows.length);
   };
 
@@ -168,34 +147,33 @@ function createReorderSession(read: () => ReorderOptions, announce: (text: strin
 
   /** Moves the lifted row to `to` by keyboard. */
   const step = (to: number) => {
-    if (!state.move) return;
-    const next = Math.max(0, Math.min(state.move.rows.length - 1, to));
-    if (next === state.move.to) {
-      if (next === 0 || next === state.move.rows.length - 1)
-        sayEnd(state.move.label, next, state.move.rows.length);
+    if (!move) return;
+    const next = Math.max(0, Math.min(move.rows.length - 1, to));
+    if (next === move.to) {
+      if (next === 0 || next === move.rows.length - 1) sayEnd(move.label, next, move.rows.length);
       return;
     }
-    state.move.to = next;
-    paint(state.move);
-    say('moved', state.move.label, next, state.move.rows.length);
+    move.to = next;
+    paint(move);
+    say('moved', move.label, next, move.rows.length);
   };
 
   /** Follows the pointer: the target place for the row under it. */
   const follow = () => {
-    const pointer = state.move?.pointer;
-    if (!state.move || !pointer) return;
-    const to = pointerTarget(state.move, pointer);
-    if (to !== state.move.to) {
-      state.move.to = to;
-      say('moved', state.move.label, to, state.move.rows.length);
+    const pointer = move?.pointer;
+    if (!move || !pointer) return;
+    const to = pointerTarget(move, pointer);
+    if (to !== move.to) {
+      move.to = to;
+      say('moved', move.label, to, move.rows.length);
     }
-    paint(state.move);
+    paint(move);
   };
 
   /** Scrolls the scroll area while the pointer drags near its edges. */
   const autoScroll = () => {
-    cancelAnimationFrame(state.frame);
-    const pointer = state.move?.pointer;
+    cancelAnimationFrame(frame);
+    const pointer = move?.pointer;
     if (!pointer?.dragging) return;
     const { scroller } = pointer;
     const delta = edgeScrollDelta(scroller, pointer.lastY);
@@ -204,7 +182,7 @@ function createReorderSession(read: () => ReorderOptions, announce: (text: strin
     scroller.scrollTop = before + delta;
     if (scroller.scrollTop === before) return;
     follow();
-    state.frame = requestAnimationFrame(autoScroll);
+    frame = requestAnimationFrame(autoScroll);
   };
 
   /** Lifts a row for the arrow keys, by keyboard or a press of its handle. */
@@ -213,41 +191,7 @@ function createReorderSession(read: () => ReorderOptions, announce: (text: strin
     if (started) say('lifted', label, started.from, started.rows.length);
   };
 
-  return {
-    state,
-    read,
-    say,
-    sayEnd,
-    show,
-    settle,
-    start,
-    drop,
-    cancel,
-    step,
-    follow,
-    autoScroll,
-    lift,
-  };
-}
-
-type ReorderSession = ReturnType<typeof createReorderSession>;
-
-/** The handlers of a list's rows and their handles, which start, move and end its moves. */
-function reorderHandlers({
-  state,
-  read,
-  say,
-  sayEnd,
-  show,
-  start,
-  drop,
-  cancel,
-  step,
-  follow,
-  autoScroll,
-  lift,
-}: ReorderSession) {
-  return {
+  const handlers = {
     /**
      * The handle's keys. Space and Enter lift and drop here, and their own click is prevented, so
      * a click comes only from a press, such as a pointer's, voice control's or a screen reader's.
@@ -256,8 +200,8 @@ function reorderHandlers({
       const isLift = event.key === ' ' || event.key === 'Enter';
       if (isLift) event.preventDefault();
       // A row another handle lifted, which kept it lifted as focus moved here, goes back first.
-      if (state.move && state.move.handle !== event.currentTarget) cancel(true);
-      if (!state.move) {
+      if (move && move.handle !== event.currentTarget) cancel(true);
+      if (!move) {
         if (!isLift || event.repeat) return;
         lift(row, event.currentTarget, label);
         return;
@@ -268,14 +212,14 @@ function reorderHandlers({
         cancel();
         return;
       }
-      if (state.move.mode !== 'keyboard' || event.repeat) return;
+      if (move.mode !== 'keyboard' || event.repeat) return;
       if (isLift) drop();
       else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
         event.preventDefault();
-        step(state.move.to + (event.key === 'ArrowUp' ? -1 : 1));
+        step(move.to + (event.key === 'ArrowUp' ? -1 : 1));
       } else if (event.key === 'Home' || event.key === 'End') {
         event.preventDefault();
-        step(event.key === 'Home' ? 0 : state.move.rows.length - 1);
+        step(event.key === 'Home' ? 0 : move.rows.length - 1);
       } else if (event.key === 'Tab') cancel();
     },
     /** Space clicks a button as it is released; the key down has done what it does. */
@@ -288,38 +232,38 @@ function reorderHandlers({
      * browse mode, can move it too.
      */
     handleClick(event: MouseEvent<HTMLElement>, row: HTMLElement, label: string) {
-      state.pressingLifted = false;
-      if (state.afterDrag) {
-        state.afterDrag = false;
+      pressingLifted = false;
+      if (afterDrag) {
+        afterDrag = false;
         return;
       }
       const handle = event.currentTarget;
       handle.focus({ preventScroll: true });
-      if (state.move && state.move.handle !== handle) cancel(true);
-      if (!state.move) lift(row, handle, label);
-      else if (state.move.mode === 'keyboard' && state.move.row === row) drop();
+      if (move && move.handle !== handle) cancel(true);
+      if (!move) lift(row, handle, label);
+      else if (move.mode === 'keyboard' && move.row === row) drop();
     },
     /** Losing focus puts a row lifted by keyboard back. */
     handleBlur() {
-      if (state.move?.mode === 'keyboard' && !state.pressingLifted) cancel();
+      if (move?.mode === 'keyboard' && !pressingLifted) cancel();
     },
     handlePointerDown(event: PointerEvent<HTMLElement>, row: HTMLElement, label: string) {
       if (event.button !== 0) return;
-      if (state.move) {
-        if (state.move.mode === 'keyboard' && state.move.handle === event.currentTarget) {
-          state.pressingLifted = true;
+      if (move) {
+        if (move.mode === 'keyboard' && move.handle === event.currentTarget) {
+          pressingLifted = true;
           setTimeout(() => {
-            state.pressingLifted = false;
+            pressingLifted = false;
           });
           // Released off the handle, the press clicks nothing, and a browser that took focus from
           // the handle as it was pressed would leave the row lifted with no handle to hear its keys:
           // once the release and any click have run, the lifted row's handle has focus again.
-          const current = state.move;
+          const current = move;
           const released = () => {
             window.removeEventListener('pointerup', released, true);
             window.removeEventListener('pointercancel', released, true);
             setTimeout(() => {
-              if (state.move === current && document.activeElement !== current.handle)
+              if (move === current && document.activeElement !== current.handle)
                 current.handle.focus({ preventScroll: true });
             });
           };
@@ -328,7 +272,7 @@ function reorderHandlers({
         }
         return;
       }
-      state.afterDrag = false;
+      afterDrag = false;
       const handle = event.currentTarget;
       const current = start(row, handle, label, 'pointer');
       if (!current) return;
@@ -348,40 +292,40 @@ function reorderHandlers({
       handle.focus({ preventScroll: true });
     },
     handlePointerMove(event: PointerEvent<HTMLElement>) {
-      const pointer = state.move?.pointer;
-      if (!state.move || !pointer || event.pointerId !== pointer.id) return;
+      const pointer = move?.pointer;
+      if (!move || !pointer || event.pointerId !== pointer.id) return;
       pointer.lastY = event.clientY;
       if (!pointer.dragging) {
         if (Math.abs(event.clientY - pointer.startY) < dragThreshold) return;
         pointer.dragging = true;
-        show(state.move);
-        say('liftedByPointer', state.move.label, state.move.from, state.move.rows.length);
+        show(move);
+        say('liftedByPointer', move.label, move.from, move.rows.length);
       }
       follow();
       autoScroll();
     },
     handlePointerUp(event: PointerEvent<HTMLElement>) {
-      const pointer = state.move?.pointer;
+      const pointer = move?.pointer;
       if (!pointer || event.pointerId !== pointer.id) return;
       // A press that never moved far enough is no drag: nothing is announced, and the click that
       // follows lifts the row. The click that follows a drag does nothing, and in case none
       // follows, nothing is held for the next one.
       if (pointer.dragging) {
-        state.afterDrag = true;
+        afterDrag = true;
         setTimeout(() => {
-          state.afterDrag = false;
+          afterDrag = false;
         });
         drop();
       } else cancel(true);
     },
     handlePointerCancel(event: PointerEvent<HTMLElement>) {
-      const pointer = state.move?.pointer;
+      const pointer = move?.pointer;
       if (!pointer || event.pointerId !== pointer.id) return;
       cancel(!pointer.dragging);
     },
     /** Alt+↑ and Alt+↓ on a row's target move the row one place at once. */
     rowKeyDown(event: KeyboardEvent<HTMLElement>, row: HTMLElement, label: string) {
-      if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || state.move) return;
+      if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || move) return;
       if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
       const target = event.target as HTMLElement;
       const { list, onReorder } = read();
@@ -395,31 +339,26 @@ function reorderHandlers({
         sayEnd(label, from, rows.length);
         return;
       }
-      state.refocus = target;
+      refocus = target;
       say('moved', label, to, rows.length);
       onReorder?.(from, to);
     },
   };
-}
 
-/** A list's moves, their handlers, and what runs as React commits and unmounts the list. */
-function createReorder(read: () => ReorderOptions, announce: (text: string) => void) {
-  const session = createReorderSession(read, announce);
-  const { state, settle } = session;
   return {
-    handlers: reorderHandlers(session),
+    handlers,
     /**
      * After a drop the application moves the row in the DOM, which can take focus from it: focus
      * goes back to the control that moved the row.
      */
     restoreFocus() {
-      const element = state.refocus;
-      state.refocus = null;
+      const element = refocus;
+      refocus = null;
       if (element?.isConnected && document.activeElement !== element)
         element.focus({ preventScroll: true });
     },
     dispose() {
-      if (state.move) settle(state.move, false);
+      if (move) settle(move, false);
     },
   };
 }

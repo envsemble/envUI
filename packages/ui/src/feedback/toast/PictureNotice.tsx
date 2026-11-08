@@ -1,11 +1,7 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import type { Toast as BaseToast } from '@base-ui/react/toast';
-import { Button, IconButton } from '../../actions/Button.js';
-import { IconClose } from '../../icons/Close.js';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { flag } from '../../internal/flag.js';
-import { ToastBody } from './ToastBody.js';
 import type { ToastEntry } from './toastInternals.js';
 import type { ToastController } from './useToastController.js';
 import '../../styles/Base.css';
@@ -13,29 +9,26 @@ import '../../styles/Toast.css';
 
 /**
  * A notice of a contained region's picture: it arrives and leaves with a live notice's motion, from
- * the toast's starting and ending styles, and its time stops while the pointer rests on it. It
- * keeps a live notice's look, action, dismiss button and duration. Once it has left, `onGone` takes
- * it out of the picture.
+ * the toast's starting and ending styles, and its time stops while the pointer rests on it. Once it
+ * has left, `onGone` takes it out of the picture.
  */
 export function PictureNotice({
-  toast,
+  id,
+  tone,
   limited,
+  ending,
   controller,
-  dismissLabel,
-  onDismiss,
   onGone,
+  children,
 }: {
-  toast: BaseToast.Root.ToastObject<ToastEntry>;
+  id: string;
+  tone: ToastEntry['tone'];
   limited: boolean;
+  ending: boolean;
   controller: ToastController;
-  dismissLabel: string;
-  onDismiss: (id: string) => void;
   onGone: (id: string) => void;
+  children: ReactNode;
 }) {
-  const { id } = toast;
-  // Every notice the controller adds carries its entry.
-  const entry = toast.data!;
-  const ending = toast.transitionStatus === 'ending';
   const element = useRef<HTMLDivElement>(null);
   // A notice closed before it was ever shown, such as one an effect shows and takes back at once,
   // never arrives.
@@ -63,36 +56,15 @@ export function PictureNotice({
       ref={element}
       data-toast-id={id}
       className="env-toast"
-      data-tone={entry.tone}
+      data-tone={tone}
       data-limited={flag(limited)}
       data-starting-style=""
       data-ending-style={ending ? '' : undefined}
-      role={entry.tone === 'danger' ? 'alert' : 'status'}
+      role={tone === 'danger' ? 'alert' : 'status'}
       onMouseEnter={() => controller.pause(id, 'hover')}
       onMouseLeave={() => controller.resume(id, 'hover')}
     >
-      <ToastBody
-        tone={entry.tone}
-        message={<div className="env-toast-message">{entry.message}</div>}
-        action={
-          entry.action && (
-            <Button variant="outline" className="env-toast-action" onClick={entry.action.onClick}>
-              {entry.action.label}
-            </Button>
-          )
-        }
-        dismiss={
-          entry.dismissible !== false && (
-            <IconButton
-              variant="ghost"
-              icon={<IconClose />}
-              className="env-toast-dismiss"
-              aria-label={dismissLabel}
-              onClick={() => onDismiss(id)}
-            />
-          )
-        }
-      />
+      {children}
     </div>
   );
 }

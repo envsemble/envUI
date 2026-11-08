@@ -13,7 +13,10 @@ import type { ToastEntry } from './toastInternals.js';
 import type { ToastPlacement } from './toastTypes.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 import { useModalOpen } from '../internal/useModalPresence.js';
-import { LiveNotice } from './LiveNotice.js';
+import { Button, IconButton } from '../../actions/Button.js';
+import { IconClose } from '../../icons/Close.js';
+import { flag } from '../../internal/flag.js';
+import { ToastBody } from './ToastBody.js';
 import { PictureNotice } from './PictureNotice.js';
 import { useToastGlide } from './useToastGlide.js';
 import '../../styles/Base.css';
@@ -91,12 +94,7 @@ export function ToastRegion({
     if (held || toastStore.toasts.every((toast) => shown.has(toast.id))) return;
     setShown(new Set(toastStore.toasts.map((toast) => toast.id)));
   }, [held, shown, toastStore.toasts]);
-  const { viewport, attachViewport } = useToastGlide({
-    toasts: toastStore.toasts,
-    placement,
-    hiddenCount,
-    held,
-  });
+  const [viewport, attachViewport] = useToastGlide(toastStore.toasts, placement, hiddenCount, held);
   // A swipe toward the end of the line dismisses, so it is to the left in right-to-left text.
   const [direction] = useDirection(viewport, toastStore.toasts.length);
   const swipeDirection: ('down' | 'left' | 'right')[] = [
@@ -130,17 +128,47 @@ export function ToastRegion({
             )}
             {toastStore.toasts
               .filter((toast) => !gone.has(toast.id))
-              .map((toast) => (
-                <PictureNotice
-                  key={toast.id}
-                  toast={toast}
-                  limited={limited.has(toast.id)}
-                  controller={controller}
-                  dismissLabel={messages.dismiss}
-                  onDismiss={toastStore.close}
-                  onGone={leave}
-                />
-              ))}
+              .map((toast) => {
+                const entry = toast.data!;
+                return (
+                  <PictureNotice
+                    key={toast.id}
+                    id={toast.id}
+                    tone={entry.tone}
+                    limited={limited.has(toast.id)}
+                    ending={toast.transitionStatus === 'ending'}
+                    controller={controller}
+                    onGone={leave}
+                  >
+                    <ToastBody
+                      tone={entry.tone}
+                      message={<div className="env-toast-message">{entry.message}</div>}
+                      action={
+                        entry.action && (
+                          <Button
+                            variant="outline"
+                            className="env-toast-action"
+                            onClick={entry.action.onClick}
+                          >
+                            {entry.action.label}
+                          </Button>
+                        )
+                      }
+                      dismiss={
+                        entry.dismissible !== false && (
+                          <IconButton
+                            variant="ghost"
+                            icon={<IconClose />}
+                            className="env-toast-dismiss"
+                            aria-label={messages.dismiss}
+                            onClick={() => toastStore.close(toast.id)}
+                          />
+                        )
+                      }
+                    />
+                  </PictureNotice>
+                );
+              })}
           </div>
         </Theme>
       </BaseToast.Portal>
@@ -180,16 +208,72 @@ export function ToastRegion({
               aria-label={hiddenLabel}
             />
           )}
-          {toastStore.toasts.map((toast) => (
-            <LiveNotice
-              key={toast.id}
-              toast={toast}
-              limited={limited.has(toast.id)}
-              swipeDirection={swipeDirection}
-              controller={controller}
-              dismissLabel={messages.dismiss}
-            />
-          ))}
+          {toastStore.toasts.map((toast) => {
+            const entry = toast.data!;
+            const isLimited = limited.has(toast.id);
+            const danger = entry.tone === 'danger';
+            return (
+              <BaseToast.Root
+                key={toast.id}
+                toast={toast}
+                data-toast-id={toast.id}
+                className="env-toast"
+                data-tone={entry.tone}
+                swipeDirection={swipeDirection}
+                data-limited={flag(isLimited)}
+                inert={isLimited || undefined}
+                // A danger notice interrupts: it is an alert as it appears, outside any polite region, and
+                // stays readable.
+                {...(danger && { role: 'alert', 'aria-modal': undefined })}
+                onMouseEnter={() => controller.pause(toast.id, 'hover')}
+                onMouseLeave={() => controller.resume(toast.id, 'hover')}
+                onFocusCapture={(event) => {
+                  if (event.target instanceof Element && event.target.matches(':focus-visible'))
+                    controller.pause(toast.id, 'focus');
+                  else controller.resume(toast.id, 'focus');
+                }}
+                onBlurCapture={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget))
+                    controller.resume(toast.id, 'focus');
+                }}
+              >
+                <ToastBody
+                  tone={entry.tone}
+                  message={<BaseToast.Title className="env-toast-message" title={entry.message} />}
+                  action={
+                    entry.action && (
+                      <BaseToast.Action
+                        render={
+                          <Button
+                            variant="outline"
+                            className="env-toast-action"
+                            onClick={entry.action.onClick}
+                          />
+                        }
+                      >
+                        {entry.action.label}
+                      </BaseToast.Action>
+                    )
+                  }
+                  dismiss={
+                    entry.dismissible !== false && (
+                      <BaseToast.Close
+                        aria-hidden={false}
+                        render={
+                          <IconButton
+                            variant="ghost"
+                            icon={<IconClose />}
+                            className="env-toast-dismiss"
+                            aria-label={messages.dismiss}
+                          />
+                        }
+                      />
+                    )
+                  }
+                />
+              </BaseToast.Root>
+            );
+          })}
         </BaseToast.Viewport>
         {/* The ordinary notices, read politely as they arrive; a danger notice is an alert. */}
         <div className="env-toast-announcer" role="status" aria-live="polite" aria-atomic="false">

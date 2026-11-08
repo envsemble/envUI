@@ -28,19 +28,15 @@ const noticesOf = (viewport: HTMLElement) =>
 /**
  * The motion of a region's stack: when notices arrive or leave, the others glide from their
  * previous position instead of jumping, a leaving notice fades where it was drawn, and one revealed
- * from the hidden ones fades in. Returns the viewport and the ref callback that attaches it.
+ * from the hidden ones fades in. Returns the viewport's ref and the ref callback that attaches it.
  */
-export function useToastGlide({
-  toasts,
-  placement,
-  hiddenCount,
-  held,
-}: {
-  toasts: readonly BaseToast.Root.ToastObject<ToastEntry>[];
-  placement: ToastPlacement;
-  hiddenCount: number;
-  held: boolean;
-}) {
+export function useToastGlide(
+  toasts: readonly BaseToast.Root.ToastObject<ToastEntry>[],
+  placement: ToastPlacement,
+  /** How many notices are hidden, and whether a modal holds them all: they change which glide. */
+  hiddenCount: number,
+  held: boolean,
+) {
   const viewport = useRef<HTMLDivElement | null>(null);
   const positions = useRef(new Map<string, number>());
   const hiddenIds = useRef(new Set<string>());
@@ -85,8 +81,7 @@ export function useToastGlide({
     const leavingIds = new Set(
       toasts.filter((toast) => toast.transitionStatus === 'ending').map((toast) => toast.id),
     );
-    // Each item the selector finds carries data-toast-id.
-    const items = noticesOf(element).map((item) => ({ item, id: item.dataset.toastId! }));
+    const items = noticesOf(element);
     // A leaving notice steps out of the stack at once and fades where it was drawn. The others then
     // move into its place in a single glide, and a notice revealed from the hidden ones takes its
     // turn, instead of the stack growing while the notice fades and shrinking after. Its layout box
@@ -95,8 +90,9 @@ export function useToastGlide({
     // the drawn boxes, which a transform or zoom around the region scales.
     const before = { left: element.offsetLeft, top: element.offsetTop };
     const pins = items
-      .filter(({ item, id }) => leavingIds.has(id) && !item.hasAttribute('data-leaving'))
-      .map(({ item }) => {
+      // Each item the selector finds carries data-toast-id.
+      .filter((item) => leavingIds.has(item.dataset.toastId!) && !item.hasAttribute('data-leaving'))
+      .map((item) => {
         // The computed size is fractional, unlike offsetWidth: a notice is max-content wide, so a
         // rounded-down width would wrap its message while it fades.
         const size = getComputedStyle(item);
@@ -128,7 +124,8 @@ export function useToastGlide({
     }
     const next = new Map<string, number>();
     const hidden = new Set<string>();
-    for (const { item, id } of items) {
+    for (const item of items) {
+      const id = item.dataset.toastId!;
       if (item.hasAttribute('data-leaving')) continue;
       if (item.hasAttribute('data-limited')) {
         hidden.add(id);
@@ -167,5 +164,5 @@ export function useToastGlide({
     hiddenIds.current = hidden;
     settle();
   }, [toasts, hiddenCount, held, placement, settle]);
-  return { viewport, attachViewport };
+  return [viewport, attachViewport] as const;
 }
