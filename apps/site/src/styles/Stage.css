@@ -483,8 +483,11 @@
 }
 
 /* What opens it sits at the stage's top start, where an application's search does, beside the
-   palette rather than under its frosted panel, where it would show through as a blur. */
-:is(.site-live-example, .site-verdict-stage) .catalogue-open-example:has(.env-command-palette) {
+   palette rather than under its frosted panel, where it would show through as a blur. It stays
+   there while the palette is closed (`data-catalogue-palette`, OpenExample.tsx), so nothing
+   behind the palette moves as it opens and closes. */
+:is(.site-live-example, .site-verdict-stage)
+  .catalogue-open-example:is(:has(.env-command-palette), [data-catalogue-palette]) {
   place-items: start;
 }
 
