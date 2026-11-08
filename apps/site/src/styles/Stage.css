@@ -76,6 +76,7 @@
    (tests/contrast/Pairs.ts). */
 .site-live-example,
 .site-verdict-stage,
+.site-verdict-caption,
 .site-anatomy-stage,
 .site-loading-stage,
 .catalogue-related-stage,
@@ -172,10 +173,16 @@
    darker of the window's two. A still example carries its theme itself; an animated figure takes
    the page's. A figure drawn on a device (DeviceFrame.css) takes it too: the device's body is the
    page's fill. */
-:is(.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-related-stage):is(
-    [data-stage='shaded'],
-    [data-device]
-  ):is([data-env-theme='light'], [data-env-theme='light'] :not([data-env-theme])) {
+:is(
+    .site-live-example,
+    .site-verdict-stage,
+    .site-verdict-caption,
+    .site-anatomy-stage,
+    .catalogue-related-stage
+  ):is([data-stage='shaded'], [data-device]):is(
+    [data-env-theme='light'],
+    [data-env-theme='light'] :not([data-env-theme])
+  ) {
   --catalogue-card-fill: oklch(from var(--env-color-bg-page) calc(l - 0.035) c h);
 }
 

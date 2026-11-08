@@ -23,7 +23,7 @@ import {
 } from './foundations/FoundationFigures';
 import { FigureCode } from './foundations/Topic';
 import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
-import { useCaptionRoom, useVerdictFit } from '../template/VerdictFit';
+import { useVerdictFit } from '../template/VerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
@@ -56,11 +56,10 @@ const verdicts = {
 };
 
 /**
- * A do, don't or caution figure, a cell as a gallery's is: at its top start, its tag, a check, a
- * cross or a warning with the word Do, Don't or Caution in green, red or amber, a caution being
- * acceptable with care rather than a mistake, with its one sentence beside it or under it; below
- * them, on the same fill, the live example on its stage; and under the whole cell, the example's
- * code (Verdicts.css). The stage is as tall as
+ * A do, don't or caution figure, as a gallery's cells: the live example on its stage; under it, a
+ * strip of the same fill with its tag, a check, a cross or a warning with the word Do, Don't or
+ * Caution in green, red or amber, a caution being acceptable with care rather than a mistake, and
+ * its one sentence beside it; and under that, the example's code (Verdicts.css). The stage is as tall as
  * the example, or square where the example shows open or playing, and the example is drawn smaller
  * where it needs more room than the stage's width (useVerdictFit). With `motion`, its animated specimen of the same
  * name plays it on the stage. A `wide` figure, whose point is a change across the column's width,
@@ -101,29 +100,14 @@ export function VerdictFigure({
   // needs; any other is as tall as its example.
   const shape = wide ? 'wide' : open || motion ? 'square' : 'fit';
   useVerdictFit(stageRef, box, !wide && !(motion && page), shape === 'fit' ? 'fit' : 'square');
-  const figureRef = useRef<HTMLElement>(null);
-  const captionRef = useRef<HTMLElement>(null);
-  useCaptionRoom(figureRef, captionRef);
   return (
     // Named by its mark and its sentence, each read once.
     <figure
-      ref={figureRef}
       className="site-verdict"
       data-verdict={verdict}
       data-shape={shape}
       aria-labelledby={`${id}-verdict ${id}-caption`}
     >
-      {/* The top of the cell, over its stage: the verdict's tag, and its sentence beside it or under
-          it; the example keeps clear of them (useCaptionRoom). */}
-      <figcaption ref={captionRef} className="site-verdict-caption">
-        <span className="site-verdict-mark" id={`${id}-verdict`}>
-          {icon}
-          <span>{label}</span>
-        </span>
-        <span className="site-verdict-sentence" id={`${id}-caption`}>
-          {caption}
-        </span>
-      </figcaption>
       {motion && page ? (
         <VerdictMotion value={wide ? 'wide' : 'square'}>
           <SpecimenRender page={page} name={name ?? ''} />
@@ -151,6 +135,16 @@ export function VerdictFigure({
           </div>
         </Column>
       )}
+      {/* A strip of the stage's fill under it: the verdict's tag and its sentence beside it. */}
+      <figcaption className="site-verdict-caption" data-stage={stage}>
+        <span className="site-verdict-mark" id={`${id}-verdict`}>
+          {icon}
+          <span>{label}</span>
+        </span>
+        <span className="site-verdict-sentence" id={`${id}-caption`}>
+          {caption}
+        </span>
+      </figcaption>
       {page && <ExampleCode page={page} name={name ?? ''} />}
     </figure>
   );
