@@ -2,10 +2,20 @@
 // styles to Stylelint; this config only reports likely bugs.
 import envui from '@envsemble/eslint-plugin-envui';
 import js from '@eslint/js';
+import { readdirSync } from 'node:fs';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+
+/**
+ * The library's families, the folders of packages/ui/src that hold components. A family's
+ * internal/ folder is its own: code two families use sits in the top-level internal/ (AGENTS.md).
+ */
+const families = readdirSync(new URL('packages/ui/src/', import.meta.url), { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+  .filter((name) => !['internal', 'styles', 'assets', 'generated', 'icons'].includes(name));
 
 /** Browser globals that are easy to use by accident in place of a local, such as `event`. */
 const confusingBrowserGlobals = [
@@ -141,6 +151,24 @@ export default defineConfig(
     files: ['packages/ui/src/**/*.{ts,tsx}'],
     rules: { 'no-restricted-syntax': ['error', ...inlineFlags] },
   },
+  ...families.map((family) => ({
+    files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: String.raw`^(\.\./)+(${families
+                .filter((other) => other !== family)
+                .join('|')})/([\w-]+/)*internal(/|$)`,
+              message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/ (AGENTS.md).`,
+            },
+          ],
+        },
+      ],
+    },
+  })),
   {
     // The site's own code. Examples are application code, where a preview is the product's word,
     // such as a file's or the Markdown editor's.
