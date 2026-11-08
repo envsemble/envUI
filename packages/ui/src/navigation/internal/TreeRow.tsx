@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { flag } from '../../internal/flag.js';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
 import type { TreeItem } from '../Tree.js';
 import type { TreeMotion } from './treeModel.js';
@@ -45,8 +46,8 @@ export function TreeRow({
       title={item.tooltip}
       className="env-tree-item"
       data-id={item.value}
-      data-highlighted={!leaving && highlighted ? '' : undefined}
-      data-starting-style={arriving ? '' : undefined}
+      data-highlighted={flag(!leaving && highlighted)}
+      data-starting-style={flag(arriving)}
       style={
         {
           '--env-tree-depth': item.depth,
@@ -54,11 +55,7 @@ export function TreeRow({
         } as CSSProperties
       }
     >
-      <span
-        className="env-tree-chevron"
-        aria-hidden="true"
-        data-expanded={item.expanded ? '' : undefined}
-      >
+      <span className="env-tree-chevron" aria-hidden="true" data-expanded={flag(item.expanded)}>
         {item.expandable && (
           <span className="env-icon">
             <IconChevronRight />
@@ -120,8 +117,8 @@ export function placeRows<Item extends TreeItem>({
         className="env-tree-group"
         aria-hidden={kind === 'close' || undefined}
         inert={kind === 'close'}
-        data-starting-style={kind === 'open' && !moving ? '' : undefined}
-        data-ending-style={kind === 'close' && moving ? '' : undefined}
+        data-starting-style={flag(kind === 'open' && !moving)}
+        data-ending-style={flag(kind === 'close' && moving)}
         style={{
           transform: `translateY(${start * rowHeight}px)`,
           blockSize: `calc(${kind === 'open' ? size * rowHeight : 0}px + var(--env-tree-shift))`,

@@ -25,9 +25,18 @@ function scrollsToward(element: Element, dx: number, dy: number): 'room' | 'end'
   return y === 'room' || x === 'room' ? 'room' : (y ?? x);
 }
 
+/** The px a wheel's turn counts by lines and by pages, where the browser reports it so. */
+const lineDelta = 16;
+const pageDelta = 400;
+
 /** The wheel's turn in px, Shift turning a vertical wheel sideways, as browsers do. */
 export function wheelDelta(event: WheelEvent): { dx: number; dy: number } {
-  const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 400 : 1;
+  const unit =
+    event.deltaMode === WheelEvent.DOM_DELTA_LINE
+      ? lineDelta
+      : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+        ? pageDelta
+        : 1;
   const sideways = event.shiftKey && event.deltaX === 0;
   return {
     dx: (sideways ? event.deltaY : event.deltaX) * unit,

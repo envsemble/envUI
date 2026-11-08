@@ -10,6 +10,7 @@ import {
 import { classNames } from '../../internal/classNames.js';
 import { setRef } from '../../internal/setRef.js';
 import { TextareaResizeEdge } from './TextareaResizeEdge.js';
+import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
 
@@ -70,7 +71,7 @@ export function TextareaControl({
         ref={attachInput}
         rows={rows ?? 2}
         data-sizing={sizing}
-        data-rows={rows !== undefined ? '' : undefined}
+        data-rows={flag(rows !== undefined)}
         style={sizingStyle}
         className={classNames('env-text-field-input', className)}
       />

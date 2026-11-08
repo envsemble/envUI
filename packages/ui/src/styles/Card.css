@@ -68,8 +68,8 @@
   }
 
   .env-card[data-interactive]:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
   .env-card[data-interactive]:is(:disabled, [aria-disabled='true']) {
     opacity: var(--env-state-disabled-opacity);

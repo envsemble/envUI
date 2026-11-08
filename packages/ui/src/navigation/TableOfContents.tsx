@@ -26,6 +26,7 @@ import { useContentsHeadings } from './internal/useContentsHeadings.js';
 import { createWaveDrawer } from './internal/waveDrawer.js';
 import { prefersReducedMotion, reducedMotionQuery } from '../internal/reducedMotion.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/TableOfContents.css';
 
@@ -89,7 +90,7 @@ function List({ items, current, passed, depth, onNavigate }: ListProps) {
             className="env-table-of-contents-link"
             href={`#${item.id}`}
             aria-current={item.id === current ? 'location' : undefined}
-            data-passed={passed.has(item.id) ? '' : undefined}
+            data-passed={flag(passed.has(item.id))}
             onClick={(event) => onNavigate(event, item.id)}
           >
             {item.label}

@@ -9,6 +9,7 @@ import { labelOf } from '../readout.js';
 import { windowClassOf } from '../units.js';
 import { devStats, timed } from './stats.js';
 import { surfaceOf } from './surfaces.js';
+import { flag } from '../../internal/flag.js';
 
 /** A node's surfaces, copied at a size and a version of its content, with what scrolls them. */
 export interface CopiedSurface {
@@ -144,11 +145,11 @@ export const Plane = memo(
         className="env-dev-plane"
         data-plane={node.key}
         data-kind={node.kind}
-        data-overlay={node.overlay ? '' : undefined}
+        data-overlay={flag(node.overlay)}
         data-window={windowClassOf(node.size.w / rootPx)}
-        data-container={node.container ? '' : undefined}
-        data-problems={problems ? '' : undefined}
-        data-selected={selected ? '' : undefined}
+        data-container={flag(node.container)}
+        data-problems={flag(problems)}
+        data-selected={flag(selected)}
         style={{
           width: clip.w,
           height: clip.h,

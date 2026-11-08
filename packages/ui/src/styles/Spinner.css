@@ -3,18 +3,18 @@
   .env-spinner {
     display: inline-block;
     flex: 0 0 auto;
-    inline-size: 1.5rem;
-    block-size: 1.5rem;
+    /* Its size: 1.5 rem, 1 rem when small and 3 rem when large. */
+    --env-spinner-size: 1.5rem;
+    inline-size: var(--env-spinner-size);
+    block-size: var(--env-spinner-size);
     /* The hook --env-spinner-color recolors it, such as to a button's label color. */
     color: var(--env-spinner-color, var(--env-color-bg-primary-emphasis));
   }
   .env-spinner:where([data-size='sm']) {
-    inline-size: 1rem;
-    block-size: 1rem;
+    --env-spinner-size: 1rem;
   }
   .env-spinner:where([data-size='lg']) {
-    inline-size: 3rem;
-    block-size: 3rem;
+    --env-spinner-size: 3rem;
   }
   .env-spinner > svg {
     display: block;

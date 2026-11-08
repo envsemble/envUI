@@ -79,6 +79,12 @@ export interface ContextMenuProps {
   style?: CSSProperties;
 }
 
+/**
+ * How long after the keyboard opens the menu a contextmenu event counts as the browser's own
+ * follow-up to the key, in milliseconds, rather than a press of its own.
+ */
+const keyboardFollowUp = 500;
+
 /** A browser context-menu key event: the ContextMenu key or Shift+F10. */
 function isContextMenuKey(event: KeyboardEvent) {
   return event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10');
@@ -174,7 +180,7 @@ function WindowContextMenu({
 
   function openAtPointer(event: MouseEvent<Element> & { preventBaseUIHandler?: () => void }) {
     if (disabled) return;
-    if (performance.now() - keyboardOpenedAt.current < 500) {
+    if (performance.now() - keyboardOpenedAt.current < keyboardFollowUp) {
       event.preventDefault();
       event.preventBaseUIHandler?.();
       return;

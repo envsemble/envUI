@@ -90,12 +90,14 @@
   }
   /* Carries the value for native forms; an invalid required field's message points at the field. */
   .env-date-picker-native {
+    /* Visually hidden: a pixel's box, clipped away, still read. */
+    --env-date-picker-native-size: 0.0625rem;
     position: absolute;
     inset-block-end: 0;
     inset-inline-start: 50%;
-    inline-size: 0.0625rem;
-    block-size: 0.0625rem;
-    margin: -0.0625rem;
+    inline-size: var(--env-date-picker-native-size);
+    block-size: var(--env-date-picker-native-size);
+    margin: calc(-1 * var(--env-date-picker-native-size));
     padding: 0;
     border: 0;
     overflow: hidden;

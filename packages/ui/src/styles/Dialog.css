@@ -32,7 +32,10 @@
       max(var(--env-viewport-gutter), env(safe-area-inset-left)) +
         max(var(--env-viewport-gutter), env(safe-area-inset-right))
     );
-    width: min(28rem, 100% - var(--env-dialog-gutters));
+    /* The widths of a dialog, md by default and lg. */
+    --env-dialog-width-md: 28rem;
+    --env-dialog-width-lg: 44rem;
+    width: min(var(--env-dialog-width-md), 100% - var(--env-dialog-gutters));
     margin-left: max(var(--env-viewport-gutter), env(safe-area-inset-left));
     margin-right: max(var(--env-viewport-gutter), env(safe-area-inset-right));
     /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
@@ -40,7 +43,7 @@
     transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-dialog[data-width='lg'] {
-    width: min(44rem, 100% - var(--env-dialog-gutters));
+    width: min(var(--env-dialog-width-lg), 100% - var(--env-dialog-gutters));
   }
   .env-dialog-title,
   .env-dialog-description {
@@ -109,7 +112,13 @@
   /* Search-like dialogs open near the top, so results can grow downward without moving the field. */
   .env-dialog-positioner[data-placement='top'] {
     place-items: start center;
-    padding-block-start: max(var(--env-viewport-gutter), min(12vh, 6rem), env(safe-area-inset-top));
+    /* 12% of the window down, at most this far. */
+    --env-dialog-top-max: 6rem;
+    padding-block-start: max(
+      var(--env-viewport-gutter),
+      min(12vh, var(--env-dialog-top-max)),
+      env(safe-area-inset-top)
+    );
   }
 
   /* Motion: the backdrop fades, and the dialog fades and rises into place. Movement only without a
@@ -133,11 +142,13 @@
     }
     .env-dialog[data-starting-style],
     .env-dialog[data-ending-style] {
-      transform: translateY(0.75rem) scale(0.98);
+      --env-dialog-rise: 0.75rem;
+      transform: translateY(var(--env-dialog-rise)) scale(0.98);
     }
     .env-dialog[data-placement='top'][data-starting-style],
     .env-dialog[data-placement='top'][data-ending-style] {
-      transform: translateY(-0.5rem) scale(0.98);
+      --env-dialog-drop: -0.5rem;
+      transform: translateY(var(--env-dialog-drop)) scale(0.98);
     }
     .env-dialog[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);

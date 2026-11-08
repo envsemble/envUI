@@ -13,14 +13,15 @@
   }
   .env-rating-stars {
     display: inline-flex;
-    gap: 0.125rem;
+    gap: calc(var(--env-space-1) / 2);
     color: var(--env-color-border-default);
   }
   .env-rating-star {
+    --env-rating-star-size: 1.125rem;
     position: relative;
     display: inline-flex;
-    inline-size: 1.125rem;
-    block-size: 1.125rem;
+    inline-size: var(--env-rating-star-size);
+    block-size: var(--env-rating-star-size);
   }
   .env-rating-star svg {
     display: block;
@@ -40,7 +41,7 @@
     color: var(--env-color-fg-rating-star);
   }
   .env-rating-star-half svg {
-    inline-size: 1.125rem;
+    inline-size: var(--env-rating-star-size);
     max-inline-size: none;
   }
 

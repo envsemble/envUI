@@ -151,7 +151,8 @@
   .env-select-popup {
     width: max-content;
     min-width: min(var(--anchor-width), var(--available-width));
-    max-width: min(22rem, var(--available-width));
+    --env-select-popup-max-width: 22rem;
+    max-width: min(var(--env-select-popup-max-width), var(--available-width));
     max-height: var(--available-height);
     overflow: hidden;
     padding: var(--env-popup-padding);

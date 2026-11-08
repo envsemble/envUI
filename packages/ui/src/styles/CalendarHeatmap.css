@@ -9,7 +9,10 @@
     inline-size: fit-content;
     max-inline-size: 100%;
     color: var(--env-color-fg-muted);
-    font: var(--env-font-weight-regular) 0.75rem / 1 var(--env-font-family);
+    /* The legend's and labels' own size, fixed as the cells are. */
+    --env-calendar-heatmap-font-size: 0.75rem;
+    font: var(--env-font-weight-regular) var(--env-calendar-heatmap-font-size) / 1
+      var(--env-font-family);
   }
   .env-calendar-heatmap[data-tone='accent'] {
     --env-calendar-heatmap-tone: var(--env-color-fg-accent);
@@ -79,7 +82,7 @@
   }
   .env-calendar-heatmap-day,
   .env-calendar-heatmap-swatch {
-    border-radius: 0.125rem;
+    border-radius: calc(var(--env-space-1) / 2);
     background: var(--env-color-bg-neutral-muted);
   }
   .env-calendar-heatmap-day:not([data-level='0']),
@@ -95,13 +98,13 @@
   }
   @media (hover: hover) {
     .env-calendar-heatmap-day:hover {
-      outline: 0.0625rem solid var(--env-color-fg-muted);
-      outline-offset: 0.0625rem;
+      outline: 1px solid var(--env-color-fg-muted);
+      outline-offset: 1px;
     }
   }
   .env-calendar-heatmap-day:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.0625rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 1px;
   }
   .env-calendar-heatmap-legend {
     gap: var(--env-calendar-heatmap-gap);

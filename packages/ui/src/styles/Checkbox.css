@@ -183,8 +183,10 @@
     content: '';
     position: absolute;
     inset-inline: calc(var(--env-checkbox-size) / 4.5);
-    inset-block-start: calc(50% - 0.0625rem);
-    height: 0.125rem;
+    /* The dash: an eighth of a rem either side of the middle. */
+    --env-checkbox-dash: 0.125rem;
+    inset-block-start: calc(50% - var(--env-checkbox-dash) / 2);
+    height: var(--env-checkbox-dash);
     background: currentColor;
   }
   /* Under the pointer and while pressed, an unchecked box also darkens its edge to the text color. */
@@ -205,8 +207,8 @@
     border-color: transparent;
   }
   .env-checkbox-input:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
   .env-checkbox-indicator {
     box-sizing: border-box;

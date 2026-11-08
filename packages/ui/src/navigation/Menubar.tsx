@@ -10,7 +10,6 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
   type ComponentPropsWithRef,
   type CSSProperties,
   type ReactNode,
@@ -22,6 +21,8 @@ import { setRef } from '../internal/setRef.js';
 import { MenuPopup } from './internal/MenuPopup.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { useDirection } from '../internal/useDirection.js';
+import { flag } from '../internal/flag.js';
+import { useMenubarAccessKeys } from './internal/useMenubarAccessKeys.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import '../styles/Base.css';
 import '../styles/Menubar.css';
@@ -47,16 +48,6 @@ const MenubarContext = createContext<MenubarContextValue | null>(null);
 /** Whether an element belongs to the menubar or an open menu, which never count as earlier focus. */
 function isMenuPart(menubar: Element, element: Element) {
   return menubar.contains(element) || element.closest('[role="menu"]') !== null;
-}
-
-/** The letters a key event may stand for: the character typed and the letter key's own name. */
-function pressedLetters(event: KeyboardEvent) {
-  const letters: string[] = [];
-  if (Array.from(event.key).length === 1) letters.push(event.key.toLowerCase());
-  // With Alt, some keyboard layouts type another character; the physical key still names a letter.
-  const code = /^(?:Key([A-Z])|Digit([0-9]))$/.exec(event.code);
-  if (code) letters.push((code[1] ?? code[2])!.toLowerCase());
-  return letters;
 }
 
 /** An access key as one lowercase character, such as f for File. */
@@ -105,9 +96,19 @@ function Root({
   // The last element outside the menubar and its menus that had focus, such as a text field.
   const lastFocus = useRef<Element | null>(null);
   const closers = useRef(new Set<() => void>());
-  const [altHeld, setAltHeld] = useState(false);
-  // Activation by the keyboard keeps the access keys visible while focus stays in the menubar.
-  const [activated, setActivated] = useState(false);
+
+  // Leaves the menubar: an open menu closes and focus returns to where it was.
+  const leave = useCallback(() => {
+    for (const close of closers.current) close();
+    const target = lastFocus.current;
+    if (target instanceof HTMLElement && target.isConnected) target.focus();
+    else (root.current?.ownerDocument.activeElement as HTMLElement | null)?.blur();
+  }, []);
+  const { shown: accessKeysShown, endActivation } = useMenubarAccessKeys({
+    root,
+    enabled: accessKeys,
+    leave,
+  });
 
   useEffect(() => {
     const menubar = root.current;
@@ -118,14 +119,14 @@ function Root({
       lastFocus.current = active;
     // As in a desktop application, the last field stays the target of commands such as Copy, even
     // after a click elsewhere on the page.
-    function noteFocus(event: FocusEvent) {
-      if (!(event.target instanceof Element) || isMenuPart(menubar!, event.target)) return;
+    const noteFocus = (event: FocusEvent) => {
+      if (!(event.target instanceof Element) || isMenuPart(menubar, event.target)) return;
       lastFocus.current = event.target;
-      setActivated(false);
-    }
+      endActivation();
+    };
     document.addEventListener('focusin', noteFocus, true);
     return () => document.removeEventListener('focusin', noteFocus, true);
-  }, []);
+  }, [endActivation]);
 
   const previousFocus = useCallback(() => {
     const menubar = root.current;
@@ -144,131 +145,6 @@ function Root({
       closers.current.delete(close);
     };
   }, []);
-
-  useEffect(() => {
-    const menubar = root.current;
-    if (!accessKeys || !menubar) return;
-    const document = menubar.ownerDocument;
-    const view = document.defaultView;
-    if (!view) return;
-    let altAlone = false;
-
-    function enabledTriggers() {
-      return Array.from(menubar!.querySelectorAll<HTMLElement>('.env-menubar-trigger')).filter(
-        (trigger) => !trigger.hasAttribute('data-disabled'),
-      );
-    }
-    function triggerFor(event: KeyboardEvent) {
-      const triggers = enabledTriggers();
-      for (const letter of pressedLetters(event)) {
-        const trigger = triggers.find((candidate) => candidate.dataset.accessKey === letter);
-        if (trigger) return trigger;
-      }
-      return undefined;
-    }
-    // Opens a menu as ↓ on its trigger does, with focus on its first item.
-    function openMenu(trigger: HTMLElement) {
-      setActivated(true);
-      trigger.focus();
-      trigger.dispatchEvent(
-        new KeyboardEvent('keydown', {
-          key: 'ArrowDown',
-          code: 'ArrowDown',
-          bubbles: true,
-          cancelable: true,
-        }),
-      );
-    }
-    // A menubar in an inert region, such as the page behind a modal dialog, can't be used, so keys
-    // pressed outside that region don't reach it; keys from inside it, as a script may send them,
-    // do.
-    function reaches(event: KeyboardEvent) {
-      const region = menubar!.closest('[inert]');
-      return !region || (event.target instanceof Node && region.contains(event.target));
-    }
-    function menuOpen() {
-      return menubar!.querySelector('.env-menubar-trigger[aria-expanded="true"]') !== null;
-    }
-    // Leaves the menubar: an open menu closes and focus returns to where it was.
-    function leave() {
-      setActivated(false);
-      for (const close of closers.current) close();
-      const target = lastFocus.current;
-      if (target instanceof HTMLElement && target.isConnected) target.focus();
-      else (document.activeElement as HTMLElement | null)?.blur();
-    }
-    function onKeyDown(event: KeyboardEvent) {
-      if (!reaches(event)) return;
-      if (event.key === 'Alt') {
-        if (!event.repeat) altAlone = !event.ctrlKey && !event.metaKey && !event.shiftKey;
-        if (altAlone) setAltHeld(true);
-        return;
-      }
-      // Another key ends the hint, such as Space opening the window's own menu, which may keep the
-      // Alt release from the page. An access key that opens a menu shows the keys again below.
-      altAlone = false;
-      setAltHeld(false);
-      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey) return;
-      if (event.altKey) {
-        // Alt with a letter that no menu claims stays with the page.
-        const trigger = triggerFor(event);
-        if (!trigger) return;
-        event.preventDefault();
-        openMenu(trigger);
-        return;
-      }
-      // While a trigger has focus and no menu is open, Escape leaves the menubar and a menu's
-      // letter opens that menu.
-      const active = document.activeElement;
-      if (!(active instanceof HTMLElement) || !menubar!.contains(active) || menuOpen()) return;
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        leave();
-        return;
-      }
-      const trigger = triggerFor(event);
-      if (!trigger) return;
-      event.preventDefault();
-      openMenu(trigger);
-    }
-    function onKeyUp(event: KeyboardEvent) {
-      if (event.key !== 'Alt' || !reaches(event)) return;
-      setAltHeld(false);
-      if (!altAlone) return;
-      altAlone = false;
-      event.preventDefault();
-      const active = document.activeElement;
-      const inMenubar =
-        active instanceof Element &&
-        (menubar!.contains(active) || (menuOpen() && active.closest('[role="menu"]') !== null));
-      if (inMenubar) {
-        leave();
-        return;
-      }
-      const first = enabledTriggers()[0];
-      if (!first) return;
-      setActivated(true);
-      first.focus();
-    }
-    // Leaving the window, or pointing, ends the hint and the keyboard activation.
-    function cancel() {
-      altAlone = false;
-      setAltHeld(false);
-      setActivated(false);
-    }
-    view.addEventListener('keydown', onKeyDown, true);
-    view.addEventListener('keyup', onKeyUp, true);
-    view.addEventListener('pointerdown', cancel, true);
-    view.addEventListener('blur', cancel);
-    return () => {
-      view.removeEventListener('keydown', onKeyDown, true);
-      view.removeEventListener('keyup', onKeyUp, true);
-      view.removeEventListener('pointerdown', cancel, true);
-      view.removeEventListener('blur', cancel);
-      setAltHeld(false);
-      setActivated(false);
-    };
-  }, [accessKeys]);
 
   const setRoot = useCallback(
     (node: HTMLDivElement | null) => {
@@ -297,7 +173,7 @@ function Root({
           modal={false}
           disabled={disabled}
           className={classNames('env-menubar', className)}
-          data-access-keys-shown={accessKeys && (altHeld || activated) ? '' : undefined}
+          data-access-keys-shown={flag(accessKeysShown)}
         >
           {children}
         </BaseMenubar>

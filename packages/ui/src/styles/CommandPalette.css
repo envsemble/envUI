@@ -14,14 +14,18 @@
     /* The env-window container of the palette (see .env-overlay-theme in Dialog.css); its inline
        gutter is the palette's margin, so the container measures the whole window. */
     container: env-window / inline-size;
-    padding-block: max(var(--env-viewport-gutter), min(12vh, 6rem)) var(--env-viewport-gutter);
+    /* The palette opens near the top: 12% of the window down, at most this far. */
+    --env-command-palette-top-max: 6rem;
+    padding-block: max(var(--env-viewport-gutter), min(12vh, var(--env-command-palette-top-max)))
+      var(--env-viewport-gutter);
     pointer-events: none;
   }
   .env-command-palette {
     /* The edge of a solid palette; frosted, it has none. */
     --env-command-palette-edge: var(--env-popup-solid) var(--env-elevation-3-border);
     box-sizing: border-box;
-    inline-size: min(40rem, 100% - 2 * var(--env-viewport-gutter));
+    --env-command-palette-width: 40rem;
+    inline-size: min(var(--env-command-palette-width), 100% - 2 * var(--env-viewport-gutter));
     margin-inline: var(--env-viewport-gutter);
     max-block-size: 100%;
     /* An inset that keeps the rows' corners concentric with the palette's. */
@@ -227,7 +231,8 @@
     }
     .env-command-palette[data-starting-style],
     .env-command-palette[data-ending-style] {
-      transform: translateY(-0.5rem) scale(0.98);
+      --env-command-palette-rise: -0.5rem;
+      transform: translateY(var(--env-command-palette-rise)) scale(0.98);
     }
     .env-command-palette[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);

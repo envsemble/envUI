@@ -36,6 +36,7 @@ import {
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
 import type { ResizeDetails } from '../internal/resizeDetails.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationDrawer.css';
 
@@ -489,7 +490,7 @@ export function NavigationDrawer({
           : style
       }
       data-background={backgroundAttribute(background)}
-      data-resizable={resizable ? '' : undefined}
+      data-resizable={flag(resizable)}
       align="stretch"
       gap={3}
     >

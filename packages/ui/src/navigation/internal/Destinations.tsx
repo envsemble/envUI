@@ -7,6 +7,7 @@ import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { SymbolIconFill } from '../../internal/SymbolIconFill.js';
 import { navigation, type NavigationMessages } from '../../foundations/messages/navigation.js';
+import { flag } from '../../internal/flag.js';
 
 /** What every destination has, whichever navigation form shows it. */
 interface DestinationFields {
@@ -241,7 +242,7 @@ export function DestinationItem({
     ref,
     render: control,
     className: classes.item,
-    'data-current': marked ? '' : undefined,
+    'data-current': flag(marked),
     'aria-current': current ? ('page' as const) : inside ? ('true' as const) : undefined,
     'aria-label': countedName(label, count, messages),
   };

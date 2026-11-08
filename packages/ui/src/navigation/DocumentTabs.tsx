@@ -176,9 +176,9 @@ export function DocumentTabs({
       activateOnFocus
       render={<Row align="stretch" />}
       className="env-document-tabs-list"
-      data-fade-left={fades.left ? '' : undefined}
-      data-fade-right={fades.right ? '' : undefined}
-      data-reordering={drag ? '' : undefined}
+      data-fade-left={flag(fades.left)}
+      data-fade-right={flag(fades.right)}
+      data-reordering={flag(drag)}
       onKeyDown={onListKeyDown}
     >
       {items.map((item) => {
@@ -190,7 +190,7 @@ export function DocumentTabs({
           <div
             key={item.value}
             className="env-document-tabs-item"
-            data-active={active ? '' : undefined}
+            data-active={flag(active)}
             data-moving={drag?.id === item.value ? 'pointer' : undefined}
             data-drop={
               item.value === dropBefore ? 'before' : item.value === dropAfter ? 'after' : undefined

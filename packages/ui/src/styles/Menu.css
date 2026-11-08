@@ -26,9 +26,16 @@
     --env-menu-slot: calc(var(--env-control-icon-size) + var(--env-popup-row-gap));
     --env-menu-leading: 0rem;
     inline-size: max-content;
-    min-inline-size: min(12rem, var(--available-width, 100vw));
-    /* From 12 rem up to 22 rem, and never wider than the room the positioner finds in the window. */
-    max-inline-size: min(22rem, var(--available-width, calc(100vw - 2rem)));
+    /* From 12 rem up to 22 rem, and never wider than the room the positioner finds in the window,
+       or the window less a rem either side where it finds none. */
+    --env-menu-min-width: 12rem;
+    --env-menu-max-width: 22rem;
+    --env-menu-window-room: calc(100vw - 2rem);
+    min-inline-size: min(var(--env-menu-min-width), var(--available-width, 100vw));
+    max-inline-size: min(
+      var(--env-menu-max-width),
+      var(--available-width, var(--env-menu-window-room))
+    );
     /* Corners concentric with the rows inside, through the popup's inset. Menus float at elevation
        2, PopupSurface's default, whose edge shows only on a solid popup. */
     padding: var(--env-popup-padding);

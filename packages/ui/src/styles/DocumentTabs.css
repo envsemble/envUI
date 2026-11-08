@@ -29,7 +29,7 @@
        into view. */
     position: relative;
     flex: 1 1 auto;
-    gap: 0.125rem;
+    gap: calc(var(--env-space-1) / 2);
     block-size: 100%;
     padding-inline: var(--env-space-1);
     overflow-x: auto;
@@ -115,8 +115,10 @@
     box-sizing: border-box;
     position: relative;
     flex: 0 0 auto;
+    /* A long title ends in an ellipsis past this width. */
+    --env-document-tabs-tab-max-width: 14rem;
     min-inline-size: 0;
-    max-inline-size: 14rem;
+    max-inline-size: var(--env-document-tabs-tab-max-width);
     display: inline-flex;
     align-items: center;
     padding-inline-end: var(--env-space-1);
@@ -151,14 +153,16 @@
     content: '';
     position: absolute;
     inset: auto 0 0;
-    block-size: 0.125rem;
-    border-radius: 0.125rem 0.125rem 0 0;
+    --env-document-tabs-indicator-size: 0.125rem;
+    block-size: var(--env-document-tabs-indicator-size);
+    border-radius: var(--env-document-tabs-indicator-size) var(--env-document-tabs-indicator-size) 0
+      0;
     background: var(--env-color-fg-on-selected);
   }
   /* The ring of a focused tab goes around its whole item, close button included. */
   .env-document-tabs-item:has(> .env-document-tabs-tab:focus-visible) {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: -0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
   }
   /* The tab covers its item up to the close button, so a press anywhere on the label selects it. */
   .env-document-tabs-tab {
@@ -199,6 +203,7 @@
   .env-document-tabs-tab[data-preview] .env-document-tabs-tab-label {
     font-style: italic;
     font-synthesis: style;
+    /* stylelint-disable-next-line unit-disallowed-list -- room for the slant of the label's last italic letter, which follows its font size */
     padding-inline-end: 0.125em;
   }
   /* The close button, an IconButton with a cross, is a small circle that keeps its space so tabs do not change

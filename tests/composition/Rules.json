@@ -101,7 +101,9 @@
       "forms/Combobox.tsx": "composites",
       "forms/internal/ComboboxPopup.tsx": "composites",
       "forms/internal/comboboxItems.ts": "composites",
+      "forms/internal/useComboboxOpen.ts": "composites",
       "forms/internal/useComboboxOptions.ts": "composites",
+      "forms/internal/useComboboxQuery.ts": "composites",
       "forms/internal/useComboboxSelection.ts": "composites",
       "forms/Composer.tsx": "composites",
       "forms/DatePicker.tsx": "composites",
@@ -249,6 +251,7 @@
           "dev/ui/ViewToolbar.tsx",
           "dev/ui/surfaces.ts",
           "dev/ui/useLivePage.ts",
+          "dev/ui/useViewWheel.ts",
           "dev/units.ts",
           "dev/usedTokens.ts"
         ]
@@ -299,6 +302,9 @@
       "List": {
         "modules": ["content/internal/ReorderableList.tsx"]
       },
+      "Slider": {
+        "modules": ["forms/internal/useSliderVeil.ts"]
+      },
       "Table": {
         "modules": ["content/internal/ColumnResizeHandle.tsx"]
       },
@@ -306,7 +312,9 @@
         "modules": [
           "forms/internal/ComboboxPopup.tsx",
           "forms/internal/comboboxItems.ts",
+          "forms/internal/useComboboxOpen.ts",
           "forms/internal/useComboboxOptions.ts",
+          "forms/internal/useComboboxQuery.ts",
           "forms/internal/useComboboxSelection.ts"
         ]
       },
@@ -411,6 +419,9 @@
       "NavigationRail": { "classes": ["env-navigation-rail"] },
       "Menu": {
         "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
+      },
+      "Menubar": {
+        "modules": ["navigation/internal/useMenubarAccessKeys.ts"]
       },
       "PanelDock": {
         "modules": [

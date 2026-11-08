@@ -172,8 +172,8 @@
     background: var(--env-switch-on-fill, var(--env-color-bg-primary-emphasis-pressed));
   }
   .env-switch-input:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
   @media (prefers-reduced-motion: reduce) {
     .env-switch-input,

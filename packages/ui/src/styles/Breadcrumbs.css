@@ -17,10 +17,12 @@
   .env-breadcrumbs-link,
   .env-breadcrumbs-text,
   .env-breadcrumbs-current {
+    /* A long crumb ends in an ellipsis past this width. */
+    --env-breadcrumbs-crumb-max-width: 20rem;
     min-inline-size: 0;
-    max-inline-size: 20rem;
+    max-inline-size: var(--env-breadcrumbs-crumb-max-width);
     display: inline-flex;
-    padding: 0.125rem var(--env-space-1);
+    padding: calc(var(--env-space-1) / 2) var(--env-space-1);
     border-radius: var(--env-radius-sm);
   }
   .env-breadcrumbs-link {
@@ -40,7 +42,7 @@
   .env-breadcrumbs-link:focus-visible,
   .env-breadcrumbs-text:focus-visible,
   .env-breadcrumbs-current:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
+    outline: 2px solid var(--env-color-border-focus);
     /* Clear of the label's first and last letters, as on a text button: half the smallest space. */
     outline-offset: calc(var(--env-space-1) / 2);
   }

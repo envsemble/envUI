@@ -25,7 +25,7 @@
   }
   .env-radio-group {
     overflow-wrap: break-word;
-    gap: 0.125rem;
+    gap: calc(var(--env-space-1) / 2);
     margin: 0;
     padding: 0;
     border: 0;
@@ -114,8 +114,8 @@
     background: var(--env-radio-custom-fill, var(--env-color-bg-selected-pressed));
   }
   .env-radio[data-orientation='vertical']:has(input:focus-visible) {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: -0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
   }
   .env-radio-input {
     --env-radio-size: 1rem;

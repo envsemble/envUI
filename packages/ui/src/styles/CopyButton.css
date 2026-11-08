@@ -3,10 +3,12 @@
      from a hidden field there for a moment. */
   .env-copy-button-status,
   .env-copy-button-field {
+    /* Visually hidden: a pixel's box, clipped away, still read. */
+    --env-copy-button-field-size: 0.0625rem;
     position: absolute;
-    inline-size: 0.0625rem;
-    block-size: 0.0625rem;
-    margin: -0.0625rem;
+    inline-size: var(--env-copy-button-field-size);
+    block-size: var(--env-copy-button-field-size);
+    margin: calc(-1 * var(--env-copy-button-field-size));
     padding: 0;
     border: 0;
     overflow: hidden;

@@ -26,7 +26,6 @@ import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/DatePicker.css';
 
-/** The props every picker field shares with DatePicker: its frame, form value and open state. */
 /**
  * Why a date, time or month picker's popup asks to open or close: a popover's reasons, such as
  * trigger-press, outside-press or escape-key; list-navigation for the arrow keys on the field;
@@ -42,6 +41,7 @@ export interface PickerOpenChangeDetails {
   reason: PickerOpenChangeReason;
 }
 
+/** The props every picker field shares with DatePicker: its frame, form value and open state. */
 export interface PickerFieldProps
   extends
     Omit<

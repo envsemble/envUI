@@ -19,7 +19,8 @@
   }
   .env-meter-track,
   .env-progress-track {
-    block-size: 0.625rem;
+    --env-meter-track-height: 0.625rem;
+    block-size: var(--env-meter-track-height);
     overflow: hidden;
     border-radius: var(--env-radius-full);
     /* The neutral fill, the track a Slider draws, so empty steps still show on a dark panel, light

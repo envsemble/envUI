@@ -51,7 +51,7 @@ export interface TypedText {
 }
 
 /** Whether a key now adds to the text typed ahead, rather than starting it over. */
-export function isTyping(typed: TypedText) {
+function isTyping(typed: TypedText) {
   return performance.now() - typed.time <= typeaheadTimeout;
 }
 
@@ -60,7 +60,7 @@ export function isTyping(typed: TypedText) {
  * first letter cycles through matches from the row after the active one; longer text refines the
  * current match.
  */
-export function findTypedRow(
+function findTypedRow(
   items: readonly TreeItem[],
   typed: TypedText,
   key: string,
@@ -81,10 +81,75 @@ export function findTypedRow(
 }
 
 /** The index of the row's parent, the nearest shallower row above it, or -1 for a top-level row. */
-export function parentIndex(items: readonly TreeItem[], index: number) {
+function parentIndex(items: readonly TreeItem[], index: number) {
   const depth = items[index]!.depth;
   for (let above = index - 1; above >= 0; above -= 1) if (items[above]!.depth < depth) return above;
   return -1;
+}
+
+/**
+ * What a key does in a tree: moves the active row to an index, expands or collapses it, opens it in
+ * place or as a preview, or stays, as a typed letter that names no row does. Null for a key that
+ * isn't the tree's.
+ */
+export type TreeKeyAction =
+  | { kind: 'move'; index: number }
+  | { kind: 'expand'; expanded: boolean }
+  | { kind: 'open'; preview: boolean }
+  | { kind: 'stay' };
+
+/**
+ * The action of a key on the active row, following the WAI-ARIA tree view: the arrows move along
+ * the rows and, inward and outward as the text runs, into and out of a level; Home, End and the page
+ * keys jump; Enter opens; Space previews, unless it is part of the text typed ahead.
+ */
+export function treeKeyAction(
+  key: string,
+  items: readonly TreeItem[],
+  active: number,
+  pageRows: number,
+  rtl: boolean,
+  typed: TypedText,
+): TreeKeyAction | null {
+  const item = items[active];
+  if (!item) return null;
+  const move = (index: number): TreeKeyAction => ({ kind: 'move', index });
+  const typedRow = (): TreeKeyAction => {
+    const index = findTypedRow(items, typed, key, active);
+    return index === -1 ? { kind: 'stay' } : move(index);
+  };
+  switch (key) {
+    case 'ArrowDown':
+      return move(active + 1);
+    case 'ArrowUp':
+      return move(active - 1);
+    case 'Home':
+      return move(0);
+    case 'End':
+      return move(items.length - 1);
+    case 'PageDown':
+      return move(active + pageRows);
+    case 'PageUp':
+      return move(active - pageRows);
+    case 'ArrowRight':
+    case 'ArrowLeft': {
+      if ((key === 'ArrowRight') !== rtl) {
+        if (item.expandable && !item.expanded) return { kind: 'expand', expanded: true };
+        if (item.expanded && items[active + 1]?.depth === item.depth + 1) return move(active + 1);
+        return { kind: 'stay' };
+      }
+      if (item.expandable && item.expanded) return { kind: 'expand', expanded: false };
+      const parent = parentIndex(items, active);
+      return parent === -1 ? { kind: 'stay' } : move(parent);
+    }
+    case 'Enter':
+      return { kind: 'open', preview: false };
+    case ' ':
+      // While typing ahead, a space belongs to the typed text.
+      return isTyping(typed) && typed.text ? typedRow() : { kind: 'open', preview: true };
+    default:
+      return key.length === 1 ? typedRow() : null;
+  }
 }
 
 /** Position and size of each row among its siblings, for aria-posinset and aria-setsize. */

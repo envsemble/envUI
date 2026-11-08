@@ -5,7 +5,8 @@
     position: fixed;
     inset: 0 0 auto 0;
     z-index: calc(var(--env-z-tooltip) + 1);
-    block-size: 0.1875rem;
+    --env-loading-bar-height: 0.1875rem;
+    block-size: var(--env-loading-bar-height);
     overflow: hidden;
     pointer-events: none;
   }

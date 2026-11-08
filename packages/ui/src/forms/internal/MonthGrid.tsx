@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useId, useMemo } from 'react';
 import { Grid, Row } from '../../foundations/Layout.js';
 import { IconButton } from '../../actions/Button.js';
 import { IconChevronLeft } from '../../icons/ChevronLeft.js';
@@ -14,7 +14,7 @@ import {
   now,
   toUtcDate,
 } from '../../internal/calendarDays.js';
-import { isRightToLeft } from '../../internal/direction.js';
+import { useActiveCell } from './useActiveCell.js';
 import '../../styles/Base.css';
 import '../../styles/MonthPicker.css';
 
@@ -70,18 +70,30 @@ export function MonthGrid({
   nextYearLabel,
 }: MonthGridProps) {
   const headingId = useId();
-  const grid = useRef<HTMLTableElement>(null);
-  const focusActive = useRef(false);
   const thisMonth = monthOfDay(now().day);
-  // The active month is the grid's one tab stop; the year that holds it is shown. It follows the
-  // chosen month when that changes.
-  const [activeState, setActiveState] = useState(() => value ?? thisMonth);
-  const [trackedValue, setTrackedValue] = useState(value);
-  if (trackedValue !== value) {
-    setTrackedValue(value);
-    if (value !== undefined) setActiveState(value);
-  }
-  const active = clampMonth(activeState, min, max);
+  const isUnavailable = (month: number) =>
+    (min !== undefined && month < min) || (max !== undefined && month > max);
+  // The active month is the grid's one tab stop; the year that holds it is shown.
+  const { active, grid, moveTo, choose, handleKeyDown, focusCell } = useActiveCell({
+    chosen: value,
+    initial: () => thisMonth,
+    clamp: (month) => clampMonth(month, min, max),
+    isUnavailable,
+    onChoose,
+    moves: (month, _event, rtl) => {
+      const column = (month - Math.floor(month / 12) * 12) % columns;
+      return {
+        ArrowLeft: month + (rtl ? 1 : -1),
+        ArrowRight: month + (rtl ? -1 : 1),
+        ArrowUp: month - columns,
+        ArrowDown: month + columns,
+        Home: month - column,
+        End: month + columns - 1 - column,
+        PageUp: month - 12,
+        PageDown: month + 12,
+      };
+    },
+  });
   const year = Math.floor(active / 12);
   const first = year * 12;
 
@@ -93,54 +105,6 @@ export function MonthGrid({
     }),
     [locale],
   );
-
-  useLayoutEffect(() => {
-    if (!focusActive.current) return;
-    focusActive.current = false;
-    monthGridActive(grid.current)?.focus();
-  });
-
-  const isUnavailable = (month: number) =>
-    (min !== undefined && month < min) || (max !== undefined && month > max);
-
-  function moveTo(month: number, focus: boolean) {
-    const next = clampMonth(month, min, max);
-    // A key that keeps the month leaves no request behind that would take focus back later.
-    if (next === active) return;
-    focusActive.current = focus;
-    setActiveState(next);
-  }
-
-  function choose(month: number) {
-    if (isUnavailable(month)) return;
-    setActiveState(month);
-    onChoose(month);
-  }
-
-  function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
-    if (event.altKey || event.ctrlKey || event.metaKey) return;
-    const rtl = isRightToLeft(event.currentTarget);
-    const column = (active - first) % columns;
-    const moves: Record<string, number> = {
-      ArrowLeft: active + (rtl ? 1 : -1),
-      ArrowRight: active + (rtl ? -1 : 1),
-      ArrowUp: active - columns,
-      ArrowDown: active + columns,
-      Home: active - column,
-      End: active + columns - 1 - column,
-      PageUp: active - 12,
-      PageDown: active + 12,
-    };
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      choose(active);
-      return;
-    }
-    const next = moves[event.key];
-    if (next === undefined) return;
-    event.preventDefault();
-    moveTo(next, true);
-  }
 
   const previousAvailable = min === undefined || first - 1 >= min;
   const nextAvailable = max === undefined || first + 12 <= max;
@@ -202,9 +166,7 @@ export function MonthGrid({
                     // A press on an unavailable month leaves focus where it was.
                     onMouseDown={unavailable ? (event) => event.preventDefault() : undefined}
                     onClick={() => choose(month)}
-                    onFocus={() => {
-                      if (month !== active) setActiveState(month);
-                    }}
+                    onFocus={() => focusCell(month)}
                   >
                     <span className="env-month-picker-month-mark">
                       {formats.short[month - first]}

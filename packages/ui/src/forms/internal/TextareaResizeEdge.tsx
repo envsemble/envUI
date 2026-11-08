@@ -16,6 +16,9 @@ interface Metrics {
   fontSize: number;
 }
 
+/** What a length counts as where it doesn't parse, such as a line height of normal: a default rem. */
+const defaultPixels = 16;
+
 function measureTextarea(input: HTMLTextAreaElement): Metrics {
   const styles = input.ownerDocument.defaultView!.getComputedStyle(input);
   const minimumHeight = Number.parseFloat(styles.minHeight) || 0;
@@ -26,8 +29,8 @@ function measureTextarea(input: HTMLTextAreaElement): Metrics {
     maximumHeight: Number.isFinite(maximumHeight)
       ? Math.max(minimumHeight, maximumHeight)
       : Infinity,
-    lineHeight: Number.parseFloat(styles.lineHeight) || 16,
-    fontSize: Number.parseFloat(styles.fontSize) || 16,
+    lineHeight: Number.parseFloat(styles.lineHeight) || defaultPixels,
+    fontSize: Number.parseFloat(styles.fontSize) || defaultPixels,
   };
 }
 
@@ -38,8 +41,8 @@ const unmeasured: Metrics = {
   height: 0,
   minimumHeight: 0,
   maximumHeight: Infinity,
-  lineHeight: 16,
-  fontSize: 16,
+  lineHeight: defaultPixels,
+  fontSize: defaultPixels,
 };
 
 /**

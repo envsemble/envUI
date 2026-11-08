@@ -24,7 +24,7 @@
     /* The density sets the rows' block padding; a row is at least as tall as a small control with it. */
     --env-list-row-padding: calc(var(--env-row-padding-block-md) + var(--env-space-1));
     overflow-wrap: break-word;
-    gap: 0.125rem;
+    gap: calc(var(--env-space-1) / 2);
     margin: 0;
     padding: 0;
     list-style: none;

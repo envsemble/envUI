@@ -30,8 +30,14 @@
       transparent
     );
     --env-tooltip-edge: var(--env-popup-solid) var(--env-color-border-neutral-strong);
-    /* As wide as its text up to 18 rem, never wider than the room the positioner finds. */
-    max-inline-size: min(18rem, var(--available-width, calc(100vw - 2rem)));
+    /* As wide as its text up to 18 rem, never wider than the room the positioner finds, or the
+       window less a rem either side where it finds none. */
+    --env-tooltip-max-width: 18rem;
+    --env-tooltip-window-room: calc(100vw - 2rem);
+    max-inline-size: min(
+      var(--env-tooltip-max-width),
+      var(--available-width, var(--env-tooltip-window-room))
+    );
     /* Its inset and corners follow the scale as a popup's rows do (Popup.css). */
     padding: calc(0.15 * var(--env-popup-row-height)) calc(0.25 * var(--env-popup-row-height));
     /* Tooltips float over everything, set apart by their strong fill and a soft shadow of their own,
@@ -71,8 +77,8 @@
     border-radius: var(--env-radius-full);
   }
   .env-tooltip-disabled-target:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
 
   /* Motion: a tooltip only fades, quickly, with any motion preference: a label that small needs no
