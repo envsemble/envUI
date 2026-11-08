@@ -336,9 +336,21 @@ test(
   },
 );
 
-test('a server search shows its loading state, highlights the first result and keeps the chosen label', async ({
+// Guards autoHighlightAlways (packages/ui/src/forms/internal/autoHighlightAlways.ts).
+test('options that arrive after typing have the first highlighted, so Enter chooses it', async ({
   page,
 }) => {
+  const contact = field(page, 'Contact light');
+  await contact.click();
+  await contact.pressSequentially('mo');
+  // No option is there yet as the search runs.
+  await expect(page.locator('.env-combobox-status')).toHaveText('Searching…');
+  await expect.poll(() => highlighted(page)).toEqual(['Morgan Diaz']);
+  await page.keyboard.press('Enter');
+  await expect(contact).toHaveValue('Morgan Diaz');
+});
+
+test('a server search shows its loading state and keeps the chosen label', async ({ page }) => {
   const contact = field(page, 'Contact light');
   const output = page.getByTestId('combobox-search-light');
   await contact.click();
@@ -353,11 +365,9 @@ test('a server search shows its loading state, highlights the first result and k
       .evaluate((status) => status.closest('[aria-busy="true"]') === null),
   ).toBe(true);
   await expect(page.locator('.env-combobox-status .env-spinner')).toBeVisible();
-  // The results arrive after typing; the first is highlighted, so Enter chooses it.
   await expect(page.getByRole('option').locator('.env-list-row-text')).toHaveText([
     'Morgan Diazmorgan.diaz@example.com',
   ]);
-  await expect.poll(() => highlighted(page)).toEqual(['Morgan Diaz']);
   await expect(page.locator('.env-combobox-status')).toHaveText('');
   await page.keyboard.press('Enter');
   await expect(contact).toHaveValue('Morgan Diaz');
