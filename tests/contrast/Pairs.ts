@@ -17,9 +17,8 @@
  *   as their OKLab distance, ΔEOK, rather than a ratio: difference (a state fill against its own
  *   rest or the surface it borders, such as a hovered row against its table) and distinct (two
  *   states of different items that mean different things, such as the selection and another item
- *   under the pointer, or two labels). Themes.ts sets the minimum of each kind and says why: 4.5, 3
- *   and 3 at standard contrast and 7, 4.5 and 4.5 at high contrast for the ratios, ΔEOK 0.02 for a
- *   difference, and ΔEOK 0.03, 0.04 at high contrast, for a distinct pair.
+ *   under the pointer, or two labels). Themes.ts sets the minimum of each kind in each theme and
+ *   says why.
  * - A pair that departs from those rules says why in its `rationale`: `contrast: 'high'` measures it
  *   only in the high-contrast themes, `contrast: 'standard'` only outside them, and `minimum` lowers its minimum at standard or high contrast. Pairs the gate no
  *   longer measures are listed in `dropped`, and pairs it measures under a new name in `renamed`,

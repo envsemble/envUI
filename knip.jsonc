@@ -45,11 +45,8 @@
       "ignoreBinaries": ["openssl"],
     },
     "packages/ui": {
-      "entry": [
-        "src/{index,code,markdown,rich-text,diff,color,theme-bootstrap,dev,messages}.ts",
-        "src/icons/*.tsx",
-        "terrazzo.config.mjs",
-      ],
+      // Knip takes the entry points from package.json's exports, the icons' pattern included.
+      "entry": ["terrazzo.config.mjs"],
       "project": ["src/**/*.{ts,tsx}"],
     },
     "packages/eslint-plugin": {

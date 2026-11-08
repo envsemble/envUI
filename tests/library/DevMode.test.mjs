@@ -3,10 +3,10 @@
 // every other one, must not reach dev mode's code.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
+import { libraryEntryPoints } from '../../scripts/docs/LibraryEntryPoints.ts';
 import { importSource, repository } from '../support/importSource.mjs';
 
 const {
@@ -20,12 +20,13 @@ const {
   read,
   toPx,
   windowClassOf,
+  isStuck,
 } = await importSource('DevMode', [
   "export * from './packages/ui/src/dev/queries.ts';",
   "export * from './packages/ui/src/dev/parts.ts';",
   "export * from './packages/ui/src/dev/readout.ts';",
   "export * from './packages/ui/src/dev/units.ts';",
-  "export { paintsOf } from './packages/ui/src/dev/measure.ts';",
+  "export { isStuck, paintsOf } from './packages/ui/src/dev/measure.ts';",
 ]);
 
 test('container conditions: the widths they test and whether they hold', () => {
@@ -323,6 +324,35 @@ test('what an element paints: a fill, an image, a shadow, or an edge of a color 
   assert.deepEqual(paintsOf(style(edge('transparent'))), []);
 });
 
+test('a sticky element is stuck at any of the four edges, of the document or a scroll container', () => {
+  const none = { top: 0, right: 0, bottom: 0, left: 0 };
+  // The document's scrollport: the viewport, scrolled part of the way along both axes.
+  const viewport = {
+    edges: { top: 0, left: 0, right: 800, bottom: 600 },
+    hidden: { top: 200, bottom: 400, left: 50, right: 150 },
+  };
+  // A container inside its border, at 100, 100 in the viewport.
+  const container = {
+    edges: { top: 101, left: 101, right: 401, bottom: 301 },
+    hidden: { top: 30, bottom: 70, left: 10, right: 20 },
+  };
+  const at = (edges) => ({ ...none, ...edges });
+  for (const port of [viewport, container]) {
+    const { top, left, right, bottom } = port.edges;
+    assert.equal(isStuck('top', 8, at({ top: top + 8 }), port), true);
+    assert.equal(isStuck('bottom', 8, at({ bottom: bottom - 8 }), port), true);
+    assert.equal(isStuck('left', 4, at({ left: left + 4 }), port), true);
+    assert.equal(isStuck('right', 4, at({ right: right - 4 }), port), true);
+    // Away from the line it sticks at, it scrolls with the content.
+    assert.equal(isStuck('bottom', 8, at({ bottom: bottom - 40 }), port), false);
+    assert.equal(isStuck('right', 4, at({ right: right - 40 }), port), false);
+  }
+  // At its edge with nothing hidden past it, it is where it would be anyway: not stuck.
+  const start = { ...container, hidden: { top: 0, bottom: 0, left: 0, right: 0 } };
+  for (const edge of ['top', 'bottom', 'left', 'right'])
+    assert.equal(isStuck(edge, 0, at({ [edge]: start.edges[edge] }), start), false, edge);
+});
+
 test('the readout finds what paints, spills, overflows, never sticks, leaves the window or is squeezed', () => {
   const reading = read(
     snapshot([
@@ -470,22 +500,14 @@ test('what is set out on purpose, or out of the flow, neither spills nor overflo
 });
 
 test('no entry point but dev reaches dev mode, so production builds contain none of it', async () => {
-  // Every entry point the package exports, but dev and the one-icon pattern.
-  const { exports } = JSON.parse(
-    await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
-  );
-  const entries = Object.entries(exports)
-    .filter(
-      ([name, target]) =>
-        name !== './dev' && !name.includes('*') && /\.tsx?$/.test(target['envui-source'] ?? ''),
-    )
-    .map(([, target]) => target['envui-source'].replace(/^\.\/src\//, ''));
-  assert.ok(entries.includes('index.ts'), String(entries));
+  const entries = libraryEntryPoints()
+    .filter(({ specifier }) => specifier !== '@envsemble/envui/dev')
+    .map(({ file }) => file);
   const dev = join(repository, 'packages/ui/src/dev');
   for (const entry of entries) {
     const result = await build({
       absWorkingDir: repository,
-      entryPoints: [join(repository, 'packages/ui/src', entry)],
+      entryPoints: [entry],
       bundle: true,
       write: false,
       metafile: true,
@@ -502,36 +524,6 @@ test('no entry point but dev reaches dev mode, so production builds contain none
     assert.deepEqual(reached, [], `${entry} reaches dev mode`);
     assert.doesNotMatch(result.outputFiles[0].text, /data-env-dev|installDevMode/, entry);
   }
-});
-
-test('the dev entry imports no library beyond React and Base UI, so it loads without the others', async () => {
-  // The content, rich-text and diff entries' libraries, such as code highlighting, are installed by
-  // the applications that use those entries; the inspector once reached one through Code.
-  const { dependencies, peerDependencies } = JSON.parse(
-    await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
-  );
-  const declared = [...Object.keys(dependencies), ...Object.keys(peerDependencies)];
-  const result = await build({
-    absWorkingDir: repository,
-    entryPoints: [join(repository, 'packages/ui/src/dev.ts')],
-    bundle: true,
-    write: false,
-    metafile: true,
-    format: 'esm',
-    platform: 'neutral',
-    packages: 'external',
-    loader: { '.css': 'empty', '.woff2': 'empty' },
-    logLevel: 'error',
-  });
-  const packages = new Set(
-    Object.values(result.metafile.inputs).flatMap(({ imports }) =>
-      imports.filter((entry) => entry.external).map((entry) => entry.path),
-    ),
-  );
-  const reached = [...packages].filter(
-    (path) => !declared.some((name) => path === name || path.startsWith(`${name}/`)),
-  );
-  assert.deepEqual(reached, [], 'the dev entry imports libraries envUI does not declare');
 });
 
 test('installDevMode() warns about parts in the wrong shape and installs all the same', async () => {

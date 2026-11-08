@@ -1,16 +1,15 @@
+// The third-party libraries an entry point loads, which applications install themselves. envUI
+// lists none of them as a dependency or peer, as GitHub Packages drops `peerDependenciesMeta` and
+// npm would then install every peer; docs/setup.md names each entry point's libraries instead.
 import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 /**
- * The entries whose libraries applications install themselves. envUI lists none of them as a
- * dependency or peer, as GitHub Packages drops `peerDependenciesMeta` and npm would then install
- * every peer; docs/setup.md names each entry's libraries instead.
+ * The libraries every entry point may import, which envUI declares itself, and envUI, which dev
+ * mode's usage example imports in a comment the scan below doesn't tell from code.
  */
-export const libraryEntries = ['code', 'markdown', 'rich-text', 'diff', 'color'];
-
-/** The libraries every entry may import, which envUI declares itself. */
-const declared = new Set(['react', 'react-dom', '@base-ui/react']);
+const declared = new Set(['react', 'react-dom', '@base-ui/react', '@envsemble/envui']);
 
 /** The package a bare import names: `@tiptap/pm/state` is `@tiptap/pm`, `shiki/core` is `shiki`. */
 function packageName(specifier: string) {
@@ -41,10 +40,8 @@ function runtimeImports(code: string) {
   return specifiers;
 }
 
-/** The third-party libraries an entry's modules import at runtime. */
-export async function importedLibraries(repositoryRoot: string, entry: string) {
-  const source = resolve(repositoryRoot, 'packages/ui/src');
-  const start = resolve(source, `${entry === 'main' ? 'index' : entry}.ts`);
+/** The third-party libraries an entry point's modules import at runtime, from its source file. */
+export async function importedLibraries(start: string) {
   const libraries = new Set<string>();
   const seen = new Set<string>();
   const pending: string[] = [start];
@@ -66,21 +63,19 @@ export async function importedLibraries(repositoryRoot: string, entry: string) {
   return libraries;
 }
 
-/** Each entry's libraries and versions, from its `npm install` command in docs/setup.md. */
+/**
+ * The libraries and versions of each entry point docs/setup.md gives an `npm install` command, by
+ * its specifier.
+ */
 export async function documentedLibraries(repositoryRoot: string) {
   const setup = await readFile(resolve(repositoryRoot, 'docs/setup.md'), 'utf8');
   const documented: Record<string, { name: string; range: string }[]> = {};
-  for (const entry of libraryEntries) {
-    const pattern = new RegExp(
-      `^- \`@envsemble/envui/${entry}\`:\\n\\n {2}\`\`\`sh\\n {2}npm install ([^\\n]+)\\n`,
-      'm',
-    );
-    const match = setup.match(pattern);
-    if (!match) throw new Error(`docs/setup.md has no install command for the ${entry} entry.`);
-    documented[entry] = match[1].split(' ').map((spec) => {
+  for (const [, specifier, command] of setup.matchAll(
+    /^- `(@envsemble\/envui[\w/-]*)`:\n\n {2}```sh\n {2}npm install ([^\n]+)\n/gm,
+  ))
+    documented[specifier] = command.split(' ').map((spec) => {
       const at = spec.lastIndexOf('@');
       return { name: spec.slice(0, at), range: spec.slice(at + 1) };
     });
-  }
   return documented;
 }

@@ -176,7 +176,7 @@ A field without a visible label, such as in a toolbar, says what to type in its 
 
 ### Usage
 
-Combobox takes its options as `items`, each with a `value` and a `label`, and optionally a `description` and `start` content, such as an Avatar; a ComboboxGroup puts items under a heading.
+Combobox takes its options as `items`, each with a `value` and a `label`, and optionally a `description` and `start` content, such as an Avatar; a ComboboxGroup puts items under a heading. An entry with an `items` array is a group, so an option has no field of that name.
 
 - Control it with `value`, `null` for none, and `onValueChange`, which receives the value and its item, or leave it uncontrolled with `defaultValue`.
 - `label`, `description` and `error` work as on TextField.

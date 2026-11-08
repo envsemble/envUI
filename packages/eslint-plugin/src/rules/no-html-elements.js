@@ -30,17 +30,10 @@ function ownersOf(entry) {
 }
 
 /**
- * The envUI entry points that export components. The others export icons, assets and a script,
- * which are not components whatever their local name.
+ * The specifiers of envUI's entry points, whose names count as envUI's. Those without components,
+ * such as `/dev`, export none of the owners' names.
  */
-const componentEntryPoints = new Set([
-  '@envsemble/envui',
-  '@envsemble/envui/code',
-  '@envsemble/envui/markdown',
-  '@envsemble/envui/diff',
-  '@envsemble/envui/color',
-  '@envsemble/envui/rich-text',
-]);
+const entryPoints = new Set(readData('entryPoints.json').entryPoints);
 
 /** The bindings an entry imports: its own list, or the namespaces of the components it uses. */
 function bindings(entry) {
@@ -174,7 +167,7 @@ export default {
     const { sourceCode } = context;
     const { isReexportModule } = pluginSettings(context);
     /** Whether names from a module are envUI's: an entry point, or a module that re-exports one. */
-    const isEnvuiSource = (source) => componentEntryPoints.has(source) || isReexportModule(source);
+    const isEnvuiSource = (source) => entryPoints.has(source) || isReexportModule(source);
     const unknown = allow.filter((id) => !knownIds.has(id));
     if (unknown.length > 0)
       throw new Error(

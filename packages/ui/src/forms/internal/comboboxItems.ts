@@ -13,6 +13,8 @@ export interface ComboboxItem {
   start?: ReactNode;
   /** The option shows but can't be chosen. */
   disabled?: boolean;
+  /** Reserved: an entry with an `items` array is a group, so an option has none. */
+  items?: never;
 }
 
 /** Options under a heading, which also names the group for assistive technology. */
@@ -33,14 +35,14 @@ export type ComboboxFilter<Item extends ComboboxItem = ComboboxItem> = (
 export function isGroup<Item extends ComboboxItem>(
   entry: Item | ComboboxGroup<Item>,
 ): entry is ComboboxGroup<Item> {
-  return Array.isArray((entry as ComboboxGroup<Item>).items);
+  return Array.isArray(entry.items);
 }
 
 /** The options, out of their groups. */
 export function flattenItems<Item extends ComboboxItem>(
   items: readonly Item[] | readonly ComboboxGroup<Item>[],
 ) {
-  return (items as readonly (Item | ComboboxGroup<Item>)[]).flatMap((entry) =>
+  return items.flatMap((entry: Item | ComboboxGroup<Item>) =>
     isGroup(entry) ? entry.items : [entry],
   );
 }
