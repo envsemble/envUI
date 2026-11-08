@@ -209,8 +209,11 @@ function gapStart(
 }
 
 /** The smallest span that contains both spans, or whichever one is defined. */
-const grown = (a: [number, number] | undefined, b: [number, number] | undefined) =>
-  a && b ? ([Math.min(a[0], b[0]), Math.max(a[1], b[1])] as [number, number]) : (a ?? b);
+const grown = (
+  a: [number, number] | undefined,
+  b: [number, number] | undefined,
+): [number, number] | undefined =>
+  a && b ? [Math.min(a[0], b[0]), Math.max(a[1], b[1])] : (a ?? b);
 
 /**
  * What the device fit keeps between runs, reset when the drawn size (`size`) changes:

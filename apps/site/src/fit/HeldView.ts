@@ -332,9 +332,11 @@ export interface Follow {
  */
 export function holdsFrame(was: Shape, now: Shape, follow: Follow) {
   const holds = (held: boolean) => ({ holds: held, follow });
+  // `near` compares lists of the same length (sizes, view, edges), so `b[index]` exists.
   const near = (a: readonly number[], b: readonly number[], slack: number) =>
     a.every((value, index) => Math.abs(value - b[index]!) <= slack);
   const edges = ({ box }: Shape['boxes'][number]) => [box.left, box.top, box.right, box.bottom];
+  // The lengths are checked first, so `after[index]` exists.
   const same = (before: Shape['boxes'], after: Shape['boxes'], slack: number) =>
     before.length === after.length &&
     before.every((shown, index) => near(edges(shown), edges(after[index]!), slack));
