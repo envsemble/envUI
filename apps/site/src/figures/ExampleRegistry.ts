@@ -4,9 +4,9 @@
  * page's Markdown places it by name in an empty ```tsx figure=Name``` fence.
  */
 import type { ComponentType } from 'react';
-import { moduleRegistry } from '../loading/ModuleRegistry';
+import { componentRegistry, moduleRegistry } from '../loading/ModuleRegistry';
 
-const examples = moduleRegistry(
+const examples = componentRegistry(
   import.meta.glob<{ default: ComponentType }>('/src/examples/*/*.tsx'),
 );
 const sources = moduleRegistry(

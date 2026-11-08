@@ -4,7 +4,7 @@ import { PartHeadingLevel, SpecimenHeadingLevel } from './Example';
 import { hasExample } from './ExampleRegistry';
 import { keepLinksInPlace } from './LiveExample';
 import { LoadBoundary } from '../loading/LoadBoundary';
-import { moduleRegistry } from '../loading/ModuleRegistry';
+import { componentRegistry } from '../loading/ModuleRegistry';
 import { HoldPlaceholder } from '../loading/LoadingStore';
 import { StageSkeleton } from '../loading/Skeletons';
 import { VerdictMotion } from '../motion/MotionStage';
@@ -22,7 +22,7 @@ import { VerdictMotion } from '../motion/MotionStage';
  *   where it must change what the example holds, and a script plays it (apps/site/src/motion), so
  *   changing or renaming an example changes its playback too.
  */
-const specimens = moduleRegistry(
+const specimens = componentRegistry(
   import.meta.glob<{ default: ComponentType }>('/src/specimens/*/*.tsx'),
 );
 
