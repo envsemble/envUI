@@ -9,7 +9,7 @@ import '../../apps/site/src/styles/Stage.css';
 
 /**
  * Every catalogue example file, loaded on demand: apps/site/src/examples/<page>/<Name>.tsx,
- * as the catalogue's LiveExample loads them.
+ * as the catalogue's example registry loads them (ExampleRegistry.ts).
  */
 const loaders = import.meta.glob<{ default: ComponentType }>(
   '../../apps/site/src/examples/*/*.tsx',

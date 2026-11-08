@@ -16,7 +16,7 @@ export const SpecimenHeadingLevel = createContext<2 | 3>(2);
 const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
 
 /**
- * Whether an Example shows its content on a stage, as a foundation page's preview does; its caption
+ * Whether an Example shows its content on a stage, as a foundation page's figure does; its caption
  * stays below the stage.
  */
 export const ExampleStage = createContext(false);

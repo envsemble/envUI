@@ -23,14 +23,14 @@ import {
 } from './foundations/FoundationFigures';
 import { FigureCode } from './foundations/Topic';
 import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
-import { useVerdictFit } from '../template/VerdictFit';
+import { useVerdictFit } from '../fit/useVerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
 type FigureBlock = ExampleBlock | FoundationBlock;
 
 /**
- * A foundation's figure: the catalogue's own, from its page's preview,
+ * A foundation's figure: the catalogue's own, registered for its page (FoundationFigures.ts),
  * with the legend its Markdown gives it, and its code where it has an example file of its name.
  */
 function FoundationFigure({ page, block }: { page: Document; block: FoundationBlock }) {
@@ -63,8 +63,8 @@ const verdicts = {
  * the example, or square where the example shows open or playing, and the example is drawn smaller
  * where it needs more room than the stage's width (useVerdictFit). With `motion`, its animated specimen of the same
  * name plays it on the stage. A `wide` figure, whose point is a change across the column's width,
- * keeps a stage as wide as the column and as tall as its example. A foundation page's preview
- * passes its sample as `children` instead, which has no code of its own.
+ * keeps a stage as wide as the column and as tall as its example. A foundation page's figure
+ * passes what it shows as `children` instead, which has no code of its own.
  */
 export function VerdictFigure({
   page,
@@ -220,18 +220,18 @@ function Figure({
 }
 
 /**
- * A component's preview at the top of its Usage in the Docs: its catalogue's first overview
+ * A component's figure at the top of its Usage in the Docs: its catalogue's first overview
  * example, live as the Overview shows it, without its code, which Usage gives right under it. It
  * is the one figure a Docs page shows, so a reader sees what the code makes without switching
  * parts; the catalogue's Overview section itself isn't repeated.
  */
-export function UsagePreview({ page }: { page: Document }) {
+export function UsageFigure({ page }: { page: Document }) {
   const block = page.sections
     ?.find((section) => section.id === 'overview')
     ?.blocks.find((item): item is ExampleBlock => item.kind === 'example');
   if (!block) return null;
   return (
-    <div className="docs-usage-preview">
+    <div className="docs-usage-figure">
       <LiveExample
         page={page.id}
         name={block.name}

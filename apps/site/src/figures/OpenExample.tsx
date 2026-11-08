@@ -1,7 +1,7 @@
 import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { sitePopupOpen } from '../motion/SitePopup';
-import { recordedSize } from '../template/Loading';
+import { recordedSize } from '../loading/Loading';
 
 /** The least room a dialog, a sheet or a toast keeps from the stage's edges, in px. */
 const gutter = 16;
@@ -23,7 +23,7 @@ const union = (boxes: Edges[]): Edges => ({
 /**
  * The box that places the figure's dialogs, sheets and toasts: the stage, or in an anatomy figure,
  * the room, which keeps them clear of the stage's padding, where the callouts go, or on a do or
- * don't figure's square, the box over it that is drawn smaller to fit it (VerdictFit.ts).
+ * don't figure's square, the box over it that is drawn smaller to fit it (useVerdictFit.ts).
  */
 const stageOf = (element: HTMLElement) => {
   const room = element.closest<HTMLElement>('.catalogue-open-example');

@@ -21,7 +21,7 @@ import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
-const preview: CSSProperties = { blockSize: '30rem' };
+const windowBox: CSSProperties = { blockSize: '30rem' };
 
 /**
  * A small application: a Scaffold with a top bar, the same destinations as a bar, a rail or a
@@ -39,7 +39,7 @@ export function DemoApp({ fixedColumns = false }: { fixedColumns?: boolean }) {
     <Scaffold
       scroll="body"
       landmarks={false}
-      style={preview}
+      style={windowBox}
       topBar={<TopBar title="Northwind" actions={<AvatarButton name="Alex Morgan" />} />}
       navigation={{
         bar: <NavigationBar destinations={destinations} />,

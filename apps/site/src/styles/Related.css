@@ -115,7 +115,7 @@
 }
 
 /* The window the example lays out in, at a width it was written for, then scaled down and centred
-   (Related.tsx). It contains its fixed overlays, such as a dialog, and is transparent until it
+   (TileStage.tsx). It contains its fixed overlays, such as a dialog, and is transparent until it
    fits, rather than hidden, so what hides by itself inside it can be told from what shows. It is
    inert, so no reader's pointer reaches it; a tile's own pointer, which no one sees, follows what
    its parts let through (VirtualPointer.ts). */
@@ -312,7 +312,7 @@
   text-align: center;
 }
 
-/* A tile's skeleton (TileSkeleton in template/Loading.tsx): over the whole stage, which pulses as
+/* A tile's skeleton (TileSkeleton in loading/Loading.tsx): over the whole stage, which pulses as
    envUI's skeleton surfaces do, from a moment after the tile nears the view until the picture is
    fitted on the stage and fades in over it. */
 .catalogue-tile-loading {

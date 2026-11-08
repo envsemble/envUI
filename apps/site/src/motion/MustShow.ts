@@ -1,5 +1,5 @@
 /*
- * What a playing tile keeps in view (template/useFit.ts): the elements its animation acts on. A
+ * What a playing tile keeps in view (fit/useFit.ts): the elements its animation acts on. A
  * pointer's script names them itself, every element it moves to, types into or presses keys on
  * (usePointer in Motion.tsx), and what they open shows as it opens. A tile whose animation acts on
  * something its script doesn't name, such as a row a timeline changes, names it with

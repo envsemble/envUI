@@ -1,5 +1,5 @@
 // What the site shows of a part of a page before the part loads: the outlines its skeletons are
-// drawn from (apps/site/src/template/Loading.tsx), small enough to come with the page. The site
+// drawn from (apps/site/src/loading/Loading.tsx), small enough to come with the page. The site
 // reads them when it builds or serves, through the virtual modules in apps/site/vite.config.ts, so
 // they always match the files they outline.
 import { readdirSync, readFileSync } from 'node:fs';

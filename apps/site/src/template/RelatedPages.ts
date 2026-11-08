@@ -39,8 +39,8 @@ function relatedHref(id: string) {
   return route && routeHref(route);
 }
 
-/** The example a tile previews: a page's file, and whether its overlays are shown open. */
-export interface Preview {
+/** What a tile shows of a page: its example's file, and whether its overlays are shown open. */
+export interface TilePicture {
   page: string;
   name: string;
   open: boolean;
@@ -79,7 +79,10 @@ const memberExamples: Record<string, string> = {
  * that renders it (memberExamples), else the first named after it, where there is one. A page
  * without one, such as a foundation's, shows its specimen.
  */
-export function previewOf(document: DocumentSummary, component?: string): Preview | undefined {
+export function tilePictureOf(
+  document: DocumentSummary,
+  component?: string,
+): TilePicture | undefined {
   const own = component && document.metadata?.components[0] !== component.split('.')[0];
   const tile = !own && tileOf(document.id);
   const blocks = (document.outline ?? []).flatMap((section) => section.examples);
@@ -139,7 +142,7 @@ export interface Alternative {
   key: string;
   name: string;
   href?: string;
-  preview?: Preview;
+  picture?: TilePicture;
   line: string;
   /**
    * How its tile is framed, as a gallery's is (Gallery.tsx): a component at its own size, a
@@ -169,7 +172,7 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
         key: use,
         name: use,
         href: page && pageHref(page),
-        preview: page && previewOf(page.document, use),
+        picture: page && tilePictureOf(page.document, use),
         line: text,
         frame: frameOf(page?.document.id),
       };
@@ -179,7 +182,7 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
       key: `page:${see}`,
       name: document?.title ?? see ?? '',
       href: see && relatedHref(see),
-      preview: document && previewOf(document),
+      picture: document && tilePictureOf(document),
       line: text,
       frame: frameOf(see),
     };

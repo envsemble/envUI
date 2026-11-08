@@ -1,5 +1,5 @@
 /* A card's picture of a piece of an application's frame, such as a Scaffold or a top bar
-   (template/AppTile.tsx): it fills the picture as the application fills its window, in the
+   (figures/AppTile.tsx): it fills the picture as the application fills its window, in the
    browser's window a page's figure is drawn in, an even margin around it (`window`), or edge to
    edge, as a cropped screenshot (`bleed`). Its canvas is laid out at the picture's size, less the
    margin, at its own size (useAppFit), from the stage's top left corner, and clips what runs past

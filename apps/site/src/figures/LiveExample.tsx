@@ -1,11 +1,9 @@
 import {
-  lazy,
   Suspense,
   use,
   useLayoutEffect,
   useRef,
   useState,
-  type ComponentType,
   type MouseEvent,
   type ReactNode,
 } from 'react';
@@ -13,66 +11,20 @@ import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import type { DeviceKind, StageFill } from '../../../../scripts/docs/model/DocumentationTypes';
 import { FigureDevice, OnDevice } from './DeviceFrame';
-import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
+import { LoadBoundary } from '../loading/LoadBoundary';
+import {
+  exampleComponent,
+  exampleModule,
+  exampleSource,
+  retryExample,
+  retrySource,
+} from './ExampleRegistry';
 import { OpenExample } from './OpenExample';
-import { CodeSkeleton, exampleLines, HoldPlaceholder, StageSkeleton } from '../template/Loading';
+import { CodeSkeleton, exampleLines, HoldPlaceholder, StageSkeleton } from '../loading/Loading';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
 import { SpecimenRender } from './Specimen';
 import { StillMark } from './StillMark';
-
-/**
- * Every example file, rendered live, and its source as text, each loaded with the page that shows
- * it. An example is apps/site/src/examples/<page>/<Name>.tsx with a default-exported
- * component; the page's Markdown places it by name in an empty ```tsx figure=Name``` fence.
- */
-const loaders = import.meta.glob<{ default: ComponentType }>('../examples/*/*.tsx');
-const sourceLoaders = import.meta.glob<string>('../examples/*/*.tsx', {
-  query: '?raw',
-  import: 'default',
-});
-const examples = new Map(
-  Object.entries(loaders).map(([path, load]) => [path, lazy(loadModule(load))]),
-);
-const sources = new Map<string, Promise<string>>();
-/** How each source loads: from its loader, or once it failed, from reloadModule. */
-const sourceLoads = new Map<string, () => Promise<string>>();
-
-export const examplePath = (page: string, name: string) => `../examples/${page}/${name}.tsx`;
-
-/** Whether a page has an example file of the name, such as one a gallery picks for its tile. */
-export const hasExample = (page: string, name: string) => examples.has(examplePath(page, name));
-
-/**
- * The source of an example, loaded once and kept for every later render. A load that fails is kept
- * too, so renders until a retry read the same rejected promise rather than a new one each time,
- * which React would take for a promise it was never given; forgetSource drops it.
- */
-function sourceOf(path: string) {
-  let source = sources.get(path);
-  if (!source) {
-    source = loadModule(sourceLoads.get(path) ?? sourceLoaders[path])();
-    sources.set(path, source);
-  }
-  return source;
-}
-
-/** Drops an example whose file failed to load, so that its next render loads it again. */
-function forgetExample(path: string) {
-  examples.set(path, lazy(loadModule(reloadModule(loaders[path], path, import.meta.url))));
-}
-
-/** Drops the source of an example that failed to load, so that its next render loads it again. */
-function forgetSource(path: string) {
-  sources.delete(path);
-  sourceLoads.set(
-    path,
-    reloadModule(sourceLoaders[path], path, import.meta.url, {
-      query: 'raw',
-      pick: (module) => (module as { default: string }).default,
-    }),
-  );
-}
 
 /**
  * Links in an example keep their semantics without navigating away from the documentation. A link
@@ -86,8 +38,8 @@ function preventNavigation(event: MouseEvent<HTMLDivElement>) {
   event.preventDefault();
 }
 
-function Source({ path, name }: { path: string; name: string }) {
-  const source = use(sourceOf(path));
+function Source({ page, name }: { page: string; name: string }) {
+  const source = use(exampleSource(page, name));
   return (
     <CodeBlock language="tsx" label={`${name}.tsx`} copyable className="site-example-source">
       {source.replace(/\n$/, '')}
@@ -102,13 +54,12 @@ function Source({ path, name }: { path: string; name: string }) {
 export function ExampleSource({ page, name }: { page: string; name: string }) {
   // A retry renders the code afresh from its file loaded again.
   const [, setAttempt] = useState(0);
-  const path = examplePath(page, name);
   return (
     <LoadBoundary
       what="code"
-      modules={[`src/examples/${page}/${name}.tsx?raw`]}
+      modules={[`${exampleModule(page, name)}?raw`]}
       onRetry={() => {
-        forgetSource(path);
+        retrySource(page, name);
         setAttempt((count) => count + 1);
       }}
     >
@@ -117,7 +68,7 @@ export function ExampleSource({ page, name }: { page: string; name: string }) {
           <CodeSkeleton label={`${name}.tsx`} lines={exampleLines(`${page}/${name}`) ?? 1} />
         }
       >
-        <Source path={path} name={name} />
+        <Source page={page} name={name} />
       </Suspense>
     </LoadBoundary>
   );
@@ -125,7 +76,7 @@ export function ExampleSource({ page, name }: { page: string; name: string }) {
 
 /**
  * An example's source in a disclosure right under its figure, Show code until it opens and Hide code
- * while it is, with a copy button once open; a template preview shows it too.
+ * while it is, with a copy button once open; a template page's screen shows it too.
  */
 export function ExampleCode({ page, name }: { page: string; name: string }) {
   const [open, setOpen] = useState(false);
@@ -133,7 +84,7 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
   // and each one's file and highlighting would load with it. A pointer over the summary starts
   // loading the file.
   const [opened, setOpened] = useState(false);
-  const preload = () => void sourceOf(examplePath(page, name)).catch(() => {});
+  const preload = () => void exampleSource(page, name).catch(() => {});
   return (
     <Disclosure
       title={
@@ -172,28 +123,25 @@ export function ExampleRender({
   name: string;
   /**
    * What shows while the file loads: a skeleton at the example's size in its place on the stage.
-   * A tile's picture shows nothing, as its whole stage is a skeleton meanwhile (Related.tsx).
+   * A tile's picture shows nothing, as its whole stage is a skeleton meanwhile (TileStage.tsx).
    */
   fallback?: ReactNode;
 }) {
   // A retry renders the example afresh from its file loaded again, and leaves its code as it is.
   const [, setAttempt] = useState(0);
-  const path = examplePath(page, name);
-  const Example = examples.get(path);
-  if (!Example || !sourceLoaders[path])
-    throw new Error(`No example file apps/site/src/examples/${page}/${name}.tsx`);
+  const Example = exampleComponent(page, name);
   return (
     <LoadBoundary
       what="example"
-      modules={[`src/examples/${page}/${name}.tsx`]}
+      modules={[exampleModule(page, name)]}
       onRetry={() => {
-        forgetExample(path);
+        retryExample(page, name);
         setAttempt((count) => count + 1);
       }}
     >
       <Suspense fallback={fallback}>
         <HoldPlaceholder part={`example:${page}/${name}`}>
-          {/* The example is looked up among module-level lazy components, not created here. */}
+          {/* The example is looked up among the registry's lazy components, not created here. */}
           {/* eslint-disable-next-line react-hooks/static-components */}
           <Example />
         </HoldPlaceholder>
@@ -313,7 +261,7 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
  * `motion`, the stage plays it: its animated specimen of the same name, which uses the example as a
  * person would, takes the stage's place, above its caption and code. With `open` and `live`, as an
  * overview's, it rests with its overlay open, and people can use it; without `live`, it is a still
- * picture, marked as one. Without `code`, as the preview at the top of a Docs page's Usage, whose
+ * picture, marked as one. Without `code`, as the figure at the top of a Docs page's Usage (UsageFigure), whose
  * code follows it, it shows no code of its own. With `device`, it shows on a phone's or a window's
  * screen at the device's real width, filling it, the device drawn to fit the stage (DeviceFrame),
  * an animated one too: its stage puts the device around what it plays.

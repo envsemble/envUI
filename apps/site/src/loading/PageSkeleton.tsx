@@ -4,7 +4,7 @@ import { catalogueTrail, docsTrail } from '../navigation/Trails';
 import type { RoutePage } from '../navigation/SiteRoutes';
 import { PartSwitch } from '../navigation/OtherPart';
 import { PartSkeleton, placeholderText, recordedSize } from './Loading';
-import { MetadataBadges } from './TemplateContent';
+import { MetadataBadges } from '../template/TemplateContent';
 
 /**
  * An example's height where its size wasn't recorded, the stage's room around it and its least
@@ -85,7 +85,7 @@ function DocsSection({ code }: { code: boolean }) {
  * with its title and summary, then its first section's heading, text and figure or code, as bars
  * and shapes. As every part's skeleton, it shows once the load has taken a moment, keeping its
  * space meanwhile, and is a busy region whose content assistive technology skips, with the page's
- * one status saying the page is loading (template/Loading.tsx). A link keeps the page before until
+ * one status saying the page is loading (loading/Loading.tsx). A link keeps the page before until
  * the next has loaded, so it never shows this.
  */
 export function PageSkeleton({ page }: { page: RoutePage }) {

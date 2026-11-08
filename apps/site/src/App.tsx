@@ -71,9 +71,9 @@ import { SearchButton } from './search/SearchButton';
 import { useSiteRoute } from './navigation/useSiteRoute';
 import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
-import { LoadingStatus } from './template/Loading';
+import { LoadingStatus } from './loading/Loading';
 import { restoreScroll, scrolled } from './navigation/ScrollRestoration';
-import { PageSkeleton } from './template/PageSkeleton';
+import { PageSkeleton } from './loading/PageSkeleton';
 
 /** What each kind of page renders. */
 const pageContent: { [Kind in PageKind]: (props: { page: PageOfKind<Kind> }) => ReactNode } = {

@@ -40,7 +40,7 @@ import { withoutComments } from '../../scripts/site/CssComments.ts';
 let building = false;
 
 /** The recorded size of each part that loads with a page (scripts/site/RecordPartSizes.ts). */
-const partSizesFile = fileURLToPath(new URL('./src/template/PartSizes.json', import.meta.url));
+const partSizesFile = fileURLToPath(new URL('./src/loading/PartSizes.json', import.meta.url));
 function readPartSizes(): Record<string, [number, number]> {
   const { $comment: _comment, ...sizes } = JSON.parse(readFileSync(partSizesFile, 'utf8'));
   return sizes;

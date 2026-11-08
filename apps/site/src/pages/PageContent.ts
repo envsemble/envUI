@@ -1,7 +1,7 @@
 import { use } from 'react';
 import type { DocumentationEntry } from '../../../../scripts/docs/model/DocumentationTypes';
-import { loadOnce } from '../template/LoadOnce';
-import { keepPageParts } from '../template/Loading';
+import { loadOnce } from '../loading/LoadOnce';
+import { keepPageParts } from '../loading/Loading';
 
 /** Each page's content, in a file of its own that loads with the page. */
 const contents = import.meta.glob<DocumentationEntry>('../generated/pages/*.json', {

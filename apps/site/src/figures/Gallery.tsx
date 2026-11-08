@@ -5,8 +5,9 @@ import { routeHref } from '../navigation/Address';
 import type { RoutePage } from '../navigation/SiteRoutes';
 import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/Motion';
-import { TilePreview, useNear } from '../template/Related';
-import { frameOf, previewOf, type Preview } from '../template/RelatedPages';
+import { TileStage } from './TileStage';
+import { useNear } from './useNear';
+import { frameOf, tilePictureOf, type TilePicture } from '../template/RelatedPages';
 import { preloadTile } from '../tiles/Tiles';
 
 /** One group of a gallery, such as a kind of component or what people are doing. */
@@ -18,16 +19,16 @@ export interface GalleryGroup {
   pages: RoutePage[];
 }
 
-/** What a gallery tile shows of a page: its own tile, as a Related tile does (Related.tsx). */
-export function galleryPreviewOf(page: RoutePage): Preview | undefined {
-  return page.document && previewOf(page.document);
+/** What a gallery tile shows of a page: its own tile, as a Related tile does (TileStage.tsx). */
+export function galleryPictureOf(page: RoutePage): TilePicture | undefined {
+  return page.document && tilePictureOf(page.document);
 }
 
 /**
- * One page's tile, a cell of the gallery's grid: its preview, rendered once near the viewport, in
+ * One page's tile, a cell of the gallery's grid: its picture, rendered once near the viewport, in
  * the reader's theme, and its name under it. The name shows as the pointer or the keyboard comes onto the tile, and
  * always where the reader can't hover; it is a heading one level under the gallery's group, or
- * under the page's title where the gallery has no groups. The preview plays while the pointer or
+ * under the page's title where the gallery has no groups. The picture plays while the pointer or
  * the keyboard is on the tile, and where the reader can't hover, while it is the tile in the middle
  * of the viewport (Autoplay.ts).
  */
@@ -40,8 +41,8 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   return (
     <li ref={tile} className="catalogue-gallery-tile" {...playOn}>
       <div className="catalogue-gallery-picture">
-        <TilePreview
-          preview={galleryPreviewOf(page)}
+        <TileStage
+          picture={galleryPictureOf(page)}
           near={near}
           playing={playing || autoplay}
           className="catalogue-related-stage catalogue-gallery-stage"

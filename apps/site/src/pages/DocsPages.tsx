@@ -7,12 +7,12 @@ import { pagesOf, type DocumentPage, type RoutePage } from '../navigation/SiteRo
 import { docsTrail } from '../navigation/Trails';
 import { docsRoute } from '../navigation/Address';
 import { PartSwitch } from '../navigation/OtherPart';
-import { lazyPart } from '../template/LoadBoundary';
+import { lazyPart } from '../loading/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
-import { UsagePreview } from '../figures/Figures';
+import { UsageFigure } from '../figures/Figures';
 import { partsOf } from '../template/Parts';
 import { providesOf } from '../template/Provides';
-import { PropsTables } from '../template/PropsTables';
+import { PropsTables } from './PropsTables';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import type { Documentation as Document } from './PageModel';
 import { useDocument } from './PageContent';
@@ -383,7 +383,7 @@ function guideSubsections(document: Document) {
  * The guide at the top of a page in the Docs, from the page's "## Compose": how to import it, its
  * common uses in code, how its parts compose and how to customize it, each a section of its own,
  * with an example file of the page shown as code where the page names one. With `showExample`, as a
- * component's, Usage opens with the component, live and compact (UsagePreview).
+ * component's, Usage opens with the component, live and compact (UsageFigure).
  */
 function CodeGuide({
   document,
@@ -399,7 +399,7 @@ function CodeGuide({
         <Text render={<h2 />} variant="title" className="site-section-title" id={id}>
           {title}
         </Text>
-        {showExample && title === 'Usage' && <UsagePreview page={document} />}
+        {showExample && title === 'Usage' && <UsageFigure page={document} />}
         {content.map((part, index) =>
           part.kind === 'source' ? (
             <ExampleSource key={index} page={document.id} name={part.name} />

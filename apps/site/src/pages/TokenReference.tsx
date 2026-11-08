@@ -1,5 +1,5 @@
 import { ColorSwatch } from '@envsemble/envui/color';
-import { PlainCode } from '../template/SimpleTable';
+import { PlainCode } from './SimpleTable';
 // Every token with its value in each theme and scale, as the token build writes it; no entry of
 // the package exports this data, so the reference reads the generated file.
 import tokenList from '../../../../packages/ui/src/generated/tokens.json';

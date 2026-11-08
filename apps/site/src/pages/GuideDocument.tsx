@@ -1,8 +1,8 @@
 import { Fragment, Suspense, useState } from 'react';
 import type { Documentation as Document } from './PageModel';
-import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
+import { LoadBoundary, lazyPart } from '../loading/LoadBoundary';
 import { Documentation } from './Documentation';
-import { StageSkeleton } from '../template/Loading';
+import { StageSkeleton } from '../loading/Loading';
 
 /**
  * The live demos a guide page places with a `<!-- demo: Name -->` line, each loaded with the page

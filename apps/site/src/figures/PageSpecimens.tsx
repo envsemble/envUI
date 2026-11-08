@@ -12,7 +12,7 @@ import { IconSettings } from '@envsemble/envui/icons/Settings';
  * A small, characteristic specimen of each foundation, for a Related tile that points to a page
  * without an example of its own: what the page is about, drawn with envUI, so its tile reads as
  * the tiles of components do rather than as a missing picture. The tile scales it to fit its
- * stage, as it does an example (Related.tsx); its styles are in Related.css.
+ * stage, as it does an example (TileStage.tsx); its styles are in Related.css.
  */
 
 /** A few real icons from the set, outline and filled. */

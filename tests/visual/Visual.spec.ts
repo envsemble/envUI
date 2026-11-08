@@ -256,7 +256,7 @@ async function finishAnimations(page: Page) {
 
 /** Wait until fonts, lazy content and finite animations have finished. */
 async function settle(page: Page) {
-  // A skeleton of the site's (.site-loading, template/Loading.tsx) marks a part that is still
+  // A skeleton of the site's (.site-loading, loading/Loading.tsx) marks a part that is still
   // loading: an example, its code, a specimen, a demo, the icon list, the token reference or the
   // changelog. A tile's (.catalogue-tile-loading) waits for the tile to come into view instead.
   // A section still to show is its outline (data-site-pending, template/SectionOutline.ts) until

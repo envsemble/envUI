@@ -1,7 +1,7 @@
 import type { RoutePage } from '../navigation/SiteRoutes';
 import { loadFoundationFigures } from '../figures/foundations/FoundationFigures';
 import { loadDocument } from './PageContent';
-import { settled } from '../template/LoadOnce';
+import { settled } from '../loading/LoadOnce';
 
 /** What a page needs before it renders, loading: its content and a foundation's figures. */
 const loads = (page: RoutePage | undefined) => {

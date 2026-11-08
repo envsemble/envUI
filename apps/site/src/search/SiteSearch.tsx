@@ -18,7 +18,7 @@ import { findPage, routeOfDocument, type RoutePage } from '../navigation/SiteRou
 import { counterpartOf } from '../navigation/Counterparts';
 import { otherPart } from '../navigation/OtherPart';
 import { docsRoute, navigate, routeHref } from '../navigation/Address';
-import { canRetryLoad, reloadModule, reloadPage } from '../template/LoadBoundary';
+import { canRetryLoad, reloadModule, reloadPage } from '../loading/LoadBoundary';
 import type { SearchResult } from './SearchIndex';
 import { commandKey } from './SearchShortcut';
 

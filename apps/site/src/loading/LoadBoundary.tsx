@@ -2,7 +2,7 @@ import { Component, createRef, lazy, type ComponentType, type ReactNode } from '
 import { Alert, Button, Row } from '@envsemble/envui';
 
 /** A file that a part of a page loads on its own and that failed to arrive. */
-export class ModuleLoadError extends Error {
+class ModuleLoadError extends Error {
   constructor(cause: unknown) {
     super('A file of the catalogue failed to load', { cause });
     this.name = 'ModuleLoadError';

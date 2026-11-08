@@ -1,8 +1,8 @@
 import { lazy, Suspense, use, useState, type ComponentType } from 'react';
 import { SpecimenHeadingLevel } from './Example';
 import { SpecimenArea } from './SpecimenArea';
-import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
-import { HoldPlaceholder, StageSkeleton } from '../template/Loading';
+import { LoadBoundary, loadModule, reloadModule } from '../loading/LoadBoundary';
+import { HoldPlaceholder, StageSkeleton } from '../loading/Loading';
 import { VerdictMotion } from '../motion/MotionStage';
 
 /**

@@ -2,10 +2,10 @@ import type { ReactNode } from 'react';
 import { Column, Table, Text } from '@envsemble/envui';
 import { PlainCode } from './SimpleTable';
 import type { ExportEntry, PropEntry } from '../../../../scripts/docs/model/DocumentationTypes';
-import type { Documentation } from '../pages/PageModel';
+import type { Documentation } from './PageModel';
 // The ids search leads to, as the search index writes them.
 import { exportSection, propSection } from '../shared/SearchAnchors';
-import { useSectionOutline } from './SectionOutline';
+import { useSectionOutline } from '../template/SectionOutline';
 
 /** The same sentences as the packaged Markdown's Props section (scripts/docs/GenerateDocumentation.ts). */
 function nativeSentence(elements: string[]) {

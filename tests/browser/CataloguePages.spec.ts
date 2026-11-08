@@ -1766,14 +1766,14 @@ test('each Related tile shows the component it names, also one documented on ano
         default: { metadata?: DocumentationMetadata };
       } | null;
       const metadata = full?.default.metadata;
-      for (const { name, preview } of metadata?.avoidWhen ? related.alternativesOf(metadata) : []) {
+      for (const { name, picture } of metadata?.avoidWhen ? related.alternativesOf(metadata) : []) {
         // A page's own export shows the page's tile; a pattern or a guide is no component.
-        if (!related.pageOf(name) || !preview || preview.tile || preview.specimen) continue;
+        if (!related.pageOf(name) || !picture || picture.tile || picture.specimen) continue;
         const { default: source } = (await load(
-          `/src/examples/${preview.page}/${preview.name}.tsx?raw`,
+          `/src/examples/${picture.page}/${picture.name}.tsx?raw`,
         )) as { default: string };
         if (!new RegExp(`<${name.replace('.', '\\.')}[\\s/>.]`).test(source))
-          found.push(`${document.id}: ${name} shows ${preview.page}/${preview.name}`);
+          found.push(`${document.id}: ${name} shows ${picture.page}/${picture.name}`);
       }
     }
     return [...new Set(found)];

@@ -1,6 +1,6 @@
 import { Component, createRef, type ReactNode } from 'react';
 import { Alert, Button, Link, Column } from '@envsemble/envui';
-import { errorMessage, focusDropped, focusedElement, reloadPage } from '../template/LoadBoundary';
+import { errorMessage, focusDropped, focusedElement, reloadPage } from '../loading/LoadBoundary';
 import { SiteBanner } from './SiteBanner';
 import { homeRoute, routeHref } from '../navigation/Address';
 

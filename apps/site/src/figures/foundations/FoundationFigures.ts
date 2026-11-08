@@ -1,6 +1,6 @@
 import { use, type ComponentType } from 'react';
 import type { LegendEntry } from './Topic';
-import { loadOnce } from '../../template/LoadOnce';
+import { loadOnce } from '../../loading/LoadOnce';
 
 /**
  * A foundation's figure: the picture alone, which the page's

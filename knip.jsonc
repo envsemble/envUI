@@ -86,7 +86,7 @@
         "src/pages/Documentation.tsx": ["exports"],
         "src/pages/GuideDocument.tsx": ["exports"],
         "src/shared/SearchTerms.ts": ["exports"],
-        "src/template/LoadBoundary.tsx": ["exports"],
+        "src/loading/LoadBoundary.tsx": ["exports"],
         "src/template/Provides.ts": ["exports"],
         "src/template/WhenToUse.tsx": ["exports"],
         "src/theme/DisplayStorage.ts": ["exports"],

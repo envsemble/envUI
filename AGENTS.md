@@ -96,9 +96,12 @@ One word for each thing the site shows, and one folder in `apps/site/src` for ea
 | ------------- | --------------------------------------------------------------- | ---------------------------------------------------- |
 | example       | A page's usage file, live with its code, placed by `figure=`    | `examples/<page>/`                                   |
 | specimen      | A picture of the catalogue's own, with no code                  | `specimens/<page>/`                                  |
-| tile          | A gallery's small live picture of a page                        | `tiles/`                                             |
+| tile          | A gallery's small live picture of a page                        | `tiles/`; its stage in `figures/TileStage.tsx`       |
 | figure        | The frame that shows an example or a specimen on a page         | `figures/`; a foundation's in `figures/foundations/` |
+| fit           | Drawing a tile's or a figure's picture to fit its stage         | `fit/`                                               |
 | motion        | Scripted playback on a stage, where a tile or figure plays live | `motion/`                                            |
+| loading       | Skeletons, load boundaries and retries while a part loads       | `loading/`                                           |
+| template      | The sections of a component or pattern page, in their order     | `template/`                                          |
 | page          | A route's page in the catalogue or the Docs, and its data       | `pages/`                                             |
 | route         | Addresses old and new, the rail, drawers, trails and the pager  | `navigation/`                                        |
 | banner        | A page's banner, contents, footer and failure                   | `layout/`                                            |
