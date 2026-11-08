@@ -1,3 +1,6 @@
+'use client';
+
+import { Menu as BaseMenu } from '@base-ui/react/menu';
 import type { ComponentPropsWithRef, ReactNode, Ref } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { Grid } from '../../foundations/Layout.js';
@@ -10,6 +13,16 @@ import {
 } from '../../internal/PopupSurface.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
+
+/**
+ * The Base UI parts of a menu's popup, for Menu.Root, Menu.Submenu, Menubar.Menu and a contained
+ * ContextMenu; a ContextMenu over the window takes BaseContextMenu's.
+ */
+export const menuParts = {
+  Portal: BaseMenu.Portal,
+  Positioner: BaseMenu.Positioner,
+  Popup: BaseMenu.Popup,
+};
 
 /**
  * Renders a menu popup element with, when given, its own name. Base UI names a menu after its

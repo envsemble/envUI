@@ -2,7 +2,13 @@
 
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
-import { useRef, type ComponentPropsWithRef, type KeyboardEvent, type ReactNode } from 'react';
+import {
+  useRef,
+  type ComponentPropsWithRef,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
+} from 'react';
 import { IconButton } from '../actions/Button.js';
 import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
@@ -159,16 +165,6 @@ export function DocumentTabs({
     if (event.altKey || event.ctrlKey || event.metaKey) event.preventBaseUIHandler?.();
   }
 
-  function onTabKeyDown(event: KeyboardEvent<HTMLElement>, id: string) {
-    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    // Backspace too, for keyboards without a forward Delete key.
-    if (event.key !== 'Delete' && event.key !== 'Backspace') return;
-    event.preventDefault();
-    // A held key closes one tab, not the tab after it as each repeat arrives.
-    if (event.repeat) return;
-    onClose(id);
-  }
-
   const strip = (
     <BaseTabs.List
       ref={list}
@@ -181,61 +177,23 @@ export function DocumentTabs({
       data-reordering={flag(drag)}
       onKeyDown={onListKeyDown}
     >
-      {items.map((item) => {
-        const active = item.value === value;
-        return (
-          // The item lays out the tab and its close button side by side, so the close button
-          // isn't nested in the tab. It is a pointer's affordance: the keyboard closes a tab with
-          // Delete or Backspace, as aria-keyshortcuts says, or from the context menu.
-          <div
-            key={item.value}
-            className="env-document-tabs-item"
-            data-active={flag(active)}
-            data-moving={drag?.id === item.value ? 'pointer' : undefined}
-            data-drop={
-              item.value === dropBefore ? 'before' : item.value === dropAfter ? 'after' : undefined
-            }
-            onPointerDown={(event) => onItemPointerDown(event, item.value)}
-            onMouseDown={(event) => {
-              // A middle press would otherwise start autoscrolling.
-              if (event.button === 1) event.preventDefault();
-            }}
-            onAuxClick={(event) => {
-              if (event.button !== 1) return;
-              event.preventDefault();
-              onClose(item.value);
-            }}
-          >
-            <BaseTabs.Tab
-              value={item.value}
-              className="env-document-tabs-tab"
-              // The label names the tab, whatever its icon.
-              aria-label={item.label}
-              aria-controls={active ? panelId : undefined}
-              aria-keyshortcuts="Delete Backspace"
-              title={item.tooltip ?? item.label}
-              tabIndex={item.value === focusable ? 0 : -1}
-              data-tab-id={item.value}
-              data-preview={flag(item.preview)}
-              onDoubleClick={() => onPin?.(item.value)}
-              onKeyDown={(event: KeyboardEvent<HTMLElement>) => onTabKeyDown(event, item.value)}
-            >
-              {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
-              <span className="env-document-tabs-tab-label">{item.label}</span>
-            </BaseTabs.Tab>
-            <IconButton
-              variant="ghost"
-              icon={<IconClose />}
-              aria-label={closeName(item.label)}
-              aria-hidden
-              tabIndex={-1}
-              title={closeName(item.label)}
-              className="env-document-tabs-close"
-              onClick={() => onClose(item.value)}
-            />
-          </div>
-        );
-      })}
+      {items.map((item) => (
+        <DocumentTab
+          key={item.value}
+          item={item}
+          active={item.value === value}
+          focusable={item.value === focusable}
+          panelId={panelId}
+          closeName={closeName}
+          moving={drag?.id === item.value}
+          drop={
+            item.value === dropBefore ? 'before' : item.value === dropAfter ? 'after' : undefined
+          }
+          onPointerDown={(event) => onItemPointerDown(event, item.value)}
+          onClose={onClose}
+          onPin={onPin}
+        />
+      ))}
     </BaseTabs.List>
   );
 
@@ -263,39 +221,25 @@ export function DocumentTabs({
             // Without onCloseAll, only a tab offers a menu.
             if (!onTab && !onCloseAll) return null;
             return (
-              <>
-                {onTab && (
-                  <Menu.Item
-                    onClick={() => {
-                      closeFocus.onCloseFromMenu();
-                      onClose(id);
-                    }}
-                  >
-                    {closeName(tab.getAttribute('aria-label') ?? '')}
-                  </Menu.Item>
-                )}
-                {onTab && onReorder && (
-                  <>
-                    <Menu.Item
-                      onClick={() => moveTab(id, 'left')}
-                      disabled={moveTarget(id, 'left') < 0}
-                    >
-                      {messages.moveLeft}
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() => moveTab(id, 'right')}
-                      disabled={moveTarget(id, 'right') < 0}
-                    >
-                      {messages.moveRight}
-                    </Menu.Item>
-                  </>
-                )}
-                {onCloseAll && (
-                  <Menu.Item onClick={onCloseAll} disabled={items.length === 0}>
-                    {closeAllLabel ?? messages.closeAll}
-                  </Menu.Item>
-                )}
-              </>
+              <TabMenuItems
+                tab={onTab ? { id, label: tab.getAttribute('aria-label') ?? '' } : undefined}
+                closeName={closeName}
+                onClose={(tabId) => {
+                  closeFocus.onCloseFromMenu();
+                  onClose(tabId);
+                }}
+                onMove={onReorder && moveTab}
+                canMove={(tabId, side) => moveTarget(tabId, side) >= 0}
+                closeAll={
+                  onCloseAll && {
+                    onClick: onCloseAll,
+                    label: closeAllLabel ?? messages.closeAll,
+                    disabled: items.length === 0,
+                  }
+                }
+                moveLeftLabel={messages.moveLeft}
+                moveRightLabel={messages.moveRight}
+              />
             );
           }}
         >
@@ -320,5 +264,139 @@ export function DocumentTabs({
         )}
       </BaseTabs.Root>
     </DirectionProvider>
+  );
+}
+
+/** Whether a key closes the focused tab: Delete, or Backspace for keyboards without a forward Delete key. */
+function closesTab(event: KeyboardEvent<HTMLElement>) {
+  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return false;
+  if (event.key !== 'Delete' && event.key !== 'Backspace') return false;
+  event.preventDefault();
+  // A held key closes one tab, not the tab after it as each repeat arrives.
+  return !event.repeat;
+}
+
+/**
+ * One document's tab beside its close button. The item lays the two out side by side, so the close
+ * button isn't nested in the tab. It is a pointer's affordance: the keyboard closes a tab with
+ * Delete or Backspace, as aria-keyshortcuts says, or from the context menu.
+ */
+function DocumentTab({
+  item,
+  active,
+  focusable,
+  panelId,
+  closeName,
+  moving,
+  drop,
+  onPointerDown,
+  onClose,
+  onPin,
+}: Pick<DocumentTabsProps, 'panelId' | 'onClose' | 'onPin'> & {
+  item: DocumentTabsItem;
+  active: boolean;
+  /** The tab that Tab reaches in the strip. */
+  focusable: boolean;
+  closeName: (label: string) => string;
+  /** The tab is being dragged. */
+  moving: boolean;
+  /** The side of the tab a dragged tab would drop on, where it would drop beside it. */
+  drop: 'before' | 'after' | undefined;
+  onPointerDown: (event: PointerEvent<HTMLDivElement>) => void;
+}) {
+  return (
+    <div
+      className="env-document-tabs-item"
+      data-active={flag(active)}
+      data-moving={moving ? 'pointer' : undefined}
+      data-drop={drop}
+      onPointerDown={onPointerDown}
+      onMouseDown={(event) => {
+        // A middle press would otherwise start autoscrolling.
+        if (event.button === 1) event.preventDefault();
+      }}
+      onAuxClick={(event) => {
+        if (event.button !== 1) return;
+        event.preventDefault();
+        onClose(item.value);
+      }}
+    >
+      <BaseTabs.Tab
+        value={item.value}
+        className="env-document-tabs-tab"
+        // The label names the tab, whatever its icon.
+        aria-label={item.label}
+        aria-controls={active ? panelId : undefined}
+        aria-keyshortcuts="Delete Backspace"
+        title={item.tooltip ?? item.label}
+        tabIndex={focusable ? 0 : -1}
+        data-tab-id={item.value}
+        data-preview={flag(item.preview)}
+        onDoubleClick={() => onPin?.(item.value)}
+        onKeyDown={(event: KeyboardEvent<HTMLElement>) => {
+          if (closesTab(event)) onClose(item.value);
+        }}
+      >
+        {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
+        <span className="env-document-tabs-tab-label">{item.label}</span>
+      </BaseTabs.Tab>
+      <IconButton
+        variant="ghost"
+        icon={<IconClose />}
+        aria-label={closeName(item.label)}
+        aria-hidden
+        tabIndex={-1}
+        title={closeName(item.label)}
+        className="env-document-tabs-close"
+        onClick={() => onClose(item.value)}
+      />
+    </div>
+  );
+}
+
+/**
+ * The context menu's items: on a tab, Close and, where the tabs reorder, Move left and Move right;
+ * Close all tabs where the application offers it.
+ */
+function TabMenuItems({
+  tab,
+  closeName,
+  onClose,
+  onMove,
+  canMove,
+  closeAll,
+  moveLeftLabel,
+  moveRightLabel,
+}: {
+  /** The tab the menu opened on, if it opened on one. */
+  tab: { id: string; label: string } | undefined;
+  closeName: (label: string) => string;
+  onClose: (id: string) => void;
+  /** Moves a tab one place on screen, where the tabs reorder. */
+  onMove: ((id: string, side: 'left' | 'right') => void) | undefined;
+  canMove: (id: string, side: 'left' | 'right') => boolean;
+  closeAll: { onClick: () => void; label: string; disabled: boolean } | undefined;
+  moveLeftLabel: string;
+  moveRightLabel: string;
+}) {
+  return (
+    <>
+      {tab && <Menu.Item onClick={() => onClose(tab.id)}>{closeName(tab.label)}</Menu.Item>}
+      {tab && onMove && (
+        <>
+          <Menu.Item onClick={() => onMove(tab.id, 'left')} disabled={!canMove(tab.id, 'left')}>
+            {moveLeftLabel}
+          </Menu.Item>
+          <Menu.Item onClick={() => onMove(tab.id, 'right')} disabled={!canMove(tab.id, 'right')}>
+            {moveRightLabel}
+          </Menu.Item>
+        </>
+      )}
+      {closeAll && (
+        <Menu.Item onClick={closeAll.onClick} disabled={closeAll.disabled}>
+          {closeAll.label}
+        </Menu.Item>
+      )}
+    </>
   );
 }

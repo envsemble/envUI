@@ -16,26 +16,20 @@ import {
   type Ref,
   type TouchEvent,
 } from 'react';
-import { MenuPopup } from './internal/MenuPopup.js';
+import { MenuPopup, menuParts } from './internal/MenuPopup.js';
 import type {
   OpenChangeDetails as MenuOpenChangeDetails,
   OpenChangeReason as MenuOpenChangeReason,
 } from './internal/menuOpenChange.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { isRightToLeft } from '../internal/direction.js';
+import { useOpenState } from '../internal/useOpenState.js';
 
 /** The Base UI parts of a context menu's popup. */
 const contextMenuParts = {
   Portal: BaseContextMenu.Portal,
   Positioner: BaseContextMenu.Positioner,
   Popup: BaseContextMenu.Popup,
-};
-
-/** The Base UI parts of a contained context menu's popup: a menu's, which needn't be modal. */
-const containedMenuParts = {
-  Portal: BaseMenu.Portal,
-  Positioner: BaseMenu.Positioner,
-  Popup: BaseMenu.Popup,
 };
 
 /** What a context menu's onOpenChange receives beside the requested state: a menu's details. */
@@ -88,6 +82,29 @@ const keyboardFollowUp = 500;
 /** A browser context-menu key event: the ContextMenu key or Shift+F10. */
 function isContextMenuKey(event: KeyboardEvent) {
   return event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10');
+}
+
+/**
+ * Whether the content offers a menu on an element: content that renders nothing, such as null,
+ * undefined, false or '', offers none, and a content function returning it for an element offers
+ * none there.
+ */
+function offersMenu(content: ContextMenuProps['content'], element: Element | null) {
+  const node = contentFor(content, element);
+  return node != null && node !== false && node !== '';
+}
+
+/** The menu's content for the element it opens on. */
+function contentFor(content: ContextMenuProps['content'], element: Element | null) {
+  return typeof content === 'function' ? content(element) : content;
+}
+
+/** The element a context-menu key opens the menu on: the focused one, or its active descendant. */
+function keyboardTarget(event: KeyboardEvent<Element>) {
+  const focused = event.target instanceof Element ? event.target : event.currentTarget;
+  const descendantId = focused.getAttribute('aria-activedescendant');
+  const descendant = descendantId ? focused.ownerDocument.getElementById(descendantId) : null;
+  return descendant ?? focused;
 }
 
 function pointAnchor(point: ContextMenuPoint) {
@@ -154,9 +171,8 @@ function WindowContextMenu({
   ref,
   style,
 }: ContextMenuProps) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const [open, setOpenState] = useOpenState({ open: controlledOpen, onOpenChange });
   const portal = usePortalContainer();
-  const open = controlledOpen ?? uncontrolledOpen;
   const [target, setTarget] = useState<Element | null>(null);
   const [keyboardAnchor, setKeyboardAnchor] = useState<ReturnType<typeof elementAnchor> | null>(
     null,
@@ -165,17 +181,10 @@ function WindowContextMenu({
   // the menu at the pointer.
   const keyboardOpenedAt = useRef(Number.NEGATIVE_INFINITY);
   const region = useRef<HTMLDivElement>(null);
-  // Content that renders nothing, such as null, undefined, false or '', offers no menu: a content
-  // function returning it for an element offers none there.
-  const offersMenu = (element: Element | null) => {
-    const node = typeof content === 'function' ? content(element) : content;
-    return node != null && node !== false && node !== '';
-  };
 
   function setOpen(next: boolean, reason: MenuOpenChangeReason = 'trigger-press') {
     if (!next) keyboardOpenedAt.current = Number.NEGATIVE_INFINITY;
-    if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next, { reason });
+    setOpenState(next, { reason });
   }
 
   function openAtPointer(event: MouseEvent<Element> & { preventBaseUIHandler?: () => void }) {
@@ -186,7 +195,7 @@ function WindowContextMenu({
       return;
     }
     const element = event.target instanceof Element ? event.target : null;
-    if (!offersMenu(element)) {
+    if (!offersMenu(content, element)) {
       // Where no menu is offered, the browser keeps its own. Base UI's trigger also cancels every
       // contextmenu event inside the region from a listener on the document, so the event stops
       // here, before it leaves React's root. Listeners of the application's own on the document
@@ -203,7 +212,7 @@ function WindowContextMenu({
   // A long press where no menu is offered starts no timer to open one.
   function checkTouch(event: TouchEvent<Element> & { preventBaseUIHandler?: () => void }) {
     if (disabled) return;
-    if (!offersMenu(event.target instanceof Element ? event.target : null))
+    if (!offersMenu(content, event.target instanceof Element ? event.target : null))
       event.preventBaseUIHandler?.();
   }
 
@@ -217,11 +226,8 @@ function WindowContextMenu({
 
   function openFromKeyboard(event: KeyboardEvent<Element>) {
     if (disabled || !isContextMenuKey(event)) return;
-    const focused = event.target instanceof Element ? event.target : event.currentTarget;
-    const descendantId = focused.getAttribute('aria-activedescendant');
-    const descendant = descendantId ? focused.ownerDocument.getElementById(descendantId) : null;
-    const element = descendant ?? focused;
-    if (!offersMenu(element)) return;
+    const element = keyboardTarget(event);
+    if (!offersMenu(content, element)) return;
     event.preventDefault();
     keyboardOpenedAt.current = performance.now();
     setTarget(element);
@@ -261,7 +267,7 @@ function WindowContextMenu({
         popupRef={ref}
         popupProps={{ style }}
       >
-        {typeof content === 'function' ? content(target) : content}
+        {contentFor(content, target)}
       </MenuPopup>
     </BaseContextMenu.Root>
   );
@@ -285,29 +291,23 @@ function ContainedContextMenu({
   style,
 }: ContextMenuProps) {
   const portal = usePortalContainer();
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const open = controlledOpen ?? uncontrolledOpen;
+  const [open, setOpenState] = useOpenState({ open: controlledOpen, onOpenChange });
   const [target, setTarget] = useState<Element | null>(null);
   const [anchor, setAnchor] = useState<{
     at: ReturnType<typeof pointOnElement> | ReturnType<typeof elementAnchor>;
     pointer: boolean;
   } | null>(null);
   const region = useRef<HTMLElement>(null);
-  const offersMenu = (element: Element | null) => {
-    const node = typeof content === 'function' ? content(element) : content;
-    return node != null && node !== false && node !== '';
-  };
 
   function setOpen(next: boolean, reason: MenuOpenChangeReason = 'trigger-press') {
-    if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next, { reason });
+    setOpenState(next, { reason });
   }
 
   function openAtPointer(event: MouseEvent<Element>) {
     if (disabled) return;
     const element = event.target instanceof Element ? event.target : null;
     // Where no menu is offered, the browser keeps its own.
-    if (!offersMenu(element)) return;
+    if (!offersMenu(content, element)) return;
     event.preventDefault();
     setTarget(element);
     // The page around a contained menu goes on scrolling, so the point is the element's, not the
@@ -321,11 +321,8 @@ function ContainedContextMenu({
 
   function openFromKeyboard(event: KeyboardEvent<Element>) {
     if (disabled || !isContextMenuKey(event)) return;
-    const focused = event.target instanceof Element ? event.target : event.currentTarget;
-    const descendantId = focused.getAttribute('aria-activedescendant');
-    const descendant = descendantId ? focused.ownerDocument.getElementById(descendantId) : null;
-    const element = descendant ?? focused;
-    if (!offersMenu(element)) return;
+    const element = keyboardTarget(event);
+    if (!offersMenu(content, element)) return;
     event.preventDefault();
     setTarget(element);
     setAnchor({ at: elementAnchor(element), pointer: false });
@@ -365,7 +362,7 @@ function ContainedContextMenu({
     >
       {regionElement}
       <MenuPopup
-        parts={containedMenuParts}
+        parts={menuParts}
         label={label}
         trigger={region}
         anchor={at}
@@ -377,7 +374,7 @@ function ContainedContextMenu({
         popupRef={ref}
         popupProps={{ style }}
       >
-        {typeof content === 'function' ? content(target) : content}
+        {contentFor(content, target)}
       </MenuPopup>
     </BaseMenu.Root>
   );

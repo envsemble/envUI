@@ -55,11 +55,12 @@ after(async () => {
   if (consumerDirectory) await rm(consumerDirectory, { recursive: true, force: true });
 });
 
-test('the package ships the config, its token names and its documentation, and nothing else', () => {
+test('the package ships the config, its color policy, its token names and its documentation, and nothing else', () => {
   const files = packed.files.map(({ path }) => path.replaceAll('\\', '/')).sort();
   assert.deepEqual(files, [
     'CHANGELOG.md',
     'README.md',
+    'colorPolicy.js',
     'data/tokens.json',
     'index.js',
     'package.json',

@@ -9,27 +9,20 @@
 // the view, the wheel and hovering render nothing; the planes render when the page's geometry
 // changes, and copy their surfaces once it settles.
 
-import {
-  memo,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type RefObject,
-} from 'react';
+import { memo, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import type { NodeData, Snapshot } from '../model.js';
-import { angles, fitted, useCamera, useOrbit, type Angle } from './camera.js';
+import { useCamera, useOrbit } from './camera.js';
 import type { Side } from './Controls.js';
 import { Frame, type FrameSize } from './Frame.js';
 import { Legend } from './Legend.js';
 import { NodeHoverCard, Ruler } from './NodeHints.js';
 import { PerformancePanel } from './PerformancePanel.js';
 import { Plane, SurfaceCache } from './Plane.js';
-import { devStats } from './stats.js';
+import { countViewRender } from './stats.js';
 import type { LivePage } from './useLivePage.js';
 import { ViewCorners, ViewToolbar, type ShowOptions } from './ViewToolbar.js';
+import { usePlaneHover } from './usePlaneHover.js';
+import { useViewFit } from './useViewFit.js';
 import { useViewWheel } from './useViewWheel.js';
 import { flag } from '../../internal/flag.js';
 
@@ -67,6 +60,34 @@ function subtreeOf(snapshot: Snapshot, key: number): Set<number> {
   return keys;
 }
 
+/** The hatching that the planes' padding and gaps are drawn with, which they name by id. */
+function SpacingPatterns() {
+  return (
+    <svg aria-hidden="true" width="0" height="0" style={{ position: 'absolute' }}>
+      <defs>
+        <pattern
+          id="env-dev-padding"
+          patternUnits="userSpaceOnUse"
+          width="7"
+          height="7"
+          patternTransform="rotate(45)"
+        >
+          <rect width="3" height="7" fill="var(--env-dev-tint-butter)" fillOpacity="0.45" />
+        </pattern>
+        <pattern
+          id="env-dev-gap"
+          patternUnits="userSpaceOnUse"
+          width="6"
+          height="6"
+          patternTransform="rotate(-45)"
+        >
+          <rect width="2" height="6" fill="var(--env-dev-tint-seafoam)" fillOpacity="0.3" />
+        </pattern>
+      </defs>
+    </svg>
+  );
+}
+
 const defaultShow: ShowOptions = {
   names: true,
   spacing: true,
@@ -85,17 +106,14 @@ export const View3D = memo(function View3D({
   onFrameChange,
   root,
 }: View3DProps) {
-  devStats.viewRenders += 1;
+  countViewRender();
   const snapshot = live.geometry;
   const problemsByKey = live.full?.problemsByKey;
   const frameOn = frame.width !== null || frame.height !== null;
   const [show, setShow] = useState(defaultShow);
   const [levels, setLevels] = useState({ spacing: 48, from: 0, to: null as number | null });
-  const [hovered, setHovered] = useState<number | null>(null);
   const [dragging, setDragging] = useState(false);
   const [debug, setDebug] = useState(false);
-  // The angle the view is at, which the View dropdown marks, until a drag turns it.
-  const [angle, setAngle] = useState<Angle | null>('tilted');
   const view = useRef<HTMLDivElement>(null);
   const card = useRef<HTMLDivElement>(null);
   // Where the pointer is in the view, where the hover card goes.
@@ -113,94 +131,20 @@ export const View3D = memo(function View3D({
   const camera = useCamera(lift);
   const scene = camera.scene;
 
-  /** The camera that shows the whole page at an angle, centred in the view. */
-  const fittedAt = useCallback((at: { rx: number; ry: number }) => {
-    const current = snapshotRef.current;
-    const room = view.current?.getBoundingClientRect();
-    if (!current || !room) return null;
-    return fitted(at, current.root.box, room);
-  }, []);
-  /** Turns the view to an angle, with the whole page in view. */
-  const turnTo = useCallback(
-    (next: Angle) => {
-      const target = fittedAt(angles[next]);
-      if (!target) return;
-      camera.glideTo(target);
-      setAngle(next);
-    },
-    [camera, fittedAt],
-  );
-
-  // The first measurement fits the page into the view; so does a new size from the Responsive
-  // dropdown, once the page is measured at it, at the angle the view is at. Dragging the frame
-  // keeps the camera where it is.
-  const fittedOnce = useRef(false);
-  const refitFrom = useRef<{ w: number; h: number } | null>(null);
-  useLayoutEffect(() => {
-    if (!snapshot) return;
-    const box = snapshot.root.box;
-    if (!fittedOnce.current) {
-      fittedOnce.current = true;
-      const target = fittedAt(angles.tilted);
-      if (target) camera.set(target);
-    } else if (
-      refitFrom.current &&
-      (refitFrom.current.w !== box.w || refitFrom.current.h !== box.h)
-    ) {
-      refitFrom.current = null;
-      const target = fittedAt(camera.camera.current);
-      if (target) camera.glideTo(target);
-    }
-  }, [snapshot, camera, fittedAt]);
-  const changeFrameFromMenu = useCallback(
-    (next: FrameSize) => {
-      const box = snapshotRef.current?.root.box;
-      refitFrom.current = box ? { w: box.w, h: box.h } : null;
-      onFrameChange(next);
-    },
-    [onFrameChange],
-  );
+  const { angle, setAngle, turnTo, changeFrameFromMenu } = useViewFit({
+    snapshot,
+    snapshotRef,
+    view,
+    camera,
+    onFrameChange,
+  });
 
   // Forget the copies of nodes that are gone.
   useEffect(() => {
     if (live.full) surfaces.keep(new Set(live.full.snapshot.nodes.map((node) => node.key)));
   }, [live.full, surfaces]);
 
-  // Hover marks planes directly: the plane under the pointer and the node the tree's pointer
-  // rests on.
-  const hoverKeys = useRef<{ pointer: number | null; tree: number | null }>({
-    pointer: null,
-    tree: null,
-  });
-  const paintHover = useCallback(() => {
-    const element = scene.current;
-    if (!element) return;
-    const { pointer: under, tree } = hoverKeys.current;
-    for (const plane of Array.from(element.querySelectorAll<HTMLElement>('[data-hovered]')))
-      if (Number(plane.dataset.plane) !== under && Number(plane.dataset.plane) !== tree)
-        delete plane.dataset.hovered;
-    for (const key of [under, tree])
-      if (key !== null) {
-        const plane = element.querySelector<HTMLElement>(`[data-plane="${key}"]`);
-        if (plane) plane.dataset.hovered = '';
-      }
-  }, [scene]);
-  useLayoutEffect(() => {
-    highlight.current = (key) => {
-      hoverKeys.current.tree = key;
-      paintHover();
-    };
-  }, [highlight, paintHover]);
-  // Planes that mount afresh, such as after Only the selected, take the mark too.
-  useLayoutEffect(paintHover);
-  const hoveredRef = useRef(hovered);
-  hoveredRef.current = hovered;
-  const hover = (key: number | null) => {
-    if (key === hoveredRef.current) return;
-    hoverKeys.current.pointer = key;
-    paintHover();
-    setHovered(key);
-  };
+  const { hovered, hoveredRef, hover } = usePlaneHover({ scene, highlightRef: highlight });
 
   useViewWheel({ view, root, camera, snapshot: snapshotRef, hovered: hoveredRef, measured });
 
@@ -265,28 +209,7 @@ export const View3D = memo(function View3D({
       // as a picture and cancel the pointer, and dragging would stop turning the view.
       onDragStart={(event) => event.preventDefault()}
     >
-      <svg aria-hidden="true" width="0" height="0" style={{ position: 'absolute' }}>
-        <defs>
-          <pattern
-            id="env-dev-padding"
-            patternUnits="userSpaceOnUse"
-            width="7"
-            height="7"
-            patternTransform="rotate(45)"
-          >
-            <rect width="3" height="7" fill="var(--env-dev-tint-butter)" fillOpacity="0.45" />
-          </pattern>
-          <pattern
-            id="env-dev-gap"
-            patternUnits="userSpaceOnUse"
-            width="6"
-            height="6"
-            patternTransform="rotate(-45)"
-          >
-            <rect width="2" height="6" fill="var(--env-dev-tint-seafoam)" fillOpacity="0.3" />
-          </pattern>
-        </defs>
-      </svg>
+      <SpacingPatterns />
       <div ref={scene} className="env-dev-scene" style={{ width: origin.w, height: origin.h }}>
         <div className="env-dev-floor" />
         {shown.map((node) => (

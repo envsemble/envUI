@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import plugin from '../src/index.js';
 import { lintPackages, staleFiles } from '../../../scripts/build/SyncLintPackages.ts';
-import { colorTokenSuggestion } from '../src/tokens.js';
+import { colorTokenAdvice } from '../src/tokens.js';
 
 const read = (url) => JSON.parse(readFileSync(url, 'utf8'));
 const manifest = read(new URL('../package.json', import.meta.url));
@@ -70,7 +70,7 @@ test("the components that own a role, and those suggested, are envUI's when the 
       );
 });
 
-test("the token names and their helper are the repository's, copied", () => {
+test("the token names, their helper and the color policy are the repository's, copied", () => {
   const directory = lintPackages[manifest.name];
   assert.deepEqual(
     staleFiles().filter((path) => path.startsWith(`${directory}/`)),
@@ -86,9 +86,9 @@ test('every token the messages and the README name exists in the library', () =>
   const messages = [
     ...Object.values(plugin.rules).flatMap((rule) => Object.values(rule.meta.messages)),
     ...['color', 'backgroundColor', 'borderColor', 'outline', 'fill', 'boxShadow', '--brand'].map(
-      colorTokenSuggestion,
+      colorTokenAdvice,
     ),
-    colorTokenSuggestion(undefined),
+    colorTokenAdvice(undefined),
   ];
   const named = [...messages, readme].flatMap((text) => [
     ...text.matchAll(/var\((--[\w-]+)(…)?/g),

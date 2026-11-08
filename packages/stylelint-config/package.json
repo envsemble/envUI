@@ -21,6 +21,7 @@
   },
   "files": [
     "index.js",
+    "colorPolicy.js",
     "tokens.js",
     "data",
     "README.md",

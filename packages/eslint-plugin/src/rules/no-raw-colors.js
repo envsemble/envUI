@@ -1,4 +1,11 @@
-import { colorTokenSuggestion } from '../tokens.js';
+import {
+  colorFunctionNames,
+  colorSpace,
+  customPropertyName,
+  literalAlpha,
+  nestingDepth,
+} from '../colorPolicy.js';
+import { colorTokenAdvice } from '../tokens.js';
 import { documentationUrl, jsxName, propertyName, walk } from '../utilities.js';
 
 /** The CSS named colors (CSS Color 4), besides transparent and currentcolor. */
@@ -40,7 +47,7 @@ const hexColor = /(?<![\w&-])#(?:[\da-f]{8}|[\da-f]{6}|[\da-f]{3,4})(?![\w\uE000
 const builtHexColor = /(?<![\w&-])#(?=[\da-f]*\uE000)[\da-f\uE000]+(?![\w-])/gi;
 
 /** The start of a color function call. */
-const colorFunctionStart = /(?<![\w-])(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/gi;
+const colorFunctionStart = new RegExp(String.raw`(?<![\w-])(${colorFunctionNames})\(`, 'gi');
 
 /**
  * What stands for each expression of a template literal, which is read as one value: a literal
@@ -81,11 +88,11 @@ function splitTopLevel(text, separator) {
   return parts;
 }
 
-/**
- * How many levels of fallbacks are followed, a fallback's fallback being the second. The Stylelint
- * config's patterns stop at the same depth, so both read a value alike; deeper nesting is raw.
- */
-const nestingDepth = 8;
+/** One `var()`, with its fallback, if it has one, as the first group. */
+const customPropertyCall = new RegExp(
+  String.raw`^var\(\s*${customPropertyName}\s*(?:,([\s\S]*))?\)$`,
+  'i',
+);
 
 /**
  * Whether channels all come from custom properties: each one a `var()`, whose fallback, if it has
@@ -96,7 +103,7 @@ function fromCustomProperties(channels, depth = 0) {
   return splitTopLevel(channels, /[\s,]/)
     .filter((token) => token.trim())
     .every((token) => {
-      const match = /^var\(\s*--[\w-]+\s*(?:,([\s\S]*))?\)$/i.exec(token.trim());
+      const match = customPropertyCall.exec(token.trim());
       return (
         Boolean(match) &&
         (match[1] === undefined ||
@@ -105,8 +112,11 @@ function fromCustomProperties(channels, depth = 0) {
     });
 }
 
-/** A literal number or percentage, such as `0.5`, `.5` or `50%`. */
-const literalAlpha = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?%?$/i;
+/** A whole alpha that is a literal number or percentage. */
+const literalAlphaValue = new RegExp(`^${literalAlpha}$`, 'i');
+
+/** The color space `color()` names before its channels, with the space after it. */
+const leadingColorSpace = new RegExp(String.raw`^\s*${colorSpace}\s`, 'i');
 
 /**
  * Whether a color's alpha keeps it from custom properties: a literal number or percentage, or one
@@ -116,7 +126,7 @@ const literalAlpha = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?%?$/i;
 function isTokenAlpha(alpha) {
   const text = alpha.trim();
   return (
-    literalAlpha.test(text.replaceAll(expressionStandIn, '1')) ||
+    literalAlphaValue.test(text.replaceAll(expressionStandIn, '1')) ||
     (splitTopLevel(text, /[\s,]/).filter((token) => token.trim()).length === 1 &&
       fromCustomProperties(text))
   );
@@ -131,7 +141,7 @@ function isTokenAlpha(alpha) {
  */
 function isRawColorFunction(name, args) {
   if (/^\s*from\b/i.test(args)) return false;
-  let channels = name.toLowerCase() === 'color' ? args.replace(/^\s*[a-z][\w-]*\s/i, ' ') : args;
+  let channels = name.toLowerCase() === 'color' ? args.replace(leadingColorSpace, ' ') : args;
   let alpha;
   const slash = splitTopLevel(channels, /\//);
   if (slash.length > 1) [channels, alpha] = [slash[0], slash.slice(1).join('/')];
@@ -230,8 +240,7 @@ export default {
     },
     schema: [],
     messages: {
-      rawColor:
-        'Raw color {{color}} in an inline style: use an envUI color token instead, {{tokens}}, so the color follows the theme and keeps its contrast.',
+      rawColor: 'Raw color {{color}} in an inline style: {{advice}}',
     },
   },
   create(context) {
@@ -242,7 +251,7 @@ export default {
         context.report({
           node,
           messageId: 'rawColor',
-          data: { color, tokens: colorTokenSuggestion(property) },
+          data: { color, advice: colorTokenAdvice(property) },
         });
     }
 
