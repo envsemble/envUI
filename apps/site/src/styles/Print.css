@@ -1,14 +1,4 @@
-@container (width < 24rem) {
-  .docs-palette-row {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .docs-palette-label {
-    padding-inline-end: 0;
-  }
-  .docs-swatch {
-    min-block-size: var(--env-control-height-touch);
-  }
-}
+/* A printed page: its text and figures, without the site's navigation and controls. */
 @media print {
   .site-compact-controls,
   .site-sidebar,

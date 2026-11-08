@@ -2,10 +2,10 @@
    theme changing (the Colors page's figures cut instead, Foundations.css): in a nested theme in a
    figure that plays, every part's colors, fills and edges transition briefly, only while the theme
    switches (data-catalogue-theme-fading, MotionStage.tsx), so the rest of the time a part's own
-   transitions, such as a key's hover, keep their timing. The figure's nested theme only, not the page's or an
-   example stage's, which follow the reader's choice with the page, crossfading with it (below). Below envUI's
-   component layer, so a part with transitions of its own, such as a button's, keeps them. The
-   catalogue's, not envUI's. */
+   transitions, such as a key's hover, keep their timing. The figure's nested theme only, not the
+   page's or an example stage's, which follow the reader's choice with the page, crossfading with it
+   (display/DisplaySettings.css). Below envUI's component layer, so a part with transitions of its
+   own, such as a button's, keeps them. The catalogue's, not envUI's. */
 @layer env.base.catalogue-theme-fade {
   .catalogue-motion-subject[data-catalogue-theme-fading] .env-theme,
   .catalogue-motion-subject[data-catalogue-theme-fading] .env-theme *,
@@ -25,19 +25,5 @@
     .catalogue-motion-subject[data-catalogue-theme-fading] .env-theme ::after {
       transition: none;
     }
-  }
-}
-
-/* The page's own colors, a theme or a contrast chosen in the Display menu, crossfade over the whole
-   window as they change (switchColors, DisplaySettings.tsx): the view transition's old picture of
-   the page fades into the new one, in the fast motion token, so the frames between, a grey halfway
-   from light to dark, pass before they read as a dim flash. With motion reduced, there is no view
-   transition, and the colors change at once. */
-@media (prefers-reduced-motion: no-preference) {
-  ::view-transition-group(root),
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: var(--env-motion-duration-fast);
-    animation-timing-function: var(--env-motion-ease);
   }
 }

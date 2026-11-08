@@ -21,7 +21,7 @@ import { build } from 'esbuild';
 // one exception, by request: the very faint shadow its example canvases, tiles and its own cards
 // take, `--catalogue-card-shadow`, and half of it for a small card, `--catalogue-card-shadow-subtle`, and a stronger one for cards laid over one another,
 // `--catalogue-card-shadow-raised`, and the canvases' own, `--catalogue-card-shadow-recessed`, gone in the dark themes
-// (Stage.css), a device of the documentation that envUI never ships.
+// (figures/Stage.css), a device of the documentation that envUI never ships.
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const styles = join(root, 'packages/ui/src/styles');
@@ -46,8 +46,11 @@ async function devMode() {
 }
 
 async function catalogue() {
-  const folder = join(root, 'apps/site/src/styles');
-  const files = (await readdir(folder)).filter((name) => name.endsWith('.css'));
+  // Its sheets sit beside the code they style, in the folders of apps/site/src.
+  const folder = join(root, 'apps/site/src');
+  const files = (await readdir(folder, { recursive: true })).filter((name) =>
+    name.endsWith('.css'),
+  );
   return Promise.all(files.map((name) => readFile(join(folder, name), 'utf8')));
 }
 

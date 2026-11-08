@@ -3181,7 +3181,7 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * - Calendar heatmap steps mix the tone into the page by a share that depends on how many steps the
  *   data has, from 30% at the lightest to the full tone (CalendarHeatmap.tsx and .css). The
  *   lightest step of the default accent tone is measured.
- * - The catalogue's recessed canvas its examples sit on, as apps/site/src/styles/Stage.css
+ * - The catalogue's recessed canvas its examples sit on, as apps/site/src/figures/Stage.css
  *   paints it.
  *
  * The CSS is the one source of a formula it holds: the declaration under a `/* contrast: name *\/`

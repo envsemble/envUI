@@ -72,7 +72,10 @@ export const popupRoom = 5;
  */
 export const wholeRoom = 8;
 
-/** The cursor's length from its tip, in rem (Stage.css), at the scale its picture is drawn at. */
+/**
+ * The cursor's length from its tip, in rem (MotionStage.css), at the scale its picture is drawn
+ * at.
+ */
 export const cursorLength = 1.25;
 
 /** The least space, in px, between the cursor and the stage's bottom edge. */

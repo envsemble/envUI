@@ -14,15 +14,12 @@ const repository = fileURLToPath(new URL('../../', import.meta.url));
 /** The style sheets envUI ships, dev mode's and the catalogue's. */
 function styleSheets() {
   const sheets = [];
-  for (const directory of [
-    'packages/ui/src/styles',
-    'packages/ui/src/dev/ui',
-    'apps/site/src/styles',
-  ])
-    for (const name of readdirSync(join(repository, directory)))
+  // The catalogue's sheets sit beside the code they style, in the folders of apps/site/src.
+  for (const directory of ['packages/ui/src/styles', 'packages/ui/src/dev/ui', 'apps/site/src'])
+    for (const name of readdirSync(join(repository, directory), { recursive: true }))
       if (name.endsWith('.css'))
         sheets.push({
-          file: `${directory}/${name}`,
+          file: `${directory}/${name.replaceAll('\\', '/')}`,
           css: readFileSync(join(repository, directory, name), 'utf8'),
         });
   return sheets;
