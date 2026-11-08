@@ -2,7 +2,7 @@ import { useState } from 'react';
 import LinkPicker from '../../examples/markdown/LinkPicker';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const source = 'textarea.env-markdown-editor-input';

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import RunCommand from '../../examples/command-palette/RunCommand';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage, roomFor } from '../../motion/MotionStage';
+import { MotionStage, roomFor } from '../../figures/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 
 const input = '.env-command-palette-input';

@@ -1,7 +1,7 @@
 import WithoutUrls from '../../examples/breadcrumbs/WithoutUrls';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 // What a crumb shows: a link, or the current page.
 const crumbElement = ':is(.env-breadcrumbs-link, .env-breadcrumbs-current)';

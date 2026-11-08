@@ -1,7 +1,7 @@
 import { Button, Card, Text } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The card as its skeleton a moment, over two steps, as a timeline's first step is cut short as

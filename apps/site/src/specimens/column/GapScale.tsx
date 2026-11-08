@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import { Column, Row, Surface, Text, type SpaceStep } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const sizes: Record<SpaceStep, string> = {
   0: '0',

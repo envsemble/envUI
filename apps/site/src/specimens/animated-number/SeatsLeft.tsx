@@ -1,6 +1,6 @@
 import SeatsLeft from '../../examples/animated-number/SeatsLeft';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { invitingTwo } from './Seats';
 
 function Inviting() {

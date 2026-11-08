@@ -1,7 +1,7 @@
 import PageProgress from '../../examples/loading/PageProgress';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { useStayOnPage } from '../navigation/StayOnPage';
 
 const place = (href: string) => `.env-navigation-rail-item[href="${href}"]`;

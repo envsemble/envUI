@@ -1,7 +1,7 @@
 import FormatsTogether from '../../examples/color-picker/FormatsTogether';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const area = '.env-color-picker-area';
 const thumb = `${area} .env-color-picker-thumb`;

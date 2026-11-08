@@ -27,7 +27,7 @@ import {
   type OptionTable,
 } from '@docs-model/CatalogueContent';
 import { ExamplePlayback, Specimen } from './Specimen';
-import { VerdictMotion } from '../motion/MotionStage';
+import { VerdictMotion } from './MotionStage';
 import {
   useFoundationFigures,
   type FoundationFigure as Figure,

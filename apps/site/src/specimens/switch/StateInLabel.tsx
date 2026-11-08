@@ -1,6 +1,6 @@
 import StateInLabel from '../../examples/switch/StateInLabel';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { toggling } from './Toggling';
 
 const script = toggling(true);

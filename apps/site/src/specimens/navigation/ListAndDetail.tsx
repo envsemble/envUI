@@ -1,7 +1,7 @@
 import ListAndDetail from '../../examples/navigation/ListAndDetail';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { useStayOnPage } from './StayOnPage';
 
 const project = '.env-list-item:nth-child(1 of .env-list-item) a';

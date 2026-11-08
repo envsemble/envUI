@@ -1,7 +1,7 @@
 import SaveFailed from '../../examples/alert/SaveFailed';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The pointer presses Save draft: it works a moment, the save fails, and the danger alert appears

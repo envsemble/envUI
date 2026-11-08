@@ -2,7 +2,7 @@ import FrequentQuestions from '../../examples/accordion/FrequentQuestions';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const question = (index: number) =>
   `.env-accordion-item:nth-child(${index} of .env-accordion-item) .env-accordion-trigger`;

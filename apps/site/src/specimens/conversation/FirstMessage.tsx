@@ -2,7 +2,7 @@ import { useState } from 'react';
 import FirstMessage from '../../examples/conversation/FirstMessage';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const suggestion = '[data-env-layout="row"] > .env-button:nth-child(3)';

@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import NeutralForDelete from '../../examples/confirm-dialog/NeutralForDelete';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 import { useKeyboardOpening } from './KeyboardOpening';
 

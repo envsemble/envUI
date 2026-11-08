@@ -2,7 +2,7 @@ import { useState } from 'react';
 import SlashCommands from '../../examples/rich-text/SlashCommands';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const document = '.ProseMirror';
 

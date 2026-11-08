@@ -18,13 +18,13 @@ import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '@docs-model/DocumentationTypes';
 import { useVerdictFit } from '../fit/standalone/useVerdictFit';
 import { useDisplaySettings } from '../display/DisplaySettings';
-import { Playback, StageOverlays } from './Playback';
-import { useInView } from './useInView';
+import { Playback, StageOverlays } from '../motion/Playback';
+import { useInView } from '../motion/useInView';
 import { rootMotionDuration } from '../shared/RootMotionTokens';
 import { pixelTolerance, remeasure } from '../shared/Remeasure';
-import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
+import { FigureDevice, OnDevice } from './DeviceFrame';
 import { flag } from '@envui-internal/internal/flag';
-import { useBrowserStandIns } from './BrowserStandIns';
+import { useBrowserStandIns } from '../motion/BrowserStandIns';
 
 /**
  * The elements a reader can operate in a figure. A stage that has none of them stays a recording.

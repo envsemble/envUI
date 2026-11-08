@@ -1,7 +1,7 @@
 import { Column, Rating, Text } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /* The value steps up and past the end; the stars and the number snap to half steps, and stop at 5. */
 const values = [4.3, 4.6, 4.8, 5.4];

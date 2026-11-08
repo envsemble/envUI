@@ -235,7 +235,10 @@ test('a shared file runs the shared set, and a file no fixture uses runs no spec
 });
 
 test("the catalogue's playback runs the motion specs", () => {
-  for (const path of ['apps/site/src/motion/MotionStage.tsx', 'apps/site/src/motion/Autoplay.ts']) {
+  for (const path of [
+    'apps/site/src/figures/MotionStage.tsx',
+    'apps/site/src/motion/Autoplay.ts',
+  ]) {
     const selected = specs(path);
     assert.ok(selected.includes('SiteMotion') && selected.includes('Autoplay'), path);
   }

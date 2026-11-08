@@ -1,7 +1,7 @@
 import UndoInstead from '../../examples/destructive-actions/UndoInstead';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const archive = '[aria-label="Archive Website refresh"]';
 

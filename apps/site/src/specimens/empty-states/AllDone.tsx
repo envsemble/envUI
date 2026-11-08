@@ -2,7 +2,7 @@ import { useState } from 'react';
 import AllDone from '../../examples/empty-states/AllDone';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const approve = '.env-list-item:first-child .env-button';

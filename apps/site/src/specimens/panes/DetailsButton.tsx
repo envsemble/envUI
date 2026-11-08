@@ -1,6 +1,6 @@
 import DetailsButton from '../../examples/panes/DetailsButton';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { WidthSweep } from '../../motion/WidthSweep';
 import { opening, useNarrowing, widths } from './Details';
 

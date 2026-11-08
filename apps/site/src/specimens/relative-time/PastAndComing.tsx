@@ -1,7 +1,7 @@
 import PastAndComing from '../../examples/relative-time/PastAndComing';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const time = (index: number) => `.env-text:nth-child(${index}) > .env-relative-time`;
 

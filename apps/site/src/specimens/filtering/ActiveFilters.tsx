@@ -1,7 +1,7 @@
 import ActiveFilters from '../../examples/filtering/ActiveFilters';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const token = '[aria-label="Remove filter Assignee: Sam Lee"]';
 const add = '.env-button[aria-haspopup="menu"]';

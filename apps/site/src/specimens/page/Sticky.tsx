@@ -1,7 +1,7 @@
 import Sticky from '../../examples/page/Sticky';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The pointer comes over the report and turns the wheel: the sections scroll up under the header,

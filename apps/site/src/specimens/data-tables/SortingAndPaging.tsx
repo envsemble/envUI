@@ -2,7 +2,7 @@ import SortAndPaginate from '../../examples/data-tables/SortAndPaginate';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /** A column's sort button: Name is the first column, Updated the fourth. */
 const sort = (column: number) => `th:nth-child(${column}) .env-table-sort-button`;

@@ -1,7 +1,7 @@
 import OpenInPanel from '../../examples/markdown/OpenInPanel';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { keepLinksInPlace } from '../../figures/LiveExample';
 
 const link = 'a[href="/documents/launch-plan"]';

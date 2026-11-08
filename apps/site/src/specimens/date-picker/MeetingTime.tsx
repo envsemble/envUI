@@ -1,7 +1,7 @@
 import MeetingTime from '../../examples/date-picker/MeetingTime';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage, roomFor, rowsAnd } from '../../motion/MotionStage';
+import { MotionStage, roomFor, rowsAnd } from '../../figures/MotionStage';
 
 const field = '.env-date-picker-control';
 const day = (date: string) => `.env-calendar-day[data-date="${date}"]`;

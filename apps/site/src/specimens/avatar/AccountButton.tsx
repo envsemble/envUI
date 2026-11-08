@@ -1,7 +1,7 @@
 import AccountButton from '../../examples/avatar/AccountButton';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /* The pointer rests on the avatar: the name's tooltip appears, and goes as the pointer leaves. */
 const script: PointerStep[] = [

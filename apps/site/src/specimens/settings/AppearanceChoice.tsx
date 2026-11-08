@@ -3,7 +3,7 @@ import { Surface, ThemePreferenceProvider, useTheme, type ThemeScale } from '@en
 import AppearanceChoice from '../../examples/settings/AppearanceChoice';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /** Where the figure's own preference is kept, apart from the site's. */
 const storageKey = 'catalogue-appearance-figure';

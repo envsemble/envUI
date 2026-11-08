@@ -2,7 +2,7 @@ import { useState } from 'react';
 import RenameProject from '../../examples/dialog/RenameProject';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const field = '.env-dialog input';

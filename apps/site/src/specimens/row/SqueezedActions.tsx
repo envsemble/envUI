@@ -1,5 +1,5 @@
 import SqueezedActions from '../../examples/row/SqueezedActions';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { WidthSweep } from '../../motion/WidthSweep';
 import { useNarrowing, widths } from './Narrowing';
 

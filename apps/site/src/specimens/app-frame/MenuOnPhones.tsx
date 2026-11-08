@@ -2,7 +2,7 @@ import { useState } from 'react';
 import MenuOnPhones from '../../examples/app-frame/MenuOnPhones';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { WidthSweep } from '../../motion/WidthSweep';
 import { keepLinksInPlace } from '../../figures/LiveExample';
 

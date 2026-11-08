@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Column } from '@envsemble/envui';
 import FrequentFirst from '../../examples/menu/FrequentFirst';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 import { useOpenedByKeyboard } from './OpenedByKeyboard';
 

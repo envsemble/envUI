@@ -1,5 +1,5 @@
 import NoWayToDetails from '../../examples/panes/NoWayToDetails';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { WidthSweep } from '../../motion/WidthSweep';
 import { useNarrowing, widths } from './Details';
 

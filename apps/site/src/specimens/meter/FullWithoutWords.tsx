@@ -1,5 +1,5 @@
 import { Button, Card, Column, Meter } from '@envsemble/envui';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { Refilling, useAssigned, useSeats } from './SeatsFilling';
 
 function Plan() {

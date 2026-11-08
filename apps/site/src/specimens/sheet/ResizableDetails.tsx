@@ -1,7 +1,7 @@
 import ResizableDetails from '../../examples/sheet/ResizableDetails';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const handle = '.env-sheet-resize-handle';
 const viewport = '.env-sheet-viewport';

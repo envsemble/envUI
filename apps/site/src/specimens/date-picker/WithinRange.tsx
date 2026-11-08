@@ -1,7 +1,7 @@
 import WithinRange from '../../examples/date-picker/WithinRange';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage, rowsAnd } from '../../motion/MotionStage';
+import { MotionStage, rowsAnd } from '../../figures/MotionStage';
 
 const next = '.env-calendar-next';
 const previous = '.env-calendar-previous';

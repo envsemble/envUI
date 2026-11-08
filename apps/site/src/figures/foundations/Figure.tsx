@@ -7,7 +7,7 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { Text } from '@envsemble/envui';
 import { ExampleCode } from '../LiveExample';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../MotionStage';
 
 /**
  * The example file whose source a foundation's figure shows as its code: the file of its name in

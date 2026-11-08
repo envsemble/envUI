@@ -4,7 +4,7 @@ import { IconLock } from '@envsemble/envui/icons/Lock';
 import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 import { IconWifiOff } from '@envsemble/envui/icons/WifiOff';
 import { useTimeline } from '../../motion/Timeline';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 /** The three reasons a whole page can't show, each with its own way on. */

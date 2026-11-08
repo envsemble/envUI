@@ -2,7 +2,7 @@ import { useState } from 'react';
 import IconOnly from '../../examples/command-palette/IconOnly';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The pointer rests on the search icon in the header: its tooltip opens below it with the label and

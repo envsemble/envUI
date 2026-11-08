@@ -3,7 +3,7 @@ import { useModifierKey, type ModifierKey } from '@envsemble/envui';
 import InSidebar from '../../examples/command-palette/InSidebar';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 
 const input = '.env-command-palette-input';

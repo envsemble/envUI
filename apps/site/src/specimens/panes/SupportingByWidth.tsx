@@ -2,7 +2,7 @@ import { useState } from 'react';
 import SupportingByWidth from '../../examples/panes/SupportingByWidth';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { WidthSweep } from '../../motion/WidthSweep';
 
 /** The frame's widths, in rem: compact, the still; medium; and expanded, side by side. */
