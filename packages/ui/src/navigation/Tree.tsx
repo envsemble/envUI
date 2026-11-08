@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
@@ -305,14 +304,12 @@ export function Tree<Item extends TreeItem>({
       <div
         ref={rowsElement}
         className="env-tree-rows"
-        style={
-          {
-            blockSize: items.length * rowHeight,
-            '--env-tree-shift': `${shift}px`,
-            // The starting shift applies at once; only the way back to 0 eases.
-            transition: shift ? 'none' : undefined,
-          } as CSSProperties
-        }
+        style={{
+          blockSize: items.length * rowHeight,
+          '--env-tree-shift': `${shift}px`,
+          // The starting shift applies at once; only the way back to 0 eases.
+          transition: shift ? 'none' : undefined,
+        }}
       >
         {rows}
       </div>

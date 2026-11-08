@@ -3,7 +3,12 @@
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { createContext, type ReactNode, type RefObject } from 'react';
 import { classNames } from './classNames.js';
-import { PopupSurface, type PopupSide, type PopupSurfaceProps } from './PopupSurface.js';
+import {
+  PopupSurface,
+  type PopupElementProps,
+  type PopupSide,
+  type PopupSurfaceProps,
+} from './PopupSurface.js';
 import '../styles/Base.css';
 import '../styles/Tooltip.css';
 
@@ -42,6 +47,7 @@ export function TooltipPopup({
   anchor,
   sideOffset = 8,
   positionerClassName,
+  className,
   popupProps,
 }: {
   content: ReactNode;
@@ -56,10 +62,11 @@ export function TooltipPopup({
   sideOffset?: number;
   /** The owner's positioner class, beside env-tooltip-positioner. */
   positionerClassName?: string;
-  /** More props for the popup element: id, ref, className, style and data attributes. */
-  popupProps?: Record<string, unknown>;
+  /** The owner's popup class, beside env-tooltip. */
+  className?: string;
+  /** More props for the popup element, such as id, ref and style. */
+  popupProps?: PopupElementProps;
 }) {
-  const { className, ...rest } = popupProps ?? {};
   return (
     <PopupSurface
       parts={parts}
@@ -69,9 +76,8 @@ export function TooltipPopup({
       anchor={anchor}
       sideOffset={sideOffset}
       positionerClassName={classNames('env-tooltip-positioner', positionerClassName)}
-      // popupProps are the popup's props, loosely typed; its className is a string.
-      className={classNames('env-tooltip', className as string | undefined)}
-      popupProps={{ role: 'tooltip', ...rest }}
+      className={classNames('env-tooltip', className)}
+      popupProps={{ role: 'tooltip', ...popupProps }}
     >
       {content}
     </PopupSurface>

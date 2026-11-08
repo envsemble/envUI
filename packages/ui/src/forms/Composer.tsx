@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type KeyboardEvent,
   type ReactNode,
   type RefObject,
@@ -240,13 +239,11 @@ export function Composer({
     <Grid
       gap={2}
       className={classNames('env-composer', className)}
-      style={
-        {
-          '--env-composer-min-rows': rows,
-          '--env-composer-max-rows': maximumRows,
-          ...style,
-        } as CSSProperties
-      }
+      style={{
+        '--env-composer-min-rows': rows,
+        '--env-composer-max-rows': maximumRows,
+        ...style,
+      }}
       data-running={flag(running)}
       data-disabled={flag(disabled)}
       data-start={flag(start != null)}

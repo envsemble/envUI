@@ -12,7 +12,7 @@ export default function SmallToolbar() {
     >
       <DatePicker
         size="sm"
-        showLabel={false}
+        visibleLabel={false}
         aria-label="Due"
         placeholder="Due"
         granularity="minute"

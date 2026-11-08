@@ -38,9 +38,14 @@ test.describe('PortalContainer, contained', () => {
     expect(await insidePreview(page, '.env-dialog', 'dialog-preview')).toBe(true);
     // No focus moved in, and the page neither hides behind a modal layer nor stops scrolling.
     // Base UI focuses a menu as it opens; waiting past the 500 ms in which a contained popup sends
-    // that focus back shows that it stays out.
+    // that focus back (openingFocusWindow in PopupSurface.tsx) shows that it stays out.
     await page.waitForTimeout(600);
     expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+    // After that window, focus moved in from outside the container stays.
+    const firstItem = layer.getByRole('menuitem').first();
+    await firstItem.focus();
+    await expect(firstItem).toBeFocused();
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
     await expect(page.locator('[data-testid="outside"]')).not.toHaveAttribute('aria-hidden');
     expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe(
       'hidden',

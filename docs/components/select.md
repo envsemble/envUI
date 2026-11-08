@@ -188,7 +188,7 @@ Where a row's title names the select, give the select that name as its `aria-lab
 
 #### Sizes
 
-`size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. `showLabel={false}` keeps the label for assistive technology only, as on a TextField, and the field fits its longest option.
+`size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. `visibleLabel={false}` keeps the label for assistive technology only, as on a TextField, and the field fits its longest option.
 
 ### Composition
 
@@ -206,6 +206,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
 - **1.0.0**: `options` is `items`, and `SelectOption` is `SelectItem`; `hint` is `description`; `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the trigger, which takes `ref`. The trigger is a Button, the popup the shared popup and the options its rows: `env-dropdown-trigger` is `env-select-trigger`, `env-dropdown-options` `env-select-popup`, `env-dropdown-list` `env-select-list`, `env-dropdown-option` `env-select-item` and `env-dropdown-option-check` `env-select-item-indicator`.
 - **1.0.0**: The open list takes the level-2 elevation edge, with no shadow.
 - **1.0.0-prerelease.6**: The chevron turns over `--env-motion-duration-medium` with `--env-motion-ease-enter` as the list opens, and back in `--env-motion-duration-fast` with `--env-motion-ease-exit`, done when the list is.

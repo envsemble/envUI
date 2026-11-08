@@ -54,7 +54,7 @@ export default function MonthPickerTile() {
   return (
     <MonthPicker
       label="Report month"
-      showLabel={false}
+      visibleLabel={false}
       size="sm"
       value={value}
       onValueChange={setValue}

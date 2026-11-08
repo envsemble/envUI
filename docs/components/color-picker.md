@@ -208,7 +208,7 @@ Where the color carries text, check its contrast and say what is wrong under the
 
 ColorPicker, ColorPickerButton and ColorSwatch come from their own entry, `@envsemble/envui/color`, built on React Aria's color hooks, whose libraries the application installs.
 
-- A ColorPicker takes its `label`, which names it, a `description` and an `error`; `showLabel={false}` hides the label where something else names the picker, such as a popover.
+- A ColorPicker takes its `label`, which names it, a `description` and an `error`; `visibleLabel={false}` hides the label where something else names the picker, such as a popover.
 - `value` and `defaultValue`, `#000000` by default, take a CSS color string, such as `#6750a4`, `rgb(103, 80, 164)` or `hsl(256, 34%, 48%)`, or React Aria's `Color`.
 - `onValueChange` receives the color as a string in `valueFormat`; the picker keeps the hue of a gray itself.
 - `valueFormat` is `hex`, the default, `#rrggbb` or `#rrggbbaa` while translucent, `rgb` or `hsl`.
@@ -308,6 +308,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
 - **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. ColorPickerButton has no fill of its own, as fields have none. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
 - **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
 - **1.0.0-prerelease.6**: ColorPickerButton's popover opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.

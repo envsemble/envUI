@@ -18,22 +18,15 @@ import { relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Node, Project, ts } from 'ts-morph';
 import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
+import { libraryEntryPoints } from './LibraryEntryPoints.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const libraryDirectory = resolve(root, 'packages/ui');
 const sourceDirectory = resolve(libraryDirectory, 'src');
 export const propsFile = resolve(root, 'docs/generated/props.json');
 
-/** Public entry points and the module specifier consumers import them from. */
-const entries: [file: string, specifier: string][] = [
-  ['index.ts', '@envsemble/envui'],
-  ['content.ts', '@envsemble/envui/content'],
-  ['diff.ts', '@envsemble/envui/diff'],
-  ['color.ts', '@envsemble/envui/color'],
-  ['rich-text.ts', '@envsemble/envui/rich-text'],
-  ['theme-bootstrap.ts', '@envsemble/envui/theme-bootstrap'],
-  ['dev.ts', '@envsemble/envui/dev'],
-];
+/** The entry point no Props section reads: it holds the built-in strings, and no component. */
+const undocumentedEntryPoints = new Set(['@envsemble/envui/messages']);
 
 /** React's per-element attribute interfaces, by the element they describe. */
 const attributeElements: Record<string, string> = {
@@ -708,20 +701,16 @@ function isRuntime(declaration: Node) {
 
 export function extractProps() {
   const project = new Project({ tsConfigFilePath: resolve(libraryDirectory, 'tsconfig.json') });
+  const entryPoints = libraryEntryPoints()
+    .filter(({ specifier }) => !undocumentedEntryPoints.has(specifier))
+    .map(({ specifier, file }) => ({ specifier, source: project.getSourceFileOrThrow(file) }));
   const publicNames = new Set(
-    entries.flatMap(([file]) => [
-      ...project
-        .getSourceFileOrThrow(resolve(sourceDirectory, file))
-        .getExportedDeclarations()
-        .keys(),
-    ]),
+    entryPoints.flatMap(({ source }) => [...source.getExportedDeclarations().keys()]),
   );
   const reader = new ExportReader(project.getTypeChecker().compilerObject, publicNames);
-  for (const [file, entry] of entries) {
-    const sourceFile = project.getSourceFileOrThrow(resolve(sourceDirectory, file));
-    for (const [name, [declaration]] of sourceFile.getExportedDeclarations())
-      if (isRuntime(declaration)) reader.describe(name, declaration, entry);
-  }
+  for (const { specifier, source } of entryPoints)
+    for (const [name, [declaration]] of source.getExportedDeclarations())
+      if (isRuntime(declaration)) reader.describe(name, declaration, specifier);
   const sorted = [...reader.exportsByName].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
   return {
     $comment:

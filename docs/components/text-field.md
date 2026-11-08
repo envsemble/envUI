@@ -299,11 +299,11 @@ A TextField is a native `<input>` with its `label`, `description` and `error`. G
 
 ```tsx
 <TextField size="lg" label="Owner" name="owner" />
-<TextField variant="ghost" label="Find projects" showLabel={false} startIcon={<IconSearch />} />
-<TextField size="sm" label="Filter" showLabel={false} placeholder="Filter" name="filter" />
+<TextField variant="ghost" label="Find projects" visibleLabel={false} startIcon={<IconSearch />} />
+<TextField size="sm" label="Filter" visibleLabel={false} placeholder="Filter" name="filter" />
 ```
 
-`variant` is `outline`, the default, or `ghost`, as on Textarea. `size` is `sm`, `md` or `lg`; without it, a field takes its container's. `showLabel={false}` keeps the label for assistive technology only; `sm` is for a field with its label hidden, as [Sizes](#sizes) says.
+`variant` is `outline`, the default, or `ghost`, as on Textarea. `size` is `sm`, `md` or `lg`; without it, a field takes its container's. `visibleLabel={false}` keeps the label for assistive technology only; `sm` is for a field with its label hidden, as [Sizes](#sizes) says.
 
 #### Prefix, suffix, icon and end action
 
@@ -329,6 +329,7 @@ A field fills its container's width, so set the width on the container, or on th
 
 ## Changelog
 
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides. SearchField keeps `showLabel`, which shows its label where it is hidden by default.
 - **1.0.0**: `hint` is `description`, and the variants are `outline`, `floating` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, and `plain` is gone, for the default outline. `className` and `style` style the field's root rather than the input; `ref` and the other native props still reach the input. TextField and Textarea take `onValueChange`. The frame is Field's parts, and the classes follow: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field` and `env-field-hint` `env-field-description`. A button in `endAction` takes the ghost variant where it sets none. Textarea's resize edge is a `separator`, and its labels and the clear label come from EnvUIProvider's `messages`. Textarea's resize edge, `env-textarea-resize-edge`, is `env-textarea-resize-handle`, as every resize handle is named.
 - **1.0.0**: `Input` is `TextField`, with the same props, behaviour and look; the page is `text-field`.
 - **1.0.0-prerelease.6**: The edge and the label change color in `--env-motion-duration-fast` with `--env-motion-ease-enter`, as every color under the pointer does; the label still floats and the notch still opens over `--env-motion-duration-medium`.

@@ -24,7 +24,7 @@ export function AffixesFixture({ theme }: { theme: ColorScheme }) {
           description="Up to 10"
         />
         <TextField
-          showLabel={false}
+          visibleLabel={false}
           label="Price"
           name="price"
           placeholder="0.00"
@@ -35,7 +35,7 @@ export function AffixesFixture({ theme }: { theme: ColorScheme }) {
             <IconButton variant="text" icon={<IconContentCopy />} aria-label="Copy price" />
           }
         />
-        <TextField showLabel label="Share" name="share" suffix="%" defaultValue="40" />
+        <TextField visibleLabel label="Share" name="share" suffix="%" defaultValue="40" />
         <TextField size="lg" label="Handle" name="handle" prefix="@" defaultValue="aurora" />
         <SearchField variant="ghost" label="Find projects" placeholder="Find projects" />
         <TextField label="Quota" name="quota" suffix="GB" defaultValue="12" disabled />

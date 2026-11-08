@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { useLocale } from '@react-aria/i18n';
 import type { Color } from '@react-stately/color';
 import { useRovingFocus } from '../../internal/useRovingFocus.js';
@@ -74,7 +74,7 @@ export function SwatchList({ swatches, value, onChange, alpha, disabled, label }
             className="env-color-picker-swatch"
             data-selected={flag(item === selected)}
             data-translucent={flag(item.color.getChannelValue('alpha') < 1)}
-            style={{ '--env-color-swatch-color': item.color.toString('css') } as CSSProperties}
+            style={{ '--env-color-swatch-color': item.color.toString('css') }}
             {...roving.getItemProps(item)}
             onClick={choose}
             onKeyDown={(event) => {

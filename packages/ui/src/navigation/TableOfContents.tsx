@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type MouseEvent,
   type RefObject,
 } from 'react';
@@ -82,7 +81,7 @@ function List({ items, current, passed, depth, onNavigate }: ListProps) {
     <ol
       className="env-table-of-contents-list"
       // The level's depth, which the links take their indent from.
-      style={depth > 0 ? ({ '--env-table-of-contents-depth': depth } as CSSProperties) : undefined}
+      style={depth > 0 ? { '--env-table-of-contents-depth': depth } : undefined}
     >
       {items.map((item) => (
         <li key={item.id} className="env-table-of-contents-item">

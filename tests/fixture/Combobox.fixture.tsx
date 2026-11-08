@@ -213,7 +213,7 @@ export function ComboboxFixture({ theme }: { theme: ColorScheme }) {
       <Surface padding={2} data-testid={`combobox-compact-${theme}`} className="fixture-actions">
         <Combobox
           size="sm"
-          showLabel={false}
+          visibleLabel={false}
           aria-label={`Compact owner ${theme}`}
           placeholder="Owner"
           items={people}
@@ -221,7 +221,7 @@ export function ComboboxFixture({ theme }: { theme: ColorScheme }) {
         />
         <Combobox
           size="sm"
-          showLabel={false}
+          visibleLabel={false}
           multiple
           aria-label={`Compact labels ${theme}`}
           placeholder="Labels"
@@ -236,7 +236,7 @@ export function ComboboxFixture({ theme }: { theme: ColorScheme }) {
         <Combobox
           multiple
           label={`Topics ${theme}`}
-          showLabel
+          visibleLabel
           items={tags}
           defaultValue={['accessibility', 'performance', 'documentation', 'localization']}
         />
@@ -261,7 +261,7 @@ export function ComboboxFixture({ theme }: { theme: ColorScheme }) {
         />
       </div>
       <Dialog title={`Share ${theme}`} trigger={<Button variant="secondary">Share {theme}</Button>}>
-        <Combobox multiple label={`Share with ${theme}`} showLabel items={people} clearable />
+        <Combobox multiple label={`Share with ${theme}`} visibleLabel items={people} clearable />
       </Dialog>
     </Theme>
   );

@@ -10,7 +10,6 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type ReactNode,
   type RefObject,
 } from 'react';
@@ -241,9 +240,7 @@ function Root({
       data-stacked={flag(stacked)}
       // The container query compares the region with 37.5em, an em of stackBelow / 37.5: in a
       // query, em is the container's own.
-      style={
-        stack ? ({ '--env-table-stack-below': remLength(stackBelow) } as CSSProperties) : undefined
-      }
+      style={stack ? { '--env-table-stack-below': remLength(stackBelow) } : undefined}
     >
       {inSkeleton(
         skeleton,

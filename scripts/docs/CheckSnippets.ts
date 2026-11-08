@@ -23,6 +23,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import { libraryEntryPoints } from './LibraryEntryPoints.ts';
 
 const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const librarySource = join(repositoryRoot, 'packages/ui/src');
@@ -123,16 +124,19 @@ export const reportedCodes = new Map<number, string>([
   [2747, 'children of the wrong kind'],
 ]);
 
-/** The entries an unimported name may come from, in order of preference. */
+/**
+ * The entries an unimported name that several export comes from first, before the rest in the
+ * manifest's order: the root, and content before rich-text, which also exports the Markdown link
+ * types but loads Tiptap.
+ */
+const preferredEntries = ['@envsemble/envui', '@envsemble/envui/content'];
+
+/** Every entry point's specifier, in order of preference for an unimported name. */
 const entries = [
-  '@envsemble/envui',
-  '@envsemble/envui/content',
-  '@envsemble/envui/rich-text',
-  '@envsemble/envui/diff',
-  '@envsemble/envui/color',
-  '@envsemble/envui/dev',
-  '@envsemble/envui/messages',
-  '@envsemble/envui/theme-bootstrap',
+  ...preferredEntries,
+  ...libraryEntryPoints()
+    .map(({ specifier }) => specifier)
+    .filter((specifier) => !preferredEntries.includes(specifier)),
 ];
 
 /** What snippets use from React without importing it, beside its hooks. */

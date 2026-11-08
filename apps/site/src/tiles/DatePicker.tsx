@@ -68,7 +68,7 @@ export default function DatePickerTile() {
   return (
     <DatePicker
       label="Publish on"
-      showLabel={false}
+      visibleLabel={false}
       size="sm"
       value={value}
       onValueChange={setValue}

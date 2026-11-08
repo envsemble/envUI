@@ -45,11 +45,11 @@ export interface ColorPickerProps
       'children' | 'defaultValue' | 'onChange' | 'color' | 'role' | keyof ColorPickerValueProps
     > {
   /**
-   * Show the label above the picker. Set false where something else names it, such as the
-   * popover around it: the label still names the picker for assistive technology.
+   * The label shows above the picker. false hides it where something else names the picker, such
+   * as the popover around it: the label still names the picker for assistive technology.
    * @default true
    */
-  showLabel?: boolean;
+  visibleLabel?: boolean;
   /** Lasting guidance under the picker, such as where the color shows. */
   description?: ReactNode;
   /** A message under the picker that says what is wrong with the color, such as too little contrast. */
@@ -67,7 +67,7 @@ export interface ColorPickerProps
 export function ColorPicker({
   ref,
   label,
-  showLabel = true,
+  visibleLabel = true,
   value,
   defaultValue = '#000000',
   onValueChange,
@@ -146,8 +146,8 @@ export function ColorPicker({
         ref={(element) => setRef(ref, element)}
         id={id}
         role="group"
-        aria-labelledby={showLabel ? `${id}-label` : undefined}
-        aria-label={showLabel ? undefined : label}
+        aria-labelledby={visibleLabel ? `${id}-label` : undefined}
+        aria-label={visibleLabel ? undefined : label}
         aria-describedby={describedByIds}
         aria-disabled={disabled || undefined}
         className={classNames('env-color-picker', className)}
@@ -155,7 +155,7 @@ export function ColorPicker({
         data-readonly={flag(readOnly)}
         data-invalid={flag(error != null)}
       >
-        {showLabel && (
+        {visibleLabel && (
           <span id={`${id}-label`} className="env-color-picker-label">
             {label}
           </span>

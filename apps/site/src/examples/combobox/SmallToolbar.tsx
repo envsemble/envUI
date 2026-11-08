@@ -32,7 +32,7 @@ export default function SmallToolbar() {
     >
       <Combobox
         size="sm"
-        showLabel={false}
+        visibleLabel={false}
         aria-label="Document"
         placeholder="Document"
         items={documents}

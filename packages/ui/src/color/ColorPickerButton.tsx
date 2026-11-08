@@ -130,7 +130,7 @@ export function ColorPickerButton({
             swatches={swatches}
             readOnly={readOnly}
             label={label}
-            showLabel={false}
+            visibleLabel={false}
             value={color}
             alpha={alpha}
             valueFormat={valueFormat}

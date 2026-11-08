@@ -63,7 +63,7 @@ export default function TimePickerTile() {
   return (
     <TimePicker
       label="Starts at"
-      showLabel={false}
+      visibleLabel={false}
       size="sm"
       value={value}
       onValueChange={setValue}

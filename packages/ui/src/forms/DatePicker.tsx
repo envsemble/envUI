@@ -2,14 +2,17 @@
 
 import { useId, type ButtonHTMLAttributes, type CSSProperties, type Ref } from 'react';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { type ControlSize } from '../foundations/Theme.js';
 import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
 import { Button } from '../actions/Button.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { IconCalendarClock } from '../icons/CalendarClock.js';
 import { IconCalendarMonth } from '../icons/CalendarMonth.js';
 import { Calendar, calendarActiveDay } from './Calendar.js';
-import { type FieldProps } from './internal/FieldFrame.js';
+import {
+  type FieldProps,
+  type FieldSizeProps,
+  type TextFieldDecorationProps,
+} from './internal/FieldFrame.js';
 import {
   PickerField,
   usePickerOpen,
@@ -41,7 +44,9 @@ export interface DatePickerProps
       ButtonHTMLAttributes<HTMLButtonElement>,
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,
-    FieldProps {
+    FieldProps,
+    FieldSizeProps,
+    Pick<TextFieldDecorationProps, 'visibleLabel'> {
   /** The field's button, which shows the value and opens the calendar. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element, beside env-field and env-date-picker. */
@@ -108,17 +113,6 @@ export interface DatePickerProps
   readOnly?: boolean;
   /** Shown while the field is empty and its label floats or is hidden. */
   placeholder?: string;
-  /**
-   * The control height, sm, md or lg; without it, the container's, and else md. sm is for a
-   * field with its label hidden.
-   */
-  size?: ControlSize;
-  /**
-   * Show the label inside the field, where it floats into the outline while the field has a value,
-   * focus or its calendar open. Set false for a field whose purpose is clear without it.
-   * @default true
-   */
-  showLabel?: boolean;
   /** A clear button in the field and in the calendar removes the value. */
   clearable?: boolean;
   /** Whether the calendar is open; with `onOpenChange` it controls it. */

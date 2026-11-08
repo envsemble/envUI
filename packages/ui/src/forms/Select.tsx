@@ -11,12 +11,12 @@ import {
 } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
-import { type ControlSize } from '../foundations/Theme.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconCheck } from '../icons/Check.js';
 import {
   FieldFrame,
   type FieldProps,
+  type FieldSizeProps,
   type TextFieldDecorationProps,
 } from './internal/FieldFrame.js';
 import { PopupSurface } from '../internal/PopupSurface.js';
@@ -72,7 +72,8 @@ export interface SelectProps
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,
     FieldProps,
-    Pick<TextFieldDecorationProps, 'showLabel'> {
+    FieldSizeProps,
+    Pick<TextFieldDecorationProps, 'visibleLabel'> {
   /** The trigger, the button that shows the chosen option and opens the list. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element, beside env-field and env-select. */
@@ -122,11 +123,6 @@ export interface SelectProps
   placeholder?: string;
   /** A hint for the browser's autofill, such as country, set on the hidden input. */
   autoComplete?: string;
-  /**
-   * The control height, sm, md or lg; without it, the container's, and else md. sm is for a
-   * field with its label hidden.
-   */
-  size?: ControlSize;
 }
 
 /** Select's positioner, which opens the list below the trigger rather than over it. */
@@ -199,7 +195,7 @@ export function Select({
   placeholder,
   autoComplete,
   size,
-  showLabel,
+  visibleLabel,
   form,
   id: suppliedId,
   className,
@@ -287,7 +283,7 @@ export function Select({
         error={error}
         floatingLabel
         size={size}
-        showLabel={showLabel}
+        visibleLabel={visibleLabel}
         className={classNames('env-select', className)}
         style={style}
         renderControlBox={(box) => (

@@ -8,7 +8,7 @@ export default function Variants() {
       <TextField label="Project name" name="project" defaultValue="Northwind launch" />
       <TextField
         variant="ghost"
-        showLabel={false}
+        visibleLabel={false}
         label="Find projects"
         placeholder="Find projects"
         startIcon={<IconSearch />}

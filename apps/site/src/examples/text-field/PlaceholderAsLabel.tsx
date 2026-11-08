@@ -3,7 +3,7 @@ import { TextField } from '@envsemble/envui';
 export default function PlaceholderAsLabel() {
   return (
     <TextField
-      showLabel={false}
+      visibleLabel={false}
       label="Project handle"
       name="handle"
       placeholder="Handle: lowercase letters, numbers and hyphens"

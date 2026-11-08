@@ -6,7 +6,7 @@ export default function FieldsBesideButtons() {
     <Column gap={4} style={{ inlineSize: 'min(100%, 28rem)' }}>
       <Grid columns="minmax(0, 1fr) auto" align="center" gap={3}>
         <TextField
-          showLabel={false}
+          visibleLabel={false}
           label="Invite by e-mail"
           type="email"
           placeholder="name@example.com"

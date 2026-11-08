@@ -236,7 +236,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
   const sortControl = (
     <Select
       label="Sort by"
-      showLabel
+      visibleLabel
       items={sortOrders}
       value={sortOrder}
       onValueChange={(value) => {
@@ -264,7 +264,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
     <>
       <Select
         label="Status"
-        showLabel={!inlineFilters}
+        visibleLabel={!inlineFilters}
         size={inlineFilters ? 'sm' : undefined}
         items={statuses}
         value={status}
@@ -273,7 +273,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
       <Combobox
         multiple
         label="Owner"
-        showLabel={!inlineFilters}
+        visibleLabel={!inlineFilters}
         placeholder="Any owner"
         size={inlineFilters ? 'sm' : undefined}
         items={owners}

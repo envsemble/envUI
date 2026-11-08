@@ -19,5 +19,5 @@ export function tokenStyle(
       [fontStyle & 4 ? 'underline' : '', fontStyle & 8 ? 'line-through' : '']
         .filter(Boolean)
         .join(' ') || undefined,
-  } as CSSProperties;
+  };
 }

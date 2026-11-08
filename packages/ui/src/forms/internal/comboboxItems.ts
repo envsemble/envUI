@@ -29,11 +29,6 @@ export type ComboboxFilter<Item extends ComboboxItem = ComboboxItem> = (
   query: string,
 ) => boolean;
 
-/** A chosen value the field never saw among the options stands for itself, as its chip shows. */
-export function standIn<Item extends ComboboxItem>(value: string) {
-  return { value, label: value } as Item;
-}
-
 /** Whether an entry of the options is a group of them. */
 export function isGroup<Item extends ComboboxItem>(
   entry: Item | ComboboxGroup<Item>,

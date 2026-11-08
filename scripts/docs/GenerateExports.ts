@@ -11,7 +11,6 @@
 //                                            a name that goes or changes its kind a major one that
 //                                            names it. The base is found as for the parts
 //                                            (scripts/docs/GenerateParts.ts).
-import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Node, Project } from 'ts-morph';
@@ -24,6 +23,7 @@ import {
   names,
   pendingChangesets,
 } from './ContractHistory.ts';
+import { libraryEntryPoints } from './LibraryEntryPoints.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const libraryDirectory = resolve(root, 'packages/ui');
@@ -46,22 +46,12 @@ function kindOf(declaration: Node) {
   return declaration.getKindName();
 }
 
-/** The entry points with a module of their own: the package's exports with a TypeScript source. */
-function entryPoints() {
-  const manifest = JSON.parse(readFileSync(resolve(libraryDirectory, 'package.json'), 'utf8'));
-  return Object.entries(manifest.exports as Record<string, string | Record<string, string>>)
-    .flatMap(([subpath, target]) => {
-      const source = typeof target === 'object' ? target['envui-source'] : undefined;
-      if (!source || source.includes('*') || !/\.tsx?$/.test(source)) return [];
-      return [[`@envsemble/envui${subpath.slice(1)}`, resolve(libraryDirectory, source)] as const];
-    })
-    .sort(([a], [b]) => a.localeCompare(b));
-}
-
 function buildExports(): ExportsRecord {
   const project = new Project({ tsConfigFilePath: resolve(libraryDirectory, 'tsconfig.json') });
   const record: ExportsRecord = {};
-  for (const [specifier, file] of entryPoints()) {
+  // Every entry point, by specifier, so the record reads in the same order whatever the manifest's.
+  const entryPoints = libraryEntryPoints().sort((a, b) => a.specifier.localeCompare(b.specifier));
+  for (const { specifier, file } of entryPoints) {
     const exported = [...project.getSourceFileOrThrow(file).getExportedDeclarations()];
     record[specifier] = Object.fromEntries(
       exported

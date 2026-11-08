@@ -1,6 +1,6 @@
 'use client';
 
-import { useImperativeHandle, useRef, type CSSProperties } from 'react';
+import { useImperativeHandle, useRef } from 'react';
 import { EditorContent, useEditorState } from '@tiptap/react';
 import * as Toolbar from '../actions/Toolbar.js';
 import { IconAttachFile } from '../icons/AttachFile.js';
@@ -145,10 +145,10 @@ export function RichTextEditor({
       style={
         minRows === undefined
           ? style
-          : ({
+          : {
               '--env-rich-text-min-block-size': `calc(${Math.max(1, Math.round(minRows))} * 1lh + 2 * var(--env-space-4))`,
               ...style,
-            } as CSSProperties)
+            }
       }
       data-disabled={flag(disabled)}
       data-readonly={flag(readOnly)}

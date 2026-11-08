@@ -9,7 +9,6 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -219,13 +218,11 @@ export function Slider({
           onFocus?.(event);
         }}
         className={classNames('env-slider', className)}
-        style={
-          {
-            '--env-slider-ticks': ticks,
-            '--env-slider-fraction': fractionOf(current, min, max),
-            ...style,
-          } as CSSProperties
-        }
+        style={{
+          '--env-slider-ticks': ticks,
+          '--env-slider-fraction': fractionOf(current, min, max),
+          ...style,
+        }}
         data-ticks={flag(ticks > 1)}
         value={current}
         onValueChange={(next) => {

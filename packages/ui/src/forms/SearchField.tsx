@@ -12,7 +12,14 @@ import { useFormReset } from './internal/useFormReset.js';
 
 export interface SearchFieldProps extends Omit<
   TextFieldProps,
-  'type' | 'startIcon' | 'endAction' | 'label' | 'value' | 'defaultValue' | 'onValueChange'
+  | 'type'
+  | 'startIcon'
+  | 'endAction'
+  | 'label'
+  | 'visibleLabel'
+  | 'value'
+  | 'defaultValue'
+  | 'onValueChange'
 > {
   /**
    * The field's accessible name, such as Search members. It shows as a floating label only with
@@ -91,7 +98,7 @@ export function SearchField({
       }}
       type="search"
       label={label}
-      showLabel={showLabel}
+      visibleLabel={showLabel}
       placeholder={placeholder ?? (showLabel ? undefined : messages.placeholder)}
       disabled={disabled}
       value={query}

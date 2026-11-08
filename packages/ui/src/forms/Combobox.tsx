@@ -14,7 +14,6 @@ import {
 import { setRef } from '../internal/setRef.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
-import { type ControlSize } from '../foundations/Theme.js';
 import { IconButton } from '../actions/Button.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconClose } from '../icons/Close.js';
@@ -24,11 +23,12 @@ import {
   isLabelShown,
   type FieldControlBoxProps,
   type FieldProps,
+  type FieldSizeProps,
+  type TextFieldDecorationProps,
 } from './internal/FieldFrame.js';
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { autoHighlightAlways } from './internal/autoHighlightAlways.js';
 import {
-  standIn,
   type ComboboxFilter,
   type ComboboxGroup,
   type ComboboxItem,
@@ -72,7 +72,9 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
       ComponentPropsWithoutRef<'input'>,
       'value' | 'defaultValue' | 'onChange' | 'type' | 'children' | 'multiple' | 'list' | 'size'
     >,
-    FieldProps {
+    FieldProps,
+    FieldSizeProps,
+    Pick<TextFieldDecorationProps, 'visibleLabel'> {
   /** The text input, so that a form library can register it and focus it. */
   ref?: Ref<HTMLInputElement>;
   /** The field's class, on its root element, beside env-field and env-combobox. */
@@ -103,18 +105,6 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
    * @default 'No matches', or EnvUIProvider's messages.combobox.empty
    */
   emptyLabel?: ReactNode;
-  /**
-   * The control height, sm, md or lg; without it, the container's, and else md. sm is for a
-   * field with its label hidden.
-   */
-  size?: ControlSize;
-  /**
-   * Show the label inside the field, where it floats into the outline while the field has focus or
-   * a value. Set false for a field whose purpose is clear without it; a placeholder then gives the
-   * visible guidance.
-   * @default true
-   */
-  showLabel?: boolean;
   /**
    * A clear button removes the value while there is one; Esc on the closed field clears it too.
    * @default false
@@ -160,8 +150,12 @@ interface ComboboxMultipleProps<Item extends ComboboxItem> {
   value?: readonly string[];
   /** The values an uncontrolled field starts with, and that a form reset restores; none by default. */
   defaultValue?: readonly string[];
-  /** Receives the chosen values and their options. */
-  onValueChange?: (value: string[], items: Item[]) => void;
+  /**
+   * Receives the chosen values and their options. A value none of the options has had, such as one
+   * given before a server search finds it, comes as a ComboboxItem of its own, with the value as
+   * its label, as its chip shows it.
+   */
+  onValueChange?: (value: string[], items: (Item | ComboboxItem)[]) => void;
 }
 
 export type ComboboxProps<Item extends ComboboxItem = ComboboxItem> = ComboboxSharedProps<Item> &
@@ -188,7 +182,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     loadingLabel,
     emptyLabel,
     size,
-    showLabel,
+    visibleLabel,
     clearable = false,
     clearLabel,
     removeLabel,
@@ -243,9 +237,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
 
   // The chosen value: the one it is given, or one the field keeps itself, which a native form reset
   // restores to the default; as Base UI takes it, a list of values for a field that takes several.
-  const defaultSelection: Selection = isMultiple
-    ? [...((defaultValue as readonly string[] | undefined) ?? [])]
-    : ((defaultValue as string | null | undefined) ?? null);
+  const defaultSelection: Selection = props.multiple
+    ? [...(props.defaultValue ?? [])]
+    : (props.defaultValue ?? null);
   const [uncontrolledValue, setUncontrolledValue] = useState<Selection>(defaultSelection);
   const controlled = value !== undefined;
   const selection = controlled ? (isMultiple ? value : (value ?? null)) : uncontrolledValue;
@@ -256,9 +250,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     },
     form,
   );
-  const selectedValues = (
-    Array.isArray(selection) ? selection : selection == null ? [] : [selection]
-  ) as readonly string[];
+  const selectedValues = typeof selection === 'string' ? [selection] : (selection ?? []);
 
   const {
     known,
@@ -269,7 +261,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     grouped,
   } = useComboboxOptions({ items, filter, locale, selectedValues });
 
-  const singleItem = isMultiple || selection == null ? undefined : known.get(selection as string);
+  const singleItem = typeof selection === 'string' ? known.get(selection) : undefined;
   // The text the input shows, which starts as the chosen option's label, and the query
   // onInputValueChange reported last.
   const [inputText, setInputText] = useState(singleItem?.label ?? '');
@@ -278,19 +270,16 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   /** Keeps a value people chose, where the field keeps its own, and reports it with its options. */
   function choose(next: Selection) {
     if (!controlled) setUncontrolledValue(next);
-    // The props are a union on multiple, which the field has already told apart.
-    if (isMultiple) {
+    // Base UI's selection is a list of values for a field that takes several, else one or none.
+    if (props.multiple) {
       const values = [...((next as readonly string[] | null) ?? [])];
-      (onValueChange as ((value: string[], items: Item[]) => void) | undefined)?.(
+      props.onValueChange?.(
         values,
-        values.map((selected) => known.get(selected) ?? standIn<Item>(selected)),
+        values.map((selected) => known.get(selected) ?? { value: selected, label: selected }),
       );
     } else {
       const single = (next as string | null) ?? null;
-      (onValueChange as ((value: string | null, item: Item | null) => void) | undefined)?.(
-        single,
-        single == null ? null : (known.get(single) ?? null),
-      );
+      props.onValueChange?.(single, single == null ? null : (known.get(single) ?? null));
     }
   }
 
@@ -335,7 +324,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   }
 
   const hasChips = isMultiple && selectedValues.length > 0;
-  const labelShown = label != null && isLabelShown({ showLabel });
+  const labelShown = label != null && isLabelShown({ visibleLabel });
   // A floating label needs a blank placeholder to detect the empty state; chips fill the field.
   const fieldPlaceholder = hasChips ? undefined : labelShown ? placeholder || ' ' : placeholder;
   const describedByIds =
@@ -353,6 +342,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       <BaseCombobox.Root<string, boolean, Item>
         items={collection}
         multiple={isMultiple}
+        // Base UI's value type takes a mutable list of values; it only reads this one.
         value={selection as string[] | string | null}
         onValueChange={handleValueChange}
         onInputValueChange={handleInputValueChange}
@@ -383,7 +373,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           error={error}
           floatingLabel
           size={size}
-          showLabel={showLabel}
+          visibleLabel={visibleLabel}
           className={className ? `env-combobox ${className}` : 'env-combobox'}
           style={style}
           renderControlBox={controlBox({

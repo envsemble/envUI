@@ -149,7 +149,7 @@ The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: 
 
 #### Sizes
 
-`size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. `showLabel={false}` hides the label, with a `placeholder` while the field is empty.
+`size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. `visibleLabel={false}` hides the label, with a `placeholder` while the field is empty.
 
 ### Composition
 
@@ -161,6 +161,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
 - **1.0.0**: TimePicker, for a time of day chosen on wheels of hours, minutes and day periods on the locale's clock, with `minuteStep`, `min` and `max`.
 - **1.0.0-prerelease.6**: The popup opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
 - **1.0.0-prerelease.6**: A mouse drags a wheel as a finger does: the rows follow the pointer while its button is down, and a quick drag let go glides on and eases into a row; a press that doesn't move still chooses the row under it.

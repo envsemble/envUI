@@ -12,5 +12,5 @@
     "noEmit": true,
     "customConditions": ["envui-source"]
   },
-  "include": ["*.tsx"]
+  "include": ["*.tsx", "../../packages/ui/src/customProperties.d.ts"]
 }
