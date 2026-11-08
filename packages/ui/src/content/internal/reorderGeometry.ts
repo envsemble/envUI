@@ -66,7 +66,7 @@ export function scrollerOf(element: HTMLElement): Element {
  * How far the pointer has moved the row, with what the boxes around it, the page among them,
  * scrolled meanwhile: the row stays under a pointer held still while one of them scrolls.
  */
-export function pointerOffset(pointer: NonNullable<Move['pointer']>) {
+function pointerOffset(pointer: NonNullable<Move['pointer']>) {
   return pointer.lastY - pointer.startY + scrolledBy(pointer.row, 'y') - pointer.startScrolled;
 }
 

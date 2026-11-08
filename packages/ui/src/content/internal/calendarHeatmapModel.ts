@@ -36,7 +36,7 @@ export interface CalendarHeatmapModel {
  * The strength of each color step, from 30% of the tone over the canvas to the full tone at the
  * strongest step; with a single step above the empty one, that step is the tone.
  */
-export function levelMix(level: number, levelCount: number) {
+function levelMix(level: number, levelCount: number) {
   if (levelCount <= 2) return '100%';
   return `${30 + (70 * (level - 1)) / (levelCount - 2)}%`;
 }

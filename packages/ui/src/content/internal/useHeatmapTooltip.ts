@@ -15,7 +15,7 @@ import { tooltipDelay } from '../../internal/TooltipPopup.js';
 const focusTipSlack = 4;
 
 /** The day cell an event's target is in, if any. */
-export function cellFrom(target: EventTarget | null) {
+function cellFrom(target: EventTarget | null) {
   return target instanceof Element ? target.closest<HTMLElement>('td[data-day]') : null;
 }
 

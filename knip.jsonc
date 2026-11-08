@@ -46,9 +46,8 @@
         "terrazzo.config.mjs",
       ],
       "project": ["src/**/*.{ts,tsx}"],
-      // Pending, for the library's refactor: useLatest.ts, which it is to use, and the issues
-      // below but the generated token module's, whose exports are the whole list.
-      "ignoreFiles": ["src/internal/useLatest.ts"],
+      // Pending, for the library's refactor: the issues below but the generated token module's,
+      // whose exports are the whole list.
       "ignoreIssues": {
         "src/generated/**": ["exports", "types"],
         "src/content/internal/codeColors.ts": ["types"],
@@ -72,8 +71,7 @@
     },
     "apps/site": {
       "project": ["src/**/*.{ts,tsx}"],
-      // Pending, for the site's refactor: Lengths.ts, which it is to use, and these.
-      "ignoreFiles": ["src/shared/Lengths.ts", "src/motion/HeldAnimations.ts"],
+      // Pending, for the site's refactor.
       "ignoreIssues": {
         "src/figures/DeviceFrame.tsx": ["exports"],
         "src/figures/Example.tsx": ["exports"],
