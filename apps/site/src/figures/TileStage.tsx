@@ -22,6 +22,7 @@ import {
 } from '../motion/MustShow';
 import { aimedElement } from '../motion/pointer/PointerPlan';
 import { flag } from '@envui-internal/internal/flag';
+import { useBrowserStandIns } from '../motion/BrowserStandIns';
 
 /** What a tile's script tells its fit, as each fit starts (StageScript), and when it changes. */
 const tileScript = {
@@ -80,6 +81,7 @@ export function TileStage({
    */
   frame?: 'own' | 'legible';
 }) {
+  useBrowserStandIns();
   const Composition = picture?.composition;
   const theme = useTheme();
   const { motionPaused } = useDisplaySettings();

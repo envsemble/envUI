@@ -23,6 +23,7 @@ import { useInView } from './useInView';
 import { rootMotionDuration } from './RootMotionTokens';
 import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 import { flag } from '@envui-internal/internal/flag';
+import { useBrowserStandIns } from './BrowserStandIns';
 
 /** What the reader can operate in a figure: a stage with none of it stays a recording. */
 const operable =
@@ -216,6 +217,7 @@ export function MotionStage({
   stage?: StageFill;
   top?: boolean;
 }) {
+  useBrowserStandIns();
   const { motionPaused } = useDisplaySettings();
   const verdict = use(VerdictMotion);
   // The figure's own choice, and the Display menu's at the time, which it overrides only while that holds.
