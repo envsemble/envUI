@@ -2,7 +2,7 @@
  * Measures what a picture paints, in its canvas's own px (FitMeasure.ts). The fit centres what
  * shows, not the boxes that only lay it out, so it needs to know which boxes paint something.
  */
-import { paintsOf } from '@envui-internal/dev/measure';
+import { paintsOf } from '@envui-internal/internal/dom/paints';
 import type { Box } from './FitGeometry';
 import { pixelTolerance } from '../shared/Remeasure';
 

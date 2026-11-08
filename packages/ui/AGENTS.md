@@ -97,6 +97,6 @@ Never edit these; change their source and run their command.
 
 - `@envsemble/envui/dev`, entry point `packages/ui/src/dev.ts`, gives agents `envui.layout`, a readout of the page's layout and its problems, and people a 3D view with an inspector; [docs/dev-mode.md](../../docs/dev-mode.md) documents it.
 - No other entry point imports it (`tests/library/DevMode.test.mjs`), so a production build holds none of it.
-- Its code is in `packages/ui/src/dev/`: measuring the page (`measure.ts`), the data (`model.ts`), the readout and its checks as plain functions of that data (`readout.ts`), and the API (`api.ts`).
+- Its code is in `packages/ui/src/dev/`: measuring the page (`measure.ts`, with what nodes hold inside in `inner.ts` and the attributes and labels of elements in `elements.ts`), the data (`model.ts`), the readout and its checks as plain functions of that data (`readout.ts`), and the API (`api.ts`).
 - The view is in `packages/ui/src/dev/ui/`, with its own style sheet, `DevMode.css`, which `install.tsx` imports as text and adds to the page, outside `packages/ui/src/styles`.
 - Give a readout check a unit test on data in `tests/library/DevMode.test.mjs`; test the view and `envui.layout` on a page in `tests/browser/library/DevMode.spec.ts`.

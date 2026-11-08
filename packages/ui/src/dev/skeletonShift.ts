@@ -2,7 +2,8 @@
 // page doesn't move when its content arrives. It toggles the skeleton's attribute, which the
 // styles follow, measures every element in both states, and reports the ones that move or resize.
 
-import { describeElement, isDevElement, resolveRoot, toBox } from './measure.js';
+import { describeElement, isDevElement } from './elements.js';
+import { resolveRoot, toBox } from './measure.js';
 import type { Box, LayoutProblem } from './model.js';
 import { partClassOf } from './parts.js';
 import { remPixels } from '../internal/dom/lengths.js';

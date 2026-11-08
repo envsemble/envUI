@@ -4,6 +4,9 @@ export function remPixels(element?: Element) {
   return Number.parseFloat(getComputedStyle(root).fontSize) || 16;
 }
 
+/** A computed length, such as `12.5px`, as its number of px; 0 for none, such as `auto`. */
+export const pixelsOf = (value: string) => Number.parseFloat(value) || 0;
+
 /** A number to a hundredth, as sizes in rem are kept and reported. */
 export const roundToHundredth = (value: number) => Math.round(value * 100) / 100;
 
