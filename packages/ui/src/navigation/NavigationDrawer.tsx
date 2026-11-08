@@ -11,7 +11,6 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type ReactElement,
   type ReactNode,
   type RefObject,
@@ -481,12 +480,12 @@ export function NavigationDrawer({
       className={classNames('env-navigation-drawer', className)}
       style={
         resizable
-          ? ({
+          ? {
               '--env-navigation-drawer-width': `${resize.width}rem`,
               '--env-navigation-drawer-min-width': `${resize.handleProps.min}rem`,
               '--env-navigation-drawer-max-width': `${resize.handleProps.max}rem`,
               ...style,
-            } as CSSProperties)
+            }
           : style
       }
       data-background={backgroundAttribute(background)}

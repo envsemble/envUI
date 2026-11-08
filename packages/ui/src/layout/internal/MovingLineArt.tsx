@@ -39,7 +39,7 @@ function movingShapes(drawing: LineArtDrawing) {
   const shapes = Children.toArray(drawn).map((shape, index) =>
     cloneElement(shape as ReactElement<{ pathLength?: number; style?: CSSProperties }>, {
       pathLength: 1,
-      style: { '--env-line-art-at': at[index] } as CSSProperties,
+      style: { '--env-line-art-at': at[index] },
     }),
   );
   // Every drawing has a beat, and every beat a line.

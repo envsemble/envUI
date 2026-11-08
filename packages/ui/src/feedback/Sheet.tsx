@@ -9,7 +9,6 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type ReactElement,
   type ReactNode,
 } from 'react';
@@ -376,12 +375,10 @@ export function Sheet({
                 {...popupProps}
                 ref={attachPopup}
                 className={classNames('env-sheet', className)}
-                style={
-                  {
-                    ...(customWidth !== undefined && { '--env-sheet-width': customWidth }),
-                    ...style,
-                  } as CSSProperties
-                }
+                style={{
+                  ...(customWidth !== undefined && { '--env-sheet-width': customWidth }),
+                  ...style,
+                }}
                 data-side={side}
                 data-width={named ? width : 'custom'}
                 data-resizable={flag(resizable)}

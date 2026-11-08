@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentPropsWithRef, CSSProperties, ReactElement, Ref } from 'react';
+import type { ComponentPropsWithRef, ReactElement, Ref } from 'react';
 import { useRender } from '@base-ui/react/use-render';
 import { classNames } from '../internal/classNames.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
@@ -97,7 +97,7 @@ export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({
           ? { '--env-surface-padding': padding === 0 ? '0rem' : `var(--env-space-${padding})` }
           : {}),
         ...style,
-      } as CSSProperties,
+      },
     },
   });
 }

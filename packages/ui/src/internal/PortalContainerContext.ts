@@ -138,10 +138,10 @@ export function containedModal<Modal>(value: PortalContainerValue, modal: Modal)
  * The style a contained popup adds to its popup element: it sizes to its content within the
  * container's width, rather than to the room the window leaves beside its anchor.
  */
-export const containedPopupStyle = {
+export const containedPopupStyle: CSSProperties = {
   '--available-height': '100vh',
   '--available-width': '100cqi',
-} as CSSProperties;
+};
 
 /**
  * The positioner props of a contained popup: it opens on its own side, without flipping, and

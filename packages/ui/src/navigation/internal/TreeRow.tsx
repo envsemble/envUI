@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { flag } from '../../internal/flag.js';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
 import type { TreeItem } from '../Tree.js';
@@ -48,12 +48,10 @@ export function TreeRow({
       data-id={item.value}
       data-highlighted={flag(!leaving && highlighted)}
       data-starting-style={flag(arriving)}
-      style={
-        {
-          '--env-tree-depth': item.depth,
-          transform: `translateY(${top}px)`,
-        } as CSSProperties
-      }
+      style={{
+        '--env-tree-depth': item.depth,
+        transform: `translateY(${top}px)`,
+      }}
     >
       <span className="env-tree-chevron" aria-hidden="true" data-expanded={flag(item.expanded)}>
         {item.expandable && (

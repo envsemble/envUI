@@ -9,7 +9,6 @@ import {
   useMemo,
   useRef,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
@@ -321,7 +320,7 @@ function Root({
       <div
         {...props}
         className={classNames('env-panes', className)}
-        style={{ '--env-panes-size': `${resize.width}rem`, ...style } as CSSProperties}
+        style={{ '--env-panes-size': `${resize.width}rem`, ...style }}
         data-env-layout="panes"
         data-env-name={name}
         data-behavior={behavior}

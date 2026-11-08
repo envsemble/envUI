@@ -137,5 +137,5 @@ export function codeThemeStyle(theme: ColorScheme): CSSProperties {
     '--env-code-foreground': standard.foreground,
     '--env-code-foreground-high': high.foreground,
     colorScheme: theme,
-  } as CSSProperties;
+  };
 }

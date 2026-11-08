@@ -43,9 +43,7 @@ function levelMix(level: number, levelCount: number) {
 
 /** A color step's custom property: its strength, on every step above the empty one. */
 export function levelStyle(level: number, levelCount: number): CSSProperties | undefined {
-  return level > 0
-    ? ({ '--env-calendar-heatmap-mix': levelMix(level, levelCount) } as CSSProperties)
-    : undefined;
+  return level > 0 ? { '--env-calendar-heatmap-mix': levelMix(level, levelCount) } : undefined;
 }
 
 /**

@@ -217,13 +217,12 @@ export function AvatarGroup({
   // style sheet moves it as the group bunches, within the room the group keeps for its spread.
   const counted = overflow > 0;
   const hues = groupHues(shown.map((person) => person.name));
-  const place = (index: number) =>
-    ({
-      '--env-avatar-group-before': String(Math.min(index, shown.length - 1)),
-      '--env-avatar-group-after': String(Math.max(0, shown.length - 1 - index)),
-      '--env-avatar-group-count-before': index === shown.length ? '1' : '0',
-      '--env-avatar-group-count-after': counted && index < shown.length ? '1' : '0',
-    }) as CSSProperties;
+  const place = (index: number): CSSProperties => ({
+    '--env-avatar-group-before': String(Math.min(index, shown.length - 1)),
+    '--env-avatar-group-after': String(Math.max(0, shown.length - 1 - index)),
+    '--env-avatar-group-count-before': index === shown.length ? '1' : '0',
+    '--env-avatar-group-count-after': counted && index < shown.length ? '1' : '0',
+  });
   return (
     <div
       role="group"
