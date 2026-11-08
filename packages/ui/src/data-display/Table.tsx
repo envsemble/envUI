@@ -22,8 +22,8 @@ import { useStackedReport } from '../internal/useStackedReport.js';
 import { IconArrowDownward } from '../icons/ArrowDownward.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconUnfoldMore } from '../icons/UnfoldMore.js';
-import { columnMinimums, sameWidths } from './internal/tableColumns.js';
-import { ColumnResizeHandle, type TableColumns } from './internal/ColumnResizeHandle.js';
+import { useColumnIndex, useTableColumns, type TableColumns } from './internal/tableColumns.js';
+import { ColumnResizeHandle } from './internal/ColumnResizeHandle.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
@@ -195,34 +195,13 @@ function Root({
   const table = useRef<HTMLTableElement>(null);
   const stacked = useStacked(region, table, stack, stackBelow);
   useStackedReport(stacked, onStackedChange);
-  // Widths the table owns start over when the defaults change, for example with another column.
-  const defaultsKey = defaultColumnWidths?.join(' ');
-  const [chosen, setChosen] = useState({ key: defaultsKey, widths: defaultColumnWidths });
-  if (chosen.key !== defaultsKey) setChosen({ key: defaultsKey, widths: defaultColumnWidths });
-  const [startWidths] = useState(columnWidths);
-  const [resizing, setResizing] = useState(false);
-  const widths = columnWidths ?? (chosen.key === defaultsKey ? chosen.widths : defaultColumnWidths);
-
-  let columns: TableColumns | null = null;
-  if (widths) {
-    const change = (next: number[], committed: boolean) => {
-      const same = sameWidths(widths, next);
-      if (same && !committed) return;
-      if (!same && columnWidths === undefined) setChosen({ key: defaultsKey, widths: next });
-      onColumnWidthsChange?.(next, { committed });
-    };
-    const starting = [defaultColumnWidths, startWidths].find(
-      (candidate) => candidate?.length === widths.length,
-    );
-    columns = {
-      widths,
-      minimums: columnMinimums(minColumnWidths, widths.length),
-      resizable: resizableColumns,
-      setResizing,
-      change,
-      reset: () => change(starting ? [...starting] : widths.map(() => 100 / widths.length), true),
-    };
-  }
+  const { widths, columns, resizing } = useTableColumns({
+    columnWidths,
+    defaultColumnWidths,
+    onColumnWidthsChange,
+    minColumnWidths,
+    resizableColumns,
+  });
 
   return (
     <div
@@ -393,27 +372,6 @@ export interface HeaderCellProps
    * @default 'Resize {header}', from EnvUIProvider's messages.table.resize
    */
   resizeLabel?: string;
-}
-
-/** The column at the inline end of a header cell, counting the columns that cells before it span. */
-function useColumnIndex(cell: RefObject<HTMLTableCellElement | null>, enabled: boolean) {
-  const [column, setColumn] = useState<number>();
-  // Read after every render: the column depends on the cells before this one, which are not in its
-  // props. Setting the same column again renders nothing.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useLayoutEffect(() => {
-    const element = cell.current;
-    if (!enabled || !element?.parentElement) return;
-    let end = -1;
-    for (const sibling of element.parentElement.children) {
-      // A TH or TD is a table cell, which spans columns.
-      if (sibling.tagName === 'TH' || sibling.tagName === 'TD')
-        end += (sibling as HTMLTableCellElement).colSpan;
-      if (sibling === element) break;
-    }
-    setColumn(end);
-  });
-  return enabled ? column : undefined;
 }
 
 const sortIcons = {

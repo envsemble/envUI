@@ -7,21 +7,10 @@ import {
   columnResizeLargeStep,
   columnResizeStep,
   resizeColumns,
+  type TableColumns,
 } from './tableColumns.js';
 import '../../styles/Base.css';
 import '../../styles/Table.css';
-
-/** What a table with resizable columns gives its header cells. */
-export interface TableColumns {
-  widths: readonly number[];
-  minimums: readonly number[];
-  resizable: boolean;
-  /** Says whether a column's resize handle is being dragged. */
-  setResizing: (resizing: boolean) => void;
-  /** Sets the widths: committed false while dragging, true as a change is complete. */
-  change: (widths: number[], committed: boolean) => void;
-  reset: () => void;
-}
 
 const tableOf = (handle: HTMLElement) => handle.closest('table');
 
