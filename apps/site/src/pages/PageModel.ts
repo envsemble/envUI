@@ -1,17 +1,7 @@
+import { componentGroups, type ComponentGroup } from '@docs-model/DocumentationTypes';
 import { documents } from '../generated/Documentation';
 
-export { documents };
-export const componentGroups = [
-  'Actions',
-  'Forms & selection',
-  'Navigation',
-  'Data display',
-  'Text & content',
-  'Feedback',
-  'Overlays',
-  'App frame & layout',
-] as const;
-type ComponentGroup = (typeof componentGroups)[number];
+export { componentGroups, documents };
 /** The id of a component group's heading on the overview, such as components-app-frame-layout. */
 export const componentGroupId = (group: string) =>
   `components-${group.toLowerCase().replace(/[^a-z]+/g, '-')}`;

@@ -4,19 +4,12 @@ import { existsSync, readFileSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { documentationDirectory } from './DocumentationPaths.ts';
-import { pageStatuses, type DocumentationBlock } from './model/DocumentationTypes.ts';
+import {
+  componentGroups,
+  pageStatuses,
+  type DocumentationBlock,
+} from './model/DocumentationTypes.ts';
 
-/** The index's component groups; a component page's category is one of them. */
-export const componentGroups = [
-  'Actions',
-  'Forms & selection',
-  'Navigation',
-  'Data display',
-  'Text & content',
-  'Feedback',
-  'Overlays',
-  'App frame & layout',
-];
 /**
  * The status of an export a guide or foundations page documents, such as EnvUIProvider or
  * useContainerSize, unless the page's `statuses` gives it another, or a guide's `status`.
