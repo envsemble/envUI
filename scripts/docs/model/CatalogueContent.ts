@@ -60,7 +60,7 @@ const isProvides = (chunk: string) =>
  * A section's Markdown without what envUI and the application provide, and without the heading
  * of its keyboard table, which is all the section then holds and says what it is.
  */
-export function withoutProvides(markdown: string): string {
+function withoutProvides(markdown: string): string {
   return subsections(markdown)
     .filter((chunk) => !isProvides(chunk))
     .map((chunk) => chunk.replace(/^### Keyboard\n+/, ''))

@@ -1,5 +1,5 @@
 import type { DocumentationSection } from '@docs-model/DocumentationTypes';
-import { providesOf, catalogueMarkdown, withoutProvides } from '@docs-model/CatalogueContent';
+import { catalogueMarkdown } from '@docs-model/CatalogueContent';
 
 /**
  * The subsections of a page's Accessibility that say what envUI provides and what the application
@@ -7,10 +7,7 @@ import { providesOf, catalogueMarkdown, withoutProvides } from '@docs-model/Cata
  * which shows what it looks like and when to use it, leaves them out, as it leaves out a
  * table's In code column. scripts/docs/model/CatalogueContent.ts holds the
  * rules, which the plain-language test reads too.
- */
-export { providesOf, withoutProvides };
-
-/**
+ *
  * The section as the catalogue shows it: without what envUI and the application provide or a
  * table's code, and nothing where that leaves only its heading.
  */

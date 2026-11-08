@@ -14,7 +14,7 @@ const layoutPages = new Set(['box', 'row', 'column', 'grid']);
  * helpers and providers, such as useToast, placeholders or LinkProvider, a dialog's close button
  * and the layout primitives are for agents and the Docs, which keep the whole list.
  */
-export function visibleComponents(composes: string[]) {
+function visibleComponents(composes: string[]) {
   const pages = new Map<string, { title: string; path: string }>();
   for (const name of composes) {
     if (!/^[A-Z]/.test(name) || /(?:Provider|Close)$/.test(name)) continue;

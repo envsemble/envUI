@@ -11,7 +11,6 @@ import { lazyPart } from '../loading/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
 import { UsageFigure } from '../figures/Figures';
 import { partsOf } from '../template/Parts';
-import { providesOf } from '../template/Provides';
 import { PropsTables } from './PropsTables';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import type { Documentation as Document } from './PageModel';
@@ -26,7 +25,7 @@ import { TokenReferenceSkeleton } from './TokenTables';
 import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleton';
 import { SpecimenHeadingLevel } from '../figures/Example';
 import { ReleaseNotes } from './ReleaseNotes';
-import { codeColumns, subsections } from '@docs-model/CatalogueContent';
+import { codeColumns, providesOf, subsections } from '@docs-model/CatalogueContent';
 import { headingSlug } from '@docs-model/SearchAnchors';
 
 /** The token reference, a large page that loads with the page that shows it. */
