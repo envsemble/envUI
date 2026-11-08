@@ -3,8 +3,14 @@
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 import { useLatest } from '../../internal/useLatest.js';
-import type { Entry } from './TimeWheel.js';
-import { centredRow, nearestAvailable, topOf, wheelMetrics, wrap } from './wheelRows.js';
+import {
+  centredRow,
+  nearestAvailable,
+  topOf,
+  wheelMetrics,
+  wrap,
+  type Entry,
+} from './wheelRows.js';
 
 /**
  * How quickly a turn eases into its row: each frame closes the distance left with a time constant of
@@ -31,7 +37,6 @@ export function useWheelTurn({
   onChoose,
   loop,
   copies,
-  markTurning,
 }: {
   wheelRef: RefObject<HTMLDivElement | null>;
   /** A mouse dragging the wheel, which settles once it is let go. */
@@ -43,8 +48,6 @@ export function useWheelTurn({
   loop: boolean;
   /** How many times the wheel repeats its entries. */
   copies: number;
-  /** Sets the wheel's data-turning while it eases through a turn of its own. */
-  markTurning: (wheel: HTMLElement, turning: boolean) => void;
 }) {
   const count = entries.length;
   const middleCopy = Math.floor(copies / 2);
@@ -72,7 +75,7 @@ export function useWheelTurn({
     if (!turn.current) return;
     cancelAnimationFrame(turn.current.frame);
     turn.current = null;
-    if (wheel) markTurning(wheel, false);
+    if (wheel) delete wheel.dataset.turning;
   }
 
   /** Eases the wheel towards the target row, a frame at a time, and settles once it is there. */
@@ -111,7 +114,7 @@ export function useWheelTurn({
     // A turn under way heads for the new row from where it is.
     if (turn.current) return;
     // Snapping stays off while the wheel eases, as it would pull each frame back to a row.
-    markTurning(wheel, true);
+    wheel.dataset.turning = '';
     turn.current = {
       position: wheel.scrollTop,
       time: performance.now(),

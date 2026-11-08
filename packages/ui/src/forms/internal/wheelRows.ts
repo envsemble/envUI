@@ -1,6 +1,19 @@
-import type { Entry } from './TimeWheel.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
+
+// The rows of a TimeList's wheels: their entries, and where each row sits as a wheel scrolls.
+
+/** The part of the time a column chooses. */
+export type Part = 'hour' | 'minute' | 'dayPeriod';
+
+export interface Entry {
+  /** The hour (of the day, or of its half on a 12-hour clock), the minute, or 0 for AM and 1 for PM. */
+  value: number;
+  label: string;
+  disabled: boolean;
+  /** What typing names it: digits, or the start of the day period's name. */
+  keys: string[];
+}
 
 /** The rows a wheel shows, --env-time-list-rows in TimeList.css. */
 export const shownRows = 5;

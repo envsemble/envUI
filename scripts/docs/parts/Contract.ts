@@ -272,14 +272,17 @@ export function buildParts({
 
   // A state's values, completed from what the group's code writes: its own module and the modules
   // its classes occur in, which set its attributes on its parts, and, through an element's dataset,
-  // the internal modules it imports, such as List's reordering. An internal module that renders
+  // the internal modules it imports, such as List's reordering, or, for a group no public module
+  // renders, that its classes' modules import, such as a time wheel's turning. An internal module that renders
   // several components' elements, such as the one under Button and Link, writes values that may be
   // another's, so it counts only where the group's classes occur in it.
   for (const group of groups.values()) {
     const states = groupStates.get(group.name);
     if (!states) continue;
     const own = new Set([...(group.source ? [group.source] : []), ...filesOfMembers(group.name)]);
-    const imported = group.source ? reachable(group.source) : own;
+    const imported = group.source
+      ? reachable(group.source)
+      : new Set([...own].flatMap((file) => [...reachable(file)]));
     for (const [attribute, entry] of states) {
       if (entry.free) continue;
       const found = [

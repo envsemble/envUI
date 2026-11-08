@@ -4,6 +4,7 @@ import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
   useRef,
+  useState,
   type ComponentPropsWithoutRef,
   type CSSProperties,
   type ReactNode,
@@ -26,35 +27,20 @@ import {
 } from './internal/FieldFrame.js';
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { autoHighlightAlways } from './internal/autoHighlightAlways.js';
+import {
+  standIn,
+  type ComboboxFilter,
+  type ComboboxGroup,
+  type ComboboxItem,
+} from './internal/comboboxItems.js';
 import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
-import { useComboboxQuery } from './internal/useComboboxQuery.js';
-import { useComboboxSelection } from './internal/useComboboxSelection.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
+import { useFormReset } from './internal/useFormReset.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';
 
-/** One option of a Combobox. */
-export interface ComboboxItem {
-  /** Stable identifier: the value the field reports and submits. */
-  value: string;
-  /** Names the option; the field shows it once chosen, and the default filter matches it. */
-  label: string;
-  /** A muted second line, such as an e-mail address; the default filter matches it too. */
-  description?: string;
-  /** Content before the label, such as an Avatar or an icon; it takes the size of its slot. */
-  start?: ReactNode;
-  /** The option shows but can't be chosen. */
-  disabled?: boolean;
-}
-
-/** Options under a heading, which also names the group for assistive technology. */
-export interface ComboboxGroup<Item extends ComboboxItem = ComboboxItem> {
-  /** The group's heading. */
-  label: string;
-  /** The options under the heading, in display order. */
-  items: readonly Item[];
-}
+export type { ComboboxFilter, ComboboxGroup, ComboboxItem };
 
 /** What a combobox's onOpenChange receives beside the requested state. */
 export interface ComboboxOpenChangeDetails {
@@ -64,12 +50,6 @@ export interface ComboboxOpenChangeDetails {
    */
   reason: string;
 }
-
-/** Whether an option matches the text typed into the field. */
-export type ComboboxFilter<Item extends ComboboxItem = ComboboxItem> = (
-  item: Item,
-  query: string,
-) => boolean;
 
 interface ComboboxSharedProps<Item extends ComboboxItem>
   extends
@@ -172,6 +152,12 @@ interface ComboboxMultipleProps<Item extends ComboboxItem> {
 export type ComboboxProps<Item extends ComboboxItem = ComboboxItem> = ComboboxSharedProps<Item> &
   (ComboboxSingleProps<Item> | ComboboxMultipleProps<Item>);
 
+/** The chosen value as Base UI takes it: a list of values, one value, or none. */
+type Selection = readonly string[] | string | null;
+
+/** Changes of the typed text that people make, rather than the field filling in a chosen label. */
+const typedChanges = new Set(['input-change', 'input-clear', 'clear-press', 'escape-key']);
+
 /**
  * A text field that filters a list of options as people type, for choosing one option or several.
  * Chosen options show as removable chips; keyboard, focus and announcements follow the WAI-ARIA
@@ -239,17 +225,26 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   // The chips' arrow keys and the popup follow the text direction, read as the popup opens or
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
-  const { selection, selectedValues, handleValueChange } = useComboboxSelection<Item>({
-    multiple: isMultiple,
-    value,
-    defaultValue,
-    onValueChange,
+
+  // The chosen value: the one it is given, or one the field keeps itself, which a native form reset
+  // restores to the default; as Base UI takes it, a list of values for a field that takes several.
+  const defaultSelection: Selection = isMultiple
+    ? [...((defaultValue as readonly string[] | undefined) ?? [])]
+    : ((defaultValue as string | null | undefined) ?? null);
+  const [uncontrolledValue, setUncontrolledValue] = useState<Selection>(defaultSelection);
+  const controlled = value !== undefined;
+  const selection = controlled ? (isMultiple ? value : (value ?? null)) : uncontrolledValue;
+  useFormReset(
     nativeRef,
+    function applyReset() {
+      if (!controlled) setUncontrolledValue(defaultSelection);
+    },
     form,
-    clearable,
-    popupOpen,
-    changeOpen,
-  });
+  );
+  const selectedValues = (
+    Array.isArray(selection) ? selection : selection == null ? [] : [selection]
+  ) as readonly string[];
+
   const {
     known,
     labelOf,
@@ -260,12 +255,69 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   } = useComboboxOptions({ items, filter, locale, selectedValues });
 
   const singleItem = isMultiple || selection == null ? undefined : known.get(selection as string);
-  const { inputText, handleInputValueChange } = useComboboxQuery({
-    initialText: singleItem?.label ?? '',
-    clearable,
-    multiple: isMultiple,
-    onInputValueChange,
-  });
+  // The text the input shows, which starts as the chosen option's label, and the query
+  // onInputValueChange reported last.
+  const [inputText, setInputText] = useState(singleItem?.label ?? '');
+  const reportedQuery = useRef('');
+
+  /** Keeps a value people chose, where the field keeps its own, and reports it with its options. */
+  function choose(next: Selection) {
+    if (!controlled) setUncontrolledValue(next);
+    // The props are a union on multiple, which the field has already told apart.
+    if (isMultiple) {
+      const values = [...((next as readonly string[] | null) ?? [])];
+      (onValueChange as ((value: string[], items: Item[]) => void) | undefined)?.(
+        values,
+        values.map((selected) => known.get(selected) ?? standIn<Item>(selected)),
+      );
+    } else {
+      const single = (next as string | null) ?? null;
+      (onValueChange as ((value: string | null, item: Item | null) => void) | undefined)?.(
+        single,
+        single == null ? null : (known.get(single) ?? null),
+      );
+    }
+  }
+
+  function handleValueChange(next: Selection, details: BaseCombobox.Root.ChangeEventDetails) {
+    if (details.isCanceled) return;
+    // Esc and emptying the text clear only a clearable single field that has a value. They keep
+    // the value otherwise, and Esc never removes chips, which go one at a time or with the clear
+    // button; Esc then goes on, such as to close a dialog.
+    const escape = details.reason === 'escape-key';
+    const clearing = escape || (!isMultiple && details.reason === 'input-clear');
+    if (clearing && (!clearable || selectedValues.length === 0 || (isMultiple && escape))) {
+      details.cancel();
+      details.allowPropagation();
+      // Emptied text shows every option to choose another; closing the popup restores the label.
+      if (details.reason === 'input-clear' && !popupOpen) changeOpen(true, details.reason);
+      return;
+    }
+    choose(next);
+  }
+
+  /**
+   * Keeps the text, and reports the query as people type. Esc keeps the text of a field that isn't
+   * clearable, and goes on, such as to close a dialog. Once a single field shows its chosen label
+   * again, the query is over and an empty one is reported, so options found for it, such as on a
+   * server, go with it.
+   */
+  function handleInputValueChange(next: string, details: BaseCombobox.Root.ChangeEventDetails) {
+    if (details.isCanceled) return;
+    if (details.reason === 'escape-key' && !clearable) {
+      details.cancel();
+      details.allowPropagation();
+      return;
+    }
+    setInputText(next);
+    if (typedChanges.has(details.reason)) {
+      reportedQuery.current = next;
+      onInputValueChange?.(next);
+    } else if (!isMultiple && reportedQuery.current !== '') {
+      reportedQuery.current = '';
+      onInputValueChange?.('');
+    }
+  }
 
   const hasChips = isMultiple && selectedValues.length > 0;
   const labelShown = label != null && isLabelShown({ showLabel });
@@ -287,7 +339,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
         items={collection}
         multiple={isMultiple}
         value={selection as string[] | string | null}
-        onValueChange={(next, details) => handleValueChange(next, details, known)}
+        onValueChange={handleValueChange}
         onInputValueChange={handleInputValueChange}
         itemToStringLabel={labelOf}
         filter={baseFilter}

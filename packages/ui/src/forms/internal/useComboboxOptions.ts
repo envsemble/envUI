@@ -2,8 +2,13 @@
 
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useLayoutEffect, useMemo, useRef } from 'react';
-import type { ComboboxFilter, ComboboxGroup, ComboboxItem } from '../Combobox.js';
-import { flattenItems, isGroup } from './comboboxItems.js';
+import {
+  flattenItems,
+  isGroup,
+  type ComboboxFilter,
+  type ComboboxGroup,
+  type ComboboxItem,
+} from './comboboxItems.js';
 
 /**
  * A combobox's options as Base UI reads them: their collection, the filter, and the options known
