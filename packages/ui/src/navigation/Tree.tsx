@@ -188,10 +188,11 @@ export function Tree<Item extends TreeItem>({
   }, [selectedId]);
 
   function activate(index: number) {
-    const item = items[Math.max(0, Math.min(items.length - 1, index))];
+    const at = Math.max(0, Math.min(items.length - 1, index));
+    const item = items[at];
     if (!item) return;
     setActiveId(item.value);
-    scrollToIndex(indexById.get(item.value)!);
+    scrollToIndex(at);
   }
 
   function open(item: Item, preview: boolean) {

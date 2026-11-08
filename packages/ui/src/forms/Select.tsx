@@ -28,6 +28,7 @@ import {
 import { Grid } from '../foundations/Layout.js';
 import { ListRow } from '../internal/ListRow.js';
 import { setRef } from '../internal/setRef.js';
+import { useOpenState } from '../internal/useOpenState.js';
 import { classNames } from '../internal/classNames.js';
 import { flag } from '../internal/flag.js';
 import { useFormReset } from './internal/useFormReset.js';
@@ -171,7 +172,7 @@ export function Select({
   defaultValue,
   onValueChange,
   open: controlledOpen,
-  defaultOpen = false,
+  defaultOpen,
   onOpenChange,
   readOnly = false,
   name,
@@ -203,8 +204,7 @@ export function Select({
   const portal = usePortalContainer();
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? null);
   const selectedValue = value === undefined ? uncontrolledValue : value;
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
-  const open = controlledOpen ?? uncontrolledOpen;
+  const [open, setOpen] = useOpenState({ open: controlledOpen, defaultOpen, onOpenChange });
   // The label floats into the outline while the field holds a value or its list is open.
   const labelFloats = selectedValue != null || open;
   useFormReset(
@@ -233,8 +233,7 @@ export function Select({
           details.cancel();
           return;
         }
-        if (controlledOpen === undefined) setUncontrolledOpen(next);
-        onOpenChange?.(next, { reason: details.reason });
+        setOpen(next, { reason: details.reason });
         // A key, or the click a key gives a button (detail 0), rather than the pointer, which
         // opens the list on mousedown.
         const event = details.event;

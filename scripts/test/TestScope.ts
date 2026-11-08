@@ -249,7 +249,7 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
     // Generated files: tokens with the lint packages' copies, icons, and the documentation the
     // sources and docs/ make.
     if (
-      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens)\.[jt]s$|tokens\/)|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|data\/tokens\.json)$/.test(
+      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens|LintPackageColorPolicy)\.[jt]s$|tokens\/)|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|colorPolicy\.js|data\/tokens\.json)$/.test(
         path,
       )
     )

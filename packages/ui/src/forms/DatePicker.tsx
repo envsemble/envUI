@@ -164,8 +164,6 @@ interface DateTimeValue {
   minutes: number;
 }
 
-const minutesPerDay = 24 * 60;
-
 function parseValue(value: string | null | undefined, withTime: boolean, defaultMinutes: number) {
   const dateTime = parseDateTime(value);
   const day = dateTime?.day ?? parseDay(value);
@@ -179,7 +177,7 @@ function boundMoment(value: string | undefined, edge: 'start' | 'end') {
   if (dateTime) return momentOf(dateTime.day, dateTime.minutes);
   const day = parseDay(value);
   if (day === undefined) return undefined;
-  return momentOf(day, edge === 'start' ? 0 : minutesPerDay - 1);
+  return edge === 'start' ? momentOf(day, 0) : momentOf(day + 1, 0) - 1;
 }
 
 /** A bound's time of day where it falls on the given day, for the list of times. */

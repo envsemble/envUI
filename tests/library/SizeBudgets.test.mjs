@@ -44,8 +44,9 @@ const componentBudgets = {
   Popover: 7400,
   // 14,607 measured; raising it is a deliberate decision, recorded in the commit.
   Menu: 15000,
-  // 15,542 measured; raising it is a deliberate decision, recorded in the commit.
-  Select: 16200,
+  // 16,320 measured (2026-11-08, its open state from the shared useOpenState; was 16,167); raising
+  // it is a deliberate decision, recorded in the commit.
+  Select: 16800,
   // 7,528 measured (2026-11-08, prerelease.6's ghost fill and read-only look; was 7,202); raising it
   // is a deliberate decision, recorded in the commit.
   TextField: 7750,

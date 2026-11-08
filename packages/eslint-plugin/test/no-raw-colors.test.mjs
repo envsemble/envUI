@@ -1,44 +1,33 @@
 import { readFileSync } from 'node:fs';
 import rule from '../src/rules/no-raw-colors.js';
-import { colorTokenSuggestion } from '../src/tokens.js';
+import { colorTokenAdvice } from '../src/tokens.js';
 import { ruleTester, typeScriptRuleTester } from './RuleTester.mjs';
 
 /** A raw color in a property; the property decides which tokens the message suggests. */
 const raw = (color, property) => ({
   messageId: 'rawColor',
-  data: { color, tokens: colorTokenSuggestion(property) },
+  data: { color, advice: colorTokenAdvice(property) },
 });
 
-/** Values with nested fallbacks that the Stylelint config's tests read too. */
-const nestedFallbacks = JSON.parse(
-  readFileSync(new URL('../../../tests/lint/NestedFallbacks.json', import.meta.url), 'utf8'),
+/** The color values the Stylelint config's tests read too, which both packages read alike. */
+const colorValues = JSON.parse(
+  readFileSync(new URL('../../../tests/lint/ColorValues.json', import.meta.url), 'utf8'),
 );
+const inlineColor = (value) => `<div style={{ color: ${JSON.stringify(value)} }} />`;
 
-// Fallbacks nest: each is var()s whose own fallbacks are var()s, as the Stylelint config reads them.
-ruleTester.run('no-raw-colors with nested fallbacks', rule, {
-  valid: nestedFallbacks.custom.map(
-    (value) => `<div style={{ color: ${JSON.stringify(value)} }} />`,
-  ),
-  invalid: nestedFallbacks.raw.map((value) => ({
-    code: `<div style={{ color: ${JSON.stringify(value)} }} />`,
-    errors: [raw(value, 'color')],
-  })),
+ruleTester.run('no-raw-colors reads color values as the Stylelint config does', rule, {
+  valid: colorValues.accepted.map(inlineColor),
+  invalid: colorValues.rejected.map((entry) => {
+    const [value, color] = Array.isArray(entry) ? entry : [entry, entry];
+    return { code: inlineColor(value), errors: [raw(color, 'color')] };
+  }),
 });
 
 ruleTester.run('no-raw-colors', rule, {
   valid: [
-    '<div style={{ color: "var(--env-color-fg-muted)" }} />',
-    '<div style={{ background: "color-mix(in srgb, var(--env-color-bg-default) 80%, transparent)" }} />',
-    // A relative color derived from a token keeps following it.
-    '<div style={{ color: "hsl(from var(--env-color-fg-link) h s calc(l - 10))" }} />',
-    // Channels that all come from custom properties, and colors inside a CSS string.
-    '<div style={{ color: "oklch(var(--l) var(--c) var(--h))", background: "rgb(var(--rgb) / 50%)" }} />',
-    '<div style={{ color: "color(display-p3 var(--r) var(--g) var(--b))" }} />',
-    // The comma form's last argument is the alpha, as the one after the slash is.
-    '<div style={{ color: "rgba(var(--rgb), 0.5)", background: "rgba(var(--r), var(--g), var(--b), 50%)" }} />',
-    '<div style={{ color: "rgb(var(--brand-rgb))", background: "rgb(var(--rgb, var(--fallback-rgb)))" }} />',
     // A template whose expressions sit outside any color.
     `<div style={{ color: \`var(--env-color-fg-\${tone})\`, background: \`rgb(var(--rgb) / \${alpha})\` }} />`,
+    // Colors inside CSS strings.
     `<div style={{ content: '"rgb(1 2 3) #fff"', quotes: "'red' 'blue'" }} />`,
     '<div style={{ color: "currentColor", borderColor: "transparent", fill: "inherit" }} />',
     // Words that are not colors, and named colors where a property does not take one.
@@ -75,35 +64,6 @@ ruleTester.run('no-raw-colors', rule, {
           column: 22,
         },
       ],
-    },
-    {
-      code: '<div style={{ background: "#0B57D0CC" }} />',
-      errors: [raw('#0B57D0CC', 'background')],
-    },
-    {
-      code: '<div style={{ color: "rgb(0 0 0 / 50%)" }} />',
-      errors: [raw('rgb(0 0 0 / 50%)', 'color')],
-    },
-    {
-      code: '<div style={{ color: "rgba(0, 0, 0, 0.5)" }} />',
-      errors: [raw('rgba(0, 0, 0, 0.5)', 'color')],
-    },
-    {
-      code: '<div style={{ color: "hsl(210 50% 40%)" }} />',
-      errors: [raw('hsl(210 50% 40%)', 'color')],
-    },
-    {
-      code: '<div style={{ color: "oklch(0.6 0.15 250)" }} />',
-      errors: [raw('oklch(0.6 0.15 250)', 'color')],
-    },
-    {
-      code: '<div style={{ color: "color(display-p3 1 0 0)" }} />',
-      errors: [raw('color(display-p3 1 0 0)', 'color')],
-    },
-    {
-      // One literal channel among custom properties is still a literal color.
-      code: '<div style={{ color: "oklch(var(--l) 0.15 var(--h))" }} />',
-      errors: [raw('oklch(var(--l) 0.15 var(--h))', 'color')],
     },
     {
       code: `<div style={{ content: '"a"', color: 'RGB(1 2 3)' }} />`,
@@ -204,15 +164,6 @@ ruleTester.run('no-raw-colors', rule, {
       code: `<div style={{ border: \`1px solid \${on ? "#000" : "var(--env-color-border-default)"}\` }} />`,
       errors: [raw('#000', 'border')],
     },
-    // A fallback is a color as much as the value.
-    {
-      code: '<div style={{ color: "rgb(var(--rgb, 255 0 0))" }} />',
-      errors: [raw('rgb(var(--rgb, 255 0 0))', 'color')],
-    },
-    {
-      code: '<div style={{ color: "var(--accent, #0b57d0)" }} />',
-      errors: [raw('#0b57d0', 'color')],
-    },
     // A call's callee and arguments are part of the value: a color passed to a helper, a style
     // object built by one, and a string whose method is called.
     {
@@ -243,19 +194,6 @@ ruleTester.run('no-raw-colors', rule, {
       // A lookup's selector passes, but the rest of the call around it does not.
       code: `<div style={{ color: pick(document.querySelector('#fff'), '#000') }} />`,
       errors: [raw('#000', 'color')],
-    },
-    // Channels are custom properties, each one a var(); anything else is a color of its own.
-    {
-      code: '<div style={{ color: "rgb(calc(255) calc(0) calc(0))" }} />',
-      errors: [raw('rgb(calc(255) calc(0) calc(0))', 'color')],
-    },
-    {
-      code: '<div style={{ color: "hsl(none none none)" }} />',
-      errors: [raw('hsl(none none none)', 'color')],
-    },
-    {
-      code: '<div style={{ color: "rgb(var(--r), var(--g), 0)" }} />',
-      errors: [raw('rgb(var(--r), var(--g), 0)', 'color')],
     },
   ],
 });

@@ -99,6 +99,7 @@
       "forms/Calendar.tsx": "composites",
       "forms/Checkbox.tsx": "base",
       "forms/Combobox.tsx": "composites",
+      "forms/internal/autoHighlightAlways.ts": "composites",
       "forms/internal/ComboboxPopup.tsx": "composites",
       "forms/internal/comboboxItems.ts": "composites",
       "forms/internal/useComboboxOpen.ts": "composites",
@@ -310,6 +311,7 @@
       },
       "Combobox": {
         "modules": [
+          "forms/internal/autoHighlightAlways.ts",
           "forms/internal/ComboboxPopup.tsx",
           "forms/internal/comboboxItems.ts",
           "forms/internal/useComboboxOpen.ts",

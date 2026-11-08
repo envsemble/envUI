@@ -1,7 +1,14 @@
 // Stylelint config for applications built with envUI: colors and stacking order from tokens,
 // and rem for everything that follows the reader's font size, with px only for hairlines.
 // See README.md.
-import { colorTokenSuggestion, tokens } from './tokens.js';
+import {
+  colorFunctionNames,
+  colorSpace,
+  customPropertyName,
+  literalAlpha,
+  nestingDepth,
+} from './colorPolicy.js';
+import { colorTokenAdvice, tokens } from './tokens.js';
 
 const documentation =
   'https://github.com/envsemble/envUI/blob/main/packages/stylelint-config/README.md';
@@ -11,15 +18,11 @@ const outsideUrl = String.raw`(?<!\burl\(\s*(?:"[^"]*|'[^']*|[^"')]*))`;
 /** Not inside a CSS string, such as the text of `content: "rgb(1 2 3)"`. */
 const outsideString = String.raw`(?<!^(?:[^"'\\]|\\.|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')*(?:"(?:[^"\\]|\\.)*|'(?:[^'\\]|\\.)*))`;
 /** The start of a color function call. */
-const colorFunctionStart = String.raw`(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(`;
+const colorFunctionStart = String.raw`(?<![\w-])(?:${colorFunctionNames})\(`;
 /**
- * How deeply the patterns below follow nested parentheses, such as a fallback's fallback. A
- * regular expression can't recurse, so the patterns are built to this depth, which no real value
- * reaches; deeper nesting counts as raw. The ESLint plugin's no-raw-colors follows fallbacks to the
- * same depth.
+ * Builds a pattern `nestingDepth` levels deep, each level wrapping the one inside it, as a regular
+ * expression can't recurse.
  */
-const nestingDepth = 8;
-/** Builds a pattern `nestingDepth` levels deep, each level wrapping the one inside it. */
 const nested = (innermost, wrap) =>
   Array.from({ length: nestingDepth }).reduce((inner) => wrap(inner), innermost);
 /**
@@ -28,17 +31,16 @@ const nested = (innermost, wrap) =>
  * The ESLint plugin's no-raw-colors reads fallbacks the same way.
  */
 const customProperty = nested(
-  String.raw`var\(\s*--[\w-]+\s*\)`,
-  (inner) => String.raw`var\(\s*--[\w-]+\s*(?:,[\s,]*(?:${inner}(?=[\s,)])[\s,]*)*)?\)`,
+  String.raw`var\(\s*${customPropertyName}\s*\)`,
+  (inner) =>
+    String.raw`var\(\s*${customPropertyName}\s*(?:,[\s,]*(?:${inner}(?=[\s,)])[\s,]*)*)?\)`,
 );
-/** Text whose parentheses balance. */
-const balanced = nested('[^()]*', (inner) => String.raw`(?:[^()]|\(${inner}\))*`);
 /**
  * An alpha that keeps a color from custom properties: a literal number or percentage, such as
  * `0.5` or `50%`, or one custom property whose fallbacks are custom properties, as a channel's are.
  * The ESLint plugin's no-raw-colors reads it alike.
  */
-const alpha = String.raw`\s*(?:[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?%?|${customProperty})\s*`;
+const alpha = String.raw`\s*(?:${literalAlpha}|${customProperty})\s*`;
 /**
  * Arguments that make no raw color: a relative color derived from a token (`hsl(from …)`), or
  * channels that all come from custom properties, each a `var()` whose fallback, if any, is a
@@ -47,7 +49,7 @@ const alpha = String.raw`\s*(?:[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?%?|${cu
  * comma-separated arguments: `rgb(var(--rgb) / 50%)` and `rgba(var(--rgb), var(--alpha))` alike.
  * `color()` names its color space first.
  */
-const customChannels = String.raw`(?:\s*from\b|(?:(?<=color\()\s*[a-z][\w-]*\s+)?\s*${customProperty}(?:\s+${customProperty})*\s*(?:\/${alpha})?\)|\s*${customProperty}\s*(?:,\s*${customProperty}\s*,\s*${customProperty}\s*)?(?:,${alpha})?\))`;
+const customChannels = String.raw`(?:\s*from\b|(?:(?<=color\()\s*${colorSpace}\s+)?\s*${customProperty}(?:\s+${customProperty})*\s*(?:\/${alpha})?\)|\s*${customProperty}\s*(?:,\s*${customProperty}\s*,\s*${customProperty}\s*)?(?:,${alpha})?\))`;
 
 /**
  * Color functions with a channel that is not a custom property, as a Stylelint regular expression:
@@ -117,15 +119,26 @@ export const hairlineProperties = [
   '/^--[\\w-]*(?:shadow|hairline)$/',
 ];
 
-/** A whole raw color function call outside url() and strings, for the message. */
-const colorCall = new RegExp(
-  String.raw`${outsideString}${outsideUrl}${colorFunctionStart}(?!${customChannels})${balanced}\)?`,
+/** The start of a raw color function call outside url() and strings. */
+const rawColorCallStart = new RegExp(
+  String.raw`${outsideString}${outsideUrl}${colorFunctionStart}(?!${customChannels})`,
   'i',
 );
 
-/** What to use instead of a raw color, with the envUI tokens for the property it is in. */
-const useColorToken = (property) =>
-  `use an envUI color token instead, ${colorTokenSuggestion(property)}, so the color follows the theme and keeps its contrast.`;
+/**
+ * The first whole raw color function call in a value, for the message, to its matching `)` or the
+ * value's end; the value itself where none is found.
+ */
+function rawColorCall(value) {
+  const start = rawColorCallStart.exec(value);
+  if (!start) return value;
+  let depth = 1;
+  let end = start.index + start[0].length;
+  for (; end < value.length && depth > 0; end += 1)
+    if (value[end] === '(') depth += 1;
+    else if (value[end] === ')') depth -= 1;
+  return value.slice(start.index, end);
+}
 
 /** @type {import('stylelint').Config} */
 export default {
@@ -133,14 +146,14 @@ export default {
     'color-no-hex': [
       true,
       {
-        message: (hex) => `Raw color ${hex}: ${useColorToken()}`,
+        message: (hex) => `Raw color ${hex}: ${colorTokenAdvice()}`,
         url: `${documentation}#raw-colors`,
       },
     ],
     'color-named': [
       'never',
       {
-        message: (name) => `Raw color ${name}: ${useColorToken()}`,
+        message: (name) => `Raw color ${name}: ${colorTokenAdvice()}`,
         url: `${documentation}#raw-colors`,
       },
     ],
@@ -148,7 +161,7 @@ export default {
       { '/.*/': [rawColorFunction] },
       {
         message: (property, value) =>
-          `Raw color ${value.match(colorCall)?.[0] ?? value} in ${property}: ${useColorToken(property)}`,
+          `Raw color ${rawColorCall(value)} in ${property}: ${colorTokenAdvice(property)}`,
         url: `${documentation}#raw-colors`,
       },
     ],
