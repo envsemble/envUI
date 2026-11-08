@@ -350,6 +350,205 @@ function joinPointerFrames(frame: PointerFrame) {
   return () => void pointerFrames.delete(frame);
 }
 
+type Plan = ReturnType<typeof planOf>;
+
+/** Sends one thing a script does at a moment to the pointer, such as a press, a key or a cue. */
+function send(
+  current: VirtualPointer,
+  happening: Plan['happenings'][number],
+  onCue: ((cue: string) => void) | undefined,
+) {
+  switch (happening.kind) {
+    case 'cue':
+      return onCue?.(happening.cue!);
+    case 'type':
+      return current.type(happening.target!, happening.text ?? null);
+    case 'key':
+      return current.key(happening.cue!, happening.target);
+    case 'keyDown':
+      return current.keyDown(happening.cue!, happening.target);
+    case 'keyUp':
+      return current.keyUp(happening.cue!, happening.target);
+    case 'focus':
+    case 'blur':
+      return current.keyboardFocus(happening.target ?? null);
+    case 'carry':
+      return current.carry(happening.files!);
+    case 'drop':
+      return current.drop();
+    case 'press':
+      return current.press(happening.button);
+    case 'release':
+      return current.release();
+    case 'leave':
+      return current.leave();
+  }
+}
+
+/** Turns the wheel where the pointer is, from `done` to `to`, eased in and out, as a hand's flick. */
+function turnWheels(current: VirtualPointer, plan: Plan, done: number, to: number) {
+  for (const wheel of plan.wheels) {
+    if (wheel.end <= done || wheel.start > to) continue;
+    if (wheel.start > done) current.startWheel(wheel.axis);
+    const progress = Math.min(1, (to - wheel.start) / (wheel.end - wheel.start));
+    current.turnWheel(wheel.distance * ease(progress));
+    if (to >= wheel.end) current.endWheel();
+  }
+}
+
+/** Where a pointer's script is: the time it has played to, and the last time it acted on. */
+interface PointerClock {
+  time: number;
+  done: number;
+}
+
+/**
+ * Plays a pointer's script over `scope` from where its clock is, a frame at a time, reading where
+ * it goes with the page's other pointers and then moving it (joinPointerFrames); `clockName` plays
+ * it on a shared clock (joinClock). Returns the stop, which keeps where it is for the next play.
+ */
+function playPointer(
+  scope: HTMLElement,
+  current: VirtualPointer,
+  plan: Plan,
+  {
+    clockRef,
+    cueRef,
+    clockName,
+  }: {
+    clockRef: RefObject<PointerClock>;
+    cueRef: RefObject<((cue: string) => void) | undefined>;
+    clockName: string | undefined;
+  },
+) {
+  let last = performance.now();
+  /** The time the next frame moves the pointer to, and where that is, read after the last one. */
+  let next: number | null = null;
+  let aimed: { time: number; at: { x: number; y: number }; target: Aimed | null } | null = null;
+  /**
+   * Where the aims were when read. Something happening in the frame, such as a press, moves the
+   * pointer by them still: what it changed shows in the next frame's.
+   */
+  let known: AimPoints = new Map();
+  /** Whether something happened in this frame, which may have changed what the pointer is over. */
+  let acted = false;
+  /** Where the stage was as the aims were read, in the viewport. */
+  let readAt = { x: 0, y: 0 };
+  const together = clockName ? joinClock(clockName, 0) : null;
+  /** Moves the pointer on to a time of the plan, sending what happens on the way. */
+  const advance = (to: number, still = false) => {
+    const { done } = clockRef.current;
+    for (const happening of plan.happenings) {
+      if (happening.time <= done || happening.time > to) continue;
+      const at = positionAt(scope, plan, happening.time, known);
+      acted = true;
+      if (at && presentAt(plan, happening.time - 0.001)) current.moveTo(at);
+      send(current, happening, cueRef.current);
+    }
+    if (still) {
+      // It stays where it is, whatever moves under it.
+    } else if (presentAt(plan, to)) {
+      const ready = aimed?.time === to ? aimed : null;
+      const at = ready ? ready.at : positionAt(scope, plan, to, known);
+      // What is under it, read with the aims, unless something happened since.
+      if (at) current.moveTo(at, acted ? null : ready?.target);
+    } else if (current.present) current.leave();
+    // The wheel turns where the pointer is now.
+    turnWheels(current, plan, done, to);
+    clockRef.current.done = to;
+  };
+  /** Reads where the pointer goes in this frame: the time it moves to, and what is there. */
+  const read = (now: number) => {
+    next = together ? together.time() % plan.length : clockRef.current.time + (now - last);
+    last = now;
+    aimed = null;
+    known = new Map();
+    const box = scope.getBoundingClientRect();
+    readAt = { x: box.left, y: box.top };
+    const time = next >= plan.length ? next % plan.length : next;
+    // Where it is heading, which its tile's view keeps in the stage (MustShow.ts).
+    headFor(scope, headingAt(plan, time));
+    // Where what happens on the way to it happens, through the end of the loop where it ends.
+    const { done, time: from } = clockRef.current;
+    const loops = next >= plan.length || next < from;
+    for (const happening of plan.happenings) {
+      const due = loops
+        ? happening.time > done || happening.time <= time
+        : happening.time > done && happening.time <= time;
+      if (due) positionAt(scope, plan, happening.time, known);
+    }
+    if (!presentAt(plan, time)) return;
+    const at = positionAt(scope, plan, time, known);
+    if (at) aimed = { time, at, target: current.aim(at) };
+  };
+  const write = () => {
+    const to = next;
+    if (to === null) return;
+    next = null;
+    const state = clockRef.current;
+    acted = false;
+    // The reader scrolled the page since the aims were read: they are where the stage was, so
+    // the frame reads them again where it is now.
+    const box = scope.getBoundingClientRect();
+    if (Math.abs(box.left - readAt.x) >= 0.5 || Math.abs(box.top - readAt.y) >= 0.5) {
+      aimed = null;
+      known = new Map();
+    }
+    // While another stage's pointer holds its button down, this one waits: a page has one
+    // mouse, and a move without a button, on the document, would end the other's drag. A
+    // script of keys alone, which never moves the pointer, goes on, and so does one where it
+    // only stays where it is meanwhile, waiting or turning the wheel. On a
+    // shared clock, its time goes on meanwhile.
+    let still = false;
+    if (plan.moves.length > 0 && !current.resume()) {
+      const quiet =
+        to < plan.length &&
+        !plan.moves.some((move) => move.start <= to && move.end >= state.time) &&
+        !plan.happenings.some((happening) => happening.time > state.time && happening.time <= to);
+      if (!quiet) return;
+      still = true;
+    }
+    if (together && to < state.time) {
+      advance(plan.length);
+      state.done = -1;
+    }
+    state.time = to;
+    if (state.time >= plan.length) {
+      advance(plan.length);
+      state.time %= plan.length;
+      state.done = -1;
+    }
+    advance(state.time, still);
+  };
+  const stop = joinPointerFrames({ read, write });
+  // Its cursor shows while it plays, and goes as it stops or pauses.
+  current.showCursor(true);
+  return () => {
+    stop();
+    together?.leave();
+    current.suspend();
+    current.showCursor(false);
+    headFor(scope, null);
+  };
+}
+
+/** Names what a pointer's script acts on and where it heads, which its tile's view keeps. */
+function usePointerCourse(root: HTMLElement | null, plan: Plan) {
+  // What it acts on stays in its tile's view as it plays (MustShow.ts).
+  useEffect(() => (root ? nameMustShow(root, aimsOf(plan)) : undefined), [root, plan]);
+  // Where it heads, which its tile's still is framed on, as its play is (useFit.ts).
+  useEffect(
+    () =>
+      root
+        ? nameCourse(
+            root,
+            plan.moves.map(({ to }) => ({ selector: to.selector, x: to.x, y: to.y })),
+          )
+        : undefined,
+    [root, plan],
+  );
+}
+
 /**
  * Plays a script of what the pointer no one sees does over the stage's live component, in a loop
  * while the stage plays: it hovers, presses, drags and releases it by the same events a mouse
@@ -382,21 +581,9 @@ export function usePointer(
   const rests = Boolean(onRest);
   useEffect(() => (rests ? claimRest?.() : undefined), [rests, claimRest]);
   const pointer = useRef<VirtualPointer | null>(null);
-  const clock = useRef({ time: 0, done: -1 });
+  const clock = useRef<PointerClock>({ time: 0, done: -1 });
   const [plan] = useState(() => planOf(script));
-  // What it acts on stays in its tile's view as it plays (MustShow.ts).
-  useEffect(() => (root ? nameMustShow(root, aimsOf(plan)) : undefined), [root, plan]);
-  // Where it heads, which its tile's still is framed on, as its play is (useFit.ts).
-  useEffect(
-    () =>
-      root
-        ? nameCourse(
-            root,
-            plan.moves.map(({ to }) => ({ selector: to.selector, x: to.x, y: to.y })),
-          )
-        : undefined,
-    [root, plan],
-  );
+  usePointerCourse(root, plan);
   // The pointer's events go out after React's commit, as a component may answer them by
   // rendering at once, which React refuses from inside an effect.
   useEffect(
@@ -419,157 +606,8 @@ export function usePointer(
   }, [playing, rest]);
   useEffect(() => {
     if (!playing || !root) return;
-    const scope = root;
-    const current = (pointer.current ??= new VirtualPointer(scope));
-    let last = performance.now();
-    /** The time the next frame moves the pointer to, and where that is, read after the last one. */
-    let next: number | null = null;
-    let aimed: { time: number; at: { x: number; y: number }; target: Aimed | null } | null = null;
-    /**
-     * Where the aims were when read. Something happening in the frame, such as a press, moves the
-     * pointer by them still: what it changed shows in the next frame's.
-     */
-    let known: AimPoints = new Map();
-    /** Whether something happened in this frame, which may have changed what the pointer is over. */
-    let acted = false;
-    /** Where the stage was as the aims were read, in the viewport. */
-    let readAt = { x: 0, y: 0 };
-    const together = clockName ? joinClock(clockName, 0) : null;
-    /** Moves the pointer on to a time of the plan, sending what happens on the way. */
-    const advance = (to: number, still = false) => {
-      const { done } = clock.current;
-      for (const happening of plan.happenings) {
-        if (happening.time <= done || happening.time > to) continue;
-        const at = positionAt(scope, plan, happening.time, known);
-        acted = true;
-        if (at && presentAt(plan, happening.time - 0.001)) current.moveTo(at);
-        if (happening.kind === 'cue') {
-          cueTo.current?.(happening.cue!);
-          continue;
-        }
-        if (happening.kind === 'type') {
-          current.type(happening.target!, happening.text ?? null);
-          continue;
-        }
-        if (happening.kind === 'key') {
-          current.key(happening.cue!, happening.target);
-          continue;
-        }
-        if (happening.kind === 'keyDown') {
-          current.keyDown(happening.cue!, happening.target);
-          continue;
-        }
-        if (happening.kind === 'keyUp') {
-          current.keyUp(happening.cue!, happening.target);
-          continue;
-        }
-        if (happening.kind === 'focus' || happening.kind === 'blur') {
-          current.keyboardFocus(happening.target ?? null);
-          continue;
-        }
-        if (happening.kind === 'carry') {
-          current.carry(happening.files!);
-          continue;
-        }
-        if (happening.kind === 'drop') {
-          current.drop();
-          continue;
-        }
-        if (happening.kind === 'press') current.press(happening.button);
-        else if (happening.kind === 'release') current.release();
-        else current.leave();
-      }
-      if (still) {
-        // It stays where it is, whatever moves under it.
-      } else if (presentAt(plan, to)) {
-        const ready = aimed?.time === to ? aimed : null;
-        const at = ready ? ready.at : positionAt(scope, plan, to, known);
-        // What is under it, read with the aims, unless something happened since.
-        if (at) current.moveTo(at, acted ? null : ready?.target);
-      } else if (current.present) current.leave();
-      // The wheel turns where the pointer is now, eased in and out, as a hand's flick.
-      for (const wheel of plan.wheels) {
-        if (wheel.end <= done || wheel.start > to) continue;
-        if (wheel.start > done) current.startWheel(wheel.axis);
-        const progress = Math.min(1, (to - wheel.start) / (wheel.end - wheel.start));
-        current.turnWheel(wheel.distance * ease(progress));
-        if (to >= wheel.end) current.endWheel();
-      }
-      clock.current.done = to;
-    };
-    /** Reads where the pointer goes in this frame: the time it moves to, and what is there. */
-    const read = (now: number) => {
-      next = together ? together.time() % plan.length : clock.current.time + (now - last);
-      last = now;
-      aimed = null;
-      known = new Map();
-      const box = scope.getBoundingClientRect();
-      readAt = { x: box.left, y: box.top };
-      const time = next >= plan.length ? next % plan.length : next;
-      // Where it is heading, which its tile's view keeps in the stage (MustShow.ts).
-      headFor(scope, headingAt(plan, time));
-      // Where what happens on the way to it happens, through the end of the loop where it ends.
-      const { done, time: from } = clock.current;
-      const loops = next >= plan.length || next < from;
-      for (const happening of plan.happenings) {
-        const due = loops
-          ? happening.time > done || happening.time <= time
-          : happening.time > done && happening.time <= time;
-        if (due) positionAt(scope, plan, happening.time, known);
-      }
-      if (!presentAt(plan, time)) return;
-      const at = positionAt(scope, plan, time, known);
-      if (at) aimed = { time, at, target: current.aim(at) };
-    };
-    const write = () => {
-      const to = next;
-      if (to === null) return;
-      next = null;
-      const state = clock.current;
-      acted = false;
-      // The reader scrolled the page since the aims were read: they are where the stage was, so
-      // the frame reads them again where it is now.
-      const box = scope.getBoundingClientRect();
-      if (Math.abs(box.left - readAt.x) >= 0.5 || Math.abs(box.top - readAt.y) >= 0.5) {
-        aimed = null;
-        known = new Map();
-      }
-      // While another stage's pointer holds its button down, this one waits: a page has one
-      // mouse, and a move without a button, on the document, would end the other's drag. A
-      // script of keys alone, which never moves the pointer, goes on, and so does one where it
-      // only stays where it is meanwhile, waiting or turning the wheel. On a
-      // shared clock, its time goes on meanwhile.
-      let still = false;
-      if (plan.moves.length > 0 && !current.resume()) {
-        const quiet =
-          to < plan.length &&
-          !plan.moves.some((move) => move.start <= to && move.end >= state.time) &&
-          !plan.happenings.some((happening) => happening.time > state.time && happening.time <= to);
-        if (!quiet) return;
-        still = true;
-      }
-      if (together && to < state.time) {
-        advance(plan.length);
-        state.done = -1;
-      }
-      state.time = to;
-      if (state.time >= plan.length) {
-        advance(plan.length);
-        state.time %= plan.length;
-        state.done = -1;
-      }
-      advance(state.time, still);
-    };
-    const stop = joinPointerFrames({ read, write });
-    // Its cursor shows while it plays, and goes as it stops or pauses.
-    current.showCursor(true);
-    return () => {
-      stop();
-      together?.leave();
-      current.suspend();
-      current.showCursor(false);
-      headFor(scope, null);
-    };
+    const current = (pointer.current ??= new VirtualPointer(root));
+    return playPointer(root, current, plan, { clockRef: clock, cueRef: cueTo, clockName });
   }, [playing, root, plan, clockName]);
 }
 
