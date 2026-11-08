@@ -178,6 +178,7 @@ if (scope.generated.has('tokens'))
   staticTasks.push(
     task('tokens:check', node('scripts/build/GeneratePalette.ts', '--check')),
     task('tokens:check build', node('scripts/build/BuildTokens.ts', '--check')),
+    task('tokens:check lint packages', node('scripts/build/SyncLintPackages.ts', '--check')),
   );
 if (scope.generated.has('docs'))
   staticTasks.push(

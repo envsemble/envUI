@@ -282,9 +282,10 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
       Object.assign(scope.whole, { lint: true, css: true, format: true });
       scope.typecheck = scope.build.library = true;
     }
-    // Generated files: tokens, icons, and the documentation the sources and docs/ make.
+    // Generated files: tokens with the lint packages' copies, icons, and the documentation the
+    // sources and docs/ make.
     if (
-      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:BuildTokens|GeneratePalette)\.ts$/.test(
+      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens)\.[jt]s$|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|data\/tokens\.json)$/.test(
         path,
       )
     )
