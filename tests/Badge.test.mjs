@@ -2,32 +2,13 @@
 // style sheet reads by data-count.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource } from './support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/Badge.mjs');
-await build({
-  absWorkingDir: repository,
-  stdin: {
-    contents: "export { Badge } from './packages/ui/src/content/Badge.tsx';",
-    resolveDir: repository,
-    loader: 'ts',
-  },
-  bundle: true,
-  // The style sheets the modules import are the browser's concern.
-  loader: { '.css': 'empty' },
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  jsx: 'automatic',
-  outfile: output,
-  logLevel: 'error',
-});
-const { Badge } = await import(pathToFileURL(output).href);
+const { Badge } = await importSource('Badge', [
+  "export { Badge } from './packages/ui/src/content/Badge.tsx';",
+]);
 
 test('a badge shows its label in its tone and variant', () => {
   const markup = renderToStaticMarkup(h(Badge, { tone: 'success' }, 'Done'));

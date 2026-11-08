@@ -4,36 +4,10 @@
 // hydrates.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource } from './support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/TableOfContents.mjs');
-await build({
-  absWorkingDir: repository,
-  stdin: {
-    contents: [
-      "export { TableOfContents } from './packages/ui/src/navigation/TableOfContents.tsx';",
-      "export * from './packages/ui/src/navigation/internal/contentsOutline.ts';",
-      "export * from './packages/ui/src/navigation/internal/contentsWave.ts';",
-      "export { EnvUIProvider } from './packages/ui/src/foundations/EnvUIProvider.tsx';",
-    ].join('\n'),
-    resolveDir: repository,
-    loader: 'ts',
-  },
-  bundle: true,
-  // The style sheets the modules import are the browser's concern.
-  loader: { '.css': 'empty' },
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  jsx: 'automatic',
-  outfile: output,
-  logLevel: 'error',
-});
 const {
   TableOfContents,
   EnvUIProvider,
@@ -50,7 +24,12 @@ const {
   wavePath,
   wavePlace,
   waveThin,
-} = await import(pathToFileURL(output).href);
+} = await importSource('TableOfContents', [
+  "export { TableOfContents } from './packages/ui/src/navigation/TableOfContents.tsx';",
+  "export * from './packages/ui/src/navigation/internal/contentsOutline.ts';",
+  "export * from './packages/ui/src/navigation/internal/contentsWave.ts';",
+  "export { EnvUIProvider } from './packages/ui/src/foundations/EnvUIProvider.tsx';",
+]);
 
 test('headings nest under the last heading above them of a lower level', () => {
   const items = outline([

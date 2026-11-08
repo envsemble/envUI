@@ -3,31 +3,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource, repository } from './support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/AvatarSelected.mjs');
-await build({
-  absWorkingDir: repository,
-  stdin: {
-    contents: "export { Avatar } from './packages/ui/src/content/Avatar.tsx';",
-    resolveDir: repository,
-    loader: 'ts',
-  },
-  bundle: true,
-  // The style sheets the modules import are the browser's concern.
-  loader: { '.css': 'empty' },
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  jsx: 'automatic',
-  outfile: output,
-  logLevel: 'error',
-});
-const { Avatar } = await import(pathToFileURL(output).href);
+const { Avatar } = await importSource('AvatarSelected', [
+  "export { Avatar } from './packages/ui/src/content/Avatar.tsx';",
+]);
 
 test('a selected avatar marks its state and draws a check hidden from assistive technology', () => {
   const markup = renderToStaticMarkup(h(Avatar, { name: 'Sam Lee', named: true, selected: true }));

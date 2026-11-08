@@ -4,40 +4,20 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource, repository } from './support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/Skeleton.mjs');
-await build({
-  absWorkingDir: repository,
-  stdin: {
-    contents: [
-      "export { placeholders, isPlaceholder } from './packages/ui/src/foundations/placeholders.ts';",
-      "export { skeletonAttributes, skeletonListAttributes, given } from './packages/ui/src/internal/skeleton.ts';",
-      "export { useSkeleton } from './packages/ui/src/foundations/SkeletonScope.tsx';",
-      "export { Surface } from './packages/ui/src/foundations/Surface.tsx';",
-      "export { Text } from './packages/ui/src/foundations/Text.tsx';",
-      "export { Card } from './packages/ui/src/content/Card.tsx';",
-      "export * as List from './packages/ui/src/content/List.tsx';",
-      "export { Alert } from './packages/ui/src/feedback/Alert.tsx';",
-    ].join('\n'),
-    resolveDir: repository,
-    loader: 'ts',
-  },
-  bundle: true,
-  // The style sheets the modules import are the browser's concern.
-  loader: { '.css': 'empty' },
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  jsx: 'automatic',
-  outfile: output,
-  logLevel: 'error',
-});
-const library = await import(pathToFileURL(output).href);
+const library = await importSource('Skeleton', [
+  "export { placeholders, isPlaceholder } from './packages/ui/src/foundations/placeholders.ts';",
+  "export { skeletonAttributes, skeletonListAttributes, given } from './packages/ui/src/internal/skeleton.ts';",
+  "export { useSkeleton } from './packages/ui/src/foundations/SkeletonScope.tsx';",
+  "export { Surface } from './packages/ui/src/foundations/Surface.tsx';",
+  "export { Text } from './packages/ui/src/foundations/Text.tsx';",
+  "export { Card } from './packages/ui/src/content/Card.tsx';",
+  "export * as List from './packages/ui/src/content/List.tsx';",
+  "export { Alert } from './packages/ui/src/feedback/Alert.tsx';",
+]);
 const { placeholders, isPlaceholder, skeletonAttributes, skeletonListAttributes, given } = library;
 const { useSkeleton } = library;
 const { Surface, Text, Card, List, Alert } = library;

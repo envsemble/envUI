@@ -5,30 +5,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
+import { importSource, repository } from './support/importSource.mjs';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/DevMode.mjs');
-await build({
-  absWorkingDir: repository,
-  stdin: {
-    contents: [
-      "export * from './packages/ui/src/dev/queries.ts';",
-      "export * from './packages/ui/src/dev/parts.ts';",
-      "export * from './packages/ui/src/dev/readout.ts';",
-      "export * from './packages/ui/src/dev/units.ts';",
-    ].join('\n'),
-    resolveDir: repository,
-    loader: 'ts',
-  },
-  bundle: true,
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  outfile: output,
-  logLevel: 'error',
-});
 const {
   conditionHolds,
   thresholdsOf,
@@ -39,7 +19,12 @@ const {
   read,
   toPx,
   windowClassOf,
-} = await import(pathToFileURL(output).href);
+} = await importSource('DevMode', [
+  "export * from './packages/ui/src/dev/queries.ts';",
+  "export * from './packages/ui/src/dev/parts.ts';",
+  "export * from './packages/ui/src/dev/readout.ts';",
+  "export * from './packages/ui/src/dev/units.ts';",
+]);
 
 test('container conditions: the widths they test and whether they hold', () => {
   assert.deepEqual(thresholdsOf('(inline-size >= 37.5rem)', 16), [37.5]);

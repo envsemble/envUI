@@ -2,24 +2,12 @@
 // parser, and the dates it can't read.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource } from './support/importSource.mjs';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/CalendarHeatmapModel.mjs');
-await build({
-  absWorkingDir: repository,
-  entryPoints: [join(repository, 'packages/ui/src/content/internal/calendarHeatmapModel.ts')],
-  bundle: true,
-  loader: { '.css': 'empty' },
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  outfile: output,
-  logLevel: 'error',
-});
-const { calendarHeatmapModel } = await import(pathToFileURL(output).href);
+const { calendarHeatmapModel } = await importSource(
+  'CalendarHeatmapModel',
+  'packages/ui/src/content/internal/calendarHeatmapModel.ts',
+);
 
 const model = (data, options = {}) =>
   calendarHeatmapModel({
