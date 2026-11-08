@@ -36,7 +36,7 @@ const preflight = flag('--preflight');
  * mcr.microsoft.com/playwright:v<version>-noble` prints, and rerun the baseline.
  */
 const imageDigests: Record<string, string> = {
-  '1.63.0': 'sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27',
+  '1.65.0': 'sha256:6e3fb709361521eb27161606e6da6d2674e5e89fa16516cb37d6fdd91372273d',
 };
 /** Snapshots are rendered on x86-64; other hosts emulate it rather than draw different pixels. */
 const platform = 'linux/amd64';
