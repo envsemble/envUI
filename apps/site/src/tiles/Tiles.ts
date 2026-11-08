@@ -2,7 +2,7 @@ import { lazy, type ComponentType } from 'react';
 import { loadModule } from '../template/LoadBoundary';
 
 /*
- * The tiles' own previews: for a component or pattern, a small live picture written for its tile
+ * The tiles' own pictures: for a component or pattern, a small live picture written for its tile
  * in the galleries and in Related, apps/site/src/tiles/<Page>.tsx, named after the page's id in
  * PascalCase (segmented-control is SegmentedControl.tsx), with a default-exported component. It
  * shows the component alone, large and centred, with as little else as it needs to be recognised,

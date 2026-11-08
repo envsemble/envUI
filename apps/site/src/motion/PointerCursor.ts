@@ -1,13 +1,13 @@
 /*
  * The cursor of the pointer no one sees (VirtualPointer.ts): a small plain arrow drawn over the
- * stage of the preview it plays in, where the pointer is, while it plays, so a reader can follow
- * what it moves to and presses. It is drawn beside the preview, not in it, so it changes nothing of
- * the component, isn't measured by a tile's fit and is never under the pointer itself; it takes the
- * scale the preview is drawn at, so it sits on what it points at, and shrinks a little while it
+ * stage it plays in, where the pointer is, while it plays, so a reader can follow what it moves to
+ * and presses. It is drawn beside the live component, not in it, so it changes nothing of the
+ * component, isn't measured by a tile's fit and is never under the pointer itself; it takes the
+ * scale the component is drawn at, so it sits on what it points at, and shrinks a little while it
  * presses (Stage.css). While it carries files in, as from the desktop, a small chip beside it names
  * them, with a file icon, as a drag image does, on whichever side of it the stage has room for it.
  * Both are drawn in a layer as large as the stage that clips them, so neither is ever drawn past the
- * stage's edges, such as over the name under it. Without motion, previews don't play, and it isn't
+ * stage's edges, such as over the name under it. Without motion, stages don't play, and it isn't
  * drawn.
  */
 import { createElement } from 'react';
@@ -49,7 +49,7 @@ export class PointerCursor {
     if (layer.parentElement !== stage) stage.append(layer);
     if (element.parentElement !== layer) layer.append(element);
     const box = stage.getBoundingClientRect();
-    // The scale the stage is drawn at, as a page drawn smaller would be, and the preview in it.
+    // The scale the stage is drawn at, as a page drawn smaller would be, and the component in it.
     const stageScale = box.width / (stage.offsetWidth || box.width) || 1;
     const own = this.scope.getBoundingClientRect();
     const scope = this.scope as HTMLElement;

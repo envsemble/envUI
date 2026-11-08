@@ -59,7 +59,7 @@ function initialMotion() {
 interface DisplaySettingsValue {
   contrast: ThemeContrast;
   scale: ThemeScale;
-  /** Whether every animation of the site is paused, the previews' and the figures'. */
+  /** Whether every animation of the site is paused, the tiles' and the figures'. */
   motionPaused: boolean;
   setContrast: (contrast: ThemeContrast) => void;
   setScale: (scale: ThemeScale) => void;

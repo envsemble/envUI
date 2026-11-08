@@ -3,7 +3,7 @@ import { useSyncExternalStore } from 'react';
 /**
  * Whether one of the site's own popups is open, such as the Display menu, search or the navigation
  * sheet: a menu, list or dialog portalled to the page's body, outside the app (#root), where every
- * preview keeps its own overlays in its layer. While one is, the previews'
+ * stage keeps its own overlays in its layer. While one is, the stages'
  * pointers stand still and their overlays wait to open again, as their presses and openings would
  * otherwise count as a press outside it, and close it.
  */
@@ -31,7 +31,7 @@ function subscribe(listener: () => void) {
   listeners.add(listener);
   if (!observer) {
     open = sitePopupOpen();
-    // Read once a frame at most: the previews change the page many times a second.
+    // Read once a frame at most: the stages change the page many times a second.
     observer = new MutationObserver(() => {
       if (frame) return;
       frame = requestAnimationFrame(() => {

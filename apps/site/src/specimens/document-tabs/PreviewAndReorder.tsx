@@ -50,6 +50,7 @@ function Arranging() {
 }
 
 /** A preview tab kept by a double click, then a tab dragged into a new place. */
+// eslint-disable-next-line no-restricted-syntax -- a preview tab is the document tabs' own word
 export default function PreviewAndReorderMotion() {
   return (
     <Example>

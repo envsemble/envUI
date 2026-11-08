@@ -31,15 +31,15 @@ import { useSitePopupOpen } from './SitePopup';
 export type { PointerStep } from './PointerPlan';
 
 /*
- * The site's animated previews: a tile's, which plays while the pointer or the keyboard is on it,
- * and an animated figure's on a page, which plays while it is in view unless it is paused. Each is
+ * The site's stages, where a live component plays: a tile's, while the pointer or the keyboard is
+ * on it, and an animated figure's on a page, while it is in view unless it is paused. Each shows
  * the live component, used as a person would use it: a pointer no one sees hovers, presses and
  * drags it (usePointer), and where something else changes, such as a notification arriving, a
  * timeline of steps changes its props (useTimeline). Its still is the animation at its start,
  * never a picture.
  */
 
-/** How the animations inside a preview play. */
+/** How the animations inside a stage play. */
 interface PlaybackValue {
   /** Whether they play now. */
   playing: boolean;
@@ -48,23 +48,23 @@ interface PlaybackValue {
    * leaves it, or where they are, as a paused figure does.
    */
   rest: 'start' | 'hold';
-  /** The preview's element, which holds the component and its popups. */
+  /** The stage's element, which holds the component and its popups. */
   root: HTMLElement | null;
 }
 
 const PlaybackContext = createContext<
   PlaybackValue & {
-    /** Takes over going back to the still, from drawing the preview anew; returns the release. */
+    /** Takes over going back to the still, from drawing the stage anew; returns the release. */
     claimRest?: () => () => void;
-    /** Counts a timeline that sets the preview's props while it is there; returns the release. */
+    /** Counts a timeline that sets the stage's props while it is there; returns the release. */
     countTimeline?: () => () => void;
-    /** Counts any animation of the preview, a pointer's script too, while it is there (Playback). */
+    /** Counts any animation of the stage, a pointer's script too, while it is there (Playback). */
     countAnimation?: () => () => void;
   }
 >({ playing: false, rest: 'start', root: null });
 
 /**
- * Plays or stops the animations of a preview. A preview that rests at its start is drawn anew as it
+ * Plays or stops the animations of a stage. A stage that rests at its start is drawn anew as it
  * stops, so it is its still again, whatever its animation changed, unless it goes back to its
  * still by itself (usePointer's `onRest`), as one whose still would come in with motion again.
  */
@@ -89,7 +89,7 @@ export function Playback({
   redraw?: boolean;
   children: ReactNode;
 }) {
-  // A site popup open, such as the Display menu, holds the previews where they are (SitePopup.ts).
+  // A site popup open, such as the Display menu, holds the stages where they are (SitePopup.ts).
   const held = useSitePopupOpen();
   return (
     <PlaybackOf
@@ -141,7 +141,7 @@ function PlaybackOf({
 }
 
 /**
- * Whether the preview plays now, and where it rests once it stops, for an animation that keeps its
+ * Whether the stage plays now, and where it rests once it stops, for an animation that keeps its
  * own clock, such as a width frame's sweep (WidthSweep.tsx), which runs only while it plays.
  */
 export function usePlayback() {
@@ -150,29 +150,29 @@ export function usePlayback() {
 }
 
 /**
- * The layer a preview's overlays render into, inside its canvas, for a tile that renders an
+ * The layer a stage's overlays render into, inside its canvas, for a tile that renders an
  * overlay live rather than as a picture, such as notifications that arrive and leave with their
  * own motion.
  */
-export function usePreviewLayer() {
+export function useStageLayer() {
   const { root } = use(PlaybackContext);
   return root?.querySelector<HTMLElement>(':scope > .catalogue-overlay-layer') ?? null;
 }
 
 /**
- * Holds a preview's overlays inside it, live: its menus, popovers, dialogs, sheets and tooltips
+ * Holds a stage's overlays inside it, live: its menus, popovers, dialogs, sheets and tooltips
  * render through envUI's PortalContainer, contained, into a layer beside the component, so they
  * neither lock the page's scroll, take focus nor close as the reader presses elsewhere, and the
- * pointer no one sees finds them in the preview. The box around it that is a containing block,
+ * pointer no one sees finds them in the stage. The box around it that is a containing block,
  * a tile's canvas or a figure's stage, places them: a dialog's backdrop covers it, not the page.
- * Render it as a direct child of the preview's root (Playback), where usePreviewLayer finds it.
+ * Render it as a direct child of the stage's root (Playback), where useStageLayer finds it.
  *
  * Its tooltips take turns among themselves alone: a tooltip opening closes the one open before it
- * only in the same preview, so a figure's playing pointer never closes the tooltip the reader opened
+ * only in the same stage, so a figure's playing pointer never closes the tooltip the reader opened
  * on a live example, nor another figure's. With no wait for the next one past a tooltip closing,
  * as envUI's tooltips have outside any group.
  */
-export function PreviewOverlays({ children }: { children: ReactNode }) {
+export function StageOverlays({ children }: { children: ReactNode }) {
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   return (
     <BaseTooltip.Provider timeout={0}>
@@ -184,13 +184,13 @@ export function PreviewOverlays({ children }: { children: ReactNode }) {
   );
 }
 
-/** Counts a timeline in its preview's while it is there, and as one of its animations. */
+/** Counts a timeline in its stage's while it is there, and as one of its animations. */
 function useCounted(countTimeline: (() => () => void) | undefined) {
   useEffect(() => countTimeline?.(), [countTimeline]);
   useCountedAnimation();
 }
 
-/** Counts an animation in its preview's while it is there. */
+/** Counts an animation in its stage's while it is there. */
 function useCountedAnimation() {
   const { countAnimation } = use(PlaybackContext);
   useEffect(() => countAnimation?.(), [countAnimation]);
@@ -199,8 +199,8 @@ function useCountedAnimation() {
 /**
  * The step a looping animation is at, from 0, the still: each step lasts its duration, in ms, and
  * the last leads back to the first, so an animation is a list of what changes at each step. It
- * advances only while its preview plays (Playback), and stopped, it goes back to the still or
- * holds where it is, as its preview rests.
+ * advances only while its stage plays (Playback), and stopped, it goes back to the still or
+ * holds where it is, as its stage rests.
  *
  *     const step = useTimeline([600, 1200]);
  *     return <Toast ... />;
@@ -211,7 +211,7 @@ export function useTimeline(durations: readonly number[]) {
   const [step, setStep] = useState(0);
   // Whether it has yet to leave its still since it started playing: it leaves it at once.
   const fresh = useRef(true);
-  // Stopped, a preview that rests at the still goes back to it at once, in the same render.
+  // Stopped, a stage that rests at the still goes back to it at once, in the same render.
   if (!playing && rest === 'start' && step !== 0) setStep(0);
   const duration = (durations[step] ?? 0) * waitPace;
   const count = durations.length;
@@ -232,13 +232,13 @@ export function useTimeline(durations: readonly number[]) {
 
 /**
  * The clocks of timelines that play together: the time each has played, counted while any of its
- * previews plays.
+ * stages plays.
  */
 const sharedClocks = new Map<string, { played: number; since: number | null; players: number }>();
 
 /**
- * Joins a shared clock while a preview plays on it: `time` is how long the clock has played, and
- * `leave` stops counting for this preview. A new clock starts `from` that time.
+ * Joins a shared clock while a stage plays on it: `time` is how long the clock has played, and
+ * `leave` stops counting for this stage. A new clock starts `from` that time.
  */
 function joinClock(clock: string, from: number) {
   let shared = sharedClocks.get(clock);
@@ -259,8 +259,8 @@ function joinClock(clock: string, from: number) {
 }
 
 /**
- * useTimeline for previews that play one timeline together, such as a do and a don't side by side:
- * every preview that names the same `clock` takes its step from one clock, so they keep in step
+ * useTimeline for stages that play one timeline together, such as a do and a don't side by side:
+ * every stage that names the same `clock` takes its step from one clock, so they keep in step
  * however their timers fall. The clock runs while any of them plays; one paused by itself holds
  * where it is, and plays on in step with the others.
  *
@@ -321,7 +321,7 @@ function writePointerFrames() {
   // Posted first, so the reads come before any rendering that the moves below schedule.
   afterFrame!.postMessage(undefined);
   const frames = [...pointerFrames];
-  // A pointer whose preview stopped on another's move stops here too.
+  // A pointer whose stage stopped on another's move stops here too.
   for (const frame of frames) if (pointerFrames.has(frame)) frame.write();
 }
 
@@ -351,15 +351,15 @@ function joinPointerFrames(frame: PointerFrame) {
 }
 
 /**
- * Plays a script of what the pointer no one sees does over the preview's live component, in a loop
- * while the preview plays: it hovers, presses, drags and releases it by the same events a mouse
+ * Plays a script of what the pointer no one sees does over the stage's live component, in a loop
+ * while the stage plays: it hovers, presses, drags and releases it by the same events a mouse
  * sends, so the component shows its own hover, press and drag (VirtualPointer.ts). Its clock runs
- * only while the preview plays, so a paused figure holds mid-drag. Write the script to end where it
- * began, off the preview and released, so the loop starts again from the still.
- * - `onCue` hears its cues, the moments where the preview itself changes.
- * - `onRest`, where given, takes the preview back to its still as it stops, in place of drawing
+ * only while the stage plays, so a paused figure holds mid-drag. Write the script to end where it
+ * began, off the stage and released, so the loop starts again from the still.
+ * - `onCue` hears its cues, the moments where the stage itself changes.
+ * - `onRest`, where given, takes the stage back to its still as it stops, in place of drawing
  *   it anew, such as dismissing what a cue showed.
- * - `clock`, a name, plays the script on the clock of the previews that name it, as
+ * - `clock`, a name, plays the script on the clock of the stages that name it, as
  *   useSharedTimeline does, for a do and a don't whose pointers act side by side in step: give
  *   their scripts the same length.
  */
@@ -407,7 +407,7 @@ export function usePointer(
     },
     [],
   );
-  // Stopped, a preview that goes back to its still by itself does: the pointer goes, and the
+  // Stopped, a stage that goes back to its still by itself does: the pointer goes, and the
   // script starts again from the beginning next time.
   useEffect(() => {
     if (playing || rest !== 'start' || !restTo.current) return;
@@ -432,7 +432,7 @@ export function usePointer(
     let known: AimPoints = new Map();
     /** Whether something happened in this frame, which may have changed what the pointer is over. */
     let acted = false;
-    /** Where the preview was as the aims were read, in the viewport. */
+    /** Where the stage was as the aims were read, in the viewport. */
     let readAt = { x: 0, y: 0 };
     const together = clockName ? joinClock(clockName, 0) : null;
     /** Moves the pointer on to a time of the plan, sending what happens on the way. */
@@ -527,14 +527,14 @@ export function usePointer(
       next = null;
       const state = clock.current;
       acted = false;
-      // The reader scrolled the page since the aims were read: they are where the preview was, so
+      // The reader scrolled the page since the aims were read: they are where the stage was, so
       // the frame reads them again where it is now.
       const box = scope.getBoundingClientRect();
       if (Math.abs(box.left - readAt.x) >= 0.5 || Math.abs(box.top - readAt.y) >= 0.5) {
         aimed = null;
         known = new Map();
       }
-      // While another preview's pointer holds its button down, this one waits: a page has one
+      // While another stage's pointer holds its button down, this one waits: a page has one
       // mouse, and a move without a button, on the document, would end the other's drag. A
       // script of keys alone, which never moves the pointer, goes on, and so does one where it
       // only stays where it is meanwhile, waiting or turning the wheel. On a
@@ -575,7 +575,7 @@ export function usePointer(
 
 /**
  * Names elements a tile's animation acts on that its pointer's script doesn't, such as a row a
- * timeline changes, by selectors inside its preview, so they stay in its view as it plays
+ * timeline changes, by selectors inside its stage, so they stay in its view as it plays
  * (MustShow.ts).
  */
 export function useMustShow(...selectors: string[]) {
@@ -604,14 +604,14 @@ export function usePlaying() {
   const [pointer, setPointer] = useState(false);
   const [keyboard, setKeyboard] = useState(false);
   const handlers = {
-    // The pointer no one sees, inside the tile's own preview, isn't the reader's.
+    // The pointer no one sees, inside the tile's own stage, isn't the reader's.
     onPointerEnter: (event: PointerEvent) => {
       if (!isVirtual(event.nativeEvent)) setPointer(event.pointerType !== 'touch');
     },
     onPointerLeave: (event: PointerEvent) => {
       if (!isVirtual(event.nativeEvent)) setPointer(false);
     },
-    // The focus the pointer no one sees brings into a tile's preview, untrusted, isn't the
+    // The focus the pointer no one sees brings into a tile's stage, untrusted, isn't the
     // reader's either: it would keep the tile playing once the reader's pointer left it.
     onFocus: (event: FocusEvent) => {
       if (event.nativeEvent.isTrusted) setKeyboard(event.target.matches(':focus-visible'));

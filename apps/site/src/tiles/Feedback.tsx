@@ -8,7 +8,7 @@ import {
   useToast,
 } from '@envsemble/envui';
 import { IconSend } from '@envsemble/envui/icons/Send';
-import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
+import { usePointer, useStageLayer, type PointerStep } from '../motion/Motion';
 
 /**
  * The last invitation's notification dismissed, then another sent: the button works a moment, and
@@ -66,7 +66,7 @@ function Invite() {
  * in the live region the tile's layer holds.
  */
 export default function FeedbackTile() {
-  const layer = usePreviewLayer();
+  const layer = useStageLayer();
   if (!layer) return null;
   return (
     <PortalContainer container={layer}>

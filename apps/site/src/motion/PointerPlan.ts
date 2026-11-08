@@ -9,10 +9,10 @@ import { remPixels } from '../shared/Lengths';
 
 /**
  * One step of what the pointer no one sees does, or of what happens around it:
- * - `wait`, ms: it stays as it is, over the preview or not, pressed or not.
- * - `to`, a selector of an element in the preview: it moves to a point of it, `x` and `y` as
+ * - `wait`, ms: it stays as it is, over the stage or not, pressed or not.
+ * - `to`, a selector of an element in the stage: it moves to a point of it, `x` and `y` as
  *   fractions of its box, the middle by default, over `duration` ms, or comes there at once if it
- *   wasn't over the preview. Pressed, it drags; pressed on text, in a field or in content, the drag
+ *   wasn't over the stage. Pressed, it drags; pressed on text, in a field or in content, the drag
  *   selects the words it crosses, whole, as a person does, until a press elsewhere. With `text`, a
  *   word or phrase in the element's text or value, it moves to that text: `x` is how far along it,
  *   by its characters, and `y` how far down its line, so a script finds a word wherever the text
@@ -25,8 +25,8 @@ import { remPixels } from '../shared/Lengths';
  *   `stay` keeps it where it pressed.
  * - `rightClick`: its secondary button pressed and released, which opens a context menu where it
  *   is, as a right click does.
- * - `leave`: it goes off the preview, releasing its button and any key held first.
- * - `cue`: a moment the preview acts on (usePointer's `onCue`), such as a notification arriving.
+ * - `leave`: it goes off the stage, releasing its button and any key held first.
+ * - `cue`: a moment the stage acts on (usePointer's `onCue`), such as a notification arriving.
  * - `type`, text, `into` a selector of a field: typed a character at a time, `every` ms apart;
  *   `erase`, a count: as many characters deleted the same way.
  * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`. Tab
@@ -34,12 +34,12 @@ import { remPixels } from '../shared/Lengths';
  *   form.
  * - `focus`, a selector: the keyboard's focus arrives on that element, as a Tab brings it, with
  *   its focus ring; keys then go to it, and where a key moves focus, as an arrow key along tabs
- *   does, it follows. `blur` takes it off the preview again.
+ *   does, it follows. `blur` takes it off the stage again.
  * - `keyDown`, `keyUp`, a key such as `Alt`: held down and let go, on the field typed into or on
  *   `on`. A held modifier, Alt, Control, Shift or Meta, is on every event meanwhile, so Alt and a
  *   `key` is Alt with that key.
  * - `wheel`, px, down or along `axis` `x` (negative: up, or back): the wheel turned over the
- *   element under the pointer, which scrolls the nearest box around it in the preview that can
+ *   element under the pointer, which scrolls the nearest box around it in the stage that can
  *   scroll, smoothly, over `duration` ms.
  * - `carry`, a file's name, `as` its type and `size` its bytes, or a list of files: the pointer
  *   picks them up, as from the desktop, so its moves drag them; `drop` drops them where it is.
@@ -68,7 +68,7 @@ export type PointerStep =
   | { carry: readonly CarriedFile[] }
   | { drop: true };
 
-/** A point of an element of the preview, as fractions of its box, or of a text in it. */
+/** A point of an element of the stage, as fractions of its box, or of a text in it. */
 export interface Aim {
   selector: string;
   text?: string;
@@ -247,7 +247,7 @@ export function aimsOf(plan: Plan): string[] {
 
 /**
  * Where the pointer is heading at a time of its plan: the aim of the move it is making, or of the
- * last it made; none while it is off the preview.
+ * last it made; none while it is off the stage.
  */
 export function headingAt(plan: Plan, time: number): Aim | null {
   if (!presentAt(plan, time)) return null;
@@ -272,7 +272,7 @@ function pointOf(scope: Element, aim: Aim, known?: AimPoints) {
 }
 
 /**
- * The element of a preview a selector aims at: the first that shows, its middle inside every box
+ * The element of a stage a selector aims at: the first that shows, its middle inside every box
  * around it that clips what overflows it, such as the shown copy of a looping wheel's row rather
  * than one scrolled out of it, else the first there is.
  */
@@ -321,7 +321,7 @@ function asideOf(element: Element, box: DOMRect, point: { x: number; y: number }
   return { x: point.x + end * step, y: point.y };
 }
 
-/** Whether the pointer is over the preview at a time: after a move began and no leave since. */
+/** Whether the pointer is over the stage at a time: after a move began and no leave since. */
 export function presentAt(plan: Plan, time: number) {
   const entered = Math.max(
     -1,

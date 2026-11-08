@@ -382,10 +382,16 @@ function guideSubsections(document: Document) {
 /**
  * The guide at the top of a page in the Docs, from the page's "## Compose": how to import it, its
  * common uses in code, how its parts compose and how to customize it, each a section of its own,
- * with an example file of the page shown as code where the page names one. With `preview`, as a
+ * with an example file of the page shown as code where the page names one. With `showExample`, as a
  * component's, Usage opens with the component, live and compact (UsagePreview).
  */
-function CodeGuide({ document, preview = false }: { document: Document; preview?: boolean }) {
+function CodeGuide({
+  document,
+  showExample = false,
+}: {
+  document: Document;
+  showExample?: boolean;
+}) {
   return guideSubsections(document).map(({ title, content }) => {
     const id = headingSlug(title);
     return (
@@ -393,7 +399,7 @@ function CodeGuide({ document, preview = false }: { document: Document; preview?
         <Text render={<h2 />} variant="title" className="site-section-title" id={id}>
           {title}
         </Text>
-        {preview && title === 'Usage' && <UsagePreview page={document} />}
+        {showExample && title === 'Usage' && <UsagePreview page={document} />}
         {content.map((part, index) =>
           part.kind === 'source' ? (
             <ExampleSource key={index} page={document.id} name={part.name} />
@@ -536,8 +542,8 @@ function Strings({ document }: { document: Document }) {
  * application and envUI provide, which the catalogue leaves out; then, as reference, its props,
  * part names and color properties, and its changelog. It repeats no section of the catalogue and
  * shows no Related: the page goes from its header to Import and Usage, which a component's opens
- * with a compact preview of the component, its catalogue's first overview example. Field, which has no page in the catalogue, shows its whole page here, on
- * the page, as "Build your own field".
+ * with the component, live and compact: its catalogue's first overview example. Field, which has
+ * no page in the catalogue, shows its whole page here, on the page, as "Build your own field".
  */
 export function DocsReferencePage({ page }: { page: DocumentPage }) {
   const document = useDocument(page.document);
@@ -547,7 +553,7 @@ export function DocsReferencePage({ page }: { page: DocumentPage }) {
   // The guide, then once it has painted its reference, together: each step lays the whole page out
   // again, which costs more here than a step saves (useRevealed).
   const guide = useMemo(
-    () => <CodeGuide document={document} preview={!!cataloguePage && !pattern} />,
+    () => <CodeGuide document={document} showExample={!!cataloguePage && !pattern} />,
     [document, cataloguePage, pattern],
   );
   const parts = useMemo(

@@ -6,7 +6,7 @@ const patternGroupId = (group: string) =>
   `patterns-${group.toLowerCase().replace(/[^a-z]+/g, '-')}`;
 
 /**
- * Every pattern, a tile with its preview for each, under the headings of what people are doing,
+ * Every pattern, a tile for each, under the headings of what people are doing,
  * the groups the drawer lists, in the order the index lists the patterns.
  */
 export function PatternCatalogue() {

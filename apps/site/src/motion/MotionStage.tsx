@@ -18,7 +18,7 @@ import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '../shared/DocumentationTypes';
 import { useVerdictFit } from '../template/VerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
-import { Playback, PreviewOverlays, useInView } from './Motion';
+import { Playback, StageOverlays, useInView } from './Motion';
 import { motionDuration } from './MotionTokens';
 import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 
@@ -107,7 +107,7 @@ export const VerdictMotion = createContext<false | 'square' | 'wide'>(false);
  * close what the reader opened.
  *
  * Playing, its overlays, such as a menu, a dialog or a tooltip, open inside the stage, as a tile's
- * do (PreviewOverlays): a dialog's backdrop covers the stage, not the page, and nothing leaves it.
+ * do (StageOverlays): a dialog's backdrop covers the stage, not the page, and nothing leaves it.
  * `height`, a CSS length, keeps the stage as tall as what opens in it from the start, so the
  * figure keeps one height as it plays. Whatever the figure, the stage keeps the tallest height it
  * has reached at its width (useTallest), so a figure that grows for a moment as it plays never
@@ -222,7 +222,7 @@ export function MotionStage({
     </Playback>
   ) : (
     <Playback playing={inView && !paused} rest="hold" root={subject} countTimeline={countTimeline}>
-      <PreviewOverlays>{children}</PreviewOverlays>
+      <StageOverlays>{children}</StageOverlays>
     </Playback>
   );
   // On a page's figure drawn on a device, the device stands on the stage, what plays on its screen.

@@ -82,7 +82,7 @@ function widthAt(time: number, stops: readonly number[], hold: number) {
 
 /**
  * The example in a frame whose width sweeps between `widths`, in rem, the first its still: on
- * through them and back again, held `hold` ms at each, while its preview plays (Playback), and
+ * through them and back again, held `hold` ms at each, while its stage plays (Playback), and
  * held where it is when paused. Place it in a MotionStage. With `at`, it sweeps by itself no
  * longer: it moves to the width at that index whenever `at` changes, for a figure that does more
  * at a width, such as opening a sheet at the narrow end, driven by a useTimeline step or a cue.
@@ -274,7 +274,7 @@ export function WidthSweep({
     move.current = { from: shown.current, to, elapsed: 0, duration: travelTime(shown.current, to) };
   }, [at]);
 
-  // The sweep's clock runs only while the preview plays; stopped, a preview that rests at its
+  // The sweep's clock runs only while the stage plays; stopped, a stage that rests at its
   // start is back at its first width, and a paused one holds where it is.
   useEffect(() => {
     if (!playing) {

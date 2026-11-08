@@ -46,7 +46,7 @@ export const usePendingRoute = () =>
  * The anchor of every envUI destination on the site, through LinkProvider. A plain press on a link
  * to one of its pages, the catalogue's or the Docs', shows the page without loading the site again; a
  * press with a modifier and a link to a file or another site behave as anchors do. An example's
- * links, which a preview keeps from navigating, stay in place. A pointer over a link, or a press
+ * links, which a stage keeps from navigating, stay in place. A pointer over a link, or a press
  * starting on it, starts loading what its page needs; the address and the page change together,
  * once that has loaded, rather than the address first with the page before it still shown, and
  * meanwhile the navigation shows the destination (usePendingRoute).

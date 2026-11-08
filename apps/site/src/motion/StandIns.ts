@@ -1,7 +1,7 @@
 /*
- * Stand-ins for what the browser keeps only for a real pointer, so a preview's components answer
+ * Stand-ins for what the browser keeps only for a real pointer, so a stage's components answer
  * the pointer no one sees (VirtualPointer.ts) as they would a person: its pointer capture, the
- * keyboard's focus inside an inert preview, the clipboard a copy button writes to, and the page's
+ * keyboard's focus inside an inert stage, the clipboard a copy button writes to, and the page's
  * selection a rich text command reads. Elsewhere each is the browser's, as before.
  */
 import { focusMark } from './PointerStates';
@@ -32,11 +32,11 @@ export function keepCaptures() {
   };
 }
 
-/** The previews the keyboard's focus is in, by their scope, and what follows a move of it there. */
+/** The stages the keyboard's focus is in, by their scope, and what follows a move of it there. */
 export const keyboardFocused = new Map<Element, (element: Element) => void>();
 
 /**
- * Keeps the keyboard's focus inside a preview that has it: the preview is inert, so where one of
+ * Keeps the keyboard's focus inside a stage that has it: the stage is inert, so where one of
  * its components moves focus, as an arrow key along tabs does, the pointer's focus follows
  * instead (VirtualPointer.keyboardFocus), and a component asking whether an element of it matches
  * :focus or :focus-visible is answered by the pointer's mark, as its stylesheets are
@@ -67,7 +67,7 @@ export function keepFocus() {
 }
 
 /**
- * Runs a click with the reader's clipboard kept as it is: a preview's copy button, pressed by the
+ * Runs a click with the reader's clipboard kept as it is: a stage's copy button, pressed by the
  * pointer no one sees, copies nowhere. Its writes resolve, so it shows that it copied.
  */
 export function keepClipboard(click: () => void) {
@@ -90,10 +90,10 @@ export function keepClipboard(click: () => void) {
 }
 
 /**
- * Runs what a key does in a rich text editor with the page's selection lent to the preview, at its
+ * Runs what a key does in a rich text editor with the page's selection lent to the stage, at its
  * start, outside the editor, so nothing takes focus, and then given back as the reader left it: a
  * command that reads the page's selection, such as inserting a reference, finds one, as it would
- * in a focused editor, though nothing in an inert preview holds the page's selection.
+ * in a focused editor, though nothing in an inert stage holds the page's selection.
  */
 export function lendSelection(scope: Element | undefined, run: () => void) {
   const selection = scope ? window.getSelection() : null;
@@ -113,8 +113,8 @@ export function lendSelection(scope: Element | undefined, run: () => void) {
   }
 }
 
-/** What a preview's own scrolling stays inside: a tile's window and a page's figure. */
-const previews = '.catalogue-related-canvas, .site-live-example';
+/** What a stage's own scrolling stays inside: a tile's window and a page's figure. */
+const stages = '.catalogue-related-canvas, .site-live-example';
 
 /** Whether a box scrolls along the block axis, its content taller than it. */
 const scrollsDown = (box: Element) =>
@@ -136,20 +136,20 @@ function scrollFor(start: number, end: number, from: number, to: number, place: 
 }
 
 /**
- * Keeps what a component scrolls into view inside the preview it is in, such as the chosen row of
- * a select resting open in a gallery tile: the boxes that scroll inside the preview scroll as the
+ * Keeps what a component scrolls into view inside the stage it is in, such as the chosen row of
+ * a select resting open in a gallery tile: the boxes that scroll inside the stage scroll as the
  * browser would scroll them, and the page never does. The browser's own scrollIntoView scrolls
  * every box around the element, the page among them, so a tile loaded below the fold would pull
  * the page down to it as it appears. Elsewhere, scrolling into view is the browser's, as before.
  */
-export function keepScrollInPreviews() {
+export function keepScrollInStages() {
   const proto = Element.prototype;
   if ((proto as { catalogueScroll?: boolean }).catalogueScroll) return;
   (proto as { catalogueScroll?: boolean }).catalogueScroll = true;
   const { scrollIntoView } = proto;
   proto.scrollIntoView = function (options?: boolean | ScrollIntoViewOptions) {
-    const preview = this.closest(previews);
-    if (!preview) return scrollIntoView.call(this, options);
+    const stage = this.closest(stages);
+    if (!stage) return scrollIntoView.call(this, options);
     const block =
       typeof options === 'object'
         ? (options.block ?? 'start')
@@ -157,7 +157,7 @@ export function keepScrollInPreviews() {
           ? 'end'
           : 'start';
     const inline = typeof options === 'object' ? (options.inline ?? 'nearest') : 'nearest';
-    for (let box = this.parentElement; box && preview.contains(box); box = box.parentElement) {
+    for (let box = this.parentElement; box && stage.contains(box); box = box.parentElement) {
       const down = scrollsDown(box);
       const across = scrollsAcross(box);
       if (!down && !across) continue;
