@@ -284,7 +284,12 @@
         "modules": ["feedback/internal/SpinnerLabel.tsx", "feedback/internal/SpinnerArc.tsx"]
       },
       "Scaffold": {
-        "modules": ["layout/internal/useScrollKeys.ts"]
+        "modules": [
+          "layout/internal/useScrollKeys.ts",
+          "layout/internal/scaffoldFocus.ts",
+          "layout/internal/useNavigationFocusHandoff.ts",
+          "layout/internal/useScaffoldBarSizes.ts"
+        ]
       },
       "List": {
         "modules": ["content/internal/ReorderableList.tsx"]

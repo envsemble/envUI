@@ -2,7 +2,6 @@
 
 import {
   useCallback,
-  useEffect,
   useId,
   useState,
   type ComponentPropsWithRef,
@@ -18,6 +17,9 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
 import { resolveNavigationForms } from './internal/navigationForms.js';
+import { focusRegion } from './internal/scaffoldFocus.js';
+import { useNavigationFocusHandoff } from './internal/useNavigationFocusHandoff.js';
+import { useScaffoldBarSizes } from './internal/useScaffoldBarSizes.js';
 import '../styles/Base.css';
 import '../styles/Scaffold.css';
 
@@ -113,30 +115,6 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   children?: ReactNode;
 }
 
-/** The element of a navigation form to put focus on: its current item, else its first one. */
-function entryOf(form: HTMLElement) {
-  const focusable = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
-  const current = form.querySelector<HTMLElement>('[aria-current]:not([aria-current="false"])');
-  return (
-    (current?.matches(focusable) ? current : current?.querySelector<HTMLElement>(focusable)) ??
-    form.querySelector<HTMLElement>(focusable)
-  );
-}
-
-/** Whether a navigation form's slot shows at the Scaffold's width, as CSS decided. */
-const showing = (slot: Element) => getComputedStyle(slot).display !== 'none';
-
-/** Moves focus to a region without scrolling it under the top bar, as a skip link does. */
-function focusRegion(target: HTMLElement) {
-  // A region that takes no focus takes it for as long as it keeps it, so a press inside it later
-  // doesn't focus the region itself.
-  if (!target.hasAttribute('tabindex')) {
-    target.setAttribute('tabindex', '-1');
-    target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
-  }
-  target.focus();
-}
-
 /**
  * The invisible structure of an application's screen, after Material's: a top bar region, a
  * navigation region and the body. It never paints. It shows one navigation form at a time by its
@@ -192,81 +170,8 @@ export function Scaffold({
   const hasTopBar = topBar != null;
   const hasBar = shown.has('bar');
 
-  // The bars' heights, which CSS can't know where a top bar wraps or is a window's title bar, or
-  // whatever a bar's labels take: the top bar's for what sticks under it, and, where the document
-  // scrolls, both as the document's scroll padding, so what scrolls into view, such as an element
-  // taking focus, keeps clear of the bars (WCAG 2.4.11). A bar that hides measures 0. Until script
-  // runs, Scaffold.css estimates them.
-  useEffect(() => {
-    if (!root || (!hasTopBar && !hasBar)) return;
-    const html = root.ownerDocument.documentElement;
-    const topBarRegion = root.querySelector<HTMLElement>(':scope > .env-scaffold-top-bar');
-    const barSlot = root.querySelector<HTMLElement>(
-      ':scope > .env-scaffold-navigation > .env-scaffold-bar',
-    );
-    const publish = () => {
-      const top = topBarRegion?.offsetHeight ?? 0;
-      root.style.setProperty('--env-scaffold-top-bar-size', `${top}px`);
-      if (scroll !== 'document') return;
-      html.style.setProperty('--env-scaffold-scroll-top', `${top}px`);
-      html.style.setProperty('--env-scaffold-scroll-bottom', `${barSlot?.offsetHeight ?? 0}px`);
-    };
-    publish();
-    const observer = new ResizeObserver(publish);
-    for (const region of [topBarRegion, barSlot]) if (region) observer.observe(region);
-    return () => {
-      observer.disconnect();
-      root.style.removeProperty('--env-scaffold-top-bar-size');
-      html.style.removeProperty('--env-scaffold-scroll-top');
-      html.style.removeProperty('--env-scaffold-scroll-bottom');
-    };
-  }, [root, scroll, hasTopBar, hasBar]);
-
-  // When the Scaffold's width changes the form that shows, focus in the form that hid goes to the
-  // form that shows now, on its current item. Focus elsewhere stays where it is.
-  useEffect(() => {
-    if (!root || !hasNavigation) return;
-    const document = root.ownerDocument;
-    const region = () => document.getElementById(navigationId);
-    // The slot of the form that last had focus, until focus or a press goes elsewhere.
-    let focused: HTMLElement | null = null;
-    const slotOf = (node: EventTarget | null) => {
-      const slot =
-        node instanceof Element ? node.closest<HTMLElement>('[data-navigation-form]') : null;
-      return slot && slot.parentElement === region() ? slot : null;
-    };
-    const onFocusIn = (event: FocusEvent) => {
-      focused = slotOf(event.target);
-    };
-    const onPointerDown = (event: PointerEvent) => {
-      if (!(event.target instanceof Node) || !focused?.contains(event.target)) focused = null;
-    };
-    const observer = new ResizeObserver(() => {
-      if (!focused || showing(focused)) return;
-      const active = document.activeElement;
-      // Focus that moved on, rather than left with the form as it hid, stays where it is.
-      if (active && active !== document.body && !focused.contains(active)) {
-        focused = null;
-        return;
-      }
-      const next = [...(region()?.children ?? [])].find(
-        (slot): slot is HTMLElement => slot instanceof HTMLElement && showing(slot),
-      );
-      focused = next ?? null;
-      if (!next) return;
-      const entry = entryOf(next);
-      if (entry) entry.focus();
-      else focusRegion(next);
-    });
-    root.addEventListener('focusin', onFocusIn);
-    document.addEventListener('pointerdown', onPointerDown, true);
-    observer.observe(root);
-    return () => {
-      root.removeEventListener('focusin', onFocusIn);
-      document.removeEventListener('pointerdown', onPointerDown, true);
-      observer.disconnect();
-    };
-  }, [root, hasNavigation, navigationId]);
+  useScaffoldBarSizes(root, scroll, hasTopBar, hasBar);
+  useNavigationFocusHandoff(root, hasNavigation, navigationId);
   // Every form that shows at some window class is rendered; CSS shows the one for the Scaffold's
   // width, and the others are display: none, out of the tab order and the accessibility tree.
   const slot = (form: ScaffoldNavigationForm) =>
