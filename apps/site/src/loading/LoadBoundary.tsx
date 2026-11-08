@@ -46,7 +46,7 @@ export function reloadModule<T>(
 
 /**
  * A component that loads on its own, for LoadBoundary to show. `module` is the path in the
- * site app of the module `load` imports, such as `src/usage/IconUsage.tsx`, and `modules`
+ * site app of the module `load` imports, such as `src/pages/Changelog.tsx`, and `modules`
  * passes it on to LoadBoundary. `component` is the lazy component to render. A lazy component
  * that failed to load stays failed, so `retry` replaces it with one that asks for the module again,
  * as reloadModule does, at that path from the app's root, where Vite serves it in development.

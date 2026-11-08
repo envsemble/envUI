@@ -14,6 +14,7 @@ import {
   type PointerStep,
 } from './PointerPlan';
 import { joinClock } from '../Timeline';
+import { useLatest } from '@envui-internal/internal/useLatest';
 
 /*
  * A pointer's script played over a stage's live component (usePointer): a pointer no one sees
@@ -296,12 +297,8 @@ export function usePointer(
 ) {
   const { playing, rest, root, claimRest } = use(PlaybackContext);
   useCountedAnimation();
-  const cueTo = useRef(onCue);
-  const restTo = useRef(onRest);
-  useEffect(() => {
-    cueTo.current = onCue;
-    restTo.current = onRest;
-  });
+  const cueTo = useLatest(onCue);
+  const restTo = useLatest(onRest);
   const rests = Boolean(onRest);
   useEffect(() => (rests ? claimRest?.() : undefined), [rests, claimRest]);
   const pointer = useRef<VirtualPointer | null>(null);
@@ -327,10 +324,10 @@ export function usePointer(
       pointer.current?.leave();
       restTo.current?.();
     });
-  }, [playing, rest]);
+  }, [playing, rest, restTo]);
   useEffect(() => {
     if (!playing || !root) return;
     const current = (pointer.current ??= new VirtualPointer(root));
     return playPointer(root, current, plan, { clockRef: clock, cueRef: cueTo, clockName });
-  }, [playing, root, plan, clockName]);
+  }, [playing, root, plan, clockName, cueTo]);
 }

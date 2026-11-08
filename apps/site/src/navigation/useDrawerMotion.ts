@@ -1,7 +1,8 @@
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useState, type RefObject } from 'react';
 import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
 import { rootMotionDuration, rootMotionEasing } from '../motion/RootMotionTokens';
 import type { CatalogueSection } from './SiteRoutes';
+import { useLatest } from '@envui-internal/internal/useLatest';
 
 /** How the catalogue's drawer is moving, if it is (useDrawerMotion). */
 type DrawerMotion = 'arriving' | 'entering' | 'leaving' | 'holding' | 'switching';
@@ -51,10 +52,7 @@ export function useDrawerMotion(
   if (next !== state) setState(next);
   const { motion } = next;
   // The destination the route shows now, for the list that replaces the one held.
-  const latest = useRef<DrawnDrawer>({ section, routePath });
-  useEffect(() => {
-    latest.current = { section, routePath };
-  });
+  const latest = useLatest<DrawnDrawer>({ section, routePath });
   // Switching, the new list replaces the one held, before it paints: it starts unseen beside the
   // rail's edge and comes in as an entrance does, and only fades under reduced motion.
   useLayoutEffect(() => {
@@ -116,7 +114,7 @@ export function useDrawerMotion(
     return () => {
       current = false;
     };
-  }, [navigation, motion]);
+  }, [navigation, motion, latest]);
   return {
     drawn: next.shows || motion === 'leaving' ? next.last : undefined,
     motion,

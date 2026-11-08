@@ -9,6 +9,7 @@ import {
 import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/envui';
 import { usePlayback } from './Playback';
 import { remPixels } from '@envui-internal/internal/lengths';
+import { useLatest } from '@envui-internal/internal/useLatest';
 
 /*
  * An Adapting to width figure that plays: the example in one frame whose width sweeps between the
@@ -378,10 +379,7 @@ export function WidthSweep({
       if (reading.current.textContent !== text) reading.current.textContent = text;
     }
   };
-  const drawRef = useRef(draw);
-  useLayoutEffect(() => {
-    drawRef.current = draw;
-  });
+  const drawRef = useLatest(draw);
   const parts: SweepParts = {
     areaRef: area,
     placeRef: place,
