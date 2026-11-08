@@ -11,8 +11,8 @@ import { libraryVersion, withLibraryVersion } from '../docs/Schema.ts';
 
 export { libraryVersion };
 
-export const siteOrigin = 'https://envui.envsemble.com';
-export const skillTemplateFile = fileURLToPath(
+const siteOrigin = 'https://envui.envsemble.com';
+const skillTemplateFile = fileURLToPath(
   new URL('../../apps/site/hosting/SKILL.md', import.meta.url),
 );
 /** The setup skill for a version of envUI. */

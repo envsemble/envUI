@@ -123,7 +123,7 @@ export function renderProps(names: readonly string[], props: PropsFile, headingD
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; GenerateParts writes it
 export type PartsFile = { components: Record<string, any> };
 
-export function readParts(directory = documentationDirectory): PartsFile | undefined {
+function readParts(directory = documentationDirectory): PartsFile | undefined {
   const file = resolve(directory, 'generated/parts.json');
   return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
 }
@@ -132,7 +132,7 @@ export function readParts(directory = documentationDirectory): PartsFile | undef
  * The generated Part names and Color properties of a page, as Markdown, from parts.json: the same
  * lists the page in the Docs shows, so a page's prose never repeats them.
  */
-export function renderParts(names: readonly string[], parts: PartsFile, headingDepth = 2) {
+function renderParts(names: readonly string[], parts: PartsFile, headingDepth = 2) {
   const heading = '#'.repeat(headingDepth);
   const entries = names.flatMap((name) => {
     const entry = parts?.components?.[name];

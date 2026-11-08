@@ -35,15 +35,15 @@ export interface SearchSources {
   tokens?: TokenList;
 }
 
-export const searchIndexFile = fileURLToPath(
+const searchIndexFile = fileURLToPath(
   new URL('../../apps/site/src/generated/SearchIndex.json', import.meta.url),
 );
-export const tokensFile = fileURLToPath(
+const tokensFile = fileURLToPath(
   new URL('../../packages/ui/src/generated/tokens.json', import.meta.url),
 );
 
 /** What a search result is. */
-export type SearchKind =
+type SearchKind =
   'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page';
 
 /** A document of the search index: one result, with what it is found by and where it leads. */
@@ -118,13 +118,6 @@ export const unlistedPages = new Set(['index']);
 
 /** Components documented in the Docs alone: Field, as "Build your own field". */
 const docsOnlyPages = new Set(['field']);
-
-export {
-  exportSection,
-  propSection,
-  tokenSection,
-  headingSlug,
-} from '../../apps/site/src/shared/SearchAnchors.ts';
 
 const kindOfGroup = (group: string): SearchKind =>
   group === 'Foundations'

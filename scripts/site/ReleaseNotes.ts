@@ -6,14 +6,14 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { headingsOf } from '../docs/MarkdownHeadings.ts';
 
-export const releaseNotesFile = fileURLToPath(
+const releaseNotesFile = fileURLToPath(
   new URL('../../apps/site/src/releases/release-notes.md', import.meta.url),
 );
 const migrationFile = fileURLToPath(new URL('../../docs/migration.md', import.meta.url));
 const changelogFile = fileURLToPath(new URL('../../packages/ui/CHANGELOG.md', import.meta.url));
 
 /** The most highlights an entry has. */
-export const highlightLimit = 5;
+const highlightLimit = 5;
 
 /**
  * A line of inline Markdown as pieces the page renders: text, `code` and [links](href), whose
@@ -93,7 +93,7 @@ function versionKey(version: string) {
   return [...core.split('.').map(Number), preNumber];
 }
 
-export function compareVersions(a: string, b: string) {
+function compareVersions(a: string, b: string) {
   const [left, right] = [versionKey(a), versionKey(b)];
   for (let index = 0; index < left.length; index += 1)
     if (left[index] !== right[index]) return left[index]! < right[index]! ? -1 : 1;
@@ -101,7 +101,7 @@ export function compareVersions(a: string, b: string) {
 }
 
 /** Every link in an entry's pieces. */
-export const linksOf = (pieces: InlinePiece[]): string[] =>
+const linksOf = (pieces: InlinePiece[]): string[] =>
   pieces.flatMap((piece) =>
     piece.kind === 'link' ? [piece.href, ...linksOf(piece.children)] : [],
   );

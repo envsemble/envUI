@@ -6,7 +6,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ViteDevServer } from 'vite';
 
-export const checkoutPath = '/__envui/checkout';
+const checkoutPath = '/__envui/checkout';
 
 /**
  * The development servers' ports when no other checkout or program holds them: the site's, which
@@ -41,7 +41,7 @@ export function checkoutMarker() {
 }
 
 /** What listens on a local port: nothing, this checkout's server, or anything else. */
-export async function probe(port: number, id = checkoutId()) {
+async function probe(port: number, id = checkoutId()) {
   try {
     const response = await fetch(`http://127.0.0.1:${port}${checkoutPath}`, {
       signal: AbortSignal.timeout(2000),

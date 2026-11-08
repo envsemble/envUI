@@ -22,11 +22,11 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import ts from 'typescript';
 
 const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
-export const sourceDirectory = resolve(repositoryRoot, 'packages/ui/src');
+const sourceDirectory = resolve(repositoryRoot, 'packages/ui/src');
 const configFile = resolve(repositoryRoot, 'packages/ui/tsconfig.json');
 
 /** The directive, as the modules write it. */
-export const directive = "'use client';";
+const directive = "'use client';";
 
 /**
  * The comment that gives a module the directive for a reason the reading cannot see, tested on the
@@ -62,7 +62,7 @@ const clientCalls = new Set(['createContext', 'createPortal']);
 const elementCalls = new Set(['createElement', 'cloneElement', 'jsx', 'jsxs', 'jsxDEV']);
 
 /** Whether a source file starts with the 'use client' directive. */
-export function hasClientDirective(sourceFile: ts.SourceFile) {
+function hasClientDirective(sourceFile: ts.SourceFile) {
   const [first] = sourceFile.statements;
   return Boolean(
     first &&
@@ -304,7 +304,7 @@ function createReader(checker: ts.TypeChecker | undefined) {
  * What makes a module a client module, as reasons; none for a module a server can render. With a
  * type checker for the program the file belongs to, handlers passed by name count too.
  */
-export function clientReasons(sourceFile: ts.SourceFile, checker?: ts.TypeChecker) {
+function clientReasons(sourceFile: ts.SourceFile, checker?: ts.TypeChecker) {
   return createReader(checker)(sourceFile);
 }
 

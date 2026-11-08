@@ -144,6 +144,9 @@ else if (scope.lint.length)
       },
     ),
   );
+// Unused files, exports and dependencies (knip.jsonc), wherever code or the packages changed.
+if (scope.whole.lint || scope.lint.length)
+  staticTasks.push(task('lint:unused', [...bin.npm, 'run', '-s', 'lint:unused']));
 if (scope.whole.css)
   staticTasks.push(
     task('stylelint', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/site/src/**/*.css']),

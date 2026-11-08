@@ -43,7 +43,7 @@ export interface DocumentRecord {
 }
 
 /** A link's fragment with its percent escapes decoded, or as it is where they are malformed. */
-export function decoded(fragment: string) {
+function decoded(fragment: string) {
   try {
     return decodeURIComponent(fragment);
   } catch {
@@ -53,7 +53,7 @@ export function decoded(fragment: string) {
 
 /** The component or pattern page that documents an export; a part such as Menu.Item is on its
  * namespace's. */
-export function pageOfExport(
+function pageOfExport(
   documents: readonly DocumentRecord[],
   name: string,
 ): DocumentRecord | undefined {

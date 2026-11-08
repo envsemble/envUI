@@ -102,7 +102,7 @@ export const kindFolders = {
 export type Frontmatter = Record<string, any>;
 
 /** A field of a page's frontmatter as its schema checks it. */
-export interface FrontmatterRule {
+interface FrontmatterRule {
   type: 'string' | 'strings' | 'statuses' | 'avoid' | 'examples';
   required?: boolean;
   nonEmpty?: boolean;
@@ -149,7 +149,7 @@ export interface PropsFile {
 
 /** An export's entry in props.json: the entry points it comes from, and the rest of its record. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; ExtractProps writes it
-export type ExportProps = { entries: string[] } & Record<string, any>;
+type ExportProps = { entries: string[] } & Record<string, any>;
 
 export const pageSections: readonly PageSectionDefinition[] = [
   { id: 'overview', title: 'Overview', generated: true },

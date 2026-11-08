@@ -12,7 +12,7 @@ import { headersFor, siteHeaders } from '../../../scripts/site/SiteHeaders.ts';
 
 export const site = resolve('dist/site');
 export const siteUrl = 'http://envui.site.test';
-export const contentTypes: Record<string, string> = {
+const contentTypes: Record<string, string> = {
   '.html': 'text/html',
   '.js': 'text/javascript',
   '.css': 'text/css',
@@ -48,7 +48,7 @@ export function moduleFiles(module: string) {
 }
 
 /** The file of the hosted build at a path, or undefined when it has none. */
-export function siteFile(pathname: string) {
+function siteFile(pathname: string) {
   const file = resolve(site, `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`);
   return existsSync(file) ? file : undefined;
 }

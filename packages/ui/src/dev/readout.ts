@@ -33,7 +33,7 @@ export const labelOf = (node: Pick<NodeData, 'kind' | 'name'>) =>
   node.name === node.kind ? node.kind : `${node.kind} "${node.name}"`;
 
 /** The nodes from the top down to this one, such as `scaffold > page > grid "cards"`. */
-export function pathOf(snapshot: Snapshot, node: NodeData): string {
+function pathOf(snapshot: Snapshot, node: NodeData): string {
   const labels: string[] = [];
   for (
     let at: NodeData | undefined = node;

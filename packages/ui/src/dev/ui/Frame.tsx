@@ -27,7 +27,7 @@ export interface FrameSize {
 /** The page at its own size: no frame set. */
 export const realSize: FrameSize = { width: null, height: null, device: null };
 
-export type FrameEdge = 'start' | 'end' | 'bottom' | 'bottom-start' | 'bottom-end';
+type FrameEdge = 'start' | 'end' | 'bottom' | 'bottom-start' | 'bottom-end';
 
 /** Which way each handle moves the width and the height: -1 shrinks as it moves right or down. */
 const directions: Record<FrameEdge, { x: -1 | 0 | 1; y: 0 | 1 }> = {

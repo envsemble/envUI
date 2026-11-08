@@ -51,7 +51,7 @@ import { common } from '../../packages/ui/src/foundations/messages/common.js';
  * Every message replaced by ⟦namespace.key⟧, functions too, so a test can tell an overridable
  * string from an English default left in the markup.
  */
-export const pseudoMessages = Object.fromEntries(
+const pseudoMessages = Object.fromEntries(
   Object.entries(defaultMessages).map(([namespace, keys]) => [
     namespace,
     Object.fromEntries(

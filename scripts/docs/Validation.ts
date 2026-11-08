@@ -27,7 +27,7 @@ type FigureBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 
 /** A section of a page as readPage builds it: its blocks, and in Compose its tokens. */
-export interface ReadSection extends PageSection {
+interface ReadSection extends PageSection {
   tokens: Token[];
 }
 

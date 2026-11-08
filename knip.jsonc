@@ -1,0 +1,100 @@
+// Unused files, exports and dependencies (npm run lint:unused, which npm run check runs). Each
+// ignore says why; "pending" lists what the refactor still has to remove, and only shrinks.
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  // An export tagged @internal is there for a unit test that bundles the module from its source,
+  // which knip cannot follow (tests/support/importSource.mjs).
+  "tags": ["-@internal"],
+  "workspaces": {
+    ".": {
+      // The scripts in package.json are entries of their own; these run otherwise.
+      "entry": [
+        // Run by hand: after the favicon's SVG changes, and to check the site's contents lists.
+        "scripts/build/GenerateFavicons.ts",
+        "scripts/test/CheckContents.ts",
+        "tests/*.test.mjs",
+        "tests/browser/*.spec.ts",
+        "tests/accessibility/*.spec.ts",
+        // The fixture's pages, each loading one of these.
+        "tests/fixture/{main,perf,RichText,CascadeLayers,ForcedColors}.tsx",
+        "tests/fixture/Contrast.ts",
+        "tests/fixture/vite.config.ts",
+        "tests/fixture/hydration/*.tsx",
+        "tests/types/*.tsx",
+        "tests/rsc/*.mjs",
+      ],
+      "project": ["scripts/**/*.{ts,js}", "tests/**/*.{ts,tsx,mjs}"],
+      // Off: it takes every module in a folder named test, as scripts/test/, for a test file whose
+      // exports go unchecked. The entries above list the tests.
+      "node": false,
+      // The source the lint packages' tokens.js is copied from (scripts/build/SyncLintPackages.ts).
+      "ignoreFiles": ["scripts/build/LintPackageTokens.js"],
+      "ignoreDependencies": [
+        // Changesets reads .changeset/ with these, which come with @changesets/cli.
+        "@changesets/types",
+        "@changesets/config",
+        // The fixture uses Base UI as the library does, which installs it.
+        "@base-ui/react",
+      ],
+      // MeasureSite.ts makes the local server's certificate with the system's openssl.
+      "ignoreBinaries": ["openssl"],
+    },
+    "packages/ui": {
+      "entry": [
+        "src/{index,content,rich-text,diff,color,theme-bootstrap,dev,messages}.ts",
+        "src/icons/*.tsx",
+        "terrazzo.config.mjs",
+      ],
+      "project": ["src/**/*.{ts,tsx}"],
+      // Pending, for the library's refactor: useLatest.ts, which it is to use, and the issues
+      // below but the generated token module's, whose exports are the whole list.
+      "ignoreFiles": ["src/internal/useLatest.ts"],
+      "ignoreIssues": {
+        "src/generated/**": ["exports", "types"],
+        "src/content/internal/codeColors.ts": ["types"],
+        "src/internal/cssLength.ts": ["exports"],
+        "src/internal/motionTokens.ts": ["exports"],
+        "src/navigation/internal/contentsWave.ts": ["exports"],
+        "src/foundations/messages/*.ts": ["types"],
+      },
+    },
+    "packages/eslint-plugin": {
+      "entry": ["scripts/*.mjs", "test/*.test.mjs"],
+      "project": ["**/*.{js,mjs}"],
+      // The application the rules' tests lint, which is never installed or run.
+      "ignoreDependencies": ["@envsemble/envui"],
+      // A copy of the lint packages' shared helper, whose tokens the Stylelint config's copy uses.
+      "ignoreIssues": { "src/tokens.js": ["exports"] },
+    },
+    "packages/stylelint-config": {
+      "entry": ["test/*.test.mjs"],
+      "project": ["**/*.{js,mjs}"],
+    },
+    "apps/site": {
+      "project": ["src/**/*.{ts,tsx}"],
+      // Pending, for the site's refactor: Lengths.ts, which it is to use, and these.
+      "ignoreFiles": ["src/shared/Lengths.ts", "src/motion/HeldAnimations.ts"],
+      "ignoreIssues": {
+        "src/figures/DeviceFrame.tsx": ["exports"],
+        "src/figures/Example.tsx": ["exports"],
+        "src/figures/Figures.tsx": ["exports"],
+        "src/figures/Gallery.tsx": ["exports"],
+        "src/figures/LiveExample.tsx": ["exports"],
+        "src/figures/foundations/Topic.tsx": ["exports", "types"],
+        "src/navigation/Address.ts": ["exports"],
+        "src/navigation/SiteNavigation.tsx": ["exports"],
+        "src/navigation/SiteRoutes.ts": ["exports", "types"],
+        "src/pages/DocsPages.tsx": ["exports"],
+        "src/pages/Documentation.tsx": ["exports"],
+        "src/pages/GuideDocument.tsx": ["exports"],
+        "src/shared/SearchTerms.ts": ["exports"],
+        "src/template/LoadBoundary.tsx": ["exports"],
+        "src/template/Provides.ts": ["exports"],
+        "src/template/WhenToUse.tsx": ["exports"],
+        "src/theme/DisplayStorage.ts": ["exports"],
+        "src/tiles/Reflow.ts": ["exports"],
+        "src/tiles/Tiles.ts": ["exports"],
+      },
+    },
+  },
+}

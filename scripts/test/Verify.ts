@@ -74,6 +74,7 @@ const [phase1, built] = await Promise.all([
     task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
     task('lint', [...bin.eslint, '.', '--cache', '--cache-location', '.cache/eslint/']),
     task('lint:css', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/site/src/**/*.css']),
+    task('lint:unused', [...bin.npm, 'run', '-s', 'lint:unused']),
     task('format:check', [...bin.prettier, '--check', '.']),
     task('typecheck ui', [
       ...bin.tsc,

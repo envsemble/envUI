@@ -7,9 +7,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-export const headersFile = fileURLToPath(
-  new URL('../../apps/site/hosting/_headers', import.meta.url),
-);
+const headersFile = fileURLToPath(new URL('../../apps/site/hosting/_headers', import.meta.url));
 
 /** A rule of a _headers file: the paths it matches, and the headers it sets and removes. */
 interface HeaderRule {

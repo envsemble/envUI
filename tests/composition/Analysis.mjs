@@ -606,6 +606,3 @@ function splitSelectors(prelude) {
   push(prelude.length);
   return parts;
 }
-
-export const sourcePath = (module) => `packages/ui/src/${module}`;
-export const stylesheetPath = (stylesheet) => `packages/ui/src/styles/${stylesheet}`;

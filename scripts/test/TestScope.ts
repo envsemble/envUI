@@ -83,7 +83,7 @@ const catalogue = [
 ];
 
 /** Paths that name no component, by prefix, and the specs they run. */
-export const exceptions: [RegExp, string[]][] = [
+const exceptions: [RegExp, string[]][] = [
   [
     /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/(?:Tokens\w*|Theme)\.css)|^tests\/contrast\/|^scripts\/build\/(?:BuildTokens|GeneratePalette)\.ts$/,
     shared,
@@ -232,7 +232,8 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
       scope.typecheck = true;
     if (/(?:^|\/)tsconfig\.json$/.test(path)) scope.typecheck = true;
     // Repository-wide configuration reruns the whole of its check.
-    if (/^eslint\.config\.mjs$|^packages\/eslint-plugin\//.test(path)) scope.whole.lint = true;
+    if (/^eslint\.config\.mjs$|^knip\.jsonc$|^packages\/eslint-plugin\//.test(path))
+      scope.whole.lint = true;
     if (/^stylelint\.|^stylelint-suppressions\.json$|^packages\/stylelint-config\//.test(path))
       scope.whole.css = true;
     if (/^\.prettier/.test(path)) scope.whole.format = true;
@@ -321,7 +322,7 @@ export function mergeChanges(entries: readonly Change[], untracked: readonly str
 }
 
 /** The integration branches a change is compared with, in order of preference. */
-export const defaultBases = ['origin/envui-1.0', 'origin/dev'];
+const defaultBases = ['origin/envui-1.0', 'origin/dev'];
 
 function git(args: string[], root: string) {
   return execFileSync('git', args, {
