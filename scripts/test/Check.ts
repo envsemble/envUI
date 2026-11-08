@@ -77,7 +77,7 @@ const builds = {
 };
 
 // What runs, and why.
-const list = (items) =>
+const list = (items: string[]) =>
   items.length > 6
     ? `${items.slice(0, 6).join(', ')} and ${items.length - 6} more`
     : items.join(', ');
@@ -111,6 +111,10 @@ if (deferred.length)
 for (const [helper, users] of scope.helpers)
   if (!users.some((name) => scope.specs.has(name)) && users.length)
     console.log(dim(`  ${helper}: ${users.length} specs import it; verify covers them`));
+for (const [path, count] of scope.widelyUsed)
+  console.log(
+    dim(`  ${path}: ${count} specs' fixtures use it; verify covers those that don't run`),
+  );
 const unmatched = scope.unmatched.filter((path) => !scope.helpers.has(path));
 if (unmatched.length) console.log(dim(`  no spec for ${list(unmatched)}; verify covers it`));
 console.log('');
@@ -140,6 +144,9 @@ else if (scope.lint.length)
       },
     ),
   );
+// Unused files, exports and dependencies (knip.jsonc), wherever code or the packages changed.
+if (scope.whole.lint || scope.lint.length)
+  staticTasks.push(task('lint:unused', [...bin.npm, 'run', '-s', 'lint:unused']));
 if (scope.whole.css)
   staticTasks.push(
     task('stylelint', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/site/src/**/*.css']),
@@ -178,6 +185,7 @@ if (scope.generated.has('tokens'))
   staticTasks.push(
     task('tokens:check', node('scripts/build/GeneratePalette.ts', '--check')),
     task('tokens:check build', node('scripts/build/BuildTokens.ts', '--check')),
+    task('tokens:check lint packages', node('scripts/build/SyncLintPackages.ts', '--check')),
   );
 if (scope.generated.has('docs'))
   staticTasks.push(

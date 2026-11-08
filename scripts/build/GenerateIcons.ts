@@ -5,7 +5,28 @@ import { fileURLToPath } from 'node:url';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const packageRoot = resolve(repositoryRoot, 'packages/ui');
-const manifest = JSON.parse(await readFile(resolve(packageRoot, 'icon-manifest.json'), 'utf8'));
+/** A variant's file of icon-manifest.json, with its hash. */
+interface IconVariant {
+  source: string;
+  sha256: string;
+}
+/** icon-manifest.json: the upstream revision, and each icon with its variants by fill. */
+interface IconManifest {
+  schemaVersion: number;
+  iconCount: number;
+  sourceCount: number;
+  license: IconVariant;
+  upstream: { revision: string };
+  icons: { name: string; variants: Record<string, IconVariant> }[];
+}
+/** An SVG's view box and paths. */
+interface Geometry {
+  viewBox: string;
+  paths: string[];
+}
+const manifest: IconManifest = JSON.parse(
+  await readFile(resolve(packageRoot, 'icon-manifest.json'), 'utf8'),
+);
 if (
   manifest.schemaVersion !== 1 ||
   manifest.iconCount !== manifest.icons.length ||
@@ -18,7 +39,7 @@ const checkOnly = process.argv.includes('--check');
 if (process.argv.slice(2).some((argument) => argument !== '--check'))
   throw new Error('Usage: GenerateIcons.ts [--check]');
 await mkdir(outputDirectory, { recursive: true });
-async function writeModule(path, source) {
+async function writeModule(path: string, source: string) {
   const existingSource = await readFile(path, 'utf8').catch((error) => {
     if (error.code === 'ENOENT') return null;
     throw error;
@@ -28,20 +49,20 @@ async function writeModule(path, source) {
   // Preserve timestamps for unchanged modules so local consumers avoid needless rebuilds.
   await writeFile(path, source);
 }
-const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
+const hash = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
 if (
   hash(await readFile(resolve(packageRoot, manifest.license.source))) !== manifest.license.sha256
 ) {
   throw new Error('Official Material Symbols license hash mismatch');
 }
 /** The module's name, the symbol's in PascalCase, such as `Add` or `10k`. */
-function toModuleName(name) {
+function toModuleName(name: string) {
   return name
     .split('_')
-    .map((word) => word[0].toUpperCase() + word.slice(1))
+    .map((word) => word[0]!.toUpperCase() + word.slice(1))
     .join('');
 }
-async function readVerifiedGeometry(variant) {
+async function readVerifiedGeometry(variant: IconVariant): Promise<Geometry> {
   const bytes = await readFile(resolve(packageRoot, variant.source));
   if (hash(bytes) !== variant.sha256)
     throw new Error(`Source hash mismatch: ${variant.source}. Restore with SyncIcons.ts.`);
@@ -62,22 +83,22 @@ async function readVerifiedGeometry(variant) {
     throw new Error(`Unsupported SVG markup: ${variant.source}`);
   return { viewBox, paths };
 }
-function renderPaths(paths) {
+function renderPaths(paths: string[]) {
   return paths.length === 1
     ? `<path d=${JSON.stringify(paths[0])} />`
     : `<>${paths.map((path) => `<path d=${JSON.stringify(path)} />`).join('')}</>`;
 }
 
 /** The start two single paths share, when it is long enough to be worth writing once. */
-function shareableStart(unfilled, filled) {
+function shareableStart(unfilled: string[], filled: string[]) {
   if (unfilled.length !== 1 || filled.length !== 1) return '';
-  const [a, b] = [unfilled[0], filled[0]];
+  const [a, b] = [unfilled[0]!, filled[0]!];
   let length = 0;
   while (length < a.length && length < b.length && a[length] === b[length]) length += 1;
   return length >= 64 ? a.slice(0, length) : '';
 }
 
-function renderIconModule(name, unfilled, filled) {
+function renderIconModule(name: string, unfilled: Geometry, filled: Geometry) {
   const identicalPaths = JSON.stringify(unfilled.paths) === JSON.stringify(filled.paths);
   const identicalViewBox = unfilled.viewBox === filled.viewBox;
   const hasFillVariant = !identicalPaths || !identicalViewBox;
@@ -95,7 +116,7 @@ function renderIconModule(name, unfilled, filled) {
   const sharedDeclaration = sharedStart
     ? `\n/** The path both styles start with. */\nconst start = ${JSON.stringify(sharedStart)};\n`
     : '';
-  const fromStart = (path) =>
+  const fromStart = (path: string) =>
     path === sharedStart ? 'start' : `start + ${JSON.stringify(path.slice(sharedStart.length))}`;
   const paths = identicalPaths
     ? renderPaths(unfilled.paths)
@@ -112,7 +133,7 @@ function renderIconModule(name, unfilled, filled) {
 // Every icon exports its module's name with the Icon prefix, `IconAdd` from icons/Add, so no icon
 // shares its name with a component, such as Link or Menu.
 const generatedFiles = new Set(['index.ts', 'Typography.tsx']);
-const moduleNames = new Set();
+const moduleNames = new Set<string>();
 const iconEntries = manifest.icons.map((icon) => {
   const module = toModuleName(icon.name);
   if (moduleNames.has(module)) throw new Error(`Icon name collision: ${module}`);
@@ -125,10 +146,10 @@ const iconEntries = manifest.icons.map((icon) => {
 let nextIconIndex = 0;
 async function generateIconModules() {
   while (nextIconIndex < iconEntries.length) {
-    const { module, name, icon } = iconEntries[nextIconIndex++];
+    const { module, name, icon } = iconEntries[nextIconIndex++]!;
     const [unfilled, filled] = await Promise.all([
-      readVerifiedGeometry(icon.variants['0']),
-      readVerifiedGeometry(icon.variants['1']),
+      readVerifiedGeometry(icon.variants['0']!),
+      readVerifiedGeometry(icon.variants['1']!),
     ]);
     await writeModule(
       resolve(outputDirectory, module + '.tsx'),

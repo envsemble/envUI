@@ -60,7 +60,7 @@ export function apcaContrast(text: Rgb, background: Rgb): number {
   return contrast > -0.1 ? 0 : (contrast + 0.027) * 100;
 }
 
-export type ContrastStatus =
+type ContrastStatus =
   | 'pass'
   | 'known exception'
   | 'FAIL: below minimum'
@@ -79,7 +79,7 @@ export interface ContrastRow {
   detail?: string;
 }
 
-export const formatRatio = (ratio: number) => (Math.floor(ratio * 100) / 100).toFixed(2);
+const formatRatio = (ratio: number) => (Math.floor(ratio * 100) / 100).toFixed(2);
 
 /** A measured value as the table shows it: a ratio to 2 decimals, a ΔEOK distance to 4. */
 export const formatValue = (kind: ContrastKind, value: number) =>

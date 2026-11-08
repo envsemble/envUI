@@ -19,14 +19,11 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type {
-  DocumentationEntry,
-  DocumentationSummary,
-} from '../../apps/site/src/shared/DocumentationTypes.ts';
+import type { DocumentationEntry, DocumentationSummary } from './model/DocumentationTypes.ts';
 import { marked } from 'marked';
 import { headingsOf, plainText } from './MarkdownHeadings.ts';
 import { exportSection, headingSlugger } from '../../apps/site/src/shared/SearchAnchors.ts';
-import { providesHeadings } from '../../apps/site/src/shared/CatalogueContent.ts';
+import { providesHeadings } from './model/CatalogueContent.ts';
 import { writeSearchIndex } from '../site/SearchIndex.ts';
 import { documentationDirectory, generatedFile, pageKindOf, readProps } from './Schema.ts';
 import { readDocumentation } from './Reader.ts';
@@ -200,7 +197,7 @@ export function generateDocumentation() {
       // Pattern and template pages document no exports of their own; they link to what they compose.
       ...(kind === 'component' && {
         props: Object.fromEntries(
-          documentedExports(frontmatter.components, props).map((name) => [
+          documentedExports(frontmatter.components, props).map((name: string) => [
             name,
             props!.exports[name],
           ]),
@@ -248,7 +245,7 @@ export function generateDocumentation() {
       })),
     };
   });
-  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '../shared/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
+  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '../../../../scripts/docs/model/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
   writeIfChanged(generatedFile, source);
   const contents = new Map(
     entries.map((entry) => {

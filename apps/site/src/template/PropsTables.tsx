@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Column, Table, Text } from '@envsemble/envui';
 import { PlainCode } from './SimpleTable';
-import type { ExportEntry, PropEntry } from '../shared/DocumentationTypes';
+import type { ExportEntry, PropEntry } from '../../../../scripts/docs/model/DocumentationTypes';
 import type { Documentation } from '../pages/PageModel';
 // The ids search leads to, as the search index writes them.
 import { exportSection, propSection } from '../shared/SearchAnchors';

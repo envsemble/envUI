@@ -14,7 +14,7 @@ export async function generateBrandAssets() {
       readFile(resolve(root, `assets/brand/envUI/envUI-lockup-${color}.svg`), 'utf8'),
     ),
   );
-  function geometry(source) {
+  function geometry(source: string) {
     const viewBox = source.match(/viewBox="([^"]+)"/)?.[1];
     const paths = [...source.matchAll(/<path\b[^>]*\bd="([^"]+)"[^>]*\/\s*>/g)];
     const tags = [...source.matchAll(/<([\w:-]+)\b/g)].map((match) => match[1]);

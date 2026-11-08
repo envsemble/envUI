@@ -11,7 +11,7 @@ import { OverlaysSheet } from './ContactSheetOverlays.js';
 import { LayoutSheet } from './ContactSheetLayout.js';
 
 /** The catalogue's component groups (docs/components/*.md `category`), by their URL name. */
-export const contactSheetFamilies: Record<string, { title: string; render: () => ReactNode }> = {
+const contactSheetFamilies: Record<string, { title: string; render: () => ReactNode }> = {
   actions: { title: 'Actions', render: ActionsSheet },
   forms: { title: 'Forms & selection', render: FormsSheet },
   navigation: { title: 'Navigation', render: NavigationSheet },

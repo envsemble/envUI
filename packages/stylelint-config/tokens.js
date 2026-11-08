@@ -1,5 +1,8 @@
-// The envUI tokens the config's messages suggest, read from data/tokens.json, which
-// scripts/SyncTokens.mjs copies from the library's generated token list before every pack.
+// Generated from scripts/build/LintPackageTokens.js by npm run tokens:build; edit that file.
+// The envUI tokens a lint package's messages suggest, read from data/tokens.json beside this file.
+// scripts/build/SyncLintPackages.ts copies this file into the ESLint plugin and the Stylelint config,
+// each with its own data/tokens.json from the library's generated token list, so each package
+// works on its own once installed.
 import { readFileSync } from 'node:fs';
 
 /** envUI's public tokens by DTCG type. */
@@ -41,27 +44,4 @@ export function colorTokenSuggestion(property) {
   if (known.length === 0) return 'from envUI';
   const list = known.map((prefix) => `var(${prefix}…)`);
   return `one of the ${list.length > 1 ? `${list.slice(0, -1).join(', ')} or ${list.at(-1)}` : list[0]} roles`;
-}
-
-/** envUI's stacking tokens, the custom properties of z-index layers such as `--env-z-modal`. */
-export const stackingTokens = Object.values(tokens)
-  .flat()
-  .filter((name) => /^--(?:env-)?z(?:-index)?-/.test(name))
-  .sort();
-
-/** What to do instead of a literal z-index, depending on whether envUI has stacking tokens. */
-export function stackingAdvice() {
-  if (stackingTokens.length > 0) {
-    const named = (pattern) => stackingTokens.find((name) => pattern.test(name));
-    const examples = [
-      [named(/-sticky$/), 'a sticky header'],
-      [named(/-modal$/), 'a modal layer'],
-    ].filter(([name]) => name);
-    const such = examples.length
-      ? examples.map(([name, use]) => `var(${name}) for ${use}`).join(' or ')
-      : `var(${stackingTokens[0]})`;
-    const family = stackingTokens[0].slice(0, stackingTokens[0].lastIndexOf('-') + 1);
-    return `use an envUI stacking token (${family}…) instead, such as ${such}, with calc() for a step between two, so the application's layers keep one order with envUI's popups and dialogs.`;
-  }
-  return 'envUI has no stacking tokens yet. Avoid a literal z-index, or set it through a documented custom property of your own, such as var(--app-z-header), so the order of layers lives in one place.';
 }

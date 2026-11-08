@@ -12,6 +12,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { build, defineConfig, Logger, parse } from '@terrazzo/parser';
 import { format, resolveConfig } from 'prettier';
+import type { ViteDevServer } from 'vite';
 import { createConfig } from '../../packages/ui/terrazzo.config.mjs';
 
 const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
@@ -80,15 +81,15 @@ export async function buildTokens({
  */
 export function tokensVitePlugin() {
   // One build at a time: a burst of edits rebuilds in order, and the last build wins.
-  let queue = Promise.resolve();
+  let queue: Promise<unknown> = Promise.resolve();
   return {
     name: 'envui-tokens',
     async buildStart() {
       await buildTokens();
     },
-    configureServer(server) {
+    configureServer(server: ViteDevServer) {
       server.watcher.add(tokensDirectory);
-      server.watcher.on('all', (event, path) => {
+      server.watcher.on('all', (event: string, path: string) => {
         const contained = relative(tokensDirectory, path);
         if (
           contained.startsWith('..') ||

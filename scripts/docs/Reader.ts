@@ -21,15 +21,10 @@ import {
   withImport,
   withLibraryVersion,
   type Frontmatter,
+  type PageSection,
   type PropsFile,
 } from './Schema.ts';
-import {
-  readPage,
-  readPartNames,
-  validateFrontmatter,
-  type PartNames,
-  type ReadSection,
-} from './Validation.ts';
+import { readPage, readPartNames, validateFrontmatter, type PartNames } from './Validation.ts';
 
 /** A page of docs/ as readDocumentation reads it. */
 export interface DocumentRecord {
@@ -44,11 +39,11 @@ export interface DocumentRecord {
   frontmatter?: Frontmatter;
   yaml?: string;
   /** A page in the one-file structure's sections. */
-  sections?: ReadSection[];
+  sections?: PageSection[];
 }
 
 /** A link's fragment with its percent escapes decoded, or as it is where they are malformed. */
-export function decoded(fragment) {
+function decoded(fragment: string) {
   try {
     return decodeURIComponent(fragment);
   } catch {
@@ -58,7 +53,7 @@ export function decoded(fragment) {
 
 /** The component or pattern page that documents an export; a part such as Menu.Item is on its
  * namespace's. */
-export function pageOfExport(
+function pageOfExport(
   documents: readonly DocumentRecord[],
   name: string,
 ): DocumentRecord | undefined {
@@ -141,16 +136,16 @@ export function readDocumentation(
       const markdown = body.replace(/^# [^\n]+\r?\n\s*/, '');
       const kind = pageKindOf(path);
       // A page's folder says its kind, and the index lists each kind of page under its section.
-      const sectionKind = indexSectionKinds[group];
+      const sectionKind = indexSectionKinds[group as keyof typeof indexSectionKinds];
       const kindSection = Object.keys(indexSectionKinds).find(
-        (section) => indexSectionKinds[section] === kind,
+        (section) => indexSectionKinds[section as keyof typeof indexSectionKinds] === kind,
       );
       if (sectionKind ? sectionKind !== kind : kindSection)
         throw new Error(
-          `${path} is a ${kind} page, from ${kindFolders[kind]}, but the index lists it under "## ${group}"; ${
+          `${path} is a ${kind} page, from ${kindFolders[kind as keyof typeof kindFolders]}, but the index lists it under "## ${group}"; ${
             kindSection
               ? `list it under "## ${kindSection}"`
-              : `move it to ${kindFolders[sectionKind]}`
+              : `move it to ${kindFolders[sectionKind as keyof typeof kindFolders]}`
           }.`,
         );
       const component = kind === 'component';

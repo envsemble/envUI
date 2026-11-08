@@ -5,35 +5,16 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource, repository } from './support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/Scaffolds.mjs');
-await build({
-  absWorkingDir: repository,
-  stdin: {
-    contents: [
-      "export * from './packages/ui/src/layout/Scaffold.tsx';",
-      "export * as Panes from './packages/ui/src/layout/Panes.tsx';",
-      "export * from './packages/ui/src/layout/Page.tsx';",
-      "export { resolveNavigationForms } from './packages/ui/src/layout/internal/navigationForms.ts';",
-    ].join('\n'),
-    resolveDir: repository,
-    loader: 'ts',
-  },
-  bundle: true,
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  jsx: 'automatic',
-  loader: { '.svg': 'empty', '.css': 'empty' },
-  outfile: output,
-  logLevel: 'error',
-});
-const { Scaffold, Panes, Page, resolveNavigationForms } = await import(pathToFileURL(output).href);
+const { Scaffold, Panes, Page, resolveNavigationForms } = await importSource('Scaffolds', [
+  "export * from './packages/ui/src/layout/Scaffold.tsx';",
+  "export * as Panes from './packages/ui/src/layout/Panes.tsx';",
+  "export * from './packages/ui/src/layout/Page.tsx';",
+  "export { resolveNavigationForms } from './packages/ui/src/layout/internal/navigationForms.ts';",
+]);
 
 const styles = join(repository, 'packages/ui/src/styles');
 const sheet = (name) => readFileSync(join(styles, name), 'utf8');

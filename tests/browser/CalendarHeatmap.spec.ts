@@ -1,20 +1,12 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './helpers/Servers';
+import { collectErrors } from './helpers/PageErrors';
 
 const heatmapFixture = `${fixtureUrl}/?fixture=calendar-heatmap`;
 
 // British English, so the names of days read as Sat 10 Oct 2026, from Intl, with a comma after the
 // weekday in some engines.
 test.use({ locale: 'en-GB' });
-
-function collectErrors(page: Page) {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  page.on('console', (message) => {
-    if (message.type() === 'error' || message.type() === 'warning') errors.push(message.text());
-  });
-  return errors;
-}
 
 /** Waits for two frames, so pointer events and the renders they cause have run. */
 const nextFrames = (page: Page) =>
@@ -34,7 +26,7 @@ const focusedName = (page: Page) =>
   page.evaluate(() => document.activeElement?.getAttribute('aria-label'));
 
 test('a year of days is one grid with named cells and a single tab stop', async ({ page }) => {
-  const errors = collectErrors(page);
+  const errors = collectErrors(page, { warnings: true });
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
   await expect(grid).toHaveAttribute('aria-readonly', 'true');

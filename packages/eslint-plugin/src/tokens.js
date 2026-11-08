@@ -1,7 +1,14 @@
-import { readData } from './utilities.js';
+// Generated from scripts/build/LintPackageTokens.js by npm run tokens:build; edit that file.
+// The envUI tokens a lint package's messages suggest, read from data/tokens.json beside this file.
+// scripts/build/SyncLintPackages.ts copies this file into the ESLint plugin and the Stylelint config,
+// each with its own data/tokens.json from the library's generated token list, so each package
+// works on its own once installed.
+import { readFileSync } from 'node:fs';
 
-/** envUI's public tokens by DTCG type, from src/data/tokens.json. */
-export const tokens = readData('tokens.json').tokens;
+/** envUI's public tokens by DTCG type. */
+export const tokens = JSON.parse(
+  readFileSync(new URL('./data/tokens.json', import.meta.url), 'utf8'),
+).tokens;
 
 /** The semantic color roles a property's color plays: text, background or boundary. */
 const roleOfProperty = [

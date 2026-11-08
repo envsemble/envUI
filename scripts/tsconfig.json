@@ -9,10 +9,9 @@
     "verbatimModuleSyntax": true,
     "resolveJsonModule": true,
     "strict": true,
-    "noImplicitAny": false,
     "skipLibCheck": true,
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["**/*.ts", "../apps/site/src/shared/*.ts"]
+  "include": ["**/*.ts"]
 }

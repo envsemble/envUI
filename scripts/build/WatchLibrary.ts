@@ -5,7 +5,7 @@ const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
 const buildScript = new URL('./BuildLibrary.ts', import.meta.url);
 let buildInProgress = false;
 let rebuildPending = false;
-let debounceTimer;
+let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
 function rebuildLibrary() {
   if (buildInProgress) {

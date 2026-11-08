@@ -2,35 +2,14 @@
 // status with its label beside the arc, Loading by default in the provider's language.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource } from './support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/Spinner.mjs');
-await build({
-  absWorkingDir: repository,
-  stdin: {
-    contents: [
-      "export { Spinner } from './packages/ui/src/feedback/Spinner.tsx';",
-      "export { EnvUIProvider } from './packages/ui/src/foundations/EnvUIProvider.tsx';",
-    ].join('\n'),
-    resolveDir: repository,
-    loader: 'ts',
-  },
-  bundle: true,
-  // The style sheets the modules import are the browser's concern.
-  loader: { '.css': 'empty' },
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  jsx: 'automatic',
-  outfile: output,
-  logLevel: 'error',
-});
-const { Spinner, EnvUIProvider } = await import(pathToFileURL(output).href);
+const { Spinner, EnvUIProvider } = await importSource('Spinner', [
+  "export { Spinner } from './packages/ui/src/feedback/Spinner.tsx';",
+  "export { EnvUIProvider } from './packages/ui/src/foundations/EnvUIProvider.tsx';",
+]);
 
 test('a spinner without a label is hidden, and with one a progress bar it names', () => {
   assert.match(

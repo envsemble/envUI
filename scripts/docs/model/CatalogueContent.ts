@@ -36,7 +36,7 @@ export const docsOnlySections = new Set(['code', 'changelog']);
 export const providesHeadings = { envui: 'envUI provides', app: 'You provide' } as const;
 
 /** The section that holds those lists, on either kind of page. */
-export const providesSections = new Set(['accessibility']);
+const providesSections = new Set(['accessibility']);
 
 /** Markdown cut at its `###` and `##` headings, outside code fences. */
 export function subsections(markdown: string): string[] {
@@ -69,7 +69,7 @@ export function withoutProvides(markdown: string): string {
 }
 
 /** The heading of a table's column that only the Docs and agents read, such as a word's code. */
-export const codeColumnHeading = 'In code' as const;
+const codeColumnHeading = 'In code' as const;
 
 /**
  * Markdown with the columns of its tables headed In code left out, as the catalogue shows it: a
@@ -213,7 +213,7 @@ export function catalogueText(document: CataloguePage): CataloguePiece[] {
 }
 
 /** The inline code of Markdown as it renders: code spans and `<code>` elements. */
-export function inlineCodeOf(markdown: string): string[] {
+function inlineCodeOf(markdown: string): string[] {
   const found: string[] = [];
   marked.walkTokens(marked.lexer(markdown), (token) => {
     if (token.type === 'codespan') found.push(token.text);
@@ -233,7 +233,7 @@ export function catalogueInlineCode(document: CataloguePage): { where: string; c
 }
 
 /** The heading of the last column of an option table, which names what each option is for. */
-export const optionUseHeading = 'Use for' as const;
+const optionUseHeading = 'Use for' as const;
 
 /** The plain text of inline Markdown tokens, as a reader sees it: code spans without backticks. */
 function plainText(tokens: readonly Token[]): string {
@@ -258,7 +258,7 @@ function plainText(tokens: readonly Token[]): string {
  * shows its parts; the packaged page and the Docs keep the table. Anything else is undefined.
  */
 /** An option of an option table: its name, as text and as tokens, its details and what it is for. */
-export interface OptionTableOption {
+interface OptionTableOption {
   name: string;
   nameTokens: Token[];
   details: { title: string; markdown: string }[];
@@ -325,7 +325,7 @@ const opening = (text: string) => {
 };
 
 /** The most paragraphs a titled block holds. */
-export const blockParagraphs = 3;
+const blockParagraphs = 3;
 
 /**
  * Where a page's catalogue text has no structure. Every piece of text belongs to a titled block:

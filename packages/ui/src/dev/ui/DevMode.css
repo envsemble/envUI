@@ -1,15 +1,13 @@
-// Dev mode's own style sheet, added to the document while dev mode is installed: it ships in the
-// dev entry alone, never in styles.css. dev mode is built of envUI's components and layout
-// primitives, which style themselves; these rules place its panes and floating controls and draw
-// the 3D view, from envUI's tokens.
-//
-// The rules are in envUI's components layer, after the components' own: a selector of dev mode's
-// own parts is :where(), of no specificity, as the layout primitives' are, so it wins only by
-// coming later; one that adjusts a part of an envUI component it renders, such as a resize
-// handle's place, takes a second class, as the component's own rule does. The first line repeats
-// envUI's layer order, so the components' layer keeps its place whichever style sheet loads first.
+/* Dev mode's own style sheet, which dev/install.tsx imports as text and adds to the document while
+   dev mode is installed: it ships in the dev entry alone, never in styles.css. dev mode is built of
+   envUI's components and layout primitives, which style themselves; these rules place its panes and
+   floating controls and draw the 3D view, from envUI's tokens.
 
-export const devStyles = /* css */ `
+   The rules are in envUI's components layer, after the components' own: a selector of dev mode's
+   own parts is :where(), of no specificity, as the layout primitives' are, so it wins only by
+   coming later; one that adjusts a part of an envUI component it renders, such as a resize
+   handle's place, takes a second class, as the component's own rule does. The first line repeats
+   envUI's layer order, so the components' layer keeps its place whichever style sheet loads first. */
 @layer env.reset, env.tokens, env.base, env.components, env.utilities;
 @layer env.components {
   :where([data-env-dev-host]) {
@@ -178,7 +176,7 @@ export const devStyles = /* css */ `
   .env-dev-float {
     --env-surface-outline: var(--env-elevation-2-border);
     position: absolute;
-    z-index: 1;
+    z-index: var(--env-z-raised);
     inset-block-start: var(--env-space-2);
     max-inline-size: calc(100% - 2 * var(--env-space-2));
     cursor: auto;
@@ -272,7 +270,10 @@ export const devStyles = /* css */ `
 
   /* Dev mode's own tints, a soft pastel set for the planes of the 3D view and its padding and gap
      patterns, lighter in the light theme. They are its own, so no public token they once borrowed
-     can change them. */
+     can change them: the palette's grades 10 (light) and 15 (dark) of each hue, written out because
+     the palette is internal and has no custom properties. */
+  /* stylelint-disable color-no-hex -- the palette's grades, as the comment above says */
+  /* stylelint-disable-next-line no-duplicate-selectors -- the tints keep a rule of their own */
   :where(.env-dev-view) {
     --env-dev-tint-oat: #e7dbce;
     --env-dev-tint-seafoam: #b8e7de;
@@ -291,6 +292,7 @@ export const devStyles = /* css */ `
     --env-dev-tint-blush: #f3c2c4;
     --env-dev-tint-orchid: #ecc2dd;
   }
+  /* stylelint-enable color-no-hex */
   :where(.env-dev-plane) {
     --env-dev-tint: var(--env-dev-tint-oat);
     position: absolute;
@@ -301,19 +303,41 @@ export const devStyles = /* css */ `
     background: color-mix(in oklab, var(--env-dev-tint) 10%, transparent);
     outline: 1px solid color-mix(in oklab, var(--env-dev-tint) 85%, transparent);
     outline-offset: -1px;
-    border-radius: 2px;
+    border-radius: 0.125rem;
   }
-  :where(.env-dev-plane[data-kind='row']) { --env-dev-tint: var(--env-dev-tint-seafoam); }
-  :where(.env-dev-plane[data-kind='column']) { --env-dev-tint: var(--env-dev-tint-sage); }
-  :where(.env-dev-plane[data-kind='grid']) { --env-dev-tint: var(--env-dev-tint-periwinkle); }
-  :where(.env-dev-plane:is([data-kind='scaffold'], [data-kind='panes'])) { --env-dev-tint: var(--env-dev-tint-butter); }
-  :where(.env-dev-plane[data-kind='page']) { --env-dev-tint: var(--env-dev-tint-blush); }
-  :where(.env-dev-plane[data-overlay]) { --env-dev-tint: var(--env-dev-tint-orchid); }
-  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='compact']) { --env-dev-tint: var(--env-dev-tint-blush); }
-  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='medium']) { --env-dev-tint: var(--env-dev-tint-butter); }
-  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='expanded']) { --env-dev-tint: var(--env-dev-tint-sage); }
-  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='large']) { --env-dev-tint: var(--env-dev-tint-seafoam); }
-  :where(.env-dev-view[data-color='window'] .env-dev-plane:not([data-container])) { outline-style: dotted; }
+  :where(.env-dev-plane[data-kind='row']) {
+    --env-dev-tint: var(--env-dev-tint-seafoam);
+  }
+  :where(.env-dev-plane[data-kind='column']) {
+    --env-dev-tint: var(--env-dev-tint-sage);
+  }
+  :where(.env-dev-plane[data-kind='grid']) {
+    --env-dev-tint: var(--env-dev-tint-periwinkle);
+  }
+  :where(.env-dev-plane:is([data-kind='scaffold'], [data-kind='panes'])) {
+    --env-dev-tint: var(--env-dev-tint-butter);
+  }
+  :where(.env-dev-plane[data-kind='page']) {
+    --env-dev-tint: var(--env-dev-tint-blush);
+  }
+  :where(.env-dev-plane[data-overlay]) {
+    --env-dev-tint: var(--env-dev-tint-orchid);
+  }
+  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='compact']) {
+    --env-dev-tint: var(--env-dev-tint-blush);
+  }
+  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='medium']) {
+    --env-dev-tint: var(--env-dev-tint-butter);
+  }
+  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='expanded']) {
+    --env-dev-tint: var(--env-dev-tint-sage);
+  }
+  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='large']) {
+    --env-dev-tint: var(--env-dev-tint-seafoam);
+  }
+  :where(.env-dev-view[data-color='window'] .env-dev-plane:not([data-container])) {
+    outline-style: dotted;
+  }
   :where(.env-dev-plane[data-problems]) {
     outline: 2px solid var(--env-color-border-danger-emphasis);
   }
@@ -337,8 +361,12 @@ export const devStyles = /* css */ `
   :where(.env-dev-spacing) {
     overflow: visible;
   }
-  :where(.env-dev-spacing [data-padding]) { fill: url(#env-dev-padding); }
-  :where(.env-dev-spacing [data-gap]) { fill: url(#env-dev-gap); }
+  :where(.env-dev-spacing [data-padding]) {
+    fill: url(#env-dev-padding);
+  }
+  :where(.env-dev-spacing [data-gap]) {
+    fill: url(#env-dev-gap);
+  }
   :where(.env-dev-spacing [data-child]) {
     fill: none;
     stroke: var(--env-color-fg-muted);
@@ -358,14 +386,15 @@ export const devStyles = /* css */ `
     font-size: var(--env-font-size-caption);
     font-weight: var(--env-font-weight-medium);
     color: var(--env-color-fg-on-strong);
+    /* stylelint-disable-next-line color-named -- darkens the tint by a tenth in either theme */
     background: color-mix(in oklab, var(--env-dev-tint) 90%, black);
-    border-end-end-radius: 2px;
+    border-end-end-radius: 0.125rem;
     pointer-events: none;
   }
   /* The hovered plane's card follows the pointer, on a popup's fill and edge. */
   :where(.env-dev-card) {
     position: absolute;
-    z-index: 2;
+    z-index: calc(var(--env-z-raised) + 1);
     max-inline-size: 24rem;
     padding: var(--env-space-2) var(--env-space-3);
     background: var(--env-color-bg-popup);
@@ -426,10 +455,18 @@ export const devStyles = /* css */ `
   :where(.env-dev-ruler-band[data-current]) {
     background: color-mix(in oklab, var(--env-dev-tint) 70%, transparent);
   }
-  :where(.env-dev-ruler-band[data-window='compact']) { --env-dev-tint: var(--env-dev-tint-blush); }
-  :where(.env-dev-ruler-band[data-window='medium']) { --env-dev-tint: var(--env-dev-tint-butter); }
-  :where(.env-dev-ruler-band[data-window='expanded']) { --env-dev-tint: var(--env-dev-tint-sage); }
-  :where(.env-dev-ruler-band[data-window='large']) { --env-dev-tint: var(--env-dev-tint-seafoam); }
+  :where(.env-dev-ruler-band[data-window='compact']) {
+    --env-dev-tint: var(--env-dev-tint-blush);
+  }
+  :where(.env-dev-ruler-band[data-window='medium']) {
+    --env-dev-tint: var(--env-dev-tint-butter);
+  }
+  :where(.env-dev-ruler-band[data-window='expanded']) {
+    --env-dev-tint: var(--env-dev-tint-sage);
+  }
+  :where(.env-dev-ruler-band[data-window='large']) {
+    --env-dev-tint: var(--env-dev-tint-seafoam);
+  }
   :where(.env-dev-ruler-line) {
     position: absolute;
     inset-block-start: -1.5rem;
@@ -451,4 +488,3 @@ export const devStyles = /* css */ `
     border-inline-start: 2px solid var(--env-color-border-focus);
   }
 }
-`;

@@ -149,7 +149,7 @@ export function analyze() {
       `${target}/index.tsx`,
     ];
     const found = candidates.find((candidate) => moduleSet.has(candidate));
-    if (found === undefined && !/\.(?:css|json|svg|woff2)$/.test(specifier))
+    if (found === undefined && !/\.(?:css|json|svg|woff2)(?:\?raw)?$/.test(specifier))
       problems.push(`${from} imports ${specifier}, which isn't a module under packages/ui/src.`);
     return found;
   };
@@ -606,6 +606,3 @@ function splitSelectors(prelude) {
   push(prelude.length);
   return parts;
 }
-
-export const sourcePath = (module) => `packages/ui/src/${module}`;
-export const stylesheetPath = (stylesheet) => `packages/ui/src/styles/${stylesheet}`;

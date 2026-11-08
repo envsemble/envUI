@@ -2,10 +2,13 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Badge, Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
 import { Documentation, GuidanceLists } from '../pages/Documentation';
 import type { Documentation as Document } from '../pages/PageModel';
-import type { DocumentationMetadata, DocumentationSection } from '../shared/DocumentationTypes';
+import type {
+  DocumentationMetadata,
+  DocumentationSection,
+} from '../../../../scripts/docs/model/DocumentationTypes';
 import { FigureSection } from '../figures/Figures';
 import { catalogueSection } from './Provides';
-import { docsOnlySections } from '../shared/CatalogueContent';
+import { docsOnlySections } from '../../../../scripts/docs/model/CatalogueContent';
 import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';

@@ -40,12 +40,9 @@ async function shipped() {
   return result.outputFiles.find((file) => file.path.endsWith('.css')).text;
 }
 
-/** Dev mode's style sheet, the template literal of packages/ui/src/dev/ui/styles.ts. */
+/** Dev mode's style sheet. */
 async function devMode() {
-  const source = await readFile(join(root, 'packages/ui/src/dev/ui/styles.ts'), 'utf8');
-  const css = source.match(/\/\* css \*\/ `([\s\S]*?)`/)?.[1];
-  assert.ok(css, 'styles.ts holds dev mode’s style sheet');
-  return css;
+  return readFile(join(root, 'packages/ui/src/dev/ui/DevMode.css'), 'utf8');
 }
 
 async function catalogue() {

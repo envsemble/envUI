@@ -5,24 +5,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource, repository } from './support/importSource.mjs';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
 const styles = join(repository, 'packages/ui/src/styles');
-const output = join(repository, '.cache/unit/WindowClasses.mjs');
-await build({
-  absWorkingDir: repository,
-  entryPoints: ['packages/ui/src/foundations/windowClasses.ts'],
-  bundle: true,
-  // The style sheets the modules import are the browser's concern.
-  loader: { '.css': 'empty' },
-  platform: 'node',
-  format: 'esm',
-  outfile: output,
-  logLevel: 'error',
-});
-const { windowClasses } = await import(pathToFileURL(output).href);
+const { windowClasses } = await importSource(
+  'WindowClasses',
+  'packages/ui/src/foundations/windowClasses.ts',
+);
 
 /** The style sheets envUI ships, by file name, without the generated tokens. */
 const sheets = Object.fromEntries(

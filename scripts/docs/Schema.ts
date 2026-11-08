@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
+import type { DocumentationBlock } from './model/DocumentationTypes.ts';
 
 export const documentationDirectory = fileURLToPath(new URL('../../docs/', import.meta.url));
 
@@ -58,7 +59,7 @@ export const intents = [
   'Frame the application',
 ];
 /** The kind of a page of docs/, by its folder. */
-export function pageKindOf(path) {
+export function pageKindOf(path: string) {
   if (path.startsWith('components/')) return 'component';
   if (path.startsWith('patterns/')) return 'pattern';
   if (path.startsWith('foundations/')) return 'foundation';
@@ -101,7 +102,7 @@ export const kindFolders = {
 export type Frontmatter = Record<string, any>;
 
 /** A field of a page's frontmatter as its schema checks it. */
-export interface FrontmatterRule {
+interface FrontmatterRule {
   type: 'string' | 'strings' | 'statuses' | 'avoid' | 'examples';
   required?: boolean;
   nonEmpty?: boolean;
@@ -123,6 +124,13 @@ export interface PageSectionDefinition {
   required?: boolean;
 }
 
+/** A section of a page in the one-file structure, as the build reads it: its blocks. */
+export interface PageSection {
+  id: string;
+  title: string;
+  blocks: DocumentationBlock[];
+}
+
 /** An example's entry in a page's frontmatter: its role, and its caption and framing. */
 export interface ExampleEntry {
   role: string;
@@ -141,7 +149,7 @@ export interface PropsFile {
 
 /** An export's entry in props.json: the entry points it comes from, and the rest of its record. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; ExtractProps writes it
-export type ExportProps = { entries: string[] } & Record<string, any>;
+type ExportProps = { entries: string[] } & Record<string, any>;
 
 export const pageSections: readonly PageSectionDefinition[] = [
   { id: 'overview', title: 'Overview', generated: true },
@@ -241,12 +249,14 @@ export function importMarkdown(names: readonly string[], props: PropsFile | unde
 }
 
 /** The names a page's own code imports, such as `import { IconButton } from '@envsemble/envui';`. */
-function importedIn(sections): Set<string> {
+function importedIn(sections: readonly PageSection[]): Set<string> {
   const imported = new Set<string>();
   for (const section of sections)
     for (const block of section.blocks ?? [])
-      for (const [, list] of (block.markdown ?? '').matchAll(/^import\s*\{([^}]*)\}\s*from/gm))
-        for (const name of list.split(',')) if (name.trim()) imported.add(name.trim());
+      for (const [, list] of (block.kind === 'markdown' ? block.markdown : '').matchAll(
+        /^import\s*\{([^}]*)\}\s*from/gm,
+      ))
+        for (const name of list!.split(',')) if (name.trim()) imported.add(name.trim());
   return imported;
 }
 
@@ -256,7 +266,12 @@ function importedIn(sections): Set<string> {
  * export, the first it documents; a companion the page's code imports where it shows it, such as
  * IconButton in Button's section on icons, is left to that code, so the Import stays short.
  */
-export function withImport(sections, names, props, title = 'Compose') {
+export function withImport<Section extends PageSection>(
+  sections: Section[],
+  names: readonly string[],
+  props: PropsFile | undefined,
+  title = 'Compose',
+): Section[] {
   const imported = importedIn(sections);
   const imports = importMarkdown(
     names.filter((name, place) => place === 0 || !imported.has(name)),
@@ -272,13 +287,16 @@ export function withImport(sections, names, props, title = 'Compose') {
       id: 'code',
       title,
       blocks: [{ kind: 'markdown', markdown: `## ${title}\n\n${imports}` }],
-    };
+    } as Section;
     return [...sections.slice(0, after + 1), code, ...sections.slice(after + 1)];
   }
-  const [first, ...rest] = sections[index].blocks;
+  const [first, ...rest] = sections[index]!.blocks as [
+    Extract<DocumentationBlock, { kind: 'markdown' }>,
+    ...DocumentationBlock[],
+  ];
   const markdown = first.markdown.replace(/^## Compose\n+/, `## Compose\n\n${imports}`);
   return sections.with(index, {
-    ...sections[index],
+    ...sections[index]!,
     blocks: [{ ...first, markdown }, ...rest],
   });
 }
@@ -404,9 +422,9 @@ export function libraryVersions({
     return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
   };
   const library = '@envsemble/envui';
-  const group = readJson('config.json')?.fixed?.find((names) => names.includes(library)) ?? [
-    library,
-  ];
+  const group = readJson('config.json')?.fixed?.find((names: string[]) =>
+    names.includes(library),
+  ) ?? [library];
   const pre = readJson('pre.json');
   // Changesets 3 keeps the changesets that prereleases applied in .changeset/pre/ until the mode
   // ends; they count toward the version the prereleases lead to.

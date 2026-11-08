@@ -12,7 +12,7 @@ const messagesDirectory = fileURLToPath(
 );
 
 /** One string of a namespace: its key, its English default and what it names. */
-export interface MessageString {
+interface MessageString {
   namespace: string;
   key: string;
   /** The default as written, or for a function of values, the values it names. */

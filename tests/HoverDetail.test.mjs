@@ -2,36 +2,15 @@
 // development warning for a text trigger that keyboard focus can't reach.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource } from './support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/HoverDetail.mjs');
-await build({
-  absWorkingDir: repository,
-  stdin: {
-    contents: [
-      "export { HoverCard } from './packages/ui/src/feedback/HoverCard.tsx';",
-      "export { Text } from './packages/ui/src/foundations/Text.tsx';",
-      "export { IconInfo } from './packages/ui/src/icons/Info.tsx';",
-    ].join('\n'),
-    resolveDir: repository,
-    loader: 'ts',
-  },
-  bundle: true,
-  // The style sheets the modules import are the browser's concern.
-  loader: { '.css': 'empty' },
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  jsx: 'automatic',
-  outfile: output,
-  logLevel: 'error',
-});
-const { HoverCard, Text, IconInfo } = await import(pathToFileURL(output).href);
+const { HoverCard, Text, IconInfo } = await importSource('HoverDetail', [
+  "export { HoverCard } from './packages/ui/src/feedback/HoverCard.tsx';",
+  "export { Text } from './packages/ui/src/foundations/Text.tsx';",
+  "export { IconInfo } from './packages/ui/src/icons/Info.tsx';",
+]);
 
 /** Renders a HoverCard with a trigger, and returns its markup and the warnings it gave. */
 function render(trigger) {

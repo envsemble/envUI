@@ -6,14 +6,14 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { headingsOf } from '../docs/MarkdownHeadings.ts';
 
-export const releaseNotesFile = fileURLToPath(
+const releaseNotesFile = fileURLToPath(
   new URL('../../apps/site/src/releases/release-notes.md', import.meta.url),
 );
 const migrationFile = fileURLToPath(new URL('../../docs/migration.md', import.meta.url));
 const changelogFile = fileURLToPath(new URL('../../packages/ui/CHANGELOG.md', import.meta.url));
 
 /** The most highlights an entry has. */
-export const highlightLimit = 5;
+const highlightLimit = 5;
 
 /**
  * A line of inline Markdown as pieces the page renders: text, `code` and [links](href), whose
@@ -87,28 +87,28 @@ export function parseReleaseNotes(markdown: string): ReleaseEntry[] {
 }
 
 /** A version's parts, for ordering: 1.0.0-prerelease.2 is [1, 0, 0, 2], a release [x, y, z, ∞]. */
-function versionKey(version) {
-  const [core, pre] = version.split('-');
+function versionKey(version: string) {
+  const [core, pre] = version.split('-') as [string, string | undefined];
   const preNumber = pre ? Number(pre.split('.').at(-1)) : Infinity;
   return [...core.split('.').map(Number), preNumber];
 }
 
-export function compareVersions(a, b) {
+function compareVersions(a: string, b: string) {
   const [left, right] = [versionKey(a), versionKey(b)];
   for (let index = 0; index < left.length; index += 1)
-    if (left[index] !== right[index]) return left[index] < right[index] ? -1 : 1;
+    if (left[index] !== right[index]) return left[index]! < right[index]! ? -1 : 1;
   return 0;
 }
 
 /** Every link in an entry's pieces. */
-export const linksOf = (pieces) =>
+const linksOf = (pieces: InlinePiece[]): string[] =>
   pieces.flatMap((piece) =>
     piece.kind === 'link' ? [piece.href, ...linksOf(piece.children)] : [],
   );
 
 /** The pages of the Docs the notes may link to, each with its heading ids. */
 function linkTargets() {
-  const ids = (file) =>
+  const ids = (file: string) =>
     new Set(
       headingsOf(
         readFileSync(file, 'utf8')
@@ -116,14 +116,17 @@ function linkTargets() {
           .replace(/^# [^\n]+\n\s*/, ''),
       ).map(({ id }) => id),
     );
-  return { '/docs/migration': ids(migrationFile), '/docs/changelog': ids(changelogFile) };
+  return {
+    '/docs/migration': ids(migrationFile),
+    '/docs/changelog': ids(changelogFile),
+  } as Record<string, Set<string>>;
 }
 
 /**
  * The problems of the release notes: an entry with too many highlights, versions out of order,
  * a breaking change without a link, or a link to a section the Docs don't have.
  */
-export function releaseNotesProblems(releases, targets = linkTargets()) {
+export function releaseNotesProblems(releases: ReleaseEntry[], targets = linkTargets()) {
   const problems: string[] = [];
   releases.forEach((release, index) => {
     const name = `Release ${release.version}`;
@@ -138,7 +141,7 @@ export function releaseNotesProblems(releases, targets = linkTargets()) {
       if (!linksOf(change).length) problems.push(`${name} has a breaking change without a link.`);
     for (const href of [...release.highlights, ...release.breaking].flatMap(linksOf)) {
       const [path, section] = href.split('#');
-      const ids = targets[path];
+      const ids = targets[path!];
       if (!ids)
         problems.push(`${name} links to ${href}, which is not the migration guide or changelog.`);
       else if (!section || !ids.has(section))

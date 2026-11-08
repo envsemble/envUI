@@ -3,33 +3,13 @@
 // site's own reading of them (apps/site/src/motion/MotionTokens.ts).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource } from './support/importSource.mjs';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/MotionTokens.mjs');
-await build({
-  absWorkingDir: repository,
-  entryPoints: [join(repository, 'packages/ui/src/internal/motionTokens.ts')],
-  bundle: true,
-  platform: 'node',
-  format: 'esm',
-  outfile: output,
-  logLevel: 'error',
-});
-const { parseTime, easingFunction } = await import(pathToFileURL(output).href);
-const siteOutput = join(repository, '.cache/unit/SiteMotionTokens.mjs');
-await build({
-  absWorkingDir: repository,
-  entryPoints: [join(repository, 'apps/site/src/motion/MotionTokens.ts')],
-  bundle: true,
-  platform: 'node',
-  format: 'esm',
-  outfile: siteOutput,
-  logLevel: 'error',
-});
-const site = await import(pathToFileURL(siteOutput).href);
+const { parseTime, easingFunction } = await importSource(
+  'MotionTokens',
+  'packages/ui/src/internal/motionTokens.ts',
+);
+const site = await importSource('SiteMotionTokens', 'apps/site/src/motion/MotionTokens.ts');
 
 test('a duration reads in milliseconds, and as 0 where it is 0s, unset or not a time', () => {
   assert.equal(parseTime(' 0.24s'), 240);

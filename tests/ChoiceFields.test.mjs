@@ -2,36 +2,16 @@
 // a description, Slider an error, each linked to the control. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource } from './support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/ChoiceFields.mjs');
-await build({
-  absWorkingDir: repository,
-  stdin: {
-    contents: [
-      "export * from './packages/ui/src/forms/Radio.tsx';",
-      "export * from './packages/ui/src/forms/Checkbox.tsx';",
-      "export * from './packages/ui/src/forms/Switch.tsx';",
-      "export * from './packages/ui/src/forms/Slider.tsx';",
-    ].join('\n'),
-    resolveDir: repository,
-    loader: 'ts',
-  },
-  bundle: true,
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  jsx: 'automatic',
-  loader: { '.svg': 'empty', '.css': 'empty' },
-  outfile: output,
-  logLevel: 'error',
-});
-const { RadioGroup, Radio, Checkbox, Switch, Slider } = await import(pathToFileURL(output).href);
+const { RadioGroup, Radio, Checkbox, Switch, Slider } = await importSource('ChoiceFields', [
+  "export * from './packages/ui/src/forms/Radio.tsx';",
+  "export * from './packages/ui/src/forms/Checkbox.tsx';",
+  "export * from './packages/ui/src/forms/Switch.tsx';",
+  "export * from './packages/ui/src/forms/Slider.tsx';",
+]);
 
 const describedText = (markup, element) => {
   const ids = new RegExp(`<${element}[^>]*aria-describedby="([^"]+)"`).exec(markup)?.[1];

@@ -3,35 +3,14 @@
 // of each drawing's construction.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource } from './support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/LineArt.mjs');
-await build({
-  absWorkingDir: repository,
-  stdin: {
-    contents: [
-      "export { LineArt, lineArtDrawings } from './packages/ui/src/layout/LineArt.tsx';",
-      "export { lineArtShapes } from './packages/ui/src/layout/internal/lineArtShapes.tsx';",
-    ].join('\n'),
-    resolveDir: repository,
-    loader: 'ts',
-  },
-  bundle: true,
-  // The style sheets the modules import are the browser's concern.
-  loader: { '.css': 'empty' },
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  jsx: 'automatic',
-  outfile: output,
-  logLevel: 'error',
-});
-const { LineArt, lineArtDrawings, lineArtShapes } = await import(pathToFileURL(output).href);
+const { LineArt, lineArtDrawings, lineArtShapes } = await importSource('LineArt', [
+  "export { LineArt, lineArtDrawings } from './packages/ui/src/layout/LineArt.tsx';",
+  "export { lineArtShapes } from './packages/ui/src/layout/internal/lineArtShapes.tsx';",
+]);
 
 test('sixteen drawings, each named in kebab case and drawn in lines of its own', () => {
   assert.equal(lineArtDrawings.length, 16);

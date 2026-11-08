@@ -1,16 +1,8 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './helpers/Servers';
+import { collectErrors } from './helpers/PageErrors';
 
 const menubarFixture = `${fixtureUrl}/?fixture=menubar`;
-
-function collectErrors(page: Page) {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
-  return errors;
-}
 
 /**
  * Moves focus to a menu item once the menu holds focus: a menu takes focus as it opens, which would

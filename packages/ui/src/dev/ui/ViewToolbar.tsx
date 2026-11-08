@@ -42,7 +42,7 @@ export interface ShowOptions {
 }
 
 /** The levels shown and how far apart, which View settings sets. */
-export interface Levels {
+interface Levels {
   spacing: number;
   from: number;
   to: number;

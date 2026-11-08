@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import stylelint from 'stylelint';
 import config, { hairlineProperties, rawColorFunction, stackingValues } from '../index.js';
-import { expectedTokens, libraryTokensUrl, tokensUrl } from '../scripts/SyncTokens.mjs';
+import { lintPackages, staleFiles } from '../../../scripts/build/SyncLintPackages.ts';
 
 const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
 /** Values with nested fallbacks that the ESLint plugin's no-raw-colors tests read too. */
@@ -203,22 +203,19 @@ test('a disable comment with a reason lets one line through', async () => {
   );
 });
 
-test("the token names are the library's when the repository has its token list", () => {
-  const copy = JSON.parse(readFileSync(tokensUrl, 'utf8'));
-  if (existsSync(libraryTokensUrl)) {
-    assert.equal(
-      readFileSync(tokensUrl, 'utf8'),
-      expectedTokens(),
-      "data/tokens.json is behind the library's token list: run npm run sync:tokens --workspace @envsemble/stylelint-config-envui.",
-    );
-    assert.equal(copy.source, 'packages/ui/src/generated/tokens.json');
-  } else assert.equal(copy.source, 'embedded');
+test("the token names and their helper are the repository's, copied", () => {
+  const directory = lintPackages['@envsemble/stylelint-config-envui'];
+  assert.deepEqual(
+    staleFiles().filter((path) => path.startsWith(`${directory}/`)),
+    [],
+    'Run npm run tokens:build.',
+  );
 });
 
 test('every token the messages and the README name exists in the library', () => {
-  const library = existsSync(libraryTokensUrl)
-    ? JSON.parse(readFileSync(libraryTokensUrl, 'utf8')).tokens.map((token) => token.cssVariable)
-    : Object.values(JSON.parse(readFileSync(tokensUrl, 'utf8')).tokens).flat();
+  const library = JSON.parse(
+    readFileSync(new URL('../../ui/src/generated/tokens.json', import.meta.url), 'utf8'),
+  ).tokens.map((token) => token.cssVariable);
   const rules = config.rules;
   const messages = [
     rules['color-no-hex'][1].message('#fff'),

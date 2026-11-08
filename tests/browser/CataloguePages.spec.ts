@@ -4,7 +4,7 @@ import { chooseScheme } from './helpers/CatalogueThemes';
 import { documents, componentDocuments } from '../../apps/site/src/pages/PageModel';
 import type * as PageModel from '../../apps/site/src/pages/PageModel';
 import type * as RelatedPages from '../../apps/site/src/template/RelatedPages';
-import type { DocumentationMetadata } from '../../apps/site/src/shared/DocumentationTypes';
+import type { DocumentationMetadata } from '../../scripts/docs/model/DocumentationTypes';
 import { goTo } from './helpers/SiteSpecHelpers';
 import { pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
 import { bannerDrawingIndex, bannerSubject } from '../../apps/site/src/layout/CatalogueBannerOrder';

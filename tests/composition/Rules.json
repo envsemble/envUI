@@ -247,7 +247,6 @@
           "dev/ui/Plane.tsx",
           "dev/ui/View3D.tsx",
           "dev/ui/ViewToolbar.tsx",
-          "dev/ui/styles.ts",
           "dev/ui/surfaces.ts",
           "dev/ui/useLivePage.ts",
           "dev/units.ts",

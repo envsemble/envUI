@@ -8,13 +8,14 @@
 // navigations then failed with ERR_NO_BUFFER_SPACE. A reset in answer to the browser's close ends
 // the connection on both sides at once. Only idle connections are closed so: a browser closes no
 // connection that still waits for a response.
+import type { ViteDevServer } from 'vite';
 
 /** The Vite plugin that resets a connection once the browser has closed its side. */
 export function resetClosedConnections() {
   return {
     name: 'envui-reset-closed-connections',
     apply: 'serve',
-    configureServer(server) {
+    configureServer(server: ViteDevServer) {
       server.httpServer?.on('connection', (socket) => {
         // Before the HTTP server's own listener, which would answer with a close of its own.
         socket.prependListener('end', () => {

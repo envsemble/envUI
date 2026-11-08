@@ -1,17 +1,9 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './helpers/Servers';
+import { collectErrors } from './helpers/PageErrors';
 
 const adoption = `${fixtureUrl}/?fixture=adoption`;
 const menusFixture = `${fixtureUrl}/?fixture=menus`;
-
-function collectErrors(page: Page) {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
-  return errors;
-}
 
 /** Computed colors of theme tokens, read beside an element so they resolve in its theme. */
 async function tokenColors(locator: Locator, tokens: string[]) {

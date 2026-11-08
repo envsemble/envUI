@@ -2,24 +2,8 @@
 // YYYY-MM months of MonthPicker.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { build } from 'esbuild';
+import { importSource } from './support/importSource.mjs';
 
-const repository = fileURLToPath(new URL('../', import.meta.url));
-const output = join(repository, '.cache/unit/CalendarDays.mjs');
-await build({
-  absWorkingDir: repository,
-  entryPoints: [join(repository, 'packages/ui/src/internal/calendarDays.ts')],
-  bundle: true,
-  // The style sheets the modules import are the browser's concern.
-  loader: { '.css': 'empty' },
-  platform: 'node',
-  format: 'esm',
-  packages: 'external',
-  outfile: output,
-  logLevel: 'error',
-});
 const {
   minuteStepOf,
   minuteSteps,
@@ -31,7 +15,7 @@ const {
   monthFirstDay,
   parseDay,
   formatDay,
-} = await import(pathToFileURL(output).href);
+} = await importSource('CalendarDays', 'packages/ui/src/internal/calendarDays.ts');
 
 test('the step is a whole number of minutes from 1 to 60, 15 by default', () => {
   assert.equal(minuteStepOf(undefined), 15);

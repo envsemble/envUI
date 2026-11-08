@@ -2,8 +2,9 @@
 // whether to typecheck, which generated files to check, and which browser specs to run.
 //
 // A spec is named after its component (tests/browser/Button.spec.ts), and runs when that component
-// changes, nothing more: a library or fixture file runs the spec of its name, or of the name
-// `aliases` gives it; a changed spec runs itself; a changed helper runs the specs that import it;
+// changes: a library or fixture file runs the spec of its name, or of the name `aliases` gives it,
+// and the specs whose fixtures use it (FixtureImports.ts), all of them when they are few, else the
+// most specific few; a changed spec runs itself; a changed helper runs the specs that import it;
 // and `exceptions` lists the shared files and the catalogue, which name no component. A path that
 // matches nothing runs no browser spec: `npm run verify` covers it. Check.ts runs the result, and
 // tests/TestScope.test.mjs covers the logic.
@@ -11,105 +12,43 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { fixtureUse } from './FixtureImports.ts';
 
 export const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
-/** Components and fixtures whose spec has another name: name → the specs about it. */
+/**
+ * Files whose specs neither their name nor the fixtures' imports find, such as a part a fixture
+ * reaches only through a component many specs use: name → the specs about it.
+ */
 export const aliases: Record<string, string[]> = {
   SearchField: ['TextField'],
-  Affixes: ['TextField'],
-  Select: ['Forms'],
-  SelectOptions: ['Forms'],
   Field: ['Forms'],
   FieldFrame: ['Forms', 'TextField'],
   Popover: ['Dialog'],
-  Alert: ['Dialog'],
-  Overlays: ['Dialog'],
-  Breadcrumbs: ['DataDisplay'],
-  contentsOutline: ['TableOfContents'],
-  contentsWave: ['TableOfContents'],
-  sectionScroll: ['TableOfContents'],
-  useContentsHeadings: ['TableOfContents'],
-  waveDrawer: ['TableOfContents'],
-  treeModel: ['Tree'],
-  TreeRow: ['Tree'],
-  useTreeTransitions: ['Tree'],
-  useTreeViewport: ['Tree'],
-  tabStrip: ['DocumentTabs'],
-  useTabCloseFocus: ['DocumentTabs'],
-  useTabDrag: ['DocumentTabs'],
-  useTabStripScrolling: ['DocumentTabs'],
-  Kbd: ['DataDisplay'],
-  Progress: ['Meter'],
   Spinner: ['Meter', 'Skeleton'],
   Badge: ['DiffStat'],
-  ButtonCounts: ['DiffStat'],
   ConfirmButton: ['Button'],
   AvatarButton: ['Button'],
   LinkProvider: ['Button'],
   ActionElement: ['Button'],
-  Adoption: ['Button'],
   QuietButtons: ['Button'],
   ContextMenu: ['Menu'],
   MenuPopup: ['Menu', 'Menubar'],
-  Bar: ['Navigation'],
-  NavigationBar: ['Navigation'],
-  NavigationRail: ['Navigation'],
-  NavigationDrawer: ['Navigation'],
-  Rail: ['Navigation'],
-  Drawer: ['Navigation'],
-  ResizableDrawers: ['Navigation'],
-  NestedDrawers: ['Navigation'],
   useResizableWidth: ['Navigation', 'Sheet'],
-  Destinations: ['Navigation'],
-  ChoiceControls: ['Checkbox', 'Radio', 'Switch'],
-  Toolbar: ['Primitives'],
   ResizeHandle: ['Primitives', 'Panes'],
-  Editor: ['MarkdownEditor', 'RichTextEditor'],
   useResize: ['Panes', 'PanelDock'],
-  PanelDockPanelContext: ['PanelDock'],
-  PanelFrame: ['PanelDock'],
-  PanelTab: ['PanelDock'],
-  dockLayout: ['PanelDock'],
-  useEntrance: ['PanelDock'],
-  useDockOverflow: ['PanelDock'],
-  useStripWheel: ['PanelDock', 'DocumentTabs'],
-  useDockArrangement: ['PanelDock'],
-  useDockFocus: ['PanelDock'],
-  useDockMeasurements: ['PanelDock'],
-  usePanelHeights: ['PanelDock'],
-  useRecency: ['PanelDock'],
-  useScrollPreservation: ['PanelDock'],
-  TopBar: ['Scaffold'],
-  useScrollKeys: ['Scaffold'],
-  scaffoldFocus: ['Scaffold'],
-  useNavigationFocusHandoff: ['Scaffold'],
-  useScaffoldBarSizes: ['Scaffold'],
-  Page: ['PageHeader'],
   PopupSurface: ['Primitives', 'PortalContainer'],
   PortalContainerContext: ['PortalContainer'],
-  PortalContainers: ['PortalContainer'],
-  useRovingFocus: ['Primitives'],
   useDirection: ['Direction'],
   Theme: ['ThemePreference', 'ThemeContrast', 'WindowClasses'],
   Popup: ['WindowClasses', 'Primitives'],
   windowClasses: ['WindowClasses'],
   themeBootstrap: ['ThemePreference', 'ThemeContrast'],
   'theme-bootstrap': ['ThemePreference', 'ThemeContrast'],
-  ThemePreferenceContext: ['ThemePreference'],
-  ThemeToggle: ['ThemePreference'],
-  Density: ['Scale'],
-  DensitySections: ['Scale'],
-  MessageStrings: ['Messages'],
   Avatar: ['AvatarGroup'],
   // The icon wrapper sizes whatever every icon slot holds, a Graphic's included.
   Icon: ['Graphic', 'Button', 'IconButton', 'Skeleton'],
-  NavigationIconState: ['Navigation', 'Tabs'],
-  Calendar: ['DatePicker'],
-  calendarDays: ['DatePicker', 'TimePicker', 'MonthPicker', 'CalendarHeatmap'],
-  PickerField: ['DatePicker', 'TimePicker', 'MonthPicker', 'PickerPopup'],
   PickerPopup: ['PickerPopup', 'DatePicker', 'TimePicker', 'MonthPicker'],
-  PickerPopups: ['PickerPopup'],
   DatePicker: ['DatePicker', 'PickerPopup'],
   TimePicker: ['TimePicker', 'PickerPopup'],
   MonthPicker: ['MonthPicker', 'PickerPopup'],
@@ -121,72 +60,16 @@ export const aliases: Record<string, string[]> = {
   MonthGrid: ['MonthPicker', 'ForcedColors'],
   Code: ['CodeBlock'],
   RichText: ['RichTextEditor'],
-  commands: ['RichTextEditor'],
-  Reference: ['RichTextEditor'],
-  referenceAttributes: ['RichTextEditor'],
-  referenceExtension: ['RichTextEditor'],
-  suggestions: ['RichTextEditor'],
-  taskItem: ['RichTextEditor'],
-  useDocumentAttributes: ['RichTextEditor'],
-  useLinksAndUploads: ['RichTextEditor'],
-  useRichTextDocument: ['RichTextEditor'],
-  useRichTextExtensions: ['RichTextEditor'],
   TooltipPopup: ['Tooltip'],
   accessibleName: ['Tooltip'],
-  sliderOverdrag: ['Slider'],
   DialogParts: ['Dialog', 'Skeleton'],
-  SkeletonScope: ['Skeleton'],
   skeleton: ['Skeleton'],
   inSkeleton: ['Skeleton'],
-  placeholders: ['Skeleton'],
   skeletonShift: ['Skeleton'],
-  SpinnerLabel: ['Skeleton'],
-  Skeletons: ['Skeleton'],
-  AlertDismiss: ['Dialog'],
   Listbox: ['Forms', 'Combobox'],
-  ComboboxPopup: ['Combobox'],
-  comboboxItems: ['Combobox'],
-  useCheckedInput: ['Checkbox', 'Switch'],
-  useComboboxOptions: ['Combobox'],
-  useComboboxSelection: ['Combobox'],
-  useFormReset: [
-    'Forms',
-    'Checkbox',
-    'Radio',
-    'Slider',
-    'Composer',
-    'DropZone',
-    'Combobox',
-    'DatePicker',
-  ],
   ListRow: ['List'],
-  ReorderableList: ['List'],
-  useReorder: ['List'],
-  reorderGeometry: ['List'],
-  ColumnResizeHandle: ['Table'],
-  calendarHeatmapModel: ['CalendarHeatmap'],
-  useHeatmapTooltip: ['CalendarHeatmap'],
-  Palette: ['CommandPalette'],
-  CommandPaletteFooter: ['CommandPalette'],
-  CommandPaletteOptions: ['CommandPalette'],
-  CommandPaletteStatus: ['CommandPalette'],
-  useCommandPaletteKeys: ['CommandPalette'],
   'rich-text': ['RichTextEditor'],
   color: ['ColorPicker'],
-  ColorSwatch: ['ColorPicker'],
-  ColorPickerButton: ['ColorPicker'],
-  ColorArea: ['ColorPicker'],
-  ColorSlider: ['ColorPicker'],
-  ColorFields: ['ColorPicker'],
-  ColorValues: ['ColorPicker'],
-  ColorLocale: ['ColorPicker'],
-  SwatchList: ['ColorPicker'],
-  colorValue: ['ColorPicker'],
-  useColorState: ['ColorPicker'],
-  useEyeDropper: ['ColorPicker'],
-  MotionStage: ['SiteMotion'],
-  VirtualPointer: ['SiteMotion'],
-  VirtualSelection: ['SiteMotion'],
 };
 
 /** The specs a token, theme or other shared change runs. */
@@ -203,7 +86,7 @@ const catalogue = [
 ];
 
 /** Paths that name no component, by prefix, and the specs they run. */
-export const exceptions: [RegExp, string[]][] = [
+const exceptions: [RegExp, string[]][] = [
   [
     /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/(?:Tokens\w*|Theme)\.css)|^tests\/contrast\/|^scripts\/build\/(?:BuildTokens|GeneratePalette)\.ts$/,
     shared,
@@ -215,6 +98,8 @@ export const exceptions: [RegExp, string[]][] = [
   [/^packages\/ui\/src\/foundations\/messages\//, ['Messages']],
   [/^packages\/ui\/src\/dev(?:\.ts$|\/)/, ['DevMode']],
   [/^apps\/site\/|^wrangler\.jsonc$|^scripts\/(?:docs|site)\//, catalogue],
+  // The catalogue's scripted playback: its pointer, timelines and autoplay.
+  [/^apps\/site\/src\/motion\//, ['SiteMotion', 'Autoplay']],
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
   [/^apps\/site\/src\//, ['LiveDevelopment']],
   // The layout check measures every example the pages place, on the catalogue's stage, with dev
@@ -227,10 +112,19 @@ export const exceptions: [RegExp, string[]][] = [
 
 /** More specs than this importing a changed helper leaves it to `npm run verify`. */
 const helperBudget = 8;
+/** More specs than this whose fixtures use a changed file run the most specific of them. */
+const fixtureBudget = 6;
 
 const specFile = (name: string) => `tests/browser/${name}.spec.ts`;
 const baseName = (path: string) =>
   posix.basename(path).replace(/\.(?:spec\.ts|tsx?|css|m?js|html)$/, '');
+
+/** fixtureUse reads every fixture and library module: once per checkout and process. */
+const fixtureUses = new Map<string, ReturnType<typeof fixtureUse>>();
+function cachedFixtureUse(root: string) {
+  if (!fixtureUses.has(root)) fixtureUses.set(root, fixtureUse(root));
+  return fixtureUses.get(root)!;
+}
 
 /** What a spec needs beyond the development servers, read from its source. */
 export function specNeeds(name: string, root = repositoryRoot) {
@@ -249,11 +143,13 @@ export function specNeeds(name: string, root = repositoryRoot) {
 
 /**
  * The browser specs a change runs, by name (Button for tests/browser/Button.spec.ts), each with
- * why, and the paths that run none.
+ * why; the paths that run none; and the files more specs' fixtures use than run, with how many do.
  */
 export function specsFor(paths: readonly string[], root = repositoryRoot) {
   const specs = new Map<string, Set<string>>();
   const unmatched: string[] = [];
+  const widelyUsed = new Map<string, number>();
+  let specsUsing: ((path: string) => string[]) | undefined;
   // By name, as written: a file system that ignores case would find Table.spec.ts for table.
   const written = new Set(walk(root, 'tests/browser', /\.spec\.ts$/).map(baseName));
   const exists = (name: string) => written.has(name);
@@ -277,23 +173,38 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
         for (const user of users) found = add(user, `imports ${path}`) || found;
     } else if (/^(?:packages\/ui\/src|tests\/fixture)\//.test(path)) {
       // Buttons.tsx and Comboboxes.tsx are about Button and Combobox, Tabs.tsx about Tabs, and
-      // a file in navigation/panel-dock/ about PanelDock.
+      // a file in navigation/panel-dock/ about PanelDock. An icon's name names a symbol, not a
+      // component: icons/Palette.tsx is not about CommandPalette.
       const name = baseName(path);
       const folder = posix
         .basename(posix.dirname(path))
         .replace(/(?:^|-)([a-z])/g, (_, letter) => letter.toUpperCase());
-      const candidates = [name, name.replace(/e?s$/, ''), name.replace(/s$/, ''), folder];
+      const candidates = path.startsWith('packages/ui/src/icons/')
+        ? []
+        : [name, name.replace(/e?s$/, ''), name.replace(/s$/, ''), folder];
       const specsOf = (each: string) =>
-        Object.hasOwn(aliases, each) ? aliases[each] : exists(each) ? [each] : [];
+        Object.hasOwn(aliases, each) ? aliases[each]! : exists(each) ? [each] : [];
       const component = candidates.find((each) => specsOf(each).length);
-      for (const spec of component ? specsOf(component) : [])
-        found = add(spec, `about ${component} (${path})`) || found;
+      const named = component ? specsOf(component) : [];
+      for (const spec of named) found = add(spec, `about ${component} (${path})`) || found;
+      // The specs whose fixtures use it: all of them when they are few; else, for a file of no
+      // spec's name, the most specific few, and verify the rest.
+      specsUsing ??= cachedFixtureUse(root);
+      const using = specsUsing(path).filter(exists);
+      if (using.length <= fixtureBudget)
+        for (const spec of using) found = add(spec, `its fixture uses ${path}`) || found;
+      else {
+        widelyUsed.set(path, using.length);
+        if (!named.length)
+          for (const spec of using.slice(0, fixtureBudget))
+            found = add(spec, `among the fixtures that use ${path}`) || found;
+      }
     }
     for (const [pattern, names] of exceptions)
       if (pattern.test(path)) for (const name of names) found = add(name, path) || found;
     if (!found) unmatched.push(path);
   }
-  return { specs, unmatched, helpers };
+  return { specs, unmatched, helpers, widelyUsed };
 }
 
 /**
@@ -324,7 +235,8 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
       scope.typecheck = true;
     if (/(?:^|\/)tsconfig\.json$/.test(path)) scope.typecheck = true;
     // Repository-wide configuration reruns the whole of its check.
-    if (/^eslint\.config\.mjs$|^packages\/eslint-plugin\//.test(path)) scope.whole.lint = true;
+    if (/^eslint\.config\.mjs$|^knip\.jsonc$|^packages\/eslint-plugin\//.test(path))
+      scope.whole.lint = true;
     if (/^stylelint\.|^stylelint-suppressions\.json$|^packages\/stylelint-config\//.test(path))
       scope.whole.css = true;
     if (/^\.prettier/.test(path)) scope.whole.format = true;
@@ -332,9 +244,10 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
       Object.assign(scope.whole, { lint: true, css: true, format: true });
       scope.typecheck = scope.build.library = true;
     }
-    // Generated files: tokens, icons, and the documentation the sources and docs/ make.
+    // Generated files: tokens with the lint packages' copies, icons, and the documentation the
+    // sources and docs/ make.
     if (
-      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:BuildTokens|GeneratePalette)\.ts$/.test(
+      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens)\.[jt]s$|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|data\/tokens\.json)$/.test(
         path,
       )
     )
@@ -358,13 +271,13 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
     )
       scope.build.library = true;
   }
-  const { specs, unmatched, helpers } = specsFor(paths, root);
+  const { specs, unmatched, helpers, widelyUsed } = specsFor(paths, root);
   for (const name of specs.keys()) {
     const needs = specNeeds(name, root);
     scope.build.site ||= needs.site;
     scope.build.library ||= needs.library;
   }
-  return { ...scope, specs, unmatched, helpers };
+  return { ...scope, specs, unmatched, helpers, widelyUsed };
 }
 
 /** Which development servers the specs need, for ENVUI_SERVERS. */
@@ -412,7 +325,7 @@ export function mergeChanges(entries: readonly Change[], untracked: readonly str
 }
 
 /** The integration branches a change is compared with, in order of preference. */
-export const defaultBases = ['origin/envui-1.0', 'origin/dev'];
+const defaultBases = ['origin/envui-1.0', 'origin/dev'];
 
 function git(args: string[], root: string) {
   return execFileSync('git', args, {

@@ -14,10 +14,10 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 | Affected | `npm run check:affected` | Before pushing a branch or marking its pull request ready: a few minutes                   |
 | Full     | `npm run verify`         | When asked, or to reproduce a failure of the Verify workflow on a pull request into `main` |
 
-- **The fast tier** checks what the branch changed since its merge-base with `origin/envui-1.0`, else `origin/dev` (`--base <ref>` or `ENVUI_BASE` picks another), with uncommitted and untracked files: ESLint, Stylelint and Prettier on those files, incremental `tsc`, the generated-file checks the change touches, the unit tests that need no build, and the related browser specs in Chromium. `npm run check -- --dry-run` prints what it would run and why.
+- **The fast tier** checks what the branch changed since its merge-base with `origin/envui-1.0`, else `origin/dev` (`--base <ref>` or `ENVUI_BASE` picks another), with uncommitted and untracked files: ESLint, Stylelint and Prettier on those files, unused files and exports (`npm run lint:unused`, `knip.jsonc`), incremental `tsc`, the generated-file checks the change touches, the unit tests that need no build, and the related browser specs in Chromium. `npm run check -- --dry-run` prints what it would run and why.
 - **The affected tier** adds the related specs' `@engines` tests in Firefox and WebKit, the builds the change needs with the unit tests that read them, the layout check where pages or examples changed, and live development when the catalogue changed.
 - **The full tier** runs everything, the accessibility scan of every page and the visual baseline in Docker included (`npm run verify:no-visual` skips the screenshots and says the run doesn't count). Don't run it, `test:browser`, `test:a11y` or `test:visual` as a routine step.
-- **The selection** (`scripts/test/TestScope.ts`): a file runs the spec named after it or its folder, such as `Checkbox.css` → `Checkbox.spec.ts`; add a file whose name doesn't name its spec to `aliases` there instead of running everything. A token, theme or shared file runs the contrast gate and a small shared set.
+- **The selection** (`scripts/test/TestScope.ts`): a file runs the spec named after it or its folder, such as `Checkbox.css` → `Checkbox.spec.ts`, and the specs whose fixtures use it, found through their imports (`scripts/test/FixtureImports.ts`): all of them when they are few, else the most specific six. Add a file to `aliases` there only for a spec neither finds. A token, theme or shared file runs the contrast gate and a small shared set.
 - **CI** checks every pull request once it is ready: the `CI` job for pull requests into `dev`, and `npm run verify` as the Verify workflow for those into `main`. Don't change `.github/workflows`, start or re-run runs, or change the required checks without asking.
 
 ### Write tests that stay fast
@@ -42,6 +42,15 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 - **Messages.** A component's strings live in `foundations/messages/`, one namespace per component or family, named after it (`copyButton`) or after the concept a family sets (`themePreference`). A prop that overrides one is named after its key: `<x>Label` reads `messages.<namespace>.<x>`. A number that picks a plural form arrives as `count` with `countText`, the count in the locale's digits; any other number arrives as locale text.
 - **What belongs in envUI.** A variant, slot or component every application needs, built on envUI's primitives and tokens; routing, authorization, validation, preferences and persistence stay in the application.
 - **Generated files.** Icons, tokens, props, parts, the catalogue's data and packaged copies have sources: edit those and regenerate (`npm run tokens:build`, `docs:props`, `docs:parts`, `icons:generate`); `npm run check` fails while a generated file is stale.
+
+### Changing a component touches
+
+- Its module in its family and its style sheet, `src/styles/<Name>.css`; a new component also its entry point's export.
+- `src/parts.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
+- Its strings in `src/foundations/messages/`.
+- Its page, `docs/components/<name>.md` or `docs/patterns/`, with its examples in `apps/site/src/examples/<page>/` and its gallery tile in `apps/site/src/tiles/`.
+- Its spec, `tests/browser/<Name>.spec.ts`, and fixture, `tests/fixture/<Name>s.tsx`, which `tests/fixture/App.tsx` mounts by name. The selection finds both from their names and imports; `npm run check -- --dry-run` shows what runs, and an alias in `scripts/test/TestScope.ts` covers what it misses.
+- A changeset, when people using envUI notice the change.
 
 ### Tokens
 
@@ -100,7 +109,7 @@ One word for each thing the site shows, and one folder in `apps/site/src` for ea
 | shared        | What the site and its build scripts both read                   | `shared/`                                            |
 | style         | The site's style sheets                                         | `styles/`                                            |
 | generated     | The site's data, written by `scripts/`: never edit it           | `generated/`                                         |
-| documentation | The Markdown in `docs/` and the model generated from it         | `scripts/docs/`, `shared/DocumentationTypes.ts`      |
+| documentation | The Markdown in `docs/` and the model generated from it         | `scripts/docs/`, its model in `scripts/docs/model/`  |
 | Docs          | The part under /docs, and nothing else                          | `docs-` classes, `Docs*` names                       |
 
 Other words for these, such as preview, demo, showcase and sample, are older names; don't add new uses.

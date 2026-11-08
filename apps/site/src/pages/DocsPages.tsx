@@ -26,7 +26,7 @@ import { TokenReferenceSkeleton } from './TokenTables';
 import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleton';
 import { SpecimenHeadingLevel } from '../figures/Example';
 import { ReleaseNotes } from './ReleaseNotes';
-import { codeColumns, subsections } from '../shared/CatalogueContent';
+import { codeColumns, subsections } from '../../../../scripts/docs/model/CatalogueContent';
 import { headingSlug } from '../shared/SearchAnchors';
 
 /** The token reference, a large page that loads with the page that shows it. */

@@ -20,11 +20,11 @@ export interface CatalogueTheme {
   contrast: 'no-preference' | 'more';
 }
 
-export const standardThemes: readonly CatalogueTheme[] = [
+const standardThemes: readonly CatalogueTheme[] = [
   { name: 'light', scheme: 'light', contrast: 'no-preference' },
   { name: 'dark', scheme: 'dark', contrast: 'no-preference' },
 ];
-export const highContrastThemes: readonly CatalogueTheme[] = [
+const highContrastThemes: readonly CatalogueTheme[] = [
   { name: 'light-hc', scheme: 'light', contrast: 'more' },
   { name: 'dark-hc', scheme: 'dark', contrast: 'more' },
 ];
@@ -38,7 +38,7 @@ export const allThemes: readonly CatalogueTheme[] = [...standardThemes, ...highC
  * (tests/browser/Contrast.spec.ts) measures every token pair in all four themes, and the visual
  * baseline's open lists capture menus and selects in dark and high contrast.
  */
-export const samplePages: ReadonlySet<string> = new Set([
+const samplePages: ReadonlySet<string> = new Set([
   'foundations/colors',
   'components/button',
   'components/text-field',

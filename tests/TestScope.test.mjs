@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import {
+  aliases,
   changedFiles,
   mergeChanges,
   parseNameStatus,
@@ -75,9 +76,8 @@ test('changed files come from the merge-base, uncommitted edits and untracked fi
 test('a component runs the spec of its name, or of the name its alias gives', () => {
   assert.deepEqual(specs('packages/ui/src/forms/Checkbox.tsx'), ['Checkbox']);
   assert.deepEqual(specs('packages/ui/src/styles/Table.css'), ['Table']);
-  // A fixture is named in the plural; a file in a component's folder is about that component.
-  assert.deepEqual(specs('tests/fixture/Comboboxes.tsx'), ['Combobox']);
-  assert.deepEqual(specs('packages/ui/src/navigation/panel-dock/Header.tsx'), ['PanelDock']);
+  // A file in a component's folder is about that component.
+  assert.ok(specs('packages/ui/src/navigation/panel-dock/Header.tsx').includes('PanelDock'));
   assert.deepEqual(specs('packages/ui/src/foundations/Theme.tsx'), [
     'ThemeContrast',
     'ThemePreference',
@@ -87,16 +87,66 @@ test('a component runs the spec of its name, or of the name its alias gives', ()
   assert.deepEqual(specs('packages/ui/src/foundations/messages/table.ts'), ['Messages']);
 });
 
-test('a shared file runs the shared set, and an unknown file runs no spec', () => {
+test('a file runs the specs whose fixtures use it, and a fixture the specs that open it', () => {
+  // Group specs: a component without a spec of its own runs the spec whose fixture shows it.
+  assert.ok(specs('packages/ui/src/actions/Toolbar.tsx').includes('Primitives'));
+  assert.ok(specs('packages/ui/src/content/Kbd.tsx').includes('DataDisplay'));
+  // Through the module that imports it: Calendar is in the date picker's popup.
+  assert.ok(specs('packages/ui/src/forms/Calendar.tsx').includes('DatePicker'));
+  // A fixture runs the specs that open it, also through the fixtures that import it.
+  assert.deepEqual(specs('tests/fixture/Comboboxes.tsx'), ['Combobox', 'Field']);
+  assert.ok(specs('tests/fixture/Palette.tsx').includes('CommandPalette'));
+  // An icon's name names a symbol: icons/Palette.tsx is not about CommandPalette.
+  assert.ok(!specs('packages/ui/src/icons/Palette.tsx').includes('CommandPalette'));
+});
+
+test('a file many fixtures use runs the most specific few, and says how many use it', () => {
+  const { specs: some, widelyUsed } = specsFor(['packages/ui/src/internal/classNames.ts']);
+  assert.equal(some.size, 6);
+  assert.ok(widelyUsed.get('packages/ui/src/internal/classNames.ts') > 6);
+  // A file of a spec's name runs that spec alone.
+  assert.deepEqual(specs('packages/ui/src/actions/Button.tsx'), ['Button']);
+});
+
+test('a shared file runs the shared set, and a file no fixture uses runs no spec', () => {
   assert.deepEqual(specs('packages/ui/src/styles/Tokens.css'), [
     'Colors',
     'Contrast',
     'Scale',
     'ThemeContrast',
   ]);
-  const { specs: none, unmatched } = specsFor(['packages/ui/src/internal/classNames.ts']);
+  const { specs: none, unmatched } = specsFor(['packages/ui/src/internal/resizeDetails.ts']);
   assert.equal(none.size, 0);
-  assert.deepEqual(unmatched, ['packages/ui/src/internal/classNames.ts']);
+  assert.deepEqual(unmatched, ['packages/ui/src/internal/resizeDetails.ts']);
+});
+
+test("the catalogue's playback runs the motion specs", () => {
+  for (const path of ['apps/site/src/motion/MotionStage.tsx', 'apps/site/src/motion/Autoplay.ts']) {
+    const selected = specs(path);
+    assert.ok(selected.includes('SiteMotion') && selected.includes('Autoplay'), path);
+  }
+});
+
+test('every alias names a file and specs that exist, and adds what the imports miss', () => {
+  const files = [
+    ...readdirSync('packages/ui/src', { recursive: true }),
+    ...readdirSync('tests/fixture', { recursive: true }),
+  ].map((file) => String(file).replaceAll('\\', '/'));
+  const named = (file) => {
+    const name = file
+      .split('/')
+      .at(-1)
+      .replace(/\.(?:tsx?|css|m?js|html)$/, '');
+    return [name, name.replace(/e?s$/, ''), name.replace(/s$/, '')];
+  };
+  for (const [name, targets] of Object.entries(aliases)) {
+    assert.ok(
+      files.some((file) => named(file).includes(name)),
+      `the alias ${name} names no file`,
+    );
+    for (const target of targets)
+      assert.ok(existsSync(`tests/browser/${target}.spec.ts`), `${name}: no spec ${target}`);
+  }
 });
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {

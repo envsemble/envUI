@@ -1,18 +1,10 @@
 import { test, expect, type Browser, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './helpers/Servers';
+import { collectErrors } from './helpers/PageErrors';
 
 const dateFixture = `${fixtureUrl}/?fixture=date-picker`;
 /** Today is fixed, so the calendar marks the same day in every run. */
 const today = new Date('2026-10-14T10:00:00');
-
-function collectErrors(page: Page) {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  page.on('console', (message) => {
-    if (message.type() === 'error' || message.type() === 'warning') errors.push(message.text());
-  });
-  return errors;
-}
 
 const field = (page: Page, name: string) => page.getByRole('combobox', { name, exact: true });
 const focusedDate = (page: Page) =>
@@ -43,7 +35,7 @@ test.beforeEach(async ({ page }) => {
 test('the field shows its value in the locale and the calendar follows the date picker keys', async ({
   page,
 }) => {
-  const errors = collectErrors(page);
+  const errors = collectErrors(page, { warnings: true });
   const publish = field(page, 'Publish on light');
   await expect(publish).toHaveText('20 Oct 2026');
   await expect(publish).toHaveAttribute('aria-haspopup', 'dialog');

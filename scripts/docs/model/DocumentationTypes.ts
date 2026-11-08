@@ -1,7 +1,8 @@
 /**
  * The shape of the generated documentation data, written by scripts/docs/GenerateDocumentation.ts
- * from docs/ and docs/generated/props.json: every page's summary (generated/Documentation.ts) and
- * each page's content (generated/pages/<id>.json).
+ * from docs/ and docs/generated/props.json: every page's summary
+ * (apps/site/src/generated/Documentation.ts) and each page's content
+ * (apps/site/src/generated/pages/<id>.json). The site and the documentation scripts both read it.
  */
 
 /** One prop of a component, as scripts/docs/ExtractProps.ts reads it from the TypeScript source. */
@@ -150,7 +151,7 @@ export interface AnatomyLegendItem {
   label?: string;
 }
 
-export type TemplateSectionId =
+type TemplateSectionId =
   | 'overview'
   | 'usage'
   | 'width'
@@ -176,7 +177,7 @@ export interface DocumentationSection {
 }
 
 /** A page's or an export's status: alpha, beta, stable or deprecated. */
-export type DocumentationStatus = 'alpha' | 'beta' | 'stable' | 'deprecated';
+type DocumentationStatus = 'alpha' | 'beta' | 'stable' | 'deprecated';
 
 /** A component or pattern page's frontmatter beyond its title, summary and category. */
 export interface DocumentationMetadata {
@@ -198,13 +199,13 @@ export interface DocumentationMetadata {
 }
 
 /** An example figure a section places, as a page's tile and the layout check pick one. */
-export type ExampleOutline = Pick<
+type ExampleOutline = Pick<
   Extract<DocumentationBlock, { kind: 'example' }>,
   'name' | 'heading' | 'role' | 'widths' | 'open' | 'stage'
 >;
 
 /** A section of a page as the site knows it before the page loads. */
-export interface SectionOutline {
+interface SectionOutline {
   id: TemplateSectionId;
   /** The ids of the section's headings, as the catalogue renders them, numbered across the page. */
   anchors: string[];
@@ -239,7 +240,7 @@ export interface DocumentationSummary {
 }
 
 /** A component a page documents besides its own, and the headings that lead to it. */
-export interface PageMember {
+interface PageMember {
   name: string;
   /** The id of the catalogue's heading that first names it, on a component page. */
   catalogue?: string;
@@ -270,7 +271,7 @@ export interface DocumentationEntry extends Omit<DocumentationSummary, 'outline'
 }
 
 /** One of envUI's built-in strings: its namespace and key, its English default and what it names. */
-export interface DocumentationString {
+interface DocumentationString {
   namespace: string;
   key: string;
   value: string;

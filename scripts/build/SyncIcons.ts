@@ -53,7 +53,14 @@ async function download(url: string): Promise<Buffer> {
   }
   throw new Error(`Could not download ${url}`);
 }
-async function tree(sha) {
+/** An entry of a GitHub tree: a file or a folder. */
+interface TreeEntry {
+  path: string;
+  type: 'blob' | 'tree';
+  sha: string;
+}
+
+async function tree(sha: string): Promise<TreeEntry[]> {
   const result = JSON.parse((await download(api + sha)).toString('utf8'));
   if (result.truncated || !Array.isArray(result.tree))
     throw new Error(`Incomplete upstream tree ${sha}`);
@@ -78,7 +85,7 @@ async function worker() {
   while (cursor < catalogue.length) {
     const index = cursor++;
     const entry = catalogue[index];
-    const variants = {};
+    const variants: ManifestIcon['variants'] = {};
     for (const fill of [0, 1]) {
       const filename = `${entry.path}${fill ? '_fill1' : ''}_24px.svg`;
       const upstreamPath = `symbols/web/${entry.path}/materialsymbolsrounded/${filename}`;

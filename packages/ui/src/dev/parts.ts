@@ -3,7 +3,7 @@
 // whether or not the descriptions have loaded, so the readout reads the same before and after.
 
 /** A part: its class, the component or shared group it belongs to, and what it is. */
-export interface PartInfo {
+interface PartInfo {
   /** The part's class name, such as `env-card-header`. */
   className: string;
   /** The component's export name, such as `Card`, or the shared group's, such as `ConnectedRows`. */
@@ -17,7 +17,7 @@ export interface PartInfo {
 }
 
 /** A state attribute, with the values it takes and the parts it goes on. */
-export interface StateAttribute {
+interface StateAttribute {
   attribute: string;
   values: string[];
   parts: string[];
@@ -48,6 +48,7 @@ export interface PartsFile {
  * Indexes parts.json: `components` by export name and `shared` groups by name, each with its root
  * class, its parts (`{ class, description }`) and its states (`{ attribute, values, parts }`).
  * Anything else is refused, so a changed format shows at once rather than as missing descriptions.
+ * @internal Exported for tests/DevMode.test.mjs.
  */
 export function indexParts(data: PartsFile): PartsIndex {
   if (typeof data !== 'object' || data === null || typeof data.components !== 'object')

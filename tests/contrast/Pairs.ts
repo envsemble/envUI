@@ -3193,7 +3193,7 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * The color of the declaration a CSS file marks with `/* contrast: name *\/`: its value, or the
  * color function in it, such as the color-mix() of a border shorthand.
  */
-export function markedColor(file: string, name: string): string {
+function markedColor(file: string, name: string): string {
   const css = readFileSync(new URL(`../../${file}`, import.meta.url), 'utf8');
   const marker = css.indexOf(`/* contrast: ${name} */`);
   if (marker === -1) throw new Error(`${file} marks no declaration /* contrast: ${name} */.`);
@@ -3224,7 +3224,7 @@ const badgeOutline = markedColor('packages/ui/src/styles/Button.css', 'badge-out
 const tooltipFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-frosted');
 const tooltipKeyFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-key');
 
-export const derived: Readonly<Record<string, string>> = {
+const derived: Readonly<Record<string, string>> = {
   ...Object.fromEntries(
     ['on-emphasis', 'control', 'accent', 'on-strong', 'muted', 'default', 'link', 'danger'].map(
       (label) => [`button-end-separator-${label}`, ofLabel(separator, `--env-color-fg-${label}`)],

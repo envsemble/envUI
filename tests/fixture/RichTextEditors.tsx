@@ -47,7 +47,7 @@ function deferred<T>(query: string, signal: AbortSignal, requests: DeferredReque
   });
 }
 
-export const punctuatedReference = {
+const punctuatedReference = {
   id: 'record/"42"[a]',
   label: 'River [east] "quote", slash/ amp&!',
   kind: 'application-record',

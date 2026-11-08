@@ -3,7 +3,7 @@
  * side it is nearest to, spread so none overlap; for a variants figure, each variant's name beside
  * its item, with the room the names take.
  */
-import type { AnatomyLegendItem } from '../shared/DocumentationTypes';
+import type { AnatomyLegendItem } from '../../../../scripts/docs/model/DocumentationTypes';
 import { partSelector } from '../template/Parts';
 import { openerBox } from './OpenExample';
 

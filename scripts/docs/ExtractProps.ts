@@ -24,7 +24,7 @@ const sourceDirectory = resolve(libraryDirectory, 'src');
 export const propsFile = resolve(root, 'docs/generated/props.json');
 
 /** Public entry points and the module specifier consumers import them from. */
-const entries = [
+const entries: [file: string, specifier: string][] = [
   ['index.ts', '@envsemble/envui'],
   ['content.ts', '@envsemble/envui/content'],
   ['diff.ts', '@envsemble/envui/diff'],
@@ -35,7 +35,7 @@ const entries = [
 ];
 
 /** React's per-element attribute interfaces, by the element they describe. */
-const attributeElements = {
+const attributeElements: Record<string, string> = {
   AnchorHTMLAttributes: 'a',
   ButtonHTMLAttributes: 'button',
   InputHTMLAttributes: 'input',
@@ -59,7 +59,7 @@ const attributeElements = {
   SVGAttributes: 'svg',
 };
 /** DOM element interfaces, by tag, for props types that only use the generic HTMLAttributes. */
-const domElements = {
+const domElements: Record<string, string> = {
   HTMLAnchorElement: 'a',
   HTMLButtonElement: 'button',
   HTMLDivElement: 'div',
@@ -89,32 +89,40 @@ const domElements = {
   SVGSVGElement: 'svg',
 };
 
-const posix = (path) => path.split(sep).join('/');
-const collapse = (text) => text.replace(/\s+/g, ' ').trim();
+const posix = (path: string) => path.split(sep).join('/');
+const collapse = (text: string) => text.replace(/\s+/g, ' ').trim();
 /** Type text on one line, without import() qualifiers or the trailing commas of wrapped lists. */
-const tidyType = (text) =>
+const tidyType = (text: string) =>
   collapse(text)
     .replace(/import\(['"][^'"]+['"]\)\./g, '')
     .replace(/,\s*([)>\]])/g, '$1')
     .replace(/([(<[])\s+/g, '$1')
     .replace(/\s+([)>\]])/g, '$1');
 /** One member of a union, in parentheses when it is a function type. */
-const unionMember = (text) => (/=>/.test(text) && !text.startsWith('((') ? `(${text})` : text);
+const unionMember = (text: string) =>
+  /=>/.test(text) && !text.startsWith('((') ? `(${text})` : text;
+const code = (text: string) => '`' + text + '`';
 
 /** Where a declaration comes from: envUI's source, Base UI, or React's DOM types. */
-function originOf(declaration) {
+type Origin = 'envui' | 'base-ui' | 'native';
+
+function originOf(declaration: ts.Node): Origin {
   const file = resolve(declaration.getSourceFile().fileName);
   if (!relative(sourceDirectory, file).startsWith('..')) return 'envui';
   if (/[\\/]node_modules[\\/]@base-ui[\\/]/.test(file)) return 'base-ui';
   return 'native';
 }
 
+/** Whether a declaration is envUI's own, rather than the platform's or a dependency's. */
+const isLibrary = (declaration: ts.Node) =>
+  !relative(sourceDirectory, declaration.getSourceFile().fileName).startsWith('..');
+
 /** The TSDoc of a declaration: its text, @default and @deprecated. */
-function documentation(declaration) {
+function documentation(declaration: ts.Node) {
   const docs = ts.getJSDocCommentsAndTags(declaration).filter(ts.isJSDoc);
-  const text = (comment) => collapse(ts.getTextOfJSDocComment(comment) ?? '');
+  const text = (comment: ts.JSDoc['comment']) => collapse(ts.getTextOfJSDocComment(comment) ?? '');
   const tags = docs.flatMap((doc) => doc.tags ?? []);
-  const tag = (name) => tags.find((item) => item.tagName.text === name);
+  const tag = (name: string) => tags.find((item) => item.tagName.text === name);
   const deprecated = tag('deprecated');
   return {
     description: docs
@@ -126,131 +134,178 @@ function documentation(declaration) {
   };
 }
 
-export function extractProps() {
-  const project = new Project({ tsConfigFilePath: resolve(libraryDirectory, 'tsconfig.json') });
-  const checker = project.getTypeChecker().compilerObject;
-  /** Every name the entry points export, which a default may name as it is. */
-  const publicNames = new Set(
-    entries.flatMap(([file]) => [
-      ...project
-        .getSourceFileOrThrow(resolve(sourceDirectory, file))
-        .getExportedDeclarations()
-        .keys(),
-    ]),
-  );
+const isUndefinedOnly = (type: ts.Type): boolean =>
+  (type.flags & (ts.TypeFlags.Undefined | ts.TypeFlags.Never)) !== 0 ||
+  (type.isUnion() && type.types.every(isUndefinedOnly));
+const withoutUndefined = (type: ts.Type) =>
+  type.isUnion() ? type.types.filter((member) => !isUndefinedOnly(member)) : [type];
 
-  const isUndefinedOnly = (type) =>
-    (type.flags & (ts.TypeFlags.Undefined | ts.TypeFlags.Never)) !== 0 ||
-    (type.isUnion() && type.types.every(isUndefinedOnly));
-  const withoutUndefined = (type) =>
-    type.isUnion() ? type.types.filter((member) => !isUndefinedOnly(member)) : [type];
-  const literalText = (type) =>
-    type.isStringLiteral()
+const keywordTypes = new Set([
+  ts.SyntaxKind.BooleanKeyword,
+  ts.SyntaxKind.StringKeyword,
+  ts.SyntaxKind.NumberKeyword,
+  ts.SyntaxKind.NullKeyword,
+  ts.SyntaxKind.UndefinedKeyword,
+]);
+
+/** The longest default, as text, that a props table shows in place of a private name. */
+const longestDefault = 200;
+
+/** A function that implements a component. */
+type Implementation = ts.FunctionDeclaration | ts.FunctionExpression | ts.ArrowFunction;
+
+/** A property of one form of a props type, with what componentProps needs of it. */
+interface FormProperty {
+  name: string;
+  declarations: ts.Declaration[];
+  type: ts.Type;
+  optional: boolean;
+  /** Typed undefined or never: the form has no such prop. */
+  absent: boolean;
+  origin: Origin;
+}
+
+/** A prop's record in props.json. */
+interface PropRecord {
+  name: string;
+  type: string | undefined;
+  required: boolean;
+  requiredWhen?: string;
+  default?: string;
+  defaultBuiltIn?: true;
+  description: string;
+  deprecated?: string | boolean;
+  source?: 'base-ui';
+}
+
+/** An export's record in props.json, without the entry points it comes from. */
+type ExportRecord =
+  | { kind: 'namespace'; source: string; description: string; parts: string[] }
+  | {
+      kind: 'component';
+      source: string;
+      description: string;
+      props: PropRecord[];
+      native: string[];
+    }
+  | { kind: 'function'; source: string; description: string; signature: string };
+
+/**
+ * Reads the exports of the entry points with the type checker: their kinds, TSDoc and props, each
+ * export with the entry points it comes from.
+ */
+class ExportReader {
+  readonly checker: ts.TypeChecker;
+  /** Every name the entry points export, which a default may name as it is. */
+  readonly publicNames: Set<string>;
+  readonly exportsByName = new Map<string, ExportRecord & { entries: string[] }>();
+
+  constructor(checker: ts.TypeChecker, publicNames: Set<string>) {
+    this.checker = checker;
+    this.publicNames = publicNames;
+  }
+
+  // Types ------------------------------------------------------------------------------------
+
+  literalText(type: ts.Type) {
+    return type.isStringLiteral()
       ? `'${type.value}'`
       : type.isNumberLiteral()
         ? String(type.value)
-        : checker.typeToString(type);
+        : this.checker.typeToString(type);
+  }
 
-  const keywordTypes = new Set([
-    ts.SyntaxKind.BooleanKeyword,
-    ts.SyntaxKind.StringKeyword,
-    ts.SyntaxKind.NumberKeyword,
-    ts.SyntaxKind.NullKeyword,
-    ts.SyntaxKind.UndefinedKeyword,
-  ]);
   /** The text of a resolved type, such as an instantiated type parameter, without undefined. */
-  const resolvedText = (type) => {
-    const texts = withoutUndefined(type).map(literalText);
+  resolvedText(type: ts.Type) {
+    const texts = withoutUndefined(type).map((member) => this.literalText(member));
     if (texts.includes('true') && texts.includes('false')) {
       texts.splice(texts.indexOf('true'), 1, 'boolean');
       texts.splice(texts.indexOf('false'), 1);
     }
     return texts.join(' | ');
-  };
+  }
+
   /** Whether a type node names a type parameter, such as State in CheckedProps<State>. */
-  const isTypeParameter = (node) =>
-    node &&
-    ts.isTypeReferenceNode(node) &&
-    (checker.getSymbolAtLocation(node.typeName)?.flags ?? 0) & ts.SymbolFlags.TypeParameter;
+  isTypeParameter(node: ts.TypeNode) {
+    return (
+      ts.isTypeReferenceNode(node) &&
+      ((this.checker.getSymbolAtLocation(node.typeName)?.flags ?? 0) &
+        ts.SymbolFlags.TypeParameter) !==
+        0
+    );
+  }
+
+  /** The symbol a name refers to, through an import. */
+  target(node: ts.Node) {
+    const symbol = this.checker.getSymbolAtLocation(node);
+    return symbol && symbol.flags & ts.SymbolFlags.Alias
+      ? this.checker.getAliasedSymbol(symbol)
+      : symbol;
+  }
 
   /**
    * The readable text of a type node: as written, with envUI's own aliases of literal unions, such
    * as ButtonVariant, spelled out as their values, since agents and readers need the values.
    */
-  function typeText(node) {
-    if (!node) return undefined;
-    if (ts.isUnionTypeNode(node)) return node.types.map(typeText).join(' | ');
-    if (ts.isParenthesizedTypeNode(node)) return `(${typeText(node.type)})`;
+  typeText(node: ts.TypeNode): string {
+    if (ts.isUnionTypeNode(node)) return node.types.map((type) => this.typeText(type)).join(' | ');
+    if (ts.isParenthesizedTypeNode(node)) return `(${this.typeText(node.type)})`;
     if (ts.isTypeReferenceNode(node) && !node.typeArguments) {
-      const symbol = checker.getSymbolAtLocation(node.typeName);
-      const target =
-        symbol && symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
-      const alias = target?.declarations?.find(ts.isTypeAliasDeclaration);
+      const alias = this.target(node.typeName)?.declarations?.find(ts.isTypeAliasDeclaration);
       if (alias && originOf(alias) === 'envui') {
         const members = ts.isUnionTypeNode(alias.type) ? alias.type.types : [alias.type];
-        const literal = (member) =>
+        const literal = (member: ts.TypeNode) =>
           ts.isLiteralTypeNode(member) ||
           keywordTypes.has(member.kind) ||
-          (ts.isTypeReferenceNode(member) && typeText(member) !== member.getText());
-        if (members.every(literal)) return typeText(alias.type);
+          (ts.isTypeReferenceNode(member) && this.typeText(member) !== member.getText());
+        if (members.every(literal)) return this.typeText(alias.type);
       }
     }
     return tidyType(node.getText());
   }
 
+  // Defaults ---------------------------------------------------------------------------------
+
   /** The function that implements a component, for its destructured defaults. */
-  function implementationOf(node, seen = new Set()) {
+  implementationOf(
+    node: ts.Node | undefined,
+    seen = new Set<ts.Node>(),
+  ): Implementation | undefined {
     if (!node || seen.has(node)) return undefined;
     seen.add(node);
     if (ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node))
       return node;
-    if (ts.isVariableDeclaration(node)) return implementationOf(node.initializer, seen);
+    if (ts.isVariableDeclaration(node)) return this.implementationOf(node.initializer, seen);
     if (
       ts.isParenthesizedExpression(node) ||
       ts.isAsExpression(node) ||
       ts.isSatisfiesExpression(node)
     )
-      return implementationOf(node.expression, seen);
+      return this.implementationOf(node.expression, seen);
     // forwardRef(…), memo(…) and withDisplayName(…) wrap the implementation as their first argument.
-    if (ts.isCallExpression(node)) return implementationOf(node.arguments[0], seen);
+    if (ts.isCallExpression(node)) return this.implementationOf(node.arguments[0], seen);
     if (ts.isIdentifier(node)) {
-      const symbol = checker.getSymbolAtLocation(node);
-      const target =
-        symbol && symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
-      return implementationOf(target?.valueDeclaration ?? target?.declarations?.[0], seen);
+      const target = this.target(node);
+      return this.implementationOf(target?.valueDeclaration ?? target?.declarations?.[0], seen);
     }
     return undefined;
   }
-
-  /** The longest default, as text, that a props table shows in place of a private name. */
-  const longestDefault = 200;
-
-  /** The declaration a name refers to, through an import. */
-  const declarationOf = (identifier) => {
-    const symbol = checker.getSymbolAtLocation(identifier);
-    const target =
-      symbol && symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
-    return target?.valueDeclaration;
-  };
-  /** Whether a declaration is envUI's own, rather than the platform's or a dependency's. */
-  const isLibrary = (declaration) =>
-    !relative(sourceDirectory, declaration.getSourceFile().fileName).startsWith('..');
 
   /**
    * The text of an expression with each private name in it replaced by what it holds, or
    * undefined when one of them cannot be shown that way.
    */
-  function inlined(expression, seen) {
+  inlined(expression: ts.Expression, seen: Set<ts.Declaration>): string | undefined {
     const replacements: { start: number; end: number; text: string }[] = [];
     let unresolved = false;
-    const visit = (node) => {
+    const visit = (node: ts.Node) => {
       if (unresolved) return;
       if (ts.isPropertyAccessExpression(node)) {
         visit(node.expression);
         return;
       }
       if (ts.isIdentifier(node)) {
-        const declaration = declarationOf(node);
+        const declaration = this.target(node)?.valueDeclaration;
         const inside =
           declaration &&
           declaration.pos >= expression.pos &&
@@ -264,10 +319,10 @@ export function extractProps() {
           (ts.isBindingElement(declaration) &&
             ts.isParameter(ts.walkUpBindingElementsAndPatterns(declaration))) ||
           !isLibrary(declaration) ||
-          publicNames.has(node.text)
+          this.publicNames.has(node.text)
         )
           return;
-        const text = privateValue(node, declaration, seen);
+        const text = this.privateValue(declaration, seen);
         if (text === undefined) unresolved = true;
         else replacements.push({ start: node.getStart(), end: node.getEnd(), text });
         return;
@@ -292,28 +347,28 @@ export function extractProps() {
    * the declarations being resolved around this one, so that a name that refers back to one of them
    * is left unresolved; a helper used twice side by side resolves both times.
    */
-  function privateValue(identifier, declaration, seen) {
+  privateValue(declaration: ts.Declaration, seen: Set<ts.Declaration>) {
     if (seen.has(declaration)) return undefined;
     seen.add(declaration);
     try {
-      return resolvedValue(declaration, seen);
+      return this.resolvedValue(declaration, seen);
     } finally {
       seen.delete(declaration);
     }
   }
 
-  function resolvedValue(declaration, seen) {
+  resolvedValue(declaration: ts.Declaration, seen: Set<ts.Declaration>) {
     if (
       ts.isVariableDeclaration(declaration) &&
       declaration.initializer &&
       ts.getCombinedNodeFlags(declaration) & ts.NodeFlags.Const
     )
-      return inlined(declaration.initializer, seen);
+      return this.inlined(declaration.initializer, seen);
     if (ts.isFunctionDeclaration(declaration) && declaration.body) {
       const [statement, ...rest] = declaration.body.statements;
       if (rest.length || !statement || !ts.isReturnStatement(statement) || !statement.expression)
         return undefined;
-      const body = inlined(statement.expression, seen);
+      const body = this.inlined(statement.expression, seen);
       const parameters = declaration.parameters.map((parameter) => parameter.getText()).join(', ');
       return body === undefined ? undefined : collapse(`(${parameters}) => ${body}`);
     }
@@ -327,14 +382,14 @@ export function extractProps() {
    * longestDefault characters is undefined: the table says the prop has a built-in default rather
    * than name something no reader can import.
    */
-  function defaultText(initializer) {
-    const text = inlined(initializer, new Set());
+  defaultText(initializer: ts.Expression) {
+    const text = this.inlined(initializer, new Set());
     return text !== undefined && text.length <= longestDefault ? text : undefined;
   }
 
   /** Defaults of the implementation's destructured props, such as variant = 'primary'. */
-  function destructuredDefaults(implementation) {
-    const defaults = new Map();
+  destructuredDefaults(implementation: Implementation | undefined) {
+    const defaults = new Map<string, string | undefined>();
     const pattern = implementation?.parameters[0]?.name;
     if (!pattern || !ts.isObjectBindingPattern(pattern)) return defaults;
     for (const element of pattern.elements) {
@@ -342,39 +397,16 @@ export function extractProps() {
       const key = element.propertyName ?? element.name;
       const name = ts.isIdentifier(key) || ts.isStringLiteral(key) ? key.text : key.getText();
       // A default that cannot be shown, such as a toolbar built from private parts, is built in.
-      defaults.set(name, defaultText(element.initializer));
+      defaults.set(name, this.defaultText(element.initializer));
     }
     return defaults;
   }
 
-  /** Intrinsic elements that receive the implementation's rest props, such as <thead {...props}>. */
-  function spreadElements(implementation) {
-    const pattern = implementation?.parameters[0]?.name;
-    const rest =
-      pattern && ts.isObjectBindingPattern(pattern)
-        ? pattern.elements.find((element) => element.dotDotDotToken)?.name
-        : undefined;
-    if (!rest || !ts.isIdentifier(rest) || !implementation.body) return [];
-    const elements = new Set();
-    let component = false;
-    const visit = (node) => {
-      if (ts.isJsxSpreadAttribute(node) && ts.isIdentifier(node.expression)) {
-        if (node.expression.text === rest.text) {
-          const tag = node.parent.parent.tagName.getText();
-          if (/^[a-z]/.test(tag)) elements.add(tag);
-          else component = true;
-        }
-      }
-      ts.forEachChild(node, visit);
-    };
-    visit(implementation.body);
-    // Props that reach another component, such as Button, keep the elements of the props type.
-    return component ? [] : [...elements];
-  }
+  // Elements ---------------------------------------------------------------------------------
 
   /** The element whose native props a form of the props accepts, such as button. */
-  function nativeElement(properties) {
-    const elements = new Set();
+  nativeElement(properties: FormProperty[]) {
+    const elements = new Set<string>();
     for (const { declarations } of properties)
       for (const declaration of declarations) {
         const owner = declaration.parent;
@@ -388,7 +420,7 @@ export function extractProps() {
     // ref to any HTMLElement, as Surface's, which render can make any element, names none.
     const text = ['ref', 'onClick']
       .map((probe) => properties.find(({ name }) => name === probe))
-      .map((probe) => (probe ? checker.typeToString(probe.type) : ''))
+      .map((probe) => (probe ? this.checker.typeToString(probe.type) : ''))
       .join(' ');
     const element = Object.entries(domElements).find(([name]) =>
       new RegExp(`\\b${name}\\b`).test(text),
@@ -397,41 +429,39 @@ export function extractProps() {
     return properties.some(({ origin }) => origin === 'native') ? ['element'] : [];
   }
 
+  // Props ------------------------------------------------------------------------------------
+
   /** Props of one component: its own and Base UI's listed, React's DOM props summarised. */
-  function componentProps(propsType, implementation) {
+  componentProps(propsType: ts.Type, implementation: Implementation | undefined) {
     const forms = propsType.isUnion() ? propsType.types : [propsType];
-    const byName = new Map();
-    const formProperties = forms.map((form, formIndex) =>
-      checker.getPropertiesOfType(form).map((symbol) => {
+    const byName = new Map<string, FormProperty[]>();
+    const formProperties = forms.map((form) =>
+      this.checker.getPropertiesOfType(form).map((symbol) => {
         const declarations = (symbol.declarations ?? []).filter(
           (declaration) => declaration.getSourceFile,
         );
-        const type = checker.getTypeOfSymbol(symbol);
-        const optional = (symbol.flags & ts.SymbolFlags.Optional) !== 0;
-        const property = {
+        const type = this.checker.getTypeOfSymbol(symbol);
+        const property: FormProperty = {
           name: symbol.name,
-          symbol,
           declarations,
           type,
-          optional,
+          optional: (symbol.flags & ts.SymbolFlags.Optional) !== 0,
           absent: isUndefinedOnly(type),
-          origin: declarations.length ? originOf(declarations[0]) : 'envui',
-          formIndex,
+          origin: declarations.length ? originOf(declarations[0]!) : 'envui',
         };
         if (!byName.has(symbol.name)) byName.set(symbol.name, []);
-        byName.get(symbol.name).push(property);
+        byName.get(symbol.name)!.push(property);
         return property;
       }),
     );
-    const defaults = destructuredDefaults(implementation);
+    const defaults = this.destructuredDefaults(implementation);
     // The element the implementation spreads its other props on, such as <thead>, where it is a
     // plain element; otherwise the elements the props type names.
     const spread = spreadElements(implementation);
     const native = spread.length
       ? spread
-      : [...new Set(formProperties.flatMap((properties) => nativeElement(properties)))];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- a prop's record, as props.json holds it
-    const props: Record<string, any>[] = [];
+      : [...new Set(formProperties.flatMap((properties) => this.nativeElement(properties)))];
+    const props: PropRecord[] = [];
     for (const [name, occurrences] of byName) {
       const present = occurrences.filter((occurrence) => !occurrence.absent);
       if (!present.length) continue;
@@ -451,17 +481,19 @@ export function extractProps() {
       );
       const declaration =
         declarations.find((d) => documentation(d).description) ??
-        listed.declarations.find((d) => originOf(d) !== 'native');
+        listed.declarations.find((d) => originOf(d) !== 'native')!;
       const origin = originOf(declaration);
-      const { required, requiredWhen } = requirement(name, formProperties);
+      const { required, requiredWhen } = this.requirement(name, formProperties);
       const texts = new Set<string>(
         present
           .filter((o) => o.declarations.some((d) => originOf(d) !== 'native'))
           .map((o) => {
-            const own = o.declarations.find((d) => originOf(d) !== 'native');
+            const own = o.declarations.find(
+              (d) => originOf(d) !== 'native',
+            ) as ts.PropertySignature;
             // A type parameter reads as the type it is instantiated with, such as boolean | 'mixed'.
-            if (!own.type || isTypeParameter(own.type)) return resolvedText(o.type);
-            return typeText(own.type);
+            if (!own.type || this.isTypeParameter(own.type)) return this.resolvedText(o.type);
+            return this.typeText(own.type);
           }),
       );
       // Forms that each allow one boolean value, such as iconOnly?: false and iconOnly: true.
@@ -478,24 +510,31 @@ export function extractProps() {
         ),
       ];
       const docs = documentation(declaration);
-      const entry = {
+      const defaultValue = docs.default ?? defaults.get(name);
+      props.push({
         name,
         type: members.length > 1 ? members.map(unionMember).join(' | ') : members[0],
         required,
         ...(requiredWhen && { requiredWhen }),
-        ...((docs.default ?? defaults.get(name)) !== undefined && {
-          default: docs.default ?? defaults.get(name),
-        }),
+        ...(defaultValue !== undefined && { default: defaultValue }),
         ...(docs.default === undefined &&
           defaults.has(name) &&
           defaults.get(name) === undefined && { defaultBuiltIn: true }),
         description: docs.description,
         ...(docs.deprecated !== undefined && { deprecated: docs.deprecated }),
         ...(origin === 'base-ui' && { source: 'base-ui' }),
-      };
-      props.push(entry);
+      });
     }
     return { props, native };
+  }
+
+  /** The literal members of a prop's type, such as true or 'primary'. */
+  literalsOf(property: FormProperty | undefined) {
+    return property
+      ? withoutUndefined(property.type).filter(
+          (member) => member.isLiteral() || member.flags & ts.TypeFlags.BooleanLiteral,
+        )
+      : [];
   }
 
   /**
@@ -504,8 +543,11 @@ export function extractProps() {
    * when the prop selects them itself, such as href; another prop that is set exactly there, such
    * as icon; or the prop that is required in the other forms instead, such as aria-labelledby.
    */
-  function requirement(name, formProperties) {
-    const find = (properties, candidate) =>
+  requirement(
+    name: string,
+    formProperties: FormProperty[][],
+  ): { required: boolean; requiredWhen?: string } {
+    const find = (properties: FormProperty[], candidate: string) =>
       properties.find((property) => property.name === candidate);
     const requiredForms = (candidate: string) =>
       new Set<number>(
@@ -518,13 +560,8 @@ export function extractProps() {
     const all = formProperties.length;
     if (requiredIn.size === all) return { required: true };
     if (requiredIn.size === 0) return { required: false };
-    const code = (text) => '`' + text + '`';
-    const literalsOf = (property) =>
-      property
-        ? withoutUndefined(property.type).filter(
-            (member) => member.isLiteral() || member.flags & ts.TypeFlags.BooleanLiteral,
-          )
-        : [];
+    const literalTexts = (property: FormProperty | undefined) =>
+      this.literalsOf(property).map((member) => this.literalText(member));
     const candidates = [
       ...new Set<string>(formProperties.flat().map((property) => property.name)),
     ].filter((candidate) => candidate !== name);
@@ -532,29 +569,26 @@ export function extractProps() {
       const properties = formProperties.map((properties) => find(properties, candidate));
       const inside = [...requiredIn].map((index) => properties[index]);
       if (!inside.every((property) => property && !property.optional)) continue;
-      const values = inside.map((property) => literalsOf(property).map(literalText));
-      if (!values.every((members) => members.length === 1 && members[0] === values[0][0])) continue;
-      const value = values[0][0];
+      const values = inside.map(literalTexts);
+      if (!values.every((members) => members.length === 1 && members[0] === values[0]![0]))
+        continue;
+      const value = values[0]![0]!;
       const outside = properties.filter((_, index) => !requiredIn.has(index));
-      if (
-        outside.every(
-          (property) => !literalsOf(property).some((member) => literalText(member) === value),
-        )
-      )
+      if (outside.every((property) => !literalTexts(property).includes(value)))
         return { required: false, requiredWhen: `${code(candidate)} is ${code(value)}` };
     }
     // The prop selects its forms itself: elsewhere it is absent, or has none of its values there.
     const own = formProperties.map((properties) => find(properties, name));
-    const insideValues = [...requiredIn].map((index) => literalsOf(own[index]).map(literalText));
+    const insideValues = [...requiredIn].map((index) => literalTexts(own[index]));
     const literal = [...requiredIn].every(
       (index, position) =>
-        insideValues[position].length > 0 &&
-        insideValues[position].length === withoutUndefined(own[index].type).length,
+        insideValues[position]!.length > 0 &&
+        insideValues[position]!.length === withoutUndefined(own[index]!.type).length,
     );
     const values = new Set(insideValues.flat());
     const selects = own.every((property, index) => {
       if (requiredIn.has(index) || !property || property.absent) return true;
-      return literal && !literalsOf(property).some((member) => values.has(literalText(member)));
+      return literal && !literalTexts(property).some((text) => values.has(text));
     });
     if (selects) return { required: false };
     for (const candidate of candidates) {
@@ -580,23 +614,24 @@ export function extractProps() {
     return { required: false, requiredWhen: 'in some forms' };
   }
 
-  const exportsByName = new Map();
-  function record(name, entry, value) {
-    const existing = exportsByName.get(name);
+  // Exports ----------------------------------------------------------------------------------
+
+  record(name: string, entry: string, value: ExportRecord) {
+    const existing = this.exportsByName.get(name);
     if (existing) existing.entries.push(entry);
-    else exportsByName.set(name, { ...value, entries: [entry] });
+    else this.exportsByName.set(name, { ...value, entries: [entry] });
   }
 
-  function describe(name, declaration, entry) {
-    const node = declaration.compilerNode;
+  /** Records an export: a namespace with its parts, a component with its props, or a function. */
+  describe(name: string, declaration: Node, entry: string) {
     if (Node.isSourceFile(declaration)) {
       const parts: string[] = [];
       for (const [partName, [partDeclaration]] of declaration.getExportedDeclarations()) {
-        if (!isRuntime(partDeclaration)) continue;
+        if (!isRuntime(partDeclaration!)) continue;
         parts.push(`${name}.${partName}`);
-        describe(`${name}.${partName}`, partDeclaration, entry);
+        this.describe(`${name}.${partName}`, partDeclaration!, entry);
       }
-      record(name, entry, {
+      this.record(name, entry, {
         kind: 'namespace',
         source: posix(relative(root, declaration.getFilePath())),
         description: '',
@@ -604,48 +639,90 @@ export function extractProps() {
       });
       return;
     }
-    const nameNode = node.name ?? node;
-    const type = checker.getTypeAtLocation(nameNode);
+    const node = declaration.compilerNode;
+    const nameNode = (node as ts.NamedDeclaration).name ?? node;
+    const type = this.checker.getTypeAtLocation(nameNode);
     const signature = type.getCallSignatures()[0];
-    const implementation = implementationOf(node);
+    const implementation = this.implementationOf(node);
     const statement = ts.isVariableDeclaration(node) ? node.parent.parent : node;
     const description =
       documentation(statement).description ||
       (implementation ? documentation(implementation).description : '');
     const source = posix(relative(root, declaration.getSourceFile().getFilePath()));
-    const leaf = name.split('.').pop();
+    const leaf = name.split('.').pop()!;
     if (/^[A-Z]/.test(leaf) && signature) {
       const parameter = signature.getParameters()[0];
       const { props, native } = parameter
-        ? componentProps(checker.getTypeOfSymbolAtLocation(parameter, nameNode), implementation)
+        ? this.componentProps(
+            this.checker.getTypeOfSymbolAtLocation(parameter, nameNode),
+            implementation,
+          )
         : { props: [], native: [] };
-      record(name, entry, { kind: 'component', source, description, props, native });
+      this.record(name, entry, { kind: 'component', source, description, props, native });
     } else if (signature) {
-      record(name, entry, {
+      this.record(name, entry, {
         kind: 'function',
         source,
         description,
         signature: collapse(
-          checker.signatureToString(signature, nameNode, ts.TypeFormatFlags.NoTruncation),
+          this.checker.signatureToString(signature, nameNode, ts.TypeFormatFlags.NoTruncation),
         ),
       });
     }
   }
+}
 
-  function isRuntime(declaration) {
-    return (
-      Node.isSourceFile(declaration) ||
-      Node.isFunctionDeclaration(declaration) ||
-      Node.isVariableDeclaration(declaration)
-    );
-  }
+/** Intrinsic elements that receive the implementation's rest props, such as <thead {...props}>. */
+function spreadElements(implementation: Implementation | undefined) {
+  const pattern = implementation?.parameters[0]?.name;
+  const rest =
+    pattern && ts.isObjectBindingPattern(pattern)
+      ? pattern.elements.find((element) => element.dotDotDotToken)?.name
+      : undefined;
+  if (!rest || !ts.isIdentifier(rest) || !implementation!.body) return [];
+  const elements = new Set<string>();
+  let component = false;
+  const visit = (node: ts.Node) => {
+    if (ts.isJsxSpreadAttribute(node) && ts.isIdentifier(node.expression)) {
+      if (node.expression.text === rest.text) {
+        const tag = node.parent.parent.tagName.getText();
+        if (/^[a-z]/.test(tag)) elements.add(tag);
+        else component = true;
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(implementation!.body);
+  // Props that reach another component, such as Button, keep the elements of the props type.
+  return component ? [] : [...elements];
+}
 
+/** Whether an exported declaration is a value at run time: a module, a function or a variable. */
+function isRuntime(declaration: Node) {
+  return (
+    Node.isSourceFile(declaration) ||
+    Node.isFunctionDeclaration(declaration) ||
+    Node.isVariableDeclaration(declaration)
+  );
+}
+
+export function extractProps() {
+  const project = new Project({ tsConfigFilePath: resolve(libraryDirectory, 'tsconfig.json') });
+  const publicNames = new Set(
+    entries.flatMap(([file]) => [
+      ...project
+        .getSourceFileOrThrow(resolve(sourceDirectory, file))
+        .getExportedDeclarations()
+        .keys(),
+    ]),
+  );
+  const reader = new ExportReader(project.getTypeChecker().compilerObject, publicNames);
   for (const [file, entry] of entries) {
     const sourceFile = project.getSourceFileOrThrow(resolve(sourceDirectory, file));
     for (const [name, [declaration]] of sourceFile.getExportedDeclarations())
-      if (isRuntime(declaration)) describe(name, declaration, entry);
+      if (isRuntime(declaration!)) reader.describe(name, declaration!, entry);
   }
-  const sorted = [...exportsByName].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+  const sorted = [...reader.exportsByName].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
   return {
     $comment:
       'Generated by scripts/docs/ExtractProps.ts from the TypeScript source of the public entry points; do not edit. Run npm run docs:props after changing a public component.',
@@ -653,7 +730,7 @@ export function extractProps() {
   };
 }
 
-export function serializeProps(props) {
+export function serializeProps(props: unknown) {
   return `${JSON.stringify(props, null, 2)}\n`;
 }
 

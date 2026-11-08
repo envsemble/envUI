@@ -27,9 +27,9 @@ import { IconPalette } from '@envsemble/envui/icons/Palette';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { IconUnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
 
-export const user = { name: 'Alex Morgan', email: 'alex.morgan@northwind.example' };
+const user = { name: 'Alex Morgan', email: 'alex.morgan@northwind.example' };
 
-export const organizations = [
+const organizations = [
   { id: 'northwind', label: 'Northwind Labs', role: 'Admin' },
   { id: 'contoso', label: 'Contoso', role: 'Member' },
   { id: 'fabrikam', label: 'Fabrikam Research', role: 'Viewer' },

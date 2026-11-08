@@ -1,6 +1,6 @@
-import { build } from 'esbuild';
+import { build, transform } from 'esbuild';
 import { readdir, readFile, mkdir, writeFile, cp, rm } from 'node:fs/promises';
-import { resolve, join, relative } from 'node:path';
+import { dirname, resolve, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { collectDependencyNotices } from './DependencyNotices.ts';
@@ -36,7 +36,8 @@ if (relative(libraryDirectory, outputDirectory) !== 'dist')
   throw new Error('Library output must remain within packages/ui/dist.');
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
-const sourceEntryPoints = await findFiles(sourceDirectory, /\.tsx?$/);
+// Every module, without the ambient declarations, which hold no code.
+const sourceEntryPoints = await findFiles(sourceDirectory, /(?<!\.d)\.tsx?$/);
 await build({
   entryPoints: sourceEntryPoints,
   outbase: sourceDirectory,
@@ -77,6 +78,24 @@ for (const file of await findFiles(outputDirectory, /\.js$/)) {
     return `import "#styles/${stylesheet}";`;
   });
   if (rewritten !== code) await writeFile(file, rewritten);
+}
+// A style sheet a module imports as text, as dev mode imports its own, becomes that text in the
+// module, without comments and whitespace as the other style sheets ship.
+const stylesheetTextImport = /^import (\w+) from "(\.[^"]+\.css)\?raw"(?: with \{[^}]*\})?;$/gm;
+for (const file of await findFiles(outputDirectory, /\.js$/)) {
+  const code = await readFile(file, 'utf8');
+  const imports = [...code.matchAll(stylesheetTextImport)];
+  if (!imports.length) continue;
+  let inlined = code;
+  for (const [statement, name, specifier] of imports) {
+    const source = resolve(sourceDirectory, relative(outputDirectory, dirname(file)), specifier!);
+    const { code: css } = await transform(await readFile(source, 'utf8'), {
+      loader: 'css',
+      minifyWhitespace: true,
+    });
+    inlined = inlined.replace(statement, `const ${name} = ${JSON.stringify(css)};`);
+  }
+  await writeFile(file, inlined);
 }
 // The declarations carry no style sheet imports: they hold no types, and a checker that resolves
 // side-effect imports would look for declarations of CSS.

@@ -15,7 +15,7 @@ import { flushSync } from 'react-dom';
 import { IconButton, Tooltip } from '@envsemble/envui';
 import { IconPause } from '@envsemble/envui/icons/Pause';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
-import type { StageFill } from '../shared/DocumentationTypes';
+import type { StageFill } from '../../../../scripts/docs/model/DocumentationTypes';
 import { useVerdictFit } from '../template/VerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { Playback, StageOverlays, useInView } from './Motion';

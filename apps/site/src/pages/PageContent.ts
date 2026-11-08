@@ -1,5 +1,5 @@
 import { use } from 'react';
-import type { DocumentationEntry } from '../shared/DocumentationTypes';
+import type { DocumentationEntry } from '../../../../scripts/docs/model/DocumentationTypes';
 import { loadOnce } from '../template/LoadOnce';
 import { keepPageParts } from '../template/Loading';
 

@@ -14,7 +14,7 @@ import { PortalContainer } from '@envsemble/envui';
  * `data-highlighted` of a list's cursor), and `data-cs-click` asks for a real click, such as to arm
  * a ConfirmButton.
  */
-export type Force = 'hover' | 'focus' | 'pressed';
+type Force = 'hover' | 'focus' | 'pressed';
 
 interface CellProps {
   caption: string;

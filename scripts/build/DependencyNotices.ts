@@ -5,7 +5,18 @@ import { resolve } from 'node:path';
 const shippingWorkspaces = ['packages/ui', 'apps/site'];
 
 /** The lockfile location a dependency of the package at `from` resolves to, as Node finds it. */
-function resolveLocked(packages, from, name) {
+/** A package-lock.json entry of an installed package. */
+interface LockedPackage {
+  version?: string;
+  license?: string;
+  dev?: boolean;
+  link?: boolean;
+  dependencies?: Record<string, string>;
+  optionalDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+}
+
+function resolveLocked(packages: Record<string, LockedPackage>, from: string, name: string) {
   for (let base = from; ;) {
     const location = `${base ? `${base}/` : ''}node_modules/${name}`;
     if (packages[location]) return location;
@@ -19,11 +30,13 @@ function resolveLocked(packages, from, name) {
  * Include the locked runtime dependencies of the shipping workspaces, including optional bundled
  * grammar modules: every non-dev package reachable from them through non-dev packages.
  */
-export async function collectDependencyNotices(repositoryRoot) {
-  const lock = JSON.parse(await readFile(resolve(repositoryRoot, 'package-lock.json'), 'utf8'));
-  const reachable = new Map();
-  const visit = (location) => {
-    const { dependencies, optionalDependencies, peerDependencies } = lock.packages[location];
+export async function collectDependencyNotices(repositoryRoot: string) {
+  const lock: { packages: Record<string, LockedPackage> } = JSON.parse(
+    await readFile(resolve(repositoryRoot, 'package-lock.json'), 'utf8'),
+  );
+  const reachable = new Map<string, LockedPackage>();
+  const visit = (location: string) => {
+    const { dependencies, optionalDependencies, peerDependencies } = lock.packages[location]!;
     const names = Object.keys({ ...dependencies, ...optionalDependencies, ...peerDependencies });
     for (const name of names) {
       const found = resolveLocked(lock.packages, location, name);
@@ -55,7 +68,7 @@ export async function collectDependencyNotices(repositoryRoot) {
 }
 
 /** Everything the catalogue bundles: the runtime dependencies, Geist and Material Symbols. */
-export async function collectCatalogueNotices(repositoryRoot) {
+export async function collectCatalogueNotices(repositoryRoot: string) {
   const notices = [await collectDependencyNotices(repositoryRoot)];
   for (const name of ['Geist-LICENSE.txt', 'Material-Symbols-LICENSE.txt'])
     notices.push(await readFile(resolve(repositoryRoot, 'packages/ui/licenses', name), 'utf8'));
