@@ -43,8 +43,9 @@ const componentBudgets = {
   // 7,684 measured (2026-11-08, the shared contained open-change handler and an open state whose
   // setter stays the same; was 7,371); raising it is a deliberate decision, recorded in the commit.
   Popover: 7900,
-  // 14,607 measured; raising it is a deliberate decision, recorded in the commit.
-  Menu: 15000,
+  // 15,190 measured (2026-11-08, its parts in modules of their own, each importing its style
+  // sheets; was 14,833); raising it is a deliberate decision, recorded in the commit.
+  Menu: 15650,
   // 16,320 measured (2026-11-08, its open state from the shared useOpenState; was 16,167); raising
   // it is a deliberate decision, recorded in the commit.
   Select: 16800,
