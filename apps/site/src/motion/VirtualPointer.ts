@@ -7,7 +7,7 @@
  * What a stylesheet shows under a real pointer, `:hover` and `:active`, no event can set; the
  * pointer marks what it is over and presses, and PointerStates.ts gives every such rule of the
  * site's stylesheets a twin for those marks. What the browser keeps only for a pointer it made,
- * such as a drag's capture, StandIns.ts keeps for it.
+ * such as a drag's capture, BrowserStandIns.ts keeps for it.
  */
 
 import { editorOf, PointerSelection } from './VirtualSelection';
@@ -20,14 +20,7 @@ import {
   mirrorPointerStates,
   pressMark,
 } from './PointerStates';
-import {
-  captures,
-  keepCaptures,
-  keepClipboard,
-  keepFocus,
-  keyboardFocused,
-  lendSelection,
-} from './StandIns';
+import { captures, keepClipboard, keyboardFocused, lendSelection } from './BrowserStandIns';
 
 /** A file the pointer carries in, as from the desktop: its name, its type and its size in bytes. */
 export interface CarriedFile {
@@ -184,7 +177,6 @@ export class VirtualPointer {
 
   constructor(private readonly scope: Element) {
     document.addEventListener('scroll', this.followScroll, { capture: true, passive: true });
-    keepCaptures();
     holdReaderMoves();
     captures.set(this.id, null);
     mirrorPointerStates();
@@ -715,7 +707,6 @@ export class VirtualPointer {
     const from = this.focused;
     if (from === element) return;
     this.focus(element);
-    keepFocus();
     if (element) keyboardFocused.set(this.scope, (next) => this.keyboardFocus(next));
     else keyboardFocused.delete(this.scope);
     const events = (target: Element, out: boolean, relatedTarget: Element | null) => {

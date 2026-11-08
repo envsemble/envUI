@@ -1,22 +1,59 @@
 /*
- * Stand-ins for what the browser keeps only for a real pointer, so a stage's components answer
- * the pointer no one sees (VirtualPointer.ts) as they would a person: its pointer capture, the
- * keyboard's focus inside an inert stage, the clipboard a copy button writes to, and the page's
- * selection a rich text command reads. Elsewhere each is the browser's, as before.
+ * The site's stand-ins for browser methods, installed once as it starts (installBrowserStandIns,
+ * main.tsx), so a stage's components answer as they would on a page of their own: the pointer no
+ * one sees (VirtualPointer.ts) captures and focuses as a person's would, a component's scrolling
+ * into view stays inside its stage, and a live example keeps its focus to itself until the reader
+ * reaches for it. Outside what each stands in for, the method is the browser's own. Here too, run
+ * for one call, the clipboard a copy button writes to and the page's selection a rich text command
+ * reads (tests/BrowserStandIns.test.mjs).
  */
 import { focusMark } from './PointerStates';
 
 /** The ids of the pointers no one sees, and what each has captured. */
 export const captures = new Map<number, Element | null>();
 
+/** The stages the keyboard's focus is in, by their scope, and what follows a move of it there. */
+export const keyboardFocused = new Map<Element, (element: Element) => void>();
+
+/** What a stage's own scrolling stays inside: a tile's window and a page's figure. */
+const stages = '.catalogue-tile-canvas, .site-live-example';
+
+/**
+ * What an open example's scrolling stays inside where no stage holds it, such as in an anatomy
+ * figure, and an animated figure's, whose menus highlight their items as its pointer runs down them.
+ */
+const openExamples = '.catalogue-open-example, .catalogue-motion-subject';
+
+/** A live example the reader hasn't reached for yet (`data-touched`, OpenExample.tsx). */
+const untouchedExample = '.catalogue-open-example[data-live]:not([data-touched])';
+
+/** The prototypes the stand-ins are installed on: the page's, or a test's. */
+interface Realm {
+  Element: { prototype: Element };
+  HTMLElement: { prototype: HTMLElement };
+}
+
+/** Marks a realm's prototypes as having the stand-ins, across a hot reload of this module too. */
+const installed = Symbol.for('catalogue-browser-stand-ins');
+
+/**
+ * Installs the stand-ins on a realm's prototypes, once: a second call changes nothing. Each wraps
+ * the browser's own method and calls it for anything it doesn't stand in for.
+ */
+export function installBrowserStandIns(realm: Realm = globalThis) {
+  const element = realm.Element.prototype as Element & { [installed]?: true };
+  if (element[installed]) return;
+  element[installed] = true;
+  keepCaptures(element);
+  keepFocus(element, realm.HTMLElement.prototype);
+  keepScrollInStages(element);
+}
+
 /**
  * Keeps a pointer's capture for the pointers no one sees: the browser throws for an id it doesn't
- * know. Only those ids are kept here; a real pointer's capture is the browser's, as before.
+ * know. Only those ids are kept here; a real pointer's capture is the browser's.
  */
-export function keepCaptures() {
-  const proto = Element.prototype;
-  if ((proto as { catalogueCaptures?: boolean }).catalogueCaptures) return;
-  (proto as { catalogueCaptures?: boolean }).catalogueCaptures = true;
+function keepCaptures(proto: Element) {
   const { setPointerCapture, releasePointerCapture, hasPointerCapture } = proto;
   proto.setPointerCapture = function (id: number) {
     if (!captures.has(id)) return setPointerCapture.call(this, id);
@@ -32,27 +69,25 @@ export function keepCaptures() {
   };
 }
 
-/** The stages the keyboard's focus is in, by their scope, and what follows a move of it there. */
-export const keyboardFocused = new Map<Element, (element: Element) => void>();
-
 /**
- * Keeps the keyboard's focus inside a stage that has it: the stage is inert, so where one of
- * its components moves focus, as an arrow key along tabs does, the pointer's focus follows
- * instead (VirtualPointer.keyboardFocus), and a component asking whether an element of it matches
- * :focus or :focus-visible is answered by the pointer's mark, as its stylesheets are
- * (mirrorPointerStates). Elsewhere, focus is the browser's, as before.
+ * Keeps focus where a stage or an example holds it. Inside a stage the keyboard's focus is in,
+ * which is inert, where one of its components moves focus, as an arrow key along tabs does, the
+ * pointer's focus follows instead (VirtualPointer.keyboardFocus), and a component asking whether an
+ * element of it matches :focus or :focus-visible is answered by the pointer's mark, as its
+ * stylesheets are (mirrorPointerStates). In a live example the reader hasn't reached for, a call
+ * to focus an element does nothing: an overlay pressed open as the page loads, such as a select's
+ * list, moves focus to its chosen item as an opened list does, which would take focus from the
+ * page, and scroll it, wherever the reader was.
  */
-export function keepFocus() {
-  const proto = HTMLElement.prototype;
-  if ((proto as { catalogueFocus?: boolean }).catalogueFocus) return;
-  (proto as { catalogueFocus?: boolean }).catalogueFocus = true;
-  const { focus } = proto;
-  proto.focus = function (options?: FocusOptions) {
+function keepFocus(element: Element, html: HTMLElement) {
+  const { focus } = html;
+  html.focus = function (this: HTMLElement, options?: FocusOptions) {
     for (const [scope, follow] of keyboardFocused) if (scope.contains(this)) return follow(this);
+    if (this.closest(untouchedExample)) return;
     return focus.call(this, options);
   };
-  const { matches } = Element.prototype;
-  Element.prototype.matches = function (this: Element, selectors: string) {
+  const { matches } = element;
+  element.matches = function (this: Element, selectors: string) {
     if (selectors.includes(':focus'))
       for (const scope of keyboardFocused.keys())
         if (scope.contains(this))
@@ -64,6 +99,93 @@ export function keepFocus() {
           );
     return matches.call(this, selectors);
   } as typeof matches;
+}
+
+/** Whether a box scrolls along the block axis, its content taller than it. */
+const scrollsDown = (box: Element) =>
+  box.scrollHeight > box.clientHeight &&
+  /auto|scroll|overlay/.test(getComputedStyle(box).overflowY);
+/** Whether a box scrolls along the inline axis, its content wider than it. */
+const scrollsAcross = (box: Element) =>
+  box.scrollWidth > box.clientWidth && /auto|scroll|overlay/.test(getComputedStyle(box).overflowX);
+
+/** How far a box scrolls along an axis to bring a span into it, by where it is to show there. */
+function scrollFor(start: number, end: number, from: number, to: number, place: string) {
+  if (place === 'start') return start - from;
+  if (place === 'end') return end - to;
+  if (place === 'center') return (start + end) / 2 - (from + to) / 2;
+  // Nearest: as little as brings it in, none where it is in already.
+  if (start < from) return start - from;
+  if (end > to) return Math.min(end - to, start - from);
+  return 0;
+}
+
+/**
+ * How far a box scrolls to show an item it holds, by the item's `block` alignment as
+ * scrollIntoView takes it; `nearest` scrolls only as far as the item needs.
+ */
+function scrollDelta(item: DOMRect, box: Element, block: ScrollLogicalPosition) {
+  const top = item.top - box.getBoundingClientRect().top - box.clientTop;
+  const bottom = top + item.height;
+  if (block === 'start') return top;
+  if (block === 'end') return bottom - box.clientHeight;
+  if (block === 'center') return (top + bottom - box.clientHeight) / 2;
+  if (top < 0) return top;
+  return Math.max(0, bottom - box.clientHeight);
+}
+
+/** The block alignment scrollIntoView takes from its argument. */
+const blockOf = (options?: boolean | ScrollIntoViewOptions): ScrollLogicalPosition =>
+  typeof options === 'object' ? (options.block ?? 'start') : options === false ? 'end' : 'start';
+
+/**
+ * Keeps what a component scrolls into view inside the stage or the open example it is in, such
+ * as the chosen row of a select resting open in a gallery tile: the browser's own scrollIntoView
+ * scrolls every box around the element, the page among them, so a tile loaded below the fold would
+ * pull the page down to it as it appears, and a page with an example opened partway down, wherever
+ * the example was. In a stage, the boxes that scroll inside it scroll as the browser would scroll
+ * them, along both axes; in an open example elsewhere, the boxes inside it that scroll down, such
+ * as a popup's list.
+ */
+function keepScrollInStages(proto: Element) {
+  const { scrollIntoView } = proto;
+  proto.scrollIntoView = function (this: Element, options?: boolean | ScrollIntoViewOptions) {
+    const stage = this.closest(stages);
+    if (stage) return scrollInStage(this, stage, options);
+    const example = this.closest(openExamples);
+    if (example) return scrollInExample(this, example, options);
+    return scrollIntoView.call(this, options);
+  };
+}
+
+function scrollInStage(target: Element, stage: Element, options?: boolean | ScrollIntoViewOptions) {
+  const block = blockOf(options);
+  const inline = typeof options === 'object' ? (options.inline ?? 'nearest') : 'nearest';
+  for (let box = target.parentElement; box && stage.contains(box); box = box.parentElement) {
+    const down = scrollsDown(box);
+    const across = scrollsAcross(box);
+    if (!down && !across) continue;
+    const shown = box.getBoundingClientRect();
+    const item = target.getBoundingClientRect();
+    box.scrollBy({
+      top: down ? scrollFor(item.top, item.bottom, shown.top, shown.bottom, block) : 0,
+      left: across ? scrollFor(item.left, item.right, shown.left, shown.right, inline) : 0,
+      behavior: 'instant',
+    });
+  }
+}
+
+function scrollInExample(
+  target: Element,
+  example: Element,
+  options?: boolean | ScrollIntoViewOptions,
+) {
+  const block = blockOf(options);
+  for (let box = target.parentElement; box && box !== example; box = box.parentElement) {
+    if (box.scrollHeight <= box.clientHeight) continue;
+    if (!/auto|scroll/.test(getComputedStyle(box).overflowY)) continue;
+    box.scrollTop += scrollDelta(target.getBoundingClientRect(), box, block);
+  }
 }
 
 /**
@@ -111,63 +233,4 @@ export function lendSelection(scope: Element | undefined, run: () => void) {
     selection.removeAllRanges();
     for (const each of kept) selection.addRange(each);
   }
-}
-
-/** What a stage's own scrolling stays inside: a tile's window and a page's figure. */
-const stages = '.catalogue-tile-canvas, .site-live-example';
-
-/** Whether a box scrolls along the block axis, its content taller than it. */
-const scrollsDown = (box: Element) =>
-  box.scrollHeight > box.clientHeight &&
-  /auto|scroll|overlay/.test(getComputedStyle(box).overflowY);
-/** Whether a box scrolls along the inline axis, its content wider than it. */
-const scrollsAcross = (box: Element) =>
-  box.scrollWidth > box.clientWidth && /auto|scroll|overlay/.test(getComputedStyle(box).overflowX);
-
-/** How far a box scrolls along an axis to bring a span into it, by where it is to show there. */
-function scrollFor(start: number, end: number, from: number, to: number, place: string) {
-  if (place === 'start') return start - from;
-  if (place === 'end') return end - to;
-  if (place === 'center') return (start + end) / 2 - (from + to) / 2;
-  // Nearest: as little as brings it in, none where it is in already.
-  if (start < from) return start - from;
-  if (end > to) return Math.min(end - to, start - from);
-  return 0;
-}
-
-/**
- * Keeps what a component scrolls into view inside the stage it is in, such as the chosen row of
- * a select resting open in a gallery tile: the boxes that scroll inside the stage scroll as the
- * browser would scroll them, and the page never does. The browser's own scrollIntoView scrolls
- * every box around the element, the page among them, so a tile loaded below the fold would pull
- * the page down to it as it appears. Elsewhere, scrolling into view is the browser's, as before.
- */
-export function keepScrollInStages() {
-  const proto = Element.prototype;
-  if ((proto as { catalogueScroll?: boolean }).catalogueScroll) return;
-  (proto as { catalogueScroll?: boolean }).catalogueScroll = true;
-  const { scrollIntoView } = proto;
-  proto.scrollIntoView = function (options?: boolean | ScrollIntoViewOptions) {
-    const stage = this.closest(stages);
-    if (!stage) return scrollIntoView.call(this, options);
-    const block =
-      typeof options === 'object'
-        ? (options.block ?? 'start')
-        : options === false
-          ? 'end'
-          : 'start';
-    const inline = typeof options === 'object' ? (options.inline ?? 'nearest') : 'nearest';
-    for (let box = this.parentElement; box && stage.contains(box); box = box.parentElement) {
-      const down = scrollsDown(box);
-      const across = scrollsAcross(box);
-      if (!down && !across) continue;
-      const shown = box.getBoundingClientRect();
-      const target = this.getBoundingClientRect();
-      box.scrollBy({
-        top: down ? scrollFor(target.top, target.bottom, shown.top, shown.bottom, block) : 0,
-        left: across ? scrollFor(target.left, target.right, shown.left, shown.right, inline) : 0,
-        behavior: 'instant',
-      });
-    }
-  };
 }

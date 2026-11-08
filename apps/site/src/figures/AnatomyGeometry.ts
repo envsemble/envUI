@@ -8,7 +8,7 @@ import { remPixels } from '../shared/Lengths';
 import { partSelector } from '../template/Parts';
 import { union, type Box } from '../fit/FitMath';
 import type { AnatomyGeometry, Corners, Part, UseSize, VariantGeometry } from './AnatomyPlacement';
-import { openerBox } from './OpenExample';
+import { openerBox } from '../fit/OverlayRoom';
 
 /**
  * Whether an element is only text, such as a label or a description, with no fill or edge of its

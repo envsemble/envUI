@@ -7,12 +7,13 @@ import { PaletteCustomizationProvider } from './theme/PaletteCustomization';
 import { findPage } from './navigation/SiteRoutes';
 import { currentRoute } from './navigation/useSiteRoute';
 import { preloadPage } from './pages/PreloadPage';
-import { keepScrollInStages } from './motion/StandIns';
+import { installBrowserStandIns } from './motion/BrowserStandIns';
 
+// A stage's components scroll and take focus only inside it, never the page's, and the pointer no
+// one sees captures as a person's does, from the first render on.
+installBrowserStandIns();
 // The site renders once what the page it opens on needs has loaded, which started as it did, so
 // its first paint has the whole page rather than the frame and then the page.
-// A stage's components scroll only inside it, never the page, from its first render on.
-keepScrollInStages();
 void preloadPage(findPage(currentRoute().split('?')[0]!)).then(() =>
   createRoot(document.getElementById('root')!).render(
     <PaletteCustomizationProvider>
