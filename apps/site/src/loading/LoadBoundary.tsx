@@ -1,4 +1,11 @@
-import { Component, createRef, lazy, type ComponentType, type ReactNode } from 'react';
+import {
+  Component,
+  createRef,
+  lazy,
+  type ComponentType,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { Alert, Button, Row } from '@envsemble/envui';
 
 /** A file that a part of a page loads on its own and that failed to arrive. */
@@ -8,6 +15,9 @@ class ModuleLoadError extends Error {
     this.name = 'ModuleLoadError';
   }
 }
+
+/** Whether an error is a file that failed to load, rather than a failure to render. */
+export const isLoadFailure = (error: unknown) => error instanceof ModuleLoadError;
 
 /** A loader whose failure is a ModuleLoadError, which LoadBoundary shows in place. */
 export function loadModule<T>(load: () => Promise<T>) {
@@ -27,7 +37,7 @@ export const canRetryLoad = import.meta.env.DEV;
 
 /**
  * A loader that asks for a module again after it failed to load, in development: it asks for the
- * file at `path`, relative to `base`, under a new URL, with `query` (such as `raw`) first. A build,
+ * file at `path`, relative to `base`, under a new URL, with `query` (such as `raw`) last. A build,
  * where LoadBoundary offers no retry, keeps `load` as it is.
  */
 export function reloadModule<T>(
@@ -40,7 +50,7 @@ export function reloadModule<T>(
   if (!canRetryLoad) return load;
   const { pathname } = new URL(path, base);
   return () =>
-    import(/* @vite-ignore */ `${pathname}?${query ? `${query}&` : ''}retry=${Date.now()}`).then(
+    import(/* @vite-ignore */ `${pathname}?retry=${Date.now()}${query ? `&${query}` : ''}`).then(
       pick,
     );
 }
@@ -219,7 +229,7 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
     const { what } = this.props;
     let content: ReactNode;
     if (!failure) content = this.props.children;
-    else if (!(failure.error instanceof ModuleLoadError))
+    else if (!isLoadFailure(failure.error))
       content = (
         <Alert ref={this.alert} tabIndex={-1} tone="danger" title={`This ${what} failed to render`}>
           {errorMessage(failure.error)}
@@ -227,36 +237,13 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
       );
     else
       content = (
-        <Alert
-          ref={this.alert}
-          tabIndex={-1}
-          tone="warning"
-          title={`The ${what} could not load`}
-          actions={
-            <Row wrap align="center" gap={4}>
-              {canRetryLoad && (
-                <Button variant="secondary" onClick={this.retry}>
-                  Try again
-                </Button>
-              )}
-              {canRetryLoad ? (
-                <Button variant="text" onClick={() => void this.reload()}>
-                  Reload the page
-                </Button>
-              ) : (
-                <Button variant="secondary" onClick={() => void this.reload()}>
-                  Reload the page
-                </Button>
-              )}
-            </Row>
-          }
-        >
-          The catalogue may have been updated since this page opened, or the connection dropped.
-          {!canRetryLoad && ` Reloading the page loads the ${what} again.`}
-          <span role="status">
-            {offline && ' The connection seems to be down. Reload the page once it is back.'}
-          </span>
-        </Alert>
+        <LoadFailure
+          what={what}
+          alert={this.alert}
+          offline={offline}
+          onRetry={this.retry}
+          onReload={() => void this.reload()}
+        />
       );
     // Until a retry, the content stands on its own, as the page lays it out.
     if (!wrapped) return content;
@@ -266,4 +253,51 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
       </div>
     );
   }
+}
+
+/**
+ * The message for a part that failed to load, `what` naming it, such as an example or a page:
+ * Try again in development, where the file can be asked for again in place (canRetryLoad), and
+ * Reload the page, which fetches the current files. `offline` says a reload found the connection
+ * down. `alert` is the message's element, which takes the focus a failure drops.
+ */
+export function LoadFailure({
+  what,
+  alert,
+  offline,
+  onRetry,
+  onReload,
+}: {
+  what: string;
+  alert: RefObject<HTMLDivElement | null>;
+  offline: boolean;
+  onRetry: () => void;
+  onReload: () => void;
+}) {
+  return (
+    <Alert
+      ref={alert}
+      tabIndex={-1}
+      tone="warning"
+      title={`The ${what} could not load`}
+      actions={
+        <Row wrap align="center" gap={4}>
+          {canRetryLoad && (
+            <Button variant="secondary" onClick={onRetry}>
+              Try again
+            </Button>
+          )}
+          <Button variant={canRetryLoad ? 'text' : 'secondary'} onClick={onReload}>
+            Reload the page
+          </Button>
+        </Row>
+      }
+    >
+      The catalogue may have been updated since this page opened, or the connection dropped.
+      {!canRetryLoad && ` Reloading the page loads the ${what} again.`}
+      <span role="status">
+        {offline && ' The connection seems to be down. Reload the page once it is back.'}
+      </span>
+    </Alert>
+  );
 }

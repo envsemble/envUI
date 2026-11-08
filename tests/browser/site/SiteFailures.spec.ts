@@ -77,6 +77,22 @@ test('an example that fails to load says so in place, and loads again on request
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
 });
 
+test('a page whose content fails to load says so, and loads it again on request', async ({
+  page,
+}) => {
+  const content = '**/src/generated/pages/button.json*';
+  await page.route(content, (route) => route.abort());
+  await page.goto(`${siteDevUrl}/components/button`);
+  const main = page.getByRole('main');
+  await expect(main.getByText('The page could not load')).toBeVisible();
+  await expect(main.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
+  await page.unroute(content);
+  await main.getByRole('button', { name: 'Try again', exact: true }).click();
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await expect(main.getByText('The page could not load')).toHaveCount(0);
+});
+
 test('in the hosted build, an example whose file is missing offers a reload, which loads it', async ({
   page,
 }) => {
