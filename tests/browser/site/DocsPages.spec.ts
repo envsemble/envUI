@@ -252,8 +252,8 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
 test('every page of the Docs lists its own sections beside it, each once, at addresses of their own', async ({
   page,
 }) => {
-  // It opens every page of the Docs, about 20 s.
-  test.slow();
+  // It opens every page of the Docs: about 20 s alone, longer beside other workers on CI.
+  test.setTimeout(8 * 60_000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${siteDevUrl}/docs`);
   const contents = page.getByRole('navigation', { name: 'On this page' });

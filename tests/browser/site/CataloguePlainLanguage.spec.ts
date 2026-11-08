@@ -56,8 +56,8 @@ const typographyPages = (['foundation', 'component', 'pattern'] as const).map(
 test("a specimen's titles and captions name options in words, not values", async ({ page }) => {
   // The catalogue speaks plain language in its specimens too: Small rather than sm, Step 1 rather
   // than gap={1}. A value starts in lower case or is written as code, with =, braces, quotes or --.
-  // It visits every component page with a specimen.
-  test.slow();
+  // It visits every component page with a specimen, longer beside other workers on CI.
+  test.setTimeout(8 * 60_000);
   const pages = readdirSync('docs/components')
     .filter((file) => readFileSync(`docs/components/${file}`, 'utf8').includes('<!-- specimen:'))
     .map((file) => file.replace(/\.md$/, ''));
@@ -90,8 +90,9 @@ test('the foundation and pattern pages show no technical text, in their words or
   page,
 }) => {
   // The catalogue is for people looking at envUI: no token names, hex colors, lengths, percentages or
-  // code. They belong to each foundation's guide and each pattern's page in the Docs.
-  test.slow();
+  // code. They belong to each foundation's guide and each pattern's page in the Docs. It visits each,
+  // longer beside other workers on CI.
+  test.setTimeout(8 * 60_000);
   await page.goto(`${siteDevUrl}/`);
   for (const path of plainPages) {
     await goTo(page, `/${path}`);
@@ -115,8 +116,9 @@ test('the foundation and pattern pages show no technical text, in their words or
 test('component pages show no technical text, in their words or their figures', async ({
   page,
 }) => {
-  // Lengths, tokens, percentages and code names belong to the page's In code, in the Docs.
-  test.slow();
+  // Lengths, tokens, percentages and code names belong to the page's In code, in the Docs. It visits
+  // every component page: well under the limit alone, longer beside other workers on CI.
+  test.setTimeout(8 * 60_000);
   await page.goto(`${siteDevUrl}/`);
   const found: string[] = [];
   for (const { path, title } of plainComponentPages) {
