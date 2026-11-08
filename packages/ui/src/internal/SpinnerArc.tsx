@@ -1,8 +1,8 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
-import { classNames } from '../../internal/classNames.js';
-import { flag } from '../../internal/flag.js';
-import '../../styles/Base.css';
-import '../../styles/Spinner.css';
+import { classNames } from './classNames.js';
+import { flag } from './flag.js';
+import '../styles/Base.css';
+import '../styles/Spinner.css';
 
 export interface SpinnerArcProps extends ComponentPropsWithRef<'span'> {
   /** As Spinner's: sm, md or lg. */

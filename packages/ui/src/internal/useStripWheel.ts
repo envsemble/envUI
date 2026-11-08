@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, type RefObject } from 'react';
-import { isRightToLeft } from '../../internal/direction.js';
+import { isRightToLeft } from './direction.js';
 
 /**
  * A vertical wheel scrolls an overflowing strip of tabs sideways. `shown` says whether the strip is

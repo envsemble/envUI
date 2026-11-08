@@ -6,7 +6,7 @@ import type {
   ReactNode,
   Ref,
 } from 'react';
-import type { FieldProps, FieldVariant } from '../internal/FieldFrame.js';
+import type { FieldProps, FieldVariant } from '../../internal/field/FieldFrame.js';
 import type { MarkdownLink, MarkdownLinkRequest } from '../../content/MarkdownEditor.js';
 
 /** Application-owned identity and display data; envUI assigns no meaning to kind or id. */

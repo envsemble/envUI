@@ -5,7 +5,7 @@ import * as Toolbar from '../../actions/Toolbar.js';
 import { editor as editorMessages } from '../../foundations/messages/editor.js';
 import { IconRedo } from '../../icons/Redo.js';
 import { IconUndo } from '../../icons/Undo.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
+import { useMessages } from '../EnvUIContext.js';
 import { editorCommandGroup, editorCommands, type EditorCommand } from './editorCommands.js';
 import '../../styles/Base.css';
 import '../../styles/Editor.css';

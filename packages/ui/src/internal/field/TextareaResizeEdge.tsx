@@ -1,8 +1,8 @@
 'use client';
 
 import { useLayoutEffect, useRef, useState, type RefObject } from 'react';
-import { useMessages } from '../../internal/EnvUIContext.js';
-import { useResize } from '../../internal/useResize.js';
+import { useMessages } from '../EnvUIContext.js';
+import { useResize } from '../useResize.js';
 import { textarea as textareaMessages } from '../../foundations/messages/textarea.js';
 import type { TextareaControlProps } from './TextareaControl.js';
 import '../../styles/Base.css';

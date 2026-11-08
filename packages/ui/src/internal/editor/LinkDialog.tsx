@@ -5,8 +5,8 @@ import { Button } from '../../actions/Button.js';
 import { Dialog } from '../../overlays/Dialog.js';
 import { Column } from '../../layout/Layout.js';
 import { linkDialog as linkDialogMessages } from '../../foundations/messages/linkDialog.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
-import { TextField } from '../TextField.js';
+import { useMessages } from '../EnvUIContext.js';
+import { TextField } from '../../forms/TextField.js';
 
 /** A link to insert: its text, and where it leads. */
 export interface EditorLink {

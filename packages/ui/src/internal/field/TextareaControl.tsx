@@ -7,10 +7,10 @@ import {
   type Ref,
   type TextareaHTMLAttributes,
 } from 'react';
-import { classNames } from '../../internal/classNames.js';
-import { setRef } from '../../internal/setRef.js';
+import { classNames } from '../classNames.js';
+import { setRef } from '../setRef.js';
 import { TextareaResizeEdge } from './TextareaResizeEdge.js';
-import { flag } from '../../internal/flag.js';
+import { flag } from '../flag.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
 

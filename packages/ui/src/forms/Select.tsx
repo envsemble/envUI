@@ -10,7 +10,7 @@ import {
   type Ref,
 } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
-import { useFieldMetadata } from './internal/useFieldMetadata.js';
+import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { type ControlSize } from '../foundations/Theme.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconCheck } from '../icons/Check.js';
@@ -18,7 +18,7 @@ import {
   FieldFrame,
   type FieldProps,
   type TextFieldDecorationProps,
-} from './internal/FieldFrame.js';
+} from '../internal/field/FieldFrame.js';
 import { PopupSurface } from '../internal/PopupSurface.js';
 import {
   containedModal,
@@ -32,7 +32,7 @@ import { setRef } from '../internal/setRef.js';
 import { useOpenState } from '../internal/useOpenState.js';
 import { classNames } from '../internal/classNames.js';
 import { flag } from '../internal/flag.js';
-import { useFormReset } from './internal/useFormReset.js';
+import { useFormReset } from '../internal/field/useFormReset.js';
 import '../styles/Base.css';
 import '../styles/Select.css';
 

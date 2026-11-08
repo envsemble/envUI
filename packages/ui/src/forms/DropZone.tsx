@@ -19,7 +19,7 @@ import { setRef } from '../internal/setRef.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
-import { useFormReset } from './internal/useFormReset.js';
+import { useFormReset } from '../internal/field/useFormReset.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/DropZone.css';

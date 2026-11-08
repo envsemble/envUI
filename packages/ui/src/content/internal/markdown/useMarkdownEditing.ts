@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useLayoutEffect, useRef, useState, type ChangeEvent } from 'react';
-import { subscribeFormReset } from '../../../forms/internal/subscribeFormReset.js';
+import { subscribeFormReset } from '../../../internal/field/subscribeFormReset.js';
 import { useLatest } from '../../../internal/useLatest.js';
 import { readMarkdownSelection, type MarkdownSelection } from './markdownFormatting.js';
 import {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { subscribeFormReset } from '../../internal/subscribeFormReset.js';
+import { subscribeFormReset } from '../../../internal/field/subscribeFormReset.js';
 import { sameColor, toColor, type ColorValue } from './colorValue.js';
 import { useLatest } from '../../../internal/useLatest.js';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, type RefObject } from 'react';
-import { useLatest } from '../../internal/useLatest.js';
+import { useLatest } from '../useLatest.js';
 import { subscribeFormReset } from './subscribeFormReset.js';
 
 /**

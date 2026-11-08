@@ -86,7 +86,7 @@
       "overlays/Popover.tsx": "base",
       "feedback/Spinner.tsx": "base",
       "feedback/internal/SpinnerLabel.tsx": "base",
-      "feedback/internal/SpinnerArc.tsx": "base",
+      "internal/SpinnerArc.tsx": "base",
       "overlays/Tooltip.tsx": "base",
       "overlays/internal/tooltipTriggerName.ts": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
@@ -117,8 +117,8 @@
       "forms/DropZone.tsx": "composites",
       "forms/Field.tsx": "base",
       "content/MarkdownEditor.tsx": "composites",
-      "forms/internal/EditorToolbar.tsx": "composites",
-      "forms/internal/LinkDialog.tsx": "composites",
+      "internal/editor/EditorToolbar.tsx": "composites",
+      "internal/editor/LinkDialog.tsx": "composites",
       "forms/Radio.tsx": "base",
       "forms/SearchField.tsx": "composites",
       "forms/Select.tsx": "composites",
@@ -151,7 +151,19 @@
       "layout/Surface.tsx": "foundations",
       "layout/internal/LoadingBar.tsx": "base",
       "content/CodeDiff.tsx": "composites",
-      "content/countDiffLines.ts": "composites"
+      "content/countDiffLines.ts": "composites",
+      "internal/field/FieldFrame.tsx": "base",
+      "internal/field/useFieldMetadata.ts": "base",
+      "internal/field/useFormReset.ts": "base",
+      "internal/field/subscribeFormReset.ts": "base",
+      "internal/field/TextareaControl.tsx": "base",
+      "internal/field/TextareaResizeEdge.tsx": "base",
+      "internal/editor/EditorStatus.tsx": "base",
+      "internal/editor/editorCommands.ts": "base",
+      "internal/DialogParts.tsx": "base",
+      "internal/useModalPresence.ts": "base",
+      "internal/rangeBarProps.ts": "base",
+      "internal/useStripWheel.ts": "base"
     },
     "private": {
       "$comment": "Modules in these directories are private to the listed modules, besides each other.",
@@ -189,7 +201,7 @@
     "leafControls": {
       "internal/ActionElement.tsx": ["a", "button"],
       "forms/TextField.tsx": ["input"],
-      "forms/internal/TextareaControl.tsx": ["textarea"],
+      "internal/field/TextareaControl.tsx": ["textarea"],
       "forms/Checkbox.tsx": ["input"],
       "forms/Radio.tsx": ["input"],
       "forms/Switch.tsx": ["input"],
@@ -302,7 +314,7 @@
         "modules": ["feedback/internal/AlertDismiss.tsx"]
       },
       "Spinner": {
-        "modules": ["feedback/internal/SpinnerLabel.tsx", "feedback/internal/SpinnerArc.tsx"]
+        "modules": ["feedback/internal/SpinnerLabel.tsx", "internal/SpinnerArc.tsx"]
       },
       "Scaffold": {
         "modules": [
@@ -331,7 +343,7 @@
       },
       "Dialog": {
         "modules": [
-          "overlays/internal/DialogParts.tsx",
+          "internal/DialogParts.tsx",
           "overlays/internal/DialogPendingAction.tsx",
           "overlays/ConfirmDialog.tsx"
         ],
@@ -381,11 +393,11 @@
       },
       "Field": {
         "modules": [
-          "forms/internal/FieldFrame.tsx",
+          "internal/field/FieldFrame.tsx",
           "forms/TextField.tsx",
           "forms/Textarea.tsx",
-          "forms/internal/TextareaControl.tsx",
-          "forms/internal/TextareaResizeEdge.tsx"
+          "internal/field/TextareaControl.tsx",
+          "internal/field/TextareaResizeEdge.tsx"
         ],
         "classes": ["env-text-field"],
         "styles": ["TextField.css"],
@@ -402,10 +414,10 @@
       },
       "Editor": {
         "modules": [
-          "forms/internal/editorCommands.ts",
-          "forms/internal/EditorToolbar.tsx",
-          "forms/internal/EditorStatus.tsx",
-          "forms/internal/LinkDialog.tsx"
+          "internal/editor/editorCommands.ts",
+          "internal/editor/EditorToolbar.tsx",
+          "internal/editor/EditorStatus.tsx",
+          "internal/editor/LinkDialog.tsx"
         ],
         "styles": ["Editor.css"]
       },

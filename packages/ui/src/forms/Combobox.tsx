@@ -24,7 +24,7 @@ import {
   isLabelShown,
   type FieldControlBoxProps,
   type FieldProps,
-} from './internal/FieldFrame.js';
+} from '../internal/field/FieldFrame.js';
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { autoHighlightAlways } from './internal/autoHighlightAlways.js';
 import {
@@ -35,8 +35,8 @@ import {
 } from './internal/comboboxItems.js';
 import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
-import { useFieldMetadata } from './internal/useFieldMetadata.js';
-import { useFormReset } from './internal/useFormReset.js';
+import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import { useFormReset } from '../internal/field/useFormReset.js';
 import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';

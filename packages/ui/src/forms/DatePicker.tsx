@@ -9,7 +9,7 @@ import { Grid, Row } from '../layout/Layout.js';
 import { IconCalendarClock } from '../icons/CalendarClock.js';
 import { IconCalendarMonth } from '../icons/CalendarMonth.js';
 import { Calendar, calendarActiveDay } from './Calendar.js';
-import { type FieldProps } from './internal/FieldFrame.js';
+import { type FieldProps } from '../internal/field/FieldFrame.js';
 import {
   PickerField,
   usePickerOpen,

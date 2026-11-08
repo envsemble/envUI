@@ -27,7 +27,7 @@ import {
   DialogHeader,
   DialogSurface,
   OverlayTheme,
-} from './internal/DialogParts.js';
+} from '../internal/DialogParts.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { useOpenState } from '../internal/useOpenState.js';
 import '../styles/Base.css';

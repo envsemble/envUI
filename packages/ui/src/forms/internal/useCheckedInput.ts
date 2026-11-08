@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react';
-import { useFormReset } from './useFormReset.js';
+import { useFormReset } from '../../internal/field/useFormReset.js';
 
 export type CheckboxState = boolean | 'mixed';
 export interface CheckedProps<State extends CheckboxState> extends Omit<

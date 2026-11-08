@@ -8,14 +8,14 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
-import * as Field from '../Field.js';
-import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
-import { ControlDefaults } from '../../internal/ControlDefaults.js';
-import { classNames } from '../../internal/classNames.js';
+import * as Field from '../../forms/Field.js';
+import { DecorativeIcon } from '../DecorativeIcon.js';
+import { ControlDefaults } from '../ControlDefaults.js';
+import { classNames } from '../classNames.js';
 import type { ControlSize } from '../../foundations/Theme.js';
 import { fieldMessageIds } from './useFieldMetadata.js';
-import { flag } from '../../internal/flag.js';
-import { reportInDevelopment } from '../../internal/developmentReport.js';
+import { flag } from '../flag.js';
+import { reportInDevelopment } from '../developmentReport.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
 

@@ -18,7 +18,7 @@ import {
   DialogPendingContext,
   DialogSurface,
   OverlayTheme,
-} from './internal/DialogParts.js';
+} from '../internal/DialogParts.js';
 import { withPendingAction } from './internal/DialogPendingAction.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import {

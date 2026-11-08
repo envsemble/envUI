@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Editor } from '@tiptap/react';
 import { linkDialog as linkDialogMessages } from '../../../foundations/messages/linkDialog.js';
 import { richText as richTextMessages } from '../../../foundations/messages/richText.js';
-import type { EditorLink } from '../../internal/LinkDialog.js';
+import type { EditorLink } from '../../../internal/editor/LinkDialog.js';
 import { useMessages } from '../../../internal/EnvUIContext.js';
 import type { RichTextAttachment, RichTextEditorProps } from '../types.js';
 import { safeRichTextUrl } from './referenceAttributes.js';

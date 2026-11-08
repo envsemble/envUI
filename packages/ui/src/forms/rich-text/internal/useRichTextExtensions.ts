@@ -6,7 +6,7 @@ import type { PluginKey } from '@tiptap/pm/state';
 import { Suggestion } from '@tiptap/suggestion';
 import { editor as editorMessages } from '../../../foundations/messages/editor.js';
 import { richText as richTextMessages } from '../../../foundations/messages/richText.js';
-import { editorCommands } from '../../internal/editorCommands.js';
+import { editorCommands } from '../../../internal/editor/editorCommands.js';
 import { useMessages } from '../../../internal/EnvUIContext.js';
 import { createRichTextExtensions } from '../extensions.js';
 import type { RichTextEditorProps, RichTextSlashCommand } from '../types.js';

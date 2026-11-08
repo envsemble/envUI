@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState, type Ref } from 'react';
-import { useFieldMetadata } from '../forms/internal/useFieldMetadata.js';
+import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { flushSync } from 'react-dom';
 import { Button } from '../actions/Button.js';
 import { Tabs } from '../navigation/Tabs.js';
@@ -11,11 +11,11 @@ import { Grid } from '../layout/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
 import type { TextareaProps } from '../forms/Textarea.js';
-import { EditorStatus } from '../forms/internal/EditorStatus.js';
-import { EditorToolbar } from '../forms/internal/EditorToolbar.js';
-import { FieldFrame } from '../forms/internal/FieldFrame.js';
-import { LinkDialog } from '../forms/internal/LinkDialog.js';
-import { TextareaControl } from '../forms/internal/TextareaControl.js';
+import { EditorStatus } from '../internal/editor/EditorStatus.js';
+import { EditorToolbar } from '../internal/editor/EditorToolbar.js';
+import { FieldFrame } from '../internal/field/FieldFrame.js';
+import { LinkDialog } from '../internal/editor/LinkDialog.js';
+import { TextareaControl } from '../internal/field/TextareaControl.js';
 import { MarkdownPreview } from './internal/markdown/MarkdownPreview.js';
 import { useMarkdownEditing } from './internal/markdown/useMarkdownEditing.js';
 import { useMarkdownLink } from './internal/markdown/useMarkdownLink.js';
