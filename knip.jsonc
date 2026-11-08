@@ -54,7 +54,6 @@
       "ignoreIssues": {
         "src/content/internal/codeColors.ts": ["types"],
         "src/internal/motionTokens.ts": ["exports"],
-        "src/navigation/internal/contentsWave.ts": ["exports"],
         "src/foundations/messages/*.ts": ["types"],
       },
     },
