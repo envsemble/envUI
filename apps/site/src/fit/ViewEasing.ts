@@ -193,7 +193,7 @@ export function settle(
     view.y = view.toY = toY;
     view.scale = view.toScale = view.rest = scale;
     place(f);
-    for (const { element } of boxes) f.resize.observe(element);
+    for (const { element } of boxes) f.observe(element);
     if (first.calm >= 3 || performance.now() - first.start >= 250) canvas.dataset.fitted = '';
     else f.update();
     return;
@@ -222,5 +222,5 @@ export function settle(
     jump(f);
   }
   canvas.dataset.fitted = '';
-  for (const { element } of boxes) f.resize.observe(element);
+  for (const { element } of boxes) f.observe(element);
 }

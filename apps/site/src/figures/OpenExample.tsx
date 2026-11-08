@@ -1,6 +1,7 @@
 import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { makeRoom, overlays, reserveStage } from '../fit/standalone/OverlayRoom';
+import { remeasure } from '../fit/Remeasure';
 import { sitePopupOpen } from '../motion/SitePopup';
 import { press, triggerOf } from './PressTrigger';
 import { flag } from '@envui-internal/internal/flag';
@@ -159,7 +160,6 @@ export function OpenExample({
   useLayoutEffect(() => {
     const roomElement = room.current;
     if (!roomElement || !layer) return;
-    let frame = 0;
     let timer = 0;
     // The figure shows once its room is made for its overlays resting open, fading in, so nothing
     // in it moves as it appears (Stage.css): or a while after its example has loaded, whatever
@@ -172,45 +172,42 @@ export function OpenExample({
       if (made) reserved.release();
       else reserved.shown();
     };
-    const update = () => {
-      // A palette's room keeps its framing once one has opened in it, closed too (Stage.css).
-      if (layer.querySelector('.env-command-palette')) roomElement.dataset.cataloguePalette = '';
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
+    // The room follows the overlays as they open, are placed, come to rest and resize, and the
+    // stage's width.
+    const rooms = remeasure(
+      () => {
+        // A palette's room keeps its framing once one has opened in it, closed too (Stage.css).
+        if (layer.querySelector('.env-command-palette')) roomElement.dataset.cataloguePalette = '';
         if (reserved.measured(() => makeRoom(roomElement, layer, live))) place(true);
         else if (!timer && !roomElement.querySelector('.site-loading'))
           timer = window.setTimeout(() => place(false), placeWait);
-      });
-    };
-    update();
-    // The room follows the overlays as they open, are placed, come to rest and resize, and the
-    // stage's width.
-    const resize = new ResizeObserver(update);
-    resize.observe(roomElement);
-    const mutation = new MutationObserver(update);
-    mutation.observe(roomElement, {
-      childList: true,
-      subtree: true,
-      attributeFilter: [
-        'class',
-        'style',
-        'data-side',
-        'hidden',
-        'data-starting-style',
-        'data-ending-style',
-      ],
-    });
-    roomElement.addEventListener('transitionend', update);
-    roomElement.addEventListener('animationend', update);
-    void document.fonts?.ready.then(update);
+      },
+      {
+        first: 'frame',
+        resize: [roomElement],
+        mutation: {
+          target: roomElement,
+          options: {
+            childList: true,
+            subtree: true,
+            attributeFilter: [
+              'class',
+              'style',
+              'data-side',
+              'hidden',
+              'data-starting-style',
+              'data-ending-style',
+            ],
+          },
+        },
+        events: [{ target: roomElement, types: ['transitionend', 'animationend'] }],
+        fonts: true,
+      },
+    );
     return () => {
-      cancelAnimationFrame(frame);
+      rooms.stop();
       window.clearTimeout(timer);
       reserved.release();
-      resize.disconnect();
-      mutation.disconnect();
-      roomElement.removeEventListener('transitionend', update);
-      roomElement.removeEventListener('animationend', update);
     };
   }, [layer, live, part]);
   return (
