@@ -19,49 +19,67 @@ import {
   catalogueStructure,
 } from '../scripts/docs/model/CatalogueContent.ts';
 
-test('focused Markdown discovery preserves examples and rejects broken documentation', async () => {
+const discoveryIndex =
+  '# envUI documentation\n\n## Actions\n\n- [Button](button.md) — Perform an action.\n';
+const discoveryPage = '# Button\n\n## Example\n\n```tsx\n<Button>Save</Button>\n```\n';
+
+/** A docs/ folder of an index and the Button page it lists, which `run` rewrites and reads. */
+async function discoveryFixture(run) {
   const cache = resolve('.cache');
   await mkdir(cache, { recursive: true });
   const fixture = await mkdtemp(join(cache, 'documentation-'));
-  const index =
-    '# envUI documentation\n\n## Actions\n\n- [Button](button.md) — Perform an action.\n';
-  const example = '# Button\n\n## Example\n\n```tsx\n<Button>Save</Button>\n```\n';
   try {
-    await writeFile(join(fixture, 'index.md'), index);
-    await writeFile(join(fixture, 'button.md'), example);
-    const [discovery, button] = readDocumentation(fixture);
-    assert.equal(discovery.path, 'index.md');
-    assert.equal(button.path, 'button.md');
-    assert.equal(button.group, 'Actions');
-    assert.ok(button.markdown.includes('```tsx\n<Button>Save</Button>\n```'));
-
-    await writeFile(join(fixture, 'button.md'), example + '\n[Missing component](missing.md)\n');
-    assert.throws(() => readDocumentation(fixture), /Broken documentation link/);
-    // A link to a heading must name one the page has, as the catalogue gives it its id.
-    await writeFile(join(fixture, 'button.md'), example + '\n[The example](#example)\n');
-    assert.equal(readDocumentation(fixture).length, 2);
-    await writeFile(
-      join(fixture, 'button.md'),
-      `# Button\n\n## Größe\n\n[Size](#gr%C3%B6%C3%9Fe)\n`,
-    );
-    assert.equal(readDocumentation(fixture).length, 2);
-    await writeFile(join(fixture, 'button.md'), example + '\n[An example](#examples)\n');
-    assert.throws(() => readDocumentation(fixture), /names no heading of button\.md/);
-    await writeFile(join(fixture, 'index.md'), index + '\nSee [its example](button.md#example).\n');
-    await writeFile(join(fixture, 'button.md'), example);
-    assert.equal(readDocumentation(fixture).length, 2);
-    await writeFile(join(fixture, 'index.md'), index + '\nSee [its example](button.md#usage).\n');
-    assert.throws(() => readDocumentation(fixture), /names no heading of button\.md/);
-    await writeFile(join(fixture, 'index.md'), index);
-    await writeFile(join(fixture, 'button.md'), '# Different title\n');
-    assert.throws(() => readDocumentation(fixture), /title differs/);
-    await writeFile(join(fixture, 'index.md'), index.replace('button.md', '../outside.md'));
-    assert.throws(() => readDocumentation(fixture), /escapes docs/);
+    await writeFile(join(fixture, 'index.md'), discoveryIndex);
+    await writeFile(join(fixture, 'button.md'), discoveryPage);
+    await run({
+      fixture,
+      write: (name, text) => writeFile(join(fixture, name), text),
+      read: () => readDocumentation(fixture),
+    });
   } finally {
     const contained = relative(cache, fixture);
     assert.ok(contained && !contained.startsWith('..') && !isAbsolute(contained));
     await rm(fixture, { recursive: true, force: true });
   }
+}
+
+test('Markdown discovery reads each page the index lists, in its group, with its examples', async () => {
+  await discoveryFixture(async ({ read }) => {
+    const [discovery, button] = read();
+    assert.equal(discovery.path, 'index.md');
+    assert.equal(button.path, 'button.md');
+    assert.equal(button.group, 'Actions');
+    assert.ok(button.markdown.includes('```tsx\n<Button>Save</Button>\n```'));
+  });
+});
+
+test('a link reaches a page, and a heading the page has', async () => {
+  await discoveryFixture(async ({ write, read }) => {
+    await write('button.md', discoveryPage + '\n[Missing component](missing.md)\n');
+    assert.throws(read, /Broken documentation link/);
+    // A link to a heading must name one the page has, as the catalogue gives it its id.
+    await write('button.md', discoveryPage + '\n[The example](#example)\n');
+    assert.equal(read().length, 2);
+    await write('button.md', `# Button\n\n## Größe\n\n[Size](#gr%C3%B6%C3%9Fe)\n`);
+    assert.equal(read().length, 2);
+    await write('button.md', discoveryPage + '\n[An example](#examples)\n');
+    assert.throws(read, /names no heading of button\.md/);
+    await write('index.md', discoveryIndex + '\nSee [its example](button.md#example).\n');
+    await write('button.md', discoveryPage);
+    assert.equal(read().length, 2);
+    await write('index.md', discoveryIndex + '\nSee [its example](button.md#usage).\n');
+    assert.throws(read, /names no heading of button\.md/);
+  });
+});
+
+test("a page's title is the index's, and the index lists no page outside docs", async () => {
+  await discoveryFixture(async ({ write, read }) => {
+    await write('button.md', '# Different title\n');
+    assert.throws(read, /title differs/);
+    await write('button.md', discoveryPage);
+    await write('index.md', discoveryIndex.replace('button.md', '../outside.md'));
+    assert.throws(read, /escapes docs/);
+  });
 });
 
 const switchExample = [
@@ -207,7 +225,10 @@ const switchProps = {
   },
 };
 
-/** A docs/ folder with one component page, its example and specimen files and stand-in props. */
+/**
+ * A docs/ folder with one component page, its example and specimen files and stand-in props, which
+ * `run` rewrites and reads.
+ */
 async function pageFixture(run) {
   const cache = resolve('.cache');
   await mkdir(cache, { recursive: true });
@@ -230,7 +251,12 @@ async function pageFixture(run) {
   const versions = new Set(['0.1.0', '0.2.0']);
   const read = () => readDocumentation(docs, { props: switchProps, examples, specimens, versions });
   try {
-    await run({ page, read, examples, specimens, docs });
+    /** Writes `source` as the page, and expects reading the docs to fail with `pattern`. */
+    const rejects = async (source, pattern) => {
+      await writeFile(page, source);
+      assert.throws(read, pattern);
+    };
+    await run({ page, read, rejects, examples, specimens, docs });
   } finally {
     const contained = relative(cache, fixture);
     assert.ok(contained && !contained.startsWith('..') && !isAbsolute(contained));
@@ -324,20 +350,35 @@ test('a page is read into its sections, figures, legends and specimens', async (
   });
 });
 
-test('the build fails a page that is not in the one-file structure', async () => {
-  await pageFixture(async ({ page, read, docs, specimens }) => {
-    const rejects = async (source, pattern) => {
-      await writeFile(page, source);
-      assert.throws(read, pattern);
-    };
-    const body = switchBody;
-    const frontmatter = switchFrontmatter;
+test('a page of a structured kind needs its frontmatter, and its frontmatter its examples', async () => {
+  await pageFixture(async ({ rejects, docs }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     // A page of a structured kind lists its examples; without them it is not in the structure.
     await rejects(
       frontmatter.replace(/examples:\n[\s\S]*?(?=---)/, '') + body,
       /components\/switch\.md is not in the one-file structure: its frontmatter lists no examples/,
     );
     await rejects(body, /Component page components\/switch\.md needs frontmatter/);
+    // A pattern or foundation page is in the structure too.
+    await mkdir(join(docs, 'foundations'), { recursive: true });
+    await writeFile(
+      join(docs, 'foundations', 'motion.md'),
+      '---\ntitle: Motion\nsummary: How things move.\naliases: [animation]\n---\n\n# Motion\n\n## Rules\n\nMove little.\n',
+    );
+    await writeFile(
+      join(docs, 'index.md'),
+      '# envUI documentation\n\n## Foundations\n\n- [Motion](foundations/motion.md)\n\n## Forms & selection\n\n- [Switch](components/switch.md)\n',
+    );
+    await rejects(
+      frontmatter + body,
+      /foundations\/motion\.md is not in the one-file structure: its frontmatter lists no examples/,
+    );
+  });
+});
+
+test('the sections are those the structure knows, once each, in its order, with Rules', async () => {
+  await pageFixture(async ({ rejects }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     // Sections: those the structure knows, once each, in its order, with Rules.
     await rejects(
       frontmatter + body.replace('## Variants', '## Usage'),
@@ -375,6 +416,12 @@ test('the build fails a page that is not in the one-file structure', async () =>
       frontmatter + body.replace('# Switch\n\n', '# Switch\n\nAn intro.\n\n'),
       /content must follow a "##" section heading/,
     );
+  });
+});
+
+test('every example the frontmatter lists is placed once, but the overview, which nothing places', async () => {
+  await pageFixture(async ({ rejects }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     // Examples: each listed once and placed once, but the overview's, which nothing places.
     await rejects(
       frontmatter + body.replace('```tsx figure=Instant\n', '```tsx figure=Narrow\n'),
@@ -405,6 +452,12 @@ test('the build fails a page that is not in the one-file structure', async () =>
       frontmatter + body.replace('figure=Parts\n\n```', 'figure=Parts\n<Switch />\n```'),
       /the fence of figure Parts must be empty/,
     );
+  });
+});
+
+test("an example's frontmatter gives its role and caption, and an overview's its framing", async () => {
+  await pageFixture(async ({ page, read, rejects }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     // The frontmatter: an example's entry, a role and a caption, and on an overview its framing.
     await rejects(
       frontmatter.replace('  Parts: anatomy', '  Parts: legend') + body,
@@ -440,22 +493,6 @@ test('the build fails a page that is not in the one-file structure', async () =>
         body,
       /gives Narrow open, stage, motion, wide or device, which only an overview example takes here/,
     );
-    // An example the catalogue plays needs its specimen of the same name.
-    await rejects(
-      frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    motion: true') +
-        body,
-      /example Basic has motion but no specimen apps\/site\/src\/specimens\/switch\/Basic\.tsx/,
-    );
-    await rejects(
-      frontmatter +
-        body.replace('figure=Narrow widths="16 30"', 'figure=Narrow motion widths="16 30"'),
-      /example Narrow has motion but no specimen/,
-    );
-    // An anatomy figure held in a moment needs its specimen of the same name too.
-    await rejects(
-      frontmatter + body.replace('figure=Parts\n', 'figure=Parts specimen\n'),
-      /anatomy Parts has specimen but no specimen apps\/site\/src\/specimens\/switch\/Parts\.tsx/,
-    );
     await rejects(
       frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    open: yes') +
         body,
@@ -480,6 +517,28 @@ test('the build fails a page that is not in the one-file structure', async () =>
       open: true,
       stage: 'shaded',
     });
+  });
+});
+
+test('an example the catalogue plays, or an anatomy held in a moment, needs its specimen', async () => {
+  await pageFixture(async ({ page, read, rejects, specimens }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
+    // An example the catalogue plays needs its specimen of the same name.
+    await rejects(
+      frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    motion: true') +
+        body,
+      /example Basic has motion but no specimen apps\/site\/src\/specimens\/switch\/Basic\.tsx/,
+    );
+    await rejects(
+      frontmatter +
+        body.replace('figure=Narrow widths="16 30"', 'figure=Narrow motion widths="16 30"'),
+      /example Narrow has motion but no specimen/,
+    );
+    // An anatomy figure held in a moment needs its specimen of the same name too.
+    await rejects(
+      frontmatter + body.replace('figure=Parts\n', 'figure=Parts specimen\n'),
+      /anatomy Parts has specimen but no specimen apps\/site\/src\/specimens\/switch\/Parts\.tsx/,
+    );
     // With its specimen, an example the catalogue plays says so, in the Overview and on its fence.
     await writeFile(join(specimens, 'switch', 'Basic.tsx'), 'export default function Basic() {}\n');
     await writeFile(
@@ -496,31 +555,12 @@ test('the build fails a page that is not in the one-file structure', async () =>
       .filter((block) => block.motion)
       .map((block) => block.name);
     assert.deepEqual(motions, ['Basic', 'Narrow']);
-    // A pattern or foundation page is in the structure too.
-    await mkdir(join(docs, 'foundations'), { recursive: true });
-    await writeFile(
-      join(docs, 'foundations', 'motion.md'),
-      '---\ntitle: Motion\nsummary: How things move.\naliases: [animation]\n---\n\n# Motion\n\n## Rules\n\nMove little.\n',
-    );
-    await writeFile(
-      join(docs, 'index.md'),
-      '# envUI documentation\n\n## Foundations\n\n- [Motion](foundations/motion.md)\n\n## Forms & selection\n\n- [Switch](components/switch.md)\n',
-    );
-    await rejects(
-      frontmatter + body,
-      /foundations\/motion\.md is not in the one-file structure: its frontmatter lists no examples/,
-    );
   });
 });
 
-test('the structure checks the frontmatter, the figures and the text of a page', async () => {
-  await pageFixture(async ({ page, read }) => {
-    const rejects = async (source, pattern) => {
-      await writeFile(page, source);
-      assert.throws(read, pattern);
-    };
-    const body = switchBody;
-    const frontmatter = switchFrontmatter;
+test("the frontmatter's fields hold what the page's kind takes", async () => {
+  await pageFixture(async ({ page, read, rejects }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(frontmatter.replace('status: beta', 'status: ready') + body, /status must be/);
     await rejects(frontmatter.replace('since: 0.1.0\n', '') + body, /since is required/);
     await rejects(frontmatter.replace('title: Switch', 'title: Switch\nowner: me') + body, /owner/);
@@ -567,6 +607,12 @@ test('the structure checks the frontmatter, the figures and the text of a page',
       frontmatter.replace('components: [Switch]', 'components: [Switch, Menu.Item]') + body,
       /Menu\.Item, a part/,
     );
+  });
+});
+
+test('Accessibility lists what envUI and the application provide, and a Key and Action table', async () => {
+  await pageFixture(async ({ rejects }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     // Accessibility: what envUI and the application provide, and a Key and Action table.
     await rejects(frontmatter + body.replace('### You provide', '### Notes'), /You provide/);
     await rejects(
@@ -575,6 +621,12 @@ test('the structure checks the frontmatter, the figures and the text of a page',
       /"### envUI provides" list/,
     );
     await rejects(frontmatter + body.replace('| Key | Action |', '| Keys | Result |'), /"Key"/);
+  });
+});
+
+test('props, headings, quotes and specimens are written as the structure reads them', async () => {
+  await pageFixture(async ({ rejects }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     // Lists, props and headings the structure generates or needs in Markdown.
     await rejects(
       frontmatter +
@@ -597,6 +649,12 @@ test('the structure checks the frontmatter, the figures and the text of a page',
       /Rules has a blockquote/,
     );
     await rejects(frontmatter + body.replace('specimen: States', 'specimen: Matrix'), /no file/);
+  });
+});
+
+test('an option table names each option in a few words, once, and says what it is for', async () => {
+  await pageFixture(async ({ page, read, rejects }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     // An option table, whose last column is Use for, shows in the catalogue as a legend of tags:
     // each names its option in a few plain words, once, and says what it is for.
     const options = (rows) =>
@@ -620,6 +678,12 @@ test('the structure checks the frontmatter, the figures and the text of a page',
     );
     await writeFile(page, options('| Small | A dense list. |'));
     assert.doesNotThrow(read);
+  });
+});
+
+test("a figure's fence takes the attributes its role takes, as values and flags", async () => {
+  await pageFixture(async ({ page, read, rejects }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     // A figure's fence: the attributes its role takes, as name="value", and flags alone.
     await rejects(frontmatter + body.replace('widths="16 30"', 'widths="wide"'), /widths="wide"/);
     // sweep shows one frame sweeping between at least two widths; classes needs a sweep.
@@ -672,6 +736,12 @@ test('the structure checks the frontmatter, the figures and the text of a page',
       frontmatter + body.replace('figure=Narrow widths="16 30"', 'figure=Narrow widths="16 "30""'),
       /the fence `tsx figure=Narrow widths="16 "30"" stage=shaded` is malformed/,
     );
+  });
+});
+
+test("a figure's legend names parts that exist, each by its name in bold", async () => {
+  await pageFixture(async ({ rejects }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     // A legend names parts that exist, each starting with its name in bold.
     await rejects(
       frontmatter + body.replace('2. **Thumb** (`env-switch-input`)', '2. The thumb.'),
@@ -700,8 +770,12 @@ test('the structure checks the frontmatter, the figures and the text of a page',
       frontmatter + body.replace(/1\. \*\*Track\*\*.*\n2\. \*\*Thumb\*\*.*\n/, ''),
       /anatomy Parts has no legend, and docs\/generated\/parts\.json lists no parts of Switch/,
     );
-    // Saved with CRLF line endings, the page reads as it does with LF.
-    await writeFile(page, (frontmatter + body).replaceAll('\n', '\r\n'));
+  });
+});
+
+test('a page saved with CRLF line endings reads as it does with LF', async () => {
+  await pageFixture(async ({ page, read }) => {
+    await writeFile(page, (switchFrontmatter + switchBody).replaceAll('\n', '\r\n'));
     assert.deepEqual(
       read()[1].sections.map((section) => section.id),
       [
@@ -715,7 +789,7 @@ test('the structure checks the frontmatter, the figures and the text of a page',
         'changelog',
       ],
     );
-    await writeFile(page, frontmatter + body);
+    await writeFile(page, switchFrontmatter + switchBody);
     assert.doesNotThrow(read);
   });
 });
