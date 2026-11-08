@@ -18,7 +18,10 @@ import {
 } from 'react';
 import { MenuPopup, menuParts } from './internal/MenuPopup.js';
 import type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
-import { containedOpenChange, usePortalContainer } from '../internal/popup/PortalContainerContext.js';
+import {
+  containedOpenChange,
+  usePortalContainer,
+} from '../internal/popup/PortalContainerContext.js';
 import { isRightToLeft } from '../internal/dom/direction.js';
 import { useOpenState } from '../internal/popup/useOpenState.js';
 

@@ -11,7 +11,11 @@ import {
 } from 'react';
 import type { IconButtonEmphasisProps } from './Button.js';
 import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
-import { TooltipNestingContext, TooltipPopup, tooltipDelay } from '../internal/popup/TooltipPopup.js';
+import {
+  TooltipNestingContext,
+  TooltipPopup,
+  tooltipDelay,
+} from '../internal/popup/TooltipPopup.js';
 import { IconCheck } from '../icons/Check.js';
 import { IconContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';

@@ -2,7 +2,12 @@
 
 import { useMemo } from 'react';
 import { useFormatters, useResolvedLocale } from '../../internal/provider/useFormatters.js';
-import { dayParts, localeWeekStart, parseDay, type Weekday } from '../../internal/time/calendarDays.js';
+import {
+  dayParts,
+  localeWeekStart,
+  parseDay,
+  type Weekday,
+} from '../../internal/time/calendarDays.js';
 import { day as dayMilliseconds } from '../../internal/time/durations.js';
 import { localeNames } from './calendarHeatmapModel.js';
 

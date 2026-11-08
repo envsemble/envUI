@@ -1,4 +1,8 @@
-import { easingFunction, motionDuration, motionEasing } from '../../internal/motion/motionTokens.js';
+import {
+  easingFunction,
+  motionDuration,
+  motionEasing,
+} from '../../internal/motion/motionTokens.js';
 import {
   glideAt,
   glideStep,

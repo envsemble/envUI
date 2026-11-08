@@ -16,7 +16,10 @@ import { setRef } from '../../internal/setRef.js';
 import { useHydrated } from '../../internal/useHydrated.js';
 import { useOpenState } from '../../internal/popup/useOpenState.js';
 import { useDirection } from '../../internal/provider/useDirection.js';
-import { containedOpenChange, usePortalContainer } from '../../internal/popup/PortalContainerContext.js';
+import {
+  containedOpenChange,
+  usePortalContainer,
+} from '../../internal/popup/PortalContainerContext.js';
 import type { OverlayOpenChangeReason } from '../../internal/popup/overlayOpenChangeReason.js';
 import type { PopoverOpenChangeReason } from '../../overlays/Popover.js';
 import { IconButton } from '../../actions/Button.js';

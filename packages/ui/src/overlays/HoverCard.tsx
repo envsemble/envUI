@@ -11,11 +11,18 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/popup/PopupSurface.js';
-import { containedOpenChange, usePortalContainer } from '../internal/popup/PortalContainerContext.js';
+import {
+  containedOpenChange,
+  usePortalContainer,
+} from '../internal/popup/PortalContainerContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 import { Grid } from '../layout/Layout.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/popup/hoverDetail.js';
-import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/popup/triggerOwner.js';
+import {
+  HoverCardTriggerContext,
+  isTooltip,
+  markTriggerOwner,
+} from '../internal/popup/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { useOpenState } from '../internal/popup/useOpenState.js';

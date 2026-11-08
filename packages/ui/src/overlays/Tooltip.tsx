@@ -22,7 +22,11 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/popup/hoverDetail.js';
 import { setRef } from '../internal/setRef.js';
-import { HoverCardTriggerContext, isTriggerOwner, markTooltip } from '../internal/popup/triggerOwner.js';
+import {
+  HoverCardTriggerContext,
+  isTriggerOwner,
+  markTooltip,
+} from '../internal/popup/triggerOwner.js';
 import {
   TooltipDescribesContext,
   TooltipNestingContext,
@@ -31,7 +35,10 @@ import {
   tooltipDelay,
 } from '../internal/popup/TooltipPopup.js';
 import { accessibleName } from './internal/accessibleName.js';
-import { containedOpenChange, usePortalContainer } from '../internal/popup/PortalContainerContext.js';
+import {
+  containedOpenChange,
+  usePortalContainer,
+} from '../internal/popup/PortalContainerContext.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { ownName, useStandIn, useTriggerName } from './internal/tooltipTriggerName.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';

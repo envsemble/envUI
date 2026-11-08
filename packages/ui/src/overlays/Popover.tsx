@@ -5,7 +5,10 @@ import { useRef, type ComponentPropsWithRef, type ReactElement, type ReactNode }
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/popup/PopupSurface.js';
-import { containedOpenChange, usePortalContainer } from '../internal/popup/PortalContainerContext.js';
+import {
+  containedOpenChange,
+  usePortalContainer,
+} from '../internal/popup/PortalContainerContext.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
