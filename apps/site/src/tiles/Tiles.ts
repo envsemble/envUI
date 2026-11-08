@@ -35,19 +35,12 @@ export interface TileWindow {
   overlay?: boolean;
   /**
    * Whether it is a piece of an application's frame, such as a Scaffold or a top bar: it fills its
-   * card's picture as the application fills its window (AppTile.tsx), rather than floating small
+   * card's picture as the application fills its window (TileStage.tsx), rather than floating small
    * in it. It lays out as wide as the picture at its own size, or no narrower than `least` rem,
    * such as panes that stand side by side only in a medium window, cut off at the card's end.
    */
   app?: { least?: number };
 }
-
-/**
- * How a card shows an application's frame (`app` above): `window`, in a browser's window, the one
- * drawn around a page's figure (DeviceFrame.tsx), an even margin around it; or `bleed`, edge to
- * edge, as if the card were a cropped screenshot of the application.
- */
-export const appTileFrame: 'window' | 'bleed' = 'window';
 
 /**
  * The windows of the tiles whose component doesn't fit the tiles' 14 by 10.5 rem, by page id: a

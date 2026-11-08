@@ -38,7 +38,7 @@ const places = [
 ];
 
 /**
- * An application's frame filling its card (AppTile.tsx): the top bar, titled with the place, over
+ * An application's frame filling its card (TileStage.tsx): the top bar, titled with the place, over
  * its page, and the navigation bar, the form a compact window's navigation takes, its places side
  * by side at the foot.
  */

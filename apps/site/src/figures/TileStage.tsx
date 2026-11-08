@@ -17,9 +17,9 @@ import type { TilePicture } from '../template/RelatedPages';
 import { TileSkeleton } from '../loading/Skeletons';
 import { cropped, fitKindOf, type StageScript } from '../fit/FitKind';
 import { useFit } from '../fit/useFit';
-import { AppScreen } from './AppTile';
+import { DeviceFrame } from './DeviceFrame';
 import { useAppFit } from '../fit/standalone/useAppFit';
-import { appTileFrame, narrowGallery } from '../tiles/Tiles';
+import { narrowGallery } from '../tiles/Tiles';
 import {
   courseOf,
   headingEvent,
@@ -127,7 +127,7 @@ export function TileStage({
     ) : (
       <ExampleRender page={picture.page} name={picture.name} fallback={null} />
     ));
-  // A piece of an application's frame fills its card instead (AppTile.tsx).
+  // A piece of an application's frame fills its card instead (wrapApp).
   const app = picture?.window?.app;
   const kind = fitKindOf(picture, app ? undefined : frame);
   const ownSize = kind.scale === 'own';
@@ -163,7 +163,7 @@ export function TileStage({
             data-tile={flag(picture.tile)}
             data-own-size={flag(ownSize)}
             data-overlay={flag(ownSize && picture.window?.overlay)}
-            data-app={app ? appTileFrame : undefined}
+            data-app={flag(app)}
             style={
               picture.window &&
               ({
@@ -199,9 +199,23 @@ export function TileStage({
 const crop = (ownSize: boolean, canvas: ReactNode) =>
   ownSize ? <div className="catalogue-tile-crop">{canvas}</div> : canvas;
 
-/** A piece of an application's frame, on the screen its card shows it on (AppTile.tsx). */
+/**
+ * A piece of an application's frame, such as a Scaffold, a top bar or panes (`app` in
+ * tiles/Tiles.ts), in a browser's window, the one a page's figure is drawn in (DeviceFrame.tsx),
+ * an even margin around it: it fills its card's picture as the application fills its window,
+ * rather than floating small in the middle of it. The window's screen is the tile's window
+ * (`env-window`), so the tile lays out for its width as it would in an application. It is drawn
+ * at its own size, and on a card too narrow for that, such as a phone's, a little smaller
+ * (AppTile.css).
+ */
 const wrapApp = (app: boolean, subject: ReactNode) =>
-  app ? <AppScreen>{subject}</AppScreen> : subject;
+  app ? (
+    <DeviceFrame kind="window" fill>
+      {subject}
+    </DeviceFrame>
+  ) : (
+    subject
+  );
 
 /** Whether an animation loops for ever, as a skeleton's pulse or a spinner's turn does. */
 const loops = (animation: Animation) =>
