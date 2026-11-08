@@ -128,14 +128,8 @@ export default defineConfig(
     // The site's own code. Examples are application code, where a preview is the product's word,
     // such as a file's or the Markdown editor's.
     files: ['apps/site/src/**/*.{ts,tsx}'],
-    ignores: ['apps/site/src/examples/**', 'apps/site/src/figures/**', 'apps/site/src/template/**'],
+    ignores: ['apps/site/src/examples/**'],
     rules: { 'no-restricted-syntax': ['error', ...previewNames] },
-  },
-  {
-    // A warning until the figures' and the template's names follow the rule too; then the block
-    // above covers them.
-    files: ['apps/site/src/figures/**/*.{ts,tsx}', 'apps/site/src/template/**/*.{ts,tsx}'],
-    rules: { 'no-restricted-syntax': ['warn', ...previewNames] },
   },
   {
     // Examples and templates are the code applications and agents copy, so they follow the rules
