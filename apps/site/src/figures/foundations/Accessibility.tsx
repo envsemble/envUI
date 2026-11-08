@@ -3,9 +3,9 @@ import { Button, Checkbox, Column, IconButton, Kbd, Row, TextField } from '@envs
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import type { FoundationFigure } from './FoundationFigures';
+import type { FoundationFigureEntry } from './FoundationFigures';
 import { CornerLabel } from './Steps';
-import { Figure } from './Figure';
+import { FoundationFrame } from './FoundationFrame';
 
 /*
  * The figures of the Accessibility foundation. Its words are in docs/foundations/accessibility.md,
@@ -119,17 +119,17 @@ function KeyboardSteps() {
 /** A small form the keyboard moves through on its own: the focus ring shows where it is. */
 function KeyboardFigure({ caption }: { caption?: string }) {
   return (
-    <Figure
+    <FoundationFrame
       label="Move through a form with the keyboard"
       motion="the keyboard moving through the form"
       caption={caption}
     >
       <KeyboardSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
 /** The figures docs/foundations/accessibility.md places, by name. */
-export const accessibilityFigures: Record<string, FoundationFigure> = {
+export const accessibilityFigures: Record<string, FoundationFigureEntry> = {
   Keyboard: { render: KeyboardFigure },
 };

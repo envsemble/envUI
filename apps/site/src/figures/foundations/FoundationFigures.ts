@@ -1,19 +1,19 @@
 import { use, type ComponentType } from 'react';
-import type { LegendEntry } from './Figure';
+import type { LegendEntry } from './FoundationFrame';
 import { loadOnce } from '../../loading/LoadOnce';
 
 /**
- * A foundation's or a guide's figure: the picture alone, which the page's
+ * A foundation's or a guide's figure as its page registers it: the picture alone, which the page's
  * Markdown places by name (```tsx figure=Name```) and gives its words, the legend that follows the
  * fence: each numbered mark's, or each picture's, name and what it means. `wide` keeps it across
  * the whole column rather than beside the text before it.
  */
-export interface FoundationFigure {
+export interface FoundationFigureEntry {
   render: ComponentType<{ legend: readonly LegendEntry[]; caption?: string }>;
   wide?: boolean;
 }
 
-type Figures = Record<string, FoundationFigure>;
+type Figures = Record<string, FoundationFigureEntry>;
 
 /** Each foundation's figures, which load with the page, and a guide's, by the page's id. */
 const loaders: Record<string, () => Promise<Figures>> = {

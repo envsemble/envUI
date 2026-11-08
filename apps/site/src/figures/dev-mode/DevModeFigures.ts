@@ -1,4 +1,4 @@
-import type { FoundationFigure } from '../foundations/FoundationFigures';
+import type { FoundationFigureEntry } from '../foundations/FoundationFigures';
 import { TryDevMode } from './TryDevMode';
 import {
   DevModeButtonPicture,
@@ -15,7 +15,7 @@ import {
  * Only Try dev mode loads `@envsemble/envui/dev`, once it is pressed: scripts/site/SiteDevMode.ts
  * checks the hosted build for it.
  */
-export const devModeFigures: Record<string, FoundationFigure> = {
+export const devModeFigures: Record<string, FoundationFigureEntry> = {
   TryDevMode: { render: TryDevMode },
   DevModeButtonPicture: { render: DevModeButtonPicture },
   DevModeWholePicture: { render: DevModeWholePicture },

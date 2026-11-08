@@ -1,24 +1,10 @@
-import { Fragment, useId, useMemo, useRef, type ReactNode } from 'react';
-import { Column, Theme, useTheme } from '@envsemble/envui';
-import { IconCheck } from '@envsemble/envui/icons/Check';
-import { IconClose } from '@envsemble/envui/icons/Close';
-import { IconWarning } from '@envsemble/envui/icons/Warning';
-import type {
-  DocumentationBlock,
-  DocumentationSection,
-  StageFill,
-} from '@docs-model/DocumentationTypes';
+import { Fragment, useMemo, type ReactNode } from 'react';
+import type { DocumentationBlock, DocumentationSection } from '@docs-model/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { AnatomyFigure } from './anatomy/AnatomyFigure';
-import {
-  ExampleCode,
-  ExampleRender,
-  keepLinksInPlace,
-  LiveExample,
-  type Presentation,
-} from './LiveExample';
-import { OpenExample } from './OpenExample';
+import { LiveExample, type Presentation } from './LiveExample';
+import { VerdictFigure } from './VerdictFigure';
 import { MarkdownWithLegends } from '../markdown/MarkdownWithLegends';
 import {
   lastSubsection,
@@ -26,15 +12,10 @@ import {
   optionPieces,
   type OptionTable,
 } from '@docs-model/CatalogueContent';
-import { ExamplePlayback, Specimen } from './Specimen';
-import { VerdictMotion } from './MotionStage';
-import {
-  useFoundationFigures,
-  type FoundationFigure as Figure,
-} from './foundations/FoundationFigures';
-import { FigureCode } from './foundations/Figure';
+import { Specimen } from './Specimen';
+import { useFoundationFigures, type FoundationFigureEntry } from './foundations/FoundationFigures';
+import { FigureCode } from './foundations/FoundationFrame';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
-import { useVerdictFit } from '../fit/standalone/useVerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
@@ -59,111 +40,11 @@ function FoundationFigure({ page, block }: { page: DocumentationEntry; block: Fo
   );
 }
 
-/** The mark of a do, a don't or a caution: its icon and its word. */
-const verdicts = {
-  do: { label: 'Do', icon: <IconCheck /> },
-  dont: { label: 'Don’t', icon: <IconClose /> },
-  caution: { label: 'Caution', icon: <IconWarning /> },
-};
-
-/**
- * A do, don't or caution figure, as a gallery's cells: the live example on its stage; under it, a
- * strip of the same fill with its tag, a check, a cross or a warning with the word Do, Don't or
- * Caution in green, red or amber, a caution being acceptable with care rather than a mistake, and
- * its one sentence beside it; and under that, the example's code (Verdicts.css). The stage is as
- * tall as the example, or square where the example shows open or playing, and the example is
- * drawn smaller where it needs more room than the stage's width (useVerdictFit). A `wide` figure,
- * whose point is a change across the column's width, keeps a stage as wide as the column and as
- * tall as its example.
- */
-function VerdictFigure({
-  page,
-  name,
-  verdict,
-  caption,
-  shows,
-  wide,
-  stage,
-}: {
-  page: string;
-  name: string;
-  verdict: 'do' | 'dont' | 'caution';
-  caption: string;
-  /**
-   * What the stage shows: the example; its overlays open, as a picture; or its animated specimen of
-   * the same name playing it.
-   */
-  shows: 'example' | 'open' | 'motion';
-  /** Whether it keeps a stage as wide as the column, rather than a square. */
-  wide: boolean;
-  /** The stage's fill, where the page's would hide the subject. */
-  stage?: StageFill;
-}) {
-  const theme = useTheme();
-  const { label, icon } = verdicts[verdict];
-  const id = useId();
-  const stageRef = useRef<HTMLDivElement>(null);
-  const box = useRef<HTMLDivElement>(null);
-  // A figure that shows its example open or playing keeps a square, the room what opens in it
-  // needs; any other is as tall as its example. A playing one is fitted by its motion's stage.
-  const shape = wide ? 'wide' : shows === 'example' ? 'fit' : 'square';
-  useVerdictFit(stageRef, box, {
-    on: shape !== 'wide' && shows !== 'motion',
-    shape: shape === 'fit' ? 'fit' : 'square',
-  });
-  return (
-    // Named by its mark and its sentence, each read once.
-    <figure
-      className="site-verdict"
-      data-verdict={verdict}
-      data-shape={shape}
-      aria-labelledby={`${id}-verdict ${id}-caption`}
-    >
-      {shows === 'motion' ? (
-        <VerdictMotion value={wide ? 'wide' : 'square'}>
-          <ExamplePlayback page={page} name={name} />
-        </VerdictMotion>
-      ) : (
-        <Column
-          ref={stageRef}
-          render={<Theme {...theme} />}
-          gap={0}
-          className="site-verdict-stage"
-          data-example={name}
-          data-stage={stage}
-          {...keepLinksInPlace}
-        >
-          <div ref={box} className="site-verdict-fit">
-            {shows === 'open' ? (
-              <OpenExample name={name}>
-                <ExampleRender page={page} name={name} />
-              </OpenExample>
-            ) : (
-              <ExampleRender page={page} name={name} />
-            )}
-          </div>
-        </Column>
-      )}
-      {/* A strip of the stage's fill under it: the verdict's tag and its sentence beside it. */}
-      <figcaption className="site-verdict-caption" data-stage={stage}>
-        <span className="site-verdict-mark" id={`${id}-verdict`}>
-          {icon}
-          <span>{label}</span>
-        </span>
-        <span className="site-verdict-sentence" id={`${id}-caption`}>
-          {caption}
-        </span>
-      </figcaption>
-      <ExampleCode page={page} name={name} />
-    </figure>
-  );
-}
-
 /**
  * One figure of a section, by its kind. `options` is the option table right after a variants
  * figure, which it shows as its legend.
  */
-function Figure({
+function BlockFigure({
   page,
   block,
   options,
@@ -267,7 +148,10 @@ export function UsageFigure({ page }: { page: DocumentationEntry }) {
  * The blocks of a section in the order they are written, with figures that follow each other, such
  * as a do and a don't, side by side; Markdown that is only blank lines between them doesn't count.
  */
-function groupFigures(blocks: DocumentationBlock[], figures: Record<string, Figure> | undefined) {
+function groupFigures(
+  blocks: DocumentationBlock[],
+  figures: Record<string, FoundationFigureEntry> | undefined,
+) {
   const groups: (DocumentationBlock | FigureBlock[])[] = [];
   for (const block of blocks) {
     if (block.kind === 'markdown' && !block.markdown.trim()) continue;
@@ -335,7 +219,7 @@ export function FigureSection({
   // The Overview's figures shown open are the components at rest, open, which people can use.
   const live = section.id === 'overview';
   const figure = (block: FigureBlock, key?: string | number) => (
-    <Figure key={key} page={page} block={block} live={live} />
+    <BlockFigure key={key} page={page} block={block} live={live} />
   );
   const outline = useSectionOutline();
   /** Subsections of text shown beside the figure at an index of groups. */
@@ -428,7 +312,7 @@ export function FigureSection({
       } else if (text.trim()) content.push(markdown(index, text));
     } else if (group.kind === 'example' || group.kind === 'figure')
       content.push(
-        <Figure
+        <BlockFigure
           key={index}
           page={page}
           block={group}

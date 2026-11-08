@@ -16,14 +16,14 @@ import { MotionStage } from '../MotionStage';
 export const FigureCode = createContext<{ page: string; name: string } | null>(null);
 
 /**
- * A figure that shows envUI at work: its content on the recessed canvas, marked when something in
+ * The frame of a foundation's figure, which shows envUI at work: its content on the recessed canvas, marked when something in
  * it can be used, with its legend and caption below, and below them its code in a Code disclosure
  * where it has an example file (FigureCode). `label` names it for assistive technology.
  * With `motion`, what its pause button names, it is an animated figure, as a component page's
  * animated specimen is: its content plays on a MotionStage (usePointer, useTimeline, WidthSweep),
  * a picture with a pause button.
  */
-export function Figure({
+export function FoundationFrame({
   label,
   children,
   legend,

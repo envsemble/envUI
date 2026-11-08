@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { ThemeContrast } from '@envsemble/envui';
-import type { LegendEntry } from './Figure';
+import type { LegendEntry } from './FoundationFrame';
 import { remeasure } from '../../shared/Remeasure';
 
 // What the figures of the Colors & themes foundation (Colors.tsx) share.

@@ -25,13 +25,13 @@ import {
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { useState } from 'react';
-import type { FoundationFigure } from './FoundationFigures';
+import type { FoundationFigureEntry } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel, StepStack } from './Steps';
-import { Figure, NumberedLegend, type LegendEntry } from './Figure';
+import { FoundationFrame, NumberedLegend, type LegendEntry } from './FoundationFrame';
 
 /*
  * The figures of the Spacing & density foundation. Its words are in docs/foundations/spacing.md,
@@ -58,7 +58,7 @@ const reviewers: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jord
  */
 function GroupingFigure({ legend }: FigureWords) {
   return (
-    <Figure
+    <FoundationFrame
       label="How space groups a settings card"
       className="catalogue-marked-stage"
       legend={<NumberedLegend entries={legend} />}
@@ -93,14 +93,14 @@ function GroupingFigure({ legend }: FigureWords) {
           </Column>
         </Surface>
       </MarkedSubject>
-    </Figure>
+    </FoundationFrame>
   );
 }
 
 /** A toolbar of five kinds of control at one size, with guides along their tops and bottoms. */
 function AlignFigure() {
   return (
-    <Figure label="Controls of one size line up" className="catalogue-marked-stage">
+    <FoundationFrame label="Controls of one size line up" className="catalogue-marked-stage">
       <MarkedSubject>
         <Row wrap gap={2} align="center" data-catalogue-guides className="catalogue-align-subject">
           <SearchField label="Search reports" showLabel={false} defaultValue="Budget" />
@@ -125,7 +125,7 @@ function AlignFigure() {
           <Button startIcon={<IconAdd />}>New report</Button>
         </Row>
       </MarkedSubject>
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -135,7 +135,7 @@ function AlignFigure() {
  */
 function ShapesFigure({ legend }: FigureWords) {
   return (
-    <Figure
+    <FoundationFrame
       label="Corners say what a thing is"
       className="catalogue-marked-stage"
       legend={<NumberedLegend entries={legend} />}
@@ -163,7 +163,7 @@ function ShapesFigure({ legend }: FigureWords) {
           </Row>
         </Surface>
       </MarkedSubject>
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -221,9 +221,9 @@ function ScaleSteps({ legend }: FigureWords) {
 
 function ScalesFigure({ legend }: FigureWords) {
   return (
-    <Figure label="Comfortable or compact" motion="the dialog in each scale">
+    <FoundationFrame label="Comfortable or compact" motion="the dialog in each scale">
       <ScaleSteps legend={legend} />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -278,9 +278,9 @@ function RowSteps({ legend }: FigureWords) {
 
 function RowsFigure({ legend }: FigureWords) {
   return (
-    <Figure label="Tighter rows" motion="the rows closing up and opening out">
+    <FoundationFrame label="Tighter rows" motion="the rows closing up and opening out">
       <RowSteps legend={legend} />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -344,18 +344,18 @@ function TallSteps() {
 
 function TallFigure() {
   return (
-    <Figure
+    <FoundationFrame
       label="Tall things keep sensible corners"
       motion="the field filling and the button wrapping"
       className="catalogue-tall-stage"
     >
       <TallSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
 /** The figures docs/foundations/spacing.md places, by name. */
-export const spacingFigures: Record<string, FoundationFigure> = {
+export const spacingFigures: Record<string, FoundationFigureEntry> = {
   Grouping: { render: GroupingFigure, wide: true },
   Align: { render: AlignFigure, wide: true },
   Scales: { render: ScalesFigure, wide: true },

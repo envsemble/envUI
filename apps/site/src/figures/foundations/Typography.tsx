@@ -11,10 +11,10 @@ import {
 } from '@envsemble/envui';
 import { useTimeline } from '../../motion/Timeline';
 import { WidthSweep } from '../../motion/WidthSweep';
-import type { FoundationFigure } from './FoundationFigures';
+import type { FoundationFigureEntry } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
-import { Figure, NumberedLegend, type LegendEntry } from './Figure';
+import { FoundationFrame, NumberedLegend, type LegendEntry } from './FoundationFrame';
 
 /*
  * The figures of the Typography foundation. Its words are in docs/foundations/typography.md, the
@@ -30,7 +30,7 @@ interface FigureWords {
 /** A small report screen with each text style it uses marked. */
 function ScreenFigure({ legend }: FigureWords) {
   return (
-    <Figure
+    <FoundationFrame
       label="The text styles of a screen"
       className="catalogue-marked-stage"
       legend={<NumberedLegend entries={legend} />}
@@ -65,7 +65,7 @@ function ScreenFigure({ legend }: FigureWords) {
           </Text>
         </Surface>
       </MarkedSubject>
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -111,7 +111,7 @@ function StylesFigure({ legend }: FigureWords) {
  */
 function HierarchyFigure({ legend }: FigureWords) {
   return (
-    <Figure
+    <FoundationFrame
       label="A lead, then quieter detail"
       className="catalogue-marked-stage"
       legend={<NumberedLegend entries={legend} />}
@@ -146,19 +146,19 @@ function HierarchyFigure({ legend }: FigureWords) {
           </Column>
         </Surface>
       </MarkedSubject>
-    </Figure>
+    </FoundationFrame>
   );
 }
 
 /** The same size of text in the main color and the quieter one. */
 function EmphasisFigure() {
   return (
-    <Figure label="Quieter text">
+    <FoundationFrame label="Quieter text">
       <Column gap={2} align="start" inert>
         <Text>Quarterly report</Text>
         <Text emphasis="muted">Updated today by Priya Shah</Text>
       </Column>
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -223,9 +223,9 @@ function TextSizeSteps() {
 
 function TextSizeFigure() {
   return (
-    <Figure label="Text follows the reader" motion="the card at each text size">
+    <FoundationFrame label="Text follows the reader" motion="the card at each text size">
       <TextSizeSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -235,7 +235,7 @@ function TextSizeFigure() {
  */
 function MeasureFigure() {
   return (
-    <Figure
+    <FoundationFrame
       label="Lines a comfortable length"
       motion="the frame widening"
       className="catalogue-measure-stage"
@@ -254,12 +254,12 @@ function MeasureFigure() {
           </Column>
         </div>
       </WidthSweep>
-    </Figure>
+    </FoundationFrame>
   );
 }
 
 /** The figures docs/foundations/typography.md places, by name. */
-export const typographyFigures: Record<string, FoundationFigure> = {
+export const typographyFigures: Record<string, FoundationFigureEntry> = {
   Screen: { render: ScreenFigure, wide: true },
   Styles: { render: StylesFigure, wide: true },
   Emphasis: { render: EmphasisFigure },

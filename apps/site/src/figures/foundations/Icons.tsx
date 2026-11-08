@@ -28,8 +28,8 @@ import { useTimeline } from '../../motion/Timeline';
 import { LoadBoundary, lazyPart } from '../../loading/LoadBoundary';
 import { PartSkeleton, placeholderText } from '../../loading/Skeletons';
 import { SpecimenFrame } from '../SpecimenFrame';
-import type { FoundationFigure } from './FoundationFigures';
-import { Figure } from './Figure';
+import type { FoundationFigureEntry } from './FoundationFigures';
+import { FoundationFrame } from './FoundationFrame';
 
 /*
  * The figures of the Icons foundation. Its words are in docs/foundations/icons.md, the page's one
@@ -72,9 +72,9 @@ function FollowTextSteps() {
 
 function FollowTextFigure() {
   return (
-    <Figure label="Icons follow their text" motion="the icons following their text">
+    <FoundationFrame label="Icons follow their text" motion="the icons following their text">
       <FollowTextSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -130,9 +130,9 @@ function DestinationSteps() {
 /** Outlined destinations, the selected one filled, as the pointer moves between them. */
 function OutlinedAndFilledFigure() {
   return (
-    <Figure label="Outlined and filled" motion="the selected icon filling">
+    <FoundationFrame label="Outlined and filled" motion="the selected icon filling">
       <DestinationSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -207,7 +207,7 @@ function CatalogueFigure() {
 }
 
 /** The figures docs/foundations/icons.md places, by name. */
-export const iconsFigures: Record<string, FoundationFigure> = {
+export const iconsFigures: Record<string, FoundationFigureEntry> = {
   FollowText: { render: FollowTextFigure },
   OutlinedAndFilled: { render: OutlinedAndFilledFigure },
   Catalogue: { render: CatalogueFigure, wide: true },
