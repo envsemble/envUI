@@ -15,6 +15,35 @@ interface OldAddress {
 const codingAgents = `${docsRoute}?section=coding-agents`;
 
 /**
+ * The ids of documents that are gone, which old addresses name (`?document=` and
+ * `get-started/<id>`): the route each one opens now.
+ */
+const oldDocuments: Record<string, string> = {
+  // The catalogue's Get started page is the setup guide, the Docs' home.
+  'get-started': docsRoute,
+  // Dev mode's page in the catalogue folded into its guide in the Docs.
+  'dev-mode-overview': 'docs/dev-mode',
+  changelog: 'docs/changelog',
+  // The codemods are gone: their page opens the migration guide.
+  codemods: 'docs/migration',
+  // The agent skills are gone, and so is the guide for agents: setup leads to the skill.
+  'agent-skills': codingAgents,
+  'agent-tooling': codingAgents,
+  // Pages merged into others.
+  'customizing-colors': 'docs/customizing',
+  composition: 'docs/customizing',
+  scale: 'foundations/spacing',
+};
+
+/** The route of a document an old address names, by its id then or now, at `section`. */
+function routeOfOldDocument(id: string, section?: string) {
+  const route = Object.hasOwn(oldDocuments, id) ? oldDocuments[id] : undefined;
+  if (route === undefined) return routeOfDocument(id, { section });
+  // A route that names its own section keeps it.
+  return section && !route.includes('?') ? `${route}?${new URLSearchParams({ section })}` : route;
+}
+
+/**
  * The overview's views: the components and Get started, which held the setup guide, the agents'
  * skills and the guides by their document's id. The catalogue's Get started page that followed is
  * the setup guide too.
@@ -33,7 +62,7 @@ function overviewView({ path, search, section, rest }: OldAddress) {
     search.delete('document');
     if (shown) {
       search.delete('section');
-      return routeOfDocument(shown) ?? docsRoute;
+      return routeOfOldDocument(shown) ?? docsRoute;
     }
     if (search.has('skill') || section === 'local-development') return codingAgents;
     if (section === 'documentation') return docsRoute;
@@ -43,7 +72,7 @@ function overviewView({ path, search, section, rest }: OldAddress) {
   if (/^overview\//.test(path)) return `${homeRoute}${rest()}`;
   // The guides of Get started moved to the Docs, and the contributing pages are gone.
   const guide = /^get-started\/(.+)$/.exec(path)?.[1];
-  if (guide) return routeOfDocument(guide, { section: section ?? undefined }) ?? docsRoute;
+  if (guide) return routeOfOldDocument(guide, section ?? undefined) ?? docsRoute;
   if (/^contributing(?:\/|$)/.test(path)) return homeRoute;
   return undefined;
 }
@@ -68,8 +97,17 @@ const movedPages: Record<string, string> = {
   'foundations/tokens': 'docs/tokens',
   // Scale & density joined Spacing & density.
   'docs/foundations/scale': 'docs/foundations/spacing',
+  // Customize colors joined Customize and extend.
+  'docs/customizing-colors': 'docs/customizing',
   // The templates are gone: the app frame is a pattern now.
   'templates/app-frame': 'patterns/app-frame',
+  // Patterns merged into others open the pattern they joined, in the catalogue and the Docs.
+  'patterns/window-frame': 'patterns/app-frame',
+  'docs/patterns/window-frame': 'docs/patterns/app-frame',
+  'patterns/account-menu': 'patterns/account-and-organizations',
+  'docs/patterns/account-menu': 'docs/patterns/account-and-organizations',
+  'patterns/organization-switcher': 'patterns/account-and-organizations',
+  'docs/patterns/organization-switcher': 'docs/patterns/account-and-organizations',
 };
 
 /**
@@ -110,13 +148,6 @@ function foldedPage({ path, search, section, rest }: OldAddress) {
   return `${folded.page}${rest()}`;
 }
 
-/** Patterns that merged into another, by their slug: the pattern each one is part of now. */
-const mergedPatterns: Record<string, string> = {
-  'window-frame': 'app-frame',
-  'account-menu': 'account-and-organizations',
-  'organization-switcher': 'account-and-organizations',
-};
-
 /** Component pages that became patterns, by their slug: the pattern each one opens. */
 const componentPatterns: Record<string, string> = {
   'window-frame': 'app-frame',
@@ -128,17 +159,12 @@ const componentPatterns: Record<string, string> = {
 
 /** Pages merged into others, and pages that became others, each opening the page it is part of now. */
 function mergedPage({ path, rest }: OldAddress) {
-  // Nine foundations became six: Composition & extension, with Customize colors, became the Docs'
-  // guide Customize and extend.
-  if (/^(?:docs\/)?foundations\/composition(?:\/|$)|^docs\/customizing-colors$/.test(path))
-    return `docs/customizing${rest()}`;
+  // Nine foundations became six: Composition & extension became the Docs' guide Customize and
+  // extend.
+  if (/^(?:docs\/)?foundations\/composition(?:\/|$)/.test(path)) return `docs/customizing${rest()}`;
   // The other templates' screens open the overview.
   if (/^templates(?:\/|$)/.test(path)) return `${homeRoute}${rest()}`;
-  // Patterns merged into others open the pattern they joined, in the catalogue and the Docs, and the
-  // content guidelines are the Writing guide in the Docs.
-  const merged = /^(docs\/)?patterns\/([a-z-]+)$/.exec(path);
-  if (merged && Object.hasOwn(mergedPatterns, merged[2]))
-    return `${merged[1] ?? ''}patterns/${mergedPatterns[merged[2]]}${rest()}`;
+  // The content guidelines are the Writing guide in the Docs.
   if (/^(?:docs\/)?foundations\/content(?:\/|$)/.test(path)) return `docs/writing${rest()}`;
   // Components that became patterns open their pattern.
   const slug = path.split('/')[1] ?? '';
