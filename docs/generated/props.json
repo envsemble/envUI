@@ -4658,7 +4658,7 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean, details: MenuOpenChangeDetails) => void",
+          "type": "(open: boolean, details: MenuFocusDetails) => void",
           "required": false,
           "description": "Called when the menu opens or closes, with the element that had focus before the menubar took it."
         },

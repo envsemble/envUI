@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
-import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { containedOpenChange, usePortalContainer } from '../internal/PortalContainerContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 import { Grid } from '../foundations/Layout.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
@@ -145,10 +145,9 @@ export function HoverCard({
   return (
     <BasePreviewCard.Root
       open={open}
-      onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
-        else setOpen(next, details.reason);
-      }}
+      onOpenChange={containedOpenChange(portal, triggerRef, (next, details) =>
+        setOpen(next, details.reason),
+      )}
     >
       {/* A Tooltip as the trigger, or around the HoverCard, shows no tooltip (see Tooltip). */}
       <HoverCardTriggerContext value={isTooltip(trigger.type)}>

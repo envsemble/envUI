@@ -2,7 +2,7 @@
 
 import type { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useState, type RefObject } from 'react';
-import type { ComboboxItem, ComboboxProps } from '../Combobox.js';
+import type { ComboboxItem, ComboboxOpenChangeDetails, ComboboxProps } from '../Combobox.js';
 import { standIn } from './comboboxItems.js';
 import { useFormReset } from './useFormReset.js';
 
@@ -31,7 +31,7 @@ export function useComboboxSelection<Item extends ComboboxItem>({
   clearable: boolean;
   popupOpen: boolean;
   /** Opens or closes the popup, and says why. */
-  changeOpen: (open: boolean, reason: string) => void;
+  changeOpen: (open: boolean, reason: ComboboxOpenChangeDetails['reason']) => void;
 }) {
   const defaultSelection: Selection = multiple
     ? [...((defaultValue as readonly string[] | undefined) ?? [])]

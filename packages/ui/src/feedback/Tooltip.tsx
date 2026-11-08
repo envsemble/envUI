@@ -31,7 +31,7 @@ import {
   tooltipDelay,
 } from '../internal/TooltipPopup.js';
 import { accessibleName } from '../internal/accessibleName.js';
-import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { containedOpenChange, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { ownName, useStandIn, useTriggerName } from './internal/tooltipTriggerName.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
@@ -356,17 +356,14 @@ function TooltipTrigger({
       <BaseTooltip.Root
         key={isDisabled ? 'disabled' : 'enabled'}
         open={open}
-        onOpenChange={(next, details) => {
-          if (keepsOpen(portal, next, details, triggerRef.current)) {
-            details.cancel();
-            return;
-          }
+        onOpenChange={containedOpenChange(portal, triggerRef, (next, details) => {
           if (next && expanded) return;
           if (next && focusReturning(details.reason, details.event)) return;
           if (next && !isDisabled) setName(accessibleName(triggerRef.current) ?? ownName(trigger));
-          // Base UI's tooltip reasons, which a popover's reason type names.
+          // Base UI's tooltip reasons are a popover's, and disabled for a root it disables, which
+          // this tooltip never does: a control that becomes disabled gets a fresh root (key).
           setOpen(next, details.reason as PopoverOpenChangeReason);
-        }}
+        })}
       >
         <BaseTooltip.Trigger
           ref={triggerRef}

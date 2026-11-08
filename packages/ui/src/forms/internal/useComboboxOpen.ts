@@ -3,12 +3,12 @@
 import type { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useCallback, type RefObject } from 'react';
 import {
-  keepsOpen,
+  containedOpenChange,
   useKeepPageVisible,
   usePortalContainer,
 } from '../../internal/PortalContainerContext.js';
 import { useOpenState } from '../../internal/useOpenState.js';
-import type { ComboboxProps } from '../Combobox.js';
+import type { ComboboxOpenChangeDetails, ComboboxProps } from '../Combobox.js';
 
 /**
  * Whether a combobox's list is open: as it is given, or as the field keeps it itself. Returns it,
@@ -34,14 +34,12 @@ export function useComboboxOpen({
     useCallback(() => [popupRef.current, inputRef.current], [popupRef, inputRef]),
   );
 
-  function changeOpen(next: boolean, reason: string) {
+  function changeOpen(next: boolean, reason: ComboboxOpenChangeDetails['reason']) {
     setOpen(next, { reason });
   }
 
-  function handleOpenChange(next: boolean, details: BaseCombobox.Root.ChangeEventDetails) {
-    if (keepsOpen(portal, next, details)) details.cancel();
-    else changeOpen(next, details.reason);
-  }
+  const handleOpenChange: (next: boolean, details: BaseCombobox.Root.ChangeEventDetails) => void =
+    containedOpenChange(portal, null, (next, details) => changeOpen(next, details.reason));
 
   return { popupOpen, changeOpen, handleOpenChange };
 }

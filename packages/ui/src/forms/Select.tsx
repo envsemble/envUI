@@ -22,9 +22,10 @@ import {
 import { PopupSurface } from '../internal/PopupSurface.js';
 import {
   containedModal,
-  keepsOpen,
+  containedOpenChange,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
+import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
 import { Grid } from '../foundations/Layout.js';
 import { ListRow } from '../internal/ListRow.js';
 import { setRef } from '../internal/setRef.js';
@@ -48,8 +49,20 @@ export interface SelectItem {
 }
 /** What a select's onOpenChange receives beside the requested state. */
 export interface SelectOpenChangeDetails {
-  /** Why it asks to open or close, as Base UI says, such as trigger-press, item-press or escape-key. */
-  reason: string;
+  /** Why it asks to open or close, such as trigger-press, item-press or escape-key. */
+  reason: Extract<
+    OverlayOpenChangeReason,
+    | 'trigger-press'
+    | 'outside-press'
+    | 'escape-key'
+    | 'window-resize'
+    | 'item-press'
+    | 'focus-out'
+    | 'list-navigation'
+    | 'cancel-open'
+    | 'imperative-action'
+    | 'none'
+  >;
 }
 
 export interface SelectProps
@@ -228,11 +241,7 @@ export function Select({
       onValueChange={handleValueChange}
       open={open}
       readOnly={readOnly}
-      onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details, triggerRef.current)) {
-          details.cancel();
-          return;
-        }
+      onOpenChange={containedOpenChange(portal, triggerRef, (next, details) => {
         setOpen(next, { reason: details.reason });
         // A key, or the click a key gives a button (detail 0), rather than the pointer, which
         // opens the list on mousedown.
@@ -241,7 +250,7 @@ export function Select({
           openedByKeyboard.current =
             event?.type.startsWith('key') === true ||
             (event?.type === 'click' && (event as MouseEvent).detail === 0);
-      }}
+      })}
       onOpenChangeComplete={(open) => {
         // Base UI moves focus to the highlighted option a frame after the list opens from the
         // keyboard. On a busy page that queued focus is now and then lost, leaving focus on the

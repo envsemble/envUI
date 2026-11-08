@@ -17,11 +17,8 @@ import {
   type TouchEvent,
 } from 'react';
 import { MenuPopup, menuParts } from './internal/MenuPopup.js';
-import type {
-  OpenChangeDetails as MenuOpenChangeDetails,
-  OpenChangeReason as MenuOpenChangeReason,
-} from './internal/menuOpenChange.js';
-import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
+import { containedOpenChange, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { isRightToLeft } from '../internal/direction.js';
 import { useOpenState } from '../internal/useOpenState.js';
 
@@ -33,7 +30,7 @@ const contextMenuParts = {
 };
 
 /** What a context menu's onOpenChange receives beside the requested state: a menu's details. */
-export type ContextMenuOpenChangeDetails = MenuOpenChangeDetails;
+export type ContextMenuOpenChangeDetails = OpenChangeDetails;
 
 export interface ContextMenuPoint {
   /** Distance from the viewport's left edge in pixels, such as a pointer event's clientX. */
@@ -182,7 +179,7 @@ function WindowContextMenu({
   const keyboardOpenedAt = useRef(Number.NEGATIVE_INFINITY);
   const region = useRef<HTMLDivElement>(null);
 
-  function setOpen(next: boolean, reason: MenuOpenChangeReason = 'trigger-press') {
+  function setOpen(next: boolean, reason: OpenChangeReason = 'trigger-press') {
     if (!next) keyboardOpenedAt.current = Number.NEGATIVE_INFINITY;
     setOpenState(next, { reason });
   }
@@ -240,10 +237,9 @@ function WindowContextMenu({
   return (
     <BaseContextMenu.Root
       open={open}
-      onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details, region.current)) details.cancel();
-        else setOpen(next, details.reason as MenuOpenChangeReason);
-      }}
+      onOpenChange={containedOpenChange(portal, region, (next, details) =>
+        setOpen(next, details.reason),
+      )}
       disabled={disabled}
     >
       <BaseContextMenu.Trigger
@@ -299,7 +295,7 @@ function ContainedContextMenu({
   } | null>(null);
   const region = useRef<HTMLElement>(null);
 
-  function setOpen(next: boolean, reason: MenuOpenChangeReason = 'trigger-press') {
+  function setOpen(next: boolean, reason: OpenChangeReason = 'trigger-press') {
     setOpenState(next, { reason });
   }
 
@@ -355,10 +351,9 @@ function ContainedContextMenu({
     <BaseMenu.Root
       open={open && !disabled}
       modal={false}
-      onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details, region.current)) details.cancel();
-        else setOpen(next, details.reason as MenuOpenChangeReason);
-      }}
+      onOpenChange={containedOpenChange(portal, region, (next, details) =>
+        setOpen(next, details.reason),
+      )}
     >
       {regionElement}
       <MenuPopup

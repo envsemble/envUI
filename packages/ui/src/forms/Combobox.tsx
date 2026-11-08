@@ -31,6 +31,7 @@ import { useComboboxOptions } from './internal/useComboboxOptions.js';
 import { useComboboxQuery } from './internal/useComboboxQuery.js';
 import { useComboboxSelection } from './internal/useComboboxSelection.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
+import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';
 
@@ -58,11 +59,25 @@ export interface ComboboxGroup<Item extends ComboboxItem = ComboboxItem> {
 
 /** What a combobox's onOpenChange receives beside the requested state. */
 export interface ComboboxOpenChangeDetails {
-  /**
-   * Why it asks to open or close, as Base UI says, such as trigger-press, input-change, item-press,
-   * input-clear or escape-key.
-   */
-  reason: string;
+  /** Why it asks to open or close, such as trigger-press, input-change, item-press or escape-key. */
+  reason: Extract<
+    OverlayOpenChangeReason,
+    | 'trigger-press'
+    | 'input-press'
+    | 'input-change'
+    | 'input-clear'
+    | 'outside-press'
+    | 'escape-key'
+    | 'close-press'
+    | 'focus-out'
+    | 'item-press'
+    | 'list-navigation'
+    | 'clear-press'
+    | 'chip-remove-press'
+    | 'cancel-open'
+    | 'imperative-action'
+    | 'none'
+  >;
 }
 
 /** Whether an option matches the text typed into the field. */

@@ -19,7 +19,7 @@ import { classNames } from '../internal/classNames.js';
 import { Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { MenuPopup, menuParts } from './internal/MenuPopup.js';
-import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { containedOpenChange, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { useDirection } from '../internal/useDirection.js';
 import { flag } from '../internal/flag.js';
 import { useMenubarAccessKeys } from './internal/useMenubarAccessKeys.js';
@@ -175,13 +175,17 @@ function Root({
   );
 }
 
-export interface MenuOpenChangeDetails {
+/** What Menubar.Menu's onOpenChange receives beside the requested state. */
+export interface MenuFocusDetails {
   /**
    * The element that had focus before the menubar took it, such as a text field, or null. Commands
    * such as Copy act on it.
    */
   previousFocus: Element | null;
 }
+
+/** @deprecated Use Menubar.MenuFocusDetails, the same details under a name no other menu shares. */
+export type MenuOpenChangeDetails = MenuFocusDetails;
 
 export interface MenuProps {
   /** The trigger's text, such as File. */
@@ -210,7 +214,7 @@ export interface MenuProps {
   /**
    * Called when the menu opens or closes, with the element that had focus before the menubar took it.
    */
-  onOpenChange?: (open: boolean, details: MenuOpenChangeDetails) => void;
+  onOpenChange?: (open: boolean, details: MenuFocusDetails) => void;
   /** Class of the menu popup. */
   className?: string;
   /** The menu popup's ref; the trigger is the menubar's own. */
@@ -318,16 +322,10 @@ function Menu({
       defaultOpen={defaultOpen}
       disabled={disabled}
       actionsRef={actions}
-      onOpenChange={(next, details) => {
+      onOpenChange={containedOpenChange(portal, trigger, (next, details) => {
         // Base UI checks where focus went a moment after it leaves the trigger. When that check runs
         // late, focus may already be in one of the menu's own submenus, so the menu stays open.
-        // Another menu of the menubar opening in its place closes it, in a contained
-        // PortalContainer too, where a close from outside the container is kept from it.
-        if (
-          (!next && details.reason === 'trigger-focus' && focusInSubmenu()) ||
-          (!switchingReasons.has(details.reason) &&
-            keepsOpen(portal, next, details, trigger.current))
-        ) {
+        if (!next && details.reason === 'trigger-focus' && focusInSubmenu()) {
           details.cancel();
           return;
         }
@@ -336,7 +334,7 @@ function Menu({
           closeReason.current = null;
         } else closeReason.current = details.reason;
         onOpenChange?.(next, { previousFocus: previousFocus.current });
-      }}
+      })}
     >
       <BaseMenu.Trigger
         ref={trigger}

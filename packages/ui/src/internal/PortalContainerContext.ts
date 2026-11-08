@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useLayoutEffect, type CSSProperties } from 'react';
+import {
+  createContext,
+  useContext,
+  useLayoutEffect,
+  type CSSProperties,
+  type RefObject,
+} from 'react';
 
 /** What PortalContainer gives the overlays inside it. */
 export interface PortalContainerValue {
@@ -30,28 +36,59 @@ function originOf(event: Event | null | undefined) {
   return event?.composedPath?.()[0] ?? event?.target ?? undefined;
 }
 
+/** What Base UI's onOpenChange of an overlay's root receives beside the requested state. */
+interface OpenChangeEventDetails {
+  event?: Event | null | undefined;
+  reason: string;
+  trigger?: Element | undefined;
+  cancel: () => void;
+}
+
 /**
  * Whether a contained overlay keeps itself open against a change: a close that came from outside
  * its container and its own trigger, such as a press elsewhere on the page or Esc while focus is
  * elsewhere, or from no event, such as another tooltip opening, other than code that closes it.
- * Its trigger, which may sit outside the container, still closes it, as do its own controls. An
- * owner cancels such a change in its root's onOpenChange, passing its trigger where it holds one.
+ * Its trigger, which may sit outside the container, still closes it, as do its own controls.
  */
-export function keepsOpen(
+function keepsOpen(
   { container, contained }: PortalContainerValue,
   next: boolean,
-  details: { event?: Event | null | undefined; reason?: string; trigger?: Element | undefined },
-  trigger?: Element | null,
+  details: OpenChangeEventDetails,
+  trigger: Element | null | undefined,
 ) {
   if (!contained || next || !container) return false;
-  // Pressing, hovering away from or leaving the trigger closes it, as it would anywhere.
-  if (details.reason?.startsWith('trigger-')) return false;
+  // Pressing, hovering away from or leaving the trigger closes it, as it would anywhere, and so
+  // does another menu of its menubar or menu opening in its place, or the arrow keys moving to one.
+  if (
+    details.reason.startsWith('trigger-') ||
+    details.reason === 'sibling-open' ||
+    details.reason === 'list-navigation'
+  )
+    return false;
   const origin = originOf(details.event);
   if (!isNode(origin)) return details.reason !== 'imperative-action';
   const own = [container, trigger, details.trigger].filter(
     (element): element is Element => element instanceof Node,
   );
   return !own.some((element) => element.contains(origin));
+}
+
+/**
+ * The onOpenChange of an overlay's Base UI root: in a contained PortalContainer it cancels a change
+ * the overlay keeps itself open against (see keepsOpen), and hands every other change to `handle`.
+ * `trigger` is the overlay's own control, such as its button or a combobox's text field, which
+ * closes it from outside the container too; null where it has none, or where Base UI names it in
+ * the details, as a dialog's root does.
+ */
+export function containedOpenChange<Details extends OpenChangeEventDetails>(
+  portal: PortalContainerValue,
+  trigger: RefObject<Element | null> | null,
+  handle: (next: boolean, details: Details) => void,
+) {
+  return (next: boolean, details: Details) => {
+    if (keepsOpen(portal, next, details, trigger?.current)) details.cancel();
+    else handle(next, details);
+  };
 }
 
 /**

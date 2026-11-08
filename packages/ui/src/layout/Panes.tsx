@@ -33,6 +33,7 @@ import { IconClose } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/lengths.js';
 import { useResizableWidth } from '../internal/useResizableWidth.js';
 import { useLatest } from '../internal/useLatest.js';
+import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
 import { flag } from '../internal/flag.js';
 import { keepTabInside, useSupportingSheet } from './internal/useSupportingSheet.js';
 import '../styles/Base.css';
@@ -51,8 +52,10 @@ export type SplitAt = 'medium' | 'expanded' | 'large';
  * Why Panes asks to open or close what `open` shows below `splitAt`: Escape, the supporting
  * sheet's close button, a press on its backdrop, the detail's back button, or Panes.Trigger.
  */
-export type OpenChangeReason =
-  'escape-key' | 'close-press' | 'outside-press' | 'back-press' | 'trigger-press';
+export type OpenChangeReason = Extract<
+  OverlayOpenChangeReason,
+  'escape-key' | 'close-press' | 'outside-press' | 'back-press' | 'trigger-press'
+>;
 
 /** What Panes.Root's onOpenChange receives beside the requested state. */
 export interface OpenChangeDetails {
