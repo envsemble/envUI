@@ -481,7 +481,9 @@ body:has(.density-fixture) {
 body:has(.fixture-layout-check) {
   margin: 0;
 }
-.site-live-example.fixture-layout-check {
+/* The class three times: the site's stage rules (Stage.css) weigh up to three classes, in an
+   `:is()` with an attribute and a `:not()`, and load later. */
+.site-live-example.fixture-layout-check.fixture-layout-check.fixture-layout-check {
   min-block-size: 0;
   padding: 0;
   border: 0;
