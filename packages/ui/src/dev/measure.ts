@@ -471,6 +471,58 @@ function scrollOf(element: Element, style: CSSStyleDeclaration): ScrollData | nu
   };
 }
 
+type Edge = StickyData['edge'];
+type Edges = Record<Edge, number>;
+
+/**
+ * Where a scroll container shows its content, in viewport px, inside its borders and scrollbars,
+ * and how far its content reaches past each of those edges, hidden.
+ */
+interface Scrollport {
+  edges: Edges;
+  hidden: Edges;
+}
+
+/**
+ * Whether an element sticky at `edge` is stuck: it sits `offset` inside that edge of the
+ * scrollport while content is hidden past the edge, so it has left the place it would scroll to.
+ * @internal
+ */
+export function isStuck(edge: Edge, offset: number, rect: Edges, port: Scrollport): boolean {
+  const line =
+    edge === 'top' || edge === 'left' ? port.edges[edge] + offset : port.edges[edge] - offset;
+  return port.hidden[edge] > 0.5 && Math.abs(rect[edge] - line) < 1;
+}
+
+/** The scrollport of a scroll container, or of the document's own scrolling. */
+function scrollportOf(scroller: Element | null): Scrollport {
+  const page = document.scrollingElement ?? document.documentElement;
+  const element = scroller ?? page;
+  // The document's scrollport is the viewport; a container's starts inside its border and, in a
+  // right-to-left container, its scrollbar, which clientLeft counts.
+  const box = scroller?.getBoundingClientRect() ?? { left: 0, top: 0 };
+  const left = box.left + (scroller?.clientLeft ?? 0);
+  const top = box.top + (scroller?.clientTop ?? 0);
+  // scrollLeft runs from 0 to negative in a right-to-left scroller, whose start is its right edge.
+  const across = element.scrollWidth - element.clientWidth;
+  const rtl = getComputedStyle(element).direction === 'rtl';
+  const hiddenLeft = rtl ? across + element.scrollLeft : element.scrollLeft;
+  return {
+    edges: {
+      top,
+      left,
+      bottom: top + element.clientHeight,
+      right: left + element.clientWidth,
+    },
+    hidden: {
+      top: element.scrollTop,
+      bottom: element.scrollHeight - element.clientHeight - element.scrollTop,
+      left: hiddenLeft,
+      right: across - hiddenLeft,
+    },
+  };
+}
+
 /** Where an element sticks, in what, and whether it is stuck now. */
 function stickyOf(
   element: HTMLElement,
@@ -478,14 +530,10 @@ function stickyOf(
   indexOf: Map<Element, number>,
   nodes: NodeData[],
 ): StickyData {
-  const edge: StickyData['edge'] =
-    style.top !== 'auto'
-      ? 'top'
-      : style.bottom !== 'auto'
-        ? 'bottom'
-        : style.left !== 'auto'
-          ? 'left'
-          : 'right';
+  const edge =
+    (['top', 'bottom', 'left', 'right'] as const).find(
+      (side) => style.getPropertyValue(side) !== 'auto',
+    ) ?? 'right';
   const offset = px(style.getPropertyValue(edge));
   let scroller: Element | null = null;
   // It sticks in the nearest scroll container: overflow hidden, auto or scroll. `clip` makes none.
@@ -497,39 +545,15 @@ function stickyOf(
       break;
     }
   }
-  const rect = element.getBoundingClientRect();
-  if (!scroller) {
-    const page = document.scrollingElement ?? document.documentElement;
-    const scrolled =
-      edge === 'top' || edge === 'bottom' ? page.scrollTop > 0 : page.scrollLeft !== 0;
-    const at = edge === 'top' ? rect.top : edge === 'left' ? rect.left : 0;
-    return {
-      edge,
-      offset,
-      scroller: 'the document',
-      scrolls: true,
-      stuck: scrolled && Math.abs(at - offset) < 1,
-    };
-  }
+  const stuck = isStuck(edge, offset, element.getBoundingClientRect(), scrollportOf(scroller));
+  if (!scroller) return { edge, offset, scroller: 'the document', scrolls: true, stuck };
   const around = getComputedStyle(scroller);
-  const scrolls = scrollsAlong(around.overflowX) || scrollsAlong(around.overflowY);
-  const box = scroller.getBoundingClientRect();
-  const stuck =
-    edge === 'top'
-      ? scroller.scrollTop > 0 &&
-        Math.abs(rect.top - (box.top + px(around.borderTopWidth) + offset)) < 1
-      : edge === 'bottom'
-        ? scroller.scrollTop + scroller.clientHeight < scroller.scrollHeight - 1 &&
-          Math.abs(box.bottom - px(around.borderBottomWidth) - offset - rect.bottom) < 1
-        : edge === 'left'
-          ? scroller.scrollLeft > 0 && Math.abs(rect.left - (box.left + offset)) < 1
-          : false;
   const index = indexOf.get(scroller);
   return {
     edge,
     offset,
     scroller: index === undefined ? describeElement(scroller) : labelFor(nodes, index, scroller),
-    scrolls,
+    scrolls: scrollsAlong(around.overflowX) || scrollsAlong(around.overflowY),
     stuck,
   };
 }
