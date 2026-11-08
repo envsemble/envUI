@@ -34,8 +34,10 @@ export interface ResizeOptions {
   step?: number;
   /** How far Page Up and Page Down, and an arrow key with Shift, move it; ten steps by default. */
   largeStep?: number;
-  /** The size's unit: px, % of the handle's parent element, or rem, of the root's font size. */
+  /** The size's unit: px, % of the handle's parent element or `percentOf`, or rem, of the root's font size. */
   unit?: 'px' | '%' | 'rem';
+  /** The element a size in % is a share of, such as a column's table: the handle's parent by default. */
+  percentOf?: (handle: HTMLElement) => HTMLElement | null;
   /**
    * Whether the size grows toward the start of the axis: a panel docked at the bottom grows up as
    * its top edge moves up, and a pane at the inline end grows as its start edge moves toward the
@@ -105,6 +107,7 @@ export function useResize({
   step = 10,
   largeStep = step * 10,
   unit = 'px',
+  percentOf = (handle) => handle.parentElement,
   reverse = false,
   onChange,
   valueText,
@@ -158,13 +161,21 @@ export function useResize({
     // Dragging selects no text and leaves focus where it is.
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
-    const parent = event.currentTarget.parentElement;
-    const extent = parent ? (axis === 'inline' ? parent.clientWidth : parent.clientHeight) : 0;
+    const container = percentOf(event.currentTarget);
+    const extent = container
+      ? axis === 'inline'
+        ? container.clientWidth
+        : container.clientHeight
+      : 0;
     // Pointer movement is in screen pixels; a scaled ancestor, as in a zoomed preview, draws the
     // layout smaller or larger than it is.
-    const box = parent?.getBoundingClientRect();
+    const box = container?.getBoundingClientRect();
     const drawn = box ? (axis === 'inline' ? box.width : box.height) : 0;
-    const laid = parent ? (axis === 'inline' ? parent.offsetWidth : parent.offsetHeight) : 0;
+    const laid = container
+      ? axis === 'inline'
+        ? container.offsetWidth
+        : container.offsetHeight
+      : 0;
     const layoutPerScreen = drawn > 0 && laid > 0 ? laid / drawn : 1;
     // A rem follows the root's font size, read as the drag starts.
     const pixelsPerUnit = unit === 'rem' ? remPixels(event.currentTarget) : 1;
