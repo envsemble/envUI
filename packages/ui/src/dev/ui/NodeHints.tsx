@@ -6,7 +6,8 @@ import { Text } from '../../foundations/Text.js';
 import type { LayoutProblem, NodeData, Snapshot } from '../model.js';
 import { queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
-import { round, toRem, windowClasses, windowClassOf } from '../units.js';
+import { roundToHundredth } from '../../internal/lengths.js';
+import { toRem, windowClasses, windowClassOf } from '../units.js';
 import { flag } from '../../internal/flag.js';
 
 /** The hovered node in a few lines: its name, size, level, container and problems. */
@@ -110,7 +111,7 @@ export function Ruler({
           {!node.container
             ? ' · not a container'
             : next !== undefined
-              ? ` · ${round(next - width)}rem to the next query`
+              ? ` · ${roundToHundredth(next - width)}rem to the next query`
               : thresholds.length
                 ? ' · past every query'
                 : ' · nothing queries it'}

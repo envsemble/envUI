@@ -5,7 +5,8 @@ import { measure, resolveRoot } from './measure.js';
 import type { LayoutProblem } from './model.js';
 import { read, type Reading } from './readout.js';
 import { skeletonShift, type SkeletonShiftOptions } from './skeletonShift.js';
-import { rootFontPx, toPx, windowClassOf, type WindowClass } from './units.js';
+import { remPixels } from '../internal/lengths.js';
+import { toPx, windowClassOf, type WindowClass } from './units.js';
 
 export interface LayoutOptions {
   /**
@@ -127,7 +128,7 @@ function atSize<T>(
 ): T {
   if (width === undefined && height === undefined) return run();
   const px = (value: number | string | undefined) =>
-    value === undefined ? null : toPx(value, rootFontPx());
+    value === undefined ? null : toPx(value, remPixels());
   const restore = resizeRoot(root, px(width), px(height));
   try {
     return run();
@@ -156,7 +157,7 @@ export const layout: LayoutApi = {
       return {
         width: String(width),
         ...(height !== undefined && { height: String(height) }),
-        windowClass: windowClassOf(toPx(width, rootFontPx()) / rootFontPx()),
+        windowClass: windowClassOf(toPx(width, remPixels()) / remPixels()),
         text: reading.text,
         problems: reading.problems,
       };

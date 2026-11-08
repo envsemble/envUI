@@ -5,7 +5,8 @@
 import { describeElement, isDevElement, resolveRoot } from './measure.js';
 import type { LayoutProblem } from './model.js';
 import { partClassOf } from './parts.js';
-import { rootFontPx, toRem } from './units.js';
+import { remPixels } from '../internal/lengths.js';
+import { toRem } from './units.js';
 import { alignPulses } from '../foundations/SkeletonScope.js';
 
 /** The attribute that marks a skeleton's root, which its styles follow. */
@@ -227,6 +228,6 @@ export function skeletonShift(
   { tolerance = 1 }: SkeletonShiftOptions = {},
 ): LayoutProblem[] {
   const element = resolveRoot(root);
-  const rootPx = rootFontPx();
+  const rootPx = remPixels(element);
   return surfacesOf(element).flatMap((surface) => shiftsOf(surface, tolerance, rootPx));
 }
