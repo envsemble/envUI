@@ -90,3 +90,45 @@
 .site-page-skeleton-code {
   block-size: 7.5rem;
 }
+
+/* The sign that a pressed link's page is loading (navigation/RouteProgress.tsx): envUI's loading
+   bar, as a TopBar shows it, along the window's top, which creeps forward while the page loads,
+   then completes and fades out. With motion reduced, it is at its full width, and appears and
+   leaves at once. */
+.site-route-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: var(--env-z-tooltip);
+  block-size: 0.1875rem;
+  overflow: hidden;
+  pointer-events: none;
+}
+.site-route-progress-indicator {
+  block-size: 100%;
+  background: var(--env-color-bg-primary-emphasis);
+  transform-origin: left center;
+}
+.site-route-progress-indicator:dir(rtl) {
+  transform-origin: right center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-route-progress-indicator {
+    transform: scaleX(0.9);
+    /* The creep: about ten seconds, slowing as it goes, so it never seems to reach the end. */
+    transition: transform calc(var(--env-motion-duration-slow) * 40) var(--env-motion-ease-enter);
+  }
+  @starting-style {
+    .site-route-progress-indicator {
+      transform: scaleX(0);
+    }
+  }
+  /* Completing takes the slow time, then the bar fades out in the fast one. */
+  .site-route-progress[data-state='finishing'] .site-route-progress-indicator {
+    transform: scaleX(1);
+    opacity: 0;
+    transition:
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter),
+      opacity var(--env-motion-duration-fast) var(--env-motion-ease-exit)
+        var(--env-motion-duration-slow);
+  }
+}

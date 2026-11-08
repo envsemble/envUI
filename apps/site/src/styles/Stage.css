@@ -442,14 +442,15 @@
 }
 
 /* It shows once its room is made for its overlays resting open, fading in once, so nothing in it
-   moves as it appears (OpenExample.tsx); while its example loads, the skeleton in it shows. */
+   moves as it appears (OpenExample.tsx); while its example loads, the skeleton in it shows, and
+   stays over it until then, fading out as it fades in (template/Loading.tsx). */
 .catalogue-open-example:not([data-placed], :has(.site-loading)) {
   opacity: 0;
 }
 @media (prefers-reduced-motion: no-preference) {
   .catalogue-open-example[data-placed] {
     animation: catalogue-open-example-appear var(--env-motion-duration-medium)
-      var(--env-motion-ease);
+      var(--env-motion-ease-enter);
   }
 }
 @keyframes catalogue-open-example-appear {
@@ -482,8 +483,11 @@
 }
 
 /* What opens it sits at the stage's top start, where an application's search does, beside the
-   palette rather than under its frosted panel, where it would show through as a blur. */
-:is(.site-live-example, .site-verdict-stage) .catalogue-open-example:has(.env-command-palette) {
+   palette rather than under its frosted panel, where it would show through as a blur. It stays
+   there while the palette is closed (`data-catalogue-palette`, OpenExample.tsx), so nothing
+   behind the palette moves as it opens and closes. */
+:is(.site-live-example, .site-verdict-stage)
+  .catalogue-open-example:is(:has(.env-command-palette), [data-catalogue-palette]) {
   place-items: start;
 }
 

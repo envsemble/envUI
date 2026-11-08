@@ -1385,6 +1385,15 @@ test("an overlay's overview rests open, and people can close it and open it agai
   await expect(dialog).toHaveCount(0);
   await room.getByRole('button', { name: 'View project', exact: true }).click();
   await expect(dialog).toBeVisible();
+  // What opens a palette stays where it is as the palette closes and opens again.
+  await page.goto(`${siteDevUrl}/components/command-palette`);
+  const palette = page.locator('[data-section="overview"] .catalogue-open-example').first();
+  const search = palette.getByRole('button', { name: 'Search', exact: true });
+  await expect(palette.locator('.env-command-palette')).toBeVisible();
+  const open = await search.boundingBox();
+  await palette.getByRole('combobox').press('Escape');
+  await expect(palette.locator('.env-command-palette')).toHaveCount(0);
+  expect(await search.boundingBox()).toEqual(open);
   // A select's list takes the pointer too, and its choice sticks.
   await page.goto(`${siteDevUrl}/components/select`);
   const select = page.locator('[data-section="overview"] .catalogue-open-example').first();

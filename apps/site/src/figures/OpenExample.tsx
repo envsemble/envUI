@@ -578,6 +578,8 @@ export function OpenExample({
       else reserved.shown();
     };
     const update = () => {
+      // A palette's room keeps its framing once one has opened in it, closed too (Stage.css).
+      if (layer.querySelector('.env-command-palette')) roomElement.dataset.cataloguePalette = '';
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         if (reserved.measured(() => fit(roomElement, layer, live))) place(true);

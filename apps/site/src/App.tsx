@@ -41,6 +41,7 @@ import {
 } from './navigation/SiteNavigation';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink, usePendingRoute } from './navigation/RouterLink';
+import { RouteProgress } from './navigation/RouteProgress';
 import {
   docsRoute,
   homeRoute,
@@ -270,6 +271,8 @@ function Shell() {
         <PageFooter />
         {/* What the page is still loading, said once, while its parts show as skeletons. */}
         <LoadingStatus />
+        {/* A link's page that takes a moment to load shows a bar along the window's top. */}
+        <RouteProgress />
       </div>
       <Sheet
         className="site-navigation-sheet"
