@@ -326,7 +326,7 @@ export function TableOfContents({
     // The shape: drawn every frame the reader's place moves, by writing its outline directly,
     // without rendering the list again. It keeps its shape and follows the scroll as it is; a
     // larger step, such as a chosen section's jump or a mouse wheel's without smooth scrolling,
-    // glides there in the slow duration with the standard easing, never past it, while the label
+    // glides there in the medium duration with the entering easing, never past it, while the label
     // there takes the text color. The swell under the pointer grows and fades in the fast one. No
     // frame is drawn once they rest. At once where reduced motion is preferred or the motion
     // tokens are 0s.
@@ -349,8 +349,9 @@ export function TableOfContents({
         hovers = layout.anchors.map((_, index) => glideAt(index === hovered ? 1 : 0));
       }
       const instant = reducedMotion?.matches ?? false;
-      const travel = instant ? 0 : motionDuration(body, 'slow');
+      const travel = instant ? 0 : motionDuration(body, 'medium');
       const swell = instant ? 0 : motionDuration(body, 'fast');
+      const arrive = easingFunction(motionEasing(body, 'ease-enter'));
       const ease = easingFunction(motionEasing(body, 'ease'));
       let moving = false;
       if (target === null || !placed) {
@@ -359,7 +360,7 @@ export function TableOfContents({
         Object.assign(place, glideAt(target ?? 0));
       } else {
         glideTo(place, target, now, followStep);
-        moving = glideStep(place, now, travel, ease);
+        moving = glideStep(place, now, travel, arrive);
       }
       hovers.forEach((glide, index) => {
         glideTo(glide, index === hovered ? 1 : 0, now);
