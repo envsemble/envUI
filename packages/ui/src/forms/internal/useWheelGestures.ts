@@ -47,6 +47,7 @@ export function useWheelGestures({
   loop,
   count,
   copies,
+  markDragging,
 }: {
   wheelRef: RefObject<HTMLDivElement | null>;
   dragRef: RefObject<WheelDrag | null>;
@@ -54,6 +55,8 @@ export function useWheelGestures({
   loop: boolean;
   count: number;
   copies: number;
+  /** Sets the wheel's data-dragging while the rows follow the pointer. */
+  markDragging: (wheel: HTMLElement, dragging: boolean) => void;
 }) {
   // A touchpad's scrolling not yet turned into a whole row, in pixels.
   const wheelRest = useRef(0);
@@ -73,7 +76,7 @@ export function useWheelGestures({
       state.moved = true;
       wheel.setPointerCapture(event.pointerId);
       // Snapping stays off while the rows follow the pointer, as it would pull them back to a row.
-      wheel.dataset.dragging = '';
+      markDragging(wheel, true);
       turning.holdSettling();
     }
     const moved = event.clientY - state.y;
@@ -93,7 +96,7 @@ export function useWheelGestures({
     if (!state.moved) return;
     dragged.current = true;
     if (wheel.hasPointerCapture(event.pointerId)) wheel.releasePointerCapture(event.pointerId);
-    delete wheel.dataset.dragging;
+    markDragging(wheel, false);
     const speed = event.timeStamp - state.time > flingRestMs ? 0 : state.speed;
     const fling = prefersReducedMotion() ? 0 : speed * flingMs;
     turning.turnTo(wheel, centredRow(wheel, loop, wheel.scrollTop - fling));

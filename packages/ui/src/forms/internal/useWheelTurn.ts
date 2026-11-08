@@ -31,6 +31,7 @@ export function useWheelTurn({
   onChoose,
   loop,
   copies,
+  markTurning,
 }: {
   wheelRef: RefObject<HTMLDivElement | null>;
   /** A mouse dragging the wheel, which settles once it is let go. */
@@ -42,6 +43,8 @@ export function useWheelTurn({
   loop: boolean;
   /** How many times the wheel repeats its entries. */
   copies: number;
+  /** Sets the wheel's data-turning while it eases through a turn of its own. */
+  markTurning: (wheel: HTMLElement, turning: boolean) => void;
 }) {
   const count = entries.length;
   const middleCopy = Math.floor(copies / 2);
@@ -69,7 +72,7 @@ export function useWheelTurn({
     if (!turn.current) return;
     cancelAnimationFrame(turn.current.frame);
     turn.current = null;
-    if (wheel) delete wheel.dataset.turning;
+    if (wheel) markTurning(wheel, false);
   }
 
   /** Eases the wheel towards the target row, a frame at a time, and settles once it is there. */
@@ -108,7 +111,7 @@ export function useWheelTurn({
     // A turn under way heads for the new row from where it is.
     if (turn.current) return;
     // Snapping stays off while the wheel eases, as it would pull each frame back to a row.
-    wheel.dataset.turning = '';
+    markTurning(wheel, true);
     turn.current = {
       position: wheel.scrollTop,
       time: performance.now(),

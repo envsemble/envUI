@@ -40,6 +40,18 @@ interface TimeWheelProps {
   onSideways: (direction: -1 | 1) => void;
 }
 
+// The wheel's states that its turning and dragging set on it directly, between React's renders.
+
+function markTurning(wheel: HTMLElement, turning: boolean) {
+  if (turning) wheel.dataset.turning = '';
+  else delete wheel.dataset.turning;
+}
+
+function markDragging(wheel: HTMLElement, dragging: boolean) {
+  if (dragging) wheel.dataset.dragging = '';
+  else delete wheel.dataset.dragging;
+}
+
 /**
  * One column of a time list: a spinbutton drawn as a wheel whose middle row is its value. Hours and
  * minutes loop endlessly, their entries repeated with the scroll position moved back to the middle
@@ -78,8 +90,17 @@ export function TimeWheel({
     onChoose,
     loop,
     copies,
+    markTurning,
   });
-  const gestures = useWheelGestures({ wheelRef, dragRef, turning, loop, count, copies });
+  const gestures = useWheelGestures({
+    wheelRef,
+    dragRef,
+    turning,
+    loop,
+    count,
+    copies,
+    markDragging,
+  });
   const { centred, scrollToRow } = turning;
 
   function step(index: number, direction: 1 | -1) {
