@@ -111,7 +111,7 @@ One word for each thing the site shows, and one folder in `apps/site/src` for ea
 | playback      | An example played, or held in a moment: the specimen of its name | `specimens/<page>/<Example>.tsx`                     |
 | tile          | A gallery's small live picture of a page                         | `tiles/`; its stage in `figures/TileStage.tsx`       |
 | figure        | The frame that shows an example or a specimen on a page          | `figures/`; a foundation's in `figures/foundations/` |
-| fit           | Drawing a tile's or a figure's picture to fit its stage          | `fit/`                                               |
+| fit           | Drawing a tile's or a figure's picture to fit its stage          | `fit/`; `figures/useVerdictFit.ts`: motion uses it   |
 | motion        | Scripts that play a stage, where a tile or figure plays live     | `motion/`                                            |
 | loading       | Skeletons, load boundaries and retries while a part loads        | `loading/`                                           |
 | template      | The sections of a component or pattern page, in their order      | `template/`                                          |

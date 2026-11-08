@@ -222,7 +222,13 @@ function exampleFigure(
         `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(', ')}, or nothing for the stage in the page's color`,
       );
   }
-  if (attributes.open === true) block.open = true;
+  if (attributes.open === true) {
+    if (attributes.widths !== undefined && attributes.sweep !== true)
+      problems.push(
+        `example ${name} has widths and open; a frame of each width shows no overlays open`,
+      );
+    else block.open = true;
+  }
   if (attributes.device !== undefined) {
     if (!deviceKinds.includes(String(attributes.device)))
       problems.push(

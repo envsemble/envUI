@@ -17,6 +17,7 @@ import { IconSignalCellular4Bar } from '@envsemble/envui/icons/SignalCellular4Ba
 import { IconSignalWifi4Bar } from '@envsemble/envui/icons/SignalWifi4Bar';
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
 import { useDeviceFit } from '../fit/standalone/useDeviceFit';
+import { flag } from '@envui-internal/internal/flag';
 
 /*
  * A device drawn around a page's figure: a phone or a browser's window whose screen is a window of
@@ -93,7 +94,7 @@ function DeviceStage({ kind, children }: { kind: DeviceKind; children: ReactNode
         <div
           ref={row}
           className="site-device-row"
-          data-fitted={fit ? '' : undefined}
+          data-fitted={flag(fit)}
           style={fit && { translate: `${-fit.x * fit.scale}px ${-fit.y * fit.scale}px` }}
         >
           {children}
@@ -204,7 +205,7 @@ export function DeviceFrame({
     <div
       className="site-device"
       data-kind={kind}
-      data-fill={fill ? '' : undefined}
+      data-fill={flag(fill)}
       role={label ? 'group' : undefined}
       aria-label={label}
     >

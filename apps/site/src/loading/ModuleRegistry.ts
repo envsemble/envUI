@@ -1,5 +1,6 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
-import { loadModule, reloadModule } from './LoadBoundary';
+import { reloadModule } from './LoadBoundary';
+import { loadOnce } from './LoadOnce';
 
 /** A glob's files, each a component as its default export. */
 type ComponentModule = { default: ComponentType };
@@ -7,11 +8,10 @@ type ComponentModule = { default: ComponentType };
 /**
  * The files of a glob of the site's own, such as `import.meta.glob('/src/examples/*\/*.tsx')`, each
  * loaded with the page that shows it and kept, by its path from the site app's root, such as
- * `/src/examples/button/CreateProject.tsx`. A load that fails is kept too, so renders until a retry
- * read the same rejected promise rather than a new one each time, which React would take for a
- * promise it was never given; `retry` drops it and, in development, asks for the file again under a
- * new URL (reloadModule). `query` and `pick` say how to read a file loaded again, as `raw` and its
- * default export for a glob of sources.
+ * `/src/examples/button/CreateProject.tsx` (loadOnce). A load that fails is kept until `retry`
+ * drops it and, in development, asks for the file again under a new URL (reloadModule). `query`
+ * and `pick` say how to read a file loaded again, as `raw` and its default export for a glob of
+ * sources.
  */
 export function moduleRegistry<T>(
   glob: Record<string, () => Promise<T>>,
@@ -32,14 +32,7 @@ export function moduleRegistry<T>(
     /** Whether the glob has a file at `path`. */
     has: (path: string) => loaders.has(path),
     /** The module at `path`, loaded once and kept; it throws for a path with no file. */
-    load(path: string) {
-      let loaded = loads.get(path);
-      if (!loaded) {
-        loaded = loadModule(loaderOf(path))();
-        loads.set(path, loaded);
-      }
-      return loaded;
-    },
+    load: (path: string) => loadOnce(loads, path, loaderOf(path)),
     /** Starts loading the file at `path`, where there is one, ahead of its first render. */
     preload(path: string) {
       if (loaders.has(path)) registry.load(path).catch(() => undefined);

@@ -1,7 +1,8 @@
-// The fit's pure calculations (apps/site/src/fit/): what a picture is fitted as and how its view
-// is placed, boxes, the scales a tile's picture is drawn at, a still framed on its pointer's
-// course, where a playing tile's view goes, a held view's scale and place, whether a resting
-// picture holds its frame, and the view's glide.
+// The fit's pure calculations and decisions (apps/site/src/fit/): what a picture is fitted as and
+// how its view is placed, boxes, the scales a tile's picture is drawn at, a still framed on its
+// pointer's course, where a playing tile's view goes and where it is cut off, a held view's scale
+// and place, a modal's screen, a popup's and a resting picture's scale, whether a resting picture
+// holds its frame, and the view's glide.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/importSource.mjs';
@@ -10,6 +11,9 @@ const math = await importSource('FitGeometry', 'apps/site/src/fit/FitGeometry.ts
 const held = await importSource('HeldView', 'apps/site/src/fit/HeldView.ts');
 const easing = await importSource('ViewEasing', 'apps/site/src/fit/ViewEasing.ts');
 const kinds = await importSource('FitKind', 'apps/site/src/fit/FitKind.ts');
+const screen = await importSource('FitScreen', 'apps/site/src/fit/FitScreen.ts');
+const playing = await importSource('FitPlaying', 'apps/site/src/fit/FitPlaying.ts');
+const popups = await importSource('FitResting', 'apps/site/src/fit/FitResting.ts');
 
 const box = (left, top, right, bottom) => ({ left, top, right, bottom });
 
@@ -293,22 +297,27 @@ test('a resting picture holds its frame, and follows its popups placed again onl
     ],
     popups: 1,
   });
-  const follow = { count: 0, following: false };
+  let follow = { count: 0, following: false };
+  const holds = (was, now) => {
+    const decided = held.holdsFrame(was, now, follow);
+    follow = decided.follow;
+    return decided.holds;
+  };
   // Nothing moved: held, and framed anew on a popup placed elsewhere.
-  assert.ok(held.holdsFrame(shape([0, 0]), shape([0, 0]), follow));
-  assert.ok(!held.holdsFrame(shape([0, 0]), shape([0, 0], 3), follow));
+  assert.ok(holds(shape([0, 0]), shape([0, 0])));
+  assert.ok(!holds(shape([0, 0]), shape([0, 0], 3)));
   // A change outside the popups, or of the stage, frames it anew.
-  assert.ok(
-    !held.holdsFrame(shape([0, 0]), { ...shape([0, 0]), room: [210, 150, 300, 200] }, follow),
-  );
+  assert.ok(!holds(shape([0, 0]), { ...shape([0, 0]), room: [210, 150, 300, 200] }));
   // Scrolled to the window's edge, it holds.
-  assert.ok(held.holdsFrame(shape([0, 0]), shape([0, 0], 30, false), follow));
-  // The view moved: a popup placed a few px away holds; further, it is followed, so often.
-  assert.ok(held.holdsFrame(shape([0, 0]), shape([5, 0], 3), follow));
-  for (let count = 0; count < 30; count++)
-    assert.ok(!held.holdsFrame(shape([0, 0]), shape([5, 0], 10), follow));
-  assert.ok(follow.following);
-  assert.ok(held.holdsFrame(shape([0, 0]), shape([5, 0], 10), follow));
+  assert.ok(holds(shape([0, 0]), shape([0, 0], 30, false)));
+  // The view moved: a popup placed a few px away holds; further, it is followed, so often, each
+  // time counted anew rather than in what it was given.
+  assert.ok(holds(shape([0, 0]), shape([5, 0], 3)));
+  const before = follow;
+  for (let count = 0; count < 30; count++) assert.ok(!holds(shape([0, 0]), shape([5, 0], 10)));
+  assert.deepEqual(before, { count: 0, following: false });
+  assert.deepEqual(follow, { count: 30, following: true });
+  assert.ok(holds(shape([0, 0]), shape([5, 0], 10)));
 });
 
 test('the view glides to where it goes, bent to a target that moves on the way', () => {
@@ -326,4 +335,158 @@ test('the view glides to where it goes, bent to a target that moves on the way',
   // Late in a glide, a new one starts from where the view is.
   const late = easing.steer(first, [90, 0, 1], [200, 0, 1], 90, 100, linear);
   assert.deepEqual(late, { from: [90, 0, 1], to: [200, 0, 1], start: 90, length: 100 });
+});
+
+test("a modal's screen is drawn at the overlays' scale, or as small as it needs, and kept as it plays", () => {
+  const room = { across: 300, down: 200 };
+  const scales = { overlay: 0.75, phone: false, steps: [1], popupLeast: 0.6 };
+  const atRest = { played: null, rest: 1 };
+  const dialog = screen.decideScreenScale(
+    room,
+    { scales, own: 1 },
+    { needHeight: 300, needWidth: 0, surfaceHeight: 150 },
+    atRest,
+  );
+  // Its surface fits the stage a margin from its edges at the overlays' scale; the screen is as tall
+  // as the stage shows at it, or the modal needs.
+  assert.deepEqual(dialog, {
+    scale: 0.75,
+    tall: 300,
+    plays: false,
+    surfaceHeight: 150,
+    centred: true,
+  });
+  // A taller surface is drawn as much smaller as it needs, down to the popups' least.
+  const tall = { needHeight: 500, needWidth: 0, surfaceHeight: 400 };
+  assert.equal(screen.decideScreenScale(room, { scales, own: 1 }, tall, atRest).scale, 0.6);
+  // As it plays, it keeps the scale it rested at and the screen it has.
+  assert.deepEqual(
+    screen.decideScreenScale(room, { scales, own: 1 }, tall, { played: 420, rest: 0.7 }),
+    { scale: 0.7, tall: 420, plays: true, surfaceHeight: 400, centred: true },
+  );
+  // Any other modal on a phone, such as a sheet wider than the screen, takes one of its steps.
+  const phone = { overlay: 0, phone: true, steps: [1, 0.85, 0.7], popupLeast: 0.7 };
+  const wide = { needHeight: 0, needWidth: 400, surfaceHeight: 0 };
+  assert.equal(screen.decideScreenScale(room, { scales: phone, own: 1 }, wide, atRest).scale, 0.7);
+});
+
+test('a playing tile is cut off where its view shows, and where its still was until it moves', () => {
+  const room = { across: 300, down: 200 };
+  const boxes = [{ box: box(-100, -50, 100, 50) }];
+  const view = { toX: 0, toY: 0, toScale: 1, zoomed: false };
+  const run = {
+    rested: new Map(),
+    scale: 1,
+    pending: null,
+    at: { x: 0, y: 0, scale: 1 },
+    cut: ['bottom'],
+    moved: false,
+  };
+  // Where it rested, it keeps the side its still was cut off at, though it shows whole.
+  assert.deepEqual(playing.decidePlayCut(room, boxes, run, view, false), { cut: 'bottom', run });
+  // Moved, it is cut off only where it reaches past the stage, and stays marked as moved.
+  const moved = playing.decidePlayCut(room, boxes, run, { ...view, toX: 80 }, false);
+  assert.equal(moved.cut, 'start');
+  assert.equal(moved.run.moved, true);
+  assert.equal(run.moved, false);
+  // A held view is cut off where its still was, wherever it shows.
+  assert.equal(playing.decidePlayCut(room, boxes, run, { ...view, toX: 80 }, true).cut, 'bottom');
+});
+
+test("a popup's whole scale is decided once for its stage's size, and kept while it stays", () => {
+  const measured = {
+    extent: { ...box(0, 0, 100, 100), width: 268, height: 168 },
+    painted: [
+      { box: box(0, 0, 100, 20), popup: false },
+      { box: box(0, 24, 100, 100), popup: true },
+    ],
+    popup: true,
+    dialog: false,
+    scales: { phone: false, popupLeast: 0.8 },
+  };
+  const kind = { scale: 'own', tile: true };
+  const script = { holdsView: false, narrow: false };
+  const room = { across: 300, down: 200 };
+  const kept = { room: '300 200', narrower: 0.7, whole: 0.7 };
+  const shown = popups.decidePopups(room, kind, measured, script, { shown: true, wholeFor: kept });
+  assert.equal(shown.wholeFor, kept);
+  // A component's popup keeps its room from the stage's edges, what opens it the inset.
+  assert.deepEqual(
+    shown.anchored.map(({ pad }) => pad),
+    [16, 5],
+  );
+  // Another stage's size, or before it shows, decides it again.
+  const other = { across: 320, down: 200 };
+  assert.deepEqual(
+    popups.decidePopups(other, kind, measured, script, { shown: true, wholeFor: kept }).wholeFor,
+    { room: '320 200', narrower: null, whole: 0 },
+  );
+  assert.notEqual(
+    popups.decidePopups(room, kind, measured, script, { shown: false, wholeFor: kept }).wholeFor,
+    kept,
+  );
+  // What shows whole at a scale is drawn at it; else at the popups' least.
+  assert.equal(shown.scale(1), 1);
+  const large = {
+    ...measured,
+    extent: { ...box(0, 0, 400, 300), width: 268, height: 168 },
+    painted: [
+      { box: box(0, 0, 400, 20), popup: false },
+      { box: box(0, 24, 400, 300), popup: true },
+    ],
+  };
+  const drawn = popups.decidePopups(room, kind, large, script, { shown: false, wholeFor: null });
+  assert.equal(drawn.scale(1), 0.8);
+});
+
+test('a resting component keeps the scale it rested at, and a held subject is drawn smaller to show', () => {
+  const scales = {
+    phone: false,
+    steps: [1],
+    popupLeast: 0.8,
+    overlay: 0,
+    overlayScale: 0.75,
+    least: 0,
+    leastBlock: 0,
+    floor: 0,
+  };
+  const measured = {
+    extent: { ...box(0, 0, 300, 100), width: 168, height: 118 },
+    popup: false,
+    scales,
+    window: 1,
+    own: 0.85,
+  };
+  const kind = { scale: 'own', tile: true };
+  const popupsAt = { anchored: null, narrower: null, whole: 0, scale: (atMost) => atMost };
+  const held = { rows: null, lowest: null, ways: [], room: {} };
+  const room = { across: 200, down: 150 };
+  const decide = (script, at) =>
+    popups.decideRestingScale(room, kind, measured, popupsAt, held, script, {
+      playing: false,
+      rest: 1,
+      laidOut: false,
+      ...at,
+    });
+  const plain = { holdsView: false, anywhere: [] };
+  assert.equal(decide(plain).scale, 0.85);
+  // Measured again a hair off, it is the scale it rested at.
+  assert.equal(decide(plain, { rest: 0.8502 }).scale, 0.8502);
+  // A held view that names what it shows is drawn as much smaller as shows it whole, a margin
+  // from the stage's edges.
+  const subject = decide({ holdsView: true, anywhere: ['.env-panel'] });
+  assert.equal(subject.scale, 0.626);
+  assert.equal(subject.heldSmaller, true);
+  // On a phone, a popup laid out in its window lays out at the scale it is drawn at, at rest.
+  const phone = { ...measured, scales: { ...scales, phone: true, steps: [1, 0.85] } };
+  const smaller = { ...popupsAt, scale: (atMost) => Math.min(atMost, 0.85) };
+  const phoneScale = (at) =>
+    popups.decideRestingScale(room, kind, { ...phone, popup: true }, smaller, held, plain, {
+      playing: false,
+      rest: 1,
+      laidOut: true,
+      ...at,
+    }).layoutScale;
+  assert.equal(phoneScale(), '0.85');
+  assert.equal(phoneScale({ playing: true }), null);
 });

@@ -1,12 +1,12 @@
 /*
- * What a tile's pointer heads to over its script (MustShow.ts), as parts of its canvas the fit keeps
- * in view (useFit.ts): at rest, so its still is framed as its play is, and as it plays.
+ * What a tile's pointer heads to over its script (StageScript, FitKind.ts), as parts of its canvas
+ * the fit keeps in view (useFit.ts): at rest, so its still is framed as its play is, and as it
+ * plays.
  */
-import { courseOf, headingOf, mustShowOf, type Heading } from '../motion/MustShow';
-import { aimedElement } from '../motion/pointer/PointerPlan';
 import { remPixels } from '@envui-internal/internal/lengths';
 import { rowSelector } from './FitDraw';
 import { frameOnCourse, type Box } from './FitGeometry';
+import type { Aim, StageScript } from './FitKind';
 import { inkOf, partOf } from './PaintedBoxes';
 
 /**
@@ -15,8 +15,8 @@ import { inkOf, partOf } from './PaintedBoxes';
  * past its foot (trimRows); of an element taller than a row, such as a panel's content, only the
  * stretch around the point it aims at.
  */
-function aimBox(canvas: HTMLElement, aim: Heading): Box | null {
-  const element = aimedElement(canvas, aim.selector);
+function aimBox(canvas: HTMLElement, script: StageScript, aim: Aim): Box | null {
+  const element = script.aimed(aim.selector);
   if (!element?.checkVisibility()) return null;
   const row = element.closest(rowSelector);
   const box = partOf(row && canvas.contains(row) ? row : element, canvas);
@@ -34,19 +34,18 @@ function aimBox(canvas: HTMLElement, aim: Heading): Box | null {
 }
 
 /** The part of the canvas a playing tile's pointer is heading to, in its own px (aimBox). */
-export function heading(canvas: HTMLElement): Box | null {
-  const aim = headingOf(canvas);
-  return aim ? aimBox(canvas, aim) : null;
+export function heading(canvas: HTMLElement, script: StageScript): Box | null {
+  return script.heading ? aimBox(canvas, script, script.heading) : null;
 }
 
 /**
  * Each point a tile's pointer heads to over its script that is there at rest: the part of the
  * canvas it takes in (aimBox), and the point its cursor's tip is at, in the canvas's own px.
  */
-export function restingAims(canvas: HTMLElement) {
-  return courseOf(canvas).flatMap((aim) => {
-    const element = aimedElement(canvas, aim.selector);
-    const box = aimBox(canvas, aim);
+export function restingAims(canvas: HTMLElement, script: StageScript) {
+  return script.course.flatMap((aim) => {
+    const element = script.aimed(aim.selector);
+    const box = aimBox(canvas, script, aim);
     if (!element || !box || box.right <= box.left || box.bottom <= box.top) return [];
     const own = partOf(element, canvas);
     return [{ box, y: own.top + (own.bottom - own.top) * aim.y }];
@@ -54,21 +53,22 @@ export function restingAims(canvas: HTMLElement) {
 }
 
 /**
- * A still framed as its play is (frameOnCourse): on what the tile names anywhere (useMustShow),
- * such as a panel it opens in place, as far as it paints (inkOf), first, then each point its
- * pointer heads to over its script that is there at rest, in order.
+ * A still framed as its play is (frameOnCourse): on what the tile names anywhere, such as a panel
+ * it opens in place, as far as it paints (inkOf), first, then each point its pointer heads to over
+ * its script that is there at rest, in order.
  */
 export function onCourse(
   stage: HTMLElement,
   canvas: HTMLElement,
+  script: StageScript,
   toX: number,
   toY: number,
   scale: number,
 ) {
-  const named = mustShowOf(canvas, true).flatMap((selector) => {
-    const element = aimedElement(canvas, selector);
+  const named = script.anywhere.flatMap((selector) => {
+    const element = script.aimed(selector);
     return element?.checkVisibility() ? [inkOf(element, canvas)] : [];
   });
-  const aims = courseOf(canvas).map((aim) => aimBox(canvas, aim));
+  const aims = script.course.map((aim) => aimBox(canvas, script, aim));
   return frameOnCourse([...named, ...aims], stage.clientWidth, stage.clientHeight, toX, toY, scale);
 }

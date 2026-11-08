@@ -699,6 +699,11 @@ test("a figure's fence takes the attributes its role takes, as values and flags"
       frontmatter + body.replace('widths="16 30"', 'widths="16 30" fit'),
       /example Narrow has fit without sweep/,
     );
+    // A frame of each width shows the example closed: a live example is shown one way.
+    await rejects(
+      frontmatter + body.replace('widths="16 30"', 'widths="16 30" open'),
+      /example Narrow has widths and open/,
+    );
     await writeFile(
       page,
       frontmatter + body.replace('widths="16 30"', 'widths="30 16" sweep classes fit'),

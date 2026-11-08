@@ -3,6 +3,7 @@ import { PortalContainer } from '@envsemble/envui';
 import { makeRoom, overlays, reserveStage } from '../fit/standalone/OverlayRoom';
 import { sitePopupOpen } from '../motion/SitePopup';
 import { press, triggerOf } from './PressTrigger';
+import { flag } from '@envui-internal/internal/flag';
 
 /**
  * How long a figure's room may wait, in ms, for overlays to rest open in before it shows anyway,
@@ -221,7 +222,7 @@ export function OpenExample({
       className="catalogue-open-example"
       data-open-example={name}
       data-catalogue-reserve={part}
-      data-live={live ? '' : undefined}
+      data-live={flag(live)}
       inert={!live}
     >
       <PortalContainer container={layer} contained>

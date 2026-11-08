@@ -11,7 +11,13 @@ import type {
 import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../pages/PageModel';
 import { AnatomyFigure } from './anatomy/AnatomyFigure';
-import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
+import {
+  ExampleCode,
+  ExampleRender,
+  keepLinksInPlace,
+  LiveExample,
+  type Presentation,
+} from './LiveExample';
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from '../template/SiteMarkdown';
 import {
@@ -211,17 +217,24 @@ function Figure({
       name={block.name}
       title={block.heading}
       caption={block.caption}
-      widths={block.widths}
-      sweep={block.sweep}
-      classes={block.classes}
-      fit={block.fit}
-      open={block.open}
-      live={live}
+      presentation={presentationOf(block, live)}
       stage={block.stage}
-      motion={block.motion}
-      device={block.device}
     />
   );
+}
+
+/**
+ * How a live example's figure shows it, by its fence's attributes: played where it takes
+ * `motion`, whatever else it takes; else in frames of its `widths`, sweeping or one to a row;
+ * else open, or on its device.
+ */
+function presentationOf(block: ExampleBlock, live: boolean): Presentation | undefined {
+  const { motion, widths, sweep, classes, fit, open, device } = block;
+  if (motion) return { kind: 'motion', device };
+  if (widths && sweep) return { kind: 'sweep', widths, classes, fit };
+  if (widths) return { kind: 'widths', widths };
+  if (open) return { kind: 'open', live };
+  return device && { kind: 'device', device };
 }
 
 /**
@@ -241,10 +254,12 @@ export function UsageFigure({ page }: { page: Document }) {
         page={page.id}
         name={block.name}
         title={block.heading}
-        open={block.open}
-        live
+        presentation={
+          block.open
+            ? { kind: 'open', live: true }
+            : block.device && { kind: 'device', device: block.device }
+        }
         stage={block.stage}
-        device={block.device}
         code={false}
       />
     </div>

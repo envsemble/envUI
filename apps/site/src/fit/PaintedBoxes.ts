@@ -12,7 +12,7 @@ export const inPopup = (element: Element) => element.closest(overlayLayer) !== n
 
 /**
  * The elements of a canvas a selector names, such as one a tile names for its view to keep
- * (MustShow.ts); a selector that doesn't parse names none.
+ * (StageScript, FitKind.ts); a selector that doesn't parse names none.
  */
 export function elementsOf(canvas: Element, selector: string) {
   try {

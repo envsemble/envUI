@@ -1,7 +1,8 @@
 /*
- * The decisions of a fit on a modal's screen (FitPicture.ts): a component's modal over its
- * backdrop, such as a dialog, a sheet or a command palette, with its tile's stage for its screen.
- * They are returned for the drawing step to apply (FitDraw.ts), and read the page, never write it.
+ * The decisions of a fit on a modal's screen (useFit.ts): a component's modal over its backdrop,
+ * such as a dialog, a sheet or a command palette, with its tile's stage for its screen. They are
+ * returned for the fit to draw (FitDraw.ts) and keep, and write nothing: the scale is decided on
+ * what was measured, the place on the screen as it is laid out at that scale.
  *
  * The modal has the stage for its screen, as an application's has the window: the canvas is laid
  * out as large as the stage shows at its scale, from the stage's corner, so the backdrop covers the
@@ -12,8 +13,8 @@
  */
 import type { Placement } from './FitDraw';
 import { contain, join, margin, stepDown } from './FitGeometry';
+import type { StageScript } from './FitKind';
 import type { Measured } from './FitMeasure';
-import type { Fitting } from './FitState';
 import { overlayLayer, partOf, type Shown } from './PaintedBoxes';
 import { heading, onCourse } from './PointerCourse';
 
@@ -32,11 +33,18 @@ const open = (surface: Element) =>
   surface.checkVisibility() && !surface.closest('[data-ending-style]');
 
 /**
- * The room the modals in a canvas need: as tall as their content and the gutters around it, a
- * sheet as tall as the screen it spans, and as wide where one is wider than the screen; and how
- * tall a surface is alone.
+ * The room the modals in a canvas need, in its own px: as tall as their content and the gutters
+ * around it, a sheet as tall as the screen it spans, and as wide where one is wider than the
+ * screen; and how tall a surface is alone.
  */
-function modalRoom(canvas: HTMLElement) {
+export interface ModalRoom {
+  needHeight: number;
+  needWidth: number;
+  surfaceHeight: number;
+}
+
+/** Measures the room the modals in a canvas need (ModalRoom). */
+export function modalRoom(canvas: HTMLElement): ModalRoom {
   const px = (value: string) => parseFloat(value) || 0;
   let needHeight = 0;
   let needWidth = 0;
@@ -89,10 +97,15 @@ export interface ScreenScale {
  * the stage still; any other modal at its own size, as far smaller as it needs, down to the popups'
  * least, or on a phone at one of a phone's scales. An overlay is drawn whole where its surface
  * fits the stage a margin from its edges, the gutters of backdrop around it cut off where they
- * don't, centred on it.
+ * don't, centred on it. `across` and `down` are the stage's size; `played`, as a tile that has
+ * shown plays, how tall its screen is, which it keeps, at the scale it rested at, `rest`.
  */
-export function decideScreenScale(f: Fitting, { scales, own }: Measured): ScreenScale {
-  const { stage, canvas, view } = f;
+export function decideScreenScale(
+  { across, down }: { across: number; down: number },
+  { scales, own }: Pick<Measured, 'scales' | 'own'>,
+  { needHeight, needWidth, surfaceHeight }: ModalRoom,
+  { played, rest }: { played: number | null; rest: number },
+): ScreenScale {
   const { overlay, phone, steps, popupLeast } = scales;
   const centred = Boolean(overlay);
   const atMost = overlay || (phone ? 1 : own);
@@ -102,18 +115,15 @@ export function decideScreenScale(f: Fitting, { scales, own }: Measured): Screen
       : phone
         ? stepDown(steps, scale, popupLeast)
         : Math.max(Math.min(own, popupLeast), scale);
-  const across = stage.clientWidth;
-  const down = stage.clientHeight;
-  const { needHeight, needWidth, surfaceHeight } = modalRoom(canvas);
   const fits = Math.min(
     atMost,
     needHeight ? (centred ? (down - 2 * margin) / surfaceHeight : down / needHeight) : Infinity,
     needWidth ? across / needWidth : Infinity,
   );
   // As it plays, the screen stays as it was at rest, as the modal closes and opens again.
-  const plays = f.playing.current && canvas.dataset.fitted !== undefined;
-  const scale = plays ? view.rest : stepped(fits);
-  const tall = plays ? canvas.offsetHeight : Math.max(down / scale, needHeight);
+  const plays = played !== null;
+  const scale = plays ? rest : stepped(fits);
+  const tall = plays ? played : Math.max(down / scale, needHeight);
   return { scale, tall, plays, surfaceHeight, centred };
 }
 
@@ -127,11 +137,12 @@ export function decideScreenScale(f: Fitting, { scales, own }: Measured): Screen
  * own fill aside, is cut off there.
  */
 export function decideScreenPlace(
-  f: Fitting,
+  { stage, canvas }: { stage: HTMLElement; canvas: HTMLElement },
+  script: StageScript,
   boxes: Shown[],
   { scale, tall, plays, surfaceHeight, centred }: ScreenScale,
+  { toY: viewY, fadeAt, playing }: { toY: number; fadeAt: number | null; playing: boolean },
 ): Placement {
-  const { stage, canvas, view } = f;
   const across = stage.clientWidth;
   const down = stage.clientHeight;
   // From the screen's top to its foot: where the stage's middle is along it.
@@ -144,7 +155,7 @@ export function decideScreenPlace(
   const surfaceBox = surface ? partOf(surface, canvas) : null;
   const surfaceFits = surfaceHeight * scale <= down - 2 * margin;
   let toY = plays
-    ? view.toY
+    ? viewY
     : along(
         surfaceBox && surfaceFits
           ? ((surfaceBox.top + surfaceBox.bottom) / 2) * scale
@@ -152,11 +163,11 @@ export function decideScreenPlace(
             ? down / 2 + surfaceBox.top * scale - margin
             : centred
               ? (tall / 2) * scale
-              : onCourse(stage, canvas, across / 2, highest, scale).toY,
+              : onCourse(stage, canvas, script, across / 2, highest, scale).toY,
       );
   if (plays) {
     toY = along(toY);
-    const box = heading(canvas);
+    const box = heading(canvas, script);
     if (box) toY = along(contain(toY, box.top * scale, box.bottom * scale, down / 2 - 4));
   }
   const shows = join(...boxes.map(({ box }) => box));
@@ -171,8 +182,8 @@ export function decideScreenPlace(
     toX: across / 2,
     toY,
     cut,
-    fadeAt: f.kept.fadeAt,
-    played: f.playing.current,
+    fadeAt,
+    played: playing,
     screenTop: true,
   };
 }

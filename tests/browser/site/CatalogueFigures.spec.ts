@@ -52,6 +52,33 @@ test('live examples keep links in place, show their source, and specimens show f
   await expect(page.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
 });
 
+test('a playback keeps its links in place, as an example does, but a link to a part of the page', async ({
+  page,
+}) => {
+  await page.goto(`${siteDevUrl}/components/table-of-contents`);
+  const playback = page.locator('[data-catalogue-specimen="ReadersPlace"]');
+  await expect(playback.locator('.env-table-of-contents')).toBeVisible();
+  // A link to a section of the page, as a table of contents in a playback holds, and one to
+  // another page, in the playback's area.
+  const section = await page.locator('main h2[id]').first().getAttribute('id');
+  await playback.evaluate((area, id) => {
+    for (const [href, text] of [
+      [`#${id}`, 'To the section'],
+      ['/components/button', 'To another page'],
+    ]) {
+      const link = document.createElement('a');
+      link.href = href;
+      link.textContent = text;
+      area.append(link);
+    }
+  }, section);
+  const address = page.url();
+  await playback.getByRole('link', { name: 'To another page', exact: true }).click();
+  expect(page.url()).toBe(address);
+  await playback.getByRole('link', { name: 'To the section', exact: true }).click();
+  await expect.poll(() => new URL(page.url()).hash).toBe(`#${section}`);
+});
+
 test('every anatomy figure numbers each part its legend names', async ({ page }) => {
   // It visits every component and pattern page, whose examples load as each opens: about 1.5
   // minutes alone, longer beside other workers.

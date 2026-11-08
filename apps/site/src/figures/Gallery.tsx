@@ -9,6 +9,7 @@ import { TileStage } from './TileStage';
 import { useNear } from './useNear';
 import { frameOf, tilePictureOf, type TilePicture } from '../template/RelatedPages';
 import { preloadTile } from '../tiles/Tiles';
+import { flag } from '@envui-internal/internal/flag';
 
 /** One group of a gallery, such as a kind of component or what people are doing. */
 export interface GalleryGroup {
@@ -73,8 +74,7 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
 
 /** Marks a group of patterns, whose scenes take larger, taller cards than a component's, fewer to a
  * row, so their words read (Gallery.css). */
-const scenes = (group: GalleryGroup) =>
-  group.pages.every((page) => page.kind === 'pattern') ? '' : undefined;
+const scenes = (group: GalleryGroup) => flag(group.pages.every((page) => page.kind === 'pattern'));
 
 /**
  * A gallery of pages, such as every component or every pattern: by group, a tile for each page

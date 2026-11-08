@@ -152,73 +152,77 @@ export const keepLinksInPlace = {
 };
 
 /**
- * An example rendered live in the documentation's theme, on the recessed canvas, with its source
- * and a copy button; with `widths`, in a frame of each width, one to a row, or with `sweep`, in
- * one frame whose width sweeps between them (`classes` names their window classes, `fit` draws it
- * smaller where it must to reach the widest), and with `caption`, a sentence below it. With
- * `motion`, the stage plays it: its animated specimen of the same name, which uses the example as a
- * person would, takes the stage's place, above its caption and code. With `open` and `live`, as an
- * overview's, it rests with its overlay open, and people can use it; without `live`, it is a still
- * picture, marked as one. Without `code`, as the figure at the top of a Docs page's Usage (UsageFigure), whose
- * code follows it, it shows no code of its own. With `device`, it shows on a phone's or a window's
- * screen at the device's real width, filling it, the device drawn to fit the stage (DeviceFrame),
- * an animated one too: its stage puts the device around what it plays.
+ * How a live example is shown, as its fence's `figure=` attributes say (validation/Figures.ts);
+ * without one, live in one window of the column's width.
+ */
+export type Presentation =
+  /** In a frame of each width, in rem, one to a row (`widths`). */
+  | { kind: 'widths'; widths: number[] }
+  /**
+   * In one frame whose width sweeps between the widths and back (`sweep`), its ruler naming their
+   * window classes too (`classes`), drawn smaller where it must to reach the widest (`fit`).
+   */
+  | { kind: 'sweep'; widths: number[]; classes?: boolean; fit?: boolean }
+  /**
+   * Resting with its overlays open (`open`): a still picture, marked as one, or `live`, to use, as
+   * an overview's is.
+   */
+  | { kind: 'open'; live?: boolean }
+  /**
+   * Played by its stage (`motion`): its animated specimen of the same name, which uses the example
+   * as a person would, in its device, where it has one.
+   */
+  | { kind: 'motion'; device?: DeviceKind }
+  /**
+   * On a phone's or a window's screen at the device's real width, filling it, the device drawn to
+   * fit the stage (DeviceFrame).
+   */
+  | { kind: 'device'; device: DeviceKind };
+
+/**
+ * An example rendered live in the documentation's theme, on the recessed canvas, as `presentation`
+ * says, with `caption`, a sentence below it, and its source and a copy button under that. Without
+ * `code`, as the figure at the top of a Docs page's Usage (UsageFigure), whose code follows it, it
+ * shows no code of its own.
  */
 export function LiveExample({
   page,
   name,
   title,
   caption,
-  widths,
-  sweep = false,
-  classes = false,
-  fit = false,
-  open = false,
-  live = false,
+  presentation,
   stage,
-  motion = false,
   code = true,
-  device,
 }: {
   page: string;
   name: string;
   title: string;
   caption?: string;
-  widths?: number[];
-  /** Whether the example is shown in one frame whose width sweeps between `widths`. */
-  sweep?: boolean;
-  /** Whether that frame's ruler names its window class too. */
-  classes?: boolean;
-  /** Whether that frame is drawn smaller where it must to reach its widest width. */
-  fit?: boolean;
-  /** Whether the example's overlays are shown open, as a picture. */
-  open?: boolean;
-  /** Whether, shown open, it is live rather than a picture, as a page's overview is. */
-  live?: boolean;
+  /** How it is shown; without one, live in one window. */
+  presentation?: Presentation;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
-  /** Whether its animated specimen plays it in place of the live stage. */
-  motion?: boolean;
   /** Whether its code shows under it, in a disclosure. */
   code?: boolean;
-  /** The device it shows on, at the device's real width. */
-  device?: DeviceKind;
 }) {
   const theme = useTheme();
-  const render = open ? (
-    <OpenExample name={name} live={live} part={`open:${page}/${name}`}>
+  const still = presentation?.kind === 'open' && !presentation.live;
+  const device = presentation?.kind === 'device' ? presentation.device : undefined;
+  const render =
+    presentation?.kind === 'open' ? (
+      <OpenExample name={name} live={presentation.live ?? false} part={`open:${page}/${name}`}>
+        <ExampleRender page={page} name={name} />
+      </OpenExample>
+    ) : (
       <ExampleRender page={page} name={name} />
-    </OpenExample>
-  ) : (
-    <ExampleRender page={page} name={name} />
-  );
+    );
   return (
     <Column gap={3} className="site-live-example-entry">
-      {motion ? (
-        <FigureDevice value={device}>
+      {presentation?.kind === 'motion' ? (
+        <FigureDevice value={presentation.device}>
           <ExamplePlayback page={page} name={name} />
         </FigureDevice>
-      ) : widths && sweep ? (
+      ) : presentation?.kind === 'sweep' ? (
         // On the page's own theme: a theme boundary around it would paint over the page.
         <div
           role="group"
@@ -227,12 +231,17 @@ export function LiveExample({
           {...keepLinksInPlace}
         >
           <MotionStage label="the example's width changing" stage={stage}>
-            <WidthSweep widths={widths} classes={classes} fit={fit} crop>
+            <WidthSweep
+              widths={presentation.widths}
+              classes={presentation.classes ?? false}
+              fit={presentation.fit ?? false}
+              crop
+            >
               {render}
             </WidthSweep>
           </MotionStage>
         </div>
-      ) : widths ? (
+      ) : presentation?.kind === 'widths' ? (
         <div
           role="group"
           aria-label={`${title} example`}
@@ -240,7 +249,7 @@ export function LiveExample({
           data-example={name}
           {...keepLinksInPlace}
         >
-          {widths.map((width) => (
+          {presentation.widths.map((width) => (
             <figure key={width} className="catalogue-width-frame">
               <Column
                 render={<Theme {...theme} />}
@@ -265,9 +274,7 @@ export function LiveExample({
           container="env-window"
           gap={0}
           role="group"
-          aria-label={
-            open && !live ? `${title} example, shown open as a picture` : `${title} example`
-          }
+          aria-label={still ? `${title} example, shown open as a picture` : `${title} example`}
           className="site-live-example"
           data-example={name}
           data-stage={stage}
@@ -283,7 +290,7 @@ export function LiveExample({
           )}
         </Column>
       )}
-      {open && !live && !motion && <StillMark />}
+      {still && <StillMark />}
       {caption && (
         <Text className="site-figure-caption" emphasis="muted">
           {caption}
