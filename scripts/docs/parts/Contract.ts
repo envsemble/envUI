@@ -4,7 +4,7 @@
 // hand-written packages/ui/src/parts.json.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { kebab, type PropsFile } from '../Schema.ts';
+import { kebab, type PropsFile } from '../PageStructure.ts';
 import { root, sourceDirectory, styleSheets } from './Library.ts';
 import { readSource } from './SourceExtraction.ts';
 import { readColorProperties, readStyles } from './StyleExtraction.ts';

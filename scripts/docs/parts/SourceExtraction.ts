@@ -4,7 +4,7 @@
 // in JSX on an element with a part class, with the values of the attribute's type.
 import { relative, resolve } from 'node:path';
 import { Node, Project, SyntaxKind, type JsxAttribute, type SourceFile, type Type } from 'ts-morph';
-import { kebab } from '../Schema.ts';
+import { kebab } from '../PageStructure.ts';
 import {
   isPrivateState,
   libraryDirectory,

@@ -1,5 +1,5 @@
 // Unused files, exports and dependencies (npm run lint:unused, which npm run check runs). Each
-// ignore says why; "pending" lists what the refactor still has to remove, and only shrinks.
+// ignore says why.
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   // An export tagged @internal is there for a unit test that bundles the module from its source,
@@ -56,12 +56,14 @@
       "project": ["**/*.{js,mjs}"],
       // The application the rules' tests lint, which is never installed or run.
       "ignoreDependencies": ["@envsemble/envui"],
-      // A copy of the lint packages' shared helper, whose tokens the Stylelint config's copy uses.
-      "ignoreIssues": { "src/tokens.js": ["exports"] },
+      // Copies of the lint packages' shared modules, whose exports the Stylelint config's copies use.
+      "ignoreIssues": { "src/tokens.js": ["exports"], "src/colorPolicy.js": ["exports"] },
     },
     "packages/stylelint-config": {
       "entry": ["test/*.test.mjs"],
       "project": ["**/*.{js,mjs}"],
+      // A copy of the shared color policy, whose stand-in for an expression the ESLint plugin uses.
+      "ignoreIssues": { "colorPolicy.js": ["exports"] },
     },
     "apps/site": {
       "project": ["src/**/*.{ts,tsx}"],

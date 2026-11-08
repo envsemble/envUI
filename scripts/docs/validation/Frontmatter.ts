@@ -9,7 +9,7 @@ import {
   type ExampleEntry,
   type Frontmatter,
   type FrontmatterSchema,
-} from '../Schema.ts';
+} from '../PageStructure.ts';
 import { pageStatuses } from '../model/DocumentationTypes.ts';
 import { deviceKinds, stageFills } from './Figures.ts';
 

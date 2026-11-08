@@ -1,63 +1,17 @@
 // Stylelint config for applications built with envUI: colors and stacking order from tokens,
 // and rem for everything that follows the reader's font size, with px only for hairlines.
 // See README.md.
-import {
-  colorFunctionNames,
-  colorSpace,
-  customPropertyName,
-  literalAlpha,
-  nestingDepth,
-} from './colorPolicy.js';
+import { rawColorCalls, rawColorFunction } from './colorPolicy.js';
 import { colorTokenAdvice, tokens } from './tokens.js';
 
 const documentation =
   'https://github.com/envsemble/envUI/blob/main/packages/stylelint-config/README.md';
 
-/** Not inside `url(…)`, where a data URL can spell colors of its own image. */
-const outsideUrl = String.raw`(?<!\burl\(\s*(?:"[^"]*|'[^']*|[^"')]*))`;
-/** Not inside a CSS string, such as the text of `content: "rgb(1 2 3)"`. */
-const outsideString = String.raw`(?<!^(?:[^"'\\]|\\.|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')*(?:"(?:[^"\\]|\\.)*|'(?:[^'\\]|\\.)*))`;
-/** The start of a color function call. */
-const colorFunctionStart = String.raw`(?<![\w-])(?:${colorFunctionNames})\(`;
 /**
- * Builds a pattern `nestingDepth` levels deep, each level wrapping the one inside it, as a regular
- * expression can't recurse.
+ * Color functions with a channel that is not a custom property, as a Stylelint regular expression
+ * (colorPolicy.js). envUI's own style sheets use it too.
  */
-const nested = (innermost, wrap) =>
-  Array.from({ length: nestingDepth }).reduce((inner) => wrap(inner), innermost);
-/**
- * A custom property whose fallback, if it has one, is custom properties too, separated by spaces
- * or commas, each with a fallback of custom properties in turn: `var(--a, var(--b, var(--c)))`.
- * The ESLint plugin's no-raw-colors reads fallbacks the same way.
- */
-const customProperty = nested(
-  String.raw`var\(\s*${customPropertyName}\s*\)`,
-  (inner) =>
-    String.raw`var\(\s*${customPropertyName}\s*(?:,[\s,]*(?:${inner}(?=[\s,)])[\s,]*)*)?\)`,
-);
-/**
- * An alpha that keeps a color from custom properties: a literal number or percentage, such as
- * `0.5` or `50%`, or one custom property whose fallbacks are custom properties, as a channel's are.
- * The ESLint plugin's no-raw-colors reads it alike.
- */
-const alpha = String.raw`\s*(?:${literalAlpha}|${customProperty})\s*`;
-/**
- * Arguments that make no raw color: a relative color derived from a token (`hsl(from …)`), or
- * channels that all come from custom properties, each a `var()` whose fallback, if any, is a
- * `var()` too, as in `oklch(var(--l) var(--c) var(--h))` or `rgb(var(--brand-rgb))`, with an
- * alpha that is a literal or a custom property, after the `/` or as the last of two or four
- * comma-separated arguments: `rgb(var(--rgb) / 50%)` and `rgba(var(--rgb), var(--alpha))` alike.
- * `color()` names its color space first.
- */
-const customChannels = String.raw`(?:\s*from\b|(?:(?<=color\()\s*${colorSpace}\s+)?\s*${customProperty}(?:\s+${customProperty})*\s*(?:\/${alpha})?\)|\s*${customProperty}\s*(?:,\s*${customProperty}\s*,\s*${customProperty}\s*)?(?:,${alpha})?\))`;
-
-/**
- * Color functions with a channel that is not a custom property, as a Stylelint regular expression:
- * a number, percentage, angle, keyword such as `none`, calculation or fallback. Relative colors
- * derived from a token (`hsl(from …)`), channels from custom properties and colors inside `url()`
- * or a string pass. envUI's own style sheets use it too.
- */
-export const rawColorFunction = `/${outsideString}${outsideUrl}${colorFunctionStart}(?!${customChannels})/i`;
+export { rawColorFunction };
 
 /** envUI's stacking tokens, the custom properties of z-index layers such as `--env-z-modal`. */
 const stackingTokens = Object.values(tokens)
@@ -119,27 +73,6 @@ export const hairlineProperties = [
   '/^--[\\w-]*(?:shadow|hairline)$/',
 ];
 
-/** The start of a raw color function call outside url() and strings. */
-const rawColorCallStart = new RegExp(
-  String.raw`${outsideString}${outsideUrl}${colorFunctionStart}(?!${customChannels})`,
-  'i',
-);
-
-/**
- * The first whole raw color function call in a value, for the message, to its matching `)` or the
- * value's end; the value itself where none is found.
- */
-function rawColorCall(value) {
-  const start = rawColorCallStart.exec(value);
-  if (!start) return value;
-  let depth = 1;
-  let end = start.index + start[0].length;
-  for (; end < value.length && depth > 0; end += 1)
-    if (value[end] === '(') depth += 1;
-    else if (value[end] === ')') depth -= 1;
-  return value.slice(start.index, end);
-}
-
 /** @type {import('stylelint').Config} */
 export default {
   rules: {
@@ -161,7 +94,7 @@ export default {
       { '/.*/': [rawColorFunction] },
       {
         message: (property, value) =>
-          `Raw color ${rawColorCall(value)} in ${property}: ${colorTokenAdvice(property)}`,
+          `Raw color ${rawColorCalls(value)[0] ?? value} in ${property}: ${colorTokenAdvice(property)}`,
         url: `${documentation}#raw-colors`,
       },
     ],

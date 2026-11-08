@@ -12,9 +12,10 @@
 // Related are generated, Related from its avoidWhen. The build fails on a page of these kinds that
 // is not in the structure. contributing/pages.md describes it for authors.
 //
-// The work is in scripts/docs/: Schema.ts (the page kinds, sections, roles and frontmatter),
-// Validation.ts (a page read and checked), Reader.ts (every page, its index and links) and
-// Compiler.ts (the props tables and the Markdown the package ships). This file writes the
+// The work is in scripts/docs/: PageStructure.ts (the page kinds, sections, roles and
+// frontmatter), PageReader.ts (a page read and checked), DocumentationReader.ts (every page, its
+// index and links), DocumentationPaths.ts and LibraryVersions.ts (where things are, and the versions
+// a page names) and Compiler.ts (the props tables and the Markdown the package ships). This file writes the
 // catalogue's data and runs as the command; it exports what the modules did as one file.
 import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -24,34 +25,37 @@ import { headingsOf, plainText } from './MarkdownHeadings.ts';
 import { exportSection, headingSlugger } from './model/SearchAnchors.ts';
 import { providesHeadings } from './model/CatalogueContent.ts';
 import { writeSearchIndex } from '../site/SearchIndex.ts';
-import { documentationDirectory, generatedFile, pageKindOf, readProps } from './Schema.ts';
-import { readDocumentation } from './Reader.ts';
+import { documentationDirectory, generatedFile } from './DocumentationPaths.ts';
+import { pageKindOf, readProps } from './PageStructure.ts';
+import { readDocumentation } from './DocumentationReader.ts';
 import { writeIfChanged } from '../build/GeneratedFiles.ts';
 import { documentedExports } from './Compiler.ts';
 import { readMessages, stringsOf } from './Messages.ts';
 
 export {
+  documentationDirectory,
+  examplesDirectory,
+  specimensDirectory,
+} from './DocumentationPaths.ts';
+export { libraryVersions } from './LibraryVersions.ts';
+export {
   codeSubsections,
   componentGroups,
-  documentationDirectory,
   exampleRoles,
-  examplesDirectory,
   examplesOf,
   frontmatterSchema,
   guideExportStatus,
   importMarkdown,
   intents,
-  libraryVersions,
   pageKindOf,
   pageSchemas,
   pageSections,
   readProps,
-  specimensDirectory,
   splitFrontmatter,
-} from './Schema.ts';
+} from './PageStructure.ts';
 export { fenceFor, isPropsTable } from './validation/MarkdownBlocks.ts';
 export { readPartNames } from './validation/Legends.ts';
-export { readDocumentation } from './Reader.ts';
+export { readDocumentation } from './DocumentationReader.ts';
 export {
   compileDocument,
   compileDocumentation,

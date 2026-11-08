@@ -1,7 +1,7 @@
 // Placing a figure a `tsx figure=Name` fence names: its attributes, each checked against its role
 // and the others, and the block the page shows it as.
 import type { Tokens } from 'marked';
-import type { ExampleEntry } from '../Schema.ts';
+import type { ExampleEntry } from '../PageStructure.ts';
 import type { ExampleBlock, FigureBlock, PageReading, ReadSection } from './PageReading.ts';
 
 /**

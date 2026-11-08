@@ -2,7 +2,7 @@
 // legends it places read and add to.
 import type { Token } from 'marked';
 import type { DocumentationBlock } from '../model/DocumentationTypes.ts';
-import type { ExampleEntry, PageSection, PageSectionDefinition } from '../Schema.ts';
+import type { ExampleEntry, PageSection, PageSectionDefinition } from '../PageStructure.ts';
 
 /** A figure of a foundation's page, or an example file placed as a figure. */
 export type FigureBlock = Extract<DocumentationBlock, { kind: 'figure' }>;

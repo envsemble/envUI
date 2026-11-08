@@ -1,15 +1,14 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { readDocumentation, type DocumentRecord } from './Reader.ts';
+import { readDocumentation, type DocumentRecord } from './DocumentationReader.ts';
+import { documentationDirectory, examplesDirectory } from './DocumentationPaths.ts';
 import {
-  documentationDirectory,
-  examplesDirectory,
   examplesOf,
   pageKindOf,
   readProps,
   type PageSection,
   type PropsFile,
-} from './Schema.ts';
+} from './PageStructure.ts';
 import { cell, fenceFor } from './validation/MarkdownBlocks.ts';
 import { readMessages, renderStrings, type MessageNamespace } from './Messages.ts';
 import type { AnatomyLegendItem, PropEntry } from './model/DocumentationTypes.ts';

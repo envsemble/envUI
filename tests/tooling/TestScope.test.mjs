@@ -1,14 +1,23 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  globSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import {
   aliases,
   changedFiles,
   mergeChanges,
   parseNameStatus,
+  pathRules,
   selectScope,
   serversFor,
   specFile,
@@ -17,6 +26,7 @@ import {
   unitTestFiles,
 } from '../../scripts/test/TestScope.ts';
 import { checkoutId, checkoutPort } from '../../scripts/test/CheckoutMarker.ts';
+import { fixtureUse, importsOf } from '../../scripts/test/FixtureImports.ts';
 
 const specs = (...paths) => [...specsFor(paths).specs.keys()].sort();
 
@@ -109,6 +119,117 @@ test('a file many fixtures use runs the most specific few, and says how many use
   assert.deepEqual(specs('packages/ui/src/actions/Button.tsx'), ['Button']);
 });
 
+test('the affected tier runs every spec a file or helper concerns', () => {
+  const path = 'packages/ui/src/internal/classNames.ts';
+  const fast = specsFor([path]);
+  const affected = specsFor([path], { affected: true });
+  assert.equal(affected.widelyUsed.size, 0);
+  assert.equal(affected.specs.size, fast.widelyUsed.get(path));
+  // Every spec imports Servers.ts, so the affected tier runs them all.
+  const helper = specsFor(['tests/browser/helpers/Servers.ts'], { affected: true });
+  assert.equal(helper.specs.size, helper.helpers.get('tests/browser/helpers/Servers.ts').length);
+  assert.ok(helper.specs.size > 100);
+});
+
+test('imports are read from the syntax, types, comments and strings left out', () => {
+  const source = `
+    // import { Table } from '@envsemble/envui';
+    import type { Page } from '@playwright/test';
+    import {
+      type ButtonProps,
+      Button as Action,
+      Card,
+    } from '@envsemble/envui';
+    import Default, { Menu } from './Menus';
+    import './Fixture.css';
+    export { Dialog } from '../library';
+    export type { Theme } from '../theme';
+    export * from './everything';
+    const text = "import { Tree } from '@envsemble/envui'";
+    const lazy = () => import('./Lazy');
+    await render(\`import { Table } from '@envsemble/envui';
+      export const element = \${'x'};\`);
+  `;
+  assert.deepEqual(importsOf(source), [
+    { specifier: '@envsemble/envui', names: ['Button', 'Card'] },
+    { specifier: './Menus', names: 'all' },
+    { specifier: './Fixture.css', names: 'all' },
+    { specifier: '../library', names: ['Dialog'] },
+    { specifier: './everything', names: 'all' },
+    { specifier: './Lazy', names: 'all' },
+    { specifier: '@envsemble/envui', names: ['Table'] },
+  ]);
+});
+
+test("a fixture's specs follow what its imports mean, however they are written", () => {
+  const checkout = (files) => {
+    const root = mkdtempSync(join(tmpdir(), 'envui-imports-'));
+    for (const [path, text] of Object.entries(files)) {
+      mkdirSync(dirname(join(root, path)), { recursive: true });
+      writeFileSync(join(root, path), text.join('\n'));
+    }
+    return root;
+  };
+  // Each file a list of lines.
+  const common = {
+    'packages/ui/src/actions/Button.tsx': [
+      "import '../styles/Button.css';",
+      'export function Button() {}',
+    ],
+    'packages/ui/src/styles/Button.css': ['.env-button {}'],
+    'tests/fixture/App.tsx': [
+      "import { Buttons } from './Buttons';",
+      'export default function App() {',
+      "  const fixture = new URLSearchParams(location.search).get('fixture');",
+      "  if (fixture === 'buttons') return <Buttons />;",
+      '  return null;',
+      '}',
+    ],
+    'tests/browser/library/Button.spec.ts': [
+      "test('x', ({ page }) => page.goto('/?fixture=buttons'));",
+    ],
+    'tests/browser/library/Table.spec.ts': ["// import { Button } from '@envsemble/envui';"],
+  };
+  const plain = checkout({
+    ...common,
+    'packages/ui/src/index.ts': ["export { Button } from './actions/Button.js';"],
+    'tests/fixture/Buttons.tsx': [
+      "import { Button } from '@envsemble/envui';",
+      'export const Buttons = Button;',
+    ],
+  });
+  const rewritten = checkout({
+    ...common,
+    'packages/ui/src/index.ts': ["export * from './actions/Button.js';"],
+    'tests/fixture/Buttons.tsx': [
+      'import {',
+      '  type Button as Kind,',
+      '  Button as Action,',
+      "} from '@envsemble/envui';",
+      'export const Buttons = Action;',
+    ],
+  });
+  try {
+    for (const root of [plain, rewritten]) {
+      const specsOf = fixtureUse(root);
+      assert.deepEqual(specsOf('packages/ui/src/styles/Button.css'), ['Button'], root);
+      assert.deepEqual(specsOf('tests/fixture/Buttons.tsx'), ['Button'], root);
+    }
+  } finally {
+    rmSync(plain, { recursive: true, force: true });
+    rmSync(rewritten, { recursive: true, force: true });
+  }
+});
+
+test('every path a rule names exists, and every spec it runs', () => {
+  const skipped = (name) => name === 'node_modules' || name === '.git' || name === 'dist';
+  for (const { paths, specs: names = [] } of pathRules) {
+    for (const glob of paths)
+      assert.ok(globSync(glob, { exclude: skipped }).length, `${glob} names no file`);
+    for (const name of names) assert.ok(existsSync(specFile(name)), `no spec ${name}`);
+  }
+});
+
 test('a shared file runs the shared set, and a file no fixture uses runs no spec', () => {
   assert.deepEqual(specs('packages/ui/src/generated/Tokens.css'), [
     'Colors',
@@ -163,7 +284,7 @@ test('a changed spec runs itself, and a changed helper the specs that import it'
 });
 
 test('a module of the documentation generator runs the specs of the site', () => {
-  assert.ok([...selectScope(['scripts/docs/Validation.ts']).specs.keys()].includes('DocsPages'));
+  assert.ok([...selectScope(['scripts/docs/PageReader.ts']).specs.keys()].includes('DocsPages'));
 });
 
 test('the site runs its specs and live development, with the builds they open', () => {

@@ -1,30 +1,33 @@
+// Reads the whole documentation in docs/: the index, which groups and orders the pages, each page
+// through PageReader.ts, and the links between them, checked as it goes.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, dirname, relative, resolve } from 'node:path';
 import { marked } from 'marked';
 import { headingsOf } from './MarkdownHeadings.ts';
 import {
-  contained,
   documentationDirectory,
   examplesDirectory,
+  specimensDirectory,
+} from './DocumentationPaths.ts';
+import { libraryVersions, withLibraryVersion } from './LibraryVersions.ts';
+import {
+  contained,
   examplesOf,
   exportKinds,
   indexSectionKinds,
   kebab,
   kindFolders,
-  libraryVersions,
   pageKindOf,
   pageKinds,
   readProps,
   slugExceptions,
-  specimensDirectory,
   splitFrontmatter,
   withImport,
-  withLibraryVersion,
   type Frontmatter,
   type PageSection,
   type PropsFile,
-} from './Schema.ts';
-import { readPage } from './Validation.ts';
+} from './PageStructure.ts';
+import { readPage } from './PageReader.ts';
 import { validateFrontmatter } from './validation/Frontmatter.ts';
 import { readPartNames } from './validation/Legends.ts';
 import type { PartNames } from './validation/PageReading.ts';

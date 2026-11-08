@@ -1,18 +1,20 @@
 // Chooses what `npm run check` and `npm run check:affected` run for a change: which files to lint,
 // whether to typecheck, which generated files to check, and which browser specs to run.
 //
-// A spec is named after its component (tests/browser/library/Button.spec.ts), and runs when that component
-// changes: a library or fixture file runs the spec of its name, or of the name `aliases` gives it,
-// and the specs whose fixtures use it (FixtureImports.ts), all of them when they are few, else the
-// most specific few; a changed spec runs itself; a changed helper runs the specs that import it;
-// and `exceptions` lists the shared files and the catalogue, which name no component. A path that
-// matches nothing runs no browser spec: `npm run verify` covers it. Check.ts runs the result, and
-// tests/tooling/TestScope.test.mjs covers the logic.
+// A spec is named after its component (tests/browser/library/Button.spec.ts), and runs when that
+// component changes: a library or fixture file runs the spec of its name, or of the name `aliases`
+// gives it, and the specs whose fixtures use it (FixtureImports.ts); a changed spec runs itself; a
+// changed helper runs the specs that import it; and `pathRules` lists what other paths need, such
+// as the shared files and the catalogue, which name no component. The affected tier runs every
+// spec a change concerns; the fast tier leaves a helper many specs import to it, and of a file many
+// fixtures use runs the most specific few. A path that matches nothing runs no browser spec:
+// `npm run verify` covers it. Check.ts runs the result, and tests/tooling/TestScope.test.mjs covers
+// the logic.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fixtureUse, specPaths } from './FixtureImports.ts';
+import { fixtureUse, importsOf, specPaths } from './FixtureImports.ts';
 
 export const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
@@ -87,34 +89,145 @@ const catalogue = [
   'CatalogueSearch',
 ];
 
-/** Paths that name no component, by prefix, and the specs they run. */
-const exceptions: [RegExp, string[]][] = [
-  [
-    /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/|src\/styles\/(?:TokensHandwritten|Theme)\.css)|^tests\/contrast\/|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette)\.ts$|tokens\/)/,
-    shared,
-  ],
-  [
-    /^packages\/ui\/src\/(?:styles\/(?:index|Motion)\.css|index\.ts)$|^package(?:-lock)?\.json$/,
-    [...shared, 'CascadeLayers', 'ForcedColors'],
-  ],
-  [/^packages\/ui\/src\/foundations\/messages\//, ['Messages']],
-  [/^packages\/ui\/src\/dev(?:\.ts$|\/)/, ['DevMode']],
-  [/^apps\/site\/|^wrangler\.jsonc$|^scripts\/(?:docs|site)\//, catalogue],
+/** A check a changed path needs beyond linting and formatting it. */
+type Need =
+  /** `tsc` on the projects. */
+  | 'typecheck'
+  /** ESLint, Stylelint or Prettier on the whole repository rather than the changed files. */
+  | 'lint'
+  | 'css'
+  | 'format'
+  /** The generated files of the tokens, the icons or the documentation. */
+  | 'tokens'
+  | 'icons'
+  | 'docs'
+  /** The library build, for the unit tests that read it. */
+  | 'library';
+
+/**
+ * What paths need besides their own lint and format and the specs of their names: checks and
+ * browser specs. Each path is a glob from the repository's root, `**` reaching into folders, and
+ * names files that exist (tests/tooling/TestScope.test.mjs).
+ */
+export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] = [
+  {
+    paths: [
+      'packages/ui/src/**/*.{ts,tsx}',
+      'apps/site/src/**/*.{ts,tsx}',
+      'tests/fixture/**/*.{ts,tsx}',
+      'tests/types/**/*.{ts,tsx}',
+      'scripts/**/*.ts',
+      '**/tsconfig.json',
+    ],
+    needs: ['typecheck'],
+  },
+  // Repository-wide configuration reruns the whole of its check.
+  { paths: ['eslint.config.mjs', 'knip.jsonc', 'packages/eslint-plugin/**'], needs: ['lint'] },
+  {
+    paths: ['stylelint.config.mjs', 'stylelint-suppressions.json', 'packages/stylelint-config/**'],
+    needs: ['css'],
+  },
+  { paths: ['.prettierrc.json', '.prettierignore'], needs: ['format'] },
+  {
+    paths: ['package.json', 'package-lock.json'],
+    needs: ['lint', 'css', 'format', 'typecheck', 'library'],
+    specs: [...shared, 'CascadeLayers', 'ForcedColors'],
+  },
+  // The tokens and the documentation that lists them, and the shared specs.
+  {
+    paths: [
+      'packages/ui/tokens/**',
+      'packages/ui/terrazzo.config.mjs',
+      'packages/ui/src/generated/**',
+      'packages/ui/src/styles/TokensHandwritten.css',
+      'scripts/build/BuildTokens.ts',
+      'scripts/build/GeneratePalette.ts',
+      'scripts/build/tokens/**',
+    ],
+    needs: ['tokens', 'docs'],
+    specs: shared,
+  },
+  // The lint packages' copies of the tokens and the color policy, and their sources.
+  {
+    paths: [
+      'scripts/build/SyncLintPackages.ts',
+      'scripts/build/LintPackageTokens.js',
+      'scripts/build/LintPackageColorPolicy.js',
+      'packages/eslint-plugin/src/tokens.js',
+      'packages/eslint-plugin/src/colorPolicy.js',
+      'packages/eslint-plugin/src/data/tokens.json',
+      'packages/stylelint-config/tokens.js',
+      'packages/stylelint-config/colorPolicy.js',
+      'packages/stylelint-config/data/tokens.json',
+    ],
+    needs: ['tokens', 'docs'],
+  },
+  { paths: ['packages/ui/src/styles/Theme.css', 'tests/contrast/**'], specs: shared },
+  {
+    paths: [
+      'packages/ui/src/styles/index.css',
+      'packages/ui/src/styles/Motion.css',
+      'packages/ui/src/index.ts',
+    ],
+    specs: [...shared, 'CascadeLayers', 'ForcedColors'],
+  },
+  {
+    paths: [
+      'packages/ui/src/icons/**',
+      'packages/ui/icon-manifest.json',
+      'scripts/build/GenerateIcons.ts',
+      'scripts/build/SyncIcons.ts',
+    ],
+    needs: ['icons'],
+  },
+  // The documentation the sources and docs/ make.
+  {
+    paths: ['packages/ui/src/**/*.{ts,tsx,css,json}', 'docs/**', '.changeset/**'],
+    needs: ['docs'],
+  },
+  { paths: ['apps/site/**', 'scripts/docs/**'], needs: ['docs'], specs: catalogue },
+  { paths: ['wrangler.jsonc', 'scripts/site/**'], specs: catalogue },
+  {
+    paths: [
+      'packages/ui/src/**',
+      'packages/ui/package.json',
+      'packages/ui/README.md',
+      'README.md',
+      'scripts/build/BuildLibrary.ts',
+      'scripts/build/ClientModules.ts',
+      'scripts/build/DependencyNotices.ts',
+      'scripts/release/ValidateRelease.ts',
+    ],
+    needs: ['library'],
+  },
+  { paths: ['packages/ui/src/foundations/messages/**'], specs: ['Messages'] },
+  { paths: ['packages/ui/src/dev.ts', 'packages/ui/src/dev/**'], specs: ['DevMode'] },
   // The catalogue's scripted playback: its pointer, timelines and autoplay.
-  [/^apps\/site\/src\/motion\//, ['SiteMotion', 'Autoplay']],
+  { paths: ['apps/site/src/motion/**'], specs: ['SiteMotion', 'Autoplay'] },
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
-  [/^apps\/site\/src\//, ['LiveDevelopment']],
+  { paths: ['apps/site/src/**'], specs: ['LiveDevelopment'] },
   // The layout check measures every example the pages place, on the catalogue's stage, with dev
   // mode's checks; the affected tier runs it.
-  [
-    /^apps\/site\/src\/(?:examples\/|styles\/Stage\.css$)|^docs\/(?:components|patterns)\/|^packages\/ui\/src\/dev(?:\.ts$|\/)/,
-    ['LayoutCheck'],
-  ],
+  {
+    paths: [
+      'apps/site/src/examples/**',
+      'apps/site/src/styles/Stage.css',
+      'docs/components/**',
+      'docs/patterns/**',
+      'packages/ui/src/dev.ts',
+      'packages/ui/src/dev/**',
+    ],
+    specs: ['LayoutCheck'],
+  },
 ];
 
-/** More specs than this importing a changed helper leaves it to `npm run verify`. */
+/** The rules whose paths a changed path matches. */
+const rulesOf = (path: string) =>
+  pathRules.filter((rule) => rule.paths.some((glob) => posix.matchesGlob(path, glob)));
+
+/** In the fast tier, more specs than this importing a changed helper leaves them to the affected tier. */
 const helperBudget = 8;
-/** More specs than this whose fixtures use a changed file run the most specific of them. */
+/** In the fast tier, more specs than this whose fixtures use a changed file run the most specific. */
 const fixtureBudget = 6;
 
 /** A spec's file, by its name: Button for tests/browser/library/Button.spec.ts. */
@@ -135,7 +248,7 @@ export function specNeeds(name: string, root = repositoryRoot) {
   const source = read(root, specFile(name, root));
   return {
     // Opens the hosted build, which npm run build:site writes.
-    site: /from '\.\.\/helpers\/HostedSite'/.test(source),
+    site: importsOf(source).some(({ specifier }) => specifier === '../helpers/HostedSite'),
     // Opens a page that the unit tests on the library build render.
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
@@ -145,11 +258,21 @@ export function specNeeds(name: string, root = repositoryRoot) {
   };
 }
 
+/** The checkout to read, and whether the selection is the affected tier's, which runs every spec. */
+interface ScopeOptions {
+  root?: string;
+  affected?: boolean;
+}
+
 /**
- * The browser specs a change runs, by name (Button for tests/browser/library/Button.spec.ts), each with
- * why; the paths that run none; and the files more specs' fixtures use than run, with how many do.
+ * The browser specs a change runs, by name (Button for tests/browser/library/Button.spec.ts), each
+ * with why; the paths that run none; the changed helpers with the specs that import them; and in
+ * the fast tier, the files more specs' fixtures use than run, with how many do.
  */
-export function specsFor(paths: readonly string[], root = repositoryRoot) {
+export function specsFor(
+  paths: readonly string[],
+  { root = repositoryRoot, affected = false }: ScopeOptions = {},
+) {
   const specs = new Map<string, Set<string>>();
   const unmatched: string[] = [];
   const widelyUsed = new Map<string, number>();
@@ -171,10 +294,12 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
     else if (/^tests\/browser\/helpers\/[^/]+\.ts$/.test(path)) {
       const helper = baseName(path);
       const users = [...written].filter((spec) =>
-        new RegExp(`from '\\.\\./helpers/${helper}'`).test(read(root, specFile(spec, root))),
+        importsOf(read(root, specFile(spec, root))).some(
+          ({ specifier }) => specifier === `../helpers/${helper}`,
+        ),
       );
       helpers.set(path, users);
-      if (users.length <= helperBudget)
+      if (affected || users.length <= helperBudget)
         for (const user of users) found = add(user, `imports ${path}`) || found;
     } else if (/^(?:packages\/ui\/src|tests\/fixture)\//.test(path)) {
       // ButtonGroups.tsx and Comboboxes.tsx are about ButtonGroup and Combobox, Tabs.tsx about
@@ -192,11 +317,12 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
       const component = candidates.find((each) => specsOf(each).length);
       const named = component ? specsOf(component) : [];
       for (const spec of named) found = add(spec, `about ${component} (${path})`) || found;
-      // The specs whose fixtures use it: all of them when they are few; else, for a file of no
-      // spec's name, the most specific few, and verify the rest.
+      // The specs whose fixtures use it: all of them in the affected tier or when they are few;
+      // else, for a file of no spec's name, the most specific few, leaving the rest to the
+      // affected tier.
       specsUsing ??= cachedFixtureUse(root);
       const using = specsUsing(path).filter(exists);
-      if (using.length <= fixtureBudget)
+      if (affected || using.length <= fixtureBudget)
         for (const spec of using) found = add(spec, `its fixture uses ${path}`) || found;
       else {
         widelyUsed.set(path, using.length);
@@ -205,8 +331,8 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
             found = add(spec, `among the fixtures that use ${path}`) || found;
       }
     }
-    for (const [pattern, names] of exceptions)
-      if (pattern.test(path)) for (const name of names) found = add(name, path) || found;
+    for (const rule of rulesOf(path))
+      for (const name of rule.specs ?? []) found = add(name, path) || found;
     if (!found) unmatched.push(path);
   }
   return { specs, unmatched, helpers, widelyUsed };
@@ -216,7 +342,8 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
  * What a change needs, by file: the static checks, the generated-file checks, the browser specs
  * and the builds those open.
  */
-export function selectScope(paths: readonly string[], root = repositoryRoot) {
+export function selectScope(paths: readonly string[], options: ScopeOptions = {}) {
+  const { root = repositoryRoot } = options;
   const scope = {
     lint: [] as string[],
     css: [] as string[],
@@ -227,56 +354,18 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
     build: { library: false, site: false },
   };
   for (const path of paths) {
-    const exists = existsSync(resolve(root, path));
-    if (exists && /\.(?:[cm]?js|tsx?)$/.test(path)) scope.lint.push(path);
-    if (exists && /^(?:packages\/ui\/src|apps\/site\/src)\/.*\.css$/.test(path))
-      scope.css.push(path);
-    if (exists) scope.format.push(path);
-    if (
-      /^(?:packages\/ui\/src|apps\/site\/src|tests\/fixture|tests\/types|scripts)\/.*\.tsx?$/.test(
-        path,
-      )
-    )
-      scope.typecheck = true;
-    if (/(?:^|\/)tsconfig\.json$/.test(path)) scope.typecheck = true;
-    // Repository-wide configuration reruns the whole of its check.
-    if (/^eslint\.config\.mjs$|^knip\.jsonc$|^packages\/eslint-plugin\//.test(path))
-      scope.whole.lint = true;
-    if (/^stylelint\.|^stylelint-suppressions\.json$|^packages\/stylelint-config\//.test(path))
-      scope.whole.css = true;
-    if (/^\.prettier/.test(path)) scope.whole.format = true;
-    if (/^package(?:-lock)?\.json$/.test(path)) {
-      Object.assign(scope.whole, { lint: true, css: true, format: true });
-      scope.typecheck = scope.build.library = true;
+    if (existsSync(resolve(root, path))) {
+      if (/\.(?:[cm]?js|tsx?)$/.test(path)) scope.lint.push(path);
+      if (/^(?:packages\/ui\/src|apps\/site\/src)\/.*\.css$/.test(path)) scope.css.push(path);
+      scope.format.push(path);
     }
-    // Generated files: tokens with the lint packages' copies, icons, and the documentation the
-    // sources and docs/ make.
-    if (
-      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/|src\/styles\/TokensHandwritten\.css)|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens|LintPackageColorPolicy)\.[jt]s$|tokens\/)|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|colorPolicy\.js|data\/tokens\.json)$/.test(
-        path,
-      )
-    )
-      scope.generated.add('tokens').add('docs');
-    if (
-      /^packages\/ui\/src\/icons\/|^scripts\/build\/(?:GenerateIcons|SyncIcons)\.ts$|^packages\/ui\/icon-manifest\.json$/.test(
-        path,
-      )
-    )
-      scope.generated.add('icons');
-    if (
-      /^packages\/ui\/src\/.*\.(?:tsx?|css|json)$|^docs\/|^apps\/site\/|^\.changeset\/|^scripts\/docs\//.test(
-        path,
-      )
-    )
-      scope.generated.add('docs');
-    if (
-      /^packages\/ui\/(?:src\/|package\.json|README)|^README\.md$|^scripts\/build\/(?:BuildLibrary|ClientModules|DependencyNotices)\.ts$|^scripts\/release\/ValidateRelease\.ts$/.test(
-        path,
-      )
-    )
-      scope.build.library = true;
+    for (const need of rulesOf(path).flatMap((rule) => rule.needs ?? []))
+      if (need === 'typecheck') scope.typecheck = true;
+      else if (need === 'lint' || need === 'css' || need === 'format') scope.whole[need] = true;
+      else if (need === 'library') scope.build.library = true;
+      else scope.generated.add(need);
   }
-  const { specs, unmatched, helpers, widelyUsed } = specsFor(paths, root);
+  const { specs, unmatched, helpers, widelyUsed } = specsFor(paths, options);
   for (const name of specs.keys()) {
     const needs = specNeeds(name, root);
     scope.build.site ||= needs.site;
