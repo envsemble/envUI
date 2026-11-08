@@ -28,7 +28,7 @@ export interface FitOptions {
  * and eases back to centre the still at its scale once the tile rests.
  *
  * FitPicture.ts fits it once; this hook fits it again as anything that changes it does, until the
- * picture goes or changes.
+ * picture goes or changes: what comes after that, such as the fonts arriving, fits nothing.
  */
 export function useFit(
   stage: RefObject<HTMLElement | null>,
@@ -49,7 +49,9 @@ export function useFit(
     const canvasElement = canvas.current;
     if (!on || !stageElement || !canvasElement) return;
     let frame = 0;
+    let active = true;
     const update = () => {
+      if (!active) return;
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => fitPicture(fitting));
     };
@@ -98,6 +100,7 @@ export function useFit(
     window.addEventListener('resize', update);
     update();
     return () => {
+      active = false;
       window.removeEventListener('resize', update);
       canvasElement.removeEventListener('scroll', scrolled, true);
       canvasElement.removeEventListener('transitionend', update);

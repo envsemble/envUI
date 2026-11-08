@@ -16,6 +16,9 @@ import { useLayoutEffect, type RefObject } from 'react';
  * rather than square: the box lays out as wide as the stage, wider only where a part can't be
  * narrower, then drawn smaller to the stage's width, and keeps the room it takes drawn so, its
  * margins taking back what the transform leaves.
+ *
+ * It follows the figure until it goes or changes: what comes after that, such as the fonts
+ * arriving, measures nothing.
  */
 export function useVerdictFit(
   stage: RefObject<HTMLElement | null>,
@@ -43,6 +46,7 @@ export function useVerdictFit(
       if (fit) boxElement.style.marginBlockEnd = `${boxElement.offsetHeight * (side / room - 1)}px`;
     };
     let frame = 0;
+    let active = true;
     const measure = () => {
       const width = stageElement.clientWidth;
       if (!width) return;
@@ -70,6 +74,7 @@ export function useVerdictFit(
       settle();
     };
     const update = () => {
+      if (!active) return;
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(measure);
     };
@@ -86,6 +91,7 @@ export function useVerdictFit(
     changes.observe(boxElement, { childList: true });
     void document.fonts?.ready.then(update);
     return () => {
+      active = false;
       cancelAnimationFrame(frame);
       observer.disconnect();
       changes.disconnect();

@@ -58,7 +58,8 @@ interface LayoutOptions {
 /**
  * The callouts of an anatomy figure, measured from its live parts, and in a variants figure the
  * room its names take: they follow the figure as it resizes, its example loads, its fonts arrive
- * and its parts settle where they enter with motion. Only a change of place re-renders them.
+ * and its parts settle where they enter with motion, until the figure goes or changes: what comes
+ * after that, such as the fonts arriving, measures nothing. Only a change of place re-renders them.
  */
 export function useAnatomyLayout(
   stage: RefObject<HTMLDivElement | null>,
@@ -72,9 +73,11 @@ export function useAnatomyLayout(
     const subjectElement = subject.current;
     if (!stageElement || !subjectElement) return;
     let frame = 0;
+    let active = true;
     /** The variants' names' widths, measured once, and again as the fonts arrive. */
     const labels = new Map<string, number>();
     const update = () => {
+      if (!active) return;
       cancelAnimationFrame(frame);
       // Only a change of place re-renders the callouts.
       frame = requestAnimationFrame(() => {
@@ -117,6 +120,7 @@ export function useAnatomyLayout(
       attributeFilter: ['class', 'style'],
     });
     void document.fonts?.ready.then(() => {
+      if (!active) return;
       labels.clear();
       update();
     });
@@ -125,6 +129,7 @@ export function useAnatomyLayout(
     subjectElement.addEventListener('animationend', update);
     subjectElement.addEventListener('transitionend', update);
     return () => {
+      active = false;
       cancelAnimationFrame(frame);
       resize.disconnect();
       mutation.disconnect();
