@@ -7,7 +7,7 @@
 // most specific few; a changed spec runs itself; a changed helper runs the specs that import it;
 // and `exceptions` lists the shared files and the catalogue, which name no component. A path that
 // matches nothing runs no browser spec: `npm run verify` covers it. Check.ts runs the result, and
-// tests/TestScope.test.mjs covers the logic.
+// tests/tooling/TestScope.test.mjs covers the logic.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
@@ -394,7 +394,7 @@ const read = (root: string, path: string) => readFileSync(resolve(root, path), '
  */
 export function unitTestFiles(root = repositoryRoot) {
   const files = [
-    ...walk(root, 'tests', /\.test\.mjs$/).filter((file) => !file.slice(6).includes('/')),
+    ...walk(root, 'tests', /\.test\.mjs$/).filter((file) => /^tests\/[^/]+\/[^/]+$/.test(file)),
     ...walk(root, 'packages', /\.test\.mjs$/).filter((file) =>
       /^packages\/[^/]+\/test\/[^/]+$/.test(file),
     ),

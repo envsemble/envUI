@@ -1,4 +1,4 @@
-// Run by tests/ClientDirectives.test.mjs with `--conditions=react-server` and ClientReferences.mjs:
+// Run by tests/library/ClientDirectives.test.mjs with `--conditions=react-server` and ClientReferences.mjs:
 // imports every entry point of the built package as a server component's module graph would, and
 // renders envUI on the server. Prints what it found as JSON.
 import { readFileSync } from 'node:fs';

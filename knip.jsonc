@@ -12,7 +12,7 @@
         // Run by hand: after the favicon's SVG changes, and to check the site's contents lists.
         "scripts/build/GenerateFavicons.ts",
         "scripts/test/CheckContents.ts",
-        "tests/*.test.mjs",
+        "tests/*/*.test.mjs",
         "tests/browser/*.spec.ts",
         "tests/accessibility/*.spec.ts",
         // The fixture's pages, each loading one of these.

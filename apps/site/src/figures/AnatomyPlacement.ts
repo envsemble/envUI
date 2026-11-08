@@ -1,7 +1,7 @@
 /*
  * Where an anatomy figure's callouts sit, from its geometry (AnatomyGeometry.ts): a numbered one on
  * each part, on the side it is nearest to, spread so none overlap; for a variants figure, each
- * variant's name beside its item. Nothing here reads the page (tests/AnatomyPlacement.test.mjs).
+ * variant's name beside its item. Nothing here reads the page (tests/site/AnatomyPlacement.test.mjs).
  */
 
 type Side = 'top' | 'bottom' | 'left' | 'right';

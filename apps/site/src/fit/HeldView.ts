@@ -2,7 +2,7 @@
  * A held view's scale and place (useFit.ts): a tile that holds its view (holdsView, MustShow.ts),
  * such as a picker resting open, is framed once on its still, the largest it shows, so what its
  * script acts on shows whole in it from its top, above the fade at its foot, with the cursor on
- * it. Nothing here reads the page (tests/Fit.test.mjs).
+ * it. Nothing here reads the page (tests/site/Fit.test.mjs).
  */
 import { cursorRoom, inset, join, type Box } from './FitMath';
 

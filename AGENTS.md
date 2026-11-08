@@ -22,7 +22,7 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 
 ### Write tests that stay fast
 
-- Prefer a unit test (`node --test`, `tests/*.test.mjs`) to a browser spec, and a computed-style or DOM assertion to a screenshot.
+- Prefer a unit test (`node --test`) to a browser spec, and a computed-style or DOM assertion to a screenshot. A unit test goes in the folder of what it tests: `tests/library/`, `tests/site/`, `tests/docs/` (the documentation and its generators) or `tests/tooling/` (the checks and the release).
 - Give a browser spec its own fixture (`?fixture=<name>` in `tests/fixture`) and name it after the component it covers. Test a behaviour once, in its component's spec; leave colour to the contrast gate and appearance to the visual baseline.
 - Tag a test `@engines` when it depends on the engine (scrolling, focus, pointer and input methods, native forms, platform keys); Firefox and WebKit run only those.
 - No fixed sleeps: wait for a condition, such as `expect.poll` or the element's animations finishing. Where a test proves nothing happens for a while, wait just past the delay and say so.
@@ -62,11 +62,11 @@ Not in code, docs, comments, changesets, release notes or sample data: its first
 
 ### Style sheets
 
-- Each component's CSS is a file of `src/styles` in `@layer env.components`. Its module imports `../styles/Base.css`, then the style sheets of what it builds on, then its own (`tests/StyleImports.test.mjs`). No specificity tricks to stay overridable, and nothing `!important`.
+- Each component's CSS is a file of `src/styles` in `@layer env.components`. Its module imports `../styles/Base.css`, then the style sheets of what it builds on, then its own (`tests/library/StyleImports.test.mjs`). No specificity tricks to stay overridable, and nothing `!important`.
 - Colors, `z-index` and font weights come from tokens; lengths that follow the text are rem, px only for hairlines, em only for typography that follows the element's own size (`npm run lint:css`).
-- No drop shadows but Avatar's, the frosted popups' and a segmented control's thumb (`tests/NoShadows.test.mjs`); regions part by space and fill, and hairlines only separate the items of one list.
-- Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/StableHover.test.mjs`).
-- A pill is `var(--env-radius-full)`, so a tall element becomes a rounded rectangle; `50%` only on parts that are always square (`tests/Corners.test.mjs`).
+- No drop shadows but Avatar's, the frosted popups' and a segmented control's thumb (`tests/library/NoShadows.test.mjs`); regions part by space and fill, and hairlines only separate the items of one list.
+- Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/library/StableHover.test.mjs`).
+- A pill is `var(--env-radius-full)`, so a tall element becomes a rounded rectangle; `50%` only on parts that are always square (`tests/library/Corners.test.mjs`).
 - Motion uses the motion tokens, movement only under `prefers-reduced-motion: no-preference`; under `forced-colors: active`, a state a fill or shadow carries takes system colors (`tests/browser/ForcedColors.spec.ts`).
 
 ### Part names and color properties

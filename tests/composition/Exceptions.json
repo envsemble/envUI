@@ -1,5 +1,5 @@
 {
-  "$comment": "Composition violations that exist today, counted per module or stylesheet. tests/Composition.test.mjs fails on a new violation, on a higher count, and on an entry that no longer matches, so this list only shrinks. Paths are relative to packages/ui/src and packages/ui/src/styles.",
+  "$comment": "Composition violations that exist today, counted per module or stylesheet. tests/library/Composition.test.mjs fails on a new violation, on a higher count, and on an entry that no longer matches, so this list only shrinks. Paths are relative to packages/ui/src and packages/ui/src/styles.",
   "imports": [],
   "interactive": [],
   "tsxClasses": [],

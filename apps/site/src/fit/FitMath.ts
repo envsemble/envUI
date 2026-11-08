@@ -1,6 +1,6 @@
 /*
  * The fit's pure calculations (useFit.ts): boxes in a canvas's own px, the scales a picture is
- * drawn at, and where its view goes. Nothing here reads the page (tests/Fit.test.mjs).
+ * drawn at, and where its view goes. Nothing here reads the page (tests/site/Fit.test.mjs).
  */
 
 /** A box in a canvas's own px. */
