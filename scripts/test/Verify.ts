@@ -70,6 +70,7 @@ const [phase1, built] = await Promise.all([
     task('tokens:check build', node('scripts/build/BuildTokens.ts', '--check')),
     task('docs:check props', node('scripts/docs/ExtractProps.ts', '--check')),
     task('docs:check parts', node('scripts/docs/GenerateParts.ts', '--check')),
+    task('docs:check exports', node('scripts/docs/GenerateExports.ts', '--check')),
     task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),
     task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
     task('lint', [...bin.eslint, '.', '--cache', '--cache-location', '.cache/eslint/']),

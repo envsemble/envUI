@@ -38,8 +38,15 @@
 // The modules in scripts/docs/parts/ read the TypeScript and the style sheets, assemble the
 // contract and compare it with the base branch's.
 import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
-import { buildParts, partsFile, partsPath, serializeParts } from './parts/Contract.ts';
-import { baseParts, pendingChangesets, removedParts } from './parts/ContractComparison.ts';
+import { baseContract, baseOption, pendingChangesets } from './ContractHistory.ts';
+import {
+  buildParts,
+  partsFile,
+  partsPath,
+  serializeParts,
+  type PartsContract,
+} from './parts/Contract.ts';
+import { removedParts } from './parts/ContractComparison.ts';
 
 const check = process.argv.includes('--check');
 const { parts, problems } = buildParts();
@@ -57,16 +64,15 @@ if (check) {
     );
     process.exit(1);
   }
-  const option = process.argv.indexOf('--base');
-  const base = baseParts(option === -1 ? undefined : process.argv[option + 1]);
-  if (!base.parts) {
+  const base = baseContract<PartsContract>(partsPath, baseOption());
+  if (!base.contract) {
     console.log(`${partsPath} matches its sources.`);
     console.warn(
       `[33mwarning: no part or state removal was checked: ${base.skipped.join('; ')}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.[0m`,
     );
   } else {
     if (base.skipped.length) console.log(`Compared with ${base.ref}: ${base.skipped.join('; ')}.`);
-    const removed = removedParts(base.parts, parts, pendingChangesets());
+    const removed = removedParts(base.contract, parts, pendingChangesets());
     const unrecorded = removed.filter((item) => !item.recorded);
     if (removed.length)
       console.log(
