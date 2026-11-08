@@ -8,11 +8,13 @@ type Tracked<T> = Promise<T> & {
 };
 
 /**
- * What `load` gives, for a part of a page that loads with it, such as its content: loaded once
- * under `key` and kept in `cache`, and marked settled as React's use() reads a promise, so a part
- * loaded before its first render, as a link is about to be followed, shows at once rather than
- * suspending for a moment. A load that fails is a ModuleLoadError and is forgotten, so the next
- * render asks again.
+ * What `load` gives, for a part of a page that loads with it, such as its content, an example or
+ * its code: loaded once under `key` and kept in `cache`, and marked settled as React's use() reads
+ * a promise, so a part loaded before its first render, as a link is about to be followed, shows at
+ * once rather than suspending for a moment. A load that fails is a ModuleLoadError and is kept
+ * too, so renders until a retry read the same rejected promise rather than a new one each time,
+ * which React would take for a promise it was never given and ask for again, on and on. A part
+ * with a retry deletes it from `cache` to load it again (ModuleRegistry.ts).
  */
 export function loadOnce<T>(cache: Map<string, Promise<T>>, key: string, load: () => Promise<T>) {
   const cached = cache.get(key);
@@ -27,7 +29,6 @@ export function loadOnce<T>(cache: Map<string, Promise<T>>, key: string, load: (
     (reason: unknown) => {
       promise.status = 'rejected';
       promise.reason = reason;
-      cache.delete(key);
     },
   );
   cache.set(key, promise);
