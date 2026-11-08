@@ -58,8 +58,8 @@ const verdicts = {
 /**
  * A do, don't or caution figure, a cell as a gallery's is: the live example on its stage, and under
  * it, as a gallery cell's name, its mark, a check, a cross or a warning in green, red or amber with
- * the word Do, Don't or Caution, a caution being acceptable with care rather than a mistake, then
- * its one sentence, and the example's code at the row's end (Verdicts.css). The stage is as tall as
+ * the word Do, Don't or Caution, a caution being acceptable with care rather than a mistake, and
+ * its one sentence beside it, and the example's code on the row below (Verdicts.css). The stage is as tall as
  * the example, or square where the example shows open or playing, and the example is drawn smaller
  * where it needs more room than the stage's width (useVerdictFit). With `motion`, its animated specimen of the same
  * name plays it on the stage. A `wide` figure, whose point is a change across the column's width,

@@ -2,7 +2,7 @@
 
 /* A do, don't or caution figure: a cell as a gallery's is (Figures.tsx), the example on its stage,
    flat and square-cornered as every figure of a page, and under it, as a cell's name, its mark and
-   its one sentence, with its code switch at the row's end (Figures.css). The stage is as tall as
+   its one sentence, and its code switch on the row below. The stage is as tall as
    the example, and at least 11 rem, or square where the example shows open or playing, the room
    what opens needs; never wider than `--site-verdict-size`, so a pair side by side stays small
    beside the text; alone, or in a narrow column, it starts where the text does. A `wide` figure,
@@ -111,13 +111,15 @@
   transform-origin: 0 0;
 }
 
-/* The caption, as a gallery cell's name row: the mark, a small icon in the verdict's color and its
-   word in the text's, and under it the sentence, quieter. No strip, frame or fill: the color is the
-   icon's alone. */
+/* Under the cell, as a gallery cell's name row: the mark, a small icon in the verdict's color and
+   its word in the text's, and the sentence right after it, quieter, wrapping under itself so the
+   mark stands alone at the start. No strip, frame or fill: the color is the icon's alone. The code
+   switch has the row below to itself. */
 .site-verdict-caption {
   display: grid;
-  justify-items: start;
-  row-gap: var(--env-space-1);
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--env-space-2);
   min-inline-size: 0;
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-sm);
@@ -127,6 +129,8 @@
   display: inline-flex;
   flex: none;
   align-items: center;
+  /* One line of the sentence tall, so the word sits on its first line. */
+  min-block-size: 1lh;
   gap: var(--env-space-1);
   color: var(--env-color-fg-default);
   font-weight: var(--env-font-weight-medium);
@@ -153,42 +157,6 @@
 
 .site-verdict-sentence {
   min-inline-size: 0;
-}
-
-/* Temporary, while the owner chooses (VerdictOption.ts, `?verdicts=2`): the mark on the cell
-   itself, at its top start corner, as a picture's tag, in the verdict's color, and the sentence
-   alone under the cell. */
-:root[data-catalogue-verdicts='2'] .site-verdict {
-  position: relative;
-}
-
-:root[data-catalogue-verdicts='2'] .site-verdict-mark {
-  position: absolute;
-  inset-block-start: var(--env-space-3);
-  inset-inline-start: var(--env-space-3);
-  z-index: var(--env-z-raised);
-  padding: var(--env-space-1) var(--env-space-2);
-  border-radius: var(--env-radius-full);
-  background: var(--env-color-bg-raised);
-  font: var(--env-type-body-sm);
-  font-weight: var(--env-font-weight-medium);
-}
-
-/* The example keeps clear of the tag, by its height and a little more, above the stage's inset. */
-:root[data-catalogue-verdicts='2'] .site-verdict-fit {
-  padding-block-start: calc(var(--site-verdict-inset) + var(--env-space-6));
-}
-
-:root[data-catalogue-verdicts='2'] .site-verdict[data-verdict='do'] .site-verdict-mark {
-  color: var(--env-color-fg-success);
-}
-
-:root[data-catalogue-verdicts='2'] .site-verdict[data-verdict='dont'] .site-verdict-mark {
-  color: var(--env-color-fg-danger);
-}
-
-:root[data-catalogue-verdicts='2'] .site-verdict[data-verdict='caution'] .site-verdict-mark {
-  color: var(--env-color-fg-warning);
 }
 
 @container (width < 30rem) {

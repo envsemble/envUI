@@ -8,10 +8,6 @@ import { findPage } from './navigation/SiteRoutes';
 import { currentRoute } from './navigation/useSiteRoute';
 import { preloadPage } from './pages/PreloadPage';
 import { keepScrollInPreviews } from './motion/StandIns';
-import { applyVerdictOption } from './figures/VerdictOption';
-
-// Which way a do or don't figure is drawn, while the owner chooses (VerdictOption.ts).
-applyVerdictOption();
 
 // The site renders once what the page it opens on needs has loaded, which started as it did, so
 // its first paint has the whole page rather than the frame and then the page.

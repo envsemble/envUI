@@ -64,26 +64,28 @@
 /* A figure, as a gallery's cell: its stage, and under it on one row, as a cell's name and arrow,
    its caption at the start and its code switch at the end; open, the code runs under both, the
    switch keeping its place at the end. A figure without a caption has its switch alone on the
-   row. */
+   row. A do or don't figure lays its caption out its own way (Verdicts.css). */
 :is(.site-live-example-entry, .site-verdict) {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--env-space-2) var(--env-space-4);
+}
+.site-live-example-entry {
   grid-template-columns: minmax(0, 1fr) auto;
   grid-auto-flow: row dense;
   align-items: baseline;
-  gap: var(--env-space-2) var(--env-space-4);
 }
-:is(.site-live-example-entry, .site-verdict) > * {
+.site-live-example-entry > * {
   grid-column: 1 / -1;
 }
-:is(.site-live-example-entry, .site-verdict)
-  > :is(.site-figure-caption, .site-verdict-caption, .site-still-mark) {
+.site-live-example-entry > :is(.site-figure-caption, .site-still-mark) {
   grid-column: 1;
 }
-:is(.site-live-example-entry, .site-verdict) > .site-live-example-code:not([open]) {
+.site-live-example-entry > .site-live-example-code:not([open]) {
   grid-column: 2;
   justify-self: end;
 }
-:is(.site-live-example-entry, .site-verdict) > .site-live-example-code[open] > summary {
+.site-live-example-entry > .site-live-example-code[open] > summary {
   margin-inline-start: auto;
 }
 

@@ -120,22 +120,29 @@ test('a component page shows plain sections, equal cells and the parts of its an
   ]);
   await expect(page.locator('.site-figures .env-message')).toHaveCount(0);
   // Do and don't figures are cells as a gallery's are: a square-cornered stage with no frame, and
-  // under it their mark and one sentence, with the code switch at the row's end.
+  // under it their mark with their one sentence beside it, and the code switch on the row below.
   const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
   await expect(verdict.locator('.site-verdict-caption .site-verdict-mark')).toHaveText('Do');
   await expect(verdict.locator('details summary')).toHaveText('Show code, OnePrimaryAction.tsx');
   const cell = await verdict.evaluate((figure) => {
     const stage = getComputedStyle(figure.querySelector('.site-verdict-stage')!);
-    const mark = figure.querySelector('.site-verdict-mark')!.getBoundingClientRect();
-    const code = figure.querySelector('details summary')!.getBoundingClientRect();
+    const box = (selector: string) => figure.querySelector(selector)!.getBoundingClientRect();
+    const [mark, sentence, caption, code] = [
+      '.site-verdict-mark',
+      '.site-verdict-sentence',
+      '.site-verdict-caption',
+      'details summary',
+    ].map(box);
     return {
       corner: stage.borderTopLeftRadius,
       shadow: stage.boxShadow,
-      // The switch on the caption's row, at its end.
-      row: Math.abs(code.top - mark.top) < mark.height && code.left > mark.right,
+      // The sentence starts on the mark's line, after it.
+      beside: Math.abs(sentence.top - mark.top) < mark.height && sentence.left > mark.right,
+      // The switch alone below the caption, from its start.
+      below: code.top >= caption.bottom - 1 && Math.abs(code.left - caption.left) < 1,
     };
   });
-  expect(cell).toEqual({ corner: '0px', shadow: 'none', row: true });
+  expect(cell).toEqual({ corner: '0px', shadow: 'none', beside: true, below: true });
   // When to use is a guidance list, marked with sparks, where a component named at an item's end
   // follows it after a muted dot: the Button family's own page, so not a link.
   const useWhen = page.locator('.site-when .site-guidance li');
