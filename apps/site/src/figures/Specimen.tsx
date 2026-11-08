@@ -1,15 +1,8 @@
-import {
-  Suspense,
-  use,
-  useContext,
-  useState,
-  type ComponentType,
-  type MouseEvent,
-  type ReactNode,
-} from 'react';
+import { Suspense, use, useContext, useState, type ComponentType, type ReactNode } from 'react';
 import { Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { PartHeadingLevel, SpecimenHeadingLevel } from './Example';
 import { hasExample } from './ExampleRegistry';
+import { keepLinksInPlace } from './LiveExample';
 import { LoadBoundary } from '../loading/LoadBoundary';
 import { moduleRegistry } from '../loading/ModuleRegistry';
 import { HoldPlaceholder } from '../loading/LoadingStore';
@@ -108,17 +101,11 @@ export function ExamplePlayback({
   return <SpecimenBody page={page} name={name} onStage={onStage} />;
 }
 
-/** Link specimens retain native link semantics without navigating away from the page. */
-function preventExampleNavigation(event: MouseEvent<HTMLDivElement>) {
-  if (event.target instanceof Element && event.target.closest('a[href]')) {
-    event.preventDefault();
-  }
-}
-
 /**
  * A specimen a page places, in an area that follows the documentation's current theme;
  * `headingLevel` is the level of its title, 3 inside a section of a page. The area names the
- * specimen, so the visual baseline can name an untitled one's image after it.
+ * specimen, so the visual baseline can name an untitled one's image after it, and keeps its links
+ * in place, as an example's are.
  */
 export function Specimen({
   page,
@@ -137,8 +124,7 @@ export function Specimen({
         gap={0}
         className="catalogue-specimen-area"
         data-catalogue-specimen={name}
-        onClickCapture={preventExampleNavigation}
-        onAuxClickCapture={preventExampleNavigation}
+        {...keepLinksInPlace}
       >
         <SpecimenBody page={page} name={name} />
       </Column>
