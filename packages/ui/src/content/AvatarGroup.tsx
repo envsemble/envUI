@@ -8,6 +8,7 @@ import {
   type CSSProperties,
   type MouseEvent,
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
 } from 'react';
 import {
   Avatar,
@@ -126,6 +127,32 @@ function groupHues(names: readonly string[]): AvatarHue[] {
 const tapSpreadDuration = 5000;
 
 /**
+ * Whether a tap spread the group, where no pointer hovers: until a tap outside, a pause or a mouse
+ * leaving it. `tapInside` restarts the pause.
+ */
+function useTapSpread(group: RefObject<HTMLDivElement | null>) {
+  const [tapped, setTapped] = useState(false);
+  const [taps, setTaps] = useState(0);
+  useEffect(() => {
+    if (!tapped) return;
+    const bunch = () => setTapped(false);
+    const timer = setTimeout(bunch, tapSpreadDuration);
+    const outside = (event: PointerEvent) => {
+      if (!group.current?.contains(event.target as Node)) bunch();
+    };
+    document.addEventListener('pointerdown', outside, true);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('pointerdown', outside, true);
+    };
+  }, [group, tapped, taps]);
+  const tapInside = () => {
+    if (tapped) setTaps((value) => value + 1);
+  };
+  return { tapped, setTapped, tapInside };
+}
+
+/**
  * A pile of avatars for a set of people, such as the members of a project, with a chip that counts
  * the rest and lists them in its tooltip. Hover, a tap or keyboard focus spreads it.
  */
@@ -147,24 +174,8 @@ export function AvatarGroup({
   onPointerLeave,
   ...props
 }: AvatarGroupProps) {
-  // Spread by a tap, where no pointer hovers: until a tap outside, a pause or a mouse leaving it.
-  const [tapped, setTapped] = useState(false);
-  // Each tap inside a tapped group restarts the pause.
-  const [taps, setTaps] = useState(0);
   const groupRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (!tapped) return;
-    const bunch = () => setTapped(false);
-    const timer = setTimeout(bunch, tapSpreadDuration);
-    const outside = (event: PointerEvent) => {
-      if (!groupRef.current?.contains(event.target as Node)) bunch();
-    };
-    document.addEventListener('pointerdown', outside, true);
-    return () => {
-      clearTimeout(timer);
-      document.removeEventListener('pointerdown', outside, true);
-    };
-  }, [tapped, taps]);
+  const { tapped, setTapped, tapInside } = useTapSpread(groupRef);
   // A format prop wins over the provider's messages, which win over the English defaults.
   const messages = useMessages('avatarGroup', avatarGroupMessages);
   const formatters = useFormatters();
@@ -234,7 +245,7 @@ export function AvatarGroup({
       }}
       onPointerDown={(event) => {
         onPointerDown?.(event);
-        if (tapped) setTaps((value) => value + 1);
+        tapInside();
       }}
       onPointerLeave={(event: ReactPointerEvent<HTMLDivElement>) => {
         onPointerLeave?.(event);

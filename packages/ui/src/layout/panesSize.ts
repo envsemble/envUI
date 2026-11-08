@@ -6,7 +6,7 @@
  *
  *   <Panes.Root persist="inbox" persistedWidth={readPanesWidth(cookieHeader, 'inbox')}>
  *
- * Returns undefined where no width is kept under the key.
+ * Returns undefined where no width is kept under the key, or what is kept there is no width.
  */
 export function readPanesWidth(
   cookies: string | null | undefined,
@@ -17,8 +17,16 @@ export function readPanesWidth(
   for (const part of cookies.split(';')) {
     const separator = part.indexOf('=');
     if (separator < 0 || part.slice(0, separator).trim() !== name) continue;
-    const size = Number(decodeURIComponent(part.slice(separator + 1).trim()));
-    return Number.isFinite(size) && part.slice(separator + 1).trim() !== '' ? size : undefined;
+    const value = part.slice(separator + 1).trim();
+    if (value === '') return undefined;
+    let size: number;
+    try {
+      size = Number(decodeURIComponent(value));
+    } catch {
+      // A value that is no valid encoding, such as one with a stray %, keeps no width.
+      return undefined;
+    }
+    return Number.isFinite(size) ? size : undefined;
   }
   return undefined;
 }

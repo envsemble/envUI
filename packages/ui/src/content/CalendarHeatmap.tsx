@@ -15,20 +15,18 @@ import { TooltipPopup } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { useFormatters, useResolvedLocale } from '../internal/useFormatters.js';
 import { calendarHeatmap as calendarHeatmapMessages } from '../foundations/messages/calendarHeatmap.js';
 import type { BadgeTone } from './Badge.js';
 import { isRightToLeft } from '../internal/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
-import { dayParts, localeWeekStart, parseDay, type Weekday } from '../internal/calendarDays.js';
-import { day as dayMilliseconds } from '../internal/durations.js';
+import type { Weekday } from '../internal/calendarDays.js';
 import {
   calendarHeatmapModel,
   heatmapKeyTarget,
   levelStyle,
-  localeNames,
   type CalendarHeatmapModel,
 } from './internal/calendarHeatmapModel.js';
+import { useHeatmapLabels } from './internal/useHeatmapLabels.js';
 import { useHeatmapTooltip } from './internal/useHeatmapTooltip.js';
 import '../styles/Base.css';
 import '../styles/CalendarHeatmap.css';
@@ -156,36 +154,13 @@ export function CalendarHeatmap({
   const messages = useMessages('calendarHeatmap', calendarHeatmapMessages);
   const lessLabel = ownLessLabel ?? messages.less;
   const moreLabel = ownMoreLabel ?? messages.more;
-  const formatters = useFormatters();
-  const resolvedLocale = useResolvedLocale();
-  const weekStart = useMemo(
-    () => ownWeekStart ?? localeWeekStart(resolvedLocale),
-    [ownWeekStart, resolvedLocale],
-  );
-  const names = useMemo(() => localeNames(formatters), [formatters]);
-  const monthLabels = ownMonthLabels ?? names.months;
-  const weekdayLabels = ownWeekdayLabels ?? names.weekdays;
-  const formatValue = useMemo(
-    () => ownFormatValue ?? ((value: number) => formatters.number().format(value)),
-    [ownFormatValue, formatters],
-  );
-  const formatDate = useMemo(() => {
-    if (ownFormatDate) return ownFormatDate;
-    // Names given as props make the date from them; else the locale writes the whole date.
-    if (ownMonthLabels || ownWeekdayLabels)
-      return (date: string) => {
-        const parts = dayParts(parseDay(date)!);
-        return `${weekdayLabels[parts.weekday]} ${parts.date} ${monthLabels[parts.month]} ${parts.year}`;
-      };
-    const format = formatters.dateTime({
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      timeZone: 'UTC',
-    });
-    return (date: string) => format.format(parseDay(date)! * dayMilliseconds);
-  }, [ownFormatDate, ownMonthLabels, ownWeekdayLabels, monthLabels, weekdayLabels, formatters]);
+  const { weekStart, monthLabels, weekdayLabels, formatValue, formatDate } = useHeatmapLabels({
+    weekStart: ownWeekStart,
+    formatValue: ownFormatValue,
+    formatDate: ownFormatDate,
+    monthLabels: ownMonthLabels,
+    weekdayLabels: ownWeekdayLabels,
+  });
   // Thresholds compare by value, so a new array with the same steps keeps the model.
   const thresholdsKey = thresholds?.join(' ');
   const model = useMemo(

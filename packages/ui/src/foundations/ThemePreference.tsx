@@ -172,6 +172,72 @@ function readSystemTheme(): ColorScheme {
     : 'light';
 }
 
+/**
+ * The preference kept in localStorage under a key, else the default; a choice made in another
+ * window or tab of the same origin applies here too.
+ */
+function useStoredPreference(storageKey: string, defaultPreference: ThemePreference) {
+  const [preference, setPreferenceState] = useState<ThemePreference>(() =>
+    typeof window === 'undefined'
+      ? defaultPreference
+      : readStoredPreference(storageKey, defaultPreference),
+  );
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.storageArea !== window.localStorage || event.key !== storageKey) return;
+      const next = event.newValue;
+      setPreferenceState(
+        next === 'light' || next === 'dark' || next === 'system' ? next : defaultPreference,
+      );
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [storageKey, defaultPreference]);
+  const setPreference = useCallback(
+    (next: ThemePreference) => {
+      setPreferenceState(next);
+      try {
+        window.localStorage.setItem(storageKey, next);
+      } catch {
+        // A blocked storage API should not prevent switching for this visit.
+      }
+    },
+    [storageKey],
+  );
+  return [preference, setPreference] as const;
+}
+
+/**
+ * The page's new colors show at once rather than easing, each restyled every frame until done.
+ * Before the new theme is styled, the root stops transitions; once it is, they resume, and as the
+ * colors no longer change, none start. A provider that doesn't apply to the document, such as one
+ * in a figure, leaves its transitions to ease.
+ */
+function useInstantColorSwitch(applyToDocument: boolean, colors: string) {
+  const shownColors = useRef<string | undefined>(undefined);
+  useInsertionEffect(() => {
+    if (applyToDocument && shownColors.current !== undefined && shownColors.current !== colors)
+      document.documentElement.setAttribute(switchingAttribute, '');
+  }, [applyToDocument, colors]);
+  useLayoutEffect(() => {
+    shownColors.current = colors;
+    const root = document.documentElement;
+    if (!root.hasAttribute(switchingAttribute)) return;
+    // Reading a computed style brings the page's styles up to date, with the new colors.
+    void getComputedStyle(root).transitionProperty;
+    // After the frame that shows them, so that frame's style isn't worked out twice.
+    let timer = 0;
+    const frame = requestAnimationFrame(() => {
+      timer = window.setTimeout(() => root.removeAttribute(switchingAttribute));
+    });
+    // A switch before then removes it in its own time.
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+    };
+  }, [colors]);
+}
+
 /** Owns the theme preference: persistence, the system theme and document-root theming. */
 export function ThemePreferenceProvider({
   children,
@@ -192,11 +258,7 @@ export function ThemePreferenceProvider({
   const appliedContrast = ownContrast ?? inherited.contrast;
   const contrast = ownContrast ?? (fromPage ? (pageContrast ?? 'system') : inherited.contrast);
   const scale = ownScale ?? (fromPage ? (pageScale ?? 'system') : inherited.scale);
-  const [preference, setPreferenceState] = useState<ThemePreference>(() =>
-    typeof window === 'undefined'
-      ? defaultPreference
-      : readStoredPreference(storageKey, defaultPreference),
-  );
+  const [preference, setPreference] = useStoredPreference(storageKey, defaultPreference);
   const [systemTheme, setSystemTheme] = useState<ColorScheme>(() =>
     typeof document !== 'undefined' && document.documentElement.dataset.envTheme === 'dark'
       ? 'dark'
@@ -213,19 +275,6 @@ export function ThemePreferenceProvider({
     query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);
   }, [preference]);
-
-  // A choice made in another window or tab of the same origin applies here too.
-  useEffect(() => {
-    const onStorage = (event: StorageEvent) => {
-      if (event.storageArea !== window.localStorage || event.key !== storageKey) return;
-      const next = event.newValue;
-      setPreferenceState(
-        next === 'light' || next === 'dark' || next === 'system' ? next : defaultPreference,
-      );
-    };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, [storageKey, defaultPreference]);
 
   // One provider applies to the document; a second would write over the first's root theme. A
   // layout effect, so it registers before the provider writes on the root below.
@@ -284,45 +333,8 @@ export function ThemePreferenceProvider({
       browserTheme.content = canvas;
   }, [applyToDocument, theme, appliedContrast, ownScale, provider]);
 
-  // The page's new colors show at once rather than easing, each restyled every frame until done.
-  // Before the new theme is styled, the root stops transitions; once it is, they resume, and as
-  // the colors no longer change, none start. A provider that doesn't apply to the document, such as
-  // one in a figure, leaves its transitions to ease.
-  const colors = `${theme} ${contrast} ${appliedContrast}`;
-  const shownColors = useRef<string | undefined>(undefined);
-  useInsertionEffect(() => {
-    if (applyToDocument && shownColors.current !== undefined && shownColors.current !== colors)
-      document.documentElement.setAttribute(switchingAttribute, '');
-  }, [applyToDocument, colors]);
-  useLayoutEffect(() => {
-    shownColors.current = colors;
-    const root = document.documentElement;
-    if (!root.hasAttribute(switchingAttribute)) return;
-    // Reading a computed style brings the page's styles up to date, with the new colors.
-    void getComputedStyle(root).transitionProperty;
-    // After the frame that shows them, so that frame's style isn't worked out twice.
-    let timer = 0;
-    const frame = requestAnimationFrame(() => {
-      timer = window.setTimeout(() => root.removeAttribute(switchingAttribute));
-    });
-    // A switch before then removes it in its own time.
-    return () => {
-      cancelAnimationFrame(frame);
-      clearTimeout(timer);
-    };
-  }, [colors]);
+  useInstantColorSwitch(applyToDocument, `${theme} ${contrast} ${appliedContrast}`);
 
-  const setPreference = useCallback(
-    (next: ThemePreference) => {
-      setPreferenceState(next);
-      try {
-        window.localStorage.setItem(storageKey, next);
-      } catch {
-        // A blocked storage API should not prevent switching for this visit.
-      }
-    },
-    [storageKey],
-  );
   const value = useMemo<ThemePreferenceValue>(
     () => ({
       preference,

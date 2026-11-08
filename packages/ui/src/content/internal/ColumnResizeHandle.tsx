@@ -1,14 +1,13 @@
 'use client';
 
-import { useRef, type PointerEvent as ReactPointerEvent } from 'react';
-import { isRightToLeft } from '../../internal/direction.js';
+import { useEffect } from 'react';
+import { useResize } from '../../internal/useResize.js';
 import {
   columnBounds,
   columnResizeLargeStep,
   columnResizeStep,
   resizeColumns,
 } from './tableColumns.js';
-import { scrolledBy } from '../../internal/scrolledBy.js';
 import '../../styles/Base.css';
 import '../../styles/Table.css';
 
@@ -17,19 +16,19 @@ export interface TableColumns {
   widths: readonly number[];
   minimums: readonly number[];
   resizable: boolean;
-  /** The column whose resize handle is being dragged. */
-  resizing: number | null;
-  setResizing: (column: number | null) => void;
+  /** Says whether a column's resize handle is being dragged. */
+  setResizing: (resizing: boolean) => void;
   /** Sets the widths: committed false while dragging, true as a change is complete. */
   change: (widths: number[], committed: boolean) => void;
   reset: () => void;
 }
 
-function inlineDirection(element: Element) {
-  return isRightToLeft(element) ? -1 : 1;
-}
+const tableOf = (handle: HTMLElement) => handle.closest('table');
 
-/** A separator at the inline end of a header cell that moves the boundary to the next column. */
+/**
+ * A separator at the inline end of a header cell that moves the boundary to the next column: a
+ * window splitter's handle on useResize, its size the column's width in percent of the table.
+ */
 export function ColumnResizeHandle({
   column,
   columns,
@@ -41,99 +40,41 @@ export function ColumnResizeHandle({
   label?: string;
   labelledBy: string;
 }) {
-  const { widths, minimums, change, reset, resizing, setResizing } = columns;
-  const drag = useRef<{
-    pointerId: number;
-    startX: number;
-    tableWidth: number;
-    widths: readonly number[];
-    direction: number;
-  } | null>(null);
+  const { widths, minimums, change, reset, setResizing } = columns;
   const width = widths[column];
   const { min, max } = columnBounds(widths, minimums, column);
-
-  /**
-   * How far the pointer has moved the boundary, as a share of the table, on the content: a box
-   * scrolled around the table, such as its own, moves it as the pointer's move would.
-   */
-  function deltaOf(event: ReactPointerEvent<HTMLDivElement>) {
-    const current = drag.current!;
-    const x = event.clientX + scrolledBy(event.currentTarget, 'x');
-    return ((x - current.startX) * current.direction * 100) / current.tableWidth;
-  }
-
-  function dragTo(event: ReactPointerEvent<HTMLDivElement>) {
-    const current = drag.current!;
-    change(resizeColumns(current.widths, minimums, column, deltaOf(event)), false);
-  }
-
-  function finish(event: ReactPointerEvent<HTMLDivElement>) {
-    const current = drag.current;
-    if (!current || current.pointerId !== event.pointerId) return;
-    if (event.type === 'pointerup') {
-      change(resizeColumns(current.widths, minimums, column, deltaOf(event)), true);
-    }
-    // A cancelled drag, such as one the browser took over for scrolling, returns to where it began.
-    else change([...current.widths], true);
-    drag.current = null;
-    setResizing(null);
-    if (event.currentTarget.hasPointerCapture(event.pointerId))
-      event.currentTarget.releasePointerCapture(event.pointerId);
-  }
+  // A column's handle always moves along the inline axis, so its part takes no data-axis.
+  const {
+    handleProps: { 'data-axis': _axis, ...handleProps },
+    dragging,
+  } = useResize({
+    axis: 'inline',
+    unit: '%',
+    percentOf: tableOf,
+    value: width,
+    min,
+    max,
+    step: columnResizeStep,
+    largeStep: columnResizeLargeStep,
+    // Only this column and the next change, so the boundary moves to the new width from any widths.
+    onChange: (next, { committed }) =>
+      change(resizeColumns(widths, minimums, column, next - width), committed),
+    valueText: (value) => `${Math.round(value)}%`,
+  });
+  // The table shows that a column is resizing while this handle is dragged.
+  useEffect(() => {
+    if (!dragging) return;
+    setResizing(true);
+    return () => setResizing(false);
+  }, [dragging, setResizing]);
 
   return (
     <div
-      role="separator"
-      aria-orientation="vertical"
+      {...handleProps}
       aria-label={label}
       aria-labelledby={label === undefined ? labelledBy : undefined}
-      aria-valuenow={Math.round(width)}
-      aria-valuemin={Math.round(min)}
-      aria-valuemax={Math.round(max)}
-      aria-valuetext={`${Math.round(width)}%`}
-      tabIndex={0}
       className="env-table-column-resize-handle"
-      data-resizing={resizing === column ? '' : undefined}
-      onPointerDown={(event) => {
-        if (event.button !== 0) return;
-        const tableWidth = event.currentTarget.closest('table')?.getBoundingClientRect().width;
-        if (!tableWidth) return;
-        // Dragging selects no text and leaves focus where it is.
-        event.preventDefault();
-        event.currentTarget.setPointerCapture(event.pointerId);
-        drag.current = {
-          pointerId: event.pointerId,
-          startX: event.clientX + scrolledBy(event.currentTarget, 'x'),
-          tableWidth,
-          widths,
-          direction: inlineDirection(event.currentTarget),
-        };
-        setResizing(column);
-      }}
-      onPointerMove={(event) => {
-        if (drag.current?.pointerId === event.pointerId) dragTo(event);
-      }}
-      onPointerUp={finish}
-      onPointerCancel={finish}
-      onLostPointerCapture={(event) => {
-        if (drag.current?.pointerId !== event.pointerId) return;
-        drag.current = null;
-        setResizing(null);
-      }}
       onDoubleClick={reset}
-      onKeyDown={(event) => {
-        if (event.altKey || event.ctrlKey || event.metaKey) return;
-        const step = event.shiftKey ? columnResizeLargeStep : columnResizeStep;
-        const direction = inlineDirection(event.currentTarget);
-        let next: number;
-        if (event.key === 'ArrowRight') next = Math.round(width + step * direction);
-        else if (event.key === 'ArrowLeft') next = Math.round(width - step * direction);
-        else if (event.key === 'Home') next = min;
-        else if (event.key === 'End') next = max;
-        else return;
-        event.preventDefault();
-        change(resizeColumns(widths, minimums, column, next - width), true);
-      }}
     />
   );
 }

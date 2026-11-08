@@ -8,7 +8,7 @@ import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Column, Grid, Row } from '../foundations/Layout.js';
 import { useDirectionScope } from '../internal/useDirection.js';
-import { NavigationIconState } from '../foundations/NavigationIconState.js';
+import { SymbolIconFill } from '../internal/SymbolIconFill.js';
 import { Surface } from '../foundations/Surface.js';
 import { Button } from '../actions/Button.js';
 import '../styles/Base.css';
@@ -150,7 +150,7 @@ function TabButton({
   });
   // Base UI composes the consumer's handlers and ref with its tab behavior.
   const element = useRender({ render: tabButton, props });
-  return <NavigationIconState selected={active}>{element}</NavigationIconState>;
+  return <SymbolIconFill selected={active}>{element}</SymbolIconFill>;
 }
 
 /**

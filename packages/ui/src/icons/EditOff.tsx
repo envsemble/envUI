@@ -3,7 +3,7 @@
 'use client';
 
 import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
-import { useSymbolIconFill } from '../foundations/NavigationIconState.js';
+import { useSymbolIconFill } from '../internal/SymbolIconFill.js';
 
 export function IconEditOff({ filled: requestedFill, ...props }: SymbolIconProps) {
   const filled = useSymbolIconFill(requestedFill);

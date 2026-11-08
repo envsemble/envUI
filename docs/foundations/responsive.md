@@ -3,8 +3,10 @@ title: Adapting to width
 summary: Components follow the space they sit in, and four window classes name where a layout changes.
 components:
   - useContainerSize
+  - windowClassOf
 statuses: # Never released before 1.0, so beta until a release has used them.
   useContainerSize: beta
+  windowClassOf: beta
 aliases:
   - window class
   - window classes
@@ -111,13 +113,13 @@ Ask an agent for a layout that adapts in these words; envUI turns each into a wi
 ```tsx
 import type { ReactNode } from 'react';
 import { useRef } from 'react';
-import { useContainerSize, windowClasses } from '@envsemble/envui';
+import { useContainerSize, windowClassOf, windowClasses } from '@envsemble/envui';
 
 function ChartPanel({ chart, legend }: { chart: ReactNode; legend: ReactNode }) {
-  // The legend moves under the chart when the panel itself is narrow, wherever it is placed.
+  // The legend moves under the chart when the panel itself is compact, wherever it is placed.
   const panel = useRef<HTMLDivElement>(null);
   const size = useContainerSize(panel);
-  const narrow = size !== undefined && size.inlineSize < 480;
+  const narrow = size !== undefined && windowClassOf(size.inlineSize) === 'compact';
   return (
     <div ref={panel}>
       {chart}
@@ -149,6 +151,7 @@ const medium = windowClasses.medium;
 | `WindowClass`                       | `'compact'`, `'medium'`, `'expanded'` or `'large'`                                                            |
 | `env-window`                        | The container the outermost theme boundary is; a query on it measures the window class                        |
 | `useContainerSize(target, { box })` | An element's `{ inlineSize, blockSize }` in CSS pixels, measured before it paints; undefined on the server    |
+| `windowClassOf(inlineSize)`         | The window class of a width in CSS pixels, such as `useContainerSize`'s, at the root font size                |
 | `--env-z-base` … `--env-z-tooltip`  | The stacking order of envUI's layers and the application's own, lowest first                                  |
 
 #### Window classes

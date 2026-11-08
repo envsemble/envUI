@@ -158,6 +158,10 @@ test(
     await page.keyboard.press('Shift+ArrowRight');
     await expect(widths).toHaveText('46.0 24.0 15.0 15.0');
     await expect(handle).toHaveAttribute('aria-valuenow', '46');
+    await page.keyboard.press('PageDown');
+    await expect(widths).toHaveText('41.0 29.0 15.0 15.0');
+    await page.keyboard.press('PageUp');
+    await expect(widths).toHaveText('46.0 24.0 15.0 15.0');
     await page.keyboard.press('End');
     await expect(widths).toHaveText('60.0 10.0 15.0 15.0');
     await page.keyboard.press('ArrowRight');

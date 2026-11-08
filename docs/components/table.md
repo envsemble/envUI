@@ -191,6 +191,7 @@ Start each row with the cell that identifies it, which titles the row when rows 
 | <kbd>Enter</kbd> or <kbd>Space</kbd> on a sort button                             | Asks the application to sort the rows by the column.                             |
 | <kbd>←</kbd> or <kbd>→</kbd> on a resize handle                                   | Moves the column's end by 1 percent, in the reading direction.                   |
 | <kbd>Shift</kbd>+<kbd>←</kbd> or <kbd>Shift</kbd>+<kbd>→</kbd> on a resize handle | Moves the column's end by 5 percent.                                             |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd> on a resize handle                       | Widens or narrows the column by 5 percent.                                       |
 | <kbd>Home</kbd>, <kbd>End</kbd> on a resize handle                                | Narrows the column to its smallest width, or widens it to its largest.           |
 
 ### envUI provides

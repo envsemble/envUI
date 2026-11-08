@@ -17,7 +17,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { remLength } from '../internal/cssLength.js';
+import { remLength } from '../internal/lengths.js';
 import { setRef } from '../internal/setRef.js';
 import { useStackedReport } from '../internal/useStackedReport.js';
 import { IconArrowDownward } from '../icons/ArrowDownward.js';
@@ -201,7 +201,7 @@ function Root({
   const [chosen, setChosen] = useState({ key: defaultsKey, widths: defaultColumnWidths });
   if (chosen.key !== defaultsKey) setChosen({ key: defaultsKey, widths: defaultColumnWidths });
   const [startWidths] = useState(columnWidths);
-  const [resizing, setResizing] = useState<number | null>(null);
+  const [resizing, setResizing] = useState(false);
   const widths = columnWidths ?? (chosen.key === defaultsKey ? chosen.widths : defaultColumnWidths);
 
   let columns: TableColumns | null = null;
@@ -219,7 +219,6 @@ function Root({
       widths,
       minimums: columnMinimums(minColumnWidths, widths.length),
       resizable: resizableColumns,
-      resizing,
       setResizing,
       change,
       reset: () => change(starting ? [...starting] : widths.map(() => 100 / widths.length), true),
@@ -259,7 +258,7 @@ function Root({
           className={classNames('env-table', className)}
           data-density={density}
           data-fixed-layout={widths ? '' : undefined}
-          data-resizing={resizing === null ? undefined : ''}
+          data-resizing={resizing ? '' : undefined}
         >
           {caption != null && (
             <caption id={captionId} className="env-table-caption">

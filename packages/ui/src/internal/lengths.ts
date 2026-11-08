@@ -6,3 +6,9 @@ export function remPixels(element?: Element) {
 
 /** A number to a hundredth, as sizes in rem are kept and reported. */
 export const roundToHundredth = (value: number) => Math.round(value * 100) / 100;
+
+/** A CSS length as given, or a bare number, also written as text such as "40", of rem. */
+export function remLength(length: string | number) {
+  const text = String(length).trim();
+  return /^\d*\.?\d+$/.test(text) ? `${text}rem` : text;
+}

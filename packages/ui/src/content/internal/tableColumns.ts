@@ -2,7 +2,10 @@
 
 /** The smallest width of a column in percent unless the application sets its own. */
 const defaultMinColumnWidth = 5;
-/** Keyboard steps of a resize handle in percent: arrow keys, and arrow keys with Shift. */
+/**
+ * Keyboard steps of a resize handle in percent: arrow keys, and Page Up, Page Down or arrow keys
+ * with Shift.
+ */
 export const columnResizeStep = 1;
 export const columnResizeLargeStep = 5;
 
