@@ -17,6 +17,8 @@ import {
   sourcePattern,
   statuses,
   type ExampleEntry,
+  type Frontmatter,
+  type PageSectionDefinition,
 } from './Schema.ts';
 
 /** A figure of a foundation's page, or an example file placed as a figure. */
@@ -40,7 +42,19 @@ export interface PartNames {
 export const cell = (text: unknown) =>
   String(text).replace(/\|/g, '\\|').replace(/\s+/g, ' ').trim();
 
-export function validateFrontmatter(frontmatter, path, { kind, versions }) {
+/** What a page's frontmatter is checked against: its kind, and the versions its since may name. */
+export interface FrontmatterContext {
+  kind: string;
+  /** The released versions and the next one; without them, since goes unchecked. */
+  versions?: Set<string>;
+}
+
+/** Checks a page's frontmatter against its kind's schema, throwing with every problem it has. */
+export function validateFrontmatter(
+  frontmatter: Frontmatter,
+  path: string,
+  { kind, versions }: FrontmatterContext,
+) {
   const problems: string[] = [];
   const schema = pageSchemas[kind];
   if (!schema) {
@@ -111,12 +125,12 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
           `${key} must map each example's name to its role, or to its role and caption`,
         );
       else
-        for (const [name, entry] of Object.entries(value)) {
-          const { role, caption, open, stage, motion, wide, device } =
+        for (const [name, entry] of Object.entries<string | Partial<ExampleEntry> | null>(value)) {
+          const { role, caption, open, stage, motion, wide, device }: Partial<ExampleEntry> =
             typeof entry === 'string' ? { role: entry } : (entry ?? {});
           if (!/^[A-Z][A-Za-z\d]*$/.test(name))
             problems.push(`${key} names ${name}; name an example by its PascalCase file name`);
-          if (!exampleRoles.includes(role))
+          if (!exampleRoles.includes(role ?? ''))
             problems.push(
               `${key} gives ${name} the role ${role}; one of ${exampleRoles.join(', ')}`,
             );
@@ -166,10 +180,10 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
       if (!value || typeof value !== 'object' || Array.isArray(value))
         problems.push(`${key} must map an export to its status`);
       else
-        for (const [name, status] of Object.entries(value)) {
+        for (const [name, status] of Object.entries<unknown>(value)) {
           if (!listed.includes(name))
             problems.push(`${key} names ${name}, which components does not list`);
-          if (!statuses.includes(status))
+          if (!statuses.includes(status as string))
             problems.push(`${key} of ${name} must be one of ${statuses.join(', ')}`);
           else if (
             status === (schema ? frontmatter.status : (frontmatter.status ?? guideExportStatus))
@@ -194,7 +208,7 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
       versions &&
       schema.since &&
       typeof frontmatter.since === 'string' &&
-      frontmatter.since.match(schema.since.pattern) &&
+      frontmatter.since.match(schema.since.pattern!) &&
       !versions.has(frontmatter.since)
     )
       problems.push(
@@ -241,9 +255,9 @@ const propsTableColumns = ['type', 'types', 'contract', 'contracts', 'default', 
  * A table that lists props by hand, such as `| Name | Contract |` or `| Option | Type |`; the
  * template generates them.
  */
-export function isPropsTable(token) {
+export function isPropsTable(token: Token) {
   if (token.type !== 'table') return false;
-  const header = token.header.map((cell) => cell.text.trim().toLowerCase());
+  const header = (token as Tokens.Table).header.map((cell) => cell.text.trim().toLowerCase());
   return (
     propsTableNames.includes(header[0]) &&
     header.slice(1).some((cell) => propsTableColumns.includes(cell))
@@ -251,7 +265,7 @@ export function isPropsTable(token) {
 }
 
 /** A fence long enough for a source: three backticks, or one more than its longest run. */
-export function fenceFor(source) {
+export function fenceFor(source: string) {
   const longest = Math.max(0, ...[...source.matchAll(/`+/g)].map((match) => match[0].length));
   return '`'.repeat(Math.max(3, longest + 1));
 }
@@ -265,10 +279,10 @@ const providesHeadings = ['envUI provides', 'You provide'];
  * What an Accessibility section lacks: the `###` lists of what envUI and the application provide,
  * and a Key and Action table under `### Keyboard`.
  */
-function accessibilityProblems(tokens) {
+function accessibilityProblems(tokens: Token[]) {
   const problems: string[] = [];
   const headings = tokens
-    .filter((token) => token.type === 'heading' && token.depth === 3)
+    .filter((token): token is Tokens.Heading => token.type === 'heading' && token.depth === 3)
     .map((token) => token.text);
   for (const required of providesHeadings) {
     const start = tokens.findIndex(
@@ -277,7 +291,11 @@ function accessibilityProblems(tokens) {
     const list = tokens
       .slice(start + 1)
       .find((token) => token.type === 'list' || token.type === 'heading');
-    if (start === -1 || list?.type !== 'list' || !list.items.some((item) => item.text.trim()))
+    if (
+      start === -1 ||
+      list?.type !== 'list' ||
+      !(list as Tokens.List).items.some((item) => item.text.trim())
+    )
       problems.push(`"## Accessibility" needs a "### ${required}" list`);
   }
   if (headings.includes('Keyboard')) {
@@ -287,7 +305,8 @@ function accessibilityProblems(tokens) {
     const table = tokens
       .slice(start + 1)
       .find((token) => token.type === 'table' || (token.type === 'heading' && token.depth <= 3));
-    const header = table?.type === 'table' ? table.header.map((cell) => cell.text) : [];
+    const header =
+      table?.type === 'table' ? (table as Tokens.Table).header.map((cell) => cell.text) : [];
     if (header[0] !== 'Key' || header[1] !== 'Action')
       problems.push('"### Keyboard" needs a table with "Key" and "Action" columns');
   }
@@ -312,14 +331,14 @@ function compareChangelogVersions(a: string, b: string) {
 }
 
 /** What a Changelog's entries get wrong: they run from the newest version to the oldest. */
-function changelogProblems(tokens) {
+function changelogProblems(tokens: Token[]) {
   const versions = tokens
-    .filter((token) => token.type === 'list')
+    .filter((token): token is Tokens.List => token.type === 'list')
     .flatMap((list) => list.items)
     .map((item) => /^\*\*([^*]+)\*\*:/.exec(item.text)?.[1])
-    .filter(Boolean);
+    .filter((version): version is string => Boolean(version));
   const misplaced = versions.find(
-    (version, index) => index > 0 && compareChangelogVersions(versions[index - 1], version) < 0,
+    (version, index) => index > 0 && compareChangelogVersions(versions[index - 1]!, version) < 0,
   );
   return misplaced
     ? [`"## Changelog" lists ${misplaced} below an older version: list the newest first`]
@@ -327,7 +346,7 @@ function changelogProblems(tokens) {
 }
 
 /** Problems of any heading: the title is the only `#`, and props are generated. */
-function headingProblems(token) {
+function headingProblems(token: Token) {
   const problems: string[] = [];
   if (token.type === 'heading' && token.depth === 1)
     problems.push('only the title is a level-one heading');
@@ -440,6 +459,52 @@ export function readPartNames(directory = documentationDirectory): PartNames {
   return { classes, components };
 }
 
+/** The page readPage reads: its id, the path its problems name, and its title. */
+export interface PageInput {
+  id: string;
+  path: string;
+  title: string;
+}
+
+/**
+ * What readPage checks a page against: its kind, the examples its frontmatter lists, the example
+ * and specimen files of its folder, and the part names its legends may name.
+ */
+export interface PageContext {
+  kind: string;
+  catalog: Record<string, ExampleEntry>;
+  examples: Set<string>;
+  specimens: Set<string>;
+  partNames: PartNames;
+}
+
+/** What readPage keeps as it reads a page's tokens in order. */
+interface PageReading {
+  document: PageInput;
+  context: PageContext;
+  foundation: boolean;
+  /** The sections the page's kind takes, in their order, with their titles on this kind. */
+  structure: PageSectionDefinition[];
+  codeTitle: string;
+  /** The figures placed so far, by name. */
+  placed: Set<string>;
+  sections: ReadSection[];
+  problems: string[];
+  current: ReadSection | undefined;
+  subheading: string | undefined;
+  /** The figure an ordered list right after it is the legend of. */
+  legendOf: FigureBlock | ExampleBlock | undefined;
+  /** The `###` subsections of Compose so far, by their index in codeSubsections. */
+  codeOrder: number[];
+}
+
+/** Adds Markdown to a section's blocks, to the Markdown block it ends with if it does. */
+function appendMarkdown(blocks: DocumentationBlock[], raw: string) {
+  const last = blocks.at(-1);
+  if (last?.kind === 'markdown') last.markdown += raw;
+  else blocks.push({ kind: 'markdown', markdown: raw });
+}
+
 /**
  * The sections of a page in the one-file structure, each with its blocks: Markdown, figures with
  * their legends, specimens and, in Compose, examples shown as code. It checks the structure: the
@@ -448,409 +513,460 @@ export function readPartNames(directory = documentationDirectory): PartNames {
  * a pattern, an overview example and Accessibility's lists. A foundation's figures are the
  * catalogue's (figures/foundations); an example file there is the code of the figure of its name.
  */
-export function readPage(
-  document: { id: string; path: string; title: string },
-  body: string,
-  {
-    kind,
-    catalog,
-    examples,
-    specimens,
-    partNames,
-  }: {
-    kind: string;
-    catalog: Record<string, ExampleEntry>;
-    examples: Set<string>;
-    specimens: Set<string>;
-    partNames: PartNames;
-  },
-) {
+export function readPage(document: PageInput, body: string, context: PageContext) {
   const tokens = marked.lexer(body);
   if (tokens.map((token) => token.raw).join('') !== body)
     throw new Error(`Could not split ${document.path} into sections.`);
-  const foundation = kind === 'foundation';
+  const foundation = context.kind === 'foundation';
   const structure = pageSections.map((item) => ({
     ...item,
     title: (foundation && item.foundationTitle) || item.title,
   }));
-  const codeTitle = structure.find((item) => item.id === 'code')!.title;
-  const placed = new Set<string>();
-  const sections: ReadSection[] = [];
-  const problems: string[] = [];
-  let current: ReadSection | undefined;
-  let subheading: string | undefined;
-  /** The figure an ordered list right after it is the legend of. */
-  let legendOf: FigureBlock | ExampleBlock | undefined;
-  /** The `###` subsections of Compose so far, by their index in codeSubsections. */
-  const codeOrder: number[] = [];
-  for (const token of tokens) {
-    problems.push(...headingProblems(token));
-    if (current?.id === 'code' && !(token.type === 'heading' && token.depth === 2)) {
-      // The developer part: `###` subsections of codeSubsections, in order, holding Markdown and
-      // example files shown as code.
-      current.tokens.push(token);
-      if (token.type === 'heading' && token.depth === 3) {
-        const index = codeSubsections.findIndex((item) => item.title === token.text);
-        if (token.text === 'Import')
-          problems.push(`"### Import" of "## ${codeTitle}" is generated; remove it`);
-        else if (index === -1)
-          problems.push(
-            `"### ${token.text}" is not a subsection of "## ${codeTitle}" (${codeSubsections.map((item) => item.title).join(', ')}); use a "####" heading inside one`,
-          );
-        else if (codeOrder.includes(index)) problems.push(`"### ${token.text}" appears twice`);
-        else if (codeOrder.some((other) => other > index))
-          problems.push(
-            `"### ${token.text}" must come before "### ${codeSubsections[Math.max(...codeOrder)].title}" in "## ${codeTitle}"`,
-          );
-        codeOrder.push(index);
-      } else if (token.type !== 'space' && !codeOrder.length)
-        problems.push(`"## ${codeTitle}" starts with a "###" subsection, such as "### Usage"`);
-      // Code of one language with nothing between is one block, rather than a line and then more.
-      const before = current.tokens.slice(0, -1).findLast((item) => item.type !== 'space');
-      if (
-        token.type === 'code' &&
-        before?.type === 'code' &&
-        before.lang === token.lang &&
-        !sourcePattern.test(token.lang ?? '')
-      )
-        problems.push(
-          `"## ${codeTitle}" gives two ${token.lang || 'code'} blocks in a row; make them one block`,
-        );
-      if (token.type === 'code' && sourcePattern.test(token.lang ?? '')) {
-        const name = token.lang.match(sourcePattern)[1];
-        if (!examples.has(name))
-          problems.push(
-            `source ${name} has no file apps/site/src/examples/${document.id}/${name}.tsx`,
-          );
-        if (token.text.trim())
-          problems.push(`the fence of source ${name} must be empty; the build fills in its file`);
-        current.blocks.push({ kind: 'source', name });
-        continue;
-      }
-      if (
-        token.type === 'code' &&
-        (figurePattern.test(token.lang ?? '') || kindFencePattern.test(token.lang ?? ''))
-      )
-        problems.push(
-          `"## ${codeTitle}" shows code, not figures: show an example's source with \`tsx source=Name\`, not \`${token.lang}\``,
-        );
-      if (token.type === 'html' && specimenPattern.test(token.raw.trim()))
-        problems.push(`"## ${codeTitle}" shows code, not specimens`);
-      const last = current.blocks.at(-1);
-      if (last?.kind === 'markdown') last.markdown += token.raw;
-      else current.blocks.push({ kind: 'markdown', markdown: token.raw });
-      continue;
-    }
-    if (token.type === 'heading' && token.depth === 2) {
-      const section = structure.find((item) => item.title === token.text);
-      if (!section) {
-        problems.push(
-          `"## ${token.text}" is not a section of a ${kind} page (${structure
-            .filter((item) => !item.generated)
-            .map((item) => item.title)
-            .join(', ')})`,
-        );
-        continue;
-      }
-      if (section.generated) problems.push(`"## ${token.text}" is generated; remove it`);
-      if (sections.some((item) => item.id === section.id))
-        problems.push(`"## ${token.text}" appears twice`);
-      const previous = sections.at(-1);
-      if (
-        previous &&
-        structure.indexOf(section) < structure.findIndex((item) => item.id === previous.id)
-      )
-        problems.push(`"## ${token.text}" must come before "## ${previous.title}"`);
-      current = { id: section.id, title: section.title, blocks: [], tokens: [] };
-      sections.push(current);
-      subheading = undefined;
-      legendOf = undefined;
-    }
-    if (!current) {
-      if (token.type !== 'space') problems.push('content must follow a "##" section heading');
-      continue;
-    }
-    current.tokens.push(token);
-    const blocks = current.blocks;
-    const appendMarkdown = (raw) => {
-      const last = blocks.at(-1);
-      if (last?.kind === 'markdown') last.markdown += raw;
-      else blocks.push({ kind: 'markdown', markdown: raw });
-    };
-    if (token.type === 'space') {
-      appendMarkdown(token.raw);
-      continue;
-    }
-    if (token.type === 'blockquote')
-      problems.push(
-        `${current.title} has a blockquote; write its text as a paragraph, or a rule as a do and don't pair`,
-      );
-    if (token.type === 'heading' && token.depth === 3) subheading = token.text;
-    if (isPropsTable(token))
-      problems.push(`${current.title} lists props in a table; the Props section is generated`);
-    // An option table, whose last column is Use for, shows in the catalogue as a legend of tags.
-    const options = optionTable(token);
-    const title = current.title;
-    if (options)
-      problems.push(...optionTableProblems(options).map((problem) => `${title}: ${problem}`));
-    if (legendOf?.kind === 'figure' && token.type === 'list' && token.ordered) {
-      // A foundation figure's legend: what each numbered mark, or each picture of a run, shows,
-      // its name in bold and then what it means, such as **Tight, inside a group**: A title….
-      const figure = legendOf;
-      figure.legend = token.items.map((item, index) => {
-        const match = item.text.replace(/\s+/g, ' ').match(/^\*\*([^*]+)\*\*:?\s*(.*)$/);
-        if (!match)
-          problems.push(
-            `item ${index + 1} of the legend of figure ${figure.name} must start with its name in bold, such as **Compact**: and what it means`,
-          );
-        return { name: match?.[1] ?? '', text: match?.[2].trim() ?? item.text };
-      });
-      legendOf = undefined;
-      continue;
-    }
-    if (legendOf?.role === 'variants' && token.type === 'list' && token.ordered) {
-      // A variants figure's legend: each variant's name in bold, labelling the example's items in
-      // order, or the item a part reference names.
-      const figure = legendOf;
-      figure.legend = token.items.map((item, index) => {
-        const label = item.text.match(/^\*\*([^*]+)\*\*/)?.[1];
-        if (!label)
-          problems.push(
-            `item ${index + 1} of the legend of variants ${figure.name} must start with the variant's name in bold, such as **Outline**`,
-          );
-        const part = item.text.match(/`(env-[^`]+)`/)?.[1] ?? '';
-        for (const name of part.match(/env-[\w-]+/g) ?? [])
-          if (!partNames.classes.has(name))
-            problems.push(
-              `item ${index + 1} of the legend of variants ${figure.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
-            );
-        return { part, text: item.text.replace(/\s+/g, ' ').trim(), label: label ?? '' };
-      });
-      legendOf = undefined;
-      continue;
-    }
-    if (legendOf && token.type === 'list' && token.ordered) {
-      // The anatomy figure's legend: one numbered part per item, by its class name.
-      const figure = legendOf;
-      figure.legend = token.items.map((item, index) => {
-        const part = item.text.match(/`(env-[^`]+)`/)?.[1];
-        if (!part)
-          problems.push(
-            `item ${index + 1} of the legend of anatomy ${figure.name} names no part, such as \`env-button\``,
-          );
-        // The catalogue shows the part's name alone; its class names and props are for
-        // developers.
-        const name = item.text.match(/^\*\*([^*]+)\*\*/)?.[1];
-        if (!name)
-          problems.push(
-            `item ${index + 1} of the legend of anatomy ${figure.name} must start with the part's name in bold, such as **Label**, which is all the catalogue shows of it`,
-          );
-        // Every class it names is one envUI styles or lists as a part.
-        for (const name of (part ?? '').replace(/::text$/, '').match(/env-[\w-]+/g) ?? [])
-          if (!partNames.classes.has(name))
-            problems.push(
-              `item ${index + 1} of the legend of anatomy ${figure.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
-            );
-        return {
-          part: part ?? '',
-          text: item.text.replace(/\s+/g, ' ').trim(),
-          ...(name && { name }),
-        };
-      });
-      legendOf = undefined;
-      continue;
-    }
-    legendOf = undefined;
-    const lang = token.type === 'code' ? (token.lang ?? '') : '';
-    if (sourcePattern.test(lang))
-      problems.push(
-        `\`${lang}\` in "## ${current.title}": an example's source as code belongs in "## ${codeTitle}"`,
-      );
-    if (kindFencePattern.test(lang)) {
-      problems.push(
-        `\`${lang}\`: place a figure as \`tsx figure=Name\`, and list its role and caption under examples in the frontmatter`,
-      );
-      continue;
-    }
-    const figure = lang.match(figurePattern);
-    if (/^tsx\s+figure=/.test(lang) && !figure) {
-      problems.push(
-        `the fence \`${lang}\` is malformed: write \`tsx figure=Name\`, with attributes as name="value" (a value holds no ", so use ' or “ ”) and flags, such as open, as their name alone`,
-      );
-      continue;
-    }
-    if (figure) {
-      const [, name, rest] = figure;
-      const listed = catalog[name];
-      if (placed.has(name)) problems.push(`figure ${name} is placed twice; place it once`);
-      placed.add(name);
-      if (!listed) {
-        problems.push(`figure ${name} is not listed under examples in the frontmatter`);
-        continue;
-      }
-      if (listed.role === 'overview') {
-        problems.push(
-          `figure ${name} is an overview example, which the Overview shows from the frontmatter; don't place it`,
-        );
-        continue;
-      }
-      if ((token as Tokens.Code).text.trim())
-        problems.push(`the fence of figure ${name} must be empty; the build fills in its file`);
-      if (current!.id === 'changelog')
-        problems.push(`figure ${name} belongs in a section before the changelog`);
-      if (foundation) {
-        // A foundation's figure is the catalogue's own, from its page's preview, with the legend
-        // that follows it; an example file of its name, where it has one, is its code.
-        if (rest.trim()) problems.push(`figure ${name} takes no attributes on a foundation page`);
-        const block: FigureBlock = {
-          kind: 'figure',
-          name,
-          heading: subheading ?? fileWords(name),
-          role: listed.role,
-          ...(listed.caption && { caption: listed.caption }),
-          ...(examples.has(name) && { code: true }),
-        };
-        blocks.push(block);
-        legendOf = block;
-        continue;
-      }
-      const { role } = listed;
-      const attributes: Record<string, string | true> = {};
-      for (const [, key, value, quoted, plain] of rest.matchAll(
-        /\s+([a-z]+)(=(?:"([^"]*)"|([^\s"]+)))?/g,
-      )) {
-        if (key === 'caption')
-          problems.push(`figure ${name} has a caption on its fence; it goes under examples`);
-        else if (!figureAttributes[role].allowed.includes(key))
-          problems.push(
-            `${role} ${name} takes no ${key}${figureAttributes[role].allowed.length ? `; it takes ${figureAttributes[role].allowed.join(', ')}` : ''}`,
-          );
-        else if (figureFlags.has(key) && value)
-          problems.push(`${role} ${name} has ${key}${value}; write the flag ${key} alone`);
-        else if (!figureFlags.has(key) && !value)
-          problems.push(`${role} ${name} has ${key} without a value; write ${key}="…"`);
-        if (key in attributes) problems.push(`${role} ${name} repeats ${key}`);
-        attributes[key] = value ? (quoted ?? plain).trim() : true;
-      }
-      delete attributes.caption;
-      if (listed.caption) attributes.caption = listed.caption;
-      for (const key of figureAttributes[role].required)
-        if (!attributes[key]) problems.push(`${role} ${name} needs a ${key}, one sentence`);
-      if (!examples.has(name))
-        problems.push(
-          `figure ${name} has no file apps/site/src/examples/${document.id}/${name}.tsx`,
-        );
-      const caption = typeof attributes.caption === 'string' ? attributes.caption : undefined;
-      const block: ExampleBlock = {
-        kind: 'example',
-        name,
-        heading:
-          role === 'do'
-            ? `Do: ${caption}`
-            : role === 'dont'
-              ? `Don't: ${caption}`
-              : role === 'caution'
-                ? `Caution: ${caption}`
-                : role === 'anatomy'
-                  ? `${document.title} anatomy`
-                  : role === 'variants'
-                    ? `${document.title} variants`
-                    : (subheading ?? fileWords(name)),
-        ...(role !== 'example' && { role: role as ExampleBlock['role'] }),
-        ...(caption && { caption }),
-      };
-      if (attributes.widths !== undefined) {
-        const widths = String(attributes.widths)
-          .split(/[\s,]+/)
-          .filter(Boolean)
-          .map(Number);
-        if (!widths.length || widths.some((width) => !(width >= 10 && width <= 120)))
-          problems.push(
-            `example ${name} has widths="${attributes.widths}"; give widths in rem, from 10 to 120`,
-          );
-        block.widths = widths;
-      }
-      if (attributes.sweep === true) {
-        if (!block.widths || block.widths.length < 2)
-          problems.push(
-            `example ${name} has sweep; give the widths it sweeps between, widths="30 16"`,
-          );
-        else if (attributes.open === true)
-          problems.push(
-            `example ${name} has sweep and open; a sweeping frame shows no overlays open`,
-          );
-        else block.sweep = true;
-      }
-      if (attributes.classes === true) {
-        if (attributes.sweep !== true)
-          problems.push(
-            `example ${name} has classes without sweep; only a sweeping frame names them`,
-          );
-        else block.classes = true;
-      }
-      if (attributes.fit === true) {
-        if (attributes.sweep !== true)
-          problems.push(
-            `example ${name} has fit without sweep; only a sweeping frame is drawn smaller`,
-          );
-        else block.fit = true;
-      }
-      if (attributes.width !== undefined) {
-        const width = Number(attributes.width);
-        if (!(width >= 10 && width <= 120))
-          problems.push(
-            `${role} ${name} has width="${attributes.width}"; give one width in rem, from 10 to 120`,
-          );
-        block.width = width;
-      }
-      if (attributes.of !== undefined) block.of = String(attributes.of);
-      if (typeof attributes.stage === 'string') {
-        if (stageFills.includes(attributes.stage))
-          block.stage = attributes.stage as ExampleBlock['stage'];
-        else
-          problems.push(
-            `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(', ')}, or nothing for the stage in the page's color`,
-          );
-      }
-      if (attributes.open === true) block.open = true;
-      if (attributes.device !== undefined) {
-        if (!deviceKinds.includes(String(attributes.device)))
-          problems.push(
-            `example ${name} has device="${attributes.device}"; a device is ${deviceKinds.map((kind) => `"${kind}"`).join(' or ')}`,
-          );
-        else if (attributes.widths !== undefined || attributes.open === true)
-          problems.push(
-            `example ${name} has device with widths or open; a device is one window of its own width, closed`,
-          );
-        else block.device = attributes.device as ExampleBlock['device'];
-      }
-      if (attributes.enlarge === true) block.enlarge = true;
-      if (attributes.wide === true) block.wide = true;
-      if (attributes.motion === true) block.motion = true;
-      if (block.motion && !specimens.has(name))
-        problems.push(
-          `example ${name} has motion but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to play it`,
-        );
-      if (attributes.specimen === true) block.specimen = true;
-      if (block.specimen && !specimens.has(name))
-        problems.push(
-          `anatomy ${name} has specimen but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to number`,
-        );
-      blocks.push(block);
-      if (role === 'anatomy' || role === 'variants') legendOf = block;
-      continue;
-    }
-    if (token.type === 'html' && specimenPattern.test(token.raw.trim())) {
-      const name = token.raw.trim().match(specimenPattern)![1]!;
-      if (!specimens.has(name))
-        problems.push(
-          `specimen ${name} has no file apps/site/src/specimens/${document.id}/${name}.tsx`,
-        );
-      blocks.push({ kind: 'specimen', name });
-      continue;
-    }
-    appendMarkdown(token.raw);
+  const page: PageReading = {
+    document,
+    context,
+    foundation,
+    structure,
+    codeTitle: structure.find((item) => item.id === 'code')!.title,
+    placed: new Set(),
+    sections: [],
+    problems: [],
+    current: undefined,
+    subheading: undefined,
+    legendOf: undefined,
+    codeOrder: [],
+  };
+  for (const token of tokens) readToken(page, token);
+  page.problems.push(...pageProblems(page));
+  if (page.problems.length)
+    throw new Error(
+      `${document.path} does not follow the one-file structure (contributing/pages.md):\n  - ${page.problems.join('\n  - ')}`,
+    );
+  return withOverview(page);
+}
+
+/** Reads one token of a page into the section it belongs to. */
+function readToken(page: PageReading, token: Token) {
+  const { problems, codeTitle } = page;
+  problems.push(...headingProblems(token));
+  if (page.current?.id === 'code' && !(token.type === 'heading' && token.depth === 2)) {
+    readComposeToken(page, page.current, token);
+    return;
   }
+  if (token.type === 'heading' && token.depth === 2 && !startSection(page, token as Tokens.Heading))
+    return;
+  const current = page.current;
+  if (!current) {
+    if (token.type !== 'space') problems.push('content must follow a "##" section heading');
+    return;
+  }
+  current.tokens.push(token);
+  if (token.type === 'space') {
+    appendMarkdown(current.blocks, token.raw);
+    return;
+  }
+  if (token.type === 'blockquote')
+    problems.push(
+      `${current.title} has a blockquote; write its text as a paragraph, or a rule as a do and don't pair`,
+    );
+  if (token.type === 'heading' && token.depth === 3) page.subheading = token.text;
+  if (isPropsTable(token))
+    problems.push(`${current.title} lists props in a table; the Props section is generated`);
+  // An option table, whose last column is Use for, shows in the catalogue as a legend of tags.
+  const options = optionTable(token);
+  if (options)
+    problems.push(...optionTableProblems(options).map((problem) => `${current.title}: ${problem}`));
+  if (token.type === 'list' && token.ordered && readLegend(page, token as Tokens.List)) return;
+  page.legendOf = undefined;
+  const lang = token.type === 'code' ? (token.lang ?? '') : '';
+  if (sourcePattern.test(lang))
+    problems.push(
+      `\`${lang}\` in "## ${current.title}": an example's source as code belongs in "## ${codeTitle}"`,
+    );
+  if (kindFencePattern.test(lang)) {
+    problems.push(
+      `\`${lang}\`: place a figure as \`tsx figure=Name\`, and list its role and caption under examples in the frontmatter`,
+    );
+    return;
+  }
+  const figure = lang.match(figurePattern);
+  if (/^tsx\s+figure=/.test(lang) && !figure) {
+    problems.push(
+      `the fence \`${lang}\` is malformed: write \`tsx figure=Name\`, with attributes as name="value" (a value holds no ", so use ' or “ ”) and flags, such as open, as their name alone`,
+    );
+    return;
+  }
+  if (figure) {
+    placeFigure(page, current, token as Tokens.Code, figure[1]!, figure[2]!);
+    return;
+  }
+  if (token.type === 'html' && specimenPattern.test(token.raw.trim())) {
+    const name = token.raw.trim().match(specimenPattern)![1]!;
+    if (!page.context.specimens.has(name))
+      problems.push(
+        `specimen ${name} has no file apps/site/src/specimens/${page.document.id}/${name}.tsx`,
+      );
+    current.blocks.push({ kind: 'specimen', name });
+    return;
+  }
+  appendMarkdown(current.blocks, token.raw);
+}
+
+/**
+ * Reads a token of "## Compose", the developer part: `###` subsections of codeSubsections, in
+ * order, holding Markdown and example files shown as code.
+ */
+function readComposeToken(page: PageReading, current: ReadSection, token: Token) {
+  const { problems, codeTitle, codeOrder } = page;
+  current.tokens.push(token);
+  if (token.type === 'heading' && token.depth === 3) {
+    const index = codeSubsections.findIndex((item) => item.title === token.text);
+    if (token.text === 'Import')
+      problems.push(`"### Import" of "## ${codeTitle}" is generated; remove it`);
+    else if (index === -1)
+      problems.push(
+        `"### ${token.text}" is not a subsection of "## ${codeTitle}" (${codeSubsections.map((item) => item.title).join(', ')}); use a "####" heading inside one`,
+      );
+    else if (codeOrder.includes(index)) problems.push(`"### ${token.text}" appears twice`);
+    else if (codeOrder.some((other) => other > index))
+      problems.push(
+        `"### ${token.text}" must come before "### ${codeSubsections[Math.max(...codeOrder)]!.title}" in "## ${codeTitle}"`,
+      );
+    codeOrder.push(index);
+  } else if (token.type !== 'space' && !codeOrder.length)
+    problems.push(`"## ${codeTitle}" starts with a "###" subsection, such as "### Usage"`);
+  // Code of one language with nothing between is one block, rather than a line and then more.
+  const before = current.tokens.slice(0, -1).findLast((item) => item.type !== 'space');
+  if (
+    token.type === 'code' &&
+    before?.type === 'code' &&
+    before.lang === token.lang &&
+    !sourcePattern.test(token.lang ?? '')
+  )
+    problems.push(
+      `"## ${codeTitle}" gives two ${token.lang || 'code'} blocks in a row; make them one block`,
+    );
+  if (token.type === 'code' && sourcePattern.test(token.lang ?? '')) {
+    const name = token.lang.match(sourcePattern)[1];
+    if (!page.context.examples.has(name))
+      problems.push(
+        `source ${name} has no file apps/site/src/examples/${page.document.id}/${name}.tsx`,
+      );
+    if (token.text.trim())
+      problems.push(`the fence of source ${name} must be empty; the build fills in its file`);
+    current.blocks.push({ kind: 'source', name });
+    return;
+  }
+  if (
+    token.type === 'code' &&
+    (figurePattern.test(token.lang ?? '') || kindFencePattern.test(token.lang ?? ''))
+  )
+    problems.push(
+      `"## ${codeTitle}" shows code, not figures: show an example's source with \`tsx source=Name\`, not \`${token.lang}\``,
+    );
+  if (token.type === 'html' && specimenPattern.test(token.raw.trim()))
+    problems.push(`"## ${codeTitle}" shows code, not specimens`);
+  appendMarkdown(current.blocks, token.raw);
+}
+
+/**
+ * Starts the section a `##` heading opens, checking it is one the page's kind takes, once, in
+ * order; false for a heading of no such section, which the page then leaves out.
+ */
+function startSection(page: PageReading, token: Tokens.Heading) {
+  const { structure, sections, problems } = page;
+  const section = structure.find((item) => item.title === token.text);
+  if (!section) {
+    problems.push(
+      `"## ${token.text}" is not a section of a ${page.context.kind} page (${structure
+        .filter((item) => !item.generated)
+        .map((item) => item.title)
+        .join(', ')})`,
+    );
+    return false;
+  }
+  if (section.generated) problems.push(`"## ${token.text}" is generated; remove it`);
+  if (sections.some((item) => item.id === section.id))
+    problems.push(`"## ${token.text}" appears twice`);
+  const previous = sections.at(-1);
+  if (
+    previous &&
+    structure.indexOf(section) < structure.findIndex((item) => item.id === previous.id)
+  )
+    problems.push(`"## ${token.text}" must come before "## ${previous.title}"`);
+  page.current = { id: section.id, title: section.title, blocks: [], tokens: [] };
+  sections.push(page.current);
+  page.subheading = undefined;
+  page.legendOf = undefined;
+  return true;
+}
+
+/** Reads an ordered list as the legend of the figure before it, if it has one; false if not. */
+function readLegend(page: PageReading, list: Tokens.List) {
+  const figure = page.legendOf;
+  if (!figure) return false;
+  if (figure.kind === 'figure') figure.legend = foundationLegend(page, figure, list);
+  else if (figure.role === 'variants') figure.legend = variantsLegend(page, figure, list);
+  else figure.legend = anatomyLegend(page, figure, list);
+  page.legendOf = undefined;
+  return true;
+}
+
+/**
+ * A foundation figure's legend: what each numbered mark, or each picture of a run, shows, its name
+ * in bold and then what it means, such as **Tight, inside a group**: A title….
+ */
+function foundationLegend(page: PageReading, figure: FigureBlock, list: Tokens.List) {
+  return list.items.map((item, index) => {
+    const match = item.text.replace(/\s+/g, ' ').match(/^\*\*([^*]+)\*\*:?\s*(.*)$/);
+    if (!match)
+      page.problems.push(
+        `item ${index + 1} of the legend of figure ${figure.name} must start with its name in bold, such as **Compact**: and what it means`,
+      );
+    return { name: match?.[1] ?? '', text: match?.[2]!.trim() ?? item.text };
+  });
+}
+
+/**
+ * A variants figure's legend: each variant's name in bold, labelling the example's items in order,
+ * or the item a part reference names.
+ */
+function variantsLegend(page: PageReading, figure: ExampleBlock, list: Tokens.List) {
+  return list.items.map((item, index) => {
+    const label = item.text.match(/^\*\*([^*]+)\*\*/)?.[1];
+    if (!label)
+      page.problems.push(
+        `item ${index + 1} of the legend of variants ${figure.name} must start with the variant's name in bold, such as **Outline**`,
+      );
+    const part = item.text.match(/`(env-[^`]+)`/)?.[1] ?? '';
+    for (const name of part.match(/env-[\w-]+/g) ?? [])
+      if (!page.context.partNames.classes.has(name))
+        page.problems.push(
+          `item ${index + 1} of the legend of variants ${figure.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
+        );
+    return { part, text: item.text.replace(/\s+/g, ' ').trim(), label: label ?? '' };
+  });
+}
+
+/** An anatomy figure's legend: one numbered part per item, by its class name. */
+function anatomyLegend(page: PageReading, figure: ExampleBlock, list: Tokens.List) {
+  return list.items.map((item, index) => {
+    const part = item.text.match(/`(env-[^`]+)`/)?.[1];
+    if (!part)
+      page.problems.push(
+        `item ${index + 1} of the legend of anatomy ${figure.name} names no part, such as \`env-button\``,
+      );
+    // The catalogue shows the part's name alone; its class names and props are for developers.
+    const name = item.text.match(/^\*\*([^*]+)\*\*/)?.[1];
+    if (!name)
+      page.problems.push(
+        `item ${index + 1} of the legend of anatomy ${figure.name} must start with the part's name in bold, such as **Label**, which is all the catalogue shows of it`,
+      );
+    // Every class it names is one envUI styles or lists as a part.
+    for (const name of (part ?? '').replace(/::text$/, '').match(/env-[\w-]+/g) ?? [])
+      if (!page.context.partNames.classes.has(name))
+        page.problems.push(
+          `item ${index + 1} of the legend of anatomy ${figure.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
+        );
+    return {
+      part: part ?? '',
+      text: item.text.replace(/\s+/g, ' ').trim(),
+      ...(name && { name }),
+    };
+  });
+}
+
+/** Places the figure a `tsx figure=Name` fence names, with the attributes `rest` gives it. */
+function placeFigure(
+  page: PageReading,
+  current: ReadSection,
+  token: Tokens.Code,
+  name: string,
+  rest: string,
+) {
+  const { problems } = page;
+  const listed = page.context.catalog[name];
+  if (page.placed.has(name)) problems.push(`figure ${name} is placed twice; place it once`);
+  page.placed.add(name);
+  if (!listed) {
+    problems.push(`figure ${name} is not listed under examples in the frontmatter`);
+    return;
+  }
+  if (listed.role === 'overview') {
+    problems.push(
+      `figure ${name} is an overview example, which the Overview shows from the frontmatter; don't place it`,
+    );
+    return;
+  }
+  if (token.text.trim())
+    problems.push(`the fence of figure ${name} must be empty; the build fills in its file`);
+  if (current.id === 'changelog')
+    problems.push(`figure ${name} belongs in a section before the changelog`);
+  if (page.foundation) {
+    // A foundation's figure is the catalogue's own, from its page's preview, with the legend
+    // that follows it; an example file of its name, where it has one, is its code.
+    if (rest.trim()) problems.push(`figure ${name} takes no attributes on a foundation page`);
+    const block: FigureBlock = {
+      kind: 'figure',
+      name,
+      heading: page.subheading ?? fileWords(name),
+      role: listed.role,
+      ...(listed.caption && { caption: listed.caption }),
+      ...(page.context.examples.has(name) && { code: true }),
+    };
+    current.blocks.push(block);
+    page.legendOf = block;
+    return;
+  }
+  const block = exampleFigure(page, name, listed, figureAttributesOf(page, name, listed, rest));
+  current.blocks.push(block);
+  if (listed.role === 'anatomy' || listed.role === 'variants') page.legendOf = block;
+}
+
+/**
+ * The attributes on an example's figure fence, each checked against those its role takes: a value,
+ * or true for a flag. The caption is the frontmatter's.
+ */
+function figureAttributesOf(page: PageReading, name: string, listed: ExampleEntry, rest: string) {
+  const { problems } = page;
+  const { role } = listed;
+  const attributes: Record<string, string | true> = {};
+  for (const [, key, value, quoted, plain] of rest.matchAll(
+    /\s+([a-z]+)(=(?:"([^"]*)"|([^\s"]+)))?/g,
+  )) {
+    if (key === 'caption')
+      problems.push(`figure ${name} has a caption on its fence; it goes under examples`);
+    else if (!figureAttributes[role]!.allowed.includes(key!))
+      problems.push(
+        `${role} ${name} takes no ${key}${figureAttributes[role]!.allowed.length ? `; it takes ${figureAttributes[role]!.allowed.join(', ')}` : ''}`,
+      );
+    else if (figureFlags.has(key!) && value)
+      problems.push(`${role} ${name} has ${key}${value}; write the flag ${key} alone`);
+    else if (!figureFlags.has(key!) && !value)
+      problems.push(`${role} ${name} has ${key} without a value; write ${key}="…"`);
+    if (key! in attributes) problems.push(`${role} ${name} repeats ${key}`);
+    attributes[key!] = value ? (quoted ?? plain)!.trim() : true;
+  }
+  delete attributes.caption;
+  if (listed.caption) attributes.caption = listed.caption;
+  for (const key of figureAttributes[role]!.required)
+    if (!attributes[key]) problems.push(`${role} ${name} needs a ${key}, one sentence`);
+  return attributes;
+}
+
+/** The block of an example's figure, from its attributes, each checked against the others. */
+function exampleFigure(
+  page: PageReading,
+  name: string,
+  listed: ExampleEntry,
+  attributes: Record<string, string | true>,
+): ExampleBlock {
+  const { problems, document } = page;
+  const { examples, specimens } = page.context;
+  const { role } = listed;
+  if (!examples.has(name))
+    problems.push(`figure ${name} has no file apps/site/src/examples/${document.id}/${name}.tsx`);
+  const caption = typeof attributes.caption === 'string' ? attributes.caption : undefined;
+  const block: ExampleBlock = {
+    kind: 'example',
+    name,
+    heading:
+      role === 'do'
+        ? `Do: ${caption}`
+        : role === 'dont'
+          ? `Don't: ${caption}`
+          : role === 'caution'
+            ? `Caution: ${caption}`
+            : role === 'anatomy'
+              ? `${document.title} anatomy`
+              : role === 'variants'
+                ? `${document.title} variants`
+                : (page.subheading ?? fileWords(name)),
+    ...(role !== 'example' && { role: role as ExampleBlock['role'] }),
+    ...(caption && { caption }),
+  };
+  if (attributes.widths !== undefined) {
+    const widths = String(attributes.widths)
+      .split(/[\s,]+/)
+      .filter(Boolean)
+      .map(Number);
+    if (!widths.length || widths.some((width) => !(width >= 10 && width <= 120)))
+      problems.push(
+        `example ${name} has widths="${attributes.widths}"; give widths in rem, from 10 to 120`,
+      );
+    block.widths = widths;
+  }
+  if (attributes.sweep === true) {
+    if (!block.widths || block.widths.length < 2)
+      problems.push(`example ${name} has sweep; give the widths it sweeps between, widths="30 16"`);
+    else if (attributes.open === true)
+      problems.push(`example ${name} has sweep and open; a sweeping frame shows no overlays open`);
+    else block.sweep = true;
+  }
+  if (attributes.classes === true) {
+    if (attributes.sweep !== true)
+      problems.push(`example ${name} has classes without sweep; only a sweeping frame names them`);
+    else block.classes = true;
+  }
+  if (attributes.fit === true) {
+    if (attributes.sweep !== true)
+      problems.push(
+        `example ${name} has fit without sweep; only a sweeping frame is drawn smaller`,
+      );
+    else block.fit = true;
+  }
+  if (attributes.width !== undefined) {
+    const width = Number(attributes.width);
+    if (!(width >= 10 && width <= 120))
+      problems.push(
+        `${role} ${name} has width="${attributes.width}"; give one width in rem, from 10 to 120`,
+      );
+    block.width = width;
+  }
+  if (attributes.of !== undefined) block.of = String(attributes.of);
+  if (typeof attributes.stage === 'string') {
+    if (stageFills.includes(attributes.stage))
+      block.stage = attributes.stage as ExampleBlock['stage'];
+    else
+      problems.push(
+        `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(', ')}, or nothing for the stage in the page's color`,
+      );
+  }
+  if (attributes.open === true) block.open = true;
+  if (attributes.device !== undefined) {
+    if (!deviceKinds.includes(String(attributes.device)))
+      problems.push(
+        `example ${name} has device="${attributes.device}"; a device is ${deviceKinds.map((kind) => `"${kind}"`).join(' or ')}`,
+      );
+    else if (attributes.widths !== undefined || attributes.open === true)
+      problems.push(
+        `example ${name} has device with widths or open; a device is one window of its own width, closed`,
+      );
+    else block.device = attributes.device as ExampleBlock['device'];
+  }
+  if (attributes.enlarge === true) block.enlarge = true;
+  if (attributes.wide === true) block.wide = true;
+  if (attributes.motion === true) block.motion = true;
+  if (block.motion && !specimens.has(name))
+    problems.push(
+      `example ${name} has motion but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to play it`,
+    );
+  if (attributes.specimen === true) block.specimen = true;
+  if (block.specimen && !specimens.has(name))
+    problems.push(
+      `anatomy ${name} has specimen but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to number`,
+    );
+  return block;
+}
+
+/**
+ * What the page as a whole gets wrong once it is read: legends, required sections and
+ * subsections, the examples its frontmatter lists, and Accessibility's and Changelog's contents.
+ */
+function pageProblems(page: PageReading) {
+  const { document, sections, structure, codeTitle, codeOrder, foundation, placed } = page;
+  const { catalog, examples, specimens, partNames } = page.context;
+  const problems: string[] = [];
   // An anatomy figure without a legend numbers the parts parts.json lists for its component; a
   // variants figure needs one, the names of its variants.
   for (const section of sections)
@@ -911,13 +1027,16 @@ export function readPage(
   }
   const changelog = sections.find((item) => item.id === 'changelog');
   if (changelog) problems.push(...changelogProblems(changelog.tokens));
-  if (problems.length)
-    throw new Error(
-      `${document.path} does not follow the one-file structure (contributing/pages.md):\n  - ${problems.join('\n  - ')}`,
-    );
+  return problems;
+}
+
+/**
+ * The page's sections, after the Overview: the frontmatter's overview examples, side by side, the
+ * first named after the page.
+ */
+function withOverview({ document, sections, foundation, context }: PageReading) {
   const result = sections.map(({ id, title, blocks }) => ({ id, title, blocks }));
-  // The Overview: the frontmatter's overview examples, side by side, the first named after the page.
-  const overviews = entries.filter(([, { role }]) => role === 'overview');
+  const overviews = Object.entries(context.catalog).filter(([, { role }]) => role === 'overview');
   if (!overviews.length) return result;
   const overview = {
     id: 'overview',
