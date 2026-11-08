@@ -26,7 +26,7 @@ import {
   rowElementId,
   siblingPositions,
   type TypedText,
-} from './internal/treeRows.js';
+} from './internal/treeModel.js';
 import { placeRows, TreeRow } from './internal/TreeRow.js';
 import { useTreeTransitions } from './internal/useTreeTransitions.js';
 import { useTreeViewport } from './internal/useTreeViewport.js';

@@ -20,6 +20,9 @@ import {
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
 import { type ControlSize } from '../foundations/Theme.js';
+import { IconButton } from '../actions/Button.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
+import { IconClose } from '../icons/Close.js';
 import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
 import {
   FieldFrame,
@@ -28,8 +31,6 @@ import {
   type FieldProps,
 } from './internal/FieldFrame.js';
 import { standIn } from './internal/comboboxItems.js';
-import { ComboboxActions } from './internal/ComboboxActions.js';
-import { ComboboxChips } from './internal/ComboboxChips.js';
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
 import { useComboboxSelection } from './internal/useComboboxSelection.js';
@@ -450,13 +451,15 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
             className="env-text-field-input env-combobox-input"
           />
           {/* The well reserves room for its actions, which stay at its end. */}
-          <ComboboxActions
-            clearName={clearName}
-            showClear={showClear}
-            // The field's label names the trigger; without one, the field's aria-label does.
-            labelId={label != null ? labelId : undefined}
-            ariaLabel={ariaLabel}
-          />
+          <span className="env-text-field-end env-combobox-end">
+            <ComboboxActions
+              clearName={clearName}
+              showClear={showClear}
+              // The field's label names the trigger; without one, the field's aria-label does.
+              labelId={label != null ? labelId : undefined}
+              ariaLabel={ariaLabel}
+            />
+          </span>
         </FieldFrame>
         {hasChips && (
           // Read with the field, so the chosen options are known before the hint.
@@ -475,5 +478,103 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
         />
       </BaseCombobox.Root>
     </DirectionProvider>
+  );
+}
+
+/** The chosen options of a combobox that takes several, as chips in its field. */
+function ComboboxChips({
+  values,
+  known,
+  labelOf,
+  removeName,
+  editable,
+}: {
+  values: readonly string[];
+  known: ReadonlyMap<string, ComboboxItem>;
+  labelOf: (value: string) => string;
+  removeName: (label: string) => string;
+  /** Whether each chip has a remove button. */
+  editable: boolean;
+}) {
+  return values.map((selected) => {
+    const item = known.get(selected);
+    const text = labelOf(selected);
+    return (
+      <BaseCombobox.Chip
+        key={selected}
+        className="env-combobox-chip"
+        // A chip is no widget, so the field's read-only state is the input's alone.
+        render={({ 'aria-readonly': _readOnly, ...chipProps }) => <div {...chipProps} />}
+      >
+        {item?.start != null && (
+          <span className="env-combobox-start" aria-hidden="true">
+            {item.start}
+          </span>
+        )}
+        <span className="env-combobox-chip-label">{text}</span>
+        {editable && (
+          <BaseCombobox.ChipRemove
+            className="env-combobox-chip-remove"
+            render={
+              <IconButton variant="ghost" icon={<IconClose />} aria-label={removeName(text)} />
+            }
+          />
+        )}
+      </BaseCombobox.Chip>
+    );
+  });
+}
+
+/** The actions at the end of a combobox's well: the clear button and the trigger that opens the list. */
+function ComboboxActions({
+  clearName,
+  showClear,
+  labelId,
+  ariaLabel,
+}: {
+  clearName: string;
+  showClear: boolean;
+  /** The id of the field's label, which names the trigger; undefined for a field without one. */
+  labelId: string | undefined;
+  /** The field's aria-label, which names the trigger where the field has no label. */
+  ariaLabel: string | undefined;
+}) {
+  return (
+    <>
+      {showClear && (
+        <BaseCombobox.Clear
+          className="env-combobox-clear"
+          render={
+            <IconButton
+              variant="ghost"
+              icon={<IconClose />}
+              aria-label={clearName}
+              title={clearName}
+            />
+          }
+        />
+      )}
+      <BaseCombobox.Trigger
+        className="env-combobox-trigger"
+        {...(labelId !== undefined ? { 'aria-labelledby': labelId } : {})}
+        // Base UI's Field gives it the field's description and error, which the input already
+        // announces; the chevron leaves them out.
+        render={({
+          'aria-describedby': _describedBy,
+          'aria-invalid': _invalid,
+          ...triggerProps
+        }) => (
+          <IconButton
+            {...triggerProps}
+            variant="ghost"
+            icon={<IconChevronRight />}
+            // IconButton requires a name; aria-labelledby gives it one where the label is undefined.
+            {...({ 'aria-label': labelId !== undefined ? undefined : ariaLabel } as {
+              'aria-label': string;
+            })}
+          />
+        )}
+      />
+    </>
   );
 }

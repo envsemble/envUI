@@ -3,6 +3,8 @@
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import type { RowDensity } from '../../foundations/Theme.js';
 import { remPixels } from '../../internal/lengths.js';
+import '../../styles/Base.css';
+import '../../styles/Tree.css';
 
 /** Rows outside the viewport kept rendered above and below it. */
 const overscan = 8;

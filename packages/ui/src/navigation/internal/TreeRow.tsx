@@ -1,7 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
 import type { TreeItem } from '../Tree.js';
-import type { TreeMotion } from './treeRows.js';
+import type { TreeMotion } from './treeModel.js';
+import '../../styles/Base.css';
+import '../../styles/Tree.css';
 
 /**
  * A tree's row, placed top pixels down its parent. A leaving row, in a group that collapses, is only

@@ -8,6 +8,8 @@ import {
   type Glide,
   type WaveLayout,
 } from './contentsWave.js';
+import '../../styles/Base.css';
+import '../../styles/TableOfContents.css';
 
 /**
  * How far the reader's place may move between two frames, in entries, and still be followed as it

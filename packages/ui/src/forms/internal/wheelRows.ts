@@ -1,4 +1,6 @@
 import type { Entry } from './TimeWheel.js';
+import '../../styles/Base.css';
+import '../../styles/TimeList.css';
 
 /** The rows a wheel shows, --env-time-list-rows in TimeList.css. */
 export const shownRows = 5;

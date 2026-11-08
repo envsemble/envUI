@@ -2,7 +2,9 @@
 
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { TreeItem } from '../Tree.js';
-import { treeMotion, type TreeMotion } from './treeRows.js';
+import { treeMotion, type TreeMotion } from './treeModel.js';
+import '../../styles/Base.css';
+import '../../styles/Tree.css';
 
 /** No rows arriving. */
 const noValues: ReadonlySet<string> = new Set();

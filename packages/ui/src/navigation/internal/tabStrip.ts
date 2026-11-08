@@ -1,4 +1,6 @@
 import { isRightToLeft } from '../../internal/direction.js';
+import '../../styles/Base.css';
+import '../../styles/DocumentTabs.css';
 
 /** A document tab's element in the strip, found by its value. */
 export function tabElement(strip: HTMLElement | null, id: string | null) {
