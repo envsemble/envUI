@@ -1,12 +1,7 @@
 'use client';
 
 import { createContext } from 'react';
-
-/**
- * open: side by side with the other open panels at the bottom of the region; minimized: a chip in
- * the strip along the bottom; maximized: filling the region.
- */
-export type PanelDockMode = 'open' | 'minimized' | 'maximized';
+import type { PanelDockMode } from '../panelDockTypes.js';
 
 /** What a panel's own window controls need: its mode and how to change it or close the panel. */
 export interface PanelDockPanelContextValue {

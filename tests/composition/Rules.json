@@ -455,9 +455,7 @@
       },
       "PanelDock": {
         "modules": [
-          "layout/panel-dock/Root.tsx",
           "layout/panel-dock/internal/PanelFrame.tsx",
-          "layout/panel-dock/Header.tsx",
           "layout/panel-dock/internal/PanelTab.tsx",
           "layout/panel-dock/internal/dockLayout.ts",
           "layout/panel-dock/internal/useEntrance.ts",

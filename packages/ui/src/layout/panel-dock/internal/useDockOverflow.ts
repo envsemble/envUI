@@ -1,8 +1,7 @@
 'use client';
 
 import { useCallback, useRef } from 'react';
-import type { PanelDockPanel } from '../Root.js';
-import type { PanelDockMode } from './PanelDockPanelContext.js';
+import type { PanelDockMode, PanelDockPanel } from '../panelDockTypes.js';
 import {
   fitsInRow,
   minimumWidth,

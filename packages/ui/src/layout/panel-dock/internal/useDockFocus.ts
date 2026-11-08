@@ -1,7 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useRef, type RefObject } from 'react';
-import type { PanelDockPanel } from '../Root.js';
+import type { PanelDockPanel } from '../panelDockTypes.js';
 import {
   isShown,
   locateFocus,

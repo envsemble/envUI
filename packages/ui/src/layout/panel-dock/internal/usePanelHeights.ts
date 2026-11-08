@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useState } from 'react';
 import { roundToHundredth } from '../../../internal/lengths.js';
-import type { PanelDockPanel } from '../Root.js';
+import type { PanelDockPanel } from '../panelDockTypes.js';
 import { clampRound, type HeightBounds } from './dockLayout.js';
 import type { DockMeasurements } from './useDockMeasurements.js';
 

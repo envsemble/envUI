@@ -2,7 +2,7 @@
 
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { remPixels } from '../../../internal/lengths.js';
-import type { PanelDockPanel } from '../Root.js';
+import type { PanelDockPanel } from '../panelDockTypes.js';
 import { fillCandidates, isAtRowEnd, overflows, scrollToRowEnd } from './dockLayout.js';
 
 export interface DockMeasurements {

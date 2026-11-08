@@ -12,13 +12,9 @@ import {
 } from 'react';
 import { useResize } from '../../../internal/useResize.js';
 import { Column } from '../../Layout.js';
-import {
-  PanelDockPanelContext,
-  type PanelDockMode,
-  type PanelDockPanelContextValue,
-} from './PanelDockPanelContext.js';
+import { PanelDockPanelContext, type PanelDockPanelContextValue } from './PanelDockPanelContext.js';
 import { pixels, rems, type HeightBounds, type Placement } from './dockLayout.js';
-import type { PanelDockPanel } from '../Root.js';
+import type { PanelDockMode, PanelDockPanel } from '../panelDockTypes.js';
 import { useEntrance } from './useEntrance.js';
 import { flag } from '../../../internal/flag.js';
 import '../../../styles/Base.css';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useLayoutEffect, useRef } from 'react';
-import type { PanelDockPanel } from '../Root.js';
+import type { PanelDockPanel } from '../panelDockTypes.js';
 
 /**
  * When each shown panel last appeared or was brought forward, on a clock of its own; a stacked dock

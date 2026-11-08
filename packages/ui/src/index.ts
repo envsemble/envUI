@@ -63,7 +63,7 @@ export * as Menubar from './actions/Menubar.js';
 export * from './navigation/Tree.js';
 export * from './navigation/DocumentTabs.js';
 export * as PanelDock from './layout/panel-dock/PanelDock.js';
-export type { PanelDockMode, PanelDockPanel } from './layout/panel-dock/Root.js';
+export type { PanelDockMode, PanelDockPanel } from './layout/panel-dock/panelDockTypes.js';
 export * from './navigation/Breadcrumbs.js';
 export * from './navigation/TableOfContents.js';
 export * from './navigation/Pagination.js';

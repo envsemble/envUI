@@ -7,7 +7,7 @@ import { Tooltip } from '../../../overlays/Tooltip.js';
 import { ActionElement } from '../../../internal/ActionElement.js';
 import { DecorativeIcon } from '../../../internal/DecorativeIcon.js';
 import { Row } from '../../Layout.js';
-import type { PanelDockPanel } from '../Root.js';
+import type { PanelDockPanel } from '../panelDockTypes.js';
 import { useEntrance } from './useEntrance.js';
 import { flag } from '../../../internal/flag.js';
 import '../../../styles/Base.css';

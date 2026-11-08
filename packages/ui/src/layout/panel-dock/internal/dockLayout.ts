@@ -1,4 +1,4 @@
-import type { PanelDockPanel } from '../Root.js';
+import type { PanelDockPanel } from '../panelDockTypes.js';
 import { isRightToLeft } from '../../../internal/direction.js';
 import '../../../styles/Base.css';
 import '../../../styles/PanelDock.css';
