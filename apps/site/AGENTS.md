@@ -68,6 +68,11 @@ Each has one folder in `apps/site/src`:
 - `SKILL.md` is the setup skill (`apps/site/hosting/SKILL.md`, with the version in place of `{{version}}`): short, with setup steps only.
 - `llms.txt` is a signpost to the skill and the installed docs, and lists no pages.
 
+## Pre-rendered pages
+
+- `npm run build:site` renders every page to its own HTML file with the server entry, `src/Server.tsx` (`scripts/site/PrerenderSite.ts`), and `main.tsx` hydrates it. The development server renders on the client alone.
+- A figure's example, specimen or picture renders in the browser alone: until `useHydrated` (`loading/`) says the page has hydrated, it shows its skeleton at its recorded size.
+
 ## Hosting
 
 - `wrangler.jsonc` says how the site is hosted and deployed.

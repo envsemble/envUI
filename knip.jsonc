@@ -64,6 +64,8 @@
       "ignoreIssues": { "src/colorPolicy.js": ["exports"] },
     },
     "apps/site": {
+      // The server entry, which scripts/site/PrerenderSite.ts builds to pre-render the pages.
+      "entry": ["src/Server.tsx"],
       "project": ["src/**/*.{ts,tsx}"],
     },
   },

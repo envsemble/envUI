@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { readFileSync } from 'node:fs';
-import { isAbsolute, relative } from 'node:path';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { isAbsolute, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   documentationDirectory,
@@ -18,6 +18,7 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
 import { displayStorageKeys } from './src/display/DisplayStorage.ts';
 import { viewModules, viewOfAddress } from './src/pages/ViewOfAddress.ts';
+import { siteDescription } from './src/routes/SiteDescription.ts';
 import {
   createDisplayBootstrapScript,
   createFirstPaintStyle,
@@ -102,6 +103,18 @@ const docsModel = fileURLToPath(new URL('../../scripts/docs/model', import.meta.
 /** The library's source, the site's only door into what its entry points don't export. */
 const libraryInternals = fileURLToPath(new URL('../../packages/ui/src', import.meta.url));
 
+/**
+ * What each kind of page's view loads, each page's content and a catalogue page's figures' style
+ * sheets, by file, as the build found them (envui-content-preload).
+ */
+let pagePreloads:
+  | {
+      views: Record<string, { scripts: string[]; styles: string[] }>;
+      contents: Record<string, string>;
+      figureStyles: Record<string, string[]>;
+    }
+  | undefined;
+
 /** The files for coding agents at the site's root, with the type each is served as. */
 const agentFileTypes = {
   'SKILL.md': 'text/markdown; charset=utf-8',
@@ -146,6 +159,18 @@ export default defineConfig(() => {
         },
       },
       {
+        // What the site is, in the head: the sentence the site gives a page without a summary
+        // (routes/SiteDescription.ts). A pre-rendered page carries its own (PrerenderSite.ts).
+        name: 'envui-description',
+        transformIndexHtml: () => [
+          {
+            tag: 'meta',
+            attrs: { name: 'description', content: siteDescription },
+            injectTo: 'head',
+          },
+        ],
+      },
+      {
         // The style sheets ship without their comments, which are about half their size. Their
         // rules and values stay as written, as cssMinify is off for the token reference.
         name: 'envui-css-comments',
@@ -167,9 +192,15 @@ export default defineConfig(() => {
         // components, preloads no content. On a catalogue page it also preloads the style sheets of
         // the page's figures (examples/<id>/, specimens/<id>/ and what they import), marked
         // data-site-figure-style, which the site applies as it starts (applyFigureStyles,
-        // pages/PreloadPage.ts).
+        // pages/PreloadPage.ts). The same lists go to dist/site/.vite/page-preloads.json, from
+        // which scripts/site/PrerenderSite.ts links each pre-rendered page's files in its head.
         name: 'envui-content-preload',
         apply: 'build',
+        writeBundle({ dir }) {
+          if (!pagePreloads || !dir) return;
+          mkdirSync(resolve(dir, '.vite'), { recursive: true });
+          writeFileSync(resolve(dir, '.vite/page-preloads.json'), JSON.stringify(pagePreloads));
+        },
         transformIndexHtml: {
           order: 'post',
           handler: (html, { bundle }) => {
@@ -234,7 +265,8 @@ export default defineConfig(() => {
                   if (!startedStyles.has(style)) styles.add(style);
               figureStyles[page] = [...styles].sort();
             }
-            const script = `<script>(function(){var p=location.pathname,w=(${String(viewOfAddress)})(p),v=${JSON.stringify(views)}[w],n=p.split('/').filter(Boolean).pop(),c=${JSON.stringify(contents)}[n],s=w==='catalogue'&&${JSON.stringify(figureStyles)}[n];function l(r,f,a){var e=document.createElement('link');e.rel=r;e.href='/'+f;if(a)e.as=a;document.head.appendChild(e);return e}v.scripts.forEach(function(f){l('modulepreload',f)});v.styles.forEach(function(f){l('preload',f,'style')});if(c)l('modulepreload',c);if(s)s.forEach(function(f){var e=l('preload',f,'style');e.crossOrigin='';e.setAttribute('data-site-figure-style','')})})();</script>`;
+            pagePreloads = { views, contents, figureStyles };
+            const script = `<script data-site-preload>(function(){var p=location.pathname,w=(${String(viewOfAddress)})(p),v=${JSON.stringify(views)}[w],n=p.split('/').filter(Boolean).pop(),c=${JSON.stringify(contents)}[n],s=w==='catalogue'&&${JSON.stringify(figureStyles)}[n];function l(r,f,a){var e=document.createElement('link');e.rel=r;e.href='/'+f;if(a)e.as=a;document.head.appendChild(e);return e}v.scripts.forEach(function(f){l('modulepreload',f)});v.styles.forEach(function(f){l('preload',f,'style')});if(c)l('modulepreload',c);if(s)s.forEach(function(f){var e=l('preload',f,'style');e.crossOrigin='';e.setAttribute('data-site-figure-style','')})})();</script>`;
             const site = html.indexOf('<script type="module"');
             if (site === -1)
               throw new Error('index.html has no module script, which the preload goes before.');

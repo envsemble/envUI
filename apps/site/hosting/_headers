@@ -2,9 +2,11 @@
 # dist/site, and the Worker in wrangler.jsonc applies it. A response collects the headers of every
 # rule matching its path, in order; "! Name" removes a header an earlier rule set.
 
-# Every page, the Site's and the Docs' under /docs, including routes answered with index.html. Pages are
-# checked for changes on each load, and only the reader's browser keeps a copy. Only the site may
-# frame its pages, so framing is same-origin rather than denied (tests/site/SiteHeaders.test.mjs).
+# Every page, the Site's and the Docs' under /docs: a pre-rendered page's file, such as
+# components/button.html, is served at its address, /components/button, and an address without a
+# file is answered with index.html. Pages are checked for changes on each load, and only the
+# reader's browser keeps a copy. Only the site may frame its pages, so framing is same-origin
+# rather than denied (tests/site/SiteHeaders.test.mjs).
 /*
   Cache-Control: private, no-cache
   X-Content-Type-Options: nosniff

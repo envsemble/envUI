@@ -28,12 +28,14 @@ import { RouterLink, usePendingRoute } from './navigation/RouterLink';
 import { RouteProgress } from './navigation/RouteProgress';
 import { docsRoute, homeRoute, inDocs, routeHref } from './routes/Address';
 import { usePagePlace } from './routes/usePagePlace';
+import { documentTitle, pageDescription } from './routes/PageHead';
 import { useSheetClosesWhenWide } from './navigation/useSheetClosesWhenWide';
 import { useSearchShortcut } from './search/useSearchShortcut';
 import { SearchButton } from './search/SearchButton';
 import { useSiteRoute } from './routes/useSiteRoute';
 import { DisplaySettingsProvider } from './display/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
+import { PaletteCustomizationProvider } from './display/PaletteCustomization';
 import { LoadingStatus } from './loading/LoadingStore';
 import { PageSkeleton } from './pages/PageSkeleton';
 
@@ -46,14 +48,6 @@ function PageView({ page }: { page: RoutePage }) {
   // The view is one of the pages' module-level components, loaded once and kept, not created here.
   // eslint-disable-next-line react-hooks/static-components
   return <View page={page} />;
-}
-
-/** The title of a page's tab: the catalogue's are envUI's, the Docs' envUI Docs'. */
-function documentTitle(page: RoutePage | undefined, area: Area) {
-  const site = area === 'docs' ? 'envUI Docs' : 'envUI';
-  if (!page) return `Page not found · ${site}`;
-  if (page.kind === 'home' || page.path === docsRoute) return site;
-  return `${page.title} · ${site}`;
 }
 
 /**
@@ -185,7 +179,7 @@ function Shell() {
   const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'catalogue');
   const contents = Boolean(page && !pagesWithoutContents.has(page.kind));
   useSearchShortcut(setSearchOpen);
-  usePagePlace(route, documentTitle(page, area), mainElement);
+  usePagePlace(route, documentTitle(page, area), pageDescription(page), mainElement);
   useSheetClosesWhenWide(navigationOpen, setNavigationOpen);
   const openSearch = () => setSearchOpen(true);
   // A pressed link's destination shows in the navigation at once, while its page loads.
@@ -282,7 +276,7 @@ const pageLocale = (typeof document === 'undefined' ? '' : document.documentElem
  * The site, in the page's language and the reader's stored theme, contrast and scale. Its links
  * open its pages without loading it again.
  */
-export default function App() {
+function App() {
   return (
     <EnvUIProvider locale={pageLocale}>
       <DisplaySettingsProvider className="site-app">
@@ -291,5 +285,17 @@ export default function App() {
         </LinkProvider>
       </DisplaySettingsProvider>
     </EnvUIProvider>
+  );
+}
+
+/**
+ * The site's root, which main.tsx hydrates or renders and the server pre-renders (Server.tsx):
+ * the site, with the palette the Docs' color editor customizes.
+ */
+export function SiteRoot() {
+  return (
+    <PaletteCustomizationProvider>
+      <App />
+    </PaletteCustomizationProvider>
   );
 }
