@@ -13,7 +13,7 @@ import {
 /**
  * Composition rules for packages/ui/src, described by tests/composition/Rules.json:
  * 1. imports go down the layers (internal, foundations, base, composites, shell) or stay in their
- *    layer, and private modules stay private;
+ *    layer (a family's internal/ folder stays its own through ESLint, eslint.config.mjs);
  * 2. raw interactive HTML appears only in the leaf controls and internals that render it;
  * 3. a module uses only its own component's classes, and a stylesheet selects only its own
  *    components' classes, besides shared helpers and documented container rules.
@@ -63,18 +63,14 @@ test('the composition rules give every module a layer and every class an owner',
   assertNoChanges(problems);
 });
 
-test('imports go down the layers and private modules stay private', () => {
+test('imports go down the layers', () => {
   assertNoChanges(
     changes('imports', {
       label: (entry) => `${entry.module} importing ${entry.imports}`,
-      describe: ({ entry, sites, from, to, upward, privateTo }) =>
-        upward
-          ? `${source(entry.module, sites)} imports ${entry.imports}, but a ${from} module may import only from its own layer or below (${layers.slice(0, -1).join(' < ')}), and ${entry.imports} is ${to}`
-          : `${source(entry.module, sites)} imports ${entry.imports}, which is private to ${privateTo.join(', ')}`,
-      fix: ({ upward }) =>
-        upward
-          ? `Move what both need into a lower layer, or correct the layer in ${rulesFile} if it is wrong.`
-          : 'Move the module into a shared internal directory, or build on the public API of the component it belongs to.',
+      describe: ({ entry, sites, from, to }) =>
+        `${source(entry.module, sites)} imports ${entry.imports}, but a ${from} module may import only from its own layer or below (${layers.slice(0, -1).join(' < ')}), and ${entry.imports} is ${to}`,
+      fix: () =>
+        `Move what both need into a lower layer, or correct the layer in ${rulesFile} if it is wrong.`,
     }),
   );
 });

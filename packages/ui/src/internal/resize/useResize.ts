@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { useEnvUI } from '../provider/EnvUIContext.js';
 import { remPixels, roundToHundredth } from '../dom/lengths.js';
-import type { ResizeDetails } from '../../layout/resizeDetails.js';
+import type { ResizeDetails } from './resizeDetails.js';
 import { scrolledBy } from '../dom/scrolledBy.js';
 import { flag } from '../flag.js';
 

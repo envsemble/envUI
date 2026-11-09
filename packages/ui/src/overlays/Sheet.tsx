@@ -42,7 +42,7 @@ import {
 } from '../internal/popup/PortalContainerContext.js';
 import { computedDirection } from '../internal/dom/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
-import type { ResizeDetails } from '../layout/resizeDetails.js';
+import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { flag } from '../internal/flag.js';
 import { useOpenState } from '../internal/popup/useOpenState.js';
 import '../styles/Base.css';

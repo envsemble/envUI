@@ -64,7 +64,7 @@ export {
   LinkProvider,
   type LinkProviderProps,
   type LinkComponentProps,
-} from './navigation/LinkProvider.js';
+} from './foundations/LinkProvider.js';
 export * from './navigation/Tree.js';
 export * from './navigation/DocumentTabs.js';
 export * from './navigation/Breadcrumbs.js';
@@ -131,7 +131,7 @@ export * from './layout/TopBar.js';
 export * as Panes from './layout/Panes.js';
 export { readPanesWidth } from './layout/panesSize.js';
 // What every resize callback receives, Panes', Sheet's and NavigationDrawer's alike.
-export type { ResizeDetails } from './layout/resizeDetails.js';
+export type { ResizeDetails } from './internal/resize/resizeDetails.js';
 export * as PanelDock from './layout/panel-dock/PanelDock.js';
 export type { PanelDockMode, PanelDockPanel } from './layout/panel-dock/panelDockTypes.js';
 export * from './layout/Page.js';

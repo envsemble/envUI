@@ -25,7 +25,7 @@ import { setRef } from '../internal/react/setRef.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { readPanesWidth, writePanesWidth } from './panesSize.js';
-import type { ResizeDetails } from './resizeDetails.js';
+import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { IconClose } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/dom/lengths.js';
 import { useResizableWidth } from '../internal/resize/useResizableWidth.js';
