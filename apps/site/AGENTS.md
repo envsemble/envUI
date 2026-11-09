@@ -71,7 +71,8 @@ Each has one folder in `apps/site/src`:
 ## Pre-rendered pages
 
 - `npm run build:site` renders every page to its own HTML file with the server entry, `src/Server.tsx` (`scripts/site/PrerenderSite.ts`), and `main.tsx` hydrates it. The development server renders on the client alone.
-- A figure's example, specimen or picture renders in the browser alone: until `useHydrated` (`loading/`) says the page has hydrated, it shows its skeleton at its recorded size.
+- A figure's example, specimen or picture renders in the browser alone: until `useHydrated` (`loading/`) says the page has hydrated, and then until it nears the view (`figures/useSubjectShown.ts`), it shows its skeleton at its recorded size. A spec that needs a pre-rendered page's figures scrolls to them, or calls `showFigures` (`tests/browser/helpers/SiteSpecHelpers.ts`).
+- A page's code blocks are highlighted as it pre-renders, and its HTML carries their tokens, which the browser gives before it hydrates (`pages/PageCode.ts`).
 
 ## Hosting
 
