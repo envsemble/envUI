@@ -57,7 +57,12 @@ test.describe('Tree', () => {
       'aria-level',
       '3',
     );
-    // A disabled row neither previews nor opens.
+    // A disabled row neither previews nor opens. The rows below Nested have moved down by the time
+    // the press comes: a forced click skips Playwright's wait for the row to hold still, and would
+    // land on the row above while they slide.
+    await tree.evaluate((element) =>
+      Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished)),
+    );
     await tree.locator('[data-id="folder-1/doc-6.md"]').click({ force: true });
     await expect.poll(() => lastLog(page)).toBe('expand folder-1/nested');
     expect(errors).toEqual([]);
