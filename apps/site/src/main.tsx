@@ -7,7 +7,7 @@ import './styles/index.css';
 import { findPage } from './routes/SiteRoutes';
 import { currentRoute } from './routes/useSiteRoute';
 import { oldHashRoute } from './routes/Address';
-import { applyFigureStyles, preloadPage } from './pages/PreloadPage';
+import { preloadPage } from './pages/PreloadPage';
 import { Hydrated } from './loading/useHydrated';
 
 // index.html holds the root, which the build pre-renders for each page, naming the page's route
@@ -18,8 +18,6 @@ const page = findPage(currentRoute().split('?')[0]);
 // its first paint has the whole page rather than the frame and then the page; a pre-rendered page
 // hydrates without suspending.
 const opening = preloadPage(page);
-// After the view's sheets, which preloadPage linked.
-applyFigureStyles();
 // The page pre-rendered for the address hydrates. While developing, and at an address the build
 // has no page for, which the host answers with the home page's file, such as an old address that
 // leads to another page, the site renders on the client alone.

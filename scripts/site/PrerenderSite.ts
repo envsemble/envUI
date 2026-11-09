@@ -3,9 +3,9 @@
 // builds the site's server entry (apps/site/src/Server.tsx) into dist/site-server, renders each page
 // the site serves with it, and writes dist/site/<route>.html, the home page as index.html, each
 // with the head of the client's index.html: its theme bootstrap, the page's title and description,
-// and its view's style sheets, applied before the first paint. The site's script, its view's
-// modules and its content (.vite/page-preloads.json) load once the style sheets have, as a script
-// at the end of the body adds them. The host serves /<route> from <route>.html, and answers an
+// and its view's and its figures' style sheets, applied before the first paint. The site's script,
+// its view's modules and its content (.vite/page-preloads.json) load once the style sheets have, as
+// a script at the end of the body adds them. The host serves /<route> from <route>.html, and answers an
 // address with no page with index.html (wrangler.jsonc), which its head hides until the site
 // renders that address on the client (main.tsx). It needs no network.
 //
@@ -45,7 +45,7 @@ interface PagePreloads {
 }
 
 /** A file the page loads once its style sheets have, in the order the loader adds them. */
-type Load = ['modulepreload' | 'figure-style' | 'script', string];
+type Load = ['modulepreload' | 'script', string];
 
 /**
  * Builds the site's server entry into `serverDirectory`, for production, with every module
@@ -80,9 +80,11 @@ const escapeAttribute = (text: string) => escapeText(text).replace(/"/g, '&quot;
 
 /**
  * The files of a page's view and content: the view's style sheets, which its head links, as its
- * text is there to paint; and what the page loads once they have, its view's modules and its
- * content, then a catalogue page's figures' sheets, which the site applies as it starts
- * (applyFigureStyles).
+ * text is there to paint, and a catalogue page's figures' sheets after them, in the order each
+ * figure's module would bring them; and what the page loads once they have, its view's modules
+ * and its content. A figure's sheets apply with the page's first paint: each figure's module
+ * would otherwise bring its sheets as it loads, after the page has painted, and a sheet applied
+ * then lays out the whole page again, a long pause on a phone. They are small beside the view's.
  */
 function pageFiles({ address, document, view: kind }: SitePage, preloads: PagePreloads) {
   const view = preloads.views[kind];
@@ -93,9 +95,10 @@ function pageFiles({ address, document, view: kind }: SitePage, preloads: PagePr
   const loads: Load[] = [
     ...view.scripts.map((file): Load => ['modulepreload', `/${file}`]),
     ...(content ? [['modulepreload', `/${content}`] satisfies Load] : []),
-    ...figureStyles.map((file): Load => ['figure-style', `/${file}`]),
   ];
-  return { styles: view.styles.map((file) => `/${file}`), loads };
+  // A sheet the view shares is linked once, with the view's.
+  const styles = [...new Set([...view.styles, ...figureStyles])];
+  return { styles: styles.map((file) => `/${file}`), loads };
 }
 
 /**
@@ -108,9 +111,7 @@ function siteLoader(loads: Load[]) {
   const add = [
     'var t;',
     "if(e[0]==='script'){t=document.createElement('script');t.type='module';t.src=e[1]}",
-    "else{t=document.createElement('link');t.href=e[1];",
-    "if(e[0]==='figure-style'){t.rel='preload';t.as='style';t.setAttribute('data-site-figure-style','')}",
-    "else t.rel='modulepreload'}",
+    "else{t=document.createElement('link');t.href=e[1];t.rel='modulepreload'}",
     "t.crossOrigin='';document.head.appendChild(t)",
   ].join('');
   return `<script>${JSON.stringify(loads)}.forEach(function(e){${add}})</script>`;
