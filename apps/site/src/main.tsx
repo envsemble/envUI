@@ -10,6 +10,7 @@ import { oldHashRoute } from './routes/Address';
 import { preloadFirstPage } from './pages/PreloadPage';
 import { FiguresMounted } from './loading/useFiguresMounted';
 import { givePageCode } from './pages/PageCode';
+import { givePageMarkdown } from './pages/PageMarkdownTrees';
 
 // index.html holds the root, which the build pre-renders for each page, naming the page's route
 // (scripts/site/PrerenderSite.ts).
@@ -55,8 +56,10 @@ void opening.then(() => {
     </Started>
   );
   if (hydrates) {
-    // Its code blocks hydrate highlighted, as the server rendered them.
+    // Its code blocks hydrate highlighted, and its Markdown from its trees, as the server rendered
+    // them.
     givePageCode();
+    givePageMarkdown();
     // As a transition, which yields to the browser as it goes, as the page shows already.
     startTransition(() => {
       hydrateRoot(container, site, {

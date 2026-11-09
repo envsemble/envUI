@@ -46,13 +46,18 @@ export interface SiteServer {
   oldAddresses: { from: string; to: string }[];
 }
 
-/** A page pre-rendered: its tab's title and description, the HTML of the site's root and its code. */
+/**
+ * A page pre-rendered: its tab's title and description, the HTML of the site's root, its code and
+ * its Markdown.
+ */
 interface RenderedPage {
   title: string;
   description: string;
   html: string;
   /** The element that carries the tokens of its code, highlighted as it rendered (PageCode.ts). */
   code?: string;
+  /** The element that carries the trees of its Markdown, parsed as it rendered (PageMarkdownTrees.ts). */
+  markdown?: string;
 }
 
 /** What each page loads, as the client's build found it (envui-content-preload in vite.config.ts). */
@@ -216,10 +221,12 @@ function pageDocument(
   replace(/\s*<\/head>/, () => `${styles.join('')}${canonical}\n  </head>`);
   const named = page ? ` data-site-page="${escapeAttribute(page.route)}"` : '';
   const root = `<div id="root"${named}>${rendered.html}</div>`;
-  // The tokens of its code, which the site gives before it hydrates, ahead of the script that
-  // starts it.
-  const code = rendered.code ? `\n    ${rendered.code}` : '';
-  replace(/<div id="root"><\/div>/, () => `${root}${code}\n    ${siteLoader(loads)}`);
+  // The tokens of its code and the trees of its Markdown, which the site gives before it hydrates,
+  // ahead of the script that starts it.
+  const data = [rendered.code, rendered.markdown].map((element) =>
+    element ? `\n    ${element}` : '',
+  );
+  replace(/<div id="root"><\/div>/, () => `${root}${data.join('')}\n    ${siteLoader(loads)}`);
   return html;
 }
 
