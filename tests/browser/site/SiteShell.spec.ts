@@ -5,7 +5,7 @@ import { chooseScheme } from '../helpers/CatalogueThemes';
 import { renderLlmsText, renderSkill } from '../../../scripts/site/SiteAgentFiles.ts';
 import { allPages, sectionHome, catalogueSections } from '../../../apps/site/src/routes/SiteRoutes';
 import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
-import { goTo } from '../helpers/SiteSpecHelpers';
+import { goTo, openSite } from '../helpers/SiteSpecHelpers';
 
 test('the hosted build opens every page of the catalogue and the Docs without network or script errors', async ({
   page,
@@ -157,7 +157,7 @@ test('the navigation holds the wordmark and search, the page the other area and 
     ['/docs/tokens', 'Catalogue', 'Docs'],
   ] as const) {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto(`${siteBuildUrl}${address}`);
+    await openSite(page, `${siteBuildUrl}${address}`);
     await expect(page.getByRole('banner')).toHaveCount(0);
     const wordmark = page
       .getByRole('navigation', { name: brand })

@@ -83,6 +83,7 @@ const catalogue = [
   'CataloguePlainLanguage',
   'DocsPages',
   'CatalogueSearch',
+  'SitePrerender',
 ];
 
 /** A check a changed path needs beyond linting and formatting it. */

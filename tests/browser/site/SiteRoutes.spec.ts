@@ -261,17 +261,20 @@ test(
     // The hash address of an earlier release, such as a bookmark, is redirected to its path.
     await page.goto(`${siteBuildUrl}/#/components/select/props`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
-    await expect(page).toHaveURL(/\/docs\/components\/select$/);
+    // The whole address: /docs/components/select ends with /components/select too.
+    const docs = `${siteBuildUrl}/docs/components/select`;
+    const catalogue = `${siteBuildUrl}/components/select`;
+    await expect(page).toHaveURL(docs);
     const banner = page.locator('.site-page-header');
     await banner.getByRole('link', { name: 'Design', exact: true }).click();
-    await expect(page).toHaveURL(/\/components\/select$/);
+    await expect(page).toHaveURL(catalogue);
     await banner.getByRole('link', { name: 'Code', exact: true }).click();
-    await expect(page).toHaveURL(/\/docs\/components\/select$/);
+    await expect(page).toHaveURL(docs);
     await page.goBack();
-    await expect(page).toHaveURL(/\/components\/select$/);
+    await expect(page).toHaveURL(catalogue);
     await expect(page.locator('.site-figure-section').first()).toBeVisible();
     await page.goForward();
-    await expect(page).toHaveURL(/\/docs\/components\/select$/);
+    await expect(page).toHaveURL(docs);
     await expect(page.getByRole('heading', { name: 'Props', exact: true })).toBeVisible();
   },
 );
