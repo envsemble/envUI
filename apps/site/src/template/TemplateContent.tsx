@@ -1,11 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
-import { PageMarkdown, GuidanceLists } from '../markdown/PageMarkdown';
+import {
+  Column,
+  DescriptionList,
+  Disclosure,
+  Text,
+  type TableOfContentsItem,
+} from '@envsemble/envui';
+import { PageMarkdown, GuidanceLists, markdownHeadings } from '../markdown/PageMarkdown';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import type { DocumentationSection } from '@docs-model/DocumentationTypes';
-import { FigureSection } from '../figures/Figures';
+import { FigureSection, sectionTitle } from '../figures/Figures';
 import { catalogueSection, docsOnlySections } from '@docs-model/CatalogueContent';
-import { Related } from './Related';
+import { Related, relatedId, relatedTitle } from './Related';
+import { alternativesOf } from './RelatedPages';
 import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';
 import { pendingAttribute, SectionOutline, useSectionOutline } from '../markdown/SectionOutline';
@@ -67,6 +74,19 @@ function groupSections(sections: readonly DocumentationSection[]) {
 }
 
 /**
+ * The sections a page shows, in its order: those the catalogue shows, as it shows them, or, with
+ * `provides`, whole; Compose and the changelog are on the page in the Docs.
+ */
+const shownSections = (sections: readonly DocumentationSection[], provides: boolean) =>
+  sections
+    .filter((section) => !docsOnlySections.has(section.id))
+    .flatMap((section) => (provides ? section : (catalogueSection(section) ?? [])));
+
+/** Whether a page, with `related`, ends with Related: a page with an Overview does. */
+const hasRelated = (sections: readonly DocumentationSection[], related: boolean) =>
+  related && sections.some((section) => section.id === 'overview');
+
+/**
  * Sections in the page's order, in their three groups, far apart, then, with `related`, Related;
  * Compose and the changelog are on the page in the Docs. A group without sections is left out. The
  * sections after the first render one after another as the page paints (useRevealed), Related last;
@@ -86,13 +106,7 @@ function Sections({
   related: boolean;
   overviewHeading: boolean;
 }) {
-  const shown = useMemo(
-    () =>
-      sections
-        .filter((section) => !docsOnlySections.has(section.id))
-        .flatMap((section) => (provides ? section : (catalogueSection(section) ?? []))),
-    [sections, provides],
-  );
+  const shown = useMemo(() => shownSections(sections, provides), [sections, provides]);
   // Each section's element, made once, so revealing the next leaves those shown as they are.
   const elements = useMemo(
     () =>
@@ -109,7 +123,7 @@ function Sections({
       ),
     [shown, page, overviewHeading],
   );
-  const withRelated = related && sections.some((section) => section.id === 'overview');
+  const withRelated = hasRelated(sections, related);
   const total = shown.length + (withRelated ? 1 : 0);
   const revealed = useRevealed(total);
   const relatedElement = useMemo(
@@ -177,6 +191,30 @@ export function TemplateContent({
 }
 
 /**
+ * The sections TemplateContent shows of a page, given the same options, as the page's contents
+ * list them: each section's heading, from its "## Title" line (FigureSection), then Related where
+ * the page has alternatives.
+ */
+export function templateContents(
+  document: DocumentationEntry,
+  { provides = false, related = true }: { provides?: boolean; related?: boolean } = {},
+): TableOfContentsItem[] {
+  const sections = document.sections ?? [];
+  const entries: TableOfContentsItem[] = shownSections(sections, provides).flatMap((section) =>
+    markdownHeadings(sectionTitle(section))
+      .filter(({ level }) => level === 2)
+      .map(({ id, text }) => ({ id, label: text })),
+  );
+  if (
+    hasRelated(sections, related) &&
+    document.metadata &&
+    alternativesOf(document.metadata).length
+  )
+    entries.push({ id: relatedId, label: relatedTitle });
+  return entries;
+}
+
+/**
  * A changelog's entries, "- **1.0.0**: what changed", one per version, or nothing where it is
  * written otherwise.
  */
@@ -195,8 +233,11 @@ function changelogEntries(markdown: string) {
   return entries.length ? entries : undefined;
 }
 
+/** The id of a page's changelog heading in the Docs. */
+export const changelogId = 'changelog';
+
 /** Whether the address names a page's changelog, as `#changelog` does. */
-const namesChangelog = () => location.hash === '#changelog';
+const namesChangelog = () => location.hash === `#${changelogId}`;
 
 /**
  * A component's changelog, on its page in the Docs: quiet side information, rarely needed, so it
@@ -228,14 +269,14 @@ export function PageChangelog({ document }: { document: DocumentationEntry }) {
       gap={3}
       className="docs-changelog"
       data-section={changelog.id}
-      aria-labelledby="changelog"
+      aria-labelledby={changelogId}
       {...pendingAttribute(outline)}
     >
       <Disclosure
         open={open}
         onOpenChange={setOpen}
         title={
-          <Text render={<h2 />} variant="body-sm" id="changelog" className="docs-changelog-title">
+          <Text render={<h2 />} variant="body-sm" id={changelogId} className="docs-changelog-title">
             {changelog.title}
           </Text>
         }

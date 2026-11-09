@@ -3,7 +3,9 @@
 // the first, adds nothing to it, removes nothing and renames nothing. It opens every page of the
 // catalogue and the Docs in a desktop window, where the contents show beside the page, with the
 // parts held back, reads the contents in the first frame that paints the page, then lets the parts
-// load, scrolls through the page and reads them again.
+// load, scrolls through the page and reads them again. The contents come from the page's data
+// (usePageContents), so it also checks that they list the page's own h2 headings once loaded, in
+// order, by their ids and words: those of the page itself, not of its examples, figures or tiles.
 //
 //   node scripts/test/CheckContents.ts                the site at http://127.0.0.1:8770 (npm run dev)
 //   node scripts/test/CheckContents.ts <site URL>     another running site in development
@@ -50,6 +52,34 @@ const readContents = () =>
     for (let item = link.closest('li'); item; item = item.parentElement!.closest('li')) depth++;
     return `${'  '.repeat(depth - 1)}${link.getAttribute('href')} ${link.textContent.trim()}`;
   });
+
+/**
+ * The page's own h2 headings, as the contents list them: those outside its examples, figures,
+ * tiles and open dialogs, and outside what the page hides; none on a page without contents.
+ */
+const readHeadings = () =>
+  [
+    ...(document.querySelector('.site-contents-list')
+      ? document.querySelectorAll<HTMLElement>('.site-page-column h2')
+      : []),
+  ]
+    .filter((heading) => {
+      if (
+        heading.closest(
+          '.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-open-example, .catalogue-specimen, .catalogue-tile-stage, .env-dialog, .env-table-of-contents',
+        )
+      )
+        return false;
+      const hider = heading.closest('[hidden], [inert], [aria-hidden="true"]');
+      return (
+        !hider || (!hider.hasAttribute('hidden') && Boolean(hider.closest('[data-base-ui-inert]')))
+      );
+    })
+    .map((heading) => {
+      const copy = heading.cloneNode(true) as HTMLElement;
+      for (const hidden of copy.querySelectorAll('[aria-hidden="true"]')) hidden.remove();
+      return `#${heading.id} ${copy.textContent.replace(/\s+/g, ' ').trim()}`;
+    });
 
 /** The contents of one page at its first render and once it has loaded, as lines. */
 async function check(browser: Browser, route: string) {
@@ -105,7 +135,8 @@ async function check(browser: Browser, route: string) {
     await page.waitForLoadState('networkidle').catch(() => {});
     await page.waitForTimeout(500);
     const loaded = await page.evaluate(readContents);
-    return { first: firstContents, loaded, waited: !first };
+    const headings = await page.evaluate(readHeadings);
+    return { first: firstContents, loaded, headings, waited: !first };
   } finally {
     await context.close();
   }
@@ -121,9 +152,18 @@ try {
     Array.from({ length: parallel }, async () => {
       for (let route = queue.shift(); route !== undefined; route = queue.shift()) {
         try {
-          const { first, loaded, waited } = await check(browser, route);
+          const { first, loaded, headings, waited } = await check(browser, route);
           const same = first.join('\n') === loaded.join('\n');
           const note = waited ? ' (its first render waited for a part held back)' : '';
+          if (same && loaded.join('\n') !== headings.join('\n')) {
+            changed++;
+            console.log(`FAIL ${route}: the contents don't list the page's own headings`);
+            for (const line of loaded.filter((entry) => !headings.includes(entry)))
+              console.log(`       listed, no such heading: ${line}`);
+            for (const line of headings.filter((entry) => !loaded.includes(entry)))
+              console.log(`       a heading not listed: ${line}`);
+            continue;
+          }
           if (same) {
             console.log(`ok   ${route}: ${loaded.length} entries${note}`);
             continue;
@@ -146,7 +186,7 @@ try {
   );
   console.log(
     changed
-      ? `${changed} of ${all.length} pages changed their contents after the first render.`
+      ? `${changed} of ${all.length} pages changed their contents after the first render or list other than their headings.`
       : `Every page's contents are whole from the first render (${all.length} pages).`,
   );
 } finally {

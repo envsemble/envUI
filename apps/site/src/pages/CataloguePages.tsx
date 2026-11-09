@@ -1,9 +1,10 @@
-import { Alert, Link } from '@envsemble/envui';
+import { Alert, Link, type TableOfContentsItem } from '@envsemble/envui';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { SiteBanner } from '../banner/SiteBanner';
 import { catalogueTrail } from '../routes/Trails';
-import type { DocumentPage } from '../routes/SiteRoutes';
+import type { DocumentPage, RoutePage } from '../routes/SiteRoutes';
 import { PartSwitch } from '../routes/OtherPart';
-import { TemplateContent } from '../template/TemplateContent';
+import { TemplateContent, templateContents } from '../template/TemplateContent';
 import { MetadataBadges } from '../template/MetadataBadges';
 import { useDocument } from './PageContent';
 
@@ -89,4 +90,17 @@ export function FoundationPage({ page }: { page: DocumentPage }) {
       <TemplateContent document={document} related={false} />
     </>
   );
+}
+
+/**
+ * The sections of a page in the catalogue, as its view renders them, for the page's contents to
+ * list from the first render: each the id and words of its heading. A foundation's page has no
+ * Related.
+ */
+export function catalogueContents(
+  page: RoutePage,
+  document: DocumentationEntry | undefined,
+): TableOfContentsItem[] {
+  if (!document) return [];
+  return templateContents(document, { related: page.kind !== 'foundation' });
 }

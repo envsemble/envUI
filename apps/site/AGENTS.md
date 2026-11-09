@@ -72,6 +72,7 @@ Each has one folder in `apps/site/src`:
 
 - `npm run build:site` renders every page to its own HTML file with the server entry, `src/Server.tsx` (`scripts/site/PrerenderSite.ts`), and `main.tsx` hydrates it. The development server renders on the client alone.
 - A figure's example, specimen or picture renders in the browser alone: until `useHydrated` (`loading/`) says the page has hydrated, it shows its skeleton at its recorded size.
+- The page's contents list its sections from its data, not from its headings once mounted: the view's module gives them with the view (`contents` in `pages/PageViews.ts`), so a section a view adds or renames changes there too; `scripts/test/CheckContents.ts` checks them against every page's headings.
 
 ## Hosting
 

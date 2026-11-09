@@ -198,6 +198,8 @@ const elements: NonNullable<MarkdownProps['components']> = {
 
 /** Text with its HTML entities, such as &amp;, as the characters they stand for. */
 function decodeEntities(text: string) {
+  // The server renders without a document; no heading of docs/ writes an entity.
+  if (typeof document === 'undefined') return text;
   const element = document.createElement('textarea');
   element.innerHTML = text;
   return element.value;
@@ -216,24 +218,34 @@ function inlineText(tokens: readonly Token[]): string {
 }
 
 /**
+ * The headings of Markdown that one PageMarkdown renders, in order, each with the id and words it
+ * takes rendered (headingIds) and its level: what a page's contents list from its data.
+ */
+export function markdownHeadings(markdown: string): { id: string; text: string; level: number }[] {
+  const slug = headingSlugger();
+  return marked.lexer(headingsOnly(markdown)).flatMap((token) => {
+    if (token.type !== 'heading') return [];
+    // marked's generic token keeps the type check above from narrowing it.
+    const heading = token as Tokens.Heading;
+    const text = inlineText(heading.tokens);
+    return [{ id: slug(text), text, level: heading.depth }];
+  });
+}
+
+/**
  * Markdown's headings alone, with the ids and words they take rendered (headingIds), for a section
  * waiting its turn to show (SectionOutline): without the Markdown pipeline, which a page's later
  * sections would otherwise run before its first paint.
  */
 function OutlineHeadings({ markdown }: { markdown: string }) {
-  const slug = headingSlugger();
-  return marked.lexer(headingsOnly(markdown)).flatMap((token, index) => {
-    if (token.type !== 'heading') return [];
-    // marked's generic token keeps the type check above from narrowing it.
-    const heading = token as Tokens.Heading;
-    const text = inlineText(heading.tokens);
+  return markdownHeadings(markdown).map(({ id, text, level }, index) => {
     // A heading's level is 1 to 6, which its element's name takes.
-    const Heading = `h${heading.depth}` as 'h2';
-    return [
-      <Heading key={index} id={slug(text)}>
+    const Heading = `h${level}` as 'h2';
+    return (
+      <Heading key={index} id={id}>
         {text}
-      </Heading>,
-    ];
+      </Heading>
+    );
   });
 }
 

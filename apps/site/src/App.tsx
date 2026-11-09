@@ -15,9 +15,9 @@ import { findPage, type Area, type RoutePage } from './routes/SiteRoutes';
 import { PageBoundary } from './banner/PageBoundary';
 import { retryDocument } from './pages/PageContent';
 import { SiteBanner } from './banner/SiteBanner';
-import { HasContents, PageContents } from './banner/PageContents';
+import { ContentsItems, PageContents } from './banner/PageContents';
 import { PageFooter } from './banner/PageFooter';
-import { retryPageView, usePageView } from './pages/PageViews';
+import { retryPageView, usePageContents, usePageView } from './pages/PageViews';
 import { preloadPage } from './pages/PreloadPage';
 import { Brand } from './brand/Brand';
 import { DocsNavigation, CatalogueNavigation } from './navigation/SiteNavigation';
@@ -126,11 +126,12 @@ function PageColumns({
   routePath: string;
   contents: boolean;
 }) {
+  const items = usePageContents(contents ? page : undefined);
   return (
     <div className="site-page-layout">
       <div className="site-page-grid" data-contents={contents || undefined}>
         <div className="site-page-column">
-          <HasContents value={contents}>
+          <ContentsItems value={contents ? items : undefined}>
             <PageBoundary
               title={page?.title ?? 'Page not found'}
               route={route}
@@ -151,10 +152,10 @@ function PageColumns({
                 {page ? <PageView key={page.path} page={page} /> : <PageNotFound area={area} />}
               </Suspense>
             </PageBoundary>
-          </HasContents>
+          </ContentsItems>
           {page && <PageNavigation page={page} />}
         </div>
-        {contents && page && <PageContents page={page} />}
+        {contents && page && <PageContents path={page.path} items={items} />}
       </div>
     </div>
   );
