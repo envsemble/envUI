@@ -47,8 +47,8 @@ function Started({ hydrating, children }: { hydrating: boolean; children: ReactN
 
 void opening.then(() => {
   // The head hides a page it can't tell is the address's (PrerenderSite.ts): an old address, or
-  // one with no page of its own, whose page renders here in place of it. It
-  // shows before the site's effects run, which scroll to and focus the section an address names.
+  // one with no page of its own, whose page renders here in place of it. It shows before the
+  // site's effects run, which scroll to and focus the section an address names.
   document.documentElement.removeAttribute('data-site-unrendered');
   const site = (
     <Started hydrating={hydrates}>
