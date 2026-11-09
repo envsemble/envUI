@@ -98,6 +98,10 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
   );
 }
 
+/** Related's heading: its id and its words. */
+export const relatedId = 'related';
+export const relatedTitle = 'Related';
+
 /**
  * Related, the last section of a component or pattern page: a tile for each component or page its
  * frontmatter names, with when to pick it instead. It ends the page (TemplateContent.tsx).
@@ -115,8 +119,8 @@ export function Related({ metadata, path }: { metadata: DocumentationMetadata; p
       data-section="related"
       {...pendingAttribute(outline)}
     >
-      <Text render={<h2 />} variant="headline" id="related">
-        Related
+      <Text render={<h2 />} variant="headline" id={relatedId}>
+        {relatedTitle}
       </Text>
       {!outline && <Tiles alternatives={alternatives} path={path} />}
     </Column>

@@ -1,11 +1,29 @@
-import { use, type ReactNode } from 'react';
+import { use, useMemo, type ReactNode } from 'react';
+import type { TableOfContentsItem } from '@envsemble/envui';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import type { PageKind, PageOfKind, RoutePage } from '../routes/SiteRoutes';
 import { reloadModule } from '../loading/LoadBoundary';
-import { loadOnce } from '../loading/LoadOnce';
+import { loadOnce, useLoaded } from '../loading/LoadOnce';
 import { viewModules, viewOfKind } from './ViewModules';
+import { loadDocument } from './PageContent';
 
 /** What a kind of page renders, given its page. */
 type View<Kind extends PageKind> = (props: { page: PageOfKind<Kind> }) => ReactNode;
+
+/**
+ * The sections a kind of page shows, given its page and its content, as its view renders their
+ * headings: what the page's contents list, from the first render on, the server's included.
+ */
+type Contents = (
+  page: RoutePage,
+  document: DocumentationEntry | undefined,
+) => TableOfContentsItem[];
+
+/** A kind of page's view, and the sections it shows where the page has contents beside it. */
+interface LoadedView<Kind extends PageKind> {
+  View: View<Kind>;
+  contents?: Contents;
+}
 
 /** Where a view comes from, and how to ask for it again after a failure. */
 interface ViewSource<V> {
@@ -46,19 +64,43 @@ const docsPages = () => import('./DocsPages');
  * names, so the site's start carries none of them, and a page only its own part's.
  */
 const views = {
-  home: viewIn('home', overview, (module) => module.Overview),
-  foundations: viewIn('foundations', galleries, (module) => module.FoundationsPage),
-  components: viewIn('components', galleries, (module) => module.ComponentsPage),
-  patterns: viewIn('patterns', galleries, (module) => module.PatternsPage),
-  component: viewIn('component', cataloguePages, (module) => module.ComponentPage),
-  pattern: viewIn('pattern', cataloguePages, (module) => module.PatternPage),
-  foundation: viewIn('foundation', cataloguePages, (module) => module.FoundationPage),
-  guide: viewIn('guide', docsPages, (module) => module.GuidePage),
-  'docs-changelog': viewIn('docs-changelog', docsPages, (module) => module.ChangelogDocsPage),
-  tokens: viewIn('tokens', docsPages, (module) => module.TokensPage),
-  'foundation-guide': viewIn('foundation-guide', docsPages, (module) => module.FoundationGuidePage),
-  reference: viewIn('reference', docsPages, (module) => module.DocsReferencePage),
-} satisfies { [Kind in PageKind]: ViewSource<View<Kind>> };
+  home: viewIn('home', overview, (module) => ({ View: module.Overview })),
+  foundations: viewIn('foundations', galleries, (module) => ({ View: module.FoundationsPage })),
+  components: viewIn('components', galleries, (module) => ({ View: module.ComponentsPage })),
+  patterns: viewIn('patterns', galleries, (module) => ({ View: module.PatternsPage })),
+  component: viewIn('component', cataloguePages, (module) => ({
+    View: module.ComponentPage,
+    contents: module.catalogueContents,
+  })),
+  pattern: viewIn('pattern', cataloguePages, (module) => ({
+    View: module.PatternPage,
+    contents: module.catalogueContents,
+  })),
+  foundation: viewIn('foundation', cataloguePages, (module) => ({
+    View: module.FoundationPage,
+    contents: module.catalogueContents,
+  })),
+  guide: viewIn('guide', docsPages, (module) => ({
+    View: module.GuidePage,
+    contents: module.docsContents,
+  })),
+  'docs-changelog': viewIn('docs-changelog', docsPages, (module) => ({
+    View: module.ChangelogDocsPage,
+    contents: module.docsContents,
+  })),
+  tokens: viewIn('tokens', docsPages, (module) => ({
+    View: module.TokensPage,
+    contents: module.docsContents,
+  })),
+  'foundation-guide': viewIn('foundation-guide', docsPages, (module) => ({
+    View: module.FoundationGuidePage,
+    contents: module.docsContents,
+  })),
+  reference: viewIn('reference', docsPages, (module) => ({
+    View: module.DocsReferencePage,
+    contents: module.docsContents,
+  })),
+} satisfies { [Kind in PageKind]: ViewSource<LoadedView<Kind>> };
 
 const loads = new Map<PageKind, Promise<unknown>>();
 
@@ -74,4 +116,22 @@ export function retryPageView(kind: PageKind) {
 /** A page's view, suspending the page until it has loaded. */
 export const usePageView = (page: RoutePage) =>
   // Each kind's view takes that kind's page, which TypeScript can't follow through the lookup.
-  use(loadPageView(page.kind)) as (props: { page: RoutePage }) => ReactNode;
+  (use(loadPageView(page.kind)) as LoadedView<PageKind>).View as (props: {
+    page: RoutePage;
+  }) => ReactNode;
+
+/**
+ * The sections a page shows, which its contents list, from its view's module and its content
+ * (Contents): without suspending, so the contents beside the page never hold it up; none until
+ * both have loaded, which the first page and a followed link's have before they render, the
+ * pre-rendered page as it hydrates included, so its first render lists them as the server did.
+ */
+export function usePageContents(page: RoutePage | undefined): readonly TableOfContentsItem[] {
+  const view = useLoaded(page && (loadPageView(page.kind) as Promise<LoadedView<PageKind>>));
+  const content = useLoaded(page?.document && loadDocument(page.document.id));
+  return useMemo(
+    () =>
+      !page || !view?.contents || (page.document && !content) ? [] : view.contents(page, content),
+    [page, view, content],
+  );
+}
