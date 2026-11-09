@@ -194,7 +194,7 @@ export function generateDocumentation() {
       // Pattern and template pages document no exports of their own; they link to what they compose.
       ...(kind === 'component' && {
         props: Object.fromEntries(
-          documentedExports(frontmatter.components, props).map((name: string) => [
+          documentedExports(frontmatter.components ?? [], props).map((name: string) => [
             name,
             props!.exports[name],
           ]),

@@ -7,9 +7,12 @@ import {
   otherFrontmatter,
   pageSchemas,
   type ExampleEntry,
+  frontmatterOf,
   type Frontmatter,
   type FrontmatterSchema,
+  type RawFrontmatter,
 } from '../PageStructure.ts';
+import { isMap } from '../Shapes.ts';
 import { pageStatuses } from '../model/DocumentationTypes.ts';
 import { deviceKinds, stageFills } from './Figures.ts';
 
@@ -22,11 +25,8 @@ export interface FrontmatterContext {
 
 type FrontmatterRule = FrontmatterSchema[string];
 
-const isMap = (value: unknown): value is Record<string, unknown> =>
-  Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-
 /** The exports the frontmatter's components lists, or none when it lists none. */
-const listedComponents = (frontmatter: Frontmatter): unknown[] =>
+const listedComponents = (frontmatter: RawFrontmatter): unknown[] =>
   Array.isArray(frontmatter.components) ? frontmatter.components : [];
 
 /**
@@ -34,7 +34,7 @@ const listedComponents = (frontmatter: Frontmatter): unknown[] =>
  * export without a component page of its own, such as "theme switcher" for ThemeToggle, a list per
  * export the page documents.
  */
-function exportAliasesProblems(frontmatter: Frontmatter) {
+function exportAliasesProblems(frontmatter: RawFrontmatter) {
   const value = frontmatter.exportAliases;
   if (!isMap(value)) return ['exportAliases must map an export to its aliases'];
   const problems: string[] = [];
@@ -101,7 +101,7 @@ function exampleProblems(key: string, name: string, entry: string | Partial<Exam
 function statusesProblems(
   key: string,
   value: unknown,
-  frontmatter: Frontmatter,
+  frontmatter: RawFrontmatter,
   schema: FrontmatterSchema | undefined,
 ) {
   if (!isMap(value)) return [`${key} must map an export to its status`];
@@ -126,7 +126,7 @@ function fieldProblems(
   key: string,
   value: unknown,
   rule: FrontmatterRule,
-  frontmatter: Frontmatter,
+  frontmatter: RawFrontmatter,
   schema: FrontmatterSchema | undefined,
 ): string[] {
   switch (rule.type) {
@@ -176,7 +176,7 @@ function isAvoidEntry(item: unknown) {
  * summary a sentence, its since a version, and namespaces rather than parts in its lists.
  */
 function schemaProblems(
-  frontmatter: Frontmatter,
+  frontmatter: RawFrontmatter,
   schema: FrontmatterSchema,
   versions: Set<string> | undefined,
 ) {
@@ -209,12 +209,15 @@ function schemaProblems(
   return problems;
 }
 
-/** Checks a page's frontmatter against its kind's schema, throwing with every problem it has. */
+/**
+ * Checks a page's frontmatter against its kind's schema, throwing with every problem it has, and
+ * returns it as its type.
+ */
 export function validateFrontmatter(
-  frontmatter: Frontmatter,
+  frontmatter: RawFrontmatter,
   path: string,
   { kind, versions }: FrontmatterContext,
-) {
+): Frontmatter {
   const problems: string[] = [];
   const schema = pageSchemas[kind];
   if (!schema) {
@@ -234,4 +237,5 @@ export function validateFrontmatter(
   if (schema) problems.push(...schemaProblems(frontmatter, schema, versions));
   if (problems.length)
     throw new Error(`Invalid frontmatter in ${path}:\n  - ${problems.join('\n  - ')}`);
+  return frontmatterOf(frontmatter, `frontmatter of ${path}`);
 }

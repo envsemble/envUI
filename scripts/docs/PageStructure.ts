@@ -8,7 +8,21 @@ import {
   componentGroups,
   pageStatuses,
   type DocumentationBlock,
+  type ExportEntry,
+  type PropEntry,
 } from './model/DocumentationTypes.ts';
+import {
+  fields,
+  isMap,
+  listOf,
+  mapOf,
+  oneOf,
+  optional,
+  text,
+  textOrYesNo,
+  yesNo,
+  type Reader,
+} from './Shapes.ts';
 
 /**
  * The status of an export a guide or foundations page documents, such as EnvUIProvider or
@@ -58,12 +72,36 @@ export const kindFolders = {
  * avoidWhen. A foundation calls its variants Options. contributing/pages.md describes it.
  */
 
-/**
- * A page's frontmatter as parsed YAML: unchecked until validateFrontmatter checks it field by field
- * against its kind's schema, so its fields are read as the schema says they are.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- parsed YAML, checked at run time
-export type Frontmatter = Record<string, any>;
+/** A page's frontmatter as parsed YAML, a mapping unchecked until validateFrontmatter checks it. */
+export type RawFrontmatter = Record<string, unknown>;
+
+/** An avoidWhen entry: a need the page doesn't meet, and the export to use or the page to read. */
+interface AvoidEntry {
+  text: string;
+  use?: string;
+  see?: string;
+}
+
+/** A page's frontmatter once validateFrontmatter has checked it against its kind's schema. */
+export interface Frontmatter {
+  title?: string;
+  summary?: string;
+  status?: string;
+  since?: string;
+  category?: string;
+  intent?: string;
+  aliases?: string[];
+  useWhen?: string[];
+  avoidWhen?: AvoidEntry[];
+  components?: string[];
+  composes?: string[];
+  /** The status of each export that differs from the page's. */
+  statuses?: Record<string, string>;
+  /** A guide's names people search for each export it documents by. */
+  exportAliases?: Record<string, string[]>;
+  /** Each example by name: its role, or its role with its caption and framing. */
+  examples?: Record<string, string | ExampleEntry>;
+}
 
 /** A field of a page's frontmatter as its schema checks it. */
 interface FrontmatterRule {
@@ -108,12 +146,8 @@ export interface ExampleEntry {
 
 /** The props of every export, as docs/generated/props.json holds them. */
 export interface PropsFile {
-  exports: Record<string, ExportProps>;
+  exports: Record<string, ExportEntry>;
 }
-
-/** An export's entry in props.json: the entry points it comes from, and the rest of its record. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; ExtractProps writes it
-type ExportProps = { entries: string[] } & Record<string, any>;
 
 export const pageSections: readonly PageSectionDefinition[] = [
   { id: 'overview', title: 'Overview', generated: true },
@@ -150,19 +184,9 @@ export const exampleRoles: readonly string[] = [
  */
 export function examplesOf(frontmatter: Frontmatter | undefined): Record<string, ExampleEntry> {
   return Object.fromEntries(
-    Object.entries<Frontmatter | string>(frontmatter?.examples ?? {}).map(([name, value]) => [
+    Object.entries(frontmatter?.examples ?? {}).map(([name, value]) => [
       name,
-      typeof value === 'string'
-        ? { role: value }
-        : {
-            role: value?.role,
-            caption: value?.caption,
-            ...(value?.open !== undefined && { open: value.open }),
-            ...(value?.stage !== undefined && { stage: value.stage }),
-            ...(value?.motion !== undefined && { motion: value.motion }),
-            ...(value?.wide !== undefined && { wide: value.wide }),
-            ...(value?.device !== undefined && { device: value.device }),
-          },
+      typeof value === 'string' ? { role: value } : value,
     ]),
   );
 }
@@ -344,19 +368,85 @@ export const contained = (directory: string, path: string) => {
   return inside && !inside.startsWith('..') && !isAbsolute(inside);
 };
 
+const texts = optional(listOf(text));
+const exampleEntry = fields<ExampleEntry>({
+  role: text,
+  caption: optional(text),
+  open: optional(yesNo),
+  stage: optional(text),
+  motion: optional(yesNo),
+  wide: optional(yesNo),
+  device: optional(text),
+});
+/** Frontmatter that validateFrontmatter checked, read into its type. */
+export const frontmatterOf = fields<Frontmatter>({
+  title: optional(text),
+  summary: optional(text),
+  status: optional(text),
+  since: optional(text),
+  category: optional(text),
+  intent: optional(text),
+  aliases: texts,
+  useWhen: texts,
+  avoidWhen: optional(
+    listOf(fields<AvoidEntry>({ text, use: optional(text), see: optional(text) })),
+  ),
+  components: texts,
+  composes: texts,
+  statuses: optional(mapOf(text)),
+  exportAliases: optional(mapOf(listOf(text))),
+  examples: optional(
+    mapOf((value, where) => (typeof value === 'string' ? value : exampleEntry(value, where))),
+  ),
+});
+
+const propEntry = fields<PropEntry>({
+  name: text,
+  type: text,
+  required: yesNo,
+  requiredWhen: optional(text),
+  default: optional(text),
+  defaultBuiltIn: optional(yesNo),
+  description: text,
+  deprecated: optional(textOrYesNo),
+  source: optional(oneOf(['base-ui'] as const)),
+});
+const exportBase = { source: text, description: text, entries: listOf(text) };
+const exportEntries = {
+  component: fields({
+    kind: oneOf(['component'] as const),
+    ...exportBase,
+    props: listOf(propEntry),
+    native: listOf(text),
+  }),
+  namespace: fields({ kind: oneOf(['namespace'] as const), ...exportBase, parts: listOf(text) }),
+  function: fields({ kind: oneOf(['function'] as const), ...exportBase, signature: text }),
+};
+/** An export's record in props.json, read by its kind's fields. */
+const exportEntry: Reader<ExportEntry> = (value, where) => {
+  const kind = isMap(value) ? value.kind : undefined;
+  if (kind !== 'component' && kind !== 'namespace' && kind !== 'function')
+    throw new Error(`${where}.kind must be component, namespace or function`);
+  return exportEntries[kind](value, where);
+};
+const propsFileOf = fields<PropsFile>({ exports: mapOf(exportEntry) });
+
+/** docs/generated/props.json, read into its type, or undefined before ExtractProps.ts wrote it. */
 export function readProps(directory = documentationDirectory): PropsFile | undefined {
   const file = resolve(directory, 'generated/props.json');
-  return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
+  return existsSync(file)
+    ? propsFileOf(JSON.parse(readFileSync(file, 'utf8')), 'props.json')
+    : undefined;
 }
 
 /** Splits `---` YAML frontmatter from a Markdown source. */
 export function splitFrontmatter(
   source: string,
   path: string,
-): { frontmatter: Frontmatter | undefined; yaml: string; body: string } {
+): { frontmatter: RawFrontmatter | undefined; yaml: string; body: string } {
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n(?:\r?\n)*/);
   if (!match) return { frontmatter: undefined, yaml: '', body: source };
-  let frontmatter: Frontmatter | undefined;
+  let frontmatter: unknown;
   try {
     frontmatter = parseYaml(match[1], { uniqueKeys: true, strict: true });
   } catch (error) {
@@ -364,7 +454,6 @@ export function splitFrontmatter(
       cause: error,
     });
   }
-  if (!frontmatter || typeof frontmatter !== 'object' || Array.isArray(frontmatter))
-    throw new Error(`Frontmatter of ${path} must be a mapping.`);
+  if (!isMap(frontmatter)) throw new Error(`Frontmatter of ${path} must be a mapping.`);
   return { frontmatter, yaml: match[1], body: source.slice(match[0].length) };
 }

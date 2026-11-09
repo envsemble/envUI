@@ -24,6 +24,7 @@ import {
   splitFrontmatter,
   withImport,
   type Frontmatter,
+  type RawFrontmatter,
   type PageSection,
   type PropsFile,
 } from './PageStructure.ts';
@@ -112,8 +113,8 @@ function checkIndexSection(path: string, kind: string, group: string) {
 function checkOneFileStructure(
   path: string,
   kind: string,
-  frontmatter: Frontmatter | undefined,
-): asserts frontmatter is Frontmatter {
+  frontmatter: RawFrontmatter | undefined,
+): asserts frontmatter is RawFrontmatter {
   if (!frontmatter)
     throw new Error(
       `${kind[0].toUpperCase()}${kind.slice(1)} page ${path} needs frontmatter: it is in the one-file structure (contributing/pages.md).`,
@@ -147,7 +148,7 @@ function checkStructuredEntry(
     );
   if (component && kebab(title) !== id && !slugExceptions.has(id))
     throw new Error(`${path} must be named ${kebab(title)}.md after its title.`);
-  if (component && !frontmatter.components.includes(title.split('.')[0]) && exported?.[title])
+  if (component && !frontmatter.components?.includes(title.split('.')[0]) && exported?.[title])
     throw new Error(`${path} must list ${title}, its own component, in components.`);
 }
 
@@ -187,7 +188,7 @@ function readEntry(
   const id = basename(path, '.md');
   if (documents.some((document) => document.id === id))
     throw new Error(`Two documentation pages share the name ${id}: ${path}`);
-  const { frontmatter, yaml, body } = splitFrontmatter(read(file), path);
+  const { frontmatter: raw, yaml, body } = splitFrontmatter(read(file), path);
   if (!body.startsWith(`# ${title}\n`) && !body.startsWith(`# ${title}\r\n`))
     throw new Error(`Documentation title differs from its index entry: ${path}`);
   const markdown = body.replace(/^# [^\n]+\r?\n\s*/, '');
@@ -198,8 +199,8 @@ function readEntry(
   // lists its examples, and its sections follow the title in pageSections' order. A page that
   // isn't fails, so every page stays in it.
   const structured = pageKinds.has(kind);
-  if (structured) checkOneFileStructure(path, kind, frontmatter);
-  if (frontmatter) validateFrontmatter(frontmatter, path, { kind, versions: context.versions });
+  if (structured) checkOneFileStructure(path, kind, raw);
+  const frontmatter = raw && validateFrontmatter(raw, path, { kind, versions: context.versions });
   if (structured && frontmatter)
     checkStructuredEntry(
       { path, id, title, group, kind },
@@ -215,7 +216,8 @@ function readEntry(
     title,
     group,
     path,
-    summary: (frontmatter?.summary ?? indexSummary).replace(/\s+/g, ' ').trim(),
+    // A page outside the one-file structure has its summary in the index (readEntry checks it).
+    summary: (frontmatter?.summary ?? indexSummary ?? '').replace(/\s+/g, ' ').trim(),
     related: [],
     markdown,
     ...(frontmatter && { frontmatter, yaml }),
