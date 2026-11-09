@@ -1,4 +1,4 @@
-import { useRef, type CSSProperties, type ReactNode } from 'react';
+import { useRef, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { Surface } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
 import { useDelayPassed, usePlaceholderShown } from './LoadingStore';
@@ -23,7 +23,7 @@ import { classNames } from '@envui-internal/internal/classNames';
  * whose content, the part's own components over placeholder text, shows as bars and shapes, inert
  * and skipped by assistive technology, while the surface is a busy region. Hidden until it has
  * waited a moment, it keeps its space. `.site-loading` marks it for the tests, which wait for it to
- * leave.
+ * leave. `ref` takes its element, such as to watch it near the view.
  */
 export function PartSkeleton({
   what,
@@ -31,6 +31,7 @@ export function PartSkeleton({
   className,
   style,
   children,
+  ref,
 }: {
   /** What is loading, for the page's status, such as "example". */
   what: string;
@@ -39,9 +40,11 @@ export function PartSkeleton({
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
+  ref?: RefObject<HTMLDivElement | null>;
 }) {
   const shown = usePlaceholderShown(what, part);
-  const element = useRef<HTMLDivElement>(null);
+  const own = useRef<HTMLDivElement>(null);
+  const element = ref ?? own;
   useArrival(element);
   return (
     <Surface
@@ -93,13 +96,14 @@ export function LongPartSkeleton({
  * own, a skeleton stage at the subject's recorded size and with the stage's fill, with a filled
  * shape in its middle where the subject will be, as a subject on its stage has; on the stage that
  * will show it, a skeleton of the subject's recorded size in its place. A part with no record keeps
- * the stage's least height.
+ * the stage's least height. `ref` takes its element, as PartSkeleton's.
  */
 export function StageSkeleton({
   part,
   what,
   stage = false,
   className,
+  ref,
 }: {
   /** The part's key in PartSizes.json, such as example:button/Variants. */
   part: string;
@@ -108,10 +112,12 @@ export function StageSkeleton({
   stage?: boolean;
   /** The classes of the stage it stands for, such as a do or don't figure's. */
   className?: string;
+  ref?: RefObject<HTMLDivElement | null>;
 }) {
   const size = recordedSize(part);
   return (
     <PartSkeleton
+      ref={ref}
       what={what}
       part={part}
       className={classNames(stage ? 'site-loading-stage' : 'site-loading-subject', className)}

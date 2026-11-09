@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { siteBuildUrl } from '../helpers/Servers';
 import { documents } from '../../../apps/site/src/routes/PageModel';
-import { goTo } from '../helpers/SiteSpecHelpers';
+import { goTo, showFigures } from '../helpers/SiteSpecHelpers';
 
 // The figures of the catalogue's pages: live examples, specimens, anatomy numbering and stages.
 
@@ -17,6 +17,7 @@ test('live examples keep links in place, show their source, and specimens show f
   page,
 }) => {
   await page.goto(`${siteBuildUrl}/components/button`);
+  await showFigures(page);
   const address = page.url();
   // Links in an example keep their semantics without leaving the documentation.
   const destinations = page.getByRole('group', { name: 'Links example', exact: true });
@@ -56,6 +57,7 @@ test('a playback keeps its links in place, as an example does, but a link to a p
   page,
 }) => {
   await page.goto(`${siteBuildUrl}/components/table-of-contents`);
+  await showFigures(page);
   const playback = page.locator('[data-catalogue-specimen="ReadersPlace"]');
   await expect(playback.locator('.env-table-of-contents')).toBeVisible();
   // A link to a section of the page, as a table of contents in a playback holds, and one to

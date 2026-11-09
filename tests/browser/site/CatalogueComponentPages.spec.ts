@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { siteBuildUrl } from '../helpers/Servers';
 import { chooseScheme } from '../helpers/CatalogueThemes';
-import { goTo } from '../helpers/SiteSpecHelpers';
+import { goTo, showFigures } from '../helpers/SiteSpecHelpers';
 
 // A component page of the catalogue: its sections, their groups and its anatomy.
 
@@ -13,6 +13,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
   // Figures that share a row are cells of one width, from the top of the row, each at least a
   // gallery cell's height, 11 rem, so a lone control sits in a calm field rather than a strip.
   await page.goto(`${siteBuildUrl}/components/badge`);
+  await showFigures(page);
   await expect(page.locator('[data-section="overview"] .site-loading')).toHaveCount(0);
   const cells = () =>
     page
@@ -180,6 +181,8 @@ test('a component page shows plain sections, equal cells and the parts of its an
         theme: stage.getAttribute('data-env-theme'),
       };
     });
+  // Its example renders as it nears the view.
+  await stages.scrollIntoViewIfNeeded();
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'light' });
   await chooseScheme(page, 'dark');
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });

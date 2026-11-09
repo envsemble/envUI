@@ -1,9 +1,9 @@
-import { Fragment, Suspense } from 'react';
+import { Fragment, Suspense, useRef, type RefObject } from 'react';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';
 import { StageSkeleton } from '../loading/Skeletons';
 import { useFoundationFigures } from '../figures/foundations/FoundationFigures';
-import { useHydrated } from '../loading/useHydrated';
+import { useSubjectShown } from '../figures/useSubjectShown';
 import { FigurePart } from '../figures/foundations/FoundationFrame';
 
 /**
@@ -12,17 +12,20 @@ import { FigurePart } from '../figures/foundations/FoundationFrame';
  */
 const figureFence = /^```tsx figure=([A-Za-z]\w*)\n\n?```[ \t]*$/m;
 
-/** A guide's figure while it loads, and on a pre-rendered page until the page has hydrated. */
-const guideFigureSkeleton = (page: string, name: string) => (
-  <StageSkeleton part={`figure:${page}/${name}`} what="figures" stage />
-);
+/** A guide's figure while it loads, and on a pre-rendered page until it renders (useSubjectShown). */
+const guideFigureSkeleton = (
+  page: string,
+  name: string,
+  place?: RefObject<HTMLDivElement | null>,
+) => <StageSkeleton ref={place} part={`figure:${page}/${name}`} what="figures" stage />;
 
 function GuideFigure({ page, name }: { page: string; name: string }) {
   const figure = useFoundationFigures(page)?.[name];
-  const hydrated = useHydrated();
+  const place = useRef<HTMLDivElement>(null);
+  const shown = useSubjectShown(place);
   if (!figure)
     throw new Error(`docs/${page}.md places ${name}, which FoundationFigures.ts doesn't register`);
-  if (!hydrated) return guideFigureSkeleton(page, name);
+  if (!shown) return guideFigureSkeleton(page, name, place);
   const Render = figure.render;
   return (
     <FigurePart value={`figure:${page}/${name}`}>

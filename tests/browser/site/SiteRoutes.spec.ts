@@ -299,7 +299,18 @@ test(
     const rules = page.locator('#rules');
     await expect.poll(() => belowTop(rules)).toBeLessThan(80);
     const landed = await belowTop(rules);
-    await expect(page.locator('.site-loading')).toHaveCount(0);
+    // The parts near the view load; those further up wait until they are scrolled to
+    // (figures/useSubjectShown.ts).
+    await expect
+      .poll(() =>
+        body.evaluate((main) =>
+          [...main.querySelectorAll('.site-loading')].some((skeleton) => {
+            const box = skeleton.getBoundingClientRect();
+            return box.bottom > -600 && box.top < innerHeight + 600;
+          }),
+        ),
+      )
+      .toBe(false);
     // A part that lands moves it until the next frame, which holds it in place again.
     await expect.poll(async () => Math.abs((await belowTop(rules)) - landed)).toBeLessThan(2);
     // Partway down a page, a link opens the next at its top; Back returns to the same place.

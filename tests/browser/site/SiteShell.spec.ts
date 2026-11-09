@@ -5,7 +5,7 @@ import { chooseScheme } from '../helpers/CatalogueThemes';
 import { renderLlmsText, renderSkill } from '../../../scripts/site/SiteAgentFiles.ts';
 import { allPages, sectionHome, catalogueSections } from '../../../apps/site/src/routes/SiteRoutes';
 import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
-import { goTo, openSite } from '../helpers/SiteSpecHelpers';
+import { goTo, openSite, showFigures } from '../helpers/SiteSpecHelpers';
 
 test('the hosted build opens every page of the catalogue and the Docs without network or script errors', async ({
   page,
@@ -566,6 +566,7 @@ test("a catalogue page's contents list none of its figures' headings, a do and d
   const contents = page.getByRole('navigation', { name: 'On this page' });
   // Card's do and don't pairs hold cards with headings of their own.
   await page.goto(`${siteBuildUrl}/components/card`);
+  await showFigures(page);
   await expect(contents.getByRole('link', { name: 'Rules', exact: true })).toBeVisible();
   await expect(page.locator('.site-verdict-stage :is(h2, h3)').first()).toBeAttached();
   const inFigures = await contents.evaluate((navigation) =>
@@ -605,6 +606,7 @@ test("a page's contents are whole from its first render, while its later section
     expect(await page.evaluate(() => (globalThis as { pending?: number }).pending)).toBeGreaterThan(
       0,
     );
+    await showFigures(page);
     await expect(page.locator('[data-site-pending], .site-loading')).toHaveCount(0);
     const loaded = await page
       .locator('.site-contents-list a')

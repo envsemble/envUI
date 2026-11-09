@@ -1,4 +1,4 @@
-import { Suspense, use, useState, type MouseEvent, type ReactNode } from 'react';
+import { Suspense, use, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { Disclosure, Column, Text } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
 import type { DeviceKind, StageFill } from '@docs-model/DocumentationTypes';
@@ -15,7 +15,7 @@ import { OpenExample } from './OpenExample';
 import { CodeSkeleton, StageSkeleton } from '../loading/Skeletons';
 import { exampleLines } from '../loading/RecordedSizes';
 import { HoldPlaceholder } from '../loading/LoadingStore';
-import { useHydrated } from '../loading/useHydrated';
+import { useSubjectShown } from './useSubjectShown';
 import { MotionStage } from './MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
 import { WidthBox } from '../fit/standalone/WidthFit';
@@ -115,21 +115,29 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
 export function ExampleRender({
   page,
   name,
-  fallback = <StageSkeleton part={`example:${page}/${name}`} what="examples" />,
+  fallback,
 }: {
   page: string;
   name: string;
   /**
-   * What shows while the file loads: a skeleton at the example's size in its place on the stage.
-   * A tile's picture shows nothing, as its whole stage is a skeleton meanwhile (TileStage.tsx).
+   * What shows while the file loads: by default a skeleton at the example's size in its place on
+   * the stage. A tile's picture shows nothing, as its whole stage is a skeleton meanwhile
+   * (TileStage.tsx).
    */
   fallback?: ReactNode;
 }) {
   // A retry renders the example afresh from its file loaded again, and leaves its code as it is.
   const [, setAttempt] = useState(0);
-  // On a pre-rendered page, the example's place is held until the page has hydrated.
-  const hydrated = useHydrated();
-  if (!hydrated) return fallback;
+  const place = useRef<HTMLDivElement>(null);
+  // On a pre-rendered page, the example's place is held until it renders (useSubjectShown).
+  const shown = useSubjectShown(fallback === undefined ? place : undefined);
+  const skeleton =
+    fallback === undefined ? (
+      <StageSkeleton ref={place} part={`example:${page}/${name}`} what="examples" />
+    ) : (
+      fallback
+    );
+  if (!shown) return skeleton;
   const Example = exampleComponent(page, name);
   return (
     <LoadBoundary
@@ -140,7 +148,7 @@ export function ExampleRender({
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense fallback={fallback}>
+      <Suspense fallback={skeleton}>
         <HoldPlaceholder part={`example:${page}/${name}`}>
           {/* The example is looked up among the registry's lazy components, not created here. */}
           {/* eslint-disable-next-line react-hooks/static-components */}
