@@ -2,7 +2,7 @@ import { useState } from 'react';
 import FailedSend from '../../examples/conversation/FailedSend';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const field = '.env-composer-input';

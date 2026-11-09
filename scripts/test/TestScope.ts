@@ -204,8 +204,11 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
   },
   { paths: ['packages/ui/src/foundations/messages/**'], specs: ['Messages'] },
   { paths: ['packages/ui/src/dev.ts', 'packages/ui/src/dev/**'], specs: ['DevMode'] },
-  // The catalogue's scripted playback: its pointer, timelines and autoplay.
-  { paths: ['apps/site/src/motion/**'], specs: ['SiteMotion', 'Autoplay'] },
+  // The catalogue's scripted playback: its pointer, timelines and autoplay, and the stage it plays on.
+  {
+    paths: ['apps/site/src/motion/**', 'apps/site/src/figures/MotionStage.tsx'],
+    specs: ['SiteMotion', 'Autoplay'],
+  },
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
   { paths: ['apps/site/src/**'], specs: ['LiveDevelopment'] },
   // The layout check measures every example the pages place, on the catalogue's stage, with dev
@@ -214,7 +217,7 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
     paths: [
       'apps/site/src/examples/**',
       'apps/site/src/figures/Stage.css',
-      'apps/site/src/motion/MotionStage.css',
+      'apps/site/src/figures/MotionStage.css',
       'docs/components/**',
       'docs/patterns/**',
       'packages/ui/src/dev.ts',

@@ -1,7 +1,7 @@
 import ChooseOwner from '../../examples/combobox/ChooseOwner';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const input = '.env-combobox-input';
 const clear = '.env-combobox-clear';

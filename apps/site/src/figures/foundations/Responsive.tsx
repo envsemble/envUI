@@ -9,9 +9,9 @@ import {
   Text,
 } from '@envsemble/envui';
 import { WidthSweep } from '../../motion/WidthSweep';
-import type { FoundationFigure } from './FoundationFigures';
+import type { FoundationFigureEntry } from './FoundationFigures';
 import { ClassTextSizeFigure } from './ResponsiveTextSize';
-import { Figure, type LegendEntry } from './Figure';
+import { FoundationFrame, type LegendEntry } from './FoundationFrame';
 
 /*
  * The figures of the Adapting to width foundation. Its words are in docs/foundations/responsive.md,
@@ -53,7 +53,7 @@ function Profile() {
  */
 function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
   return (
-    <Figure
+    <FoundationFrame
       label="One profile, from a narrow pane to room to spare"
       motion="the profile from a narrow pane to room to spare"
       legend={
@@ -74,12 +74,12 @@ function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
       <WidthSweep widths={[18, 44]} hold={1600} classes="only" crop>
         <Profile />
       </WidthSweep>
-    </Figure>
+    </FoundationFrame>
   );
 }
 
 /** The figures docs/foundations/responsive.md places, by name. */
-export const responsiveFigures: Record<string, FoundationFigure> = {
+export const responsiveFigures: Record<string, FoundationFigureEntry> = {
   Widths: { render: WidthsFigure, wide: true },
   TextSize: { render: ClassTextSizeFigure, wide: true },
 };

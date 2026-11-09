@@ -23,7 +23,7 @@ interface PartsFile {
 
 // A glob, so a checkout without the generated file still builds; its figures then show the parts
 // their legends name, without descriptions from the file.
-const files = import.meta.glob<PartsFile>('../../../../docs/generated/parts.json', {
+const files = import.meta.glob<PartsFile>('../../../../../docs/generated/parts.json', {
   eager: true,
   import: 'default',
 });

@@ -1,6 +1,6 @@
 /* Do, don't and caution figures; the frame they share with other figures is in Figures.css. */
 
-/* A do, don't or caution figure, as a gallery's cells (Figures.tsx): the example on its stage, flat
+/* A do, don't or caution figure, as a gallery's cells (VerdictFigure.tsx): the example on its stage, flat
    and square-cornered as every figure of a page; under it, a little apart, a strip of the same fill
    with its tag and its one sentence; and under that, its code switch. The stage is as tall as
    the example, and at least 11 rem, or square where the example shows open or playing, the room

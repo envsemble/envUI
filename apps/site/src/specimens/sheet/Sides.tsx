@@ -2,7 +2,7 @@ import { Button, Column, DescriptionList, Row, Sheet } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /** Each sheet: the marker on its trigger and its close button's name. */
 const sheets = [

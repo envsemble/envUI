@@ -1,7 +1,7 @@
 import { AnimatedNumber, Text } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /** The value grows, grows again, and shrinks back to where it began. */
 const steps = [1600, 1600, 1600];

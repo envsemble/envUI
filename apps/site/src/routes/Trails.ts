@@ -1,4 +1,4 @@
-import { componentGroupId } from '../pages/PageModel';
+import { componentGroupId } from './PageModel';
 import { docsRoute, homeRoute } from './Address';
 import { docsTree } from './DocsTree';
 import { sectionHome, type RoutePage, type CatalogueSection } from './SiteRoutes';

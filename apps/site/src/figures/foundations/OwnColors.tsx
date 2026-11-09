@@ -23,7 +23,7 @@ import { IconLuggage } from '@envsemble/envui/icons/Luggage';
 import { IconMap } from '@envsemble/envui/icons/Map';
 import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel } from './Steps';
-import { Figure } from './Figure';
+import { FoundationFrame } from './FoundationFrame';
 import { useHighContrast, useNarrow, type FigureWords } from './ColorFigures';
 
 /**
@@ -249,13 +249,13 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
 /** The same components in each of a few pastel schemes of an application's own, chosen in turn. */
 export function OwnColorsFigure({ legend }: FigureWords) {
   return (
-    <Figure
+    <FoundationFrame
       label="Your own colors"
       motion="the components in each color scheme"
       className="catalogue-scheme-stage"
     >
       <SchemeSteps names={legend.map((entry) => entry.name)} />
-    </Figure>
+    </FoundationFrame>
   );
 }
 

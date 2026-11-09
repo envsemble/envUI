@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { Column, CopyButton, Row, Surface, Text } from '@envsemble/envui';
 import { AgentLogos } from '../brand/AgentLogos';
-import { PageMarkdown } from './PageMarkdown';
+import { PageMarkdown } from '../markdown/PageMarkdown';
 
 /** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
 const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';

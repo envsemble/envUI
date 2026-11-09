@@ -5,7 +5,7 @@ import {
   componentDocuments,
   type DocumentSummary,
   type GroupedDocument,
-} from '../pages/PageModel';
+} from './PageModel';
 import { docsRoute, homeRoute, routeHref } from './Address';
 
 /**

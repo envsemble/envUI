@@ -1,7 +1,7 @@
 import Destinations from '../../examples/card/Destinations';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const card = (index: number) => `.env-card:nth-child(${index} of .env-card)`;
 

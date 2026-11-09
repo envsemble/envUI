@@ -1,11 +1,11 @@
 import { IconCode } from '@envsemble/envui/icons/Code';
 import { IconMenuBook } from '@envsemble/envui/icons/MenuBook';
 import { replaceAddress, revealSection, routeHref } from './Address';
-import { RouterLink } from './RouterLink';
 import { isAnchor, readingAnchor } from './ScrollRestoration';
 import { counterpartOf } from './Counterparts';
 import type { Area, RoutePage } from './SiteRoutes';
 import { flag } from '@envui-internal/internal/flag';
+import { useLinkComponent } from '@envui-internal/internal/provider/LinkComponentContext';
 
 /**
  * The other part from a page of one, by its name and icon: the Docs, in code, from the catalogue,
@@ -71,9 +71,11 @@ export function showKeptSection(main: HTMLElement, path: string): (() => void) |
  * The switch in a page's banner between the two pages of one subject: Design, its page in the
  * catalogue, and Code, its page in the Docs. Two links drawn as a small segmented control, the
  * page shown marked current with the control's check; following the other keeps the reader's
- * section where that page has it too. A page without a page in the other part shows none.
+ * section where that page has it too. A page without a page in the other part shows none. Its
+ * links are the site's link component (LinkProvider in App.tsx), as envUI's own links are.
  */
 export function PartSwitch({ page }: { page: RoutePage }) {
+  const LinkComponent = useLinkComponent();
   const route = counterpartOf(page);
   if (!route) return null;
   const parts = [
@@ -86,7 +88,7 @@ export function PartSwitch({ page }: { page: RoutePage }) {
         {parts.map(({ area, label }) => {
           const current = area === page.area;
           return (
-            <RouterLink
+            <LinkComponent
               key={area}
               href={routeHref(current ? page.path : route)}
               aria-current={current ? 'page' : undefined}
@@ -97,7 +99,7 @@ export function PartSwitch({ page }: { page: RoutePage }) {
               }}
             >
               <span className="env-segmented-control-item-label">{label}</span>
-            </RouterLink>
+            </LinkComponent>
           );
         })}
       </div>

@@ -6,7 +6,7 @@ import { layout } from '@envsemble/envui/dev';
 // and filling it where it takes its width from its container. Fixture.css takes away the stage's
 // padding and frame, so the stage is the window the example gets.
 import '../../apps/site/src/figures/Stage.css';
-import '../../apps/site/src/motion/MotionStage.css';
+import '../../apps/site/src/figures/MotionStage.css';
 
 export const mount = 'standalone';
 

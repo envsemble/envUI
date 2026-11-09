@@ -9,7 +9,7 @@ import {
 } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /** Stands in for sixteen weeks of edits: busier midweek, with a quiet stretch. */
 const data: CalendarHeatmapDay[] = Array.from({ length: 112 }, (_, index) => {

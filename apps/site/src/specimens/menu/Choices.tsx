@@ -2,7 +2,7 @@ import { Column } from '@envsemble/envui';
 import Choices from '../../examples/menu/Choices';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const radio = (index: number) =>
   `[role="menuitemradio"]:nth-child(${index} of [role="menuitemradio"])`;

@@ -10,7 +10,7 @@ import { counterpartOf, otherPartRoute } from '../../../apps/site/src/routes/Cou
 import { docsTree } from '../../../apps/site/src/routes/DocsTree';
 import { normalizeRoute } from '../../../apps/site/src/routes/OldAddresses';
 import { docsTrail } from '../../../apps/site/src/routes/Trails';
-import { componentGroups } from '../../../apps/site/src/pages/PageModel';
+import { componentGroups } from '../../../apps/site/src/routes/PageModel';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
 test('the addresses of the views before the catalogue and the Docs split open the pages they became', () => {

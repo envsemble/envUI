@@ -1,6 +1,6 @@
 import { Column, IconButton, Surface, Text, useTheme } from '@envsemble/envui';
 import { IconViewInAr } from '@envsemble/envui/icons/ViewInAr';
-import { Figure } from '../foundations/Figure';
+import { FoundationFrame } from '../foundations/FoundationFrame';
 // Pictures of the real dev mode at work on the demo application, captured by
 // scripts/docs/CaptureDevModeImage.ts (npm run docs:dev-mode-image) in each theme.
 import wholeLight from './dev-mode-whole-light.webp';
@@ -99,7 +99,7 @@ const shots = {
 function ShotFigure({ shot }: { shot: Shot }) {
   const { theme } = useTheme();
   return (
-    <Figure label={shot.label} caption={shot.caption}>
+    <FoundationFrame label={shot.label} caption={shot.caption}>
       <img
         className="docs-dev-mode-shot"
         src={theme === 'dark' ? shot.dark : shot.light}
@@ -110,7 +110,7 @@ function ShotFigure({ shot }: { shot: Shot }) {
         height={shot.height}
         loading="lazy"
       />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -127,7 +127,7 @@ export const DevModeFramePicture = () => <ShotFigure shot={shots.frame} />;
  */
 export function DevModeButtonPicture() {
   return (
-    <Figure
+    <FoundationFrame
       label="The dev mode button in the corner of a page"
       caption="The Dev mode button, in the bottom corner of a page being built: it opens dev mode in a new tab."
     >
@@ -152,6 +152,6 @@ export function DevModeButtonPicture() {
           className="docs-dev-mode-button"
         />
       </Surface>
-    </Figure>
+    </FoundationFrame>
   );
 }

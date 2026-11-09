@@ -7,7 +7,7 @@ import { LoadBoundary } from '../loading/LoadBoundary';
 import { componentRegistry } from '../loading/ModuleRegistry';
 import { HoldPlaceholder } from '../loading/LoadingStore';
 import { StageSkeleton } from '../loading/Skeletons';
-import { VerdictMotion } from '../motion/MotionStage';
+import { VerdictMotion } from './MotionStage';
 
 /*
  * The catalogue's specimens, apps/site/src/specimens/<page>/<Name>.tsx, each a default-exported

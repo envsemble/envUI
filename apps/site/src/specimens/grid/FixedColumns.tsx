@@ -1,5 +1,5 @@
 import FixedColumns from '../../examples/grid/FixedColumns';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { WidthSweep } from '../../motion/WidthSweep';
 import { paneWidths, usePaneWidth } from './PaneWidth';
 

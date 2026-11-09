@@ -19,7 +19,7 @@ import { IconManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const user = { name: 'Alex Morgan', email: 'alex.morgan@example.com' };
 

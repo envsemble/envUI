@@ -1,7 +1,7 @@
 import ProjectMembers from '../../examples/avatar/ProjectMembers';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const pile = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) .env-avatar-group`;

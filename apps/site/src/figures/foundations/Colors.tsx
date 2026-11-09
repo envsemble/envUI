@@ -1,4 +1,4 @@
-import type { FoundationFigure } from './FoundationFigures';
+import type { FoundationFigureEntry } from './FoundationFigures';
 import { RolesFigure } from './ColorRoles';
 import { SwatchesFigure } from './ColorSwatches';
 import { ThemesFigure } from './ColorThemes';
@@ -12,7 +12,7 @@ import { OwnColorsFigure } from './OwnColors';
  */
 
 /** The figures docs/foundations/colors.md places, by name. */
-export const colorsFigures: Record<string, FoundationFigure> = {
+export const colorsFigures: Record<string, FoundationFigureEntry> = {
   Roles: { render: RolesFigure, wide: true },
   Swatches: { render: SwatchesFigure, wide: true },
   Themes: { render: ThemesFigure },

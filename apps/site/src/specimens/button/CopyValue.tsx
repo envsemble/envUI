@@ -1,7 +1,7 @@
 import CopyValue from '../../examples/button/CopyValue';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The pointer presses Copy ID: it shows Copied for about two seconds, then comes back. A click by

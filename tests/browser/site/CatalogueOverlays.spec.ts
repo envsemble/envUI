@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { siteDevUrl } from '../helpers/Servers';
-import { componentDocuments } from '../../../apps/site/src/pages/PageModel';
+import { componentDocuments } from '../../../apps/site/src/routes/PageModel';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
 // Figures with overlays open on their stages, and the notifications they show.

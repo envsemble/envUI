@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PressableAvatars from '../../examples/avatar/PressableAvatars';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const person = (index: number) =>
   `.env-avatar-group-item:nth-child(${index} of .env-avatar-group-item)`;

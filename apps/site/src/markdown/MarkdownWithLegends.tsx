@@ -1,10 +1,13 @@
-import { PageMarkdown } from '../pages/PageMarkdown';
+import { PageMarkdown } from './PageMarkdown';
 import { optionPieces } from '@docs-model/CatalogueContent';
 import { OptionLegend } from './OptionLegend';
 import { useSectionOutline } from './SectionOutline';
 
-/** Markdown with its option tables shown as legends, and the rest as it is written. */
-export function SiteMarkdown({ markdown, path }: { markdown: string; path: string }) {
+/**
+ * PageMarkdown with its option tables shown as legends (OptionLegend), and the rest as it is
+ * written: the Markdown between a section's figures (FigureSection).
+ */
+export function MarkdownWithLegends({ markdown, path }: { markdown: string; path: string }) {
   const pieces = optionPieces(markdown);
   // A section waiting its turn to show renders its headings alone (SectionOutline).
   const outline = useSectionOutline();

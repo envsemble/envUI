@@ -2,7 +2,7 @@ import OneLine from '../../examples/breadcrumbs/OneLine';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /* The pointer rests on the current page, cut short, and its tooltip shows the whole name. */
 const script: PointerStep[] = [

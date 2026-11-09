@@ -1,7 +1,7 @@
 import DangerZone from '../../examples/settings/DangerZone';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const remove = '.env-list-item .env-button';
 const cancel = '.env-dialog-actions .env-button:first-child';

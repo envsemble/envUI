@@ -2,7 +2,7 @@ import { ColorPicker } from '@envsemble/envui/color';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const format = '.env-color-picker-format .env-button';
 const choice = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;

@@ -77,7 +77,7 @@
     padding-inline-end: 24rem;
   }
 }
-/* The parts of foundations' figures (figures/foundations/Figure.tsx): a figure, the text of an
+/* The parts of foundations' figures (figures/foundations/FoundationFrame.tsx): a figure, the text of an
    entry beside it, and the numbered legend under it. */
 .catalogue-topic-text {
   display: grid;

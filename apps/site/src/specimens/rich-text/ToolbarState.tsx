@@ -2,7 +2,7 @@ import { RichTextEditor } from '@envsemble/envui/rich-text';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const notes = 'Send the **press kit** to Priya Shah by Friday.';
 const document = '.ProseMirror';

@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { Pager } from '@envsemble/envui';
 import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { pagesOf, type RoutePage } from './SiteRoutes';
-import { routeHref } from './Address';
+import { pagesOf, type RoutePage } from '../routes/SiteRoutes';
+import { routeHref } from '../routes/Address';
 import { preloadPage } from '../pages/PreloadPage';
 
 /**

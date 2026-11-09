@@ -1,7 +1,7 @@
 import { useState, type ComponentProps, type PointerEvent } from 'react';
 import { NavigationDrawer } from '@envsemble/envui';
 import { drawerWidthKey } from '../display/DisplayStorage';
-import type { Area } from './SiteRoutes';
+import type { Area } from '../routes/SiteRoutes';
 
 /**
  * Each part's drawer at the start of a wide window: the width it starts at and its bounds, in rem.

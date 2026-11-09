@@ -40,22 +40,22 @@ import {
   TokensPage,
 } from './pages/DocsPages';
 import { Brand } from './brand/Brand';
-import { DocsNavigation, CatalogueNavigation } from './routes/SiteNavigation';
-import { drawerless } from './routes/CatalogueDestinations';
-import { PageActions } from './routes/PageActions';
-import { PageNavigation } from './routes/PageNavigation';
-import { RouterLink, usePendingRoute } from './routes/RouterLink';
-import { RouteProgress } from './routes/RouteProgress';
+import { DocsNavigation, CatalogueNavigation } from './navigation/SiteNavigation';
+import { drawerless } from './navigation/CatalogueDestinations';
+import { PageActions } from './navigation/PageActions';
+import { PageNavigation } from './navigation/PageNavigation';
+import { RouterLink, usePendingRoute } from './navigation/RouterLink';
+import { RouteProgress } from './navigation/RouteProgress';
 import { docsRoute, homeRoute, inDocs, routeHref } from './routes/Address';
 import { usePagePlace } from './routes/usePagePlace';
-import { useSheetClosesWhenWide } from './routes/useSheetClosesWhenWide';
+import { useSheetClosesWhenWide } from './navigation/useSheetClosesWhenWide';
 import { useSearchShortcut } from './search/useSearchShortcut';
 import { SearchButton } from './search/SearchButton';
 import { useSiteRoute } from './routes/useSiteRoute';
 import { DisplaySettingsProvider } from './display/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
 import { LoadingStatus } from './loading/LoadingStore';
-import { PageSkeleton } from './loading/PageSkeleton';
+import { PageSkeleton } from './pages/PageSkeleton';
 
 /** What each kind of page renders. */
 const pageContent: { [Kind in PageKind]: (props: { page: PageOfKind<Kind> }) => ReactNode } = {

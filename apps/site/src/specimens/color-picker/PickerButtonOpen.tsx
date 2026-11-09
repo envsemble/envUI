@@ -1,7 +1,7 @@
 import { ColorPickerButton } from '@envsemble/envui/color';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage, roomFor } from '../../motion/MotionStage';
+import { MotionStage, roomFor } from '../../figures/MotionStage';
 
 const button = '.env-color-picker-button';
 const hue = ".env-color-picker-slider[data-channel='hue']";

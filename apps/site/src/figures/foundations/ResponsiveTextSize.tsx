@@ -11,7 +11,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { useTimeline } from '../../motion/Timeline';
 import { remPixels } from '@envui-internal/internal/dom/lengths';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
-import { Figure } from './Figure';
+import { FoundationFrame } from './FoundationFrame';
 import { remeasure } from '../../shared/Remeasure';
 
 /*
@@ -99,8 +99,8 @@ function TextSizeSteps() {
 
 export function ClassTextSizeFigure() {
   return (
-    <Figure label="Larger text, narrower class" motion="the profile at each text size">
+    <FoundationFrame label="Larger text, narrower class" motion="the profile at each text size">
       <TextSizeSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }

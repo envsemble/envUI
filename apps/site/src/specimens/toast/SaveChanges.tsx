@@ -1,7 +1,7 @@
 import SaveChanges from '../../examples/toast/SaveChanges';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The pointer presses Save changes: the button works a moment, and a notification arrives at the

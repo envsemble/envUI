@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, Column, Row, Surface, Text, useTheme } from '@envsemble/envui';
 import { ColorSwatch } from '@envsemble/envui/color';
 import { MarkedSubject } from './Marks';
-import { Figure } from './Figure';
+import { FoundationFrame } from './FoundationFrame';
 import { useHighContrast, useNarrow, type FigureWords } from './ColorFigures';
 
 /**
@@ -73,7 +73,7 @@ export function RolesFigure({ legend }: FigureWords) {
     ? ({ page: 3, surface: 4, card: 3 } as const)
     : ({ page: 5, surface: 5, card: 4 } as const);
   return (
-    <Figure
+    <FoundationFrame
       label="The color roles of a screen"
       className="catalogue-marked-stage catalogue-roles-stage"
     >
@@ -127,7 +127,7 @@ export function RolesFigure({ legend }: FigureWords) {
           </Surface>
         </MarkedSubject>
       </div>
-    </Figure>
+    </FoundationFrame>
   );
 }
 

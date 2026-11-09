@@ -2,7 +2,7 @@ import { useState } from 'react';
 import NarrowFilters from '../../examples/filtering/NarrowFilters';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { WidthSweep } from '../../motion/WidthSweep';
 
 const filters = '.catalogue-width-sweep-frame .env-button[data-variant="secondary"]';

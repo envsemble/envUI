@@ -2,7 +2,7 @@ import ResizableDetails from '../../examples/panes/ResizableDetails';
 import { useMustShow } from '../../motion/Playback';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { useOnScreen } from '../../figures/DeviceFrame';
 import { WidthSweep } from '../../motion/WidthSweep';
 

@@ -1,4 +1,4 @@
-import { PageMarkdown } from '../pages/PageMarkdown';
+import { PageMarkdown } from './PageMarkdown';
 import type { OptionTable } from '@docs-model/CatalogueContent';
 
 /**

@@ -1,6 +1,6 @@
 import RowDensity from '../../examples/list/RowDensity';
 import { useTimeline } from '../../motion/Timeline';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const densities = [
   { density: 'md', name: 'Medium' },

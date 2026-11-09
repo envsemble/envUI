@@ -42,7 +42,7 @@ const kinds = {
 
 /**
  * The kind a tile's picture is fitted as, from how its page frames it (`frame`, frameOf in
- * RelatedPages.ts). `own` gives a component at its own size, except a drawing (a tile written
+ * tiles/TilePictures.ts). `own` gives a component at its own size, except a drawing (a tile written
  * for a window narrower than the tiles'), which is drawn larger at its window's scale. `legible`
  * gives a pattern's scene at a legible scale. Without a frame, a tile is drawn at its window's
  * scale and anything else as large as what it paints.

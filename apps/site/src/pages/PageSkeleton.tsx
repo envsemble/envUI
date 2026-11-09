@@ -3,8 +3,8 @@ import { SiteBanner } from '../banner/SiteBanner';
 import { catalogueTrail, docsTrail } from '../routes/Trails';
 import type { RoutePage } from '../routes/SiteRoutes';
 import { PartSwitch } from '../routes/OtherPart';
-import { PartSkeleton, placeholderText } from './Skeletons';
-import { recordedSize } from './RecordedSizes';
+import { PartSkeleton, placeholderText } from '../loading/Skeletons';
+import { recordedSize } from '../loading/RecordedSizes';
 import { MetadataBadges } from '../template/TemplateContent';
 
 /**

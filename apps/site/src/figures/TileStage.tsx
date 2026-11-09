@@ -5,7 +5,7 @@ import { Playback, StageOverlays } from '../motion/Playback';
 import { useDisplaySettings } from '../display/DisplaySettings';
 import { ExampleRender } from './LiveExample';
 import { FoundationTile } from '../tiles/foundations/FoundationTiles';
-import type { TilePicture } from '../template/RelatedPages';
+import type { TileFrame, TilePicture } from '../tiles/TilePictures';
 import { TileSkeleton } from '../loading/Skeletons';
 import { useLoaded } from '../loading/LoadOnce';
 import { cropped, fitKindOf } from '../fit/FitKind';
@@ -53,12 +53,12 @@ export function TileStage({
   playing?: boolean;
   className?: string;
   /**
-   * How its page's tile is framed (frameOf, RelatedPages.ts): a component at its own size, cropped
+   * How its page's tile is framed (frameOf, tiles/TilePictures.ts): a component at its own size, cropped
    * by its stage, as the components' gallery draws every component at one scale, a drawing, whose
    * window is smaller than the tiles' (Tiles.ts), larger still; a pattern's scene no smaller than a
    * legible scale, cropped by its stage, so its words can be read (fitKindOf).
    */
-  frame?: 'own' | 'legible';
+  frame?: TileFrame;
 }) {
   useBrowserStandIns();
   const theme = useTheme();

@@ -1,7 +1,7 @@
 import MaximizedPanel from '../../examples/panel-dock/MaximizedPanel';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const panel = (title: string) => `.env-panel-dock-panel[aria-label="${title}"]`;
 const control = (title: string, name: string) => `${panel(title)} [aria-label="${name}"]`;

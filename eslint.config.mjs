@@ -47,6 +47,51 @@ const siteImports = {
 };
 
 /**
+ * The folders of apps/site/src from the top down: a folder imports only the folders after it, so
+ * imports between them run one way (apps/site/AGENTS.md). A rule per depth of file, as a relative
+ * path to another folder starts with one ../ for each folder the file is in.
+ */
+const siteFolders = [
+  'navigation',
+  'pages',
+  'banner',
+  'search',
+  'brand',
+  'template',
+  'specimens',
+  'figures',
+  'markdown',
+  'tiles',
+  'motion',
+  'fit',
+  'routes',
+  'loading',
+  'display',
+  'examples',
+  'shared',
+  'generated',
+];
+const siteFolderOrder = siteFolders.slice(1).flatMap((folder, index) =>
+  [1, 2, 3].map((depth) => ({
+    files: [`apps/site/src/${folder}/${'*/'.repeat(depth - 1)}*.{ts,tsx}`],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            siteImports,
+            {
+              regex: String.raw`^(\.\./){${depth}}(${siteFolders.slice(0, index + 1).join('|')})(/|$)`,
+              message: `${folder}/ imports only the folders after it in apps/site/AGENTS.md's order: move what both use into ${folder}/ or below it.`,
+            },
+          ],
+        },
+      ],
+    },
+  })),
+);
+
+/**
  * The site measures sizes through its one measuring loop, remeasure (apps/site/src/shared/
  * Remeasure.ts), which owns the site's only ResizeObserver.
  */
@@ -206,26 +251,7 @@ export default defineConfig(
     files: ['apps/site/src/**/*.{ts,tsx}'],
     rules: { 'no-restricted-imports': ['error', { patterns: [siteImports] }] },
   },
-  {
-    // Imports between fit/ and motion/ run one way: motion/ may use fit/, and fit/ takes what a
-    // script tells it through the ScriptReader the figures pass in (fit/README.md).
-    files: ['apps/site/src/fit/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            siteImports,
-            {
-              regex: String.raw`^(\.\./)+motion(/|$)`,
-              message:
-                'fit/ does not import motion/: take what a script tells the fit through a ScriptReader (fit/FitKind.ts).',
-            },
-          ],
-        },
-      ],
-    },
-  },
+  ...siteFolderOrder,
   {
     // Examples and templates are the code applications and agents copy, so they follow the rules
     // envUI asks of applications: envUI's components over raw elements and no raw colors.

@@ -3,7 +3,7 @@ import { Alert, Column, Text } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * A document under two alerts. Sync resumes, and Sync paused goes by itself; then the pointer

@@ -2,7 +2,7 @@ import { IconButton, NavigationRail } from '@envsemble/envui';
 import { IconClose } from '@envsemble/envui/icons/Close';
 import { Brand } from '../brand/Brand';
 import { SearchButton } from '../search/SearchButton';
-import type { RoutePage } from './SiteRoutes';
+import type { RoutePage } from '../routes/SiteRoutes';
 import {
   catalogueDestinations,
   catalogueSectionOf,

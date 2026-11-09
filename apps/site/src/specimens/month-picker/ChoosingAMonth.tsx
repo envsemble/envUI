@@ -3,7 +3,7 @@ import ReportMonth from '../../examples/month-picker/ReportMonth';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage, rowsAnd } from '../../motion/MotionStage';
+import { MotionStage, rowsAnd } from '../../figures/MotionStage';
 
 const field = '.env-date-picker-control';
 const month = (index: number) =>

@@ -2,7 +2,7 @@ import { Column, HoverCard, Link, Text } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The pointer rests on "roadmap", and the card opens after a moment. The pointer moves down onto

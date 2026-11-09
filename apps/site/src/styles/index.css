@@ -13,10 +13,10 @@
 @import '../specimens/InteractionStates.css';
 @import '../template/Template.css';
 @import '../figures/Stage.css';
-@import '../motion/MotionStage.css';
+@import '../figures/MotionStage.css';
 @import '../figures/DeviceFrame.css';
 @import '../loading/Loading.css';
-@import '../routes/RouteProgress.css';
+@import '../navigation/RouteProgress.css';
 @import '../figures/Figures.css';
 @import '../figures/Verdicts.css';
 @import '../figures/anatomy/Anatomy.css';

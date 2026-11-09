@@ -6,7 +6,7 @@ import { nativePropsSentence, propDescription } from '@docs-model/PropWording';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 // The ids search leads to, as the search index writes them.
 import { exportSection, propSection } from '@docs-model/SearchAnchors';
-import { useSectionOutline } from '../template/SectionOutline';
+import { useSectionOutline } from '../markdown/SectionOutline';
 
 /**
  * A type's top-level alternatives, such as 'sm' | 'md' | 'lg', split at the bars outside brackets,

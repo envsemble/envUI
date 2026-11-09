@@ -3,7 +3,7 @@ import { Column, Row, Surface, TableOfContents, Text } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 /** The guide's sections, with ids of the figure's own, as a page holds them once. */
 const sections = [

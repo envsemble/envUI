@@ -3,7 +3,7 @@ import { Column, Composer, Message, MessageList } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/markdown';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useSharedTimeline } from '../../motion/Timeline';
-import { MotionStage, VerdictMotion } from '../../motion/MotionStage';
+import { MotionStage, VerdictMotion } from '../../figures/MotionStage';
 import { replyClock, replySteps, replyWords } from './Reply';
 
 const stop = () => undefined;

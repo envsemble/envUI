@@ -1,5 +1,5 @@
 import { Card, Column, Progress, Text } from '@envsemble/envui';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { useBatch } from './Batch';
 
 function Uploading() {

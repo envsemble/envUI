@@ -1,6 +1,6 @@
 import DisabledWhileSending from '../../examples/composer/DisabledWhileSending';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { losesFocus, Room } from './Sending';
 
 function Writing() {

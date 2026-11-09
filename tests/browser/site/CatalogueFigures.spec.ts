@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { siteDevUrl } from '../helpers/Servers';
-import { documents } from '../../../apps/site/src/pages/PageModel';
+import { documents } from '../../../apps/site/src/routes/PageModel';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
 // The figures of the catalogue's pages: live examples, specimens, anatomy numbering and stages.

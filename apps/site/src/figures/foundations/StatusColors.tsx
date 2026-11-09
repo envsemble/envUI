@@ -9,7 +9,7 @@ import { IconTaskAlt } from '@envsemble/envui/icons/TaskAlt';
 import { IconWarning } from '@envsemble/envui/icons/Warning';
 import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel } from './Steps';
-import { Figure } from './Figure';
+import { FoundationFrame } from './FoundationFrame';
 
 /**
  * Each tone as a badge paints it, with a word in the tone and its icon:
@@ -94,8 +94,8 @@ function StatusSteps() {
  */
 export function StatusFigure() {
   return (
-    <Figure label="What each color means" motion="the badges in each variant">
+    <FoundationFrame label="What each color means" motion="the badges in each variant">
       <StatusSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }

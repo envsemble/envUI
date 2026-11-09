@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Column, RelativeTime, Text } from '@envsemble/envui';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const minute = 60_000;

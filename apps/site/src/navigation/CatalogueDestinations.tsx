@@ -9,8 +9,8 @@ import {
   catalogueSections,
   type RoutePage,
   type CatalogueSection,
-} from './SiteRoutes';
-import { routeHref } from './Address';
+} from '../routes/SiteRoutes';
+import { routeHref } from '../routes/Address';
 
 /** The icon of each of the catalogue's destinations in its rail. */
 const sectionIcons: Record<CatalogueSection, typeof IconHome> = {

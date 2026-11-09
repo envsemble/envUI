@@ -1,7 +1,7 @@
 import DetailsInSheet from '../../examples/progressive-disclosure/DetailsInSheet';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 
 const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-item) .env-button`;
 const close = '.env-sheet [aria-label="Close details"]';
