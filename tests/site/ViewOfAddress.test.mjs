@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 
 const { allPages } = await importSource('SiteRoutes', 'apps/site/src/routes/SiteRoutes.ts');
 const { routeHref } = await importSource('Address', 'apps/site/src/routes/Address.ts');

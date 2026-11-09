@@ -5,7 +5,7 @@
  * so it uses nothing else and nothing newer than the browsers the site supports;
  * tests/site/ViewOfAddress.test.mjs checks it names the module of every page's kind.
  */
-import type { PageKind } from '../routes/SiteRoutes';
+import type { PageKind } from '../routes/SiteRoutes.ts';
 
 /** The modules of the pages' views, by their paths in the site app (PageViews.ts). */
 export const viewModules = {
