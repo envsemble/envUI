@@ -1,13 +1,25 @@
-import { test, expect, type Locator } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
 const fixture = `${fixtureUrl}/?fixture=description-list`;
 
 const box = async (locator: Locator) => (await locator.boundingBox())!;
 
+/**
+ * Opens the fixture once its text font has loaded: the values' column follows the longest label's
+ * width, which changes as the font swaps in.
+ */
+async function open(page: Page) {
+  await page.goto(fixture);
+  await page.evaluate(async () => {
+    await document.fonts.load('1em "envUI Geist"');
+    await document.fonts.ready;
+  });
+}
+
 test.describe('DescriptionList', () => {
   test('is a dl of terms and their definitions', async ({ page }) => {
-    await page.goto(fixture);
+    await open(page);
     const list = page.getByTestId('auto');
     await expect(list.getByRole('term')).toHaveText(['Owner', 'Status', 'Last updated']);
     await expect(list.getByRole('definition')).toHaveText([
@@ -25,7 +37,7 @@ test.describe('DescriptionList', () => {
   });
 
   test('puts labels beside values, and above them below 18 rem', async ({ page }) => {
-    await page.goto(fixture);
+    await open(page);
     const list = page.getByTestId('auto');
     const label = list.getByRole('term').first();
     const value = list.getByRole('definition').first();
@@ -54,7 +66,7 @@ test.describe('DescriptionList', () => {
   });
 
   test('with controls, rows are as tall as a small control', async ({ page }) => {
-    await page.goto(fixture);
+    await open(page);
     const list = page.getByTestId('controls');
     expect((await box(list.getByRole('definition').nth(1))).height).toBeGreaterThanOrEqual(31.5);
     // The label sits on the control's line.
