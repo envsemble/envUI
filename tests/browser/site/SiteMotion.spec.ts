@@ -320,6 +320,8 @@ test("a figure's wheel scrolls the box under the pointer smoothly and back, neve
  */
 async function withPointer<T>(page: Page, html: string, run: string): Promise<T> {
   await page.goto(`${siteDevUrl}/components`);
+  // The page has rendered, its view loaded: a script may read it, such as its heading.
+  await page.getByRole('heading', { level: 1 }).waitFor();
   return page.evaluate(
     async ([html, run]) => {
       const module = '/src/motion/pointer/VirtualPointer.ts';
