@@ -55,6 +55,12 @@ function firstTabbable(element: HTMLElement): HTMLElement {
   return element.querySelector<HTMLElement>(tabbable) ?? element;
 }
 
+/** Whether focus can go to an element: not disabled, hidden or inert, as Base UI's tabbable checks. */
+const canFocus = (element: HTMLElement) =>
+  !element.matches(':disabled') &&
+  element.closest('[inert]') === null &&
+  element.checkVisibility({ visibilityProperty: true });
+
 /** Whether a popup element is closed: Base UI marks it so as it starts its exit. */
 const isClosed = (popup: Element) => popup.hasAttribute('data-closed');
 
@@ -66,7 +72,7 @@ const isClosed = (popup: Element) => popup.hasAttribute('data-closed');
  * the closing popup and be lost.
  *
  * It leaves the close to Base UI where focus has already left the popup, where a pointer press
- * outside the popup closed it (the press moves focus itself, and Base UI keeps it from returning
+ * outside the popup and its trigger closed it (the press moves focus itself, and Base UI keeps it from returning
  * where the browser would scroll to the trigger), and where the target is in a closing popup, such
  * as a closing submenu's parent. A finalFocus function runs here with the close type as Base UI
  * gives it, and again once the popup has gone. Returns what stops it.
@@ -84,7 +90,12 @@ export function returnFocusAsItCloses(popup: HTMLElement, state: { current: Clos
     const triggerTarget = own instanceof HTMLElement && own.tabIndex >= 0 ? own : enteredFrom;
     const returnTo = named ?? triggerTarget;
     const target = returnTo instanceof HTMLElement ? firstTabbable(returnTo) : null;
-    if (!target?.isConnected || popup.contains(target) || target.closest('[data-closed]') !== null)
+    if (
+      !target?.isConnected ||
+      !canFocus(target) ||
+      popup.contains(target) ||
+      target.closest('[data-closed]') !== null
+    )
       return;
     target.focus({ preventScroll: true, focusVisible: closeType === 'keyboard' });
   };
@@ -111,7 +122,12 @@ export function returnFocusAsItCloses(popup: HTMLElement, state: { current: Clos
   };
   const press = (event: PointerEvent) => {
     state.current.closeType = (event.pointerType || 'mouse') as CloseType;
-    state.current.pressedOutside = !(event.target instanceof Node && popup.contains(event.target));
+    // A press on the popup's own trigger is not outside it: Safari doesn't focus a pressed button,
+    // so focus would stay in the closing popup.
+    const pressed = event.target instanceof Node ? event.target : null;
+    const trigger = state.current.trigger?.current;
+    state.current.pressedOutside =
+      pressed === null || !(popup.contains(pressed) || (trigger?.contains(pressed) ?? false));
   };
   const key = () => {
     state.current.closeType = 'keyboard';
