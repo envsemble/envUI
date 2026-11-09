@@ -1,14 +1,5 @@
 import { startTransition, useEffect, useRef, useState, type RefObject } from 'react';
-
-/**
- * The box an element scrolls in, such as the scaffold's body the page scrolls inside, or none where
- * it scrolls with the document.
- */
-function scrollerOf(element: Element) {
-  for (let node = element.parentElement; node; node = node.parentElement)
-    if (/auto|scroll|overlay/.test(getComputedStyle(node).overflowY)) return node;
-  return null;
-}
+import { onIdle, scrollerOf } from '../shared/Idle';
 
 /**
  * Whether an element is near the viewport, once: the tiles render their examples from then on.
@@ -135,20 +126,15 @@ function runIdle() {
   // A task that loads, such as a tile's module, holds the next until it has loaded.
   void Promise.resolve(task())
     .catch(() => undefined)
-    .then(() => later(runIdle));
+    .then(() => onIdle(runIdle));
 }
-
-const later = (step: () => void) =>
-  typeof requestIdleCallback === 'function'
-    ? requestIdleCallback(step, { timeout: 1000 })
-    : window.setTimeout(step, 50);
 
 /** Runs a task once the page is idle, after those before it; returns its cancel. */
 function whenIdle(task: () => Promise<unknown> | void) {
   idleTasks.add(task);
   if (!idleRunning) {
     idleRunning = true;
-    later(runIdle);
+    onIdle(runIdle);
   }
   return () => void idleTasks.delete(task);
 }
