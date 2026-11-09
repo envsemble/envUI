@@ -10,6 +10,7 @@ import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';
 import { pendingAttribute, SectionOutline, useSectionOutline } from '../markdown/SectionOutline';
 import { subscribeToAddress } from '../routes/Address';
+import { useHydrated } from '@envui-internal/internal/react/useHydrated';
 
 /**
  * One section of a page; Rules opens with when to use it, after its own lead. Without
@@ -206,14 +207,15 @@ const namesChangelog = () => location.hash === '#changelog';
 export function PageChangelog({ document }: { document: DocumentationEntry }) {
   // Waiting its turn to show, it is its heading alone (SectionOutline).
   const outline = useSectionOutline();
-  const [open, setOpen] = useState(namesChangelog);
-  useEffect(
-    () =>
-      subscribeToAddress(() => {
-        if (namesChangelog()) setOpen(true);
-      }),
-    [],
-  );
+  // A pre-rendered page renders it closed, as the server did, and opens it once it has hydrated.
+  const hydrated = useHydrated();
+  const [open, setOpen] = useState(() => hydrated && namesChangelog());
+  useEffect(() => {
+    if (namesChangelog()) setOpen(true);
+    return subscribeToAddress(() => {
+      if (namesChangelog()) setOpen(true);
+    });
+  }, []);
   const changelog = document.sections?.find((section) => section.id === 'changelog');
   if (!changelog) return null;
   const markdown = changelog.blocks

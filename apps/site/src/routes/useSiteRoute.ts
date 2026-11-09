@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useHydrated } from '@envui-internal/internal/react/useHydrated';
 import { normalizeRoute } from './OldAddresses';
 import { oldHashRoute, replaceAddress, subscribeToAddress, writtenRoute } from './Address';
 
@@ -25,9 +26,12 @@ function correctAddress() {
  * to that hasn't loaded, shows a skeleton of its shape until its content has (App.tsx).
  */
 export function useSiteRoute() {
-  // An old hash address is redirected before the first render, which reads the path.
+  const hydrated = useHydrated();
+  // An old hash address is redirected before the first render, which reads the path; a
+  // pre-rendered page first hydrates the page of its path, which the server rendered, and is
+  // redirected once it has (the effect below).
   const [route, setRoute] = useState(() => {
-    if (oldHashRoute() !== undefined) correctAddress();
+    if (hydrated && oldHashRoute() !== undefined) correctAddress();
     return currentRoute();
   });
   useEffect(() => {
