@@ -20,9 +20,11 @@ import {
 } from '@docs-model/CatalogueContent';
 import { Specimen } from './Specimen';
 import { useFoundationFigures, type FoundationFigureEntry } from './foundations/FoundationFigures';
-import { FigureCode } from './foundations/FoundationFrame';
+import { FigureCode, FigurePart } from './foundations/FoundationFrame';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
 import { classNames } from '@envui-internal/internal/classNames';
+import { StageSkeleton } from '../loading/Skeletons';
+import { useHydrated } from '../loading/useHydrated';
 
 /**
  * A foundation's figure: the catalogue's own, registered for its page (FoundationFigures.ts),
@@ -40,12 +42,18 @@ function FoundationFigure({
     () => (block.code ? { page: page.id, name: block.name } : null),
     [block.code, block.name, page.id],
   );
+  const hydrated = useHydrated();
   if (!figure) return null;
+  const part = `figure:${page.id}/${block.name}`;
+  // On a pre-rendered page, the figure's place is held until the page has hydrated.
+  if (!hydrated) return <StageSkeleton part={part} what="figures" stage />;
   const Render = figure.render;
   return (
-    <FigureCode value={code}>
-      <Render legend={block.legend ?? []} caption={block.caption} />
-    </FigureCode>
+    <FigurePart value={part}>
+      <FigureCode value={code}>
+        <Render legend={block.legend ?? []} caption={block.caption} />
+      </FigureCode>
+    </FigurePart>
   );
 }
 

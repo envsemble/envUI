@@ -17,6 +17,13 @@ import { classNames } from '@envui-internal/internal/classNames';
 export const FigureCode = createContext<{ page: string; name: string } | null>(null);
 
 /**
+ * The key of the figure a page places, such as figure:colors/Roles, which its skeleton's recorded
+ * size is kept under (scripts/site/RecordPartSizes.ts): the figure marks its element with it,
+ * `data-site-figure`, for the record.
+ */
+export const FigurePart = createContext<string | undefined>(undefined);
+
+/**
  * The frame of a foundation's figure, which shows envUI at work: its content on the recessed canvas, marked when something in
  * it can be used, with its legend and caption below, and below them its code in a Code disclosure
  * where it has an example file (FigureCode). `label` names it for assistive technology.
@@ -41,7 +48,11 @@ export function FoundationFrame({
 }) {
   const code = useContext(FigureCode);
   return (
-    <figure className="site-topic-figure" aria-label={label}>
+    <figure
+      className="site-topic-figure"
+      aria-label={label}
+      data-site-figure={useContext(FigurePart)}
+    >
       {motion ? (
         <MotionStage label={motion} foundation className={className}>
           {children}

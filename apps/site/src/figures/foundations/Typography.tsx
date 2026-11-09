@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import {
   Badge,
   Button,
@@ -14,7 +15,7 @@ import { WidthSweep } from '../../motion/WidthSweep';
 import type { FoundationFigureEntry } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
-import { FoundationFrame, NumberedLegend, type LegendEntry } from './FoundationFrame';
+import { FigurePart, FoundationFrame, NumberedLegend, type LegendEntry } from './FoundationFrame';
 
 /*
  * The figures of the Typography foundation. Its words are in docs/foundations/typography.md, the
@@ -85,7 +86,11 @@ const variants: readonly TextVariant[] = [
  */
 function StylesFigure({ legend }: FigureWords) {
   return (
-    <ol className="catalogue-type-styles" aria-label="Text styles">
+    <ol
+      className="catalogue-type-styles"
+      aria-label="Text styles"
+      data-site-figure={useContext(FigurePart)}
+    >
       {variants.map((variant, index) => (
         <li key={variant}>
           <Text render={<span />} variant={variant} className="catalogue-type-sample">

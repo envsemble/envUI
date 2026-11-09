@@ -5,7 +5,9 @@
 // open in it (reserveStage in OpenExample.tsx). It opens every page of the catalogue and the Docs
 // in a desktop window with the parts held back, notes where each skeleton is, lets the parts load
 // and measures what took each one's place. It records the room of each group of the token
-// reference and each release of the changelog too, which their skeletons keep.
+// reference and each release of the changelog too, which their skeletons keep, and the box of each
+// figure of a foundation's or a guide's page, which its skeleton keeps on a pre-rendered page until
+// the page hydrates.
 //
 //   npm run site:part-sizes                the site at http://127.0.0.1:8770 (npm run dev)
 //   npm run site:part-sizes -- <site URL>  another running site
@@ -128,6 +130,30 @@ async function measure(page: Page, route: string) {
         if (!stage) continue;
         const box = stage.getBoundingClientRect();
         result[room.dataset.catalogueReserve!] = [round(box.width), round(box.height)];
+      }
+      return result;
+    }),
+  );
+  // The figures of a page of its own, a foundation's or a guide's, which load with it rather than
+  // on their own: the box of each, its legend and code included, which its skeleton keeps on a
+  // pre-rendered page until the page has hydrated (useHydrated in loading/).
+  Object.assign(
+    sizes,
+    await page.evaluate(() => {
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const round = (value: number) => Math.round((value / rem) * 100) / 100;
+      const boxes = new Map<string, DOMRect[]>();
+      for (const figure of document.querySelectorAll<HTMLElement>('[data-site-figure]')) {
+        const key = figure.dataset.siteFigure!;
+        boxes.set(key, [...(boxes.get(key) ?? []), figure.getBoundingClientRect()]);
+      }
+      const result: Record<string, [number, number]> = {};
+      for (const [key, rects] of boxes) {
+        const width =
+          Math.max(...rects.map((box) => box.right)) - Math.min(...rects.map((box) => box.left));
+        const height =
+          Math.max(...rects.map((box) => box.bottom)) - Math.min(...rects.map((box) => box.top));
+        result[key] = [round(width), round(height)];
       }
       return result;
     }),

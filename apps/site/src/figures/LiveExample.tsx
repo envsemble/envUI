@@ -15,6 +15,7 @@ import { OpenExample } from './OpenExample';
 import { CodeSkeleton, StageSkeleton } from '../loading/Skeletons';
 import { exampleLines } from '../loading/RecordedSizes';
 import { HoldPlaceholder } from '../loading/LoadingStore';
+import { useHydrated } from '../loading/useHydrated';
 import { MotionStage } from './MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
 import { WidthBox } from '../fit/standalone/WidthFit';
@@ -126,6 +127,9 @@ export function ExampleRender({
 }) {
   // A retry renders the example afresh from its file loaded again, and leaves its code as it is.
   const [, setAttempt] = useState(0);
+  // On a pre-rendered page, the example's place is held until the page has hydrated.
+  const hydrated = useHydrated();
+  if (!hydrated) return fallback;
   const Example = exampleComponent(page, name);
   return (
     <LoadBoundary
