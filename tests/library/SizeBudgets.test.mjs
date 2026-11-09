@@ -30,11 +30,12 @@ const cssBudgets = {
 
 /** The JavaScript a page loads first. */
 const jsBudgets = [
-  // 31,037 measured: List's reorder, Table's column resizing, Scaffold's body scrolling keys and a
-  // contained toast region's notices load only where they are used (was 34,661).
-  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 31550 },
-  // 107,739 measured (was 110,015).
-  { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 109400 },
+  // 31,388 measured: List's reorder, Table's column resizing, Scaffold's body scrolling keys and a
+  // contained toast region's notices load only where they are used (was 34,661), with what holds
+  // people's input until they have and copes with a failed load.
+  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 31900 },
+  // 108,029 measured (was 110,015).
+  { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 109650 },
   // 4,888 measured. Raised from 4,850 (4,832 measured on 2026-11-08): esbuild puts the modules the
   // lazily loaded options share with a page, such as flag.js, in chunks of their own even where
   // the page never loads the option, and the page imports them from there, 56 bytes.
