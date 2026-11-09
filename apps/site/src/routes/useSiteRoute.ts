@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useHydrated } from '@envui-internal/internal/react/useHydrated';
 import { normalizeRoute } from './OldAddresses';
 import { oldHashRoute, replaceAddress, subscribeToAddress, writtenRoute } from './Address';
 
@@ -26,12 +25,14 @@ function correctAddress() {
  * to that hasn't loaded, shows a skeleton of its shape until its content has (App.tsx).
  */
 export function useSiteRoute() {
-  const hydrated = useHydrated();
-  // An old hash address is redirected before the first render, which reads the path; a
-  // pre-rendered page first hydrates the page of its path, which the server rendered, and is
-  // redirected once it has (the effect below).
+  // An old hash address is redirected before the first render, which reads the path. Such an
+  // address never hydrates (main.tsx), and the server's has no hash. A pre-rendered page first
+  // hydrates the page of its path, which the server rendered, and is redirected once it has (the
+  // effect below). Whether the page hydrates isn't read here: the library's useHydrated would
+  // render the shell again once it has, at once and in one task, and with it hydrate the page's
+  // content in one task rather than in slices.
   const [route, setRoute] = useState(() => {
-    if (hydrated && oldHashRoute() !== undefined) correctAddress();
+    if (oldHashRoute() !== undefined) correctAddress();
     return currentRoute();
   });
   useEffect(() => {

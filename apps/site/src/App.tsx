@@ -30,7 +30,7 @@ import { docsRoute, homeRoute, inDocs, routeHref } from './routes/Address';
 import { usePagePlace } from './routes/usePagePlace';
 import { documentTitle, pageDescription } from './routes/PageHead';
 import { useSheetClosesWhenWide } from './navigation/useSheetClosesWhenWide';
-import { useSearchShortcut } from './search/useSearchShortcut';
+import { SearchShortcut } from './search/SearchShortcut';
 import { SearchButton } from './search/SearchButton';
 import { useSiteRoute } from './routes/useSiteRoute';
 import { DisplaySettingsProvider } from './display/DisplaySettings';
@@ -178,7 +178,6 @@ function Shell() {
   const page = findPage(routePath);
   const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'catalogue');
   const contents = Boolean(page && !pagesWithoutContents.has(page.kind));
-  useSearchShortcut(setSearchOpen);
   usePagePlace(route, documentTitle(page, area), pageDescription(page), mainElement);
   useSheetClosesWhenWide(navigationOpen, setNavigationOpen);
   const openSearch = () => setSearchOpen(true);
@@ -265,6 +264,7 @@ function Shell() {
         {navigation(true)}
       </Sheet>
       <SiteSearch open={searchOpen} onOpenChange={setSearchOpen} page={page} />
+      <SearchShortcut setSearchOpen={setSearchOpen} />
     </Scaffold>
   );
 }
