@@ -46,9 +46,12 @@ export interface ThemePreferenceProviderProps {
    * background, native controls, portals rendered by other libraries and the content of every
    * theme-color meta tag, which takes the canvas color. One provider per document applies to it:
    * pass false to any other, nested in it or beside it. In development, envUI reports two providers
-   * that both apply. Rendered on the server, and as the page hydrates, it renders the preference's
-   * default and leaves the page's look to the theme createThemeBootstrapScript gave the root, which
-   * knows the stored preference before the first paint; once hydrated, it takes the stored one.
+   * that both apply. Outside any Theme, its boundary around the children is a plain element that
+   * takes the root's look, with none of a Theme's class and attributes, unless its contrast is
+   * system while the page set a contrast of its own on the root. Rendered on the server, and
+   * as the page hydrates, it renders the preference's default and leaves the page's look to the
+   * theme createThemeBootstrapScript gave the root, which knows the stored preference before the
+   * first paint; once hydrated, it takes the stored one.
    */
   applyToDocument?: boolean;
   /**
@@ -268,6 +271,11 @@ export function ThemePreferenceProvider({
   const appliedContrast = ownContrast ?? inherited.contrast;
   const contrast = ownContrast ?? (fromPage ? (pageContrast ?? 'system') : inherited.contrast);
   const scale = ownScale ?? (fromPage ? (pageScale ?? 'system') : inherited.scale);
+  // Such a provider gives the root its theme, contrast and scale, so its boundary takes the root's
+  // look rather than one of its own (themeFromRootAttribute): the same element, before and after
+  // the page hydrates, whose class and attributes would otherwise change as it hydrates and restyle
+  // everything in it. Only a system contrast that leaves the page's own on the root differs.
+  const rootLook = fromPage && !(ownContrast === 'system' && pageContrast !== undefined);
   const [storedPreference, setPreference] = useStoredPreference(storageKey, defaultPreference);
   const [systemTheme, setSystemTheme] = useState<ColorScheme>(() =>
     typeof document !== 'undefined' && document.documentElement.dataset.envTheme === 'dark'
@@ -278,7 +286,7 @@ export function ThemePreferenceProvider({
   // with a light system theme, as the server knows neither; the stored preference and the system's
   // theme follow in the render after. Meanwhile a provider applying to the document writes nothing
   // on the root, where the bootstrap script has applied them already, and its boundary takes the
-  // root's look (themeFromRootAttribute), so nothing changes on screen as it hydrates.
+  // root's look (rootLook), so nothing changes on screen as it hydrates.
   const hydrated = useHydrated();
   const preference = hydrated ? storedPreference : defaultPreference;
   const theme: ColorScheme =
@@ -343,12 +351,13 @@ export function ThemePreferenceProvider({
     } else releaseScale(root);
     root.style.colorScheme = theme;
     // The browser's own interface, such as a mobile address bar, takes the canvas color. Every
-    // theme-color tag follows, including ones written for a system color scheme with media.
-    const canvas = getComputedStyle(root).backgroundColor;
-    for (const browserTheme of document.querySelectorAll<HTMLMetaElement>(
-      'meta[name="theme-color"]',
-    ))
-      browserTheme.content = canvas;
+    // theme-color tag follows, including ones written for a system color scheme with media. Only a
+    // page with one reads the color, which works out the page's style at once.
+    const browserThemes = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
+    if (browserThemes.length) {
+      const canvas = getComputedStyle(root).backgroundColor;
+      for (const browserTheme of browserThemes) browserTheme.content = canvas;
+    }
   }, [applyToDocument, hydrated, theme, appliedContrast, ownScale, provider]);
 
   useInstantColorSwitch(
@@ -373,7 +382,7 @@ export function ThemePreferenceProvider({
         contrast={contrast}
         scale={scale}
         className={className}
-        {...(!hydrated && fromPage && { [themeFromRootAttribute]: '' })}
+        {...(rootLook && { [themeFromRootAttribute]: '' })}
       >
         {children}
       </Theme>

@@ -186,10 +186,10 @@ async function highlighted(page: Page) {
 /** Switches the catalogue to the theme's scheme in its Display menu, under the theme's contrast. */
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
-  const app = page.locator('.site-app');
-  if ((await app.getAttribute('data-env-theme')) !== theme.scheme)
+  const root = page.locator('html');
+  if ((await root.getAttribute('data-env-theme')) !== theme.scheme)
     await chooseScheme(page, theme.scheme);
-  await page.locator(`.site-app[data-env-theme="${theme.scheme}"]`).waitFor();
+  await page.locator(`html[data-env-theme="${theme.scheme}"]`).waitFor();
 }
 
 async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {

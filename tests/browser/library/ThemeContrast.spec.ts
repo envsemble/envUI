@@ -169,8 +169,10 @@ test('ThemePreferenceProvider sets the contrast of the document root, its bounda
   const boundary = page.getByTestId('contrast-provider').locator('xpath=..');
   await expect(root).toHaveAttribute('data-env-theme', 'dark');
   await expect(root).toHaveAttribute('data-env-contrast', 'high');
-  await expect(boundary).toHaveAttribute('data-env-contrast', 'high');
+  // The boundary, outside any Theme, takes the root's look: no theme of its own.
+  await expect(boundary).not.toHaveAttribute('data-env-contrast');
   expect(await colorsIn(root)).toEqual(gate['dark-high-contrast']);
+  expect(await colorsIn(boundary)).toEqual(gate['dark-high-contrast']);
   await expectPopups(page, 'provider', {
     theme: 'dark',
     contrast: 'high',
@@ -179,7 +181,7 @@ test('ThemePreferenceProvider sets the contrast of the document root, its bounda
 
   await page.getByRole('button', { name: 'Follow the system contrast' }).click();
   await expect(root).not.toHaveAttribute('data-env-contrast');
-  await expect(boundary).not.toHaveAttribute('data-env-contrast');
   expect(await colorsIn(root)).toEqual(gate.dark);
+  expect(await colorsIn(boundary)).toEqual(gate.dark);
   await expectPopups(page, 'provider', { theme: 'dark', contrast: null, colors: gate.dark });
 });

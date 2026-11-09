@@ -169,6 +169,26 @@ test('a provider without a scale leaves a scale the page wrote over the bootstra
   await expect(root).not.toHaveAttribute('data-env-scale-source');
 });
 
+/**
+ * Expects a provider's boundary, outside any Theme, to take the root's look: a plain element with
+ * no theme of its own, whose scale-dependent and contrast-dependent tokens are the root's.
+ */
+async function expectRootLook(page: Page) {
+  const boundary = page.locator('.fixture-adoption');
+  await expect(boundary).not.toHaveClass(/env-theme/);
+  await expect(boundary).not.toHaveAttribute('data-env-scale');
+  await expect(boundary).not.toHaveAttribute('data-env-contrast');
+  const tokens = await boundary.evaluate((element) =>
+    [element, document.documentElement].map((each) => {
+      const style = getComputedStyle(each);
+      return ['--env-control-height-md', '--env-color-fg-default'].map((name) =>
+        style.getPropertyValue(name),
+      );
+    }),
+  );
+  expect(tokens[0]).toEqual(tokens[1]);
+}
+
 /** Serves the adoption fixture with these attributes on its root, as a server or the page sets them. */
 async function withRoot(page: Page, attributes: string) {
   await page.route(`${fixtureUrl}/?fixture=adoption`, async (route) => {
@@ -186,8 +206,7 @@ test('a provider without a scale gives the application the scale the page set on
   await withRoot(page, 'data-env-scale="compact"');
   // The boundary, a Theme nested in it and the popups of both take the root's compact scale, as
   // the page and other libraries' portals do.
-  const boundary = page.locator('.fixture-adoption');
-  await expect(boundary).toHaveAttribute('data-env-scale', 'compact');
+  await expectRootLook(page);
   await expect(page.getByTestId('adoption-nested-theme')).toHaveAttribute(
     'data-env-scale',
     'compact',
@@ -198,10 +217,15 @@ test('a provider without a scale gives the application the scale the page set on
       .getByRole('menu', { name: 'Account' })
       .locator('xpath=ancestor::*[contains(@class, "env-theme")][1]'),
   ).toHaveAttribute('data-env-scale', 'compact');
-  // The root keeps the page's scale, unmarked, and so does the boundary when the page changes it.
+  // The root keeps the page's scale, unmarked, and so does the boundary when the page changes it,
+  // and a Theme nested in it.
   await expect(page.locator('html')).not.toHaveAttribute('data-env-scale-source');
   await page.locator('html').evaluate((root) => root.setAttribute('data-env-scale', 'comfortable'));
-  await expect(boundary).toHaveAttribute('data-env-scale', 'comfortable');
+  await expect(page.getByTestId('adoption-nested-theme')).toHaveAttribute(
+    'data-env-scale',
+    'comfortable',
+  );
+  await expectRootLook(page);
 });
 
 test('a provider without a scale takes system where envUI wrote the root scale', async ({
@@ -209,7 +233,11 @@ test('a provider without a scale takes system where envUI wrote the root scale',
 }) => {
   await withRoot(page, 'data-env-scale="compact" data-env-scale-source="envui:compact"');
   await expect(page.locator('html')).not.toHaveAttribute('data-env-scale');
-  await expect(page.locator('.fixture-adoption')).toHaveAttribute('data-env-scale', 'system');
+  await expect(page.getByTestId('adoption-nested-theme')).toHaveAttribute(
+    'data-env-scale',
+    'system',
+  );
+  await expectRootLook(page);
 });
 
 for (const contrast of ['high', 'standard'] as const)
@@ -217,7 +245,7 @@ for (const contrast of ['high', 'standard'] as const)
     page,
   }) => {
     await withRoot(page, `data-env-contrast="${contrast}"`);
-    await expect(page.locator('.fixture-adoption')).toHaveAttribute('data-env-contrast', contrast);
+    await expectRootLook(page);
     await expect(page.getByTestId('adoption-nested-theme')).toHaveAttribute(
       'data-env-contrast',
       contrast,

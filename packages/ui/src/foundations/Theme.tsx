@@ -151,7 +151,7 @@ export function Theme({
       <div
         {...props}
         className={className}
-        // A ThemePreferenceProvider's boundary as the page hydrates takes the root's look.
+        // A ThemePreferenceProvider's boundary that themes the root takes the root's look.
         {...(!(themeFromRootAttribute in props) && {
           className: classNames('env-theme', className),
           'data-env-theme': theme,

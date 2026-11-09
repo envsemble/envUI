@@ -62,10 +62,12 @@ for (const scheme of ['light', 'dark'] as const)
           ),
         `${path} hydrates the heading it arrived with`,
       ).toBe(true);
-      // The stored settings hold: hydrating keeps an attribute the server rendered otherwise.
-      const app = page.locator('.site-app');
-      await expect.soft(app, path).toHaveAttribute('data-env-theme', scheme);
-      await expect.soft(app, path).toHaveAttribute('data-env-scale', 'compact');
+      // The stored settings hold on the root, where the head's scripts put them, and the frame
+      // takes the root's look, a theme of no attributes of its own, before and after hydrating.
+      const root = page.locator('html');
+      await expect.soft(root, path).toHaveAttribute('data-env-theme', scheme);
+      await expect.soft(root, path).toHaveAttribute('data-env-scale', 'compact');
+      await expect.soft(page.locator('.site-app'), path).not.toHaveAttribute('data-env-theme');
       // The home page has no drawer.
       const drawer = page.locator('.env-scaffold-drawer .env-navigation-drawer');
       if (await drawer.count())
@@ -126,7 +128,7 @@ test.describe('a reader with nothing stored, in dark at high contrast and reduce
     const problems = watchProblems(page);
     await openSite(page, `${siteBuildUrl}${path}`);
     await expect(page.locator('#root')).toHaveAttribute('data-site-page', 'docs/components/button');
-    await expect(page.locator('.site-app')).toHaveAttribute('data-env-theme', 'dark');
+    await expect(page.locator('html')).toHaveAttribute('data-env-theme', 'dark');
     // Hydrated, the code keeps its colors, and the address's section is at the top.
     expect(await codeColor(page)).toBe(arrived);
     const section = page.locator('#customize');

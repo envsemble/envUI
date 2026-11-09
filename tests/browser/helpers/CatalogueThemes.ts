@@ -76,7 +76,7 @@ export async function chooseScheme(page: Page, scheme: 'light' | 'dark') {
   await menu
     .getByRole('menuitemradio', { name: scheme === 'dark' ? 'Dark' : 'Light', exact: true })
     .click();
-  await page.locator(`.site-app[data-env-theme="${scheme}"]`).waitFor();
+  await page.locator(`html[data-env-theme="${scheme}"]`).waitFor();
   await page.keyboard.press('Escape');
   await expect(menu).toHaveCount(0);
 }

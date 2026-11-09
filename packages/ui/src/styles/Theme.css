@@ -37,6 +37,14 @@ html.env-theme > body {
      --env-line-height-body to change it. */
   line-height: var(--env-line-height-body);
 }
+/* A ThemePreferenceProvider's boundary that takes the root's look, which has no theme of its own
+   (ThemePreference.tsx), sets envUI's type again as the boundary it stands for would. */
+.env-theme [data-env-ssr-root] {
+  min-inline-size: 0;
+  overflow-wrap: break-word;
+  font: var(--env-type-body);
+  line-height: var(--env-line-height-body);
+}
 .env-theme h1 {
   margin: 0;
   font: var(--env-type-headline);

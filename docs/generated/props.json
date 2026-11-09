@@ -8358,7 +8358,7 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color. One provider per document applies to it: pass false to any other, nested in it or beside it. In development, envUI reports two providers that both apply. Rendered on the server, and as the page hydrates, it renders the preference's default and leaves the page's look to the theme createThemeBootstrapScript gave the root, which knows the stored preference before the first paint; once hydrated, it takes the stored one."
+          "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color. One provider per document applies to it: pass false to any other, nested in it or beside it. In development, envUI reports two providers that both apply. Outside any Theme, its boundary around the children is a plain element that takes the root's look, with none of a Theme's class and attributes, unless its contrast is system while the page set a contrast of its own on the root. Rendered on the server, and as the page hydrates, it renders the preference's default and leaves the page's look to the theme createThemeBootstrapScript gave the root, which knows the stored preference before the first paint; once hydrated, it takes the stored one."
         },
         {
           "name": "contrast",

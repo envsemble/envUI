@@ -245,7 +245,7 @@ test('settings stored under the keys of before move to their keys now, and still
     localStorage.setItem('envui-catalogue-drawer-width-site', '25');
   });
   await page.goto(`${siteBuildUrl}/components/button`);
-  await expect(page.locator('.site-app')).toHaveAttribute('data-env-theme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-env-theme', 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-env-scale', 'compact');
   const stored = await page.evaluate(() => ({ ...localStorage }));
   expect(stored).toMatchObject({
@@ -669,14 +669,14 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
 }) => {
   await page.setViewportSize({ width: 1920, height: 1400 });
   await page.goto(`${siteBuildUrl}/components/checkbox/preview`);
-  const app = page.locator('.site-app');
+  const root = page.locator('html');
   const panes = page.locator('.catalogue-specimen-area');
   // The 0.x preview opens the Checkbox page, whose live example follows the theme with its state.
   const example = page.getByRole('group', { name: 'Checkbox example', exact: true });
   const archived = example.getByRole('checkbox', { name: 'Include archived projects' });
   await archived.check();
   await chooseScheme(page, 'dark');
-  await expect(app).toHaveAttribute('data-env-theme', 'dark');
+  await expect(root).toHaveAttribute('data-env-theme', 'dark');
   await expect(example).toHaveAttribute('data-env-theme', 'dark');
   await expect(example).toHaveCount(1);
   await expect(archived).toBeChecked();
@@ -708,14 +708,14 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
     pageSwatch.evaluate((swatch) => getComputedStyle(swatch).backgroundColor);
   const darkColor = await swatchColor();
   await chooseScheme(page, 'light');
-  await expect(app).toHaveAttribute('data-env-theme', 'light');
+  await expect(root).toHaveAttribute('data-env-theme', 'light');
   await expect.poll(swatchColor).not.toBe(darkColor);
   await chooseScheme(page, 'dark');
-  await expect(app).toHaveAttribute('data-env-theme', 'dark');
+  await expect(root).toHaveAttribute('data-env-theme', 'dark');
   // The setup guide, in the Docs, keeps the theme.
   await goTo(page, '/getting-started');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install and set up');
-  await expect(app).toHaveAttribute('data-env-theme', 'dark');
+  await expect(root).toHaveAttribute('data-env-theme', 'dark');
   await expect(panes).toHaveCount(0);
 });
 

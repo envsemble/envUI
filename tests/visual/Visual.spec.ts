@@ -292,12 +292,12 @@ async function press(page: Page, control: Locator) {
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
   const { scheme } = theme;
-  if ((await page.locator('.site-app').getAttribute('data-env-theme')) !== scheme) {
+  if ((await page.locator('html').getAttribute('data-env-theme')) !== scheme) {
     await chooseScheme(page, scheme);
     await page.mouse.move(0, 0);
     await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   }
-  await page.locator(`.site-app[data-env-theme="${scheme}"]`).waitFor();
+  await page.locator(`html[data-env-theme="${scheme}"]`).waitFor();
 }
 
 /** Names unique within a page: repeated titles get a counter. */

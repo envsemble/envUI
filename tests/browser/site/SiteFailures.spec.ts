@@ -207,7 +207,7 @@ test('a retry returns focus once, and later updates leave focus where it is', as
       new StorageEvent('storage', { key, newValue: 'dark', storageArea: localStorage }),
     );
   }, displayStorageKeys.theme);
-  await expect(page.locator('.site-app')).toHaveAttribute('data-env-theme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-env-theme', 'dark');
   expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
   expect(await body.evaluate((element) => element.scrollTop)).toBe(scrolled);
 });
