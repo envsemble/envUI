@@ -52,3 +52,30 @@ export const preloadPageContent = (page: RoutePage | undefined): Promise<unknown
 
 /** Whether what a page needs has loaded, or failed to, so it renders at once. */
 export const pageLoaded = (page: RoutePage | undefined) => loads(page).every(settled);
+
+/**
+ * Applies the style sheets of the figures of the page the site opens on, which index.html's preload
+ * script started fetching (`data-site-figure-style`, vite.config.ts), after the sheets the site
+ * starts with and its view's, in the order each later module would bring them. Each figure's module
+ * would otherwise bring its sheets as it loads, once the page has rendered, and every sheet applied
+ * then restyles and lays out the whole page again: a long pause for each, on a phone.
+ */
+export function applyFigureStyles() {
+  const linked = new Set(
+    [...document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')].map(
+      ({ href }) => href,
+    ),
+  );
+  for (const preload of document.querySelectorAll<HTMLLinkElement>(
+    'link[data-site-figure-style]',
+  )) {
+    // A sheet the view shares, linked already.
+    if (linked.has(preload.href)) continue;
+    const sheet = document.createElement('link');
+    sheet.rel = 'stylesheet';
+    // As the modules' own sheets are linked, so a module that loads later finds its sheet here.
+    sheet.crossOrigin = '';
+    sheet.href = preload.href;
+    document.head.append(sheet);
+  }
+}
