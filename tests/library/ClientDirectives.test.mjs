@@ -238,7 +238,7 @@ test('a server component imports envUI and renders it on the server', () => {
   assert.match(list, /"element":"a","props":\{"href":"\/plans\/launch",[^}]*"aria-current":"true"/);
   assert.match(
     list,
-    /"element":"li","props":\{"aria-current":"true","className":"env-list-item env-connected-row","data-selected":""/,
+    /"element":"li","props":\{[^{}]*"aria-current":"true","className":"env-list-item env-connected-row","data-selected":""/,
   );
   assert.equal(list.match(/"aria-current"/g)?.length, 2);
 });

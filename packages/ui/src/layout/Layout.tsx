@@ -1,6 +1,7 @@
-import type { ComponentPropsWithRef, CSSProperties, ReactElement, Ref } from 'react';
+import type { ComponentPropsWithRef, ReactElement, Ref } from 'react';
 import { renderElement } from '../internal/react/renderElement.js';
 import { flag } from '../internal/flag.js';
+import { primitiveAttributes, rowAttributes } from '../internal/layout/primitiveAttributes.js';
 import '../styles/Base.css';
 import '../styles/Layout.css';
 
@@ -123,47 +124,6 @@ export type GridProps<RenderedElement extends HTMLElement = HTMLDivElement> = Gr
   PrimitiveOptions<RenderedElement> &
   NativeProps<GridOptions & PrimitiveOptions<RenderedElement>>;
 
-type Kind = 'box' | 'row' | 'column' | 'grid';
-
-/** A primitive's props as the shared renderer reads them. */
-type AnyPrimitiveProps = {
-  name?: string;
-  container?: string;
-  padding?: SpaceStep;
-  gap?: SpaceStep;
-  align?: LayoutAlign;
-  justify?: LayoutJustify;
-  style?: CSSProperties;
-} & Record<string, unknown>;
-
-/**
- * Renders a primitive: its kind and options as attributes, which its zero-specificity rules in
- * Layout.css read, and the custom properties a value needs, which an application's own rule
- * overrides. It adds no class, so a component's part class names the node it lays out.
- */
-function primitive(
-  kind: Kind,
-  render: ReactElement | undefined,
-  { name, container, padding, gap, align, justify, style, ...props }: AnyPrimitiveProps,
-  extra: Record<string, unknown> = {},
-  variables: Record<string, string> = {},
-) {
-  const custom: Record<string, string> = { ...variables };
-  if (container) custom['--env-layout-container'] = container;
-  return renderElement('div', render, {
-    ...props,
-    ...extra,
-    'data-env-layout': kind,
-    'data-env-name': name,
-    'data-env-container': flag(container),
-    'data-padding': padding,
-    'data-gap': gap,
-    'data-align': align,
-    'data-justify': justify,
-    style: Object.keys(custom).length > 0 ? { ...custom, ...style } : style,
-  });
-}
-
 /**
  * A plain block for what needs no row or column of its own: an inset (`padding`), a size container
  * (`container`) or a named node. It sizes to its content and never paints.
@@ -172,7 +132,7 @@ export function Box<RenderedElement extends HTMLElement = HTMLDivElement>({
   render,
   ...props
 }: BoxProps<RenderedElement>) {
-  return primitive('box', render, props);
+  return renderElement('div', render, primitiveAttributes('box', props));
 }
 
 /**
@@ -181,10 +141,9 @@ export function Box<RenderedElement extends HTMLElement = HTMLDivElement>({
  */
 export function Row<RenderedElement extends HTMLElement = HTMLDivElement>({
   render,
-  wrap,
   ...props
 }: RowProps<RenderedElement>) {
-  return primitive('row', render, props, { 'data-wrap': flag(wrap) });
+  return renderElement('div', render, rowAttributes(props));
 }
 
 /**
@@ -195,7 +154,7 @@ export function Column<RenderedElement extends HTMLElement = HTMLDivElement>({
   render,
   ...props
 }: ColumnProps<RenderedElement>) {
-  return primitive('column', render, props);
+  return renderElement('div', render, primitiveAttributes('column', props));
 }
 
 /** The `grid-template-columns` of a Grid's columns. */
@@ -214,11 +173,14 @@ export function Grid<RenderedElement extends HTMLElement = HTMLDivElement>({
   columns,
   ...props
 }: GridProps<RenderedElement>) {
-  return primitive(
-    'grid',
+  return renderElement(
+    'div',
     render,
-    props,
-    { 'data-columns': flag(columns !== undefined) },
-    columns === undefined ? {} : { '--env-grid-columns': gridTemplate(columns) },
+    primitiveAttributes(
+      'grid',
+      props,
+      { 'data-columns': flag(columns !== undefined) },
+      columns === undefined ? {} : { '--env-grid-columns': gridTemplate(columns) },
+    ),
   );
 }
