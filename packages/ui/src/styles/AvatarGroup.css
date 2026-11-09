@@ -79,6 +79,9 @@
       (var(--env-avatar-group-size) * 0.84 + var(--env-avatar-group-ring-width)) *
         (1 - var(--env-avatar-dense, 0)) + var(--env-avatar-group-size) * var(--env-avatar-dense, 0)
     );
+    /* It rests upright and in line, as a dense pile does, set on the group, which :has() asks
+       (packages/ui/AGENTS.md, Style sheets). */
+    --env-avatar-group-lean: 0;
   }
   .env-avatar-group[data-align='end'] {
     --env-avatar-group-gather: 1;
@@ -96,6 +99,11 @@
   }
   .env-avatar-group:is([data-spread], :has(:focus-visible)) {
     --env-avatar-group-spread: 1;
+    /* The cover below goes and the items take the pointer, as on hover, through the group's own
+       properties, which :has() asks (packages/ui/AGENTS.md, Style sheets). */
+    --env-avatar-group-cover: hidden;
+    --env-avatar-group-cover-transition: visibility 0s linear var(--env-avatar-group-settle);
+    --env-avatar-group-items-pointer: auto;
   }
 
   /* The pile is one target: a cover over the whole group catches the pointer while it rests, so no
@@ -108,6 +116,8 @@
     position: absolute;
     inset: calc(var(--env-avatar-group-size) * -0.06);
     z-index: calc(var(--env-z-raised) + 1);
+    visibility: var(--env-avatar-group-cover, visible);
+    transition: var(--env-avatar-group-cover-transition, none);
   }
   @media (hover: hover) {
     .env-avatar-group:hover::before {
@@ -115,19 +125,12 @@
       transition: visibility 0s linear var(--env-avatar-group-settle);
     }
   }
-  .env-avatar-group:is([data-spread], :has(:focus-visible))::before {
-    visibility: hidden;
-    transition: visibility 0s linear var(--env-avatar-group-settle);
-  }
   /* Nor do the piled avatars and the count take the pointer themselves, below, so nothing, a
      browser's hit test or a checker's, counts them as targets that cover each other; spread, they do. */
   @media (hover: hover) {
     .env-avatar-group:hover > * {
       pointer-events: auto;
     }
-  }
-  .env-avatar-group:is([data-spread], :has(:focus-visible)) > * {
-    pointer-events: auto;
   }
 
   .env-avatar-group > * {
@@ -164,8 +167,8 @@
     position: relative;
     flex: 0 0 auto;
     margin-inline: var(--env-avatar-group-padding);
-    /* Piled, the pointer reaches the group alone. */
-    pointer-events: none;
+    /* Piled, the pointer reaches the group alone; spread, each item (above). */
+    pointer-events: var(--env-avatar-group-items-pointer, none);
     translate: calc(
         (var(--env-avatar-group-shift) + var(--env-avatar-group-nudge)) *
           (1 - var(--env-avatar-group-spread)) * var(--env-avatar-group-inline)
@@ -189,8 +192,8 @@
     );
   }
   /* At rest, small offsets that vary by place, so the avatars read as a pile rather than a row. A
-     group of initials, below, or a dense one rests upright and in line, so letters never lean and a
-     dense row stays calm. */
+     group of initials or a dense one rests upright and in line, its lean 0 (above), so letters never
+     lean and a dense row stays calm. */
   .env-avatar-group > :nth-child(3n + 1) {
     --env-avatar-group-rest-lift: calc(
       var(--env-avatar-group-size) * -0.04 * var(--env-avatar-group-lean)
@@ -214,11 +217,6 @@
       var(--env-avatar-group-size) * -0.01 * var(--env-avatar-group-lean)
     );
     --env-avatar-group-rest-turn: calc(-2deg * var(--env-avatar-group-lean));
-  }
-  .env-avatar-group:has(.env-avatar-fallback-initials) > * {
-    --env-avatar-group-nudge: 0rem;
-    --env-avatar-group-rest-lift: 0rem;
-    --env-avatar-group-rest-turn: 0deg;
   }
   /* The count lies at the bottom of the pile, under the last avatar, and shows past its end, by the
      pile's tuck alone. */

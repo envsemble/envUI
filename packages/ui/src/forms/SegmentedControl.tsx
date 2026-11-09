@@ -3,7 +3,6 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Radio } from '@base-ui/react/radio';
 import { RadioGroup } from '@base-ui/react/radio-group';
-import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   useLayoutEffect,
   useRef,
@@ -12,7 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
-import { TooltipPopup, tooltipDelay } from '../internal/popup/TooltipPopup.js';
+import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
@@ -115,7 +114,7 @@ export function SegmentedControl({
         {items.map((item) => (
           <Segment key={item.value} item={item} fullWidth={fullWidth} />
         ))}
-        <span ref={thumb} className="env-segmented-control-thumb" aria-hidden="true" hidden />
+        <span ref={thumb} className="env-segmented-control-thumb" aria-hidden="true" />
       </RadioGroup>
     </DirectionProvider>
   );
@@ -163,10 +162,9 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
   );
   if (!fullWidth) return segment;
   return (
-    <BaseTooltip.Root disabled={!cut}>
-      <BaseTooltip.Trigger delay={tooltipDelay} render={segment} />
-      {cut && <TooltipPopup content={item.label} side="top" />}
-    </BaseTooltip.Root>
+    <CutLabelTooltip cut={cut} label={item.label} side="top">
+      {segment}
+    </CutLabelTooltip>
   );
 }
 
@@ -174,9 +172,9 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
  * Places a segmented control's thumb over its chosen segment (the item with data-checked): its box,
  * measured against the track, as --env-segmented-control-thumb-left, -top, -width and -height,
  * physical, set on the thumb directly, so a change renders nothing. The thumb shows once it has
- * measured a chosen segment and hides while none is chosen; until then, as in the server's markup,
- * the chosen segment draws its own. It follows the choice, the segments' sizes and the track's.
- * Returns the cleanup.
+ * measured a chosen segment (`data-placed`) and hides while none is chosen; until then, as in the
+ * server's markup, the chosen segment draws its own. It follows the choice, the segments' sizes and
+ * the track's. Returns the cleanup.
  */
 function followThumb(thumb: HTMLElement): () => void {
   const track = thumb.parentElement;
@@ -186,7 +184,7 @@ function followThumb(thumb: HTMLElement): () => void {
       ':scope > .env-segmented-control-item[data-checked]',
     );
     if (!chosen) {
-      thumb.hidden = true;
+      thumb.removeAttribute('data-placed');
       return;
     }
     const box = chosen.getBoundingClientRect();
@@ -200,7 +198,7 @@ function followThumb(thumb: HTMLElement): () => void {
     thumb.style.setProperty('--env-segmented-control-thumb-top', `${top}px`);
     thumb.style.setProperty('--env-segmented-control-thumb-width', `${box.width / scaleX}px`);
     thumb.style.setProperty('--env-segmented-control-thumb-height', `${box.height / scaleY}px`);
-    thumb.hidden = false;
+    thumb.setAttribute('data-placed', '');
   };
   place();
   const view = track.ownerDocument.defaultView;

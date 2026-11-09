@@ -68,7 +68,7 @@
   .env-switch:has(input:disabled) {
     cursor: default;
   }
-  .env-switch:has(input:disabled) > * {
+  .env-switch:has(input:disabled) > :where(.env-switch-input, .env-switch-label) {
     opacity: var(--env-state-disabled-opacity);
   }
   /* A switch that is unavailable fades whole with its label, so one that is on keeps its fill and its

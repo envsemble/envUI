@@ -232,14 +232,15 @@
   }
   /* Without a reduced-motion preference one thumb travels from segment to segment, and the chosen
      segment, its label over it, draws none of its own: SegmentedControl places it over the chosen
-     segment (--env-segmented-control-thumb-*), and shows it once it has measured it. Until then, as
-     in the server's markup, and under a reduced-motion preference, the chosen segment draws its own
-     thumb, which fades across to the next. */
+     segment (--env-segmented-control-thumb-*), and shows it once it has measured it (data-placed).
+     Until then, as in the server's markup, and under a reduced-motion preference, the chosen segment
+     draws its own thumb, which fades across to the next. The thumb's own attribute, not hidden, as
+     :has() asks (packages/ui/AGENTS.md, Style sheets). */
   .env-segmented-control-thumb {
     display: none;
   }
   @media (prefers-reduced-motion: no-preference) and (not (forced-colors: active)) {
-    .env-segmented-control-thumb:not([hidden]) {
+    .env-segmented-control-thumb[data-placed] {
       display: block;
       position: absolute;
       z-index: calc(var(--env-z-base) - var(--env-z-raised));
@@ -260,7 +261,7 @@
         background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
     /* Over the thumb, the chosen segment lays only the state layer of the application's colors. */
-    .env-segmented-control:has(> .env-segmented-control-thumb:not([hidden]))
+    .env-segmented-control:has(> .env-segmented-control-thumb[data-placed])
       > .env-segmented-control-item[data-checked] {
       --env-segmented-control-thumb-layer: color-mix(
         in srgb,

@@ -55,8 +55,8 @@
   .env-checkbox:has(input:disabled) {
     cursor: default;
   }
-  /* Its two parts by name, not every child (`> *`): a :has() rule for any element made the browser
-     work out the style of the whole page again whenever anything in it changed. */
+  /* Its two parts by name, not every child (`> *`), which :has() asks (packages/ui/AGENTS.md,
+     Style sheets). */
   .env-checkbox:has(input:disabled) > :where(.env-checkbox-box, .env-checkbox-label) {
     opacity: var(--env-state-disabled-opacity);
   }
@@ -83,10 +83,14 @@
      the box and the layout around it stay as they are. */
   .env-checkbox:not(:has(> .env-checkbox-label)) {
     --env-checkbox-target: var(--env-control-target-min);
+    --env-checkbox-hit-area: block;
     position: relative;
   }
-  .env-checkbox:not(:has(> .env-checkbox-label))::before {
+  /* Shown through the checkbox's own property, which :has() asks (packages/ui/AGENTS.md, Style
+     sheets). */
+  .env-checkbox::before {
     content: '';
+    display: var(--env-checkbox-hit-area, none);
     position: absolute;
     inset-block: min(0%, calc((100% - var(--env-checkbox-target)) / 2));
     inset-inline: min(0%, calc((100% - var(--env-checkbox-target)) / 2));
@@ -122,17 +126,18 @@
     inset: calc(-1 * var(--env-checkbox-halo));
     padding: var(--env-checkbox-halo);
     border-radius: 50%;
-    background: transparent;
+    background: var(--env-checkbox-halo-fill, transparent);
     mask:
       linear-gradient(currentcolor 0 0) content-box exclude,
       linear-gradient(currentcolor 0 0);
     pointer-events: none;
   }
-  .env-checkbox-box:has(> .env-checkbox-input:hover:not(:disabled))::before {
-    background: var(--env-color-bg-neutral-subtle-pressed);
+  /* The halo's fill, set on the box, as the hit area's display above. */
+  .env-checkbox-box:has(> .env-checkbox-input:hover:not(:disabled)) {
+    --env-checkbox-halo-fill: var(--env-color-bg-neutral-subtle-pressed);
   }
-  .env-checkbox-box:has(> .env-checkbox-input:active:not(:disabled))::before {
-    background: linear-gradient(var(--env-color-bg-neutral-subtle-pressed) 0 0)
+  .env-checkbox-box:has(> .env-checkbox-input:active:not(:disabled)) {
+    --env-checkbox-halo-fill: linear-gradient(var(--env-color-bg-neutral-subtle-pressed) 0 0)
       var(--env-color-bg-neutral-subtle-pressed);
   }
   .env-checkbox-input {

@@ -4602,6 +4602,13 @@
           ]
         },
         {
+          "attribute": "data-placed",
+          "values": [],
+          "parts": [
+            "env-segmented-control-thumb"
+          ]
+        },
+        {
           "attribute": "data-size",
           "values": [
             "lg",
@@ -5404,6 +5411,15 @@
           ],
           "parts": [
             "env-tabs-list"
+          ]
+        },
+        {
+          "attribute": "data-placed",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-tabs-indicator"
           ]
         },
         {

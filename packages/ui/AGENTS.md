@@ -79,6 +79,7 @@ Never edit these; change their source and run their command.
 - Lengths that follow the text are rem; px only for hairlines; em only for typography that follows the element's own size (`npm run lint:css`).
 - No drop shadows but Avatar's, the frosted popups' and a segmented control's thumb (`tests/library/NoShadows.test.mjs`).
 - Regions part by space and fill; hairlines only separate the items of one list.
+- Keep `:has()` rules from restyling the whole page: Chromium works out the style of every element a `:has()` rule may match again whenever something its argument names changes on any element. Inside `:has()`, match a part's own attribute rather than `hidden`, which changes all over a page, as the tabs' indicator and the segmented control's thumb do with `data-placed`; and give a rule with `:has()` a subject by its part's class, never a pseudo-element or any element (`> *`, `> :first-child`): set a custom property on the part for its pseudo-element to read instead, as Checkbox's halo does, and name the children as `:where(...)`.
 - Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/library/StableHover.test.mjs`).
 - A pill is `var(--env-radius-full)`, so a tall element becomes a rounded rectangle; `50%` only on parts that are always square (`tests/library/Corners.test.mjs`).
 - Motion uses the motion tokens, and movement only under `prefers-reduced-motion: no-preference`.

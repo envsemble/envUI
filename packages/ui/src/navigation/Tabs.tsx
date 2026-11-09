@@ -224,8 +224,14 @@ export function Tabs({
           />
         ))}
         {/* One indicator, which moves to the selected tab; until it has measured the tab, as in the
-            server's markup, the selected tab draws its own. */}
-        <BaseTabs.Indicator className="env-tabs-indicator" />
+            server's markup, the selected tab draws its own. Base UI hides it until then; it says
+            it shows with data-placed, which Tabs.css finds it by. */}
+        <BaseTabs.Indicator
+          className="env-tabs-indicator"
+          render={(indicatorProps) => (
+            <span {...indicatorProps} data-placed={flag(!indicatorProps.hidden)} />
+          )}
+        />
       </BaseTabs.List>
     </DirectionProvider>
   );

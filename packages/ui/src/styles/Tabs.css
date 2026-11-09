@@ -186,7 +186,10 @@
     pointer-events: none;
   }
   .env-tabs-list > .env-tabs-tab[data-active]::after {
-    background: var(--env-tabs-indicator-color, var(--env-color-border-primary-emphasis));
+    background: var(
+      --env-tabs-tab-indicator,
+      var(--env-tabs-indicator-color, var(--env-color-border-primary-emphasis))
+    );
   }
   /* One indicator moves from tab to tab: Base UI's, placed by the selected tab's box
      (--active-tab-*, physical), under its label inside its inline padding, as each tab's own shape
@@ -230,8 +233,10 @@
     translate: calc(var(--active-tab-left) + var(--env-tabs-active-padding))
       calc(var(--active-tab-top) + var(--active-tab-height) - var(--env-tabs-indicator-size));
   }
-  .env-tabs-list:has(> .env-tabs-indicator:not([hidden])) > .env-tabs-tab[data-active]::after {
-    background: transparent;
+  /* Once the indicator shows (data-placed, Tabs.tsx), the selected tab draws none of its own: the
+     indicator's own attribute, not hidden, as :has() asks (packages/ui/AGENTS.md, Style sheets). */
+  .env-tabs-list:has(> .env-tabs-indicator[data-placed]) > .env-tabs-tab[data-active] {
+    --env-tabs-tab-indicator: transparent;
   }
   /* A vertical rail's indicator stands at the start of the selected tab. */
   .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab {
@@ -387,7 +392,10 @@
     .env-tabs-list > .env-tabs-tab[data-active] :where(*) {
       color: inherit;
     }
-    .env-tabs-list > .env-tabs-tab[data-active]::after,
+    .env-tabs-list > .env-tabs-tab[data-active]::after {
+      forced-color-adjust: none;
+      background: var(--env-tabs-tab-indicator, Highlight);
+    }
     .env-tabs-list > .env-tabs-indicator {
       forced-color-adjust: none;
       background: Highlight;

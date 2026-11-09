@@ -158,7 +158,7 @@
   }
   /* A disabled control fades with its label, at the opacity of every disabled control. The row of a
      row radio keeps its surface, so the group's shape stays whole. */
-  .env-radio:has(input:disabled) > * {
+  .env-radio:has(input:disabled) > :where(.env-radio-input, span) {
     opacity: var(--env-state-disabled-opacity);
   }
 

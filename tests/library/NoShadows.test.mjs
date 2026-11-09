@@ -306,7 +306,7 @@ test('the chosen segment’s shadow is small, follows the theme, gives way at hi
   // The chosen segment, and the thumb that travels to it.
   assert.deepEqual(usersOf(css, segmentShadow), [
     '.env-segmented-control-item[data-checked]',
-    '.env-segmented-control-thumb:not([hidden])',
+    '.env-segmented-control-thumb[data-placed]',
   ]);
 });
 

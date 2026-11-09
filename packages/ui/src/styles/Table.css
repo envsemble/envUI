@@ -114,16 +114,28 @@
     border-radius: var(--env-radius-lg);
     background: var(--env-table-surface);
   }
-  .env-table:has(> .env-table-caption) .env-table-head > .env-table-row:first-child > :first-child {
+  .env-table:has(> .env-table-caption)
+    .env-table-head
+    > .env-table-row:first-child
+    > :where(.env-table-header-cell, .env-table-cell):first-child {
     border-start-start-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
   }
-  .env-table:has(> .env-table-caption) .env-table-head > .env-table-row:first-child > :last-child {
+  .env-table:has(> .env-table-caption)
+    .env-table-head
+    > .env-table-row:first-child
+    > :where(.env-table-header-cell, .env-table-cell):last-child {
     border-start-end-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
   }
-  .env-table:has(> .env-table-caption) > :last-child > .env-table-row:last-child > :first-child {
+  .env-table:has(> .env-table-caption)
+    > :last-child
+    > .env-table-row:last-child
+    > :where(.env-table-header-cell, .env-table-cell):first-child {
     border-end-start-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
   }
-  .env-table:has(> .env-table-caption) > :last-child > .env-table-row:last-child > :last-child {
+  .env-table:has(> .env-table-caption)
+    > :last-child
+    > .env-table-row:last-child
+    > :where(.env-table-header-cell, .env-table-cell):last-child {
     border-end-end-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
   }
   .env-table-header-cell,
@@ -240,11 +252,11 @@
     background: var(--env-color-bg-selected-hover);
   }
   .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox']))
-    > :first-child {
+    > :where(.env-table-header-cell, .env-table-cell):first-child {
     box-shadow: inset 3px 0 0 var(--env-table-selection-bar);
   }
   .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox']))
-    > :first-child:dir(rtl) {
+    > :where(.env-table-header-cell, .env-table-cell):first-child:dir(rtl) {
     box-shadow: inset -3px 0 0 var(--env-table-selection-bar);
   }
 

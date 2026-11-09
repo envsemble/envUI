@@ -76,7 +76,7 @@
   .env-page:has(> .env-page-header[data-sticky] .env-page-header-actions) {
     --env-page-sticky-actions: calc(var(--env-control-height) + var(--env-space-4));
   }
-  .env-page:has(> .env-page-header[data-sticky]) > .env-page-content * {
+  .env-page > .env-page-header[data-sticky] ~ .env-page-content * {
     scroll-margin-block-start: calc(
       var(
           --env-page-header-block-size,
@@ -89,7 +89,7 @@
   }
   /* From a medium page the actions sit at the end of the title row, adding no row of their own. */
   @container env-page (width >= 37.5rem) {
-    .env-page:has(> .env-page-header[data-sticky]) > .env-page-content * {
+    .env-page > .env-page-header[data-sticky] ~ .env-page-content * {
       --env-page-sticky-actions: 0rem;
     }
   }

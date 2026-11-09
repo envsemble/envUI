@@ -272,9 +272,8 @@
     > legend {
     max-inline-size: calc(100% - var(--env-space-4));
   }
-  /* Set on the input, whose placeholder takes it, rather than by a rule for the placeholder: a
-     :has() rule for a pseudo-element made the browser work out the style of the whole page again
-     whenever anything in it changed. */
+  /* Set on the input, whose placeholder takes it, rather than by a rule for the placeholder, which
+     :has() asks (packages/ui/AGENTS.md, Style sheets). */
   .env-text-field-control:has(> label) > .env-text-field-input:not(:focus) {
     --env-text-field-placeholder: transparent;
   }
