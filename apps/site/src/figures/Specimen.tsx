@@ -7,6 +7,7 @@ import { LoadBoundary } from '../loading/LoadBoundary';
 import { componentRegistry } from '../loading/ModuleRegistry';
 import { HoldPlaceholder } from '../loading/LoadingStore';
 import { StageSkeleton } from '../loading/Skeletons';
+import { useHydrated } from '../loading/useHydrated';
 import { VerdictMotion } from './MotionStage';
 import { PageTheme } from './PageTheme';
 
@@ -54,6 +55,17 @@ function SpecimenBody({
   // On a do or don't figure, the stage it stands for is the figure's cell.
   const verdict = use(VerdictMotion);
   const path = specimenPath(page, name);
+  const skeleton = (
+    <StageSkeleton
+      part={`specimen:${page}/${name}`}
+      what="specimens"
+      stage={!onStage}
+      className={verdict ? 'site-verdict-stage' : undefined}
+    />
+  );
+  // On a pre-rendered page, the specimen's place is held until the page has hydrated.
+  const hydrated = useHydrated();
+  if (!hydrated) return skeleton;
   const Component = specimens.component(path);
   return (
     <LoadBoundary
@@ -64,16 +76,7 @@ function SpecimenBody({
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense
-        fallback={
-          <StageSkeleton
-            part={`specimen:${page}/${name}`}
-            what="specimens"
-            stage={!onStage}
-            className={verdict ? 'site-verdict-stage' : undefined}
-          />
-        }
-      >
+      <Suspense fallback={skeleton}>
         <HoldPlaceholder part={`specimen:${page}/${name}`}>
           {/* The specimen is looked up among module-level lazy components, not created here. */}
           {/* eslint-disable-next-line react-hooks/static-components */}

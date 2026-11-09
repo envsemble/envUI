@@ -17,7 +17,8 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 // npm run build, so the library's source module is imported instead.
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
 import { displayStorageKeys } from './src/display/DisplayStorage.ts';
-import { viewModules, viewOfAddress } from './src/pages/ViewOfAddress.ts';
+import { viewModules } from './src/pages/ViewModules.ts';
+import { siteDescription } from './src/routes/SiteDescription.ts';
 import {
   createDisplayBootstrapScript,
   createFirstPaintStyle,
@@ -149,6 +150,18 @@ export default defineConfig(() => {
         },
       },
       {
+        // What the site is, in the head: the sentence the site gives a page without a summary
+        // (routes/SiteDescription.ts). A pre-rendered page carries its own (PrerenderSite.ts).
+        name: 'envui-description',
+        transformIndexHtml: () => [
+          {
+            tag: 'meta',
+            attrs: { name: 'description', content: siteDescription },
+            injectTo: 'head',
+          },
+        ],
+      },
+      {
         // The style sheets ship without their comments, which are about half their size. Their
         // rules and values stay as written, as cssMinify is off for the token reference.
         name: 'envui-css-comments',
@@ -161,22 +174,22 @@ export default defineConfig(() => {
         },
       },
       {
-        // What the page the address names needs loads beside the site's script rather than once
-        // that has arrived and run: a script in index.html, before the site's script and its style
-        // sheet, which would hold it up, preloads the view of its kind (pages/ViewOfAddress.ts) with
-        // the files that view's module imports, and its content (generated/pages/<id>.json,
-        // PageContent.ts), the file of the page its last segment names, such as button for
-        // /components/button and /docs/components/button. A segment that names no page, such as
-        // components, preloads no content. On a catalogue page it also preloads the style sheets of
-        // the page's figures (examples/<id>/, specimens/<id>/ and what they import), marked
-        // data-site-figure-style, which the site applies as it starts (applyFigureStyles,
-        // pages/PreloadPage.ts).
+        // What each page needs loads beside the site's script rather than once that has arrived and
+        // run: the files the module of its kind's view imports (pages/ViewModules.ts) and the file
+        // of its content (generated/pages/<id>.json, PageContent.ts), and on a catalogue page the
+        // style sheets of its figures (examples/<id>/, specimens/<id>/ and what they import), which
+        // the site applies as it starts (applyFigureStyles, pages/PreloadPage.ts). The lists go to
+        // dist/site/.vite/page-preloads.json, from which scripts/site/PrerenderSite.ts links each
+        // pre-rendered page's files in its head.
         name: 'envui-content-preload',
         apply: 'build',
-        transformIndexHtml: {
+        generateBundle: {
+          // After Vite drops the chunks that held only style sheets, which pages import as sheets.
           order: 'post',
-          handler: (html, { bundle }) => {
-            const chunks = Object.values(bundle ?? {}).filter((file) => file.type === 'chunk');
+          handler(_options, bundle) {
+            // The server's build renders the pages, and loads nothing.
+            if (this.environment.config.consumer !== 'client') return;
+            const chunks = Object.values(bundle).filter((file) => file.type === 'chunk');
             const contents: Record<string, string> = {};
             for (const file of chunks) {
               const page = /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(
@@ -237,11 +250,11 @@ export default defineConfig(() => {
                   if (!startedStyles.has(style)) styles.add(style);
               figureStyles[page] = [...styles].sort();
             }
-            const script = `<script>(function(){var p=location.pathname,w=(${String(viewOfAddress)})(p),v=${JSON.stringify(views)}[w],n=p.split('/').filter(Boolean).pop(),c=${JSON.stringify(contents)}[n],s=w==='catalogue'&&${JSON.stringify(figureStyles)}[n];function l(r,f,a){var e=document.createElement('link');e.rel=r;e.href='/'+f;if(a)e.as=a;document.head.appendChild(e);return e}v.scripts.forEach(function(f){l('modulepreload',f)});v.styles.forEach(function(f){l('preload',f,'style')});if(c)l('modulepreload',c);if(s)s.forEach(function(f){var e=l('preload',f,'style');e.crossOrigin='';e.setAttribute('data-site-figure-style','')})})();</script>`;
-            const site = html.indexOf('<script type="module"');
-            if (site === -1)
-              throw new Error('index.html has no module script, which the preload goes before.');
-            return `${html.slice(0, site)}${script}\n    ${html.slice(site)}`;
+            this.emitFile({
+              type: 'asset',
+              fileName: '.vite/page-preloads.json',
+              source: JSON.stringify({ views, contents, figureStyles }),
+            });
           },
         },
       },

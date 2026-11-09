@@ -178,6 +178,9 @@ export default defineConfig({
       command: `node scripts/test/ServeBuild.ts --app site --port ${servers['site-build'].port}`,
       url: `http://127.0.0.1:${servers['site-build'].port}`,
       reuseExistingServer: servers['site-build'].reuse,
+      // It builds the site and its server entry and pre-renders every page first: on a busy
+      // machine, or in the visual baseline's container, longer than a minute.
+      timeout: 180_000,
     },
     servers.fixture && {
       command: `node scripts/test/ServeBuild.ts --app fixture --port ${servers.fixture.port}`,

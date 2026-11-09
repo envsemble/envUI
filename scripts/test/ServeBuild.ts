@@ -6,7 +6,8 @@
 // A page of a build loads a few dozen files; on the development server it loads every module of
 // the library's and the app's sources, some 800, each a request the server answers and the browser
 // compiles again in every test's fresh context: on CI's two cores, the fixture's specs take half as
-// long on its build. The site is built for production, as it is hosted. The fixture is built for development:
+// long on its build. The site is built for production, as it is hosted, its pages pre-rendered
+// (scripts/site/PrerenderSite.ts), which the preview server serves at their addresses. The fixture is built for development:
 // React's development build, with its warnings and StrictMode's checks, as the library's specs
 // expect, bundled. Each builds in seconds, into node_modules, which the visual baseline's Docker run
 // keeps apart from the host's. Outside CI a build follows its sources, so a server Playwright
@@ -16,6 +17,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { build, preview, type InlineConfig } from 'vite';
+import { prerenderSite } from '../site/PrerenderSite.ts';
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const { values } = parseArgs({
@@ -57,14 +59,25 @@ const output = await build({
     watch: process.env.CI ? null : {},
   },
 });
-// Watching, the first build has ended once the watcher says so.
-if ('on' in output)
+/** Pre-renders the site's pages into its build, as npm run build:site does. */
+const prerender = () =>
+  values.app === 'site'
+    ? prerenderSite(outDir, resolve(root, 'node_modules/.cache/envui-test-builds/site-server'))
+    : Promise.resolve();
+// Watching, the first build has ended once the watcher says so; each build after it is pre-rendered
+// again, and a page that fails to pre-render leaves the build as it was rendered last.
+if ('on' in output) {
   await new Promise<void>((done, fail) =>
     output.on('event', (event) => {
       if (event.code === 'END') done();
       if (event.code === 'ERROR') fail(event.error);
     }),
   );
+  await prerender();
+  output.on('event', (event) => {
+    if (event.code === 'END') prerender().catch((error: unknown) => console.error(error));
+  });
+} else await prerender();
 
 await preview({
   ...app,

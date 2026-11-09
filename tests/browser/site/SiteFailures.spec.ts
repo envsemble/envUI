@@ -120,6 +120,24 @@ test('in the hosted build, an example whose file is missing offers a reload, whi
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
 });
 
+test("in the hosted build, a pre-rendered page whose view can't load says so in the page's place", async ({
+  page,
+}) => {
+  requireSite();
+  // The page arrives pre-rendered, but the module that renders it does not.
+  const [view] = moduleFiles('src/pages/CataloguePages.tsx');
+  await serveSite(page, { failing: (pathname) => pathname === view, failure: 'missing' });
+  await page.goto(`${siteUrl}/components/button`);
+  const main = page.getByRole('main');
+  // Its pre-rendered text gives way to the failure, as it can't hydrate without it; the banner,
+  // the navigation and the pager stay.
+  await expect(main.getByText('The page could not load')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(main.getByRole('heading', { name: 'Overview' })).toHaveCount(0);
+  await expect(main.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
+  await expect(main.getByRole('link', { name: /Link/ }).last()).toBeVisible();
+});
+
 test("in the hosted build, a reload whose files can't be fetched keeps the page and says so", async ({
   page,
 }) => {

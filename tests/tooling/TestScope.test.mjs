@@ -297,6 +297,7 @@ test('the site runs its specs and live development, with the builds they open', 
     'DocsPages',
     'LiveDevelopment',
     'SiteFailures',
+    'SitePrerender',
     'SiteRoutes',
     'SiteShell',
   ]);

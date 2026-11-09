@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 import { headersFor, parseHeaders, siteHeaders } from '../../scripts/site/SiteHeaders.ts';
 
 test('the hosted site lets its own pages frame its pages, and no other site', () => {
@@ -45,4 +48,20 @@ test('_headers rules collect in order, with removals and path patterns', () => {
   assert.equal(headersFor(rules, '/docs/a/b')['x-robots-tag'], 'noindex, nosnippet');
   assert.throws(() => parseHeaders('  Name: value'), /before any path/);
   assert.throws(() => parseHeaders('/*\n  Name value'), /not "Name: value"/);
+});
+
+test("a page's pre-rendered file is served with the headers of every page", () => {
+  // Cloudflare serves /components/button from components/button.html (html_handling), under the
+  // rules of its address, which the file's own name never is in a request.
+  const page = headersFor(siteHeaders(), '/');
+  for (const path of ['/components/button', '/docs', '/docs/components/button', '/foundations'])
+    assert.deepEqual(headersFor(siteHeaders(), path), page, path);
+  // Checked for changes on each load, as a deploy changes the files it names.
+  assert.match(page['cache-control'] ?? '', /\bno-cache\b/);
+});
+
+test("the host serves a page's address from its pre-rendered file, and any other from index.html", () => {
+  const config = readFileSync(resolve(repositoryRoot, 'wrangler.jsonc'), 'utf8');
+  assert.match(config, /"html_handling": "auto-trailing-slash"/);
+  assert.match(config, /"not_found_handling": "single-page-application"/);
 });

@@ -18,7 +18,7 @@ The catalogue opens at [127.0.0.1:8770](http://127.0.0.1:8770), with the Docs un
 | --------------------- | ----------------------------------------------------------- |
 | `npm run dev`         | The catalogue and the Docs, from source                     |
 | `npm run build`       | The package, into `packages/ui/dist/`                       |
-| `npm run build:site`  | The hosted site, into `dist/site/`                          |
+| `npm run build:site`  | The hosted site, each page pre-rendered, into `dist/site/`  |
 | `npm run site:dev`    | The hosted site, built and served at 127.0.0.1:8771         |
 | `npm run dev:library` | A watched build of the package, for an app that links envUI |
 | `npm run format`      | Prettier on everything                                      |

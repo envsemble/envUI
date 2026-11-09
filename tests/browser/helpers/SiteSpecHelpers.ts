@@ -19,3 +19,12 @@ export async function goTo(page: Page, path: string) {
  */
 export const showTile = (tile: Locator) =>
   tile.evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
+
+/**
+ * Opens an address of the site and waits until the site has started on it (main.tsx): a page the
+ * build pre-rendered shows before its controls answer, so a press until then does nothing.
+ */
+export async function openSite(page: Page, url: string) {
+  await page.goto(url);
+  await page.locator('html[data-site-started]').waitFor({ state: 'attached' });
+}

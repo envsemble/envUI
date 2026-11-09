@@ -47,10 +47,17 @@ export function moduleFiles(module: string) {
   return files.map((file) => `/${file}`);
 }
 
-/** The file of the hosted build at a path, or undefined when it has none. */
+/**
+ * The file of the hosted build at a path, or undefined when it has none: a page's pre-rendered
+ * file, such as components/button.html for /components/button, as Cloudflare's asset server finds
+ * it (html_handling), or index.html for the root.
+ */
 function siteFile(pathname: string) {
-  const file = resolve(site, `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`);
-  return existsSync(file) ? file : undefined;
+  const path = decodeURI(pathname);
+  const file = resolve(site, `.${path.endsWith('/') ? `${path}index.html` : path}`);
+  if (existsSync(file)) return file;
+  const page = resolve(site, `.${path.replace(/\/$/, '')}.html`);
+  return path !== '/' && existsSync(page) ? page : undefined;
 }
 
 export interface ServeSiteOptions {
@@ -67,10 +74,10 @@ export interface ServeSiteOptions {
 
 /**
  * Serves the hosted build to the page at siteUrl through the hosted Worker script, with an asset
- * server that answers as Cloudflare's does from dist/site: a path without a file gets index.html,
- * so path routes load, with the headers dist/site/_headers gives its path, and the Worker answers a
- * file missing under /assets/ as not found. With options, chosen files fail, to test how the
- * catalogue recovers.
+ * server that answers as Cloudflare's does from dist/site: a page's address gets its pre-rendered
+ * file and any other path without a file index.html, so every route loads, with the headers
+ * dist/site/_headers gives its path, and the Worker answers a file missing under /assets/ as not
+ * found. With options, chosen files fail, to test how the catalogue recovers.
  */
 export async function serveSite(
   page: Page,
