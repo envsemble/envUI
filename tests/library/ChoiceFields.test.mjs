@@ -2,8 +2,8 @@
 // a description, Slider an error, each linked to the control. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from '../support/importSource.mjs';
-import { descriptions, elementsOf, firstElement, hasClass, textOf } from '../support/markup.mjs';
+import { importSource } from '../support/ImportSource.mjs';
+import { descriptions, elementsOf, firstElement, hasClass, textOf } from '../support/Markup.mjs';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 

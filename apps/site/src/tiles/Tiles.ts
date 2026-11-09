@@ -11,7 +11,7 @@ import { moduleRegistry } from '../loading/ModuleRegistry';
  * pointer no one sees (usePointer in motion/pointer/PointerPlayback.ts, its steps in
  * PointerPlan.ts), or a timeline of its props (useTimeline in motion/Timeline.ts) where nothing is
  * pointed at. A page without a tile of its own shows the example its tile picks (Gallery.tsx,
- * Related.tsx).
+ * Related.tsx). Every .tsx file of this folder is a tile, so a helper here is a .ts file.
  */
 
 /** What a tile's file exports: its picture, and its window where it isn't the tiles'. */

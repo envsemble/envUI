@@ -1,12 +1,8 @@
-// What the page reader keeps as it reads a page's Markdown tokens in order, which the figures and
-// legends it places read and add to.
+// The types of PageReader.ts: what it reads a page with, and what it keeps as it reads the page's
+// Markdown tokens in order, which the figures and legends it places read and add to.
 import type { Token } from 'marked';
-import type { DocumentationBlock } from './model/DocumentationTypes.ts';
+import type { PlacedBlock } from './model/DocumentationTypes.ts';
 import type { ExampleEntry, PageSection, PageSectionDefinition } from './PageStructure.ts';
-
-/** A figure of a foundation's page, or an example file placed as a figure. */
-export type FigureBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
-export type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 
 /** A section of a page as readPage builds it: its blocks, and in Compose its tokens. */
 export interface ReadSection extends PageSection {
@@ -53,7 +49,7 @@ export interface PageReading {
   current: ReadSection | undefined;
   subheading: string | undefined;
   /** The figure an ordered list right after it is the legend of. */
-  legendOf: FigureBlock | ExampleBlock | undefined;
+  legendOf: PlacedBlock | undefined;
   /** The `###` subsections of Compose so far, by their index in codeSubsections. */
   codeOrder: number[];
 }

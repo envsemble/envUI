@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState, type MouseEvent } from 'react';
 import type { ResizeHandleProps } from './ResizeHandle.js';
 import { useFormatters } from '../provider/useFormatters.js';
 import { remPixels, roundToHundredth } from '../dom/lengths.js';
-import type { ResizeDetails } from '../../layout/resizeDetails.js';
+import type { ResizeDetails } from './resizeDetails.js';
 import { useLatest } from '../useLatest.js';
 
 /** A number that is finite, else undefined. */

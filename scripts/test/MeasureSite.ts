@@ -37,14 +37,13 @@ import { request as httpRequest, type IncomingHttpHeaders } from 'node:http';
 import { createSecureServer } from 'node:http2';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { chromium } from '@playwright/test';
 import { median } from './Median.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const lighthouseVersion = '13.6.0';
-const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
-const cache = resolve(root, '.cache/site-perf');
+const cache = resolve(repositoryRoot, '.cache/site-perf');
 const port = Number(process.env.ENVUI_SITE_PERF_PORT || 9095);
 const wranglerPort = port + 1;
 const debuggingPort = port + 2;
@@ -115,7 +114,7 @@ for (const form of chosenForms)
   if (!forms.includes(form)) throw new Error(`Unknown form ${form}: ${forms.join(', ')}.`);
 const label = options.label ?? new Date().toISOString().replace(/[:.]/g, '-');
 /** The build served: dist/site, or --site's. */
-const site = resolve(root, options.site ?? 'dist/site');
+const site = resolve(repositoryRoot, options.site ?? 'dist/site');
 
 /** A command line for the shell, which npm's commands need on Windows. */
 const commandLine = (parts: string[]) =>
@@ -128,7 +127,7 @@ const commandLine = (parts: string[]) =>
 function run(parts: string[], quiet = false) {
   return new Promise<string>((done, fail) => {
     const child = spawn(commandLine(parts), {
-      cwd: root,
+      cwd: repositoryRoot,
       stdio: quiet ? 'pipe' : 'inherit',
       shell: true,
     });
@@ -261,7 +260,7 @@ function startWrangler() {
       '--persist-to',
       resolve(cache, `wrangler-${port}`),
     ]),
-    { cwd: root, stdio: 'ignore', shell: true },
+    { cwd: repositoryRoot, stdio: 'ignore', shell: true },
   );
 }
 

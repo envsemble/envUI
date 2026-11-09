@@ -1,11 +1,10 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { documentedLibraries, importedLibraries } from '../../scripts/build/EntryLibraries.ts';
 import { libraryEntryPoints } from '../../scripts/docs/LibraryEntryPoints.ts';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-const repository = fileURLToPath(new URL('../../', import.meta.url));
 const entryPoints = libraryEntryPoints();
 const entryFile = (specifier) => entryPoints.find((entry) => entry.specifier === specifier).file;
 const manifest = JSON.parse(
@@ -17,7 +16,7 @@ test('the main entry imports no library beyond React and Base UI', async functio
 });
 
 test("the setup guide's install commands name exactly the libraries each entry point imports", async function () {
-  const documented = await documentedLibraries(repository);
+  const documented = await documentedLibraries(repositoryRoot);
   for (const { specifier, file } of entryPoints)
     assert.deepEqual(
       (documented[specifier] ?? []).map(({ name }) => name).sort(),
@@ -33,7 +32,7 @@ test("the setup guide's install commands name exactly the libraries each entry p
 });
 
 test('the documented versions start at the versions envUI is built and tested with', async function () {
-  for (const libraries of Object.values(await documentedLibraries(repository)))
+  for (const libraries of Object.values(await documentedLibraries(repositoryRoot)))
     for (const { name, range } of libraries)
       assert.equal(range, `^${manifest.devDependencies[name]}`, name);
 });

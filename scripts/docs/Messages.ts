@@ -4,12 +4,10 @@
 // generated documentation gives each component's page its Strings, so no page writes them.
 import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import { librarySourceDirectory } from '../RepositoryPaths.ts';
 
-const messagesDirectory = fileURLToPath(
-  new URL('../../packages/ui/src/foundations/messages/', import.meta.url),
-);
+const messagesDirectory = resolve(librarySourceDirectory, 'foundations/messages');
 
 /** One string of a namespace: its key, its English default and what it names. */
 interface MessageString {

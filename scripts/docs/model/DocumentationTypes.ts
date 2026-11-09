@@ -133,6 +133,13 @@ export type DocumentationBlock =
    */
   | { kind: 'source'; name: string };
 
+/** An example file placed as a figure. */
+export type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
+/** A foundation's figure, one of the catalogue's own. */
+export type FoundationFigureBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
+/** A block a page places as a figure: an example or a foundation's figure. */
+export type PlacedBlock = ExampleBlock | FoundationFigureBlock;
+
 /** One numbered part of an anatomy figure. */
 export interface AnatomyLegendItem {
   /** The part, by its class name, such as env-card-header, or a selector of env-* class names. */
@@ -215,10 +222,7 @@ export interface DocumentationMetadata {
 }
 
 /** An example figure a section places, as a page's tile and the layout check pick one. */
-type ExampleOutline = Pick<
-  Extract<DocumentationBlock, { kind: 'example' }>,
-  'name' | 'heading' | 'role' | 'widths' | 'open' | 'stage'
->;
+type ExampleOutline = Pick<ExampleBlock, 'name' | 'heading' | 'role' | 'widths' | 'open' | 'stage'>;
 
 /** A section of a page as the site knows it before the page loads. */
 interface SectionOutline {

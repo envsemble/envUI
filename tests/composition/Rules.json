@@ -1,7 +1,7 @@
 {
   "$comment": "The architecture tests/library/Composition.test.mjs enforces. Paths are relative to packages/ui/src; stylesheets are relative to packages/ui/src/styles.",
   "layers": {
-    "$comment": "Imports go down this list or stay in their layer. A module's layer is entries for the package's entry points, read from its exports, else its exact entry under modules, else the longest matching entry under directories. Every component module is listed: base for a control that renders no other component, composites for one that does, so a base control cannot import a composite.",
+    "$comment": "Imports go down this list or stay in their layer. A module's layer is entries for the package's entry points, read from its exports, else its entry under modules, else the longest matching entry under directories. Every component module is listed: base for a control that renders no other component, composites for one that does, so a base control cannot import a composite. Any other module listed with a layer its directory doesn't give it takes { layer, reason }. Which modules may import a family's internal/ folder is ESLint's rule, in eslint.config.mjs.",
     "order": ["internal", "foundations", "base", "composites", "shell", "entries"],
     "directories": {
       "internal/": "internal",
@@ -24,12 +24,18 @@
       "dev/": "shell"
     },
     "modules": {
-      "icons/index.ts": "entries",
-      "navigation/LinkProvider.tsx": "foundations",
-      "layout/resizeDetails.ts": "internal",
-      "foundations/ThemePreference.tsx": "composites",
-      "foundations/ThemeToggle.tsx": "composites",
-      "foundations/ThemeMenuRadioGroup.tsx": "composites",
+      "icons/index.ts": {
+        "layer": "entries",
+        "reason": "The generated index of every icon, beside the icons/* export."
+      },
+      "foundations/ThemeToggle.tsx": {
+        "layer": "composites",
+        "reason": "Its page is a foundation’s, and it renders IconButton."
+      },
+      "foundations/ThemeMenuRadioGroup.tsx": {
+        "layer": "composites",
+        "reason": "It sets the theme preference beside it, and renders Menu’s radio group."
+      },
       "layout/panel-dock/internal/PanelDockPanelContext.ts": "shell",
       "data-display/AvatarButton.tsx": "composites",
       "actions/Button.tsx": "composites",
@@ -80,7 +86,6 @@
       "overlays/Popover.tsx": "base",
       "feedback/Spinner.tsx": "base",
       "feedback/internal/SpinnerLabel.tsx": "base",
-      "internal/control/SpinnerArc.tsx": "base",
       "overlays/Tooltip.tsx": "base",
       "overlays/internal/tooltipTriggerName.ts": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
@@ -112,8 +117,14 @@
       "forms/DropZone.tsx": "composites",
       "forms/Field.tsx": "base",
       "content/MarkdownEditor.tsx": "composites",
-      "internal/editor/EditorToolbar.tsx": "composites",
-      "internal/editor/LinkDialog.tsx": "composites",
+      "internal/editor/EditorToolbar.tsx": {
+        "layer": "composites",
+        "reason": "It renders Toolbar."
+      },
+      "internal/editor/LinkDialog.tsx": {
+        "layer": "composites",
+        "reason": "It renders Dialog and Button."
+      },
       "forms/Radio.tsx": "base",
       "forms/SearchField.tsx": "composites",
       "forms/Select.tsx": "composites",
@@ -138,30 +149,45 @@
       "navigation/internal/treeModel.ts": "composites",
       "navigation/internal/useTreeTransitions.ts": "composites",
       "navigation/internal/useTreeViewport.ts": "composites",
-      "internal/popup/PopupSurface.tsx": "foundations",
-      "internal/skeleton.tsx": "foundations",
-      "internal/popup/TooltipPopup.tsx": "base",
-      "layout/Layout.tsx": "foundations",
-      "layout/Surface.tsx": "foundations",
+      "internal/popup/PopupSurface.tsx": {
+        "layer": "foundations",
+        "reason": "It reads Theme and the skeleton."
+      },
+      "internal/skeleton.tsx": {
+        "layer": "foundations",
+        "reason": "It reads SkeletonScope."
+      },
+      "internal/popup/TooltipPopup.tsx": {
+        "layer": "foundations",
+        "reason": "It renders PopupSurface."
+      },
+      "layout/Layout.tsx": {
+        "layer": "foundations",
+        "reason": "Its page is in App frame & layout, but base controls such as Disclosure and Menubar lay out with it."
+      },
+      "layout/Surface.tsx": {
+        "layer": "foundations",
+        "reason": "Its page is in App frame & layout, but Card and the dialogs’ parts build on it."
+      },
       "layout/internal/LoadingBar.tsx": "base",
       "content/CodeDiff.tsx": "composites",
       "content/countDiffLines.ts": "composites",
-      "internal/field/FieldFrame.tsx": "base",
-      "internal/field/useFieldMetadata.ts": "base",
-      "internal/field/useFormReset.ts": "base",
-      "internal/field/subscribeFormReset.ts": "base",
-      "internal/field/TextareaControl.tsx": "base",
-      "internal/field/TextareaResizeEdge.tsx": "base",
-      "internal/editor/EditorStatus.tsx": "base",
-      "internal/editor/editorCommands.ts": "base",
-      "internal/popup/DialogParts.tsx": "base",
-      "internal/popup/useModalPresence.ts": "base",
-      "internal/rangeBarProps.ts": "base",
-      "internal/dom/useStripWheel.ts": "base"
-    },
-    "private": {
-      "$comment": "Modules in these directories are private to the listed modules, besides each other.",
-      "content/internal/markdown/": ["content/MarkdownEditor.tsx"]
+      "internal/field/FieldFrame.tsx": {
+        "layer": "base",
+        "reason": "It renders Field."
+      },
+      "internal/editor/EditorStatus.tsx": {
+        "layer": "foundations",
+        "reason": "It renders Text."
+      },
+      "internal/editor/editorCommands.ts": {
+        "layer": "foundations",
+        "reason": "It gives each command its Icon."
+      },
+      "internal/popup/DialogParts.tsx": {
+        "layer": "foundations",
+        "reason": "It renders Surface and reads Theme."
+      }
     }
   },
   "planned": {

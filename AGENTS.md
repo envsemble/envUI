@@ -22,6 +22,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 - In the site, the tests and the scripts, name a module's file in PascalCase and a hook's `useX`.
 - Start the name of a script run as a command with a verb, such as `GenerateParts.ts`.
 - Name documentation files in lowercase.
+- Take a path into the repository, in a script or a test, from `scripts/RepositoryPaths.ts`.
 - The library names its files as [packages/ui/AGENTS.md](packages/ui/AGENTS.md#files) says.
 
 ## Checks: three tiers, never the full suite every turn

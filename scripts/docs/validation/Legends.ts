@@ -2,12 +2,12 @@
 // name.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import type { Tokens } from 'marked';
-import { documentationDirectory } from '../DocumentationPaths.ts';
-import type { ExampleBlock, FigureBlock, PageReading, PartNames } from '../PageReading.ts';
+import type { ExampleBlock, FoundationFigureBlock } from '../model/DocumentationTypes.ts';
+import type { PageReading, PartNames } from '../PageReaderTypes.ts';
+import { documentationDirectory, librarySourceDirectory } from '../../RepositoryPaths.ts';
 
-const stylesDirectory = fileURLToPath(new URL('../../../packages/ui/src/styles/', import.meta.url));
+const stylesDirectory = resolve(librarySourceDirectory, 'styles');
 
 /**
  * The part class names an anatomy legend may name: every `env-*` class of packages/ui's style
@@ -56,7 +56,7 @@ export function readLegend(page: PageReading, list: Tokens.List) {
  * A foundation figure's legend: what each numbered mark, or each picture of a run, shows, its name
  * in bold and then what it means, such as **Tight, inside a group**: A title….
  */
-function foundationLegend(page: PageReading, figure: FigureBlock, list: Tokens.List) {
+function foundationLegend(page: PageReading, figure: FoundationFigureBlock, list: Tokens.List) {
   return list.items.map((item, index) => {
     const match = item.text.replace(/\s+/g, ' ').match(/^\*\*([^*]+)\*\*:?\s*(.*)$/);
     if (!match)

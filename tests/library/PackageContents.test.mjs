@@ -6,9 +6,9 @@ import { existsSync } from 'node:fs';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { compileDocumentation } from '../../scripts/docs/GenerateDocumentation.ts';
-import { ruleSelectors, scopedSelector, splitSelectors } from '../support/cssScope.mjs';
-import { repository } from '../support/importSource.mjs';
-import { installTimeout, packedConsumer } from '../support/packedConsumer.mjs';
+import { ruleSelectors, scopedSelector, splitSelectors } from '../support/CssScope.mjs';
+import { installTimeout, packedConsumer } from '../support/PackedConsumer.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 let consumer;
 before(async () => (consumer = await packedConsumer()), { timeout: installTimeout });
@@ -224,6 +224,6 @@ test('the packed README links only what the package ships, and the packed docume
     JSON.parse(
       await readFile(join(consumer.installedDirectory, 'docs/generated/props.json'), 'utf8'),
     ),
-    JSON.parse(await readFile(join(repository, 'docs/generated/props.json'), 'utf8')),
+    JSON.parse(await readFile(join(repositoryRoot, 'docs/generated/props.json'), 'utf8')),
   );
 });

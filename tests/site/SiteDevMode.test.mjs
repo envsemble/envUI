@@ -4,15 +4,13 @@ import assert from 'node:assert/strict';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import {
   devEntry,
   devMarker,
   devModeFigures,
   devModeProblems,
 } from '../../scripts/site/SiteDevMode.ts';
-
-const repository = fileURLToPath(new URL('../../', import.meta.url));
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 /** A build as the catalogue's is: dev mode in a chunk of its own that only the dev mode page's figures load. */
 function build() {
@@ -83,9 +81,9 @@ test('dev mode anywhere else is a problem', () => {
 });
 
 test('every figure a guide places is one its page registers', async () => {
-  const figures = join(repository, 'apps/site/src/figures/foundations');
+  const figures = join(repositoryRoot, 'apps/site/src/figures/foundations');
   const loaders = await readFile(join(figures, 'FoundationFigures.ts'), 'utf8');
-  const docs = join(repository, 'docs');
+  const docs = join(repositoryRoot, 'docs');
   const placed = [];
   for (const name of (await readdir(docs)).filter((file) => file.endsWith('.md'))) {
     const markdown = await readFile(join(docs, name), 'utf8');

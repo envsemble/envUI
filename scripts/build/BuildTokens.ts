@@ -15,9 +15,8 @@ import { build, defineConfig, Logger, parse } from '@terrazzo/parser';
 import type { ViteDevServer } from 'vite';
 import { formatted, readIfExists, writeIfChanged } from './GeneratedFiles.ts';
 import { createConfig } from './tokens/Config.ts';
+import { libraryDirectory, repositoryRoot } from '../RepositoryPaths.ts';
 
-const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
-const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 const tokensDirectory = resolve(libraryDirectory, 'tokens');
 
 /**

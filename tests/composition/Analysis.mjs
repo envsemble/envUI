@@ -125,11 +125,37 @@ function readLibrary(rules) {
   };
 }
 
-/** The layers: their order, each module's layer and the private scopes, checked against the rules. */
+/**
+ * The layers: their order and each module's layer, checked against the rules. A module listed with a
+ * layer other than its directory's, beyond a component's choice between base and composites, gives
+ * its reason.
+ */
 function readLayers(library) {
   const { rules, problems, modules, planned, requireModule } = library;
-  const { order, directories, modules: layeredModules, private: privateScopes } = rules.layers;
+  const { order, directories, modules: listed } = rules.layers;
   const rank = new Map(order.map((layer, index) => [layer, index]));
+  const directoryLayer = (module) => {
+    const directory = Object.keys(directories)
+      .filter((path) => module.startsWith(path))
+      .sort((a, b) => b.length - a.length)[0];
+    return directory === undefined ? undefined : directories[directory];
+  };
+  const layeredModules = Object.fromEntries(
+    Object.entries(listed).map(([module, entry]) => [
+      module,
+      typeof entry === 'string' ? entry : entry.layer,
+    ]),
+  );
+  const components = new Set(['base', 'composites']);
+  for (const [module, entry] of Object.entries(listed)) {
+    const own = layeredModules[module];
+    const folder = directoryLayer(module);
+    const usual = own === folder || (components.has(own) && components.has(folder));
+    if (!usual && typeof entry === 'string')
+      problems.push(
+        `${rulesFile} layers.modules puts ${module} in ${own} beside its directory's ${folder}: give it { "layer", "reason" }.`,
+      );
+  }
   for (const [where, map] of [
     ['layers.directories', directories],
     ['layers.modules', layeredModules],
@@ -147,18 +173,12 @@ function readLayers(library) {
   const layerOf = (module) => {
     if (entryPoints.has(module)) return 'entries';
     if (Object.hasOwn(layeredModules, module)) return layeredModules[module];
-    const directory = Object.keys(directories)
-      .filter((path) => module.startsWith(path))
-      .sort((a, b) => b.length - a.length)[0];
-    return directory === undefined ? undefined : directories[directory];
+    return directoryLayer(module);
   };
   for (const module of modules)
     if (layerOf(module) === undefined)
       problems.push(`${module} has no layer: give it one under layers in ${rulesFile}.`);
-  const privates = Object.entries(privateScopes).filter(([path]) => !path.startsWith('$'));
-  for (const [path, allowed] of privates)
-    for (const module of allowed) requireModule(module, `layers.private ${path}`);
-  return { order, rank, layerOf, privates };
+  return { order, rank, layerOf };
 }
 
 /** The library modules each module imports, each with the line of its first import. */
@@ -193,25 +213,15 @@ function readImports({ problems, modules, moduleSet, sources }) {
   return imports;
 }
 
-/** The imports that go up the layers or into another module's private scope. */
-function importFindingsOf(imports, { rank, layerOf, privates }) {
+/** The imports that go up the layers. */
+function importFindingsOf(imports, { rank, layerOf }) {
   const findings = new Map();
   for (const [module, targets] of imports)
     for (const [target, line] of targets) {
       const from = layerOf(module);
       const to = layerOf(target);
-      const upward = rank.has(from) && rank.has(to) && rank.get(to) > rank.get(from);
-      const scope = privates.find(
-        ([path, allowed]) =>
-          target.startsWith(path) && !module.startsWith(path) && !allowed.includes(module),
-      );
-      if (!upward && !scope) continue;
-      record(
-        findings,
-        'imports',
-        { module, imports: target },
-        { line, info: { from, to, upward, privateTo: scope?.[1] } },
-      );
+      if (!rank.has(from) || !rank.has(to) || rank.get(to) <= rank.get(from)) continue;
+      record(findings, 'imports', { module, imports: target }, { line, info: { from, to } });
     }
   return findings;
 }

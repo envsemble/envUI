@@ -3,19 +3,13 @@
 // reads them when it builds or serves, through the virtual modules in apps/site/vite.config.ts, so
 // they always match the files they outline.
 import { readdirSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { examplesDirectory } from '../docs/GenerateDocumentation.ts';
 import {
   groupOf,
   themes,
   tokenGroups,
   tokenValueText,
 } from '../../apps/site/src/pages/TokenGroups.ts';
-
-const changelogFile = fileURLToPath(new URL('../../packages/ui/CHANGELOG.md', import.meta.url));
-const tokensFile = fileURLToPath(
-  new URL('../../packages/ui/src/generated/tokens.json', import.meta.url),
-);
+import { examplesDirectory, libraryChangelogFile, tokensDataFile } from '../RepositoryPaths.ts';
 
 /** The lines of each example's code, by page/Name, as its code block shows it. */
 export function readExampleLines(): Record<string, number> {
@@ -65,7 +59,7 @@ export function markdownShape(markdown: string) {
  * The changelog as the Docs' Changelog page shows it, a level lower under Every change: each
  * release's heading, which the page's contents list from the start, and the shape of what it says.
  */
-export function readChangelogOutline(file = changelogFile) {
+export function readChangelogOutline(file = libraryChangelogFile) {
   const changelog = readFileSync(file, 'utf8')
     .replace(/\r\n?/g, '\n')
     .replace(/^# [^\n]*\n+/, '')
@@ -78,7 +72,7 @@ export function readChangelogOutline(file = changelogFile) {
       return { heading: heading, shape: markdownShape(body.join('\n').trim()) };
     });
 }
-export const changelogOutlineSources = [changelogFile];
+export const changelogOutlineSources = [libraryChangelogFile];
 
 /** The length of a token's value as the reference shows it. */
 function valueLength(value: { resolved?: unknown } | undefined, color: boolean) {
@@ -100,7 +94,7 @@ interface Token {
  * The token reference's groups, each with its title and a row for each token: its name, the length
  * of its description, and the length of each value it shows.
  */
-export function readTokenOutline(file = tokensFile) {
+export function readTokenOutline(file = tokensDataFile) {
   const { tokens } = JSON.parse(readFileSync(file, 'utf8')) as { tokens: Token[] };
   return tokenGroups.flatMap((group) => {
     const members = tokens.filter((token) => groupOf(token) === group);
@@ -124,4 +118,4 @@ export function readTokenOutline(file = tokensFile) {
     ];
   });
 }
-export const tokenOutlineSources = [tokensFile];
+export const tokenOutlineSources = [tokensDataFile];

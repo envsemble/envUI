@@ -11,10 +11,10 @@ import { copyFile, mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from
 import { createRequire } from 'node:module';
 import { basename, dirname, join } from 'node:path';
 import { documentedLibraries } from '../../scripts/build/EntryLibraries.ts';
-import { repository } from './importSource.mjs';
-import { npmCli, npmPack, runNode } from './npm.mjs';
+import { npmCli, npmPack, runNode } from './Npm.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-const consumersDirectory = join(repository, '.cache/package-consumer');
+const consumersDirectory = join(repositoryRoot, '.cache/package-consumer');
 /** Written once the installation is complete. */
 const readyMarker = '.installed';
 /** How long a process waits for another's installation, and when a lock counts as abandoned. */
@@ -24,7 +24,7 @@ export const installTimeout = lockTimeout + 60 * 1000;
 
 /** Packs the library into `directory`: the tarball's path and the files it holds. */
 function pack(directory) {
-  const { filename, files } = npmPack(join(repository, 'packages/ui'), [
+  const { filename, files } = npmPack(join(repositoryRoot, 'packages/ui'), [
     '--pack-destination',
     directory,
   ]);
@@ -36,7 +36,7 @@ function pack(directory) {
  * code, markdown, rich-text, diff and color entries, at the versions of the repository's manifests.
  */
 async function consumerDependencies() {
-  const read = async (path) => JSON.parse(await readFile(join(repository, path), 'utf8'));
+  const read = async (path) => JSON.parse(await readFile(join(repositoryRoot, path), 'utf8'));
   const { devDependencies: tools } = await read('package.json');
   const { devDependencies: libraries } = await read('packages/ui/package.json');
   const dependencies = {};
@@ -50,7 +50,7 @@ async function consumerDependencies() {
     'vite',
   ])
     dependencies[name] = tools[name];
-  for (const entryLibraries of Object.values(await documentedLibraries(repository)))
+  for (const entryLibraries of Object.values(await documentedLibraries(repositoryRoot)))
     for (const { name } of entryLibraries) dependencies[name] = libraries[name];
   return dependencies;
 }
@@ -145,7 +145,7 @@ async function removeOtherInstallations(current) {
  */
 export async function packedConsumer() {
   await mkdir(consumersDirectory, { recursive: true });
-  const packDirectory = await mkdtemp(join(repository, '.cache/package-pack-'));
+  const packDirectory = await mkdtemp(join(repositoryRoot, '.cache/package-pack-'));
   try {
     const { tarball, files } = pack(packDirectory);
     const dependencies = await consumerDependencies();

@@ -14,9 +14,10 @@
 //
 // The work is in scripts/docs/: PageStructure.ts (the page kinds, sections, roles and
 // frontmatter), PageReader.ts (a page read and checked), DocumentationReader.ts (every page, its
-// index and links), DocumentationPaths.ts and LibraryVersions.ts (where things are, and the versions
-// a page names) and Compiler.ts (the props tables and the Markdown the package ships). This file writes the
-// catalogue's data and runs as the command; it exports what the modules did as one file.
+// index and links), LibraryVersions.ts (the versions a page names) and Compiler.ts (the props
+// tables and the Markdown the package ships); where things are is in scripts/RepositoryPaths.ts.
+// This file writes the catalogue's data and runs as the command; it exports what the modules did
+// as one file.
 import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import type { DocumentationEntry, DocumentationSummary } from './model/DocumentationTypes.ts';
@@ -25,7 +26,7 @@ import { headingsOf, plainText } from './MarkdownHeadings.ts';
 import { exportSection, headingSlugger } from './model/SearchAnchors.ts';
 import { providesHeadings } from './model/CatalogueContent.ts';
 import { writeSearchIndex } from '../site/BuildSearchIndex.ts';
-import { documentationDirectory, generatedFile } from './DocumentationPaths.ts';
+import { documentationDirectory, generatedDocumentationFile } from '../RepositoryPaths.ts';
 import { pageKindOf, readProps } from './PageStructure.ts';
 import { readDocumentation } from './DocumentationReader.ts';
 import { writeIfChanged } from '../build/GeneratedFiles.ts';
@@ -36,7 +37,7 @@ export {
   documentationDirectory,
   examplesDirectory,
   specimensDirectory,
-} from './DocumentationPaths.ts';
+} from '../RepositoryPaths.ts';
 export { libraryVersions } from './LibraryVersions.ts';
 export {
   codeSubsections,
@@ -64,8 +65,8 @@ export {
   renderProps,
 } from './Compiler.ts';
 
-/** Each page's content for the catalogue: generated/pages/<id>.json beside generatedFile. */
-const pagesDirectory = resolve(dirname(generatedFile), 'pages');
+/** Each page's content for the catalogue: generated/pages/<id>.json beside generatedDocumentationFile. */
+const pagesDirectory = resolve(dirname(generatedDocumentationFile), 'pages');
 
 const names = (text: string, name: string) =>
   new RegExp(`(?<![\\w.])${name.replace(/[.$]/g, '\\$&')}(?![\\w])`).test(text);
@@ -193,7 +194,7 @@ export function generateDocumentation() {
       // Pattern and template pages document no exports of their own; they link to what they compose.
       ...(kind === 'component' && {
         props: Object.fromEntries(
-          documentedExports(frontmatter.components, props).map((name: string) => [
+          documentedExports(frontmatter.components ?? [], props).map((name: string) => [
             name,
             props!.exports[name],
           ]),
@@ -242,7 +243,7 @@ export function generateDocumentation() {
     };
   });
   const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '@docs-model/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
-  writeIfChanged(generatedFile, source);
+  writeIfChanged(generatedDocumentationFile, source);
   const contents = new Map(
     entries.map((entry) => {
       const { sections, markdown, ...rest } = entry as DocumentationEntry;

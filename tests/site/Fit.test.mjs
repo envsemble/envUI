@@ -6,7 +6,7 @@
 // an open example's room for its overlays.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 
 const math = await importSource('FitGeometry', 'apps/site/src/fit/FitGeometry.ts');
 const held = await importSource('HeldView', 'apps/site/src/fit/HeldView.ts');

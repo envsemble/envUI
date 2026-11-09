@@ -1,7 +1,8 @@
 import { watch } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
+import { resolve } from 'node:path';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 const buildScript = new URL('./BuildLibrary.ts', import.meta.url);
 let buildInProgress = false;
 let rebuildPending = false;
@@ -31,15 +32,15 @@ function scheduleRebuild() {
 }
 
 for (const directory of [
-  '../../packages/ui/src/',
-  '../../packages/ui/tokens/',
-  '../../docs/',
-  '../../apps/site/src/examples/',
-  '../../assets/',
+  'packages/ui/src',
+  'packages/ui/tokens',
+  'docs',
+  'apps/site/src/examples',
+  'assets',
 ]) {
-  watch(new URL(directory, import.meta.url), { recursive: true }, scheduleRebuild);
+  watch(resolve(repositoryRoot, directory), { recursive: true }, scheduleRebuild);
 }
-watch(new URL('../../README.md', import.meta.url), scheduleRebuild);
+watch(resolve(repositoryRoot, 'README.md'), scheduleRebuild);
 rebuildLibrary();
 console.log(
   'Watching public library builds for external local consumers. The catalogue reads source directly for Fast Refresh.',

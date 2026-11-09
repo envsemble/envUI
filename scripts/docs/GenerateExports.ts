@@ -12,7 +12,6 @@
 //                                            names it. The base is found as for the parts
 //                                            (scripts/docs/GenerateParts.ts).
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { Node, Project } from 'ts-morph';
 import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
 import {
@@ -24,11 +23,10 @@ import {
   pendingChangesets,
 } from './ContractHistory.ts';
 import { libraryEntryPoints } from './LibraryEntryPoints.ts';
+import { libraryDirectory, repositoryRoot } from '../RepositoryPaths.ts';
 
-const root = fileURLToPath(new URL('../../', import.meta.url));
-const libraryDirectory = resolve(root, 'packages/ui');
 const exportsPath = 'docs/generated/exports.json';
-const exportsFile = resolve(root, exportsPath);
+const exportsFile = resolve(repositoryRoot, exportsPath);
 
 /** Each entry point's exported names and their kinds, by the specifier applications import. */
 type ExportsRecord = Record<string, Record<string, string>>;

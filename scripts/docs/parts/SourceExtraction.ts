@@ -5,13 +5,8 @@
 import { relative, resolve } from 'node:path';
 import { Node, Project, SyntaxKind, type JsxAttribute, type SourceFile, type Type } from 'ts-morph';
 import { kebab } from '../PageStructure.ts';
-import {
-  isPrivateState,
-  libraryDirectory,
-  repositoryPath,
-  sourceDirectory,
-  type StateRecord,
-} from './Library.ts';
+import { libraryDirectory, librarySourceDirectory } from '../../RepositoryPaths.ts';
+import { isPrivateState, repositoryPath, type StateRecord } from './Library.ts';
 
 /** An `env-*` class in a string, not part of a selector, custom property or data attribute. */
 const classPattern = /(?<![\w.#-])env-[a-z\d]+(?:-[a-z\d]+)*(-?)/g;
@@ -87,7 +82,7 @@ export function readSource() {
     .filter(
       (file) =>
         !/^dev(?:\.ts$|[\\/])|[\\/](?:generated|icons)[\\/]/.test(
-          relative(sourceDirectory, file.getFilePath()),
+          relative(librarySourceDirectory, file.getFilePath()),
         ),
     );
   for (const file of files) {

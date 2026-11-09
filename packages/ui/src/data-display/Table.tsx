@@ -29,7 +29,7 @@ import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
-import type { ResizeDetails } from '../layout/resizeDetails.js';
+import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Table.css';

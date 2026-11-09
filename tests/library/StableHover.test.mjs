@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
-import { declarations } from '../support/cssDeclarations.mjs';
+import { declarations } from '../support/CssDeclarations.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // Hover and focus inside never change a component's layout. A part that grows under the pointer
 // can push its neighbours, wrap the row it sits in and move out from under the pointer, which
@@ -12,8 +12,7 @@ import { declarations } from '../support/cssDeclarations.mjs';
 // it grows into. This test reads every component style sheet and rejects a layout property in a
 // rule for :hover or :focus-within, also one a custom property set there carries into it.
 
-const root = fileURLToPath(new URL('../../', import.meta.url));
-const styles = join(root, 'packages/ui/src/styles');
+const styles = join(repositoryRoot, 'packages/ui/src/styles');
 
 /** Properties that size or place a box, or its text. Colors, transforms and opacity are free. */
 const layout =

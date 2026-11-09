@@ -4,9 +4,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { importSource, repository } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const library = await importSource('Skeleton', [
   "export { placeholders, isPlaceholder } from './packages/ui/src/foundations/placeholders.ts';",
@@ -115,7 +116,7 @@ test('missing text renders empty where a skeleton shows a bar, and given slots r
 });
 
 test('the style sheet draws text as bars, shapes and missing text, and pulses gentler on request', () => {
-  const css = readFileSync(join(repository, 'packages/ui/src/styles/Skeleton.css'), 'utf8');
+  const css = readFileSync(join(repositoryRoot, 'packages/ui/src/styles/Skeleton.css'), 'utf8');
   assert.match(css, /\[data-env-skeleton\]:not\(env-none\) \{[^}]*text-decoration: line-through/);
   assert.match(css, /-webkit-text-fill-color: transparent/);
   // Missing text is a bar only in the parts that turn it on.
@@ -142,7 +143,7 @@ test('the style sheet draws text as bars, shapes and missing text, and pulses ge
   const keyframes = [...css.matchAll(/@keyframes [\w-]+ \{(?:[^{}]*\{[^}]*\})*\s*\}/g)];
   assert.equal(keyframes.length, 2);
   for (const [rule] of keyframes) assert.doesNotMatch(rule, /var\(/);
-  const index = readFileSync(join(repository, 'packages/ui/src/styles/index.css'), 'utf8');
+  const index = readFileSync(join(repositoryRoot, 'packages/ui/src/styles/index.css'), 'utf8');
   // Last among the components in styles.css, so its rules follow theirs; where a bundler puts it
   // first, a type selector more wins the same ties.
   assert.match(index, /@import '\.\/Skeleton\.css';\n$/);

@@ -3,7 +3,7 @@
 // whose contracts a strict TypeScript consumer also checks.
 import assert from 'node:assert/strict';
 import { before, test } from 'node:test';
-import { installTimeout, packedConsumer } from '../support/packedConsumer.mjs';
+import { installTimeout, packedConsumer } from '../support/PackedConsumer.mjs';
 
 let consumer;
 let ssr;

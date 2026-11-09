@@ -1,4 +1,4 @@
-/** The shapes of the catalogue's data from the repository; see the virtual modules in vite.config.ts. */
+/** The shapes of the release notes' data from the repository; see the virtual modules in vite.config.ts. */
 
 /** A piece of a line of the release notes: text, code, or a link whose text has pieces of its own. */
 export type InlinePiece =

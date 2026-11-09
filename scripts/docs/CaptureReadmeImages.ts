@@ -8,12 +8,10 @@
 // checkout's own (CheckoutMarker.ts), or reuses this checkout's server already running there. Run
 // it when the site's look changes, such as before a release, look at the images, and commit them.
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { chromium, type Page } from '@playwright/test';
 import { createServer, type ViteDevServer } from 'vite';
 import { defaultPorts, resolveServers } from '../test/CheckoutMarker.ts';
-
-const root = fileURLToPath(new URL('../../', import.meta.url));
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 /**
  * The pictures: each a page in a desktop window, cut off at `end`, an element of the page, halfway
@@ -45,8 +43,8 @@ const { site } = await resolveServers({
 let server: ViteDevServer | undefined;
 if (!site.reuse) {
   server = await createServer({
-    root: resolve(root, 'apps/site'),
-    configFile: resolve(root, 'apps/site/vite.config.ts'),
+    root: resolve(repositoryRoot, 'apps/site'),
+    configFile: resolve(repositoryRoot, 'apps/site/vite.config.ts'),
     logLevel: 'warn',
     server: { host: '127.0.0.1', port: site.port, strictPort: true },
   });
@@ -110,7 +108,7 @@ try {
         const after = next ? next.getBoundingClientRect().top : bottom;
         return Math.min(innerHeight, Math.round(bottom + Math.max(0, after - bottom) / 2));
       }, end);
-      const file = resolve(root, `assets/readme/${name}-${theme}.png`);
+      const file = resolve(repositoryRoot, `assets/readme/${name}-${theme}.png`);
       await page.screenshot({ path: file, clip: { x: 0, y: 0, width: window.width, height } });
       console.log(`Wrote ${file}.`);
       await page.close();

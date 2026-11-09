@@ -15,11 +15,9 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
 import { build, transform } from 'esbuild';
-
-const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 /** The components of a typical application, as the baselines counted them. */
 const typicalApp = [
@@ -78,11 +76,11 @@ const sizes = (bytes: Uint8Array | string) => ({
 
 async function bundle(source: string, ownCode = false) {
   const result = await build({
-    stdin: { contents: source, resolveDir: root, sourcefile: 'consumer.js' },
+    stdin: { contents: source, resolveDir: repositoryRoot, sourcefile: 'consumer.js' },
     bundle: true,
     write: false,
     splitting: true,
-    outdir: resolve(root, '.cache/measure-size'),
+    outdir: resolve(repositoryRoot, '.cache/measure-size'),
     format: 'esm',
     platform: 'browser',
     minify: true,
@@ -99,7 +97,7 @@ async function bundle(source: string, ownCode = false) {
     ],
   });
   const outputs = result.metafile.outputs;
-  const key = (path: string) => relative(root, path).replaceAll('\\', '/');
+  const key = (path: string) => relative(repositoryRoot, path).replaceAll('\\', '/');
   // What the page loads first: the entry and, transitively, the chunks it imports statically.
   // A lazily imported module is an entry point of its own; the page's is the consumer's source.
   const entry = Object.keys(outputs).find((path) => outputs[path].entryPoint === 'consumer.js')!;
@@ -135,13 +133,17 @@ async function bundle(source: string, ownCode = false) {
     for (const [input, { bytesInOutput }] of Object.entries(outputs[path].inputs)) {
       const file = input.replaceAll('\\', '/');
       if (bytesInOutput === 0 || !file.includes('packages/ui/dist/')) continue;
-      for (const [, name] of readFileSync(resolve(root, file), 'utf8').matchAll(stylesheetImport))
+      for (const [, name] of readFileSync(resolve(repositoryRoot, file), 'utf8').matchAll(
+        stylesheetImport,
+      ))
         if (!stylesheets.includes(name)) stylesheets.push(name);
     }
   const css = (
     await transform(
       stylesheets
-        .map((name) => readFileSync(resolve(root, 'packages/ui/dist/styles', name), 'utf8'))
+        .map((name) =>
+          readFileSync(resolve(repositoryRoot, 'packages/ui/dist/styles', name), 'utf8'),
+        )
         .join('\n'),
       { loader: 'css', minify: true, target: 'chrome120' },
     )
@@ -159,12 +161,12 @@ async function bundle(source: string, ownCode = false) {
 }
 
 if (!process.argv.includes('--no-build'))
-  execFileSync(process.execPath, [resolve(root, 'scripts/build/BuildLibrary.ts')], {
-    cwd: root,
+  execFileSync(process.execPath, [resolve(repositoryRoot, 'scripts/build/BuildLibrary.ts')], {
+    cwd: repositoryRoot,
     stdio: ['ignore', 'ignore', 'inherit'],
   });
 
-const stylesheet = readFileSync(resolve(root, 'packages/ui/dist/styles.css'), 'utf8');
+const stylesheet = readFileSync(resolve(repositoryRoot, 'packages/ui/dist/styles.css'), 'utf8');
 const minifiedStylesheet = await transform(stylesheet, {
   loader: 'css',
   minify: true,
@@ -174,7 +176,7 @@ const minifiedStylesheet = await transform(stylesheet, {
 const report = {
   measured: new Date().toISOString(),
   revision: execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
-    cwd: root,
+    cwd: repositoryRoot,
     encoding: 'utf8',
   }).trim(),
   units: 'bytes; gzip at level 9, brotli at its default quality',

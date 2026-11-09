@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // What envUI costs a page to load, held to a budget. It measures packages/ui/dist as the library
 // build left it (node scripts/test/MeasureSize.ts --no-build, a few seconds), the way work-0028's
@@ -12,8 +12,6 @@ import { fileURLToPath } from 'node:url';
 // otherwise) plus about 1.5 %, rounded up to 50, so noise passes and real growth fails. Raising one
 // is a deliberate decision: say in the commit what grew, why it is worth the bytes, and the new
 // measurement. Lower a budget when a size drops for good.
-
-const repository = fileURLToPath(new URL('../../', import.meta.url));
 
 /** The whole style sheet, styles.css, minified, gzip: 57,314 measured. */
 const stylesheetBudget = 58200;
@@ -55,11 +53,15 @@ const componentBudgets = {
 };
 
 const report = JSON.parse(
-  execFileSync(process.execPath, [join(repository, 'scripts/test/MeasureSize.ts'), '--no-build'], {
-    cwd: repository,
-    encoding: 'utf8',
-    maxBuffer: 16 * 1024 * 1024,
-  }),
+  execFileSync(
+    process.execPath,
+    [join(repositoryRoot, 'scripts/test/MeasureSize.ts'), '--no-build'],
+    {
+      cwd: repositoryRoot,
+      encoding: 'utf8',
+      maxBuffer: 16 * 1024 * 1024,
+    },
+  ),
 );
 
 const within = (what, size, budget) =>

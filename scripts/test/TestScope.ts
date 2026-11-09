@@ -13,10 +13,8 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { fixtureUse, importsOf, specPaths } from './FixtureImports.ts';
-
-export const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 /**
  * Files whose specs neither their name nor the fixtures' imports find, such as a part a fixture
@@ -497,7 +495,7 @@ export function unitTestFiles(root = repositoryRoot) {
   ].sort();
   // A test reads the build through its path or through the packed consumer, which packs it.
   const built = files.filter((file) =>
-    /packages\/ui\/dist|support\/packedConsumer\.mjs/.test(read(root, file)),
+    /packages\/ui\/dist|support\/PackedConsumer\.mjs/.test(read(root, file)),
   );
   return { built, fast: files.filter((file) => !built.includes(file)) };
 }

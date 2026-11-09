@@ -4,11 +4,10 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 import { libraryVersion, renderLlmsText, renderSkill } from '../../scripts/site/SiteAgentFiles.ts';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-const repository = fileURLToPath(new URL('../../', import.meta.url));
 const version = libraryVersion();
 const skill = renderSkill();
 const llms = renderLlmsText();
@@ -54,14 +53,16 @@ test("the skill's AGENTS.md block is short and points at docs the package ships"
   assert.match(text, /every UI element/);
   assert.match(text, /propose an addition to envUI instead of writing a local copy/);
   // The package ships docs/ with its index and the examples, and the lint packages their READMEs.
-  const library = JSON.parse(readFileSync(join(repository, 'packages/ui/package.json'), 'utf8'));
+  const library = JSON.parse(
+    readFileSync(join(repositoryRoot, 'packages/ui/package.json'), 'utf8'),
+  );
   assert.ok(library.files.includes('docs'));
   for (const path of ['docs/index.md', 'docs/setup.md', 'docs/migration.md'])
     assert.ok(skill.includes(`node_modules/@envsemble/envui/${path}`) || text.includes(path), path);
-  assert.ok(existsSync(join(repository, 'docs/index.md')));
+  assert.ok(existsSync(join(repositoryRoot, 'docs/index.md')));
   for (const name of ['eslint-plugin', 'stylelint-config']) {
     const manifest = JSON.parse(
-      readFileSync(join(repository, `packages/${name}/package.json`), 'utf8'),
+      readFileSync(join(repositoryRoot, `packages/${name}/package.json`), 'utf8'),
     );
     assert.equal(manifest.version, version, `${manifest.name} has envUI's version`);
     assert.ok(manifest.files.includes('README.md'), `${manifest.name} ships its README`);
@@ -81,9 +82,9 @@ test('llms.txt introduces envUI and points to the setup skill and the installed 
 });
 
 test('the Docs home and setup lead to the skill the site serves at /SKILL.md', () => {
-  const docsHome = readFileSync(join(repository, 'apps/site/src/pages/AgentSetup.tsx'), 'utf8');
+  const docsHome = readFileSync(join(repositoryRoot, 'apps/site/src/pages/AgentSetup.tsx'), 'utf8');
   const prompt = /setupPrompt = '([^']+)'/.exec(docsHome)?.[1];
   assert.equal(prompt, 'Set up envUI in my app: envui.envsemble.com/SKILL.md');
-  const setup = readFileSync(join(repository, 'docs/setup.md'), 'utf8');
+  const setup = readFileSync(join(repositoryRoot, 'docs/setup.md'), 'utf8');
   assert.ok(setup.includes('(https://envui.envsemble.com/SKILL.md)'));
 });

@@ -1,5 +1,4 @@
-// Shared by every resizable component. It imports nothing, so the internal resize hooks can
-// report it: tests/composition/Rules.json puts it in the internal layer.
+// Shared by every resizable component and its resize hooks; the index entry exports it.
 
 /** What a resize callback receives beside the new width or widths. */
 export interface ResizeDetails {

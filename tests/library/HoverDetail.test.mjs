@@ -2,7 +2,7 @@
 // development warning for a text trigger that keyboard focus can't reach.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 

@@ -3756,7 +3756,7 @@
     },
     "LinkProvider": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/LinkProvider.tsx",
+      "source": "packages/ui/src/foundations/LinkProvider.tsx",
       "description": "Connects envUI links to the application's router without a router dependency in envUI.",
       "props": [
         {

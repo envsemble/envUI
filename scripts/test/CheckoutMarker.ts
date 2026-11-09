@@ -3,8 +3,8 @@
 // server another checkout started on the same port would silently serve that checkout's code.
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import type { ViteDevServer } from 'vite';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const checkoutPath = '/__envui/checkout';
 
@@ -13,10 +13,9 @@ const checkoutPath = '/__envui/checkout';
  * `npm run dev` serves on too (apps/site/package.json), and the test fixture's.
  */
 export const defaultPorts = { site: 8770, fixture: 8766 };
-const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
 /** A short hash of the checkout's folder; Windows paths compare without case. */
-export function checkoutId(folder = root) {
+export function checkoutId(folder = repositoryRoot) {
   const path = resolve(folder);
   return createHash('sha256')
     .update(process.platform === 'win32' ? path.toLowerCase() : path)

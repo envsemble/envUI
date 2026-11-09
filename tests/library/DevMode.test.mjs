@@ -7,7 +7,8 @@ import { join, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
 import { libraryEntryPoints } from '../../scripts/docs/LibraryEntryPoints.ts';
-import { importSource, repository } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const {
   conditionHolds,
@@ -504,10 +505,10 @@ test('no entry point but dev reaches dev mode, so production builds contain none
   const entries = libraryEntryPoints()
     .filter(({ specifier }) => specifier !== '@envsemble/envui/dev')
     .map(({ file }) => file);
-  const dev = join(repository, 'packages/ui/src/dev');
+  const dev = join(repositoryRoot, 'packages/ui/src/dev');
   for (const entry of entries) {
     const result = await build({
-      absWorkingDir: repository,
+      absWorkingDir: repositoryRoot,
       entryPoints: [entry],
       bundle: true,
       write: false,
@@ -520,7 +521,8 @@ test('no entry point but dev reaches dev mode, so production builds contain none
     });
     const reached = Object.keys(result.metafile.inputs).filter(
       (input) =>
-        !relative(dev, join(repository, input)).startsWith('..') || input.endsWith('src/dev.ts'),
+        !relative(dev, join(repositoryRoot, input)).startsWith('..') ||
+        input.endsWith('src/dev.ts'),
     );
     assert.deepEqual(reached, [], `${entry} reaches dev mode`);
     assert.doesNotMatch(result.outputFiles[0].text, /data-env-dev|installDevMode/, entry);
@@ -529,10 +531,10 @@ test('no entry point but dev reaches dev mode, so production builds contain none
 
 test('installDevMode() warns about parts in the wrong shape and installs all the same', async () => {
   // The installer alone, with a stand-in for its UI and React's root, on a stand-in document.
-  const installer = join(repository, '.cache/unit/DevModeInstall.mjs');
+  const installer = join(repositoryRoot, '.cache/unit/DevModeInstall.mjs');
   await build({
-    absWorkingDir: repository,
-    entryPoints: [join(repository, 'packages/ui/src/dev/install.tsx')],
+    absWorkingDir: repositoryRoot,
+    entryPoints: [join(repositoryRoot, 'packages/ui/src/dev/install.tsx')],
     bundle: true,
     loader: { '.css': 'empty' },
     platform: 'node',

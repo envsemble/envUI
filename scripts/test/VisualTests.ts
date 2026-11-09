@@ -17,9 +17,8 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const args = process.argv.slice(2);
 const flag = (name: string) => {
   const index = args.indexOf(name);
@@ -41,7 +40,7 @@ const imageDigests: Record<string, string> = {
 /** Snapshots are rendered on x86-64; other hosts emulate it rather than draw different pixels. */
 const platform = 'linux/amd64';
 
-const manifest = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
+const manifest = JSON.parse(readFileSync(resolve(repositoryRoot, 'package.json'), 'utf8'));
 const version = manifest.devDependencies['@playwright/test'];
 if (!/^\d+\.\d+\.\d+$/.test(version))
   throw new Error(
@@ -98,9 +97,9 @@ const hostUser =
     : undefined;
 
 // One set of volumes per checkout, so worktrees with different lockfiles do not reinstall each other.
-const checkout = createHash('sha256').update(root).digest('hex').slice(0, 10);
+const checkout = createHash('sha256').update(repositoryRoot).digest('hex').slice(0, 10);
 const lock = createHash('sha256')
-  .update(readFileSync(new URL('../../package-lock.json', import.meta.url)))
+  .update(readFileSync(resolve(repositoryRoot, 'package-lock.json')))
   .update(`${image} ${platform}`)
   .digest('hex');
 const modules = ['node_modules', 'packages/ui/node_modules', 'apps/site/node_modules'];
@@ -119,7 +118,7 @@ const container = [
   '--platform',
   platform,
   '--mount',
-  `type=bind,source=${root},target=/work`,
+  `type=bind,source=${repositoryRoot},target=/work`,
   ...volumes,
   '--workdir',
   '/work',
@@ -187,8 +186,8 @@ const result = spawnSync(
     `npm_config_cache=${npmCache}`,
     ...(process.env.CI ? ['--env', 'CI=1'] : []),
     // Worker count and server ports, so a run can share a machine with other checkouts' servers.
-    ...['ENVUI_WORKERS', 'ENVUI_SITE_PORT', 'ENVUI_CATALOGUE_PORT', 'ENVUI_FIXTURE_PORT'].flatMap(
-      (name) => (process.env[name] ? ['--env', `${name}=${process.env[name]}`] : []),
+    ...['ENVUI_WORKERS', 'ENVUI_SITE_PORT', 'ENVUI_FIXTURE_PORT'].flatMap((name) =>
+      process.env[name] ? ['--env', `${name}=${process.env[name]}`] : [],
     ),
     image,
     'bash',

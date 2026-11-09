@@ -21,6 +21,22 @@ The standalone fitters differ from `useFit` in what they measure and set, not on
 - an open example makes its room larger for what opens in it;
 - a do or don't figure grows the box its example lays out in.
 
+A new kind of figure becomes a `FitKind` of `useFit` (`FitKind.ts`) before anyone writes another standalone fitter; a standalone one is for a figure whose fit measures or sets something else, and takes its row above.
+
+## How `useFit` runs
+
+Each time the measuring loop calls it, in this order:
+
+1. `useFit.ts`: `fitPicture` reads the script (`ScriptReader`, `FitKind.ts`) and what the picture paints (`shownBoxes`, `PaintedBoxes.ts`), waits while something is still moving (`settling`), and keeps the framed view while the picture shows the same thing (`holdsFrame`, `HeldView.ts`).
+2. `FitMeasure.ts`: `frame` (`useFit.ts`) measures the picture (`measure`) and picks the moment's mode (`fitModeOf`, `FitKind.ts`): a modal's screen, playing or at rest.
+3. `FitScreen.ts`, on a modal's screen: its scale (`decideScreenScale`), drawn as the screen's size (`drawScreenSize`, `FitDraw.ts`), then the view's place (`decideScreenPlace`).
+4. `FitResting.ts`, otherwise: where the popups go (`decidePopups`).
+5. `FitPlaying.ts`, while playing: the view drawn out for what opened (`decideDrawOut`), moved toward the pointer's heading (`decideHeading`, with `PointerCourse.ts`), and the cut sides (`decidePlayCut`).
+6. `FitResting.ts`, at rest: what a held view must show (`measureHeld`, `FitMeasure.ts`), the scale (`decideRestingScale`), drawn into the layout (`drawLayoutScale`, `FitDraw.ts`), then the place (`decideRestingPlace`, with `HeldView.ts`).
+7. `FitDraw.ts` and `ViewEasing.ts`: the cut sides and the trimmed rows (`drawCut`, `trim`), and the view eased to its place (`glideTo`, `settle`).
+
+`FitGeometry.ts` holds the sizes and tolerances the steps share.
+
 ## Fit and motion
 
 The scripts that play a stage are in `motion/`. Imports run one way: `motion/` may import `fit/`, and `fit/` never imports `motion/` (ESLint rejects it, [apps/site/AGENTS.md](../../AGENTS.md)). A script registers what it acts on and where its pointer heads in `motion/MustShow.ts`; the fit reads that as a `StageScript` through a `ScriptReader` (`FitKind.ts`), which the figures pass in (`figures/StageScript.ts`).

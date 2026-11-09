@@ -2,7 +2,7 @@
 // parser, and the dates it can't read.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 
 const { calendarHeatmapModel } = await importSource(
   'CalendarHeatmapModel',

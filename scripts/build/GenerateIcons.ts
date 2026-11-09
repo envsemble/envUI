@@ -1,11 +1,9 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, unlink } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { readIfExists, writeIfChanged } from './GeneratedFiles.ts';
+import { libraryDirectory } from '../RepositoryPaths.ts';
 
-const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const packageRoot = resolve(repositoryRoot, 'packages/ui');
 /** A variant's file of icon-manifest.json, with its hash. */
 interface IconVariant {
   source: string;
@@ -26,7 +24,7 @@ interface Geometry {
   paths: string[];
 }
 const manifest: IconManifest = JSON.parse(
-  await readFile(resolve(packageRoot, 'icon-manifest.json'), 'utf8'),
+  await readFile(resolve(libraryDirectory, 'icon-manifest.json'), 'utf8'),
 );
 if (
   manifest.schemaVersion !== 1 ||
@@ -35,7 +33,7 @@ if (
 ) {
   throw new Error('Incomplete or unsupported official icon manifest');
 }
-const outputDirectory = resolve(packageRoot, 'src/icons');
+const outputDirectory = resolve(libraryDirectory, 'src/icons');
 const checkOnly = process.argv.includes('--check');
 if (process.argv.slice(2).some((argument) => argument !== '--check'))
   throw new Error('Usage: GenerateIcons.ts [--check]');
@@ -46,7 +44,8 @@ function writeModule(path: string, source: string) {
 }
 const hash = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
 if (
-  hash(await readFile(resolve(packageRoot, manifest.license.source))) !== manifest.license.sha256
+  hash(await readFile(resolve(libraryDirectory, manifest.license.source))) !==
+  manifest.license.sha256
 ) {
   throw new Error('Official Material Symbols license hash mismatch');
 }
@@ -58,7 +57,7 @@ function toModuleName(name: string) {
     .join('');
 }
 async function readVerifiedGeometry(variant: IconVariant): Promise<Geometry> {
-  const bytes = await readFile(resolve(packageRoot, variant.source));
+  const bytes = await readFile(resolve(libraryDirectory, variant.source));
   if (hash(bytes) !== variant.sha256)
     throw new Error(`Source hash mismatch: ${variant.source}. Restore with SyncIcons.ts.`);
   const source = bytes.toString('utf8');

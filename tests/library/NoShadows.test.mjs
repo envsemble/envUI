@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
-import { declarations } from '../support/cssDeclarations.mjs';
+import { declarations } from '../support/CssDeclarations.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // envUI draws no drop shadows: sheets, toasts and tooltips separate by their fill, their edge and,
 // for modals, the backdrop. Rings drawn with box-shadow stay: focus rings and halos (no offset, no
@@ -13,8 +13,7 @@ import { declarations } from '../support/cssDeclarations.mjs';
 // also one a custom property carries into box-shadow. The exceptions, each by request, are the
 // custom properties listed below with their reasons; no token is a shadow.
 
-const root = fileURLToPath(new URL('../../', import.meta.url));
-const styles = join(root, 'packages/ui/src/styles');
+const styles = join(repositoryRoot, 'packages/ui/src/styles');
 
 /** The bundled style sheet, as scripts/build/BuildLibrary.ts writes dist/styles.css. */
 async function shipped() {
@@ -32,12 +31,12 @@ async function shipped() {
 
 /** Dev mode's style sheet. */
 async function devMode() {
-  return readFile(join(root, 'packages/ui/src/dev/ui/DevMode.css'), 'utf8');
+  return readFile(join(repositoryRoot, 'packages/ui/src/dev/ui/DevMode.css'), 'utf8');
 }
 
 async function catalogue() {
   // Its sheets sit beside the code they style, in the folders of apps/site/src.
-  const folder = join(root, 'apps/site/src');
+  const folder = join(repositoryRoot, 'apps/site/src');
   const files = (await readdir(folder, { recursive: true })).filter((name) =>
     name.endsWith('.css'),
   );

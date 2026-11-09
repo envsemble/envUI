@@ -6,7 +6,7 @@ import { existsSync } from 'node:fs';
 import { cp, mkdir, mkdtemp, readFile } from 'node:fs/promises';
 import { delimiter, dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { repository } from './importSource.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 /** npm's CLI script, also when the tests run without npm. */
 export function npmCli() {
@@ -81,8 +81,10 @@ export async function installAsPacked(packageDirectory) {
     '--ignore-scripts',
     '--loglevel=error',
   ]);
-  await mkdir(join(repository, '.cache'), { recursive: true });
-  const directory = await mkdtemp(join(repository, '.cache', `${name.split('/').pop()}-consumer-`));
+  await mkdir(join(repositoryRoot, '.cache'), { recursive: true });
+  const directory = await mkdtemp(
+    join(repositoryRoot, '.cache', `${name.split('/').pop()}-consumer-`),
+  );
   for (const path of files)
     await cp(join(packageDirectory, path), join(directory, 'node_modules', name, path), {
       recursive: true,

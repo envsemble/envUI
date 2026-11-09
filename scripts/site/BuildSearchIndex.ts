@@ -6,8 +6,7 @@
 // searchDocuments() is plain data, so other tools can index the same documents, each a
 // SearchDocument (docs/model/SearchTerms.ts) that names the page it is found on and its place there.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
 import { marked } from 'marked';
 import MiniSearch from 'minisearch';
 import { plainText } from '../docs/MarkdownHeadings.ts';
@@ -25,6 +24,7 @@ import {
   propSection,
   tokenSection,
 } from '../docs/model/SearchAnchors.ts';
+import { repositoryRoot, tokensDataFile } from '../RepositoryPaths.ts';
 
 /** The token list, packages/ui/src/generated/tokens.json. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; the token build writes it
@@ -37,12 +37,7 @@ export interface SearchSources {
   tokens?: TokenList;
 }
 
-const searchIndexFile = fileURLToPath(
-  new URL('../../apps/site/src/generated/SearchIndex.json', import.meta.url),
-);
-const tokensFile = fileURLToPath(
-  new URL('../../packages/ui/src/generated/tokens.json', import.meta.url),
-);
+const searchIndexFile = resolve(repositoryRoot, 'apps/site/src/generated/SearchIndex.json');
 
 /** Pages of the site that no file in docs/ writes, each in its area. */
 export const standalonePages: {
@@ -337,7 +332,7 @@ function withNames(document: SearchDocument) {
 
 /** The token list. */
 export function readTokens(): TokenList {
-  return JSON.parse(readFileSync(tokensFile, 'utf8'));
+  return JSON.parse(readFileSync(tokensDataFile, 'utf8'));
 }
 
 /** Writes the site's index when it changed. */

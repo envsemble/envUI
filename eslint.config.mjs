@@ -17,6 +17,20 @@ const families = readdirSync(new URL('packages/ui/src/', import.meta.url), { wit
   .map((entry) => entry.name)
   .filter((name) => !['internal', 'styles', 'assets', 'generated', 'icons'].includes(name));
 
+/** An import of another family's internal/ folder, which a module of `family` may not make. */
+const otherFamiliesInternals = (family) => ({
+  regex: String.raw`^(\.\./)+(${families
+    .filter((other) => other !== family)
+    .join('|')})/([\w-]+/)*internal(/|$)`,
+  message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/ (packages/ui/AGENTS.md).`,
+});
+
+/**
+ * Folders of a family's internal/ that only the modules listed with them may import, besides each
+ * other: the Markdown editor's editing, links and preview are its own.
+ */
+const privateFolders = { 'content/internal/markdown': ['content/MarkdownEditor.tsx'] };
+
 /** Browser globals that are easy to use by accident in place of a local, such as `event`. */
 const confusingBrowserGlobals = [
   'close',
@@ -219,22 +233,33 @@ export default defineConfig(
   },
   ...families.map((family) => ({
     files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              regex: String.raw`^(\.\./)+(${families
-                .filter((other) => other !== family)
-                .join('|')})/([\w-]+/)*internal(/|$)`,
-              message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/ (packages/ui/AGENTS.md).`,
-            },
-          ],
-        },
-      ],
-    },
+    rules: { 'no-restricted-imports': ['error', { patterns: [otherFamiliesInternals(family)] }] },
   })),
+  ...Object.entries(privateFolders).map(([folder, allowed]) => {
+    const [family, ...rest] = folder.split('/');
+    const name = rest.at(-1);
+    return {
+      files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
+      ignores: [
+        `packages/ui/src/${folder}/**`,
+        ...allowed.map((module) => `packages/ui/src/${module}`),
+      ],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              otherFamiliesInternals(family),
+              {
+                regex: String.raw`(^|/)${rest.join('/')}(/|$)|^\./${name}(/|$)`,
+                message: `${folder}/ is private to ${allowed.join(', ')}: build on its public API (eslint.config.mjs, privateFolders).`,
+              },
+            ],
+          },
+        ],
+      },
+    };
+  }),
   {
     // The site's own code. Examples are application code, where a preview is the product's word,
     // such as a file's or the Markdown editor's, and where a ResizeObserver is the application's.

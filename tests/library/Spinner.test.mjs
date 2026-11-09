@@ -2,8 +2,8 @@
 // status with its label beside the arc, Loading by default in the provider's language.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from '../support/importSource.mjs';
-import { elementsOf, firstElement, hasClass, textOf } from '../support/markup.mjs';
+import { importSource } from '../support/ImportSource.mjs';
+import { elementsOf, firstElement, hasClass, textOf } from '../support/Markup.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 

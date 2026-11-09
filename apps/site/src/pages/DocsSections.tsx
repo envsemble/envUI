@@ -9,7 +9,7 @@ import { partsOf } from '../figures/anatomy/Parts';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';
-import { LoadedPart } from './LoadedPart';
+import { LoadedPart } from '../loading/LoadedPart';
 import { PropsTables } from './PropsTables';
 import { providesOf } from '@docs-model/CatalogueContent';
 import { guideSubsections, raisedHeadings, wordsInCode } from '@docs-model/DocsContent';

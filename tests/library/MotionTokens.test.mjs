@@ -3,7 +3,7 @@
 // site's reading of them on the page's root (apps/site/src/shared/RootMotionTokens.ts).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 
 const { parseTime, easingFunction } = await importSource(
   'MotionTokens',

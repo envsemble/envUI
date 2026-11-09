@@ -5,9 +5,10 @@
 // segment. The tests serve the hosted build with these headers, so a header that breaks the site,
 // such as framing that blocks the site's own frames, fails them as it would fail the site.
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-const headersFile = fileURLToPath(new URL('../../apps/site/hosting/_headers', import.meta.url));
+const headersFile = resolve(repositoryRoot, 'apps/site/hosting/_headers');
 
 /** A rule of a _headers file: the paths it matches, and the headers it sets and removes. */
 interface HeaderRule {

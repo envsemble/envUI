@@ -4,7 +4,7 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { readDocumentation, type DocumentRecord } from './DocumentationReader.ts';
-import { documentationDirectory, examplesDirectory } from './DocumentationPaths.ts';
+import { documentationDirectory, examplesDirectory } from '../RepositoryPaths.ts';
 import {
   examplesOf,
   pageKindOf,

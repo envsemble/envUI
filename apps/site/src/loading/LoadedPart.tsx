@@ -1,5 +1,5 @@
 import { Suspense, useState, type ReactNode } from 'react';
-import { LoadBoundary, type lazyPart } from '../loading/LoadBoundary';
+import { LoadBoundary, type lazyPart } from './LoadBoundary';
 
 /**
  * A large part of a page that loads with the page that shows it, such as the token reference or

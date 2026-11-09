@@ -9,8 +9,8 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { build as vite, createServer } from 'vite';
 import { Theme, useTheme } from '../../packages/ui/dist/index.js';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
 const themeModule = fileURLToPath(
   new URL('../../packages/ui/dist/foundations/Theme.js', import.meta.url),
 );
@@ -213,7 +213,7 @@ test("Vite's development server keeps the warning for the browser", async () => 
             path: file.includes('jsx-runtime') ? 'react/jsx-runtime' : 'react',
             external: true,
           };
-        return { path: fileURLToPath(new URL(`.${file}`, pathToFileURL(repositoryRoot))) };
+        return { path: fileURLToPath(new URL(`.${file}`, pathToFileURL(`${repositoryRoot}/`))) };
       });
     },
   };
