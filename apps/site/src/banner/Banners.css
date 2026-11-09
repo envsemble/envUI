@@ -124,6 +124,13 @@
 .catalogue-banner-lines {
   --env-line-art-duration: calc(var(--env-motion-duration-slow) * 4);
 }
+/* Where it will draw itself in, as the head's script found before the first paint, a pre-rendered
+   page shows none of its lines until it starts to, rather than the whole drawing first. */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-site-banner-appear] .catalogue-banner-lines:not([data-motion]) {
+    visibility: hidden;
+  }
+}
 /* On the dark banner, the same contrast reads louder than in light: the lines are quieter there,
    so they keep light's presence. High contrast keeps them whole. */
 :where([data-env-theme='dark']) :is(.catalogue-banner-lines, .docs-banner-lines) {
