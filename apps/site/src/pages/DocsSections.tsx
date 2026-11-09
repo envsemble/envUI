@@ -1,6 +1,5 @@
 import { Column, DescriptionList, Text, type TableOfContentsItem } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/code';
-import { lazyPart } from '../loading/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
 import { UsageFigure } from '../figures/Figures';
 import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleton';
@@ -10,6 +9,7 @@ import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline'
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';
 import { LoadedPart } from '../loading/LoadedPart';
+import { pageParts } from './PageParts';
 import { PropsTables } from './PropsTables';
 import { providesOf } from '@docs-model/CatalogueContent';
 import { guideSubsections, raisedHeadings, wordsInCode } from '@docs-model/DocsContent';
@@ -40,13 +40,6 @@ function SectionHeading({ heading }: { heading: { id: string; label: string } })
   );
 }
 
-/** The palette's swatches, with their color picker, which load with the page that shows them. */
-const colorPalette = lazyPart(
-  () => import('../figures/foundations/ColorPalette'),
-  (module) => module.ColorPalette,
-  'src/figures/foundations/ColorPalette.tsx',
-);
-
 /**
  * The colors guide's editable palette: every role a component paints, by its token, with its value
  * in the current theme, each a swatch that picks another color for this visit.
@@ -60,7 +53,11 @@ export function PaletteSection() {
         another color: the whole catalogue follows, in this theme only, until you reload.
       </Text>
       <SpecimenHeadingLevel value={3}>
-        <LoadedPart part={colorPalette} what="palette" placeholder={<ColorPaletteSkeleton />} />
+        <LoadedPart
+          part={pageParts.palette}
+          what="palette"
+          placeholder={<ColorPaletteSkeleton />}
+        />
       </SpecimenHeadingLevel>
     </Column>
   );

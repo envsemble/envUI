@@ -3,6 +3,7 @@ import { loadFoundationFigures } from '../figures/foundations/FoundationFigures'
 import { loadDocument } from './PageContent';
 import { loadPageView } from './PageViews';
 import { settled } from '../loading/LoadOnce';
+import { loadPageParts } from './PageParts';
 
 /**
  * What a page needs before it renders, loading: its kind's view, and its content and a
@@ -49,6 +50,16 @@ export const preloadPage = (page: RoutePage | undefined): Promise<unknown> =>
  */
 export const preloadPageContent = (page: RoutePage | undefined): Promise<unknown> =>
   Promise.allSettled(page ? contentLoads(page) : []);
+
+/**
+ * Starts loading what the page the site opens on needs, as preloadPage does, and also the parts of
+ * it that load on their own, such as the token reference (PageParts.ts): the server renders them
+ * in the page, and the browser hydrates them in place, so it has to have them first, as it does
+ * the page's view and content, else React renders them again with their skeletons. A link's page
+ * shows their skeletons while they load.
+ */
+export const preloadFirstPage = (page: RoutePage | undefined): Promise<unknown> =>
+  Promise.allSettled([...loads(page), ...(page ? loadPageParts(page) : [])]);
 
 /** Whether what a page needs has loaded, or failed to, so it renders at once. */
 export const pageLoaded = (page: RoutePage | undefined) => loads(page).every(settled);

@@ -265,3 +265,23 @@ export function normalizeRoute(route: string): string {
   const renamed = renamedPages[`${area}/${id}`];
   return pageView(renamed ? [renamed, ...view].join('/') : path, address);
 }
+
+/**
+ * Old addresses whose path alone says where they lead: the pages that moved, were folded into
+ * another, became a pattern or were renamed. The host answers each with a redirect
+ * (scripts/site/PrerenderSite.ts writes them to _redirects), so a crawler, a link preview or a
+ * reader without the site's script finds the page; normalizeRoute redirects the rest in the
+ * browser, such as an old view of a page or an address whose query names a document.
+ */
+export const oldPaths = [
+  ...Object.keys(movedPages),
+  'docs/agent-skills',
+  'docs/agent-tooling',
+  ...Object.keys(foldedPages).flatMap((path) => [path, `docs/${path}`]),
+  ...Object.keys(componentPatterns).map((slug) => `components/${slug}`),
+  ...Object.keys(renamedPages),
+  'foundations/composition',
+  'docs/foundations/composition',
+  'foundations/content',
+  'docs/foundations/content',
+];

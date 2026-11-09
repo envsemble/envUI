@@ -1,8 +1,25 @@
 @layer env.components {
+  /* The code theme's colors, standard and high-contrast, set by every boundary for its theme, so
+     code takes those of the nearest one, also on a page rendered on the server before it hydrates,
+     when only the root knows the reader's theme. They are fixed in codeColors.ts, which
+     tests/library/CodeHighlighting.test.mjs holds these to. */
+  /* stylelint-disable color-no-hex, declaration-property-value-disallowed-list -- the code themes'
+     own colors, outside the color tokens, as the colors of highlighted tokens are. */
   .env-theme {
     --env-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
     --env-code-font-size: 0.8125rem;
+    --env-code-background: rgb(31 31 34 / 0.06);
+    --env-code-background-high: rgb(31 31 34 / 0.06);
+    --env-code-foreground: #1f2328;
+    --env-code-foreground-high: #0e1116;
   }
+  .env-theme[data-env-theme='dark'] {
+    --env-code-background: rgb(232 234 238 / 0.05);
+    --env-code-background-high: #0a0c10;
+    --env-code-foreground: #b2c0cd;
+    --env-code-foreground-high: #f0f3f6;
+  }
+  /* stylelint-enable color-no-hex, declaration-property-value-disallowed-list */
   /* Code's colors come from the code theme, standard and high-contrast: a custom property that starts
      with the theme's high-contrast switch (Theme.css), such as a token's --env-code-token-now, holds
      its high-contrast color or nothing. */

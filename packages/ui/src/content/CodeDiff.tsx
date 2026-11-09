@@ -244,7 +244,9 @@ export function CodeDiff({
       {...props}
       ref={rootRef}
       className={classNames('env-code-diff', className)}
-      style={{ ...codeThemeStyle(shown?.theme ?? theme), ...style }}
+      // Code.css gives it the nearest boundary's code colors; a diff still showing the theme before a
+      // switch keeps that theme's until the new one loads.
+      style={shown && shown.theme !== theme ? { ...codeThemeStyle(shown.theme), ...style } : style}
       aria-busy={!loaded && !failed ? true : undefined}
     >
       {failed ? (
