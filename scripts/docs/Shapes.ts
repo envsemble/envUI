@@ -61,6 +61,7 @@ export const fields =
   (value, where) => {
     if (!isMap(value)) return fail(where, 'a map');
     const result: Partial<T> = {};
+    // The readers have exactly the keys of T.
     for (const key of Object.keys(readers) as (keyof T & string)[]) {
       const read = readers[key](value[key], `${where}.${key}`);
       if (read !== undefined) result[key] = read;

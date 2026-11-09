@@ -271,6 +271,7 @@ export function withImport<Section extends PageSection>(
     const after = sections.findLastIndex((section) =>
       ['accessibility', 'rules', 'anatomy', 'variants', 'behaviour', 'words'].includes(section.id),
     );
+    // A section that a page reads has more fields, which the generated Compose doesn't take.
     const code = {
       id: 'code',
       title,
@@ -450,6 +451,7 @@ export function splitFrontmatter(
   try {
     frontmatter = parseYaml(match[1], { uniqueKeys: true, strict: true });
   } catch (error) {
+    // The YAML parser throws only Errors.
     throw new Error(`Invalid frontmatter in ${path}: ${(error as Error).message}`, {
       cause: error,
     });

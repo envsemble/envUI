@@ -95,6 +95,7 @@ interface EntryContext {
 
 /** Fails unless the index lists a page under the section of its kind, from its folder. */
 function checkIndexSection(path: string, kind: string, group: string) {
+  // A heading the index has but indexSectionKinds lacks reads as undefined.
   const sectionKind = indexSectionKinds[group as keyof typeof indexSectionKinds];
   const kindSection = Object.keys(indexSectionKinds).find(
     (section) => indexSectionKinds[section as keyof typeof indexSectionKinds] === kind,

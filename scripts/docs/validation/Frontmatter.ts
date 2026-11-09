@@ -109,6 +109,7 @@ function statusesProblems(
   for (const [name, status] of Object.entries(value)) {
     if (!listedComponents(frontmatter).includes(name))
       problems.push(`${key} names ${name}, which components does not list`);
+    // Widened, so includes takes a value the YAML gave, of any type.
     if (!(pageStatuses as readonly unknown[]).includes(status))
       problems.push(`${key} of ${name} must be one of ${pageStatuses.join(', ')}`);
     else if (status === (schema ? frontmatter.status : (frontmatter.status ?? guideExportStatus)))
