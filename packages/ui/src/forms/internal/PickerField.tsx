@@ -409,6 +409,7 @@ export function PickerField({
         className={popupClassName}
         anchorRef={controlRef}
         popupRef={popupRef}
+        triggerRef={triggerRef}
         // The portal leaves the field's text direction behind; the popup keeps it.
         dir={direction}
         name={accessibleName}

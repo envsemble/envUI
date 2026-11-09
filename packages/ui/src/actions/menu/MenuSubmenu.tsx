@@ -111,11 +111,23 @@ export function Submenu({
         sideOffset={() => menuPopupInlineInset(trigger.current?.closest('.env-menu')) + submenuGap}
         alignOffset={() => -menuPopupInset(popup.current)}
         trigger={trigger}
-        // Escape and ← close only the submenu and return to its row. Otherwise focus has moved on,
-        // or an item closed the whole menu, whose own trigger takes focus.
-        finalFocus={() =>
-          submenuReturnReasons.has(closeReason.current ?? '') ? (trigger.current ?? false) : false
-        }
+        // Escape and ← close only the submenu and return to its row, while focus is still in the
+        // submenu or on the row: it runs as the submenu starts to close and again once it has gone,
+        // when focus may have moved on in the menu. Otherwise focus has moved on, or an item closed
+        // the whole menu, whose own trigger takes focus.
+        finalFocus={() => {
+          const row = trigger.current;
+          const active = row?.ownerDocument.activeElement;
+          // Focus in a submenu that has gone falls to the body.
+          const focusHere =
+            active == null ||
+            active === row ||
+            active === row?.ownerDocument.body ||
+            popup.current?.contains(active) === true;
+          return submenuReturnReasons.has(closeReason.current ?? '') && focusHere
+            ? (row ?? false)
+            : false;
+        }}
         className={className}
         popupRef={(node: HTMLDivElement | null) => {
           popup.current = node;
