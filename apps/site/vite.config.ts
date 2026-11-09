@@ -17,6 +17,7 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 // npm run build, so the library's source module is imported instead.
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
 import { displayStorageKeys } from './src/display/DisplayStorage.ts';
+import { viewModules, viewOfAddress } from './src/pages/ViewOfAddress.ts';
 import {
   createDisplayBootstrapScript,
   createFirstPaintStyle,
@@ -157,30 +158,58 @@ export default defineConfig(() => {
         },
       },
       {
-        // The page's content (generated/pages/<id>.json, PageContent.ts) loads beside the site's
-        // script rather than once that has arrived and run: a script in index.html preloads the
-        // file of the page the address names by its last segment, such as button for
+        // What the page the address names needs loads beside the site's script rather than once
+        // that has arrived and run: a script in index.html, before the site's script and its style
+        // sheet, which would hold it up, preloads the view of its kind (pages/ViewOfAddress.ts) with
+        // the files that view's module imports, and its content (generated/pages/<id>.json,
+        // PageContent.ts), the file of the page its last segment names, such as button for
         // /components/button and /docs/components/button. A segment that names no page, such as
-        // components, preloads nothing.
+        // components, preloads no content.
         name: 'envui-content-preload',
         apply: 'build',
         transformIndexHtml: {
           order: 'post',
-          handler: (_html, { bundle }) => {
-            const files: Record<string, string> = {};
-            for (const file of Object.values(bundle ?? {})) {
-              const page =
-                file.type === 'chunk' &&
-                /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(file.facadeModuleId ?? '')?.[1];
-              if (page) files[page] = file.fileName;
+          handler: (html, { bundle }) => {
+            const chunks = Object.values(bundle ?? {}).filter((file) => file.type === 'chunk');
+            const contents: Record<string, string> = {};
+            for (const file of chunks) {
+              const page = /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(
+                file.facadeModuleId ?? '',
+              )?.[1];
+              if (page) contents[page] = file.fileName;
             }
-            return [
-              {
-                tag: 'script',
-                children: `(function(){var f=${JSON.stringify(files)}[location.pathname.split('/').filter(Boolean).pop()];if(f){var l=document.createElement('link');l.rel='modulepreload';l.href='/'+f;document.head.appendChild(l)}})();`,
-                injectTo: 'head' as const,
-              },
-            ];
+            const byName = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));
+            // What the site's script loads itself, which the views' files leave out.
+            const started = new Set<string>();
+            const imported = (name: string, into: Set<string>) => {
+              if (into.has(name)) return;
+              into.add(name);
+              for (const next of byName.get(name)?.imports ?? []) imported(next, into);
+            };
+            for (const chunk of chunks) if (chunk.isEntry) imported(chunk.fileName, started);
+            const views: Record<string, { scripts: string[]; styles: string[] }> = {};
+            for (const [view, module] of Object.entries(viewModules)) {
+              const chunk = chunks.find((file) => file.facadeModuleId?.endsWith(`/${module}`));
+              if (!chunk) throw new Error(`No chunk holds ${module}, which a page's view is in.`);
+              const scripts = new Set<string>();
+              imported(chunk.fileName, scripts);
+              const files = [...scripts].filter((name) => !started.has(name));
+              views[view] = {
+                scripts: files,
+                styles: [
+                  ...new Set(
+                    files.flatMap((name) => [
+                      ...(byName.get(name)?.viteMetadata?.importedCss ?? []),
+                    ]),
+                  ),
+                ],
+              };
+            }
+            const script = `<script>(function(){var p=location.pathname,v=${JSON.stringify(views)}[(${String(viewOfAddress)})(p)],c=${JSON.stringify(contents)}[p.split('/').filter(Boolean).pop()];function l(r,f,a){var e=document.createElement('link');e.rel=r;e.href='/'+f;if(a)e.as=a;document.head.appendChild(e)}v.scripts.forEach(function(f){l('modulepreload',f)});v.styles.forEach(function(f){l('preload',f,'style')});if(c)l('modulepreload',c)})();</script>`;
+            const site = html.indexOf('<script type="module"');
+            if (site === -1)
+              throw new Error('index.html has no module script, which the preload goes before.');
+            return `${html.slice(0, site)}${script}\n    ${html.slice(site)}`;
           },
         },
       },

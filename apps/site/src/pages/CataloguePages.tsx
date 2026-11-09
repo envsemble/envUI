@@ -1,12 +1,10 @@
-import { Alert, Column, Link } from '@envsemble/envui';
+import { Alert, Link } from '@envsemble/envui';
 import { SiteBanner } from '../banner/SiteBanner';
 import { catalogueTrail } from '../routes/Trails';
-import type { DocumentPage, RoutePage } from '../routes/SiteRoutes';
+import type { DocumentPage } from '../routes/SiteRoutes';
 import { PartSwitch } from '../routes/OtherPart';
-import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
-import { Catalogue } from './Catalogue';
-import { FoundationCatalogue } from './FoundationCatalogue';
-import { PatternCatalogue } from './PatternCatalogue';
+import { TemplateContent } from '../template/TemplateContent';
+import { MetadataBadges } from '../template/MetadataBadges';
 import { useDocument } from './PageContent';
 
 /**
@@ -89,57 +87,6 @@ export function FoundationPage({ page }: { page: DocumentPage }) {
       {document.id === 'icons' && <IconsCredit />}
       {/* A foundation is its Markdown, with its figures in place. */}
       <TemplateContent document={document} related={false} />
-    </>
-  );
-}
-
-/** Every foundation at a glance, each a way to its page. */
-export function FoundationsPage({ page }: { page: RoutePage }) {
-  return (
-    <>
-      <SiteBanner
-        title={page.title}
-        trail={catalogueTrail(page)}
-        description={page.summary}
-        subject="foundations"
-      />
-      <Column gap={7} className="site-article catalogue-overview">
-        <FoundationCatalogue />
-      </Column>
-    </>
-  );
-}
-
-/** Every component, by what it is for. */
-export function ComponentsPage({ page }: { page: RoutePage }) {
-  return (
-    <>
-      <SiteBanner
-        title={page.title}
-        trail={catalogueTrail(page)}
-        description={page.summary}
-        subject="components"
-      />
-      <Column gap={7} className="site-article catalogue-overview">
-        <Catalogue />
-      </Column>
-    </>
-  );
-}
-
-/** Every pattern, by what people are doing. */
-export function PatternsPage({ page }: { page: RoutePage }) {
-  return (
-    <>
-      <SiteBanner
-        title={page.title}
-        trail={catalogueTrail(page)}
-        description={page.summary}
-        subject="patterns"
-      />
-      <Column gap={7} className="site-article catalogue-overview">
-        <PatternCatalogue />
-      </Column>
     </>
   );
 }

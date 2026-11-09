@@ -1,4 +1,4 @@
-import { Suspense, useRef, useState, type ReactNode } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import {
   Column,
   EnvUIProvider,
@@ -11,34 +11,13 @@ import {
   Tooltip,
 } from '@envsemble/envui';
 import { IconMenu } from '@envsemble/envui/icons/Menu';
-import {
-  findPage,
-  type Area,
-  type PageKind,
-  type PageOfKind,
-  type RoutePage,
-} from './routes/SiteRoutes';
+import { findPage, type Area, type RoutePage } from './routes/SiteRoutes';
 import { PageBoundary } from './banner/PageBoundary';
 import { retryDocument } from './pages/PageContent';
 import { SiteBanner } from './banner/SiteBanner';
 import { HasContents, PageContents } from './banner/PageContents';
 import { PageFooter } from './banner/PageFooter';
-import { Overview } from './pages/Overview';
-import {
-  ComponentPage,
-  ComponentsPage,
-  PatternsPage,
-  FoundationPage,
-  FoundationsPage,
-  PatternPage,
-} from './pages/CataloguePages';
-import {
-  DocsReferencePage,
-  ChangelogDocsPage,
-  FoundationGuidePage,
-  GuidePage,
-  TokensPage,
-} from './pages/DocsPages';
+import { retryPageView, usePageView } from './pages/PageViews';
 import { Brand } from './brand/Brand';
 import { DocsNavigation, CatalogueNavigation } from './navigation/SiteNavigation';
 import { drawerless } from './navigation/CatalogueDestinations';
@@ -57,21 +36,13 @@ import { SiteSearch } from './search/SiteSearch';
 import { LoadingStatus } from './loading/LoadingStore';
 import { PageSkeleton } from './pages/PageSkeleton';
 
-/** What each kind of page renders. */
-const pageContent: { [Kind in PageKind]: (props: { page: PageOfKind<Kind> }) => ReactNode } = {
-  home: Overview,
-  foundations: FoundationsPage,
-  components: ComponentsPage,
-  patterns: PatternsPage,
-  component: ComponentPage,
-  pattern: PatternPage,
-  foundation: FoundationPage,
-  guide: GuidePage,
-  'docs-changelog': ChangelogDocsPage,
-  tokens: TokensPage,
-  'foundation-guide': FoundationGuidePage,
-  reference: DocsReferencePage,
-};
+/** A page, as its kind's view renders it, which loads with the first page of its kind. */
+function PageView({ page }: { page: RoutePage }) {
+  const View = usePageView(page);
+  // The view is one of the pages' module-level components, loaded once and kept, not created here.
+  // eslint-disable-next-line react-hooks/static-components
+  return <View page={page} />;
+}
 
 /** The title of a page's tab: the catalogue's are envUI's, the Docs' envUI Docs'. */
 function documentTitle(page: RoutePage | undefined, area: Area) {
@@ -157,10 +128,6 @@ function PageColumns({
   routePath: string;
   contents: boolean;
 }) {
-  // The page's component, looked up among module-level components, not created here. Each
-  // kind's takes that kind's page (pageContent), which TypeScript can't follow
-  // through the lookup.
-  const Content = page && (pageContent[page.kind] as (props: { page: RoutePage }) => ReactNode);
   return (
     <div className="site-page-layout">
       <div className="site-page-grid" data-contents={contents || undefined}>
@@ -170,7 +137,9 @@ function PageColumns({
               title={page?.title ?? 'Page not found'}
               route={route}
               onRetry={() => {
-                if (page?.document) retryDocument(page.document.id);
+                if (!page) return;
+                retryPageView(page.kind);
+                if (page.document) retryDocument(page.document.id);
               }}
             >
               {/* A page's content loads with it (useDocument), which the first page and a link's
@@ -181,7 +150,7 @@ function PageColumns({
                 key={page?.path ?? routePath}
                 fallback={page && <PageSkeleton page={page} />}
               >
-                {Content ? <Content key={page.path} page={page} /> : <PageNotFound area={area} />}
+                {page ? <PageView key={page.path} page={page} /> : <PageNotFound area={area} />}
               </Suspense>
             </PageBoundary>
           </HasContents>
