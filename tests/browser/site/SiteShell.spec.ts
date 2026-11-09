@@ -579,39 +579,85 @@ test("a catalogue page's contents list none of its figures' headings, a do and d
   expect(inFigures).toEqual([]);
 });
 
-test("a page's contents are whole from its first render, while its later sections are outlines", async ({
+test("a page's contents are whole from its first render, pre-rendered or followed to, while its later sections are outlines", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  // The contents in the first frame that paints a page's heading; scripts/test/CheckContents.ts
-  // checks every page the same way, with the parts held back.
+  // The contents in the first frame that paints the heading of Button's page at
+  // `globalThis.awaited`, a path, and how many of its sections are still to show; scripts/test/CheckContents.ts checks
+  // every page the same way, with the parts held back.
   await page.addInitScript(() => {
+    const state = globalThis as {
+      awaited?: string;
+      firstContents?: string[];
+      pending?: number;
+    };
     const take = () => {
-      if (!document.querySelector('.site-page-column h1')) return requestAnimationFrame(take);
-      (globalThis as { firstContents?: string[] }).firstContents = [
-        ...document.querySelectorAll('.site-contents-list a'),
-      ].map((link) => `${link.getAttribute('href')} ${link.textContent}`);
-      // The sections after the first are still to show.
-      (globalThis as { pending?: number }).pending =
-        document.querySelectorAll('[data-site-pending]').length;
+      requestAnimationFrame(take);
+      if (state.firstContents || location.pathname !== state.awaited) return;
+      // A page followed to paints its own heading once its view replaces the page before.
+      if (document.querySelector('.site-page-column h1')?.textContent !== 'Button') return;
+      state.firstContents = [...document.querySelectorAll('.site-contents-list a')].map(
+        (link) => `${link.getAttribute('href')} ${link.textContent}`,
+      );
+      state.pending = document.querySelectorAll('[data-site-pending]').length;
     };
     requestAnimationFrame(take);
   });
-  for (const path of ['/components/button', '/docs/components/button']) {
-    await page.goto(`${siteBuildUrl}${path}`);
-    const first = await page
-      .waitForFunction(() => (globalThis as { firstContents?: string[] }).firstContents)
-      .then((handle) => handle.jsonValue());
-    expect(await page.evaluate(() => (globalThis as { pending?: number }).pending)).toBeGreaterThan(
-      0,
-    );
+  const contentsOf = async () => {
     await expect(page.locator('[data-site-pending], .site-loading')).toHaveCount(0);
     const loaded = await page
       .locator('.site-contents-list a')
       .evaluateAll((links) =>
         links.map((link) => `${link.getAttribute('href')} ${link.textContent}`),
       );
+    expect(loaded.length).toBeGreaterThan(3);
+    // Each leads to one of the page's headings.
+    const targets = await page.evaluate(
+      (hrefs) => hrefs.map((href) => document.getElementById(href.slice(1))?.tagName),
+      loaded.map((entry) => entry.split(' ')[0]),
+    );
+    expect(targets.every((tag) => tag === 'H2')).toBe(true);
+    return loaded;
+  };
+  const firstRender = () =>
+    page
+      .waitForFunction(() => (globalThis as { firstContents?: string[] }).firstContents)
+      .then((handle) => handle.jsonValue());
+  for (const [path, from] of [
+    ['/components/button', '/components/link'],
+    ['/docs/components/button', '/docs/components/link'],
+  ] as const) {
+    // Pre-rendered, the page's HTML holds the contents, beside the page and under its banner,
+    // before any script runs, as its first render does; every section is there.
+    await page.addInitScript((awaited) => {
+      (globalThis as { awaited?: string }).awaited = awaited;
+    }, path);
+    await page.goto(`${siteBuildUrl}${path}`);
+    const first = await firstRender();
+    const loaded = await contentsOf();
     expect(first).toEqual(loaded);
+    const html = await (await page.request.get(`${siteBuildUrl}${path}`)).text();
+    const inHtml = [...html.matchAll(/<a [^>]*class="env-table-of-contents-link"[^>]*>/g)].map(
+      ([link]) => /href="([^"]*)"/.exec(link)?.[1],
+    );
+    const hrefs = loaded.map((entry) => entry.split(' ')[0]);
+    expect(inHtml).toEqual([...hrefs, ...hrefs]);
+    // Followed to from another page, it renders in the browser, its sections after the first one
+    // after another, each its outline meanwhile, and its contents are whole all the same.
+    await openSite(page, `${siteBuildUrl}${from}`);
+    await page.evaluate(() => {
+      (globalThis as { firstContents?: string[] }).firstContents = undefined;
+    });
+    await page
+      .getByRole('navigation', { name: path.startsWith('/docs') ? 'Docs' : 'Components' })
+      .getByRole('link', { name: 'Button', exact: true })
+      .click();
+    expect(await firstRender()).toEqual(loaded);
+    expect(await page.evaluate(() => (globalThis as { pending?: number }).pending)).toBeGreaterThan(
+      0,
+    );
+    expect(await contentsOf()).toEqual(loaded);
   }
 });
 
