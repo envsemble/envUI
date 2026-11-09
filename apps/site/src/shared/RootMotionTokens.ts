@@ -34,6 +34,8 @@ function rootToken<T extends number | string>(
 ): T {
   const element = root();
   if (!element) return outside;
+  // Where nothing can watch the root, as in a unit test's stand-in document, read each time.
+  if (typeof MutationObserver === 'undefined') return read(element);
   if (!rootChanges) {
     rootChanges = new MutationObserver(() => kept.clear());
     rootChanges.observe(element, { attributes: true });

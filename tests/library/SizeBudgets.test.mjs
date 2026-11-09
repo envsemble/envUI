@@ -42,10 +42,10 @@ const jsBudgets = [
 
 /** Each component's own envUI code, minified, its Base UI and Floating UI left out. */
 const componentBudgets = {
-  // 12,589 measured.
-  Tooltip: 12700,
-  // 7,633 measured.
-  Popover: 7750,
+  // 12,718 measured, with skeletons aligning their pulses once a commit.
+  Tooltip: 12950,
+  // 7,757 measured, with skeletons aligning their pulses once a commit.
+  Popover: 7900,
   // 15,184 measured.
   Menu: 15450,
   // 16,470 measured.
