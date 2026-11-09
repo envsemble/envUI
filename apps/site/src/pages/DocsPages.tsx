@@ -5,7 +5,6 @@ import { pagesOf, type DocumentPage, type RoutePage } from '../routes/SiteRoutes
 import { docsTrail } from '../routes/Trails';
 import { docsRoute } from '../routes/Address';
 import { PartSwitch } from '../routes/OtherPart';
-import { lazyPart } from '../loading/LoadBoundary';
 import { PageChangelog, TemplateContent } from '../template/TemplateContent';
 import { MetadataBadges } from '../template/MetadataBadges';
 import { useRevealed } from '../template/useRevealed';
@@ -13,6 +12,8 @@ import { SectionOutline } from '../markdown/SectionOutline';
 import { useDocument } from './PageContent';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from '../loading/LoadedPart';
+import { pageParts } from './PageParts';
+import { partsOfPage } from './ViewModules';
 import { ChangelogSkeleton } from './ChangelogOutline';
 import { TokenReferenceSkeleton } from './TokenTables';
 import { ReleaseNotes } from './ReleaseNotes';
@@ -33,13 +34,6 @@ import { withoutAgentNote } from '@docs-model/DocsContent';
  * The Docs' route views: a guide, the token reference, the changelog, a foundation's developer
  * part and a component's or a pattern's reference, each placing its sections (DocsSections.tsx).
  */
-
-/** The token reference, a large page that loads with the page that shows it. */
-const tokenReference = lazyPart(
-  () => import('./TokenReference'),
-  (module) => module.TokenReference,
-  'src/pages/TokenReference.tsx',
-);
 
 /**
  * A guide of docs/, such as migration, with its figures in place. The setup guide is the Docs'
@@ -83,7 +77,7 @@ export function TokensPage({ page }: { page: RoutePage }) {
       />
       <Column gap={7} className="site-article">
         <LoadedPart
-          part={tokenReference}
+          part={pageParts.tokenReference}
           what="token reference"
           placeholder={<TokenReferenceSkeleton />}
         />
@@ -91,13 +85,6 @@ export function TokensPage({ page }: { page: RoutePage }) {
     </>
   );
 }
-
-/** The full changelog, a large page that loads with the page that shows it. */
-const changelog = lazyPart(
-  () => import('./Changelog'),
-  (module) => module.Changelog,
-  'src/pages/Changelog.tsx',
-);
 
 /**
  * What changed in each release of @envsemble/envui: the release notes, a few lines on each release
@@ -123,7 +110,11 @@ export function ChangelogDocsPage({ page }: { page: RoutePage }) {
           <Text render={<h2 id="every-change" />} variant="title" className="site-section-title">
             Every change
           </Text>
-          <LoadedPart part={changelog} what="changelog" placeholder={<ChangelogSkeleton />} />
+          <LoadedPart
+            part={pageParts.changelog}
+            what="changelog"
+            placeholder={<ChangelogSkeleton />}
+          />
         </Column>
       </Column>
     </>
@@ -150,7 +141,7 @@ export function FoundationGuidePage({ page }: { page: DocumentPage }) {
         <CodeGuide document={document} />
         <WordsInCode document={document} />
         <Provides document={document} title="Accessibility" id="provides" />
-        {document.id === 'colors' && <PaletteSection />}
+        {partsOfPage(page.kind, document.id).includes('palette') && <PaletteSection />}
       </Column>
     </>
   );

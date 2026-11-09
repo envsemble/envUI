@@ -17,7 +17,7 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 // npm run build, so the library's source module is imported instead.
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
 import { displayStorageKeys } from './src/display/DisplayStorage.ts';
-import { viewModules } from './src/pages/ViewModules.ts';
+import { partModules, viewModules } from './src/pages/ViewModules.ts';
 import { siteDescription } from './src/routes/SiteDescription.ts';
 import {
   createDisplayBootstrapScript,
@@ -175,7 +175,8 @@ export default defineConfig(() => {
       },
       {
         // What each page needs loads beside the site's script rather than once that has arrived and
-        // run: the files the module of its kind's view imports (pages/ViewModules.ts) and the file
+        // run: the files the module of its kind's view imports (pages/ViewModules.ts), and those of
+        // the parts of it that load on their own and that the server renders, and the file
         // of its content (generated/pages/<id>.json, PageContent.ts), and on a catalogue page the
         // style sheets of its figures (examples/<id>/, specimens/<id>/ and what they import), which
         // the site applies as it starts (applyFigureStyles, pages/PreloadPage.ts). The lists go to
@@ -206,24 +207,24 @@ export default defineConfig(() => {
               for (const next of byName.get(name)?.imports ?? []) imported(next, into);
             };
             for (const chunk of chunks) if (chunk.isEntry) imported(chunk.fileName, started);
-            const views: Record<string, { scripts: string[]; styles: string[] }> = {};
-            for (const [view, module] of Object.entries(viewModules)) {
-              const chunk = chunks.find((file) => file.facadeModuleId?.endsWith(`/${module}`));
-              if (!chunk) throw new Error(`No chunk holds ${module}, which a page's view is in.`);
-              const scripts = new Set<string>();
-              imported(chunk.fileName, scripts);
-              const files = [...scripts].filter((name) => !started.has(name));
-              views[view] = {
-                scripts: files,
-                styles: [
-                  ...new Set(
-                    files.flatMap((name) => [
-                      ...(byName.get(name)?.viteMetadata?.importedCss ?? []),
-                    ]),
-                  ),
-                ],
-              };
-            }
+            // The files of a module, a view's or a part's, and what it imports, but the start's.
+            const filesOf = (modules: Record<string, string>, what: string) =>
+              Object.fromEntries(
+                Object.entries(modules).map(([name, module]) => {
+                  const chunk = chunks.find((file) => file.facadeModuleId?.endsWith(`/${module}`));
+                  if (!chunk) throw new Error(`No chunk holds ${module}, which ${what} is in.`);
+                  const scripts = new Set<string>();
+                  imported(chunk.fileName, scripts);
+                  const files = [...scripts].filter((file) => !started.has(file));
+                  const styles = files.flatMap((file) => [
+                    ...(byName.get(file)?.viteMetadata?.importedCss ?? []),
+                  ]);
+                  return [name, { scripts: files, styles: [...new Set(styles)] }];
+                }),
+              );
+            const views = filesOf(viewModules, "a page's view");
+            // The parts of pages that the server renders, which a page loads with its view.
+            const parts = filesOf(partModules, 'a part of a page');
             // The style sheets the site starts with, which a page's figures' sheets leave out.
             const startedStyles = new Set(
               [...started].flatMap((name) => [
@@ -253,7 +254,7 @@ export default defineConfig(() => {
             this.emitFile({
               type: 'asset',
               fileName: '.vite/page-preloads.json',
-              source: JSON.stringify({ views, contents, figureStyles }),
+              source: JSON.stringify({ views, parts, contents, figureStyles }),
             });
           },
         },
