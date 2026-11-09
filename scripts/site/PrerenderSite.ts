@@ -83,7 +83,11 @@ export async function buildSiteServer(serverDirectory: string) {
       // The client's chunks, which carry a page's parts to the browser, don't matter here.
       rolldownOptions: { output: { codeSplitting: false } },
     },
-    ssr: { noExternal: true },
+    // The server resolves the library from its source too: Vite gives the site's resolve.conditions
+    // to the browser's build only, and without envui-source here the package's name would bring in
+    // packages/ui/dist beside the source the site's internal imports reach, two copies of every
+    // context, and the server would render whatever the last library build was.
+    ssr: { noExternal: true, resolve: { conditions: ['envui-source', 'module', 'node'] } },
   });
 }
 

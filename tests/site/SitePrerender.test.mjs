@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { resolve } from 'node:path';
 import {
@@ -27,6 +28,14 @@ const text = (html) =>
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&amp;/g, '&');
+
+test('the server renders with the library from its source, as the browser does', async () => {
+  // One copy of the library: the built package beside the source would bring a second copy of
+  // every context, and render what the last library build was rather than the source.
+  const bundle = await readFile(resolve(serverDirectory, 'Server.js'), 'utf8');
+  assert.equal(bundle.includes('packages/ui/dist/'), false);
+  assert.equal(bundle.includes('packages/ui/src/'), true);
+});
 
 test('every page the site serves pre-renders, with its one heading and its title', async () => {
   assert.deepEqual(
