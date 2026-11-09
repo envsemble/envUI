@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl } from '../helpers/Servers';
 import { requireSite, serveSite, siteUrl } from '../helpers/HostedSite';
 import { chooseScheme } from '../helpers/CatalogueThemes';
 import { renderLlmsText, renderSkill } from '../../../scripts/site/SiteAgentFiles.ts';
@@ -80,7 +80,7 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
 test('a live example keeps its state when the theme changes', async ({ page }) => {
   // The 0.x preview of text fields opens the TextField page, whose live examples follow the
   // documentation's theme.
-  await page.goto(`${siteDevUrl}/components/input/preview`);
+  await page.goto(`${siteBuildUrl}/components/input/preview`);
   const example = page.getByRole('group', { name: 'TextField example', exact: true });
   const projectName = example.getByRole('textbox', { name: 'Project name', exact: true });
   await projectName.fill('Winter release');
@@ -157,7 +157,7 @@ test('the navigation holds the wordmark and search, the page the other area and 
     ['/docs/tokens', 'Catalogue', 'Docs'],
   ] as const) {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto(`${siteDevUrl}${address}`);
+    await page.goto(`${siteBuildUrl}${address}`);
     await expect(page.getByRole('banner')).toHaveCount(0);
     const wordmark = page
       .getByRole('navigation', { name: brand })
@@ -244,7 +244,7 @@ test('settings stored under the keys of before move to their keys now, and still
     localStorage.setItem('envui-catalogue-scale', 'compact');
     localStorage.setItem('envui-catalogue-drawer-width-site', '25');
   });
-  await page.goto(`${siteDevUrl}/components/button`);
+  await page.goto(`${siteBuildUrl}/components/button`);
   await expect(page.locator('.site-app')).toHaveAttribute('data-env-theme', 'dark');
   await expect(page.locator('html')).toHaveAttribute('data-env-scale', 'compact');
   const stored = await page.evaluate(() => ({ ...localStorage }));
@@ -264,7 +264,7 @@ test("every label and heading of the catalogue's and the Docs' drawers fits on o
   // The Overview, a destination of one page, has no drawer.
   const sections = catalogueSections.filter((section) => section !== 'Overview');
   for (const path of [...sections.map((section) => sectionHome(section).path), 'docs']) {
-    await page.goto(`${siteDevUrl}/${path}`);
+    await page.goto(`${siteBuildUrl}/${path}`);
     const drawer = page.locator('.site-sidebar');
     await expect(drawer.locator('.env-navigation-drawer-item').first()).toBeVisible();
     // Every section open, so the labels of each one's pages are measured too.
@@ -286,7 +286,7 @@ test('the navigation shows the current page, and focus moves to the page only on
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto(`${siteDevUrl}/components/tree`);
+  await page.goto(`${siteBuildUrl}/components/tree`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tree');
   // The rail marks the page's destination, and the drawer beside it lists the destination's pages.
   await expect(
@@ -324,14 +324,14 @@ test('the navigation shows the current page, and focus moves to the page only on
   // subject in the other part and back.
   const partSwitch = page.getByRole('navigation', { name: 'Design or code' });
   await partSwitch.getByRole('link', { name: 'Code', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/docs/foundations/colors`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/docs/foundations/colors`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
   await expect(page.getByRole('navigation', { name: 'Catalogue' })).toHaveCount(0);
   await expect(
     page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Design tokens' }),
   ).toBeVisible();
   await partSwitch.getByRole('link', { name: 'Design', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/foundations/colors`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/foundations/colors`);
   await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
 });
 
@@ -339,7 +339,7 @@ test("the catalogue's drawer comes in beside the rail, goes again and brings in 
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const drawer = page.locator('.site-sidebar');
   const list = drawer.locator('.env-navigation-drawer-list');
   const rail = page.getByRole('navigation', { name: 'Catalogue' });
@@ -349,16 +349,47 @@ test("the catalogue's drawer comes in beside the rail, goes again and brings in 
   await expect(list).toBeVisible();
   await expect(drawer).not.toHaveAttribute('data-site-drawer');
   const besideDrawer = await bodyStart();
-  // Records, on every frame from now on, the drawer's motion, its list's opacity, where the page
-  // beside it starts, how many drawers there are and where search is.
+  // Records, on every frame from now on until the next recording, the drawer's motion, its list's
+  // opacity, where the page beside it starts, how many drawers there are and where search is; and
+  // the fades of the list, whatever the frames: each transition of its opacity as it starts, with
+  // the drawer's motion then, and each animation of it the page starts, with its keyframes. A busy
+  // page's frames can come further apart than a fade lasts, so no frame need show one midway.
+  type Fade = [kind: string, motion: string, opacities: number[]];
   const record = () =>
     page.evaluate(() => {
-      const frames: [string, number, number, number, number][] = [];
-      (window as unknown as { frames: typeof frames }).frames = frames;
+      type Recording = {
+        frames: [string, number, number, number, number][];
+        fades: Fade[];
+        stop: () => void;
+      };
+      const state = window as unknown as { recording?: Recording };
+      state.recording?.stop();
+      const recording: Recording = { frames: [], fades: [], stop: () => {} };
+      state.recording = recording;
+      const list = '.site-sidebar > .env-navigation-drawer-list';
+      const motion = () =>
+        document.querySelector<HTMLElement>('.site-sidebar')?.dataset.siteDrawer ?? 'still';
+      const transition = (event: TransitionEvent) => {
+        if ((event.target as Element).matches(list) && event.propertyName === 'opacity')
+          recording.fades.push(['transition', motion(), []]);
+      };
+      // The list's new entries come in through the Web Animations API (useDrawerMotion.ts).
+      const animate = Element.prototype.animate;
+      Element.prototype.animate = function (keyframes, options) {
+        if (this.matches(list) && Array.isArray(keyframes))
+          recording.fades.push([
+            'animation',
+            motion(),
+            keyframes.map((keyframe) => Number(keyframe.opacity)),
+          ]);
+        return animate.call(this, keyframes, options);
+      };
+      document.addEventListener('transitionrun', transition, true);
+      let frame = 0;
       const tick = () => {
         const sidebar = document.querySelector<HTMLElement>('.site-sidebar');
         const items = sidebar?.querySelector('.env-navigation-drawer-list');
-        frames.push([
+        recording.frames.push([
           sidebar ? (sidebar.dataset.siteDrawer ?? 'still') : 'none',
           items ? Number(getComputedStyle(items).opacity) : 0,
           document.querySelector('.env-scaffold-body')!.getBoundingClientRect().left,
@@ -367,23 +398,43 @@ test("the catalogue's drawer comes in beside the rail, goes again and brings in 
             .querySelector('.site-drawer-search, .site-page-search-button')!
             .getBoundingClientRect().left,
         ]);
-        if (frames.length < 90) requestAnimationFrame(tick);
+        frame = requestAnimationFrame(tick);
       };
-      requestAnimationFrame(tick);
+      frame = requestAnimationFrame(tick);
+      recording.stop = () => {
+        cancelAnimationFrame(frame);
+        document.removeEventListener('transitionrun', transition, true);
+        Element.prototype.animate = animate;
+      };
     });
-  const frames = () =>
+  const recorded = () =>
     page.evaluate(
-      () => (window as unknown as { frames: [string, number, number, number, number][] }).frames,
+      () =>
+        (
+          window as unknown as {
+            recording: { frames: [string, number, number, number, number][]; fades: Fade[] };
+          }
+        ).recording,
+    );
+  const frames = async () => (await recorded()).frames;
+  /** Whether the list faded from 0 to 1 opacity or back: a transition, or an animation. */
+  const faded = (fades: Fade[], motion: string, from: number, to: number) =>
+    fades.some(
+      ([kind, during, opacities]) =>
+        during === motion &&
+        (kind === 'transition' || (opacities[0] === from && opacities.at(-1) === to)),
     );
   // To the Overview, which has none, it fades out laid over the page, which takes its room at once.
   await record();
   await rail.getByRole('link', { name: 'Overview', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toBeAttached();
   await expect(drawer).toHaveCount(0);
-  const out = await frames();
+  const { frames: out, fades: outFades } = await recorded();
   const leaving = out.filter(([motion]) => motion === 'leaving');
   expect(leaving.length).toBeGreaterThan(0);
-  expect(leaving.some(([, opacity]) => opacity > 0 && opacity < 1)).toBe(true);
+  // From its full opacity, through a transition, to none.
+  expect(out[0]![1]).toBe(1);
+  expect(faded(outFades, 'leaving', 1, 0)).toBe(true);
   const besideRail = out.at(-1)![2];
   expect(besideRail).toBeLessThan(besideDrawer);
   expect(leaving.every(([, , start]) => start === besideRail)).toBe(true);
@@ -395,10 +446,16 @@ test("the catalogue's drawer comes in beside the rail, goes again and brings in 
     .poll(async () => (await frames()).some(([motion]) => motion === 'entering'))
     .toBe(true);
   await expect(drawer).not.toHaveAttribute('data-site-drawer');
-  const back = (await frames()).filter(([motion]) => motion !== 'none');
-  expect(back.some(([, opacity]) => opacity > 0 && opacity < 1)).toBe(true);
+  const { frames: backFrames, fades: backFades } = await recorded();
+  const back = backFrames.filter(([motion]) => motion !== 'none');
+  // From none while it waits for the page to paint, through a transition, to its full opacity.
+  expect(back.filter(([motion]) => motion === 'arriving').map(([, opacity]) => opacity)).toContain(
+    0,
+  );
+  expect(faded(backFades, 'entering', 0, 1)).toBe(true);
+  expect(back.at(-1)![1]).toBe(1);
   expect(back.every(([, , start]) => start === besideDrawer)).toBe(true);
-  const searchAt = (await frames()).at(-1)![4];
+  const searchAt = backFrames.at(-1)![4];
   // To Patterns, which has a drawer too, the panel stays and the new list comes in once the page
   // has painted: one drawer and one list all along, search and the page where they were.
   await record();
@@ -408,8 +465,9 @@ test("the catalogue's drawer comes in beside the rail, goes again and brings in 
     .poll(async () => (await frames()).some(([motion]) => motion === 'switching'))
     .toBe(true);
   await expect(drawer).not.toHaveAttribute('data-site-drawer');
-  const switched = await frames();
-  expect(switched.some(([, opacity]) => opacity > 0 && opacity < 1)).toBe(true);
+  const { frames: switched, fades: switchFades } = await recorded();
+  expect(faded(switchFades, 'switching', 0, 1)).toBe(true);
+  expect(switched.at(-1)![1]).toBe(1);
   expect(
     switched.every(
       ([, , start, drawers, search]) =>
@@ -420,7 +478,7 @@ test("the catalogue's drawer comes in beside the rail, goes again and brings in 
   // and nothing moves.
   await record();
   await page.locator('.catalogue-gallery-link').first().click();
-  await expect(page).not.toHaveURL(`${siteDevUrl}/patterns`);
+  await expect(page).not.toHaveURL(`${siteBuildUrl}/patterns`);
   await expect(page.getByRole('navigation', { name: 'Patterns' })).toBeVisible();
   await page.evaluate(() => new Promise(requestAnimationFrame));
   expect((await frames()).every(([motion, opacity]) => motion === 'still' && opacity === 1)).toBe(
@@ -441,7 +499,7 @@ test("a catalogue page has its contents beside it from 56rem, in the Docs' colum
     );
   // A component's page lists its sections, none of their subsections, and marks where the reader
   // is; a link scrolls to its section.
-  await page.goto(`${siteDevUrl}/components/button`);
+  await page.goto(`${siteBuildUrl}/components/button`);
   await expect(contents).toBeVisible();
   await expect
     .poll(topLevel)
@@ -449,7 +507,7 @@ test("a catalogue page has its contents beside it from 56rem, in the Docs' colum
   await expect(contents.locator('li li')).toHaveCount(0);
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Overview');
   await contents.getByRole('link', { name: 'Rules', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/components/button#rules`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/components/button#rules`);
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Rules');
   // The banner, the page's column and the contents beside it are laid out as in the Docs: the
   // banner is its column less the gutters, level with the top of the contents, and the contents
@@ -507,7 +565,7 @@ test("a catalogue page's contents list none of its figures' headings, a do and d
   await page.setViewportSize({ width: 1440, height: 900 });
   const contents = page.getByRole('navigation', { name: 'On this page' });
   // Card's do and don't pairs hold cards with headings of their own.
-  await page.goto(`${siteDevUrl}/components/card`);
+  await page.goto(`${siteBuildUrl}/components/card`);
   await expect(contents.getByRole('link', { name: 'Rules', exact: true })).toBeVisible();
   await expect(page.locator('.site-verdict-stage :is(h2, h3)').first()).toBeAttached();
   const inFigures = await contents.evaluate((navigation) =>
@@ -540,7 +598,7 @@ test("a page's contents are whole from its first render, while its later section
     requestAnimationFrame(take);
   });
   for (const path of ['/components/button', '/docs/components/button']) {
-    await page.goto(`${siteDevUrl}${path}`);
+    await page.goto(`${siteBuildUrl}${path}`);
     const first = await page
       .waitForFunction(() => (globalThis as { firstContents?: string[] }).firstContents)
       .then((handle) => handle.jsonValue());
@@ -561,7 +619,7 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   page,
 }) => {
   await page.setViewportSize({ width: 1920, height: 1400 });
-  await page.goto(`${siteDevUrl}/components/checkbox/preview`);
+  await page.goto(`${siteBuildUrl}/components/checkbox/preview`);
   const app = page.locator('.site-app');
   const panes = page.locator('.catalogue-specimen-area');
   // The 0.x preview opens the Checkbox page, whose live example follows the theme with its state.
@@ -617,7 +675,7 @@ test("the Display menu stays open while a page's figures play, and they go on on
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   // The Menu page's overview rests open and its figures press their menus open as they play.
-  await page.goto(`${siteDevUrl}/components/menu`);
+  await page.goto(`${siteBuildUrl}/components/menu`);
   const overview = page.locator('.catalogue-overlay-layer [role="menu"]').first();
   await expect(overview).toBeVisible();
   await page.getByRole('button', { name: 'Display', exact: true }).click();

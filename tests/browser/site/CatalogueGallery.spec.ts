@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl } from '../helpers/Servers';
 import { pagesOf } from '../../../apps/site/src/routes/SiteRoutes';
 import { showTile } from '../helpers/SiteSpecHelpers';
 
@@ -8,7 +8,7 @@ import { showTile } from '../helpers/SiteSpecHelpers';
 test('the page of all foundations is one sheet, each pane a single link to its foundation', async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/foundations`);
+  await page.goto(`${siteBuildUrl}/foundations`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Foundations');
   const panes = page.locator('.catalogue-foundation-sheet').getByRole('link');
   const foundations = pagesOf('catalogue').filter((entry) => entry.kind === 'foundation');
@@ -26,27 +26,28 @@ test('the page of all foundations is one sheet, each pane a single link to its f
   await icons.scrollIntoViewIfNeeded();
   const box = (await icons.boundingBox())!;
   await page.mouse.click(box.x + 8, box.y + box.height - 8);
-  await expect(page).toHaveURL(`${siteDevUrl}/foundations/icons`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/foundations/icons`);
 });
 
-test('a gallery card and a Related card are each one link over the whole card, its live picture included', async ({
-  page,
-  context,
-}) => {
-  // Where on a card a press lands, as fractions of its box: the middle of its live picture, a
-  // corner of it, and the name's row that slides in under it.
-  const points = [
-    [0.5, 0.4],
-    [0.06, 0.06],
-    [0.5, 0.97],
-  ];
-  for (const [from, tiles, link] of [
-    ['components', '.catalogue-gallery-tile', '.catalogue-gallery-link'],
-    ['patterns', '.catalogue-gallery-tile', '.catalogue-gallery-link'],
-    ['components/button', '.catalogue-related-tile', '.catalogue-related-link'],
-  ] as const) {
+// Each page of cards is a test of its own, as is the keyboard's: every press opens a page, and on a
+// busy machine the pages don't fit one test's time together.
+for (const [from, tiles, link] of [
+  ['components', '.catalogue-gallery-tile', '.catalogue-gallery-link'],
+  ['patterns', '.catalogue-gallery-tile', '.catalogue-gallery-link'],
+  ['components/button', '.catalogue-related-tile', '.catalogue-related-link'],
+] as const)
+  test(`a card of /${from} is one link over the whole card, its live picture included`, async ({
+    page,
+  }) => {
+    // Where on a card a press lands, as fractions of its box: the middle of its live picture, a
+    // corner of it, and the name's row that slides in under it.
+    const points = [
+      [0.5, 0.4],
+      [0.06, 0.06],
+      [0.5, 0.97],
+    ];
     for (const [index, [x, y]] of points.entries()) {
-      await page.goto(`${siteDevUrl}/${from}`);
+      await page.goto(`${siteBuildUrl}/${from}`);
       const card = page.locator(tiles).nth(index + 1);
       await showTile(card);
       // One link, named by the card's name, and nothing else in the card to use.
@@ -57,18 +58,23 @@ test('a gallery card and a Related card are each one link over the whole card, i
       await expect(card.locator(link)).toHaveCSS('cursor', 'pointer');
       await page.mouse.down();
       await page.mouse.up();
-      await expect(page).toHaveURL(`${siteDevUrl}${href}`);
+      await expect(page).toHaveURL(`${siteBuildUrl}${href}`);
     }
-  }
+  });
+
+test("a Related card's link is named and described, and a card's ring and Enter work from the keyboard", async ({
+  page,
+  context,
+}) => {
   // A Related card's link is named by its name and described by when to pick it.
-  await page.goto(`${siteDevUrl}/components/button`);
+  await page.goto(`${siteBuildUrl}/components/button`);
   const related = page.locator('.catalogue-related-tile').first();
   await showTile(related);
   const relatedLink = related.locator('.catalogue-related-link');
   await expect(relatedLink).toHaveAccessibleName('Link');
   await expect(relatedLink).toHaveAccessibleDescription('A destination inside running text.');
   // From the keyboard the ring is around the whole card, and Enter opens it.
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const card = page.locator('.catalogue-gallery-tile').nth(1);
   await showTile(card);
   const cardLink = card.locator('.catalogue-gallery-link');
@@ -92,12 +98,12 @@ test('a gallery card and a Related card are each one link over the whole card, i
   await page.mouse.click(box.x + box.width / 2, box.y + box.height * 0.4);
   await page.keyboard.up(process.platform === 'darwin' ? 'Meta' : 'Control');
   const tab = await opened;
-  await expect(tab).toHaveURL(`${siteDevUrl}${href}`);
+  await expect(tab).toHaveURL(`${siteBuildUrl}${href}`);
   await tab.close();
-  await expect(page).toHaveURL(`${siteDevUrl}/components`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/components`);
   await cardLink.focus();
   await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(`${siteDevUrl}${href}`);
+  await expect(page).toHaveURL(`${siteBuildUrl}${href}`);
 });
 
 test('every tile of the galleries is fitted: components at one scale, a scene at about its own size', async ({
@@ -253,7 +259,7 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
       });
     });
   for (const route of ['/components', '/patterns']) {
-    await page.goto(`${siteDevUrl}${route}`);
+    await page.goto(`${siteBuildUrl}${route}`);
     await expect(tiles.first()).toBeVisible();
     const count = await tiles.count();
     expect(count).toBeGreaterThan(route === '/components' ? 60 : 10);
@@ -326,7 +332,7 @@ test('on a phone, no gallery tile breaks a word across lines', async ({ page }) 
   // Each component lays out as wide as it is written for, such as a notification at its own width,
   // and is drawn smaller to fit its stage, rather than squeezed until a word breaks mid-way.
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const tiles = page.locator('.catalogue-gallery-tile');
   await expect(tiles.first()).toBeVisible();
   const count = await tiles.count();
@@ -367,7 +373,7 @@ test('the gallery renders its tiles ahead of the scroll, before they come into v
   // scrolled to, rather than fading in as it comes into view (useNear, Related.tsx).
   for (const route of ['/components', '/patterns']) {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto(`${siteDevUrl}${route}`);
+    await page.goto(`${siteBuildUrl}${route}`);
     await expect(page.locator('.catalogue-tile-canvas[data-fitted]').first()).toBeVisible();
     // The tiles whose stage starts within a screen below the fold, unscrolled.
     const below = () =>
@@ -461,7 +467,7 @@ for (const [width, scale] of [
       // rather than following its popup as it is placed again a fraction away, every frame.
       test.setTimeout(240_000);
       for (const route of ['/components', '/patterns']) {
-        await page.goto(`${siteDevUrl}${route}`);
+        await page.goto(`${siteBuildUrl}${route}`);
         await page.mouse.move(0, 0);
         await expect(page.locator('.catalogue-tile-canvas[data-fitted]').first()).toBeVisible();
         const moving: string[] = [];

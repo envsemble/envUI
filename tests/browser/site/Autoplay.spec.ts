@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl } from '../helpers/Servers';
 import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
 
 /*
@@ -55,7 +55,7 @@ async function flick(page: Page, distance: number) {
 test('on a touch screen, the tile in the middle plays, one at a time, and the next as the reader scrolls', async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   await expect.poll(() => playing(page)).toHaveLength(1);
   await watchMost(page);
   const first = (await playing(page))[0];
@@ -68,7 +68,7 @@ test('on a touch screen, the tile in the middle plays, one at a time, and the ne
     await page.evaluate(() => (window as unknown as { mostPlaying: number }).mostPlaying),
   ).toBe(1);
   // Related's tiles at a page's end take part too, one at a time.
-  await page.goto(`${siteDevUrl}/components/button`);
+  await page.goto(`${siteBuildUrl}/components/button`);
   await page.locator('.catalogue-related-tile').first().scrollIntoViewIfNeeded();
   await expect.poll(() => page.locator('.catalogue-related [data-playing]').count()).toBe(1);
 });
@@ -94,7 +94,7 @@ test('on a touch screen the galleries and Related are one card to a row, so the 
         route,
       );
   for (const route of ['patterns', 'components/button', 'components']) {
-    await page.goto(`${siteDevUrl}/${route}`);
+    await page.goto(`${siteBuildUrl}/${route}`);
     if (route === 'components/button')
       await page.locator('.catalogue-related').scrollIntoViewIfNeeded();
     await expect.poll(async () => (await columns(route)).length).toBeGreaterThan(0);
@@ -116,7 +116,7 @@ test('on a touch screen the galleries and Related are one card to a row, so the 
 
 test('nothing plays by itself where the animations are paused', async ({ page }) => {
   await page.addInitScript((key) => localStorage.setItem(key, 'paused'), displayStorageKeys.motion);
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   await expect(page.locator('.catalogue-gallery-tile').first()).toBeVisible();
   await flick(page, 600);
   // Just past the time a tile waits for scrolling to settle, with time to start.
@@ -132,7 +132,7 @@ test('nothing plays by itself where reduced motion is preferred, though the anim
     displayStorageKeys.motion,
   );
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   await expect(page.locator('.catalogue-gallery-tile').first()).toBeVisible();
   await flick(page, 600);
   // Just past the time a tile waits for scrolling to settle, with time to start.

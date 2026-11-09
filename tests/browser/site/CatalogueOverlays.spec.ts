@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl } from '../helpers/Servers';
 import { componentDocuments } from '../../../apps/site/src/routes/PageModel';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
@@ -15,7 +15,7 @@ test('figures with open overlays keep them in their stages, overviews live and o
     )
     .map(({ id }) => id);
   expect(pages).toEqual(expect.arrayContaining(['dialog', 'menu', 'tooltip', 'toast', 'select']));
-  await page.goto(`${siteDevUrl}/`);
+  await page.goto(`${siteBuildUrl}/`);
   for (const id of pages) {
     await goTo(page, `/components/${id}`);
     const rooms = page.locator('.catalogue-open-example');
@@ -81,7 +81,7 @@ test('figures with open overlays keep them in their stages, overviews live and o
 test("an overlay's overview rests open, and people can close it and open it again", async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components/dialog`);
+  await page.goto(`${siteBuildUrl}/components/dialog`);
   const room = page.locator('[data-section="overview"] .catalogue-open-example').first();
   const dialog = room.locator('.env-dialog');
   // Open as the page loads, without taking focus.
@@ -92,7 +92,7 @@ test("an overlay's overview rests open, and people can close it and open it agai
   await room.getByRole('button', { name: 'View project', exact: true }).click();
   await expect(dialog).toBeVisible();
   // What opens a palette stays where it is as the palette closes and opens again.
-  await page.goto(`${siteDevUrl}/components/command-palette`);
+  await page.goto(`${siteBuildUrl}/components/command-palette`);
   const palette = page.locator('[data-section="overview"] .catalogue-open-example').first();
   const search = palette.getByRole('button', { name: 'Search', exact: true });
   // Where it is within the figure's frame, which pressing a key in the palette may scroll.
@@ -108,14 +108,14 @@ test("an overlay's overview rests open, and people can close it and open it agai
   await expect(palette.locator('.env-command-palette')).toHaveCount(0);
   expect(await inFrame()).toEqual(open);
   // A select's list takes the pointer too, and its choice sticks.
-  await page.goto(`${siteDevUrl}/components/select`);
+  await page.goto(`${siteBuildUrl}/components/select`);
   const select = page.locator('[data-section="overview"] .catalogue-open-example').first();
   await select.getByRole('option', { name: 'Private', exact: true }).click();
   await expect(select.locator('.env-select-trigger')).toContainText('Private');
 });
 
 test("F6 passes the figures' notifications by, to the browser @engines", async ({ page }) => {
-  await page.goto(`${siteDevUrl}/components/toast`);
+  await page.goto(`${siteBuildUrl}/components/toast`);
   await expect(page.locator('.catalogue-open-example .env-toast').first()).toBeVisible();
   // While no notification of the page is open, F6 is the browser's: the figures' notices, which
   // are pictures, don't take it.

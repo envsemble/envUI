@@ -8,7 +8,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl } from '../helpers/Servers';
 import { moduleFiles, requireSite, serveSite, site, siteUrl } from '../helpers/HostedSite';
 import { routeOfDocument } from '../../../apps/site/src/routes/SiteRoutes';
 import { normalizeRoute } from '../../../apps/site/src/routes/OldAddresses';
@@ -57,7 +57,7 @@ test.describe('search', () => {
     'Ctrl+K, or ⌘K on Apple platforms, opens and closes search, and so does its button',
     { tag: '@engines' },
     async ({ page }) => {
-      await openCatalogue(page, `${siteDevUrl}/`);
+      await openCatalogue(page, `${siteBuildUrl}/`);
       const keys = await shortcutKeys(page);
       await page.keyboard.press(keys.own);
       await expect(dialog(page)).toBeVisible();
@@ -93,7 +93,7 @@ test.describe('search', () => {
   test('suggests the same page in the other part and where to start, until people type', async ({
     page,
   }) => {
-    await openCatalogue(page, `${siteDevUrl}/components/badge`);
+    await openCatalogue(page, `${siteBuildUrl}/components/badge`);
     await page.keyboard.press((await shortcutKeys(page)).own);
     const suggested = dialog(page).getByRole('group', { name: 'Suggested' });
     // The page's counterpart in the Docs comes first, highlighted, then the starting points.
@@ -114,14 +114,14 @@ test.describe('search', () => {
     await field(page).fill('');
     await expect.poll(() => highlighted(page)).toBe('docs/components/badge');
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(`${siteDevUrl}/docs/components/badge`);
+    await expect(page).toHaveURL(`${siteBuildUrl}/docs/components/badge`);
     // From the Docs, the counterpart is the catalogue's page.
     await page.keyboard.press((await shortcutKeys(page)).own);
     await expect(option(page, 'components/badge')).toContainText('Catalogue');
   });
 
   test("finds a prop and opens its component's page in the Docs at its row", async ({ page }) => {
-    await openCatalogue(page, `${siteDevUrl}/`);
+    await openCatalogue(page, `${siteBuildUrl}/`);
     await search(page, 'start icon');
     const result = option(page, 'prop:Button.startIcon');
     await expect(result).toBeVisible();
@@ -130,7 +130,7 @@ test.describe('search', () => {
     await expect(result).not.toContainText('Docs ·');
     await expect(dialog(page).getByRole('group', { name: 'Props' })).toBeVisible();
     await result.click();
-    await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button#props-Button-startIcon`);
+    await expect(page).toHaveURL(`${siteBuildUrl}/docs/components/button#props-Button-startIcon`);
     await expect(page.getByRole('navigation', { name: 'Docs' })).toBeVisible();
     await expect(page.locator('[id="props-Button-startIcon"]')).toBeInViewport();
     // Focus goes to the row, so reading and the keyboard go on from it.
@@ -138,7 +138,7 @@ test.describe('search', () => {
   });
 
   test('lists what a query names before what only mentions it in its text', async ({ page }) => {
-    await openCatalogue(page, `${siteDevUrl}/`);
+    await openCatalogue(page, `${siteBuildUrl}/`);
     await search(page, 'date');
     const groups = dialog(page).getByRole('group');
     await expect(groups.first()).toContainText('DatePicker');
@@ -179,7 +179,7 @@ test.describe('search', () => {
   });
 
   test('finds a page once, and opens it in the part the reader is in', async ({ page }) => {
-    await openCatalogue(page, `${siteDevUrl}/docs`);
+    await openCatalogue(page, `${siteBuildUrl}/docs`);
     await search(page, 'colors and themes');
     await expect(option(page, 'page:colors')).toContainText('Foundations');
     await expect(option(page, 'page:colors')).not.toContainText('Catalogue ·');
@@ -188,13 +188,13 @@ test.describe('search', () => {
     await expect(option(page, 'page:button')).toContainText('Actions');
     await page.keyboard.press('Enter');
     // From the Docs, a page found opens in the Docs; from the catalogue, in the catalogue.
-    await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button`);
+    await expect(page).toHaveURL(`${siteBuildUrl}/docs/components/button`);
     await expect(page.getByRole('navigation', { name: 'Docs' })).toBeVisible();
-    await openCatalogue(page, `${siteDevUrl}/components`);
+    await openCatalogue(page, `${siteBuildUrl}/components`);
     await search(page, 'button');
     await expect(option(page, 'page:button')).toBeVisible();
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(`${siteDevUrl}/components/button`);
+    await expect(page).toHaveURL(`${siteBuildUrl}/components/button`);
   });
 
   test('a link to a heading opens the page that shows it', async ({ page }) => {
@@ -206,7 +206,7 @@ test.describe('search', () => {
     expect(normalizeRoute('components/button/accessibility?section=keyboard')).toBe(
       'components/button?section=keyboard',
     );
-    await openCatalogue(page, `${siteDevUrl}/components/dialog/accessibility#pending-work`);
+    await openCatalogue(page, `${siteBuildUrl}/components/dialog/accessibility#pending-work`);
     const heading = page.getByRole('heading', { name: 'Pending work', exact: true });
     await expect(heading).toBeInViewport();
     await expect(heading).toBeFocused();
@@ -382,19 +382,19 @@ test.describe('hosted build', () => {
 });
 
 test('a token found in search opens the token reference in the Docs', async ({ page }) => {
-  await openCatalogue(page, `${siteDevUrl}/`);
+  await openCatalogue(page, `${siteBuildUrl}/`);
   await search(page, 'fg muted');
   await expect.poll(() => highlighted(page)).toBe('token:color.fg.muted');
   await expect(option(page, 'token:color.fg.muted')).toContainText('color token');
   await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(`${siteDevUrl}/docs/tokens#token-env-color-fg-muted`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/docs/tokens#token-env-color-fg-muted`);
   await expect(page.locator('#token-env-color-fg-muted')).toBeInViewport();
   // The token reference has no page in the catalogue: the switch leads to its Overview.
   await page
     .locator('.site-page-actions')
     .getByRole('link', { name: 'Catalogue', exact: true })
     .click();
-  await expect(page).toHaveURL(`${siteDevUrl}/`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/`);
   await page
     .getByRole('navigation', { name: 'Catalogue' })
     .getByRole('link', { name: 'Patterns', exact: true })
@@ -402,6 +402,6 @@ test('a token found in search opens the token reference in the Docs', async ({ p
   const patterns = page.getByRole('navigation', { name: 'Patterns' });
   await patterns.getByRole('button', { name: 'Keep people informed', exact: true }).click();
   await patterns.getByRole('link', { name: 'Loading', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/patterns/loading`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/patterns/loading`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Loading');
 });

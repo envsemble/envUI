@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Route } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl, siteDevUrl } from '../helpers/Servers';
 import {
   allPages,
   findPage,
@@ -183,7 +183,7 @@ test("the pager and the drawer open a page at its top, and a section's address a
   // view once moved the whole page there.
   const listShown = () =>
     expect(page.locator('.catalogue-open-example .env-select-popup').first()).toBeVisible();
-  await page.goto(`${siteDevUrl}/components/combobox`);
+  await page.goto(`${siteBuildUrl}/components/combobox`);
   await expect(page.locator('.site-page-navigation')).toBeVisible();
   await bottom();
   await page
@@ -235,9 +235,9 @@ test("the Design and Code switch keeps the reader's section where the other page
   const body = page.locator('#site-main');
   const partSwitch = page.getByRole('navigation', { name: 'Design or code' });
   // A section both pages of the pattern have, named by the address, as a contents link writes it.
-  await page.goto(`${siteDevUrl}/docs/patterns/forms#sending`);
+  await page.goto(`${siteBuildUrl}/docs/patterns/forms#sending`);
   await partSwitch.getByRole('link', { name: 'Design', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/patterns/forms#sending`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/patterns/forms#sending`);
   await expect(page.locator('#sending')).toBeInViewport();
   // The corner leads across too, as on every page, here to the same page in the Docs.
   await expect(
@@ -249,7 +249,7 @@ test("the Design and Code switch keeps the reader's section where the other page
   // A section the other page doesn't have, such as the props, opens it at its top.
   await goTo(page, '/docs/components/button#props');
   await partSwitch.getByRole('link', { name: 'Design', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/components/button`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/components/button`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   expect(await body.evaluate((element) => element.scrollTop)).toBe(0);
 });
@@ -259,7 +259,7 @@ test(
   { tag: '@engines' },
   async ({ page }) => {
     // The hash address of an earlier release, such as a bookmark, is redirected to its path.
-    await page.goto(`${siteDevUrl}/#/components/select/props`);
+    await page.goto(`${siteBuildUrl}/#/components/select/props`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
     await expect(page).toHaveURL(/\/docs\/components\/select$/);
     const banner = page.locator('.site-page-header');
@@ -292,7 +292,7 @@ test(
     const body = page.locator('#site-main');
     const scroll = () => body.evaluate((element) => element.scrollTop);
     // A later section's address opens at it, and it stays there as the parts above it load.
-    await page.goto(`${siteDevUrl}/components/table#rules`);
+    await page.goto(`${siteBuildUrl}/components/table#rules`);
     const rules = page.locator('#rules');
     await expect.poll(() => belowTop(rules)).toBeLessThan(80);
     const landed = await belowTop(rules);

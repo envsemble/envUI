@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { existsSync, readFileSync } from 'node:fs';
+import { siteBuildUrl } from '../helpers/Servers';
 import { showTile } from '../helpers/SiteSpecHelpers';
 
 // A gallery tile that plays its script as the pointer comes in: what it opens, its clicks and its
@@ -151,7 +152,7 @@ test("a gallery tile that plays draws out what it opens inside its stage and res
   // opened again from its button keeps its items and its button in view.
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const least = 0.84;
   // What each script acts on, by the selectors of its tile (tiles/).
   const cards = {
@@ -191,7 +192,7 @@ test('a popup tile rests open and holds one view from its still through its play
   test.setTimeout(120_000);
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
-    await page.goto(`${siteDevUrl}/components`);
+    await page.goto(`${siteBuildUrl}/components`);
     for (const name of ['Select', 'Combobox', 'Menubar', 'CommandPalette', 'Avatar']) {
       const tile = page.locator('.catalogue-gallery-tile').filter({
         has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
@@ -232,7 +233,7 @@ test('a gallery tile holds its still as the pointer comes in', async ({ page }) 
   // The first thing seen as a tile starts to play is what its script does, not the tile moving.
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   // Its still is framed as its play is (useFit.ts): Accordion's panel opens in place.
   for (const name of ['Tree', 'List', 'Avatar', 'Accordion']) {
     // Just past 300 ms, the first stretch of the play.
@@ -257,7 +258,7 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
   // the stage's middle or its corner, and the pile's count and its tooltip show whole.
   test.setTimeout(150_000);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   await expect(page.locator('.catalogue-tile-canvas[data-fitted]').first()).toBeVisible();
   for (const name of [
     'Avatar',
@@ -272,6 +273,9 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
     const tile = page.locator('.catalogue-gallery-tile').filter({
       has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
     });
+    // A tile whose pointer never presses has no click to check, and would play a while for nothing.
+    if (!scriptClicks((await tile.locator('.catalogue-gallery-link').getAttribute('href'))!))
+      continue;
     const canvas = tile.locator('.catalogue-tile-canvas[data-fitted]');
     await showTile(tile);
     await page.mouse.move(0, 0);
@@ -348,7 +352,7 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
 test('on a phone, what a playing gallery tile opens shows inside its stage', async ({ page }) => {
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   for (const name of ['Menubar', 'Select']) {
     const { frames } = await playTile(page, name, []);
     // Past an edge it is cut off at, such as the menu bar's menu at the stage's end, it fades out.
@@ -419,10 +423,22 @@ function tileState(canvas: Element) {
 }
 
 /**
+ * Whether the script of the tile a gallery card links to has a click step: its file, named after
+ * the page's id in PascalCase (apps/site/src/tiles/Tiles.ts), says. A tile whose file can't be
+ * found counts as one that clicks.
+ */
+function scriptClicks(href: string) {
+  const id = href.split('/').pop()!;
+  const pascal = id.replace(/(^|-)([a-z\d])/g, (_, __, letter: string) => letter.toUpperCase());
+  const file = `apps/site/src/tiles/${pascal}.tsx`;
+  return !existsSync(file) || /\bclick:\s*true\b/.test(readFileSync(file, 'utf8'));
+}
+
+/**
  * Plays a gallery's tiles one after another, each for one loop of its script, and returns, for
  * each tile whose pointer clicks, the clicks after which nothing in it changed by the time of its
- * next press or 700 ms later: a click that misses what it aims at, such as one that a box clipped
- * away takes, leaves the tile as it was.
+ * next press or 700 ms and 42 frames later: a click that misses what it aims at, such as one that
+ * a box clipped away takes, leaves the tile as it was.
  */
 async function deadClicks(page: Page, names: string[]) {
   const dead: string[] = [];
@@ -430,6 +446,9 @@ async function deadClicks(page: Page, names: string[]) {
     const tile = page.locator('.catalogue-gallery-tile').filter({
       has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
     });
+    // A tile whose pointer never presses has no click to check, and would play a while for nothing.
+    if (!scriptClicks((await tile.locator('.catalogue-gallery-link').getAttribute('href'))!))
+      continue;
     const canvas = tile.locator('.catalogue-tile-canvas[data-fitted]');
     await showTile(tile);
     await expect(canvas, name).toHaveCount(1);
@@ -437,16 +456,31 @@ async function deadClicks(page: Page, names: string[]) {
     await expect(tile.locator('[data-playing]')).toHaveCount(0);
     await canvas.evaluate((element, source) => {
       const state = new Function(`return (${source})`)() as (canvas: Element) => string;
-      const log = { clicks: 0, dead: [] as string[], left: false, pressed: false };
+      const log = { clicks: 0, dead: [] as string[], left: false, pressed: false, pending: false };
       (element as HTMLElement & { clickLog?: typeof log }).clickLog = log;
+      // Settles the last click from the test, should the page have stopped drawing frames.
+      (element as HTMLElement & { settleClick?: () => void }).settleClick = () => settle();
       let before: string | null = null;
       let down = { x: 0, y: 0, time: 0 };
-      let pending: { after: string; timer: number } | null = null;
+      let pending: { after: string } | null = null;
       const settle = () => {
         if (!pending) return;
-        window.clearTimeout(pending.timer);
         if (state(element) === before) log.dead.push(pending.after);
         pending = null;
+        log.pending = false;
+      };
+      // What a click changes shows within 700 ms and the 42 frames that hold at 60 a second: a busy
+      // page draws its frames later, and what the click changes with them, so both must have passed.
+      const watch = (click: { after: string }) => {
+        const start = performance.now();
+        let frames = 0;
+        const frame = () => {
+          if (pending !== click) return;
+          frames++;
+          if (frames >= 42 && performance.now() - start >= 700) settle();
+          else requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
       };
       element.addEventListener(
         'pointerdown',
@@ -473,7 +507,9 @@ async function deadClicks(page: Page, names: string[]) {
           const label =
             `${target.localName}.${[...target.classList].join('.')} ` +
             `"${target.textContent?.trim().slice(0, 20)}"`;
-          pending = { after: label, timer: window.setTimeout(settle, 700) };
+          pending = { after: label };
+          log.pending = true;
+          watch(pending);
         },
         true,
       );
@@ -504,7 +540,22 @@ async function deadClicks(page: Page, names: string[]) {
       .toBe(true)
       .catch(() => undefined);
     if (Date.now() - started < 800) await page.waitForTimeout(800);
-    await page.waitForTimeout(750);
+    // The last click's change has had its time and frames, or five seconds: a page that draws no
+    // more frames, as one did beside many workers, has it checked then.
+    await expect
+      .poll(
+        () =>
+          canvas.evaluate(
+            (element) =>
+              (element as HTMLElement & { clickLog: { pending: boolean } }).clickLog.pending,
+          ),
+        { timeout: 5000 },
+      )
+      .toBe(false)
+      .catch(() => undefined);
+    await canvas.evaluate((element) =>
+      (element as HTMLElement & { settleClick: () => void }).settleClick(),
+    );
     const log = await canvas.evaluate(
       (element) =>
         (element as HTMLElement & { clickLog: { clicks: number; dead: string[] } }).clickLog,
@@ -527,7 +578,7 @@ for (const [route, parts] of [
       // changes something: a value, a state, a popup opening or closing, the text it shows.
       test.setTimeout(150_000);
       await page.setViewportSize({ width: 1440, height: 900 });
-      await page.goto(`${siteDevUrl}${route}`);
+      await page.goto(`${siteBuildUrl}${route}`);
       const tiles = page.locator('.catalogue-gallery-tile');
       await expect(tiles.first()).toBeVisible();
       const names = (await tiles.locator('.catalogue-gallery-name').allTextContents()).filter(
@@ -541,7 +592,7 @@ test("a playing tile draws its pointer's cursor over its stage, gone at rest and
 }) => {
   // A gallery's card: the cursor shows on its stage while the card plays, and goes as it rests.
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const tile = page.locator('.catalogue-gallery-tile').filter({
     has: page.locator('.catalogue-gallery-name', { hasText: /^Select$/ }),
   });
@@ -563,7 +614,7 @@ test("a playing tile draws its pointer's cursor over its stage, gone at rest and
   await page.mouse.move(0, 0);
   await expect(cursor).toHaveCount(0);
   // A page's animated figure: its cursor shows while it plays in view, and goes when it is paused.
-  await page.goto(`${siteDevUrl}/components/menu`);
+  await page.goto(`${siteBuildUrl}/components/menu`);
   const figure = page.locator('.catalogue-motion-stage').filter({
     has: page.locator('.catalogue-motion-pause'),
   });
@@ -579,7 +630,7 @@ test('a playing pointer that carries a file names it in a chip beside its cursor
 }) => {
   // DropZone's card carries report.pdf in, over the zone, and drops it (tiles/DropZone.tsx).
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const tile = page.locator('.catalogue-gallery-tile').filter({
     has: page.locator('.catalogue-gallery-name', { hasText: /^DropZone$/ }),
   });
