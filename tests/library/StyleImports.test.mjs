@@ -42,9 +42,29 @@ const resolveImport = (from, specifier) => {
 
 /** Each module's requests in source order, { module } or { sheet }; type-only ones are erased. */
 const requests = new Map();
+/**
+ * The modules each module imports lazily, with import(): they load once it has run, after all it
+ * imports itself, such as the code of an option that loads only where it is used.
+ */
+const lazyRequests = new Map();
 for (const module of modules) {
   const text = readFileSync(join(sourceRoot, module), 'utf8');
   const file = ts.createSourceFile(module, text, ts.ScriptTarget.Latest, true);
+  const lazy = [];
+  const findLazy = (node) => {
+    if (
+      ts.isCallExpression(node) &&
+      node.expression.kind === ts.SyntaxKind.ImportKeyword &&
+      node.arguments[0] &&
+      ts.isStringLiteral(node.arguments[0])
+    ) {
+      const target = resolveImport(module, node.arguments[0].text);
+      if (target) lazy.push(target);
+    }
+    ts.forEachChild(node, findLazy);
+  };
+  findLazy(file);
+  lazyRequests.set(module, lazy);
   const list = [];
   for (const statement of file.statements) {
     let specifier;
@@ -93,10 +113,13 @@ function guaranteedBefore() {
     'icons/index.ts',
   ]);
   const importers = new Map(modules.map((module) => [module, []]));
-  for (const module of modules)
+  for (const module of modules) {
     requests.get(module).forEach((request, index) => {
       if (request.module) importers.get(request.module).push([module, index]);
     });
+    for (const target of lazyRequests.get(module))
+      importers.get(target).push([module, requests.get(module).length]);
+  }
   const first = (module) =>
     barrels.has(module) ||
     importers.get(module).length === 0 ||
