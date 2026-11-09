@@ -7,6 +7,7 @@ import { textarea as textareaMessages } from '../../foundations/messages/textare
 import type { TextareaControlProps } from './TextareaControl.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
+import '../../styles/TextareaResizeEdge.css';
 
 interface Metrics {
   height: number;
