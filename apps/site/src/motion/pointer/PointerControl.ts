@@ -91,14 +91,31 @@ export class PointerControl {
    * for a move.
    */
   private onContent<T extends MouseEvent>(event: T): T {
-    let [x, y] = [event.clientX, event.clientY];
-    for (let node = this.spot.scope.parentElement; node; node = node.parentElement) {
-      x += node.scrollLeft;
-      y += node.scrollTop;
-    }
-    Object.defineProperty(event, 'pageX', { value: x });
-    Object.defineProperty(event, 'pageY', { value: y });
+    const scrolled = this.scrolled();
+    Object.defineProperty(event, 'pageX', { value: event.clientX + scrolled.x });
+    Object.defineProperty(event, 'pageY', { value: event.clientY + scrolled.y });
     return event;
+  }
+
+  /** How far the boxes around the stage are scrolled, read once for the events of one task. */
+  private scrolling: { x: number; y: number } | undefined;
+
+  /**
+   * How far the boxes around the stage are scrolled, across and down. Reading it lays the page out,
+   * and between two events the page's handlers have changed it, so it is read once for the events
+   * one task sends, such as a frame's move and its mouse twin, in which nothing scrolls the page.
+   */
+  private scrolled() {
+    if (!this.scrolling) {
+      const scrolled = { x: 0, y: 0 };
+      for (let node = this.spot.scope.parentElement; node; node = node.parentElement) {
+        scrolled.x += node.scrollLeft;
+        scrolled.y += node.scrollTop;
+      }
+      this.scrolling = scrolled;
+      queueMicrotask(() => (this.scrolling = undefined));
+    }
+    return this.scrolling;
   }
 
   private send(target: Element, type: string, init: PointerEventInit = {}) {
