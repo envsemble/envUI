@@ -1,7 +1,6 @@
 'use client';
 
 import { DirectionProvider, useDirection } from '@base-ui/react/direction-provider';
-import type { Popover } from '@base-ui/react/popover';
 import {
   useCallback,
   useLayoutEffect,
@@ -26,6 +25,7 @@ import {
 } from './PortalContainerContext.js';
 import { inSkeleton, skeletonAttributes } from '../skeleton.js';
 import { computedDirection } from '../dom/direction.js';
+import { returnFocusAsItCloses, type ClosingFocus, type FocusTarget } from './closingFocus.js';
 import '../../styles/Base.css';
 import '../../styles/Popup.css';
 
@@ -44,9 +44,6 @@ interface OffsetData {
 
 /** An element, a ref to one, or Base UI's virtual element, for a popup that opens away from its trigger. */
 type Anchor = Element | RefObject<Element | null> | { getBoundingClientRect(): DOMRect };
-
-/** Where focus goes as the popup opens or closes, as each Base UI popup that moves focus takes it. */
-type FocusTarget = NonNullable<Popover.Popup.Props['initialFocus']>;
 
 /**
  * The popup element's props that its owner passes on, such as its name, id, ref, style, data
@@ -245,10 +242,27 @@ export function PopupSurface({
   const { style: ownStyle, ref: ownRef, onFocusCapture: ownFocusCapture } = popupProps ?? {};
   // When the popup appeared, to tell the focus Base UI moves into it as it opens.
   const openedAt = useRef(0);
+  // Where focus goes as the popup starts to close (closingFocus.ts).
+  const closingFocus = useRef<ClosingFocus>({ finalFocus, enteredFrom: null });
+  useLayoutEffect(() => {
+    closingFocus.current.finalFocus = finalFocus;
+  });
+  const shownPopup = useRef<HTMLDivElement | null>(null);
   const attachPopup = useCallback(
-    (node: HTMLDivElement | null) => {
-      openedAt.current = node ? performance.now() : 0;
-      setRef(ownRef, node);
+    (node: HTMLDivElement) => {
+      openedAt.current = performance.now();
+      // A popup that mounts afresh has had no focus yet; the same one attached again keeps where
+      // focus came from.
+      if (node !== shownPopup.current) closingFocus.current.enteredFrom = null;
+      shownPopup.current = node;
+      const ownCleanup = setRef(ownRef, node);
+      const stop = returnFocusAsItCloses(node, closingFocus);
+      return () => {
+        stop();
+        openedAt.current = 0;
+        if (ownCleanup) ownCleanup();
+        else setRef(ownRef, null);
+      };
     },
     [ownRef],
   );
@@ -284,9 +298,9 @@ export function PopupSurface({
               <Popup
                 {...(layout && { render: layout })}
                 {...popupProps}
+                ref={attachPopup}
                 {...(contained && {
                   style: { ...containedPopupStyle, ...ownStyle },
-                  ref: attachPopup,
                   onFocusCapture: keepFocusOut,
                 })}
                 {...skeletonAttributes(skeleton)}

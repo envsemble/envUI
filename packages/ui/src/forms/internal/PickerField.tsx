@@ -2,6 +2,7 @@
 
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import {
+  Fragment,
   useRef,
   useState,
   type ButtonHTMLAttributes,
@@ -309,6 +310,10 @@ export function PickerField({
   // focus comes back to it, rather than settling while the popup fades and rising again.
   const [popupShown, setPopupShown] = useState(open);
   if (open && !popupShown) setPopupShown(true);
+  // Each opening shows the popup's content afresh, such as the calendar at the value rather than
+  // at the day it was left on, also when it opens again while it still fades out.
+  const [openings, setOpenings] = useState({ open, count: 0 });
+  if (open !== openings.open) setOpenings({ open, count: openings.count + (open ? 1 : 0) });
   const labelFloats = Boolean(serialized) || popupShown;
 
   function renderControlBox(boxProps: FieldControlBoxProps) {
@@ -411,7 +416,9 @@ export function PickerField({
         start={popupStart}
         end={popupEnd}
       >
-        {typeof children === 'function' ? children(accessibleName) : children}
+        <Fragment key={openings.count}>
+          {typeof children === 'function' ? children(accessibleName) : children}
+        </Fragment>
       </PickerPopup>
     </BasePopover.Root>
   );

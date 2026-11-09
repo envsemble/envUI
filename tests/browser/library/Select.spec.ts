@@ -6,6 +6,31 @@ test.beforeEach(async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=forms`);
 });
 
+test('a list opened again while it fades out moves focus to the chosen option', async ({
+  page,
+}) => {
+  // The exit lasts long enough that the select opens again before the closing list has gone.
+  await page.addStyleTag({
+    content: '.env-popup[data-ending-style] { transition-duration: 60s; }',
+  });
+  const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
+  await trigger.focus();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('option', { name: 'Starter', exact: true })).toBeFocused();
+  // Closed while it still grows in, it would leave at once.
+  await page
+    .locator('.env-popup')
+    .evaluate((list) => Promise.all(list.getAnimations().map(({ finished }) => finished)));
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(trigger).toHaveText('Team');
+  // Focus is back on the select as the list starts to fade, not once it has gone.
+  await expect(page.locator('.env-popup[data-ending-style]')).toHaveCount(1);
+  await expect(trigger).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('option', { name: 'Team', exact: true })).toBeFocused();
+});
+
 test('Select supports keyboard commit, typeahead, Escape, and native form reset', async ({
   page,
 }) => {
@@ -42,6 +67,9 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset'
   await expect(trigger).toHaveText('Starter');
   await expect(trigger).toBeFocused();
 
+  // A space typed within 750 ms of a letter goes on with the type-ahead rather than opening the
+  // list: this waits just past it.
+  await page.waitForTimeout(800);
   await page.keyboard.press('Space');
   await expect(page.getByRole('listbox')).toBeVisible();
   await expect(page.getByRole('option', { name: 'Starter', exact: true })).toBeFocused();

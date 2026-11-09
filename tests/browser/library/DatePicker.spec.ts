@@ -163,6 +163,45 @@ test('the field shows its value in the locale and the calendar follows the date 
   expect(errors).toEqual([]);
 });
 
+test('a calendar opened again while it fades out moves focus to the chosen day', async ({
+  page,
+}) => {
+  // The exit lasts long enough that the field opens again before the closing popup has gone.
+  await page.addStyleTag({
+    content: '.env-popup[data-ending-style] { transition-duration: 60s; }',
+  });
+  // Closed while it still grows in, it would leave at once.
+  const grown = () =>
+    openPopup(page).evaluate((popup) =>
+      Promise.all(popup.getAnimations().map(({ finished }) => finished)),
+    );
+  const publish = field(page, 'Publish on light');
+  await publish.focus();
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-20');
+  await grown();
+  await page.keyboard.press('ArrowLeft');
+  await page.keyboard.press(' ');
+  await expect(publish).toHaveText('19 Oct 2026');
+  // Focus is back on the field as the popup starts to fade, not once it has gone.
+  await expect(page.locator('.env-date-picker-popup[data-ending-style]')).toHaveCount(1);
+  await expect(publish).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(openPopup(page)).toHaveCount(1);
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-19');
+  await expect(page.locator('.env-date-picker-popup')).toHaveCount(1);
+  // A day moved to and left with Esc is not the value: opened again as it fades, the calendar
+  // starts at the value.
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-20');
+  await grown();
+  await page.keyboard.press('Escape');
+  await expect(publish).toBeFocused();
+  await expect(page.locator('.env-date-picker-popup[data-ending-style]')).toHaveCount(1);
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedDate(page)).toBe('2026-10-19');
+});
+
 test('month buttons, a pressed day, Today and the clear button change the value', async ({
   page,
 }) => {
