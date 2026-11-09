@@ -30,10 +30,6 @@ const wanted = wantedServers();
 
 // Ports, and whether a server running there belongs to this checkout and can be reused. Specs read
 // the chosen ports through tests/browser/helpers/Servers.ts; see scripts/test/CheckoutMarker.ts.
-// The site's port was ENVUI_CATALOGUE_PORT before, which still chooses it. With neither set, the
-// default ports apply: assigning undefined to process.env would store the string 'undefined'.
-if (!process.env.ENVUI_SITE_PORT && process.env.ENVUI_CATALOGUE_PORT)
-  process.env.ENVUI_SITE_PORT = process.env.ENVUI_CATALOGUE_PORT;
 const servers = await resolveServers(
   Object.fromEntries(
     Object.entries({
