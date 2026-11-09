@@ -8,7 +8,7 @@ import { findPage } from './routes/SiteRoutes';
 import { currentRoute } from './routes/useSiteRoute';
 import { oldHashRoute } from './routes/Address';
 import { preloadFirstPage } from './pages/PreloadPage';
-import { Hydrated } from './loading/useHydrated';
+import { FiguresMounted } from './loading/useFiguresMounted';
 import { givePageCode } from './pages/PageCode';
 
 // index.html holds the root, which the build pre-renders for each page, naming the page's route
@@ -28,7 +28,7 @@ const hydrates =
 
 /**
  * The site as it starts. Once a pre-rendered page has hydrated, the parts that render in the
- * browser alone, such as its figures, mount (Hydrated), in a transition, which yields to the
+ * browser alone, such as its figures, mount (FiguresMounted), in a transition, which yields to the
  * browser as it goes rather than holding up the page in one long task. Rendering on the client
  * alone, they mount at once. It marks the document once the site has started, after every part's
  * effects, with `data-site-started`: before it, a press on a pre-rendered control has no handler
@@ -41,7 +41,7 @@ function Started({ hydrating, children }: { hydrating: boolean; children: ReactN
     document.documentElement.setAttribute('data-site-started', '');
     startTransition(() => setHydrated(true));
   }, []);
-  return <Hydrated value={hydrated}>{children}</Hydrated>;
+  return <FiguresMounted value={hydrated}>{children}</FiguresMounted>;
 }
 
 void opening.then(() => {

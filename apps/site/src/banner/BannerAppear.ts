@@ -50,6 +50,8 @@ function due(): boolean {
  */
 export function useBannerAppear(page: string): LineArtMotion | undefined {
   const { motionPaused } = useDisplaySettings();
+  // The library's useHydrated, not the site's useFiguresMounted: the banner decides whether it
+  // appears in the render right after hydrating, before the reader's first frames of it.
   const hydrated = useHydrated();
   // Decided once for each page the banner shows, as the banner stays while the reader moves on.
   const [shown, setShown] = useState<{ page: string; appear: boolean } | undefined>(() =>

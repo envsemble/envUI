@@ -109,6 +109,8 @@ export function DisplaySettingsProvider({
     addEventListener('storage', onStorage);
     return () => removeEventListener('storage', onStorage);
   }, []);
+  // The library's useHydrated, not the site's useFiguresMounted: the reader's stored settings
+  // show in the render right after hydrating, as the head's scripts already show them.
   const hydrated = useHydrated();
   const shown = hydrated
     ? { contrast, scale, motion }

@@ -2,7 +2,7 @@
  * The site's server entry, which scripts/site/PrerenderSite.ts builds and runs as the site builds:
  * it renders a page to the HTML of the site's root, as the browser's first render of it will be,
  * once what the page shows has loaded: its view, its content and the parts that load on their own,
- * such as the token reference. Its figures show their skeletons (useHydrated), so the page holds
+ * such as the token reference. Its figures show their skeletons (useFiguresMounted), so the page holds
  * no example or specimen. main.tsx hydrates it.
  */
 import { prerender } from 'react-dom/static';

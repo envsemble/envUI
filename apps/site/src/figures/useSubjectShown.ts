@@ -1,5 +1,5 @@
 import { useRef, useState, type RefObject } from 'react';
-import { useHydrated } from '../loading/useHydrated';
+import { useFiguresMounted } from '../loading/useFiguresMounted';
 import { useNear } from './useNear';
 
 /**
@@ -13,7 +13,9 @@ import { useNear } from './useNear';
  * itself, it renders once the page has hydrated.
  */
 export function useSubjectShown(place?: RefObject<HTMLElement | null>) {
-  const hydrated = useHydrated();
+  // The site's own, which turns in a transition after hydrating: a figure mounting is no reason
+  // to render the page again in one task.
+  const hydrated = useFiguresMounted();
   // Whether the page was pre-rendered, as the first render tells: the page hydrates it.
   const [prerendered] = useState(!hydrated);
   const nothing = useRef<HTMLElement>(null);

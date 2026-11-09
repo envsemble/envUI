@@ -249,6 +249,8 @@ export function PageChangelog({ document }: { document: DocumentationEntry }) {
   // Waiting its turn to show, it is its heading alone (SectionOutline).
   const outline = useSectionOutline();
   // A pre-rendered page renders it closed, as the server did, and opens it once it has hydrated.
+  // The library's useHydrated, not the site's useFiguresMounted: a page opened at the changelog
+  // shows it open in the render right after hydrating, rather than after the figures mount.
   const hydrated = useHydrated();
   const [open, setOpen] = useState(() => hydrated && namesChangelog());
   useEffect(() => {
