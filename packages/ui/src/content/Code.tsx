@@ -1,5 +1,3 @@
-'use client';
-
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import '../styles/Base.css';
