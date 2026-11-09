@@ -132,6 +132,55 @@ test.describe('List', () => {
   });
 
   test(
+    'a drag or keys used before the reorder code has loaded still move the row',
+    { tag: '@engines' },
+    async ({ page }) => {
+      // The list loads the code that moves its rows as it renders: hold it back, as a slow
+      // network would, while people already drag and press.
+      let held = Promise.withResolvers<() => void>();
+      await page.route(/reorderController\.ts/, async (route) => {
+        const { promise, resolve } = Promise.withResolvers<void>();
+        held.resolve(resolve);
+        await promise;
+        await route.continue();
+      });
+      const release = async () => {
+        (await held.promise)();
+        held = Promise.withResolvers();
+      };
+      await page.goto(lists);
+      const list = page.getByTestId('slides');
+      const order = page.getByTestId('slides-order');
+      const rows = list.getByRole('listitem');
+      const from = await centre(list.getByRole('button', { name: 'Reorder Roadmap' }));
+      const target = await centre(rows.nth(3));
+      await page.mouse.move(from.x, from.y);
+      await page.mouse.down();
+      await page.mouse.move(from.x, from.y + (target.y + 4 - from.y) / 2, { steps: 4 });
+      await page.mouse.move(from.x, target.y + 4, { steps: 4 });
+      await page.mouse.up();
+      await expect(order).toHaveText('Intro,Roadmap,Budget,Questions');
+      await release();
+      await expect(order).toHaveText('Intro,Budget,Questions,Roadmap');
+      await expect(announcer(page)).toHaveText('Roadmap dropped at position 4 of 4.');
+      await expect(list.locator('[data-moving]')).toHaveCount(0);
+
+      // Space lifts, ↓ moves and Space drops: the handle's own press of Space doesn't follow.
+      await page.reload();
+      const handle = list.getByRole('button', { name: 'Reorder Intro' });
+      await handle.focus();
+      await page.keyboard.press('Space');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Space');
+      await release();
+      await expect(order).toHaveText('Roadmap,Intro,Budget,Questions');
+      await expect(announcer(page)).toHaveText('Intro dropped at position 2 of 4.');
+      await expect(handle).toHaveAttribute('aria-pressed', 'false');
+      await expect(handle).toBeFocused();
+    },
+  );
+
+  test(
     'a press on a lifted row released off its handle keeps the row on its handle',
     { tag: '@engines' },
     async ({ page }) => {
