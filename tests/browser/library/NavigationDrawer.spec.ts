@@ -177,7 +177,12 @@ test.describe('Drawer resizable', () => {
       expect((await item.boundingBox())!.height).toBeCloseTo(height, 0);
       // A heading cut short gives its full text as its title, as it takes no focus for a tooltip.
       await expect(heading).toHaveAttribute('title', (await heading.textContent())!);
-      // The full label shows in a tooltip, on hover and on keyboard focus, and names nothing new.
+      // The full label shows in a tooltip, on hover and on keyboard focus, and names nothing new. The
+      // label is cut before the drawer has measured it so, later under load: the hover waits for its
+      // tooltip to be on, and comes in afresh, as the pointer resting on the item since the first
+      // hover would open nothing.
+      await expect(item).not.toHaveAttribute('data-trigger-disabled');
+      await page.mouse.move(0, 0);
       await item.hover();
       await expect(tooltip).toHaveText('Reviews waiting for the whole team');
       await page.mouse.move(0, 0);

@@ -133,7 +133,7 @@ test.describe('List', () => {
   });
 
   test(
-    'a drag or keys used before the reorder code has loaded still move the row',
+    'a drag used before the reorder code has loaded still moves the row',
     { tag: '@engines' },
     async ({ page }) => {
       // The list loads the code that moves its rows as it renders: hold it back, as a slow
@@ -155,9 +155,20 @@ test.describe('List', () => {
       await expect(order).toHaveText('Intro,Budget,Questions,Roadmap');
       await expect(announcer(page)).toHaveText('Roadmap dropped at position 4 of 4.');
       await expect(list.locator('[data-moving]')).toHaveCount(0);
+    },
+  );
 
+  // Its own page rather than a reload of the last: WebKit keeps the module a page has loaded and
+  // runs it again after a reload without asking for it, so it can't be held back a second time.
+  test(
+    'keys used before the reorder code has loaded still move the row',
+    { tag: '@engines' },
+    async ({ page }) => {
+      const { release } = await holdOptionModule(page, 'reorderController');
+      await page.goto(lists);
+      const list = page.getByTestId('slides');
+      const order = page.getByTestId('slides-order');
       // Space lifts, ↓ moves and Space drops: the handle's own press of Space doesn't follow.
-      await page.reload();
       const handle = list.getByRole('button', { name: 'Reorder Intro' });
       await handle.focus();
       await page.keyboard.press('Space');

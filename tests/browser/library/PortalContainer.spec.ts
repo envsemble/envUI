@@ -210,8 +210,20 @@ test.describe('PortalContainer, contained', () => {
     await page.goto(preview);
     await expect(page.getByTestId('layer').getByText('Changes saved.')).toBeVisible();
     await page.getByTestId('outside').focus();
+    // F6 stays the browser's: envUI neither takes the key nor moves focus to the toasts. What the
+    // browser then does with it differs: Firefox moves focus out of the page's content, while
+    // headless Chromium and WebKit leave it where it was.
+    await page.evaluate(() =>
+      window.addEventListener(
+        'keydown',
+        (event) =>
+          setTimeout(() => (document.body.dataset.f6Prevented = `${event.defaultPrevented}`)),
+        { once: true },
+      ),
+    );
     await page.keyboard.press('F6');
-    await expect(page.getByTestId('outside')).toBeFocused();
+    await expect(page.locator('body')).toHaveAttribute('data-f6-prevented', 'false');
+    await expect(page.getByTestId('layer').locator(':focus')).toHaveCount(0);
   });
 
   test('a menubar switches menus in it, one open at a time', async ({ page }) => {

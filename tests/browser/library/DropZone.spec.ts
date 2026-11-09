@@ -17,10 +17,22 @@ function filesTransfer(page: Page, files: Array<[name: string, type: string]>) {
   }, files);
 }
 
+/**
+ * Sends a drag event carrying files to what a locator finds, found first and then sent the event.
+ * Firefox's page crashes when the page's own scripts read an element's ariaLabelledByElements after
+ * Playwright's own world has, as finding a locator named by its label does in each world, and a
+ * locator's dispatchEvent given a handle finds it in the page's world.
+ */
+async function drag(target: Locator, type: string, dataTransfer: JSHandle<DataTransfer>) {
+  const element = (await target.elementHandle())!;
+  await element.dispatchEvent(type, { dataTransfer });
+  await element.dispose();
+}
+
 async function drop(target: Locator, dataTransfer: JSHandle<DataTransfer>) {
-  await target.dispatchEvent('dragenter', { dataTransfer });
-  await target.dispatchEvent('dragover', { dataTransfer });
-  await target.dispatchEvent('drop', { dataTransfer });
+  await drag(target, 'dragenter', dataTransfer);
+  await drag(target, 'dragover', dataTransfer);
+  await drag(target, 'drop', dataTransfer);
 }
 
 /** Text contrast as painted: the text color over every fill between it and the theme canvas. */
@@ -141,7 +153,7 @@ test(
       ['notes.txt', 'text/plain'],
       ['mark.png', 'image/png'],
     ]);
-    await zone.dispatchEvent('dragenter', { dataTransfer: transfer });
+    await drag(zone, 'dragenter', transfer);
     await expect(root).toHaveAttribute('data-drag-over', '');
     await expect(zone).toHaveCSS('border-top-style', 'solid');
     await expect(zone).toHaveCSS(
@@ -150,10 +162,10 @@ test(
     );
     // Moving over the label inside keeps the state until the files leave the zone.
     const label = zone.locator('.env-drop-zone-label');
-    await label.dispatchEvent('dragenter', { dataTransfer: transfer });
-    await zone.dispatchEvent('dragleave', { dataTransfer: transfer });
+    await drag(label, 'dragenter', transfer);
+    await drag(zone, 'dragleave', transfer);
     await expect(root).toHaveAttribute('data-drag-over', '');
-    await label.dispatchEvent('dragleave', { dataTransfer: transfer });
+    await drag(label, 'dragleave', transfer);
     await expect(root).not.toHaveAttribute('data-drag-over');
 
     await drop(zone, transfer);
