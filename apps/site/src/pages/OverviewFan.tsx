@@ -1,4 +1,4 @@
-import { useSyncExternalStore, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import {
   AvatarGroup,
   Badge,
@@ -58,31 +58,16 @@ function deploysPerDay(): CalendarHeatmapDay[] {
 }
 const deploys = deploysPerDay();
 
-const touchQuery = '(pointer: coarse)';
-/** Whether the pointer is a finger, which gives a heatmap's days a touch target's size. */
-function useCoarsePointer() {
-  return useSyncExternalStore(
-    (changed) => {
-      const query = matchMedia(touchQuery);
-      query.addEventListener('change', changed);
-      return () => query.removeEventListener('change', changed);
-    },
-    () => matchMedia(touchQuery).matches,
-    () => false,
-  );
-}
-
 /**
- * The deploys card: the count and a heatmap of the latest weeks, as many as fit the card whole: ten,
- * under the count drawn large, or on a touch screen, whose days take a touch target's size, five,
- * with the count in the note, so the card stays as tall as the one beside it.
+ * The deploys card for a pointer: the count and a heatmap of the latest weeks, as many as fit the
+ * card whole: ten, under the count drawn large, or on a touch screen, whose days take a touch
+ * target's size, five, with the count in the note, so the card stays as tall as the one beside it.
  */
-function DeploysCard() {
-  const touch = useCoarsePointer();
+function Deploys({ touch }: { touch: boolean }) {
   const weeks = touch ? 5 : 10;
   const count = touch ? 94 : 186;
   return (
-    <>
+    <div className="catalogue-fan-deploys" data-pointer={touch ? 'coarse' : 'fine'}>
       <CardHeader title="Deploys" note={touch ? `${count} in the last 5 weeks` : 'Last 10 weeks'} />
       <Column gap={3} className="catalogue-fan-body">
         {touch ? null : (
@@ -97,6 +82,20 @@ function DeploysCard() {
           tone="success"
         />
       </Column>
+    </div>
+  );
+}
+
+/**
+ * The deploys card, for the pointer the reader has: both render, and the style sheet shows the
+ * one for a touch screen or for a mouse (OverviewFan.css), so a pre-rendered page shows the
+ * reader's from the first paint, as the server can't tell.
+ */
+function DeploysCard() {
+  return (
+    <>
+      <Deploys touch={false} />
+      <Deploys touch />
     </>
   );
 }

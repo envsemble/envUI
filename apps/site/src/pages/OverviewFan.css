@@ -120,6 +120,22 @@
   }
 }
 
+/* The deploys card's two forms, for a mouse and for a touch screen (OverviewFan.tsx): the one for
+   the reader's pointer lays out as the card's own content. */
+.catalogue-fan-deploys {
+  display: contents;
+}
+@media (pointer: coarse) {
+  .catalogue-fan-deploys[data-pointer='fine'] {
+    display: none;
+  }
+}
+@media not (pointer: coarse) {
+  .catalogue-fan-deploys[data-pointer='coarse'] {
+    display: none;
+  }
+}
+
 /* The card's body, under its header, rests on the card's foot. */
 .catalogue-fan-body {
   margin-block-start: auto;

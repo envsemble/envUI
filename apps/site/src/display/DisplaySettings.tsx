@@ -14,6 +14,7 @@ import {
 import { IconTune } from '@envsemble/envui/icons/Tune';
 import { displayStorageKeys } from './DisplayStorage';
 import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
+import { useHydrated } from '@envui-internal/internal/react/useHydrated';
 
 const themes: readonly ThemePreference[] = ['system', 'light', 'dark'];
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];
@@ -78,6 +79,10 @@ const DisplaySettingsContext = createContext<DisplaySettingsValue | null>(null);
  * the theme by ThemePreferenceProvider and the others here, and kept in step with the site's other
  * windows. The theme follows the system until the reader picks one, the contrast follows
  * `prefers-contrast` until then, and the animations start paused where reduced motion is preferred.
+ * A pre-rendered page renders the defaults on the server and as it hydrates, as the server knows no
+ * reader's settings, and the stored ones in the render after; the head's scripts have applied the
+ * theme, the contrast and the scale to the root before the first paint (HeadScripts.ts), so the page
+ * looks the same throughout.
  */
 export function DisplaySettingsProvider({
   className,
@@ -104,11 +109,15 @@ export function DisplaySettingsProvider({
     addEventListener('storage', onStorage);
     return () => removeEventListener('storage', onStorage);
   }, []);
+  const hydrated = useHydrated();
+  const shown = hydrated
+    ? { contrast, scale, motion }
+    : ({ contrast: 'system', scale: 'system', motion: 'playing' } as const);
   const value = useMemo<DisplaySettingsValue>(
     () => ({
-      contrast,
-      scale,
-      motionPaused: motion === 'paused',
+      contrast: shown.contrast,
+      scale: shown.scale,
+      motionPaused: shown.motion === 'paused',
       setContrast(next) {
         setContrastState(next);
         store(displayStorageKeys.contrast, next);
@@ -123,14 +132,14 @@ export function DisplaySettingsProvider({
         store(displayStorageKeys.motion, next);
       },
     }),
-    [contrast, scale, motion],
+    [shown.contrast, shown.scale, shown.motion],
   );
   return (
     <DisplaySettingsContext value={value}>
       <ThemePreferenceProvider
         storageKey={displayStorageKeys.theme}
-        contrast={contrast}
-        scale={scale}
+        contrast={shown.contrast}
+        scale={shown.scale}
         className={className}
       >
         {children}

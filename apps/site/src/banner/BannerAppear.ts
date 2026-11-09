@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import type { LineArtMotion } from '@envsemble/envui';
+import { useHydrated } from '@envui-internal/internal/react/useHydrated';
 import { useDisplaySettings } from '../display/DisplaySettings';
-
-/** Where the site keeps, for the tab's session, that a banner has drawn itself in. */
-const storageKey = 'envui-site-banner-drawn';
+import { bannerAppearAttribute, bannerDrawnKey } from '../display/DisplayStorage';
 
 /** Where the site once kept when each page's banner last drew itself in, which it no longer reads. */
 const formerKey = 'envui-site-banners-drawn';
@@ -21,8 +20,8 @@ let firstDraw: boolean | undefined;
 function sessionFirst() {
   try {
     localStorage.removeItem(formerKey);
-    if (sessionStorage.getItem(storageKey) !== null) return false;
-    sessionStorage.setItem(storageKey, '');
+    if (sessionStorage.getItem(bannerDrawnKey) !== null) return false;
+    sessionStorage.setItem(bannerDrawnKey, '');
   } catch {
     // Storage blocked: the banner draws in on the page the site opens on.
   }
@@ -44,17 +43,29 @@ function due(): boolean {
  * page the site first opens on, and whole otherwise, on the pages the reader moves to and on a
  * reload, so it never replays as the reader moves around. Where the reader has paused the site's
  * animations it is whole from the start, and pausing them while it draws shows it whole at once;
- * where reduced motion is preferred, LineArt shows it whole at once too.
+ * where reduced motion is preferred, LineArt shows it whole at once too. A pre-rendered page
+ * renders it whole on the server and as it hydrates, and decides once hydrated, when the reader's
+ * settings are known; meanwhile, where the head's script found it will draw in, its lines are
+ * hidden (bannerAppearAttribute, Banners.css), so they don't show whole first.
  */
 export function useBannerAppear(page: string): LineArtMotion | undefined {
   const { motionPaused } = useDisplaySettings();
+  const hydrated = useHydrated();
   // Decided once for each page the banner shows, as the banner stays while the reader moves on.
-  const [shown, setShown] = useState(() => ({ page, appear: !motionPaused && due() }));
-  if (shown.page !== page) setShown({ page, appear: false });
-  const appear = shown.page === page && shown.appear;
+  const [shown, setShown] = useState<{ page: string; appear: boolean } | undefined>(() =>
+    hydrated ? { page, appear: !motionPaused && due() } : undefined,
+  );
+  if (hydrated && !shown) setShown({ page, appear: !motionPaused && due() });
+  else if (shown && shown.page !== page) setShown({ page, appear: false });
+  const appear = shown?.page === page && shown.appear;
+  // Decided, the lines show as the banner draws them, so the root's mark goes before the paint.
+  const decided = shown !== undefined;
+  useLayoutEffect(() => {
+    if (decided) document.documentElement.removeAttribute(bannerAppearAttribute);
+  }, [decided]);
   // Drawn once, it is spent: the pages the reader moves to, and this one again, show it whole.
   useEffect(() => {
-    spent = true;
-  }, []);
+    if (decided) spent = true;
+  }, [decided]);
   return appear && !motionPaused ? 'appear' : undefined;
 }
