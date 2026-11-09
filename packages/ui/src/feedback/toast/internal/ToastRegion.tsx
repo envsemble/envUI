@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useCallback, useLayoutEffect, useState } from 'react';
+import { useCallback, useLayoutEffect, useState } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Badge } from '../../../data-display/Badge.js';
 import { Theme, useTheme } from '../../../foundations/Theme.js';
@@ -18,6 +18,8 @@ import { IconClose } from '../../../icons/Close.js';
 import { flag } from '../../../internal/flag.js';
 import { ToastBody } from './ToastBody.js';
 import { useToastGlide } from './useToastGlide.js';
+import type { PictureNotice } from './PictureNotice.js';
+import { optionModule, useOptionModule } from '../../../internal/react/useOptionModule.js';
 import '../../../styles/Base.css';
 import '../../../styles/Toast.css';
 
@@ -25,13 +27,9 @@ type ToastObject = BaseToast.Root.ToastObject<ToastEntry>;
 
 /**
  * The notices of a contained region's picture, which only a region in a contained PortalContainer
- * loads, as it renders, so they are there by the time it shows one.
+ * loads, as it mounts, so they are there by the time it shows one; a notice shows once they are.
  */
-let loadingPicture: Promise<typeof import('./PictureNotice.js')> | undefined;
-const loadPicture = () => (loadingPicture ??= import('./PictureNotice.js'));
-const PictureNotice = lazy(() =>
-  loadPicture().then(({ PictureNotice }) => ({ default: PictureNotice })),
-);
+const picture = optionModule(() => import('./PictureNotice.js'));
 
 /**
  * The notices that wait behind the count of hidden ones: the oldest beyond the visible limit. Danger
@@ -134,14 +132,14 @@ export function ToastRegion({
     'down',
     direction === 'rtl' ? 'left' : 'right',
   ];
+  const pictureNotice = useOptionModule(picture, contained)?.PictureNotice;
   const regionLabel =
     placement === 'bottom-end' ? messages.regionBottomEnd : messages.regionTopCenter;
   // In a contained PortalContainer the notices are a picture of the region, part of the container:
   // without Base UI's viewport, whose window-wide F6 would take the page's F6 for a region that is
   // only shown. They keep their look, action, dismiss button and duration, arrive and leave with
   // their motion, and stay while the pointer rests on them.
-  if (contained) {
-    void loadPicture();
+  if (contained)
     return (
       <BaseToast.Portal container={container}>
         <Theme {...theme} className="env-toast-theme">
@@ -160,12 +158,13 @@ export function ToastRegion({
                 aria-label={hiddenLabel}
               />
             )}
-            <Suspense>
-              {toastStore.toasts
+            {pictureNotice &&
+              toastStore.toasts
                 .filter((toast) => !gone.has(toast.id))
                 .map((toast) => (
                   <PictureToast
                     key={toast.id}
+                    Notice={pictureNotice}
                     toast={toast}
                     limited={limited.has(toast.id)}
                     controller={controller}
@@ -174,12 +173,10 @@ export function ToastRegion({
                     onGone={leave}
                   />
                 ))}
-            </Suspense>
           </div>
         </Theme>
       </BaseToast.Portal>
     );
-  }
   return (
     <BaseToast.Portal container={container}>
       <Theme {...theme} className="env-toast-theme">
@@ -250,6 +247,7 @@ export function ToastRegion({
  * Base UI's parts.
  */
 function PictureToast({
+  Notice,
   toast,
   limited,
   controller,
@@ -257,6 +255,8 @@ function PictureToast({
   onClose,
   onGone,
 }: {
+  /** PictureNotice, once its module has loaded. */
+  Notice: typeof PictureNotice;
   toast: ToastObject;
   limited: boolean;
   controller: ToastController;
@@ -267,7 +267,7 @@ function PictureToast({
   // Every notice carries its entry as the data (useToastController).
   const entry = toast.data!;
   return (
-    <PictureNotice
+    <Notice
       id={toast.id}
       tone={entry.tone}
       limited={limited}
@@ -297,7 +297,7 @@ function PictureToast({
           )
         }
       />
-    </PictureNotice>
+    </Notice>
   );
 }
 

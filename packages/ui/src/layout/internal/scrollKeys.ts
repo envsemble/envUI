@@ -151,23 +151,18 @@ function room(element: Element, direction: -1 | 1) {
 }
 
 /**
- * Scrolls the region with the keyboard: the window's keys and presses that useScrollKeys hears
- * reach it through `keyDown` and `pointerDown`, and it notes other input itself until `stop`.
- * `pressed` is where the pointer last pressed before it was made.
+ * Scrolls the region with the keyboard: the window's keys and the targets of the pointer's presses,
+ * which useScrollKeys hears, reach it through `keyDown` and `press`, and it notes other input
+ * itself until `stop`.
  */
-export function createScrollKeys(
-  root: HTMLElement,
-  scroller: HTMLElement,
-  view: Window,
-  pressedBefore: EventTarget | null,
-) {
+export function createScrollKeys(root: HTMLElement, scroller: HTMLElement, view: Window) {
   const document = root.ownerDocument;
   const reducedMotion = reducedMotionQuery(view);
   // Where the smooth scroll of the last key is heading. The next key continues from there, so
   // quick presses add up; the end of the scroll and any other input clear it.
   let destination: number | null = null;
   // Where the pointer last pressed: with focus on the document, browsers scroll that area.
-  let pressed: Element | null = isElement(pressedBefore) ? pressedBefore : null;
+  let pressed: Element | null = null;
 
   function scrollsThatWay(element: Element, direction: -1 | 1) {
     return (
@@ -229,8 +224,8 @@ export function createScrollKeys(
     destination = smooth && Math.abs(top - scroller.scrollTop) >= 1 ? top : null;
     scroller.scrollTo({ top, behavior: smooth ? 'smooth' : 'instant' });
   }
-  function onPointerDown(event: PointerEvent) {
-    const target = event.composedPath()[0] ?? null;
+  /** A press of the pointer, on the first element of its event's composed path. */
+  function press(target: EventTarget | null) {
     pressed = isElement(target) ? target : null;
     destination = null;
   }
@@ -245,7 +240,7 @@ export function createScrollKeys(
   scroller.addEventListener('scrollend', forget);
   return {
     keyDown: onKeyDown,
-    pointerDown: onPointerDown,
+    press,
     stop() {
       view.removeEventListener('wheel', forget, early);
       view.removeEventListener('touchstart', forget, early);

@@ -1,6 +1,7 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 import { openServerMarkup } from '../helpers/ServerMarkup';
+import { failOptionModule, holdOptionModule } from '../helpers/OptionLoad';
 
 const tablesFixture = `${fixtureUrl}/?fixture=table`;
 const themes = ['light', 'dark'] as const;
@@ -217,20 +218,14 @@ test('the resize handles come with their code, which a table loads as it renders
   page,
 }) => {
   // Held back, as a slow network would, the handles' code leaves the header as it is without them.
-  const held = Promise.withResolvers<() => void>();
-  await page.route(/ColumnResizeHandle\.tsx/, async (route) => {
-    const { promise, resolve } = Promise.withResolvers<void>();
-    held.resolve(resolve);
-    await promise;
-    await route.continue();
-  });
+  const { requested, release } = await holdOptionModule(page, /ColumnResizeHandle\.tsx/);
   await page.reload();
   const table = page.getByRole('table', { name: 'Reports light' });
   const widths = page.getByTestId('widths-light');
   await expect(table.getByRole('columnheader', { name: 'Report', exact: true })).toBeVisible();
-  const release = await held.promise;
+  await requested();
   await expect(table.getByRole('separator')).toHaveCount(0);
-  release();
+  await release();
   // Once it has loaded, the first drag resizes, with the handle's own style.
   const handle = table.getByRole('separator', { name: 'Resize Report' });
   await expect(handle).toHaveCSS('cursor', 'col-resize');
@@ -243,6 +238,23 @@ test('the resize handles come with their code, which a table loads as it renders
   });
   await page.mouse.up();
   await expect(widths).toHaveText('50.0 20.0 15.0 15.0');
+});
+
+test('a table whose resize code fails to load keeps its columns, and a remount tries again', async ({
+  page,
+}) => {
+  const option = await failOptionModule(page, /ColumnResizeHandle\.tsx/);
+  await page.reload();
+  const table = page.getByRole('table', { name: 'Reports light' });
+  const report = table.getByRole('columnheader', { name: 'Report', exact: true });
+  await expect(report).toBeVisible();
+  await option.failed();
+  await expect(table.getByRole('separator')).toHaveCount(0);
+  await report.getByRole('button').click();
+  await expect(report).toHaveAttribute('aria-sort', 'ascending');
+  option.restore();
+  await option.remount();
+  await expect(table.getByRole('separator')).toHaveCount(3);
 });
 
 test('columns resize the other way in a right-to-left table', async ({ page }) => {

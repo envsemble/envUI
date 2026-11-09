@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import { Fragment, useEffect, useState, type ComponentType } from 'react';
 import { Theme, type ColorScheme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
@@ -37,20 +37,28 @@ const fixtures = new Map(
 /**
  * The fixture `?fixture=<name>` names, in the scale `?scale=compact` or `?scale=system` sets,
  * otherwise comfortable whatever the pointer, so a spec measures the same sizes in every browser.
+ * A `fixture-remount` event on the window mounts it afresh, as a spec that checks what a component
+ * does on a later mount in the same page dispatches.
  */
 export default function App() {
+  const [mounts, setMounts] = useState(0);
+  useEffect(() => {
+    const remount = () => setMounts((count) => count + 1);
+    window.addEventListener('fixture-remount', remount);
+    return () => window.removeEventListener('fixture-remount', remount);
+  }, []);
   const parameters = new URLSearchParams(location.search);
   const name = parameters.get('fixture');
   const { default: Fixture, themes, mount } = fixtures.get(name ?? '') ?? {};
   // The parts of another fixture, such as ContactSheetParts.fixture.tsx, have no default export.
   if (!Fixture) return <p>{`?fixture=${name} names no <Name>.fixture.tsx that mounts.`}</p>;
   const fixture = themes ? (
-    <>
+    <Fragment key={mounts}>
       <Fixture theme="light" />
       <Fixture theme="dark" />
-    </>
+    </Fragment>
   ) : (
-    <Fixture theme="light" />
+    <Fixture key={mounts} theme="light" />
   );
   if (mount === 'root') return fixture;
   const requested = parameters.get('scale');

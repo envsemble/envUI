@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
+import { failOptionModule, holdOptionModule } from '../helpers/OptionLoad';
 
 const preview = `${fixtureUrl}/?fixture=portal-container`;
 
@@ -176,22 +177,33 @@ test.describe('PortalContainer, contained', () => {
     page,
   }) => {
     // The region loads the picture's notices as it renders: hold them back, as a slow network would.
-    const held = Promise.withResolvers<() => void>();
-    await page.route(/PictureNotice\.tsx/, async (route) => {
-      const { promise, resolve } = Promise.withResolvers<void>();
-      held.resolve(resolve);
-      await promise;
-      await route.continue();
-    });
+    const { requested, release } = await holdOptionModule(page, /PictureNotice\.tsx/);
     await page.goto(preview);
     const layer = page.getByTestId('layer');
-    const release = await held.promise;
+    await requested();
     await expect(layer.getByRole('menu', { name: 'Actions' })).toBeVisible();
     await expect(layer.locator('.env-toast')).toHaveCount(0);
-    release();
+    await release();
     await expect(layer.getByText('Changes saved.')).toBeVisible();
     await page.getByRole('button', { name: 'Notify' }).click();
     await expect(layer.locator('.env-toast', { hasText: 'Invitation sent.' })).toBeVisible();
+  });
+
+  test('a contained region whose notices fail to load shows none, and a remount tries again', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    const option = await failOptionModule(page, /PictureNotice\.tsx/);
+    await page.goto(preview);
+    const layer = page.getByTestId('layer');
+    await expect(layer.getByRole('menu', { name: 'Actions' })).toBeVisible();
+    await option.failed();
+    await expect(layer.locator('.env-toast')).toHaveCount(0);
+    option.restore();
+    await option.remount();
+    await expect(layer.getByText('Changes saved.')).toBeVisible();
+    expect(errors).toEqual([]);
   });
 
   test('F6 leaves the contained toasts alone @engines', async ({ page }) => {
