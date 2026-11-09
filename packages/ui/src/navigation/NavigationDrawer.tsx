@@ -1,7 +1,6 @@
 'use client';
 
 import { Collapsible } from '@base-ui/react/collapsible';
-import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   useCallback,
   useEffect,
@@ -17,7 +16,7 @@ import {
 } from 'react';
 import { Column } from '../layout/Layout.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
-import { TooltipPopup, tooltipDelay } from '../internal/popup/TooltipPopup.js';
+import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { useLatest } from '../internal/useLatest.js';
 import { ResizeHandle } from '../internal/resize/ResizeHandle.js';
@@ -172,10 +171,8 @@ interface DrawerState {
 
 /**
  * A destination's control, such as a link. In a resizable drawer, whose labels keep to one line, a
- * label cut short with an ellipsis shows in full in a tooltip beside the drawer, on hover and
- * keyboard focus. The tooltip stays in place while the label fits, so the item and its focus are
- * kept as the drawer is resized. `as` renders the item as another trigger, such as the button that
- * opens a section.
+ * label cut short with an ellipsis shows in full in a tooltip beside the drawer (CutLabelTooltip).
+ * `as` renders the item as another trigger, such as the button that opens a section.
  */
 function DrawerControl({
   destination,
@@ -195,10 +192,9 @@ function DrawerControl({
   );
   const item = as ? as(destinationItem) : destinationItem;
   return oneLine ? (
-    <BaseTooltip.Root disabled={!cut}>
-      <BaseTooltip.Trigger delay={tooltipDelay} render={item} />
-      {cut && <TooltipPopup content={destination.label} side="inline-end" />}
-    </BaseTooltip.Root>
+    <CutLabelTooltip cut={cut} label={destination.label} side="inline-end">
+      {item}
+    </CutLabelTooltip>
   ) : (
     item
   );

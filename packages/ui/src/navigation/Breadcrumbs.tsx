@@ -1,6 +1,5 @@
 'use client';
 
-import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   useLayoutEffect,
   useRef,
@@ -17,7 +16,7 @@ import { IconChevronRight } from '../icons/ChevronRight.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
-import { TooltipPopup, tooltipDelay } from '../internal/popup/TooltipPopup.js';
+import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Breadcrumbs.css';
@@ -110,13 +109,10 @@ function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
       </span>
     );
   }
-  // A label cut short shows in full in a tooltip, on hover and on keyboard focus.
-  // The tooltip stays in place while the label fits, so the element and its focus are kept.
   return (
-    <BaseTooltip.Root disabled={!truncated}>
-      <BaseTooltip.Trigger delay={tooltipDelay} render={crumb} />
-      {truncated && <TooltipPopup content={item.label} side="bottom" />}
-    </BaseTooltip.Root>
+    <CutLabelTooltip cut={truncated} label={item.label} side="bottom">
+      {crumb}
+    </CutLabelTooltip>
   );
 }
 

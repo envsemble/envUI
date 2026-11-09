@@ -1,7 +1,7 @@
 'use client';
 
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
-import { createContext, type ReactNode, type RefObject } from 'react';
+import { createContext, type ReactElement, type ReactNode, type RefObject } from 'react';
 import { classNames } from '../classNames.js';
 import {
   PopupSurface,
@@ -81,5 +81,32 @@ export function TooltipPopup({
     >
       {content}
     </PopupSurface>
+  );
+}
+
+/**
+ * A label cut short with an ellipsis, `cut`, shown in full in a tooltip, `label`, on hover and on
+ * keyboard focus, such as a navigation drawer's or a breadcrumb's. The tooltip stays in place while
+ * the label fits, so the element and its focus are kept as it resizes: its trigger is disabled
+ * then, not its root, whose state would change right after it mounts and render each such tooltip
+ * again, one by one, as a page with dozens of them hydrates.
+ */
+export function CutLabelTooltip({
+  cut,
+  label,
+  side,
+  children,
+}: {
+  cut: boolean;
+  label: ReactNode;
+  side: TooltipSide;
+  /** The element whose label is cut short, which takes the trigger's props and ref. */
+  children: ReactElement;
+}) {
+  return (
+    <BaseTooltip.Root>
+      <BaseTooltip.Trigger disabled={!cut} delay={tooltipDelay} render={children} />
+      {cut && <TooltipPopup content={label} side={side} />}
+    </BaseTooltip.Root>
   );
 }
