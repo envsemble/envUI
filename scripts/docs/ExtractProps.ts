@@ -15,15 +15,12 @@
 // only some forms names the prop that selects them, such as `iconOnly` being `true`.
 import { readFileSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { Node, Project, ts } from 'ts-morph';
 import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
 import { libraryEntryPoints } from './LibraryEntryPoints.ts';
+import { libraryDirectory, librarySourceDirectory, repositoryRoot } from '../RepositoryPaths.ts';
 
-const root = fileURLToPath(new URL('../../', import.meta.url));
-const libraryDirectory = resolve(root, 'packages/ui');
-const sourceDirectory = resolve(libraryDirectory, 'src');
-export const propsFile = resolve(root, 'docs/generated/props.json');
+export const propsFile = resolve(repositoryRoot, 'docs/generated/props.json');
 
 /** The entry point no Props section reads: it holds the built-in strings, and no component. */
 const undocumentedEntryPoints = new Set(['@envsemble/envui/messages']);
@@ -102,14 +99,14 @@ type Origin = 'envui' | 'base-ui' | 'native';
 
 function originOf(declaration: ts.Node): Origin {
   const file = resolve(declaration.getSourceFile().fileName);
-  if (!relative(sourceDirectory, file).startsWith('..')) return 'envui';
+  if (!relative(librarySourceDirectory, file).startsWith('..')) return 'envui';
   if (/[\\/]node_modules[\\/]@base-ui[\\/]/.test(file)) return 'base-ui';
   return 'native';
 }
 
 /** Whether a declaration is envUI's own, rather than the platform's or a dependency's. */
 const isLibrary = (declaration: ts.Node) =>
-  !relative(sourceDirectory, declaration.getSourceFile().fileName).startsWith('..');
+  !relative(librarySourceDirectory, declaration.getSourceFile().fileName).startsWith('..');
 
 /** The TSDoc of a declaration: its text, @default and @deprecated. */
 function documentation(declaration: ts.Node) {
@@ -626,7 +623,7 @@ class ExportReader {
       }
       this.record(name, entry, {
         kind: 'namespace',
-        source: posix(relative(root, declaration.getFilePath())),
+        source: posix(relative(repositoryRoot, declaration.getFilePath())),
         description: '',
         parts,
       });
@@ -641,7 +638,7 @@ class ExportReader {
     const description =
       documentation(statement).description ||
       (implementation ? documentation(implementation).description : '');
-    const source = posix(relative(root, declaration.getSourceFile().getFilePath()));
+    const source = posix(relative(repositoryRoot, declaration.getSourceFile().getFilePath()));
     const leaf = name.split('.').pop()!;
     if (/^[A-Z]/.test(leaf) && signature) {
       const parameter = signature.getParameters()[0];

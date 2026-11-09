@@ -4,21 +4,20 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { clientReasonsOf, libraryModules } from '../../scripts/build/ClientModules.ts';
 import { libraryEntryPoints } from '../../scripts/docs/LibraryEntryPoints.ts';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // envUI and React Server Components: each module that uses client-only React APIs starts with
 // 'use client', the entry points carry no directive, the build keeps the directives where they
 // are, and a server component's module graph imports the package and renders envUI on the server.
 
-const repository = fileURLToPath(new URL('../../', import.meta.url));
-const dist = join(repository, 'packages/ui/dist');
+const dist = join(repositoryRoot, 'packages/ui/dist');
 const modules = await libraryModules();
 
 /** The entry points, whose `export *` and `export * as` lines a server component imports through. */
 const entries = libraryEntryPoints().map(({ file }) =>
-  relative(join(repository, 'packages/ui/src'), file).split(sep).join('/'),
+  relative(join(repositoryRoot, 'packages/ui/src'), file).split(sep).join('/'),
 );
 
 const startsWithDirective = (code) => /^\s*(['"])use client\1;?/.test(code);
@@ -164,7 +163,7 @@ test('a server component imports envUI and renders it on the server', () => {
       './tests/rsc/ClientReferences.mjs',
       'tests/rsc/ServerRender.mjs',
     ],
-    { cwd: repository, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
+    { cwd: repositoryRoot, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 },
   );
   const result = JSON.parse(output);
   // A part reached through its namespace is a client reference, which the server sends as such.

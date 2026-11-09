@@ -1,10 +1,15 @@
 // The token sources as the resolver lists them: where they are, the tokens each declares, and the
 // tokens two sources of one set or context both declare.
 import { readFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
+import { libraryDirectory, librarySourceDirectory } from '../../RepositoryPaths.ts';
 
-/** The token sources, and where the build writes; a test can build other tokens elsewhere. */
-export const defaultTokensDirectory = new URL('../../../packages/ui/tokens/', import.meta.url);
-export const defaultOutDir = new URL('../../../packages/ui/src/', import.meta.url);
+/**
+ * The token sources, and where the build writes, as file URLs ending in a slash; a test can build
+ * other tokens elsewhere.
+ */
+export const defaultTokensDirectory = pathToFileURL(`${libraryDirectory}/tokens/`);
+export const defaultOutDir = pathToFileURL(`${librarySourceDirectory}/`);
 export const resolverIn = (directory: URL) => new URL('envui.resolver.json', directory);
 
 /** A token document, or a group in one: nested groups and tokens, which hold a `$value`. */

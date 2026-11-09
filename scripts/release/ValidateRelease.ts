@@ -1,9 +1,10 @@
 import { readFile } from 'node:fs/promises';
-const libraryPackage = JSON.parse(
-  await readFile(new URL('../../packages/ui/package.json', import.meta.url), 'utf8'),
-);
+import { resolve } from 'node:path';
+import { libraryChangelogFile, libraryPackageFile, repositoryRoot } from '../RepositoryPaths.ts';
+
+const libraryPackage = JSON.parse(await readFile(libraryPackageFile, 'utf8'));
 const cataloguePackage = JSON.parse(
-  await readFile(new URL('../../apps/site/package.json', import.meta.url), 'utf8'),
+  await readFile(resolve(repositoryRoot, 'apps/site/package.json'), 'utf8'),
 );
 // The release tag: RELEASE_TAG where a workflow names it, as GitHub sets GITHUB_REF_NAME to the
 // event's ref, else GITHUB_REF_NAME on a tag push or by hand.
@@ -15,7 +16,7 @@ if (cataloguePackage.dependencies['@envsemble/envui'] !== libraryPackage.version
 // The lint packages are published with the library at its version (a fixed group in Changesets).
 for (const directory of ['eslint-plugin', 'stylelint-config']) {
   const { name, version } = JSON.parse(
-    await readFile(new URL(`../../packages/${directory}/package.json`, import.meta.url), 'utf8'),
+    await readFile(resolve(repositoryRoot, `packages/${directory}/package.json`), 'utf8'),
   );
   if (version !== libraryPackage.version)
     throw new Error(`${name} ${version} must have the release version ${libraryPackage.version}.`);
@@ -23,10 +24,7 @@ for (const directory of ['eslint-plugin', 'stylelint-config']) {
 if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(libraryPackage.version))
   throw new Error('Invalid version.');
 const prerelease = libraryPackage.version.includes('-');
-const notes = releaseNotes(
-  await readFile(new URL('../../packages/ui/CHANGELOG.md', import.meta.url), 'utf8'),
-  libraryPackage.version,
-);
+const notes = releaseNotes(await readFile(libraryChangelogFile, 'utf8'), libraryPackage.version);
 if (process.argv.includes('--release-notes')) process.stdout.write(notes);
 // A prerelease goes out under its own name, such as prerelease for 1.0.0-prerelease.0.
 else if (process.argv.includes('--dist-tag'))

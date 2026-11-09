@@ -12,9 +12,10 @@
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
+import { resolve } from 'node:path';
 import { libraryEntryPoints } from '../docs/LibraryEntryPoints.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-const repository = new URL('../../', import.meta.url);
 const libraryTokens = 'packages/ui/src/generated/tokens.json';
 /** The modules each lint package ships a copy of, by their name in the package. */
 const copiedModules = {
@@ -75,7 +76,7 @@ function serializeTokens(types: Record<string, string[]>) {
   return lines.join('\n');
 }
 
-const read = (path: string) => readFileSync(new URL(path, repository), 'utf8');
+const read = (path: string) => readFileSync(resolve(repositoryRoot, path), 'utf8');
 
 /** Each file the lint packages ship from a source, by its path in the repository, with its text. */
 export function expectedFiles(): Map<string, string> {
@@ -100,7 +101,7 @@ export function expectedFiles(): Map<string, string> {
 /** The copies that differ from their sources, or are missing. */
 export function staleFiles() {
   return [...expectedFiles()]
-    .filter(([path, text]) => !existsSync(new URL(path, repository)) || read(path) !== text)
+    .filter(([path, text]) => !existsSync(resolve(repositoryRoot, path)) || read(path) !== text)
     .map(([path]) => path);
 }
 
@@ -115,7 +116,7 @@ function main() {
     return;
   }
   const expected = expectedFiles();
-  for (const path of stale) writeFileSync(new URL(path, repository), expected.get(path)!);
+  for (const path of stale) writeFileSync(resolve(repositoryRoot, path), expected.get(path)!);
   console.log(
     stale.length
       ? `Updated ${stale.join(', ')}.`

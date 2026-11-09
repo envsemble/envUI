@@ -7,21 +7,19 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { declarations } from '../support/cssDeclarations.mjs';
-
-const repository = fileURLToPath(new URL('../../', import.meta.url));
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 /** The style sheets envUI ships, dev mode's and the catalogue's. */
 function styleSheets() {
   const sheets = [];
   // The catalogue's sheets sit beside the code they style, in the folders of apps/site/src.
   for (const directory of ['packages/ui/src/styles', 'packages/ui/src/dev/ui', 'apps/site/src'])
-    for (const name of readdirSync(join(repository, directory), { recursive: true }))
+    for (const name of readdirSync(join(repositoryRoot, directory), { recursive: true }))
       if (name.endsWith('.css'))
         sheets.push({
           file: `${directory}/${name.replaceAll('\\', '/')}`,
-          css: readFileSync(join(repository, directory, name), 'utf8'),
+          css: readFileSync(join(repositoryRoot, directory, name), 'utf8'),
         });
   return sheets;
 }
@@ -70,7 +68,7 @@ test('round corners are capped, except on parts that are always square', () => {
 
 test('the full corner is capped at half the tallest single-line control', () => {
   const css = readFileSync(
-    join(repository, 'packages/ui/src/styles/TokensHandwritten.css'),
+    join(repositoryRoot, 'packages/ui/src/styles/TokensHandwritten.css'),
     'utf8',
   );
   const [, value] = css.match(/--env-radius-full:\s*([^;]+);/) ?? [];

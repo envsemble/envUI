@@ -21,11 +21,10 @@
 // --check writes nothing and fails when the committed palette differs from a fresh build. The
 // palette is internal: semantic tokens in packages/ui/tokens alias it, components never do.
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { converter, formatHex, parse, wcagLuminance, type Oklch, type Rgb } from 'culori';
 import { formatted, readIfExists, writeIfChanged } from './GeneratedFiles.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
 export const paletteFile = resolve(repositoryRoot, 'packages/ui/tokens/palette.tokens.json');
 
 const toOklch = converter('oklch');

@@ -2,16 +2,15 @@ import assert from 'node:assert/strict';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import ts from 'typescript';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // The setup page's "Connect your router" recipes, the ```tsx recipe fences in docs/setup.md, are
 // type-checked against envUI's source and minimal declarations of the routers
 // (tests/docs/router-shims.d.ts), so a recipe can't drift from LinkComponentProps.
 
-const repository = fileURLToPath(new URL('../../', import.meta.url));
-const directory = join(repository, '.cache/router-recipes');
+const directory = join(repositoryRoot, '.cache/router-recipes');
 
 /** The recipe fences of a Markdown page, in order. */
 function recipes(markdown) {
@@ -22,7 +21,7 @@ function recipes(markdown) {
 }
 
 test('the setup page has a recipe for each router', () => {
-  const found = recipes(readFileSync(join(repository, 'docs/setup.md'), 'utf8'));
+  const found = recipes(readFileSync(join(repositoryRoot, 'docs/setup.md'), 'utf8'));
   const imports = found.join('\n');
   for (const router of ['@tanstack/react-router', 'react-router', 'next/link'])
     assert.match(imports, new RegExp(`from '${router}'`), `a recipe for ${router}`);
@@ -30,7 +29,7 @@ test('the setup page has a recipe for each router', () => {
 });
 
 test('the router recipes type-check against LinkComponentProps', () => {
-  const found = recipes(readFileSync(join(repository, 'docs/setup.md'), 'utf8'));
+  const found = recipes(readFileSync(join(repositoryRoot, 'docs/setup.md'), 'utf8'));
   rmSync(directory, { recursive: true, force: true });
   mkdirSync(directory, { recursive: true });
   // Each recipe is a module of its own, beside the router declarations.
@@ -39,18 +38,21 @@ test('the router recipes type-check against LinkComponentProps', () => {
     writeFileSync(file, source);
     return file;
   });
-  const program = ts.createProgram([...files, join(repository, 'tests/docs/router-shims.d.ts')], {
-    target: ts.ScriptTarget.ES2022,
-    lib: ['lib.es2022.d.ts', 'lib.dom.d.ts', 'lib.dom.iterable.d.ts'],
-    module: ts.ModuleKind.ESNext,
-    moduleResolution: ts.ModuleResolutionKind.Bundler,
-    jsx: ts.JsxEmit.ReactJSX,
-    strict: true,
-    skipLibCheck: true,
-    noEmit: true,
-    customConditions: ['envui-source'],
-    types: [],
-  });
+  const program = ts.createProgram(
+    [...files, join(repositoryRoot, 'tests/docs/router-shims.d.ts')],
+    {
+      target: ts.ScriptTarget.ES2022,
+      lib: ['lib.es2022.d.ts', 'lib.dom.d.ts', 'lib.dom.iterable.d.ts'],
+      module: ts.ModuleKind.ESNext,
+      moduleResolution: ts.ModuleResolutionKind.Bundler,
+      jsx: ts.JsxEmit.ReactJSX,
+      strict: true,
+      skipLibCheck: true,
+      noEmit: true,
+      customConditions: ['envui-source'],
+      types: [],
+    },
+  );
   const own = new Set(files.map((file) => file.replaceAll('\\', '/')));
   const diagnostics = ts
     .getPreEmitDiagnostics(program)

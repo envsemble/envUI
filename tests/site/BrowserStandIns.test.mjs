@@ -5,7 +5,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { importSource, repository } from '../support/importSource.mjs';
+import { importSource } from '../support/importSource.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const standIns = await importSource('BrowserStandIns', 'apps/site/src/motion/BrowserStandIns.ts');
 
@@ -150,7 +151,7 @@ test('the pointers no one sees keep their capture here, a real pointer’s the b
 test('evaluated again, as on a hot reload, the module keeps the state its stand-ins read', async () => {
   const { Element, calls } = realm();
   // The same bundle, evaluated again as a module of its own.
-  const bundle = pathToFileURL(join(repository, '.cache/unit/BrowserStandIns.mjs')).href;
+  const bundle = pathToFileURL(join(repositoryRoot, '.cache/unit/BrowserStandIns.mjs')).href;
   const again = await import(`${bundle}?evaluated=again`);
   assert.notEqual(again.holdBrowserStandIns, standIns.holdBrowserStandIns);
   assert.equal(again.captures, standIns.captures);

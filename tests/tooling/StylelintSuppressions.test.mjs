@@ -2,21 +2,20 @@ import assert from 'node:assert/strict';
 import { glob, readFile } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import stylelint from 'stylelint';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // stylelint-suppressions.json records the violations that predate the style rules, per file and
 // rule. Stylelint fails only when a count rises, so a recorded count above the real one would leave
 // room for new violations. This test lints without the suppressions and requires the recorded
 // counts to equal the real ones.
 
-const repository = fileURLToPath(new URL('../../', import.meta.url));
 const suppressionsFile = 'stylelint-suppressions.json';
 const recordAgain = `Record the lower counts with \`npm run lint:css -- --suppress\` while \`npm run lint:css\` passes, and commit ${suppressionsFile}.`;
 
 /** The globs `npm run lint:css` passes to Stylelint. */
 async function lintedGlobs() {
-  const manifest = JSON.parse(await readFile(join(repository, 'package.json'), 'utf8'));
+  const manifest = JSON.parse(await readFile(join(repositoryRoot, 'package.json'), 'utf8'));
   const globs = [...manifest.scripts['lint:css'].matchAll(/"([^"]+)"/g)].map((match) => match[1]);
   assert.ok(globs.length > 0, 'lint:css names the files it lints');
   return globs;
@@ -32,14 +31,14 @@ async function lintAll() {
   const found = [];
   const files = new Set();
   for (const pattern of await lintedGlobs())
-    for await (const file of glob(pattern, { cwd: repository }))
+    for await (const file of glob(pattern, { cwd: repositoryRoot }))
       files.add(file.split(sep).join('/'));
   for (const file of [...files].sort()) {
     // Linting the code rather than the file leaves the suppressions file out.
     const { results } = await stylelint.lint({
-      code: await readFile(join(repository, file), 'utf8'),
-      codeFilename: join(repository, file),
-      configFile: join(repository, 'stylelint.config.mjs'),
+      code: await readFile(join(repositoryRoot, file), 'utf8'),
+      codeFilename: join(repositoryRoot, file),
+      configFile: join(repositoryRoot, 'stylelint.config.mjs'),
     });
     for (const warning of results.flatMap((result) => result.warnings))
       found.push({ file, ...warning });
@@ -79,7 +78,7 @@ function compareCounts(actual, recorded) {
 }
 
 test('stylelint-suppressions.json records exactly the CSS violations there are', async () => {
-  const recorded = JSON.parse(await readFile(join(repository, suppressionsFile), 'utf8'));
+  const recorded = JSON.parse(await readFile(join(repositoryRoot, suppressionsFile), 'utf8'));
   const { rises, drops } = compareCounts(await violations(), recorded);
   const report = [];
   if (rises.length)

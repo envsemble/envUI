@@ -17,11 +17,10 @@
 // Run it after a change to dev mode's UI or to the demo application, and commit the images.
 import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { chromium, type Browser, type Page } from '@playwright/test';
 import { defaultPorts } from '../test/CheckoutMarker.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-const root = fileURLToPath(new URL('../../', import.meta.url));
 const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 const page = 'docs/dev-mode';
 /** The 3D picture's shape, width to height, as TryDevMode.tsx declares it, and its margin in px. */
@@ -60,7 +59,10 @@ async function save(tab: Page, png: Buffer, name: string, theme: Theme) {
     },
     { data: png.toString('base64'), quality },
   );
-  const file = resolve(root, `apps/site/src/figures/dev-mode/dev-mode-${name}-${theme}.webp`);
+  const file = resolve(
+    repositoryRoot,
+    `apps/site/src/figures/dev-mode/dev-mode-${name}-${theme}.webp`,
+  );
   await writeFile(file, Buffer.from(webp, 'base64'));
   console.log(`Wrote ${file} (${Math.round((webp.length * 0.75) / 1024)} KB).`);
 }

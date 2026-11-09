@@ -3,16 +3,16 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // The namespaces' parts are pure, so a bundler that sees which parts an application renders keeps
 // only those: Rolldown does through the entry point, and esbuild does when it bundles the
 // namespace's own module (through the entry point it keeps the whole namespace; docs/setup.md
 // gives the sizes). This test bundles each namespace module with esbuild, part by part.
 
-const repository = fileURLToPath(new URL('../../', import.meta.url));
-const dist = join(repository, 'packages/ui/dist');
+const dist = join(repositoryRoot, 'packages/ui/dist');
 
 /** The bytes esbuild keeps of a dist module, by its path from dist, for an application using `use`. */
 async function bundledSize(module, use) {

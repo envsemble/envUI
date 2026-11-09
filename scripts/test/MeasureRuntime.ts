@@ -32,11 +32,11 @@ import { availableParallelism, cpus, platform, release } from 'node:os';
 import { mkdir, readFile } from 'node:fs/promises';
 import { SourceMap } from 'node:module';
 import { dirname, relative, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { chromium, type Browser, type Page } from '@playwright/test';
 import { build, preview, type PreviewServer } from 'vite';
 import { median } from './Median.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 /** What the benchmarks' page (tests/fixture/perf.tsx) gives the script, as window.envuiPerf. */
 interface PerfPage {
@@ -52,10 +52,9 @@ declare global {
   }
 }
 
-const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const outputs = {
-  site: resolve(root, '.cache/perf/site'),
-  fixture: resolve(root, '.cache/perf/fixture'),
+  site: resolve(repositoryRoot, '.cache/perf/site'),
+  fixture: resolve(repositoryRoot, '.cache/perf/fixture'),
 };
 const ports = {
   site: Number(process.env.ENVUI_SITE_PORT || 8778),
@@ -110,19 +109,19 @@ async function buildPages() {
   if (needsFixture)
     await build({
       ...common,
-      configFile: resolve(root, 'tests/fixture/vite.config.ts'),
+      configFile: resolve(repositoryRoot, 'tests/fixture/vite.config.ts'),
       build: {
         outDir: outputs.fixture,
         emptyOutDir: true,
         sourcemap: true,
-        rollupOptions: { input: resolve(root, 'tests/fixture/perf.html') },
+        rollupOptions: { input: resolve(repositoryRoot, 'tests/fixture/perf.html') },
       },
     });
   if (needsSite)
     await build({
       ...common,
-      root: resolve(root, 'apps/site'),
-      configFile: resolve(root, 'apps/site/vite.config.ts'),
+      root: resolve(repositoryRoot, 'apps/site'),
+      configFile: resolve(repositoryRoot, 'apps/site/vite.config.ts'),
       build: { outDir: outputs.site, emptyOutDir: true, sourcemap: true },
     });
 }
@@ -131,9 +130,9 @@ async function serve(name: 'site' | 'fixture'): Promise<PreviewServer> {
   await mkdir(outputs[name], { recursive: true });
   return preview({
     logLevel: 'warn',
-    root: resolve(root, name === 'site' ? 'apps/site' : 'tests/fixture'),
+    root: resolve(repositoryRoot, name === 'site' ? 'apps/site' : 'tests/fixture'),
     configFile: resolve(
-      root,
+      repositoryRoot,
       name === 'site' ? 'apps/site/vite.config.ts' : 'tests/fixture/vite.config.ts',
     ),
     build: { outDir: outputs[name] },
@@ -409,10 +408,10 @@ async function original(url: string | undefined, line: number, column: number) {
   const entry = loaded?.map.findEntry(line - 1, column - 1);
   if (!loaded || !entry || !('originalSource' in entry))
     return `${address.pathname}:${line}:${column}`;
-  const source = relative(root, resolve(loaded.directory, entry.originalSource)).replaceAll(
-    '\\',
-    '/',
-  );
+  const source = relative(
+    repositoryRoot,
+    resolve(loaded.directory, entry.originalSource),
+  ).replaceAll('\\', '/');
   return `${source}:${entry.originalLine + 1}`;
 }
 

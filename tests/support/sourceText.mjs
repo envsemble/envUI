@@ -3,20 +3,25 @@
 import { readdir } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
 import ts from 'typescript';
-import { repository } from './importSource.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 /** The files under `directory`, a path from the repository's root, as sorted root paths. */
 export async function listFiles(directory) {
   let entries;
   try {
-    entries = await readdir(join(repository, directory), { recursive: true, withFileTypes: true });
+    entries = await readdir(join(repositoryRoot, directory), {
+      recursive: true,
+      withFileTypes: true,
+    });
   } catch (error) {
     if (error.code === 'ENOENT') return [];
     throw error;
   }
   return entries
     .filter((entry) => entry.isFile())
-    .map((entry) => relative(repository, join(entry.parentPath, entry.name)).split(sep).join('/'))
+    .map((entry) =>
+      relative(repositoryRoot, join(entry.parentPath, entry.name)).split(sep).join('/'),
+    )
     .sort();
 }
 

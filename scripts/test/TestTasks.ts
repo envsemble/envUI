@@ -3,7 +3,7 @@
 // so parallel tasks don't interleave. A summary with each task's time closes the run.
 import { spawn } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
-import { repositoryRoot } from './TestScope.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const color = process.stdout.isTTY && !process.env.NO_COLOR;
 const paint = (code: number, text: string) => (color ? `\u001b[${code}m${text}\u001b[0m` : text);

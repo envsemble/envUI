@@ -1,9 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { writeIfChanged } from './GeneratedFiles.ts';
-
-const root = fileURLToPath(new URL('../../', import.meta.url));
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 /**
  * Preserve the supplied artwork while making its monochrome paint theme-aware. The lockup is the
@@ -12,7 +10,7 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 export async function generateBrandAssets() {
   const [black, white] = await Promise.all(
     ['black', 'white'].map((color) =>
-      readFile(resolve(root, `assets/brand/envUI/envUI-lockup-${color}.svg`), 'utf8'),
+      readFile(resolve(repositoryRoot, `assets/brand/envUI/envUI-lockup-${color}.svg`), 'utf8'),
     ),
   );
   function geometry(source: string) {
@@ -54,7 +52,7 @@ export function EnvUILogo({ label = 'envUI', ...props }: EnvUILogoProps) {
   );
 }
 `;
-  const target = resolve(root, 'apps/site/src/brand/EnvUILogo.tsx');
+  const target = resolve(repositoryRoot, 'apps/site/src/brand/EnvUILogo.tsx');
   writeIfChanged(target, output);
 }
 

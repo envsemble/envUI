@@ -14,14 +14,13 @@
 // hasn't recorded keeps the stage's least height while it loads, so a stale record only moves the
 // page a little.
 import { writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { chromium, type Page, type Route } from '@playwright/test';
 import { defaultPorts } from '../test/CheckoutMarker.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
-const recordFile = fileURLToPath(
-  new URL('../../apps/site/src/generated/PartSizes.json', import.meta.url),
-);
+const recordFile = resolve(repositoryRoot, 'apps/site/src/generated/PartSizes.json');
 /** The window the sizes are recorded in, a desktop's, beside the page's contents. */
 const window = { width: 1440, height: 1000 };
 /** The files of the parts a page loads on its own, in development, where each is its own file. */

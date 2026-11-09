@@ -21,12 +21,10 @@
 // tests/library/ClientDirectives.test.mjs runs the check, and checks the built dist and a server render.
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import { libraryDirectory, librarySourceDirectory } from '../RepositoryPaths.ts';
 
-const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
-const sourceDirectory = resolve(repositoryRoot, 'packages/ui/src');
-const configFile = resolve(repositoryRoot, 'packages/ui/tsconfig.json');
+const configFile = resolve(libraryDirectory, 'tsconfig.json');
 
 /** The directive, as the modules write it. */
 const directive = "'use client';";
@@ -320,7 +318,10 @@ function libraryProgram(paths: string[]) {
  * The reasons of a module given as source text, read in a program of its own with the library's
  * options; for tests of the reading.
  */
-export function clientReasonsOf(text: string, fileName = join(sourceDirectory, 'Example.tsx')) {
+export function clientReasonsOf(
+  text: string,
+  fileName = join(librarySourceDirectory, 'Example.tsx'),
+) {
   const path = resolve(fileName);
   const host = ts.createCompilerHost({});
   const readFile = host.readFile.bind(host);
@@ -353,7 +354,7 @@ export function clientReasonsOf(text: string, fileName = join(sourceDirectory, '
 
 /** Every library module, the generated icons included, with whether it needs and has the directive. */
 export async function libraryModules() {
-  const entries = await readdir(sourceDirectory, { recursive: true, withFileTypes: true });
+  const entries = await readdir(librarySourceDirectory, { recursive: true, withFileTypes: true });
   const files = entries
     .filter(
       (entry) => entry.isFile() && /\.tsx?$/.test(entry.name) && !entry.name.endsWith('.d.ts'),
@@ -369,7 +370,7 @@ export async function libraryModules() {
     client: boolean;
   }[] = [];
   for (const path of files) {
-    const file = relative(sourceDirectory, path).split('\\').join('/');
+    const file = relative(librarySourceDirectory, path).split('\\').join('/');
     const text = await readFile(path, 'utf8');
     const sourceFile = program.getSourceFile(path);
     modules.push({

@@ -2,18 +2,14 @@
 // attributes each extraction finds.
 import { readdirSync, readFileSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-export const root = fileURLToPath(new URL('../../../', import.meta.url));
-export const libraryDirectory = resolve(root, 'packages/ui');
-export const sourceDirectory = resolve(libraryDirectory, 'src');
+import { librarySourceDirectory, repositoryRoot } from '../../RepositoryPaths.ts';
 
 /** A file's path from the repository's root, with forward slashes. */
-export const repositoryPath = (file: string) => relative(root, file).split(sep).join('/');
+export const repositoryPath = (file: string) => relative(repositoryRoot, file).split(sep).join('/');
 
 /** The library's style sheets, src/styles/*.css, each with its repository path and its text. */
 export function styleSheets() {
-  const directory = resolve(sourceDirectory, 'styles');
+  const directory = resolve(librarySourceDirectory, 'styles');
   return readdirSync(directory)
     .filter((name) => name.endsWith('.css'))
     .map((name) => ({

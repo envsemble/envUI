@@ -4,7 +4,7 @@ import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/pr
 import { tmpdir } from 'node:os';
 import { join, posix, relative } from 'node:path';
 import { after, before, test } from 'node:test';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import {
   cssDeclarations,
   overridingCustomProperties,
@@ -12,12 +12,12 @@ import {
 import { contextTokens, duplicateTokens } from '../../scripts/build/tokens/TokenSources.ts';
 import { withoutRepeatedValues } from '../../scripts/build/tokens/TokensCss.ts';
 import { buildTokens } from '../../scripts/build/BuildTokens.ts';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // The token build's guards, on copies of the tokens built into a scratch folder, and the custom
 // properties the library's style sheets read.
 
-const repository = fileURLToPath(new URL('../../', import.meta.url));
-const library = join(repository, 'packages/ui');
+const library = join(repositoryRoot, 'packages/ui');
 let scratch;
 
 before(async () => {

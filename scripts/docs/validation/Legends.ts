@@ -2,12 +2,11 @@
 // name.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import type { Tokens } from 'marked';
-import { documentationDirectory } from '../DocumentationPaths.ts';
 import type { ExampleBlock, FigureBlock, PageReading, PartNames } from '../PageReading.ts';
+import { documentationDirectory, librarySourceDirectory } from '../../RepositoryPaths.ts';
 
-const stylesDirectory = fileURLToPath(new URL('../../../packages/ui/src/styles/', import.meta.url));
+const stylesDirectory = resolve(librarySourceDirectory, 'styles');
 
 /**
  * The part class names an anatomy legend may name: every `env-*` class of packages/ui's style

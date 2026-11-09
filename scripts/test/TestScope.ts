@@ -13,10 +13,8 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { fixtureUse, importsOf, specPaths } from './FixtureImports.ts';
-
-export const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 /**
  * Files whose specs neither their name nor the fixtures' imports find, such as a part a fixture

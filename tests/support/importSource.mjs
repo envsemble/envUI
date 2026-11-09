@@ -1,10 +1,9 @@
 // Bundles TypeScript sources of the repository for Node and imports them, so a unit test can call
 // the library's or the site's modules as they are written, without the library build.
 import { join } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
-
-export const repository = fileURLToPath(new URL('../../', import.meta.url));
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 /**
  * The exports of the given sources, bundled into `.cache/unit/<name>.mjs`. `sources` is a path from
@@ -14,12 +13,12 @@ export const repository = fileURLToPath(new URL('../../', import.meta.url));
  * packages stay imports.
  */
 export async function importSource(name, sources) {
-  const output = join(repository, '.cache/unit', `${name}.mjs`);
+  const output = join(repositoryRoot, '.cache/unit', `${name}.mjs`);
   await build({
-    absWorkingDir: repository,
+    absWorkingDir: repositoryRoot,
     stdin: {
       contents: typeof sources === 'string' ? `export * from './${sources}';` : sources.join('\n'),
-      resolveDir: repository,
+      resolveDir: repositoryRoot,
       loader: 'ts',
     },
     bundle: true,

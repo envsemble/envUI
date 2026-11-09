@@ -5,9 +5,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { importSource, repository } from '../support/importSource.mjs';
+import { importSource } from '../support/importSource.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-const styles = join(repository, 'packages/ui/src/styles');
+const styles = join(repositoryRoot, 'packages/ui/src/styles');
 const { windowClasses, windowClassOf } = await importSource(
   'WindowClasses',
   'packages/ui/src/foundations/windowClasses.ts',
@@ -44,7 +45,7 @@ test('windowClasses holds the widths of the window-class tokens, from compact up
     large: '75rem',
   });
   const { tokens } = JSON.parse(
-    readFileSync(join(repository, 'packages/ui/src/generated/tokens.json'), 'utf8'),
+    readFileSync(join(repositoryRoot, 'packages/ui/src/generated/tokens.json'), 'utf8'),
   );
   const fromTokens = Object.fromEntries(
     tokens

@@ -2,13 +2,9 @@
 // their commands, and the versions a page's `since` may name, from the changelog and changesets.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { libraryChangelogFile, libraryPackageFile, repositoryRoot } from '../RepositoryPaths.ts';
 
-const changelogFile = fileURLToPath(new URL('../../packages/ui/CHANGELOG.md', import.meta.url));
-const changesetDirectory = fileURLToPath(new URL('../../.changeset/', import.meta.url));
-const libraryPackageFile = fileURLToPath(
-  new URL('../../packages/ui/package.json', import.meta.url),
-);
+const changesetDirectory = resolve(repositoryRoot, '.changeset');
 
 /** The version of @envsemble/envui, from its package.json. */
 export const libraryVersion = (): string =>
@@ -51,7 +47,7 @@ const compareVersions = (a: string, b: string) => {
  * `## 1.0.0-prerelease.0` are not versions a page can name. Undefined outside the repository, where the check is skipped.
  */
 export function libraryVersions({
-  changelog = changelogFile,
+  changelog = libraryChangelogFile,
   changesets = changesetDirectory,
 } = {}) {
   if (!existsSync(changelog)) return undefined;

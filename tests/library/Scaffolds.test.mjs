@@ -5,9 +5,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { importSource, repository } from '../support/importSource.mjs';
+import { importSource } from '../support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const { Scaffold, Panes, Page, resolveNavigationForms } = await importSource('Scaffolds', [
   "export * from './packages/ui/src/layout/Scaffold.tsx';",
@@ -16,7 +17,7 @@ const { Scaffold, Panes, Page, resolveNavigationForms } = await importSource('Sc
   "export { resolveNavigationForms } from './packages/ui/src/layout/internal/navigationForms.ts';",
 ]);
 
-const styles = join(repository, 'packages/ui/src/styles');
+const styles = join(repositoryRoot, 'packages/ui/src/styles');
 const sheet = (name) => readFileSync(join(styles, name), 'utf8');
 
 test('each window class shows the form it asks for, else the nearest one given', () => {

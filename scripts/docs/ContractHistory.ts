@@ -3,11 +3,10 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { baseCandidates } from '../test/TestScope.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-const root = fileURLToPath(new URL('../../', import.meta.url));
-const changesetDirectory = resolve(root, '.changeset');
+const changesetDirectory = resolve(repositoryRoot, '.changeset');
 
 /** Whether a changeset's front matter bumps @envsemble/envui at all. */
 export const bumpsLibrary = (changeset: string) =>
@@ -27,7 +26,7 @@ export const names = (text: string, name: string) =>
 
 function git(args: string[]) {
   return execFileSync('git', args, {
-    cwd: root,
+    cwd: repositoryRoot,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'ignore'],
   });

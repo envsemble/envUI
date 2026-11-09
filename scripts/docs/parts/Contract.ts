@@ -5,7 +5,8 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { kebab, type PropsFile } from '../PageStructure.ts';
-import { root, sourceDirectory, styleSheets } from './Library.ts';
+import { librarySourceDirectory, repositoryRoot } from '../../RepositoryPaths.ts';
+import { styleSheets } from './Library.ts';
 import { readSource } from './SourceExtraction.ts';
 import { readColorProperties, readStyles } from './StyleExtraction.ts';
 
@@ -30,9 +31,9 @@ export interface PartsContract {
 }
 
 export const partsPath = 'docs/generated/parts.json';
-export const partsFile = resolve(root, partsPath);
-const partDescriptionsFile = resolve(sourceDirectory, 'partDescriptions.json');
-const propsFile = resolve(root, 'docs/generated/props.json');
+export const partsFile = resolve(repositoryRoot, partsPath);
+const partDescriptionsFile = resolve(librarySourceDirectory, 'partDescriptions.json');
+const propsFile = resolve(repositoryRoot, 'docs/generated/props.json');
 
 const partsSchemaVersion = 1;
 

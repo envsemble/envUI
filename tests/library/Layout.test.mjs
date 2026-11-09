@@ -4,9 +4,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { importSource, repository } from '../support/importSource.mjs';
+import { importSource } from '../support/importSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const { Box, Column, Grid, Row } = await importSource(
   'Layout',
@@ -68,10 +69,10 @@ test('render renders another element, with its own props winning', () => {
 });
 
 test('every rule of the primitives has zero specificity', () => {
-  const css = readFileSync(join(repository, 'packages/ui/src/styles/Layout.css'), 'utf8').replace(
-    /\/\*[\s\S]*?\*\//g,
-    '',
-  );
+  const css = readFileSync(
+    join(repositoryRoot, 'packages/ui/src/styles/Layout.css'),
+    'utf8',
+  ).replace(/\/\*[\s\S]*?\*\//g, '');
   const selectors = [...css.matchAll(/([^{}]+)\{[^{}]*\}/g)].flatMap(([, list]) =>
     list.split(/,(?![^(]*\))/).map((selector) => selector.trim()),
   );

@@ -3,14 +3,16 @@
 // changes, each linking to the migration guide or the full changelog below them. The catalogue reads them when it builds, through the
 // virtual module in apps/site/vite.config.ts, and the checks below hold them to that shape.
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { headingsOf } from '../docs/MarkdownHeadings.ts';
+import {
+  documentationDirectory,
+  libraryChangelogFile,
+  repositoryRoot,
+} from '../RepositoryPaths.ts';
 
-const releaseNotesFile = fileURLToPath(
-  new URL('../../apps/site/src/releases/release-notes.md', import.meta.url),
-);
-const migrationFile = fileURLToPath(new URL('../../docs/migration.md', import.meta.url));
-const changelogFile = fileURLToPath(new URL('../../packages/ui/CHANGELOG.md', import.meta.url));
+const releaseNotesFile = resolve(repositoryRoot, 'apps/site/src/releases/release-notes.md');
+const migrationFile = resolve(documentationDirectory, 'migration.md');
 
 /** The most highlights an entry has. */
 const highlightLimit = 5;
@@ -118,7 +120,7 @@ function linkTargets() {
     );
   return {
     '/docs/migration': ids(migrationFile),
-    '/docs/changelog': ids(changelogFile),
+    '/docs/changelog': ids(libraryChangelogFile),
   } as Record<string, Set<string>>;
 }
 
@@ -161,4 +163,4 @@ export function readReleaseNotes(file = releaseNotesFile) {
 }
 
 /** The files the release notes depend on, which the catalogue watches while it runs. */
-export const releaseNotesSources = [releaseNotesFile, migrationFile, changelogFile];
+export const releaseNotesSources = [releaseNotesFile, migrationFile, libraryChangelogFile];

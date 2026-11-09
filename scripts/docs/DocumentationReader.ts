@@ -8,7 +8,7 @@ import {
   documentationDirectory,
   examplesDirectory,
   specimensDirectory,
-} from './DocumentationPaths.ts';
+} from '../RepositoryPaths.ts';
 import { libraryVersions, withLibraryVersion } from './LibraryVersions.ts';
 import {
   contained,

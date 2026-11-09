@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { repository } from '../support/importSource.mjs';
 import { codeText, listFiles } from '../support/sourceText.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // envUI names no application that uses it: its first versions gathered what those applications
 // needed, and naming them would make its components read as built for one of them. Other products,
@@ -84,7 +84,7 @@ const generated = [
 test('shipped text, documentation and sample data name no products', async () => {
   const findings = [];
   for (const file of await sourceFiles()) {
-    const text = await readFile(join(repository, file.path), 'utf8');
+    const text = await readFile(join(repositoryRoot, file.path), 'utf8');
     const segments = file.read === 'code' ? codeText(file.path, text) : [{ start: 0, text }];
     for (const segment of segments) findings.push(...productMentions(file.path, text, segment));
   }

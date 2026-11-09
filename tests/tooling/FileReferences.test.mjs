@@ -7,8 +7,8 @@ import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { repository } from '../support/importSource.mjs';
 import { codeText, cssComments, listFiles } from '../support/sourceText.mjs';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 /** The folders whose comments are checked. */
 const checked = ['packages/ui/src', 'apps/site/src', 'scripts', 'tests'];
@@ -38,7 +38,7 @@ const fileName =
 const repositoryFiles = execFileSync(
   'git',
   ['ls-files', '--cached', '--others', '--exclude-standard'],
-  { cwd: repository, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 },
+  { cwd: repositoryRoot, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 },
 )
   .split('\n')
   .filter(Boolean);
@@ -85,7 +85,7 @@ async function checkedFiles() {
 test('comments name only files that exist', async () => {
   const found = [];
   for (const path of await checkedFiles())
-    found.push(...danglingNames(path, await readFile(join(repository, path), 'utf8')));
+    found.push(...danglingNames(path, await readFile(join(repositoryRoot, path), 'utf8')));
   assert.deepEqual(found, [], 'Update the comment to where the file is now, or drop the name.');
 });
 

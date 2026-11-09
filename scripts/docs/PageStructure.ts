@@ -3,7 +3,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { parse as parseYaml } from 'yaml';
-import { documentationDirectory } from './DocumentationPaths.ts';
+import { documentationDirectory } from '../RepositoryPaths.ts';
 import {
   componentGroups,
   pageStatuses,

@@ -8,11 +8,12 @@
 //
 // Run it after changing the SVG, and commit what it writes. index.html links all three.
 import { readFileSync, writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { chromium } from '@playwright/test';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-const folder = fileURLToPath(new URL('../../assets/brand/envUI/', import.meta.url));
-const svg = readFileSync(`${folder}envUI-favicon.svg`, 'utf8');
+const folder = resolve(repositoryRoot, 'assets/brand/envUI');
+const svg = readFileSync(`${folder}/envUI-favicon.svg`, 'utf8');
 /** The tile's color in the light scheme, which the touch icon fills its square with. */
 const tile = /\.tile\s*\{\s*fill:\s*(#[0-9a-f]+)/i.exec(svg)![1];
 
@@ -54,8 +55,8 @@ try {
   const sizes = [16, 32, 48];
   const images: { size: number; png: Buffer }[] = [];
   for (const size of sizes) images.push({ size, png: await draw(size) });
-  writeFileSync(`${folder}envUI-favicon.ico`, ico(images));
-  writeFileSync(`${folder}envUI-apple-touch-icon.png`, await draw(180, tile));
+  writeFileSync(`${folder}/envUI-favicon.ico`, ico(images));
+  writeFileSync(`${folder}/envUI-apple-touch-icon.png`, await draw(180, tile));
   console.log(`Wrote envUI-favicon.ico (${sizes.join(', ')} px) and envUI-apple-touch-icon.png.`);
 } finally {
   await browser.close();

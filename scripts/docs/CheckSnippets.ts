@@ -21,12 +21,9 @@
 // it may be one envUI renamed; the application's own are listed in `applicationComponents`.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import { libraryEntryPoints } from './LibraryEntryPoints.ts';
-
-const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
-const librarySource = join(repositoryRoot, 'packages/ui/src');
+import { librarySourceDirectory, repositoryRoot } from '../RepositoryPaths.ts';
 
 /** A code fence of a page that holds TypeScript. */
 export interface Snippet {
@@ -221,7 +218,10 @@ const compilerOptions: ts.CompilerOptions = {
 
 const inLibrary = (fileName: string) => {
   const path = resolve(fileName).toLowerCase();
-  return path.startsWith(librarySource.toLowerCase() + sep) || path === librarySource.toLowerCase();
+  return (
+    path.startsWith(librarySourceDirectory.toLowerCase() + sep) ||
+    path === librarySourceDirectory.toLowerCase()
+  );
 };
 
 /** Whether a symbol, its alias followed, is declared in the library's source. */

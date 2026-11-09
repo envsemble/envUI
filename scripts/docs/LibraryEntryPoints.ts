@@ -3,9 +3,7 @@
 // manifest's order. A script that leaves some out or orders them says so where it reads them.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const libraryDirectory = fileURLToPath(new URL('../../packages/ui/', import.meta.url));
+import { libraryDirectory } from '../RepositoryPaths.ts';
 
 export interface LibraryEntryPoint {
   /** What applications import, such as @envsemble/envui/markdown. */
