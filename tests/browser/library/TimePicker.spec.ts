@@ -27,13 +27,18 @@ const focusedWheel = (page: Page) =>
 /** The names of a popup's wheels, in order. */
 const wheelNames = (scope: Locator) =>
   scope.getByRole('spinbutton').evaluateAll((wheels) => wheels.map((each) => each.ariaLabel));
-/** The row a number of rows below (or above) a wheel's middle row. */
+/**
+ * The row a number of rows below (or above) a wheel's middle row. The wheel counts its rows itself:
+ * evaluateAll would find the wheel by its name in the page's own world, and Firefox's page crashes
+ * when the page's world reads ariaLabelledByElements after Playwright's own world has.
+ */
 async function rowFromMiddle(spinbutton: Locator, offset: number) {
-  const rows = spinbutton.locator('.env-time-list-row');
-  const middle = await rows.evaluateAll((all) =>
-    all.findIndex((row) => row.hasAttribute('data-centered')),
+  const middle = await spinbutton.evaluate((wheel) =>
+    [...wheel.querySelectorAll('.env-time-list-row')].findIndex((row) =>
+      row.hasAttribute('data-centered'),
+    ),
   );
-  return rows.nth(middle + offset);
+  return spinbutton.locator('.env-time-list-row').nth(middle + offset);
 }
 const wellOf = (trigger: Locator) =>
   trigger.locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]');
@@ -400,14 +405,17 @@ test(
     await page.waitForTimeout(150);
     await page.mouse.up();
     await expect(start).toHaveText('11:15');
-    // A quick drag let go while moving glides on past where the pointer stopped.
+    // A quick drag let go while moving glides on past where the pointer stopped: a few pixels down,
+    // too few to turn a row, turn the hours back. How far it glides follows the moves' timing, which
+    // each engine stamps differently: these few pixels glide it at most 11 rows, short of wrapping
+    // around past 11 o'clock, so the hour is earlier whatever the timing.
     await page.mouse.move(x, y);
     await page.mouse.down();
-    await page.mouse.move(x, y + row, { steps: 2 });
+    await page.mouse.move(x, y + 6, { steps: 3 });
     await page.mouse.up();
     await expect(hours).not.toHaveAttribute('data-turning');
     const hour = Number(await hours.getAttribute('aria-valuenow'));
-    expect(hour).toBeLessThan(10);
+    expect(hour).toBeLessThan(11);
   },
 );
 

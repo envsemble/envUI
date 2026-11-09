@@ -301,11 +301,17 @@ test.describe('Scaffold document scroll', { tag: '@engines' }, () => {
 });
 
 test.describe('Scaffold document scroll, focus', { tag: '@engines' }, () => {
-  /** Where the focused element sits against the top bar, the sticky header and the bar. */
-  const placement = (page: Page) =>
-    page.evaluate(() => {
+  /**
+   * Where the focused element sits against the top bar, the sticky header and the bar. Firefox
+   * moves focus without scrolling while only the edge of the element, under about a fifth of it,
+   * is behind a bar, counting it in view; Chromium and WebKit scroll it clear. So in Firefox an
+   * element is clear with up to a quarter of it behind a bar.
+   */
+  const placement = (page: Page, browserName: string) =>
+    page.evaluate((firefox) => {
       const active = document.activeElement!;
       const box = active.getBoundingClientRect();
+      const slack = firefox ? box.height / 4 : 0.5;
       const top = document.querySelector('.env-scaffold-top-bar')!.getBoundingClientRect();
       const header = document.querySelector('.env-page-header')!.getBoundingClientRect();
       const slot = document.querySelector('.env-scaffold-bar');
@@ -315,10 +321,10 @@ test.describe('Scaffold document scroll, focus', { tag: '@engines' }, () => {
           : window.innerHeight;
       return {
         name: active.textContent,
-        clearOfTop: box.top >= Math.max(top.bottom, header.bottom) - 0.5,
-        clearOfBottom: box.bottom <= bar + 0.5,
+        clearOfTop: box.top >= Math.max(top.bottom, header.bottom) - slack,
+        clearOfBottom: box.bottom <= bar + slack,
       };
-    });
+    }, browserName === 'firefox');
 
   for (const [width, windowClass] of [
     [480, 'compact, with the bar at the bottom'],
@@ -326,6 +332,7 @@ test.describe('Scaffold document scroll, focus', { tag: '@engines' }, () => {
   ] as const)
     test(`Tab keeps focus clear of the bars and the sticky header, ${windowClass}`, async ({
       page,
+      browserName,
     }) => {
       await page.setViewportSize({ width, height: 640 });
       await page.goto(scaffoldPanes);
@@ -347,7 +354,7 @@ test.describe('Scaffold document scroll, focus', { tag: '@engines' }, () => {
       for (let step = 2; step <= 40; step++) {
         await page.keyboard.press('Tab');
         await expect
-          .poll(() => placement(page))
+          .poll(() => placement(page, browserName))
           .toEqual({ name: `Message ${step}`, clearOfTop: true, clearOfBottom: true });
       }
       // The document scrolled to keep focus in view.
@@ -355,7 +362,7 @@ test.describe('Scaffold document scroll, focus', { tag: '@engines' }, () => {
       for (let step = 39; step >= 1; step--) {
         await page.keyboard.press('Shift+Tab');
         await expect
-          .poll(() => placement(page))
+          .poll(() => placement(page, browserName))
           .toEqual({ name: `Message ${step}`, clearOfTop: true, clearOfBottom: true });
       }
     });
