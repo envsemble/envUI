@@ -3,6 +3,7 @@ import { Surface } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
 import { useDelayPassed, usePlaceholderShown } from './LoadingStore';
 import { useArrival } from './useArrival';
+import { usePulseNear } from './usePulseNear';
 import { recordedSize } from './RecordedSizes';
 import { flag } from '@envui-internal/internal/flag';
 import { classNames } from '@envui-internal/internal/classNames';
@@ -46,6 +47,7 @@ export function PartSkeleton({
   const own = useRef<HTMLDivElement>(null);
   const element = ref ?? own;
   useArrival(element);
+  usePulseNear(element);
   return (
     <Surface
       ref={element}
