@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import { startTransition, useEffect, useState, type ReactNode } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { SiteRoot } from './App';
 // After App: its envUI components bring envUI's style sheets, which declare the order of the env
@@ -8,6 +8,7 @@ import { findPage } from './routes/SiteRoutes';
 import { currentRoute } from './routes/useSiteRoute';
 import { oldHashRoute } from './routes/Address';
 import { applyFigureStyles, preloadPage } from './pages/PreloadPage';
+import { Hydrated } from './loading/useHydrated';
 
 // index.html holds the root, which the build pre-renders for each page, naming the page's route
 // (scripts/site/PrerenderSite.ts).
@@ -27,33 +28,42 @@ const hydrates =
   prerendered !== undefined && oldHashRoute() === undefined && page?.path === prerendered;
 
 /**
- * Marks the document once the site has rendered or hydrated, after every part's effects, with
- * `data-site-started`: before it, a press on a pre-rendered control has no handler yet, which the
- * browser tests wait for (SiteSpecHelpers.ts). A page the head hid as it isn't the address's
- * (PrerenderSite.ts) shows again. It renders no element, so the hydrated tree is the server's.
+ * The site as it starts. Once a pre-rendered page has hydrated, the parts that render in the
+ * browser alone, such as its figures, mount (Hydrated), in a transition, which yields to the
+ * browser as it goes rather than holding up the page in one long task. Rendering on the client
+ * alone, they mount at once. It marks the document once the site has started, after every part's
+ * effects, with `data-site-started`: before it, a press on a pre-rendered control has no handler
+ * yet, which the browser tests wait for (SiteSpecHelpers.ts). A page the head hid as it isn't the
+ * address's (PrerenderSite.ts) shows again. It renders no element, so the hydrated tree is the
+ * server's.
  */
-function Started({ children }: { children: ReactNode }) {
+function Started({ hydrating, children }: { hydrating: boolean; children: ReactNode }) {
+  const [hydrated, setHydrated] = useState(!hydrating);
   useEffect(() => {
     document.documentElement.removeAttribute('data-site-unrendered');
     document.documentElement.setAttribute('data-site-started', '');
+    startTransition(() => setHydrated(true));
   }, []);
-  return children;
+  return <Hydrated value={hydrated}>{children}</Hydrated>;
 }
 
 void opening.then(() => {
   const site = (
-    <Started>
+    <Started hydrating={hydrates}>
       <SiteRoot />
     </Started>
   );
   if (hydrates)
-    hydrateRoot(container, site, {
-      // A page whose first render differs from its pre-rendered HTML renders again on the client,
-      // which the browser tests watch the console for (SitePrerender.spec.ts).
-      onRecoverableError(error) {
-        // eslint-disable-next-line no-console -- a mismatch is a bug the browser tests catch here
-        console.error('The pre-rendered page did not hydrate:', error);
-      },
+    // As a transition, which yields to the browser as it goes, as the page shows already.
+    startTransition(() => {
+      hydrateRoot(container, site, {
+        // A page whose first render differs from its pre-rendered HTML renders again on the
+        // client, which the browser tests watch the console for (SitePrerender.spec.ts).
+        onRecoverableError(error) {
+          // eslint-disable-next-line no-console -- a mismatch is a bug the browser tests catch here
+          console.error('The pre-rendered page did not hydrate:', error);
+        },
+      });
     });
   else {
     container.replaceChildren();

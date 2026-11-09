@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { isAbsolute, relative, resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { isAbsolute, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   documentationDirectory,
@@ -17,7 +17,7 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 // npm run build, so the library's source module is imported instead.
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
 import { displayStorageKeys } from './src/display/DisplayStorage.ts';
-import { viewModules, viewOfAddress } from './src/pages/ViewOfAddress.ts';
+import { viewModules } from './src/pages/ViewModules.ts';
 import { siteDescription } from './src/routes/SiteDescription.ts';
 import {
   createDisplayBootstrapScript,
@@ -103,18 +103,6 @@ const docsModel = fileURLToPath(new URL('../../scripts/docs/model', import.meta.
 /** The library's source, the site's only door into what its entry points don't export. */
 const libraryInternals = fileURLToPath(new URL('../../packages/ui/src', import.meta.url));
 
-/**
- * What each kind of page's view loads, each page's content and a catalogue page's figures' style
- * sheets, by file, as the build found them (envui-content-preload).
- */
-let pagePreloads:
-  | {
-      views: Record<string, { scripts: string[]; styles: string[] }>;
-      contents: Record<string, string>;
-      figureStyles: Record<string, string[]>;
-    }
-  | undefined;
-
 /** The files for coding agents at the site's root, with the type each is served as. */
 const agentFileTypes = {
   'SKILL.md': 'text/markdown; charset=utf-8',
@@ -183,95 +171,82 @@ export default defineConfig(() => {
         },
       },
       {
-        // What the page the address names needs loads beside the site's script rather than once
-        // that has arrived and run: a script in index.html, before the site's script and its style
-        // sheet, which would hold it up, preloads the view of its kind (pages/ViewOfAddress.ts) with
-        // the files that view's module imports, and its content (generated/pages/<id>.json,
-        // PageContent.ts), the file of the page its last segment names, such as button for
-        // /components/button and /docs/components/button. A segment that names no page, such as
-        // components, preloads no content. On a catalogue page it also preloads the style sheets of
-        // the page's figures (examples/<id>/, specimens/<id>/ and what they import), marked
-        // data-site-figure-style, which the site applies as it starts (applyFigureStyles,
-        // pages/PreloadPage.ts). The same lists go to dist/site/.vite/page-preloads.json, from
-        // which scripts/site/PrerenderSite.ts links each pre-rendered page's files in its head.
+        // What each page needs loads beside the site's script rather than once that has arrived and
+        // run: the files the module of its kind's view imports (pages/ViewModules.ts) and the file
+        // of its content (generated/pages/<id>.json, PageContent.ts), and on a catalogue page the
+        // style sheets of its figures (examples/<id>/, specimens/<id>/ and what they import), which
+        // the site applies as it starts (applyFigureStyles, pages/PreloadPage.ts). The lists go to
+        // dist/site/.vite/page-preloads.json, from which scripts/site/PrerenderSite.ts links each
+        // pre-rendered page's files in its head.
         name: 'envui-content-preload',
         apply: 'build',
-        writeBundle({ dir }) {
-          if (!pagePreloads || !dir) return;
-          mkdirSync(resolve(dir, '.vite'), { recursive: true });
-          writeFileSync(resolve(dir, '.vite/page-preloads.json'), JSON.stringify(pagePreloads));
-        },
-        transformIndexHtml: {
-          order: 'post',
-          handler: (html, { bundle }) => {
-            const chunks = Object.values(bundle ?? {}).filter((file) => file.type === 'chunk');
-            const contents: Record<string, string> = {};
-            for (const file of chunks) {
-              const page = /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(
-                file.facadeModuleId ?? '',
-              )?.[1];
-              if (page) contents[page] = file.fileName;
-            }
-            const byName = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));
-            // What the site's script loads itself, which the views' files leave out.
-            const started = new Set<string>();
-            const imported = (name: string, into: Set<string>) => {
-              if (into.has(name)) return;
-              into.add(name);
-              for (const next of byName.get(name)?.imports ?? []) imported(next, into);
+        generateBundle(_options, bundle) {
+          // The server's build renders the pages, and loads nothing.
+          if (this.environment.config.consumer !== 'client') return;
+          const chunks = Object.values(bundle).filter((file) => file.type === 'chunk');
+          const contents: Record<string, string> = {};
+          for (const file of chunks) {
+            const page = /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(
+              file.facadeModuleId ?? '',
+            )?.[1];
+            if (page) contents[page] = file.fileName;
+          }
+          const byName = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));
+          // What the site's script loads itself, which the views' files leave out.
+          const started = new Set<string>();
+          const imported = (name: string, into: Set<string>) => {
+            if (into.has(name)) return;
+            into.add(name);
+            for (const next of byName.get(name)?.imports ?? []) imported(next, into);
+          };
+          for (const chunk of chunks) if (chunk.isEntry) imported(chunk.fileName, started);
+          const views: Record<string, { scripts: string[]; styles: string[] }> = {};
+          for (const [view, module] of Object.entries(viewModules)) {
+            const chunk = chunks.find((file) => file.facadeModuleId?.endsWith(`/${module}`));
+            if (!chunk) throw new Error(`No chunk holds ${module}, which a page's view is in.`);
+            const scripts = new Set<string>();
+            imported(chunk.fileName, scripts);
+            const files = [...scripts].filter((name) => !started.has(name));
+            views[view] = {
+              scripts: files,
+              styles: [
+                ...new Set(
+                  files.flatMap((name) => [...(byName.get(name)?.viteMetadata?.importedCss ?? [])]),
+                ),
+              ],
             };
-            for (const chunk of chunks) if (chunk.isEntry) imported(chunk.fileName, started);
-            const views: Record<string, { scripts: string[]; styles: string[] }> = {};
-            for (const [view, module] of Object.entries(viewModules)) {
-              const chunk = chunks.find((file) => file.facadeModuleId?.endsWith(`/${module}`));
-              if (!chunk) throw new Error(`No chunk holds ${module}, which a page's view is in.`);
-              const scripts = new Set<string>();
-              imported(chunk.fileName, scripts);
-              const files = [...scripts].filter((name) => !started.has(name));
-              views[view] = {
-                scripts: files,
-                styles: [
-                  ...new Set(
-                    files.flatMap((name) => [
-                      ...(byName.get(name)?.viteMetadata?.importedCss ?? []),
-                    ]),
-                  ),
-                ],
-              };
-            }
-            // The style sheets the site starts with, which a page's figures' sheets leave out.
-            const startedStyles = new Set(
-              [...started].flatMap((name) => [
-                ...(byName.get(name)?.viteMetadata?.importedCss ?? []),
-              ]),
-            );
-            const figureStyles: Record<string, string[]> = {};
-            for (const chunk of chunks) {
-              const page = /[\\/]src[\\/](?:examples|specimens)[\\/]([\w-]+)[\\/]/.exec(
-                chunk.facadeModuleId ?? '',
-              )?.[1];
-              if (!page || !contents[page]) continue;
-              const files = new Set<string>();
-              imported(chunk.fileName, files);
-              // With the modules of the options its components set, which load as they render,
-              // such as a table's column resizing.
-              for (const name of [...files])
-                for (const option of byName.get(name)?.dynamicImports ?? [])
-                  if (/[\\/]packages[\\/]ui[\\/]/.test(byName.get(option)?.facadeModuleId ?? ''))
-                    imported(option, files);
-              const styles = new Set(figureStyles[page]);
-              for (const name of files)
-                for (const style of byName.get(name)?.viteMetadata?.importedCss ?? [])
-                  if (!startedStyles.has(style)) styles.add(style);
-              figureStyles[page] = [...styles].sort();
-            }
-            pagePreloads = { views, contents, figureStyles };
-            const script = `<script data-site-preload>(function(){var p=location.pathname,w=(${String(viewOfAddress)})(p),v=${JSON.stringify(views)}[w],n=p.split('/').filter(Boolean).pop(),c=${JSON.stringify(contents)}[n],s=w==='catalogue'&&${JSON.stringify(figureStyles)}[n];function l(r,f,a){var e=document.createElement('link');e.rel=r;e.href='/'+f;if(a)e.as=a;document.head.appendChild(e);return e}v.scripts.forEach(function(f){l('modulepreload',f)});v.styles.forEach(function(f){l('preload',f,'style')});if(c)l('modulepreload',c);if(s)s.forEach(function(f){var e=l('preload',f,'style');e.crossOrigin='';e.setAttribute('data-site-figure-style','')})})();</script>`;
-            const site = html.indexOf('<script type="module"');
-            if (site === -1)
-              throw new Error('index.html has no module script, which the preload goes before.');
-            return `${html.slice(0, site)}${script}\n    ${html.slice(site)}`;
-          },
+          }
+          // The style sheets the site starts with, which a page's figures' sheets leave out.
+          const startedStyles = new Set(
+            [...started].flatMap((name) => [
+              ...(byName.get(name)?.viteMetadata?.importedCss ?? []),
+            ]),
+          );
+          const figureStyles: Record<string, string[]> = {};
+          for (const chunk of chunks) {
+            const page = /[\\/]src[\\/](?:examples|specimens)[\\/]([\w-]+)[\\/]/.exec(
+              chunk.facadeModuleId ?? '',
+            )?.[1];
+            if (!page || !contents[page]) continue;
+            const files = new Set<string>();
+            imported(chunk.fileName, files);
+            // With the modules of the options its components set, which load as they render,
+            // such as a table's column resizing.
+            for (const name of [...files])
+              for (const option of byName.get(name)?.dynamicImports ?? [])
+                if (/[\\/]packages[\\/]ui[\\/]/.test(byName.get(option)?.facadeModuleId ?? ''))
+                  imported(option, files);
+            const styles = new Set(figureStyles[page]);
+            for (const name of files)
+              for (const style of byName.get(name)?.viteMetadata?.importedCss ?? [])
+                if (!startedStyles.has(style)) styles.add(style);
+            figureStyles[page] = [...styles].sort();
+          }
+          this.emitFile({
+            type: 'asset',
+            fileName: '.vite/page-preloads.json',
+            source: JSON.stringify({ views, contents, figureStyles }),
+          });
         },
       },
       {

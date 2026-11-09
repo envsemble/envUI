@@ -4,10 +4,10 @@ import { showKeptSection } from './OtherPart';
 import { restoreScroll, scrolled } from './ScrollRestoration';
 
 /**
- * Titles the tab after the page, describes it in the head and, as the route changes, moves focus to the page and shows where
- * the reader goes on it: the section the Design and Code switch kept, where they were on a page
- * gone back to, the section the address names, else the page's top. Each step of the history keeps
- * where the reader is on its page (ScrollRestoration.ts).
+ * Titles the tab after the page, describes it in the head and, as the route changes, moves focus to
+ * the page and shows where the reader goes on it: the section the Design and Code switch kept,
+ * where they were on a page gone back to, the section the address names, else the page's top. Each
+ * step of the history keeps where the reader is on its page (ScrollRestoration.ts).
  */
 export function usePagePlace(
   route: string,

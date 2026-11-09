@@ -11,7 +11,7 @@ import { routeHref } from './routes/Address';
 import { documentTitle, pageDescription } from './routes/PageHead';
 import { allPages, findPage } from './routes/SiteRoutes';
 import { preloadPage } from './pages/PreloadPage';
-import { viewOfKind } from './pages/ViewOfAddress';
+import { viewOfKind } from './pages/ViewModules';
 
 /**
  * Every page the site serves: its route, such as components/button (the home page's is overview),

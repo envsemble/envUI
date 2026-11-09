@@ -2,7 +2,7 @@ import { use, type ReactNode } from 'react';
 import type { PageKind, PageOfKind, RoutePage } from '../routes/SiteRoutes';
 import { reloadModule } from '../loading/LoadBoundary';
 import { loadOnce } from '../loading/LoadOnce';
-import { viewModules, viewOfKind } from './ViewOfAddress';
+import { viewModules, viewOfKind } from './ViewModules';
 
 /** What a kind of page renders, given its page. */
 type View<Kind extends PageKind> = (props: { page: PageOfKind<Kind> }) => ReactNode;

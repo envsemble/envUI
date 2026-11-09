@@ -2,11 +2,12 @@
 // paints its shell, banner and text from its HTML rather than once the site's script has run. It
 // builds the site's server entry (apps/site/src/Server.tsx) into dist/site-server, renders each page
 // the site serves with it, and writes dist/site/<route>.html, the home page as index.html, each
-// with the head of the client's index.html: its theme bootstrap and scripts, the page's title and
-// description, and the files of the page's kind, linked rather than found by index.html's preload
-// script, its view's style sheets applied before the first paint. The host serves /<route> from
-// <route>.html, and answers an address with no page with index.html (wrangler.jsonc), which its
-// head hides until the site renders that address on the client (main.tsx). It needs no network.
+// with the head of the client's index.html: its theme bootstrap, the page's title and description,
+// and its view's style sheets, applied before the first paint. The site's script, its view's
+// modules and its content (.vite/page-preloads.json) load once the style sheets have, as a script
+// at the end of the body adds them. The host serves /<route> from <route>.html, and answers an
+// address with no page with index.html (wrangler.jsonc), which its head hides until the site
+// renders that address on the client (main.tsx). It needs no network.
 //
 //   node scripts/site/PrerenderSite.ts
 import { existsSync } from 'node:fs';
@@ -26,7 +27,7 @@ interface SitePage {
   address: string;
   /** The id of the page of docs/ it shows, whose content it loads. */
   document?: string;
-  /** The module of its kind's view (pages/ViewOfAddress.ts), such as catalogue. */
+  /** The module of its kind's view (pages/ViewModules.ts), such as catalogue. */
   view: string;
 }
 
@@ -42,6 +43,9 @@ interface PagePreloads {
   contents: Record<string, string>;
   figureStyles: Record<string, string[]>;
 }
+
+/** A file the page loads once its style sheets have, in the order the loader adds them. */
+type Load = ['modulepreload' | 'figure-style' | 'script', string];
 
 /**
  * Builds the site's server entry into `serverDirectory`, for production, with every module
@@ -75,26 +79,41 @@ const escapeText = (text: string) =>
 const escapeAttribute = (text: string) => escapeText(text).replace(/"/g, '&quot;');
 
 /**
- * The files a page's head links, as index.html's preload script would add them for its address:
- * its view's modules and its content, to load beside the site's script; its view's style sheets,
- * applied before its first paint, as its text is there; and a catalogue page's figures' sheets, to
- * fetch, which the site applies as it starts (applyFigureStyles).
+ * The files of a page's view and content: the view's style sheets, which its head links, as its
+ * text is there to paint; and what the page loads once they have, its view's modules and its
+ * content, then a catalogue page's figures' sheets, which the site applies as it starts
+ * (applyFigureStyles).
  */
-function pageLinks({ address, document, view: kind }: SitePage, preloads: PagePreloads) {
+function pageFiles({ address, document, view: kind }: SitePage, preloads: PagePreloads) {
   const view = preloads.views[kind];
   if (!view) throw new Error(`No files of the view ${kind}, which ${address} shows`);
   const content = document === undefined ? undefined : preloads.contents[document];
   if (document !== undefined && !content) throw new Error(`No file of the content of ${document}`);
   const figureStyles = (kind === 'catalogue' && document && preloads.figureStyles[document]) || [];
-  return [
-    ...view.scripts.map((file) => `<link rel="modulepreload" crossorigin href="/${file}">`),
-    ...(content ? [`<link rel="modulepreload" crossorigin href="/${content}">`] : []),
-    ...view.styles.map((file) => `<link rel="stylesheet" crossorigin href="/${file}">`),
-    ...figureStyles.map(
-      (file) =>
-        `<link rel="preload" as="style" crossorigin href="/${file}" data-site-figure-style>`,
-    ),
+  const loads: Load[] = [
+    ...view.scripts.map((file): Load => ['modulepreload', `/${file}`]),
+    ...(content ? [['modulepreload', `/${content}`] satisfies Load] : []),
+    ...figureStyles.map((file): Load => ['figure-style', `/${file}`]),
   ];
+  return { styles: view.styles.map((file) => `/${file}`), loads };
+}
+
+/**
+ * The script at the end of a page's body that adds what the page doesn't need to paint: the
+ * site's script and the modules it starts with. It runs once the style sheets before it have
+ * loaded, so they, the font and the page's text come first, rather than sharing a slow connection
+ * with the scripts.
+ */
+function siteLoader(loads: Load[]) {
+  const add = [
+    'var t;',
+    "if(e[0]==='script'){t=document.createElement('script');t.type='module';t.src=e[1]}",
+    "else{t=document.createElement('link');t.href=e[1];",
+    "if(e[0]==='figure-style'){t.rel='preload';t.as='style';t.setAttribute('data-site-figure-style','')}",
+    "else t.rel='modulepreload'}",
+    "t.crossOrigin='';document.head.appendChild(t)",
+  ].join('');
+  return `<script>${JSON.stringify(loads)}.forEach(function(e){${add}})</script>`;
 }
 
 /**
@@ -118,33 +137,44 @@ function addressCheck(address: string) {
   ];
 }
 
-/** The client's index.html with a page's head and its rendered root. */
+/** The client's index.html with a page's head, its rendered root and its loader. */
 function pageDocument(
   template: string,
   page: SitePage,
-  links: string[],
+  files: ReturnType<typeof pageFiles>,
   rendered: { title: string; description: string; html: string },
 ) {
   let html = template;
-  const replace = (pattern: RegExp, replacement: string) => {
+  const replace = (pattern: RegExp, replacement: (found: string, file: string) => string) => {
     if (!pattern.test(html))
       throw new Error(`index.html has no ${pattern}, which a page replaces.`);
-    html = html.replace(pattern, () => replacement);
+    html = html.replace(pattern, replacement);
   };
-  replace(/<script data-site-preload>[\s\S]*?<\/script>\s*/, '');
-  replace(/<title>[^<]*<\/title>/, `<title>${escapeText(rendered.title)}</title>`);
+  // The site's script and the modules Vite links for it load with the page's own (siteLoader).
+  const loads: Load[] = [];
+  replace(/\s*<link rel="modulepreload" crossorigin href="([^"]+)">/g, (_, href) => {
+    loads.push(['modulepreload', href]);
+    return '';
+  });
+  loads.push(...files.loads);
+  replace(/\s*<script type="module" crossorigin src="([^"]+)"><\/script>/, (_, src) => {
+    loads.push(['script', src]);
+    return '';
+  });
+  replace(/<title>[^<]*<\/title>/, () => `<title>${escapeText(rendered.title)}</title>`);
   replace(
     /<meta name="description" content="[^"]*">/,
-    `<meta name="description" content="${escapeAttribute(rendered.description)}">`,
+    () => `<meta name="description" content="${escapeAttribute(rendered.description)}">`,
   );
   // After the theme bootstrap and the first paint's style, which open the head.
-  replace(/<\/style>/, `</style>\n    ${addressCheck(page.address).join('\n    ')}`);
+  replace(/<\/style>/, () => `</style>\n    ${addressCheck(page.address).join('\n    ')}`);
   // After the site's own style sheet, whose cascade layers their sheets build on.
-  replace(/<\/head>/, `${links.map((link) => `  ${link}\n`).join('')}  </head>`);
-  replace(
-    /<div id="root"><\/div>/,
-    `<div id="root" data-site-page="${escapeAttribute(page.route)}">${rendered.html}</div>`,
+  const styles = files.styles.map(
+    (href) => `\n    <link rel="stylesheet" crossorigin href="${href}">`,
   );
+  replace(/\s*<\/head>/, () => `${styles.join('')}\n  </head>`);
+  const root = `<div id="root" data-site-page="${escapeAttribute(page.route)}">${rendered.html}</div>`;
+  replace(/<div id="root"><\/div>/, () => `${root}\n    ${siteLoader(loads)}`);
   return html;
 }
 
@@ -176,7 +206,7 @@ export async function prerenderSite(siteDirectory: string, serverDirectory: stri
     const rendered = await server.renderPage(page.route);
     const file = resolve(siteDirectory, pageFile(page.address));
     await mkdir(dirname(file), { recursive: true });
-    await writeFile(file, pageDocument(template, page, pageLinks(page, preloads), rendered));
+    await writeFile(file, pageDocument(template, page, pageFiles(page, preloads), rendered));
   }
   return server.sitePages.length;
 }
