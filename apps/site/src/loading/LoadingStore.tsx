@@ -21,6 +21,15 @@ const shownAt = new Map<string, number>();
 const holds = new Map<string, Promise<void>>();
 
 /**
+ * The wait of a part that waits for nothing: already over, and marked so as React marks a promise
+ * it has seen settle, so use() returns at once rather than suspending until it has seen it.
+ */
+const noHold: Promise<void> = Object.assign(Promise.resolve(), {
+  status: 'fulfilled' as const,
+  value: undefined,
+});
+
+/**
  * Holds what a part's skeleton stands for, inside the Suspense boundary the skeleton is the
  * fallback of, until the skeleton has shown for a moment: a part that lands just after its
  * skeleton showed keeps it a little longer rather than flicker. A part whose skeleton never showed
@@ -35,9 +44,10 @@ export function HoldPlaceholder({ part, children }: { part: string; children: Re
     hold = new Promise<void>((resolve) => window.setTimeout(resolve, left));
     holds.set(part, hold);
   }
-  // The render after the wait reads the same, now settled, promise, as React asks of a component
-  // that suspended; the wait is forgotten once that render is committed.
-  if (hold) use(hold);
+  // Every render calls use(), as React asks of a component that suspended on it: the render after
+  // the wait calls it again even should the wait be forgotten by then. That render reads the same,
+  // now settled, promise; the wait is forgotten once that render is committed.
+  use(hold ?? noHold);
   useEffect(() => {
     if (!hold || holds.get(part) !== hold) return;
     holds.delete(part);
