@@ -25,7 +25,10 @@ function correctAddress() {
  * to that hasn't loaded, shows a skeleton of its shape until its content has (App.tsx).
  */
 export function useSiteRoute() {
-  // An old hash address is redirected before the first render, which reads the path.
+  // An old hash address is redirected before the first render, which reads the path. Whether the
+  // page hydrates isn't read here: the library's useHydrated would render the shell again once it
+  // has, at once and in one task, and with it hydrate the page's content in one task rather than in
+  // slices.
   const [route, setRoute] = useState(() => {
     if (oldHashRoute() !== undefined) correctAddress();
     return currentRoute();

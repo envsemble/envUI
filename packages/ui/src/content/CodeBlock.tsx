@@ -4,7 +4,6 @@ import { Fragment, useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { IconButton } from '../actions/Button.js';
 import { IconContentCopy } from '../icons/ContentCopy.js';
 import { IconCheck } from '../icons/Check.js';
-import { useTheme } from '../foundations/Theme.js';
 import { codeBlock as codeBlockMessages } from '../foundations/messages/codeBlock.js';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
@@ -46,7 +45,6 @@ export function CodeBlock({
   className,
   ...props
 }: CodeBlockProps) {
-  const { theme } = useTheme();
   const messages = useMessages('codeBlock', codeBlockMessages);
   const preRef = useRef<HTMLPreElement>(null);
   const contrast = useCodeContrast(preRef);
@@ -92,7 +90,7 @@ export function CodeBlock({
             ? tokens.map((line, index) => (
                 <Fragment key={index}>
                   {line.map((token, tokenIndex) => (
-                    <span key={tokenIndex} style={tokenStyle(token[theme], token[`${theme}High`])}>
+                    <span key={tokenIndex} style={tokenStyle(token)}>
                       {token.content}
                     </span>
                   ))}

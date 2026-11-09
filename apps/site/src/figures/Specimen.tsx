@@ -1,4 +1,4 @@
-import { Suspense, use, useState, type ComponentType } from 'react';
+import { Suspense, use, useRef, useState, type ComponentType } from 'react';
 import { Column } from '@envsemble/envui';
 import { SpecimenHeadingLevel } from './SpecimenFrame';
 import { hasExample } from './ExampleRegistry';
@@ -7,7 +7,7 @@ import { LoadBoundary } from '../loading/LoadBoundary';
 import { componentRegistry } from '../loading/ModuleRegistry';
 import { HoldPlaceholder } from '../loading/LoadingStore';
 import { StageSkeleton } from '../loading/Skeletons';
-import { useHydrated } from '../loading/useHydrated';
+import { useSubjectShown } from './useSubjectShown';
 import { VerdictMotion } from './MotionStage';
 import { PageTheme } from './PageTheme';
 
@@ -55,17 +55,18 @@ function SpecimenBody({
   // On a do or don't figure, the stage it stands for is the figure's cell.
   const verdict = use(VerdictMotion);
   const path = specimenPath(page, name);
+  const place = useRef<HTMLDivElement>(null);
   const skeleton = (
     <StageSkeleton
+      ref={place}
       part={`specimen:${page}/${name}`}
       what="specimens"
       stage={!onStage}
       className={verdict ? 'site-verdict-stage' : undefined}
     />
   );
-  // On a pre-rendered page, the specimen's place is held until the page has hydrated.
-  const hydrated = useHydrated();
-  if (!hydrated) return skeleton;
+  // On a pre-rendered page, the specimen's place is held until it renders (useSubjectShown).
+  if (!useSubjectShown(place)) return skeleton;
   const Component = specimens.component(path);
   return (
     <LoadBoundary

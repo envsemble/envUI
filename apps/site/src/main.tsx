@@ -7,8 +7,9 @@ import './styles/index.css';
 import { findPage } from './routes/SiteRoutes';
 import { currentRoute } from './routes/useSiteRoute';
 import { oldHashRoute } from './routes/Address';
-import { applyFigureStyles, preloadFirstPage } from './pages/PreloadPage';
-import { Hydrated } from './loading/useHydrated';
+import { preloadFirstPage } from './pages/PreloadPage';
+import { FiguresMounted } from './loading/useFiguresMounted';
+import { givePageCode } from './pages/PageCode';
 
 // index.html holds the root, which the build pre-renders for each page, naming the page's route
 // (scripts/site/PrerenderSite.ts).
@@ -18,8 +19,6 @@ const page = findPage(currentRoute().split('?')[0]);
 // its first paint has the whole page rather than the frame and then the page; a pre-rendered page
 // hydrates without suspending.
 const opening = preloadFirstPage(page);
-// After the view's sheets, which preloadFirstPage linked.
-applyFigureStyles();
 // The page pre-rendered for the address hydrates. While developing, at an old hash address, and at
 // an address the build has no page for, which the host answers with Page not found (404.html),
 // such as an old address that leads to another page, the site renders on the client alone.
@@ -29,7 +28,7 @@ const hydrates =
 
 /**
  * The site as it starts. Once a pre-rendered page has hydrated, the parts that render in the
- * browser alone, such as its figures, mount (Hydrated), in a transition, which yields to the
+ * browser alone, such as its figures, mount (FiguresMounted), in a transition, which yields to the
  * browser as it goes rather than holding up the page in one long task. Rendering on the client
  * alone, they mount at once. It marks the document once the site has started, after every part's
  * effects, with `data-site-started`: before it, a press on a pre-rendered control has no handler
@@ -42,7 +41,7 @@ function Started({ hydrating, children }: { hydrating: boolean; children: ReactN
     document.documentElement.setAttribute('data-site-started', '');
     startTransition(() => setHydrated(true));
   }, []);
-  return <Hydrated value={hydrated}>{children}</Hydrated>;
+  return <FiguresMounted value={hydrated}>{children}</FiguresMounted>;
 }
 
 void opening.then(() => {
@@ -55,7 +54,9 @@ void opening.then(() => {
       <SiteRoot />
     </Started>
   );
-  if (hydrates)
+  if (hydrates) {
+    // Its code blocks hydrate highlighted, as the server rendered them.
+    givePageCode();
     // As a transition, which yields to the browser as it goes, as the page shows already.
     startTransition(() => {
       hydrateRoot(container, site, {
@@ -67,7 +68,7 @@ void opening.then(() => {
         },
       });
     });
-  else {
+  } else {
     container.replaceChildren();
     createRoot(container).render(site);
   }

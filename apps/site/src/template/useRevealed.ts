@@ -18,6 +18,8 @@ const interruptions = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
  * as it hydrates.
  */
 export function useRevealed(total: number) {
+  // The library's useHydrated, not the site's useFiguresMounted: its first render, the only one
+  // that reads it, tells a page rendered in the browser alone from one hydrating.
   const hydrated = useHydrated();
   const [revealed, setRevealed] = useState(() =>
     !hydrated ||

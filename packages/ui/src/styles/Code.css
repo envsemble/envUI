@@ -70,11 +70,15 @@
   .env-code-block code {
     font: inherit;
   }
-  /* Each highlighted token has its standard color and its high-contrast one, as above. */
+  /* Each highlighted token has its color in each code theme, standard and high-contrast, as above:
+     the dark theme's where the nearest Theme is dark (Theme.css's switch), else the light one's. */
   .env-code-block code span {
     --env-code-token-now: var(--env-theme-high-contrast) var(--env-code-token-high);
+    --env-code-token-dark-now: var(--env-theme-high-contrast) var(--env-code-token-dark-high);
+    --env-code-token-dark-shown: var(--env-theme-dark)
+      var(--env-code-token-dark-now, var(--env-code-token-dark));
 
-    color: var(--env-code-token-now, var(--env-code-token));
+    color: var(--env-code-token-dark-shown, var(--env-code-token-now, var(--env-code-token)));
   }
   .env-code-block pre:focus-visible {
     outline: 2px solid var(--env-color-border-focus);

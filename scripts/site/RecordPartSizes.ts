@@ -136,7 +136,7 @@ async function measure(page: Page, route: string) {
   );
   // The figures of a page of its own, a foundation's or a guide's, which load with it rather than
   // on their own: the box of each, its legend and code included, which its skeleton keeps on a
-  // pre-rendered page until the page has hydrated (useHydrated in loading/).
+  // pre-rendered page until the page has hydrated (useFiguresMounted in loading/).
   Object.assign(
     sizes,
     await page.evaluate(() => {

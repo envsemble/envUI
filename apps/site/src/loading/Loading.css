@@ -6,6 +6,12 @@
   opacity: 0;
 }
 
+/* A skeleton far from the view stands still, until it nears the view (usePulseNear.ts). */
+.site-loading[data-site-far],
+.site-loading[data-site-far] [data-env-skeleton] {
+  animation: none;
+}
+
 /* The skeleton's root is no surface of its own: what it holds, such as a code block or a table,
    keeps its own fill and corners, and only a stage, or the room of a figure's subject on its
    stage, pulses as a surface does. */

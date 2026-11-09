@@ -3,13 +3,13 @@
 // builds the site's server entry (apps/site/src/Server.tsx) into dist/site-server, renders each page
 // the site serves with it, and writes dist/site/<route>.html, the home page as index.html, each
 // with the head of the client's index.html: its theme bootstrap, the page's title and description,
-// its view's and parts' style sheets, applied before the first paint, and its canonical address.
-// The site's script, its view's and parts' modules and its content (.vite/page-preloads.json) load
-// once the style sheets have, as a script at the end of the body adds them. The host serves
-// /<route> from <route>.html, redirects the old addresses _redirects lists, and answers any other
-// address with 404.html, Page not found, with a 404 status (wrangler.jsonc), which its head hides
-// until the site renders that address on the client, the page an old address leads to or Page not
-// found (main.tsx). It needs no network.
+// its view's, parts' and figures' style sheets, applied before the first paint, and its canonical
+// address. The site's script, its view's and parts' modules and its content
+// (.vite/page-preloads.json) load once the style sheets have, as a script at the end of the body
+// adds them. The host serves /<route> from <route>.html, redirects the old addresses _redirects
+// lists, and answers any other address with 404.html, Page not found, with a 404 status
+// (wrangler.jsonc), which its head hides until the site renders that address on the client, the
+// page an old address leads to or Page not found (main.tsx). It needs no network.
 //
 //   node scripts/site/PrerenderSite.ts
 import { existsSync } from 'node:fs';
@@ -46,11 +46,13 @@ export interface SiteServer {
   oldAddresses: { from: string; to: string }[];
 }
 
-/** A page pre-rendered: its tab's title and description, and the HTML of the site's root. */
+/** A page pre-rendered: its tab's title and description, the HTML of the site's root and its code. */
 interface RenderedPage {
   title: string;
   description: string;
   html: string;
+  /** The element that carries the tokens of its code, highlighted as it rendered (PageCode.ts). */
+  code?: string;
 }
 
 /** What each page loads, as the client's build found it (envui-content-preload in vite.config.ts). */
@@ -62,7 +64,7 @@ interface PagePreloads {
 }
 
 /** A file the page loads once its style sheets have, in the order the loader adds them. */
-type Load = ['modulepreload' | 'figure-style' | 'script', string];
+type Load = ['modulepreload' | 'script', string];
 
 /**
  * Builds the site's server entry into `serverDirectory`, for production, with every module
@@ -101,9 +103,12 @@ const escapeAttribute = (text: string) => escapeText(text).replace(/"/g, '&quot;
 
 /**
  * The files of a page's view, parts and content: the style sheets of its view and parts, which its
- * head links, as its text is there to paint; and what the page loads once they have, its view's
- * and parts' modules and its content, then a catalogue page's figures' sheets, which the site
- * applies as it starts (applyFigureStyles).
+ * head links, as its text is there to paint, and a catalogue page's figures' sheets after them, in
+ * the order each figure's module would bring them; and what the page loads once they have, its
+ * view's and parts' modules and its content. A figure's sheets apply with the page's first paint:
+ * each figure's module would otherwise bring its sheets as it loads, after the page has painted,
+ * and a sheet applied then lays out the whole page again, a long pause on a phone. They are small
+ * beside the view's.
  */
 function pageFiles({ address, document, view: kind, parts }: SitePage, preloads: PagePreloads) {
   const view = preloads.views[kind];
@@ -121,9 +126,9 @@ function pageFiles({ address, document, view: kind, parts }: SitePage, preloads:
   const loads: Load[] = [
     ...[...scripts].map((file): Load => ['modulepreload', `/${file}`]),
     ...(content ? [['modulepreload', `/${content}`] satisfies Load] : []),
-    ...figureStyles.map((file): Load => ['figure-style', `/${file}`]),
   ];
-  return { styles: [...styles].map((file) => `/${file}`), loads };
+  // A sheet the view or a part shares is linked once, with theirs.
+  return { styles: [...new Set([...styles, ...figureStyles])].map((file) => `/${file}`), loads };
 }
 
 /**
@@ -136,9 +141,7 @@ function siteLoader(loads: Load[]) {
   const add = [
     'var t;',
     "if(e[0]==='script'){t=document.createElement('script');t.type='module';t.src=e[1]}",
-    "else{t=document.createElement('link');t.href=e[1];",
-    "if(e[0]==='figure-style'){t.rel='preload';t.as='style';t.setAttribute('data-site-figure-style','')}",
-    "else t.rel='modulepreload'}",
+    "else{t=document.createElement('link');t.href=e[1];t.rel='modulepreload'}",
     "t.crossOrigin='';document.head.appendChild(t)",
   ].join('');
   return `<script>${JSON.stringify(loads)}.forEach(function(e){${add}})</script>`;
@@ -213,7 +216,10 @@ function pageDocument(
   replace(/\s*<\/head>/, () => `${styles.join('')}${canonical}\n  </head>`);
   const named = page ? ` data-site-page="${escapeAttribute(page.route)}"` : '';
   const root = `<div id="root"${named}>${rendered.html}</div>`;
-  replace(/<div id="root"><\/div>/, () => `${root}\n    ${siteLoader(loads)}`);
+  // The tokens of its code, which the site gives before it hydrates, ahead of the script that
+  // starts it.
+  const code = rendered.code ? `\n    ${rendered.code}` : '';
+  replace(/<div id="root"><\/div>/, () => `${root}${code}\n    ${siteLoader(loads)}`);
   return html;
 }
 

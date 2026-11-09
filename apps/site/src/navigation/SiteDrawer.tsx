@@ -31,6 +31,8 @@ function useDrawerWidth(
   inSheet: boolean,
 ): Partial<ComponentProps<typeof NavigationDrawer>> {
   const [width, setWidth] = useState(() => storedDrawerWidth(area));
+  // The library's useHydrated, not the site's useFiguresMounted: the drawer takes its stored
+  // width in the render right after hydrating, as the head's script already shows it.
   const hydrated = useHydrated();
   useLayoutEffect(() => {
     if (hydrated) document.documentElement.style.removeProperty(storedDrawerWidthProperty(area));

@@ -140,7 +140,9 @@ export interface NavigationDrawerProps
 
 /**
  * Whether a one-line label or heading is cut short with an ellipsis, measured as it resizes; never
- * where labels wrap.
+ * where labels wrap. It is first measured as the observer reports its size, once the page is laid
+ * out: measured as it mounts, each of a drawer's labels would lay the page out again, after what
+ * the effects between them wrote, a long pause as a page with a long drawer hydrates.
  */
 function useCut(ref: RefObject<HTMLElement | null>, oneLine: boolean) {
   const [cut, setCut] = useState(false);
@@ -151,8 +153,7 @@ function useCut(ref: RefObject<HTMLElement | null>, oneLine: boolean) {
       return;
     }
     const measure = () => setCut(element.scrollWidth > element.clientWidth);
-    measure();
-    if (typeof ResizeObserver === 'undefined') return;
+    if (typeof ResizeObserver === 'undefined') return measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => observer.disconnect();

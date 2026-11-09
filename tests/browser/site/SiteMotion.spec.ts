@@ -1,5 +1,6 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { siteBuildUrl, siteDevUrl } from '../helpers/Servers';
+import { showFigures } from '../helpers/SiteSpecHelpers';
 import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
 
 /*
@@ -59,6 +60,7 @@ test('an animated figure plays by itself, and its pause button holds it where it
   page,
 }) => {
   await page.goto(`${siteBuildUrl}/components/slider`);
+  await showFigures(page);
   const stage = sliderFigure(page);
   await stage.scrollIntoViewIfNeeded();
   // It moves on from its still, the value at 30, by itself.
@@ -77,6 +79,7 @@ test("the Display menu's Motion pauses every animation and is kept, and a figure
   page,
 }) => {
   await page.goto(`${siteBuildUrl}/components/slider`);
+  await showFigures(page);
   const stage = sliderFigure(page);
   await stage.scrollIntoViewIfNeeded();
   await (await motionChoice(page, 'Pause')).click();
@@ -107,6 +110,7 @@ test('a reader who prefers reduced motion starts with every animation paused', a
   const context = await browser.newContext({ reducedMotion: 'reduce' });
   const page = await context.newPage();
   await page.goto(`${siteBuildUrl}/components/slider`);
+  await showFigures(page);
   const stage = sliderFigure(page);
   await stage.scrollIntoViewIfNeeded();
   await expect(await motionChoice(page, 'Pause')).toBeChecked();
@@ -167,6 +171,7 @@ test("a figure's dialog opens live inside its stage, its backdrop over the stage
   page,
 }) => {
   await page.goto(`${siteBuildUrl}/components/dialog`);
+  await showFigures(page);
   const stage = figure(page, 'the large dialog opening');
   await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
@@ -192,6 +197,7 @@ test('a click on an animated figure hands its example to the reader, the click g
   page,
 }) => {
   await page.goto(`${siteBuildUrl}/components/select`);
+  await showFigures(page);
   const stage = figure(page, 'typing in the open list');
   await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
@@ -235,6 +241,7 @@ test('the keyboard reaching an animated figure takes it over, and leaving it unt
   page,
 }) => {
   await page.goto(`${siteBuildUrl}/components/select`);
+  await showFigures(page);
   const stage = figure(page, 'typing in the open list');
   await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
@@ -255,6 +262,7 @@ test("a figure's right click opens its context menu inside the stage, and the pa
   page,
 }) => {
   await page.goto(`${siteBuildUrl}/components/menu`);
+  await showFigures(page);
   const stage = figure(page, 'the menu opening on a right click');
   await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
@@ -274,6 +282,7 @@ test("a figure's wheel scrolls the box under the pointer smoothly and back, neve
   page,
 }) => {
   await page.goto(`${siteBuildUrl}/components/table`);
+  await showFigures(page);
   const stage = figure(page, 'the rows scrolling');
   // Every figure above has loaded, so the page holds still.
   await expect(page.locator('.site-loading')).toHaveCount(0);
@@ -568,6 +577,7 @@ test(
     // to climb each other's height in Firefox, a little every frame.
     await page.setViewportSize({ width: 1600, height: 1000 });
     await page.goto(`${siteBuildUrl}/components/relative-time`);
+    await showFigures(page);
     await expect(page.locator('.catalogue-motion-stage').first()).toBeVisible();
     await page.waitForTimeout(1500);
     const before = await heights();
@@ -576,6 +586,7 @@ test(
     for (const [stage] of before) expect(stage).toBeLessThan(400);
     // Alert's figures sit in a column: each stage stays about as tall as what it shows.
     await page.goto(`${siteBuildUrl}/components/alert`);
+    await showFigures(page);
     await expect(page.locator('.catalogue-motion-stage').first()).toBeVisible();
     await page.waitForTimeout(2000);
     for (const [stage, subject] of await heights()) expect(stage).toBeLessThan(subject + 200);

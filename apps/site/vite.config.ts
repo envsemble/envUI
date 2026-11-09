@@ -179,9 +179,8 @@ export default defineConfig(() => {
         // the parts of it that load on their own and that the server renders, and the file
         // of its content (generated/pages/<id>.json, PageContent.ts), and on a catalogue page the
         // style sheets of its figures (examples/<id>/, specimens/<id>/ and what they import), which
-        // the site applies as it starts (applyFigureStyles, pages/PreloadPage.ts). The lists go to
-        // dist/site/.vite/page-preloads.json, from which scripts/site/PrerenderSite.ts links each
-        // pre-rendered page's files in its head.
+        // apply with its first paint. The lists go to dist/site/.vite/page-preloads.json, from which
+        // scripts/site/PrerenderSite.ts links each pre-rendered page's files in its head.
         name: 'envui-content-preload',
         apply: 'build',
         generateBundle: {

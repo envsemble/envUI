@@ -1,4 +1,4 @@
-import { createHighlighterCore, type HighlighterCore } from 'shiki/core';
+import { createHighlighterCore, type GrammarState, type HighlighterCore } from 'shiki/core';
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 import javascript from '@shikijs/langs/javascript';
 import jsx from '@shikijs/langs/jsx';
@@ -37,6 +37,9 @@ const themes = {
   standard: { light: () => codeTheme('light'), dark: () => codeTheme('dark') },
   high: { lightHigh: () => codeTheme('light', 'high'), darkHigh: () => codeTheme('dark', 'high') },
 };
+
+/** How long a task of tokenizing may run before it gives the browser its turn, in ms. */
+const tokenizeTask = 8;
 
 let highlighter: Promise<HighlighterCore> | undefined;
 let highContrastLoaded: Promise<void> | undefined;
@@ -88,12 +91,6 @@ export async function highlightCode(
       });
     await highContrastLoaded;
   }
-  // Each source is tokenized in a task of its own, so a page of many code blocks answers input
-  // between them, rather than once the runtime is ready and all of them are done.
-  await new Promise((resolve) => setTimeout(resolve));
-  // Another consumer may have filled the cache while this shared runtime initialized.
-  const initialized = cache.get(key);
-  if (initialized) return initialized;
   const names: Record<string, string> = {
     light: codeThemeName('light', 'standard'),
     dark: codeThemeName('dark', 'standard'),
@@ -102,10 +99,30 @@ export async function highlightCode(
       darkHigh: codeThemeName('dark', 'high'),
     }),
   };
-  const tokens = runtime
-    .codeToTokensWithThemes(source, { lang: language, themes: names })
-    .map((line) =>
-      line.map((token) => ({
+  // The source is tokenized a line at a time, carrying the grammar's state from each line to the
+  // next as one pass over it does, and gives the browser its turn between tasks of a few
+  // milliseconds: the first lines a language meets build most of its matchers, a long pause on a
+  // phone if done in one task, and a page of many code blocks answers input between them.
+  const lines = source.split(/\r?\n/);
+  const tokens: CodeToken[][] = [];
+  let grammarState: GrammarState | undefined;
+  let taskStart = -Infinity;
+  for (const line of lines) {
+    if (performance.now() - taskStart > tokenizeTask) {
+      await new Promise((resolve) => setTimeout(resolve));
+      // Another consumer may have filled the cache meanwhile.
+      const done = cache.get(key);
+      if (done) return done;
+      taskStart = performance.now();
+    }
+    const lineTokens = runtime.codeToTokensWithThemes(line, {
+      lang: language,
+      themes: names,
+      grammarState,
+    });
+    grammarState = runtime.getLastGrammarState(lineTokens);
+    tokens.push(
+      lineTokens[0].map((token) => ({
         content: token.content,
         light: token.variants.light,
         dark: token.variants.dark,
@@ -113,6 +130,7 @@ export async function highlightCode(
         darkHigh: token.variants.darkHigh,
       })),
     );
+  }
   cache.set(key, tokens);
   cachedCharacters += key.length;
   while (cache.size > 40 || cachedCharacters > 500_000) {

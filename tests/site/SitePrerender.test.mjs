@@ -66,6 +66,19 @@ test("a page's figures are skeletons at their recorded size until it hydrates", 
   assert.match(html, /data-site-part="example:button\/CreateProject"[^>]*;block-size:\d/);
 });
 
+test("a page's code is highlighted as it pre-renders, and its HTML carries the tokens", async () => {
+  const { html, code } = await server.renderPage('docs/components/button');
+  // Each token is a span in its theme's color, the light one's on the server.
+  assert.match(html, /<pre[^>]*><code><span style="--env-code-token:#/);
+  const data = JSON.parse(
+    /<script type="application\/json" id="site-page-code">(.*)<\/script>/.exec(code)[1],
+  );
+  assert.ok(data.blocks.length > 0);
+  assert.ok(data.blocks.every(([language, lines]) => language && lines.length));
+  // A page without code carries none.
+  assert.equal((await server.renderPage('components/button')).code, undefined);
+});
+
 test('each page is written at the file its address is served from', () => {
   assert.equal(pageFile('/'), 'index.html');
   assert.equal(pageFile('/components/button'), 'components/button.html');
