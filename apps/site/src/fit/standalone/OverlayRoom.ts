@@ -274,6 +274,28 @@ export function popupPadding(
 }
 
 /**
+ * The padding a room takes at the stage's `scale`: at full size, each side rounded down to even
+ * whole pixels, so it never takes more than the room spares. What the room centres then moves by
+ * whole pixels as the padding changes, so the popups it opens, placed at whole pixels, round the
+ * same way and measure the same, and the padding comes to the same value whatever it was before.
+ * Padding that followed their rounding came to rest a fraction of a pixel apart from one load to
+ * the next, and the figure's text drawn a pixel apart. A stage drawn smaller moves what it centres
+ * by fractions anyway, so its padding stays as measured; full size reads as a scale a hair from 1,
+ * since the element's offsetWidth is rounded.
+ * @internal
+ */
+export function steadyPadding(padding: Sides, scale: number): Sides {
+  if (Math.abs(scale - 1) > 0.01) return padding;
+  const even = (length: number) => 2 * Math.floor(length / 2);
+  return {
+    top: even(padding.top),
+    right: even(padding.right),
+    bottom: even(padding.bottom),
+    left: even(padding.left),
+  };
+}
+
+/**
  * Makes space in the figure for its open overlays, and centres them with what opens them:
  * - a popup beside its trigger adds padding to the room on the popup's side, so the two together
  *   sit in the middle of the stage;
@@ -308,7 +330,10 @@ export function makeRoom(room: HTMLElement, layer: HTMLElement, hold: boolean) {
   }
   const next =
     content.length && anchored.length
-      ? popupPadding(union(content), anchored, scale, room.clientWidth, padding)
+      ? steadyPadding(
+          popupPadding(union(content), anchored, scale, room.clientWidth, padding),
+          scale,
+        )
       : { top: 0, right: 0, bottom: 0, left: 0 };
   // A popup is placed at whole pixels, and moving the room by a fraction of one can round the
   // popup to the next pixel. Padding that followed every such step would tremble a pixel each

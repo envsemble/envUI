@@ -202,6 +202,21 @@ test.describe('List', () => {
     const handle = list.getByRole('button', { name: 'Reorder Intro' });
     await expect(handle).toBeVisible();
     await option.failed();
+    // The import's rejection reaches the list some time after the request fails, later under load;
+    // until then the handle holds Space back for the code it waits for. A key the page sends, which
+    // the browser gives no default, tells when it no longer does; what it queued goes with the
+    // failure.
+    await expect
+      .poll(() =>
+        handle.evaluate((element) => {
+          const key = { key: ' ', code: 'Space', bubbles: true, cancelable: true };
+          const down = new KeyboardEvent('keydown', key);
+          element.dispatchEvent(down);
+          element.dispatchEvent(new KeyboardEvent('keyup', key));
+          return down.defaultPrevented;
+        }),
+      )
+      .toBe(false);
     // Space is the handle's own again, and nothing lifts or moves.
     await page.evaluate(() =>
       window.addEventListener('keydown', (event) => {

@@ -187,6 +187,33 @@ test(
   },
 );
 
+test(
+  'a command gives focus back to the field as its menu starts to fade',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(menubarFixture);
+    await page.addStyleTag({
+      content: '.env-popup[data-ending-style] { transition-duration: 60s; }',
+    });
+    const note = page.getByRole('textbox', { name: 'Note' });
+    await note.click();
+    await page.mouse.move(1, 999);
+    await page.keyboard.press('Alt+KeyE');
+    const editMenu = page.getByRole('menu', { name: 'Edit' });
+    await expect(editMenu.getByRole('menuitem', { name: 'Select all' })).toBeFocused();
+    // Closed while it still grows in, it would leave at once.
+    await expect(editMenu).not.toHaveAttribute('data-starting-style');
+    await editMenu.evaluate(async (menu) => {
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      await Promise.allSettled(menu.getAnimations().map(({ finished }) => finished));
+    });
+    await page.keyboard.press('Enter');
+    // Its finalFocus, the field, takes focus while the menu still fades out.
+    await expect(editMenu).toHaveAttribute('data-ending-style');
+    await expect(note).toBeFocused();
+  },
+);
+
 test('a click elsewhere lets focus go when nothing had focus before the menu', async ({ page }) => {
   await page.goto(menubarFixture);
   await trigger(page, 'File').click();

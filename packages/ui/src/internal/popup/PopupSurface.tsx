@@ -1,7 +1,6 @@
 'use client';
 
 import { DirectionProvider, useDirection } from '@base-ui/react/direction-provider';
-import type { Popover } from '@base-ui/react/popover';
 import {
   useCallback,
   useLayoutEffect,
@@ -26,6 +25,12 @@ import {
 } from './PortalContainerContext.js';
 import { inSkeleton, skeletonAttributes } from '../skeleton.js';
 import { computedDirection } from '../dom/direction.js';
+import {
+  closingFocusState,
+  returnFocusAsItCloses,
+  type ClosingFocus,
+  type FocusTarget,
+} from './closingFocus.js';
 import '../../styles/Base.css';
 import '../../styles/Popup.css';
 
@@ -44,9 +49,6 @@ interface OffsetData {
 
 /** An element, a ref to one, or Base UI's virtual element, for a popup that opens away from its trigger. */
 type Anchor = Element | RefObject<Element | null> | { getBoundingClientRect(): DOMRect };
-
-/** Where focus goes as the popup opens or closes, as each Base UI popup that moves focus takes it. */
-type FocusTarget = NonNullable<Popover.Popup.Props['initialFocus']>;
 
 /**
  * The popup element's props that its owner passes on, such as its name, id, ref, style, data
@@ -108,14 +110,18 @@ export interface PopupSurfaceProps {
   /** What it opens beside, where that isn't its trigger. */
   anchor?: Anchor;
   /**
-   * The trigger, whose text direction the popup takes as it opens where it has no anchor. An owner
-   * passes the ref it gives its trigger: a popup opened by a pointer, a hover or code may open
-   * while focus is elsewhere.
+   * The trigger, whose text direction the popup takes as it opens where it has no anchor, and
+   * where focus returns as it starts to close, where focus can go there. An owner passes the ref it
+   * gives its trigger: a popup opened by a pointer, a hover or code may open while focus is
+   * elsewhere.
    */
   trigger?: RefObject<Element | null>;
   /** Where focus goes as it opens, where its Popup takes it. */
   initialFocus?: FocusTarget;
-  /** Where focus goes as it closes, where its Popup takes it. */
+  /**
+   * Where focus goes as it closes, where its Popup takes it. A function runs as the popup starts to
+   * close, unless a press outside it closed it, and again once it has gone (closingFocus.ts).
+   */
   finalFocus?: FocusTarget;
   /**
    * The text direction inside it, for its placement and keyboard: the nearest EnvUIProvider's,
@@ -245,10 +251,34 @@ export function PopupSurface({
   const { style: ownStyle, ref: ownRef, onFocusCapture: ownFocusCapture } = popupProps ?? {};
   // When the popup appeared, to tell the focus Base UI moves into it as it opens.
   const openedAt = useRef(0);
+  // Where focus goes as the popup starts to close (closingFocus.ts).
+  const closingFocus = useRef<ClosingFocus>(closingFocusState());
+  useLayoutEffect(() => {
+    closingFocus.current.finalFocus = finalFocus;
+    closingFocus.current.trigger = trigger;
+  });
+  const shownPopup = useRef<HTMLDivElement | null>(null);
   const attachPopup = useCallback(
-    (node: HTMLDivElement | null) => {
-      openedAt.current = node ? performance.now() : 0;
-      setRef(ownRef, node);
+    (node: HTMLDivElement) => {
+      openedAt.current = performance.now();
+      // A popup that mounts afresh starts anew; the same one attached again, as when its owner
+      // passes a new ref, keeps what it has seen.
+      if (node !== shownPopup.current) {
+        closingFocus.current = {
+          ...closingFocusState(),
+          finalFocus: closingFocus.current.finalFocus,
+          trigger: closingFocus.current.trigger,
+        };
+      }
+      shownPopup.current = node;
+      const ownCleanup = setRef(ownRef, node);
+      const stop = returnFocusAsItCloses(node, closingFocus);
+      return () => {
+        stop();
+        openedAt.current = 0;
+        if (ownCleanup) ownCleanup();
+        else setRef(ownRef, null);
+      };
     },
     [ownRef],
   );
@@ -284,9 +314,9 @@ export function PopupSurface({
               <Popup
                 {...(layout && { render: layout })}
                 {...popupProps}
+                ref={attachPopup}
                 {...(contained && {
                   style: { ...containedPopupStyle, ...ownStyle },
-                  ref: attachPopup,
                   onFocusCapture: keepFocusOut,
                 })}
                 {...skeletonAttributes(skeleton)}

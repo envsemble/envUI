@@ -28,6 +28,8 @@ export interface PickerPopupProps {
   anchorRef: RefObject<HTMLElement | null>;
   /** The popup element. */
   popupRef: RefObject<HTMLDivElement | null>;
+  /** The field's button, where focus returns as the popup closes. */
+  triggerRef: RefObject<HTMLElement | null>;
   /** The text direction at the field, which the portal leaves behind. */
   dir: Direction | undefined;
   /** The popup's accessible name, the field's. */
@@ -52,6 +54,7 @@ export function PickerPopup({
   className,
   anchorRef,
   popupRef,
+  triggerRef,
   dir,
   name,
   initialFocus,
@@ -65,6 +68,7 @@ export function PickerPopup({
       side="bottom"
       align="start"
       anchor={anchorRef}
+      trigger={triggerRef}
       dir={dir}
       className={classNames('env-picker-popup', 'env-date-picker-popup', className)}
       layout={<Grid gap={3} padding={4} />}

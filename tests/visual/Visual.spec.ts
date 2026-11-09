@@ -263,17 +263,22 @@ async function settle(page: Page) {
   // it renders, with the skeletons of its parts.
   await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
   await page.locator('.site-loading').first().waitFor({ state: 'detached' });
+  // envUI ships its own Geist; a fallback face would make every text specimen drift. The fonts are
+  // ready at once while none has been asked for yet, as on a busy machine before the page has laid
+  // out its text, so it waits for Geist itself.
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() =>
+          [...document.fonts].some(
+            (font) => font.family.replace(/"/g, '') === 'envUI Geist' && font.status === 'loaded',
+          ),
+        ),
+      { message: 'envUI Geist is loaded' },
+    )
+    .toBe(true);
   await page.evaluate(() => document.fonts.ready);
   await finishAnimations(page);
-  // envUI ships its own Geist; a fallback face would make every text specimen drift.
-  expect(
-    await page.evaluate(() =>
-      [...document.fonts].some(
-        (font) => font.family.replace(/"/g, '') === 'envUI Geist' && font.status === 'loaded',
-      ),
-    ),
-    'envUI Geist is loaded',
-  ).toBe(true);
 }
 
 /** Click, then park the pointer and drop focus, so neither paints a state into later shots. */

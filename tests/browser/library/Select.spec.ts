@@ -1,9 +1,43 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { chevronTips, expectHalfTurn, slowChevron } from '../helpers/Chevron';
 import { fixtureUrl } from '../helpers/Servers';
 
+/** Waits until the open list has finished growing in. */
+async function grown(page: Page) {
+  const list = page.locator('.env-popup[data-open]');
+  await expect(list).not.toHaveAttribute('data-starting-style');
+  await list.evaluate(async (element) => {
+    // The transition starts in the frame after the starting style is removed.
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
+  });
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=forms`);
+});
+
+test('a list opened again while it fades out moves focus to the chosen option', async ({
+  page,
+}) => {
+  // The exit lasts long enough that the select opens again before the closing list has gone.
+  await page.addStyleTag({
+    content: '.env-popup[data-ending-style] { transition-duration: 60s; }',
+  });
+  const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
+  await trigger.focus();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('option', { name: 'Starter', exact: true })).toBeFocused();
+  // Closed while it still grows in, it would leave at once.
+  await grown(page);
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(trigger).toHaveText('Team');
+  // Focus is back on the select as the list starts to fade, not once it has gone.
+  await expect(page.locator('.env-popup[data-ending-style]')).toHaveCount(1);
+  await expect(trigger).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('option', { name: 'Team', exact: true })).toBeFocused();
 });
 
 test('Select supports keyboard commit, typeahead, Escape, and native form reset', async ({
@@ -42,6 +76,9 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset'
   await expect(trigger).toHaveText('Starter');
   await expect(trigger).toBeFocused();
 
+  // A space typed within 750 ms of a letter goes on with the type-ahead rather than opening the
+  // list: this waits just past it.
+  await page.waitForTimeout(800);
   await page.keyboard.press('Space');
   await expect(page.getByRole('listbox')).toBeVisible();
   await expect(page.getByRole('option', { name: 'Starter', exact: true })).toBeFocused();
@@ -361,3 +398,33 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   await page.keyboard.press('Escape');
   await expect(compact).toBeFocused();
 });
+
+test(
+  'a press outside an open list leaves focus to the press, never taking it to the select first',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.addStyleTag({
+      content: '.env-popup[data-ending-style] { transition-duration: 1s; }',
+    });
+    const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
+    await trigger.focus();
+    await page.keyboard.press('Space');
+    await expect(page.getByRole('option', { name: 'Starter', exact: true })).toBeFocused();
+    await grown(page);
+    await trigger.evaluate((node) => {
+      node.dataset.focusCount = '0';
+      node.addEventListener('focus', () => {
+        node.dataset.focusCount = String(Number(node.dataset.focusCount) + 1);
+      });
+    });
+    // Above the select, outside the list: the press lands on the list's backdrop.
+    const box = (await trigger.boundingBox())!;
+    await page.mouse.click(box.x + 20, box.y - 60);
+    await expect(page.locator('.env-popup[data-ending-style]')).toHaveCount(1);
+    await expect(trigger).not.toBeFocused();
+    await expect(trigger).toHaveAttribute('data-focus-count', '0');
+    // Base UI returns focus once the list has gone, once.
+    await expect(page.locator('.env-popup[data-ending-style]')).toHaveCount(0);
+    await expect(trigger).toHaveAttribute('data-focus-count', /^[01]$/);
+  },
+);

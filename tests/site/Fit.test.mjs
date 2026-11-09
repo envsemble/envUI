@@ -635,6 +635,12 @@ test("an open example's room is padded so its popup centres with what opens it",
   assert.deepEqual(room.popupPadding(trigger, [popup], 2, 600, none).bottom, 60);
   // On a narrow stage, the trigger keeps its width and 2 px, and the side padding fits the rest.
   assert.equal(room.popupPadding(trigger, [popup], 1, 150, none).right, 48);
+  // At full size it takes even whole pixels, so what it centres moves by whole pixels; scaled, it
+  // keeps the measure.
+  const measured = { top: 0, right: 99.6, bottom: 120.3, left: 1.4 };
+  assert.deepEqual(room.steadyPadding(measured, 1), { top: 0, right: 98, bottom: 120, left: 0 });
+  assert.deepEqual(room.steadyPadding(measured, 0.9997), room.steadyPadding(measured, 1));
+  assert.deepEqual(room.steadyPadding(measured, 2), measured);
 });
 
 test('a stage grows for an overlay placed on it by its full height and the space around it', () => {

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState, type ComponentType } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useState, type ComponentType } from 'react';
 import { Theme, type ColorScheme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
@@ -38,7 +38,8 @@ const fixtures = new Map(
  * The fixture `?fixture=<name>` names, in the scale `?scale=compact` or `?scale=system` sets,
  * otherwise comfortable whatever the pointer, so a spec measures the same sizes in every browser.
  * A `fixture-remount` event on the window mounts it afresh, as a spec that checks what a component
- * does on a later mount in the same page dispatches.
+ * does on a later mount in the same page dispatches; the root's data-fixture-mounts counts the
+ * mounts once each is in the page.
  */
 export default function App() {
   const [mounts, setMounts] = useState(0);
@@ -47,6 +48,9 @@ export default function App() {
     window.addEventListener('fixture-remount', remount);
     return () => window.removeEventListener('fixture-remount', remount);
   }, []);
+  useLayoutEffect(() => {
+    document.documentElement.dataset.fixtureMounts = String(mounts);
+  }, [mounts]);
   const parameters = new URLSearchParams(location.search);
   const name = parameters.get('fixture');
   const { default: Fixture, themes, mount } = fixtures.get(name ?? '') ?? {};

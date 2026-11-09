@@ -692,3 +692,88 @@ test('Menu supports keyboard navigation, actions and routed destinations', async
   await expect(page.getByTestId('menu-action')).toHaveText('Followed account settings');
   expect(errors).toEqual([]);
 });
+
+test.describe('Focus as a menu closes', { tag: '@engines' }, () => {
+  /** The exit lasts long enough to act while the closing menu still fades out. */
+  const slowExit = (page: Page) =>
+    page.addStyleTag({ content: '.env-popup[data-ending-style] { transition-duration: 1.5s; }' });
+  /** Counts the focus events an element receives from now on. */
+  const countFocus = (element: Locator) =>
+    element.evaluate((node) => {
+      node.dataset.focusCount = '0';
+      node.addEventListener('focus', () => {
+        node.dataset.focusCount = String(Number(node.dataset.focusCount) + 1);
+      });
+    });
+  const openCompact = async (page: Page) => {
+    const button = page.getByTestId('menus-light').getByRole('button', { name: 'Compact options' });
+    await button.focus();
+    await page.keyboard.press('Enter');
+    const menu = page.getByRole('menu', { name: 'Compact options' });
+    await expect(menu.getByRole('menuitem', { name: 'New window' })).toBeFocused();
+    await settled(menu);
+    return { button, menu };
+  };
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(menusFixture);
+    await slowExit(page);
+  });
+
+  test('a press outside leaves focus to the press, never taking it to the trigger first', async ({
+    page,
+  }) => {
+    const { button, menu } = await openCompact(page);
+    await countFocus(button);
+    // Away from the menu and its trigger: the press lands on the menu's backdrop.
+    const box = (await menu.boundingBox())!;
+    await page.mouse.click(box.x + box.width + 200, box.y + box.height / 2);
+    await expect(menu).toHaveAttribute('data-ending-style');
+    await expect(button).not.toBeFocused();
+    await expect(button).toHaveAttribute('data-focus-count', '0');
+    // Base UI decides once the menu has gone, and moves focus once at most.
+    await expect(menu).toHaveCount(0);
+    await expect(button).toHaveAttribute('data-focus-count', /^[01]$/);
+  });
+
+  test('Tab moves on from the menu, and focus stays where it went', async ({ page }) => {
+    const { button, menu } = await openCompact(page);
+    await countFocus(button);
+    await page.keyboard.press('Tab');
+    await expect(menu).toHaveAttribute('data-ending-style');
+    // Past the trigger, to the control after it, without passing through the trigger.
+    const next = page.getByTestId('menus-light').getByRole('button', { name: 'Density' });
+    await expect(next).toBeFocused();
+    await expect(menu).toHaveCount(0);
+    await expect(next).toBeFocused();
+    await expect(button).toHaveAttribute('data-focus-count', '0');
+  });
+
+  test('Escape gives focus to the trigger as the menu starts to fade', async ({ page }) => {
+    const { button, menu } = await openCompact(page);
+    await page.keyboard.press('Escape');
+    await expect(menu).toHaveAttribute('data-ending-style');
+    await expect(button).toBeFocused();
+  });
+
+  test('a submenu closed with Escape gives its row focus, and focus moved on stays', async ({
+    page,
+  }) => {
+    const { menu } = await openCompact(page);
+    const row = menu.getByRole('menuitem', { name: 'Open recent' });
+    await row.focus();
+    await page.keyboard.press('ArrowRight');
+    const recent = page.getByRole('menu', { name: 'Open recent' });
+    await expect(recent.getByRole('menuitem', { name: 'Quarterly report' })).toBeFocused();
+    await settled(recent);
+    await page.keyboard.press('Escape');
+    await expect(recent).toHaveAttribute('data-ending-style');
+    await expect(row).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    const save = menu.getByRole('menuitem', { name: 'Save' });
+    await expect(save).toBeFocused();
+    // Gone, the submenu leaves focus where it moved rather than taking it back to its row.
+    await expect(recent).toHaveCount(0);
+    await expect(save).toBeFocused();
+  });
+});
