@@ -22,21 +22,116 @@ function leavingLayer(element: HTMLElement) {
   return layer;
 }
 
+/** What a leaving skeleton's copy keeps of it: its box, fill and corners, and its pulse's time. */
+interface Look {
+  box: DOMRect;
+  backgroundColor: string;
+  borderRadius: string;
+  boxShadow: string;
+  times: (CSSNumberish | null)[];
+}
+
+/** The skeletons in the page that leave as copies (`seen`), which are measured together. */
+const skeletons = new Set<HTMLElement>();
+
+/**
+ * The looks of every skeleton in the page that would leave as a copy, measured together as the
+ * first of them leaves in a commit, and kept until the commit is over. React removes each skeleton
+ * that leaves right after its cleanup, so measuring each one as it leaves would lay the page out
+ * again for every one, a long pause on a page where dozens land at once; measured together, the
+ * page is laid out once.
+ */
+let looks: Map<HTMLElement, Look> | undefined;
+
+function lookOf(element: HTMLElement): Look {
+  const style = getComputedStyle(element);
+  return {
+    box: element.getBoundingClientRect(),
+    backgroundColor: style.backgroundColor,
+    borderRadius: style.borderRadius,
+    boxShadow: style.boxShadow,
+    times: element.getAnimations({ subtree: true }).map((animation) => animation.currentTime),
+  };
+}
+
+/** The look of a skeleton as it leaves, measured with the others that may leave in its commit. */
+function lookAsItLeaves(element: HTMLElement) {
+  if (!looks) {
+    const measured = new Map<HTMLElement, Look>();
+    for (const skeleton of skeletons)
+      if (skeleton.isConnected && seen(skeleton)) measured.set(skeleton, lookOf(skeleton));
+    looks = measured;
+    // After the commit's cleanups, which run together, and before the next commit's.
+    queueMicrotask(() => (looks = undefined));
+  }
+  return looks.get(element) ?? lookOf(element);
+}
+
+/** The motion of a crossfade, from the root's motion tokens. */
+interface Motion {
+  leave: KeyframeAnimationOptions;
+  enter: KeyframeAnimationOptions;
+}
+
+/**
+ * What the crossfades after one commit share of what they read of the page, each in a microtask
+ * of its own: the leaving layer's box, read once, as placing a copy changes the layout inside the
+ * layer but not the layer's own box; the motion tokens, read once; and the copies' pulses, which
+ * take up their skeletons' times once every copy is in, as reading a copy's animations works out
+ * its style. Read in each crossfade, after the copy before it went in, each would work out the
+ * page again, a long pause on a page where dozens of parts land at once.
+ */
+let together:
+  { layers: Map<HTMLElement, DOMRect>; motion?: Motion; pulses: (() => void)[] } | undefined;
+function crossfadingTogether() {
+  if (!together) {
+    const batch = { layers: new Map<HTMLElement, DOMRect>(), pulses: [] as (() => void)[] };
+    together = batch;
+    // After the crossfades of the commit, each in a microtask queued before this one.
+    queueMicrotask(() => {
+      together = undefined;
+      for (const pulse of batch.pulses) pulse();
+    });
+  }
+  return together;
+}
+
+/** The leaving layer's box, as the crossfades after one commit read it (crossfadingTogether). */
+function layerBox(layer: HTMLElement) {
+  const { layers } = crossfadingTogether();
+  let box = layers.get(layer);
+  if (!box) {
+    box = layer.getBoundingClientRect();
+    layers.set(layer, box);
+  }
+  return box;
+}
+
+/** The crossfade's motion, as the crossfades after one commit read it (crossfadingTogether). */
+function crossfadeMotion() {
+  const batch = crossfadingTogether();
+  batch.motion ??= {
+    leave: { duration: rootMotionDuration('fast'), easing: rootMotionEasing('ease-exit') },
+    enter: { duration: rootMotionDuration('medium'), easing: rootMotionEasing('ease-enter') },
+  };
+  return batch.motion;
+}
+
 /**
  * A skeleton that leaves while it shows, kept as a copy where it was, unseen by assistive
  * technology and no longer counted as loading, over what takes its place, until that shows: then
  * it fades out as what it stood for fades in, in the same frame, so the stage is never seen empty
- * between them. Measured as it leaves, while still in place, and drawn as it was, its fill and
- * corners as its place gave them, its pulse going on where it was; `place` lays the copy over the
- * same box in the page's leaving layer, and `fade` fades it out in the fast time and removes it,
- * at once with motion reduced. A skeleton outside the page, or not laid out, leaves no copy.
+ * between them. Measured as it leaves, while still in place (lookAsItLeaves), and drawn as it was,
+ * its fill and corners as its place gave them, its pulse going on where it was; `place` lays the
+ * copy over the same box in the page's leaving layer, and `fade` fades it out in the fast time and
+ * removes it, at once with motion reduced. A skeleton outside the page, or not laid out, leaves no
+ * copy.
  */
 function leaveInPlace(element: HTMLElement) {
   const layer = leavingLayer(element);
-  const box = element.getBoundingClientRect();
-  if (!layer || !box.width || !box.height) return undefined;
-  const style = getComputedStyle(element);
-  const times = element.getAnimations({ subtree: true }).map((animation) => animation.currentTime);
+  if (!layer) return undefined;
+  const { box, times, ...fill } = lookAsItLeaves(element);
+  if (!box.width || !box.height) return undefined;
   // A clone of an element is one.
   const copy = element.cloneNode(true) as HTMLElement;
   for (const node of [copy, ...copy.querySelectorAll('[id]')]) node.removeAttribute('id');
@@ -53,9 +148,7 @@ function leaveInPlace(element: HTMLElement) {
     minInlineSize: '0',
     minBlockSize: '0',
     maxInlineSize: 'none',
-    backgroundColor: style.backgroundColor,
-    borderRadius: style.borderRadius,
-    boxShadow: style.boxShadow,
+    ...fill,
   });
   let gone = false;
   const remove = () => {
@@ -66,24 +159,22 @@ function leaveInPlace(element: HTMLElement) {
   const timer = window.setTimeout(remove, leaveLongest);
   return {
     place() {
-      const at = layer.getBoundingClientRect();
+      const at = layerBox(layer);
       copy.style.left = `${box.left - at.left}px`;
       copy.style.top = `${box.top - at.top}px`;
       layer.append(copy);
-      const animations = copy.getAnimations({ subtree: true });
-      if (animations.length === times.length)
-        animations.forEach((animation, index) => (animation.currentTime = times[index] ?? null));
+      crossfadingTogether().pulses.push(() => {
+        const animations = copy.getAnimations({ subtree: true });
+        if (animations.length === times.length)
+          animations.forEach((animation, index) => (animation.currentTime = times[index] ?? null));
+      });
     },
     fade() {
       window.clearTimeout(timer);
       if (gone) return;
       if (!copy.isConnected || prefersReducedMotion()) return remove();
       copy
-        .animate([{ opacity: 1 }, { opacity: 0 }], {
-          duration: rootMotionDuration('fast'),
-          easing: rootMotionEasing('ease-exit'),
-          fill: 'forwards',
-        })
+        .animate([{ opacity: 1 }, { opacity: 0 }], { ...crossfadeMotion().leave, fill: 'forwards' })
         .finished.then(remove, remove);
     },
   };
@@ -132,10 +223,12 @@ export function useArrival(skeleton: { current: HTMLElement | null }) {
     const element = skeleton.current;
     const parent = element?.parentElement;
     if (!element || !parent) return;
+    skeletons.add(element);
     return () => {
       const before = new Set(parent.children);
       // Now, while it is still in place: React removes it after this.
       const leaving = element.isConnected && seen(element) ? leaveInPlace(element) : undefined;
+      skeletons.delete(element);
       // Once React has put what it stands for in its place, before the page paints.
       queueMicrotask(() => {
         if (!parent.isConnected) return;
@@ -150,12 +243,8 @@ export function useArrival(skeleton: { current: HTMLElement | null }) {
         }
         leaving?.fade();
         if (prefersReducedMotion()) return;
-        const easing = rootMotionEasing('ease-enter');
-        for (const child of arrived)
-          child.animate([{ opacity: 0 }, { opacity: 1 }], {
-            duration: rootMotionDuration('medium'),
-            easing,
-          });
+        const { enter } = crossfadeMotion();
+        for (const child of arrived) child.animate([{ opacity: 0 }, { opacity: 1 }], enter);
       });
     };
   }, [skeleton]);
