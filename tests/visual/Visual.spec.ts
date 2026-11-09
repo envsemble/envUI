@@ -173,7 +173,7 @@ const openLists: OpenList[] = [
     themes: ['light'],
     page: 'command-palette',
     example: 'GoToDocument',
-    trigger: (page) => stageOf(page).getByRole('button', { name: 'Go to document', exact: true }),
+    trigger: (page) => stageOf(page).getByRole('button', { name: 'Search', exact: true }),
     key: 'Enter',
     popup: (page) => page.getByRole('dialog', { name: 'Go to document', exact: true }),
     highlighted: 'Roadmap.md',
