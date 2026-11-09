@@ -1,6 +1,7 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 import { openServerMarkup } from '../helpers/ServerMarkup';
+import { failOptionModule, holdOptionModule } from '../helpers/OptionLoad';
 
 const tablesFixture = `${fixtureUrl}/?fixture=table`;
 const themes = ['light', 'dark'] as const;
@@ -94,6 +95,8 @@ test('sortable headers are buttons that say what pressing does and report the or
   await expect(page.getByTestId('order-light')).toHaveText('roadmap quarterly tokens audit');
 
   const reviews = table.getByRole('columnheader', { name: 'Reviews', exact: true });
+  // Tab passes the resize handles of Report and Owner, once their code has loaded.
+  await expect(table.getByRole('separator')).toHaveCount(3);
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
@@ -210,6 +213,49 @@ test(
     expect(await cut.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
   },
 );
+
+test('the resize handles come with their code, which a table loads as it renders', async ({
+  page,
+}) => {
+  // Held back, as a slow network would, the handles' code leaves the header as it is without them.
+  const { requested, release } = await holdOptionModule(page, /ColumnResizeHandle\.tsx/);
+  await page.reload();
+  const table = page.getByRole('table', { name: 'Reports light' });
+  const widths = page.getByTestId('widths-light');
+  await expect(table.getByRole('columnheader', { name: 'Report', exact: true })).toBeVisible();
+  await requested();
+  await expect(table.getByRole('separator')).toHaveCount(0);
+  await release();
+  // Once it has loaded, the first drag resizes, with the handle's own style.
+  const handle = table.getByRole('separator', { name: 'Resize Report' });
+  await expect(handle).toHaveCSS('cursor', 'col-resize');
+  const tableWidth = (await table.boundingBox())!.width;
+  const box = (await handle.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 + tableWidth * 0.1, box.y + box.height / 2, {
+    steps: 4,
+  });
+  await page.mouse.up();
+  await expect(widths).toHaveText('50.0 20.0 15.0 15.0');
+});
+
+test('a table whose resize code fails to load keeps its columns, and a remount tries again', async ({
+  page,
+}) => {
+  const option = await failOptionModule(page, /ColumnResizeHandle\.tsx/);
+  await page.reload();
+  const table = page.getByRole('table', { name: 'Reports light' });
+  const report = table.getByRole('columnheader', { name: 'Report', exact: true });
+  await expect(report).toBeVisible();
+  await option.failed();
+  await expect(table.getByRole('separator')).toHaveCount(0);
+  await report.getByRole('button').click();
+  await expect(report).toHaveAttribute('aria-sort', 'ascending');
+  option.restore();
+  await option.remount();
+  await expect(table.getByRole('separator')).toHaveCount(3);
+});
 
 test('columns resize the other way in a right-to-left table', async ({ page }) => {
   const table = page.getByRole('table', { name: 'Reports light' });

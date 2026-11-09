@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
+import { failOptionModule, holdOptionModule } from '../helpers/OptionLoad';
 
 const preview = `${fixtureUrl}/?fixture=portal-container`;
 
@@ -170,6 +171,39 @@ test.describe('PortalContainer, contained', () => {
     await page.mouse.move(1, 1);
     await expect(notice).toHaveCount(0);
     await expect(layer).toHaveAttribute('data-ended', '');
+  });
+
+  test('a contained notice shown before its code has loaded arrives once it has', async ({
+    page,
+  }) => {
+    // The region loads the picture's notices as it renders: hold them back, as a slow network would.
+    const { requested, release } = await holdOptionModule(page, /PictureNotice\.tsx/);
+    await page.goto(preview);
+    const layer = page.getByTestId('layer');
+    await requested();
+    await expect(layer.getByRole('menu', { name: 'Actions' })).toBeVisible();
+    await expect(layer.locator('.env-toast')).toHaveCount(0);
+    await release();
+    await expect(layer.getByText('Changes saved.')).toBeVisible();
+    await page.getByRole('button', { name: 'Notify' }).click();
+    await expect(layer.locator('.env-toast', { hasText: 'Invitation sent.' })).toBeVisible();
+  });
+
+  test('a contained region whose notices fail to load shows none, and a remount tries again', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    const option = await failOptionModule(page, /PictureNotice\.tsx/);
+    await page.goto(preview);
+    const layer = page.getByTestId('layer');
+    await expect(layer.getByRole('menu', { name: 'Actions' })).toBeVisible();
+    await option.failed();
+    await expect(layer.locator('.env-toast')).toHaveCount(0);
+    option.restore();
+    await option.remount();
+    await expect(layer.getByText('Changes saved.')).toBeVisible();
+    expect(errors).toEqual([]);
   });
 
   test('F6 leaves the contained toasts alone @engines', async ({ page }) => {

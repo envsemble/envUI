@@ -1,5 +1,6 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
+import { failOptionModule, holdOptionModule } from '../helpers/OptionLoad';
 
 const scaffold = (query = '') => `${fixtureUrl}/?fixture=scaffold${query}`;
 const scrollKeys = `${fixtureUrl}/?fixture=scaffold-scroll-keys`;
@@ -407,6 +408,49 @@ test.describe('Scaffold body scroll', { tag: '@engines' }, () => {
     await page.keyboard.press('PageDown');
     await twoFrames(page);
     expect((await metrics()).top).toBe(0);
+  });
+
+  test('a key pressed before the scrolling code has loaded scrolls once it has', async ({
+    page,
+  }) => {
+    // The scaffold loads the code as the body mounts: hold it back, as a slow network would.
+    const { requested, release } = await holdOptionModule(page, /scrollKeys\.ts/);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(scrollKeys);
+    const content = page.locator('.env-scaffold-body');
+    await expect(content).toBeVisible();
+    await requested();
+    await page.keyboard.press('PageDown');
+    await page.keyboard.press('ArrowDown');
+    await twoFrames(page);
+    expect(await content.evaluate((element) => element.scrollTop)).toBe(0);
+    await release();
+    const step = await content.evaluate((element) => element.clientHeight * 0.875);
+    await expect
+      .poll(async () => Math.abs((await content.evaluate((e) => e.scrollTop)) - (step + 40)))
+      .toBeLessThanOrEqual(1.5);
+  });
+
+  test('where the scrolling code fails to load the keys stay with the browser, and a remount tries again', async ({
+    page,
+  }) => {
+    const option = await failOptionModule(page, /scrollKeys\.ts/);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const taken = await openScrollKeys(page);
+    await option.failed();
+    const content = page.locator('.env-scaffold-body');
+    const top = () => content.evaluate((element) => element.scrollTop);
+    await page.keyboard.press('PageDown');
+    expect(await taken()).toBe('false');
+    await twoFrames(page);
+    expect(await top()).toBe(0);
+    option.restore();
+    await option.remount();
+    await expect(content).toBeVisible();
+    const step = await content.evaluate((element) => element.clientHeight * 0.875);
+    // One page: the key pressed before the remount is gone with the scaffold that heard it.
+    await page.keyboard.press('PageDown');
+    await expect.poll(async () => Math.abs((await top()) - step)).toBeLessThanOrEqual(1.5);
   });
 
   test('quick presses and held keys scroll as far as the browser scrolls', async ({ page }) => {

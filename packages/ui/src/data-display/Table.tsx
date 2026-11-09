@@ -23,9 +23,9 @@ import { IconArrowDownward } from '../icons/ArrowDownward.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconUnfoldMore } from '../icons/UnfoldMore.js';
 import { useColumnIndex, useTableColumns, type TableColumns } from './internal/tableColumns.js';
-import { ColumnResizeHandle } from './internal/ColumnResizeHandle.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
+import { optionModule, useOptionModule } from '../internal/react/useOptionModule.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
@@ -119,6 +119,13 @@ export interface RootProps
 }
 
 /**
+ * The column resize handles' module, which only a table with resizableColumns loads: the table
+ * starts loading it as it renders, so it is there by the time its header cells, which find their
+ * columns once they are in the document, show the handles.
+ */
+const columnResize = optionModule(() => import('./internal/ColumnResizeHandle.js'));
+
+/**
  * Whether a stacking table's rows are stacked, as its container query on the region laid them
  * out: read from the table's --env-table-stacked once it is in the document, and again as the
  * region or the table resizes. CSS decides the layout; this only reports it, so the server's
@@ -202,6 +209,7 @@ function Root({
     minColumnWidths,
     resizableColumns,
   });
+  if (columns?.resizable) columnResize.preload();
 
   return (
     <div
@@ -412,7 +420,8 @@ function HeaderCell({
     [ref],
   );
   const column = useColumnIndex(cell, section === 'head' && columns?.resizable === true);
-  const handle = columns && column !== undefined && column + 1 < columns.widths.length;
+  const resize = useOptionModule(columnResize, columns?.resizable === true);
+  const handle = resize && columns && column !== undefined && column + 1 < columns.widths.length;
   const sortable = onSortChange !== undefined;
   const nextSort = sortDirection === 'ascending' ? 'descending' : 'ascending';
   // The header keeps its own name; the controls inside add what they do to it through
@@ -466,7 +475,7 @@ function HeaderCell({
         </span>
       )}
       {handle && (
-        <ColumnResizeHandle
+        <resize.ColumnResizeHandle
           column={column}
           columns={columns}
           label={resizeLabel}

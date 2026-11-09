@@ -5,37 +5,21 @@ import {
   useLayoutEffect,
   useState,
   type KeyboardEvent,
-  type MouseEvent,
-  type PointerEvent,
   type RefObject,
+  type SyntheticEvent,
 } from 'react';
-import { scrolledBy } from '../../internal/dom/scrolledBy.js';
 import { useLatest } from '../../internal/useLatest.js';
-import {
-  edgeScrollDelta,
-  measureRows,
-  pointerTarget,
-  rowOffset,
-  rowsOf,
-  scrollerOf,
-  type Move,
-} from './reorderGeometry.js';
+import { optionModule } from '../../internal/react/useOptionModule.js';
+import { dragThreshold, isLiftKey, isLiftedKey, isRowMoveKey } from './reorderKeys.js';
+import type {
+  createReorder,
+  Reorder,
+  ReorderAnnouncements,
+  ReorderHandlers,
+  ReorderOptions,
+} from './reorderController.js';
 
-type AnnouncementValues = { label: string; position: string; count: string };
-
-/** What a reorder announces, with the row's label and its position and the count as text. */
-export interface ReorderAnnouncements {
-  /** A row lifted by keyboard or a press, which the arrow keys move. */
-  lifted: (values: AnnouncementValues) => string;
-  /** A row the pointer drags. */
-  liftedByPointer: (values: AnnouncementValues) => string;
-  moved: (values: AnnouncementValues) => string;
-  /** A row that can't move further toward the start, or the end, of the list. */
-  atStart: (values: AnnouncementValues) => string;
-  atEnd: (values: AnnouncementValues) => string;
-  dropped: (values: AnnouncementValues) => string;
-  cancelled: (values: AnnouncementValues) => string;
-}
+export type { ReorderHandlers };
 
 /** The latest announcement, and how many there have been, so a repeat is told apart. */
 export interface Announcement {
@@ -43,329 +27,160 @@ export interface Announcement {
   count: number;
 }
 
-/** What the controller reads as it works, from the latest render. */
-interface ReorderOptions {
-  list: HTMLElement | null;
-  onReorder: ((from: number, to: number) => void) | undefined;
-  announcements: ReorderAnnouncements;
-  formatNumber: (value: number) => string;
-}
-
-/** How far, in CSS pixels, a press moves before it drags the row. */
-const dragThreshold = 4;
+/**
+ * The code that moves the rows, which only a reorderable list loads: it starts loading as the list
+ * renders, so it is there by the time people reach a handle, and what they do before it is, such
+ * as a drag begun at once, waits for it.
+ */
+const controllerModule = optionModule(() => import('./reorderController.js'));
 
 /**
- * The moves of one list, outside React's render: the rows shift with the CSS `translate` property
- * while a row moves, and nothing moves in the DOM until onReorder.
+ * An event as it was dispatched, to hand to the controller once it has loaded. React clears an
+ * event's currentTarget once its handlers have run, so it is kept; preventing its default then
+ * would come too late, so the handlers below do that as it happens.
  */
-function createReorder(read: () => ReorderOptions, announce: (text: string) => void) {
-  let move: Move | null = null;
-  let frame = 0;
-  /** The control to focus again once the application has moved the row. */
-  let refocus: HTMLElement | null = null;
-  /** Set as a drag ends, so the click that follows its release doesn't lift the row again. */
-  let afterDrag = false;
-  /**
-   * Set while the pointer presses the handle of a row it lifted by a press, so the focus some
-   * browsers take from the handle on that press doesn't put the row back before the click drops it.
-   */
-  let pressingLifted = false;
+function replayed<E extends SyntheticEvent>(event: E): E {
+  const { currentTarget, target } = event;
+  return Object.assign(Object.create(event) as E, {
+    currentTarget,
+    target,
+    preventDefault() {},
+    stopPropagation() {},
+  });
+}
 
-  const say = (kind: keyof ReorderAnnouncements, label: string, index: number, count: number) => {
-    const { announcements, formatNumber } = read();
-    announce(
-      announcements[kind]({ label, position: formatNumber(index + 1), count: formatNumber(count) }),
-    );
-  };
-
-  /** Shows the rows where they would be with the moving row at its target. */
-  const paint = (current: Move) => {
-    current.rows.forEach((row, index) => {
-      const offset = rowOffset(current, index);
-      row.style.translate = offset === 0 ? '' : `0 ${offset}px`;
-    });
-  };
-
-  /** Marks the moving row, its pressed handle and the list, which raise the row and animate the others. */
-  const show = (current: Move) => {
-    current.row.dataset.moving = current.mode;
-    current.handle.setAttribute('aria-pressed', 'true');
-    current.list.dataset.reordering = '';
-  };
-
-  /** Ends a move: the rows return to rest, without a transition where the DOM is about to move. */
-  const settle = (current: Move, instant: boolean) => {
-    cancelAnimationFrame(frame);
-    for (const row of current.rows) {
-      if (instant) row.style.transition = 'none';
-      row.style.translate = '';
-      delete row.dataset.moving;
-    }
-    current.handle.setAttribute('aria-pressed', 'false');
-    delete current.list.dataset.reordering;
-    if (instant)
-      requestAnimationFrame(() => {
-        for (const row of current.rows) row.style.transition = '';
-      });
-    move = null;
-  };
-
-  const start = (row: HTMLElement, handle: HTMLElement, label: string, mode: Move['mode']) => {
-    const { list } = read();
-    if (!list) return null;
-    const rows = rowsOf(list);
-    const from = rows.indexOf(row);
-    if (from === -1) return null;
-    move = { list, row, handle, label, from, to: from, rows, ...measureRows(list, rows), mode };
-    // A press on the handle shows nothing until the pointer drags; a key lifts the row at once.
-    if (mode === 'keyboard') show(move);
-    return move;
-  };
-
-  const drop = () => {
-    if (!move) return;
-    const { from, to, label, rows, handle } = move;
-    const moved = from !== to;
-    settle(move, moved);
-    say('dropped', label, to, rows.length);
-    if (moved) {
-      refocus = handle;
-      read().onReorder?.(from, to);
+/**
+ * Handlers for a list's rows and handles that pass each event to the controller, or, until it has
+ * loaded, keep it for the controller to handle as it arrives, in order. Meanwhile they do at once
+ * what can't wait, by the controller's own rules (reorderKeys.ts): preventing the default of a key
+ * or a press it takes, and capturing a pressed pointer so the drag's moves still reach the handle.
+ * Where the controller fails to load, they leave every event alone.
+ */
+function createDeferredReorder(read: () => ReorderOptions, announce: (text: string) => void) {
+  let controller: Reorder | null = null;
+  let failed = false;
+  let waiting: (() => void)[] = [];
+  /** Whether the events that wait have lifted a row by its handle's keys or a press of it. */
+  let liftHeld = false;
+  /** Where a press of a handle that waits started, so its moves wait too; and whether it dragged. */
+  let pressedAt: number | null = null;
+  let dragged = false;
+  /** Set once a replayed event has had the application move a row (see load). */
+  let replaying = false;
+  let reordered = false;
+  const waits = () => !controller && !failed;
+  /** Hands the event to the controller, or keeps it, as it was dispatched, until it has loaded. */
+  const pass = <E extends SyntheticEvent>(
+    event: E,
+    call: (handlers: ReorderHandlers, event: E) => void,
+  ) => {
+    if (controller) call(controller.handlers, event);
+    else if (!failed) {
+      const kept = replayed(event);
+      waiting.push(() => call(controller!.handlers, kept));
     }
   };
-
-  const cancel = (quiet = false) => {
-    if (!move) return;
-    const { label, from, rows } = move;
-    settle(move, false);
-    if (!quiet) say('cancelled', label, from, rows.length);
-  };
-
-  /** Says that a row is at an end of the list and can't move further that way. */
-  const sayEnd = (label: string, index: number, count: number) =>
-    say(index === 0 ? 'atStart' : 'atEnd', label, index, count);
-
-  /** Moves the lifted row to `to` by keyboard. */
-  const step = (to: number) => {
-    if (!move) return;
-    const next = Math.max(0, Math.min(move.rows.length - 1, to));
-    if (next === move.to) {
-      if (next === 0 || next === move.rows.length - 1) sayEnd(move.label, next, move.rows.length);
-      return;
-    }
-    move.to = next;
-    paint(move);
-    say('moved', move.label, next, move.rows.length);
-  };
-
-  /** Follows the pointer: the target place for the row under it. */
-  const follow = () => {
-    const pointer = move?.pointer;
-    if (!move || !pointer) return;
-    const to = pointerTarget(move, pointer);
-    if (to !== move.to) {
-      move.to = to;
-      say('moved', move.label, to, move.rows.length);
-    }
-    paint(move);
-  };
-
-  /** Scrolls the scroll area while the pointer drags near its edges. */
-  const autoScroll = () => {
-    cancelAnimationFrame(frame);
-    const pointer = move?.pointer;
-    if (!pointer?.dragging) return;
-    const { scroller } = pointer;
-    const delta = edgeScrollDelta(scroller, pointer.lastY);
-    if (delta === 0) return;
-    const before = scroller.scrollTop;
-    scroller.scrollTop = before + delta;
-    if (scroller.scrollTop === before) return;
-    follow();
-    frame = requestAnimationFrame(autoScroll);
-  };
-
-  /** Lifts a row for the arrow keys, by keyboard or a press of its handle. */
-  const lift = (row: HTMLElement, handle: HTMLElement, label: string) => {
-    const started = start(row, handle, label, 'keyboard');
-    if (started) say('lifted', label, started.from, started.rows.length);
-  };
-
-  const handlers = {
-    /**
-     * The handle's keys. Space and Enter lift and drop here, and their own click is prevented, so
-     * a click comes only from a press, such as a pointer's, voice control's or a screen reader's.
-     */
-    handleKeyDown(event: KeyboardEvent<HTMLElement>, row: HTMLElement, label: string) {
-      const isLift = event.key === ' ' || event.key === 'Enter';
-      if (isLift) event.preventDefault();
-      // A row another handle lifted, which kept it lifted as focus moved here, goes back first.
-      if (move && move.handle !== event.currentTarget) cancel(true);
-      if (!move) {
-        if (!isLift || event.repeat) return;
-        lift(row, event.currentTarget, label);
-        return;
+  const handlers: ReorderHandlers = {
+    handleKeyDown(event, row, label) {
+      if (waits()) {
+        if (isLiftKey(event.key)) {
+          event.preventDefault();
+          if (!event.repeat) liftHeld = !liftHeld;
+        } else if (liftHeld && isLiftedKey(event.key)) {
+          event.preventDefault();
+          if (event.key === 'Escape') {
+            event.stopPropagation();
+            liftHeld = false;
+          }
+        } else if (event.key === 'Tab') liftHeld = false;
       }
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        event.stopPropagation();
-        cancel();
-        return;
-      }
-      if (move.mode !== 'keyboard' || event.repeat) return;
-      if (isLift) drop();
-      else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-        event.preventDefault();
-        step(move.to + (event.key === 'ArrowUp' ? -1 : 1));
-      } else if (event.key === 'Home' || event.key === 'End') {
-        event.preventDefault();
-        step(event.key === 'Home' ? 0 : move.rows.length - 1);
-      } else if (event.key === 'Tab') cancel();
+      pass(event, (each, kept) => each.handleKeyDown(kept, row, label));
     },
-    /** Space clicks a button as it is released; the key down has done what it does. */
-    handleKeyUp(event: KeyboardEvent<HTMLElement>) {
-      if (event.key === ' ') event.preventDefault();
+    handleKeyUp(event) {
+      if (waits() && event.key === ' ') event.preventDefault();
+      pass(event, (each, kept) => each.handleKeyUp(kept));
     },
-    /**
-     * A press of the handle that didn't drag lifts its row, or drops the lifted row, so people who
-     * press rather than drag or type, through voice control, switch access or a screen reader's
-     * browse mode, can move it too.
-     */
-    handleClick(event: MouseEvent<HTMLElement>, row: HTMLElement, label: string) {
-      pressingLifted = false;
-      if (afterDrag) {
-        afterDrag = false;
-        return;
-      }
-      const handle = event.currentTarget;
-      handle.focus({ preventScroll: true });
-      if (move && move.handle !== handle) cancel(true);
-      if (!move) lift(row, handle, label);
-      else if (move.mode === 'keyboard' && move.row === row) drop();
+    handleClick(event, row, label) {
+      // A press that didn't drag lifts the row, or drops it.
+      if (waits() && !dragged) liftHeld = !liftHeld;
+      dragged = false;
+      pass(event, (each, kept) => each.handleClick(kept, row, label));
     },
-    /** Losing focus puts a row lifted by keyboard back. */
     handleBlur() {
-      if (move?.mode === 'keyboard' && !pressingLifted) cancel();
-    },
-    handlePointerDown(event: PointerEvent<HTMLElement>, row: HTMLElement, label: string) {
-      if (event.button !== 0) return;
-      if (move) {
-        if (move.mode === 'keyboard' && move.handle === event.currentTarget) {
-          pressingLifted = true;
-          setTimeout(() => {
-            pressingLifted = false;
-          });
-          // Released off the handle, the press clicks nothing, and a browser that took focus from
-          // the handle as it was pressed would leave the row lifted with no handle to hear its keys:
-          // once the release and any click have run, the lifted row's handle has focus again.
-          const current = move;
-          const released = () => {
-            window.removeEventListener('pointerup', released, true);
-            window.removeEventListener('pointercancel', released, true);
-            setTimeout(() => {
-              if (move === current && document.activeElement !== current.handle)
-                current.handle.focus({ preventScroll: true });
-            });
-          };
-          window.addEventListener('pointerup', released, true);
-          window.addEventListener('pointercancel', released, true);
-        }
-        return;
+      if (failed) return;
+      if (controller) controller.handlers.handleBlur();
+      else {
+        liftHeld = false;
+        waiting.push(() => controller!.handlers.handleBlur());
       }
-      afterDrag = false;
-      const handle = event.currentTarget;
-      const current = start(row, handle, label, 'pointer');
-      if (!current) return;
-      const scroller = scrollerOf(row);
-      current.pointer = {
-        id: event.pointerId,
-        startY: event.clientY,
-        lastY: event.clientY,
-        scroller,
-        row,
-        startScrolled: scrolledBy(row, 'y'),
-        dragging: false,
-      };
-      handle.setPointerCapture?.(event.pointerId);
-      // The handle is no text to select, and the press shouldn't scroll the page on touch.
-      event.preventDefault();
-      handle.focus({ preventScroll: true });
     },
-    handlePointerMove(event: PointerEvent<HTMLElement>) {
-      const pointer = move?.pointer;
-      if (!move || !pointer || event.pointerId !== pointer.id) return;
-      pointer.lastY = event.clientY;
-      if (!pointer.dragging) {
-        if (Math.abs(event.clientY - pointer.startY) < dragThreshold) return;
-        pointer.dragging = true;
-        show(move);
-        say('liftedByPointer', move.label, move.from, move.rows.length);
+    handlePointerDown(event, row, label) {
+      if (waits() && event.button === 0) {
+        pressedAt = event.clientY;
+        dragged = false;
+        const handle = event.currentTarget;
+        handle.setPointerCapture?.(event.pointerId);
+        event.preventDefault();
+        handle.focus({ preventScroll: true });
       }
-      follow();
-      autoScroll();
+      pass(event, (each, kept) => each.handlePointerDown(kept, row, label));
     },
-    handlePointerUp(event: PointerEvent<HTMLElement>) {
-      const pointer = move?.pointer;
-      if (!pointer || event.pointerId !== pointer.id) return;
-      // A press that never moved far enough is no drag: nothing is announced, and the click that
-      // follows lifts the row. The click that follows a drag does nothing, and in case none
-      // follows, nothing is held for the next one.
-      if (pointer.dragging) {
-        afterDrag = true;
-        setTimeout(() => {
-          afterDrag = false;
-        });
-        drop();
-      } else cancel(true);
-    },
-    handlePointerCancel(event: PointerEvent<HTMLElement>) {
-      const pointer = move?.pointer;
-      if (!pointer || event.pointerId !== pointer.id) return;
-      cancel(!pointer.dragging);
-    },
-    /** Alt+↑ and Alt+↓ on a row's target move the row one place at once. */
-    rowKeyDown(event: KeyboardEvent<HTMLElement>, row: HTMLElement, label: string) {
-      if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || move) return;
-      if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
-      // A key press on a row reaches it from an element inside it.
-      const target = event.target as HTMLElement;
-      const { list, onReorder } = read();
-      if (!target.closest('[data-row-target]') || !list) return;
-      const rows = rowsOf(list);
-      const from = rows.indexOf(row);
-      const to = from + (event.key === 'ArrowUp' ? -1 : 1);
-      if (from === -1) return;
-      event.preventDefault();
-      if (to < 0 || to >= rows.length) {
-        sayEnd(label, from, rows.length);
-        return;
+    handlePointerMove(event) {
+      if (controller) controller.handlers.handlePointerMove(event);
+      else if (pressedAt !== null) {
+        if (Math.abs(event.clientY - pressedAt) >= dragThreshold) dragged = true;
+        pass(event, (each, kept) => each.handlePointerMove(kept));
       }
-      refocus = target;
-      say('moved', label, to, rows.length);
-      onReorder?.(from, to);
+    },
+    handlePointerUp(event) {
+      pressedAt = null;
+      pass(event, (each, kept) => each.handlePointerUp(kept));
+    },
+    handlePointerCancel(event) {
+      pressedAt = null;
+      pass(event, (each, kept) => each.handlePointerCancel(kept));
+    },
+    rowKeyDown(event: KeyboardEvent<HTMLElement>, row, label) {
+      if (waits() && isRowMoveKey(event)) event.preventDefault();
+      pass(event, (each, kept) => each.rowKeyDown(kept, row, label));
     },
   };
-
   return {
     handlers,
     /**
-     * After a drop the application moves the row in the DOM, which can take focus from it: focus
-     * goes back to the control that moved the row.
+     * Takes the loaded controller and hands it what waited for it, until one of those events has
+     * the application move a row: the rows move in the DOM only once it has rendered again, so
+     * what came after would read the old order and move the wrong row. It is dropped.
      */
-    restoreFocus() {
-      const element = refocus;
-      refocus = null;
-      if (element?.isConnected && document.activeElement !== element)
-        element.focus({ preventScroll: true });
+    load(module: { createReorder: typeof createReorder }) {
+      controller = module.createReorder(() => {
+        const options = read();
+        if (!replaying) return options;
+        return {
+          ...options,
+          onReorder: (from: number, to: number) => {
+            reordered = true;
+            options.onReorder?.(from, to);
+          },
+        };
+      }, announce);
+      replaying = true;
+      for (const call of waiting) {
+        call();
+        if (reordered) break;
+      }
+      replaying = false;
+      waiting = [];
     },
-    dispose() {
-      if (move) settle(move, false);
+    /** The controller didn't load: the rows can't move, and their events are left alone. */
+    fail() {
+      failed = true;
+      waiting = [];
     },
+    restoreFocus: () => controller?.restoreFocus(),
+    dispose: () => controller?.dispose(),
   };
 }
-
-/** The handlers a list's rows and their handles call. */
-export type ReorderHandlers = ReturnType<typeof createReorder>['handlers'];
 
 /**
  * Moving the rows of a list by keyboard and pointer, with a preview while the row moves and one
@@ -391,13 +206,27 @@ export function useReorder(
 ) {
   const [announcement, setAnnouncement] = useState<Announcement>({ text: '', count: 0 });
   const latest = useLatest({ onReorder, announcements, formatNumber });
-  const [controller] = useState(() =>
-    createReorder(
+  const [reorder] = useState(() =>
+    createDeferredReorder(
       () => ({ list: list.current, ...latest.current }),
       (text) => setAnnouncement((last) => ({ text, count: last.count + 1 })),
     ),
   );
-  useLayoutEffect(() => controller.restoreFocus());
-  useEffect(() => () => controller.dispose(), [controller]);
-  return { announcement, handlers: controller.handlers };
+  // Loading starts as the list first renders; the controller is made once it is in the page.
+  controllerModule.preload();
+  useEffect(() => {
+    let mounted = true;
+    controllerModule.load().then(
+      (module) => {
+        if (mounted) reorder.load(module);
+      },
+      () => reorder.fail(),
+    );
+    return () => {
+      mounted = false;
+      reorder.dispose();
+    };
+  }, [reorder]);
+  useLayoutEffect(() => reorder.restoreFocus());
+  return { announcement, handlers: reorder.handlers };
 }

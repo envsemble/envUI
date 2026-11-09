@@ -26,6 +26,7 @@
 @import './Accordion.css';
 @import './Badge.css';
 @import './Table.css';
+@import './ColumnResizeHandle.css';
 @import './Breadcrumbs.css';
 @import './TableOfContents.css';
 @import './Pagination.css';
@@ -51,6 +52,7 @@
 @import './Radio.css';
 @import './Field.css';
 @import './TextField.css';
+@import './TextareaResizeEdge.css';
 @import './ColorPicker.css';
 @import './Editor.css';
 @import './MarkdownEditor.css';

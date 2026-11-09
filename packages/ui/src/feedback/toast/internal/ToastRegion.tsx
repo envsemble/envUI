@@ -17,12 +17,19 @@ import { Button, IconButton } from '../../../actions/Button.js';
 import { IconClose } from '../../../icons/Close.js';
 import { flag } from '../../../internal/flag.js';
 import { ToastBody } from './ToastBody.js';
-import { PictureNotice } from './PictureNotice.js';
 import { useToastGlide } from './useToastGlide.js';
+import type { PictureNotice } from './PictureNotice.js';
+import { optionModule, useOptionModule } from '../../../internal/react/useOptionModule.js';
 import '../../../styles/Base.css';
 import '../../../styles/Toast.css';
 
 type ToastObject = BaseToast.Root.ToastObject<ToastEntry>;
+
+/**
+ * The notices of a contained region's picture, which only a region in a contained PortalContainer
+ * loads, as it mounts, so they are there by the time it shows one; a notice shows once they are.
+ */
+const picture = optionModule(() => import('./PictureNotice.js'));
 
 /**
  * The notices that wait behind the count of hidden ones: the oldest beyond the visible limit. Danger
@@ -125,6 +132,7 @@ export function ToastRegion({
     'down',
     direction === 'rtl' ? 'left' : 'right',
   ];
+  const pictureNotice = useOptionModule(picture, contained)?.PictureNotice;
   const regionLabel =
     placement === 'bottom-end' ? messages.regionBottomEnd : messages.regionTopCenter;
   // In a contained PortalContainer the notices are a picture of the region, part of the container:
@@ -150,19 +158,21 @@ export function ToastRegion({
                 aria-label={hiddenLabel}
               />
             )}
-            {toastStore.toasts
-              .filter((toast) => !gone.has(toast.id))
-              .map((toast) => (
-                <PictureToast
-                  key={toast.id}
-                  toast={toast}
-                  limited={limited.has(toast.id)}
-                  controller={controller}
-                  dismissLabel={messages.dismiss}
-                  onClose={toastStore.close}
-                  onGone={leave}
-                />
-              ))}
+            {pictureNotice &&
+              toastStore.toasts
+                .filter((toast) => !gone.has(toast.id))
+                .map((toast) => (
+                  <PictureToast
+                    key={toast.id}
+                    Notice={pictureNotice}
+                    toast={toast}
+                    limited={limited.has(toast.id)}
+                    controller={controller}
+                    dismissLabel={messages.dismiss}
+                    onClose={toastStore.close}
+                    onGone={leave}
+                  />
+                ))}
           </div>
         </Theme>
       </BaseToast.Portal>
@@ -237,6 +247,7 @@ export function ToastRegion({
  * Base UI's parts.
  */
 function PictureToast({
+  Notice,
   toast,
   limited,
   controller,
@@ -244,6 +255,8 @@ function PictureToast({
   onClose,
   onGone,
 }: {
+  /** PictureNotice, once its module has loaded. */
+  Notice: typeof PictureNotice;
   toast: ToastObject;
   limited: boolean;
   controller: ToastController;
@@ -254,7 +267,7 @@ function PictureToast({
   // Every notice carries its entry as the data (useToastController).
   const entry = toast.data!;
   return (
-    <PictureNotice
+    <Notice
       id={toast.id}
       tone={entry.tone}
       limited={limited}
@@ -284,7 +297,7 @@ function PictureToast({
           )
         }
       />
-    </PictureNotice>
+    </Notice>
   );
 }
 

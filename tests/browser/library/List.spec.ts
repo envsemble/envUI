@@ -1,5 +1,6 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
+import { failOptionModule, holdOptionModule } from '../helpers/OptionLoad';
 
 const lists = `${fixtureUrl}/?fixture=list`;
 
@@ -129,6 +130,99 @@ test.describe('List', () => {
     await handle.click();
     await expect(order).toHaveText('Budget,Intro,Questions,Roadmap');
     await expect(handle).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test(
+    'a drag or keys used before the reorder code has loaded still move the row',
+    { tag: '@engines' },
+    async ({ page }) => {
+      // The list loads the code that moves its rows as it renders: hold it back, as a slow
+      // network would, while people already drag and press.
+      const { release } = await holdOptionModule(page, /reorderController\.ts/);
+      await page.goto(lists);
+      const list = page.getByTestId('slides');
+      const order = page.getByTestId('slides-order');
+      const rows = list.getByRole('listitem');
+      const from = await centre(list.getByRole('button', { name: 'Reorder Roadmap' }));
+      const target = await centre(rows.nth(3));
+      await page.mouse.move(from.x, from.y);
+      await page.mouse.down();
+      await page.mouse.move(from.x, from.y + (target.y + 4 - from.y) / 2, { steps: 4 });
+      await page.mouse.move(from.x, target.y + 4, { steps: 4 });
+      await page.mouse.up();
+      await expect(order).toHaveText('Intro,Roadmap,Budget,Questions');
+      await release();
+      await expect(order).toHaveText('Intro,Budget,Questions,Roadmap');
+      await expect(announcer(page)).toHaveText('Roadmap dropped at position 4 of 4.');
+      await expect(list.locator('[data-moving]')).toHaveCount(0);
+
+      // Space lifts, ↓ moves and Space drops: the handle's own press of Space doesn't follow.
+      await page.reload();
+      const handle = list.getByRole('button', { name: 'Reorder Intro' });
+      await handle.focus();
+      await page.keyboard.press('Space');
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Space');
+      await release();
+      await expect(order).toHaveText('Roadmap,Intro,Budget,Questions');
+      await expect(announcer(page)).toHaveText('Intro dropped at position 2 of 4.');
+      await expect(handle).toHaveAttribute('aria-pressed', 'false');
+      await expect(handle).toBeFocused();
+    },
+  );
+
+  test('two moves held for the reorder code move the row once, not back again', async ({
+    page,
+  }) => {
+    const { requested, release } = await holdOptionModule(page, /reorderController\.ts/);
+    await page.goto(lists);
+    const list = page.getByTestId('slides');
+    const order = page.getByTestId('slides-order');
+    await requested();
+    await list.getByRole('link', { name: 'Roadmap' }).focus();
+    await page.keyboard.press('Alt+ArrowDown');
+    await page.keyboard.press('Alt+ArrowDown');
+    await release();
+    // The second came before the rows had moved, so it would read the old order: it is dropped.
+    await expect(order).toHaveText('Intro,Budget,Roadmap,Questions');
+    await expect(announcer(page)).toHaveText('Roadmap moved to position 3 of 4.');
+    await page.keyboard.press('Alt+ArrowDown');
+    await expect(order).toHaveText('Intro,Budget,Questions,Roadmap');
+  });
+
+  test('a list whose reorder code fails to load leaves its handles alone, and a remount tries again', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    const option = await failOptionModule(page, /reorderController\.ts/);
+    await page.goto(lists);
+    const list = page.getByTestId('slides');
+    const order = page.getByTestId('slides-order');
+    const handle = list.getByRole('button', { name: 'Reorder Intro' });
+    await expect(handle).toBeVisible();
+    await option.failed();
+    // Space is the handle's own again, and nothing lifts or moves.
+    await page.evaluate(() =>
+      window.addEventListener('keydown', (event) => {
+        document.body.dataset.prevented = String(event.defaultPrevented);
+      }),
+    );
+    await handle.focus();
+    await page.keyboard.press('Space');
+    expect(await page.evaluate(() => document.body.dataset.prevented)).toBe('false');
+    await page.keyboard.press('ArrowDown');
+    await expect(handle).toHaveAttribute('aria-pressed', 'false');
+    await expect(order).toHaveText('Intro,Roadmap,Budget,Questions');
+
+    option.restore();
+    await option.remount();
+    await handle.focus();
+    await page.keyboard.press('Space');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Space');
+    await expect(order).toHaveText('Roadmap,Intro,Budget,Questions');
+    expect(errors).toEqual([]);
   });
 
   test(
