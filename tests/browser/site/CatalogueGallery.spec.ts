@@ -29,22 +29,23 @@ test('the page of all foundations is one sheet, each pane a single link to its f
   await expect(page).toHaveURL(`${siteDevUrl}/foundations/icons`);
 });
 
-test('a gallery card and a Related card are each one link over the whole card, its live picture included', async ({
-  page,
-  context,
-}) => {
-  // Where on a card a press lands, as fractions of its box: the middle of its live picture, a
-  // corner of it, and the name's row that slides in under it.
-  const points = [
-    [0.5, 0.4],
-    [0.06, 0.06],
-    [0.5, 0.97],
-  ];
-  for (const [from, tiles, link] of [
-    ['components', '.catalogue-gallery-tile', '.catalogue-gallery-link'],
-    ['patterns', '.catalogue-gallery-tile', '.catalogue-gallery-link'],
-    ['components/button', '.catalogue-related-tile', '.catalogue-related-link'],
-  ] as const) {
+// Each page of cards is a test of its own, as is the keyboard's: every press opens a page, and on a
+// busy machine the pages don't fit one test's time together.
+for (const [from, tiles, link] of [
+  ['components', '.catalogue-gallery-tile', '.catalogue-gallery-link'],
+  ['patterns', '.catalogue-gallery-tile', '.catalogue-gallery-link'],
+  ['components/button', '.catalogue-related-tile', '.catalogue-related-link'],
+] as const)
+  test(`a card of /${from} is one link over the whole card, its live picture included`, async ({
+    page,
+  }) => {
+    // Where on a card a press lands, as fractions of its box: the middle of its live picture, a
+    // corner of it, and the name's row that slides in under it.
+    const points = [
+      [0.5, 0.4],
+      [0.06, 0.06],
+      [0.5, 0.97],
+    ];
     for (const [index, [x, y]] of points.entries()) {
       await page.goto(`${siteDevUrl}/${from}`);
       const card = page.locator(tiles).nth(index + 1);
@@ -59,7 +60,12 @@ test('a gallery card and a Related card are each one link over the whole card, i
       await page.mouse.up();
       await expect(page).toHaveURL(`${siteDevUrl}${href}`);
     }
-  }
+  });
+
+test("a Related card's link is named and described, and a card's ring and Enter work from the keyboard", async ({
+  page,
+  context,
+}) => {
   // A Related card's link is named by its name and described by when to pick it.
   await page.goto(`${siteDevUrl}/components/button`);
   const related = page.locator('.catalogue-related-tile').first();

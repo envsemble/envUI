@@ -349,16 +349,47 @@ test("the catalogue's drawer comes in beside the rail, goes again and brings in 
   await expect(list).toBeVisible();
   await expect(drawer).not.toHaveAttribute('data-site-drawer');
   const besideDrawer = await bodyStart();
-  // Records, on every frame from now on, the drawer's motion, its list's opacity, where the page
-  // beside it starts, how many drawers there are and where search is.
+  // Records, on every frame from now on until the next recording, the drawer's motion, its list's
+  // opacity, where the page beside it starts, how many drawers there are and where search is; and
+  // the fades of the list, whatever the frames: each transition of its opacity as it starts, with
+  // the drawer's motion then, and each animation of it the page starts, with its keyframes. A busy
+  // page's frames can come further apart than a fade lasts, so no frame need show one midway.
+  type Fade = [kind: string, motion: string, opacities: number[]];
   const record = () =>
     page.evaluate(() => {
-      const frames: [string, number, number, number, number][] = [];
-      (window as unknown as { frames: typeof frames }).frames = frames;
+      type Recording = {
+        frames: [string, number, number, number, number][];
+        fades: Fade[];
+        stop: () => void;
+      };
+      const state = window as unknown as { recording?: Recording };
+      state.recording?.stop();
+      const recording: Recording = { frames: [], fades: [], stop: () => {} };
+      state.recording = recording;
+      const list = '.site-sidebar > .env-navigation-drawer-list';
+      const motion = () =>
+        document.querySelector<HTMLElement>('.site-sidebar')?.dataset.siteDrawer ?? 'still';
+      const transition = (event: TransitionEvent) => {
+        if ((event.target as Element).matches(list) && event.propertyName === 'opacity')
+          recording.fades.push(['transition', motion(), []]);
+      };
+      // The list's new entries come in through the Web Animations API (useDrawerMotion.ts).
+      const animate = Element.prototype.animate;
+      Element.prototype.animate = function (keyframes, options) {
+        if (this.matches(list) && Array.isArray(keyframes))
+          recording.fades.push([
+            'animation',
+            motion(),
+            keyframes.map((keyframe) => Number(keyframe.opacity)),
+          ]);
+        return animate.call(this, keyframes, options);
+      };
+      document.addEventListener('transitionrun', transition, true);
+      let frame = 0;
       const tick = () => {
         const sidebar = document.querySelector<HTMLElement>('.site-sidebar');
         const items = sidebar?.querySelector('.env-navigation-drawer-list');
-        frames.push([
+        recording.frames.push([
           sidebar ? (sidebar.dataset.siteDrawer ?? 'still') : 'none',
           items ? Number(getComputedStyle(items).opacity) : 0,
           document.querySelector('.env-scaffold-body')!.getBoundingClientRect().left,
@@ -367,23 +398,43 @@ test("the catalogue's drawer comes in beside the rail, goes again and brings in 
             .querySelector('.site-drawer-search, .site-page-search-button')!
             .getBoundingClientRect().left,
         ]);
-        if (frames.length < 90) requestAnimationFrame(tick);
+        frame = requestAnimationFrame(tick);
       };
-      requestAnimationFrame(tick);
+      frame = requestAnimationFrame(tick);
+      recording.stop = () => {
+        cancelAnimationFrame(frame);
+        document.removeEventListener('transitionrun', transition, true);
+        Element.prototype.animate = animate;
+      };
     });
-  const frames = () =>
+  const recorded = () =>
     page.evaluate(
-      () => (window as unknown as { frames: [string, number, number, number, number][] }).frames,
+      () =>
+        (
+          window as unknown as {
+            recording: { frames: [string, number, number, number, number][]; fades: Fade[] };
+          }
+        ).recording,
+    );
+  const frames = async () => (await recorded()).frames;
+  /** Whether the list faded from 0 to 1 opacity or back: a transition, or an animation. */
+  const faded = (fades: Fade[], motion: string, from: number, to: number) =>
+    fades.some(
+      ([kind, during, opacities]) =>
+        during === motion &&
+        (kind === 'transition' || (opacities[0] === from && opacities.at(-1) === to)),
     );
   // To the Overview, which has none, it fades out laid over the page, which takes its room at once.
   await record();
   await rail.getByRole('link', { name: 'Overview', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toBeAttached();
   await expect(drawer).toHaveCount(0);
-  const out = await frames();
+  const { frames: out, fades: outFades } = await recorded();
   const leaving = out.filter(([motion]) => motion === 'leaving');
   expect(leaving.length).toBeGreaterThan(0);
-  expect(leaving.some(([, opacity]) => opacity > 0 && opacity < 1)).toBe(true);
+  // From its full opacity, through a transition, to none.
+  expect(out[0]![1]).toBe(1);
+  expect(faded(outFades, 'leaving', 1, 0)).toBe(true);
   const besideRail = out.at(-1)![2];
   expect(besideRail).toBeLessThan(besideDrawer);
   expect(leaving.every(([, , start]) => start === besideRail)).toBe(true);
@@ -395,10 +446,16 @@ test("the catalogue's drawer comes in beside the rail, goes again and brings in 
     .poll(async () => (await frames()).some(([motion]) => motion === 'entering'))
     .toBe(true);
   await expect(drawer).not.toHaveAttribute('data-site-drawer');
-  const back = (await frames()).filter(([motion]) => motion !== 'none');
-  expect(back.some(([, opacity]) => opacity > 0 && opacity < 1)).toBe(true);
+  const { frames: backFrames, fades: backFades } = await recorded();
+  const back = backFrames.filter(([motion]) => motion !== 'none');
+  // From none while it waits for the page to paint, through a transition, to its full opacity.
+  expect(back.filter(([motion]) => motion === 'arriving').map(([, opacity]) => opacity)).toContain(
+    0,
+  );
+  expect(faded(backFades, 'entering', 0, 1)).toBe(true);
+  expect(back.at(-1)![1]).toBe(1);
   expect(back.every(([, , start]) => start === besideDrawer)).toBe(true);
-  const searchAt = (await frames()).at(-1)![4];
+  const searchAt = backFrames.at(-1)![4];
   // To Patterns, which has a drawer too, the panel stays and the new list comes in once the page
   // has painted: one drawer and one list all along, search and the page where they were.
   await record();
@@ -408,8 +465,9 @@ test("the catalogue's drawer comes in beside the rail, goes again and brings in 
     .poll(async () => (await frames()).some(([motion]) => motion === 'switching'))
     .toBe(true);
   await expect(drawer).not.toHaveAttribute('data-site-drawer');
-  const switched = await frames();
-  expect(switched.some(([, opacity]) => opacity > 0 && opacity < 1)).toBe(true);
+  const { frames: switched, fades: switchFades } = await recorded();
+  expect(faded(switchFades, 'switching', 0, 1)).toBe(true);
+  expect(switched.at(-1)![1]).toBe(1);
   expect(
     switched.every(
       ([, , start, drawers, search]) =>

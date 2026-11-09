@@ -268,31 +268,47 @@ test("a figure's wheel scrolls the box under the pointer smoothly and back, neve
     const region = element.querySelector('.env-table-region')!;
     return region.scrollHeight - region.clientHeight;
   });
+  // Every frame, from wherever its loop is, until the rows have gone most of the way down and come
+  // back to the top, or 20 seconds, two loops: where the rows are, where the header is, and when.
   const samples = await stage.evaluate(
-    (element) =>
-      new Promise<{ top: number; header: number }[]>((done) => {
+    (element, deep) =>
+      new Promise<{ top: number; header: number; time: number }[]>((done) => {
         const region = element.querySelector('.env-table-region')!;
         const header = element.querySelector('thead th')!;
-        const found: { top: number; header: number }[] = [];
-        const sample = () => {
+        const found: { top: number; header: number; time: number }[] = [];
+        let wentDeep = false;
+        const sample = (time: number) => {
+          const top = region.scrollTop;
           found.push({
-            top: region.scrollTop,
+            top,
             header: header.getBoundingClientRect().top - region.getBoundingClientRect().top,
+            time,
           });
-          if (found.length < 400) requestAnimationFrame(sample);
-          else done(found);
+          wentDeep ||= top > deep;
+          if ((wentDeep && top === 0) || time - found[0]!.time > 20_000) done(found);
+          else requestAnimationFrame(sample);
         };
-        sample();
+        requestAnimationFrame(sample);
       }),
+    room * 0.6,
   );
   const tops = samples.map((sample) => sample.top);
   const deepest = Math.max(...tops);
   // It scrolls down through most of the rows a little at a time, and back to the top.
   expect(room).toBeGreaterThan(100);
   expect(deepest).toBeGreaterThan(room * 0.6);
-  const steps = tops.slice(1).map((top, index) => Math.abs(top - tops[index]!));
-  expect(Math.max(...steps)).toBeLessThan(40);
   expect(tops.slice(tops.indexOf(deepest)).includes(0)).toBe(true);
+  // A little at a time: the turn moves the rows at most 40 px in a frame of 60 a second, a step
+  // across frames that came late in proportion (the playback follows the clock, so a busy page's
+  // late frame shows a longer step of the same smooth turn), and through many places on the way, so
+  // no jump passes for a turn by landing in a late frame.
+  const frame = 1000 / 60;
+  const steps = samples.slice(1).map((sample, index) => {
+    const before = samples[index]!;
+    return Math.abs(sample.top - before.top) / Math.max(1, (sample.time - before.time) / frame);
+  });
+  expect(Math.max(...steps)).toBeLessThan(40);
+  expect(new Set(tops.filter((top) => top > 0 && top < deepest)).size).toBeGreaterThan(10);
   // The header stays at the region's top throughout, and the page doesn't move.
   expect(new Set(samples.map((sample) => Math.round(sample.header))).size).toBe(1);
   expect(await pageScroll(page)).toBe(scrolled);
