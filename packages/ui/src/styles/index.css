@@ -26,6 +26,7 @@
 @import './Accordion.css';
 @import './Badge.css';
 @import './Table.css';
+@import './ColumnResizeHandle.css';
 @import './Breadcrumbs.css';
 @import './TableOfContents.css';
 @import './Pagination.css';

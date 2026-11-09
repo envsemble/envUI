@@ -94,6 +94,8 @@ test('sortable headers are buttons that say what pressing does and report the or
   await expect(page.getByTestId('order-light')).toHaveText('roadmap quarterly tokens audit');
 
   const reviews = table.getByRole('columnheader', { name: 'Reviews', exact: true });
+  // Tab passes the resize handles of Report and Owner, once their code has loaded.
+  await expect(table.getByRole('separator')).toHaveCount(3);
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
@@ -210,6 +212,38 @@ test(
     expect(await cut.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
   },
 );
+
+test('the resize handles come with their code, which a table loads as it renders', async ({
+  page,
+}) => {
+  // Held back, as a slow network would, the handles' code leaves the header as it is without them.
+  const held = Promise.withResolvers<() => void>();
+  await page.route(/ColumnResizeHandle\.tsx/, async (route) => {
+    const { promise, resolve } = Promise.withResolvers<void>();
+    held.resolve(resolve);
+    await promise;
+    await route.continue();
+  });
+  await page.reload();
+  const table = page.getByRole('table', { name: 'Reports light' });
+  const widths = page.getByTestId('widths-light');
+  await expect(table.getByRole('columnheader', { name: 'Report', exact: true })).toBeVisible();
+  const release = await held.promise;
+  await expect(table.getByRole('separator')).toHaveCount(0);
+  release();
+  // Once it has loaded, the first drag resizes, with the handle's own style.
+  const handle = table.getByRole('separator', { name: 'Resize Report' });
+  await expect(handle).toHaveCSS('cursor', 'col-resize');
+  const tableWidth = (await table.boundingBox())!.width;
+  const box = (await handle.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 + tableWidth * 0.1, box.y + box.height / 2, {
+    steps: 4,
+  });
+  await page.mouse.up();
+  await expect(widths).toHaveText('50.0 20.0 15.0 15.0');
+});
 
 test('columns resize the other way in a right-to-left table', async ({ page }) => {
   const table = page.getByRole('table', { name: 'Reports light' });

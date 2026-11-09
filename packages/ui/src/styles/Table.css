@@ -367,43 +367,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  /* A header cell holds its column's resize handle (ColumnResizeHandle.css), whose line shows while
+     the pointer is over the header row. */
   .env-table-header-cell[data-resizable] {
     position: relative;
   }
-  /* The resize handle straddles nothing: it sits inside the end of its header cell, with a line on
-     the column boundary while it is hovered, focused or dragged. */
-  .env-table-column-resize-handle {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-end: 0;
-    z-index: var(--env-z-raised);
-    inline-size: var(--env-space-3);
-    cursor: col-resize;
-    touch-action: none;
-    outline: none;
-  }
-  .env-table-column-resize-handle::after {
-    content: '';
-    position: absolute;
-    inset-block: var(--env-space-2);
-    inset-inline-end: 0;
-    /* The bar, thicker while the column resizes. */
-    --env-table-resize-bar: 0.125rem;
-    inline-size: var(--env-table-resize-bar);
-    border-radius: var(--env-radius-full);
-    background: transparent;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
-  }
   .env-table-head .env-table-row:hover .env-table-column-resize-handle::after {
     background: var(--env-color-border-muted);
-  }
-  .env-table-column-resize-handle:hover::after {
-    background: var(--env-color-border-muted-hover);
-  }
-  .env-table-column-resize-handle:is(:focus-visible, [data-resizing])::after {
-    inset-block: 0;
-    --env-table-resize-bar: 0.1875rem;
-    background: var(--env-color-border-focus);
   }
   /* While a column is resized, the pointer keeps the resize cursor and no text is selected. */
   .env-table[data-resizing] {
@@ -412,9 +382,6 @@
     user-select: none;
   }
   @media (pointer: coarse) {
-    .env-table-column-resize-handle {
-      inline-size: var(--env-space-5);
-    }
     /* A sortable header is a button, at least the touch height in every scale and row density. */
     .env-table-sort-button {
       min-block-size: var(--env-control-height-touch);
@@ -422,8 +389,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .env-table-row[data-interactive],
-    .env-table-sort-button,
-    .env-table-column-resize-handle::after {
+    .env-table-sort-button {
       transition: none;
     }
   }

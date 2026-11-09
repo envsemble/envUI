@@ -2,7 +2,9 @@
 
 import {
   createContext,
+  lazy,
   memo,
+  Suspense,
   useCallback,
   useContext,
   useId,
@@ -23,7 +25,6 @@ import { IconArrowDownward } from '../icons/ArrowDownward.js';
 import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconUnfoldMore } from '../icons/UnfoldMore.js';
 import { useColumnIndex, useTableColumns, type TableColumns } from './internal/tableColumns.js';
-import { ColumnResizeHandle } from './internal/ColumnResizeHandle.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
@@ -119,6 +120,16 @@ export interface RootProps
 }
 
 /**
+ * The column resize handles' module, which only a table with resizableColumns loads: the table
+ * starts loading it as it renders, so it is there by the time its header cells, which find their
+ * columns once they are in the document, show the handles.
+ */
+const loadColumnResize = () => import('./internal/ColumnResizeHandle.js');
+const ColumnResizeHandle = lazy(() =>
+  loadColumnResize().then(({ ColumnResizeHandle }) => ({ default: ColumnResizeHandle })),
+);
+
+/**
  * Whether a stacking table's rows are stacked, as its container query on the region laid them
  * out: read from the table's --env-table-stacked once it is in the document, and again as the
  * region or the table resizes. CSS decides the layout; this only reports it, so the server's
@@ -202,6 +213,7 @@ function Root({
     minColumnWidths,
     resizableColumns,
   });
+  if (columns?.resizable) void loadColumnResize();
 
   return (
     <div
@@ -466,12 +478,14 @@ function HeaderCell({
         </span>
       )}
       {handle && (
-        <ColumnResizeHandle
-          column={column}
-          columns={columns}
-          label={resizeLabel}
-          labelledBy={`${id}-resize ${nameIds}`}
-        />
+        <Suspense>
+          <ColumnResizeHandle
+            column={column}
+            columns={columns}
+            label={resizeLabel}
+            labelledBy={`${id}-resize ${nameIds}`}
+          />
+        </Suspense>
       )}
       {handle && resizeLabel === undefined && (
         <span id={`${id}-resize`} hidden>
