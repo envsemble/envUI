@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useLayoutEffect, useState } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Badge } from '../../../data-display/Badge.js';
 import { Theme, useTheme } from '../../../foundations/Theme.js';
@@ -17,12 +17,21 @@ import { Button, IconButton } from '../../../actions/Button.js';
 import { IconClose } from '../../../icons/Close.js';
 import { flag } from '../../../internal/flag.js';
 import { ToastBody } from './ToastBody.js';
-import { PictureNotice } from './PictureNotice.js';
 import { useToastGlide } from './useToastGlide.js';
 import '../../../styles/Base.css';
 import '../../../styles/Toast.css';
 
 type ToastObject = BaseToast.Root.ToastObject<ToastEntry>;
+
+/**
+ * The notices of a contained region's picture, which only a region in a contained PortalContainer
+ * loads, as it renders, so they are there by the time it shows one.
+ */
+let loadingPicture: Promise<typeof import('./PictureNotice.js')> | undefined;
+const loadPicture = () => (loadingPicture ??= import('./PictureNotice.js'));
+const PictureNotice = lazy(() =>
+  loadPicture().then(({ PictureNotice }) => ({ default: PictureNotice })),
+);
 
 /**
  * The notices that wait behind the count of hidden ones: the oldest beyond the visible limit. Danger
@@ -131,7 +140,8 @@ export function ToastRegion({
   // without Base UI's viewport, whose window-wide F6 would take the page's F6 for a region that is
   // only shown. They keep their look, action, dismiss button and duration, arrive and leave with
   // their motion, and stay while the pointer rests on them.
-  if (contained)
+  if (contained) {
+    void loadPicture();
     return (
       <BaseToast.Portal container={container}>
         <Theme {...theme} className="env-toast-theme">
@@ -150,23 +160,26 @@ export function ToastRegion({
                 aria-label={hiddenLabel}
               />
             )}
-            {toastStore.toasts
-              .filter((toast) => !gone.has(toast.id))
-              .map((toast) => (
-                <PictureToast
-                  key={toast.id}
-                  toast={toast}
-                  limited={limited.has(toast.id)}
-                  controller={controller}
-                  dismissLabel={messages.dismiss}
-                  onClose={toastStore.close}
-                  onGone={leave}
-                />
-              ))}
+            <Suspense>
+              {toastStore.toasts
+                .filter((toast) => !gone.has(toast.id))
+                .map((toast) => (
+                  <PictureToast
+                    key={toast.id}
+                    toast={toast}
+                    limited={limited.has(toast.id)}
+                    controller={controller}
+                    dismissLabel={messages.dismiss}
+                    onClose={toastStore.close}
+                    onGone={leave}
+                  />
+                ))}
+            </Suspense>
           </div>
         </Theme>
       </BaseToast.Portal>
     );
+  }
   return (
     <BaseToast.Portal container={container}>
       <Theme {...theme} className="env-toast-theme">

@@ -172,6 +172,28 @@ test.describe('PortalContainer, contained', () => {
     await expect(layer).toHaveAttribute('data-ended', '');
   });
 
+  test('a contained notice shown before its code has loaded arrives once it has', async ({
+    page,
+  }) => {
+    // The region loads the picture's notices as it renders: hold them back, as a slow network would.
+    const held = Promise.withResolvers<() => void>();
+    await page.route(/PictureNotice\.tsx/, async (route) => {
+      const { promise, resolve } = Promise.withResolvers<void>();
+      held.resolve(resolve);
+      await promise;
+      await route.continue();
+    });
+    await page.goto(preview);
+    const layer = page.getByTestId('layer');
+    const release = await held.promise;
+    await expect(layer.getByRole('menu', { name: 'Actions' })).toBeVisible();
+    await expect(layer.locator('.env-toast')).toHaveCount(0);
+    release();
+    await expect(layer.getByText('Changes saved.')).toBeVisible();
+    await page.getByRole('button', { name: 'Notify' }).click();
+    await expect(layer.locator('.env-toast', { hasText: 'Invitation sent.' })).toBeVisible();
+  });
+
   test('F6 leaves the contained toasts alone @engines', async ({ page }) => {
     await page.goto(preview);
     await expect(page.getByTestId('layer').getByText('Changes saved.')).toBeVisible();
