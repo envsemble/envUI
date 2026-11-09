@@ -409,6 +409,33 @@ test.describe('Scaffold body scroll', { tag: '@engines' }, () => {
     expect((await metrics()).top).toBe(0);
   });
 
+  test('a key pressed before the scrolling code has loaded scrolls once it has', async ({
+    page,
+  }) => {
+    // The scaffold loads the code as the body mounts: hold it back, as a slow network would.
+    const held = Promise.withResolvers<() => void>();
+    await page.route(/scrollKeys\.ts/, async (route) => {
+      const { promise, resolve } = Promise.withResolvers<void>();
+      held.resolve(resolve);
+      await promise;
+      await route.continue();
+    });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(scrollKeys);
+    const content = page.locator('.env-scaffold-body');
+    await expect(content).toBeVisible();
+    const release = await held.promise;
+    await page.keyboard.press('PageDown');
+    await page.keyboard.press('ArrowDown');
+    await twoFrames(page);
+    expect(await content.evaluate((element) => element.scrollTop)).toBe(0);
+    release();
+    const step = await content.evaluate((element) => element.clientHeight * 0.875);
+    await expect
+      .poll(async () => Math.abs((await content.evaluate((e) => e.scrollTop)) - (step + 40)))
+      .toBeLessThanOrEqual(1.5);
+  });
+
   test('quick presses and held keys scroll as far as the browser scrolls', async ({ page }) => {
     // With motion allowed the keys scroll smoothly, and many hold-and-settle steps take a while.
     test.slow();
