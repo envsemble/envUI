@@ -23,6 +23,7 @@ import {
 import { withDisplayName } from '../internal/react/withDisplayName.js';
 import { ListReorderHandle, ReorderableList } from './internal/ReorderableList.js';
 import { flag } from '../internal/flag.js';
+import { rowAttributes } from '../internal/layout/primitiveAttributes.js';
 import '../styles/Base.css';
 import '../styles/List.css';
 import '../styles/ConnectedRows.css';
@@ -182,6 +183,12 @@ function markCurrent(node: ReactNode): [ReactNode, boolean] {
 }
 
 /**
+ * A row's layout: a wrapping Row's attributes on the li itself, as a Row around each of a long
+ * list's rows would cost a component render of its own.
+ */
+const itemLayout = rowAttributes({ wrap: true, align: 'center', justify: 'between', gap: 3 });
+
+/**
  * One `li` row with a label, a description and content at its end; the current row, content at its start,
  * and in a reorderable list a drag handle. It renders on the server: only the handle of a
  * reorderable row needs the browser.
@@ -219,22 +226,15 @@ function Item(props: ItemProps) {
     textValue ??
     (typeof label === 'string' || typeof label === 'number' ? String(label) : undefined);
   return (
-    <Row
-      wrap
-      align="center"
-      justify="between"
-      gap={3}
-      render={
-        <li
-          aria-current={current && !targetMarked ? 'true' : undefined}
-          {...rest}
-          {...skeletonAttributes(skeleton)}
-          className={classNames('env-list-item', 'env-connected-row', className)}
-          data-interactive={flag(interactive)}
-          data-selected={flag(current)}
-          data-start={flag(hasStart)}
-        />
-      }
+    <li
+      {...itemLayout}
+      aria-current={current && !targetMarked ? 'true' : undefined}
+      {...rest}
+      {...skeletonAttributes(skeleton)}
+      className={classNames('env-list-item', 'env-connected-row', className)}
+      data-interactive={flag(interactive)}
+      data-selected={flag(current)}
+      data-start={flag(hasStart)}
     >
       {inSkeleton(
         skeleton,
@@ -254,7 +254,7 @@ function Item(props: ItemProps) {
           {end}
         </>,
       )}
-    </Row>
+    </li>
   );
 }
 
