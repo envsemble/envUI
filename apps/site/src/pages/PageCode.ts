@@ -24,7 +24,7 @@ interface PageCodeData {
 }
 
 /** The id of the element of a page's HTML that carries its code's tokens. */
-export const pageCodeId = 'site-page-code';
+const pageCodeId = 'site-page-code';
 
 /** A block's source, its lines joined as the highlighter splits them. */
 const sourceOf = (lines: string[][]) => lines.map((line) => line.join('')).join('\n');
