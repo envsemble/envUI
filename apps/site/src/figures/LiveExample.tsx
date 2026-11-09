@@ -1,5 +1,5 @@
 import { Suspense, use, useState, type MouseEvent, type ReactNode } from 'react';
-import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
+import { Disclosure, Column, Text } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
 import type { DeviceKind, StageFill } from '@docs-model/DocumentationTypes';
 import { FigureDevice, OnDevice } from './DeviceFrame';
@@ -21,6 +21,7 @@ import { WidthBox } from '../fit/standalone/WidthFit';
 import { ExamplePlayback } from './Specimen';
 import { StillMark } from './StillMark';
 import { useBrowserStandIns } from '../motion/BrowserStandIns';
+import { PageTheme } from './PageTheme';
 
 /**
  * Links in an example keep their semantics without navigating away from the documentation. A link
@@ -207,7 +208,6 @@ export function LiveExample({
   code?: boolean;
 }) {
   useBrowserStandIns();
-  const theme = useTheme();
   const still = presentation?.kind === 'open' && !presentation.live;
   const device = presentation?.kind === 'device' ? presentation.device : undefined;
   const render =
@@ -254,7 +254,7 @@ export function LiveExample({
           {presentation.widths.map((width) => (
             <figure key={width} className="catalogue-width-frame">
               <Column
-                render={<Theme {...theme} />}
+                render={<PageTheme />}
                 container="env-window"
                 gap={0}
                 className="site-live-example"
@@ -272,7 +272,7 @@ export function LiveExample({
         </div>
       ) : (
         <Column
-          render={<Theme {...theme} />}
+          render={<PageTheme />}
           container="env-window"
           gap={0}
           role="group"
