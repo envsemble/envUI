@@ -2,7 +2,7 @@ import { Fragment, type ReactNode } from 'react';
 import { Column, Link, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/code';
 import releases from 'virtual:envui-release-notes';
-import type { InlinePiece, Release } from './SiteData';
+import type { InlinePiece, Release } from './ReleaseNotesData';
 
 const formatDate = (date: string) =>
   new Intl.DateTimeFormat('en', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(date));

@@ -11,7 +11,7 @@ import { useRevealed } from '../template/useRevealed';
 import { SectionOutline } from '../markdown/SectionOutline';
 import { useDocument } from './PageContent';
 import { GuideDocument } from './GuideDocument';
-import { LoadedPart } from './LoadedPart';
+import { LoadedPart } from '../loading/LoadedPart';
 import { ChangelogSkeleton } from './ChangelogOutline';
 import { TokenReferenceSkeleton } from './TokenTables';
 import { ReleaseNotes } from './ReleaseNotes';
