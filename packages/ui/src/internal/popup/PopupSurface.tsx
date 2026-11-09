@@ -164,6 +164,13 @@ function anchorElement(anchor: Anchor | undefined): Element | null {
   return null;
 }
 
+/** The computed direction at the anchor, else the trigger, else where focus is. */
+function directionAt(anchor: Anchor | undefined, trigger: RefObject<Element | null> | undefined) {
+  return computedDirection(
+    anchorElement(anchor) ?? trigger?.current ?? document.activeElement ?? document.documentElement,
+  );
+}
+
 /**
  * The popup's content in a direction: the given one, the provider's, or else the anchor's or the
  * trigger's on opening.
@@ -180,16 +187,18 @@ function Directed({
   children: (direction: Direction | undefined) => ReactNode;
 }) {
   const provided = useEnvUI().dir;
-  const [read, setRead] = useState<Direction>();
-  // It mounts as the popup opens, so the direction is read then, before the popup is painted.
+  // It mounts as the popup opens, in the browser only, so the direction is read as it first
+  // renders: the popup renders once, in its direction, rather than again once an effect has read
+  // it. Read before the popup is in the document, it brings no new element's style up to date.
+  const [read, setRead] = useState(() =>
+    dir || provided || typeof document === 'undefined' ? undefined : directionAt(anchor, trigger),
+  );
+  // Read again where the anchor or the trigger changes while it is open; the same direction
+  // renders nothing again.
   useLayoutEffect(() => {
     if (dir || provided) return;
-    const source =
-      anchorElement(anchor) ??
-      trigger?.current ??
-      document.activeElement ??
-      document.documentElement;
-    setRead(computedDirection(source));
+    const next = directionAt(anchor, trigger);
+    setRead((current) => (current === next ? current : next));
   }, [dir, provided, anchor, trigger]);
   const direction = dir ?? provided ?? read;
   // The provider is always there, so the popup isn't remounted once the direction is read: a
