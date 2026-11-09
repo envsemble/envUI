@@ -3,7 +3,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { build } from 'esbuild';
-import { declarations } from '../support/cssDeclarations.mjs';
+import { declarations } from '../support/CssDeclarations.mjs';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // envUI draws no drop shadows: sheets, toasts and tooltips separate by their fill, their edge and,

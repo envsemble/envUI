@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const standIns = await importSource('BrowserStandIns', 'apps/site/src/motion/BrowserStandIns.ts');

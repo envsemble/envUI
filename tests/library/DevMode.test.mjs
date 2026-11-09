@@ -7,7 +7,7 @@ import { join, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
 import { libraryEntryPoints } from '../../scripts/docs/LibraryEntryPoints.ts';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const {

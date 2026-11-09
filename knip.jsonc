@@ -3,7 +3,7 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   // An export tagged @internal is there for a unit test that bundles the module from its source,
-  // which knip cannot follow (tests/support/importSource.mjs).
+  // which knip cannot follow (tests/support/ImportSource.mjs).
   "tags": ["-@internal"],
   "workspaces": {
     ".": {

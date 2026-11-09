@@ -3,7 +3,7 @@
 // side each part's callout takes, and the reading order.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 
 const placement = await importSource(
   'PlaceCallouts',

@@ -1,7 +1,7 @@
 // What the Docs show of a page beside the catalogue (scripts/docs/model/DocsContent.ts).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 
 const { raisedHeadings, guideSubsections, withoutAgentNote } = await importSource(
   'DocsContent',

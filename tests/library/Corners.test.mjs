@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { declarations } from '../support/cssDeclarations.mjs';
+import { declarations } from '../support/CssDeclarations.mjs';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 /** The style sheets envUI ships, dev mode's and the catalogue's. */

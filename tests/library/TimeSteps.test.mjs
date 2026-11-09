@@ -2,7 +2,7 @@
 // YYYY-MM months of MonthPicker.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 
 const {
   minuteStepOf,

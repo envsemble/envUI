@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { codeText, cssComments, listFiles } from '../support/sourceText.mjs';
+import { codeText, cssComments, listFiles } from '../support/SourceText.mjs';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 /** The folders whose comments are checked. */

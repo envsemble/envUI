@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { declarations } from '../support/cssDeclarations.mjs';
+import { declarations } from '../support/CssDeclarations.mjs';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // Hover and focus inside never change a component's layout. A part that grows under the pointer

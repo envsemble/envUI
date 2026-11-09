@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { codeText, listFiles } from '../support/sourceText.mjs';
+import { codeText, listFiles } from '../support/SourceText.mjs';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // envUI names no application that uses it: its first versions gathered what those applications

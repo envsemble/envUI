@@ -11,7 +11,7 @@ import { copyFile, mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from
 import { createRequire } from 'node:module';
 import { basename, dirname, join } from 'node:path';
 import { documentedLibraries } from '../../scripts/build/EntryLibraries.ts';
-import { npmCli, npmPack, runNode } from './npm.mjs';
+import { npmCli, npmPack, runNode } from './Npm.mjs';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const consumersDirectory = join(repositoryRoot, '.cache/package-consumer');

@@ -6,8 +6,8 @@ import { existsSync } from 'node:fs';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { compileDocumentation } from '../../scripts/docs/GenerateDocumentation.ts';
-import { ruleSelectors, scopedSelector, splitSelectors } from '../support/cssScope.mjs';
-import { installTimeout, packedConsumer } from '../support/packedConsumer.mjs';
+import { ruleSelectors, scopedSelector, splitSelectors } from '../support/CssScope.mjs';
+import { installTimeout, packedConsumer } from '../support/PackedConsumer.mjs';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 let consumer;

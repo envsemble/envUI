@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const styles = join(repositoryRoot, 'packages/ui/src/styles');

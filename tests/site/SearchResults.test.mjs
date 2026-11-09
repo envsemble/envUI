@@ -2,7 +2,7 @@
 // type, the groups of results and the palette's rows of them, and where a result opens.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { importSource } from '../support/importSource.mjs';
+import { importSource } from '../support/ImportSource.mjs';
 
 const search = await importSource('SearchResults', 'apps/site/src/search/SearchResults.ts');
 const routes = await importSource('SearchRoutes', 'apps/site/src/routes/SiteRoutes.ts');

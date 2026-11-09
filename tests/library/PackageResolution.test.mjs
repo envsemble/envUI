@@ -5,7 +5,7 @@ import { before, test } from 'node:test';
 import { existsSync } from 'node:fs';
 import { lstat, readFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve } from 'node:path';
-import { installTimeout, packedConsumer } from '../support/packedConsumer.mjs';
+import { installTimeout, packedConsumer } from '../support/PackedConsumer.mjs';
 
 let consumer;
 before(async () => (consumer = await packedConsumer()), { timeout: installTimeout });
