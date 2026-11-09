@@ -84,8 +84,8 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 
 ## Ports, workers and recorded lists
 
-- The browser tests start or reuse the site on 8770 and the fixture on 8766, reusing a server only when it answers for this checkout.
-- Beside another checkout's tests, set `ENVUI_SITE_PORT` and `ENVUI_FIXTURE_PORT`, such as 8832 and 8833.
+- The browser tests start or reuse the site's development server on 8770, the site built as it is hosted on 8767 and the fixture, built for development, on 8766, reusing a server only when it answers for this checkout. A site spec opens the build (`siteBuildUrl`) unless it needs the development server (`siteDevUrl`): `tests/browser/helpers/Servers.ts` says which is which.
+- Beside another checkout's tests, set `ENVUI_SITE_PORT`, `ENVUI_SITE_BUILD_PORT` and `ENVUI_FIXTURE_PORT`, such as 8832, 8834 and 8833.
 - `ENVUI_WORKERS` sets the workers (default: half the cores).
 - Lists that only shrink: `stylelint-suppressions.json` (after removing violations, `npm run lint:css -- --suppress`), `tests/accessibility/KnownViolations.json` (`npm run test:a11y:update`) and the visual baseline (`npm run test:visual:update`, then review the images like code). Add to them only for a reviewed reason.
 - The layout check (`tests/browser/site/LayoutCheck.spec.ts`) runs dev mode on every figure at four widths. Give a problem an example has on purpose an allowance there, with its reason.

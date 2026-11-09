@@ -6,6 +6,21 @@ import { pathToFileURL } from 'node:url';
 import { fixtureUrl } from './Servers';
 
 /**
+ * The library's whole style sheet, packages/ui/src/styles/index.css, bundled with its imports, its
+ * font and its marks, once a worker: the page is the spec's own, so no server's build of the sheet
+ * is involved.
+ */
+let styleSheet: Promise<string> | undefined;
+const bundledStyleSheet = () =>
+  (styleSheet ??= build({
+    entryPoints: ['packages/ui/src/styles/index.css'],
+    bundle: true,
+    loader: { '.woff2': 'dataurl', '.svg': 'dataurl' },
+    write: false,
+    logLevel: 'error',
+  }).then((bundle) => bundle.outputFiles[0]!.text));
+
+/**
  * Renders the library's source on the server, as an application would, and opens the markup in a
  * page with the style sheet: what people see before any script runs. `source` is a module, run
  * from the checkout, that exports `element`; `@envsemble/envui` resolves to the source.
@@ -82,11 +97,14 @@ import { hydrateRoot } from 'react-dom/client';
       route.fulfill({ contentType: 'text/javascript', body: client }),
     );
   }
-  const stylesheet = `/@fs/${resolve('packages/ui/src/styles/index.css').replaceAll('\\', '/')}?direct`;
+  const css = await bundledStyleSheet();
+  await page.route('**/server-markup.css', (route) =>
+    route.fulfill({ contentType: 'text/css', body: css }),
+  );
   await page.route('**/server-markup.html', (route) =>
     route.fulfill({
       contentType: 'text/html',
-      body: `<!doctype html><html lang="en"><head><link rel="stylesheet" href="${stylesheet}"></head><body><div id="server-markup" class="env-theme" data-env-theme="light">${markup}</div>${hydrate ? '<script src="server-markup.js"></script>' : ''}</body></html>`,
+      body: `<!doctype html><html lang="en"><head><link rel="stylesheet" href="server-markup.css"></head><body><div id="server-markup" class="env-theme" data-env-theme="light">${markup}</div>${hydrate ? '<script src="server-markup.js"></script>' : ''}</body></html>`,
     }),
   );
   await page.goto(`${fixtureUrl}/server-markup.html`);

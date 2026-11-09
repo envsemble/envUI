@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl, siteDevUrl } from '../helpers/Servers';
 import { chooseScheme } from '../helpers/CatalogueThemes';
 import { readReleaseNotes } from '../../../scripts/site/ReleaseNotes.ts';
 import { renderLlmsText, renderSkill } from '../../../scripts/site/SiteAgentFiles.ts';
@@ -7,7 +7,7 @@ import { pagesOf } from '../../../apps/site/src/routes/SiteRoutes';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
 test('a guide in the Docs renders shared Markdown and follows relative links', async ({ page }) => {
-  await page.goto(`${siteDevUrl}/docs/customizing`);
+  await page.goto(`${siteBuildUrl}/docs/customizing`);
   await expect(page.getByRole('heading', { name: 'Compose one root', exact: true })).toBeVisible();
   await expect(
     page.getByText('Surface supplies fill, padding and corners', { exact: false }),
@@ -23,7 +23,7 @@ test('a guide in the Docs renders shared Markdown and follows relative links', a
 
   // A guide opens on a page of its own in the Docs, current in their navigation, with its status
   // under its title and beside its name.
-  await page.goto(`${siteDevUrl}/docs`);
+  await page.goto(`${siteBuildUrl}/docs`);
   await page
     .getByRole('navigation', { name: 'Docs' })
     .getByRole('link', { name: /^Dev mode/ })
@@ -39,7 +39,9 @@ test('a guide in the Docs renders shared Markdown and follows relative links', a
   );
   await expect(navigation.getByRole('link', { name: /^Dev mode/ })).toContainText('Alpha');
   // The address it had on the Get started view, as a hash, leads to the same page as a path.
-  await page.goto(`${siteDevUrl}/#/overview/get-started?document=migration&section=documentation`);
+  await page.goto(
+    `${siteBuildUrl}/#/overview/get-started?document=migration&section=documentation`,
+  );
   await expect(page).toHaveURL(/\/docs\/migration$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Move an app to envUI');
 });
@@ -48,7 +50,7 @@ test('palette editing uses public controls and remains temporary and independent
   page,
 }) => {
   // The editable palette, with its tokens and values, is on the colors guide in the Docs.
-  await page.goto(`${siteDevUrl}/docs/foundations/colors`);
+  await page.goto(`${siteBuildUrl}/docs/foundations/colors`);
   const app = page.locator('.site-app');
   const canvasValue = () =>
     app.evaluate((element) =>
@@ -83,10 +85,10 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   // Each pattern's guide in the Docs lists what the application and envUI provide, as plain lists
   // under Accessibility. The address of the page that once listed them all opens the Docs' home,
   // the setup guide, whose navigation lists every page.
-  await page.goto(`${siteDevUrl}/docs/patterns`);
+  await page.goto(`${siteBuildUrl}/docs/patterns`);
   await expect(page).toHaveURL(/\/docs$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install and set up');
-  await page.goto(`${siteDevUrl}/docs/patterns/forms`);
+  await page.goto(`${siteBuildUrl}/docs/patterns/forms`);
   // The Docs show the developer part alone: Compose, what envUI and the application provide,
   // which the catalogue leaves out, and the changelog. None of the catalogue's sections, its
   // figures or Related.
@@ -109,7 +111,7 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   ).toHaveCount(0);
   // A foundation's guide maps the words of its page in the catalogue to code, the column the
   // catalogue leaves out, without the words' meanings, which it shows.
-  await page.goto(`${siteDevUrl}/docs/foundations/spacing`);
+  await page.goto(`${siteBuildUrl}/docs/foundations/spacing`);
   await expect(main.getByRole('heading', { level: 2 })).toHaveText([
     'Usage',
     'Composition',
@@ -121,14 +123,14 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   await expect(page.locator('.catalogue-related, .site-figure-section')).toHaveCount(0);
   // Field, which has no page in the catalogue, shows its whole page in the Docs, its sections,
   // then props, part names and changelog, without Related.
-  await page.goto(`${siteDevUrl}/docs/components/field`);
+  await page.goto(`${siteBuildUrl}/docs/components/field`);
   await expect(page.locator('.docs-changelog')).toHaveCount(1);
   await expect(page.locator('[data-section="overview"]')).toHaveCount(1);
   await expect(page.locator('.catalogue-related')).toHaveCount(0);
   // A component's guide repeats no section of the catalogue: it goes from its header to Import,
   // then Usage, which opens with the component's overview example, live and compact, without its
   // code, as the code follows it.
-  await page.goto(`${siteDevUrl}/docs/components/button`);
+  await page.goto(`${siteBuildUrl}/docs/components/button`);
   const shown = page.locator('.docs-api .site-live-example-entry');
   await expect(shown).toHaveCount(1);
   await expect(shown.getByRole('button', { name: 'Create project' })).toBeVisible();
@@ -141,7 +143,7 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
 });
 
 test("a page's changelog in the Docs is collapsed, and a link to it opens it", async ({ page }) => {
-  await page.goto(`${siteDevUrl}/docs/components/button`);
+  await page.goto(`${siteBuildUrl}/docs/components/button`);
   const changelog = page.locator('.docs-changelog details');
   await expect(changelog.locator('summary')).toHaveText('Changelog');
   await expect(changelog).not.toHaveAttribute('open');
@@ -155,7 +157,7 @@ test("a page's changelog in the Docs is collapsed, and a link to it opens it", a
     link.remove();
   });
   await expect(changelog).toHaveAttribute('open');
-  await page.goto(`${siteDevUrl}/docs/patterns/forms#changelog`);
+  await page.goto(`${siteBuildUrl}/docs/patterns/forms#changelog`);
   await expect(page.locator('.docs-changelog details')).toHaveAttribute('open');
   await expect(page.locator('#changelog')).toBeInViewport();
 });
@@ -188,8 +190,8 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   await page.setViewportSize({ width: 1440, height: 900 });
   // An address that names a section in its query, as earlier releases wrote some, opens the
   // section, at the fragment address that links, search and the contents share.
-  await page.goto(`${siteDevUrl}/docs/components/button?section=props-Button-variant`);
-  await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button#props-Button-variant`);
+  await page.goto(`${siteBuildUrl}/docs/components/button?section=props-Button-variant`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/docs/components/button#props-Button-variant`);
   await expect(page.locator('[id="props-Button-variant"]')).toBeFocused();
   const banner = page.locator('.site-page-header');
   const trail = banner.getByRole('navigation', { name: 'Breadcrumb' });
@@ -236,12 +238,12 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Props');
   // A link of the contents writes the section's fragment, and the address and Back follow it.
   await contents.getByRole('link', { name: 'Usage', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button#usage`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/docs/components/button#usage`);
   await expect(page.locator('#usage')).toBeFocused();
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Usage');
   // Docs, the trail's link, leads to their home, the setup guide, with its contents beside it.
   await trail.getByRole('link', { name: 'Docs', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/docs`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/docs`);
   await expect(contents).toBeVisible();
   // A narrower window leaves the contents out.
   await page.setViewportSize({ width: 1024, height: 900 });
@@ -255,7 +257,7 @@ test('every page of the Docs lists its own sections beside it, each once, at add
   // It opens every page of the Docs: about 20 s alone, longer beside other workers on CI.
   test.setTimeout(8 * 60_000);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/docs`);
+  await page.goto(`${siteBuildUrl}/docs`);
   const contents = page.getByRole('navigation', { name: 'On this page' });
   for (const { path, title } of pagesOf('docs')) {
     await goTo(page, `/${path}`);
@@ -311,8 +313,8 @@ test("the Docs' Changelog page lists each release's highlights, newest first, an
 }) => {
   const releases = readReleaseNotes();
   // The catalogue's old address opens it.
-  await page.goto(`${siteDevUrl}/changelog`);
-  await expect(page).toHaveURL(`${siteDevUrl}/docs/changelog`);
+  await page.goto(`${siteBuildUrl}/changelog`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/docs/changelog`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');
   await expect(page.getByRole('heading', { level: 2, name: 'Highlights' })).toBeVisible();
   await expect(page.getByRole('heading', { level: 2, name: 'Every change' })).toBeVisible();
@@ -331,7 +333,7 @@ test("the Docs' Changelog page lists each release's highlights, newest first, an
   }
   expect([...sections.keys()]).toEqual(['/docs/changelog']);
   for (const [path, ids] of sections) {
-    await page.goto(`${siteDevUrl}${path}`);
+    await page.goto(`${siteBuildUrl}${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     for (const id of ids)
       await expect(page.locator(`[id="${id}"]`), `${path}#${id}`).toBeAttached();

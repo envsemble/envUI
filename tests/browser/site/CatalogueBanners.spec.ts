@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl } from '../helpers/Servers';
 import { componentDocuments } from '../../../apps/site/src/pages/PageModel';
 import { pagesOf } from '../../../apps/site/src/routes/SiteRoutes';
 import {
@@ -12,7 +12,7 @@ import {
 test("the overview's hero says what envUI is, leads to setting it up and gives the install command", async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/`);
+  await page.goto(`${siteBuildUrl}/`);
   const hero = page.locator('.catalogue-overview-hero');
   await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(hero.locator('.catalogue-overview-lede')).toContainText('A React design system');
@@ -55,7 +55,7 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components/slider`);
+  await page.goto(`${siteBuildUrl}/components/slider`);
   const banner = page.locator('.site-page-banner');
   const trail = banner.getByRole('navigation', { name: 'Breadcrumb' });
   await expect(trail.getByRole('link')).toHaveText(['envUI', 'Components', 'Forms & selection']);
@@ -81,7 +81,7 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   await expect(banner.locator('.catalogue-banner-motif')).toHaveCount(0);
   // The one page with a motif of its own, Colors & themes, draws it out of the
   // accessibility tree and the tab order.
-  await page.goto(`${siteDevUrl}/foundations/colors`);
+  await page.goto(`${siteBuildUrl}/foundations/colors`);
   const motif = page.locator('.site-page-banner .catalogue-banner-motif');
   await expect(motif).toHaveAttribute('aria-hidden', 'true');
   await expect(motif).toHaveAttribute('inert', '');
@@ -107,7 +107,7 @@ test("neighbouring catalogue pages' banners show different drawings, each page a
   const start = order.findIndex(({ path }) => path === 'components/command-palette');
   const shown: string[] = [];
   for (const { path } of [...order.slice(start, start + 3), order[start]!]) {
-    await page.goto(`${siteDevUrl}/${path}`);
+    await page.goto(`${siteBuildUrl}/${path}`);
     const drawing = await page
       .locator('.site-page-banner .catalogue-banner-lines')
       .getAttribute('data-drawing');
@@ -116,7 +116,7 @@ test("neighbouring catalogue pages' banners show different drawings, each page a
   expect(new Set(shown.slice(0, 3)).size).toBe(3);
   expect(shown[3]).toBe(shown[0]);
   // The page's banner in the Docs shows the same drawing as its banner in the catalogue.
-  await page.goto(`${siteDevUrl}/docs/${order[start]!.path}`);
+  await page.goto(`${siteBuildUrl}/docs/${order[start]!.path}`);
   await expect(page.locator('.site-page-banner .docs-banner-lines')).toHaveAttribute(
     'data-drawing',
     shown[0]!,
@@ -126,7 +126,7 @@ test("neighbouring catalogue pages' banners show different drawings, each page a
 test('the Icons page credits Material Symbols with their license at its top, and the footer does not', async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/foundations/icons`);
+  await page.goto(`${siteBuildUrl}/foundations/icons`);
   const credit = page.locator('.catalogue-icons-credit .env-alert');
   await expect(credit).toHaveAttribute('data-tone', 'info');
   await expect(credit).toContainText("envUI doesn't draw icons of its own");

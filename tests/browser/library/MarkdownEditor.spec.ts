@@ -2,13 +2,15 @@ import { expect, test } from '@playwright/test';
 import { fixtureUrl as fixtureServer } from '../helpers/Servers';
 
 const fixtureUrl = `${fixtureServer}/?fixture=markdown-editor`;
+/** The highlighter's module, loaded on demand: its source file, or its chunk in a build. */
+const highlightingModule = /\/codeHighlighting(?:-[\w-]+)?\.(?:ts|js)(?:\?|$)/;
 
 test('inactive preview avoids rendering and highlighting work while retaining custom link state', async ({
   page,
 }) => {
   let highlightingImports = 0;
   page.on('request', (request) => {
-    if (/\/codeHighlighting\.(?:ts|js)(?:\?|$)/.test(request.url())) highlightingImports++;
+    if (highlightingModule.test(request.url())) highlightingImports++;
   });
   await page.goto(fixtureUrl);
   const form = page.getByTestId('markdown-form');
@@ -150,7 +152,7 @@ for (const change of ['remove', 'replace'] as const) {
     const requested = new Promise<void>((resolve) => {
       notifyRequest = resolve;
     });
-    await page.route(/\/codeHighlighting\.(?:ts|js)(?:\?|$)/, async (route) => {
+    await page.route(highlightingModule, async (route) => {
       notifyRequest();
       await held;
       await route.fulfill({

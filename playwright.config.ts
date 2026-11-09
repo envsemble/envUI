@@ -4,10 +4,10 @@ import { defineConfig, devices } from '@playwright/test';
 import { defaultPorts, resolveServers } from './scripts/test/CheckoutMarker.ts';
 
 /**
- * The development servers this run needs: ENVUI_SERVERS lists them (site, fixture, or none; the
- * site's name before, catalogue, still counts),
- * as `npm run check` sets it for the specs it picked. Without it a run that only scans the hosted
- * build (the a11y projects) needs none, and any other run needs both.
+ * The servers this run needs (tests/browser/helpers/Servers.ts): ENVUI_SERVERS lists them (site,
+ * site-build, fixture, or none; the site's name before, catalogue, still counts), as
+ * `npm run check` sets it for the specs it picked. Without it a run that only scans the hosted
+ * build (the a11y projects) needs none, and any other run needs all three.
  */
 function wantedServers() {
   if (process.env.ENVUI_SERVERS)
@@ -24,7 +24,7 @@ function wantedServers() {
         : [],
   );
   if (projects.length && projects.every((project) => project === 'a11y')) return new Set<string>();
-  return new Set(['site', 'fixture']);
+  return new Set(['site', 'site-build', 'fixture']);
 }
 const wanted = wantedServers();
 
@@ -39,6 +39,11 @@ const servers = await resolveServers(
     Object.entries({
       site: { variable: 'ENVUI_SITE_PORT', port: defaultPorts.site, offset: 0 },
       fixture: { variable: 'ENVUI_FIXTURE_PORT', port: defaultPorts.fixture, offset: 1 },
+      'site-build': {
+        variable: 'ENVUI_SITE_BUILD_PORT',
+        port: defaultPorts.siteBuild,
+        offset: 2,
+      },
     }).filter(([name]) => wanted.has(name)),
   ),
 );
@@ -160,10 +165,12 @@ export default defineConfig({
       },
     },
   ],
-  // --force bundles the dependencies again as a server starts. Vite reuses its bundle while the
-  // lockfile is unchanged, so after a change imports a dependency it holds none of, such as a code
-  // theme loaded on demand, the first page to ask for it makes Vite bundle it and reload every page
-  // the server has open, and the tests on those pages lose their state midway.
+  // The site's development server, for the specs that need it. --force bundles the dependencies
+  // again as it starts. Vite reuses its bundle while the lockfile is unchanged, so after a change
+  // imports a dependency it holds none of, such as a code theme loaded on demand, the first page to
+  // ask for it makes Vite bundle it and reload every page the server has open, and the tests on those
+  // pages lose their state midway. The site's build and the fixture are served as built
+  // (scripts/test/ServeBuild.ts).
   webServer: [
     servers.site && {
       command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.site.port} --strictPort --force`,
@@ -171,8 +178,13 @@ export default defineConfig({
       url: `http://127.0.0.1:${servers.site.port}`,
       reuseExistingServer: servers.site.reuse,
     },
+    servers['site-build'] && {
+      command: `node scripts/test/ServeBuild.ts --app site --port ${servers['site-build'].port}`,
+      url: `http://127.0.0.1:${servers['site-build'].port}`,
+      reuseExistingServer: servers['site-build'].reuse,
+    },
     servers.fixture && {
-      command: `node node_modules/vite/bin/vite.js --config tests/fixture/vite.config.ts --host 127.0.0.1 --port ${servers.fixture.port} --strictPort --force`,
+      command: `node scripts/test/ServeBuild.ts --app fixture --port ${servers.fixture.port}`,
       url: `http://127.0.0.1:${servers.fixture.port}`,
       reuseExistingServer: servers.fixture.reuse,
     },

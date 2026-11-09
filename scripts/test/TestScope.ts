@@ -374,12 +374,13 @@ export function selectScope(paths: readonly string[], options: ScopeOptions = {}
   return { ...scope, specs, unmatched, helpers, widelyUsed };
 }
 
-/** Which development servers the specs need, for ENVUI_SERVERS. */
+/** Which servers the specs need, for ENVUI_SERVERS (tests/browser/helpers/Servers.ts). */
 export function serversFor(names: readonly string[], root = repositoryRoot) {
   const servers = new Set<string>();
   for (const name of names) {
     const source = read(root, specFile(name, root));
     if (/\bsiteDevUrl\b/.test(source)) servers.add('site');
+    if (/\bsiteBuildUrl\b/.test(source)) servers.add('site-build');
     if (/\bfixtureUrl\b/.test(source)) servers.add('fixture');
   }
   return [...servers].sort();

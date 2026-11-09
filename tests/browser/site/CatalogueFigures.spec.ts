@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl } from '../helpers/Servers';
 import { documents } from '../../../apps/site/src/pages/PageModel';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
@@ -16,7 +16,7 @@ const figurePages = documents
 test('live examples keep links in place, show their source, and specimens show forced states', async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components/button`);
+  await page.goto(`${siteBuildUrl}/components/button`);
   const address = page.url();
   // Links in an example keep their semantics without leaving the documentation.
   const destinations = page.getByRole('group', { name: 'Links example', exact: true });
@@ -55,7 +55,7 @@ test('live examples keep links in place, show their source, and specimens show f
 test('a playback keeps its links in place, as an example does, but a link to a part of the page', async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components/table-of-contents`);
+  await page.goto(`${siteBuildUrl}/components/table-of-contents`);
   const playback = page.locator('[data-catalogue-specimen="ReadersPlace"]');
   await expect(playback.locator('.env-table-of-contents')).toBeVisible();
   // A link to a section of the page, as a table of contents in a playback holds, and one to
@@ -96,7 +96,7 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
   // A window wide enough for every figure's parts beside the page's contents: in a narrower
   // column, Panes' figure shows one pane at a time and PanelDock's tucks a part away.
   await page.setViewportSize({ width: 1920, height: 900 });
-  await page.goto(`${siteDevUrl}/`);
+  await page.goto(`${siteBuildUrl}/`);
   for (const { id, route, figures } of pages) {
     await goTo(page, route);
     const anatomy = page.locator('.site-anatomy');
@@ -124,7 +124,7 @@ test('every stage is the only frame of its figure', async ({ page }) => {
   // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's
   // stage is the figure's one frame, as a gallery cell's picture is.
   expect(figurePages.length).toBeGreaterThan(0);
-  await page.goto(`${siteDevUrl}/`);
+  await page.goto(`${siteBuildUrl}/`);
   for (const { id, route } of figurePages) {
     await goTo(page, route);
     await expect(page.locator('.site-figures .site-figure-section').first()).toBeVisible();

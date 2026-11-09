@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl } from '../helpers/Servers';
 import { showTile } from '../helpers/SiteSpecHelpers';
 
 // A gallery tile that plays its script as the pointer comes in: what it opens, its clicks and its
@@ -151,7 +151,7 @@ test("a gallery tile that plays draws out what it opens inside its stage and res
   // opened again from its button keeps its items and its button in view.
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const least = 0.84;
   // What each script acts on, by the selectors of its tile (tiles/).
   const cards = {
@@ -191,7 +191,7 @@ test('a popup tile rests open and holds one view from its still through its play
   test.setTimeout(120_000);
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
-    await page.goto(`${siteDevUrl}/components`);
+    await page.goto(`${siteBuildUrl}/components`);
     for (const name of ['Select', 'Combobox', 'Menubar', 'CommandPalette', 'Avatar']) {
       const tile = page.locator('.catalogue-gallery-tile').filter({
         has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
@@ -232,7 +232,7 @@ test('a gallery tile holds its still as the pointer comes in', async ({ page }) 
   // The first thing seen as a tile starts to play is what its script does, not the tile moving.
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   // Its still is framed as its play is (useFit.ts): Accordion's panel opens in place.
   for (const name of ['Tree', 'List', 'Avatar', 'Accordion']) {
     // Just past 300 ms, the first stretch of the play.
@@ -257,7 +257,7 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
   // the stage's middle or its corner, and the pile's count and its tooltip show whole.
   test.setTimeout(150_000);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   await expect(page.locator('.catalogue-tile-canvas[data-fitted]').first()).toBeVisible();
   for (const name of [
     'Avatar',
@@ -348,7 +348,7 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
 test('on a phone, what a playing gallery tile opens shows inside its stage', async ({ page }) => {
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   for (const name of ['Menubar', 'Select']) {
     const { frames } = await playTile(page, name, []);
     // Past an edge it is cut off at, such as the menu bar's menu at the stage's end, it fades out.
@@ -527,7 +527,7 @@ for (const [route, parts] of [
       // changes something: a value, a state, a popup opening or closing, the text it shows.
       test.setTimeout(150_000);
       await page.setViewportSize({ width: 1440, height: 900 });
-      await page.goto(`${siteDevUrl}${route}`);
+      await page.goto(`${siteBuildUrl}${route}`);
       const tiles = page.locator('.catalogue-gallery-tile');
       await expect(tiles.first()).toBeVisible();
       const names = (await tiles.locator('.catalogue-gallery-name').allTextContents()).filter(
@@ -541,7 +541,7 @@ test("a playing tile draws its pointer's cursor over its stage, gone at rest and
 }) => {
   // A gallery's card: the cursor shows on its stage while the card plays, and goes as it rests.
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const tile = page.locator('.catalogue-gallery-tile').filter({
     has: page.locator('.catalogue-gallery-name', { hasText: /^Select$/ }),
   });
@@ -563,7 +563,7 @@ test("a playing tile draws its pointer's cursor over its stage, gone at rest and
   await page.mouse.move(0, 0);
   await expect(cursor).toHaveCount(0);
   // A page's animated figure: its cursor shows while it plays in view, and goes when it is paused.
-  await page.goto(`${siteDevUrl}/components/menu`);
+  await page.goto(`${siteBuildUrl}/components/menu`);
   const figure = page.locator('.catalogue-motion-stage').filter({
     has: page.locator('.catalogue-motion-pause'),
   });
@@ -579,7 +579,7 @@ test('a playing pointer that carries a file names it in a chip beside its cursor
 }) => {
   // DropZone's card carries report.pdf in, over the zone, and drops it (tiles/DropZone.tsx).
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const tile = page.locator('.catalogue-gallery-tile').filter({
     has: page.locator('.catalogue-gallery-name', { hasText: /^DropZone$/ }),
   });

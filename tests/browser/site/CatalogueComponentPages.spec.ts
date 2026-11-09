@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl } from '../helpers/Servers';
 import { chooseScheme } from '../helpers/CatalogueThemes';
 import { goTo } from '../helpers/SiteSpecHelpers';
 
@@ -12,7 +12,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
   await page.setViewportSize({ width: 1920, height: 900 });
   // Figures that share a row are cells of one width, from the top of the row, each at least a
   // gallery cell's height, 11 rem, so a lone control sits in a calm field rather than a strip.
-  await page.goto(`${siteDevUrl}/components/badge`);
+  await page.goto(`${siteBuildUrl}/components/badge`);
   await expect(page.locator('[data-section="overview"] .site-loading')).toHaveCount(0);
   const cells = () =>
     page
@@ -42,7 +42,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
         }),
       );
   expect(new Set((await codeGaps()).map(({ gap }) => gap)).size).toBe(1);
-  await page.goto(`${siteDevUrl}/components/button`);
+  await page.goto(`${siteBuildUrl}/components/button`);
   // One page of sections, with no views; the props are on its page in the Docs, which the banner's
   // Design and Code switch opens, Design marked as the page shown.
   await expect(page.locator('.site-page-header').getByRole('tab')).toHaveCount(0);
@@ -187,7 +187,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
   await expect(page.locator('.site-anatomy-legend > li')).toHaveCount(4);
   // One to a row, each figure's caption or code follows its stage as closely.
-  await page.goto(`${siteDevUrl}/components/badge`);
+  await page.goto(`${siteBuildUrl}/components/badge`);
   await expect(page.locator('[data-section="overview"] .site-loading')).toHaveCount(0);
   const column = await codeGaps();
   expect(new Set(column.map(({ gap }) => gap)).size).toBe(1);
@@ -218,7 +218,7 @@ test('a component page groups its sections into three, all on the page', async (
             ),
           ),
       );
-  await page.goto(`${siteDevUrl}/components/scaffold`);
+  await page.goto(`${siteBuildUrl}/components/scaffold`);
   await expect.poll(groups).toEqual([
     { group: true, sections: ['overview', 'variants', 'anatomy', 'behaviour'] },
     { group: true, sections: ['rules'] },

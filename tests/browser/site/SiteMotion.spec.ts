@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl, siteDevUrl } from '../helpers/Servers';
 import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
 
 /*
@@ -38,7 +38,7 @@ const figureValue = (page: Page) =>
   sliderFigure(page).locator('.env-slider-value').first().textContent();
 
 test('a tile plays while the pointer is on it, and rests at its still after', async ({ page }) => {
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const switchTile = tile(page, 'Switch');
   await switchTile.scrollIntoViewIfNeeded();
   await expect(switchTile.locator('.catalogue-tile-canvas[data-fitted]')).toBeVisible();
@@ -58,7 +58,7 @@ test('a tile plays while the pointer is on it, and rests at its still after', as
 test('an animated figure plays by itself, and its pause button holds it where it is', async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components/slider`);
+  await page.goto(`${siteBuildUrl}/components/slider`);
   const stage = sliderFigure(page);
   await stage.scrollIntoViewIfNeeded();
   // It moves on from its still, the value at 30, by itself.
@@ -76,7 +76,7 @@ test('an animated figure plays by itself, and its pause button holds it where it
 test("the Display menu's Motion pauses every animation and is kept, and a figure's own button overrides it", async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components/slider`);
+  await page.goto(`${siteBuildUrl}/components/slider`);
   const stage = sliderFigure(page);
   await stage.scrollIntoViewIfNeeded();
   await (await motionChoice(page, 'Pause')).click();
@@ -91,7 +91,7 @@ test("the Display menu's Motion pauses every animation and is kept, and a figure
   await stage.getByRole('button', { name: /^Play / }).click();
   await expect.poll(() => figureValue(page), { timeout: 4000 }).not.toBe(held);
   // A tile stays at its still under the pointer while the menu's Pause holds.
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const switchTile = tile(page, 'Switch');
   await switchTile.scrollIntoViewIfNeeded();
   await expect(switchTile.locator('.catalogue-tile-canvas[data-fitted]')).toBeVisible();
@@ -106,7 +106,7 @@ test('a reader who prefers reduced motion starts with every animation paused', a
 }) => {
   const context = await browser.newContext({ reducedMotion: 'reduce' });
   const page = await context.newPage();
-  await page.goto(`${siteDevUrl}/components/slider`);
+  await page.goto(`${siteBuildUrl}/components/slider`);
   const stage = sliderFigure(page);
   await stage.scrollIntoViewIfNeeded();
   await expect(await motionChoice(page, 'Pause')).toBeChecked();
@@ -119,7 +119,7 @@ test('a reader who prefers reduced motion starts with every animation paused', a
 test('the Toast tile shows one notice at a time: Undo hands the archived one over to the restored one', async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components`);
+  await page.goto(`${siteBuildUrl}/components`);
   const toastTile = tile(page, 'Toast');
   await toastTile.scrollIntoViewIfNeeded();
   await expect(toastTile.locator('.catalogue-tile-canvas[data-fitted] .env-toast')).toBeVisible();
@@ -166,7 +166,7 @@ const pageScroll = (page: Page) => page.evaluate(() => document.querySelector('m
 test("a figure's dialog opens live inside its stage, its backdrop over the stage alone", async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components/dialog`);
+  await page.goto(`${siteBuildUrl}/components/dialog`);
   const stage = figure(page, 'the large dialog opening');
   await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
@@ -191,7 +191,7 @@ test("a figure's dialog opens live inside its stage, its backdrop over the stage
 test('a click on an animated figure hands its example to the reader, the click going on to it', async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components/select`);
+  await page.goto(`${siteBuildUrl}/components/select`);
   const stage = figure(page, 'typing in the open list');
   await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
@@ -219,7 +219,7 @@ test('a click on an animated figure hands its example to the reader, the click g
 test('the keyboard reaching an animated figure takes it over, and leaving it untouched plays it again', async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components/select`);
+  await page.goto(`${siteBuildUrl}/components/select`);
   const stage = figure(page, 'typing in the open list');
   await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
@@ -239,7 +239,7 @@ test('the keyboard reaching an animated figure takes it over, and leaving it unt
 test("a figure's right click opens its context menu inside the stage, and the page stays", async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components/menu`);
+  await page.goto(`${siteBuildUrl}/components/menu`);
   const stage = figure(page, 'the menu opening on a right click');
   await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
@@ -258,7 +258,7 @@ test("a figure's right click opens its context menu inside the stage, and the pa
 test("a figure's wheel scrolls the box under the pointer smoothly and back, never the page", async ({
   page,
 }) => {
-  await page.goto(`${siteDevUrl}/components/table`);
+  await page.goto(`${siteBuildUrl}/components/table`);
   const stage = figure(page, 'the rows scrolling');
   // Every figure above has loaded, so the page holds still.
   await expect(page.locator('.site-loading')).toHaveCount(0);
@@ -550,7 +550,7 @@ test(
     // RelativeTime's overview: two stages in one row, wide enough to sit side by side, which used
     // to climb each other's height in Firefox, a little every frame.
     await page.setViewportSize({ width: 1600, height: 1000 });
-    await page.goto(`${siteDevUrl}/components/relative-time`);
+    await page.goto(`${siteBuildUrl}/components/relative-time`);
     await expect(page.locator('.catalogue-motion-stage').first()).toBeVisible();
     await page.waitForTimeout(1500);
     const before = await heights();
@@ -558,7 +558,7 @@ test(
     expect(await heights()).toEqual(before);
     for (const [stage] of before) expect(stage).toBeLessThan(400);
     // Alert's figures sit in a column: each stage stays about as tall as what it shows.
-    await page.goto(`${siteDevUrl}/components/alert`);
+    await page.goto(`${siteBuildUrl}/components/alert`);
     await expect(page.locator('.catalogue-motion-stage').first()).toBeVisible();
     await page.waitForTimeout(2000);
     for (const [stage, subject] of await heights()) expect(stage).toBeLessThan(subject + 200);

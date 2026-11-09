@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
+import { siteBuildUrl } from '../helpers/Servers';
 import { readdirSync, readFileSync } from 'node:fs';
 import { technicalText } from '../../../scripts/docs/model/CatalogueContent.ts';
 import { allPages } from '../../../apps/site/src/routes/SiteRoutes';
@@ -62,7 +62,7 @@ test("a specimen's titles and captions name options in words, not values", async
     .filter((file) => readFileSync(`docs/components/${file}`, 'utf8').includes('<!-- specimen:'))
     .map((file) => file.replace(/\.md$/, ''));
   expect(pages.length).toBeGreaterThan(0);
-  await page.goto(`${siteDevUrl}/`);
+  await page.goto(`${siteBuildUrl}/`);
   for (const id of pages) {
     await goTo(page, `/components/${id}`);
     // Every section has rendered, those after the first once the page has painted.
@@ -93,7 +93,7 @@ test('the foundation and pattern pages show no technical text, in their words or
   // code. They belong to each foundation's guide and each pattern's page in the Docs. It visits each,
   // longer beside other workers on CI.
   test.setTimeout(8 * 60_000);
-  await page.goto(`${siteDevUrl}/`);
+  await page.goto(`${siteBuildUrl}/`);
   for (const path of plainPages) {
     await goTo(page, `/${path}`);
     if (path.startsWith('foundations/')) {
@@ -119,7 +119,7 @@ test('component pages show no technical text, in their words or their figures', 
   // Lengths, tokens, percentages and code names belong to the page's In code, in the Docs. It visits
   // every component page: well under the limit alone, longer beside other workers on CI.
   test.setTimeout(8 * 60_000);
-  await page.goto(`${siteDevUrl}/`);
+  await page.goto(`${siteBuildUrl}/`);
   const found: string[] = [];
   for (const { path, title } of plainComponentPages) {
     await goTo(page, `/${path}`);
@@ -137,7 +137,7 @@ test("the catalogue's text keeps a readable measure, and opens each section with
   // Running text wraps at about 70 characters, never one long line across the page; a section's
   // lead is larger than the quieter text that supports it.
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteDevUrl}/`);
+  await page.goto(`${siteBuildUrl}/`);
   for (const path of typographyPages) {
     await goTo(page, `/${path}`);
     const lead = page.locator('.site-lead').first();
