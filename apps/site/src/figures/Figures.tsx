@@ -1,5 +1,11 @@
 import { Fragment, useMemo, type ReactNode } from 'react';
-import type { DocumentationBlock, DocumentationSection } from '@docs-model/DocumentationTypes';
+import type {
+  DocumentationBlock,
+  DocumentationSection,
+  ExampleBlock,
+  FoundationFigureBlock,
+  PlacedBlock,
+} from '@docs-model/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { AnatomyFigure } from './anatomy/AnatomyFigure';
@@ -18,15 +24,17 @@ import { FigureCode } from './foundations/FoundationFrame';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
 import { classNames } from '@envui-internal/internal/classNames';
 
-type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
-type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
-type FigureBlock = ExampleBlock | FoundationBlock;
-
 /**
  * A foundation's figure: the catalogue's own, registered for its page (FoundationFigures.ts),
  * with the legend its Markdown gives it, and its code where it has an example file of its name.
  */
-function FoundationFigure({ page, block }: { page: DocumentationEntry; block: FoundationBlock }) {
+function FoundationFigure({
+  page,
+  block,
+}: {
+  page: DocumentationEntry;
+  block: FoundationFigureBlock;
+}) {
   const figure = useFoundationFigures(page.id)?.[block.name];
   const code = useMemo(
     () => (block.code ? { page: page.id, name: block.name } : null),
@@ -52,7 +60,7 @@ function BlockFigure({
   live = false,
 }: {
   page: DocumentationEntry;
-  block: FigureBlock;
+  block: PlacedBlock;
   options?: OptionTable;
   /** Whether a figure shown open is live, as the Overview's are: the component, open, to use. */
   live?: boolean;
@@ -153,7 +161,7 @@ function groupFigures(
   blocks: DocumentationBlock[],
   figures: Record<string, FoundationFigureEntry> | undefined,
 ) {
-  const groups: (DocumentationBlock | FigureBlock[])[] = [];
+  const groups: (DocumentationBlock | PlacedBlock[])[] = [];
   for (const block of blocks) {
     if (block.kind === 'markdown' && !block.markdown.trim()) continue;
     const last = groups.at(-1);
@@ -219,7 +227,7 @@ export function FigureSection({
   const groups = groupFigures(blocks, useFoundationFigures(page.id));
   // The Overview's figures shown open are the components at rest, open, which people can use.
   const live = section.id === 'overview';
-  const figure = (block: FigureBlock, key?: string | number) => (
+  const figure = (block: PlacedBlock, key?: string | number) => (
     <BlockFigure key={key} page={page} block={block} live={live} />
   );
   const outline = useSectionOutline();

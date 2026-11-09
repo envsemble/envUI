@@ -2,7 +2,8 @@
 // and the others, and the block the page shows it as.
 import type { Tokens } from 'marked';
 import type { ExampleEntry } from '../PageStructure.ts';
-import type { ExampleBlock, FigureBlock, PageReading, ReadSection } from '../PageReading.ts';
+import type { ExampleBlock, FoundationFigureBlock } from '../model/DocumentationTypes.ts';
+import type { PageReading, ReadSection } from '../PageReading.ts';
 
 /**
  * A figure, placed by name: ```tsx figure=Name```, with optional attributes, written
@@ -96,7 +97,7 @@ export function placeFigure(
     // A foundation's figure is the catalogue's own, from its page's preview, with the legend
     // that follows it; an example file of its name, where it has one, is its code.
     if (rest.trim()) problems.push(`figure ${name} takes no attributes on a foundation page`);
-    const block: FigureBlock = {
+    const block: FoundationFigureBlock = {
       kind: 'figure',
       name,
       heading: page.subheading ?? fileWords(name),
