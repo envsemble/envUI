@@ -15,27 +15,30 @@ import { fileURLToPath } from 'node:url';
 
 const repository = fileURLToPath(new URL('../../', import.meta.url));
 
-/** The whole style sheet, styles.css, minified, gzip: 57,314 measured. */
+/** The whole style sheet, styles.css, minified, gzip: 57,334 measured. */
 const stylesheetBudget = 58200;
 
 /** The CSS a page loads with the bundle set's components, minified, gzip. */
 const cssBudgets = {
-  // 15,104 measured (Text without the hover detail's style sheet; was 15,293).
-  'Small app (Theme, Button, TextField, Card)': 15350,
-  // 31,248 measured.
-  'Typical app (23 components, with Base UI)': 31750,
-  // 53,520 measured.
-  'Everything, envUI’s own code': 54350,
+  // 14,868 measured (the text area's resize handle in a style sheet of its own; was 15,104).
+  'Small app (Theme, Button, TextField, Card)': 15100,
+  // 30,873 measured (also Table's column resize handles in theirs; was 31,248).
+  'Typical app (23 components, with Base UI)': 31350,
+  // 53,383 measured.
+  'Everything, envUI’s own code': 54200,
 };
 
 /** The JavaScript a page loads first. */
 const jsBudgets = [
-  // 34,661 measured.
-  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 35050 },
-  // 110,015 measured.
-  { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 111700 },
-  // 4,832 measured (2026-11-08).
-  { set: 'Theme + Button + Icon', measure: 'minified', budget: 4850 },
+  // 31,037 measured: List's reorder, Table's column resizing, Scaffold's body scrolling keys and a
+  // contained toast region's notices load only where they are used (was 34,661).
+  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 31550 },
+  // 107,739 measured (was 110,015).
+  { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 109400 },
+  // 4,888 measured. Raised from 4,850 (4,832 measured on 2026-11-08): esbuild puts the modules the
+  // lazily loaded options share with a page, such as flag.js, in chunks of their own even where
+  // the page never loads the option, and the page imports them from there, 56 bytes.
+  { set: 'Theme + Button + Icon', measure: 'minified', budget: 4950 },
 ];
 
 /** Each component's own envUI code, minified, its Base UI and Floating UI left out. */
