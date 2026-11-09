@@ -279,6 +279,28 @@ test(
   },
 );
 
+test('the host redirects an old address, and answers one with no page with Page not found', async ({
+  page,
+}) => {
+  // A page's old name is a redirect, which crawlers and link previews follow too.
+  const moved = await page.request.get(`${siteBuildUrl}/components/buttons`, { maxRedirects: 0 });
+  expect(moved.status()).toBe(301);
+  expect(moved.headers().location).toBe('/components/button');
+  await page.goto(`${siteBuildUrl}/components/buttons`);
+  await expect(page).toHaveURL(`${siteBuildUrl}/components/button`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  // An address with no page is not found, pre-rendered as such.
+  const missing = await page.goto(`${siteBuildUrl}/components/no-such-page`);
+  expect(missing?.status()).toBe(404);
+  expect(await missing?.text()).toContain('Page not found');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Page not found');
+  // An old view of a page, which only the site's script reads, opens the page it became.
+  const view = await page.goto(`${siteBuildUrl}/components/select/props`);
+  expect(view?.status()).toBe(404);
+  await expect(page).toHaveURL(`${siteBuildUrl}/docs/components/select`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
+});
+
 /** How far a page's element is below the top of the body that scrolls. */
 const belowTop = (element: Locator) =>
   element.evaluate(
