@@ -29,6 +29,13 @@ const specimens = componentRegistry(
 const specimenPath = (page: string, name: string) => `/src/specimens/${page}/${name}.tsx`;
 
 /**
+ * Starts loading the specimen of a name, such as an example's playback, where there is one, ahead
+ * of its first render.
+ */
+export const preloadSpecimen = (page: string, name: string) =>
+  specimens.preload(specimenPath(page, name));
+
+/**
  * A page's specimen file rendered, loaded with the page and loaded again on a retry. Until it
  * loads, a skeleton at its size holds its place: a stage of its own, unless it shows on a stage of
  * the figure's (`onStage`), as on an anatomy figure.

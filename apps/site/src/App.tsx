@@ -18,6 +18,7 @@ import { SiteBanner } from './banner/SiteBanner';
 import { HasContents, PageContents } from './banner/PageContents';
 import { PageFooter } from './banner/PageFooter';
 import { retryPageView, usePageView } from './pages/PageViews';
+import { preloadPage } from './pages/PreloadPage';
 import { Brand } from './brand/Brand';
 import { DocsNavigation, CatalogueNavigation } from './navigation/SiteNavigation';
 import { drawerless } from './navigation/CatalogueDestinations';
@@ -38,6 +39,9 @@ import { PageSkeleton } from './pages/PageSkeleton';
 
 /** A page, as its kind's view renders it, which loads with the first page of its kind. */
 function PageView({ page }: { page: RoutePage }) {
+  // What it needs starts loading together, as when a link to it is followed, also where it renders
+  // without that, such as a page gone back to.
+  void preloadPage(page);
   const View = usePageView(page);
   // The view is one of the pages' module-level components, loaded once and kept, not created here.
   // eslint-disable-next-line react-hooks/static-components

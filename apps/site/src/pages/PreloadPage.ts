@@ -11,10 +11,22 @@ import { settled } from '../loading/LoadOnce';
 const loads = (page: RoutePage | undefined) =>
   page ? [loadPageView(page.kind), ...contentLoads(page)] : [];
 
-/** What a page shows that is its own: its content and a foundation's figures. */
+/**
+ * What a page shows that is its own: its content and a foundation's figures. The files of the
+ * figures of its first section, which it opens on, start loading too, beside its content rather
+ * than once that has arrived and the page renders; the page doesn't wait for them, as each figure
+ * holds its place while its file loads.
+ */
 const contentLoads = (page: RoutePage) => {
   const document = page.document;
   if (!document) return [];
+  const first = document.outline?.[0]?.examples.map(({ name }) => name) ?? [];
+  // Through a module of its own, as the figures' registries come with the views that show them
+  // rather than with the site's start.
+  if (first.length)
+    void import('../figures/PreloadFigures')
+      .then(({ preloadFigures }) => preloadFigures(document.id, first))
+      .catch(() => {});
   return [
     loadDocument(document.id),
     ...(page.kind === 'foundation' ? [loadFoundationFigures(document.id)] : []),

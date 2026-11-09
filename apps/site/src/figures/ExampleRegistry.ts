@@ -26,6 +26,9 @@ export const exampleModule = (page: string, name: string) => examples.module(pat
 export const exampleComponent = (page: string, name: string) =>
   examples.component(pathOf(page, name));
 
+/** Starts loading an example's module, where there is one, ahead of its first render. */
+export const preloadExample = (page: string, name: string) => examples.preload(pathOf(page, name));
+
 /** The source of an example, loaded once and kept for every later render. */
 export const exampleSource = (page: string, name: string) => sources.load(pathOf(page, name));
 
