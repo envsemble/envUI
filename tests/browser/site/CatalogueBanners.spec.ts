@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { siteBuildUrl } from '../helpers/Servers';
+import { openSite } from '../helpers/SiteSpecHelpers';
 import { componentDocuments } from '../../../apps/site/src/routes/PageModel';
 import { pagesOf } from '../../../apps/site/src/routes/SiteRoutes';
 import {
@@ -55,7 +56,8 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${siteBuildUrl}/components/slider`);
+  // Its drawing draws itself in once the site has started, which the box is measured after.
+  await openSite(page, `${siteBuildUrl}/components/slider`);
   const banner = page.locator('.site-page-banner');
   const trail = banner.getByRole('navigation', { name: 'Breadcrumb' });
   await expect(trail.getByRole('link')).toHaveText(['envUI', 'Components', 'Forms & selection']);

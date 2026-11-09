@@ -23,7 +23,8 @@ export function usePagePlace(
     document.querySelector('meta[name="description"]')?.setAttribute('content', description);
     // An address that a link of the page's contents wrote has shown its section already.
     if (takeShownAddress()) return;
-    if (firstLoad.current) firstLoad.current = false;
+    const first = firstLoad.current;
+    if (first) firstLoad.current = false;
     // After the microtasks of the commit, in which a popup of the page that left hands the focus
     // back to what it was opened from, so the page keeps it.
     else queueMicrotask(() => main.current?.focus({ preventScroll: true }));
@@ -36,7 +37,9 @@ export function usePagePlace(
     if (restoring) return restoring;
     const section = new URLSearchParams(route.split('?')[1]).get('section');
     if (section) return revealSection(section);
-    main.current?.scrollTo({ top: 0 });
+    // The first page opens at its top, where a reader who scrolled it before the site started,
+    // as a pre-rendered page allows, stays where they are.
+    if (!first) main.current?.scrollTo({ top: 0 });
   }, [route, title, description, main]);
   useEffect(() => {
     const element = main.current;

@@ -38,6 +38,7 @@ import { SiteSearch } from './search/SiteSearch';
 import { PaletteCustomizationProvider } from './display/PaletteCustomization';
 import { LoadingStatus } from './loading/LoadingStore';
 import { PageSkeleton } from './pages/PageSkeleton';
+import { useFiguresMounted } from './loading/useFiguresMounted';
 
 /** A page, as its kind's view renders it, which loads with the first page of its kind. */
 function PageView({ page }: { page: RoutePage }) {
@@ -127,6 +128,14 @@ function PageColumns({
   contents: boolean;
 }) {
   const items = usePageContents(contents ? page : undefined);
+  // The page the document was pre-rendered with hydrates in the same pass as the frame around it,
+  // with no Suspense boundary of its own until the reader leaves it: React hydrates a boundary's
+  // content in a later pass, and the frame's first updates after hydrating, such as the stored
+  // settings showing, would hydrate the whole page at once in one long task before then. It has
+  // loaded before it hydrates, and the parts of it that load later have boundaries of their own.
+  const [hydratedPath, setHydratedPath] = useState(useFiguresMounted() ? undefined : routePath);
+  if (hydratedPath !== undefined && hydratedPath !== routePath) setHydratedPath(undefined);
+  const view = page ? <PageView key={page.path} page={page} /> : <PageNotFound area={area} />;
   return (
     <div className="site-page-layout">
       <div className="site-page-grid" data-contents={contents || undefined}>
@@ -139,18 +148,24 @@ function PageColumns({
                 if (!page) return;
                 retryPageView(page.kind);
                 if (page.document) retryDocument(page.document.id);
+                // What loads again shows its skeleton meanwhile.
+                setHydratedPath(undefined);
               }}
             >
               {/* A page's content loads with it (useDocument), which the first page and a link's
                 page wait for before they render; a page gone back to, or opened from search,
                 before it has loaded shows as a skeleton of its shape meanwhile. A boundary of
                 its own for each page, so the page before doesn't stay, hidden. */}
-              <Suspense
-                key={page?.path ?? routePath}
-                fallback={page && <PageSkeleton page={page} />}
-              >
-                {page ? <PageView key={page.path} page={page} /> : <PageNotFound area={area} />}
-              </Suspense>
+              {hydratedPath === routePath ? (
+                view
+              ) : (
+                <Suspense
+                  key={page?.path ?? routePath}
+                  fallback={page && <PageSkeleton page={page} />}
+                >
+                  {view}
+                </Suspense>
+              )}
             </PageBoundary>
           </ContentsItems>
           {page && <PageNavigation page={page} />}

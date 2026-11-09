@@ -48,8 +48,11 @@ export const settled = (promise: Promise<unknown>) =>
  */
 export function useLoaded<T>(load: Promise<T> | undefined): T | undefined {
   const [, loaded] = useReducer((count: number) => count + 1, 0);
+  // A load settled by the render rendered as it is: rendering again would render all it holds
+  // again for nothing, such as a page's Markdown, parsed anew, right after the page hydrates.
+  const pending = load !== undefined && !settled(load);
   useEffect(() => {
-    if (!load) return;
+    if (!load || !pending) return;
     let gone = false;
     // Also a load settled since the render: it renders again with the value.
     const settle = () => {
@@ -59,7 +62,7 @@ export function useLoaded<T>(load: Promise<T> | undefined): T | undefined {
     return () => {
       gone = true;
     };
-  }, [load]);
+  }, [load, pending]);
   // Every load loadOnce makes is tracked.
   const tracked = load as Tracked<T> | undefined;
   return tracked?.status === 'fulfilled' ? tracked.value : undefined;
