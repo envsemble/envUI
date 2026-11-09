@@ -12,8 +12,6 @@
         // Run by hand: after the favicon's SVG changes, and to check the site's contents lists.
         "scripts/build/GenerateFavicons.ts",
         "scripts/test/CheckContents.ts",
-        // The browser tests' web server for the builds, which playwright.config.ts starts.
-        "scripts/test/ServeBuild.ts",
         "tests/*/*.test.mjs",
         "tests/browser/{library,site}/*.spec.ts",
         "tests/accessibility/*.spec.ts",
