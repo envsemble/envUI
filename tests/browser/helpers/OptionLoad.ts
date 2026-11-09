@@ -33,8 +33,10 @@ export async function holdOptionModule(page: Page, name: string) {
 
 /**
  * Makes the module an option loads fail to load, as offline, until `restore` is called. Call it
- * before the page loads; `failed` resolves once the page has seen the module fail, and `remount`
- * mounts the fixture afresh (App.tsx).
+ * before the page loads; `failed` resolves once the request has failed, and `remount` mounts the
+ * fixture afresh (App.tsx). The import's rejection reaches the component later, by no event a spec
+ * can wait for, and later still under load: a spec whose next step needs the component to have
+ * handled it polls for what that changes.
  */
 export async function failOptionModule(page: Page, name: string) {
   const file = moduleFile(name);
@@ -44,7 +46,7 @@ export async function failOptionModule(page: Page, name: string) {
   return {
     failed: async () => {
       await seen;
-      // The import's rejection reaches the component once the page has handled the failure.
+      // Usually the component has handled the rejection two frames later.
       await page.evaluate(
         () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
       );
@@ -52,6 +54,18 @@ export async function failOptionModule(page: Page, name: string) {
     restore: () => {
       failing = false;
     },
-    remount: () => page.evaluate(() => window.dispatchEvent(new Event('fixture-remount'))),
+    // Resolves once the new mount is in the page, so what a spec does next reaches it rather than
+    // the elements it replaces.
+    remount: async () => {
+      const mounts = await page.evaluate(() => {
+        const before = Number(document.documentElement.dataset.fixtureMounts);
+        window.dispatchEvent(new Event('fixture-remount'));
+        return before;
+      });
+      await page.waitForFunction(
+        (before) => Number(document.documentElement.dataset.fixtureMounts) > before,
+        mounts,
+      );
+    },
   };
 }
