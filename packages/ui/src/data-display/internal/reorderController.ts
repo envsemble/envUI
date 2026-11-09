@@ -2,6 +2,7 @@
 // drags. Only a list with onReorder loads it, as it renders (useReorder.ts).
 import type { KeyboardEvent, MouseEvent, PointerEvent } from 'react';
 import { scrolledBy } from '../../internal/dom/scrolledBy.js';
+import { dragThreshold, isLiftKey, isRowMoveKey } from './reorderKeys.js';
 import {
   edgeScrollDelta,
   measureRows,
@@ -35,9 +36,6 @@ export interface ReorderOptions {
   announcements: ReorderAnnouncements;
   formatNumber: (value: number) => string;
 }
-
-/** How far, in CSS pixels, a press moves before it drags the row. */
-const dragThreshold = 4;
 
 /**
  * The moves of one list, outside React's render: the rows shift with the CSS `translate` property
@@ -182,7 +180,7 @@ export function createReorder(read: () => ReorderOptions, announce: (text: strin
      * a click comes only from a press, such as a pointer's, voice control's or a screen reader's.
      */
     handleKeyDown(event: KeyboardEvent<HTMLElement>, row: HTMLElement, label: string) {
-      const isLift = event.key === ' ' || event.key === 'Enter';
+      const isLift = isLiftKey(event.key);
       if (isLift) event.preventDefault();
       // A row another handle lifted, which kept it lifted as focus moved here, goes back first.
       if (move && move.handle !== event.currentTarget) cancel(true);
@@ -315,12 +313,10 @@ export function createReorder(read: () => ReorderOptions, announce: (text: strin
     },
     /** Alt+↑ and Alt+↓ on a row's target move the row one place at once. */
     rowKeyDown(event: KeyboardEvent<HTMLElement>, row: HTMLElement, label: string) {
-      if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || move) return;
-      if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
-      // A key press on a row reaches it from an element inside it.
+      if (move || !isRowMoveKey(event)) return;
       const target = event.target as HTMLElement;
       const { list, onReorder } = read();
-      if (!target.closest('[data-row-target]') || !list) return;
+      if (!list) return;
       const rows = rowsOf(list);
       const from = rows.indexOf(row);
       const to = from + (event.key === 'ArrowUp' ? -1 : 1);

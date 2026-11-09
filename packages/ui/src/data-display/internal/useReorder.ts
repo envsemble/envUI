@@ -9,6 +9,8 @@ import {
   type SyntheticEvent,
 } from 'react';
 import { useLatest } from '../../internal/useLatest.js';
+import { optionModule } from '../../internal/react/useOptionModule.js';
+import { dragThreshold, isLiftKey, isLiftedKey, isRowMoveKey } from './reorderKeys.js';
 import type {
   createReorder,
   Reorder,
@@ -30,11 +32,7 @@ export interface Announcement {
  * renders, so it is there by the time people reach a handle, and what they do before it is, such
  * as a drag begun at once, waits for it.
  */
-let loading: Promise<{ createReorder: typeof createReorder }> | undefined;
-const loadReorder = () => (loading ??= import('./reorderController.js'));
-
-/** The keys a lifted row's handle takes for itself. */
-const liftedKeys = ['ArrowUp', 'ArrowDown', 'Home', 'End', 'Escape'];
+const controllerModule = optionModule(() => import('./reorderController.js'));
 
 /**
  * An event as it was dispatched, to hand to the controller once it has loaded. React clears an
@@ -54,51 +52,72 @@ function replayed<E extends SyntheticEvent>(event: E): E {
 /**
  * Handlers for a list's rows and handles that pass each event to the controller, or, until it has
  * loaded, keep it for the controller to handle as it arrives, in order. Meanwhile they do at once
- * what can't wait: preventing a key's or a press's default, and capturing a pressed pointer so the
- * drag's moves still reach the handle.
+ * what can't wait, by the controller's own rules (reorderKeys.ts): preventing the default of a key
+ * or a press it takes, and capturing a pressed pointer so the drag's moves still reach the handle.
+ * Where the controller fails to load, they leave every event alone.
  */
 function createDeferredReorder(read: () => ReorderOptions, announce: (text: string) => void) {
   let controller: Reorder | null = null;
+  let failed = false;
   let waiting: (() => void)[] = [];
-  /** Whether a press of a handle waits for the controller, so its moves wait too. */
-  let pressed = false;
+  /** Whether the events that wait have lifted a row by its handle's keys or a press of it. */
+  let liftHeld = false;
+  /** Where a press of a handle that waits started, so its moves wait too; and whether it dragged. */
+  let pressedAt: number | null = null;
+  let dragged = false;
+  /** Set once a replayed event has had the application move a row (see load). */
+  let replaying = false;
+  let reordered = false;
+  const waits = () => !controller && !failed;
   /** Hands the event to the controller, or keeps it, as it was dispatched, until it has loaded. */
   const pass = <E extends SyntheticEvent>(
     event: E,
     call: (handlers: ReorderHandlers, event: E) => void,
   ) => {
     if (controller) call(controller.handlers, event);
-    else {
+    else if (!failed) {
       const kept = replayed(event);
       waiting.push(() => call(controller!.handlers, kept));
     }
   };
   const handlers: ReorderHandlers = {
     handleKeyDown(event, row, label) {
-      if (!controller) {
-        if (event.key === ' ' || event.key === 'Enter') event.preventDefault();
-        // A row lifted by a key that waits is moved and put back by the keys that follow.
-        else if (waiting.length > 0 && liftedKeys.includes(event.key)) {
+      if (waits()) {
+        if (isLiftKey(event.key)) {
           event.preventDefault();
-          if (event.key === 'Escape') event.stopPropagation();
-        }
+          if (!event.repeat) liftHeld = !liftHeld;
+        } else if (liftHeld && isLiftedKey(event.key)) {
+          event.preventDefault();
+          if (event.key === 'Escape') {
+            event.stopPropagation();
+            liftHeld = false;
+          }
+        } else if (event.key === 'Tab') liftHeld = false;
       }
       pass(event, (each, kept) => each.handleKeyDown(kept, row, label));
     },
     handleKeyUp(event) {
-      if (!controller && event.key === ' ') event.preventDefault();
+      if (waits() && event.key === ' ') event.preventDefault();
       pass(event, (each, kept) => each.handleKeyUp(kept));
     },
     handleClick(event, row, label) {
+      // A press that didn't drag lifts the row, or drops it.
+      if (waits() && !dragged) liftHeld = !liftHeld;
+      dragged = false;
       pass(event, (each, kept) => each.handleClick(kept, row, label));
     },
     handleBlur() {
+      if (failed) return;
       if (controller) controller.handlers.handleBlur();
-      else waiting.push(() => controller!.handlers.handleBlur());
+      else {
+        liftHeld = false;
+        waiting.push(() => controller!.handlers.handleBlur());
+      }
     },
     handlePointerDown(event, row, label) {
-      if (!controller && event.button === 0) {
-        pressed = true;
+      if (waits() && event.button === 0) {
+        pressedAt = event.clientY;
+        dragged = false;
         const handle = event.currentTarget;
         handle.setPointerCapture?.(event.pointerId);
         event.preventDefault();
@@ -107,36 +126,56 @@ function createDeferredReorder(read: () => ReorderOptions, announce: (text: stri
       pass(event, (each, kept) => each.handlePointerDown(kept, row, label));
     },
     handlePointerMove(event) {
-      if (controller || pressed) pass(event, (each, kept) => each.handlePointerMove(kept));
+      if (controller) controller.handlers.handlePointerMove(event);
+      else if (pressedAt !== null) {
+        if (Math.abs(event.clientY - pressedAt) >= dragThreshold) dragged = true;
+        pass(event, (each, kept) => each.handlePointerMove(kept));
+      }
     },
     handlePointerUp(event) {
+      pressedAt = null;
       pass(event, (each, kept) => each.handlePointerUp(kept));
     },
     handlePointerCancel(event) {
+      pressedAt = null;
       pass(event, (each, kept) => each.handlePointerCancel(kept));
     },
     rowKeyDown(event: KeyboardEvent<HTMLElement>, row, label) {
-      if (
-        !controller &&
-        event.altKey &&
-        !event.ctrlKey &&
-        !event.metaKey &&
-        !event.shiftKey &&
-        (event.key === 'ArrowUp' || event.key === 'ArrowDown') &&
-        (event.target as HTMLElement).closest('[data-row-target]')
-      )
-        event.preventDefault();
+      if (waits() && isRowMoveKey(event)) event.preventDefault();
       pass(event, (each, kept) => each.rowKeyDown(kept, row, label));
     },
   };
   return {
     handlers,
-    /** Takes the loaded controller and hands it what waited for it. */
+    /**
+     * Takes the loaded controller and hands it what waited for it, until one of those events has
+     * the application move a row: the rows move in the DOM only once it has rendered again, so
+     * what came after would read the old order and move the wrong row. It is dropped.
+     */
     load(module: { createReorder: typeof createReorder }) {
-      controller = module.createReorder(read, announce);
-      for (const call of waiting) call();
+      controller = module.createReorder(() => {
+        const options = read();
+        if (!replaying) return options;
+        return {
+          ...options,
+          onReorder: (from: number, to: number) => {
+            reordered = true;
+            options.onReorder?.(from, to);
+          },
+        };
+      }, announce);
+      replaying = true;
+      for (const call of waiting) {
+        call();
+        if (reordered) break;
+      }
+      replaying = false;
       waiting = [];
-      pressed = false;
+    },
+    /** The controller didn't load: the rows can't move, and their events are left alone. */
+    fail() {
+      failed = true;
+      waiting = [];
     },
     restoreFocus: () => controller?.restoreFocus(),
     dispose: () => controller?.dispose(),
@@ -174,12 +213,15 @@ export function useReorder(
     ),
   );
   // Loading starts as the list first renders; the controller is made once it is in the page.
-  if (typeof window !== 'undefined') void loadReorder();
+  controllerModule.preload();
   useEffect(() => {
     let mounted = true;
-    void loadReorder().then((module) => {
-      if (mounted) reorder.load(module);
-    });
+    controllerModule.load().then(
+      (module) => {
+        if (mounted) reorder.load(module);
+      },
+      () => reorder.fail(),
+    );
     return () => {
       mounted = false;
       reorder.dispose();
