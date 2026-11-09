@@ -121,11 +121,23 @@ const seen = (element: HTMLElement) =>
   (element.classList.contains('site-loading-subject') && element.dataset.shown !== undefined);
 
 /**
+ * The event, bubbling, that a part which took a skeleton's place receives once it shows in full
+ * (useArrival): as it fades in, it is drawn see-through, so what measures which of its words
+ * show, such as a device figure's fit, measures again then.
+ */
+export const arrivedEvent = 'site-arrived';
+
+/** Tells a part that it shows in full (arrivedEvent). */
+const arrive = (part: Element) => part.dispatchEvent(new Event(arrivedEvent, { bubbles: true }));
+
+/**
  * Crossfades a skeleton with what takes its place in its parent, once, as it leaves: the skeleton
  * fades out in the fast time as it leaves the page, and the parts the parent didn't hold before
  * fade in in the medium one, entering, in the same frame (leaveInPlace). In an open example's room
  * that isn't made yet, which shows as a whole once its overlays rest open, the skeleton stays
- * until the room shows and fades in. With motion reduced, it is all at once.
+ * until the room shows and fades in. With motion reduced, it is all at once. Each part that
+ * arrives is sent `arrivedEvent` once it shows in full: as it finishes fading in, or as its room
+ * shows, else at once.
  */
 export function useArrival(skeleton: { current: HTMLElement | null }) {
   useLayoutEffect(() => {
@@ -145,17 +157,29 @@ export function useArrival(skeleton: { current: HTMLElement | null }) {
         const room = parent.closest<HTMLElement>('.catalogue-open-example:not([data-placed])');
         leaving?.place();
         if (room) {
-          if (leaving) whenPlaced(room, leaving.fade);
+          whenPlaced(room, () => {
+            leaving?.fade();
+            arrived.forEach(arrive);
+          });
           return;
         }
         leaving?.fade();
-        if (prefersReducedMotion()) return;
+        if (prefersReducedMotion()) {
+          arrived.forEach(arrive);
+          return;
+        }
         const easing = rootMotionEasing('ease-enter');
         for (const child of arrived)
-          child.animate([{ opacity: 0 }, { opacity: 1 }], {
-            duration: rootMotionDuration('medium'),
-            easing,
-          });
+          child
+            .animate([{ opacity: 0 }, { opacity: 1 }], {
+              duration: rootMotionDuration('medium'),
+              easing,
+            })
+            // Cancelled, as the part leaves again, it has nothing to tell.
+            .finished.then(
+              () => arrive(child),
+              () => undefined,
+            );
       });
     };
   }, [skeleton]);

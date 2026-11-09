@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
+import { arrivedEvent } from '../../loading/useArrival';
 import { remeasure } from '../../shared/Remeasure';
 import type { ScriptReader } from '../FitKind';
 import { sameFit, type DeviceFit } from './DeviceFit';
@@ -7,8 +8,9 @@ import { deviceFit, type DeviceFitting } from './DeviceMeasure';
 
 /**
  * The fit of a device figure in its stage (deviceFit, for DeviceStage in DeviceFrame.tsx), or
- * undefined before it has a size. It fits again when the stage or the device's row resizes, and,
- * for an animated figure, when its screen changes or its pointer's heading changes (`script`).
+ * undefined before it has a size. It fits again when the stage or the device's row resizes, when
+ * its example arrives in place of its skeleton, and, for an animated figure, when its screen
+ * changes or its pointer's heading changes (`script`).
  */
 export function useDeviceFit(
   stage: RefObject<HTMLElement | null>,
@@ -59,11 +61,16 @@ export function useDeviceFit(
         }),
       },
     );
+    // The screen is a fixed size, so the example arriving in place of its skeleton resizes
+    // nothing, and it fades in, its words see-through until it has: it fits again once it has
+    // arrived (useArrival), its words measured as on a resize.
+    rowElement.addEventListener(arrivedEvent, fits.update);
     // The pointer's script registers its points a moment after the picture starts, so fit
     // again after 600 ms.
     const timer = setTimeout(fits.update, 600);
     return () => {
       fits.stop();
+      rowElement.removeEventListener(arrivedEvent, fits.update);
       clearTimeout(timer);
     };
   }, [stage, row, kind, read, heading]);
