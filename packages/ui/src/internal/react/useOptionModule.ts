@@ -49,10 +49,12 @@ export function optionModule<T>(importer: () => Promise<T>): OptionModule<T> {
 
 /**
  * An option's module once it has loaded, while `enabled`, loading it as the component mounts.
- * Where it fails to load, the option is missing, as if it were not set, until a later mount.
+ * Where it fails to load, the option is missing, as if it were not set, until a later mount. The
+ * first render never has it, even where it has already loaded, since the server rendered without
+ * it and a component hydrating later must match that.
  */
 export function useOptionModule<T>(module: OptionModule<T>, enabled: boolean): T | undefined {
-  const [value, setValue] = useState(module.loaded);
+  const [value, setValue] = useState<T | undefined>(undefined);
   useEffect(() => {
     if (!enabled || value) return;
     let mounted = true;
@@ -66,5 +68,5 @@ export function useOptionModule<T>(module: OptionModule<T>, enabled: boolean): T
       mounted = false;
     };
   }, [module, enabled, value]);
-  return enabled ? (value ?? module.loaded) : undefined;
+  return enabled ? value : undefined;
 }
