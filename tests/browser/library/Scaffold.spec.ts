@@ -414,7 +414,7 @@ test.describe('Scaffold body scroll', { tag: '@engines' }, () => {
     page,
   }) => {
     // The scaffold loads the code as the body mounts: hold it back, as a slow network would.
-    const { requested, release } = await holdOptionModule(page, /scrollKeys\.ts/);
+    const { requested, release } = await holdOptionModule(page, 'scrollKeys');
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(scrollKeys);
     const content = page.locator('.env-scaffold-body');
@@ -434,7 +434,7 @@ test.describe('Scaffold body scroll', { tag: '@engines' }, () => {
   test('where the scrolling code fails to load the keys stay with the browser, and a remount tries again', async ({
     page,
   }) => {
-    const option = await failOptionModule(page, /scrollKeys\.ts/);
+    const option = await failOptionModule(page, 'scrollKeys');
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const taken = await openScrollKeys(page);
     await option.failed();

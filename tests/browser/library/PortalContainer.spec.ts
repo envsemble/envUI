@@ -177,7 +177,7 @@ test.describe('PortalContainer, contained', () => {
     page,
   }) => {
     // The region loads the picture's notices as it renders: hold them back, as a slow network would.
-    const { requested, release } = await holdOptionModule(page, /PictureNotice\.tsx/);
+    const { requested, release } = await holdOptionModule(page, 'PictureNotice');
     await page.goto(preview);
     const layer = page.getByTestId('layer');
     await requested();
@@ -194,7 +194,7 @@ test.describe('PortalContainer, contained', () => {
   }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
-    const option = await failOptionModule(page, /PictureNotice\.tsx/);
+    const option = await failOptionModule(page, 'PictureNotice');
     await page.goto(preview);
     const layer = page.getByTestId('layer');
     await expect(layer.getByRole('menu', { name: 'Actions' })).toBeVisible();

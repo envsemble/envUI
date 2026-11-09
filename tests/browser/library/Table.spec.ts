@@ -218,7 +218,7 @@ test('the resize handles come with their code, which a table loads as it renders
   page,
 }) => {
   // Held back, as a slow network would, the handles' code leaves the header as it is without them.
-  const { requested, release } = await holdOptionModule(page, /ColumnResizeHandle\.tsx/);
+  const { requested, release } = await holdOptionModule(page, 'ColumnResizeHandle');
   await page.reload();
   const table = page.getByRole('table', { name: 'Reports light' });
   const widths = page.getByTestId('widths-light');
@@ -243,7 +243,7 @@ test('the resize handles come with their code, which a table loads as it renders
 test('a table whose resize code fails to load keeps its columns, and a remount tries again', async ({
   page,
 }) => {
-  const option = await failOptionModule(page, /ColumnResizeHandle\.tsx/);
+  const option = await failOptionModule(page, 'ColumnResizeHandle');
   await page.reload();
   const table = page.getByRole('table', { name: 'Reports light' });
   const report = table.getByRole('columnheader', { name: 'Report', exact: true });

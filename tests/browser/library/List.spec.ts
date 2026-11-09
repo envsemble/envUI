@@ -138,7 +138,7 @@ test.describe('List', () => {
     async ({ page }) => {
       // The list loads the code that moves its rows as it renders: hold it back, as a slow
       // network would, while people already drag and press.
-      const { release } = await holdOptionModule(page, /reorderController\.ts/);
+      const { release } = await holdOptionModule(page, 'reorderController');
       await page.goto(lists);
       const list = page.getByTestId('slides');
       const order = page.getByTestId('slides-order');
@@ -174,7 +174,7 @@ test.describe('List', () => {
   test('two moves held for the reorder code move the row once, not back again', async ({
     page,
   }) => {
-    const { requested, release } = await holdOptionModule(page, /reorderController\.ts/);
+    const { requested, release } = await holdOptionModule(page, 'reorderController');
     await page.goto(lists);
     const list = page.getByTestId('slides');
     const order = page.getByTestId('slides-order');
@@ -195,7 +195,7 @@ test.describe('List', () => {
   }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
-    const option = await failOptionModule(page, /reorderController\.ts/);
+    const option = await failOptionModule(page, 'reorderController');
     await page.goto(lists);
     const list = page.getByTestId('slides');
     const order = page.getByTestId('slides-order');

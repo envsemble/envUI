@@ -1,11 +1,18 @@
 import type { Page } from '@playwright/test';
 
 /**
+ * The address of an option's module, named as its source file is: the file itself on a development
+ * server, or the chunk a build names after it, such as `reorderController-C-xeEPbo.js`.
+ */
+const moduleFile = (name: string) => new RegExp(String.raw`/${name}(?:\.tsx?|-[\w-]+\.js)(?:\?|$)`);
+
+/**
  * Holds back the module an option loads where it is used, as a slow network would, matched by its
- * file: `requested` resolves once the page has asked for it, and `release` lets it load, once the
+ * name: `requested` resolves once the page has asked for it, and `release` lets it load, once the
  * page has asked, and holds it back again on the next request, as after a reload.
  */
-export async function holdOptionModule(page: Page, file: RegExp) {
+export async function holdOptionModule(page: Page, name: string) {
+  const file = moduleFile(name);
   let held = Promise.withResolvers<() => void>();
   await page.route(file, async (route) => {
     const { promise, resolve } = Promise.withResolvers<void>();
@@ -29,7 +36,8 @@ export async function holdOptionModule(page: Page, file: RegExp) {
  * before the page loads; `failed` resolves once the page has seen the module fail, and `remount`
  * mounts the fixture afresh (App.tsx).
  */
-export async function failOptionModule(page: Page, file: RegExp) {
+export async function failOptionModule(page: Page, name: string) {
+  const file = moduleFile(name);
   let failing = true;
   await page.route(file, (route) => (failing ? route.abort() : route.continue()));
   const seen = page.waitForEvent('requestfailed', (request) => file.test(request.url()));
