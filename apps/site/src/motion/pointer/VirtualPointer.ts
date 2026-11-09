@@ -87,6 +87,8 @@ export class VirtualPointer {
       noteScope: () => {
         const box = this.scope.getBoundingClientRect();
         this.scopeAt = { x: box.left, y: box.top };
+        // Read with the scope, before the move's events change the page.
+        if (this.cursorShown) this.cursor.note();
       },
       drawCursor: () => this.drawCursor(),
     };
