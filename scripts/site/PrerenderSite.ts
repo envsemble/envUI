@@ -204,9 +204,14 @@ export async function prerenderSite(siteDirectory: string, serverDirectory: stri
   );
   for (const page of server.sitePages) {
     const rendered = await server.renderPage(page.route);
+    const files = pageFiles(page, preloads);
+    // A file the build left out, such as a chunk that held only style sheets, would not be found.
+    for (const linked of [...files.styles, ...files.loads.map(([, href]) => href)])
+      if (!existsSync(resolve(siteDirectory, `.${linked}`)))
+        throw new Error(`${page.address} links ${linked}, which the build doesn't have.`);
     const file = resolve(siteDirectory, pageFile(page.address));
     await mkdir(dirname(file), { recursive: true });
-    await writeFile(file, pageDocument(template, page, pageFiles(page, preloads), rendered));
+    await writeFile(file, pageDocument(template, page, files, rendered));
   }
   return server.sitePages.length;
 }

@@ -33,14 +33,12 @@ const hydrates =
  * browser as it goes rather than holding up the page in one long task. Rendering on the client
  * alone, they mount at once. It marks the document once the site has started, after every part's
  * effects, with `data-site-started`: before it, a press on a pre-rendered control has no handler
- * yet, which the browser tests wait for (SiteSpecHelpers.ts). A page the head hid as it isn't the
- * address's (PrerenderSite.ts) shows again. It renders no element, so the hydrated tree is the
- * server's.
+ * yet, which the browser tests wait for (SiteSpecHelpers.ts). It renders no element, so the
+ * hydrated tree is the server's.
  */
 function Started({ hydrating, children }: { hydrating: boolean; children: ReactNode }) {
   const [hydrated, setHydrated] = useState(!hydrating);
   useEffect(() => {
-    document.documentElement.removeAttribute('data-site-unrendered');
     document.documentElement.setAttribute('data-site-started', '');
     startTransition(() => setHydrated(true));
   }, []);
@@ -48,6 +46,10 @@ function Started({ hydrating, children }: { hydrating: boolean; children: ReactN
 }
 
 void opening.then(() => {
+  // The head hides a page it can't tell is the address's (PrerenderSite.ts): an address with a
+  // query, which is, or one with no page of its own, whose page renders here in place of it. It
+  // shows before the site's effects run, which scroll to and focus the section an address names.
+  document.documentElement.removeAttribute('data-site-unrendered');
   const site = (
     <Started hydrating={hydrates}>
       <SiteRoot />

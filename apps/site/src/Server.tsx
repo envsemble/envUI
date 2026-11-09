@@ -7,7 +7,7 @@
  */
 import { prerender } from 'react-dom/static';
 import { SiteRoot } from './App';
-import { routeHref } from './routes/Address';
+import { renderAt, routeHref } from './routes/Address';
 import { documentTitle, pageDescription } from './routes/PageHead';
 import { allPages, findPage } from './routes/SiteRoutes';
 import { preloadPage } from './pages/PreloadPage';
@@ -25,20 +25,6 @@ export const sitePages = allPages.map((page) => ({
   view: viewOfKind[page.kind],
 }));
 
-/**
- * Stands in for the browser's location while the server renders the page at `address`: the site
- * reads its route from the address (routes/Address.ts), and the server knows the address it
- * renders. Undefined puts nothing in its place.
- */
-function setServerLocation(address: string | undefined) {
-  if (address === undefined) Reflect.deleteProperty(globalThis, 'location');
-  else
-    Object.defineProperty(globalThis, 'location', {
-      value: new URL(address, 'https://envui.envsemble.com'),
-      configurable: true,
-    });
-}
-
 /** A page pre-rendered: its tab's title and description, and the HTML of the site's root. */
 export interface RenderedPage {
   title: string;
@@ -52,23 +38,20 @@ export async function renderPage(route: string): Promise<RenderedPage> {
   if (!page) throw new Error(`No page at the route ${route}`);
   // Its view and content together, which the render would otherwise wait for one after the other.
   await preloadPage(page);
-  setServerLocation(routeHref(route));
+  // The server has no address: it renders the route's path.
+  renderAt(routeHref(route));
   // React renders a part that throws on the client alone, after a fallback; a page with one would
   // not hydrate as it is, so it fails the build instead.
   const errors: unknown[] = [];
-  try {
-    const { prelude } = await prerender(<SiteRoot />, {
-      // The whole page in its place, rather than parts of it moved there by a script as they load.
-      progressiveChunkSize: Number.POSITIVE_INFINITY,
-      onError(error) {
-        errors.push(error);
-      },
-    });
-    const html = await new Response(prelude).text();
-    if (errors.length)
-      throw new AggregateError(errors, `The page ${route} failed to render on the server`);
-    return { title: documentTitle(page, page.area), description: pageDescription(page), html };
-  } finally {
-    setServerLocation(undefined);
-  }
+  const { prelude } = await prerender(<SiteRoot />, {
+    // The whole page in its place, rather than parts of it moved there by a script as they load.
+    progressiveChunkSize: Number.POSITIVE_INFINITY,
+    onError(error) {
+      errors.push(error);
+    },
+  });
+  const html = await new Response(prelude).text();
+  if (errors.length)
+    throw new AggregateError(errors, `The page ${route} failed to render on the server`);
+  return { title: documentTitle(page, page.area), description: pageDescription(page), html };
 }

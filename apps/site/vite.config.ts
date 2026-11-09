@@ -183,73 +183,79 @@ export default defineConfig(() => {
         // pre-rendered page's files in its head.
         name: 'envui-content-preload',
         apply: 'build',
-        generateBundle(_options, bundle) {
-          // The server's build renders the pages, and loads nothing.
-          if (this.environment.config.consumer !== 'client') return;
-          const chunks = Object.values(bundle).filter((file) => file.type === 'chunk');
-          const contents: Record<string, string> = {};
-          for (const file of chunks) {
-            const page = /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(
-              file.facadeModuleId ?? '',
-            )?.[1];
-            if (page) contents[page] = file.fileName;
-          }
-          const byName = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));
-          // What the site's script loads itself, which the views' files leave out.
-          const started = new Set<string>();
-          const imported = (name: string, into: Set<string>) => {
-            if (into.has(name)) return;
-            into.add(name);
-            for (const next of byName.get(name)?.imports ?? []) imported(next, into);
-          };
-          for (const chunk of chunks) if (chunk.isEntry) imported(chunk.fileName, started);
-          const views: Record<string, { scripts: string[]; styles: string[] }> = {};
-          for (const [view, module] of Object.entries(viewModules)) {
-            const chunk = chunks.find((file) => file.facadeModuleId?.endsWith(`/${module}`));
-            if (!chunk) throw new Error(`No chunk holds ${module}, which a page's view is in.`);
-            const scripts = new Set<string>();
-            imported(chunk.fileName, scripts);
-            const files = [...scripts].filter((name) => !started.has(name));
-            views[view] = {
-              scripts: files,
-              styles: [
-                ...new Set(
-                  files.flatMap((name) => [...(byName.get(name)?.viteMetadata?.importedCss ?? [])]),
-                ),
-              ],
+        generateBundle: {
+          // After Vite drops the chunks that held only style sheets, which pages import as sheets.
+          order: 'post',
+          handler(_options, bundle) {
+            // The server's build renders the pages, and loads nothing.
+            if (this.environment.config.consumer !== 'client') return;
+            const chunks = Object.values(bundle).filter((file) => file.type === 'chunk');
+            const contents: Record<string, string> = {};
+            for (const file of chunks) {
+              const page = /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(
+                file.facadeModuleId ?? '',
+              )?.[1];
+              if (page) contents[page] = file.fileName;
+            }
+            const byName = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));
+            // What the site's script loads itself, which the views' files leave out.
+            const started = new Set<string>();
+            const imported = (name: string, into: Set<string>) => {
+              if (into.has(name)) return;
+              into.add(name);
+              for (const next of byName.get(name)?.imports ?? []) imported(next, into);
             };
-          }
-          // The style sheets the site starts with, which a page's figures' sheets leave out.
-          const startedStyles = new Set(
-            [...started].flatMap((name) => [
-              ...(byName.get(name)?.viteMetadata?.importedCss ?? []),
-            ]),
-          );
-          const figureStyles: Record<string, string[]> = {};
-          for (const chunk of chunks) {
-            const page = /[\\/]src[\\/](?:examples|specimens)[\\/]([\w-]+)[\\/]/.exec(
-              chunk.facadeModuleId ?? '',
-            )?.[1];
-            if (!page || !contents[page]) continue;
-            const files = new Set<string>();
-            imported(chunk.fileName, files);
-            // With the modules of the options its components set, which load as they render,
-            // such as a table's column resizing.
-            for (const name of [...files])
-              for (const option of byName.get(name)?.dynamicImports ?? [])
-                if (/[\\/]packages[\\/]ui[\\/]/.test(byName.get(option)?.facadeModuleId ?? ''))
-                  imported(option, files);
-            const styles = new Set(figureStyles[page]);
-            for (const name of files)
-              for (const style of byName.get(name)?.viteMetadata?.importedCss ?? [])
-                if (!startedStyles.has(style)) styles.add(style);
-            figureStyles[page] = [...styles].sort();
-          }
-          this.emitFile({
-            type: 'asset',
-            fileName: '.vite/page-preloads.json',
-            source: JSON.stringify({ views, contents, figureStyles }),
-          });
+            for (const chunk of chunks) if (chunk.isEntry) imported(chunk.fileName, started);
+            const views: Record<string, { scripts: string[]; styles: string[] }> = {};
+            for (const [view, module] of Object.entries(viewModules)) {
+              const chunk = chunks.find((file) => file.facadeModuleId?.endsWith(`/${module}`));
+              if (!chunk) throw new Error(`No chunk holds ${module}, which a page's view is in.`);
+              const scripts = new Set<string>();
+              imported(chunk.fileName, scripts);
+              const files = [...scripts].filter((name) => !started.has(name));
+              views[view] = {
+                scripts: files,
+                styles: [
+                  ...new Set(
+                    files.flatMap((name) => [
+                      ...(byName.get(name)?.viteMetadata?.importedCss ?? []),
+                    ]),
+                  ),
+                ],
+              };
+            }
+            // The style sheets the site starts with, which a page's figures' sheets leave out.
+            const startedStyles = new Set(
+              [...started].flatMap((name) => [
+                ...(byName.get(name)?.viteMetadata?.importedCss ?? []),
+              ]),
+            );
+            const figureStyles: Record<string, string[]> = {};
+            for (const chunk of chunks) {
+              const page = /[\\/]src[\\/](?:examples|specimens)[\\/]([\w-]+)[\\/]/.exec(
+                chunk.facadeModuleId ?? '',
+              )?.[1];
+              if (!page || !contents[page]) continue;
+              const files = new Set<string>();
+              imported(chunk.fileName, files);
+              // With the modules of the options its components set, which load as they render,
+              // such as a table's column resizing.
+              for (const name of [...files])
+                for (const option of byName.get(name)?.dynamicImports ?? [])
+                  if (/[\\/]packages[\\/]ui[\\/]/.test(byName.get(option)?.facadeModuleId ?? ''))
+                    imported(option, files);
+              const styles = new Set(figureStyles[page]);
+              for (const name of files)
+                for (const style of byName.get(name)?.viteMetadata?.importedCss ?? [])
+                  if (!startedStyles.has(style)) styles.add(style);
+              figureStyles[page] = [...styles].sort();
+            }
+            this.emitFile({
+              type: 'asset',
+              fileName: '.vite/page-preloads.json',
+              source: JSON.stringify({ views, contents, figureStyles }),
+            });
+          },
         },
       },
       {
