@@ -34,14 +34,22 @@ interface Look {
 /** The skeletons in the page that leave as copies (`seen`), which are measured together. */
 const skeletons = new Set<HTMLElement>();
 
+/** The crossfade's motion, from the root's motion tokens. */
+const crossfadeMotion = () => ({
+  leave: { duration: rootMotionDuration('fast'), easing: rootMotionEasing('ease-exit') },
+  enter: { duration: rootMotionDuration('medium'), easing: rootMotionEasing('ease-enter') },
+});
+
 /**
- * The looks of every skeleton in the page that would leave as a copy, measured together as the
- * first of them leaves in a commit, and kept until the commit is over. React removes each skeleton
- * that leaves right after its cleanup, so measuring each one as it leaves would lay the page out
- * again for every one, a long pause on a page where dozens land at once; measured together, the
- * page is laid out once.
+ * What the skeletons that leave in a commit read of the page, measured together as the first of
+ * them leaves, and kept until the commit is over: the looks of every skeleton in the page that
+ * would leave as a copy, and the box of the leaving layer they go into, which placing a copy
+ * changes the layout inside of but not the layer's own box. React removes each skeleton that
+ * leaves right after its cleanup, so measuring each one as it leaves, or the layer after the
+ * commit, would lay the page out again for every one, a long pause on a page where dozens land at
+ * once; measured together, the page is laid out once.
  */
-let looks: Map<HTMLElement, Look> | undefined;
+let measured: { looks: Map<HTMLElement, Look>; layers: Map<HTMLElement, DOMRect> } | undefined;
 
 function lookOf(element: HTMLElement): Look {
   const style = getComputedStyle(element);
@@ -54,74 +62,55 @@ function lookOf(element: HTMLElement): Look {
   };
 }
 
-/** The look of a skeleton as it leaves, measured with the others that may leave in its commit. */
-function lookAsItLeaves(element: HTMLElement) {
-  if (!looks) {
-    const measured = new Map<HTMLElement, Look>();
+/**
+ * The look of a skeleton as it leaves and the box of its leaving layer, measured with the others
+ * that may leave in its commit.
+ */
+function measureAsItLeaves(element: HTMLElement, layer: HTMLElement) {
+  if (!measured) {
+    const batch = { looks: new Map<HTMLElement, Look>(), layers: new Map<HTMLElement, DOMRect>() };
     for (const skeleton of skeletons)
-      if (skeleton.isConnected && seen(skeleton)) measured.set(skeleton, lookOf(skeleton));
-    looks = measured;
+      if (skeleton.isConnected && seen(skeleton)) batch.looks.set(skeleton, lookOf(skeleton));
+    batch.layers.set(layer, layer.getBoundingClientRect());
+    // Read now, with the looks, so the crossfades after the commit find the tokens kept
+    // (RootMotionTokens.ts) rather than working out the page's style again for them.
+    crossfadeMotion();
+    measured = batch;
     // After the commit's cleanups, which run together, and before the next commit's.
-    queueMicrotask(() => (looks = undefined));
+    queueMicrotask(() => (measured = undefined));
   }
-  return looks.get(element) ?? lookOf(element);
-}
-
-/** The motion of a crossfade, from the root's motion tokens. */
-interface Motion {
-  leave: KeyframeAnimationOptions;
-  enter: KeyframeAnimationOptions;
+  let at = measured.layers.get(layer);
+  if (!at) {
+    at = layer.getBoundingClientRect();
+    measured.layers.set(layer, at);
+  }
+  return { look: measured.looks.get(element) ?? lookOf(element), at };
 }
 
 /**
- * What the crossfades after one commit share of what they read of the page, each in a microtask
- * of its own: the leaving layer's box, read once, as placing a copy changes the layout inside the
- * layer but not the layer's own box; the motion tokens, read once; and the copies' pulses, which
- * take up their skeletons' times once every copy is in, as reading a copy's animations works out
- * its style. Read in each crossfade, after the copy before it went in, each would work out the
- * page again, a long pause on a page where dozens of parts land at once.
+ * The copies' pulses, which take up their skeletons' times once every copy of a commit is in, each
+ * crossfade in a microtask of its own: reading a copy's animations works out its style, and read
+ * after each copy went in, each would work out the page again.
  */
-let together:
-  { layers: Map<HTMLElement, DOMRect>; motion?: Motion; pulses: (() => void)[] } | undefined;
-function crossfadingTogether() {
-  if (!together) {
-    const batch = { layers: new Map<HTMLElement, DOMRect>(), pulses: [] as (() => void)[] };
-    together = batch;
+let pulses: (() => void)[] | undefined;
+function pulseTogether(pulse: () => void) {
+  if (!pulses) {
+    const batch: (() => void)[] = [];
+    pulses = batch;
     // After the crossfades of the commit, each in a microtask queued before this one.
     queueMicrotask(() => {
-      together = undefined;
-      for (const pulse of batch.pulses) pulse();
+      pulses = undefined;
+      for (const each of batch) each();
     });
   }
-  return together;
-}
-
-/** The leaving layer's box, as the crossfades after one commit read it (crossfadingTogether). */
-function layerBox(layer: HTMLElement) {
-  const { layers } = crossfadingTogether();
-  let box = layers.get(layer);
-  if (!box) {
-    box = layer.getBoundingClientRect();
-    layers.set(layer, box);
-  }
-  return box;
-}
-
-/** The crossfade's motion, as the crossfades after one commit read it (crossfadingTogether). */
-function crossfadeMotion() {
-  const batch = crossfadingTogether();
-  batch.motion ??= {
-    leave: { duration: rootMotionDuration('fast'), easing: rootMotionEasing('ease-exit') },
-    enter: { duration: rootMotionDuration('medium'), easing: rootMotionEasing('ease-enter') },
-  };
-  return batch.motion;
+  pulses.push(pulse);
 }
 
 /**
  * A skeleton that leaves while it shows, kept as a copy where it was, unseen by assistive
  * technology and no longer counted as loading, over what takes its place, until that shows: then
  * it fades out as what it stood for fades in, in the same frame, so the stage is never seen empty
- * between them. Measured as it leaves, while still in place (lookAsItLeaves), and drawn as it was,
+ * between them. Measured as it leaves, while still in place (measureAsItLeaves), and drawn as it was,
  * its fill and corners as its place gave them, its pulse going on where it was; `place` lays the
  * copy over the same box in the page's leaving layer, and `fade` fades it out in the fast time and
  * removes it, at once with motion reduced. A skeleton outside the page, or not laid out, leaves no
@@ -130,7 +119,10 @@ function crossfadeMotion() {
 function leaveInPlace(element: HTMLElement) {
   const layer = leavingLayer(element);
   if (!layer) return undefined;
-  const { box, times, ...fill } = lookAsItLeaves(element);
+  const {
+    look: { box, times, ...fill },
+    at,
+  } = measureAsItLeaves(element, layer);
   if (!box.width || !box.height) return undefined;
   // A clone of an element is one.
   const copy = element.cloneNode(true) as HTMLElement;
@@ -159,11 +151,10 @@ function leaveInPlace(element: HTMLElement) {
   const timer = window.setTimeout(remove, leaveLongest);
   return {
     place() {
-      const at = layerBox(layer);
       copy.style.left = `${box.left - at.left}px`;
       copy.style.top = `${box.top - at.top}px`;
       layer.append(copy);
-      crossfadingTogether().pulses.push(() => {
+      pulseTogether(() => {
         const animations = copy.getAnimations({ subtree: true });
         if (animations.length === times.length)
           animations.forEach((animation, index) => (animation.currentTime = times[index] ?? null));
