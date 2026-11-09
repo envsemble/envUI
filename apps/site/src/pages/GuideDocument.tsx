@@ -1,6 +1,7 @@
 import { Fragment, Suspense, useRef, type RefObject } from 'react';
+import type { TableOfContentsItem } from '@envsemble/envui';
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
-import { PageMarkdown } from '../markdown/PageMarkdown';
+import { markdownHeadings, PageMarkdown } from '../markdown/PageMarkdown';
 import { StageSkeleton } from '../loading/Skeletons';
 import { useFoundationFigures } from '../figures/foundations/FoundationFigures';
 import { useSubjectShown } from '../figures/useSubjectShown';
@@ -34,9 +35,21 @@ function GuideFigure({ page, name }: { page: string; name: string }) {
   );
 }
 
+/** A guide's Markdown and the names of its figures, by turns: the split keeps each figure's name. */
+const guidePieces = (document: DocumentationEntry) =>
+  (document.markdown ?? '').split(new RegExp(figureFence.source, 'gm'));
+
+/** The sections of a guide (GuideDocument): the h2 headings of each piece of its Markdown. */
+export const guideContents = (document: DocumentationEntry): TableOfContentsItem[] =>
+  guidePieces(document)
+    .filter((_, index) => index % 2 === 0)
+    .flatMap((piece) => markdownHeadings(piece))
+    .filter(({ level }) => level === 2)
+    .map(({ id, text }) => ({ id, label: text }));
+
 /** A guide page's Markdown, with its figures in place. */
 export function GuideDocument({ document }: { document: DocumentationEntry }) {
-  const pieces = (document.markdown ?? '').split(new RegExp(figureFence.source, 'gm'));
+  const pieces = guidePieces(document);
   if (pieces.length === 1) return <PageMarkdown document={document} />;
   // Markdown and figure names alternate: the split keeps each figure's name.
   return pieces.map((piece, index) => (

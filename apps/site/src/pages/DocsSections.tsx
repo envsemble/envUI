@@ -1,6 +1,5 @@
-import { Column, DescriptionList, Text } from '@envsemble/envui';
+import { Column, DescriptionList, Text, type TableOfContentsItem } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/code';
-import { lazyPart } from '../loading/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
 import { UsageFigure } from '../figures/Figures';
 import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleton';
@@ -10,6 +9,7 @@ import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline'
 import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';
 import { LoadedPart } from '../loading/LoadedPart';
+import { pageParts } from './PageParts';
 import { PropsTables } from './PropsTables';
 import { providesOf } from '@docs-model/CatalogueContent';
 import { guideSubsections, raisedHeadings, wordsInCode } from '@docs-model/DocsContent';
@@ -20,12 +20,25 @@ import { headingSlug } from '@docs-model/SearchAnchors';
  * as the route views place them (DocsPages.tsx).
  */
 
-/** The palette's swatches, with their color picker, which load with the page that shows them. */
-const colorPalette = lazyPart(
-  () => import('../figures/foundations/ColorPalette'),
-  (module) => module.ColorPalette,
-  'src/figures/foundations/ColorPalette.tsx',
-);
+/** The headings of the Docs' sections that always read the same: each one's id and words. */
+export const docsHeadings = {
+  palette: { id: 'palette', label: 'Try the palette' },
+  partNames: { id: 'part-names', label: 'Part names' },
+  provides: { id: 'provides', label: 'Accessibility' },
+  wordsInCode: { id: 'words-in-code', label: 'Words in code' },
+  colorProperties: { id: 'color-properties', label: 'Color properties' },
+  props: { id: 'props', label: 'Props' },
+  strings: { id: 'strings', label: 'Strings' },
+} satisfies Record<string, TableOfContentsItem>;
+
+/** A section's heading, from docsHeadings. */
+function SectionHeading({ heading }: { heading: { id: string; label: string } }) {
+  return (
+    <Text render={<h2 />} variant="title" className="site-section-title" id={heading.id}>
+      {heading.label}
+    </Text>
+  );
+}
 
 /**
  * The colors guide's editable palette: every role a component paints, by its token, with its value
@@ -33,16 +46,18 @@ const colorPalette = lazyPart(
  */
 export function PaletteSection() {
   return (
-    <Column render={<section />} gap={5} aria-labelledby="palette">
-      <Text render={<h2 />} variant="title" className="site-section-title" id="palette">
-        Try the palette
-      </Text>
+    <Column render={<section />} gap={5} aria-labelledby={docsHeadings.palette.id}>
+      <SectionHeading heading={docsHeadings.palette} />
       <Text emphasis="muted">
         Each swatch shows a token&apos;s value in the theme you are reading in. Press one to pick
         another color: the whole catalogue follows, in this theme only, until you reload.
       </Text>
       <SpecimenHeadingLevel value={3}>
-        <LoadedPart part={colorPalette} what="palette" placeholder={<ColorPaletteSkeleton />} />
+        <LoadedPart
+          part={pageParts.palette}
+          what="palette"
+          placeholder={<ColorPaletteSkeleton />}
+        />
       </SpecimenHeadingLevel>
     </Column>
   );
@@ -62,24 +77,26 @@ function StateValues({ values }: { values: readonly string[] }) {
   ));
 }
 
-/** The part names and state attributes of the exports a page documents, as simple lists. */
-export function PartNames({ components }: { components: readonly string[] }) {
-  const entries = components.flatMap((name) => {
+/** The exports of a page with part names, each with its parts. */
+export const partEntries = (components: readonly string[]) =>
+  components.flatMap((name) => {
     const parts = partsOf(name);
     return parts ? [{ name, parts }] : [];
   });
+
+/** The part names and state attributes of the exports a page documents, as simple lists. */
+export function PartNames({ components }: { components: readonly string[] }) {
+  const entries = partEntries(components);
   const outline = useSectionOutline();
   if (!entries.length) return null;
   return (
     <Column
       render={<section />}
       gap={5}
-      aria-labelledby="part-names"
+      aria-labelledby={docsHeadings.partNames.id}
       {...pendingAttribute(outline)}
     >
-      <Text render={<h2 />} variant="title" className="site-section-title" id="part-names">
-        Part names
-      </Text>
+      <SectionHeading heading={docsHeadings.partNames} />
       <Text emphasis="muted">
         Each part&apos;s class and state attributes are public and versioned, for an
         application&apos;s CSS to style.
@@ -115,20 +132,18 @@ export function PartNames({ components }: { components: readonly string[] }) {
   );
 }
 
+/** Whether a page writes what envUI or the application provides, which Provides shows. */
+export const hasProvides = (document: DocumentationEntry) => {
+  const { envui, app } = providesOf(document.sections ?? []);
+  return Boolean(envui || app);
+};
+
 /**
  * What an application adds for a component or pattern to be accessible, and what envUI does for
- * it, as the Accessibility section of its page writes them: plain lists under a heading, `title`,
- * of the section's own.
+ * it, as the Accessibility section of its page writes them: plain lists under Accessibility, a
+ * heading of the section's own.
  */
-export function Provides({
-  document,
-  title,
-  id,
-}: {
-  document: DocumentationEntry;
-  title: string;
-  id: string;
-}) {
+export function Provides({ document }: { document: DocumentationEntry }) {
   const { envui, app } = providesOf(document.sections ?? []);
   const outline = useSectionOutline();
   if (!envui && !app) return null;
@@ -136,13 +151,11 @@ export function Provides({
     <Column
       render={<section />}
       gap={5}
-      aria-labelledby={id}
+      aria-labelledby={docsHeadings.provides.id}
       className="docs-provides"
       {...pendingAttribute(outline)}
     >
-      <Text render={<h2 />} variant="title" className="site-section-title" id={id}>
-        {title}
-      </Text>
+      <SectionHeading heading={docsHeadings.provides} />
       {app && (
         <Column gap={3}>
           <Text render={<h3 />} variant="title">
@@ -162,6 +175,13 @@ export function Provides({
     </Column>
   );
 }
+
+/** The sections of a page's guide (CodeGuide): its Compose subsections' headings. */
+export const codeGuideContents = (document: DocumentationEntry): TableOfContentsItem[] =>
+  guideSubsections(document.sections).map(({ title }) => ({
+    id: headingSlug(title),
+    label: title,
+  }));
 
 /**
  * The guide at the top of a page in the Docs, from the page's "## Compose": how to import it, its
@@ -213,35 +233,35 @@ export function WordsInCode({ document }: { document: DocumentationEntry }) {
     <Column
       render={<section />}
       gap={5}
-      aria-labelledby="words-in-code"
+      aria-labelledby={docsHeadings.wordsInCode.id}
       {...pendingAttribute(outline)}
     >
-      <Text render={<h2 />} variant="title" className="site-section-title" id="words-in-code">
-        Words in code
-      </Text>
+      <SectionHeading heading={docsHeadings.wordsInCode} />
       <PageMarkdown markdown={markdown} path={document.path} />
     </Column>
   );
 }
 
-/** The color properties of the exports a page documents, from docs/generated/parts.json. */
-export function ColorProperties({ components }: { components: readonly string[] }) {
-  const entries = components.flatMap((name) => {
+/** The exports of a page with color properties, each with its properties. */
+export const colorEntries = (components: readonly string[]) =>
+  components.flatMap((name) => {
     const colors = partsOf(name)?.colors ?? [];
     return colors.length ? [{ name, colors }] : [];
   });
+
+/** The color properties of the exports a page documents, from docs/generated/parts.json. */
+export function ColorProperties({ components }: { components: readonly string[] }) {
+  const entries = colorEntries(components);
   const outline = useSectionOutline();
   if (!entries.length) return null;
   return (
     <Column
       render={<section />}
       gap={5}
-      aria-labelledby="color-properties"
+      aria-labelledby={docsHeadings.colorProperties.id}
       {...pendingAttribute(outline)}
     >
-      <Text render={<h2 />} variant="title" className="site-section-title" id="color-properties">
-        Color properties
-      </Text>
+      <SectionHeading heading={docsHeadings.colorProperties} />
       <Text emphasis="muted">
         Each sets a color of one instance, through <Code>style</Code> or CSS; its hover, focus and
         press follow it. They are public and versioned.
@@ -273,12 +293,10 @@ export function PropsSection({ document }: { document: DocumentationEntry }) {
     <Column
       render={<section />}
       gap={5}
-      aria-labelledby="props"
+      aria-labelledby={docsHeadings.props.id}
       {...pendingAttribute(useSectionOutline())}
     >
-      <Text render={<h2 />} variant="title" className="site-section-title" id="props">
-        Props
-      </Text>
+      <SectionHeading heading={docsHeadings.props} />
       <PropsTables document={document} />
     </Column>
   );
@@ -290,10 +308,13 @@ export function Strings({ document }: { document: DocumentationEntry }) {
   const outline = useSectionOutline();
   if (!strings.length) return null;
   return (
-    <Column render={<section />} gap={5} aria-labelledby="strings" {...pendingAttribute(outline)}>
-      <Text render={<h2 />} variant="title" className="site-section-title" id="strings">
-        Strings
-      </Text>
+    <Column
+      render={<section />}
+      gap={5}
+      aria-labelledby={docsHeadings.strings.id}
+      {...pendingAttribute(outline)}
+    >
+      <SectionHeading heading={docsHeadings.strings} />
       <Text emphasis="muted">
         EnvUIProvider&apos;s <Code>messages</Code> overrides each, and a component&apos;s own label
         prop wins over it.

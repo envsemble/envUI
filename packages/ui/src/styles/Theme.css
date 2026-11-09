@@ -7,6 +7,8 @@
   overflow-wrap: break-word;
   /* Standard contrast until a rule below says otherwise (see the switch at the end). */
   --env-theme-high-contrast: initial;
+  /* Light until a rule below says otherwise (see the switch at the end). */
+  --env-theme-dark: initial;
 }
 /* The outermost theme boundary is the env-window container, on which the window classes are
    measured: a themed document root, the Theme around an application, or the portal of a popup or a
@@ -64,6 +66,13 @@ html.env-theme > body {
   .env-theme:not([data-env-contrast='standard']) {
     --env-theme-high-contrast: ;
   }
+}
+/* A switch for what a component draws in each color scheme, set by each boundary as its theme is:
+   empty in the dark theme, and invalid in the light one, so a custom property that starts with it,
+   such as a code token's --env-code-token-dark-shown, holds its dark value or nothing. Markup that
+   carries both, as a highlighted code block does, is the same in either theme. */
+.env-theme[data-env-theme='dark'] {
+  --env-theme-dark: ;
 }
 /* While a ThemePreferenceProvider switches the page's theme or contrast, nothing transitions: the
    new colors show in the frame they change, not eased over the next ones. Important in the first of

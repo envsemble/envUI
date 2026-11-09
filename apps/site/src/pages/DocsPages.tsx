@@ -1,45 +1,56 @@
 import { useMemo } from 'react';
-import { Column, Text } from '@envsemble/envui';
+import { Column, Text, type TableOfContentsItem } from '@envsemble/envui';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
 import { SiteBanner } from '../banner/SiteBanner';
 import { pagesOf, type DocumentPage, type RoutePage } from '../routes/SiteRoutes';
 import { docsTrail } from '../routes/Trails';
 import { docsRoute } from '../routes/Address';
 import { PartSwitch } from '../routes/OtherPart';
-import { lazyPart } from '../loading/LoadBoundary';
-import { PageChangelog, TemplateContent } from '../template/TemplateContent';
+import {
+  changelogId,
+  PageChangelog,
+  TemplateContent,
+  templateContents,
+} from '../template/TemplateContent';
 import { MetadataBadges } from '../template/MetadataBadges';
 import { useRevealed } from '../template/useRevealed';
 import { SectionOutline } from '../markdown/SectionOutline';
 import { useDocument } from './PageContent';
-import { GuideDocument } from './GuideDocument';
+import { GuideDocument, guideContents } from './GuideDocument';
 import { LoadedPart } from '../loading/LoadedPart';
+import { pageParts } from './PageParts';
+import { partsOfPage } from './ViewModules';
 import { ChangelogSkeleton } from './ChangelogOutline';
-import { TokenReferenceSkeleton } from './TokenTables';
+import { tokenContents, TokenReferenceSkeleton } from './TokenTables';
 import { ReleaseNotes } from './ReleaseNotes';
-import { AgentSetup } from './AgentSetup';
+import { AgentSetup, agentSetupContents } from './AgentSetup';
 import {
   CodeGuide,
+  codeGuideContents,
+  colorEntries,
   ColorProperties,
+  docsHeadings,
+  hasProvides,
   PaletteSection,
+  partEntries,
   PartNames,
   PropsSection,
   Provides,
   Strings,
   WordsInCode,
 } from './DocsSections';
-import { withoutAgentNote } from '@docs-model/DocsContent';
+import { wordsInCode, withoutAgentNote } from '@docs-model/DocsContent';
 
 /*
  * The Docs' route views: a guide, the token reference, the changelog, a foundation's developer
  * part and a component's or a pattern's reference, each placing its sections (DocsSections.tsx).
  */
 
-/** The token reference, a large page that loads with the page that shows it. */
-const tokenReference = lazyPart(
-  () => import('./TokenReference'),
-  (module) => module.TokenReference,
-  'src/pages/TokenReference.tsx',
-);
+/** On the Docs' home, the guide's note on coding agents moves up under the prompt. */
+function guideParts(whole: DocumentationEntry, home: boolean) {
+  const { markdown, note } = home ? withoutAgentNote(whole.markdown ?? '') : {};
+  return { document: note ? { ...whole, markdown } : whole, note };
+}
 
 /**
  * A guide of docs/, such as migration, with its figures in place. The setup guide is the Docs'
@@ -48,11 +59,7 @@ const tokenReference = lazyPart(
 export function GuidePage({ page }: { page: DocumentPage }) {
   const whole = useDocument(page.document);
   const home = page.path === docsRoute;
-  // On the Docs' home, the guide's note on coding agents moves up under the prompt.
-  const { document, note } = useMemo(() => {
-    const { markdown, note } = home ? withoutAgentNote(whole.markdown ?? '') : {};
-    return { document: note ? { ...whole, markdown } : whole, note };
-  }, [whole, home]);
+  const { document, note } = useMemo(() => guideParts(whole, home), [whole, home]);
   return (
     <>
       <SiteBanner
@@ -83,7 +90,7 @@ export function TokensPage({ page }: { page: RoutePage }) {
       />
       <Column gap={7} className="site-article">
         <LoadedPart
-          part={tokenReference}
+          part={pageParts.tokenReference}
           what="token reference"
           placeholder={<TokenReferenceSkeleton />}
         />
@@ -92,12 +99,9 @@ export function TokensPage({ page }: { page: RoutePage }) {
   );
 }
 
-/** The full changelog, a large page that loads with the page that shows it. */
-const changelog = lazyPart(
-  () => import('./Changelog'),
-  (module) => module.Changelog,
-  'src/pages/Changelog.tsx',
-);
+/** The Changelog page's two sections. */
+const highlights = { id: 'highlights', label: 'Highlights' };
+const everyChange = { id: 'every-change', label: 'Every change' };
 
 /**
  * What changed in each release of @envsemble/envui: the release notes, a few lines on each release
@@ -113,17 +117,21 @@ export function ChangelogDocsPage({ page }: { page: RoutePage }) {
         kind="docs"
       />
       <Column gap={8} className="site-article">
-        <Column gap={6} render={<section aria-labelledby="highlights" />}>
-          <Text render={<h2 id="highlights" />} variant="title" className="site-section-title">
-            Highlights
+        <Column gap={6} render={<section aria-labelledby={highlights.id} />}>
+          <Text render={<h2 id={highlights.id} />} variant="title" className="site-section-title">
+            {highlights.label}
           </Text>
           <ReleaseNotes />
         </Column>
-        <Column gap={6} render={<section aria-labelledby="every-change" />}>
-          <Text render={<h2 id="every-change" />} variant="title" className="site-section-title">
-            Every change
+        <Column gap={6} render={<section aria-labelledby={everyChange.id} />}>
+          <Text render={<h2 id={everyChange.id} />} variant="title" className="site-section-title">
+            {everyChange.label}
           </Text>
-          <LoadedPart part={changelog} what="changelog" placeholder={<ChangelogSkeleton />} />
+          <LoadedPart
+            part={pageParts.changelog}
+            what="changelog"
+            placeholder={<ChangelogSkeleton />}
+          />
         </Column>
       </Column>
     </>
@@ -149,8 +157,8 @@ export function FoundationGuidePage({ page }: { page: DocumentPage }) {
       <Column gap={8} className="site-article docs-api">
         <CodeGuide document={document} />
         <WordsInCode document={document} />
-        <Provides document={document} title="Accessibility" id="provides" />
-        {document.id === 'colors' && <PaletteSection />}
+        <Provides document={document} />
+        {partsOfPage(page.kind, document.id).includes('palette') && <PaletteSection />}
       </Column>
     </>
   );
@@ -168,9 +176,8 @@ export function FoundationGuidePage({ page }: { page: DocumentPage }) {
  */
 export function DocsReferencePage({ page }: { page: DocumentPage }) {
   const document = useDocument(page.document);
-  const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
+  const { cataloguePage, pattern } = catalogueKind(document);
   const metadata = document.metadata;
-  const pattern = cataloguePage?.kind === 'pattern';
   // The guide, then once it has painted its reference, together: each step lays the whole page out
   // again, which costs more here than a step saves (useRevealed).
   const guide = useMemo(
@@ -181,9 +188,7 @@ export function DocsReferencePage({ page }: { page: DocumentPage }) {
     () =>
       [
         cataloguePage && <WordsInCode key="words" document={document} />,
-        cataloguePage && (
-          <Provides key="provides" document={document} title="Accessibility" id="provides" />
-        ),
+        cataloguePage && <Provides key="provides" document={document} />,
         !pattern && <PropsSection key="props" document={document} />,
         <PartNames key="parts" components={metadata?.components ?? []} />,
         <ColorProperties key="colors" components={metadata?.components ?? []} />,
@@ -214,4 +219,50 @@ export function DocsReferencePage({ page }: { page: DocumentPage }) {
       </Column>
     </>
   );
+}
+
+/** Whether a page in the Docs has a page in the catalogue, and whether that page is a pattern's. */
+function catalogueKind(document: DocumentationEntry) {
+  const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
+  return { cataloguePage, pattern: cataloguePage?.kind === 'pattern' };
+}
+
+/**
+ * The sections of a page in the Docs, as its view renders them, for the page's contents to list
+ * from the first render: each the id and words of its heading.
+ */
+export function docsContents(
+  page: RoutePage,
+  whole: DocumentationEntry | undefined,
+): TableOfContentsItem[] {
+  if (page.kind === 'docs-changelog') return [highlights, everyChange];
+  if (page.kind === 'tokens') return tokenContents();
+  if (!whole) return [];
+  if (page.kind === 'guide') {
+    const home = page.path === docsRoute;
+    const { document, note } = guideParts(whole, home);
+    return [...(home ? agentSetupContents(note) : []), ...guideContents(document)];
+  }
+  const words = wordsInCode(whole.sections) ? [docsHeadings.wordsInCode] : [];
+  const provides = hasProvides(whole) ? [docsHeadings.provides] : [];
+  if (page.kind === 'foundation-guide')
+    return [
+      ...codeGuideContents(whole),
+      ...words,
+      ...provides,
+      ...(whole.id === 'colors' ? [docsHeadings.palette] : []),
+    ];
+  const { cataloguePage, pattern } = catalogueKind(whole);
+  const components = whole.metadata?.components ?? [];
+  const changelog = whole.sections?.find((section) => section.id === 'changelog');
+  return [
+    ...(cataloguePage ? [] : templateContents(whole, { provides: true, related: false })),
+    ...codeGuideContents(whole),
+    ...(cataloguePage ? [...words, ...provides] : []),
+    ...(pattern ? [] : [docsHeadings.props]),
+    ...(partEntries(components).length ? [docsHeadings.partNames] : []),
+    ...(colorEntries(components).length ? [docsHeadings.colorProperties] : []),
+    ...(whole.strings?.length ? [docsHeadings.strings] : []),
+    ...(changelog ? [{ id: changelogId, label: changelog.title }] : []),
+  ];
 }

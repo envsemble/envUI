@@ -9,6 +9,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { siteBuildUrl } from '../helpers/Servers';
+import { openSite } from '../helpers/SiteSpecHelpers';
 import { moduleFiles, requireSite, serveSite, site, siteUrl } from '../helpers/HostedSite';
 import { routeOfDocument } from '../../../apps/site/src/routes/SiteRoutes';
 import { normalizeRoute } from '../../../apps/site/src/routes/OldAddresses';
@@ -47,8 +48,9 @@ async function search(page: Page, query: string) {
   await field(page).fill(query);
 }
 
+/** Opens an address once the site has started on it, so its shortcuts answer. */
 async function openCatalogue(page: Page, address: string) {
-  await page.goto(address);
+  await openSite(page, address);
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 }
 
@@ -248,14 +250,16 @@ test.describe('hosted build', () => {
         return {
           route: await answer('/components/dialog'),
           docs: await answer('/docs/components/dialog'),
+          noPage: await answer('/components/no-such-page'),
           missing: await answer('/assets/gone-0000.js'),
           asset: await answer(new URL(script.src).pathname),
         };
       });
-      // A page without a file answers with index.html, in the catalogue and the Docs; /assets/
-      // never does.
+      // A page answers with its file, in the catalogue and the Docs, and an address without one
+      // with Page not found; /assets/ never does.
       expect(answers.route).toMatchObject({ status: 200, type: 'text/html' });
       expect(answers.docs).toMatchObject({ status: 200, type: 'text/html' });
+      expect(answers.noPage).toMatchObject({ status: 404, type: 'text/html' });
       // WebKit drops the charset of a response the test fulfils.
       expect(answers.missing).toMatchObject({ status: 404, cache: 'no-store' });
       expect(answers.missing.type).toMatch(/^text\/plain\b/);

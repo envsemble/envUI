@@ -20,7 +20,7 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "envui",
   "main": "./apps/site/hosting/Worker.mjs",
-  // From 2025-04-01, page loads of unknown paths get index.html without running the script.
+  // From 2025-04-01, page loads of unknown paths get 404.html without running the script.
   "compatibility_date": "2026-10-12",
   "assets": {
     "directory": "./dist/site",
@@ -28,11 +28,13 @@
     // A page's address answers with its pre-rendered file, /components/button with
     // components/button.html, and / with index.html, the home page's.
     "html_handling": "auto-trailing-slash",
-    // An address without a file, such as an old one, answers with index.html, which renders the
-    // page it leads to on the client (apps/site/src/main.tsx).
-    "not_found_handling": "single-page-application",
+    // An address without a file answers with 404.html, Page not found, with a 404 status; at an
+    // old address that _redirects doesn't list, the browser renders the page it leads to there
+    // (apps/site/src/main.tsx). The old addresses it lists are redirected, and old hash addresses,
+    // /#/…, which only the browser sees, are redirected there from index.html.
+    "not_found_handling": "404-page",
     // The script answers /assets/ first, so a missing hashed file is not found even when a browser
-    // opens it as a page, rather than index.html cached for a year under its name.
+    // opens it as a page, rather than with the HTML of 404.html.
     "run_worker_first": ["/assets/*"],
   },
   // The workers.dev address and the Preview URLs of branches stay off until Cloudflare Access

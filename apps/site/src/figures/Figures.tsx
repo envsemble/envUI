@@ -190,6 +190,15 @@ function groupFigures(
 }
 
 /**
+ * A section's "## Title" line, which its first Markdown block opens with and its heading shows;
+ * empty where it opens otherwise.
+ */
+export function sectionTitle(section: DocumentationSection): string {
+  const first = section.blocks[0];
+  return first?.kind === 'markdown' ? (first.markdown.split('\n')[0] ?? '') : '';
+}
+
+/**
  * One section of a page: its heading, then its content in the order it is
  * written, with figures that follow each other side by side and a subsection beside its one
  * figure. `lead` comes right after the heading, before the authored content, or with `leadAfter`
@@ -210,10 +219,10 @@ export function FigureSection({
   headingHidden?: boolean;
 }) {
   const blocks = [...section.blocks];
-  // The first Markdown block opens with the section's "## Title" line, which the heading shows.
+  const title = sectionTitle(section);
   const first = blocks[0];
-  const [title, ...intro] = first?.kind === 'markdown' ? first.markdown.split('\n') : [''];
-  if (first?.kind === 'markdown') blocks[0] = { kind: 'markdown', markdown: intro.join('\n') };
+  if (first?.kind === 'markdown')
+    blocks[0] = { kind: 'markdown', markdown: first.markdown.split('\n').slice(1).join('\n') };
   // An option table right after a variants figure is the figure's legend: each variant's name,
   // which its callout tags, followed by what it is for.
   const options = new Map<string, OptionTable>();

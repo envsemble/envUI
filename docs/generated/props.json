@@ -1007,7 +1007,7 @@
     "Code": {
       "kind": "component",
       "source": "packages/ui/src/content/Code.tsx",
-      "description": "Inline source in the code theme of the app theme; use CodeBlock for multiline source.",
+      "description": "Inline source in the code theme of the app theme, the nearest Theme boundary's; use CodeBlock for multiline source.",
       "props": [],
       "native": [
         "code"

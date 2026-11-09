@@ -3,11 +3,13 @@
 // builds the site's server entry (apps/site/src/Server.tsx) into dist/site-server, renders each page
 // the site serves with it, and writes dist/site/<route>.html, the home page as index.html, each
 // with the head of the client's index.html: its theme bootstrap, the page's title and description,
-// and its view's and its figures' style sheets, applied before the first paint. The site's script,
-// its view's modules and its content (.vite/page-preloads.json) load once the style sheets have, as
-// a script at the end of the body adds them. The host serves /<route> from <route>.html, and answers an
-// address with no page with index.html (wrangler.jsonc), which its head hides until the site
-// renders that address on the client (main.tsx). It needs no network.
+// its view's, parts' and figures' style sheets, applied before the first paint, and its canonical
+// address. The site's script, its view's and parts' modules and its content
+// (.vite/page-preloads.json) load once the style sheets have, as a script at the end of the body
+// adds them. The host serves /<route> from <route>.html, redirects the old addresses _redirects
+// lists, and answers any other address with 404.html, Page not found, with a 404 status
+// (wrangler.jsonc), which its head hides until the site renders that address on the client, the
+// page an old address leads to or Page not found (main.tsx). It needs no network.
 //
 //   node scripts/site/PrerenderSite.ts
 import { existsSync } from 'node:fs';
@@ -16,6 +18,7 @@ import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { build } from 'vite';
 import { repositoryRoot } from '../RepositoryPaths.ts';
+import { siteOrigin } from './SiteAgentFiles.ts';
 
 const siteApp = resolve(repositoryRoot, 'apps/site');
 
@@ -29,19 +32,33 @@ interface SitePage {
   document?: string;
   /** The module of its kind's view (pages/ViewModules.ts), such as catalogue. */
   view: string;
+  /** The parts of it that load on their own and that it renders (partsOfPage), such as changelog. */
+  parts: string[];
 }
 
 /** The server entry's build: its module, which renders the site's pages. */
 export interface SiteServer {
   sitePages: SitePage[];
-  renderPage: (
-    route: string,
-  ) => Promise<{ title: string; description: string; html: string; code?: string }>;
+  renderPage: (route: string) => Promise<RenderedPage>;
+  /** Page not found, which the host answers an address with no page with. */
+  renderNotFound: () => Promise<RenderedPage>;
+  /** The old addresses the host redirects, each with the address of the page it leads to. */
+  oldAddresses: { from: string; to: string }[];
+}
+
+/** A page pre-rendered: its tab's title and description, the HTML of the site's root and its code. */
+interface RenderedPage {
+  title: string;
+  description: string;
+  html: string;
+  /** The element that carries the tokens of its code, highlighted as it rendered (PageCode.ts). */
+  code?: string;
 }
 
 /** What each page loads, as the client's build found it (envui-content-preload in vite.config.ts). */
 interface PagePreloads {
   views: Record<string, { scripts: string[]; styles: string[] }>;
+  parts: Record<string, { scripts: string[]; styles: string[] }>;
   contents: Record<string, string>;
   figureStyles: Record<string, string[]>;
 }
@@ -68,13 +85,11 @@ export async function buildSiteServer(serverDirectory: string) {
       // The client's chunks, which carry a page's parts to the browser, don't matter here.
       rolldownOptions: { output: { codeSplitting: false } },
     },
-    ssr: {
-      noExternal: true,
-      // The library's source, as the browser's build resolves it (envui-source, vite.config.ts),
-      // rather than its build in dist/: the two would render apart once the source changes, and
-      // the site's door into the library's internals (@envui-internal) is to its source.
-      resolve: { conditions: ['envui-source', 'module', 'node', 'development|production'] },
-    },
+    // The server resolves the library from its source too: Vite gives the site's resolve.conditions
+    // to the browser's build only, and without envui-source here the package's name would bring in
+    // packages/ui/dist beside the source the site's internal imports reach, two copies of every
+    // context, and the server would render whatever the last library build was.
+    ssr: { noExternal: true, resolve: { conditions: ['envui-source', 'module', 'node'] } },
   });
 }
 
@@ -87,26 +102,33 @@ const escapeText = (text: string) =>
 const escapeAttribute = (text: string) => escapeText(text).replace(/"/g, '&quot;');
 
 /**
- * The files of a page's view and content: the view's style sheets, which its head links, as its
- * text is there to paint, and a catalogue page's figures' sheets after them, in the order each
- * figure's module would bring them; and what the page loads once they have, its view's modules
- * and its content. A figure's sheets apply with the page's first paint: each figure's module
- * would otherwise bring its sheets as it loads, after the page has painted, and a sheet applied
- * then lays out the whole page again, a long pause on a phone. They are small beside the view's.
+ * The files of a page's view, parts and content: the style sheets of its view and parts, which its
+ * head links, as its text is there to paint, and a catalogue page's figures' sheets after them, in
+ * the order each figure's module would bring them; and what the page loads once they have, its
+ * view's and parts' modules and its content. A figure's sheets apply with the page's first paint:
+ * each figure's module would otherwise bring its sheets as it loads, after the page has painted,
+ * and a sheet applied then lays out the whole page again, a long pause on a phone. They are small
+ * beside the view's.
  */
-function pageFiles({ address, document, view: kind }: SitePage, preloads: PagePreloads) {
+function pageFiles({ address, document, view: kind, parts }: SitePage, preloads: PagePreloads) {
   const view = preloads.views[kind];
   if (!view) throw new Error(`No files of the view ${kind}, which ${address} shows`);
+  const partFiles = parts.map((part) => {
+    const files = preloads.parts[part];
+    if (!files) throw new Error(`No files of the part ${part}, which ${address} shows`);
+    return files;
+  });
+  const scripts = new Set([view, ...partFiles].flatMap((files) => files.scripts));
+  const styles = new Set([view, ...partFiles].flatMap((files) => files.styles));
   const content = document === undefined ? undefined : preloads.contents[document];
   if (document !== undefined && !content) throw new Error(`No file of the content of ${document}`);
   const figureStyles = (kind === 'catalogue' && document && preloads.figureStyles[document]) || [];
   const loads: Load[] = [
-    ...view.scripts.map((file): Load => ['modulepreload', `/${file}`]),
+    ...[...scripts].map((file): Load => ['modulepreload', `/${file}`]),
     ...(content ? [['modulepreload', `/${content}`] satisfies Load] : []),
   ];
-  // A sheet the view shares is linked once, with the view's.
-  const styles = [...new Set([...view.styles, ...figureStyles])];
-  return { styles: styles.map((file) => `/${file}`), loads };
+  // A sheet the view or a part shares is linked once, with theirs.
+  return { styles: [...new Set([...styles, ...figureStyles])].map((file) => `/${file}`), loads };
 }
 
 /**
@@ -127,17 +149,20 @@ function siteLoader(loads: Load[]) {
 
 /**
  * The head's script that hides the root where the address is not its page's: the host answers an
- * address with no page with index.html, the home page's, and an old address, such as an old hash
- * address or one that names a document in its query, may lead to another page than its file's.
- * main.tsx then renders the address's page on the client and shows the root again. A query of
- * `scale` alone is the page's own.
+ * address with no page with 404.html, whose address is never its page's (no `address`), and an old
+ * address, such as an old hash address at the root or one whose query names a document, a skill or a section (routes/OldAddresses.ts), may
+ * lead to another page than its file's or another place on it. main.tsx then renders the address's
+ * page on the client and shows the root again. Any other query, such as `scale` or a campaign's
+ * `utm_source`, leaves the page as it is.
  */
-function addressCheck(address: string) {
-  const path = JSON.stringify(decodeURI(address).replace(/\/+$/, ''));
+function addressCheck(address: string | undefined) {
+  const path = address && JSON.stringify(decodeURI(address).replace(/\/+$/, ''));
   const check = [
     'var p=location.pathname;',
     'try{p=decodeURI(p)}catch(e){}',
-    `if(p.replace(/\\/+$/,'')!==${path}||location.hash.indexOf('#/')===0||/[?&](?!scale=)[^&]/.test(location.search))`,
+    path === undefined
+      ? ''
+      : `if(p.replace(/\\/+$/,'')!==${path}||location.hash.indexOf('#/')===0||/[?&](?:document|skill|section)(?:[=&]|$)/.test(location.search))`,
     "document.documentElement.setAttribute('data-site-unrendered','')",
   ].join('');
   return [
@@ -146,12 +171,15 @@ function addressCheck(address: string) {
   ];
 }
 
-/** The client's index.html with a page's head, its rendered root and its loader. */
+/**
+ * The client's index.html with a page's head, its rendered root and its loader; without a page,
+ * Page not found's, which the browser renders on its own rather than hydrating (main.tsx).
+ */
 function pageDocument(
   template: string,
-  page: SitePage,
+  page: SitePage | undefined,
   files: ReturnType<typeof pageFiles>,
-  rendered: { title: string; description: string; html: string; code?: string },
+  rendered: RenderedPage,
 ) {
   let html = template;
   const replace = (pattern: RegExp, replacement: (found: string, file: string) => string) => {
@@ -176,19 +204,32 @@ function pageDocument(
     () => `<meta name="description" content="${escapeAttribute(rendered.description)}">`,
   );
   // After the theme bootstrap and the first paint's style, which open the head.
-  replace(/<\/style>/, () => `</style>\n    ${addressCheck(page.address).join('\n    ')}`);
+  replace(/<\/style>/, () => `</style>\n    ${addressCheck(page?.address).join('\n    ')}`);
   // After the site's own style sheet, whose cascade layers their sheets build on.
   const styles = files.styles.map(
     (href) => `\n    <link rel="stylesheet" crossorigin href="${href}">`,
   );
-  replace(/\s*<\/head>/, () => `${styles.join('')}\n  </head>`);
-  const root = `<div id="root" data-site-page="${escapeAttribute(page.route)}">${rendered.html}</div>`;
+  // The page's one address, for search engines and link previews, whichever address served it.
+  const canonical = page
+    ? `\n    <link rel="canonical" href="${escapeAttribute(siteOrigin + page.address)}">`
+    : '';
+  replace(/\s*<\/head>/, () => `${styles.join('')}${canonical}\n  </head>`);
+  const named = page ? ` data-site-page="${escapeAttribute(page.route)}"` : '';
+  const root = `<div id="root"${named}>${rendered.html}</div>`;
   // The tokens of its code, which the site gives before it hydrates, ahead of the script that
   // starts it.
   const code = rendered.code ? `\n    ${rendered.code}` : '';
   replace(/<div id="root"><\/div>/, () => `${root}${code}\n    ${siteLoader(loads)}`);
   return html;
 }
+
+/**
+ * The host's redirects of old addresses (_redirects), permanent, each to the page it leads to. An
+ * old address it doesn't list, such as an old view of a page, gets 404.html, in which the browser
+ * renders the page it leads to.
+ */
+export const redirectsFile = (redirects: SiteServer['oldAddresses']) =>
+  redirects.map(({ from, to }) => `${encodeURI(from)} ${to} 301\n`).join('');
 
 /** The file a page's address is served from: index.html for the home page's, /. */
 export const pageFile = (address: string) =>
@@ -225,6 +266,12 @@ export async function prerenderSite(siteDirectory: string, serverDirectory: stri
     await mkdir(dirname(file), { recursive: true });
     await writeFile(file, pageDocument(template, page, files, rendered));
   }
+  const notFound = await server.renderNotFound();
+  await writeFile(
+    resolve(siteDirectory, '404.html'),
+    pageDocument(template, undefined, { styles: [], loads: [] }, notFound),
+  );
+  await writeFile(resolve(siteDirectory, '_redirects'), redirectsFile(server.oldAddresses));
   return server.sitePages.length;
 }
 

@@ -127,7 +127,9 @@ export const codeThemeName = (scheme: ColorScheme, contrast: CodeContrast) =>
 /**
  * The code theme's colors for the app theme, standard and high-contrast, as CSS custom properties:
  * the style sheet takes the high-contrast ones where the nearest Theme's contrast is high. Inline
- * code takes the neutral muted fill from the color tokens.
+ * code takes the neutral muted fill from the color tokens. Code.css sets the same on every theme
+ * boundary, so code takes its boundary's; a diff still showing the theme before a switch takes
+ * that theme's from here.
  */
 export function codeThemeStyle(theme: ColorScheme): CSSProperties {
   const [standard, high] = [colors[theme].standard, colors[theme].high];

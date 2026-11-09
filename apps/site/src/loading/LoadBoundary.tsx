@@ -1,11 +1,4 @@
-import {
-  Component,
-  createRef,
-  lazy,
-  type ComponentType,
-  type ReactNode,
-  type RefObject,
-} from 'react';
+import { Component, createRef, type ReactNode, type RefObject } from 'react';
 import { Alert, Button, Row } from '@envsemble/envui';
 
 /** A file that a part of a page loads on its own and that failed to arrive. */
@@ -53,31 +46,6 @@ export function reloadModule<T>(
     import(/* @vite-ignore */ `${pathname}?retry=${Date.now()}${query ? `&${query}` : ''}`).then(
       pick,
     );
-}
-
-/**
- * A component that loads on its own, for LoadBoundary to show. `module` is the path in the
- * site app of the module `load` imports, such as `src/pages/Changelog.tsx`, and `modules`
- * passes it on to LoadBoundary. `component` is the lazy component to render. A lazy component
- * that failed to load stays failed, so `retry` replaces it with one that asks for the module again,
- * as reloadModule does, at that path from the app's root, where Vite serves it in development.
- */
-export function lazyPart<M, P extends object>(
-  load: () => Promise<M>,
-  pick: (module: M) => ComponentType<P>,
-  module: string,
-) {
-  const make = (from: () => Promise<M>) =>
-    lazy(loadModule(() => from().then((loaded) => ({ default: pick(loaded) }))));
-  const part = {
-    component: make(load),
-    modules: [module] as const,
-    retry() {
-      const root = new URL(import.meta.env.BASE_URL, window.location.href).href;
-      part.component = make(reloadModule(load, module, root));
-    },
-  };
-  return part;
 }
 
 /** Whether this is the built site, whose parts load from files of their own. */

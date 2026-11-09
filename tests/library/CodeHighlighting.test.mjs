@@ -31,26 +31,88 @@ test('tokens carry high-contrast colors only when asked, which loads those theme
   assert.ok(high.flat().some((token) => token.lightHigh?.color && token.darkHigh?.color));
 });
 
-test('a token without high-contrast styles takes its standard color at high contrast', () => {
-  assert.deepEqual(tokenStyle({ color: '#123456', fontStyle: 1 }, undefined), {
+test('a token carries its colors in both code themes, its standard ones at high contrast where it has no high-contrast styles', () => {
+  const token = (light, dark, lightHigh, darkHigh) => ({
+    content: 'a',
+    light,
+    dark,
+    lightHigh,
+    darkHigh,
+  });
+  assert.deepEqual(tokenStyle(token({ color: '#123456', fontStyle: 1 }, { color: '#654321' })), {
     '--env-code-token': '#123456',
     '--env-code-token-high': '#123456',
+    '--env-code-token-dark': '#654321',
+    '--env-code-token-dark-high': '#654321',
     fontStyle: 'italic',
     fontWeight: undefined,
     textDecoration: undefined,
   });
-  assert.equal(tokenStyle({ color: '#123456' }, {})['--env-code-token-high'], '#123456');
-  assert.equal(
-    tokenStyle({ color: '#123456' }, { color: '#000000' })['--env-code-token-high'],
-    '#000000',
+  const high = tokenStyle(
+    token({ color: '#123456' }, { color: '#654321' }, { color: '#000000' }, { color: '#ffffff' }),
   );
-  assert.deepEqual(tokenStyle({ fontStyle: 2 | 4 | 8 }), {
+  assert.equal(high['--env-code-token-high'], '#000000');
+  assert.equal(high['--env-code-token-dark-high'], '#ffffff');
+  assert.deepEqual(tokenStyle(token({ fontStyle: 2 | 4 | 8 }, {})), {
     '--env-code-token': undefined,
     '--env-code-token-high': undefined,
+    '--env-code-token-dark': undefined,
+    '--env-code-token-dark-high': undefined,
     fontStyle: undefined,
     fontWeight: 700,
     textDecoration: 'underline line-through',
   });
+});
+
+test('the code themes style a token alike, so its font style is the same in either', async () => {
+  const sources = [
+    [
+      [
+        'export function A({ a }: { a?: string }) {',
+        '  // A comment',
+        '  return <b className="x">{a}</b>;',
+        '}',
+      ].join('\n'),
+      'tsx',
+    ],
+    ['.a:hover { color: red; /* note */ }', 'css'],
+    [['# Title', '', '*emphasis* **strong** `code`'].join('\n'), 'markdown'],
+  ];
+  for (const [source, language] of sources)
+    for (const token of (await highlightCode(source, language, true)).flat())
+      for (const style of [token.dark, token.lightHigh, token.darkHigh])
+        assert.equal(
+          style?.fontStyle ?? 0,
+          token.light.fontStyle ?? 0,
+          `${language}: ${token.content}`,
+        );
+});
+
+test('every theme boundary sets the code colors codeColors.ts gives its theme', async () => {
+  const { codeThemeStyle } = await import('../../packages/ui/dist/content/internal/codeColors.js');
+  const css = await readFile(
+    new URL('../../packages/ui/src/styles/Code.css', import.meta.url),
+    'utf8',
+  );
+  // The code colors each rule of a selector declares, in the order of the style sheet.
+  const declared = (selector) => {
+    const properties = {};
+    for (const [, at, body] of css.matchAll(/^ {2}([^\n{]+) \{([^}]*)\}/gm))
+      if (at === selector)
+        for (const [, name, value] of body.matchAll(
+          /(--env-code-(?:back|fore)ground[\w-]*): ([^;]+);/g,
+        ))
+          properties[name] = value;
+    return properties;
+  };
+  for (const [scheme, selector] of [
+    ['light', '.env-theme'],
+    ['dark', ".env-theme[data-env-theme='dark']"],
+  ]) {
+    const { colorScheme, ...colors } = codeThemeStyle(scheme);
+    assert.equal(colorScheme, scheme);
+    assert.deepEqual(declared(selector), colors, `${scheme}: update Code.css to codeColors.ts`);
+  }
 });
 
 test('every highlighted token is readable on its code background, in code blocks and diffs', async () => {

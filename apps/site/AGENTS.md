@@ -73,6 +73,9 @@ Each has one folder in `apps/site/src`:
 - `npm run build:site` renders every page to its own HTML file with the server entry, `src/Server.tsx` (`scripts/site/PrerenderSite.ts`), and `main.tsx` hydrates it. The development server renders on the client alone.
 - A figure's example, specimen or picture renders in the browser alone: until `useHydrated` (`loading/`) says the page has hydrated, and then until it nears the view (`figures/useSubjectShown.ts`), it shows its skeleton at its recorded size. A spec that needs a pre-rendered page's figures scrolls to them, or calls `showFigures` (`tests/browser/helpers/SiteSpecHelpers.ts`).
 - A page's code blocks are highlighted as it pre-renders, and its HTML carries their tokens, which the browser gives before it hydrates (`pages/PageCode.ts`).
+- The page's contents list its sections from its data, not from its headings once mounted: the view's module gives them with the view (`contents` in `pages/PageViews.ts`), so a section a view adds or renames changes there too; `scripts/test/CheckContents.ts` checks them against every page's headings.
+- A part of a page that loads on its own and that the server renders, such as the token reference, is a `lazyPart` in `pages/PageParts.ts`, listed for its pages by `partsOfPage` (`pages/ViewModules.ts`): the browser loads it before it hydrates, and the build fails on a page that renders one it doesn't list.
+- The build also writes `404.html`, which the host answers an address with no page with, and `_redirects`, the old addresses whose path alone says where they lead (`oldPaths`, `routes/OldAddresses.ts`).
 
 ## Hosting
 

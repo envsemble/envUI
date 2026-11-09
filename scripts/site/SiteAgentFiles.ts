@@ -12,7 +12,8 @@ import { repositoryRoot } from '../RepositoryPaths.ts';
 
 export { libraryVersion };
 
-const siteOrigin = 'https://envui.envsemble.com';
+/** Where the site is hosted. */
+export const siteOrigin = 'https://envui.envsemble.com';
 const skillTemplateFile = resolve(repositoryRoot, 'apps/site/hosting/SKILL.md');
 /** The setup skill for a version of envUI. */
 export function renderSkill({

@@ -7,7 +7,7 @@ import './styles/index.css';
 import { findPage } from './routes/SiteRoutes';
 import { currentRoute } from './routes/useSiteRoute';
 import { oldHashRoute } from './routes/Address';
-import { preloadPage } from './pages/PreloadPage';
+import { preloadFirstPage } from './pages/PreloadPage';
 import { Hydrated } from './loading/useHydrated';
 import { givePageCode } from './pages/PageCode';
 
@@ -18,10 +18,10 @@ const page = findPage(currentRoute().split('?')[0]);
 // The site renders once what the page it opens on needs has loaded, which started as it did, so
 // its first paint has the whole page rather than the frame and then the page; a pre-rendered page
 // hydrates without suspending.
-const opening = preloadPage(page);
-// The page pre-rendered for the address hydrates. While developing, and at an address the build
-// has no page for, which the host answers with the home page's file, such as an old address that
-// leads to another page, the site renders on the client alone.
+const opening = preloadFirstPage(page);
+// The page pre-rendered for the address hydrates. While developing, at an old hash address, and at
+// an address the build has no page for, which the host answers with Page not found (404.html),
+// such as an old address that leads to another page, the site renders on the client alone.
 const prerendered = container.dataset.sitePage;
 const hydrates =
   prerendered !== undefined && oldHashRoute() === undefined && page?.path === prerendered;
@@ -45,9 +45,9 @@ function Started({ hydrating, children }: { hydrating: boolean; children: ReactN
 }
 
 void opening.then(() => {
-  // The head hides a page it can't tell is the address's (PrerenderSite.ts): an address with a
-  // query, which is, or one with no page of its own, whose page renders here in place of it. It
-  // shows before the site's effects run, which scroll to and focus the section an address names.
+  // The head hides a page it can't tell is the address's (PrerenderSite.ts): an old address, or
+  // one with no page of its own, whose page renders here in place of it. It shows before the
+  // site's effects run, which scroll to and focus the section an address names.
   document.documentElement.removeAttribute('data-site-unrendered');
   const site = (
     <Started hydrating={hydrates}>
