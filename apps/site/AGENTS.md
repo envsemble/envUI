@@ -47,7 +47,7 @@ Each has one folder in `apps/site/src`:
 
 ## Imports run down the folders
 
-- A folder of `apps/site/src` imports only the folders below it in this order, and `App.tsx` and `main.tsx` any: navigation, pages, banner, search, brand, template, specimens, figures, markdown, tiles, motion, fit, routes, loading, display, examples, shared, generated. ESLint rejects an import up the list, from the same list in `eslint.config.mjs` (`siteFolders`): change the two together.
+- A folder of `apps/site/src` imports only the folders after it in `siteFolders`, the order listed once in `eslint.config.mjs`, and `App.tsx` and `main.tsx` any. ESLint rejects an import up the list.
 - What two folders both need sits in the lower one or below it. Where a lower folder needs to know something of a higher one, the higher one passes it in, as the figures pass `fit/` what a script tells it (`ScriptReader`, [`fit/`](src/fit/README.md)).
 - A new folder takes its place in the order.
 
