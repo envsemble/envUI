@@ -8,52 +8,50 @@ import { fileURLToPath } from 'node:url';
 // build left it (node scripts/test/MeasureSize.ts --no-build, a few seconds), the way work-0028's
 // baselines and targets were measured. Sizes are bytes; gzip at level 9.
 //
-// Each budget is the size measured when it was set (2026-10-29) plus about 3 %, rounded, so noise
-// passes and real growth fails. Raising one is a deliberate decision: say in the commit what grew,
-// why it is worth the bytes, and the new measurement. Lower a budget when a size drops for good.
+// Each budget is the size measured when it was last set (2026-11-09, unless its comment says
+// otherwise) plus about 1.5 %, rounded up to 50, so noise passes and real growth fails. Raising one
+// is a deliberate decision: say in the commit what grew, why it is worth the bytes, and the new
+// measurement. Lower a budget when a size drops for good.
 
 const repository = fileURLToPath(new URL('../../', import.meta.url));
 
+/** The whole style sheet, styles.css, minified, gzip: 57,314 measured. */
+const stylesheetBudget = 58200;
+
 /** The CSS a page loads with the bundle set's components, minified, gzip. */
 const cssBudgets = {
-  // 15,091 measured (2026-11-08, prerelease.6's states, focus rings and motion; was 13,119);
-  // raising it is a deliberate decision, recorded in the commit.
-  'Small app (Theme, Button, TextField, Card)': 15550,
-  // 30,907 measured (2026-11-08, prerelease.6; was 26,080); raising it is a deliberate decision,
-  // recorded in the commit.
-  'Typical app (23 components, with Base UI)': 31850,
-  // 53,065 measured (2026-11-08, prerelease.6; was 45,854); raising it is a deliberate decision,
-  // recorded in the commit.
-  'Everything, envUI’s own code': 54650,
+  // 15,104 measured (Text without the hover detail's style sheet; was 15,293).
+  'Small app (Theme, Button, TextField, Card)': 15350,
+  // 31,248 measured.
+  'Typical app (23 components, with Base UI)': 31750,
+  // 53,520 measured.
+  'Everything, envUI’s own code': 54350,
 };
 
 /** The JavaScript a page loads first. */
 const jsBudgets = [
-  // 34,013 measured (2026-11-08, Table's column resize handle on the shared useResize; was 32,296);
-  // raising it is a deliberate decision, recorded in the commit.
+  // 34,661 measured.
   { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 35050 },
-  // 4,701 measured; raising it is a deliberate decision, recorded in the commit.
+  // 110,015 measured.
+  { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 111700 },
+  // 4,832 measured (2026-11-08).
   { set: 'Theme + Button + Icon', measure: 'minified', budget: 4850 },
 ];
 
 /** Each component's own envUI code, minified, its Base UI and Floating UI left out. */
 const componentBudgets = {
-  // 12,294 measured; raising it is a deliberate decision, recorded in the commit.
+  // 12,589 measured.
   Tooltip: 12700,
-  // 7,684 measured (2026-11-08, the shared contained open-change handler and an open state whose
-  // setter stays the same; was 7,371); raising it is a deliberate decision, recorded in the commit.
-  Popover: 7900,
-  // 15,190 measured (2026-11-08, its parts in modules of their own, each importing its style
-  // sheets; was 14,833); raising it is a deliberate decision, recorded in the commit.
-  Menu: 15650,
-  // 16,320 measured (2026-11-08, its open state from the shared useOpenState; was 16,167); raising
-  // it is a deliberate decision, recorded in the commit.
-  Select: 16800,
-  // 7,528 measured (2026-11-08, prerelease.6's ghost fill and read-only look; was 7,202); raising it
-  // is a deliberate decision, recorded in the commit.
-  TextField: 7750,
-  // 11,200 measured; raising it is a deliberate decision, recorded in the commit.
-  Alert: 11500,
+  // 7,633 measured.
+  Popover: 7750,
+  // 15,184 measured.
+  Menu: 15450,
+  // 16,470 measured.
+  Select: 16750,
+  // 7,524 measured.
+  TextField: 7650,
+  // 11,279 measured.
+  Alert: 11450,
 };
 
 const report = JSON.parse(
@@ -70,6 +68,9 @@ const within = (what, size, budget) =>
     `${what} is ${size} bytes, over its budget of ${budget}. Shrink it, or raise the budget in ` +
       'tests/library/SizeBudgets.test.mjs as a deliberate decision, recorded in the commit.',
   );
+
+test('the whole style sheet stays within its budget', () =>
+  within('styles.css (gzip)', report.stylesheet.gzip, stylesheetBudget));
 
 test('the CSS each bundle set loads stays within its budget', () => {
   for (const [set, budget] of Object.entries(cssBudgets))
