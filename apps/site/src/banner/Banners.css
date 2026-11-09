@@ -125,10 +125,17 @@
   --env-line-art-duration: calc(var(--env-motion-duration-slow) * 4);
 }
 /* Where it will draw itself in, as the head's script found before the first paint, a pre-rendered
-   page shows none of its lines until it starts to, rather than the whole drawing first. */
+   page shows none of its lines until it starts to, rather than the whole drawing first. Where the
+   site's script hasn't run five seconds on, as when it failed to load, they show whole. */
 @media (prefers-reduced-motion: no-preference) {
   :root[data-site-banner-appear] .catalogue-banner-lines:not([data-motion]) {
     visibility: hidden;
+    animation: site-banner-lines-shown 0s 5s forwards;
+  }
+}
+@keyframes site-banner-lines-shown {
+  to {
+    visibility: visible;
   }
 }
 /* On the dark banner, the same contrast reads louder than in light: the lines are quieter there,
