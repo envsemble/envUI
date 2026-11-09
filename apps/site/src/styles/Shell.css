@@ -49,6 +49,11 @@ body {
   block-size: 0.864rem;
   inline-size: auto;
 }
+/* Its black artwork in a light theme and its white one in a dark theme (EnvUIDocsLogo.tsx). */
+:root[data-env-theme='dark'] .docs-brand-docs[data-docs-lockup='black'],
+:root:not([data-env-theme='dark']) .docs-brand-docs[data-docs-lockup='white'] {
+  display: none;
+}
 /* The navigation at the start of a wide window: the catalogue's rail beside the drawer of the
    chosen destination's pages, or the Docs' drawer, flush on the navigation's background with no line
    between them, as tall as the window. The drawer keeps its top and foot in view and scrolls its
@@ -71,6 +76,15 @@ body {
 .site-sidebar {
   block-size: 100%;
   padding: var(--env-space-4) var(--env-space-3);
+}
+/* Until the site has hydrated a pre-rendered page, the drawer, which renders its default width,
+   is as wide as the reader left it, which the head's script set on the root (HeadScripts.ts); then
+   the drawer has that width itself, and the root's goes (SiteDrawer.tsx). */
+.site-frame[data-area='catalogue'] .site-sidebar[data-resizable] {
+  inline-size: var(--site-drawer-width-catalogue, var(--env-navigation-drawer-width));
+}
+.site-frame[data-area='docs'] .site-sidebar[data-resizable] {
+  inline-size: var(--site-drawer-width-docs, var(--env-navigation-drawer-width));
 }
 /* The drawer coming and going beside the rail (useDrawerMotion.ts): the page
    beside it takes its room at once, so nothing on it moves. Coming in, its panel fades in and its
@@ -294,6 +308,12 @@ body {
   .site-search-keys {
     display: none;
   }
+}
+/* The search button's keys in the platform's modifier, ⌘ where the head's script found an Apple
+   platform and Ctrl elsewhere (SearchButton.tsx). */
+:root:not([data-site-modifier='meta']) .site-search-keys[data-site-keys='meta'],
+:root[data-site-modifier='meta'] .site-search-keys[data-site-keys='control'] {
+  display: none;
 }
 .site-navigation[data-in-sheet] .site-search-keys {
   display: none;

@@ -1,16 +1,8 @@
-import { useState, type ComponentProps, type PointerEvent } from 'react';
+import { useLayoutEffect, useState, type ComponentProps, type PointerEvent } from 'react';
 import { NavigationDrawer } from '@envsemble/envui';
-import { drawerWidthKey } from '../display/DisplayStorage';
+import { useHydrated } from '@envui-internal/internal/react/useHydrated';
+import { drawerWidthKey, drawerWidths, storedDrawerWidthProperty } from '../display/DisplayStorage';
 import type { Area } from '../routes/SiteRoutes';
-
-/**
- * Each part's drawer at the start of a wide window: the width it starts at and its bounds, in rem.
- * The Docs' drawer holds the wordmark and search on its first row, so it starts wider.
- */
-const drawerWidths: Record<Area, { defaultWidth: number; minWidth: number; maxWidth: number }> = {
-  catalogue: { defaultWidth: 16, minWidth: 13, maxWidth: 24 },
-  docs: { defaultWidth: 21, minWidth: 18, maxWidth: 30 },
-};
 
 /** The width the reader gave the area's drawer on an earlier visit, within its bounds. */
 function storedDrawerWidth(area: Area) {
@@ -28,19 +20,26 @@ function storedDrawerWidth(area: Area) {
 
 /**
  * The resizable drawer of a wide window, whose width the reader drags and the catalogue keeps for
- * the next visit; read before the first render, so nothing moves as the page loads. The drawer in
- * the sheet of a narrower window takes the sheet's width and isn't resizable.
+ * the next visit; read before the first render, so nothing moves as the page loads. A pre-rendered
+ * page renders the default width on the server and as it hydrates, while the drawer takes the
+ * stored width the head's script set on the root (Shell.css); once hydrated, the drawer has it
+ * itself and the root's goes. The drawer in the sheet of a narrower window takes the sheet's width
+ * and isn't resizable.
  */
 function useDrawerWidth(
   area: Area,
   inSheet: boolean,
 ): Partial<ComponentProps<typeof NavigationDrawer>> {
   const [width, setWidth] = useState(() => storedDrawerWidth(area));
+  const hydrated = useHydrated();
+  useLayoutEffect(() => {
+    if (hydrated) document.documentElement.style.removeProperty(storedDrawerWidthProperty(area));
+  }, [hydrated, area]);
   if (inSheet) return {};
   return {
     resizable: true,
     ...drawerWidths[area],
-    width,
+    width: hydrated ? width : drawerWidths[area].defaultWidth,
     onWidthChange: (next, { committed }) => {
       setWidth(next);
       if (!committed) return;

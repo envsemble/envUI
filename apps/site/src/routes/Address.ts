@@ -65,9 +65,27 @@ function routeOfLocation({ pathname, search, hash }: Pick<URL, 'pathname' | 'sea
   return path || !query ? `${path}${query}` : `overview${query}`;
 }
 
+/**
+ * The path a server renders the site at, where there is no location, such as the build's
+ * pre-rendering of each page (renderAt): it stands in for the address, with no query or fragment.
+ */
+let serverPath = '/';
+
+/**
+ * Sets the path the server renders the site at next, such as `/components/button`.
+ * @internal
+ */
+export function renderAt(path: string) {
+  serverPath = path;
+}
+
+/** The address: the browser's, or on the server the path it renders. */
+const address = (): Pick<URL, 'pathname' | 'search' | 'hash'> =>
+  typeof location === 'undefined' ? { pathname: serverPath, search: '', hash: '' } : location;
+
 /** The route the address's path names, as it is written; empty at the root. */
 export function writtenRoute(): string {
-  return routeOfLocation(location);
+  return routeOfLocation(address());
 }
 
 /**
@@ -75,7 +93,7 @@ export function writtenRoute(): string {
  * `#/components/button/props`, which the address is redirected from; undefined for any other.
  */
 export function oldHashRoute(): string | undefined {
-  const { hash } = location;
+  const { hash } = address();
   return hash.startsWith('#/') ? hash.slice(2) : undefined;
 }
 

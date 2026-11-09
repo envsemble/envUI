@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from 'react';
 import { outsideTheme } from './internal/outsideTheme.js';
+import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ColorScheme } from './Theme.js';
 import {
   contrastSourceAttribute,
@@ -27,6 +28,7 @@ import {
   type ThemePreferenceValue,
 } from './internal/ThemePreferenceContext.js';
 import { reportOnce } from '../internal/developmentReport.js';
+import { useHydrated } from '../internal/react/useHydrated.js';
 
 export type { ThemePreferenceValue } from './internal/ThemePreferenceContext.js';
 
@@ -44,7 +46,9 @@ export interface ThemePreferenceProviderProps {
    * background, native controls, portals rendered by other libraries and the content of every
    * theme-color meta tag, which takes the canvas color. One provider per document applies to it:
    * pass false to any other, nested in it or beside it. In development, envUI reports two providers
-   * that both apply.
+   * that both apply. Rendered on the server, and as the page hydrates, it renders the preference's
+   * default and leaves the page's look to the theme createThemeBootstrapScript gave the root, which
+   * knows the stored preference before the first paint; once hydrated, it takes the stored one.
    */
   applyToDocument?: boolean;
   /**
@@ -211,12 +215,18 @@ function useStoredPreference(storageKey: string, defaultPreference: ThemePrefere
  * The page's new colors show at once rather than easing, each restyled every frame until done.
  * Before the new theme is styled, the root stops transitions; once it is, they resume, and as the
  * colors no longer change, none start. A provider that doesn't apply to the document, such as one
- * in a figure, leaves its transitions to ease.
+ * in a figure, leaves its transitions to ease. Colors still undefined, as the page hydrates, are
+ * the root's already and count as none shown.
  */
-function useInstantColorSwitch(applyToDocument: boolean, colors: string) {
+function useInstantColorSwitch(applyToDocument: boolean, colors: string | undefined) {
   const shownColors = useRef<string | undefined>(undefined);
   useInsertionEffect(() => {
-    if (applyToDocument && shownColors.current !== undefined && shownColors.current !== colors)
+    if (
+      applyToDocument &&
+      colors !== undefined &&
+      shownColors.current !== undefined &&
+      shownColors.current !== colors
+    )
       document.documentElement.setAttribute(switchingAttribute, '');
   }, [applyToDocument, colors]);
   useLayoutEffect(() => {
@@ -258,23 +268,31 @@ export function ThemePreferenceProvider({
   const appliedContrast = ownContrast ?? inherited.contrast;
   const contrast = ownContrast ?? (fromPage ? (pageContrast ?? 'system') : inherited.contrast);
   const scale = ownScale ?? (fromPage ? (pageScale ?? 'system') : inherited.scale);
-  const [preference, setPreference] = useStoredPreference(storageKey, defaultPreference);
+  const [storedPreference, setPreference] = useStoredPreference(storageKey, defaultPreference);
   const [systemTheme, setSystemTheme] = useState<ColorScheme>(() =>
     typeof document !== 'undefined' && document.documentElement.dataset.envTheme === 'dark'
       ? 'dark'
       : readSystemTheme(),
   );
-  const theme: ColorScheme = preference === 'system' ? systemTheme : preference;
+  // The server, and the browser as it hydrates the server's markup, render the default preference
+  // with a light system theme, as the server knows neither; the stored preference and the system's
+  // theme follow in the render after. Meanwhile a provider applying to the document writes nothing
+  // on the root, where the bootstrap script has applied them already, and its boundary takes the
+  // root's look (themeFromRootAttribute), so nothing changes on screen as it hydrates.
+  const hydrated = useHydrated();
+  const preference = hydrated ? storedPreference : defaultPreference;
+  const theme: ColorScheme =
+    preference === 'system' ? (hydrated ? systemTheme : 'light') : preference;
   const [provider] = useState(() => Symbol('ThemePreferenceProvider'));
 
   useEffect(() => {
-    if (preference !== 'system' || !window.matchMedia) return;
+    if (storedPreference !== 'system' || !window.matchMedia) return;
     const query = window.matchMedia(systemDarkQuery);
     const update = () => setSystemTheme(query.matches ? 'dark' : 'light');
     update();
     query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);
-  }, [preference]);
+  }, [storedPreference]);
 
   // One provider applies to the document; a second would write over the first's root theme. A
   // layout effect, so it registers before the provider writes on the root below.
@@ -302,7 +320,7 @@ export function ThemePreferenceProvider({
 
   // Before the paint, so the root and the boundary take a theme in the same frame.
   useLayoutEffect(() => {
-    if (!applyToDocument) return;
+    if (!applyToDocument || !hydrated) return;
     const root = document.documentElement;
     root.classList.add('env-theme');
     root.dataset.envTheme = theme;
@@ -331,9 +349,12 @@ export function ThemePreferenceProvider({
       'meta[name="theme-color"]',
     ))
       browserTheme.content = canvas;
-  }, [applyToDocument, theme, appliedContrast, ownScale, provider]);
+  }, [applyToDocument, hydrated, theme, appliedContrast, ownScale, provider]);
 
-  useInstantColorSwitch(applyToDocument, `${theme} ${contrast} ${appliedContrast}`);
+  useInstantColorSwitch(
+    applyToDocument,
+    hydrated ? `${theme} ${contrast} ${appliedContrast}` : undefined,
+  );
 
   const value = useMemo<ThemePreferenceValue>(
     () => ({
@@ -347,7 +368,13 @@ export function ThemePreferenceProvider({
 
   return (
     <ThemePreferenceContext value={value}>
-      <Theme theme={theme} contrast={contrast} scale={scale} className={className}>
+      <Theme
+        theme={theme}
+        contrast={contrast}
+        scale={scale}
+        className={className}
+        {...(!hydrated && fromPage && { [themeFromRootAttribute]: '' })}
+      >
         {children}
       </Theme>
     </ThemePreferenceContext>

@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from '../helpers/Servers';
 
 const adoption = `${fixtureUrl}/?fixture=adoption`;
@@ -25,6 +25,19 @@ async function adoptionMeasures(page: Page) {
     probe.remove();
     return { fontSize, lineHeight, control: Number.parseFloat(height) };
   });
+}
+
+/**
+ * Expects an element's line height to be the body type's. WebKit computes the same line height a
+ * hair apart on different elements, such as 18.199999px on one and 18.200001px on another, so it
+ * is compared as a number rather than as text.
+ */
+async function expectBodyLineHeight(element: Locator, lineHeight: string) {
+  await expect
+    .poll(async () =>
+      Number.parseFloat(await element.evaluate((node) => getComputedStyle(node).lineHeight)),
+    )
+    .toBeCloseTo(Number.parseFloat(lineHeight), 3);
 }
 
 async function openLayers(page: Page) {
@@ -157,7 +170,7 @@ test(
     expect((await button.boundingBox())!.height).toBeCloseTo(type.control, 1);
     // Text takes the body type in the document body, the application and portals alike.
     await expect(page.locator('body')).toHaveCSS('font-size', type.fontSize);
-    await expect(page.locator('body')).toHaveCSS('line-height', type.lineHeight);
+    await expectBodyLineHeight(page.locator('body'), type.lineHeight);
     await expect(page.locator('.fixture-adoption')).toHaveCSS('font-size', type.fontSize);
     const portal = await page.evaluate(() => {
       const element = document.createElement('div');
@@ -219,7 +232,7 @@ test(
     }
     for (const element of inside) {
       await expect(element).toHaveCSS('font-size', type.fontSize);
-      await expect(element).toHaveCSS('line-height', type.lineHeight);
+      await expectBodyLineHeight(element, type.lineHeight);
     }
     await page.getByRole('button', { name: 'Assign seat' }).hover();
     const tooltip = page.locator('.env-tooltip');

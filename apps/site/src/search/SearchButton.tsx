@@ -47,8 +47,21 @@ export function SearchButton({
     <Button
       variant="secondary"
       startIcon={<IconSearch />}
-      // The keys show for a keyboard alone: a touch screen has none (Shell.css).
-      end={<Kbd keys={keys} aria-hidden className="site-search-keys" />}
+      // The keys show for a keyboard alone: a touch screen has none (Shell.css). Both modifiers'
+      // keys render, and the one the head's script found the platform's shows (Shell.css), so a
+      // pre-rendered page shows ⌘ on an Apple platform from the first paint, not Ctrl until it
+      // has hydrated, as useModifierKey would.
+      end={
+        <>
+          <Kbd
+            keys={['Ctrl', 'K']}
+            aria-hidden
+            className="site-search-keys"
+            data-site-keys="control"
+          />
+          <Kbd keys={['⌘', 'K']} aria-hidden className="site-search-keys" data-site-keys="meta" />
+        </>
+      }
       aria-keyshortcuts={ariaKeyShortcuts}
       onClick={onClick}
       onPointerEnter={preloadSearch}

@@ -22,6 +22,7 @@ import { siteDescription } from './src/routes/SiteDescription.ts';
 import {
   createDisplayBootstrapScript,
   createFirstPaintStyle,
+  createSiteBootstrapScript,
   createStorageMigrationScript,
 } from './src/display/HeadScripts.ts';
 import { checkoutMarker } from '../../scripts/test/CheckoutMarker.ts';
@@ -119,7 +120,8 @@ export default defineConfig(() => {
       {
         // The stored theme, contrast and scale apply before the catalogue loads, so a dark theme
         // does not flash light and a compact page does not start at the comfortable size; the
-        // page's background, in that theme, paints from the first frame.
+        // page's background, in that theme, paints from the first frame. So do the drawer's width,
+        // the banner's draw-in and the shortcuts' modifier (createSiteBootstrapScript).
         name: 'envui-theme-bootstrap',
         // The script goes right after <meta charset>, which has to stay within the first 1024
         // bytes, and before the styles, so it runs before the first paint.
@@ -134,7 +136,8 @@ export default defineConfig(() => {
                 `${tag}\n    <script>${
                   createStorageMigrationScript() +
                   createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }) +
-                  createDisplayBootstrapScript()
+                  createDisplayBootstrapScript() +
+                  createSiteBootstrapScript()
                 }</script>
     <style>${createFirstPaintStyle(
       readFileSync(

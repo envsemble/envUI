@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { outsideTheme } from './internal/outsideTheme.js';
+import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { reportOnce } from '../internal/developmentReport.js';
 import '../styles/Base.css';
 
@@ -149,10 +150,14 @@ export function Theme({
     <ThemeContext value={value}>
       <div
         {...props}
-        className={classNames('env-theme', className)}
-        data-env-theme={theme}
-        data-env-contrast={contrast === 'system' ? undefined : contrast}
-        data-env-scale={scale}
+        className={className}
+        // A ThemePreferenceProvider's boundary as the page hydrates takes the root's look.
+        {...(!(themeFromRootAttribute in props) && {
+          className: classNames('env-theme', className),
+          'data-env-theme': theme,
+          'data-env-contrast': contrast === 'system' ? undefined : contrast,
+          'data-env-scale': scale,
+        })}
       >
         {children}
       </div>

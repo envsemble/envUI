@@ -99,8 +99,12 @@ test(
     await expect(opacity).toHaveAttribute('aria-valuenow', '75');
     await expect(page.getByTestId('opacity-light')).toHaveText('75');
     await expect(page.getByTestId('commits-light')).toHaveText('25 75');
-    const indicator = (await scope.locator('.env-slider-indicator').first().boundingBox())!;
-    expect(indicator.width / box.width).toBeCloseTo(0.75, 2);
+    // The fill reaches the value, gliding the last of the way when the value lands after the
+    // release, as it can under load.
+    const indicator = scope.locator('.env-slider-indicator').first();
+    await expect
+      .poll(async () => (await indicator.boundingBox())!.width / box.width)
+      .toBeCloseTo(0.75, 2);
   },
 );
 

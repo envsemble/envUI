@@ -12,12 +12,14 @@ import { headingsOnly, useSectionOutline } from './SectionOutline';
 import { marked, type Token, type Tokens } from 'marked';
 import { classNames } from '@envui-internal/internal/classNames';
 
-/** The current route scrolled to `section`, keeping its other parameters. */
+/**
+ * The current page scrolled to `section`: its path alone, as the server that renders the page knows
+ * it, so the link's address is the same on the server and in the browser, whatever the address's
+ * query holds.
+ */
 function sectionOfCurrentRoute(section: string) {
-  const [path, query] = currentRoute().split('?');
-  const params = new URLSearchParams(query);
-  params.set('section', section);
-  return `${path}?${params}`;
+  const [path] = currentRoute().split('?');
+  return `${path}?${new URLSearchParams({ section })}`;
 }
 
 const decodedFragment = (hash: string) => {
