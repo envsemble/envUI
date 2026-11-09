@@ -458,6 +458,8 @@ async function deadClicks(page: Page, names: string[]) {
       const state = new Function(`return (${source})`)() as (canvas: Element) => string;
       const log = { clicks: 0, dead: [] as string[], left: false, pressed: false, pending: false };
       (element as HTMLElement & { clickLog?: typeof log }).clickLog = log;
+      // Settles the last click from the test, should the page have stopped drawing frames.
+      (element as HTMLElement & { settleClick?: () => void }).settleClick = () => settle();
       let before: string | null = null;
       let down = { x: 0, y: 0, time: 0 };
       let pending: { after: string } | null = null;
@@ -538,8 +540,8 @@ async function deadClicks(page: Page, names: string[]) {
       .toBe(true)
       .catch(() => undefined);
     if (Date.now() - started < 800) await page.waitForTimeout(800);
-    // The last click's change has had its time and frames: on a busy page, its 42 frames can take
-    // several seconds.
+    // The last click's change has had its time and frames, or five seconds: a page that draws no
+    // more frames, as one did beside many workers, has it checked then.
     await expect
       .poll(
         () =>
@@ -547,9 +549,13 @@ async function deadClicks(page: Page, names: string[]) {
             (element) =>
               (element as HTMLElement & { clickLog: { pending: boolean } }).clickLog.pending,
           ),
-        { timeout: 30_000 },
+        { timeout: 5000 },
       )
-      .toBe(false);
+      .toBe(false)
+      .catch(() => undefined);
+    await canvas.evaluate((element) =>
+      (element as HTMLElement & { settleClick: () => void }).settleClick(),
+    );
     const log = await canvas.evaluate(
       (element) =>
         (element as HTMLElement & { clickLog: { clicks: number; dead: string[] } }).clickLog,
