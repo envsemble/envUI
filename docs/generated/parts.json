@@ -5492,9 +5492,6 @@
             "env-text"
           ]
         }
-      ],
-      "uses": [
-        "HoverDetail"
       ]
     },
     "TextField": {
@@ -6374,7 +6371,6 @@
       "usedBy": [
         "HoverCard",
         "RelativeTime",
-        "Text",
         "Tooltip"
       ]
     },

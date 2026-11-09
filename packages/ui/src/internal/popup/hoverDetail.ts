@@ -1,4 +1,5 @@
 import { Children, isValidElement, type ReactElement, type ReactNode } from 'react';
+import { isMarkedText } from './textMark.js';
 import '../../styles/Base.css';
 import '../../styles/Text.css';
 import '../../styles/HoverDetail.css';
@@ -30,13 +31,6 @@ const textTags = new Set([
   'time',
   'var',
 ]);
-
-const textKey = Symbol.for('envui.text');
-
-/** Marks envUI's Text, so a HoverCard or Tooltip can tell a text trigger. */
-export function markText<Component extends object>(component: Component): Component {
-  return Object.assign(component, { [textKey]: true });
-}
 
 interface TextLikeProps {
   children?: ReactNode;
@@ -76,9 +70,7 @@ function isTextElement(element: ReactElement<TextLikeProps>): boolean {
         /(?:^|\s)env-text(?:\s|$)/.test(element.props.className))
     );
   if ((typeof type !== 'function' && typeof type !== 'object') || type === null) return false;
-  // A component, function or object alike, that markText marked carries the key, which React's
-  // types know nothing of.
-  if ((type as unknown as Record<symbol, unknown>)[textKey] !== true) return false;
+  if (!isMarkedText(type)) return false;
   const render = element.props.render;
   if (!isValidElement(render)) return true;
   return render.type === 'p' || (typeof render.type === 'string' && textTags.has(render.type));
