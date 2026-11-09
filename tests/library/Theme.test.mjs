@@ -1,5 +1,6 @@
-// Theme on the server: the attributes it writes, and its development warning about a theme that is
-// neither light nor dark, as JavaScript that passes 0.x's useTheme() to it would.
+// Theme on the server: the attributes it writes, ThemePreferenceProvider's boundary, and Theme's
+// development warning about a theme that is neither light nor dark, as JavaScript that passes 0.x's
+// useTheme() to it would.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
@@ -8,7 +9,7 @@ import { build as esbuild } from 'esbuild';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { build as vite, createServer } from 'vite';
-import { Theme, useTheme } from '../../packages/ui/dist/index.js';
+import { Theme, ThemePreferenceProvider, useTheme } from '../../packages/ui/dist/index.js';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const themeModule = fileURLToPath(
@@ -124,6 +125,24 @@ test('a Theme writes its scale, which nested Themes inherit, and a data-env-scal
     h(Theme, { theme: 'light', scale: 'comfortable', 'data-env-scale': 'compact' }, h(Inner)),
   ).markup;
   assert.match(prop, /data-env-scale="comfortable"/);
+});
+
+test('ThemePreferenceProvider renders its default on the server and leaves the look to the root', () => {
+  function Inner() {
+    return h('output', null, useTheme().theme);
+  }
+  // Applying to the document, its boundary has none of a theme boundary's class and attributes, so
+  // until the page hydrates it takes the theme the bootstrap script gave the root.
+  const root = render(
+    h(ThemePreferenceProvider, { className: 'app', defaultPreference: 'system' }, h(Inner)),
+  ).markup;
+  assert.match(root, /^<div data-env-ssr-root="" class="app"><output>light<\/output><\/div>$/);
+  // One that doesn't apply to the document themes its own boundary, with the default preference.
+  const own = render(
+    h(ThemePreferenceProvider, { applyToDocument: false, defaultPreference: 'dark' }, h(Inner)),
+  ).markup;
+  assert.match(own, /^<div class="env-theme" data-env-theme="dark" data-env-scale="system">/);
+  assert.match(own, /<output>dark<\/output>/);
 });
 
 /** Runs `run` where nothing defines process, as in a browser. */
