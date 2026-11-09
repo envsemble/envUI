@@ -187,9 +187,6 @@ export interface MenuFocusDetails {
   previousFocus: Element | null;
 }
 
-/** @deprecated Use Menubar.MenuFocusDetails, the same details under a name no other menu shares. */
-export type MenuOpenChangeDetails = MenuFocusDetails;
-
 export interface MenuProps {
   /** The trigger's text, such as File. */
   label: ReactNode;
