@@ -1,4 +1,11 @@
-import { use, useEffect, useState, useSyncExternalStore, type ReactNode } from 'react';
+import {
+  use,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from 'react';
 
 /*
  * The state behind the site's skeletons (Skeletons.tsx): when each showed, the waits that keep one
@@ -7,6 +14,17 @@ import { use, useEffect, useState, useSyncExternalStore, type ReactNode } from '
 
 /** How long a part may take before its skeleton shows: quick loads never flash it. */
 const placeholderDelay = 240;
+
+/**
+ * How long a figure on a pre-rendered page may take, from the page's first paint, which shows its
+ * place, before its skeleton shows, as the browser draws it before the site's script runs
+ * (`data-site-early`, Loading.css). The site holds every figure until the page has hydrated, which
+ * on a fast computer takes a few hundred ms more than a part loading (about 400 ms from the first
+ * paint to the figures in view, measured with the built site served on the same computer): long
+ * enough that those come in without their skeleton flashing first, and short enough that a slow
+ * phone, which hydrates seconds later, shows the skeletons within a moment of the page.
+ */
+export const earlyPlaceholderDelay = 600;
 
 /**
  * How long a skeleton that shows stays at least, so it never flickers: a moment, then it fades out
@@ -68,31 +86,66 @@ const setLoading = (next: readonly string[]) => {
   for (const listener of listeners) listener();
 };
 
-/** Whether a placeholder shows yet: once it has waited placeholderDelay. */
-export function useDelayPassed() {
+/** How long, in ms, since the page's first paint, or undefined where the browser doesn't say. */
+function sinceFirstPaint() {
+  const [paint] = performance.getEntriesByName('first-paint');
+  return paint && performance.now() - paint.startTime;
+}
+
+/**
+ * Whether a placeholder shows yet: once it has waited placeholderDelay, or earlyPlaceholderDelay
+ * from the page's first paint for one the page was pre-rendered with (`early`), as its style shows
+ * it; from when it stops `waiting` for one that waits for something else first.
+ */
+export function useDelayPassed(early = false, waiting = false) {
   const [passed, setPassed] = useState(false);
   useEffect(() => {
-    const timer = window.setTimeout(() => setPassed(true), placeholderDelay);
+    if (waiting) return;
+    const wait = early ? earlyPlaceholderDelay - (sinceFirstPaint() ?? 0) : placeholderDelay;
+    const timer = window.setTimeout(() => setPassed(true), Math.max(0, wait));
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [early, waiting]);
   return passed;
 }
 
 /**
- * Whether a placeholder shows yet, as useDelayPassed says. From then until it leaves, LoadingStatus
- * counts what it is loading.
+ * The parts whose skeleton left, while it showed, in the commit now ending, for a skeleton of the
+ * same part that takes its place, such as an example's while its file loads after its pre-rendered
+ * one: it shows at once, so the place never goes empty between them.
  */
-export function usePlaceholderShown(what: string, part?: string) {
-  const shown = useDelayPassed();
+const leftShown = new Set<string>();
+
+/**
+ * Whether a placeholder shows yet, as useDelayPassed says, or at once where one of its part that
+ * showed has just left. From then until it leaves, LoadingStatus counts what it is loading.
+ */
+export function usePlaceholderShown(what: string, part?: string, early = false, waiting = false) {
+  const passed = useDelayPassed(early, waiting);
+  const [followed, setFollowed] = useState(false);
+  const shown = passed || followed;
+  // A layout effect, after the one that left it ran as its skeleton was removed in the same commit,
+  // so the skeleton shows before the page paints.
+  useLayoutEffect(() => {
+    if (part !== undefined && leftShown.has(part)) setFollowed(true);
+  }, [part]);
+  useLayoutEffect(() => {
+    if (!shown || part === undefined) return;
+    return () => {
+      leftShown.add(part);
+      queueMicrotask(() => leftShown.delete(part));
+    };
+  }, [shown, part]);
   useEffect(() => {
     if (!shown) return;
-    if (part !== undefined) shownAt.set(part, performance.now());
+    // One that takes the place of one shown keeps the time that one showed at.
+    if (part !== undefined && !(followed && shownAt.has(part)))
+      shownAt.set(part, performance.now());
     setLoading([...loading, what]);
     return () => {
       const index = loading.indexOf(what);
       setLoading(loading.filter((_, at) => at !== index));
     };
-  }, [shown, what, part]);
+  }, [shown, followed, what, part]);
   return shown;
 }
 

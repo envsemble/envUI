@@ -1,7 +1,8 @@
-import { useRef, type CSSProperties, type ReactNode, type RefObject } from 'react';
+import { useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { Surface } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
-import { useDelayPassed, usePlaceholderShown } from './LoadingStore';
+import { earlyPlaceholderDelay, useDelayPassed, usePlaceholderShown } from './LoadingStore';
+import { useFiguresMounted } from './useFiguresMounted';
 import { useArrival } from './useArrival';
 import { usePulseNear } from './usePulseNear';
 import { recordedSize } from './RecordedSizes';
@@ -23,8 +24,10 @@ import { classNames } from '@envui-internal/internal/classNames';
  * A part of a page while it loads, as envUI's skeleton of its shape: a surface with `skeleton`,
  * whose content, the part's own components over placeholder text, shows as bars and shapes, inert
  * and skipped by assistive technology, while the surface is a busy region. Hidden until it has
- * waited a moment, it keeps its space. `.site-loading` marks it for the tests, which wait for it to
- * leave. `ref` takes its element, such as to watch it near the view.
+ * waited a moment, it keeps its space; one in the page's pre-rendered HTML waits it from the page's
+ * first paint, by its style alone, as the page shows it before the site's script runs
+ * (`data-site-early`). `.site-loading` marks it for the tests, which wait for it to leave. `ref`
+ * takes its element, such as to watch it near the view.
  */
 export function PartSkeleton({
   what,
@@ -43,11 +46,26 @@ export function PartSkeleton({
   children?: ReactNode;
   ref?: RefObject<HTMLDivElement | null>;
 }) {
-  const shown = usePlaceholderShown(what, part);
+  // In the page's pre-rendered HTML, as the browser hydrates it the same. Its wait counts from the
+  // page's first paint where it is near the view as the page starts (usePulseNear tells); one far
+  // from it then, such as a figure held until it nears the view (figures/useSubjectShown.ts), which
+  // comes a moment after, waits from when it nears the view, as one rendered in the browser does,
+  // hidden again out of sight meanwhile.
+  const [early, setEarly] = useState(!useFiguresMounted());
+  const [near, setNear] = useState<boolean>();
+  const [held, setHeld] = useState(false);
+  const waiting = (early && near === undefined) || (held && !near);
+  const shown = usePlaceholderShown(what, part, early, waiting);
   const own = useRef<HTMLDivElement>(null);
   const element = ref ?? own;
   useArrival(element);
-  usePulseNear(element);
+  usePulseNear(element, (nowNear) => {
+    if (early && near === undefined && !nowNear) {
+      setEarly(false);
+      setHeld(true);
+    }
+    setNear(nowNear);
+  });
   return (
     <Surface
       ref={element}
@@ -56,8 +74,9 @@ export function PartSkeleton({
       radius="none"
       className={classNames('site-loading', className)}
       data-shown={flag(shown)}
+      data-site-early={flag(early)}
       data-site-part={part}
-      style={style}
+      style={early ? { ...style, '--site-loading-delay': `${earlyPlaceholderDelay}ms` } : style}
     >
       {children}
     </Surface>

@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
 import { scrollerOf } from '../shared/Idle';
 
 /** How far from the view a skeleton pulses on, as a share of the view's height. */
@@ -11,13 +11,20 @@ const pulseMargin = '50% 0px';
  * figure until it nears the view (figures/useSubjectShown.ts), and the frames of those far below
  * it, which no one sees pulse, would hold up the page.
  */
-export function usePulseNear(skeleton: RefObject<HTMLElement | null>) {
+export function usePulseNear(
+  skeleton: RefObject<HTMLElement | null>,
+  /** Told on each report whether the skeleton is near the view. */
+  onReport?: (near: boolean) => void,
+) {
+  const report = useRef(onReport);
+  report.current = onReport;
   useEffect(() => {
     const element = skeleton.current;
     if (!element || typeof IntersectionObserver === 'undefined') return;
     const observer = new IntersectionObserver(
       (entries) => {
-        const near = entries.at(-1)?.isIntersecting;
+        const near = Boolean(entries.at(-1)?.isIntersecting);
+        report.current?.(near);
         if (!near) return element.setAttribute('data-site-far', '');
         if (!element.hasAttribute('data-site-far')) return;
         element.removeAttribute('data-site-far');

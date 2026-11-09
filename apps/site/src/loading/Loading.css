@@ -5,6 +5,18 @@
   /* Not hidden: the skeleton measures its text's bars only where it is visible. */
   opacity: 0;
 }
+/* One in a pre-rendered page's HTML (data-site-early) shows once it has waited that moment from
+   the page's first paint, as the browser first styles it, before the site's script runs, which
+   then says it shows (data-shown) too: from its start style, a transition after that wait. */
+.site-loading[data-site-early]:not(.site-loading-stage, [data-shown]) {
+  opacity: 1;
+  transition: opacity 0s linear var(--site-loading-delay);
+}
+@starting-style {
+  .site-loading[data-site-early]:not(.site-loading-stage, [data-shown]) {
+    opacity: 0;
+  }
+}
 
 /* A skeleton far from the view stands still, until it nears the view (usePulseNear.ts). */
 .site-loading[data-site-far],
@@ -48,6 +60,15 @@
 }
 .site-loading-stage:not([data-shown]) > .site-loading-stage-subject {
   visibility: hidden;
+}
+.site-loading-stage[data-site-early]:not([data-shown]) > .site-loading-stage-subject {
+  visibility: visible;
+  transition: visibility 0s linear var(--site-loading-delay);
+}
+@starting-style {
+  .site-loading-stage[data-site-early]:not([data-shown]) > .site-loading-stage-subject {
+    visibility: hidden;
+  }
 }
 .site-loading-stage-subject {
   position: absolute;
