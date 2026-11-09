@@ -30,8 +30,9 @@ const cssBudgets = {
 const jsBudgets = [
   // 31,388 measured: List's reorder, Table's column resizing, Scaffold's body scrolling keys and a
   // contained toast region's notices load only where they are used (was 34,661), with what holds
-  // people's input until they have and copes with a failed load.
-  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 31900 },
+  // people's input until they have and copes with a failed load. 32,217 since popups give focus
+  // back as they start to close (closingFocus.ts, 892 bytes).
+  { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 32650 },
   // 108,029 measured (was 110,015).
   { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 109650 },
   // 4,888 measured. Raised from 4,850 (4,832 measured on 2026-11-08): esbuild puts the modules the
@@ -42,14 +43,14 @@ const jsBudgets = [
 
 /** Each component's own envUI code, minified, its Base UI and Floating UI left out. */
 const componentBudgets = {
-  // 12,718 measured, with skeletons aligning their pulses once a commit.
-  Tooltip: 12950,
-  // 7,757 measured, with skeletons aligning their pulses once a commit.
-  Popover: 7900,
-  // 15,184 measured.
-  Menu: 15450,
-  // 16,470 measured.
-  Select: 16750,
+  // 14,896 measured: 12,718, and closingFocus.ts, which every popup surface brings.
+  Tooltip: 15100,
+  // 9,935 measured: 7,757, and closingFocus.ts.
+  Popover: 10100,
+  // 17,610 measured: 15,184, and closingFocus.ts with the submenu's guard.
+  Menu: 17850,
+  // 18,815 measured: 16,470, and closingFocus.ts.
+  Select: 19100,
   // 7,524 measured.
   TextField: 7650,
   // 11,279 measured.
