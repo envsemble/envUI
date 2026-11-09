@@ -174,9 +174,12 @@
 /* A part that takes its width from its container, such as a size container (a primitive with
    `container` too), a strip of tabs, a window or a skeleton, has none of its own and would
    collapse if centred: an example that is or holds one fills the stage, unless it sets its
-   width. */
-:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-tile-canvas)
-  > :where(
+   width. The stage's child is tested first, in the subject itself: a browser matches a selector
+   from its subject, so written as stage > :where(…), the :has() below searched under every
+   element of the page whenever it was restyled, such as on every theme switch. */
+:is(
+    :is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-tile-canvas) > *
+  ):where(
     .env-description-list[data-layout='auto'],
     .env-page,
     .env-page-header,
