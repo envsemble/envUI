@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { kebab, type PropsFile } from '../PageStructure.ts';
+import { fields, mapOf, oneOf, optional, text } from '../Shapes.ts';
 import { librarySourceDirectory, repositoryRoot } from '../../RepositoryPaths.ts';
 import { styleSheets } from './Library.ts';
 import { readSource } from './SourceExtraction.ts';
@@ -39,13 +40,40 @@ const partsSchemaVersion = 1;
 
 const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
-/** packages/ui/src/partDescriptions.json: the hand-written part of the contract. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- hand-written JSON, checked as buildParts reads it
-type PartDescriptions = Record<string, any>;
+/** packages/ui/src/partDescriptions.json: the hand-written part of the contract, as its $comment says. */
+interface PartDescriptions {
+  /** A component whose root is not env-<its name>, and its root class. */
+  roots?: Record<string, string>;
+  /** A component whose classes don't start with env-<its name>, and the prefix they take. */
+  prefixes?: Record<string, string>;
+  /** Anatomy several components render, by name: its class prefix, and its root class. */
+  shared?: Record<string, { prefix: string; root?: string }>;
+  /** A class that no prefix places, and its group. */
+  placed?: Record<string, string>;
+  /** One line per part class, by component. */
+  descriptions?: Record<string, Record<string, string>>;
+  /** Each component's color properties, and what each colors. */
+  colors?: Record<string, Record<string, string>>;
+  /** The public custom properties that are neither tokens nor color properties, and their use. */
+  properties?: Record<string, Record<string, { use: 'set' | 'read'; description: string }>>;
+}
 
-/** The hand-written part of the contract. */
-const readPartDescriptions = (): PartDescriptions =>
-  JSON.parse(readFileSync(partDescriptionsFile, 'utf8'));
+const texts = optional(mapOf(text));
+const readDescriptions = fields<PartDescriptions>({
+  roots: texts,
+  prefixes: texts,
+  shared: optional(mapOf(fields({ prefix: text, root: optional(text) }))),
+  placed: texts,
+  descriptions: optional(mapOf(mapOf(text))),
+  colors: optional(mapOf(mapOf(text))),
+  properties: optional(
+    mapOf(mapOf(fields({ use: oneOf(['set', 'read'] as const), description: text }))),
+  ),
+});
+
+/** The hand-written part of the contract, read from its file. */
+const readPartDescriptions = () =>
+  readDescriptions(JSON.parse(readFileSync(partDescriptionsFile, 'utf8')), 'partDescriptions.json');
 
 /** A component, namespace or shared anatomy, whose classes take its prefix. */
 interface Group {
@@ -76,9 +104,7 @@ function readGroups(props: PropsFile, source: PartDescriptions) {
     const prefix = source.prefixes?.[name] ?? `env-${kebab(name)}`;
     groups.set(name, { name, prefix, source: entry.source, shared: false });
   }
-  for (const [name, entry] of Object.entries<{ prefix: string; root?: string }>(
-    source.shared ?? {},
-  ))
+  for (const [name, entry] of Object.entries(source.shared ?? {}))
     groups.set(name, { name, prefix: entry.prefix, root: entry.root ?? null, shared: true });
   return groups;
 }
@@ -154,21 +180,17 @@ function reachableFrom(
 
 /** The hand-written public custom properties' problems: where they are, their use and description. */
 function checkProperties(
-  properties: Record<string, Record<string, { use: string; description: string }>>,
+  properties: NonNullable<PartDescriptions['properties']>,
   problems: string[],
 ) {
   const styleText = styleSheets()
     .map(({ css }) => css)
     .join('\n');
   for (const [group, list] of Object.entries(properties))
-    for (const [property, { use, description }] of Object.entries(list)) {
+    for (const [property, { description }] of Object.entries(list)) {
       if (!new RegExp(`${property}(?![\\w-])`).test(styleText))
         problems.push(`${group}: its property ${property} is in none of the style sheets`);
-      if (use !== 'set' && use !== 'read')
-        problems.push(
-          `${group}: ${property} needs a use, set or read, in packages/ui/src/partDescriptions.json`,
-        );
-      if (typeof description !== 'string' || !description.trim())
+      if (!description.trim())
         problems.push(
           `${group}: ${property} has no description in packages/ui/src/partDescriptions.json`,
         );
@@ -186,7 +208,7 @@ function checkColors(colors: Record<string, Record<string, string>>, problems: s
         problems.push(
           `${group}: its color property ${property} is not registered in the style sheets as a property that doesn't inherit`,
         );
-      if (typeof description !== 'string' || !description.trim())
+      if (!description.trim())
         problems.push(
           `${group}: ${property} has no description in packages/ui/src/partDescriptions.json`,
         );
@@ -331,13 +353,8 @@ export function buildParts({
   for (const group of [...groups.values()].sort((a, b) => byText(a.name, b.name))) {
     const list = members.get(group.name) ?? [];
     const rootClass =
-      group.name in (source.roots ?? {})
-        ? source.roots[group.name]
-        : group.shared
-          ? group.root
-          : list.includes(group.prefix)
-            ? group.prefix
-            : null;
+      source.roots?.[group.name] ??
+      (group.shared ? (group.root ?? null) : list.includes(group.prefix) ? group.prefix : null);
     if (!list.length && !rootClass) continue;
     if (rootClass && !classes.has(rootClass))
       problems.push(`${group.name}: its root ${rootClass} is not a class of the library`);
@@ -361,15 +378,15 @@ export function buildParts({
         })),
       ...(uses.size && { uses: [...uses].sort(byText) }),
       ...(colors[group.name] && {
-        colors: Object.entries<string>(colors[group.name]).map(([property, description]) => ({
+        colors: Object.entries(colors[group.name]).map(([property, description]) => ({
           property,
           description,
         })),
       }),
       ...(properties[group.name] && {
-        properties: Object.entries<{ use: 'set' | 'read'; description: string }>(
-          properties[group.name],
-        ).map(([property, { use, description }]) => ({ property, use, description })),
+        properties: Object.entries(properties[group.name]).map(
+          ([property, { use, description }]) => ({ property, use, description }),
+        ),
       }),
     };
     (group.shared ? output.shared : output.components)[group.name] = entry;
