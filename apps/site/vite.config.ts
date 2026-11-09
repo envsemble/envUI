@@ -164,7 +164,10 @@ export default defineConfig(() => {
         // the files that view's module imports, and its content (generated/pages/<id>.json,
         // PageContent.ts), the file of the page its last segment names, such as button for
         // /components/button and /docs/components/button. A segment that names no page, such as
-        // components, preloads no content.
+        // components, preloads no content. On a catalogue page it also preloads the style sheets of
+        // the page's figures (examples/<id>/, specimens/<id>/ and what they import), marked
+        // data-site-figure-style, which the site applies as it starts (applyFigureStyles,
+        // pages/PreloadPage.ts).
         name: 'envui-content-preload',
         apply: 'build',
         transformIndexHtml: {
@@ -205,7 +208,33 @@ export default defineConfig(() => {
                 ],
               };
             }
-            const script = `<script>(function(){var p=location.pathname,v=${JSON.stringify(views)}[(${String(viewOfAddress)})(p)],c=${JSON.stringify(contents)}[p.split('/').filter(Boolean).pop()];function l(r,f,a){var e=document.createElement('link');e.rel=r;e.href='/'+f;if(a)e.as=a;document.head.appendChild(e)}v.scripts.forEach(function(f){l('modulepreload',f)});v.styles.forEach(function(f){l('preload',f,'style')});if(c)l('modulepreload',c)})();</script>`;
+            // The style sheets the site starts with, which a page's figures' sheets leave out.
+            const startedStyles = new Set(
+              [...started].flatMap((name) => [
+                ...(byName.get(name)?.viteMetadata?.importedCss ?? []),
+              ]),
+            );
+            const figureStyles: Record<string, string[]> = {};
+            for (const chunk of chunks) {
+              const page = /[\\/]src[\\/](?:examples|specimens)[\\/]([\w-]+)[\\/]/.exec(
+                chunk.facadeModuleId ?? '',
+              )?.[1];
+              if (!page || !contents[page]) continue;
+              const files = new Set<string>();
+              imported(chunk.fileName, files);
+              // With the modules of the options its components set, which load as they render,
+              // such as a table's column resizing.
+              for (const name of [...files])
+                for (const option of byName.get(name)?.dynamicImports ?? [])
+                  if (/[\\/]packages[\\/]ui[\\/]/.test(byName.get(option)?.facadeModuleId ?? ''))
+                    imported(option, files);
+              const styles = new Set(figureStyles[page]);
+              for (const name of files)
+                for (const style of byName.get(name)?.viteMetadata?.importedCss ?? [])
+                  if (!startedStyles.has(style)) styles.add(style);
+              figureStyles[page] = [...styles].sort();
+            }
+            const script = `<script>(function(){var p=location.pathname,w=(${String(viewOfAddress)})(p),v=${JSON.stringify(views)}[w],n=p.split('/').filter(Boolean).pop(),c=${JSON.stringify(contents)}[n],s=w==='catalogue'&&${JSON.stringify(figureStyles)}[n];function l(r,f,a){var e=document.createElement('link');e.rel=r;e.href='/'+f;if(a)e.as=a;document.head.appendChild(e);return e}v.scripts.forEach(function(f){l('modulepreload',f)});v.styles.forEach(function(f){l('preload',f,'style')});if(c)l('modulepreload',c);if(s)s.forEach(function(f){var e=l('preload',f,'style');e.crossOrigin='';e.setAttribute('data-site-figure-style','')})})();</script>`;
             const site = html.indexOf('<script type="module"');
             if (site === -1)
               throw new Error('index.html has no module script, which the preload goes before.');

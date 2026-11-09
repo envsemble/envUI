@@ -88,6 +88,9 @@ export async function highlightCode(
       });
     await highContrastLoaded;
   }
+  // Each source is tokenized in a task of its own, so a page of many code blocks answers input
+  // between them, rather than once the runtime is ready and all of them are done.
+  await new Promise((resolve) => setTimeout(resolve));
   // Another consumer may have filled the cache while this shared runtime initialized.
   const initialized = cache.get(key);
   if (initialized) return initialized;

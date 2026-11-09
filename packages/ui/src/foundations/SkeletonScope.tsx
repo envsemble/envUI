@@ -37,6 +37,9 @@ export function alignPulses() {
   }
 }
 
+/** Whether alignPulses is due once the skeletons that mount in this commit have (SkeletonScope). */
+let aligning = false;
+
 /**
  * Tells the components inside a skeleton that they are in one, and keeps its pulse in step with
  * the others on the page. Every component that takes `skeleton` renders it around its content.
@@ -46,7 +49,15 @@ export function SkeletonScope({ skeleton, children }: { skeleton: boolean; child
   const active = skeleton || inherited;
   useEffect(() => {
     if (!skeleton) return;
-    alignPulses();
+    // Once for the skeletons that mount together: reading the page's animations works out the style
+    // of the whole page, and each skeleton aligning on its own would work it out again.
+    if (!aligning) {
+      aligning = true;
+      queueMicrotask(() => {
+        aligning = false;
+        alignPulses();
+      });
+    }
     // Text that is there draws as rounded, pulsing bars, as missing text does. The script that
     // measures it loads only once a skeleton shows; until it runs, CSS draws the text's fallback.
     let release: (() => void) | undefined;

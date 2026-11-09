@@ -24,14 +24,57 @@ const arrow = 'M1 1 V16.5 L5 12.8 L7.8 19 L10.4 17.9 L7.7 11.8 H13 Z';
 
 const svgNamespace = 'http://www.w3.org/2000/svg';
 
+/** Where a cursor's stage is and the scales it and its component are drawn at (geometryOf). */
+interface Geometry {
+  stage: HTMLElement;
+  box: DOMRect;
+  stageScale: number;
+  scale: number;
+  clientLeft: number;
+  clientTop: number;
+}
+
+/**
+ * Where a stage is in the viewport, the scale it is drawn at, as for a page drawn smaller, and the
+ * scale its component (`scope`, an element of the page's HTML) is drawn at in it.
+ */
+function geometryOf(stage: HTMLElement, scope: HTMLElement): Geometry {
+  const box = stage.getBoundingClientRect();
+  const stageScale = box.width / (stage.offsetWidth || box.width) || 1;
+  const own = scope.getBoundingClientRect();
+  const scale = (own.width / (scope.offsetWidth || own.width) || 1) / stageScale;
+  return {
+    stage,
+    box,
+    stageScale,
+    scale,
+    clientLeft: stage.clientLeft,
+    clientTop: stage.clientTop,
+  };
+}
+
 export class PointerCursor {
   private element: HTMLElement | null = null;
+  /**
+   * The stage's geometry as it was before the pointer's move sent its events (note), until the
+   * task that moves it ends. What the events change, such as a hover's style, doesn't move the
+   * stage, so the cursor is drawn from it rather than by laying out the page again.
+   */
+  private noted: Geometry | null = null;
   /** The layer over the stage that clips the cursor to the stage's edges. */
   private layer: HTMLElement | null = null;
   /** The chip that names the carried files, and the element its icon renders into. */
   private chip: { element: HTMLElement; name: HTMLElement; icon: Root } | null = null;
 
   constructor(private readonly scope: Element) {}
+
+  /** Notes the stage's geometry before a move sends its events, for drawing the cursor after them. */
+  note() {
+    const stage = this.scope.closest<HTMLElement>(stages);
+    if (!stage) return;
+    this.noted = geometryOf(stage, this.scope as HTMLElement);
+    queueMicrotask(() => (this.noted = null));
+  }
 
   /**
    * Draws the cursor at a point, in viewport coordinates, pressed or not, with the names of the
@@ -49,15 +92,11 @@ export class PointerCursor {
     }));
     if (layer.parentElement !== stage) stage.append(layer);
     if (element.parentElement !== layer) layer.append(element);
-    const box = stage.getBoundingClientRect();
-    // The scale the stage, and the component in it, is drawn at, as for a page drawn smaller.
-    const stageScale = box.width / (stage.offsetWidth || box.width) || 1;
-    const own = this.scope.getBoundingClientRect();
     // A stage's scope is an element of the page's HTML.
-    const scope = this.scope as HTMLElement;
-    const scale = (own.width / (scope.offsetWidth || own.width) || 1) / stageScale;
-    const x = (point.x - box.left) / stageScale - stage.clientLeft;
-    const y = (point.y - box.top) / stageScale - stage.clientTop;
+    const { box, stageScale, scale, clientLeft, clientTop } =
+      this.noted?.stage === stage ? this.noted : geometryOf(stage, this.scope as HTMLElement);
+    const x = (point.x - box.left) / stageScale - clientLeft;
+    const y = (point.y - box.top) / stageScale - clientTop;
     element.style.translate = `${x}px ${y}px`;
     element.style.setProperty('--catalogue-cursor-scale', String(scale));
     element.toggleAttribute('data-pressed', pressed);

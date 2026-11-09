@@ -6,10 +6,13 @@ import './styles/index.css';
 import { PaletteCustomizationProvider } from './display/PaletteCustomization';
 import { findPage } from './routes/SiteRoutes';
 import { currentRoute } from './routes/useSiteRoute';
-import { preloadPage } from './pages/PreloadPage';
+import { applyFigureStyles, preloadPage } from './pages/PreloadPage';
 // The site renders once what the page it opens on needs has loaded, which started as it did, so
 // its first paint has the whole page rather than the frame and then the page.
-void preloadPage(findPage(currentRoute().split('?')[0])).then(() =>
+const opening = preloadPage(findPage(currentRoute().split('?')[0]));
+// After the view's sheets, which preloadPage linked.
+applyFigureStyles();
+void opening.then(() =>
   // index.html holds the root.
   createRoot(document.getElementById('root')!).render(
     <PaletteCustomizationProvider>

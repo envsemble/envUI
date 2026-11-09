@@ -7,6 +7,7 @@ import {
   type RefObject,
 } from 'react';
 import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/envui';
+import { onIdle, scrollerOf } from '../shared/Idle';
 import { pixelTolerance, remeasure } from '../shared/Remeasure';
 import { usePlayback } from './Playback';
 import { remPixels } from '@envui-internal/internal/dom/lengths';
@@ -142,6 +143,52 @@ function tallestAlong(box: HTMLElement, narrowest: number, most: number) {
 }
 
 /**
+ * How near the view, in viewports above and below it, a sweep samples its height at once. One
+ * further off samples it in the page's idle moments, so the sampling, a layout for each width, never
+ * holds up the page as it loads, and has finished before the reader gets there.
+ */
+const nearViews = 1;
+
+/** Whether `element` is near the view of the box it scrolls in (nearViews). */
+function nearView(element: HTMLElement, scroller: Element | null) {
+  const box = element.getBoundingClientRect();
+  const view = scroller ? scroller.getBoundingClientRect() : { top: 0, bottom: innerHeight };
+  const margin = nearViews * (view.bottom - view.top);
+  return box.bottom > view.top - margin && box.top < view.bottom + margin;
+}
+
+/**
+ * Samples tallestAlong in the page's idle moments, as many widths as each moment has time for, and
+ * calls `done` with the tallest. Between moments the frame is at its own width again, so the reader
+ * never sees a sample. Returns the cancel.
+ */
+function tallestWhenIdle(
+  box: HTMLElement,
+  narrowest: number,
+  most: number,
+  done: (tallest: number) => void,
+) {
+  let width = narrowest;
+  let tallest = 0;
+  let cancel = onIdle(function sample(time) {
+    const own = box.style.inlineSize;
+    // At least one width, each moment: a moment that came only as the wait ran out has no time.
+    do {
+      box.style.inlineSize = `${Math.min(width, most)}rem`;
+      tallest = Math.max(tallest, box.offsetHeight);
+      width += sampleStep;
+    } while (width < most + sampleStep && time.timeRemaining() > idleSampleTime);
+    box.style.inlineSize = own;
+    if (width < most + sampleStep) cancel = onIdle(sample);
+    else done(tallest);
+  });
+  return () => cancel();
+}
+
+/** The time an idle moment must still have for another sample, in ms: a sample takes a layout. */
+const idleSampleTime = 10;
+
+/**
  * The ruler's text for a width. At a width the page gives, the exact value; during a move, and at a
  * width the stage narrowed, whole rem, which change calmly. `classes` shows the window class beside
  * it, or instead of it with `'only'`.
@@ -190,6 +237,13 @@ function useSweepLayout(
     const stops = key.split(' ').map(Number);
     /** The tallest the example gets along a sweep, by the root's font size and the sweep's ends. */
     const tallestOf = new Map<string, number>();
+    /** The sampling of a sweep far from the view, while it runs in the page's idle moments. */
+    let sampling: { range: string; cancel: () => void } | null = null;
+    const stopSampling = () => {
+      sampling?.cancel();
+      sampling = null;
+    };
+    const scroller = scrollerOf(room);
     /** The stage's width as last measured, which a resize must change to measure again. */
     let width = 0;
     const measure = () => {
@@ -205,8 +259,22 @@ function useSweepLayout(
       // sampled keeps its tallest as the stage resizes, such as while the drawer beside the page
       // is dragged: a layout for each sample, every frame, made that drag lag.
       const range = `${rem} ${narrowest} ${most}`;
-      const tallest = tallestOf.get(range) ?? tallestAlong(box, narrowest, most);
-      tallestOf.set(range, tallest);
+      let tallest = tallestOf.get(range);
+      if (tallest === undefined && nearView(room, scroller)) {
+        stopSampling();
+        tallest = tallestAlong(box, narrowest, most);
+        tallestOf.set(range, tallest);
+      } else if (tallest === undefined && sampling?.range !== range) {
+        stopSampling();
+        sampling = {
+          range,
+          cancel: tallestWhenIdle(box, narrowest, most, (sampled) => {
+            sampling = null;
+            tallestOf.set(range, sampled);
+            sweep.update();
+          }),
+        };
+      }
       layoutRef.current = fitted;
       if (cropped) spot.dataset.cropped = '';
       else {
@@ -219,7 +287,9 @@ function useSweepLayout(
         '--catalogue-sweep-widest',
         `${cropped ? space / rem : most * scale}rem`,
       );
-      spot.style.setProperty('--catalogue-sweep-height', `${tallest * scale}px`);
+      // Until a far sweep is sampled, the frame keeps its own height (Figures.css).
+      if (tallest !== undefined)
+        spot.style.setProperty('--catalogue-sweep-height', `${tallest * scale}px`);
       spot.style.setProperty('--catalogue-sweep-scale', String(scale));
       drawRef.current(Math.min(Math.max(shownRef.current, narrowest), most));
     };
@@ -227,8 +297,11 @@ function useSweepLayout(
     // such as once it has loaded, and once the fonts have, which sample its height afresh.
     const sweep = remeasure(
       (changed) => {
-        if (changed.has('mutation') || changed.has('fonts')) tallestOf.clear();
-        else if (changed.size === 1 && changed.has('resize') && room.clientWidth === width) return;
+        if (changed.has('mutation') || changed.has('fonts')) {
+          tallestOf.clear();
+          stopSampling();
+        } else if (changed.size === 1 && changed.has('resize') && room.clientWidth === width)
+          return;
         width = room.clientWidth;
         measure();
       },
@@ -239,7 +312,19 @@ function useSweepLayout(
         fonts: true,
       },
     );
-    return sweep.stop;
+    // A sweep still sampling as it nears the view finishes at once (measure).
+    const approach = new IntersectionObserver(
+      (entries) => {
+        if (sampling && entries.some((entry) => entry.isIntersecting)) sweep.update();
+      },
+      { root: scroller, rootMargin: `${nearViews * 100}% 0px` },
+    );
+    approach.observe(room);
+    return () => {
+      sweep.stop();
+      approach.disconnect();
+      stopSampling();
+    };
   }, [areaRef, placeRef, frameRef, layoutRef, shownRef, drawRef, key, fit, crop]);
 }
 

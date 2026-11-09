@@ -67,20 +67,24 @@ function sync() {
     retained > 0 ? [...document.querySelectorAll<HTMLElement>('[data-env-skeleton]')] : [];
   for (const [root, state] of tracked)
     if (!root.isConnected || !roots.includes(root)) untrack(root, state);
-  // Every root is tracked, then every one measured, then every one's bars set: setting a root's bars
-  // between measuring two would make the browser work out the page again for each.
-  for (const root of roots) if (!tracked.has(root)) track(root);
+  // Every new root's position is read, then every one tracked, then every one measured, then every
+  // one's bars set: a write between two reads, such as tracking a root or setting its bars, would
+  // make the browser work out the page again for each.
+  const fresh = roots.filter((root) => !tracked.has(root));
+  const statics = fresh.map((root) => getComputedStyle(root).position === 'static');
+  fresh.forEach((root, index) => track(root, statics[index]!));
   const drawn = roots.map((root) => [root, barsOf(root)] as const);
   for (const [root, values] of drawn)
     for (const [property, value] of Object.entries(values))
       if (root.style.getPropertyValue(property) !== value) root.style.setProperty(property, value);
 }
 
-function track(root: HTMLElement) {
+/** Starts drawing a root's bars; `isStatic`, read before, is whether its position is static. */
+function track(root: HTMLElement, isStatic: boolean) {
   root.setAttribute(skeletonTextAttribute, '');
   // The bars are laid out over the root's padding box, which a static root can't hold.
   let position: string | undefined;
-  if (getComputedStyle(root).position === 'static') {
+  if (isStatic) {
     position = root.style.position;
     root.style.position = 'relative';
   }

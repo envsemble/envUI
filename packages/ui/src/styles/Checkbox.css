@@ -55,7 +55,9 @@
   .env-checkbox:has(input:disabled) {
     cursor: default;
   }
-  .env-checkbox:has(input:disabled) > * {
+  /* Its two parts by name, not every child (`> *`): a :has() rule for any element made the browser
+     work out the style of the whole page again whenever anything in it changed. */
+  .env-checkbox:has(input:disabled) > :where(.env-checkbox-box, .env-checkbox-label) {
     opacity: var(--env-state-disabled-opacity);
   }
   /* A checked or mixed box that is unavailable reads as unavailable rather than as a lighter brand
