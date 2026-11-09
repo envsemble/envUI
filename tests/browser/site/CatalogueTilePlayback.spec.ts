@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { existsSync, readFileSync } from 'node:fs';
 import { siteBuildUrl } from '../helpers/Servers';
 import { showTile } from '../helpers/SiteSpecHelpers';
 
@@ -272,6 +273,9 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
     const tile = page.locator('.catalogue-gallery-tile').filter({
       has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
     });
+    // A tile whose pointer never presses has no click to check, and would play a while for nothing.
+    if (!scriptClicks((await tile.locator('.catalogue-gallery-link').getAttribute('href'))!))
+      continue;
     const canvas = tile.locator('.catalogue-tile-canvas[data-fitted]');
     await showTile(tile);
     await page.mouse.move(0, 0);
@@ -419,10 +423,22 @@ function tileState(canvas: Element) {
 }
 
 /**
+ * Whether the script of the tile a gallery card links to has a click step: its file, named after
+ * the page's id in PascalCase (apps/site/src/tiles/Tiles.ts), says. A tile whose file can't be
+ * found counts as one that clicks.
+ */
+function scriptClicks(href: string) {
+  const id = href.split('/').pop()!;
+  const pascal = id.replace(/(^|-)([a-z\d])/g, (_, __, letter: string) => letter.toUpperCase());
+  const file = `apps/site/src/tiles/${pascal}.tsx`;
+  return !existsSync(file) || /\bclick:\s*true\b/.test(readFileSync(file, 'utf8'));
+}
+
+/**
  * Plays a gallery's tiles one after another, each for one loop of its script, and returns, for
  * each tile whose pointer clicks, the clicks after which nothing in it changed by the time of its
- * next press or 700 ms later: a click that misses what it aims at, such as one that a box clipped
- * away takes, leaves the tile as it was.
+ * next press or 700 ms and 42 frames later: a click that misses what it aims at, such as one that
+ * a box clipped away takes, leaves the tile as it was.
  */
 async function deadClicks(page: Page, names: string[]) {
   const dead: string[] = [];
@@ -430,6 +446,9 @@ async function deadClicks(page: Page, names: string[]) {
     const tile = page.locator('.catalogue-gallery-tile').filter({
       has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
     });
+    // A tile whose pointer never presses has no click to check, and would play a while for nothing.
+    if (!scriptClicks((await tile.locator('.catalogue-gallery-link').getAttribute('href'))!))
+      continue;
     const canvas = tile.locator('.catalogue-tile-canvas[data-fitted]');
     await showTile(tile);
     await expect(canvas, name).toHaveCount(1);
@@ -437,16 +456,29 @@ async function deadClicks(page: Page, names: string[]) {
     await expect(tile.locator('[data-playing]')).toHaveCount(0);
     await canvas.evaluate((element, source) => {
       const state = new Function(`return (${source})`)() as (canvas: Element) => string;
-      const log = { clicks: 0, dead: [] as string[], left: false, pressed: false };
+      const log = { clicks: 0, dead: [] as string[], left: false, pressed: false, pending: false };
       (element as HTMLElement & { clickLog?: typeof log }).clickLog = log;
       let before: string | null = null;
       let down = { x: 0, y: 0, time: 0 };
-      let pending: { after: string; timer: number } | null = null;
+      let pending: { after: string } | null = null;
       const settle = () => {
         if (!pending) return;
-        window.clearTimeout(pending.timer);
         if (state(element) === before) log.dead.push(pending.after);
         pending = null;
+        log.pending = false;
+      };
+      // What a click changes shows within 700 ms and the 42 frames that hold at 60 a second: a busy
+      // page draws its frames later, and what the click changes with them, so both must have passed.
+      const watch = (click: { after: string }) => {
+        const start = performance.now();
+        let frames = 0;
+        const frame = () => {
+          if (pending !== click) return;
+          frames++;
+          if (frames >= 42 && performance.now() - start >= 700) settle();
+          else requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
       };
       element.addEventListener(
         'pointerdown',
@@ -473,7 +505,9 @@ async function deadClicks(page: Page, names: string[]) {
           const label =
             `${target.localName}.${[...target.classList].join('.')} ` +
             `"${target.textContent?.trim().slice(0, 20)}"`;
-          pending = { after: label, timer: window.setTimeout(settle, 700) };
+          pending = { after: label };
+          log.pending = true;
+          watch(pending);
         },
         true,
       );
@@ -504,7 +538,18 @@ async function deadClicks(page: Page, names: string[]) {
       .toBe(true)
       .catch(() => undefined);
     if (Date.now() - started < 800) await page.waitForTimeout(800);
-    await page.waitForTimeout(750);
+    // The last click's change has had its time and frames: on a busy page, its 42 frames can take
+    // several seconds.
+    await expect
+      .poll(
+        () =>
+          canvas.evaluate(
+            (element) =>
+              (element as HTMLElement & { clickLog: { pending: boolean } }).clickLog.pending,
+          ),
+        { timeout: 30_000 },
+      )
+      .toBe(false);
     const log = await canvas.evaluate(
       (element) =>
         (element as HTMLElement & { clickLog: { clicks: number; dead: string[] } }).clickLog,
