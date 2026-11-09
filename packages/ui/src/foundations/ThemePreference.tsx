@@ -302,9 +302,9 @@ export function ThemePreferenceProvider({
     return () => query.removeEventListener('change', update);
   }, [storedPreference]);
 
-  // One provider applies to the document; a second would write over the first's root theme. A
-  // layout effect, so it registers before the provider writes on the root below.
-  useLayoutEffect(() => {
+  // One provider applies to the document; a second would write over the first's root theme. An
+  // insertion effect, as the writes below, so it registers before them.
+  useInsertionEffect(() => {
     if (!applyToDocument) return;
     try {
       if (process.env.NODE_ENV !== 'production' && documentProviders.size > 0)
@@ -326,8 +326,15 @@ export function ThemePreferenceProvider({
     };
   }, [applyToDocument, provider]);
 
-  // Before the paint, so the root and the boundary take a theme in the same frame.
-  useLayoutEffect(() => {
+  useInstantColorSwitch(
+    applyToDocument,
+    hydrated ? `${theme} ${contrast} ${appliedContrast}` : undefined,
+  );
+
+  // The root takes the theme in an insertion effect, after the colors' switch above and before any
+  // layout effect: the boundary takes the root's look, so what a layout effect inside measures of
+  // the theme, such as a figure's colors, is the new theme's, as in a boundary of its own.
+  useInsertionEffect(() => {
     if (!applyToDocument || !hydrated) return;
     const root = document.documentElement;
     root.classList.add('env-theme');
@@ -350,20 +357,19 @@ export function ThemePreferenceProvider({
       root.setAttribute(scaleSourceAttribute, ownScaleSource(ownScale));
     } else releaseScale(root);
     root.style.colorScheme = theme;
-    // The browser's own interface, such as a mobile address bar, takes the canvas color. Every
-    // theme-color tag follows, including ones written for a system color scheme with media. Only a
-    // page with one reads the color, which works out the page's style at once.
-    const browserThemes = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
-    if (browserThemes.length) {
-      const canvas = getComputedStyle(root).backgroundColor;
-      for (const browserTheme of browserThemes) browserTheme.content = canvas;
-    }
   }, [applyToDocument, hydrated, theme, appliedContrast, ownScale, provider]);
 
-  useInstantColorSwitch(
-    applyToDocument,
-    hydrated ? `${theme} ${contrast} ${appliedContrast}` : undefined,
-  );
+  // Before the paint, so the browser's own interface, such as a mobile address bar, takes the
+  // canvas color in the frame that shows it. Every theme-color tag follows, including ones written
+  // for a system color scheme with media. Only a page with one reads the color, which works out
+  // the page's style at once.
+  useLayoutEffect(() => {
+    if (!applyToDocument || !hydrated) return;
+    const browserThemes = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
+    if (!browserThemes.length) return;
+    const canvas = getComputedStyle(document.documentElement).backgroundColor;
+    for (const browserTheme of browserThemes) browserTheme.content = canvas;
+  }, [applyToDocument, hydrated, theme, appliedContrast, ownScale]);
 
   const value = useMemo<ThemePreferenceValue>(
     () => ({
