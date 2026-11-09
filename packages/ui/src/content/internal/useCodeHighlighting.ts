@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { CodeToken } from './codeHighlighting.js';
+import { givenCodeTokens } from './givenCodeTokens.js';
 
 const languageAliases: Record<string, string> = {
   js: 'javascript',
@@ -29,7 +30,8 @@ const languageAliases: Record<string, string> = {
 
 /**
  * Render plain source on the server and first client render, then enrich it in place: with the
- * high-contrast colors too where `highContrast` asks for them.
+ * high-contrast colors too where `highContrast` asks for them. Source whose tokens were given
+ * (givenCodeTokens.ts) renders highlighted from the first render.
  */
 export function useCodeHighlighting(source: string, language?: string, highContrast = false) {
   const resolvedLanguage = languageAliases[language?.toLowerCase() ?? ''];
@@ -41,9 +43,24 @@ export function useCodeHighlighting(source: string, language?: string, highContr
     source: string;
     language: string;
     tokens: CodeToken[][];
-  } | null>(null);
+  } | null>(() => {
+    const tokens =
+      eligible && resolvedLanguage && !highContrast
+        ? givenCodeTokens({ source, language: resolvedLanguage })
+        : undefined;
+    return tokens && resolvedLanguage ? { source, language: resolvedLanguage, tokens } : null;
+  });
   useEffect(() => {
     if (!eligible || !resolvedLanguage) return;
+    const tokens = highContrast
+      ? undefined
+      : givenCodeTokens({ source, language: resolvedLanguage });
+    if (tokens) {
+      setResult((shown) =>
+        shown?.tokens === tokens ? shown : { source, language: resolvedLanguage, tokens },
+      );
+      return;
+    }
     let current = true;
     import('./codeHighlighting.js')
       .then(({ highlightCode }) =>

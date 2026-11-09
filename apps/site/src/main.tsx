@@ -9,6 +9,7 @@ import { currentRoute } from './routes/useSiteRoute';
 import { oldHashRoute } from './routes/Address';
 import { preloadPage } from './pages/PreloadPage';
 import { Hydrated } from './loading/useHydrated';
+import { givePageCode } from './pages/PageCode';
 
 // index.html holds the root, which the build pre-renders for each page, naming the page's route
 // (scripts/site/PrerenderSite.ts).
@@ -53,7 +54,9 @@ void opening.then(() => {
       <SiteRoot />
     </Started>
   );
-  if (hydrates)
+  if (hydrates) {
+    // Its code blocks hydrate highlighted, as the server rendered them.
+    givePageCode();
     // As a transition, which yields to the browser as it goes, as the page shows already.
     startTransition(() => {
       hydrateRoot(container, site, {
@@ -65,7 +68,7 @@ void opening.then(() => {
         },
       });
     });
-  else {
+  } else {
     container.replaceChildren();
     createRoot(container).render(site);
   }

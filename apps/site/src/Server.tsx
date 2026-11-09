@@ -12,6 +12,7 @@ import { documentTitle, pageDescription } from './routes/PageHead';
 import { allPages, findPage } from './routes/SiteRoutes';
 import { preloadPage } from './pages/PreloadPage';
 import { viewOfKind } from './pages/ViewModules';
+import { pageCodeScript, renderWithCode } from './pages/PageCode';
 
 /**
  * Every page the site serves: its route, such as components/button (the home page's is overview),
@@ -25,11 +26,15 @@ export const sitePages = allPages.map((page) => ({
   view: viewOfKind[page.kind],
 }));
 
-/** A page pre-rendered: its tab's title and description, and the HTML of the site's root. */
+/**
+ * A page pre-rendered: its tab's title and description, the HTML of the site's root, and the
+ * element that carries the tokens of its code, highlighted as it rendered (pages/PageCode.ts).
+ */
 export interface RenderedPage {
   title: string;
   description: string;
   html: string;
+  code?: string;
 }
 
 /** Renders the page at `route`, such as components/button, once what it shows has loaded. */
@@ -43,15 +48,22 @@ export async function renderPage(route: string): Promise<RenderedPage> {
   // React renders a part that throws on the client alone, after a fallback; a page with one would
   // not hydrate as it is, so it fails the build instead.
   const errors: unknown[] = [];
-  const { prelude } = await prerender(<SiteRoot />, {
-    // The whole page in its place, rather than parts of it moved there by a script as they load.
-    progressiveChunkSize: Number.POSITIVE_INFINITY,
-    onError(error) {
-      errors.push(error);
-    },
+  const { rendered: html, code } = await renderWithCode(async () => {
+    const { prelude } = await prerender(<SiteRoot />, {
+      // The whole page in its place, rather than parts of it moved there by a script as they load.
+      progressiveChunkSize: Number.POSITIVE_INFINITY,
+      onError(error) {
+        errors.push(error);
+      },
+    });
+    return new Response(prelude).text();
   });
-  const html = await new Response(prelude).text();
   if (errors.length)
     throw new AggregateError(errors, `The page ${route} failed to render on the server`);
-  return { title: documentTitle(page, page.area), description: pageDescription(page), html };
+  return {
+    title: documentTitle(page, page.area),
+    description: pageDescription(page),
+    html,
+    code: code && pageCodeScript(code),
+  };
 }

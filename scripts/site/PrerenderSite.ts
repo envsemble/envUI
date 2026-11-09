@@ -34,7 +34,9 @@ interface SitePage {
 /** The server entry's build: its module, which renders the site's pages. */
 export interface SiteServer {
   sitePages: SitePage[];
-  renderPage: (route: string) => Promise<{ title: string; description: string; html: string }>;
+  renderPage: (
+    route: string,
+  ) => Promise<{ title: string; description: string; html: string; code?: string }>;
 }
 
 /** What each page loads, as the client's build found it (envui-content-preload in vite.config.ts). */
@@ -66,7 +68,13 @@ export async function buildSiteServer(serverDirectory: string) {
       // The client's chunks, which carry a page's parts to the browser, don't matter here.
       rolldownOptions: { output: { codeSplitting: false } },
     },
-    ssr: { noExternal: true },
+    ssr: {
+      noExternal: true,
+      // The library's source, as the browser's build resolves it (envui-source, vite.config.ts),
+      // rather than its build in dist/: the two would render apart once the source changes, and
+      // the site's door into the library's internals (@envui-internal) is to its source.
+      resolve: { conditions: ['envui-source', 'module', 'node', 'development|production'] },
+    },
   });
 }
 
@@ -143,7 +151,7 @@ function pageDocument(
   template: string,
   page: SitePage,
   files: ReturnType<typeof pageFiles>,
-  rendered: { title: string; description: string; html: string },
+  rendered: { title: string; description: string; html: string; code?: string },
 ) {
   let html = template;
   const replace = (pattern: RegExp, replacement: (found: string, file: string) => string) => {
@@ -175,7 +183,10 @@ function pageDocument(
   );
   replace(/\s*<\/head>/, () => `${styles.join('')}\n  </head>`);
   const root = `<div id="root" data-site-page="${escapeAttribute(page.route)}">${rendered.html}</div>`;
-  replace(/<div id="root"><\/div>/, () => `${root}\n    ${siteLoader(loads)}`);
+  // The tokens of its code, which the site gives before it hydrates, ahead of the script that
+  // starts it.
+  const code = rendered.code ? `\n    ${rendered.code}` : '';
+  replace(/<div id="root"><\/div>/, () => `${root}${code}\n    ${siteLoader(loads)}`);
   return html;
 }
 
