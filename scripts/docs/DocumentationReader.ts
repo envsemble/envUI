@@ -30,7 +30,7 @@ import {
 import { readPage } from './PageReader.ts';
 import { validateFrontmatter } from './validation/Frontmatter.ts';
 import { readPartNames } from './validation/Legends.ts';
-import type { PartNames } from './PageReading.ts';
+import type { PartNames } from './PageReaderTypes.ts';
 
 /** A page of docs/ as readDocumentation reads it. */
 export interface DocumentRecord {

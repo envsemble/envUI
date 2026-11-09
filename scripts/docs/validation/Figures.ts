@@ -3,7 +3,7 @@
 import type { Tokens } from 'marked';
 import type { ExampleEntry } from '../PageStructure.ts';
 import type { ExampleBlock, FoundationFigureBlock } from '../model/DocumentationTypes.ts';
-import type { PageReading, ReadSection } from '../PageReading.ts';
+import type { PageReading, ReadSection } from '../PageReaderTypes.ts';
 
 /**
  * A figure, placed by name: ```tsx figure=Name```, with optional attributes, written

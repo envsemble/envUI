@@ -1,5 +1,5 @@
-// What the page reader keeps as it reads a page's Markdown tokens in order, which the figures and
-// legends it places read and add to.
+// The types of PageReader.ts: what it reads a page with, and what it keeps as it reads the page's
+// Markdown tokens in order, which the figures and legends it places read and add to.
 import type { Token } from 'marked';
 import type { PlacedBlock } from './model/DocumentationTypes.ts';
 import type { ExampleEntry, PageSection, PageSectionDefinition } from './PageStructure.ts';
