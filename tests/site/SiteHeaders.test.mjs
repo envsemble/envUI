@@ -60,8 +60,10 @@ test("a page's pre-rendered file is served with the headers of every page", () =
   assert.match(page['cache-control'] ?? '', /\bno-cache\b/);
 });
 
-test("the host serves a page's address from its pre-rendered file, and any other from index.html", () => {
+test("the host serves a page's address from its pre-rendered file, and any other from 404.html", () => {
   const config = readFileSync(resolve(repositoryRoot, 'wrangler.jsonc'), 'utf8');
   assert.match(config, /"html_handling": "auto-trailing-slash"/);
-  assert.match(config, /"not_found_handling": "single-page-application"/);
+  // With a 404 status, and the headers of every page.
+  assert.match(config, /"not_found_handling": "404-page"/);
+  assert.deepEqual(headersFor(siteHeaders(), '/404.html'), headersFor(siteHeaders(), '/'));
 });

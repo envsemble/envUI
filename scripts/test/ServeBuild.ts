@@ -12,7 +12,7 @@
 // expect, bundled. Each builds in seconds, into node_modules, which the visual baseline's Docker run
 // keeps apart from the host's. Outside CI a build follows its sources, so a server Playwright
 // reuses serves the code as it is.
-import { readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
@@ -85,6 +85,36 @@ await preview({
   build: { outDir },
   preview: { host: '127.0.0.1', port, strictPort: true },
   plugins: [
+    {
+      // As the host answers the site's addresses (wrangler.jsonc): an old address _redirects lists
+      // with its redirect, and a page load of an address without a file with 404.html, Page not
+      // found, and a 404 status, rather than the preview server's index.html.
+      name: 'envui-hosted-addresses',
+      configurePreviewServer(server) {
+        if (values.app !== 'site') return;
+        server.middlewares.use((request, response, next) => {
+          const pathname = decodeURI(new URL(request.url ?? '/', 'http://site').pathname);
+          const redirects = resolve(outDir, '_redirects');
+          const redirect =
+            existsSync(redirects) &&
+            readFileSync(redirects, 'utf8')
+              .split('\n')
+              .map((line) => line.split(' '))
+              .find(([from]) => from && decodeURI(from) === pathname)?.[1];
+          if (redirect) {
+            response.writeHead(301, { Location: redirect }).end();
+            return;
+          }
+          const file = resolve(outDir, `.${pathname}`);
+          const page = ['', '.html', '/index.html'].some(
+            (end) => existsSync(`${file}${end}`) && (end || !pathname.endsWith('/')),
+          );
+          if (page || !request.headers.accept?.includes('text/html')) return next();
+          response.writeHead(404, { 'Content-Type': 'text/html' });
+          response.end(readFileSync(resolve(outDir, '404.html')));
+        });
+      },
+    },
     {
       // Uncompressed: the browser is on the same machine, and the preview server would gzip every
       // file again for every test's fresh context: on CI's two cores, five minutes of the suite.
