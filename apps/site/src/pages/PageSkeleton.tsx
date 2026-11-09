@@ -5,7 +5,7 @@ import type { RoutePage } from '../routes/SiteRoutes';
 import { PartSwitch } from '../routes/OtherPart';
 import { PartSkeleton, placeholderText } from '../loading/Skeletons';
 import { recordedSize } from '../loading/RecordedSizes';
-import { MetadataBadges } from '../template/TemplateContent';
+import { MetadataBadges } from '../template/MetadataBadges';
 
 /**
  * An example's height where its size wasn't recorded, the stage's room around it and its least

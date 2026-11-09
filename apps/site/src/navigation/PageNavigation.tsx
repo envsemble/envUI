@@ -4,7 +4,7 @@ import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { pagesOf, type RoutePage } from '../routes/SiteRoutes';
 import { routeHref } from '../routes/Address';
-import { preloadPage } from '../pages/PreloadPage';
+import { preloadPageContent } from '../pages/PreloadPage';
 
 /**
  * Starts loading what the previous and next pages need once the page has loaded and the browser is
@@ -14,8 +14,8 @@ function usePreloadNeighbours(previous: RoutePage | undefined, next: RoutePage |
   useEffect(() => {
     let idle = 0;
     const load = () => {
-      void preloadPage(previous);
-      void preloadPage(next);
+      void preloadPageContent(previous);
+      void preloadPageContent(next);
     };
     // Safari has no requestIdleCallback; there, a moment after the load.
     const idleSupported = typeof window.requestIdleCallback === 'function';

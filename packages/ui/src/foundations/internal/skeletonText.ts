@@ -67,10 +67,13 @@ function sync() {
     retained > 0 ? [...document.querySelectorAll<HTMLElement>('[data-env-skeleton]')] : [];
   for (const [root, state] of tracked)
     if (!root.isConnected || !roots.includes(root)) untrack(root, state);
-  for (const root of roots) {
-    if (!tracked.has(root)) track(root);
-    draw(root);
-  }
+  // Every root is tracked, then every one measured, then every one's bars set: setting a root's bars
+  // between measuring two would make the browser work out the page again for each.
+  for (const root of roots) if (!tracked.has(root)) track(root);
+  const drawn = roots.map((root) => [root, barsOf(root)] as const);
+  for (const [root, values] of drawn)
+    for (const [property, value] of Object.entries(values))
+      if (root.style.getPropertyValue(property) !== value) root.style.setProperty(property, value);
 }
 
 function track(root: HTMLElement) {
@@ -146,8 +149,8 @@ function visibleRect(element: Element, root: HTMLElement, rect: DOMRect) {
   return { left, right, top, bottom };
 }
 
-/** Measures the root's text and sets the bars it draws. */
-function draw(root: HTMLElement) {
+/** Measures the root's text: the bars it draws, as the properties that draw them. */
+function barsOf(root: HTMLElement): Record<string, string> {
   const box = root.getBoundingClientRect();
   const originX = box.left + root.clientLeft - root.scrollLeft;
   const originY = box.top + root.clientTop - root.scrollTop;
@@ -223,7 +226,7 @@ function draw(root: HTMLElement) {
     (bar) =>
       `var(--env-skeleton-rect) ${roundToHundredth(bar.x - left)}px ${roundToHundredth(bar.y - top)}px / ${roundToHundredth(bar.width)}px ${roundToHundredth(bar.height)}px no-repeat`,
   );
-  const values: Record<string, string> = {
+  return {
     '--env-skeleton-text-bars':
       layers.length > 0 ? layers.join(', ') : 'linear-gradient(transparent 0 0)',
     '--env-skeleton-text-left': `${roundToHundredth(left)}px`,
@@ -231,6 +234,4 @@ function draw(root: HTMLElement) {
     '--env-skeleton-text-width': `${roundToHundredth(right - left)}px`,
     '--env-skeleton-text-height': `${roundToHundredth(bottom - top)}px`,
   };
-  for (const [property, value] of Object.entries(values))
-    if (root.style.getPropertyValue(property) !== value) root.style.setProperty(property, value);
 }

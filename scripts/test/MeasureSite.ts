@@ -278,7 +278,10 @@ interface Audit {
     unknown
   >;
 }
-type Report = { audits: Record<string, Audit> };
+type Report = {
+  audits: Record<string, Audit>;
+  categories?: { performance?: { score?: number | null } };
+};
 
 interface Chain {
   children?: Record<string, Chain>;
@@ -312,6 +315,8 @@ function numbers(report: Report) {
   const longTasks = items('long-tasks');
   const renderBlocking = items('render-blocking-insight');
   return {
+    // Lighthouse's performance score, out of 100.
+    score: (report.categories?.performance?.score ?? NaN) * 100,
     lcp: value('largest-contentful-paint'),
     fcp: value('first-contentful-paint'),
     tbt: value('total-blocking-time'),
@@ -531,8 +536,8 @@ function report({ results, unused, navigations }: Measurement) {
       ]),
     ) as Numbers;
   const lines = [
-    '| Form | Page | Cache | LCP | FCP | TBT | CLS | SI | Total KB | JS KB | CSS KB | Font KB | Image KB | Other KB | Requests | Chain | JS exec | Long tasks | Main thread | Script | Style, layout | Paint | Other work |',
-    '| --- | --- | --- | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: |',
+    '| Form | Page | Cache | Score | LCP | FCP | TBT | CLS | SI | Total KB | JS KB | CSS KB | Font KB | Image KB | Other KB | Requests | Chain | JS exec | Long tasks | Main thread | Script | Style, layout | Paint | Other work |',
+    '| --- | --- | --- | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: |',
   ];
   for (const [form, byPage] of Object.entries(results))
     for (const [name, states] of Object.entries(byPage))
@@ -540,7 +545,7 @@ function report({ results, unused, navigations }: Measurement) {
         if (!list.length) continue;
         const n = medians(list);
         lines.push(
-          `| ${form} | ${pages[name]?.title ?? name} | ${state} | ${fixed(n.lcp)} | ${fixed(n.fcp)} | ${fixed(n.tbt)} | ${fixed(n.cls, 3)} | ${fixed(n.speedIndex)} | ${kb(n.totalBytes)} | ${kb(n.jsBytes)} | ${kb(n.cssBytes)} | ${kb(n.fontBytes)} | ${kb(n.imageBytes)} | ${kb(n.otherBytes)} | ${fixed(n.requests)} | ${fixed(n.chainDepth)} | ${fixed(n.jsExecution)} | ${fixed(n.longTasks)} | ${fixed(n.mainThread)} | ${fixed(n.scriptEvaluation + n.scriptParsing)} | ${fixed(n.styleLayout)} | ${fixed(n.paintCompositeRender)} | ${fixed(n.otherWork + n.garbageCollection + n.parseHTML)} |`,
+          `| ${form} | ${pages[name]?.title ?? name} | ${state} | ${fixed(n.score)} | ${fixed(n.lcp)} | ${fixed(n.fcp)} | ${fixed(n.tbt)} | ${fixed(n.cls, 3)} | ${fixed(n.speedIndex)} | ${kb(n.totalBytes)} | ${kb(n.jsBytes)} | ${kb(n.cssBytes)} | ${kb(n.fontBytes)} | ${kb(n.imageBytes)} | ${kb(n.otherBytes)} | ${fixed(n.requests)} | ${fixed(n.chainDepth)} | ${fixed(n.jsExecution)} | ${fixed(n.longTasks)} | ${fixed(n.mainThread)} | ${fixed(n.scriptEvaluation + n.scriptParsing)} | ${fixed(n.styleLayout)} | ${fixed(n.paintCompositeRender)} | ${fixed(n.otherWork + n.garbageCollection + n.parseHTML)} |`,
         );
       }
   if (Object.keys(unused).length) {

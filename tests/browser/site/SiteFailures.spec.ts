@@ -12,8 +12,11 @@ import { goTo } from '../helpers/SiteSpecHelpers';
  * serves every file.
  */
 async function openFailingButtonPage(page: Page) {
-  // The page's content, which a failure would take the whole page down with, arrives.
-  const loaded = new Set(moduleFiles('src/generated/pages/button.json'));
+  // The page's view and content, which a failure would take the whole page down with, arrive.
+  const loaded = new Set([
+    ...moduleFiles('src/pages/CataloguePages.tsx'),
+    ...moduleFiles('src/generated/pages/button.json'),
+  ]);
   let state: 'opening' | 'failing' | 'assets' | 'up' = 'opening';
   await serveSite(page, {
     failing: (pathname) => {
@@ -99,10 +102,11 @@ test('in the hosted build, an example whose file is missing offers a reload, whi
   // A build's chunk that failed stays failed until the page reloads, in Chromium and WebKit, and
   // in WebKit even then, unless it is fetched again.
   requireSite();
-  const files = moduleFiles('src/examples/button/CreateProject.tsx');
+  // The example's own file, the first it loads: the others it imports may be the page's too.
+  const [file] = moduleFiles('src/examples/button/CreateProject.tsx');
   let failing = true;
   await serveSite(page, {
-    failing: (pathname) => failing && files.includes(pathname),
+    failing: (pathname) => failing && pathname === file,
     failure: 'missing',
   });
   await page.goto(`${siteUrl}/components/button`);
