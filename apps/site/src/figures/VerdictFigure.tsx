@@ -1,5 +1,5 @@
 import { useId, useRef } from 'react';
-import { Column, Theme, useTheme } from '@envsemble/envui';
+import { Column } from '@envsemble/envui';
 import { IconCheck } from '@envsemble/envui/icons/Check';
 import { IconClose } from '@envsemble/envui/icons/Close';
 import { IconWarning } from '@envsemble/envui/icons/Warning';
@@ -9,6 +9,7 @@ import { OpenExample } from './OpenExample';
 import { ExamplePlayback } from './Specimen';
 import { VerdictMotion } from './MotionStage';
 import { useVerdictFit } from '../fit/standalone/useVerdictFit';
+import { PageTheme } from './PageTheme';
 
 /** The mark of a do, a don't or a caution: its icon and its word. */
 const verdicts = {
@@ -50,7 +51,6 @@ export function VerdictFigure({
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
 }) {
-  const theme = useTheme();
   const { label, icon } = verdicts[verdict];
   const id = useId();
   const stageRef = useRef<HTMLDivElement>(null);
@@ -77,7 +77,7 @@ export function VerdictFigure({
       ) : (
         <Column
           ref={stageRef}
-          render={<Theme {...theme} />}
+          render={<PageTheme />}
           gap={0}
           className="site-verdict-stage"
           data-example={name}

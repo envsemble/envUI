@@ -1,5 +1,5 @@
 import { Suspense, use, useState, type ComponentType } from 'react';
-import { Column, Theme, useTheme } from '@envsemble/envui';
+import { Column } from '@envsemble/envui';
 import { SpecimenHeadingLevel } from './SpecimenFrame';
 import { hasExample } from './ExampleRegistry';
 import { keepLinksInPlace } from './LiveExample';
@@ -8,6 +8,7 @@ import { componentRegistry } from '../loading/ModuleRegistry';
 import { HoldPlaceholder } from '../loading/LoadingStore';
 import { StageSkeleton } from '../loading/Skeletons';
 import { VerdictMotion } from './MotionStage';
+import { PageTheme } from './PageTheme';
 
 /*
  * The catalogue's specimens, apps/site/src/specimens/<page>/<Name>.tsx, each a default-exported
@@ -116,11 +117,10 @@ export function Specimen({
   name: string;
   headingLevel?: 2 | 3;
 }) {
-  const theme = useTheme();
   return (
     <SpecimenHeadingLevel value={headingLevel}>
       <Column
-        render={<Theme {...theme} />}
+        render={<PageTheme />}
         gap={0}
         className="catalogue-specimen-area"
         data-catalogue-specimen={name}
