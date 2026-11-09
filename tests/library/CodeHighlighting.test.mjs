@@ -53,6 +53,33 @@ test('a token without high-contrast styles takes its standard color at high cont
   });
 });
 
+test('every theme boundary sets the code colors codeColors.ts gives its theme', async () => {
+  const { codeThemeStyle } = await import('../../packages/ui/dist/content/internal/codeColors.js');
+  const css = await readFile(
+    new URL('../../packages/ui/src/styles/Code.css', import.meta.url),
+    'utf8',
+  );
+  // The code colors each rule of a selector declares, in the order of the style sheet.
+  const declared = (selector) => {
+    const properties = {};
+    for (const [, at, body] of css.matchAll(/^ {2}([^\n{]+) \{([^}]*)\}/gm))
+      if (at === selector)
+        for (const [, name, value] of body.matchAll(
+          /(--env-code-(?:back|fore)ground[\w-]*): ([^;]+);/g,
+        ))
+          properties[name] = value;
+    return properties;
+  };
+  for (const [scheme, selector] of [
+    ['light', '.env-theme'],
+    ['dark', ".env-theme[data-env-theme='dark']"],
+  ]) {
+    const { colorScheme, ...colors } = codeThemeStyle(scheme);
+    assert.equal(colorScheme, scheme);
+    assert.deepEqual(declared(selector), colors, `${scheme}: update Code.css to codeColors.ts`);
+  }
+});
+
 test('every highlighted token is readable on its code background, in code blocks and diffs', async () => {
   const { wcagContrast, differenceEuclidean, oklch } = await import('culori');
   const chroma = (color) => oklch(color).c ?? 0;

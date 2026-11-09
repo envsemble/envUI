@@ -10,7 +10,6 @@ import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useCopy } from '../internal/useCopy.js';
-import { codeThemeStyle } from './internal/codeColors.js';
 import { useCodeContrast } from './internal/useCodeContrast.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
 import { tokenStyle } from './internal/codeTokenStyle.js';
@@ -45,7 +44,6 @@ export function CodeBlock({
   copyable = false,
   wrap = false,
   className,
-  style,
   ...props
 }: CodeBlockProps) {
   const { theme } = useTheme();
@@ -70,12 +68,7 @@ export function CodeBlock({
   }
   const lineEndings = source.match(/\r\n|\r|\n/g) ?? [];
   return (
-    <div
-      {...props}
-      className={classNames('env-code-block', className)}
-      data-wrap={flag(wrap)}
-      style={{ ...codeThemeStyle(theme), ...style }}
-    >
+    <div {...props} className={classNames('env-code-block', className)} data-wrap={flag(wrap)}>
       {(label || copyable) && (
         <Row wrap align="center" justify="between" gap={4} className="env-code-block-header">
           <span>{label ?? language ?? messages.title}</span>
