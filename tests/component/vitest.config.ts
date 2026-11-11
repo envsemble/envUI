@@ -5,6 +5,7 @@ import { playwright } from '@vitest/browser-playwright';
 import react from '@vitejs/plugin-react';
 import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 import { commands } from './Commands.ts';
+import { ShardByDuration } from './ShardByDuration.ts';
 
 /**
  * The library's component tests: each fixture mounted straight into a real browser page, with no
@@ -69,6 +70,8 @@ export default defineConfig({
       { name: 'a11y', description: 'The accessibility scan, which `npm run test:a11y` runs' },
     ],
     maxWorkers: workers,
+    // --shard splits the files by the time each takes, as Durations.json records.
+    sequence: { sequencer: ShardByDuration },
     testTimeout: 30_000,
     expect: { poll: { timeout: 8_000 } },
     browser: {

@@ -1,4 +1,5 @@
-// The median the measuring scripts report: MeasureRuntime.ts's and MeasureSite.ts's.
+// The median the measuring scripts report, MeasureRuntime.ts's and MeasureSite.ts's, and the time
+// the component tests' shards count for a file they have no record of (ComponentShards.ts).
 
 /** The median of the finite values, or NaN when there are none. */
 export function median(values: number[]) {

@@ -9,9 +9,11 @@
     ".": {
       // The scripts in package.json are entries of their own; these run otherwise.
       "entry": [
-        // Run by hand: after the favicon's SVG changes, and to check the site's contents lists.
+        // Run by hand: after the favicon's SVG changes, to check the site's contents lists, and to
+        // record the component tests' times for CI's shards.
         "scripts/build/GenerateFavicons.ts",
         "scripts/test/CheckContents.ts",
+        "scripts/test/RecordDurations.ts",
         "tests/*/*.test.mjs",
         "tests/browser/{library,site}/*.spec.ts",
         "tests/accessibility/*.spec.ts",

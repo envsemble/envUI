@@ -20,3 +20,5 @@ export const examplesDirectory = at('apps/site/src/examples');
 export const specimensDirectory = at('apps/site/src/specimens');
 /** The catalogue's generated summary of the documentation, with its pages beside it. */
 export const generatedDocumentationFile = at('apps/site/src/generated/Documentation.ts');
+/** How long each component test file takes, by which CI splits them into shards. */
+export const componentDurationsFile = at('tests/component/Durations.json');
