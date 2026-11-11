@@ -70,7 +70,7 @@ test('imports go down the layers', () => {
       describe: ({ entry, sites, from, to }) =>
         `${source(entry.module, sites)} imports ${entry.imports}, but a ${from} module may import only from its own layer or below (${layers.slice(0, -1).join(' < ')}), and ${entry.imports} is ${to}`,
       fix: () =>
-        `Move what both need into a lower layer, or correct the layer in ${rulesFile} if it is wrong.`,
+        `Move what both need into a lower layer, or correct the layer in ${rulesFile} if it is wrong: a component of a family's folder that renders a composite is a composite, listed under layers.modules.`,
     }),
   );
 });
