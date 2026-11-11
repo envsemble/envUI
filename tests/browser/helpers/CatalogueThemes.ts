@@ -1,6 +1,6 @@
 /**
- * The themes the visual baseline and the accessibility scan show catalogue pages in: every page in
- * light, and the pages in samplePages in dark, light high contrast and dark high contrast as well.
+ * The catalogue's themes, and those the visual baseline shows its pages in: every page in light,
+ * and the pages in samplePages in dark, light high contrast and dark high contrast as well.
  */
 import { expect, type Page } from '@playwright/test';
 import { allPages } from '../../../apps/site/src/routes/SiteRoutes';

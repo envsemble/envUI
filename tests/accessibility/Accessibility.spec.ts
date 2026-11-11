@@ -1,16 +1,16 @@
 /**
- * Accessibility gate: axe scans every page of the catalogue and the Docs in light, and the theme
- * sample of samplePages (tests/browser/helpers/CatalogueThemes.ts) in dark and both high-contrast themes
- * too, and compares the violations with KnownViolations.json. A new violation fails, and so does a
- * listed one that no longer occurs, so the list only shrinks. Run `npm run test:a11y`; after fixing
- * violations, or when a reviewed change has to add one, rewrite the list with `npm run
- * test:a11y:update` and review its diff.
+ * The site's accessibility scan: axe scans one page of each kind the site has, in light, and the
+ * pages of `allThemesOn` in dark and both high-contrast themes too, and compares the violations
+ * with KnownViolations.json. A new violation fails, and so does a listed one that no longer occurs,
+ * so the list only shrinks. The library's components are scanned in their fixtures
+ * (tests/component/Accessibility.test.tsx). Run `npm run test:a11y`; after fixing violations, or
+ * when a reviewed change has to add one, rewrite the lists with `npm run test:a11y:update` and
+ * review their diff.
  *
  * Violations are keyed by page, theme, axe rule and a stable target: the catalogue region (the
  * specimen's heading, sidebar, header…) and the element's tag with its env-, site-, catalogue-
  * and docs- classes, counted.
  * React ids and child positions are left out so unrelated edits do not move the keys.
-
  */
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -18,15 +18,15 @@ import { mkdirSync, readFileSync, rmdirSync, rmSync, statSync, writeFileSync } f
 import { fileURLToPath } from 'node:url';
 import { serveSite, siteBuilt, siteUrl } from '../browser/helpers/HostedSite';
 import {
+  allThemes,
   chooseScheme,
   emulateContrast,
-  themesFor,
   type CatalogueTheme,
   type ThemeName,
 } from '../browser/helpers/CatalogueThemes';
-import { allPages } from '../../apps/site/src/routes/SiteRoutes';
+import { findPage } from '../../apps/site/src/routes/SiteRoutes';
 
-/** light on every page, and dark, light-hc and dark-hc on the pages of samplePages. */
+/** light on every page, and dark, light-hc and dark-hc on the pages of allThemesOn. */
 type Theme = ThemeName;
 /** rule id → stable target → count */
 type RuleCounts = Record<string, Record<string, number>>;
@@ -53,12 +53,33 @@ const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  */
 const highContrastRules = { 'color-contrast-enhanced': { enabled: true } };
 
-/** Every page of the catalogue and the Docs, with the themes it is scanned in. */
-const pages = allPages.map(({ path, title }) => ({
-  path,
-  title,
-  routes: [{ route: path, themes: themesFor(path) }],
-}));
+/**
+ * A page of each kind: the home page, a component's, a pattern's and a foundation's page, a
+ * gallery, and in the Docs a component's page, a guide, the token reference and the changelog.
+ */
+const kinds = [
+  'overview',
+  'components/button',
+  'patterns/forms',
+  'foundations/colors',
+  'components',
+  'docs/components/button',
+  'docs/customizing',
+  'docs/tokens',
+  'docs/changelog',
+];
+/**
+ * Also scanned in dark and high contrast: the color roles and actions with their states, and the
+ * Docs' props tables and token swatches.
+ */
+const allThemesOn = new Set(['components/button', 'docs/tokens']);
+
+const pages = kinds.map((path) => {
+  const page = findPage(path);
+  if (!page) throw new Error(`Accessibility.spec.ts names a page the site does not have: ${path}.`);
+  const themes = allThemesOn.has(path) ? allThemes : allThemes.slice(0, 1);
+  return { path, title: page.title, routes: [{ route: path, themes }] };
+});
 /** Every route scanned, with the themes it is scanned in. */
 const routes = new Map<string, Set<string>>([
   ...pages.flatMap((page) =>
@@ -122,8 +143,27 @@ function updating(testInfo: TestInfo) {
   return ['all', 'changed'].includes(testInfo.config.updateSnapshots);
 }
 
+/**
+ * Brings each skeleton into view in turn, as a reader scrolling the page does: a pre-rendered page
+ * renders a figure's subject only once it nears the view (apps/site/src/figures/useSubjectShown.ts).
+ * Playwright scrolls through the browser rather than the page's scrollIntoView, which the site
+ * stands in for while a stage plays (apps/site/src/motion/BrowserStandIns.ts).
+ */
+async function showFigures(page: Page) {
+  for (;;) {
+    const skeleton = (
+      await page.evaluateHandle(() => document.querySelector('.site-loading'))
+    ).asElement();
+    if (!skeleton) return;
+    // A skeleton may go as it scrolls, its subject rendered.
+    await skeleton.scrollIntoViewIfNeeded().catch(() => {});
+    await page.waitForFunction((element) => !element.isConnected, skeleton);
+  }
+}
+
 async function settle(page: Page) {
   await page.locator('#site-main').waitFor();
+  await showFigures(page);
   // A skeleton of the site's (.site-loading, loading/Skeletons.tsx) marks a part that is still
   // loading: an example, its code, a specimen, a demo, the icon list, the token reference or the
   // changelog. A tile's (.catalogue-tile-loading) waits for the tile to come into view instead.

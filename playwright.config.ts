@@ -126,7 +126,7 @@ export default defineConfig({
       dependencies: ['chromium', 'firefox', 'webkit'],
       use: { ...devices['Desktop Chrome'] },
     },
-    // `npm run test:a11y`: axe over every page of the site, Chromium only.
+    // `npm run test:a11y`: axe over a page of each kind the site has, Chromium only.
     {
       name: 'a11y',
       testDir: './tests/accessibility',

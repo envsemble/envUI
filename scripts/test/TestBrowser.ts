@@ -6,13 +6,15 @@
 //
 //   node scripts/test/TestBrowser.ts <library|site> [--browser chromium|firefox|webkit]
 //                                     [--shard <i>/<n>] [--retries <n>] [--no-build]
-//                                     [Playwright arguments]
+//                                     [--api.port <port>] [Playwright arguments]
 //
 // --browser    the library's engine (default chromium); Firefox and WebKit run its tests tagged
 //              engines (Vitest) and @engines (Playwright)
 // --shard      runs the i-th of n parts, for CI's parallel jobs: Vitest's by file, Playwright's
 //              by test
 // --retries    tries a failed test again (default: once in CI)
+// --api.port   the port of Vitest's browser server (default 63315, or the next free one); Vitest
+//              reads this, not --browser.api.port
 // --no-build   skips the build the suite opens, for a run that has just made it: the library's
 //              Hydration.spec.ts opens .cache/Hydration.html, which a unit test renders from the
 //              library's build, and the site's specs open its hosted build (npm run build:site)
@@ -28,8 +30,10 @@ const [suite, ...argv] = process.argv.slice(2);
 if (suite !== 'library' && suite !== 'site')
   throw new Error('Usage: TestBrowser.ts <library|site> [options]');
 
-// Its own options, as --name value or --name=value; what it does not read goes to Playwright.
+// Its own options, as --name value or --name=value; Vitest's --api.port, the port of its browser
+// server, goes to Vitest, and what it does not read to Playwright.
 const passed: string[] = [];
+const vitestPassed: string[] = [];
 const options: { browser: string; shard?: string; retries?: string; build: boolean } = {
   browser: 'chromium',
   retries: process.env.CI ? '1' : undefined,
@@ -38,6 +42,7 @@ const options: { browser: string; shard?: string; retries?: string; build: boole
 for (let index = 0; index < argv.length; index++) {
   const [name, inline] = argv[index]!.split(/=(.*)/s, 2) as [string, string | undefined];
   if (name === '--no-build') options.build = false;
+  else if (name === '--api.port') vitestPassed.push(`--api.port=${inline ?? argv[++index]}`);
   else if (name === '--browser' || name === '--shard' || name === '--retries') {
     const value = inline ?? argv[++index];
     if (!value) throw new Error(`${name} needs a value`);
@@ -99,7 +104,9 @@ if (suite === 'library')
       '--config',
       'tests/component/vitest.config.ts',
       `--project=${browser}`,
-      ...(browser === 'chromium' ? [] : ['--tags-filter=engines']),
+      // The accessibility scan of the fixtures runs in `npm run test:a11y`.
+      `--tags-filter=${browser === 'chromium' ? '!a11y' : 'engines'}`,
+      ...vitestPassed,
       ...(shard ? [`--shard=${shard}`, '--passWithNoTests'] : []),
       ...(retries ? [`--retry=${retries}`] : []),
     ],

@@ -252,8 +252,8 @@ const browserTask = (names: string[], projects: string[], label: string) =>
       detail: `${names.length} specs`,
     },
   );
-// The component tests (tests/component): every test in Chromium, and in the affected tier those
-// tagged engines in Firefox and WebKit too.
+// The component tests (tests/component): every test in Chromium but the accessibility scan, which
+// `npm run test:a11y` runs, and in the affected tier those tagged engines in Firefox and WebKit too.
 const componentTask = (names: string[], engines: boolean) =>
   task(
     engines ? 'component (Firefox, WebKit)' : 'component (Chromium)',
@@ -265,7 +265,7 @@ const componentTask = (names: string[], engines: boolean) =>
       '--reporter=dot',
       ...(engines
         ? ['--project=firefox', '--project=webkit', '--tags-filter=engines']
-        : ['--project=chromium']),
+        : ['--project=chromium', '--tags-filter=!a11y']),
       ...(affected ? ['--retry=1'] : ['--bail=5']),
       ...names.map((name) => specFile(name)),
     ],

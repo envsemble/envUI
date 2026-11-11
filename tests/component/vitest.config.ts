@@ -54,6 +54,7 @@ export default defineConfig({
     setupFiles: ['tests/component/Setup.ts'],
     tags: [
       { name: 'engines', description: 'Depends on the engine: also runs in Firefox and WebKit' },
+      { name: 'a11y', description: 'The accessibility scan, which `npm run test:a11y` runs' },
     ],
     maxWorkers: workers,
     testTimeout: 30_000,

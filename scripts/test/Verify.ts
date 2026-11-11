@@ -4,8 +4,8 @@
 //   1. generated files, lint, formatting, types, the three builds and every unit test;
 //   2. on those builds, the browser suites, each with its own servers, ports and share of the
 //      browser workers: the library in Chromium with the contrast gate, in Firefox and in WebKit,
-//      the site's smoke, the accessibility scan of the hosted build, and the visual baseline in
-//      Docker;
+//      the site's smoke, the accessibility scans of the site's pages and of the fixtures, and the
+//      visual baseline in Docker;
 //   3. live development, which edits sources, once nothing else reads them.
 //
 //   node scripts/test/Verify.ts [--skip-visual] [--keep-going]
@@ -95,6 +95,7 @@ const [phase1, built] = await Promise.all([
       scripts: 'scripts',
       types: 'tests/types',
       fixture: 'tests/fixture',
+      component: 'tests/component',
     }).map(([project, folder]) =>
       task(`typecheck ${project}`, [
         ...bin.tsc,
@@ -124,7 +125,8 @@ const suites = [
   { name: 'library (Firefox)', weight: 2, run: ['library', '--browser=firefox'] },
   { name: 'library (WebKit)', weight: 2, run: ['library', '--browser=webkit'] },
   { name: 'site', weight: 1, run: ['site'] },
-  { name: 'accessibility', weight: 2 },
+  { name: 'accessibility (site)', weight: 1 },
+  { name: 'accessibility (fixtures)', weight: 1 },
   ...(skipVisual ? [] : [{ name: 'visual baseline (Docker)', weight: 3 }]),
 ];
 const configured = process.env.ENVUI_WORKERS;
@@ -168,10 +170,24 @@ const phase2 = await parallel(
         ],
         { env, detail },
       );
-    if (suite.name === 'accessibility')
+    if (suite.name === 'accessibility (site)')
       return task(
         suite.name,
         [...bin.playwright, 'test', '--project=a11y', ...playwrightOptions(folder)],
+        { env, detail },
+      );
+    if (suite.name === 'accessibility (fixtures)')
+      return task(
+        suite.name,
+        [
+          ...bin.vitest,
+          'run',
+          '--config',
+          'tests/component/vitest.config.ts',
+          '--project=chromium',
+          '--tags-filter=a11y',
+          '--reporter=dot',
+        ],
         { env, detail },
       );
     // The screenshots get no second try.
