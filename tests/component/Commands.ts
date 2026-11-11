@@ -116,7 +116,8 @@ const emulateTouch: BrowserCommand<[enabled: boolean]> = async (context, enabled
 
 /**
  * The module an option loads where it is used, matched by the name of its source file, held back
- * as a slow network would or failing as offline. A route lives on the page, which the frames of
+ * as a slow network would or failing as offline, or held and then answered with a stand-in's
+ * source. A route lives on the page, which the frames of
  * test files running at once may share, so each test's route answers its own frame's requests
  * only and passes on the rest, and `unrouteModule` ends it.
  */
@@ -132,20 +133,29 @@ interface ModuleRoute {
 const routes = new Map<string, ModuleRoute>();
 const routeKey = (context: BrowserCommandContext, name: string) => `${context.sessionId} ${name}`;
 
-async function routeModule(context: BrowserCommandContext, name: string, mode: 'hold' | 'fail') {
+async function routeModule(
+  context: BrowserCommandContext,
+  name: string,
+  mode: 'hold' | 'fail',
+  standIn?: string,
+) {
   const frame = await context.frame();
   let requested!: () => void;
   let released = false;
   let release = () => {
     released = true;
   };
+  const answer = (route: Route) =>
+    standIn === undefined
+      ? route.continue()
+      : route.fulfill({ contentType: 'application/javascript', body: standIn });
   const entry: ModuleRoute = {
     requested: new Promise((resolve) => (requested = resolve)),
     release: () => release(),
     handler: async (route) => {
       if (route.request().frame() !== frame) return route.fallback();
       requested();
-      if (released) return route.continue();
+      if (released) return answer(route);
       if (mode === 'fail') return route.abort();
       await new Promise<void>((resolve) => {
         release = () => {
@@ -153,7 +163,7 @@ async function routeModule(context: BrowserCommandContext, name: string, mode: '
           resolve();
         };
       });
-      await route.continue();
+      await answer(route);
     },
   };
   routes.set(routeKey(context, name), entry);
@@ -165,6 +175,10 @@ const holdModule: BrowserCommand<[name: string]> = (context, name) =>
 
 const failModule: BrowserCommand<[name: string]> = (context, name) =>
   routeModule(context, name, 'fail');
+
+/** Holds the module, and once released answers it with `source` instead. */
+const holdModuleAs: BrowserCommand<[name: string, source: string]> = (context, name, source) =>
+  routeModule(context, name, 'hold', source);
 
 /** Resolves once the frame has asked for the module: held, or failed. */
 const moduleRequested: BrowserCommand<[name: string]> = async (context, name) => {
@@ -218,6 +232,7 @@ export const commands = {
   emulateTouch,
   touch,
   holdModule,
+  holdModuleAs,
   failModule,
   moduleRequested,
   releaseModule,

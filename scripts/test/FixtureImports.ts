@@ -1,6 +1,6 @@
 // Which browser specs a source file concerns, by what their fixtures import. A spec opens fixtures,
 // `?fixture=<name>` of tests/fixture/App.tsx, which is `<Name>.fixture.tsx`, or a page such as
-// RichText.html, or renders library source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
+// ForcedColors.html, or renders library source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
 // components by name, and those import the modules and style sheets they draw with, all read with
 // the TypeScript parser, so how an import is written doesn't change what it finds. TestScope.ts
 // selects specs with it; tests/tooling/TestScope.test.mjs covers it.

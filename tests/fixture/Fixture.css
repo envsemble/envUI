@@ -177,9 +177,6 @@ body:has(> #root > .env-theme > .env-scaffold) {
   border-radius: var(--env-radius-sm);
   object-fit: cover;
 }
-.fixture-heatmap-narrow {
-  inline-size: min(100%, 24rem);
-}
 .fixture-shrink-row {
   display: flex;
   align-items: center;
@@ -266,33 +263,12 @@ body:has(> #root > .env-theme > .env-scaffold) {
   inline-size: min(100%, 42rem);
   block-size: 24rem;
 }
-/* An application's own fill, which the gap of a chosen avatar's ring in a group matches through
-   its custom property. */
-.fixture-avatar-surface {
-  --fixture-avatar-surface: hsl(40 90% 88%);
-  --env-avatar-group-ring: var(--fixture-avatar-surface);
-  padding: 1rem;
-  background: var(--fixture-avatar-surface);
-}
-[data-env-theme='dark'] .fixture-avatar-surface {
-  --fixture-avatar-surface: hsl(40 30% 20%);
-}
 /* A list row about as narrow as a phone's, where a group that grew as it spread would wrap. */
 .fixture-avatar-row {
   inline-size: 17rem;
 }
 .fixture-narrow-time {
   inline-size: 6rem;
-}
-/* A toolbar as wide as a phone, and a frame too narrow for a pager on one line. */
-.fixture-pager-toolbar {
-  inline-size: min(100%, 22rem);
-}
-.fixture-pager-toolbar > .fixture-shrink-label {
-  min-inline-size: 0;
-}
-.fixture-narrow-pager {
-  inline-size: 9rem;
 }
 
 /* Density specimens: the same content in the comfortable and the compact scale, one above the

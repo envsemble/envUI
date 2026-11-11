@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, type ComponentType } from 'react';
+import { useRef, useState, type ComponentType } from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
@@ -6,7 +6,6 @@ import {
   Button,
   ConfirmButton,
   CopyButton,
-  EnvUIProvider,
   Field,
   IconButton,
   Popover,
@@ -15,7 +14,6 @@ import {
   Text,
   TextField,
   Toolbar,
-  useLocale,
 } from '@envsemble/envui';
 import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
 import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
@@ -152,29 +150,6 @@ function EmphasisSample() {
           </LooseButton>
         )}
       </Row>
-    </Column>
-  );
-}
-
-/** A toolbar whose callback ref returns a cleanup, as React 19 allows, mounted and unmounted. */
-function RefCleanupSample() {
-  const [mounted, setMounted] = useState(true);
-  const [log, setLog] = useState<string[]>([]);
-  const ref = useCallback((element: HTMLDivElement | null) => {
-    setLog((current) => [...current, element ? 'attach' : 'null']);
-    return () => setLog((current) => [...current, 'cleanup']);
-  }, []);
-  return (
-    <Column gap={2}>
-      <button type="button" onClick={() => setMounted((current) => !current)}>
-        Toggle ref toolbar
-      </button>
-      {mounted && (
-        <Toolbar.Root aria-label="Ref toolbar" ref={ref}>
-          <Toolbar.Button icon={<IconFormatBold />} label="Ref quote" />
-        </Toolbar.Root>
-      )}
-      <output data-testid="ref-log">{log.join(',')}</output>
     </Column>
   );
 }
@@ -390,17 +365,12 @@ function CopySample() {
   );
 }
 
-function LocaleProbe() {
-  return <output data-testid="locale">{useLocale() ?? 'runtime'}</output>;
-}
-
 /** The primitives batch A adds. */
 export default function PrimitivesFixture() {
   return (
     <Column gap={6}>
       <ToolbarSample />
       <EmphasisSample />
-      <RefCleanupSample />
       <FieldSample />
       <CloseButtonSample />
       <ResizeSample dir="ltr" />
@@ -411,12 +381,6 @@ export default function PrimitivesFixture() {
       <PopupSample />
       <ListRowSample />
       <CopySample />
-      <LocaleProbe />
-      <EnvUIProvider locale="de-CH">
-        <span data-testid="provided-locale">
-          <LocaleProbe />
-        </span>
-      </EnvUIProvider>
     </Column>
   );
 }
