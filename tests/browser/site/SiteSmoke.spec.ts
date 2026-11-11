@@ -8,7 +8,7 @@ import { openSite } from '../support/SiteSpecHelpers';
  * One journey through a page of each kind the build pre-renders, as a reader takes it: the page
  * opens and hydrates, the reader does one thing on it, and nothing goes wrong on the way, no
  * error or warning in the console and nothing fetched from elsewhere. What every page renders is
- * the unit tests' (tests/site/SitePrerender.test.mjs), and how each kind hydrates
+ * the unit tests' (tests/site/SitePrerender.test.ts), and how each kind hydrates
  * SitePrerender.spec.ts's.
  */
 const journeys: { kind: string; path: string; act: (page: Page) => Promise<void> }[] = [

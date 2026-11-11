@@ -29,7 +29,7 @@ const isContainerRule = (rule: RuleLike) =>
 
 /**
  * The widths a condition tests, in rem: `(width >= 600px)` at a 16 px root is 37.5.
- * @internal Exported for tests/library/source/DevMode.test.mjs.
+ * @internal Exported for tests/library/source/DevMode.test.ts.
  */
 export function thresholdsOf(condition: string, rootPx: number): number[] {
   const widths = new Set<number>();
@@ -121,7 +121,7 @@ function conditionOf(rule: RuleLike): string {
 /**
  * Every `@container` rule in the style sheets, by the container name it asks about, with its
  * conditions merged: one entry per name and condition, counting the style rules inside.
- * @internal Exported for tests/library/source/DevMode.test.mjs.
+ * @internal Exported for tests/library/source/DevMode.test.ts.
  */
 export function readContainerQueries(
   sheets: Iterable<{ cssRules: ArrayLike<RuleLike> }>,

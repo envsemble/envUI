@@ -99,7 +99,7 @@ if (options.build && suite === 'library' && browser === 'chromium' && playwright
   });
   if (listed.status !== 0 || /\bHydration\.spec\.ts\b/.test(listed.stdout)) {
     run([...bin.node, 'scripts/build/BuildLibrary.ts']);
-    run([...bin.node, '--test', '--test-reporter=dot', 'tests/library/package/Hydration.test.mjs']);
+    run([...bin.node, '--test', '--test-reporter=dot', 'tests/library/package/Hydration.test.ts']);
   }
 }
 

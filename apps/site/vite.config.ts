@@ -370,8 +370,9 @@ export default defineConfig(() => {
           server.middlewares.use((request, response, next) => {
             const name = request.url?.split('?')[0]?.slice(1) ?? '';
             if (!Object.hasOwn(agentFileTypes, name)) return next();
-            response.setHeader('Content-Type', agentFileTypes[name]!);
-            response.end(siteAgentFiles()[name as keyof typeof agentFileTypes]);
+            const file = name as keyof typeof agentFileTypes;
+            response.setHeader('Content-Type', agentFileTypes[file]);
+            response.end(siteAgentFiles()[file]);
           });
         },
         generateBundle() {

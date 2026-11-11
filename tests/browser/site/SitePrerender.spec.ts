@@ -41,10 +41,9 @@ for (const scheme of ['light', 'dark'] as const)
       {
         keys: displayStorageKeys,
         scheme,
-        widths: Object.entries(storedWidths).map(([area, width]) => [
-          drawerWidthKey(area as keyof typeof storedWidths),
-          width,
-        ]),
+        widths: Object.entries(storedWidths).map(
+          ([area, width]) => [drawerWidthKey(area as keyof typeof storedWidths), width] as const,
+        ),
       },
     );
     // React reports a page that didn't hydrate as it was pre-rendered (main.tsx), and its warnings.

@@ -8,7 +8,7 @@
 // as the shared files and the catalogue, which name no component. The affected tier runs every
 // spec a change concerns; the fast tier leaves a helper many specs import to it, and of a file many
 // fixtures use runs the most specific few. A path that matches nothing runs no browser spec:
-// `npm run verify` covers it. Check.ts runs the result, and tests/tooling/TestScope.test.mjs covers
+// `npm run verify` covers it. Check.ts runs the result, and tests/tooling/TestScope.test.ts covers
 // the logic.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -84,7 +84,7 @@ type Need =
 /**
  * What paths need besides their own lint and format and the specs of their names: checks and
  * browser specs. Each path is a glob from the repository's root, `**` reaching into folders, and
- * names files that exist (tests/tooling/TestScope.test.mjs).
+ * names files that exist (tests/tooling/TestScope.test.ts).
  */
 export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] = [
   {
@@ -92,6 +92,8 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
       'packages/ui/src/**/*.{ts,tsx}',
       'apps/site/src/**/*.{ts,tsx}',
       'tests/**/*.{ts,tsx}',
+      'playwright.config.ts',
+      'apps/site/vite.config.ts',
       'scripts/**/*.ts',
       '**/tsconfig.json',
     ],
@@ -464,7 +466,7 @@ const builtUnitTests = 'tests/library/package/';
  */
 export function unitTestFiles(root = repositoryRoot) {
   const files = [
-    ...walk(root, 'tests', /\.test\.mjs$/),
+    ...walk(root, 'tests', /\.test\.ts$/),
     ...walk(root, 'packages', /\.test\.mjs$/).filter((file) =>
       /^packages\/[^/]+\/test\/[^/]+$/.test(file),
     ),

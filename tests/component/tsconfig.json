@@ -18,6 +18,6 @@
     "support/*.ts",
     "support/*.tsx",
     "../../packages/ui/src/customProperties.d.ts",
-    "../contrast/culori.d.ts"
+    "../../scripts/build/culori.d.ts"
   ]
 }

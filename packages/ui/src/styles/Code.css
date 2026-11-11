@@ -2,7 +2,7 @@
   /* The code theme's colors, standard and high-contrast, set by every boundary for its theme, so
      code takes those of the nearest one, also on a page rendered on the server before it hydrates,
      when only the root knows the reader's theme. They are fixed in codeColors.ts, which
-     tests/library/package/CodeHighlighting.test.mjs holds these to. */
+     tests/library/package/CodeHighlighting.test.ts holds these to. */
   /* stylelint-disable color-no-hex, declaration-property-value-disallowed-list -- the code themes'
      own colors, outside the color tokens, as the colors of highlighted tokens are. */
   .env-theme {

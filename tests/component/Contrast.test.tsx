@@ -11,7 +11,7 @@ import tokenList from '../../packages/ui/src/generated/tokens.json';
  * told apart rather than read against each other. Pairs that fail today are listed in
  * tests/contrast/Exceptions.json; the gate fails on a new failure, on a listed failure that got
  * worse, and on a listed failure that now passes, so the list only shrinks. Its registry and
- * snapshot are checked in Node (tests/contrast/ContrastRegistry.test.mjs).
+ * snapshot are checked in Node (tests/contrast/ContrastRegistry.test.ts).
  *
  * Set ENVUI_CONTRAST_REPORT=1 to print every pair's ratio and APCA Lc.
  */

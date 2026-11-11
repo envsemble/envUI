@@ -18,6 +18,7 @@ const typecheckProjects = {
   types: 'tests/types',
   fixture: 'tests/fixture',
   component: 'tests/component',
+  tests: 'tests',
 };
 
 /** The style sheets Stylelint checks when it checks them all. */

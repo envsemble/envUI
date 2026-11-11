@@ -79,9 +79,10 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 
 - Unit tests go in `tests/library/`, `tests/site/`, `tests/docs/` (the documentation and its generators), `tests/tooling/` (the checks and the release) or `tests/lint/` (cases both lint packages' tests read; each package's own tests are in its `test/`).
 - The library's are in three folders: `source/` for its modules as written (server markup and logic), `rules/` for the rules the repository holds its source to, and `package/` for the built package, the only unit tests that need `npm run build`.
+- Unit tests and their helpers are TypeScript, which Node runs as it is; `npm run typecheck` checks them with `tests/tsconfig.json`, except the files it lists as not typed yet, a list that only shrinks.
 - Helpers a folder's tests share are in its `support/`, such as `tests/support/` and `tests/component/support/`; data a test reads sits beside it.
 - A component test mounts its fixture straight into the page (`mount`, `tests/component/support/Mount.tsx`) and drives it with the real mouse, keys and finger (`tests/component/support/Browser.ts`); it never opens a page of the site or the fixture.
-- Run one file as you work: `node --test tests/library/source/<Name>.test.mjs`, or `npm run test:component -- tests/component/<Name>.test.tsx`.
+- Run one file as you work: `node --test tests/library/source/<Name>.test.ts`, or `npm run test:component -- tests/component/<Name>.test.tsx`.
 
 ### When to add a test, and which
 

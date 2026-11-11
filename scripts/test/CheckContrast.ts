@@ -1,4 +1,4 @@
-// Runs the contrast gate: its registry and snapshot in Node (tests/contrast/ContrastRegistry.test.mjs),
+// Runs the contrast gate: its registry and snapshot in Node (tests/contrast/ContrastRegistry.test.ts),
 // then every pair measured in every theme in Chromium (tests/component/Contrast.test.tsx).
 //
 //   node scripts/test/CheckContrast.ts [--update-snapshots]
@@ -16,7 +16,7 @@ function run([command, ...args]: string[], env: NodeJS.ProcessEnv = process.env)
   if (status !== 0) process.exit(status ?? 1);
 }
 
-run([...bin.node, '--test', 'tests/contrast/ContrastRegistry.test.mjs'], {
+run([...bin.node, '--test', 'tests/contrast/ContrastRegistry.test.ts'], {
   ...process.env,
   ENVUI_CONTRAST_UPDATE: update ? '1' : '',
 });
