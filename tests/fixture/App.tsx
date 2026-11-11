@@ -6,13 +6,13 @@ import { fixtureName } from './FixtureName.js';
 
 /**
  * Each fixture's module by its name. The pages with an .html of their own render as their modules
- * load, so they are left out, as is the editor RichText.html shows, and CascadeLayers, whose
- * application style sheet would style every fixture.
+ * load, so they are left out, as are the rich text editor the component tests mount, and
+ * CascadeLayers, whose application style sheet would style every fixture.
  */
 const fixtures = new Map(
   Object.entries(
     import.meta.glob<FixtureModule>(
-      ['./*.fixture.tsx', '!./{CascadeLayers,ForcedColors,RichText,RichTextEditor}.fixture.tsx'],
+      ['./*.fixture.tsx', '!./{CascadeLayers,ForcedColors,RichTextEditor}.fixture.tsx'],
       { eager: true },
     ),
   ).map(([file, module]) => [fixtureName(file), module]),
