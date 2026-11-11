@@ -1,4 +1,4 @@
-import { beforeEach, expect, onTestFinished, test } from 'vitest';
+import { expect, onTestFinished, test } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/ColorPicker.fixture.tsx';
 import { css, keyboard, recordClipboard } from './Browser.ts';
