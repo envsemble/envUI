@@ -18,6 +18,7 @@ import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { build } from 'vite';
 import { repositoryRoot } from '../RepositoryPaths.ts';
+import type { PagePreloads } from './PagePreloads.ts';
 import { siteOrigin } from './SiteAgentFiles.ts';
 
 const siteApp = resolve(repositoryRoot, 'apps/site');
@@ -61,13 +62,6 @@ interface RenderedPage {
   code?: string;
   /** The element that carries the trees of its Markdown, parsed as it rendered (PageMarkdownTrees.ts). */
   markdown?: string;
-}
-
-/** What each page loads, as the client's build found it (envui-content-preload in vite.config.ts). */
-interface PagePreloads {
-  modules: Record<string, { scripts: string[]; styles: string[] }>;
-  contents: Record<string, string>;
-  figureStyles: Record<string, string[]>;
 }
 
 /** A file the page loads once its style sheets have, in the order the loader adds them. */

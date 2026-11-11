@@ -3,7 +3,7 @@ import sharedLines from 'virtual:envui-example-lines';
 
 /**
  * What the build gives each page's content of the parts on it, rather than every page's to the
- * site's start (vite.config.ts): its examples' and specimens' recorded sizes and its examples'
+ * site's start (scripts/site/SiteData.ts): its examples' and specimens' recorded sizes and its examples'
  * lines of code. While developing, every part's is in the virtual modules instead.
  */
 const pageSizes = new Map<string, readonly [number, number]>();

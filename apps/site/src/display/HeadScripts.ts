@@ -1,10 +1,11 @@
-// What the site's index.html runs and paints before the site loads, which vite.config.ts writes into
-// its head. Node runs this module from there before anything is built, where neither the package's
-// build nor the @envui-internal alias resolves, so the marks of the library's theme bootstrap,
-// which no entry exports, come from its source module by path.
+// What the site's index.html runs and paints before the site loads, which IndexHead.ts writes into
+// its head. Node runs this module from the site's Vite config before anything is built, where
+// neither the package's build nor the @envui-internal alias resolves, so the library's theme
+// bootstrap and its marks, which no entry exports, come from its source module by path.
 // eslint-disable-next-line no-restricted-imports -- Node loads this file outside Vite (see above).
 import {
   contrastSourceAttribute,
+  createThemeBootstrapScript,
   ownContrastSource,
   ownScaleSource,
   scaleSourceAttribute,
@@ -32,11 +33,23 @@ const renamedStorageKeys: readonly (readonly [before: string, now: string])[] = 
 ];
 
 /**
+ * The inline script of the document head, which runs before the first paint: the stored settings
+ * move to their keys now, then the stored theme, contrast and scale apply, so a dark theme does
+ * not flash light and a compact page does not start at the comfortable size, and so do the
+ * drawer's width, the banner's draw-in and the shortcuts' modifier.
+ */
+export const headScript = () =>
+  createStorageMigrationScript() +
+  createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }) +
+  createDisplayBootstrapScript() +
+  createSiteBootstrapScript();
+
+/**
  * An inline script for the document head, ahead of the scripts that read the settings: a setting
  * stored under a key of before moves to its key now, once, so a reader keeps their theme, contrast,
  * scale and drawer widths. A setting already under its new key wins.
  */
-export function createStorageMigrationScript() {
+function createStorageMigrationScript() {
   const keys = JSON.stringify(renamedStorageKeys);
   return `(function(){try{var k=${keys};for(var i=0;i<k.length;i++){var v=localStorage.getItem(k[i][0]);if(v!==null){if(localStorage.getItem(k[i][1])===null)localStorage.setItem(k[i][1],v);localStorage.removeItem(k[i][0])}}}catch(e){}})();`;
 }
@@ -50,7 +63,7 @@ export function createStorageMigrationScript() {
  * data-env-contrast-source="envui:high" and data-env-scale-source="envui:compact", so the provider
  * takes them as its own once it mounts.
  */
-export function createDisplayBootstrapScript() {
+function createDisplayBootstrapScript() {
   const contrastKey = JSON.stringify(displayStorageKeys.contrast);
   const scaleKey = JSON.stringify(displayStorageKeys.scale);
   const contrastSource = JSON.stringify(contrastSourceAttribute);
@@ -73,7 +86,7 @@ export function createDisplayBootstrapScript() {
  * - whether the shortcuts' modifier is ⌘, on Apple platforms, as useModifierKey tells, so the
  *   search button shows its keys from the start (SearchButton.tsx, Shell.css).
  */
-export function createSiteBootstrapScript() {
+function createSiteBootstrapScript() {
   const widths = JSON.stringify(
     (['catalogue', 'docs'] as const).map((area) => [
       drawerWidthKey(area),
