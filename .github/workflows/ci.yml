@@ -119,7 +119,7 @@ jobs:
           fetch-depth: 2
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - run: node scripts/docs/GenerateDocumentation.ts
+      # It generates the documentation too, which the unit tests read.
       - run: npm run -s build:library
       # node --test runs one file per core but one; on two cores that is one at a time, while most
       # files wait on npm, esbuild or the disk. Four at once take about 15 s less.
