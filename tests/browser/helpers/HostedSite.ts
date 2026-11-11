@@ -10,7 +10,7 @@ import { extname, resolve } from 'node:path';
 import worker from '../../../apps/site/hosting/Worker.mjs';
 import { headersFor, siteHeaders } from '../../../scripts/site/SiteHeaders.ts';
 
-export const site = resolve('dist/site');
+const site = resolve('dist/site');
 export const siteUrl = 'http://envui.site.test';
 const contentTypes: Record<string, string> = {
   '.html': 'text/html',

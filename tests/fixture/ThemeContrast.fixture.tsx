@@ -77,7 +77,7 @@ function PopupTriggers({ name }: { name: string }) {
       <Select label={`Sort ${name}`} items={statusOptions} defaultValue="open" />
       <Combobox label={`Person ${name}`} items={people} />
       <DatePicker label={`Due ${name}`} defaultValue="2026-10-20" locale="en-GB" />
-      {/* No hover delay: these boundaries test colors, and HoverCard.spec.ts tests the delay. */}
+      {/* No hover delay: these boundaries test colors, and HoverCard.test.tsx tests the delay. */}
       <HoverCard delay={0} trigger={<Link href="#card">Card {name}</Link>}>
         <Text>Card {name} details.</Text>
       </HoverCard>

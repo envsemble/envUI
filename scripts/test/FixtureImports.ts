@@ -1,6 +1,6 @@
 // Which browser specs a source file concerns, by what their fixtures import. A spec opens fixtures,
 // `?fixture=<name>` of tests/fixture/App.tsx, which is `<Name>.fixture.tsx`, or a page such as
-// RichText.html, or renders library source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
+// ForcedColors.html, or renders library source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
 // components by name, and those import the modules and style sheets they draw with, all read with
 // the TypeScript parser, so how an import is written doesn't change what it finds. TestScope.ts
 // selects specs with it; tests/tooling/TestScope.test.mjs covers it.
@@ -13,7 +13,15 @@ const library = 'packages/ui/src';
 const fixtures = 'tests/fixture';
 /** The browser specs' folder: the library's in library/, the site's in site/, helpers in helpers/. */
 const specs = 'tests/browser';
-const specFolders = [`${specs}/library`, `${specs}/site`];
+/**
+ * The folders of specs, with the ending of their files: Playwright's browser specs, and the
+ * library's component tests, which Vitest mounts in the browser (tests/component).
+ */
+const specFolders = [
+  [`${specs}/library`, '.spec.ts'],
+  [`${specs}/site`, '.spec.ts'],
+  ['tests/component', '.test.tsx'],
+] as const;
 
 /** An import of a module: its specifier and the names it imports, or all of them. */
 export interface Import {
@@ -229,18 +237,23 @@ function specRoots(sources: Sources, path: string, fixtureModules: Map<string, s
   return roots;
 }
 
-/** Every spec's path from the root, by its name: tests/browser/library/<Name>.spec.ts or site/. */
+/**
+ * Every spec's path from the root, by its name: tests/browser/library/<Name>.spec.ts or site/, or
+ * the component test tests/component/<Name>.test.tsx.
+ */
 export function specPaths(root: string) {
   const paths = new Map<string, string>();
-  for (const folder of specFolders) {
+  for (const [folder, ending] of specFolders) {
     const directory = resolve(root, folder);
     if (!existsSync(directory)) continue;
     for (const file of readdirSync(directory))
-      if (file.endsWith('.spec.ts'))
-        paths.set(file.slice(0, -'.spec.ts'.length), `${folder}/${file}`);
+      if (file.endsWith(ending)) paths.set(file.slice(0, -ending.length), `${folder}/${file}`);
   }
   return paths;
 }
+
+/** Whether a spec's file is a component test, which Vitest runs, rather than a Playwright spec. */
+export const isComponentTest = (path: string) => path.endsWith('.test.tsx');
 
 /** The library's modules, by path from the root, the generated icons left out. */
 function libraryModules(root: string, directory = library): string[] {

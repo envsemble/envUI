@@ -1,16 +1,7 @@
 import { useEffect, useState } from 'react';
-import {
-  Button,
-  Pagination,
-  SearchField,
-  Surface,
-  Theme,
-  type ColorScheme,
-} from '@envsemble/envui';
+import { Button, Pagination, Theme, type ColorScheme } from '@envsemble/envui';
 
 export const themes = true;
-
-const ignore = () => undefined;
 
 /**
  * Pages whose loading starts in an effect once the page changes, as with a query keyed by the page:
@@ -93,107 +84,6 @@ export default function PaginationFixture({ theme }: { theme: ColorScheme }) {
         Refresh batches {theme}
       </Button>
       <EffectLoadedPages theme={theme} />
-      <Pagination
-        aria-label="Hidden single page"
-        page={1}
-        pageSize={60}
-        total={40}
-        hideWhenSinglePage
-        onPageChange={ignore}
-      />
-      <Pagination
-        aria-label="Single page"
-        page={1}
-        pageSize={60}
-        total={40}
-        onPageChange={ignore}
-      />
-      <Pagination aria-label="No items" page={1} pageSize={60} total={0} onPageChange={ignore} />
-      <Pagination aria-label="Last item" page={5} pageSize={60} total={241} onPageChange={ignore} />
-      <Pagination
-        aria-label="Beyond the end"
-        page={9}
-        pageSize={60}
-        total={245}
-        onPageChange={ignore}
-      />
-      <Pagination
-        aria-label="Last batch"
-        page={3}
-        pageSize={50}
-        hasNextPage={false}
-        hideWhenSinglePage
-        onPageChange={ignore}
-      />
-      <Pagination
-        aria-label="Seiten"
-        page={2}
-        pageSize={20}
-        total={1234}
-        previousLabel="Vorherige Seite"
-        nextLabel="Nächste Seite"
-        formatRange={({ start, end, total }) =>
-          `${start.toLocaleString('de')}–${end.toLocaleString('de')} von ${total?.toLocaleString('de')}`
-        }
-        onPageChange={ignore}
-      />
-      <Pagination page={1} pageSize={10} total={30} onPageChange={ignore} />
-      {/* A small toolbar: a search field that shrinks, and the pager on one line beside it. */}
-      <Surface
-        background="muted"
-        padding={2}
-        radius="sm"
-        className="fixture-toolbar fixture-pager-toolbar"
-        data-testid="toolbar"
-      >
-        <span className="fixture-shrink-label">
-          <SearchField size="sm" label="Search reports" />
-        </span>
-        <Pagination
-          aria-label="Toolbar pages"
-          page={1}
-          pageSize={25}
-          total={112}
-          variant="text"
-          size="sm"
-          onPageChange={ignore}
-        />
-      </Surface>
-      <div className="fixture-toolbar">
-        <Pagination
-          aria-label="Standard pages"
-          page={2}
-          pageSize={10}
-          total={30}
-          onPageChange={ignore}
-        />
-        <Pagination
-          aria-label="Compact pages"
-          size="sm"
-          page={2}
-          pageSize={10}
-          total={30}
-          onPageChange={ignore}
-        />
-      </div>
-      <div className="fixture-narrow-pager" data-testid="narrow">
-        <Pagination
-          aria-label="Narrow pages"
-          page={2}
-          pageSize={100}
-          total={12345}
-          onPageChange={ignore}
-        />
-      </div>
-      <div dir="rtl">
-        <Pagination
-          aria-label="Right-to-left pages"
-          page={2}
-          pageSize={10}
-          total={30}
-          onPageChange={ignore}
-        />
-      </div>
     </Theme>
   );
 }

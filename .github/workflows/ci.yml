@@ -1,14 +1,21 @@
 name: CI
-# One job for pull requests into dev and main once they are ready for review, on the Linux runner
-# the envsemble organization variable CI_LINUX_RUNNER names. Pull requests into main are the
-# releases: the full `npm run verify` runs for them in its own workflow (verify.yml), so this job
-# only scans them with Betterleaks. Merging one publishes its version (release.yml). There is no
-# documentation-only skip: the README, docs/ and the changesets ship in the package, and
-# Prettier and the tests read the contributors' guides too.
+# Pull requests into dev and main once they are ready for review, as parallel jobs on the Linux
+# runner the envsemble organization variable CI_LINUX_RUNNER names. Every job has a timeout, so a
+# hung run cannot burn the month's minutes. The job named CI at the end is the check the
+# organization's rulesets require: splitting or resharding the jobs above needs no ruleset change.
+#
+# `Changes` (scripts/test/ChooseJobs.ts) maps the changed files to the library and the site: a
+# site-only change skips the library's browser tests, a library change runs the site's smoke too,
+# and a path no rule names, a failure to read the change, a release into main and any event other
+# than a pull request run everything. The static checks, the build and the unit tests always run:
+# the README, docs/ and the changesets ship in the package, and Prettier and the tests read the
+# contributors' guides too. Pull requests into main also run the rest of `npm run verify`, in
+# verify.yml; merging one publishes its version (release.yml).
 on:
   pull_request:
     branches: [dev, main]
     types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
 permissions:
   contents: read
 defaults:
@@ -16,103 +23,185 @@ defaults:
     shell: bash
 # A new push cancels the run for the pull request's older head.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+env:
+  # One browser worker per core; Playwright would take three where CI is set.
+  ENVUI_WORKERS: '2'
 jobs:
-  ci:
-    name: CI
+  changes:
+    name: Changes
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ${{ vars.CI_LINUX_RUNNER }}
-    # The job takes about 30 minutes on the two-core runner, 25 of them the browser suite; 45 leaves
-    # room without letting a hung run burn much more.
-    timeout-minutes: 45
-    env:
-      # Two browser workers on a two-core runner; Playwright would take three where CI is set.
-      ENVUI_WORKERS: '2'
+    timeout-minutes: 5
+    outputs:
+      library: ${{ steps.choose.outputs.library }}
+      site: ${{ steps.choose.outputs.site }}
+    steps:
+      # Only what the choice reads; depth 2 brings the base the merge commit is diffed against.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+          sparse-checkout: |
+            /scripts/test/ChooseJobs.ts
+            /.github/actions/
+          sparse-checkout-cone-mode: false
+      - id: choose
+        uses: ./.github/actions/choose-jobs
+        with:
+          full: ${{ github.base_ref == 'main' }}
+
+  # Generated files, lint, formatting, unused code and types: nothing here needs a build or a browser.
+  static:
+    name: Static checks
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          # The whole history: Betterleaks scans it, and the contrast gate reads the base's
-          # snapshot from the merge commit's first parent.
-          fetch-depth: 0
           persist-credentials: false
-      # The checks run for pull requests into dev; a pull request into main gets them from Verify.
-      - name: Choose the checks
-        id: changes
-        env:
-          BASE: ${{ github.event.pull_request.base.ref }}
-        run: |
-          if [ "$BASE" = main ]; then
-            echo checks=false >> "$GITHUB_OUTPUT"
-            echo "::notice title=Release pull request::The Verify workflow runs every check; this job scans with Betterleaks."
-          else
-            echo checks=true >> "$GITHUB_OUTPUT"
-          fi
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        if: ${{ steps.changes.outputs.checks != 'false' }}
+      - uses: ./.github/actions/setup
+      # ESLint's, Prettier's and tsc's caches from this pull request's last run: they compare each
+      # file's content, so a restored cache rechecks only what changed, about 40 s less. The key
+      # names the lint packages, whose rules ESLint's cache does not see change. knip's cache goes by
+      # modification times, which every checkout resets.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-        if: ${{ steps.changes.outputs.checks != 'false' }}
+          path: |
+            .cache/eslint
+            .cache/prettier
+            .cache/tsc
+          key: static-${{ hashFiles('package-lock.json', 'eslint.config.mjs', 'packages/eslint-plugin/src/**', '.prettierrc.json') }}-${{ github.sha }}
+          restore-keys: static-${{ hashFiles('package-lock.json', 'eslint.config.mjs', 'packages/eslint-plugin/src/**', '.prettierrc.json') }}-
+      # tsc is the longest check and takes one core, so it runs beside the others on the second:
+      # about 35 s less than after them.
+      - name: Start the typecheck
+        run: |
+          (
+            set +e
+            npm run -s typecheck
+            echo "$?" > "$RUNNER_TEMP/typecheck-status"
+          ) > "$RUNNER_TEMP/typecheck.log" 2>&1 < /dev/null &
       - name: Check generated icons, tokens and documentation
-        if: ${{ steps.changes.outputs.checks != 'false' }}
-        run: npm run icons:check && npm run tokens:check && npm run docs:check
+        if: ${{ !cancelled() }}
+        run: npm run -s icons:check && npm run -s tokens:check && npm run -s docs:check
       - name: Lint scripts, components and styles
-        if: ${{ steps.changes.outputs.checks != 'false' }}
-        run: npm run lint && npm run lint:css
-      - name: Check formatting and TypeScript
-        if: ${{ steps.changes.outputs.checks != 'false' }}
-        run: npm run format:check && npm run typecheck
-      - name: Build the package and the hosted site
-        if: ${{ steps.changes.outputs.checks != 'false' }}
-        run: npm run build && npm run build:site
-      - name: Test package contracts
-        if: ${{ steps.changes.outputs.checks != 'false' }}
-        run: npm test
-      - name: Read the Playwright version
-        id: playwright
-        if: ${{ steps.changes.outputs.checks != 'false' }}
-        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
-      - name: Restore Chromium
-        id: chromium
-        if: ${{ steps.changes.outputs.checks != 'false' }}
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-chromium-${{ runner.os }}-${{ steps.playwright.outputs.version }}
-      - name: Install Chromium
-        if: ${{ steps.changes.outputs.checks != 'false' && steps.chromium.outputs.cache-hit != 'true' }}
-        run: npx playwright install --with-deps chromium
-      - name: Install Chromium's system libraries
-        if: ${{ steps.changes.outputs.checks != 'false' && steps.chromium.outputs.cache-hit == 'true' }}
-        run: npx playwright install-deps chromium
-      # The contrast gate also compares tests/contrast/DeclaredPairs.json with the base's copy
-      # (tests/contrast/Snapshot.ts): the checkout is the pull request's merge commit, whose first
-      # parent is the tip of the branch it merges into.
-      - name: Test browser behavior in Chromium
-        if: ${{ steps.changes.outputs.checks != 'false' }}
+        if: ${{ !cancelled() }}
+        run: npm run -s lint && npm run -s lint:css
+      - name: Check formatting
+        if: ${{ !cancelled() }}
+        run: npm run -s format:check
+      - name: Check unused files and exports
+        if: ${{ !cancelled() }}
+        run: npm run -s lint:unused
+      - name: Typecheck
+        if: ${{ !cancelled() }}
+        timeout-minutes: 5
         run: |
-          # Only a base that has the snapshot: until it reaches dev and main, the gate compares with
-          # the checkout's snapshot alone.
+          until test -s "$RUNNER_TEMP/typecheck-status"; do sleep 1; done
+          cat "$RUNNER_TEMP/typecheck.log"
+          exit "$(cat "$RUNNER_TEMP/typecheck-status")"
+
+  # The library's build, its size budgets and every unit test, the package's contracts included.
+  build:
+    name: Build and unit tests
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 10
+    steps:
+      # Depth 2: the merge commit and its parents, the first being the tip of the branch it merges
+      # into, which the contrast gate's registry (tests/contrast/ContrastRegistry.test.mjs) compares
+      # its snapshot with.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: node scripts/docs/GenerateDocumentation.ts
+      - run: npm run -s build:library
+      # node --test runs one file per core but one; on two cores that is one at a time, while most
+      # files wait on npm, esbuild or the disk. Four at once take about 15 s less.
+      - name: Run the unit tests
+        run: |
           if git cat-file -e 'HEAD^1:tests/contrast/DeclaredPairs.json' 2>/dev/null; then
-            export ENVUI_CONTRAST_BASE="$(git rev-parse 'HEAD^1')"
-          else
-            echo "::notice::The base predates tests/contrast/DeclaredPairs.json, so the contrast gate compares with the checkout's snapshot alone."
+            base=$(git rev-parse 'HEAD^1')
+            export ENVUI_CONTRAST_BASE="$base"
           fi
-          npx playwright test --project=chromium
+          npm test -- --test-concurrency=4
+
+  # The library's browser tests in Chromium (npm run test:library), split in three: one runner
+  # takes about 4 minutes, each shard at most about 2.5 with its setup, so the check ends with the
+  # build and the unit tests. Two shards would leave one at about 3.2 minutes; a fourth saves under
+  # 30 s and costs a runner more. They wait the 15 s `Changes` takes, so that a change they don't
+  # concern starts none of them.
+  library:
+    name: Library browser tests (${{ matrix.shard }}/3)
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.library != 'false' }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          browsers: chromium-shell
+      - name: Test the library in Chromium
+        env:
+          SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
+        run: npm run -s test:library -- --shard="$SHARD"
       # Only a failure keeps anything: its traces and screenshots, for the organization's artifact
       # retention. A refused upload never fails the job.
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: ${{ failure() }}
         continue-on-error: true
         with:
-          name: browser-failure-${{ github.sha }}
+          name: library-failure-${{ matrix.shard }}-${{ github.sha }}
           path: test-results
           if-no-files-found: ignore
-      # Also after a failed check, so one run reports both.
+
+  # The site's smoke journeys, hydration and failure specs, on its hosted build.
+  site:
+    name: Site smoke
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.site != 'false' }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          browsers: chromium-shell
+      - run: npm run -s test:site
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ failure() }}
+        continue-on-error: true
+        with:
+          name: site-failure-${{ github.sha }}
+          path: test-results
+          if-no-files-found: ignore
+
+  secrets:
+    name: Secret scan
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 5
+    steps:
+      # The whole history, which Betterleaks scans.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - name: Scan the history with Betterleaks
-        if: ${{ !cancelled() }}
         env:
           BETTERLEAKS_VERSION: '1.8.1'
           BETTERLEAKS_SHA256: 'efa407244e1ea8e35f582b8a42becdeac08bdead04f68eb752adda722d583c2a'
@@ -122,3 +211,23 @@ jobs:
           echo "${BETTERLEAKS_SHA256}  ${archive}" | sha256sum --check
           tar -xzf "$archive" -C "$RUNNER_TEMP"
           "$RUNNER_TEMP/betterleaks" git . --redact
+
+  # The check the rulesets require on dev and main. It fails when any job above fails or is
+  # cancelled, or is skipped although `Changes` did not skip it. `always()` rather than
+  # `!cancelled()`: a skipped job reports success to the rulesets, so a cancelled run must still
+  # fail this one. Add every new job to `needs`.
+  ci:
+    name: CI
+    if: ${{ always() && !github.event.pull_request.draft }}
+    needs: [changes, static, build, library, site, secrets]
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 5
+    steps:
+      - name: Require every job to pass
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          echo "$RESULTS" | jq -e '.changes.outputs as $chosen
+            | all(to_entries[]; .value.result == "success"
+                or (.value.result == "skipped" and $chosen[.key] == "false"))' > /dev/null

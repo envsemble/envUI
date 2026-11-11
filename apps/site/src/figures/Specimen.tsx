@@ -2,7 +2,7 @@ import { Suspense, use, useRef, useState, type ComponentType } from 'react';
 import { Column } from '@envsemble/envui';
 import { SpecimenHeadingLevel } from './SpecimenFrame';
 import { hasExample } from './ExampleRegistry';
-import { keepLinksInPlace } from './LiveExample';
+import { keepLinksInPlace } from './KeepLinksInPlace';
 import { LoadBoundary } from '../loading/LoadBoundary';
 import { componentRegistry } from '../loading/ModuleRegistry';
 import { HoldPlaceholder } from '../loading/LoadingStore';

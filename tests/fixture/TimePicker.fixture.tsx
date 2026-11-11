@@ -1,8 +1,12 @@
 import { useState } from 'react';
-import { Button, DatePicker, TimePicker } from '@envsemble/envui';
+import { Button, TimePicker } from '@envsemble/envui';
 
 export const mount = 'standalone';
 
+/**
+ * Time pickers in a form, one controlled on a 12-hour clock and one read-only. Their clocks in other
+ * locales, and their states, are tests/library/TimePicker.test.mjs's.
+ */
 export default function TimePickerFixture() {
   const [submitted, setSubmitted] = useState('');
   const [reminder, setReminder] = useState<string | null>('14:00');
@@ -62,36 +66,7 @@ export default function TimePickerFixture() {
         clearable
       />
       <output data-testid="time-picker-reminder">{JSON.stringify({ reminder, changes })}</output>
-      <div className="fixture-actions">
-        {/* A value between the steps keeps its own row. */}
-        <TimePicker label="Check in" locale="en-GB" defaultValue="10:07" minuteStep={5} />
-        <TimePicker label="Abfahrt" locale="de-DE" defaultValue="18:45" />
-        {/* Korean writes the day period before the hour. */}
-        <TimePicker label="Korean time" locale="ko-KR" defaultValue="14:30" />
-        {/* hourCycle sets the clock whatever the locale's. */}
-        <TimePicker label="Rota" locale="en-US" hourCycle="h23" defaultValue="18:45" />
-        <TimePicker label="Twelve-hour" locale="en-GB" hourCycle="h12" defaultValue="18:45" />
-        <TimePicker label="Disabled time" locale="en-GB" defaultValue="12:00" disabled />
-        <TimePicker label="Read only time" locale="en-GB" defaultValue="12:00" readOnly />
-        <TimePicker label="Invalid time" locale="en-GB" error="Choose a later time." />
-      </div>
-      <div className="fixture-actions">
-        {/* A time with a date, in a column beside the calendar. */}
-        <DatePicker
-          label="Departure"
-          granularity="minute"
-          locale="en-US"
-          minuteStep={30}
-          defaultValue="2026-10-21T09:10"
-        />
-        <DatePicker
-          label="Shift start"
-          granularity="minute"
-          locale="en-US"
-          hourCycle="h23"
-          defaultValue="2026-10-21T18:00"
-        />
-      </div>
+      <TimePicker label="Read only time" locale="en-GB" defaultValue="12:00" readOnly />
     </div>
   );
 }

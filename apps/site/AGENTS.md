@@ -71,12 +71,17 @@ Each has one folder in `apps/site/src`:
 ## Pre-rendered pages
 
 - `npm run build:site` renders every page to its own HTML file with the server entry, `src/Server.tsx` (`scripts/site/PrerenderSite.ts`), and `main.tsx` hydrates it. The development server renders on the client alone.
-- A figure's example, specimen or picture renders in the browser alone: until `useFiguresMounted` (`loading/`) says the page has hydrated, and then until it nears the view (`figures/useSubjectShown.ts`), it shows its skeleton at its recorded size, which its style shows a moment after the first paint (`earlyPlaceholderDelay`, `loading/LoadingStore.tsx`). A spec that needs a pre-rendered page's figures scrolls to them, or calls `showFigures` (`tests/browser/helpers/SiteSpecHelpers.ts`).
+- A figure's example, specimen or picture renders in the browser alone: until `useFiguresMounted` (`loading/`) says the page has hydrated, and then until it nears the view (`figures/useSubjectShown.ts`), it shows its skeleton at its recorded size, which its style shows a moment after the first paint (`earlyPlaceholderDelay`, `loading/LoadingStore.tsx`). A spec that needs a pre-rendered page's figures scrolls to them.
 - A page's code blocks are highlighted, and its Markdown parsed, as it pre-renders; its HTML carries their tokens and trees, which the browser gives before it hydrates (`pages/PageCode.ts`, `pages/PageMarkdownTrees.ts`).
 - The page an address opens on hydrates with the frame around it, in one pass, without a Suspense boundary of its own until the reader leaves it (`PageColumns`, `App.tsx`).
 - The page's contents list its sections from its data, not from its headings once mounted: the view's module gives them with the view (`contents` in `pages/PageViews.ts`), so a section a view adds or renames changes there too; `scripts/test/CheckContents.ts` checks them against every page's headings.
 - A part of a page that loads on its own and that the server renders, such as the token reference, is a `lazyPart` in `pages/PageParts.ts`, listed for its pages by `partsOfPage` (`pages/ViewModules.ts`): the browser loads it before it hydrates, and the build fails on a page that renders one it doesn't list.
 - The build also writes `404.html`, which the host answers an address with no page with, and `_redirects`, the old addresses whose path alone says where they lead (`oldPaths`, `routes/OldAddresses.ts`).
+
+## Tests of the site
+
+- A new kind of page takes a smoke journey in `tests/browser/site/SiteSmoke.spec.ts` and a place among the accessibility scan's kinds (`tests/accessibility/Accessibility.spec.ts`); a new page of a kind the site has takes neither.
+- Check a page's words, contents and routes in Node, over the pre-rendered pages (`tests/site/`, through `scripts/site/PrerenderSite.ts`), rather than in a browser.
 
 ## Hosting
 

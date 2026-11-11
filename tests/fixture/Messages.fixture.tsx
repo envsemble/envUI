@@ -169,7 +169,7 @@ function InlineMessages() {
 /**
  * The components whose strings come from EnvUIProvider's messages, under the pseudo-locale. Each
  * batch that moves a family's strings adds its components here;
- * tests/browser/library/Messages.spec.ts fails on any English default left in them.
+ * tests/component/Messages.test.tsx fails on any English default left in them.
  */
 export default function MessagesFixture() {
   return (

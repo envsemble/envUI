@@ -221,7 +221,7 @@ export interface DocumentationMetadata {
   composes?: string[];
 }
 
-/** An example figure a section places, as a page's tile and the layout check pick one. */
+/** An example figure a section places, as a page's tile picks one. */
 type ExampleOutline = Pick<ExampleBlock, 'name' | 'heading' | 'role' | 'widths' | 'open' | 'stage'>;
 
 /** A section of a page as the site knows it before the page loads. */

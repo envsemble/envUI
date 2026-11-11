@@ -1,6 +1,6 @@
 /**
- * The themes the visual baseline and the accessibility scan show catalogue pages in: every page in
- * light, and the pages in samplePages in dark, light high contrast and dark high contrast as well.
+ * The catalogue's themes, and those the visual baseline shows its pages in: every page in light,
+ * and the pages in samplePages in dark, light high contrast and dark high contrast as well.
  */
 import { expect, type Page } from '@playwright/test';
 import { allPages } from '../../../apps/site/src/routes/SiteRoutes';
@@ -35,7 +35,7 @@ export const allThemes: readonly CatalogueTheme[] = [...standardThemes, ...highC
  * light alone. Together they show the color roles, actions with their forced states, a field, table
  * rows, highlighted code, which takes high-contrast token colors of its own, and the Docs' props
  * tables and token swatches. The contrast gate
- * (tests/browser/library/Contrast.spec.ts) measures every token pair in all four themes, and the visual
+ * (tests/component/Contrast.test.tsx) measures every token pair in all four themes, and the visual
  * baseline's open lists capture menus and selects in dark and high contrast.
  */
 const samplePages: ReadonlySet<string> = new Set([

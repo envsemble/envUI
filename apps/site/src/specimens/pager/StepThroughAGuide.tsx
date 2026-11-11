@@ -2,7 +2,7 @@ import StepThroughAGuide from '../../examples/pager/StepThroughAGuide';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
-import { keepLinksInPlace } from '../../figures/LiveExample';
+import { keepLinksInPlace } from '../../figures/KeepLinksInPlace';
 
 const next = '.env-pager-link-next';
 const previous = '.env-pager-link-previous';

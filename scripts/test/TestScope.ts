@@ -1,7 +1,7 @@
 // Chooses what `npm run check` and `npm run check:affected` run for a change: which files to lint,
 // whether to typecheck, which generated files to check, and which browser specs to run.
 //
-// A spec is named after its component (tests/browser/library/Button.spec.ts), and runs when that
+// A spec is named after its component (tests/component/Button.test.tsx), and runs when that
 // component changes: a library or fixture file runs the spec of its name, or of the name `aliases`
 // gives it, and the specs whose fixtures use it (FixtureImports.ts); a changed spec runs itself; a
 // changed helper runs the specs that import it; and `pathRules` lists what other paths need, such
@@ -13,7 +13,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
-import { fixtureUse, importsOf, specPaths } from './FixtureImports.ts';
+import { fixtureUse, importsOf, isComponentTest, specPaths } from './FixtureImports.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 /**
@@ -24,8 +24,7 @@ export const aliases: Record<string, string[]> = {
   SearchField: ['TextField'],
   FieldFrame: ['TextField'],
   Popover: ['Dialog'],
-  Spinner: ['Meter', 'Skeleton'],
-  Badge: ['DiffStat'],
+  Spinner: ['Skeleton'],
   ConfirmButton: ['Button'],
   AvatarButton: ['Button'],
   LinkProvider: ['Button'],
@@ -44,10 +43,7 @@ export const aliases: Record<string, string[]> = {
   Avatar: ['AvatarGroup'],
   // The icon wrapper sizes whatever every icon slot holds, a Graphic's included.
   Icon: ['Graphic', 'Button', 'IconButton', 'Skeleton'],
-  PickerPopup: ['PickerPopup', 'DatePicker', 'TimePicker', 'MonthPicker'],
-  DatePicker: ['DatePicker', 'PickerPopup'],
-  TimePicker: ['TimePicker', 'PickerPopup'],
-  MonthPicker: ['MonthPicker', 'PickerPopup'],
+  PickerPopup: ['DatePicker', 'TimePicker', 'MonthPicker'],
   TimeList: ['DatePicker', 'TimePicker', 'ForcedColors'],
   TimeWheel: ['DatePicker', 'TimePicker', 'ForcedColors'],
   timeWheelRows: ['DatePicker', 'TimePicker'],
@@ -68,23 +64,8 @@ export const aliases: Record<string, string[]> = {
 
 /** The specs a token, theme or other shared change runs. */
 const shared = ['Contrast', 'Colors', 'ThemeContrast', 'Scale'];
-/** The catalogue's own specs; some open its hosted build. */
-const catalogue = [
-  'SiteRoutes',
-  'SiteShell',
-  'SiteFailures',
-  'CatalogueComponentPages',
-  'CatalogueFigures',
-  'CatalogueBanners',
-  'CatalogueGallery',
-  'CatalogueTilePlayback',
-  'CatalogueRelated',
-  'CatalogueOverlays',
-  'CataloguePlainLanguage',
-  'DocsPages',
-  'CatalogueSearch',
-  'SitePrerender',
-];
+/** The site's own specs; some open its hosted build. */
+const siteSpecs = ['SitePrerender', 'SiteFailures', 'SiteSmoke'];
 
 /** A check a changed path needs beyond linting and formatting it. */
 type Need =
@@ -186,8 +167,8 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
     paths: ['packages/ui/src/**/*.{ts,tsx,css,json}', 'docs/**', '.changeset/**'],
     needs: ['docs'],
   },
-  { paths: ['apps/site/**', 'scripts/docs/**'], needs: ['docs'], specs: catalogue },
-  { paths: ['wrangler.jsonc', 'scripts/site/**'], specs: catalogue },
+  { paths: ['apps/site/**', 'scripts/docs/**'], needs: ['docs'], specs: siteSpecs },
+  { paths: ['wrangler.jsonc', 'scripts/site/**'], specs: siteSpecs },
   {
     paths: [
       'packages/ui/src/**',
@@ -203,27 +184,8 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
   },
   { paths: ['packages/ui/src/foundations/messages/**'], specs: ['Messages'] },
   { paths: ['packages/ui/src/dev.ts', 'packages/ui/src/dev/**'], specs: ['DevMode'] },
-  // The catalogue's scripted playback: its pointer, timelines and autoplay, and the stage it plays on.
-  {
-    paths: ['apps/site/src/motion/**', 'apps/site/src/figures/MotionStage.tsx'],
-    specs: ['SiteMotion', 'Autoplay'],
-  },
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
   { paths: ['apps/site/src/**'], specs: ['LiveDevelopment'] },
-  // The layout check measures every example the pages place, on the catalogue's stage, with dev
-  // mode's checks; the affected tier runs it.
-  {
-    paths: [
-      'apps/site/src/examples/**',
-      'apps/site/src/figures/Stage.css',
-      'apps/site/src/figures/MotionStage.css',
-      'docs/components/**',
-      'docs/patterns/**',
-      'packages/ui/src/dev.ts',
-      'packages/ui/src/dev/**',
-    ],
-    specs: ['LayoutCheck'],
-  },
 ];
 
 /** The rules whose paths a changed path matches. */
@@ -235,11 +197,11 @@ const helperBudget = 8;
 /** In the fast tier, more specs than this whose fixtures use a changed file run the most specific. */
 const fixtureBudget = 6;
 
-/** A spec's file, by its name: Button for tests/browser/library/Button.spec.ts. */
+/** A spec's file, by its name: Button for tests/component/Button.test.tsx. */
 export const specFile = (name: string, root = repositoryRoot) =>
   specPaths(root).get(name) ?? `tests/browser/library/${name}.spec.ts`;
 const baseName = (path: string) =>
-  posix.basename(path).replace(/\.(?:spec\.ts|fixture\.tsx?|tsx?|css|m?js|html)$/, '');
+  posix.basename(path).replace(/\.(?:spec\.ts|test\.tsx|fixture\.tsx?|tsx?|css|m?js|html)$/, '');
 
 /** fixtureUse reads every fixture and library module: once per checkout and process. */
 const fixtureUses = new Map<string, ReturnType<typeof fixtureUse>>();
@@ -259,8 +221,6 @@ export function specNeeds(name: string, root = repositoryRoot) {
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
     live: name === 'LiveDevelopment',
-    // Renders every catalogue example at four widths: minutes, so the affected tier runs it.
-    whole: name === 'LayoutCheck',
   };
 }
 
@@ -271,7 +231,7 @@ interface ScopeOptions {
 }
 
 /**
- * The browser specs a change runs, by name (Button for tests/browser/library/Button.spec.ts), each
+ * The browser specs a change runs, by name (Button for tests/component/Button.test.tsx), each
  * with why; the paths that run none; the changed helpers with the specs that import them; and in
  * the fast tier, the files more specs' fixtures use than run, with how many do.
  */
@@ -283,7 +243,7 @@ export function specsFor(
   const unmatched: string[] = [];
   const widelyUsed = new Map<string, number>();
   let specsUsing: ((path: string) => string[]) | undefined;
-  // By name, as written: a file system that ignores case would find Table.spec.ts for table.
+  // By name, as written: a file system that ignores case would find Table's spec for table.
   const written = new Set(specPaths(root).keys());
   const exists = (name: string) => written.has(name);
   const add = (name: string, reason: string) => {
@@ -294,13 +254,31 @@ export function specsFor(
   const helpers = new Map<string, string[]>();
   for (const path of paths) {
     let found = false;
-    if (/^tests\/browser\/(?:library|site)\/[^/]+\.spec\.ts$/.test(path))
+    if (
+      /^tests\/browser\/(?:library|site)\/[^/]+\.spec\.ts$/.test(path) ||
+      /^tests\/component\/[^/]+\.test\.tsx$/.test(path)
+    )
       found = add(baseName(path), 'changed spec');
-    else if (/^tests\/browser\/helpers\/[^/]+\.ts$/.test(path)) {
-      const helper = baseName(path);
+    // What every component test runs on: its configuration, setup and core helpers, and the
+    // mount it shares with the fixture page.
+    else if (
+      /^tests\/component\/(?:vitest\.config|Setup|Browser|Commands|Mount)\.tsx?$/.test(path) ||
+      path === 'tests/fixture/FixtureMount.tsx'
+    ) {
+      for (const [name, file] of specPaths(root))
+        if (isComponentTest(file)) found = add(name, `runs on ${path}`) || found;
+    } else if (
+      /^tests\/browser\/helpers\/[^/]+\.ts$/.test(path) ||
+      /^tests\/component\/[^/]+\.tsx?$/.test(path)
+    ) {
+      // A helper some specs share: those that import it.
+      const helper = posix.basename(path);
+      const specifiers = path.startsWith('tests/component/')
+        ? [`./${helper}`, `./${baseName(path)}`]
+        : [`../helpers/${baseName(path)}`];
       const users = [...written].filter((spec) =>
-        importsOf(read(root, specFile(spec, root))).some(
-          ({ specifier }) => specifier === `../helpers/${helper}`,
+        importsOf(read(root, specFile(spec, root))).some(({ specifier }) =>
+          specifiers.includes(specifier),
         ),
       );
       helpers.set(path, users);

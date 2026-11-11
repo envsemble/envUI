@@ -113,3 +113,20 @@ test('render runs both event handlers, the element’s first, and gives both ref
   // A single ref is passed on as it is.
   assert.equal(Row({ ref: objectRef, render: h('div') }).props.ref, objectRef);
 });
+
+test('rows and columns lay out with flex and grids with grid, and no primitive paints', () => {
+  const css = readFileSync(
+    join(repositoryRoot, 'packages/ui/src/styles/Layout.css'),
+    'utf8',
+  ).replace(/\/\*[\s\S]*?\*\//g, '');
+  assert.match(
+    css,
+    /:where\(\[data-env-layout='row'\], \[data-env-layout='column'\]\) \{\s*display: flex;/,
+  );
+  assert.match(css, /:where\(\[data-env-layout='grid'\]\) \{\s*display: grid;/);
+  // Spacing and sizing only: a primitive draws nothing of its own.
+  const properties = [...css.matchAll(/^\s*([\w-]+):/gm)].map(([, property]) => property);
+  assert.ok(properties.length > 20);
+  for (const property of properties)
+    assert.doesNotMatch(property, /^(background|border|outline|box-shadow|color|fill|filter)/);
+});

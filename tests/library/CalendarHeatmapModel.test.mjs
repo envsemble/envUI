@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/ImportSource.mjs';
 
-const { calendarHeatmapModel } = await importSource(
+const { calendarHeatmapModel, heatmapKeyTarget } = await importSource(
   'CalendarHeatmapModel',
   'packages/ui/src/data-display/internal/calendarHeatmapModel.ts',
 );
@@ -47,4 +47,18 @@ test('the weeks start on the given weekday, any of the seven', () => {
   // 2026-03-04 is a Wednesday: with weeks from Wednesday, it starts the first column.
   const result = model([{ date: '2026-03-04', value: 1 }], { weekStart: 3 });
   assert.equal(result.first, result.start);
+});
+
+test('Page Up and Page Down go to the first and last day of the week, within the range', () => {
+  // From Wednesday 2026-03-04 to Wednesday 2026-03-18, in weeks from Monday: the first and the last
+  // week hold only part of theirs.
+  const result = model([], { startDate: '2026-03-04', endDate: '2026-03-18' });
+  const key = (active, name) =>
+    heatmapKeyTarget(result, active, { key: name, ctrlKey: false }, false) - result.start;
+  // Friday 2026-03-13 is in a whole week, Monday 9 to Sunday 15.
+  assert.equal(key(result.start + 9, 'PageUp'), 5);
+  assert.equal(key(result.start + 9, 'PageDown'), 11);
+  // The first week's Monday and the last week's Sunday are outside the range.
+  assert.equal(key(result.start + 2, 'PageUp'), 0);
+  assert.equal(key(result.start + 13, 'PageDown'), 14);
 });

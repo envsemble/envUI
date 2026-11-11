@@ -100,8 +100,8 @@ test('a component runs the spec of its name, or of the name its alias gives', ()
 
 test('a file runs the specs whose fixtures use it, and a fixture the specs that open it', () => {
   // A component without a spec of its own runs the specs whose fixtures show it.
-  assert.ok(specs('packages/ui/src/feedback/Progress.tsx').includes('Meter'));
-  assert.ok(specs('packages/ui/src/layout/Page.tsx').includes('Scaffold'));
+  assert.ok(specs('packages/ui/src/feedback/Progress.tsx').includes('Messages'));
+  assert.ok(specs('packages/ui/src/layout/Page.tsx').includes('Panes'));
   // Through the module that imports it: Calendar is in the date picker's popup.
   assert.ok(specs('packages/ui/src/forms/Calendar.tsx').includes('DatePicker'));
   // A fixture runs the specs that open it, also through the fixtures that import it.
@@ -125,10 +125,10 @@ test('the affected tier runs every spec a file or helper concerns', () => {
   const affected = specsFor([path], { affected: true });
   assert.equal(affected.widelyUsed.size, 0);
   assert.equal(affected.specs.size, fast.widelyUsed.get(path));
-  // Every spec imports Servers.ts, so the affected tier runs them all.
+  // Nearly every spec imports Servers.ts, and the affected tier runs each that does.
   const helper = specsFor(['tests/browser/helpers/Servers.ts'], { affected: true });
   assert.equal(helper.specs.size, helper.helpers.get('tests/browser/helpers/Servers.ts').length);
-  assert.ok(helper.specs.size > 100);
+  assert.ok(helper.specs.size > globSync('tests/browser/{library,site}/*.spec.ts').length / 2);
 });
 
 test('imports are read from the syntax, types, comments and strings left out', () => {
@@ -234,16 +234,6 @@ test('a shared file runs the shared set, and a file no fixture uses runs no spec
   assert.deepEqual(unmatched, ['packages/ui/src/foundations/headingLevel.ts']);
 });
 
-test("the catalogue's playback runs the motion specs", () => {
-  for (const path of [
-    'apps/site/src/figures/MotionStage.tsx',
-    'apps/site/src/motion/Autoplay.ts',
-  ]) {
-    const selected = specs(path);
-    assert.ok(selected.includes('SiteMotion') && selected.includes('Autoplay'), path);
-  }
-});
-
 test('every alias names a file and specs that exist, and adds what the imports miss', () => {
   const files = [
     ...readdirSync('packages/ui/src', { recursive: true }),
@@ -266,52 +256,34 @@ test('every alias names a file and specs that exist, and adds what the imports m
   }
 });
 
-test("a spec is in the library's or the site's folder", () => {
-  assert.equal(specFile('Button'), 'tests/browser/library/Button.spec.ts');
-  assert.equal(specFile('SiteShell'), 'tests/browser/site/SiteShell.spec.ts');
+test("a spec is in the library's or the site's folder, or a component test", () => {
+  assert.equal(specFile('Hydration'), 'tests/browser/library/Hydration.spec.ts');
+  assert.equal(specFile('Button'), 'tests/component/Button.test.tsx');
+  assert.equal(specFile('SiteSmoke'), 'tests/browser/site/SiteSmoke.spec.ts');
 });
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
-  assert.deepEqual(specs('tests/browser/library/Tree.spec.ts'), ['Tree']);
-  assert.deepEqual(specs('tests/browser/helpers/Chevron.ts'), ['Combobox', 'Select']);
-  // Every spec imports Servers.ts: verify covers it.
-  assert.deepEqual(specs('tests/browser/helpers/Servers.ts'), []);
+  assert.deepEqual(specs('tests/component/Tree.test.tsx'), ['Tree']);
+  assert.deepEqual(specs('tests/component/Chevron.ts'), ['Select']);
+  assert.deepEqual(specs('tests/browser/helpers/HostedSite.ts'), ['SiteFailures']);
 });
 
 test('a module of the documentation generator runs the specs of the site', () => {
-  assert.ok([...selectScope(['scripts/docs/PageReader.ts']).specs.keys()].includes('DocsPages'));
+  assert.ok([...selectScope(['scripts/docs/PageReader.ts']).specs.keys()].includes('SiteSmoke'));
 });
 
 test('the site runs its specs and live development, with the builds they open', () => {
   const scope = selectScope(['apps/site/src/main.tsx']);
   assert.deepEqual([...scope.specs.keys()].sort(), [
-    'CatalogueBanners',
-    'CatalogueComponentPages',
-    'CatalogueFigures',
-    'CatalogueGallery',
-    'CatalogueOverlays',
-    'CataloguePlainLanguage',
-    'CatalogueRelated',
-    'CatalogueSearch',
-    'CatalogueTilePlayback',
-    'DocsPages',
     'LiveDevelopment',
     'SiteFailures',
     'SitePrerender',
-    'SiteRoutes',
-    'SiteShell',
+    'SiteSmoke',
   ]);
   assert.equal(scope.build.site, true);
   assert.equal(specNeeds('LiveDevelopment').live, true);
   assert.equal(specNeeds('Hydration').library, true);
   assert.equal(selectScope(['tests/browser/library/Hydration.spec.ts']).build.library, true);
-});
-
-test('the examples, the pages that place them and dev mode run the layout check', () => {
-  assert.deepEqual(specs('docs/components/card.md'), ['LayoutCheck']);
-  assert.ok(specs('apps/site/src/examples/card/ProjectSummary.tsx').includes('LayoutCheck'));
-  assert.ok(specs('packages/ui/src/dev/measure.ts').includes('LayoutCheck'));
-  assert.equal(specNeeds('LayoutCheck').whole, true);
 });
 
 test('static checks cover the changed files, and configuration the whole of its check', () => {
@@ -323,14 +295,23 @@ test('static checks cover the changed files, and configuration the whole of its 
 });
 
 test('servers follow the specs that need them', () => {
-  assert.deepEqual(serversFor(['Tree']), ['fixture']);
-  assert.deepEqual(serversFor(['SiteShell']), ['site-build']);
+  // A library spec that opens the fixture page, in a checkout of its own.
+  const root = mkdtempSync(join(tmpdir(), 'envui-servers-'));
+  try {
+    mkdirSync(join(root, 'tests/browser/library'), { recursive: true });
+    writeFileSync(
+      join(root, 'tests/browser/library/Widget.spec.ts'),
+      "import { fixtureUrl } from '../helpers/Servers';",
+    );
+    assert.deepEqual(serversFor(['Widget'], root), ['fixture']);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+  // A component test needs none.
+  assert.deepEqual(serversFor(['Tree']), []);
+  assert.deepEqual(serversFor(['SiteSmoke']), ['site-build']);
   assert.deepEqual(serversFor(['SiteFailures']), ['site']);
-  assert.deepEqual(serversFor(['Tree', 'SiteShell', 'SiteMotion']), [
-    'fixture',
-    'site',
-    'site-build',
-  ]);
+  assert.deepEqual(serversFor(['SiteSmoke', 'SiteFailures']), ['site', 'site-build']);
   assert.deepEqual(serversFor([]), []);
 });
 

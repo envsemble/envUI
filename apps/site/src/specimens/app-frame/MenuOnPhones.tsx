@@ -4,7 +4,7 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 import { WidthSweep } from '../../motion/WidthSweep';
-import { keepLinksInPlace } from '../../figures/LiveExample';
+import { keepLinksInPlace } from '../../figures/KeepLinksInPlace';
 
 const menu = '[aria-label="Open the chapters"]';
 const chapter = (id: string, where: string) =>

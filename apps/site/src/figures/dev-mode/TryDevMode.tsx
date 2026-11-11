@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Column, Row, Text, Theme, useTheme } from '@envsemble/envui';
 import { IconViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import type { DevModeHandle } from '@envsemble/envui/dev';
-import { keepLinksInPlace } from '../LiveExample';
+import { keepLinksInPlace } from '../KeepLinksInPlace';
 import { SmallApplication } from './SmallApplication';
 import { useBrowserStandIns } from '../../motion/BrowserStandIns';
 // The 3D view of the application below, captured from the real dev mode by

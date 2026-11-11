@@ -43,7 +43,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 - `packages/ui/src/partDescriptions.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
 - Its strings in `packages/ui/src/foundations/messages/`.
 - Its page, `docs/components/<name>.md` or `docs/patterns/`, with its examples in `apps/site/src/examples/<page>/` and its gallery tile in `apps/site/src/tiles/`.
-- Its spec and fixture, named as [Fixtures](../../AGENTS.md#fixtures) says.
+- Its component test and fixture, named as [Fixtures](../../AGENTS.md#fixtures) says.
 - A changeset, when people using envUI notice the change ([Record the change](../../AGENTS.md#record-the-change)).
 
 ## Tokens
@@ -83,7 +83,7 @@ Never edit these; change their source and run their command.
 - Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/library/StableHover.test.mjs`).
 - A pill is `var(--env-radius-full)`, so a tall element becomes a rounded rectangle; `50%` only on parts that are always square (`tests/library/Corners.test.mjs`).
 - Motion uses the motion tokens, and movement only under `prefers-reduced-motion: no-preference`.
-- Under `forced-colors: active`, a state a fill or shadow carries takes system colors (`tests/browser/library/ForcedColors.spec.ts`).
+- Under `forced-colors: active`, a state a fill or shadow carries takes system colors (`tests/component/ForcedColors.test.tsx`).
 
 ## Part names and color properties
 
@@ -93,7 +93,7 @@ Never edit these; change their source and run their command.
 - `data-env-ssr-*` attributes are private.
 - Each attribute keeps one meaning: `data-active` what shows, `data-current` the page's destination, `data-selected` what is chosen, `data-highlighted` the list's cursor, and for a drag `data-dragging`, `data-moving`, `data-resizing` or `data-drag-over`.
 - Color properties are `--env-<component>-<role>`, or the item's for a collection's rows, with the roles `container`, `content`, `outline`, `icon`, `selected`, `selected-content` and `indicator`.
-- Register each at the top of its style sheet as `@property … { syntax: '*'; inherits: false; }` and only read it, with the designed token as its fallback, so the default colors never change (`tests/browser/library/DefaultColors.spec.ts`) and states follow what an application sets as layers of the content over the container.
+- Register each at the top of its style sheet as `@property … { syntax: '*'; inherits: false; }` and only read it, with the designed token as its fallback, so the default colors never change (`tests/component/DefaultColors.test.tsx`) and states follow what an application sets as layers of the content over the container.
 - Renaming or removing any of these is a `major` change, and `npm run docs:check` fails without a major changeset that names it; a new color property is `minor`.
 
 ## Dev mode
@@ -102,4 +102,4 @@ Never edit these; change their source and run their command.
 - No other entry point imports it (`tests/library/DevMode.test.mjs`), so a production build holds none of it.
 - Its code is in `packages/ui/src/dev/`: measuring the page (`measure.ts`, with what nodes hold inside in `inner.ts`, the attributes and labels of elements in `elements.ts`, the open overlays in `overlays.ts`, the container queries in `queries.ts` and the part names in `parts.ts`), the data (`model.ts`), the readout and its checks as plain functions of that data (`readout.ts`, its lengths in `units.ts`), and the API (`api.ts`, with the skeleton shift check in `skeletonShift.ts`).
 - The view is in `packages/ui/src/dev/ui/`, with the tokens the inspector shows from `usedTokens.ts`, and its own style sheet, `DevMode.css`, which `install.tsx` imports as text and adds to the page, outside `packages/ui/src/styles`.
-- Give a readout check a unit test on data in `tests/library/DevMode.test.mjs`; test the view and `envui.layout` on a page in `tests/browser/library/DevMode.spec.ts`.
+- Give a readout check a unit test on data in `tests/library/DevMode.test.mjs`; test the view and `envui.layout` in the browser in `tests/component/DevMode.test.tsx`.

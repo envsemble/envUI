@@ -1,6 +1,5 @@
-// The forced-colors spec's page: one component of each kind in its states, side by side, each part
-// named by a test id, so the spec can compare a state with its rest under forced colors.
-import { createRoot } from 'react-dom/client';
+// The forced-colors test's fixture: one component of each kind in its states, side by side, each
+// part named by a test id, so the test can compare a state with its rest under forced colors.
 import {
   Button,
   Calendar,
@@ -32,10 +31,11 @@ import {
 import { IconClose } from '@envsemble/envui/icons/Close';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
-import '@envsemble/envui/styles.css';
 // Internal: the lists of times and months the pickers open, shown here without their popups.
 import { TimeList } from '../../packages/ui/src/forms/internal/TimeList.js';
 import { MonthGrid } from '../../packages/ui/src/forms/internal/MonthGrid.js';
+
+export const mount = 'root';
 
 const noop = () => {};
 
@@ -56,7 +56,7 @@ const variants = [
   ['text-danger', { variant: 'text', tone: 'danger' }],
 ] as const;
 
-function Page() {
+export default function ForcedColorsFixture() {
   return (
     <Theme theme="light" style={{ display: 'grid', gap: '1.5rem', padding: '1rem' }}>
       <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -237,7 +237,3 @@ function Page() {
     </Theme>
   );
 }
-
-// ForcedColors.html has the #root.
-createRoot(document.getElementById('root')!).render(<Page />);
-document.body.dataset.stylesReady = '';

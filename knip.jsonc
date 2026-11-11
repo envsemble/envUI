@@ -15,10 +15,10 @@
         "tests/*/*.test.mjs",
         "tests/browser/{library,site}/*.spec.ts",
         "tests/accessibility/*.spec.ts",
+        "tests/component/*.test.tsx",
+        "tests/component/{vitest.config,Setup}.ts",
         // The fixture's pages, each loading one of these.
         "tests/fixture/{main,perf}.tsx",
-        "tests/fixture/{RichText,CascadeLayers,ForcedColors}.fixture.tsx",
-        "tests/fixture/Contrast.fixture.ts",
         "tests/fixture/vite.config.ts",
         "tests/fixture/Hydration.fixture.tsx",
         "tests/types/*.tsx",

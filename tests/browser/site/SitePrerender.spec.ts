@@ -145,6 +145,29 @@ test.describe('a reader with nothing stored, in dark at high contrast and reduce
   });
 });
 
+test('settings stored under the keys of before move to their keys now, and still apply', async ({
+  page,
+}) => {
+  // A reader's settings from when the site was called the catalogue, and its drawer the site's.
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('seeded')) return;
+    sessionStorage.setItem('seeded', 'yes');
+    localStorage.setItem('envui-catalogue-theme', 'dark');
+    localStorage.setItem('envui-catalogue-scale', 'compact');
+    localStorage.setItem('envui-catalogue-drawer-width-site', '25');
+  });
+  await page.goto(`${siteBuildUrl}/components/button`);
+  await expect(page.locator('html')).toHaveAttribute('data-env-theme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-env-scale', 'compact');
+  const stored = await page.evaluate(() => ({ ...localStorage }));
+  expect(stored).toMatchObject({
+    [displayStorageKeys.theme]: 'dark',
+    [displayStorageKeys.scale]: 'compact',
+    'envui-site-drawer-width-catalogue': '25',
+  });
+  expect(Object.keys(stored).filter((key) => key.startsWith('envui-catalogue-'))).toEqual([]);
+});
+
 test("a campaign's query keeps the pre-rendered page in view, and an old address's query hides it", async ({
   page,
 }) => {
