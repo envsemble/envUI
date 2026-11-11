@@ -1,4 +1,4 @@
-import { Suspense, use, useRef, useState, type MouseEvent, type ReactNode } from 'react';
+import { Suspense, use, useRef, useState, type ReactNode } from 'react';
 import { Disclosure, Column, Text } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
 import type { DeviceKind, StageFill } from '@docs-model/DocumentationTypes';
@@ -23,18 +23,7 @@ import { ExamplePlayback } from './Specimen';
 import { StillMark } from './StillMark';
 import { useBrowserStandIns } from '../motion/BrowserStandIns';
 import { PageTheme } from './PageTheme';
-
-/**
- * Links in an example keep their semantics without navigating away from the documentation. A link
- * to a part of the page, such as a table of contents' link to its section, stays on it and works.
- */
-function preventNavigation(event: MouseEvent<HTMLDivElement>) {
-  const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
-  if (!link) return;
-  const href = link.getAttribute('href') ?? '';
-  if (href.length > 1 && href.startsWith('#') && document.getElementById(href.slice(1))) return;
-  event.preventDefault();
-}
+import { keepLinksInPlace } from './KeepLinksInPlace';
 
 function Source({ page, name }: { page: string; name: string }) {
   const source = use(exampleSource(page, name));
@@ -158,12 +147,6 @@ export function ExampleRender({
     </LoadBoundary>
   );
 }
-
-/** The handlers that keep an example's links from leaving the documentation. */
-export const keepLinksInPlace = {
-  onClickCapture: preventNavigation,
-  onAuxClickCapture: preventNavigation,
-};
 
 /**
  * How a live example is shown, as its fence's `figure=` attributes say (validation/Figures.ts);

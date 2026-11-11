@@ -2,7 +2,7 @@ import OpenInPanel from '../../examples/markdown/OpenInPanel';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
-import { keepLinksInPlace } from '../../figures/LiveExample';
+import { keepLinksInPlace } from '../../figures/KeepLinksInPlace';
 
 const link = 'a[href="/documents/launch-plan"]';
 const close = '.env-sheet [aria-label="Close document"]';
