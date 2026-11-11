@@ -1,7 +1,7 @@
 /**
  * The contrast gate's pair registry: every foreground envUI paints on a background, with the kind
  * of contrast WCAG 2.x asks of it, and every pair of state fills that must look different.
- * tests/browser/library/Contrast.spec.ts resolves each pair in every theme of Themes.ts, in a real browser,
+ * tests/component/Contrast.test.tsx resolves each pair in every theme of Themes.ts, in a real browser,
  * and fails on any pair below the theme's minimum for its kind that Exceptions.json doesn't list.
  *
  * - `fg` and each `bg` layer name a custom property: a semantic role (`--env-color-{bg|fg|border}-…`),
@@ -1339,7 +1339,7 @@ export const pairs: readonly ContrastPair[] = merged([...registry, ...onPage.map
 /**
  * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
  * must be listed here or in `renamed`: tests/contrast/DeclaredPairs.json holds the names declared
- * when it was last updated, and tests/browser/library/Contrast.spec.ts fails on a name that is gone from
+ * when it was last updated, and tests/contrast/ContrastRegistry.test.mjs fails on a name that is gone from
  * `pairs` without an entry, and on a dropped pair that is still declared.
  */
 export const dropped: readonly { pair: string; rationale: string }[] = [
@@ -2900,7 +2900,7 @@ function apiReviewRenames() {
 
 /**
  * Pairs the gate still measures under another name, from the old name to the new, with the reason.
- * tests/browser/library/Contrast.spec.ts checks that each old name is not declared, and that each new one
+ * tests/contrast/ContrastRegistry.test.mjs checks that each old name is not declared, and that each new one
  * is, or has since been dropped or renamed onward in turn.
  */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [

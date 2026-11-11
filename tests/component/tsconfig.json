@@ -18,6 +18,7 @@
     "Browser.ts",
     "Commands.ts",
     "Setup.ts",
-    "../../packages/ui/src/customProperties.d.ts"
+    "../../packages/ui/src/customProperties.d.ts",
+    "../contrast/culori.d.ts"
   ]
 }

@@ -26,7 +26,7 @@
     "test:component": "vitest run --config tests/component/vitest.config.ts --project=chromium",
     "test:component:engines": "vitest run --config tests/component/vitest.config.ts --project=firefox --project=webkit --tags-filter=engines",
     "test:browser": "playwright test --project=chromium --project=firefox --project=webkit --project=live-development",
-    "test:contrast": "playwright test tests/browser/library/Contrast.spec.ts --project=chromium",
+    "test:contrast": "node scripts/test/CheckContrast.ts",
     "test:a11y": "npm run build:site && playwright test --project=a11y",
     "test:a11y:update": "npm run build:site && playwright test --project=a11y --update-snapshots=changed",
     "test:visual": "node scripts/test/VisualTests.ts",

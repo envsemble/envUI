@@ -183,6 +183,18 @@ const clipboardText: BrowserCommand<[]> = async (context) => {
   return context.page.evaluate(() => navigator.clipboard.readText());
 };
 
+/**
+ * The contrast gate's Node side (tests/contrast/Gate.ts), loaded only by the test that asks for
+ * it: the colors a theme's pairs name, and the measure of the colors the browser resolved.
+ */
+const contrastColors: BrowserCommand<[theme: string]> = async (_, theme) =>
+  (await import('../contrast/Gate.ts')).contrastColors(theme);
+
+const measureContrast: BrowserCommand<
+  [theme: string, resolved: Record<string, string | null>, canvas: string]
+> = async (_, theme, resolved, canvas) =>
+  (await import('../contrast/Gate.ts')).measureContrast(theme, resolved, canvas);
+
 export const commands = {
   mouseMove,
   mouseDown,
@@ -201,6 +213,8 @@ export const commands = {
   releaseModule,
   unrouteModule,
   clipboardText,
+  contrastColors,
+  measureContrast,
 };
 
 export type Commands = typeof commands;
