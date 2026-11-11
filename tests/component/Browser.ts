@@ -40,6 +40,7 @@ export const mouse = {
     options?: { button?: 'left' | 'right' | 'middle'; clickCount?: number },
   ) => commands.mouseClick(x, y, options),
   dblclick: (x: number, y: number) => commands.mouseClick(x, y, { clickCount: 2 }),
+  wheel: (deltaX: number, deltaY: number) => commands.mouseWheel(deltaX, deltaY),
 };
 
 /** The keyboard, its keys named as Playwright's keyboard names them, such as `Shift+Tab`. */
