@@ -1,5 +1,5 @@
 {
-  "$comment": "Recorded by tests/browser/library/DefaultColors.spec.ts with ENVUI_RECORD_DEFAULT_COLORS=1; do not edit.",
+  "$comment": "Recorded by tests/component/DefaultColors.test.tsx when the file is missing; do not edit.",
   "light [data-testid=\"default-colors\"] .env-button #0 rest": "3d3d877f8891c1ee",
   "light [data-testid=\"default-colors\"] .env-button #0 hover": "4cb38d09bac11403",
   "light [data-testid=\"default-colors\"] .env-button #0 pressed": "b3fbbb49232a9fb5",

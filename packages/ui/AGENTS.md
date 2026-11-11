@@ -93,7 +93,7 @@ Never edit these; change their source and run their command.
 - `data-env-ssr-*` attributes are private.
 - Each attribute keeps one meaning: `data-active` what shows, `data-current` the page's destination, `data-selected` what is chosen, `data-highlighted` the list's cursor, and for a drag `data-dragging`, `data-moving`, `data-resizing` or `data-drag-over`.
 - Color properties are `--env-<component>-<role>`, or the item's for a collection's rows, with the roles `container`, `content`, `outline`, `icon`, `selected`, `selected-content` and `indicator`.
-- Register each at the top of its style sheet as `@property … { syntax: '*'; inherits: false; }` and only read it, with the designed token as its fallback, so the default colors never change (`tests/browser/library/DefaultColors.spec.ts`) and states follow what an application sets as layers of the content over the container.
+- Register each at the top of its style sheet as `@property … { syntax: '*'; inherits: false; }` and only read it, with the designed token as its fallback, so the default colors never change (`tests/component/DefaultColors.test.tsx`) and states follow what an application sets as layers of the content over the container.
 - Renaming or removing any of these is a `major` change, and `npm run docs:check` fails without a major changeset that names it; a new color property is `minor`.
 
 ## Dev mode
