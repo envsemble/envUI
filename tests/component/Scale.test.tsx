@@ -10,11 +10,12 @@
  */
 import { expect, test } from 'vitest';
 import { commands, page, server } from 'vitest/browser';
+import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as primitives from '../fixture/Primitives.fixture.tsx';
 import * as fixture from '../fixture/Scale.fixture.tsx';
 import { controlSizes, densityScales } from '../fixture/ScaleSections.fixture.ts';
 import * as tabsCompact from '../fixture/TabsCompact.fixture.tsx';
-import { box } from './Browser.ts';
+import { box, css } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 /** The control heights of each scale, in CSS pixels at the default 16 px root. */
@@ -333,6 +334,10 @@ test('on a coarse pointer every control of a row is as tall, and at least the to
     }));
     expect(corners).toHaveLength(6);
     for (const { radius, half } of corners) expect(radius).toBe(half);
+    // AvatarButton grows to the touch height around a small avatar.
+    mount(adoption);
+    const avatar = page.getByRole('button', { name: 'Open account menu' });
+    expect([css(avatar, 'width'), css(avatar, 'height')]).toEqual(['44px', '44px']);
     // A toolbar's rows, and a desktop view's rows of controls at their default size.
     for (const section of ['toolbar', 'desktop']) {
       await openSection(section);
