@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/TimePicker.fixture.tsx';
-import { box, collectErrors, keyboard, mouse, nextFrames } from './Browser.ts';
+import { box, collectErrors, keyboard, mouse, nextFrames, waitOnRealTime } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 beforeEach(() => {
@@ -57,7 +57,6 @@ async function hover(element: Element) {
   const { x, y } = middle(element);
   await mouse.move(x, y);
 }
-const wait = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
 
 test('the field shows its time in the locale and each wheel follows the spinbutton keys', async () => {
   const errors = collectErrors();
@@ -298,7 +297,7 @@ test(
     await mouse.down();
     await mouse.move(x, y - 2 * row, { steps: 12 });
     await expect.poll(() => hours.hasAttribute('data-dragging')).toBe(true);
-    await wait(150);
+    await waitOnRealTime(150);
     await mouse.up();
     await expect.poll(text('Start time')).toBe('11:30');
     await expect.poll(() => hours.hasAttribute('data-dragging')).toBe(false);
@@ -309,7 +308,7 @@ test(
     await mouse.move(minuteX, y);
     await mouse.down();
     await mouse.move(minuteX, y + row, { steps: 8 });
-    await wait(150);
+    await waitOnRealTime(150);
     await mouse.up();
     await expect.poll(text('Start time')).toBe('11:15');
     // A quick drag let go while moving glides on past where the pointer stopped: 12 px down, too

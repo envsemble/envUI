@@ -1,7 +1,16 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/AvatarGroup.fixture.tsx';
-import { addStyle, box, css, keyboard, mouse, nextFrames } from './Browser.ts';
+import {
+  addStyle,
+  box,
+  css,
+  keyboard,
+  mouse,
+  nextFrames,
+  passTime,
+  stopTimers,
+} from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 beforeEach(() => {
@@ -402,20 +411,14 @@ test('on touch screens a tap spreads the pile, later taps press touch-sized avat
     await expect.poll(spread(group)).toBe(false);
     expect(hits(group)).toEqual([false, false, false, false, false]);
     // So does a pause of five seconds without a tap in it.
-    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    try {
-      await tap(first.x + first.width / 2, first.top + 22);
-      await expect.poll(spread(group)).toBe(true);
-      await vi.advanceTimersByTimeAsync(4900);
-      // React renders what the timers changed in a task of its own.
-      await nextFrames();
-      expect(spread(group)()).toBe(true);
-      await vi.advanceTimersByTimeAsync(200);
-      await nextFrames();
-      expect(spread(group)()).toBe(false);
-    } finally {
-      vi.useRealTimers();
-    }
+    stopTimers();
+    await tap(first.x + first.width / 2, first.top + 22);
+    await expect.poll(spread(group)).toBe(true);
+    await passTime(4900);
+    expect(spread(group)()).toBe(true);
+    await passTime(200);
+    expect(spread(group)()).toBe(false);
+    vi.useRealTimers();
 
     // A small pressable group spreads into touch targets too.
     const small = byTestId('small-pressable');

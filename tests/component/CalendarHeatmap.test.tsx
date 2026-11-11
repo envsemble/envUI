@@ -1,7 +1,7 @@
 import { beforeEach, expect, onTestFinished, test, vi } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/CalendarHeatmap.fixture.tsx';
-import { box, css, keyboard, mouse, nextFrames } from './Browser.ts';
+import { box, css, keyboard, mouse, nextFrames, passTime, stopTimers } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 beforeEach(() => {
@@ -121,15 +121,11 @@ test('people can move the pointer onto the tooltip of a hovered or clicked day t
     // Straight up from the day, the pointer crosses only the gap between days to reach it, and
     // the tooltip stays past its close delay.
     const to = box(tooltip()!);
-    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    try {
-      await moveOntoTooltip(day);
-      await vi.advanceTimersByTimeAsync(600);
-      await nextFrames();
-      expect(tooltipText()).toBe(nameOf(day));
-    } finally {
-      vi.useRealTimers();
-    }
+    stopTimers();
+    await moveOntoTooltip(day);
+    await passTime(600);
+    expect(tooltipText()).toBe(nameOf(day));
+    vi.useRealTimers();
     // Leaving the tooltip for anything but the days closes it.
     await mouse.move(to.x - 40, to.y - 60, { steps: 4 });
     await expect.poll(() => positioners().length).toBe(0);

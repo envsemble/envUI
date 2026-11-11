@@ -25,7 +25,6 @@ export const aliases: Record<string, string[]> = {
   FieldFrame: ['TextField'],
   Popover: ['Dialog'],
   Spinner: ['Skeleton'],
-  ConfirmButton: ['Button'],
   AvatarButton: ['Button'],
   LinkProvider: ['Button'],
   ActionElement: ['Button'],

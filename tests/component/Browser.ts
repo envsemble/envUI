@@ -71,6 +71,15 @@ export function stopTimers(...more: ('performance' | 'Date')[]) {
   onTestFinished(() => void vi.useRealTimers());
 }
 
+/**
+ * Waits real time, only for what the browser times itself and no stopped clock moves: the times
+ * events carry, the performance.now() a component reads as it opens, the frames of a motion.
+ * Anything a component times with setTimeout takes stopTimers and passTime instead.
+ */
+export function waitOnRealTime(milliseconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
 /** Moves the stopped timers on, then waits the frames in which React renders what they changed. */
 export async function passTime(milliseconds: number) {
   await vi.advanceTimersByTimeAsync(milliseconds);

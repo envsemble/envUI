@@ -1,7 +1,7 @@
 import { beforeEach, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/TableOfContents.fixture.tsx';
-import { css, keyboard, nextFrames, shown } from './Browser.ts';
+import { css, keyboard, nextFrames, shown, waitOnRealTime } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 beforeEach(async () => {
@@ -158,17 +158,16 @@ test('a smooth scroll to a section moves the marks through the sections on the w
   await expect.poll(current(navigation)).toBe('Short end');
   // Once it has landed, it rests: no motion of its own while nothing moves.
   const outline = () => path.getAttribute('d');
-  const wait = (time: number) => new Promise((done) => setTimeout(done, time));
   await expect
     .poll(async () => {
       const first = outline();
-      await wait(100);
+      await waitOnRealTime(100);
       return first === outline();
     })
     .toBe(true);
   // Still after longer than a glide lasts, the medium duration, 160 ms.
   const rested = outline();
-  await wait(400);
+  await waitOnRealTime(400);
   expect(outline()).toBe(rested);
 });
 
