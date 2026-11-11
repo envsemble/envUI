@@ -1,8 +1,17 @@
-import { beforeEach, describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as fixture from '../fixture/Tooltip.fixture.tsx';
-import { box, collectErrors, keyboard, mouse, shown } from './Browser.ts';
+import {
+  box,
+  collectErrors,
+  keyboard,
+  mouse,
+  nextFrames,
+  passTime,
+  shown,
+  stopTimers,
+} from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 /**
@@ -32,10 +41,13 @@ const isGone = (locator: Locator) => expect.poll(() => locator.elements().length
 const focus = (locator: Locator) => (locator.element() as HTMLElement).focus();
 const leave = () => mouse.move(1, 1);
 /**
- * Waits past a tooltip's delay of 0 and its opening animation, where a test proves that none
- * opens meanwhile.
+ * Waits past a tooltip's delay of 0 and the frames it would render in, where a test proves that
+ * none opens meanwhile: a timer runs after those of the same delay set before it.
  */
-const pastOpening = () => new Promise((resolve) => setTimeout(resolve, 300));
+const pastOpening = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  await nextFrames();
+};
 const button = (name: string) => page.getByRole('button', { name, exact: true });
 
 describe('Tooltip', () => {
@@ -204,7 +216,8 @@ describe('Tooltip', () => {
       let mutations = 0;
       const observer = new MutationObserver((records) => (mutations += records.length));
       observer.observe(archiveAll.element(), { attributes: true, subtree: true, childList: true });
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Thirty frames, each of which a loop would render in.
+      for (let frame = 0; frame < 15; frame++) await nextFrames();
       observer.disconnect();
       expect(mutations).toBeLessThan(10);
       focus(archiveAll);
@@ -377,8 +390,10 @@ describe('Tooltip', () => {
       // past the tooltip's closing delay, it is still open.
       const popup = box(document.querySelector('.env-tooltip')!);
       await mouse.move(popup.x + popup.width / 2, popup.y + popup.height / 2, { steps: 4 });
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      stopTimers();
+      await passTime(600);
       expect(tooltips()).toEqual(['Moves it out of the list']);
+      vi.useRealTimers();
       await mouse.move(0, 0);
       await noTooltip();
     });

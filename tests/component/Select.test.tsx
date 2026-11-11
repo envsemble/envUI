@@ -1,4 +1,4 @@
-import { beforeEach, expect, test } from 'vitest';
+import { beforeEach, expect, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/Forms.fixture.tsx';
 import {
@@ -9,7 +9,9 @@ import {
   keyboard,
   mouse,
   nextFrames,
+  passTime,
   shown,
+  stopTimers,
 } from './Browser.ts';
 import { chevronTips, expectHalfTurn, slowChevron } from './Chevron.ts';
 import { mount } from './Mount.tsx';
@@ -102,6 +104,8 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset,
   await keyboard.press('Space');
   await isOpen();
   await isFocused(option('Team'));
+  // The type-ahead's 750 ms pass only as the test moves the clock.
+  stopTimers();
   await keyboard.press('s');
   await keyboard.press('Enter');
   await isClosed();
@@ -109,8 +113,9 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset,
   await isFocused(trigger);
 
   // A space typed within 750 ms of a letter goes on with the type-ahead rather than opening the
-  // list: this waits just past it.
-  await new Promise((resolve) => setTimeout(resolve, 800));
+  // list: this moves the clock just past it.
+  await passTime(800);
+  vi.useRealTimers();
   await keyboard.press('Space');
   await isOpen();
   await isFocused(option('Starter'));

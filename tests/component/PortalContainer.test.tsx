@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/PortalContainer.fixture.tsx';
-import { box, keyboard, mouse, nextFrames, shown } from './Browser.ts';
+import { box, keyboard, mouse, nextFrames, passTime, shown, stopTimers } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 /** Whether an element's box lies inside the preview region's. */
@@ -180,6 +180,8 @@ describe('PortalContainer, contained', () => {
   test('a contained notice arrives and leaves with its motion, and stays under the pointer', async () => {
     mount(fixture);
     const layer = page.getByTestId('layer');
+    // The notice's time passes only as the test moves the clock; its motion runs as it does.
+    stopTimers('Date');
     await page.getByRole('button', { name: 'Notify' }).click();
     await expect.poll(() => toasts(layer, 'Invitation sent.')).toHaveLength(1);
     const notice = page.elementLocator(toasts(layer, 'Invitation sent.')[0]!);
@@ -188,7 +190,7 @@ describe('PortalContainer, contained', () => {
     await expect.poll(() => getComputedStyle(notice.element()).opacity).toBe('1');
     // Under the pointer its time stops: past its 1.2 s it is still there.
     await notice.hover();
-    await wait(1800);
+    await passTime(1800);
     expect(notice.element().isConnected).toBe(true);
     // Once the pointer leaves, it goes, taking its ending style before it is removed.
     let ended = false;
@@ -199,7 +201,12 @@ describe('PortalContainer, contained', () => {
     observer.observe(layer.element(), { subtree: true, attributeFilter: ['data-ending-style'] });
     try {
       await mouse.move(1, 1);
-      await expect.poll(() => toasts(layer, 'Invitation sent.')).toHaveLength(0);
+      await expect
+        .poll(async () => {
+          await passTime(100);
+          return toasts(layer, 'Invitation sent.');
+        })
+        .toHaveLength(0);
       expect(ended).toBe(true);
     } finally {
       observer.disconnect();

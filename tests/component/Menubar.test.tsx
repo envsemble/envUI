@@ -330,8 +330,8 @@ test(
     // As behind a modal dialog: the menubar is inert, and the note outside it has focus.
     menubar().element().setAttribute('inert', '');
     await keyboard.down('Alt');
-    // Just past the update holding Alt would make.
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // Past the render holding Alt would make.
+    await nextFrames();
     expect(accessKeysShown()).toBe(false);
     await keyboard.press('KeyF');
     await keyboard.up('Alt');

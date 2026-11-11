@@ -253,7 +253,7 @@ test(
 
     // A read-only field doesn't open: a popup would be in the page by the next frames.
     await field('Read only time').click();
-    await wait(100);
+    await nextFrames();
     expect(page.getByRole('dialog').elements()).toHaveLength(0);
     expect(text('Read only time')()).toBe('12:00');
   },
