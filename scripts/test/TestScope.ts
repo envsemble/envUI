@@ -400,8 +400,8 @@ export function mergeChanges(entries: readonly Change[], untracked: readonly str
   return [...byPath.values()].sort((a, b) => a.path.localeCompare(b.path));
 }
 
-/** The integration branches a change is compared with, in order of preference. */
-const defaultBases = ['origin/envui-1.0', 'origin/dev'];
+/** The integration branch a change is compared with. */
+const defaultBase = 'origin/dev';
 
 function git(args: string[], root: string) {
   return execFileSync('git', args, {
@@ -412,32 +412,25 @@ function git(args: string[], root: string) {
   });
 }
 
-/**
- * The files changed since the merge-base with the integration branch, committed or not, and the
- * untracked ones. The branch is `base`, else ENVUI_BASE, else the first of defaultBases that exists.
- */
-/** The branches to compare with, in order: `base`, else ENVUI_BASE, else defaultBases. */
-export function baseCandidates(base?: string): string[] {
-  return base ? [base] : process.env.ENVUI_BASE ? [process.env.ENVUI_BASE] : defaultBases;
+/** The branch to compare with: `base`, else ENVUI_BASE, else defaultBase. */
+export function baseBranch(base?: string): string {
+  return base || process.env.ENVUI_BASE || defaultBase;
 }
 
+/**
+ * The files changed since the merge-base with the integration branch, committed or not, and the
+ * untracked ones.
+ */
 export function changedFiles({
   root = repositoryRoot,
   base,
 }: { root?: string; base?: string } = {}) {
-  const candidates = baseCandidates(base);
-  const found = candidates.find((ref) => {
-    try {
-      git(['rev-parse', '--verify', '--quiet', `${ref}^{commit}`], root);
-      return true;
-    } catch {
-      return false;
-    }
-  });
-  if (!found)
-    throw new Error(
-      `None of ${candidates.join(', ')} exists. Fetch it, or pass --base <ref> or set ENVUI_BASE.`,
-    );
+  const found = baseBranch(base);
+  try {
+    git(['rev-parse', '--verify', '--quiet', `${found}^{commit}`], root);
+  } catch {
+    throw new Error(`${found} doesn't exist. Fetch it, or pass --base <ref> or set ENVUI_BASE.`);
+  }
   const mergeBase = git(['merge-base', 'HEAD', found], root).trim();
   const entries = parseNameStatus(
     git(['diff', '--name-status', '-z', '-M', '--no-ext-diff', mergeBase], root),

@@ -4,7 +4,7 @@
 //
 //   node scripts/test/Check.ts [--affected] [--base <ref>] [--files <a,b,...>] [--dry-run]
 //
-// --base       the branch to compare with; else ENVUI_BASE, else origin/envui-1.0, else origin/dev
+// --base       the branch to compare with; else ENVUI_BASE, else origin/dev
 // --files      check these paths instead of the branch's changes, such as to try the selection
 // --dry-run    print the selection and stop
 import { parseArgs } from 'node:util';

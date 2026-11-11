@@ -3,7 +3,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { baseCandidates } from '../test/TestScope.ts';
+import { baseBranch } from '../test/TestScope.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const changesetDirectory = resolve(repositoryRoot, '.changeset');
@@ -33,29 +33,25 @@ function git(args: string[]) {
 }
 
 /**
- * A file of the repository, parsed as JSON, at the merge-base with the integration branch: from the
- * first of the check tiers' bases whose merge-base has it, with what each base skipped lacked.
+ * A file of the repository, parsed as JSON, at the merge-base with the check tiers' base branch;
+ * else why it couldn't be read.
  */
 export function baseContract<T>(
   path: string,
   base: string | undefined,
-): { ref: string | undefined; contract: T | undefined; skipped: string[] } {
-  const skipped: string[] = [];
-  for (const ref of baseCandidates(base)) {
-    let mergeBase: string;
-    try {
-      mergeBase = git(['merge-base', 'HEAD', ref]).trim();
-    } catch {
-      skipped.push(`${ref} does not exist here`);
-      continue;
-    }
-    try {
-      return { ref, contract: JSON.parse(git(['show', `${mergeBase}:${path}`])) as T, skipped };
-    } catch {
-      skipped.push(`${ref} has no ${path} at the merge-base ${mergeBase.slice(0, 10)}`);
-    }
+): { ref: string; contract: T } | { ref: string; contract?: undefined; missing: string } {
+  const ref = baseBranch(base);
+  let mergeBase: string;
+  try {
+    mergeBase = git(['merge-base', 'HEAD', ref]).trim();
+  } catch {
+    return { ref, missing: `${ref} does not exist here` };
   }
-  return { ref: undefined, contract: undefined, skipped };
+  try {
+    return { ref, contract: JSON.parse(git(['show', `${mergeBase}:${path}`])) as T };
+  } catch {
+    return { ref, missing: `${ref} has no ${path} at the merge-base ${mergeBase.slice(0, 10)}` };
+  }
 }
 
 /** The pending changesets' text, one per changeset. */

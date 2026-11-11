@@ -78,7 +78,7 @@ test('changed files come from the merge-base, uncommitted edits and untracked fi
       changes.map(({ status, path }) => `${status} ${path}`),
       ['A committed.md', 'M edited.css', 'A new.tsx'],
     );
-    assert.throws(() => changedFiles({ root: folder, base: 'missing' }), /None of missing exists/);
+    assert.throws(() => changedFiles({ root: folder, base: 'missing' }), /missing doesn't exist/);
   } finally {
     rmSync(folder, { recursive: true, force: true });
   }

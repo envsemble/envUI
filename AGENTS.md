@@ -35,7 +35,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 
 ### The fast tier
 
-- It checks what the branch changed since its merge-base with `origin/envui-1.0`, else `origin/dev`; `--base <ref>` or `ENVUI_BASE` picks another. Uncommitted and untracked files count.
+- It checks what the branch changed since its merge-base with `origin/dev`; `--base <ref>` or `ENVUI_BASE` picks another. Uncommitted and untracked files count.
 - It runs ESLint, Stylelint and Prettier on those files, unused files and exports (`npm run lint:unused`, `knip.jsonc`), incremental `tsc`, the generated-file checks the change touches, the unit tests that need no build, and the related component tests and browser specs in Chromium.
 - `npm run check -- --dry-run` prints what it would run and why; `--files <a,b>` checks those files instead of the branch's changes, the quickest way to run only the tests a change concerns.
 

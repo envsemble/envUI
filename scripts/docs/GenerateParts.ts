@@ -68,10 +68,9 @@ if (check) {
   if (!base.contract) {
     console.log(`${partsPath} matches its sources.`);
     console.warn(
-      `[33mwarning: no part or state removal was checked: ${base.skipped.join('; ')}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.[0m`,
+      `[33mwarning: no part or state removal was checked: ${base.missing}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.[0m`,
     );
   } else {
-    if (base.skipped.length) console.log(`Compared with ${base.ref}: ${base.skipped.join('; ')}.`);
     const removed = removedParts(base.contract, parts, pendingChangesets());
     const unrecorded = removed.filter((item) => !item.recorded);
     if (removed.length)

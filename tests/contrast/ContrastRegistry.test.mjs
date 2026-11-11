@@ -64,9 +64,9 @@ test('the pair registry and its exceptions agree', () => {
     if (!entry.rationale.trim()) problems.push(`The renamed pair ${entry.from} needs a rationale.`);
   }
   problems.push(...checkRenameTargets(renamed, declared, dropped));
-  // What each pair is held to, against DeclaredPairs.json and the base branches' copies of it: see
+  // What each pair is held to, against DeclaredPairs.json and the base branch's copy of it: see
   // tests/contrast/Snapshot.ts.
-  const { bases, note, problem } = readBaseSnapshot();
+  const { base, note, problem } = readBaseSnapshot();
   if (problem) problems.push(problem);
   if (note) {
     console.log(note);
@@ -84,7 +84,7 @@ test('the pair registry and its exceptions agree', () => {
       recorded: working.recorded,
       update: process.env.ENVUI_CONTRAST_UPDATE === '1',
       ci: Boolean(process.env.CI),
-      bases,
+      base,
     });
     problems.push(...snapshot.problems);
     if (problems.length === 0 && snapshot.write)
@@ -406,7 +406,7 @@ test("the base branch's snapshot catches a snapshot edited along with the pairs"
   const onBase = record([a], []);
   const base = { label: 'the base snapshot', recorded: onBase };
   const check = (pairs, relaxed, recorded) =>
-    checkSnapshot({ ...common, pairs, relaxed, recorded, update: false, bases: [base] }).problems;
+    checkSnapshot({ ...common, pairs, relaxed, recorded, update: false, base }).problems;
   // The snapshot written by hand to match the lowered pair passes against itself alone…
   const edited = record([lowered], []);
   expect(
@@ -425,7 +425,7 @@ test("the base branch's snapshot catches a snapshot edited along with the pairs"
       relaxed,
       recorded: undefined,
       update: true,
-      bases: [base],
+      base,
     });
   expect(afresh([])).toEqual({
     problems: [expect.stringContaining('is held to less than the base snapshot records')],
@@ -447,7 +447,7 @@ test("the base branch's snapshot catches a snapshot edited along with the pairs"
       relaxed: [relaxation],
       recorded: editedLater,
       update: false,
-      bases: [laterBase],
+      base: laterBase,
     }).problems,
   ).toEqual([expect.stringContaining('is held to less than the base snapshot records')]);
   // A relaxation recorded on the base can't be deleted from Pairs.ts and the snapshot together.
@@ -459,7 +459,7 @@ test("the base branch's snapshot catches a snapshot edited along with the pairs"
       relaxed: [],
       recorded: withoutIt,
       update: false,
-      bases: [laterBase],
+      base: laterBase,
     }).problems,
   ).toEqual([expect.stringContaining('is recorded (the base snapshot) but no longer listed')]);
   // One recorded only on the branch can, along with the loosening it approved.
@@ -467,7 +467,7 @@ test("the base branch's snapshot catches a snapshot edited along with the pairs"
   // Tightened back on the branch, a spent relaxation may stay as history.
   expect(check([a], [relaxation], record([a], [relaxation], relaxedOnBranch))).toEqual([]);
 });
-test("the bases are the one asked for, or every base branch's with the snapshot but the branch's own", () => {
+test("the base is the one asked for, or else origin/dev's unless it is the branch's own", () => {
   const snapshot = JSON.stringify({ pairs: {}, dropped: [], renamed: [], relaxed: [] });
   /** A clone where each command answers as listed, and any other fails as git would. */
   const clone =
@@ -483,117 +483,51 @@ test("the bases are the one asked for, or every base branch's with the snapshot 
     'symbolic-ref --quiet --short HEAD': 'topic',
     [upstream('topic')]: '',
     'merge-base HEAD origin/dev': 'dev00000old',
-    'rev-list --count dev00000old..HEAD': '40',
-    'merge-base HEAD origin/envui-1.0': 'one00000new',
-    'rev-list --count one00000new..HEAD': '2',
-    [show('one00000new')]: snapshot,
+    [show('dev00000old')]: snapshot,
   };
-  const labels = (answers) =>
-    readBaseSnapshot({ requested: '', git: clone(answers) }).bases.map(({ label }) => label);
-  // The merge-base with origin/dev predates the snapshot, so the one with origin/envui-1.0 is
-  // the base, and the note says so.
-  const fallback = readBaseSnapshot({ requested: '', git: clone(basic) });
-  expect(fallback.problem).toBeUndefined();
-  expect(fallback.bases.map(({ label }) => label)).toEqual([
-    expect.stringContaining('one00000, the merge-base with origin/envui-1.0'),
-  ]);
-  expect(fallback.note).toContain('the merge-base with origin/dev (dev00000)');
-  expect(fallback.note).toContain('ENVUI_CONTRAST_BASE');
-  // Where several have it, every one is a base, the nearest first; a merge-base two share is one.
-  const both = { ...basic, [show('dev00000old')]: snapshot };
-  expect(labels(both)).toEqual([
-    expect.stringContaining('the merge-base with origin/envui-1.0'),
-    expect.stringContaining('the merge-base with origin/dev'),
-  ]);
-  expect(labels({ ...both, 'merge-base HEAD origin/envui-1.0': 'dev00000old' })).toEqual([
-    expect.stringContaining('the merge-base with origin/dev and origin/envui-1.0'),
-  ]);
+  const based = readBaseSnapshot({ requested: '', git: clone(basic) });
+  expect(based.problem).toBeUndefined();
+  expect(based.base?.label).toContain('dev00000, the merge-base with origin/dev');
+  expect(based.note).toContain('ENVUI_CONTRAST_BASE');
   // A branch's own copy is no base, as it holds the branch's edits: its namesake on origin, as on
-  // envui-1.0 itself, and the branch it tracks, whatever its name.
+  // dev itself, and the branch it tracks, whatever its name.
   const itself = readBaseSnapshot({
     requested: '',
-    git: clone({
-      ...both,
-      'symbolic-ref --quiet --short HEAD': 'envui-1.0',
-      [upstream('envui-1.0')]: '',
-    }),
+    git: clone({ ...basic, 'symbolic-ref --quiet --short HEAD': 'dev', [upstream('dev')]: '' }),
   });
-  expect(itself.bases.map(({ label }) => label)).toEqual([
-    expect.stringContaining('the merge-base with origin/dev'),
-  ]);
-  expect(itself.note).toContain("Skipping origin/envui-1.0, this branch's own copy.");
-  expect(labels({ ...both, [upstream('topic')]: 'origin/envui-1.0' })).toEqual([
-    expect.stringContaining('the merge-base with origin/dev'),
-  ]);
+  expect(itself.base).toBeUndefined();
+  expect(itself.note).toContain("Skipping origin/dev, this branch's own copy.");
   const tracking = readBaseSnapshot({
     requested: '',
-    git: clone({ ...basic, [upstream('topic')]: 'origin/envui-1.0' }),
+    git: clone({ ...basic, [upstream('topic')]: 'origin/dev' }),
   });
-  expect(tracking.bases).toEqual([]);
-  expect(tracking.note).toMatch(
-    /Skipping origin\/envui-1\.0.*doesn't exist at the merge-base with origin\/dev/,
-  );
+  expect(tracking.base).toBeUndefined();
+  expect(tracking.note).toContain("Skipping origin/dev, this branch's own copy.");
   // A detached HEAD, as in CI, has no copies of its own.
-  expect(labels({ ...both, 'symbolic-ref --quiet --short HEAD': undefined })).toHaveLength(2);
-  // Without any, the gate compares with the working tree's snapshot alone, and the note says how
+  const detached = { ...basic, 'symbolic-ref --quiet --short HEAD': undefined };
+  expect(readBaseSnapshot({ requested: '', git: clone(detached) }).base).toBeDefined();
+  // Without one, the gate compares with the working tree's snapshot alone, and the note says how
   // to compare with a base.
   const none = readBaseSnapshot({ requested: '', git: clone({}) });
-  expect(none.bases).toEqual([]);
+  expect(none.base).toBeUndefined();
   expect(none.problem).toBeUndefined();
-  expect(none.note).toMatch(/No merge-base with .* Set ENVUI_CONTRAST_BASE/);
+  expect(none.note).toMatch(/No merge-base with origin\/dev .* Set ENVUI_CONTRAST_BASE/);
   const predating = readBaseSnapshot({
     requested: '',
     git: clone({ 'merge-base HEAD origin/dev': 'dev00000old' }),
   });
-  expect(predating.bases).toEqual([]);
+  expect(predating.base).toBeUndefined();
   expect(predating.note).toMatch(/doesn't exist at the merge-base with origin\/dev \(dev00000\)/);
   // A base that was asked for is the only one, and fails when git can't find it or it lacks the
   // file.
   const asked = (git) => readBaseSnapshot({ requested: 'v1', git });
   const v1 = { 'rev-parse --verify v1^{commit}': 'v1000000abc' };
-  expect(asked(clone({ ...both, ...v1, [show('v1000000abc')]: snapshot })).bases).toEqual([
-    {
-      label: expect.stringContaining('at v1 (ENVUI_CONTRAST_BASE)'),
-      recorded: expect.anything(),
-    },
-  ]);
-  expect(asked(clone({})).problem).toContain("which git can't find");
-  expect(asked(clone(v1))).toEqual({
-    bases: [],
-    problem: expect.stringContaining("doesn't exist"),
+  expect(asked(clone({ ...basic, ...v1, [show('v1000000abc')]: snapshot })).base).toEqual({
+    label: expect.stringContaining('at v1 (ENVUI_CONTRAST_BASE)'),
+    recorded: expect.anything(),
   });
-});
-test('an older base accepts what a newer one records', () => {
-  const a = { fg: '--a', bg: ['--b'], kind: 'distinct' };
-  const lowered = { ...a, minimum: { standard: 0.02 }, rationale: 'Lowered.' };
-  const relaxation = {
-    pair: '--a on --b',
-    kind: 'distinct',
-    minimum: { standard: 0.02, high: 0.04 },
-    rationale: 'Accepted for a reason.',
-  };
-  const common = { dropped: [], renamed: [], themes, pairName, ci: false };
-  const record = (pairs, relaxed, recorded) =>
-    checkSnapshot({ ...common, pairs, relaxed, recorded, update: true }).write;
-  const check = (pairs, relaxed, recorded, bases) =>
-    checkSnapshot({ ...common, pairs, relaxed, recorded, update: false, bases }).problems;
-  // One base branch's merge-base predates a relaxation that the other's records.
-  const older = { label: 'the older base', recorded: record([a], []) };
-  const relaxedNewer = record([lowered], [relaxation], older.recorded);
-  const newer = { label: 'the newer base', recorded: relaxedNewer };
-  // The relaxation is new since the older base, so it approves the loosening there too.
-  expect(check([lowered], [relaxation], relaxedNewer, [newer, older])).toEqual([]);
-  // Tightened back since, it stays as history: against a base, an unspent entry is no problem.
-  const tightened = record([a], [relaxation], relaxedNewer);
-  const tightenedBase = { label: 'the newer base', recorded: tightened };
-  expect(check([a], [relaxation], tightened, [tightenedBase, older])).toEqual([]);
-  // Loosened again under the spent entry, with the snapshot edited to match, the newer base
-  // catches it, though the older alone would not.
-  const edited = { ...tightened, pairs: record([lowered], []).pairs };
-  expect(check([lowered], [relaxation], edited, [older])).toEqual([]);
-  expect(check([lowered], [relaxation], edited, [tightenedBase, older])).toEqual([
-    expect.stringContaining('is held to less than the newer base records'),
-  ]);
+  expect(asked(clone({})).problem).toContain("which git can't find");
+  expect(asked(clone(v1))).toEqual({ problem: expect.stringContaining("doesn't exist") });
 });
 test('a snapshot recorded afresh records no relaxation that relaxed nothing', () => {
   const a = { fg: '--a', bg: ['--b'], kind: 'distinct' };
@@ -607,29 +541,27 @@ test('a snapshot recorded afresh records no relaxation that relaxed nothing', ()
   const common = { dropped: [], renamed: [], themes, pairName, ci: false };
   const record = (pairs, relaxed, recorded) =>
     checkSnapshot({ ...common, pairs, relaxed, recorded, update: true }).write;
-  const afresh = (pairs, bases = []) =>
+  const afresh = (pairs, base) =>
     checkSnapshot({
       ...common,
       pairs,
       relaxed: [relaxation],
       recorded: undefined,
       update: true,
-      bases,
+      base,
     });
   const base = { label: 'the base snapshot', recorded: record([a], []) };
   // Against a base, an entry must approve a loosening since it, or be recorded there.
-  expect(afresh([a], [base])).toEqual({
+  expect(afresh([a], base)).toEqual({
     problems: [expect.stringContaining('which relaxes nothing the base snapshot records')],
     write: undefined,
   });
-  expect(afresh([lowered], [base]).problems).toEqual([]);
+  expect(afresh([lowered], base).problems).toEqual([]);
   const spent = {
     label: 'the newer base',
     recorded: record([a], [relaxation], record([lowered], [relaxation], base.recorded)),
   };
-  expect(afresh([a], [spent]).problems).toEqual([]);
-  // Recorded by any base, it is spent, though an older base predates it.
-  expect(afresh([a], [spent, base]).problems).toEqual([]);
+  expect(afresh([a], spent).problems).toEqual([]);
   // Without a snapshot or a base, nothing records what it relaxed.
   expect(afresh([lowered])).toEqual({
     problems: [
