@@ -111,8 +111,12 @@ jobs:
     runs-on: ${{ vars.CI_LINUX_RUNNER }}
     timeout-minutes: 10
     steps:
+      # Depth 2: the merge commit and its parents, the first being the tip of the branch it merges
+      # into, which the contrast gate's registry (tests/contrast/ContrastRegistry.test.mjs) compares
+      # its snapshot with.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 2
           persist-credentials: false
       - uses: ./.github/actions/setup
       - run: node scripts/docs/GenerateDocumentation.ts
@@ -120,7 +124,12 @@ jobs:
       # node --test runs one file per core but one; on two cores that is one at a time, while most
       # files wait on npm, esbuild or the disk. Four at once take about 15 s less.
       - name: Run the unit tests
-        run: npm test -- --test-concurrency=4
+        run: |
+          if git cat-file -e 'HEAD^1:tests/contrast/DeclaredPairs.json' 2>/dev/null; then
+            base=$(git rev-parse 'HEAD^1')
+            export ENVUI_CONTRAST_BASE="$base"
+          fi
+          npm test -- --test-concurrency=4
 
   # The library's browser tests in Chromium (npm run test:library), split in four: one runner takes
   # about 7 minutes, each shard about 2.5, so the check ends with the build and the unit tests
@@ -137,26 +146,16 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4]
     steps:
-      # Depth 2: the merge commit and its parents, the first being the tip of the branch it merges
-      # into, which the contrast gate compares its snapshot with.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          fetch-depth: 2
           persist-credentials: false
       - uses: ./.github/actions/setup
         with:
           browsers: chromium-shell
-      # The contrast gate (Contrast.spec.ts) also compares tests/contrast/DeclaredPairs.json with
-      # the base's copy (tests/contrast/Snapshot.ts).
       - name: Test the library in Chromium
         env:
           SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
-        run: |
-          if git cat-file -e 'HEAD^1:tests/contrast/DeclaredPairs.json' 2>/dev/null; then
-            base=$(git rev-parse 'HEAD^1')
-            export ENVUI_CONTRAST_BASE="$base"
-          fi
-          npm run -s test:library -- --shard="$SHARD"
+        run: npm run -s test:library -- --shard="$SHARD"
       # Only a failure keeps anything: its traces and screenshots, for the organization's artifact
       # retention. A refused upload never fails the job.
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
