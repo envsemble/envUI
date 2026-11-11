@@ -256,8 +256,9 @@ test('every alias names a file and specs that exist, and adds what the imports m
   }
 });
 
-test("a spec is in the library's or the site's folder", () => {
-  assert.equal(specFile('Button'), 'tests/browser/library/Button.spec.ts');
+test("a spec is in the library's or the site's folder, or a component test", () => {
+  assert.equal(specFile('Hydration'), 'tests/browser/library/Hydration.spec.ts');
+  assert.equal(specFile('Button'), 'tests/component/Button.test.tsx');
   assert.equal(specFile('SiteSmoke'), 'tests/browser/site/SiteSmoke.spec.ts');
 });
 

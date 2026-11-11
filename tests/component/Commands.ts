@@ -49,6 +49,15 @@ const mouseClick: BrowserCommand<
   await context.page.mouse.click(point.x, point.y, options);
 };
 
+/** Turns the wheel where the mouse is, by these CSS pixels, as Playwright's mouse.wheel does. */
+const mouseWheel: BrowserCommand<[deltaX: number, deltaY: number]> = async (
+  context,
+  deltaX,
+  deltaY,
+) => {
+  await context.page.mouse.wheel(deltaX, deltaY);
+};
+
 const keyPress: BrowserCommand<[key: string]> = async (context, key) => {
   await context.page.keyboard.press(key);
 };
@@ -179,6 +188,7 @@ export const commands = {
   mouseDown,
   mouseUp,
   mouseClick,
+  mouseWheel,
   keyPress,
   keyDown,
   keyUp,

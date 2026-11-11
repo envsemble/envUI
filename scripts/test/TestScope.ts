@@ -1,7 +1,7 @@
 // Chooses what `npm run check` and `npm run check:affected` run for a change: which files to lint,
 // whether to typecheck, which generated files to check, and which browser specs to run.
 //
-// A spec is named after its component (tests/browser/library/Button.spec.ts), and runs when that
+// A spec is named after its component (tests/component/Button.test.tsx), and runs when that
 // component changes: a library or fixture file runs the spec of its name, or of the name `aliases`
 // gives it, and the specs whose fixtures use it (FixtureImports.ts); a changed spec runs itself; a
 // changed helper runs the specs that import it; and `pathRules` lists what other paths need, such
@@ -201,7 +201,7 @@ const helperBudget = 8;
 /** In the fast tier, more specs than this whose fixtures use a changed file run the most specific. */
 const fixtureBudget = 6;
 
-/** A spec's file, by its name: Button for tests/browser/library/Button.spec.ts. */
+/** A spec's file, by its name: Button for tests/component/Button.test.tsx. */
 export const specFile = (name: string, root = repositoryRoot) =>
   specPaths(root).get(name) ?? `tests/browser/library/${name}.spec.ts`;
 const baseName = (path: string) =>
@@ -235,7 +235,7 @@ interface ScopeOptions {
 }
 
 /**
- * The browser specs a change runs, by name (Button for tests/browser/library/Button.spec.ts), each
+ * The browser specs a change runs, by name (Button for tests/component/Button.test.tsx), each
  * with why; the paths that run none; the changed helpers with the specs that import them; and in
  * the fast tier, the files more specs' fixtures use than run, with how many do.
  */

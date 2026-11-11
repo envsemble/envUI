@@ -63,9 +63,9 @@ function Toasts() {
 }
 
 /**
- * Every component that has color properties, at rest and disabled, with none set: DefaultColors.spec.ts forces
- * each control into its states and compares the colors it paints with those the integration branch
- * painted, so envUI's own colors can't drift.
+ * Every component that has color properties, at rest and disabled, with none set:
+ * DefaultColors.test.tsx forces each control into its states and compares the colors it paints
+ * with those the integration branch painted, so envUI's own colors can't drift.
  */
 export default function DefaultColorsFixture() {
   return (

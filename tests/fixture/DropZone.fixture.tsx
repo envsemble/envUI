@@ -99,12 +99,6 @@ export default function DropZoneFixture({ theme }: { theme: ColorScheme }) {
         onFilesAccepted={(files) => setUnavailable(names(files))}
       />
       <output data-testid={`unavailable-${theme}`}>{unavailable}</output>
-      <DropZone
-        label="Drop a cover image"
-        accept="image/*"
-        error="Choose an image at least 1200 pixels wide."
-        onFilesAccepted={() => undefined}
-      />
       <form
         onSubmit={(event) => {
           event.preventDefault();

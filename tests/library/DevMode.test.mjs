@@ -294,6 +294,35 @@ test('the readout lists each node with its layout, and folds identical siblings'
   assert.deepEqual(reading.problems, []);
 });
 
+test('the readout counts rem from the root font size, also when it is not 16px', () => {
+  // 40rem is 800px at 20px a rem: the window class and the scaffold's 37.5rem query go by rem.
+  assert.equal(toPx('40rem', 20), 800);
+  const reading = read(
+    snapshot(
+      [
+        [
+          node('scaffold', 'app', box(0, 0, 800, 600), {
+            container: { name: 'env-scaffold', type: 'inline-size' },
+            display: 'grid',
+            gap: [20, 20],
+            padding: [20, 20, 20, 20],
+          }),
+          null,
+        ],
+      ],
+      {
+        rootPx: 20,
+        root: { label: 'div.env-theme', box: box(0, 0, 800, 600) },
+        window: { w: 800, h: 600 },
+      },
+    ),
+  );
+  assert.deepEqual(reading.text.split('\n').slice(0, 2), [
+    'root div.env-theme · 40×30rem · medium · window 40×30rem · 1rem = 20px',
+    'scaffold "app" · 40×30rem · medium · container env-scaffold (queried at 37.5rem) · grid · gap 1rem · padding 1rem',
+  ]);
+});
+
 test('what an element paints: a fill, an image, a shadow, or an edge of a color that shows', () => {
   const style = (values) => {
     const all = {
