@@ -383,7 +383,8 @@ describe('Tooltip', () => {
       await noTooltip();
     });
 
-    test('a tap opens the menu or popover and no tooltip', { tags: ['engines'] }, async () => {
+    // In Chromium alone: the other engines' pages take no touch input here.
+    test('a tap opens the menu or popover and no tooltip', async () => {
       await commands.emulateTouch(true);
       try {
         const tap = async (locator: Locator) => {

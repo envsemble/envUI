@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, onTestFinished, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import { PanelDock, Theme } from '@envsemble/envui';
 import * as fixture from '../fixture/PanelDock.fixture.tsx';
-import { box, collectErrors, css, keyboard, mouse } from './Browser.ts';
+import { box, collectErrors, css, keyboard, mouse, nextFrames } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 /** A length in pixels as a number of rem, to a hundredth, as the dock reports heights. */
@@ -247,11 +247,11 @@ describe('PanelDock', () => {
       await expect.poll(attribute(() => dock.panel('report'), 'data-mode')).toBe('maximized');
       await expect.element(draft).toHaveFocus();
       expect(draftField().value).toBe('Unsent changes');
-      expect(scrolls()).toEqual([120, 60]);
+      await expect.poll(scrolls).toEqual([120, 60]);
       await keyboard.press('Alt+KeyO');
       await expect.poll(attribute(() => dock.panel('report'), 'data-mode')).toBe('open');
       await expect.element(draft).toHaveFocus();
-      expect(scrolls()).toEqual([120, 60]);
+      await expect.poll(scrolls).toEqual([120, 60]);
 
       // Minimizing hands focus to the tab; the tab brings the panel back to the draft.
       await keyboard.press('Alt+KeyM');
@@ -262,7 +262,7 @@ describe('PanelDock', () => {
       await isVisible(() => dock.panel('report'));
       await expect.element(draft).toHaveFocus();
       expect(draftField().value).toBe('Unsent changes');
-      expect(scrolls()).toEqual([120, 60]);
+      await expect.poll(scrolls).toEqual([120, 60]);
 
       // Focus in a menu the panel opened moves to the tab too when the panel is minimized; the
       // menu closes with Escape, and focus returns to the menu's trigger with the panel.
@@ -295,7 +295,7 @@ describe('PanelDock', () => {
       await keyboard.press('Alt+KeyR');
       await expect.poll(order).toEqual(['budget', 'notes', 'report']);
       await expect.element(draft).toHaveFocus();
-      expect(scrolls()).toEqual([0, 60]);
+      await expect.poll(scrolls).toEqual([0, 60]);
       expect(notesContent.scrollTop).toBe(150);
       await keyboard.type(' and more');
       await expect.poll(() => draftField().value).toBe('Unsent changes and more');
@@ -370,11 +370,14 @@ describe('PanelDock', () => {
       await keyboard.press('Control+ArrowDown');
       await valueIs(room);
 
-      // Dragging past a bound stops at it.
+      // Dragging past a bound stops at it: at its maximum, any way up is past it. The pointer
+      // stays near the edge, inside the test's frame, which a drag in Firefox can't leave while
+      // other frames share the page.
+      await nextFrames();
       const top = box(handle);
-      await mouse.move(top.x + top.width / 2, top.y + top.height / 2);
+      await mouse.move(top.x + top.width / 2, top.y + top.height / 2, { steps: 2 });
       await mouse.down();
-      await mouse.move(top.x + top.width / 2, top.y - 200, { steps: 4 });
+      await mouse.move(top.x + top.width / 2, Math.max(1, top.y - 40), { steps: 4 });
       await mouse.up();
       await valueIs(room);
 
@@ -755,7 +758,9 @@ describe('PanelDock', () => {
         headerBefore.y + headerBefore.height,
       );
       focus(tip);
-      expect(box(tip).y).toBeGreaterThanOrEqual(box(header()).y + box(header()).height);
+      await expect
+        .poll(() => box(tip).y - (box(header()).y + box(header()).height))
+        .toBeGreaterThanOrEqual(0);
 
       // The content scrolls on, leaving the focused draft out of sight; brought back, the draft
       // shows, and where it then shows in the window, the page stays.
