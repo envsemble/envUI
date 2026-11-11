@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/Toast.fixture.tsx';
-import { addStyle, animationsDone, box, css, keyboard, mouse } from './Browser.ts';
+import { addStyle, animationsDone, box, css, keyboard, mouse, nextFrames } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 beforeEach(() => {
@@ -243,8 +243,8 @@ test('Strict Mode mount effects preserve capacity after effect replay', async ()
   await expect.poll(active).toBe(1);
   await page.getByRole('button', { name: 'Add strict notices' }).click();
   await expect.poll(active).toBe(3);
-  // Past the moment an effect replayed twice would have dropped one: the check waits just past it.
-  await new Promise((resolve) => setTimeout(resolve, 350));
+  // Past the render in which an effect replayed twice would have dropped one.
+  await nextFrames();
   expect(active()).toBe(3);
 });
 

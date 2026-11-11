@@ -10,9 +10,9 @@
 //
 // --browser    the library's engine (default chromium); Firefox and WebKit run its tests tagged
 //              engines (Vitest) and @engines (Playwright)
-// --shard      runs the i-th of n parts, for CI's parallel jobs: Vitest's by file, the site's
-//              Playwright specs by test and the library's in its first part, which Vitest's
-//              split leaves lightest
+// --shard      runs the i-th of n parts, for CI's parallel jobs: Vitest's files by the time each
+//              takes (scripts/test/ComponentShards.ts), the site's Playwright specs by test and
+//              the library's in its first part, which that split leaves lighter for them
 // --retries    tries a failed test again (default: once in CI)
 // --api.port   the port of Vitest's browser server (default 63315, or the next free one); Vitest
 //              reads this, not --browser.api.port

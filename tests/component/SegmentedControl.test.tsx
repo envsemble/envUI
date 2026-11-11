@@ -1,7 +1,7 @@
-import { beforeEach, expect, test } from 'vitest';
+import { beforeEach, expect, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/SegmentedControl.fixture.tsx';
-import { box, css, keyboard, mouse } from './Browser.ts';
+import { box, css, keyboard, mouse, passTime, stopTimers } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 beforeEach(() => {
@@ -139,10 +139,12 @@ test('a full-width control splits its container evenly and cuts long labels shor
       (element) => element.scrollWidth <= element.clientWidth,
     ),
   ).toBe(true);
-  await page.elementLocator(wide.getByRole('radio').elements()[0]!).hover();
   // None shows past the tooltip's delay, 400 ms.
-  await new Promise((resolve) => setTimeout(resolve, 600));
+  stopTimers();
+  await page.elementLocator(wide.getByRole('radio').elements()[0]!).hover();
+  await passTime(600);
   expect(tooltips()).toEqual([]);
+  vi.useRealTimers();
   // Without fullWidth the control keeps the width of its options.
   expect(
     box(page.getByTestId('segments-light').getByRole('radiogroup', { name: 'Layout light' })).width,

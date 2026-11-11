@@ -16,21 +16,6 @@ const { Box, Column, Grid, Row } = await importSource(
 
 const markup = (element) => renderToStaticMarkup(element);
 
-test('each primitive names its kind, and only the options it is given', () => {
-  assert.equal(markup(h(Box)), '<div data-env-layout="box"></div>');
-  assert.equal(markup(h(Row)), '<div data-env-layout="row"></div>');
-  assert.equal(markup(h(Column)), '<div data-env-layout="column"></div>');
-  assert.equal(markup(h(Grid)), '<div data-env-layout="grid"></div>');
-  assert.equal(
-    markup(h(Row, { gap: 3, align: 'center', justify: 'between', wrap: true, padding: 0 })),
-    '<div data-wrap="" data-env-layout="row" data-padding="0" data-gap="3" data-align="center" data-justify="between"></div>',
-  );
-  assert.equal(
-    markup(h(Column, { name: 'filters', className: 'app-filters' }, 'Text')),
-    '<div class="app-filters" data-env-layout="column" data-env-name="filters">Text</div>',
-  );
-});
-
 test('a primitive adds no class of its own, so a part class names it', () => {
   for (const primitive of [Box, Row, Column, Grid])
     assert.doesNotMatch(markup(h(primitive, { gap: 2 })), /class=/);

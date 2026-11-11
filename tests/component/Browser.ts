@@ -1,4 +1,4 @@
-import { onTestFinished } from 'vitest';
+import { onTestFinished, vi } from 'vitest';
 import { commands, type Locator } from 'vitest/browser';
 import type { Commands } from './Commands.ts';
 
@@ -58,6 +58,23 @@ export const keyboard = {
 /** Waits two animation frames, past the one in which a component reacts to what just happened. */
 export function nextFrames() {
   return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+/**
+ * Stops the page's timers until the test ends or `vi.useRealTimers()`, so a component's delay
+ * passes only as far as `passTime` moves it, however slow the machine. Frames, transitions and the
+ * times events carry run as they do. `performance` and `Date` stop performance.now() and the date
+ * too, for a component that times by them.
+ */
+export function stopTimers(...more: ('performance' | 'Date')[]) {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', ...more] });
+  onTestFinished(() => void vi.useRealTimers());
+}
+
+/** Moves the stopped timers on, then waits the frames in which React renders what they changed. */
+export async function passTime(milliseconds: number) {
+  await vi.advanceTimersByTimeAsync(milliseconds);
+  await nextFrames();
 }
 
 /** Waits until an element's animations, and its descendants' with `subtree`, have finished. */

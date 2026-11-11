@@ -3,7 +3,7 @@
  * items (MeasureAnatomy.ts). Each variant's name goes beside its item. Items side by side get their
  * names under them. Items stacked one under another get their names on the start side, and the
  * text that says what each variant is for goes beside the item on the other side, or under it when
- * there is no room beside. Nothing here reads the page (tests/site/PlaceVariants.test.mjs).
+ * there is no room beside. Nothing here reads the page.
  */
 import { union, type Box } from '../../fit/FitGeometry';
 import type { Callout, Side } from './PlaceCallouts';

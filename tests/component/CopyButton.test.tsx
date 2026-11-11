@@ -1,7 +1,16 @@
-import { beforeEach, expect, test } from 'vitest';
+import { beforeEach, expect, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/CopyButton.fixture.tsx';
-import { box, collectErrors, keyboard, mouse, nextFrames, recordClipboard } from './Browser.ts';
+import {
+  box,
+  collectErrors,
+  keyboard,
+  mouse,
+  nextFrames,
+  passTime,
+  recordClipboard,
+  stopTimers,
+} from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 beforeEach(() => {
@@ -40,6 +49,8 @@ test('an icon-only copy button copies its text, shows a check and says Copied', 
   await copy.hover();
   await expect.poll(tooltips).toEqual(['Copy link light']);
   const restingIcon = pathOf(copy);
+  // The result's two seconds pass only as the test moves the clock.
+  stopTimers();
   await copy.click();
   await expect.poll(() => writes).toEqual(['https://example.com/r/quarterly-report']);
   await expect
@@ -48,15 +59,15 @@ test('an icon-only copy button copies its text, shows a check and says Copied', 
   await expect.element(copy).toHaveAttribute('data-copied', '');
   expect(pathOf(copy)).not.toBe(restingIcon);
   await expect.poll(tooltips).toEqual(['Copied']);
-  const shown = Date.now();
   await expect.poll(status).toBe('Copied');
-  // The result stays for about two seconds, also once the pointer leaves, and the name never
-  // changes. However slow the machine, the result shows at least as long as measured here.
+  // The result stays for two seconds, also once the pointer leaves, and the name never changes.
   await movePointerAway();
+  await passTime(1_900);
   expect(tooltips()).toEqual(['Copied']);
   await expect.element(copy).toHaveAccessibleName('Copy link light');
-  await expect.poll(tooltips, { timeout: 4_000 }).toEqual([]);
-  expect(Date.now() - shown).toBeGreaterThan(1_500);
+  await passTime(200);
+  await expect.poll(tooltips).toEqual([]);
+  vi.useRealTimers();
   await expect.element(copy).not.toHaveAttribute('data-copied');
   expect(pathOf(copy)).toBe(restingIcon);
   expect(status()).toBe('');
@@ -79,10 +90,12 @@ test('a labelled copy button copies the result of a function from the keyboard a
   const { writes } = recordClipboard('available');
   const copy = button('Copy ID light');
   // A labelled button needs no tooltip at rest: none shows past the tooltip's delay, 400 ms.
+  stopTimers();
   await copy.hover();
-  await new Promise((resolve) => setTimeout(resolve, 600));
+  await passTime(600);
   expect(tooltips()).toEqual([]);
   await movePointerAway();
+  vi.useRealTimers();
   (copy.element() as HTMLElement).focus();
   await keyboard.press('Enter');
   await expect.poll(tooltips).toEqual(['Copied']);

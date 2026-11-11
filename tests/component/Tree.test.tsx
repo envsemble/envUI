@@ -1,11 +1,21 @@
 import { createElement as h } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
-import { describe, expect, onTestFinished, test } from 'vitest';
+import { describe, expect, onTestFinished, test, vi } from 'vitest';
 import { page } from 'vitest/browser';
 import { Theme, Tree } from '@envsemble/envui';
 import * as fixture from '../fixture/Tree.fixture.tsx';
-import { box, css, keyboard, mouse, nextFrames, shown, viewportRatio } from './Browser.ts';
+import {
+  box,
+  css,
+  keyboard,
+  mouse,
+  nextFrames,
+  passTime,
+  shown,
+  stopTimers,
+  viewportRatio,
+} from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 const treeOf = (theme = 'light') => page.getByRole('tree', { name: `Files ${theme}` });
@@ -127,14 +137,17 @@ describe('Tree', () => {
     await expect.poll(lastLog()).toBe('collapse folder-1');
 
     // Type-ahead moves to the next row starting with the typed text; a repeated letter cycles.
+    // The tree times the keys by performance.now(), which moves here only as the test moves it.
+    stopTimers('performance');
     await keyboard.press('f');
     await expect.poll(active).toBe('folder-2');
     await keyboard.press('f');
     await expect.poll(active).toBe('folder-3');
     // Past the type-ahead's pause, the next letters start a new search.
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await passTime(800);
     await keyboard.type('doc 1');
     await expect.poll(active).toBe('folder-2/doc-1.md');
+    vi.useRealTimers();
 
     const folder = box(row('folder-2')!);
     await mouse.click(folder.x + 4, folder.y + 4);

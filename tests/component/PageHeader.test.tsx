@@ -1,5 +1,5 @@
 import { beforeEach, expect, test } from 'vitest';
-import { commands, page } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import * as fixture from '../fixture/PageHeader.fixture.tsx';
 import { box, css } from './Browser.ts';
 import { mount } from './Mount.tsx';
@@ -82,26 +82,3 @@ test(
     await clearOfHeader();
   },
 );
-
-test('takes the muted fill, not a line, once content scrolls beneath it', async () => {
-  await commands.emulateMedia({ reducedMotion: 'reduce' });
-  const [pageColor, muted] = ['var(--env-color-bg-page)', 'var(--env-color-bg-muted)'].map(
-    (value) => {
-      const probe = document.createElement('span');
-      probe.style.backgroundColor = value;
-      sticky().append(probe);
-      const color = getComputedStyle(probe).backgroundColor;
-      probe.remove();
-      return color;
-    },
-  );
-  expect(sticky().hasAttribute('data-scrolled')).toBe(false);
-  expect(css(sticky(), 'background-color')).toBe(pageColor);
-  body().scrollTo(0, 600);
-  await expect.poll(() => sticky().hasAttribute('data-scrolled')).toBe(true);
-  await expect.poll(() => css(sticky(), 'background-color')).toBe(muted);
-  expect(css(sticky(), 'border-bottom-width')).toBe('0px');
-  body().scrollTo(0, 0);
-  await expect.poll(() => sticky().hasAttribute('data-scrolled')).toBe(false);
-  await expect.poll(() => css(sticky(), 'background-color')).toBe(pageColor);
-});

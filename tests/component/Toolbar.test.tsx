@@ -1,7 +1,7 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Primitives.fixture.tsx';
-import { css, keyboard, shown } from './Browser.ts';
+import { css, keyboard, passTime, shown, stopTimers } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 // tests/fixture/Primitives.fixture.tsx mounts its toolbars among envUI's primitives.
@@ -93,13 +93,14 @@ test("a toolbar closes a button's tooltip as the root or a group disables it", a
 });
 
 test('a toolbar opens its tooltips after tooltipDelay, at once with 0', async () => {
-  // The default waits 400ms on hover, so a tooltip shown within 250ms came with no wait.
+  // The clock stands still but for a millisecond, so a tooltip that shows came with no wait: the
+  // default would wait 400 ms.
+  stopTimers();
   for (const name of ['Instant button', 'Instant link']) {
     await page.getByRole('toolbar', { name: 'Instant names' }).getByLabelText(name).hover();
+    await passTime(1);
     await expect
-      .poll(() => tooltip(name) !== undefined && shown(page.elementLocator(tooltip(name)!)), {
-        timeout: 250,
-      })
+      .poll(() => tooltip(name) !== undefined && shown(page.elementLocator(tooltip(name)!)))
       .toBe(true);
   }
 });

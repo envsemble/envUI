@@ -1,11 +1,11 @@
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import { cdp, commands, page, server, type Locator } from 'vitest/browser';
 import { Button } from '@envsemble/envui';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as buttonCounts from '../fixture/ButtonCounts.fixture.tsx';
 import * as colors from '../fixture/Colors.fixture.tsx';
 import * as primitives from '../fixture/Primitives.fixture.tsx';
-import { box, collectErrors, css, keyboard, mouse } from './Browser.ts';
+import { box, collectErrors, css, keyboard, mouse, passTime, stopTimers } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 const text = (testId: string) => () => page.getByTestId(testId).element().textContent;
@@ -153,10 +153,16 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await expect.poll(() => label(button)).toBe('Remove Morgan');
   await keyboard.press('Tab');
   await expect.poll(() => label(button)).toBe('Remove');
+  // The fixture's 800 ms pass only as the test moves the clock.
+  stopTimers();
   (button.element() as HTMLElement).focus();
   await keyboard.press('Enter');
   await expect.poll(() => label(button)).toBe('Remove Morgan');
-  await expect.poll(() => label(button), { timeout: 3_000 }).toBe('Remove');
+  await passTime(790);
+  expect(label(button)).toBe('Remove Morgan');
+  await passTime(20);
+  expect(label(button)).toBe('Remove');
+  vi.useRealTimers();
   expect(confirmed()).toBe('1');
 
   // An icon-only ConfirmButton is round at rest and names the consequence when armed.

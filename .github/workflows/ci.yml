@@ -131,11 +131,11 @@ jobs:
           fi
           npm test -- --test-concurrency=4
 
-  # The library's browser tests in Chromium (npm run test:library), split in three: one runner
-  # takes about 4 minutes, each shard at most about 2.5 with its setup, so the check ends with the
-  # build and the unit tests. Two shards would leave one at about 3.2 minutes; a fourth saves under
-  # 30 s and costs a runner more. They wait the 15 s `Changes` takes, so that a change they don't
-  # concern starts none of them.
+  # The library's browser tests in Chromium (npm run test:library), split in three by the time
+  # each file takes (scripts/test/ComponentShards.ts): one runner takes about 4 minutes, each shard
+  # at most about 2.5 with its setup, so the check ends with the build and the unit tests. Two
+  # shards would leave one at about 3.2 minutes; a fourth saves under 30 s and costs a runner more.
+  # They wait the 15 s `Changes` takes, so that a change they don't concern starts none of them.
   library:
     name: Library browser tests (${{ matrix.shard }}/3)
     needs: changes

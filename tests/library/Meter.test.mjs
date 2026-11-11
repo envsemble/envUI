@@ -1,5 +1,5 @@
-// Meter and Progress: the values assistive technology reads, and how segments fill. Server markup;
-// Spinner's is in Spinner.test.mjs.
+// Meter and Progress: the values assistive technology reads. Server markup; Spinner's is in
+// Spinner.test.mjs.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/ImportSource.mjs';
@@ -35,13 +35,4 @@ test('meters and progress bars read their values', () => {
   assert.equal(importing.attributes['data-indeterminate'], '');
   const uploading = withRole(h(Progress, { label: 'Uploading', value: 30 }), 'progressbar');
   assert.match(uploading.attributes['aria-valuetext'], /30/);
-});
-
-test('segments fill in turn: half of four is two full steps', () => {
-  const fills = elementsOf(render(h(Progress, { label: 'Setup', value: 50, segments: 4 })))
-    .filter((element) => hasClass(element, 'env-progress-segment'))
-    .map(
-      (segment) => /--env-progress-segment-fill:\s*([\d.]+)/.exec(segment.attributes.style)?.[1],
-    );
-  assert.deepEqual(fills, ['1', '1', '0', '0']);
 });

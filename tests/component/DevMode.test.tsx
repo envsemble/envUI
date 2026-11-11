@@ -3,7 +3,7 @@ import { page, type Locator } from 'vitest/browser';
 // The type brings dev mode's `window.envui` with it.
 import type { LayoutProblem } from '@envsemble/envui/dev';
 import * as fixture from '../fixture/DevMode.fixture.tsx';
-import { box, css, keyboard, mouse, shown } from './Browser.ts';
+import { box, css, keyboard, mouse, passTime, shown, stopTimers } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 const title = document.title;
@@ -296,12 +296,14 @@ test(
     await expect.poll(zoom).toBeGreaterThan(fittedZoom * 1.2);
     await turnTo('Tilted');
     await expect.poll(zoom).toBeCloseTo(fittedZoom, 3);
-    // The toolbar's buttons show their names at once, with no wait.
+    // The toolbar's buttons show their names at once, with no wait: the clock stands still but
+    // for a millisecond.
+    stopTimers();
     const show = centre(button(toolbar, 'Show'));
     await mouse.move(show.x, show.y);
-    await expect
-      .poll(() => page.getByRole('tooltip').query()?.textContent, { timeout: 300 })
-      .toBe('Show');
+    await passTime(1);
+    await expect.poll(() => page.getByRole('tooltip').query()?.textContent).toBe('Show');
+    vi.useRealTimers();
     // The arrow keys move between the toolbar's dropdowns.
     (button(toolbar, 'View').element() as HTMLElement).focus();
     await keyboard.press('ArrowRight');

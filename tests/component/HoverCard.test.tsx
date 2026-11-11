@@ -1,7 +1,15 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/HoverCard.fixture.tsx';
-import { animationsDone, box, keyboard, mouse, nextFrames } from './Browser.ts';
+import {
+  animationsDone,
+  box,
+  keyboard,
+  mouse,
+  nextFrames,
+  passTime,
+  stopTimers,
+} from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 const themes = ['light', 'dark'] as const;
@@ -29,40 +37,21 @@ function center(locator: Locator | Element) {
   return { x: x + width / 2, y: y + height / 2 };
 }
 
-/** Resolves with the time from `start` until a hover card is in the page. */
-function untilOpen(start: () => void) {
-  return new Promise<number>((resolve) => {
-    let started = 0;
-    const observer = new MutationObserver(() => {
-      if (!document.querySelector('.env-hover-card')) return;
-      observer.disconnect();
-      resolve(performance.now() - started);
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    started = performance.now();
-    start();
-  });
-}
-
 test(
   'a hover card opens after the delay on hover, stays open on the card and keeps the theme',
   { tags: ['engines'] },
   async () => {
+    // The card's delays pass only as the test moves the clock, however slow the machine.
+    stopTimers();
     for (const theme of themes) {
       const trigger = page
         .getByTestId(`hover-card-${theme}`)
         .getByRole('link', { name: `Roadmap ${theme}` });
-      // Time the opening from the pointer's entering, so a slow test runner cannot blur the delay.
-      const opened = new Promise<number>((resolve) =>
-        trigger
-          .element()
-          .addEventListener('pointerenter', () => void untilOpen(() => {}).then(resolve), {
-            once: true,
-          }),
-      );
       await trigger.hover();
       // The pointer has to rest on the trigger first (600 ms by default).
-      expect(await opened).toBeGreaterThanOrEqual(550);
+      await passTime(590);
+      expect(card()).toBeNull();
+      await passTime(20);
       await isOpen();
       expect(cardTheme()).toBe(theme);
       // Supplementary details, not a dialog.
@@ -76,19 +65,21 @@ test(
       await animationsDone(card()!, true);
       const target = center(card()!.querySelector('p')!);
       await mouse.move(target.x, target.y, { steps: 8 });
-      await new Promise((resolve) => setTimeout(resolve, 700));
+      await passTime(700);
       expect(cardShown()).toBe(true);
       await mouse.dblclick(target.x, target.y);
       expect(getSelection()?.toString().trim()).not.toBe('');
       expect(cardShown()).toBe(true);
 
-      // Leaving the trigger and the card closes it.
+      // Leaving the trigger and the card closes it, once its close delay, 300 ms, has passed.
       await mouse.move(5, 5);
+      await passTime(300);
       await isClosed();
       await expect.poll(changes(theme)).toBe('true false');
     }
     // Escape closes it while the pointer rests on its trigger.
     await page.getByRole('link', { name: 'Roadmap light' }).hover();
+    await passTime(600);
     await isOpen();
     await keyboard.press('Escape');
     await isClosed();
@@ -99,6 +90,8 @@ test(
   'a hover card opens at once on keyboard focus, leaves focus on the trigger and closes on Escape',
   { tags: ['engines'] },
   async () => {
+    // The clock stands still, so the card that opens came with no wait: the hover delay is 600 ms.
+    stopTimers();
     for (const theme of themes) {
       const scope = page.getByTestId(`hover-card-${theme}`);
       const trigger = scope.getByRole('link', { name: `Roadmap ${theme}` });
@@ -107,9 +100,7 @@ test(
       // WebKit leaves links out of the Tab order by default, so focus moves to the link directly
       // after a key press, which makes it keyboard focus.
       await keyboard.press('Shift');
-      const opened = await untilOpen(() => (trigger.element() as HTMLElement).focus());
-      // Well within the 600 ms hover delay.
-      expect(opened).toBeLessThan(300);
+      (trigger.element() as HTMLElement).focus();
       await expect.element(trigger).toHaveFocus();
       await isOpen();
       expect(cardTheme()).toBe(theme);
@@ -118,8 +109,8 @@ test(
       await keyboard.press('Escape');
       await isClosed();
       await expect.element(trigger).toHaveFocus();
-      // The delayed focus opening does not bring it back: this waits past it.
-      await new Promise((resolve) => setTimeout(resolve, 700));
+      // The delayed focus opening does not bring it back: this moves the clock past it.
+      await passTime(700);
       expect(card()).toBeNull();
       expect(changes(theme)()).toBe('true false');
 

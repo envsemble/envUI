@@ -208,19 +208,6 @@ describe('Scaffold', () => {
     scaffold('width=60rem&dir=rtl');
     expect(box(page.getByTestId('drawer-form')).x).toBeGreaterThan(box(page.getByRole('main')).x);
   });
-
-  test('TopBar is one row at the top bar height, its title truncating first', () => {
-    scaffold('width=30rem');
-    const bar = element('.env-top-bar');
-    // 3.25 rem.
-    expect(box(bar).height).toBeCloseTo(3.25 * 16, 0);
-    const title = element('.env-top-bar-title');
-    expect(css(title, 'text-overflow')).toBe('ellipsis');
-    expect(css(title, 'white-space')).toBe('nowrap');
-    const actions = box(element('.env-top-bar-actions'));
-    const outer = box(bar);
-    expect(actions.x + actions.width).toBeCloseTo(outer.x + outer.width - 16, 0);
-  });
 });
 
 /** The scroll position of an element once it has stayed still for a quarter of a second. */

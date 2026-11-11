@@ -5,7 +5,16 @@ import { beforeEach, describe, expect, onTestFinished, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import { PanelDock, Theme } from '@envsemble/envui';
 import * as fixture from '../fixture/PanelDock.fixture.tsx';
-import { box, collectErrors, css, keyboard, mouse, nextFrames } from './Browser.ts';
+import {
+  box,
+  collectErrors,
+  css,
+  keyboard,
+  mouse,
+  nextFrames,
+  passTime,
+  stopTimers,
+} from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 /** A length in pixels as a number of rem, to a hundredth, as the dock reports heights. */
@@ -1168,13 +1177,20 @@ describe('PanelDock', () => {
   });
 
   test('a dock that minimizes asks for the next panel when the application keeps one open', async () => {
+    // Mounted again on a clock that moves only as the test moves it: its timers and
+    // performance.now(), by which the dock times an answer.
+    stopTimers('performance');
+    mount(fixture);
     const scope = dockScope('keeping');
     const log = logText('keeping');
     const { row, ids } = rowOf(scope);
     // Asked once for the pinned panel, which the application keeps without an answer for 5
     // seconds, the dock minimizes the next.
     await expect.poll(log).toBe('pinned minimized');
-    await expect.poll(log, { timeout: 10_000 }).toBe('pinned minimized,inbox minimized');
+    await passTime(4_900);
+    expect(log()).toBe('pinned minimized');
+    await passTime(200);
+    await expect.poll(log).toBe('pinned minimized,inbox minimized');
     await expect.poll(ids).toEqual(['pinned', 'today']);
     expect(row().hasAttribute('data-overflowing')).toBe(false);
     await frames();
@@ -1184,19 +1200,26 @@ describe('PanelDock', () => {
   });
 
   test('a dock that minimizes waits for an answer that comes later, as in a transition', async () => {
+    // Mounted again on a clock that moves only as the test moves it: its timers and
+    // performance.now(), by which the dock times an answer.
+    stopTimers('performance');
+    mount(fixture);
     const scope = dockScope('late');
     const log = logText('late');
     const { ids } = rowOf(scope);
     // The application answers a second later: the dock asks for nothing else meanwhile, and one
     // panel makes room. Half a second after the row settles, it has asked nothing more.
+    await expect.poll(log).toBe('p0 minimized');
+    await passTime(1_000);
     await expect.poll(ids).toEqual(['p1', 'p2']);
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await passTime(500);
     expect(log()).toBe('p0 minimized');
     expect(ids()).toEqual(['p1', 'p2']);
     // With room for it again, the panel comes back, also with an answer that comes later.
     scope.element().style.inlineSize = '88rem';
-    await expect.poll(ids).toEqual(['p0', 'p1', 'p2']);
     await expect.poll(log).toBe('p0 minimized,p0 open');
+    await passTime(1_000);
+    await expect.poll(ids).toEqual(['p0', 'p1', 'p2']);
   });
 
   test('the dock and its window controls take their names from EnvUIProvider, and a header can leave the controls out', async () => {

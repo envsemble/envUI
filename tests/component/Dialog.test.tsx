@@ -3,7 +3,7 @@ import { cdp, page, server, type Locator } from 'vitest/browser';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as dialogs from '../fixture/Dialog.fixture.tsx';
 import * as popovers from '../fixture/Popover.fixture.tsx';
-import { box, css, keyboard, mouse, shown } from './Browser.ts';
+import { box, css, keyboard, mouse, nextFrames, shown } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 const isShown = (locator: Locator) => expect.poll(() => shown(locator)).toBe(true);
@@ -171,9 +171,10 @@ test('a pending Dialog cannot be dismissed until the work finishes', async () =>
     .toHaveAttribute('aria-busy', 'true');
   await keyboard.press('Escape');
   await mouse.click(5, 5);
-  // Past the frames a dismissal would take.
-  await new Promise((resolve) => setTimeout(resolve, 100));
+  // Past the frames a dismissal would take: one would have started the dialog's ending style.
+  await nextFrames();
   expect(shown(dialog)).toBe(true);
+  expect(dialog.element().hasAttribute('data-ending-style')).toBe(false);
   await dialog.getByRole('button', { name: 'Toggle pending' }).click();
   await expect.element(dialog.getByRole('button', { name: 'Discard' })).toBeEnabled();
   await expect

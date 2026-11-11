@@ -1,8 +1,8 @@
-import { beforeEach, expect, test } from 'vitest';
+import { beforeEach, expect, test, vi } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/RelativeTime.fixture.tsx';
 import { tooltipDelay } from '../../packages/ui/src/internal/popup/TooltipPopup.tsx';
-import { box, keyboard, mouse } from './Browser.ts';
+import { box, keyboard, mouse, passTime, stopTimers } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 beforeEach(() => {
@@ -38,10 +38,12 @@ test('the tooltip shows the date and time on hover, in the theme of the page', a
   // A time with a tooltip takes the dotted underline of text with more on hover; one without, none.
   expect(time('light', 'fixed').classList.contains('env-hover-detail')).toBe(true);
   expect(time('light', 'no-tooltip').classList.contains('env-hover-detail')).toBe(false);
-  // Without a tooltip nothing opens: the check waits just past the tooltip's delay.
+  // Without a tooltip nothing opens: the check moves the clock just past the tooltip's delay.
+  stopTimers();
   await hover(time('light', 'no-tooltip'));
-  await new Promise((resolve) => setTimeout(resolve, tooltipDelay + 100));
+  await passTime(tooltipDelay + 100);
   expect(tooltip()).toBeNull();
+  vi.useRealTimers();
   // The time is never a tab stop.
   const fixed = time('light', 'fixed') as HTMLElement;
   fixed.focus();
