@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type PointerEvent, type RefObject } from 'react';
+import { dragThreshold } from '../../internal/dom/lengths.js';
 import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
 import type { useTimeWheelTurn } from './useTimeWheelTurn.js';
 import { centredRow, wheelMetrics } from './timeWheelRows.js';
@@ -12,8 +13,6 @@ import { centredRow, wheelMetrics } from './timeWheelRows.js';
 const notchPixels = 50;
 /** A notch of a wheel that scrolls by lines, as Firefox reports one. */
 const notchLines = 3;
-/** A mouse that moves this many pixels with its button down drags the wheel rather than pressing a row. */
-const dragThreshold = 4;
 /**
  * A drag let go while moving flings the wheel on by its speed, in pixels a millisecond, over this
  * many milliseconds, before it eases into the nearest row; one held still first stops where it is.

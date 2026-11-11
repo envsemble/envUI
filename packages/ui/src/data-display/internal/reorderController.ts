@@ -2,7 +2,8 @@
 // drags. Only a list with onReorder loads it, as it renders (useReorder.ts).
 import type { KeyboardEvent, MouseEvent, PointerEvent } from 'react';
 import { scrolledBy } from '../../internal/dom/scrolledBy.js';
-import { dragThreshold, isLiftKey, isRowMoveKey } from './reorderKeys.js';
+import { dragThreshold } from '../../internal/dom/lengths.js';
+import { isLiftKey, isRowMoveKey } from './reorderKeys.js';
 import {
   edgeScrollDelta,
   measureRows,
