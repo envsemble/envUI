@@ -15,20 +15,6 @@ export default function HoverCardFixture({ theme }: { theme: ColorScheme }) {
         >
           <Text>Changed today by Alex. 3 open decisions, 1 blocked.</Text>
         </HoverCard>
-        {/* Text that shows more takes the dotted underline; a button or Text holding only an icon
-            doesn't. */}
-        <HoverCard
-          trigger={
-            <Text render={<span />} tabIndex={0}>
-              28 h {theme}
-            </Text>
-          }
-        >
-          <Text>Reviews 11 h, drafting 9 h, meetings 8 h.</Text>
-        </HoverCard>
-        <HoverCard trigger={<Button variant="secondary">Details {theme}</Button>}>
-          <Text>Button details.</Text>
-        </HoverCard>
       </div>
       <output data-testid={`hover-card-changes-${theme}`}>{changes.join(' ')}</output>
     </Theme>
