@@ -3,7 +3,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
-import { elementsOf, firstElement, textOf } from '../../support/Markup.ts';
+import {
+  elementsOf,
+  findElement,
+  firstElement,
+  type MarkupElement,
+  textOf,
+} from '../../support/Markup.ts';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 
@@ -12,10 +18,10 @@ const { Pager, EnvUIProvider } = await importSource('Pager', [
   "export * from './packages/ui/src/foundations/EnvUIProvider.tsx';",
 ]);
 
-const links = (nav) => elementsOf(nav).filter((element) => element.tag === 'a');
+const links = (nav: MarkupElement) => elementsOf(nav).filter((element) => element.tag === 'a');
 
 test('the previous link comes first and the next link last, with strings from messages', () => {
-  const pager = (props, previous, next) =>
+  const pager = (props: Record<string, unknown> | null, previous: string, next: string) =>
     h(
       Pager.Root,
       props,
@@ -42,7 +48,7 @@ test('the previous link comes first and the next link last, with strings from me
       ),
     ),
   );
-  const nav = elementsOf(translated).find((element) => element.tag === 'nav');
+  const nav = findElement(translated, (element) => element.tag === 'nav');
   assert.equal(nav.attributes['aria-label'], 'Seiten');
   assert.deepEqual(links(nav).map(textOf), ['ZurückEinführung', 'WeiterEinrichtung']);
 });

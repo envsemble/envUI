@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
 import { elementsOf, firstElement } from '../../support/Markup.ts';
-import { createElement as h } from 'react';
+import { createElement as h, type ReactElement } from 'react';
 import { renderToString } from 'react-dom/server';
 
 const { Button, ConfirmButton, CopyButton, Toolbar } = await importSource('Button', [
@@ -16,7 +16,7 @@ const { Button, ConfirmButton, CopyButton, Toolbar } = await importSource('Butto
 ]);
 
 /** The variant and tone of each button in the markup, by its data-testid. */
-function emphasis(element) {
+function emphasis(element: ReactElement) {
   return Object.fromEntries(
     elementsOf(firstElement(renderToString(element)))
       .filter((each) => each.tag === 'button')
@@ -27,9 +27,9 @@ function emphasis(element) {
   );
 }
 
-const confirm = (testId) =>
+const confirm = (testId: string) =>
   h(ConfirmButton, { confirmLabel: 'Remove', onConfirm() {}, 'data-testid': testId }, 'Remove');
-const copy = (testId) =>
+const copy = (testId: string) =>
   h(CopyButton, { value: 'text', 'aria-label': 'Copy text', 'data-testid': testId });
 
 test("a button takes its container's variant where it has the button's tone", () => {
@@ -55,8 +55,8 @@ test("a button takes its container's variant where it has the button's tone", ()
 });
 
 test('a pair no variant is designed in renders neutral, and is reported', (context) => {
-  const errors = [];
-  context.mock.method(console, 'error', (...args) => errors.push(args.join(' ')));
+  const errors: string[] = [];
+  context.mock.method(console, 'error', (...args: unknown[]) => errors.push(args.join(' ')));
   // Past the types on purpose: the undesigned pair the runtime check must catch.
   const pair = emphasis(
     h(Button, { variant: 'secondary', tone: 'danger', 'data-testid': 'undesigned' }, 'Undesigned'),

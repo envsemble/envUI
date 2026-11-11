@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
-import { descriptions, elementsOf, firstElement } from '../../support/Markup.ts';
+import { descriptions, findElement, firstElement } from '../../support/Markup.ts';
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 
@@ -12,9 +12,9 @@ const { MonthPicker } = await importSource('MonthPicker', [
 ]);
 
 /** The rendered field and its trigger, the combobox that opens the months. */
-function render(props) {
+function render(props: Record<string, unknown>) {
   const root = firstElement(renderToString(h(MonthPicker, { locale: 'en-GB', ...props })));
-  return [root, elementsOf(root).find((element) => element.attributes.role === 'combobox')];
+  return [root, findElement(root, (element) => element.attributes.role === 'combobox')] as const;
 }
 
 test('disabled, read-only and invalid fields', () => {

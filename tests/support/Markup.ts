@@ -57,6 +57,16 @@ export const elementsOf = (element: MarkupElement): MarkupElement[] => [
   ...element.children.filter(isElement).flatMap(elementsOf),
 ];
 
+/**
+ * The first element in `root`, itself included, that `matches`; a test that expects one fails
+ * here without it.
+ */
+export function findElement(root: MarkupElement, matches: (element: MarkupElement) => boolean) {
+  const found = elementsOf(root).find(matches);
+  if (!found) throw new Error(`No element in <${root.tag}> matches ${matches}.`);
+  return found;
+}
+
 /** The first element of `markup`, as parseMarkup reads it; markup without one is a mistake. */
 export function firstElement(markup: string) {
   const [first] = parseMarkup(markup);

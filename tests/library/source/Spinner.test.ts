@@ -3,8 +3,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
-import { elementsOf, firstElement, hasClass, textOf } from '../../support/Markup.ts';
-import { createElement as h } from 'react';
+import {
+  elementsOf,
+  findElement,
+  firstElement,
+  hasClass,
+  type MarkupElement,
+  textOf,
+} from '../../support/Markup.ts';
+import { createElement as h, type ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 const { Spinner, EnvUIProvider } = await importSource('Spinner', [
@@ -12,10 +19,13 @@ const { Spinner, EnvUIProvider } = await importSource('Spinner', [
   "export { EnvUIProvider } from './packages/ui/src/foundations/EnvUIProvider.tsx';",
 ]);
 
-const render = (element) => firstElement(renderToStaticMarkup(element));
+const render = (element: ReactElement) => firstElement(renderToStaticMarkup(element));
 /** The label shown beside the arc, if the spinner shows one. */
-const shownLabel = (spinner) =>
+const shownLabel = (spinner: MarkupElement) =>
   elementsOf(spinner).find((element) => hasClass(element, 'env-spinner-label'));
+/** The text of the label shown beside the arc, which the spinner must show. */
+const labelText = (spinner: MarkupElement) =>
+  textOf(findElement(spinner, (element) => hasClass(element, 'env-spinner-label')));
 
 test('a spinner without a label is hidden, and with one a progress bar it names', () => {
   const hidden = render(h(Spinner));
@@ -38,13 +48,13 @@ test('with showLabel, a busy status shows the label beside the arc', () => {
     assert.equal(element.attributes['aria-label'], undefined);
     assert.notEqual(element.attributes.role, 'progressbar');
   }
-  const arc = elementsOf(spinner).find((element) => element.tag === 'svg');
+  const arc = findElement(spinner, (element) => element.tag === 'svg');
   assert.equal(arc.attributes['aria-hidden'], 'true');
-  assert.equal(textOf(shownLabel(spinner)), 'Loading project');
+  assert.equal(labelText(spinner), 'Loading project');
 });
 
 test("without a label, showLabel says Loading, in the provider's language", () => {
-  assert.equal(textOf(shownLabel(render(h(Spinner, { showLabel: true })))), 'Loading');
+  assert.equal(labelText(render(h(Spinner, { showLabel: true }))), 'Loading');
   const translated = render(
     h(
       EnvUIProvider,
@@ -52,5 +62,5 @@ test("without a label, showLabel says Loading, in the provider's language", () =
       h(Spinner, { showLabel: true }),
     ),
   );
-  assert.equal(textOf(shownLabel(translated)), 'Wird geladen');
+  assert.equal(labelText(translated), 'Wird geladen');
 });
