@@ -145,65 +145,77 @@ async function ownDocument(session: ReturnType<typeof cdp>) {
   return own;
 }
 
-test('with no color property set, every component paints its colors of before in every state and theme', async () => {
-  mount(fixture);
-  addStyle('*, *::before, *::after { transition: none !important; animation: none !important; }');
-  await expect.poll(() => document.querySelectorAll('.env-menu-item').length).toBeGreaterThan(0);
-  await expect.poll(() => document.querySelectorAll('.env-tooltip').length).toBeGreaterThan(0);
-  await expect.poll(() => document.querySelectorAll('.env-toast').length).toBe(3);
-  const session = cdp();
-  await session.send('DOM.enable');
-  await session.send('CSS.enable');
-  const own = await ownDocument(session);
-  const nodes = async (nodeId: number, selector: string) =>
-    (await session.send('DOM.querySelectorAll', { nodeId, selector })).nodeIds;
-  const force = async (nodeIds: number[], classes: readonly string[]) => {
-    for (const nodeId of nodeIds)
-      await session.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [...classes] });
-  };
-  const measured: Record<string, string> = {};
-  const details: Record<string, string> = {};
-  for (const theme of themes) {
-    for (const boundary of document.querySelectorAll('.env-theme')) {
-      boundary.removeAttribute('data-env-contrast');
-      for (const [name, value] of Object.entries(theme.attributes))
-        boundary.setAttribute(name, value);
-    }
-    for (const selector of targets) {
-      const ids = await nodes(own.nodeId, selector);
-      const elements = document.querySelectorAll(selector);
-      expect(ids.length, `${selector} renders`).toBeGreaterThan(0);
-      expect(ids.length).toBe(elements.length);
-      for (const [index, nodeId] of ids.entries()) {
-        // A row is pressed through its target, which the row's style reads.
-        const inner = await nodes(nodeId, '[data-row-target]');
-        for (const [state, classes] of Object.entries(states)) {
-          // Each state's classes replace the last's.
-          await force([nodeId], classes);
-          if (state === 'pressed') await force(inner, ['active']);
-          const value = paint(elements[index]!);
-          if (state === 'pressed') await force(inner, []);
-          const key = `${theme.name} ${selector} #${index} ${state}`;
-          details[key] = value;
-          measured[key] = await hash(value);
+// One test per theme: the four together read about 1,500 states, which on CI's two-core runner
+// take longer than one test's timeout.
+test.each(themes)(
+  'with no color property set, every component paints its colors of before in every state, in $name',
+  { timeout: 90_000 },
+  async (theme) => {
+    mount(fixture);
+    addStyle('*, *::before, *::after { transition: none !important; animation: none !important; }');
+    await expect.poll(() => document.querySelectorAll('.env-menu-item').length).toBeGreaterThan(0);
+    await expect.poll(() => document.querySelectorAll('.env-tooltip').length).toBeGreaterThan(0);
+    await expect.poll(() => document.querySelectorAll('.env-toast').length).toBe(3);
+    const session = cdp();
+    await session.send('DOM.enable');
+    await session.send('CSS.enable');
+    const own = await ownDocument(session);
+    const nodes = async (nodeId: number, selector: string) =>
+      (await session.send('DOM.querySelectorAll', { nodeId, selector })).nodeIds;
+    const force = async (nodeIds: number[], classes: readonly string[]) => {
+      for (const nodeId of nodeIds)
+        await session.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [...classes] });
+    };
+    const measured: Record<string, string> = {};
+    const details: Record<string, string> = {};
+    {
+      for (const boundary of document.querySelectorAll('.env-theme')) {
+        boundary.removeAttribute('data-env-contrast');
+        for (const [name, value] of Object.entries(theme.attributes))
+          boundary.setAttribute(name, value);
+      }
+      for (const selector of targets) {
+        const ids = await nodes(own.nodeId, selector);
+        const elements = document.querySelectorAll(selector);
+        expect(ids.length, `${selector} renders`).toBeGreaterThan(0);
+        expect(ids.length).toBe(elements.length);
+        for (const [index, nodeId] of ids.entries()) {
+          // A row is pressed through its target, which the row's style reads.
+          const inner = await nodes(nodeId, '[data-row-target]');
+          for (const [state, classes] of Object.entries(states)) {
+            // Each state's classes replace the last's.
+            await force([nodeId], classes);
+            if (state === 'pressed') await force(inner, ['active']);
+            const value = paint(elements[index]!);
+            if (state === 'pressed') await force(inner, []);
+            const key = `${theme.name} ${selector} #${index} ${state}`;
+            details[key] = value;
+            measured[key] = await hash(value);
+          }
+          await force([nodeId], []);
         }
-        await force([nodeId], []);
       }
     }
-  }
-  const saved = await commands.readFile(snapshotFile).catch(() => undefined);
-  if (saved === undefined) {
-    await commands.writeFile(
-      snapshotFile,
-      `${JSON.stringify({ $comment: generatedNote, ...measured }, null, 2)}\n`,
-    );
-    expect.fail('DefaultColors.json was missing and is recorded now: review it and commit it.');
-  }
-  const { $comment: _note, ...recorded }: Record<string, string> = JSON.parse(saved!);
-  const changed = Object.keys(recorded).filter((key) => measured[key] !== recorded[key]);
-  expect(
-    changed.slice(0, 20).map((key) => `${key}:\n${details[key] ?? '(gone)'}`),
-    `${changed.length} default colors changed`,
-  ).toEqual([]);
-  expect(Object.keys(measured).sort()).toEqual(Object.keys(recorded).sort());
-});
+    const saved = await commands.readFile(snapshotFile).catch(() => undefined);
+    const file: Record<string, string> = saved === undefined ? {} : JSON.parse(saved);
+    const ownKey = (key: string) => key.startsWith(`${theme.name} `);
+    if (!Object.keys(file).some(ownKey)) {
+      // Missing, or missing this theme: each theme's test records its own colors beside the others'.
+      const { $comment: _old, ...others } = file;
+      await commands.writeFile(
+        snapshotFile,
+        `${JSON.stringify({ $comment: generatedNote, ...others, ...measured }, null, 2)}\n`,
+      );
+      expect.fail(
+        `DefaultColors.json had no ${theme.name} colors and records them now: review and commit it.`,
+      );
+    }
+    const recorded = Object.fromEntries(Object.entries(file).filter(([key]) => ownKey(key)));
+    const changed = Object.keys(recorded).filter((key) => measured[key] !== recorded[key]);
+    expect(
+      changed.slice(0, 20).map((key) => `${key}:\n${details[key] ?? '(gone)'}`),
+      `${changed.length} default colors changed`,
+    ).toEqual([]);
+    expect(Object.keys(measured).sort()).toEqual(Object.keys(recorded).sort());
+  },
+);
