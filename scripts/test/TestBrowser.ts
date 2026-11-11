@@ -74,7 +74,7 @@ const run = (command: string[], env: Record<string, string> = {}, required = tru
 };
 const folder = `tests/browser/${suite}/`;
 // The library's few specs, its hydration, run whole in its first shard, so only that shard builds
-// the library for them; the site's split by test. A shard may hold none of a runner's tests.
+// the library for them; the site's split by test, a shard possibly holding none of them.
 const shardIndex = shard?.split('/')[0];
 const playwrightShard = suite === 'library' ? undefined : shard;
 const playwrightRuns = suite !== 'library' || !shard || shardIndex === '1';
@@ -82,7 +82,9 @@ const playwright = [
   ...bin.playwright,
   'test',
   `--project=${browser}`,
-  ...(playwrightShard ? [`--shard=${playwrightShard}`, '--pass-with-no-tests'] : []),
+  ...(playwrightShard ? [`--shard=${playwrightShard}`] : []),
+  // Firefox and WebKit may have none of the library's specs, which are Chromium's hydration.
+  ...(playwrightShard || suite === 'library' ? ['--pass-with-no-tests'] : []),
   ...(retries ? [`--retries=${retries}`] : []),
   folder,
 ];
