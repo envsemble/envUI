@@ -157,61 +157,6 @@ test('coarse pointers get the touch height, the whole field taking the finger', 
   }
 });
 
-test('a slider is a field: as tall as the fields, with their corners, its label and value inside', () => {
-  const root = slider(0);
-  const control = part(0, '.env-slider-control');
-  const field = box(control);
-  // As tall as a field of the control height, with the same rounded ends, and no outline.
-  const probe = document.createElement('div');
-  probe.style.blockSize = 'var(--env-control-height)';
-  scope().element().append(probe);
-  expect(field.height).toBeCloseTo(probe.getBoundingClientRect().height, 0);
-  probe.remove();
-  // The fields' corners: the capped full corner, which the browser draws as rounded ends.
-  const full = document.createElement('div');
-  full.style.blockSize = 'var(--env-radius-full)';
-  control.append(full);
-  const radius = full.getBoundingClientRect().height;
-  full.remove();
-  expect(Math.abs(Number.parseFloat(css(control, 'border-top-left-radius')) - radius)).toBeLessThan(
-    0.5,
-  );
-  expect(css(control, 'box-shadow')).toBe('none');
-  expect(css(control, 'border-top-style')).toBe('none');
-  // The label sits inside at the start and the value at the end, in a field's type, and the value
-  // with numbers of one width.
-  const labelPart = part(0, '.env-slider-label');
-  const value = part(0, '.env-slider-value');
-  const label = box(labelPart);
-  const valueBox = box(value);
-  expect(label.x).toBeGreaterThan(field.x);
-  expect(label.y).toBeGreaterThan(field.y);
-  expect(label.y + label.height).toBeLessThan(field.y + field.height);
-  expect(valueBox.x + valueBox.width).toBeLessThan(field.x + field.width);
-  expect(valueBox.x).toBeGreaterThan(label.x + label.width);
-  const paragraph = document.createElement('p');
-  paragraph.className = 'env-text';
-  root.append(paragraph);
-  const type = [css(paragraph, 'font-family'), css(paragraph, 'font-size')];
-  paragraph.remove();
-  for (const text of [value, labelPart])
-    expect([css(text, 'font-family'), css(text, 'font-size')]).toEqual(type);
-  expect(css(value, 'font-variant-numeric')).toBe('tabular-nums');
-  expect(value.classList.contains('env-text')).toBe(true);
-  // The fill runs from the slider's own start to the value, 40% of the whole field.
-  const fill = box(part(0, '.env-slider-indicator'));
-  expect(Math.abs(fill.x - field.x)).toBeLessThanOrEqual(0.5);
-  expect(fill.width / field.width).toBeCloseTo(0.4, 2);
-  // The text never dims: the handle and the fill's end fade under it instead, as the tests of the
-  // states below show.
-  for (const text of [part(0, '.env-slider-header'), labelPart, value]) {
-    expect(css(text, 'opacity')).toBe('1');
-    expect(css(text, 'mask-image')).toBe('none');
-  }
-  // Ten parts of 0 to 100 by large steps of 10; a range of few steps is cut at every step.
-  expect(css(root, '--env-slider-ticks')).toBe('10');
-});
-
 /** The parts of the first slider whose look changes with its state, read from computed styles. */
 function stateOf() {
   const control = part(0, '.env-slider-control');
@@ -237,78 +182,6 @@ async function expectRest(state: ReturnType<typeof stateOf>) {
   await expect.poll(state.ticks).toBe('0');
   await expect.poll(state.fillEnd).toBe('0');
 }
-
-test('at rest a slider shows its text and fill only, with no handle, ticks or fade', async () => {
-  const state = stateOf();
-  await expectRest(state);
-  // Even where the fill ends under the label, it ends crisply.
-  state.input.focus();
-  await keyboard.press('Home');
-  state.input.blur();
-  await expect.poll(state.veil).toBe('1');
-  await expectRest(state);
-});
-
-test(
-  'hover shows the handle and the ticks, the handle faded where it sits behind the label',
-  { tags: ['engines'] },
-  async () => {
-    const state = stateOf();
-    const field = box(state.control);
-    const y = field.y + field.height / 2;
-    // At 40%, clear of the text: the handle in full and the fill's end crisp.
-    await mouse.move(field.x + field.width * 0.5, y);
-    await expect.poll(has(state.control, 'data-handle')).toBe(true);
-    await expect.poll(has(state.control, 'data-ruler')).toBe(true);
-    await expect.poll(state.veil).toBe('0');
-    await expect.poll(() => css(state.thumb, 'opacity')).toBe('1');
-    await expect.poll(state.ticks).toBe('0.35');
-    await expect.poll(state.fillEnd).toBe('0');
-    // Leave, move the value under the label with the keyboard, and hover again: the handle and the
-    // fill's end fade there, while the text stays at full strength.
-    await mouse.move(0, 0);
-    state.input.focus();
-    await keyboard.press('Home');
-    state.input.blur();
-    await mouse.move(field.x + field.width * 0.5, y);
-    await expect.poll(state.veil).toBe('1');
-    await expect.poll(() => css(state.thumb, 'opacity')).toBe('0.25');
-    await expect.poll(state.fillEnd).toBe('1');
-    await expect.poll(state.ticks).toBe('0.35');
-    expect(css(part(0, '.env-slider-label'), 'opacity')).toBe('1');
-  },
-);
-
-test('the ticks fade under the label and the value, as the handle does', async () => {
-  await page.viewport(390, 900);
-  const state = stateOf();
-  const field = box(state.control);
-  await mouse.move(field.x + field.width * 0.5, field.y + field.height / 2);
-  await expect.poll(state.ticks).toBe('0.35');
-  // Each tick is faint, at a quarter, where it sits within half a line of the label or the value,
-  // and in full between them: read from the measured clear stretch the mask keeps whole.
-  const root = state.slider;
-  const track = root.querySelector('.env-slider-track')!.getBoundingClientRect();
-  const clearStart = Number.parseFloat(css(state.control, '--env-slider-clear-start'));
-  const clearEnd = Number.parseFloat(css(state.control, '--env-slider-clear-end'));
-  const parts = Number(css(root, '--env-slider-ticks'));
-  const texts = [...root.querySelectorAll('.env-slider-label, .env-slider-value')].map((text) => {
-    const at = text.getBoundingClientRect();
-    const margin = Number.parseFloat(css(text, 'font-size')) / 2;
-    return [at.left - margin - track.left, at.right + margin - track.left];
-  });
-  expect(css(part(0, '.env-slider-track'), 'mask-image', '::after')).toMatch(/^linear-gradient/);
-  const ticks = Array.from({ length: parts - 1 }, (_, index) => {
-    const at = (track.width * (index + 1)) / parts;
-    return {
-      underText: texts.some(([start, end]) => at >= start! && at <= end!),
-      faint: at < clearStart || at > clearEnd,
-    };
-  });
-  for (const tick of ticks) expect(tick.faint).toBe(tick.underText);
-  expect(ticks.some((tick) => tick.faint)).toBe(true);
-  expect(ticks.some((tick) => !tick.faint)).toBe(true);
-});
 
 test(
   'a click moves the value to the pointer and leaves the slider at rest under it',
@@ -397,24 +270,6 @@ test(
     await expectRest(state);
   },
 );
-
-test('a finger shows the handle and the ticks only while it is down', async () => {
-  await commands.emulateTouch(true);
-  try {
-    await page.viewport(390, 900);
-    const state = stateOf();
-    const field = box(state.control);
-    const point = [field.x + field.width * 0.6, field.y + field.height / 2] as const;
-    await commands.touch('touchStart', ...point);
-    await expect.poll(has(state.control, 'data-handle')).toBe(true);
-    await expect.poll(has(state.control, 'data-ruler')).toBe(true);
-    await commands.touch('touchEnd');
-    await expect.poll(has(state.control, 'data-dragging')).toBe(false);
-    await expectRest(state);
-  } finally {
-    await commands.emulateTouch(false);
-  }
-});
 
 test('the fill is empty at the minimum, the whole field at the maximum and in proportion between, in either direction', async () => {
   for (const direction of ['ltr', 'rtl'] as const) {

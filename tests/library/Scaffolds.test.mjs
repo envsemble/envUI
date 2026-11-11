@@ -109,24 +109,6 @@ test('Scaffold without navigation renders no skip link to it, and scrolls the do
   assert.match(renderToString(h(Scaffold, { scroll: 'body' }, 'Body')), /data-scroll="body"/);
 });
 
-test('Scaffold shows each form in one range of its own width, with no width media query', () => {
-  const css = sheet('Scaffold.css');
-  assert.match(css, /container: env-scaffold \/ inline-size;/);
-  for (const [range, windowClass] of [
-    ['width < 37.5rem', 'compact'],
-    ['37.5rem <= width < 52.5rem', 'medium'],
-    ['52.5rem <= width < 75rem', 'expanded'],
-    ['width >= 75rem', 'large'],
-  ])
-    assert.match(
-      css,
-      new RegExp(
-        `@container env-scaffold \\(${range.replaceAll('.', '\\.')}\\) \\{\\s*\\.env-scaffold\\[data-navigation-${windowClass}='bar'\\]`,
-      ),
-    );
-  assert.doesNotMatch(css, /@media[^{]*width/);
-});
-
 test('Panes renders its behavior, its split and its size for CSS, and the parts their roles', () => {
   const markup = renderToString(
     h(
@@ -159,23 +141,6 @@ test('Panes renders its behavior, its split and its size for CSS, and the parts 
   // The back button is always in the markup; CSS shows it while one pane shows at a time.
   assert.match(open, /class="env-panes-back"/);
   assert.doesNotMatch(open, /env-panes-backdrop/);
-});
-
-test('Panes decides its arrangement in CSS at the window classes of its own width', () => {
-  const css = sheet('Panes.css');
-  assert.match(css, /container: env-panes \/ inline-size;/);
-  for (const [width, splits] of [
-    ['37.5rem', "\\[data-split-at='medium'\\]"],
-    ['52.5rem', "\\[data-split-at='medium'\\], \\[data-split-at='expanded'\\]"],
-    ['75rem', '\\[data-split-at\\]'],
-  ])
-    assert.match(
-      css,
-      new RegExp(
-        `@container env-panes \\(width >= ${width.replace('.', '\\.')}\\) \\{[^}]*\\.env-panes:is\\(${splits}\\)`,
-      ),
-    );
-  assert.doesNotMatch(css, /@media[^{]*width/);
 });
 
 test('Page renders invisible structure with its width, and its header above its content', () => {

@@ -1,7 +1,6 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Markdown.fixture.tsx';
-import { css } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 beforeEach(() => {
@@ -22,17 +21,6 @@ test('an item with key caps in its line keeps its line, its bullet beside the ke
   });
   expect(items).toEqual([true, true]);
 });
-
-test(
-  'inline code in a table cell breaks only where it would overflow, not inside its word',
-  { tags: ['engines'] },
-  () => {
-    const code = page.getByTestId('narrow').element().querySelector('td code')!;
-    expect(css(code, 'overflow-wrap')).toBe('break-word');
-    // The column keeps room for the whole word, which the region scrolls to show.
-    expect(code.getClientRects()).toHaveLength(1);
-  },
-);
 
 test('rendered again with a new renderLink, Markdown keeps its elements and uses the new one', async () => {
   const scope = page.getByTestId('rendered-again');

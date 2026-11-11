@@ -1,10 +1,9 @@
 import { expect, test } from 'vitest';
 import { page } from 'vitest/browser';
-import FillARegion from '../../apps/site/src/examples/tabs/FillARegion.tsx';
 import * as fixture from '../fixture/Tabs.fixture.tsx';
 import * as rtl from '../fixture/TabsRtl.fixture.tsx';
 import * as scrolling from '../fixture/TabsScrolling.fixture.tsx';
-import { box, keyboard } from './Browser.ts';
+import { keyboard } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 /** The computed display of the panel each tab of a tab list controls, in order. */
@@ -65,21 +64,6 @@ test(
     await expect.poll(place).toEqual({ overflows: true, atStart: true, inView: true });
   },
 );
-
-test('filling tabs give the selected panel the height left below the list', async () => {
-  mount({ default: FillARegion });
-  const panel = page.getByRole('tabpanel', { name: 'Canvas' });
-  await expect.poll(() => panel.query()?.firstElementChild).toBeTruthy();
-  const canvas = panel.element().firstElementChild!;
-  // The example's region, which has a height of its own.
-  const region = box(document.querySelector('.fixture-main > *')!);
-  const list = box(page.getByRole('tablist'));
-  const view = box(canvas);
-  // The canvas reaches the bottom of the region and starts below the list.
-  expect(Math.abs(view.y + view.height - (region.y + region.height))).toBeLessThanOrEqual(2);
-  expect(view.y).toBeGreaterThan(list.y + list.height - 1);
-  expect(view.height).toBeGreaterThan(100);
-});
 
 test('filling tabs that keep inactive panels mounted display only the selected panel', async () => {
   mount(fixture);

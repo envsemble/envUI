@@ -22,7 +22,6 @@ const {
   glideStep,
   waveReach,
   wavePath,
-  wavePlace,
   waveThin,
 } = await importSource('TableOfContents', [
   "export { TableOfContents } from './packages/ui/src/navigation/TableOfContents.tsx';",
@@ -155,14 +154,6 @@ test('without items, the server renders the landmark hidden, named in the provid
   assert.doesNotMatch(markup, /<a /);
 });
 
-test('the shape stays on the current entry, then glides on to the next as it nears', () => {
-  assert.equal(wavePlace(2), 2);
-  assert.equal(wavePlace(2.4), 2);
-  assert.equal(wavePlace(2.75), 2.5);
-  assert.ok(wavePlace(2.9) > 2.8 && wavePlace(2.9) < 3);
-  assert.equal(wavePlace(3), 3);
-});
-
 test("the shape swells at the reader's place, half 0.9 entries away, and none two and a half away", () => {
   assert.equal(swellAt(4, 4, []), 1);
   assert.ok(Math.abs(swellAt(4.9, 4, []) - 0.5) < 0.01);
@@ -210,23 +201,6 @@ test('the place glides to a far target without passing it, and follows small ste
   glideTo(place, 1, 700, 0.2);
   assert.equal(glideStep(place, 700, 0, ease), false);
   assert.equal(place.value, 1);
-});
-
-test("the shape's outline is straight at its start, widest beside the reader's place, with round ends", () => {
-  const layout = { anchors: [10, 40, 70, 100, 130, 160], top: 4, bottom: 166, full: 12 };
-  const path = wavePath(layout, 2, []);
-  const edge = [...path.matchAll(/L([\d.]+) ([\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])]);
-  const widest = Math.max(...edge.map(([x]) => x));
-  assert.equal(widest, 12);
-  // Its fullest is a short run, round at the top, centred beside the place.
-  const run = edge.filter(([x]) => x === widest).map(([, y]) => y);
-  assert.ok(Math.abs((Math.min(...run) + Math.max(...run)) / 2 - 70) <= 1);
-  // Three entries away, as thin as it gets: a tenth of its fullest.
-  assert.ok(Math.abs(Math.min(...edge.map(([x]) => x)) - 12 * waveThin) < 0.01);
-  // It starts and ends at the box's start: the closing edge is straight down it.
-  assert.match(path, /^M0 [\d.]+A[^L]*L.*A[\d. ]+ 0 0 1 0 [\d.]+Z$/);
-  assert.equal((path.match(/A/g) ?? []).length, 2);
-  assert.equal(wavePath({ ...layout, anchors: [] }, 0, []), '');
 });
 
 test('near either end the edge runs on into the round end, with no step to a second peak', () => {

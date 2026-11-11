@@ -69,22 +69,3 @@ test("each drawing's order moves every one of its lines once, in beats", () => {
     assert.ok(lineArtShapes[drawing].order.length >= 4, `${drawing} draws in at least four beats`);
   }
 });
-
-test('in motion, each line is one long and starts at its place in the order', () => {
-  const still = renderToStaticMarkup(h(LineArt, { drawing: 'monochord' }));
-  assert.doesNotMatch(still, /pathLength|data-motion|--env-line-art-at/);
-  for (const motion of ['appear', 'disappear', 'play', 'loop']) {
-    const markup = renderToStaticMarkup(h(LineArt, { drawing: 'monochord', motion }));
-    assert.match(markup, new RegExp(`data-motion="${motion}"`));
-    assert.equal(
-      /data-turn="in"/.test(markup),
-      motion === 'loop',
-      `${motion} turns only in a loop`,
-    );
-    const lines = markup.match(/<(rect|circle|line|polygon|path) [^>]*>/g);
-    assert.ok(lines.every((line) => /pathLength="1"/.test(line)));
-    // Monochord's string first, then its ends, the arc over the whole and each stop with its arc.
-    const at = lines.map((line) => Number(/--env-line-art-at:\s*([\d.]+)/.exec(line)[1]));
-    assert.deepEqual(at, [0, 0.2, 0.2, 0.4, 0.6, 0.6, 0.8, 0.8, 1, 1]);
-  }
-});

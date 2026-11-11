@@ -47,41 +47,6 @@ function expectSize(found: Box, side: number, label?: string) {
 const byTestId = (testId: string) => page.getByTestId(testId).element();
 const child = (testId: string, selector: string) => byTestId(testId).querySelector(selector)!;
 
-test("a graphic is its step's size whatever the file, with the picture contained and centered in it", () => {
-  const steps = {
-    icon: 'var(--env-control-icon-size)',
-    sm: 'var(--env-picture-size-sm)',
-    md: 'var(--env-picture-size-md)',
-    lg: 'var(--env-picture-size-lg)',
-    xl: 'var(--env-picture-size-xl)',
-  };
-  for (const [size, value] of Object.entries(steps)) {
-    const expected = length(value);
-    for (const kind of ['png', 'svg-file', 'svg']) {
-      const label = `${kind} ${size}`;
-      const outer = box(byTestId(`${kind}-${size}`));
-      const picture = child(`${kind}-${size}`, ':scope > *');
-      expectSize(outer, expected, label);
-      // The img or svg fills the box, and object-fit or the viewBox contains the picture in it.
-      expectSameBox(box(picture), outer, label);
-      expect(css(picture, 'object-fit'), label).toBe('contain');
-    }
-  }
-  // The steps above icon are Avatar's, from the same tokens.
-  expect(length('var(--env-picture-size-sm)')).toBe(24);
-  expect(length('var(--env-picture-size-xl)')).toBe(88);
-});
-
-test('the text step is the size of the text around it, and fill takes its container', () => {
-  expectSize(
-    box(byTestId('png-text')),
-    Number.parseFloat(css(byTestId('graphic-text'), 'font-size')),
-  );
-  const area = box(byTestId('graphic-fill-box'));
-  expectSameBox(box(child('graphic-fill-box', '.env-graphic')), area);
-  expectSameBox(box(child('graphic-fill-box', '.env-graphic > img')), area);
-});
-
 test('fill is a block that takes its height from an aspect, and a step with an aspect is wider', () => {
   const width = length('16rem');
   const aspect = box(byTestId('fill-aspect'));

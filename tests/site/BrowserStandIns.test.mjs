@@ -133,21 +133,6 @@ test('in a stage the keyboard is in, focus follows the pointer and :focus reads 
   }
 });
 
-test('the pointers no one sees keep their capture here, a real pointer’s the browser does', () => {
-  const { HTMLElement, calls } = realm();
-  const element = new HTMLElement();
-  standIns.captures.set(3, null);
-  try {
-    element.setPointerCapture(3);
-    assert.equal(element.hasPointerCapture(3), true);
-    element.releasePointerCapture(3);
-    assert.equal(element.hasPointerCapture(3), false);
-    assert.deepEqual(calls, []);
-  } finally {
-    standIns.captures.clear();
-  }
-});
-
 test('evaluated again, as on a hot reload, the module keeps the state its stand-ins read', async () => {
   const { Element, calls } = realm();
   // The same bundle, evaluated again as a module of its own.

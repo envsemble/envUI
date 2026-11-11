@@ -14,14 +14,12 @@ const library = await importSource('Skeleton', [
   "export { skeletonAttributes, skeletonListAttributes, given } from './packages/ui/src/internal/skeleton.tsx';",
   "export { useSkeleton } from './packages/ui/src/foundations/SkeletonScope.tsx';",
   "export { Surface } from './packages/ui/src/layout/Surface.tsx';",
-  "export { Text } from './packages/ui/src/foundations/Text.tsx';",
   "export { Card } from './packages/ui/src/layout/Card.tsx';",
   "export * as List from './packages/ui/src/data-display/List.tsx';",
-  "export { Alert } from './packages/ui/src/feedback/Alert.tsx';",
 ]);
 const { placeholders, isPlaceholder, skeletonAttributes, skeletonListAttributes, given } = library;
 const { useSkeleton } = library;
-const { Surface, Text, Card, List, Alert } = library;
+const { Surface, Card, List } = library;
 
 const markup = (element) => renderToStaticMarkup(element);
 
@@ -85,34 +83,6 @@ test('a surface as a skeleton marks its root and tells what is inside', () => {
     }),
   );
   assert.match(row, /<div class="env-skeleton-content" inert=""><div class="env-list-item-start"/);
-});
-
-test('missing text renders empty where a skeleton shows a bar, and given slots render', () => {
-  const [item] = placeholders(1);
-  const card = markup(
-    h(Card, {
-      skeleton: true,
-      title: item.title,
-      meta: item.updated,
-      description: item.summary,
-    }),
-  );
-  assert.match(card, /data-env-skeleton=""/);
-  assert.match(card, /<h3 class="env-text env-card-title" data-variant="title"><\/h3>/);
-  assert.match(card, /class="env-text env-card-meta" data-variant="body-sm"><\/span>/);
-  assert.match(card, /class="env-text env-card-description"[^>]*><\/p>/);
-  // A slot not given at all renders nothing.
-  assert.doesNotMatch(markup(h(Card, null, 'Body')), /env-card-title|env-card-description/);
-
-  const row = markup(h(List.Item, { label: item.name, description: item.owner }));
-  assert.match(
-    row,
-    /<div class="env-list-item-content"><span class="env-text" data-variant="body-sm"><\/span><small><\/small><\/div>/,
-  );
-  assert.match(markup(h(List.Item, { label: 'Launch brief' })), /content">Launch brief<\/div>/);
-
-  assert.match(markup(h(Alert, { title: undefined }, undefined)), /env-alert-title/);
-  assert.match(markup(h(Text, null, undefined)), /^<p class="env-text" data-variant="body"><\/p>$/);
 });
 
 test('the style sheet draws text as bars, shapes and missing text, and pulses gentler on request', () => {

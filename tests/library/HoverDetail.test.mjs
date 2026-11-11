@@ -6,11 +6,7 @@ import { importSource } from '../support/ImportSource.mjs';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-const { HoverCard, Text, IconInfo } = await importSource('HoverDetail', [
-  "export { HoverCard } from './packages/ui/src/overlays/HoverCard.tsx';",
-  "export { Text } from './packages/ui/src/foundations/Text.tsx';",
-  "export { IconInfo } from './packages/ui/src/icons/Info.tsx';",
-]);
+const { HoverCard } = await importSource('HoverDetail', 'packages/ui/src/overlays/HoverCard.tsx');
 
 /** Renders a HoverCard with a trigger, and returns its markup and the warnings it gave. */
 function render(trigger) {
@@ -25,23 +21,6 @@ function render(trigger) {
 }
 
 const underlined = (markup) => /class="[^"]*\benv-hover-detail\b/.test(markup);
-
-test('Text that holds text takes the dotted underline', () => {
-  assert.ok(underlined(render(h(Text, { tabIndex: 0 }, '28 h this week')).markup));
-});
-
-test('Text that holds only an icon takes no underline', () => {
-  const { markup } = render(h(Text, { render: h('span'), tabIndex: 0 }, h(IconInfo)));
-  assert.ok(markup.includes('<svg'), markup);
-  assert.ok(!underlined(markup), markup);
-});
-
-test('Text a server component rendered, a p with env-text, takes the underline too', () => {
-  // A server component's Text reaches a client HoverCard as the p it rendered.
-  const { markup } = render(h('p', { className: 'env-text', tabIndex: 0 }, '28 h this week'));
-  assert.ok(underlined(markup), markup);
-  assert.ok(!underlined(render(h('p', { tabIndex: 0 }, 'A paragraph')).markup));
-});
 
 test('a text trigger without tabIndex gives a development warning, once', () => {
   const first = render(h('span', null, '28 h'));

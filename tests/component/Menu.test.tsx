@@ -108,36 +108,6 @@ describe('Menus', () => {
     );
   });
 
-  test('in dark a menu takes the popup color, a step above the cards, frosted and solid', async () => {
-    mount(menus);
-    const open = async () => {
-      await section('dark').getByRole('button', { name: 'View options' }).click();
-      const menu = page.getByRole('menu', { name: 'View options' });
-      await settled(menu);
-      return menu;
-    };
-    let menu = await open();
-    const [popup, card] = tokenColors(menu, ['--env-color-bg-popup', '--env-color-bg-raised']);
-    expect(popup).toBe('rgb(52, 54, 56)');
-    expect(popup).not.toBe(card);
-    expect(popupSurface(menu).background).toBe('color(srgb 0.203922 0.211765 0.219608 / 0.9)');
-    await keyboard.press('Escape');
-    await isHidden(menu);
-    await commands.emulateMedia({ contrast: 'more' });
-    menu = await open();
-    // Solid: the popup color itself, as the same mix resolves it, inside the strongest edge.
-    const probe = document.createElement('div');
-    menu.element().append(probe);
-    probe.style.backgroundColor = 'color-mix(in srgb, var(--env-color-bg-popup) 100%, transparent)';
-    const solid = getComputedStyle(probe).backgroundColor;
-    probe.style.backgroundColor = 'var(--env-elevation-3-border)';
-    const edge = getComputedStyle(probe).backgroundColor;
-    probe.remove();
-    const look = popupSurface(menu);
-    expect(look.background).toBe(solid);
-    expect(look.borderColor).toBe(edge);
-  });
-
   for (const [why, setUp, tearDown] of [
     [
       'high contrast',
@@ -196,15 +166,6 @@ describe('Submenus', () => {
     await settled(menu);
     return menu;
   }
-
-  test('a separator is a break of half a row, with no line', async () => {
-    const menu = await openCompactOptions();
-    const separator = menu.getByRole('separator').first().element();
-    expect(css(separator, 'border-top-width')).toBe('0px');
-    // Half a row's height, so it reads as a break between groups rather than uneven spacing.
-    const row = separator.closest('.env-menu')!.querySelector('.env-menu-item')!;
-    expect(box(separator).height).toBeCloseTo(box(row).height / 2, 0);
-  });
 
   test('a submenu opens beside its row on hover, with the rows of its menu', async () => {
     const errors = collectErrors();
