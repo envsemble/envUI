@@ -57,8 +57,12 @@ export const elementsOf = (element: MarkupElement): MarkupElement[] => [
   ...element.children.filter(isElement).flatMap(elementsOf),
 ];
 
-/** The first element of `markup`, as parseMarkup reads it. */
-export const firstElement = (markup: string) => parseMarkup(markup)[0]!;
+/** The first element of `markup`, as parseMarkup reads it; markup without one is a mistake. */
+export function firstElement(markup: string) {
+  const [first] = parseMarkup(markup);
+  if (!first) throw new Error(`No element in ${JSON.stringify(markup)}.`);
+  return first;
+}
 
 /** The text of an element and what it holds. */
 export const textOf = (element: MarkupElement): string =>

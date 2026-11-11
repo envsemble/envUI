@@ -9,7 +9,7 @@ const { calendarHeatmapModel, heatmapKeyTarget } = await importSource(
   'packages/ui/src/data-display/internal/calendarHeatmapModel.ts',
 );
 
-const model = (data, options = {}) =>
+const model = (data: unknown, options = {}) =>
   calendarHeatmapModel({
     data,
     startDate: undefined,
@@ -19,7 +19,7 @@ const model = (data, options = {}) =>
     thresholdsKey: undefined,
     weekStart: 1,
     formatValue: String,
-    formatDate: (date) => date,
+    formatDate: (date: string) => date,
     monthLabels: Array.from({ length: 12 }, (_, index) => String(index + 1)),
     ...options,
   });
@@ -53,7 +53,7 @@ test('Page Up and Page Down go to the first and last day of the week, within the
   // From Wednesday 2026-03-04 to Wednesday 2026-03-18, in weeks from Monday: the first and the last
   // week hold only part of theirs.
   const result = model([], { startDate: '2026-03-04', endDate: '2026-03-18' });
-  const key = (active, name) =>
+  const key = (active: unknown, name: string) =>
     heatmapKeyTarget(result, active, { key: name, ctrlKey: false }, false) - result.start;
   // Friday 2026-03-13 is in a whole week, Monday 9 to Sunday 15.
   assert.equal(key(result.start + 9, 'PageUp'), 5);

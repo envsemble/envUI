@@ -24,14 +24,17 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
   // The server renders on a fixed day, so the browser's own today can lie in another month.
   const RealDate = Date;
   const serverTime = RealDate.parse('2026-03-17T10:00:00Z');
+  // A Date that is the server's moment when made without a value; called as a function, as no
+  // code here does, it would still give the real date.
   globalThis.Date = class extends RealDate {
-    constructor(...values) {
-      super(...(values.length > 0 ? values : [serverTime]));
+    constructor(...values: unknown[]) {
+      // The real Date takes what it is given, one value or a date's parts, which no one overload is.
+      super(...((values.length > 0 ? values : [serverTime]) as [number, number]));
     }
     static now() {
       return serverTime;
     }
-  };
+  } as DateConstructor;
   let markup;
   try {
     markup = renderToString(createElement(HydrationApp));

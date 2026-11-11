@@ -12,7 +12,7 @@ const styles = join(repositoryRoot, 'packages/ui/src/styles/');
 const layerOrder = ['env.reset', 'env.tokens', 'env.base', 'env.components', 'env.utilities'];
 
 /** The top-level statements of a style sheet: at-rule preludes and selectors, comments dropped. */
-function topLevel(css) {
+function topLevel(css: string) {
   const statements: { prelude: string; block: boolean }[] = [];
   let depth = 0;
   let text = '';
@@ -51,7 +51,9 @@ async function bundled() {
     outfile: join(styles, 'out.css'),
     logLevel: 'silent',
   });
-  return result.outputFiles.find((file) => file.path.endsWith('.css')).text;
+  const sheet = result.outputFiles.find((file) => file.path.endsWith('.css'));
+  assert.ok(sheet, 'esbuild writes the style sheet');
+  return sheet.text;
 }
 
 test('the shipped style sheet puts every rule in a cascade layer of env, in order', async () => {
@@ -68,7 +70,7 @@ test('the shipped style sheet puts every rule in a cascade layer of env, in orde
 });
 
 test('every style sheet is imported once and puts its rules in a layer of env', async () => {
-  const importsOf = async (file) => [
+  const importsOf = async (file: string) => [
     ...(await readFile(join(styles, file), 'utf8')).matchAll(/^@import '\.\/([\w.]+)'(.*);$/gm),
   ];
   const index = await importsOf('index.css');

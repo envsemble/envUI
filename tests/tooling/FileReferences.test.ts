@@ -45,7 +45,7 @@ const repositoryFiles = execFileSync(
 const fileNames = new Set(repositoryFiles.map((path) => path.slice(path.lastIndexOf('/') + 1)));
 
 /** Whether `name`, as a comment writes it, matches a file of the repository. */
-function exists(name) {
+function exists(name: string) {
   const path = name.replace(/^(?:\.{1,2}\/)+/, '');
   // Build output and installed packages, which the repository doesn't hold.
   if (/^(?:dist|node_modules|\.cache)\/|\/(?:dist|node_modules)\//.test(path)) return true;
@@ -54,7 +54,7 @@ function exists(name) {
 }
 
 /** The names in `file`'s comments that match no file, as `path:line: name`. */
-function danglingNames(path, text) {
+function danglingNames(path: string, text: string) {
   const comments = path.endsWith('.css') ? cssComments(text) : codeText(path, text);
   const found: string[] = [];
   for (const comment of comments) {

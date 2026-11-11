@@ -15,7 +15,10 @@ function styleSheets() {
   const sheets: { file: string; css: string }[] = [];
   // The catalogue's sheets sit beside the code they style, in the folders of apps/site/src.
   for (const directory of ['packages/ui/src/styles', 'packages/ui/src/dev/ui', 'apps/site/src'])
-    for (const name of readdirSync(join(repositoryRoot, directory), { recursive: true }))
+    for (const name of readdirSync(join(repositoryRoot, directory), {
+      recursive: true,
+      encoding: 'utf8',
+    }))
       if (name.endsWith('.css'))
         sheets.push({
           file: `${directory}/${name.replaceAll('\\', '/')}`,

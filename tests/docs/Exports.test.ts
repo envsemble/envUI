@@ -4,12 +4,13 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { changedExports } from '../../scripts/docs/GenerateExports.ts';
 
-const changeset = (bump, text) => `---\n'@envsemble/envui': ${bump}\n---\n\n${text}\n`;
+const changeset = (bump: string, text: string) =>
+  `---\n'@envsemble/envui': ${bump}\n---\n\n${text}\n`;
 const before = { '@envsemble/envui': { Button: 'function', ButtonProps: 'interface' } };
 
 test('an export that goes, or changes its kind, needs a major changeset that names it', () => {
   const after = { '@envsemble/envui': { ButtonProps: 'type' } };
-  const labels = (changesets) =>
+  const labels = (changesets: string[]) =>
     changedExports(before, after, changesets).map(({ label, recorded }) => [label, recorded]);
   assert.deepEqual(labels([]), [
     ['@envsemble/envui: Button (function, gone)', false],

@@ -11,10 +11,11 @@ import {
   devModeProblems,
 } from '../../scripts/site/SiteDevMode.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
+import type { ViteManifest } from '../../scripts/site/SiteModuleFiles.ts';
 
 /** A build as the catalogue's is: dev mode in a chunk of its own that only the dev mode page's figures load. */
 function build() {
-  const manifest = {
+  const manifest: ViteManifest = {
     'index.html': {
       file: 'assets/index-1.js',
       isEntry: true,
@@ -66,7 +67,7 @@ test('dev mode anywhere else is a problem', () => {
 
   // The page imports it with its entry.
   ({ manifest, contents } = build());
-  manifest['index.html'].imports.push(devEntry);
+  manifest['index.html']?.imports?.push(devEntry);
   assert.match(devModeProblems(manifest, contents).join('\n'), /index\.html imports/);
 
   // Its code lands in a chunk other pages load.

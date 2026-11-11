@@ -15,7 +15,7 @@ import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 const dist = join(repositoryRoot, 'packages/ui/dist');
 
 /** The bytes esbuild keeps of a dist module, by its path from dist, for an application using `use`. */
-async function bundledSize(module, use) {
+async function bundledSize(module: string, use: string) {
   const result = await build({
     stdin: {
       contents: `import * as parts from ${JSON.stringify(module)};\nexport default ${use};\n`,
@@ -45,7 +45,7 @@ test('a bundler keeps only the namespace parts an application uses', async () =>
   const namespaces = [...index.matchAll(/import \* as (\w+) from "(\.\/[^"]+)";/g)];
   assert.ok(namespaces.length >= 8, 'the entry point has the namespaces');
   for (const [, namespace, path] of namespaces) {
-    const exports = await import(new URL(path, `${pathToFileURL(dist)}/`));
+    const exports = await import(new URL(path, `${pathToFileURL(dist)}/`).href);
     const parts = Object.keys(exports).filter((name) => /^[A-Z]/.test(name));
     const whole = await bundledSize(path, `[${parts.map((part) => `parts.${part}`).join(', ')}]`);
     const sizes = await Promise.all(parts.map((part) => bundledSize(path, `parts.${part}`)));

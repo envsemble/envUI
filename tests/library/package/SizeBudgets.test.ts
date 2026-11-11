@@ -69,7 +69,7 @@ const report = JSON.parse(
   ),
 );
 
-const within = (what, size, budget) =>
+const within = (what: string, size: number, budget: number) =>
   assert.ok(
     size <= budget,
     `${what} is ${size} bytes, over its budget of ${budget}. Shrink it, or raise the budget in ` +

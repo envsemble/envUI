@@ -26,10 +26,18 @@ test('a description list is a dl of terms and their definitions', () => {
   assert.equal(list.attributes['aria-label'], 'Project facts');
   // dl > div > dt + dd, as HTML allows.
   assert.deepEqual(
-    list.children.map((item) => `${item.tag}>${item.children.map((part) => part.tag).join('+')}`),
+    list.children
+      .filter((item) => typeof item === 'object')
+      .map(
+        (item) =>
+          `${item.tag}>${elementsOf(item)
+            .slice(1)
+            .map((part) => part.tag)
+            .join('+')}`,
+      ),
     ['div>dt+dd', 'div>dt+dd', 'div>dt+dd'],
   );
-  const texts = (tag) =>
+  const texts = (tag: string) =>
     elementsOf(list)
       .filter((element) => element.tag === tag)
       .map(textOf);

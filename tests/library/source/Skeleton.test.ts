@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { importSource } from '../../support/ImportSource.ts';
-import { createElement as h } from 'react';
+import { createElement as h, type ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { repositoryRoot } from '../../../scripts/RepositoryPaths.ts';
 
@@ -21,12 +21,12 @@ const { placeholders, isPlaceholder, skeletonAttributes, skeletonListAttributes,
 const { useSkeleton } = library;
 const { Surface, Card, List } = library;
 
-const markup = (element) => renderToStaticMarkup(element);
+const markup = (element: ReactElement) => renderToStaticMarkup(element);
 
 test('placeholders() returns stand-in items with ids for keys, and nothing else', () => {
   const items = placeholders(3);
   assert.deepEqual(
-    items.map((item) => item.id),
+    items.map((item: { id: string }) => item.id),
     ['envui-placeholder-0', 'envui-placeholder-1', 'envui-placeholder-2'],
   );
   assert.deepEqual(Object.keys(items[0]), ['id']);
@@ -100,7 +100,7 @@ test('the style sheet draws text as bars, shapes and missing text, and pulses ge
     css,
     /\[data-env-skeleton\]:not\(env-none\) \{[^}]*animation: env-skeleton-pulse calc\(var\(--env-motion-duration-slow\) \* 7\.5\) var\(--env-motion-ease\)\s+infinite;/,
   );
-  const block = (start) =>
+  const block = (start: string) =>
     css.slice(css.indexOf(start), css.indexOf('\n  }\n', css.indexOf(start)));
   assert.match(
     block('@media (prefers-reduced-motion: reduce)'),

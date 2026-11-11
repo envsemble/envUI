@@ -3,14 +3,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
-import { createElement as h } from 'react';
+import { createElement as h, type ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 const { HoverCard } = await importSource('HoverDetail', 'packages/ui/src/overlays/HoverCard.tsx');
 
 /** Renders a HoverCard with a trigger, and returns its markup and the warnings it gave. */
-function render(trigger) {
-  const warnings = [];
+function render(trigger: ReactElement) {
+  const warnings: string[] = [];
   const original = console.warn;
   console.warn = (...values) => warnings.push(values.join(' '));
   try {
@@ -20,7 +20,7 @@ function render(trigger) {
   }
 }
 
-const underlined = (markup) => /class="[^"]*\benv-hover-detail\b/.test(markup);
+const underlined = (markup: string) => /class="[^"]*\benv-hover-detail\b/.test(markup);
 
 test('a text trigger without tabIndex gives a development warning, once', () => {
   const first = render(h('span', null, '28 h'));

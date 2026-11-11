@@ -25,6 +25,7 @@ test('className and style reach the root, and the textarea keeps its own class',
   assert.ok(hasClass(root, 'required-markdown-editor'));
   assert.equal(root.attributes.style, 'max-inline-size:40rem');
   const source = elementsOf(root).find((element) => element.tag === 'textarea');
+  assert.ok(source);
   assert.equal(source.attributes.name, 'requiredSource');
   assert.ok(hasClass(source, 'env-markdown-editor-input'));
   assert.ok(!hasClass(source, 'required-markdown-editor'));

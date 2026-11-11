@@ -11,7 +11,7 @@ const { Alert } = await importSource('Alert', [
   'export * from "./packages/ui/src/feedback/Alert.tsx";',
 ]);
 
-const render = (props, children = 'The message.') =>
+const render = (props: Record<string, unknown>, children = 'The message.') =>
   firstElement(renderToString(h(Alert, props, children)));
 
 test('notices use status and alert roles by tone, with an icon and a dismiss button on request', () => {
@@ -32,6 +32,7 @@ test('notices use status and alert roles by tone, with an icon and a dismiss but
     ),
   );
   const icon = elementsOf(blocked).find((element) => hasClass(element, 'env-alert-icon'));
+  assert.ok(icon);
   assert.equal(elementsOf(icon).filter((element) => element.tag === 'svg').length, 1);
   assert.ok(
     !elementsOf(render({ tone: 'info', icon: false })).some((element) => element.tag === 'svg'),
@@ -43,6 +44,7 @@ test('notices use status and alert roles by tone, with an icon and a dismiss but
   const dismiss = elementsOf(render({ tone: 'danger', onDismiss() {} })).find((element) =>
     hasClass(element, 'env-alert-dismiss'),
   );
+  assert.ok(dismiss);
   assert.equal(dismiss.tag, 'button');
   assert.equal(dismiss.attributes['aria-label'], 'Dismiss');
 });
