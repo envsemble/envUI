@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/ButtonGroup.fixture.tsx';
-import { box, css, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** The shown buttons of a group: their boxes and their corners, start-start first. */
 function buttons(group: Locator) {

@@ -1,8 +1,8 @@
 import { beforeEach, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/TableOfContents.fixture.tsx';
-import { css, keyboard, nextFrames, shown, waitOnRealTime } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { css, keyboard, nextFrames, shown, waitOnRealTime } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(async () => {
   // A window shorter than the article's sections, so each can reach the reading line.

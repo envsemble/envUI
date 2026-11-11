@@ -14,7 +14,7 @@ const waveRound = 3;
 const waveFall = 0.9 / Math.LN2 ** (1 / waveRound);
 /**
  * How thin the shape runs away from the reader's place, as a share of its fullest.
- * @internal Exported for tests/library/TableOfContents.test.mjs.
+ * @internal Exported for tests/library/source/TableOfContents.test.mjs.
  */
 export const waveThin = 0.1;
 /** How far the entry under the pointer swells the shape, as a share of the reader's place. */
@@ -52,7 +52,7 @@ function swellAround(distance: number): number {
 /**
  * How tall the bulge is in a list of so many entries, as a share of its height in a long one: in a
  * short list, shorter, so the thin stroke still runs beside some of it.
- * @internal Exported for tests/library/TableOfContents.test.mjs.
+ * @internal Exported for tests/library/source/TableOfContents.test.mjs.
  */
 export function waveReach(count: number): number {
   return Math.min(1, Math.max(0.85, (count - 1) / 6));
@@ -99,7 +99,7 @@ function fitBetween(before: number, after: number, foot: number): number {
  * 1 per entry), which merges with the bulge where they meet. Without a place, only those. Near
  * either of the shape's `ends`, fractional indexes, the bulge is drawn smaller, the same shape, and
  * a little toward the middle, so it tapers whole before the end; a swell under the pointer, shorter.
- * @internal Exported for tests/library/TableOfContents.test.mjs.
+ * @internal Exported for tests/library/source/TableOfContents.test.mjs.
  */
 export function swellAt(
   index: number,

@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/PortalContainer.fixture.tsx';
-import { collectErrors, nextFrames, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { collectErrors, nextFrames, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 // A file of its own: the frame keeps a module it has loaded, so this test needs one that hasn't
 // loaded the notices' module yet.

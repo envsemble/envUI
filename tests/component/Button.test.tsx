@@ -5,8 +5,8 @@ import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as buttonCounts from '../fixture/ButtonCounts.fixture.tsx';
 import * as colors from '../fixture/Colors.fixture.tsx';
 import * as primitives from '../fixture/Primitives.fixture.tsx';
-import { box, collectErrors, css, keyboard, mouse } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, collectErrors, css, keyboard, mouse } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 const text = (testId: string) => () => page.getByTestId(testId).element().textContent;
 

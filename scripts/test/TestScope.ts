@@ -91,8 +91,7 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
     paths: [
       'packages/ui/src/**/*.{ts,tsx}',
       'apps/site/src/**/*.{ts,tsx}',
-      'tests/fixture/**/*.{ts,tsx}',
-      'tests/types/**/*.{ts,tsx}',
+      'tests/**/*.{ts,tsx}',
       'scripts/**/*.ts',
       '**/tsconfig.json',
     ],
@@ -261,19 +260,21 @@ export function specsFor(
     // What every component test runs on: its configuration, setup and core helpers, and the
     // mount it shares with the fixture page.
     else if (
-      /^tests\/component\/(?:vitest\.config|Setup|Browser|Commands|Mount)\.tsx?$/.test(path) ||
+      /^tests\/component\/(?:vitest\.config|support\/(?:Setup|Browser|Commands|Mount))\.tsx?$/.test(
+        path,
+      ) ||
       path === 'tests/fixture/FixtureMount.tsx'
     ) {
       for (const [name, file] of specPaths(root))
         if (isComponentTest(file)) found = add(name, `runs on ${path}`) || found;
     } else if (
       /^tests\/browser\/helpers\/[^/]+\.ts$/.test(path) ||
-      /^tests\/component\/[^/]+\.tsx?$/.test(path)
+      /^tests\/component\/support\/[^/]+\.tsx?$/.test(path)
     ) {
       // A helper some specs share: those that import it.
       const helper = posix.basename(path);
       const specifiers = path.startsWith('tests/component/')
-        ? [`./${helper}`, `./${baseName(path)}`]
+        ? [`./support/${helper}`, `./support/${baseName(path)}`]
         : [`../helpers/${baseName(path)}`];
       const users = [...written].filter((spec) =>
         importsOf(read(root, specFile(spec, root))).some(({ specifier }) =>
@@ -454,20 +455,20 @@ function walk(root: string, directory: string, pattern: RegExp): string[] {
 
 const read = (root: string, path: string) => readFileSync(resolve(root, path), 'utf8');
 
+/** The folder of the unit tests that read the library build: packages/ui/dist, or a packed tarball. */
+const builtUnitTests = 'tests/library/package/';
+
 /**
- * The unit test files, split into those that read the library build (packages/ui/dist, or a packed
- * tarball) and the rest, which run in seconds without it.
+ * The unit test files, split into those that read the library build, in builtUnitTests, and the
+ * rest, which run in seconds without it.
  */
 export function unitTestFiles(root = repositoryRoot) {
   const files = [
-    ...walk(root, 'tests', /\.test\.mjs$/).filter((file) => /^tests\/[^/]+\/[^/]+$/.test(file)),
+    ...walk(root, 'tests', /\.test\.mjs$/),
     ...walk(root, 'packages', /\.test\.mjs$/).filter((file) =>
       /^packages\/[^/]+\/test\/[^/]+$/.test(file),
     ),
   ].sort();
-  // A test reads the build through its path or through the packed consumer, which packs it.
-  const built = files.filter((file) =>
-    /packages\/ui\/dist|support\/PackedConsumer\.mjs/.test(read(root, file)),
-  );
+  const built = files.filter((file) => file.startsWith(builtUnitTests));
   return { built, fast: files.filter((file) => !built.includes(file)) };
 }

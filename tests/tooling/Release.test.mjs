@@ -5,13 +5,11 @@ import { mkdtempSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { isPublished, publish, releaseState } from '../../scripts/release/Publish.ts';
+import { libraryPackageFile, repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-const script = fileURLToPath(new URL('../../scripts/release/ValidateRelease.ts', import.meta.url));
-const { version } = JSON.parse(
-  await readFile(new URL('../../packages/ui/package.json', import.meta.url), 'utf8'),
-);
+const script = join(repositoryRoot, 'scripts/release/ValidateRelease.ts');
+const { version } = JSON.parse(await readFile(libraryPackageFile, 'utf8'));
 const validate = (...args) =>
   execFileSync(process.execPath, [script, ...args], {
     encoding: 'utf8',

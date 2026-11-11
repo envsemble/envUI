@@ -48,7 +48,7 @@ export interface PartsFile {
  * Indexes parts.json: `components` by export name and `shared` groups by name, each with its root
  * class, its parts (`{ class, description }`) and its states (`{ attribute, values, parts }`).
  * Anything else is refused, so a changed format shows at once rather than as missing descriptions.
- * @internal Exported for tests/library/DevMode.test.mjs.
+ * @internal Exported for tests/library/source/DevMode.test.mjs.
  */
 export function indexParts(data: PartsFile): PartsIndex {
   if (typeof data !== 'object' || data === null || typeof data.components !== 'object')

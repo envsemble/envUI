@@ -5,7 +5,7 @@ export const mount = 'standalone';
 
 /**
  * Time pickers in a form, one controlled on a 12-hour clock and one read-only. Their clocks in other
- * locales, and their states, are tests/library/TimePicker.test.mjs's.
+ * locales, and their states, are tests/library/source/TimePicker.test.mjs's.
  */
 export default function TimePickerFixture() {
   const [submitted, setSubmitted] = useState('');

@@ -19,10 +19,13 @@ test('a site change skips the library browser tests, and a library change runs t
 });
 
 test('guides, unit tests and lint configuration run no browser job', () => {
-  assert.deepEqual(jobs('AGENTS.md', 'contributing/pages.md', 'tests/library/Corners.test.mjs'), {
-    library: false,
-    site: false,
-  });
+  assert.deepEqual(
+    jobs('AGENTS.md', 'contributing/pages.md', 'tests/library/rules/Corners.test.mjs'),
+    {
+      library: false,
+      site: false,
+    },
+  );
   assert.deepEqual(jobs('packages/eslint-plugin/src/index.js', 'eslint.config.mjs'), {
     library: false,
     site: false,

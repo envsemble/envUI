@@ -2,8 +2,8 @@ import axe from 'axe-core';
 import { expect, test } from 'vitest';
 import { page, server, type Locator } from 'vitest/browser';
 import { RichTextEditingFixture } from '../fixture/RichTextEditor.fixture.tsx';
-import { addStyle, box, collectErrors, css, keyboard, mouse, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { addStyle, box, collectErrors, css, keyboard, mouse, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** The editing fixture, with only the sections asked for, as `?section=` gives them. */
 const open = (...sections: string[]) =>

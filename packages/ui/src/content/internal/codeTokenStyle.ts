@@ -7,7 +7,7 @@ import type { CodeToken } from './codeHighlighting.js';
  * so the markup is the same in either theme: also a page rendered on the server, before it
  * hydrates, when only the root knows the reader's theme. A token without high-contrast styles
  * keeps its standard color at high contrast. Its font style is the light theme's, as the code
- * themes style a token alike (tests/library/CodeHighlighting.test.mjs).
+ * themes style a token alike (tests/library/package/CodeHighlighting.test.mjs).
  */
 export function tokenStyle({ light, dark, lightHigh, darkHigh }: CodeToken): CSSProperties {
   const { fontStyle = 0 } = light;

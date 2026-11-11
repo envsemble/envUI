@@ -1,8 +1,8 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Graphic.fixture.tsx';
-import { box, css } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(async () => {
   mount(fixture);

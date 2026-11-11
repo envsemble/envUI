@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/ContainerSize.fixture.tsx';
-import { mount } from './Mount.tsx';
+import { mount } from './support/Mount.tsx';
 
 const text = (testId: string) => () => page.getByTestId(testId).element().textContent;
 

@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/DescriptionList.fixture.tsx';
-import { box, css } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /**
  * Mounts the fixture once its text font has loaded: the values' column follows the longest label's

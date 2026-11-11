@@ -81,9 +81,8 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
   // configuration of the static checks.
   {
     paths: [
-      'tests/*/*.test.mjs',
+      'tests/{library,site,docs,tooling,support,types,lint}/**',
       'scripts/measure/**',
-      'tests/{support,types,lint,rsc,docs,composition,graphic}/**',
       'tests/{accessibility,visual}/**',
       'eslint.config.mjs',
       'stylelint.config.mjs',

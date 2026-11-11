@@ -14,7 +14,7 @@
         "scripts/build/GenerateFavicons.ts",
         "scripts/test/CheckContents.ts",
         "scripts/test/RecordDurations.ts",
-        "tests/*/*.test.mjs",
+        "tests/**/*.test.mjs",
         "tests/browser/{library,site}/*.spec.ts",
         "tests/accessibility/*.spec.ts",
         "tests/component/*.test.tsx",
@@ -24,7 +24,7 @@
         "tests/fixture/vite.config.ts",
         "tests/fixture/Hydration.fixture.tsx",
         "tests/types/*.tsx",
-        "tests/rsc/*.mjs",
+        "tests/library/package/rsc/*.mjs",
       ],
       "project": ["scripts/**/*.{ts,js}", "tests/**/*.{ts,tsx,mjs}"],
       // Off: it takes every module in a folder named test, as scripts/test/, for a test file whose

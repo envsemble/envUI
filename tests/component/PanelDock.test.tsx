@@ -14,8 +14,8 @@ import {
   nextFrames,
   passTime,
   stopTimers,
-} from './Browser.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** A length in pixels as a number of rem, to a hundredth, as the dock reports heights. */
 const inRem = (pixels: number) => Math.round((pixels / 16) * 100) / 100;

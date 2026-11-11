@@ -1,8 +1,8 @@
 import { beforeEach, expect, onTestFinished, test, vi } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/CalendarHeatmap.fixture.tsx';
-import { box, css, keyboard, mouse, nextFrames, passTime, stopTimers } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css, keyboard, mouse, nextFrames, passTime, stopTimers } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   mount(fixture);

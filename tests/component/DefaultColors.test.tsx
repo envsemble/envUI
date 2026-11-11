@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
 import { cdp, commands } from 'vitest/browser';
 import * as fixture from '../fixture/DefaultColors.fixture.tsx';
-import { addStyle } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { addStyle } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /**
  * envUI's own colors don't change when the color properties are added: with none set, every

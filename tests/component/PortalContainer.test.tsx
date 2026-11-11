@@ -10,8 +10,8 @@ import {
   shown,
   stopTimers,
   waitOnRealTime,
-} from './Browser.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** Whether an element's box lies inside the preview region's. */
 function insidePreview(selector: string, preview = 'preview') {

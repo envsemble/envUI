@@ -78,8 +78,10 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 | Contrast, appearance, accessibility                                                            | Their gates                           | `npm run test:contrast`, `test:visual`, `test:a11y`                                  |
 
 - Unit tests go in `tests/library/`, `tests/site/`, `tests/docs/` (the documentation and its generators), `tests/tooling/` (the checks and the release) or `tests/lint/` (cases both lint packages' tests read; each package's own tests are in its `test/`).
-- A component test mounts its fixture straight into the page (`mount`, `tests/component/Mount.tsx`) and drives it with the real mouse, keys and finger (`tests/component/Browser.ts`); it never opens a page of the site or the fixture.
-- Run one file as you work: `node --test tests/library/<Name>.test.mjs`, or `npm run test:component -- tests/component/<Name>.test.tsx`.
+- The library's are in three folders: `source/` for its modules as written (server markup and logic), `rules/` for the rules the repository holds its source to, and `package/` for the built package, the only unit tests that need `npm run build`.
+- Helpers a folder's tests share are in its `support/`, such as `tests/support/` and `tests/component/support/`; data a test reads sits beside it.
+- A component test mounts its fixture straight into the page (`mount`, `tests/component/support/Mount.tsx`) and drives it with the real mouse, keys and finger (`tests/component/support/Browser.ts`); it never opens a page of the site or the fixture.
+- Run one file as you work: `node --test tests/library/source/<Name>.test.mjs`, or `npm run test:component -- tests/component/<Name>.test.tsx`.
 
 ### When to add a test, and which
 
@@ -89,7 +91,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 - Test a behaviour once, in its component's test, and check independent states on one mount.
 - Prefer a computed-style or DOM assertion to a screenshot.
 - Tag a component test `engines` (`{ tags: ['engines'] }`) when it depends on the engine (scrolling, focus, pointer and input methods, native forms, platform keys); Firefox and WebKit run only those.
-- No fixed sleeps: wait for a condition, such as `expect.poll` or the element's animations finishing. Where a test proves that a component waits for a delay, or that nothing happens within one, stop the page's timers and move them on (`stopTimers` and `passTime` in `tests/component/Browser.ts`).
+- No fixed sleeps: wait for a condition, such as `expect.poll` or the element's animations finishing. Where a test proves that a component waits for a delay, or that nothing happens within one, stop the page's timers and move them on (`stopTimers` and `passTime` in `tests/component/support/Browser.ts`).
 
 ### When to delete a test
 

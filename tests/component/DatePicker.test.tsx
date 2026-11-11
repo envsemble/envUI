@@ -11,8 +11,8 @@ import {
   mouse,
   nextFrames,
   shown,
-} from './Browser.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** Today is fixed, so the calendar marks the same day in every run. */
 const today = new Date('2026-10-14T10:00:00');

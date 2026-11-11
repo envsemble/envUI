@@ -264,7 +264,7 @@ test("a spec is in the library's or the site's folder, or a component test", () 
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
   assert.deepEqual(specs('tests/component/Tree.test.tsx'), ['Tree']);
-  assert.deepEqual(specs('tests/component/Chevron.ts'), ['Select']);
+  assert.deepEqual(specs('tests/component/support/Chevron.ts'), ['Select']);
   assert.deepEqual(specs('tests/browser/helpers/HostedSite.ts'), ['SiteFailures']);
 });
 
@@ -318,7 +318,7 @@ test('servers follow the specs that need them', () => {
 test('unit tests that read the library build are kept apart', () => {
   const { built, fast: quick } = unitTestFiles();
   for (const part of ['Contents', 'Resolution', 'Rendering'])
-    assert.ok(built.includes(`tests/library/Package${part}.test.mjs`), part);
+    assert.ok(built.includes(`tests/library/package/Package${part}.test.mjs`), part);
   assert.ok(quick.includes('tests/tooling/TestScope.test.mjs'));
   assert.ok(!quick.some((file) => built.includes(file)));
 });

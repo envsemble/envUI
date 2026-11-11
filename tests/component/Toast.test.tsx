@@ -1,8 +1,16 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/Toast.fixture.tsx';
-import { addStyle, animationsDone, box, css, keyboard, mouse, nextFrames } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import {
+  addStyle,
+  animationsDone,
+  box,
+  css,
+  keyboard,
+  mouse,
+  nextFrames,
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   mount(fixture);

@@ -3,8 +3,8 @@ import { commands, page, server, type Locator } from 'vitest/browser';
 import * as scaffoldFixture from '../fixture/Scaffold.fixture.tsx';
 import * as scaffoldPanes from '../fixture/ScaffoldPanes.fixture.tsx';
 import * as scrollKeys from '../fixture/ScaffoldScrollKeys.fixture.tsx';
-import { box, css, keyboard, nextFrames, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css, keyboard, nextFrames, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 const scaffold = (search = '') => mount(scaffoldFixture, { search });
 

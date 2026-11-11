@@ -2,8 +2,8 @@ import { expect, test } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as layers from '../fixture/CascadeLayers.fixture.tsx';
-import { addStyle, animationsDone, box, css, mouse, nextFrames } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { addStyle, animationsDone, box, css, mouse, nextFrames } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /**
  * The boundary between an application's CSS and envUI's. envUI's style sheet puts every rule in a

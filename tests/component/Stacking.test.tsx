@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Stacking.fixture.tsx';
-import { box, keyboard, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, keyboard, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** Whether nothing between an element and the root makes a stacking context of its own. */
 function inRootContext(node: Element) {

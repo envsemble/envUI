@@ -46,7 +46,7 @@ const dark = '#e8eaee';
  * The colors of code around its tokens, for Shiki's code themes: github-light-default and
  * github-dark-dimmed, and github-light-high-contrast and github-dark-high-contrast under high
  * contrast. They are fixed here, so that inline code and the frames of blocks and diffs need no
- * theme loaded; tests/library/CodeHighlighting.test.mjs checks them against the installed themes and the
+ * theme loaded; tests/library/package/CodeHighlighting.test.mjs checks them against the installed themes and the
  * color tokens.
  */
 const colors: Record<ColorScheme, Record<CodeContrast, CodeColors>> = {

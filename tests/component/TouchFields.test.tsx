@@ -7,8 +7,8 @@ import * as composer from '../fixture/Composer.fixture.tsx';
 import * as forms from '../fixture/Forms.fixture.tsx';
 import * as markdownEditor from '../fixture/MarkdownEditor.fixture.tsx';
 import { RichTextEditingFixture } from '../fixture/RichTextEditor.fixture.tsx';
-import { css } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { css } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 const richText = { default: RichTextEditingFixture };
 

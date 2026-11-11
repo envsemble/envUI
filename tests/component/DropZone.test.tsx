@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, expect, test } from 'vitest';
 import { page, userEvent, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/DropZone.fixture.tsx';
-import { collectErrors, keyboard, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { collectErrors, keyboard, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 let errors: string[] = [];
 /** The file inputs whose picker a press opened, in order: the test stands in for the picker. */

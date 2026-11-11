@@ -30,6 +30,8 @@
  * A pair is named `<fg> on <bg> over <next layer>`, which is also how Exceptions.json refers to it.
  */
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 export type ContrastKind = 'text' | 'non-text' | 'focus' | 'difference' | 'distinct';
 
@@ -1377,7 +1379,7 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * color function in it, such as the color-mix() of a border shorthand.
  */
 function markedColor(file: string, name: string): string {
-  const css = readFileSync(new URL(`../../${file}`, import.meta.url), 'utf8');
+  const css = readFileSync(join(repositoryRoot, file), 'utf8');
   const marker = css.indexOf(`/* contrast: ${name} */`);
   if (marker === -1) throw new Error(`${file} marks no declaration /* contrast: ${name} */.`);
   const declaration = css.slice(marker).match(/\*\/\s*[\w-]+\s*:\s*([^;]+);/);

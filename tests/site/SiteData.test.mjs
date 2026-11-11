@@ -16,6 +16,12 @@ import {
   readReleaseNotes,
   releaseNotesProblems,
 } from '../../scripts/site/ReleaseNotes.ts';
+import { join } from 'node:path';
+import {
+  libraryChangelogFile,
+  repositoryRoot,
+  tokensDataFile,
+} from '../../scripts/RepositoryPaths.ts';
 
 test('the release notes hold: newest first, five highlights at most, links to sections of the Docs', () => {
   const releases = readReleaseNotes();
@@ -53,10 +59,7 @@ test('the release notes checks find what is wrong', () => {
 });
 
 test("the changelog's outline heads each release as the changelog does, over the shape of its text", () => {
-  const changelog = readFileSync(
-    new URL('../../packages/ui/CHANGELOG.md', import.meta.url),
-    'utf8',
-  );
+  const changelog = readFileSync(libraryChangelogFile, 'utf8');
   const releases = readChangelogOutline();
   // The page shows the changelog a level lower, so each release heading is one of the contents'.
   assert.deepEqual(
@@ -79,14 +82,12 @@ test("the changelog's outline heads each release as the changelog does, over the
 });
 
 test('the token outline lists every token once, in its group, and each example its lines', () => {
-  const { tokens } = JSON.parse(
-    readFileSync(new URL('../../packages/ui/src/generated/tokens.json', import.meta.url), 'utf8'),
-  );
+  const { tokens } = JSON.parse(readFileSync(tokensDataFile, 'utf8'));
   const rows = readTokenOutline().flatMap((group) => group.rows.map(([name]) => name));
   assert.deepEqual(rows.toSorted(), tokens.map((token) => token.cssVariable).toSorted());
   const lines = readExampleLines();
   const source = readFileSync(
-    new URL('../../apps/site/src/examples/loading/CardsLoading.tsx', import.meta.url),
+    join(repositoryRoot, 'apps/site/src/examples/loading/CardsLoading.tsx'),
     'utf8',
   );
   assert.equal(lines['loading/CardsLoading'], source.trimEnd().split('\n').length);

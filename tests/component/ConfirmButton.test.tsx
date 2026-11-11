@@ -9,8 +9,8 @@ import {
   passTime,
   stopTimers,
   waitOnRealTime,
-} from './Browser.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 const text = (testId: string) => () => page.getByTestId(testId).element().textContent;
 const label = (locator: Locator) => locator.element().textContent;

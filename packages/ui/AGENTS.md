@@ -4,12 +4,12 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 
 ## Files
 
-- Put a component in the family folder of its page's category under `packages/ui/src`, such as Overlays in `overlays/`; `tests/library/ComponentFolders.test.mjs` maps them.
+- Put a component in the family folder of its page's category under `packages/ui/src`, such as Overlays in `overlays/`; `tests/library/rules/ComponentFolders.test.mjs` maps them.
 - Name its file after its main export: PascalCase for a component, a context or a namespace; `useX` for a hook; camelCase for other modules; entry points lowercase.
 - Keep a namespace's parts in its file, or, when they are many, in a folder of its own whose entry is the namespace's file and holds the parts' names, as `actions/menu/Menu.tsx` does.
 - Put code one family uses in its `internal/` folder, and code two families use in the top-level `internal/`, grouped by concern, such as `internal/field/`; only a helper most families use, such as `flag.ts`, or a module whose concern no other shares, such as `useCopy.ts`, stays at its top. ESLint rejects an import of another family's `internal/`, and of a folder `privateFolders` in `eslint.config.mjs` keeps to the modules it names.
 - A component with many private modules may take its own folder in its family, with its own `internal/`, such as `feedback/toast/` and `forms/color/`.
-- `tests/composition/Rules.json` gives each module its layer (imports go down: internal, foundations, base, composites, shell) and each class its owner, and `tests/library/Composition.test.mjs` holds the library to it. A folder's layer is under `layers.directories`; a module whose layer isn't its folder's is under `layers.modules` with its reason.
+- `tests/library/rules/composition/Rules.json` gives each module its layer (imports go down: internal, foundations, base, composites, shell) and each class its owner, and `tests/library/rules/Composition.test.mjs` holds the library to it. A folder's layer is under `layers.directories`; a module whose layer isn't its folder's is under `layers.modules` with its reason.
 
 ## Entry points
 
@@ -39,7 +39,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 ## Changing a component touches
 
 - Its module in its family and its style sheet, `packages/ui/src/styles/<Name>.css`; a new component also its entry point's export.
-- `tests/composition/Rules.json` for a new component (`base` if it renders no other component, else `composites`, under `layers.modules`), a new folder, or classes and style sheets it shares with another component (`classes`).
+- `tests/library/rules/composition/Rules.json` for a new component (`base` if it renders no other component, else `composites`, under `layers.modules`), a new folder, or classes and style sheets it shares with another component (`classes`).
 - `packages/ui/src/partDescriptions.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
 - Its strings in `packages/ui/src/foundations/messages/`.
 - Its page, `docs/components/<name>.md` or `docs/patterns/`, with its examples in `apps/site/src/examples/<page>/` and its gallery tile in `apps/site/src/tiles/`.
@@ -73,15 +73,15 @@ Never edit these; change their source and run their command.
 
 - Each component's CSS is a file of `packages/ui/src/styles` in `@layer env.components`.
 - Keep `packages/ui/src/styles` one flat folder, apart from the modules: `package.json`'s `#styles/*` import, `scripts/build/BuildLibrary.ts`'s rewrite of `../styles/X.css` to `#styles/X.css` and the ordered `src/styles/index.css` rely on it.
-- Its module imports `../styles/Base.css`, then the style sheets of what it builds on, then its own (`tests/library/StyleImports.test.mjs`).
+- Its module imports `../styles/Base.css`, then the style sheets of what it builds on, then its own (`tests/library/rules/StyleImports.test.mjs`).
 - No specificity tricks to stay overridable, and nothing `!important`.
 - Colors, `z-index` and font weights come from tokens.
 - Lengths that follow the text are rem; px only for hairlines; em only for typography that follows the element's own size (`npm run lint:css`).
-- No drop shadows but Avatar's, the frosted popups' and a segmented control's thumb (`tests/library/NoShadows.test.mjs`).
+- No drop shadows but Avatar's, the frosted popups' and a segmented control's thumb (`tests/library/rules/NoShadows.test.mjs`).
 - Regions part by space and fill; hairlines only separate the items of one list.
 - Keep `:has()` rules from restyling the whole page: Chromium works out the style of every element a `:has()` rule may match again whenever something its argument names changes on any element. Inside `:has()`, match a part's own attribute rather than `hidden`, which changes all over a page, as the tabs' indicator and the segmented control's thumb do with `data-placed`; and give a rule with `:has()` a subject by its part's class, never a pseudo-element or any element (`> *`, `> :first-child`): set a custom property on the part for its pseudo-element to read instead, as Checkbox's halo does, and name the children as `:where(...)`.
-- Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/library/StableHover.test.mjs`).
-- A pill is `var(--env-radius-full)`, so a tall element becomes a rounded rectangle; `50%` only on parts that are always square (`tests/library/Corners.test.mjs`).
+- Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/library/rules/StableHover.test.mjs`).
+- A pill is `var(--env-radius-full)`, so a tall element becomes a rounded rectangle; `50%` only on parts that are always square (`tests/library/rules/Corners.test.mjs`).
 - Motion uses the motion tokens, and movement only under `prefers-reduced-motion: no-preference`.
 - Under `forced-colors: active`, a state a fill or shadow carries takes system colors (`tests/component/ForcedColors.test.tsx`).
 
@@ -99,7 +99,7 @@ Never edit these; change their source and run their command.
 ## Dev mode
 
 - `@envsemble/envui/dev`, entry point `packages/ui/src/dev.ts`, gives agents `envui.layout`, a readout of the page's layout and its problems, and people a 3D view with an inspector; [docs/dev-mode.md](../../docs/dev-mode.md) documents it.
-- No other entry point imports it (`tests/library/DevMode.test.mjs`), so a production build holds none of it.
+- No other entry point imports it (`tests/library/source/DevMode.test.mjs`), so a production build holds none of it.
 - Its code is in `packages/ui/src/dev/`: measuring the page (`measure.ts`, with what nodes hold inside in `inner.ts`, the attributes and labels of elements in `elements.ts`, the open overlays in `overlays.ts`, the container queries in `queries.ts` and the part names in `parts.ts`), the data (`model.ts`), the readout and its checks as plain functions of that data (`readout.ts`, its lengths in `units.ts`), and the API (`api.ts`, with the skeleton shift check in `skeletonShift.ts`).
 - The view is in `packages/ui/src/dev/ui/`, with the tokens the inspector shows from `usedTokens.ts`, and its own style sheet, `DevMode.css`, which `install.tsx` imports as text and adds to the page, outside `packages/ui/src/styles`.
-- Give a readout check a unit test on data in `tests/library/DevMode.test.mjs`; test the view and `envui.layout` in the browser in `tests/component/DevMode.test.tsx`.
+- Give a readout check a unit test on data in `tests/library/source/DevMode.test.mjs`; test the view and `envui.layout` in the browser in `tests/component/DevMode.test.tsx`.

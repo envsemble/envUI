@@ -1,4 +1,4 @@
-// The main entry point, one heading per family folder (tests/library/ComponentFolders.test.mjs maps
+// The main entry point, one heading per family folder (tests/library/rules/ComponentFolders.test.mjs maps
 // each page category to its folder).
 
 // foundations/: theme, text, icons, window classes, the provider and the skeleton every family takes.

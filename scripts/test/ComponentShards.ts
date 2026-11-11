@@ -1,6 +1,6 @@
 // How CI splits the component test files into shards: by the time each takes, as
 // tests/component/Durations.json records it (scripts/test/RecordDurations.ts writes it), rather
-// than by their count. Vitest's sequencer applies it (tests/component/ShardByDuration.ts).
+// than by their count. Vitest's sequencer applies it (tests/component/support/ShardByDuration.ts).
 import { readFileSync } from 'node:fs';
 import { componentDurationsFile } from '../RepositoryPaths.ts';
 import { median } from '../measure/Median.ts';

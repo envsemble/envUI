@@ -1,7 +1,7 @@
 import { afterEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/CodeBlock.fixture.tsx';
-import { mount } from './Mount.tsx';
+import { mount } from './support/Mount.tsx';
 
 /**
  * Records what the page writes to the clipboard. available: the asynchronous Clipboard API works;

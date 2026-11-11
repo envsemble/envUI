@@ -1,8 +1,8 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Direction.fixture.tsx';
-import { keyboard } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { keyboard } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 // The direction check: components whose keyboard or placement follows the text direction read it
 // from EnvUIProvider's dir, or else from the dir at their element. tests/fixture/Direction.fixture.tsx

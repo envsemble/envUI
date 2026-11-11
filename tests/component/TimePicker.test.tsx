@@ -1,8 +1,15 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/TimePicker.fixture.tsx';
-import { box, collectErrors, keyboard, mouse, nextFrames, waitOnRealTime } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import {
+  box,
+  collectErrors,
+  keyboard,
+  mouse,
+  nextFrames,
+  waitOnRealTime,
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   // The clock is fixed, so Now and the time the wheels start at without a value stay the same;

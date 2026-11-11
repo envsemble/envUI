@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/MarkdownEditor.fixture.tsx';
-import { mount } from './Mount.tsx';
+import { mount } from './support/Mount.tsx';
 
 /** A highlighter that records what it highlights, standing in for the one loaded on demand. */
 const recordingHighlighter = `window.delayedHighlighting = { sources: [], loaded: true };

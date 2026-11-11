@@ -14,12 +14,12 @@
 // reuses serves the code as it is.
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { build, preview, type InlineConfig } from 'vite';
 import { prerenderSite } from '../site/PrerenderSite.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
+const root = repositoryRoot;
 const { values } = parseArgs({
   options: { app: { type: 'string' }, port: { type: 'string' } },
 });

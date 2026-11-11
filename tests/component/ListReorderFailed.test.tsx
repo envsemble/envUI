@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/List.fixture.tsx';
-import { keyboard, nextFrames } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { keyboard, nextFrames } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 // A file of its own: the frame keeps a module once it has loaded it, so the module must not have
 // loaded before this test makes it fail.
