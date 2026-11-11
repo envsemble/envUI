@@ -1,15 +1,18 @@
-// The catalogue's text: option tables read as legends, and text with no structure or too long.
+// The catalogue's text: option tables read as legends, text with no structure or too long, and
+// headings inside code fences.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
 import { marked } from 'marked';
 import {
+  lastSubsection,
   longParagraphs,
   optionPieces,
   optionTable,
   optionTableProblems,
   paragraphLength,
   catalogueStructure,
+  subsections,
 } from '../../scripts/docs/model/CatalogueContent.ts';
 import { pageFixture, switchBody, switchFrontmatter } from './DocumentationFixtures.mjs';
 
@@ -172,4 +175,27 @@ ${long}
     [`Rules: ${long.length}`],
   );
   assert.ok(long.length > paragraphLength);
+});
+
+test("a heading in a fence's code is no heading, whichever marker opens it and whatever shorter fence it holds", () => {
+  const fenced = [
+    '````md',
+    '```tsx',
+    '```',
+    '### In the code',
+    '~~~',
+    '### Still in the code',
+    '````',
+  ].join('\n');
+  const markdown = `## Rules\n\nThe text.\n\n### Last\n\nText beside a figure.\n\n${fenced}\n`;
+  assert.deepEqual(
+    subsections(markdown).map((chunk) => chunk.split('\n')[0]),
+    ['', '## Rules', '### Last'],
+  );
+  // The last subsection holds a fence, so no figure sits beside it.
+  assert.equal(lastSubsection(markdown), undefined);
+  assert.deepEqual(
+    lastSubsection(`## Rules\n\n${fenced}\n\n### Last\n\nText.`)?.[1],
+    '### Last\n\nText.',
+  );
 });
