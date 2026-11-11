@@ -4,7 +4,7 @@
  * the dropped, renamed and relaxed pairs. Against it the gate fails on a pair that disappears
  * unexplained, and on one that is held to less than before, by a weaker kind, a switch between a
  * ΔEOK distance and a ratio, a lower minimum or a contrast it is no longer measured in, unless a new
- * entry of `relaxed` in Pairs.ts lists that change with its rationale. A renamed pair is held to
+ * entry of `relaxed` in PairHistory.ts lists that change with its rationale. A renamed pair is held to
  * what its old name recorded, as well as to its own record when it takes a name already recorded,
  * and through a chain of renames. Each `relaxed` entry approves one loosening: once recorded it is
  * spent, so loosening the pair the same way again later needs another entry. Entries of `dropped`,
@@ -151,7 +151,7 @@ export function checkRenameTargets(
       const onward = renamed.find((other) => other.from === target);
       if (!onward || seen.has(target)) {
         problems.push(
-          `${entry.from} is listed as renamed to ${entry.to}, which tests/contrast/Pairs.ts doesn't declare, drop, or rename onward to a declared or dropped pair.`,
+          `${entry.from} is listed as renamed to ${entry.to}, which tests/contrast/Pairs.ts doesn't declare and tests/contrast/PairHistory.ts doesn't drop or rename onward to a declared or dropped pair.`,
         );
         break;
       }
@@ -226,7 +226,7 @@ export function checkSnapshot(input: SnapshotInput): {
       !current.renamed.includes(entry.pair)
     )
       problems.push(
-        `relaxed in tests/contrast/Pairs.ts lists ${entry.pair}, which is neither declared, dropped nor renamed.`,
+        `relaxed in tests/contrast/PairHistory.ts lists ${entry.pair}, which is neither declared, dropped nor renamed.`,
       );
   }
 
@@ -308,7 +308,7 @@ function compare(
   for (const name of [...Object.keys(recorded.pairs), ...(recorded.unrecorded ?? [])])
     if (!declared.has(name) && !accounted.has(name))
       problems.push(
-        `${name} was declared (${source}) and is gone from tests/contrast/Pairs.ts: list it in dropped or renamed there, with the reason.`,
+        `${name} was declared (${source}) and is gone from tests/contrast/Pairs.ts: list it in dropped or renamed in tests/contrast/PairHistory.ts, with the reason.`,
       );
 
   // No pair is held to less than it was, under its name or the one it was renamed from, unless a
@@ -336,7 +336,7 @@ function compare(
       const renamedFrom = from === name ? '' : `, renamed from ${from},`;
       const recordedFor = from === name ? '' : ` for ${from}`;
       problems.push(
-        `${name}${renamedFrom} is held to less than ${source} records${recordedFor}: ${ways.join('; ')}. Restore it, or, for a deliberate relaxation, add an entry to relaxed in tests/contrast/Pairs.ts with its rationale: ${JSON.stringify({ pair: name, ...requirement, rationale: '…' })}`,
+        `${name}${renamedFrom} is held to less than ${source} records${recordedFor}: ${ways.join('; ')}. Restore it, or, for a deliberate relaxation, add an entry to relaxed in tests/contrast/PairHistory.ts with its rationale: ${JSON.stringify({ pair: name, ...requirement, rationale: '…' })}`,
       );
     }
   }
@@ -345,18 +345,18 @@ function compare(
   for (const name of recorded.dropped)
     if (!current.dropped.includes(name) && !declared.has(name))
       problems.push(
-        `${name} is recorded as dropped (${source}) but no longer listed in dropped in tests/contrast/Pairs.ts: keep its entry and reason.`,
+        `${name} is recorded as dropped (${source}) but no longer listed in dropped in tests/contrast/PairHistory.ts: keep its entry and reason.`,
       );
   for (const name of recorded.renamed)
     if (!current.renamed.includes(name) && !declared.has(name))
       problems.push(
-        `${name} is recorded as renamed (${source}) but no longer listed in renamed in tests/contrast/Pairs.ts: keep its entry and reason.`,
+        `${name} is recorded as renamed (${source}) but no longer listed in renamed in tests/contrast/PairHistory.ts: keep its entry and reason.`,
       );
   for (const [key, count] of countRelaxations(recorded.relaxed))
     if ((countRelaxations(current.relaxed).get(key) ?? 0) < count) {
       const entry = recorded.relaxed.find((other) => relaxationKey(other) === key)!;
       problems.push(
-        `The relaxation of ${entry.pair} to ${describe(entry)} is recorded${count > 1 ? ` ${count} times` : ''} (${source}) but no longer listed${count > 1 ? ' as often' : ''} in relaxed in tests/contrast/Pairs.ts: keep its entry and rationale.`,
+        `The relaxation of ${entry.pair} to ${describe(entry)} is recorded${count > 1 ? ` ${count} times` : ''} (${source}) but no longer listed${count > 1 ? ' as often' : ''} in relaxed in tests/contrast/PairHistory.ts: keep its entry and rationale.`,
       );
     }
   return { problems, unspent };
@@ -383,7 +383,7 @@ function relaxingNothing(
     if (count <= 0) continue;
     left.set(key, count - 1);
     problems.push(
-      `relaxed in tests/contrast/Pairs.ts lists ${entry.pair} at ${describe(entry)}${why}`,
+      `relaxed in tests/contrast/PairHistory.ts lists ${entry.pair} at ${describe(entry)}${why}`,
     );
   }
   return problems;

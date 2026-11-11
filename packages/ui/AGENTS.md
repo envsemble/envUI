@@ -55,7 +55,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 - A size that follows the compact scale is a token.
 - A component's own custom properties, such as `--env-card-padding`, take its name and are private.
 - Change a color by choosing another grade for its role, then run `npm run test:contrast`.
-- List a pair that leaves `tests/contrast/Pairs.ts` as dropped or renamed, and one held to less as `relaxed`, each with its reason; `npm run test:contrast -- --update-snapshots` records the change (`tests/contrast/Snapshot.ts` says how the record and the base branches hold it).
+- List a pair that leaves `tests/contrast/Pairs.ts` as dropped or renamed in `tests/contrast/PairHistory.ts`, and one held to less as `relaxed` there, each with its reason; `npm run test:contrast -- --update-snapshots` records the change (`tests/contrast/Snapshot.ts` says how the record and the base branch hold it).
 - What DTCG can't express is in `packages/ui/src/styles/TokensHandwritten.css`, its public tokens listed in `packages/ui/tokens/handwritten.json`.
 
 ## Generated and vendored files

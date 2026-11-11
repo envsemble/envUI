@@ -6,7 +6,8 @@
 import { test } from 'node:test';
 import { expect } from 'vitest';
 import { writeFileSync } from 'node:fs';
-import { cssColor, dropped, pairName, pairs, relaxed, renamed } from './Pairs.ts';
+import { cssColor, pairName, pairs } from './Pairs.ts';
+import { dropped, relaxed, renamed } from './PairHistory.ts';
 import {
   checkRenameTargets,
   checkSnapshot,
@@ -52,14 +53,14 @@ test('the pair registry and its exceptions agree', () => {
   for (const entry of dropped) {
     if (declared.has(entry.pair))
       problems.push(
-        `${entry.pair} is listed as dropped in tests/contrast/Pairs.ts but is still measured.`,
+        `${entry.pair} is listed as dropped in tests/contrast/PairHistory.ts but is still measured.`,
       );
     if (!entry.rationale.trim()) problems.push(`The dropped pair ${entry.pair} needs a rationale.`);
   }
   for (const entry of renamed) {
     if (declared.has(entry.from))
       problems.push(
-        `${entry.from} is listed as renamed in tests/contrast/Pairs.ts but is still declared.`,
+        `${entry.from} is listed as renamed in tests/contrast/PairHistory.ts but is still declared.`,
       );
     if (!entry.rationale.trim()) problems.push(`The renamed pair ${entry.from} needs a rationale.`);
   }
@@ -450,7 +451,7 @@ test("the base branch's snapshot catches a snapshot edited along with the pairs"
       base: laterBase,
     }).problems,
   ).toEqual([expect.stringContaining('is held to less than the base snapshot records')]);
-  // A relaxation recorded on the base can't be deleted from Pairs.ts and the snapshot together.
+  // A relaxation recorded on the base can't be deleted from PairHistory.ts and the snapshot together.
   const withoutIt = { ...tightenedOnBase, relaxed: [] };
   expect(
     checkSnapshot({
