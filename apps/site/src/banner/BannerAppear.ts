@@ -4,9 +4,6 @@ import { useHydrated } from '@envui-internal/internal/react/useHydrated';
 import { useDisplaySettings } from '../display/DisplaySettings';
 import { bannerAppearAttribute, bannerDrawnKey } from '../display/DisplayStorage';
 
-/** Where the site once kept when each page's banner last drew itself in, which it no longer reads. */
-const formerKey = 'envui-site-banners-drawn';
-
 /** The address the site opened on, before the reader moved to another page. */
 const openedOn = typeof location === 'undefined' ? '' : location.pathname;
 
@@ -19,7 +16,6 @@ let firstDraw: boolean | undefined;
 /** Whether the session's first draw is still to come, which it is once: on its first page. */
 function sessionFirst() {
   try {
-    localStorage.removeItem(formerKey);
     if (sessionStorage.getItem(bannerDrawnKey) !== null) return false;
     sessionStorage.setItem(bannerDrawnKey, '');
   } catch {
