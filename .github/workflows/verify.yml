@@ -24,6 +24,8 @@ env:
   # One browser worker per core; Playwright would take three where CI is set.
   ENVUI_WORKERS: '2'
 jobs:
+  # About 4 minutes in Firefox and 5 in WebKit, whose system libraries apt installs: no longer than
+  # the visual baseline, so neither is sharded.
   engines:
     name: Library browser tests (${{ matrix.browser }})
     if: ${{ !github.event.pull_request.draft }}
