@@ -13,7 +13,7 @@ runs:
       with:
         node-version: 24
         cache: npm
-    # With npm's cache restored, about 5 s on the runner.
+    # With npm's cache restored, about 5 s.
     - shell: bash
       run: npm ci --no-audit --no-fund
     - name: Read the Playwright version
@@ -25,8 +25,8 @@ runs:
       run: |
         echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
         echo "key=$(echo "$BROWSERS" | tr ' ' '-')" >> "$GITHUB_OUTPUT"
-    # One key per set of browsers, so a job restores only what it launches. The headless shell is a
-    # third of full Chromium's download.
+    # One key per set of browsers, so a job restores only what it launches. Headless Chromium runs
+    # the headless shell, so the full browser is never downloaded.
     - name: Restore the browsers
       id: cache
       if: ${{ inputs.browsers != '' }}
@@ -47,8 +47,8 @@ runs:
             npx playwright install "$browser"
           fi
         done
-    # Playwright refuses to launch a browser whose system libraries are missing, so a launch tells
-    # whether to install them: apt takes 10 to 60 s, and the runner's image already has Chromium's.
+    # Playwright refuses to launch a browser whose system libraries are missing, so a launch, about
+    # a second, tells whether to install them: apt took 11 s for Chromium on every run.
     - name: Install the browsers' missing system libraries
       if: ${{ inputs.browsers != '' }}
       shell: bash

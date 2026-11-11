@@ -64,9 +64,9 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup
       # ESLint's, Prettier's and tsc's caches from this pull request's last run: they compare each
-      # file's content, so a restored cache rechecks only what changed, about 60 s less on the
-      # runner. The key names the lint packages, whose rules ESLint's cache does not see change.
-      # knip's cache goes by modification times, which every checkout resets.
+      # file's content, so a restored cache rechecks only what changed, about 40 s less. The key
+      # names the lint packages, whose rules ESLint's cache does not see change. knip's cache goes by
+      # modification times, which every checkout resets.
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
@@ -75,7 +75,8 @@ jobs:
             .cache/tsc
           key: static-${{ hashFiles('package-lock.json', 'eslint.config.mjs', 'packages/eslint-plugin/src/**', '.prettierrc.json') }}-${{ github.sha }}
           restore-keys: static-${{ hashFiles('package-lock.json', 'eslint.config.mjs', 'packages/eslint-plugin/src/**', '.prettierrc.json') }}-
-      # tsc is the longest check and takes one core, so it runs beside the others on the second.
+      # tsc is the longest check and takes one core, so it runs beside the others on the second:
+      # about 35 s less than after them.
       - name: Start the typecheck
         run: |
           (
@@ -117,16 +118,18 @@ jobs:
       - run: node scripts/docs/GenerateDocumentation.ts
       - run: npm run -s build:library
       # node --test runs one file per core but one; on two cores that is one at a time, while most
-      # files wait on npm, esbuild or the disk.
+      # files wait on npm, esbuild or the disk. Four at once take about 15 s less.
       - name: Run the unit tests
         run: npm test -- --test-concurrency=4
 
-  # The library's browser tests in Chromium, split in four. Each shard reads the change itself
-  # rather than wait for `Changes`, as they are the longest jobs; one the change does not concern
-  # stops after its checkout.
+  # The library's browser tests in Chromium (npm run test:library), split in four: one runner takes
+  # about 7 minutes, each shard about 2.5, so the check ends with the build and the unit tests
+  # rather than 4 minutes after them. A fifth shard would save under 30 s and cost a runner more.
+  # They wait the 15 s `Changes` takes, so that a change they don't concern starts none of them.
   library:
     name: Library browser tests (${{ matrix.shard }}/4)
-    if: ${{ !github.event.pull_request.draft }}
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.library != 'false' }}
     runs-on: ${{ vars.CI_LINUX_RUNNER }}
     timeout-minutes: 15
     strategy:
@@ -135,23 +138,17 @@ jobs:
         shard: [1, 2, 3, 4]
     steps:
       # Depth 2: the merge commit and its parents, the first being the tip of the branch it merges
-      # into, which the change is read against and the contrast gate compares its snapshot with.
+      # into, which the contrast gate compares its snapshot with.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 2
           persist-credentials: false
-      - id: choose
-        uses: ./.github/actions/choose-jobs
-        with:
-          full: ${{ github.base_ref == 'main' }}
       - uses: ./.github/actions/setup
-        if: ${{ steps.choose.outputs.library != 'false' }}
         with:
           browsers: chromium-shell
       # The contrast gate (Contrast.spec.ts) also compares tests/contrast/DeclaredPairs.json with
       # the base's copy (tests/contrast/Snapshot.ts).
       - name: Test the library in Chromium
-        if: ${{ steps.choose.outputs.library != 'false' }}
         env:
           SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
         run: |
