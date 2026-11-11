@@ -1,15 +1,7 @@
 import { useState } from 'react';
 import { Button, Column } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
-import { MarkdownEditor, type MarkdownLinkProps } from '@envsemble/envui/markdown';
-
-declare global {
-  interface Window {
-    markdownPreviewWork: { linkRenders: number };
-  }
-}
-
-window.markdownPreviewWork = { linkRenders: 0 };
+import { MarkdownEditor } from '@envsemble/envui/markdown';
 
 const defaultSource =
   Array.from(
@@ -17,28 +9,6 @@ const defaultSource =
     (_, index) =>
       `Paragraph ${index}: [Reference ${index}](/reference/${index}) explains the editing workload.`,
   ).join('\n\n') + '\n\n```javascript\nconst example = 1;\n```';
-
-function PreviewLink({ children, onClick, ...props }: MarkdownLinkProps) {
-  const [visits, setVisits] = useState(0);
-  return (
-    <a
-      {...props}
-      data-visits={visits}
-      onClick={(event) => {
-        event.preventDefault();
-        onClick?.(event);
-        setVisits((count) => count + 1);
-      }}
-    >
-      {children}
-    </a>
-  );
-}
-
-function renderPreviewLink(props: MarkdownLinkProps) {
-  window.markdownPreviewWork.linkRenders++;
-  return <PreviewLink {...props} />;
-}
 
 export default function MarkdownEditorFixture() {
   const [submitted, setSubmitted] = useState('');
@@ -60,7 +30,6 @@ export default function MarkdownEditorFixture() {
           name="source"
           rows={4}
           defaultValue={defaultSource}
-          previewProps={{ renderLink: renderPreviewLink }}
         />
         <Button type="submit">Submit Markdown</Button>
         <Button type="reset" variant="secondary">
