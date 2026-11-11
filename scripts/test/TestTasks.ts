@@ -23,6 +23,7 @@ export const bin = {
   prettier: [node, resolve(repositoryRoot, 'node_modules/prettier/bin/prettier.cjs')],
   tsc: [node, resolve(repositoryRoot, 'node_modules/typescript/bin/tsc')],
   playwright: [node, resolve(repositoryRoot, 'node_modules/@playwright/test/cli.js')],
+  vitest: [node, resolve(repositoryRoot, 'node_modules/vitest/vitest.mjs')],
   node: [node],
   // npm's own script, so no shell runs in between: the one running this script, or Node's.
   npm: [

@@ -4,7 +4,8 @@
 //
 //   1. generated files, lint, formatting, types, the three builds and every unit test, side by side;
 //   2. on those builds, alone: the browser specs in Chromium, Firefox and WebKit with the contrast
-//      gate, and the accessibility scan of the hosted build, in one Playwright run;
+//      gate, and the accessibility scan of the hosted build, in one Playwright run; then the
+//      component tests, in Chromium and their engines tests in Firefox and WebKit;
 //   3. the visual baseline in Docker;
 //   4. live development, which edits sources, once nothing else reads them.
 //
@@ -134,6 +135,26 @@ const phase2 = await series([
   ),
 ]);
 if (failed(phase2) && !keepGoing) finish();
+const vitest = (...args: string[]) => [
+  ...bin.vitest,
+  'run',
+  '--config',
+  'tests/component/vitest.config.ts',
+  '--reporter=dot',
+  '--retry=1',
+  ...args,
+];
+const components = await series(
+  [
+    task('component tests (Chromium)', vitest('--project=chromium')),
+    task(
+      'component tests (Firefox, WebKit)',
+      vitest('--project=firefox', '--project=webkit', '--tags-filter=engines'),
+    ),
+  ],
+  { keepGoing },
+);
+if (failed(components) && !keepGoing) finish();
 
 // Phase 3.
 if (!skipVisual) {

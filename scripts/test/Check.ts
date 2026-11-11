@@ -8,6 +8,7 @@
 // --files      check these paths instead of the branch's changes, such as to try the selection
 // --dry-run    print the selection and stop
 import { parseArgs } from 'node:util';
+import { isComponentTest } from './FixtureImports.ts';
 import {
   changedFiles,
   selectScope,
@@ -79,10 +80,13 @@ const browserSpecs = [...needs]
   .filter(([, need]) => !need.live && (affected || !need.library))
   .map(([name]) => name);
 const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpecs.includes(name));
+// The component tests among them run in Vitest, the rest in Playwright.
+const componentTests = browserSpecs.filter((name) => isComponentTest(specFile(name)));
+const playwrightSpecs = browserSpecs.filter((name) => !componentTests.includes(name));
 // The site build takes seconds, so the fast tier builds it when its specs open it.
 const builds = {
   library: affected && scope.build.library,
-  site: [...needs].some(([name, need]) => need.site && browserSpecs.includes(name)),
+  site: [...needs].some(([name, need]) => need.site && playwrightSpecs.includes(name)),
 };
 
 // What runs, and why.
@@ -175,6 +179,7 @@ if (scope.typecheck)
     ['site', 'apps/site/tsconfig.json'],
     ['types', 'tests/types/tsconfig.json'],
     ['fixture', 'tests/fixture/tsconfig.json'],
+    ['component', 'tests/component/tsconfig.json'],
     ['scripts', 'scripts/tsconfig.json'],
   ])
     staticTasks.push(
@@ -247,18 +252,40 @@ const browserTask = (names: string[], projects: string[], label: string) =>
       detail: `${names.length} specs`,
     },
   );
+// The component tests (tests/component): every test in Chromium, and in the affected tier those
+// tagged engines in Firefox and WebKit too.
+const componentTask = (names: string[], engines: boolean) =>
+  task(
+    engines ? 'component (Firefox, WebKit)' : 'component (Chromium)',
+    [
+      ...bin.vitest,
+      'run',
+      '--config',
+      'tests/component/vitest.config.ts',
+      '--reporter=dot',
+      ...(engines
+        ? ['--project=firefox', '--project=webkit', '--tags-filter=engines']
+        : ['--project=chromium']),
+      ...(affected ? ['--retry=1'] : ['--bail=5']),
+      ...names.map((name) => specFile(name)),
+    ],
+    { detail: `${names.length} files` },
+  );
 const npmScript = (name: string) => series([task(name, [...bin.npm, 'run', '-s', name])]);
 const catalogueBuilds = builds.site ? [npmScript('build:site')] : [];
 
 if (!affected) {
   // The browser specs start once the site build they open, if any, is done.
   const browser = async () => {
-    if (!browserSpecs.length) return;
+    if (!playwrightSpecs.length) return;
     const built = (await Promise.all(catalogueBuilds)).flat();
     if (built.every((result) => result.ok))
-      await parallel([browserTask(browserSpecs, ['chromium'], 'browser (Chromium)')]);
+      await parallel([browserTask(playwrightSpecs, ['chromium'], 'browser (Chromium)')]);
   };
-  await Promise.all([parallel(staticTasks), browser()]);
+  const components = async () => {
+    if (componentTests.length) await parallel([componentTask(componentTests, false)]);
+  };
+  await Promise.all([parallel(staticTasks), browser(), components()]);
 } else {
   // Phase 1: static checks, unit tests and the builds the browser specs need. The unit tests on
   // the build also write .cache/Hydration.html, which Hydration.spec.ts opens.
@@ -274,10 +301,14 @@ if (!affected) {
       ]),
   ]);
   // Phase 2: the specs in Chromium, and their @engines tests in Firefox and WebKit.
-  if (browserSpecs.length)
-    await parallel([
-      browserTask(browserSpecs, ['chromium', 'firefox', 'webkit'], 'browser (3 engines)'),
-    ]);
+  await parallel([
+    ...(playwrightSpecs.length
+      ? [browserTask(playwrightSpecs, ['chromium', 'firefox', 'webkit'], 'browser (3 engines)')]
+      : []),
+    ...(componentTests.length
+      ? [componentTask(componentTests, false), componentTask(componentTests, true)]
+      : []),
+  ]);
   // Live development edits sources, so it runs once nothing else reads them.
   if (live.length) await series([browserTask(live, ['live-development'], 'live development')]);
 }
