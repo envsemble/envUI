@@ -485,15 +485,17 @@ test(
       const frame = page.getByTestId(`measured-stack-frame-${theme}`).element() as HTMLElement;
       const measured = region(`Measured threshold ${theme}`);
       const changes = text(`stack-changes-${theme}`);
+      // In view: WebKit, in the test's frame, reports no resize of what lies outside its view.
+      frame.scrollIntoView();
       // calc(20rem + 160px) is 480 px, wider than the region, so its rows stack and it says so.
       await expect.poll(attribute(measured, 'data-stacked')).toBe('');
       await expect.poll(changes).toBe('stacked');
       frame.style.inlineSize = '31rem';
-      await expect.poll(attribute(measured, 'data-stacked')).toBeNull();
-      await expect.poll(changes).toBe('stacked columns');
+      await expect.poll(attribute(measured, 'data-stacked'), { message: theme }).toBeNull();
+      await expect.poll(changes, { message: theme }).toBe('stacked columns');
       frame.style.inlineSize = '29.5rem';
-      await expect.poll(attribute(measured, 'data-stacked')).toBe('');
-      await expect.poll(changes).toBe('stacked columns stacked');
+      await expect.poll(attribute(measured, 'data-stacked'), { message: theme }).toBe('');
+      await expect.poll(changes, { message: theme }).toBe('stacked columns stacked');
     }
     // The length, the region's font size times 37.5, never widens the region or the page.
     const measured = region('Measured threshold light').element();
