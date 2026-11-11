@@ -1,5 +1,13 @@
 'use client';
 
+// Panes' supporting pane makes itself a modal sheet rather than rendering a Sheet. Sheet, on Base
+// UI's Drawer, renders its popup in a portal only while it is open, while the supporting pane is one
+// element at every width: CSS lays it out beside the main pane from `splitAt` and over it below, so
+// its content, scroll position and focus carry over as the Panes widen or narrow, and the server
+// renders the same markup at every width. What Base UI gives Sheet, a modal dialog's inert page,
+// focus moving in and back, Tab kept inside and the still page, is written here for that element;
+// a change to how Sheet does one of them belongs here too (tests/component/Panes.test.tsx).
+
 import { useLayoutEffect, useRef, useState, type KeyboardEvent, type RefObject } from 'react';
 
 /** What Tab reaches inside an element, in order. */
