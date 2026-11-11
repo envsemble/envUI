@@ -1,0 +1,84 @@
+name: Caches
+# Seeds the caches the jobs of CI and Verify restore, on each push to dev: npm's, and the Playwright
+# browsers of each set .github/actions/setup installs. A run can restore the caches of its own
+# branch and of the default branch, dev, so a cache a pull request saves serves only that pull
+# request: without these, each new one installs everything again, about a minute per job. It runs
+# no tests, and when every cache is there it only looks them up, about 20 s.
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  caches:
+    name: Seed the caches
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      # Saves npm's cache at the end of the job when it was missing, as in every other job.
+      - id: node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          cache: npm
+      # The keys .github/actions/setup restores, with the version from the lockfile, so nothing
+      # needs installing to name them.
+      - name: Read the Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")" >> "$GITHUB_OUTPUT"
+      - id: chromium-shell
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-shell-${{ runner.os }}-${{ runner.arch }}-${{ steps.playwright.outputs.version }}
+          lookup-only: true
+      - id: firefox
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-firefox-${{ runner.os }}-${{ runner.arch }}-${{ steps.playwright.outputs.version }}
+          lookup-only: true
+      - id: webkit
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-webkit-${{ runner.os }}-${{ runner.arch }}-${{ steps.playwright.outputs.version }}
+          lookup-only: true
+      - name: Install the dependencies
+        if: ${{ steps.node.outputs.cache-hit != 'true' || steps.chromium-shell.outputs.cache-hit != 'true' || steps.firefox.outputs.cache-hit != 'true' || steps.webkit.outputs.cache-hit != 'true' }}
+        run: npm ci --no-audit --no-fund
+      # Each set on its own, as the jobs install them: the headless shell alone for Chromium.
+      - name: Install the headless shell
+        if: ${{ steps.chromium-shell.outputs.cache-hit != 'true' }}
+        run: rm -rf ~/.cache/ms-playwright && npx playwright install --only-shell chromium
+      - if: ${{ steps.chromium-shell.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ steps.chromium-shell.outputs.cache-primary-key }}
+      - name: Install Firefox
+        if: ${{ steps.firefox.outputs.cache-hit != 'true' }}
+        run: rm -rf ~/.cache/ms-playwright && npx playwright install firefox
+      - if: ${{ steps.firefox.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ steps.firefox.outputs.cache-primary-key }}
+      - name: Install WebKit
+        if: ${{ steps.webkit.outputs.cache-hit != 'true' }}
+        run: rm -rf ~/.cache/ms-playwright && npx playwright install webkit
+      - if: ${{ steps.webkit.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ steps.webkit.outputs.cache-primary-key }}
