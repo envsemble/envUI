@@ -3,7 +3,7 @@
 // than by their count. Vitest's sequencer applies it (tests/component/ShardByDuration.ts).
 import { readFileSync } from 'node:fs';
 import { componentDurationsFile } from '../RepositoryPaths.ts';
-import { median } from './Median.ts';
+import { median } from '../measure/Median.ts';
 
 /**
  * The first shard also builds the library and runs its hydration specs (TestBrowser.ts): about a

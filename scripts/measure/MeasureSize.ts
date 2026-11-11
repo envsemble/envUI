@@ -2,7 +2,7 @@
 // make from the built library, minified, with gzip (level 9) and brotli. The baselines of work-0028
 // were measured this way, so its numbers compare with them.
 //
-//   node scripts/test/MeasureSize.ts [--no-build]
+//   node scripts/measure/MeasureSize.ts [--no-build]
 //
 // It builds the library first (npm run build:library); --no-build measures packages/ui/dist as it
 // is. Each bundle is made with esbuild as an application would: React external, CSS imports

@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 // What envUI costs a page to load, held to a budget. It measures packages/ui/dist as the library
-// build left it (node scripts/test/MeasureSize.ts --no-build, a few seconds), the way work-0028's
+// build left it (node scripts/measure/MeasureSize.ts --no-build, a few seconds), the way work-0028's
 // baselines and targets were measured. Sizes are bytes; gzip at level 9.
 //
 // Each budget is the size measured when it was last set (2026-11-09, unless its comment says
@@ -60,7 +60,7 @@ const componentBudgets = {
 const report = JSON.parse(
   execFileSync(
     process.execPath,
-    [join(repositoryRoot, 'scripts/test/MeasureSize.ts'), '--no-build'],
+    [join(repositoryRoot, 'scripts/measure/MeasureSize.ts'), '--no-build'],
     {
       cwd: repositoryRoot,
       encoding: 'utf8',

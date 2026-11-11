@@ -2,7 +2,7 @@
 // themes, and what a still page keeps doing. The numbers depend on the machine and what else runs
 // on it: a measure to compare before and after a change on one machine, not a pass/fail test.
 //
-//   node scripts/test/MeasureRuntime.ts [--runs <n>] [--only <scenarios>] [--no-build]
+//   node scripts/measure/MeasureRuntime.ts [--runs <n>] [--only <scenarios>] [--no-build]
 //
 // It builds, for production with source maps, the benchmarks' fixture page (tests/fixture/perf.html)
 // and the site into .cache/perf, serves both with `vite preview` on ENVUI_FIXTURE_PORT and

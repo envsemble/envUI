@@ -3,7 +3,7 @@
 // The numbers depend on the machine and what else runs on it: a measure to compare before and
 // after a change on one machine, not a pass/fail test.
 //
-//   node scripts/test/MeasureSite.ts [--runs <n>] [--only <pages>] [--forms <forms>]
+//   node scripts/measure/MeasureSite.ts [--runs <n>] [--only <pages>] [--forms <forms>]
 //     [--no-build] [--site <dir>] [--no-navigation] [--label <name>] [--serve] [--report <label>]
 //
 // It builds the site (`npm run build:site`; --no-build serves the last build, --site <dir> another
