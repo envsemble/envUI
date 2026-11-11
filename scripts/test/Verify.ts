@@ -27,6 +27,7 @@ import {
   yellow,
   type TaskResult,
 } from './TestTasks.ts';
+import { checks, generateDocumentation } from './Checks.ts';
 import { unitTestFiles } from './TestScope.ts';
 import { defaultPorts } from './CheckoutMarker.ts';
 
@@ -57,8 +58,8 @@ if (!skipVisual && !(await dockerRunning())) {
   process.exit(1);
 }
 
-// The catalogue's documentation module is generated, not committed; everything below reads it.
-await series([task('generate documentation', node('scripts/docs/GenerateDocumentation.ts'))]);
+// Everything below reads the generated documentation.
+await series([generateDocumentation]);
 
 // Phase 1. The unit tests of the build run once it is done; one of them renders
 // .cache/Hydration.html, which Hydration.spec.ts opens in phase 2.
@@ -68,45 +69,14 @@ const [phase1, built] = await Promise.all([
     task('unit tests', [...bin.node, '--test', ...units.fast], {
       detail: `${units.fast.length} files`,
     }),
-    task('icons:check', node('scripts/build/GenerateIcons.ts', '--check')),
-    task('tokens:check palette', node('scripts/build/GeneratePalette.ts', '--check')),
-    task('tokens:check build', node('scripts/build/BuildTokens.ts', '--check')),
-    task('docs:check props', node('scripts/docs/ExtractProps.ts', '--check')),
-    task('docs:check parts', node('scripts/docs/GenerateParts.ts', '--check')),
-    task('docs:check exports', node('scripts/docs/GenerateExports.ts', '--check')),
-    task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),
-    task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
-    task('lint', [
-      ...bin.eslint,
-      '.',
-      '--cache',
-      '--cache-strategy',
-      'content',
-      '--cache-location',
-      '.cache/eslint/',
-    ]),
-    task('lint:css', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/site/src/**/*.css']),
-    task('lint:unused', [...bin.npm, 'run', '-s', 'lint:unused']),
-    task('format:check', [...bin.npm, 'run', '-s', 'format:check']),
-    // The projects of `npm run typecheck`, the type tests and the fixture's included, as CI runs it.
-    ...Object.entries({
-      ui: 'packages/ui',
-      site: 'apps/site',
-      scripts: 'scripts',
-      types: 'tests/types',
-      fixture: 'tests/fixture',
-      component: 'tests/component',
-    }).map(([project, folder]) =>
-      task(`typecheck ${project}`, [
-        ...bin.tsc,
-        '-p',
-        `${folder}/tsconfig.json`,
-        '--noEmit',
-        '--incremental',
-        '--tsBuildInfoFile',
-        `.cache/tsc/${project}.tsbuildinfo`,
-      ]),
-    ),
+    ...checks['icons:check'](),
+    ...checks['tokens:check'](),
+    ...checks['docs:check'](),
+    ...checks.lint(),
+    ...checks['lint:css'](),
+    ...checks['lint:unused'](),
+    ...checks['format:check'](),
+    ...checks.typecheck(),
     task('build:site', [...bin.npm, 'run', '-s', 'build:site']),
   ]),
   series([

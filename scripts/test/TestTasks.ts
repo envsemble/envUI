@@ -21,6 +21,7 @@ export const bin = {
   eslint: [node, resolve(repositoryRoot, 'node_modules/eslint/bin/eslint.js')],
   stylelint: [node, resolve(repositoryRoot, 'node_modules/stylelint/bin/stylelint.mjs')],
   prettier: [node, resolve(repositoryRoot, 'node_modules/prettier/bin/prettier.cjs')],
+  knip: [node, resolve(repositoryRoot, 'node_modules/knip/bin/knip.js')],
   tsc: [node, resolve(repositoryRoot, 'node_modules/typescript/bin/tsc')],
   playwright: [node, resolve(repositoryRoot, 'node_modules/@playwright/test/cli.js')],
   vitest: [node, resolve(repositoryRoot, 'node_modules/vitest/vitest.mjs')],
