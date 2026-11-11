@@ -177,9 +177,6 @@ body:has(> #root > .env-theme > .env-scaffold) {
   border-radius: var(--env-radius-sm);
   object-fit: cover;
 }
-.fixture-heatmap-narrow {
-  inline-size: min(100%, 24rem);
-}
 .fixture-shrink-row {
   display: flex;
   align-items: center;
