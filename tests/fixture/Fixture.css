@@ -281,9 +281,6 @@ body:has(> #root > .env-theme > .env-scaffold) {
 .fixture-avatar-row {
   inline-size: 17rem;
 }
-.fixture-narrow-time {
-  inline-size: 6rem;
-}
 /* A toolbar as wide as a phone, and a frame too narrow for a pager on one line. */
 .fixture-pager-toolbar {
   inline-size: min(100%, 22rem);

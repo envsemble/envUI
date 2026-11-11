@@ -14,6 +14,8 @@ import { commands } from './Commands.ts';
  */
 const workers = process.env.ENVUI_WORKERS ? Number(process.env.ENVUI_WORKERS) : undefined;
 const viewport = { width: 1440, height: 1000 };
+// The language and time zone CI runs in, on every machine, so dates and numbers read the same.
+const contextOptions = { locale: 'en-US', timezoneId: 'UTC' };
 
 export default defineConfig({
   root: fileURLToPath(new URL('../..', import.meta.url)),
@@ -35,7 +37,7 @@ export default defineConfig({
     browser: {
       enabled: true,
       headless: true,
-      provider: playwright({ actionTimeout: 8_000 }),
+      provider: playwright({ actionTimeout: 8_000, contextOptions }),
       commands,
       viewport,
       screenshotFailures: false,
@@ -46,6 +48,7 @@ export default defineConfig({
           // As in playwright.config.ts: no bounce-tracking warnings in the console.
           provider: playwright({
             actionTimeout: 8_000,
+            contextOptions,
             launchOptions: { firefoxUserPrefs: { 'privacy.bounceTrackingProtection.mode': 0 } },
           }),
         },
