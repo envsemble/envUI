@@ -7,7 +7,7 @@ import { Column, Grid, Row } from '../../layout/Layout.js';
 import { Surface, type SurfaceProps } from '../../layout/Surface.js';
 import { Theme, type ThemeProps } from '../../foundations/Theme.js';
 import { SkeletonScope } from '../../foundations/SkeletonScope.js';
-import { usePortalContainer } from './PortalContainerContext.js';
+import { usePortalContainer } from '../popup/PortalContainerContext.js';
 import { useModalPresence } from './useModalPresence.js';
 import '../../styles/Base.css';
 import '../../styles/Dialog.css';

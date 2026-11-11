@@ -17,12 +17,12 @@ import {
 } from '../internal/popup/PortalContainerContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 import { Grid } from '../layout/Layout.js';
-import { hoverDetailClass, isTextTrigger } from '../internal/popup/hoverDetail.js';
+import { hoverDetailClass, isTextTrigger } from '../internal/trigger/hoverDetail.js';
 import {
   HoverCardTriggerContext,
   isTooltip,
   markTriggerOwner,
-} from '../internal/popup/triggerOwner.js';
+} from '../internal/trigger/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { useControllableState } from '../internal/react/useControllableState.js';

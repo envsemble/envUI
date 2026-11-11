@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import type { ComponentPropsWithRef, ReactElement, ReactNode, RefObject } from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { classNames } from '../internal/classNames.js';
-import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
+import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
 import { Button } from '../actions/Button.js';
 import type { ButtonProps, ButtonVariant } from '../actions/Button.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
@@ -18,7 +18,7 @@ import {
   DialogPendingContext,
   DialogSurface,
   OverlayTheme,
-} from '../internal/popup/DialogParts.js';
+} from '../internal/dialog/DialogParts.js';
 import { withPendingAction } from './internal/DialogPendingAction.js';
 import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import {

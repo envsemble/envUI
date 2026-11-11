@@ -3,7 +3,7 @@
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { useRef, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
+import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/popup/PopupSurface.js';
 import {
   containedOpenChange,

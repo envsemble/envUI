@@ -19,14 +19,14 @@ import {
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { hoverDetailClass, isTextTrigger } from '../internal/popup/hoverDetail.js';
+import { hoverDetailClass, isTextTrigger } from '../internal/trigger/hoverDetail.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import {
   HoverCardTriggerContext,
   isTriggerOwner,
   markTooltip,
-} from '../internal/popup/triggerOwner.js';
+} from '../internal/trigger/triggerOwner.js';
 import {
   TooltipDescribesContext,
   TooltipNestingContext,

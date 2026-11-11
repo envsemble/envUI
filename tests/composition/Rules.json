@@ -184,7 +184,7 @@
         "layer": "foundations",
         "reason": "It gives each command its Icon."
       },
-      "internal/popup/DialogParts.tsx": {
+      "internal/dialog/DialogParts.tsx": {
         "layer": "foundations",
         "reason": "It renders Surface and reads Theme."
       }
@@ -364,7 +364,7 @@
       },
       "Dialog": {
         "modules": [
-          "internal/popup/DialogParts.tsx",
+          "internal/dialog/DialogParts.tsx",
           "overlays/internal/DialogPendingAction.tsx",
           "overlays/ConfirmDialog.tsx"
         ],

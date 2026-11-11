@@ -16,7 +16,7 @@ import { IconButton } from '../actions/Button.js';
 import { Column } from '../layout/Layout.js';
 import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
-import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
+import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/provider/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
@@ -30,7 +30,7 @@ import {
   DialogPendingContext,
   DialogSurface,
   OverlayTheme,
-} from '../internal/popup/DialogParts.js';
+} from '../internal/dialog/DialogParts.js';
 import { withPendingAction } from './internal/DialogPendingAction.js';
 import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import { ResizeHandle } from '../internal/resize/ResizeHandle.js';

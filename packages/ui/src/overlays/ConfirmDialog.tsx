@@ -14,7 +14,7 @@ import { Button } from '../actions/Button.js';
 import { useTheme } from '../foundations/Theme.js';
 import { confirmDialog } from '../foundations/messages/confirmDialog.js';
 import { classNames } from '../internal/classNames.js';
-import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
+import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
 import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import {
@@ -30,7 +30,7 @@ import {
   DialogHeader,
   DialogSurface,
   OverlayTheme,
-} from '../internal/popup/DialogParts.js';
+} from '../internal/dialog/DialogParts.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import '../styles/Base.css';

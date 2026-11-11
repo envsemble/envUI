@@ -26,7 +26,7 @@ import {
 } from '../internal/popup/PortalContainerContext.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
-import { ListRow } from '../internal/popup/ListRow.js';
+import { ListRow } from '../internal/list/ListRow.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
 import { classNames } from '../internal/classNames.js';
