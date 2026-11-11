@@ -63,7 +63,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 - CI checks every pull request once it is ready, in parallel jobs: the static checks, the build with the unit tests, the library's browser tests in Chromium, the site's smoke and a secret scan. A change skips the browser jobs it can't affect (`scripts/test/ChooseJobs.ts`); a pull request into `main` runs all of them, and the Verify workflow runs the rest of `npm run verify` beside them.
 - Each workflow ends in one job, `CI` or `Verify`, that the rulesets require; add a new job to its `needs`.
 - A push to `dev` seeds the npm and browser caches pull requests restore (`.github/workflows/caches.yml`).
-- `npm run test:library` (`--browser`, `--shard`) and `npm run test:site` run one browser suite as CI does.
+- `npm run test:library` (`--browser`, `--shard`) and `npm run test:site` run one browser suite as CI does. The library's shards split its component tests by the time each takes, from `tests/component/Durations.json`; refresh it as `scripts/test/RecordDurations.ts` says once files come or go or their times change much.
 - Don't change `.github/workflows`, start or re-run runs, or change the required checks without asking.
 
 ## Tests
@@ -83,13 +83,19 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 
 ### When to add a test, and which
 
-- Add one when it protects the public contract (keyboard, focus, ARIA, behaviour, types, tokens, size) or a bug that happened; a fix keeps the test that caught it.
-- Add none for what the visual baseline or the contrast gate already sees, for implementation details, or for Base UI's own behaviour.
+- Add one when it protects the public contract (keyboard, focus, ARIA, behaviour, types, tokens, size) or a bug that happened.
+- Add none that the next section would delete.
 - Take the first kind in the table that can see it: Node before a component test, a component test before a Playwright spec, which is the site's alone.
 - Test a behaviour once, in its component's test, and check independent states on one mount.
 - Prefer a computed-style or DOM assertion to a screenshot.
 - Tag a component test `engines` (`{ tags: ['engines'] }`) when it depends on the engine (scrolling, focus, pointer and input methods, native forms, platform keys); Firefox and WebKit run only those.
-- No fixed sleeps: wait for a condition, such as `expect.poll` or the element's animations finishing. Where a test proves nothing happens for a while, wait just past the delay and say so.
+- No fixed sleeps: wait for a condition, such as `expect.poll` or the element's animations finishing. Where a test proves that a component waits for a delay, or that nothing happens within one, stop the page's timers and move them on (`stopTimers` and `passTime` in `tests/component/Browser.ts`).
+
+### When to delete a test
+
+- Delete one that nothing would miss: it checks what TypeScript already enforces, restates the implementation (class names, DOM nesting, a private helper's exact output), asserts what the visual baseline or the contrast gate already sees (sizes, colors, spacing, fonts), repeats trivial logic or another test's case, only checks that a mock was called, or tests Base UI's, React's or the browser's own behaviour.
+- Keep it all the same when it is the only check of the public contract (contrast, focus visibility and hit areas among it) or of what the package ships, guards a bug that happened (`git log -S` on its title or body finds a `fix`), parses or writes an external format, guards a release or the repository's rules, or is a site page's only check. When unsure, keep it.
+- A test that waits on real time for what matters gets a stopped clock, as above, rather than deletion.
 
 ### Fixtures
 
