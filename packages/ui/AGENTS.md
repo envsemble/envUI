@@ -15,7 +15,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 
 - Public exports go through the entry points, such as `index.ts`, `markdown.ts` and `rich-text.ts`.
 - An entry point other than `index.ts` holds what loads an optional dependency, and is named after what it holds, such as `code` for Code and CodeBlock on Shiki.
-- Whatever a module the entry points `export *` exports is public: `docs/generated/exports.json` records every name and its kind (`npm run docs:exports`).
+- Whatever a module the entry points `export *` exports is public: `docs/generated/exports.json` records every name and its kind (`npm run docs:exports`). A component's module exports its components, their props and the hooks and types people use with them; a name only another module or a test needs goes in an `internal/` module, or, where it must stay beside the component, out of the entry point's list, as `index.ts` does for `calendarActiveDay`.
 - `npm run docs:check` fails on a change to the exports without a changeset, major for a name that goes.
 
 ## Props

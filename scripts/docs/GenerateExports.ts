@@ -113,7 +113,7 @@ if (import.meta.main) {
   } else {
     if (readIfExists(exportsFile) !== output) {
       console.error(
-        `${exportsPath} differs from the library's source. Run \`npm run docs:exports\` and commit the result.`,
+        `${exportsPath} differs from the library's source. Run \`npm run docs:exports\` and commit the result, or, for a name only another module or a test needs, move it to an internal/ module (packages/ui/AGENTS.md, Entry points).`,
       );
       process.exit(1);
     }
