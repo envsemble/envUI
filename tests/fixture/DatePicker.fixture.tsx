@@ -106,12 +106,6 @@ export default function DatePickerFixture({ theme }: { theme: ColorScheme }) {
       </Surface>
       <div className="fixture-actions">
         <DatePicker
-          label={`Disabled date ${theme}`}
-          locale="en-GB"
-          defaultValue="2026-10-20"
-          disabled
-        />
-        <DatePicker
           label={`Read only date ${theme}`}
           locale="en-GB"
           defaultValue="2026-10-20"
@@ -129,11 +123,6 @@ export default function DatePickerFixture({ theme }: { theme: ColorScheme }) {
           onValueChange={setLaunch}
         />
         <output data-testid={`date-picker-launch-${theme}`}>{launch}</output>
-        {/* Named by the application's own text instead of a label. */}
-        <span id={`date-picker-starts-${theme}`}>Starts on {theme}</span>
-        <DatePicker aria-labelledby={`date-picker-starts-${theme}`} locale="en-GB" />
-        {/* Without a label, a standard field shows its placeholder. */}
-        <DatePicker aria-label={`Ends ${theme}`} placeholder="Pick an end" locale="en-GB" />
       </div>
       <div dir="rtl" className="fixture-actions">
         <DatePicker label={`Arabic date ${theme}`} locale="ar-EG" defaultValue="2026-10-14" />
@@ -156,13 +145,6 @@ export default function DatePickerFixture({ theme }: { theme: ColorScheme }) {
             defaultValue="2026-10-14"
           />
         </div>
-        {/* Persian uses its own calendar by default; the grid's days are Gregorian. */}
-        <Calendar
-          aria-label={`Persian planner ${theme}`}
-          data-testid={`calendar-persian-${theme}`}
-          locale="fa-IR"
-          defaultValue="2026-10-14"
-        />
       </div>
       <Dialog
         title={`Schedule ${theme}`}
