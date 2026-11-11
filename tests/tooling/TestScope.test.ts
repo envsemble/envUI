@@ -15,6 +15,7 @@ import { test } from 'node:test';
 import {
   aliases,
   changedFiles,
+  fixtureBudget,
   mergeChanges,
   parseNameStatus,
   pathRules,
@@ -27,6 +28,7 @@ import {
 } from '../../scripts/test/TestScope.ts';
 import { checkoutId, checkoutPort } from '../../scripts/test/CheckoutMarker.ts';
 import { fixtureUse, importsOf } from '../../scripts/test/FixtureImports.ts';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const specs = (...paths) => [...specsFor(paths).specs.keys()].sort();
 
@@ -246,6 +248,9 @@ test('every alias names a file and specs that exist, and adds what the imports m
       .replace(/\.(?:tsx?|css|m?js|html)$/, '');
     return [name, name.replace(/e?s$/, ''), name.replace(/s$/, '')];
   };
+  // What the fixtures' imports find for a file, as the fast tier runs it: the most specific few.
+  const found = fixtureUse(repositoryRoot);
+  const redundant: string[] = [];
   for (const [name, targets] of Object.entries(aliases)) {
     assert.ok(
       files.some((file) => named(file).includes(name)),
@@ -253,7 +258,19 @@ test('every alias names a file and specs that exist, and adds what the imports m
     );
     for (const target of targets)
       assert.ok(existsSync(specFile(target)), `${name}: no spec ${target}`);
+    const modules = files
+      .filter(
+        (file) =>
+          file
+            .split('/')
+            .at(-1)
+            ?.replace(/\.(?:tsx?|css)$/, '') === name,
+      )
+      .map((file) => `packages/ui/src/${file}`);
+    const imported = new Set(modules.flatMap((path) => found(path).slice(0, fixtureBudget)));
+    if (modules.length && targets.every((target) => imported.has(target))) redundant.push(name);
   }
+  assert.deepEqual(redundant, [], 'The imports find these aliases’ specs: remove the aliases.');
 });
 
 test("a spec is in the library's or the site's folder, or a component test", () => {

@@ -3,6 +3,9 @@ import { execFileSync } from 'node:child_process';
 import { posix } from 'node:path';
 import { test } from 'node:test';
 import { chooseJobs, jobRules } from '../../scripts/test/ChooseJobs.ts';
+import { pathRules } from '../../scripts/test/TestScope.ts';
+import { specPaths } from '../../scripts/test/FixtureImports.ts';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const jobs = (...paths: string[]) => chooseJobs(paths).jobs;
 
@@ -53,4 +56,29 @@ test('every tracked file is placed by a rule, and every rule places a tracked fi
     .flatMap((rule) => rule.paths)
     .filter((glob) => !files.some((file) => posix.matchesGlob(file, glob)));
   assert.deepEqual(unused, []);
+});
+
+test('CI runs the browser job of every spec the check tiers run for a file', () => {
+  const files = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).split('\n').filter(Boolean);
+  const specs = specPaths(repositoryRoot);
+  const jobOf = (spec: string) =>
+    specs.get(spec)?.startsWith('tests/browser/site/') ? 'site' : 'library';
+  const missed: string[] = [];
+  for (const file of files) {
+    // The specs pathRules gives the file; its name and its fixtures' imports choose specs only for
+    // the library's files, the fixtures and the specs themselves.
+    const named = file.startsWith('tests/browser/site/')
+      ? ['SiteSmoke']
+      : /^(?:packages\/ui\/src|tests\/(?:fixture|component|browser\/library))\//.test(file)
+        ? ['Button']
+        : [];
+    const ruled = pathRules
+      .filter((rule) => rule.paths.some((glob) => posix.matchesGlob(file, glob)))
+      .flatMap((rule) => rule.specs ?? []);
+    const chosen = jobs(file);
+    for (const spec of [...named, ...ruled])
+      if (spec !== 'LiveDevelopment' && !chosen[jobOf(spec)])
+        missed.push(`${file} runs ${spec} in the check tiers, but CI skips the ${jobOf(spec)} job`);
+  }
+  assert.deepEqual(missed, []);
 });

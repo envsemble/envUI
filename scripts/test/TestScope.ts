@@ -24,7 +24,6 @@ export const aliases: Record<string, string[]> = {
   SearchField: ['TextField'],
   FieldFrame: ['TextField'],
   Popover: ['Dialog'],
-  Spinner: ['Skeleton'],
   AvatarButton: ['Button'],
   LinkProvider: ['Button'],
   ActionElement: ['Button'],
@@ -42,23 +41,18 @@ export const aliases: Record<string, string[]> = {
   Avatar: ['AvatarGroup'],
   // The icon wrapper sizes whatever every icon slot holds, a Graphic's included.
   Icon: ['Graphic', 'Button', 'IconButton', 'Skeleton'],
-  PickerPopup: ['DatePicker', 'TimePicker', 'MonthPicker'],
   TimeList: ['DatePicker', 'TimePicker', 'ForcedColors'],
   TimeWheel: ['DatePicker', 'TimePicker', 'ForcedColors'],
   timeWheelRows: ['DatePicker', 'TimePicker'],
   useTimeWheelTurn: ['DatePicker', 'TimePicker'],
   useTimeWheelGestures: ['DatePicker', 'TimePicker'],
   MonthGrid: ['MonthPicker', 'ForcedColors'],
-  Code: ['CodeBlock'],
   TooltipPopup: ['Tooltip'],
   accessibleName: ['Tooltip'],
   DialogParts: ['Dialog', 'Skeleton'],
   skeleton: ['Skeleton'],
-  skeletonShift: ['Skeleton'],
   Listbox: ['Select', 'Combobox'],
   ListRow: ['List'],
-  'rich-text': ['RichTextEditor'],
-  color: ['ColorPicker'],
 };
 
 /** The specs a token, theme or other shared change runs. */
@@ -167,7 +161,12 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
     paths: ['packages/ui/src/**/*.{ts,tsx,css,json}', 'docs/**', '.changeset/**'],
     needs: ['docs'],
   },
-  { paths: ['apps/site/**', 'scripts/docs/**'], needs: ['docs'], specs: siteSpecs },
+  // The site, all but its guide.
+  {
+    paths: ['apps/site/{src,hosting}/**', 'apps/site/*.{html,ts,json}', 'scripts/docs/**'],
+    needs: ['docs'],
+    specs: siteSpecs,
+  },
   { paths: ['wrangler.jsonc', 'scripts/site/**'], specs: siteSpecs },
   {
     paths: [
@@ -195,7 +194,7 @@ const rulesOf = (path: string) =>
 /** In the fast tier, more specs than this importing a changed helper leaves them to the affected tier. */
 const helperBudget = 8;
 /** In the fast tier, more specs than this whose fixtures use a changed file run the most specific. */
-const fixtureBudget = 6;
+export const fixtureBudget = 6;
 
 /** A spec's file, by its name: Button for tests/component/Button.test.tsx. */
 export const specFile = (name: string, root = repositoryRoot) =>
