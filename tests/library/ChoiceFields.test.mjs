@@ -64,3 +64,27 @@ test('a slider is described by its error', () => {
   const input = find(slider, (element) => element.attributes.type === 'range');
   assert.deepEqual(descriptions(slider, input), ['Keep it under 80%.']);
 });
+
+test('a choice control takes its class and style on its root, the label, and its native props on the input', () => {
+  for (const [Control, name, props] of [
+    [Checkbox, 'checkbox', { label: 'Subscribe', name: 'subscribe' }],
+    [Switch, 'switch', { label: 'Alerts', name: 'alerts' }],
+    [Radio, 'radio', { label: 'Team', value: 'team' }],
+  ]) {
+    const control = h(Control, {
+      ...props,
+      className: `app-${name}`,
+      style: { marginInlineStart: '3px' },
+      'data-testid': `${name}-input`,
+    });
+    const root = render(Control === Radio ? h(RadioGroup, { label: 'Plan' }, control) : control);
+    const label = find(root, (element) => element.tag === 'label');
+    assert.equal(label.attributes.class, `env-${name} app-${name}`, name);
+    assert.equal(label.attributes.style, 'margin-inline-start:3px', name);
+    const input = find(label, (element) => element.tag === 'input');
+    assert.equal(input.attributes.class, `env-${name}-input`, name);
+    assert.equal(input.attributes['data-testid'], `${name}-input`, name);
+    if (props.name) assert.equal(input.attributes.name, props.name, name);
+    assert.equal(label.attributes['data-testid'], undefined, name);
+  }
+});
