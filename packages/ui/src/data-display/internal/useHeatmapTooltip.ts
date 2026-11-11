@@ -165,8 +165,10 @@ export function useHeatmapTooltip(
     ref: popup,
     'data-focus-opened': flag(tip?.focused),
     onPointerLeave: (event: PointerEvent<HTMLDivElement>) => {
-      // Back on the days, the day under the pointer takes the tooltip.
-      if (!grid.current?.contains(event.relatedTarget as Node | null)) hide();
+      // Back on the days, the day under the pointer takes the tooltip. Leaving for what React
+      // doesn't render, React gives the window as the related target, which is no node.
+      const target = event.relatedTarget;
+      if (!(target instanceof Node && grid.current?.contains(target))) hide();
     },
   };
 

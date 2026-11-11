@@ -1,4 +1,4 @@
-import { beforeEach, expect, test, vi } from 'vitest';
+import { beforeEach, expect, onTestFinished, test, vi } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/CalendarHeatmap.fixture.tsx';
 import { box, css, keyboard, mouse, nextFrames } from './Browser.ts';
@@ -160,10 +160,14 @@ test('people can move the pointer onto the tooltip of a hovered or clicked day t
   await nextFrames();
   expect(positioners()[0]!.hasAttribute('data-open')).toBe(true);
   expect(tooltipText()).toBe(nameOf(rested));
-  // The pointer leaves the tooltip for the fixture before it goes. (Left for a point outside
-  // React's root, the tooltip's pointerleave handler throws: React gives the window as the related
-  // target, which is no Node.)
-  await pointAt(update().element());
+  // The pointer leaves the tooltip for a point React doesn't render, for which React gives the
+  // window as the related target, and the tooltip goes.
+  const outside = document.createElement('div');
+  outside.style.cssText =
+    'position: fixed; inset: auto 0 0 auto; inline-size: 2rem; block-size: 2rem';
+  document.body.append(outside);
+  onTestFinished(() => outside.remove());
+  await pointAt(outside);
   await expect.poll(() => positioners().length).toBe(0);
 });
 
