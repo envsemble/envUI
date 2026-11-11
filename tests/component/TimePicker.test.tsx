@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/TimePicker.fixture.tsx';
-import { box, collectErrors, keyboard, mouse } from './Browser.ts';
+import { box, collectErrors, keyboard, mouse, nextFrames } from './Browser.ts';
 import { mount } from './Mount.tsx';
 
 beforeEach(() => {
@@ -312,13 +312,29 @@ test(
     await wait(150);
     await mouse.up();
     await expect.poll(text('Start time')).toBe('11:15');
-    // A quick drag let go while moving glides on past where the pointer stopped: a few pixels
-    // down, too few to turn a row, turn the hours. How far it glides follows the moves' timing,
-    // which each engine stamps differently, and a busy machine more so: far enough to wrap past
-    // 11 o'clock at times, so the test asks only that it turned.
-    await commands.mouseFling(x, y, x, y + 6, 3);
-    await expect.poll(() => hours.hasAttribute('data-turning')).toBe(false);
-    expect(hours.getAttribute('aria-valuenow')).not.toBe('11');
+    // A quick drag let go while moving glides on past where the pointer stopped: 12 px down, too
+    // little to turn a row, turns the hours. How far it glides follows the moves' timing, which
+    // each engine and a busy machine stamp differently: 3 px a move glides at least half a row at
+    // a move every 16 ms, and short of a whole turn back to 11 at a move a millisecond, the
+    // fastest the gestures count (useTimeWheelGestures.ts). Let go later than a glide allows
+    // (flingRestMs there), as a busy machine may, it is a drag held still: it stays on 11.
+    let lastMove = 0;
+    let letGo = 0;
+    const onMove = (event: PointerEvent) => void (lastMove = event.timeStamp);
+    const onUp = (event: PointerEvent) => void (letGo = event.timeStamp);
+    hours.addEventListener('pointermove', onMove);
+    hours.addEventListener('pointerup', onUp);
+    await commands.mouseFling(x, y, x, y + 12, 4);
+    hours.removeEventListener('pointermove', onMove);
+    hours.removeEventListener('pointerup', onUp);
+    const hour = () => hours.getAttribute('aria-valuenow');
+    if (letGo - lastMove <= 80) await expect.poll(hour).not.toBe('11');
+    else {
+      // The wheel may start to ease a frame after it is let go.
+      await nextFrames();
+      await expect.poll(() => hours.hasAttribute('data-turning')).toBe(false);
+      expect(hour()).toBe('11');
+    }
   },
 );
 
