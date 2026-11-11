@@ -2,10 +2,13 @@ import { onTestFinished } from 'vitest';
 import { commands, type Locator } from 'vitest/browser';
 import type { Commands } from './Commands.ts';
 
-/** The commands' signatures in the browser: each without its context, returning a promise. */
+/**
+ * The commands' signatures in the browser: each without its context, returning a promise of what
+ * it returns, or of nothing where it declares no return value (any).
+ */
 type Client<T> = {
   [K in keyof T]: T[K] extends (context: never, ...args: infer A) => infer R
-    ? (...args: A) => Promise<Awaited<R>>
+    ? (...args: A) => Promise<0 extends 1 & R ? void : Awaited<R>>
     : never;
 };
 

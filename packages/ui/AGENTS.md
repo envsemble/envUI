@@ -83,7 +83,7 @@ Never edit these; change their source and run their command.
 - Hover and focus never change layout: movement on hover uses `translate`, `rotate` or `scale` (`tests/library/StableHover.test.mjs`).
 - A pill is `var(--env-radius-full)`, so a tall element becomes a rounded rectangle; `50%` only on parts that are always square (`tests/library/Corners.test.mjs`).
 - Motion uses the motion tokens, and movement only under `prefers-reduced-motion: no-preference`.
-- Under `forced-colors: active`, a state a fill or shadow carries takes system colors (`tests/browser/library/ForcedColors.spec.ts`).
+- Under `forced-colors: active`, a state a fill or shadow carries takes system colors (`tests/component/ForcedColors.test.tsx`).
 
 ## Part names and color properties
 

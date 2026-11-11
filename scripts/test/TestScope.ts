@@ -24,7 +24,7 @@ export const aliases: Record<string, string[]> = {
   SearchField: ['TextField'],
   FieldFrame: ['TextField'],
   Popover: ['Dialog'],
-  Spinner: ['Meter', 'Skeleton'],
+  Spinner: ['Skeleton'],
   ConfirmButton: ['Button'],
   AvatarButton: ['Button'],
   LinkProvider: ['Button'],
@@ -243,7 +243,7 @@ export function specsFor(
   const unmatched: string[] = [];
   const widelyUsed = new Map<string, number>();
   let specsUsing: ((path: string) => string[]) | undefined;
-  // By name, as written: a file system that ignores case would find Table.spec.ts for table.
+  // By name, as written: a file system that ignores case would find Table's spec for table.
   const written = new Set(specPaths(root).keys());
   const exists = (name: string) => written.has(name);
   const add = (name: string, reason: string) => {
@@ -259,19 +259,26 @@ export function specsFor(
       /^tests\/component\/[^/]+\.test\.tsx$/.test(path)
     )
       found = add(baseName(path), 'changed spec');
-    // What every component test runs on: its configuration, setup and helpers, and the mount it
-    // shares with the fixture page.
+    // What every component test runs on: its configuration, setup and core helpers, and the
+    // mount it shares with the fixture page.
     else if (
-      /^tests\/component\/[^/]+\.tsx?$/.test(path) ||
+      /^tests\/component\/(?:vitest\.config|Setup|Browser|Commands|Mount)\.tsx?$/.test(path) ||
       path === 'tests/fixture/FixtureMount.tsx'
     ) {
       for (const [name, file] of specPaths(root))
         if (isComponentTest(file)) found = add(name, `runs on ${path}`) || found;
-    } else if (/^tests\/browser\/helpers\/[^/]+\.ts$/.test(path)) {
-      const helper = baseName(path);
+    } else if (
+      /^tests\/browser\/helpers\/[^/]+\.ts$/.test(path) ||
+      /^tests\/component\/[^/]+\.tsx?$/.test(path)
+    ) {
+      // A helper some specs share: those that import it.
+      const helper = posix.basename(path);
+      const specifiers = path.startsWith('tests/component/')
+        ? [`./${helper}`, `./${baseName(path)}`]
+        : [`../helpers/${baseName(path)}`];
       const users = [...written].filter((spec) =>
-        importsOf(read(root, specFile(spec, root))).some(
-          ({ specifier }) => specifier === `../helpers/${helper}`,
+        importsOf(read(root, specFile(spec, root))).some(({ specifier }) =>
+          specifiers.includes(specifier),
         ),
       );
       helpers.set(path, users);

@@ -12,7 +12,7 @@ import { fixtureName } from './FixtureName.js';
 const fixtures = new Map(
   Object.entries(
     import.meta.glob<FixtureModule>(
-      ['./*.fixture.tsx', '!./{CascadeLayers,ForcedColors,RichTextEditor}.fixture.tsx'],
+      ['./*.fixture.tsx', '!./{CascadeLayers,RichTextEditor}.fixture.tsx'],
       { eager: true },
     ),
   ).map(([file, module]) => [fixtureName(file), module]),

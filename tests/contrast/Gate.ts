@@ -48,9 +48,10 @@ function themeNamed(name: string) {
 const measuredIn = (theme: ContrastTheme) =>
   pairs.filter((pair) => !pair.contrast || pair.contrast === theme.contrast);
 
-/** The colors a theme's pairs name, each as the CSS color the browser resolves. */
-export function contrastColors(themeName: string): Record<string, string> {
-  const names = new Set(measuredIn(themeNamed(themeName)).flatMap((pair) => [pair.fg, ...pair.bg]));
+/** The colors a theme's pairs name, or every pair's, each as the CSS color the browser resolves. */
+export function contrastColors(themeName?: string): Record<string, string> {
+  const measured = themeName ? measuredIn(themeNamed(themeName)) : pairs;
+  const names = new Set(measured.flatMap((pair) => [pair.fg, ...pair.bg]));
   return Object.fromEntries([...names].map((name) => [name, cssColor(name)]));
 }
 

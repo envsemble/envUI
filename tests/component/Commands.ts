@@ -1,5 +1,6 @@
 import type { BrowserCommand, BrowserCommandContext } from 'vitest/node';
 import type { CDPSession, Page, Route } from 'playwright';
+import type * as Gate from '../contrast/Gate.ts';
 
 /**
  * Commands the component tests run in Node, on the Playwright page that holds the test's frame:
@@ -49,6 +50,22 @@ const mouseClick: BrowserCommand<
   await context.page.mouse.click(point.x, point.y, options);
 };
 
+/**
+ * A quick drag let go while it moves: the pointer presses at one point, moves to another in steps
+ * and is released at once, with no round trip to the page between, which would take long enough
+ * to read as a rest.
+ */
+const mouseFling: BrowserCommand<
+  [fromX: number, fromY: number, toX: number, toY: number, steps: number]
+> = async (context, fromX, fromY, toX, toY, steps) => {
+  const [from, to] = [await toPage(context, fromX, fromY), await toPage(context, toX, toY)];
+  const { mouse } = context.page;
+  await mouse.move(from.x, from.y);
+  await mouse.down();
+  await mouse.move(to.x, to.y, { steps });
+  await mouse.up();
+};
+
 /** Turns the wheel where the mouse is, by these CSS pixels, as Playwright's mouse.wheel does. */
 const mouseWheel: BrowserCommand<[deltaX: number, deltaY: number]> = async (
   context,
@@ -89,21 +106,18 @@ function session(context: BrowserCommandContext) {
 }
 
 /**
- * A finger at a point and lifted again, through Chromium's touch input: touchStart with the point,
- * touchEnd with none.
+ * A finger at a point, moved and lifted again, through Chromium's touch input: touchStart and
+ * touchMove with the point, touchEnd with none.
  */
-const touch: BrowserCommand<[type: 'touchStart' | 'touchEnd', x?: number, y?: number]> = async (
-  context,
-  type,
-  x = 0,
-  y = 0,
-) => {
+const touch: BrowserCommand<
+  [type: 'touchStart' | 'touchMove' | 'touchEnd', x?: number, y?: number]
+> = async (context, type, x = 0, y = 0) => {
   const point = await toPage(context, x, y);
   await (
     await session(context)
   ).send('Input.dispatchTouchEvent', {
     type,
-    touchPoints: type === 'touchStart' ? [{ x: Math.round(point.x), y: Math.round(point.y) }] : [],
+    touchPoints: type === 'touchEnd' ? [] : [{ x: Math.round(point.x), y: Math.round(point.y) }],
   });
 };
 
@@ -201,20 +215,22 @@ const unrouteModule: BrowserCommand<[name: string]> = async (context, name) => {
  * The text on the system clipboard, read in the page that holds the test's frame, which may read
  * it once granted: the frame may only write. Chromium only.
  */
-const clipboardText: BrowserCommand<[]> = async (context) => {
+const clipboardText: BrowserCommand<[], string> = async (context) => {
   await context.page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   return context.page.evaluate(() => navigator.clipboard.readText());
 };
 
 /**
- * The contrast gate's Node side (tests/contrast/Gate.ts), loaded only by the test that asks for
- * it: the colors a theme's pairs name, and the measure of the colors the browser resolved.
+ * The contrast gate's Node side (tests/contrast/Gate.ts), loaded only by the tests that ask for
+ * it: the colors a theme's pairs name, or every pair's without a theme, and the measure of the
+ * colors the browser resolved.
  */
-const contrastColors: BrowserCommand<[theme: string]> = async (_, theme) =>
+const contrastColors: BrowserCommand<[theme?: string], Record<string, string>> = async (_, theme) =>
   (await import('../contrast/Gate.ts')).contrastColors(theme);
 
 const measureContrast: BrowserCommand<
-  [theme: string, resolved: Record<string, string | null>, canvas: string]
+  [theme: string, resolved: Record<string, string | null>, canvas: string],
+  ReturnType<typeof Gate.measureContrast>
 > = async (_, theme, resolved, canvas) =>
   (await import('../contrast/Gate.ts')).measureContrast(theme, resolved, canvas);
 
@@ -224,6 +240,7 @@ export const commands = {
   mouseUp,
   mouseClick,
   mouseWheel,
+  mouseFling,
   keyPress,
   keyDown,
   keyUp,

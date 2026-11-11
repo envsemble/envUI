@@ -34,5 +34,10 @@ afterEach(async () => {
   window.scrollTo(0, 0);
   if (innerWidth !== viewport.width || innerHeight !== viewport.height)
     await page.viewport(viewport.width, viewport.height);
-  await commands.emulateMedia({ reducedMotion: null, contrast: null, colorScheme: null });
+  await commands.emulateMedia({
+    reducedMotion: null,
+    contrast: null,
+    colorScheme: null,
+    forcedColors: null,
+  });
 });

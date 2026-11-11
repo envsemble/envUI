@@ -19,7 +19,6 @@
         "tests/component/{vitest.config,Setup}.ts",
         // The fixture's pages, each loading one of these.
         "tests/fixture/{main,perf}.tsx",
-        "tests/fixture/ForcedColors.fixture.tsx",
         "tests/fixture/vite.config.ts",
         "tests/fixture/Hydration.fixture.tsx",
         "tests/types/*.tsx",
