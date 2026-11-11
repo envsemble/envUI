@@ -101,7 +101,7 @@ test('a component runs the spec of its name, or of the name its alias gives', ()
 test('a file runs the specs whose fixtures use it, and a fixture the specs that open it', () => {
   // A component without a spec of its own runs the specs whose fixtures show it.
   assert.ok(specs('packages/ui/src/feedback/Progress.tsx').includes('Meter'));
-  assert.ok(specs('packages/ui/src/layout/Page.tsx').includes('Scaffold'));
+  assert.ok(specs('packages/ui/src/layout/Page.tsx').includes('Panes'));
   // Through the module that imports it: Calendar is in the date picker's popup.
   assert.ok(specs('packages/ui/src/forms/Calendar.tsx').includes('DatePicker'));
   // A fixture runs the specs that open it, also through the fixtures that import it.

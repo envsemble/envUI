@@ -13,7 +13,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
-import { fixtureUse, importsOf, specPaths } from './FixtureImports.ts';
+import { fixtureUse, importsOf, isComponentTest, specPaths } from './FixtureImports.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 /**
@@ -239,7 +239,7 @@ const fixtureBudget = 6;
 export const specFile = (name: string, root = repositoryRoot) =>
   specPaths(root).get(name) ?? `tests/browser/library/${name}.spec.ts`;
 const baseName = (path: string) =>
-  posix.basename(path).replace(/\.(?:spec\.ts|fixture\.tsx?|tsx?|css|m?js|html)$/, '');
+  posix.basename(path).replace(/\.(?:spec\.ts|test\.tsx|fixture\.tsx?|tsx?|css|m?js|html)$/, '');
 
 /** fixtureUse reads every fixture and library module: once per checkout and process. */
 const fixtureUses = new Map<string, ReturnType<typeof fixtureUse>>();
@@ -294,9 +294,20 @@ export function specsFor(
   const helpers = new Map<string, string[]>();
   for (const path of paths) {
     let found = false;
-    if (/^tests\/browser\/(?:library|site)\/[^/]+\.spec\.ts$/.test(path))
+    if (
+      /^tests\/browser\/(?:library|site)\/[^/]+\.spec\.ts$/.test(path) ||
+      /^tests\/component\/[^/]+\.test\.tsx$/.test(path)
+    )
       found = add(baseName(path), 'changed spec');
-    else if (/^tests\/browser\/helpers\/[^/]+\.ts$/.test(path)) {
+    // What every component test runs on: its configuration, setup and helpers, and the mount it
+    // shares with the fixture page.
+    else if (
+      /^tests\/component\/[^/]+\.tsx?$/.test(path) ||
+      path === 'tests/fixture/FixtureMount.tsx'
+    ) {
+      for (const [name, file] of specPaths(root))
+        if (isComponentTest(file)) found = add(name, `runs on ${path}`) || found;
+    } else if (/^tests\/browser\/helpers\/[^/]+\.ts$/.test(path)) {
       const helper = baseName(path);
       const users = [...written].filter((spec) =>
         importsOf(read(root, specFile(spec, root))).some(
