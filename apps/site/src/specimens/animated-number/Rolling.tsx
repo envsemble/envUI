@@ -1,7 +1,7 @@
 import { AnimatedNumber, Text } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
-import { useTimeline } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
 
 /** The value grows, grows again, and shrinks back to where it began. */
 const steps = [1600, 1600, 1600];
@@ -11,7 +11,7 @@ function Counting() {
   const step = useTimeline(steps);
   return (
     <Text variant="display" render={<span />}>
-      <AnimatedNumber value={values[step]!} /> tasks
+      <AnimatedNumber value={values[step]} /> tasks
     </Text>
   );
 }
@@ -19,10 +19,10 @@ function Counting() {
 /** AnimatedNumber rolling up as its value grows and down as it shrinks. */
 export default function Rolling() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="the number rolling to its new values">
         <Counting />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

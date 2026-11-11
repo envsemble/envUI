@@ -180,6 +180,7 @@ A label is a short noun phrase with no colon, such as "Project name".
 - A format or a limit goes in the description, read before people type.
 - A placeholder holds only an example value, such as name@example.com, never the label or instructions.
 - The submit button says what it does, "Create project", never "Submit".
+- Cancel, where a form has one, is a secondary Button before it, as a dialog's close button is.
 
 ### Error messages
 

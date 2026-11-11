@@ -51,9 +51,9 @@
     font: inherit;
     text-align: start;
     text-decoration: none;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     cursor: pointer;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-card[data-interactive]:hover:not(:disabled):not([aria-disabled='true']) {
     --env-card-layer: calc(var(--env-state-hover-opacity) * 100%);
@@ -68,8 +68,8 @@
   }
 
   .env-card[data-interactive]:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
   .env-card[data-interactive]:is(:disabled, [aria-disabled='true']) {
     opacity: var(--env-state-disabled-opacity);
@@ -131,13 +131,19 @@
     max-width: 32ch;
     font: var(--env-type-body);
     color: var(--env-color-fg-muted);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-card[data-actions] > .env-card-footer,
   .env-card[data-actions] > .env-skeleton-content > .env-card-footer {
     margin-block-start: auto;
     padding: var(--env-space-3) var(--env-card-padding);
     background: var(--env-color-bg-default);
+  }
+  /* A page card parts from the page by space alone, so its strip takes no fill of its own either:
+     a band would be all of the card that shows. */
+  .env-card[data-actions][data-background='page'] > .env-card-footer,
+  .env-card[data-actions][data-background='page'] > .env-skeleton-content > .env-card-footer {
+    background-color: transparent;
   }
 
   /* Motion: an interactive card settles a little while it is held, less than a compact control. Only
@@ -146,7 +152,7 @@
     .env-card[data-interactive] {
       transition-property: background-color, color, border-color, transform;
       transition-duration: var(--env-motion-duration-fast);
-      transition-timing-function: var(--env-motion-ease);
+      transition-timing-function: var(--env-motion-ease-enter);
     }
     .env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
       transform: scale(0.99);

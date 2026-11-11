@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
 
 const trigger = '.env-icon-button';
 

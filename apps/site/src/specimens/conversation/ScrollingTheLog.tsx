@@ -1,9 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Column, Composer, Grid, Message, MessageList } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 import { IconArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const question = 'What is still open for the launch on Friday?';
@@ -107,6 +108,8 @@ function Log({ replying }: { replying: boolean }) {
               alignSelf: 'end',
               justifySelf: 'center',
               marginBlockEnd: '0.5rem',
+              // Filled with the page's color, so the messages it floats over don't show through.
+              '--env-button-container': 'var(--env-color-bg-page)',
             }}
           >
             Latest

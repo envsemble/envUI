@@ -1,6 +1,7 @@
 import FrequentQuestions from '../../examples/disclosure/FrequentQuestions';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const summary = (index: number) =>
   `.env-disclosure:nth-child(${index} of .env-disclosure) > summary`;

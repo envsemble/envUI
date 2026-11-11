@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { isAbsolute, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,11 +16,15 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 // @envsemble/envui/theme-bootstrap, is its build in dist/, which a checkout has only after
 // npm run build, so the library's source module is imported instead.
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
+import { displayStorageKeys } from './src/display/DisplayStorage.ts';
+import { partModules, viewModules } from './src/pages/ViewModules.ts';
+import { siteDescription } from './src/routes/SiteDescription.ts';
 import {
   createDisplayBootstrapScript,
+  createFirstPaintStyle,
+  createSiteBootstrapScript,
   createStorageMigrationScript,
-  displayStorageKeys,
-} from './src/theme/DisplayStorage.ts';
+} from './src/display/HeadScripts.ts';
 import { checkoutMarker } from '../../scripts/test/CheckoutMarker.ts';
 import { resetClosedConnections } from '../../scripts/test/ServerSockets.ts';
 import { readReleaseNotes, releaseNotesSources } from '../../scripts/site/ReleaseNotes.ts';
@@ -40,7 +43,7 @@ import { withoutComments } from '../../scripts/site/CssComments.ts';
 let building = false;
 
 /** The recorded size of each part that loads with a page (scripts/site/RecordPartSizes.ts). */
-const partSizesFile = fileURLToPath(new URL('./src/template/PartSizes.json', import.meta.url));
+const partSizesFile = fileURLToPath(new URL('./src/generated/PartSizes.json', import.meta.url));
 function readPartSizes(): Record<string, [number, number]> {
   const { $comment: _comment, ...sizes } = JSON.parse(readFileSync(partSizesFile, 'utf8'));
   return sizes;
@@ -50,8 +53,11 @@ let pageParts: { sizes: Record<string, [number, number]>; lines: Record<string, 
   sizes: {},
   lines: {},
 };
-/** The key of a part of one page, an example or a specimen, with the page's id. */
-const pagePart = /^(?:example|specimen):([^/]+)\//;
+/**
+ * The key of a part of one page, an example, a specimen, the stage of an example shown open or a
+ * guide's figure, with the page's id.
+ */
+const pagePart = /^(?:example|specimen|open|figure):([^/]+)\//;
 
 /**
  * Data the site's pages read from the repository when the site app builds or serves, as
@@ -93,6 +99,10 @@ const siteData: Record<string, { read: () => unknown; sources: string[]; reloads
 const resolvedId = (id: string) => `\0${id}`;
 /** The library's generated list of every icon, which only the icon catalogue imports. */
 const iconList = fileURLToPath(new URL('../../packages/ui/src/icons/index.ts', import.meta.url));
+/** The documentation's model (scripts/docs/model), which the site imports as @docs-model. */
+const docsModel = fileURLToPath(new URL('../../scripts/docs/model', import.meta.url));
+/** The library's source, the site's only door into what its entry points don't export. */
+const libraryInternals = fileURLToPath(new URL('../../packages/ui/src', import.meta.url));
 
 /** The files for coding agents at the site's root, with the type each is served as. */
 const agentFileTypes = {
@@ -100,30 +110,8 @@ const agentFileTypes = {
   'llms.txt': 'text/plain; charset=utf-8',
 };
 
-/**
- * The revision the catalogue's links to source files point at: the release tag when the build is
- * of a release's commit, and otherwise the commit itself, as for archived and next builds, so a
- * link shows the source the page was generated from. Without Git, the package version's tag.
- */
-function sourceRevision() {
-  const manifest = new URL('../../packages/ui/package.json', import.meta.url);
-  const tag = `v${JSON.parse(readFileSync(manifest, 'utf8')).version}`;
-  const git = (...args: string[]) =>
-    execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-  try {
-    return git('tag', '--points-at', 'HEAD').split(/\s+/).includes(tag)
-      ? tag
-      : git('rev-parse', 'HEAD');
-  } catch {
-    return tag;
-  }
-}
-
 export default defineConfig(() => {
   return {
-    define: {
-      __ENVUI_SOURCE_REVISION__: JSON.stringify(sourceRevision()),
-    },
     plugins: [
       // Tells the browser tests which checkout this server serves.
       checkoutMarker(),
@@ -131,7 +119,9 @@ export default defineConfig(() => {
       resetClosedConnections(),
       {
         // The stored theme, contrast and scale apply before the catalogue loads, so a dark theme
-        // does not flash light and a compact page does not start at the comfortable size.
+        // does not flash light and a compact page does not start at the comfortable size; the
+        // page's background, in that theme, paints from the first frame. So do the drawer's width,
+        // the banner's draw-in and the shortcuts' modifier (createSiteBootstrapScript).
         name: 'envui-theme-bootstrap',
         // The script goes right after <meta charset>, which has to stay within the first 1024
         // bytes, and before the styles, so it runs before the first paint.
@@ -146,11 +136,30 @@ export default defineConfig(() => {
                 `${tag}\n    <script>${
                   createStorageMigrationScript() +
                   createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }) +
-                  createDisplayBootstrapScript()
-                }</script>`,
+                  createDisplayBootstrapScript() +
+                  createSiteBootstrapScript()
+                }</script>
+    <style>${createFirstPaintStyle(
+      readFileSync(
+        fileURLToPath(new URL('../../packages/ui/src/generated/Tokens.css', import.meta.url)),
+        'utf8',
+      ),
+    )}</style>`,
             );
           },
         },
+      },
+      {
+        // What the site is, in the head: the sentence the site gives a page without a summary
+        // (routes/SiteDescription.ts). A pre-rendered page carries its own (PrerenderSite.ts).
+        name: 'envui-description',
+        transformIndexHtml: () => [
+          {
+            tag: 'meta',
+            attrs: { name: 'description', content: siteDescription },
+            injectTo: 'head',
+          },
+        ],
       },
       {
         // The style sheets ship without their comments, which are about half their size. Their
@@ -165,30 +174,87 @@ export default defineConfig(() => {
         },
       },
       {
-        // The page's content (generated/pages/<id>.json, PageContent.ts) loads beside the site's
-        // script rather than once that has arrived and run: a script in index.html preloads the
-        // file of the page the address names by its last segment, such as button for
-        // /components/button and /docs/components/button. A segment that names no page, such as
-        // components, preloads nothing.
+        // What each page needs loads beside the site's script rather than once that has arrived and
+        // run: the files the module of its kind's view imports (pages/ViewModules.ts), and those of
+        // the parts of it that load on their own and that the server renders, and the file
+        // of its content (generated/pages/<id>.json, PageContent.ts), and on a catalogue page the
+        // style sheets of its figures (examples/<id>/, specimens/<id>/ and what they import), which
+        // apply with its first paint. The lists go to dist/site/.vite/page-preloads.json, from which
+        // scripts/site/PrerenderSite.ts links each pre-rendered page's files in its head.
         name: 'envui-content-preload',
         apply: 'build',
-        transformIndexHtml: {
+        generateBundle: {
+          // After Vite drops the chunks that held only style sheets, which pages import as sheets.
           order: 'post',
-          handler: (_html, { bundle }) => {
-            const files: Record<string, string> = {};
-            for (const file of Object.values(bundle ?? {})) {
-              const page =
-                file.type === 'chunk' &&
-                /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(file.facadeModuleId ?? '')?.[1];
-              if (page) files[page] = file.fileName;
+          handler(_options, bundle) {
+            // The server's build renders the pages, and loads nothing.
+            if (this.environment.config.consumer !== 'client') return;
+            const chunks = Object.values(bundle).filter((file) => file.type === 'chunk');
+            const contents: Record<string, string> = {};
+            for (const file of chunks) {
+              const page = /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(
+                file.facadeModuleId ?? '',
+              )?.[1];
+              if (page) contents[page] = file.fileName;
             }
-            return [
-              {
-                tag: 'script',
-                children: `(function(){var f=${JSON.stringify(files)}[location.pathname.split('/').filter(Boolean).pop()];if(f){var l=document.createElement('link');l.rel='modulepreload';l.href='/'+f;document.head.appendChild(l)}})();`,
-                injectTo: 'head' as const,
-              },
-            ];
+            const byName = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));
+            // What the site's script loads itself, which the views' files leave out.
+            const started = new Set<string>();
+            const imported = (name: string, into: Set<string>) => {
+              if (into.has(name)) return;
+              into.add(name);
+              for (const next of byName.get(name)?.imports ?? []) imported(next, into);
+            };
+            for (const chunk of chunks) if (chunk.isEntry) imported(chunk.fileName, started);
+            // The files of a module, a view's or a part's, and what it imports, but the start's.
+            const filesOf = (modules: Record<string, string>, what: string) =>
+              Object.fromEntries(
+                Object.entries(modules).map(([name, module]) => {
+                  const chunk = chunks.find((file) => file.facadeModuleId?.endsWith(`/${module}`));
+                  if (!chunk) throw new Error(`No chunk holds ${module}, which ${what} is in.`);
+                  const scripts = new Set<string>();
+                  imported(chunk.fileName, scripts);
+                  const files = [...scripts].filter((file) => !started.has(file));
+                  const styles = files.flatMap((file) => [
+                    ...(byName.get(file)?.viteMetadata?.importedCss ?? []),
+                  ]);
+                  return [name, { scripts: files, styles: [...new Set(styles)] }];
+                }),
+              );
+            const views = filesOf(viewModules, "a page's view");
+            // The parts of pages that the server renders, which a page loads with its view.
+            const parts = filesOf(partModules, 'a part of a page');
+            // The style sheets the site starts with, which a page's figures' sheets leave out.
+            const startedStyles = new Set(
+              [...started].flatMap((name) => [
+                ...(byName.get(name)?.viteMetadata?.importedCss ?? []),
+              ]),
+            );
+            const figureStyles: Record<string, string[]> = {};
+            for (const chunk of chunks) {
+              const page = /[\\/]src[\\/](?:examples|specimens)[\\/]([\w-]+)[\\/]/.exec(
+                chunk.facadeModuleId ?? '',
+              )?.[1];
+              if (!page || !contents[page]) continue;
+              const files = new Set<string>();
+              imported(chunk.fileName, files);
+              // With the modules of the options its components set, which load as they render,
+              // such as a table's column resizing.
+              for (const name of [...files])
+                for (const option of byName.get(name)?.dynamicImports ?? [])
+                  if (/[\\/]packages[\\/]ui[\\/]/.test(byName.get(option)?.facadeModuleId ?? ''))
+                    imported(option, files);
+              const styles = new Set(figureStyles[page]);
+              for (const name of files)
+                for (const style of byName.get(name)?.viteMetadata?.importedCss ?? [])
+                  if (!startedStyles.has(style)) styles.add(style);
+              figureStyles[page] = [...styles].sort();
+            }
+            this.emitFile({
+              type: 'asset',
+              fileName: '.vite/page-preloads.json',
+              source: JSON.stringify({ views, parts, contents, figureStyles }),
+            });
           },
         },
       },
@@ -319,8 +385,14 @@ export default defineConfig(() => {
     resolve: {
       conditions: ['envui-source', 'module', 'browser', 'development|production'],
       dedupe: ['react', 'react-dom'],
-      // The icon catalogue's list of every icon, which the package doesn't export.
-      alias: { 'envui-icon-list': iconList },
+      alias: {
+        // The icon catalogue's list of every icon, which the package doesn't export.
+        'envui-icon-list': iconList,
+        // The documentation's model, which the site and the scripts that build it both read.
+        '@docs-model': docsModel,
+        // What the library's entry points don't export, such as its reduced-motion query.
+        '@envui-internal': libraryInternals,
+      },
     },
     // That list has thousands of modules; serve it as one lazy dependency in dev.
     optimizeDeps: { include: ['envui-icon-list'] },

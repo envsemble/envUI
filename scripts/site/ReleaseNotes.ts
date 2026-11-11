@@ -3,17 +3,19 @@
 // changes, each linking to the migration guide or the full changelog below them. The catalogue reads them when it builds, through the
 // virtual module in apps/site/vite.config.ts, and the checks below hold them to that shape.
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { headingsOf } from '../docs/MarkdownHeadings.ts';
+import {
+  documentationDirectory,
+  libraryChangelogFile,
+  repositoryRoot,
+} from '../RepositoryPaths.ts';
 
-export const releaseNotesFile = fileURLToPath(
-  new URL('../../apps/site/src/releases/release-notes.md', import.meta.url),
-);
-const migrationFile = fileURLToPath(new URL('../../docs/migration.md', import.meta.url));
-const changelogFile = fileURLToPath(new URL('../../packages/ui/CHANGELOG.md', import.meta.url));
+const releaseNotesFile = resolve(repositoryRoot, 'apps/site/src/releases/release-notes.md');
+const migrationFile = resolve(documentationDirectory, 'migration.md');
 
 /** The most highlights an entry has. */
-export const highlightLimit = 5;
+const highlightLimit = 5;
 
 /**
  * A line of inline Markdown as pieces the page renders: text, `code` and [links](href), whose
@@ -41,8 +43,8 @@ export function inlinePieces(text: string): InlinePiece[] {
   for (const match of text.matchAll(pattern)) {
     if (match.index > last) pieces.push({ kind: 'text', text: text.slice(last, match.index) });
     if (match[1] !== undefined)
-      pieces.push({ kind: 'link', href: match[2]!, children: inlinePieces(match[1]) });
-    else pieces.push({ kind: 'code', text: match[3]! });
+      pieces.push({ kind: 'link', href: match[2], children: inlinePieces(match[1]) });
+    else pieces.push({ kind: 'code', text: match[3] });
     last = match.index + match[0].length;
   }
   if (last < text.length) pieces.push({ kind: 'text', text: text.slice(last) });
@@ -80,20 +82,20 @@ export function parseReleaseNotes(markdown: string): ReleaseEntry[] {
     const item = /^- (.+)$/.exec(line);
     if (item) {
       if (!releases.length) throw new Error(`An item before the first release heading: ${line}`);
-      releases.at(-1)![list].push(inlinePieces(item[1]!.trim()));
+      releases.at(-1)![list].push(inlinePieces(item[1].trim()));
     }
   }
   return releases;
 }
 
 /** A version's parts, for ordering: 1.0.0-prerelease.2 is [1, 0, 0, 2], a release [x, y, z, ∞]. */
-function versionKey(version) {
-  const [core, pre] = version.split('-');
+function versionKey(version: string) {
+  const [core, pre] = version.split('-') as [string, string | undefined];
   const preNumber = pre ? Number(pre.split('.').at(-1)) : Infinity;
   return [...core.split('.').map(Number), preNumber];
 }
 
-export function compareVersions(a, b) {
+function compareVersions(a: string, b: string) {
   const [left, right] = [versionKey(a), versionKey(b)];
   for (let index = 0; index < left.length; index += 1)
     if (left[index] !== right[index]) return left[index] < right[index] ? -1 : 1;
@@ -101,14 +103,14 @@ export function compareVersions(a, b) {
 }
 
 /** Every link in an entry's pieces. */
-export const linksOf = (pieces) =>
+const linksOf = (pieces: InlinePiece[]): string[] =>
   pieces.flatMap((piece) =>
     piece.kind === 'link' ? [piece.href, ...linksOf(piece.children)] : [],
   );
 
 /** The pages of the Docs the notes may link to, each with its heading ids. */
 function linkTargets() {
-  const ids = (file) =>
+  const ids = (file: string) =>
     new Set(
       headingsOf(
         readFileSync(file, 'utf8')
@@ -116,14 +118,17 @@ function linkTargets() {
           .replace(/^# [^\n]+\n\s*/, ''),
       ).map(({ id }) => id),
     );
-  return { '/docs/migration': ids(migrationFile), '/docs/changelog': ids(changelogFile) };
+  return {
+    '/docs/migration': ids(migrationFile),
+    '/docs/changelog': ids(libraryChangelogFile),
+  } as Record<string, Set<string>>;
 }
 
 /**
  * The problems of the release notes: an entry with too many highlights, versions out of order,
  * a breaking change without a link, or a link to a section the Docs don't have.
  */
-export function releaseNotesProblems(releases, targets = linkTargets()) {
+export function releaseNotesProblems(releases: ReleaseEntry[], targets = linkTargets()) {
   const problems: string[] = [];
   releases.forEach((release, index) => {
     const name = `Release ${release.version}`;
@@ -158,4 +163,4 @@ export function readReleaseNotes(file = releaseNotesFile) {
 }
 
 /** The files the release notes depend on, which the catalogue watches while it runs. */
-export const releaseNotesSources = [releaseNotesFile, migrationFile, changelogFile];
+export const releaseNotesSources = [releaseNotesFile, migrationFile, libraryChangelogFile];

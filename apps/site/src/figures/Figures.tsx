@@ -1,165 +1,60 @@
-import {
-  Fragment,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type ComponentPropsWithoutRef,
-  type ReactNode,
-} from 'react';
-import { Column, Theme, useTheme } from '@envsemble/envui';
-import { IconCheck } from '@envsemble/envui/icons/Check';
-import { IconClose } from '@envsemble/envui/icons/Close';
-import { IconWarning } from '@envsemble/envui/icons/Warning';
+import { Fragment, useMemo, useRef, type ReactNode } from 'react';
 import type {
   DocumentationBlock,
   DocumentationSection,
-  StageFill,
-} from '../shared/DocumentationTypes';
-import { Documentation } from '../pages/Documentation';
-import type { Documentation as Document } from '../pages/PageModel';
-import { AnatomyFigure } from './AnatomyFigure';
-import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
-import { OpenExample } from './OpenExample';
-import { SiteMarkdown } from '../template/OptionLegend';
-import { optionPieces, type OptionTable } from '../shared/CatalogueContent';
-import { InteractiveMark } from '../template/InteractiveMark';
-import { Specimen, SpecimenRender } from './Specimen';
-import { VerdictMotion } from '../motion/MotionStage';
+  ExampleBlock,
+  FoundationFigureBlock,
+  PlacedBlock,
+} from '@docs-model/DocumentationTypes';
+import { PageMarkdown } from '../markdown/PageMarkdown';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import { AnatomyFigure } from './anatomy/AnatomyFigure';
+import { LiveExample, type Presentation } from './LiveExample';
+import { VerdictFigure } from './VerdictFigure';
+import { MarkdownWithLegends } from '../markdown/MarkdownWithLegends';
 import {
-  useFoundationFigures,
-  type FoundationFigure as Figure,
-} from './foundations/FoundationFigures';
-import { FigureCode } from './foundations/Topic';
-import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
-import { useVerdictFit } from '../template/VerdictFit';
-
-type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
-type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
-type FigureBlock = ExampleBlock | FoundationBlock;
+  lastSubsection,
+  leadParagraph,
+  optionPieces,
+  type OptionTable,
+} from '@docs-model/CatalogueContent';
+import { Specimen } from './Specimen';
+import { useFoundationFigures, type FoundationFigureEntry } from './foundations/FoundationFigures';
+import { FigureCode, FigurePart } from './foundations/FoundationFrame';
+import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
+import { classNames } from '@envui-internal/internal/classNames';
+import { StageSkeleton } from '../loading/Skeletons';
+import { useSubjectShown } from './useSubjectShown';
 
 /**
- * A foundation's figure: the catalogue's own, from its page's preview,
+ * A foundation's figure: the catalogue's own, registered for its page (FoundationFigures.ts),
  * with the legend its Markdown gives it, and its code where it has an example file of its name.
  */
-function FoundationFigure({ page, block }: { page: Document; block: FoundationBlock }) {
+function FoundationFigure({
+  page,
+  block,
+}: {
+  page: DocumentationEntry;
+  block: FoundationFigureBlock;
+}) {
   const figure = useFoundationFigures(page.id)?.[block.name];
   const code = useMemo(
     () => (block.code ? { page: page.id, name: block.name } : null),
     [block.code, block.name, page.id],
   );
+  const place = useRef<HTMLDivElement>(null);
+  const shown = useSubjectShown(place);
   if (!figure) return null;
+  const part = `figure:${page.id}/${block.name}`;
+  // On a pre-rendered page, the figure's place is held until it renders (useSubjectShown).
+  if (!shown) return <StageSkeleton ref={place} part={part} what="figures" stage />;
   const Render = figure.render;
   return (
-    <FigureCode value={code}>
-      <Render legend={block.legend ?? []} caption={block.caption} />
-    </FigureCode>
-  );
-}
-
-/** The bar under a do, a don't or a caution: its word and its icon. */
-const verdicts = {
-  do: { label: 'Do', icon: <IconCheck /> },
-  dont: { label: 'Don’t', icon: <IconClose /> },
-  caution: { label: 'Caution', icon: <IconWarning /> },
-};
-
-/**
- * A do, don't or caution figure: the live example on a square stage with a green Do, red Don't or
- * amber Caution bar, a caution being acceptable with care rather than a mistake, and its one
- * sentence below, and the example's code under it. The example is drawn smaller where it
- * needs more room than the square (useVerdictFit). With `motion`, its animated specimen of the same
- * name plays it on the stage. A `wide` figure, whose point is a change across the column's width,
- * keeps a stage as wide as the column and as tall as its example. A foundation page's preview
- * passes its sample as `children` instead, which has no code of its own.
- */
-export function VerdictFigure({
-  page,
-  name,
-  verdict,
-  caption,
-  open = false,
-  motion = false,
-  wide = false,
-  children,
-  stage,
-}: {
-  verdict: 'do' | 'dont' | 'caution';
-  caption: string;
-  /** Whether the example's overlays are shown open, as a picture. */
-  open?: boolean;
-  /** Whether its animated specimen of the same name plays the example in place of the stage. */
-  motion?: boolean;
-  /** Whether it keeps a stage as wide as the column, rather than a square. */
-  wide?: boolean;
-  /** The stage's fill, where the page's would hide the subject. */
-  stage?: StageFill;
-} & (
-  | { page: string; name: string; children?: never }
-  | { page?: never; name?: never; children: ReactNode }
-)) {
-  const theme = useTheme();
-  const { label, icon } = verdicts[verdict];
-  const id = useId();
-  const stageRef = useRef<HTMLDivElement>(null);
-  const box = useRef<HTMLDivElement>(null);
-  useVerdictFit(stageRef, box, !wide && !(motion && page));
-  return (
-    // Named by its bar and its sentence, each read once.
-    <figure
-      className="site-verdict"
-      data-verdict={verdict}
-      data-shape={wide ? 'wide' : 'square'}
-      aria-labelledby={`${id}-verdict ${id}-caption`}
-    >
-      {/* The stage and the bar are two connected rows: envUI's connected-row parts give the outer
-          corners the large radius and the inner ones the small radius. */}
-      <div className="site-verdict-frame env-connected-rows">
-        {motion && page ? (
-          <VerdictMotion value={wide ? 'wide' : 'square'}>
-            <SpecimenRender page={page} name={name ?? ''} />
-          </VerdictMotion>
-        ) : (
-          <Column
-            ref={stageRef}
-            render={<Theme {...theme} />}
-            gap={0}
-            className="site-verdict-stage env-connected-row"
-            data-example={name}
-            data-stage={stage}
-            {...keepLinksInPlace}
-          >
-            <div ref={box} className="site-verdict-fit">
-              {!page ? (
-                children
-              ) : open ? (
-                <OpenExample name={name ?? ''}>
-                  <ExampleRender page={page} name={name ?? ''} />
-                </OpenExample>
-              ) : (
-                <ExampleRender page={page} name={name ?? ''} />
-              )}
-            </div>
-            <InteractiveMark enabled={!open} />
-          </Column>
-        )}
-        {/* A caution's bar is a dark island in either theme: the dark theme's bright warning fill,
-            with its dark text, where light's is a deep brown. */}
-        <Theme
-          {...theme}
-          theme={verdict === 'caution' ? 'dark' : theme.theme}
-          className="site-verdict-bar env-connected-row"
-          id={`${id}-verdict`}
-        >
-          {icon}
-          <span>{label}</span>
-        </Theme>
-      </div>
-      <figcaption className="site-verdict-caption" id={`${id}-caption`}>
-        {caption}
-      </figcaption>
-      {page && <ExampleCode page={page} name={name ?? ''} />}
-    </figure>
+    <FigurePart value={part}>
+      <FigureCode value={code}>
+        <Render legend={block.legend ?? []} caption={block.caption} />
+      </FigureCode>
+    </FigurePart>
   );
 }
 
@@ -167,14 +62,17 @@ export function VerdictFigure({
  * One figure of a section, by its kind. `options` is the option table right after a variants
  * figure, which it shows as its legend.
  */
-function Figure({
+function BlockFigure({
   page,
   block,
   options,
+  live = false,
 }: {
-  page: Document;
-  block: FigureBlock;
+  page: DocumentationEntry;
+  block: PlacedBlock;
   options?: OptionTable;
+  /** Whether a figure shown open is live, as the Overview's are: the component, open, to use. */
+  live?: boolean;
 }) {
   // A section waiting its turn to show renders its headings alone (SectionOutline).
   if (useSectionOutline()) return null;
@@ -186,9 +84,8 @@ function Figure({
         name={block.name}
         verdict={block.role}
         caption={block.caption ?? ''}
-        open={block.open}
-        motion={block.motion}
-        wide={block.wide}
+        shows={block.motion ? 'motion' : block.open ? 'open' : 'example'}
+        wide={Boolean(block.wide)}
         stage={block.stage}
       />
     );
@@ -216,54 +113,64 @@ function Figure({
       name={block.name}
       title={block.heading}
       caption={block.caption}
-      widths={block.widths}
-      sweep={block.sweep}
-      classes={block.classes}
-      fit={block.fit}
-      open={block.open}
+      presentation={presentationOf(block, live)}
       stage={block.stage}
-      motion={block.motion}
     />
   );
 }
 
 /**
- * Markdown cut before its last `###` subsection, when that subsection is text a figure can sit
- * beside: no table, no fence, and not only a list.
+ * How a live example's figure shows it, by its fence's attributes: played where it takes
+ * `motion`, whatever else it takes; else in frames of its `widths`, sweeping or one to a row;
+ * else open, or on its device.
  */
-export function lastSubsection(markdown: string): [string, string] | undefined {
-  const lines = markdown.split('\n');
-  let fence = false;
-  let start = -1;
-  lines.forEach((line, index) => {
-    if (/^\s{0,3}(`{3,}|~{3,})/.test(line)) fence = !fence;
-    if (!fence && /^### /.test(line)) start = index;
-  });
-  if (start === -1) return undefined;
-  const body = lines.slice(start + 1).filter((line) => line.trim());
-  if (!body.length || body.some((line) => /^\s*(\||`{3,}|~{3,})/.test(line))) return undefined;
-  if (/^([-*+]|\d+[.)]) /.test(body[0])) return undefined;
-  return [lines.slice(0, start).join('\n'), lines.slice(start).join('\n')];
+function presentationOf(block: ExampleBlock, live: boolean): Presentation | undefined {
+  const { motion, widths, sweep, classes, fit, open, device } = block;
+  if (motion) return { kind: 'motion', device };
+  if (widths && sweep) return { kind: 'sweep', widths, classes, fit };
+  if (widths) return { kind: 'widths', widths };
+  if (open) return { kind: 'open', live };
+  return device && { kind: 'device', device };
 }
 
 /**
- * Markdown cut after the paragraph that opens it, when it opens with one: a section's lead, which
- * the catalogue sets larger than the text below it (SiteText.css).
+ * A component's figure at the top of its Usage in the Docs: its catalogue's first overview
+ * example, live as the Overview shows it, without its code, which Usage gives right under it. It
+ * is the one figure a Docs page shows, so a reader sees what the code makes without switching
+ * parts; the catalogue's Overview section itself isn't repeated.
  */
-export function leadParagraph(markdown: string): [string, string] | undefined {
-  const text = markdown.replace(/^(?:[ \t]*\n)+/, '');
-  if (!text.trim() || /^\s{0,3}(#|\||[-*+] |\d+[.)] |`{3,}|~{3,}|<!--)/.test(text))
-    return undefined;
-  const end = text.search(/\n[ \t]*\n/);
-  return end === -1 ? [text, ''] : [text.slice(0, end), text.slice(end)];
+export function UsageFigure({ page }: { page: DocumentationEntry }) {
+  const block = page.sections
+    ?.find((section) => section.id === 'overview')
+    ?.blocks.find((item): item is ExampleBlock => item.kind === 'example');
+  if (!block) return null;
+  return (
+    <div className="docs-usage-figure">
+      <LiveExample
+        page={page.id}
+        name={block.name}
+        title={block.heading}
+        presentation={
+          block.open
+            ? { kind: 'open', live: true }
+            : block.device && { kind: 'device', device: block.device }
+        }
+        stage={block.stage}
+        code={false}
+      />
+    </div>
+  );
 }
 
 /**
  * The blocks of a section in the order they are written, with figures that follow each other, such
  * as a do and a don't, side by side; Markdown that is only blank lines between them doesn't count.
  */
-function groupFigures(blocks: DocumentationBlock[], figures: Record<string, Figure> | undefined) {
-  const groups: (DocumentationBlock | FigureBlock[])[] = [];
+function groupFigures(
+  blocks: DocumentationBlock[],
+  figures: Record<string, FoundationFigureEntry> | undefined,
+) {
+  const groups: (DocumentationBlock | PlacedBlock[])[] = [];
   for (const block of blocks) {
     if (block.kind === 'markdown' && !block.markdown.trim()) continue;
     const last = groups.at(-1);
@@ -283,19 +190,12 @@ function groupFigures(blocks: DocumentationBlock[], figures: Record<string, Figu
 }
 
 /**
- * Cells that share a row, figures side by side or a subsection beside its figure, and below them a
- * slot across the whole content column where their open code shows.
+ * A section's "## Title" line, which its first Markdown block opens with and its heading shows;
+ * empty where it opens otherwise.
  */
-function SharedRow(props: ComponentPropsWithoutRef<'div'>) {
-  const [slot, setSlot] = useState<HTMLDivElement | null>(null);
-  return (
-    <div className="site-shared-row">
-      <CodeSlot value={slot}>
-        <div {...props} />
-      </CodeSlot>
-      <div ref={setSlot} className="site-code-slot" />
-    </div>
-  );
+export function sectionTitle(section: DocumentationSection): string {
+  const first = section.blocks[0];
+  return first?.kind === 'markdown' ? (first.markdown.split('\n')[0] ?? '') : '';
 }
 
 /**
@@ -303,25 +203,28 @@ function SharedRow(props: ComponentPropsWithoutRef<'div'>) {
  * written, with figures that follow each other side by side and a subsection beside its one
  * figure. `lead` comes right after the heading, before the authored content, or with `leadAfter`
  * after the section's own lead paragraph, as Use it when follows a page's Rules lead.
+ * `headingHidden` keeps the heading for the page's contents and assistive technology alone.
  */
 export function FigureSection({
   page,
   section,
   lead,
   leadAfter = false,
+  headingHidden = false,
 }: {
-  page: Document;
+  page: DocumentationEntry;
   section: DocumentationSection;
   lead?: ReactNode;
   leadAfter?: boolean;
+  headingHidden?: boolean;
 }) {
   const blocks = [...section.blocks];
-  // The first Markdown block opens with the section's "## Title" line, which the heading shows.
+  const title = sectionTitle(section);
   const first = blocks[0];
-  const [title, ...intro] = first?.kind === 'markdown' ? first.markdown.split('\n') : [''];
-  if (first?.kind === 'markdown') blocks[0] = { kind: 'markdown', markdown: intro.join('\n') };
-  // An option table right after a variants figure is the figure's legend: each variant's name in
-  // the tag its callout shows, followed by what it is for.
+  if (first?.kind === 'markdown')
+    blocks[0] = { kind: 'markdown', markdown: first.markdown.split('\n').slice(1).join('\n') };
+  // An option table right after a variants figure is the figure's legend: each variant's name,
+  // which its callout tags, followed by what it is for.
   const options = new Map<string, OptionTable>();
   blocks.forEach((block, index) => {
     const next = blocks[index + 1];
@@ -340,6 +243,11 @@ export function FigureSection({
     };
   });
   const groups = groupFigures(blocks, useFoundationFigures(page.id));
+  // The Overview's figures shown open are the components at rest, open, which people can use.
+  const live = section.id === 'overview';
+  const figure = (block: PlacedBlock, key?: string | number) => (
+    <BlockFigure key={key} page={page} block={block} live={live} />
+  );
   const outline = useSectionOutline();
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
@@ -351,7 +259,7 @@ export function FigureSection({
     leadShown = true;
   };
   const markdown = (key: number, text: string) => (
-    <SiteMarkdown key={key} markdown={text} path={page.path} />
+    <MarkdownWithLegends key={key} markdown={text} path={page.path} />
   );
   groups.forEach((group, index) => {
     const opensWithLead =
@@ -363,19 +271,19 @@ export function FigureSection({
     const text = beside.get(index);
     if (Array.isArray(group) && text !== undefined)
       content.push(
-        <SharedRow key={index} className="site-figure-split">
+        <div key={index} className="site-figure-split">
           <div>
-            <Documentation markdown={text} path={page.path} />
+            <PageMarkdown markdown={text} path={page.path} />
           </div>
-          <Figure page={page} block={group[0]} />
-        </SharedRow>,
+          {figure(group[0])}
+        </div>,
       );
     else if (Array.isArray(group))
       content.push(
         group.length === 1 ? (
-          <Figure key={index} page={page} block={group[0]} />
+          figure(group[0], index)
         ) : (
-          <SharedRow
+          <div
             key={index}
             className="site-figure-run"
             data-count={group.length}
@@ -383,10 +291,8 @@ export function FigureSection({
               group.every((block) => block.kind === 'example' && block.role) || undefined
             }
           >
-            {group.map((block) => (
-              <Figure key={block.name} page={page} block={block} />
-            ))}
-          </SharedRow>
+            {group.map((block) => figure(block, block.name))}
+          </div>
         ),
       );
     else if (group.kind === 'markdown') {
@@ -395,7 +301,7 @@ export function FigureSection({
       const lead = index === 0 && leadParagraph(text);
       if (lead) {
         content.push(
-          <Documentation
+          <PageMarkdown
             key="section-lead"
             markdown={lead[0]}
             path={page.path}
@@ -415,7 +321,7 @@ export function FigureSection({
         leadParagraph(text)?.[1].trim() === ''
       ) {
         content.push(
-          <Documentation
+          <PageMarkdown
             key={index}
             markdown={text}
             path={page.path}
@@ -433,7 +339,13 @@ export function FigureSection({
       } else if (text.trim()) content.push(markdown(index, text));
     } else if (group.kind === 'example' || group.kind === 'figure')
       content.push(
-        <Figure key={index} page={page} block={group} options={options.get(group.name)} />,
+        <BlockFigure
+          key={index}
+          page={page}
+          block={group}
+          options={options.get(group.name)}
+          live={live}
+        />,
       );
     else if (group.kind === 'specimen' && !outline)
       content.push(<Specimen key={index} page={page.id} name={group.name} headingLevel={3} />);
@@ -443,7 +355,7 @@ export function FigureSection({
   if (section.id === 'changelog')
     return (
       <section data-section={section.id} {...pendingAttribute(outline)}>
-        <Documentation markdown={title} path={page.path} />
+        <PageMarkdown markdown={title} path={page.path} />
         {content}
       </section>
     );
@@ -453,8 +365,13 @@ export function FigureSection({
       data-section={section.id}
       {...pendingAttribute(outline)}
     >
-      <div className="site-figure-section-heading">
-        <Documentation markdown={title} path={page.path} />
+      <div
+        className={classNames(
+          'site-figure-section-heading',
+          headingHidden && 'site-visually-hidden',
+        )}
+      >
+        <PageMarkdown markdown={title} path={page.path} />
       </div>
       {content}
     </section>

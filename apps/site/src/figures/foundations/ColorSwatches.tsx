@@ -1,6 +1,7 @@
-import type { CSSProperties } from 'react';
 import { Text } from '@envsemble/envui';
+import { useContext } from 'react';
 import type { FigureWords } from './ColorFigures';
+import { FigurePart } from './FoundationFrame';
 
 /**
  * The colors of each role, in four groups: seven surfaces, six text and line roles, six actions and seven statuses, in the
@@ -52,7 +53,7 @@ const roleName = (text: string | undefined, index: number) =>
 /** The roles in the reader's theme, each group a continuous strip of swatches: a specimen of the system. */
 export function SwatchesFigure({ legend }: FigureWords) {
   return (
-    <div className="catalogue-role-groups">
+    <div className="catalogue-role-groups" data-site-figure={useContext(FigurePart)}>
       <div>
         {roleGroups.map((roles, group) => {
           const title = legend[group]?.name ?? '';
@@ -67,11 +68,7 @@ export function SwatchesFigure({ legend }: FigureWords) {
                     <span
                       className="catalogue-role-swatch"
                       aria-hidden="true"
-                      style={
-                        {
-                          '--catalogue-card-fill': `var(--env-color-${colors.at(-1)})`,
-                        } as CSSProperties
-                      }
+                      style={{ '--catalogue-card-fill': `var(--env-color-${colors.at(-1)})` }}
                     >
                       {colors.map((color) => (
                         <span key={color} style={{ background: `var(--env-color-${color})` }} />

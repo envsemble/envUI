@@ -1,0 +1,46 @@
+@layer env.components {
+  /* A table's column resize handles, which only a table with resizableColumns loads, with the code
+     that moves them (ColumnResizeHandle.tsx). A handle straddles nothing: it sits inside the end of
+     its header cell, with a line on the column boundary while it is hovered, focused or dragged, or
+     while the pointer is over the header row (Table.css). */
+  .env-table-column-resize-handle {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    z-index: var(--env-z-raised);
+    inline-size: var(--env-space-3);
+    cursor: col-resize;
+    touch-action: none;
+    outline: none;
+  }
+  .env-table-column-resize-handle::after {
+    content: '';
+    position: absolute;
+    inset-block: var(--env-space-2);
+    inset-inline-end: 0;
+    /* The bar, thicker while the column resizes. */
+    --env-table-resize-bar: 0.125rem;
+    inline-size: var(--env-table-resize-bar);
+    border-radius: var(--env-radius-full);
+    background: transparent;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  .env-table-column-resize-handle:hover::after {
+    background: var(--env-color-border-muted-hover);
+  }
+  .env-table-column-resize-handle:is(:focus-visible, [data-resizing])::after {
+    inset-block: 0;
+    --env-table-resize-bar: 0.1875rem;
+    background: var(--env-color-border-focus);
+  }
+  @media (pointer: coarse) {
+    .env-table-column-resize-handle {
+      inline-size: var(--env-space-5);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-table-column-resize-handle::after {
+      transition: none;
+    }
+  }
+}

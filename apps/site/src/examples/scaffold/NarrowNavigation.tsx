@@ -3,11 +3,11 @@ import {
   NavigationBar,
   NavigationDrawer,
   IconButton,
+  List,
   Page,
   PageHeader,
   NavigationRail,
   Scaffold,
-  Text,
   TopBar,
   type Destination,
 } from '@envsemble/envui';
@@ -20,6 +20,7 @@ import { IconSettings } from '@envsemble/envui/icons/Settings';
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '22rem' };
 const storageKey = 'navigation-narrow';
+const projects = ['Launch brief', 'Budget 2026', 'Hiring plan'];
 
 const destinations: Destination[] = [
   { label: 'Projects', icon: <IconCategory />, href: '#projects', current: true },
@@ -63,7 +64,11 @@ export default function NarrowNavigation() {
       }}
     >
       <Page header={<PageHeader title="Projects" headingLevel={3} />}>
-        <Text emphasis="muted">Website refresh, Quarterly report and four more.</Text>
+        <List.Root aria-label="Projects">
+          {projects.map((project) => (
+            <List.Item key={project} label={project} />
+          ))}
+        </List.Root>
       </Page>
     </Scaffold>
   );

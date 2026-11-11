@@ -1,15 +1,18 @@
 import { useState } from 'react';
-import { Button, Column, List, SearchField, Text } from '@envsemble/envui';
+import { Button, Column, List, SearchField, Surface, Text } from '@envsemble/envui';
 import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
 
-const projects = ['Northwind launch', 'Annual report', 'Pricing research'];
+const projects = ['Northwind launch', 'Pricing research'];
 
 const input = '.env-text-field-input';
 
 /*
- * No project matches the search: the search cleared, which brings the projects back, and the
- * same search typed again, which leaves none, as it began.
+ * No project matches the search. Clears the search, which brings the projects back, then types the
+ * same search again, which leaves none, as it began.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -26,20 +29,25 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
-/** A search with no results, its empty state offering the one way on. */
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 18, height: 13.5 };
+
+/** A search with no results, whose empty state offers the one way forward. */
 export default function EmptyStatesTile() {
   const [query, setQuery] = useState('roadmap');
   usePointer(script);
   const matches = projects.filter((name) => name.toLowerCase().includes(query.toLowerCase()));
   return (
-    <Column gap={4} style={{ inlineSize: '15rem', minBlockSize: '11.5rem' }}>
+    <Column gap={3} style={{ inlineSize: '17rem', minBlockSize: '11.5rem' }}>
       <SearchField label="Search projects" value={query} onValueChange={setQuery} />
       {matches.length > 0 ? (
-        <List.Root aria-label="Projects">
-          {matches.map((name) => (
-            <List.Item key={name} label={name} />
-          ))}
-        </List.Root>
+        <Surface background="muted" padding={1} radius="sm" style={outlined}>
+          <List.Root aria-label="Projects">
+            {matches.map((name) => (
+              <List.Item key={name} label={name} />
+            ))}
+          </List.Root>
+        </Surface>
       ) : (
         <Column gap={3} align="center">
           <Text render={<span />} emphasis="muted">

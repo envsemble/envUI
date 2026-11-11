@@ -163,5 +163,14 @@ typeScriptRuleTester.run('no-inline-layout in TypeScript', rule, {
       code: `<div style={{ display: 'flex', flexDirection: 'column' as const }} />`,
       errors: [layout('column', 'flex')],
     },
+    // Optional chaining and `!` wrap the style, as they do the components no-html-elements reads.
+    {
+      code: `const styles = { toolbar: { display: 'grid' } }; <div style={styles?.toolbar} />;`,
+      errors: [layout('grid', 'grid')],
+    },
+    {
+      code: `const d = 'flex'; <div style={{ display: d! }} />;`,
+      errors: [layout('row', 'flex')],
+    },
   ],
 });

@@ -1,6 +1,7 @@
 import RequiredInForm from '../../examples/combobox/RequiredInForm';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const input = '.env-combobox-input';
 const remove = '.env-combobox-chip-remove';

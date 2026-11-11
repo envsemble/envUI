@@ -7,9 +7,10 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@base-ui/react": "1.9.0",
     "@envsemble/envui": "1.0.0-prerelease.4",
     "minisearch": "7.2.0",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   }
 }

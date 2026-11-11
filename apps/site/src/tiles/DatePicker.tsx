@@ -1,41 +1,84 @@
-import { Calendar } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useState } from 'react';
+import { DatePicker } from '@envsemble/envui';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const day = (date: string) => `.env-calendar-day[data-date="${date}"]`;
+const field = '.env-date-picker-trigger';
 
 /*
- * The 23rd chosen, then the next month looked at and back, and the 20th chosen again, as it
- * began.
+ * Open on March 4th: chooses the 6th, which closes it and shows the 6th in its field. Opens it
+ * again, looks at April, whose first week starts on another day, and back at March; chooses the
+ * 4th, which closes it, and opens it again from its field, as it began. The last lines are the days
+ * of its first week, under the month's name.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
-  { to: day('2026-10-21') },
+  { wait: 400 },
+  { to: day('2026-03-05') },
   { wait: 250 },
-  { to: day('2026-10-23'), duration: 450 },
+  { to: day('2026-03-06'), duration: 400 },
   { wait: 300 },
   { click: true },
   { wait: 800 },
-  { to: '.env-calendar-next', duration: 500 },
+  { to: field, x: 0.4, duration: 450 },
   { wait: 200 },
   { click: true },
-  { wait: 1100 },
+  { wait: 700 },
+  { to: '.env-calendar-next', duration: 450 },
+  { wait: 200 },
+  { click: true },
+  { wait: 1400 },
   { to: '.env-calendar-previous', duration: 450 },
   { wait: 200 },
   { click: true },
   { wait: 700 },
-  { to: day('2026-10-20'), duration: 500 },
+  { to: day('2026-03-04'), duration: 450 },
   { wait: 250 },
   { click: true },
-  { wait: 600 },
+  { wait: 700 },
+  { to: field, x: 0.4, duration: 450 },
+  { wait: 200 },
+  { click: true },
+  { wait: 700 },
   { leave: true },
   { wait: 400 },
 ];
 
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 20, height: 15 };
+
 /**
- * A date picker's calendar, the 20th chosen: its popup's body, which shows what the page is about
- * at a size a tile can show, as the field it opens from would only shrink it.
+ * A date picker on March 4th, with its label hidden and its field small, as for a field whose
+ * purpose is clear without its label. It rests open with its calendar under its field, framed from
+ * the field's top down past the chosen day's week and the next one, whole, and the one after where
+ * there is room, so it reads as a month. While it plays the day is chosen, the month is paged, and
+ * the popup closes and opens again in place, so nothing in its tile moves (useHeldView); its stage
+ * draws it as much smaller as that takes (useFit.ts). March 2026 starts on a Sunday, so its first
+ * week is a whole one; April starts on a Wednesday, so when it is paged to, the days of its first
+ * week move along the row. When the tile stops, it is on the 4th again, as it rests.
  */
 export default function DatePickerTile() {
-  usePointer(script);
-  return <Calendar aria-label="Publish on" defaultValue="2026-10-20" />;
+  const [value, setValue] = useState<string | null>('2026-03-04');
+  const [open, setOpen] = useState(true);
+  useHeldView();
+  usePointer(script, {
+    onRest: () => {
+      setValue('2026-03-04');
+      setOpen(true);
+    },
+  });
+  return (
+    <DatePicker
+      label="Publish on"
+      visibleLabel={false}
+      size="sm"
+      value={value}
+      onValueChange={setValue}
+      open={open}
+      onOpenChange={setOpen}
+      style={{ inlineSize: '9rem' }}
+    />
+  );
 }

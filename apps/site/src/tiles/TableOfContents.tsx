@@ -1,8 +1,11 @@
 import { useEffect, useId, useRef, type MouseEvent } from 'react';
 import { TableOfContents } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
 
-/** How tall the unseen article's view and each of its sections are, in px. */
+/** How tall the hidden article's view and each of its sections are, in px. */
 const view = 100;
 
 /** Eases a scroll in and out. */
@@ -11,7 +14,7 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2
 const entry = (name: string) => `.env-table-of-contents-link[href$="-${name}"]`;
 
 /*
- * Configure chosen, the reader's place gliding down to it, then Deploy, through Domains, and
+ * Chooses Configure, the reader's place gliding down to it, then Deploy, passing Domains, and then
  * Install again, back up the contents.
  */
 const script: PointerStep[] = [
@@ -33,9 +36,9 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A guide's contents, its reader at Install. The guide itself is out of sight: its sections scroll
- * in a hidden view of their own behind the contents, which the contents follow as it scrolls, so
- * the reader's place glides as it does on a page, and a press on a link scrolls that view rather
+ * A guide's contents, with the reader at Install. The guide itself is out of sight: its sections
+ * scroll in a hidden view of their own behind the contents, which follow that view as it scrolls.
+ * So the reader's place glides as it does on a page, and a press on a link scrolls that view rather
  * than the gallery.
  */
 export default function TableOfContentsTile() {
@@ -43,8 +46,10 @@ export default function TableOfContentsTile() {
   const scroller = useRef<HTMLDivElement>(null);
   const glide = useRef(0);
   useEffect(() => () => cancelAnimationFrame(glide.current), []);
-  // Stopped, the unseen article goes back to its top rather than the tile being drawn anew, which
-  // would grow the marks again from nothing as the contents measure it.
+  // Framed once on the whole list, it holds that view while the reader's place moves through it.
+  useHeldView();
+  // When the tile stops, the hidden article goes back to its top, rather than the tile being drawn
+  // again, which would grow the marks again from nothing as the contents measure it.
   usePointer(script, {
     onRest: () => {
       cancelAnimationFrame(glide.current);
@@ -52,9 +57,9 @@ export default function TableOfContentsTile() {
     },
   });
   const section = (name: string) => `${id}-${name}`;
-  /** Scrolls the unseen article to a section, as a link on a page does, at a reader's pace. */
+  /** Scrolls the hidden article to a section, as a link on a page does, at a reader's pace. */
   const go = (event: MouseEvent<HTMLElement>) => {
-    const target = (event.target as HTMLElement).closest('a');
+    const target = event.target instanceof Element ? event.target.closest('a') : null;
     const area = scroller.current;
     if (!target || !area) return;
     event.preventDefault();
@@ -63,7 +68,7 @@ export default function TableOfContentsTile() {
     cancelAnimationFrame(glide.current);
     const from = area.scrollTop;
     const to = element.offsetTop - view / 4;
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (prefersReducedMotion()) {
       area.scrollTop = to;
       return;
     }

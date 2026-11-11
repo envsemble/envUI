@@ -1,8 +1,12 @@
 @layer env.components {
   .env-disclosure {
+    /* The chevron and the gap after it, which the panel's inset matches, so the details line up
+       with the summary's words. */
+    --env-disclosure-indicator-size: var(--env-icon-size-sm);
+    --env-disclosure-gap: var(--env-space-1);
     min-inline-size: 0;
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     margin: 0;
     padding: 0;
     border: 0;
@@ -12,37 +16,62 @@
   }
   .env-disclosure > summary {
     display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
+    align-items: flex-start;
+    gap: var(--env-disclosure-gap);
     list-style: none;
     white-space: normal;
-    /* Not anywhere: Firefox sizes the fit-content summary from its min-content width, which anywhere
-       shrinks to one letter, and a one-word title such as Code would break. */
-    overflow-wrap: break-word;
     cursor: pointer;
     width: fit-content;
     max-width: 100%;
+    /* Hover and press lay the shared state layer in a small rounded rectangle, the corners of a
+       link's and an accordion heading's ring, a little past the words on each side; the margin
+       takes that back, so the summary lines up with the text around it. */
+    margin-inline: calc(-1 * var(--env-space-1));
+    padding-inline: var(--env-space-1);
+    border-radius: var(--env-radius-sm);
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-disclosure > summary::-webkit-details-marker {
     display: none;
   }
-  .env-disclosure > summary::before {
-    content: '›';
-    flex: 0 0 0.5rem;
-    text-align: center;
+  /* The chevron, the icon set's as a tree's and a select's are, at the small icon size, in the
+     middle of the summary's first line. It points in the reading direction while closed and turns to
+     point down while open. */
+  .env-disclosure-indicator.env-icon {
+    --env-icon-size: var(--env-disclosure-indicator-size);
+    block-size: 1lh;
   }
-  .env-disclosure[open] > summary::before {
+  .env-disclosure-indicator > svg {
+    block-size: var(--env-disclosure-indicator-size);
+  }
+  .env-disclosure-indicator:dir(rtl) {
+    transform: scaleX(-1);
+  }
+  .env-disclosure[open] > summary > .env-disclosure-indicator {
     transform: rotate(90deg);
   }
+  .env-disclosure[open] > summary > .env-disclosure-indicator:dir(rtl) {
+    transform: scaleX(-1) rotate(90deg);
+  }
   .env-disclosure > summary:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.25rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
   .env-disclosure > summary:hover {
+    /* The lighter layer of a ghost button with a label, so a press stands apart from it. */
+    background: color-mix(in srgb, var(--env-color-bg-neutral-subtle-hover) 70%, transparent);
     color: var(--env-color-fg-muted-hover);
   }
   .env-disclosure > summary:active {
+    background: var(--env-color-bg-neutral-subtle-pressed);
     color: var(--env-color-fg-muted-pressed);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-disclosure > summary {
+      transition: none;
+    }
   }
   @media (pointer: coarse) {
     .env-disclosure > summary {
@@ -52,7 +81,7 @@
   }
   .env-disclosure-panel {
     margin-block: var(--env-space-2) 0;
-    margin-inline: var(--env-space-4) 0;
+    margin-inline: calc(var(--env-disclosure-indicator-size) + var(--env-disclosure-gap)) 0;
     color: inherit;
     font: inherit;
   }
@@ -64,14 +93,39 @@
     padding-inline-start: var(--env-space-5);
   }
 
-  /* Motion: an open panel fades in, and without a reduced-motion preference the summary's
-     indicator turns. */
-  .env-disclosure[open] > .env-disclosure-panel {
-    animation: env-motion-fade-in var(--env-motion-duration-slow) var(--env-motion-ease-enter);
-  }
+  /* Motion: without a reduced-motion preference the summary's indicator turns, and the details grow
+     to their height as they open and shrink as they close, fading in and out, as an accordion's
+     panel does, and stay until they have closed. Where the browser can't size them to their
+     content they show at once and fade in; under a reduced-motion preference they open and close at
+     once, as an accordion's panel does. */
   @media (prefers-reduced-motion: no-preference) {
-    .env-disclosure > summary::before {
+    .env-disclosure[open] > .env-disclosure-panel {
+      animation: env-motion-fade-in var(--env-motion-duration-fast) var(--env-motion-ease);
+    }
+    .env-disclosure-indicator {
       transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+    }
+    @supports (block-size: calc-size(auto, size)) {
+      .env-disclosure[open] > .env-disclosure-panel {
+        animation: none;
+      }
+      /* The details' own box holds the panel's margin, so nothing is left when it closes; it clips
+         what lies past it as it grows, but no focus ring of the panel's content. */
+      .env-disclosure::details-content {
+        display: flow-root;
+        block-size: 0;
+        overflow: clip;
+        overflow-clip-margin: var(--env-space-1);
+        opacity: 0;
+        transition:
+          block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+          opacity var(--env-motion-duration-fast) var(--env-motion-ease),
+          content-visibility var(--env-motion-duration-medium) allow-discrete;
+      }
+      .env-disclosure[open]::details-content {
+        block-size: calc-size(auto, size);
+        opacity: 1;
+      }
     }
   }
 }

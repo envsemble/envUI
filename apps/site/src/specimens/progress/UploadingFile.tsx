@@ -1,6 +1,6 @@
 import { Progress } from '@envsemble/envui';
-import { useTimeline } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
 import { useRounds } from './Rounds';
 
 /*
@@ -13,7 +13,7 @@ const steps = [900, 800, 800, 800, 1700, 350, 600, 800];
 function Uploading() {
   const step = useTimeline(steps);
   const { round, style } = useRounds(step, 6);
-  const share = shares[step]!;
+  const share = shares[step];
   return (
     <Progress
       key={round}

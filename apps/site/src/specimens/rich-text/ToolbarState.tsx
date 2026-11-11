@@ -1,7 +1,8 @@
 import { RichTextEditor } from '@envsemble/envui/rich-text';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const notes = 'Send the **press kit** to Priya Shah by Friday.';
 const document = '.ProseMirror';
@@ -43,10 +44,10 @@ function Formatting() {
 /** Bold pressed while the caret is in bold text, and let go in plain text. */
 export default function ToolbarStateMotion() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="Bold pressed in bold text">
         <Formatting />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

@@ -24,7 +24,7 @@ import {
   type CatalogueTheme,
   type ThemeName,
 } from '../browser/helpers/CatalogueThemes';
-import { allPages } from '../../apps/site/src/navigation/SiteRoutes';
+import { allPages } from '../../apps/site/src/routes/SiteRoutes';
 
 /** light on every page, and dark, light-hc and dark-hc on the pages of samplePages. */
 type Theme = ThemeName;
@@ -124,10 +124,10 @@ function updating(testInfo: TestInfo) {
 
 async function settle(page: Page) {
   await page.locator('#site-main').waitFor();
-  // A skeleton of the site's (.site-loading, template/Loading.tsx) marks a part that is still
+  // A skeleton of the site's (.site-loading, loading/Skeletons.tsx) marks a part that is still
   // loading: an example, its code, a specimen, a demo, the icon list, the token reference or the
   // changelog. A tile's (.catalogue-tile-loading) waits for the tile to come into view instead.
-  // A section still to show is its outline (data-site-pending, template/SectionOutline.ts) until
+  // A section still to show is its outline (data-site-pending, markdown/SectionOutline.ts) until
   // it renders, with the skeletons of its parts.
   await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
   await page.locator('.site-loading').first().waitFor({ state: 'detached' });
@@ -186,10 +186,10 @@ async function highlighted(page: Page) {
 /** Switches the catalogue to the theme's scheme in its Display menu, under the theme's contrast. */
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
-  const app = page.locator('.site-app');
-  if ((await app.getAttribute('data-env-theme')) !== theme.scheme)
+  const root = page.locator('html');
+  if ((await root.getAttribute('data-env-theme')) !== theme.scheme)
     await chooseScheme(page, theme.scheme);
-  await page.locator(`.site-app[data-env-theme="${theme.scheme}"]`).waitFor();
+  await page.locator(`html[data-env-theme="${theme.scheme}"]`).waitFor();
 }
 
 async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {

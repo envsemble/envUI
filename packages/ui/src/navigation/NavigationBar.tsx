@@ -1,15 +1,14 @@
 'use client';
 
 import type { ComponentPropsWithRef } from 'react';
-import { Column, Row } from '../foundations/Layout.js';
-import { Badge } from '../content/Badge.js';
+import { Column, Row } from '../layout/Layout.js';
+import { Badge } from '../data-display/Badge.js';
 import { classNames } from '../internal/classNames.js';
-import { inSkeleton } from '../foundations/internal/inSkeleton.js';
-import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
-import { ActionElement } from '../internal/ActionElement.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { ActionElement } from '../internal/control/ActionElement.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { IconMoreHoriz } from '../icons/MoreHoriz.js';
-import * as Menu from './Menu.js';
+import * as Menu from '../actions/menu/Menu.js';
 import {
   countedName,
   destinationKey,
@@ -17,10 +16,11 @@ import {
   holdsCurrent,
   shownCount,
   useNavigationMessages,
-  type Destination,
   type DestinationClasses,
-} from './internal/Destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+} from './internal/DestinationItem.js';
+import type { Destination } from './destinations.js';
+import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationBar.css';
 
@@ -36,8 +36,7 @@ const barClasses: DestinationClasses = {
 };
 
 export interface NavigationBarProps
-  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
   /**
    * The application's destinations, the same array NavigationRail and NavigationDrawer take. Give the bar 3 to 5: past
    * 5 it shows the first 4 and a More item that opens the rest in a menu. Groups and nested
@@ -91,7 +90,7 @@ export function NavigationBar({
   const restName = countedName(messages.more, restCount, messages) ?? messages.more;
   // As on the destinations, the current state is an attribute of the item, and its name says it.
   const moreState = {
-    'data-current': restCurrent ? '' : undefined,
+    'data-current': flag(restCurrent),
     'aria-label': restCurrent ? messages.moreCurrent({ name: restName }) : restName,
   };
   return (

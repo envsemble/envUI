@@ -1,8 +1,25 @@
 @layer env.components {
+  /* The code theme's colors, standard and high-contrast, set by every boundary for its theme, so
+     code takes those of the nearest one, also on a page rendered on the server before it hydrates,
+     when only the root knows the reader's theme. They are fixed in codeColors.ts, which
+     tests/library/CodeHighlighting.test.mjs holds these to. */
+  /* stylelint-disable color-no-hex, declaration-property-value-disallowed-list -- the code themes'
+     own colors, outside the color tokens, as the colors of highlighted tokens are. */
   .env-theme {
     --env-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
     --env-code-font-size: 0.8125rem;
+    --env-code-background: rgb(31 31 34 / 0.06);
+    --env-code-background-high: rgb(31 31 34 / 0.06);
+    --env-code-foreground: #1f2328;
+    --env-code-foreground-high: #0e1116;
   }
+  .env-theme[data-env-theme='dark'] {
+    --env-code-background: rgb(232 234 238 / 0.05);
+    --env-code-background-high: #0a0c10;
+    --env-code-foreground: #b2c0cd;
+    --env-code-foreground-high: #f0f3f6;
+  }
+  /* stylelint-enable color-no-hex, declaration-property-value-disallowed-list */
   /* Code's colors come from the code theme, standard and high-contrast: a custom property that starts
      with the theme's high-contrast switch (Theme.css), such as a token's --env-code-token-now, holds
      its high-contrast color or nothing. */
@@ -15,12 +32,20 @@
     background: var(--env-code-background-now, var(--env-code-background));
     color: var(--env-code-foreground-now, var(--env-code-foreground));
   }
-  /* Inline code: the neutral muted fill, a layer of the text color, so it stands apart from the
-     page, panes, cards, muted fills and popups alike, as code blocks do with a layer of their own. */
+  /* Inline code: the monospace carries it, on half the neutral muted fill, a faint layer of the text
+     color, so a sentence with several identifiers reads as text rather than a row of chips, and it
+     still stands apart on the page, panes, cards, muted fills and popups alike. High contrast keeps
+     the whole fill. */
   .env-code {
+    --env-code-inline-fill-now: var(--env-theme-high-contrast) var(--env-color-bg-neutral-muted);
+
+    /* stylelint-disable-next-line unit-disallowed-list -- inline code's padding follows its own font size, as the text around it does */
     padding: 0.125em 0.375em;
     border-radius: var(--env-radius-sm);
-    background: var(--env-color-bg-neutral-muted);
+    background: var(
+      --env-code-inline-fill-now,
+      color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent)
+    );
     font: 0.9em/1.4 var(--env-code-font-family);
     /* A container where a column should keep room for its longest word, such as a table cell, sets
        --env-code-overflow-wrap to break-word. */
@@ -45,14 +70,18 @@
   .env-code-block code {
     font: inherit;
   }
-  /* Each highlighted token has its standard color and its high-contrast one, as above. */
+  /* Each highlighted token has its color in each code theme, standard and high-contrast, as above:
+     the dark theme's where the nearest Theme is dark (Theme.css's switch), else the light one's. */
   .env-code-block code span {
     --env-code-token-now: var(--env-theme-high-contrast) var(--env-code-token-high);
+    --env-code-token-dark-now: var(--env-theme-high-contrast) var(--env-code-token-dark-high);
+    --env-code-token-dark-shown: var(--env-theme-dark)
+      var(--env-code-token-dark-now, var(--env-code-token-dark));
 
-    color: var(--env-code-token-now, var(--env-code-token));
+    color: var(--env-code-token-dark-shown, var(--env-code-token-now, var(--env-code-token)));
   }
   .env-code-block pre:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
+    outline: 2px solid var(--env-color-border-focus);
     outline-offset: var(--env-space-1);
   }
   .env-code-block[data-wrap] pre {
@@ -69,9 +98,11 @@
     font: var(--env-type-body-sm);
   }
   .env-code-block-copy-status {
+    /* Visually hidden: a pixel's box, clipped away, still read. */
+    --env-code-block-copy-status-size: 0.0625rem;
     position: absolute;
-    inline-size: 0.0625rem;
-    block-size: 0.0625rem;
+    inline-size: var(--env-code-block-copy-status-size);
+    block-size: var(--env-code-block-copy-status-size);
     clip-path: inset(50%);
     overflow: hidden;
     white-space: nowrap;

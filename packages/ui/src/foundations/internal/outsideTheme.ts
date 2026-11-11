@@ -6,5 +6,5 @@
 export const outsideTheme = Object.freeze({
   theme: 'light',
   contrast: 'system',
-  scale: 'comfortable',
+  scale: 'system',
 } as const);

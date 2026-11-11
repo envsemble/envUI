@@ -2,7 +2,7 @@
   .env-text {
     min-inline-size: 0;
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     margin: 0;
     font: var(--env-type-body);
     color: var(--env-color-fg-default);
@@ -15,9 +15,11 @@
   }
   .env-text:where([data-variant='headline']) {
     font: var(--env-type-headline);
+    letter-spacing: var(--env-type-headline-letter-spacing);
   }
   .env-text:where([data-variant='title']) {
     font: var(--env-type-title);
+    letter-spacing: var(--env-type-title-letter-spacing);
   }
   .env-text:where([data-variant='body-sm']) {
     font: var(--env-type-body-sm);
@@ -77,6 +79,7 @@
 
   /* An animated number keeps the line box of the text around it; the rolling value is clipped to it. */
   .env-animated-number {
+    position: relative;
     display: inline-flex;
     overflow: clip;
     vertical-align: bottom;
@@ -84,6 +87,18 @@
   }
   .env-animated-number-value {
     display: inline-block;
+  }
+  /* The value it changed from, over the start of the new one while it leaves; its text comes from
+     an attribute, so the element's text stays the current value. */
+  .env-animated-number-previous {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .env-animated-number-previous::before {
+    content: attr(data-value);
   }
 
   /* In a skeleton, an animated number is a bar: its value is laid out as a block of its own in the
@@ -94,32 +109,59 @@
     text-decoration-skip-ink: none;
   }
 
-  /* Motion: a changed number fades in, and without a reduced-motion preference rolls in from below
-     when it grows and from above when it shrinks. */
+  /* Motion: the value it changed from fades out quickly as the new one fades in, at once, so the
+     new value reads from the first frames and the number is never gone. Without a reduced-motion
+     preference they roll a whole line, inside the number's clipped box: up when it grows, the old
+     value out at the top as the new one comes in from below, and down when it shrinks. */
   .env-animated-number-value[data-direction] {
-    animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease);
+    animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter)
+      both;
+  }
+  .env-animated-number-previous[data-direction] {
+    animation: env-animated-number-fade-out var(--env-motion-duration-fast)
+      var(--env-motion-ease-exit) both;
   }
   @media (prefers-reduced-motion: no-preference) {
-    .env-animated-number-value[data-direction] {
-      animation: var(--env-motion-duration-slow) var(--env-motion-ease-enter) both;
-    }
     .env-animated-number-value[data-direction='up'] {
       animation-name: env-motion-roll-up;
     }
     .env-animated-number-value[data-direction='down'] {
       animation-name: env-motion-roll-down;
     }
+    .env-animated-number-previous[data-direction='up'] {
+      animation-name: env-animated-number-roll-out-up;
+    }
+    .env-animated-number-previous[data-direction='down'] {
+      animation-name: env-animated-number-roll-out-down;
+    }
+  }
+  @keyframes env-animated-number-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes env-animated-number-roll-out-up {
+    to {
+      opacity: 0;
+      transform: translateY(-1lh);
+    }
+  }
+  @keyframes env-animated-number-roll-out-down {
+    to {
+      opacity: 0;
+      transform: translateY(1lh);
+    }
   }
   @keyframes env-motion-roll-up {
     from {
       opacity: 0;
-      transform: translateY(0.6em);
+      transform: translateY(1lh);
     }
   }
   @keyframes env-motion-roll-down {
     from {
       opacity: 0;
-      transform: translateY(-0.6em);
+      transform: translateY(-1lh);
     }
   }
 }

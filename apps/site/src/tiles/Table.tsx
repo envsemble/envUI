@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { Table } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useMedia } from '../motion/Autoplay';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { narrowGallery } from './Tiles';
+import type { TileWindow } from './Tiles';
 
+/** Two projects, so the table shows whole, its frame in view, in a gallery's low tile. */
 const projects = [
   { name: 'Website', tasks: 12 },
-  { name: 'Checkout', tasks: 27 },
   { name: 'Billing', tasks: 4 },
 ];
 
@@ -12,8 +16,8 @@ const row = (index: number) => `.env-table-body .env-table-row:nth-child(${index
 const sort = '.env-table-sort-button';
 
 /*
- * Down the rows, the first chosen; its column sorted the other way, which takes the chosen row to
- * the bottom, and back; the row let go again.
+ * Moves down the rows and chooses the first. Sorts its column the other way, which moves the chosen
+ * row below the other, and back, then clears the row again.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -39,8 +43,12 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 16, height: 12 };
+
 /** A table of projects and their open tasks, sortable by the tasks, whose rows can be chosen. */
 export default function TableTile() {
+  const narrow = useMedia(narrowGallery);
   const [direction, setDirection] = useState<Table.SortDirection>('ascending');
   const [chosen, setChosen] = useState<string | null>(null);
   usePointer(script);
@@ -48,7 +56,7 @@ export default function TableTile() {
     direction === 'ascending' ? a.tasks - b.tasks : b.tasks - a.tasks,
   );
   return (
-    <Table.Root aria-label="Projects" style={{ inlineSize: '13rem' }}>
+    <Table.Root aria-label="Projects" style={{ inlineSize: narrow ? '10rem' : '11.5rem' }}>
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Project</Table.HeaderCell>

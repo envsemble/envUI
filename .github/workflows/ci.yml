@@ -23,6 +23,8 @@ jobs:
     name: CI
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    # The job takes about 30 minutes on the two-core runner, 25 of them the browser suite; 45 leaves
+    # room without letting a hung run burn much more.
     timeout-minutes: 45
     env:
       # Two browser workers on a two-core runner; Playwright would take three where CI is set.

@@ -6,11 +6,12 @@ import { useRender } from '@base-ui/react/use-render';
 import { cloneElement, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
-import { Column, Grid, Row } from '../foundations/Layout.js';
-import { useDirectionScope } from '../internal/useDirection.js';
-import { NavigationIconState } from '../SymbolIconState.js';
-import { Surface } from '../foundations/Surface.js';
+import { Column, Grid, Row } from '../layout/Layout.js';
+import { useDirectionScope } from '../internal/provider/useDirection.js';
+import { SymbolIconFill } from '../internal/icon/SymbolIconFill.js';
+import { Surface } from '../layout/Surface.js';
 import { Button } from '../actions/Button.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Tabs.css';
 
@@ -49,11 +50,10 @@ type TabsItemControl =
 /** One tab and its panel: `{ value: 'summary', label: 'Summary', content: <Summary /> }`. */
 export type TabsItem = TabsItemFields & TabsItemControl;
 
-export interface TabsProps
-  extends Omit<
-    ComponentPropsWithRef<'div'>,
-    'children' | 'defaultValue' | 'onChange' | 'aria-label'
-  > {
+export interface TabsProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'defaultValue' | 'onChange' | 'aria-label'
+> {
   /** The tabs in order, each with its value, its label or button, and its panel content. */
   items: readonly TabsItem[];
   /** The tab list's accessible name, such as Project views. */
@@ -113,11 +113,14 @@ function isDisabled(item: TabsItem) {
   return Boolean(item.disabled || item.button?.props.disabled);
 }
 
-/** The item's control: its own button, or a text button with its label and icon. */
+/**
+ * The item's control: its own button, or a ghost button with its label and icon, which keeps a
+ * button's inline padding, so neighbouring tabs stay apart. The tab takes a text tab's look either way.
+ */
 function buttonOf(item: TabsItem): ReactElement<ComponentPropsWithRef<'button'>> {
   return (
     item.button ?? (
-      <Button variant="text" startIcon={item.icon}>
+      <Button variant="ghost" startIcon={item.icon}>
         {item.label}
       </Button>
     )
@@ -148,7 +151,7 @@ function TabButton({
   });
   // Base UI composes the consumer's handlers and ref with its tab behavior.
   const element = useRender({ render: tabButton, props });
-  return <NavigationIconState selected={active}>{element}</NavigationIconState>;
+  return <SymbolIconFill selected={active}>{element}</SymbolIconFill>;
 }
 
 /**
@@ -220,6 +223,15 @@ export function Tabs({
             )}
           />
         ))}
+        {/* One indicator, which moves to the selected tab; until it has measured the tab, as in the
+            server's markup, the selected tab draws its own. Base UI hides it until then; it says
+            it shows with data-placed, which Tabs.css finds it by. */}
+        <BaseTabs.Indicator
+          className="env-tabs-indicator"
+          render={(indicatorProps) => (
+            <span {...indicatorProps} data-placed={flag(!indicatorProps.hidden)} />
+          )}
+        />
       </BaseTabs.List>
     </DirectionProvider>
   );
@@ -233,7 +245,7 @@ export function Tabs({
         onFocus?.(event);
       }}
       className={classNames('env-tabs', className)}
-      data-fill={fill ? '' : undefined}
+      data-fill={flag(fill)}
       value={value}
       defaultValue={initialValue}
       onValueChange={onValueChange}

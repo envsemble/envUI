@@ -1,6 +1,7 @@
 import WithinRange from '../../examples/date-picker/WithinRange';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage, rowsAnd } from '../../figures/MotionStage';
 
 const next = '.env-calendar-next';
 const previous = '.env-calendar-previous';
@@ -40,9 +41,15 @@ const script: PointerStep[] = [
 function Browsing() {
   usePointer(script);
   return (
-    // The field at the top of the room its calendar opens into, below it.
+    // The field at the top of the room its calendar opens into, below it, as tall as they are
+    // open, so the two sit in the middle of the stage.
     <div
-      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', blockSize: '26rem' }}
+      style={{
+        display: 'grid',
+        justifyItems: 'center',
+        inlineSize: '100%',
+        blockSize: rowsAnd(7.75, 6.9375),
+      }}
     >
       <WithinRange />
     </div>

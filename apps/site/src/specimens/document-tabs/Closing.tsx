@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import OpenDocuments from '../../examples/document-tabs/OpenDocuments';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const tab = (index: number) =>
@@ -45,10 +46,10 @@ function Closing() {
 /** A tab closed by its close button, which shows under the pointer; its neighbour takes over. */
 export default function ClosingMotion() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="a tab closing and its neighbour becoming active">
         <Closing />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

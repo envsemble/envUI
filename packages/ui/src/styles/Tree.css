@@ -1,6 +1,14 @@
 @layer env.components {
+  /* How far the rows below an expanding or collapsing row are from where they go, which Tree sets
+     and eases to 0; a length, so the rows glide and the group's end moves with them. */
+  @property --env-tree-shift {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0;
+  }
   /* A virtualized tree: the tree scrolls itself and positions its rendered rows by index. Rows follow
-     navigation colors: transparent at rest, a state layer on hover and the navigation selection. */
+     navigation colors: transparent at rest, the row state layer on hover, and the navigation
+     selection, which always reads stronger than the hover. */
   .env-tree {
     /* The density sets the rows' block padding around their content line. */
     --env-tree-item-padding: var(--env-tree-row-padding-block-sm);
@@ -21,7 +29,8 @@
     outline: none;
   }
   .env-tree[data-density='xs'] {
-    --env-tree-item-padding: var(--env-row-padding-block-xs);
+    /* Half the sm padding: 24 px rows in either scale. */
+    --env-tree-item-padding: calc(var(--env-tree-row-padding-block-sm) / 2);
   }
   .env-tree[data-density='md'] {
     --env-tree-item-padding: var(--env-tree-row-padding-block-md);
@@ -32,6 +41,22 @@
   .env-tree-rows {
     position: relative;
     min-inline-size: 0;
+  }
+  /* The rows an expanding row reveals grow from its end to their height and fade in, and the rows a
+     collapsing row hides shrink and fade out, as an accordion's panel does, on the entering curve, so
+     the press shows from its first frame: the group stays until it has closed, and the rows below
+     follow its end. */
+  .env-tree-group {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    overflow: hidden;
+  }
+  .env-tree-group:is([data-starting-style], [data-ending-style]) {
+    opacity: 0;
+  }
+  .env-tree-group ~ .env-tree-item {
+    translate: 0 var(--env-tree-shift);
   }
   .env-tree-item {
     box-sizing: border-box;
@@ -48,13 +73,23 @@
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease);
   }
+  /* The rows an expanded row reveals fade in where they arrive, from their starting style; the rows
+     scrolled into view don't. */
+  .env-tree-item[data-starting-style] {
+    opacity: 0;
+  }
+  /* A tree marks its selection with a light tint, so its rows' layers stay below it: hover at three
+     quarters of the row hover layer and a press at the full one, a step quieter than a table's
+     rows, so a passing pointer never outweighs the selected row. */
   .env-tree-item:hover {
-    background: var(--env-color-bg-neutral-subtle-hover);
+    background: color-mix(in srgb, var(--env-color-bg-row-hover) 75%, transparent);
   }
   .env-tree-item:active {
-    background: var(--env-color-bg-neutral-subtle-pressed);
+    background: var(--env-color-bg-row-hover);
   }
   .env-tree-item[aria-selected='true'] {
     background: var(--env-color-bg-selected);
@@ -68,8 +103,8 @@
   }
   /* The active row shows the focus ring only while the tree has keyboard focus. */
   .env-tree[data-focus-visible]:focus .env-tree-item[data-highlighted] {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: -0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
   }
   .env-tree-item[aria-disabled='true'] {
     opacity: var(--env-state-disabled-opacity);
@@ -89,7 +124,7 @@
   .env-tree-chevron .env-icon {
     inline-size: 100%;
     block-size: 100%;
-    transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-tree-chevron:dir(rtl) .env-icon {
     transform: scaleX(-1);
@@ -141,6 +176,21 @@
       );
     }
   }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-tree-rows {
+      transition: --env-tree-shift var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+    }
+    .env-tree-group {
+      transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+    }
+    /* Closing, the rows fade as long as the rows below take to close the gap, so no empty band is
+       left. */
+    .env-tree-group[data-ending-style] {
+      transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+    }
+  }
+  /* Under a reduced-motion preference fills change, the chevron turns and revealed rows show at
+     once, as an accordion's panel does. */
   @media (prefers-reduced-motion: reduce) {
     .env-tree-item,
     .env-tree-chevron .env-icon {

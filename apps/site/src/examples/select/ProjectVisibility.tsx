@@ -4,7 +4,12 @@ import { Select } from '@envsemble/envui';
 const visibilityOptions = [
   { value: 'team', label: 'Team' },
   { value: 'private', label: 'Private' },
-  { value: 'public', label: 'Public (turned off by your administrator)', disabled: true },
+  {
+    value: 'public',
+    label: 'Public',
+    description: 'Turned off by your administrator',
+    disabled: true,
+  },
 ];
 
 export default function ProjectVisibility() {

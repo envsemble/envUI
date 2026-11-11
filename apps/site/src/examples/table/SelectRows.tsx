@@ -31,7 +31,8 @@ export default function SelectRows() {
           {members.map((member) => (
             // Every row reports its state, selected or not.
             <Table.Row key={member.id} selected={selected.includes(member.id)}>
-              <Table.Cell>
+              {/* The name stays on one line; on a phone the table scrolls sideways instead. */}
+              <Table.Cell nowrap>
                 <Checkbox
                   label={member.name}
                   checked={selected.includes(member.id)}

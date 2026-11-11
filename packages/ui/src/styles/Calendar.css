@@ -1,28 +1,35 @@
 @layer env.components {
   /* Calendar: a month of days as round marks side by side in a grid, as wide as seven days, under the
-     month's name and, at its end, the month buttons. Today is in the accent color, the chosen day a
-     solid fill, and unavailable days are faded. Coarse pointers get touch-sized days. */
+     month's name and, at its end, the month buttons. A day is a little less than a row height, so
+     the columns stand close around the small numbers. Today is in the accent color, the chosen day a
+     solid fill, and unavailable days take the disabled color, faded. Coarse pointers get touch-sized days. */
   .env-calendar {
-    --env-calendar-day: var(--env-row-height);
+    --env-calendar-day: calc(var(--env-row-height) - 0.25rem);
     inline-size: calc(7 * var(--env-calendar-day));
     max-inline-size: 100%;
     color: var(--env-color-fg-default);
     font: var(--env-type-body-sm);
   }
   .env-calendar-header {
-    /* The month buttons, side by side at the end, are a little smaller than a control. */
-    --env-control-height: calc(0.8 * var(--env-control-height-md));
+    /* The month buttons, side by side at the end, are a little smaller than a control, with their
+       arrows a little larger than a control's icon, so they read at the compact scale too and leave
+       the month's name room for one line. The header keeps a little room under it, before the
+       weekdays. */
+    --env-control-height: calc(0.7 * var(--env-control-height-md));
+    --env-control-icon-size: 1.25rem;
+    min-block-size: calc(0.8 * var(--env-control-height-md));
     gap: calc(var(--env-space-1) / 2);
+    margin-block-end: var(--env-space-1);
   }
   /* The month's name leads the header, a little in from the edge, with both buttons after it. */
   .env-calendar-title {
     order: -1;
     flex: 1 1 auto;
     min-inline-size: 0;
-    padding-inline-start: calc(0.25 * var(--env-control-height-md));
+    padding-inline-start: calc(0.125 * var(--env-control-height-md));
     text-align: start;
     font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   /* The month buttons point back and forward in the reading direction. */
   .env-calendar-header .env-icon:dir(rtl) {
@@ -65,9 +72,10 @@
     margin-inline: auto;
     border-radius: 50%;
     font-variant-numeric: tabular-nums;
-    transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      color var(--env-motion-duration-fast) var(--env-motion-ease);
+    /* The neutral hover fill eases in and out. The chosen fill and its white text come and go at
+       once, the fill as an image over the background color, which doesn't transition, so its text
+       is never white on a fill half gone and the choice never shows on two at once. */
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* Under the pointer a day takes the neutral fill, as a popup's rows do. */
   .env-calendar-day:hover:not([aria-disabled='true'], [aria-selected='true'])
@@ -83,20 +91,28 @@
     font-weight: var(--env-font-weight-semibold);
   }
   .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark {
-    background: var(--env-color-bg-primary-emphasis);
+    background: linear-gradient(
+      var(--env-color-bg-primary-emphasis),
+      var(--env-color-bg-primary-emphasis)
+    );
     box-shadow: none;
     color: var(--env-color-fg-on-emphasis);
     font-weight: var(--env-font-weight-semibold);
   }
   .env-calendar-day:focus-visible > .env-calendar-day-mark {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.0625rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 1px;
   }
   .env-calendar-day[aria-disabled='true'] {
     cursor: default;
   }
+  /* A day outside the range, before min or after max, takes the disabled text color and fades,
+     so it can't be taken for one that can be chosen; today keeps its accent color, faded. */
   .env-calendar-day[aria-disabled='true'] > .env-calendar-day-mark {
     opacity: var(--env-state-disabled-opacity);
+  }
+  .env-calendar-day[aria-disabled='true']:not([aria-current='date']) > .env-calendar-day-mark {
+    color: var(--env-color-fg-disabled);
   }
   @media (pointer: coarse) {
     .env-calendar {
@@ -120,7 +136,7 @@
     }
     .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark {
       forced-color-adjust: none;
-      background-color: Highlight;
+      background: Highlight;
       color: HighlightText;
     }
     .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark :where(*) {

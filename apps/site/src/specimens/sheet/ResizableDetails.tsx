@@ -1,10 +1,11 @@
 import ResizableDetails from '../../examples/sheet/ResizableDetails';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const handle = '.env-sheet-resize-handle';
 const viewport = '.env-sheet-viewport';
-const close = '.env-sheet .env-dialog-heading > .env-button';
+const close = '.env-sheet [aria-label="Close"]';
 
 /*
  * The pointer opens the project's details and drags the sheet's inner edge toward the start,

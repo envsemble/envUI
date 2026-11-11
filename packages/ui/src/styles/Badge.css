@@ -2,12 +2,13 @@
   /* Badges: small pills that name a state in its tone. A soft badge has no edge: the status tones fill
      it with their stronger tint and its label is semibold, and at high contrast it takes the tone's
      softer tint. The tone's text color keeps 4.5:1 on the page, panes and rows, also over its tints; a
-     solid badge puts fg-on-emphasis on the tone's emphasis fill, and an outlined one draws the tone's
-     edge.
+     solid badge puts fg-on-emphasis on the tone's emphasis fill, fg-on-strong on danger's saturated
+     red, and an outlined one draws the tone's edge.
      In a control, such as a tab with a count, the control sets hooks on its own element:
      --env-badge-fg, --env-badge-bg and --env-badge-border (a border shorthand) for every badge inside
      it, whatever its tone and variant; --env-badge-count-fg, -bg and -border for a badge with a
-     count, which reads them instead; and --env-diff-stat-fg, -bg and -border for a diff stat, whose two tones then take that one
+     count, which reads them instead; --env-badge-underlay, the surface a soft badge lays its tint
+     over, which a selected row sets (Table.css, List.css); and --env-diff-stat-fg, -bg and -border for a diff stat, whose two tones then take that one
      color. Button sets them (Button.css). */
   /* Color properties: a badge's colors, which an application sets on one badge through style or its
      own CSS. They don't inherit, and they win over its tone and variant and over the hooks of a
@@ -35,7 +36,16 @@
     --env-badge-high-contrast-tint: var(--env-theme-high-contrast) var(--env-badge-tint);
     --env-badge-soft: var(--env-badge-high-contrast-tint, var(--env-badge-tonal));
     --env-badge-fill: var(--env-color-bg-neutral-emphasis);
+    --env-badge-on-fill: var(--env-color-fg-on-emphasis);
     --env-badge-edge: var(--env-color-border-neutral);
+    /* On a selected row, whose blue fill would swallow a translucent tint, the row sets
+       --env-badge-underlay to its surface, and a soft badge lays its tint over it, so it reads as it
+       does on an unselected row; a primary one its softer tint, as its stronger one is close to the
+       selection's blue. Invalid, so not used, while nothing sets an underlay. */
+    --env-badge-on-underlay: var(--env-badge-high-contrast-tint, var(--env-badge-tonal));
+    --env-badge-layered:
+      linear-gradient(var(--env-badge-on-underlay), var(--env-badge-on-underlay)),
+      var(--env-badge-underlay);
     box-sizing: border-box;
     inline-size: fit-content;
     max-inline-size: 100%;
@@ -45,9 +55,10 @@
     gap: var(--env-space-1);
     /* With the border, 3 px above and below and 10 px at the sides. */
     padding: calc(var(--env-space-1) / 2) calc(var(--env-space-2) + var(--env-control-border-width));
-    border: var(--env-badge-own-border, var(--env-badge-border, 0.0625rem solid transparent));
+    border: var(--env-badge-own-border, var(--env-badge-border, 1px solid transparent));
     border-radius: var(--env-radius-full);
-    background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-soft)));
+    /* prettier-ignore */
+    background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-layered, var(--env-badge-soft))));
     color: var(--env-badge-content, var(--env-badge-fg, var(--env-badge-tone)));
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
     white-space: nowrap;
@@ -59,6 +70,7 @@
     --env-badge-tonal: var(--env-color-bg-primary-subtle-hover);
     --env-badge-fill: var(--env-color-bg-primary-solid);
     --env-badge-edge: var(--env-color-border-primary);
+    --env-badge-on-underlay: var(--env-badge-tint);
   }
   .env-badge[data-tone='accent'] {
     --env-badge-tone: var(--env-color-fg-accent);
@@ -86,11 +98,16 @@
     --env-badge-tint: var(--env-color-bg-danger-muted);
     --env-badge-tonal: var(--env-color-bg-danger-subtle-hover);
     --env-badge-fill: var(--env-color-bg-danger-emphasis);
+    --env-badge-on-fill: var(--env-color-fg-on-strong);
     --env-badge-edge: var(--env-color-border-danger);
   }
+  /* Completed work recedes: a soft done badge takes half its tint, quieter than a neutral one, and
+     leads with a check mark (Badge.tsx), which sets it apart from neutral and primary by more than
+     a hue. */
   .env-badge[data-tone='done'] {
     --env-badge-tone: var(--env-color-fg-done);
     --env-badge-tint: var(--env-color-bg-done-muted);
+    --env-badge-tonal: color-mix(in srgb, var(--env-color-bg-done-muted) 50%, transparent);
     --env-badge-fill: var(--env-color-bg-done-emphasis);
     --env-badge-edge: var(--env-color-border-done);
   }
@@ -100,7 +117,7 @@
   }
   .env-badge[data-variant='solid'] {
     background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-fill)));
-    color: var(--env-badge-content, var(--env-badge-fg, var(--env-color-fg-on-emphasis)));
+    color: var(--env-badge-content, var(--env-badge-fg, var(--env-badge-on-fill)));
   }
   .env-badge[data-variant='outline'] {
     --env-badge-edge-border: 0.0625rem solid var(--env-badge-edge);
@@ -108,8 +125,7 @@
     background: var(--env-badge-container, var(--env-badge-bg, transparent));
   }
   .env-badge .env-icon {
-    inline-size: 0.875rem;
-    block-size: 0.875rem;
+    --env-icon-size: 0.875rem;
   }
   .env-badge-label {
     min-inline-size: 0;
@@ -127,7 +143,9 @@
     block-size: var(--env-badge-count-height);
     justify-content: center;
     padding-block: 0;
-    padding-inline: 0.375rem;
+    /* A digit's room either side, as a diff stat has. */
+    --env-badge-count-padding-inline: 0.375rem;
+    padding-inline: var(--env-badge-count-padding-inline);
     border: var(--env-badge-own-border, var(--env-badge-count-border, none));
     background: var(--env-badge-container, var(--env-badge-count-bg, var(--env-badge-soft)));
     color: var(--env-badge-content, var(--env-badge-count-fg, var(--env-badge-tone)));
@@ -155,8 +173,10 @@
     block-size: var(--env-badge-count-height);
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    padding-inline: 0.375rem;
+    gap: var(--env-space-1);
+    /* A count's room either side. */
+    --env-diff-stat-padding-inline: 0.375rem;
+    padding-inline: var(--env-diff-stat-padding-inline);
     border: var(--env-diff-stat-border, none);
     border-radius: var(--env-radius-full);
     background: var(--env-diff-stat-bg, var(--env-color-bg-neutral-muted));
@@ -173,10 +193,12 @@
   }
   .env-badge-count-label,
   .env-diff-stat-label {
+    /* Visually hidden: a pixel's box, clipped away, still read. */
+    --env-diff-stat-label-size: 0.0625rem;
     position: absolute;
-    inline-size: 0.0625rem;
-    block-size: 0.0625rem;
-    margin: -0.0625rem;
+    inline-size: var(--env-diff-stat-label-size);
+    block-size: var(--env-diff-stat-label-size);
+    margin: calc(-1 * var(--env-diff-stat-label-size));
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
@@ -184,6 +206,8 @@
 
   /* In a skeleton, a badge is a filled shape of its size, without its text or tone. */
   [data-env-skeleton] .env-badge {
+    /* No underlay: the skeleton's paint is the fill. */
+    --env-badge-underlay: initial;
     forced-color-adjust: none;
     border-color: transparent;
     box-shadow: none;

@@ -1,6 +1,7 @@
 import TypeToSearch from '../../examples/command-palette/TypeToSearch';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage, roomFor } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage, roomFor } from '../../figures/MotionStage';
 
 const input = '.env-command-palette-input';
 

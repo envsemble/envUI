@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { restoringScroll } from '../navigation/ScrollRestoration';
+import { restoringScroll } from '../routes/ScrollRestoration';
+import { useHydrated } from '@envui-internal/internal/react/useHydrated';
 
 /** What the reader does that shows the rest at once: scrolling, pressing or typing. */
 const interruptions = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
@@ -13,11 +14,18 @@ const interruptions = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
  * reader was (ScrollRestoration.ts) show every part at once, so the place is there to scroll to.
  * So does the reader scrolling, pressing or typing before the last has shown, such as to follow a
  * link of the page's contents: the parts above where they go are then whole before they get there,
- * and don't move it as they arrive.
+ * and don't move it as they arrive. A pre-rendered page has every part already, on the server and
+ * as it hydrates.
  */
 export function useRevealed(total: number) {
+  // The library's useHydrated, not the site's useFiguresMounted: its first render, the only one
+  // that reads it, tells a page rendered in the browser alone from one hydrating.
+  const hydrated = useHydrated();
   const [revealed, setRevealed] = useState(() =>
-    /[?&]section=/.test(location.search) || location.hash.length > 1 || restoringScroll()
+    !hydrated ||
+    /[?&]section=/.test(location.search) ||
+    location.hash.length > 1 ||
+    restoringScroll()
       ? total
       : 1,
   );

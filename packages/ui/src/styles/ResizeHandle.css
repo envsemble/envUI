@@ -30,7 +30,7 @@
     display: block;
     position: absolute;
     background: transparent;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-resize-handle[data-axis='inline']::after {
     inset-block: 0;

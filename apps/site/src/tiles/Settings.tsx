@@ -1,10 +1,13 @@
-import { Column, List, Switch, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { Column, List, Surface, Switch, Text } from '@envsemble/envui';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
 
 const toggle = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) .env-switch-input`;
 
-/** A preference turned on, which applies at once, and off again. */
+/** Turns a preference on, which applies at once, and off again. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: toggle(2) },
@@ -24,18 +27,23 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 17, height: 12.75 };
+
 /** A section of settings: preferences that apply as they change. */
 export default function SettingsTile() {
   usePointer(script);
   return (
-    <Column gap={3} style={{ inlineSize: '15rem' }}>
+    <Column gap={3} style={{ inlineSize: '17rem' }}>
       <Text render={<span />} variant="title">
         Notifications
       </Text>
-      <List.Root aria-label="Notifications">
-        <List.Item label="Email" end={<Switch aria-label="Email" defaultChecked />} />
-        <List.Item label="Weekly digest" end={<Switch aria-label="Weekly digest" />} />
-      </List.Root>
+      <Surface background="muted" padding={1} radius="sm" style={outlined}>
+        <List.Root aria-label="Notifications">
+          <List.Item label="Email" end={<Switch aria-label="Email" defaultChecked />} />
+          <List.Item label="Weekly digest" end={<Switch aria-label="Weekly digest" />} />
+        </List.Root>
+      </Surface>
     </Column>
   );
 }

@@ -1,5 +1,5 @@
 import FittingColumns from '../../examples/grid/FittingColumns';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage } from '../../figures/MotionStage';
 import { WidthSweep } from '../../motion/WidthSweep';
 import { paneWidths, usePaneWidth } from './PaneWidth';
 

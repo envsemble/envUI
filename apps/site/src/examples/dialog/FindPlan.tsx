@@ -34,13 +34,7 @@ export default function FindPlan() {
         title="Find a plan"
       >
         <Column gap={4}>
-          <SearchField
-            variant="floating"
-            label="Plan name"
-            showLabel
-            value={query}
-            onValueChange={setQuery}
-          />
+          <SearchField label="Plan name" showLabel value={query} onValueChange={setQuery} />
           {matches.length > 0 ? (
             <List.Root aria-label="Matching plans">
               {matches.map((plan) => (

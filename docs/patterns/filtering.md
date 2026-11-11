@@ -1,6 +1,6 @@
 ---
 title: Filtering and search
-summary: Let people narrow a list or a table to what they want, see how many items match, and undo it in one step.
+summary: Let people narrow a list or a table to what they want, and undo it in one step.
 status: beta
 since: 1.0.0
 intent: Work with lists and tables
@@ -45,6 +45,7 @@ composes:
   - List
   - Text
   - useContainerSize
+  - windowClassOf
 examples:
   SearchAndFilters:
     role: overview
@@ -97,7 +98,7 @@ A search and a few filters sit in the [PageHeader](../components/page.md)'s tool
 
 ## Behaviour
 
-### Keep the state in the address
+### State in the address
 
 Write the query and the filters into the address through the router, so a reload, the back button and a shared link show the same results.
 
@@ -121,7 +122,7 @@ Each choice filters at once, and a count says how many match.
 
 ```
 
-### Apply only when slow
+### Apply button
 
 Keep an Apply button only for a slow or costly query, and say what it shows: "Show 12 projects".
 
@@ -194,7 +195,7 @@ Each token is a Button with `variant="secondary"`, `size="sm"` and a Close `endI
 
 #### Filters in a sheet on narrow screens
 
-Measure the filters' own width with `useContainerSize` and compare it with `windowClasses.medium`: below it, the filters move into a Sheet opened by a Filters button with its own count Badge, and a DialogClose, "Show 12 projects", closes it. The sheet has its own `role="status"` count, there as it opens; the search stays in the toolbar. The NarrowFilters example builds it.
+Measure the filters' own width with `useContainerSize` and take its window class with `windowClassOf`: in a compact one, the filters move into a Sheet opened by a Filters button with its own count Badge, and a DialogClose, "Show 12 projects", closes it. The sheet has its own `role="status"` count, there as it opens; the search stays in the toolbar. The NarrowFilters example builds it.
 
 ```tsx
 <Sheet

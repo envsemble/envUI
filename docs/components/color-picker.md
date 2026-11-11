@@ -1,6 +1,6 @@
 ---
 title: ColorPicker
-summary: A compact color picker with hex, RGB and HSL, optional alpha, copy, an eyedropper and preset swatches; a button that opens it in a popover; and a color swatch that shows a color in a format.
+summary: Chooses a color, in the formats people work in.
 status: stable
 since: 1.0.0
 category: Forms & selection
@@ -208,7 +208,7 @@ Where the color carries text, check its contrast and say what is wrong under the
 
 ColorPicker, ColorPickerButton and ColorSwatch come from their own entry, `@envsemble/envui/color`, built on React Aria's color hooks, whose libraries the application installs.
 
-- A ColorPicker takes its `label`, which names it, a `description` and an `error`; `showLabel={false}` hides the label where something else names the picker, such as a popover.
+- A ColorPicker takes its `label`, which names it, a `description` and an `error`; `visibleLabel={false}` hides the label where something else names the picker, such as a popover.
 - `value` and `defaultValue`, `#000000` by default, take a CSS color string, such as `#6750a4`, `rgb(103, 80, 164)` or `hsl(256, 34%, 48%)`, or React Aria's `Color`.
 - `onValueChange` receives the color as a string in `valueFormat`; the picker keeps the hue of a gray itself.
 - `valueFormat` is `hex`, the default, `#rrggbb` or `#rrggbbaa` while translucent, `rgb` or `hsl`.
@@ -296,7 +296,7 @@ ColorSwatch shows its `color`, with an optional alpha, and writes it in `format`
 
 ### Composition
 
-The picker fills its container up to 18 rem. The picker, `env-color-picker`, holds its label, `env-color-picker-label`; the controls, `env-color-picker-controls`, with the area, `env-color-picker-area`, and the sliders, `env-color-picker-sliders`, the hue, `env-color-picker-hue`, and the alpha, `env-color-picker-alpha`, each an `env-color-picker-slider` with its track, `env-color-picker-track`, and a thumb, `env-color-picker-thumb`, like the area's; and the values, `env-color-picker-values`, with the format, `env-color-picker-format`, the eyedropper, `env-color-picker-eye-dropper`, copy, `env-color-picker-copy`, and the fields, `env-color-picker-fields`, each an `env-color-picker-field` with its letter, `env-color-picker-field-label`, and input, `env-color-picker-input`. Several formats shown together are rows, `env-color-picker-row`. Then come the swatches, `env-color-picker-swatches`, each an `env-color-picker-swatch`, the description, `env-color-picker-description`, and the error, `env-color-picker-error`. `data-channel` names a slider's or a field's channel, and `data-format` a row's format.
+The picker fills its container up to 18 rem. The picker, `env-color-picker`, holds its label, `env-color-picker-label`; the controls, `env-color-picker-controls`, with the area, `env-color-picker-area`, and the sliders, `env-color-picker-sliders`, the hue, `env-color-picker-hue`, and the alpha, `env-color-picker-alpha`, each an `env-color-picker-slider` with its track, `env-color-picker-track`, and a thumb, `env-color-picker-thumb`, like the area's; and the values, `env-color-picker-values`, with the format, `env-color-picker-format`, the eyedropper, `env-color-picker-eye-dropper`, copy, `env-color-picker-copy`, and the fields, `env-color-picker-fields`, each an `env-color-picker-field` with its letter, `env-color-picker-field-label`, and input, `env-color-picker-input`. Several formats shown together are rows, `env-color-picker-row`. Then come the swatches, `env-color-picker-swatches`, each an `env-color-picker-swatch`, the description, `env-color-picker-description`, and the error, `env-color-picker-error`, the shared field error, `env-field-error`, with its icon. `data-channel` names a slider's or a field's channel, and `data-format` a row's format.
 
 ColorPickerButton is `env-color-picker-button`, with its value, `env-color-picker-button-value`, and its popover, `env-color-picker-popover`. ColorSwatch is `env-color-swatch`, with its sample, `env-color-swatch-sample`, its label, `env-color-swatch-label`, and its value, `env-color-swatch-value`.
 
@@ -308,8 +308,12 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
+- **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. ColorPickerButton has no fill of its own, as fields have none. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: ColorPickerButton's popover opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
+- **1.0.0-prerelease.6**: The error shows the error icon before its message, as under every field.
 - **1.0.0-prerelease.5**: ColorPickerButton takes `open` and `onOpenChange`, and passes `ref` and the native props on to its button.
 - **1.0.0-prerelease.5**: `copy` is `copyable`, as on CodeBlock. `onValueChange` receives the string alone, without React Aria's `Color`.
-- **1.0.0-prerelease.5**: ColorPickerButton's popover is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency.
+- **1.0.0-prerelease.5**: ColorPickerButton's popover is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency.
 - **1.0.0-prerelease.3**: `formats` with two or more formats shows their fields together, a row each with its own copy button, where in 1.0.0-prerelease.2 it limited the format menu to them; the format menu stays the default. Remove `formats` to keep the menu, which offers every format. `--env-color-picker-button-container` gives one ColorPickerButton a fill.
-- **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. ColorPickerButton has no fill of its own, as fields have none. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.

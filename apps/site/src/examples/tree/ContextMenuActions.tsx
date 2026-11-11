@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { IconButton, Menu, Column, Tree, type TreeItem } from '@envsemble/envui';
+import { IconButton, Menu, Column, Row, Tree, type TreeItem } from '@envsemble/envui';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconFileCopy } from '@envsemble/envui/icons/FileCopy';
@@ -25,7 +25,7 @@ const initialEntries: Entry[] = [
 
 /** Whether an entry lies inside the folder with the given id, at any depth. */
 function inside(entries: Entry[], entry: Entry, folder: string) {
-  for (let parent = entry.parent; parent !== null; ) {
+  for (let parent = entry.parent; parent !== null;) {
     if (parent === folder) return true;
     const id: string = parent;
     parent = entries.find((candidate) => candidate.id === id)?.parent ?? null;
@@ -87,7 +87,7 @@ export default function ContextMenuActions() {
   return (
     <Column gap={2} style={{ inlineSize: 'min(100%, 20rem)' }}>
       {/* The menu's actions are buttons too, for people who cannot right-click. */}
-      <div style={{ display: 'flex', gap: '0.25rem' }}>
+      <Row gap={1}>
         <IconButton
           variant="ghost"
           icon={<IconNoteAdd />}
@@ -101,7 +101,7 @@ export default function ContextMenuActions() {
           disabled={selected === null}
           onClick={() => selected && remove(selected)}
         />
-      </div>
+      </Row>
       {/* The tree fills its parent's height and scrolls itself. */}
       <div style={{ blockSize: '17rem' }}>
         <Tree

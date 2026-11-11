@@ -4150,4 +4150,4 @@ export { IconZoomInMap } from './ZoomInMap.js';
 export { IconZoomOut } from './ZoomOut.js';
 export { IconZoomOutMap } from './ZoomOutMap.js';
 export { IconTypography } from './Typography.js';
-export type { SymbolIconProps } from '../Icon.js';
+export type { SymbolIconProps } from '../foundations/Icon.js';

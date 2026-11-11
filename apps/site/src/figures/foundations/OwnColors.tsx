@@ -21,9 +21,9 @@ import {
 import { IconGroup } from '@envsemble/envui/icons/Group';
 import { IconLuggage } from '@envsemble/envui/icons/Luggage';
 import { IconMap } from '@envsemble/envui/icons/Map';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel } from './Steps';
-import { Figure } from './Topic';
+import { FoundationFrame } from './FoundationFrame';
 import { useHighContrast, useNarrow, type FigureWords } from './ColorFigures';
 
 /**
@@ -45,7 +45,11 @@ const oklch = (lightness: number, chroma: number, hue: number, alpha?: number) =
  * accent text on it; translucent tinted fills for quiet controls. At high contrast the accent goes
  * a step further from the page, and text and edges keep the theme's own, stronger colors.
  */
-function schemeColors({ hue }: (typeof schemes)[number], theme: ColorScheme, high: boolean) {
+function schemeColors(
+  { hue }: (typeof schemes)[number],
+  theme: ColorScheme,
+  high: boolean,
+): CSSProperties {
   const light = theme === 'light';
   const step = (lightness: number, by: number) => lightness + (light ? -by : by);
   // A fill's hover and press: a step further from the page, or, for the accent, deeper in both
@@ -117,7 +121,7 @@ function schemeColors({ hue }: (typeof schemes)[number], theme: ColorScheme, hig
         '--env-color-border-default': oklch(0.62, 0.035, hue),
         '--env-color-border-muted': oklch(0.4, 0.03, hue),
       };
-  return (high ? fills : { ...fills, ...lines }) as CSSProperties;
+  return high ? fills : { ...fills, ...lines };
 }
 
 /** An area in a scheme, in a theme, at the reader's contrast. */
@@ -181,7 +185,7 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
       <div className="catalogue-scheme-tiles" data-narrow={narrow || undefined}>
         <Tile name="form">
           <Column gap={4}>
-            <TextField variant="floating" label="Trip name" defaultValue="Spring in Lisbon" />
+            <TextField label="Trip name" defaultValue="Spring in Lisbon" />
             <Column gap={2}>
               <Checkbox label="Share with travelers" defaultChecked />
               <Checkbox label="Save maps offline" />
@@ -227,7 +231,7 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
         {/* A phone leaves the search out, as it shows the navigation as a bar. */}
         {!narrow && (
           <Tile name="search">
-            <SearchField variant="floating" label="Search photos" placeholder="Search" />
+            <SearchField label="Search photos" placeholder="Search" />
           </Tile>
         )}
         <Tile name="nav">
@@ -245,13 +249,13 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
 /** The same components in each of a few pastel schemes of an application's own, chosen in turn. */
 export function OwnColorsFigure({ legend }: FigureWords) {
   return (
-    <Figure
+    <FoundationFrame
       label="Your own colors"
       motion="the components in each color scheme"
       className="catalogue-scheme-stage"
     >
       <SchemeSteps names={legend.map((entry) => entry.name)} />
-    </Figure>
+    </FoundationFrame>
   );
 }
 

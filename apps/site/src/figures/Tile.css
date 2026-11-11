@@ -1,0 +1,202 @@
+/* A tile: a gallery's or Related's tiny live picture of a page (TileStage.tsx), on its stage,
+   in a window it lays out in, the canvas, which the fit draws to fit (fit/), in a box that fades
+   out what is cut off, the crop, and under it its skeleton while it loads. A gallery's tiles and
+   Related's take their shapes in Gallery.css and Related.css. */
+
+/* The stage, as wide as its tile and of one height in a row; what it shows is scaled to fit. */
+.catalogue-tile-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  max-block-size: 10rem;
+  overflow: clip;
+  isolation: isolate;
+}
+
+/* The window the example lays out in, at a width it was written for, then scaled down and centred
+   (TileStage.tsx). It contains its fixed overlays, such as a dialog, and is transparent until it
+   fits, rather than hidden, so what hides by itself inside it can be told from what shows. It is
+   inert, so no reader's pointer reaches it; a tile's own pointer, which no one sees, follows what
+   its parts let through (VirtualPointer.ts). */
+.catalogue-tile-canvas {
+  /* The tiles' one window, in which a page's own tile lays out, unless it declares another
+     (tileWindow, tiles/Tiles.ts), and which sizes what a canvas drawn at its own size opens. */
+  --catalogue-tile-width: 14rem;
+  --catalogue-tile-height: 10.5rem;
+
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  display: grid;
+  place-content: center stretch;
+  justify-items: center;
+  box-sizing: border-box;
+  inline-size: 36rem;
+  container: env-window / inline-size;
+  contain: layout;
+  transform: scale(1);
+  transform-origin: 0 0;
+  opacity: 0;
+}
+
+/* Once fitted, the picture appears, fading in, rather than from nowhere: by its opacity alone, so
+   the boxes the fit measures keep their place. */
+.catalogue-tile-canvas[data-fitted] {
+  opacity: 1;
+  animation: catalogue-tile-appear var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+
+@keyframes catalogue-tile-appear {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-tile-canvas[data-fitted] {
+    animation: none;
+  }
+}
+
+/* A tile at rest draws its still without motion: drawn anew as it stops (Playback's `redraw`,
+   Playback.tsx), what it shows open, such as a menu or a hover card, is there at once rather than
+   coming in again, and nothing is caught on its way. */
+.catalogue-tile-canvas[data-tile]:not([data-playing] *) * {
+  transition: none;
+}
+
+/* Room for an overlay shown open, such as a dialog over the page. */
+.catalogue-tile-canvas:has(> .catalogue-overlay-layer) {
+  min-block-size: 28rem;
+}
+
+/* A page's own tile (tiles/Tiles.ts) lays out in its window, which counts whole: one window for
+   every tile, so every component is drawn at one scale, about its own size. Its popups open
+   inside it, with no more room than that. A component too large for it, such as a calendar,
+   declares a larger window (tileWindow), drawn smaller. */
+.catalogue-tile-stage > .catalogue-tile-canvas[data-tile],
+.catalogue-gallery-stage.catalogue-gallery-stage > .catalogue-tile-canvas[data-tile] {
+  inline-size: var(--catalogue-tile-width);
+  block-size: var(--catalogue-tile-height);
+  min-block-size: 0;
+}
+
+/* A command palette in a tile keeps the room its stylesheet leaves above it, a share of the window's
+   height (CommandPalette.css), measured on the tile's window rather than on the browser's, which
+   the tile stands in for: the palette's own rule, with the tile's height for the window's. */
+.catalogue-tile-canvas[data-tile] .env-command-palette-positioner {
+  padding-block: max(var(--env-viewport-gutter), min(0.12 * var(--catalogue-tile-height), 6rem))
+    var(--env-viewport-gutter);
+}
+
+/* A region that scrolls in a tile, such as a page's body in its box, fades out at its foot while
+   its content runs on past it (useFit.ts), as the stage's crop does: it ends in a fade, not in a
+   slice through a line. */
+.catalogue-tile-canvas [data-catalogue-runs-on] {
+  mask-image: linear-gradient(
+    to bottom,
+    var(--env-color-fg-default) calc(100% - 1.25rem),
+    transparent
+  );
+}
+
+/* An alternative without an example: a page icon in the middle of the same stage. */
+.catalogue-tile-placeholder {
+  inline-size: 2rem;
+  block-size: 2rem;
+  color: var(--env-color-fg-muted);
+}
+
+/* A tile's stage keeps a layer of its own, the stage's last, for the ring the keyboard draws on its
+   picture (Gallery.css); under the pointer a tile's picture slides up instead and draws no ring.
+   Nothing the picture opens, a popup, a dialog's backdrop or a sheet, covers that layer: the stage
+   isolates what it shows (above), and the ring stands at the top of it. */
+.catalogue-tile-stage::after {
+  position: absolute;
+  inset: 0;
+  z-index: var(--env-z-tooltip);
+  border: 1px solid transparent;
+  border-radius: inherit;
+  pointer-events: none;
+  content: '';
+  transition: border-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+
+/* The box of a component drawn at its own size, or a pattern's scene at a legible scale, as large
+   as the stage (TileStage.tsx): what is cut off at an edge, the bottom and the end for a component, any
+   side for a scene centred on what it paints, fades out over the last stretch, rather than ending in
+   a slice through a line, and the stage's fill shows through. */
+.catalogue-tile-crop {
+  --catalogue-crop-fade: 1.75rem;
+  /* Any opaque color: the mask reads only its alpha. */
+  --catalogue-crop-opaque: var(--env-color-fg-default);
+  --catalogue-crop-top: 0rem;
+  --catalogue-crop-bottom: 0rem;
+  --catalogue-crop-start: 0rem;
+  --catalogue-crop-end: 0rem;
+  position: absolute;
+  inset: 0;
+}
+
+.catalogue-tile-crop:has(> [data-cut~='top']) {
+  --catalogue-crop-top: var(--catalogue-crop-fade);
+}
+
+.catalogue-tile-crop:has(> [data-cut~='bottom']) {
+  --catalogue-crop-bottom: var(--catalogue-crop-fade);
+}
+
+.catalogue-tile-crop:has(> [data-cut~='start']) {
+  --catalogue-crop-start: var(--catalogue-crop-fade);
+}
+
+.catalogue-tile-crop:has(> [data-cut~='end']) {
+  --catalogue-crop-end: var(--catalogue-crop-fade);
+}
+
+/* A row that would show only a sliver in the fade's faint end is hidden whole (useFit.ts); the
+   others fade out through the foot. */
+.catalogue-tile-crop [data-catalogue-past] {
+  visibility: hidden;
+}
+
+/* The fade is gone a quarter of its length before the edge, so what it fades out, such as a
+   picker's popup, ends in the stage's own fill rather than at its edge, where it would read as
+   cut off there, also in light, where a popup is as light as the stage. */
+.catalogue-tile-crop:has(> [data-cut]) {
+  mask-image:
+    linear-gradient(
+      to bottom,
+      transparent calc(var(--catalogue-crop-top) / 4),
+      var(--catalogue-crop-opaque) var(--catalogue-crop-top),
+      var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-bottom)),
+      transparent calc(100% - var(--catalogue-crop-bottom) / 4)
+    ),
+    linear-gradient(
+      to right,
+      transparent calc(var(--catalogue-crop-start) / 4),
+      var(--catalogue-crop-opaque) var(--catalogue-crop-start),
+      var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-end)),
+      transparent calc(100% - var(--catalogue-crop-end) / 4)
+    );
+  mask-composite: intersect;
+}
+
+/* A tile's skeleton (TileSkeleton in loading/Skeletons.tsx): over the whole stage, which pulses as
+   envUI's skeleton surfaces do, from a moment after the tile nears the view until the picture is
+   fitted on the stage and fades in over it. */
+.catalogue-tile-loading {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: transparent;
+}
+.catalogue-tile-loading:not([data-shown]) {
+  opacity: 0;
+}
+.catalogue-tile-canvas[data-fitted] ~ .catalogue-tile-loading,
+.catalogue-tile-crop:has(> .catalogue-tile-canvas[data-fitted]) ~ .catalogue-tile-loading {
+  display: none;
+}

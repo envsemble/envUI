@@ -2,7 +2,7 @@
 
 import { classNames } from '../internal/classNames.js';
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { themePreference } from './messages/themePreference.js';
 import { IconDarkMode } from '../icons/DarkMode.js';
 import { IconLightMode } from '../icons/LightMode.js';
@@ -37,7 +37,7 @@ export function ThemeToggle({
   const label = ownLabel ?? (theme === 'light' ? messages.toDark : messages.toLight);
   return (
     <IconButton
-      {...(props as IconButtonProps)}
+      {...props}
       className={classNames('env-theme-toggle', className)}
       icon={theme === 'light' ? <IconDarkMode /> : <IconLightMode />}
       aria-label={label}

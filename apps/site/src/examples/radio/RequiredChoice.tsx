@@ -1,10 +1,9 @@
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import { Button, Radio, RadioGroup, Column, Text } from '@envsemble/envui';
 
 const formats: Record<string, string> = { csv: 'CSV', json: 'JSON', markdown: 'Markdown' };
 
 export default function RequiredChoice() {
-  const errorId = useId();
   const [format, setFormat] = useState<string>();
   const [error, setError] = useState<string>();
   const [exported, setExported] = useState<string>();
@@ -33,19 +32,12 @@ export default function RequiredChoice() {
             setError(undefined);
             setExported(undefined);
           }}
-          aria-describedby={error ? errorId : undefined}
+          error={error}
         >
           {Object.entries(formats).map(([value, label]) => (
             <Radio key={value} value={value} label={label} />
           ))}
         </RadioGroup>
-        {/* A field error rather than an Alert: envUI has no error message for RadioGroup yet. */}
-        {error && (
-          // eslint-disable-next-line envui/no-html-elements
-          <Text id={errorId} variant="body-sm" role="alert">
-            {error}
-          </Text>
-        )}
         <Button type="submit">Export</Button>
         <Text role="status">
           {exported && `Exported Northwind launch as ${formats[exported]}.`}

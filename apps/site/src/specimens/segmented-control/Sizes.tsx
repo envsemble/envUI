@@ -1,5 +1,5 @@
 import { type ControlSize, SegmentedControl } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 const sizes: readonly { size: ControlSize; title: string; caption: string }[] = [
   { size: 'sm', title: 'Small', caption: 'A table row or a dense toolbar' },
@@ -11,10 +11,10 @@ const ignore = () => undefined;
 /** The three sizes, the control heights every control of a size shares. */
 export default function Sizes() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid size="compact">
         {sizes.map(({ size, title, caption }) => (
-          <Specimen key={size} title={title} caption={caption}>
+          <SpecimenPart key={size} title={title} caption={caption}>
             <SegmentedControl
               aria-label={`Layout, ${title.toLowerCase()}`}
               size={size}
@@ -25,9 +25,9 @@ export default function Sizes() {
                 { value: 'board', label: 'Board' },
               ]}
             />
-          </Specimen>
+          </SpecimenPart>
         ))}
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

@@ -1,6 +1,6 @@
 ---
 title: Markdown
-summary: Renders a Markdown string in envUI's typography and code, and MarkdownEditor writes one with a toolbar and a preview.
+summary: Shows a Markdown string in envUI's typography, and MarkdownEditor writes one.
 status: stable
 statuses:
   MarkdownEditor: beta
@@ -52,7 +52,7 @@ examples:
 
 ### Editor sizing
 
-An editor keeps its height for a long document, or grows with its text for a short one.
+A MarkdownEditor keeps its height for a long document, or grows with its text for a short one.
 
 | Editor sizing       | Use for                                                    |
 | ------------------- | ---------------------------------------------------------- |
@@ -80,8 +80,6 @@ The toolbar holds the actions the text needs, as [RichText](rich-text.md#toolbar
 3. **Toolbar** (`env-editor-toolbar`, `toolbar`)
 4. **Source** (`env-markdown-editor-input`)
 5. **Description** (`env-field-description`, `description`)
-
-A rendered document is a single part, in which each table scrolls in a region of its own.
 
 ## Behaviour
 
@@ -150,7 +148,7 @@ On Apple keyboards, <kbd>Cmd</kbd> replaces <kbd>Ctrl</kbd>.
 
 ### Usage
 
-Markdown and MarkdownEditor come from `@envsemble/envui/content`. Markdown renders the string in `children`: CommonMark with tables, strikethrough, task lists, automatic links and footnotes.
+Markdown and MarkdownEditor come from `@envsemble/envui/markdown`. Markdown renders the string in `children`: CommonMark with tables, strikethrough, task lists, automatic links and footnotes.
 
 - Raw HTML is ignored, except keys written as `<kbd>`, which render as Kbd.
 - `headingOffset` adds to the document's heading levels, capped at h6: set it so the first heading sits one level below the page's.
@@ -235,6 +233,9 @@ The editor's root is `env-markdown-editor`, with the tabs, `env-tabs-list`, the 
 
 ## Changelog
 
+- **1.0.0**: Code in Markdown takes the new code themes, as Code and CodeBlock do. MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, and `plain` is gone, for the default outline. `className` and `style` style the root, `env-markdown-editor`, rather than the textarea; `ref` and the other native props still reach the textarea. Its toolbar is a Toolbar, with tooltips instead of native titles, and its words come from EnvUIProvider's `messages`, as do Markdown's table and task names. Markdown's root carries `env-prose` beside `env-markdown`. Markdown is stable; MarkdownEditor stays beta. The editor's source text area, `env-markdown-source`, is `env-markdown-editor-input`, a MarkdownEditor part as `env-text-field-input` is a TextField's.
+- **1.0.0-prerelease.6**: Bold text is semibold rather than medium, so it stands out from the body text around it; it is heavier than a heading's medium, which its size sets apart.
+- **1.0.0-prerelease.6**: Where MarkdownEditor's toolbar is wider than the editor, its groups wrap onto more rows rather than scrolling sideways, so Undo and Redo stay in view. The editor's label takes the size, weight and muted color of a field's floated label.
+- **1.0.0-prerelease.6**: A table's header cells line up at the start, over their columns' text, rather than in the middle.
 - **1.0.0-prerelease.5**: `onRequestLink` is `pickLink`: it supplies the link rather than reporting an event.
 - **1.0.0-prerelease.2**: MarkdownEditor's `underline` variant, which `plain` became in the earlier prereleases, is gone, for the default outline.
-- **1.0.0**: Code in Markdown takes the new code themes, as Code and CodeBlock do. MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, and `plain` is gone, for the default outline. `className` and `style` style the root, `env-markdown-editor`, rather than the textarea; `ref` and the other native props still reach the textarea. Its toolbar is a Toolbar, with tooltips instead of native titles, and its words come from EnvUIProvider's `messages`, as do Markdown's table and task names. Markdown's root carries `env-prose` beside `env-markdown`. Markdown is stable; MarkdownEditor stays beta. The editor's source text area, `env-markdown-source`, is `env-markdown-editor-input`, a MarkdownEditor part as `env-text-field-input` is a TextField's.

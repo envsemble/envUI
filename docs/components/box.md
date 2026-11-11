@@ -1,6 +1,6 @@
 ---
 title: Box
-summary: Box is a plain block for an inset, a size container or a named region, with no layout of its own.
+summary: A plain block for an inset, a size container or a named region.
 status: beta
 since: 1.0.0
 category: App frame & layout

@@ -12,64 +12,136 @@
 // Related are generated, Related from its avoidWhen. The build fails on a page of these kinds that
 // is not in the structure. contributing/pages.md describes it for authors.
 //
-// The work is in scripts/docs/: Schema.ts (the page kinds, sections, roles and frontmatter),
-// Validation.ts (a page read and checked), Reader.ts (every page, its index and links) and
-// Compiler.ts (the props tables and the Markdown the package ships). This file writes the
-// catalogue's data and runs as the command; it exports what the modules did as one file.
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+// The work is in scripts/docs/: PageStructure.ts (the page kinds, sections, roles and
+// frontmatter), PageReader.ts (a page read and checked), DocumentationReader.ts (every page, its
+// index and links), LibraryVersions.ts (the versions a page names) and Compiler.ts (the props
+// tables and the Markdown the package ships); where things are is in scripts/RepositoryPaths.ts.
+// This file writes the catalogue's data and runs as the command; it exports what the modules did
+// as one file.
+import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import type {
-  DocumentationEntry,
-  DocumentationSummary,
-} from '../../apps/site/src/shared/DocumentationTypes.ts';
-import { headingsOf } from './MarkdownHeadings.ts';
-import { headingSlugger } from '../../apps/site/src/shared/SearchAnchors.ts';
-import { writeSearchIndex } from '../site/SearchIndex.ts';
-import { documentationDirectory, generatedFile, pageKindOf, readProps } from './Schema.ts';
-import { readDocumentation } from './Reader.ts';
+import type { DocumentationEntry, DocumentationSummary } from './model/DocumentationTypes.ts';
+import { marked } from 'marked';
+import { headingsOf, plainText } from './MarkdownHeadings.ts';
+import { exportSection, headingSlugger } from './model/SearchAnchors.ts';
+import { providesHeadings } from './model/CatalogueContent.ts';
+import { writeSearchIndex } from '../site/BuildSearchIndex.ts';
+import { documentationDirectory, generatedDocumentationFile } from '../RepositoryPaths.ts';
+import { pageKindOf, readProps } from './PageStructure.ts';
+import { readDocumentation } from './DocumentationReader.ts';
+import { writeIfChanged } from '../build/GeneratedFiles.ts';
 import { documentedExports } from './Compiler.ts';
 import { readMessages, stringsOf } from './Messages.ts';
 
 export {
-  codeSubsections,
-  componentGroups,
   documentationDirectory,
-  exampleRoles,
   examplesDirectory,
+  specimensDirectory,
+} from '../RepositoryPaths.ts';
+export { libraryVersions } from './LibraryVersions.ts';
+export {
+  codeSubsections,
+  exampleRoles,
   examplesOf,
   frontmatterSchema,
   guideExportStatus,
   importMarkdown,
   intents,
-  libraryVersions,
   pageKindOf,
   pageSchemas,
   pageSections,
   readProps,
-  specimensDirectory,
   splitFrontmatter,
-  statuses,
-} from './Schema.ts';
-export { fenceFor, isPropsTable, readPartNames } from './Validation.ts';
-export { readDocumentation } from './Reader.ts';
+} from './PageStructure.ts';
+export { fenceFor, isPropsTable } from './MarkdownBlocks.ts';
+export { readPartNames } from './validation/Legends.ts';
+export { readDocumentation } from './DocumentationReader.ts';
 export {
   compileDocument,
   compileDocumentation,
   documentedExports,
   exampleSource,
   packageDocumentation,
-  propDescription,
   renderProps,
 } from './Compiler.ts';
 
-/** Each page's content for the catalogue: generated/pages/<id>.json beside generatedFile. */
-const pagesDirectory = resolve(dirname(generatedFile), 'pages');
+/** Each page's content for the catalogue: generated/pages/<id>.json beside generatedDocumentationFile. */
+const pagesDirectory = resolve(dirname(generatedDocumentationFile), 'pages');
 
-/** Writes a generated file only when it changes, so a dev server watching it doesn't reload. */
-function writeIfChanged(file: string, source: string) {
-  mkdirSync(dirname(file), { recursive: true });
-  if (!existsSync(file) || readFileSync(file, 'utf8') !== source) writeFileSync(file, source);
+const names = (text: string, name: string) =>
+  new RegExp(`(?<![\\w.])${name.replace(/[.$]/g, '\\$&')}(?![\\w])`).test(text);
+
+/**
+ * The heading ids of Markdown with the text under each, the text before its first heading under
+ * `start`: the `slug` numbers repeated headings across the parts of one page.
+ */
+function headedText(markdown: string, slug: (text: string) => string, start: string) {
+  const parts = [{ id: start, heading: '', text: '' }];
+  for (const token of marked.lexer(markdown)) {
+    if (token.type === 'heading')
+      parts.push({ id: slug(plainText(token.tokens)), heading: token.text, text: '' });
+    else parts.at(-1)!.text += `\n${token.raw}`;
+  }
+  return parts;
+}
+
+/**
+ * The exports a page documents besides the one it is named after, each a component or a namespace,
+ * such as IconButton on Button's, for the navigation's entries under the page: each with where the
+ * Docs show it, its props on a component page and a guide's first heading whose text names it, and
+ * on a component page where the catalogue does, the first heading of its plain sections whose text
+ * names it, else the Overview; a page with none has none.
+ */
+function membersOf(
+  document: {
+    title: string;
+    markdown: string;
+    sections?: { id: string; blocks: { kind: string; markdown?: string }[] }[];
+  },
+  components: readonly string[],
+  props: NonNullable<ReturnType<typeof readProps>>,
+) {
+  const members = components.filter(
+    (name) =>
+      name !== document.title && ['component', 'namespace'].includes(props.exports[name]?.kind),
+  );
+  if (!members.length) return undefined;
+  const slug = headingSlugger();
+  const parts = document.sections
+    ? document.sections.flatMap((section) =>
+        headedText(
+          section.blocks
+            .flatMap((block) => (block.kind === 'markdown' ? [block.markdown!] : []))
+            .join('\n\n'),
+          slug,
+          section.id,
+        ).map((part) => ({
+          ...part,
+          // The catalogue leaves out Compose, the changelog and the lists of what is provided.
+          plain:
+            !['code', 'changelog'].includes(section.id) &&
+            !Object.values(providesHeadings).includes(part.heading as never),
+        })),
+      )
+    : headedText(document.markdown, slug, '').map((part) => ({ ...part, plain: false }));
+  const firstNaming = (name: string, plain: boolean) =>
+    parts.find((part) => part.id && part.plain === plain && names(part.text, name))?.id;
+  // A guide's component that no heading's text names has no place to lead to, and no entry.
+  const placed = members.flatMap((name) => {
+    const entry = props.exports[name];
+    if (!document.sections) {
+      const docs = firstNaming(name, false);
+      return docs ? [{ name, docs }] : [];
+    }
+    return [
+      {
+        name,
+        catalogue: firstNaming(name, true) ?? 'overview',
+        docs: exportSection(entry.kind === 'namespace' ? (entry.parts[0] ?? name) : name),
+      },
+    ];
+  });
+  return placed.length ? placed : undefined;
 }
 
 export function generateDocumentation() {
@@ -82,12 +154,18 @@ export function generateDocumentation() {
     if (!frontmatter) return entry;
     // A guide names the exports it documents, such as LinkProvider, so a page that relates to one
     // links to it, and may carry a status, such as alpha.
-    if (!sections)
+    if (!sections) {
+      const members =
+        frontmatter.components && props && membersOf(document, frontmatter.components, props);
       return {
         ...entry,
         ...(frontmatter.status && { status: frontmatter.status }),
         ...(frontmatter.components && { components: frontmatter.components }),
+        ...(members && { members }),
       };
+    }
+    const members =
+      kind === 'component' && props && membersOf(document, frontmatter.components ?? [], props);
     const metadata = {
       ...(frontmatter.status && { status: frontmatter.status }),
       ...(frontmatter.since && { since: frontmatter.since }),
@@ -106,6 +184,7 @@ export function generateDocumentation() {
     return {
       ...entry,
       metadata,
+      ...(members && { members }),
       sections: sections.map((section) => ({
         ...section,
         anchors: section.blocks.flatMap((block) =>
@@ -115,7 +194,7 @@ export function generateDocumentation() {
       // Pattern and template pages document no exports of their own; they link to what they compose.
       ...(kind === 'component' && {
         props: Object.fromEntries(
-          documentedExports(frontmatter.components, props).map((name) => [
+          documentedExports(frontmatter.components ?? [], props).map((name: string) => [
             name,
             props!.exports[name],
           ]),
@@ -163,8 +242,8 @@ export function generateDocumentation() {
       })),
     };
   });
-  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '../shared/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
-  writeIfChanged(generatedFile, source);
+  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '@docs-model/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
+  writeIfChanged(generatedDocumentationFile, source);
   const contents = new Map(
     entries.map((entry) => {
       const { sections, markdown, ...rest } = entry as DocumentationEntry;
@@ -182,7 +261,7 @@ export function generateDocumentation() {
   return documents;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (import.meta.main) {
   // --check reads and validates the documentation, its links and headings, and writes nothing.
   if (process.argv.includes('--check'))
     console.log(

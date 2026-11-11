@@ -9,9 +9,9 @@ import {
   Text,
 } from '@envsemble/envui';
 import { WidthSweep } from '../../motion/WidthSweep';
-import type { FoundationFigure } from './FoundationFigures';
+import type { FoundationFigureEntry } from './FoundationFigures';
 import { ClassTextSizeFigure } from './ResponsiveTextSize';
-import { Figure, type LegendEntry } from './Topic';
+import { FoundationFrame, type LegendEntry } from './FoundationFrame';
 
 /*
  * The figures of the Adapting to width foundation. Its words are in docs/foundations/responsive.md,
@@ -47,11 +47,13 @@ function Profile() {
 /**
  * The profile in one frame whose width sweeps from a narrow pane to room to spare and back, slowly
  * and held at each end, its ruler naming the window class alone, as the page shows no lengths; the
- * legend's two entries, below it, say what changes at each.
+ * legend's two entries, below it, say what changes at each. On a stage too narrow for its widest
+ * at a legible scale, such as a phone's, the frame is cut off and panned across rather than
+ * narrowed, so the actions beside the name still show.
  */
 function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
   return (
-    <Figure
+    <FoundationFrame
       label="One profile, from a narrow pane to room to spare"
       motion="the profile from a narrow pane to room to spare"
       legend={
@@ -69,15 +71,15 @@ function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
         </div>
       }
     >
-      <WidthSweep widths={[18, 44]} hold={1600} classes="only">
+      <WidthSweep widths={[18, 44]} hold={1600} classes="only" crop>
         <Profile />
       </WidthSweep>
-    </Figure>
+    </FoundationFrame>
   );
 }
 
 /** The figures docs/foundations/responsive.md places, by name. */
-export const responsiveFigures: Record<string, FoundationFigure> = {
+export const responsiveFigures: Record<string, FoundationFigureEntry> = {
   Widths: { render: WidthsFigure, wide: true },
   TextSize: { render: ClassTextSizeFigure, wide: true },
 };

@@ -26,11 +26,11 @@
     /* The indicator's thickness and the rounding of its ends, three hairlines. */
     --env-tabs-indicator-size: calc(3 * var(--env-control-border-width));
     --env-tabs-rail-color: var(--env-tabs-container, transparent);
-    --env-tabs-label-color: var(--env-tabs-content, var(--env-color-fg-muted));
+    /* The labels of the tabs not selected, a step stronger than the muted text, so an unavailable
+       tab's disabled color stands clearly apart from them. */
+    --env-tabs-label-color: var(--env-tabs-content, var(--env-color-fg-muted-hover));
     --env-tabs-selected-color: var(--env-tabs-selected-content, var(--env-color-fg-primary));
     --env-tabs-indicator-color: var(--env-tabs-indicator, var(--env-color-border-primary-emphasis));
-    /* Valid only while the application sets the container or the content (see Button.css). */
-    --env-tabs-custom: var(--env-tabs-container, var(--env-tabs-content));
   }
 
   /* The whole rail is as tall as a control of its size, and its tabs fill it. */
@@ -39,6 +39,7 @@
     /* The height the rail draws at: its size's, or the touch height under a coarse pointer. */
     --env-tabs-height: var(--env-tabs-rail);
     --env-tabs-inset: 0rem;
+    --env-tabs-active-padding: var(--env-space-3);
     --env-control-height: var(--env-tabs-height);
     inline-size: fit-content;
     max-inline-size: 100%;
@@ -48,6 +49,27 @@
     /* The tabs' offset parent, so the rail, which scrolls the selected tab into view, measures it
        from its own start rather than from a positioned ancestor's, and starts with it in view. */
     position: relative;
+  }
+  /* A horizontal rail lines its first label up with the content below it. It reaches back before
+     its container's edge by a tab's inline padding, a button's or a text button's slimmer one, and
+     holds that much as leading padding of its own, which takes no presses; its first tab gives up its
+     leading padding, so its label starts at the content's edge, and draws its fill and focus ring
+     back over the rail's padding (below). So no tab's hit area reaches over what lies before the
+     rail, and none overlaps the next. */
+  .env-tabs-list:not([data-orientation='vertical']) {
+    --env-tabs-lead: var(--env-space-3);
+    margin-inline-start: calc(-1 * var(--env-tabs-lead));
+    padding-inline-start: calc(var(--env-tabs-inset) + var(--env-tabs-lead));
+    max-inline-size: calc(100% + var(--env-tabs-lead));
+    pointer-events: none;
+  }
+  .env-tabs-list:not([data-orientation='vertical']):has(
+      > .env-tabs-tab:first-child[data-variant='text']
+    ) {
+    --env-tabs-lead: var(--env-space-1);
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > * {
+    pointer-events: auto;
   }
   /* The rail has no fill of its own: the tabs sit on what the Tabs sit on. */
   .env-tabs-list.env-surface {
@@ -77,6 +99,11 @@
       inset-inline: 0;
     }
   }
+  /* A vertical rail's tabs are rows of a column, as tall as a medium control like the other
+     navigation rows beside them, at the large size too; a small rail keeps its smaller tabs. */
+  .env-tabs-list[data-orientation='vertical'] {
+    --env-tabs-rail: var(--env-control-height-md);
+  }
   .env-tabs-list[data-size='sm'] {
     --env-tabs-rail: var(--env-control-height-sm);
   }
@@ -86,40 +113,57 @@
   .env-tabs-list[data-size='sm'] > .env-tabs-tab {
     padding-block: 0;
   }
+  .env-tabs-list > .env-tabs-tab[data-variant='text'] {
+    --env-tabs-tab-padding: var(--env-space-1);
+    margin-inline: 0;
+    max-inline-size: 100%;
+  }
+  /* The indicator spans the label, inside the tab's inline padding: a button's, or a text button's
+     slimmer one. A text button of the application's own takes no margin back here, which would let
+     neighbouring tabs overlap and their labels run together. */
   .env-tabs-list > .env-tabs-tab {
+    --env-tabs-tab-padding: var(--env-space-3);
+    /* The faint layer a press lays (below). */
+    --env-tabs-press-layer: color-mix(
+      in srgb,
+      var(--env-color-bg-neutral-subtle-hover) 70%,
+      transparent
+    );
     position: relative;
     flex-shrink: 0;
     border-radius: var(--env-radius-sm);
     white-space: normal;
-    overflow-wrap: anywhere;
-    transition:
-      background-color var(--env-motion-duration-medium) var(--env-motion-ease),
-      color var(--env-motion-duration-medium) var(--env-motion-ease);
+    overflow-wrap: break-word;
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* Every tab is a text tab, whatever its button's variant: no fill or edge of its own, its label
-     muted. Under the pointer and pressed a state layer shows; with the application's colors, the
-     layer is their label's, a quarter stronger than Button's, as a muted label is lighter than the
-     text color. The states are named so these rules outweigh the button's own. */
+     quieter than the text. Under the pointer no block or bar shows, as either would read as a
+     second selection: only the label takes the text color, and the indicator is the selected tab's
+     alone. A press, which lasts only as long as the button is held, lays a faint state layer under
+     the label as well (below), a step past hover. The states, unavailable included, are named so
+     these rules outweigh the button's own. */
   .env-tabs-list > .env-tabs-tab,
+  .env-tabs-list > .env-tabs-tab:is(:disabled, [aria-disabled='true']),
   .env-tabs-list
     > .env-tabs-tab:is(:hover, :active, :focus-visible):not(:disabled):not([aria-disabled='true']) {
-    /* Valid only in a state while the application sets the tabs' colors (see Button.css). */
-    --env-tabs-tab-custom-fill: color-mix(
-      in srgb,
-      var(--env-tabs-custom) 0%,
-      color-mix(in srgb, transparent, currentColor calc(var(--env-button-layer) * 1.25))
-    );
     border-color: transparent;
     background: transparent;
     box-shadow: none;
-    color: var(--env-tabs-label-color, var(--env-color-fg-muted));
+    color: var(--env-tabs-label-color, var(--env-color-fg-muted-hover));
   }
-  .env-tabs-list > .env-tabs-tab:hover:not(:disabled):not([aria-disabled='true']) {
-    background: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+  /* An unavailable tab takes the disabled text color, as an unavailable button does, and no state,
+     so it reads apart from the muted labels of the tabs that are there. */
+  .env-tabs-list > .env-tabs-tab:is(:disabled, [aria-disabled='true']) {
+    color: var(--env-color-fg-disabled);
+  }
+  .env-tabs-list
+    > .env-tabs-tab:is(:hover, :active):not([data-active]):not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    color: var(--env-tabs-content, var(--env-color-fg-default));
   }
   .env-tabs-list > .env-tabs-tab:active:not(:disabled):not([aria-disabled='true']) {
-    --env-button-layer: calc(var(--env-state-pressed-opacity) * 100%);
-    background: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
+    background: var(--env-tabs-press-layer);
   }
   /* The selected tab: its label in the accent's text color, with the indicator under it. */
   .env-tabs-list > .env-tabs-tab[data-active],
@@ -129,23 +173,77 @@
     ) {
     color: var(--env-tabs-selected-color, var(--env-color-fg-primary));
   }
-  .env-tabs-list > .env-tabs-tab[data-active]::after {
+  /* Every tab draws the indicator's shape, transparent but on the selected tab. */
+  .env-tabs-list > .env-tabs-tab::after {
     content: '';
     position: absolute;
-    inset-inline: var(--env-space-2);
+    inset-inline: var(--env-tabs-tab-padding);
     inset-block-end: 0;
     block-size: var(--env-tabs-indicator-size);
     border-start-start-radius: var(--env-tabs-indicator-size);
     border-start-end-radius: var(--env-tabs-indicator-size);
-    background: var(--env-tabs-indicator-color, var(--env-color-border-primary-emphasis));
+    background: transparent;
     pointer-events: none;
+  }
+  .env-tabs-list > .env-tabs-tab[data-active]::after {
+    background: var(
+      --env-tabs-tab-indicator,
+      var(--env-tabs-indicator-color, var(--env-color-border-primary-emphasis))
+    );
+  }
+  /* One indicator moves from tab to tab: Base UI's, placed by the selected tab's box
+     (--active-tab-*, physical), under its label inside its inline padding, as each tab's own shape
+     above is, which it takes the place of once it has measured. The selected tab's inline padding,
+     which the rail reads for the indicator: a button's, or a text button's slimmer one. */
+  .env-tabs-list:has(> .env-tabs-tab[data-active][data-variant='text']) {
+    --env-tabs-active-padding: var(--env-space-1);
+  }
+  .env-tabs-list > .env-tabs-indicator {
+    /* Base UI sets the tab's box inline as it measures it; until then the indicator is hidden. */
+    --active-tab-left: 0rem;
+    --active-tab-top: 0rem;
+    --active-tab-width: 0rem;
+    --active-tab-height: 0rem;
+    /* The padding before the label, at the tab's start: none on a horizontal rail's first tab. */
+    --env-tabs-indicator-start: var(--env-tabs-active-padding);
+    position: absolute;
+    /* Physical, as Base UI measures the tab. */
+    top: 0;
+    left: 0;
+    inline-size: calc(
+      var(--active-tab-width) - var(--env-tabs-indicator-start) - var(--env-tabs-active-padding)
+    );
+    block-size: var(--env-tabs-indicator-size);
+    border-start-start-radius: var(--env-tabs-indicator-size);
+    border-start-end-radius: var(--env-tabs-indicator-size);
+    background: var(--env-tabs-indicator-color, var(--env-color-border-primary-emphasis));
+    translate: calc(var(--active-tab-left) + var(--env-tabs-indicator-start))
+      calc(var(--active-tab-top) + var(--active-tab-height) - var(--env-tabs-indicator-size));
+    pointer-events: none;
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-indicator {
+    pointer-events: none;
+  }
+  .env-tabs-list:not([data-orientation='vertical']):has(> .env-tabs-tab:first-child[data-active])
+    > .env-tabs-indicator {
+    --env-tabs-indicator-start: 0rem;
+  }
+  /* In right-to-left text the tab's start is its right side. */
+  .env-tabs-list > .env-tabs-indicator:dir(rtl) {
+    translate: calc(var(--active-tab-left) + var(--env-tabs-active-padding))
+      calc(var(--active-tab-top) + var(--active-tab-height) - var(--env-tabs-indicator-size));
+  }
+  /* Once the indicator shows (data-placed, Tabs.tsx), the selected tab draws none of its own: the
+     indicator's own attribute, not hidden, as :has() asks (packages/ui/AGENTS.md, Style sheets). */
+  .env-tabs-list:has(> .env-tabs-indicator[data-placed]) > .env-tabs-tab[data-active] {
+    --env-tabs-tab-indicator: transparent;
   }
   /* A vertical rail's indicator stands at the start of the selected tab. */
   .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab {
     justify-content: flex-start;
     text-align: start;
   }
-  .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab[data-active]::after {
+  .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab::after {
     inset-block: var(--env-space-2);
     inset-inline: 0 auto;
     inline-size: var(--env-tabs-indicator-size);
@@ -154,9 +252,73 @@
     border-start-end-radius: var(--env-tabs-indicator-size);
     border-end-end-radius: var(--env-tabs-indicator-size);
   }
+  .env-tabs-list[data-orientation='vertical'] > .env-tabs-indicator {
+    inline-size: var(--env-tabs-indicator-size);
+    block-size: calc(var(--active-tab-height) - 2 * var(--env-space-2));
+    border-radius: 0;
+    border-start-end-radius: var(--env-tabs-indicator-size);
+    border-end-end-radius: var(--env-tabs-indicator-size);
+    translate: var(--active-tab-left) calc(var(--active-tab-top) + var(--env-space-2));
+  }
+  .env-tabs-list[data-orientation='vertical'] > .env-tabs-indicator:dir(rtl) {
+    translate: calc(
+        var(--active-tab-left) + var(--active-tab-width) - var(--env-tabs-indicator-size)
+      )
+      calc(var(--active-tab-top) + var(--env-space-2));
+  }
+  /* It slides and resizes to the tab selected, once a tab has been selected, not as it first
+     measures. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-tabs-list
+      > .env-tabs-indicator:is([data-activation-direction]):not(
+        [data-activation-direction='none']
+      ) {
+      transition:
+        translate var(--env-motion-duration-medium) var(--env-motion-ease),
+        inline-size var(--env-motion-duration-medium) var(--env-motion-ease),
+        block-size var(--env-motion-duration-medium) var(--env-motion-ease);
+    }
+  }
   .env-tabs-list > .env-tabs-tab:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
+  }
+  /* The first tab of a horizontal rail, its label at the content's edge: its focus ring is drawn a
+     tab's padding wider, back over the rail's leading padding, by a shape under its label that takes
+     no presses, so it surrounds the whole tab as the others' do. */
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child {
+    isolation: isolate;
+    padding-inline-start: 0;
+  }
+  .env-tabs-list:not([data-orientation='vertical'])
+    > .env-tabs-tab:first-child:focus-visible:not(:disabled):not([aria-disabled='true']) {
+    outline-color: transparent;
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child::before {
+    content: '';
+    position: absolute;
+    z-index: calc(var(--env-z-base) - var(--env-z-raised));
+    inset-block: 0;
+    inset-inline: calc(-1 * var(--env-tabs-lead)) 0;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .env-tabs-list:not([data-orientation='vertical'])
+    > .env-tabs-tab:first-child:focus-visible::before {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
+  }
+  /* Its press layer, too, covers the whole tab: the shape under its label takes it. */
+  .env-tabs-list:not([data-orientation='vertical'])
+    > .env-tabs-tab:first-child:active:not(:disabled):not([aria-disabled='true']) {
+    background: transparent;
+  }
+  .env-tabs-list:not([data-orientation='vertical'])
+    > .env-tabs-tab:first-child:active:not(:disabled):not([aria-disabled='true'])::before {
+    background: var(--env-tabs-press-layer);
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child::after {
+    inset-inline-start: 0;
   }
   .env-tabs-panels {
     position: relative;
@@ -182,36 +344,40 @@
     min-inline-size: 0;
     opacity: 1;
     transition:
-      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-      transform var(--env-motion-duration-medium) var(--env-motion-ease);
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
+      transform var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-tabs-panel[hidden] {
     display: none;
   }
+  /* The incoming panel starts half faded, not from nothing: the outgoing one is gone by its first
+     frame, and a panel that started invisible would leave the frames before its fade gets going
+     empty, a blink between the two. */
   .env-tabs-panel[data-starting-style] {
-    opacity: 0;
+    opacity: 0.5;
     transform: translateY(var(--env-space-1));
   }
-  /* The outgoing panel fades out of flow, so content after the tabs settles when the tab changes
-     instead of jumping when the fade ends. */
+  /* The outgoing panel goes at once, out of flow, so the two panels never show over each other and
+     content after the tabs settles as the tab changes; the incoming one fades in. */
   .env-tabs-panel[data-ending-style] {
     position: absolute;
     inset-inline: 0;
     inset-block-start: 0;
     opacity: 0;
-    transform: translateY(calc(-1 * var(--env-space-1)));
     pointer-events: none;
+    transition: none;
   }
   .env-tabs-panel:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
   @media (prefers-reduced-motion: reduce) {
     .env-tabs-list > .env-tabs-tab,
     .env-tabs-panel {
       transition: none;
     }
-    .env-tabs-panel:is([data-starting-style], [data-ending-style]) {
+    .env-tabs-panel[data-starting-style] {
+      opacity: 1;
       transform: none;
     }
   }
@@ -228,10 +394,24 @@
     }
     .env-tabs-list > .env-tabs-tab[data-active]::after {
       forced-color-adjust: none;
+      background: var(--env-tabs-tab-indicator, Highlight);
+    }
+    .env-tabs-list > .env-tabs-indicator {
+      forced-color-adjust: none;
       background: Highlight;
     }
     .env-tabs-list > .env-tabs-tab[data-active]:focus-visible {
       outline-color: CanvasText;
+    }
+    /* The lined-up first tab draws its ring on a shape under its label; with no fills to line up,
+       the tab draws the system's ring itself. */
+    .env-tabs-list:not([data-orientation='vertical'])
+      > .env-tabs-tab:first-child:focus-visible:not(:disabled):not([aria-disabled='true']) {
+      outline-color: CanvasText;
+    }
+    .env-tabs-list:not([data-orientation='vertical'])
+      > .env-tabs-tab:first-child:focus-visible::before {
+      outline: 0;
     }
   }
 }

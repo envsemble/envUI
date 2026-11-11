@@ -3,7 +3,7 @@
  * light, and the pages in samplePages in dark, light high contrast and dark high contrast as well.
  */
 import { expect, type Page } from '@playwright/test';
-import { allPages } from '../../../apps/site/src/navigation/SiteRoutes';
+import { allPages } from '../../../apps/site/src/routes/SiteRoutes';
 
 export type ThemeName = 'light' | 'dark' | 'light-hc' | 'dark-hc';
 
@@ -20,11 +20,11 @@ export interface CatalogueTheme {
   contrast: 'no-preference' | 'more';
 }
 
-export const standardThemes: readonly CatalogueTheme[] = [
+const standardThemes: readonly CatalogueTheme[] = [
   { name: 'light', scheme: 'light', contrast: 'no-preference' },
   { name: 'dark', scheme: 'dark', contrast: 'no-preference' },
 ];
-export const highContrastThemes: readonly CatalogueTheme[] = [
+const highContrastThemes: readonly CatalogueTheme[] = [
   { name: 'light-hc', scheme: 'light', contrast: 'more' },
   { name: 'dark-hc', scheme: 'dark', contrast: 'more' },
 ];
@@ -35,10 +35,10 @@ export const allThemes: readonly CatalogueTheme[] = [...standardThemes, ...highC
  * light alone. Together they show the color roles, actions with their forced states, a field, table
  * rows, highlighted code, which takes high-contrast token colors of its own, and the Docs' props
  * tables and token swatches. The contrast gate
- * (tests/browser/Contrast.spec.ts) measures every token pair in all four themes, and the visual
+ * (tests/browser/library/Contrast.spec.ts) measures every token pair in all four themes, and the visual
  * baseline's open lists capture menus and selects in dark and high contrast.
  */
-export const samplePages: ReadonlySet<string> = new Set([
+const samplePages: ReadonlySet<string> = new Set([
   'foundations/colors',
   'components/button',
   'components/text-field',
@@ -76,7 +76,7 @@ export async function chooseScheme(page: Page, scheme: 'light' | 'dark') {
   await menu
     .getByRole('menuitemradio', { name: scheme === 'dark' ? 'Dark' : 'Light', exact: true })
     .click();
-  await page.locator(`.site-app[data-env-theme="${scheme}"]`).waitFor();
+  await page.locator(`html[data-env-theme="${scheme}"]`).waitFor();
   await page.keyboard.press('Escape');
   await expect(menu).toHaveCount(0);
 }

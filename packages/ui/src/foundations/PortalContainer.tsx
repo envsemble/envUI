@@ -3,7 +3,7 @@
 // @client-module It provides the portal container context, which React reads only in client modules.
 
 import { useMemo, type ReactNode } from 'react';
-import { PortalContainerContext } from '../internal/PortalContainerContext.js';
+import { PortalContainerContext } from '../internal/popup/PortalContainerContext.js';
 
 export interface PortalContainerProps {
   /**

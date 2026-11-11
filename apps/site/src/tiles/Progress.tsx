@@ -1,9 +1,9 @@
 import { Progress } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
+import { useTimeline } from '../motion/Timeline';
 
 /**
- * An upload that advances, finishes, and the next one fills again to where the first began: the
- * value at each step, which the bar follows in its own transition.
+ * An upload that advances and finishes, then the next one fills again to where the first began: the
+ * value at each step, which the bar follows with its own transition.
  */
 const values = [40, 55, 72, 86, 100, 0, 18];
 const durations = [700, 450, 550, 450, 1100, 450, 450];

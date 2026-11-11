@@ -11,8 +11,10 @@ import type {
   Snapshot,
   StickyData,
 } from './model.js';
+import { layoutKinds } from './model.js';
 import { queriesFor, thresholdsFor } from './queries.js';
-import { round, toRem, windowClassOf } from './units.js';
+import { roundToHundredth } from '../internal/dom/lengths.js';
+import { toRem, windowClassOf } from './units.js';
 
 /** A measurement read: its text, each node's line and problems, and every problem. */
 export interface Reading {
@@ -26,14 +28,15 @@ export interface Reading {
   problems: LayoutProblem[];
 }
 
-const layoutKinds = new Set(['box', 'row', 'column', 'grid', 'scaffold', 'panes', 'page']);
+/** The kinds of envUI's layout primitives, by name. */
+const layoutKindNames = new Set<string>(layoutKinds);
 
 /** A node as the readout names it: its kind, and its name where that isn't the kind. */
 export const labelOf = (node: Pick<NodeData, 'kind' | 'name'>) =>
   node.name === node.kind ? node.kind : `${node.kind} "${node.name}"`;
 
 /** The nodes from the top down to this one, such as `scaffold > page > grid "cards"`. */
-export function pathOf(snapshot: Snapshot, node: NodeData): string {
+function pathOf(snapshot: Snapshot, node: NodeData): string {
   const labels: string[] = [];
   for (
     let at: NodeData | undefined = node;
@@ -184,7 +187,7 @@ class Reader {
     const { rootPx } = this.snapshot;
     // A component may paint through a primitive it renders, which carries its part class; a
     // layout node without one is the app's own, and never paints.
-    if (layoutKinds.has(node.kind) && node.part === null && node.paints.length)
+    if (layoutKindNames.has(node.kind) && node.part === null && node.paints.length)
       this.problem(
         node,
         'layout-paints',
@@ -244,7 +247,7 @@ class Reader {
     if (!spills && wider > 1)
       this.overflowing.set(
         node.index,
-        `${label}: its content is ${round(wider / rootPx)}rem wider than it (${this.rem(node.scrollSize.clientW)}rem) and it doesn't scroll${clips ? ', so the content is cut off' : ''}. Let the content wrap or shrink (min-inline-size: 0), or let it scroll.`,
+        `${label}: its content is ${roundToHundredth(wider / rootPx)}rem wider than it (${this.rem(node.scrollSize.clientW)}rem) and it doesn't scroll${clips ? ', so the content is cut off' : ''}. Let the content wrap or shrink (min-inline-size: 0), or let it scroll.`,
       );
   }
 

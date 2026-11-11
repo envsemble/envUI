@@ -1,7 +1,8 @@
 import { Column } from '@envsemble/envui';
 import Choices from '../../examples/menu/Choices';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const radio = (index: number) =>
   `[role="menuitemradio"]:nth-child(${index} of [role="menuitemradio"])`;

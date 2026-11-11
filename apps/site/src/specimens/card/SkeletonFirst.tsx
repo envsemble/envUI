@@ -1,7 +1,7 @@
 import { Button, Card, Text } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
-import { useTimeline } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The card as its skeleton a moment, over two steps, as a timeline's first step is cut short as
@@ -29,10 +29,10 @@ function Loading() {
 /** A card as its own skeleton while its content loads, then filled in. */
 export default function SkeletonFirst() {
   return (
-    <Example size="content">
+    <SpecimenFrame size="content">
       <MotionStage label="the card filling in as its content loads">
         <Loading />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

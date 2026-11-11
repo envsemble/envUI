@@ -22,12 +22,15 @@ import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { IconPerson } from '@envsemble/envui/icons/Person';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { IconStar } from '@envsemble/envui/icons/Star';
-import { usePointer, useTimeline, type PointerStep } from '../../motion/Motion';
-import { LoadBoundary, lazyPart } from '../../template/LoadBoundary';
-import { PartSkeleton, placeholderText } from '../../template/Loading';
-import { Example } from '../Example';
-import type { FoundationFigure } from './FoundationFigures';
-import { Figure } from './Topic';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { useTimeline } from '../../motion/Timeline';
+import { LoadBoundary } from '../../loading/LoadBoundary';
+import { lazyPart } from '../../loading/LoadedPart';
+import { PartSkeleton, placeholderText } from '../../loading/Skeletons';
+import { SpecimenFrame } from '../SpecimenFrame';
+import type { FoundationFigureEntry } from './FoundationFigures';
+import { FoundationFrame } from './FoundationFrame';
 
 /*
  * The figures of the Icons foundation. Its words are in docs/foundations/icons.md, the page's one
@@ -70,9 +73,9 @@ function FollowTextSteps() {
 
 function FollowTextFigure() {
   return (
-    <Figure label="Icons follow their text" motion="the icons following their text">
+    <FoundationFrame label="Icons follow their text" motion="the icons following their text">
       <FollowTextSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -128,9 +131,9 @@ function DestinationSteps() {
 /** Outlined destinations, the selected one filled, as the pointer moves between them. */
 function OutlinedAndFilledFigure() {
   return (
-    <Figure label="Outlined and filled" motion="the selected icon filling">
+    <FoundationFrame label="Outlined and filled" motion="the selected icon filling">
       <DestinationSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -153,9 +156,9 @@ const nameLengths = [6, 4, 4, 5, 8, 12, 8, 3, 6, 10, 4, 13];
 function IconCatalogueSkeleton() {
   return (
     <PartSkeleton what="icons">
-      <Example size="collection">
+      <SpecimenFrame size="collection">
         <div className="catalogue-icon-toolbar">
-          <SearchField variant="floating" label="Search icons" showLabel />
+          <SearchField size="lg" label="Search icons" showLabel />
           <Switch label="Filled icons" />
         </div>
         <ul className="catalogue-icon-catalogue">
@@ -180,7 +183,7 @@ function IconCatalogueSkeleton() {
           <Text variant="caption">Page 1 of 99</Text>
           <Button variant="secondary">Next</Button>
         </Row>
-      </Example>
+      </SpecimenFrame>
     </PartSkeleton>
   );
 }
@@ -205,7 +208,7 @@ function CatalogueFigure() {
 }
 
 /** The figures docs/foundations/icons.md places, by name. */
-export const iconsFigures: Record<string, FoundationFigure> = {
+export const iconsFigures: Record<string, FoundationFigureEntry> = {
   FollowText: { render: FollowTextFigure },
   OutlinedAndFilled: { render: OutlinedAndFilledFigure },
   Catalogue: { render: CatalogueFigure, wide: true },

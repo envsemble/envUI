@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  useEffect,
   useId,
   useLayoutEffect,
   useRef,
@@ -12,24 +11,23 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Grid } from '../foundations/Layout.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { ActionElement } from '../internal/ActionElement.js';
-import { FileInput } from '../internal/FileInput.js';
-import { setRef } from '../internal/setRef.js';
+import { Grid } from '../layout/Layout.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { ActionElement } from '../internal/control/ActionElement.js';
+import { FileInput } from './internal/FileInput.js';
+import { setRef } from '../internal/react/setRef.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
-import { acceptsFile } from './internal/acceptsFile.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { useFormReset } from '../internal/field/useFormReset.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/DropZone.css';
 
-export interface DropZoneProps
-  extends Omit<
-    ComponentPropsWithRef<'div'>,
-    'children' | 'onDragEnter' | 'onDragOver' | 'onDragLeave' | 'onDrop'
-  > {
+export interface DropZoneProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'onDragEnter' | 'onDragOver' | 'onDragLeave' | 'onDrop'
+> {
   /**
    * What to drop or choose, such as "Drop a logo here, or browse". With the description, it names
    * the zone, as its visible text does.
@@ -118,8 +116,6 @@ export function DropZone({
   const [dragging, setDragging] = useState(false);
   // Entering a child of the zone leaves its parent first, so count the elements under the files.
   const depth = useRef(0);
-  const latestFiles = useRef(files);
-  latestFiles.current = files;
   const available = !disabled && !pending;
 
   /** Native forms submit exactly these files, also when they were dropped. */
@@ -135,16 +131,13 @@ export function DropZone({
     if (files !== undefined) hold(files);
   }, [files, name]);
 
-  useEffect(
+  // The browser empties the named input; files the application keeps stay.
+  useFormReset(
+    field,
     function keepFilesAfterFormReset() {
-      const owner = field.current?.form;
-      if (!owner) return;
-      // The browser empties the named input; files the application keeps stay.
-      return subscribeFormReset(owner, () => {
-        if (latestFiles.current !== undefined) hold(latestFiles.current);
-      });
+      if (files !== undefined) hold(files);
     },
-    [form, name],
+    form,
   );
 
   function take(chosen: File[]) {
@@ -208,9 +201,9 @@ export function DropZone({
       invalid={error != null || undefined}
       className={classNames('env-drop-zone', className)}
       data-size={size}
-      data-drag-over={dragging ? '' : undefined}
-      data-pending={pending ? '' : undefined}
-      data-invalid={error != null ? '' : undefined}
+      data-drag-over={flag(dragging)}
+      data-pending={flag(pending)}
+      data-invalid={flag(error != null)}
       onDragEnter={(event) => {
         if (!carriesFiles(event)) return;
         event.preventDefault();
@@ -257,4 +250,23 @@ export function DropZone({
       {error != null && <Field.Error id={`${id}-error`}>{error}</Field.Error>}
     </Field.Root>
   );
+}
+
+/**
+ * Whether a file matches an accept list as the native file input reads it: MIME types such as
+ * image/png, groups such as image/*, and file name extensions such as .webp, separated by commas.
+ */
+function acceptsFile(file: File, accept: string | undefined) {
+  const patterns = (accept ?? '')
+    .split(',')
+    .map((pattern) => pattern.trim().toLowerCase())
+    .filter(Boolean);
+  if (patterns.length === 0) return true;
+  const fileName = file.name.toLowerCase();
+  const type = file.type.toLowerCase();
+  return patterns.some((pattern) => {
+    if (pattern.startsWith('.')) return fileName.endsWith(pattern);
+    if (pattern.endsWith('/*')) return type.startsWith(pattern.slice(0, -1));
+    return type === pattern;
+  });
 }

@@ -6,10 +6,12 @@
     "moduleResolution": "Bundler",
     "jsx": "react-jsx",
     "strict": true,
+    "types": ["node"],
+    "noUncheckedSideEffectImports": false,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
     "customConditions": ["envui-source"]
   },
-  "include": ["*.ts", "*.tsx"]
+  "include": ["*.ts", "*.tsx", "../../packages/ui/src/customProperties.d.ts"]
 }

@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import TypeToConfirm from '../../examples/destructive-actions/TypeToConfirm';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const field = '.env-text-field-input';
 const confirm = '.env-dialog-actions .env-button:last-child';
 
 /*
- * The pointer opens the dialog, types the name with a slip and presses Delete project: the dialog
- * stays and says what to type. It mends the name and presses again, and the dialog closes. Then
- * the example starts anew.
+ * The pointer opens the dialog and types the name with a slip: Delete project stays disabled, and
+ * the pointer drifts towards it and back. It mends the name, the button enables, and it presses
+ * it; the dialog closes. Then the example starts anew.
  */
 const script: PointerStep[] = [
   { wait: 500 },
@@ -24,14 +25,14 @@ const script: PointerStep[] = [
   { type: 'Data migraton', into: field, every: 80 },
   { wait: 300 },
   { to: confirm, x: 0.5, y: 0.6, duration: 500 },
+  { wait: 1100 },
+  { to: field, x: 0.6, y: 0.5, duration: 450 },
   { wait: 250 },
-  { click: true },
-  { wait: 1300 },
   { erase: 3, into: field, every: 90 },
   { type: 'tion', into: field, every: 90 },
-  { wait: 300 },
+  { wait: 900 },
   { to: confirm, x: 0.5, y: 0.6, duration: 450 },
-  { wait: 250 },
+  { wait: 300 },
   { click: true },
   { wait: 1500 },
   { leave: true },

@@ -1,11 +1,11 @@
 @layer env.components {
   /* Rail, the navigation rail: a narrow column of destinations on the navigation's background, a
-     plain rectangle, each its icon in a pill-shaped indicator above a short label, with an optional
+     plain rectangle, each its icon in a rounded-rectangle indicator above a short label, with an optional
      header and footer. The current destination fills its indicator; the count sits on the icon's top
      end. Every placement is logical. */
   .env-navigation-rail {
     --env-navigation-rail-width: 5rem;
-    --env-navigation-rail-indicator-width: 3.5rem;
+    --env-navigation-rail-indicator-width: 2.75rem;
     --env-navigation-rail-indicator-height: 2rem;
     /* The count's pill on the icon: as tall as it is wide for one digit. */
     --env-navigation-rail-count-size: 1rem;
@@ -42,9 +42,10 @@
   }
 
   /* Color properties: a destination's colors, which an application sets on one item through style or
-     its own CSS: container and selected color the pill around its icon, at rest and when current,
-     content its label, icon its icon at rest and selected-content its icon when current. They don't
-     inherit; the item passes them on to its pill, where currentColor in them is the pill's color. */
+     its own CSS: container and selected color the indicator around its icon, at rest and when
+     current, content its label, icon its icon at rest and selected-content its icon when current.
+     They don't inherit; the item passes them on to its indicator, where currentColor in them is the
+     indicator's color. */
   @property --env-navigation-rail-item-container {
     syntax: '*';
     inherits: false;
@@ -135,13 +136,13 @@
     block-size: var(--env-navigation-rail-indicator-height);
     display: grid;
     place-items: center;
-    border-radius: var(--env-radius-full);
+    border-radius: var(--env-radius-md);
     background: var(--env-navigation-rail-item-custom-fill, transparent);
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-navigation-rail-label {
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   /* The count, on the icon's top end, in the pill of an accent count badge. */
   .env-navigation-rail-count {
@@ -196,9 +197,13 @@
   .env-navigation-rail-item[data-current]:active .env-navigation-rail-indicator {
     background: var(--env-navigation-rail-item-selected-fill, var(--env-color-bg-selected-pressed));
   }
+  /* Keyboard focus rings the indicator, as the item's visible shape, rather than the whole item. */
   .env-navigation-rail-item:focus-visible {
+    outline: none;
+  }
+  .env-navigation-rail-item:focus-visible .env-navigation-rail-indicator {
     outline: 2px solid var(--env-color-border-focus);
-    outline-offset: -2px;
+    outline-offset: 2px;
   }
   /* Under a reduced-motion preference, fills change at once. */
   @media (prefers-reduced-motion: reduce) {
@@ -267,13 +272,11 @@
     .env-navigation-rail-indicator {
     background: transparent;
   }
-  [data-env-skeleton] .env-navigation-rail-count {
-    forced-color-adjust: none;
-    border-color: transparent;
-    --env-skeleton-shape: 1;
-    background: var(--env-skeleton-paint);
-  }
-  [data-env-skeleton] .env-navigation-rail-count * {
+  /* A count's badge lies over the icon, so a skeleton leaves it out: one shape for each
+     destination, and its label's bar. */
+  .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-navigation-rail-item
+    .env-navigation-rail-count {
     visibility: hidden;
   }
   /* A destination whose label is loading, given as an empty string, is a bar of a label's length. */

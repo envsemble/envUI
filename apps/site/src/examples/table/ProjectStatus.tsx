@@ -35,17 +35,18 @@ const projects = [
   },
 ] as const;
 
-const tones = { 'In progress': 'primary', Blocked: 'warning', Done: 'done' } as const;
+const tones = { 'In progress': 'primary', Blocked: 'warning', Done: 'success' } as const;
 
 export default function ProjectStatus() {
   return (
-    <Table.Root caption="Projects">
+    // On a phone, each project is a block of its own rather than a row that scrolls sideways.
+    <Table.Root caption="Projects" narrowLayout="stack">
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Project</Table.HeaderCell>
+          <Table.HeaderCell>Status</Table.HeaderCell>
           <Table.HeaderCell>Owner</Table.HeaderCell>
           <Table.HeaderCell numeric>Open tasks</Table.HeaderCell>
-          <Table.HeaderCell>Status</Table.HeaderCell>
         </Table.Row>
       </Table.Head>
       <Table.Body>
@@ -57,10 +58,14 @@ export default function ProjectStatus() {
               </Link>
               <Text variant="caption">{project.team}</Text>
             </Table.Cell>
-            <Table.Cell nowrap>{project.owner}</Table.Cell>
-            <Table.Cell numeric>{project.openTasks}</Table.Cell>
-            <Table.Cell>
+            <Table.Cell label="Status">
               <Badge tone={tones[project.status]}>{project.status}</Badge>
+            </Table.Cell>
+            <Table.Cell nowrap label="Owner">
+              {project.owner}
+            </Table.Cell>
+            <Table.Cell numeric label="Open tasks">
+              {project.openTasks}
             </Table.Cell>
           </Table.Row>
         ))}

@@ -34,14 +34,13 @@ export default function RenameProject() {
         closeLabel="Cancel"
         pending={saving}
         actions={
-          <Button type="submit" form={formId} pending={saving}>
+          <Button type="submit" form={formId}>
             Save name
           </Button>
         }
       >
         <form id={formId} onSubmit={save}>
           <TextField
-            variant="floating"
             label="Project name"
             value={draft}
             readOnly={saving}

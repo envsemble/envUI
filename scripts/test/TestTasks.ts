@@ -2,27 +2,18 @@
 // a command with a name, run alone or beside others, its output held back and printed when it ends
 // so parallel tasks don't interleave. A summary with each task's time closes the run.
 import { spawn } from 'node:child_process';
-import { availableParallelism } from 'node:os';
 import { dirname, resolve } from 'node:path';
-import { repositoryRoot } from './TestScope.ts';
-
-export const cores = availableParallelism();
-
-/**
- * Browser workers: ENVUI_WORKERS (a count or a percentage of the cores), else half the cores.
- * Playwright reads the same variable in playwright.config.ts.
- */
-export const browserWorkers = process.env.ENVUI_WORKERS ?? '50%';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const color = process.stdout.isTTY && !process.env.NO_COLOR;
-const paint = (code, text) => (color ? `\u001b[${code}m${text}\u001b[0m` : text);
-export const red = (text) => paint(31, text);
-export const green = (text) => paint(32, text);
-export const yellow = (text) => paint(33, text);
-export const dim = (text) => paint(2, text);
-export const bold = (text) => paint(1, text);
+const paint = (code: number, text: string) => (color ? `\u001b[${code}m${text}\u001b[0m` : text);
+export const red = (text: string) => paint(31, text);
+const green = (text: string) => paint(32, text);
+export const yellow = (text: string) => paint(33, text);
+export const dim = (text: string) => paint(2, text);
+export const bold = (text: string) => paint(1, text);
 
-export const seconds = (ms) => `${(ms / 1000).toFixed(1)} s`;
+const seconds = (ms: number) => `${(ms / 1000).toFixed(1)} s`;
 
 const node = process.execPath;
 /** The command lines of the repository's tools, run with this Node rather than through npm. */
@@ -79,7 +70,7 @@ export function task(name: string, run: string[], options: Omit<Task, 'name' | '
 const results: TaskResult[] = [];
 
 /** Runs one task and records its result. */
-export function runTask(item: Task): Promise<TaskResult> {
+function runTask(item: Task): Promise<TaskResult> {
   const started = performance.now();
   return new Promise((done) => {
     const [command, ...args] = item.run as [string, ...string[]];
@@ -154,14 +145,14 @@ function tail(text: string, lines: number) {
   ).join('\n');
 }
 
-const indent = (text) =>
+const indent = (text: string) =>
   text
     .split('\n')
     .map((line) => `    ${line}`)
     .join('\n');
 
 /** Prints every task's time and the total, and returns whether all required tasks passed. */
-export function summary(title, started) {
+export function summary(title: string, started: number) {
   const failed = results.filter((result) => !result.ok && !result.optional);
   const total = performance.now() - started;
   console.log('');

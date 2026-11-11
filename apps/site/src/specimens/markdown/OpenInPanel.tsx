@@ -1,10 +1,11 @@
 import OpenInPanel from '../../examples/markdown/OpenInPanel';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { keepLinksInPlace } from '../../figures/LiveExample';
 
 const link = 'a[href="/documents/launch-plan"]';
-const close = '.env-sheet .env-dialog-heading > .env-button';
+const close = '.env-sheet [aria-label="Close document"]';
 
 /*
  * The pointer clicks "launch plan": the document opens in the side panel beside the text, which

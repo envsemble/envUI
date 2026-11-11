@@ -1,11 +1,12 @@
-import { Card, Column, Text } from '@envsemble/envui';
+import { Button, Card, Column, CopyButton, Link, Row, Text } from '@envsemble/envui';
+import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
-import { version } from '../../../../packages/ui/package.json';
+import { name } from '@envsemble/envui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
-import { routeHref } from '../navigation/Address';
-import { pagesOf, sectionHome } from '../navigation/SiteRoutes';
+import { docsRoute, routeHref } from '../routes/Address';
+import { pagesOf, sectionHome } from '../routes/SiteRoutes';
 import { OverviewFan } from './OverviewFan';
 
 /**
@@ -43,9 +44,15 @@ const counts = (['component', 'pattern', 'foundation'] as const).map((kind) => (
 }));
 
 /**
- * The catalogue's home: what envUI is, a hand of cards built with it, and the way to its
- * foundations, components and patterns. The hero leads nowhere itself: the navigation beside and
- * above it, and the Explore cards, do.
+ * The command that installs envUI, by the package's name in packages/ui/package.json: short, so it
+ * keeps room to spare on a phone. docs/setup.md gives the registry it needs and the command that
+ * pins the version exactly, which the line under it leads to.
+ */
+const install = `npm i ${name}`;
+
+/**
+ * The catalogue's home: what envUI is, the way to setting it up, a hand of cards built with it, and
+ * the way to its foundations, components and patterns.
  */
 export function Overview() {
   return (
@@ -58,18 +65,33 @@ export function Overview() {
           <Text variant="display" className="catalogue-overview-lede">
             A React design system for clear, accessible interfaces.
           </Text>
-          {/* Quiet facts under it: the package's version, read from packages/ui/package.json, and
-              how much the catalogue shows. */}
-          <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
-            <span className="catalogue-overview-version">v{version}</span>
-            <span className="catalogue-overview-counts">
+          {/* The one way in, to setting envUI up, beside the command that installs it; under them,
+              one quiet line: how much the catalogue shows, and what installing needs first. */}
+          <Column gap={4} align="center">
+            <Row gap={4} align="center" justify="center" wrap className="catalogue-overview-start">
+              <Button href={routeHref(docsRoute)} endIcon={<IconArrowForward />}>
+                Get started
+              </Button>
+              <span className="catalogue-overview-install">
+                {/* The command the button copies, on one line (Overview.css). */}
+                <code>{install}</code>
+                <CopyButton value={install} variant="ghost" aria-label="Copy install command" />
+              </span>
+            </Row>
+            <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
               {counts.map(({ kind, count }) => (
                 <span key={kind}>
                   {count} {kind}s
                 </span>
               ))}
-            </span>
-          </Text>
+              <span>
+                Installing needs{' '}
+                <Link href={routeHref(`${docsRoute}?section=registry-access`)}>
+                  registry access
+                </Link>
+              </span>
+            </Text>
+          </Column>
         </Column>
       </header>
       <OverviewFan />

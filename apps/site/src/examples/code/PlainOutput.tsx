@@ -1,4 +1,4 @@
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 
 export default function PlainOutput() {
   // Without a language, or with one envUI doesn't highlight, the source stays plain text.

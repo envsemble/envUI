@@ -1,7 +1,8 @@
 import { Switch } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
-/** Hovered and clicked on, then off again. */
+/** Hovers and clicks it on, then off again. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-switch-input' },

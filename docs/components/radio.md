@@ -113,7 +113,7 @@ Labels stay short, and an option that needs explaining says so in its descriptio
 
 Choose a default where one option suits most people, and none where people must decide.
 
-### Nothing to press inside
+### Controls in options
 
 Keep links and buttons out of labels and descriptions: pressing anywhere on an option chooses it.
 
@@ -137,7 +137,7 @@ Keep links and buttons out of labels and descriptions: pressing anywhere on an o
 
 - A `label` for the group, or `aria-label`.
 - A `name` for a group in a form.
-- Errors linked with `aria-describedby`, and focus on the group when a form is refused.
+- Focus on the group when a form is refused.
 
 ## Compose
 
@@ -169,7 +169,7 @@ A RadioGroup holds Radio options and is a native `<fieldset>`: its `label`, the 
 
 #### Required and disabled
 
-`required` asks for a choice before the form submits, through native constraint validation. Show the error under the group, linked with `aria-describedby`, and move focus to the group when a form is refused, as the RequiredChoice example does; envUI has no error message for RadioGroup yet, so a Text with `role="alert"` holds it. `disabled` disables every option: the group keeps its choice visible, but can't be focused or changed. Say where to change it in a sentence beside it.
+`required` asks for a choice before the form submits, through native constraint validation. Pass the message as `error` and move focus to the group when a form is refused, as the RequiredChoice example does. `disabled` disables every option: the group keeps its choice visible, but can't be focused or changed. Say where to change it in a sentence beside it.
 
 ```tsx
 <RadioGroup label="Access" value="team" disabled aria-describedby={reason}>
@@ -187,6 +187,10 @@ The parts are the group, `env-radio-group`, with `data-orientation` and its lege
 
 ## Changelog
 
+- **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: The group's legend takes the size, weight and muted color of a field's floated label. In a vertical group, the chosen row's label keeps the text color, its choice shown by the selection's fill and the filled radio, and on a dialog, a popover or a muted or raised card or Surface, the rows take a faint neutral tint, so they keep their shape there.
+- **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the radio sits on the middle of its first line rather than across both lines.
+- **1.0.0-prerelease.6**: The group's error shows the error icon, as a field's does.
 - **1.0.0-prerelease.5**: RadioGroup takes `description` and `error`, as a field does, and a controlled `value` of `null` chooses none.
 - **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row and Select's chosen option do, rather than the hover fill.
-- **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.

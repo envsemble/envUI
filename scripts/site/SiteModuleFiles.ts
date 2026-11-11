@@ -47,7 +47,7 @@ export function moduleFiles(manifest: ViteManifest): Record<string, string[]> {
     const keys = [...closure(key)].filter((imported) => imported === key || !page.has(imported));
     map[key] = [
       ...new Set(
-        keys.flatMap((imported) => [manifest[imported]!.file, ...(manifest[imported]!.css ?? [])]),
+        keys.flatMap((imported) => [manifest[imported].file, ...(manifest[imported].css ?? [])]),
       ),
     ];
   }
@@ -59,7 +59,7 @@ export function moduleFiles(manifest: ViteManifest): Record<string, string[]> {
  * Resolves to true once written, and to false for a build that is already finalised, whose map
  * stays as it is: its manifest is gone, as after `npm run build:site`.
  */
-export async function writeModuleFiles(siteDirectory) {
+export async function writeModuleFiles(siteDirectory: string) {
   const manifestDirectory = resolve(siteDirectory, '.vite');
   const manifestFile = resolve(manifestDirectory, 'manifest.json');
   if (!existsSync(manifestFile)) {

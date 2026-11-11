@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Disclosure } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { Column, Disclosure, Text } from '@envsemble/envui';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const summary = '.env-disclosure > summary';
 
-/** Its summary pressed, which hides the details; pressed again, they come back. */
+/** Presses its summary, which hides the details; pressing it again brings them back. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: '.env-disclosure-panel', x: 0.7, y: 0.5 },
@@ -20,21 +21,26 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A disclosure, open on its details. Its box keeps one size open or closed, so its summary stays
- * where it is as the details hide. Stopped, it opens again rather than being drawn anew, which
- * would fade its details in again.
+ * A disclosure under the title of what it tells more about, open on its details, so even closed it
+ * reads as part of a page rather than a lone line. The column it stands in keeps its height as the
+ * details hide, as a page's would, so the title and the summary stay where they are. When the tile
+ * stops, the disclosure opens again rather than being drawn again, which would fade its details in
+ * again.
  */
 export default function DisclosureTile() {
   const [open, setOpen] = useState(true);
   usePointer(script, { onRest: () => setOpen(true) });
   return (
-    <Disclosure
-      title="Who can see it"
-      open={open}
-      onOpenChange={setOpen}
-      style={{ inlineSize: '8.5rem', blockSize: '5rem' }}
-    >
-      Only people you invite.
-    </Disclosure>
+    <Column gap={2} align="start" style={{ inlineSize: '8.5rem', minBlockSize: '5.25rem' }}>
+      <Text variant="title">Launch plan</Text>
+      <Disclosure
+        title="What changed"
+        open={open}
+        onOpenChange={setOpen}
+        style={{ inlineSize: '100%' }}
+      >
+        It ships in May.
+      </Disclosure>
+    </Column>
   );
 }

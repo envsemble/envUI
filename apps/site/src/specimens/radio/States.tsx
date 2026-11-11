@@ -1,10 +1,10 @@
 import { Radio, RadioGroup } from '@envsemble/envui';
-import { Example, MatrixScroll } from '../../figures/Example';
+import { SpecimenFrame, MatrixScroll } from '../../figures/SpecimenFrame';
 
 /** Unchosen and chosen, enabled and disabled. */
 export default function States() {
   return (
-    <Example size="wide">
+    <SpecimenFrame size="wide" still>
       <MatrixScroll label="Radio states">
         {/* Two columns don't fill the stage: the table takes its own width, centred. */}
         <table
@@ -44,6 +44,6 @@ export default function States() {
           </tbody>
         </table>
       </MatrixScroll>
-    </Example>
+    </SpecimenFrame>
   );
 }

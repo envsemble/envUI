@@ -1,0 +1,83 @@
+/* Pages on the documentation template: status in the banner, live examples and their source. */
+.site-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--env-space-4);
+}
+
+/* The banner's Design and Code switch (OtherPart.tsx): links drawn as a small segmented control,
+   without a link's underline. */
+.site-part-switch {
+  display: flex;
+}
+.site-part-switch .env-segmented-control-item {
+  text-decoration: none;
+}
+
+/* Specimens inside an article share its gutter instead of adding their own, and the page's
+   background: only their canvas is filled. */
+.site-article .catalogue-specimen-area {
+  padding: 0;
+  background: none;
+}
+
+/* Code in the guidance tables of a page wraps between words, so a column is never narrower than
+   its longest word. */
+.site-template .env-markdown-table code {
+  overflow-wrap: break-word;
+}
+
+/* A page is parts, not one stream. A component or pattern page groups its sections into three
+   larger ones (TemplateContent.tsx); every section, in a group or starting one, stands the same
+   section gap from the one before (Shell.css), and what is inside a section sits closer
+   (Figures.css). */
+.site-section-groups {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--site-section-gap);
+  padding-block-end: 3rem;
+}
+
+/* While its later sections are still to show (TemplateContent.tsx), the page is a window tall at
+   least, so what follows it, such as its Next link, starts below the window rather than moving
+   down as they arrive. */
+.site-section-groups[aria-busy],
+.docs-api[aria-busy] {
+  min-block-size: 100dvh;
+  align-content: start;
+}
+
+/* A section still to show is its outline (SectionOutline.ts): its headings, which the page's
+   contents list from the start, hidden in its place until it renders. */
+[data-site-pending] {
+  visibility: hidden;
+}
+
+.site-section-groups .site-section-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  row-gap: var(--site-section-gap);
+  padding-block-end: 0;
+}
+
+/* The same on a foundation's page, whose sections are its figures, each under its h2, and on a
+   component's page in the Docs. */
+.site-example:has(> h2) {
+  margin-block-end: var(--site-section-gap);
+}
+
+/* A page in the Docs is a guide in several sections, from Import to the changelog: as far apart as
+   the sections in the catalogue. */
+.docs-api.docs-api {
+  row-gap: var(--site-section-gap);
+}
+
+/* A component named at an item's end follows it after a muted middle dot, in the muted color too
+   where it isn't a link. */
+.catalogue-list-name-dot,
+.catalogue-list-name {
+  color: var(--env-color-fg-muted);
+}

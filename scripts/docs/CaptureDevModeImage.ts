@@ -17,14 +17,13 @@
 // Run it after a change to dev mode's UI or to the demo application, and commit the images.
 import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { chromium } from '@playwright/test';
+import { chromium, type Browser, type Page } from '@playwright/test';
 import { defaultPorts } from '../test/CheckoutMarker.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-const root = fileURLToPath(new URL('../../', import.meta.url));
 const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 const page = 'docs/dev-mode';
-/** The 3D picture's shape, width to height, as DevModeDemo.tsx declares it, and its margin in px. */
+/** The 3D picture's shape, width to height, as TryDevMode.tsx declares it, and its margin in px. */
 const aspect = 16 / 10;
 const margin = 24;
 const scale = 2;
@@ -35,9 +34,20 @@ const planes = '.env-dev-scene [data-plane]';
 const window = { width: 1280, height: 800 };
 
 /** A PNG screenshot as WebP: the browser encodes it, so the script needs no image library. */
-async function save(tab, png, name, theme) {
+/** The site's color scheme a picture is taken in. */
+type Theme = 'light' | 'dark';
+
+/** A box on the page, in CSS pixels. */
+interface Box {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+async function save(tab: Page, png: Buffer, name: string, theme: Theme) {
   const webp = await tab.evaluate(
-    async ({ data, quality }) => {
+    async ({ data, quality }: { data: string; quality: number }) => {
       const image = new Image();
       image.src = `data:image/png;base64,${data}`;
       await image.decode();
@@ -49,15 +59,18 @@ async function save(tab, png, name, theme) {
     },
     { data: png.toString('base64'), quality },
   );
-  const file = resolve(root, `apps/site/src/figures/dev-mode/dev-mode-${name}-${theme}.webp`);
+  const file = resolve(
+    repositoryRoot,
+    `apps/site/src/figures/dev-mode/dev-mode-${name}-${theme}.webp`,
+  );
   await writeFile(file, Buffer.from(webp, 'base64'));
   console.log(`Wrote ${file} (${Math.round((webp.length * 0.75) / 1024)} KB).`);
 }
 
 /** The box around the planes, with a margin. */
-const planesBox = (tab, extra = margin) =>
+const planesBox = (tab: Page, extra = margin): Promise<Box> =>
   tab.evaluate(
-    ({ planes, extra }) => {
+    ({ planes, extra }: { planes: string; extra: number }) => {
       const boxes = [...document.querySelectorAll(planes)]
         .map((plane) => plane.getBoundingClientRect())
         .filter((rect) => rect.width > 1 && rect.height > 1);
@@ -71,7 +84,7 @@ const planesBox = (tab, extra = margin) =>
   );
 
 /** A box rounded to whole pixels and kept inside the window. */
-const inside = (box, size) => {
+const inside = (box: Box, size: { width: number; height: number }) => {
   const x = Math.max(0, Math.round(box.x));
   const y = Math.max(0, Math.round(box.y));
   return {
@@ -83,7 +96,11 @@ const inside = (box, size) => {
 };
 
 /** Opens the Docs' dev mode page in a theme, and dev mode on its demo with Try dev mode. */
-async function openDevMode(browser, theme, viewport) {
+async function openDevMode(
+  browser: Browser,
+  theme: Theme,
+  viewport: { width: number; height: number },
+) {
   const context = await browser.newContext({
     viewport,
     deviceScaleFactor: scale,
@@ -101,7 +118,7 @@ async function openDevMode(browser, theme, viewport) {
 }
 
 /** Picks an angle in the toolbar's View dropdown, with the whole page in view. */
-async function turnTo(tab, name) {
+async function turnTo(tab: Page, name: string) {
   await tab.getByRole('button', { name: 'View', exact: true }).click();
   await tab
     .getByRole('dialog', { name: 'View' })
@@ -110,20 +127,20 @@ async function turnTo(tab, name) {
 }
 
 /** Turns a check item of the toolbar's Show dropdown on or off, and closes the dropdown. */
-async function show(tab, name) {
+async function show(tab: Page, name: string) {
   await tab.getByRole('button', { name: 'Show', exact: true }).click();
   await tab.getByRole('menuitemcheckbox', { name: new RegExp(`^${name}`) }).click();
   await tab.keyboard.press('Escape');
 }
 
 /** Waits for the view to settle after a change, with the pointer out of the way. */
-async function settle(tab) {
+async function settle(tab: Page) {
   await tab.mouse.move(0, 0);
   await tab.waitForTimeout(500);
 }
 
 /** Dev mode's 3D view of the demo application alone, as the dev mode guide's demo shows it. */
-async function captureView(browser, theme) {
+async function captureView(browser: Browser, theme: Theme) {
   const { context, tab } = await openDevMode(browser, theme, { width: 1600, height: 1000 });
   // The node tree and the inspector are hidden, so the view takes the whole window.
   await tab.getByRole('button', { name: 'Hide the nodes' }).click();
@@ -159,7 +176,7 @@ async function captureView(browser, theme) {
 }
 
 /** Dev mode at work on the demo application, in the pictures the dev mode guide shows. */
-async function captureAtWork(browser, theme) {
+async function captureAtWork(browser: Browser, theme: Theme) {
   const { context, tab } = await openDevMode(browser, theme, window);
   const card = tab.getByRole('treeitem', { name: /^column "env-card"/ }).first();
   // Clicking the selected node again would clear the selection.
@@ -179,8 +196,8 @@ async function captureAtWork(browser, theme) {
   await angles.waitFor();
   await tab.mouse.move(0, 0);
   await tab.waitForTimeout(400);
-  const bar = await tab.locator('.env-dev-toolbar').boundingBox();
-  const dropdown = await angles.boundingBox();
+  const bar = (await tab.locator('.env-dev-toolbar').boundingBox())!;
+  const dropdown = (await angles.boundingBox())!;
   const barLeft = Math.min(bar.x, dropdown.x) - 12;
   const barRight = Math.max(bar.x + bar.width, dropdown.x + dropdown.width) + 12;
   await save(
@@ -231,8 +248,8 @@ async function captureAtWork(browser, theme) {
   await select();
   await turnTo(tab, 'Tilted');
   await settle(tab);
-  const tree = await tab.locator('aside[data-side="tree"]').boundingBox();
-  const lastRow = await tab.locator('.env-dev-tree [role=treeitem]').last().boundingBox();
+  const tree = (await tab.locator('aside[data-side="tree"]').boundingBox())!;
+  const lastRow = (await tab.locator('.env-dev-tree [role=treeitem]').last().boundingBox())!;
   await save(
     tab,
     await tab.screenshot({
@@ -241,8 +258,8 @@ async function captureAtWork(browser, theme) {
     'problems',
     theme,
   );
-  const inspector = await tab.locator('aside.env-dev-sidebar').last().boundingBox();
-  const tokens = await tab.getByText('Tokens its styles use', { exact: true }).boundingBox();
+  const inspector = (await tab.locator('aside.env-dev-sidebar').last().boundingBox())!;
+  const tokens = (await tab.getByText('Tokens its styles use', { exact: true }).boundingBox())!;
   await save(
     tab,
     await tab.screenshot({
@@ -256,8 +273,8 @@ async function captureAtWork(browser, theme) {
   // Tilted would tilt the view again.
   await turnTo(tab, 'Front');
   await settle(tab);
-  const frame = await tab.locator('.env-dev-frame').boundingBox();
-  const label = await tab.locator('.env-dev-frame-label').boundingBox();
+  const frame = (await tab.locator('.env-dev-frame').boundingBox())!;
+  const label = (await tab.locator('.env-dev-frame-label').boundingBox())!;
   const top = Math.min(frame.y, label.y);
   const left = Math.min(frame.x, label.x);
   const right = Math.max(frame.x + frame.width, label.x + label.width);
@@ -282,7 +299,7 @@ async function captureAtWork(browser, theme) {
 
 const browser = await chromium.launch();
 try {
-  for (const theme of ['light', 'dark']) {
+  for (const theme of ['light', 'dark'] as const) {
     await captureView(browser, theme);
     await captureAtWork(browser, theme);
   }

@@ -20,5 +20,3 @@ export const panelDock = {
   /** A window control: closes the panel. */
   closeWindow: 'Close',
 };
-
-export type PanelDockMessages = typeof panelDock;

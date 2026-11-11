@@ -6,5 +6,3 @@ export const relativeTime = {
   /** A moment that has just passed, where Intl would say now. */
   now: 'just now',
 };
-
-export type RelativeTimeMessages = typeof relativeTime;

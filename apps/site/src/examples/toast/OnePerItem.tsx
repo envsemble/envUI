@@ -3,9 +3,10 @@ import { Button, ToastProvider, useToast, type ToastNotification } from '@envsem
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
 // Wrong: one action, and a notification for each person it reached.
-const invited = people.map(
-  (person): ToastNotification => ({ tone: 'success', message: `Invited ${person}.` }),
-);
+const invited = people.map((person): ToastNotification => ({
+  tone: 'success',
+  message: `Invited ${person}.`,
+}));
 
 function InviteButton() {
   const toast = useToast();

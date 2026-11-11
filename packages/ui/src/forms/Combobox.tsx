@@ -3,86 +3,79 @@
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
   useRef,
   useState,
   type ComponentPropsWithoutRef,
   type CSSProperties,
   type ReactNode,
   type Ref,
+  type RefObject,
 } from 'react';
-import { setRef } from '../internal/setRef.js';
-import { useDirection } from '../internal/useDirection.js';
-import { useLocale, useMessages } from '../internal/EnvUIContext.js';
-import {
-  keepsOpen,
-  useKeepPageVisible,
-  usePortalContainer,
-} from '../internal/PortalContainerContext.js';
-import { type ControlSize } from '../foundations/Theme.js';
-import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
+import { classNames } from '../internal/classNames.js';
+import { setRef } from '../internal/react/setRef.js';
+import { useDirection } from '../internal/provider/useDirection.js';
+import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { IconButton } from '../actions/Button.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconClose } from '../icons/Close.js';
+import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
 import {
   FieldFrame,
   isLabelShown,
   type FieldControlBoxProps,
   type FieldProps,
-} from './internal/FieldFrame.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
-import { flattenItems, isGroup, standIn } from './internal/comboboxItems.js';
+  type FieldSizeProps,
+  type TextFieldDecorationProps,
+} from '../internal/field/FieldFrame.js';
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
-import { useFieldMetadata } from './internal/useFieldMetadata.js';
+import { autoHighlightAlways } from './internal/autoHighlightAlways.js';
+import {
+  type ComboboxFilter,
+  type ComboboxGroup,
+  type ComboboxItem,
+} from './internal/comboboxItems.js';
+import { useComboboxOpen } from './internal/useComboboxOpen.js';
+import { useComboboxOptions } from './internal/useComboboxOptions.js';
+import { useComboboxSelection, type ComboboxSelection } from './internal/useComboboxSelection.js';
+import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';
 
-/** One option of a Combobox. */
-export interface ComboboxItem {
-  /** Stable identifier: the value the field reports and submits. */
-  value: string;
-  /** Names the option; the field shows it once chosen, and the default filter matches it. */
-  label: string;
-  /** A muted second line, such as an e-mail address; the default filter matches it too. */
-  description?: string;
-  /** Content before the label, such as an Avatar or an icon; it takes the size of its slot. */
-  start?: ReactNode;
-  /** The option shows but can't be chosen. */
-  disabled?: boolean;
-}
-
-/** Options under a heading, which also names the group for assistive technology. */
-export interface ComboboxGroup<Item extends ComboboxItem = ComboboxItem> {
-  /** The group's heading. */
-  label: string;
-  /** The options under the heading, in display order. */
-  items: readonly Item[];
-}
+export type { ComboboxFilter, ComboboxGroup, ComboboxItem };
 
 /** What a combobox's onOpenChange receives beside the requested state. */
 export interface ComboboxOpenChangeDetails {
-  /**
-   * Why it asks to open or close, as Base UI says, such as trigger-press, input-change, item-press,
-   * input-clear or escape-key.
-   */
-  reason: string;
+  /** Why it asks to open or close, such as trigger-press, input-change, item-press or escape-key. */
+  reason: Extract<
+    OverlayOpenChangeReason,
+    | 'trigger-press'
+    | 'input-press'
+    | 'input-change'
+    | 'input-clear'
+    | 'outside-press'
+    | 'escape-key'
+    | 'close-press'
+    | 'focus-out'
+    | 'item-press'
+    | 'list-navigation'
+    | 'clear-press'
+    | 'chip-remove-press'
+    | 'cancel-open'
+    | 'imperative-action'
+    | 'none'
+  >;
 }
 
-/** Whether an option matches the text typed into the field. */
-export type ComboboxFilter<Item extends ComboboxItem = ComboboxItem> = (
-  item: Item,
-  query: string,
-) => boolean;
-
 interface ComboboxSharedProps<Item extends ComboboxItem>
-  extends Omit<
+  extends
+    Omit<
       ComponentPropsWithoutRef<'input'>,
       'value' | 'defaultValue' | 'onChange' | 'type' | 'children' | 'multiple' | 'list' | 'size'
     >,
-    FieldProps {
+    FieldProps,
+    FieldSizeProps,
+    Pick<TextFieldDecorationProps, 'visibleLabel'> {
   /** The text input, so that a form library can register it and focus it. */
   ref?: Ref<HTMLInputElement>;
   /** The field's class, on its root element, beside env-field and env-combobox. */
@@ -113,25 +106,6 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
    * @default 'No matches', or EnvUIProvider's messages.combobox.empty
    */
   emptyLabel?: ReactNode;
-  /**
-   * The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall
-   * with room for its label, for long forms on a page.
-   * @default 'outline'
-   */
-  variant?: 'outline' | 'floating';
-  /**
-   * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
-   * field takes the control height of its container, md unless the container sets another. The
-   * popup's rows take the row height of the scale.
-   */
-  size?: ControlSize;
-  /**
-   * Show the label inside the field, where it floats into the outline while the field has focus or
-   * a value. Set false for a field whose purpose is clear without it; a placeholder then gives the
-   * visible guidance.
-   * @default true
-   */
-  showLabel?: boolean;
   /**
    * A clear button removes the value while there is one; Esc on the closed field clears it too.
    * @default false
@@ -177,14 +151,16 @@ interface ComboboxMultipleProps<Item extends ComboboxItem> {
   value?: readonly string[];
   /** The values an uncontrolled field starts with, and that a form reset restores; none by default. */
   defaultValue?: readonly string[];
-  /** Receives the chosen values and their options. */
-  onValueChange?: (value: string[], items: Item[]) => void;
+  /**
+   * Receives the chosen values and their options. A value none of the options has had, such as one
+   * given before a server search finds it, comes as a ComboboxItem of its own, with the value as
+   * its label, as its chip shows it.
+   */
+  onValueChange?: (value: string[], items: (Item | ComboboxItem)[]) => void;
 }
 
 export type ComboboxProps<Item extends ComboboxItem = ComboboxItem> = ComboboxSharedProps<Item> &
   (ComboboxSingleProps<Item> | ComboboxMultipleProps<Item>);
-
-type ChangeDetails = BaseCombobox.Root.ChangeEventDetails;
 
 /** Changes of the typed text that people make, rather than the field filling in a chosen label. */
 const typedChanges = new Set(['input-change', 'input-clear', 'clear-press', 'escape-key']);
@@ -203,9 +179,8 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     loading = false,
     loadingLabel,
     emptyLabel,
-    variant = 'outline',
     size,
-    showLabel,
+    visibleLabel,
     clearable = false,
     clearLabel,
     removeLabel,
@@ -246,98 +221,38 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const inputRef = useRef<HTMLInputElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  const pressFocus = useRef(false);
-  // The query onInputValueChange reported last.
-  const reportedQuery = useRef('');
 
-  // The field keeps an uncontrolled value itself, so a native form reset can restore it.
-  const defaultSelection = isMultiple
-    ? [...((defaultValue as readonly string[] | undefined) ?? [])]
-    : ((defaultValue as string | null | undefined) ?? null);
-  const defaultKey = JSON.stringify(defaultSelection);
-  const [uncontrolledValue, setUncontrolledValue] = useState<readonly string[] | string | null>(
-    defaultSelection,
-  );
-  const selection = value === undefined ? uncontrolledValue : isMultiple ? value : (value ?? null);
-  const selectedValues: readonly string[] = Array.isArray(selection)
-    ? selection
-    : selection == null
-      ? []
-      : [selection as string];
-  const selectedKey = selectedValues.join('\u0000');
-
-  // Chosen options stay labelled while the options change, such as with each server search.
-  const flatItems = useMemo(() => flattenItems(items), [items]);
-  const knownRef = useRef(new Map<string, Item>());
-  const known = useMemo(() => {
-    const map = new Map(flatItems.map((item) => [item.value, item] as const));
-    for (const selected of selectedKey ? selectedKey.split('\u0000') : []) {
-      const previous = knownRef.current.get(selected);
-      if (!map.has(selected) && previous) map.set(selected, previous);
-    }
-    return map;
-  }, [flatItems, selectedKey]);
-  useLayoutEffect(() => {
-    knownRef.current = known;
+  const { popupOpen, changeOpen, handleOpenChange } = useComboboxOpen({
+    open,
+    defaultOpen,
+    onOpenChange,
+    popupRef,
+    inputRef,
   });
-  const labelOf = (selected: string) => known.get(selected)?.label ?? selected;
-  const collection = useMemo(
-    () =>
-      BaseCombobox.createItems<Item, string>(items as never, {
-        getValue: (item: Item) => item.value,
-        getLabel: (item: Item) => item.label,
-      }),
-    [items],
-  );
-  const hasStart = flatItems.some((item) => item.start != null);
-  const grouped = flatItems.length > 0 && isGroup((items as readonly unknown[])[0] as Item);
-
-  const matcher = BaseCombobox.useFilter({ locale, multiple: true });
-  const baseFilter = useMemo(
-    () =>
-      filter === null
-        ? null
-        : (filter ??
-          ((item: Item, query: string) =>
-            matcher.contains(item.label, query) ||
-            (item.description != null && matcher.contains(item.description, query)))),
-    [filter, matcher],
-  );
-
-  // The typed text, to show the chosen option's start content only while the field shows its label.
-  const singleItem = isMultiple || selection == null ? undefined : known.get(selection as string);
-  const [inputText, setInputText] = useState(() => singleItem?.label ?? '');
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
-  const popupOpen = open ?? uncontrolledOpen;
-  const portal = usePortalContainer();
-  // Base UI hides the rest of the page while the list is open; a contained one leaves it in reach.
-  useKeepPageVisible(
-    portal,
-    popupOpen,
-    useCallback(() => [popupRef.current, inputRef.current], []),
-  );
   // The chips' arrow keys and the popup follow the text direction, read as the popup opens or
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
 
-  function changeOpen(next: boolean, reason: string) {
-    if (open === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next, { reason });
-  }
+  const { value: selection, selectedValues, choose } = useComboboxSelection(props, nativeRef);
 
-  useEffect(
-    function subscribeToFormReset() {
-      const input = nativeRef.current;
-      const ownerForm = input?.form;
-      if (!input || !ownerForm) return;
-      return subscribeFormReset(ownerForm, function applyReset() {
-        if (value === undefined) setUncontrolledValue(JSON.parse(defaultKey));
-      });
-    },
-    [value, defaultKey, form],
-  );
+  const {
+    known,
+    labelOf,
+    collection,
+    filter: baseFilter,
+    hasStart,
+  } = useComboboxOptions({ items, filter, locale, selectedValues });
 
-  function handleValueChange(next: string[] | string | null, details: ChangeDetails) {
+  const singleItem = typeof selection === 'string' ? known.get(selection) : undefined;
+  // The text the input shows, which starts as the chosen option's label, and the query
+  // onInputValueChange reported last.
+  const [inputText, setInputText] = useState(singleItem?.label ?? '');
+  const reportedQuery = useRef('');
+
+  function handleValueChange(
+    next: ComboboxSelection,
+    details: BaseCombobox.Root.ChangeEventDetails,
+  ) {
     if (details.isCanceled) return;
     // Esc and emptying the text clear only a clearable single field that has a value. They keep
     // the value otherwise, and Esc never removes chips, which go one at a time or with the clear
@@ -351,23 +266,16 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       if (details.reason === 'input-clear' && !popupOpen) changeOpen(true, details.reason);
       return;
     }
-    if (value === undefined) setUncontrolledValue(next);
-    if (isMultiple) {
-      const values = [...((next as readonly string[] | null) ?? [])];
-      (onValueChange as ComboboxMultipleProps<Item>['onValueChange'])?.(
-        values,
-        values.map((selected) => known.get(selected) ?? standIn<Item>(selected)),
-      );
-    } else {
-      const single = (next as string | null) ?? null;
-      (onValueChange as ComboboxSingleProps<Item>['onValueChange'])?.(
-        single,
-        single == null ? null : (known.get(single) ?? null),
-      );
-    }
+    choose(next, known);
   }
 
-  function handleInputValueChange(next: string, details: ChangeDetails) {
+  /**
+   * Keeps the text, and reports the query as people type. Esc keeps the text of a field that isn't
+   * clearable, and goes on, such as to close a dialog. Once a single field shows its chosen label
+   * again, the query is over and an empty one is reported, so options found for it, such as on a
+   * server, go with it.
+   */
+  function handleInputValueChange(next: string, details: BaseCombobox.Root.ChangeEventDetails) {
     if (details.isCanceled) return;
     if (details.reason === 'escape-key' && !clearable) {
       details.cancel();
@@ -379,15 +287,13 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       reportedQuery.current = next;
       onInputValueChange?.(next);
     } else if (!isMultiple && reportedQuery.current !== '') {
-      // The field shows the chosen label again, after a choice or when people leave a query:
-      // the query is over, so options found for it, such as on a server, go with it.
       reportedQuery.current = '';
       onInputValueChange?.('');
     }
   }
 
   const hasChips = isMultiple && selectedValues.length > 0;
-  const labelShown = label != null && isLabelShown({ showLabel });
+  const labelShown = label != null && isLabelShown({ visibleLabel });
   // A floating label needs a blank placeholder to detect the empty state; chips fill the field.
   const fieldPlaceholder = hasChips ? undefined : labelShown ? placeholder || ' ' : placeholder;
   const describedByIds =
@@ -400,48 +306,20 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const toolbarName =
     label != null ? { 'aria-labelledby': labelId } : ariaLabel ? { 'aria-label': ariaLabel } : {};
 
-  function renderControlBox(boxProps: FieldControlBoxProps) {
-    const props = {
-      ...boxProps,
-      className: `${boxProps.className} env-combobox-control`,
-      'data-action-count': clearShown ? '2' : '1',
-    };
-    if (!isMultiple) return <BaseCombobox.InputGroup {...props} />;
-    // Chips and the text input share the well, so Backspace and the arrow keys reach the chips.
-    return (
-      <BaseCombobox.InputGroup
-        {...props}
-        {...(hasChips ? { role: 'toolbar', ...toolbarName } : {})}
-        render={<BaseCombobox.Chips />}
-      />
-    );
-  }
-
-  // Focusing a single field that shows its chosen label selects the label, so typing replaces it
-  // with a query. A press keeps that selection rather than placing the caret.
-  const selectsLabel = (input: HTMLInputElement) =>
-    !isMultiple && !readOnly && singleItem !== undefined && input.value === singleItem.label;
-
   return (
     <DirectionProvider direction={direction}>
       <BaseCombobox.Root<string, boolean, Item>
         items={collection}
         multiple={isMultiple}
-        value={selection as string[] | string | null}
+        value={selection}
         onValueChange={handleValueChange}
         onInputValueChange={handleInputValueChange}
         itemToStringLabel={labelOf}
         filter={baseFilter}
         locale={locale}
-        // The first match is highlighted, also when options arrive after typing, such as from a
-        // server, so Enter chooses it. Base UI documents 'always' for Autocomplete, which shares
-        // the Combobox's implementation.
-        autoHighlight={'always' as never}
+        autoHighlight={autoHighlightAlways}
         open={popupOpen}
-        onOpenChange={(next, details) => {
-          if (keepsOpen(portal, next, details)) details.cancel();
-          else changeOpen(next, details.reason);
-        }}
+        onOpenChange={handleOpenChange}
         name={name}
         form={form}
         required={required}
@@ -462,112 +340,52 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           description={description}
           error={error}
           floatingLabel
-          variant={variant}
           size={size}
-          showLabel={showLabel}
-          className={className ? `env-combobox ${className}` : 'env-combobox'}
+          visibleLabel={visibleLabel}
+          className={classNames('env-combobox', className)}
           style={style}
-          renderControlBox={renderControlBox}
+          renderControlBox={controlBox({
+            multiple: isMultiple,
+            clearShown,
+            toolbarName: hasChips ? toolbarName : undefined,
+          })}
         >
           {showStart && (
             <span className="env-combobox-start env-combobox-value-icon" aria-hidden="true">
               {singleItem.start}
             </span>
           )}
-          {isMultiple &&
-            selectedValues.map((selected) => {
-              const item = known.get(selected);
-              const text = labelOf(selected);
-              return (
-                <BaseCombobox.Chip
-                  key={selected}
-                  className="env-combobox-chip"
-                  // A chip is no widget, so the field's read-only state is the input's alone.
-                  render={({ 'aria-readonly': _readOnly, ...chipProps }) => <div {...chipProps} />}
-                >
-                  {item?.start != null && (
-                    <span className="env-combobox-start" aria-hidden="true">
-                      {item.start}
-                    </span>
-                  )}
-                  <span className="env-combobox-chip-label">{text}</span>
-                  {!disabled && !readOnly && (
-                    <BaseCombobox.ChipRemove
-                      className="env-combobox-chip-remove"
-                      render={
-                        <IconButton
-                          variant="ghost"
-                          icon={<IconClose />}
-                          aria-label={removeName(text)}
-                        />
-                      }
-                    />
-                  )}
-                </BaseCombobox.Chip>
-              );
-            })}
-          <BaseCombobox.Input
+          {isMultiple && (
+            <ComboboxChips
+              values={selectedValues}
+              known={known}
+              labelOf={labelOf}
+              removeName={removeName}
+              editable={!disabled && !readOnly}
+            />
+          )}
+          <ComboboxInput
             {...inputProps}
-            ref={(node: HTMLInputElement | null) => {
-              inputRef.current = node;
-              setRef(ref, node);
-            }}
+            ref={ref}
+            inputRef={inputRef}
+            chosenLabel={isMultiple || readOnly ? undefined : singleItem?.label}
             id={id}
-            onPointerDown={(event) => {
-              inputProps.onPointerDown?.(event);
-              pressFocus.current =
-                event.currentTarget.ownerDocument.activeElement !== event.currentTarget;
-            }}
             onFocus={(event) => {
               inputProps.onFocus?.(event);
               readDirection();
-              if (selectsLabel(event.currentTarget)) event.currentTarget.select();
-            }}
-            onMouseUp={(event) => {
-              inputProps.onMouseUp?.(event);
-              if (pressFocus.current && selectsLabel(event.currentTarget)) event.preventDefault();
-              pressFocus.current = false;
             }}
             aria-invalid={metadata['aria-invalid']}
             aria-describedby={describedByIds}
             placeholder={fieldPlaceholder}
-            className="env-text-field-input env-combobox-input"
           />
           {/* The well reserves room for its actions, which stay at its end. */}
           <span className="env-text-field-end env-combobox-end">
-            {showClear && (
-              <BaseCombobox.Clear
-                className="env-combobox-clear"
-                render={
-                  <IconButton
-                    variant="ghost"
-                    icon={<IconClose />}
-                    aria-label={clearName}
-                    title={clearName}
-                  />
-                }
-              />
-            )}
-            <BaseCombobox.Trigger
-              className="env-combobox-trigger"
+            <ComboboxActions
+              clearName={clearName}
+              showClear={showClear}
               // The field's label names the trigger; without one, the field's aria-label does.
-              {...(label != null ? { 'aria-labelledby': labelId } : {})}
-              // Base UI's Field gives it the field's description and error, which the input
-              // already announces; the chevron leaves them out.
-              render={({
-                'aria-describedby': _describedBy,
-                'aria-invalid': _invalid,
-                ...triggerProps
-              }) => (
-                <IconButton
-                  {...triggerProps}
-                  variant="ghost"
-                  icon={<IconChevronRight />}
-                  {...({ 'aria-label': label != null ? undefined : ariaLabel } as {
-                    'aria-label': string;
-                  })}
-                />
-              )}
+              labelId={label != null ? labelId : undefined}
+              ariaLabel={ariaLabel}
             />
           </span>
         </FieldFrame>
@@ -583,10 +401,188 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           loading={loading}
           loadingLabel={loadingLabel ?? messages.loading}
           emptyLabel={emptyLabel ?? messages.empty}
-          grouped={grouped}
           startSlot={hasStart}
         />
       </BaseCombobox.Root>
     </DirectionProvider>
+  );
+}
+
+/**
+ * A Combobox's text input. Focusing it while it shows the chosen option's label selects the label,
+ * so typing replaces it with a query; a press keeps that selection rather than placing the caret.
+ */
+function ComboboxInput({
+  ref,
+  inputRef,
+  chosenLabel,
+  ...inputProps
+}: ComponentPropsWithoutRef<typeof BaseCombobox.Input> & {
+  /** The application's ref to the input. */
+  ref: Ref<HTMLInputElement> | undefined;
+  /** The field's own ref to the input. */
+  inputRef: RefObject<HTMLInputElement | null>;
+  /** The label that focus selects: a single, editable field's chosen option's, else undefined. */
+  chosenLabel: string | undefined;
+}) {
+  // Whether the press now under way focused the input, rather than finding it focused.
+  const pressFocus = useRef(false);
+  const showsLabel = (input: HTMLInputElement) =>
+    chosenLabel !== undefined && input.value === chosenLabel;
+
+  return (
+    <BaseCombobox.Input
+      {...inputProps}
+      ref={(node: HTMLInputElement | null) => {
+        inputRef.current = node;
+        setRef(ref, node);
+      }}
+      onPointerDown={(event) => {
+        inputProps.onPointerDown?.(event);
+        pressFocus.current =
+          event.currentTarget.ownerDocument.activeElement !== event.currentTarget;
+      }}
+      onFocus={(event) => {
+        inputProps.onFocus?.(event);
+        if (showsLabel(event.currentTarget)) event.currentTarget.select();
+      }}
+      onMouseUp={(event) => {
+        inputProps.onMouseUp?.(event);
+        if (pressFocus.current && showsLabel(event.currentTarget)) event.preventDefault();
+        pressFocus.current = false;
+      }}
+      className="env-text-field-input env-combobox-input"
+    />
+  );
+}
+
+/**
+ * The field's well as Base UI's input group, with room for its actions. For several options it is
+ * the chips' well, which the text input shares, so Backspace and the arrow keys reach the chips; a
+ * toolbar, named as the field is, while it holds chips.
+ */
+function controlBox({
+  multiple,
+  clearShown,
+  toolbarName,
+}: {
+  multiple: boolean;
+  /** The clear button shows beside the trigger. */
+  clearShown: boolean;
+  /** The toolbar's name while the well holds chips, else undefined. */
+  toolbarName: { 'aria-labelledby'?: string; 'aria-label'?: string } | undefined;
+}) {
+  return function renderControlBox(boxProps: FieldControlBoxProps) {
+    const props = {
+      ...boxProps,
+      className: `${boxProps.className} env-combobox-control`,
+      'data-action-count': clearShown ? '2' : '1',
+    };
+    if (!multiple) return <BaseCombobox.InputGroup {...props} />;
+    return (
+      <BaseCombobox.InputGroup
+        {...props}
+        {...(toolbarName ? { role: 'toolbar', ...toolbarName } : {})}
+        render={<BaseCombobox.Chips />}
+      />
+    );
+  };
+}
+
+/** The chosen options of a combobox that takes several, as chips in its field. */
+function ComboboxChips({
+  values,
+  known,
+  labelOf,
+  removeName,
+  editable,
+}: {
+  values: readonly string[];
+  known: ReadonlyMap<string, ComboboxItem>;
+  labelOf: (value: string) => string;
+  removeName: (label: string) => string;
+  /** Whether each chip has a remove button. */
+  editable: boolean;
+}) {
+  return values.map((selected) => {
+    const item = known.get(selected);
+    const text = labelOf(selected);
+    return (
+      <BaseCombobox.Chip
+        key={selected}
+        className="env-combobox-chip"
+        // A chip is no widget, so the field's read-only state is the input's alone.
+        render={({ 'aria-readonly': _readOnly, ...chipProps }) => <div {...chipProps} />}
+      >
+        {item?.start != null && (
+          <span className="env-combobox-start" aria-hidden="true">
+            {item.start}
+          </span>
+        )}
+        <span className="env-combobox-chip-label">{text}</span>
+        {editable && (
+          <BaseCombobox.ChipRemove
+            className="env-combobox-chip-remove"
+            render={
+              <IconButton variant="ghost" icon={<IconClose />} aria-label={removeName(text)} />
+            }
+          />
+        )}
+      </BaseCombobox.Chip>
+    );
+  });
+}
+
+/** The actions at the end of a combobox's well: the clear button and the trigger that opens the list. */
+function ComboboxActions({
+  clearName,
+  showClear,
+  labelId,
+  ariaLabel,
+}: {
+  clearName: string;
+  showClear: boolean;
+  /** The id of the field's label, which names the trigger; undefined for a field without one. */
+  labelId: string | undefined;
+  /** The field's aria-label, which names the trigger where the field has no label. */
+  ariaLabel: string | undefined;
+}) {
+  return (
+    <>
+      {showClear && (
+        <BaseCombobox.Clear
+          className="env-combobox-clear"
+          render={
+            <IconButton
+              variant="ghost"
+              icon={<IconClose />}
+              aria-label={clearName}
+              title={clearName}
+            />
+          }
+        />
+      )}
+      <BaseCombobox.Trigger
+        className="env-combobox-trigger"
+        {...(labelId !== undefined ? { 'aria-labelledby': labelId } : {})}
+        // Base UI's Field gives it the field's description and error, which the input already
+        // announces; the chevron leaves them out.
+        render={({
+          'aria-describedby': _describedBy,
+          'aria-invalid': _invalid,
+          ...triggerProps
+        }) => (
+          <IconButton
+            {...triggerProps}
+            variant="ghost"
+            icon={<IconChevronRight />}
+            // IconButton requires a name; aria-labelledby gives it one where the label is undefined.
+            {...({ 'aria-label': labelId !== undefined ? undefined : ariaLabel } as {
+              'aria-label': string;
+            })}
+          />
+        )}
+      />
+    </>
   );
 }

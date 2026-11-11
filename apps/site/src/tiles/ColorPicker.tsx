@@ -1,42 +1,55 @@
 import { ColorPicker } from '@envsemble/envui/color';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useMedia } from '../motion/Autoplay';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { narrowGallery } from './Tiles';
 
 const area = '.env-color-picker-area';
-const swatch = (index: number) =>
-  `.env-color-picker-swatch:nth-child(${index} of .env-color-picker-swatch)`;
+const hue = '.env-color-picker-slider .env-color-picker-track';
 
-/** Dragged across the colors, a swatch chosen, and the first swatch, its color at the start. */
+/**
+ * Drags across the colors, then along the hue. Each change shows in the area and its thumb, the
+ * hue's thumb and the value below them.
+ */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: area, x: 0.72, y: 0.3 },
-  { wait: 300 },
+  { wait: 250 },
   { press: true },
-  { to: area, x: 0.35, y: 0.55, duration: 700 },
-  { to: area, x: 0.85, y: 0.15, duration: 800 },
+  { to: area, x: 0.4, y: 0.5, duration: 600 },
+  { to: area, x: 0.85, y: 0.2, duration: 600 },
   { release: true },
-  { wait: 500 },
-  { to: swatch(2), duration: 450 },
-  { wait: 200 },
-  { click: true },
-  { wait: 900 },
-  { to: swatch(1), duration: 400 },
-  { wait: 200 },
-  { click: true },
-  { wait: 600 },
+  { wait: 300 },
+  { to: hue, y: 0.66, duration: 400 },
+  { wait: 150 },
+  { press: true },
+  { to: hue, y: 0.9, duration: 600 },
+  { release: true },
+  { wait: 400 },
   { leave: true },
   { wait: 400 },
 ];
 
-/** A color picker: its colors, its hue and a few swatches. */
+/**
+ * A compact color picker: its colors and its hue shown whole in the tile, above the value they
+ * make. Its square area is as tall as it is wide, so the picker is drawn a little smaller, just
+ * wide enough that the value keeps a whole row below it in a gallery's low tile. Its label and its
+ * copy button are visually hidden, so the value has the row; the label still names the picker. In a
+ * phone's lower tile its colors are smaller still and its eye dropper is left out, so the value
+ * shows whole below them.
+ */
 export default function ColorPickerTile() {
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
   return (
     <ColorPicker
       label="Accent color"
+      visibleLabel={false}
       defaultValue="#3b6fd4"
       formats={['hex']}
-      swatches={['#3b6fd4', '#2f6f62', '#c2413b']}
-      style={{ inlineSize: '12rem' }}
+      copyable={false}
+      eyeDropper={!narrow}
+      style={{ inlineSize: narrow ? '4.5rem' : '6rem' }}
     />
   );
 }

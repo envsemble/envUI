@@ -3,9 +3,9 @@
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { type ReactNode, type RefObject } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { type Direction } from '../../internal/EnvUIContext.js';
-import { PopupSurface } from '../../internal/PopupSurface.js';
-import { Grid, Row } from '../../foundations/Layout.js';
+import { type Direction } from '../../internal/provider/EnvUIContext.js';
+import { PopupSurface } from '../../internal/popup/PopupSurface.js';
+import { Grid, Row } from '../../layout/Layout.js';
 import '../../styles/Base.css';
 import '../../styles/PickerPopup.css';
 
@@ -28,6 +28,8 @@ export interface PickerPopupProps {
   anchorRef: RefObject<HTMLElement | null>;
   /** The popup element. */
   popupRef: RefObject<HTMLDivElement | null>;
+  /** The field's button, where focus returns as the popup closes. */
+  triggerRef: RefObject<HTMLElement | null>;
   /** The text direction at the field, which the portal leaves behind. */
   dir: Direction | undefined;
   /** The popup's accessible name, the field's. */
@@ -52,6 +54,7 @@ export function PickerPopup({
   className,
   anchorRef,
   popupRef,
+  triggerRef,
   dir,
   name,
   initialFocus,
@@ -65,6 +68,7 @@ export function PickerPopup({
       side="bottom"
       align="start"
       anchor={anchorRef}
+      trigger={triggerRef}
       dir={dir}
       className={classNames('env-picker-popup', 'env-date-picker-popup', className)}
       layout={<Grid gap={3} padding={4} />}

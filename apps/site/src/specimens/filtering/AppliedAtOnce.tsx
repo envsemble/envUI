@@ -1,6 +1,6 @@
 import AppliedAtOnce from '../../examples/filtering/AppliedAtOnce';
-import { usePointer } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { statusClock, statusScript } from './Status';
 
 const script = statusScript(false);

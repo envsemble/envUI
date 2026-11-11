@@ -1,6 +1,6 @@
 ---
 title: Page
-summary: The invisible column a page's content sits in, at a readable width, under its header with the page's title and actions.
+summary: The column a page's content sits in, under its title and actions.
 status: beta
 since: 1.0.0
 category: App frame & layout
@@ -43,7 +43,9 @@ components:
   - Page
   - PageHeader
 examples:
-  WithHeader: overview
+  WithHeader:
+    role: overview
+    device: window
   WithBreadcrumbs: example
   WithToolbar: example
   PageAnatomy: anatomy
@@ -293,5 +295,6 @@ The header is a `div`, no landmark, `env-page-header`, with the breadcrumbs, `en
 
 ## Changelog
 
-- **1.0.0-prerelease.3**: PageHeader is documented on this page, `page`, which its page's address opens.
 - **1.0.0**: Page, with the widths `sm`, `md`, `lg` and `full`, `header`, `gutter`, `name` and `render`; invisible structure whose gutters follow the window class of the region it sits in, and the `env-page` container. PageHeader, with `title`, `headingLevel`, `description`, `breadcrumbs`, `start`, `meta`, `actions`, `toolbar`, `sticky` and `controlSize`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.3**: PageHeader is documented on this page, `page`, which its page's address opens.

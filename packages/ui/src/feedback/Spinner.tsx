@@ -1,5 +1,5 @@
 import type { ComponentPropsWithRef } from 'react';
-import { SpinnerArc } from './internal/SpinnerArc.js';
+import { SpinnerArc } from '../internal/control/SpinnerArc.js';
 import { SpinnerLabel } from './internal/SpinnerLabel.js';
 
 export interface SpinnerProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {

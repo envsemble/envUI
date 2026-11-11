@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import AsyncWithError from '../../examples/confirm-dialog/AsyncWithError';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const confirm = '.env-dialog-actions .env-button:last-child';
 
@@ -39,6 +40,7 @@ function Archiving() {
   // purpose every time it plays, so its failures stay out of the reader's console.
   useEffect(() => {
     const quiet = (event: ErrorEvent) => {
+      // What the archive threw, if anything.
       if ((event.error as Error | undefined)?.message === 'Archive failed') event.preventDefault();
     };
     window.addEventListener('error', quiet);

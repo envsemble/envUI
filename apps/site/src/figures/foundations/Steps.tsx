@@ -1,4 +1,5 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { classNames } from '@envui-internal/internal/classNames';
 
 /*
  * Parts of the foundations' animated figures that step through states, such as a card at each text
@@ -22,7 +23,7 @@ export function StepStack({
   className?: string;
 }) {
   return (
-    <div className={['catalogue-step-stack', className].filter(Boolean).join(' ')}>
+    <div className={classNames('catalogue-step-stack', className)}>
       {Array.from({ length: count }, (_, index) => (
         <div key={index} data-current={index === at || undefined}>
           {render(index)}
@@ -43,5 +44,5 @@ export function CornerLabel({ children }: { children: ReactNode }) {
  * its width, so the content rewraps and its container queries see less room, as they would.
  */
 export function AtTextSize({ size, children }: { size: number; children: ReactNode }) {
-  return <div style={{ zoom: size } as CSSProperties}>{children}</div>;
+  return <div style={{ zoom: size }}>{children}</div>;
 }

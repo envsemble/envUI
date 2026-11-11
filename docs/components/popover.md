@@ -1,6 +1,6 @@
 ---
 title: Popover
-summary: A floating panel beside its trigger for details or a small form; Esc or a press outside closes it.
+summary: A floating panel beside its trigger, for details or a small form.
 status: stable
 since: 1.0.0
 category: Overlays
@@ -45,7 +45,7 @@ examples:
 
 ### Widths
 
-A popover is as wide as its content, up to its width.
+A popover is as wide as its content, within its width's range.
 
 | Width  | Use for                                  |
 | ------ | ---------------------------------------- |
@@ -185,7 +185,7 @@ Leave it uncontrolled, with `defaultOpen` to start open, or control it with `ope
 
 #### Width, side and alignment
 
-`width` is `md`, 20 rem and the default, or `lg`, 28 rem: the widest the popover grows, as wide as its content from 12 rem up, and narrower to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; it flips to the other side without room. `align` is `start`, `center`, the default, or `end`.
+`width` sets how wide the popover grows with its content: `md`, the default, from 12 rem up to 20 rem, or `lg`, from 20 rem up to 28 rem; it narrows to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; it flips to the other side without room. `align` is `start`, `center`, the default, or `end`.
 
 ```tsx
 <Popover
@@ -202,16 +202,18 @@ Leave it uncontrolled, with `defaultOpen` to start open, or control it with `ope
 
 Every popup, a popover, a menu, a Select's or a Combobox's list, a picker, a hover card, rich text suggestions and the command palette, is frosted. Three properties, set on a `.env-theme` boundary, change them all:
 
-- `--env-popup-opacity`, 88 % in light and 90 % in dark, how much of the popup's color covers what is behind it; `100%` makes popups solid. The color is `--env-color-bg-popup` in light and `--env-color-bg-default` in dark, darker than the cards and rows popups open over, frosted or solid.
+- `--env-popup-opacity`, 88 % in light and 90 % in dark, how much of the popup's color covers what is behind it; `100%` makes popups solid. The color is `--env-color-bg-popup`.
 - `--env-popup-blur`, 1.375 rem, the blur of what shows through, with a little more saturation.
 - `--env-popup-shadow`, a soft shadow in the text's color in light and a deeper shade of the page in dark: with the avatars', envUI's only shadow.
 
-At high contrast, with reduced transparency and under forced colors popups are solid, with their elevation edge and no blur or shadow; at high contrast the edge is a modal's, `--env-elevation-3-border`, the strongest. Tooltips are frosted too, at `--env-tooltip-opacity` with a smaller `--env-tooltip-shadow`, as [Tooltip](tooltip.md#customize) describes.
+In dark a faint hairline of the text color keeps a frosted popup's edge, where its shadow barely shows. At high contrast, with reduced transparency and under forced colors popups are solid, with their elevation edge and no blur or shadow; at high contrast the edge is a modal's, `--env-elevation-3-border`, the strongest. Tooltips are frosted too, at `--env-tooltip-opacity` with a smaller `--env-tooltip-shadow`, as [Tooltip](tooltip.md#customize) describes.
 
 `className`, `style`, `ref` and data attributes reach the surface, `env-popover`, which has `data-width="lg"` when large and renders on PopupSurface in the trigger's text direction and theme. Its title is `env-popover-title`.
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: Popovers are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.
 - **1.0.0**: `width` is `md` or `lg`, the widest the popover grows as it sizes to its content; `side` takes `inline-start` and `inline-end`; `className`, `style`, `ref` and data attributes reach the surface, which renders on PopupSurface in the trigger's text direction.
 - **1.0.0**: Popovers take the level-2 elevation edge, with no shadow.
+- **1.0.0-prerelease.6**: A popover opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
+- **1.0.0-prerelease.6**: A popover's corners are the popups' own, concentric with their rows and half a row's height, 20 px and 16 px at the compact scale, rather than a surface's 28 px and 22 px; dialogs and sheets keep a surface's.
+- **1.0.0-prerelease.5**: Popovers are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.

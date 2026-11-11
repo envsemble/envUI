@@ -2,9 +2,9 @@
 
 import type { CSSProperties, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { useFieldMetadata } from './internal/useFieldMetadata.js';
-import { TextareaControl, type TextareaControlProps } from './internal/TextareaControl.js';
-import { FieldFrame, type FieldProps } from './internal/FieldFrame.js';
+import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import { TextareaControl, type TextareaControlProps } from '../internal/field/TextareaControl.js';
+import { FieldFrame, type FieldProps } from '../internal/field/FieldFrame.js';
 
 export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** The native text area, so that a form library can register it and focus it. */
@@ -14,8 +14,8 @@ export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** Styles of the field's root element, such as its width in a row. */
   style?: CSSProperties;
   /**
-   * The field's look, as TextField's: outline or ghost. A text area is always tall, with
-   * its label resting at the top, so it has no floating variant.
+   * The field's look, as TextField's: outline or ghost. A text area is always tall, with its label
+   * resting at the top.
    * @default 'outline'
    */
   variant?: 'outline' | 'ghost';

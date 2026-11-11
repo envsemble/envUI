@@ -1,245 +1,106 @@
-import {
-  Component,
-  startTransition,
-  Suspense,
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-  type RefObject,
-} from 'react';
-import { Column, Link, Text, Theme, useTheme } from '@envsemble/envui';
-import { IconArticle } from '@envsemble/envui/icons/Article';
-import type { DocumentationMetadata } from '../shared/DocumentationTypes';
-import { Documentation } from '../pages/Documentation';
+import { useId, useRef, type ReactNode } from 'react';
+import { Column, Link, Row, Text } from '@envsemble/envui';
+import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
+import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
+import { PageMarkdown } from '../markdown/PageMarkdown';
 import { useAutoplay } from '../motion/Autoplay';
-import { Playback, PreviewOverlays, usePlaying } from '../motion/Motion';
-import { useDisplaySettings } from '../theme/DisplaySettings';
-import { ExampleRender } from '../figures/LiveExample';
-import { PageSpecimen } from '../figures/PageSpecimens';
-import { alternativesOf, type Alternative, type Preview } from './RelatedPages';
-import { TileSkeleton } from './Loading';
-import { useFit } from './useFit';
-import { pendingAttribute, useSectionOutline } from './SectionOutline';
+import { usePlaying } from '../motion/usePlaying';
+import { TileStage } from '../figures/TileStage';
+import { useNear } from '../figures/useNear';
+import { alternativesOf, type Alternative } from './RelatedPages';
+import type { TileFrame, TilePicture } from '../tiles/TilePictures';
+import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
+import { flag } from '@envui-internal/internal/flag';
 
 /**
- * Keeps a tile that fails to render to itself: it shows nothing, and the gallery around it its
- * other tiles, rather than the page failing.
- */
-class TileBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
-  state = { failed: false };
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-  render() {
-    return this.state.failed ? null : this.props.children;
-  }
-}
-
-/**
- * A tiny live picture of an alternative on the recessed canvas: its example, inert and scaled down
- * to fit, rendered once the tiles near the viewport; for a page without one, its specimen, in the
- * same way, and from then until it shows, a skeleton of the stage. Without either, a page icon. A page's own
- * tile, or a gallery's composition, takes the example's place. A gallery's tile passes its own
- * stage class. While `playing`, unless the sidebar paused every animation, its animation plays
- * (motion/Motion.tsx), and it rests at its still once that ends.
- */
-export function TilePreview({
-  preview,
-  near,
-  playing = false,
-  className = 'catalogue-related-stage',
-  whole = false,
-}: {
-  preview?: Preview;
-  near: boolean;
-  /** Whether the pointer or the keyboard is on the tile, which plays its animation. */
-  playing?: boolean;
-  className?: string;
-  /** Whether the window it lays out in counts whole as it is fitted, as a gallery's does. */
-  whole?: boolean;
-}) {
-  const Composition = preview?.composition;
-  const theme = useTheme();
-  const { motionPaused } = useDisplaySettings();
-  const plays = playing && !motionPaused;
-  const stage = useRef<HTMLDivElement>(null);
-  const canvas = useRef<HTMLDivElement>(null);
-  // The canvas, for the pointer no one sees, which finds the preview's elements in it.
-  const [canvasElement, setCanvasElement] = useState<HTMLDivElement | null>(null);
-  const shown = Boolean(preview && near);
-  const subject =
-    preview &&
-    (Composition ? (
-      <TileBoundary>
-        <Suspense fallback={null}>
-          <Playback playing={plays} rest="start" root={canvasElement}>
-            <Composition />
-          </Playback>
-        </Suspense>
-      </TileBoundary>
-    ) : preview.specimen ? (
-      <PageSpecimen id={preview.specimen} />
-    ) : (
-      <ExampleRender page={preview.page} name={preview.name} fallback={null} />
-    ));
-  const tile = Boolean(preview?.tile);
-  useFit(stage, canvas, shown, whole || tile, tile, plays);
-  useStillAtRest(canvasElement, tile && !plays);
-  return (
-    <Theme
-      {...theme}
-      ref={stage}
-      className={className}
-      data-example={preview?.specimen || Composition ? undefined : preview?.name}
-      data-catalogue-specimen={preview?.specimen}
-      data-stage={preview?.stage}
-      data-empty={preview ? undefined : ''}
-      data-playing={plays ? '' : undefined}
-    >
-      {!preview ? (
-        <IconArticle className="catalogue-related-placeholder" aria-hidden />
-      ) : (
-        shown && (
-          <div
-            ref={(element) => {
-              canvas.current = element;
-              setCanvasElement(element);
-            }}
-            className="catalogue-related-canvas"
-            data-tile={preview.tile ? '' : undefined}
-            style={
-              preview.window &&
-              ({
-                '--catalogue-tile-width': `${preview.window.width}rem`,
-                '--catalogue-tile-height': `${preview.window.height}rem`,
-              } as CSSProperties)
-            }
-            inert
-            aria-hidden
-          >
-            {preview.open ? <PreviewOverlays>{subject}</PreviewOverlays> : subject}
-          </div>
-        )
-      )}
-      {/* After the canvas, which hides it once the picture is fitted (Related.css). Only as the
-          tile nears the view, as its picture starts loading: a skeleton pulses on every frame,
-          and a gallery's tiles far from the view would keep the page busy restyling them. */}
-      {shown && <TileSkeleton />}
-    </Theme>
-  );
-}
-
-/** Whether an animation loops for ever, as a skeleton's pulse or a spinner's turn does. */
-const loops = (animation: Animation) =>
-  animation.effect?.getComputedTiming().iterations === Infinity;
-
-/**
- * Holds a resting tile still: the animations in it that loop for ever, such as a skeleton's
- * pulse, pause until it plays, also those that start while it rests. An entrance, which ends,
- * runs on, so nothing is left halfway in.
- */
-function useStillAtRest(canvas: HTMLElement | null, resting: boolean) {
-  useEffect(() => {
-    if (!canvas) return;
-    const looping = () => canvas.getAnimations({ subtree: true }).filter(loops);
-    if (!resting) {
-      for (const animation of looping()) animation.play();
-      return;
-    }
-    const pause = () => {
-      for (const animation of looping()) animation.pause();
-    };
-    pause();
-    // A loop that starts later, such as a skeleton drawn anew, pauses as it starts.
-    canvas.addEventListener('animationstart', pause);
-    const changes = new MutationObserver(pause);
-    changes.observe(canvas, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-    return () => {
-      canvas.removeEventListener('animationstart', pause);
-      changes.disconnect();
-    };
-  }, [canvas, resting]);
-}
-
-/** Whether an element is near the viewport, once: the tiles render their examples from then on. */
-export function useNear(element: RefObject<HTMLElement | null>) {
-  const [near, setNear] = useState(false);
-  useEffect(() => {
-    const target = element.current;
-    if (!target || near) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        observer.disconnect();
-        // The examples load and render without holding up what the reader is doing.
-        startTransition(() => setNear(true));
-      },
-      { rootMargin: '600px 0px' },
-    );
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [element, near]);
-  return near;
-}
-
-/**
- * One alternative's tile, whose preview plays while the pointer or the keyboard is on it, and where
+ * One alternative's tile, whose picture plays while the pointer or the keyboard is on it, and where
  * the reader can't hover, while it is the tile in the middle of the viewport, as a gallery's does.
+ * It is a gallery's cell (Gallery.tsx, Gallery.css): on a stage of one shape, a component at its
+ * own size and a pattern's scene at a legible scale, and under it its name and when to pick it,
+ * which slide into view with the picture as the pointer comes on.
  */
 function RelatedTile({
-  preview,
+  picture,
   near,
+  frame,
   children,
 }: {
-  preview?: Preview;
+  picture?: TilePicture;
   near: boolean;
+  frame?: TileFrame;
   children: ReactNode;
 }) {
   const tile = useRef<HTMLLIElement>(null);
   const [playing, playOn] = usePlaying();
   const autoplay = useAutoplay(tile, playing);
   return (
-    <li ref={tile} className="catalogue-related-tile" {...playOn}>
-      <TilePreview preview={preview} near={near} playing={playing || autoplay} />
-      {children}
+    <li ref={tile} className="catalogue-related-tile catalogue-gallery-tile" {...playOn}>
+      <div className="catalogue-gallery-picture">
+        <TileStage
+          picture={picture}
+          near={near}
+          playing={playing || autoplay}
+          className="catalogue-tile-stage catalogue-gallery-stage"
+          frame={frame}
+        />
+      </div>
+      <div className="catalogue-gallery-meta catalogue-related-meta">{children}</div>
     </li>
   );
 }
 
-/** The alternatives as tiles of one size: a preview on its stage, the name and its situations. */
+/** The alternatives as tiles of one size: a picture on its stage, the name and its situations. */
 function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: string }) {
   const list = useRef<HTMLUListElement>(null);
   const near = useNear(list);
+  const id = useId();
   return (
-    <ul ref={list} className="catalogue-related-tiles" data-count={alternatives.length}>
-      {alternatives.map(({ key, name, href, preview, line }) => (
-        <RelatedTile key={key} preview={preview} near={near}>
-          {/* The name is the link; it stretches over the picture, so a pointer can follow it from
-              there too without a link around the preview, whose example may hold links itself. */}
-          <Text render={<span />} className="catalogue-related-name">
-            {href ? (
-              <Link href={href} className="catalogue-related-link">
-                {name}
-              </Link>
-            ) : (
-              name
-            )}
-          </Text>
-          <div className="catalogue-related-line">
-            <Documentation markdown={line} path={path} />
+    <ul
+      ref={list}
+      className="catalogue-related-tiles"
+      data-count={alternatives.length}
+      // A scene's tile takes a larger stage, as in its gallery: so does every tile beside it.
+      data-scenes={flag(alternatives.some(({ frame }) => frame === 'legible'))}
+    >
+      {alternatives.map(({ key, name, href, picture, line, frame }, index) => (
+        <RelatedTile key={key} picture={picture} near={near} frame={frame}>
+          {/* The name is the tile's one link, described by when to pick it; it stretches over the
+              whole tile, picture, name and why, so the tile is one target and one box
+              (Gallery.css). Its words slide, not the link, which would otherwise hold the stretch
+              to the row it slides in. */}
+          <Row align="center" justify="between" gap={2}>
+            <Text render={<span />} className="catalogue-related-name">
+              {href ? (
+                <Link
+                  href={href}
+                  underline={false}
+                  className="catalogue-related-link"
+                  aria-describedby={`${id}-${index}`}
+                >
+                  <span className="catalogue-gallery-label catalogue-gallery-slide">{name}</span>
+                </Link>
+              ) : (
+                <span className="catalogue-gallery-label catalogue-gallery-slide">{name}</span>
+              )}
+            </Text>
+            <IconArrowForward
+              className="catalogue-gallery-arrow catalogue-gallery-slide"
+              aria-hidden="true"
+            />
+          </Row>
+          {/* Words alone, its links as text: the tile holds one link, its name's. */}
+          <div className="catalogue-related-line catalogue-gallery-slide" id={`${id}-${index}`}>
+            <PageMarkdown markdown={line} path={path} linkless />
           </div>
         </RelatedTile>
       ))}
     </ul>
   );
 }
+
+/** Related's heading: its id and its words. */
+export const relatedId = 'related';
+export const relatedTitle = 'Related';
 
 /**
  * Related, the last section of a component or pattern page: a tile for each component or page its
@@ -258,8 +119,8 @@ export function Related({ metadata, path }: { metadata: DocumentationMetadata; p
       data-section="related"
       {...pendingAttribute(outline)}
     >
-      <Text render={<h2 />} variant="headline" id="related">
-        Related
+      <Text render={<h2 />} variant="headline" id={relatedId}>
+        {relatedTitle}
       </Text>
       {!outline && <Tiles alternatives={alternatives} path={path} />}
     </Column>

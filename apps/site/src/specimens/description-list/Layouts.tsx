@@ -1,6 +1,6 @@
 import { DescriptionList } from '@envsemble/envui';
-import { useTimeline } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
 import { CornerLabel } from '../../figures/foundations/Steps';
 
 const layouts = [

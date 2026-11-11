@@ -1,6 +1,6 @@
 import SameLabel from '../../examples/switch/SameLabel';
-import { usePointer } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { toggling } from './Toggling';
 
 const script = toggling(false);

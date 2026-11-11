@@ -12,5 +12,3 @@ export const copyButton = {
   /** Reported when the clipboard is unavailable. */
   unavailable: 'The clipboard is unavailable.',
 };
-
-export type CopyButtonMessages = typeof copyButton;

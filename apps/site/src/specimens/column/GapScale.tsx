@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react';
 import { Column, Row, Surface, Text, type SpaceStep } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
-import { useTimeline } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
 
 const sizes: Record<SpaceStep, string> = {
   0: '0',
@@ -22,17 +22,17 @@ const sizes: Record<SpaceStep, string> = {
  * themes, where the stage is lighter than the page and a row's white barely shows on it, and a
  * row's in the dark ones.
  */
-const block = {
+const block: CSSProperties = {
   '--env-surface-container-default':
     'light-dark(var(--env-color-bg-page), var(--env-color-bg-muted))',
-} as CSSProperties;
+};
 
 /** Up the scale a step at a time, from 1 to 9, and back down to 1. */
 const order: SpaceStep[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2];
 const steps = order.map((step) => (step === 1 || step === 9 ? 1300 : 700));
 
 function Stepping() {
-  const step = order[useTimeline(steps)]!;
+  const step = order[useTimeline(steps)];
   return (
     <Row gap={6} align="start" style={{ inlineSize: 'min(100%, 22rem)' }}>
       <Column gap={1} style={{ inlineSize: '5rem' }}>
@@ -42,15 +42,8 @@ function Stepping() {
         </Text>
       </Column>
       {/* As tall as the largest gap holds from the start, the first block at its top, so only the
-          second moves. */}
-      <Column
-        gap={step}
-        style={{
-          flex: 1,
-          minBlockSize: 'calc(2 * 2.75rem + 4rem)',
-          transition: 'gap var(--env-motion-duration-slow) var(--env-motion-ease)',
-        }}
-      >
+          second moves, at once, as a Column lays out a new gap. */}
+      <Column gap={step} style={{ flex: 1, minBlockSize: 'calc(2 * 2.75rem + 4rem)' }}>
         <Surface radius="sm" padding={2} style={block}>
           <Text>First</Text>
         </Surface>
@@ -65,10 +58,10 @@ function Stepping() {
 /** One column whose gap steps up the spacing scale and back down. */
 export default function GapScale() {
   return (
-    <Example size="content">
+    <SpecimenFrame size="content">
       <MotionStage label="the gap stepping through the scale">
         <Stepping />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

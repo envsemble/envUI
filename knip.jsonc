@@ -1,0 +1,72 @@
+// Unused files, exports and dependencies (npm run lint:unused, which npm run check runs). Each
+// ignore says why.
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  // An export tagged @internal is there for a unit test that bundles the module from its source,
+  // which knip cannot follow (tests/support/ImportSource.mjs).
+  "tags": ["-@internal"],
+  "workspaces": {
+    ".": {
+      // The scripts in package.json are entries of their own; these run otherwise.
+      "entry": [
+        // Run by hand: after the favicon's SVG changes, and to check the site's contents lists.
+        "scripts/build/GenerateFavicons.ts",
+        "scripts/test/CheckContents.ts",
+        "tests/*/*.test.mjs",
+        "tests/browser/{library,site}/*.spec.ts",
+        "tests/accessibility/*.spec.ts",
+        // The fixture's pages, each loading one of these.
+        "tests/fixture/{main,perf}.tsx",
+        "tests/fixture/{RichText,CascadeLayers,ForcedColors}.fixture.tsx",
+        "tests/fixture/Contrast.fixture.ts",
+        "tests/fixture/vite.config.ts",
+        "tests/fixture/Hydration.fixture.tsx",
+        "tests/types/*.tsx",
+        "tests/rsc/*.mjs",
+      ],
+      "project": ["scripts/**/*.{ts,js}", "tests/**/*.{ts,tsx,mjs}"],
+      // Off: it takes every module in a folder named test, as scripts/test/, for a test file whose
+      // exports go unchecked. The entries above list the tests.
+      "node": false,
+      // The sources of the lint packages' tokens.js and colorPolicy.js, which
+      // scripts/build/SyncLintPackages.ts copies into them.
+      "ignoreFiles": [
+        "scripts/build/LintPackageTokens.js",
+        "scripts/build/LintPackageColorPolicy.js",
+      ],
+      "ignoreDependencies": [
+        // Changesets reads .changeset/ with these, which come with @changesets/cli.
+        "@changesets/types",
+        "@changesets/config",
+        // The fixture uses Base UI as the library does, which installs it.
+        "@base-ui/react",
+      ],
+      // MeasureSite.ts makes the local server's certificate with the system's openssl.
+      "ignoreBinaries": ["openssl"],
+    },
+    "packages/ui": {
+      // Knip takes the entry points from package.json's exports, the icons' pattern included.
+      "entry": ["terrazzo.config.mjs"],
+      "project": ["src/**/*.{ts,tsx}"],
+    },
+    "packages/eslint-plugin": {
+      "entry": ["scripts/*.mjs", "test/*.test.mjs"],
+      "project": ["**/*.{js,mjs}"],
+      // The application the rules' tests lint, which is never installed or run.
+      "ignoreDependencies": ["@envsemble/envui"],
+      // Copies of the lint packages' shared modules, whose exports the Stylelint config's copies use.
+      "ignoreIssues": { "src/tokens.js": ["exports"], "src/colorPolicy.js": ["exports"] },
+    },
+    "packages/stylelint-config": {
+      "entry": ["test/*.test.mjs"],
+      "project": ["**/*.{js,mjs}"],
+      // A copy of the shared color policy, whose stand-in for an expression the ESLint plugin uses.
+      "ignoreIssues": { "src/colorPolicy.js": ["exports"] },
+    },
+    "apps/site": {
+      // The server entry, which scripts/site/PrerenderSite.ts builds to pre-render the pages.
+      "entry": ["src/Server.tsx"],
+      "project": ["src/**/*.{ts,tsx}"],
+    },
+  },
+}

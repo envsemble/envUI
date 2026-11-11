@@ -1,6 +1,6 @@
 /**
  * Visual baseline: screenshots of today's identity, so that later changes are deliberate and
- * reviewed as image diffs. Every catalogue page's preview specimens and forced interaction states
+ * reviewed as image diffs. Every catalogue page's specimens and forced interaction states
  * are captured in light, and its first example where it has no specimen or only animated ones; an
  * animated figure is captured as its still, with the catalogue's animations paused. The theme
  * sample of samplePages (CatalogueThemes.ts) is captured in dark and high contrast as well. So are a few density specimens of the test fixture, and a few lists, a tooltip and the
@@ -33,8 +33,8 @@ import {
   type CatalogueTheme,
   type ThemeName,
 } from '../browser/helpers/CatalogueThemes';
-import { groupedPages } from '../../apps/site/src/navigation/SiteRoutes';
-import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
+import { groupedPages } from '../../apps/site/src/routes/SiteRoutes';
+import { displayStorageKeys } from '../../apps/site/src/display/DisplayStorage';
 
 /**
  * The density fixture's sections captured, each with a theme its boundaries take from the address:
@@ -50,7 +50,7 @@ const densityShots = [
 const now = new Date('2026-03-04T10:00:00Z');
 const snapshots = fileURLToPath(new URL('./snapshots/', import.meta.url));
 /**
- * The forced-state matrices of InteractionStates.ts, by catalogue page and matrix label. A page
+ * The forced-state matrices of InteractionStates.tsx, by catalogue page and matrix label. A page
  * must show exactly these, so a matrix that disappears, or a new one, fails until it is listed.
  */
 const stateMatrices: Record<string, string[]> = {
@@ -59,8 +59,8 @@ const stateMatrices: Record<string, string[]> = {
 
 /**
  * A list or other popup the baseline captures open, beside its trigger, from a catalogue example.
- * The catalogue plays these examples on an inert stage, so each opens on its own in the test
- * fixture (`?fixture=layout-check`, LayoutCheck.tsx), on the catalogue's canvas, in a page of the
+ * The catalogue plays these examples, or shows them open in a figure's own room, so each opens as an
+ * application's would, highlighted from the keyboard and in each theme, in the test fixture (`?fixture=layout-check`, LayoutCheck.fixture.tsx), on the catalogue's canvas, in a page of the
  * theme, where its popups open into the document as an application's do.
  */
 interface OpenList {
@@ -173,7 +173,7 @@ const openLists: OpenList[] = [
     themes: ['light'],
     page: 'command-palette',
     example: 'GoToDocument',
-    trigger: (page) => stageOf(page).getByRole('button', { name: 'Go to document', exact: true }),
+    trigger: (page) => stageOf(page).getByRole('button', { name: 'Search', exact: true }),
     key: 'Enter',
     popup: (page) => page.getByRole('dialog', { name: 'Go to document', exact: true }),
     highlighted: 'Roadmap.md',
@@ -256,24 +256,29 @@ async function finishAnimations(page: Page) {
 
 /** Wait until fonts, lazy content and finite animations have finished. */
 async function settle(page: Page) {
-  // A skeleton of the site's (.site-loading, template/Loading.tsx) marks a part that is still
+  // A skeleton of the site's (.site-loading, loading/Skeletons.tsx) marks a part that is still
   // loading: an example, its code, a specimen, a demo, the icon list, the token reference or the
   // changelog. A tile's (.catalogue-tile-loading) waits for the tile to come into view instead.
-  // A section still to show is its outline (data-site-pending, template/SectionOutline.ts) until
+  // A section still to show is its outline (data-site-pending, markdown/SectionOutline.ts) until
   // it renders, with the skeletons of its parts.
   await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
   await page.locator('.site-loading').first().waitFor({ state: 'detached' });
+  // envUI ships its own Geist; a fallback face would make every text specimen drift. The fonts are
+  // ready at once while none has been asked for yet, as on a busy machine before the page has laid
+  // out its text, so it waits for Geist itself.
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() =>
+          [...document.fonts].some(
+            (font) => font.family.replace(/"/g, '') === 'envUI Geist' && font.status === 'loaded',
+          ),
+        ),
+      { message: 'envUI Geist is loaded' },
+    )
+    .toBe(true);
   await page.evaluate(() => document.fonts.ready);
   await finishAnimations(page);
-  // envUI ships its own Geist; a fallback face would make every text specimen drift.
-  expect(
-    await page.evaluate(() =>
-      [...document.fonts].some(
-        (font) => font.family.replace(/"/g, '') === 'envUI Geist' && font.status === 'loaded',
-      ),
-    ),
-    'envUI Geist is loaded',
-  ).toBe(true);
 }
 
 /** Click, then park the pointer and drop focus, so neither paints a state into later shots. */
@@ -287,12 +292,12 @@ async function press(page: Page, control: Locator) {
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
   const { scheme } = theme;
-  if ((await page.locator('.site-app').getAttribute('data-env-theme')) !== scheme) {
+  if ((await page.locator('html').getAttribute('data-env-theme')) !== scheme) {
     await chooseScheme(page, scheme);
     await page.mouse.move(0, 0);
     await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   }
-  await page.locator(`.site-app[data-env-theme="${scheme}"]`).waitFor();
+  await page.locator(`html[data-env-theme="${scheme}"]`).waitFor();
 }
 
 /** Names unique within a page: repeated titles get a counter. */
@@ -447,7 +452,7 @@ test.describe('catalogue', () => {
             specimens++;
             if (await example.locator('.catalogue-motion-stage').count()) animated++;
           }
-          // The forced hover, pressed, focus and disabled states of InteractionStates.ts, opened
+          // The forced hover, pressed, focus and disabled states of InteractionStates.tsx, opened
           // where the catalogue keeps them in a closed disclosure.
           const states = page.locator(
             '.catalogue-specimen-area [role="region"][aria-label$="interaction states"]',
@@ -495,7 +500,7 @@ test.describe('catalogue', () => {
           if (!(await example.count())) continue;
           const file =
             (await example.getAttribute('data-example')) ??
-            /Code, (\w+)\.tsx/.exec(
+            /code, (\w+)\.tsx/i.exec(
               (await example
                 .locator('xpath=..')
                 .locator(':scope > .site-live-example-code summary')
@@ -524,7 +529,7 @@ test.describe('density', () => {
   for (const { section, theme } of densityShots) {
     test(`${section} (${theme})`, async ({ page }) => {
       await page.clock.setFixedTime(now);
-      await page.goto(`${fixtureUrl}/?fixture=density&section=${section}&theme=${theme}`);
+      await page.goto(`${fixtureUrl}/?fixture=scale&section=${section}&theme=${theme}`);
       const specimen = page.locator(`[data-density-section="${section}"]`);
       await specimen.waitFor();
       await expect(specimen).not.toContainText('Unknown density section');

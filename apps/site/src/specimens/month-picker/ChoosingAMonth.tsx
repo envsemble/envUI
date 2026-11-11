@@ -1,8 +1,9 @@
 import { Column } from '@envsemble/envui';
 import ReportMonth from '../../examples/month-picker/ReportMonth';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage, rowsAnd } from '../../figures/MotionStage';
 
 const field = '.env-date-picker-control';
 const month = (index: number) =>
@@ -40,9 +41,10 @@ const script: PointerStep[] = [
 
 function Choosing() {
   usePointer(script);
-  // The popup opens below the field, in the room under it.
+  // The popup opens below the field, in the room under it, as tall as the two are open, so they
+  // sit in the middle of the stage.
   return (
-    <Column align="center" style={{ inlineSize: '100%', blockSize: '25rem' }}>
+    <Column align="center" style={{ inlineSize: '100%', blockSize: rowsAnd(5.625, 9.75) }}>
       <ReportMonth />
     </Column>
   );
@@ -51,10 +53,10 @@ function Choosing() {
 /** Report month chosen from its popup by a pointer no one sees. */
 export default function ChoosingAMonth() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="a month chosen">
         <Choosing />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

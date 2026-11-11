@@ -7,10 +7,12 @@ import {
   PageHeader,
   Surface,
 } from '@envsemble/envui';
-import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
-import { useTimeline } from '../../motion/Motion';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { useTimeline } from '../../motion/Timeline';
+import { remPixels } from '@envui-internal/internal/dom/lengths';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
-import { Figure } from './Topic';
+import { FoundationFrame } from './FoundationFrame';
+import { remeasure } from '../../shared/Remeasure';
 
 /*
  * The Adapting to width foundation's figure of the reader's text size: one profile in a frame of
@@ -55,20 +57,16 @@ const frameWidth = 41;
  * The scale the frame is drawn at, so it fits its stage: smaller on a narrow stage, but measured at
  * its own width, so the profile lays out as it would in a frame that wide.
  */
-function useFit() {
+function useTextFit() {
   const place = useRef<HTMLDivElement>(null);
   const [fit, setFit] = useState(1);
   useLayoutEffect(() => {
     const element = place.current;
     if (!element) return;
     const measure = () => {
-      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-      setFit(Math.min(1, element.clientWidth / ((frameWidth + 1) * rem)));
+      setFit(Math.min(1, element.clientWidth / ((frameWidth + 1) * remPixels())));
     };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
+    return remeasure(measure, { first: 'now', resize: [element] }).stop;
   }, []);
   return [place, fit] as const;
 }
@@ -79,11 +77,11 @@ function useFit() {
  */
 function TextSizeSteps() {
   const step = useTimeline(sizes.map(() => 3000));
-  const [place, fit] = useFit();
+  const [place, fit] = useTextFit();
   return (
     <div ref={place} className="catalogue-class-text-place">
       <CornerLabel>{sizeNames[step]}</CornerLabel>
-      <div style={{ zoom: fit } as CSSProperties}>
+      <div style={{ zoom: fit }}>
         <StepStack
           className="catalogue-fixed-frame catalogue-class-text-frame"
           count={sizes.length}
@@ -101,8 +99,8 @@ function TextSizeSteps() {
 
 export function ClassTextSizeFigure() {
   return (
-    <Figure label="Larger text, narrower class" motion="the profile at each text size">
+    <FoundationFrame label="Larger text, narrower class" motion="the profile at each text size">
       <TextSizeSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }

@@ -1,12 +1,11 @@
 'use client';
 
 import { Progress as BaseProgress } from '@base-ui/react/progress';
-import type { CSSProperties } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../foundations/Layout.js';
-import { useLocale, useMessages } from '../internal/EnvUIContext.js';
+import { Grid, Row } from '../layout/Layout.js';
+import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
-import type { RangeBarProps } from './internal/rangeBarProps.js';
+import type { RangeBarProps } from '../internal/rangeBarProps.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Meter.css';
@@ -71,11 +70,9 @@ export function Progress({
             <span
               key={step}
               className="env-progress-segment"
-              style={
-                {
-                  '--env-progress-segment-fill': Math.min(Math.max(done * steps - step, 0), 1),
-                } as CSSProperties
-              }
+              style={{
+                '--env-progress-segment-fill': Math.min(Math.max(done * steps - step, 0), 1),
+              }}
             />
           ))
         )}

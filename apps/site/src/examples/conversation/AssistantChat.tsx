@@ -1,6 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { Button, Column, Composer, CopyButton, Grid, Message, MessageList } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 import { IconArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
 
 interface Entry {
@@ -139,14 +139,18 @@ export default function AssistantChat() {
             size="sm"
             startIcon={<IconArrowDownward />}
             onClick={jumpToLatest}
-            style={{
-              // Over the log, whose list items are positioned and would otherwise paint above it.
-              position: 'relative',
-              gridArea: '1 / 1',
-              alignSelf: 'end',
-              justifySelf: 'center',
-              marginBlockEnd: '0.5rem',
-            }}
+            style={
+              {
+                // Over the log, whose list items are positioned and would otherwise paint above it.
+                position: 'relative',
+                gridArea: '1 / 1',
+                alignSelf: 'end',
+                justifySelf: 'center',
+                marginBlockEnd: '0.5rem',
+                // Filled with the page's color, so the messages it floats over don't show through.
+                '--env-button-container': 'var(--env-color-bg-page)',
+              } as CSSProperties
+            }
           >
             Latest
           </Button>

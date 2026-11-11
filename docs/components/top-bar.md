@@ -1,6 +1,6 @@
 ---
 title: TopBar
-summary: The bar at the top of an application or a screen, with start content, a title that truncates first and actions, which can stick, show page progress or be the window's title bar.
+summary: The bar at the top of an application or a screen, with its title and actions.
 status: beta
 since: 1.0.0
 category: App frame & layout
@@ -71,8 +71,6 @@ The bar can be the window's own title bar in an installed web app: empty space d
 3. **Title** (`env-top-bar-title`, `title`)
 4. **Actions** (`env-top-bar-actions`, `actions`)
 
-Not shown: the page progress.
-
 ## Behaviour
 
 ### Adapting to width
@@ -95,7 +93,7 @@ The bar goes in a [Scaffold](scaffold.md)'s top bar region, the screen's banner,
 
 ```
 
-### What goes where
+### Layout
 
 The title names the application or the section.
 
@@ -173,3 +171,4 @@ The parts are the bar, `env-top-bar`, its start, `env-top-bar-start`, its title,
 ## Changelog
 
 - **1.0.0**: TopBar, which replaces AppShell.Header and WindowFrame.TitleBar, with `sticky`, `titleBar` and `loading`.
+- **1.0.0-prerelease.6**: The loading bar follows the motion tokens: it completes in `--env-motion-duration-slow` with `--env-motion-ease-enter`, fades out in `--env-motion-duration-fast` with `--env-motion-ease-exit`, and is removed once its fade has ended; at once with durations of `0s`.

@@ -1,6 +1,6 @@
 ---
 title: Scaffold
-summary: The invisible frame of an application's screen, around its top bar, its navigation and the page.
+summary: The frame of an application's screen, around its top bar, its navigation and the page.
 status: beta
 since: 1.0.0
 category: App frame & layout
@@ -35,6 +35,7 @@ examples:
     role: overview
     stage: shaded
     motion: true
+    device: phone
   ChooseForms:
     role: example
     caption: A drawer only, and none on a phone.
@@ -60,13 +61,13 @@ Scaffold shows the [navigation](navigation-drawer.md) that fits its own width: t
 
 ```
 
-### A button that narrows the navigation
+### Narrowing the navigation
 
 A button can narrow the navigation to a strip of icons by asking for the rail in place of the drawer, and the application keeps the choice.
 
 - Don't build a narrow drawer of your own: the Scaffold already has both forms.
 
-```tsx figure=NarrowNavigation stage=shaded motion
+```tsx figure=NarrowNavigation stage=shaded motion device=window
 
 ```
 
@@ -99,8 +100,6 @@ The navigation and the top bar share one fill, flush with the window's edges and
 3. **Navigation** (`env-scaffold-rail`, `navigation`)
 4. **Body** (`env-scaffold-body`, `children`)
 
-Not shown: the skip links, and the places of the bar and the drawer.
-
 ## Behaviour
 
 ### Scrolling
@@ -121,7 +120,7 @@ The Scaffold follows its own width, not the window's.
 
 Scaffold paints nothing itself: what goes in its top bar, its navigation and its body does.
 
-### One for the whole application
+### One per application
 
 One Scaffold sits at the application's root and stays as the pages change.
 
@@ -182,7 +181,7 @@ Render one Scaffold at the application's root, around the router's outlet, and k
 </Scaffold>
 ```
 
-#### A button that narrows the navigation
+#### Narrowing the navigation
 
 A button that narrows the navigation sets `navigationForms={{ expanded: 'rail', large: 'rail' }}`, and the application keeps the choice, such as in `localStorage`.
 
@@ -246,5 +245,5 @@ The parts are the root, `env-scaffold`, the top bar, `env-scaffold-top-bar`, the
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: `skipLabel` and `skipNavigationLabel` are `skipToContentLabel` and `skipToNavigationLabel`, after their messages. `forms` is `navigationForms`, and `NavigationForm` is `ScaffoldNavigationForm`, so neither reads as a form of fields. `resolveNavigationForms` is internal.
 - **1.0.0**: Scaffold, which replaces AppShell and WindowFrame: a top bar region, the navigation forms by window class, and the body, with the document or the body scrolling.
+- **1.0.0-prerelease.5**: `skipLabel` and `skipNavigationLabel` are `skipToContentLabel` and `skipToNavigationLabel`, after their messages. `forms` is `navigationForms`, and `NavigationForm` is `ScaffoldNavigationForm`, so neither reads as a form of fields. `resolveNavigationForms` is internal.

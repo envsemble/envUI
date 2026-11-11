@@ -4,7 +4,6 @@ export default function OfficeHours() {
   return (
     <div style={{ inlineSize: 'min(100%, 16rem)' }}>
       <TimePicker
-        variant="floating"
         label="Call back at"
         description="Any half hour between 08:00 and 18:00."
         placeholder="Choose a time"

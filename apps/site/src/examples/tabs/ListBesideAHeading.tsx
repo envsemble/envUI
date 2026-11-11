@@ -1,4 +1,4 @@
-import { Card, Tabs, Text } from '@envsemble/envui';
+import { Card, Row, Tabs, Text } from '@envsemble/envui';
 
 export default function ListBesideAHeading() {
   return (
@@ -8,20 +8,12 @@ export default function ListBesideAHeading() {
         size="sm"
         renderList={(list) => (
           // The heading and the list share a row; the panels follow below.
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '0.75rem',
-            }}
-          >
+          <Row wrap align="center" justify="between" gap={3}>
             <Text render={<h3 />} variant="title">
               Orders
             </Text>
             {list}
-          </div>
+          </Row>
         )}
         items={[
           {

@@ -1,6 +1,6 @@
 @layer env.components {
   /* Meter and Progress share one look: a label row over a rounded track whose indicator fills with
-     the value. The track is a quiet tint with no outline, as Material draws it; the indicator reaches
+     the value. The track is the neutral fill with no outline, as Material draws it; the indicator reaches
      3:1 against the track and the surface, and the value text says the exact amount. Each emits its own classes, env-meter* and env-progress*; Progress adds the
      indeterminate sweep and segments. */
   .env-meter-header,
@@ -19,12 +19,13 @@
   }
   .env-meter-track,
   .env-progress-track {
-    block-size: 0.625rem;
+    --env-meter-track-height: 0.625rem;
+    block-size: var(--env-meter-track-height);
     overflow: hidden;
     border-radius: var(--env-radius-full);
-    /* The quiet tint of a state layer, light enough that the indicator keeps 3:1 against it on every
-       surface, a card's included. */
-    background: var(--env-color-bg-neutral-subtle-hover);
+    /* The neutral fill, the track a Slider draws, so empty steps still show on a dark panel, light
+       enough that the indicator keeps 3:1 against it on every surface, a card's included. */
+    background: var(--env-color-bg-neutral-muted);
   }
   .env-meter-indicator,
   .env-progress-indicator {
@@ -35,7 +36,10 @@
   }
   .env-progress[data-indeterminate] .env-progress-indicator {
     inline-size: 40%;
-    animation: env-progress-indeterminate 1.2s var(--env-motion-ease) infinite;
+    /* A sweep takes five times the slow duration, 1.2 s, so motion tokens of 0s stop it. It runs at
+       an even pace, as a spinner turns: an easing would linger where the bar is off the track, and the
+       empty track would read as a stall. The bar enters as the last one leaves. */
+    animation: env-progress-indeterminate calc(var(--env-motion-duration-slow) * 5) linear infinite;
   }
   /* The sweep runs toward the end of the line, so right to left in right-to-left text. */
   .env-progress[data-indeterminate]:dir(rtl) .env-progress-indicator {
@@ -68,7 +72,7 @@
     flex: 1 1 0;
     overflow: hidden;
     border-radius: var(--env-radius-full);
-    background: var(--env-color-bg-neutral-subtle-hover);
+    background: var(--env-color-bg-neutral-muted);
   }
   .env-progress-segment::before {
     content: '';
@@ -83,8 +87,17 @@
     .env-progress-indicator {
       transition: none;
     }
+    /* With no sweep, a still bar part of the way along would read as a value: the indicator spans
+       the track as quiet stripes of the indicator's color instead, which no amount reads as. */
     .env-progress[data-indeterminate] .env-progress-indicator {
+      inline-size: 100%;
       animation: none;
+      background: repeating-linear-gradient(
+        -45deg,
+        color-mix(in srgb, var(--env-color-bg-primary-emphasis) 35%, transparent) 0
+          var(--env-space-1),
+        transparent var(--env-space-1) calc(2 * var(--env-space-1))
+      );
     }
   }
 
@@ -107,6 +120,16 @@
     }
     .env-progress-segment::before {
       background: Highlight;
+    }
+  }
+  @media (forced-colors: active) and (prefers-reduced-motion: reduce) {
+    .env-progress[data-indeterminate] .env-progress-indicator {
+      forced-color-adjust: none;
+      background: repeating-linear-gradient(
+        -45deg,
+        Highlight 0 var(--env-space-1),
+        Canvas var(--env-space-1) calc(2 * var(--env-space-1))
+      );
     }
   }
 

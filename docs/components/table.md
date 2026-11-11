@@ -1,7 +1,6 @@
 ---
 title: Table
-summary: 'Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and
-  stacked rows in narrow containers.'
+summary: Records in rows and columns, which people can sort and select.
 status: stable
 since: 1.0.0
 category: Data display
@@ -31,7 +30,9 @@ avoidWhen:
 components:
   - Table
 examples:
-  ProjectStatus: overview
+  ProjectStatus:
+    role: overview
+    stage: shaded
   RowDensity: example
   NumericColumns: example
   TableAnatomy: anatomy
@@ -54,7 +55,7 @@ examples:
 
 ### Density
 
-Density changes only the rows' padding; controls in cells keep the small height.
+Density changes only the rows' padding. Controls in cells keep the small height.
 
 ```tsx figure=RowDensity motion
 
@@ -96,13 +97,11 @@ A cell can line its content up for comparing, keep it on one line, or head its r
 6. **Row** (`env-table-body > env-table-row:last-child`)
 7. **Cell** (`env-table-cell:last-child`)
 
-Not shown: a column's resize handle, and a stacked cell's label.
-
 ## Behaviour
 
 ### Sort by a column
 
-A header can sort the rows by its column, and each sortable header shows the order.
+A header can sort the rows by its column. The sorted column shows its order; the other sortable headers show their arrow while the pointer is over the header row or one has keyboard focus, and always on touch.
 
 ```tsx figure=SortableColumns motion
 
@@ -110,7 +109,10 @@ A header can sort the rows by its column, and each sortable header shows the ord
 
 ### Select rows
 
-A selected row takes the selection colors, and a checkbox labelled with the row's name selects it.
+A selected row takes a lighter tint of the selection fill, so wide rows don't outweigh what is in them, and the full fill at high contrast.
+
+- A checkbox labelled with the row's name selects it.
+- A row selected without a checkbox in its first cell, such as the one open in a detail pane, also takes a bar at its start.
 
 ```tsx figure=SelectRows
 
@@ -143,7 +145,8 @@ While its rows load, a table shows as its own skeleton, as [Loading](../patterns
 By default the columns keep their width and the region scrolls sideways.
 
 - A table can stack its rows instead where it is narrow, such as on a phone.
-- Each row then becomes a block titled by its first cell, with each other value beside its column's name.
+- Each row then becomes a compact block. Its first cell titles it, with the next value, such as a status, beside it.
+- The other cells sit two to a line, under their columns' names.
 
 ```tsx figure=StackedRows widths="44 22" sweep
 
@@ -169,11 +172,11 @@ Name each state in words, such as in a Badge, never by color alone.
 
 Name every table, with a caption above it or by a heading just before it.
 
-### Not a spreadsheet
+### Editing
 
 A table has no editing cell by cell and no moving between cells with the arrow keys.
 
-### The first cell
+### Row titles
 
 Start each row with the cell that identifies it, which titles the row when rows stack.
 
@@ -188,6 +191,7 @@ Start each row with the cell that identifies it, which titles the row when rows 
 | <kbd>Enter</kbd> or <kbd>Space</kbd> on a sort button                             | Asks the application to sort the rows by the column.                             |
 | <kbd>←</kbd> or <kbd>→</kbd> on a resize handle                                   | Moves the column's end by 1 percent, in the reading direction.                   |
 | <kbd>Shift</kbd>+<kbd>←</kbd> or <kbd>Shift</kbd>+<kbd>→</kbd> on a resize handle | Moves the column's end by 5 percent.                                             |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd> on a resize handle                       | Widens or narrows the column by 5 percent.                                       |
 | <kbd>Home</kbd>, <kbd>End</kbd> on a resize handle                                | Narrows the column to its smallest width, or widens it to its largest.           |
 
 ### envUI provides
@@ -215,6 +219,8 @@ Table's parts are the native table elements, inside a focusable region. Name eve
 ```
 
 `density` on Table.Root changes only the cells' padding; controls in cells take the small height.
+
+A Link in a cell, such as the name that opens a row, takes the cell's text color, so a column of names doesn't read as a column of blue; its underline shows under the pointer and with keyboard focus. A secondary line under a cell's text, `<Text variant="caption">`, keeps to one line and ends in an ellipsis where its column is narrower; give it a `title` with the full text when that can happen.
 
 #### Sorting
 
@@ -245,11 +251,17 @@ The application sorts the rows. `onSortChange` on a header cell makes it a sort 
 
 #### Sticky header and loading
 
-`stickyHeader` makes the region scroll vertically, so give it a height through `regionClassName` or its layout. `skeleton` shows the table as its own skeleton over placeholder rows until they arrive.
+`stickyHeader` makes the region scroll vertically, so give it a height through `regionClassName` or its layout. `skeleton` shows the table as its own skeleton over placeholder rows until they arrive, without the selection's fill or bar.
 
 #### Stacked rows
 
-`narrowLayout="stack"` stacks the body rows below `stackBelow`, the region's own width, by a container query, so server markup already stacks. Give every cell after the first a `label`, which titles its value in a stacked row. The header row, and its sort buttons, are hidden while rows stack: `onStackedChange` tells the application, such as to show a Select for the order instead.
+`narrowLayout="stack"` stacks the body rows below `stackBelow`, the region's own width. It works by a container query, so server markup already stacks.
+
+- Give every cell after the first a `label`, which titles its value in a stacked row.
+- The first labelled value sits beside the title without its label, so put one there that reads on its own, such as a status.
+- A cell without a label, such as the row's menu of actions, joins that line too.
+- The other values follow two to a line, each under its label.
+- The header row, and its sort buttons, are hidden while rows stack. `onStackedChange` tells the application, such as to show a Select for the order instead.
 
 ```tsx
 <Table.Root aria-label="Invoices" narrowLayout="stack" onStackedChange={setStacked}>
@@ -268,6 +280,16 @@ Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resi
 
 ## Changelog
 
+- **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component. Table.HeaderCell's `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too, which was left unnamed. The sort and resize words come from `messages.table`. A column's resize handle, `env-table-column-resize`, is `env-table-column-resize-handle`, as every resize handle is named.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: A selected row takes a lighter tint of the selection fill, still a step above a row under the pointer; at high contrast it keeps the full fill.
+- **1.0.0-prerelease.6**: A sortable header's focus ring has a row's rounded corners. In dark, the header band and row dividers are a light step closer to the surface. A stacked row's labels sit directly over their values.
+- **1.0.0-prerelease.6**: A sortable header under the pointer takes no fill: its label darkens to the text color, with its arrow showing.
+- **1.0.0-prerelease.6**: A sortable header's focus ring sits a hair inside the header, so the frame's rounded corners never cut it in the first and last headers.
+- **1.0.0-prerelease.6**: An unsorted sortable header shows its arrow only while the pointer is over the header row or the header has keyboard focus, where the pointer hovers; the sorted column's arrow always shows.
+- **1.0.0-prerelease.6**: A stacked row is a compact block: the first labelled value, such as a status, sits beside the title without its label, an unlabelled cell such as the row's menu joins them, and the other values follow two to a line, each under its label, in place of a line for each value. The row densities differ by at least 4 px of row height in the compact scale: `xs` and `sm` rows are shorter, and `md` keeps its height.
+- **1.0.0-prerelease.6**: A skeleton shows no selection. A row under the pointer takes `--env-color-bg-row-hover`, clear in light and dark and a step below the selection.
+- **1.0.0-prerelease.6**: A selected row whose first cell holds a checkbox takes no bar at its start, as the checkbox and the fill say it already; a row selected without one keeps the bar.
+- **1.0.0-prerelease.6**: Links and times repeat down the rows, so a Link in a table takes the cell's text color and shows its underline only under the pointer and with keyboard focus, and a RelativeTime its dotted line; in a selected row too. A secondary line keeps to one line, ending in an ellipsis. A skeleton's sortable headers are bars, as the others are.
 - **1.0.0-prerelease.5**: A number for `stackBelow` is a number of rem, as on PanelDock, where it was pixels.
 - **1.0.0-prerelease.5**: `onColumnWidthsChange` receives `{ committed }` beside the widths, as the other resize callbacks do.
-- **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component. Table.HeaderCell's `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too, which was left unnamed. The sort and resize words come from `messages.table`. A column's resize handle, `env-table-column-resize`, is `env-table-column-resize-handle`, as every resize handle is named.

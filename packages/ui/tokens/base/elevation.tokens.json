@@ -25,10 +25,10 @@
     "3": {
       "border": {
         "$type": "color",
-        "$description": "The edge of dialogs, sheets and the command palette where they are solid, the same as level 2's; a modal's backdrop sets it apart as well. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill.",
-        "$value": "{palette.gray.25}"
+        "$description": "The edge of dialogs, sheets and the command palette where they are solid: in light the default border's gray, a step stronger than level 2's, as the light backdrop dims the page to about level 2's gray; in dark the same as level 2's. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill.",
+        "$value": "{palette.gray.45}"
       }
     },
-    "$description": "Elevation 0–3: the edge color of each level, for layers that float over the page. A floating layer shows this edge where it is solid, at high contrast, with reduced transparency and under forced colors; elsewhere popups and dialogs part by their fill and a soft shadow, and a modal by its backdrop as well. Level 0 is flat; menus, Select lists and popovers take level 2, dialogs and sheets level 3. Levels 1–3 share one edge, clearly visible at about 2:1 against a popup and the page; in high contrast it is the 4.5:1 boundary, and under forced colors the system's."
+    "$description": "Elevation 0–3: the edge color of each level, for layers that float over the page. A floating layer shows this edge where it is solid, at high contrast, with reduced transparency and under forced colors; elsewhere popups and dialogs part by their fill and a soft shadow, and a modal by its backdrop as well. Level 0 is flat; menus, Select lists and popovers take level 2, dialogs and sheets level 3. Levels 1–3 share one edge, clearly visible at about 2:1 against a popup and the page, except level 3's in light, which stands out against the dimmed page behind a modal; in high contrast it is the 4.5:1 boundary, and under forced colors the system's."
   }
 }

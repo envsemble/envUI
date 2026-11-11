@@ -135,8 +135,9 @@ function Popups() {
 const scenarios = { table: BigTable, list: BigList, popups: Popups };
 type Scenario = keyof typeof scenarios;
 
-const container = document.getElementById('root')!;
+const container = document.getElementById('root')!; // perf.html has one.
 const root = createRoot(container);
+// MeasureRuntime.ts asks only for scenarios that exist.
 const scenario = (new URLSearchParams(location.search).get('scenario') ?? 'popups') as Scenario;
 const Content = scenarios[scenario];
 const page = (
@@ -168,7 +169,8 @@ new PerformanceObserver((list) => {
   for (const entry of list.getEntries())
     longFrames.push({ start: entry.startTime, duration: entry.duration });
 }).observe({ type: 'long-animation-frame', buffered: true });
-// Event timing: from a press's hardware time to the frame after its handlers.
+// Event timing: from a press's hardware time to the frame after its handlers. The cast:
+// TypeScript's PerformanceObserverInit lacks durationThreshold.
 const events: { name: string; start: number; duration: number }[] = [];
 new PerformanceObserver((list) => {
   for (const entry of list.getEntries())

@@ -9,7 +9,7 @@ import {
   Text,
   TopBar,
   useContainerSize,
-  windowClasses,
+  windowClassOf,
   type NavigationDrawerDestination,
 } from '@envsemble/envui';
 import { IconMenu } from '@envsemble/envui/icons/Menu';
@@ -26,17 +26,13 @@ const summaries: Record<string, string> = {
   Sharing: 'Share a project with people outside your team.',
 };
 
-/** A width in rem, such as a window class's, in CSS pixels at the document's font size. */
-const remToPixels = (width: string) =>
-  Number.parseFloat(width) * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-
 export default function MenuOnPhones() {
   const [current, setCurrent] = useState(chapters[0]);
   const [menu, setMenu] = useState(false);
   // The menu button shows only where the Scaffold shows no navigation: in a compact width.
   const frame = useRef<HTMLDivElement>(null);
   const size = useContainerSize(frame);
-  const compact = size !== undefined && size.inlineSize < remToPixels(windowClasses.medium);
+  const compact = size !== undefined && windowClassOf(size.inlineSize) === 'compact';
   const destinations = (inSheet: boolean): NavigationDrawerDestination[] =>
     chapters.map((chapter) => ({
       label: chapter,

@@ -1,6 +1,6 @@
 ---
 title: DescriptionList
-summary: The facts about one thing, as labels and their values, beside each other or stacked by the list's own width.
+summary: The facts about one thing, as labels and their values.
 status: beta
 since: 1.0.0
 category: Data display
@@ -115,7 +115,7 @@ DescriptionList.Root is a `dl`, and each DescriptionList.Item a term and its val
 
 #### Layout and size
 
-`layout` is `auto`, the default, `inline` or `stacked`. Inline puts each label beside its value, in a column as wide as the longest label; stacked puts it above; auto is inline, and stacked where the list's own width is below 24 rem. `size` is `sm`, the default, the smaller body text, for facts beside other content, such as in a sidebar or a card, or `md`, body text, for a page of details.
+`layout` is `auto`, the default, `inline` or `stacked`. Inline puts each label beside its value, in a column as wide as the longest label; stacked puts it above; auto is inline, and stacked where the list's own width is below 18 rem. `size` is `sm`, the default, the smaller body text, for facts beside other content, such as in a sidebar or a card, or `md`, body text, for a page of details.
 
 ```tsx
 <DescriptionList.Root layout="stacked" size="md" aria-label="Contact">
@@ -143,3 +143,4 @@ The parts are the list, `env-description-list`, with `data-layout`, `data-size` 
 ## Changelog
 
 - **1.0.0**: DescriptionList, with `layout`, `size` and `controls`.
+- **1.0.0-prerelease.6**: Stacked, the pairs stand further apart than a label from its value. Auto stacks below 18 rem of the list's width, in place of 24 rem, so a 360 px panel keeps its labels beside their values.

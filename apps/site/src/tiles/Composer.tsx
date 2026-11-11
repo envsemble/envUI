@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { Composer } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useMedia } from '../motion/Autoplay';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { narrowGallery } from './Tiles';
 
 const input = '.env-composer-input';
 
 /**
- * Clicked into, a message typed and sent: the field clears and, while the reply comes, the send
- * button is a stop button; then it is a send button again.
+ * Clicks into it, types a message and sends it: the field clears and, while the reply comes, the
+ * send button is a stop button; then it is a send button again.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -28,6 +31,7 @@ const script: PointerStep[] = [
 
 /** A composer with its placeholder and its send button. */
 export default function ComposerTile() {
+  const narrow = useMedia(narrowGallery);
   const [replying, setReplying] = useState(false);
   const timer = useRef<number>(undefined);
   useEffect(() => () => window.clearTimeout(timer.current), []);
@@ -43,7 +47,7 @@ export default function ComposerTile() {
         // A timer stands in for the reply.
         timer.current = window.setTimeout(() => setReplying(false), 1300);
       }}
-      style={{ inlineSize: '11rem' }}
+      style={{ inlineSize: narrow ? '8.5rem' : '11rem' }}
     />
   );
 }

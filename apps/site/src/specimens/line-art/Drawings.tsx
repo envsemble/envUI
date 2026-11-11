@@ -24,7 +24,9 @@ import { IconDraw } from '@envsemble/envui/icons/Draw';
 import { IconInkEraser } from '@envsemble/envui/icons/InkEraser';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import { IconRepeat } from '@envsemble/envui/icons/Repeat';
-import { SpecimenGrid, SpecimenHeadingLevel } from '../../figures/Example';
+import { SpecimenGrid, SpecimenHeadingLevel } from '../../figures/SpecimenFrame';
+import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
+import { remeasure } from '../../shared/Remeasure';
 
 /** Each drawing's name, as people say it. */
 const names: Record<LineArtDrawing, string> = {
@@ -117,10 +119,10 @@ const area: CSSProperties = { position: 'relative', overflow: 'hidden', aspectRa
 const room: CSSProperties = { position: 'absolute', inset: '6%', containerType: 'size' };
 
 /** A drawing's card: its fill, a step lighter than the stage in every theme. */
-const card = {
+const card: CSSProperties = {
   '--env-surface-container-default':
     'light-dark(var(--env-color-bg-muted), var(--env-color-bg-default))',
-} as CSSProperties;
+};
 
 /** A card's place in the gallery: its card, its name and its line, each a row of the gallery's. */
 const row: CSSProperties = {
@@ -158,7 +160,7 @@ function DrawingCard({ drawing }: { drawing: LineArtDrawing }) {
   const play = (motion: LineArtMotion) => {
     if (motion === 'loop' && looping) {
       // Where reduced motion is preferred, a loop is already still and whole.
-      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const reduced = prefersReducedMotion();
       setPlayed(({ turn }) => (reduced ? { turn: turn + 1 } : { motion, turn, stopping: true }));
     } else setPlayed(({ turn }) => ({ motion, turn: turn + 1 }));
   };
@@ -176,8 +178,8 @@ function DrawingCard({ drawing }: { drawing: LineArtDrawing }) {
     // Three rows of the gallery's, so the names and their lines line up across a row.
     <li style={row}>
       {/* A lighter card on the figure's stage: a card's white in the light themes, where the
-          stage is lighter than the page and the panes, and a pane's in the dark ones, where the
-          page is barely lighter than the stage. The drawing is on top, the buttons in a row below it. */}
+          stage is barely below the panes, and a pane's in the dark ones, where the page is barely
+          lighter than the stage. The drawing is on top, the buttons in a row below it. */}
       <Surface background="page" padding={3} style={card} render={<Column gap={2} />}>
         <div style={area}>
           <div style={room}>
@@ -243,11 +245,7 @@ function useColumns(list: RefObject<HTMLUListElement | null>) {
       const between = Number.parseFloat(getComputedStyle(ul).columnGap) || 0;
       setColumns(space >= 4 * need + 3 * between ? 4 : space >= 2 * need + between ? 2 : 1);
     };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(ul);
-    observer.observe(toolbar);
-    return () => observer.disconnect();
+    return remeasure(measure, { first: 'now', resize: [ul, toolbar] }).stop;
   }, [list]);
   return columns;
 }

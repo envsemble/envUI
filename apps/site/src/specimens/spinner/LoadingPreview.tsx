@@ -1,6 +1,6 @@
 import LoadingPreview from '../../examples/spinner/LoadingPreview';
-import { useTimeline } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The preview's frame spins while the file renders, two seconds, and its first page takes the
@@ -14,6 +14,7 @@ function Opening() {
 }
 
 /** The overview's preview, loading and then shown, opened again and again. */
+// eslint-disable-next-line no-restricted-syntax -- named after its example, a file's preview loading
 export default function LoadingPreviewMotion() {
   return (
     <MotionStage label="the preview loading and taking the spinner's place">

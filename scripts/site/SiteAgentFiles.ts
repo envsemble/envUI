@@ -6,26 +6,22 @@
 // {{version}}; llms.txt is a signpost, not another index: the Docs and the skill say the rest. The catalogue's Vite config serves both while developing and writes them into
 // dist/site when it builds.
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
+import { libraryVersion, withLibraryVersion } from '../docs/LibraryVersions.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
+export { libraryVersion };
+
+/** Where the site is hosted. */
 export const siteOrigin = 'https://envui.envsemble.com';
-export const skillTemplateFile = fileURLToPath(
-  new URL('../../apps/site/hosting/SKILL.md', import.meta.url),
-);
-const libraryPackageFile = fileURLToPath(
-  new URL('../../packages/ui/package.json', import.meta.url),
-);
-
-/** The version of @envsemble/envui, which the skill installs. */
-export const libraryVersion = () => JSON.parse(readFileSync(libraryPackageFile, 'utf8')).version;
-
+const skillTemplateFile = resolve(repositoryRoot, 'apps/site/hosting/SKILL.md');
 /** The setup skill for a version of envUI. */
 export function renderSkill({
   version = libraryVersion(),
   template,
 }: { version?: string; template?: string } = {}) {
   const source = (template ?? readFileSync(skillTemplateFile, 'utf8')).replace(/\r\n?/g, '\n');
-  return source.replaceAll('{{version}}', version);
+  return withLibraryVersion(source, version);
 }
 
 /**

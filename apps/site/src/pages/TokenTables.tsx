@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
-import { Column, Text } from '@envsemble/envui';
+import { Column, Text, type TableOfContentsItem } from '@envsemble/envui';
 import tokenOutline from 'virtual:envui-token-outline';
-import { PlainCode, SimpleTable, type SimpleRow } from '../template/SimpleTable';
-import { LongPartSkeleton, placeholderText, recordedSize } from '../template/Loading';
+import { PlainCode, SimpleTable, type SimpleRow } from './SimpleTable';
+import { LongPartSkeleton, placeholderText } from '../loading/Skeletons';
+import { recordedSize } from '../loading/RecordedSizes';
 import { themes } from './TokenGroups';
 
 /*
@@ -11,6 +12,16 @@ import { themes } from './TokenGroups';
  * that shows it; until it has, the frame shows the same headings, which the page's contents list
  * from the start, over each table as a skeleton of its rows (virtual:envui-token-outline).
  */
+
+/** The id of a group's heading. */
+const groupHeading = (title: string) => `tokens-${title}`;
+
+/**
+ * The sections of the token reference: a heading for each group, the same while it loads and once
+ * it has (virtual:envui-token-outline holds the groups that have tokens).
+ */
+export const tokenContents = (): TableOfContentsItem[] =>
+  tokenOutline.map(({ title }) => ({ id: groupHeading(title), label: title }));
 
 /** The reference's opening words. */
 export function TokenIntro() {
@@ -72,10 +83,10 @@ export function TokenTable({
     <Column
       render={<section />}
       gap={4}
-      aria-labelledby={`tokens-${title}`}
+      aria-labelledby={groupHeading(title)}
       style={size && { blockSize: `${size[1]}rem` }}
     >
-      <Text render={<h2 />} variant="title" id={`tokens-${title}`}>
+      <Text render={<h2 />} variant="title" className="site-section-title" id={groupHeading(title)}>
         {title}
       </Text>
       {loading ? (

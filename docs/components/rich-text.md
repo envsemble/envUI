@@ -1,7 +1,6 @@
 ---
 title: RichText
-summary: Formatted text people edit as it looks, saved as Markdown with references, and shown again
-  read-only.
+summary: Formatted text people edit as it looks, saved as Markdown.
 status: alpha
 since: 1.0.0
 category: Forms & selection
@@ -90,13 +89,13 @@ The toolbar shows the commands the content needs, in order, or none.
 5. **Task** (`env-rich-text-task`)
 6. **Description** (`env-field-description`, `description`)
 
-Not shown: the suggestions and the status.
-
 ## Behaviour
 
 ### Show saved content
 
-RichText shows saved text again as it was written, also on a server, and opens its references and links through the application.
+RichText shows saved text again as it was written, also on a server, and opens its references and links through the application. A single newline in the Markdown starts a new line, as in the editor.
+
+Task lists keep their checkboxes in full color, read-only, each on the middle of its text's first line.
 
 ```tsx figure=SavedContent
 
@@ -206,7 +205,7 @@ RichText renders the Markdown in its `children`, also on a server. Pass it the e
 
 #### Toolbar and variants
 
-`toolbar` takes the commands to show, in order, or `false` for none; Undo and Redo, and Attach files with `onUpload`, follow them. `variant` is `outline`, the default, or `ghost`.
+`toolbar` takes the commands to show, in order, or `false` for none; Undo and Redo, and Attach files with `onUpload`, follow them. `variant` is `outline`, the default, or `ghost`. The document is at least 10 rem tall; `minRows` makes it as tall as that many lines instead, such as `minRows={2}` for a short note in a card, and it grows with its text either way.
 
 #### References and slash commands
 
@@ -264,11 +263,17 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: `onRequestLink` is `pickLink`: it supplies the link rather than reporting an event.
-- **1.0.0-prerelease.5**: `ref` reaches the root element, and `editorRef` gives the Tiptap editor.
-- **1.0.0-prerelease.5**: Suggestions are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency, with the rows of Select's list.
-- **1.0.0-prerelease.3**: A task's row in RichText is as tall as in the editor. The suggestions keep the active option in view as the arrow keys move past the list's edge, and close as focus leaves the editor rather than on any press on the page.
-- **1.0.0-prerelease.2**: The `underline` variant is gone, for the default outline.
 - **1.0.0**: A reference source's `char` is `trigger` and its `items` lookup is `search`, and a reference's `char` is `trigger`; The Markdown saved before keeps working.
 - **1.0.0**: RichTextEditor takes the field vocabulary: `description` instead of `hint`, and the variants `outline`, `underline` and `ghost` instead of `outlined`, `plain` and `quiet`, which drew as outlined. The document sits in the field's box, with its border, its states and a disabled field whose label stays readable, and task items show envUI's checkboxes beside their text. The toolbar is the Toolbar MarkdownEditor shares, with tooltips, the link dialog is the shared one, and every word comes from EnvUIProvider's `messages`. Suggestions are rows of a listbox in the editor, above a Dialog it sits in, and close as focus leaves; a controlled editor raises no `flushSync` warning. The `./rich-text` entry is alpha.
 - **1.0.0**: Tiptap, marked, Shiki and the Pierre themes are no longer peer dependencies; applications that import the rich-text entry install them, as [Setup](../setup.md#public-entry-points) lists.
+- **1.0.0-prerelease.6**: RichTextEditor takes `minRows`, the lines of text its document is tall enough for, for a short editor rather than one at least 10 rem tall.
+- **1.0.0-prerelease.6**: Bold text in a document is semibold rather than medium, as in Markdown, so it stands out from the body text around it.
+- **1.0.0-prerelease.6**: Where the toolbar is wider than the editor, its groups wrap onto more rows rather than scrolling sideways, so Undo and Redo stay in view. The editor's label takes the size, weight and muted color of a field's floated label.
+- **1.0.0-prerelease.6**: In RichText and a read-only editor, a task's checkbox is read-only rather than disabled: in full color, with `aria-readonly`, out of the tab order and not answering the pointer. A disabled editor's tasks stay disabled. The checkbox sits on the middle of its text's first line rather than a little above it.
+- **1.0.0-prerelease.6**: RichText keeps a line break within a paragraph, a single newline in the Markdown, and runs of spaces, as the editor shows them, rather than joining the lines.
+- **1.0.0-prerelease.6**: A disabled editor no longer fades as a whole: its document takes `--env-color-fg-disabled` and its outline the muted border, as a disabled TextField does.
+- **1.0.0-prerelease.5**: `onRequestLink` is `pickLink`: it supplies the link rather than reporting an event.
+- **1.0.0-prerelease.5**: `ref` reaches the root element, and `editorRef` gives the Tiptap editor.
+- **1.0.0-prerelease.5**: Suggestions are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency, with the rows of Select's list.
+- **1.0.0-prerelease.3**: A task's row in RichText is as tall as in the editor. The suggestions keep the active option in view as the arrow keys move past the list's edge, and close as focus leaves the editor rather than on any press on the page.
+- **1.0.0-prerelease.2**: The `underline` variant is gone, for the default outline.

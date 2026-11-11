@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Column, Composer, Message, MessageList } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { Markdown } from '@envsemble/envui/markdown';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 interface Entry {
   id: number;
@@ -11,16 +13,20 @@ interface Entry {
 
 const history: Entry[] = [
   { id: 1, from: 'self', text: 'Who owns the press kit?' },
-  { id: 2, from: 'other', text: 'Priya Shah. She expects the photos today.' },
+  { id: 2, from: 'other', text: 'Priya Shah, for Friday.' },
 ];
 
-const reply = 'Sam Lee. He is checking the last prices.';
+// An answer to the question it follows, one line long, as the first answer is.
+const question = 'Is the copy final?';
+const reply = 'Yes, Sam signed it off.';
 
 const input = '.env-composer-input';
 
 /*
- * A question typed and sent: the log moves up to it, the reply grows a few words at a time while
- * the send button is Stop, and once it is complete, the log is scrolled back up to where it began.
+ * Types a question and sends it: it joins the thread under the first exchange, and the assistant
+ * works a moment. The reply grows a few words at a time while the send button is Stop, and the log
+ * follows the thread to its end as the thread outgrows it. After a while to read it, the thread is
+ * back to the first exchange.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -28,58 +34,59 @@ const script: PointerStep[] = [
   { wait: 250 },
   { click: true },
   { wait: 200 },
-  { type: 'And the prices?', into: input, every: 90 },
+  { type: question, into: input, every: 70 },
   { wait: 300 },
   { to: '.env-composer-action', duration: 450 },
   { wait: 200 },
   { click: true },
-  { wait: 2600 },
+  { wait: 3000 },
   { to: '.env-message-list', x: 0.5, y: 0.4, duration: 500 },
-  { wait: 200 },
-  { cue: 'back' },
-  { wait: 1300 },
+  { wait: 1200 },
   { cue: 'reset' },
   { leave: true },
   { wait: 500 },
 ];
 
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 19, height: 14.25 };
+
 /** An exchange with an assistant above the composer, its reply streaming in as it is written. */
 export default function ConversationTile() {
   const [entries, setEntries] = useState(history);
   const [replying, setReplying] = useState(false);
-  // The log is as tall as the exchange it starts with, and scrolls to what comes after.
-  const [height, setHeight] = useState<number>();
+  // Before its first words arrive, the log's busy row stands where the reply will show.
+  const [thinking, setThinking] = useState(false);
   const log = useRef<HTMLDivElement>(null);
   const timer = useRef<number>(undefined);
-  // Where the log is going: its end, following the reply, or its start, read again.
-  const goal = useRef<'end' | 'start'>('end');
+  const pause = useRef<number>(undefined);
   const frame = useRef(0);
 
-  // Glides the log to where it is going, a little each frame, so it follows the reply smoothly.
+  // Scrolls the log a little each frame toward its end, so it follows the thread as it grows.
   const follow = useCallback(() => {
     if (frame.current) return;
     const step = () => {
       const node = log.current;
       if (!node) return;
-      const target = goal.current === 'end' ? node.scrollHeight - node.clientHeight : 0;
+      // At the end, as a log keeps the newest message in view while people are at its end.
+      const target = node.scrollHeight - node.clientHeight;
       const left = target - node.scrollTop;
       if (Math.abs(left) < 1) {
         node.scrollTop = target;
         frame.current = 0;
         return;
       }
-      const move = left * 0.12;
+      const move = left * 0.25;
       node.scrollTop += Math.abs(move) < 1 ? Math.sign(left) : move;
       frame.current = requestAnimationFrame(step);
     };
     frame.current = requestAnimationFrame(step);
   }, []);
 
-  useLayoutEffect(() => setHeight(log.current?.offsetHeight), []);
-  useLayoutEffect(follow, [entries, follow]);
+  useLayoutEffect(follow, [entries, thinking, follow]);
   useEffect(
     () => () => {
       window.clearInterval(timer.current);
+      window.clearTimeout(pause.current);
       cancelAnimationFrame(frame.current);
     },
     [],
@@ -87,45 +94,42 @@ export default function ConversationTile() {
 
   usePointer(script, {
     onCue: (cue) => {
-      if (cue === 'back') goal.current = 'start';
-      if (cue === 'reset') {
-        // Scrolled back to the start, what came after is out of view, so it goes unseen.
-        goal.current = 'end';
-        setEntries(history);
-      }
-      follow();
+      if (cue === 'reset') setEntries(history);
     },
   });
 
   function send(text: string) {
     const words = reply.split(' ');
     let shown = 1;
-    goal.current = 'end';
-    setEntries([
-      ...history,
-      { id: 3, from: 'self', text },
-      { id: 4, from: 'other', text: words[0] },
-    ]);
+    setEntries([...history, { id: 3, from: 'self', text }]);
     setReplying(true);
-    // A timer stands in for a reply that streams in a word at a time.
-    timer.current = window.setInterval(() => {
-      shown += 1;
-      const text = words.slice(0, shown).join(' ');
-      setEntries((list) => list.map((entry) => (entry.id === 4 ? { ...entry, text } : entry)));
-      if (shown >= words.length) {
-        window.clearInterval(timer.current);
-        setReplying(false);
-      }
-    }, 150);
+    setThinking(true);
+    // Timers stand in for a reply that comes after a moment and streams in a word at a time.
+    pause.current = window.setTimeout(() => {
+      setThinking(false);
+      setEntries((list) => [...list, { id: 4, from: 'other', text: words[0] }]);
+      timer.current = window.setInterval(() => {
+        shown += 1;
+        const text = words.slice(0, shown).join(' ');
+        setEntries((list) => list.map((entry) => (entry.id === 4 ? { ...entry, text } : entry)));
+        if (shown >= words.length) {
+          window.clearInterval(timer.current);
+          setReplying(false);
+        }
+      }, 150);
+    }, 600);
   }
 
   return (
-    <Column gap={4} style={{ inlineSize: '14rem' }}>
+    <Column gap={4} style={{ inlineSize: '17rem' }}>
       <MessageList
         ref={log}
         aria-label="Conversation with the assistant"
-        busy={replying}
-        style={{ blockSize: height, overflowY: 'hidden' }}
+        busy={thinking}
+        busyAuthor="Assistant"
+        // A set height with room under the first exchange for the next one, which the thread grows
+        // into, scrolling once it grows past it.
+        style={{ blockSize: '9.375rem', overflowY: 'hidden' }}
       >
         {entries.map((entry) =>
           entry.from === 'self' ? (
@@ -146,6 +150,8 @@ export default function ConversationTile() {
         running={replying}
         onStop={() => {
           window.clearInterval(timer.current);
+          window.clearTimeout(pause.current);
+          setThinking(false);
           setReplying(false);
         }}
       />

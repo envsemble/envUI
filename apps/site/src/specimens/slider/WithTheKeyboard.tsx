@@ -1,7 +1,8 @@
 import { Slider } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const thumb = '.env-slider-thumb input';
 
@@ -37,10 +38,10 @@ function Stepped() {
 /** Slider with the keyboard: focus shows its ring and handle, and the arrow keys step the value. */
 export default function WithTheKeyboard() {
   return (
-    <Example size="field">
+    <SpecimenFrame size="field">
       <MotionStage label="the slider stepped with the arrow keys">
         <Stepped />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { DropZone } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const zone = '.env-drop-zone-target';
@@ -93,10 +94,10 @@ function Dropping() {
 /** A zone that turns away a file it can't take, then is pending while an image uploads. */
 export default function States() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="the zone turning a file away, then pending">
         <Dropping />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

@@ -12,14 +12,14 @@
      default length for its text style, on as many lines as the style usually takes, in the parts that
      turn it on in their own style sheets. Bars and shapes take envUI's corners: a bar a small radius,
      and a shape its component's own, such as a chip's, an avatar's round one or a card's surface
-     radius. Bars and shapes pulse, between a strong tone and a faint one, and the skeleton's own
-     surfaces with them, fainter, in step across the page. A component whose generic look isn't
+     radius. Bars and shapes pulse, between a strong tone and a faint one, in step across the page,
+     and the skeleton's own surfaces take a faint tint that barely moves with them. A component whose generic look isn't
      right, such as a chart's, gives its own in its style sheet.
 
-     These rules win their ties with the components' rules: last in styles.css, they did by order. A
-     bundler may put this style sheet before a component's, which its module imports later, so each
-     rule takes one type selector more, :not(env-none), which every element matches. It wins those
-     ties whatever the order, and still loses to a rule that outweighs it by more, as before. */
+     These rules win their ties with the components' rules whatever the order: last in styles.css
+     they would by order, but a bundler may put this style sheet before a component's, which its
+     module imports later, so each rule takes one type selector more, :not(env-none), which every
+     element matches. A rule that outweighs it by more still wins. */
 
   /* Where the pulse is, from the strong tone (0) to the faint one (1). The root animates it, and
      everything inside inherits the paint it sets. Registered, so it interpolates; its keyframes are
@@ -37,18 +37,12 @@
     /* The two tones of a bar: the fill a little toward the text color, darker in light and lighter
        in dark, and the fill faded toward the surface. Dark goes deeper, 14 % to light's 11 %, as a
        lighter step shows less there; light-dark() follows the nearest theme's color scheme. The
-       surfaces' tint carries a quarter of the change, so the bars take three quarters of the
-       depth: bar and surface together change about as much as a bar alone would, and the bars keep
-       their contrast against their surface. */
+       bars carry the pulse: the surfaces around them stay nearly still (below). */
     --env-skeleton-strong: light-dark(
-      color-mix(in oklab, var(--env-skeleton-fill), var(--env-color-fg-default) calc(11% * 0.75)),
-      color-mix(in oklab, var(--env-skeleton-fill), var(--env-color-fg-default) calc(14% * 0.75))
+      color-mix(in oklab, var(--env-skeleton-fill), var(--env-color-fg-default) 11%),
+      color-mix(in oklab, var(--env-skeleton-fill), var(--env-color-fg-default) 14%)
     );
-    --env-skeleton-faint: color-mix(
-      in srgb,
-      var(--env-skeleton-fill),
-      transparent calc(45% * 0.75)
-    );
+    --env-skeleton-faint: color-mix(in srgb, var(--env-skeleton-fill), transparent 45%);
     /* The tone of every bar and shape at this point of the pulse. */
     --env-skeleton-tone: color-mix(
       in oklab,
@@ -67,17 +61,19 @@
        its mask tile. */
     --env-skeleton-rect: url("data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Crect width='100%25' height='100%25' rx='4'/%3E%3C/svg%3E");
     /* A tint of the text color over the skeleton's own surfaces, such as a card or a row, strongest
-       with the bars' strong tone, so the whole skeleton pulses as one: 7 % in light, 9 % in dark. */
+       with the bars' strong tone: 1.5 % in light, 2 % in dark. It stays a few percent from the
+       surface's own fill, short of the step to the page around it, so a card keeps its edges and the
+       layout stands still while its bars pulse. */
     --env-skeleton-overlay: linear-gradient(
       light-dark(
           color-mix(
             in srgb,
-            var(--env-color-fg-default) calc((1 - var(--env-skeleton-pulse)) * 7%),
+            var(--env-color-fg-default) calc((1 - var(--env-skeleton-pulse)) * 1.5%),
             transparent
           ),
           color-mix(
             in srgb,
-            var(--env-color-fg-default) calc((1 - var(--env-skeleton-pulse)) * 9%),
+            var(--env-color-fg-default) calc((1 - var(--env-skeleton-pulse)) * 2%),
             transparent
           )
         )
@@ -97,7 +93,8 @@
     text-decoration-thickness: 0.8em;
     text-decoration-skip-ink: none;
     /* The pulse (Motion, below). */
-    animation: env-skeleton-pulse 1.8s ease-in-out infinite;
+    animation: env-skeleton-pulse calc(var(--env-motion-duration-slow) * 7.5) var(--env-motion-ease)
+      infinite;
   }
   /* Text that is there, once the script has measured it (skeletonText.ts): no line through it, but a
      rounded bar over each of its line boxes, all drawn by one layer over the content in the skeleton's
@@ -230,9 +227,10 @@
     mask-composite: intersect, add, add;
   }
 
-  /* Motion: the tone breathes from strong to faint and back, 1.8 s a breath, every skeleton's in
-     step, as the component aligns their start. With a reduced-motion preference it breathes half as
-     deep and slower: only the tone changes, nothing moves. */
+  /* Motion: the tone breathes from strong to faint and back, 7.5 times the slow duration a breath
+     (1.8 s), every skeleton's in step, as the component aligns their start. With a reduced-motion
+     preference it breathes half as deep and slower: only the tone changes, nothing moves. Motion
+     tokens of 0s stop it. */
   @keyframes env-skeleton-pulse {
     0%,
     100% {
@@ -253,7 +251,8 @@
   }
   @media (prefers-reduced-motion: reduce) {
     [data-env-skeleton]:not(env-none) {
-      animation: env-skeleton-pulse-reduced 3.2s ease-in-out infinite;
+      animation: env-skeleton-pulse-reduced calc(var(--env-motion-duration-slow) * 13.5)
+        var(--env-motion-ease) infinite;
     }
   }
   /* A popup, dialog or sheet that is a skeleton stops pulsing as it closes: it is removed once its

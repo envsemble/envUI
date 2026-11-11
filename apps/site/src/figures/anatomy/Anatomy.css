@@ -1,0 +1,308 @@
+/* An anatomy figure: the component in the reader's theme on its recessed canvas, with numbered
+   callouts on its parts, measured from the live parts, and the legend of part names below. */
+.site-anatomy,
+.catalogue-variants {
+  display: grid;
+  gap: var(--env-space-6);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.site-anatomy-stage {
+  position: relative;
+  padding: 3.5rem 3.75rem;
+}
+
+/* A variants figure names its items in plain text beside them, with no callouts around them to make
+   room for, so its stage keeps only an example's room, which leaves what each variant is for room
+   beside its item. */
+.catalogue-variants .site-anatomy-stage {
+  padding: var(--env-space-6);
+}
+
+.site-anatomy-subject {
+  display: grid;
+  justify-items: center;
+  inline-size: 100%;
+  min-inline-size: 0;
+  /* Parts raised in their component, such as a dock's panels, stay under the callouts. */
+  isolation: isolate;
+}
+
+/* A subject that needs a width to show its parts (`width` on its fence): it fills the stage, or,
+   where the stage is narrower, is laid out at that width and drawn smaller from its start corner
+   into the scaled place it takes (FitFrame, fit/standalone/WidthFit.tsx). */
+.catalogue-anatomy-fit {
+  inline-size: 100%;
+}
+
+.catalogue-anatomy-fit-box {
+  display: grid;
+}
+
+.catalogue-anatomy-fit[data-scaled] {
+  position: relative;
+}
+
+.catalogue-anatomy-fit[data-scaled] > .catalogue-anatomy-fit-box {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  transform-origin: top left;
+}
+
+.catalogue-anatomy-fit[data-scaled]:dir(rtl) > .catalogue-anatomy-fit-box {
+  transform-origin: top right;
+}
+
+.site-anatomy-lines {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.site-anatomy-lines line {
+  stroke: var(--env-color-fg-muted);
+  stroke-width: 1px;
+}
+
+.site-anatomy-lines circle {
+  fill: var(--catalogue-card-fill, var(--env-color-bg-page));
+  stroke: var(--env-color-fg-muted);
+  stroke-width: 1px;
+}
+
+/* A part's box: a faint hairline with softened corners, over a line in the canvas's color, so it
+   still shows on a part of a strong fill, such as a notification's, and is unchanged on the canvas.
+   It marks where the part is without reading as an outline of the component's own. */
+.site-anatomy-box,
+.site-anatomy-box-rim {
+  fill: none;
+  stroke-width: 1px;
+}
+
+.site-anatomy-box {
+  stroke: color-mix(in oklch, var(--env-color-fg-muted) 60%, transparent);
+}
+
+.site-anatomy-box-rim {
+  stroke: var(--catalogue-card-fill, var(--env-color-bg-recessed));
+  stroke-width: 3px;
+}
+
+/* A callout's tag and the legend's number: quiet, the text's color on a faint neutral tint of it,
+   so the eye finds the numbers and the component, with its own colors, stays the loudest thing in
+   the figure. Its edge, transparent, shows where forced colors drop the tint. */
+.site-anatomy-badge,
+.site-anatomy-number {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--env-radius-lg);
+  /* The tint over the canvas's own color, opaque, so a leader line ends at its edge rather than
+     showing through the digit. */
+  --site-anatomy-tint: color-mix(in oklab, var(--env-color-fg-default) 8%, transparent);
+  background:
+    linear-gradient(var(--site-anatomy-tint), var(--site-anatomy-tint)),
+    var(--catalogue-card-fill, var(--env-color-bg-page));
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body-sm);
+  font-weight: var(--env-font-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.site-anatomy-badge {
+  position: absolute;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+
+/* A variants figure's names: plain, quiet text by each item, on the start side of items one under
+   another, or under items side by side (PlaceCallouts.ts), with no line or outline, so the
+   variants themselves are what stands out. */
+.catalogue-variant-label {
+  position: absolute;
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-sm);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.catalogue-variant-label[data-side='left'] {
+  translate: -100% -50%;
+}
+
+.catalogue-variant-label[data-side='right'] {
+  translate: 0 -50%;
+}
+
+.catalogue-variant-label[data-side='bottom'] {
+  translate: -50% 0;
+}
+
+/* What a variant is for, beside its item on the other side from its name, where every item's fits
+   (PlaceCallouts.ts): its sentence, and under it any detail the option table adds, such as its
+   tones. */
+.catalogue-variant-use {
+  position: absolute;
+  box-sizing: content-box;
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-sm);
+  text-align: start;
+  text-wrap: pretty;
+  pointer-events: none;
+}
+
+.catalogue-variant-use > span {
+  display: block;
+}
+
+.catalogue-variant-use[data-side='right'] {
+  translate: 0 -50%;
+}
+
+.catalogue-variant-use[data-side='left'] {
+  translate: -100% -50%;
+}
+
+/* Where it doesn't fit beside, as in a narrow stage, it sits under its item, and the next item
+   stands apart by the room it takes (PlaceCallouts.ts). */
+.catalogue-variant-use[data-side='bottom'] {
+  translate: 0 0;
+}
+
+.catalogue-variant-use[data-side='bottom']:dir(rtl) {
+  translate: -100% 0;
+}
+
+/* Its code switch at the end of the row under the legend, as under every figure (Figures.css). */
+:is(.site-anatomy, .catalogue-variants) > .site-live-example-code:not([open]) {
+  justify-self: end;
+}
+:is(.site-anatomy, .catalogue-variants) > .site-live-example-code[open] > summary {
+  margin-inline-start: auto;
+}
+.site-anatomy-caption {
+  display: grid;
+  gap: var(--env-space-6);
+}
+
+/* A caption with nothing to show, such as a variants figure's names for assistive technology
+   alone, takes no row, so the figure's code follows its stage as closely as another figure's. */
+.site-anatomy-caption:not(:has(> :not(.site-visually-hidden))) {
+  display: contents;
+}
+
+.site-anatomy-caption:not(:has(> :not(.site-visually-hidden))) + .site-live-example-code {
+  margin-block-start: calc(var(--env-space-2) - var(--env-space-6));
+}
+
+.site-anatomy-legend {
+  display: grid;
+  --site-anatomy-gap: var(--env-space-6);
+  /* As many columns as make even rows, `--site-anatomy-columns` (AnatomyFigure.tsx), such as two
+     by two for four parts, or fewer where they don't fit, as most names are a word or two, close
+     enough to read as one list. */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(
+      min(
+        100%,
+        max(
+          12rem,
+          (100% - (var(--site-anatomy-columns, 3) - 1) * var(--site-anatomy-gap)) /
+            var(--site-anatomy-columns, 3)
+        )
+      ),
+      1fr
+    )
+  );
+  gap: var(--env-space-3) var(--site-anatomy-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-anatomy-legend > li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--env-space-3);
+}
+
+.site-anatomy-legend p {
+  margin: 0;
+}
+
+/* An option table in the catalogue, such as a component's variants or sizes: a legend laid out
+   as an anatomy figure's is, each option's name followed by what it is for (OptionLegend.tsx). The
+   name is plain text, as a variants figure's callouts already tag each variant. The names of a
+   column share its widest name's width, so what each option is for starts on one line down the
+   column; two columns where they fit. */
+.catalogue-option-legend {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  /* Room between the entries, so each tag and its explanation read as one item. */
+  gap: var(--env-space-5) var(--env-space-8);
+  align-items: start;
+  margin: 0;
+}
+
+.catalogue-option {
+  display: grid;
+  grid-column: span 2;
+  grid-template-columns: subgrid;
+  column-gap: var(--env-space-4);
+  align-items: start;
+}
+
+.catalogue-option > dt {
+  display: grid;
+  justify-items: start;
+  font-weight: var(--env-font-weight-medium);
+}
+
+.catalogue-option > dd {
+  display: grid;
+  gap: var(--env-space-1);
+  margin: 0;
+}
+
+.catalogue-option > dd p {
+  margin: 0;
+}
+
+.catalogue-option-detail,
+.catalogue-option-detail p {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-sm);
+}
+
+@container (width >= 48rem) {
+  .catalogue-option-legend:has(> :nth-child(2)) {
+    grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr);
+  }
+}
+
+@container (width < 30rem) {
+  .site-anatomy-stage {
+    padding: 3.5rem 2.75rem;
+  }
+  /* A variants figure names its items beside them, with no callouts above or below to make room
+     for, so a phone's stage keeps only an example's room around them. */
+  .catalogue-variants .site-anatomy-stage {
+    padding-block: var(--env-space-5);
+  }
+}
+
+/* An anatomy shows every part at rest: beside chips, a combobox's clear button, which a fine pointer
+   shows only while the field is under it or has focus, shows here too, so its callout points at it. */
+.site-anatomy-subject .env-combobox-clear {
+  opacity: 1;
+}

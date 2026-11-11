@@ -12,7 +12,7 @@ export type CodeContrast = 'standard' | 'high';
 export const codeContrastTargets: Record<CodeContrast, number> = { standard: 4.55, high: 7.05 };
 
 /** A fill: a color at an opacity, laid over whatever surface the code sits on. */
-export interface CodeLayer {
+interface CodeLayer {
   color: string;
   alpha: number;
 }
@@ -46,13 +46,13 @@ const dark = '#e8eaee';
  * The colors of code around its tokens, for Shiki's code themes: github-light-default and
  * github-dark-dimmed, and github-light-high-contrast and github-dark-high-contrast under high
  * contrast. They are fixed here, so that inline code and the frames of blocks and diffs need no
- * theme loaded; tests/CodeHighlighting.test.mjs checks them against the installed themes and the
+ * theme loaded; tests/library/CodeHighlighting.test.mjs checks them against the installed themes and the
  * color tokens.
  */
 const colors: Record<ColorScheme, Record<CodeContrast, CodeColors>> = {
   light: {
     standard: {
-      surfaces: ['#eaeaec', '#f4f4f6', '#f5f5f7', '#ffffff'],
+      surfaces: ['#eaeaec', '#f4f4f6', '#ffffff'],
       block: { color: light, alpha: 0.06 },
       inline: { color: light, alpha: 0.1 },
       foreground: '#1f2328',
@@ -66,7 +66,7 @@ const colors: Record<ColorScheme, Record<CodeContrast, CodeColors>> = {
   },
   dark: {
     standard: {
-      surfaces: ['#1e1f21', '#28292b', '#343638'],
+      surfaces: ['#1e1f21', '#28292b', '#303234', '#343638'],
       block: { color: dark, alpha: 0.05 },
       inline: { color: dark, alpha: 0.125 },
       foreground: '#b2c0cd',
@@ -127,7 +127,9 @@ export const codeThemeName = (scheme: ColorScheme, contrast: CodeContrast) =>
 /**
  * The code theme's colors for the app theme, standard and high-contrast, as CSS custom properties:
  * the style sheet takes the high-contrast ones where the nearest Theme's contrast is high. Inline
- * code takes the neutral muted fill from the color tokens.
+ * code takes the neutral muted fill from the color tokens. Code.css sets the same on every theme
+ * boundary, so code takes its boundary's; a diff still showing the theme before a switch takes
+ * that theme's from here.
  */
 export function codeThemeStyle(theme: ColorScheme): CSSProperties {
   const [standard, high] = [colors[theme].standard, colors[theme].high];
@@ -137,5 +139,5 @@ export function codeThemeStyle(theme: ColorScheme): CSSProperties {
     '--env-code-foreground': standard.foreground,
     '--env-code-foreground-high': high.foreground,
     colorScheme: theme,
-  } as CSSProperties;
+  };
 }

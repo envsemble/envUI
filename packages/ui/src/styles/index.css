@@ -1,7 +1,11 @@
 /* envUI's whole style sheet, which ships as styles.css for applications without a bundler: the base,
    then every component's style sheet, each of which puts its rules in env.components itself. A
    bundler that loads the components' own style sheets, as their modules import them, keeps this
-   order between any two of them that one depends on. */
+   order between any two of them that one depends on.
+
+   Every sheet stays in this one flat folder, a component's named after it (styles/Menu.css for
+   Menu), rather than beside its module: package.json's "#styles/*" import, BuildLibrary.ts's
+   rewrite of a module's sheet imports to that import and this list rely on it. */
 @import './Base.css';
 @import './Popup.css';
 @import './ListRow.css';
@@ -22,6 +26,7 @@
 @import './Accordion.css';
 @import './Badge.css';
 @import './Table.css';
+@import './ColumnResizeHandle.css';
 @import './Breadcrumbs.css';
 @import './TableOfContents.css';
 @import './Pagination.css';
@@ -47,6 +52,7 @@
 @import './Radio.css';
 @import './Field.css';
 @import './TextField.css';
+@import './TextareaResizeEdge.css';
 @import './ColorPicker.css';
 @import './Editor.css';
 @import './MarkdownEditor.css';

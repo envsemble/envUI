@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { ThemeContrast } from '@envsemble/envui';
-import type { LegendEntry } from './Topic';
+import type { LegendEntry } from './FoundationFrame';
+import { remeasure } from '../../shared/Remeasure';
 
 // What the figures of the Colors & themes foundation (Colors.tsx) share.
 
@@ -20,14 +21,11 @@ export function useNarrow(width: number) {
   useLayoutEffect(() => {
     const element = ref.current;
     if (!element) return;
-    const measure = (inline: number) => {
+    const measure = () => {
       const rem = parseFloat(getComputedStyle(element).fontSize) || 16;
-      setNarrow(inline < width * rem);
+      setNarrow(element.getBoundingClientRect().width < width * rem);
     };
-    measure(element.getBoundingClientRect().width);
-    const observer = new ResizeObserver(([entry]) => measure(entry?.contentRect.width ?? 0));
-    observer.observe(element);
-    return () => observer.disconnect();
+    return remeasure(measure, { first: 'now', resize: [element] }).stop;
   }, [width]);
   return [ref, narrow] as const;
 }

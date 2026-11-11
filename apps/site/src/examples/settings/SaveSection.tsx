@@ -119,7 +119,6 @@ export default function SaveSection() {
         <Select
           label="Time zone"
           // On a pane, the outline look keeps the trigger apart from the fill.
-          variant="outline"
           name="timeZone"
           items={timeZones}
           value={draft.timeZone}

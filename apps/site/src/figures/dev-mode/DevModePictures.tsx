@@ -1,7 +1,6 @@
-import type { CSSProperties } from 'react';
 import { Column, IconButton, Surface, Text, useTheme } from '@envsemble/envui';
 import { IconViewInAr } from '@envsemble/envui/icons/ViewInAr';
-import { Figure } from '../foundations/Topic';
+import { FoundationFrame } from '../foundations/FoundationFrame';
 // Pictures of the real dev mode at work on the demo application, captured by
 // scripts/docs/CaptureDevModeImage.ts (npm run docs:dev-mode-image) in each theme.
 import wholeLight from './dev-mode-whole-light.webp';
@@ -18,8 +17,8 @@ import frameLight from './dev-mode-frame-light.webp';
 import frameDark from './dev-mode-frame-dark.webp';
 
 /**
- * The pictures the dev mode guide places beside its words, each a demo of its own
- * (`<!-- demo: Name -->` in docs/dev-mode.md). None of them loads `@envsemble/envui/dev`.
+ * The pictures the dev mode guide places beside its words, each a figure of its own
+ * (DevModeFigures.ts). None of them loads `@envsemble/envui/dev`.
  */
 
 /** A picture of dev mode in each theme, with its size in CSS pixels: the files hold twice as many. */
@@ -100,18 +99,18 @@ const shots = {
 function ShotFigure({ shot }: { shot: Shot }) {
   const { theme } = useTheme();
   return (
-    <Figure label={shot.label} caption={shot.caption}>
+    <FoundationFrame label={shot.label} caption={shot.caption}>
       <img
         className="docs-dev-mode-shot"
         src={theme === 'dark' ? shot.dark : shot.light}
         // The file holds twice the CSS size: the picture shows at its own size, or narrower.
-        style={{ '--docs-shot-width': `${shot.width / 16}rem` } as CSSProperties}
+        style={{ '--docs-shot-width': `${shot.width / 16}rem` }}
         alt={shot.alt}
         width={shot.width}
         height={shot.height}
         loading="lazy"
       />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
@@ -128,7 +127,7 @@ export const DevModeFramePicture = () => <ShotFigure shot={shots.frame} />;
  */
 export function DevModeButtonPicture() {
   return (
-    <Figure
+    <FoundationFrame
       label="The dev mode button in the corner of a page"
       caption="The Dev mode button, in the bottom corner of a page being built: it opens dev mode in a new tab."
     >
@@ -153,6 +152,6 @@ export function DevModeButtonPicture() {
           className="docs-dev-mode-button"
         />
       </Surface>
-    </Figure>
+    </FoundationFrame>
   );
 }

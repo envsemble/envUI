@@ -1,9 +1,10 @@
 import FormatsTogether from '../../examples/color-picker/FormatsTogether';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const area = '.env-color-picker-area';
-const thumb = `${area} > .env-color-picker-thumb`;
+const thumb = `${area} .env-color-picker-thumb`;
 
 /*
  * The pointer takes the area's thumb and drags it to a pale violet and on to a deep one: the hex,

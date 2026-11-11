@@ -1,10 +1,11 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, Checkbox, Column, IconButton, Kbd, Row, TextField } from '@envsemble/envui';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import type { FoundationFigure } from './FoundationFigures';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import type { FoundationFigureEntry } from './FoundationFigures';
 import { CornerLabel } from './Steps';
-import { Figure } from './Topic';
+import { FoundationFrame } from './FoundationFrame';
 
 /*
  * The figures of the Accessibility foundation. Its words are in docs/foundations/accessibility.md,
@@ -13,7 +14,7 @@ import { Figure } from './Topic';
 
 /**
  * The marks the pointer no one sees gives what holds focus, which the site's :focus-visible and
- * :focus-within rules follow (VirtualPointer.ts): an animated figure is inert, so it can't hold
+ * :focus-within rules follow (KeyboardControl.ts): an animated figure is inert, so it can't hold
  * real focus.
  */
 const focusMark = 'data-catalogue-focus';
@@ -67,6 +68,7 @@ function KeyboardSteps() {
         setAt(-1);
         return;
       }
+      // Its script cues only the keys it presses, and that it is done (keyboardScript).
       const press = cue as Press;
       setKey((last) => ({ press, count: (last?.count ?? 0) + 1 }));
       if (press === 'space') setShared((checked) => !checked);
@@ -117,17 +119,17 @@ function KeyboardSteps() {
 /** A small form the keyboard moves through on its own: the focus ring shows where it is. */
 function KeyboardFigure({ caption }: { caption?: string }) {
   return (
-    <Figure
+    <FoundationFrame
       label="Move through a form with the keyboard"
       motion="the keyboard moving through the form"
       caption={caption}
     >
       <KeyboardSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }
 
 /** The figures docs/foundations/accessibility.md places, by name. */
-export const accessibilityFigures: Record<string, FoundationFigure> = {
+export const accessibilityFigures: Record<string, FoundationFigureEntry> = {
   Keyboard: { render: KeyboardFigure },
 };

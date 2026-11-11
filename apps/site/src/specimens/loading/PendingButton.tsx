@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import PendingButton from '../../examples/loading/PendingButton';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const save = 'button[type="submit"]';
@@ -17,9 +18,12 @@ const script: PointerStep[] = [
   { to: save, x: 0.55, y: 0.6, duration: 450 },
   { wait: 300 },
   { click: true },
-  { wait: 400 },
+  { wait: 80 },
+  // Off the button it pressed, so its spinner shows clear while it works.
+  { to: save, x: 1.3, y: 1.9, duration: 300 },
+  { wait: 200 },
   { leave: true },
-  { wait: 4400 },
+  { wait: 4000 },
   { cue: 'renew' },
   { wait: 600 },
 ];

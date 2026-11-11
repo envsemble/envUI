@@ -1,7 +1,10 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import NarrowNavigation from '../../examples/scaffold/NarrowNavigation';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
+import { useOnScreen } from '../../figures/DeviceFrame';
+import { remeasure } from '../../shared/Remeasure';
 
 /** A window wide enough for the drawer, in rem: an expanded one. */
 const windowWidth = 56;
@@ -18,26 +21,16 @@ function Fitted({ children }: { children: ReactNode }) {
     const outer = room.current;
     const inner = window.current;
     if (!outer || !inner) return;
+    // Measured at once, then again only as the stage's width changes: the height it sets
+    // resizes what it observes.
+    let width = -1;
     const measure = () => {
+      if (outer.clientWidth === width) return;
+      width = outer.clientWidth;
       const scale = Math.min(1, outer.clientWidth / inner.offsetWidth);
       setFit({ scale, height: inner.offsetHeight * scale });
     };
-    measure();
-    // Measured again in the next frame as the stage's width changes: the height it sets resizes
-    // what it observes.
-    let request = 0;
-    let width = outer.clientWidth;
-    const observer = new ResizeObserver(() => {
-      if (outer.clientWidth === width) return;
-      width = outer.clientWidth;
-      cancelAnimationFrame(request);
-      request = requestAnimationFrame(measure);
-    });
-    observer.observe(outer);
-    return () => {
-      cancelAnimationFrame(request);
-      observer.disconnect();
-    };
+    return remeasure(measure, { first: 'now', resize: [outer] }).stop;
   }, []);
   return (
     // As wide as the stage, whatever the window holds: its width doesn't come from the window.
@@ -84,7 +77,11 @@ const script: PointerStep[] = [
 
 function Narrowing() {
   usePointer(script);
-  return (
+  // On a window's screen, which is wide enough for the drawer, it shows as it is.
+  const onScreen = useOnScreen();
+  return onScreen ? (
+    <NarrowNavigation />
+  ) : (
     <Fitted>
       <NarrowNavigation />
     </Fitted>

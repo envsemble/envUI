@@ -1,4 +1,4 @@
-import { roundToHundredth } from '../../internal/lengths.js';
+import { roundToHundredth } from '../../internal/dom/lengths.js';
 import '../../styles/Base.css';
 import '../../styles/Skeleton.css';
 // Text that is there in a skeleton, such as a heading that doesn't wait for data, drawn as bars like
@@ -67,17 +67,24 @@ function sync() {
     retained > 0 ? [...document.querySelectorAll<HTMLElement>('[data-env-skeleton]')] : [];
   for (const [root, state] of tracked)
     if (!root.isConnected || !roots.includes(root)) untrack(root, state);
-  for (const root of roots) {
-    if (!tracked.has(root)) track(root);
-    draw(root);
-  }
+  // Every new root's position is read, then every one tracked, then every one measured, then every
+  // one's bars set: a write between two reads, such as tracking a root or setting its bars, would
+  // make the browser work out the page again for each.
+  const fresh = roots.filter((root) => !tracked.has(root));
+  const statics = fresh.map((root) => getComputedStyle(root).position === 'static');
+  fresh.forEach((root, index) => track(root, statics[index]!));
+  const drawn = roots.map((root) => [root, barsOf(root)] as const);
+  for (const [root, values] of drawn)
+    for (const [property, value] of Object.entries(values))
+      if (root.style.getPropertyValue(property) !== value) root.style.setProperty(property, value);
 }
 
-function track(root: HTMLElement) {
+/** Starts drawing a root's bars; `isStatic`, read before, is whether its position is static. */
+function track(root: HTMLElement, isStatic: boolean) {
   root.setAttribute(skeletonTextAttribute, '');
   // The bars are laid out over the root's padding box, which a static root can't hold.
   let position: string | undefined;
-  if (getComputedStyle(root).position === 'static') {
+  if (isStatic) {
     position = root.style.position;
     root.style.position = 'relative';
   }
@@ -124,20 +131,30 @@ interface Bar {
   gap: number;
 }
 
-/** The part of a rectangle that the element's clipping ancestors, up to the root, leave visible. */
-function visibleSpan(element: Element, root: HTMLElement, left: number, right: number) {
+/** The part of a rectangle that the element's clipping ancestors, up to the root, leave visible,
+    across and down: a closed section, kept in the page at no height, clips its text away. */
+function visibleRect(element: Element, root: HTMLElement, rect: DOMRect) {
+  let { left, right, top, bottom } = rect;
   for (let at: Element | null = element; at && at !== root; at = at.parentElement) {
     const style = getComputedStyle(at);
-    if (style.overflowX === 'visible') continue;
+    const clipsX = style.overflowX !== 'visible';
+    const clipsY = style.overflowY !== 'visible';
+    if (!clipsX && !clipsY) continue;
     const box = at.getBoundingClientRect();
-    left = Math.max(left, box.left);
-    right = Math.min(right, box.right);
+    if (clipsX) {
+      left = Math.max(left, box.left);
+      right = Math.min(right, box.right);
+    }
+    if (clipsY) {
+      top = Math.max(top, box.top);
+      bottom = Math.min(bottom, box.bottom);
+    }
   }
-  return [left, right] as const;
+  return { left, right, top, bottom };
 }
 
-/** Measures the root's text and sets the bars it draws. */
-function draw(root: HTMLElement) {
+/** Measures the root's text: the bars it draws, as the properties that draw them. */
+function barsOf(root: HTMLElement): Record<string, string> {
   const box = root.getBoundingClientRect();
   const originX = box.left + root.clientLeft - root.scrollLeft;
   const originY = box.top + root.clientTop - root.scrollTop;
@@ -145,6 +162,7 @@ function draw(root: HTMLElement) {
   const range = document.createRange();
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    // The walker shows text nodes only.
     const text = node as Text;
     if (!text.data.trim()) continue;
     const parent = text.parentElement;
@@ -159,8 +177,8 @@ function draw(root: HTMLElement) {
     range.selectNodeContents(text);
     for (const rect of range.getClientRects()) {
       if (rect.width < 1 || rect.height < 1) continue;
-      const [left, right] = visibleSpan(parent, root, rect.left, rect.right);
-      if (right - left < 1) continue;
+      const { left, right, top, bottom } = visibleRect(parent, root, rect);
+      if (right - left < 1 || bottom - top < 1) continue;
       const height = Math.min(rect.height, fontSize * barHeight);
       bars.push({
         x: left - originX,
@@ -212,7 +230,7 @@ function draw(root: HTMLElement) {
     (bar) =>
       `var(--env-skeleton-rect) ${roundToHundredth(bar.x - left)}px ${roundToHundredth(bar.y - top)}px / ${roundToHundredth(bar.width)}px ${roundToHundredth(bar.height)}px no-repeat`,
   );
-  const values: Record<string, string> = {
+  return {
     '--env-skeleton-text-bars':
       layers.length > 0 ? layers.join(', ') : 'linear-gradient(transparent 0 0)',
     '--env-skeleton-text-left': `${roundToHundredth(left)}px`,
@@ -220,6 +238,4 @@ function draw(root: HTMLElement) {
     '--env-skeleton-text-width': `${roundToHundredth(right - left)}px`,
     '--env-skeleton-text-height': `${roundToHundredth(bottom - top)}px`,
   };
-  for (const [property, value] of Object.entries(values))
-    if (root.style.getPropertyValue(property) !== value) root.style.setProperty(property, value);
 }

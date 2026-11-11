@@ -11,7 +11,10 @@ import {
 } from '@envsemble/envui';
 import { IconTrendingDown } from '@envsemble/envui/icons/TrendingDown';
 import { IconTrendingUp } from '@envsemble/envui/icons/TrendingUp';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { outlined } from './Outline';
+import type { TileWindow } from './Tiles';
 
 const periods = {
   week: { lead: 2.5, faster: 0.5, done: 42, more: 6 },
@@ -21,7 +24,7 @@ const periods = {
 const segment = (index: number) =>
   `.env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
 
-/** The month chosen, the figures rolling to it, and the week again. */
+/** Chooses the month, the figures rolling to it, then the week again. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: segment(2) },
@@ -36,13 +39,16 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** Two key figures on a surface, with how each changed over the period chosen. */
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 18, height: 13.5 };
+
+/** Two key figures on a surface, with how each changed over the chosen period. */
 export default function KeyFiguresTile() {
   const [period, setPeriod] = useState<keyof typeof periods>('week');
   usePointer(script);
   const figures = periods[period];
   return (
-    <Surface padding={5} style={{ inlineSize: '17rem' }}>
+    <Surface padding={5} style={{ ...outlined, inlineSize: '17rem' }}>
       <Column gap={4}>
         <SegmentedControl
           aria-label="Period"

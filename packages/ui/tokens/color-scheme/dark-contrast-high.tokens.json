@@ -59,13 +59,13 @@
         },
         "raised": {
           "$root": {
-            "$value": "{palette.neutral.88}"
+            "$value": "{palette.neutral.82}"
           },
           "hover": {
-            "$value": "{palette.neutral.84}"
+            "$value": "{palette.neutral.80}"
           },
           "pressed": {
-            "$value": "{palette.neutral.80}"
+            "$value": "{palette.neutral.75}"
           }
         },
         "popup": {
@@ -278,7 +278,15 @@
         },
         "danger": {
           "emphasis": {
-            "$value": "{palette.red.10}"
+            "$root": {
+              "$value": "{palette.red.75}"
+            },
+            "hover": {
+              "$value": "{palette.red.70}"
+            },
+            "pressed": {
+              "$value": "{palette.red.80}"
+            }
           },
           "muted": {
             "$value": {
@@ -323,13 +331,13 @@
         },
         "done": {
           "emphasis": {
-            "$value": "{palette.violet.10}"
+            "$value": "{palette.slate.10}"
           },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/violet/10/$value/components"
+                "$ref": "#/palette/slate/10/$value/components"
               },
               "alpha": 0.1
             }
@@ -349,6 +357,17 @@
           }
         },
         "accent": {
+          "emphasis": {
+            "$root": {
+              "$value": "{palette.purple.10}"
+            },
+            "hover": {
+              "$value": "{palette.purple.6}"
+            },
+            "pressed": {
+              "$value": "{palette.purple.4}"
+            }
+          },
           "strong": {
             "$root": {
               "$value": "{palette.purple.75}"
@@ -417,28 +436,28 @@
         },
         "avatar": {
           "powder": {
-            "$value": "{palette.powder.15}"
+            "$value": "{palette.powder.84}"
           },
           "seafoam": {
-            "$value": "{palette.seafoam.15}"
+            "$value": "{palette.seafoam.84}"
           },
           "sage": {
-            "$value": "{palette.sage.15}"
+            "$value": "{palette.sage.84}"
           },
           "butter": {
-            "$value": "{palette.butter.15}"
+            "$value": "{palette.butter.84}"
           },
           "blush": {
-            "$value": "{palette.blush.15}"
+            "$value": "{palette.blush.84}"
           },
           "periwinkle": {
-            "$value": "{palette.periwinkle.15}"
+            "$value": "{palette.periwinkle.84}"
           },
           "orchid": {
-            "$value": "{palette.orchid.15}"
+            "$value": "{palette.orchid.84}"
           },
           "oat": {
-            "$value": "{palette.oat.15}"
+            "$value": "{palette.oat.84}"
           }
         }
       },
@@ -456,6 +475,9 @@
           "pressed": {
             "$value": "{palette.neutral.2}"
           }
+        },
+        "disabled": {
+          "$value": "{palette.neutral.30}"
         },
         "control": {
           "$value": "{palette.neutral.4}"
@@ -487,41 +509,58 @@
           "$value": "{palette.amber.6}"
         },
         "danger": {
-          "$value": "{palette.red.6}"
+          "$root": {
+            "$value": "{palette.red.6}"
+          },
+          "hover": {
+            "$value": "{palette.red.4}"
+          },
+          "pressed": {
+            "$value": "{palette.red.2}"
+          }
         },
         "done": {
-          "$value": "{palette.violet.6}"
+          "$value": "{palette.slate.6}"
         },
         "on-emphasis": {
           "$value": "{palette.neutral.96}"
+        },
+        "success-on-strong": {
+          "$value": "{palette.green.10}"
+        },
+        "info-on-strong": {
+          "$value": "{palette.blue.10}"
+        },
+        "danger-on-strong": {
+          "$value": "{palette.red.10}"
         },
         "rating-star": {
           "$value": "{palette.amber.6}"
         },
         "avatar": {
           "powder": {
-            "$value": "{palette.powder.86}"
+            "$value": "{palette.powder.6}"
           },
           "seafoam": {
-            "$value": "{palette.seafoam.86}"
+            "$value": "{palette.seafoam.6}"
           },
           "sage": {
-            "$value": "{palette.sage.86}"
+            "$value": "{palette.sage.6}"
           },
           "butter": {
-            "$value": "{palette.butter.86}"
+            "$value": "{palette.butter.6}"
           },
           "blush": {
-            "$value": "{palette.blush.86}"
+            "$value": "{palette.blush.6}"
           },
           "periwinkle": {
-            "$value": "{palette.periwinkle.86}"
+            "$value": "{palette.periwinkle.6}"
           },
           "orchid": {
-            "$value": "{palette.orchid.86}"
+            "$value": "{palette.orchid.6}"
           },
           "oat": {
-            "$value": "{palette.oat.86}"
+            "$value": "{palette.oat.6}"
           }
         }
       },
@@ -694,7 +733,7 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/violet/6/$value/components"
+              "$ref": "#/palette/slate/6/$value/components"
             },
             "alpha": 0.55
           }

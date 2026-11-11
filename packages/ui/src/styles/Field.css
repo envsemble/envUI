@@ -6,7 +6,7 @@
     --env-field-error-color: var(--env-color-fg-danger);
     align-content: start;
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     font: var(--env-type-body-sm);
     font-size: var(--env-font-size-body-sm);
     color: var(--env-color-fg-default);
@@ -26,18 +26,27 @@
     flex-shrink: 0;
     width: var(--env-control-icon-size);
     height: var(--env-control-icon-size);
-    margin-block-start: 0.125rem;
+    margin-block-start: calc(var(--env-space-1) / 2);
   }
   .env-field-label {
     inline-size: fit-content;
     max-inline-size: 100%;
     cursor: default;
   }
+  /* A label above its control, Field.Label's and an editor's above its toolbar, reads as the notched
+     label of envUI's fields does once it floats: its size, weight and muted color (TextField.css),
+     so a form's labels read alike. */
+  .env-field-label,
+  .env-field:not(.env-text-field) > label {
+    font: var(--env-type-body);
+    font-size: var(--env-font-size-label);
+    color: var(--env-color-fg-muted);
+  }
   .env-field[data-disabled] > .env-field-label {
     opacity: var(--env-state-disabled-opacity);
   }
   /* Field.Control: a native text input in the outlined field look, at the control height of its size
-     or its container's, with the rounded ends of buttons so the two line up in a row, and no fill of
+     or its container's, so it lines up with buttons in a row, with a text field's corners and no fill of
      its own: it takes the background of what it sits on. A control given through render takes the
      same outline. */
   .env-field-control {
@@ -54,9 +63,9 @@
       )
       var(--env-space-4);
     border: var(--env-control-border-width) solid var(--env-field-control-border);
-    /* The capped full corner, so a taller control given through render, such as a text area, keeps
-       the corners rather than becoming a pill. */
-    border-radius: var(--env-radius-full);
+    /* A text field's corner: the large corner, no more than a third of the height, so a taller
+       control given through render, such as a text area, keeps the same corners. */
+    border-radius: min(var(--env-radius-lg), var(--env-control-height) / 3);
     outline: none;
     background: transparent;
     color: var(--env-color-fg-default);
@@ -79,14 +88,19 @@
     color: var(--env-color-fg-muted);
     opacity: 1;
   }
+  /* Under the pointer the edge darkens to the muted text color, as a text field's does; the accent
+     shows focus alone. A read-only control keeps its resting edge, as TextField's does. */
   @media (hover: hover) {
-    .env-field-control:hover:not(:disabled, [data-disabled]) {
-      --env-field-control-border: var(--env-color-border-primary-emphasis-hover);
+    .env-field-control:hover:not(:disabled, [data-disabled], [readonly]) {
+      --env-field-control-border: var(--env-color-fg-muted);
     }
   }
+  /* Focus draws the edge in the accent at twice its width, the second hairline inside it, so
+     nothing moves. */
   .env-field-control:focus-visible,
   .env-field-control:focus-within {
     --env-field-control-border: var(--env-color-border-primary-emphasis);
+    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-field-control-border);
   }
   .env-field-control:is([data-invalid], [aria-invalid='true']) {
     --env-field-control-border: var(--env-color-fg-danger);

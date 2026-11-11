@@ -1,12 +1,16 @@
 import WithDetails from '../../examples/app-frame/WithDetails';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { useMustShow } from '../../motion/Playback';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const close = '[aria-label="Close"]';
 
 /*
  * The pointer presses Details: the supporting pane opens, beside the page in a wide frame and as a
- * sheet in a narrow one. It rests a moment, and the pointer closes it.
+ * sheet in a narrow one. It rests a moment, and the pointer closes it. A window cut off at a phone's
+ * width shows the page with its navigation, and once the details open, the page's text beside the
+ * details' heading, then the details' end with the close button the pointer heads to.
  */
 const script: PointerStep[] = [
   { wait: 500 },
@@ -14,7 +18,7 @@ const script: PointerStep[] = [
   { to: '.env-panes-trigger', x: 0.5, y: 0.6, duration: 450 },
   { wait: 300 },
   { click: true },
-  { wait: 1500 },
+  { wait: 2200 },
   { to: close, x: 0.5, y: 0.5, duration: 700 },
   { wait: 300 },
   { click: true },
@@ -25,6 +29,12 @@ const script: PointerStep[] = [
 
 function Opening() {
   usePointer(script);
+  // Once the details open, the page's text beside them as well as the details themselves.
+  useMustShow(
+    '.env-panes[data-open] .env-panes-main p',
+    '.env-panes-supporting h3',
+    '.env-panes-supporting p',
+  );
   return <WithDetails />;
 }
 

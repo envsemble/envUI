@@ -1,6 +1,6 @@
 ---
 title: HoverCard
-summary: A card of supplementary details that opens beside a link on hover and keyboard focus, like a link preview.
+summary: A card of supplementary details that opens beside a link, like a link preview.
 status: stable
 since: 1.0.0
 category: Overlays
@@ -39,7 +39,7 @@ examples:
 
 ### Widths
 
-The card is as wide as its content, up to its width, and narrows to fit the window.
+The card is as wide as its content, within its width's range, and narrows to fit the window.
 
 | Width  | Use for                                                         |
 | ------ | --------------------------------------------------------------- |
@@ -75,7 +75,7 @@ The pointer can move from the trigger onto the card without closing it, and focu
 
 <!-- specimen: HoverAndFocus -->
 
-### Text with more details
+### Text triggers
 
 Text that isn't a link can open a card too, with the dotted underline and the focus a [tooltip on text](tooltip.md#text) takes.
 
@@ -85,15 +85,15 @@ Text that isn't a link can open a card too, with the dotted underline and the fo
 
 ## Rules
 
-### Details that are also elsewhere
+### Supplementary details
 
 Keep the details supplementary: the page the link leads to has them too.
 
-### Nothing to press
+### Interactive content
 
 No links, buttons or fields in the card: the keyboard and touch can't reach them.
 
-### No tooltip as well
+### Tooltips
 
 No [Tooltip](tooltip.md) around a hover card or as its trigger; put what it would say in the card.
 
@@ -144,7 +144,7 @@ A trigger that is text rather than a link, such as a span or Text that holds tex
 
 #### Width and placement
 
-`width` is the widest the card grows: `md`, 20 rem and the default, or `lg`, 28 rem. It is as wide as its content from 12 rem up, and narrows to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; `align` is `center`, the default, `start` or `end`.
+`width` sets how wide the card grows with its content: `md`, the default, from 12 rem up to 20 rem, or `lg`, from 20 rem up to 28 rem. It narrows to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; `align` is `center`, the default, `start` or `end`.
 
 ```tsx
 <HoverCard
@@ -168,5 +168,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: Hover cards are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.
 - **1.0.0**: A text trigger, such as a span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`, and one without `tabIndex` gets a warning while developing. `width` is `md` or `lg`, the widest the card grows as it sizes to its content; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction. A Tooltip around it, or as its `trigger`, shows no tooltip.
+- **1.0.0-prerelease.6**: A hover card opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
+- **1.0.0-prerelease.6**: A hover card's corners are the popups' own, as a popover's are, rather than a surface's.
+- **1.0.0-prerelease.5**: Hover cards are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.

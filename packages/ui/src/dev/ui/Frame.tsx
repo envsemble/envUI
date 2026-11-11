@@ -8,7 +8,8 @@
 
 import { useEffect, useRef, type HTMLAttributes, type KeyboardEvent } from 'react';
 import { Text } from '../../foundations/Text.js';
-import { round, windowClasses, windowClassOf } from '../units.js';
+import { roundToHundredth } from '../../internal/dom/lengths.js';
+import { windowClasses, windowClassOf } from '../units.js';
 
 /** The smallest and largest the frame lays the page out at, in rem. */
 const frameMin = 15;
@@ -27,7 +28,7 @@ export interface FrameSize {
 /** The page at its own size: no frame set. */
 export const realSize: FrameSize = { width: null, height: null, device: null };
 
-export type FrameEdge = 'start' | 'end' | 'bottom' | 'bottom-start' | 'bottom-end';
+type FrameEdge = 'start' | 'end' | 'bottom' | 'bottom-start' | 'bottom-end';
 
 /** Which way each handle moves the width and the height: -1 shrinks as it moves right or down. */
 const directions: Record<FrameEdge, { x: -1 | 0 | 1; y: 0 | 1 }> = {
@@ -220,7 +221,7 @@ export function Frame({
   const text = [
     size.device,
     `${Math.round(width)}×${Math.round(height)}px`,
-    `${round(width / rootPx)}×${round(height / rootPx)}rem`,
+    `${roundToHundredth(width / rootPx)}×${roundToHundredth(height / rootPx)}rem`,
     windowClass,
   ]
     .filter(Boolean)

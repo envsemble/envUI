@@ -7,9 +7,9 @@ import { IconInfo } from '@envsemble/envui/icons/Info';
 import { IconRadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
 import { IconTaskAlt } from '@envsemble/envui/icons/TaskAlt';
 import { IconWarning } from '@envsemble/envui/icons/Warning';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel } from './Steps';
-import { Figure } from './Topic';
+import { FoundationFrame } from './FoundationFrame';
 
 /**
  * Each tone as a badge paints it, with a word in the tone and its icon:
@@ -29,15 +29,15 @@ const tones: readonly {
       soft: {
         '--env-badge-container': 'var(--env-color-bg-primary-muted)',
         '--env-badge-content': 'var(--env-color-fg-primary)',
-      } as CSSProperties,
+      },
       solid: {
         '--env-badge-container': 'var(--env-color-bg-info-strong)',
         '--env-badge-content': 'var(--env-color-fg-on-strong)',
-      } as CSSProperties,
+      },
       outline: {
         '--env-badge-content': 'var(--env-color-fg-primary)',
         '--env-badge-outline': 'var(--env-color-border-primary)',
-      } as CSSProperties,
+      },
     },
     icon: <IconInfo />,
     word: 'Tip',
@@ -94,8 +94,8 @@ function StatusSteps() {
  */
 export function StatusFigure() {
   return (
-    <Figure label="What each color means" motion="the badges in each variant">
+    <FoundationFrame label="What each color means" motion="the badges in each variant">
       <StatusSteps />
-    </Figure>
+    </FoundationFrame>
   );
 }

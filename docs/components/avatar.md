@@ -1,6 +1,6 @@
 ---
 title: Avatar
-summary: A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or piled in a group.
+summary: The picture of a person or an organization, alone or in a group.
 status: stable
 since: 1.0.0
 category: Data display
@@ -76,7 +76,7 @@ examples:
 
 ### Pictures and fallbacks
 
-Without a picture, or while it loads or after it fails, an avatar shows the default person picture, or initials for an organization.
+Without a picture, or while it loads or after it fails, an avatar shows the initials of its name, or the default person picture, such as for a guest.
 
 ```tsx figure=Fallbacks
 
@@ -87,7 +87,10 @@ Without a picture, or while it loads or after it fails, an avatar shows the defa
 The name chooses one of eight pastel colors, the same on every page.
 
 - An organization can take another of them as its own.
-- Each is a soft fill with the initials or the figure in a deep shade of the same hue.
+- Each is a soft fill with the initials or the figure in a deep shade of the same hue. In dark it turns over: a deep fill with light initials, so avatars stay quieter than the screen's text.
+- In a dense place, a table's cell or a small group, the fills are quieter, so a column of avatars doesn't outweigh the data beside it.
+- In a group, no two neighbours take colors that look alike.
+- Initials stay large enough to read; an avatar smaller than the small size, such as one sized to a dense row, shows its color alone.
 - The colors only tell people apart.
 
 <!-- specimen: Hues -->
@@ -108,11 +111,11 @@ The name chooses one of eight pastel colors, the same on every page.
 
 ### A group as a pile
 
-AvatarGroup rests as a compact pile, like stacked cards, with the count of the rest in a rounded square.
+AvatarGroup rests as a compact pile, like stacked cards, with the count of the rest in a circle.
 
 - Hovering, tapping or focusing it spreads the avatars along a gentle arch, so each one shows.
 - It keeps the room its spread takes, so nothing around it moves.
-- A faint shadow under each avatar and under the count parts each from the one it lies on.
+- A ring in the color of the surface below parts each avatar from the one it lies on, and the last from the count, which lies flat at the bottom.
 
 ```tsx figure=ProjectMembers motion
 
@@ -187,11 +190,11 @@ Show only as many people in a group as fit without wrapping, and use AvatarButto
 
 ### Usage
 
-Avatar takes the person's or organization's `name`, a picture in `src`, and `fallback="initials"` for initials instead of the default person picture. Beside a visible name it is decorative; `named` makes it an image named by `name`. `size` is `sm`, `md`, the default, `lg` or `xl`: 1.5, 2, 3 or 5.5 rem.
+Avatar takes the person's or organization's `name`, a picture in `src`, and `fallback="person"` for the default person picture instead of the initials, which an empty name shows too. Beside a visible name it is decorative; `named` makes it an image named by `name`. `size` is `sm`, `md`, the default, `lg` or `xl`: 1.5, 2, 3 or 5.5 rem.
 
 ```tsx
 <Avatar name="Alex Morgan" src={alex.picture} />
-<Avatar name="Northwind Labs" fallback="initials" size="lg" named />
+<Avatar name="Northwind Labs" size="lg" named />
 ```
 
 #### Chosen
@@ -213,13 +216,14 @@ Avatar takes the person's or organization's `name`, a picture in `src`, and `fal
 
 #### Colors
 
-`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses, and `avatarHues` lists the eight in order. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme.
+`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses, and `avatarHues` lists the eight in order. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, and in the dark theme a deep fill with the initials and the figure in a light shade. In a table's cell and in a small AvatarGroup the fill takes half its chroma at the same lightness, so the initials keep their contrast; `--env-avatar-dense: 1` on a container of your own, such as a dense list, does the same for the avatars and groups in it. In an AvatarGroup, an avatar whose color looks like its neighbour's before it, the two blues, greens, pinks or warm hues, takes the next of the eight that doesn't.
 
 #### Groups
 
 AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`, `id` and `selected`. `max` sets how many show, and the count chip counts the rest; `total` counts people beyond a preview list.
 
-- At rest the avatars pile up, each a little off the line and turned, with the count chip at the bottom of the pile.
+- At rest the avatars pile up, each a little off the line and turned, with the count chip at the bottom of the pile. A group of initials piles looser, so two letters stay whole under the next avatar, and rests upright and in line, as does a small group.
+- A small group, or any group in a table's cell, is dense: pictures overlap by 0.3 of the avatar, and initials only by the ring that parts them, so the letters stay clear.
 - The group always keeps the room its spread takes, so spreading never moves what is around it; `align="end"` piles a group at the end of that room, for a group that ends a row, such as a list row's action.
 - With reduced motion it spreads at once.
 - `formatMore` and `formatLabel` set its words.
@@ -248,12 +252,18 @@ The group is `env-avatar-group`, with an `env-avatar` for each person, an `env-a
 
 ### Customize
 
-Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. That faint shadow, 1 px down and 2 px soft, is envUI's one drop shadow; under forced colors there is none, and `box-shadow: none` on `.env-avatar` and `.env-avatar-group-overflow` removes it.
+Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. A lone avatar casts a faint shadow, 1 px down and 2 px soft, which the ring replaces in a group; a small avatar and one in a table cast none; under forced colors there is none, and `box-shadow: none` on `.env-avatar` removes it.
 
 ## Changelog
 
+- **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: In the dark theme an avatar takes a deep fill of its hue with light initials, rather than the light theme's pastel, so avatars are no longer the brightest thing on a dark screen. The butter, sage and oat fills sit a little lighter, with paler initials, so they read as gold, green and oat rather than muddy brown and olive.
+- **1.0.0-prerelease.6**: Avatars in a table's cell and in a small group take quieter fills, and a small group or one in a table overlaps less, initials only by the ring. In a group, an avatar whose color looks like the one before it takes another.
+- **1.0.0-prerelease.6**: An avatar without a picture shows its name's initials by default, in place of the default person picture, which `fallback="person"` keeps. Avatars in a group take a ring in the color of the surface below, so their initials never run together.
+- **1.0.0-prerelease.6**: A small avatar and one in a table cast no shadow, so a column of them stays quiet.
+- **1.0.0-prerelease.6**: Initials stay legible at small sizes, at least the caption size; below `sm`, an avatar with initials is a disc of its color alone.
 - **1.0.0-prerelease.5**: AvatarGroup's `gather` is `align`, as Row and Popover name the inline axis, and its `data-gather` attribute is `data-align`.
 - **1.0.0-prerelease.5**: An avatar and AvatarGroup's count cast a faint, small shadow in a deeper shade of the surface below, so the avatars of a group part from one another.
 - **1.0.0-prerelease.3**: AvatarGroup rests as a compact pile, like stacked cards, which is one pointer target: hover, a tap or keyboard focus spreads it, and its avatars take presses only once spread, in place of a looser rest that kept 1.5 rem of each pressable avatar uncovered. A tap spreads a group on touch screens too, marked with `data-spread`. The count is a rounded square the size of the avatars, at the bottom of the pile.
 - **1.0.0-prerelease.2**: The eight colors are a new pastel palette of tonal pairs: a soft fill with initials and a figure in a deep shade of the same hue, rather than white. The hues are named for their colors, in `hue`, `data-hue` and the tokens: `blue` is `powder`, `teal` `seafoam`, `green` `sage`, `amber` `butter`, `red` `blush`, `violet` `periwinkle`, `purple` `orchid` and `slate` `oat`. `selected` shows an avatar as chosen, with a ring and a check, `env-avatar-check`. AvatarGroup rests bunched where a pointer can hover, with the count of the rest under the last avatar, and spreads along an arch under the pointer or with focus inside, within the room it keeps for the spread; `gather` sets where the avatars gather at rest. Avatars in a group and the count take no ring; `--env-avatar-ring` is gone, and `--env-avatar-group-ring` sets only the gap in a chosen avatar's ring.
-- **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.

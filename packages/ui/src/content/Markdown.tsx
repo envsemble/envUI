@@ -14,7 +14,7 @@ import {
 import ReactMarkdown, { type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { classNames } from '../internal/classNames.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import {
   markdown as markdownMessages,
   type MarkdownMessages,
@@ -24,6 +24,12 @@ import { Link } from '../actions/Link.js';
 import { Code } from './Code.js';
 import { CodeBlock } from './CodeBlock.js';
 import { Kbd } from './Kbd.js';
+import {
+  collectingMarkdown,
+  givenMarkdownTree,
+  noteMarkdownTree,
+  type MarkdownTree,
+} from './internal/givenMarkdownTrees.js';
 import '../styles/Base.css';
 import '../styles/Prose.css';
 import '../styles/Markdown.css';
@@ -131,7 +137,7 @@ function keepKeys(children: MarkdownNode[]) {
     ) {
       kept.push({ type: 'key', data: { hName: 'kbd' }, children: [text] });
       index += 2;
-    } else kept.push(children[index]!);
+    } else kept.push(children[index]);
   }
   return kept;
 }
@@ -151,6 +157,9 @@ function remarkDropHtml() {
 }
 
 const markdownPlugins = [remarkGfm];
+
+/** A rehype plugin, last, that notes the tree `source` renders, while they are collected. */
+const noteTree = (source: string) => () => (tree: MarkdownTree) => noteMarkdownTree(source, tree);
 
 type TableProps = ComponentPropsWithoutRef<'table'> & {
   node?: unknown;
@@ -270,13 +279,23 @@ export function Markdown({
     () => (componentOverrides ? { ...elements, ...componentOverrides } : elements),
     [componentOverrides],
   );
+  // A tree given for the source, such as by the page this renders in pre-rendered with it, renders
+  // as it is: the empty source parses to nothing, which the tree replaces (givenMarkdownTrees.ts).
+  const given = givenMarkdownTree(children);
   const mergedRehypePlugins = useMemo(
-    () => [rehypeTableNames(messages), ...(rehypePlugins ?? [])],
-    [rehypePlugins, messages],
+    () =>
+      given
+        ? [() => () => given]
+        : [
+            rehypeTableNames(messages),
+            ...(rehypePlugins ?? []),
+            ...(collectingMarkdown() ? [noteTree(children)] : []),
+          ],
+    [given, rehypePlugins, messages, children],
   );
   const mergedRemarkPlugins = useMemo(
-    () => [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropHtml],
-    [remarkPlugins],
+    () => (given ? [] : [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropHtml]),
+    [given, remarkPlugins],
   );
   return (
     <div {...props} className={classNames('env-markdown', 'env-prose', className)}>
@@ -287,7 +306,7 @@ export function Markdown({
           components={mergedComponents}
           skipHtml
         >
-          {children}
+          {given ? '' : children}
         </ReactMarkdown>
       </MarkdownOptionsContext.Provider>
     </div>

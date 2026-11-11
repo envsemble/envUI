@@ -78,17 +78,10 @@
       "$value": { "value": 5.5, "unit": "rem" }
     }
   },
-  "field": {
-    "$type": "dimension",
-    "floating-height": {
-      "$description": "The height of a text field's floating variant, whose label rests inside the field and floats into its outline. Other fields take the control height.",
-      "$value": { "value": 3.5, "unit": "rem" }
-    }
-  },
   "row": {
     "$type": "dimension",
     "height": {
-      "$description": "The row of a menu and of a select's or combobox's popup.",
+      "$description": "The day of a calendar, and the base of a popup's row: a menu's, a select's or a combobox's rows are a quarter rem taller.",
       "$value": { "value": 2.25, "unit": "rem" }
     },
     "content-height": {

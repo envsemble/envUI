@@ -1,11 +1,22 @@
-import { pagesOf } from '../navigation/SiteRoutes';
-import { Gallery } from '../figures/Gallery';
+import { pagesOf } from '../routes/SiteRoutes';
+import { Gallery, type GalleryGroup } from '../figures/Gallery';
+
+/** The id of a group's heading on the patterns' overview, such as patterns-keep-people-informed. */
+const patternGroupId = (group: string) =>
+  `patterns-${group.toLowerCase().replace(/[^a-z]+/g, '-')}`;
 
 /**
- * Every pattern, a tile with its preview for each, in one gallery without group headings, in the
- * order the index lists the patterns.
+ * Every pattern, a tile for each, under the headings of what people are doing,
+ * the groups the drawer lists, in the order the index lists the patterns.
  */
 export function PatternCatalogue() {
   const pages = pagesOf('catalogue').filter((entry) => entry.kind === 'pattern');
-  return <Gallery groups={[{ id: 'patterns', pages }]} />;
+  const groups: GalleryGroup[] = [];
+  for (const page of pages) {
+    const title = page.group ?? 'Patterns';
+    let group = groups.find((each) => each.title === title);
+    if (!group) groups.push((group = { title, id: patternGroupId(title), pages: [] }));
+    group.pages.push(page);
+  }
+  return <Gallery groups={groups} />;
 }

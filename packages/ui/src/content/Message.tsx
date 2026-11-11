@@ -1,13 +1,12 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../foundations/Layout.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { ControlDefaults } from '../internal/ControlDefaults.js';
+import { Grid, Row } from '../layout/Layout.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
+import { ControlDefaults } from '../internal/control/ControlDefaults.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { IconError } from '../icons/Error.js';
 import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
-import { inSkeleton } from '../foundations/internal/inSkeleton.js';
-import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Message.css';
@@ -15,8 +14,7 @@ import '../styles/Message.css';
 export type MessageStatus = 'sending' | 'failed';
 
 export interface MessageProps
-  extends Omit<ComponentPropsWithRef<'article'>, 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'article'>, 'children'>, SkeletonProps {
   /**
    * self: written by the person using the app, a compact bubble at the inline end. other: from
    * anyone else, such as an assistant or another participant, full-width content without a bubble.
@@ -133,19 +131,35 @@ export function Message(allProps: MessageProps) {
 
 export interface MessageListProps extends ComponentPropsWithRef<'div'> {
   /**
-   * Messages are still changing, such as a reply streaming in or earlier messages loading. The log
-   * reports aria-busy, so assistive technology can wait for the change to finish instead of
-   * announcing every step.
+   * A reply is on its way or streaming in: after the last message, where the reply will show, a
+   * row with the busy author, a quiet spinner and Working in the muted color; and the log reports
+   * aria-busy, so assistive technology can wait for the reply to finish instead of announcing
+   * every step.
    */
   busy?: boolean;
+  /** Who the reply on its way comes from, such as Agent, named on the busy row as a message's author. */
+  busyAuthor?: ReactNode;
+  /**
+   * The text beside the busy spinner, such as "Thinking". It overrides EnvUIProvider's
+   * `messages.message.working`.
+   * @default 'Working'
+   */
+  busyLabel?: string;
 }
 
 /**
  * The messages of a conversation in order, as a log: assistive technology politely announces
- * messages added anywhere in it and text that changes. Set busy while a reply streams in or earlier
- * messages load. Name it with aria-label or aria-labelledby.
+ * messages added anywhere in it and text that changes. Set busy while a reply is on its way or
+ * streams in. Name it with aria-label or aria-labelledby.
  */
-export function MessageList({ busy = false, className, ...props }: MessageListProps) {
+export function MessageList({
+  busy = false,
+  busyAuthor,
+  busyLabel,
+  className,
+  children,
+  ...props
+}: MessageListProps) {
   return (
     <Grid
       gap={5}
@@ -154,6 +168,18 @@ export function MessageList({ busy = false, className, ...props }: MessageListPr
       {...props}
       role="log"
       className={classNames('env-message-list', className)}
-    />
+    >
+      {children}
+      {/* Shown, not read: aria-busy says it, and the reply is announced once it is complete. */}
+      {busy && (
+        <Row wrap align="center" className="env-message-list-busy" aria-hidden="true">
+          {present(busyAuthor) && <span className="env-message-author">{busyAuthor}</span>}
+          <Row align="center" gap={1} className="env-message-status">
+            <Spinner size="sm" />
+            <MessageStatusLabel status="working" label={busyLabel} />
+          </Row>
+        </Row>
+      )}
+    </Grid>
   );
 }

@@ -1,0 +1,389 @@
+/* Component, pattern and foundation pages: ordinary sections of short text and live figures, with
+   a rhythm of space. What belongs together sits close: a heading and its first content, text and
+   the figure it introduces, a figure's stage, caption and code. Unrelated parts sit apart: one
+   sub-topic clearly from the next, and one section far from the next, which the article's gap
+   sets (Template.css). */
+.site-figures {
+  /* The widest a do or don't figure is drawn (Verdicts.css). */
+  --site-verdict-size: 23rem;
+  container-type: inline-size;
+}
+
+.site-figure-section {
+  /* The space between sub-topics of a section: clearly apart, and far closer than two sections,
+     which the article's gap sets (Template.css). */
+  --catalogue-subtopic-gap: var(--env-space-7);
+  /* A link to a section stops below the sticky display controls. */
+  scroll-margin-block-start: var(--env-space-9);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--catalogue-subtopic-gap);
+  min-inline-size: 0;
+}
+
+.site-figure-section-heading h2 {
+  margin: 0;
+}
+
+/* A heading sits close to what it heads. */
+.site-figure-section-heading + * {
+  margin-block-start: calc(var(--env-space-4) - var(--catalogue-subtopic-gap));
+}
+
+/* Overview's heading is for the contents alone (TemplateContent.tsx): its figure, the page's one
+   large cell, sits right under the banner, as close to it as a figure to its text, so the two read
+   as the page's head. */
+.site-figure-section[data-section='overview']
+  > .site-figure-section-heading.site-visually-hidden
+  + * {
+  margin-block-start: calc(var(--env-space-6) - var(--site-section-gap) + var(--env-space-2));
+}
+
+/* Text sits close to the figure it introduces, but not to a subsection that starts with its own
+   heading beside its figure. */
+.site-figure-section
+  > .env-markdown
+  + :is(
+    .site-live-example-entry,
+    .site-figure-run,
+    .site-anatomy,
+    .catalogue-variants,
+    .site-verdict,
+    .site-example,
+    .catalogue-option-legend
+  ) {
+  margin-block-start: calc(var(--env-space-4) - var(--catalogue-subtopic-gap));
+}
+
+/* A subsection that follows text, a list or a table in the same run of Markdown sits as far from
+   it as from a figure. */
+.site-figure-section .env-markdown > h3:not(:first-child) {
+  margin-block-start: var(--catalogue-subtopic-gap);
+}
+
+/* A figure, as a gallery's cell: its stage, and under it on one row, as a cell's name and arrow,
+   its caption at the start and its code switch at the end; open, the code runs under both, the
+   switch keeping its place at the end. A figure without a caption has its switch alone on the
+   row. A do or don't figure lays its caption out its own way (Verdicts.css). */
+:is(.site-live-example-entry, .site-verdict) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--env-space-2) var(--env-space-4);
+}
+.site-live-example-entry {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-auto-flow: row dense;
+  align-items: baseline;
+}
+.site-live-example-entry > * {
+  grid-column: 1 / -1;
+}
+.site-live-example-entry > :is(.site-figure-caption, .site-still-mark) {
+  grid-column: 1;
+}
+.site-live-example-entry > .site-live-example-code:not([open]) {
+  grid-column: 2;
+  justify-self: end;
+}
+.site-live-example-entry > .site-live-example-code[open] > summary {
+  margin-inline-start: auto;
+}
+
+/* A still picture's mark sits just under its stage, quieter than a caption (StillMark.tsx). */
+.site-still-mark {
+  margin: 0;
+}
+.site-figure-caption {
+  margin: 0;
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-sm);
+}
+
+/* Figures side by side are cells of one width, each as tall as its own figure, from the top of
+   the row: a stage stretched to a taller neighbour's height left a small control floating in empty
+   room. */
+/* A run is one column until all its figures fit side by side, so no row is left with an orphan:
+   two to a row from 38 rem for an even run, such as do and don't pairs, three from 58 rem for a run
+   of three. */
+.site-figure-run {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  /* Side by side, as close as a gallery's cells; a row apart by their captions. */
+  gap: var(--env-space-7) var(--env-space-3);
+  min-inline-size: 0;
+}
+
+.site-figure-run > * {
+  display: grid;
+  align-content: start;
+  row-gap: var(--env-space-2);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+/* A subsection's text beside its one figure. */
+.site-figure-split {
+  display: grid;
+  align-items: start;
+  gap: var(--env-space-5) var(--env-space-7);
+  min-inline-size: 0;
+}
+
+/* Even runs go two to a row, do and don't pairs included; a run of three goes three across once
+   they fit, and stays one column before that, so no row is left with an orphan. */
+@container (width >= 38rem) {
+  .site-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8']) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 58rem) {
+  .site-figure-run[data-count='3'] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* A run of do and don't figures: side by side from a narrower column than other figures, as
+   they need less room, in columns no wider than one, from the column's start, so a pair stays
+   close together however wide the column is. */
+@container (width >= 32rem) {
+  .site-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8']):not(
+      :has(> :not(.site-verdict:not([data-shape='wide'])))
+    ) {
+    grid-template-columns: repeat(2, minmax(0, var(--site-verdict-size)));
+  }
+}
+
+@container (width >= 48rem) {
+  .site-figure-run[data-count='3']:not(:has(> :not(.site-verdict:not([data-shape='wide'])))) {
+    grid-template-columns: repeat(3, minmax(0, var(--site-verdict-size)));
+  }
+}
+
+@container (width >= 56rem) {
+  .site-figure-split {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  }
+}
+
+/* An example at given widths: one frame to a row, each centred on a stage of its own, which
+   scrolls where the frame is wider than the page. */
+.catalogue-width-strip {
+  display: grid;
+  gap: var(--env-space-5);
+  min-inline-size: 0;
+}
+
+.catalogue-width-frame {
+  display: grid;
+  gap: var(--env-space-2);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+/* A frame wider than the page scrolls from its start, rather than centring past the stage's edge. */
+.catalogue-width-frame > .site-live-example {
+  justify-items: safe center;
+  overflow-x: auto;
+}
+
+/* The frame the example responds to, outlined so its width shows. */
+.catalogue-width-box {
+  container-type: inline-size;
+  outline: 0.0625rem dashed var(--env-color-border-default);
+  outline-offset: var(--env-space-2);
+}
+
+/* A frame wider than its stage, such as beside the page's contents, is drawn smaller to fit, not
+   resized (WidthBox, fit/standalone/WidthFit.tsx): its place on the stage takes the scaled size, and the
+   frame, at its own width, is scaled from its start corner into it. */
+.catalogue-width-fit[data-scaled] {
+  position: relative;
+}
+.catalogue-width-fit[data-scaled] > .catalogue-width-box {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  transform-origin: top left;
+}
+.catalogue-width-fit[data-scaled]:dir(rtl) > .catalogue-width-box {
+  transform-origin: top right;
+}
+
+/* A frame wider than its stage even drawn smaller (WidthBox): at its own size, it scrolls across
+   its place, which is as wide as the stage and keeps room for the outline on every side, and fades
+   out over the last stretch at an edge where it runs on, as a cropped sweep does (below). */
+.catalogue-width-fit[data-cropped] {
+  --catalogue-width-edge: calc(var(--env-space-2) + 0.0625rem);
+  --catalogue-width-fade: 1.75rem;
+  --catalogue-width-start: 0rem;
+  --catalogue-width-end: 0rem;
+  box-sizing: border-box;
+  max-inline-size: calc(100% + 2 * var(--catalogue-width-edge));
+  margin: calc(-1 * var(--catalogue-width-edge));
+  padding: var(--catalogue-width-edge);
+  overflow-x: auto;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    var(--env-color-fg-default) var(--catalogue-width-start),
+    var(--env-color-fg-default) calc(100% - var(--catalogue-width-end)),
+    transparent
+  );
+}
+.catalogue-width-fit[data-cropped]:dir(rtl) {
+  mask-image: linear-gradient(
+    to left,
+    transparent,
+    var(--env-color-fg-default) var(--catalogue-width-start),
+    var(--env-color-fg-default) calc(100% - var(--catalogue-width-end)),
+    transparent
+  );
+}
+.catalogue-width-fit[data-cut~='start'] {
+  --catalogue-width-start: var(--catalogue-width-fade);
+}
+.catalogue-width-fit[data-cut~='end'] {
+  --catalogue-width-end: var(--catalogue-width-fade);
+}
+
+/* An example in a frame whose width sweeps (`widths` with `sweep` on its fence, WidthSweep.tsx):
+   across its stage, a place as wide as the widest width at the frame's scale, and as tall as the
+   ruler and the tallest the example gets, so the figure keeps one height; in it, the ruler and the
+   frame, both centred, so the frame stays in the middle of the stage as both its edges move. */
+.catalogue-width-sweep {
+  display: grid;
+  justify-items: center;
+  justify-self: stretch;
+  min-inline-size: 0;
+}
+
+.catalogue-width-sweep-place {
+  display: grid;
+  grid-template-rows: auto auto;
+  row-gap: var(--env-space-4);
+  justify-items: center;
+  /* The widest frame with its outline on both sides, as wide as the ruler gets, so the room and
+     the frame in it stay centred on the stage. */
+  inline-size: calc(var(--catalogue-sweep-widest, 0rem) + 2 * var(--env-space-2) + 0.125rem);
+  max-inline-size: 100%;
+  /* The frame's outline, at its offset, below the room. */
+  padding-block-end: var(--env-space-2);
+}
+
+.catalogue-width-sweep-room {
+  position: relative;
+  inline-size: 100%;
+  block-size: var(--catalogue-sweep-height, auto);
+}
+
+/* The frame the example responds to: an env-window container, so the window classes are measured
+   on it, outlined as an example's width frame is, and drawn at its scale from its top middle. */
+.catalogue-width-sweep-frame {
+  position: absolute;
+  inset-block-start: 0;
+  left: 50%;
+  container: env-window / inline-size;
+  outline: 0.0625rem dashed var(--env-color-border-default);
+  outline-offset: var(--env-space-2);
+  transform: translateX(-50%) scale(var(--catalogue-sweep-scale, 1));
+  transform-origin: top center;
+}
+/* The layer the frame's overlays render into (WidthSweep.tsx), at its top start corner and of no
+   size of its own, so it covers nothing: the frame places what opens in it. */
+.catalogue-width-sweep-overlays {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+}
+
+/* A frame wider than the stage at a legible scale (`crop`): seen from its start and cut off at the
+   stage's end, where it fades out over the last stretch as a device cut off does (DeviceFrame.css),
+   and the ruler stops at what shows, unmarked where the frame runs on. */
+.catalogue-width-sweep-place[data-cropped] {
+  --catalogue-sweep-fade: 1.75rem;
+  --catalogue-sweep-end: 0rem;
+  overflow-x: clip;
+  mask-image: linear-gradient(
+    to right,
+    var(--env-color-fg-default) calc(100% - var(--catalogue-sweep-end)),
+    transparent
+  );
+}
+.catalogue-width-sweep-place[data-cut~='end'] {
+  --catalogue-sweep-end: var(--catalogue-sweep-fade);
+}
+.catalogue-width-sweep-place[data-cut~='end'] .catalogue-width-ruler {
+  border-inline-end-color: transparent;
+}
+
+/* A frame of a width of its own, without its edge, for a figure whose point isn't the width. */
+.catalogue-width-sweep-frame[data-outline='none'] {
+  outline-color: transparent;
+}
+
+/* The ruler: a faint dimension line across the frame's outline, its ends marked, with the width
+   in its middle in small muted figures that don't shift as they change. */
+.catalogue-width-ruler {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  column-gap: var(--env-space-2);
+  align-items: center;
+  box-sizing: border-box;
+  inline-size: calc(var(--catalogue-sweep-width, 0rem) + 2 * var(--env-space-2) + 0.125rem);
+  border-inline: 0.0625rem solid var(--env-color-border-muted);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.catalogue-width-ruler::before,
+.catalogue-width-ruler::after {
+  content: '';
+  block-size: 0.0625rem;
+  background: var(--env-color-border-muted);
+}
+
+/* An example's code switch: plain text, quiet, without a chevron or a fill, underlined under the
+   pointer as a link is. Show code and Hide code say its state. */
+.site-live-example-code > summary {
+  margin-inline: 0;
+  padding-inline: 0;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.site-live-example-code > summary > .env-disclosure-indicator {
+  display: none;
+}
+.site-live-example-code > summary:is(:hover, :active) {
+  background: none;
+  color: var(--env-color-fg-default);
+  text-decoration-color: currentcolor;
+}
+
+/* An example's open code lines up with its stage, edge to edge and with the stage's corners, so
+   the two read as one figure: square under a page's figure, a surface's corners elsewhere. Code
+   never wraps: a line wider than the column scrolls sideways. */
+.site-live-example-code > .env-disclosure-panel {
+  margin-inline: 0;
+}
+
+.site-example-source.env-code-block {
+  border-radius: var(--env-radius-surface);
+}
+.site-figures .site-example-source.env-code-block {
+  border-radius: 0;
+}
+
+/* Text for assistive technology alone, such as the file a Code disclosure shows. */
+.site-visually-hidden {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

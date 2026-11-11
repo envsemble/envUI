@@ -1,0 +1,341 @@
+/* The galleries of components and patterns (Gallery.tsx): by group, a cell for each page: its live
+   picture, inert, flat and square-cornered, in the reader's theme, and under it its name, which
+   slides into view as the pointer comes onto the cell: a component at its own size, a pattern's
+   scene scaled to fit. Cells are of one size, so the pictures line up in rows. */
+/* The groups stand a page's section gap apart (Shell.css), as every section does. */
+.catalogue-gallery {
+  /* As wide as the page's whole pane, past the column the text keeps to, less a gutter at either
+     side, and centred on it: 100cqi is the pane's width (site-page-layout, Shell.css). */
+  inline-size: calc(100cqi - 2 * var(--site-gutter));
+  max-inline-size: none;
+  margin-inline: calc(50% - 50cqi + var(--site-gutter));
+  text-align: start;
+  container: catalogue-gallery / inline-size;
+}
+
+.catalogue-gallery > * + * {
+  margin-block-start: var(--site-section-gap);
+}
+
+/* A gallery's grid, and Related's, whose tiles are framed as a gallery's are (Related.tsx). */
+.catalogue-gallery-grid,
+.catalogue-related-tiles {
+  /* The least box a component drawn at its own size is drawn whole at, with the inset around it
+     (useFit.ts): as wide as five to a row, and as tall as a row of controls with room around it;
+     what is taller, such as a calendar, is cut off at its foot rather than drawn smaller. An open
+     popup, such as a menu beside its button, is drawn a little smaller to show whole, but never
+     smaller than `--catalogue-own-popup-least`, every popup's least, so its words read as the
+     other tiles' do; a larger one, such as a picker, is cut off at its foot as a calendar is. A
+     modal, such as a dialog, has the whole stage for its screen, its backdrop over all of it, and
+     shows from its top where it is taller. A popup's tile is written to show whole, or as a window
+     onto it from its top (tiles/). A tile that holds its view, such as a picker resting open, is
+     such a window too, what its script acts on, such as the chosen row, above the fade at its
+     foot. So a popup is drawn at its own size or at that one scale, never between. The overlays,
+     such as a notification, a popover, a sheet and a dialog, are drawn at one scale,
+     `--catalogue-overlay-scale`, on a phone a smaller one, and a dialog smaller still only as far
+     as it needs to show whole, down to its own least (Tiles.ts). A held view, such as a picker
+     resting open, is drawn smaller only as far as what its script acts on needs (useFit.ts). */
+  --catalogue-own-least: 12rem;
+  --catalogue-own-least-block: 4.5rem;
+  --catalogue-own-popup-least: 0.84;
+  --catalogue-overlay-scale: 0.84;
+}
+
+.catalogue-gallery-grid {
+  display: grid;
+  /* As many to a row as fit at 24 rem, as a pattern's cells: two on a laptop's page, three or more
+     on a wider one, and two in a narrow window; on a touch screen one (below). */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+  gap: var(--env-space-3);
+  max-inline-size: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A cell of the gallery: its picture, square-cornered and flat on the page, with no edge, and its
+   name under it, out of the cell's view. The cell is as tall as the picture and the name together
+   and shows only that much: at rest the picture sits in its middle, half the name's row lower, and
+   the name under it, unseen; under the pointer, or with the keyboard on its link, both slide up a
+   little together, `--catalogue-gallery-rise`, as far as the name needs to show whole, and the
+   name fades in, quick at first and settling, as the picture comes alive; as the pointer leaves,
+   they slide back as calmly, the name fading out quicker. Where the reader can't hover, the name
+   always shows. What slides is the picture and the words of the name's row
+   (.catalogue-gallery-slide), never a box around the name's link, so the link's cover reaches the
+   whole cell (below). */
+.catalogue-gallery-tile {
+  --catalogue-gallery-meta-height: 2.25rem;
+  --catalogue-gallery-slide: calc(var(--catalogue-gallery-meta-height) / 2);
+  /* The name's line, centred in its row, shows whole with the picture risen this far. */
+  --catalogue-gallery-rise: 0.75rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto var(--catalogue-gallery-meta-height);
+  min-inline-size: 0;
+  overflow: clip;
+  /* Its link's cover stacks over the picture here, and nowhere past the cell. */
+  isolation: isolate;
+}
+
+/* The picture, which slides as a whole with what it shows (Gallery.tsx). */
+.catalogue-gallery-picture {
+  min-inline-size: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-gallery-picture,
+  .catalogue-gallery-slide {
+    transition: translate var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .catalogue-gallery-meta {
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-exit);
+  }
+  .catalogue-gallery-tile:is(:hover, :has(:focus-visible))
+    :is(.catalogue-gallery-picture, .catalogue-gallery-slide) {
+    transition: translate var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+  }
+  .catalogue-gallery-tile:is(:hover, :has(:focus-visible)) .catalogue-gallery-meta {
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+  }
+}
+
+@media (hover: hover) {
+  .catalogue-gallery-tile :is(.catalogue-gallery-picture, .catalogue-gallery-slide) {
+    translate: 0 calc(var(--catalogue-gallery-slide) - var(--catalogue-gallery-rise));
+  }
+  .catalogue-gallery-tile:not(:hover, :has(:focus-visible))
+    :is(.catalogue-gallery-picture, .catalogue-gallery-slide) {
+    translate: 0 var(--catalogue-gallery-slide);
+  }
+  .catalogue-gallery-tile:not(:hover, :has(:focus-visible)) .catalogue-gallery-meta {
+    opacity: 0;
+  }
+}
+
+/* Where the reader can't hover, nothing slides and nothing is written: the cell shows its picture
+   alone. Its name is still there, unseen, for a screen reader, and its link still covers the cell,
+   so a tap on the picture opens the page. */
+@media (hover: none) {
+  .catalogue-gallery-tile {
+    grid-template-rows: auto 0;
+    overflow: visible;
+  }
+  .catalogue-gallery-tile > .catalogue-gallery-meta {
+    block-size: 0;
+    padding: 0;
+    opacity: 0;
+  }
+}
+
+/* The picture: square corners, no edge and no shadow, in a gallery and in Related alike. */
+:is(.catalogue-gallery-grid, .catalogue-related-tiles)
+  .catalogue-gallery-stage.catalogue-gallery-stage {
+  border-radius: 0;
+  box-shadow: none;
+}
+:is(.catalogue-gallery-grid, .catalogue-related-tiles) .catalogue-tile-crop {
+  clip-path: inset(0);
+}
+
+/* The name and an arrow to its page, in the row under the picture. */
+.catalogue-gallery-meta {
+  min-inline-size: 0;
+  padding-inline: var(--env-space-1);
+}
+.catalogue-gallery-arrow {
+  flex: none;
+  color: var(--env-color-fg-muted);
+}
+
+/* The stage of a gallery tile: 4:3, the shape of a tile's window (Tiles.ts) and of a pattern's
+   stage, so what a component opens below it has room and the cells are as tall as a pattern's;
+   what is taller still, such as a calendar, is cut off at its foot, fading out through the rows
+   there. Each page's own tile lays out in its own window (tiles/Tiles.ts, Tile.css); a page
+   without one shows its example in a window that counts whole (TileStage.tsx), so it is drawn at
+   the tiles' scale. */
+.catalogue-gallery-stage.catalogue-gallery-stage {
+  aspect-ratio: 4 / 3;
+  max-block-size: none;
+}
+
+/* A pattern's scene takes a larger cell than a component's: three to a row on a wide page, two on
+   a narrower one and one on a phone, on a stage of 4:3, so the whole window its scene is written
+   for shows at about its own size and its words read as a page's do (useFit.ts). Every scene is
+   one piece of an application 17rem across, low enough to show whole as it plays, so each sits
+   centred in its stage with the same margins (tiles/). */
+.catalogue-gallery-grid[data-scenes] {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+}
+
+/* So do Related's tiles where one of them is a scene, so they line up in a row. */
+:is(.catalogue-gallery-grid, .catalogue-related-tiles)[data-scenes]
+  .catalogue-gallery-stage.catalogue-gallery-stage {
+  aspect-ratio: 4 / 3;
+}
+
+/* A component's picture, not its stage, is clipped to the stage's corners, in a gallery and in
+   Related: a popup measures the room it has against the boxes that clip it, and would shift off its trigger to fit inside the stage,
+   rather than open where it opens in an application and be framed there (useFit.ts). */
+:is(.catalogue-gallery-grid, .catalogue-related-tiles):not([data-scenes])
+  .catalogue-gallery-stage.catalogue-gallery-stage {
+  overflow: visible;
+}
+
+/* A scene lays out from its window's top rather than its middle, also with its overlay layer: at
+   rest the view centres what it paints either way (useFit.ts), and as it plays, what grows or
+   shrinks in it, such as a list a filter narrows or files added, changes below what stays, which
+   holds still. */
+.catalogue-gallery-stage[data-scene] .catalogue-tile-canvas,
+.catalogue-gallery-stage[data-scene] .catalogue-tile-canvas:has(> .catalogue-overlay-layer) {
+  place-content: start stretch;
+}
+
+/* In a narrow window under a mouse, components two to a row on lower stages, so the gallery stays
+   short: each drawn at one of a few scales (useFit.ts), its own size where it fits its stage, else
+   `--catalogue-own-floor`, laid out as wide as the stage shows at that scale, and an open popup
+   down to its least, `--catalogue-own-popup-least`, as legible as the tiles beside it; what is
+   larger still is shown from its top and cut off at its end and its foot, fading out. Only an
+   overlay, such as a notification or a dialog, is drawn smaller, at `--catalogue-overlay-scale`
+   (above): one of a notification's width shows whole there. A pattern's scene keeps its own card,
+   one to a row (above). On a touch screen the cards stay one to a row, on their own stages
+   (below). */
+@media not ((hover: none) or (pointer: coarse)) {
+  @container catalogue-gallery (width < 27.25rem) {
+    .catalogue-gallery-grid:not([data-scenes]) {
+      --catalogue-own-least: 0rem;
+      --catalogue-own-floor: 0.85;
+      --catalogue-own-popup-least: 0.85;
+      --catalogue-overlay-scale: 0.75;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .catalogue-gallery-grid:not([data-scenes]) .catalogue-gallery-stage.catalogue-gallery-stage {
+      aspect-ratio: 16 / 10;
+    }
+    .catalogue-gallery-grid:not([data-scenes])
+      .catalogue-gallery-stage.catalogue-gallery-stage
+      .catalogue-tile-canvas[data-own-size] {
+      inline-size: min(14rem, (100% - 2rem) / var(--catalogue-own-floor));
+    }
+    /* A popup shown open lays out no wider than the stage's room shows at the scale it is drawn
+       at, `--catalogue-canvas-scale` (useFit.ts), first a popup's least, the fit's inset from its
+       edges, so what fits its window fits the stage; one narrower is drawn larger. */
+    .catalogue-gallery-grid:not([data-scenes])
+      .catalogue-gallery-stage.catalogue-gallery-stage
+      .catalogue-tile-canvas[data-own-size][data-popup] {
+      inline-size: min(
+        var(--catalogue-tile-width),
+        (100% - 2rem) / var(--catalogue-canvas-scale, var(--catalogue-own-popup-least))
+      );
+    }
+    /* An overlay lays out as wide as the stage's room shows at the overlays' scale, so a popover
+       keeps the inset from both edges; a notification with the gutters it keeps around it, about
+       the fit's inset from the stage's edges, so it shows its message on one line (useFit.ts). */
+    .catalogue-gallery-grid:not([data-scenes])
+      .catalogue-gallery-stage.catalogue-gallery-stage
+      .catalogue-tile-canvas[data-own-size][data-popup][data-overlay] {
+      inline-size: calc((100% - 2rem) / var(--catalogue-overlay-scale));
+    }
+    .catalogue-gallery-grid:not([data-scenes])
+      .catalogue-gallery-stage.catalogue-gallery-stage
+      .catalogue-tile-canvas[data-own-size][data-popup][data-overlay]:has(.env-toast-viewport) {
+      inline-size: calc((100% - 1.75rem) / var(--catalogue-overlay-scale) + 1.5rem);
+    }
+  }
+}
+
+/* On a touch screen, a phone or a tablet, in either orientation, the cards are one to a row: the
+   card in the middle of the view plays as the reader scrolls (Autoplay.ts), which needs one card
+   there, not two side by side. */
+@media (hover: none), (pointer: coarse) {
+  .catalogue-gallery-grid.catalogue-gallery-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.catalogue-gallery-stage .catalogue-tile-canvas,
+.catalogue-gallery-stage .catalogue-tile-canvas:has(> .catalogue-overlay-layer) {
+  place-content: center stretch;
+  inline-size: 16rem;
+  block-size: 12rem;
+  min-block-size: 0;
+}
+
+/* So does a tile that grows as it plays, such as a note gaining a line (useHeldView, Playback.tsx):
+   what it adds grows below what stays. */
+.catalogue-gallery-stage .catalogue-tile-canvas[data-from-top],
+.catalogue-gallery-stage .catalogue-tile-canvas[data-from-top]:has(> .catalogue-overlay-layer) {
+  place-content: start stretch;
+}
+
+/* The name under the picture, in body text of a medium weight, on one line; the group headings
+   still lead. Its words are cut short with an ellipsis in a box of their own, which slides, so
+   nothing around them clips them as they slide. */
+.catalogue-gallery-name {
+  min-inline-size: 0;
+  margin: 0;
+  font-weight: var(--env-font-weight-medium);
+}
+.catalogue-gallery-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catalogue-gallery-group {
+  margin: 0;
+}
+
+/* The name's link, a gallery's or Related's: the cell's one link, with no fill, ring or press of
+   its own under the pointer, a press or the keyboard, as the cell is what they reach. A button's
+   press would shrink it, and with it hold its cover to the link's own box. */
+:is(.catalogue-gallery-link, .catalogue-related-link),
+:is(.catalogue-gallery-link, .catalogue-related-link):is(:hover, :active, :focus-visible) {
+  display: block;
+  min-inline-size: 0;
+  outline: none;
+  background: none;
+  color: var(--env-color-fg-default);
+  text-decoration: none;
+  transform: none;
+}
+
+/* Its cover: the whole cell, the picture and the row under it, over everything in the cell, so a
+   press anywhere on it, the live picture included, opens the page, and the pointer is a link's
+   all over it. No box between the link and the cell moves, so the cover holds still as the
+   picture and the words slide, and the pointer stays on the cell from the picture to the words. */
+:is(.catalogue-gallery-link, .catalogue-related-link)::after {
+  position: absolute;
+  inset: 0;
+  z-index: var(--env-z-raised);
+  content: '';
+}
+
+/* The keyboard on a cell's link rings the whole cell, inside its edge, as the cell clips what lies
+   outside it. */
+:is(.catalogue-gallery-link, .catalogue-related-link):focus-visible::after {
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: -0.125rem;
+}
+
+/* Drawn at its own size, a component lays out as wide as the stage's room, less the fit's inset,
+   so what it opens stays in view, but never narrower than the least width it is drawn whole at,
+   `--catalogue-own-least`; a stage smaller than the least box draws it smaller, by one scale for
+   every tile (useFit.ts), but on a phone; and at least as tall as its tile's window, so what opens
+   below it has the room it was written for. What is larger, such as a calendar, is cut off at its
+   end. */
+.catalogue-gallery-stage.catalogue-gallery-stage .catalogue-tile-canvas[data-own-size] {
+  inline-size: max(100% - 2rem, var(--catalogue-own-least));
+  block-size: max(100% - 2rem, var(--catalogue-tile-height));
+  min-block-size: 0;
+}
+
+/* A popup shown open lays out in its tile's own window, as wide as it was written for, such as a
+   menu beside its button, also on a phone (useFit.ts). */
+:is(.catalogue-gallery-grid, .catalogue-related-tiles)
+  .catalogue-gallery-stage.catalogue-gallery-stage
+  .catalogue-tile-canvas[data-own-size][data-popup] {
+  inline-size: max(100% - 2rem, var(--catalogue-tile-width));
+}

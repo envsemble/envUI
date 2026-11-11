@@ -1,7 +1,6 @@
 ---
 title: Message
-summary: 'Conversation entries in a log: compact bubbles for your own messages, full-width content
-  from others.'
+summary: The entries of a conversation, your own as bubbles and others at full width.
 status: stable
 since: 1.0.0
 category: Text & content
@@ -124,7 +123,7 @@ Name icon actions after what they do, such as Copy answer.
 
 ### envUI provides
 
-- MessageList as a polite log, and `aria-busy` while `busy`.
+- MessageList as a polite log, and `aria-busy` while `busy`, with the busy row shown but not read.
 - Each message as an `<article>`, with its author and meta in a header.
 - The status as text beside its icon.
 
@@ -175,10 +174,10 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
 
 #### Streaming
 
-`busy` on MessageList reports `aria-busy` while a reply streams in or earlier messages load, until it is cleared. The list doesn't scroll by itself: keep the newest message in view yourself, without moving focus.
+`busy` on MessageList shows a busy row after the last message, where the reply will show: `busyAuthor`, who the reply comes from, as a message's author, then a quiet spinner and Working in the muted color (`busyLabel`, or `messages.message.working`). It reports `aria-busy` while a reply is on its way or streams in, until it is cleared. The list doesn't scroll by itself: keep the newest message in view yourself, without moving focus.
 
 ```tsx
-<MessageList aria-label="Conversation with Sam Lee" busy={streaming}>
+<MessageList aria-label="Conversation with Sam Lee" busy={streaming} busyAuthor="Assistant">
   …
 </MessageList>
 ```
@@ -189,8 +188,10 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
 
 ### Customize
 
-The list is `env-message-list`, and each message `env-message`, with its author, `env-message-author`, and meta, `env-message-meta`, in its header, then its content, `env-message-content`, its actions, `env-message-actions`, and its status, `env-message-status`.
+The list is `env-message-list`, with `env-message-list-busy` for its busy row, and each message `env-message`, with its author, `env-message-author`, and meta, `env-message-meta`, in its header, then its content, `env-message-content`, its actions, `env-message-actions`, and its status, `env-message-status`.
 
 ## Changelog
 
 - **1.0.0**: Buttons in `actions` are small ghost buttons unless they set their own variant or size, and the statuses come from `messages.message`. The page is `message`, after the component, instead of `messages`. Message and MessageList can render in React Server Components.
+- **1.0.0-prerelease.6**: The busy row names who replies, `busyAuthor`, and says Working beside its spinner, `busyLabel` or `messages.message.working`.
+- **1.0.0-prerelease.6**: While `busy`, MessageList shows a quiet spinner in the muted color after the last message, `env-message-list-busy`.

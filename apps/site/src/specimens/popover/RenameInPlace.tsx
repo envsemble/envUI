@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import RenameInPlace from '../../examples/popover/RenameInPlace';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const field = '.env-popover .env-text-field-input';

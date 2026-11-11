@@ -1,6 +1,6 @@
 ---
 title: DocumentTabs
-summary: Editor-style tabs for open documents, which people switch, close, pin and close all.
+summary: Editor-style tabs for the documents people have open.
 status: stable
 since: 1.0.0
 category: Navigation
@@ -109,7 +109,7 @@ A tab names its document, and closing one never loses work.
 
 ```
 
-### When a tab closes
+### Closing the active tab
 
 Activate a neighbor when the active tab closes.
 
@@ -175,5 +175,7 @@ Each tab opens a context menu with Close on right click, long press, the <kbd>Me
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: `DocumentTab` is `DocumentTabsItem`, keyed by `value` where it had `id`, with `tooltip` where it had `title`; the root takes the native props.
 - **1.0.0**: `onReorder`: a tab dragged with a mouse or pen shows where it will land and moves there when let go, and each tab's context menu offers Move left and Move right. `end` holds content after the tabs, such as a button that closes them all. Tabs that run past an edge fade out toward it. Rebuilt on Base UI Tabs: each tab sits beside its close button, an IconButton with a cross hidden from assistive technology, instead of around it, which fixes the nested-interactive control, and announces Delete and Backspace, which close it, through `aria-keyshortcuts`. Each tab opens a context menu with Close, also without `onCloseAll`, which adds Close all tabs. The arrow keys and the wheel follow the text direction. Strings come from `messages.documentTabs`, and the strip takes `ref` and `style`. Classes: `env-document-tabs-item` lays out each tab, and `env-document-tab`, `-label` and `-close` are `env-document-tabs-tab`, `-tab-label` and `env-document-tabs-close`. The root, `env-document-tabs`, is the bar that holds the strip and the end content, and takes `className`, `style` and `ref`; the strip, the tab list, which they reached before, is `env-document-tabs-list`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: The active tab takes the surface of the content below it, which it joins, in place of the grey fill, which now marks hover alone.
+- **1.0.0-prerelease.5**: `DocumentTab` is `DocumentTabsItem`, keyed by `value` where it had `id`, with `tooltip` where it had `title`; the root takes the native props.

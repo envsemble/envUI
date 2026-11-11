@@ -5,8 +5,8 @@
 // planes' surfaces and renders the view. It counts frames only while it shows.
 
 import { useEffect, useRef, useState } from 'react';
-import * as DescriptionList from '../../content/DescriptionList.js';
-import { Surface } from '../../foundations/Surface.js';
+import * as DescriptionList from '../../data-display/DescriptionList.js';
+import { Surface } from '../../layout/Surface.js';
 import { devStats, type WorkStats } from './stats.js';
 
 interface Sample {

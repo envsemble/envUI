@@ -2,10 +2,12 @@
 // page doesn't move when its content arrives. It toggles the skeleton's attribute, which the
 // styles follow, measures every element in both states, and reports the ones that move or resize.
 
-import { describeElement, isDevElement, resolveRoot } from './measure.js';
-import type { LayoutProblem } from './model.js';
+import { describeElement, isDevElement } from './elements.js';
+import { resolveRoot, toBox } from './measure.js';
+import type { Box, LayoutProblem } from './model.js';
 import { partClassOf } from './parts.js';
-import { rootFontPx, toRem } from './units.js';
+import { remPixels } from '../internal/dom/lengths.js';
+import { toRem } from './units.js';
 import { alignPulses } from '../foundations/SkeletonScope.js';
 
 /** The attribute that marks a skeleton's root, which its styles follow. */
@@ -15,18 +17,6 @@ export interface SkeletonShiftOptions {
   /** How far, in px, an element may move or resize before it counts. @default 1 */
   tolerance?: number;
 }
-
-interface Rect {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
-const rectOf = (element: Element): Rect => {
-  const box = element.getBoundingClientRect();
-  return { x: box.x, y: box.y, w: box.width, h: box.height };
-};
 
 /** An element as the check names it: its part class, its name or layout kind, else its tag. */
 function labelOf(element: Element): string {
@@ -143,10 +133,10 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
     surface.toggleAttribute(skeletonAttribute, skeleton);
     if (skeleton) wrapper.wrap();
     else wrapper.unwrap();
-    return elements.map(rectOf);
+    return elements.map((element) => toBox(element.getBoundingClientRect()));
   };
-  let loaded: Rect[];
-  let skeleton: Rect[];
+  let loaded: Box[];
+  let skeleton: Box[];
   try {
     loaded = measure(false);
     skeleton = measure(true);
@@ -205,17 +195,16 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
         !reported.has(element) &&
         element.matches('img, video, iframe') &&
         getComputedStyle(element).aspectRatio === 'auto' &&
+        // An img, video or iframe, as matched above.
         !sizedByItsBox(element as HTMLElement),
     )
-    .map(
-      (element): LayoutProblem => ({
-        rule: 'skeleton-shift',
-        node: labelOf(element),
-        path: pathOf(element, surface),
-        message:
-          'Media without an aspect ratio has no size until it loads. Declare one, with width and height attributes or aspect-ratio, so its skeleton holds its place.',
-      }),
-    );
+    .map((element): LayoutProblem => ({
+      rule: 'skeleton-shift',
+      node: labelOf(element),
+      path: pathOf(element, surface),
+      message:
+        'Media without an aspect ratio has no size until it loads. Declare one, with width and height attributes or aspect-ratio, so its skeleton holds its place.',
+    }));
   return [...deepest.map(([, problem]) => problem), ...media];
 }
 
@@ -229,6 +218,6 @@ export function skeletonShift(
   { tolerance = 1 }: SkeletonShiftOptions = {},
 ): LayoutProblem[] {
   const element = resolveRoot(root);
-  const rootPx = rootFontPx();
+  const rootPx = remPixels(element);
   return surfacesOf(element).flatMap((surface) => shiftsOf(surface, tolerance, rootPx));
 }

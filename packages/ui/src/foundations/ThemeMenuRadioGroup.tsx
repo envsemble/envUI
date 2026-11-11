@@ -1,8 +1,8 @@
 'use client';
 
 import { useContext, type ReactNode } from 'react';
-import * as Menu from '../navigation/Menu.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import * as Menu from '../actions/menu/Menu.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { themePreference } from './messages/themePreference.js';
 import { ThemePreferenceContext } from './internal/ThemePreferenceContext.js';
 import type { ThemePreference } from './themeBootstrap.js';
@@ -65,6 +65,7 @@ export function ThemeMenuRadioGroup({
   return (
     <Menu.RadioGroup
       value={current}
+      // The radio items carry the preferences as their values.
       onValueChange={(next) => change(next as ThemePreference)}
       label={label}
       aria-labelledby={labelledBy}

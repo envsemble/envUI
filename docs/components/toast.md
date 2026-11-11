@@ -1,6 +1,6 @@
 ---
 title: Toast
-summary: Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people.
+summary: Brief feedback after an action, at the edge of the window.
 status: stable
 since: 1.0.0
 category: Feedback
@@ -91,15 +91,17 @@ Past a limit, older notifications wait behind a count, and danger notifications 
 4. **Action** (`env-toast-action`, `action`)
 5. **Dismiss button** (`env-toast-dismiss`, `dismissible`)
 
-Not shown: the count of hidden notifications.
-
 ## Behaviour
 
-### How long it stays
+### Duration
 
 Its timer pauses while the pointer rests on it or it has focus.
 
-### Undo an action
+### Over a modal
+
+While a modal, such as a Dialog or a Sheet, is open, notifications wait until it closes, so none covers its actions. Each then shows, and is announced, for its full duration.
+
+### Undo
 
 A notification with an action stays until its action has run or people dismiss it.
 
@@ -107,7 +109,7 @@ A notification with an action stays until its action has run or people dismiss i
 
 ```
 
-### Try again after an error
+### Retry
 
 A danger notification stays until it is dismissed, and is announced at once.
 
@@ -115,7 +117,7 @@ A danger notification stays until it is dismissed, and is announced at once.
 
 ```
 
-### Work that finished elsewhere
+### Background work
 
 A notification can stay until people dismiss it.
 
@@ -175,7 +177,7 @@ Put one ToastProvider near the root of the application. Any component inside it 
 
 #### Tones
 
-`tone` is `neutral`, the default, with no icon, `success`, `info` or `danger`. A danger notification stays until it is dismissed, is announced at once as an alert, and is never hidden behind the count.
+`tone` is `neutral`, the default, with no icon, `success`, `info` or `danger`. Every tone takes the same dark fill, and the tone shows in its icon, so a stack stays quiet beside the page's content. A danger notification stays until it is dismissed, is announced at once as an alert, and is never hidden behind the count.
 
 A toast has no `warning` tone, unlike Alert: a warning needs attention where it applies, so it is an Alert on the page, not a notification that passes.
 
@@ -188,7 +190,7 @@ toast.show({ tone: 'danger', message: 'Changes couldn’t be saved.' });
 `action` is one button, with its `label` and its `onClick`; the notification stays until it is dismissed, so call `dismiss` with the id `show` returned once the action has run.
 
 - `duration` is how long it stays, in milliseconds: 5000 by default, or `Infinity` for danger notifications and those with an action.
-- It counts only while the notification is visible, pauses on hover and keyboard focus, and starts again in full when it returns from behind the count.
+- It counts only while the notification is visible, pauses on hover and keyboard focus, and starts again in full when it returns from behind the count or from behind a modal.
 - `Infinity` or `0` keeps it until it is dismissed, and a negative number throws a `RangeError`.
 - `dismissible={false}` leaves out the dismiss button; it still closes after its duration, with <kbd>Esc</kbd> while focused and with `dismiss`.
 
@@ -218,15 +220,21 @@ ToastProvider's `defaultPlacement` is `bottom-end`, stacking upward from the bot
 
 ### Composition
 
-The parts are each placement's region, `env-toast-viewport`, with `data-placement`; each notification, `env-toast`, with `data-tone`; its tone icon, `env-toast-status-icon`, its message, `env-toast-message`, its action, `env-toast-action`, and its dismiss button, `env-toast-dismiss`; the count of hidden notifications, `env-toast-queued-count`; and the announcements, `env-toast-announcer`. The region names, the hidden count and the dismiss button's name come from the provider's messages.
+The parts are each placement's region, `env-toast-viewport`, with `data-placement`; each notification, `env-toast`, with `data-tone`; its tone icon and message together, `env-toast-content`, the tone icon, `env-toast-status-icon`, its message, `env-toast-message`, its action, `env-toast-action`, and its dismiss button, `env-toast-dismiss`; the count of hidden notifications, `env-toast-queued-count`; and the announcements, `env-toast-announcer`. The region names, the hidden count and the dismiss button's name come from the provider's messages.
 
 ### Customize
 
-A Toast draws an edge only at high contrast, unless its outline color sets one, and its container color takes the place of the tone's fill.
+A Toast draws an edge only at high contrast, unless its outline color sets one, and its container color takes the place of the dark fill; with its content color set, the tone icon takes that color too.
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.
 - **1.0.0**: No edge outside high contrast, where the tone's edge bounds it, and an alert's corners, 1.25 rem. The notifications' theme boundary, `env-toast-portal-theme`, is `env-toast-theme`, as Popup's is `env-popup-theme`.
 - **1.0.0**: `limit` for `visibleLimit`, as Base UI names it. `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centered in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.
 - **1.0.0**: `ToastProvider` and `useToast` keep their names. The manual `Toast` component and `ToastProps` are no longer exported; show notifications with `useToast` inside `ToastProvider`.
+- **1.0.0-prerelease.6**: A toast fades in with `--env-motion-ease-enter`, so it shows from its first frames rather than late, while it arrives from its edge as before.
+- **1.0.0-prerelease.6**: Notifications glide and a revealed one fades in with the motion tokens, `--env-motion-duration-slow` and `--env-motion-duration-medium` with `--env-motion-ease-enter`, so durations of `0s` stop them.
+- **1.0.0-prerelease.6**: The tone icon stands on its own, without its disc, at a control's icon size, 20 px, and level with the message's first line, beside which a message of two or three lines starts; the icon and the message sit together in `env-toast-content`.
+- **1.0.0-prerelease.6**: Every tone takes the neutral toast's dark fill, `--env-color-bg-neutral-strong`, with its icon in the tone's light grade on a faint disc of it, rather than a solid green, blue or red fill. Every toast in a region is one width, 22 rem, less the gutters on a phone, so a stack's edges line up.
+- **1.0.0-prerelease.6**: A toast takes the large corner of the radius scale, `--env-radius-lg`, as an alert does, rather than a fixed 1.25 rem.
+- **1.0.0-prerelease.6**: The action is an outline button in the notification's own text color, with its edge in that color and the dismiss button's hover and press fills, rather than a blue primary button on the tone's fill. Notifications wait while a modal is open in the same container and show once it closes, rather than covering its actions.
+- **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.

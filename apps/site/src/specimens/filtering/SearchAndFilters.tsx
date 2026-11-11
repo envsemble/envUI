@@ -1,6 +1,7 @@
 import SearchAndFilters from '../../examples/filtering/SearchAndFilters';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const search = '.env-page-header-toolbar input';
 const status = '.env-page-header-toolbar .env-select-trigger';
@@ -39,9 +40,18 @@ const script: PointerStep[] = [
 function Filtering() {
   usePointer(script);
   return (
-    // As tall as the whole list, so the figure keeps its height as the list narrows.
+    // A bounded view of the results, as tall as the header and three or four projects (taller in a
+    // narrow window, where the toolbar wraps): the list narrowing leaves little room empty, and a
+    // longer list runs on past the view's foot, fading out.
     <div
-      style={{ display: 'grid', alignContent: 'start', inlineSize: '100%', minBlockSize: '40rem' }}
+      style={{
+        display: 'grid',
+        alignContent: 'start',
+        inlineSize: '100%',
+        blockSize: 'max(21rem, 31rem - 10vw)',
+        overflow: 'clip',
+        maskImage: 'linear-gradient(to bottom, #000 calc(100% - 3rem), transparent)',
+      }}
     >
       <SearchAndFilters />
     </div>

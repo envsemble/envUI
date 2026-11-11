@@ -92,13 +92,14 @@ import { IconHome } from '@envsemble/envui/icons/Home';
 </Column>;
 ```
 
-| Name     | Takes                                                                                                        |
-| -------- | ------------------------------------------------------------------------------------------------------------ |
-| Symbols  | Material Symbols Rounded, bundled and imported one by one: `Icon<Name>` from `@envsemble/envui/icons/<Name>` |
-| `filled` | The filled form of a standalone symbol; navigation and tabs fill the selected one themselves                 |
-| `label`  | The accessible name of a meaningful standalone icon; leave it out for decoration                             |
-| `Icon`   | The SVG that envUI's symbols render: `currentColor`, 1 em, and hidden unless labelled                        |
-| Your own | A logo or an icon of the application's own: `Graphic`, which every icon slot sizes like a symbol             |
+| Name     | Takes                                                                                                                                    |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Symbols  | Material Symbols Rounded, bundled and imported one by one: `Icon<Name>` from `@envsemble/envui/icons/<Name>`                             |
+| `filled` | The filled form of a standalone symbol; navigation and tabs fill the selected one themselves                                             |
+| `label`  | The accessible name of a meaningful standalone icon; leave it out for decoration                                                         |
+| `tone`   | A status tone's text color, `--env-color-fg-{tone}`, such as `success` for a step that is done; `neutral`, the default, keeps the text's |
+| `Icon`   | The SVG that envUI's symbols render: `currentColor`, 1 em, and hidden unless labelled                                                    |
+| Your own | A logo or an icon of the application's own: `Graphic`, which every icon slot sizes like a symbol                                         |
 
 #### The words of the figures
 
@@ -108,7 +109,7 @@ import { IconHome } from '@envsemble/envui/icons/Home';
 ### Composition
 
 - Copy an icon's import from the list on the Icons page of the catalogue. Each icon has its own path, such as `@envsemble/envui/icons/Add` for `IconAdd`.
-- Icons take the color of their text. Decorative icons stay hidden from assistive technology; icon-only controls need an accessible name.
+- Icons take the color of their text; `tone` gives a status icon its tone's color instead, such as the done and failed steps of a run. Decorative icons stay hidden from assistive technology; icon-only controls need an accessible name.
 
 The symbols are Material Design's [Material Symbols](https://m3.material.io/styles/icons), in their Rounded style, under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0); the package carries the license and its notice.
 

@@ -9,6 +9,13 @@ body {
 .site-app {
   --site-content-width: 72rem;
   --site-gutter: clamp(0.75rem, 3vw, 3rem);
+  /* The space above every section's h2, the first one under the banner included: one rhythm for
+     a page's sections in the catalogue and the Docs alike (Template.css, SiteText.css). */
+  --site-section-gap: var(--env-space-9);
+  /* The catalogue's rail, and where search starts in a wide window: one place in every part, past
+     the rail in the catalogue and past the wordmark in the Docs, so it never moves between them. */
+  --site-rail-width: 6rem;
+  --site-search-start: 9.375rem;
   /* The monospace of code, which the Docs also set their banners' trails in. */
   --site-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
   min-height: 100dvh;
@@ -42,11 +49,16 @@ body {
   block-size: 0.864rem;
   inline-size: auto;
 }
+/* Its black artwork in a light theme and its white one in a dark theme (EnvUIDocsLogo.tsx). */
+:root[data-env-theme='dark'] .docs-brand-docs[data-docs-lockup='black'],
+:root:not([data-env-theme='dark']) .docs-brand-docs[data-docs-lockup='white'] {
+  display: none;
+}
 /* The navigation at the start of a wide window: the catalogue's rail beside the drawer of the
    chosen destination's pages, or the Docs' drawer, flush on the navigation's background with no line
    between them, as tall as the window. The drawer keeps its top and foot in view and scrolls its
    list; the reader resizes it by its end edge, and the catalogue keeps the width it starts at and
-   its bounds (SiteNavigation.tsx). In the sheet of a narrower window they take the
+   its bounds (SiteDrawer.tsx). In the sheet of a narrower window they take the
    sheet's width, and the sheet takes their color. */
 .site-navigation {
   display: flex;
@@ -56,7 +68,7 @@ body {
 }
 .catalogue-rail {
   /* Wide enough for its longest label, Components, on one line. */
-  --env-navigation-rail-width: 6rem;
+  --env-navigation-rail-width: var(--site-rail-width);
   flex: none;
   padding-block: var(--env-space-4);
   overflow-y: auto;
@@ -64,6 +76,73 @@ body {
 .site-sidebar {
   block-size: 100%;
   padding: var(--env-space-4) var(--env-space-3);
+}
+/* Until the site has hydrated a pre-rendered page, the drawer, which renders its default width,
+   is as wide as the reader left it, which the head's script set on the root (HeadScripts.ts); then
+   the drawer has that width itself, and the root's goes (SiteDrawer.tsx). */
+.site-frame[data-area='catalogue'] .site-sidebar[data-resizable] {
+  inline-size: var(--site-drawer-width-catalogue, var(--env-navigation-drawer-width));
+}
+.site-frame[data-area='docs'] .site-sidebar[data-resizable] {
+  inline-size: var(--site-drawer-width-docs, var(--env-navigation-drawer-width));
+}
+/* The drawer coming and going beside the rail (useDrawerMotion.ts): the page
+   beside it takes its room at once, so nothing on it moves. Coming in, its panel fades in and its
+   list slides out of the rail's edge a short way as it fades in; its header, search, stays still,
+   where the page without the drawer has it. Going, it is laid over the page's start, its header
+   hidden over the page's own search, and fades out quicker as its list slides back. Under reduced
+   motion it only fades. Going to another destination with a drawer, its panel stays and its new
+   list comes in as an entrance's does, from script (useDrawerMotion). */
+.site-sidebar[data-site-drawer] {
+  transition: background-color var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+}
+.site-sidebar[data-site-drawer] > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+  transition:
+    opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
+    translate var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+}
+/* Arriving, until the page beside it has painted, it waits where it comes in from, so its
+   entrance plays in frames the reader sees rather than in the page's first, long one. */
+.site-sidebar[data-site-drawer='arriving'] {
+  background-color: transparent;
+}
+.site-sidebar[data-site-drawer='arriving']
+  > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+  opacity: 0;
+}
+.site-sidebar[data-site-drawer='arriving'],
+.site-sidebar[data-site-drawer='arriving']
+  > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+  transition: none;
+}
+.site-sidebar[data-site-drawer='leaving'] {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: var(--site-rail-width);
+  z-index: var(--env-z-raised);
+  pointer-events: none;
+  background-color: transparent;
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+.site-sidebar[data-site-drawer='leaving'] > .env-navigation-drawer-header {
+  visibility: hidden;
+}
+.site-sidebar[data-site-drawer='leaving']
+  > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+  opacity: 0;
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-sidebar[data-site-drawer='arriving']
+    > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+    translate: -0.75rem 0;
+  }
+  .site-sidebar[data-site-drawer='leaving']
+    > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+    translate: -0.5rem 0;
+  }
 }
 /* In the sheet, the navigation fills the sheet's height, so the drawer keeps its top and foot in
    view there too and scrolls its list: the sheet's body, which would scroll, passes it the whole
@@ -100,6 +179,84 @@ body {
 .site-drawer-search {
   max-inline-size: 100%;
 }
+/* Under a fine pointer, the drawer's rows are the scale's row height, as a tree's are, so the long
+   lists of pages stay dense; under a coarse pointer they keep the touch height (NavigationDrawer). */
+@media (pointer: fine) {
+  .site-sidebar .env-navigation-drawer-item {
+    --env-navigation-drawer-item-height: var(--env-row-height);
+  }
+  .site-sidebar .env-navigation-drawer-branch {
+    --env-navigation-drawer-toggle-size: calc(var(--env-row-height) - 2 * var(--env-space-1));
+  }
+}
+/* In a wide window, search keeps its one place (--site-search-start) rather than centring in the
+   drawer, which the reader resizes; a drawer too narrow for it there takes it back towards its
+   start. In the Docs, the wordmark takes the room up to it, or less where the drawer is narrow. */
+.site-navigation:not([data-in-sheet])
+  .catalogue-rail
+  + .site-sidebar
+  > .env-navigation-drawer-header {
+  align-items: flex-start;
+}
+.site-navigation:not([data-in-sheet]) .catalogue-rail + .site-sidebar .site-drawer-search {
+  margin-inline-start: max(
+    0rem,
+    min(var(--site-search-start) - var(--site-rail-width) - var(--env-space-3), 100% - 9.5rem)
+  );
+}
+.site-navigation:not([data-in-sheet]) .docs-drawer-top {
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 0;
+}
+.site-navigation:not([data-in-sheet]) .docs-drawer-top > .site-brand {
+  flex: 0 1 calc(var(--site-search-start) - var(--env-space-3));
+}
+/* The drawer's resize grip shows where it is wanted: while the pointer is on the drawer's end edge,
+   while the handle has keyboard focus and while it drags. The edge keeps its resize cursor, so the
+   pointer finds it, and Tab reaches the handle as before. */
+.site-sidebar > .env-navigation-drawer-resize-handle::after {
+  opacity: 0;
+}
+.site-sidebar
+  > .env-navigation-drawer-resize-handle:is(:hover, :focus-visible, [data-resizing])::after {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-sidebar > .env-navigation-drawer-resize-handle::after {
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+}
+/* Once the drawer's list scrolls, its top edge fades, so a page's link passing under search reads as
+   scrolled away rather than cut short; at the top of the list nothing fades. In a browser without
+   scroll-driven animations the list scrolls as it is. */
+@property --site-drawer-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0rem;
+}
+@keyframes site-drawer-fade {
+  to {
+    --site-drawer-fade: var(--site-drawer-fade-length);
+  }
+}
+.site-sidebar .env-navigation-drawer-list {
+  /* The fade's length, which the list scrolls the current page's group heading clear of
+     (useCurrentInView.ts). */
+  --site-drawer-fade-length: var(--env-space-6);
+}
+@supports (animation-timeline: scroll()) {
+  .site-sidebar .env-navigation-drawer-list {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      var(--env-color-fg-default) var(--site-drawer-fade)
+    );
+    animation: site-drawer-fade linear both;
+    animation-range: 0 var(--site-drawer-fade-length);
+    animation-timeline: scroll(self);
+  }
+}
 .docs-drawer-top {
   display: flex;
   align-items: center;
@@ -110,6 +267,56 @@ body {
 }
 .docs-drawer-top .site-drawer-search {
   flex: none;
+}
+/* In the sheet, the first row ends in the sheet's close button: after search in the catalogue's
+   drawer, beside the rail's wordmark, and after the wordmark in the Docs', with search under them. */
+.site-drawer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--env-space-2);
+  align-self: stretch;
+  min-inline-size: 0;
+}
+.site-drawer-top > .site-drawer-search {
+  min-inline-size: 0;
+}
+.docs-drawer-top > .site-drawer-top {
+  flex: 1 0 100%;
+}
+.site-sheet-close {
+  flex: none;
+}
+/* Search (SiteSearch.tsx) opens over pages of strong color, such as a banner's picture or a
+   figure: its frosted fill covers nearly all of what is behind, so the blur of that color doesn't
+   smear through its results. Where popups are solid, it is too. */
+.site-search {
+  background: color-mix(
+    in srgb,
+    var(--env-popup-fill) max(var(--env-popup-opacity), 98%),
+    transparent
+  );
+}
+/* The results end a little apart from the footer of keys under them. */
+.site-search .env-command-palette-footer {
+  margin-block-start: var(--env-space-2);
+}
+/* The search shortcut's keys show for a keyboard alone, on a window wide enough to hold them: a
+   touch screen has none to press, and in the navigation's sheet of a narrower window they would
+   crowd the wordmark and the close button on search's row. */
+@media (pointer: coarse) {
+  .site-search-keys {
+    display: none;
+  }
+}
+/* The search button's keys in the platform's modifier, ⌘ where the head's script found an Apple
+   platform and Ctrl elsewhere (SearchButton.tsx). */
+:root:not([data-site-modifier='meta']) .site-search-keys[data-site-keys='meta'],
+:root[data-site-modifier='meta'] .site-search-keys[data-site-keys='control'] {
+  display: none;
+}
+.site-navigation[data-in-sheet] .site-search-keys {
+  display: none;
 }
 .docs-drawer-top .site-brand {
   flex: none;
@@ -124,7 +331,8 @@ body {
 /* The other area and the Display menu: ghost buttons at the page's top end that stay in the corner
    as the page scrolls. Their row sticks to the body's top and lets the page show through; the
    buttons sit on a small pill of the page's color, so content scrolling beneath doesn't run into
-   them. Below an expanded window they are icon buttons, across from the menu button and search. */
+   them. Below an expanded window the other part keeps its name and Display is an icon button,
+   at the end of the bar the menu button and search start (.site-compact-controls). */
 .site-page-actions {
   position: sticky;
   z-index: var(--env-z-sticky);
@@ -151,17 +359,27 @@ body {
 .site-wide-only {
   display: none;
 }
-@container env-scaffold (width >= 52.5rem) {
-  .site-narrow-only {
-    display: none;
-  }
-  .site-wide-only {
-    display: contents;
-  }
+/* A wide window's page with no drawer beside the rail, such as Overview, has search at its top
+   start, level with the page's actions across from it: a row of no height that sticks to the
+   body's top, as the compact controls below do. */
+.site-page-search {
+  position: sticky;
+  z-index: var(--env-z-sticky);
+  inset-block-start: 0;
+  display: none;
+  block-size: 0;
 }
-/* Below an expanded window, where the navigation is in a sheet, the menu button and search float
-   as a small pill at the page's top start: a row of no height that sticks to the body's top, so
-   the page starts below the pill and scrolls beneath it. */
+.site-page-search-button {
+  position: absolute;
+  /* Level with search at the top of a drawer: the drawer's top padding. */
+  inset-block-start: var(--env-space-4);
+  inset-inline-start: calc(var(--site-search-start) - var(--site-rail-width));
+}
+/* Below an expanded window, where the navigation is in a sheet, the menu button, the wordmark and
+   search start one bar across the top of the page, in the page's color, which the other area and
+   Display end (.site-page-actions, whose pill sits on it): a row of no height that sticks to the
+   body's top, so the page starts below the bar and scrolls beneath it, hidden from the bar's top
+   to the foot of its controls. */
 .site-compact-controls {
   position: sticky;
   z-index: var(--env-z-sticky);
@@ -170,33 +388,57 @@ body {
 }
 .site-compact-controls-bar {
   position: absolute;
-  inset-block-start: var(--env-space-2);
-  inset-inline-start: var(--env-space-3);
+  inset-block-start: 0;
+  inset-inline: 0;
   display: flex;
   gap: var(--env-space-1);
-  padding: var(--env-space-1);
-  border-radius: var(--env-radius-full);
+  /* Level with the page's actions: their row's padding and their pill's. */
+  padding: calc(var(--env-space-3) + var(--env-space-1)) var(--env-space-4) var(--env-space-2)
+    calc(var(--env-space-3) + var(--env-space-1));
   background: var(--env-color-bg-page);
 }
+/* The wordmark between them, as small as at the top of the Docs' drawer. */
+.site-compact-controls-bar > .site-brand {
+  padding-inline: var(--env-space-2);
+}
+.site-compact-controls-bar > .site-brand svg {
+  inline-size: 4rem;
+}
+.site-compact-controls-bar .docs-brand-docs {
+  block-size: 0.768rem;
+}
+/* From an expanded window, as the library's windowClasses.expanded starts it (CSS can't read a
+   custom property in a query): the drawer beside the rail in place of the sheet and its bar. */
 @container env-scaffold (width >= 52.5rem) {
+  .site-narrow-only {
+    display: none;
+  }
+  .site-wide-only {
+    display: contents;
+  }
+  .site-page-search {
+    display: block;
+  }
   .site-compact-controls {
     display: none;
   }
 }
 .site-main {
+  /* The box of the layer that holds placeholders on their way out (Loading.css). */
+  position: relative;
   display: flex;
   flex-direction: column;
   min-block-size: 100%;
 }
-/* The page, and its contents beside it, in the catalogue and the Docs alike but on their homes: a
-   column at the page's end, as wide as its longest label needs, so each section stays on one line,
-   from 13rem up to 22rem, on a pane wide enough for it beside a readable page; the page's banner
-   and sections take the rest, so a banner is as wide in the catalogue as in the Docs. The contents
-   stay in view below the corner's controls as the page scrolls, and scroll on their own where they
-   are taller than the window. A narrower pane leaves them out, as the page's own headings say as
-   much. The pager stays at the foot of a short page. */
+/* The page, and its contents beside it, in the catalogue and the Docs alike, but on their homes and the catalogue's index pages: a
+   column of one width at the page's end, the same on every page, so the page's column ends at the
+   same place wherever the reader goes; a long label wraps. It shows on a pane wide enough for it
+   beside a readable page; the page's banner and sections take the rest, so a banner is as wide in
+   the catalogue as in the Docs. The contents stay in view below the corner's controls as the page
+   scrolls, and scroll on their own where they are taller than the window. A narrower pane leaves
+   them out, as the page's own headings say as much. The pager stays at the foot of a short page. */
 .site-page-layout {
-  --site-contents-width: 22rem;
+  --site-contents-width: 13rem;
   /* Below the corner's controls: their row's padding and the pill's height, with room. */
   --site-contents-top: 4.5rem;
   container: site-page-layout / inline-size;
@@ -218,28 +460,55 @@ body {
 .site-contents {
   display: none;
 }
+/* Where the contents don't fit beside the page, the banner has them under it, closed
+   (CompactContents), as wide as the banner. */
+.site-compact-contents {
+  inline-size: calc(min(100cqi, var(--site-content-width)) - 2 * var(--site-gutter));
+  margin: var(--env-space-4) auto 0;
+}
+/* On a phone the banner, the contents under it and the first figure share the first screen: the
+   sections sit closer, so the page doesn't spend its first screens on room. */
+@container site-page-layout (width < 37.5rem) {
+  .site-page-grid {
+    --site-section-gap: var(--env-space-7);
+  }
+  .site-compact-contents {
+    margin-block-start: var(--env-space-2);
+  }
+  .site-page-grid .site-page-header {
+    margin-block-end: var(--env-space-4);
+  }
+}
 @container site-page-layout (width >= 56rem) {
+  .site-page-grid[data-contents] .site-compact-contents {
+    display: none;
+  }
   .site-page-grid[data-contents] {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    inline-size: min(100%, var(--site-content-width) + var(--site-contents-width));
+    grid-template-columns: minmax(0, 1fr) calc(var(--site-contents-width) + var(--site-gutter));
+    inline-size: min(
+      100%,
+      var(--site-content-width) + var(--site-contents-width) + var(--site-gutter)
+    );
     margin-inline: auto;
   }
   .site-page-grid[data-contents] > .site-contents {
     display: block;
-    inline-size: max-content;
-    min-inline-size: 13rem;
-    max-inline-size: var(--site-contents-width);
+    min-inline-size: 0;
     padding-inline-end: var(--site-gutter);
   }
 }
 .site-contents-list {
   position: sticky;
-  inset-block-start: var(--site-contents-top);
-  max-block-size: calc(100dvh - var(--site-contents-top) - var(--env-space-6));
+  inset-block-start: calc(var(--site-contents-top) - var(--env-table-of-contents-room));
+  max-block-size: calc(
+    100dvh - var(--site-contents-top) + var(--env-table-of-contents-room) - var(--env-space-6)
+  );
   overflow-y: auto;
-  /* Level with the top of the page's banner. */
-  padding-block: 0 var(--env-space-6);
+  /* The first label level with the top of the page's banner: the room the contents leave above it
+     for their shape reaches up beside the banner. */
+  margin-block-start: calc(-1 * var(--env-table-of-contents-room));
+  padding-block: 0 calc(var(--env-space-6) - var(--env-table-of-contents-room));
   /* On the page's own color, which it stands on anyway: the accessibility scan measures its
      labels on that, not on a banner shape whose box, clipped on screen, reaches beside it. */
   background: var(--env-color-bg-page);
@@ -259,8 +528,9 @@ body {
    whole pane. The header spans the pane, so its width is the container's. */
 .site-page-header {
   container: site-page-header / inline-size;
-  padding-block: var(--env-space-5) var(--env-space-4);
-  margin-block-end: var(--env-space-8);
+  padding-block: var(--env-space-5) var(--env-space-2);
+  /* The page's first section sits as far below the banner as each section below the one before. */
+  margin-block-end: calc(var(--site-section-gap) - var(--env-space-2));
 }
 .site-page-banner,
 .catalogue-overview-hero {
@@ -293,7 +563,8 @@ body {
   isolation: isolate;
   overflow: hidden;
   container-type: inline-size;
-  padding-block: clamp(2.5rem, 5vw, 4rem);
+  /* Snug, so a page's first figure starts close below it. */
+  padding-block: clamp(1.25rem, 2vw, 1.5rem);
 }
 .site-page-banner-content {
   position: relative;
@@ -308,33 +579,31 @@ body {
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
+/* The description fills the banner's text column, whatever its width, its last line kept from
+   standing alone. */
 .site-page-banner-description {
-  max-inline-size: 42ch;
-  text-wrap: balance;
+  max-inline-size: 100%;
+  text-wrap: pretty;
 }
 .site-page-navigation {
   padding: var(--env-space-6) var(--site-gutter) var(--env-space-8);
   margin-top: auto;
 }
-/* The foot of every page, set apart from the page by space alone: the wordmark, the catalogue's
-   destinations in columns, as many as fit and wrapping onto more rows in a narrow page. Its links are quiet text that comes forward when hovered. */
+/* The foot of every page, set apart from the page by space alone: one compact row, the wordmark
+   and the version at its start, a few links at its end. Its links are quiet text that comes
+   forward when hovered. */
 .site-footer {
-  container: site-footer / inline-size;
   background: var(--env-color-bg-default);
 }
 .site-footer-inner {
   inline-size: min(100%, var(--site-content-width));
   margin-inline: auto;
-  padding: var(--env-space-7) var(--site-gutter) var(--env-space-8);
+  padding: var(--env-space-6) var(--site-gutter);
 }
 .site-footer-brand {
   display: block;
   flex: none;
   inline-size: 4.5rem;
-}
-.site-footer-columns {
-  flex: 1;
-  min-inline-size: 0;
 }
 .site-footer-brand svg {
   display: block;
@@ -342,9 +611,9 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-.site-footer .site-footer-title {
+.site-footer-version {
   margin: 0;
-  font-weight: var(--env-font-weight-medium);
+  font-variant-numeric: tabular-nums;
 }
 .site-footer-links {
   margin: 0;
@@ -360,39 +629,17 @@ body {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
-/* The five columns sit in one row beside the wordmark where they fit. Narrower, the wordmark moves
-   above them, and they keep one row, then go three and two, then pair up two to a row in a compact
-   page, so none is left on a row of its own. */
-@container site-footer (width >= 37.5rem) {
-  .site-footer-columns {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-}
-@container site-footer (width < 66rem) {
-  .site-footer-main {
-    flex-direction: column;
-  }
-  .site-footer-columns {
-    align-self: stretch;
-  }
-}
-@container site-footer (37.5rem <= width < 54rem) {
-  .site-footer-columns {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@container site-footer (width < 37.5rem) {
-  .site-footer-main {
-    flex-direction: column;
-  }
-  .site-footer-columns {
-    align-self: stretch;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--env-space-5);
-  }
-}
-/* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge.
-   An example's own sections keep the margins it gives them, such as below its sticky header. */
+/* A section that a route scrolls to, such as a prop's row, stops below the sticky controls at the
+   page's top, as a figure's section does (Figures.css). An example's own sections keep the margins
+   it gives them, such as below its sticky header. */
 .site-main [id]:not(.site-live-example *) {
-  scroll-margin-block-start: var(--env-space-6);
+  scroll-margin-block-start: var(--env-space-9);
+}
+/* A heading or row that a route focuses, so reading and the keyboard go on from it (Address.ts),
+   takes focus from script alone and shows no ring: the reader didn't move focus there. */
+.site-page-column
+  [id][tabindex='-1']:focus:not(
+    :where(.site-live-example, .catalogue-open-example, .site-verdict-stage, .site-anatomy-stage) *
+  ) {
+  outline: none;
 }

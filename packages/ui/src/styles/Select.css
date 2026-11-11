@@ -16,7 +16,7 @@
     inherits: false;
   }
   .env-select {
-    --env-field-height: var(--env-control-height);
+    --env-field-height: max(var(--env-control-height), var(--env-text-field-least, 0rem));
     /* prettier-ignore */
     --env-text-field-well: var(--env-select-container, var(--env-text-field-container, transparent));
     --env-text-field-text: var(
@@ -36,18 +36,14 @@
 
   /* Select: an outlined field, as TextField is, whose control is a button that shows the chosen
      option and opens the shared popup (PopupSurface) with a list of rows (ListRow), its chevron at
-     the end where Combobox's is. The chevron is as tall as the field's own icon buttons: the small
-     control height in a floating field, a little less than the field elsewhere. */
+     the end where Combobox's is. The chevron is as tall as the field's own icon buttons, a little
+     less than the field. */
   .env-select .env-select-control {
     --env-select-action: max(
       var(--env-control-target-min),
       calc(var(--env-field-height) - var(--env-space-2))
     );
     --env-select-end: var(--env-space-1);
-  }
-  .env-select[data-tall] .env-select-control {
-    --env-select-action: var(--env-control-height-sm);
-    --env-select-end: var(--env-space-2);
   }
   /* The trigger holds the value and, in the same cell, the hidden labels of every option, so it is
      as wide as the longest. */
@@ -59,8 +55,17 @@
     text-align: start;
     cursor: pointer;
   }
-  .env-select .env-select-control > .env-select-trigger:disabled {
+  .env-select .env-select-control > .env-select-trigger:is(:disabled, [aria-readonly='true']) {
     cursor: default;
+  }
+  /* A read-only select opens nothing: its chevron stays, muted, so the field still reads as a
+     choice, as a read-only Combobox's and a date's calendar do. */
+  .env-select-control:has(> .env-select-trigger[aria-readonly='true']) .env-select-icon {
+    color: var(--env-color-fg-muted);
+  }
+  /* A disabled select's chevron takes the disabled text color, as its value and label do. */
+  .env-select-control:has(> .env-select-trigger:disabled) .env-select-icon {
+    color: var(--env-color-fg-disabled);
   }
   .env-select-trigger > *,
   .env-select-sizer > * {
@@ -73,8 +78,19 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  /* An option's row adds more to its label than the field does, the popup's and the row's insets and
+     the check mark's slot against the field's insets and chevron, so the hidden labels take the
+     difference too: a field that fits its options is then as wide as its open list, whose edges line
+     up with the field's. */
   .env-select-sizer {
+    --env-select-sizer-room: max(
+      0rem,
+      2 * var(--env-popup-padding) + 2 * var(--env-popup-row-padding-inline) +
+        var(--env-popup-row-gap) + var(--env-control-icon-size) -
+        (var(--env-space-4) + var(--env-select-end) + var(--env-select-action) + var(--env-space-1))
+    );
     display: grid;
+    padding-inline-end: var(--env-select-sizer-room);
     block-size: 0;
     overflow: hidden;
     visibility: hidden;
@@ -109,39 +125,45 @@
     pointer-events: none;
     inset-inline-end: var(--env-select-end);
   }
-  /* The chevron points down, and up while the list is open. It flips over its horizontal axis rather
-     than turning half a circle, which swings it through pointing sideways, as a submenu's chevron
-     does, in a frame or two: the list's trigger would twitch as it opens and closes. */
+  /* The chevron points down, and up while the list is open: it turns half a circle, so it keeps its
+     shape all the way, where flipping it over would squash it flat halfway. */
   .env-select-end > .env-icon.env-select-icon {
     display: grid;
     place-items: center;
     inline-size: var(--env-select-action);
     block-size: var(--env-select-action);
     color: var(--env-text-field-text, var(--env-color-fg-default));
-    transform: rotate(90deg) scaleX(1);
+    transform: rotate(90deg);
   }
   .env-select-control:has(> [aria-expanded='true']) .env-select-icon {
-    transform: rotate(90deg) scaleX(-1);
+    transform: rotate(270deg);
   }
   .env-select-icon > svg {
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
   }
-  .env-select-control:focus-within .env-select-icon {
-    color: var(--env-text-field-accent, var(--env-color-border-primary-emphasis));
-  }
 
   /* The open list is the menus' frosted popup, with their corners and rows that highlight on hover
      and keyboard focus, where the selection's fill, a check mark and a heavier label show the chosen
-     option. */
+     option. It is at least as wide as its field, wider only for a label that needs it. Options with descriptions let it grow
+     to 20 rem, or the field's width where that is more, their descriptions wrapping past it, so a
+     short description stays on one line beside a narrow field. */
   .env-select-popup {
     width: max-content;
     min-width: min(var(--anchor-width), var(--available-width));
-    max-width: min(22rem, var(--available-width));
+    --env-select-popup-max-width: 22rem;
+    max-width: min(var(--env-select-popup-max-width), var(--available-width));
     max-height: var(--available-height);
     overflow: hidden;
     padding: var(--env-popup-padding);
     border-radius: var(--env-popup-radius);
+  }
+  .env-select-popup:has(.env-select-item[aria-describedby]) {
+    --env-select-described-width: 20rem;
+    max-width: min(
+      max(var(--anchor-width), var(--env-select-described-width)),
+      var(--available-width)
+    );
   }
   .env-select-popup[hidden] {
     display: none;
@@ -156,16 +178,19 @@
   }
   .env-select-item {
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     text-align: start;
   }
   .env-select-item[data-selected] {
     font-weight: var(--env-font-weight-medium);
   }
-  /* Highlight includes pointer interaction; only keyboard focus needs a ring. */
+  /* The highlight is the keyboard's focus too, so an option draws no ring of its own, except at
+     high contrast, where every boundary is strong, and under forced colors, where the system paints
+     the highlight (below). The ring is valid only at high contrast (see Theme.css). */
   .env-select-item:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: -0.125rem;
+    --env-select-item-ring: var(--env-theme-high-contrast) var(--env-color-border-focus);
+    outline: 2px solid var(--env-select-item-ring, transparent);
+    outline-offset: -2px;
   }
   .env-select-item[data-disabled] {
     pointer-events: none;
@@ -177,14 +202,18 @@
     }
   }
 
-  /* Motion: the chevron flips. Movement only without a reduced-motion preference. The chevron,
-     always in the field, doesn't settle in as the field's other actions do. */
+  /* Motion: the chevron turns, as the list opens and quickly back as it closes, done when the list
+     is. Movement only without a reduced-motion preference. The chevron, always in the field,
+     doesn't settle in as the field's other actions do. */
   .env-select-icon {
     animation: none;
   }
   @media (prefers-reduced-motion: no-preference) {
     .env-select-end .env-select-icon {
-      transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+      transition: transform var(--env-motion-duration-fast) var(--env-motion-ease-exit);
+    }
+    .env-select-control:has(> [aria-expanded='true']) .env-select-end .env-select-icon {
+      transition: transform var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     }
   }
 
@@ -192,6 +221,10 @@
      and fades as every unavailable item does: GrayText on Highlight would not read. An invalid
      select takes the field's own forced-colors edge. */
   @media (forced-colors: active) {
+    .env-select-item:focus-visible {
+      outline: 2px solid CanvasText;
+      outline-offset: -2px;
+    }
     .env-select-item[data-highlighted]:focus-visible,
     .env-select-item[data-highlighted] :focus-visible {
       outline-color: HighlightText;

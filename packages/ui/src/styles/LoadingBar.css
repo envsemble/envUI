@@ -5,7 +5,8 @@
     position: fixed;
     inset: 0 0 auto 0;
     z-index: calc(var(--env-z-tooltip) + 1);
-    block-size: 0.1875rem;
+    --env-loading-bar-height: 0.1875rem;
+    block-size: var(--env-loading-bar-height);
     overflow: hidden;
     pointer-events: none;
   }
@@ -18,7 +19,8 @@
     background: var(--env-color-bg-primary-emphasis);
     transform-origin: left center;
     transform: scaleX(0.9);
-    transition: transform 10s cubic-bezier(0.1, 0.7, 0.15, 1);
+    /* The creep: about ten seconds, slowing as it goes, so it never seems to reach the end. */
+    transition: transform calc(var(--env-motion-duration-slow) * 40) var(--env-motion-ease-enter);
   }
   .env-loading-bar-indicator:dir(rtl) {
     transform-origin: right center;
@@ -28,21 +30,26 @@
       transform: scaleX(0);
     }
   }
-  /* Completing takes 0.2 s and fading 0.2 s more; LoadingBar removes the bar after both. */
+  /* Completing takes the slow duration, then the bar fades out in the fast one; LoadingBar removes
+     it once the fade has ended. */
   .env-loading-bar[data-state='finishing'] .env-loading-bar-indicator {
     transform: scaleX(1);
     opacity: 0;
     transition:
-      transform 0.2s var(--env-motion-ease-enter),
-      opacity 0.2s var(--env-motion-ease) 0.2s;
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter),
+      opacity var(--env-motion-duration-fast) var(--env-motion-ease-exit)
+        var(--env-motion-duration-slow);
   }
 
   @media (prefers-reduced-motion: reduce) {
     /* The bar fades in at full width instead of moving. */
-    .env-loading-bar-indicator,
+    .env-loading-bar-indicator {
+      transform: none;
+      transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+    }
     .env-loading-bar[data-state='finishing'] .env-loading-bar-indicator {
       transform: none;
-      transition: opacity 0.2s var(--env-motion-ease);
+      transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-exit);
     }
     @starting-style {
       .env-loading-bar-indicator {

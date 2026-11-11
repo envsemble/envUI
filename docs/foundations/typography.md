@@ -60,8 +60,8 @@ Each style, largest first, in the theme you are reading in, with what it is for.
 ```
 
 1. **Display**: The one large line that opens a page, at most once.
-2. **Headline**: The title of a page.
-3. **Title**: The title of a section, a card or a dialog.
+2. **Headline**: The title of a page, once per page.
+3. **Title**: The title of a pane, a section, a card or a dialog, and of a section inside a pane, so nothing in a pane outranks its title.
 4. **Body**: Most text: paragraphs, descriptions and values.
 5. **Small body**: Supporting text, a step smaller and quieter.
 6. **Caption**: A note under a figure or a chart.
@@ -141,7 +141,7 @@ Ask an agent for text in these words; envUI turns each into a style, so the resu
 | ---------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | A hero line      | `variant="display"`, once per view at most                                    | The display style: one large line that opens a page.                                         |
 | A page title     | `variant="headline"` on the page's heading element, such as `render={<h1 />}` | The headline style, as the page’s main heading.                                              |
-| A section title  | `variant="title"` on the section's heading element, such as `render={<h2 />}` | The title style, for a section, a card or a dialog.                                          |
+| A section title  | `variant="title"` on the section's heading element, such as `render={<h2 />}` | The title style, for a pane, a section, a card or a dialog.                                  |
 | Supporting text  | `variant="body-sm"`, muted by default                                         | Text a step smaller and quieter, for details and hints.                                      |
 | A caption        | `variant="caption"`                                                           | A small, quiet note under a figure or a chart.                                               |
 | Quieter text     | `emphasis="muted"` on Text of any variant                                     | The same size in the quieter color of supporting text.                                       |
@@ -180,8 +180,8 @@ At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes 
 | Variant    | In the catalogue | Size                                                    | Color                    |
 | ---------- | ---------------- | ------------------------------------------------------- | ------------------------ |
 | `display`  | Display          | 1.75 to 2.75 rem, with the window, `--env-type-display` | `--env-color-fg-default` |
-| `headline` | Headline         | 1.125 rem, `--env-type-headline`                        | `--env-color-fg-default` |
-| `title`    | Title            | 1 rem, `--env-type-title`                               | `--env-color-fg-default` |
+| `headline` | Headline         | 1.375 rem, `--env-type-headline`                        | `--env-color-fg-default` |
+| `title`    | Title            | 1.125 rem, `--env-type-title`                           | `--env-color-fg-default` |
 | `body`     | Body             | 0.9375 rem, `--env-type-body`                           | `--env-color-fg-default` |
 | `body-sm`  | Small body       | 0.875 rem, `--env-type-body-sm`                         | `--env-color-fg-muted`   |
 | `caption`  | Caption          | 0.875 rem, `--env-type-body-sm`                         | `--env-color-fg-muted`   |
@@ -198,7 +198,7 @@ At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes 
 
 - Choose the element for the document's structure and the variant for its look, apart: a section's `h2` may be a title.
 - One display text per view at most, for a page's hero; it scales from 1.75 to 2.75 rem and balances its lines.
-- Geist at regular (400) and medium (500), from `--env-font-weight-*`; semibold (600) only for the strongest emphasis in a small space, such as today in a calendar.
+- Geist at regular (400) and medium (500, a touch lighter in dark, 460, where light text on a dark ground reads heavier), from `--env-font-weight-*`; semibold (600) for bold in running text, such as Markdown's, and otherwise only for the strongest emphasis in a small space, such as today in a calendar.
 - Text adds no outer spacing: a Column, a Row or the component around it owns the gaps.
 - Vary the text by its role rather than setting everything as body: open with what matters in the default color, and set supporting text, such as a description under a title, details and hints, `emphasis="muted"` or `body-sm`.
 - Keep running text to a readable measure, about 60–75 characters a line: give paragraphs and Markdown a `max-inline-size` of about `53ch`, since Text and Markdown fill their container. Write short paragraphs, one point each, a few lines long.

@@ -75,7 +75,7 @@ Locally, `NODE_AUTH_TOKEN` is a classic GitHub token with `read:packages`; in Gi
 ## Install a release
 
 ```sh
-npm install --save-exact @envsemble/envui@<version>
+npm install --save-exact @envsemble/envui@{{version}}
 ```
 
 Upgrade `@envsemble/envui` and the [lint packages](#lint-rules) together, to the same exact version.
@@ -110,7 +110,7 @@ Each component's module imports its own style sheet, after the base every compon
 For a whole application, `ThemePreferenceProvider` replaces the fixed `Theme`. It follows the system theme until the user picks one with `ThemeToggle`, stores that choice, applies a choice made in another window of the same origin, and themes the document root, so the page background, native controls, other libraries' portals and `<meta name="theme-color">` match.
 
 - **Type.** The root keeps the browser's font size, so 1 rem stays the reader's. To change envUI's typeface, size or line height, set `--env-font-family`, `--env-font-size-body` and `--env-line-height-body` for `.env-theme` in a style sheet loaded after envUI's, not in a `body` rule.
-- **Contrast and scale.** `contrast` is `high`, `standard` or `system`. Left out, the provider takes a surrounding `Theme`'s, and else follows `prefers-contrast: more`, keeping a `data-env-contrast` the page set on the root; `scale` does the same, else comfortable. The provider marks the contrast it writes with `data-env-contrast-source`; a page that keeps a contrast of its own on the root removes that attribute.
+- **Contrast and scale.** `contrast` is `high`, `standard` or `system`. Left out, the provider takes a surrounding `Theme`'s, and else follows `prefers-contrast: more`, keeping a `data-env-contrast` the page set on the root; `scale` does the same, else `system`: compact under a fine pointer, comfortable on touch ([Spacing & density](foundations/spacing.md)). The provider marks the contrast it writes with `data-env-contrast-source`; a page that keeps a contrast of its own on the root removes that attribute.
 - **One per document.** A second provider, such as for a section with a preference of its own, passes `applyToDocument={false}`; envUI warns in development about two. Unmounted, a provider removes the contrast and scale it wrote.
 
 ```tsx
@@ -336,7 +336,8 @@ A server component passes a client component only serializable values, no functi
 
 - `@envsemble/envui` for ordinary UI.
 - `@envsemble/envui/icons/<Name>` for individual official symbols, each `Icon<Name>`.
-- `@envsemble/envui/content` when the feature needs code or Markdown.
+- `@envsemble/envui/code` when the feature shows code: [Code and CodeBlock](components/code.md).
+- `@envsemble/envui/markdown` when the feature shows or edits Markdown: [Markdown and MarkdownEditor](components/markdown.md).
 - `@envsemble/envui/diff` when the feature shows code diffs.
 - `@envsemble/envui/rich-text` when the feature needs formatted editing or rendering.
 - `@envsemble/envui/color` when the feature chooses or shows colors: [ColorPicker, ColorPickerButton and ColorSwatch](components/color-picker.md).
@@ -344,9 +345,15 @@ A server component passes a client component only serializable values, no functi
 - `@envsemble/envui/dev` for [dev mode](dev-mode.md), in development only: load it with a dynamic `import()` behind a development check, so production builds contain none of it.
 - `@envsemble/envui/assets/*` for raw assets, such as the Geist font file.
 
-The content, rich-text, diff and color entries need libraries that envUI doesn't list as dependencies, so an application that uses only the main entry never installs them. One that imports an entry installs its libraries, in these versions or later ones of the same major:
+The code, markdown, rich-text, diff and color entries need libraries that envUI doesn't list as dependencies, so an application that uses only the main entry never installs them. One that imports an entry installs its libraries, in these versions or later ones of the same major:
 
-- `@envsemble/envui/content`:
+- `@envsemble/envui/code`:
+
+  ```sh
+  npm install shiki@^4.5.0 @shikijs/langs@^4.5.0
+  ```
+
+- `@envsemble/envui/markdown`:
 
   ```sh
   npm install shiki@^4.5.0 @shikijs/langs@^4.5.0 react-markdown@^10.1.0 remark-gfm@^4.0.1
@@ -385,7 +392,7 @@ The modules have no side effects, so a bundler keeps only what the application u
 [`@envsemble/eslint-plugin-envui`](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin) and [`@envsemble/stylelint-config-envui`](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) report hand-built controls and raw colors, naming the envUI component or token to use, so people and agents see them as they edit and check. Install them at envUI's version; each one's README says how to turn it on:
 
 ```sh
-npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@<version> @envsemble/stylelint-config-envui@<version>
+npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@{{version}} @envsemble/stylelint-config-envui@{{version}}
 ```
 
 ## Coding agents

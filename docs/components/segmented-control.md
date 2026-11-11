@@ -1,6 +1,6 @@
 ---
 title: SegmentedControl
-summary: One choice among a few items, as connected outlined segments, such as views or filters of the same content.
+summary: One choice among a few views or filters of the same content.
 status: stable
 since: 1.0.0
 category: Forms & selection
@@ -60,10 +60,10 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 
 ```
 
-1. **Outline** (`env-segmented-control`)
-2. **Segment** (`env-segmented-control-item`)
-3. **Check** (`env-segmented-control-item-indicator`)
-4. **Icon** (`env-segmented-control-item[data-unchecked] > env-icon:not(env-segmented-control-item-indicator)`, `icon`)
+1. **Track** (`env-segmented-control`)
+2. **Thumb** (`env-segmented-control-item[data-checked]`)
+3. **Segment** (`env-segmented-control-item[data-unchecked]`)
+4. **Icon** (`env-segmented-control-item[data-unchecked] > env-icon`, `icon`)
 5. **Label** (`env-segmented-control-item-label`, `label`)
 6. **Count** (`env-segmented-control-item-count`, `count`)
 
@@ -74,7 +74,7 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 Each option can show an icon and a count.
 
 - One option can be disabled, which the arrow keys skip, or the whole control.
-- The chosen option shows a check in place of its icon.
+- The chosen option rises out of the track on a raised thumb.
 
 <!-- specimen: States -->
 
@@ -148,10 +148,14 @@ Leave it uncontrolled, starting at `defaultValue`, the first item by default, or
 
 ### Composition
 
-The outline, `env-segmented-control`, carries `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, `data-checked` while chosen and `data-disabled`. The check, `env-segmented-control-item-indicator`, takes the chosen segment's icon's place.
+The track, `env-segmented-control`, carries `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, `data-checked` while chosen, when it is the thumb, and `data-disabled`.
 
 ## Changelog
 
+- **1.0.0**: `options` is `items`, and `SegmentedControlOption` is `SegmentedControlItem`. The segments' classes are `env-segmented-control-item`, `-item-label` and `-item-count`. An unchosen segment's count keeps 4.5:1 contrast. SegmentedControl takes `ref`, `style`, `id` and other attributes of its rail, and its page is under Forms & selection.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: One thumb, `env-segmented-control-thumb`, travels to the chosen segment rather than two segments cross-fading; under reduced motion the fill still fades across.
+- **1.0.0-prerelease.6**: Under the pointer a segment not chosen takes no layer, only the text color on its label, and pressed only the faint neutral pressed layer, so only the thumb reads as chosen, in dark too, where the thumb is the raised neutral grade, `--env-color-bg-neutral-strong-hover`, opaque and clearly lighter than a hovered segment; at high contrast it keeps a layer of the neutral fill.
+- **1.0.0-prerelease.6**: SegmentedControl is segments in a recessed track, the chosen one raised on a thumb with a soft shadow, rather than Material's connected outlined segments: no outline, no lines between the segments and no check, and a chosen segment shows its icon. Tabs keep their indicator under the selected tab, so the two still read differently. The check, `env-segmented-control-item-indicator`, is gone. `--env-segmented-control-container` sets the track, the neutral fill by default, `--env-segmented-control-outline` an outline around it, none by default, and `--env-segmented-control-selected` the thumb.
 - **1.0.0-prerelease.5**: It can be uncontrolled, with `defaultValue`.
 - **1.0.0-prerelease.2**: SegmentedControl looks like Material's segmented buttons: connected segments in one outline, the chosen one in the selected fill, `--env-color-bg-selected`, with a check, `env-segmented-control-item-check`, in place of its icon, so it reads differently from Tabs. `--env-segmented-control-outline` sets the outline. The API stays.
-- **1.0.0**: `options` is `items`, and `SegmentedControlOption` is `SegmentedControlItem`. The segments' classes are `env-segmented-control-item`, `-item-label` and `-item-count`. An unchosen segment's count keeps 4.5:1 contrast. SegmentedControl takes `ref`, `style`, `id` and other attributes of its rail, and its page is under Forms & selection.

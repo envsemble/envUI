@@ -1,11 +1,11 @@
 import { useId, useMemo, useRef, useState } from 'react';
 import { Button, SearchField, Column, Row, Switch, Text, Sheet } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 // This browser of every icon loads the full set, from the library's generated list of them, which
 // the package doesn't export: applications import each icon by its own path. The site's Vite
 // config and tsconfig point envui-icon-list at packages/ui/src/icons/index.ts.
 import * as symbols from 'envui-icon-list';
-import { Example } from '../Example';
+import { SpecimenFrame } from '../SpecimenFrame';
 import { iconPageSize as pageSize } from './Icons';
 
 const normalizeName = (name: string) => name.toLowerCase().replace(/[\s_-]/g, '');
@@ -62,7 +62,7 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
     <Column gap={5}>
       <Column gap={3}>
         <Text variant="caption">Material Symbols Rounded · {filled ? 'Filled' : 'Outline'}</Text>
-        <div className="catalogue-icon-detail-preview">
+        <div className="catalogue-icon-detail-symbol">
           <Symbol filled={filled} width="4rem" height="4rem" />
         </div>
       </Column>
@@ -92,10 +92,10 @@ export function IconCatalogue() {
   const visibleSymbols = matches.slice(page * pageSize, (page + 1) * pageSize);
 
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <div className="catalogue-icon-toolbar">
         <SearchField
-          variant="floating"
+          size="lg"
           label="Search icons"
           showLabel
           value={query}
@@ -173,6 +173,6 @@ export function IconCatalogue() {
       >
         {selectedName && <IconDetails key={selectedName} name={selectedName} filled={filled} />}
       </Sheet>
-    </Example>
+    </SpecimenFrame>
   );
 }

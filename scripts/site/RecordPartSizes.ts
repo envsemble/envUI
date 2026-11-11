@@ -1,10 +1,13 @@
 // Records the size of every figure's subject that loads with its page, an example, a specimen or a
-// guide's demo, in apps/site/src/template/PartSizes.json: its skeleton keeps that size while it
-// loads (StageSkeleton in template/Loading.tsx), so the page doesn't move when it lands. It opens
-// every page of the catalogue and the Docs in a desktop window with the parts held back, notes
-// where each skeleton is, lets the parts load and measures what took each one's place. It records
-// the room of each group of the token reference and each release of the changelog too, which
-// their skeletons keep.
+// guide's figure, in apps/site/src/generated/PartSizes.json: its skeleton keeps that size while it
+// loads (StageSkeleton in loading/Skeletons.tsx), so the page doesn't move when it lands. Of an
+// example shown open, it records its stage too, which keeps that height until its overlays rest
+// open in it (reserveStage in OpenExample.tsx). It opens every page of the catalogue and the Docs
+// in a desktop window with the parts held back, notes where each skeleton is, lets the parts load
+// and measures what took each one's place. It records the room of each group of the token
+// reference and each release of the changelog too, which their skeletons keep, and the box of each
+// figure of a foundation's or a guide's page, which its skeleton keeps on a pre-rendered page until
+// the page hydrates.
 //
 //   npm run site:part-sizes                the site at http://127.0.0.1:8770 (npm run dev)
 //   npm run site:part-sizes -- <site URL>  another running site
@@ -13,14 +16,13 @@
 // hasn't recorded keeps the stage's least height while it loads, so a stale record only moves the
 // page a little.
 import { writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { chromium, type Page, type Route } from '@playwright/test';
 import { defaultPorts } from '../test/CheckoutMarker.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
-const recordFile = fileURLToPath(
-  new URL('../../apps/site/src/template/PartSizes.json', import.meta.url),
-);
+const recordFile = resolve(repositoryRoot, 'apps/site/src/generated/PartSizes.json');
 /** The window the sizes are recorded in, a desktop's, beside the page's contents. */
 const window = { width: 1440, height: 1000 };
 /** The files of the parts a page loads on its own, in development, where each is its own file. */
@@ -35,7 +37,7 @@ async function routes(page: Page) {
     const links = await page
       .locator('.site-page-column a[href^="/"], .env-scaffold-navigation a[href^="/"]')
       .evaluateAll((anchors) => anchors.map((anchor) => anchor.getAttribute('href')!));
-    for (const href of links) found.add(href.slice(1).split(/[?#]/)[0]!);
+    for (const href of links) found.add(href.slice(1).split(/[?#]/)[0]);
   }
   found.delete('');
   return [...found].sort();
@@ -113,6 +115,49 @@ async function measure(page: Page, route: string) {
     }
     return result;
   });
+  // The stage of each example shown open, with its overlays resting open in it, which it keeps
+  // from as it starts loading until they rest there (reserveStage in OpenExample.tsx).
+  Object.assign(
+    sizes,
+    await page.evaluate(() => {
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const round = (value: number) => Math.round((value / rem) * 100) / 100;
+      const result: Record<string, [number, number]> = {};
+      for (const room of document.querySelectorAll<HTMLElement>(
+        '[data-catalogue-reserve][data-placed]',
+      )) {
+        const stage = room.closest('.site-live-example');
+        if (!stage) continue;
+        const box = stage.getBoundingClientRect();
+        result[room.dataset.catalogueReserve!] = [round(box.width), round(box.height)];
+      }
+      return result;
+    }),
+  );
+  // The figures of a page of its own, a foundation's or a guide's, which load with it rather than
+  // on their own: the box of each, its legend and code included, which its skeleton keeps on a
+  // pre-rendered page until the page has hydrated (useFiguresMounted in loading/).
+  Object.assign(
+    sizes,
+    await page.evaluate(() => {
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const round = (value: number) => Math.round((value / rem) * 100) / 100;
+      const boxes = new Map<string, DOMRect[]>();
+      for (const figure of document.querySelectorAll<HTMLElement>('[data-site-figure]')) {
+        const key = figure.dataset.siteFigure!;
+        boxes.set(key, [...(boxes.get(key) ?? []), figure.getBoundingClientRect()]);
+      }
+      const result: Record<string, [number, number]> = {};
+      for (const [key, rects] of boxes) {
+        const width =
+          Math.max(...rects.map((box) => box.right)) - Math.min(...rects.map((box) => box.left));
+        const height =
+          Math.max(...rects.map((box) => box.bottom)) - Math.min(...rects.map((box) => box.top));
+        result[key] = [round(width), round(height)];
+      }
+      return result;
+    }),
+  );
   // The long parts, whose skeletons keep the room they take once loaded: each group of the token
   // reference, with its heading, and each release of the changelog, from its heading to the next.
   await page

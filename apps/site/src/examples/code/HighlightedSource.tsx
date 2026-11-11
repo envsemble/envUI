@@ -1,4 +1,4 @@
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 
 const source = `// Saves the draft
 <Button onClick={save}>

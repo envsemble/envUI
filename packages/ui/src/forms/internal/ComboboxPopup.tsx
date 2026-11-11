@@ -2,14 +2,13 @@
 
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useId, type ReactNode, type Ref } from 'react';
-import type { Direction } from '../../internal/EnvUIContext.js';
-import { PopupSurface } from '../../internal/PopupSurface.js';
-import { ListRow } from '../../internal/ListRow.js';
-import { Column, Grid } from '../../foundations/Layout.js';
+import type { Direction } from '../../internal/provider/EnvUIContext.js';
+import { PopupSurface } from '../../internal/popup/PopupSurface.js';
+import { ListRow } from '../../internal/popup/ListRow.js';
+import { Column, Grid } from '../../layout/Layout.js';
 import { Spinner } from '../../feedback/Spinner.js';
 import { IconCheck } from '../../icons/Check.js';
-import type { ComboboxGroup, ComboboxItem } from '../Combobox.js';
-import { isGroup } from './comboboxItems.js';
+import { isGroup, type ComboboxGroup, type ComboboxItem } from './comboboxItems.js';
 import '../../styles/Base.css';
 import '../../styles/Combobox.css';
 
@@ -26,7 +25,6 @@ export function ComboboxPopup<Item extends ComboboxItem>({
   loading,
   loadingLabel,
   emptyLabel,
-  grouped,
   startSlot,
 }: {
   popupRef: Ref<HTMLDivElement>;
@@ -34,8 +32,6 @@ export function ComboboxPopup<Item extends ComboboxItem>({
   loading: boolean;
   loadingLabel: ReactNode;
   emptyLabel: ReactNode;
-  /** The options come in groups. */
-  grouped: boolean;
   /** Some option has start content, so every row keeps room for it. */
   startSlot: boolean;
 }) {
@@ -68,10 +64,10 @@ export function ComboboxPopup<Item extends ComboboxItem>({
         aria-busy={loading || undefined}
       >
         {(entry: Item | ComboboxGroup<Item>) =>
-          grouped && isGroup(entry) ? (
+          isGroup(entry) ? (
             <BaseCombobox.Group
               key={entry.label}
-              items={entry.items as Item[]}
+              items={entry.items}
               render={<Grid />}
               className="env-combobox-group"
             >
@@ -85,11 +81,7 @@ export function ComboboxPopup<Item extends ComboboxItem>({
               </BaseCombobox.Collection>
             </BaseCombobox.Group>
           ) : (
-            <ComboboxOption
-              key={(entry as Item).value}
-              item={entry as Item}
-              startSlot={startSlot}
-            />
+            <ComboboxOption key={entry.value} item={entry} startSlot={startSlot} />
           )
         }
       </BaseCombobox.List>

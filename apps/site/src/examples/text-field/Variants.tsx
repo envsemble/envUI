@@ -6,10 +6,9 @@ export default function Variants() {
     // As wide as a form column.
     <Column gap={5} style={{ inlineSize: 'min(100%, 22rem)' }}>
       <TextField label="Project name" name="project" defaultValue="Northwind launch" />
-      <TextField variant="floating" label="Owner" name="owner" defaultValue="Priya Shah" />
       <TextField
         variant="ghost"
-        showLabel={false}
+        visibleLabel={false}
         label="Find projects"
         placeholder="Find projects"
         startIcon={<IconSearch />}

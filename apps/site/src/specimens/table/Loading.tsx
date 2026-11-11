@@ -1,7 +1,7 @@
 import { placeholders, Table } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
-import { useTimeline } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
 
 interface File {
   id: string;
@@ -51,10 +51,10 @@ function Arriving() {
 /** Table loading: its own skeleton, and its rows arriving in its place. */
 export default function Loading() {
   return (
-    <Example size="content">
+    <SpecimenFrame size="content">
       <MotionStage label="the rows arriving in the skeleton's place">
         <Arriving />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

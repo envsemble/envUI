@@ -12,12 +12,12 @@ import { IconSearch } from '@envsemble/envui/icons/Search';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { IconShare } from '@envsemble/envui/icons/Share';
 import { IconStar } from '@envsemble/envui/icons/Star';
-import { edges, gap, Item, Mark } from '../../tiles/Reflow';
+import { edges, gap, Item, Mark } from './LayoutDrawing';
 
 /*
  * The pictures of the page of all foundations (FoundationCatalogue.tsx), one for each foundation:
  * the system's own values in its tokens, so they follow the reader's theme, contrast and scale.
- * Space, width and the keyboard are drawn as the layout tiles are, in hairlines (tiles/Reflow.ts);
+ * Space, width and the keyboard are drawn in hairlines (LayoutDrawing.ts);
  * type, color and icons show themselves. They are pictures: hidden from assistive technology,
  * since the foundation's name beside them says what they are.
  */
@@ -33,13 +33,12 @@ const tones = [
   { id: 'neutral', name: 'Neutral' },
 ] as const;
 
-const toneStyle = (tone: string) =>
-  ({
-    '--catalogue-tone-muted': `var(--env-color-bg-${tone}-muted)`,
-    '--catalogue-tone-emphasis': `var(--env-color-bg-${tone}-${tone === 'primary' || tone === 'accent' ? 'solid' : 'emphasis'})`,
-    '--catalogue-tone-strong':
-      tone === 'neutral' ? 'var(--env-color-fg-default)' : `var(--env-color-fg-${tone})`,
-  }) as CSSProperties;
+const toneStyle = (tone: string): CSSProperties => ({
+  '--catalogue-tone-muted': `var(--env-color-bg-${tone}-muted)`,
+  '--catalogue-tone-emphasis': `var(--env-color-bg-${tone}-${tone === 'primary' || tone === 'accent' ? 'solid' : 'emphasis'})`,
+  '--catalogue-tone-strong':
+    tone === 'neutral' ? 'var(--env-color-fg-default)' : `var(--env-color-fg-${tone})`,
+});
 
 /** A row for each tone: its name, then its soft fill, its solid fill and its text. */
 function ColorsPicture() {

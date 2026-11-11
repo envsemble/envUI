@@ -63,7 +63,7 @@ export function minimumOf(pair: ContrastPair, theme: ContrastTheme) {
 }
 
 /** What a pair is held to: its kind, and its minimum at each contrast it is measured in. */
-export function requirementOf(pair: ContrastPair, themes: readonly ContrastTheme[]): Requirement {
+function requirementOf(pair: ContrastPair, themes: readonly ContrastTheme[]): Requirement {
   const minimum: Requirement['minimum'] = {};
   for (const level of levels) {
     const theme = themes.find((candidate) => candidate.contrast === level);
@@ -112,7 +112,7 @@ function renamedInto(name: string, renamed: readonly { from: string; to: string 
 const measure = (kind: ContrastKind) => (isDistance(kind) ? 'a ΔEOK distance' : 'a ratio');
 
 /** How `current` asks less than `recorded`, one line per way; empty when it asks as much or more. */
-export function loosening(current: Requirement, recorded: Requirement): string[] {
+function loosening(current: Requirement, recorded: Requirement): string[] {
   const ways: string[] = [];
   // Ratios and ΔEOK distances can't be compared, so a switch between them, either way and to any
   // kind, asks less: a ratio of 1.01 or a distance of 0.0001 would pass for the stronger kind.
@@ -418,7 +418,7 @@ const isObject = (value: unknown): value is Record<string, unknown> =>
  * name alone, records no requirements: its names are `unrecorded`. Anything else that isn't a
  * snapshot is a problem.
  */
-export function parseSnapshot(
+function parseSnapshot(
   text: string,
   source: string,
 ): { recorded: DeclaredPairs; problem?: undefined } | { recorded?: undefined; problem: string } {
@@ -470,7 +470,7 @@ const runGit: Git = (...args) =>
  * ENVUI_CONTRAST_BASE is unset: the integration branch and the branch the work towards 1.0
  * collects on.
  */
-export const baseCandidates = ['origin/dev', 'origin/envui-1.0'] as const;
+const baseCandidates = ['origin/dev', 'origin/envui-1.0'] as const;
 
 /**
  * The snapshots on the base branches: at ENVUI_CONTRAST_BASE, any revision git knows, or else at

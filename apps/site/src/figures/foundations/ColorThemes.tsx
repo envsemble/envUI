@@ -10,9 +10,9 @@ import {
   type ThemeContrast,
   type ColorScheme,
 } from '@envsemble/envui';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel } from './Steps';
-import { Figure } from './Topic';
+import { FoundationFrame } from './FoundationFrame';
 import type { FigureWords } from './ColorFigures';
 
 /** The theme and contrast of each sample, in the legend's order. */
@@ -66,8 +66,8 @@ function ThemeSteps({ names }: { names: readonly string[] }) {
 /** One screen stepping through each theme and contrast, the one shown named in the corner. */
 export function ThemesFigure({ legend }: FigureWords) {
   return (
-    <Figure label="One screen in each theme" motion="the screen in each theme">
+    <FoundationFrame label="One screen in each theme" motion="the screen in each theme">
       <ThemeSteps names={legend.map((entry) => entry.name)} />
-    </Figure>
+    </FoundationFrame>
   );
 }

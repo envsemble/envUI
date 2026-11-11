@@ -1,23 +1,26 @@
 @layer env.components {
   /* TableOfContents: the page's sections as small links, nested by indent, with the reader's place
      marked by one shape down the list beside them, like a brush stroke in one quiet color: a broad
-     bulge at the current section, running thin a few sections away; the labels of the passed and
-     current sections in the text color, never bolder, so no label rewraps as the reader moves, and
-     those still to come quieter. */
+     bulge at the current section, running thin a few sections away; the current section's label in
+     the text color and drawn a little heavier, without a heavier font, so no label rewraps as the
+     reader moves, and every other one quieter. */
   .env-table-of-contents {
-    /* How far each level sits in from the one above it, and the shape's width at its fullest, which
-       is also its column's. */
+    /* How far each level sits in from the one above it, the shape's width at its fullest, which is
+       also its column's, and the room above the first entry and below the last that it runs on
+       into, so its bulge tapers whole at either end. */
     --env-table-of-contents-indent: var(--env-space-3);
     --env-table-of-contents-stroke: var(--env-space-5);
+    --env-table-of-contents-room: var(--env-space-4);
     min-inline-size: 0;
     font: var(--env-type-body-sm);
   }
   .env-table-of-contents[hidden] {
     display: none;
   }
-  /* The shape's box, which the links measure their place in. */
+  /* The shape's box, which the links measure their place in, with the shape's room around them. */
   .env-table-of-contents-body {
     position: relative;
+    padding-block: var(--env-table-of-contents-room);
   }
   .env-table-of-contents-list {
     margin: 0;
@@ -40,6 +43,9 @@
     border-radius: var(--env-radius-sm);
     color: var(--env-color-fg-muted);
     text-decoration: none;
+    /* A label that becomes current takes the text color quickly, ahead of the shape on its way
+       beside it, and the one it leaves fades as fast, so only one label reads as current. */
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     /* Long labels wrap, and a long word breaks rather than overflowing the column. */
     overflow-wrap: break-word;
   }
@@ -48,8 +54,8 @@
     outline-offset: -2px;
   }
 
-  /* The shape, in the column at the list's start, the same beside every level, from the first
-     label's top to the last one's bottom, straight along the column's start and bulging toward its
+  /* The shape, in the column at the list's start, the same beside every level, from a little above
+     the first label to a little below the last, straight along the column's start and bulging toward its
      end, never past the gap before the labels. The component draws its outline every frame the
      reader's place moves. The section under the pointer swells it a little. */
   .env-table-of-contents-wave {
@@ -68,34 +74,50 @@
   .env-table-of-contents-wave:dir(rtl) {
     scale: -1 1;
   }
-  .env-table-of-contents .env-table-of-contents-link[data-passed],
-  .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
-    color: var(--env-color-fg-default);
-  }
-  /* The sections still to come, quieter than muted text yet still 4.5:1 on the page and on a
-     surface in both themes; at high contrast they keep the muted text color. */
-  .env-table-of-contents .env-table-of-contents-link:not([data-passed], [aria-current]) {
+  /* Only the current section's label takes the text color: every other one, passed or still to come,
+     is quieter than muted text yet still 4.5:1 on the page and on a surface in both themes, so the
+     list has one place that reads as current. At high contrast they keep the muted text color. */
+  .env-table-of-contents .env-table-of-contents-link:not([aria-current]) {
     color: color-mix(in srgb, var(--env-color-fg-muted) 85%, transparent);
   }
   :where([data-env-contrast='high'])
     .env-table-of-contents
-    .env-table-of-contents-link:not([data-passed], [aria-current]) {
+    .env-table-of-contents-link:not([aria-current]) {
     color: var(--env-color-fg-muted);
   }
   @media (prefers-contrast: more) {
     :where(.env-theme:not([data-env-contrast='standard']))
       .env-table-of-contents
-      .env-table-of-contents-link:not([data-passed], [aria-current]) {
+      .env-table-of-contents-link:not([aria-current]) {
       color: var(--env-color-fg-muted);
     }
   }
+  /* The current section's label reads as current on its own, beside the shape: the text color, and
+     strokes a hairline's fraction heavier, about a medium weight, which keep the regular weight's
+     widths, so its lines break where they did. */
   .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
     color: var(--env-color-fg-default);
+    /* stylelint-disable-next-line unit-disallowed-list -- the stroke is typography: it follows the label's font size. */
+    -webkit-text-stroke: 0.025em currentColor;
   }
-  /* The section under the pointer takes muted text's hover color, a quiet gray between the passed
-     sections' and those to come, whichever it is: after every rule above, which it outranks. */
-  .env-table-of-contents .env-table-of-contents-link:hover:is(*, [data-passed], [aria-current]) {
-    color: var(--env-color-fg-muted-hover);
+  /* The section under the pointer takes the text color, a step past the quiet labels around it, and
+     pressed, muted text's pressed color: after every rule above, which they outrank. The current
+     section keeps its heavier strokes, so the two still read apart. */
+  .env-table-of-contents .env-table-of-contents-link:hover:is(*, [aria-current]) {
+    color: var(--env-color-fg-default);
+  }
+  .env-table-of-contents .env-table-of-contents-link:active:is(*, [aria-current]) {
+    color: var(--env-color-fg-muted-pressed);
+  }
+  /* The pointer's own colors land from the first frame. */
+  .env-table-of-contents-link:is(:hover, :active) {
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  /* Under a reduced-motion preference the shape moves at once, and so does the label's color. */
+  @media (prefers-reduced-motion: reduce) {
+    .env-table-of-contents-link {
+      transition: none;
+    }
   }
 
   /* Forced colors: the system paints the links, so the current one takes its selection color, and

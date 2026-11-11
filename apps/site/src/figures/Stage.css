@@ -1,0 +1,546 @@
+/* The stage every figure sits on: live examples, do and don't figures, anatomy figures, the tiles
+   of Related and the specimens of a page alike. An example is envUI itself, in the theme the
+   reader has chosen, on a recessed canvas: envUI's well for a preview, with a surface's corners
+   and no edge, so the example's own surfaces rise out of it and never read as the catalogue's. A
+   figure that explains the system rather than showing envUI at work, on a foundation page, sits on
+   the page itself. Both centre what they show. A device of the documentation, kept out of envUI. */
+/* A very faint shadow, soft and wide, a little below the card and with no edge of its own, that
+   lifts it off the page: every recessed canvas, the examples, the tiles of Related and the
+   galleries, and the site's own cards; the site draws no other shadow. Its color follows the
+   card's own, `--catalogue-card-fill`: a shade of it, darker, and stronger the darker the card, so
+   a dark card casts a dark shadow and a light card a light one. Each card sets its fill below, and
+   the shadow is declared on the card itself, so it reads that card's fill. */
+.site-live-example,
+.site-verdict-stage,
+.site-anatomy-stage,
+.site-loading-stage,
+.catalogue-tile-stage,
+.site-foundation-stage[data-figure='example'],
+.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
+.catalogue-fan-card,
+.site-page-banner,
+.catalogue-explore-grid > .env-card,
+.site-page-navigation .env-pager-link,
+.catalogue-role-swatch {
+  --catalogue-card-shadow-color: oklch(
+    from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
+      calc(0.14 - l * 0.087)
+  );
+  --catalogue-card-shadow: 0 0.5rem 1.5rem var(--catalogue-card-shadow-color);
+  /* A recessed canvas's: the same in the light themes; in the dark ones the canvas is a well,
+     deeper than the page, and a well casts no shadow. */
+  --catalogue-card-shadow-recessed: 0 0.5rem 1.5rem
+    light-dark(var(--catalogue-card-shadow-color), transparent);
+  /* Stronger, for cards laid over one another, such as the Overview's fan of cards. */
+  --catalogue-card-shadow-raised: 0 0.75rem 2rem
+    oklch(
+      from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.3) calc(c * 0.5) h /
+        calc(0.34 - l * 0.22)
+    );
+  /* Half as strong, for a small card such as the pager's at a page's foot. */
+  --catalogue-card-shadow-subtle: 0 0.25rem 0.75rem
+    oklch(
+      from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
+        calc(0.07 - l * 0.043)
+    );
+}
+
+.site-live-example,
+.site-verdict-stage,
+.site-anatomy-stage {
+  display: grid;
+  place-content: center stretch;
+  justify-items: center;
+  gap: var(--env-space-4);
+  min-inline-size: 0;
+  container-type: inline-size;
+}
+
+/* A stage outside a page's figures, such as the Docs' example of a component, has a surface's
+   corners; in them it is a gallery's cell, square-cornered (below). */
+:is(
+  .site-live-example,
+  .site-anatomy-stage,
+  .site-loading-stage,
+  .site-foundation-stage,
+  .catalogue-tile-stage
+):not(.site-figures *) {
+  border-radius: var(--env-radius-surface);
+}
+
+/* The recessed canvas: envUI's recessed surface, `--env-color-bg-recessed`, below the panes in every
+   theme: a shade deeper than the page in the dark themes, between the page and the panes in the
+   light ones. The
+   contrast gate measures every pair an example paints on the page on it too
+   (tests/contrast/Pairs.ts). */
+.site-live-example,
+.site-verdict-stage,
+.site-verdict-caption,
+.site-anatomy-stage,
+.site-loading-stage,
+.catalogue-tile-stage,
+.site-foundation-stage[data-figure='example'],
+.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
+.catalogue-fan-card {
+  /* Near-white in the light themes, as the stages have always been, but a shade below white:
+     the filled and raised surfaces are white there, so list and radio rows, cards and tables on a
+     white stage would vanish into it. Halfway from white to the recessed well keeps them apart and
+     stays lighter than the well, so every pair the gate measures on the well holds on it. The
+     deeper near-black in the dark ones. */
+  --catalogue-card-fill: light-dark(
+    color-mix(in oklab, var(--env-color-bg-raised), var(--env-color-bg-recessed)),
+    var(--env-color-bg-recessed)
+  );
+  background-color: var(--catalogue-card-fill);
+}
+
+/* A stage outside a page's figures lifts off the page a little in the light themes. */
+:is(
+  .site-live-example,
+  .site-verdict-stage,
+  .site-anatomy-stage,
+  .site-loading-stage,
+  .catalogue-tile-stage,
+  .site-foundation-stage[data-figure='example']
+):not(.site-figures *) {
+  box-shadow: var(--catalogue-card-shadow-recessed);
+}
+
+/* In a component's, a pattern's or a foundation's page (TemplateContent.tsx), each figure is a
+   gallery's cell (Gallery.css): its stage square-cornered and flat on the page, with no edge and
+   no shadow, on the same fill as the galleries' pictures, so the page reads as the galleries and
+   the home page do, and what it shows is the one thing raised. */
+.site-figures
+  :is(
+    .site-live-example,
+    .site-verdict-stage,
+    .site-anatomy-stage,
+    .site-loading-stage,
+    .site-foundation-stage,
+    .catalogue-specimen-grid,
+    .catalogue-matrix-scroll
+  ) {
+  border-radius: 0;
+}
+
+/* The cards of the Overview's fan lie over one another: each takes the stronger shadow. They are
+   cards rather than stages, so in the dark themes they rise on the raised surface, lighter than the
+   page, rather than sinking into it. */
+.catalogue-fan-card {
+  box-shadow: var(--catalogue-card-shadow-raised);
+}
+[data-env-theme='dark'] .catalogue-fan-card {
+  --catalogue-card-fill: var(--env-color-bg-raised);
+}
+
+/* The site's own cards lift off the page as its canvases do, each by its own fill: a page's
+   banner, the catalogue's and the Docs' alike, and the Overview's cards; the pager at a page's
+   foot, smaller, half as much. */
+.site-page-banner,
+.catalogue-explore-grid > .env-card {
+  --catalogue-card-fill: var(--env-surface-color);
+  box-shadow: var(--catalogue-card-shadow);
+}
+.site-page-navigation .env-pager-link {
+  --catalogue-card-fill: var(--env-color-bg-raised);
+  box-shadow: var(--catalogue-card-shadow-subtle);
+}
+
+/* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its
+   navigation, top bar and body, whose edges must show on the canvas. In the dark themes the
+   recessed surface is already deeper than both, the navigation being lighter than the page. In the
+   light themes it is lighter than both, so the canvas is a shade deeper than the page instead, the
+   darker of the window's two. A still example carries its theme itself; an animated figure takes
+   the page's. A figure drawn on a device (DeviceFrame.css) takes it too: the device's body is the
+   page's fill. */
+:is(
+    .site-live-example,
+    .site-verdict-stage,
+    .site-verdict-caption,
+    .site-anatomy-stage,
+    .catalogue-tile-stage
+  ):is([data-stage='shaded'], [data-device]):is(
+    [data-env-theme='light'],
+    [data-env-theme='light'] :not([data-env-theme])
+  ) {
+  --catalogue-card-fill: oklch(from var(--env-color-bg-page) calc(l - 0.035) c h);
+}
+
+/* What the stage shows keeps to its width, however wide its content would be. */
+:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-tile-canvas) > * {
+  max-inline-size: 100%;
+}
+
+/* A part that takes its width from its container, such as a size container (a primitive with
+   `container` too), a strip of tabs, a window or a skeleton, has none of its own and would
+   collapse if centred: an example that is or holds one fills the stage, unless it sets its
+   width. The stage's child is tested first, in the subject itself: a browser matches a selector
+   from its subject, so written as stage > :where(…), the :has() below searched under every
+   element of the page whenever it was restyled, such as on every theme switch. */
+:is(
+    :is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-tile-canvas) > *
+  ):where(
+    .env-description-list[data-layout='auto'],
+    .env-page,
+    .env-page-header,
+    .env-panes,
+    [data-env-name='key-figures'],
+    .env-document-tabs-list,
+    .env-panel-dock,
+    .env-scaffold,
+    [data-env-skeleton],
+    [data-env-container],
+    :has(
+      .env-description-list[data-layout='auto'],
+      .env-page,
+      .env-page-header,
+      .env-panes,
+      [data-env-name='key-figures'],
+      .env-document-tabs-list,
+      .env-panel-dock,
+      .env-scaffold,
+      [data-env-skeleton],
+      [data-env-container]
+    )
+  ),
+/* A Scaffold straight on an animated figure's stage stands in for a window there too. */
+.catalogue-motion-subject > .env-scaffold,
+/* A strip of document tabs fills the stage's width. */
+:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-tile-canvas)
+  > .env-document-tabs {
+  inline-size: 100%;
+}
+
+/* A Scaffold on the stage stands in for a window, so its body shows what a window's would, the
+   page's background. */
+:is(
+    .site-live-example,
+    .site-verdict-fit,
+    .site-anatomy-subject,
+    .catalogue-width-box,
+    .catalogue-tile-canvas,
+    .catalogue-motion-subject
+  )
+  > .env-scaffold,
+/* The dev mode demo's application sits in the element dev mode measures. */
+.site-live-example > [data-dev-mode-demo] > .env-scaffold {
+  background-color: var(--env-color-bg-page);
+}
+
+/* A width frame keeps its own width on the stage; the example fills it. It is a window of its own,
+   the env-window container, so what the example holds lays out at the frame's width: container
+   queries without a name, such as a Page's gutters, and those on the window see the frame. */
+.catalogue-width-box {
+  display: grid;
+  container: env-window / inline-size;
+}
+
+.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
+  padding: var(--env-space-6);
+}
+@container site-page-layout (width < 37.5rem) {
+  .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
+    padding: var(--env-space-5) var(--env-space-4);
+  }
+}
+
+/* A live example's stage is as tall as what it shows, with room around it: a row of buttons takes a
+   low stage, its room above and below no more than a control's height, which doesn't push the next
+   figure out of view or leave a few small controls adrift, and composed UI a large one by its own
+   size. */
+.site-live-example {
+  min-block-size: 4.5rem;
+  padding: var(--env-space-5) var(--env-space-6);
+}
+
+@container (width < 30rem) {
+  .site-live-example {
+    padding: var(--env-space-5) var(--env-space-4);
+  }
+}
+
+/* A table fills its stage: a rounded surface of its own, inset from the stage's edge by the
+   difference of their corners, so the two curves run side by side rather than one card in
+   another. */
+.site-live-example:has(> .env-table-region) {
+  padding: calc(var(--env-radius-surface) - var(--env-radius-lg));
+}
+
+/* A page's figure has a gallery cell's room around what it shows: a row of buttons sits in a calm
+   field rather than a strip, as a gallery's picture does. A component's or pattern's overview of one
+   figure, right under its banner, is the page's one large cell. */
+.site-figures .site-live-example {
+  min-block-size: 11rem;
+  padding-block: var(--env-space-7);
+}
+.site-figure-section[data-section='overview'] > .site-live-example-entry > .site-live-example {
+  min-block-size: clamp(16rem, 42cqi, 30rem);
+  padding-block: var(--env-space-8);
+}
+
+/* A figure that shows its overlays open fills its stage with its room, which places them in its
+   middle, or a palette's search at its top start, rather than being centred on a stage taller than
+   it: as its room grows and shrinks a little with what opens, what it shows stays put. */
+.site-figures .site-live-example:has(> .catalogue-open-example) {
+  align-content: stretch;
+}
+
+/* A row of items centres them on the stage, also once it wraps, unless the example aligns it or it
+   is a group of choices, whose options start under its label, as in a form. */
+:is(.site-live-example, .site-verdict-fit, .catalogue-tile-canvas)
+  > [data-env-layout='row']:not([data-justify], fieldset) {
+  justify-content: center;
+}
+
+/* A grid of specimens on its stage: the whole grid centred, with even space on its four sides, in
+   columns of one width that stop growing at the specimen's width. */
+.site-figures .catalogue-specimen-grid {
+  --catalogue-specimen-track: var(--catalogue-specimen-width);
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, var(--catalogue-specimen-min)), var(--catalogue-specimen-track))
+  );
+  justify-content: center;
+}
+
+.site-figures .catalogue-specimen-grid[data-size='wide'] {
+  --catalogue-specimen-track: 1fr;
+}
+
+/* Four specimens never leave one alone on a row: four across where they fit, else two pairs, else
+   one column. Each step switches at the width its columns need, as runs of figures do. */
+.site-figures
+  .catalogue-specimen-grid:has(
+    > .catalogue-specimen:nth-child(4 of .catalogue-specimen):nth-last-child(
+        1 of .catalogue-specimen
+      )
+  ) {
+  --catalogue-specimen-gap: var(--env-space-6);
+  --catalogue-specimen-four: calc(
+    4 * var(--catalogue-specimen-min) + 3 * var(--catalogue-specimen-gap)
+  );
+  --catalogue-specimen-two: calc(2 * var(--catalogue-specimen-min) + var(--catalogue-specimen-gap));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(
+      max(
+        clamp(
+          calc(25% - 0.75 * var(--catalogue-specimen-gap) - 0.01rem),
+          (var(--catalogue-specimen-four) - 100%) * 999,
+          calc(50% - 0.5 * var(--catalogue-specimen-gap) - 0.01rem)
+        ),
+        clamp(0rem, (var(--catalogue-specimen-two) - 100%) * 999, 100%)
+      ),
+      1fr
+    )
+  );
+  column-gap: var(--catalogue-specimen-gap);
+}
+
+/* Three specimens, such as a control's three sizes, never leave one alone on a row either: three
+   across where they fit, else one column. */
+.site-figures
+  .catalogue-specimen-grid:not([data-size='small']):has(
+    > .catalogue-specimen:nth-child(3 of .catalogue-specimen):nth-last-child(
+        1 of .catalogue-specimen
+      )
+  ) {
+  --catalogue-specimen-gap: var(--env-space-6);
+  --catalogue-specimen-three: calc(
+    3 * var(--catalogue-specimen-min) + 2 * var(--catalogue-specimen-gap)
+  );
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(
+      clamp(
+        calc(100% / 3 - 2 * var(--catalogue-specimen-gap) / 3 - 0.01rem),
+        (var(--catalogue-specimen-three) - 100%) * 999,
+        100%
+      ),
+      1fr
+    )
+  );
+  column-gap: var(--catalogue-specimen-gap);
+}
+
+/* Small pictures, such as LineArt's drawings: four across, or two where four don't fit, so a run
+   of four, eight or sixteen never leaves one alone on a row. A title that wraps keeps the
+   pictures of its row in line, below the titles. */
+.site-figures .catalogue-specimen-grid[data-size='small'] {
+  grid-template-columns: repeat(4, minmax(0, var(--catalogue-specimen-width)));
+  align-items: end;
+  column-gap: var(--env-space-5);
+}
+@container (width < 42rem) {
+  .site-figures .catalogue-specimen-grid[data-size='small'] {
+    grid-template-columns: repeat(2, minmax(0, var(--catalogue-specimen-width)));
+  }
+}
+
+.site-figures .catalogue-specimen-grid > * {
+  max-inline-size: none;
+}
+
+/* Each specimen's content centred in its column, unless it fills the column, such as cards. */
+.site-figures
+  .catalogue-specimen-grid:not([data-size='card'], [data-size='wide'])
+  > .catalogue-specimen {
+  align-items: center;
+  text-align: center;
+}
+
+/* A part that takes its width from its column, such as a text field, fills it. */
+.site-figures
+  .catalogue-specimen
+  > :is(
+    .env-text-field,
+    .env-combobox,
+    .env-date-picker,
+    .env-time-picker,
+    .env-month-picker,
+    .env-slider,
+    .env-drop-zone,
+    .env-composer,
+    .env-color-picker
+  ) {
+  align-self: stretch;
+  text-align: start;
+}
+
+/* A matrix on its stage, such as forced states by variant: the table centred with even space on
+   its four sides, its columns after the label column of one width, each cell's content centred in
+   its column, and each label on the centre line of its row or column. */
+.site-figures .catalogue-matrix {
+  table-layout: fixed;
+}
+
+.site-figures .catalogue-matrix :is(th, td) {
+  padding: var(--env-space-3) var(--env-space-2);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.site-figures .catalogue-matrix :is(thead th:first-child, tbody th) {
+  inline-size: 7rem;
+  text-align: start;
+}
+
+/* What a matrix cell shows sits in the middle of its column, also a control that is a block. */
+.site-figures .catalogue-matrix td > * {
+  inline-size: fit-content;
+  margin-inline: auto;
+}
+
+/* A foundation page's figure: what it shows on the stage, centred, at the example's width. */
+.site-foundation-stage {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--env-space-5);
+  min-block-size: 8rem;
+  min-inline-size: 0;
+  padding: var(--env-space-7) var(--env-space-6);
+  container-type: inline-size;
+}
+
+.site-foundation-stage > * {
+  inline-size: min(100%, var(--catalogue-example-width));
+  min-inline-size: 0;
+}
+
+/* A figure that shows its overlays open (`open` on its fence): a room as wide as the stage, with
+   what opens them in its middle, that grows to hold them. Its padding and height are measured
+   (OpenExample.tsx). Its dialogs, sheets and toasts, and their backdrops, are placed on the stage,
+   which its layout containment makes their containing block, and clips them to its corners.
+   The room stacks its overlays below the callouts of an anatomy figure. */
+.catalogue-open-example {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  justify-self: stretch;
+  box-sizing: border-box;
+  inline-size: 100%;
+}
+
+/* It shows once its room is made for its overlays resting open, fading in once, so nothing in it
+   moves as it appears (OpenExample.tsx); while its example loads, the skeleton in it shows, and
+   stays over it until then, fading out as it fades in (loading/useArrival.ts). */
+.catalogue-open-example:not([data-placed], :has(.site-loading)) {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-open-example[data-placed] {
+    animation: catalogue-open-example-appear var(--env-motion-duration-medium)
+      var(--env-motion-ease-enter);
+  }
+}
+@keyframes catalogue-open-example-appear {
+  from {
+    opacity: 0;
+  }
+}
+
+:is(.site-live-example, .site-verdict-stage):has(.catalogue-open-example) {
+  contain: layout;
+  overflow: clip;
+}
+
+/* In an anatomy figure the room places them, so they keep clear of the stage's padding, where the
+   callouts go; the backdrop, which would fill only the room, is left out. */
+.site-anatomy-subject .catalogue-open-example {
+  contain: layout;
+}
+
+.site-anatomy-subject .catalogue-overlay-layer :is(.env-dialog-backdrop, .env-sheet-backdrop) {
+  display: none;
+}
+
+/* Toasts, which an anatomy figure shows without what raised them, sit in its middle. */
+.site-anatomy-subject .catalogue-overlay-layer .env-toast-viewport {
+  inset: 0;
+  inline-size: fit-content;
+  block-size: fit-content;
+  margin: auto;
+}
+
+/* What opens it sits at the stage's top start, where an application's search does, beside the
+   palette rather than under its frosted panel, where it would show through as a blur. It stays
+   there while the palette is closed (`data-catalogue-palette`, OpenExample.tsx), so nothing
+   behind the palette moves as it opens and closes. */
+:is(.site-live-example, .site-verdict-stage)
+  .catalogue-open-example:is(:has(.env-command-palette), [data-catalogue-palette]) {
+  place-items: start;
+}
+
+/* The layer envUI's overlays render into, through PortalContainer, over the room. */
+.catalogue-overlay-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* A live room's overlays, an overview's, take the pointer, as in an application. */
+.catalogue-open-example[data-live] > .catalogue-overlay-layer > * {
+  pointer-events: auto;
+}
+
+/* A picture: the overlays are shown in place, without the motion that brings them in. A page's own
+   tile and an animated figure, which play, keep their motion. */
+:not(.catalogue-tile-canvas[data-tile], .catalogue-motion-subject) > .catalogue-overlay-layer * {
+  transition: none;
+  animation: none;
+}
+
+/* Forced colors paint the canvas in Canvas, like the page: a frame keeps each example apart. A
+   figure that explains the system sits on the page and takes none. */
+@media (forced-colors: active) {
+  .site-live-example,
+  .site-verdict-stage,
+  .site-anatomy-stage,
+  .site-foundation-stage[data-figure='example'],
+  .catalogue-tile-stage,
+  .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
+    border: 1px solid CanvasText;
+  }
+}

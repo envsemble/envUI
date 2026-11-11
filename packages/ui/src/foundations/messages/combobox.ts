@@ -12,5 +12,3 @@ export const combobox = {
   /** The clear button's name. */
   clear: 'Clear',
 };
-
-export type ComboboxMessages = typeof combobox;

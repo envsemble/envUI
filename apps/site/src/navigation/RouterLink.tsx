@@ -1,10 +1,12 @@
+import { useSyncExternalStore } from 'react';
 import type { LinkComponentProps } from '@envsemble/envui';
-import { navigate, routeOfLink } from './Address';
-import { findPage, normalizeRoute } from './SiteRoutes';
+import { navigate, routeOfLink } from '../routes/Address';
+import { findPage } from '../routes/SiteRoutes';
+import { normalizeRoute } from '../routes/OldAddresses';
 import { pageLoaded, preloadPage } from '../pages/PreloadPage';
 
 /** The page of a route, such as components/button?section=props. */
-const pageOfRoute = (route: string) => findPage(route.split('?')[0]!);
+const pageOfRoute = (route: string) => findPage(route.split('?')[0]);
 
 /** Starts loading what the page a link leads to needs, as a press on it is coming. */
 function preload(href: string | undefined) {
@@ -16,12 +18,38 @@ function preload(href: string | undefined) {
 let latestPress = 0;
 
 /**
+ * The route a press on a link leads to while its page loads, before the address changes: the
+ * navigation shows it as the reader's destination at once (App.tsx), so the press shows on the
+ * first frame however long the page takes.
+ */
+let pendingRoute: string | undefined;
+const pendingListeners = new Set<() => void>();
+function setPendingRoute(route: string | undefined) {
+  if (pendingRoute === route) return;
+  pendingRoute = route;
+  for (const listener of pendingListeners) listener();
+}
+const subscribePending = (listener: () => void) => {
+  pendingListeners.add(listener);
+  return () => pendingListeners.delete(listener);
+};
+
+/** The route a pressed link leads to while its page loads (setPendingRoute), if any. */
+export const usePendingRoute = () =>
+  useSyncExternalStore(
+    subscribePending,
+    () => pendingRoute,
+    () => undefined,
+  );
+
+/**
  * The anchor of every envUI destination on the site, through LinkProvider. A plain press on a link
  * to one of its pages, the catalogue's or the Docs', shows the page without loading the site again; a
  * press with a modifier and a link to a file or another site behave as anchors do. An example's
- * links, which a preview keeps from navigating, stay in place. A pointer over a link, or a press
+ * links, which a stage keeps from navigating, stay in place. A pointer over a link, or a press
  * starting on it, starts loading what its page needs; the address and the page change together,
- * once that has loaded, rather than the address first with the page before it still shown.
+ * once that has loaded, rather than the address first with the page before it still shown, and
+ * meanwhile the navigation shows the destination (usePendingRoute).
  */
 export function RouterLink({
   onClick,
@@ -51,11 +79,17 @@ export function RouterLink({
         const target = normalizeRoute(route || 'overview');
         const page = pageOfRoute(target);
         const press = ++latestPress;
-        if (pageLoaded(page)) navigate(target);
-        else
+        if (pageLoaded(page)) {
+          setPendingRoute(undefined);
+          navigate(target);
+        } else {
+          setPendingRoute(target);
           void preloadPage(page).then(() => {
-            if (press === latestPress) navigate(target);
+            if (press !== latestPress) return;
+            navigate(target);
+            setPendingRoute(undefined);
           });
+        }
       }}
     />
   );

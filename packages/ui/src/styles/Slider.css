@@ -29,6 +29,13 @@
     inherits: true;
     initial-value: 0;
   }
+  /* The value's fraction of the range, which Slider sets; a number, so the handle's distance from
+     the ends glides with it. */
+  @property --env-slider-fraction {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
   /* How far a drag past either end stretches the slider, as a fraction of its length, which Slider
      sets while the pointer is past the end, and 0 otherwise; a number, so the spring back eases. */
   @property --env-slider-stretch {
@@ -71,29 +78,13 @@
     /* Dragged past an end, the field stretches toward the pointer from its other end, Slider's
        --env-slider-stretch-origin, and thins a little, as a rubber band would: a scale, so nothing
        around it moves. While the pointer is past the end, Slider sets --env-slider-stretch-spring to
-       0s, so the stretch follows it at once; let go, it springs back, settling with a slight give. */
+       0s, so the stretch follows it at once; let go, it eases back, without overshooting. */
     scale: calc(1 + var(--env-slider-stretch)) calc(1 - var(--env-slider-stretch) / 2);
     transform-origin: var(--env-slider-stretch-origin, left) center;
     transition:
-      --env-slider-veil var(--env-motion-duration-fast) var(--env-motion-ease),
-      --env-slider-stretch
-        var(--env-slider-stretch-spring, calc(var(--env-motion-duration-slow) * 1.5))
-        linear(
-          0,
-          0.08 5%,
-          0.256 10%,
-          0.459 15%,
-          0.646 20%,
-          0.797 25%,
-          0.908 30%,
-          0.981 35%,
-          1.023 40%,
-          1.046 50%,
-          1.033 60%,
-          1.015 70%,
-          1.004 80%,
-          1
-        );
+      --env-slider-veil var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      --env-slider-stretch var(--env-slider-stretch-spring, var(--env-motion-duration-slow))
+        var(--env-motion-ease);
   }
   .env-slider-track {
     grid-area: slider;
@@ -123,7 +114,7 @@
     );
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-slider-control[data-handle] .env-slider-indicator::after {
     opacity: var(--env-slider-veil);
@@ -157,7 +148,7 @@
           )
       )
     );
-    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-slider-thumb:dir(rtl) {
     --env-slider-thumb-side: -1;
@@ -180,7 +171,7 @@
       0 0 / calc(100% / (var(--env-slider-ticks) - 1)) 100% repeat-x;
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     /* Under the label and the value the ticks fade to a quarter, as the handle does: a mask at a
        quarter outside the clear stretch between them, which Slider measures from the track's left
        side. Its stops are in this box, which starts one part along the track. */
@@ -262,6 +253,32 @@
   @media (pointer: coarse) {
     .env-slider {
       --env-slider-height: max(var(--env-control-height), var(--env-control-height-touch));
+    }
+  }
+  /* The fill and the handle reach a value a press on the track or a key chooses quickly, so they
+     agree with the value shown from the first frames, and follow a drag at once: while a pressed
+     pointer moves, Slider sets --env-slider-glide to 0s. A pressed handle grows a little, so the
+     press is felt before anything moves. Movement only without a reduced-motion preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-slider {
+      transition: --env-slider-fraction var(--env-slider-glide, var(--env-motion-duration-fast))
+        var(--env-motion-ease-enter);
+    }
+    .env-slider-indicator {
+      transition:
+        width var(--env-slider-glide, var(--env-motion-duration-fast)) var(--env-motion-ease-enter),
+        inset-inline-start var(--env-slider-glide, var(--env-motion-duration-fast))
+          var(--env-motion-ease-enter);
+    }
+    .env-slider-thumb {
+      transition:
+        opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+        scale var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+        inset-inline-start var(--env-slider-glide, var(--env-motion-duration-fast))
+          var(--env-motion-ease-enter);
+    }
+    .env-slider-control[data-dragging] .env-slider-thumb {
+      scale: 1.5 1.2;
     }
   }
   @media (prefers-reduced-motion: reduce) {

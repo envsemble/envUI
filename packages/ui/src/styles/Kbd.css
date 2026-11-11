@@ -8,16 +8,21 @@
      and --env-kbd-separator-padding-inline, -fg and -font for the + between them; a container that
      draws keys as chips with no edge sets --env-kbd-border-end-width to the other sides' width. */
   .env-kbd {
+    /* The key's own sizes, which the hooks above replace. */
+    --env-kbd-default-size: 1.375rem;
+    --env-kbd-default-padding-inline: 0.3125rem;
+    --env-kbd-default-radius: 0.3125rem;
+    --env-kbd-default-font-size: 0.75rem;
     box-sizing: border-box;
-    min-inline-size: var(--env-kbd-size, 1.375rem);
-    block-size: var(--env-kbd-size, 1.375rem);
+    min-inline-size: var(--env-kbd-size, var(--env-kbd-default-size));
+    block-size: var(--env-kbd-size, var(--env-kbd-default-size));
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding-inline: var(--env-kbd-padding-inline, 0.3125rem);
+    padding-inline: var(--env-kbd-padding-inline, var(--env-kbd-default-padding-inline));
     /* Hooks: a container sets --env-kbd-fg, --env-kbd-bg and --env-kbd-border for its own fill. */
     --env-kbd-high-contrast-edge: var(--env-theme-high-contrast) var(--env-color-border-default);
-    border: 0.0625rem solid
+    border: 1px solid
       var(
         --env-kbd-border,
         var(
@@ -25,11 +30,12 @@
           color-mix(in srgb, var(--env-color-fg-default) 5%, transparent)
         )
       );
-    border-block-end-width: var(--env-kbd-border-end-width, 0.125rem);
-    border-radius: var(--env-kbd-radius, 0.3125rem);
+    border-block-end-width: var(--env-kbd-border-end-width, 2px);
+    border-radius: var(--env-kbd-radius, var(--env-kbd-default-radius));
     background: var(--env-kbd-bg, var(--env-color-bg-neutral-muted));
     color: var(--env-kbd-fg, var(--env-color-fg-default));
-    font: var(--env-font-weight-medium) var(--env-kbd-font-size, 0.75rem) / 1 var(--env-font-family);
+    font: var(--env-font-weight-medium) var(--env-kbd-font-size, var(--env-kbd-default-font-size)) /
+      1 var(--env-font-family);
     white-space: nowrap;
     vertical-align: baseline;
   }
@@ -45,7 +51,11 @@
     align-items: baseline;
   }
   .env-kbd-separator {
-    padding-inline: var(--env-kbd-separator-padding-inline, 0.1875rem);
+    --env-kbd-separator-default-padding-inline: 0.1875rem;
+    padding-inline: var(
+      --env-kbd-separator-padding-inline,
+      var(--env-kbd-separator-default-padding-inline)
+    );
     color: var(--env-kbd-separator-fg, var(--env-kbd-fg, var(--env-color-fg-muted)));
     font: var(--env-kbd-separator-font, var(--env-type-body-sm));
   }

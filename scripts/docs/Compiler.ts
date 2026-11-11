@@ -1,72 +1,56 @@
+// Compiles the documentation into the Markdown the package ships in docs/, for agents and readers
+// without the catalogue: each page whole, with its examples' code, the generated Props, Parts and
+// Strings sections, and the example sources beside it.
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { readDocumentation, type DocumentRecord } from './Reader.ts';
+import { readDocumentation, type DocumentRecord } from './DocumentationReader.ts';
+import { documentationDirectory, examplesDirectory } from '../RepositoryPaths.ts';
 import {
-  documentationDirectory,
-  examplesDirectory,
   examplesOf,
   pageKindOf,
   readProps,
+  type PageSection,
   type PropsFile,
-} from './Schema.ts';
-import { cell, fenceFor } from './Validation.ts';
+} from './PageStructure.ts';
+import { cell, fenceFor } from './MarkdownBlocks.ts';
 import { readMessages, renderStrings, type MessageNamespace } from './Messages.ts';
+import type { AnatomyLegendItem, PropEntry } from './model/DocumentationTypes.ts';
+import { nativePropsSentence, propDescription } from './model/PropWording.ts';
 
 /** How the package names a do, a don't or a caution figure in a run of figures. */
 const verdictWords: Record<string, string> = { do: 'do', dont: "don't", caution: 'caution' };
 
 /** Every runtime export a page documents, with namespaces expanded to their parts. */
-export function documentedExports(names, props) {
-  return names.flatMap((name) => {
+export function documentedExports(names: readonly string[], props: PropsFile | undefined) {
+  return names.flatMap((name): string[] => {
     const entry = props?.exports[name];
     if (!entry) return [];
     return entry.kind === 'namespace' ? [name, ...entry.parts] : [name];
   });
 }
 
-const codeCell = (text) => `\`${cell(text)}\``;
+const codeCell = (text: string) => `\`${cell(text)}\``;
 
-const orList = (items) =>
-  items.length === 1 ? items[0] : `${items.slice(0, -1).join(', ')} or ${items.at(-1)}`;
-const andList = (items) =>
+const andList = (items: string[]) =>
   items.length === 1 ? items[0] : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
-
-/** The elements whose native props an export takes; the index says once what native props are. */
-function nativeSentence(elements) {
-  if (!elements.length) return '';
-  const tags = elements.map((element) =>
-    element === 'element' ? 'HTML element' : `\`<${element}>\``,
-  );
-  return `Native props: ${orList(tags)}.`;
-}
-
-/** The description of a prop as its table shows it, with when it is required or deprecated. */
-export function propDescription(prop) {
-  return [
-    prop.deprecated ? `Deprecated${prop.deprecated === true ? '' : `: ${prop.deprecated}`}.` : '',
-    prop.requiredWhen
-      ? prop.requiredWhen === 'in some forms'
-        ? 'Required in some forms.'
-        : `Required when ${prop.requiredWhen}.`
-      : '',
-    prop.source === 'base-ui' ? 'Passed to Base UI.' : '',
-    prop.description,
-  ]
-    .filter(Boolean)
-    .join(' ');
-}
 
 /**
  * The generated Props section of a page, as Markdown: each export's props in a table, where a prop
  * an export above says word for word is named after the table rather than repeated.
  */
-export function renderProps(names, props, headingDepth = 2) {
+export function renderProps(names: readonly string[], props: PropsFile, headingDepth = 2) {
   const heading = '#'.repeat(headingDepth);
   const lines = [`${heading} Props`, ''];
   // The export that first lists a prop, by its name, type, default and description.
-  const firstWith = new Map();
-  const propKey = (prop) =>
-    JSON.stringify([prop.name, prop.required, prop.type, prop.default, propDescription(prop)]);
+  const firstWith = new Map<string, string>();
+  const propKey = (prop: PropEntry) =>
+    JSON.stringify([
+      prop.name,
+      prop.required,
+      prop.type,
+      prop.default,
+      propDescription(prop, 'markdown'),
+    ]);
   for (const name of documentedExports(names, props)) {
     const entry = props.exports[name];
     if (entry.kind === 'namespace') continue;
@@ -76,14 +60,14 @@ export function renderProps(names, props, headingDepth = 2) {
       lines.push('```ts', `${name}${entry.signature}`, '```', '');
       continue;
     }
-    const native = nativeSentence(entry.native);
+    const native = nativePropsSentence(entry.native, 'markdown');
     if (!entry.props.length) {
       lines.push(native ? `No props of its own. ${native}` : 'Takes no props.', '');
       continue;
     }
     // A prop said word for word on an export above is named after the table, not repeated.
-    const shared = new Map();
-    const own = entry.props.filter((prop) => {
+    const shared = new Map<string, string[]>();
+    const own = entry.props.filter((prop: PropEntry) => {
       const owner = firstWith.get(propKey(prop));
       if (!owner) {
         firstWith.set(propKey(prop), name);
@@ -108,7 +92,7 @@ export function renderProps(names, props, headingDepth = 2) {
             : prop.defaultBuiltIn
               ? 'built-in'
               : '—'
-        } | ${cell(propDescription(prop))} |`,
+        } | ${cell(propDescription(prop, 'markdown'))} |`,
       );
     lines.push('');
     if (sharedSentence) lines.push(`Also ${sharedSentence}.`, '');
@@ -121,7 +105,7 @@ export function renderProps(names, props, headingDepth = 2) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; GenerateParts writes it
 export type PartsFile = { components: Record<string, any> };
 
-export function readParts(directory = documentationDirectory): PartsFile | undefined {
+function readParts(directory = documentationDirectory): PartsFile | undefined {
   const file = resolve(directory, 'generated/parts.json');
   return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
 }
@@ -130,16 +114,16 @@ export function readParts(directory = documentationDirectory): PartsFile | undef
  * The generated Part names and Color properties of a page, as Markdown, from parts.json: the same
  * lists the page in the Docs shows, so a page's prose never repeats them.
  */
-export function renderParts(names, parts, headingDepth = 2) {
+function renderParts(names: readonly string[], parts: PartsFile, headingDepth = 2) {
   const heading = '#'.repeat(headingDepth);
   const entries = names.flatMap((name) => {
     const entry = parts?.components?.[name];
     return entry ? [{ name, entry }] : [];
   });
   const named = entries.length > 1;
-  const values = (list) =>
+  const values = (list: string[]) =>
     list.length
-      ? list.map((value) => (value === '' ? 'present' : codeCell(value))).join(', ')
+      ? list.map((value: string) => (value === '' ? 'present' : codeCell(value))).join(', ')
       : 'any value, or present';
   const lines: string[] = [];
   const withParts = entries.filter(({ entry }) => entry.parts?.length || entry.states?.length);
@@ -179,7 +163,7 @@ export function renderParts(names, parts, headingDepth = 2) {
 }
 
 /** An example's source as the package and agents read it. */
-export function exampleSource(page, name, directory = examplesDirectory) {
+export function exampleSource(page: string, name: string, directory = examplesDirectory) {
   return readFileSync(resolve(directory, page, `${name}.tsx`), 'utf8');
 }
 
@@ -189,7 +173,7 @@ export function exampleSource(page, name, directory = examplesDirectory) {
  * left out. A foundation's figures are the catalogue's, and its legends say what they show, so
  * only those with an example file, their code, are listed.
  */
-function shippedYaml(document) {
+function shippedYaml(document: DocumentRecord) {
   const foundation = pageKindOf(document.path) === 'foundation';
   const coded = new Set(
     (document.sections ?? []).flatMap((section) =>
@@ -221,15 +205,21 @@ function shippedYaml(document) {
  * rather than repeating it, and the releases are
  * in the package's CHANGELOG.md.
  */
-function compilePage(document, { props, examples, title }) {
+function compilePage(
+  document: DocumentRecord,
+  { props, examples, title }: { props: string; examples: string; title: string },
+) {
   const head = `---\n${shippedYaml(document).replace(/\n*$/, '')}\n---\n\n`;
-  const legendLines = (legend, named = false) =>
+  const legendLines = (
+    legend: (AnatomyLegendItem | { name: string; text: string })[],
+    named = false,
+  ) =>
     legend
       .map((item, index) =>
         named ? `${index + 1}. **${item.name}**: ${item.text}` : `${index + 1}. ${item.text}`,
       )
       .join('\n');
-  const write = (section) => {
+  const write = (section: PageSection) => {
     let text = '';
     let run: string[] = [];
     const flush = () => {
@@ -269,19 +259,19 @@ function compilePage(document, { props, examples, title }) {
     return text.replace(/\n{3,}/g, '\n\n').replace(/\s*$/, '\n');
   };
   const parts: string[] = [];
-  for (const section of document.sections) {
+  for (const section of document.sections!) {
     if (['overview', 'related', 'changelog'].includes(section.id)) continue;
     parts.push(write(section));
     if (section.id === 'code' && props) parts.push(props);
   }
-  if (props && !document.sections.some((section) => section.id === 'code')) parts.push(props);
+  if (props && !document.sections!.some((section) => section.id === 'code')) parts.push(props);
   return `${head}${title}${parts.join('\n')}`.replace(/\n*$/, '\n');
 }
 
 /**
  * The Markdown of a page as it ships: a component, pattern or foundation page as compilePage writes
- * it, with its props; the index with each page's summary; and a
- * guide as it is written.
+ * it, with its props; the index with each page's summary; and a guide as it is written, but for its
+ * figures (```tsx figure=Name```), the catalogue's own pictures, which its words describe.
  */
 export function compileDocument(
   document: DocumentRecord,
@@ -322,7 +312,8 @@ export function compileDocument(
   const head = document.frontmatter
     ? `---\n${(document.yaml ?? '').replace(/\n*$/, '')}\n---\n\n`
     : '';
-  return `${head}${title}${document.markdown}`;
+  const markdown = document.markdown.replace(/^```tsx figure=\w+\n\n?```[ \t]*\n+/gm, '');
+  return `${head}${title}${markdown}`;
 }
 
 /** Every packaged documentation file: compiled pages, the index and the example sources. */
@@ -359,7 +350,7 @@ export function compileDocumentation(
 }
 
 /** Writes the package's docs/: compiled pages and examples, and every other file as it is. */
-export function packageDocumentation(outputDirectory) {
+export function packageDocumentation(outputDirectory: string) {
   rmSync(outputDirectory, { recursive: true, force: true });
   cpSync(documentationDirectory, outputDirectory, { recursive: true });
   for (const [path, contents] of compileDocumentation()) {

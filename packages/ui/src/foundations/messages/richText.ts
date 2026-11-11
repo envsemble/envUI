@@ -32,5 +32,3 @@ export const richText = {
   /** Said when an upload failed without a message of its own. */
   uploadFailed: 'The upload failed. Try again.',
 };
-
-export type RichTextMessages = typeof richText;

@@ -1,161 +1,77 @@
 import { useMemo } from 'react';
-import { Column, CopyButton, DescriptionList, Link, Row, Surface, Text } from '@envsemble/envui';
-import { Code } from '@envsemble/envui/content';
-import { AgentLogos } from '../brand/AgentLogos';
-import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
-import { PageHeader } from '../layout/PageHeader';
+import { Column, Text, type TableOfContentsItem } from '@envsemble/envui';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import { SiteBanner } from '../banner/SiteBanner';
+import { pagesOf, type DocumentPage, type RoutePage } from '../routes/SiteRoutes';
+import { docsTrail } from '../routes/Trails';
+import { docsRoute } from '../routes/Address';
+import { PartSwitch } from '../routes/OtherPart';
 import {
-  docsTrail,
-  docsTree,
-  pagesOf,
-  type DocsGroup,
-  type RoutePage,
-} from '../navigation/SiteRoutes';
-import { routeHref } from '../navigation/Address';
-import { OtherPartButton } from '../navigation/OtherPart';
-import { lazyPart } from '../template/LoadBoundary';
-import { ExampleSource } from '../figures/LiveExample';
-import { partsOf } from '../template/Parts';
-import { providesOf } from '../template/Provides';
-import { PropsTables } from '../template/PropsTables';
-import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
-import type { Documentation as Document } from './PageModel';
-import { useDocument } from './PageContent';
+  changelogId,
+  PageChangelog,
+  TemplateContent,
+  templateContents,
+} from '../template/TemplateContent';
+import { MetadataBadges } from '../template/MetadataBadges';
 import { useRevealed } from '../template/useRevealed';
-import { pendingAttribute, SectionOutline, useSectionOutline } from '../template/SectionOutline';
-import { Documentation } from './Documentation';
-import { GuideDocument } from './GuideDocument';
-import { LoadedPart } from './LoadedPart';
+import { SectionOutline } from '../markdown/SectionOutline';
+import { useDocument } from './PageContent';
+import { GuideDocument, guideContents } from './GuideDocument';
+import { LoadedPart } from '../loading/LoadedPart';
+import { pageParts } from './PageParts';
+import { partsOfPage } from './ViewModules';
 import { ChangelogSkeleton } from './ChangelogOutline';
-import { TokenReferenceSkeleton } from './TokenTables';
-import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleton';
-import { SpecimenHeadingLevel } from '../figures/Example';
+import { tokenContents, TokenReferenceSkeleton } from './TokenTables';
 import { ReleaseNotes } from './ReleaseNotes';
-import { codeColumns, subsections } from '../shared/CatalogueContent';
-import { headingSlug } from '../shared/SearchAnchors';
+import { AgentSetup, agentSetupContents } from './AgentSetup';
+import {
+  CodeGuide,
+  codeGuideContents,
+  colorEntries,
+  ColorProperties,
+  docsHeadings,
+  hasProvides,
+  PaletteSection,
+  partEntries,
+  PartNames,
+  PropsSection,
+  Provides,
+  Strings,
+  WordsInCode,
+} from './DocsSections';
+import { wordsInCode, withoutAgentNote } from '@docs-model/DocsContent';
 
-/** The token reference, a large page that loads with the page that shows it. */
-const tokenReference = lazyPart(
-  () => import('./TokenReference'),
-  (module) => module.TokenReference,
-  'src/pages/TokenReference.tsx',
-);
+/*
+ * The Docs' route views: a guide, the token reference, the changelog, a foundation's developer
+ * part and a component's or a pattern's reference, each placing its sections (DocsSections.tsx).
+ */
 
-/** The palette's swatches, with their color picker, which load with the page that shows them. */
-const colorPalette = lazyPart(
-  () => import('../figures/foundations/ColorPalette'),
-  (module) => module.ColorPalette,
-  'src/figures/foundations/ColorPalette.tsx',
-);
-
-/** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
-export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
-
-/** A group's pages, one link to each, in a short list. */
-function PageLinks({ pages }: { pages: readonly RoutePage[] }) {
-  return (
-    <ul className="docs-link-list">
-      {pages.map((entry) => (
-        <li key={entry.path}>
-          <Link href={routeHref(entry.path)}>{entry.label ?? entry.title}</Link>
-        </li>
-      ))}
-    </ul>
-  );
+/** On the Docs' home, the guide's note on coding agents moves up under the prompt. */
+function guideParts(whole: DocumentationEntry, home: boolean) {
+  const { markdown, note } = home ? withoutAgentNote(whole.markdown ?? '') : {};
+  return { document: note ? { ...whole, markdown } : whole, note };
 }
 
 /**
- * A section of the Docs' home, as their navigation has it: its pages, then its groups, each under
- * a heading of its own, which a page's breadcrumbs lead to.
+ * A guide of docs/, such as migration, with its figures in place. The setup guide is the Docs'
+ * home, with the prompt that sets envUI up with a coding agent at its top.
  */
-function HomeSection({ section, home }: { section: DocsGroup; home: RoutePage }) {
-  const pages = section.pages.filter((entry) => entry !== home);
-  return (
-    <Column render={<section aria-labelledby={section.id} />} gap={4}>
-      <Text render={<h2 id={section.id} />} variant="title">
-        {section.label}
-      </Text>
-      {pages.length > 0 && <PageLinks pages={pages} />}
-      {section.groups.map((group) => (
-        <Column key={group.id} render={<section aria-labelledby={group.id} />} gap={2}>
-          <Text render={<h3 id={group.id} />} variant="body-sm" emphasis="muted">
-            {group.label}
-          </Text>
-          <PageLinks pages={group.pages} />
-        </Column>
-      ))}
-    </Column>
-  );
-}
-
-/**
- * The Docs' home: what they are, said once in its summary, the prompt that sets envUI up with a
- * coding agent or the guide to setting it up by hand, and each section's pages in short lists, by
- * their groups, as the navigation has them.
- */
-export function DocsHome({ page }: { page: RoutePage }) {
+export function GuidePage({ page }: { page: DocumentPage }) {
+  const whole = useDocument(page.document);
+  const home = page.path === docsRoute;
+  const { document, note } = useMemo(() => guideParts(whole, home), [whole, home]);
   return (
     <>
-      <PageHeader
-        title={page.title}
-        logo={<EnvUIDocsLogo />}
-        description={page.summary}
-        kind="docs-home"
-      />
-      <Column gap={7} className="site-article">
-        <Column
-          render={<section aria-labelledby="agent-setup" />}
-          gap={3}
-          align="center"
-          className="docs-agent-setup"
-        >
-          <Text render={<h2 id="agent-setup" />} variant="title">
-            Set up with your agent
-          </Text>
-          <Text render={<p />} className="docs-agent-setup-text">
-            Paste this into your coding agent: it shows you its plan and waits for your yes.
-          </Text>
-          <Surface
-            background="muted"
-            padding={1}
-            render={<Row gap={3} align="center" />}
-            className="docs-agent-prompt"
-          >
-            <AgentLogos className="docs-agent-logos" />
-            <Text render={<code />} className="docs-agent-prompt-text">
-              {setupPrompt}
-            </Text>
-            <CopyButton value={setupPrompt} variant="ghost" size="sm" aria-label="Copy prompt" />
-          </Surface>
-          <Text render={<p />} emphasis="muted" className="docs-setup-by-hand">
-            Or set it up by hand: <Link href={routeHref('docs/setup')}>Install and set up</Link>
-          </Text>
-        </Column>
-        {docsTree.map((section) => (
-          <HomeSection key={section.id} section={section} home={page} />
-        ))}
-      </Column>
-    </>
-  );
-}
-
-/** A guide of docs/, such as setup or migration, with its live demos in place. */
-export function GuidePage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
-  return (
-    <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
         kind="docs"
-        meta={
-          <MetadataBadges metadata={{ status: page.document?.status }}>
-            <OtherPartButton page={page} />
-          </MetadataBadges>
-        }
+        meta={<MetadataBadges metadata={{ status: page.document.status }} />}
+        corner={<PartSwitch page={page} />}
       />
       <Column gap={7} className="site-article">
+        {home && <AgentSetup note={note} path={whole.path} />}
         <GuideDocument document={document} />
       </Column>
     </>
@@ -166,7 +82,7 @@ export function GuidePage({ page }: { page: RoutePage }) {
 export function TokensPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
@@ -174,7 +90,7 @@ export function TokensPage({ page }: { page: RoutePage }) {
       />
       <Column gap={7} className="site-article">
         <LoadedPart
-          part={tokenReference}
+          part={pageParts.tokenReference}
           what="token reference"
           placeholder={<TokenReferenceSkeleton />}
         />
@@ -183,12 +99,9 @@ export function TokensPage({ page }: { page: RoutePage }) {
   );
 }
 
-/** The full changelog, a large page that loads with the page that shows it. */
-const changelog = lazyPart(
-  () => import('./Changelog'),
-  (module) => module.Changelog,
-  'src/pages/Changelog.tsx',
-);
+/** The Changelog page's two sections. */
+const highlights = { id: 'highlights', label: 'Highlights' };
+const everyChange = { id: 'every-change', label: 'Every change' };
 
 /**
  * What changed in each release of @envsemble/envui: the release notes, a few lines on each release
@@ -197,48 +110,31 @@ const changelog = lazyPart(
 export function ChangelogDocsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         trail={docsTrail(page)}
         description={page.summary}
         kind="docs"
       />
       <Column gap={8} className="site-article">
-        <Column gap={6} render={<section aria-labelledby="highlights" />}>
-          <Text render={<h2 id="highlights" />} variant="headline">
-            Highlights
+        <Column gap={6} render={<section aria-labelledby={highlights.id} />}>
+          <Text render={<h2 id={highlights.id} />} variant="title" className="site-section-title">
+            {highlights.label}
           </Text>
           <ReleaseNotes />
         </Column>
-        <Column gap={6} render={<section aria-labelledby="every-change" />}>
-          <Text render={<h2 id="every-change" />} variant="headline">
-            Every change
+        <Column gap={6} render={<section aria-labelledby={everyChange.id} />}>
+          <Text render={<h2 id={everyChange.id} />} variant="title" className="site-section-title">
+            {everyChange.label}
           </Text>
-          <LoadedPart part={changelog} what="changelog" placeholder={<ChangelogSkeleton />} />
+          <LoadedPart
+            part={pageParts.changelog}
+            what="changelog"
+            placeholder={<ChangelogSkeleton />}
+          />
         </Column>
       </Column>
     </>
-  );
-}
-
-/**
- * The colors guide's editable palette: every role a component paints, by its token, with its value
- * in the current theme, each a swatch that picks another color for this visit.
- */
-function PaletteSection() {
-  return (
-    <Column render={<section />} gap={5} aria-labelledby="palette">
-      <Text render={<h2 />} variant="headline" id="palette">
-        Try the palette
-      </Text>
-      <Text emphasis="muted">
-        Each swatch shows a token&apos;s value in the theme you are reading in. Press one to pick
-        another color: the whole catalogue follows, in this theme only, until you reload.
-      </Text>
-      <SpecimenHeadingLevel value={3}>
-        <LoadedPart part={colorPalette} what="palette" placeholder={<ColorPaletteSkeleton />} />
-      </SpecimenHeadingLevel>
-    </Column>
   );
 }
 
@@ -247,315 +143,24 @@ function PaletteSection() {
  * the same file: Compose, the words of the page mapped to code, and what the application and envUI
  * provide. No Related.
  */
-export function FoundationGuidePage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
+export function FoundationGuidePage({ page }: { page: DocumentPage }) {
+  const document = useDocument(page.document);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         kind="docs"
         trail={docsTrail(page)}
         description={page.summary}
-        meta={<OtherPartButton page={page} />}
+        corner={<PartSwitch page={page} />}
       />
       <Column gap={8} className="site-article docs-api">
         <CodeGuide document={document} />
         <WordsInCode document={document} />
-        <Provides document={document} title="Accessibility" id="provides" />
-        {document.id === 'colors' && <PaletteSection />}
+        <Provides document={document} />
+        {partsOfPage(page.kind, document.id).includes('palette') && <PaletteSection />}
       </Column>
     </>
-  );
-}
-
-/**
- * The values a state attribute takes: each as code, except the empty value of an attribute set
- * without one, which reads as Present; with no values listed, any value or presence alone selects it.
- */
-function StateValues({ values }: { values: readonly string[] }) {
-  if (!values.length) return <>Any value, or present</>;
-  return values.map((value, index) => (
-    <span key={value}>
-      {index > 0 && ' · '}
-      {value === '' ? 'Present' : <Code>{value}</Code>}
-    </span>
-  ));
-}
-
-/** The part names and state attributes of the exports a page documents, as simple lists. */
-function PartNames({ components }: { components: readonly string[] }) {
-  const entries = components.flatMap((name) => {
-    const parts = partsOf(name);
-    return parts ? [{ name, parts }] : [];
-  });
-  const outline = useSectionOutline();
-  if (!entries.length) return null;
-  return (
-    <Column
-      render={<section />}
-      gap={5}
-      aria-labelledby="part-names"
-      {...pendingAttribute(outline)}
-    >
-      <Text render={<h2 />} variant="headline" id="part-names">
-        Part names
-      </Text>
-      <Text emphasis="muted">
-        Each part&apos;s class and state attributes are public and versioned, for an
-        application&apos;s CSS to style.
-      </Text>
-      {!outline &&
-        entries.map(({ name, parts }) => (
-          <Column key={name} gap={3}>
-            {entries.length > 1 && (
-              <Text render={<h3 />} variant="title">
-                <Code>{name}</Code>
-              </Text>
-            )}
-            <DescriptionList.Root className="docs-parts">
-              {parts.parts.map((part) => (
-                <DescriptionList.Item key={part.class} label={<Code>{part.class}</Code>}>
-                  {part.description}
-                </DescriptionList.Item>
-              ))}
-              {parts.states.map((state) => (
-                <DescriptionList.Item key={state.attribute} label={<Code>{state.attribute}</Code>}>
-                  <StateValues values={state.values} />
-                  {state.parts.length > 1 || state.parts[0] !== parts.root ? (
-                    <Text render={<span />} emphasis="muted">
-                      {` on ${state.parts.join(', ')}`}
-                    </Text>
-                  ) : null}
-                </DescriptionList.Item>
-              ))}
-            </DescriptionList.Root>
-          </Column>
-        ))}
-    </Column>
-  );
-}
-
-/**
- * What an application adds for a component or pattern to be accessible, and what envUI does for
- * it, as the Accessibility section of its page writes them: plain lists under a heading, `title`,
- * of the section's own.
- */
-function Provides({ document, title, id }: { document: Document; title: string; id: string }) {
-  const { envui, app } = providesOf(document.sections ?? []);
-  const outline = useSectionOutline();
-  if (!envui && !app) return null;
-  return (
-    <Column
-      render={<section />}
-      gap={5}
-      aria-labelledby={id}
-      className="docs-provides"
-      {...pendingAttribute(outline)}
-    >
-      <Text render={<h2 />} variant="headline" id={id}>
-        {title}
-      </Text>
-      {app && (
-        <Column gap={3}>
-          <Text render={<h3 />} variant="title">
-            You provide
-          </Text>
-          <Documentation markdown={app} path={document.path} />
-        </Column>
-      )}
-      {envui && (
-        <Column gap={3}>
-          <Text render={<h3 />} variant="title">
-            envUI provides
-          </Text>
-          <Documentation markdown={envui} path={document.path} />
-        </Column>
-      )}
-    </Column>
-  );
-}
-
-/** Markdown with its `####` and deeper headings raised a level, outside code fences. */
-function raisedHeadings(markdown: string) {
-  let fence: string | undefined;
-  return markdown
-    .split('\n')
-    .map((line) => {
-      const marker = line.match(/^\s{0,3}(`{3,}|~{3,})/)?.[1];
-      if (marker && (!fence || (marker[0] === fence[0] && marker.length >= fence.length)))
-        fence = fence ? undefined : marker;
-      return !fence && /^#{4,6} /.test(line) ? line.slice(1) : line;
-    })
-    .join('\n');
-}
-
-type GuidePart = { kind: 'markdown'; markdown: string } | { kind: 'source'; name: string };
-
-/**
- * A page's developer part, its "## Compose" section, cut into its `###` subsections: the
- * generated Import, then Usage, Composition and Customize as the page writes them.
- */
-function guideSubsections(document: Document) {
-  const section = document.sections?.find((item) => item.id === 'code');
-  const parts: { title: string; content: GuidePart[] }[] = [];
-  for (const block of section?.blocks ?? []) {
-    if (block.kind === 'source') parts.at(-1)?.content.push(block);
-    if (block.kind !== 'markdown') continue;
-    for (const chunk of subsections(block.markdown)) {
-      const title = /^### (.*)/.exec(chunk)?.[1].trim();
-      if (title) parts.push({ title, content: [] });
-      const body = chunk.replace(/^#{2,3} .*\n/, '');
-      if (body.trim()) parts.at(-1)?.content.push({ kind: 'markdown', markdown: body });
-    }
-  }
-  return parts;
-}
-
-/**
- * The guide at the top of a page in the Docs, from the page's "## Compose": how to import it, its
- * common uses in code, how its parts compose and how to customize it, each a section of its own,
- * with an example file of the page shown as code where the page names one.
- */
-function CodeGuide({ document }: { document: Document }) {
-  return guideSubsections(document).map(({ title, content }) => {
-    const id = headingSlug(title);
-    return (
-      <Column key={title} render={<section />} gap={5} aria-labelledby={id} className="docs-guide">
-        <Text render={<h2 />} variant="headline" id={id}>
-          {title}
-        </Text>
-        {content.map((part, index) =>
-          part.kind === 'source' ? (
-            <ExampleSource key={index} page={document.id} name={part.name} />
-          ) : (
-            <Documentation
-              key={index}
-              markdown={raisedHeadings(part.markdown)}
-              path={document.path}
-            />
-          ),
-        )}
-      </Column>
-    );
-  });
-}
-
-/**
- * The words a page gives people, from its "## Words to use", each with the code it means: the
- * table's In code column, which the catalogue leaves out, beside the words. Nothing where the
- * page has no such column.
- */
-function WordsInCode({ document }: { document: Document }) {
-  const section = document.sections?.find((item) => item.id === 'words');
-  const markdown = codeColumns(
-    (section?.blocks ?? [])
-      .map((block) => (block.kind === 'markdown' ? block.markdown : ''))
-      .join('\n'),
-  );
-  const outline = useSectionOutline();
-  if (!markdown) return null;
-  return (
-    <Column
-      render={<section />}
-      gap={5}
-      aria-labelledby="words-in-code"
-      {...pendingAttribute(outline)}
-    >
-      <Text render={<h2 />} variant="headline" id="words-in-code">
-        Words in code
-      </Text>
-      <Documentation markdown={markdown} path={document.path} />
-    </Column>
-  );
-}
-
-/** The color properties of the exports a page documents, from docs/generated/parts.json. */
-function ColorProperties({ components }: { components: readonly string[] }) {
-  const entries = components.flatMap((name) => {
-    const colors = partsOf(name)?.colors ?? [];
-    return colors.length ? [{ name, colors }] : [];
-  });
-  const outline = useSectionOutline();
-  if (!entries.length) return null;
-  return (
-    <Column
-      render={<section />}
-      gap={5}
-      aria-labelledby="color-properties"
-      {...pendingAttribute(outline)}
-    >
-      <Text render={<h2 />} variant="headline" id="color-properties">
-        Color properties
-      </Text>
-      <Text emphasis="muted">
-        Each sets a color of one instance, through <Code>style</Code> or CSS; its hover, focus and
-        press follow it. They are public and versioned.
-      </Text>
-      {!outline &&
-        entries.map(({ name, colors }) => (
-          <Column key={name} gap={3}>
-            {entries.length > 1 && (
-              <Text render={<h3 />} variant="title">
-                <Code>{name}</Code>
-              </Text>
-            )}
-            <DescriptionList.Root className="docs-parts">
-              {colors.map((color) => (
-                <DescriptionList.Item key={color.property} label={<Code>{color.property}</Code>}>
-                  {color.description}
-                </DescriptionList.Item>
-              ))}
-            </DescriptionList.Root>
-          </Column>
-        ))}
-    </Column>
-  );
-}
-
-/** Every export's props, generated from their types, under Props. */
-function PropsSection({ document }: { document: Document }) {
-  return (
-    <Column
-      render={<section />}
-      gap={5}
-      aria-labelledby="props"
-      {...pendingAttribute(useSectionOutline())}
-    >
-      <Text render={<h2 />} variant="headline" id="props">
-        Props
-      </Text>
-      <PropsTables document={document} />
-    </Column>
-  );
-}
-
-/** The built-in strings a page's exports show, each a key of EnvUIProvider's `messages`. */
-function Strings({ document }: { document: Document }) {
-  const strings = document.strings ?? [];
-  const outline = useSectionOutline();
-  if (!strings.length) return null;
-  return (
-    <Column render={<section />} gap={5} aria-labelledby="strings" {...pendingAttribute(outline)}>
-      <Text render={<h2 />} variant="headline" id="strings">
-        Strings
-      </Text>
-      <Text emphasis="muted">
-        EnvUIProvider&apos;s <Code>messages</Code> overrides each, and a component&apos;s own label
-        prop wins over it.
-      </Text>
-      {!outline && (
-        <DescriptionList.Root className="docs-parts">
-          {strings.map((string) => (
-            <DescriptionList.Item
-              key={`${string.namespace}.${string.key}`}
-              label={<Code>{`messages.${string.namespace}.${string.key}`}</Code>}
-            >
-              <Code>{string.value}</Code> {string.description}
-            </DescriptionList.Item>
-          ))}
-        </DescriptionList.Root>
-      )}
-    </Column>
   );
 }
 
@@ -564,25 +169,26 @@ function Strings({ document }: { document: Document }) {
  * its page in the catalogue rather than repeating it: how to import it, its common uses, how its
  * parts compose and how to customize it, from the page's Compose; what the
  * application and envUI provide, which the catalogue leaves out; then, as reference, its props,
- * part names and color properties, and its changelog. No figures of the catalogue and no
- * Related. Field, which has no page in the catalogue, shows its whole page here, on the
- * page, as "Build your own field".
+ * part names and color properties, and its changelog. It repeats no section of the catalogue and
+ * shows no Related: the page goes from its header to Import and Usage, which a component's opens
+ * with the component, live and compact: its catalogue's first overview example. Field, which has
+ * no page in the catalogue, shows its whole page here, on the page, as "Build your own field".
  */
-export function DocsReferencePage({ page }: { page: RoutePage }) {
-  const document = useDocument(page.document!);
-  const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
+export function DocsReferencePage({ page }: { page: DocumentPage }) {
+  const document = useDocument(page.document);
+  const { cataloguePage, pattern } = catalogueKind(document);
   const metadata = document.metadata;
-  const pattern = cataloguePage?.kind === 'pattern';
   // The guide, then once it has painted its reference, together: each step lays the whole page out
   // again, which costs more here than a step saves (useRevealed).
-  const guide = useMemo(() => <CodeGuide document={document} />, [document]);
+  const guide = useMemo(
+    () => <CodeGuide document={document} showExample={!!cataloguePage && !pattern} />,
+    [document, cataloguePage, pattern],
+  );
   const parts = useMemo(
     () =>
       [
         cataloguePage && <WordsInCode key="words" document={document} />,
-        cataloguePage && (
-          <Provides key="provides" document={document} title="Accessibility" id="provides" />
-        ),
+        cataloguePage && <Provides key="provides" document={document} />,
         !pattern && <PropsSection key="props" document={document} />,
         <PartNames key="parts" components={metadata?.components ?? []} />,
         <ColorProperties key="colors" components={metadata?.components ?? []} />,
@@ -594,18 +200,13 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
   const revealed = useRevealed(2);
   return (
     <>
-      <PageHeader
+      <SiteBanner
         title={page.title}
         kind="docs"
         trail={docsTrail(page)}
         description={page.summary}
-        meta={
-          metadata && (
-            <MetadataBadges metadata={metadata}>
-              <OtherPartButton page={page} />
-            </MetadataBadges>
-          )
-        }
+        meta={metadata && <MetadataBadges metadata={metadata} />}
+        corner={<PartSwitch page={page} />}
       />
       {/* Field, which has no page in the catalogue, shows the whole file, what envUI and the
           application provide in place. */}
@@ -618,4 +219,50 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
       </Column>
     </>
   );
+}
+
+/** Whether a page in the Docs has a page in the catalogue, and whether that page is a pattern's. */
+function catalogueKind(document: DocumentationEntry) {
+  const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
+  return { cataloguePage, pattern: cataloguePage?.kind === 'pattern' };
+}
+
+/**
+ * The sections of a page in the Docs, as its view renders them, for the page's contents to list
+ * from the first render: each the id and words of its heading.
+ */
+export function docsContents(
+  page: RoutePage,
+  whole: DocumentationEntry | undefined,
+): TableOfContentsItem[] {
+  if (page.kind === 'docs-changelog') return [highlights, everyChange];
+  if (page.kind === 'tokens') return tokenContents();
+  if (!whole) return [];
+  if (page.kind === 'guide') {
+    const home = page.path === docsRoute;
+    const { document, note } = guideParts(whole, home);
+    return [...(home ? agentSetupContents(note) : []), ...guideContents(document)];
+  }
+  const words = wordsInCode(whole.sections) ? [docsHeadings.wordsInCode] : [];
+  const provides = hasProvides(whole) ? [docsHeadings.provides] : [];
+  if (page.kind === 'foundation-guide')
+    return [
+      ...codeGuideContents(whole),
+      ...words,
+      ...provides,
+      ...(whole.id === 'colors' ? [docsHeadings.palette] : []),
+    ];
+  const { cataloguePage, pattern } = catalogueKind(whole);
+  const components = whole.metadata?.components ?? [];
+  const changelog = whole.sections?.find((section) => section.id === 'changelog');
+  return [
+    ...(cataloguePage ? [] : templateContents(whole, { provides: true, related: false })),
+    ...codeGuideContents(whole),
+    ...(cataloguePage ? [...words, ...provides] : []),
+    ...(pattern ? [] : [docsHeadings.props]),
+    ...(partEntries(components).length ? [docsHeadings.partNames] : []),
+    ...(colorEntries(components).length ? [docsHeadings.colorProperties] : []),
+    ...(whole.strings?.length ? [docsHeadings.strings] : []),
+    ...(changelog ? [{ id: changelogId, label: changelog.title }] : []),
+  ];
 }

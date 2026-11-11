@@ -11,7 +11,7 @@
     border-radius: 50%;
     background: transparent;
     cursor: pointer;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-avatar-button:hover:not(:disabled) {
     background: var(--env-color-bg-neutral-subtle-hover);
@@ -21,8 +21,8 @@
     background: var(--env-color-bg-neutral-subtle-pressed);
   }
   .env-avatar-button:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
   }
   .env-avatar-button:disabled {
     opacity: var(--env-state-disabled-opacity);
@@ -48,7 +48,7 @@
     .env-avatar-button {
       transition-property: background-color, color, border-color, transform;
       transition-duration: var(--env-motion-duration-fast);
-      transition-timing-function: var(--env-motion-ease);
+      transition-timing-function: var(--env-motion-ease-enter);
     }
     .env-avatar-button:active:not(:disabled) {
       transform: scale(0.97);

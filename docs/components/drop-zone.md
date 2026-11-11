@@ -1,6 +1,6 @@
 ---
 title: DropZone
-summary: An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files.
+summary: An area that takes dropped files and opens the file picker when pressed.
 status: stable
 since: 1.0.0
 category: Forms & selection
@@ -73,8 +73,6 @@ examples:
 2. **Icon** (`env-drop-zone-icon`, `icon`)
 3. **Label** (`env-drop-zone-label`, `label`)
 4. **Description** (`env-drop-zone-description`, `description`)
-
-Not shown: the target people press, which takes the drop zone's own box.
 
 ## Behaviour
 
@@ -223,3 +221,4 @@ The zone's frame is Field's root and error. Its parts are the zone, `env-drop-zo
 
 - **1.0.0**: `onFiles` is `onFilesAccepted` and `onReject` is `onFilesRejected`; they run for dropped and browsed files alike. The zone is named by what it shows, its label and its description, and described by its error. Its frame is Field's root and error.
 - **1.0.0**: `FileDropzone` is `DropZone`, with the `env-drop-zone-*` classes; the page is `drop-zone`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.

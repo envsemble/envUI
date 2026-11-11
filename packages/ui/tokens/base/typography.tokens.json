@@ -29,17 +29,17 @@
         "$value": { "value": 0.9375, "unit": "rem" }
       },
       "title": {
-        "$description": "A section's heading: Text's title variant, 16 px in the comfortable scale.",
-        "$value": { "value": 1, "unit": "rem" }
+        "$description": "A section's heading: Text's title variant, 18 px in the comfortable scale: a step above body text in size as well as weight.",
+        "$value": { "value": 1.125, "unit": "rem" }
       },
       "headline": {
-        "$description": "A page's heading: Text's headline variant, 18 px in the comfortable scale.",
-        "$value": { "value": 1.125, "unit": "rem" }
+        "$description": "A page's heading: Text's headline variant, 22 px in the comfortable scale: a clear step above a section's title.",
+        "$value": { "value": 1.375, "unit": "rem" }
       }
     },
     "weight": {
       "$type": "fontWeight",
-      "$description": "The font weights: regular for body text, medium for headings, labels that lead and emphasis in a row, semibold for the strongest emphasis in a small space, such as today in a calendar. The same in every scale.",
+      "$description": "The font weights: regular for body text, medium for headings, labels that lead and emphasis in a row, semibold for the strongest emphasis in a small space, such as today in a calendar. The same in every scale; medium is a touch lighter in dark.",
       "regular": { "$description": "Regular, 400: running text and most labels.", "$value": 400 },
       "medium": {
         "$description": "Medium, 500: headings, labels that lead and emphasis in a row.",
@@ -66,25 +66,25 @@
     "$type": "typography",
     "$description": "Font shorthands for the type roles, as the `font` property takes them: weight, size, line height and family. The line height is in em, so it follows the role's own size.",
     "headline": {
-      "$description": "A page's heading: Text's headline variant, medium.",
+      "$description": "A page's heading: Text's headline variant, medium, its lines tighter than body text's and its letters a touch closer, as larger type wants.",
       "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
       "$value": {
         "fontFamily": "{font.family}",
         "fontSize": "{font.size.headline}",
         "fontWeight": "{font.weight.medium}",
-        "letterSpacing": { "value": 0, "unit": "rem" },
-        "lineHeight": 1.4
+        "letterSpacing": { "value": -0.0125, "unit": "rem" },
+        "lineHeight": 1.3
       }
     },
     "title": {
-      "$description": "A section's heading: Text's title variant, medium.",
+      "$description": "A section's heading: Text's title variant, medium, its lines a little tighter than body text's and its letters a touch closer.",
       "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
       "$value": {
         "fontFamily": "{font.family}",
         "fontSize": "{font.size.title}",
         "fontWeight": "{font.weight.medium}",
-        "letterSpacing": { "value": 0, "unit": "rem" },
-        "lineHeight": 1.4
+        "letterSpacing": { "value": -0.00625, "unit": "rem" },
+        "lineHeight": 1.35
       }
     },
     "body": {

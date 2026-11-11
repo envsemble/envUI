@@ -7,9 +7,9 @@ import {
   type CalendarHeatmapDay,
   type CalendarHeatmapProps,
 } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
-import { useTimeline } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
 
 /** Stands in for sixteen weeks of edits: busier midweek, with a quiet stretch. */
 const data: CalendarHeatmapDay[] = Array.from({ length: 112 }, (_, index) => {
@@ -36,7 +36,7 @@ const steps = looks.map(() => 1700);
 
 function Stepping() {
   const step = useTimeline(steps);
-  const look = looks[step]!;
+  const look = looks[step];
   return (
     // A theme of its own, the page's, so the colors ease from one look to the next.
     <Theme {...useTheme()}>
@@ -58,10 +58,10 @@ function Stepping() {
 /** One heatmap through the tones, then from two color steps to ten. */
 export default function TonesAndSteps() {
   return (
-    <Example size="content">
+    <SpecimenFrame size="content">
       <MotionStage label="the heatmap through its tones and color steps">
         <Stepping />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

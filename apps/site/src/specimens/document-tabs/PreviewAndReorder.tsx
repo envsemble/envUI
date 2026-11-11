@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import OpenDocuments from '../../examples/document-tabs/OpenDocuments';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const tab = (index: number) =>
@@ -50,12 +51,13 @@ function Arranging() {
 }
 
 /** A preview tab kept by a double click, then a tab dragged into a new place. */
+// eslint-disable-next-line no-restricted-syntax -- a preview tab is the document tabs' own word
 export default function PreviewAndReorderMotion() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="a preview tab kept and a tab dragged into place">
         <Arranging />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

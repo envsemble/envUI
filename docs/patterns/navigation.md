@@ -56,6 +56,7 @@ examples:
     role: overview
     stage: shaded
     motion: true
+    device: window
   Hierarchy: example
   ViewsOfOneThing: example
   ListAndDetail: example
@@ -106,8 +107,6 @@ As narrow as a phone, the detail shows in place of the list, with a back button 
 2. **Quick open** (`env-top-bar-actions > env-icon-button`)
 3. **Trail** (`env-breadcrumbs`)
 4. **Views** (`env-tabs-list`)
-
-Not shown: the [Pager](../components/pager.md) at the end of a page read in order.
 
 ## Behaviour
 

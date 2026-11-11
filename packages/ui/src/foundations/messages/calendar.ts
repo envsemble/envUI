@@ -8,5 +8,3 @@ export const calendar = {
   /** The next-month button's name. */
   nextMonth: 'Next month',
 };
-
-export type CalendarMessages = typeof calendar;

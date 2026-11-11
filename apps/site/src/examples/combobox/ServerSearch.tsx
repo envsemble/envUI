@@ -43,6 +43,7 @@ export default function ServerSearch() {
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
       <Combobox
         label="Contact"
+        placeholder="Type a name"
         items={results}
         filter={null}
         loading={searching}

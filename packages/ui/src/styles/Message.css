@@ -4,7 +4,13 @@
   .env-message-list {
     align-content: start;
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
+  }
+  /* While busy, a reply on its way, where it will show: its author, as a message's header, then a
+     small spinner and Working in the muted color. */
+  .env-message-list-busy {
+    column-gap: var(--env-space-2);
+    font: var(--env-type-body-sm);
   }
   .env-message {
     justify-items: start;
@@ -34,7 +40,9 @@
   /* The bubble takes the row tone on the canvas; as a translucent fill it stays distinct on panes. */
   .env-message[data-from='self'] > .env-message-content,
   .env-message[data-from='self'] > .env-skeleton-content > .env-message-content {
-    max-inline-size: min(100%, max(75%, 16rem));
+    /* Three quarters of the row, and never narrower than this where the row is narrow. */
+    --env-message-bubble-min-measure: 16rem;
+    max-inline-size: min(100%, max(75%, var(--env-message-bubble-min-measure)));
     padding: var(--env-space-2) var(--env-space-4);
     border-radius: var(--env-radius-lg);
     background: var(--env-color-bg-neutral-muted);
@@ -47,7 +55,7 @@
   .env-message[data-from='self'][data-status='failed']
     > .env-skeleton-content
     > .env-message-content {
-    box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-danger);
+    box-shadow: inset 0 0 0 1px var(--env-color-border-danger);
   }
   .env-message-content > :first-child {
     margin-block-start: 0;

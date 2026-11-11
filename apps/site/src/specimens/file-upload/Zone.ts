@@ -1,4 +1,4 @@
-import type { PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
 
 /** The clock the do and the don't of a zone during uploads play on together. */
 export const zoneClock = 'file-upload-zone';
@@ -21,7 +21,7 @@ const start: PointerStep[] = [{ cue: 'renew' }, { wait: 600 }];
 export const readyScript: PointerStep[] = [
   ...start,
   carry,
-  { to: zone, x: 0.9, y: 1.5 },
+  { to: zone, x: 0.6, y: 1.5 },
   { to: zone, x: 0.55, y: 0.55, duration: 600 },
   { wait: 300 },
   { drop: true },
@@ -38,7 +38,7 @@ export const readyScript: PointerStep[] = [
 export const busyScript: PointerStep[] = [
   ...start,
   carry,
-  { to: zone, x: 0.9, y: 1.5 },
+  { to: zone, x: 0.6, y: 1.5 },
   { to: zone, x: 0.55, y: 0.55, duration: 600 },
   { wait: 300 },
   { wait: 3500 },

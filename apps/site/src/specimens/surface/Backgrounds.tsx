@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Column, Surface, Text } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 const backgrounds = [
   { background: 'default', title: 'Default' },
@@ -12,13 +12,13 @@ const backgrounds = [
  * Raised as a popup has it: over a pane's content and past the pane's edge, lifted by a popup's
  * shadow, as its fill is a pane's; where popups are solid, by a popup's edge instead.
  */
-const popup = {
+const popup: CSSProperties = {
   '--env-surface-outline': 'var(--env-popup-solid) var(--env-elevation-2-border)',
   boxShadow: 'var(--env-popup-shadow)',
   marginInline: 'var(--env-space-6) calc(-1 * var(--env-space-6))',
   marginBlockEnd: 'calc(-1 * var(--env-space-6))',
   whiteSpace: 'nowrap',
-} as CSSProperties;
+};
 
 /**
  * Every background, on the page and on a pane, each on a piece of either, as the stage is neither;
@@ -26,10 +26,10 @@ const popup = {
  */
 export default function Backgrounds() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid size="compact">
         {backgrounds.map(({ background, title }) => (
-          <Specimen key={background} title={title}>
+          <SpecimenPart key={background} title={title}>
             <Surface background="page" padding={2} radius="sm">
               <Surface background={background} padding={4}>
                 <Text>On the page</Text>
@@ -40,16 +40,16 @@ export default function Backgrounds() {
                 <Text>On a pane</Text>
               </Surface>
             </Surface>
-          </Specimen>
+          </SpecimenPart>
         ))}
-        <Specimen title="Recessed">
+        <SpecimenPart title="Recessed">
           <Surface background="page" padding={3} radius="sm">
             <Surface background="recessed" padding={4} radius="sm">
               <Text>In the page</Text>
             </Surface>
           </Surface>
-        </Specimen>
-        <Specimen title="Raised">
+        </SpecimenPart>
+        <SpecimenPart title="Raised">
           <Surface background="page" padding={2} radius="sm">
             <Surface background="raised" padding={4}>
               <Text>On the page</Text>
@@ -66,8 +66,8 @@ export default function Backgrounds() {
               <Text>Over a pane</Text>
             </Surface>
           </Surface>
-        </Specimen>
+        </SpecimenPart>
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

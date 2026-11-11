@@ -2,8 +2,8 @@
 
 import { useMemo, useRef, useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
-import { useResolvedLocale } from '../../internal/useFormatters.js';
+import { useMessages } from '../../internal/provider/EnvUIContext.js';
+import { useResolvedLocale } from '../../internal/provider/useFormatters.js';
 import { timePicker as timePickerMessages } from '../../foundations/messages/timePicker.js';
 import {
   dateFormat,
@@ -12,14 +12,18 @@ import {
   now,
   roundToStep,
   toUtcDate,
-} from '../../internal/calendarDays.js';
-import { TimeWheel, type Entry, type Part } from './TimeWheel.js';
+  withHourCycle,
+} from '../../internal/time/calendarDays.js';
+import { TimeWheel } from './TimeWheel.js';
+import type { Entry, Part } from './timeWheelRows.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
 import '../../styles/DatePicker.css';
 
-export interface TimeListProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {
+export interface TimeListProps extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'defaultValue' | 'onChange'
+> {
   /** The chosen time as minutes after midnight, or undefined for none. */
   value: number | undefined;
   /** Receives the chosen time as minutes after midnight. */
@@ -37,6 +41,8 @@ export interface TimeListProps
   start?: number;
   /** The locale the times are written in, with its own 12- or 24-hour clock. */
   locale?: string;
+  /** The clock, h12 or h23, whatever the locale's; the locale's by default. */
+  hourCycle?: 'h12' | 'h23';
 }
 
 /** The first column of a time list, where focus goes as a popup with the list opens. */
@@ -67,6 +73,7 @@ export function TimeList({
   max,
   start,
   locale,
+  hourCycle,
   className,
   ...props
 }: TimeListProps) {
@@ -74,9 +81,10 @@ export function TimeList({
   const columnsRef = useRef<(HTMLDivElement | null)[]>([]);
   const shownLocale = useResolvedLocale(locale);
   const step = minuteStepOf(minuteStep);
-  // Times are wall-clock minutes, formatted in UTC so no zone shifts them, on the locale's clock.
+  // Times are wall-clock minutes, formatted in UTC so no zone shifts them, on the locale's clock
+  // unless hourCycle sets one.
   const clock = useMemo(() => {
-    const format = dateFormat(shownLocale, { timeStyle: 'short' });
+    const format = dateFormat(shownLocale, withHourCycle({ timeStyle: 'short' }, hourCycle));
     const cycle = format.resolvedOptions().hourCycle;
     const partOf = (minutes: number, type: Part) =>
       format.formatToParts(toUtcDate(0, minutes)).find((part) => part.type === type)?.value ?? '';
@@ -98,7 +106,7 @@ export function TimeList({
       periodLabels: [partOf(60, 'dayPeriod'), partOf(13 * 60, 'dayPeriod')],
       cycle,
     };
-  }, [shownLocale]);
+  }, [shownLocale, hourCycle]);
 
   // Without a value, a choice in one column completes the time the others show.
   const [startState] = useState(() => roundToStep(now().minutes, step));
@@ -117,15 +125,12 @@ export function TimeList({
           keys: [String(shown), pad(shown)],
         };
       })
-    : Array.from(
-        { length: 24 },
-        (_, hour): Entry => ({
-          value: hour,
-          label: clock.hourLabel(hour),
-          disabled: !overlaps(hour * 60, hour * 60 + 59, min, max),
-          keys: [pad(hour), String(hour)],
-        }),
-      );
+    : Array.from({ length: 24 }, (_, hour): Entry => ({
+        value: hour,
+        label: clock.hourLabel(hour),
+        disabled: !overlaps(hour * 60, hour * 60 + 59, min, max),
+        keys: [pad(hour), String(hour)],
+      }));
   const minutes = minuteSteps(step, value === undefined ? undefined : baseMinute).map(
     (minute): Entry => ({
       value: minute,
@@ -134,14 +139,12 @@ export function TimeList({
       keys: [pad(minute)],
     }),
   );
-  const periods = [0, 1].map(
-    (period): Entry => ({
-      value: period,
-      label: clock.periodLabels[period]!,
-      disabled: !overlaps(period * 720, period * 720 + 719, min, max),
-      keys: [clock.periodLabels[period]!.toLocaleLowerCase(shownLocale), period ? 'p' : 'a'],
-    }),
-  );
+  const periods = [0, 1].map((period): Entry => ({
+    value: period,
+    label: clock.periodLabels[period]!,
+    disabled: !overlaps(period * 720, period * 720 + 719, min, max),
+    keys: [clock.periodLabels[period]!.toLocaleLowerCase(shownLocale), period ? 'p' : 'a'],
+  }));
 
   const columns: Record<
     Part,

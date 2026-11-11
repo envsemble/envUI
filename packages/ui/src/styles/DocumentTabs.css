@@ -1,6 +1,7 @@
 @layer env.components {
   /* Editor tabs for open documents. Inactive tabs are quiet, with state layers on hover; the active tab
-     carries the translucent fill and a selection-blue indicator along its bottom edge. Each item lays
+     takes the surface of the content below it, which it joins, with a selection-blue indicator along
+     its bottom edge, so the grey fill means hover alone. Each item lays
      out its tab, a Base UI tab, beside its close button, which isn't nested in the tab. */
   /* The root holds the strip and the content after it, as tall as a medium control: 2.5rem, and 2rem
      in the compact scale. No line runs under it: the active tab's fill and indicator mark it. It
@@ -28,7 +29,7 @@
        into view. */
     position: relative;
     flex: 1 1 auto;
-    gap: 0.125rem;
+    gap: calc(var(--env-space-1) / 2);
     block-size: 100%;
     padding-inline: var(--env-space-1);
     overflow-x: auto;
@@ -114,8 +115,10 @@
     box-sizing: border-box;
     position: relative;
     flex: 0 0 auto;
+    /* A long title ends in an ellipsis past this width. */
+    --env-document-tabs-tab-max-width: 14rem;
     min-inline-size: 0;
-    max-inline-size: 14rem;
+    max-inline-size: var(--env-document-tabs-tab-max-width);
     display: inline-flex;
     align-items: center;
     padding-inline-end: var(--env-space-1);
@@ -127,8 +130,8 @@
     cursor: pointer;
     user-select: none;
     transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      color var(--env-motion-duration-fast) var(--env-motion-ease);
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* While a tab is dragged, the pointer passing over the others is not a hover: they keep their
      fills and hide their close buttons. */
@@ -139,22 +142,27 @@
   :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:active {
     background: var(--env-color-bg-neutral-subtle-pressed);
   }
+  /* The surface the strip and its content sit on: the envUI surface around them, else the canvas.
+     A strip in a fill of its own, such as a muted bar over the content, shows the active tab in the
+     content's surface. */
   .env-document-tabs-item[data-active] {
-    background: var(--env-color-bg-neutral-muted);
+    background: var(--env-surface-color, var(--env-color-bg-page));
     color: var(--env-color-fg-default);
   }
   .env-document-tabs-item[data-active]::after {
     content: '';
     position: absolute;
     inset: auto 0 0;
-    block-size: 0.125rem;
-    border-radius: 0.125rem 0.125rem 0 0;
+    --env-document-tabs-indicator-size: 0.125rem;
+    block-size: var(--env-document-tabs-indicator-size);
+    border-radius: var(--env-document-tabs-indicator-size) var(--env-document-tabs-indicator-size) 0
+      0;
     background: var(--env-color-fg-on-selected);
   }
   /* The ring of a focused tab goes around its whole item, close button included. */
   .env-document-tabs-item:has(> .env-document-tabs-tab:focus-visible) {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: -0.125rem;
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
   }
   /* The tab covers its item up to the close button, so a press anywhere on the label selects it. */
   .env-document-tabs-tab {
@@ -195,6 +203,7 @@
   .env-document-tabs-tab[data-preview] .env-document-tabs-tab-label {
     font-style: italic;
     font-synthesis: style;
+    /* stylelint-disable-next-line unit-disallowed-list -- room for the slant of the label's last italic letter, which follows its font size */
     padding-inline-end: 0.125em;
   }
   /* The close button, an IconButton with a cross, is a small circle that keeps its space so tabs do not change

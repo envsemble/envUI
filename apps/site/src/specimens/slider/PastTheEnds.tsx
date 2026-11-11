@@ -1,7 +1,8 @@
 import { Slider } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const control = '.env-slider-control';
 
@@ -16,14 +17,14 @@ const script: PointerStep[] = [
   { wait: 400 },
   { press: true },
   { to: control, x: 1, duration: 600 },
-  { to: control, x: 1.15, duration: 500 },
+  { to: control, x: 1.08, duration: 400 },
   { wait: 300 },
   { release: true },
   { wait: 700 },
   { to: control, x: 0.95, duration: 400 },
   { press: true },
   { to: control, x: 0, duration: 900 },
-  { to: control, x: -0.15, duration: 500 },
+  { to: control, x: -0.08, duration: 400 },
   { wait: 300 },
   { release: true },
   { wait: 700 },
@@ -44,10 +45,10 @@ function Dragged() {
 /** Slider dragged past either end: it stretches a little toward the pointer, then springs back. */
 export default function PastTheEnds() {
   return (
-    <Example size="field">
+    <SpecimenFrame size="field">
       <MotionStage label="the slider stretching past its ends">
         <Dragged />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

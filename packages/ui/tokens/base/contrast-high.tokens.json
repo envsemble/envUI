@@ -59,13 +59,13 @@
         },
         "raised": {
           "$root": {
-            "$value": "{palette.gray.2}"
+            "$value": "{palette.neutral.0}"
           },
           "hover": {
-            "$value": "{palette.gray.6}"
+            "$value": "{palette.gray.4}"
           },
           "pressed": {
-            "$value": "{palette.gray.9}"
+            "$value": "{palette.gray.8}"
           }
         },
         "popup": {
@@ -251,9 +251,9 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/amber/80/$value/components"
+                "$ref": "#/palette/amber/12/$value/components"
               },
-              "alpha": 0.08
+              "alpha": 0.24
             }
           },
           "subtle": {
@@ -261,25 +261,33 @@
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/amber/80/$value/components"
+                  "$ref": "#/palette/amber/12/$value/components"
                 },
-                "alpha": 0.14
+                "alpha": 0.36
               }
             },
             "pressed": {
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/amber/80/$value/components"
+                  "$ref": "#/palette/amber/12/$value/components"
                 },
-                "alpha": 0.22
+                "alpha": 0.5
               }
             }
           }
         },
         "danger": {
           "emphasis": {
-            "$value": "{palette.red.80}"
+            "$root": {
+              "$value": "{palette.red.80}"
+            },
+            "hover": {
+              "$value": "{palette.red.84}"
+            },
+            "pressed": {
+              "$value": "{palette.red.88}"
+            }
           },
           "muted": {
             "$value": {
@@ -324,13 +332,13 @@
         },
         "done": {
           "emphasis": {
-            "$value": "{palette.violet.80}"
+            "$value": "{palette.slate.82}"
           },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/violet/80/$value/components"
+                "$ref": "#/palette/slate/82/$value/components"
               },
               "alpha": 0.08
             }
@@ -350,6 +358,17 @@
           }
         },
         "accent": {
+          "emphasis": {
+            "$root": {
+              "$value": "{palette.purple.75}"
+            },
+            "hover": {
+              "$value": "{palette.purple.80}"
+            },
+            "pressed": {
+              "$value": "{palette.purple.84}"
+            }
+          },
           "strong": {
             "$root": {
               "$value": "{palette.purple.75}"
@@ -458,6 +477,9 @@
             "$value": "{palette.gray.92}"
           }
         },
+        "disabled": {
+          "$value": "{palette.gray.65}"
+        },
         "control": {
           "$value": "{palette.gray.88}"
         },
@@ -488,13 +510,30 @@
           "$value": "{palette.amber.80}"
         },
         "danger": {
-          "$value": "{palette.red.80}"
+          "$root": {
+            "$value": "{palette.red.80}"
+          },
+          "hover": {
+            "$value": "{palette.red.84}"
+          },
+          "pressed": {
+            "$value": "{palette.red.88}"
+          }
         },
         "done": {
-          "$value": "{palette.violet.80}"
+          "$value": "{palette.slate.82}"
         },
         "on-emphasis": {
           "$value": "{palette.neutral.0}"
+        },
+        "success-on-strong": {
+          "$value": "{palette.green.10}"
+        },
+        "info-on-strong": {
+          "$value": "{palette.blue.10}"
+        },
+        "danger-on-strong": {
+          "$value": "{palette.red.10}"
         },
         "rating-star": {
           "$value": "{palette.amber.80}"
@@ -696,7 +735,7 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/violet/80/$value/components"
+              "$ref": "#/palette/slate/82/$value/components"
             },
             "alpha": 0.55
           }

@@ -9,18 +9,20 @@
     max-height: 100%;
     overflow-y: auto;
     overscroll-behavior: contain;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     pointer-events: auto;
   }
-  /* A dialog follows the popups' rules (Popup.css): their fill, their soft shadow and no edge, and its
-     header, content and actions part by space. Unlike a popup it isn't frosted: over its backdrop, what
-     shows through would only grey the dialog and smudge it with the shapes the backdrop dims. Where
-     popups are solid, at high contrast, with reduced transparency and under forced colors, it has no
-     shadow and its elevation edge returns. What it holds takes the fill as the color beneath it. */
+  /* A dialog follows the popups' rules (Popup.css): their fill, their soft shadow, no edge in light
+     and their faint hairline in dark, and its header, content and actions part by space. Unlike a
+     popup it isn't frosted: over its backdrop, what shows through would only grey the dialog and smudge
+     it with the shapes the backdrop dims. Where popups are solid, at high contrast, with reduced
+     transparency and under forced colors, it has no shadow and its elevation edge returns. What it
+     holds takes the fill as the color beneath it. */
   .env-surface.env-dialog {
     --env-surface-color: var(--env-popup-fill);
+    --env-surface-muted-ground: ;
     --env-dialog-edge: var(--env-popup-solid) var(--env-elevation-3-border);
-    border-color: var(--env-dialog-edge, transparent);
+    border-color: var(--env-dialog-edge, var(--env-popup-frosted-edge, transparent));
     box-shadow: var(--env-popup-shadow);
   }
   .env-dialog {
@@ -30,15 +32,18 @@
       max(var(--env-viewport-gutter), env(safe-area-inset-left)) +
         max(var(--env-viewport-gutter), env(safe-area-inset-right))
     );
-    width: min(28rem, 100% - var(--env-dialog-gutters));
+    /* The widths of a dialog, md by default and lg. */
+    --env-dialog-width-md: 28rem;
+    --env-dialog-width-lg: 44rem;
+    width: min(var(--env-dialog-width-md), 100% - var(--env-dialog-gutters));
     margin-left: max(var(--env-viewport-gutter), env(safe-area-inset-left));
     margin-right: max(var(--env-viewport-gutter), env(safe-area-inset-right));
     /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
     transform-origin: var(--transform-origin, center);
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-dialog[data-width='lg'] {
-    width: min(44rem, 100% - var(--env-dialog-gutters));
+    width: min(var(--env-dialog-width-lg), 100% - var(--env-dialog-gutters));
   }
   .env-dialog-title,
   .env-dialog-description {
@@ -46,12 +51,19 @@
   }
   .env-dialog-title {
     min-inline-size: 0;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     font: var(--env-type-headline);
+    letter-spacing: var(--env-type-headline-letter-spacing);
   }
   .env-dialog-description {
     font: var(--env-type-body-sm);
     color: var(--env-color-fg-muted);
+  }
+  /* The content follows the heading block at the gap between the title and the description, so a
+     dialog has one gap under its title; the actions keep the sections' gap from what is above them.
+     The content column is a flex column (DialogContent), so the margin takes back its gap. */
+  .env-dialog-content > .env-dialog-header:has(+ :not(.env-dialog-actions)) {
+    margin-block-end: calc(var(--env-space-3) - var(--env-space-5));
   }
   /* The theme boundary of a modal surface's portal (Dialog, ConfirmDialog, Sheet, CommandPalette) has
      no box: it carries the theme to the backdrop and the surface and is no container. The surface's
@@ -100,7 +112,13 @@
   /* Search-like dialogs open near the top, so results can grow downward without moving the field. */
   .env-dialog-positioner[data-placement='top'] {
     place-items: start center;
-    padding-block-start: max(var(--env-viewport-gutter), min(12vh, 6rem), env(safe-area-inset-top));
+    /* 12% of the window down, at most this far. */
+    --env-dialog-top-max: 6rem;
+    padding-block-start: max(
+      var(--env-viewport-gutter),
+      min(12vh, var(--env-dialog-top-max)),
+      env(safe-area-inset-top)
+    );
   }
 
   /* Motion: the backdrop fades, and the dialog fades and rises into place. Movement only without a
@@ -119,16 +137,18 @@
   @media (prefers-reduced-motion: no-preference) {
     .env-dialog {
       transition:
-        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
         transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
     }
     .env-dialog[data-starting-style],
     .env-dialog[data-ending-style] {
-      transform: translateY(0.75rem) scale(0.98);
+      --env-dialog-rise: 0.75rem;
+      transform: translateY(var(--env-dialog-rise)) scale(0.98);
     }
     .env-dialog[data-placement='top'][data-starting-style],
     .env-dialog[data-placement='top'][data-ending-style] {
-      transform: translateY(-0.5rem) scale(0.98);
+      --env-dialog-drop: -0.5rem;
+      transform: translateY(var(--env-dialog-drop)) scale(0.98);
     }
     .env-dialog[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);

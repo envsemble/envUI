@@ -1,6 +1,6 @@
 ---
 title: Dialog
-summary: A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal.
+summary: A focused task over the page.
 status: stable
 since: 1.0.0
 category: Overlays
@@ -36,7 +36,7 @@ components:
 examples:
   ProjectDetails:
     role: overview
-    motion: true
+    open: true
   FindPlan: example
   ReviewChanges: example
   DialogAnatomy: anatomy
@@ -101,11 +101,11 @@ Both narrow to fit the window.
 
 ### Actions
 
-A dialog's actions end with the primary one, after a built-in close button.
+A dialog's actions end with the primary one, after a built-in close button. A Cancel of your own is a secondary Button, as that close button is.
 
 ### Pending work
 
-While its work runs, nothing closes the dialog and its close button is disabled.
+While its work runs, nothing closes the dialog. Its close buttons are disabled, and its primary action shows the work running.
 
 - Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.
 
@@ -113,9 +113,9 @@ While its work runs, nothing closes the dialog and its close button is disabled.
 
 ```
 
-### More actions that close
+### Closing actions
 
-Other buttons can close the dialog after doing their own work, such as Don’t save.
+A DialogClose closes the dialog after doing its own work, such as Don’t save.
 
 ```tsx figure=UnsavedChanges motion
 
@@ -180,7 +180,11 @@ A Dialog opens from its `trigger`, such as a Button, and holds its `title`, whic
 
 #### Pending work
 
-`pending` keeps <kbd>Esc</kbd>, outside presses and the close buttons from dismissing the dialog until it returns to `false`, and disables the built-in close button. Put a `<form>` in `children` and make the primary action its submit button, through the `form` attribute, so <kbd>Enter</kbd> in a field submits it too.
+`pending` keeps the dialog open until it returns to `false`: <kbd>Esc</kbd>, outside presses and the close buttons don't dismiss it.
+
+- It disables the built-in close button and every DialogClose inside.
+- The last action, the primary one, shows it pending, where it is a Button that sets no `pending` of its own.
+- Put a `<form>` in `children` and make the primary action its submit button, through the `form` attribute, so <kbd>Enter</kbd> in a field submits it too.
 
 ```tsx
 <Dialog
@@ -188,7 +192,7 @@ A Dialog opens from its `trigger`, such as a Button, and holds its `title`, whic
   closeLabel="Cancel"
   pending={saving}
   actions={
-    <Button type="submit" form={formId} pending={saving}>
+    <Button type="submit" form={formId}>
       Save name
     </Button>
   }
@@ -199,7 +203,7 @@ A Dialog opens from its `trigger`, such as a Button, and holds its `title`, whic
 </Dialog>
 ```
 
-#### More actions that close
+#### Closing actions
 
 An action closes the dialog only where it is a DialogClose, a Button that closes it after its own `onClick`, or where it sets `open` to `false`. DialogClose takes Button's props and is `secondary` by default.
 
@@ -220,7 +224,11 @@ An action closes the dialog only where it is a DialogClose, a Button that closes
 
 #### Placement, width and modal
 
-`placement` is `center`, the default, or `top`, near the top of the window, so results grow down without moving the field. `width` is `md`, 28 rem and the default, or `lg`, 44 rem; both narrow to fit the window. `modal={false}` leaves the page usable beside the dialog, such as an inspector; by default it traps focus over a backdrop, hides the page from assistive technology, blocks presses on it and locks its scroll. `disablePointerDismissal` keeps it open on presses outside it, and a non-modal one also when focus moves outside.
+`placement` is `center`, the default, or `top`, near the top of the window, so results grow down without moving the field.
+
+- `width` is `md`, 28 rem and the default, or `lg`, 44 rem. Both narrow to fit the window.
+- By default the dialog is modal: it traps focus over a backdrop, hides the page from assistive technology, blocks presses on it and locks its scroll. `modal={false}` leaves the page usable beside the dialog, such as an inspector.
+- `disablePointerDismissal` keeps it open on presses outside it, and a non-modal one also when focus moves outside.
 
 ```tsx
 <Dialog width="lg" title="Review changes" trigger={<Button>Review</Button>}>
@@ -240,9 +248,12 @@ Keep one task per dialog: show a field's error on the field rather than in a sec
 
 The parts are the surface, `env-dialog`, its heading, `env-dialog-heading`, with the title, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, which start with the close button. The backdrop behind a modal dialog is `env-dialog-backdrop`.
 
-The surface takes the popups' color and their shadow, `--env-popup-shadow`, as [Popover](popover.md#customize) describes, with no edge. It stays solid over the backdrop, so `--env-popup-opacity` and `--env-popup-blur` don't reach it. At high contrast, with reduced transparency and under forced colors it has no shadow and its level-3 elevation edge returns.
+The surface takes the popups' color and their shadow, `--env-popup-shadow`, as [Popover](popover.md#customize) describes, with no edge in light and their faint hairline in dark. It stays solid over the backdrop, so `--env-popup-opacity` and `--env-popup-blur` don't reach it. At high contrast, with reduced transparency and under forced colors it has no shadow and its level-3 elevation edge returns.
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: Dialogs take the popups' color and soft shadow, with no outline edge, and stay solid over the scrim; at high contrast and with reduced transparency the shadow goes and the edge returns.
 - **1.0.0**: `width` (`md` or `lg`) for `size`; the side panel, `placement="right"`, is [Sheet](../components/sheet.md); `onOpenChange` reports the reason; `initialFocus` and `finalFocus` take functions too; the surface's class is `env-dialog`. The page is `dialog`, after the component.
+- **1.0.0-prerelease.6**: A dialog fades in with `--env-motion-ease-enter`, so it shows from its first frames rather than late, while it rises into place as before.
+- **1.0.0-prerelease.6**: While a dialog is `pending`, every DialogClose inside is disabled as the built-in close button is, and its last action, where it is a Button that sets no `pending` of its own, shows it pending, so `pending` need not be set on each.
+- **1.0.0-prerelease.6**: In dark, the backdrop is black at 70 %, rather than 50 %, so it sets the dark page back as clearly as the light backdrop does.
+- **1.0.0-prerelease.5**: Dialogs take the popups' color and soft shadow, with no outline edge, and stay solid over the scrim; at high contrast and with reduced transparency the shadow goes and the edge returns.

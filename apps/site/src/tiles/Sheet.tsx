@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { Button, Checkbox, Column, DialogClose, Sheet } from '@envsemble/envui';
+import { Checkbox, Column, IconButton, List, Row, Sheet, Text } from '@envsemble/envui';
 import { IconFilterList } from '@envsemble/envui/icons/FilterList';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
-/** Applied, which closes the sheet toward its edge; opened again from its button. */
+/** Closes the sheet with its close button, toward its edge, and opens it again from its button. */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '.env-sheet .env-dialog-actions .env-button', x: 0.4, y: 0.6 },
+  { to: '.env-sheet .env-dialog-heading .env-button' },
   { wait: 700 },
   { click: true },
   { wait: 900 },
@@ -18,46 +20,58 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
-/**
- * The window the sheet opens at the edge of, outlined, with the button in the middle of what the
- * sheet leaves of it.
- */
+/** The page the sheet opens over, as large as the tile's window. */
 const page = {
-  inlineSize: '20rem',
-  blockSize: '15rem',
-  display: 'grid',
-  gridTemplateColumns: '8rem',
-  placeItems: 'center',
+  inlineSize: '100%',
+  blockSize: '100%',
+  padding: '0.75rem',
   boxSizing: 'border-box',
-  border: '0.0625rem solid var(--env-color-border-muted)',
+  overflow: 'hidden',
 } as const;
 
 /**
- * A side sheet, open at the end edge beside the button that opens it. Stopped, it is open again
- * rather than drawn anew, which would bring it in again.
+ * Two projects, as many as the stage shows whole, with names short enough to read beside the sheet.
+ */
+const projects = ['Billing', 'Search'];
+
+/**
+ * A lower window than the tiles' (Tile.css), as an overlay: a sheet of a title and a filter is
+ * as tall as its window, so it shows whole.
+ */
+export const tileWindow: TileWindow = { width: 14, height: 7, overlay: true };
+
+/**
+ * A side sheet that filters a list of projects, open at the end edge over the page: its title, its
+ * close button and a filter, with no actions below, so it shows whole in its low window
+ * (tileWindow) and what closes it is in view. The button that opens it is at the end of the list's
+ * heading, under the sheet, and the start of the list, each project's name, shows beside the sheet
+ * under its backdrop, on a phone too. When the tile stops, the sheet is open again rather than
+ * drawn again, which would make it appear with motion again.
  */
 export default function SheetTile() {
   const [open, setOpen] = useState(true);
   usePointer(script, { onRest: () => setOpen(true) });
   return (
-    <div style={page}>
-      <Sheet
-        open={open}
-        onOpenChange={setOpen}
-        trigger={
-          <Button variant="secondary" startIcon={<IconFilterList />}>
-            Filters
-          </Button>
-        }
-        width={12}
-        title="Filters"
-        actions={<DialogClose variant="primary">Apply</DialogClose>}
-      >
-        <Column gap={3}>
+    <Column gap={1} style={page}>
+      <Row align="center" justify="between" gap={2}>
+        <Text variant="title">Projects</Text>
+        <Sheet
+          open={open}
+          onOpenChange={setOpen}
+          trigger={
+            <IconButton variant="ghost" size="sm" icon={<IconFilterList />} aria-label="Filters" />
+          }
+          width={9.5}
+          title="Filters"
+        >
           <Checkbox label="Active" defaultChecked />
-          <Checkbox label="Paused" />
-        </Column>
-      </Sheet>
-    </div>
+        </Sheet>
+      </Row>
+      <List.Root aria-label="Projects" density="sm">
+        {projects.map((name) => (
+          <List.Item key={name} label={name} />
+        ))}
+      </List.Root>
+    </Column>
   );
 }

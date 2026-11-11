@@ -15,7 +15,7 @@
     column-gap: var(--env-space-2);
     min-inline-size: 0;
     padding: var(--env-space-2);
-    border: 0.0625rem solid var(--env-composer-border);
+    border: 1px solid var(--env-composer-border);
     border-radius: var(--env-radius-surface);
     background: var(--env-color-bg-popup);
     color: var(--env-color-fg-default);
@@ -54,7 +54,7 @@
     field-sizing: content;
     overflow-y: auto;
     scrollbar-width: thin;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-composer[data-start] .env-composer-input {
     padding-inline-end: var(--env-space-4);
@@ -92,13 +92,13 @@
   }
   @media (hover: hover) {
     .env-composer:not([data-disabled]) .env-composer-surface:hover {
-      --env-composer-border: var(--env-color-border-primary-emphasis-hover);
+      --env-composer-border: var(--env-color-fg-muted);
     }
   }
   /* Focus in the field recolors the outline and doubles its weight; the action has its own ring. */
   .env-composer-surface:has(> .env-composer-input:focus) {
     --env-composer-border: var(--env-color-border-primary-emphasis);
-    box-shadow: 0 0 0 0.0625rem var(--env-composer-border);
+    box-shadow: 0 0 0 1px var(--env-composer-border);
   }
   .env-composer[data-disabled] .env-composer-surface {
     cursor: default;
@@ -111,7 +111,7 @@
     padding-inline: var(--env-space-5);
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   @media (prefers-reduced-motion: reduce) {
     .env-composer-surface {

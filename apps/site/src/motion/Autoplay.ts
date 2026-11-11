@@ -1,18 +1,21 @@
 import { useEffect, useSyncExternalStore, type RefObject } from 'react';
-import { useDisplaySettings } from '../theme/DisplaySettings';
+import { useDisplaySettings } from '../display/DisplaySettings';
+import { reducedMotionQuery } from '@envui-internal/internal/motion/reducedMotion';
 
 /*
  * Tiles that play by themselves where the reader can't hover, as on a phone, where the galleries
- * read as a feed: once scrolling settles, the tile nearest the middle of the viewport that is
- * mostly in view plays, and the one before it goes back to its still, as when the pointer leaves
- * it. One plays at a time on the whole page, the galleries' tiles and Related's alike. Nothing
- * plays by itself where the sidebar paused the animations or reduced motion is preferred.
+ * read as a feed. Once scrolling settles, the tile that is mostly in view and nearest the middle of
+ * the viewport plays, and the one that played before goes back to its still, as when the pointer
+ * leaves it. Only one tile plays at a time on the whole page, the galleries' tiles and Related's
+ * alike. Nothing plays by itself when the Display menu paused the animations or the reader prefers
+ * reduced motion.
  */
 
 /** A device without hover: a touch screen. A mouse, at any width, keeps hover and focus. */
 const touchQuery = '(hover: none), (pointer: coarse)';
-const reducedQuery = '(prefers-reduced-motion: reduce)';
-/** How long scrolling rests before a tile starts, in ms, so a fling plays nothing on its way. */
+/**
+ * How long scrolling must rest before a tile starts, in ms, so a fling plays nothing on its way.
+ */
 const settle = 150;
 /** The share of a tile in view that counts as mostly in view. */
 const mostly = 0.6;
@@ -33,13 +36,13 @@ function play(next: Element | null) {
   for (const listener of listeners) listener();
 }
 
-/** The share of a box in the viewport, of as much of it as the viewport can hold. */
+/** The share of a box in the viewport, out of as much of the box as the viewport can hold. */
 function shownShare(box: DOMRect) {
   const shown = Math.min(box.bottom, innerHeight) - Math.max(box.top, 0);
   return shown / Math.max(1, Math.min(box.height, innerHeight));
 }
 
-/** Picks the tile to play: the one mostly in view nearest the viewport's middle. */
+/** Picks the tile to play: the one that is mostly in view and nearest the viewport's middle. */
 function pick() {
   timer = undefined;
   let best: Element | null = null;
@@ -58,7 +61,8 @@ function pick() {
       best = element;
     }
   }
-  // The one playing goes on unless another is clearly nearer, so a nudge doesn't switch them.
+  // The one playing keeps playing unless another is clearly nearer, so a small scroll doesn't
+  // switch them.
   play(currentDistance - nearest < keep ? current : best);
 }
 
@@ -68,21 +72,23 @@ function schedule() {
 }
 
 function start() {
-  observer = new IntersectionObserver(
+  const watching = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
         if (entry.isIntersecting) inView.set(entry.target, entry.intersectionRatio);
         else inView.delete(entry.target);
-        // Scrolled mostly out of view, the one playing stops at once, before scrolling settles.
+        // When the one playing is scrolled mostly out of view, it stops at once, before scrolling
+        // settles.
         if (entry.target === current && entry.intersectionRatio < mostly) play(null);
       }
       schedule();
     },
     { threshold: [0, mostly] },
   );
-  // Scrolling anywhere, the page or a box it scrolls in, moves the tiles.
+  // Scrolling anywhere, the page or a box inside it, moves the tiles.
   addEventListener('scroll', schedule, { capture: true, passive: true });
   addEventListener('resize', schedule);
+  return (observer = watching);
 }
 
 function stop() {
@@ -94,11 +100,10 @@ function stop() {
   removeEventListener('resize', schedule);
 }
 
-/** Adds a tile to those that play by themselves; returns its removal. */
+/** Adds a tile to those that play by themselves. Returns the function that removes it. */
 function register(element: Element) {
   tiles.add(element);
-  if (!observer) start();
-  observer!.observe(element);
+  (observer ?? start()).observe(element);
   return () => {
     tiles.delete(element);
     observer?.unobserve(element);
@@ -114,27 +119,33 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
-function useMedia(query: string) {
+/**
+ * Whether a media query matches now, updated as it changes. Takes the query, or a function that
+ * returns its MediaQueryList, such as the library's reducedMotionQuery.
+ */
+export function useMedia(query: string | (() => MediaQueryList | null)) {
+  const list = () => (typeof query === 'string' ? matchMedia(query) : query());
   return useSyncExternalStore(
     (change) => {
-      const list = matchMedia(query);
-      list.addEventListener('change', change);
-      return () => list.removeEventListener('change', change);
+      const media = list();
+      media?.addEventListener('change', change);
+      return () => media?.removeEventListener('change', change);
     },
-    () => matchMedia(query).matches,
+    () => list()?.matches ?? false,
     () => false,
   );
 }
 
 /**
- * Whether a tile plays by itself now: on a device without hover, while it is the one mostly in
- * view nearest the viewport's middle. `held` is whether it plays by the keyboard, which makes it
- * the one that plays, so two never do. Pass the tile's element, the one its link covers.
+ * Whether a tile plays by itself now: on a device without hover, while it is the tile that is
+ * mostly in view and nearest the viewport's middle. `held` is whether the keyboard plays it, which
+ * makes it the one that plays, so two never play at once. Pass the tile's element, the one its link
+ * covers.
  */
 export function useAutoplay(element: RefObject<HTMLElement | null>, held = false) {
   const { motionPaused } = useDisplaySettings();
   const touch = useMedia(touchQuery);
-  const reduced = useMedia(reducedQuery);
+  const reduced = useMedia(reducedMotionQuery);
   const active = touch && !reduced && !motionPaused;
   useEffect(() => {
     const target = element.current;

@@ -156,7 +156,14 @@ const places = [
     href: '/',
     icon: <IconHome />,
     lead: 'Good morning, Alex. Here is what you opened lately.',
-    items: ['Quarterly report', 'Website refresh', 'Launch brief'],
+    items: [
+      'Quarterly report',
+      'Website refresh',
+      'Launch brief',
+      'Budget 2026',
+      'Meeting notes',
+      'Hiring plan',
+    ],
   },
   {
     label: 'Projects',

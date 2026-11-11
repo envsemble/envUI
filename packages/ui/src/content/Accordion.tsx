@@ -5,9 +5,8 @@ import { createContext, useContext, type ComponentPropsWithRef, type ReactNode }
 import { IconAdd } from '../icons/Add.js';
 import { IconRemove } from '../icons/Remove.js';
 import { classNames } from '../internal/classNames.js';
-import { inSkeleton } from '../foundations/internal/inSkeleton.js';
-import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
-import { withDisplayName } from '../internal/withDisplayName.js';
+import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/Accordion.css';
@@ -17,8 +16,7 @@ import '../styles/Accordion.css';
 const HeadingLevelContext = createContext<Exclude<HeadingLevel, 1>>(3);
 
 export interface RootProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange'>, SkeletonProps {
   /** The items: Accordion.Item, one for each section. */
   children?: ReactNode;
   /**
@@ -80,6 +78,7 @@ function Root({
         {...props}
         {...skeletonAttributes(skeleton)}
         className={classNames('env-accordion', className)}
+        // Base UI takes a mutable list and never changes it; the items' values are strings.
         value={value as string[] | undefined}
         defaultValue={defaultValue as string[] | undefined}
         onValueChange={onValueChange ? (next) => onValueChange(next as string[]) : undefined}

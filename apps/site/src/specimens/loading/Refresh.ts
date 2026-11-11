@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useSharedTimeline } from '../../motion/Motion';
+import { useSharedTimeline } from '../../motion/Timeline';
 
 /*
  * The refresh the Rules' second do and don't play, on one timeline: a while to read, the pointer

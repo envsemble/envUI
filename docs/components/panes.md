@@ -1,6 +1,6 @@
 ---
 title: Panes
-summary: Two panes side by side, after Material's pane layouts, a main pane with a supporting one or a list and its detail, that make the most of less room.
+summary: Two panes side by side, such as a list and its detail.
 status: beta
 since: 1.0.0
 category: App frame & layout
@@ -33,10 +33,12 @@ examples:
     role: overview
     caption: A main pane and a supporting one.
     motion: true
+    device: phone
   ListAndDetail:
     role: overview
     caption: A list and its detail.
     motion: true
+    device: phone
   ResizableDetails: example
   PanesAnatomy: anatomy
   SupportingByWidth: example
@@ -67,7 +69,7 @@ The panes sit side by side once they are as wide as a medium, an expanded or a l
 
 People can resize the supporting pane or the list by the gap between the panes, with its small grip, by pointer or with the arrow keys.
 
-```tsx figure=ResizableDetails motion
+```tsx figure=ResizableDetails motion device=window
 
 ```
 
@@ -228,6 +230,6 @@ The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `
 
 ## Changelog
 
+- **1.0.0**: Panes, which replaces SplitPane and ListDetail: the supporting and list-detail behaviors, `splitAt` at a window class, a divider in rem, and Panes.Trigger, which opens the supporting sheet.
 - **1.0.0-prerelease.5**: The resized pane's `size`, `defaultSize`, `onSizeChange`, `minSize`, `maxSize` and `persistedSize` are `width`, `defaultWidth`, `onWidthChange`, `minWidth`, `maxWidth` and `persistedWidth`, as on Sheet, and `readPanesSize` is `readPanesWidth`. `defaultOpen` leaves the open state to Panes, and `onOpenChange` receives why. The part props are `Panes.MainProps`, `Panes.DetailProps` and `Panes.ListProps`.
 - **1.0.0-prerelease.5**: The supporting sheet is on a Sheet's fill, `--env-color-bg-default`, rather than `--env-color-bg-raised`, which differ only at high contrast in the light theme.
-- **1.0.0**: Panes, which replaces SplitPane and ListDetail: the supporting and list-detail behaviors, `splitAt` at a window class, a divider in rem, and Panes.Trigger, which opens the supporting sheet.

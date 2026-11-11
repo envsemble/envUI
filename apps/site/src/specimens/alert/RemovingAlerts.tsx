@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Alert, Column, Text } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * A document under two alerts. Sync resumes, and Sync paused goes by itself; then the pointer
@@ -62,10 +63,10 @@ function Removing() {
 /** Alerts removed as they stop applying: one by itself, one dismissed by a pointer no one sees. */
 export default function RemovingAlerts() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="the alerts going once they no longer apply">
         <Removing />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

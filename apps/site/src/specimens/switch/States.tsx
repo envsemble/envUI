@@ -1,10 +1,10 @@
 import { Switch } from '@envsemble/envui';
-import { Example, MatrixScroll } from '../../figures/Example';
+import { SpecimenFrame, MatrixScroll } from '../../figures/SpecimenFrame';
 
 /** Off and on, enabled and disabled. */
 export default function States() {
   return (
-    <Example size="wide">
+    <SpecimenFrame size="wide" still>
       <MatrixScroll label="Switch states">
         <table className="catalogue-matrix">
           <thead>
@@ -28,6 +28,6 @@ export default function States() {
           </tbody>
         </table>
       </MatrixScroll>
-    </Example>
+    </SpecimenFrame>
   );
 }

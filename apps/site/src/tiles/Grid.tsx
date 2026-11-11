@@ -1,57 +1,53 @@
-import { useRef } from 'react';
-import { Grid } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
-import { easing, edges, gap, Item, Mark, useReflow } from './Reflow';
+import { Grid, Surface, Text } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
+import { useTimeline } from '../motion/Timeline';
+import { outlined } from './Outline';
+import { narrowGallery } from './Tiles';
 
-/** The columns, step by step: two, then four across. */
-const columns = [2, 4];
+/** A card's least width, in rem. */
+const card = 2.25;
 
-/** A cell's side. */
-const cell = '1.75rem';
-
-/** Where the first gap begins on either axis, past the padding and the first cell. */
-const firstGap = `calc(var(--env-space-2) + ${cell})`;
-
-/** Where a mark stands in the padding, centred in it. */
-const inPadding = 'calc((var(--env-space-2) - var(--env-space-1)) / 2)';
-
-/** The gap between the first two columns, marked above, and between the two rows, to the left. */
-const columnGap = gap('inline', { from: firstGap, across: 'var(--env-space-2)', off: inPadding });
-const rowGap = gap('block', { from: firstGap, across: 'var(--env-space-2)', off: inPadding });
+/** The width of `count` cards and the gaps between them, so the grid holds them exactly. */
+const fit = (count: number) => `calc(${count * card}rem + ${count - 1} * var(--env-space-2))`;
 
 /**
- * Four square cells in a frame, drawn in hairlines, in two columns, the gaps between them marked,
- * then four across, the cells gliding to their new places and the frame easing around them, and
- * two again. The rows' gap fades as the rows become one and returns once the cells are back in two.
+ * The panel's room, step by step: enough for two columns, then for four. In a phone's narrower
+ * tile, where four across would overflow at the cards' own size, enough for three, with the fourth
+ * card wrapping below.
+ */
+const widths = [fit(2), fit(4)];
+const narrowWidths = [fit(2), fit(3)];
+
+/** The quarters, each a small card with its name. */
+const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+
+/**
+ * Four small outlined cards in a grid of as many columns as fit, a gap apart both ways, in an
+ * outlined panel whose width changes, so its edge shows the room the grid has: two columns, then
+ * four across as the panel widens (three on a phone), and two again. Each step lays the grid out at
+ * once, as a Grid does when its room changes.
  */
 export default function GridTile() {
-  const step = useTimeline([1100, 1800]);
-  const grid = useRef<HTMLDivElement>(null);
-  const outline = useRef<HTMLDivElement>(null);
-  useReflow(grid, step, { speed: 11, outline });
-  const rows = step === 0;
+  const step = useTimeline([2200, 2200]);
+  const narrow = useMedia(narrowGallery);
   return (
-    <div ref={outline} style={{ position: 'relative', padding: 'var(--env-space-2)' }}>
-      {edges()}
-      <Mark {...columnGap} />
-      <Mark
-        at={{
-          ...rowGap.at,
-          opacity: rows ? 1 : 0,
-          transition: rows ? `opacity 300ms ${easing} 500ms` : `opacity 150ms ${easing}`,
-        }}
-        lines={rowGap.lines}
-      />
-      <Grid
-        ref={grid}
-        columns={`repeat(${columns[step]}, ${cell})`}
-        gap={2}
-        style={{ position: 'relative', inlineSize: 'max-content' }}
-      >
-        {Array.from({ length: 4 }, (_, index) => (
-          <Item key={index} width={cell} height={cell} />
+    <Surface
+      background="muted"
+      radius="sm"
+      padding={2}
+      style={{
+        ...outlined,
+        inlineSize: (narrow ? narrowWidths : widths)[step],
+        boxSizing: 'content-box',
+      }}
+    >
+      <Grid columns={{ min: `${card}rem` }} gap={2}>
+        {quarters.map((name) => (
+          <Surface key={name} background="default" radius="sm" padding={2} style={outlined}>
+            <Text variant="body-sm">{name}</Text>
+          </Surface>
         ))}
       </Grid>
-    </div>
+    </Surface>
   );
 }

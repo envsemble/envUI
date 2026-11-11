@@ -1,6 +1,6 @@
 ---
 title: TableOfContents
-summary: The page's sections as links, nested by level, with the section the reader is in marked as they scroll.
+summary: The page's sections as links, with the one the reader is in marked.
 status: beta
 since: 1.0.0
 category: Navigation
@@ -67,17 +67,17 @@ A section need not be a heading: name any part of the page, such as a card or a 
 3. **Link** (`env-table-of-contents-link:not([aria-current])`)
 4. **Current section** (`env-table-of-contents-link[aria-current='location']`)
 
-Not shown: the sections passed, their labels as dark as the current one's.
-
 ## Behaviour
 
 ### The reader's place
 
 One shape down the side of the list bulges beside the section the reader is in, in one quiet color.
 
-- It travels to the next section with a little give: it stretches as it goes and settles with a short wobble, then stays still.
-- It moves at once, without the wobble, where reduced motion is preferred.
-- The section under the pointer swells it a little, and its label turns a quiet gray.
+- It keeps its shape as it moves: it follows the scroll, and glides calmly to a section further away, arriving as that section's label takes the text color.
+- It moves at once where reduced motion is preferred.
+- The current section's label is in the text color and drawn a little heavier, at the same widths, so no label rewraps as the reader moves.
+- The section under the pointer swells it a little, and its label takes the text color.
+- It runs a little past the first and last sections, and at either one the bulge is drawn smaller, a little toward the middle, so it tapers whole before the shape ends.
 
 <!-- specimen: ReadersPlace -->
 
@@ -171,14 +171,16 @@ The current section is the last one whose start, less its scroll margin, has pas
 
 ### Composition
 
-The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`, and the sections after it are quieter.
+The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`; only the current one's label takes the text color.
 
 The reader's place is `env-table-of-contents-wave`, an SVG hidden from assistive technology in the body's start column, `--env-space-5` wide at its fullest, and a tenth of that elsewhere. The component draws its outline every frame the place moves, without rendering again, from the links' layout positions.
 
 - It is one path in `--env-color-bg-neutral-muted`, a round bulb over about two entries either side of the place, fewer in a list of under seven. In right-to-left text, its straight edge is on the right.
-- It follows the scroll on a spring, and two more springs stretch it and lean it back with its speed, so it wobbles once as it lands; no frame is drawn once they rest. At once under reduced motion; in forced colors it is `CanvasText`.
+- It follows the scroll as it is, and glides to a place more than a fifth of an entry away in `--env-motion-duration-medium` with `--env-motion-ease-enter`, never past it; a label's color changes in `--env-motion-duration-fast` with `--env-motion-ease-enter`, ahead of it, and the swell under the pointer in `--env-motion-duration-fast`. No frame is drawn once it rests. At once under reduced motion or with the duration tokens at `0s`; in forced colors it is `CanvasText`.
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: The reader's place is one shape down the side of the list instead of a dash before each section, in one color: straight along the list's start and bulging broadly toward the labels beside the current section, thin a few sections away. It moves on a spring, stretching as it travels and settling with a short wobble, at once under reduced motion. The labels sit a little further in. Inside a transformed or zoomed container, the current section is measured in the scrolling area's own pixels.
 - **1.0.0**: TableOfContents: the page's headings or sections of your own, nested, with the current section marked as the reader scrolls.
+- **1.0.0-prerelease.6**: The reader's place glides calmly, in the motion tokens' medium duration and entering easing, instead of stretching, leaning and wobbling on springs, and the current label takes its color quickly, ahead of it, so only one label reads as current; with the duration tokens at `0s` it moves at once.
+- **1.0.0-prerelease.6**: The current section's label is drawn a little heavier without changing its widths, and a label under the pointer takes the text color.
+- **1.0.0-prerelease.5**: The reader's place is one shape down the side of the list instead of a dash before each section, in one color: straight along the list's start and bulging broadly toward the labels beside the current section, thin a few sections away. It moves on a spring, stretching as it travels and settling with a short wobble, at once under reduced motion. The labels sit a little further in. Inside a transformed or zoomed container, the current section is measured in the scrolling area's own pixels.

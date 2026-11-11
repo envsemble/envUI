@@ -1,0 +1,337 @@
+'use client';
+
+import { DirectionProvider, useDirection } from '@base-ui/react/direction-provider';
+import {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type ComponentType,
+  type FocusEvent,
+  type ReactElement,
+  type ReactNode,
+  type RefObject,
+} from 'react';
+import { Theme, useTheme } from '../../foundations/Theme.js';
+import { classNames } from '../classNames.js';
+import { ResetControlDefaults } from '../control/ControlDefaults.js';
+import { useEnvUI, type Direction } from '../provider/EnvUIContext.js';
+import { setRef } from '../react/setRef.js';
+import {
+  containedCollisionAvoidance,
+  containedPopupStyle,
+  usePortalContainer,
+} from './PortalContainerContext.js';
+import { inSkeleton, skeletonAttributes } from '../skeleton.js';
+import { computedDirection } from '../dom/direction.js';
+import {
+  closingFocusState,
+  returnFocusAsItCloses,
+  type ClosingFocus,
+  type FocusTarget,
+} from './closingFocus.js';
+import '../../styles/Base.css';
+import '../../styles/Popup.css';
+
+/** A side of the anchor; inline-start and inline-end follow the text direction. */
+export type PopupSide = 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';
+/** How the popup lines up with the anchor along its side. */
+export type PopupAlign = 'start' | 'center' | 'end';
+
+/** What Base UI's offset functions receive. */
+interface OffsetData {
+  side: PopupSide;
+  align: PopupAlign;
+  anchor: { width: number; height: number };
+  positioner: { width: number; height: number };
+}
+
+/** An element, a ref to one, or Base UI's virtual element, for a popup that opens away from its trigger. */
+type Anchor = Element | RefObject<Element | null> | { getBoundingClientRect(): DOMRect };
+
+/**
+ * The popup element's props that its owner passes on, such as its name, id, ref, style, data
+ * attributes and handlers: a div's, which every Base UI popup renders, and Base UI's render. Its
+ * class is PopupSurface's className.
+ */
+export type PopupElementProps = Omit<ComponentPropsWithRef<'div'>, 'children' | 'className'> & {
+  render?: ReactElement | ((props: ComponentPropsWithRef<'div'>) => ReactElement);
+  [attribute: `data-${string}`]: string | boolean | undefined;
+};
+
+/** What PopupSurface gives a Base UI positioner: props every one of them takes. */
+interface PositionerProps {
+  side?: PopupSide;
+  align?: PopupAlign;
+  sideOffset: number | ((data: OffsetData) => number);
+  alignOffset?: number | ((data: OffsetData) => number);
+  collisionPadding: number;
+  collisionAvoidance?: typeof containedCollisionAvoidance;
+  anchor?: Anchor;
+  className: string;
+  children: ReactNode;
+}
+
+/**
+ * What PopupSurface gives a Base UI popup. Tooltip's and PreviewCard's take no focus targets, which
+ * PopupSurface passes only where an owner gives them.
+ */
+interface PopupProps extends PopupElementProps {
+  initialFocus?: FocusTarget;
+  finalFocus?: FocusTarget;
+  className: string;
+  children: ReactNode;
+}
+
+/**
+ * The parts of a Base UI popup: Portal, Positioner and Popup of Popover, Menu, ContextMenu, Select,
+ * Combobox, Tooltip or PreviewCard.
+ */
+export interface PopupParts {
+  Portal: ComponentType<{ container?: HTMLElement | null; children?: ReactNode }>;
+  Positioner: ComponentType<PositionerProps>;
+  Popup: ComponentType<PopupProps>;
+}
+
+export interface PopupSurfaceProps {
+  /** The popup's Base UI parts, such as { Portal: Popover.Portal, Positioner: …, Popup: … }. */
+  parts: PopupParts;
+  /** The side of the anchor it opens on; it flips where the window has no room. */
+  side?: PopupSide;
+  /** How it lines up with the anchor along that side. */
+  align?: PopupAlign;
+  /** The gap to the anchor in px, or a function of the placement; 8 by default. */
+  sideOffset?: number | ((data: OffsetData) => number);
+  /** The shift along the side from where align puts it, in px, or a function of the placement; none by default. */
+  alignOffset?: number | ((data: OffsetData) => number);
+  /** The room it keeps from the window's edges, in px; 8 by default. */
+  collisionPadding?: number;
+  /** What it opens beside, where that isn't its trigger. */
+  anchor?: Anchor;
+  /**
+   * The trigger, whose text direction the popup takes as it opens where it has no anchor, and
+   * where focus returns as it starts to close, where focus can go there. An owner passes the ref it
+   * gives its trigger: a popup opened by a pointer, a hover or code may open while focus is
+   * elsewhere.
+   */
+  trigger?: RefObject<Element | null>;
+  /** Where focus goes as it opens, where its Popup takes it. */
+  initialFocus?: FocusTarget;
+  /**
+   * Where focus goes as it closes, where its Popup takes it. A function runs as the popup starts to
+   * close, unless a press outside it closed it, and again once it has gone (closingFocus.ts).
+   */
+  finalFocus?: FocusTarget;
+  /**
+   * The text direction inside it, for its placement and keyboard: the nearest EnvUIProvider's,
+   * else the direction at the anchor or the trigger as it opens; without either, at the focused
+   * element.
+   */
+  dir?: Direction;
+  /** How far it floats above the page: 1, 2 (the default, as menus and popovers) or 3. */
+  elevation?: 1 | 2 | 3;
+  /** The widest it grows, where its owner's style sheet reads it: md, 20 rem, or lg, 28 rem. */
+  width?: 'md' | 'lg';
+  /** The owner's popup class, such as env-popover, beside env-popup. */
+  className?: string;
+  /**
+   * The layout primitive the popup element renders as, which lays out its content, such as
+   * <Column gap={3} padding={5} />. A render in popupProps replaces it.
+   */
+  layout?: ReactElement;
+  /** The owner's positioner class. */
+  positionerClassName?: string;
+  /** More props for the Popup part, such as aria-label, ref, render, style and handlers. */
+  popupProps?: PopupElementProps;
+  /**
+   * Shows the content as a skeleton: the popup is the busy root and keeps focus, so people can
+   * still close it, while its content is inert.
+   */
+  skeleton?: boolean;
+  children?: ReactNode;
+}
+
+/**
+ * Milliseconds after a popup appears in which focus that arrives in it is the focus Base UI moves
+ * as it opens. Base UI moves it once the popup is placed, a few animation frames after it appears,
+ * from no event of its own that tells it apart from focus people move: in Chromium about 20 ms,
+ * six frames, after the popup element attaches. The window leaves room for a slow machine and ends
+ * before people can reach into a popup that has just appeared. tests/browser/library/PortalContainer.spec.ts
+ * checks both sides: Base UI's opening focus goes back, and focus moved in after the window stays.
+ */
+const openingFocusWindow = 500;
+
+/** The element an anchor stands for, if it is one. */
+function anchorElement(anchor: Anchor | undefined): Element | null {
+  if (!anchor) return null;
+  if (anchor instanceof Element) return anchor;
+  if ('current' in anchor) return anchor.current;
+  return null;
+}
+
+/** The computed direction at the anchor, else the trigger, else where focus is. */
+function directionAt(anchor: Anchor | undefined, trigger: RefObject<Element | null> | undefined) {
+  return computedDirection(
+    anchorElement(anchor) ?? trigger?.current ?? document.activeElement ?? document.documentElement,
+  );
+}
+
+/**
+ * The popup's content in a direction: the given one, the provider's, or else the anchor's or the
+ * trigger's on opening.
+ */
+function Directed({
+  dir,
+  anchor,
+  trigger,
+  children,
+}: {
+  dir: Direction | undefined;
+  anchor: Anchor | undefined;
+  trigger: RefObject<Element | null> | undefined;
+  children: (direction: Direction | undefined) => ReactNode;
+}) {
+  const provided = useEnvUI().dir;
+  // It mounts as the popup opens, in the browser only, so the direction is read as it first
+  // renders: the popup renders once, in its direction, rather than again once an effect has read
+  // it. Read before the popup is in the document, it brings no new element's style up to date.
+  const [read, setRead] = useState(() =>
+    dir || provided || typeof document === 'undefined' ? undefined : directionAt(anchor, trigger),
+  );
+  // Read again where the anchor or the trigger changes while it is open; the same direction
+  // renders nothing again.
+  useLayoutEffect(() => {
+    if (dir || provided) return;
+    const next = directionAt(anchor, trigger);
+    setRead((current) => (current === next ? current : next));
+  }, [dir, provided, anchor, trigger]);
+  const direction = dir ?? provided ?? read;
+  // The provider is always there, so the popup isn't remounted once the direction is read: a
+  // remounted popup returns focus to where it was before opening, and a menu closes as it opens.
+  // Until then it passes on the direction around it.
+  const inherited = useDirection();
+  return (
+    <DirectionProvider direction={direction ?? inherited}>{children(direction)}</DirectionProvider>
+  );
+}
+
+/**
+ * One implementation of envUI's floating surfaces: a Base UI popup's Portal, a Theme that carries
+ * the trigger's theme, contrast and scale into the portal, the Positioner and the Popup, with the
+ * shared env-popup look and the text direction at its trigger. The defaults a toolbar or a field
+ * gives its buttons stay outside: the popup's buttons take their own.
+ *
+ *   <PopupSurface parts={{ Portal: Popover.Portal, Positioner: Popover.Positioner,
+ *     Popup: Popover.Popup }} trigger={triggerRef} className="env-popover" width="md">…</PopupSurface>
+ */
+export function PopupSurface({
+  parts: { Portal, Positioner, Popup },
+  side,
+  align,
+  sideOffset = 8,
+  alignOffset,
+  collisionPadding = 8,
+  anchor,
+  trigger,
+  initialFocus,
+  finalFocus,
+  dir,
+  elevation = 2,
+  width,
+  className,
+  layout,
+  positionerClassName,
+  popupProps,
+  skeleton = false,
+  children,
+}: PopupSurfaceProps) {
+  const theme = useTheme();
+  const { container, contained } = usePortalContainer();
+  const { style: ownStyle, ref: ownRef, onFocusCapture: ownFocusCapture } = popupProps ?? {};
+  // When the popup appeared, to tell the focus Base UI moves into it as it opens.
+  const openedAt = useRef(0);
+  // Where focus goes as the popup starts to close (closingFocus.ts).
+  const closingFocus = useRef<ClosingFocus>(closingFocusState());
+  useLayoutEffect(() => {
+    closingFocus.current.finalFocus = finalFocus;
+    closingFocus.current.trigger = trigger;
+  });
+  const shownPopup = useRef<HTMLDivElement | null>(null);
+  const attachPopup = useCallback(
+    (node: HTMLDivElement) => {
+      openedAt.current = performance.now();
+      // A popup that mounts afresh starts anew; the same one attached again, as when its owner
+      // passes a new ref, keeps what it has seen.
+      if (node !== shownPopup.current) {
+        closingFocus.current = {
+          ...closingFocusState(),
+          finalFocus: closingFocus.current.finalFocus,
+          trigger: closingFocus.current.trigger,
+        };
+      }
+      shownPopup.current = node;
+      const ownCleanup = setRef(ownRef, node);
+      const stop = returnFocusAsItCloses(node, closingFocus);
+      return () => {
+        stop();
+        openedAt.current = 0;
+        if (ownCleanup) ownCleanup();
+        else setRef(ownRef, null);
+      };
+    },
+    [ownRef],
+  );
+  /**
+   * In a contained container a popup takes no focus as it opens, such as a menu open from the
+   * start: focus that arrives within openingFocusWindow from outside the container and the trigger
+   * goes back where it was. Focus from the trigger, or that people move in later, stays.
+   */
+  const keepFocusOut = (event: FocusEvent<HTMLDivElement>) => {
+    ownFocusCapture?.(event);
+    if (performance.now() - openedAt.current > openingFocusWindow) return;
+    const from = event.relatedTarget;
+    const own = [container, trigger?.current, anchorElement(anchor), event.currentTarget];
+    if (from instanceof Node && own.some((element) => element?.contains(from))) return;
+    if (from instanceof HTMLElement) from.focus({ preventScroll: true });
+    else if (event.target instanceof HTMLElement) event.target.blur();
+  };
+  return (
+    <Portal container={container}>
+      <Directed dir={dir} anchor={anchor} trigger={trigger}>
+        {(direction) => (
+          <Theme {...theme} className="env-popup-theme" dir={direction}>
+            <Positioner
+              side={side}
+              align={align}
+              sideOffset={sideOffset}
+              {...(alignOffset !== undefined && { alignOffset })}
+              collisionPadding={collisionPadding}
+              {...(contained && { collisionAvoidance: containedCollisionAvoidance })}
+              {...(anchor !== undefined && { anchor })}
+              className={classNames('env-popup-positioner', positionerClassName)}
+            >
+              <Popup
+                {...(layout && { render: layout })}
+                {...popupProps}
+                ref={attachPopup}
+                {...(contained && {
+                  style: { ...containedPopupStyle, ...ownStyle },
+                  onFocusCapture: keepFocusOut,
+                })}
+                {...skeletonAttributes(skeleton)}
+                {...(initialFocus !== undefined && { initialFocus })}
+                {...(finalFocus !== undefined && { finalFocus })}
+                className={classNames('env-popup', className)}
+                data-elevation={elevation}
+                data-width={width}
+              >
+                <ResetControlDefaults>{inSkeleton(skeleton, children)}</ResetControlDefaults>
+              </Popup>
+            </Positioner>
+          </Theme>
+        )}
+      </Directed>
+    </Portal>
+  );
+}

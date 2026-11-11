@@ -9,14 +9,14 @@ import {
   type ReactNode,
 } from 'react';
 import { IconButton, type IconButtonProps, type ButtonVariant } from './Button.js';
-import { Tooltip } from '../feedback/Tooltip.js';
+import { Tooltip } from '../overlays/Tooltip.js';
 import { Kbd } from '../content/Kbd.js';
-import { ControlDefaults } from '../internal/ControlDefaults.js';
+import { ControlDefaults } from '../internal/control/ControlDefaults.js';
 import { classNames } from '../internal/classNames.js';
-import { Column, Row } from '../foundations/Layout.js';
+import { Column, Row } from '../layout/Layout.js';
 import { DirectedToolbarRoot } from './internal/DirectedToolbarRoot.js';
-import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
-import { withDisplayName } from '../internal/withDisplayName.js';
+import { keyShortcuts, shortcutChords } from './internal/shortcuts.js';
+import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
@@ -175,8 +175,10 @@ function tooltipContent(label: string, chords: string[][]) {
   );
 }
 
-export interface ButtonProps
-  extends Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label' | 'aria-pressed'> {
+export interface ButtonProps extends Omit<
+  ComponentPropsWithRef<'button'>,
+  'children' | 'aria-label' | 'aria-pressed'
+> {
   /** The icon, such as FormatBold. */
   icon: ReactNode;
   /**
@@ -198,6 +200,12 @@ export interface ButtonProps
   /** As Button's; ghost by default, from the toolbar. */
   variant?: ButtonVariant;
   /**
+   * As Button's: danger for an action that destroys, such as Delete, so it keeps its warning
+   * without a label.
+   * @default 'neutral'
+   */
+  tone?: 'neutral' | 'danger';
+  /**
    * As Button's: a spinner replaces the icon while the work runs.
    * @default false
    */
@@ -215,6 +223,7 @@ function ToolbarButton({
   shortcut,
   disabled,
   variant,
+  tone,
   className,
   ...props
 }: ButtonProps) {
@@ -227,9 +236,11 @@ function ToolbarButton({
       focusableWhenDisabled={false}
       render={
         <IconButton
+          // IconButtonProps is a union of a button's and a link's; this is the button's.
           {...({
             ...props,
             variant,
+            tone,
             icon,
             'aria-label': label,
             'aria-pressed': pressed,
@@ -259,20 +270,33 @@ export type LinkProps = Omit<ComponentPropsWithRef<'a'>, 'children' | 'aria-labe
   label: string;
 };
 
-/** An icon-only link of a toolbar, named by its label, which a tooltip shows. */
+/**
+ * An icon-only link of a toolbar, named by its label, which a tooltip shows. In a disabled toolbar
+ * or group it has no destination: it reports aria-disabled, leaves the arrow keys' path and has no
+ * tooltip, as a disabled button does.
+ */
 function Link({ icon, label, className, ...props }: LinkProps) {
+  const off = useContext(DisabledContext);
   const delay = useContext(TooltipDelayContext);
+  if (off)
+    return (
+      <IconButton
+        {...props}
+        icon={icon}
+        disabled
+        aria-label={label}
+        className={classNames('env-toolbar-button', className)}
+      />
+    );
   return (
     <Tooltip content={label} delay={delay}>
       <BaseToolbar.Link
         render={
           <IconButton
-            {...({
-              ...props,
-              icon,
-              'aria-label': label,
-              className: classNames('env-toolbar-button', className),
-            } as IconButtonProps)}
+            {...props}
+            icon={icon}
+            aria-label={label}
+            className={classNames('env-toolbar-button', className)}
           />
         }
       />

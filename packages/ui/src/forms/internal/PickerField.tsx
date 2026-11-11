@@ -2,43 +2,53 @@
 
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import {
-  useEffect,
+  Fragment,
   useRef,
   useState,
   type ButtonHTMLAttributes,
+  type ComponentPropsWithRef,
+  type RefObject,
   type CSSProperties,
   type KeyboardEvent,
   type ReactNode,
   type Ref,
 } from 'react';
-import { setRef } from '../../internal/setRef.js';
-import { useHydrated } from '../../internal/useHydrated.js';
-import { useDirection } from '../../internal/useDirection.js';
-import { keepsOpen, usePortalContainer } from '../../internal/PortalContainerContext.js';
-import { type ControlSize } from '../../foundations/Theme.js';
-import type { PopoverOpenChangeReason } from '../../feedback/Popover.js';
+import { setRef } from '../../internal/react/setRef.js';
+import { useHydrated } from '../../internal/react/useHydrated.js';
+import { useOpenState } from '../../internal/popup/useOpenState.js';
+import { useDirection } from '../../internal/provider/useDirection.js';
+import {
+  containedOpenChange,
+  usePortalContainer,
+} from '../../internal/popup/PortalContainerContext.js';
+import type { OverlayOpenChangeReason } from '../../internal/popup/overlayOpenChangeReason.js';
+import type { PopoverOpenChangeReason } from '../../overlays/Popover.js';
 import { IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';
-import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './FieldFrame.js';
+import {
+  FieldFrame,
+  type FieldControlBoxProps,
+  type FieldProps,
+  type FieldSizeProps,
+  type TextFieldDecorationProps,
+} from '../../internal/field/FieldFrame.js';
 import { PickerPopup, type PickerName } from './PickerPopup.js';
-import { subscribeFormReset } from './subscribeFormReset.js';
-import { useFieldMetadata } from './useFieldMetadata.js';
+import { useFormReset } from '../../internal/field/useFormReset.js';
+import { useFieldMetadata } from '../../internal/field/useFieldMetadata.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/DatePicker.css';
 
-/** The props every picker field shares with DatePicker: its frame, form value and open state. */
 /**
  * Why a date, time or month picker's popup asks to open or close: a popover's reasons, such as
  * trigger-press, outside-press or escape-key; list-navigation for the arrow keys on the field;
  * item-press for a chosen value, such as a day, a month, Today or Now; or clear-press for the
  * clear button.
  */
-export type PickerOpenChangeReason =
-  | PopoverOpenChangeReason
-  | 'list-navigation'
-  | 'item-press'
-  | 'clear-press';
+export type PickerOpenChangeReason = Extract<
+  OverlayOpenChangeReason,
+  PopoverOpenChangeReason | 'list-navigation' | 'item-press' | 'clear-press'
+>;
 
 /** What a date, time or month picker's onOpenChange receives beside the requested state. */
 export interface PickerOpenChangeDetails {
@@ -46,12 +56,16 @@ export interface PickerOpenChangeDetails {
   reason: PickerOpenChangeReason;
 }
 
+/** The props every picker field shares with DatePicker: its frame, form value and open state. */
 export interface PickerFieldProps
-  extends Omit<
+  extends
+    Omit<
       ButtonHTMLAttributes<HTMLButtonElement>,
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,
-    FieldProps {
+    FieldProps,
+    FieldSizeProps,
+    Pick<TextFieldDecorationProps, 'visibleLabel'> {
   /** The field's button, which shows the value and opens the popup. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element. */
@@ -69,23 +83,6 @@ export interface PickerFieldProps
   readOnly?: boolean;
   /** Shown while the field is empty and its label floats or is hidden. */
   placeholder?: string;
-  /**
-   * The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall
-   * with room for its label, for long forms on a page.
-   * @default 'outline'
-   */
-  variant?: 'outline' | 'floating';
-  /**
-   * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
-   * field takes the control height of its container, md unless the container sets another.
-   */
-  size?: ControlSize;
-  /**
-   * Show the label inside the field, where it floats into the outline while the field has a value,
-   * focus or its popup open. Set false for a field whose purpose is clear without it.
-   * @default true
-   */
-  showLabel?: boolean;
   /** A clear button in the field and in the popup removes the value. */
   clearable?: boolean;
   /** Whether the popup is open; with `onOpenChange` it controls it. */
@@ -98,24 +95,137 @@ export interface PickerFieldProps
 
 /** The open state of a picker's popup, controlled or not; a disabled or read-only field stays closed. */
 export function usePickerOpen({
-  open: controlledOpen,
-  defaultOpen = false,
+  open,
+  defaultOpen,
   onOpenChange,
   disabled = false,
   readOnly = false,
 }: Pick<PickerFieldProps, 'open' | 'defaultOpen' | 'onOpenChange' | 'disabled' | 'readOnly'>) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
-  const open = controlledOpen ?? uncontrolledOpen;
+  const [shown, setShown] = useOpenState({ open, defaultOpen, onOpenChange });
   function setOpen(next: boolean, reason: PickerOpenChangeReason) {
     if (next && (disabled || readOnly)) return;
-    if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next, { reason });
+    setShown(next, { reason });
   }
-  return [open, setOpen] as const;
+  return [shown, setOpen] as const;
+}
+
+/** The value a picker field shows, or its placeholder while it has none. */
+function PickerValue({ display, placeholder }: { display: string; placeholder: ReactNode }) {
+  const hydrated = useHydrated();
+  if (!display) return <span className="env-date-picker-placeholder">{placeholder}</span>;
+  // As in RelativeTime: should the browser format the hydrated value differently from the server,
+  // the server's text stays until hydration ends, then the browser's replaces it, without a
+  // mismatch error.
+  return (
+    <span className="env-date-picker-value" suppressHydrationWarning>
+      {hydrated ? display : [display]}
+    </span>
+  );
 }
 
 function ignoreChange() {
   // The visually hidden input only carries the value for native forms.
+}
+
+/**
+ * A picker field's label. A press on it closes the open popup, as a press outside it does; the
+ * click that follows would open it again, as it opens a closed one.
+ */
+function PickerLabel({
+  id,
+  labelId,
+  open,
+  triggerRef,
+  children,
+}: {
+  /** The trigger's id, which the label is for. */
+  id: string;
+  labelId: string;
+  open: boolean;
+  triggerRef: RefObject<HTMLButtonElement | null>;
+  children: ReactNode;
+}) {
+  // Whether the popup was open when the press began.
+  const pressOpen = useRef(false);
+  return (
+    <label
+      htmlFor={id}
+      id={labelId}
+      className="env-date-picker-label"
+      onPointerDown={() => {
+        pressOpen.current = open;
+      }}
+      onClick={(event) => {
+        if (!pressOpen.current) return;
+        pressOpen.current = false;
+        event.preventDefault();
+        triggerRef.current?.focus();
+      }}
+    >
+      {children}
+    </label>
+  );
+}
+
+/** The visually hidden input that carries a picker field's value for native forms. */
+function PickerNativeInput({
+  ref,
+  triggerRef,
+  readOnly,
+  ...inputProps
+}: Pick<
+  ComponentPropsWithRef<'input'>,
+  'ref' | 'name' | 'form' | 'value' | 'required' | 'disabled' | 'readOnly'
+> & { triggerRef: RefObject<HTMLButtonElement | null> }) {
+  return (
+    <input
+      {...inputProps}
+      ref={ref}
+      className="env-date-picker-native"
+      // Like a read-only input, a read-only field is not validated, so an empty required one never
+      // keeps its form from submitting.
+      readOnly={readOnly}
+      tabIndex={-1}
+      aria-hidden="true"
+      autoComplete="off"
+      onChange={ignoreChange}
+      // The browser focuses an invalid required field on submit; the field takes it instead.
+      onFocus={() => triggerRef.current?.focus()}
+    />
+  );
+}
+
+/** What PickerField takes from its owner beside the field's own props. */
+interface PickerFieldOwnProps extends Omit<
+  PickerFieldProps,
+  'open' | 'defaultOpen' | 'onOpenChange'
+> {
+  /** The value as the form submits it; empty for none. */
+  serialized: string;
+  /** The value as the field shows it. */
+  display: string;
+  /** The icon at the field's end. */
+  icon: ReactNode;
+  /** The owner's classes on the root, beside env-field. */
+  rootClassName: string;
+  /** The owner's class on the popup, beside env-picker-popup and env-date-picker-popup. */
+  popupClassName?: string;
+  /** The action at the start of the popup's footer, such as Today. */
+  popupStart: ReactNode;
+  /** The actions at the end of the popup's footer, such as Clear. */
+  popupEnd?: ReactNode;
+  /** The element focus moves to as the popup opens, from the popup. */
+  initialFocus: (popup: HTMLElement | null) => HTMLElement | null;
+  /** The clear button's name. */
+  clearLabel: string;
+  /** Removes the value. */
+  onClear: () => void;
+  /** Restores the value a form reset gives an uncontrolled field. */
+  onFormReset: () => void;
+  open: boolean;
+  setOpen: (open: boolean, reason: PickerOpenChangeReason) => void;
+  /** The popup's body, or a function of the name the field and popup share, for its parts. */
+  children: ReactNode | ((name: PickerName) => ReactNode);
 }
 
 /**
@@ -146,9 +256,8 @@ export function PickerField({
   disabled = false,
   readOnly = false,
   placeholder,
-  variant = 'outline',
   size,
-  showLabel,
+  visibleLabel,
   clearable = false,
   label,
   description,
@@ -163,34 +272,7 @@ export function PickerField({
   'aria-labelledby': labelledBy,
   onKeyDown,
   ...triggerProps
-}: Omit<PickerFieldProps, 'open' | 'defaultOpen' | 'onOpenChange'> & {
-  /** The value as the form submits it; empty for none. */
-  serialized: string;
-  /** The value as the field shows it. */
-  display: string;
-  /** The icon at the field's end. */
-  icon: ReactNode;
-  /** The owner's classes on the root, beside env-field. */
-  rootClassName: string;
-  /** The owner's class on the popup, beside env-picker-popup and env-date-picker-popup. */
-  popupClassName?: string;
-  /** The action at the start of the popup's footer, such as Today. */
-  popupStart: ReactNode;
-  /** The actions at the end of the popup's footer, such as Clear. */
-  popupEnd?: ReactNode;
-  /** The element focus moves to as the popup opens, from the popup. */
-  initialFocus: (popup: HTMLElement | null) => HTMLElement | null;
-  /** The clear button's name. */
-  clearLabel: string;
-  /** Removes the value. */
-  onClear: () => void;
-  /** Restores the value a form reset gives an uncontrolled field. */
-  onFormReset: () => void;
-  open: boolean;
-  setOpen: (open: boolean, reason: PickerOpenChangeReason) => void;
-  /** The popup's body, or a function of the name the field and popup share, for its parts. */
-  children: ReactNode | ((name: PickerName) => ReactNode);
-}) {
+}: PickerFieldOwnProps) {
   const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;
   const labelId = `${id}-label`;
@@ -199,13 +281,8 @@ export function PickerField({
   const controlRef = useRef<HTMLDivElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  // Whether the popup was open when a press on the label began, which closes it.
-  const labelPressOpen = useRef(false);
-  const resetRef = useRef(onFormReset);
-  resetRef.current = onFormReset;
   // Read as the popup opens, which takes the field's direction into its portal.
   const [direction] = useDirection(triggerRef, open);
-  const hydrated = useHydrated();
   // The field and its popup take the application's own aria-labelledby, else the label, else the
   // aria-label.
   const accessibleName: PickerName = {
@@ -213,15 +290,7 @@ export function PickerField({
     'aria-label': labelledBy == null && label == null ? ariaLabel : undefined,
   };
 
-  useEffect(
-    function subscribeToFormReset() {
-      const input = nativeRef.current;
-      const ownerForm = input?.form;
-      if (!input || !ownerForm) return;
-      return subscribeFormReset(ownerForm, () => resetRef.current());
-    },
-    [form],
-  );
+  useFormReset(nativeRef, onFormReset, form);
 
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
     onKeyDown?.(event);
@@ -237,7 +306,15 @@ export function PickerField({
 
   const portal = usePortalContainer();
   const showClear = clearable && Boolean(serialized) && !disabled && !readOnly;
-  const labelFloats = Boolean(serialized) || open;
+  // The field keeps its open look, its frame and its floated label, until the popup has closed, as
+  // focus comes back to it, rather than settling while the popup fades and rising again.
+  const [popupShown, setPopupShown] = useState(open);
+  if (open && !popupShown) setPopupShown(true);
+  // Each opening shows the popup's content afresh, such as the calendar at the value rather than
+  // at the day it was left on, also when it opens again while it still fades out.
+  const [openings, setOpenings] = useState({ open, count: 0 });
+  if (open !== openings.open) setOpenings({ open, count: openings.count + (open ? 1 : 0) });
+  const labelFloats = Boolean(serialized) || popupShown;
 
   function renderControlBox(boxProps: FieldControlBoxProps) {
     return (
@@ -246,6 +323,7 @@ export function PickerField({
         ref={controlRef}
         className={`${boxProps.className} env-date-picker-control`}
         data-label-floating={flag(labelFloats)}
+        data-popup-open={flag(popupShown)}
         data-action-count={showClear ? '2' : '1'}
       />
     );
@@ -254,41 +332,27 @@ export function PickerField({
   return (
     <BasePopover.Root
       open={open}
-      onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details)) details.cancel();
-        else setOpen(next, details.reason as PopoverOpenChangeReason);
+      onOpenChange={containedOpenChange(portal, triggerRef, (next, details) =>
+        setOpen(next, details.reason),
+      )}
+      onOpenChangeComplete={(next) => {
+        if (!next) setPopupShown(false);
       }}
     >
       <FieldFrame
         id={id}
         label={
           label != null ? (
-            <label
-              htmlFor={id}
-              id={labelId}
-              className="env-date-picker-label"
-              onPointerDown={() => {
-                labelPressOpen.current = open;
-              }}
-              onClick={(event) => {
-                // A press on the label closes the open popup, as a press outside it does; the
-                // click that follows would open it again, as it opens a closed one.
-                if (!labelPressOpen.current) return;
-                labelPressOpen.current = false;
-                event.preventDefault();
-                triggerRef.current?.focus();
-              }}
-            >
+            <PickerLabel id={id} labelId={labelId} open={open} triggerRef={triggerRef}>
               {label}
-            </label>
+            </PickerLabel>
           ) : null
         }
         description={description}
         error={error}
         floatingLabel
-        variant={variant}
         size={size}
-        showLabel={showLabel}
+        visibleLabel={visibleLabel}
         className={className ? `${rootClassName} ${className}` : rootClassName}
         style={style}
         renderControlBox={renderControlBox}
@@ -310,16 +374,7 @@ export function PickerField({
           className="env-text-field-input env-date-picker-trigger"
           onKeyDown={handleKeyDown}
         >
-          {display ? (
-            // As in RelativeTime: should the browser format the hydrated value differently from
-            // the server, the server's text stays until hydration ends, then the browser's
-            // replaces it, without a mismatch error.
-            <span className="env-date-picker-value" suppressHydrationWarning>
-              {hydrated ? display : [display]}
-            </span>
-          ) : (
-            <span className="env-date-picker-placeholder">{placeholder}</span>
-          )}
+          <PickerValue display={display} placeholder={placeholder} />
         </BasePopover.Trigger>
         <span className="env-text-field-end env-date-picker-end">
           {showClear && (
@@ -339,29 +394,22 @@ export function PickerField({
             {icon}
           </span>
         </span>
-        <input
+        <PickerNativeInput
           ref={nativeRef}
-          className="env-date-picker-native"
           name={name}
           form={form}
           value={serialized}
           required={required}
           disabled={disabled}
-          // Like a read-only input, a read-only field is not validated, so an empty required one
-          // never keeps its form from submitting.
           readOnly={readOnly}
-          tabIndex={-1}
-          aria-hidden="true"
-          autoComplete="off"
-          onChange={ignoreChange}
-          // The browser focuses an invalid required field on submit; the field takes it instead.
-          onFocus={() => triggerRef.current?.focus()}
+          triggerRef={triggerRef}
         />
       </FieldFrame>
       <PickerPopup
         className={popupClassName}
         anchorRef={controlRef}
         popupRef={popupRef}
+        triggerRef={triggerRef}
         // The portal leaves the field's text direction behind; the popup keeps it.
         dir={direction}
         name={accessibleName}
@@ -369,7 +417,9 @@ export function PickerField({
         start={popupStart}
         end={popupEnd}
       >
-        {typeof children === 'function' ? children(accessibleName) : children}
+        <Fragment key={openings.count}>
+          {typeof children === 'function' ? children(accessibleName) : children}
+        </Fragment>
       </PickerPopup>
     </BasePopover.Root>
   );

@@ -1,9 +1,12 @@
-import { CodeBlock } from '@envsemble/envui/content';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { CodeBlock } from '@envsemble/envui/code';
+import { useMedia } from '../motion/Autoplay';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { narrowGallery } from './Tiles';
 
 const copy = '.env-code-block-header .env-icon-button';
 
-/** Its copy button pressed: the icon turns to a check and, a few seconds later, back. */
+/** Presses its copy button: the icon turns to a check and, a few seconds later, back. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: 'pre', x: 0.6, y: 0.6 },
@@ -20,9 +23,15 @@ const script: PointerStep[] = [
 
 /** A code block with a command and its copy button. */
 export default function CodeTile() {
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
   return (
-    <CodeBlock language="sh" label="Terminal" copyable style={{ inlineSize: '11rem' }}>
+    <CodeBlock
+      language="sh"
+      label="Terminal"
+      copyable
+      style={{ inlineSize: narrow ? '10rem' : '11rem' }}
+    >
       {'npm run build'}
     </CodeBlock>
   );

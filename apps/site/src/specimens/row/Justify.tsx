@@ -1,5 +1,5 @@
 import { Button, Row, Surface } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 const justifications = [
   { justify: 'start', title: 'At the start' },
@@ -11,10 +11,10 @@ const justifications = [
 /** A row of two actions at each value of justify, on a muted fill that shows the row's width. */
 export default function Justify() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid size="wide">
         {justifications.map(({ justify, title }) => (
-          <Specimen key={justify} title={title}>
+          <SpecimenPart key={justify} title={title}>
             <Surface background="muted" radius="sm" padding={2}>
               <Row wrap align="center" gap={2} justify={justify}>
                 <Button variant="secondary" size="sm">
@@ -23,9 +23,9 @@ export default function Justify() {
                 <Button size="sm">Save</Button>
               </Row>
             </Surface>
-          </Specimen>
+          </SpecimenPart>
         ))}
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

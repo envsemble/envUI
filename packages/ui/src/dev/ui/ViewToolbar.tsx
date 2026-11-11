@@ -7,13 +7,13 @@
 import { memo, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
 import { Button } from '../../actions/Button.js';
 import * as Toolbar from '../../actions/Toolbar.js';
-import * as DescriptionList from '../../content/DescriptionList.js';
+import * as DescriptionList from '../../data-display/DescriptionList.js';
 import { Kbd } from '../../content/Kbd.js';
-import { Popover } from '../../feedback/Popover.js';
+import { Popover } from '../../overlays/Popover.js';
 import { Slider } from '../../forms/Slider.js';
 import { Switch } from '../../forms/Switch.js';
-import { Column, Grid, Row } from '../../foundations/Layout.js';
-import { Surface } from '../../foundations/Surface.js';
+import { Column, Grid, Row } from '../../layout/Layout.js';
+import { Surface } from '../../layout/Surface.js';
 import { Text } from '../../foundations/Text.js';
 import { IconFilterAlt } from '../../icons/FilterAlt.js';
 import { IconInfo } from '../../icons/Info.js';
@@ -26,7 +26,7 @@ import { IconStayCurrentLandscape } from '../../icons/StayCurrentLandscape.js';
 import { IconStayCurrentPortrait } from '../../icons/StayCurrentPortrait.js';
 import { IconTune } from '../../icons/Tune.js';
 import { IconViewInAr } from '../../icons/ViewInAr.js';
-import * as Menu from '../../navigation/Menu.js';
+import * as Menu from '../../actions/menu/Menu.js';
 import { angles, type Angle } from './camera.js';
 import { HintedIconButton, SidebarToggle, instant, type Side } from './Controls.js';
 import { deviceGroups } from './devices.js';
@@ -42,7 +42,7 @@ export interface ShowOptions {
 }
 
 /** The levels shown and how far apart, which View settings sets. */
-export interface Levels {
+interface Levels {
   spacing: number;
   from: number;
   to: number;

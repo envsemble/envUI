@@ -1,7 +1,6 @@
 'use client';
 
 import { Collapsible } from '@base-ui/react/collapsible';
-import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   useCallback,
   useEffect,
@@ -11,30 +10,30 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type ReactElement,
   type ReactNode,
   type RefObject,
 } from 'react';
-import { Column } from '../foundations/Layout.js';
+import { Column } from '../layout/Layout.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
-import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
+import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
-import { ResizeHandle } from '../internal/ResizeHandle.js';
-import { containerWidth, useResizableWidth } from '../internal/useResizableWidth.js';
-import { inSkeleton } from '../foundations/internal/inSkeleton.js';
-import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { useLatest } from '../internal/useLatest.js';
+import { ResizeHandle } from '../internal/resize/ResizeHandle.js';
+import { containerWidth, useResizableWidth } from '../internal/resize/useResizableWidth.js';
+import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import {
   destinationKey,
   DestinationItem,
   destinationSections,
   useNavigationMessages,
   type DestinationClasses,
-  type NavigationDrawerDestination,
-} from './internal/Destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
-import type { ResizeDetails } from '../internal/resizeDetails.js';
+} from './internal/DestinationItem.js';
+import type { NavigationDrawerDestination } from './destinations.js';
+import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
+import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationDrawer.css';
 
@@ -46,8 +45,7 @@ const drawerClasses: DestinationClasses = {
 };
 
 export interface NavigationDrawerProps
-  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
   /**
    * The application's destinations, the same array NavigationBar and NavigationRail take: each a row with its icon, its
    * label and its count. A heading starts each run of destinations of one `group`. A destination
@@ -141,7 +139,9 @@ export interface NavigationDrawerProps
 
 /**
  * Whether a one-line label or heading is cut short with an ellipsis, measured as it resizes; never
- * where labels wrap.
+ * where labels wrap. It is first measured as the observer reports its size, once the page is laid
+ * out: measured as it mounts, each of a drawer's labels would lay the page out again, after what
+ * the effects between them wrote, a long pause as a page with a long drawer hydrates.
  */
 function useCut(ref: RefObject<HTMLElement | null>, oneLine: boolean) {
   const [cut, setCut] = useState(false);
@@ -152,8 +152,7 @@ function useCut(ref: RefObject<HTMLElement | null>, oneLine: boolean) {
       return;
     }
     const measure = () => setCut(element.scrollWidth > element.clientWidth);
-    measure();
-    if (typeof ResizeObserver === 'undefined') return;
+    if (typeof ResizeObserver === 'undefined') return measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => observer.disconnect();
@@ -172,10 +171,8 @@ interface DrawerState {
 
 /**
  * A destination's control, such as a link. In a resizable drawer, whose labels keep to one line, a
- * label cut short with an ellipsis shows in full in a tooltip beside the drawer, on hover and
- * keyboard focus. The tooltip stays in place while the label fits, so the item and its focus are
- * kept as the drawer is resized. `as` renders the item as another trigger, such as the button that
- * opens a section.
+ * label cut short with an ellipsis shows in full in a tooltip beside the drawer (CutLabelTooltip).
+ * `as` renders the item as another trigger, such as the button that opens a section.
  */
 function DrawerControl({
   destination,
@@ -195,10 +192,9 @@ function DrawerControl({
   );
   const item = as ? as(destinationItem) : destinationItem;
   return oneLine ? (
-    <BaseTooltip.Root disabled={!cut}>
-      <BaseTooltip.Trigger delay={tooltipDelay} render={item} />
-      {cut && <TooltipPopup content={destination.label} side="inline-end" />}
-    </BaseTooltip.Root>
+    <CutLabelTooltip cut={cut} label={destination.label} side="inline-end">
+      {item}
+    </CutLabelTooltip>
   ) : (
     item
   );
@@ -365,29 +361,26 @@ function useExpanded(
     setOwn((open) => joined(open, path));
   }
   const shown = controlled ? expanded : own;
-  const latest = useRef({ shown, onExpandedChange });
-  useEffect(() => {
-    latest.current = { shown, onExpandedChange };
-  });
+  // The latest open sections, so the effect below and setExpanded, one function across renders,
+  // read them: a render that changes neither, such as one for each move of a resize, leaves the
+  // destinations as they are.
+  const latest = useLatest({ shown, controlled, onExpandedChange });
   useEffect(() => {
     if (!controlled) return;
     const { shown: open, onExpandedChange: change } = latest.current;
     const keys = JSON.parse(pathKey) as string[];
     if (keys.some((key) => !open.includes(key))) change?.(joined(open, keys));
-  }, [controlled, pathKey]);
+  }, [latest, controlled, pathKey]);
   const set = useMemo(() => new Set(shown), [shown]);
-  // One function across renders, reading the latest open sections, so a render that changes
-  // neither, such as one for each move of a resize, leaves the destinations as they are.
-  const latestSet = useRef({ shown, controlled, onExpandedChange });
-  useLayoutEffect(() => {
-    latestSet.current = { shown, controlled, onExpandedChange };
-  });
-  const setExpanded = useCallback((key: string, open: boolean) => {
-    const { shown: current, controlled: kept, onExpandedChange: change } = latestSet.current;
-    const next = open ? joined(current, [key]) : current.filter((each) => each !== key);
-    if (!kept) setOwn(next);
-    change?.(next);
-  }, []);
+  const setExpanded = useCallback(
+    (key: string, open: boolean) => {
+      const { shown: current, controlled: kept, onExpandedChange: change } = latest.current;
+      const next = open ? joined(current, [key]) : current.filter((each) => each !== key);
+      if (!kept) setOwn(next);
+      change?.(next);
+    },
+    [latest],
+  );
   return { expanded: set, setExpanded };
 }
 
@@ -483,16 +476,16 @@ export function NavigationDrawer({
       className={classNames('env-navigation-drawer', className)}
       style={
         resizable
-          ? ({
+          ? {
               '--env-navigation-drawer-width': `${resize.width}rem`,
               '--env-navigation-drawer-min-width': `${resize.handleProps.min}rem`,
               '--env-navigation-drawer-max-width': `${resize.handleProps.max}rem`,
               ...style,
-            } as CSSProperties)
+            }
           : style
       }
       data-background={backgroundAttribute(background)}
-      data-resizable={resizable ? '' : undefined}
+      data-resizable={flag(resizable)}
       align="stretch"
       gap={3}
     >

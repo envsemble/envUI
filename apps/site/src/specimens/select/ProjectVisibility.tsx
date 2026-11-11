@@ -1,6 +1,7 @@
 import ProjectVisibility from '../../examples/select/ProjectVisibility';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage, rowsAnd } from '../../figures/MotionStage';
 
 const highlighted = '.env-select-item[data-highlighted]';
 const item = (index: number) => `.env-select-item:nth-child(${index} of .env-select-item)`;
@@ -39,7 +40,12 @@ function Choosing() {
 /** The overview's select, opened, typed into and chosen from by a pointer no one sees. */
 export default function ProjectVisibilityMotion() {
   return (
-    <MotionStage label="typing in the open list to jump to an option" height="24rem">
+    // As tall as the select with its list open, so the two sit in the middle of the stage.
+    <MotionStage
+      label="typing in the open list to jump to an option"
+      height={rowsAnd(4.375, 4.875)}
+      top
+    >
       <Choosing />
     </MotionStage>
   );

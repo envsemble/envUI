@@ -6,7 +6,9 @@
 // every copied element takes the computed values of the properties that lay it out and paint it,
 // frozen inline. Copies are inert, and lose what would tie them to the page: ids, names, popovers.
 
-import { devAttribute, layoutAttribute, layoutChildrenOf, paintsOf } from '../measure.js';
+import { devAttribute, layoutAttribute } from '../elements.js';
+import { layoutChildrenOf } from '../measure.js';
+import { paintsOf } from '../../internal/dom/paints.js';
 
 /** Properties frozen on every copied element. */
 const frozen = [

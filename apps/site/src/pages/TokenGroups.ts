@@ -41,3 +41,29 @@ export const themes = [
   ['light-high-contrast', 'Light high contrast'],
   ['dark-high-contrast', 'Dark high contrast'],
 ] as const;
+
+const hexPart = (value: number) => Math.round(value).toString(16).padStart(2, '0');
+
+/**
+ * A token's value as the reference shows it: a color in one format, hex, with its alpha as a
+ * fourth pair where it has one, as rgb(31 31 34 / 0.1) is #1f1f221a; anything else as written,
+ * and a composite value as its properties, such as a shadow's.
+ */
+export function tokenValueText(resolved: unknown): string {
+  if (resolved === undefined) return '—';
+  if (typeof resolved !== 'string')
+    // A composite token's value is an object of its parts.
+    return Object.entries(resolved as Record<string, unknown>)
+      .map(([property, part]) => `${property}: ${part}`)
+      .join('; ');
+  const rgb = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)(?:\s*[/,]\s*([\d.]+%?))?\s*\)$/.exec(
+    resolved,
+  );
+  if (!rgb) return resolved;
+  const [, red, green, blue, alpha] = rgb;
+  const opacity =
+    alpha === undefined ? 1 : alpha.endsWith('%') ? parseFloat(alpha) / 100 : parseFloat(alpha);
+  return `#${[red, green, blue].map((part) => hexPart(Number(part))).join('')}${
+    opacity < 1 ? hexPart(opacity * 255) : ''
+  }`;
+}

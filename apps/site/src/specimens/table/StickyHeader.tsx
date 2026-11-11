@@ -1,6 +1,7 @@
 import StickyHeader from '../../examples/table/StickyHeader';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The pointer turns the wheel over the table: its rows scroll down through the months, under the

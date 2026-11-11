@@ -1,65 +1,43 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Badge, Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
-import { Documentation, GuidanceLists } from '../pages/Documentation';
-import type { Documentation as Document } from '../pages/PageModel';
-import type { DocumentationMetadata, DocumentationSection } from '../shared/DocumentationTypes';
-import { FigureSection } from '../figures/Figures';
-import { catalogueSection } from './Provides';
-import { docsOnlySections } from '../shared/CatalogueContent';
-import { Related } from './Related';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  Column,
+  DescriptionList,
+  Disclosure,
+  Text,
+  type TableOfContentsItem,
+} from '@envsemble/envui';
+import { PageMarkdown, GuidanceLists, markdownHeadings } from '../markdown/PageMarkdown';
+import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import type { DocumentationSection } from '@docs-model/DocumentationTypes';
+import { FigureSection, sectionTitle } from '../figures/Figures';
+import { catalogueSection, docsOnlySections } from '@docs-model/CatalogueContent';
+import { Related, relatedId, relatedTitle } from './Related';
+import { alternativesOf } from './RelatedPages';
 import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';
-import { pendingAttribute, SectionOutline, useSectionOutline } from './SectionOutline';
-import { subscribeToAddress } from '../navigation/Address';
-import { statusTones } from '../navigation/PageBadges';
+import { pendingAttribute, SectionOutline, useSectionOutline } from '../markdown/SectionOutline';
+import { subscribeToAddress } from '../routes/Address';
+import { useHydrated } from '@envui-internal/internal/react/useHydrated';
 
 /**
- * Status and first release under the title of a component's or pattern's page, and after them
- * `children`, such as the button to its counterpart in the catalogue or the Docs.
+ * One section of a page; Rules opens with when to use it, after its own lead. Without
+ * `overviewHeading`, Overview's heading is for the page's contents and assistive technology alone,
+ * as the page's title, right above, heads its figure.
  */
-export function MetadataBadges({
-  metadata,
-  plain = false,
-  children,
+function Section({
+  page,
+  section,
+  overviewHeading,
 }: {
-  metadata: Pick<DocumentationMetadata, 'status' | 'statuses' | 'since'>;
-  /** Leave out the statuses of exports that are code, such as a hook, as the catalogue does. */
-  plain?: boolean;
-  children?: ReactNode;
+  page: DocumentationEntry;
+  section: DocumentationSection;
+  overviewHeading: boolean;
 }) {
-  return (
-    <div className="site-page-meta">
-      {metadata.status && (
-        <Badge tone={statusTones[metadata.status]}>
-          {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
-        </Badge>
-      )}
-      {/* In the catalogue, a component's status only: a hook or a function, such as
-          useModifierKey, is code, which the catalogue never names; its page in the Docs shows
-          its status. */}
-      {Object.entries(metadata.statuses ?? {})
-        .filter(([name]) => !plain || /^[A-Z]/.test(name))
-        .map(([name, status]) => (
-          <Badge key={name} tone={statusTones[status]}>
-            {name}: {status[0].toUpperCase() + status.slice(1)}
-          </Badge>
-        ))}
-      {metadata.since && (
-        <Text render={<span />} variant="caption">
-          Since {metadata.since}
-        </Text>
-      )}
-      {children}
-    </div>
-  );
-}
-
-/** One section of a page; Rules opens with when to use it, after its own lead. */
-function Section({ page, section }: { page: Document; section: DocumentationSection }) {
   return (
     <FigureSection
       page={page}
       section={section}
+      headingHidden={!overviewHeading && section.id === 'overview'}
       leadAfter
       lead={
         section.id === 'rules' &&
@@ -96,6 +74,19 @@ function groupSections(sections: readonly DocumentationSection[]) {
 }
 
 /**
+ * The sections a page shows, in its order: those the catalogue shows, as it shows them, or, with
+ * `provides`, whole; Compose and the changelog are on the page in the Docs.
+ */
+const shownSections = (sections: readonly DocumentationSection[], provides: boolean) =>
+  sections
+    .filter((section) => !docsOnlySections.has(section.id))
+    .flatMap((section) => (provides ? section : (catalogueSection(section) ?? [])));
+
+/** Whether a page, with `related`, ends with Related: a page with an Overview does. */
+const hasRelated = (sections: readonly DocumentationSection[], related: boolean) =>
+  related && sections.some((section) => section.id === 'overview');
+
+/**
  * Sections in the page's order, in their three groups, far apart, then, with `related`, Related;
  * Compose and the changelog are on the page in the Docs. A group without sections is left out. The
  * sections after the first render one after another as the page paints (useRevealed), Related last;
@@ -107,31 +98,32 @@ function Sections({
   sections,
   provides,
   related,
+  overviewHeading,
 }: {
-  page: Document;
+  page: DocumentationEntry;
   sections: DocumentationSection[];
   provides: boolean;
   related: boolean;
+  overviewHeading: boolean;
 }) {
-  const shown = useMemo(
-    () =>
-      sections
-        .filter((section) => !docsOnlySections.has(section.id))
-        .flatMap((section) => (provides ? section : (catalogueSection(section) ?? []))),
-    [sections, provides],
-  );
+  const shown = useMemo(() => shownSections(sections, provides), [sections, provides]);
   // Each section's element, made once, so revealing the next leaves those shown as they are.
   const elements = useMemo(
     () =>
       new Map(
         shown.map((section) => [
           section.id,
-          <Section key={section.id} page={page} section={section} />,
+          <Section
+            key={section.id}
+            page={page}
+            section={section}
+            overviewHeading={overviewHeading}
+          />,
         ]),
       ),
-    [shown, page],
+    [shown, page, overviewHeading],
   );
-  const withRelated = related && sections.some((section) => section.id === 'overview');
+  const withRelated = hasRelated(sections, related);
   const total = shown.length + (withRelated ? 1 : 0);
   const revealed = useRevealed(total);
   const relatedElement = useMemo(
@@ -149,7 +141,7 @@ function Sections({
         group.length ? (
           <div key={index} className="site-article site-template site-figures site-section-group">
             {group.map((section, at) => (
-              <SectionOutline key={section.id} value={before[index]! + at >= revealed}>
+              <SectionOutline key={section.id} value={before[index] + at >= revealed}>
                 {elements.get(section.id)}
               </SectionOutline>
             ))}
@@ -170,16 +162,19 @@ function Sections({
  * a component's props, part names, what the application provides and changelog are on its page in
  * the Docs. For Field, whose whole page is in the Docs, `provides` keeps what envUI and the
  * application provide in Accessibility and `related={false}` leaves out Related, which the Docs
- * don't have.
+ * don't have. `overviewHeading={false}` hides Overview's heading where the page's title, on the page
+ * rather than in a card, heads its figure (SiteBanner.tsx).
  */
 export function TemplateContent({
   document,
   provides = false,
   related = true,
+  overviewHeading = true,
 }: {
-  document: Document;
+  document: DocumentationEntry;
   provides?: boolean;
   related?: boolean;
+  overviewHeading?: boolean;
 }) {
   // A component's or pattern's page is guidance: its lists are check lists.
   return (
@@ -189,9 +184,34 @@ export function TemplateContent({
         sections={document.sections ?? []}
         provides={provides}
         related={related}
+        overviewHeading={overviewHeading}
       />
     </GuidanceLists>
   );
+}
+
+/**
+ * The sections TemplateContent shows of a page, given the same options, as the page's contents
+ * list them: each section's heading, from its "## Title" line (FigureSection), then Related where
+ * the page has alternatives.
+ */
+export function templateContents(
+  document: DocumentationEntry,
+  { provides = false, related = true }: { provides?: boolean; related?: boolean } = {},
+): TableOfContentsItem[] {
+  const sections = document.sections ?? [];
+  const entries: TableOfContentsItem[] = shownSections(sections, provides).flatMap((section) =>
+    markdownHeadings(sectionTitle(section))
+      .filter(({ level }) => level === 2)
+      .map(({ id, text }) => ({ id, label: text })),
+  );
+  if (
+    hasRelated(sections, related) &&
+    document.metadata &&
+    alternativesOf(document.metadata).length
+  )
+    entries.push({ id: relatedId, label: relatedTitle });
+  return entries;
 }
 
 /**
@@ -203,17 +223,21 @@ function changelogEntries(markdown: string) {
   for (const line of markdown.split('\n')) {
     if (!line.trim() || /^#{2,} /.test(line)) continue;
     const entry = /^- \*\*([^*]+)\*\*:\s*(.*)$/.exec(line);
+    const last = entries.at(-1);
     // A version listed twice in a row is one entry, each change a paragraph of its own.
-    if (entry && entries.at(-1)?.version === entry[1]) entries.at(-1)!.text += `\n\n${entry[2]}`;
+    if (entry && last?.version === entry[1]) last.text += `\n\n${entry[2]}`;
     else if (entry) entries.push({ version: entry[1], text: entry[2] });
-    else if (/^\s/.test(line) && entries.length) entries.at(-1)!.text += `\n${line.trim()}`;
+    else if (/^\s/.test(line) && last) last.text += `\n${line.trim()}`;
     else return undefined;
   }
   return entries.length ? entries : undefined;
 }
 
+/** The id of a page's changelog heading in the Docs. */
+export const changelogId = 'changelog';
+
 /** Whether the address names a page's changelog, as `#changelog` does. */
-const namesChangelog = () => location.hash === '#changelog';
+const namesChangelog = () => location.hash === `#${changelogId}`;
 
 /**
  * A component's changelog, on its page in the Docs: quiet side information, rarely needed, so it
@@ -221,17 +245,20 @@ const namesChangelog = () => location.hash === '#changelog';
  * loading the page and on following a link to it; each version is a muted label beside what
  * changed in it, in small muted type.
  */
-export function PageChangelog({ document }: { document: Document }) {
+export function PageChangelog({ document }: { document: DocumentationEntry }) {
   // Waiting its turn to show, it is its heading alone (SectionOutline).
   const outline = useSectionOutline();
-  const [open, setOpen] = useState(namesChangelog);
-  useEffect(
-    () =>
-      subscribeToAddress(() => {
-        if (namesChangelog()) setOpen(true);
-      }),
-    [],
-  );
+  // A pre-rendered page renders it closed, as the server did, and opens it once it has hydrated.
+  // The library's useHydrated, not the site's useFiguresMounted: a page opened at the changelog
+  // shows it open in the render right after hydrating, rather than after the figures mount.
+  const hydrated = useHydrated();
+  const [open, setOpen] = useState(() => hydrated && namesChangelog());
+  useEffect(() => {
+    if (namesChangelog()) setOpen(true);
+    return subscribeToAddress(() => {
+      if (namesChangelog()) setOpen(true);
+    });
+  }, []);
   const changelog = document.sections?.find((section) => section.id === 'changelog');
   if (!changelog) return null;
   const markdown = changelog.blocks
@@ -244,14 +271,14 @@ export function PageChangelog({ document }: { document: Document }) {
       gap={3}
       className="docs-changelog"
       data-section={changelog.id}
-      aria-labelledby="changelog"
+      aria-labelledby={changelogId}
       {...pendingAttribute(outline)}
     >
       <Disclosure
         open={open}
         onOpenChange={setOpen}
         title={
-          <Text render={<h2 />} variant="body-sm" id="changelog" className="docs-changelog-title">
+          <Text render={<h2 />} variant="body-sm" id={changelogId} className="docs-changelog-title">
             {changelog.title}
           </Text>
         }
@@ -260,13 +287,13 @@ export function PageChangelog({ document }: { document: Document }) {
           <DescriptionList.Root className="docs-changelog-entries">
             {entries.map(({ version, text }, index) => (
               <DescriptionList.Item key={`${index}-${version}`} label={version}>
-                <Documentation markdown={text} path={document.path} />
+                <PageMarkdown markdown={text} path={document.path} />
               </DescriptionList.Item>
             ))}
           </DescriptionList.Root>
         ) : (
           // A changelog written another way shows as its Markdown, below the same heading.
-          <Documentation markdown={markdown.replace(/^#{2,} .*$/m, '')} path={document.path} />
+          <PageMarkdown markdown={markdown.replace(/^#{2,} .*$/m, '')} path={document.path} />
         )}
       </Disclosure>
     </Column>

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { common } from './messages/common.js';
 import '../styles/Base.css';
 import '../styles/Skeleton.css';
@@ -23,15 +23,22 @@ export function useSkeleton(): boolean {
 export function alignPulses() {
   if (typeof document === 'undefined' || typeof document.getAnimations !== 'function') return;
   for (const animation of document.getAnimations()) {
+    // A CSS animation's effect is a keyframe effect.
     const target = (animation.effect as KeyframeEffect | null)?.target;
+    // Only a pulse, on the document's timeline: a scroll-driven animation on the same root, such as
+    // a table region's edge fade, takes no start time.
     if (
       'animationName' in animation &&
+      animation.timeline === document.timeline &&
       target?.hasAttribute('data-env-skeleton') &&
       animation.startTime !== 0
     )
       animation.startTime = 0;
   }
 }
+
+/** Whether alignPulses is due once the skeletons that mount in this commit have (SkeletonScope). */
+let aligning = false;
 
 /**
  * Tells the components inside a skeleton that they are in one, and keeps its pulse in step with
@@ -42,7 +49,15 @@ export function SkeletonScope({ skeleton, children }: { skeleton: boolean; child
   const active = skeleton || inherited;
   useEffect(() => {
     if (!skeleton) return;
-    alignPulses();
+    // Once for the skeletons that mount together: reading the page's animations works out the style
+    // of the whole page, and each skeleton aligning on its own would work it out again.
+    if (!aligning) {
+      aligning = true;
+      queueMicrotask(() => {
+        aligning = false;
+        alignPulses();
+      });
+    }
     // Text that is there draws as rounded, pulsing bars, as missing text does. The script that
     // measures it loads only once a skeleton shows; until it runs, CSS draws the text's fallback.
     let release: (() => void) | undefined;

@@ -17,11 +17,10 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const args = process.argv.slice(2);
-const flag = (name) => {
+const flag = (name: string) => {
   const index = args.indexOf(name);
   if (index !== -1) args.splice(index, 1);
   return index !== -1;
@@ -35,13 +34,13 @@ const preflight = flag('--preflight');
  * @playwright/test, add the Digest that `docker buildx imagetools inspect
  * mcr.microsoft.com/playwright:v<version>-noble` prints, and rerun the baseline.
  */
-const imageDigests = {
-  '1.63.0': 'sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27',
+const imageDigests: Record<string, string> = {
+  '1.65.0': 'sha256:6e3fb709361521eb27161606e6da6d2674e5e89fa16516cb37d6fdd91372273d',
 };
 /** Snapshots are rendered on x86-64; other hosts emulate it rather than draw different pixels. */
 const platform = 'linux/amd64';
 
-const manifest = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
+const manifest = JSON.parse(readFileSync(resolve(repositoryRoot, 'package.json'), 'utf8'));
 const version = manifest.devDependencies['@playwright/test'];
 if (!/^\d+\.\d+\.\d+$/.test(version))
   throw new Error(
@@ -98,9 +97,9 @@ const hostUser =
     : undefined;
 
 // One set of volumes per checkout, so worktrees with different lockfiles do not reinstall each other.
-const checkout = createHash('sha256').update(root).digest('hex').slice(0, 10);
+const checkout = createHash('sha256').update(repositoryRoot).digest('hex').slice(0, 10);
 const lock = createHash('sha256')
-  .update(readFileSync(new URL('../../package-lock.json', import.meta.url)))
+  .update(readFileSync(resolve(repositoryRoot, 'package-lock.json')))
   .update(`${image} ${platform}`)
   .digest('hex');
 const modules = ['node_modules', 'packages/ui/node_modules', 'apps/site/node_modules'];
@@ -119,7 +118,7 @@ const container = [
   '--platform',
   platform,
   '--mount',
-  `type=bind,source=${root},target=/work`,
+  `type=bind,source=${repositoryRoot},target=/work`,
   ...volumes,
   '--workdir',
   '/work',
@@ -187,7 +186,7 @@ const result = spawnSync(
     `npm_config_cache=${npmCache}`,
     ...(process.env.CI ? ['--env', 'CI=1'] : []),
     // Worker count and server ports, so a run can share a machine with other checkouts' servers.
-    ...['ENVUI_WORKERS', 'ENVUI_SITE_PORT', 'ENVUI_CATALOGUE_PORT', 'ENVUI_FIXTURE_PORT'].flatMap(
+    ...['ENVUI_WORKERS', 'ENVUI_SITE_PORT', 'ENVUI_SITE_BUILD_PORT', 'ENVUI_FIXTURE_PORT'].flatMap(
       (name) => (process.env[name] ? ['--env', `${name}=${process.env[name]}`] : []),
     ),
     image,

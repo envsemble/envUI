@@ -6,5 +6,3 @@ export const alert = {
   /** The dismiss button's name. */
   dismiss: 'Dismiss',
 };
-
-export type AlertMessages = typeof alert;

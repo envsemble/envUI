@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useLatest } from './useLatest.js';
 
 /** What to copy: the text, or a function that returns it, also as a promise, when copying. */
 export type CopyValue = string | (() => string | Promise<string>);
@@ -45,40 +46,41 @@ export type CopyStatus = 'idle' | 'copied' | 'failed';
 export function useCopy({ write, resetAfter = 2000, onCopied, fieldClassName }: CopyOptions = {}) {
   const [result, setResult] = useState<{ status: Exclude<CopyStatus, 'idle'>; round: number }>();
   const [phase, setPhase] = useState<'idle' | 'copying' | 'waiting'>('idle');
-  const latest = useRef({ write, onCopied, fieldClassName });
-  useEffect(() => {
-    latest.current = { write, onCopied, fieldClassName };
-  });
+  const latest = useLatest({ write, onCopied, fieldClassName });
   useEffect(() => {
     if (!result) return;
     const timer = setTimeout(() => setResult(undefined), resetAfter);
     return () => clearTimeout(timer);
   }, [result, resetAfter]);
-  const copy = useCallback(async (value: CopyValue, anchor: HTMLElement | null = null) => {
-    setPhase('copying');
-    let copied = true;
-    let text = '';
-    try {
-      text = await writeToClipboard(value, anchor, {
-        write: latest.current.write,
-        fieldClassName: latest.current.fieldClassName,
-        onWait: () => setPhase('waiting'),
-      });
-    } catch {
-      copied = false;
-    }
-    setPhase('idle');
-    // Each copy shows its result again, also the same result twice in a row.
-    setResult((current) => ({
-      status: copied ? 'copied' : 'failed',
-      round: (current?.round ?? 0) + 1,
-    }));
-    if (copied) latest.current.onCopied?.(text);
-    return copied;
-  }, []);
+  const copy = useCallback(
+    async (value: CopyValue, anchor: HTMLElement | null = null) => {
+      setPhase('copying');
+      let copied = true;
+      let text = '';
+      try {
+        text = await writeToClipboard(value, anchor, {
+          write: latest.current.write,
+          fieldClassName: latest.current.fieldClassName,
+          onWait: () => setPhase('waiting'),
+        });
+      } catch {
+        copied = false;
+      }
+      setPhase('idle');
+      // Each copy shows its result again, also the same result twice in a row.
+      setResult((current) => ({
+        status: copied ? 'copied' : 'failed',
+        round: (current?.round ?? 0) + 1,
+      }));
+      if (copied) latest.current.onCopied?.(text);
+      return copied;
+    },
+    [latest],
+  );
   const reset = useCallback(() => setResult(undefined), []);
   return {
     copy,
+    // The status, copied or failed, as copy sets it.
     status: (result?.status ?? 'idle') as CopyStatus,
     round: result?.round ?? 0,
     copying: phase !== 'idle',
@@ -173,6 +175,7 @@ function copyWithSelection(text: string, anchor: HTMLElement, fieldClassName?: s
     copied = false;
   }
   field.remove();
+  // The element that had focus, which is an HTML or SVG element.
   (focused as HTMLElement | null)?.focus({ preventScroll: true });
   if (selection) {
     selection.removeAllRanges();

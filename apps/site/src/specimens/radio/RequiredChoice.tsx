@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import RequiredChoice from '../../examples/radio/RequiredChoice';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const exportButton = 'button[type="submit"]';
@@ -34,11 +35,14 @@ function Exporting() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // As tall as the form with its error or its result, so the stage keeps its height.
+    // As tall and as wide as the form with its error or its result, so the stage keeps its height
+    // and the form its place as the error comes and goes.
     <div style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%' }}>
-      <div style={{ minBlockSize: '11rem' }}>
+      <div style={{ minBlockSize: '11rem', inlineSize: 'min(100%, 16rem)' }}>
         <Renew round={round}>
-          <RequiredChoice />
+          <div style={{ inlineSize: '100%' }}>
+            <RequiredChoice />
+          </div>
         </Renew>
       </div>
     </div>

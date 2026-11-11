@@ -1,8 +1,7 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const root = fileURLToPath(new URL('../../', import.meta.url));
+import { writeIfChanged } from './GeneratedFiles.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 /**
  * Preserve the supplied artwork while making its monochrome paint theme-aware. The lockup is the
@@ -11,10 +10,10 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 export async function generateBrandAssets() {
   const [black, white] = await Promise.all(
     ['black', 'white'].map((color) =>
-      readFile(resolve(root, `assets/brand/envUI/envUI-lockup-${color}.svg`), 'utf8'),
+      readFile(resolve(repositoryRoot, `assets/brand/envUI/envUI-lockup-${color}.svg`), 'utf8'),
     ),
   );
-  function geometry(source) {
+  function geometry(source: string) {
     const viewBox = source.match(/viewBox="([^"]+)"/)?.[1];
     const paths = [...source.matchAll(/<path\b[^>]*\bd="([^"]+)"[^>]*\/\s*>/g)];
     const tags = [...source.matchAll(/<([\w:-]+)\b/g)].map((match) => match[1]);
@@ -53,17 +52,11 @@ export function EnvUILogo({ label = 'envUI', ...props }: EnvUILogoProps) {
   );
 }
 `;
-  const target = resolve(root, 'apps/site/src/brand/EnvUILogo.tsx');
-  let existing: string | undefined;
-  try {
-    existing = await readFile(target, 'utf8');
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-  }
-  if (existing !== output) await writeFile(target, output);
+  const target = resolve(repositoryRoot, 'apps/site/src/brand/EnvUILogo.tsx');
+  writeIfChanged(target, output);
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (import.meta.main) {
   await generateBrandAssets();
   console.log('Generated the theme-aware envUI logo from the supplied SVG assets.');
 }

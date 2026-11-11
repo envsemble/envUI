@@ -4,13 +4,11 @@ import { Fragment, useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { IconButton } from '../actions/Button.js';
 import { IconContentCopy } from '../icons/ContentCopy.js';
 import { IconCheck } from '../icons/Check.js';
-import { useTheme } from '../foundations/Theme.js';
 import { codeBlock as codeBlockMessages } from '../foundations/messages/codeBlock.js';
 import { classNames } from '../internal/classNames.js';
-import { Row } from '../foundations/Layout.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { Row } from '../layout/Layout.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useCopy } from '../internal/useCopy.js';
-import { codeThemeStyle } from './internal/codeColors.js';
 import { useCodeContrast } from './internal/useCodeContrast.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
 import { tokenStyle } from './internal/codeTokenStyle.js';
@@ -45,10 +43,8 @@ export function CodeBlock({
   copyable = false,
   wrap = false,
   className,
-  style,
   ...props
 }: CodeBlockProps) {
-  const { theme } = useTheme();
   const messages = useMessages('codeBlock', codeBlockMessages);
   const preRef = useRef<HTMLPreElement>(null);
   const contrast = useCodeContrast(preRef);
@@ -70,12 +66,7 @@ export function CodeBlock({
   }
   const lineEndings = source.match(/\r\n|\r|\n/g) ?? [];
   return (
-    <div
-      {...props}
-      className={classNames('env-code-block', className)}
-      data-wrap={flag(wrap)}
-      style={{ ...codeThemeStyle(theme), ...style }}
-    >
+    <div {...props} className={classNames('env-code-block', className)} data-wrap={flag(wrap)}>
       {(label || copyable) && (
         <Row wrap align="center" justify="between" gap={4} className="env-code-block-header">
           <span>{label ?? language ?? messages.title}</span>
@@ -99,7 +90,7 @@ export function CodeBlock({
             ? tokens.map((line, index) => (
                 <Fragment key={index}>
                   {line.map((token, tokenIndex) => (
-                    <span key={tokenIndex} style={tokenStyle(token[theme], token[`${theme}High`])}>
+                    <span key={tokenIndex} style={tokenStyle(token)}>
                       {token.content}
                     </span>
                   ))}

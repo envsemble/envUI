@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import plugin from '../src/index.js';
-import { expectedTokens, libraryTokensUrl, tokensUrl } from '../scripts/SyncTokens.mjs';
-import { colorTokenSuggestion } from '../src/tokens.js';
+import { lintPackages, staleFiles } from '../../../scripts/build/SyncLintPackages.ts';
+import { colorTokenAdvice } from '../src/tokens.js';
 
 const read = (url) => JSON.parse(readFileSync(url, 'utf8'));
 const manifest = read(new URL('../package.json', import.meta.url));
@@ -70,28 +70,25 @@ test("the components that own a role, and those suggested, are envUI's when the 
       );
 });
 
-test("the token names are the library's when the repository has its token list", () => {
-  const copy = read(tokensUrl);
-  if (existsSync(libraryTokensUrl)) {
-    assert.equal(
-      readFileSync(tokensUrl, 'utf8'),
-      expectedTokens(),
-      "src/data/tokens.json is behind the library's token list: run npm run sync:tokens --workspace @envsemble/eslint-plugin-envui.",
-    );
-    assert.equal(copy.source, 'packages/ui/src/generated/tokens.json');
-  } else assert.equal(copy.source, 'embedded');
+test("the token names, their helper and the color policy are the repository's, copied", () => {
+  const directory = lintPackages[manifest.name];
+  assert.deepEqual(
+    staleFiles().filter((path) => path.startsWith(`${directory}/`)),
+    [],
+    'Run npm run tokens:build.',
+  );
 });
 
 test('every token the messages and the README name exists in the library', () => {
-  const library = existsSync(libraryTokensUrl)
-    ? read(libraryTokensUrl).tokens.map((token) => token.cssVariable)
-    : Object.values(read(tokensUrl).tokens).flat();
+  const library = read(new URL('../../ui/src/generated/tokens.json', import.meta.url)).tokens.map(
+    (token) => token.cssVariable,
+  );
   const messages = [
     ...Object.values(plugin.rules).flatMap((rule) => Object.values(rule.meta.messages)),
     ...['color', 'backgroundColor', 'borderColor', 'outline', 'fill', 'boxShadow', '--brand'].map(
-      colorTokenSuggestion,
+      colorTokenAdvice,
     ),
-    colorTokenSuggestion(undefined),
+    colorTokenAdvice(undefined),
   ];
   const named = [...messages, readme].flatMap((text) => [
     ...text.matchAll(/var\((--[\w-]+)(…)?/g),

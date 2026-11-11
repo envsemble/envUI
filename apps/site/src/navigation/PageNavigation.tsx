@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { Pager } from '@envsemble/envui';
 import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { pagesOf, type RoutePage } from './SiteRoutes';
-import { routeHref } from './Address';
-import { preloadPage } from '../pages/PreloadPage';
+import { pagesOf, type RoutePage } from '../routes/SiteRoutes';
+import { routeHref } from '../routes/Address';
+import { preloadPageContent } from '../pages/PreloadPage';
 
 /**
  * Starts loading what the previous and next pages need once the page has loaded and the browser is
@@ -14,8 +14,8 @@ function usePreloadNeighbours(previous: RoutePage | undefined, next: RoutePage |
   useEffect(() => {
     let idle = 0;
     const load = () => {
-      void preloadPage(previous);
-      void preloadPage(next);
+      void preloadPageContent(previous);
+      void preloadPageContent(next);
     };
     // Safari has no requestIdleCallback; there, a moment after the load.
     const idleSupported = typeof window.requestIdleCallback === 'function';
@@ -34,7 +34,7 @@ function usePreloadNeighbours(previous: RoutePage | undefined, next: RoutePage |
 
 /**
  * The previous and next pages of the page's part, the catalogue or the Docs, in reading order,
- * which load once the page is idle.
+ * which load once the page is idle. The catalogue's home shows none: its Explore cards lead on.
  */
 export function PageNavigation({ page }: { page: RoutePage }) {
   const pages = pagesOf(page.area);
@@ -42,7 +42,7 @@ export function PageNavigation({ page }: { page: RoutePage }) {
   const previous = index === -1 ? undefined : pages[index - 1];
   const next = index === -1 ? undefined : pages[index + 1];
   usePreloadNeighbours(previous, next);
-  if (index === -1) return null;
+  if (index === -1 || page.kind === 'home') return null;
   return (
     <Pager.Root className="site-page-navigation">
       {previous && (

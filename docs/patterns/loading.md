@@ -127,8 +127,6 @@ The [top bar](../components/top-bar.md)'s progress bar shows the next page is on
 4. **Description bars** (`env-card-description`)
 5. **Action shape** (`env-card-footer`)
 
-Not shown: the inert content inside the root, which has no box of its own.
-
 ## Behaviour
 
 ### When it shows
@@ -141,7 +139,7 @@ Show the skeleton only once a load takes a noticeable moment, so quick loads nev
 
 Every bar and shape breathes between a stronger and a fainter tone, in step across the page.
 
-- The skeleton's own surfaces, such as a card or a row, pulse with them, more faintly.
+- The skeleton's own surfaces, such as a card or a row, take a faint tint that barely moves, so they keep their edges and the layout stands still.
 - For people who ask for reduced motion it breathes slower and shallower: only the tone changes.
 - In forced colors the bars stand still in the system's gray.
 
@@ -260,3 +258,5 @@ A skeleton's root takes `aria-busy` and its content is inert, in `env-skeleton-c
 ## Changelog
 
 - **1.0.0**: Skeletons are the components themselves, with `skeleton` and `placeholders()`, in place of hand-built Skeleton placeholders. The page is on the figure template.
+- **1.0.0-prerelease.6**: Only the bars and shapes pulse: the skeleton's own surfaces, such as cards and rows, keep a faint tint that barely moves, so they keep their edges against the page and the layout stands still.
+- **1.0.0-prerelease.6**: A skeleton's breath lasts seven and a half times `--env-motion-duration-slow`, as long as before, with `--env-motion-ease`, so durations of `0s` stop it.

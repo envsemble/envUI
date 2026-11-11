@@ -1,6 +1,7 @@
 import ListAndDetail from '../../examples/panes/ListAndDetail';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const message = (id: string) => `.env-panes-list a[href="/inbox/${id}"]`;
 const back = '.env-panes-back .env-button';
@@ -39,7 +40,7 @@ function Reading() {
     <div
       style={{ inlineSize: '100%' }}
       onClickCapture={(event) => {
-        if ((event.target as Element).closest('a')) event.preventDefault();
+        if (event.target instanceof Element && event.target.closest('a')) event.preventDefault();
       }}
     >
       <ListAndDetail />

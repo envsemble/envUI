@@ -1,4 +1,4 @@
-import type { PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
 
 /** The clock the do and the don't of filtering by status play on together. */
 export const statusClock = 'filtering-status';

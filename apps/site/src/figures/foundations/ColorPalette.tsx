@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Dialog, Column, Text, useTheme } from '@envsemble/envui';
 import { ColorPicker } from '@envsemble/envui/color';
-import { Example } from '../Example';
-import { colorGroups, colorVariable } from '../../theme/Palette';
-import { usePaletteCustomization } from '../../theme/PaletteCustomization';
+import { SpecimenFrame } from '../SpecimenFrame';
+import { colorGroups, colorVariable } from '../../display/Palette';
+import { usePaletteCustomization } from '../../display/PaletteCustomization';
 
 interface MeasuredColor {
   css: string;
@@ -127,6 +127,7 @@ export function ColorPalette() {
     if (!paletteElement.current) return;
     const target = isHighContrast(paletteElement.current) ? 7 : 4.5;
     const computedStyle = getComputedStyle(paletteElement.current);
+    // A new canvas always gives its first 2D context.
     const context = document
       .createElement('canvas')
       .getContext('2d', { willReadFrequently: true })!;
@@ -142,7 +143,7 @@ export function ColorPalette() {
         const probe = document.createElement('span');
         probe.style.color = `var(${colorVariable(token)})`;
         probe.hidden = true;
-        paletteElement.current!.append(probe);
+        paletteElement.current?.append(probe);
         return { token, probe };
       }),
     );
@@ -164,10 +165,10 @@ export function ColorPalette() {
     setColorValues(measuredColors);
   }, [theme, themeContrast, systemContrast, palettes]);
   return (
-    // Each group is an Example, so the visual baseline captures it; their margins space them.
+    // Each group is a SpecimenFrame, so the visual baseline captures it; their margins space them.
     <Column ref={paletteElement} gap={0} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
-        <Example key={group} title={group} size="collection" explains>
+        <SpecimenFrame key={group} title={group} size="collection">
           <Column gap={0}>
             {tokens.map(([token, label]) => (
               <div className="docs-palette-row" key={label}>
@@ -181,7 +182,7 @@ export function ColorPalette() {
               </div>
             ))}
           </Column>
-        </Example>
+        </SpecimenFrame>
       ))}
     </Column>
   );

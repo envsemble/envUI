@@ -1,6 +1,6 @@
 ---
 title: NavigationDrawer
-summary: An application's main destinations, as a drawer with group headings, counts and sections that open and close on wider windows, a rail on tablets or a bar on phones.
+summary: An application's main destinations, in a drawer, a rail or a bar by the window's width.
 status: beta
 since: 1.0.0
 category: Navigation
@@ -66,6 +66,7 @@ examples:
   AppDestinations:
     role: overview
     stage: shaded
+    device: window
   TabletDestinations:
     role: overview
     stage: shaded
@@ -158,7 +159,7 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 
 ### One list, three forms
 
-The drawer, the rail and the bar take the same list of destinations, and [Scaffold](scaffold.md) shows the one that fits its width.
+NavigationDrawer, NavigationRail and NavigationBar take the same list of destinations, and [Scaffold](scaffold.md) shows the one that fits its width.
 
 - A group is a heading in the drawer only: the rail and the bar show its destinations one after another.
 - Nested sections are the drawer's too: the rail and the bar show the top level, and mark the destination whose section holds the current page.
@@ -344,10 +345,15 @@ The parts the anatomy doesn't show: a section's row, `env-navigation-drawer-bran
 
 ## Changelog
 
+- **1.0.0**: NavigationDrawer, the navigation drawer, NavigationRail, the navigation rail, and NavigationBar, the navigation bar; together they replace NavList and the sidebar's rail. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.
+- **1.0.0-prerelease.6**: A closing section's destinations fade over its whole closing, `--env-motion-duration-medium`, so they leave no empty band.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: A section's chevron turns half a circle rather than flipping over, and its destinations fade in and out as they grow and shrink.
+- **1.0.0-prerelease.6**: Nested destinations under a section with an icon sit in past it, so their labels start a step inside the section's label rather than before it.
+- **1.0.0-prerelease.6**: The indicators are rounded rectangles with the medium corner, rather than Material's pills: NavigationRail's and NavigationBar's around the icon, narrower at 2.75 rem, and each NavigationDrawer item. A NavigationRail item's keyboard focus ring rings its indicator, 2 px out, rather than the whole item.
 - **1.0.0-prerelease.5**: Bar, Rail and Drawer are NavigationBar, NavigationRail and NavigationDrawer, with their props types and `NavigationDrawerDestination`, after Material's names, so they don't read as an overlay drawer or any bar; the page is `navigation-drawer`. Their part classes and color properties take the same names: `env-bar-*`, `env-rail-*` and `env-drawer-*` are `env-navigation-bar-*`, `env-navigation-rail-*` and `env-navigation-drawer-*`. NavigationBar names its parts as NavigationRail does, `-indicator` and `-label` where they were `-icon` and `-text`, and a group's label is `env-navigation-drawer-group-label`, as in Menu, where it was `env-drawer-heading`.
 - **1.0.0-prerelease.5**: A destination runs `onClick(event)`, as a link or a button does, where it ran `onSelect()`, and takes an optional `id`, which names its section in `expanded` in every language.
 - **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, so a NavigationDrawer or a NavigationRail in the sheet of a narrow window keeps its color. A destination's `badge` shows a short word at the end of its NavigationDrawer item, such as New.
 - **1.0.0-prerelease.4**: A destination's `children` nest under it: Drawer shows them indented, in a section that opens and closes with a chevron, open while it holds the current destination, whose links stay in the page, hidden until found. A section without `href` or `onSelect` is only its heading. `expanded`, `defaultExpanded` and `onExpandedChange` keep the open sections. Rail and Bar show the top level, and mark a destination whose section holds the current one.
 - **1.0.0-prerelease.3**: A resizable Drawer keeps each label and group heading on one line as it narrows: one that doesn't fit ends in an ellipsis, a label cut short shows in full in a tooltip, and a heading cut short gives its full text as its title. Bar and Rail are documented on this page, `drawer`, which their pages' addresses open.
 - **1.0.0-prerelease.2**: With `resizable`, people resize it by its end edge, between `minWidth` and `maxWidth` and never past half its container, from `defaultWidth`; `width` and `onWidthChange` keep it. The handle is `env-drawer-resize-handle`, the same grip as Panes.Divider's.
-- **1.0.0**: NavigationDrawer, the navigation drawer, NavigationRail, the navigation rail, and NavigationBar, the navigation bar; together they replace NavList and the sidebar's rail. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.

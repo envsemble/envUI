@@ -1,6 +1,7 @@
 import PendingAction from '../../examples/button/PendingAction';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The pointer presses Save changes: a spinner takes the label's place at the same width, and a

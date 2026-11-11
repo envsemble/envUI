@@ -1,6 +1,6 @@
 ---
 title: Graphic
-summary: The application's own logo, icon or picture, from a file or an SVG component, at one of envUI's sizes, contained and centered in its box.
+summary: The application's own logo, icon or picture, at one of envUI's sizes.
 status: beta
 since: 1.0.0
 category: Data display
@@ -114,7 +114,7 @@ A graphic keeps its own colors. A one-color mark or icon can take the color of t
 
 ## Behaviour
 
-### Its size is never the file's
+### Box size
 
 A graphic's box is one of envUI's sizes, and the picture is contained and centered in it, never stretched or cut.
 
@@ -147,7 +147,7 @@ Trim a file to its drawing once, when it joins the application, so its box holds
 
 ```
 
-### envUI's icons first
+### Icons
 
 Use one of envUI's icons wherever one fits, and a graphic only for what is the application's own, such as its logo or an icon of a feature only it has.
 

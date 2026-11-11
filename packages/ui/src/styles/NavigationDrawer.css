@@ -1,7 +1,7 @@
 @layer env.components {
   /* Drawer, the navigation drawer: a column of destinations on the navigation's background, a plain
-     rectangle, each a pill as wide as the drawer with its icon, label and count, under the headings
-     of their groups. It keeps its header and footer in view and scrolls its list. Every placement is
+     rectangle, each a rounded rectangle as wide as the drawer with its icon, label and count, under
+     the headings of their groups. It keeps its header and footer in view and scrolls its list. Every placement is
      logical, so it follows the text direction. */
   .env-navigation-drawer {
     /* The drawer is as wide as its longest destination, within these bounds. */
@@ -64,7 +64,7 @@
     padding: var(--env-space-1) var(--env-space-3);
     color: var(--env-color-fg-default);
     font: var(--env-font-weight-semibold) var(--env-font-size-body-sm) / 1.4 var(--env-font-family);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   /* resizable: the drawer is --env-navigation-drawer-width wide, which the component sets with its bounds, and
      never more than half its container, such as the Scaffold, or of the window. The resize handle
@@ -79,7 +79,7 @@
   }
   /* A resizable drawer keeps each label and heading on one line, so its items keep their height as
      people narrow it: what doesn't fit ends in an ellipsis, a label cut short shows in full in a
-     tooltip and a heading in its title (Drawer.tsx). */
+     tooltip and a heading in its title (NavigationDrawer.tsx). */
   .env-navigation-drawer[data-resizable]
     :is(.env-navigation-drawer-label, .env-navigation-drawer-group-label) {
     overflow: hidden;
@@ -178,18 +178,18 @@
     margin: 0;
     padding: var(--env-space-1) var(--env-space-3);
     border: 0;
-    /* The capped full corner, so a label that wraps keeps the corners. */
-    border-radius: var(--env-radius-full);
+    /* The indicator's medium corner, as on the rail's and the bar's. */
+    border-radius: var(--env-radius-md);
     background: var(--env-navigation-drawer-item-custom-fill, transparent);
     /* Muted, under the group headings in the text color; a section's heading is an item too. */
     color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted));
     font: var(--env-font-weight-body) var(--env-font-size-body) / 1.4 var(--env-font-family);
     text-align: start;
     text-decoration: none;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      color var(--env-motion-duration-fast) var(--env-motion-ease);
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-navigation-drawer-item > .env-icon {
     flex: none;
@@ -262,8 +262,19 @@
   .env-navigation-drawer-branch {
     /* The round button at the end of a section's link, inside the item's height. */
     --env-navigation-drawer-toggle-size: calc(var(--env-control-height) - 2 * var(--env-space-1));
-    /* How far nested destinations sit in from their section's. */
+    /* How far nested destinations sit in from their section's: their labels start a step inside
+       the section's label, past its icon and the gap after it where it has one. */
     --env-navigation-drawer-indent: var(--env-space-4);
+  }
+  .env-navigation-drawer-branch:has(
+    > .env-navigation-drawer-item > .env-navigation-drawer-label:not(:first-child),
+    > .env-navigation-drawer-branch-row
+      > .env-navigation-drawer-item
+      > .env-navigation-drawer-label:not(:first-child)
+  ) {
+    --env-navigation-drawer-indent: calc(
+      var(--env-control-icon-size) + var(--env-space-3) + var(--env-space-4)
+    );
   }
   .env-navigation-drawer-branch-row {
     display: grid;
@@ -289,7 +300,7 @@
     background: transparent;
     color: var(--env-color-fg-muted);
     cursor: pointer;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* Over the current destination, the button takes its content color. */
   .env-navigation-drawer-branch-row:has(> [data-current]) > .env-navigation-drawer-toggle {
@@ -323,20 +334,21 @@
   .env-navigation-drawer-item > .env-navigation-drawer-chevron {
     margin-inline-start: auto;
   }
-  /* The chevron points down, and up while the section is open: it flips over its horizontal axis,
-     as Select's does, rather than turning half a circle. */
+  /* The chevron points down, and up while the section is open: it turns half a circle, as Select's
+     does. */
   .env-navigation-drawer-chevron {
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
-    transform: rotate(90deg) scaleX(1);
+    transform: rotate(90deg);
   }
   /* Its trigger, the heading's row or the link's button, says the section is open. */
   .env-navigation-drawer-item[aria-expanded='true'] > .env-navigation-drawer-chevron,
   .env-navigation-drawer-toggle[aria-expanded='true'] > .env-navigation-drawer-chevron {
-    transform: rotate(90deg) scaleX(-1);
+    transform: rotate(270deg);
   }
-  /* The nested destinations grow to their height as the section opens and shrink as it closes. A
-     closed section keeps them in the page, hidden until found. */
+  /* The nested destinations grow to their height as the section opens and shrink as it closes,
+     fading in and out, as an accordion's panel does. A closed section keeps them in the page, hidden
+     until found. */
   .env-navigation-drawer-children {
     display: flex;
     flex-direction: column;
@@ -347,13 +359,16 @@
     list-style: none;
     block-size: var(--collapsible-panel-height, auto);
     overflow: hidden;
-    transition: block-size var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition:
+      block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+      opacity var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-navigation-drawer-children > li:first-child {
     margin-block-start: var(--env-space-1);
   }
   .env-navigation-drawer-children:is([data-starting-style], [data-ending-style]) {
     block-size: 0;
+    opacity: 0;
   }
   .env-navigation-drawer-children[hidden]:not([hidden='until-found']) {
     display: none;
@@ -379,7 +394,7 @@
       );
     }
   }
-  /* Under a reduced-motion preference, fills change at once. */
+  /* Under a reduced-motion preference, fills change and sections open and close at once. */
   @media (prefers-reduced-motion: reduce) {
     .env-navigation-drawer-item,
     .env-navigation-drawer-toggle,
@@ -387,10 +402,16 @@
       transition: none;
     }
   }
-  /* Motion: a section's chevron flips, only without a reduced-motion preference. */
+  /* Motion: a section's chevron turns, and a closing section's destinations fade over its whole
+     closing, so no empty band is left, only without a reduced-motion preference. */
   @media (prefers-reduced-motion: no-preference) {
     .env-navigation-drawer-chevron {
       transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+    }
+    .env-navigation-drawer-children[data-ending-style] {
+      transition:
+        block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease);
     }
   }
   /* Motion: an item settles slightly while it is held, only without a reduced-motion preference. */
@@ -462,6 +483,11 @@
     background: var(--env-skeleton-paint);
   }
   [data-env-skeleton] .env-navigation-drawer-count * {
+    visibility: hidden;
+  }
+  /* A section's toggle isn't drawn, so its row is the destination's icon, its bar and its count. */
+  .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-navigation-drawer-toggle {
     visibility: hidden;
   }
   /* A destination whose label is loading, given as an empty string, is a bar of a label's length. */

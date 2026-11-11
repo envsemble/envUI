@@ -1,5 +1,5 @@
 import { CopyButton, Message, MessageList } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 
 const answer = `Here is the plan for next week:
 

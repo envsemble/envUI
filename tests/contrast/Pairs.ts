@@ -1,7 +1,7 @@
 /**
  * The contrast gate's pair registry: every foreground envUI paints on a background, with the kind
  * of contrast WCAG 2.x asks of it, and every pair of state fills that must look different.
- * tests/browser/Contrast.spec.ts resolves each pair in every theme of Themes.ts, in a real browser,
+ * tests/browser/library/Contrast.spec.ts resolves each pair in every theme of Themes.ts, in a real browser,
  * and fails on any pair below the theme's minimum for its kind that Exceptions.json doesn't list.
  *
  * - `fg` and each `bg` layer name a custom property: a semantic role (`--env-color-{bg|fg|border}-…`),
@@ -17,9 +17,8 @@
  *   as their OKLab distance, ΔEOK, rather than a ratio: difference (a state fill against its own
  *   rest or the surface it borders, such as a hovered row against its table) and distinct (two
  *   states of different items that mean different things, such as the selection and another item
- *   under the pointer, or two labels). Themes.ts sets the minimum of each kind and says why: 4.5, 3
- *   and 3 at standard contrast and 7, 4.5 and 4.5 at high contrast for the ratios, ΔEOK 0.02 for a
- *   difference, and ΔEOK 0.03, 0.04 at high contrast, for a distinct pair.
+ *   under the pointer, or two labels). Themes.ts sets the minimum of each kind in each theme and
+ *   says why.
  * - A pair that departs from those rules says why in its `rationale`: `contrast: 'high'` measures it
  *   only in the high-contrast themes, `contrast: 'standard'` only outside them, and `minimum` lowers its minimum at standard or high contrast. Pairs the gate no
  *   longer measures are listed in `dropped`, and pairs it measures under a new name in `renamed`,
@@ -78,12 +77,12 @@ const badgeFill = (tone: (typeof tones)[number]) =>
 
 // Surfaces, by role.
 const page = '--env-color-bg-page'; // the app frame, title bars, Surface background="page"
-const recessed = '--env-color-bg-recessed'; // a shade deeper than the page: Surface background="recessed", the catalogue's canvas
+const recessed = '--env-color-bg-recessed'; // below the panes, a shade deeper than the page in dark: Surface background="recessed", the catalogue's canvas
 const recessedHover = '--env-color-bg-recessed-hover';
 const recessedPressed = '--env-color-bg-recessed-pressed';
 const surface = '--env-color-bg-default'; // Surface's default, sidebars, standard menus
 const muted = '--env-color-bg-muted'; // Surface background="muted", cards, radio rows
-const raised = '--env-color-bg-raised'; // Surface background="raised", tables, rows on a contrasting surface
+const raised = '--env-color-bg-raised'; // Surface background="raised", tables, docked panels, the pager
 const popup = '--env-color-bg-popup'; // Select lists, popovers, compact menus, menu rows, the composer, solid dialogs
 const field = '--env-color-bg-field';
 const overlay = '--env-color-bg-backdrop'; // the backdrop behind dialogs
@@ -95,15 +94,36 @@ const popupPressed = '--env-color-bg-popup-pressed';
 const fill = '--env-color-bg-neutral-muted'; // the translucent fill of tab rails, chips, secondary buttons
 const layerHover = '--env-color-bg-neutral-subtle-hover';
 const layerPressed = '--env-color-bg-neutral-subtle-pressed';
+// The state layer of tree and table rows: in light a step quieter than layerHover, under the selection.
+const treeRowHover = '--env-color-bg-row-hover';
+const treeRowPressed = '--env-color-bg-row-pressed';
 const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
 // A frosted popup's fill, translucent (derived below), and the worst that can be behind it; and the
-// fill itself, opaque: the popup color in light and the default surface in dark (Popup.css).
+// fill itself, opaque: the popup color (Popup.css).
 const frosted = 'popup-frosted';
 const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
 // A tooltip's frosted fill, a key chip on it and the worst behind it (Tooltip.css).
 const tooltipFrosted = 'tooltip-frosted';
+// A text field's prefix and suffix (TextField.css).
+const textFieldAffix = 'text-field-affix';
+// A segmented control's thumb, the chosen segment on its track (SegmentedControl.css).
+const segmentThumb = 'segmented-control-thumb';
+// The thumb at high contrast, a layer of the neutral fill (SegmentedControl.css).
+const segmentThumbHigh = 'segmented-control-thumb-high';
+const segmentThumbStandard = {
+  contrast: 'standard',
+  rationale:
+    'At high contrast the thumb is a layer of the neutral fill (SegmentedControl.css), segmented-control-thumb-high, measured under the same pairs.',
+} as const;
+const segmentThumbAtHigh = {
+  contrast: 'high',
+  rationale:
+    'The thumb at high contrast (SegmentedControl.css); segmented-control-thumb is measured at standard contrast.',
+} as const;
+/** The surfaces a segmented control's track sits on, each with the track's fill over it. */
+const segmentTracks = [page, surface, muted, raised].map((below) => [fill, below] as const);
 const tooltipKey = 'tooltip-key';
 const tooltipWorstBackdrop = 'tooltip-worst-backdrop';
 const frostedOverWorst = [
@@ -191,11 +211,15 @@ const toneOutline = {
 } as const;
 
 /**
- * An alert's fill: the tone's stronger tint, its subtle hover fill. At high contrast it takes the
- * tone's softer tint, its muted fill, with an edge in the border color.
+ * The tone's stronger tint, its subtle hover fill: an alert's hover layer and a soft badge's tint,
+ * which alerts rested on until 1.0.0-prerelease.6. Their text stays measured on it at standard
+ * contrast; an alert now rests on the tone's muted fill (alertRest) in every contrast.
  */
 const alertFill = (tone: (typeof alertTones)[number]) => `--env-color-bg-${tone}-subtle-hover`;
-/** What an alert sits on: the page, a pane and a card. */
+/** An alert's fill: the tone's muted tint, at every contrast. */
+const alertRest = (tone: (typeof alertTones)[number]) => `--env-color-bg-${tone}-muted`;
+/** What an alert sits on: the page, a pane and a card. In light its tint lies over the raised surface,
+ * white, which the card measures. */
 const alertGrounds = [page, surface, muted] as const;
 /** The stronger tint of an alert or a soft badge, which high contrast replaces with the softer one. */
 const tonal = {
@@ -236,11 +260,7 @@ const registry: readonly ContrastPair[] = merged([
     [page, surface, muted, raised, popup],
     'Supporting text, icons, field descriptions, unchecked checkbox rings',
   ),
-  ...text(
-    '--env-color-fg-control',
-    [page, surface],
-    'Navigation labels, meter values, the thumb of a switch that is off',
-  ),
+  ...text('--env-color-fg-control', [page, surface], 'Navigation labels and meter values'),
   ...text('--env-color-fg-default', [row, rowHover, rowPressed], 'List rows'),
   ...text('--env-color-fg-muted', [row, rowHover, rowPressed], 'List row details'),
   ...text(
@@ -258,6 +278,16 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...text('--env-color-fg-link-hover', [page, surface, muted]),
   ...text('--env-color-fg-link-pressed', [page, surface, muted]),
+  ...text(
+    '--env-color-fg-danger-hover',
+    [page, surface, muted, raised, popup],
+    'A danger text button under the pointer; in a selected table row it keeps the danger color',
+  ),
+  ...text(
+    '--env-color-fg-danger-pressed',
+    [page, surface, muted, raised, popup],
+    'A danger text button while pressed; in a selected table row it keeps the danger color',
+  ),
   // Where a tint lowers the link blue below 4.5:1 in the light theme, links and text buttons take
   // the link colors for a tint: alerts and rows under the pointer or pressed point fg.link at them,
   // and applications put them on the brand's muted tint.
@@ -266,6 +296,10 @@ const registry: readonly ContrastPair[] = merged([
     [
       [layerHover, raised],
       [layerHover, surface],
+      [treeRowHover, raised],
+      [treeRowHover, surface],
+      [treeRowPressed, raised],
+      [treeRowPressed, surface],
       rowHover,
       rowPressed,
       ['--env-color-bg-primary-muted', page],
@@ -278,6 +312,8 @@ const registry: readonly ContrastPair[] = merged([
     [
       [layerHover, raised],
       [layerHover, surface],
+      [treeRowHover, raised],
+      [treeRowHover, surface],
       rowHover,
       ['--env-color-bg-primary-muted', page],
       ['--env-color-bg-primary-muted', surface],
@@ -289,6 +325,8 @@ const registry: readonly ContrastPair[] = merged([
     [
       [layerHover, raised],
       [layerHover, surface],
+      [treeRowPressed, raised],
+      [treeRowPressed, surface],
       rowPressed,
       ['--env-color-bg-primary-muted', page],
       ['--env-color-bg-primary-muted', surface],
@@ -310,18 +348,15 @@ const registry: readonly ContrastPair[] = merged([
       ),
       ...text(
         link,
-        [
-          [`--env-color-bg-${tone}-muted`, page],
-          [`--env-color-bg-${tone}-muted`, surface],
-        ],
-        `Links and text buttons in an alert, tone="${tone === 'primary' ? 'info' : tone}", at rest, hovered and pressed, at high contrast`,
+        alertGrounds.map((ground) => [alertRest(tone), ground]),
+        `Links and text buttons in an alert, tone="${tone === 'primary' ? 'info' : tone}", on its tint, at rest, hovered and pressed`,
       ),
     ]),
   ),
   ...text(
     '--env-color-fg-muted-hover',
-    [page, surface],
-    'Disclosure summaries and checkbox rings on hover',
+    [page, surface, muted, raised, popup],
+    'Disclosure summaries and checkbox rings on hover, and the labels of unselected tabs',
   ),
   ...text('--env-color-fg-muted-pressed', [page, surface], 'Disclosure summaries on press'),
 
@@ -335,10 +370,34 @@ const registry: readonly ContrastPair[] = merged([
       '--env-color-bg-primary-emphasis-hover',
       '--env-color-bg-primary-emphasis-pressed',
     ],
-    'Primary buttons, the chosen calendar day, the check of a checked checkbox and the thumb of a switch that is on',
+    'Primary buttons, the chosen calendar day and time, the check of a checked checkbox and the thumb of a switch that is on',
+  ),
+  ...nonText(
+    '--env-color-border-default-pressed',
+    [
+      [fill, page],
+      [fill, surface],
+      [fill, muted],
+      [fill, raised],
+    ],
+    'The thumb of a switch that is off on its track at rest: the fill is translucent, so it is measured on each surface it sits on',
+  ),
+  ...nonText(
+    '--env-color-fg-muted',
+    [
+      ['--env-color-bg-neutral-muted-hover', page],
+      ['--env-color-bg-neutral-muted-pressed', page],
+      ['--env-color-bg-neutral-muted-hover', surface],
+      ['--env-color-bg-neutral-muted-pressed', surface],
+      ['--env-color-bg-neutral-muted-hover', muted],
+      ['--env-color-bg-neutral-muted-pressed', muted],
+      ['--env-color-bg-neutral-muted-hover', raised],
+      ['--env-color-bg-neutral-muted-pressed', raised],
+    ],
+    'The thumb of a switch that is off on its track under the pointer and pressed',
   ),
   ...text(
-    '--env-color-fg-control',
+    '--env-color-fg-default',
     [
       [fill, page],
       ['--env-color-bg-neutral-muted-hover', page],
@@ -353,17 +412,26 @@ const registry: readonly ContrastPair[] = merged([
       ['--env-color-bg-neutral-muted-hover', raised],
       ['--env-color-bg-neutral-muted-pressed', raised],
     ],
-    'Secondary buttons, and the thumb of a switch that is off on its track: the fill is translucent, so it is measured on each surface it sits on',
+    'Secondary buttons: the fill is translucent, so it is measured on each surface it sits on',
   ),
   ...text(
     '--env-color-fg-primary',
     [raised, '--env-color-bg-raised-hover', '--env-color-bg-raised-pressed'],
     'The icon of a pager link',
   ),
-  // An outline button has no fill: its label sits on the surface beneath it, and on hover and
-  // press on the state layer over that surface.
   ...text(
     '--env-color-fg-primary',
+    [page, surface, muted, raised, popup].flatMap((ground) => [
+      ground,
+      [layerHover, ground],
+      [layerPressed, ground],
+    ]),
+    'Text in the brand’s text color, such as a selected tab’s label or today in a calendar, on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
+  ),
+  // An outline button has no fill: its label, in the text color, sits on the surface beneath it,
+  // and on hover and press on the state layer over that surface.
+  ...text(
+    '--env-color-fg-default',
     [page, surface, muted, raised, popup].flatMap((ground) => [
       ground,
       [layerHover, ground],
@@ -388,6 +456,24 @@ const registry: readonly ContrastPair[] = merged([
       '--env-color-bg-accent-strong-pressed',
     ],
     'Button variant="important"',
+  ),
+  ...text(
+    '--env-color-fg-on-strong',
+    [
+      '--env-color-bg-danger-emphasis',
+      '--env-color-bg-danger-emphasis-hover',
+      '--env-color-bg-danger-emphasis-pressed',
+    ],
+    'Primary buttons in the danger tone, at rest, hovered and pressed',
+  ),
+  ...text(
+    '--env-color-fg-on-emphasis',
+    [
+      '--env-color-bg-accent-emphasis',
+      '--env-color-bg-accent-emphasis-hover',
+      '--env-color-bg-accent-emphasis-pressed',
+    ],
+    'Primary buttons in the accent tone, at rest, hovered and pressed',
   ),
   ...text(
     '--env-color-fg-default',
@@ -422,13 +508,18 @@ const registry: readonly ContrastPair[] = merged([
     ]),
     'The label of an outline button in the danger tone, which has no fill: on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
   ),
+  // Ghost and outline buttons, and icon-only text buttons, in the danger tone lay the tone's own
+  // tint on hover and press: on press the tone's hover layer, a soft danger badge's tint, which the
+  // badge pairs measure under fg.danger on the page, a pane, a card, a raised surface and a popup;
+  // on hover a lighter mix of it, which the label clears by more.
 
   // Fields.
   ...text('--env-color-fg-default', [field]),
+  ...text('--env-color-fg-muted', [field], 'Labels, placeholders and icons in the field'),
   ...text(
-    '--env-color-fg-muted',
-    [field],
-    'Labels, prefixes, suffixes, placeholders and icons in the field',
+    textFieldAffix,
+    [field, page, surface, muted, raised],
+    'A prefix or a suffix, quieter than the value, in a field and in a ghost field on any surface',
   ),
   ...text('--env-color-border-primary-emphasis', [field], 'The label of a focused field'),
   ...text('--env-color-fg-danger', [field], 'The label and message of an invalid field'),
@@ -590,6 +681,11 @@ const registry: readonly ContrastPair[] = merged([
       'A highlighted row’s description and icon, and keys as chips at rest',
     ),
     ...text(
+      '--env-color-fg-danger',
+      [[fill, frosted, behind]],
+      'A destructive menu item’s label and icon on its highlighted row',
+    ),
+    ...text(
       '--env-color-fg-default',
       [[fill, fill, frosted, behind]],
       'Key chips on a highlighted row',
@@ -708,6 +804,42 @@ const registry: readonly ContrastPair[] = merged([
     ],
     'The active tab of a secondary tab rail',
   ),
+  ...[
+    [segmentThumb, segmentThumbStandard] as const,
+    [segmentThumbHigh, segmentThumbAtHigh] as const,
+  ].flatMap(([thumb, extra]) => [
+    ...on(
+      'text',
+      '--env-color-fg-default',
+      segmentTracks.map((track) => [thumb, ...track]),
+      'The chosen segment’s label and count on its thumb',
+      extra,
+    ),
+    ...on(
+      'difference',
+      thumb,
+      segmentTracks,
+      'The chosen segment’s thumb against its track',
+      extra,
+    ),
+    ...on(
+      'focus',
+      '--env-color-border-focus',
+      segmentTracks.map((track) => [thumb, ...track]),
+      'The inset ring of the chosen segment, on its thumb',
+      extra,
+    ),
+  ]),
+  ...text(
+    '--env-color-fg-default',
+    segmentTracks,
+    'The label of a segment not chosen under the pointer, on the track with no layer',
+  ),
+  ...text(
+    '--env-color-fg-muted-pressed',
+    segmentTracks.map((track) => [layerPressed, ...track]),
+    'The label of a segment not chosen, on its state layer while pressed',
+  ),
   ...text(
     '--env-color-fg-control',
     [navigationHover, navigationPressed, [layerHover, page], [layerHover, surface]],
@@ -750,14 +882,29 @@ const registry: readonly ContrastPair[] = merged([
   // a hovered selected row against a hovered unselected one. Every state also differs from its rest.
   ...distinct(
     selected,
-    [popup, popupHover, surface, page, raised, [layerHover, surface], [layerHover, raised]],
+    [
+      popup,
+      popupHover,
+      surface,
+      page,
+      raised,
+      [treeRowHover, page],
+      [treeRowHover, surface],
+      [treeRowHover, raised],
+    ],
     'The selection against the other items, at rest and under the pointer: Select options, tree and table rows',
   ),
   ...distinct(selected, [navigationHover], 'A selected navigation item next to a hovered one'),
   ...distinct(selected, [navigationPressed], 'A selected navigation item next to a pressed one'),
   ...distinct(
     selectedHover,
-    [navigationHover, popupHover, [layerHover, surface], [layerHover, raised]],
+    [
+      navigationHover,
+      popupHover,
+      [treeRowHover, page],
+      [treeRowHover, surface],
+      [treeRowHover, raised],
+    ],
     'A selected item under the pointer against an unselected one under the pointer: navigation items, Select options, tree and table rows',
   ),
   ...different(selectedHover, [selected], 'A selected item under the pointer'),
@@ -767,7 +914,12 @@ const registry: readonly ContrastPair[] = merged([
     [surface, page],
     'A navigation item under the pointer, on a sidebar and on the page',
   ),
-  ...different(layerHover, [surface, page, raised], 'A tree or table row under the pointer'),
+  ...different(
+    layerHover,
+    [surface, page, raised],
+    'A control without a fill under the pointer, such as a ghost button',
+  ),
+  ...different(treeRowHover, [surface, page, raised], 'A tree or table row under the pointer'),
   ...distinct(
     '--env-color-fg-on-selected',
     ['--env-color-fg-control', '--env-color-fg-default'],
@@ -838,7 +990,11 @@ const registry: readonly ContrastPair[] = merged([
           'A soft badge on the page, a pane, a row, a muted or raised surface or a popup',
           tonal,
         )),
-    ...text('--env-color-fg-on-emphasis', [badgeFill(tone)], 'Solid badges and counters'),
+    ...text(
+      tone === 'danger' ? '--env-color-fg-on-strong' : '--env-color-fg-on-emphasis',
+      [badgeFill(tone)],
+      'Solid badges and counters',
+    ),
   ]),
   ...text(
     '--env-color-fg-on-emphasis',
@@ -880,28 +1036,14 @@ const registry: readonly ContrastPair[] = merged([
     ),
     ...text(
       '--env-color-fg-default',
-      [[`--env-color-bg-${tone}-muted`, page]],
-      `Alert tone="${tone}" at high contrast: the message`,
+      alertGrounds.map((ground) => [alertRest(tone), ground]),
+      `Alert tone="${tone}" on its tint: the message`,
     ),
-    // On a card at high contrast; a soft badge measures the other tones' text on their tint there.
     ...text(
-      '--env-color-fg-default',
-      [[`--env-color-bg-${tone}-muted`, muted]],
-      `Alert tone="${tone}" on a card at high contrast: the message`,
+      toneText(tone),
+      alertGrounds.map((ground) => [alertRest(tone), ground]),
+      `Alert tone="${tone}" on its tint: the title, and the icon held to the text minimum`,
     ),
-    ...(tone === 'primary'
-      ? on(
-          'text',
-          toneText(tone),
-          [[`--env-color-bg-${tone}-muted`, muted]],
-          `Alert tone="${tone}" on a card at high contrast: the title and the icon`,
-          {
-            contrast: 'high',
-            rationale:
-              'The info alert takes this tint only at high contrast; outside it, its stronger tint, measured above.',
-          },
-        )
-      : []),
     ...nonText(
       toneText(tone),
       [
@@ -911,6 +1053,34 @@ const registry: readonly ContrastPair[] = merged([
         [`--env-color-bg-${tone}-subtle-pressed`, `--env-color-bg-${tone}-muted`, page],
       ],
       'The dismiss icon of an alert on hover and press, on its fill and at high contrast on its softer tint',
+    ),
+    // The label of an outline or text button among an alert's actions, in the text color, over the
+    // dismiss button's layers.
+    ...on(
+      'text',
+      '--env-color-fg-default',
+      [
+        [`--env-color-bg-${tone}-subtle-hover`, alertFill(tone), page],
+        [`--env-color-bg-${tone}-subtle-pressed`, alertFill(tone), page],
+      ],
+      `An outline or text button among the actions of an alert, tone="${tone}", on hover and press`,
+      tonal,
+    ),
+    ...text(
+      '--env-color-fg-default',
+      [[`--env-color-bg-${tone}-subtle-hover`, `--env-color-bg-${tone}-muted`, page]],
+      `An outline or text button among the actions of an alert, tone="${tone}", on hover over its tint`,
+    ),
+    ...on(
+      'text',
+      '--env-color-fg-default',
+      [[`--env-color-bg-${tone}-subtle-pressed`, `--env-color-bg-${tone}-muted`, page]],
+      `An outline or text button among the actions of an alert, tone="${tone}", while pressed over its tint`,
+      {
+        minimum: { high: 4.5 },
+        rationale:
+          'A press lasts a moment: the label keeps the text minimum of standard contrast under the tone’s pressed layer, as the dismiss button’s does there.',
+      },
     ),
   ]),
   ...tones.flatMap((tone) =>
@@ -938,6 +1108,13 @@ const registry: readonly ContrastPair[] = merged([
       '--env-color-bg-info-strong',
     ],
     'Toasts and tooltips, and the focus ring of a toast’s dismiss button',
+  ),
+  ...(['success', 'info', 'danger'] as const).flatMap((tone) =>
+    nonText(
+      `--env-color-fg-${tone}-on-strong`,
+      ['--env-color-bg-neutral-strong'],
+      'A toast’s tone icon, on the toast’s neutral strong fill',
+    ),
   ),
   ...text(
     '--env-color-fg-on-strong',
@@ -1021,13 +1198,13 @@ const registry: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-bg-primary-emphasis',
     [
-      [layerHover, page],
-      [layerHover, surface],
-      [layerHover, muted],
-      [layerHover, raised],
-      [layerHover, popup],
+      [fill, page],
+      [fill, surface],
+      [fill, muted],
+      [fill, raised],
+      [fill, popup],
     ],
-    'The indicators of Meter and Progress on their track, a quiet tint with no outline, on every surface',
+    'The indicators of Meter and Progress on their track, the neutral fill with no outline, on every surface',
   ),
   ...distinct(
     'heatmap-accent-lowest',
@@ -1036,8 +1213,8 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...nonText(
     'badge-outline-primary',
-    ['--env-color-bg-primary-emphasis'],
-    'The outline of a badge or counter on a primary button',
+    ['--env-color-bg-primary-emphasis', '--env-color-bg-accent-emphasis'],
+    'The outline of a badge or counter on a primary button in the neutral or accent tone',
     {
       minimum: { standard: 1.5, high: 3 },
       rationale:
@@ -1046,8 +1223,8 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...nonText(
     'badge-outline-important',
-    ['--env-color-bg-accent-strong'],
-    'The outline of a badge or counter on an important button',
+    ['--env-color-bg-accent-strong', '--env-color-bg-danger-emphasis'],
+    'The outline of a badge or counter on an important button or a danger primary, on a white label',
     {
       minimum: { standard: 1.5, high: 3 },
       rationale:
@@ -1062,6 +1239,9 @@ const registry: readonly ContrastPair[] = merged([
     '--env-color-bg-primary-emphasis',
     '--env-color-bg-primary-emphasis-hover',
     '--env-color-bg-primary-emphasis-pressed',
+    '--env-color-bg-accent-emphasis',
+    '--env-color-bg-accent-emphasis-hover',
+    '--env-color-bg-accent-emphasis-pressed',
   ]),
   ...buttonEndSeparator('control', [
     [fill, page],
@@ -1083,6 +1263,9 @@ const registry: readonly ContrastPair[] = merged([
     '--env-color-bg-raised-pressed',
   ]),
   ...buttonEndSeparator('on-strong', [
+    '--env-color-bg-danger-emphasis',
+    '--env-color-bg-danger-emphasis-hover',
+    '--env-color-bg-danger-emphasis-pressed',
     '--env-color-bg-danger-strong',
     '--env-color-bg-danger-strong-hover',
     '--env-color-bg-danger-strong-pressed',
@@ -1156,10 +1339,24 @@ export const pairs: readonly ContrastPair[] = merged([...registry, ...onPage.map
 /**
  * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
  * must be listed here or in `renamed`: tests/contrast/DeclaredPairs.json holds the names declared
- * when it was last updated, and tests/browser/Contrast.spec.ts fails on a name that is gone from
+ * when it was last updated, and tests/browser/library/Contrast.spec.ts fails on a name that is gone from
  * `pairs` without an entry, and on a dropped pair that is still declared.
  */
 export const dropped: readonly { pair: string; rationale: string }[] = [
+  // A switch that is off has a muted thumb now, measured as a boundary at rest and in its states.
+  ...['', '-hover', '-pressed'].flatMap((state) =>
+    [
+      '--env-color-bg-default',
+      '--env-color-bg-muted',
+      '--env-color-bg-page',
+      '--env-color-bg-raised',
+      '--env-color-bg-recessed',
+    ].map((ground) => ({
+      pair: `--env-color-fg-control on --env-color-bg-neutral-muted${state} over ${ground}`,
+      rationale:
+        'The thumb of a switch that is off is muted, so it no longer outweighs a switch that is on: --env-color-border-default-pressed at rest and --env-color-fg-muted under the pointer and pressed, each measured on the track at 3:1 as the control’s boundary.',
+    })),
+  ),
   // Alerts have no edge outside high contrast, where the border color bounds them, measured as a
   // boundary there.
   ...(['accent', 'success', 'warning', 'danger'] as const).flatMap((tone) =>
@@ -2703,10 +2900,43 @@ function apiReviewRenames() {
 
 /**
  * Pairs the gate still measures under another name, from the old name to the new, with the reason.
- * tests/browser/Contrast.spec.ts checks that each old name is not declared, and that each new one
+ * tests/browser/library/Contrast.spec.ts checks that each old name is not declared, and that each new one
  * is, or has since been dropped or renamed onward in turn.
  */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  // A toast's tone icon stands bare on the toast, without its disc.
+  ...(['success', 'info', 'danger'] as const).map((tone) => ({
+    from: `--env-color-fg-${tone}-on-strong on toast-icon-disc-${tone} over --env-color-bg-neutral-strong`,
+    to: `--env-color-fg-${tone}-on-strong on --env-color-bg-neutral-strong`,
+    rationale:
+      'A toast’s tone icon is drawn bare, larger, level with the message’s first line, so it is measured on the toast’s neutral strong fill itself.',
+  })),
+  // Meter's and Progress's track is the neutral fill, as a Slider's track is.
+  ...[
+    '--env-color-bg-default',
+    '--env-color-bg-muted',
+    '--env-color-bg-page',
+    '--env-color-bg-popup',
+    '--env-color-bg-raised',
+    '--env-color-bg-recessed',
+    'catalogue-canvas',
+  ].flatMap((ground) =>
+    reviewed(`--env-color-bg-primary-emphasis on ${layerHover} over ${ground}`).map((from) => ({
+      from,
+      to: `--env-color-bg-primary-emphasis on ${fill} over ${ground === 'catalogue-canvas' ? '--env-color-bg-recessed' : ground}`,
+      rationale:
+        'The track of Meter and Progress is the neutral fill a Slider’s track takes, --env-color-bg-neutral-muted, rather than a state layer’s faint tint, so empty steps show on dark panels.',
+    })),
+  ),
+  // Tree and table rows take a state layer of their own, a step quieter than a control's in light.
+  ...(['--env-color-bg-selected', '--env-color-bg-selected-hover'] as const).flatMap((fill) =>
+    ['--env-color-bg-default', '--env-color-bg-raised'].map((ground) => ({
+      from: `${fill} on --env-color-bg-neutral-subtle-hover over ${ground}`,
+      to: `${fill} on --env-color-bg-row-hover over ${ground}`,
+      rationale:
+        'Tree and table rows take their own state layer, --env-color-bg-row-hover, a step quieter than a control’s in light, so a hovered row never weighs as much as the selection on the gray page.',
+    })),
+  ),
   // The catalogue's canvas is the recessed surface, a token now rather than a formula of its own.
   ...onPage
     .flatMap((pair) => {
@@ -2721,6 +2951,13 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
       rationale:
         'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
     })),
+  // The thumb of a switch that is off, since dropped, was renamed onto the recessed surface first.
+  ...['', '-hover', '-pressed'].map((state) => ({
+    from: `--env-color-fg-control on --env-color-bg-neutral-muted${state} over catalogue-canvas`,
+    to: `--env-color-fg-control on --env-color-bg-neutral-muted${state} over --env-color-bg-recessed`,
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  })),
   // The alerts' edges, since dropped, were renamed onto the recessed surface first.
   ...(['accent', 'success', 'warning', 'danger'] as const).map((tone) => ({
     from: `--env-color-border-${tone}-muted on catalogue-canvas`,
@@ -2840,6 +3077,36 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
       'Every token takes the --env- prefix, and the tone borders are named by emphasis: the solid edge is border.{tone}.emphasis, the translucent one border.{tone}.',
   })),
   ...apiReviewRenames(),
+  // The danger emphasis fill is a saturated red with a white label in every theme, so a destructive
+  // primary outweighs the soft primary and accent fills in dark: its label, a solid danger badge's
+  // and what an end slot or a count draws in it are --env-color-fg-on-strong.
+  ...['', '-hover', '-pressed'].flatMap((state) =>
+    ['--env-color-fg-on-emphasis', 'button-end-separator-on-emphasis'].map((label) => ({
+      from: `${label} on --env-color-bg-danger-emphasis${state}`,
+      to: `${label.replace('on-emphasis', 'on-strong')} on --env-color-bg-danger-emphasis${state}`,
+      rationale:
+        'The danger primary takes a white label, --env-color-fg-on-strong, on its saturated red in every theme, rather than a dark one on a soft coral in dark, so a destructive action outweighs the soft primary and accent fills beside it.',
+    })),
+  ),
+  // A segment not chosen takes no layer under the pointer, only the text color on its label.
+  ...[page, surface, muted, raised, recessed].map((below) => ({
+    from: `--env-color-fg-muted-hover on segmented-control-hover-layer over ${fill} over ${below}`,
+    to: `--env-color-fg-default on ${fill} over ${below}`,
+    rationale:
+      'A hovered segment of a SegmentedControl lays no state layer, which read as a second selection beside the thumb, and its label takes the text color on the track.',
+  })),
+  {
+    from: `--env-color-fg-muted-hover on segmented-control-hover-layer over ${fill} over catalogue-canvas`,
+    to: `--env-color-fg-muted-hover on segmented-control-hover-layer over ${fill} over ${recessed}`,
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  },
+  {
+    from: 'badge-outline-primary on --env-color-bg-danger-emphasis',
+    to: 'badge-outline-important on --env-color-bg-danger-emphasis',
+    rationale:
+      'A count on a danger primary is outlined in its white label, as on an important button, now that the danger fill takes --env-color-fg-on-strong.',
+  },
 ];
 
 /** What a pair is held to: its kind, and its minimum at each contrast it is measured in. */
@@ -2866,7 +3133,36 @@ export interface Relaxation extends Requirement {
  * pair again, even back to a requirement relaxed before, needs another entry with its own
  * rationale. Entries stay once recorded: they are the history of what was relaxed and why.
  */
-export const relaxed: readonly Relaxation[] = [];
+const segmentThumbHighContrast =
+  'At high contrast the thumb keeps a layer of the neutral fill, measured there as segmented-control-thumb-high under the same pairs; the thumb as drawn at standard contrast, the raised neutral grade in dark, is measured there.';
+export const relaxed: readonly Relaxation[] = [
+  ...[
+    '--env-color-bg-default',
+    '--env-color-bg-muted',
+    '--env-color-bg-page',
+    '--env-color-bg-raised',
+    '--env-color-bg-recessed',
+  ].flatMap((below): Relaxation[] => [
+    {
+      pair: `--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over ${below}`,
+      kind: 'text',
+      minimum: { standard: 4.5 },
+      rationale: segmentThumbHighContrast,
+    },
+    {
+      pair: `segmented-control-thumb on --env-color-bg-neutral-muted over ${below}`,
+      kind: 'difference',
+      minimum: { standard: 0.02 },
+      rationale: segmentThumbHighContrast,
+    },
+    {
+      pair: `--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over ${below}`,
+      kind: 'focus',
+      minimum: { standard: 3 },
+      rationale: segmentThumbHighContrast,
+    },
+  ]),
+];
 
 export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
   return `${pair.fg} on ${pair.bg.join(' over ')}`;
@@ -2885,7 +3181,7 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * - Calendar heatmap steps mix the tone into the page by a share that depends on how many steps the
  *   data has, from 30% at the lightest to the full tone (CalendarHeatmap.tsx and .css). The
  *   lightest step of the default accent tone is measured.
- * - The catalogue's recessed canvas its examples sit on, as apps/site/src/styles/Stage.css
+ * - The catalogue's recessed canvas its examples sit on, as apps/site/src/figures/Stage.css
  *   paints it.
  *
  * The CSS is the one source of a formula it holds: the declaration under a `/* contrast: name *\/`
@@ -2896,7 +3192,7 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * The color of the declaration a CSS file marks with `/* contrast: name *\/`: its value, or the
  * color function in it, such as the color-mix() of a border shorthand.
  */
-export function markedColor(file: string, name: string): string {
+function markedColor(file: string, name: string): string {
   const css = readFileSync(new URL(`../../${file}`, import.meta.url), 'utf8');
   const marker = css.indexOf(`/* contrast: ${name} */`);
   if (marker === -1) throw new Error(`${file} marks no declaration /* contrast: ${name} */.`);
@@ -2907,6 +3203,8 @@ export function markedColor(file: string, name: string): string {
     .replace(/\(\s+/g, '(')
     .replace(/\s+\)/g, ')')
     .trim();
+  // A token alone is its own color.
+  if (/^var\(--[\w-]+\)$/.test(value)) return value;
   const start = value.search(/\b(?:color-mix|light-dark|oklch|rgb|hsl)\(/);
   let depth = 0;
   for (let index = start; index < value.length; index++) {
@@ -2925,7 +3223,7 @@ const badgeOutline = markedColor('packages/ui/src/styles/Button.css', 'badge-out
 const tooltipFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-frosted');
 const tooltipKeyFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-key');
 
-export const derived: Readonly<Record<string, string>> = {
+const derived: Readonly<Record<string, string>> = {
   ...Object.fromEntries(
     ['on-emphasis', 'control', 'accent', 'on-strong', 'muted', 'default', 'link', 'danger'].map(
       (label) => [`button-end-separator-${label}`, ofLabel(separator, `--env-color-fg-${label}`)],
@@ -2946,6 +3244,17 @@ export const derived: Readonly<Record<string, string>> = {
   'tooltip-frosted': tooltipFill,
   'tooltip-key': ofLabel(tooltipKeyFill, '--env-color-fg-on-strong'),
   'tooltip-worst-backdrop': '#fff',
+  // A text field's prefix and suffix, a share of muted text (TextField.css).
+  'text-field-affix': markedColor('packages/ui/src/styles/TextField.css', 'text-field-affix'),
+  // A segmented control's thumb (SegmentedControl.css).
+  'segmented-control-thumb': markedColor(
+    'packages/ui/src/styles/SegmentedControl.css',
+    'segmented-control-thumb',
+  ),
+  'segmented-control-thumb-high': markedColor(
+    'packages/ui/src/styles/SegmentedControl.css',
+    'segmented-control-thumb-high',
+  ),
 };
 
 /** The CSS color a name in a pair stands for. */

@@ -3,13 +3,13 @@
 import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { IconButton, type ButtonVariant } from '../actions/Button.js';
-import { Tooltip } from '../feedback/Tooltip.js';
+import { Tooltip } from '../overlays/Tooltip.js';
 import { IconChevronLeft } from '../icons/ChevronLeft.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { classNames } from '../internal/classNames.js';
-import { Row } from '../foundations/Layout.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { useFormatters } from '../internal/useFormatters.js';
+import { Row } from '../layout/Layout.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { useFormatters } from '../internal/provider/useFormatters.js';
 import { pagination } from '../foundations/messages/pagination.js';
 import '../styles/Base.css';
 import '../styles/Pagination.css';
@@ -28,8 +28,10 @@ export interface PaginationRange {
   pageCount?: number;
 }
 
-export interface PaginationProps
-  extends Omit<ComponentPropsWithRef<'nav'>, 'children' | 'onChange'> {
+export interface PaginationProps extends Omit<
+  ComponentPropsWithRef<'nav'>,
+  'children' | 'onChange'
+> {
   /**
    * The page shown, counted from 1. It is kept within the pages that exist, so a page beyond the
    * end shows the last one.

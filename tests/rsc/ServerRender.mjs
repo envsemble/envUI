@@ -1,10 +1,11 @@
-// Run by tests/ClientDirectives.test.mjs with `--conditions=react-server` and ClientReferences.mjs:
+// Run by tests/library/ClientDirectives.test.mjs with `--conditions=react-server` and ClientReferences.mjs:
 // imports every entry point of the built package as a server component's module graph would, and
 // renders envUI on the server. Prints what it found as JSON.
 import { readFileSync } from 'node:fs';
 import { createElement as h } from 'react';
 import * as ui from '@envsemble/envui';
-import * as content from '@envsemble/envui/content';
+import * as code from '@envsemble/envui/code';
+import * as markdown from '@envsemble/envui/markdown';
 import * as diff from '@envsemble/envui/diff';
 import * as color from '@envsemble/envui/color';
 import * as richText from '@envsemble/envui/rich-text';
@@ -159,7 +160,8 @@ console.log(
     ),
     surveys: {
       '@envsemble/envui': survey('@envsemble/envui', ui),
-      '@envsemble/envui/content': survey('@envsemble/envui/content', content),
+      '@envsemble/envui/code': survey('@envsemble/envui/code', code),
+      '@envsemble/envui/markdown': survey('@envsemble/envui/markdown', markdown),
       '@envsemble/envui/diff': survey('@envsemble/envui/diff', diff),
       '@envsemble/envui/color': survey('@envsemble/envui/color', color),
       '@envsemble/envui/rich-text': survey('@envsemble/envui/rich-text', richText),

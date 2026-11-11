@@ -18,5 +18,3 @@ export const linkDialog = {
   /** The error for a destination that is neither a URL nor a path. */
   invalidPath: 'Enter a valid URL or relative path.',
 };
-
-export type LinkDialogMessages = typeof linkDialog;

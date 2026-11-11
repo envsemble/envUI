@@ -37,12 +37,13 @@ import { request as httpRequest, type IncomingHttpHeaders } from 'node:http';
 import { createSecureServer } from 'node:http2';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
 import { chromium } from '@playwright/test';
+import { median } from './Median.ts';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const lighthouseVersion = '13.6.0';
-const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
-const cache = resolve(root, '.cache/site-perf');
+const cache = resolve(repositoryRoot, '.cache/site-perf');
 const port = Number(process.env.ENVUI_SITE_PERF_PORT || 9095);
 const wranglerPort = port + 1;
 const debuggingPort = port + 2;
@@ -78,8 +79,8 @@ const contextOptions = (form: Form) =>
     : { viewport: { width: 1350, height: 940 } };
 /**
  * What a page shows while a part of it loads, which the measures wait for until none is in view: a
- * part's or the whole page's skeleton (template/Loading.tsx, template/PageSkeleton.tsx), a tile's
- * skeleton, and a section still to show, hidden as its outline (template/SectionOutline.ts).
+ * part's or the whole page's skeleton (loading/Skeletons.tsx, pages/PageSkeleton.tsx), a tile's
+ * skeleton, and a section still to show, hidden as its outline (markdown/SectionOutline.ts).
  */
 const loadingSelector = '.site-loading, .catalogue-tile-loading, [data-site-pending]';
 
@@ -90,29 +91,30 @@ const noneInView = (selector: string) =>
     return box.bottom > 0 && box.top < innerHeight && box.width > 0;
   });
 
-const args = process.argv.slice(2);
-const option = (name: string) => {
-  const index = args.indexOf(name);
-  return index === -1 ? undefined : args[index + 1];
-};
-const runs = Number(option('--runs') ?? 3);
-const only = (option('--only') ?? Object.keys(pages).join(',')).split(',');
+const { values: options } = parseArgs({
+  options: {
+    runs: { type: 'string', default: '3' },
+    only: { type: 'string' },
+    forms: { type: 'string' },
+    label: { type: 'string' },
+    site: { type: 'string' },
+    report: { type: 'string' },
+    'no-build': { type: 'boolean', default: false },
+    'no-navigation': { type: 'boolean', default: false },
+    serve: { type: 'boolean', default: false },
+  },
+});
+const runs = Number(options.runs);
+const only = (options.only ?? Object.keys(pages).join(',')).split(',');
 for (const name of only)
   if (!Object.hasOwn(pages, name))
     throw new Error(`Unknown page ${name}: ${Object.keys(pages).join(', ')}.`);
-const chosenForms = (option('--forms') ?? forms.join(',')).split(',') as Form[];
+const chosenForms = (options.forms ?? forms.join(',')).split(',') as Form[];
 for (const form of chosenForms)
   if (!forms.includes(form)) throw new Error(`Unknown form ${form}: ${forms.join(', ')}.`);
-const label = option('--label') ?? new Date().toISOString().replace(/[:.]/g, '-');
+const label = options.label ?? new Date().toISOString().replace(/[:.]/g, '-');
 /** The build served: dist/site, or --site's. */
-const site = resolve(root, option('--site') ?? 'dist/site');
-
-const median = (values: number[]) => {
-  const sorted = values.filter((value) => Number.isFinite(value)).sort((a, b) => a - b);
-  if (!sorted.length) return NaN;
-  const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? sorted[middle]! : (sorted[middle - 1]! + sorted[middle]!) / 2;
-};
+const site = resolve(repositoryRoot, options.site ?? 'dist/site');
 
 /** A command line for the shell, which npm's commands need on Windows. */
 const commandLine = (parts: string[]) =>
@@ -125,7 +127,7 @@ const commandLine = (parts: string[]) =>
 function run(parts: string[], quiet = false) {
   return new Promise<string>((done, fail) => {
     const child = spawn(commandLine(parts), {
-      cwd: root,
+      cwd: repositoryRoot,
       stdio: quiet ? 'pipe' : 'inherit',
       shell: true,
     });
@@ -258,7 +260,7 @@ function startWrangler() {
       '--persist-to',
       resolve(cache, `wrangler-${port}`),
     ]),
-    { cwd: root, stdio: 'ignore', shell: true },
+    { cwd: repositoryRoot, stdio: 'ignore', shell: true },
   );
 }
 
@@ -276,7 +278,10 @@ interface Audit {
     unknown
   >;
 }
-type Report = { audits: Record<string, Audit> };
+type Report = {
+  audits: Record<string, Audit>;
+  categories?: { performance?: { score?: number | null } };
+};
 
 interface Chain {
   children?: Record<string, Chain>;
@@ -287,8 +292,7 @@ const chainDepth = (chains: Record<string, Chain> | undefined): number =>
 /** The tree of Lighthouse 13's network dependency insight: its first list section's chains. */
 const dependencyTree = (audit: Audit | undefined) => {
   const section = audit?.details?.items?.[0] as
-    | { value?: { chains?: Record<string, Chain> } }
-    | undefined;
+    { value?: { chains?: Record<string, Chain> } } | undefined;
   return section?.value?.chains;
 };
 
@@ -311,6 +315,8 @@ function numbers(report: Report) {
   const longTasks = items('long-tasks');
   const renderBlocking = items('render-blocking-insight');
   return {
+    // Lighthouse's performance score, out of 100.
+    score: (report.categories?.performance?.score ?? NaN) * 100,
     lcp: value('largest-contentful-paint'),
     fcp: value('first-contentful-paint'),
     tbt: value('total-blocking-time'),
@@ -530,8 +536,8 @@ function report({ results, unused, navigations }: Measurement) {
       ]),
     ) as Numbers;
   const lines = [
-    '| Form | Page | Cache | LCP | FCP | TBT | CLS | SI | Total KB | JS KB | CSS KB | Font KB | Image KB | Other KB | Requests | Chain | JS exec | Long tasks | Main thread | Script | Style, layout | Paint | Other work |',
-    '| --- | --- | --- | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: |',
+    '| Form | Page | Cache | Score | LCP | FCP | TBT | CLS | SI | Total KB | JS KB | CSS KB | Font KB | Image KB | Other KB | Requests | Chain | JS exec | Long tasks | Main thread | Script | Style, layout | Paint | Other work |',
+    '| --- | --- | --- | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: |',
   ];
   for (const [form, byPage] of Object.entries(results))
     for (const [name, states] of Object.entries(byPage))
@@ -539,7 +545,7 @@ function report({ results, unused, navigations }: Measurement) {
         if (!list.length) continue;
         const n = medians(list);
         lines.push(
-          `| ${form} | ${pages[name]?.title ?? name} | ${state} | ${fixed(n.lcp)} | ${fixed(n.fcp)} | ${fixed(n.tbt)} | ${fixed(n.cls, 3)} | ${fixed(n.speedIndex)} | ${kb(n.totalBytes)} | ${kb(n.jsBytes)} | ${kb(n.cssBytes)} | ${kb(n.fontBytes)} | ${kb(n.imageBytes)} | ${kb(n.otherBytes)} | ${fixed(n.requests)} | ${fixed(n.chainDepth)} | ${fixed(n.jsExecution)} | ${fixed(n.longTasks)} | ${fixed(n.mainThread)} | ${fixed(n.scriptEvaluation + n.scriptParsing)} | ${fixed(n.styleLayout)} | ${fixed(n.paintCompositeRender)} | ${fixed(n.otherWork + n.garbageCollection + n.parseHTML)} |`,
+          `| ${form} | ${pages[name]?.title ?? name} | ${state} | ${fixed(n.score)} | ${fixed(n.lcp)} | ${fixed(n.fcp)} | ${fixed(n.tbt)} | ${fixed(n.cls, 3)} | ${fixed(n.speedIndex)} | ${kb(n.totalBytes)} | ${kb(n.jsBytes)} | ${kb(n.cssBytes)} | ${kb(n.fontBytes)} | ${kb(n.imageBytes)} | ${kb(n.otherBytes)} | ${fixed(n.requests)} | ${fixed(n.chainDepth)} | ${fixed(n.jsExecution)} | ${fixed(n.longTasks)} | ${fixed(n.mainThread)} | ${fixed(n.scriptEvaluation + n.scriptParsing)} | ${fixed(n.styleLayout)} | ${fixed(n.paintCompositeRender)} | ${fixed(n.otherWork + n.garbageCollection + n.parseHTML)} |`,
         );
       }
   if (Object.keys(unused).length) {
@@ -580,12 +586,12 @@ async function retried<T>(step: () => Promise<T>, failed: T): Promise<T> {
 
 async function main() {
   const file = resolve(cache, `${label}.json`);
-  const from = option('--report');
+  const from = options.report;
   if (from) {
     console.log(report(JSON.parse(await readFile(resolve(cache, `${from}.json`), 'utf8'))));
     return;
   }
-  if (!args.includes('--no-build') && !option('--site')) await run(['npm', 'run', 'build:site']);
+  if (!options['no-build'] && !options.site) await run(['npm', 'run', 'build:site']);
   const wrangler = startWrangler();
   const { server, spki } = await startProxy();
   const profile = join(tmpdir(), `envui-site-perf-profile-${process.pid}`);
@@ -617,7 +623,7 @@ async function main() {
   try {
     await waitFor(`http://127.0.0.1:${wranglerPort}/`);
     await waitFor(`http://127.0.0.1:${debuggingPort}/json/version`);
-    if (args.includes('--serve')) {
+    if (options.serve) {
       console.log(`Serving ${site} at ${origin}, Chromium's DevTools on port ${debuggingPort}.`);
       await new Promise(() => {});
     }
@@ -634,7 +640,7 @@ async function main() {
     await mkdir(cache, { recursive: true });
     const save = () => writeFile(file, `${JSON.stringify(record, null, 2)}\n`);
     // A first load, not counted, so the server and the browser have started.
-    await retried(() => coverage(pages[only[0]!]!.path, 'desktop'), undefined);
+    await retried(() => coverage(pages[only[0]].path, 'desktop'), undefined);
     const failed = numbers({ audits: {} });
     const nothing = Object.fromEntries(Object.keys(failed).map((key) => [key, NaN])) as Numbers;
     for (const form of chosenForms)
@@ -642,7 +648,7 @@ async function main() {
         const entry = { cold: [] as Numbers[], warm: [] as Numbers[] };
         (record.results[form] ??= {})[name] = entry;
         for (let index = 0; index < runs; index++) {
-          const path = pages[name]!.path;
+          const path = pages[name].path;
           entry.cold.push(await retried(() => lighthouse(path, form, false), nothing));
           entry.warm.push(await retried(() => lighthouse(path, form, true), nothing));
           await save();
@@ -650,11 +656,11 @@ async function main() {
         }
       }
     for (const name of only) {
-      const unused = await retried(() => coverage(pages[name]!.path, 'desktop'), undefined);
+      const unused = await retried(() => coverage(pages[name].path, 'desktop'), undefined);
       if (unused) record.unused[name] = unused;
     }
     await save();
-    if (!args.includes('--no-navigation'))
+    if (!options['no-navigation'])
       for (const form of chosenForms)
         for (const [key, start, to] of [
           ['catalogue link', '/components/button', undefined],

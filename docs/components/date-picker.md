@@ -36,7 +36,7 @@ components:
 examples:
   PublishDate:
     role: overview
-    motion: true
+    open: true
   PlanningCalendar:
     role: overview
     caption: 'Calendar: the month the field opens.'
@@ -62,15 +62,13 @@ examples:
 
 ```
 
-1. **Outline**
-2. **Outline, with a time**
-3. **Floating**
+1. **A day**
+2. **A day and a time**
 
-| Variant              | Use for                                                    |
-| -------------------- | ---------------------------------------------------------- |
-| Outline              | A day; choosing one closes the calendar. The default.      |
-| Outline, with a time | A day and a time, with Now and the time's wheels.          |
-| Floating             | A long form on a page, as a text field's floating variant. |
+| Variant          | Use for                                               |
+| ---------------- | ----------------------------------------------------- |
+| A day            | A day; choosing one closes the calendar. The default. |
+| A day and a time | A day and a time, with Now and the time's wheels.     |
 
 ### In a toolbar
 
@@ -194,6 +192,7 @@ A DatePicker is a field with its `label`, `description` and `error`, whose butto
 
 - The time is chosen on wheels of hours, minutes every `minuteStep` minutes, 15 by default, and, on a 12-hour clock, day periods.
 - `placeholderTime`, as `HH:mm`, is the time a newly chosen day starts with, 00:00 by default.
+- `hourCycle` sets the time's clock whatever the locale's: `h23` for 18:00 with no AM/PM wheel, `h12` for 6:00 PM. The value stays on the 24-hour clock.
 
 ```tsx
 <DatePicker
@@ -201,6 +200,7 @@ A DatePicker is a field with its `label`, `description` and `error`, whose butto
   granularity="minute"
   placeholderTime="09:00"
   minuteStep={30}
+  hourCycle="h23"
   value={meeting}
   onValueChange={setMeeting}
   clearable
@@ -231,16 +231,20 @@ A DatePicker is a field with its `label`, `description` and `error`, whose butto
 </form>
 ```
 
-#### Variants and sizes
-
-`variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label, as TextField's.
+#### Sizes
 
 - `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height.
-- With `showLabel={false}`, `placeholder` shows in place of the label; name the field with `aria-label`.
+- With `visibleLabel={false}`, `placeholder` shows in place of the label; name the field with `aria-label`.
 - The field is 12 rem wide at least, also in a container sized to its content, and in a narrower container it takes the container's width.
 
 ```tsx
-<DatePicker size="sm" showLabel={false} aria-label="Due" placeholder="Due" granularity="minute" />
+<DatePicker
+  size="sm"
+  visibleLabel={false}
+  aria-label="Due"
+  placeholder="Due"
+  granularity="minute"
+/>
 ```
 
 #### Calendar
@@ -263,9 +267,25 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: `defaultTime` is `placeholderTime`, as React Aria names it: `default` names an uncontrolled starting value elsewhere.
-- **1.0.0-prerelease.5**: The calendar popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale. The calendar leads with the month's name, its buttons side by side at the end; the days of a week touch, a row height wide; today is in the accent color rather than ringed, and a day under the pointer takes the neutral fill.
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
 - **1.0.0**: The field keeps its minimum width, 12 rem, in a container sized to its content, such as an inline-flex toolbar, rather than growing after the container measured it and pushing its neighbours onto another row; in a narrower container it still takes the container's width. The calendar's month and year, `env-calendar-heading`, are `env-calendar-title`.
 - **1.0.0**: With the minute granularity, the time is chosen on wheels of hours, minutes every `minuteStep` minutes (15) and, on a 12-hour clock, day periods, beside the calendar, in place of the time field under it; turning a wheel sets the time at once. The calendar has no Done button, and `doneLabel` is gone: it closes as a date-only one does. The field and popup are shared with TimePicker and MonthPicker.
 - **1.0.0**: `withTime` is `granularity`, `"day"` or `"minute"`; `hint` is `description`; `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the button, which takes `ref`. The calendar opens on the shared popup, its month buttons are ghost icon buttons, and its labels come from EnvUIProvider's `messages`, as its locale does: `env-date-time-well` is `env-date-picker-control`.
 - **1.0.0**: `DateTimeField` is `DatePicker`, with the `env-date-picker-*` classes; the page is `date-picker`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: The calendar's popup opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
+- **1.0.0-prerelease.6**: The field keeps its focused frame and label until the calendar has closed, rather than fading and coming back as focus returns.
+- **1.0.0-prerelease.6**: With the minute granularity, `hourCycle`, `h12` or `h23`, sets the time's clock whatever the locale's, such as 18:00 with no AM/PM wheel in English; the value stays `YYYY-MM-DDTHH:mm`.
+- **1.0.0-prerelease.6**: The calendar's days, on their own and in the popup, are a little less than a row height wide, 24 px at the compact scale and 32 px at the comfortable one, so the columns stand close around the numbers; they still touch, and touch screens keep touch-sized days.
+- **1.0.0-prerelease.6**: A clearable field's clear button and its calendar icon stand a step apart, so they don't crowd each other in a small field.
+- **1.0.0-prerelease.6**: While its calendar is open, the field keeps its focused frame, the accent edge and label, also when focus is in the popup, as when it opens under the pointer.
+- **1.0.0-prerelease.6**: The calendar names the weekdays by their first two letters at every width and scale, Mo Tu We in English, where those tell the seven apart, so the names never run into each other in the popup's narrow days.
+- **1.0.0-prerelease.6**: The calendar's month buttons show larger arrows, 1.25 rem, on slightly smaller buttons, so the month's name stays on one line, and the header keeps a little room under it before the weekdays, so it reads at the compact scale too.
+- **1.0.0-prerelease.6**: The chosen hour and minute take the chosen day's solid accent fill rather than the selection's tint, and are round and as tall as a day, as the chosen day is, so a chosen day and time look alike and the wheels stay narrow; a wheel with fewer values than it shows rows, such as minutes every 15, no longer loops and shows a value twice, while its arrow keys still wrap around.
+- **1.0.0-prerelease.6**: As a time wheel turns to a row pressed or scrolled to, the fill stays on that row rather than passing over the rows on the way, and a row's text takes the fill's color only while it is on the fill, so a value it leaves is never white on the popup.
+- **1.0.0-prerelease.6**: With a time, the wheels move under the calendar where the card has no room for them beside it, rather than running past its edge.
+- **1.0.0-prerelease.6**: Days outside `min` and `max` take the disabled text color, faded, so they can't be taken for days that can be chosen; today keeps its accent color.
+- **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends. A small one with a visible label takes the medium height, so its floated label and its value each have room, and says so in the console while developing: `sm` is for a field with its label hidden.
+- **1.0.0-prerelease.6**: The calendar card takes the width of a field a little wider than it, up to 1 rem, and in a narrow window it is at least as wide as its field, so it ends with the field; Today and Clear follow the calendar's six weeks closely. Beside the calendar, the Time heading shares the line of the month's name.
+- **1.0.0-prerelease.5**: `defaultTime` is `placeholderTime`, as React Aria names it: `default` names an uncontrolled starting value elsewhere.
+- **1.0.0-prerelease.5**: The calendar popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale. The calendar leads with the month's name, its buttons side by side at the end; the days of a week touch, a row height wide; today is in the accent color rather than ringed, and a day under the pointer takes the neutral fill.

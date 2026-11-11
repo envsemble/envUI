@@ -22,5 +22,3 @@ export const diffStat = {
   }) =>
     `${additionsText} added ${plural(additions, 'line', 'lines')} and ${deletionsText} removed ${plural(deletions, 'line', 'lines')}`,
 };
-
-export type DiffStatMessages = typeof diffStat;

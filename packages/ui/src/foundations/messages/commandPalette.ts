@@ -18,5 +18,3 @@ export const commandPalette = {
   results: ({ count, countText }: { count: number; countText: string }) =>
     `${countText} ${plural(count, 'result', 'results')}`,
 };
-
-export type CommandPaletteMessages = typeof commandPalette;

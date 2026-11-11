@@ -10,7 +10,7 @@
      minimum width keeps the field from shrinking under 12rem in a row with room for it; alone, it
      counts as nothing while a container measures its content. */
   .env-date-picker {
-    --env-field-height: var(--env-control-height);
+    --env-field-height: max(var(--env-control-height), var(--env-text-field-least, 0rem));
     --env-date-picker-min-width: 12rem;
     min-inline-size: min(var(--env-date-picker-min-width), 100%);
     grid-template-columns: minmax(0, var(--env-date-picker-min-width)) minmax(0, 1fr);
@@ -24,8 +24,8 @@
       --env-field-height: max(var(--env-control-height), var(--env-control-height-touch));
     }
   }
-  /* The actions at the end are as tall as the field's own icon buttons: the small control height in a
-     floating field, a little less than the field elsewhere. */
+  /* The actions at the end are as tall as the field's own icon buttons, a little less than the
+     field. */
   .env-date-picker .env-date-picker-control {
     --env-date-picker-action: max(
       var(--env-control-target-min),
@@ -33,10 +33,6 @@
     );
     --env-date-picker-actions: 1;
     --env-date-picker-end: var(--env-space-1);
-  }
-  .env-date-picker[data-tall] .env-date-picker-control {
-    --env-date-picker-action: var(--env-control-height-sm);
-    --env-date-picker-end: var(--env-space-2);
   }
   .env-date-picker .env-date-picker-control[data-action-count='2'] {
     --env-date-picker-actions: 2;
@@ -46,12 +42,14 @@
     align-items: center;
     padding-inline-end: calc(
       var(--env-date-picker-end) + var(--env-date-picker-actions) * var(--env-date-picker-action) +
-        var(--env-space-1)
+        var(--env-date-picker-actions) * var(--env-space-1)
     );
     text-align: start;
     cursor: pointer;
   }
-  .env-date-picker .env-date-picker-control > .env-date-picker-trigger:disabled {
+  .env-date-picker
+    .env-date-picker-control
+    > .env-date-picker-trigger:is(:disabled, [aria-readonly='true']) {
     cursor: default;
   }
   .env-date-picker-value,
@@ -71,16 +69,14 @@
     .env-date-picker-placeholder {
     color: transparent;
   }
-  /* The icon shows what the field opens; presses on it reach the field. The clear button, a quiet icon
-     button like the other fields' actions, stays pressable. */
+  /* The icon shows what the field opens; presses on it reach the field. It keeps its quiet color
+     while the field is read-only, as a read-only Select's chevron does. The clear button, a quiet
+     icon button like the other fields' actions, stays pressable. */
   .env-date-picker-end {
     pointer-events: none;
   }
   .env-date-picker-end > .env-date-picker-clear {
     pointer-events: auto;
-  }
-  .env-date-picker[data-tall] .env-date-picker-end {
-    --env-control-height: var(--env-control-height-sm);
   }
   .env-date-picker-end > .env-icon.env-date-picker-icon {
     display: grid;
@@ -92,17 +88,16 @@
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
   }
-  .env-date-picker-control:focus-within .env-date-picker-icon {
-    color: var(--env-color-border-primary-emphasis);
-  }
   /* Carries the value for native forms; an invalid required field's message points at the field. */
   .env-date-picker-native {
+    /* Visually hidden: a pixel's box, clipped away, still read. */
+    --env-date-picker-native-size: 0.0625rem;
     position: absolute;
     inset-block-end: 0;
     inset-inline-start: 50%;
-    inline-size: 0.0625rem;
-    block-size: 0.0625rem;
-    margin: -0.0625rem;
+    inline-size: var(--env-date-picker-native-size);
+    block-size: var(--env-date-picker-native-size);
+    margin: calc(-1 * var(--env-date-picker-native-size));
     padding: 0;
     border: 0;
     overflow: hidden;
@@ -131,18 +126,21 @@
     font-weight: var(--env-font-weight-medium);
   }
   /* From a medium window up, the time sits beside the calendar, as tall as it, and its heading as
-     tall as the calendar's month heading, so the first time lines up with the weekday names. */
+     tall as the calendar's month heading (Calendar.css), so the two headings share a line. Where
+     the card has too little room beside the trigger for both, the time moves under the calendar
+     rather than running past the card's edge, its wheels whole. */
   @container env-window (width >= 37.5rem) {
     .env-date-picker-panes {
-      grid-template-columns: auto auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .env-date-picker-time {
-      block-size: 0;
-      min-block-size: 100%;
+      flex: 1 0 auto;
     }
     .env-date-picker-time-title {
       justify-content: center;
-      min-block-size: var(--env-control-height-md);
+      min-block-size: calc(0.8 * var(--env-control-height-md));
     }
   }
   /* Motion: the calendar icon, always in the field, doesn't settle in as the field's other actions

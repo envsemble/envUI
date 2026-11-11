@@ -1,10 +1,11 @@
 import PagesOfAList from '../../examples/pagination/PagesOfAList';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
-const previous = '.env-pagination-button:nth-child(1 of .env-pagination-button)';
-const next = '.env-pagination-button:nth-child(2 of .env-pagination-button)';
+const previous = '.env-pagination-button[data-direction="previous"]';
+const next = '.env-pagination-button[data-direction="next"]';
 
 const press = (button: string): PointerStep[] => [
   { click: true },
@@ -51,10 +52,10 @@ function Paging() {
 /** The report's pages, loaded one by one by a pointer no one sees, to the end and back. */
 export default function WhileAPageLoads() {
   return (
-    <Example>
+    <SpecimenFrame>
       <MotionStage label="pages loading">
         <Paging />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

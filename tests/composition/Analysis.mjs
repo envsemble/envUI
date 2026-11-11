@@ -1,9 +1,10 @@
 // Reads packages/ui/src against tests/composition/Rules.json and finds what breaks each composition
-// rule. tests/Composition.test.mjs compares the findings with tests/composition/Exceptions.json.
+// rule. tests/library/Composition.test.mjs compares the findings with tests/composition/Exceptions.json.
 import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, posix, relative, resolve, sep } from 'node:path';
-import { kebab } from '../../scripts/docs/Schema.ts';
+import { libraryEntryPoints } from '../../scripts/docs/LibraryEntryPoints.ts';
+import { kebab } from '../../scripts/docs/PageStructure.ts';
 
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
@@ -83,8 +84,11 @@ function record(findings, section, entry, site) {
   return finding;
 }
 
-export function analyze() {
-  const rules = JSON.parse(readFileSync(rulesFile, 'utf8'));
+/**
+ * The library as the rules read it: its modules, planned ones, the sources and style sheets, and the
+ * problems found so far, with checks that a name in the rules exists.
+ */
+function readLibrary(rules) {
   const problems = [];
   const modules = walk(sourceRoot)
     .map((path) => relative(sourceRoot, path).split(sep).join('/'))
@@ -93,26 +97,65 @@ export function analyze() {
   // Planned modules don't exist yet; the rules may name them, and each stands for its component.
   const planned = (rules.planned?.modules ?? []).filter((module) => !moduleSet.has(module));
   const plannedSet = new Set(planned);
-  const sources = new Map(
-    modules
-      .filter((module) => !isGenerated(module))
-      .map((module) => [module, readFileSync(join(sourceRoot, module), 'utf8')]),
-  );
   const stylesheets = readdirSync(stylesRoot)
     .filter((name) => name.endsWith('.css'))
     .sort();
-  const requireModule = (module, where) => {
-    if (!moduleSet.has(module) && !plannedSet.has(module))
-      problems.push(`${rulesFile} ${where} names ${module}, which doesn't exist.`);
+  return {
+    rules,
+    problems,
+    modules,
+    moduleSet,
+    planned,
+    sources: new Map(
+      modules
+        .filter((module) => !isGenerated(module))
+        .map((module) => [module, readFileSync(join(sourceRoot, module), 'utf8')]),
+    ),
+    stylesheets,
+    // The allowances the findings used; one left unused is stale.
+    usedAllowances: new Set(),
+    requireModule(module, where) {
+      if (!moduleSet.has(module) && !plannedSet.has(module))
+        problems.push(`${rulesFile} ${where} names ${module}, which doesn't exist.`);
+    },
+    requireStylesheet(stylesheet, where) {
+      if (!stylesheets.includes(stylesheet))
+        problems.push(`${rulesFile} ${where} names styles/${stylesheet}, which doesn't exist.`);
+    },
   };
-  const requireStylesheet = (stylesheet, where) => {
-    if (!stylesheets.includes(stylesheet))
-      problems.push(`${rulesFile} ${where} names styles/${stylesheet}, which doesn't exist.`);
-  };
+}
 
-  // Layers.
-  const { order, directories, modules: layeredModules, private: privateScopes } = rules.layers;
+/**
+ * The layers: their order and each module's layer, checked against the rules. A module listed with a
+ * layer other than its directory's, beyond a component's choice between base and composites, gives
+ * its reason.
+ */
+function readLayers(library) {
+  const { rules, problems, modules, planned, requireModule } = library;
+  const { order, directories, modules: listed } = rules.layers;
   const rank = new Map(order.map((layer, index) => [layer, index]));
+  const directoryLayer = (module) => {
+    const directory = Object.keys(directories)
+      .filter((path) => module.startsWith(path))
+      .sort((a, b) => b.length - a.length)[0];
+    return directory === undefined ? undefined : directories[directory];
+  };
+  const layeredModules = Object.fromEntries(
+    Object.entries(listed).map(([module, entry]) => [
+      module,
+      typeof entry === 'string' ? entry : entry.layer,
+    ]),
+  );
+  const components = new Set(['base', 'composites']);
+  for (const [module, entry] of Object.entries(listed)) {
+    const own = layeredModules[module];
+    const folder = directoryLayer(module);
+    const usual = own === folder || (components.has(own) && components.has(folder));
+    if (!usual && typeof entry === 'string')
+      problems.push(
+        `${rulesFile} layers.modules puts ${module} in ${own} beside its directory's ${folder}: give it { "layer", "reason" }.`,
+      );
+  }
   for (const [where, map] of [
     ['layers.directories', directories],
     ['layers.modules', layeredModules],
@@ -124,21 +167,22 @@ export function analyze() {
       else if (![...modules, ...planned].some((module) => module.startsWith(path)))
         problems.push(`${rulesFile} ${where} names ${path}, which holds no module.`);
     }
+  const entryPoints = new Set(
+    libraryEntryPoints().map(({ file }) => relative(sourceRoot, file).split(sep).join('/')),
+  );
   const layerOf = (module) => {
+    if (entryPoints.has(module)) return 'entries';
     if (Object.hasOwn(layeredModules, module)) return layeredModules[module];
-    const directory = Object.keys(directories)
-      .filter((path) => module.startsWith(path))
-      .sort((a, b) => b.length - a.length)[0];
-    return directory === undefined ? undefined : directories[directory];
+    return directoryLayer(module);
   };
   for (const module of modules)
     if (layerOf(module) === undefined)
       problems.push(`${module} has no layer: give it one under layers in ${rulesFile}.`);
-  const privates = Object.entries(privateScopes).filter(([path]) => !path.startsWith('$'));
-  for (const [path, allowed] of privates)
-    for (const module of allowed) requireModule(module, `layers.private ${path}`);
+  return { order, rank, layerOf };
+}
 
-  // Imports.
+/** The library modules each module imports, each with the line of its first import. */
+function readImports({ problems, modules, moduleSet, sources }) {
   const resolveImport = (from, specifier) => {
     if (!specifier.startsWith('.')) return undefined;
     const target = posix.normalize(posix.join(posix.dirname(from), specifier)).replace(/\.js$/, '');
@@ -149,7 +193,7 @@ export function analyze() {
       `${target}/index.tsx`,
     ];
     const found = candidates.find((candidate) => moduleSet.has(candidate));
-    if (found === undefined && !/\.(?:css|json|svg|woff2)$/.test(specifier))
+    if (found === undefined && !/\.(?:css|json|svg|woff2)(?:\?raw)?$/.test(specifier))
       problems.push(`${from} imports ${specifier}, which isn't a module under packages/ui/src.`);
     return found;
   };
@@ -166,30 +210,32 @@ export function analyze() {
       if (target !== undefined && !targets.has(target)) targets.set(target, lineOf(file.pos));
     }
   }
-  const importFindings = new Map();
+  return imports;
+}
+
+/** The imports that go up the layers. */
+function importFindingsOf(imports, { rank, layerOf }) {
+  const findings = new Map();
   for (const [module, targets] of imports)
     for (const [target, line] of targets) {
       const from = layerOf(module);
       const to = layerOf(target);
-      const upward = rank.has(from) && rank.has(to) && rank.get(to) > rank.get(from);
-      const scope = privates.find(
-        ([path, allowed]) =>
-          target.startsWith(path) && !module.startsWith(path) && !allowed.includes(module),
-      );
-      if (!upward && !scope) continue;
-      record(
-        importFindings,
-        'imports',
-        { module, imports: target },
-        { line, info: { from, to, upward, privateTo: scope?.[1] } },
-      );
+      if (!rank.has(from) || !rank.has(to) || rank.get(to) <= rank.get(from)) continue;
+      record(findings, 'imports', { module, imports: target }, { line, info: { from, to } });
     }
+  return findings;
+}
 
-  // Components and the classes they own.
-  const classRules = rules.classes;
-  const shared = new Set(Object.keys(classRules.shared).filter((name) => !name.startsWith('$')));
+/**
+ * The components: a module each, named after it, planned ones and those the rules join, with the
+ * modules, class prefixes, style sheets and slots of each, and each module's component.
+ */
+function readComponents(library, layerOf) {
+  const { rules, problems, modules, planned, stylesheets, requireModule, requireStylesheet } =
+    library;
   const components = new Map();
   const componentOf = new Map();
+  const ownStyles = (name) => new Set(stylesheets.includes(`${name}.css`) ? [`${name}.css`] : []);
   for (const module of modules) {
     if (layerOf(module) === 'entries' || module.startsWith(generated) || isMessages(module))
       continue;
@@ -203,7 +249,7 @@ export function analyze() {
     components.set(name, {
       modules: new Set([module]),
       prefixes: new Set([`env-${kebab(name)}`]),
-      styles: new Set(stylesheets.includes(`${name}.css`) ? [`${name}.css`] : []),
+      styles: ownStyles(name),
       slots: new Set(),
     });
     componentOf.set(module, name);
@@ -214,12 +260,12 @@ export function analyze() {
     components.set(name, {
       modules: new Set(),
       prefixes: new Set([`env-${kebab(name)}`]),
-      styles: new Set(stylesheets.includes(`${name}.css`) ? [`${name}.css`] : []),
+      styles: ownStyles(name),
       slots: new Set(),
       planned: true,
     });
   }
-  for (const [name, entry] of Object.entries(classRules.components)) {
+  for (const [name, entry] of Object.entries(rules.classes.components)) {
     const component = components.get(name) ?? {
       modules: new Set(),
       prefixes: new Set(),
@@ -243,6 +289,18 @@ export function analyze() {
     }
     for (const slot of entry.slots ?? []) component.slots.add(slot);
   }
+  return { components, componentOf };
+}
+
+/**
+ * Who owns a class: `ownerOf` names the component whose prefix it continues, or `shared`, and
+ * remembers each class it was asked about (`seen`) and each that nothing owns (`unowned`). Each
+ * style sheet's owners, which must be a component's or listed without one.
+ */
+function readOwnership(library, components) {
+  const { rules, problems, stylesheets, requireStylesheet } = library;
+  const classRules = rules.classes;
+  const shared = new Set(Object.keys(classRules.shared).filter((name) => !name.startsWith('$')));
   const prefixOwner = new Map();
   for (const [name, component] of components)
     for (const prefix of component.prefixes) {
@@ -258,11 +316,8 @@ export function analyze() {
   /** The component that owns a class, `shared`, or undefined. */
   const ownerOf = (token, where) => {
     const name = token.replace(/-\*$/, '');
-    if (shared.has(name)) {
-      seen.add(name);
-      return 'shared';
-    }
     seen.add(name);
+    if (shared.has(name)) return 'shared';
     const prefix = prefixes.find((candidate) => continues(name, candidate));
     if (prefix === undefined) {
       if (!unowned.has(name)) unowned.set(name, where);
@@ -280,65 +335,48 @@ export function analyze() {
       problems.push(
         `styles/${stylesheet} belongs to no component: list it under a component's styles in ${rulesFile}, or under stylesheetsWithoutComponent.`,
       );
-  const { layoutProperties, rules: childRules } = classRules.childRules;
-  for (const rule of childRules) requireStylesheet(rule.stylesheet, 'classes.childRules');
-  const propertyPattern = (patterns) =>
-    new RegExp(
-      `^(?:${patterns.map((pattern) => pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[a-z-]*')).join('|')})$`,
-    );
-  const layoutProperty = propertyPattern(layoutProperties);
-  const usedAllowances = new Set();
-  /** The child rule that lets a stylesheet's selectors name a class, if any. */
-  const childRuleFor = (stylesheet, token) => {
-    const rule = childRules.find(
-      (candidate) => candidate.stylesheet === stylesheet && candidate.classes.includes(token),
-    );
-    if (rule) usedAllowances.add(`childRules ${stylesheet} ${token}`);
-    return rule;
-  };
-  const disallowedProperties = (rule, properties) => {
-    const extra = propertyPattern(rule.properties ?? []);
-    return properties.filter(
-      (property) => !layoutProperty.test(property) && !(rule.properties && extra.test(property)),
-    );
-  };
+  return { shared, ownerOf, seen, unowned, stylesheetOwners };
+}
 
-  // Markup: raw interactive HTML and emitted classes.
+/** A pattern of property names, `*` standing for any run of letters and dashes. */
+const propertyPattern = (patterns) =>
+  new RegExp(
+    `^(?:${patterns.map((pattern) => pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[a-z-]*')).join('|')})$`,
+  );
+
+/**
+ * Raw interactive HTML in the modules, and classes a module emits that another component owns
+ * but neither its own slot nor a component it imports.
+ */
+function markupFindings(library, { components, componentOf }, imports, ownerOf) {
+  const { rules, requireModule, modules, sources, usedAllowances } = library;
   const interactive = rules.interactive;
   for (const module of Object.keys(interactive.leafControls))
     requireModule(module, 'interactive.leafControls');
-  const dynamicRoles = Object.entries(interactive.dynamicRoles ?? {}).filter(
-    ([module]) => module !== '$comment',
-  );
-  for (const [module] of dynamicRoles) requireModule(module, 'interactive.dynamicRoles');
+  for (const module of Object.keys(interactive.dynamicRoles ?? {}))
+    if (module !== '$comment') requireModule(module, 'interactive.dynamicRoles');
   const interactiveFindings = new Map();
   const tsxClassFindings = new Map();
   for (const module of modules) {
     if (module.startsWith(generated)) continue;
-    const text = sources.get(module);
     const file = ts.createSourceFile(
       module,
-      text,
+      sources.get(module),
       ts.ScriptTarget.Latest,
       true,
       module.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
     );
     const owner = componentOf.get(module);
     const importsOf = imports.get(module);
+    const lineOf = (node) => file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1;
     const visit = (node) => {
-      if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+      if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node))
         for (const element of interactiveElements(node, interactive, module, usedAllowances)) {
           if (interactive.leafControls[module]?.includes(element))
             usedAllowances.add(`leafControls ${module} ${element}`);
           else
-            record(
-              interactiveFindings,
-              'interactive',
-              { module, element },
-              { line: file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1 },
-            );
+            record(interactiveFindings, 'interactive', { module, element }, { line: lineOf(node) });
         }
-      }
       if (
         ts.isStringLiteral(node) ||
         ts.isNoSubstitutionTemplateLiteral(node) ||
@@ -346,7 +384,7 @@ export function analyze() {
         ts.isTemplateMiddle(node) ||
         ts.isTemplateTail(node)
       ) {
-        const line = file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1;
+        const line = lineOf(node);
         for (const match of node.text.matchAll(classPattern)) {
           const token = classToken(match[0]);
           if (token === 'env-*') continue;
@@ -369,9 +407,33 @@ export function analyze() {
     };
     visit(file);
   }
+  return { interactiveFindings, tsxClassFindings };
+}
 
-  // Stylesheets: selectors that name another component's classes.
-  const cssClassFindings = new Map();
+/**
+ * Selectors of a style sheet that name another component's classes, unless a child rule lets it
+ * set layout properties, and those it allows, on them.
+ */
+function stylesheetFindings(library, { ownerOf, stylesheetOwners }) {
+  const { rules, stylesheets, requireStylesheet, usedAllowances } = library;
+  const { layoutProperties, rules: childRules } = rules.classes.childRules;
+  for (const rule of childRules) requireStylesheet(rule.stylesheet, 'classes.childRules');
+  const layoutProperty = propertyPattern(layoutProperties);
+  /** The child rule that lets a stylesheet's selectors name a class, if any. */
+  const childRuleFor = (stylesheet, token) => {
+    const rule = childRules.find(
+      (candidate) => candidate.stylesheet === stylesheet && candidate.classes.includes(token),
+    );
+    if (rule) usedAllowances.add(`childRules ${stylesheet} ${token}`);
+    return rule;
+  };
+  const disallowedProperties = (rule, properties) => {
+    const extra = propertyPattern(rule.properties ?? []);
+    return properties.filter(
+      (property) => !layoutProperty.test(property) && !(rule.properties && extra.test(property)),
+    );
+  };
+  const findings = new Map();
   for (const stylesheet of stylesheets) {
     const text = readFileSync(join(stylesRoot, stylesheet), 'utf8');
     const owners = stylesheetOwners.get(stylesheet);
@@ -384,7 +446,7 @@ export function analyze() {
         const disallowed = childRule ? disallowedProperties(childRule, properties) : [];
         if (childRule && disallowed.length === 0) continue;
         const finding = record(
-          cssClassFindings,
+          findings,
           'cssClasses',
           { stylesheet, class: token },
           { line, info: { owner: tokenOwner, disallowed: new Set() } },
@@ -393,25 +455,27 @@ export function analyze() {
       }
     }
   }
-  for (const [name, where] of unowned)
-    problems.push(
-      `${name} (${where}) belongs to no component: add it, or a prefix of it, to a component's classes in ${rulesFile}.`,
-    );
+  return findings;
+}
 
-  // Allowances that no longer allow anything, so the rules can't hide a later regression.
-  for (const [module, expressions] of dynamicRoles)
-    for (const expression of Object.keys(expressions))
-      if (!usedAllowances.has(`dynamicRoles ${module} ${expression}`))
-        problems.push(
-          `${rulesFile} interactive.dynamicRoles lists the roles of role={${expression}} in ${module}, which sets no such role it can't read: remove it.`,
-        );
+/** Allowances that no longer allow anything, so the rules can't hide a later regression. */
+function staleAllowances(library, components, { shared, seen, stylesheetOwners }) {
+  const { rules, problems, usedAllowances } = library;
+  const { interactive, classes: classRules } = rules;
+  for (const [module, expressions] of Object.entries(interactive.dynamicRoles ?? {}))
+    if (module !== '$comment')
+      for (const expression of Object.keys(expressions))
+        if (!usedAllowances.has(`dynamicRoles ${module} ${expression}`))
+          problems.push(
+            `${rulesFile} interactive.dynamicRoles lists the roles of role={${expression}} in ${module}, which sets no such role it can't read: remove it.`,
+          );
   for (const [module, elements] of Object.entries(interactive.leafControls))
     for (const element of elements)
       if (!usedAllowances.has(`leafControls ${module} ${element}`))
         problems.push(
           `${rulesFile} interactive.leafControls lets ${module} render a raw <${element}>, which it no longer does: remove it.`,
         );
-  for (const rule of childRules)
+  for (const rule of classRules.childRules.rules)
     for (const token of rule.classes)
       if (!usedAllowances.has(`childRules ${rule.stylesheet} ${token}`))
         problems.push(
@@ -434,13 +498,36 @@ export function analyze() {
       problems.push(
         `${rulesFile} classes.stylesheetsWithoutComponent lists styles/${stylesheet}, which belongs to ${[...stylesheetOwners.get(stylesheet)].join(', ')}: remove it.`,
       );
+}
 
+export function analyze() {
+  const library = readLibrary(JSON.parse(readFileSync(rulesFile, 'utf8')));
+  const layers = readLayers(library);
+  const imports = readImports(library);
+  const importFindings = importFindingsOf(imports, layers);
+  const componentMap = readComponents(library, layers.layerOf);
+  const ownership = readOwnership(library, componentMap.components);
+  const { interactiveFindings, tsxClassFindings } = markupFindings(
+    library,
+    componentMap,
+    imports,
+    ownership.ownerOf,
+  );
+  const cssClassFindings = stylesheetFindings(library, ownership);
+  for (const [name, where] of ownership.unowned)
+    library.problems.push(
+      `${name} (${where}) belongs to no component: add it, or a prefix of it, to a component's classes in ${rulesFile}.`,
+    );
+  staleAllowances(library, componentMap.components, ownership);
   return {
-    problems,
-    layers: order,
-    // Who owns what, for tests/StyleImports.test.mjs: each module's component, each component's
+    problems: library.problems,
+    layers: layers.order,
+    // Who owns what, for tests/library/StyleImports.test.mjs: each module's component, each component's
     // style sheets, and a class's owner, a component or 'shared'.
-    ownership: { componentOf, components, ownerOf: (token) => ownerOf(token, 'a test') },
+    ownership: {
+      ...componentMap,
+      ownerOf: (token) => ownership.ownerOf(token, 'a test'),
+    },
     findings: {
       imports: importFindings,
       interactive: interactiveFindings,
@@ -606,6 +693,3 @@ function splitSelectors(prelude) {
   push(prelude.length);
   return parts;
 }
-
-export const sourcePath = (module) => `packages/ui/src/${module}`;
-export const stylesheetPath = (stylesheet) => `packages/ui/src/styles/${stylesheet}`;

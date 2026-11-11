@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import AdvancedOptions from '../../examples/progressive-disclosure/AdvancedOptions';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const summary = '.env-disclosure > summary';
 const archived = '.env-disclosure-panel .env-checkbox';

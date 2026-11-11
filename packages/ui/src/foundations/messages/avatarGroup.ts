@@ -14,5 +14,3 @@ export const avatarGroup = {
   label: ({ count, countText, names }: { count: number; countText: string; names: string }) =>
     `${countText} ${plural(count, 'person', 'people')}: ${names}`,
 };
-
-export type AvatarGroupMessages = typeof avatarGroup;

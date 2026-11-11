@@ -4,11 +4,12 @@
 // surfaces, its padding and gaps hatched, and its name.
 
 import { memo, useLayoutEffect, useRef } from 'react';
-import type { NodeData } from '../model.js';
+import type { Box, NodeData } from '../model.js';
 import { labelOf } from '../readout.js';
 import { windowClassOf } from '../units.js';
 import { devStats, timed } from './stats.js';
 import { surfaceOf } from './surfaces.js';
+import { flag } from '../../internal/flag.js';
 
 /** A node's surfaces, copied at a size and a version of its content, with what scrolls them. */
 export interface CopiedSurface {
@@ -144,11 +145,11 @@ export const Plane = memo(
         className="env-dev-plane"
         data-plane={node.key}
         data-kind={node.kind}
-        data-overlay={node.overlay ? '' : undefined}
+        data-overlay={flag(node.overlay)}
         data-window={windowClassOf(node.size.w / rootPx)}
-        data-container={node.container ? '' : undefined}
-        data-problems={problems ? '' : undefined}
-        data-selected={selected ? '' : undefined}
+        data-container={flag(node.container)}
+        data-problems={flag(problems)}
+        data-selected={flag(selected)}
         style={{
           width: clip.w,
           height: clip.h,
@@ -190,11 +191,9 @@ export const Plane = memo(
     a.rootPx === b.rootPx,
 );
 
-type Rect = { x: number; y: number; w: number; h: number };
+const sameBox = (a: Box, b: Box) => a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
 
-const sameBox = (a: Rect, b: Rect) => a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
-
-const rectPath = ({ x, y, w, h }: Rect) => `M${x} ${y}h${w}v${h}h${-w}Z`;
+const rectPath = ({ x, y, w, h }: Box) => `M${x} ${y}h${w}v${h}h${-w}Z`;
 
 /**
  * Padding hatched one way, the space between and around the children the other, the children

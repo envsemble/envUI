@@ -11,20 +11,27 @@ import {
 } from 'react';
 import type { IconButtonEmphasisProps } from './Button.js';
 import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
-import { TooltipNestingContext, TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
+import {
+  TooltipNestingContext,
+  TooltipPopup,
+  tooltipDelay,
+} from '../internal/popup/TooltipPopup.js';
 import { IconCheck } from '../icons/Check.js';
 import { IconContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
-import { useButtonEmphasis } from '../internal/ControlDefaults.js';
+import { useButtonEmphasis } from '../internal/control/ControlDefaults.js';
 import { useCopy } from '../internal/useCopy.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { copyButton as copyButtonMessages } from '../foundations/messages/copyButton.js';
 import type { ControlSize } from '../foundations/Theme.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/CopyButton.css';
 
-interface CopyButtonBaseProps
-  extends Omit<ComponentPropsWithRef<'button'>, 'value' | 'onCopy' | 'children' | 'type'> {
+interface CopyButtonBaseProps extends Omit<
+  ComponentPropsWithRef<'button'>,
+  'value' | 'onCopy' | 'children' | 'type'
+> {
   /** The text to copy, or a function that returns it, also as a promise, when pressed. */
   value: string | (() => string | Promise<string>);
   /** Runs once the text is on the clipboard, with that text. */
@@ -156,11 +163,12 @@ export function CopyButton({
     onClick: press,
     className: classNames('env-copy-button', className),
     size,
-    'data-copied': result?.copied ? '' : undefined,
-    'data-failed': result && !result.copied ? '' : undefined,
+    'data-copied': flag(result?.copied),
+    'data-failed': flag(result && !result.copied),
   };
   const button = iconOnly ? (
     <ButtonBase
+      // ButtonBaseProps is a union by iconOnly, which the shared props alone do not pick.
       {...({
         ...shared,
         fallbackVariant: 'primary',
@@ -171,12 +179,13 @@ export function CopyButton({
     />
   ) : (
     <ButtonBase
+      // ButtonBaseProps is a union by iconOnly, which the shared props alone do not pick.
       {...({
         ...shared,
         fallbackVariant: 'primary',
         startIcon: symbol,
         'aria-label': name,
-        children: children as CopyButtonLabel,
+        children,
       } as ButtonBaseProps)}
     />
   );

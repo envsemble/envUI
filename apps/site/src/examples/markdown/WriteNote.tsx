@@ -1,4 +1,4 @@
-import { MarkdownEditor } from '@envsemble/envui/content';
+import { MarkdownEditor } from '@envsemble/envui/markdown';
 
 const note = `## Launch checklist
 

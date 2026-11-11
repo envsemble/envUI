@@ -1,63 +1,95 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
-import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
-
-const invitation = '.env-toast[data-tone="success"] .env-toast-dismiss';
+import { useStageLayer } from '../motion/Playback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 /*
- * A second notification arrives and stacks with the first; the pointer dismisses it, and the
- * first is alone again, as it began.
+ * Presses Undo on the notification of an archived project: it leaves, and a notification that the
+ * project is restored takes its place. One shows at a time, so the tile never shows a half-hidden
+ * stack.
  */
 const script: PointerStep[] = [
   { wait: 400 },
-  { cue: 'invite' },
-  { wait: 1400 },
-  { to: invitation },
-  { wait: 500 },
+  { to: '.env-toast-action' },
+  { wait: 700 },
   { click: true },
   { wait: 300 },
   { leave: true },
-  { wait: 1000 },
+  { wait: 2600 },
+  { cue: 'again' },
+  { wait: 2600 },
 ];
 
 /**
- * A notification of an archived project, with Undo, and an invitation sent, as cued. Stopped, it
- * dismisses the invitation rather than being drawn anew, which would bring the first in again.
+ * How long after one notification starts to leave the next one comes: while it fades, so the stage
+ * is never empty between them, but not before it has mostly gone, so the two never stack.
+ */
+const handover = 120;
+
+/**
+ * A notification of an archived project, short enough to show whole in a gallery's tile, with Undo,
+ * which restores the project. When the tile stops, or at the end of a round, the restored
+ * notification leaves and the archived one shows again.
  */
 function Notices() {
   const toast = useToast();
-  const invited = useRef<string | null>(null);
-  usePointer(script, {
-    onCue: (cue) => {
-      if (cue === 'invite')
-        invited.current = toast.show({
-          tone: 'success',
-          message: 'Invitation sent.',
-          duration: Infinity,
-        });
-    },
-    onRest: () => {
-      if (invited.current) toast.dismiss(invited.current);
-      invited.current = null;
-    },
-  });
-  useEffect(() => {
-    const id = toast.show({
-      message: 'Project archived.',
-      action: { label: 'Undo', onClick: () => {} },
+  const shown = useRef<string | null>(null);
+  /** Whether the archived notification is the one shown, as at rest. */
+  const archived = useRef(false);
+  const timer = useRef(0);
+  const archive = useCallback(() => {
+    archived.current = true;
+    shown.current = toast.show({
+      message: 'Archived.',
+      action: {
+        label: 'Undo',
+        onClick: () => {
+          if (shown.current) toast.dismiss(shown.current);
+          shown.current = null;
+          archived.current = false;
+          timer.current = window.setTimeout(() => {
+            shown.current = toast.show({
+              tone: 'success',
+              message: 'Restored.',
+              duration: Infinity,
+            });
+          }, handover);
+        },
+      },
     });
-    return () => toast.dismiss(id);
   }, [toast]);
+  const again = () => {
+    if (archived.current) return;
+    archived.current = true;
+    window.clearTimeout(timer.current);
+    if (shown.current) toast.dismiss(shown.current);
+    shown.current = null;
+    timer.current = window.setTimeout(archive, handover);
+  };
+  usePointer(script, { onCue: again, onRest: again });
+  useEffect(() => {
+    archive();
+    return () => {
+      window.clearTimeout(timer.current);
+      if (shown.current) toast.dismiss(shown.current);
+      shown.current = null;
+    };
+  }, [archive, toast]);
   return null;
 }
 
+/** The tiles' window (Tile.css), as an overlay: drawn at the overlays' one scale. */
+export const tileWindow: TileWindow = { overlay: true };
+
 /**
- * A notification, and another stacking with it, in the live region rather than a picture of one,
- * so they arrive, glide and leave with their own motion: the region renders into the tile's layer,
- * whose transform holds it in the tile's corner.
+ * A notification in the live region rather than a picture of one, so it arrives and leaves with its
+ * own motion. The region renders into the tile's layer, whose transform keeps it in the tile's
+ * corner.
  */
 export default function ToastTile() {
-  const layer = usePreviewLayer();
+  const layer = useStageLayer();
   if (!layer) return null;
   return (
     <PortalContainer container={layer}>

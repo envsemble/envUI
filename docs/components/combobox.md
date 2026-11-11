@@ -38,8 +38,7 @@ components:
 examples:
   ChooseOwner:
     role: overview
-    motion: true
-  Variants: variants
+    open: true
   ComboboxAnatomy: anatomy
   ComboboxListAnatomy: anatomy
   Reviewers: example
@@ -50,20 +49,6 @@ examples:
 ---
 
 # Combobox
-
-## Variants
-
-```tsx figure=Variants
-
-```
-
-1. **Outline**
-2. **Floating**
-
-| Variant  | Use for                                                 |
-| -------- | ------------------------------------------------------- |
-| Outline  | In forms, dialogs and toolbars. The default.            |
-| Floating | A long form on a page, as TextField's floating variant. |
 
 ## Anatomy
 
@@ -79,8 +64,6 @@ examples:
 6. **Clear** (`env-combobox-clear`, `clearable`)
 7. **Trigger** (`env-combobox-trigger`)
 
-Not shown: the control, which holds the chips, the input and the buttons, and takes the field's own box.
-
 ```tsx figure=ComboboxListAnatomy open
 
 ```
@@ -94,9 +77,15 @@ Not shown: the control, which holds the chips, the input and the buttons, and ta
 
 ### States
 
-A read-only field can be focused and its list browsed, but its value can't change.
+A read-only field can be focused and its list browsed, but its value can't change; its chevron stays, muted, and doesn't answer the pointer, as a read-only Select's.
 
 <!-- specimen: States -->
+
+### Typing to filter
+
+The list narrows as people type, and the whole list opens again from the field's button.
+
+<!-- specimen: ChooseOwner -->
 
 ### Several reviewers
 
@@ -187,11 +176,11 @@ A field without a visible label, such as in a toolbar, says what to type in its 
 
 ### Usage
 
-Combobox takes its options as `items`, each with a `value` and a `label`, and optionally a `description` and `start` content, such as an Avatar; a ComboboxGroup puts items under a heading.
+Combobox takes its options as `items`, each with a `value` and a `label`, and optionally a `description` and `start` content, such as an Avatar; a ComboboxGroup puts items under a heading. An entry with an `items` array is a group, so an option has no field of that name.
 
 - Control it with `value`, `null` for none, and `onValueChange`, which receives the value and its item, or leave it uncontrolled with `defaultValue`.
 - `label`, `description` and `error` work as on TextField.
-- `clearable` adds a clear button while there is a value, and <kbd>Esc</kbd> on the closed field clears it too.
+- `clearable` adds a clear button while there is a value, and <kbd>Esc</kbd> on the closed field clears it too. Beside chips, it shows with a mouse only while the field is under the pointer or has focus; on a touch screen it always shows.
 
 ```tsx source=ChooseOwner
 
@@ -253,17 +242,15 @@ By default the list shows the options whose label or description contains the ty
 />
 ```
 
-#### Variants and sizes
-
-`variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label.
+#### Sizes
 
 - `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height.
-- With `showLabel={false}`, a `placeholder` and an `aria-label` name it.
+- With `visibleLabel={false}`, a `placeholder` and an `aria-label` name it.
 
 ```tsx
 <Combobox
   size="sm"
-  showLabel={false}
+  visibleLabel={false}
   aria-label="Document"
   placeholder="Document"
   items={documents}
@@ -280,5 +267,14 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, chosen ones take the selection's fill as well as their check mark, and groups part by space. Group labels sit a little ahead of the rows, and options lie one under the next with no space between them. A chosen option's check mark ends its row, after the label.
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
 - **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is an IconButton with a cross: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`, and the icons at the start, `env-combobox-leading` and `env-combobox-value-leading`, are `env-combobox-start` and `env-combobox-value-icon`, as other components name their start slots. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`. An option's `leading` content is `start`, as on List.Item.
+- **1.0.0-prerelease.6**: The chevron turns over `--env-motion-duration-medium` with `--env-motion-ease-enter` as the list opens, and back in `--env-motion-duration-fast` with `--env-motion-ease-exit`, done when the list is.
+- **1.0.0-prerelease.6**: The list opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
+- **1.0.0-prerelease.6**: The chevron turns half a circle as the list opens and closes, rather than flipping over.
+- **1.0.0-prerelease.6**: Beside chips, the clear button shows with a mouse only while the field is under the pointer or has focus, and each chip's cross is a little smaller, so the field's end holds one cross at rest; the clear button and the chevron stand a step apart.
+- **1.0.0-prerelease.6**: While its list is open, the field keeps its focused frame, the accent edge and label, also when focus is in the popup, as when it opens under the pointer.
+- **1.0.0-prerelease.6**: An avatar in the field and in the options takes an avatar's small size, large enough for its initials, rather than a disc of its color alone; where initials don't fit, in a small field at the compact scale and in a chip, an avatar of initials is left out, while an icon, a photo or a figure stays. A read-only field keeps its chevron, muted, as a read-only Select does.
+- **1.0.0-prerelease.6**: A multiple field stays one row tall while its chips fit there; the input moves to a row of its own only once its text no longer fits.
+- **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends. A small one with a visible label takes the medium height, so its floated label and its value each have room, and says so in the console while developing: `sm` is for a field with its label hidden.
+- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, chosen ones take the selection's fill as well as their check mark, and groups part by space. Group labels sit a little ahead of the rows, and options lie one under the next with no space between them. A chosen option's check mark ends its row, after the label.

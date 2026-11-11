@@ -6,6 +6,8 @@
     "moduleResolution": "Bundler",
     "jsx": "react-jsx",
     "strict": true,
+    "types": ["node"],
+    "noUncheckedSideEffectImports": false,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "declaration": true,

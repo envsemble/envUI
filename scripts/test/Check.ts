@@ -7,7 +7,15 @@
 // --base       the branch to compare with; else ENVUI_BASE, else origin/envui-1.0, else origin/dev
 // --files      check these paths instead of the branch's changes, such as to try the selection
 // --dry-run    print the selection and stop
-import { changedFiles, selectScope, serversFor, specNeeds, unitTestFiles } from './TestScope.ts';
+import { parseArgs } from 'node:util';
+import {
+  changedFiles,
+  selectScope,
+  serversFor,
+  specFile,
+  specNeeds,
+  unitTestFiles,
+} from './TestScope.ts';
 import {
   bin,
   bold,
@@ -22,22 +30,24 @@ import {
 } from './TestTasks.ts';
 
 const started = performance.now();
-const argv = process.argv.slice(2);
-const option = (name: string) => {
-  const index = argv.indexOf(name);
-  return index === -1 ? undefined : argv[index + 1];
-};
-const affected = argv.includes('--affected');
-const dryRun = argv.includes('--dry-run');
+const {
+  values: { affected, 'dry-run': dryRun, base: baseOption, files },
+} = parseArgs({
+  options: {
+    affected: { type: 'boolean', default: false },
+    'dry-run': { type: 'boolean', default: false },
+    base: { type: 'string' },
+    files: { type: 'string' },
+  },
+});
 const tier = affected ? 'check:affected' : 'check';
 
 let paths: string[];
-const files = option('--files');
 if (files) {
   paths = files.split(',').filter(Boolean);
   console.log(bold(`${tier}: ${paths.length} given files`));
 } else {
-  const { base, mergeBase, changes } = changedFiles({ base: option('--base') });
+  const { base, mergeBase, changes } = changedFiles({ base: baseOption });
   paths = changes.map((change) => change.path);
   console.log(
     bold(`${tier}: ${paths.length} files changed against ${base}`) +
@@ -49,7 +59,7 @@ if (!paths.length) {
   process.exit(0);
 }
 
-const scope = selectScope(paths);
+const scope = selectScope(paths, { affected });
 // A list of changed files too long for one command line (Windows takes about 32,000 characters)
 // is checked as the whole repository instead, as a branch that moved many files needs anyway.
 const tooLong = (paths: readonly string[]) =>
@@ -73,11 +83,11 @@ const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpec
 // The site build takes seconds, so the fast tier builds it when its specs open it.
 const builds = {
   library: affected && scope.build.library,
-  site: browserSpecs.some((name) => needs.get(name)!.site),
+  site: [...needs].some(([name, need]) => need.site && browserSpecs.includes(name)),
 };
 
 // What runs, and why.
-const list = (items) =>
+const list = (items: string[]) =>
   items.length > 6
     ? `${items.slice(0, 6).join(', ')} and ${items.length - 6} more`
     : items.join(', ');
@@ -110,7 +120,9 @@ if (deferred.length)
   );
 for (const [helper, users] of scope.helpers)
   if (!users.some((name) => scope.specs.has(name)) && users.length)
-    console.log(dim(`  ${helper}: ${users.length} specs import it; verify covers them`));
+    console.log(dim(`  ${helper}: ${users.length} specs import it; check:affected runs them`));
+for (const [path, count] of scope.widelyUsed)
+  console.log(dim(`  ${path}: ${count} specs' fixtures use it; check:affected runs them all`));
 const unmatched = scope.unmatched.filter((path) => !scope.helpers.has(path));
 if (unmatched.length) console.log(dim(`  no spec for ${list(unmatched)}; verify covers it`));
 console.log('');
@@ -140,6 +152,9 @@ else if (scope.lint.length)
       },
     ),
   );
+// Unused files, exports and dependencies (knip.jsonc), wherever code or the packages changed.
+if (scope.whole.lint || scope.lint.length)
+  staticTasks.push(task('lint:unused', [...bin.npm, 'run', '-s', 'lint:unused']));
 if (scope.whole.css)
   staticTasks.push(
     task('stylelint', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/site/src/**/*.css']),
@@ -178,6 +193,7 @@ if (scope.generated.has('tokens'))
   staticTasks.push(
     task('tokens:check', node('scripts/build/GeneratePalette.ts', '--check')),
     task('tokens:check build', node('scripts/build/BuildTokens.ts', '--check')),
+    task('tokens:check lint packages', node('scripts/build/SyncLintPackages.ts', '--check')),
   );
 if (scope.generated.has('docs'))
   staticTasks.push(
@@ -187,7 +203,15 @@ if (scope.generated.has('docs'))
       node(
         'scripts/docs/GenerateParts.ts',
         '--check',
-        ...(option('--base') ? ['--base', option('--base')!] : []),
+        ...(baseOption ? ['--base', baseOption] : []),
+      ),
+    ),
+    task(
+      'docs:check exports',
+      node(
+        'scripts/docs/GenerateExports.ts',
+        '--check',
+        ...(baseOption ? ['--base', baseOption] : []),
       ),
     ),
     task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),
@@ -217,7 +241,7 @@ const browserTask = (names: string[], projects: string[], label: string) =>
       // A test that fails once under the load of three engines and passes again is reported as
       // flaky; one that fails twice fails the run.
       ...(affected ? ['--retries=1'] : ['--max-failures=5']),
-      ...names.map((name) => `tests/browser/${name}.spec.ts`),
+      ...names.map((name) => specFile(name)),
     ],
     {
       env: { ENVUI_SERVERS: serversFor(names).join(',') || 'none' },

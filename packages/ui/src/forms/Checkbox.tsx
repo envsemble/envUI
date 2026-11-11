@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import {
   useCheckedInput,
   type CheckedProps,

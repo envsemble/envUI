@@ -1,6 +1,6 @@
 ---
 title: Field
-summary: The parts of a labelled form field, a label, a control, a description and an error, for a control envUI has no field for.
+summary: The label, description and error around a control envUI has no field for.
 status: beta
 since: 1.0.0
 category: Forms & selection
@@ -87,6 +87,10 @@ An error shows once people have had a chance to answer, and adds to the descript
 
 Keep the description while the error shows: the error adds to it.
 
+### Beside envUI's fields
+
+Field is the low-level building block, its label above the control, while TextField, Select, the pickers and the other form fields take the notched label in their edge. Build a form's fields from those, and keep Field for a control they don't cover, so one form doesn't mix the two labels.
+
 ## Accessibility
 
 ### Keyboard
@@ -156,3 +160,5 @@ The parts are the root, `env-field`, the label, `env-field-label`, the control, 
 ## Changelog
 
 - **1.0.0**: Field, on Base UI's Field.
+- **1.0.0-prerelease.6**: Field.Label takes the size, weight and muted color of a field's floated label, so it reads as the labels of envUI's own fields do.
+- **1.0.0-prerelease.6**: Field.Control takes a text field's rounded corners rather than round ends.

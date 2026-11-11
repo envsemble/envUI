@@ -3,8 +3,8 @@ import { Button, Column, Page, Scaffold, Text, TopBar } from '@envsemble/envui';
 import { IconLock } from '@envsemble/envui/icons/Lock';
 import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 import { IconWifiOff } from '@envsemble/envui/icons/WifiOff';
-import { useTimeline } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 /** The three reasons a whole page can't show, each with its own way on. */
@@ -34,7 +34,7 @@ function Cases() {
   // is the first case too, left at once as the figure starts to play.
   const step = useTimeline([10, 5000, 5000, 5000]);
   const index = Math.max(0, step - 1);
-  const shown = cases[index]!;
+  const shown = cases[index];
   return (
     <Scaffold
       scroll="body"

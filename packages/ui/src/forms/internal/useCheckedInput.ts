@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react';
-import { subscribeFormReset } from './subscribeFormReset.js';
+import { useFormReset } from '../../internal/field/useFormReset.js';
 
 export type CheckboxState = boolean | 'mixed';
-export interface CheckedProps<State extends CheckboxState>
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'checked' | 'defaultChecked'> {
+export interface CheckedProps<State extends CheckboxState> extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'checked' | 'defaultChecked'
+> {
   label?: ReactNode;
   checked?: State;
   defaultChecked?: State;
@@ -33,19 +35,17 @@ export function useCheckedInput<State extends CheckboxState>(
     },
     [checkedState, defaultChecked],
   );
-  useEffect(
-    function subscribeToFormReset() {
+  useFormReset(
+    inputRef,
+    function applyReset() {
       const input = inputRef.current;
-      const form = input?.form;
-      if (!input || !form) return;
-      return subscribeFormReset(form, function applyReset() {
-        const resetState = checked ?? defaultChecked;
-        if (checked === undefined) setUncontrolledChecked(resetState);
-        input.checked = resetState === true;
-        input.indeterminate = resetState === 'mixed';
-      });
+      const resetState = checked ?? defaultChecked;
+      if (checked === undefined) setUncontrolledChecked(resetState);
+      if (!input) return;
+      input.checked = resetState === true;
+      input.indeterminate = resetState === 'mixed';
     },
-    [checked, defaultChecked, formId],
+    formId,
   );
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const nextChecked = event.currentTarget.checked;

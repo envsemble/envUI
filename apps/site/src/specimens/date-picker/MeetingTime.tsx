@@ -1,6 +1,7 @@
 import MeetingTime from '../../examples/date-picker/MeetingTime';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage, roomFor } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage, roomFor, rowsAnd } from '../../figures/MotionStage';
 
 const field = '.env-date-picker-control';
 const day = (date: string) => `.env-calendar-day[data-date="${date}"]`;
@@ -54,13 +55,14 @@ function Choosing() {
   usePointer(script);
   return (
     // The field at the top of the room its calendar and wheels open into, below it: the wheels
-    // beside the calendar, or under it on a narrow stage.
+    // beside the calendar, or under it on a narrow stage. The room is what they fill open, so
+    // the field and the calendar sit in the middle of the stage.
     <div
       style={{
         display: 'grid',
         justifyItems: 'center',
         inlineSize: '100%',
-        blockSize: roomFor(26, 41, 30),
+        blockSize: roomFor(rowsAnd(8.75, 4.6875), rowsAnd(14.625, 4), 30),
       }}
     >
       <MeetingTime />

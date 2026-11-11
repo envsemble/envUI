@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { SearchField } from '@envsemble/envui';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 
 const input = 'input[type="search"]';
@@ -45,7 +46,6 @@ function Searching() {
     <>
       <PressedKeys keys={escapes ? ['Esc'] : null} press={escapes} />
       <SearchField
-        variant="floating"
         label="Search members"
         placeholder="Search by name or e-mail"
         style={{ inlineSize: 'min(100%, 20rem)' }}
@@ -57,10 +57,10 @@ function Searching() {
 /** A search, emptied by Esc and then by its clear button, by a pointer no one sees. */
 export default function ClearingTheQuery() {
   return (
-    <Example size="wide">
+    <SpecimenFrame size="wide">
       <MotionStage label="Esc and the clear button emptying the search">
         <Searching />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

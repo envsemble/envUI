@@ -1,6 +1,6 @@
 ---
 title: App frame
-summary: Frame an application's screens with a Scaffold, a TopBar and the same destinations as a NavigationBar, a NavigationRail or a NavigationDrawer, by the width of the window.
+summary: Frame an application's screens and their navigation by the width of the window.
 status: beta
 since: 1.0.0
 intent: Frame the application
@@ -53,10 +53,12 @@ composes:
   - Column
   - Text
   - useContainerSize
+  - windowClassOf
 examples:
   AppFrame:
     role: overview
     stage: shaded
+    device: window
   WithDetails: example
   InstalledWindow: example
   MenuOnPhones: example
@@ -77,7 +79,7 @@ examples:
 
 Side content that is not navigation goes in a supporting pane of [Panes](../components/panes.md), in the body.
 
-```tsx figure=WithDetails stage=shaded motion
+```tsx figure=WithDetails stage=shaded motion device=window
 
 ```
 
@@ -88,7 +90,7 @@ An installed app that draws its own title bar runs it across the whole window, a
 - A [Menubar](../components/menubar.md) goes at its start, where the app has one.
 - Only the body scrolls below it, so the window's controls never cover a scrollbar.
 
-```tsx figure=InstalledWindow stage=shaded
+```tsx figure=InstalledWindow stage=shaded widths="40"
 
 ```
 

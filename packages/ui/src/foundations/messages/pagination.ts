@@ -18,5 +18,3 @@ export const pagination = {
     return total === undefined ? shown : `${shown} of ${total}`;
   },
 };
-
-export type PaginationMessages = typeof pagination;

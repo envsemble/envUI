@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import FromMenu from '../../examples/confirm-dialog/FromMenu';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const menuButton = '.env-icon-button';
 
@@ -30,7 +31,7 @@ const script: PointerStep[] = [
 ];
 
 /**
- * What marks focus for the site's :focus-visible rules (VirtualPointer.ts): an animated figure is
+ * What marks focus for the site's :focus-visible rules (KeyboardControl.ts): an animated figure is
  * inert, so the dialog can't return real focus to the menu's button, as it does outside one.
  */
 const focusMark = 'data-catalogue-focus';

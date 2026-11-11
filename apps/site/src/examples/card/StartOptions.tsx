@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Column, Text } from '@envsemble/envui';
+import { Card, Column, Grid, Text } from '@envsemble/envui';
 
 const options = [
   { id: 'blank', title: 'Blank project', detail: 'Start with an empty plan.' },
@@ -7,18 +7,11 @@ const options = [
   { id: 'import', title: 'Import a file', detail: 'Bring in a spreadsheet or a document.' },
 ];
 
-const grid = {
-  display: 'grid',
-  inlineSize: '100%',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 12rem), 1fr))',
-  gap: '1rem',
-} as const;
-
 export default function StartOptions() {
   const [started, setStarted] = useState<string>();
   return (
     <Column gap={3}>
-      <div style={grid}>
+      <Grid columns={{ min: '12rem' }} gap={4} style={{ inlineSize: '100%' }}>
         {options.map(({ id, title, detail }) => (
           // A button card holds phrasing content only, so its text is spans.
           <Card key={id} onClick={() => setStarted(title)}>
@@ -38,7 +31,7 @@ export default function StartOptions() {
             Available once you have a project.
           </Text>
         </Card>
-      </div>
+      </Grid>
       <Text variant="caption" emphasis="muted" role="status">
         {started && `Starting: ${started}`}
       </Text>

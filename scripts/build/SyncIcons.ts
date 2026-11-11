@@ -1,12 +1,10 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
+import { libraryDirectory } from '../RepositoryPaths.ts';
 
 // Maintainer-only command. Consumer installation and ordinary builds never fetch icons.
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const packageRoot = resolve(root, 'packages/ui');
-const manifestPath = resolve(packageRoot, 'icon-manifest.json');
+const manifestPath = resolve(libraryDirectory, 'icon-manifest.json');
 const initialRevision = 'bd8cb85bd4bad964fe6918f79665bb40c3a8efef';
 const args = process.argv.slice(2);
 if (
@@ -53,7 +51,14 @@ async function download(url: string): Promise<Buffer> {
   }
   throw new Error(`Could not download ${url}`);
 }
-async function tree(sha) {
+/** An entry of a GitHub tree: a file or a folder. */
+interface TreeEntry {
+  path: string;
+  type: 'blob' | 'tree';
+  sha: string;
+}
+
+async function tree(sha: string): Promise<TreeEntry[]> {
   const result = JSON.parse((await download(api + sha)).toString('utf8'));
   if (result.truncated || !Array.isArray(result.tree))
     throw new Error(`Incomplete upstream tree ${sha}`);
@@ -68,8 +73,10 @@ if (!web) throw new Error('Official symbols/web directory is missing');
 const catalogue = (await tree(web.sha))
   .filter((entry) => entry.type === 'tree')
   .sort((a, b) => (a.path < b.path ? -1 : 1));
-const assets = resolve(packageRoot, 'src/assets/material-symbols-rounded');
-await mkdir(assets, { recursive: true });
+// The upstream SVGs, kept unchanged in the package's vendor/ folder, outside its source.
+const vendorFolder = 'vendor/material-symbols-rounded';
+const vendored = resolve(libraryDirectory, vendorFolder);
+await mkdir(vendored, { recursive: true });
 const previousIcons = new Map(previous?.icons.map((icon) => [icon.name, icon]) ?? []);
 let completed = 0;
 const icons: ManifestIcon[] = new Array(catalogue.length);
@@ -78,22 +85,22 @@ async function worker() {
   while (cursor < catalogue.length) {
     const index = cursor++;
     const entry = catalogue[index];
-    const variants = {};
+    const variants: ManifestIcon['variants'] = {};
     for (const fill of [0, 1]) {
       const filename = `${entry.path}${fill ? '_fill1' : ''}_24px.svg`;
       const upstreamPath = `symbols/web/${entry.path}/materialsymbolsrounded/${filename}`;
-      const source = `src/assets/material-symbols-rounded/${filename}`;
+      const source = `${vendorFolder}/${filename}`;
       const saved =
         previous?.upstream.revision === revision &&
         previousIcons.get(entry.path)?.variants[String(fill)];
       let bytes: Buffer | null = saved
-        ? await readFile(resolve(packageRoot, source)).catch(() => null)
+        ? await readFile(resolve(libraryDirectory, source)).catch(() => null)
         : null;
       if (!saved || !bytes || hash(bytes) !== saved.sha256)
         bytes = await download(raw + upstreamPath);
       if (!bytes.toString('utf8').startsWith('<svg'))
         throw new Error(`Not an SVG: ${upstreamPath}`);
-      await writeFile(resolve(packageRoot, source), bytes);
+      await writeFile(resolve(libraryDirectory, source), bytes);
       variants[String(fill)] = {
         upstreamPath,
         source,
@@ -109,8 +116,8 @@ async function worker() {
 }
 await Promise.all(Array.from({ length: 24 }, () => worker()));
 const licenseBytes = await download(raw + 'LICENSE');
-await mkdir(resolve(packageRoot, 'licenses'), { recursive: true });
-await writeFile(resolve(packageRoot, 'licenses/Material-Symbols-LICENSE.txt'), licenseBytes);
+await mkdir(resolve(libraryDirectory, 'licenses'), { recursive: true });
+await writeFile(resolve(libraryDirectory, 'licenses/Material-Symbols-LICENSE.txt'), licenseBytes);
 const manifest = {
   schemaVersion: 1,
   upstream: { repository, revision, cataloguePath: 'symbols/web', catalogueTreeSha: web.sha },
@@ -138,8 +145,8 @@ const expected = new Set(
     Object.values(icon.variants).map((variant) => variant.source.split('/').at(-1)),
   ),
 );
-for (const file of await readdir(assets)) {
-  if (file.endsWith('.svg') && !expected.has(file)) await unlink(resolve(assets, file));
+for (const file of await readdir(vendored)) {
+  if (file.endsWith('.svg') && !expected.has(file)) await unlink(resolve(vendored, file));
 }
 console.log(
   `Pinned ${manifest.sourceCount} SVGs at ${revision}. Run node scripts/build/GenerateIcons.ts.`,

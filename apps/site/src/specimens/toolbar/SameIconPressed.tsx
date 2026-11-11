@@ -1,6 +1,6 @@
 import SameIconPressed from '../../examples/toolbar/SameIconPressed';
-import { usePointer } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { pressing, pressingClock } from './Pressing';
 
 function Pressing() {

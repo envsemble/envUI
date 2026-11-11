@@ -1,39 +1,50 @@
 import { TextField } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
-/** Empty, filled, invalid, read-only and disabled fields, side by side. */
+/**
+ * An outline field in each state, side by side: empty, under the pointer and focused as the
+ * catalogue forces them (InteractionStates.css), filled, invalid, read-only and disabled.
+ */
 export default function States() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection" still>
       <SpecimenGrid size="compact">
-        <Specimen title="Empty">
+        <SpecimenPart title="Empty">
           <TextField label="Project name" placeholder="Enter a name" />
-        </Specimen>
-        <Specimen title="Filled">
+        </SpecimenPart>
+        <SpecimenPart title="Hover">
+          <TextField
+            label="Project name"
+            placeholder="Enter a name"
+            className="catalogue-force-hover"
+            inert
+          />
+        </SpecimenPart>
+        <SpecimenPart title="Focus">
+          <TextField
+            label="Project name"
+            defaultValue="Northwind"
+            className="catalogue-force-focus"
+            inert
+          />
+        </SpecimenPart>
+        <SpecimenPart title="Filled">
           <TextField label="Project name" defaultValue="Northwind launch" />
-        </Specimen>
-        <Specimen title="Invalid">
+        </SpecimenPart>
+        <SpecimenPart title="Invalid">
           <TextField
             label="Project handle"
             defaultValue="Northwind Launch"
             error="Use lowercase letters and hyphens."
           />
-        </Specimen>
-        <Specimen title="Read only">
+        </SpecimenPart>
+        <SpecimenPart title="Read-only">
           <TextField label="Project ID" defaultValue="PRJ-2041" readOnly />
-        </Specimen>
-        <Specimen title="Disabled">
+        </SpecimenPart>
+        <SpecimenPart title="Disabled">
           <TextField label="Project name" defaultValue="Northwind launch" disabled />
-        </Specimen>
-        <Specimen title="Floating, invalid">
-          <TextField
-            variant="floating"
-            label="Project handle"
-            defaultValue="Northwind Launch"
-            error="Use lowercase letters and hyphens."
-          />
-        </Specimen>
+        </SpecimenPart>
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

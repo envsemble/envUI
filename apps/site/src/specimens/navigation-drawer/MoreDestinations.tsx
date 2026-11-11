@@ -1,8 +1,10 @@
 import MoreDestinations from '../../examples/navigation-drawer/MoreDestinations';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
-const place = (index: number) => `.env-navigation-bar-list > li:nth-child(${index}) > *`;
+const more = '.env-navigation-bar-more';
+const inbox = '.env-navigation-bar-item[aria-label="Inbox, 4 new"]';
 
 /*
  * Inbox is current. The pointer presses More: its menu opens with the other three destinations,
@@ -11,7 +13,7 @@ const place = (index: number) => `.env-navigation-bar-list > li:nth-child(${inde
  */
 const script: PointerStep[] = [
   { wait: 500 },
-  { to: place(5), x: 0.5, y: 0.5 },
+  { to: more, x: 0.5, y: 0.5 },
   { wait: 400 },
   { click: true },
   { wait: 800 },
@@ -19,7 +21,7 @@ const script: PointerStep[] = [
   { wait: 350 },
   { click: true },
   { wait: 1500 },
-  { to: place(2), x: 0.5, y: 0.5, duration: 650 },
+  { to: inbox, x: 0.5, y: 0.5, duration: 650 },
   { wait: 300 },
   { click: true },
   { wait: 900 },

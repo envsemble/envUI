@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { SegmentedControl } from '@envsemble/envui';
 import { IconViewList } from '@envsemble/envui/icons/ViewList';
 import { IconViewModule } from '@envsemble/envui/icons/ViewModule';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
+import { PressedKeys } from '../../motion/PressedKeys';
 
 const statuses = [
   { value: 'open', label: 'Open', count: 12 },
@@ -19,7 +21,7 @@ const segment = (label: string, index: number) =>
 /*
  * The pointer chooses List, whose check takes its icon's place as Board gets its icon back, and
  * then Board again. The keyboard's focus arrives on Day, and the arrow key goes on to Week and
- * then past the disabled Quarter, back round to Day.
+ * then past the disabled Quarter, back round to Day, each key shown as a cap in the stage's corner.
  */
 const script: PointerStep[] = [
   { wait: 500 },
@@ -33,12 +35,16 @@ const script: PointerStep[] = [
   { wait: 700 },
   { leave: true },
   { wait: 500 },
+  { cue: 'Tab' },
   { focus: segment('Period', 1) },
   { wait: 900 },
+  { cue: '→' },
   { key: 'ArrowRight' },
   { wait: 1000 },
+  { cue: '→' },
   { key: 'ArrowRight' },
   { wait: 1000 },
+  { cue: 'none' },
   { blur: true },
   { wait: 900 },
 ];
@@ -46,18 +52,26 @@ const script: PointerStep[] = [
 function Choosing() {
   const [layout, setLayout] = useState('board');
   const [period, setPeriod] = useState('day');
-  usePointer(script);
+  // The key just pressed, as a cap in the stage's corner, since no pointer shows it.
+  const [pressed, setPressed] = useState<{ keys: string[]; press: number } | null>(null);
+  usePointer(script, {
+    onCue: (cue) =>
+      setPressed((last) =>
+        cue === 'none' ? null : { keys: [cue], press: (last?.press ?? 0) + 1 },
+      ),
+  });
   return (
     <SpecimenGrid>
-      <Specimen title="With counts">
+      <PressedKeys keys={pressed?.keys ?? null} press={pressed?.press ?? 0} />
+      <SpecimenPart title="With counts">
         <SegmentedControl
           aria-label="Work items"
           value="open"
           onValueChange={ignore}
           items={statuses}
         />
-      </Specimen>
-      <Specimen title="With icons">
+      </SpecimenPart>
+      <SpecimenPart title="With icons">
         <SegmentedControl
           aria-label="Layout"
           value={layout}
@@ -67,8 +81,8 @@ function Choosing() {
             { value: 'board', label: 'Board', icon: <IconViewModule /> },
           ]}
         />
-      </Specimen>
-      <Specimen title="A disabled option">
+      </SpecimenPart>
+      <SpecimenPart title="A disabled option">
         <SegmentedControl
           aria-label="Period"
           value={period}
@@ -79,8 +93,8 @@ function Choosing() {
             { value: 'quarter', label: 'Quarter', disabled: true },
           ]}
         />
-      </Specimen>
-      <Specimen title="Disabled">
+      </SpecimenPart>
+      <SpecimenPart title="Disabled">
         <SegmentedControl
           aria-label="Work items, unavailable"
           value="blocked"
@@ -88,7 +102,7 @@ function Choosing() {
           items={statuses}
           disabled
         />
-      </Specimen>
+      </SpecimenPart>
     </SpecimenGrid>
   );
 }
@@ -99,10 +113,10 @@ function Choosing() {
  */
 export default function States() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <MotionStage label="choosing an option, and the arrow keys skipping a disabled one">
         <Choosing />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

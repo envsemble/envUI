@@ -1,9 +1,9 @@
 import { AvatarGroup } from '@envsemble/envui';
 
-// The organization comes second, on top of the pile, so its initials show at rest.
+// The person picture under initials, so both fallbacks show at rest.
 const people = [
-  { name: 'Sam Lee' },
-  { name: 'Northwind Labs', fallback: 'initials' as const },
+  { name: 'Sam Lee', fallback: 'person' as const },
+  { name: 'Northwind Labs' },
   { name: 'Priya Shah' },
   { name: 'Jordan Ellis' },
 ];

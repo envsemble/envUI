@@ -1,0 +1,14 @@
+{
+  "$comment": "The specifiers of envUI's entry points, whose exports no-html-elements counts as envUI's. scripts/build/SyncLintPackages.ts writes this file from the exports of packages/ui/package.json before every pack.",
+  "entryPoints": [
+    "@envsemble/envui",
+    "@envsemble/envui/rich-text",
+    "@envsemble/envui/code",
+    "@envsemble/envui/markdown",
+    "@envsemble/envui/diff",
+    "@envsemble/envui/color",
+    "@envsemble/envui/theme-bootstrap",
+    "@envsemble/envui/dev",
+    "@envsemble/envui/messages"
+  ]
+}

@@ -5,14 +5,14 @@
  * connection is involved.
  */
 import { expect, test, type Page } from '@playwright/test';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { extname, resolve } from 'node:path';
 import worker from '../../../apps/site/hosting/Worker.mjs';
 import { headersFor, siteHeaders } from '../../../scripts/site/SiteHeaders.ts';
 
 export const site = resolve('dist/site');
 export const siteUrl = 'http://envui.site.test';
-export const contentTypes: Record<string, string> = {
+const contentTypes: Record<string, string> = {
   '.html': 'text/html',
   '.js': 'text/javascript',
   '.css': 'text/css',
@@ -47,10 +47,36 @@ export function moduleFiles(module: string) {
   return files.map((file) => `/${file}`);
 }
 
-/** The file of the hosted build at a path, or undefined when it has none. */
-export function siteFile(pathname: string) {
-  const file = resolve(site, `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`);
-  return existsSync(file) ? file : undefined;
+/**
+ * The redirects of old addresses in the hosted build's _redirects, by the address each redirects:
+ * `/from /to 301` lines, as PrerenderSite.ts writes them.
+ */
+function siteRedirects() {
+  const file = resolve(site, '_redirects');
+  if (!existsSync(file)) return new Map<string, string>();
+  return new Map(
+    readFileSync(file, 'utf8')
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => {
+        const [from = '', to = ''] = line.split(' ');
+        return [from, to];
+      }),
+  );
+}
+
+/**
+ * The file of the hosted build at a path, or undefined when it has none: a page's pre-rendered
+ * file, such as components/button.html for /components/button, as Cloudflare's asset server finds
+ * it (html_handling), or index.html for the root.
+ */
+function siteFile(pathname: string) {
+  const path = decodeURI(pathname);
+  const file = resolve(site, `.${path.endsWith('/') ? `${path}index.html` : path}`);
+  // A page's folder, such as docs/ beside docs.html, is no file.
+  if (existsSync(file) && statSync(file).isFile()) return file;
+  const page = resolve(site, `.${path.replace(/\/$/, '')}.html`);
+  return path !== '/' && existsSync(page) ? page : undefined;
 }
 
 export interface ServeSiteOptions {
@@ -67,28 +93,35 @@ export interface ServeSiteOptions {
 
 /**
  * Serves the hosted build to the page at siteUrl through the hosted Worker script, with an asset
- * server that answers as Cloudflare's does from dist/site: a path without a file gets index.html,
- * so path routes load, with the headers dist/site/_headers gives its path, and the Worker answers a
- * file missing under /assets/ as not found. With options, chosen files fail, to test how the
- * catalogue recovers.
+ * server that answers as Cloudflare's does from dist/site: a page's address gets its pre-rendered
+ * file, an old address _redirects lists the page it leads to, and any other path without a file
+ * 404.html with a 404 status, where an old address renders the page it leads to, with the headers
+ * dist/site/_headers gives its path, and the Worker answers a file missing under /assets/ as not
+ * found. With options, chosen files fail, to test how the catalogue recovers.
  */
 export async function serveSite(
   page: Page,
   { failing = () => false, failure = 'missing', script = (text) => text }: ServeSiteOptions = {},
 ) {
   const rules = siteHeaders(resolve(site, '_headers'));
+  const redirects = siteRedirects();
   await page.route(`${siteUrl}/**`, async (route) => {
     const request = route.request();
     const gone = failing(new URL(request.url()).pathname);
     if (gone && failure === 'aborted') return route.abort('internetdisconnected');
     const assets = {
       async fetch(assetRequest: Request) {
-        const found = gone ? undefined : siteFile(new URL(assetRequest.url).pathname);
-        const file = found ?? resolve(site, 'index.html');
+        // A route can't answer a page load with a redirect, which Chromium then fails: an old
+        // address _redirects lists gets the file of the page it leads to, whose script corrects
+        // the address (routes/useSiteRoute.ts), as the redirect would.
+        const requested = new URL(assetRequest.url).pathname;
+        const pathname = redirects.get(requested)?.split('#')[0] ?? requested;
+        const found = gone ? undefined : siteFile(pathname);
+        const file = found ?? resolve(site, '404.html');
         const body =
           extname(file) === '.js' ? script(readFileSync(file, 'utf8')) : readFileSync(file);
-        const pathname = new URL(assetRequest.url).pathname;
         return new Response(body, {
+          status: found ? 200 : 404,
           headers: {
             // The asset server applies _headers; the Worker's own responses under /assets/ set theirs.
             ...(pathname.startsWith('/assets/') ? {} : headersFor(rules, pathname)),

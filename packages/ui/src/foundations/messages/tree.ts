@@ -6,5 +6,3 @@ export const tree = {
   /** Names an item's menu of actions. */
   contextMenu: 'Actions',
 };
-
-export type TreeMessages = typeof tree;

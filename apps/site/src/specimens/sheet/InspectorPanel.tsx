@@ -1,9 +1,10 @@
 import InspectorPanel from '../../examples/sheet/InspectorPanel';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-item) .env-button`;
-const close = '.env-sheet .env-dialog-heading > .env-button';
+const close = '.env-sheet [aria-label="Close details"]';
 
 /*
  * The pointer presses Alex Morgan, and the sheet opens beside the list, which stays usable; it

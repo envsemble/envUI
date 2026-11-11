@@ -174,5 +174,6 @@ The landmark is named Breadcrumb; `aria-label` tells two trails on a page apart.
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: An item's type is `BreadcrumbsItem`, after the component, where it was `BreadcrumbItem`.
 - **1.0.0**: A label cut short with an ellipsis shows in full in a tooltip, on hover and keyboard focus; a plain level or the current page cut short takes keyboard focus for it, keeping `aria-current`. The landmark's default name comes from `messages.breadcrumbs`, and the `nav` takes `ref`, `style` and native props. Classes: `env-breadcrumb` and `env-breadcrumb-*` are `env-breadcrumbs-item` and `env-breadcrumbs-*`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.5**: An item's type is `BreadcrumbsItem`, after the component, where it was `BreadcrumbItem`.

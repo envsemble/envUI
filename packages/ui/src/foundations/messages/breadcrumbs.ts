@@ -6,5 +6,3 @@ export const breadcrumbs = {
   /** Names the breadcrumb navigation. */
   label: 'Breadcrumb',
 };
-
-export type BreadcrumbsMessages = typeof breadcrumbs;

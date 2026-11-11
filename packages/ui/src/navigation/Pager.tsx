@@ -1,12 +1,12 @@
 'use client';
 
 import { Children, type ComponentPropsWithRef, type ReactNode } from 'react';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
-import { Row } from '../foundations/Layout.js';
-import { withDisplayName } from '../internal/withDisplayName.js';
-import { useLinkComponent } from '../internal/LinkComponentContext.js';
-import { useEnvUI, useMessages } from '../internal/EnvUIContext.js';
+import { Row } from '../layout/Layout.js';
+import { withDisplayName } from '../internal/react/withDisplayName.js';
+import { useLinkComponent } from '../internal/provider/LinkComponentContext.js';
+import { useEnvUI, useMessages } from '../internal/provider/EnvUIContext.js';
 import { pager } from '../foundations/messages/pager.js';
 import '../styles/Base.css';
 import '../styles/Pager.css';

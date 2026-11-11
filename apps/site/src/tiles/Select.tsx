@@ -1,5 +1,7 @@
 import { Select } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const options = [
   { value: 'team', label: 'Team' },
@@ -9,31 +11,41 @@ const options = [
 const trigger = '.env-select-trigger';
 const option = (index: number) => `.env-select-item:nth-child(${index})`;
 
-/** Opened and Private chosen; opened again and Team chosen, as it began. */
+/**
+ * Moves down the open list and chooses Private, which closes it. Opens it again from its trigger
+ * and chooses Team, then opens it once more, as it began. Each choice is held, closed, for about a
+ * second, and the open list rests a while before the loop starts over.
+ */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: trigger },
+  { to: option(1) },
+  { wait: 400 },
+  { to: option(2), duration: 400 },
   { wait: 400 },
   { click: true },
-  { wait: 600 },
-  { to: option(2), duration: 500 },
+  { wait: 1700 },
+  { to: trigger, duration: 400 },
+  { wait: 200 },
+  { click: true },
+  { wait: 500 },
+  { to: option(1), duration: 400 },
   { wait: 300 },
   { click: true },
-  { wait: 1000 },
+  { wait: 1700 },
   { to: trigger, duration: 400 },
   { wait: 200 },
   { click: true },
   { wait: 600 },
-  { to: option(1), duration: 500 },
-  { wait: 300 },
-  { click: true },
-  { wait: 600 },
   { leave: true },
-  { wait: 400 },
+  { wait: 1600 },
 ];
 
-/** A select. */
+/**
+ * A select resting with its list open under it, framed on both, so while it plays the list closes
+ * and opens again in place, and nothing in its tile moves.
+ */
 export default function SelectTile() {
+  useHeldView();
   usePointer(script);
-  return <Select aria-label="Visibility" items={options} defaultValue="team" />;
+  return <Select aria-label="Visibility" items={options} defaultValue="team" defaultOpen />;
 }

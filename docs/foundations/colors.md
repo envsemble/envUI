@@ -139,7 +139,7 @@ function ThemeLabel() {
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Theme theme             | Required: light or dark; scopes the tokens and provides the theme to React                                                                                   |
 | Theme contrast          | `high`; `standard`, even when the system asks for more; or `system`, the default, which follows `prefers-contrast: more`; inherited from the enclosing Theme |
-| Theme scale             | comfortable or compact, the app's [scale](spacing.md); inherited from the enclosing Theme                                                                    |
+| Theme scale             | system, comfortable or compact, the app's [scale](spacing.md); inherited from the enclosing Theme                                                            |
 | useTheme()              | `{ theme, contrast, scale }` of the nearest Theme, also across envUI's portals                                                                               |
 | ThemePreferenceProvider | Stores the preference, follows the system and other windows, and themes the document root; see [setup](../setup.md)                                          |
 | useThemePreference()    | A `ThemePreferenceValue`: `preference` (light, dark or system), the resolved `theme`, `setPreference` and `toggleTheme`                                      |
@@ -149,10 +149,11 @@ function ThemeLabel() {
 
 The Design tokens page of the Docs lists every value in each theme, and this guide ends with the palette, which shows each role's value in the theme you are reading in and lets you try another.
 
-- **Page**: `--env-color-bg-page`, the document's background, behind everything: deeper than the panes and cards on it.
-- **Recessed surface**: `--env-color-bg-recessed`, a well on the page, `background="recessed"`, such as the stage of a preview: a shade deeper than the page in dark, lighter than the page and the panes in light.
+- **Page**: `--env-color-bg-page`, the document's background, behind everything: below the panes and cards on it.
+- **Recessed surface**: `--env-color-bg-recessed`, a well on the page, `background="recessed"`, such as the stage of a preview: below the panes, and in dark a shade deeper than the page too; in light, where nothing deeper than the page keeps edges at 3:1, between the page and the panes.
 - **Surface**: `--env-color-bg-default`: Surface's `background="default"`, panes, the navigation and sheets, a step lighter than the page.
-- **Filled card**: `--env-color-bg-muted`: a group inside a surface, a Card's fill, `background="muted"`, list rows and tab rails, lighter than the surface: white in light.
+- **Raised surface**: `--env-color-bg-raised`: tables, docked panels and `background="raised"`, a step above the panes with the filled card's fill: white in light.
+- **Filled card**: `--env-color-bg-muted`: a group inside a surface, a Card's fill, `background="muted"`, list rows and tab rails, a step above the surface: white in light.
 - **Text**: `--env-color-fg-default`, Text's default, for headings and the main words.
 - **Supporting text**: `--env-color-fg-muted`: `emphasis="muted"` on Text, details, captions, hints and icons.
 - **Primary**: `--env-color-bg-primary-emphasis`, the main action's fill; `--env-color-fg-primary` and `fg-link` in text, such as links and what is selected.
@@ -163,18 +164,19 @@ The Design tokens page of the Docs lists every value in each theme, and this gui
 
 Status icons, short status text and badges share these tokens, at least 4.5:1 on the page, surfaces and rows in both themes, and 7:1 at high contrast.
 
-| Token                            | Meaning                                                             |
-| -------------------------------- | ------------------------------------------------------------------- |
-| `--env-color-fg-muted`           | Neutral: no particular state, such as archived, and most actions    |
-| `--env-color-fg-primary`         | Primary: what is current or highlighted                             |
-| `--env-color-fg-accent`          | Accent: what stands out, in purple, such as a featured item         |
-| `--env-color-bg-info-strong`     | Info, an info toast's fill: something to know, neither good nor bad |
-| `--env-color-fg-success`         | Success: healthy, ready or saved                                    |
-| `--env-color-fg-warning`         | Warning: needs attention soon                                       |
-| `--env-color-fg-danger`          | Danger: failed, or an action that destroys something                |
-| `--env-color-fg-done`            | Done: completed work                                                |
-| `--env-color-bg-{tone}-muted`    | The tone's tint behind badges, and behind alerts at high contrast   |
-| `--env-color-bg-{tone}-emphasis` | A solid fill in the tone, with `fg-on-emphasis`                     |
+| Token                             | Meaning                                                          |
+| --------------------------------- | ---------------------------------------------------------------- |
+| `--env-color-fg-muted`            | Neutral: no particular state, such as archived, and most actions |
+| `--env-color-fg-primary`          | Primary: what is current or highlighted                          |
+| `--env-color-fg-accent`           | Accent: what stands out, in purple, such as a featured item      |
+| `--env-color-bg-info-strong`      | Info, as a strong fill: something to know, neither good nor bad  |
+| `--env-color-fg-success`          | Success: healthy, ready or saved                                 |
+| `--env-color-fg-warning`          | Warning: needs attention soon                                    |
+| `--env-color-fg-danger`           | Danger: failed, or an action that destroys something             |
+| `--env-color-fg-done`             | Done: completed work                                             |
+| `--env-color-bg-{tone}-muted`     | The tone's tint behind badges and alerts                         |
+| `--env-color-bg-{tone}-emphasis`  | A solid fill in the tone, with `fg-on-emphasis`                  |
+| `--env-color-fg-{tone}-on-strong` | A toast's tone icon on its dark fill: success, info or danger    |
 
 ```css
 .work-status[data-status='blocked'] {
@@ -188,9 +190,9 @@ Status icons, short status text and badges share these tokens, at least 4.5:1 on
 
 Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emphasis weakest first: `subtle`, `muted`, none, `emphasis` and `strong`. Every `fg-on-X` pairs with a `bg-X`, every state token has its resting token, and the contrast gate measures every pair a component paints, in all four themes.
 
-- **Backgrounds:** `bg-page`, the deepest; `bg-recessed`, a well on it; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, the fill of dialogs, menus and popovers in light, which take `bg-default` in dark, and wherever they are solid; `bg-field`, `bg-selected`; `bg-backdrop`, the backdrop behind dialogs.
+- **Backgrounds:** `bg-page` and `bg-recessed`, a well, below the surfaces; `bg-default`, and `bg-muted` and `bg-raised` a step above it, the surfaces; `bg-popup`, the fill of dialogs, menus and popovers, frosted or solid, white in light and in dark a step lighter than the surfaces they open over; `bg-field`, `bg-selected`; `bg-backdrop`, the backdrop behind dialogs.
 - **Fills:** `bg-neutral-muted`, a translucent layer of the text color under secondary buttons, chips, switch tracks and skeletons; `bg-neutral-subtle`, the state layer of controls without a fill, such as ghost and outline buttons; `emphasis` and `strong` solid fills.
-- **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
+- **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-disabled` for the label and value of a disabled control, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
 - **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
 
 The colors come from an internal palette of eleven hues, and the pastel hues of avatars, in grades from 0 to 100, where the grade difference alone sets the contrast: 50 grades apart give at least 4.5:1. The light theme takes a nearly neutral gray, the dark theme a slightly blue-tinted one.
@@ -198,7 +200,7 @@ The colors come from an internal palette of eleven hues, and the pastel hues of 
 #### States and contrast
 
 - **Hover and pressed** are tokens of their own, other grades of the same hue, so labels keep their contrast in every state. A component given colors of its own through its color properties draws its states as state layers instead: the content color over the container at `--env-state-hover-opacity`, `--env-state-focus-opacity` and `--env-state-pressed-opacity`.
-- **Selection** stays apart from every other item, at rest and under the pointer, and carries a second cue: its label color, a check or a bar.
+- **Selection** stays apart from every other item, at rest and under the pointer, and carries a second cue: its label color, a check or a bar. Tree and table rows hover with a layer of their own, `--env-color-bg-row-hover`, quieter than the selection, so the selected row always reads strongest.
 - **High contrast** moves text to 7:1 and boundaries, indicators and focus rings to 4.5:1. A nested Theme and envUI's popups take the contrast and theme of where they open.
 - **Elevation** 0–3 is an edge, shown only where a surface is solid: popups float at 2, dialogs, sheets and the command palette at 3, and at high contrast a solid popup takes level 3's, the strongest. Elsewhere a popup or a dialog separates by its fill and a soft shadow, a sheet by its fill, and a modal by its backdrop too.
 - **Small popups are frosted:** menus, lists, popovers, pickers, hover cards, tooltips and the command palette let a little of what is behind them through, blurred, with a soft shadow and no edge; a tooltip's strong fill covers a little less and its shadow is smaller. Dialogs take the popups' fill and shadow, solid over their backdrop. At high contrast and with reduced transparency all are solid, with their edge.

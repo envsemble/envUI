@@ -1,4 +1,4 @@
-import { useSharedTimeline } from '../../motion/Motion';
+import { useSharedTimeline } from '../../motion/Timeline';
 import { useRounds } from './Rounds';
 
 /**
@@ -23,5 +23,5 @@ const steps = [900, 900, 1500, 350, 700, 800, 800, 800];
 export function useBatch() {
   const step = useSharedTimeline('progress-batch', steps);
   const { round, style } = useRounds(step, 4);
-  return { done: files[step]!, shares: shares[step]!, round, style };
+  return { done: files[step], shares: shares[step], round, style };
 }

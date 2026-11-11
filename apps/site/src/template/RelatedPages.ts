@@ -1,14 +1,12 @@
 /*
- * The pages a page relates to, for its Related tiles and the galleries: which page documents a
- * component, the address of a related page, and the example or specimen a tile shows.
+ * The pages a page relates to, for its Related section: which page documents a component, the
+ * address of a related page, and its tile (tiles/TilePictures.ts).
  */
-import type { ComponentType } from 'react';
-import type { DocumentationMetadata, StageFill } from '../shared/DocumentationTypes';
-import { routeHref } from '../navigation/Address';
-import { pageHref, groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
-import { documents, type DocumentSummary } from '../pages/PageModel';
-import { hasPageSpecimen } from '../figures/PageSpecimens';
-import { tileOf, tileWindows } from '../tiles/Tiles';
+import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
+import { routeHref } from '../routes/Address';
+import { pageHref, groupedPages, routeOfDocument } from '../routes/SiteRoutes';
+import { documents } from '../routes/PageModel';
+import { frameOf, tilePictureOf, type TileFrame, type TilePicture } from '../tiles/TilePictures';
 
 /**
  * The page that documents a component, for the components a page relates to and the exports a
@@ -30,83 +28,15 @@ function relatedHref(id: string) {
   return route && routeHref(route);
 }
 
-/** The example a tile previews: a page's file, and whether its overlays are shown open. */
-export interface Preview {
-  page: string;
-  name: string;
-  open: boolean;
-  /** The fill its figure's stage takes, where the page's would hide it. */
-  stage?: StageFill;
-  /** A page without an example, such as a foundation's: the id of its specimen (PageSpecimens.tsx). */
-  specimen?: string;
-  /**
-   * A composition drawn for the tile instead of an example: the page's own tile (tiles/Tiles.ts).
-   */
-  composition?: ComponentType;
-  /** Whether the composition is the page's own tile, drawn in the tiles' window (Related.css). */
-  tile?: boolean;
-  /** The window a tile lays out in, in rem, where it needs a larger one than the tiles'. */
-  window?: { width: number; height: number };
-}
-
-/** Letters alone, lower case, to match an export's name with a figure's heading or file. */
-const squash = (text: string) => text.toLowerCase().replace(/[^a-z\d]/g, '');
-
-/**
- * What a tile shows of a page: its own tile, where it has one (tiles/Tiles.ts); else where its
- * component floats over the page, such as a dialog or a menu, its anatomy figure, which shows it
- * open; else the Overview's first example, its lead example. For an export that isn't the page's
- * first, such as Textarea on the TextField page, the first example named after it, where there is
- * one. A page without one, such as a foundation's, shows its specimen.
- */
-export function previewOf(document: DocumentSummary, component?: string): Preview | undefined {
-  const own = component && document.metadata?.components[0] !== component.split('.')[0];
-  const tile = !own && tileOf(document.id);
-  const blocks = (document.outline ?? []).flatMap((section) => section.examples);
-  const lead = document.outline
-    ?.find((section) => section.id === 'overview')
-    ?.examples.find((block) => !block.role);
-  // A tile's popups, such as a menu it opens as it plays, open inside its canvas; it takes the
-  // overview's stage, such as the deeper one of a whole window.
-  if (tile)
-    return {
-      page: document.id,
-      name: document.id,
-      open: true,
-      composition: tile,
-      tile: true,
-      window: tileWindows[document.id],
-      stage: lead?.stage,
-    };
-  const anatomy = blocks.find((block) => block.role === 'anatomy');
-  const named =
-    own &&
-    blocks.find(
-      (block) =>
-        !block.role &&
-        !block.widths &&
-        [block.name, block.heading].some((text) => squash(text).includes(squash(component))),
-    );
-  const chosen = named || (!own && anatomy?.open ? anatomy : lead);
-  if (!chosen)
-    return hasPageSpecimen(document.id)
-      ? { page: document.id, name: document.id, open: false, specimen: document.id }
-      : undefined;
-  return {
-    page: document.id,
-    name: chosen.name,
-    open: Boolean(chosen.open),
-    stage: chosen.stage,
-  };
-}
-
 /** One component or page a page relates to, with when to pick it instead. */
 export interface Alternative {
   key: string;
   name: string;
   href?: string;
-  preview?: Preview;
+  picture?: TilePicture;
   line: string;
+  /** How its tile is framed, as a gallery's is. */
+  frame?: TileFrame;
 }
 
 /**
@@ -121,8 +51,9 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
         key: use,
         name: use,
         href: page && pageHref(page),
-        preview: page && previewOf(page.document, use),
+        picture: page && tilePictureOf(page.document, use),
         line: text,
+        frame: frameOf(page?.document.id),
       };
     }
     const document = documents.find((item) => item.id === see);
@@ -130,8 +61,9 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
       key: `page:${see}`,
       name: document?.title ?? see ?? '',
       href: see && relatedHref(see),
-      preview: document && previewOf(document),
+      picture: document && tilePictureOf(document),
       line: text,
+      frame: frameOf(see),
     };
   });
 }

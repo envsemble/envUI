@@ -1,6 +1,6 @@
 ---
 title: Accordion
-summary: A list of sections separated by full-width hairlines, each a heading with a plus or minus that shows and hides its panel.
+summary: Stacked sections that each show and hide their content under a heading.
 status: beta
 since: 1.0.0
 category: Text & content
@@ -70,7 +70,7 @@ The application can open a section itself, such as from a help button elsewhere 
 
 Don't put an accordion inside another; show the next level inside the panel as a list.
 
-### Nothing hidden that people need
+### Required content
 
 Keep what people need to finish a task out of closed sections.
 
@@ -132,3 +132,7 @@ The parts are the accordion, `env-accordion`; each item, `env-accordion-item`, w
 ## Changelog
 
 - **1.0.0**: Accordion.
+- **1.0.0-prerelease.6**: A closing panel's content fades over the panel's whole closing, `--env-motion-duration-medium`, so it leaves no empty band.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: A panel's content fades in and out as it grows and shrinks, and the plus and minus fade into each other.
+- **1.0.0-prerelease.6**: A heading lays the shared state layer on hover and press, inset from the hairlines, with its focus ring tracing it; the title and panel sit 8 px in from the hairlines to match.

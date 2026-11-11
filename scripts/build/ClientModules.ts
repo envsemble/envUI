@@ -9,24 +9,25 @@
 // The reading is type-aware: a handler passed by name (`onMouseDown={focusControl}`), one in a
 // spread object or in createElement's props, and a hook imported under another name all count,
 // while a function the module only passes on from its own props does not, since a server parent
-// cannot have given it one. A module that needs the directive for a reason this cannot see says
-// so in a comment, `// @client-module <why>`, which the check reads as its reason.
+// cannot have given it one. A check of names alone would miss the handlers and the renamed hook,
+// each a server render that fails, and would flag the passed-on function, keeping a module the
+// server can render on the client: that is why the reading stays type-aware. A module that needs
+// the directive for a reason this cannot see says so in a comment, `// @client-module <why>`,
+// which the check reads as its reason.
 //
 //   node scripts/build/ClientModules.ts           add the directive where a module needs it
 //   node scripts/build/ClientModules.ts --check   fail when a module lacks it or has it without need
 //
-// tests/ClientDirectives.test.mjs runs the check, and checks the built dist and a server render.
+// tests/library/ClientDirectives.test.mjs runs the check, and checks the built dist and a server render.
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
 import ts from 'typescript';
+import { libraryDirectory, librarySourceDirectory } from '../RepositoryPaths.ts';
 
-const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
-export const sourceDirectory = resolve(repositoryRoot, 'packages/ui/src');
-const configFile = resolve(repositoryRoot, 'packages/ui/tsconfig.json');
+const configFile = resolve(libraryDirectory, 'tsconfig.json');
 
 /** The directive, as the modules write it. */
-export const directive = "'use client';";
+const directive = "'use client';";
 
 /**
  * The comment that gives a module the directive for a reason the reading cannot see, tested on the
@@ -35,18 +36,18 @@ export const directive = "'use client';";
 const annotation = /(?:\/\/|\/\*+|^\s*\*)\s*@client-module\b[ \t:—-]*([^\n]*?)\s*(?:\*\/)?$/m;
 
 /** The text of every comment in a source file. */
-function commentsOf(sourceFile) {
+function commentsOf(sourceFile: ts.SourceFile) {
   const text = sourceFile.getFullText();
-  const seen = new Set();
+  const seen = new Set<number>();
   const comments: string[] = [];
-  const collect = (ranges) => {
+  const collect = (ranges: ts.CommentRange[] | undefined) => {
     for (const range of ranges ?? [])
       if (!seen.has(range.pos)) {
         seen.add(range.pos);
         comments.push(text.slice(range.pos, range.end));
       }
   };
-  const visit = (node) => {
+  const visit = (node: ts.Node) => {
     collect(ts.getLeadingCommentRanges(text, node.getFullStart()));
     collect(ts.getTrailingCommentRanges(text, node.getEnd()));
     ts.forEachChild(node, visit);
@@ -62,18 +63,18 @@ const clientCalls = new Set(['createContext', 'createPortal']);
 const elementCalls = new Set(['createElement', 'cloneElement', 'jsx', 'jsxs', 'jsxDEV']);
 
 /** Whether a source file starts with the 'use client' directive. */
-export function hasClientDirective(sourceFile) {
+function hasClientDirective(sourceFile: ts.SourceFile) {
   const [first] = sourceFile.statements;
   return Boolean(
     first &&
-      ts.isExpressionStatement(first) &&
-      ts.isStringLiteral(first.expression) &&
-      first.expression.text === 'use client',
+    ts.isExpressionStatement(first) &&
+    ts.isStringLiteral(first.expression) &&
+    first.expression.text === 'use client',
   );
 }
 
 /** An expression without the parentheses, `as`, `satisfies` and `!` around it. */
-function skipOuter(node) {
+function skipOuter(node: ts.Expression) {
   let current = node;
   while (
     ts.isParenthesizedExpression(current) ||
@@ -90,15 +91,26 @@ function skipOuter(node) {
  * Reads one module's reasons with a type checker, or by syntax alone without one, in which case a
  * handler is only seen when it is written inline.
  */
-function createReader(checker) {
+function createReader(checker: ts.TypeChecker | undefined) {
   /** The declaration a name refers to, through an import or not. */
-  const declarationOf = (identifier) => {
+  const declarationOf = (identifier: ts.Node) => {
     const symbol = checker?.getSymbolAtLocation(identifier);
     return symbol?.valueDeclaration ?? symbol?.declarations?.[0];
   };
 
+  /**
+   * The value a variable declaration is set to, the first time it is followed: what a const
+   * holds counts as the const, and `seen` stops a cycle.
+   */
+  const initializerOf = (declaration: ts.Node | undefined, seen: Set<ts.Node>) => {
+    if (!declaration || !ts.isVariableDeclaration(declaration) || !declaration.initializer) return;
+    if (seen.has(declaration)) return;
+    seen.add(declaration);
+    return declaration.initializer;
+  };
+
   /** Whether a value's type can be called: a function, or a union with one. */
-  const isCallable = (node) => {
+  const isCallable = (node: ts.Node) => {
     if (!checker) return false;
     const type = checker.getNonNullableType(checker.getTypeAtLocation(node));
     const types = type.isUnion() ? type.types : [type];
@@ -106,7 +118,7 @@ function createReader(checker) {
   };
 
   /** Whether an expression only passes on what a parameter of a function holds. */
-  const isPassedOn = (node, seen = new Set()) => {
+  const isPassedOn = (node: ts.Expression, seen = new Set<ts.Node>()): boolean => {
     const expression = skipOuter(node);
     if (ts.isPropertyAccessExpression(expression) || ts.isElementAccessExpression(expression))
       return isPassedOn(expression.expression, seen);
@@ -119,11 +131,12 @@ function createReader(checker) {
    * the way that makes a function, as in `const { onClick = () => {} } = props`, makes the value
    * the module's own, which it holds when a server parent passes none.
    */
-  const holdsPassedOn = (declaration, seen = new Set()) => {
+  const holdsPassedOn = (declaration: ts.Node | undefined, seen = new Set<ts.Node>()): boolean => {
     if (!declaration || seen.has(declaration)) return false;
     seen.add(declaration);
-    const makesDefault = (node) => Boolean(node.initializer && createsFunction(node.initializer));
-    let variable = declaration;
+    const makesDefault = (node: ts.BindingElement | ts.ParameterDeclaration): boolean =>
+      Boolean(node.initializer && createsFunction(node.initializer));
+    let variable: ts.Node = declaration;
     while (ts.isBindingElement(variable)) {
       if (makesDefault(variable)) return false;
       variable = variable.parent.parent;
@@ -131,20 +144,20 @@ function createReader(checker) {
     if (ts.isParameter(variable)) return !makesDefault(variable);
     return Boolean(
       ts.isVariableDeclaration(variable) &&
-        variable.initializer &&
-        isPassedOn(variable.initializer, seen),
+      variable.initializer &&
+      isPassedOn(variable.initializer, seen),
     );
   };
 
   /** Whether an expression is a function that this module creates, rather than one passed on. */
-  const createsFunction = (node, seen = new Set()) => {
+  const createsFunction = (node: ts.Expression, seen = new Set<ts.Node>()): boolean => {
     const expression = skipOuter(node);
     if (ts.isArrowFunction(expression) || ts.isFunctionExpression(expression)) return true;
     // A function made only when the parent passed one, as in `onSelect && (() => onSelect(item))`
     // or `!onSelect ? undefined : () => onSelect(item)`, is never made under a server parent,
     // which cannot pass functions.
-    const guarded = (test) => isCallable(test) && isPassedOn(test);
-    const negated = (test) => {
+    const guarded = (test: ts.Expression): boolean => isCallable(test) && isPassedOn(test);
+    const negated = (test: ts.Expression) => {
       const condition = skipOuter(test);
       return (
         ts.isPrefixUnaryExpression(condition) &&
@@ -170,27 +183,18 @@ function createReader(checker) {
     )
       return createsFunction(expression.left, seen) || createsFunction(expression.right, seen);
     if (!isCallable(expression) || isPassedOn(expression)) return false;
-    if (ts.isIdentifier(expression)) {
-      const declaration = declarationOf(expression);
-      // A const counts as what it holds: a function it makes, or one only passed on.
-      if (
-        declaration &&
-        ts.isVariableDeclaration(declaration) &&
-        declaration.initializer &&
-        !seen.has(declaration)
-      ) {
-        seen.add(declaration);
-        return createsFunction(declaration.initializer, seen);
-      }
-    }
-    return true;
+    // A const counts as what it holds: a function it makes, or one only passed on.
+    const held = ts.isIdentifier(expression)
+      ? initializerOf(declarationOf(expression), seen)
+      : undefined;
+    return held ? createsFunction(held, seen) : true;
   };
 
   /** Whether props, as an object literal or a variable holding one, carry a function. */
-  const propsCarryFunction = (node, seen = new Set()) => {
+  const propsCarryFunction = (node: ts.Expression, seen = new Set<ts.Node>()): boolean => {
     const expression = skipOuter(node);
     if (ts.isObjectLiteralExpression(expression))
-      return expression.properties.some((property) => {
+      return expression.properties.some((property): boolean => {
         if (ts.isPropertyAssignment(property)) return createsFunction(property.initializer);
         // `{ onClick }` holds the value of the variable it names, which may only pass a prop on,
         // also one destructured in the body, as in `const { onClick } = props`.
@@ -198,15 +202,8 @@ function createReader(checker) {
           const value = checker?.getShorthandAssignmentValueSymbol(property);
           const declaration = value?.valueDeclaration ?? value?.declarations?.[0];
           if (holdsPassedOn(declaration)) return false;
-          if (
-            declaration &&
-            ts.isVariableDeclaration(declaration) &&
-            declaration.initializer &&
-            !seen.has(declaration)
-          ) {
-            seen.add(declaration);
-            return createsFunction(declaration.initializer, seen);
-          }
+          const held = initializerOf(declaration, seen);
+          if (held) return createsFunction(held, seen);
           return checker ? isCallable(property.name) : true;
         }
         if (ts.isSpreadAssignment(property)) return propsCarryFunction(property.expression, seen);
@@ -217,23 +214,14 @@ function createReader(checker) {
         propsCarryFunction(expression.whenTrue, seen) ||
         propsCarryFunction(expression.whenFalse, seen)
       );
-    if (ts.isIdentifier(expression)) {
-      const declaration = declarationOf(expression);
-      if (
-        declaration &&
-        ts.isVariableDeclaration(declaration) &&
-        declaration.initializer &&
-        !seen.has(declaration)
-      ) {
-        seen.add(declaration);
-        return propsCarryFunction(declaration.initializer, seen);
-      }
-    }
-    return false;
+    const held = ts.isIdentifier(expression)
+      ? initializerOf(declarationOf(expression), seen)
+      : undefined;
+    return held ? propsCarryFunction(held, seen) : false;
   };
 
   /** The name a call is made by: its imported name for an aliased import, as useState for state. */
-  const calleeName = (call) => {
+  const calleeName = (call: ts.CallExpression) => {
     const callee = skipOuter(call.expression);
     const identifier = ts.isPropertyAccessExpression(callee)
       ? callee.name
@@ -254,7 +242,7 @@ function createReader(checker) {
       .map((comment) => annotation.exec(comment))
       .find(Boolean);
     if (marked) reasons.add(`is marked @client-module${marked[1] ? `: ${marked[1]}` : ''}`);
-    const visit = (node) => {
+    const visit = (node: ts.Node) => {
       if (
         ts.isImportDeclaration(node) &&
         !node.importClause?.isTypeOnly &&
@@ -303,12 +291,12 @@ function createReader(checker) {
  * What makes a module a client module, as reasons; none for a module a server can render. With a
  * type checker for the program the file belongs to, handlers passed by name count too.
  */
-export function clientReasons(sourceFile, checker) {
+function clientReasons(sourceFile: ts.SourceFile, checker?: ts.TypeChecker) {
   return createReader(checker)(sourceFile);
 }
 
 /** A program of the library's source, read with its tsconfig, and its type checker. */
-function libraryProgram(paths) {
+function libraryProgram(paths: string[]) {
   const config = ts.getParsedCommandLineOfConfigFile(
     configFile,
     {},
@@ -330,7 +318,10 @@ function libraryProgram(paths) {
  * The reasons of a module given as source text, read in a program of its own with the library's
  * options; for tests of the reading.
  */
-export function clientReasonsOf(text, fileName = join(sourceDirectory, 'Example.tsx')) {
+export function clientReasonsOf(
+  text: string,
+  fileName = join(librarySourceDirectory, 'Example.tsx'),
+) {
   const path = resolve(fileName);
   const host = ts.createCompilerHost({});
   const readFile = host.readFile.bind(host);
@@ -358,12 +349,12 @@ export function clientReasonsOf(text, fileName = join(sourceDirectory, 'Example.
     host,
   });
   const sourceFile = program.getSourceFiles().find((file) => resolve(file.fileName) === path);
-  return clientReasons(sourceFile, program.getTypeChecker());
+  return clientReasons(sourceFile!, program.getTypeChecker());
 }
 
 /** Every library module, the generated icons included, with whether it needs and has the directive. */
 export async function libraryModules() {
-  const entries = await readdir(sourceDirectory, { recursive: true, withFileTypes: true });
+  const entries = await readdir(librarySourceDirectory, { recursive: true, withFileTypes: true });
   const files = entries
     .filter(
       (entry) => entry.isFile() && /\.tsx?$/.test(entry.name) && !entry.name.endsWith('.d.ts'),
@@ -379,7 +370,7 @@ export async function libraryModules() {
     client: boolean;
   }[] = [];
   for (const path of files) {
-    const file = relative(sourceDirectory, path).split('\\').join('/');
+    const file = relative(librarySourceDirectory, path).split('\\').join('/');
     const text = await readFile(path, 'utf8');
     const sourceFile = program.getSourceFile(path);
     modules.push({
@@ -421,4 +412,4 @@ async function main() {
   console.log(`Added ${missing.length} and removed ${needless.length} directives.`);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();
+if (import.meta.main) await main();

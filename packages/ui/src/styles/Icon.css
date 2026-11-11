@@ -7,8 +7,10 @@
     display: inline-grid;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     place-items: center;
-    width: var(--env-icon-size, 1rem);
-    height: var(--env-icon-size, 1rem);
+    /* The size without the hook. */
+    --env-icon-default-size: 1rem;
+    width: var(--env-icon-size, var(--env-icon-default-size));
+    height: var(--env-icon-size, var(--env-icon-default-size));
     fill: currentColor;
     flex-shrink: 0;
   }

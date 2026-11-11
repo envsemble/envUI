@@ -1,6 +1,6 @@
 ---
 title: Row
-summary: Row lays out content side by side with even gaps, and wraps when it doesn't fit, such as a form's actions.
+summary: Lays out content side by side with even gaps, wrapping when it doesn't fit.
 status: beta
 since: 1.0.0
 category: App frame & layout

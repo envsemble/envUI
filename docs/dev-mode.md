@@ -16,7 +16,9 @@ Dev mode takes a page apart, layer by layer, to show how it is built and what is
 
 Below is dev mode's 3D view of a small application. Try dev mode opens the real dev mode over it, with `root` set to the application: its three fixed columns squeeze the cards at a narrow width, and the problems name them.
 
-<!-- demo: DevModeDemo -->
+```tsx figure=TryDevMode
+
+```
 
 ## What it helps you notice
 
@@ -26,11 +28,17 @@ Mistakes that hide in a finished screen stand out once its boxes are pulled apar
 - **Squeezed or spilling content.** A box whose text is squeezed into a narrow column, or whose content spills out, is outlined in red.
 - **A layout that breaks at a width.** Lay the page out at a phone's or a tablet's size, or drag the frame's edges, and watch it change.
 
-<!-- demo: DevModeSpacingPicture -->
+```tsx figure=DevModeSpacingPicture
 
-<!-- demo: DevModeProblemsPicture -->
+```
 
-<!-- demo: DevModeFramePicture -->
+```tsx figure=DevModeProblemsPicture
+
+```
+
+```tsx figure=DevModeFramePicture
+
+```
 
 A coding agent reads the same page as text, with the same problems, at any width: ask it to check a page with dev mode at a phone's width and a wide screen's.
 
@@ -76,9 +84,13 @@ installDevMode({ parts });
 
 The Dev mode button in the corner of the page, or <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> outside a field, opens the page in a new tab with dev mode over the whole window: the node tree on one side, the 3D view in the middle and the inspector on the other. The tab's address is the page's with the `envui-dev` query parameter, where dev mode is open from the start and shows no button; close the tab to end it, or reload it to measure the page afresh. The page you came from stays as it was.
 
-<!-- demo: DevModeButtonPicture -->
+```tsx figure=DevModeButtonPicture
 
-<!-- demo: DevModeWholePicture -->
+```
+
+```tsx figure=DevModeWholePicture
+
+```
 
 ## The readout, for agents
 
@@ -168,9 +180,13 @@ envui.layout.skeletonShift('[data-testid="projects"]');
 
 Every visible layout node is a plane, lifted one level per step of nesting, with open overlays above the page; each plane carries a picture of what its node holds, its padding and gaps hatched and a red outline where it has problems. The toolbar turns the view, chooses what the planes show, lays the page out in a responsive frame at a device's size or one you drag, and sets the levels shown; its help button says how to move around, and a legend what the colors mean. Beside the view, the node tree lists the nodes with their problems counted, and the inspector shows the selected node's part, size, window class, states, container, tokens and its line of the readout. Dev mode takes the page's theme, or the one its Dev mode theme setting chooses.
 
-<!-- demo: DevModeToolbarPicture -->
+```tsx figure=DevModeToolbarPicture
 
-<!-- demo: DevModeInspectorPicture -->
+```
+
+```tsx figure=DevModeInspectorPicture
+
+```
 
 | Do this                                            | To                                                                            |
 | -------------------------------------------------- | ----------------------------------------------------------------------------- |

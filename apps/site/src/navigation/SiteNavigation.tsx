@@ -1,197 +1,18 @@
-import { useEffect, useRef, useState, type ComponentProps } from 'react';
-import {
-  Badge,
-  Button,
-  NavigationDrawer,
-  IconButton,
-  Link,
-  NavigationRail,
-  Tooltip,
-  type Destination,
-  type NavigationDrawerDestination,
-} from '@envsemble/envui';
-import { IconHome } from '@envsemble/envui/icons/Home';
-import { IconWidgets } from '@envsemble/envui/icons/Widgets';
-import { IconPattern } from '@envsemble/envui/icons/Pattern';
-import { IconPalette } from '@envsemble/envui/icons/Palette';
-import { version } from '../../../../packages/ui/package.json';
-import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
-import { EnvUILogo } from '../brand/EnvUILogo';
+import { IconButton, NavigationRail } from '@envsemble/envui';
+import { IconClose } from '@envsemble/envui/icons/Close';
+import { Brand } from '../brand/Brand';
 import { SearchButton } from '../search/SearchButton';
-import { DisplayMenu, MotionButton } from '../theme/DisplaySettings';
-import { drawerWidthKey } from '../theme/DisplayStorage';
-import { pageBadge } from './PageBadges';
+import type { RoutePage } from '../routes/SiteRoutes';
 import {
-  docsTree,
-  otherPartRoute,
-  pagesOf,
-  sectionHome,
-  catalogueSections,
-  type Area,
-  type DocsGroup,
-  type RoutePage,
-  type CatalogueSection,
-} from './SiteRoutes';
-import { docsRoute, homeRoute, routeHref } from './Address';
-import { otherPart } from './OtherPart';
-
-/** The icon of each of the catalogue's destinations in its rail. */
-const sectionIcons: Record<CatalogueSection, typeof IconHome> = {
-  Overview: IconHome,
-  Foundations: IconPalette,
-  Components: IconWidgets,
-  Patterns: IconPattern,
-};
-
-/** The catalogue's destinations, for its rail: each opens its first page. */
-export function catalogueDestinations(current: string | undefined, onChoose?: () => void) {
-  return catalogueSections.map((section): Destination => {
-    const Icon = sectionIcons[section];
-    return {
-      label: section,
-      href: routeHref(sectionHome(section).path),
-      icon: <Icon />,
-      current: section === current,
-      onClick: onChoose,
-    };
-  });
-}
-
-/** The pages of one of the catalogue's destinations, for its drawer. */
-export function pageDestinations(
-  pages: readonly RoutePage[],
-  currentPath: string,
-  onChoose?: () => void,
-): NavigationDrawerDestination[] {
-  return pages.map((page) => ({
-    group: page.group,
-    label: page.label ?? page.title,
-    href: routeHref(page.path),
-    current: page.path === currentPath,
-    onClick: onChoose,
-  }));
-}
-
-/** Scrolls the current page's link into view as the navigation mounts, as on a page deep in it. */
-function useCurrentInView() {
-  const element = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    element.current
-      ?.querySelector('.env-navigation-drawer [aria-current="page"]')
-      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }, []);
-  return element;
-}
-
-/**
- * The badge after a page's name in the Docs' navigation, such as Alpha or New, from its
- * frontmatter, a guide's status included, and the package's version (PageBadges.ts); nothing for
- * most pages.
- */
-function PageBadgeOf({ page }: { page: RoutePage }) {
-  const document = page.document;
-  const metadata = document?.metadata ?? (document?.status && { status: document.status });
-  const badge = metadata && pageBadge(metadata, version);
-  return badge ? <Badge tone={badge.tone}>{badge.label}</Badge> : null;
-}
-
-/**
- * The Docs' navigation: each section, such as Get started or Components, as a group under its
- * heading, its pages, then its groups, such as the kinds of component and the patterns' intents,
- * each a section of their pages that opens and closes, open while it holds the current page. A
- * section that is one page of its name, such as Changelog, is that page alone, under no heading.
- */
-export function docsDestinations(
-  currentPath: string,
-  onChoose?: () => void,
-): NavigationDrawerDestination[] {
-  const link = (page: RoutePage, group?: string): NavigationDrawerDestination => ({
-    group,
-    label: page.label ?? page.title,
-    badge: <PageBadgeOf page={page} />,
-    href: routeHref(page.path),
-    current: page.path === currentPath,
-    onClick: onChoose,
-  });
-  const lone = (section: DocsGroup) =>
-    !section.groups.length &&
-    section.pages.length === 1 &&
-    section.pages[0]!.title === section.label;
-  return docsTree.flatMap((section) => [
-    ...section.pages.map((page) => link(page, lone(section) ? undefined : section.label)),
-    ...section.groups.map(
-      (group): NavigationDrawerDestination => ({
-        group: section.label,
-        label: group.label,
-        children: group.pages.map((page) => link(page)),
-      }),
-    ),
-  ]);
-}
-
-/**
- * Each part's drawer at the start of a wide window: the width it starts at and its bounds, in rem.
- * The Docs' drawer holds the wordmark and search on its first row, so it starts wider.
- */
-const drawerWidths: Record<Area, { defaultWidth: number; minWidth: number; maxWidth: number }> = {
-  catalogue: { defaultWidth: 16, minWidth: 13, maxWidth: 24 },
-  docs: { defaultWidth: 21, minWidth: 18, maxWidth: 30 },
-};
-
-/** The width the reader gave the area's drawer on an earlier visit, within its bounds. */
-function storedDrawerWidth(area: Area) {
-  const { defaultWidth, minWidth, maxWidth } = drawerWidths[area];
-  let stored: number | undefined;
-  try {
-    stored = Number.parseFloat(localStorage.getItem(drawerWidthKey(area)) ?? '');
-  } catch {
-    // Storage the browser refuses, as in some private windows, keeps the default.
-  }
-  return stored !== undefined && Number.isFinite(stored)
-    ? Math.min(maxWidth, Math.max(minWidth, stored))
-    : defaultWidth;
-}
-
-/**
- * The resizable drawer of a wide window, whose width the reader drags and the catalogue keeps for
- * the next visit; read before the first render, so nothing moves as the page loads. The drawer in
- * the sheet of a narrower window takes the sheet's width and isn't resizable.
- */
-function useDrawerWidth(
-  area: Area,
-  inSheet: boolean,
-): Partial<ComponentProps<typeof NavigationDrawer>> {
-  const [width, setWidth] = useState(() => storedDrawerWidth(area));
-  if (inSheet) return {};
-  return {
-    resizable: true,
-    ...drawerWidths[area],
-    width,
-    onWidthChange: (next, { committed }) => {
-      setWidth(next);
-      if (!committed) return;
-      try {
-        localStorage.setItem(drawerWidthKey(area), String(next));
-      } catch {
-        // The width holds for this visit only.
-      }
-    },
-  };
-}
-
-/**
- * A part's NavigationDrawer, with the width the reader drags (useDrawerWidth) kept here, so a drag
- * renders the drawer alone on each move, not the navigation around it, whose destinations stay the
- * same array and leave the drawer's rows as they are.
- */
-function SiteDrawer({
-  area,
-  inSheet,
-  ...props
-}: { area: Area; inSheet: boolean } & ComponentProps<typeof NavigationDrawer>) {
-  const drawerWidth = useDrawerWidth(area, inSheet);
-  return <NavigationDrawer {...props} {...drawerWidth} />;
-}
+  catalogueDestinations,
+  catalogueSectionOf,
+  pageDestinations,
+  sectionPages,
+} from './CatalogueDestinations';
+import { docsDestinations } from './DocsDestinations';
+import { SiteDrawer } from './SiteDrawer';
+import { useCurrentInView } from './useCurrentInView';
+import { useDrawerMotion } from './useDrawerMotion';
 
 interface NavigationProps {
   /** The page shown, whose destination and page the navigation marks as current. */
@@ -204,19 +25,21 @@ interface NavigationProps {
   onChoose?: () => void;
   /** Opens search. */
   onSearch: () => void;
+  /** Closes the sheet the navigation sits in, from its button on the wordmark's row. */
+  onClose?: () => void;
 }
 
-/** The envUI wordmark, which leads to the area's home, and the envUI Docs lockup in the Docs. */
-function Brand({ area }: { area: Area }) {
+/** The sheet's close button, at the end of the navigation's first row, the wordmark's. */
+function CloseSheet({ onClose }: { onClose?: () => void }) {
+  if (!onClose) return null;
   return (
-    <Link
-      href={routeHref(area === 'docs' ? docsRoute : homeRoute)}
-      underline={false}
-      className="site-brand"
-      aria-label={area === 'docs' ? 'envUI Docs home' : 'envUI home'}
-    >
-      {area === 'docs' ? <EnvUIDocsLogo className="docs-brand-docs" /> : <EnvUILogo />}
-    </Link>
+    <IconButton
+      variant="ghost"
+      icon={<IconClose />}
+      aria-label="Close navigation"
+      onClick={onClose}
+      className="site-sheet-close"
+    />
   );
 }
 
@@ -224,8 +47,10 @@ function Brand({ area }: { area: Area }) {
  * The catalogue's navigation, one pane: a NavigationRail of its destinations, Overview, Foundations,
  * Components and Patterns, under the envUI wordmark, beside a NavigationDrawer of the chosen
  * destination's pages under search, both on the navigation's background with no seam or line
- * between them. A rail item opens its destination's first page; in the sheet of a narrower window
- * it leaves the sheet open, so a page can be chosen.
+ * between them. A destination of one page, such as Overview, has no drawer in a wide window: the
+ * rail stands alone, the page takes the width, and search is at the page's top start (App.tsx).
+ * A rail item opens its destination's first page; in the sheet of a narrower window it leaves the
+ * sheet open, so a page can be chosen.
  */
 export function CatalogueNavigation({
   page,
@@ -233,40 +58,62 @@ export function CatalogueNavigation({
   inSheet = false,
   onChoose,
   onSearch,
+  onClose,
 }: NavigationProps) {
   const element = useCurrentInView();
-  const section = (page?.area === 'catalogue' ? page.section : 'Overview') as CatalogueSection;
-  const pages = pagesOf('catalogue').filter((entry) => entry.section === section);
+  const section = catalogueSectionOf(page);
+  const pages = sectionPages(section);
+  const drawer = useDrawerMotion(element, inSheet || pages.length > 1, section, routePath);
   return (
     <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
       <NavigationRail
         aria-label="Catalogue"
         className="catalogue-rail"
         header={<Brand area="catalogue" />}
-        footer={<MotionButton />}
         destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}
       />
-      <SiteDrawer
-        area="catalogue"
-        inSheet={inSheet}
-        aria-label={section}
-        className="site-sidebar"
-        header={<SearchButton onClick={onSearch} className="site-drawer-search" />}
-        destinations={pageDestinations(pages, routePath, onChoose)}
-      />
+      {drawer.drawn && (
+        <SiteDrawer
+          area="catalogue"
+          inSheet={inSheet}
+          aria-label={drawer.drawn.section}
+          className="site-sidebar"
+          data-site-drawer={drawer.motion}
+          // On its way out it is a picture of what was there, which nothing reaches.
+          inert={drawer.motion === 'leaving' || undefined}
+          aria-hidden={drawer.motion === 'leaving' || undefined}
+          header={
+            onClose ? (
+              <div className="site-drawer-top">
+                <SearchButton onClick={onSearch} className="site-drawer-search" />
+                <CloseSheet onClose={onClose} />
+              </div>
+            ) : (
+              <SearchButton onClick={onSearch} className="site-drawer-search" />
+            )
+          }
+          destinations={pageDestinations(
+            sectionPages(drawer.drawn.section),
+            drawer.drawn.routePath,
+            onChoose,
+          )}
+        />
+      )}
     </div>
   );
 }
 
 /**
  * The Docs' navigation: a NavigationDrawer of every page of the Docs, as a tree of their sections and groups
- * (docsDestinations), with the wordmark and search side by side at its top.
+ * (docsDestinations), with the wordmark and search side by side at its top, or in the sheet, which
+ * is narrower, the wordmark and the sheet's close button, and search under them.
  */
 export function DocsNavigation({
   routePath,
   inSheet = false,
   onChoose,
   onSearch,
+  onClose,
 }: NavigationProps) {
   const element = useCurrentInView();
   return (
@@ -278,42 +125,19 @@ export function DocsNavigation({
         className="site-sidebar"
         header={
           <div className="docs-drawer-top">
-            <Brand area="docs" />
+            {onClose ? (
+              <div className="site-drawer-top">
+                <Brand area="docs" />
+                <CloseSheet onClose={onClose} />
+              </div>
+            ) : (
+              <Brand area="docs" />
+            )}
             <SearchButton onClick={onSearch} className="site-drawer-search" />
           </div>
         }
         destinations={docsDestinations(routePath, onChoose)}
       />
-    </div>
-  );
-}
-
-/**
- * The page's own controls at its top end, quiet ghost buttons that stay in the corner as the page
- * scrolls, on a small pill of the page's color: the other part, the Docs from the catalogue and
- * the catalogue from the Docs, at the page of the same subject there (otherPartRoute), and the
- * Display menu, where the theme, contrast and scale are. Below an expanded window they are icon
- * buttons with tooltips.
- */
-export function PageActions({ page, area }: { page?: RoutePage; area: Area }) {
-  const { label, Icon } = otherPart(area);
-  const href = routeHref(otherPartRoute(page, area));
-  return (
-    <div className="site-page-actions">
-      <div className="site-page-actions-bar">
-        <span className="site-wide-only">
-          <Button variant="ghost" href={href} startIcon={<Icon />}>
-            {label}
-          </Button>
-          <DisplayMenu />
-        </span>
-        <span className="site-narrow-only">
-          <Tooltip content={label}>
-            <IconButton variant="ghost" href={href} icon={<Icon />} aria-label={label} />
-          </Tooltip>
-          <DisplayMenu iconOnly />
-        </span>
-      </div>
     </div>
   );
 }

@@ -10,7 +10,7 @@
     min-inline-size: 0;
     font: var(--env-type-body);
     color: var(--env-color-fg-default);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-prose :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table, hr) {
     margin: 0;
@@ -60,15 +60,18 @@
   }
   .env-prose h1 {
     font: var(--env-type-headline);
+    letter-spacing: var(--env-type-headline-letter-spacing);
   }
   .env-prose :where(h2, h3, h4, h5, h6) {
     font: var(--env-type-title);
+    letter-spacing: var(--env-type-title-letter-spacing);
   }
   .env-prose p {
     font: var(--env-type-body);
   }
+  /* Bold stands out from the regular body text, in semibold rather than a heading's medium. */
   .env-prose strong {
-    font-weight: var(--env-font-weight-medium);
+    font-weight: var(--env-font-weight-semibold);
   }
   /* Lists: each item's marker sits in a narrow column at its start, on the middle of the item's first
      line, and the item's text starts a gap after it; items stand a full step apart, so a list breaks
@@ -155,7 +158,7 @@
   }
   .env-prose blockquote {
     padding-inline-start: var(--env-space-4);
-    border-inline-start: 0.125rem solid var(--env-color-border-muted);
+    border-inline-start: 2px solid var(--env-color-border-muted);
     color: var(--env-color-fg-muted);
   }
   .env-prose img {
@@ -164,7 +167,7 @@
   }
   .env-prose hr {
     border: 0;
-    border-block-start: 0.0625rem solid var(--env-color-border-muted);
+    border-block-start: 1px solid var(--env-color-border-muted);
   }
   .env-prose table {
     inline-size: 100%;
@@ -177,11 +180,12 @@
   .env-prose :where(th, td) {
     --env-code-overflow-wrap: break-word;
     padding: var(--env-space-3) var(--env-space-4);
-    border-block-end: 0.0625rem solid var(--env-color-border-muted);
+    border-block-end: 1px solid var(--env-color-border-muted);
     overflow-wrap: break-word;
   }
   .env-prose th {
     font-weight: var(--env-font-weight-medium);
+    text-align: start;
   }
   .env-prose .footnotes {
     font: var(--env-type-body-sm);

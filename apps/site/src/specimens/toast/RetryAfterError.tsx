@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import RetryAfterError from '../../examples/toast/RetryAfterError';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 const retry = '.env-toast[data-tone="danger"] .env-toast-action';

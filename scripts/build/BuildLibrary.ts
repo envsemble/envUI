@@ -1,14 +1,11 @@
-import { build } from 'esbuild';
+import { build, transform } from 'esbuild';
 import { readdir, readFile, mkdir, writeFile, cp, rm } from 'node:fs/promises';
-import { resolve, join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, resolve, join, relative } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { collectDependencyNotices } from './DependencyNotices.ts';
 import { generateDocumentation, packageDocumentation } from '../docs/GenerateDocumentation.ts';
 import { buildTokens } from './BuildTokens.ts';
-const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
-const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
-const sourceDirectory = resolve(libraryDirectory, 'src');
+import { libraryDirectory, librarySourceDirectory, repositoryRoot } from '../RepositoryPaths.ts';
 const outputDirectory = resolve(libraryDirectory, 'dist');
 
 async function findFiles(directory: string, pattern: RegExp): Promise<string[]> {
@@ -36,10 +33,11 @@ if (relative(libraryDirectory, outputDirectory) !== 'dist')
   throw new Error('Library output must remain within packages/ui/dist.');
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
-const sourceEntryPoints = await findFiles(sourceDirectory, /\.tsx?$/);
+// Every module, without the ambient declarations, which hold no code.
+const sourceEntryPoints = await findFiles(librarySourceDirectory, /(?<!\.d)\.tsx?$/);
 await build({
   entryPoints: sourceEntryPoints,
-  outbase: sourceDirectory,
+  outbase: librarySourceDirectory,
   outdir: outputDirectory,
   format: 'esm',
   platform: 'neutral',
@@ -56,13 +54,11 @@ execFileSync(
   ],
   { stdio: 'inherit' },
 );
-// The generated token module is internal: no export reaches it, so it does not ship. The token list
-// does, as `@envsemble/envui/tokens.json`.
+// The token list ships as `@envsemble/envui/tokens.json`.
 await cp(
-  resolve(sourceDirectory, 'generated/tokens.json'),
+  resolve(librarySourceDirectory, 'generated/tokens.json'),
   resolve(outputDirectory, 'tokens.json'),
 );
-await rm(resolve(outputDirectory, 'generated'), { recursive: true, force: true });
 // Each module imports the style sheets it draws with, as ../styles/Button.css in the source. In the
 // package they become #styles/Button.css, the package's own import (package.json "imports"): a
 // bundler, which sets the `module` condition, loads dist/styles/Button.css, and Node, which can't
@@ -77,6 +73,28 @@ for (const file of await findFiles(outputDirectory, /\.js$/)) {
     return `import "#styles/${stylesheet}";`;
   });
   if (rewritten !== code) await writeFile(file, rewritten);
+}
+// A style sheet a module imports as text, as dev mode imports its own, becomes that text in the
+// module, without comments and whitespace as the other style sheets ship.
+const stylesheetTextImport = /^import (\w+) from "(\.[^"]+\.css)\?raw"(?: with \{[^}]*\})?;$/gm;
+for (const file of await findFiles(outputDirectory, /\.js$/)) {
+  const code = await readFile(file, 'utf8');
+  const imports = [...code.matchAll(stylesheetTextImport)];
+  if (!imports.length) continue;
+  let inlined = code;
+  for (const [statement, name, specifier] of imports) {
+    const source = resolve(
+      librarySourceDirectory,
+      relative(outputDirectory, dirname(file)),
+      specifier,
+    );
+    const { code: css } = await transform(await readFile(source, 'utf8'), {
+      loader: 'css',
+      minifyWhitespace: true,
+    });
+    inlined = inlined.replace(statement, `const ${name} = ${JSON.stringify(css)};`);
+  }
+  await writeFile(file, inlined);
 }
 // The declarations carry no style sheet imports: they hold no types, and a checker that resolves
 // side-effect imports would look for declarations of CSS.
@@ -97,7 +115,7 @@ await writeFile(
 // a module imports, Base.css with the parts it imports. Each of those starts with the layer order,
 // so the layers keep their order whichever of envUI's style sheets a page loads first.
 const layerOrder = /^@layer [\w., ]+;$/m.exec(
-  await readFile(resolve(sourceDirectory, 'styles/Base.css'), 'utf8'),
+  await readFile(resolve(librarySourceDirectory, 'styles/Base.css'), 'utf8'),
 )![0];
 const stylesheetOptions = {
   bundle: true,
@@ -108,13 +126,15 @@ const stylesheetOptions = {
 const stylesheetBuilds = await Promise.all([
   build({
     ...stylesheetOptions,
-    entryPoints: [resolve(sourceDirectory, 'styles/index.css')],
+    entryPoints: [resolve(librarySourceDirectory, 'styles/index.css')],
     assetNames: 'assets/[name]',
     outfile: resolve(outputDirectory, 'styles.css'),
   }),
   build({
     ...stylesheetOptions,
-    entryPoints: [...importedStylesheets].map((name) => resolve(sourceDirectory, 'styles', name)),
+    entryPoints: [...importedStylesheets].map((name) =>
+      resolve(librarySourceDirectory, 'styles', name),
+    ),
     assetNames: '../assets/[name]',
     outdir: resolve(outputDirectory, 'styles'),
   }),

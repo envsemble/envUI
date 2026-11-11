@@ -1,5 +1,5 @@
 import { Column, Surface, Text } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
 /**
  * Every corner radius, each on a block of the size it is for: a pane's for Large and Square, a
@@ -15,10 +15,10 @@ const radii = [
 /** Every corner radius. */
 export default function Corners() {
   return (
-    <Example size="collection">
+    <SpecimenFrame size="collection">
       <SpecimenGrid size="compact">
         {radii.map(({ radius, title, caption, height }) => (
-          <Specimen key={radius} title={title} caption={caption}>
+          <SpecimenPart key={radius} title={title} caption={caption}>
             <Surface
               background="muted"
               radius={radius}
@@ -28,9 +28,9 @@ export default function Corners() {
             >
               <Text>Grouped content</Text>
             </Surface>
-          </Specimen>
+          </SpecimenPart>
         ))}
       </SpecimenGrid>
-    </Example>
+    </SpecimenFrame>
   );
 }

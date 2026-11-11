@@ -1,9 +1,9 @@
 import { use } from 'react';
 import { Column, Composer, Message, MessageList } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
-import { Example } from '../../figures/Example';
-import { useSharedTimeline } from '../../motion/Motion';
-import { MotionStage, VerdictMotion } from '../../motion/MotionStage';
+import { Markdown } from '@envsemble/envui/markdown';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import { useSharedTimeline } from '../../motion/Timeline';
+import { MotionStage, VerdictMotion } from '../../figures/MotionStage';
 import { replyClock, replySteps, replyWords } from './Reply';
 
 const stop = () => undefined;
@@ -50,5 +50,5 @@ export default function ReplyAsItArrives() {
       <Replying />
     </MotionStage>
   );
-  return use(VerdictMotion) ? stage : <Example size="content">{stage}</Example>;
+  return use(VerdictMotion) ? stage : <SpecimenFrame size="content">{stage}</SpecimenFrame>;
 }

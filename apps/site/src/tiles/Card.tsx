@@ -1,35 +1,46 @@
-import { Card, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { CSSProperties } from 'react';
+import { Card, Column, Text } from '@envsemble/envui';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
-/** Hovered, the card takes its hover fill; pressed, it settles a little; let go, and left. */
+/**
+ * Hovers the card, whose fill takes the hover layer; presses and holds it a moment, with the
+ * pressed layer over it as it settles a little; releases it, which opens the project; then the
+ * pointer leaves.
+ */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '.env-card', x: 0.62, y: 0.6 },
-  { wait: 800 },
+  { to: '.env-card', x: 0.6, y: 0.55 },
+  { wait: 1100 },
   { press: true },
-  { wait: 300 },
+  { wait: 600 },
   { release: true },
-  { wait: 700 },
+  { wait: 900 },
   { leave: true },
-  { wait: 700 },
+  { wait: 1200 },
 ];
 
-/** A card that opens a project: its name and a summary. */
+/**
+ * The card's edge, set through its own color property: on a stage of the card's own fill, it keeps
+ * the card's shape visible.
+ */
+const outlined: CSSProperties = { '--env-card-outline': 'var(--env-color-border-muted)' };
+
+/**
+ * A project's card that is one button, as a list of projects opens each project from its card: its
+ * name and when it was last updated, small enough for a phone's stage at its own size. While it
+ * plays, the pointer hovers and presses it, so the whole card reads as the target.
+ */
 export default function CardTile() {
   usePointer(script);
   return (
-    <Card
-      href="#northwind"
-      onClick={(event) => event.preventDefault()}
-      padding={4}
-      style={{ inlineSize: '9rem' }}
-    >
-      <Text render={<span />} variant="title">
-        Northwind
-      </Text>
-      <Text render={<span />} emphasis="muted">
-        12 open tasks
-      </Text>
+    <Card onClick={() => {}} padding={4} style={{ inlineSize: '9.5rem', ...outlined }}>
+      <Column gap={1}>
+        <Text variant="title">Northwind</Text>
+        <Text variant="body-sm" emphasis="muted">
+          Updated today
+        </Text>
+      </Column>
     </Card>
   );
 }

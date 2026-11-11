@@ -1,4 +1,4 @@
-// The development servers the browser tests use answer a browser's close of an idle connection with
+// The servers the browser tests use, in development or previewing a build, answer a browser's close of an idle connection with
 // a reset, so the closed connection leaves nothing behind on the browser's side.
 //
 // Each test opens a fresh browser context, whose connections close with it. The side of a
@@ -8,19 +8,22 @@
 // navigations then failed with ERR_NO_BUFFER_SPACE. A reset in answer to the browser's close ends
 // the connection on both sides at once. Only idle connections are closed so: a browser closes no
 // connection that still waits for a response.
+import type { PreviewServer, ViteDevServer } from 'vite';
 
 /** The Vite plugin that resets a connection once the browser has closed its side. */
 export function resetClosedConnections() {
+  const reset = (server: ViteDevServer | PreviewServer) => {
+    server.httpServer?.on('connection', (socket) => {
+      // Before the HTTP server's own listener, which would answer with a close of its own.
+      socket.prependListener('end', () => {
+        if (!socket.destroyed) socket.resetAndDestroy();
+      });
+    });
+  };
   return {
     name: 'envui-reset-closed-connections',
     apply: 'serve',
-    configureServer(server) {
-      server.httpServer?.on('connection', (socket) => {
-        // Before the HTTP server's own listener, which would answer with a close of its own.
-        socket.prependListener('end', () => {
-          if (!socket.destroyed) socket.resetAndDestroy();
-        });
-      });
-    },
+    configureServer: reset,
+    configurePreviewServer: reset,
   };
 }

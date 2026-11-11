@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { outsideTheme } from './internal/outsideTheme.js';
+import { themeFromRootAttribute } from './internal/themeFromRoot.js';
 import { reportOnce } from '../internal/developmentReport.js';
 import '../styles/Base.css';
 
@@ -16,12 +17,14 @@ export type ColorScheme = 'light' | 'dark';
 export type ThemeContrast = 'standard' | 'high' | 'system';
 
 /**
- * The app scale of a Theme: comfortable, the sizes of web and touch apps, or compact, about 0.8 of
- * them with type one step smaller, for desktop productivity apps.
+ * The app scale of a Theme: comfortable, the sizes of web and touch apps; compact, about 0.8 of
+ * them with type one step smaller, for desktop productivity apps; or `system`, which takes compact
+ * where the primary pointer is fine, such as a mouse or trackpad (`pointer: fine`), and comfortable
+ * on touch.
  */
-export type ThemeScale = 'comfortable' | 'compact';
+export type ThemeScale = 'comfortable' | 'compact' | 'system';
 
-export type { ControlSize } from '../internal/controlTypes.js';
+export type { ControlSize } from '../internal/control/controlTypes.js';
 
 /**
  * How tightly a data component, such as a Table, Tree or List, packs its rows: only the rows' block
@@ -49,10 +52,11 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
    */
   contrast?: ThemeContrast;
   /**
-   * The app scale of everything inside: comfortable, or compact for a desktop productivity app.
-   * Use one scale per app or window, and another only on a Theme around a whole region, such as a
-   * docked inspector. Defaults to the scale of the enclosing Theme, and to comfortable outside any.
-   * It wins over a `data-env-scale` attribute passed to the Theme.
+   * The app scale of everything inside: comfortable, compact, or `system`, which is compact under a
+   * fine pointer and comfortable on touch, chosen by the stylesheet. Use one scale per app or
+   * window, and another only on a Theme around a whole region, such as a docked inspector. Defaults
+   * to the scale of the enclosing Theme, and to `system` outside any. It wins over a
+   * `data-env-scale` attribute passed to the Theme.
    */
   scale?: ThemeScale;
 }
@@ -138,7 +142,7 @@ export function Theme({
   const scaleAttribute = attributes['data-env-scale'];
   const scale =
     ownScale ??
-    (scaleAttribute === 'comfortable' || scaleAttribute === 'compact'
+    (scaleAttribute === 'comfortable' || scaleAttribute === 'compact' || scaleAttribute === 'system'
       ? scaleAttribute
       : inherited.scale);
   const value = useMemo(() => ({ theme, contrast, scale }), [theme, contrast, scale]);
@@ -146,10 +150,14 @@ export function Theme({
     <ThemeContext value={value}>
       <div
         {...props}
-        className={classNames('env-theme', className)}
-        data-env-theme={theme}
-        data-env-contrast={contrast === 'system' ? undefined : contrast}
-        data-env-scale={scale}
+        className={className}
+        // A ThemePreferenceProvider's boundary that themes the root takes the root's look.
+        {...(!(themeFromRootAttribute in props) && {
+          className: classNames('env-theme', className),
+          'data-env-theme': theme,
+          'data-env-contrast': contrast === 'system' ? undefined : contrast,
+          'data-env-scale': scale,
+        })}
       >
         {children}
       </div>
@@ -160,7 +168,8 @@ export function Theme({
 /**
  * The theme of the nearest Theme, including across React portals: its color scheme, contrast and
  * scale. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of
- * `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`.
+ * `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of
+ * `system` leaves it to `pointer: fine`.
  */
 export function useTheme(): ThemeContextValue {
   return useContext(ThemeContext);

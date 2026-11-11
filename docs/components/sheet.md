@@ -1,6 +1,6 @@
 ---
 title: Sheet
-summary: A panel that slides in over the page from the end, the start or the bottom edge of the window, for filters, details, an inspector or a short set of choices.
+summary: A panel that slides in over the page from an edge of the window.
 status: beta
 since: 1.0.0
 category: Overlays
@@ -85,8 +85,6 @@ A medium side sheet takes the whole width of a compact window, and a large one o
 4. **Close button** (`env-dialog-heading > env-button`, `closeLabel`)
 5. **Content** (`env-sheet env-checkbox`, `children`)
 6. **Action** (`env-dialog-actions > env-button`, `actions`)
-
-Not shown: the backdrop behind a modal sheet, and the handle on a resizable sheet's inner edge.
 
 ## Behaviour
 
@@ -228,7 +226,7 @@ With `resizable`, people resize a side sheet by its inner edge, between `minWidt
 
 #### Pending work
 
-While `pending`, <kbd>Esc</kbd>, presses outside, swipes and the close button can't dismiss the sheet, so work started from it finishes first.
+While `pending`, <kbd>Esc</kbd>, presses outside, swipes and the close button can't dismiss the sheet, so work started from it finishes first. The close button and every DialogClose inside are disabled, and the last action, where it is a Button that sets no `pending` of its own, shows it pending.
 
 ### Composition
 
@@ -240,7 +238,10 @@ A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title
 
 ## Changelog
 
+- **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction.
+- **1.0.0-prerelease.6**: Under reduced motion, too, the sheet fades in with `--env-motion-ease-enter`, as it does while it slides.
+- **1.0.0-prerelease.6**: As it slides in, the sheet is solid within `--env-motion-duration-fast`, so the page doesn't show through a sheet as wide as a phone's window; the backdrop keeps the slower fade.
+- **1.0.0-prerelease.6**: While a sheet is `pending`, every DialogClose inside is disabled as its close button is, and its last action, where it is a Button that sets no `pending` of its own, shows it pending.
 - **1.0.0-prerelease.5**: A Sheet has no edge line: its fill and its scrim set it apart, and its edge returns at high contrast. A side sheet keeps its actions at its foot, however little its body holds.
 - **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, rather than the popup's, in every theme, so navigation that opens in it in a narrow window keeps its color.
 - **1.0.0-prerelease.2**: With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, from `defaultWidth`; `width` takes a number of rem, which `onWidthChange` keeps. The handle is `env-sheet-resize-handle`, the same grip as Panes.Divider's. Only a finger swipes a sheet closed; a mouse or a pen no longer moves it.
-- **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction.

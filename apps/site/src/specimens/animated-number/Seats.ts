@@ -1,7 +1,7 @@
-import type { PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
 
-const add = '.env-icon-button:nth-child(2 of .env-icon-button)';
-const remove = '.env-icon-button:nth-child(1 of .env-icon-button)';
+const add = '[aria-label="Invite one more person"]';
+const remove = '[aria-label="Invite one person fewer"]';
 
 /*
  * The pointer invites two more people with +, a moment apart, then takes them back with −, so the

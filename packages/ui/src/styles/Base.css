@@ -12,7 +12,7 @@
 @layer env.reset, env.tokens, env.base, env.components, env.utilities;
 
 @import './Reset.css' layer(env.reset);
-@import './Tokens.css' layer(env.tokens);
+@import '../generated/Tokens.css' layer(env.tokens);
 @import './TokensHandwritten.css' layer(env.tokens);
 @import './Surface.css';
 @import './Theme.css' layer(env.base);

@@ -1,38 +1,48 @@
 import { Accordion } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useMedia } from '../motion/Autoplay';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { narrowGallery } from './Tiles';
+import type { TileWindow } from './Tiles';
 
 const trigger = (index: number) => `.env-accordion-item:nth-child(${index}) .env-accordion-trigger`;
 
-/** The second section opened, which closes the first; then the first opened again. */
+/** Opens the second question, which closes the first, then opens the first again, as it began. */
 const script: PointerStep[] = [
-  { wait: 400 },
-  { to: '.env-accordion-content', x: 0.8, y: 0.3 },
-  { wait: 150 },
-  { to: trigger(2), x: 0.35, duration: 400 },
+  { wait: 300 },
+  { to: trigger(2), x: 0.35 },
   { wait: 300 },
   { click: true },
-  { wait: 1300 },
-  { to: trigger(1), x: 0.35, duration: 500 },
+  { wait: 1400 },
+  { to: trigger(1), x: 0.35, duration: 450 },
   { wait: 300 },
   { click: true },
-  { wait: 600 },
+  { wait: 900 },
   { leave: true },
-  { wait: 700 },
+  { wait: 600 },
 ];
 
-/** An accordion of three questions, the first open. */
+/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 15, height: 11.25 };
+
+/**
+ * An accordion of two questions, the first open at rest. One answer is open in every state, so the
+ * still is as tall as the accordion ever gets, the stage shows it whole, clear of the card's
+ * bottom, and the view holds while either answer opens below its question (useHeldView). In a
+ * phone's lower tile it is a little narrower.
+ */
 export default function AccordionTile() {
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
+  useHeldView();
   return (
-    <Accordion.Root defaultValue={['see']} style={{ inlineSize: '12rem' }}>
-      <Accordion.Item value="see" title="Who can see it?">
-        Everyone in the team.
+    <Accordion.Root defaultValue={['see']} style={{ inlineSize: narrow ? '9.5rem' : '12rem' }}>
+      <Accordion.Item value="see" title="Who sees it?">
+        Your team.
       </Accordion.Item>
       <Accordion.Item value="move" title="Can I move it?">
-        Yes, from its menu.
-      </Accordion.Item>
-      <Accordion.Item value="export" title="Can I export it?">
-        As Markdown or PDF.
+        Yes, any time.
       </Accordion.Item>
     </Accordion.Root>
   );

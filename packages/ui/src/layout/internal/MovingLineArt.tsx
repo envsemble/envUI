@@ -12,7 +12,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import { setRef } from '../../internal/setRef.js';
+import { setRef } from '../../internal/react/setRef.js';
 import type { LineArtDrawing, LineArtMotion } from '../LineArt.js';
 import { lineArtShapes } from './lineArtShapes.js';
 
@@ -34,14 +34,16 @@ function movingShapes(drawing: LineArtDrawing) {
   beats.forEach((lines, beat) => {
     for (const line of lines) at[line] = beats.length > 1 ? beat / (beats.length - 1) : 0;
   });
+  // A drawing is a Fragment of its shapes, each an SVG element.
   const drawn = (fragment as ReactElement<{ children: ReactNode }>).props.children;
   const shapes = Children.toArray(drawn).map((shape, index) =>
     cloneElement(shape as ReactElement<{ pathLength?: number; style?: CSSProperties }>, {
       pathLength: 1,
-      style: { '--env-line-art-at': at[index] } as CSSProperties,
+      style: { '--env-line-art-at': at[index] },
     }),
   );
-  found = { shapes, last: { in: beats.at(-1)!.at(-1)!, out: beats[0]!.at(-1)! } };
+  // Every drawing has a beat, and every beat a line.
+  found = { shapes, last: { in: beats.at(-1)!.at(-1)!, out: beats[0].at(-1)! } };
   moving.set(drawing, found);
   return found;
 }

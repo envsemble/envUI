@@ -1,6 +1,6 @@
 ---
 title: AnimatedNumber
-summary: A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.
+summary: A number that rolls to its new value, so a change made elsewhere is noticed.
 status: stable
 since: 1.0.0
 category: Data display
@@ -62,6 +62,8 @@ The number can be written in any format, such as a currency. By default it is wr
 1. **Window** (`env-animated-number`)
 2. **Value** (`env-animated-number-value`, `value`)
 
+While the number changes, the value it changed from rolls out as the new one rolls in.
+
 ## Behaviour
 
 ### Rolling to a new value
@@ -72,7 +74,7 @@ AnimatedNumber rolls up as the value grows and down as it shrinks.
 
 ### Reduced motion
 
-With a reduced-motion preference, the new value only fades in.
+With a reduced-motion preference, the old value fades out as the new one fades in.
 
 ## Rules
 
@@ -129,3 +131,4 @@ AnimatedNumber is the root, `env-animated-number`, around the value, `env-animat
 ## Changelog
 
 - **1.0.0**: The default format follows EnvUIProvider's `locale`. `format` is `formatValue`, as on Slider and CalendarHeatmap.
+- **1.0.0-prerelease.6**: The value it changed from rolls out quickly, `env-animated-number-previous`, and the new one rolls in at once, a whole line inside the number's box, so the number never blinks out and the two never read over each other; with reduced motion they cross-fade. Where the new value is wider or narrower, the box eases to its width.

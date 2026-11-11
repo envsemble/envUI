@@ -1,38 +1,42 @@
-import { Box, Column, type SpaceStep } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
-import { along, easing, edges, Item, line, Mark } from './Reflow';
-
-/** The inset, step by step: a small one, a larger one, and back. */
-const paddings: SpaceStep[] = [2, 5];
-
-/** The inset's motion, the same for the padding and the marks that measure it. */
-const motion = (property: string) => `${property} 700ms ${easing}`;
+import { Box, Button, Column, Surface, Text, type SpaceStep } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
+import { useTimeline } from '../motion/Timeline';
+import { outlined } from './Outline';
+import { narrowGallery } from './Tiles';
 
 /**
- * A box drawn in hairlines around its content, a heading, a line and an action within the outline
- * of the area its padding leaves, the inset between the two marked above and to the left, growing
- * and shrinking again.
+ * Steps through the inset: a large one, a small one, and back. A phone's lower stage holds less, so
+ * the whole surface, its action included, shows at the larger inset.
+ */
+const paddings: SpaceStep[] = [5, 1];
+const narrowPaddings: SpaceStep[] = [3, 1];
+
+/**
+ * An invitation inset by a Box in an outlined surface as wide as its content, as a region holds it:
+ * a heading, a line and an action, with the space between them and the surface's edge growing and
+ * shrinking. Each step lays the box out at once, as a Box does when its padding changes.
  */
 export default function BoxTile() {
-  const step = useTimeline([1100, 1800]);
-  const padding = `var(--env-space-${paddings[step]})`;
+  const step = useTimeline([2200, 2200]);
+  const narrow = useMedia(narrowGallery);
   return (
-    <Box padding={paddings[step]} style={{ position: 'relative', transition: motion('padding') }}>
-      {edges()}
-      <Mark
-        at={{ ...line('block', '50%'), top: 0, height: padding, transition: motion('height') }}
-        lines={along.block}
-      />
-      <Mark
-        at={{ ...line('inline', '50%'), left: 0, width: padding, transition: motion('width') }}
-        lines={along.inline}
-      />
-      <Column gap={2} style={{ position: 'relative', padding: 'var(--env-space-1)' }}>
-        {edges()}
-        <Item width="3.5rem" height="1rem" />
-        <Item width="5rem" height="0.75rem" />
-        <Item width="2.25rem" height="1rem" />
-      </Column>
-    </Box>
+    <Surface
+      background="default"
+      radius="sm"
+      padding={0}
+      style={{ ...outlined, inlineSize: 'max-content' }}
+    >
+      <Box padding={(narrow ? narrowPaddings : paddings)[step]}>
+        <Column gap={1} align="start">
+          <Text variant="body">Invite your team</Text>
+          <Text variant="body-sm" emphasis="muted">
+            Plans go faster.
+          </Text>
+          <Button variant="secondary" size="sm">
+            Invite
+          </Button>
+        </Column>
+      </Box>
+    </Surface>
   );
 }

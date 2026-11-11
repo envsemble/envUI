@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Pagination } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const button = (direction: 'previous' | 'next') =>
   `.env-pagination-button[data-direction="${direction}"]`;
 
 /*
- * Two pages on by the next page's button, the range following, and two back by the previous one.
- * The pages it passes all show ranges as wide, so the buttons stay where they are. Each press
- * comes before the buttons' tooltips would open, and a pressed button's tooltip stays closed, so
- * the range is all that changes.
+ * Goes two pages forward with the next page's button, the range following, and two back with the
+ * previous one. The pages it passes all show ranges of the same width, so the buttons stay in
+ * place. Each press comes before the buttons' tooltips would open, and a pressed button's tooltip
+ * stays closed, so the range is all that changes.
  */
 const script: PointerStep[] = [
   { wait: 300 },

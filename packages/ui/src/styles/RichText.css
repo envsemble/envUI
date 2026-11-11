@@ -8,7 +8,12 @@
   .env-rich-text-document {
     min-inline-size: 0;
     max-inline-size: 100%;
-    min-block-size: 10rem;
+    /* 10 rem, or the lines minRows asks for and the document's padding (RichTextEditor). */
+    --env-rich-text-default-min-block-size: 10rem;
+    min-block-size: var(
+      --env-rich-text-min-block-size,
+      var(--env-rich-text-default-min-block-size)
+    );
     padding: var(--env-space-4);
     border-radius: inherit;
     outline: none;
@@ -28,6 +33,12 @@
     height: 0;
     pointer-events: none;
   }
+  /* Saved text keeps its spaces and line breaks as the editor shows them: a single newline, a soft
+     break, starts a new line in both, and runs of spaces stay. */
+  .env-rich-text {
+    overflow-wrap: break-word;
+    white-space: break-spaces;
+  }
   .env-rich-text :where(ul[data-type='taskList']),
   .env-rich-text-document :where(ul[data-type='taskList']) {
     list-style: none;
@@ -37,7 +48,7 @@
   .env-rich-text :where(ul[data-type='taskList'] > li),
   .env-rich-text-document :where(ul[data-type='taskList'] > li) {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     gap: var(--env-space-2);
   }
   .env-rich-text :where(ul[data-type='taskList'] > li > div),
@@ -53,8 +64,16 @@
   /* The editor's task item: its checkbox beside the item's text, as in RichText. */
   .env-rich-text-task {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     gap: var(--env-space-2);
+  }
+  /* A task's checkbox sits on the middle of the first line of its text, however the text wraps: its
+     slot is one line of the text tall, with the checkbox in the middle. */
+  .env-rich-text-task-check {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    block-size: 1lh;
   }
   .env-rich-text-task-content {
     min-inline-size: 0;
@@ -135,7 +154,8 @@
   }
   .env-rich-text-document td,
   .env-rich-text-document th {
-    min-inline-size: 3rem;
+    --env-rich-text-cell-min-width: 3rem;
+    min-inline-size: var(--env-rich-text-cell-min-width);
     position: relative;
   }
   .env-rich-text-document .selectedCell {
@@ -144,14 +164,20 @@
   .env-rich-text-reference {
     display: inline;
     padding: 0 var(--env-space-1);
-    border-radius: 0.25rem;
+    border-radius: var(--env-space-1);
     background: var(--env-color-bg-neutral-muted);
     color: var(--env-color-fg-default);
     text-decoration: none;
     box-decoration-break: clone;
   }
+  /* Disabled, the document doesn't fade with its box: its text and references take the disabled text
+     color, as a disabled text field's value does, and the box quiets its outline. */
+  .env-rich-text-editor-control[data-disabled]
+    :is(.env-rich-text-document, .env-rich-text-reference) {
+    color: var(--env-color-fg-disabled);
+  }
   .env-rich-text-reference:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
+    outline: 2px solid var(--env-color-border-focus);
   }
   /* The suggestions of a trigger, such as @: a list beside the caret, above what the editor sits in,
      a frosted popup as menus are (Popup.css), with their corners and rows. */
@@ -160,13 +186,26 @@
   }
   .env-rich-text-suggestions {
     box-sizing: border-box;
-    min-inline-size: min(12rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
-    max-inline-size: min(24rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
-    max-block-size: min(18rem, calc(100dvh - 2 * var(--env-viewport-gutter)));
+    --env-rich-text-suggestions-min-width: 12rem;
+    --env-rich-text-suggestions-max-width: 24rem;
+    --env-rich-text-suggestions-max-height: 18rem;
+    min-inline-size: min(
+      var(--env-rich-text-suggestions-min-width),
+      calc(100dvw - 2 * var(--env-viewport-gutter))
+    );
+    max-inline-size: min(
+      var(--env-rich-text-suggestions-max-width),
+      calc(100dvw - 2 * var(--env-viewport-gutter))
+    );
+    max-block-size: min(
+      var(--env-rich-text-suggestions-max-height),
+      calc(100dvh - 2 * var(--env-viewport-gutter))
+    );
     overflow: auto;
     /* The edge of a solid list; frosted, it has none. */
     --env-rich-text-suggestions-edge: var(--env-popup-solid) var(--env-popup-edge-color);
-    border: var(--env-control-border-width) solid var(--env-rich-text-suggestions-edge, transparent);
+    border: var(--env-control-border-width) solid
+      var(--env-rich-text-suggestions-edge, var(--env-popup-frosted-edge, transparent));
     border-radius: var(--env-popup-radius);
     background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
     box-shadow: var(--env-popup-shadow);

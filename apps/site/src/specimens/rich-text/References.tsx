@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import References from '../../examples/rich-text/References';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const document = '.ProseMirror';
 

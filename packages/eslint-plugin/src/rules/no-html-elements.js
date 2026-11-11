@@ -11,6 +11,7 @@ import {
   resolveVariable,
   spreadsProps,
   staticValue,
+  unwrapExpression,
   walk,
 } from '../utilities.js';
 
@@ -29,16 +30,10 @@ function ownersOf(entry) {
 }
 
 /**
- * The envUI entry points that export components. The others export icons, assets and a script,
- * which are not components whatever their local name.
+ * The specifiers of envUI's entry points, whose names count as envUI's. Those without components,
+ * such as `/dev`, export none of the owners' names.
  */
-const componentEntryPoints = new Set([
-  '@envsemble/envui',
-  '@envsemble/envui/content',
-  '@envsemble/envui/diff',
-  '@envsemble/envui/color',
-  '@envsemble/envui/rich-text',
-]);
+const entryPoints = new Set(readData('entryPoints.json').entryPoints);
 
 /** The bindings an entry imports: its own list, or the namespaces of the components it uses. */
 function bindings(entry) {
@@ -121,22 +116,6 @@ function hasLinkComponentProps(fn, visitorKeys) {
   );
 }
 
-/**
- * An expression without the TypeScript `as`, `satisfies` and `!` around it, and without the chain
- * that optional chaining wraps around `adapters?.link`.
- */
-function unwrap(expression) {
-  let node = expression;
-  while (
-    node?.type === 'TSAsExpression' ||
-    node?.type === 'TSSatisfiesExpression' ||
-    node?.type === 'TSNonNullExpression' ||
-    node?.type === 'ChainExpression'
-  )
-    node = node.expression;
-  return node;
-}
-
 /** How the message names what was found, such as `a raw <input type="email">`. */
 function describeElement(entry, element, tag) {
   if (entry.describe) return entry.describe.replace('{tag}', tag);
@@ -188,7 +167,7 @@ export default {
     const { sourceCode } = context;
     const { isReexportModule } = pluginSettings(context);
     /** Whether names from a module are envUI's: an entry point, or a module that re-exports one. */
-    const isEnvuiSource = (source) => componentEntryPoints.has(source) || isReexportModule(source);
+    const isEnvuiSource = (source) => entryPoints.has(source) || isReexportModule(source);
     const unknown = allow.filter((id) => !knownIds.has(id));
     if (unknown.length > 0)
       throw new Error(
@@ -267,7 +246,7 @@ export default {
 
     /** The object literals an expression stands for, through variables and members. */
     function objectsOf(expression, seen) {
-      const node = unwrap(expression);
+      const node = unwrapExpression(expression);
       if (!node || seen.has(node)) return [];
       seen.add(node);
       if (node.type === 'ObjectExpression') return [node];
@@ -280,7 +259,7 @@ export default {
 
     /** The functions an expression stands for: itself, a wrapped one, a variable's or a member's. */
     function functionsOf(expression, seen = new Set()) {
-      const node = unwrap(expression);
+      const node = unwrapExpression(expression);
       if (!node || seen.has(node)) return [];
       seen.add(node);
       if (isFunction(node)) return [node];

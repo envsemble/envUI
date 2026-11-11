@@ -1,29 +1,33 @@
 'use client';
 
 import {
-  useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/setRef.js';
-import { typeaheadTimeout } from '../internal/typeahead.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { setRef } from '../internal/react/setRef.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
-import { IconChevronRight } from '../icons/ChevronRight.js';
-import { ContextMenu } from './ContextMenu.js';
-import { remPixels } from '../internal/lengths.js';
-import { isRightToLeft } from '../internal/direction.js';
+import { ContextMenu } from '../actions/ContextMenu.js';
+import { isRightToLeft } from '../internal/dom/direction.js';
+import {
+  rowElementId,
+  siblingPositions,
+  treeKeyAction,
+  type TypedText,
+} from './internal/treeModel.js';
+import { placeRows, TreeRow } from './internal/TreeRow.js';
+import { useTreeTransitions } from './internal/useTreeTransitions.js';
+import { useTreeViewport } from './internal/useTreeViewport.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Tree.css';
 
@@ -76,11 +80,10 @@ export interface TreeActionDetails {
 /** The native events the tree handles itself, for its rows; the others reach its element. */
 type TreeOwnEvents = 'onClick' | 'onDoubleClick' | 'onContextMenu' | 'onPointerDown';
 
-export interface TreeProps<Item extends TreeItem>
-  extends Omit<
-    ComponentPropsWithRef<'div'>,
-    'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu' | TreeOwnEvents
-  > {
+export interface TreeProps<Item extends TreeItem> extends Omit<
+  ComponentPropsWithRef<'div'>,
+  'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu' | TreeOwnEvents
+> {
   /**
    * The visible rows in order, flattened: an expanded row is followed by its visible descendants.
    * The application owns expansion; collapsing a row removes its descendants from items.
@@ -123,51 +126,6 @@ export interface TreeProps<Item extends TreeItem>
   density?: RowDensity;
 }
 
-/** Rows outside the viewport kept rendered above and below it. */
-const overscan = 8;
-/**
- * The rows a tree renders before it has measured its viewport, such as in the server's markup: as
- * many as a tall pane shows, so the first paint is already full and measuring only adds rows.
- */
-const unmeasuredRows = 24;
-/** Each density's row height in rem in the comfortable scale, until a row can be measured. */
-const rowRem: Record<RowDensity, number> = { xs: 1.5, sm: 1.75, md: 2.25, lg: 2.75 };
-
-/** A row id safe for id references, whatever characters the item id contains. */
-function rowElementId(treeId: string, itemId: string) {
-  return `${treeId}-row-${itemId.replace(
-    /[^A-Za-z0-9-]/g,
-    (character) => `_${character.codePointAt(0)!.toString(16)}_`,
-  )}`;
-}
-
-function itemText(item: TreeItem) {
-  return item.textValue ?? (typeof item.label === 'string' ? item.label : '');
-}
-
-/** Position and size of each row among its siblings, for aria-posinset and aria-setsize. */
-function siblingPositions(items: readonly TreeItem[]) {
-  const positions = new Array<number>(items.length);
-  const sizes = new Array<number>(items.length);
-  // Each open level keeps the indexes of its rows until a shallower row closes it.
-  const levels: number[][] = [];
-  const close = (depth: number) => {
-    while (levels.length > depth) {
-      const rows = levels.pop()!;
-      for (const index of rows) sizes[index] = rows.length;
-    }
-  };
-  items.forEach((item, index) => {
-    close(item.depth + 1);
-    while (levels.length < item.depth + 1) levels.push([]);
-    const rows = levels[item.depth]!;
-    rows.push(index);
-    positions[index] = rows.length;
-  });
-  close(0);
-  return { positions, sizes };
-}
-
 /**
  * A virtualized tree of rows for large hierarchies such as file trees. The application passes the
  * visible rows and owns expansion and selection; the tree owns focus, keyboard navigation and
@@ -192,16 +150,11 @@ export function Tree<Item extends TreeItem>({
   const messages = useMessages('tree', treeMessages);
   const treeId = useId().replace(/[^A-Za-z0-9-]/g, '');
   const container = useRef<HTMLDivElement>(null);
-  const [scrollTop, setScrollTop] = useState(0);
-  const [viewportHeight, setViewportHeight] = useState(0);
-  const [rowHeight, setRowHeight] = useState(rowRem[density] * 16);
   const [activeId, setActiveId] = useState<string | null>(selectedId);
   // Keyboard focus shows a ring on the active row; pointer focus does not.
   const [focusVisible, setFocusVisible] = useState(false);
   const pointerFocus = useRef(false);
-  const typeahead = useRef({ text: '', time: 0 });
-  // The last selection scrolled into view; a new selection is revealed once its row is visible.
-  const revealedSelection = useRef<string | null>(null);
+  const typeahead = useRef<TypedText>({ text: '', time: 0 });
 
   const indexById = useMemo(() => {
     const map = new Map<string, number>();
@@ -209,75 +162,36 @@ export function Tree<Item extends TreeItem>({
     return map;
   }, [items]);
   const { positions, sizes } = useMemo(() => siblingPositions(items), [items]);
+  const { rowsElement, arriving, motion, moving } = useTreeTransitions(items);
 
   // The active row falls back to the selected or first row when it leaves the visible rows.
   const lastActiveIndex = useRef(0);
+  const selectedIndex = selectedId === null ? undefined : indexById.get(selectedId);
   let activeIndex = activeId === null ? -1 : (indexById.get(activeId) ?? -1);
-  if (activeIndex === -1 && items.length > 0) {
-    const selectedIndex = selectedId === null ? -1 : (indexById.get(selectedId) ?? -1);
-    activeIndex =
-      selectedIndex !== -1 ? selectedIndex : Math.min(lastActiveIndex.current, items.length - 1);
-  }
+  if (activeIndex === -1 && items.length > 0)
+    activeIndex = selectedIndex ?? Math.min(lastActiveIndex.current, items.length - 1);
   lastActiveIndex.current = Math.max(activeIndex, 0);
   const activeItem = activeIndex === -1 ? undefined : items[activeIndex];
 
-  // Row height follows the density, the scale, enlarged text and coarse pointers; it is read from
-  // a row.
-  const hasItems = items.length > 0;
-  useLayoutEffect(() => {
-    const element = container.current;
-    if (!element) return;
-    const measure = () => {
-      setViewportHeight(element.clientHeight);
-      const row = element.querySelector<HTMLElement>('.env-tree-item');
-      // The layout height, exact and unaffected by transforms such as a dialog scaling in, which
-      // getBoundingClientRect would include. Rows are border-box with a fixed block size.
-      const height = row ? parseFloat(getComputedStyle(row).blockSize) : 0;
-      if (height) setRowHeight(height);
-      else setRowHeight(rowRem[density] * remPixels());
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [density, hasItems]);
-
-  const scrollToIndex = useCallback(
-    (index: number, block: 'nearest' | 'center' = 'nearest') => {
-      const element = container.current;
-      if (!element || index < 0) return;
-      const top = index * rowHeight;
-      const bottom = top + rowHeight;
-      const height = element.clientHeight;
-      if (block === 'center' && (top < element.scrollTop || bottom > element.scrollTop + height)) {
-        element.scrollTop = Math.max(0, top - (height - rowHeight) / 2);
-      } else if (top < element.scrollTop) element.scrollTop = top;
-      else if (bottom > element.scrollTop + height) element.scrollTop = bottom - height;
-      setScrollTop(element.scrollTop);
-    },
-    [rowHeight],
-  );
+  const { rowHeight, pageRows, indexes, inView, scrollToIndex, onScroll } = useTreeViewport({
+    containerRef: container,
+    density,
+    count: items.length,
+    activeIndex,
+    selectedIndex,
+    selectedId,
+  });
 
   useEffect(() => {
     if (selectedId !== null) setActiveId(selectedId);
   }, [selectedId]);
 
-  // Revealing waits until the row is among the items and the tree has a size, for example while a
-  // collapsed sidebar hides it.
-  useLayoutEffect(() => {
-    if (selectedId === null || selectedId === revealedSelection.current || viewportHeight === 0)
-      return;
-    const index = indexById.get(selectedId);
-    if (index === undefined) return;
-    revealedSelection.current = selectedId;
-    scrollToIndex(index, 'center');
-  }, [selectedId, indexById, scrollToIndex, viewportHeight]);
-
   function activate(index: number) {
-    const item = items[Math.max(0, Math.min(items.length - 1, index))];
+    const at = Math.max(0, Math.min(items.length - 1, index));
+    const item = items[at];
     if (!item) return;
     setActiveId(item.value);
-    scrollToIndex(indexById.get(item.value)!);
+    scrollToIndex(at);
   }
 
   function open(item: Item, preview: boolean) {
@@ -288,92 +202,24 @@ export function Tree<Item extends TreeItem>({
     if (!item.disabled) onExpandedChange(item, expanded);
   }
 
-  function findByText(key: string) {
-    const now = performance.now();
-    const state = typeahead.current;
-    state.text = now - state.time > typeaheadTimeout ? key : state.text + key;
-    state.time = now;
-    const query = state.text.toLocaleLowerCase();
-    // A repeated first letter cycles through matches; longer text refines the current match.
-    const repeated = query.length > 1 && [...query].every((character) => character === query[0]);
-    const search = repeated ? query[0]! : query;
-    const start = repeated || query.length === 1 ? activeIndex + 1 : activeIndex;
-    for (let offset = 0; offset < items.length; offset += 1) {
-      const index = (start + offset) % items.length;
-      if (itemText(items[index]!).toLocaleLowerCase().startsWith(search)) return index;
-    }
-    return -1;
-  }
-
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.target !== event.currentTarget || !activeItem) return;
     // Keys with Alt, Ctrl or ⌘ belong to the application, such as Alt+← for going back.
     if (event.altKey || event.ctrlKey || event.metaKey) return;
-    const page = Math.max(1, Math.floor(viewportHeight / rowHeight) - 1);
-    let handled = true;
-    switch (event.key) {
-      case 'ArrowDown':
-        activate(activeIndex + 1);
-        break;
-      case 'ArrowUp':
-        activate(activeIndex - 1);
-        break;
-      case 'Home':
-        activate(0);
-        break;
-      case 'End':
-        activate(items.length - 1);
-        break;
-      case 'PageDown':
-        activate(activeIndex + page);
-        break;
-      case 'PageUp':
-        activate(activeIndex - page);
-        break;
-      case 'ArrowRight':
-      case 'ArrowLeft': {
-        const rtl = isRightToLeft(event.currentTarget);
-        const inward = (event.key === 'ArrowRight') !== rtl;
-        if (inward) {
-          if (activeItem.expandable && !activeItem.expanded) setExpanded(activeItem, true);
-          else if (activeItem.expanded && items[activeIndex + 1]?.depth === activeItem.depth + 1)
-            activate(activeIndex + 1);
-        } else if (activeItem.expandable && activeItem.expanded) {
-          setExpanded(activeItem, false);
-        } else {
-          for (let index = activeIndex - 1; index >= 0; index -= 1) {
-            if (items[index]!.depth < activeItem.depth) {
-              activate(index);
-              break;
-            }
-          }
-        }
-        break;
-      }
-      case 'Enter':
-        open(activeItem, false);
-        break;
-      case ' ': {
-        // While typing ahead, a space belongs to the typed text.
-        const typing = performance.now() - typeahead.current.time <= typeaheadTimeout;
-        if (typing && typeahead.current.text) {
-          const index = findByText(event.key);
-          if (index !== -1) activate(index);
-        } else open(activeItem, true);
-        break;
-      }
-      default:
-        handled = false;
-        if (event.key.length === 1) {
-          const index = findByText(event.key);
-          if (index !== -1) activate(index);
-          handled = true;
-        }
-    }
-    if (handled) {
-      event.preventDefault();
-      setFocusVisible(true);
-    }
+    const action = treeKeyAction(
+      event.key,
+      items,
+      activeIndex,
+      pageRows,
+      isRightToLeft(event.currentTarget),
+      typeahead.current,
+    );
+    if (!action) return;
+    if (action.kind === 'move') activate(action.index);
+    else if (action.kind === 'expand') setExpanded(activeItem, action.expanded);
+    else if (action.kind === 'open') open(activeItem, action.preview);
+    event.preventDefault();
+    setFocusVisible(true);
   }
 
   function rowFromEvent(event: MouseEvent<HTMLElement>) {
@@ -399,16 +245,23 @@ export function Tree<Item extends TreeItem>({
     open(item, false);
   }
 
-  // Only rows in view, plus overscan and the active row, are in the document.
-  const first = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan);
-  const shownHeight = viewportHeight || unmeasuredRows * rowHeight;
-  const last = Math.min(
-    items.length - 1,
-    Math.ceil((scrollTop + shownHeight) / rowHeight) + overscan,
+  /** A row at its index, placed top pixels down its parent; a leaving row is only shown. */
+  const row = (item: Item, index: number, top: number, leaving = false) => (
+    <TreeRow
+      key={item.value}
+      item={item}
+      id={rowElementId(treeId, item.value)}
+      position={positions[index]}
+      setSize={sizes[index]}
+      selected={item.value === selectedId}
+      highlighted={index === activeIndex}
+      arriving={arriving.has(item.value)}
+      top={top}
+      leaving={leaving}
+    />
   );
-  const indexes: number[] = [];
-  for (let index = first; index <= last; index += 1) indexes.push(index);
-  if (activeIndex !== -1 && (activeIndex < first || activeIndex > last)) indexes.push(activeIndex);
+
+  const { rows, shift } = placeRows({ items, indexes, motion, moving, rowHeight, inView, row });
 
   const tree = (
     <div
@@ -423,14 +276,14 @@ export function Tree<Item extends TreeItem>({
       tabIndex={0}
       className={classNames('env-tree', className)}
       data-density={density}
-      data-focus-visible={focusVisible ? '' : undefined}
+      data-focus-visible={flag(focusVisible)}
       onKeyDown={(event) => {
         ownKeyDown?.(event);
         if (!event.defaultPrevented) onKeyDown(event);
       }}
       onScroll={(event) => {
         ownScroll?.(event);
-        setScrollTop(event.currentTarget.scrollTop);
+        onScroll(event.currentTarget.scrollTop);
       }}
       onPointerDown={() => {
         pointerFocus.current = true;
@@ -448,58 +301,17 @@ export function Tree<Item extends TreeItem>({
         if (item) setActiveId(item.value);
       }}
     >
-      <div className="env-tree-rows" style={{ blockSize: items.length * rowHeight }}>
-        {indexes.map((index) => {
-          const item = items[index]!;
-          return (
-            <div
-              key={item.value}
-              id={rowElementId(treeId, item.value)}
-              role="treeitem"
-              aria-level={item.depth + 1}
-              aria-posinset={positions[index]}
-              aria-setsize={sizes[index]}
-              aria-expanded={item.expandable ? Boolean(item.expanded) : undefined}
-              aria-selected={item.value === selectedId}
-              aria-disabled={item.disabled || undefined}
-              title={item.tooltip}
-              className="env-tree-item"
-              data-id={item.value}
-              data-highlighted={index === activeIndex ? '' : undefined}
-              style={
-                {
-                  '--env-tree-depth': item.depth,
-                  transform: `translateY(${index * rowHeight}px)`,
-                } as CSSProperties
-              }
-            >
-              <span
-                className="env-tree-chevron"
-                aria-hidden="true"
-                data-expanded={item.expanded ? '' : undefined}
-              >
-                {item.expandable && (
-                  <span className="env-icon">
-                    <IconChevronRight />
-                  </span>
-                )}
-              </span>
-              {item.icon != null && (
-                <span className="env-icon env-tree-icon" aria-hidden="true">
-                  {item.icon}
-                </span>
-              )}
-              <span className="env-tree-label">{item.label}</span>
-              {item.description != null && (
-                <>
-                  {' '}
-                  <span className="env-tree-description">{item.description}</span>
-                </>
-              )}
-              {item.end != null && <span className="env-tree-end">{item.end}</span>}
-            </div>
-          );
-        })}
+      <div
+        ref={rowsElement}
+        className="env-tree-rows"
+        style={{
+          blockSize: items.length * rowHeight,
+          '--env-tree-shift': `${shift}px`,
+          // The starting shift applies at once; only the way back to 0 eases.
+          transition: shift ? 'none' : undefined,
+        }}
+      >
+        {rows}
       </div>
     </div>
   );

@@ -1,45 +1,63 @@
-import { Avatar, Combobox, type ComboboxItem } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useState } from 'react';
+import { Combobox, type ComboboxItem } from '@envsemble/envui';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { Renew } from '../motion/Renew';
 
-const people: ComboboxItem[] = ['Alex Morgan', 'Priya Shah', 'Sam Lee'].map((name) => ({
-  value: name.toLowerCase().replace(' ', '.'),
+const labels: ComboboxItem[] = ['Bug', 'Docs'].map((name) => ({
+  value: name.toLowerCase(),
   label: name,
-  start: <Avatar name={name} size="sm" />,
 }));
 
 const input = '.env-combobox-input';
 
-/** A name typed, which narrows the list to one; chosen, then cleared again. */
+/**
+ * Types a label after the chip already chosen, which narrows the open list to one. Choosing it adds
+ * it as a second chip, and the two hold a while; then the field is drawn again as it began, its
+ * list open, with a short fade (Renew).
+ */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: input, x: 0.3 },
   { wait: 300 },
   { click: true },
   { wait: 300 },
-  { type: 'pr', into: input, every: 260 },
+  { type: 'do', into: input, every: 260 },
   { wait: 700 },
   { to: '.env-combobox-item', duration: 400 },
   { wait: 300 },
   { click: true },
-  { wait: 1200 },
-  { to: '.env-combobox-clear', duration: 400 },
-  { wait: 200 },
-  { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 400 },
+  { blur: true },
+  { wait: 2000 },
+  { cue: 'renew' },
+  { wait: 500 },
 ];
 
-/** A combobox of people. */
+/**
+ * A combobox of two labels, where several can be chosen, with one already chosen as a chip beside
+ * the field's text, so at rest it reads as a field to type in rather than a select. The labels are
+ * short enough that two chips share the field's one row, on a phone's narrower tile too. It rests
+ * with its list open, framed on the field and the list, so while it plays the list narrows, closes
+ * and opens again in place, and nothing in its tile moves.
+ */
 export default function ComboboxTile() {
-  usePointer(script);
+  const [round, setRound] = useState(0);
+  useHeldView();
+  usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    <Combobox
-      label="Owner"
-      placeholder="Choose a person"
-      items={people}
-      clearable
-      style={{ inlineSize: '11rem' }}
-    />
+    <Renew round={round}>
+      <Combobox
+        multiple
+        label="Labels"
+        placeholder="Add a label"
+        items={labels}
+        defaultValue={['bug']}
+        defaultOpen
+        style={{ inlineSize: 'min(12rem, 100%)' }}
+      />
+    </Renew>
   );
 }

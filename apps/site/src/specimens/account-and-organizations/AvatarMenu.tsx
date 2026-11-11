@@ -1,6 +1,7 @@
 import AvatarMenu from '../../examples/account-and-organizations/AvatarMenu';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
 

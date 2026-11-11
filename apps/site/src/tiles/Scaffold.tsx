@@ -2,8 +2,7 @@ import { useState } from 'react';
 import {
   IconButton,
   Page,
-  PageHeader,
-  NavigationRail,
+  NavigationBar,
   Scaffold,
   Text,
   TopBar,
@@ -12,12 +11,14 @@ import {
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSearch } from '@envsemble/envui/icons/Search';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
 
 const item = (index: number) =>
-  `.env-navigation-rail-list > li:nth-child(${index}) .env-navigation-rail-item`;
+  `.env-navigation-bar-list > li:nth-child(${index}) .env-navigation-bar-item`;
 
-/** Inbox chosen in the rail, and Home again: the body follows, and the frame stays. */
+/** Chooses Inbox in the bar, then Home again: the top bar's title follows, and the frame stays. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: item(2) },
@@ -34,10 +35,20 @@ const script: PointerStep[] = [
 
 const places = [
   { label: 'Home', icon: <IconHome />, line: 'Welcome back.' },
-  { label: 'Inbox', icon: <IconInbox />, line: '3 new messages.' },
+  { label: 'Inbox', icon: <IconInbox />, line: '2 unread.' },
 ];
 
-/** An application's frame: the rail at the start, the top bar and the page beside it. */
+/**
+ * The tiles' window (Tile.css), as a piece of an application's frame: it fills its card in a
+ * browser's window (`app`).
+ */
+export const tileWindow: TileWindow = { app: {} };
+
+/**
+ * An application's frame filling its card (TileStage.tsx): the top bar, titled with the place,
+ * above its page, and the navigation bar, the form a compact window's navigation takes, with its
+ * places side by side at the bottom.
+ */
 export default function ScaffoldTile() {
   const [current, setCurrent] = useState('Home');
   usePointer(script);
@@ -51,17 +62,16 @@ export default function ScaffoldTile() {
     <Scaffold
       scroll="body"
       landmarks={false}
-      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
-      style={{ inlineSize: '16rem', blockSize: '10.5rem' }}
+      navigationForms={{ compact: 'bar', medium: 'bar', expanded: 'bar', large: 'bar' }}
       topBar={
         <TopBar
-          title="Northwind"
+          title={current}
           actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
         />
       }
-      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
+      navigation={{ bar: <NavigationBar destinations={destinations} /> }}
     >
-      <Page header={<PageHeader title={current} headingLevel={3} />}>
+      <Page>
         <Text emphasis="muted">{places.find((place) => place.label === current)?.line}</Text>
       </Page>
     </Scaffold>

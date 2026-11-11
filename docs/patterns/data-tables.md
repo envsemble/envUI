@@ -1,6 +1,6 @@
 ---
 title: Data tables
-summary: Show many records in rows and columns that people can sort, page through, select and act on, also on narrow screens.
+summary: Show many records in rows and columns that people can sort, select and act on.
 status: beta
 since: 1.0.0
 intent: Work with lists and tables
@@ -38,6 +38,7 @@ composes:
   - Link
   - Avatar
   - Badge
+  - Select
   - RelativeTime
   - Pagination
   - ConfirmDialog
@@ -103,6 +104,8 @@ A [Table](../components/table.md) holds the data, with its own sorting, selectio
 ### Adapting to width
 
 Where the table is narrow, such as on a phone, each row stacks into a block titled by its name, with each value beside its column's name. The pages stay below it.
+
+The header and its sort buttons are hidden then, so one Select above the rows shows and changes the order.
 
 ```tsx figure=RowsThatStack widths="40 20" sweep
 
@@ -196,3 +199,4 @@ The row's other actions are a Menu whose trigger is an IconButton with `aria-lab
 ## Changelog
 
 - **1.0.0**: The page is on the figure template; sorting, selecting, loading and stacking rows are on Table.
+- **1.0.0-prerelease.6**: Stacked rows keep their sorting in a Select above them.

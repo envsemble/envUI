@@ -1,41 +1,30 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import {
-  AnimatedNumber,
   AvatarGroup,
   Badge,
+  Button,
+  Calendar,
+  CalendarHeatmap,
   Card,
-  Checkbox,
   Column,
-  List,
-  Meter,
-  Progress,
+  Composer,
+  DiffStat,
+  Message,
+  MessageList,
   Row,
-  Surface,
-  Switch,
   Text,
+  type CalendarHeatmapDay,
 } from '@envsemble/envui';
 
-/** The people on the project card, by their initials. */
-const team = [{ name: 'Alex Morgan' }, { name: 'Priya Shah' }, { name: 'Sam Lee' }];
-
 /** A card's name at its top, with a short note under it. */
-function CardHeader({ title, note, end }: { title: string; note: string; end?: ReactNode }) {
-  const heading = (
+function CardHeader({ title, note }: { title: string; note: string }) {
+  return (
     <Column gap={1}>
       <Text variant="body-sm" emphasis="default" render={<span />} className="catalogue-fan-title">
         {title}
       </Text>
       <CardNote>{note}</CardNote>
     </Column>
-  );
-  // Something at the header's end, such as a status, beside the title.
-  return end ? (
-    <Row gap={2} align="start" justify="between">
-      {heading}
-      {end}
-    </Row>
-  ) : (
-    heading
   );
 }
 
@@ -48,118 +37,157 @@ function CardNote({ children }: { children: ReactNode }) {
   );
 }
 
+/** The people reviewing the agent's pull request. */
+const reviewers = [
+  { id: 'priya', name: 'Priya Shah' },
+  { id: 'sam', name: 'Sam Lee' },
+  { id: 'alex', name: 'Alex Morgan' },
+];
+
+/** Stands in for ten weeks of deploys: busier midweek, quieter at weekends. */
+function deploysPerDay(): CalendarHeatmapDay[] {
+  const end = Date.UTC(2026, 9, 31);
+  return Array.from({ length: 70 }, (_, index) => {
+    const time = end - (69 - index) * 86_400_000;
+    const weekday = new Date(time).getUTCDay();
+    const wave = Math.sin(index / 5) + Math.sin((index * 5) / 13) + 1.1;
+    const weekend = weekday === 0 || weekday === 6;
+    const count = Math.max(0, Math.round(wave * 2.2 * (weekend ? 0.25 : 1)));
+    return { date: new Date(time).toISOString().slice(0, 10), value: count };
+  });
+}
+const deploys = deploysPerDay();
+
 /**
- * The cards in the hand, from the back to the front, each a small moment of an application built
- * with envUI. `place` is the card's place in the fan, from the middle; on a narrow page the back two
- * go and the rest take `narrowPlace`.
+ * The deploys card for a pointer: the count and a heatmap of the latest weeks, as many as fit the
+ * card whole: ten, under the count drawn large, or on a touch screen, whose days take a touch
+ * target's size, five, with the count in the note, so the card stays as tall as the one beside it.
+ */
+function Deploys({ touch }: { touch: boolean }) {
+  const weeks = touch ? 5 : 10;
+  const count = touch ? 94 : 186;
+  return (
+    <div className="catalogue-fan-deploys" data-pointer={touch ? 'coarse' : 'fine'}>
+      <CardHeader title="Deploys" note={touch ? `${count} in the last 5 weeks` : 'Last 10 weeks'} />
+      <Column gap={3} className="catalogue-fan-body">
+        {touch ? null : (
+          <Row align="center" gap={2}>
+            <span className="catalogue-fan-figure">{count}</span>
+            <Badge tone="success">+18%</Badge>
+          </Row>
+        )}
+        <CalendarHeatmap
+          aria-label={`Deploys in the last ${weeks} weeks`}
+          data={deploys.slice(-weeks * 7)}
+          tone="success"
+        />
+      </Column>
+    </div>
+  );
+}
+
+/**
+ * The deploys card, for the pointer the reader has: both render, and the style sheet shows the
+ * one for a touch screen or for a mouse (OverviewFan.css), so a pre-rendered page shows the
+ * reader's from the first paint, as the server can't tell.
+ */
+function DeploysCard() {
+  return (
+    <>
+      <Deploys touch={false} />
+      <Deploys touch />
+    </>
+  );
+}
+
+/**
+ * The cards in the hand, from the back to the front, each a small moment of a B2B or AI product
+ * built with envUI, and each of different components: an agent's pull request in review, a
+ * conversation with an assistant, ten weeks of deploys, and a calendar to pick a launch day. `place` is the
+ * card's place in the fan, from the middle; on a narrower page the first goes and the rest take
+ * `narrowPlace`, and on a narrow one only those with a `compactPlace` stay: the conversation and
+ * the deploys, drawn smaller on a phone.
  */
 const cards: {
   id: string;
   place: number;
   narrowPlace?: number;
-  /** A slight turn and lift of its own, in degrees and rem: the fan stays an arch, laid by hand. */
-  tilt: number;
+  compactPlace?: number;
+  /** A slight lift of its own, in rem, so the fan looks laid by hand rather than ruled. */
   lift: number;
   content: ReactNode;
 }[] = [
   {
-    id: 'checklist',
-    place: -2,
-    tilt: 0.6,
+    id: 'review',
+    place: -1.5,
     lift: 0.25,
     content: (
       <>
-        <CardHeader title="Mobile release" note="2 of 3 done" />
-        <Column gap={3} className="catalogue-fan-body">
-          <Checkbox label="Release notes" defaultChecked />
-          <Checkbox label="Screenshots" defaultChecked />
-          <Checkbox label="Store listing" />
+        <CardHeader title="Fix the flaky checkout test" note="#482 · opened by the agent" />
+        <Column gap={4} className="catalogue-fan-body">
+          <Row align="center" justify="between" gap={2}>
+            <DiffStat additions={128} deletions={34} />
+            <AvatarGroup people={reviewers} size="sm" />
+          </Row>
+          <Row wrap gap={2}>
+            <Badge tone="success">12 checks passed</Badge>
+            <Badge tone="primary">2 approvals</Badge>
+          </Row>
+          <Row gap={2}>
+            <Button variant="primary">Merge</Button>
+            <Button variant="outline">Review</Button>
+          </Row>
         </Column>
       </>
     ),
   },
   {
-    id: 'notifications',
-    place: -1,
-    tilt: -0.4,
+    id: 'assistant',
+    place: -0.5,
+    narrowPlace: -1,
+    compactPlace: -0.5,
     lift: -0.15,
     content: (
       <>
-        <CardHeader title="Notifications" note="Sent by email" />
-        <List.Root aria-label="Notifications" className="catalogue-fan-body">
-          <List.Item label="Mentions" end={<Switch aria-label="Mentions" defaultChecked />} />
-          <List.Item label="Comments" end={<Switch aria-label="Comments" defaultChecked />} />
-        </List.Root>
-      </>
-    ),
-  },
-  {
-    id: 'storage',
-    place: 0,
-    tilt: 0.3,
-    lift: 0.1,
-    narrowPlace: -1,
-    content: (
-      <>
-        <CardHeader title="Storage" note="Northwind team" />
-        <Surface
-          background="muted"
-          padding={4}
-          radius="sm"
+        <MessageList aria-label="Conversation with the assistant">
+          <Message from="self">Why did checkout fail?</Message>
+          <Message from="other" author="Assistant">
+            A race in the cart test. I wrote a fix and opened #482.
+          </Message>
+        </MessageList>
+        {/* On the card's foot, where a conversation's composer waits. */}
+        <Composer
+          aria-label="Message the assistant"
+          placeholder="Ask anything"
           className="catalogue-fan-body"
-          render={<Column gap={3} />}
-        >
-          <span className="catalogue-fan-figure">7.2 GB</span>
-          <Meter label="72% of 10 GB" value={7.2} max={10} />
-        </Surface>
-      </>
-    ),
-  },
-  {
-    id: 'figure',
-    place: 1,
-    tilt: -0.6,
-    lift: -0.2,
-    narrowPlace: 0,
-    content: (
-      <>
-        <CardHeader title="Tasks completed" note="Since 1 January" />
-        <Column gap={1} className="catalogue-fan-body">
-          <span className="catalogue-fan-figure">
-            <AnimatedNumber value={1280} />
-          </span>
-          <Text variant="caption" render={<span />} className="catalogue-fan-trend">
-            +12% from last year
-          </Text>
-        </Column>
-      </>
-    ),
-  },
-  {
-    id: 'project',
-    place: 2,
-    tilt: 0.4,
-    lift: 0.2,
-    narrowPlace: 1,
-    content: (
-      <>
-        <CardHeader
-          title="Website refresh"
-          note="Due 12 March"
-          end={<Badge tone="primary">In review</Badge>}
         />
-        <Column gap={4} className="catalogue-fan-body">
-          <Progress label="Tasks" value={18} max={24} valueText="18 of 24" />
-          <AvatarGroup people={team} size="md" total={6} max={3} />
-        </Column>
       </>
+    ),
+  },
+  {
+    id: 'deploys',
+    place: 0.5,
+    narrowPlace: 0,
+    compactPlace: 0.5,
+    lift: 0.1,
+    content: <DeploysCard />,
+  },
+  {
+    id: 'launch',
+    place: 1.5,
+    narrowPlace: 1,
+    lift: 0.2,
+    content: (
+      // The month's own heading names the card; January 2027 fills all six of its weeks, so no row is
+      // left empty at its foot.
+      <Calendar defaultValue="2027-01-20" className="catalogue-fan-calendar" />
     ),
   },
 ];
 
 /**
  * The Overview's fan of cards, under its banner: a hand of cards fanned evenly from one point below
- * them, each a few live components. It is a still picture: hidden from assistive technology, and
+ * them, each a few live components, spread so none covers what another shows. It is a still picture: hidden from assistive technology, and
  * its components inert.
  */
 export function OverviewFan() {
@@ -172,14 +200,13 @@ export function OverviewFan() {
             className="catalogue-fan-card"
             padding={5}
             data-narrow={card.narrowPlace === undefined ? 'hidden' : undefined}
-            style={
-              {
-                '--catalogue-fan-place': card.place,
-                '--catalogue-fan-narrow-place': card.narrowPlace ?? 0,
-                '--catalogue-fan-tilt': `${card.tilt}deg`,
-                '--catalogue-fan-lift': `${card.lift}rem`,
-              } as CSSProperties
-            }
+            data-compact={card.compactPlace === undefined ? 'hidden' : undefined}
+            style={{
+              '--catalogue-fan-place': card.place,
+              '--catalogue-fan-narrow-place': card.narrowPlace ?? 0,
+              '--catalogue-fan-compact-place': card.compactPlace ?? 0,
+              '--catalogue-fan-lift': `${card.lift}rem`,
+            }}
           >
             {card.content}
           </Card>

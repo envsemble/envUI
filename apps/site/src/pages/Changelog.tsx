@@ -1,5 +1,5 @@
 import changelog from '../../../../packages/ui/CHANGELOG.md?raw';
-import { Documentation } from './Documentation';
+import { PageMarkdown } from '../markdown/PageMarkdown';
 
 /**
  * The package's changelog as the releases write it, without its own title and a level lower, under
@@ -8,7 +8,7 @@ import { Documentation } from './Documentation';
  */
 export function Changelog() {
   return (
-    <Documentation
+    <PageMarkdown
       markdown={changelog.replace(/^# [^\n]*\n+/, '').replace(/^(#{2,5}) /gm, '#$1 ')}
       path="../packages/ui/CHANGELOG.md"
     />

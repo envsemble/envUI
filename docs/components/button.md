@@ -1,6 +1,6 @@
 ---
 title: Button
-summary: Starts an action, or goes to a destination as a link, alone, icon-only, confirmed in place, copying a value or connected in a group.
+summary: Starts an action, or goes to a destination as a link.
 status: stable
 since: 1.0.0
 category: Actions
@@ -43,12 +43,8 @@ components:
   - ButtonGroup
 examples:
   CreateProject: overview
-  Icons:
-    role: overview
-    caption: 'IconButton: an icon alone, with a name for assistive technology.'
-  ConnectedButtons:
-    role: overview
-    caption: 'ButtonGroup: related buttons joined in a row or a column.'
+  Icons: example
+  ConnectedButtons: example
   OnePrimaryAction:
     role: do
     caption: One primary button per group, at the end of its actions.
@@ -68,6 +64,9 @@ examples:
     caption: Beside others like it, each button names what it removes.
   ButtonAnatomy: anatomy
   Variants: variants
+  PrimaryTones:
+    role: example
+    caption: The three primary tones side by side, to compare them; a group still has one primary.
   QuietToolbar: example
   ButtonLinks: example
   PendingAction: example
@@ -92,14 +91,24 @@ examples:
 3. **Outline**
 4. **Ghost**
 5. **Text**
+6. **Primary, accent**
 
-| Variant   | Tones                   | Use for                                      |
-| --------- | ----------------------- | -------------------------------------------- |
-| Primary   | Neutral, accent, danger | The main action of a group. One per group.   |
-| Secondary | Neutral                 | Other actions.                               |
-| Outline   | Neutral, danger         | Other actions on panes, dialogs and rows.    |
-| Ghost     | Neutral, danger         | An application's chrome, such as a toolbar.  |
-| Text      | Neutral, danger         | A link-like action, underlined where needed. |
+| Variant         | Tones                        | Use for                                                                   |
+| --------------- | ---------------------------- | ------------------------------------------------------------------------- |
+| Primary         | Neutral (brand blue), danger | The main action of a group. One per group.                                |
+| Secondary       | Neutral                      | Other actions.                                                            |
+| Outline         | Neutral, danger              | Other actions on panes, dialogs and rows.                                 |
+| Ghost           | Neutral, danger              | An application's chrome, such as a toolbar.                               |
+| Text            | Neutral (link blue), danger  | A link-like action, underlined where needed.                              |
+| Primary, accent | Accent                       | The main action, where it must stand apart from the brand blue around it. |
+
+### Tones
+
+Only the main action and links are blue: the neutral tone keeps each variant's own color, and the danger tone colors the label, or a primary's fill.
+
+```tsx figure=PrimaryTones
+
+```
 
 ### In a toolbar
 
@@ -111,15 +120,35 @@ A button without a variant of its own takes its container's, such as ghost in a 
 
 ### Links
 
-A button can go to a page instead of acting; [Link](link.md) says when a destination takes a button's shape.
+A button can go to a page instead of acting. [Link](link.md) says when a destination takes a button's shape.
 
 ```tsx figure=ButtonLinks
 
 ```
 
+### Icons
+
+A button takes an icon at its start or its end. An IconButton shows an icon alone, with a name for assistive technology.
+
+```tsx figure=Icons
+
+```
+
+### Groups
+
+A ButtonGroup joins related buttons in a row or a column.
+
+- It joins buttons of one variant, or filled primary and secondary buttons, such as a split button.
+- A split button's menu half takes the main half's variant and tone, and shows a chevron. The hairline between the halves then reads as one action with its options, not two actions.
+- A group that mixes an outline, ghost or text button with another variant keeps them apart as whole pills, such as an outline Back beside a primary Next.
+
+```tsx figure=ConnectedButtons
+
+```
+
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/spacing.md). A button without a size of its own takes its container's, such as small in a table cell.
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md). A button without a size of its own takes its container's, such as small in a table cell, and beside a field it takes the field's.
 
 <!-- specimen: Sizes -->
 
@@ -134,22 +163,22 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 3. **Label** (`env-button::text`)
 4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
 
-Not shown: the end slot, as on the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut).
-
 ## Behaviour
 
 ### States
 
 Hover, press, keyboard focus and disabled, for each variant.
 
-- Keyboard focus draws a ring just outside the button.
+- Keyboard focus draws a ring just outside the button. On an outline button the ring lies on its edge, which takes the ring's color; in dark, a primary button's ring takes the text color, apart from its soft blue fill.
 - A text button's ring reaches a little past its label, which stays in line with the text around it.
 
 <!-- specimen: InteractionStates -->
 
 ### Pending work
 
-While its work runs, a spinner replaces the content at the same size, and presses do nothing.
+While its work runs, a spinner turns over the button and presses do nothing.
+
+- The label and icons stay in place but transparent, so the button keeps its width and its name.
 
 ```tsx figure=PendingAction motion
 
@@ -176,8 +205,9 @@ CopyButton copies a value and shows Copied, or Couldn’t copy, for about two se
 
 ### Adapting to width
 
-Labels wrap, and icon-only buttons keep their size.
+A label stays on one line and its button keeps its width, so let a row of buttons wrap: whole buttons move to the next line. Icon-only buttons keep their size.
 
+- A button that fills its container and the buttons of a ButtonGroup can't move, so their labels wrap instead.
 - On touch screens every button grows to the size of a fingertip.
 - An icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with the area it answers to.
 
@@ -211,7 +241,7 @@ A button says what will happen, and only the main action of a group stands out.
 
 ### Labels
 
-Start with a verb and say what will happen, and when the outcome is known, put it in the label.
+Start with a verb that says what will happen. When the outcome is known, put it in the label.
 
 ```tsx figure=SayWhatWillHappen motion
 
@@ -267,15 +297,26 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 <Button tone="danger">Delete project</Button>
 <Button href="/projects">Open projects</Button>
 <Button startIcon={<IconAdd />}>Create project</Button>
-<IconButton icon={<IconSettings />} aria-label="Project settings" />
 <Button pending={saving} onClick={save}>Save changes</Button>
 ```
 
-A button without a `variant` or a `size` takes its container's, such as `ghost` in a Toolbar and `sm` in a table cell; an IconButton is otherwise `secondary`. With `href` it renders the router link from `LinkProvider`.
+A button without a `variant` or a `size` takes its container's, such as `ghost` in a Toolbar and `sm` in a table cell. With `href` it renders the router link from `LinkProvider`.
+
+#### Icon only
+
+```tsx
+import { IconButton } from '@envsemble/envui';
+
+<IconButton icon={<IconSettings />} aria-label="Project settings" />;
+```
+
+An IconButton takes its container's variant too, and is otherwise `secondary`.
 
 #### Confirm and copy
 
 ```tsx
+import { ConfirmButton, CopyButton } from '@envsemble/envui';
+
 <ConfirmButton confirmLabel="Remove Sam" onConfirm={() => remove('sam')}>
   Remove
 </ConfirmButton>
@@ -287,10 +328,12 @@ ConfirmButton with `icon` and an `aria-label` is icon-only until armed. When the
 ### Composition
 
 ```tsx
+import { ButtonGroup } from '@envsemble/envui';
+
 <ButtonGroup aria-label="Project actions">
   <Button>Open</Button>
   <Button>Edit</Button>
-</ButtonGroup>
+</ButtonGroup>;
 ```
 
 `orientation="vertical"` stacks a group, every button as wide as it; `fullWidth` makes a button or a group fill its container. `end` holds quiet content after the label, at the far end of a wide button, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.
@@ -305,5 +348,17 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: An outline button is an edge with no fill at rest, the same on the page, a pane, a card or a popup; hover and press lay a state layer over the surface beneath it.
 - **1.0.0**: `end`, a quiet slot at the far end for a shortcut's keys, in the button's content color, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
+- **1.0.0-prerelease.6**: A ghost button's press eases in and out as the other variants' do, in the same color, and a button's hover and press land from their first frame.
+- **1.0.0-prerelease.6**: A text button's press reads apart from its hover: pressed, a text button with a label lays a faint layer of its label's color behind it; a danger one darkens a step under the pointer and another while pressed, as the link blue does, and a pressed link blue is a step deeper in light.
+- **1.0.0-prerelease.6**: In dark, a danger primary is a saturated red with a white label, the deepest fill beside the soft primary and accent ones, rather than a pastel coral that weighed no more than Save; it lightens a step on hover and deepens a small step pressed, as they do.
+- **1.0.0-prerelease.6**: In dark, primary and accent primary buttons share one soft lightness and strength, the accent a soft lilac; each lightens a step on hover and, pressed, deepens a small step below rest rather than turning nearly white.
+- **1.0.0-prerelease.6**: An outline button's focus ring lies on its edge, which takes the ring's color, rather than around a gray or red edge; in dark, a primary button's ring takes the text color.
+- **1.0.0-prerelease.6**: A label keeps to one line and its button to its width, so a row short of room wraps whole buttons, not their words; a `fullWidth` button and a ButtonGroup's still wrap their labels. A vertical group of outline buttons shares straight edges, round only at the column's outer corners.
+- **1.0.0-prerelease.6**: An outline button's label and icon take the text color, `--env-color-fg-default`, rather than the brand blue, so beside a primary button it reads as the other choice; a text button keeps the link blue. Ghost, outline and text icon buttons in the danger tone lay a faint tint of the danger color on hover and press, from `--env-color-bg-danger-subtle-hover`, rather than the neutral grey.
+- **1.0.0-prerelease.6**: Every pending button, an icon button's included, shows a spinner of an icon's size centred over its transparent label, in the label's color, and keeps its width and name.
+- **1.0.0-prerelease.6**: In light, a danger primary darkens on hover and press as the default and accent primaries do; in dark, the soft primaries deepen by a clearer, even step.
+- **1.0.0-prerelease.6**: A disabled button no longer fades as a whole: its label and icon take `--env-color-fg-disabled`, a filled one half the secondary's neutral fill and an outline one the muted edge, so it stays readable, also in dark.
+- **1.0.0-prerelease.6**: An accent primary is a pill like every other button, rather than having square corners.
+- **1.0.0-prerelease.6**: A ButtonGroup's buttons meet with a hairline between them and small inner corners, so the group reads as one control with pill ends; outline buttons in a group share their edge. A group that mixes an outline, ghost or text button with another variant keeps its buttons apart as whole pills.
+- **1.0.0-prerelease.5**: An outline button is an edge with no fill at rest, the same on the page, a pane, a card or a popup; hover and press lay a state layer over the surface beneath it.

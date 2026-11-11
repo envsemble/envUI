@@ -1,7 +1,7 @@
 // Container queries, read from the page's style sheets: which `@container` rules ask about a
 // container, the widths they test and whether each holds at a width.
 
-import { roundToHundredth } from '../internal/lengths.js';
+import { roundToHundredth } from '../internal/dom/lengths.js';
 
 /** One condition of `@container` rules, with every rule that asks it about one container name. */
 export interface ContainerQuery {
@@ -27,7 +27,10 @@ interface RuleLike {
 const isContainerRule = (rule: RuleLike) =>
   typeof rule.containerName === 'string' && typeof rule.conditionText === 'string';
 
-/** The widths a condition tests, in rem: `(width >= 600px)` at a 16 px root is 37.5. */
+/**
+ * The widths a condition tests, in rem: `(width >= 600px)` at a 16 px root is 37.5.
+ * @internal Exported for tests/library/DevMode.test.mjs.
+ */
 export function thresholdsOf(condition: string, rootPx: number): number[] {
   const widths = new Set<number>();
   for (const match of condition.matchAll(/(\d*\.?\d+)(rem|em|px)\b/g)) {
@@ -118,6 +121,7 @@ function conditionOf(rule: RuleLike): string {
 /**
  * Every `@container` rule in the style sheets, by the container name it asks about, with its
  * conditions merged: one entry per name and condition, counting the style rules inside.
+ * @internal Exported for tests/library/DevMode.test.mjs.
  */
 export function readContainerQueries(
   sheets: Iterable<{ cssRules: ArrayLike<RuleLike> }>,
@@ -200,6 +204,7 @@ export function pageContainerQueries(rootPx: number): Map<string, ContainerQuery
       key,
       rootPx,
       queries: readContainerQueries(
+        // A CSSRule shares none of RuleLike's optional fields, which only its kinds of rule add.
         sheets as unknown as { cssRules: ArrayLike<RuleLike> }[],
         rootPx,
       ),

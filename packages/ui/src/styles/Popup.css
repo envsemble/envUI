@@ -5,12 +5,14 @@
      sizes of its data-width. */
   /* Frosted popups: a popup's fill lets a little of what is behind it through, blurred so that it
      turns into soft color and never reads through the rows, and a soft shadow keeps its edge where it
-     crosses an area of its own color; there is no outline. These are the popups' own properties,
+     crosses an area of its own color; in light there is no outline. In dark, where the shadow barely
+     shows on a dark page, a hairline of the text color (--env-popup-frosted-edge, private) keeps the
+     popup's edge over a stage or a card of its own shade. These are the popups' own properties,
      which an application may set on a theme: how much of the fill covers what is behind
      (--env-popup-opacity), the blur (--env-popup-blur) and the shadow (--env-popup-shadow), envUI's
      second drop shadow after the avatars'. The fill (--env-popup-fill, private) is the popup color,
-     --env-color-bg-popup, in light; in dark it is the default surface, --env-color-bg-default, darker
-     than the cards, tables and rows popups open over, so they part from them, frosted or solid. The
+     --env-color-bg-popup, in every theme: in dark one step lighter than the cards, tables and rows
+     popups open over, so they lift off them, frosted or solid, as dialogs do. The
      opacity is above the least that keeps muted text at 4.5:1 over black (light) or white (dark)
      behind the popup. The command palette and rich text suggestions take the same look. A solid
      popup's edge (--env-popup-edge-color, private) is its elevation's, and at high contrast the
@@ -35,23 +37,28 @@
      * value or nothing.
      */
     --env-popup-solid: initial;
-    /* The geometry popups share, following the scale as the md control height does (2.5 rem, 2 rem
-       compact): the inset of their rows, the rows' corners and, concentric with them, the popup's,
-       and the space between groups. */
-    --env-popup-padding: calc(0.15 * var(--env-control-height-md));
-    --env-popup-row-radius: calc(0.35 * var(--env-control-height-md));
-    --env-popup-row-padding-inline: calc(0.3 * var(--env-control-height-md));
-    --env-popup-row-gap: calc(0.25 * var(--env-control-height-md));
+    --env-popup-frosted-edge: transparent;
+    /* The height of a popup's row, a menu item's or an option's, and the unit of the geometry popups
+       share: the comfortable md control height, 2.5 rem, and 2 rem at the compact scale, a step
+       shorter than the compact controls, so a menu stays dense. Its scale follows the row height
+       token. From it: the inset of the rows, the rows' corners and, concentric with them, the
+       popup's, the space between groups and, half a row, a separator's break. */
+    --env-popup-row-height: calc(var(--env-row-height) + 0.25rem);
+    --env-popup-padding: calc(0.15 * var(--env-popup-row-height));
+    --env-popup-row-radius: calc(0.35 * var(--env-popup-row-height));
+    --env-popup-row-padding-inline: calc(0.3 * var(--env-popup-row-height));
+    --env-popup-row-gap: calc(0.25 * var(--env-popup-row-height));
     --env-popup-radius: calc(var(--env-popup-row-radius) + var(--env-popup-padding));
-    --env-popup-group-gap: calc(0.25 * var(--env-control-height-md));
+    --env-popup-group-gap: calc(0.25 * var(--env-popup-row-height));
+    --env-popup-separator-gap: calc(0.5 * var(--env-popup-row-height));
     /* A group's label sits a little ahead of its rows' icons and text. */
-    --env-popup-label-padding-inline: calc(0.25 * var(--env-control-height-md));
+    --env-popup-label-padding-inline: calc(0.25 * var(--env-popup-row-height));
     /* The inset of a panel, a popover's, a hover card's or a picker's, on a surface's corners: as
        wide as a row's corner, so content keeps clear of the curve. */
-    --env-popup-panel-padding: calc(0.35 * var(--env-control-height-md));
+    --env-popup-panel-padding: calc(0.35 * var(--env-popup-row-height));
   }
   .env-theme[data-env-theme='dark'] {
-    --env-popup-fill: var(--env-color-bg-default);
+    --env-popup-frosted-edge: oklch(from var(--env-color-fg-default) l c h / 0.12);
     --env-popup-opacity: 90%;
     /* In dark a deeper shade of the page, stronger, as a light shadow would not show. */
     --env-popup-shadow: 0 12px 32px -10px
@@ -117,24 +124,29 @@
   }
   .env-popup {
     --env-popup-border: var(--env-popup-edge-color);
-    /* The edge of a solid popup; frosted, it has none. */
+    /* Its fill is the muted surface's, so rows on it take another (Surface.css). */
+    --env-surface-muted-ground: ;
+    /* The edge of a solid popup; frosted, the hairline of dark, or none. */
     --env-popup-edge: var(--env-popup-solid) var(--env-popup-border);
     box-sizing: border-box;
     max-block-size: var(--available-height, 80vh);
     overflow-y: auto;
-    border: var(--env-control-border-width) solid var(--env-popup-edge, transparent);
-    border-radius: var(--env-radius-surface);
+    border: var(--env-control-border-width) solid
+      var(--env-popup-edge, var(--env-popup-frosted-edge, transparent));
+    /* The popups' own corner, concentric with their rows and a step rounder than the fields and
+       buttons that open them; dialogs and sheets keep the surface's larger one. */
+    border-radius: var(--env-popup-radius);
     background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
     box-shadow: var(--env-popup-shadow);
     -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
     backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
     color: var(--env-color-fg-default);
     font: var(--env-type-body);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     outline: none;
     /* Motion: it fades in, and grows from the origin its positioner sets. */
     transform-origin: var(--transform-origin, center);
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-popup[data-elevation='1'] {
     --env-popup-border: var(--env-elevation-1-border);
@@ -156,12 +168,12 @@
   @media (prefers-reduced-motion: no-preference) {
     .env-popup {
       transition:
-        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-        transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
+        transform var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     }
     .env-popup[data-starting-style],
     .env-popup[data-ending-style] {
-      transform: scale(0.96);
+      transform: scale(0.98);
     }
     .env-popup[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);

@@ -1,6 +1,6 @@
 ---
 title: LineArt
-summary: A geometric drawing in faint hairlines that fills its box, for a banner's end, an empty state or the background of a header.
+summary: A geometric drawing in faint hairlines, for a banner, an empty state or a header.
 status: beta
 since: 1.0.0
 category: App frame & layout
@@ -70,8 +70,6 @@ Each is a construction from geometry, drawn whole on a sheet a little wider than
 
 1. **Drawing** (`env-line-art`)
 
-The drawing has no box of its own: it fills the one it is given.
-
 ## Behaviour
 
 ### Cropping and anchoring
@@ -132,7 +130,7 @@ A single drawing gives a screen a quiet character; several turn into noise.
 - Vary the drawing between screens, not within one.
 - Give a screen the same drawing every time it opens, such as by its place in the application.
 
-### Never as content
+### Decoration only
 
 A drawing doesn't say anything, so it never stands in for an image, a chart or an icon.
 
@@ -145,7 +143,7 @@ A drawing doesn't say anything, so it never stands in for an image, a chart or a
 
 ## Accessibility
 
-### Hidden by default
+### Assistive technology
 
 Assistive technology skips a drawing. One that means something in its place takes a label and is read as an image.
 

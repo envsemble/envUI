@@ -196,7 +196,15 @@
       },
       "danger": {
         "emphasis": {
-          "$value": "{contrast-high.color.bg.danger.emphasis}"
+          "$root": {
+            "$value": "{contrast-high.color.bg.danger.emphasis}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.danger.emphasis.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.danger.emphasis.pressed}"
+          }
         },
         "muted": {
           "$value": "{contrast-high.color.bg.danger.muted}"
@@ -243,6 +251,17 @@
         }
       },
       "accent": {
+        "emphasis": {
+          "$root": {
+            "$value": "{contrast-high.color.bg.accent.emphasis}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.accent.emphasis.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.accent.emphasis.pressed}"
+          }
+        },
         "strong": {
           "$root": {
             "$value": "{contrast-high.color.bg.accent.strong}"
@@ -294,6 +313,14 @@
           "$value": "{contrast-high.color.bg.list-item.pressed}"
         }
       },
+      "row": {
+        "hover": {
+          "$value": "{contrast-high.color.bg.neutral.subtle.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.neutral.subtle.pressed}"
+        }
+      },
       "avatar": {
         "powder": {
           "$value": "{contrast-high.color.bg.avatar.powder}"
@@ -336,6 +363,9 @@
           "$value": "{contrast-high.color.fg.muted.pressed}"
         }
       },
+      "disabled": {
+        "$value": "{contrast-high.color.fg.disabled}"
+      },
       "control": {
         "$value": "{contrast-high.color.fg.control}"
       },
@@ -366,13 +396,30 @@
         "$value": "{contrast-high.color.fg.warning}"
       },
       "danger": {
-        "$value": "{contrast-high.color.fg.danger}"
+        "$root": {
+          "$value": "{contrast-high.color.fg.danger}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.fg.danger.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.fg.danger.pressed}"
+        }
       },
       "done": {
         "$value": "{contrast-high.color.fg.done}"
       },
       "on-emphasis": {
         "$value": "{contrast-high.color.fg.on-emphasis}"
+      },
+      "success-on-strong": {
+        "$value": "{contrast-high.color.fg.success-on-strong}"
+      },
+      "info-on-strong": {
+        "$value": "{contrast-high.color.fg.info-on-strong}"
+      },
+      "danger-on-strong": {
+        "$value": "{contrast-high.color.fg.danger-on-strong}"
       },
       "link-on-muted": {
         "$root": {

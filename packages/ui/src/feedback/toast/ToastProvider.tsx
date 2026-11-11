@@ -1,9 +1,9 @@
 'use client';
 
 import { Toast as BaseToast } from '@base-ui/react/toast';
-import { ToastRegion } from './ToastRegion.js';
-import { useToastController } from './useToastController.js';
-import { toastPlacements } from './toastInternals.js';
+import { ToastRegion } from './internal/ToastRegion.js';
+import { useToastController } from './internal/useToastController.js';
+import { toastPlacements } from './internal/toastEntry.js';
 import type { ToastProviderProps } from './toastTypes.js';
 import { ToastManagerContext } from './useToast.js';
 

@@ -3,14 +3,17 @@ import { Tree, type TreeItem } from '@envsemble/envui';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useMedia } from '../motion/Autoplay';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { narrowGallery } from './Tiles';
 
 const row = (id: string) => `.env-tree-item[data-id="${id}"]`;
 const chevron = (id: string) => `${row(id)} .env-tree-chevron`;
 
 /*
- * Design collapsed by its chevron, Roadmap.md chosen in Engineering, which rises under it, and
- * Design expanded again and Brand.md chosen, as it began.
+ * Collapses Design with its chevron and chooses Roadmap.md in Engineering, which moves up under it.
+ * Then expands Design again and chooses Brand.md, as it began.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -41,8 +44,12 @@ const files = [
   { id: 'engineering', label: 'Engineering', children: ['Roadmap.md'] },
 ];
 
-/** Two folders of files, both open, Brand.md chosen. */
+/**
+ * Two folders of files, both open, with Brand.md chosen. In a phone's narrower tile the tree is a
+ * little narrower, so it is drawn at about its own size there.
+ */
 export default function TreeTile() {
+  const narrow = useMedia(narrowGallery);
   const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
   const [selected, setSelected] = useState('design/brand.md');
   usePointer(script);
@@ -75,7 +82,7 @@ export default function TreeTile() {
     ];
   });
   return (
-    <div style={{ blockSize: '9rem', inlineSize: '11rem' }}>
+    <div style={{ blockSize: '9rem', inlineSize: narrow ? '10rem' : '11rem' }}>
       <Tree
         aria-label="Files"
         items={rows}

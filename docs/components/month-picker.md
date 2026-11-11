@@ -1,6 +1,6 @@
 ---
 title: MonthPicker
-summary: A field that opens a year of months to choose a month, such as a billing or reporting period.
+summary: A field that opens a year of months to choose a month.
 status: beta
 since: 1.0.0
 category: Forms & selection
@@ -21,8 +21,9 @@ avoidWhen:
 components:
   - MonthPicker
 examples:
-  ReportMonth: overview
-  Variants: variants
+  ReportMonth:
+    role: overview
+    open: true
   MonthPickerAnatomy: anatomy
   MonthPickerPopupAnatomy: anatomy
   FiscalYear: example
@@ -30,20 +31,6 @@ examples:
 ---
 
 # MonthPicker
-
-## Variants
-
-```tsx figure=Variants
-
-```
-
-1. **Outline**
-2. **Floating**
-
-| Variant  | Use for                                                 |
-| -------- | ------------------------------------------------------- |
-| Outline  | In forms, dialogs and panes. The default.               |
-| Floating | A long form on a page, as TextField's floating variant. |
 
 ## Anatomy
 
@@ -160,9 +147,9 @@ A MonthPicker takes its `label`, a `description` and an `error`, and its value i
 </form>
 ```
 
-#### Variants, sizes and the popup
+#### Sizes and the popup
 
-`variant` is `outline`, the default, at the control height, or `floating`, 3.5 rem tall with room for its label. `size` is `sm`, `md` or `lg`; without it the field takes its container's control height. `showLabel={false}` hides the label for a field whose purpose is clear, and `placeholder` shows while it is empty. `open`, `defaultOpen` and `onOpenChange` control the popup; `onOpenChange` also receives why it opens or closes, `PickerOpenChangeDetails`. `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel` name its buttons.
+`size` is `sm`, `md` or `lg`; without it the field takes its container's control height. `visibleLabel={false}` hides the label for a field whose purpose is clear, and `placeholder` shows while it is empty. `open`, `defaultOpen` and `onOpenChange` control the popup; `onOpenChange` also receives why it opens or closes, `PickerOpenChangeDetails`. `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel` name its buttons.
 
 ### Composition
 
@@ -174,5 +161,12 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale. The year leads its header, its buttons side by side at the end; this month is in the accent color rather than ringed, and a month under the pointer takes the neutral fill.
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
 - **1.0.0**: MonthPicker, for a month of a year, with `min` and `max`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: The popup opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
+- **1.0.0-prerelease.6**: The year buttons show larger arrows, 1.25 rem, on slightly smaller buttons, and the header keeps a little room under it, as the calendar's.
+- **1.0.0-prerelease.6**: The grid's month names keep one length where the locale makes nearly all of them that long, such as Sep rather than Sept among en-GB's three-letter months; names with punctuation, and locales whose names vary, keep the locale's own.
+- **1.0.0-prerelease.6**: Months outside `min` and `max` take the disabled text color, faded, as a calendar's unavailable days do; this month keeps its accent color.
+- **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends. A small one with a visible label takes the medium height, so its floated label and its value each have room, and says so in the console while developing: `sm` is for a field with its label hidden.
+- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale. The year leads its header, its buttons side by side at the end; this month is in the accent color rather than ringed, and a month under the pointer takes the neutral fill.

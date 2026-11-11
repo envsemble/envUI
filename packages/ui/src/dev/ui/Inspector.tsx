@@ -5,21 +5,21 @@
 // agent reads. Each is resizable by its inner edge, with the grip of a resizable NavigationDrawer, and hides
 // with the button in its header's outer corner.
 
-import { Fragment, memo, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { Fragment, memo, useMemo, useState, type ReactNode } from 'react';
 import { Button } from '../../actions/Button.js';
 import { CopyButton } from '../../actions/CopyButton.js';
-import { Badge } from '../../content/Badge.js';
-import * as DescriptionList from '../../content/DescriptionList.js';
-import { Column, Grid, Row } from '../../foundations/Layout.js';
-import { Surface } from '../../foundations/Surface.js';
+import { Badge } from '../../data-display/Badge.js';
+import * as DescriptionList from '../../data-display/DescriptionList.js';
+import { Column, Grid, Row } from '../../layout/Layout.js';
+import { Surface } from '../../layout/Surface.js';
 import { Text } from '../../foundations/Text.js';
 import { IconContrast } from '../../icons/Contrast.js';
 import { IconDarkMode } from '../../icons/DarkMode.js';
 import { IconLightMode } from '../../icons/LightMode.js';
-import { ResizeHandle } from '../../internal/ResizeHandle.js';
-import { useResizableWidth } from '../../internal/useResizableWidth.js';
-import { remPixels } from '../../internal/lengths.js';
-import * as Menu from '../../navigation/Menu.js';
+import { ResizeHandle } from '../../internal/resize/ResizeHandle.js';
+import { useResizableWidth } from '../../internal/resize/useResizableWidth.js';
+import { remPixels } from '../../internal/dom/lengths.js';
+import * as Menu from '../../actions/menu/Menu.js';
 import { Tabs } from '../../navigation/Tabs.js';
 import { Tree, type TreeItem } from '../../navigation/Tree.js';
 import type { NodeData } from '../model.js';
@@ -98,7 +98,7 @@ function Sidebar({
       render={<Column gap={0} align="stretch" render={<aside aria-label={label} />} />}
       className="env-dev-sidebar"
       data-side={side}
-      style={{ '--env-dev-sidebar-width': `${resize.width}rem` } as CSSProperties}
+      style={{ '--env-dev-sidebar-width': `${resize.width}rem` }}
     >
       {children}
       <ResizeHandle
@@ -327,11 +327,7 @@ function Readout({ text }: { text: string }) {
   return (
     <pre className="env-dev-readout">
       {lines.map(({ indent, content }, index) => (
-        <span
-          key={index}
-          className="env-dev-readout-line"
-          style={{ '--env-dev-indent': indent } as CSSProperties}
-        >
+        <span key={index} className="env-dev-readout-line" style={{ '--env-dev-indent': indent }}>
           {content || '\u00a0'}
           {'\n'}
         </span>

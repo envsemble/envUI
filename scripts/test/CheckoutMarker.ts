@@ -1,21 +1,23 @@
-// Development servers of this checkout answer /__envui/checkout with its identity, so the browser
-// tests reuse a server already running only when it serves this checkout. Without the check, a
-// server another checkout started on the same port would silently serve that checkout's code.
+// The browser tests' servers of this checkout, in development or previewing a build, answer
+// /__envui/checkout with its identity, so the browser tests reuse a server already running only
+// when it serves this checkout. Without the check, a server another checkout started on the same
+// port would silently serve that checkout's code.
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import type { PreviewServer, ViteDevServer } from 'vite';
+import { repositoryRoot } from '../RepositoryPaths.ts';
 
-export const checkoutPath = '/__envui/checkout';
+const checkoutPath = '/__envui/checkout';
 
 /**
- * The development servers' ports when no other checkout or program holds them: the site's, which
- * `npm run dev` serves on too (apps/site/package.json), and the test fixture's.
+ * The browser tests' servers' ports when no other checkout or program holds them: the site's
+ * development server, which `npm run dev` serves on too (apps/site/package.json), the test
+ * fixture's and the site's build's (scripts/test/ServeBuild.ts).
  */
-export const defaultPorts = { site: 8770, fixture: 8766 };
-const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
+export const defaultPorts = { site: 8770, fixture: 8766, siteBuild: 8767 };
 
 /** A short hash of the checkout's folder; Windows paths compare without case. */
-export function checkoutId(folder = root) {
+export function checkoutId(folder = repositoryRoot) {
   const path = resolve(folder);
   return createHash('sha256')
     .update(process.platform === 'win32' ? path.toLowerCase() : path)
@@ -23,24 +25,27 @@ export function checkoutId(folder = root) {
     .slice(0, 16);
 }
 
-/** The Vite plugin that answers the marker on a development server. */
+/** The Vite plugin that answers the marker on a development or preview server. */
 export function checkoutMarker() {
   const id = checkoutId();
+  // Returns nothing: a function returned would be taken for a middleware to add after Vite's.
+  const answer = (server: ViteDevServer | PreviewServer) => {
+    server.middlewares.use(checkoutPath, (_request, response) => {
+      response.setHeader('Content-Type', 'text/plain');
+      response.setHeader('Cache-Control', 'no-store');
+      response.end(id);
+    });
+  };
   return {
     name: 'envui-checkout-marker',
     apply: 'serve',
-    configureServer(server) {
-      server.middlewares.use(checkoutPath, (_request, response) => {
-        response.setHeader('Content-Type', 'text/plain');
-        response.setHeader('Cache-Control', 'no-store');
-        response.end(id);
-      });
-    },
+    configureServer: answer,
+    configurePreviewServer: answer,
   };
 }
 
 /** What listens on a local port: nothing, this checkout's server, or anything else. */
-export async function probe(port, id = checkoutId()) {
+async function probe(port: number, id = checkoutId()) {
   try {
     const response = await fetch(`http://127.0.0.1:${port}${checkoutPath}`, {
       signal: AbortSignal.timeout(2000),
@@ -54,7 +59,7 @@ export async function probe(port, id = checkoutId()) {
 }
 
 /** A port of this checkout's own, for when another program holds the default. */
-export function checkoutPort(offset, id = checkoutId()) {
+export function checkoutPort(offset: number, id = checkoutId()) {
   return 20000 + (parseInt(id.slice(0, 8), 16) % 9000) * 2 + offset;
 }
 

@@ -14,19 +14,24 @@
     /* The env-window container of the palette (see .env-overlay-theme in Dialog.css); its inline
        gutter is the palette's margin, so the container measures the whole window. */
     container: env-window / inline-size;
-    padding-block: max(var(--env-viewport-gutter), min(12vh, 6rem)) var(--env-viewport-gutter);
+    /* The palette opens near the top: 12% of the window down, at most this far. */
+    --env-command-palette-top-max: 6rem;
+    padding-block: max(var(--env-viewport-gutter), min(12vh, var(--env-command-palette-top-max)))
+      var(--env-viewport-gutter);
     pointer-events: none;
   }
   .env-command-palette {
     /* The edge of a solid palette; frosted, it has none. */
     --env-command-palette-edge: var(--env-popup-solid) var(--env-elevation-3-border);
     box-sizing: border-box;
-    inline-size: min(40rem, 100% - 2 * var(--env-viewport-gutter));
+    --env-command-palette-width: 40rem;
+    inline-size: min(var(--env-command-palette-width), 100% - 2 * var(--env-viewport-gutter));
     margin-inline: var(--env-viewport-gutter);
     max-block-size: 100%;
     /* An inset that keeps the rows' corners concentric with the palette's. */
     padding: calc(var(--env-radius-surface) - var(--env-popup-row-radius));
-    border: var(--env-control-border-width) solid var(--env-command-palette-edge, transparent);
+    border: var(--env-control-border-width) solid
+      var(--env-command-palette-edge, var(--env-popup-frosted-edge, transparent));
     border-radius: var(--env-radius-surface);
     background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
     box-shadow: var(--env-popup-shadow);
@@ -39,34 +44,52 @@
     pointer-events: auto;
     /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
     transform-origin: var(--transform-origin, center);
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   /* The search is a ghost TextField at the large height (TextField.css), the one field in a popup
      with a fill of its own: solid in every state, the neutral fill over the popup's own color, so what
      shows through the palette never reaches the text typed in it. It is always focused, so its
      placeholder stays, and its edge returns on a solid palette. Its icon lines up with the options'. */
+  /* The search, and under a coarse pointer the close button after it. */
+  .env-command-palette-header {
+    flex: 0 0 auto;
+  }
+  .env-command-palette-header > .env-command-palette-search {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+  .env-command-palette-header > .env-command-palette-close {
+    display: none;
+  }
   .env-command-palette-search {
     --env-text-field-ghost-solid:
       linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
       var(--env-popup-fill);
-    --env-text-field-ghost-placeholder: var(--env-color-fg-muted);
     --env-text-field-ghost-edge: var(--env-popup-solid) var(--env-color-border-default);
+    /* Its focus is its own edge, below, so the field's focus frame stays a hairline in its edge. */
+    --env-text-field-ghost-focus-edge: transparent;
+    --env-text-field-ghost-focus-frame: var(--env-control-border-width);
+    /* A pill, which its focus edge below follows, rather than the fields' rounded rectangle. */
+    --env-text-field-ghost-corner: var(--env-radius-full);
     /* Where the options' icons sit, inside the control's border. */
     --env-text-field-start-inset: calc(
       var(--env-popup-row-padding-inline) - var(--env-control-border-width)
     );
-    /* The containing block of its focus ring, below. */
+    /* While results load, a small spinner sits at its end, inset as its icon is at the start. */
+    --env-text-field-end-inset: var(--env-text-field-start-inset);
+    /* The containing block of its focus edge, below. */
     position: relative;
     flex: 0 0 auto;
   }
-  /* While it holds the caret, the search shows the focus ring inside its edge, as every focused
-     control does. The search draws it over its field, a pill as the field is: an outline of its
-     own would sit under the field, which is positioned and paints after it. */
+  /* While it holds the caret, the search's edge takes the focus color: a hairline in place of its
+     edge, not a ring, as the search is always focused and a ring would read as a second frame. The
+     search draws it over its field, a pill as the field is: an outline of its own would sit under
+     the field, which is positioned and paints after it. */
   .env-command-palette-search::after {
     content: '';
     position: absolute;
     inset: 0;
-    border: 2px solid transparent;
+    border: var(--env-control-border-width) solid transparent;
     border-radius: var(--env-radius-full);
     pointer-events: none;
   }
@@ -112,40 +135,37 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  /* The empty state, in place of the list: a quiet icon on a muted circle, as DropZone draws its
-     icon, then the title and a quieter description, centred. */
+  /* The empty state, in place of the list: one muted line at an option's height and inset, as a
+     combobox says it has no options, so the palette keeps about its height as results come and go.
+     An icon an application passes sits where an option's icon does; the description follows the
+     title after a dot. */
   .env-command-palette-status[data-empty] {
-    display: grid;
-    justify-items: center;
-    gap: var(--env-space-1);
-    padding: var(--env-space-7) var(--env-space-4) var(--env-space-5);
-    color: var(--env-color-fg-default);
-    text-align: center;
-    overflow-wrap: anywhere;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-block-size: var(--env-control-height-md);
+    margin-block-start: var(--env-popup-group-gap);
+    padding: var(--env-space-1) var(--env-popup-row-padding-inline);
+    color: var(--env-color-fg-muted);
+    font: var(--env-font-weight-body) var(--env-font-size-body) / 1.35 var(--env-font-family);
+    overflow-wrap: break-word;
   }
   .env-command-palette-empty-icon {
-    --env-command-palette-empty-icon-size: 1.5rem;
-    display: grid;
-    place-items: center;
-    inline-size: var(--env-control-height-touch);
-    block-size: var(--env-control-height-touch);
-    margin-block-end: var(--env-space-2);
-    border-radius: var(--env-radius-full);
-    background: var(--env-color-bg-neutral-muted);
-    color: var(--env-color-fg-muted);
+    display: inline-flex;
+    flex: none;
+    margin-inline-end: var(--env-popup-row-gap);
   }
   .env-command-palette-empty-icon > .env-icon {
-    inline-size: var(--env-command-palette-empty-icon-size);
-    block-size: var(--env-command-palette-empty-icon-size);
-  }
-  .env-command-palette-empty-title {
-    font-weight: var(--env-font-weight-medium);
+    inline-size: var(--env-control-icon-size);
+    block-size: var(--env-control-icon-size);
   }
   .env-command-palette-empty-description {
-    max-inline-size: 48ch;
-    color: var(--env-color-fg-muted);
-    font: var(--env-type-body-sm);
+    margin-inline-start: var(--env-space-1);
     text-wrap: pretty;
+  }
+  .env-command-palette-empty-description::before {
+    content: '·' / '';
+    margin-inline-end: var(--env-space-1);
   }
   /* The footer stands apart from the options by space, its small muted text and its keys, with no
      line. */
@@ -176,9 +196,20 @@
   .env-command-palette-footer-content {
     min-inline-size: 0;
   }
+  /* Under a coarse pointer, where there is often no keyboard, the palette shows no keys: the
+     shortcuts in its options and the key hints of its footer, which then shows only the
+     application's own content, if any. With no Esc to close it, a close button follows the search. */
   @media (pointer: coarse) {
     .env-command-palette-item {
       min-block-size: var(--env-control-height-touch);
+    }
+    .env-command-palette-item .env-list-row-end :is(.env-kbd, .env-kbd-combination),
+    .env-command-palette-hint,
+    .env-command-palette-footer:not(:has(.env-command-palette-footer-content)) {
+      display: none;
+    }
+    .env-command-palette-header > .env-command-palette-close {
+      display: inline-flex;
     }
   }
 
@@ -195,12 +226,13 @@
   @media (prefers-reduced-motion: no-preference) {
     .env-command-palette {
       transition:
-        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
         transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
     }
     .env-command-palette[data-starting-style],
     .env-command-palette[data-ending-style] {
-      transform: translateY(-0.5rem) scale(0.98);
+      --env-command-palette-rise: -0.5rem;
+      transform: translateY(var(--env-command-palette-rise)) scale(0.98);
     }
     .env-command-palette[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);

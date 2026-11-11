@@ -27,7 +27,7 @@ After the YAML frontmatter and the `# Title`, a page has these `##` sections in 
 
 | Section                            | Required                       | Holds                                                                                                                                         |
 | ---------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Overview                           | generated                      | The frontmatter's overview examples, side by side; don't write it.                                                                            |
+| Overview                           | generated                      | The frontmatter's overview examples, side by side, the first on a component's page with its code open; don't write it.                        |
 | Variants (Options on a foundation) |                                | The variants figure and its option table, then the options in titled blocks, each beside its figure.                                          |
 | Anatomy                            |                                | The anatomy figure and its legend, and one sentence naming the parts the figure can't show.                                                   |
 | Behaviour                          |                                | States and what it does on its own, such as pending work or dismissing, in titled blocks, ending with `### Adapting to width`.                |
@@ -51,7 +51,7 @@ status: beta # alpha, beta, stable or deprecated.
 statuses: # Optional: the exports whose status differs from the page's.
   SearchField: stable
 since: 1.0.0 # The release that added the component, under any earlier name: a released version, or the next.
-category: Forms & selection # The index group the page is listed under.
+category: Forms & selection # The index group the page is listed under, and the family folder of its exports.
 aliases: # Words people and agents search for, including earlier names; at least one.
   - Input
   - text input
@@ -77,11 +77,11 @@ examples: # Each example file once, by its name, with its role and, where it has
 
 - **`status`** is a ladder, `alpha`, `beta`, `stable`, then `deprecated`. The catalogue and the Docs show it under the title, and alpha and deprecated beside the page's name in the Docs' navigation too.
 - **`examples`** lists each example once. Its role is `overview`, shown side by side at the top of the page and never placed in the body; `example`; `variants` and `anatomy`, with the legend that follows them; or `do`, `dont` and `caution`, whose caption is their rule and so required.
-- **An overview's framing.** Nothing places an overview, so its entry says how it is framed: `open: true` shows its overlays open, as on [HoverCard](../docs/components/hover-card.md), `stage: shaded` the deeper stage of a whole window, as on [Scaffold](../docs/components/scaffold.md), `wide: true` a row of its own, as on [Markdown](../docs/components/markdown.md), and `motion: true` plays it. Other roles take them on their fence.
+- **An overview's framing.** Nothing places an overview, so its entry says how it is framed: `open: true` shows its overlays open, as on [HoverCard](../docs/components/hover-card.md), which an overlay's overview takes: the component at rest, open and live, so people see it at a glance and can use it, its overlay pressed open from its trigger where the example doesn't open it itself; `stage: shaded` the deeper stage of a whole window or a surface, as on [Scaffold](../docs/components/scaffold.md) and [Card](../docs/components/card.md), `wide: true` a row of its own, as on [Markdown](../docs/components/markdown.md), and `motion: true` plays it and `device: phone` or `device: window` draws it on that device, as on [Panes](../docs/components/panes.md). Other roles take them on their fence.
 - **`statuses`** gives an export listed in `components` a status other than the page's, such as a beta editor on a page whose renderer is stable.
 - **`avoidWhen`** is the page's one list of related components and pages, its **Related** section: each entry names an export in `use` or an indexed page in `see`, never both, with a line saying when to pick it instead. Name each export or page once. Relate only what a reader might pick instead: a page that is only used alongside, such as Accessibility or Icons, is linked from the sentence that needs it.
 - **`components`** lists a family's members, such as IconButton on the button page. A namespace, such as `Menu`, covers all its parts; list the namespace, never a part such as `Menu.Item`.
-- **Guides**, the pages at the top of `docs/`, may take only `status`, `components`, `aliases`, `exportAliases` and `statuses`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page. A guide's exports take its status, else `stable`; `statuses` gives one another, such as `useContainerSize: beta`.
+- **Guides**, the pages at the top of `docs/`, may take only `status`, `components`, `aliases`, `exportAliases` and `statuses`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page. A guide's exports take its status, else `stable`; `statuses` gives one another, such as `useContainerSize: beta`. A guide's pictures are the catalogue's own, registered for its page in `apps/site/src/figures/foundations/FoundationFigures.ts` and placed with an empty ` ```tsx figure=Name ` fence, which the package leaves out.
 
 Register the page in [the index](../docs/index.md) under its group, with only its title and path: `- [TextField](components/text-field.md)`. The index orders the pages; the summary comes from the frontmatter.
 
@@ -89,6 +89,7 @@ Register the page in [the index](../docs/index.md) under its group, with only it
 
 - **The catalogue** shows the sections up to Words to use in three groups: what it is (Overview to Behaviour); its Rules, opening with Use it when, from `useWhen`, and on a pattern Built from; then Accessibility, Words to use and Related. It leaves out Compose, the changelog, the two lists of what is provided and every column headed In code.
 - **The Docs** show Compose, the two lists under Accessibility, the In code column as Words in code, and the generated Props, Part names and Color properties, with the changelog collapsed. [Field](../docs/components/field.md), which has no page in the catalogue, shows its whole page there.
+- **The switch** under a page's title, Design and Code, moves between its two pages, the catalogue's and the Docs', at the section the reader is in where the other page has it too, and otherwise at its top. A heading both pages show, such as a pattern's `### Sending`, keeps its place.
 - **The package** keeps the whole file: each example's entry on one line, a run of figures as one line that names them, an anatomy or variants figure as its legend or option table, and Compose with the props after it.
 
 ## Plain language in the catalogue
@@ -98,7 +99,7 @@ The catalogue is for people looking at envUI, often not developers, who then ask
 - **No inline code.** Name no props, values, part classes, tokens or container names. Say what matters in plain words: "the ghost variant", "a sheet from the bottom". Component names, such as SearchField, are names, not code.
 - **No technical values.** No hex colors, lengths, durations, percentages or contrast ratios, in text, captions, specimen titles, swatches and legends alike. Say what the value does, such as "the most space, between sections", and put the value in Compose.
 - **Options in words.** A table of variants, tones, sides or sizes names each option as people see it, such as Outline or From the bottom.
-- **No links into the Docs.** The catalogue reaches the Docs only through a page's Docs button. Link component, pattern and foundation pages, and say a point of a Docs page without the link; Compose, the changelog and the two lists of what is provided may link anywhere.
+- **No links into the Docs.** The catalogue reaches the Docs only through a page's Code switch. Link component, pattern and foundation pages, and say a point of a Docs page without the link; Compose, the changelog and the two lists of what is provided may link anywhere.
 
 ## Text in titled blocks
 
@@ -115,6 +116,7 @@ The docs are mainly visual. Let the figures teach, and write a lead and a few ru
 - **Show, then say little.** Cut every sentence a figure already shows, such as what a variant looks like. Text beside a figure says what the figure can't, such as the rule it illustrates.
 - **Say each thing once.** Each kind of information has one place, in the table below. A rule doesn't repeat a `useWhen` or `avoidWhen` entry either.
 - **Leave out what is generated.** Each prop's values and defaults are in Props, and what the code does for itself, such as an exact delay, needs no sentence unless a reader chooses it.
+- **Write envUI's version as `{{version}}`.** The Docs, the packaged docs and the setup skill fill in the package's version as they build, so a command such as the install runs as people copy it.
 
 | Information                                   | Its one place                                                                                                  |
 | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
@@ -149,17 +151,18 @@ The catalogue lays a page out; the page decides only what sits together:
 
 A figure is an [example file](#examples) listed in the frontmatter and placed with an empty fence that names it, ` ```tsx figure=Name `, anywhere but Compose and the changelog. Its role and caption come from the frontmatter; its framing from attributes after the name, written as `name="value"`, and flags, such as `open`, as their name alone. A value can't hold a double quote, so quote with ' or “ ”.
 
-| Role                    | Shows                                                                                                   | Attributes on its fence                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `example`               | The example, live on the stage, with its caption below.                                                 | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide`, `motion` |
-| `do`, `dont`, `caution` | The example on a square stage joined to a green Do, red Don't or amber Caution bar, and its rule below. | `open`, `stage`, `wide`, `motion`                                      |
-| `anatomy`               | The example on the stage, with numbered callouts on its parts and the legend below.                     | `of`, `open`, `stage`, `enlarge`, `width`, `specimen`                  |
-| `variants`              | The example on the stage, with a callout naming each variant, and the legend below.                     | `stage`                                                                |
+| Role                    | Shows                                                                                                                                                              | Attributes on its fence                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `example`               | The example, live on the stage, with its caption below.                                                                                                            | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide`, `motion`, `device` |
+| `do`, `dont`, `caution` | The example on a stage as tall as it, square where it shows open or plays, over a strip that says Do, Don't or Caution in green, red or amber, and its rule below. | `open`, `stage`, `wide`, `motion`                                                |
+| `anatomy`               | The example on the stage, with numbered callouts on its parts and the legend below.                                                                                | `of`, `open`, `stage`, `enlarge`, `width`, `specimen`                            |
+| `variants`              | The example on the stage, each variant's name in plain text beside or under it, and the legend below.                                                              | `stage`                                                                          |
 
 Every figure sits on the catalogue's recessed stage, in the theme, contrast and scale the reader chose, with a closed Code toggle under it holding the file's source. Keep example lines within the formatter's 100 characters, and a caption to one sentence.
 
-- **`stage=shaded`** is for a figure of a whole window, such as a Scaffold, whose edges must show: in light it makes the stage a shade deeper than the window's page. Don't draw a frame around the subject instead.
-- **`open`** shows a figure's popup, menu, tooltip, dialog, sheet or toast open, as a picture, rendered into the stage and inert. The example opens it itself, with `defaultOpen` or an `open` state that starts true, and says so in a comment. Use it where the point is in the open overlay; a figure whose point is the trigger stays closed.
+- **`stage=shaded`** is for a figure whose subject's own fill must show: a whole window, such as a Scaffold, whose edges must show, or a surface standing on the stage, such as a Card or a Table. In light it makes the stage a shade deeper than the window's page. Don't draw a frame around the subject instead.
+- **`device="phone"`** or **`device="window"`** draws the example on a phone's screen or in a browser's window, at the device's real width, filling the screen, the device scaled to fit the stage; an animated figure plays on it too. Use it for a whole screen of an application, such as a Scaffold or Panes, on the page's figures only: the gallery's and Related's cards never draw one. Not with `widths` or `open`.
+- **`open`** shows a figure's popup, menu, tooltip, dialog, sheet or toast open, as a picture, rendered into the stage and inert; an overview's is live instead. The example opens it itself, with `defaultOpen` or an `open` state that starts true, and says so in a comment. Use it where the point is in the open overlay; a figure whose point is the trigger stays closed.
 
 ### Examples at several widths
 
@@ -178,7 +181,7 @@ An Adapting to width figure sweeps instead: `widths="30 16" sweep` moves one fra
 
 ### Do and don't pairs
 
-List a `do` and a `dont` example and place them one after the other, so they sit side by side on small square stages. A do or a don't may stand alone where only one side is worth a picture.
+List a `do` and a `dont` example and place them one after the other, so they sit side by side on small stages. A do or a don't may stand alone where only one side is worth a picture.
 
 - **Only what a picture shows best.** Picture a real, tempting mistake and its fix; say a rule no picture shows in a titled block.
 - **The same situation**, so the only difference is the point: the same dialog's actions with one primary button and with three.
@@ -205,14 +208,15 @@ An ordered list right after an anatomy figure is its legend: each item the part'
 - A part reference is a class name, or a selector of class names without their dot, such as `env-button > env-icon:first-child`; `::text` at the end points at the element's own text, such as `env-button::text`.
 - A figure without a list numbers every part `docs/generated/parts.json` lists for the page's component, or for the one `of="Name"` names. Read a component's entry there before writing its legend.
 - `enlarge` draws a subject whose parts sit close half as large again; `width="38"` lays out a subject that shows all its parts only from a width, such as [Panes](../docs/components/panes.md) side by side.
-- Make the example small and complete, every part the legend names present once, the root first, then the parts in reading order. Name the parts it can't show in one sentence below, such as "Not shown: the spinner."
-- **Two callouts, two things.** No two callouts land on one box, and none points at nothing. Parts that look alike at rest, such as AnimatedNumber's window and its value, show apart with `specimen`: the catalogue numbers them on the specimen of the same name, which holds the example in that moment, and a caption says which.
+- Make the example small and complete, every part the legend names present once, the root first, then the parts in reading order. A sentence under the legend may say, for people reading the catalogue, how a pattern's parts fit together; what the figure leaves out and how a part is built are for Composition, in the Docs.
+- **Callouts on what shows.** A callout points at what shows of a part: its edge, its text or its icon; only a region, with no edge of its own around several things, such as a card's actions, is outlined. The catalogue names in the legend alone, unnumbered, the outermost part around the others that has no edge of its own, such as a text field's root, and the part inside it as wide as it that holds several others, such as its control.
+- **Two callouts, two things.** No two callouts land on one box, and none points at nothing. Parts that look alike at rest, such as AnimatedNumber's window and its value, show apart with `specimen`: the catalogue numbers them on the example's playback, which holds the example in that moment, and a caption says which.
 
 ### Variants figures and option tables
 
 A variants figure names each variant with a callout rather than labels inside the example. An ordered list right after it names them, each item the name in bold, in the order the example shows them; each names the example's next item, or what a part reference after it selects, such as ``**Ghost** (`env-text-field[data-variant='ghost']`)``. Write a long run, such as six tones, one under another.
 
-Variants, tones, sizes, sides and layouts are written as an option table: the first column names each option in words, the last, headed **Use for**, says what it is for, and a column headed **In code**, which only the Docs and agents read, gives its props. The catalogue shows the table as a legend; right after a variants figure's list, it is that figure's legend.
+Variants, tones, sizes, sides and layouts are written as an option table: the first column names each option in words, the last, headed **Use for**, says what it is for, and a column headed **In code**, which only the Docs and agents read, gives its props. The catalogue shows the table as a legend; right after a variants figure's list, it is that figure's legend, or, where the variants stand one under another and there is room, what each is for stands beside it.
 
 ````md
 ```tsx figure=Variants
@@ -220,12 +224,12 @@ Variants, tones, sizes, sides and layouts are written as an option table: the fi
 ```
 
 1. **Outline**
-2. **Floating**
+2. **Ghost**
 
-| Variant  | Use for                                             |
-| -------- | --------------------------------------------------- |
-| Outline  | In forms, dialogs, panes and toolbars. The default. |
-| Floating | A long form on a page.                              |
+| Variant | Use for                                                 |
+| ------- | ------------------------------------------------------- |
+| Outline | In forms, dialogs, panes and toolbars. The default.     |
+| Ghost   | A search in an application's chrome, such as a sidebar. |
 ````
 
 - **Names are tags**: a few words of plain text, named once, with no link, image or HTML. After a variants figure, they are the figure's names, in its order.
@@ -241,7 +245,7 @@ Everything the plain sections leave out goes in `## Compose`, after Words to use
 
 ### Usage
 
-`variant` is `outline`, the default, `floating` or `ghost`.
+`variant` is `outline`, the default, or `ghost`.
 
 ```tsx source=Variants
 
@@ -256,8 +260,8 @@ TextField is built from Field's parts: …
 An outline field takes no fill of its own; give it one with its container color.
 ````
 
-- **Its `###` subsections, in this order:** `### Usage`, required, with short code for its common uses and options; `### Composition`, how its parts and the components around it fit together; `### Customize`, only what is particular to it, such as an edge drawn only at high contrast. Use `####` headings inside them.
-- **Generated around it:** `### Import`, from the exports the page documents or a pattern's `composes`, opens the section; Part names, Color properties and Strings follow Props, from `docs/generated/parts.json` and `defaultMessages`. Don't write them, nor the sentence [customizing](../docs/customizing.md) says once about color properties.
+- **Its `###` subsections, in this order:** `### Usage`, required, with short code for its common uses and options, code of one language with no words between in one block; `### Composition`, how its parts and the components around it fit together; `### Customize`, only what is particular to it, such as an edge drawn only at high contrast. Use `####` headings inside them.
+- **Generated around it:** `### Import`, from the exports the page documents or a pattern's `composes`, opens the section; Part names, Color properties and Strings follow Props, from `docs/generated/parts.json` and `defaultMessages`. Don't write them, nor the sentence [customizing](../docs/customizing.md) says once about color properties. On a component's page in the Docs, Usage opens with its first overview example, live and without its code, as the one figure the Docs show.
 - **Code.** A snippet of a few lines in a `tsx` fence, or an example file of the page as code in an empty `tsx source=Name` fence, which the build fills in; at most one full example a page. `npm run docs:snippets` type-checks the snippets against envUI's API, supplying the imports and names they leave out; one that is pseudo-code on purpose takes `tsx nocheck`.
 - **Accessibility's lists** stay in Accessibility. Write the keyboard table from the code and its browser tests: the keys the component handles, and Tab for how focus enters and leaves. "envUI provides" names the roles, names, announcements and focus handling it does itself; "You provide", what the application must add, such as a label.
 
@@ -265,13 +269,13 @@ An outline field takes no fill of its own; give it one with its container color.
 
 An example is a file in `apps/site/src/examples/<page>/<Name>.tsx`: a small, default-exported component an application could copy as it is.
 
-- Import only what an application can: `react`, `@envsemble/envui`, its `/content`, `/diff`, `/rich-text` and `/color` entries, and icons, `Icon<Name>` from `@envsemble/envui/icons/<Name>`.
+- Import only what an application can: `react`, `@envsemble/envui`, its `/code`, `/markdown`, `/diff`, `/rich-text` and `/color` entries, and icons, `Icon<Name>` from `@envsemble/envui/icons/<Name>`.
 - No catalogue classes or helpers. Lay out with envUI's components; where envUI has no layout for it yet, a short inline style with a comment.
 - Keep state inside the example, and stand in for slow work with a timer.
 - Keep it small: the stage centres it at its own width. Give the root a width where it should be wider, such as `inlineSize: '100%'`; a root that is a size container fills the stage.
 - Name the file after what it shows, such as `ConfirmInPlace.tsx`.
 - Start its own headings at level 3: `headingLevel={3}` on a component that renders an `h2`, and `h3` or lower for others.
-- A field on its own, such as a search above a list, takes `variant="floating"`.
+- A field on its own, such as a search above a list, takes `size="lg"`.
 
 Every example is listed in its page's frontmatter and placed once, but an overview; Compose may also show any of them as code. The fence stays empty: the catalogue renders the file live, and the package ships it in `docs/examples/`.
 
@@ -283,13 +287,13 @@ Examples, screenshots and tests share one neutral set of sample data:
 - **Organisation and application:** Northwind.
 - **Things:** projects, such as Website refresh, Quarterly report, Onboarding guide, Mobile release, Data migration and Annual review; documents; tasks; teams.
 - **Dates:** absolute dates in February and March 2026, so relative times read naturally.
-- **No names of applications built on envUI, and no logos** ([AGENTS.md](../AGENTS.md)).
+- **No names of applications built on envUI, and no logos** ([AGENTS.md](../AGENTS.md#never-name-the-applications-built-on-envui)).
 
 Its words follow the [writing guide](../docs/writing.md).
 
 ## Specimens
 
-A visual reference that is not an example, such as controls forced into their hover and pressed looks, is a specimen in `apps/site/src/specimens/<page>/<Name>.tsx`. It may use the catalogue's figure helpers (`apps/site/src/figures`) and motion (`apps/site/src/motion`), and a page places it with a comment the package leaves out:
+A specimen, `apps/site/src/specimens/<page>/<Name>.tsx`, is one of two things: a visual reference that is not an example, such as controls forced into their hover and pressed looks, or an example's playback, below. It may use the catalogue's figure helpers (`apps/site/src/figures`) and motion (`apps/site/src/motion`), and a page places it with a comment the package leaves out:
 
 ```md
 <!-- specimen: VariantMatrix -->
@@ -302,16 +306,19 @@ A visual reference that is not an example, such as controls forced into their ho
 
 The visual baseline captures a page's specimens, or its first example when it has none; an animated figure as its still, the first frame of its loop.
 
-### Animated specimens
+### Animated specimens and playbacks
 
-Where a section is about a change, such as a slider stretching past its ends or a reply arriving, a specimen plays it: the live component on a `MotionStage` (`apps/site/src/motion/MotionStage.tsx`), driven by a script of a pointer no one sees (`usePointer`) or by steps of its props (`useTimeline`), both in `apps/site/src/motion/Motion.tsx`.
+Where a section is about a change, such as a slider stretching past its ends or a reply arriving, a specimen plays it: the live component on a `MotionStage` (`apps/site/src/figures/MotionStage.tsx`), driven by a script of a pointer no one sees (`usePointer`, `apps/site/src/motion/pointer/PointerPlayback.ts`) or by steps of its props (`useTimeline`, `apps/site/src/motion/Timeline.ts`).
 
 - **The component's own behaviour.** The pointer hovers, presses, drags, types and uses keys as a person would, so the component shows its own states; change props only where no person could.
-- **It loops**, ending where it began, at one height, so the page never moves; give `MotionStage` a `height` that holds what opens, or `roomFor` where wrapped rows grow it.
-- **Overlays open live in the stage**, contained: a dialog's backdrop covers the stage, not the page.
-- **In place of an example**: an example the catalogue plays takes `motion`, on its fence or as `motion: true` in an overview's entry, and its specimen of the same name imports it and plays it. The figure keeps the example's caption and code; the Docs and the package keep the example.
+- **It loops**, ending where it began, at one height, so the page never moves; give `MotionStage` a `height` that holds what opens, or `roomFor` where wrapped rows grow it, and `top` where that room is for what opens below the control, such as a select's list.
+- **Overlays open in the stage** while it plays, contained: a dialog's backdrop covers the stage, not the page.
+- **The reader can take it over.** A click on a figure the pointer plays, or the keyboard reaching it, stops it and hands the reader the example at its start, live, its overlays opening as in an application; its play button plays it again. A figure driven by `useTimeline` stays a recording, so a page whose component people operate keeps an example or a pointer-played figure.
+- **In place of an example**: an example the catalogue plays takes `motion`, on its fence or as `motion: true` in an overview's entry, and its playback, the specimen named after it, imports it, or draws it again where it must change what the example holds, and plays it. The figure keeps the example's caption and code; the Docs and the package keep the example.
+- **A playback depends on its example.** Changing an example can break its playback's script, and renaming one leaves its playback behind: change and rename them together. The catalogue fails on a playback without its example, and `npm test` on a specimen that no page places or plays.
+- **Aim at what a reader can name.** A script's selectors find a control by its accessible name (`[aria-label="Close details"]`), its destination (`[href="/projects"]`), a public part or state (`.env-navigation-bar-more`, `[data-direction="next"]`) or its place among the parts of its kind (`.env-list-item:nth-child(2 of .env-list-item)`); markup the specimen draws itself takes a `data-catalogue-target` marker. Never a component's inner structure, such as `.env-dialog-heading > .env-button`, which can change while the component behaves the same.
 - **Pairs in step**: a do and a don't that play one sequence take their steps from `useSharedTimeline`, or `usePointer` with the same `clock`.
-- `PointerStep` in `Motion.tsx` lists what the pointer can do, `PressedKeys` shows the keys it presses, and `Renew` redraws an example a loop can't put back.
+- `PointerStep` in `PointerPlan.ts` lists what the pointer can do, `PressedKeys` shows the keys it presses, and `Renew` redraws an example a loop can't put back.
 
 ## Tiles
 
@@ -319,8 +326,10 @@ The galleries and Related show each page by a tile: `apps/site/src/tiles/<Page>.
 
 - **The component alone, large and centred**, with as little else as it needs to be recognised.
 - **A still that is its animation's first frame.** On hover or focus it plays a short script of the component in use, and on a touch screen the tile nearest the middle plays once scrolling settles. The script ends where it began.
-- **Its window** is 10 by 7.5 rem; a component that needs another takes one in `tileWindows` (`apps/site/src/tiles/Tiles.ts`).
+- **Its window** is the same for every tile (`--catalogue-tile-width` and `--catalogue-tile-height` in `apps/site/src/figures/Tile.css`), so components show at one scale; only a component too large for it exports a larger `tileWindow` next to its default export (`TileWindow` in `apps/site/src/tiles/Tiles.ts`).
 - **A still with a popup open** keeps it in state and puts it back with `usePointer`'s `onRest`.
+- **A popup whose script opens, closes and changes it**, such as a select's list, rests open in its largest state, through the component's own `defaultOpen` or `open`, and calls `useHeldView` (`apps/site/src/motion/Playback.tsx`): framed on that still, its view holds while it plays. Where it is taller than the stage, such as a picker, it shows from its field down to what its script acts on and what is chosen, whole above the fade at the stage's foot, so the script aims only at what shows whole.
+- **A tile that grows as it plays**, such as a note gaining a line, calls `useHeldView(true)`: it lays out from its window's top and is shown from its top, so what it adds grows downward.
 
 ## Pattern pages
 
@@ -344,7 +353,7 @@ A foundation page, such as Spacing & density, explains how envUI handles one sub
 - **The same structure**, with Options in place of Variants, Accessibility only where it has something to say, and its tokens and values under Compose.
 - **How envUI handles it, in pictures.** Each block explains one idea, such as "space shows what belongs together", on a real envUI example rather than a ladder of values, with what the idea is marked on it and a numbered legend in plain words.
 - **Its figures are the catalogue's**, in `apps/site/src/figures/foundations/`, registered by name in `FoundationFigures.ts`, with their words from the legend after their fence, `1. **Name**: what it means`. A figure that shows what an application writes has an example of its name as its code; a pure illustration, such as the palette, has none.
-- **Animated figures**: `Figure` (`figures/foundations/Topic.tsx`) with `motion` plays one on a `MotionStage`; a nested `Theme` in it cross-fades between themes.
+- **Animated figures**: `FoundationFrame` (`figures/foundations/FoundationFrame.tsx`) with `motion` plays one on a `MotionStage`; a nested `Theme` in it cross-fades between themes.
 - **The words to use**: an option table whose In code column maps each phrase to the props and tokens it means.
 
 Its frontmatter has `title`, `summary`, `aliases`, its figures under `examples` and its related pages under `avoidWhen`, and may list the exports it documents under `components`.
@@ -361,7 +370,7 @@ Document only the props envUI declares or narrows; native props are summarised b
 
 ## Write a new page
 
-1. Read the component's source, its CSS for the part classes, its entry in `parts.json` and its browser tests.
+1. Read the component's source, its CSS for the part classes, its entry in `docs/generated/parts.json` and its browser tests.
 2. Write the example files: the overview, the variants and anatomy examples, the do and don't pairs, and an example for `widths` where it adapts.
 3. Write the frontmatter, then the sections in order, each block a lead and its rules, with the developer detail in Compose. Register the page in the index.
 4. Regenerate with `npm run docs:props && npm run docs:parts && node scripts/docs/GenerateDocumentation.ts`, then run `npm run check`.

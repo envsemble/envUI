@@ -1,6 +1,7 @@
 import DeleteProject from '../../examples/confirm-dialog/DeleteProject';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The pointer opens the dialog, then presses the backdrop beside it, twice: the dialog stays open, as

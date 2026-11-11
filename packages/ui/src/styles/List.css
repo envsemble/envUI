@@ -23,8 +23,8 @@
   .env-list {
     /* The density sets the rows' block padding; a row is at least as tall as a small control with it. */
     --env-list-row-padding: calc(var(--env-row-padding-block-md) + var(--env-space-1));
-    overflow-wrap: anywhere;
-    gap: 0.125rem;
+    overflow-wrap: break-word;
+    gap: calc(var(--env-space-1) / 2);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -87,6 +87,12 @@
        symbols, rather than its text's size, a Graphic of the icon size, and an svg or img of the
        application's own, contained in that box whatever its file's size. */
     --env-icon-size: var(--env-icon-size-lg);
+    /* At least an icon wide, with what it holds centred, so a narrower mark, such as a running
+       step's Spinner among icons, leaves its label in line with its siblings'. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: var(--env-icon-size);
   }
   .env-list-item-start > :is(svg, img) {
     inline-size: var(--env-icon-size);
@@ -107,6 +113,8 @@
      selected fills are close together. */
   .env-list > .env-list-item:is([data-selected], :has(> .env-list-item-start input:checked)) {
     --env-list-item-container-default: var(--env-color-bg-selected);
+    /* Soft badges lay their tint over the raised surface, not the selection's blue (Badge.css). */
+    --env-badge-underlay: var(--env-color-bg-raised);
     --env-list-item-fill-hover: var(--env-color-bg-selected-hover);
     --env-list-item-fill-pressed: var(--env-color-bg-selected-pressed);
     --env-list-item-content-gate: color-mix(
@@ -169,7 +177,7 @@
     --env-skeleton-placeholder: inline-block;
     --env-skeleton-length: 10rem;
   }
-  /* On a muted Surface that holds only lists, a pane of their own, the rows take the raised fill, so
+  /* On a muted Surface that holds only lists, a pane of their own, the rows take the default fill, so
      they stand out from it. A surface with more in it, such as a card with a heading, keeps the row
      fill. A skeleton's content wrapper and a skeleton list's status beside it don't count. */
   .env-surface[data-background='muted']:not(
@@ -183,9 +191,9 @@
     > .env-skeleton-content
     > .env-list
     > .env-list-item {
-    --env-list-item-container-default: var(--env-color-bg-raised);
-    --env-list-item-fill-hover: var(--env-color-bg-raised-hover);
-    --env-list-item-fill-pressed: var(--env-color-bg-raised-pressed);
+    --env-list-item-container-default: var(--env-color-bg-default);
+    --env-list-item-fill-hover: var(--env-color-bg-default-hover);
+    --env-list-item-fill-pressed: var(--env-color-bg-default-pressed);
   }
   /* A row that opens something through a link or button inside reacts like a clickable card: to
      hover, to keyboard focus inside it and to presses. The link or button marked data-row-target
@@ -194,7 +202,7 @@
      row's other controls. */
   .env-list > .env-list-item[data-interactive] {
     position: relative;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* The target is as wide as its label, which wraps only where the row is too narrow: a button's
      percentage cap would count it as no width in the row's text, which then wraps the label to the
@@ -207,6 +215,16 @@
     content: '';
     position: absolute;
     inset: 0;
+  }
+  /* The target's keyboard focus ring is the row's: it traces the row's corners inside its edge, the
+     area a press follows, rather than the label alone, whose ring would cut into the description. */
+  .env-list > .env-list-item[data-interactive]:has([data-row-target]:focus-visible) {
+    --env-list-item-focus-ring: 0.125rem;
+    outline: var(--env-list-item-focus-ring) solid var(--env-color-border-focus);
+    outline-offset: calc(-1 * var(--env-list-item-focus-ring));
+  }
+  .env-list > .env-list-item[data-interactive] [data-row-target]:focus-visible {
+    outline: none;
   }
   /* Links and text buttons in a row under the pointer or pressed take the link colors for a tint: the
      link blue falls below 4.5:1 on the row's hover and press fills in the light theme. */

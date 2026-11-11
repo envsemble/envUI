@@ -3,9 +3,10 @@ import { Column, Text, Tree, type TreeItem } from '@envsemble/envui';
 import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
-import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
 interface FileNode {
@@ -129,12 +130,13 @@ function Opening() {
 }
 
 /** A file previewed by a click and opened by a double click, and a folder opened by its chevron. */
+// eslint-disable-next-line no-restricted-syntax -- previewing is the tree's own word, its action's `preview`
 export default function OpeningAndPreviewing() {
   return (
-    <Example size="wide">
+    <SpecimenFrame size="wide">
       <MotionStage label="a click previewing and a double click opening">
         <Opening />
       </MotionStage>
-    </Example>
+    </SpecimenFrame>
   );
 }

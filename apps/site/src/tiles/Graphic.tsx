@@ -1,5 +1,6 @@
-import { Graphic, type GraphicSize } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
+import { Graphic, Row, type GraphicSize } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
+import { narrowGallery } from './Tiles';
 
 /** A company's logo, as an application imports its file. */
 const logo =
@@ -12,11 +13,21 @@ const logo =
       '<path d="M18 58 36 38l18 20Z" fill="#f97316"/></svg>',
   );
 
-/** The steps it takes, from the still at large. */
-const sizes: GraphicSize[] = ['lg', 'md', 'sm', 'md', 'xl'];
+/** Three of envUI's sizes, side by side, one step smaller in a phone's narrower tile. */
+const sizes: GraphicSize[] = ['md', 'lg', 'xl'];
+const narrowSizes: GraphicSize[] = ['sm', 'md', 'lg'];
 
-/** A logo at envUI's sizes: it steps down to a small one, then up to the largest, and back. */
+/**
+ * A logo at three of envUI's sizes side by side, still, aligned on their bottom edge: one file
+ * drawn at the size it is given rather than its own.
+ */
 export default function GraphicTile() {
-  const size = sizes[useTimeline([900, 600, 600, 600, 900])]!;
-  return <Graphic src={logo} alt="Northwind" size={size} />;
+  const narrow = useMedia(narrowGallery);
+  return (
+    <Row gap={4} align="end">
+      {(narrow ? narrowSizes : sizes).map((size) => (
+        <Graphic key={size} src={logo} alt="Northwind" size={size} />
+      ))}
+    </Row>
+  );
 }

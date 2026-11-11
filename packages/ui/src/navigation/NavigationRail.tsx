@@ -1,18 +1,17 @@
 'use client';
 
 import type { ComponentPropsWithRef, ReactNode } from 'react';
-import { Column } from '../foundations/Layout.js';
+import { Column } from '../layout/Layout.js';
 import { classNames } from '../internal/classNames.js';
-import { inSkeleton } from '../foundations/internal/inSkeleton.js';
-import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import {
   destinationKey,
   DestinationItem,
   useNavigationMessages,
-  type Destination,
   type DestinationClasses,
-} from './internal/Destinations.js';
-import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+} from './internal/DestinationItem.js';
+import type { Destination } from './destinations.js';
+import { backgroundAttribute, type NavigationBackground } from './navigationBackground.js';
 import '../styles/Base.css';
 import '../styles/NavigationRail.css';
 
@@ -25,8 +24,7 @@ const railClasses: DestinationClasses = {
 };
 
 export interface NavigationRailProps
-  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>,
-    SkeletonProps {
+  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
   /**
    * The application's destinations, the same array NavigationBar and NavigationDrawer take, each an icon above a short
    * label. Groups don't show: the destinations follow one another in the array's order. Nested

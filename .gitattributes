@@ -1,10 +1,9 @@
 * text=auto eol=lf
 *.woff2 -text
-packages/ui/src/assets/material-symbols-rounded/*.svg -text linguist-vendored=true
+packages/ui/vendor/material-symbols-rounded/*.svg -text linguist-vendored=true
 packages/ui/licenses/Material-Symbols-LICENSE.txt -text
 packages/ui/src/icons/* linguist-generated=true
 packages/ui/icon-manifest.json linguist-generated=true
 apps/site/src/brand/EnvUILogo.tsx linguist-generated=true
 packages/ui/licenses/Runtime-Dependencies-LICENSE.txt linguist-generated=true
-packages/ui/src/styles/Tokens.css linguist-generated=true
 packages/ui/src/generated/* linguist-generated=true

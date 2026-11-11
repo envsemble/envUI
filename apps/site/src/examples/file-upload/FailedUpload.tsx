@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, List, Progress } from '@envsemble/envui';
+import { Button, List, Progress, Row } from '@envsemble/envui';
 
 export default function FailedUpload() {
   const [state, setState] = useState<'failed' | 'uploading' | 'done'>('uploading');
@@ -85,7 +85,8 @@ export default function FailedUpload() {
                 : undefined
           }
           end={
-            <>
+            // Try again beside Remove: the pair moves below the text together.
+            <Row gap={2}>
               {state === 'failed' && (
                 <Button
                   variant="text"
@@ -103,7 +104,7 @@ export default function FailedUpload() {
               >
                 Remove
               </Button>
-            </>
+            </Row>
           }
         >
           {state === 'uploading' && (

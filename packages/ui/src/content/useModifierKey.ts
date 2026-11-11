@@ -1,6 +1,6 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useHydrated } from '../internal/react/useHydrated.js';
 
 /** The platform's modifier for shortcuts such as ⌘K or Ctrl+K. */
 export interface ModifierKey {
@@ -20,9 +20,6 @@ function isApplePlatform() {
   return /mac|iphone|ipad|ipod/i.test(userAgentData?.platform || navigator.platform || '');
 }
 
-const noSubscription = () => () => {};
-const notApple = () => false;
-
 const control: ModifierKey = { key: 'Control', label: 'Ctrl' };
 const meta: ModifierKey = { key: 'Meta', label: '⌘' };
 
@@ -31,5 +28,5 @@ const meta: ModifierKey = { key: 'Meta', label: '⌘' };
  * first render in the browser give Ctrl, so the markup hydrates; an Apple browser then renders ⌘.
  */
 export function useModifierKey(): ModifierKey {
-  return useSyncExternalStore(noSubscription, isApplePlatform, notApple) ? meta : control;
+  return useHydrated() && isApplePlatform() ? meta : control;
 }

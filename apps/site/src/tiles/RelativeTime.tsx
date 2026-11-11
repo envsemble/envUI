@@ -1,40 +1,79 @@
 import { useState } from 'react';
 import { RelativeTime, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useMedia } from '../motion/Autoplay';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { narrowGallery } from './Tiles';
 
-/** When the draft was saved: a fixed moment, so the tooltip's date is always the same. */
-const saved = Date.UTC(2026, 9, 14, 9, 41);
+/** The time the tile's clock reads: fixed, so the times and the tooltip's date never change. */
+const now = Date.UTC(2026, 9, 14, 9, 41, 30);
 const minute = 60_000;
 
-/*
- * The minutes since the save tick on; hovered, the time shows its date; the draft saved again,
- * just now, and a minute later as it began.
+/**
+ * A document's recent events, each with when it happened. There are two, so the stage has room
+ * above them for a time's tooltip at their own size, and nothing moves as it opens.
  */
-const script: PointerStep[] = [
-  { wait: 900 },
-  { cue: 'tick' },
-  { wait: 900 },
-  { cue: 'tick' },
-  { wait: 400 },
-  { to: '.env-relative-time', x: 0.6 },
-  { wait: 1900 },
-  { leave: true },
-  { wait: 500 },
-  { cue: 'save' },
-  { wait: 1100 },
-  { cue: 'tick' },
-  { wait: 400 },
+const events = [
+  { label: 'Saved', at: now - 20_000 },
+  { label: 'Shared', at: now - 2 * 24 * 60 * minute },
 ];
 
-/** When a draft was saved, a minute ago, as a time that keeps itself current. */
+/*
+ * A minute later, the save that was "just now" is "a minute ago", as the shared clock moves every
+ * time on once a minute. On hover, that time shows its date and time, in a tooltip above the list
+ * where it covers no other time.
+ */
+const script: PointerStep[] = [
+  { wait: 1000 },
+  { cue: 'minute' },
+  { wait: 900 },
+  { to: '[data-event="Saved"] .env-relative-time', x: 0.5 },
+  { wait: 2800 },
+  { leave: true },
+  { wait: 600 },
+];
+
+/**
+ * In a phone's narrower tile, only the minute passing: a time's tooltip, as wide as its date, would
+ * run past the stage's end from the times' column there.
+ */
+const narrowScript: PointerStep[] = [{ wait: 1000 }, { cue: 'minute' }, { wait: 4000 }];
+
+/**
+ * When a document's last events happened, each as a time relative to now beside what happened. In a
+ * phone's narrower tile the times take their short format, so the list is drawn at about its own
+ * size there.
+ */
 export default function RelativeTimeTile() {
-  const [minutes, setMinutes] = useState(1);
-  usePointer(script, {
-    onCue: (cue) => setMinutes((current) => (cue === 'save' ? 0 : current + 1)),
-  });
+  const narrow = useMedia(narrowGallery);
+  return <Events key={String(narrow)} narrow={narrow} />;
+}
+
+function Events({ narrow }: { narrow: boolean }) {
+  const [later, setLater] = useState(false);
+  usePointer(narrow ? narrowScript : script, { onCue: () => setLater(true) });
   return (
-    <Text variant="title">
-      <RelativeTime value={saved} now={saved + minutes * minute} />
-    </Text>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'auto auto',
+        alignItems: 'center',
+        columnGap: 'var(--env-space-6)',
+        rowGap: 'var(--env-space-3)',
+      }}
+    >
+      {events.map(({ label, at }) => (
+        <div key={label} data-event={label} style={{ display: 'contents' }}>
+          <Text emphasis="muted">{label}</Text>
+          <Text>
+            <RelativeTime
+              value={at}
+              now={now + (later ? minute : 0)}
+              format={narrow ? 'short' : 'long'}
+            />
+          </Text>
+        </div>
+      ))}
+    </div>
   );
 }
