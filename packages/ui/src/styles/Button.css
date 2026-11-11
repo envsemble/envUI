@@ -9,12 +9,6 @@
       background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
       color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
       border-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
-    /* Badges inside take the button's text color as an outlined pill (Badge.css's hooks; the
-       count and diff stat hooks are further down). */
-    --env-badge-fg: currentColor;
-    --env-badge-bg: transparent;
-    /* contrast: badge-outline */
-    --env-badge-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
     /* The height the button draws at: the control height, or more under a coarse pointer. */
     --env-button-height: var(--env-control-height);
     /* Its icons take the control icon size. */
@@ -658,11 +652,17 @@
   }
 
   /* Badges in a button, such as a tab with a count, through Badge.css's hooks. A badge takes the
-     button's text color as an outlined pill. A badge with a count or a diff stat keeps its own filled pill,
-     except on the solid primary fills, where that pill can't keep its contrast: there it is an
-     outlined pill in the text color too. The outline is the label color at 55%, which
-     only the button knows; the contrast gate measures it on each fill as a derived color
-     (tests/contrast/Pairs.ts). The hooks every button sets for its badges are in its first rule. */
+     button's text color as an outlined pill. A badge with a count or a diff stat keeps its own filled
+     pill, except on the solid primary fills, where that pill can't keep its contrast: there it is an
+     outlined pill in the text color too. The outline is the label color at 55%, which only the
+     button knows; the contrast gate measures it on each fill as a derived color
+     (tests/contrast/Pairs.ts). */
+  .env-button {
+    --env-badge-fg: currentColor;
+    --env-badge-bg: transparent;
+    /* contrast: badge-outline */
+    --env-badge-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
+  }
   .env-button:is([data-variant='primary']) {
     --env-badge-count-fg: currentColor;
     --env-badge-count-bg: transparent;

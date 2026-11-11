@@ -4,12 +4,13 @@
      softer tint. The tone's text color keeps 4.5:1 on the page, panes and rows, also over its tints; a
      solid badge puts fg-on-emphasis on the tone's emphasis fill, fg-on-strong on danger's saturated
      red, and an outlined one draws the tone's edge.
-     In a control, such as a tab with a count, the control sets hooks on its own element:
-     --env-badge-fg, --env-badge-bg and --env-badge-border (a border shorthand) for every badge inside
-     it, whatever its tone and variant; --env-badge-count-fg, -bg and -border for a badge with a
-     count, which reads them instead; --env-badge-underlay, the surface a soft badge lays its tint
-     over, which a selected row sets (Table.css, List.css); and --env-diff-stat-fg, -bg and -border for a diff stat, whose two tones then take that one
-     color. Button sets them (Button.css). */
+     What holds a badge sets hooks on its own element, which every badge inside reads:
+     --env-badge-fg, --env-badge-bg and --env-badge-border (a border shorthand), whatever its tone and
+     variant, which a button sets (Button.css); --env-badge-count-fg, -bg and -border for a badge
+     with a count, which reads them instead, as a button, a menu item's end (Menu.css) and the
+     toasts' hidden count (Toast.css) set them; --env-badge-underlay, the surface a soft badge lays
+     its tint over, which a selected row sets (Table.css, List.css); and --env-diff-stat-fg, -bg and
+     -border for a diff stat, whose two tones then take that one color, which a button sets. */
   /* Color properties: a badge's colors, which an application sets on one badge through style or its
      own CSS. They don't inherit, and they win over its tone and variant and over the hooks of a
      control around it. outline draws an edge in that color. */
