@@ -467,10 +467,13 @@ test(
     // Dragging the right edge to the left narrows it, with the whole frame in view, once the view
     // has turned there.
     await turnTo('Tilted');
+    // The View menu gone, and the view at rest: unchanged across a few frames, which a busy
+    // machine spaces further apart.
+    await expect.poll(() => page.getByRole('dialog', { name: 'View' }).query()).toBeNull();
     await expect
       .poll(async () => {
         const before = sceneStyle();
-        await new Promise((resolve) => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 200));
         return before === sceneStyle();
       })
       .toBe(true);
