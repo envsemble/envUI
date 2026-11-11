@@ -228,7 +228,7 @@ test('a tree renders a tall pane of rows before it measures, and fills its viewp
     h(
       'div',
       { style: { blockSize: '20rem', display: 'grid' } },
-      h(Tree, { 'aria-label': 'Files', items }),
+      h(Tree, { 'aria-label': 'Files', items, onAction: () => {}, onExpandedChange: () => {} }),
     ),
   );
   // The markup a server sends, in the page before any script runs.
