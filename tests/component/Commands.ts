@@ -50,6 +50,31 @@ const mouseClick: BrowserCommand<
   await context.page.mouse.click(point.x, point.y, options);
 };
 
+/**
+ * A quick drag let go while it moves: the pointer presses at one point, moves to another in steps
+ * and is released at once, with no round trip to the page between, which would take long enough
+ * to read as a rest.
+ */
+const mouseFling: BrowserCommand<
+  [fromX: number, fromY: number, toX: number, toY: number, steps: number]
+> = async (context, fromX, fromY, toX, toY, steps) => {
+  const [from, to] = [await toPage(context, fromX, fromY), await toPage(context, toX, toY)];
+  const { mouse } = context.page;
+  await mouse.move(from.x, from.y);
+  await mouse.down();
+  await mouse.move(to.x, to.y, { steps });
+  await mouse.up();
+};
+
+/** A turn of the mouse wheel by pixels, at the mouse's point. */
+const mouseWheel: BrowserCommand<[deltaX: number, deltaY: number]> = async (
+  context,
+  deltaX,
+  deltaY,
+) => {
+  await context.page.mouse.wheel(deltaX, deltaY);
+};
+
 const keyPress: BrowserCommand<[key: string]> = async (context, key) => {
   await context.page.keyboard.press(key);
 };
@@ -189,6 +214,8 @@ export const commands = {
   mouseDown,
   mouseUp,
   mouseClick,
+  mouseWheel,
+  mouseFling,
   keyPress,
   keyDown,
   keyUp,
