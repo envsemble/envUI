@@ -355,7 +355,7 @@ test('dismissed notices step out at once, so the stack neither grows, scrolls no
   // A long exit keeps the leaving notices in view while the stack is measured.
   // Letter spacing gives the messages fractional widths, which a pinned notice must keep.
   addStyle(
-    '.env-toast-viewport > .env-toast[data-ending-style] { transition-duration: 4s; } .env-toast-message { letter-spacing: 0.0137em; }',
+    '.env-toast-viewport > .env-toast[data-ending-style] { transition-duration: 1.5s; } .env-toast-message { letter-spacing: 0.0137em; }',
   );
   for (const motion of ['reduce', 'no-preference'] as const)
     for (const placement of ['bottom-end', 'top-center'] as const) {
