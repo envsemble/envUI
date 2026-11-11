@@ -3,7 +3,7 @@
  * their own and a foundation's figures. Each module of a view or a part is named once, with its
  * path in the site app beside its import, which stays literal so the bundler gives it a file of its
  * own: the server reports a page's modules by those paths (Server.tsx), and the build links each
- * pre-rendered page's files by them (envui-content-preload, scripts/site/PrerenderSite.ts).
+ * pre-rendered page's files by them (scripts/site/PagePreloads.ts, PrerenderSite.ts).
  */
 import { use, useMemo, type ReactNode } from 'react';
 import type { TableOfContentsItem } from '@envsemble/envui';
@@ -135,7 +135,9 @@ export function viewModuleOf(kind: PageKind) {
 const viewLoads = new Map<PageKind, Promise<unknown>>();
 
 /** A kind of page's view, loaded once and kept (loadOnce): as the site starts, and before a link's page. */
-const loadPageView = (kind: PageKind) => loadOnce(viewLoads, kind, views[kind].load);
+const loadPageView = (kind: PageKind) =>
+  // Each kind's view takes that kind's page, which TypeScript can't follow through the lookup.
+  loadOnce(viewLoads, kind, views[kind].load) as Promise<LoadedView<PageKind>>;
 
 /** Drops a kind's view that failed to load, so that its next render loads it again. */
 export function retryPageView(kind: PageKind) {
@@ -145,10 +147,8 @@ export function retryPageView(kind: PageKind) {
 
 /** A page's view, suspending the page until it has loaded. */
 export const usePageView = (page: RoutePage) =>
-  // Each kind's view takes that kind's page, which TypeScript can't follow through the lookup.
-  (use(loadPageView(page.kind)) as LoadedView<PageKind>).View as (props: {
-    page: RoutePage;
-  }) => ReactNode;
+  // A page of the kind the view was loaded for, which TypeScript can't follow either.
+  use(loadPageView(page.kind)).View as (props: { page: RoutePage }) => ReactNode;
 
 /**
  * The sections a page shows, which its contents list, from its view's module and its content
@@ -157,7 +157,7 @@ export const usePageView = (page: RoutePage) =>
  * pre-rendered page as it hydrates included, so its first render lists them as the server did.
  */
 export function usePageContents(page: RoutePage | undefined): readonly TableOfContentsItem[] {
-  const view = useLoaded(page && (loadPageView(page.kind) as Promise<LoadedView<PageKind>>));
+  const view = useLoaded(page && loadPageView(page.kind));
   const content = useLoaded(page?.document && loadDocument(page.document.id));
   return useMemo(
     () =>
