@@ -174,6 +174,15 @@ const unrouteModule: BrowserCommand<[name: string]> = async (context, name) => {
   await context.page.unroute(moduleFile(name), entry.handler);
 };
 
+/**
+ * The text on the system clipboard, read in the page that holds the test's frame, which may read
+ * it once granted: the frame may only write. Chromium only.
+ */
+const clipboardText: BrowserCommand<[]> = async (context) => {
+  await context.page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  return context.page.evaluate(() => navigator.clipboard.readText());
+};
+
 export const commands = {
   mouseMove,
   mouseDown,
@@ -191,6 +200,7 @@ export const commands = {
   moduleRequested,
   releaseModule,
   unrouteModule,
+  clipboardText,
 };
 
 export type Commands = typeof commands;
