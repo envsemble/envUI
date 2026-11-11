@@ -4,7 +4,7 @@ import { createContext, useContext, useMemo, type ComponentPropsWithRef } from '
 import { classNames } from '../internal/classNames.js';
 import { outsideTheme } from './internal/outsideTheme.js';
 import { themeFromRootAttribute } from './internal/themeFromRoot.js';
-import { reportOnce } from '../internal/developmentReport.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
 import '../styles/Base.css';
 
 /** A color scheme. */
@@ -91,17 +91,14 @@ function showTheme(theme: unknown): string {
  * In development, the report about a theme that is neither light nor dark. In JavaScript, 0.x's
  * `<Theme theme={useTheme()}>` now passes `{ theme, contrast }`, which would theme nothing.
  */
-function themeReport(theme: unknown): { shown: string; message: string } | undefined {
+function themeReport(theme: unknown): string | undefined {
   if (theme === 'light' || theme === 'dark') return undefined;
-  const shown = showTheme(theme);
-  return {
-    shown,
-    message:
-      `Theme takes a theme of "light" or "dark", not ${shown}.` +
-      (typeof theme === 'object' && theme !== null
-        ? ' useTheme() returns { theme, contrast }: write <Theme {...useTheme()}>.'
-        : ''),
-  };
+  return (
+    `Theme takes a theme of "light" or "dark", not ${showTheme(theme)}.` +
+    (typeof theme === 'object' && theme !== null
+      ? ' useTheme() returns { theme, contrast }: write <Theme {...useTheme()}>.'
+      : '')
+  );
 }
 
 /**
@@ -116,19 +113,7 @@ export function Theme({
   children,
   ...props
 }: ThemeProps) {
-  // Written inline so bundlers replace process.env.NODE_ENV, which leaves the check standing in a
-  // development build and drops the warning from a production one. `process` itself stays
-  // undefined in a browser, so the check must not test it: where nothing replaced the expression,
-  // as without a bundler, reading it throws and the warning stays silent. The report is built in
-  // there, by code that doesn't throw; console.error, which a test may make throw, runs outside, and
-  // the theme counts as reported once it has run, once for each theme shown.
-  let report: ReturnType<typeof themeReport>;
-  try {
-    if (process.env.NODE_ENV !== 'production') report = themeReport(theme);
-  } catch {
-    // No bundler defined process.env.NODE_ENV.
-  }
-  if (report) reportOnce(report.message, { key: `Theme ${report.shown}` });
+  reportInDevelopment(() => process.env.NODE_ENV !== 'production' && themeReport(theme));
   const inherited = useContext(ThemeContext);
   // The prop wins; without it, a data-env-contrast or data-env-scale written on the Theme counts,
   // so that the context its nested Themes and popups read agrees with the attribute.
