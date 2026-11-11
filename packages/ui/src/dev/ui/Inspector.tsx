@@ -27,7 +27,8 @@ import { knownParts } from '../parts.js';
 import { conditionHolds, queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
 import { tokensUsedBy } from '../usedTokens.js';
-import { toRem, windowClassOf } from '../units.js';
+import { toRem } from '../units.js';
+import { windowClassOfRem } from '../../foundations/windowClasses.js';
 import { SidebarToggle, type Side } from './Controls.js';
 import type { EditorTheme } from './editorTheme.js';
 import { sideWidths } from './sides.js';
@@ -451,7 +452,7 @@ function Details({ full, node }: { full: Full; node: NodeData }) {
         ) : null}
         <DescriptionList.Item label="Size">
           {node.hidden ??
-            `${width}×${toRem(node.size.h, snapshot.rootPx)}rem · ${windowClassOf(width)}`}
+            `${width}×${toRem(node.size.h, snapshot.rootPx)}rem · ${windowClassOfRem(width)}`}
         </DescriptionList.Item>
         {states.length ? (
           <DescriptionList.Item label="State">
