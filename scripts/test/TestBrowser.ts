@@ -10,8 +10,8 @@
 //
 // --browser    the library's engine (default chromium); Firefox and WebKit run its tests tagged
 //              engines (Vitest) and @engines (Playwright)
-// --shard      runs the i-th of n parts, for CI's parallel jobs: Vitest's by file, Playwright's
-//              by test
+// --shard      runs the i-th of n parts, for CI's parallel jobs: Vitest's by file, the site's
+//              Playwright specs by test and the library's in its last part
 // --retries    tries a failed test again (default: once in CI)
 // --api.port   the port of Vitest's browser server (default 63315, or the next free one); Vitest
 //              reads this, not --browser.api.port
@@ -72,19 +72,23 @@ const run = (command: string[], env: Record<string, string> = {}, required = tru
   failed = true;
 };
 const folder = `tests/browser/${suite}/`;
-// A shard may hold none of a runner's tests, once few are left in it.
+// The library's few specs, its hydration, run whole in its last shard, so only that shard builds
+// the library for them; the site's split by test. A shard may hold none of a runner's tests.
+const [shardIndex, shardCount] = shard?.split('/') ?? [];
+const playwrightShard = suite === 'library' ? undefined : shard;
+const playwrightRuns = suite !== 'library' || !shard || shardIndex === shardCount;
 const playwright = [
   ...bin.playwright,
   'test',
   `--project=${browser}`,
-  ...(shard ? [`--shard=${shard}`, '--pass-with-no-tests'] : []),
+  ...(playwrightShard ? [`--shard=${playwrightShard}`, '--pass-with-no-tests'] : []),
   ...(retries ? [`--retries=${retries}`] : []),
   folder,
 ];
 
 if (options.build && suite === 'site') run([...bin.npm, 'run', '-s', 'build:site']);
 // Only Chromium opens the hydration page, and only the shard that holds its spec needs the build.
-if (options.build && suite === 'library' && browser === 'chromium') {
+if (options.build && suite === 'library' && browser === 'chromium' && playwrightRuns) {
   const listed = spawnSync(playwright[0]!, [...playwright.slice(1), '--list', ...passed], {
     cwd: repositoryRoot,
     encoding: 'utf8',
@@ -117,5 +121,6 @@ if (suite === 'library')
 const specs = [...specPaths(repositoryRoot)]
   .filter(([, path]) => path.startsWith(folder))
   .map(([name]) => name);
-run([...playwright, ...passed], { ENVUI_SERVERS: serversFor(specs).join(',') || 'none' }, false);
+if (playwrightRuns)
+  run([...playwright, ...passed], { ENVUI_SERVERS: serversFor(specs).join(',') || 'none' }, false);
 process.exit(failed ? 1 : 0);
