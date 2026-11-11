@@ -24,10 +24,10 @@ export function treeMotion<Item extends TreeItem>(
   if (count === 0) return null;
   const [longer, shorter] = count > 0 ? [after, before] : [before, after];
   let start = 0;
-  while (start < shorter.length && shorter[start]!.value === longer[start]!.value) start += 1;
+  while (start < shorter.length && shorter[start].value === longer[start].value) start += 1;
   const size = Math.abs(count);
   for (let index = start; index < shorter.length; index += 1) {
-    if (shorter[index]!.value !== longer[index + size]!.value) return null;
+    if (shorter[index].value !== longer[index + size].value) return null;
   }
   return { kind: count > 0 ? 'open' : 'close', start, rows: longer.slice(start, start + size) };
 }
@@ -71,19 +71,19 @@ function findTypedRow(
   typed.time = now;
   const query = typed.text.toLocaleLowerCase();
   const repeated = query.length > 1 && [...query].every((character) => character === query[0]);
-  const search = repeated ? query[0]! : query;
+  const search = repeated ? query[0] : query;
   const start = repeated || query.length === 1 ? activeIndex + 1 : activeIndex;
   for (let offset = 0; offset < items.length; offset += 1) {
     const index = (start + offset) % items.length;
-    if (itemText(items[index]!).toLocaleLowerCase().startsWith(search)) return index;
+    if (itemText(items[index]).toLocaleLowerCase().startsWith(search)) return index;
   }
   return -1;
 }
 
 /** The index of the row's parent, the nearest shallower row above it, or -1 for a top-level row. */
 function parentIndex(items: readonly TreeItem[], index: number) {
-  const depth = items[index]!.depth;
-  for (let above = index - 1; above >= 0; above -= 1) if (items[above]!.depth < depth) return above;
+  const depth = items[index].depth;
+  for (let above = index - 1; above >= 0; above -= 1) if (items[above].depth < depth) return above;
   return -1;
 }
 
@@ -167,7 +167,7 @@ export function siblingPositions(items: readonly TreeItem[]) {
   items.forEach((item, index) => {
     close(item.depth + 1);
     while (levels.length < item.depth + 1) levels.push([]);
-    const rows = levels[item.depth]!;
+    const rows = levels[item.depth];
     rows.push(index);
     positions[index] = rows.length;
   });

@@ -271,7 +271,7 @@ export function Slider({
               </BaseSlider.Label>
               {/* The output names the range input it shows, and stays quiet while the value moves. */}
               <BaseSlider.Value className="env-slider-value" render={<Text render={<output />} />}>
-                {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
+                {(formatted, values) => (formatValue ? formatValue(values[0]) : formatted[0])}
               </BaseSlider.Value>
             </Row>
           </BaseSlider.Control>

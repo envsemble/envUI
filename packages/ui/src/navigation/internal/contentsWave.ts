@@ -67,9 +67,9 @@ function entryAt(anchors: readonly number[], y: number): number {
   if (count === 0) return 0;
   if (count === 1) return 0;
   let index = 0;
-  while (index < count - 2 && y > anchors[index + 1]!) index += 1;
-  const from = anchors[index]!;
-  const to = anchors[index + 1]!;
+  while (index < count - 2 && y > anchors[index + 1]) index += 1;
+  const from = anchors[index];
+  const to = anchors[index + 1];
   return to > from ? index + (y - from) / (to - from) : index;
 }
 
@@ -122,7 +122,7 @@ export function swellAt(
     swell = fit * swellAround((index - at) / (reach * fit));
   }
   for (let entry = 0; entry < hovers.length; entry += 1) {
-    const amount = hovers[entry]!;
+    const amount = hovers[entry];
     if (amount <= 0) continue;
     const spread = hoverSpread * fitBetween(entry - start, end - entry, hoverSpread);
     // Blended, not the larger of the two: where a hovered entry's swell meets the bulge they merge

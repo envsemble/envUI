@@ -209,7 +209,7 @@ export function useTimeWheelTurn({
     if (index !== chosen && chosenAt.current !== index) {
       chosenAt.current = index;
       // The index nearestAvailable found, so an entry.
-      choose(rows[index]!.value);
+      choose(rows[index].value);
     }
   }
 

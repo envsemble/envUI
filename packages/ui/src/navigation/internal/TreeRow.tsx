@@ -102,7 +102,7 @@ export function placeRows<Item extends TreeItem>({
   /** A row at its index, placed top pixels down its parent; a leaving row is only shown. */
   row: (item: Item, index: number, top: number, leaving?: boolean) => ReactNode;
 }): { rows: ReactNode; shift: number } {
-  const placed = (index: number) => row(items[index]!, index, index * rowHeight);
+  const placed = (index: number) => row(items[index], index, index * rowHeight);
   if (!motion) return { rows: indexes.map(placed), shift: 0 };
   const { kind, start, rows: groupRows } = motion;
   const size = groupRows.length;
