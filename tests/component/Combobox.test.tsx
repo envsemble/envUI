@@ -141,6 +141,19 @@ test('typing filters by label and description, ignoring case and accents, and En
   expect(errors).toEqual([]);
 });
 
+test('with nothing chosen, clearing the query highlights the first option again', async () => {
+  // packages/ui/src/forms/internal/autoHighlightAlways.ts
+  const document_ = field('Document light');
+  focus(document_);
+  await keyboard.type('a');
+  await expect.poll(highlighted).toEqual(['Quarterly report']);
+  await keyboard.press('ArrowDown');
+  await expect.poll(highlighted).toEqual(['Release notes']);
+  await keyboard.press('Backspace');
+  await expect.poll(value(document_)).toBe('');
+  await expect.poll(highlighted).toEqual(['Quarterly report']);
+});
+
 test('arrows move the highlight from the chosen option, which shows the selection and a check mark, and the chevron turns as it opens and closes the popup', async () => {
   const owner = field('Owner light');
   focus(owner);
@@ -456,8 +469,7 @@ test('a server search shows its loading state, has the first option that arrives
   expect(query('.env-combobox-list')!.getAttribute('aria-busy')).toBe('true');
   expect(query('.env-combobox-status')!.closest('[aria-busy="true"]')).toBeNull();
   expect(shown(page.elementLocator(query('.env-combobox-status .env-spinner')!))).toBe(true);
-  // Options that arrive after typing have the first highlighted, so Enter chooses it
-  // (packages/ui/src/forms/internal/autoHighlightAlways.ts).
+  // Options that arrive after typing have the first highlighted, so Enter chooses it.
   await expect.poll(optionTexts).toEqual(['Morgan Diazmorgan.diaz@example.com']);
   await expect.poll(highlighted).toEqual(['Morgan Diaz']);
   expect(status()).toBe('');
