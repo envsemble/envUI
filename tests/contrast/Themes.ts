@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import type { ContrastKind } from './Pairs';
+import type { ContrastKind } from './Pairs.ts';
 
 /** A theme the contrast gate measures. */
 export interface ContrastTheme {

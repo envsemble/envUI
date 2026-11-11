@@ -19,8 +19,8 @@
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
-import type { ContrastKind, ContrastPair, Relaxation, Requirement } from './Pairs';
-import type { ContrastTheme } from './Themes';
+import type { ContrastKind, ContrastPair, Relaxation, Requirement } from './Pairs.ts';
+import type { ContrastTheme } from './Themes.ts';
 import { isDistance } from './Contrast.ts';
 
 export const declaredFile = 'tests/contrast/DeclaredPairs.json';
