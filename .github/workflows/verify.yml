@@ -1,13 +1,16 @@
 name: Verify
-# The full `npm run verify` for pull requests into main (the releases) once they are ready for
-# review: every check, the browser specs in Chromium, Firefox and WebKit, the accessibility scan,
-# live development and the visual baseline in Docker. It is a workflow of its own so that pull
-# requests into dev never report a Verify check, which an organization ruleset requires on envUI's
-# main. The job runs on the Linux runner the envsemble organization variable CI_LINUX_RUNNER names.
+# The rest of `npm run verify` for pull requests into main (the releases) once they are ready for
+# review: the library's @engines tests in Firefox and WebKit, the accessibility scan, the visual
+# baseline in Docker and live development, as parallel jobs. CI runs the static checks, the build,
+# the unit tests and Chromium on the same pull requests, in full, so the two required checks
+# together are `npm run verify`. It is a workflow of its own so that pull requests into dev never
+# report a Verify check, which an organization ruleset requires on envUI's main. The jobs run on
+# the Linux runner the envsemble organization variable CI_LINUX_RUNNER names.
 on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
 permissions:
   contents: read
 defaults:
@@ -15,60 +18,124 @@ defaults:
     shell: bash
 # A new push cancels the run for the pull request's older head.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+env:
+  # One browser worker per core; Playwright would take three where CI is set.
+  ENVUI_WORKERS: '2'
 jobs:
-  verify:
-    name: Verify
+  # About 4 minutes in Firefox and 5 in WebKit, whose system libraries apt installs: no longer than
+  # the visual baseline, so neither is sharded.
+  engines:
+    name: Library browser tests (${{ matrix.browser }})
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ${{ vars.CI_LINUX_RUNNER }}
-    timeout-minutes: 90
-    env:
-      # Two browser workers on a two-core runner; Playwright would take three where CI is set.
-      ENVUI_WORKERS: '2'
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [firefox, webkit]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          # Two levels: the merge commit and its parents, whose first is the tip of main, which the
-          # contrast gate compares its snapshot with.
-          fetch-depth: 2
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: ./.github/actions/setup
         with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - name: Read the Playwright version
-        id: playwright
-        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
-      - name: Restore the browsers
-        id: browsers
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-all-${{ runner.os }}-${{ steps.playwright.outputs.version }}
-      - name: Install the browsers
-        if: ${{ steps.browsers.outputs.cache-hit != 'true' }}
-        run: npx playwright install --with-deps chromium firefox webkit
-      - name: Install the browsers' system libraries
-        if: ${{ steps.browsers.outputs.cache-hit == 'true' }}
-        run: npx playwright install-deps chromium firefox webkit
-      - name: Verify everything
-        run: |
-          # Only a base that has the snapshot: until it reaches dev and main, the gate compares with
-          # the checkout's snapshot alone.
-          if git cat-file -e 'HEAD^1:tests/contrast/DeclaredPairs.json' 2>/dev/null; then
-            export ENVUI_CONTRAST_BASE="$(git rev-parse 'HEAD^1')"
-          else
-            echo "::notice::The base predates tests/contrast/DeclaredPairs.json, so the contrast gate compares with the checkout's snapshot alone."
-          fi
-          npm run verify
-      # Only a failure keeps anything: its traces, screenshots and visual diffs, for the
-      # organization's artifact retention. A refused upload never fails the job.
+          browsers: ${{ matrix.browser }}
+      - run: npm run -s test:library -- --browser=${{ matrix.browser }}
+      # Only a failure keeps anything: its traces and screenshots, for the organization's artifact
+      # retention. A refused upload never fails the job.
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: ${{ failure() }}
         continue-on-error: true
         with:
-          name: verify-failure-${{ github.sha }}
+          name: ${{ matrix.browser }}-failure-${{ github.sha }}
           path: test-results
           if-no-files-found: ignore
+
+  # axe over every page of the hosted build.
+  a11y:
+    name: Accessibility
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          browsers: chromium-shell
+      - run: npm run -s test:a11y
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ failure() }}
+        continue-on-error: true
+        with:
+          name: a11y-failure-${{ github.sha }}
+          path: test-results
+          if-no-files-found: ignore
+
+  # The screenshots, rendered in the pinned Playwright image (scripts/test/VisualTests.ts), which
+  # installs the dependencies in its own volumes: the runner needs Node alone.
+  visual:
+    name: Visual baseline
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+      - run: node scripts/test/VisualTests.ts --reporter=dot
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ failure() }}
+        continue-on-error: true
+        with:
+          name: visual-failure-${{ github.sha }}
+          path: test-results
+          if-no-files-found: ignore
+
+  # The site's development server updating a component, a stylesheet, an export and a page as
+  # they are edited.
+  live:
+    name: Live development
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          browsers: chromium-shell
+      # The development server alone: the others would build the site and the fixture for nothing.
+      - run: npx playwright test --project=live-development --no-deps
+        env:
+          ENVUI_SERVERS: site
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ failure() }}
+        continue-on-error: true
+        with:
+          name: live-failure-${{ github.sha }}
+          path: test-results
+          if-no-files-found: ignore
+
+  # The check the ruleset requires on main: it fails when any job above fails, is cancelled or is
+  # skipped. Add every new job to `needs`.
+  verify:
+    name: Verify
+    if: ${{ always() && !github.event.pull_request.draft }}
+    needs: [engines, a11y, visual, live]
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 5
+    steps:
+      - name: Require every job to pass
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          echo "$RESULTS" | jq -e 'all(to_entries[]; .value.result == "success")' > /dev/null

@@ -60,7 +60,9 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 
 ### CI
 
-- CI checks every pull request once it is ready: the `CI` job for pull requests into `dev`, and `npm run verify` as the Verify workflow for those into `main`.
+- CI checks every pull request once it is ready, in parallel jobs: the static checks, the build with the unit tests, the library's browser tests in Chromium, the site's smoke and a secret scan. A change skips the browser jobs it can't affect (`scripts/test/ChooseJobs.ts`); a pull request into `main` runs all of them, and the Verify workflow runs the rest of `npm run verify` beside them.
+- Each workflow ends in one job, `CI` or `Verify`, that the rulesets require; add a new job to its `needs`.
+- `npm run test:library` (`--browser`, `--shard`) and `npm run test:site` run one browser suite as CI does.
 - Don't change `.github/workflows`, start or re-run runs, or change the required checks without asking.
 
 ## Write tests that stay fast

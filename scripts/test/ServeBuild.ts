@@ -27,7 +27,9 @@ const port = Number(values.port);
 if ((values.app !== 'site' && values.app !== 'fixture') || !Number.isInteger(port))
   throw new Error('Usage: ServeBuild.ts --app <site|fixture> --port <port>');
 
-const outDir = resolve(root, 'node_modules/.cache/envui-test-builds', values.app);
+// A folder per port, so runs side by side (`npm run verify`) don't build over each other.
+const builds = resolve(root, 'node_modules/.cache/envui-test-builds');
+const outDir = resolve(builds, `${values.app}-${port}`);
 const fixture = resolve(root, 'tests/fixture');
 const app: InlineConfig =
   values.app === 'site'
@@ -62,7 +64,7 @@ const output = await build({
 /** Pre-renders the site's pages into its build, as npm run build:site does. */
 const prerender = () =>
   values.app === 'site'
-    ? prerenderSite(outDir, resolve(root, 'node_modules/.cache/envui-test-builds/site-server'))
+    ? prerenderSite(outDir, resolve(builds, `site-server-${port}`))
     : Promise.resolve();
 // Watching, the first build has ended once the watcher says so; each build after it is pre-rendered
 // again, and a page that fails to pre-render leaves the build as it was rendered last.

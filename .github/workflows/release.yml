@@ -1,9 +1,9 @@
 name: Release
 # Merging a pull request into main publishes its version when that version isn't released yet: the
-# Verify workflow already ran every check on the pull request, so this job only validates, builds
-# and publishes. It creates a draft GitHub Release with the version's CHANGELOG section, publishes
-# the three packages under the version's dist-tag (latest, or the prerelease's name, such as
-# prerelease), then publishes the release, which creates its tag on the merge commit. A failed run
+# CI and Verify workflows already ran every check on the pull request, so this job only validates,
+# builds and publishes. It creates a draft GitHub Release with the version's CHANGELOG section,
+# publishes the three packages under the version's dist-tag (latest, or the prerelease's name, such
+# as prerelease), then publishes the release, which creates its tag on the merge commit. A failed run
 # leaves the draft; re-running it publishes only what is still missing. It runs once per merge, on
 # the Linux runner the envsemble organization variable CI_LINUX_RUNNER names.
 on:

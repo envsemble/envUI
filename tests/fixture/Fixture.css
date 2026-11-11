@@ -267,7 +267,6 @@ body:has(> #root > .env-theme > .env-scaffold) {
 .fixture-avatar-row {
   inline-size: 17rem;
 }
-}
 
 /* Density specimens: the same content in the comfortable and the compact scale, one above the
    other. Guides are dashed so the bands' extents show in screenshots. */
