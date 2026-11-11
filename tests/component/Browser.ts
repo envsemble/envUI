@@ -41,6 +41,7 @@ export const mouse = {
     options?: { button?: 'left' | 'right' | 'middle'; clickCount?: number },
   ) => commands.mouseClick(x, y, options),
   dblclick: (x: number, y: number) => commands.mouseClick(x, y, { clickCount: 2 }),
+  wheel: (deltaX: number, deltaY: number) => commands.mouseWheel(deltaX, deltaY),
 };
 
 /** The keyboard, its keys named as Playwright's keyboard names them, such as `Shift+Tab`. */
@@ -148,4 +149,18 @@ export function recordClipboard(mode: 'available' | 'selection' | 'neither' | 'r
     delete (document as { execCommand?: unknown }).execCommand;
   });
   return { writes, unhandled };
+}
+
+/**
+ * How much of an element shows in the viewport, from 0 to 1, clipped by the ancestors that scroll
+ * it, as Playwright's toBeInViewport reads it.
+ */
+export function viewportRatio(target: Target) {
+  return new Promise<number>((resolve) => {
+    const observer = new IntersectionObserver(([entry]) => {
+      observer.disconnect();
+      resolve(entry!.intersectionRatio);
+    });
+    observer.observe(elementOf(target));
+  });
 }
