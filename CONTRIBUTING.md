@@ -32,7 +32,7 @@ packages/ui/         @envsemble/envui
 packages/eslint-plugin/      @envsemble/eslint-plugin-envui
 packages/stylelint-config/   @envsemble/stylelint-config-envui
 scripts/             Build, documentation, site, test and release scripts, run by Node as they are
-tests/               Unit tests, browser specs and their fixtures
+tests/               Unit tests, component tests, the site's browser specs and their fixtures
 ```
 
 ### Use a local envUI in an app

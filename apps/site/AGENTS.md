@@ -78,6 +78,11 @@ Each has one folder in `apps/site/src`:
 - A part of a page that loads on its own and that the server renders, such as the token reference, is a `lazyPart` in `pages/PageParts.ts`, listed for its pages by `partsOfPage` (`pages/ViewModules.ts`): the browser loads it before it hydrates, and the build fails on a page that renders one it doesn't list.
 - The build also writes `404.html`, which the host answers an address with no page with, and `_redirects`, the old addresses whose path alone says where they lead (`oldPaths`, `routes/OldAddresses.ts`).
 
+## Tests of the site
+
+- A new kind of page takes a smoke journey in `tests/browser/site/SiteSmoke.spec.ts` and a place among the accessibility scan's kinds (`tests/accessibility/Accessibility.spec.ts`); a new page of a kind the site has takes neither.
+- Check a page's words, contents and routes in Node, over the pre-rendered pages (`tests/site/`, through `scripts/site/PrerenderSite.ts`), rather than in a browser.
+
 ## Hosting
 
 - `wrangler.jsonc` says how the site is hosted and deployed.

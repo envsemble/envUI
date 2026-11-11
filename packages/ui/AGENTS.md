@@ -43,7 +43,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 - `packages/ui/src/partDescriptions.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
 - Its strings in `packages/ui/src/foundations/messages/`.
 - Its page, `docs/components/<name>.md` or `docs/patterns/`, with its examples in `apps/site/src/examples/<page>/` and its gallery tile in `apps/site/src/tiles/`.
-- Its spec and fixture, named as [Fixtures](../../AGENTS.md#fixtures) says.
+- Its component test and fixture, named as [Fixtures](../../AGENTS.md#fixtures) says.
 - A changeset, when people using envUI notice the change ([Record the change](../../AGENTS.md#record-the-change)).
 
 ## Tokens
