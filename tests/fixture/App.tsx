@@ -6,7 +6,8 @@ import { fixtureName } from './FixtureName.js';
 
 /**
  * Each fixture's module by its name. The pages with an .html of their own render as their modules
- * load, so they are left out, as is the editor RichText.html shows.
+ * load, so they are left out, as is the editor RichText.html shows, and CascadeLayers, whose
+ * application style sheet would style every fixture.
  */
 const fixtures = new Map(
   Object.entries(
