@@ -185,12 +185,18 @@ test('opened over the page, it covers it until Escape, and shows the nodes and t
   expect(themeRoot().inert).toBe(true);
   // A plane for every shown node, each carrying copies of what the node holds.
   await planeCount();
-  expect(panel().element().querySelectorAll('.env-dev-plane[data-problems]')).toHaveLength(2);
-  expect(
-    [...panel().element().querySelectorAll('.env-dev-surface')].filter((surface) =>
-      surface.textContent?.includes('Painted'),
-    ),
-  ).toHaveLength(1);
+  // The copies fill in after their planes, a frame later on a slow machine.
+  await expect
+    .poll(() => panel().element().querySelectorAll('.env-dev-plane[data-problems]').length)
+    .toBe(2);
+  await expect
+    .poll(
+      () =>
+        [...panel().element().querySelectorAll('.env-dev-surface')].filter((surface) =>
+          surface.textContent?.includes('Painted'),
+        ).length,
+    )
+    .toBe(1);
 
   // Each control has one place: no two controls share a name, nor with a dropdown open, where
   // the View dropdown's angles are named once and nothing else in it repeats one.
