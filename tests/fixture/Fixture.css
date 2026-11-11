@@ -471,22 +471,8 @@ body:has(.density-fixture) {
   inline-size: 22rem;
 }
 
-/* LayoutCheck.fixture.tsx: one catalogue example on the catalogue's stage, without the stage's padding,
-   fill, corners and least height, so the stage is the window the example gets, and paints nothing. */
-body:has(.fixture-layout-check) {
-  margin: 0;
-}
-/* The class three times: the site's stage rules (Stage.css) weigh up to three classes, in an
-   `:is()` with an attribute and a `:not()`, and load later. */
-.site-live-example.fixture-layout-check.fixture-layout-check.fixture-layout-check {
-  min-block-size: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  box-shadow: none;
-}
-/* With &theme=: the stage as the catalogue draws it, in a column of a catalogue page's width, on a
-   page of that theme. */
+/* LayoutCheck.fixture.tsx: one catalogue example on the catalogue's stage, in a column of a catalogue
+   page's width, on a page of the theme &theme= names. */
 body:has(.fixture-layout-check-page) {
   margin: 0;
 }

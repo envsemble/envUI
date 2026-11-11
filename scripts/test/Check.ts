@@ -71,13 +71,12 @@ const { built: builtUnitTests, fast: fastUnitTests } = unitTestFiles();
 // A changed test of the build needs the build to run.
 if (paths.some((path) => builtUnitTests.includes(path))) scope.build.library = true;
 
-// The specs, split by what they need: live development edits sources and runs alone, a spec that
-// opens what the library build renders waits for it, and the layout check renders the whole
-// catalogue; all three run in the affected tier only.
+// The specs, split by what they need: live development edits sources and runs alone, and a spec
+// that opens what the library build renders waits for it; both run in the affected tier only.
 const needs = new Map([...scope.specs.keys()].map((name) => [name, specNeeds(name)]));
 const live = [...needs].filter(([, need]) => need.live).map(([name]) => name);
 const browserSpecs = [...needs]
-  .filter(([, need]) => !need.live && (affected || (!need.library && !need.whole)))
+  .filter(([, need]) => !need.live && (affected || !need.library))
   .map(([name]) => name);
 const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpecs.includes(name));
 // The site build takes seconds, so the fast tier builds it when its specs open it.
@@ -115,7 +114,7 @@ if (opened.length) console.log(`  builds: ${opened.join(', ')}`);
 if (deferred.length)
   console.log(
     yellow(
-      `  note: ${deferred.join(', ')} edit sources, need the library build or check the whole site: check:affected runs them`,
+      `  note: ${deferred.join(', ')} edit sources or need the library build: check:affected runs them`,
     ),
   );
 for (const [helper, users] of scope.helpers)

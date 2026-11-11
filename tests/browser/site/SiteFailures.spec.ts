@@ -60,26 +60,6 @@ async function breakOnPress(page: Page, file: string, name: string) {
   });
 }
 
-test('an example that fails to load says so in place, and loads again on request', async ({
-  page,
-}) => {
-  const example = '**/src/examples/button/CreateProject.tsx*';
-  await page.route(example, (route) => route.abort());
-  await page.goto(`${siteDevUrl}/components/button`);
-  const hero = page.getByRole('group', { name: 'Button example', exact: true });
-  await expect(hero.getByText('The example could not load')).toBeVisible();
-  // The rest of the page is still there.
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
-  await expect(hero.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
-  await page.unroute(example);
-  await hero.getByRole('button', { name: 'Try again', exact: true }).focus();
-  await page.keyboard.press('Enter');
-  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
-  await expect(hero.getByText('The example could not load')).toHaveCount(0);
-  // Focus stays where the example is, rather than falling to the page.
-  expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
-});
-
 test('a page whose content fails to load says so, and loads it again on request', async ({
   page,
 }) => {
@@ -183,16 +163,23 @@ test('code that fails to load is asked for once, not on every render', async ({ 
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
 });
 
-test('a retry returns focus once, and later updates leave focus where it is', async ({ page }) => {
+test('an example that fails to load says so in place, and a retry loads it and returns focus once', async ({
+  page,
+}) => {
   const example = '**/src/examples/button/CreateProject.tsx*';
   await page.route(example, (route) => route.abort());
   await page.goto(`${siteDevUrl}/components/button`);
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('The example could not load')).toBeVisible();
+  // The rest of the page is still there.
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(hero.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
   await page.unroute(example);
   await hero.getByRole('button', { name: 'Try again', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await expect(hero.getByText('The example could not load')).toHaveCount(0);
+  // Focus stays where the example is, rather than falling to the page.
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
   // Focus leaves for the page; the theme changes in another window, which moves no focus. The
   // frame's body scrolls, not the document.

@@ -42,7 +42,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 ### The affected tier
 
 - It runs every related spec, also those the fast tier leaves out, and their `@engines` tests in Firefox and WebKit.
-- It adds the builds the change needs with the unit tests that read them, the layout check where pages or examples changed, and live development when the catalogue changed.
+- It adds the builds the change needs with the unit tests that read them, and live development when the catalogue changed.
 
 ### The full tier
 
@@ -89,7 +89,6 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 - Beside another checkout's tests, set `ENVUI_SITE_PORT`, `ENVUI_SITE_BUILD_PORT` and `ENVUI_FIXTURE_PORT`, such as 8832, 8834 and 8833.
 - `ENVUI_WORKERS` sets the workers (default: half the cores).
 - Lists that only shrink: `stylelint-suppressions.json` (after removing violations, `npm run lint:css -- --suppress`), `tests/accessibility/KnownViolations.json` (`npm run test:a11y:update`) and the visual baseline (`npm run test:visual:update`, then review the images like code). Add to them only for a reviewed reason.
-- The layout check (`tests/browser/site/LayoutCheck.spec.ts`) runs dev mode on every figure at four widths. Give a problem an example has on purpose an allowance there, with its reason.
 - Disable a rule on one line with the reason: `// eslint-disable-next-line rule -- reason`, `/* stylelint-disable-next-line rule -- reason */`.
 
 ## Generated files

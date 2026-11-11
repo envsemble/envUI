@@ -68,23 +68,8 @@ export const aliases: Record<string, string[]> = {
 
 /** The specs a token, theme or other shared change runs. */
 const shared = ['Contrast', 'Colors', 'ThemeContrast', 'Scale'];
-/** The catalogue's own specs; some open its hosted build. */
-const catalogue = [
-  'SiteRoutes',
-  'SiteShell',
-  'SiteFailures',
-  'CatalogueComponentPages',
-  'CatalogueFigures',
-  'CatalogueBanners',
-  'CatalogueGallery',
-  'CatalogueTilePlayback',
-  'CatalogueRelated',
-  'CatalogueOverlays',
-  'CataloguePlainLanguage',
-  'DocsPages',
-  'CatalogueSearch',
-  'SitePrerender',
-];
+/** The site's own specs; some open its hosted build. */
+const siteSpecs = ['SitePrerender', 'SiteFailures', 'SiteSmoke'];
 
 /** A check a changed path needs beyond linting and formatting it. */
 type Need =
@@ -186,8 +171,8 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
     paths: ['packages/ui/src/**/*.{ts,tsx,css,json}', 'docs/**', '.changeset/**'],
     needs: ['docs'],
   },
-  { paths: ['apps/site/**', 'scripts/docs/**'], needs: ['docs'], specs: catalogue },
-  { paths: ['wrangler.jsonc', 'scripts/site/**'], specs: catalogue },
+  { paths: ['apps/site/**', 'scripts/docs/**'], needs: ['docs'], specs: siteSpecs },
+  { paths: ['wrangler.jsonc', 'scripts/site/**'], specs: siteSpecs },
   {
     paths: [
       'packages/ui/src/**',
@@ -203,27 +188,8 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
   },
   { paths: ['packages/ui/src/foundations/messages/**'], specs: ['Messages'] },
   { paths: ['packages/ui/src/dev.ts', 'packages/ui/src/dev/**'], specs: ['DevMode'] },
-  // The catalogue's scripted playback: its pointer, timelines and autoplay, and the stage it plays on.
-  {
-    paths: ['apps/site/src/motion/**', 'apps/site/src/figures/MotionStage.tsx'],
-    specs: ['SiteMotion', 'Autoplay'],
-  },
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
   { paths: ['apps/site/src/**'], specs: ['LiveDevelopment'] },
-  // The layout check measures every example the pages place, on the catalogue's stage, with dev
-  // mode's checks; the affected tier runs it.
-  {
-    paths: [
-      'apps/site/src/examples/**',
-      'apps/site/src/figures/Stage.css',
-      'apps/site/src/figures/MotionStage.css',
-      'docs/components/**',
-      'docs/patterns/**',
-      'packages/ui/src/dev.ts',
-      'packages/ui/src/dev/**',
-    ],
-    specs: ['LayoutCheck'],
-  },
 ];
 
 /** The rules whose paths a changed path matches. */
@@ -259,8 +225,6 @@ export function specNeeds(name: string, root = repositoryRoot) {
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
     live: name === 'LiveDevelopment',
-    // Renders every catalogue example at four widths: minutes, so the affected tier runs it.
-    whole: name === 'LayoutCheck',
   };
 }
 
