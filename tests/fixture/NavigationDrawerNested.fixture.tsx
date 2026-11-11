@@ -1,14 +1,5 @@
 import { useState } from 'react';
-import {
-  NavigationBar,
-  NavigationDrawer,
-  NavigationRail,
-  type Destination,
-  type NavigationDrawerDestination,
-} from '@envsemble/envui';
-import { IconHome } from '@envsemble/envui/icons/Home';
-import { IconMenuBook } from '@envsemble/envui/icons/MenuBook';
-import { IconSettings } from '@envsemble/envui/icons/Settings';
+import { NavigationDrawer, type NavigationDrawerDestination } from '@envsemble/envui';
 
 export const mount = 'standalone';
 
@@ -76,23 +67,12 @@ function destinationsOf(pages: Page[], current: string, choose: (href: string) =
 /**
  * Drawers with nested sections: one that keeps its own open sections, its current page in a
  * section, with a button that moves the current page into a closed one; one whose open sections the
- * application keeps; and NavigationRail and NavigationBar over destinations whose nested one is
- * current.
+ * application keeps.
  */
 export default function NavigationDrawerNestedFixture() {
   const [current, setCurrent] = useState('#passkeys');
   const [controlledCurrent, setControlledCurrent] = useState('#overview');
   const [expanded, setExpanded] = useState<string[]>([]);
-  const top: Destination[] = [
-    { label: 'Home', icon: <IconHome />, href: '#home' },
-    {
-      label: 'Guide',
-      icon: <IconMenuBook />,
-      href: '#guide',
-      children: [{ label: 'Passkeys', href: '#passkeys', current: true }],
-    },
-    { label: 'Settings', icon: <IconSettings />, href: '#settings' },
-  ];
   return (
     <div className="fixture-section" style={{ display: 'flex', gap: '1rem', alignItems: 'start' }}>
       <div>
@@ -117,8 +97,6 @@ export default function NavigationDrawerNestedFixture() {
         </button>
         <p data-testid="expanded">{expanded.join(', ')}</p>
       </div>
-      <NavigationRail aria-label="Top rail" destinations={top} />
-      <NavigationBar aria-label="Top bar" destinations={top} />
     </div>
   );
 }

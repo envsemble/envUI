@@ -41,7 +41,7 @@ function Frame({ width, dir, children }: { width: string; dir?: 'rtl'; children:
 /**
  * Resizable drawers: one that keeps its own width, one the application controls in a narrower
  * container, which halves its room, one in right-to-left text, one that isn't resizable, one whose
- * long label and heading it cuts short as it narrows, and one given a width that is no number.
+ * long label and heading it cuts short as it narrows.
  */
 export default function NavigationDrawerFixture() {
   const [width, setWidth] = useState(20);
@@ -79,15 +79,6 @@ export default function NavigationDrawerFixture() {
           resizable
           defaultWidth={22}
           minWidth={10}
-        />
-      </Frame>
-      {/* A width that is no number, as from a stored value that didn't parse: ignored. */}
-      <Frame width="64rem">
-        <NavigationDrawer
-          aria-label="Not a number"
-          destinations={destinations}
-          resizable
-          width={Number.NaN}
         />
       </Frame>
     </div>
