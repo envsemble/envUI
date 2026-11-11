@@ -116,7 +116,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 - Beside another checkout's tests, set `ENVUI_SITE_PORT`, `ENVUI_SITE_BUILD_PORT` and `ENVUI_FIXTURE_PORT`, such as 8832, 8834 and 8833, and give Vitest's browser server its own port with `--api.port`, such as `--api.port=63450` (Vitest ignores `--browser.api.port`); `npm run test:library` passes it on.
 - `ENVUI_WORKERS` sets the workers (default: half the cores).
 - Lists that only shrink: `stylelint-suppressions.json` (after removing violations, `npm run lint:css -- --suppress`), the accessibility scans' `tests/accessibility/KnownViolations.json` and `tests/component/__snapshots__/Accessibility.test.tsx.snap` (`npm run test:a11y:update`) and the visual baseline (`npm run test:visual:update`, then review the images like code). Add to them only for a reviewed reason.
-- Disable a rule on one line with the reason: `// eslint-disable-next-line rule -- reason`, `/* stylelint-disable-next-line rule -- reason */`.
+- Disable a rule on one line with the reason: after `--`, as in `// eslint-disable-next-line rule -- reason` and `/* stylelint-disable-next-line rule -- reason */`, or in the comment just above when it takes a sentence.
 
 ## Generated files
 

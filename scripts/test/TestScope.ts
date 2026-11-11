@@ -1,8 +1,9 @@
 // Chooses what `npm run check` and `npm run check:affected` run for a change: which files to lint,
 // whether to typecheck, which generated files to check, and which browser specs to run.
 //
-// A spec is named after its component (tests/component/Button.test.tsx), and runs when that
-// component changes: a library or fixture file runs the spec of its name, or of the name `aliases`
+// The browser tests it selects are the component tests (tests/component/Button.test.tsx) and the
+// Playwright specs, both called specs in the code below. Each is named after what it covers, and
+// runs when that changes: a library or fixture file runs the spec of its name, or of the name `aliases`
 // gives it, and the specs whose fixtures use it (FixtureImports.ts); a changed spec runs itself; a
 // changed helper runs the specs that import it; and `pathRules` lists what other paths need, such
 // as the shared files and the catalogue, which name no component. The affected tier runs every

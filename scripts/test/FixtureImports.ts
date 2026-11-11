@@ -1,4 +1,5 @@
-// Which browser specs a source file concerns, by what their fixtures import. A spec opens fixtures,
+// Which browser tests a source file concerns, by what their fixtures import: the component tests
+// and the Playwright specs, both called specs below, as in TestScope.ts. A spec opens fixtures,
 // `?fixture=<name>` of tests/fixture/App.tsx, which is `<Name>.fixture.tsx`, or a page such as
 // ForcedColors.html, or renders library source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
 // components by name, and those import the modules and style sheets they draw with, all read with
