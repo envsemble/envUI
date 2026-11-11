@@ -49,6 +49,15 @@ const mouseClick: BrowserCommand<
   await context.page.mouse.click(point.x, point.y, options);
 };
 
+/** The wheel turned under the pointer, by pixels across and down. */
+const mouseWheel: BrowserCommand<[deltaX: number, deltaY: number]> = async (
+  context,
+  deltaX,
+  deltaY,
+) => {
+  await context.page.mouse.wheel(deltaX, deltaY);
+};
+
 const keyPress: BrowserCommand<[key: string]> = async (context, key) => {
   await context.page.keyboard.press(key);
 };
@@ -193,6 +202,7 @@ export const commands = {
   mouseDown,
   mouseUp,
   mouseClick,
+  mouseWheel,
   keyPress,
   keyDown,
   keyUp,
