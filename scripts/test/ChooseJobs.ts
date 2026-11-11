@@ -52,7 +52,13 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
   // The library's Markdown is the site's content too.
   { paths: ['packages/ui/**/*.md'], jobs: ['site'] },
   {
-    paths: ['packages/ui/**', 'tests/browser/library/**', 'tests/fixture/**', 'tests/contrast/**'],
+    paths: [
+      'packages/ui/**',
+      'tests/component/**',
+      'tests/browser/library/**',
+      'tests/fixture/**',
+      'tests/contrast/**',
+    ],
     jobs: ['library', 'site'],
   },
   { paths: ['tests/browser/helpers/**'], jobs: ['library', 'site'] },

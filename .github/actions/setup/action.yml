@@ -55,12 +55,12 @@ runs:
       env:
         BROWSERS: ${{ inputs.browsers }}
       run: |
-        engines=$(echo "$BROWSERS" | sed 's/chromium-shell/chromium/g')
+        read -ra engines <<< "${BROWSERS//chromium-shell/chromium}"
         if ! node -e '
           const playwright = require("@playwright/test");
           (async () => {
             for (const name of process.argv.slice(1)) await (await playwright[name].launch()).close();
           })().catch((error) => { console.error(error.message); process.exit(1); });
-        ' $engines; then
-          npx playwright install-deps $engines
+        ' "${engines[@]}"; then
+          npx playwright install-deps "${engines[@]}"
         fi

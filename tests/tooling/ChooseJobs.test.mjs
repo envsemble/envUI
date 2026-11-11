@@ -14,6 +14,7 @@ test('a site change skips the library browser tests, and a library change runs t
     site: true,
   });
   assert.deepEqual(jobs('tests/fixture/Button.fixture.tsx'), { library: true, site: true });
+  assert.deepEqual(jobs('tests/component/Menu.test.tsx'), { library: true, site: true });
   assert.deepEqual(jobs('packages/ui/CHANGELOG.md'), { library: false, site: true });
 });
 
