@@ -9,6 +9,14 @@ import { defaultPorts, resolveServers } from './scripts/test/CheckoutMarker.ts';
  * `npm run check` sets it for the specs it picked. Without it a run that only scans the hosted
  * build (the a11y projects) needs none, and any other run needs all three.
  */
+/** The projects the command line names, if it names any. */
+const namedProjects = process.argv.flatMap((argument, index, all) =>
+  argument === '--project'
+    ? [all[index + 1]]
+    : argument.startsWith('--project=')
+      ? [argument.slice(10)]
+      : [],
+);
 function wantedServers() {
   if (process.env.ENVUI_SERVERS)
     return new Set(
@@ -16,14 +24,8 @@ function wantedServers() {
         .filter((name) => name !== 'none')
         .map((name) => (name === 'catalogue' ? 'site' : name)),
     );
-  const projects = process.argv.flatMap((argument, index, all) =>
-    argument === '--project'
-      ? [all[index + 1]]
-      : argument.startsWith('--project=')
-        ? [argument.slice(10)]
-        : [],
-  );
-  if (projects.length && projects.every((project) => project === 'a11y')) return new Set<string>();
+  if (namedProjects.length && namedProjects.every((project) => project === 'a11y'))
+    return new Set<string>();
   return new Set(['site', 'site-build', 'fixture']);
 }
 const wanted = wantedServers();
@@ -61,6 +63,7 @@ const workers = configured
  * from 4 workers on), and with more their slowest specs run out of time. Locally each takes at most
  * half the workers, and 4; CI keeps its 3 shared. They come first in the projects, so their capped
  * share starts at once and Chromium and the accessibility scan, uncapped, fill the rest and the end.
+ * A run of one engine alone, as `npm run verify` makes, keeps the cap of 4 but not the half.
  */
 const totalWorkers =
   typeof workers === 'number'
@@ -68,7 +71,10 @@ const totalWorkers =
     : Math.max(1, Math.floor((availableParallelism() * parseFloat(workers)) / 100));
 const engineWorkers = process.env.CI
   ? undefined
-  : Math.max(1, Math.min(4, Math.floor(totalWorkers / 2)));
+  : Math.max(
+      1,
+      Math.min(4, namedProjects.length === 1 ? totalWorkers : Math.floor(totalWorkers / 2)),
+    );
 
 export default defineConfig({
   testDir: './tests/browser',

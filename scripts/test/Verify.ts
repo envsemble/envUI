@@ -124,8 +124,8 @@ const suites = [
   { name: 'library (Firefox)', weight: 2, run: ['library', '--browser=firefox'] },
   { name: 'library (WebKit)', weight: 2, run: ['library', '--browser=webkit'] },
   { name: 'site', weight: 1, run: ['site'] },
-  { name: 'accessibility', weight: 1 },
-  ...(skipVisual ? [] : [{ name: 'visual baseline (Docker)', weight: 2 }]),
+  { name: 'accessibility', weight: 2 },
+  ...(skipVisual ? [] : [{ name: 'visual baseline (Docker)', weight: 3 }]),
 ];
 const configured = process.env.ENVUI_WORKERS;
 const totalWorkers = configured
