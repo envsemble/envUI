@@ -76,10 +76,18 @@ const [phase1, built] = await Promise.all([
     task('docs:check exports', node('scripts/docs/GenerateExports.ts', '--check')),
     task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),
     task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
-    task('lint', [...bin.eslint, '.', '--cache', '--cache-location', '.cache/eslint/']),
+    task('lint', [
+      ...bin.eslint,
+      '.',
+      '--cache',
+      '--cache-strategy',
+      'content',
+      '--cache-location',
+      '.cache/eslint/',
+    ]),
     task('lint:css', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/site/src/**/*.css']),
     task('lint:unused', [...bin.npm, 'run', '-s', 'lint:unused']),
-    task('format:check', [...bin.prettier, '--check', '.']),
+    task('format:check', [...bin.npm, 'run', '-s', 'format:check']),
     // The projects of `npm run typecheck`, the type tests and the fixture's included, as CI runs it.
     ...Object.entries({
       ui: 'packages/ui',
