@@ -21,7 +21,7 @@ const typecheckProjects = {
 };
 
 /** The style sheets Stylelint checks when it checks them all. */
-const styleSheets = ['packages/ui/src/**/*.css', 'apps/site/src/**/*.css'];
+export const styleSheets = ['packages/ui/src/**/*.css', 'apps/site/src/**/*.css'];
 
 /**
  * The catalogue's data and the site's documentation module, which are generated rather than

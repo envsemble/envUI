@@ -4,6 +4,7 @@ import { join, sep } from 'node:path';
 import { test } from 'node:test';
 import stylelint from 'stylelint';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
+import { styleSheets } from '../../scripts/test/Checks.ts';
 
 // stylelint-suppressions.json records the violations that predate the style rules, per file and
 // rule. Stylelint fails only when a count rises, so a recorded count above the real one would leave
@@ -12,14 +13,6 @@ import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const suppressionsFile = 'stylelint-suppressions.json';
 const recordAgain = `Record the lower counts with \`npm run lint:css -- --suppress\` while \`npm run lint:css\` passes, and commit ${suppressionsFile}.`;
-
-/** The globs `npm run lint:css` passes to Stylelint. */
-async function lintedGlobs() {
-  const manifest = JSON.parse(await readFile(join(repositoryRoot, 'package.json'), 'utf8'));
-  const globs = [...manifest.scripts['lint:css'].matchAll(/"([^"]+)"/g)].map((match) => match[1]);
-  assert.ok(globs.length > 0, 'lint:css names the files it lints');
-  return globs;
-}
 
 /** Every warning of the linted style sheets without the suppressions, with its file. */
 let linted;
@@ -30,7 +23,7 @@ async function warnings() {
 async function lintAll() {
   const found = [];
   const files = new Set();
-  for (const pattern of await lintedGlobs())
+  for (const pattern of styleSheets)
     for await (const file of glob(pattern, { cwd: repositoryRoot }))
       files.add(file.split(sep).join('/'));
   for (const file of [...files].sort()) {
