@@ -44,7 +44,7 @@ import { computedDirection } from '../internal/dom/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { flag } from '../internal/flag.js';
-import { useOpenState } from '../internal/popup/useOpenState.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import '../styles/Base.css';
 import '../styles/Sheet.css';
 
@@ -309,7 +309,11 @@ export function Sheet({
   const messages = useMessages('dialog', dialog);
   const provided = useEnvUI().dir;
   // Whether it shows, also where the application doesn't control it.
-  const [shown, setShown] = useOpenState({ open, defaultOpen, onOpenChange });
+  const [shown, setShown] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   // The touch swipe that closes a side sheet runs toward its edge, which is physical, so it follows the
   // direction where the sheet opens: the provider's, else its trigger's, read as it opens.
   const triggerRef = useRef<HTMLButtonElement>(null);

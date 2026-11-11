@@ -32,7 +32,7 @@ import {
   OverlayTheme,
 } from '../internal/popup/DialogParts.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
-import { useOpenState } from '../internal/popup/useOpenState.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import '../styles/Base.css';
 import '../styles/Dialog.css';
 
@@ -166,7 +166,11 @@ export function ConfirmDialog({
   // An alert dialog is always modal; a contained one is a dialog that isn't, with the alert
   // dialog's role, and a press outside still doesn't close it.
   const Root = portal.contained ? ContainedRoot : BaseAlertDialog.Root;
-  const [isOpen, change] = useOpenState({ open, defaultOpen, onOpenChange });
+  const [isOpen, change] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const [pending, setPending] = useState(false);
   const cancel = useRef<HTMLButtonElement>(null);
   const confirm = useRef<HTMLButtonElement>(null);

@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react';
 import { useFormReset } from '../../internal/field/useFormReset.js';
+import { useControllableState } from '../../internal/react/useControllableState.js';
 
 export type CheckboxState = boolean | 'mixed';
 export interface CheckedProps<State extends CheckboxState> extends Omit<
@@ -23,8 +24,11 @@ export function useCheckedInput<State extends CheckboxState>(
   formId: string | undefined,
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [uncontrolledChecked, setUncontrolledChecked] = useState<CheckboxState>(defaultChecked);
-  const checkedState = checked ?? uncontrolledChecked;
+  const [checkedState, setChecked, keepOwn] = useControllableState<CheckboxState, boolean>({
+    value: checked,
+    defaultValue: defaultChecked,
+    onChange: onCheckedChange,
+  });
   useEffect(
     function synchronizeInput() {
       if (inputRef.current) {
@@ -39,8 +43,7 @@ export function useCheckedInput<State extends CheckboxState>(
     inputRef,
     function applyReset() {
       const input = inputRef.current;
-      const resetState = checked ?? defaultChecked;
-      if (checked === undefined) setUncontrolledChecked(resetState);
+      const resetState = keepOwn(defaultChecked);
       if (!input) return;
       input.checked = resetState === true;
       input.indeterminate = resetState === 'mixed';
@@ -49,10 +52,9 @@ export function useCheckedInput<State extends CheckboxState>(
   );
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const nextChecked = event.currentTarget.checked;
-    if (checked === undefined) setUncontrolledChecked(nextChecked);
-    else event.currentTarget.indeterminate = checkedState === 'mixed';
+    if (checked !== undefined) event.currentTarget.indeterminate = checkedState === 'mixed';
     onChange?.(event);
-    onCheckedChange?.(nextChecked);
+    setChecked(nextChecked);
   }
   return { inputRef, checkedState, handleChange };
 }

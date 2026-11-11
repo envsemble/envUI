@@ -2,7 +2,7 @@
 
 import { useCallback, useLayoutEffect, useRef, useState, type ChangeEvent } from 'react';
 import { subscribeFormReset } from '../../../internal/field/subscribeFormReset.js';
-import { useLatest } from '../../../internal/useLatest.js';
+import { useControllableState } from '../../../internal/react/useControllableState.js';
 import { readMarkdownSelection, type MarkdownSelection } from './markdownFormatting.js';
 import {
   createMarkdownHistory,
@@ -21,15 +21,17 @@ export function useMarkdownEditing({
   onValueChange?: (value: string) => void;
   form?: string;
 }) {
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const content = value ?? uncontrolledValue;
+  const [content, change, keepOwn] = useControllableState({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const [inputElement, setInputElement] = useState<HTMLTextAreaElement | null>(null);
   const history = useRef(createMarkdownHistory(content));
   const beforeInput = useRef<MarkdownSelection | null>(null);
   const pendingSelection = useRef<MarkdownSelection | null>(null);
   const composing = useRef(false);
-  const valueChange = useLatest(onValueChange);
   const [revision, setRevision] = useState(0);
   const attachInput = useCallback((input: HTMLTextAreaElement | null) => {
     inputRef.current = input;
@@ -56,8 +58,7 @@ export function useMarkdownEditing({
 
   function emit(selection: MarkdownSelection, restoreSelection: boolean) {
     pendingSelection.current = restoreSelection ? selection : null;
-    setUncontrolledValue(selection.value);
-    valueChange.current?.(selection.value);
+    change(selection.value);
     setRevision((current) => current + 1);
   }
   function moveHistory(direction: -1 | 1) {
@@ -85,15 +86,14 @@ export function useMarkdownEditing({
     const owningForm = inputElement?.form;
     if (!owningForm || !inputElement) return;
     return subscribeFormReset(owningForm, () => {
-      const resetValue = value ?? defaultValue;
+      const resetValue = keepOwn(defaultValue);
       inputElement.value = resetValue;
       history.current = createMarkdownHistory(resetValue);
       beforeInput.current = null;
       pendingSelection.current = null;
-      setUncontrolledValue(resetValue);
       setRevision((current) => current + 1);
     });
-  }, [inputElement, value, defaultValue, form]);
+  }, [inputElement, keepOwn, defaultValue, form]);
 
   function handleChange(event: ChangeEvent<HTMLTextAreaElement>) {
     const inputType = (event.nativeEvent as InputEvent).inputType ?? 'input';

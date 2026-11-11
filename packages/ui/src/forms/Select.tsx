@@ -3,7 +3,6 @@
 import {
   useId,
   useRef,
-  useState,
   type ButtonHTMLAttributes,
   type ComponentProps,
   type CSSProperties,
@@ -29,7 +28,7 @@ import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChang
 import { Grid } from '../layout/Layout.js';
 import { ListRow } from '../internal/popup/ListRow.js';
 import { setRef } from '../internal/react/setRef.js';
-import { useOpenState } from '../internal/popup/useOpenState.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import { classNames } from '../internal/classNames.js';
 import { flag } from '../internal/flag.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
@@ -211,30 +210,32 @@ export function Select({
   /** Whether the list last opened from the keyboard, where Base UI moves focus into it. */
   const openedByKeyboard = useRef(false);
   const portal = usePortalContainer();
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? null);
-  const selectedValue = value === undefined ? uncontrolledValue : value;
-  const [open, setOpen] = useOpenState({ open: controlledOpen, defaultOpen, onOpenChange });
+  const [selectedValue, changeValue, keepOwnValue] = useControllableState({
+    value,
+    defaultValue: defaultValue ?? null,
+    onChange: onValueChange,
+  });
+  const [open, setOpen] = useControllableState({
+    value: controlledOpen,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   // The label floats into the outline while the field holds a value or its list is open.
   const labelFloats = selectedValue != null || open;
   useFormReset(
     inputRef,
     function applyReset() {
       const input = inputRef.current;
-      const resetValue = value === undefined ? (defaultValue ?? null) : value;
-      if (value === undefined) setUncontrolledValue(resetValue);
+      const resetValue = keepOwnValue(defaultValue ?? null);
       if (input) input.value = resetValue ?? '';
     },
     form,
   );
-  function handleValueChange(nextValue: string | null) {
-    if (value === undefined) setUncontrolledValue(nextValue);
-    onValueChange?.(nextValue);
-  }
   return (
     <BaseSelect.Root<string>
       items={items}
       value={selectedValue}
-      onValueChange={handleValueChange}
+      onValueChange={(next) => changeValue(next)}
       open={open}
       readOnly={readOnly}
       onOpenChange={containedOpenChange(portal, triggerRef, (next, details) => {

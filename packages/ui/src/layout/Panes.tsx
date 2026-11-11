@@ -29,7 +29,7 @@ import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { IconClose } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/dom/lengths.js';
 import { useResizableWidth } from '../internal/resize/useResizableWidth.js';
-import { useOpenState } from '../internal/popup/useOpenState.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { flag } from '../internal/flag.js';
 import { keepTabInside, useSupportingSheet } from './internal/useSupportingSheet.js';
@@ -295,7 +295,11 @@ function Root({
     if (kept !== undefined) restore(kept);
   }, [persist, restore]);
 
-  const [open, setOpen] = useOpenState({ open: controlledOpen, defaultOpen, onOpenChange });
+  const [open, setOpen] = useControllableState({
+    value: controlledOpen,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const close = useCallback((reason: OpenChangeReason) => setOpen(false, { reason }), [setOpen]);
   const show = useCallback(() => setOpen(true, { reason: 'trigger-press' }), [setOpen]);
   const resizedId = `${useId()}-resized`;

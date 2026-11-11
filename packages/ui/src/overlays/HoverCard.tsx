@@ -25,7 +25,7 @@ import {
 } from '../internal/popup/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
-import { useOpenState } from '../internal/popup/useOpenState.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import '../styles/Base.css';
 import '../styles/Popover.css';
 
@@ -119,7 +119,11 @@ export function HoverCard({
   className,
   ...popupProps
 }: HoverCardProps) {
-  const [open, changeOpen] = useOpenState({ open: controlledOpen, defaultOpen, onOpenChange });
+  const [open, changeOpen] = useControllableState({
+    value: controlledOpen,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const portal = usePortalContainer();
   const openRef = useRef(open);
   // The card takes the text direction at its trigger.

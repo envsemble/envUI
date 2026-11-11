@@ -1,8 +1,9 @@
 'use client';
 
-import { useId, useMemo, useState, type ComponentPropsWithRef } from 'react';
+import { useId, useMemo, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import { useHydrated } from '../internal/react/useHydrated.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/provider/useFormatters.js';
@@ -123,8 +124,12 @@ export function Calendar({
   const previousName = previousMonthLabel ?? messages.previousMonth;
   const nextName = nextMonthLabel ?? messages.nextMonth;
   const headingId = useId();
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const selectedDay = parseDay(value === undefined ? uncontrolledValue : value);
+  const [selectedValue, chooseValue] = useControllableState({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
+  const selectedDay = parseDay(selectedValue);
   const minDay = parseDay(min);
   const maxDay = parseDay(max);
   // On the server, and while its output hydrates, the calendar renders what every browser renders
@@ -144,11 +149,7 @@ export function Calendar({
     initial: () => now().day,
     clamp: (day) => clampDay(day, minDay, maxDay),
     isUnavailable,
-    onChoose: (day) => {
-      const chosen = formatDay(day);
-      if (value === undefined) setUncontrolledValue(chosen);
-      onValueChange?.(chosen);
-    },
+    onChoose: (day) => chooseValue(formatDay(day)),
     moves: (day, event, rtl) => {
       const column = (dayParts(day).weekday - firstWeekday + 7) % 7;
       return {
