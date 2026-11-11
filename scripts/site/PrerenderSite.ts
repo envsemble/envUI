@@ -30,10 +30,13 @@ interface SitePage {
   address: string;
   /** The id of the page of docs/ it shows, whose content it loads. */
   document?: string;
-  /** The module of its kind's view (pages/ViewModules.ts), such as catalogue. */
+  /** The name of the module of its kind's view (pages/PageLoading.ts), such as catalogue. */
   view: string;
-  /** The parts of it that load on their own and that it renders (partsOfPage), such as changelog. */
-  parts: string[];
+  /**
+   * The paths in the site app of the modules it loads before it hydrates: its view's and those of
+   * the parts of it that load on their own and that it renders, such as src/pages/docs/Changelog.tsx.
+   */
+  modules: string[];
 }
 
 /** The server entry's build: its module, which renders the site's pages. */
@@ -62,8 +65,7 @@ interface RenderedPage {
 
 /** What each page loads, as the client's build found it (envui-content-preload in vite.config.ts). */
 interface PagePreloads {
-  views: Record<string, { scripts: string[]; styles: string[] }>;
-  parts: Record<string, { scripts: string[]; styles: string[] }>;
+  modules: Record<string, { scripts: string[]; styles: string[] }>;
   contents: Record<string, string>;
   figureStyles: Record<string, string[]>;
 }
@@ -115,19 +117,17 @@ const escapeAttribute = (text: string) => escapeText(text).replace(/"/g, '&quot;
  * and a sheet applied then lays out the whole page again, a long pause on a phone. They are small
  * beside the view's.
  */
-function pageFiles({ address, document, view: kind, parts }: SitePage, preloads: PagePreloads) {
-  const view = preloads.views[kind];
-  if (!view) throw new Error(`No files of the view ${kind}, which ${address} shows`);
-  const partFiles = parts.map((part) => {
-    const files = preloads.parts[part];
-    if (!files) throw new Error(`No files of the part ${part}, which ${address} shows`);
+function pageFiles({ address, document, view, modules }: SitePage, preloads: PagePreloads) {
+  const moduleFiles = modules.map((module) => {
+    const files = preloads.modules[module];
+    if (!files) throw new Error(`No files of ${module}, which ${address} loads`);
     return files;
   });
-  const scripts = new Set([view, ...partFiles].flatMap((files) => files.scripts));
-  const styles = new Set([view, ...partFiles].flatMap((files) => files.styles));
+  const scripts = new Set(moduleFiles.flatMap((files) => files.scripts));
+  const styles = new Set(moduleFiles.flatMap((files) => files.styles));
   const content = document === undefined ? undefined : preloads.contents[document];
   if (document !== undefined && !content) throw new Error(`No file of the content of ${document}`);
-  const figureStyles = (kind === 'catalogue' && document && preloads.figureStyles[document]) || [];
+  const figureStyles = (view === 'catalogue' && document && preloads.figureStyles[document]) || [];
   const loads: Load[] = [
     ...[...scripts].map((file): Load => ['modulepreload', `/${file}`]),
     ...(content ? [['modulepreload', `/${content}`] satisfies Load] : []),

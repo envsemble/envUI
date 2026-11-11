@@ -15,11 +15,9 @@ import {
 import { MetadataBadges } from '../../template/MetadataBadges';
 import { useRevealed } from '../../template/useRevealed';
 import { SectionOutline } from '../../markdown/SectionOutline';
-import { useDocument } from '../PageContent';
 import { GuideDocument, guideContents } from './GuideDocument';
 import { LoadedPart } from '../../loading/LoadedPart';
-import { pageParts } from '../PageParts';
-import { partsOfPage } from '../ViewModules';
+import { pageParts, partsOfPage, useDocument } from '../PageLoading';
 import { ChangelogSkeleton } from './ChangelogOutline';
 import { tokenContents, TokenReferenceSkeleton } from './TokenTables';
 import { ReleaseNotes } from './ReleaseNotes';

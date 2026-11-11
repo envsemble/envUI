@@ -9,7 +9,7 @@ import sharedLines from 'virtual:envui-example-lines';
 const pageSizes = new Map<string, readonly [number, number]>();
 const pageLines = new Map<string, number>();
 
-/** Keeps the parts' data a page's content brought, as it loads (PageContent.ts). */
+/** Keeps the parts' data a page's content brought, as it loads (pages/PageLoading.ts). */
 export function keepPageParts(content: {
   partSizes?: Record<string, [number, number]>;
   exampleLines?: Record<string, number>;

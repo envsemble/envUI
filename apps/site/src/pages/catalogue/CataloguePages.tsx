@@ -6,7 +6,7 @@ import type { DocumentPage, RoutePage } from '../../routes/SiteRoutes';
 import { PartSwitch } from '../../routes/OtherPart';
 import { TemplateContent, templateContents } from '../../template/TemplateContent';
 import { MetadataBadges } from '../../template/MetadataBadges';
-import { useDocument } from '../PageContent';
+import { useDocument } from '../PageLoading';
 
 /**
  * A component's page in the catalogue: what it looks like and when to use it, in live figures

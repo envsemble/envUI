@@ -13,12 +13,16 @@ import {
 import { IconMenu } from '@envsemble/envui/icons/Menu';
 import { findPage, type Area, type RoutePage } from './routes/SiteRoutes';
 import { PageBoundary } from './frame/PageBoundary';
-import { retryDocument } from './pages/PageContent';
 import { SiteBanner } from './frame/SiteBanner';
 import { ContentsItems, PageContents } from './frame/PageContents';
 import { PageFooter } from './frame/PageFooter';
-import { retryPageView, usePageContents, usePageView } from './pages/PageViews';
-import { preloadPage } from './pages/PreloadPage';
+import {
+  preloadPage,
+  retryDocument,
+  retryPageView,
+  usePageContents,
+  usePageView,
+} from './pages/PageLoading';
 import { Brand } from './brand/Brand';
 import { DocsNavigation, CatalogueNavigation } from './navigation/SiteNavigation';
 import { drawerless } from './navigation/CatalogueDestinations';

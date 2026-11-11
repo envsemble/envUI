@@ -17,7 +17,6 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 // npm run build, so the library's source module is imported instead.
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
 import { displayStorageKeys } from './src/display/DisplayStorage.ts';
-import { partModules, viewModules } from './src/pages/ViewModules.ts';
 import { siteDescription } from './src/routes/SiteDescription.ts';
 import {
   createDisplayBootstrapScript,
@@ -173,9 +172,9 @@ export default defineConfig(() => {
       },
       {
         // What each page needs loads beside the site's script rather than once that has arrived and
-        // run: the files the module of its kind's view imports (pages/ViewModules.ts), and those of
-        // the parts of it that load on their own and that the server renders, and the file
-        // of its content (generated/pages/<id>.json, PageContent.ts), and on a catalogue page the
+        // run: the files the module of its kind's view imports, and those of the parts of it that
+        // load on their own and that the server renders (pages/PageLoading.ts), and the file of its
+        // content (generated/pages/<id>.json), and on a catalogue page the
         // style sheets of its figures (examples/<id>/, specimens/<id>/ and what they import), which
         // apply with its first paint. The lists go to dist/site/.vite/page-preloads.json, from which
         // scripts/site/PrerenderSite.ts links each pre-rendered page's files in its head.
@@ -204,24 +203,25 @@ export default defineConfig(() => {
               for (const next of byName.get(name)?.imports ?? []) imported(next, into);
             };
             for (const chunk of chunks) if (chunk.isEntry) imported(chunk.fileName, started);
-            // The files of a module, a view's or a part's, and what it imports, but the start's.
-            const filesOf = (modules: Record<string, string>, what: string) =>
-              Object.fromEntries(
-                Object.entries(modules).map(([name, module]) => {
-                  const chunk = chunks.find((file) => file.facadeModuleId?.endsWith(`/${module}`));
-                  if (!chunk) throw new Error(`No chunk holds ${module}, which ${what} is in.`);
-                  const scripts = new Set<string>();
-                  imported(chunk.fileName, scripts);
-                  const files = [...scripts].filter((file) => !started.has(file));
-                  const styles = files.flatMap((file) => [
-                    ...(byName.get(file)?.viteMetadata?.importedCss ?? []),
-                  ]);
-                  return [name, { scripts: files, styles: [...new Set(styles)] }];
-                }),
-              );
-            const views = filesOf(viewModules, "a page's view");
-            // The parts of pages that the server renders, which a page loads with its view.
-            const parts = filesOf(partModules, 'a part of a page');
+            // The files of each module the site's start loads on its own, by its path in the site
+            // app, such as src/pages/docs/DocsPages.tsx: a view's or a part's (pages/PageLoading.ts),
+            // and what it imports, but the start's.
+            const modules: Record<string, { scripts: string[]; styles: string[] }> = {};
+            for (const name of started)
+              for (const lazy of byName.get(name)?.dynamicImports ?? []) {
+                const module = byName.get(lazy)?.facadeModuleId;
+                if (!module || !/\.tsx?$/.test(module)) continue;
+                const scripts = new Set<string>();
+                imported(lazy, scripts);
+                const files = [...scripts].filter((file) => !started.has(file));
+                const styles = files.flatMap((file) => [
+                  ...(byName.get(file)?.viteMetadata?.importedCss ?? []),
+                ]);
+                modules[relative(this.environment.config.root, module).replaceAll('\\', '/')] = {
+                  scripts: files,
+                  styles: [...new Set(styles)],
+                };
+              }
             // The style sheets the site starts with, which a page's figures' sheets leave out.
             const startedStyles = new Set(
               [...started].flatMap((name) => [
@@ -251,7 +251,7 @@ export default defineConfig(() => {
             this.emitFile({
               type: 'asset',
               fileName: '.vite/page-preloads.json',
-              source: JSON.stringify({ views, parts, contents, figureStyles }),
+              source: JSON.stringify({ modules, contents, figureStyles }),
             });
           },
         },
