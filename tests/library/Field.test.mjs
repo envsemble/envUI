@@ -7,7 +7,7 @@ import { descriptions, elementsOf, firstElement, hasClass, textOf } from '../sup
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 
-const { TextField, Textarea } = await importSource('FieldWords', [
+const { TextField, Textarea } = await importSource('Field', [
   "export { TextField } from './packages/ui/src/forms/TextField.tsx';",
   "export { Textarea } from './packages/ui/src/forms/Textarea.tsx';",
 ]);
