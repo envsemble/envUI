@@ -11,7 +11,8 @@
 // --browser    the library's engine (default chromium); Firefox and WebKit run its tests tagged
 //              engines (Vitest) and @engines (Playwright)
 // --shard      runs the i-th of n parts, for CI's parallel jobs: Vitest's by file, the site's
-//              Playwright specs by test and the library's in its last part
+//              Playwright specs by test and the library's in its first part, which Vitest's
+//              split leaves lightest
 // --retries    tries a failed test again (default: once in CI)
 // --api.port   the port of Vitest's browser server (default 63315, or the next free one); Vitest
 //              reads this, not --browser.api.port
@@ -72,11 +73,11 @@ const run = (command: string[], env: Record<string, string> = {}, required = tru
   failed = true;
 };
 const folder = `tests/browser/${suite}/`;
-// The library's few specs, its hydration, run whole in its last shard, so only that shard builds
+// The library's few specs, its hydration, run whole in its first shard, so only that shard builds
 // the library for them; the site's split by test. A shard may hold none of a runner's tests.
-const [shardIndex, shardCount] = shard?.split('/') ?? [];
+const shardIndex = shard?.split('/')[0];
 const playwrightShard = suite === 'library' ? undefined : shard;
-const playwrightRuns = suite !== 'library' || !shard || shardIndex === shardCount;
+const playwrightRuns = suite !== 'library' || !shard || shardIndex === '1';
 const playwright = [
   ...bin.playwright,
   'test',
