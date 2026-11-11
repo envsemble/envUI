@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
 import { defaultPorts, resolveServers } from './scripts/test/CheckoutMarker.ts';
 
 /**
- * The servers this run needs (tests/browser/helpers/Servers.ts): ENVUI_SERVERS lists them (site,
+ * The servers this run needs (tests/browser/support/Servers.ts): ENVUI_SERVERS lists them (site,
  * site-build, fixture, or none; the site's name before, catalogue, still counts), as
  * `npm run check` sets it for the specs it picked. Without it a run that only scans the hosted
  * build (the a11y projects) needs none, and any other run needs all three.
@@ -31,7 +31,7 @@ function wantedServers() {
 const wanted = wantedServers();
 
 // Ports, and whether a server running there belongs to this checkout and can be reused. Specs read
-// the chosen ports through tests/browser/helpers/Servers.ts; see scripts/test/CheckoutMarker.ts.
+// the chosen ports through tests/browser/support/Servers.ts; see scripts/test/CheckoutMarker.ts.
 const servers = await resolveServers(
   Object.fromEntries(
     Object.entries({

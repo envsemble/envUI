@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteBuildUrl } from '../helpers/Servers';
-import { openSite } from '../helpers/SiteSpecHelpers';
+import { siteBuildUrl } from '../support/Servers';
+import { openSite } from '../support/SiteSpecHelpers';
 import { displayStorageKeys, drawerWidthKey } from '../../../apps/site/src/display/DisplayStorage';
 
 /**

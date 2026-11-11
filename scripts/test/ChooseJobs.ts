@@ -61,7 +61,7 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
     ],
     jobs: ['library', 'site'],
   },
-  { paths: ['tests/browser/helpers/**'], jobs: ['library', 'site'] },
+  { paths: ['tests/browser/support/**'], jobs: ['library', 'site'] },
   {
     paths: [
       'apps/site/**',

@@ -74,7 +74,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 | ---------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
 | Logic, and markup and ARIA rendered on the server                                              | Unit test, `node --test`              | The folder of what it tests, below                                                   |
 | Keyboard, focus, pointer, layout and positioning in a real browser                             | Component test, Vitest's browser mode | `tests/component/<Name>.test.tsx`                                                    |
-| The site's smoke journey of each kind of page, hydration and failures; the library's hydration | Playwright spec                       | `tests/browser/site/`, `tests/browser/library/`; helpers in `tests/browser/helpers/` |
+| The site's smoke journey of each kind of page, hydration and failures; the library's hydration | Playwright spec                       | `tests/browser/site/`, `tests/browser/library/`; helpers in `tests/browser/support/` |
 | Contrast, appearance, accessibility                                                            | Their gates                           | `npm run test:contrast`, `test:visual`, `test:a11y`                                  |
 
 - Unit tests go in `tests/library/`, `tests/site/`, `tests/docs/` (the documentation and its generators), `tests/tooling/` (the checks and the release) or `tests/lint/` (cases both lint packages' tests read; each package's own tests are in its `test/`).
@@ -111,7 +111,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 
 ## Ports, workers and recorded lists
 
-- The browser tests start or reuse the site's development server on 8770, the site built as it is hosted on 8767 and the fixture, built for development, on 8766, reusing a server only when it answers for this checkout. A site spec opens the build (`siteBuildUrl`) unless it needs the development server (`siteDevUrl`): `tests/browser/helpers/Servers.ts` says which is which.
+- The browser tests start or reuse the site's development server on 8770, the site built as it is hosted on 8767 and the fixture, built for development, on 8766, reusing a server only when it answers for this checkout. A site spec opens the build (`siteBuildUrl`) unless it needs the development server (`siteDevUrl`): `tests/browser/support/Servers.ts` says which is which.
 - Beside another checkout's tests, set `ENVUI_SITE_PORT`, `ENVUI_SITE_BUILD_PORT` and `ENVUI_FIXTURE_PORT`, such as 8832, 8834 and 8833, and give Vitest's browser server its own port with `--api.port`, such as `--api.port=63450` (Vitest ignores `--browser.api.port`); `npm run test:library` passes it on.
 - `ENVUI_WORKERS` sets the workers (default: half the cores).
 - Lists that only shrink: `stylelint-suppressions.json` (after removing violations, `npm run lint:css -- --suppress`), the accessibility scans' `tests/accessibility/KnownViolations.json` and `tests/component/__snapshots__/Accessibility.test.tsx.snap` (`npm run test:a11y:update`) and the visual baseline (`npm run test:visual:update`, then review the images like code). Add to them only for a reviewed reason.

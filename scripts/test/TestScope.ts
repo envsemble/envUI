@@ -214,7 +214,7 @@ export function specNeeds(name: string, root = repositoryRoot) {
   const source = read(root, specFile(name, root));
   return {
     // Opens the hosted build, which npm run build:site writes.
-    site: importsOf(source).some(({ specifier }) => specifier === '../helpers/HostedSite'),
+    site: importsOf(source).some(({ specifier }) => specifier === '../support/HostedSite'),
     // Opens a page that the unit tests on the library build render.
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
@@ -268,14 +268,14 @@ export function specsFor(
       for (const [name, file] of specPaths(root))
         if (isComponentTest(file)) found = add(name, `runs on ${path}`) || found;
     } else if (
-      /^tests\/browser\/helpers\/[^/]+\.ts$/.test(path) ||
+      /^tests\/browser\/support\/[^/]+\.ts$/.test(path) ||
       /^tests\/component\/support\/[^/]+\.tsx?$/.test(path)
     ) {
       // A helper some specs share: those that import it.
       const helper = posix.basename(path);
       const specifiers = path.startsWith('tests/component/')
         ? [`./support/${helper}`, `./support/${baseName(path)}`]
-        : [`../helpers/${baseName(path)}`];
+        : [`../support/${baseName(path)}`];
       const users = [...written].filter((spec) =>
         importsOf(read(root, specFile(spec, root))).some(({ specifier }) =>
           specifiers.includes(specifier),
@@ -355,7 +355,7 @@ export function selectScope(paths: readonly string[], options: ScopeOptions = {}
   return { ...scope, specs, unmatched, helpers, widelyUsed };
 }
 
-/** Which servers the specs need, for ENVUI_SERVERS (tests/browser/helpers/Servers.ts). */
+/** Which servers the specs need, for ENVUI_SERVERS (tests/browser/support/Servers.ts). */
 export function serversFor(names: readonly string[], root = repositoryRoot) {
   const servers = new Set<string>();
   for (const name of names) {

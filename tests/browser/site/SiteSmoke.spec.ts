@@ -1,8 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteBuildUrl } from '../helpers/Servers';
-import { chooseScheme } from '../helpers/CatalogueThemes';
-import { collectErrors } from '../helpers/PageErrors';
-import { openSite } from '../helpers/SiteSpecHelpers';
+import { siteBuildUrl } from '../support/Servers';
+import { chooseScheme } from '../support/CatalogueThemes';
+import { collectErrors } from '../support/PageErrors';
+import { openSite } from '../support/SiteSpecHelpers';
 
 /**
  * One journey through a page of each kind the build pre-renders, as a reader takes it: the page

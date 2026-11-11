@@ -126,8 +126,8 @@ test('the affected tier runs every spec a file or helper concerns', () => {
   assert.equal(affected.widelyUsed.size, 0);
   assert.equal(affected.specs.size, fast.widelyUsed.get(path));
   // Nearly every spec imports Servers.ts, and the affected tier runs each that does.
-  const helper = specsFor(['tests/browser/helpers/Servers.ts'], { affected: true });
-  assert.equal(helper.specs.size, helper.helpers.get('tests/browser/helpers/Servers.ts').length);
+  const helper = specsFor(['tests/browser/support/Servers.ts'], { affected: true });
+  assert.equal(helper.specs.size, helper.helpers.get('tests/browser/support/Servers.ts').length);
   assert.ok(helper.specs.size > globSync('tests/browser/{library,site}/*.spec.ts').length / 2);
 });
 
@@ -265,7 +265,7 @@ test("a spec is in the library's or the site's folder, or a component test", () 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
   assert.deepEqual(specs('tests/component/Tree.test.tsx'), ['Tree']);
   assert.deepEqual(specs('tests/component/support/Chevron.ts'), ['Select']);
-  assert.deepEqual(specs('tests/browser/helpers/HostedSite.ts'), ['SiteFailures']);
+  assert.deepEqual(specs('tests/browser/support/HostedSite.ts'), ['SiteFailures']);
 });
 
 test('a module of the documentation generator runs the specs of the site', () => {
@@ -301,7 +301,7 @@ test('servers follow the specs that need them', () => {
     mkdirSync(join(root, 'tests/browser/library'), { recursive: true });
     writeFileSync(
       join(root, 'tests/browser/library/Widget.spec.ts'),
-      "import { fixtureUrl } from '../helpers/Servers';",
+      "import { fixtureUrl } from '../support/Servers';",
     );
     assert.deepEqual(serversFor(['Widget'], root), ['fixture']);
   } finally {
