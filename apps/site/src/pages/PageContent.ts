@@ -1,5 +1,5 @@
 import { use } from 'react';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import type { DocumentationEntry } from '../documentation/DocumentationTypes';
 import { moduleRegistry } from '../loading/ModuleRegistry';
 import { keepPageParts } from '../loading/RecordedSizes';
 

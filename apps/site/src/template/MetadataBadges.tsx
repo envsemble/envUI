@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Badge, Text } from '@envsemble/envui';
-import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
+import type { DocumentationMetadata } from '../documentation/DocumentationTypes';
 import { statusTones } from '../routes/PageBadges';
 
 /**

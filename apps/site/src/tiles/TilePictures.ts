@@ -2,7 +2,7 @@
  * What a page's tile shows, in a gallery and in Related: its own tile, an export's (members/), an
  * example, or a foundation's tile; and how it is framed.
  */
-import type { StageFill } from '@docs-model/DocumentationTypes';
+import type { StageFill } from '../documentation/DocumentationTypes';
 import { groupedPages } from '../routes/SiteRoutes';
 import { documents, type DocumentSummary } from '../routes/PageModel';
 import { hasFoundationTile } from './foundations/FoundationTiles';

@@ -13,7 +13,7 @@ import {
   catalogueText,
   technicalText,
   withoutCodeColumns,
-} from '../../scripts/docs/model/CatalogueContent.ts';
+} from '../../apps/site/src/documentation/CatalogueContent.ts';
 import {
   examplesDirectory,
   isPropsTable,

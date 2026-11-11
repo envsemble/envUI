@@ -14,8 +14,14 @@ import {
 } from './PageStructure.ts';
 import { cell, fenceFor } from './MarkdownBlocks.ts';
 import { readMessages, renderStrings, type MessageNamespace } from './Messages.ts';
-import type { AnatomyLegendItem, PropEntry } from './model/DocumentationTypes.ts';
-import { nativePropsSentence, propDescription } from './model/PropWording.ts';
+import type {
+  AnatomyLegendItem,
+  PropEntry,
+} from '../../apps/site/src/documentation/DocumentationTypes.ts';
+import {
+  nativePropsSentence,
+  propDescription,
+} from '../../apps/site/src/documentation/PropWording.ts';
 
 /** How the package names a do, a don't or a caution figure in a run of figures. */
 const verdictWords: Record<string, string> = { do: 'do', dont: "don't", caution: 'caution' };

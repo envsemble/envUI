@@ -6,14 +6,14 @@ import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleto
 import { SpecimenHeadingLevel } from '../figures/SpecimenFrame';
 import { partsOf } from '../figures/anatomy/Parts';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import type { DocumentationEntry } from '../documentation/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';
 import { LoadedPart } from '../loading/LoadedPart';
 import { pageParts } from './PageParts';
 import { PropsTables } from './PropsTables';
-import { providesOf } from '@docs-model/CatalogueContent';
-import { guideSubsections, raisedHeadings, wordsInCode } from '@docs-model/DocsContent';
-import { headingSlug } from '@docs-model/SearchAnchors';
+import { providesOf } from '../documentation/CatalogueContent';
+import { guideSubsections, raisedHeadings, wordsInCode } from '../documentation/DocsContent';
+import { headingSlug } from '../documentation/SearchAnchors';
 
 /*
  * The sections of the Docs' pages, each from what a page's file writes or its exports generate,

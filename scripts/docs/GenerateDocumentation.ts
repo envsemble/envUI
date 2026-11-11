@@ -20,11 +20,14 @@
 // as one file.
 import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import type { DocumentationEntry, DocumentationSummary } from './model/DocumentationTypes.ts';
+import type {
+  DocumentationEntry,
+  DocumentationSummary,
+} from '../../apps/site/src/documentation/DocumentationTypes.ts';
 import { marked } from 'marked';
 import { headingsOf, plainText } from './MarkdownHeadings.ts';
-import { exportSection, headingSlugger } from './model/SearchAnchors.ts';
-import { providesHeadings } from './model/CatalogueContent.ts';
+import { exportSection, headingSlugger } from '../../apps/site/src/documentation/SearchAnchors.ts';
+import { providesHeadings } from '../../apps/site/src/documentation/CatalogueContent.ts';
 import { writeSearchIndex } from '../site/BuildSearchIndex.ts';
 import { documentationDirectory, generatedDocumentationFile } from '../RepositoryPaths.ts';
 import { pageKindOf, readProps } from './PageStructure.ts';
@@ -242,7 +245,7 @@ export function generateDocumentation() {
       })),
     };
   });
-  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '@docs-model/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
+  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '../documentation/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
   writeIfChanged(generatedDocumentationFile, source);
   const contents = new Map(
     entries.map((entry) => {

@@ -2,7 +2,10 @@
 // and the others, and the block the page shows it as.
 import type { Tokens } from 'marked';
 import type { ExampleEntry } from '../PageStructure.ts';
-import type { ExampleBlock, FoundationFigureBlock } from '../model/DocumentationTypes.ts';
+import type {
+  ExampleBlock,
+  FoundationFigureBlock,
+} from '../../../apps/site/src/documentation/DocumentationTypes.ts';
 import type { PageReading, ReadSection } from '../PageReaderTypes.ts';
 
 /**

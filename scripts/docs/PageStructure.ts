@@ -10,7 +10,7 @@ import {
   type DocumentationBlock,
   type ExportEntry,
   type PropEntry,
-} from './model/DocumentationTypes.ts';
+} from '../../apps/site/src/documentation/DocumentationTypes.ts';
 import {
   fields,
   isMap,

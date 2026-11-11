@@ -2,7 +2,7 @@
  * The pages a page relates to, for its Related section: which page documents a component, the
  * address of a related page, and its tile (tiles/TilePictures.ts).
  */
-import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
+import type { DocumentationMetadata } from '../documentation/DocumentationTypes';
 import { routeHref } from '../routes/Address';
 import { pageHref, groupedPages, routeOfDocument } from '../routes/SiteRoutes';
 import { documents } from '../routes/PageModel';

@@ -4,7 +4,7 @@
 // GenerateDocumentation.ts. The site opens it with ⌘K or Ctrl+K, in the catalogue and the Docs.
 //
 // searchDocuments() is plain data, so other tools can index the same documents, each a
-// SearchDocument (docs/model/SearchTerms.ts) that names the page it is found on and its place there.
+// SearchDocument (apps/site/src/documentation/SearchTerms.ts) that names the page it is found on and its place there.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { marked } from 'marked';
@@ -17,13 +17,13 @@ import {
   nameKey,
   type SearchDocument,
   type SearchKind,
-} from '../docs/model/SearchTerms.ts';
+} from '../../apps/site/src/documentation/SearchTerms.ts';
 import {
   exportSection,
   headingSlugger,
   propSection,
   tokenSection,
-} from '../docs/model/SearchAnchors.ts';
+} from '../../apps/site/src/documentation/SearchAnchors.ts';
 import { repositoryRoot, tokensDataFile } from '../RepositoryPaths.ts';
 
 /** The token list, packages/ui/src/generated/tokens.json. */

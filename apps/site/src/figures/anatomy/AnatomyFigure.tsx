@@ -4,8 +4,8 @@
  */
 import { useCallback, useId, useMemo, useRef, useState } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
-import type { AnatomyLegendItem, StageFill } from '@docs-model/DocumentationTypes';
-import { legendName, type OptionTable } from '@docs-model/CatalogueContent';
+import type { AnatomyLegendItem, StageFill } from '../../documentation/DocumentationTypes';
+import { legendName, type OptionTable } from '../../documentation/CatalogueContent';
 import { PageMarkdown } from '../../markdown/PageMarkdown';
 import { FitFrame } from '../../fit/standalone/WidthFit';
 import { OptionLegend } from '../../markdown/OptionLegend';

@@ -13,7 +13,7 @@ import {
   paragraphLength,
   catalogueStructure,
   subsections,
-} from '../../scripts/docs/model/CatalogueContent.ts';
+} from '../../apps/site/src/documentation/CatalogueContent.ts';
 import { pageFixture, switchBody, switchFrontmatter } from './DocumentationFixtures.mjs';
 
 test('an option table names each option in a few words, once, and says what it is for', async () => {

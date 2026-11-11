@@ -11,7 +11,7 @@ import {
   exportSection,
   propSection,
   tokenSection,
-} from '../../scripts/docs/model/SearchAnchors.ts';
+} from '../../apps/site/src/documentation/SearchAnchors.ts';
 import {
   buildSearchIndex,
   standalonePages,
@@ -24,7 +24,7 @@ import {
   queryOptionsFor,
   searchIndex,
   tokenize,
-} from '../../scripts/docs/model/SearchTerms.ts';
+} from '../../apps/site/src/documentation/SearchTerms.ts';
 
 const props = readProps();
 const documents = readDocumentation(undefined, { props });

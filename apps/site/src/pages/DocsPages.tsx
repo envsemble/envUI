@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Column, Text, type TableOfContentsItem } from '@envsemble/envui';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import type { DocumentationEntry } from '../documentation/DocumentationTypes';
 import { SiteBanner } from '../banner/SiteBanner';
 import { pagesOf, type DocumentPage, type RoutePage } from '../routes/SiteRoutes';
 import { docsTrail } from '../routes/Trails';
@@ -39,7 +39,7 @@ import {
   Strings,
   WordsInCode,
 } from './DocsSections';
-import { wordsInCode, withoutAgentNote } from '@docs-model/DocsContent';
+import { wordsInCode, withoutAgentNote } from '../documentation/DocsContent';
 
 /*
  * The Docs' route views: a guide, the token reference, the changelog, a foundation's developer

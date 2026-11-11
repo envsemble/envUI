@@ -51,13 +51,14 @@ const confusingBrowserGlobals = [
 
 /**
  * The site reaches the library through its entry points, and what they don't export through
- * @envui-internal, the scripts' documentation model through @docs-model (apps/site/AGENTS.md): a
- * relative path into either would break unseen when a file there moves.
+ * @envui-internal (apps/site/AGENTS.md): a relative path into its source would break unseen when a
+ * file there moves. The site imports nothing of the scripts, which import the site's documentation
+ * model.
  */
 const siteImports = {
   regex: String.raw`^(\.\./)+(packages/ui/src|scripts)(/|$)`,
   message:
-    'Import the library from @envsemble/envui, its internals from @envui-internal/* and the documentation model from @docs-model/* (apps/site/AGENTS.md).',
+    'Import the library from @envsemble/envui and its internals from @envui-internal/*; the site imports nothing of scripts/ (apps/site/AGENTS.md).',
 };
 
 /**
@@ -84,6 +85,7 @@ const siteFolders = [
   'examples',
   'shared',
   'generated',
+  'documentation',
 ];
 const siteFolderOrder = siteFolders.slice(1).flatMap((folder, index) =>
   [1, 2, 3].map((depth) => ({

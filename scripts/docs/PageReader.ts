@@ -2,8 +2,11 @@
 // checks are in validation/: the frontmatter, the figures and their legends, and the editorial
 // rules of headings, Accessibility and Changelog.
 import { marked, type Token, type Tokens } from 'marked';
-import type { DocumentationBlock } from './model/DocumentationTypes.ts';
-import { optionTable, optionTableProblems } from './model/CatalogueContent.ts';
+import type { DocumentationBlock } from '../../apps/site/src/documentation/DocumentationTypes.ts';
+import {
+  optionTable,
+  optionTableProblems,
+} from '../../apps/site/src/documentation/CatalogueContent.ts';
 import { codeSubsections, pageSections, sourcePattern, type PageSection } from './PageStructure.ts';
 import {
   accessibilityProblems,
@@ -13,7 +16,7 @@ import {
 import { figurePattern, fileWords, kindFencePattern, placeFigure } from './validation/Figures.ts';
 import { readLegend } from './validation/Legends.ts';
 import { isPropsTable, specimenPattern } from './MarkdownBlocks.ts';
-import type { ExampleBlock } from './model/DocumentationTypes.ts';
+import type { ExampleBlock } from '../../apps/site/src/documentation/DocumentationTypes.ts';
 import type { PageContext, PageInput, PageReading, ReadSection } from './PageReaderTypes.ts';
 
 /** Adds Markdown to a section's blocks, to the Markdown block it ends with if it does. */

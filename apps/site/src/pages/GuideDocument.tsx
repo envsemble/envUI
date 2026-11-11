@@ -1,6 +1,6 @@
 import { Fragment, Suspense, useRef, type RefObject } from 'react';
 import type { TableOfContentsItem } from '@envsemble/envui';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import type { DocumentationEntry } from '../documentation/DocumentationTypes';
 import { markdownHeadings, PageMarkdown } from '../markdown/PageMarkdown';
 import { StageSkeleton } from '../loading/Skeletons';
 import { useFoundationFigures } from '../figures/foundations/FoundationFigures';

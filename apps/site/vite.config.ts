@@ -99,8 +99,6 @@ const siteData: Record<string, { read: () => unknown; sources: string[]; reloads
 const resolvedId = (id: string) => `\0${id}`;
 /** The library's generated list of every icon, which only the icon catalogue imports. */
 const iconList = fileURLToPath(new URL('../../packages/ui/src/icons/index.ts', import.meta.url));
-/** The documentation's model (scripts/docs/model), which the site imports as @docs-model. */
-const docsModel = fileURLToPath(new URL('../../scripts/docs/model', import.meta.url));
 /** The library's source, the site's only door into what its entry points don't export. */
 const libraryInternals = fileURLToPath(new URL('../../packages/ui/src', import.meta.url));
 
@@ -388,8 +386,6 @@ export default defineConfig(() => {
       alias: {
         // The icon catalogue's list of every icon, which the package doesn't export.
         'envui-icon-list': iconList,
-        // The documentation's model, which the site and the scripts that build it both read.
-        '@docs-model': docsModel,
         // What the library's entry points don't export, such as its reduced-motion query.
         '@envui-internal': libraryInternals,
       },

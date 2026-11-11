@@ -5,7 +5,7 @@
  * beta that the navigation would be a column of them. It imports only types, so the unit tests
  * read it as it is.
  */
-import type { PageStatus } from '@docs-model/DocumentationTypes';
+import type { PageStatus } from '../documentation/DocumentationTypes';
 
 /**
  * The tone of each status's Badge, the same wherever a status shows: under a page's title and

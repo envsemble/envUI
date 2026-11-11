@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react';
 import { Column, Table, Text } from '@envsemble/envui';
 import { PlainCode } from './SimpleTable';
-import type { ExportEntry, PropEntry } from '@docs-model/DocumentationTypes';
-import { nativePropsSentence, propDescription } from '@docs-model/PropWording';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import type { ExportEntry, PropEntry } from '../documentation/DocumentationTypes';
+import { nativePropsSentence, propDescription } from '../documentation/PropWording';
+import type { DocumentationEntry } from '../documentation/DocumentationTypes';
 // The ids search leads to, as the search index writes them.
-import { exportSection, propSection } from '@docs-model/SearchAnchors';
+import { exportSection, propSection } from '../documentation/SearchAnchors';
 import { useSectionOutline } from '../markdown/SectionOutline';
 
 /**

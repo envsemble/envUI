@@ -1,6 +1,6 @@
 import { use, useMemo, type ReactNode } from 'react';
 import type { TableOfContentsItem } from '@envsemble/envui';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import type { DocumentationEntry } from '../documentation/DocumentationTypes';
 import type { PageKind, PageOfKind, RoutePage } from '../routes/SiteRoutes';
 import { reloadModule } from '../loading/LoadBoundary';
 import { loadOnce, useLoaded } from '../loading/LoadOnce';
