@@ -263,7 +263,7 @@ test("a spec is in the library's or the site's folder", () => {
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
   assert.deepEqual(specs('tests/browser/library/Tree.spec.ts'), ['Tree']);
-  assert.deepEqual(specs('tests/browser/helpers/Chevron.ts'), ['Combobox', 'Select']);
+  assert.deepEqual(specs('tests/browser/helpers/Chevron.ts'), ['Select']);
   // Every spec imports Servers.ts: verify covers it.
   assert.deepEqual(specs('tests/browser/helpers/Servers.ts'), []);
 });
