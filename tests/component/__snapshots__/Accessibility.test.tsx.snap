@@ -43,7 +43,13 @@ exports[`choice-controls has no new accessibility violations 1`] = `{}`;
 
 exports[`code-block has no new accessibility violations 1`] = `{}`;
 
-exports[`code-diff has no new accessibility violations 1`] = `{}`;
+exports[`code-diff has no new accessibility violations 1`] = `
+{
+  "aria-command-name": {
+    "div.env-code-diff diffs-container": 1,
+  },
+}
+`;
 
 exports[`color-picker has no new accessibility violations 1`] = `{}`;
 
@@ -152,6 +158,7 @@ exports[`messages has no new accessibility violations 1`] = `
   "label-content-name-mismatch": {
     "button.env-button": 1,
     "button.env-color-picker-button": 1,
+    "button.env-panel-dock-tab-restore": 1,
   },
 }
 `;

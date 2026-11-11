@@ -553,10 +553,10 @@ test(
       // It gives less than the pointer travels.
       expect(near).toBeLessThan(30);
       await mouse.move(away(280), y, { steps: 8 });
-      await expect.poll(stretch).toBeGreaterThan(near);
+      // It eases toward its most, which a busy machine reaches a few frames later.
+      await expect.poll(stretch).toBeGreaterThan(most * 0.8);
       const far = stretch();
       expect(far).toBeLessThanOrEqual(most);
-      expect(far).toBeGreaterThan(most * 0.8);
       expect(value()).toBe(atEnd);
       // It thins a little across, by at most 3%.
       const now = boxesOf(root);

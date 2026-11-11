@@ -51,6 +51,14 @@ test.for(fixtures)(
   { tags: ['a11y'] },
   async ([, module]) => {
     mount(module);
+    // What loads on its own, such as a code diff's renderer, is busy until it has: up to a few
+    // seconds, as a fixture may show a busy state on purpose.
+    for (
+      let waited = 0;
+      document.querySelector('[aria-busy="true"]') && waited < 3_000;
+      waited += 50
+    )
+      await new Promise((resolve) => setTimeout(resolve, 50));
     await nextFrames();
     const { violations } = await axe.run(document, {
       runOnly: { type: 'tag', values: tags },
