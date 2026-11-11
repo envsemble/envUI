@@ -1,18 +1,39 @@
 // The fit's decisions that keep a picture steady as it is measured again (apps/site/src/fit/):
-// whether a resting picture holds its frame, the scales a popup and a resting picture keep, a device
-// figure's scale and view and when its fit is the same, and an open example's room for its
-// overlays. The visual baseline shows where a still lands; these keep it there from one measure to
-// the next.
+// which decider places a picture, whether a resting picture holds its frame, the scales a popup, a
+// resting picture and a modal's screen keep, a device figure's scale and view and when its fit is
+// the same, and an open example's room for its overlays. The visual baseline shows where a still
+// lands; these keep it there from one measure to the next.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/ImportSource.mjs';
 
+const kinds = await importSource('FitKind', 'apps/site/src/fit/FitKind.ts');
 const held = await importSource('HeldView', 'apps/site/src/fit/HeldView.ts');
 const popups = await importSource('FitResting', 'apps/site/src/fit/FitResting.ts');
+const screen = await importSource('FitScreen', 'apps/site/src/fit/FitScreen.ts');
 const device = await importSource('DeviceFit', 'apps/site/src/fit/standalone/DeviceFit.ts');
 const room = await importSource('OverlayRoom', 'apps/site/src/fit/standalone/OverlayRoom.ts');
 
 const box = (left, top, right, bottom) => ({ left, top, right, bottom });
+
+test('a picture is fitted by its kind, and only a cropped tile that has shown plays drawn out', () => {
+  // A component at its own size, except a drawing, written for a window narrower than the tiles'.
+  assert.deepEqual(kinds.fitKindOf({ tile: true }, 'own'), { scale: 'own', tile: true });
+  const drawing = kinds.fitKindOf({ tile: true, window: { width: 8 } }, 'own');
+  assert.deepEqual(drawing, { scale: 'window', tile: true });
+  assert.deepEqual(kinds.fitKindOf(undefined, undefined), { scale: 'content', tile: false });
+  // The same kind is the same object, so the fit restarts only when the kind changes.
+  assert.equal(
+    kinds.fitKindOf({ tile: true }, 'legible'),
+    kinds.fitKindOf({ tile: true }, 'legible'),
+  );
+  const tile = kinds.fitKindOf({ tile: true }, 'own');
+  const playing = { playing: true, shown: true };
+  assert.equal(kinds.fitModeOf(tile, false, playing), 'playing');
+  assert.equal(kinds.fitModeOf(tile, false, { playing: true, shown: false }), 'resting');
+  assert.equal(kinds.fitModeOf(drawing, false, playing), 'resting');
+  assert.equal(kinds.fitModeOf(tile, true, playing), 'screen');
+});
 
 test('a resting picture holds its frame, and follows its popups placed again only so often', () => {
   const shape = (view, popupLeft = 0, whole = true) => ({
@@ -267,4 +288,30 @@ test("an open example's room is padded so its popup centres with what opens it",
   assert.deepEqual(room.steadyPadding(measured, 1), { top: 0, right: 98, bottom: 120, left: 0 });
   assert.deepEqual(room.steadyPadding(measured, 0.9997), room.steadyPadding(measured, 1));
   assert.deepEqual(room.steadyPadding(measured, 2), measured);
+});
+
+test("a modal's screen fits what it needs, no smaller than the popups' least, and keeps it playing", () => {
+  const stage = { across: 300, down: 200 };
+  const scales = { overlay: 0.8, phone: false, steps: [], popupLeast: 0.55 };
+  const resting = { played: null, rest: 0 };
+  const scaleOf = (needs, measured = { scales, own: 1 }) =>
+    screen.decideScreenScale(stage, measured, needs, resting).scale;
+  // A dialog is drawn smaller than the overlays' scale so its surface fits, less a margin above and
+  // below, and its screen is as tall as it needs.
+  const dialog = { needHeight: 300, needWidth: 0, surfaceHeight: 250 };
+  const fitted = screen.decideScreenScale(stage, { scales, own: 1 }, dialog, resting);
+  assert.equal(fitted.scale, (200 - 2 * 6) / 250);
+  assert.equal(fitted.tall, 300);
+  assert.ok(fitted.centred && !fitted.plays);
+  // A taller one stops at the popups' least scale, and shows from its top.
+  assert.equal(scaleOf({ needHeight: 1100, needWidth: 0, surfaceHeight: 1000 }), 0.55);
+  // Any other modal is drawn at its own scale, or smaller to fit its width.
+  const own = { scales: { ...scales, overlay: 0 }, own: 0.9 };
+  const sheet = { needHeight: 150, needWidth: 0, surfaceHeight: 150 };
+  assert.equal(scaleOf(sheet, own), 0.9);
+  assert.equal(scaleOf({ ...sheet, needWidth: 400 }, own), 0.75);
+  // While the tile plays, the screen keeps its resting scale and height as the modal closes.
+  const kept = { played: 320, rest: 0.7 };
+  const played = screen.decideScreenScale(stage, { scales, own: 1 }, dialog, kept);
+  assert.deepEqual([played.scale, played.tall, played.plays], [0.7, 320, true]);
 });
