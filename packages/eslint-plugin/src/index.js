@@ -20,7 +20,8 @@ const plugin = {
   configs: {},
 };
 
-plugin.configs.recommended = {
+/** @type {import('eslint').Linter.Config} */
+const recommended = {
   name: 'envui/recommended',
   files: ['**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}'],
   plugins: { envui: plugin },
@@ -33,5 +34,6 @@ plugin.configs.recommended = {
     'envui/no-raw-graphics': 'error',
   },
 };
+plugin.configs.recommended = recommended;
 
 export default plugin;

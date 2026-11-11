@@ -181,6 +181,8 @@ if (scope.typecheck)
     ['fixture', 'tests/fixture/tsconfig.json'],
     ['component', 'tests/component/tsconfig.json'],
     ['scripts', 'scripts/tsconfig.json'],
+    ['eslint-plugin', 'packages/eslint-plugin/tsconfig.json'],
+    ['stylelint-config', 'packages/stylelint-config/tsconfig.json'],
   ])
     staticTasks.push(
       task(`tsc ${name}`, [

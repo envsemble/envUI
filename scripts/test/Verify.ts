@@ -96,6 +96,8 @@ const [phase1, built] = await Promise.all([
       types: 'tests/types',
       fixture: 'tests/fixture',
       component: 'tests/component',
+      'eslint-plugin': 'packages/eslint-plugin',
+      'stylelint-config': 'packages/stylelint-config',
     }).map(([project, folder]) =>
       task(`typecheck ${project}`, [
         ...bin.tsc,

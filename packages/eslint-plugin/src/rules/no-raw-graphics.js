@@ -2,6 +2,7 @@ import {
   documentationUrl,
   findAttribute,
   importedComponent,
+  insideAttribute,
   isFunction,
   jsxName,
   pluginSettings,
@@ -199,11 +200,7 @@ export default {
 
     /** Whether a node sits in a prop that renders it in place of a part's own element. */
     const insideRenderProp = (node) =>
-      sourceCode
-        .getAncestors(node)
-        .some(
-          (ancestor) => ancestor.type === 'JSXAttribute' && jsxName(ancestor.name) === renderProp,
-        );
+      insideAttribute(sourceCode, node, (name) => name === renderProp);
 
     /**
      * Whether an svg sits where its size and color are given to it: in an icon slot, a prop or an
@@ -214,13 +211,12 @@ export default {
       let parent = node.parent.parent;
       while (parent && passesThrough(parent)) parent = parent.parent;
       if (parent?.type === 'JSXElement' && isGraphic(parent.openingElement.name)) return true;
-      return sourceCode
-        .getAncestors(node)
-        .some(
-          (ancestor) =>
-            (ancestor.type === 'JSXAttribute' && isIconSlot(jsxName(ancestor.name))) ||
-            (ancestor.type === 'Property' && isIconSlot(propertyName(ancestor))),
-        );
+      return (
+        insideAttribute(sourceCode, node, isIconSlot) ||
+        sourceCode
+          .getAncestors(node)
+          .some((ancestor) => ancestor.type === 'Property' && isIconSlot(propertyName(ancestor)))
+      );
     }
 
     function checkSvg(node) {
@@ -268,7 +264,9 @@ export default {
         if (node.source && !isTypeOnly(node, 'exportKind')) checkSource(node.source);
       },
       ExportAllDeclaration(node) {
-        if (node.exportKind !== 'type') checkSource(node.source);
+        // typescript-eslint's parser adds exportKind, which ESLint's ESTree types don't know.
+        if (/** @type {{ exportKind?: string }} */ (node).exportKind !== 'type')
+          checkSource(node.source);
       },
       ImportExpression(node) {
         checkSource(node.source);
