@@ -30,7 +30,7 @@ import {
  */
 export const guideExportStatus = 'stable';
 /** What people are doing, in order: a pattern page's intent groups it in the catalogue and agents. */
-export const intents = [
+const intents = [
   'Enter and change data',
   'Keep people informed',
   'Work with lists and tables',
@@ -219,7 +219,7 @@ const importWidth = 60;
  * that would run past importWidth puts one name to a line, so the whole of it reads in the Docs'
  * column without scrolling.
  */
-export function importMarkdown(names: readonly string[], props: PropsFile | undefined): string {
+function importMarkdown(names: readonly string[], props: PropsFile | undefined): string {
   const byEntry = new Map<string, string[]>();
   for (const name of names) {
     const entry = props?.exports[name]?.entries[0];

@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
-import { libraryVersions, readDocumentation } from '../../scripts/docs/GenerateDocumentation.ts';
+import { libraryVersions } from '../../scripts/docs/LibraryVersions.ts';
+import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
 import {
   inScratchFolder,
   pageFixture,

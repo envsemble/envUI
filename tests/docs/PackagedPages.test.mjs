@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { compileDocument, compileDocumentation } from '../../scripts/docs/GenerateDocumentation.ts';
+import { compileDocument, compileDocumentation } from '../../scripts/docs/Compiler.ts';
 import {
   pageFixture,
   switchBody,

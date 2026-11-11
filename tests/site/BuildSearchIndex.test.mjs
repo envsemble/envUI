@@ -1,11 +1,9 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import MiniSearch from 'minisearch';
-import {
-  documentedExports,
-  readDocumentation,
-  readProps,
-} from '../../scripts/docs/GenerateDocumentation.ts';
+import { documentedExports } from '../../scripts/docs/Compiler.ts';
+import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
+import { readProps } from '../../scripts/docs/PageStructure.ts';
 import { headingsOf } from '../../scripts/docs/MarkdownHeadings.ts';
 import {
   exportSection,

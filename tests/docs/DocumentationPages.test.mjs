@@ -14,13 +14,10 @@ import {
   technicalText,
   withoutCodeColumns,
 } from '../../scripts/docs/model/CatalogueContent.ts';
-import {
-  examplesDirectory,
-  isPropsTable,
-  readDocumentation,
-  readProps,
-  specimensDirectory,
-} from '../../scripts/docs/GenerateDocumentation.ts';
+import { examplesDirectory, specimensDirectory } from '../../scripts/RepositoryPaths.ts';
+import { isPropsTable } from '../../scripts/docs/MarkdownBlocks.ts';
+import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
+import { readProps } from '../../scripts/docs/PageStructure.ts';
 
 /** Exports without a page that lists them in its frontmatter; the list only shrinks. */
 const undocumentedExports = [];

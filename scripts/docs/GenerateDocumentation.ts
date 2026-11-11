@@ -16,8 +16,7 @@
 // frontmatter), PageReader.ts (a page read and checked), DocumentationReader.ts (every page, its
 // index and links), LibraryVersions.ts (the versions a page names) and Compiler.ts (the props
 // tables and the Markdown the package ships); where things are is in scripts/RepositoryPaths.ts.
-// This file writes the catalogue's data and runs as the command; it exports what the modules did
-// as one file.
+// This file writes the catalogue's data and runs as the command.
 import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import type { DocumentationEntry, DocumentationSummary } from './model/DocumentationTypes.ts';
@@ -32,38 +31,6 @@ import { readDocumentation } from './DocumentationReader.ts';
 import { writeIfChanged } from '../build/GeneratedFiles.ts';
 import { documentedExports } from './Compiler.ts';
 import { readMessages, stringsOf } from './Messages.ts';
-
-export {
-  documentationDirectory,
-  examplesDirectory,
-  specimensDirectory,
-} from '../RepositoryPaths.ts';
-export { libraryVersions } from './LibraryVersions.ts';
-export {
-  codeSubsections,
-  exampleRoles,
-  examplesOf,
-  frontmatterSchema,
-  guideExportStatus,
-  importMarkdown,
-  intents,
-  pageKindOf,
-  pageSchemas,
-  pageSections,
-  readProps,
-  splitFrontmatter,
-} from './PageStructure.ts';
-export { fenceFor, isPropsTable } from './MarkdownBlocks.ts';
-export { readPartNames } from './validation/Legends.ts';
-export { readDocumentation } from './DocumentationReader.ts';
-export {
-  compileDocument,
-  compileDocumentation,
-  documentedExports,
-  exampleSource,
-  packageDocumentation,
-  renderProps,
-} from './Compiler.ts';
 
 /** Each page's content for the catalogue: generated/pages/<id>.json beside generatedDocumentationFile. */
 const pagesDirectory = resolve(dirname(generatedDocumentationFile), 'pages');

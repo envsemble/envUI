@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { compileDocument } from '../../scripts/docs/GenerateDocumentation.ts';
+import { compileDocument } from '../../scripts/docs/Compiler.ts';
 import { pageFixture } from './DocumentationFixtures.mjs';
 
 const lead = (name) =>

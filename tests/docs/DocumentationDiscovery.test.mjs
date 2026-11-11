@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { readDocumentation } from '../../scripts/docs/GenerateDocumentation.ts';
+import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
 import { inScratchFolder } from './DocumentationFixtures.mjs';
 
 const discoveryIndex =

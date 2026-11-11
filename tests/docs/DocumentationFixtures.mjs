@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve } from 'node:path';
-import { readDocumentation } from '../../scripts/docs/GenerateDocumentation.ts';
+import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
 
 /** Runs `run` in a new folder of .cache named after `prefix`, and removes the folder after. */
 export async function inScratchFolder(prefix, run) {
