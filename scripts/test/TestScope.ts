@@ -24,7 +24,7 @@ export const aliases: Record<string, string[]> = {
   SearchField: ['TextField'],
   FieldFrame: ['TextField'],
   Popover: ['Dialog'],
-  Spinner: ['Meter', 'Skeleton'],
+  Spinner: ['Skeleton'],
   Badge: ['DiffStat'],
   ConfirmButton: ['Button'],
   AvatarButton: ['Button'],
@@ -247,7 +247,7 @@ export function specsFor(
   const unmatched: string[] = [];
   const widelyUsed = new Map<string, number>();
   let specsUsing: ((path: string) => string[]) | undefined;
-  // By name, as written: a file system that ignores case would find Table.spec.ts for table.
+  // By name, as written: a file system that ignores case would find Table's spec for table.
   const written = new Set(specPaths(root).keys());
   const exists = (name: string) => written.has(name);
   const add = (name: string, reason: string) => {

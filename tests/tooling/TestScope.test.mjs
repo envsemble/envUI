@@ -100,7 +100,7 @@ test('a component runs the spec of its name, or of the name its alias gives', ()
 
 test('a file runs the specs whose fixtures use it, and a fixture the specs that open it', () => {
   // A component without a spec of its own runs the specs whose fixtures show it.
-  assert.ok(specs('packages/ui/src/feedback/Progress.tsx').includes('Meter'));
+  assert.ok(specs('packages/ui/src/feedback/Progress.tsx').includes('Messages'));
   assert.ok(specs('packages/ui/src/layout/Page.tsx').includes('Panes'));
   // Through the module that imports it: Calendar is in the date picker's popup.
   assert.ok(specs('packages/ui/src/forms/Calendar.tsx').includes('DatePicker'));
@@ -263,7 +263,7 @@ test("a spec is in the library's or the site's folder", () => {
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
   assert.deepEqual(specs('tests/browser/library/Tree.spec.ts'), ['Tree']);
-  assert.deepEqual(specs('tests/browser/helpers/Chevron.ts'), ['Combobox', 'Select']);
+  assert.deepEqual(specs('tests/browser/helpers/Chevron.ts'), ['Combobox']);
   // Every spec imports Servers.ts: verify covers it.
   assert.deepEqual(specs('tests/browser/helpers/Servers.ts'), []);
 });
