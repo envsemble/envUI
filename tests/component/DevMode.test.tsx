@@ -56,6 +56,7 @@ async function turnTo(name: string) {
 async function pickDevice(device: RegExp) {
   await button(panel(), 'Responsive').click();
   const frame = page.getByRole('menuitemcheckbox', { name: /^Responsive frame/ });
+  await isShown(frame);
   if (frame.element().getAttribute('aria-checked') !== 'true') await frame.click();
   await page.getByRole('menuitem', { name: /^Device/ }).click();
   await page.getByRole('menuitemradio', { name: device }).click();
