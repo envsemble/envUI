@@ -46,7 +46,7 @@ const narrowScript: PointerStep[] = [
 ];
 
 /**
- * The tiles' window (Tile.css), with a lower least scale for its popup: a palette with its two
+ * The tiles' window (TileStage.css), with a lower least scale for its popup: a palette with its two
  * commands is taller than a phone's stage at a popup's least.
  */
 export const tileWindow: TileWindow = { popupLeast: 0.7 };

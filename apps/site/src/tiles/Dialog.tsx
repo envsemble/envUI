@@ -38,7 +38,7 @@ const named = 'Northwind';
 const narrow = { inlineSize: '12rem' } as const;
 
 /**
- * A taller window than the tiles' (Tile.css). A dialog with a field is taller than a tile's
+ * A taller window than the tiles' (TileStage.css). A dialog with a field is taller than a tile's
  * window, and than a wide page's stage at the overlays' scale, so it isn't drawn as one of them:
  * it lays out whole in a taller window, so its title, field and actions show whole, drawn as small
  * as that takes, down to its own least scale, at every width.

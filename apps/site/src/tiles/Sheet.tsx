@@ -35,7 +35,7 @@ const page = {
 const projects = ['Billing', 'Search'];
 
 /**
- * A lower window than the tiles' (Tile.css), as an overlay: a sheet of a title and a filter is
+ * A lower window than the tiles' (TileStage.css), as an overlay: a sheet of a title and a filter is
  * as tall as its window, so it shows whole.
  */
 export const tileWindow: TileWindow = { width: 14, height: 7, overlay: true };

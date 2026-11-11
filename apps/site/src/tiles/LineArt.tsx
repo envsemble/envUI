@@ -7,7 +7,7 @@ import type { TileWindow } from './Tiles';
  */
 const durations = [600, 6500];
 
-/** A smaller window than the tiles' (Tile.css), drawn larger: a drawing has no size of its own. */
+/** A smaller window than the tiles' (TileStage.css), drawn larger: a drawing has no size of its own. */
 export const tileWindow: TileWindow = { width: 6, height: 3.75 };
 
 /**

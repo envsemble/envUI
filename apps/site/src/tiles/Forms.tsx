@@ -38,7 +38,7 @@ const script: PointerStep[] = [
 
 const whole = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 20, height: 15 };
 
 /** A short form, checked when it is submitted, whose error goes away as soon as it is corrected. */

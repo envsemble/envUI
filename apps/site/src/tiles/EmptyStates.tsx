@@ -29,7 +29,7 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 18, height: 13.5 };
 
 /** A search with no results, whose empty state offers the one way forward. */

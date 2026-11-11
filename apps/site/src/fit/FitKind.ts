@@ -24,7 +24,7 @@ export type FitKind =
   /** An example or a specimen, as large as fits what it paints, at most its window's scale. */
   | { scale: 'content'; tile: false };
 
-/** The tiles' window's width, in rem (Tile.css). A tile written for a narrower one is a drawing. */
+/** The tiles' window's width, in rem (TileStage.css). A tile written for a narrower one is a drawing. */
 const tileWindowWidth = 14;
 
 /**

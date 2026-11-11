@@ -36,7 +36,7 @@ const closing = 300;
 const narrow = { inlineSize: '12rem' } as const;
 
 /**
- * A larger window than the tiles' (Tile.css), as an overlay, with a lower least scale for its
+ * A larger window than the tiles' (TileStage.css), as an overlay, with a lower least scale for its
  * popup: a confirm dialog with its button beside it is wider than a tile's stage at a popup's
  * least.
  */

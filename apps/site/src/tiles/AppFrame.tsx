@@ -44,7 +44,7 @@ const places = [
   { label: 'Team', icon: <IconGroup />, line: '6 people.' },
 ];
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 18, height: 13.5 };
 
 /**

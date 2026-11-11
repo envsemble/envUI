@@ -165,7 +165,7 @@ export function TileStage({
           </div>,
         )
       )}
-      {/* After the canvas, which hides it once the picture is fitted (Tile.css). Only as the
+      {/* After the canvas, which hides it once the picture is fitted (TileStage.css). Only as the
           tile nears the view, as its picture starts loading: a skeleton pulses on every frame,
           and a gallery's tiles far from the view would keep the page busy restyling them. */}
       {nearing && <TileSkeleton />}
@@ -175,7 +175,7 @@ export function TileStage({
 
 /**
  * A canvas drawn at its own size, in a box the stage's size that fades out what is cut off at its
- * bottom and its end (Tile.css): a mask on the box rather than on the canvas, whose own box
+ * bottom and its end (TileStage.css): a mask on the box rather than on the canvas, whose own box
  * doesn't hold what opens past it, and not on the stage, whose fill stays whole.
  */
 const crop = (ownSize: boolean, canvas: ReactNode) =>

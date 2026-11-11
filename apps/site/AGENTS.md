@@ -41,7 +41,7 @@ Each has one folder in `apps/site/src`:
 | Docs          | The part under /docs, and nothing else                           | `docs-` classes, `Docs*` names                       |
 
 - Give every folder of `apps/site/src` its row above.
-- Put a style sheet beside the code it styles, named after it, and import it in `styles/index.css` at its place, never from a module: the site's sheets are outside cascade layers, so their order decides between rules that weigh the same, and one list keeps that order whatever loads first.
+- Put a style sheet beside the code it styles, named after the module it styles, or after what it styles where several modules share it, such as `figures/Stage.css`, the stage every figure sits on; import it in `styles/index.css` at its place, never from a module: the site's sheets are outside cascade layers, so their order decides between rules that weigh the same, and one list keeps that order whatever loads first.
 - Other words for these, such as preview, demo, showcase and sample, are older names; don't add new uses. ESLint rejects a name the site declares with preview in it.
 - A playback depends on its example: change or rename the two together.
 

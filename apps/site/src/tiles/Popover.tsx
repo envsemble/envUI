@@ -33,7 +33,7 @@ const script: PointerStep[] = [
 const periods = { monthly: 'Monthly', yearly: 'Yearly' } as const;
 type Period = keyof typeof periods;
 
-/** The tiles' window (Tile.css), as an overlay: drawn at the overlays' one scale. */
+/** The tiles' window (TileStage.css), as an overlay: drawn at the overlays' one scale. */
 export const tileWindow: TileWindow = { overlay: true };
 
 /**

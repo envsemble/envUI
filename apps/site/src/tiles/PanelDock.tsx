@@ -51,7 +51,7 @@ const start: PanelDockPanel[] = [
 const region = { position: 'relative', blockSize: '100%', overflow: 'hidden' } as const;
 
 /**
- * The tiles' window (Tile.css), as a piece of an application's frame: it fills its card in a
+ * The tiles' window (TileStage.css), as a piece of an application's frame: it fills its card in a
  * browser's window (`app`).
  */
 export const tileWindow: TileWindow = { app: {} };

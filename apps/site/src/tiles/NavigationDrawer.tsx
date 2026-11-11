@@ -66,7 +66,7 @@ const scripts = { wide: scriptOf(wide), narrow: scriptOf(narrow) };
 const frameOf = (width: number) =>
   ({ inlineSize: `${width}rem`, blockSize: '6.5rem', display: 'flex' }) as const;
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 17, height: 12.75 };
 
 /**

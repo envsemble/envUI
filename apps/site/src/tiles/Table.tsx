@@ -43,7 +43,7 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 16, height: 12 };
 
 /** A table of projects and their open tasks, sortable by the tasks, whose rows can be chosen. */

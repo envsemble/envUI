@@ -39,7 +39,7 @@ const places = [
 ];
 
 /**
- * The tiles' window (Tile.css), as a piece of an application's frame: it fills its card in a
+ * The tiles' window (TileStage.css), as a piece of an application's frame: it fills its card in a
  * browser's window (`app`).
  */
 export const tileWindow: TileWindow = { app: {} };

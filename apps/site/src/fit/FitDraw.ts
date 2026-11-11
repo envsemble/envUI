@@ -120,13 +120,13 @@ export const rowSelector = [
   '.env-dialog-content .env-checkbox',
 ].join(', ');
 
-/** The length, in px, of the crop's bottom fade, from `--catalogue-crop-fade` (Tile.css). */
+/** The length, in px, of the crop's bottom fade, from `--catalogue-crop-fade` (TileStage.css). */
 export const cropFade = (crop: Element) =>
   parseFloat(getComputedStyle(crop).getPropertyValue('--catalogue-crop-fade')) * remPixels();
 
 /**
  * Fades a picture out at the crop's bottom, as a drawer's list does, instead of ending in a slice
- * through a row (Tile.css). Rows (rowSelector) that reach past the bottom but would show only a
+ * through a row (TileStage.css). Rows (rowSelector) that reach past the bottom but would show only a
  * sliver, in the faint end of the fade or in a fade too short to fade them out, are hidden whole
  * (`data-catalogue-past`). A row that holds other rows, such as a tree's branch, is left to them.
  *
@@ -205,7 +205,7 @@ export function cropTrim(
 /**
  * Marks each region that scrolls while a tile plays, such as a page's body in its box, with
  * `data-catalogue-runs-on` while text or a picture continues past its bottom. The mark fades the
- * region's bottom (Tile.css), as the crop fades a cut picture, instead of ending in a slice through
+ * region's bottom (TileStage.css), as the crop fades a cut picture, instead of ending in a slice through
  * a line. Only the bottom fades, so a sticky header at the top is not cut. Not marked: regions
  * shorter than 24 px, regions that do not scroll, regions still opening or closing (moving), and
  * regions that already fade their own edges, such as a time picker's wheel.
