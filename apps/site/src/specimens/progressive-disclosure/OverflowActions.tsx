@@ -11,24 +11,24 @@ const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-
  * choosing nothing.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: more, x: 0.5, y: 2.5 },
   { to: more, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: item(1), x: 0.4, duration: 450 },
-  { wait: 500 },
-  { to: item(2), x: 0.4, duration: 250 },
-  { wait: 500 },
-  { to: item(3), x: 0.4, duration: 250 },
-  { wait: 500 },
-  { to: item(4), x: 0.4, duration: 300 },
-  { wait: 600 },
-  { key: 'Escape', on: item(4) },
   { wait: 300 },
+  { to: item(2), x: 0.4, duration: 250 },
+  { wait: 300 },
+  { to: item(3), x: 0.4, duration: 250 },
+  { wait: 300 },
+  { to: item(4), x: 0.4, duration: 300 },
+  { wait: 360 },
+  { key: 'Escape', on: item(4) },
+  { wait: 180 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Opening() {

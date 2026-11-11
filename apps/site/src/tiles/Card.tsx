@@ -9,15 +9,15 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
  * pointer leaves.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-card', x: 0.6, y: 0.55 },
-  { wait: 1100 },
+  { wait: 660 },
   { press: true },
-  { wait: 600 },
+  { wait: 360 },
   { release: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 1200 },
+  { wait: 720 },
 ];
 
 /**

@@ -11,19 +11,19 @@ const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-
  * menu's items, and the menu closes.
  */
 const script: PointerStep[] = [
-  { wait: 600 },
+  { wait: 360 },
   { to: row(2), x: 0.3, y: 0.55 },
-  { wait: 500 },
-  { rightClick: true },
-  { wait: 600 },
-  { to: item(1), x: 0.35, duration: 300 },
-  { wait: 650 },
-  { to: item(2), x: 0.35, duration: 300 },
-  { wait: 750 },
-  { key: 'Escape', on: '.env-menu' },
   { wait: 300 },
+  { rightClick: true },
+  { wait: 360 },
+  { to: item(1), x: 0.35, duration: 300 },
+  { wait: 390 },
+  { to: item(2), x: 0.35, duration: 300 },
+  { wait: 450 },
+  { key: 'Escape', on: '.env-menu' },
+  { wait: 180 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function RightClicking() {

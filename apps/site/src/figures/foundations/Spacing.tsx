@@ -201,7 +201,7 @@ const scales: readonly ThemeScale[] = ['comfortable', 'compact'];
  */
 function ScaleSteps({ legend }: FigureWords) {
   const theme = useTheme();
-  const step = useTimeline(scales.map(() => 4200));
+  const step = useTimeline(scales.map(() => 2520));
   return (
     <>
       <CornerLabel>{legend[step]?.name}</CornerLabel>
@@ -262,7 +262,7 @@ function ReportsTable({ density }: { density: RowDensity }) {
  * named in the corner. A copy at the regular density, unseen, keeps the figure at its height.
  */
 function RowSteps({ legend }: FigureWords) {
-  const step = useTimeline(densities.map(() => 3600));
+  const step = useTimeline(densities.map(() => 2160));
   return (
     <>
       <CornerLabel>{legend[step]?.name}</CornerLabel>
@@ -293,31 +293,31 @@ const reviewer = (index: number) => `.env-combobox-item:nth-child(${index} of .e
  * container widens again, and the figure is back at its start.
  */
 const tallScript: PointerStep[] = [
-  { wait: 700 },
+  { wait: 420 },
   { to: reviewersInput, x: 0.5, y: 0.8 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   ...[1, 2, 3, 4].flatMap((index): PointerStep[] => [
     { to: reviewer(index), x: 0.4, duration: 350 },
-    { wait: 250 },
+    { wait: 150 },
     { click: true },
-    { wait: 550 },
+    { wait: 330 },
   ]),
   { to: '.catalogue-tall .env-combobox-trigger', duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { to: '.catalogue-tall-save', x: 0.5, y: 0.5, duration: 600 },
   { cue: 'narrow' },
-  { wait: 2600 },
+  { wait: 1560 },
   { to: '.catalogue-tall .env-combobox-clear', duration: 600 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
   { cue: 'widen' },
-  { wait: 1200 },
+  { wait: 720 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 /** One line tall, round ends; taller, as it fills or wraps, the same corners make a rectangle. */

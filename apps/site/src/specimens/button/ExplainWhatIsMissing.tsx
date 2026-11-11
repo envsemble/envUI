@@ -12,22 +12,22 @@ const create = '.env-button';
  * empties the form.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: create, x: 0.55, y: 0.6 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1500 },
+  { wait: 900 },
   { to: field, x: 0.3, duration: 500 },
   { click: true },
-  { wait: 200 },
+  { wait: 120 },
   { type: 'Spring launch', into: field, every: 90 },
-  { wait: 500 },
+  { wait: 300 },
   { to: create, x: 0.55, y: 0.6, duration: 500 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Creating() {

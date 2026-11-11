@@ -7,7 +7,7 @@ import { MotionStage } from '../../figures/MotionStage';
  * The card as its skeleton a moment, over two steps, as a timeline's first step is cut short as
  * it starts; then filled in, and a while to read it.
  */
-const steps = [600, 900, 3000];
+const steps = [360, 540, 1800];
 
 function Loading() {
   const loading = useTimeline(steps) < 2;

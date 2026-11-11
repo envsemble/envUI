@@ -7,17 +7,17 @@ const time = (index: number) => `.env-text:nth-child(${index}) > .env-relative-t
 
 /* The pointer rests on each time in turn, and its tooltip gives the exact date and time. */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: time(1), x: 0.5, y: 0.6 },
-  { wait: 2000 },
+  { wait: 1200 },
   { to: time(2), x: 0.5, y: 0.6, duration: 500 },
-  { wait: 1800 },
+  { wait: 1080 },
   { to: time(3), x: 0.5, y: 0.6, duration: 500 },
-  { wait: 1800 },
+  { wait: 1080 },
   { to: time(4), x: 0.5, y: 0.6, duration: 500 },
-  { wait: 1800 },
+  { wait: 1080 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Hovering() {

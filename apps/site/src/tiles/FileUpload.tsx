@@ -10,23 +10,23 @@ import type { TileWindow } from './Tiles';
  * it uploads, leaving the files as they began.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '[aria-label="Remove team-photo.jpg"]', duration: 600 },
-  { wait: 700 },
+  { wait: 420 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   // Picks the photo up again where it was, its chip beside the pointer, and carries it over the
   // zone, which shows it would accept it, so the drop is seen to bring it back.
   { carry: 'team-photo.jpg', as: 'image/jpeg' },
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-drop-zone-target', x: 0.6, y: 0.55, duration: 1100 },
-  { wait: 700 },
+  { wait: 420 },
   { drop: true },
-  { wait: 200 },
+  { wait: 120 },
   // The pointer moves off the zone while the photo uploads, for about two seconds, and the files
   // rest as they began for about three more, so the upload is seen to finish before the loop.
   { leave: true },
-  { wait: 5800 },
+  { wait: 3480 },
 ];
 
 /** How much of the photo has uploaded, in MB, out of 1.1. */

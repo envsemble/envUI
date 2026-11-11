@@ -4,7 +4,7 @@ import { MotionStage } from '../../figures/MotionStage';
 
 /** The inset steps up from 4 to 8, down to none and back, a beat at each. */
 const insets: SpaceStep[] = [4, 8, 4, 0];
-const steps = [1500, 1500, 1500, 1500];
+const steps = [900, 900, 900, 900];
 
 /*
  * The overview's region (examples/box/InsetRegion.tsx), its edge dashed, as a Box never paints:

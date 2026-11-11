@@ -5,21 +5,20 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 
 /**
  * Hovers, presses and releases the button, which saves: pending a moment, then ready again. That
- * holds for about a second before the pointer leaves, and rests a while before it plays again (a
- * script's waits run at waitPace, PointerPlan.ts).
+ * holds for about a second before the pointer leaves, and rests a while before it plays again.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-button' },
-  { wait: 600 },
+  { wait: 360 },
   { click: true },
-  { wait: 80 },
+  { wait: 48 },
   // Just below the button it pressed, toward the stage's middle, so its spinner shows clearly while
   // it saves and the pointer stays well inside the stage.
   { to: '.env-button', x: 0.72, y: 1.4, duration: 300 },
-  { wait: 3700 },
+  { wait: 2220 },
   { leave: true },
-  { wait: 1500 },
+  { wait: 900 },
 ];
 
 /** A primary button, which saves. */

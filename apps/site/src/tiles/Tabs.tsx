@@ -9,17 +9,17 @@ const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-ta
 
 /** Chooses Files, the indicator and the panel following, then Plan again. */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: tab(2) },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1600 },
+  { wait: 960 },
   { to: tab(1), duration: 400 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 2500 },
+  { wait: 1500 },
 ];
 
 /** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */

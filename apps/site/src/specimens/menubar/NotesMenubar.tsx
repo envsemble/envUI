@@ -11,19 +11,19 @@ const trigger = (index: number) =>
  * time, without another press. It closes View's with a press on its trigger.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: trigger(1), x: 0.5, y: 0.6 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: trigger(2), x: 0.5, y: 0.6, duration: 450 },
-  { wait: 1100 },
+  { wait: 660 },
   { to: trigger(3), x: 0.5, y: 0.6, duration: 450 },
-  { wait: 1100 },
+  { wait: 660 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Sliding() {

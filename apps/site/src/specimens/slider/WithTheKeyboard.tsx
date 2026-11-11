@@ -11,15 +11,15 @@ const thumb = '.env-slider-thumb input';
  * keys step the value up and back down, with no ticks; and focus moves on.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { focus: thumb },
-  { wait: 900 },
-  ...Array.from({ length: 3 }, (): PointerStep[] => [{ key: 'ArrowRight' }, { wait: 500 }]).flat(),
-  { wait: 500 },
-  ...Array.from({ length: 3 }, (): PointerStep[] => [{ key: 'ArrowLeft' }, { wait: 500 }]).flat(),
-  { wait: 600 },
+  { wait: 540 },
+  ...Array.from({ length: 3 }, (): PointerStep[] => [{ key: 'ArrowRight' }, { wait: 300 }]).flat(),
+  { wait: 300 },
+  ...Array.from({ length: 3 }, (): PointerStep[] => [{ key: 'ArrowLeft' }, { wait: 300 }]).flat(),
+  { wait: 360 },
   { blur: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Stepped() {

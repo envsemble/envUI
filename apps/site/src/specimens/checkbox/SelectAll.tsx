@@ -14,25 +14,25 @@ const child = (index: number) =>
  * project, and the parent is mixed again, where it began.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: child(2) },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 450 },
+  { wait: 270 },
   { to: child(3), duration: 300 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: parent, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: child(1), duration: 400 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Selecting() {

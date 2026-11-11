@@ -12,23 +12,23 @@ const field = '.env-composer-input';
  * the first has gone. The example is drawn anew at the end, which clears its count of replies.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: field, x: 0.3, y: 0.5 },
   { wait: 300 },
+  { to: field, x: 0.3, y: 0.5 },
+  { wait: 180 },
   { click: true },
-  { wait: 250 },
+  { wait: 150 },
   { type: 'Looks good to me.', into: field, every: 60 },
-  { wait: 450 },
+  { wait: 270 },
   { key: 'Enter', on: field },
   { leave: true },
   // The send takes 1.5 s; the next reply is typed meanwhile.
-  { wait: 400 },
+  { wait: 240 },
   { type: 'Can we move the review to Friday?', into: field, every: 60 },
-  { wait: 1200 },
+  { wait: 720 },
   { key: 'Enter', on: field },
-  { wait: 4200 },
+  { wait: 2520 },
   { cue: 'again' },
-  { wait: 300 },
+  { wait: 180 },
 ];
 
 function Replying() {

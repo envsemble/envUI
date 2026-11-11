@@ -11,18 +11,18 @@ const cancel = '.env-dialog-actions .env-button:first-child';
  * deletes anything. A while to read it, and the pointer cancels.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: remove, x: 0.5, y: 2.4 },
   { to: remove, x: 0.5, y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 2600 },
+  { wait: 1560 },
   { to: cancel, x: 0.5, y: 0.6, duration: 650 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Confirming() {

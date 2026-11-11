@@ -8,17 +8,17 @@ import { MotionStage } from '../../figures/MotionStage';
  * header, which stays, and back up to January.
  */
 const script: PointerStep[] = [
-  { wait: 600 },
+  { wait: 360 },
   { to: '.env-table-region', x: 0.45, y: 0.6 },
-  { wait: 400 },
+  { wait: 240 },
   { wheel: 150, duration: 1100 },
-  { wait: 700 },
+  { wait: 420 },
   { wheel: 150, duration: 1100 },
-  { wait: 1100 },
+  { wait: 660 },
   { wheel: -300, duration: 1500 },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Scrolling() {

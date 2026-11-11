@@ -12,25 +12,25 @@ const back = '.env-panes-back .env-button';
  * the message chosen as it began.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: message('budget'), x: 0.4 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { to: back, duration: 600 },
-  { wait: 300 },
-  { click: true },
-  { wait: 1000 },
-  { to: message('launch'), x: 0.4, duration: 600 },
-  { wait: 300 },
-  { click: true },
-  { wait: 1500 },
-  { to: back, duration: 500 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
   { wait: 600 },
-  { leave: true },
+  { to: message('launch'), x: 0.4, duration: 600 },
+  { wait: 180 },
+  { click: true },
   { wait: 900 },
+  { to: back, duration: 500 },
+  { wait: 180 },
+  { click: true },
+  { wait: 360 },
+  { leave: true },
+  { wait: 540 },
 ];
 
 function Reading() {

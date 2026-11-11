@@ -13,19 +13,19 @@ import { Renew } from '../../motion/Renew';
 const script: PointerStep[] = [
   // A first act, so the wait after it is whole: the reply shows as Sending a moment.
   { cue: 'shown' },
-  { wait: 1400 },
+  { wait: 840 },
   { cue: 'failed' },
-  { wait: 700 },
+  { wait: 420 },
   { to: '.env-message-actions .env-button', x: 0.5, y: 0.6, duration: 0 },
-  { wait: 600 },
+  { wait: 360 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 1200 },
+  { wait: 720 },
   { cue: 'sent' },
-  { wait: 2000 },
+  { wait: 1200 },
   { cue: 'renew' },
-  { wait: 450 },
+  { wait: 270 },
 ];
 
 function Delivering() {

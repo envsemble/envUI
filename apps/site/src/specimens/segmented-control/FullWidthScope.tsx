@@ -14,16 +14,16 @@ const widths = [26, 14];
  * widens again.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { cue: 'narrow' },
   // The frame's way from 26 to 14 rem, and a moment at the narrow end.
-  { wait: 2000 },
+  { wait: 1200 },
   { to: '.env-segmented-control-item', x: 0.45, y: 0.55 },
-  { wait: 1700 },
+  { wait: 1020 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
   { cue: 'wide' },
-  { wait: 2400 },
+  { wait: 1440 },
 ];
 
 function Narrowing() {

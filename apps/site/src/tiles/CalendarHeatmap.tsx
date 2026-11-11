@@ -20,17 +20,17 @@ const day = (date: string) => `.env-calendar-heatmap-day[data-date="${date}"]`;
  * tooltip opens at once.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: day('2026-02-25') },
-  { wait: 1000 },
-  { to: day('2026-03-04'), duration: 350 },
-  { wait: 700 },
-  { to: day('2026-03-11'), duration: 350 },
-  { wait: 700 },
-  { to: day('2026-03-13'), duration: 400 },
-  { wait: 900 },
-  { leave: true },
   { wait: 600 },
+  { to: day('2026-03-04'), duration: 350 },
+  { wait: 420 },
+  { to: day('2026-03-11'), duration: 350 },
+  { wait: 420 },
+  { to: day('2026-03-13'), duration: 400 },
+  { wait: 540 },
+  { leave: true },
+  { wait: 360 },
 ];
 
 const edits = (value: number) => `${value} ${value === 1 ? 'edit' : 'edits'}`;

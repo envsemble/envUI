@@ -7,10 +7,9 @@ import { MotionStage } from '../../figures/MotionStage';
  * Two loads that start together, on one timeline: a quick one, whose project lands at 0.1 s,
  * before the skeleton's delay of 0.2 s has passed, so no skeleton flashes; and a slow one, whose
  * skeleton shows once the delay has passed, until its project lands at 1.6 s. A while to read, and
- * both fade to start again. A timeline's steps are paced to 0.6 of what they say, so each is
- * written as its real length over 0.6.
+ * both fade to start again.
  */
-const steps = [170, 170, 2330, 4200, 420];
+const steps = [102, 102, 1398, 2520, 252];
 
 interface Load {
   arrives: string;

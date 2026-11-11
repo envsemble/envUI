@@ -8,7 +8,7 @@ import { useRounds } from './Rounds';
  * the next upload starts from nothing, back to 40%.
  */
 const shares = [40, 58, 73, 88, 100, 100, 0, 20];
-const steps = [900, 800, 800, 800, 1700, 350, 600, 800];
+const steps = [540, 480, 480, 480, 1020, 210, 360, 480];
 
 function Uploading() {
   const step = useTimeline(steps);

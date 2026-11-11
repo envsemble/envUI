@@ -13,23 +13,23 @@ const field = '.env-composer-input';
  * anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: field, x: 0.3, y: 0.5 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
   { type: 'Yes, Northwind Hall from six.', into: field, every: 60 },
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-composer-action', x: 0.5, y: 0.55, duration: 400 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { to: '.env-message-actions .env-button', x: 0.5, y: 0.6, duration: 600 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1900 },
+  { wait: 1140 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Sending() {

@@ -11,20 +11,20 @@ const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-
  * and the menu closes.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: trigger, x: 2.2, y: 0.55 },
   // Pressed as it arrives, before the button's tooltip would open.
   { to: trigger, x: 0.5, y: 0.55, duration: 450 },
   { click: true },
-  { wait: 800 },
+  { wait: 480 },
   { to: item(1), x: 0.4, duration: 400 },
-  { wait: 700 },
+  { wait: 420 },
   { to: item(2), x: 0.4, duration: 300 },
-  { wait: 900 },
+  { wait: 540 },
   { key: 'Escape', on: '.env-menu' },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Opening() {

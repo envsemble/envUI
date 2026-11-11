@@ -56,7 +56,7 @@ const badgeVariants: readonly { variant: BadgeVariant; name: string }[] = [
 ];
 
 /** How long the badges stay in each variant, in ms. */
-const variantStep = 2000;
+const variantStep = 1200;
 
 /**
  * Every tone's badge side by side, all in one variant at a time: soft,

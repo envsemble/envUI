@@ -76,7 +76,7 @@ function useTextFit() {
  * sizes its actions move under the name, and then its labels above their values.
  */
 function TextSizeSteps() {
-  const step = useTimeline(sizes.map(() => 3000));
+  const step = useTimeline(sizes.map(() => 1800));
   const [place, fit] = useTextFit();
   return (
     <div ref={place} className="catalogue-class-text-place">

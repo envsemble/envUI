@@ -12,17 +12,17 @@ const notesTab = '.env-panel-dock-tab[data-panel-id="notes"] .env-panel-dock-tab
  * each held a while once it has settled, so neither state is seen only in motion.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: minimize, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: notesTab, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 450 },
+  { wait: 270 },
 ];
 
 /**

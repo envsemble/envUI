@@ -18,22 +18,22 @@ const input = '.env-combobox-input';
  * list open, with a short fade (Renew).
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: input, x: 0.3 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { type: 'do', into: input, every: 260 },
-  { wait: 700 },
+  { wait: 420 },
   { to: '.env-combobox-item', duration: 400 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
   { blur: true },
-  { wait: 2000 },
+  { wait: 1200 },
   { cue: 'renew' },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /**

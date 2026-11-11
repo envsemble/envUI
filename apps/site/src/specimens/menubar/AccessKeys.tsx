@@ -13,19 +13,19 @@ const note = 'textarea';
  * its first item highlighted, and Esc closes it again.
  */
 const script: PointerStep[] = [
-  { wait: 600 },
+  { wait: 360 },
   { cue: 'Alt' },
   { keyDown: 'Alt', on: note },
-  { wait: 1100 },
+  { wait: 660 },
   { cue: 'Alt E' },
   { key: 'e', on: note },
   { keyUp: 'Alt', on: note },
-  { wait: 1600 },
+  { wait: 960 },
   { cue: 'Esc' },
   { key: 'Escape', on: '.env-menu' },
-  { wait: 900 },
+  { wait: 540 },
   { cue: 'none' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Holding() {

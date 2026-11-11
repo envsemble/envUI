@@ -13,18 +13,18 @@ const toggle = (section: string) =>
  * its pages show under it; then it closes Projects by its own. Then the example starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: toggle('Reports'), x: 0.5, y: 0.5 },
-  { wait: 450 },
+  { wait: 270 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: toggle('Projects'), x: 0.5, y: 0.5, duration: 600 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1600 },
+  { wait: 960 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Browsing() {

@@ -17,17 +17,17 @@ const action = '.env-popover .env-button';
  * before it plays again, when it switches back.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: action, x: 0.4, y: 0.6 },
-  { wait: 600 },
+  { wait: 360 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: trigger, x: 0.6, y: 0.7, duration: 400 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 3500 },
+  { wait: 2100 },
 ];
 
 const periods = { monthly: 'Monthly', yearly: 'Yearly' } as const;

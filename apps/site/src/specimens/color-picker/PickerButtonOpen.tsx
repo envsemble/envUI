@@ -15,26 +15,26 @@ const at = (degrees: number) => ({ x: 0.5, y: 1 - degrees / 360 });
  * with, and closes the picker with Escape.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: button, x: 0.4 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { to: `${hue} .env-color-picker-thumb`, duration: 500 },
-  { wait: 200 },
+  { wait: 120 },
   { press: true },
   { to: hue, ...at(262), duration: 800 },
-  { wait: 300 },
+  { wait: 180 },
   { to: hue, ...at(32), duration: 1100 },
-  { wait: 300 },
+  { wait: 180 },
   { to: hue, ...at(168), duration: 800 },
   { release: true },
-  { wait: 400 },
-  { wait: 200 },
+  { wait: 240 },
+  { wait: 120 },
   { key: 'Escape', on: '.env-color-picker-popover' },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Picking() {

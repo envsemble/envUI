@@ -11,21 +11,21 @@ const swatch = (index: number) =>
  * Violet, the color it began with.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: swatch(1) },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: swatch(4), duration: 400 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: swatch(3), duration: 300 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Choosing() {

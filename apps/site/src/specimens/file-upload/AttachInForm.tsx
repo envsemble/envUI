@@ -15,27 +15,27 @@ const send = 'button[type="submit"]';
  * the report goes with both files. Then the form starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { carry: 'broken-gate.jpg', as: 'image/jpeg' },
   { to: zone, x: 0.9, y: 1.4 },
   { to: zone, x: 0.55, y: 0.55, duration: 500 },
-  { wait: 250 },
+  { wait: 150 },
   { drop: true },
-  { wait: 150 },
+  { wait: 90 },
   { to: details, x: 0.5, y: 0.45, duration: 550 },
-  { wait: 150 },
+  { wait: 90 },
   { click: true },
-  { wait: 100 },
+  { wait: 60 },
   { type: 'The side gate is broken.', into: details, every: 70 },
-  { wait: 250 },
+  { wait: 150 },
   { to: send, x: 0.5, y: 0.55, duration: 600 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 4300 },
+  { wait: 2580 },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Sending() {

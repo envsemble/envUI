@@ -15,25 +15,25 @@ const cues: Record<string, number> = { compact: 0, medium: 1, expanded: 2 };
  * the details sit beside the report; then it narrows again.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: '.env-panes-trigger', x: 0.55, y: 0.6 },
-  { wait: 350 },
-  { click: true },
-  { wait: 2000 },
-  { to: '.env-panes-close .env-button', duration: 600 },
   { wait: 300 },
+  { to: '.env-panes-trigger', x: 0.55, y: 0.6 },
+  { wait: 210 },
   { click: true },
-  { wait: 600 },
+  { wait: 1200 },
+  { to: '.env-panes-close .env-button', duration: 600 },
+  { wait: 180 },
+  { click: true },
+  { wait: 360 },
   { leave: true },
   { cue: 'medium' },
   // The frame's way from 24 to 44 rem, and a moment there.
-  { wait: 5000 },
+  { wait: 3000 },
   { cue: 'expanded' },
-  { wait: 4300 },
+  { wait: 2580 },
   { cue: 'medium' },
-  { wait: 4000 },
+  { wait: 2400 },
   { cue: 'compact' },
-  { wait: 4500 },
+  { wait: 2700 },
 ];
 
 function Widening() {

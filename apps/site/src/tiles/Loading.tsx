@@ -14,7 +14,7 @@ export const tileWindow: TileWindow = { width: 17, height: 12.75 };
  */
 export default function LoadingTile() {
   // Across the loop: the still, loading, the item, loading again, and the item a while longer.
-  const step = useTimeline([400, 2000, 2700, 2000, 4000]);
+  const step = useTimeline([240, 1200, 1620, 1200, 2400]);
   const loaded = step % 2 === 0;
   return (
     <Card

@@ -35,25 +35,25 @@ const handleAt = (sizes: typeof wide, width: number) => (width - 0.3) / sizes.fr
  * it.
  */
 const scriptOf = (sizes: typeof wide): PointerStep[] => [
-  { wait: 300 },
+  { wait: 180 },
   { to: item(2) },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: item(1), duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: frameSelector, x: handleAt(sizes, sizes.width), y: 0.5, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { press: true },
   { to: frameSelector, x: handleAt(sizes, sizes.narrowed), y: 0.5, duration: 900 },
-  { wait: 1500 },
+  { wait: 900 },
   { to: frameSelector, x: handleAt(sizes, sizes.width), y: 0.5, duration: 800 },
   { release: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 const scripts = { wide: scriptOf(wide), narrow: scriptOf(narrow) };
 

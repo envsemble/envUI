@@ -11,15 +11,15 @@ import type { TileWindow } from './Tiles';
  * stack.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-toast-action' },
-  { wait: 700 },
+  { wait: 420 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 2600 },
+  { wait: 1560 },
   { cue: 'again' },
-  { wait: 2600 },
+  { wait: 1560 },
 ];
 
 /**

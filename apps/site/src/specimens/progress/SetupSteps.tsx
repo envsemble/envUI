@@ -5,7 +5,7 @@ import { useRounds } from './Rounds';
 
 /* The steps fill one at a time to the fourth; the bar fades and starts again from the first. */
 const values = [2, 3, 4, 4, 1];
-const steps = [1100, 1100, 1700, 350, 1100];
+const steps = [660, 660, 1020, 210, 660];
 
 function Filling() {
   const step = useTimeline(steps);

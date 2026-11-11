@@ -12,17 +12,17 @@ const close = '.env-sheet [aria-label="Close document"]';
  * stays as it is. It reads a moment, and closes the panel.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: link, x: 0.4, y: 0.6 },
-  { wait: 450 },
-  { click: true },
-  { wait: 1900 },
-  { to: close, duration: 650 },
   { wait: 300 },
+  { to: link, x: 0.4, y: 0.6 },
+  { wait: 270 },
   { click: true },
-  { wait: 700 },
+  { wait: 1140 },
+  { to: close, duration: 650 },
+  { wait: 180 },
+  { click: true },
+  { wait: 420 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 function Opening() {

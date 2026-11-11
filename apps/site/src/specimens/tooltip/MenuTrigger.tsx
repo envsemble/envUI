@@ -12,18 +12,18 @@ const more = '.env-icon-button[aria-label="More actions"]';
  * opens with the tooltip closed, as long as the menu is open. Esc closes the menu.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: more, x: 0.5, y: 2.4 },
   { to: more, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 1800 },
+  { wait: 1080 },
   { click: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { cue: 'escape' },
   { key: 'Escape', on: '.env-menu' },
   { leave: true },
-  { wait: 1200 },
+  { wait: 720 },
   { cue: 'none' },
-  { wait: 300 },
+  { wait: 180 },
 ];
 
 function Opening() {

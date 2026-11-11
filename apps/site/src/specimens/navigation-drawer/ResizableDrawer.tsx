@@ -20,26 +20,26 @@ const install = '.env-navigation-drawer-item[href="/guide/install"]';
  * figure forgets it as it starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: track, x: at(17.5), y: 0.5 },
-  { wait: 450 },
+  { wait: 270 },
   { press: true },
   { to: track, x: at(15), y: 0.5, duration: 900 },
-  { wait: 200 },
+  { wait: 120 },
   { release: true },
-  { wait: 300 },
+  { wait: 180 },
   { to: install, x: 0.45, y: 0.55, duration: 600 },
-  { wait: 2600 },
+  { wait: 1560 },
   { to: track, x: at(15), y: 0.5, duration: 600 },
-  { wait: 300 },
+  { wait: 180 },
   { press: true },
   { to: track, x: at(17.5), y: 0.5, duration: 800 },
-  { wait: 200 },
+  { wait: 120 },
   { release: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 const storageKey = 'guide-drawer-width';

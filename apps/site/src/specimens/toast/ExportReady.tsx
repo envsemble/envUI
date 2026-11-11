@@ -10,20 +10,20 @@ const dismiss = '.env-toast .env-toast-dismiss';
  * notification stays, however long it waits, until the pointer dismisses it.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-button', x: 0.5, y: 2 },
   { to: '.env-button', x: 0.55, y: 0.55, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 7500 },
+  { wait: 4500 },
   { to: dismiss, x: 0.5, y: 0.5 },
-  { wait: 500 },
-  { click: true },
   { wait: 300 },
+  { click: true },
+  { wait: 180 },
   { leave: true },
-  { wait: 1200 },
+  { wait: 720 },
 ];
 
 function Exporting() {

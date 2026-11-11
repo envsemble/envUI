@@ -10,19 +10,19 @@ const search = 'input[type="search"]';
  * types "roadmap" into the search again, and the list empties into No matching projects.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.5, y: 2 },
   { to: '.env-button', x: 0.5, y: 0.6, duration: 450 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { to: search, x: 0.4, y: 0.5, duration: 600 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
   { type: 'roadmap', into: search, every: 110 },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Searching() {

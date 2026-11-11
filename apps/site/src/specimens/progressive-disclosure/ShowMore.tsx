@@ -11,23 +11,23 @@ const toggle = '.env-button[aria-expanded]';
  * again.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: toggle, x: 0.5, y: 2.2 },
   { to: toggle, x: 0.5, y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   // Onto the list, which the wheel then scrolls, rather than the button the press redrew.
   { to: '.env-list-item:nth-child(4 of .env-list-item)', x: 0.6, duration: 300 },
-  { wait: 200 },
+  { wait: 120 },
   { wheel: 600, duration: 1400 },
-  { wait: 500 },
-  { to: toggle, x: 0.5, y: 0.6, duration: 400 },
   { wait: 300 },
+  { to: toggle, x: 0.5, y: 0.6, duration: 400 },
+  { wait: 180 },
   { click: true },
-  { wait: 1000 },
+  { wait: 600 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Showing() {

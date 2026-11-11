@@ -6,11 +6,11 @@ import type { TileWindow } from '../Tiles';
 
 /** The pointer on the page's action, which takes its hover fill. */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-page-header .env-button', x: 0.4 },
-  { wait: 1400 },
+  { wait: 840 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 /** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */

@@ -20,23 +20,23 @@ const sort = '.env-table-sort-button';
  * selection staying on its rows; then clears the row again.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: select('Website refresh') },
-  { wait: 400 },
-  { click: true },
-  { wait: 1000 },
-  { to: sort, duration: 500 },
-  { wait: 300 },
-  { click: true },
-  { wait: 1300 },
-  { click: true },
-  { wait: 1000 },
-  { to: select('Website refresh'), duration: 500 },
-  { wait: 300 },
+  { wait: 240 },
   { click: true },
   { wait: 600 },
+  { to: sort, duration: 500 },
+  { wait: 180 },
+  { click: true },
+  { wait: 780 },
+  { click: true },
+  { wait: 600 },
+  { to: select('Website refresh'), duration: 500 },
+  { wait: 180 },
+  { click: true },
+  { wait: 360 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 const count = (selected: number) => (selected === 1 ? '1 project' : `${selected} projects`);

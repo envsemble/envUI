@@ -15,28 +15,28 @@ const room = '[data-catalogue-sizing-room]';
  * plan. Then it writes a reply of three lines, and Reply grows with each. The fields start anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: edge, x: 0.5, y: 2.5 },
   { to: edge, x: 0.5, y: 0.5, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { press: true },
   { to: room, x: 0.5, y: 0.645, duration: 800 },
-  { wait: 150 },
+  { wait: 90 },
   { release: true },
-  { wait: 600 },
+  { wait: 360 },
   { to: reply, x: 0.4, y: 0.5, duration: 500 },
-  { wait: 150 },
+  { wait: 90 },
   { click: true },
-  { wait: 250 },
+  { wait: 150 },
   { type: 'Thanks, Sam.\n', into: reply, every: 80 },
   { type: 'Tuesday works for the review.\n', into: reply, every: 70 },
   { type: 'I’ll bring the budget.', into: reply, every: 70 },
-  { wait: 500 },
+  { wait: 300 },
   { blur: true },
   { leave: true },
-  { wait: 1400 },
+  { wait: 840 },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Sizing() {

@@ -12,22 +12,22 @@ import { Renew } from '../../motion/Renew';
  * notification goes. Then the example starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.5, y: 2.4 },
   { to: '.env-button', x: 0.5, y: 0.6, duration: 450 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-button', x: 1.6, y: 2.4, duration: 500 },
   // The export's time, and a moment with the notification and the link.
-  { wait: 6400 },
+  { wait: 3840 },
   { to: '.env-toast-action', x: 0.5, y: 0.55, duration: 700 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1000 },
+  { wait: 600 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Exporting() {

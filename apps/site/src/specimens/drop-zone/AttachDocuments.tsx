@@ -13,21 +13,21 @@ const zone = '.env-drop-zone-target';
  * starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { carry: 'Launch brief.pdf', as: 'application/pdf' },
   { carry: 'Budget 2027.xlsx', as: 'application/vnd.ms-excel' },
   { to: zone, x: 1.1, y: 1.6 },
   { to: zone, x: 0.55, y: 0.55, duration: 700 },
-  { wait: 600 },
+  { wait: 360 },
   { drop: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: '.env-list-item:first-child .env-button', x: 0.5, y: 0.55, duration: 650 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Attaching() {

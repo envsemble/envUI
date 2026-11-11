@@ -24,20 +24,20 @@ const events = [
  * where it covers no other time.
  */
 const script: PointerStep[] = [
-  { wait: 1000 },
-  { cue: 'minute' },
-  { wait: 900 },
-  { to: '[data-event="Saved"] .env-relative-time', x: 0.5 },
-  { wait: 2800 },
-  { leave: true },
   { wait: 600 },
+  { cue: 'minute' },
+  { wait: 540 },
+  { to: '[data-event="Saved"] .env-relative-time', x: 0.5 },
+  { wait: 1680 },
+  { leave: true },
+  { wait: 360 },
 ];
 
 /**
  * In a phone's narrower tile, only the minute passing: a time's tooltip, as wide as its date, would
  * run past the stage's end from the times' column there.
  */
-const narrowScript: PointerStep[] = [{ wait: 1000 }, { cue: 'minute' }, { wait: 4000 }];
+const narrowScript: PointerStep[] = [{ wait: 600 }, { cue: 'minute' }, { wait: 2400 }];
 
 /**
  * When a document's last events happened, each as a time relative to now beside what happened. In a

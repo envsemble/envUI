@@ -13,7 +13,7 @@ const densities = [
 
 function Densities() {
   // Each density held a moment: from Medium up to Large, down to Extra small and back.
-  const step = useTimeline([1600, 1600, 1100, 1300, 1600, 1300]);
+  const step = useTimeline([960, 960, 660, 780, 960, 780]);
   const { density, name } = densities[step];
   return (
     <>

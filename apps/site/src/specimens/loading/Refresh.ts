@@ -7,7 +7,7 @@ import { useSharedTimeline } from '../../motion/Timeline';
  * press their Refresh in the same step, by the marks the pointer no one sees sets, so the button
  * shows its own hover and press, and the example does the rest.
  */
-const steps = [1600, 300, 150, 2500, 1400];
+const steps = [960, 180, 90, 1500, 840];
 const clock = 'loading-refresh';
 const hover = 'data-catalogue-hover';
 const pressed = 'data-catalogue-pressed';

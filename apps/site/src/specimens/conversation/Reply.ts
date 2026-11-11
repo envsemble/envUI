@@ -7,7 +7,7 @@ const reply =
 
 export const replyWords = reply.split(' ');
 
-export const replySteps = [1100, ...replyWords.map(() => 140), 2600];
+export const replySteps = [660, ...replyWords.map(() => 84), 1560];
 
 /** The clock the do and the don't share, so they play side by side in step. */
 export const replyClock = 'conversation-reply';

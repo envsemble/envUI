@@ -11,17 +11,17 @@ const upgrade = '.env-alert .env-button:not(.env-alert-dismiss)';
  * loop starts over.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-alert-message', x: 0.4 },
-  { wait: 150 },
+  { wait: 90 },
   { to: upgrade, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { cue: 'low' },
-  { wait: 2500 },
+  { wait: 1500 },
 ];
 
 /** A warning alert with its title, message and action. A click on the action resolves it. */

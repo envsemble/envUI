@@ -5,13 +5,13 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 
 /** Moves along the connected buttons to Edit, then to the split button's menu button. */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-button-group:first-child > :nth-child(2)' },
-  { wait: 1100 },
+  { wait: 660 },
   { to: '[aria-label="More publish options"]', duration: 500 },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 /**

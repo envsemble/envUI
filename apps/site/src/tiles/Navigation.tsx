@@ -12,17 +12,17 @@ const level = (index: number) =>
 
 /** Goes down into Files, with the trail and the title following, and back up by the trail. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: row(1) },
-  { wait: 400 },
-  { click: true },
-  { wait: 1500 },
-  { to: level(2), y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 240 },
   { click: true },
   { wait: 900 },
+  { to: level(2), y: 0.6, duration: 450 },
+  { wait: 180 },
+  { click: true },
+  { wait: 540 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /** What each level holds. */

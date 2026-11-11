@@ -21,21 +21,21 @@ const item = (index: number) =>
 
 /** Chooses Projects, then Team, the page changing with each, then Home again; the frame stays. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: item(2) },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: item(3), duration: 350 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: item(1), duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 const places = [

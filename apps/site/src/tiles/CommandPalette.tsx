@@ -21,15 +21,15 @@ const input = '.env-command-palette-input';
  * it began.
  */
 const script: PointerStep[] = [
-  { wait: 600 },
+  { wait: 360 },
   { type: 'inv', into: input, every: 220 },
-  { wait: 1200 },
+  { wait: 720 },
   { erase: 3, into: input, every: 120 },
-  { wait: 700 },
+  { wait: 420 },
   { type: 'new', into: input, every: 220 },
-  { wait: 1200 },
+  { wait: 720 },
   { erase: 3, into: input, every: 120 },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 /**
@@ -38,11 +38,11 @@ const script: PointerStep[] = [
  * taller than the stage shows.
  */
 const narrowScript: PointerStep[] = [
-  { wait: 600 },
+  { wait: 360 },
   { type: 'inv', into: input, every: 220 },
-  { wait: 1400 },
+  { wait: 840 },
   { erase: 3, into: input, every: 120 },
-  { wait: 1200 },
+  { wait: 720 },
 ];
 
 /**

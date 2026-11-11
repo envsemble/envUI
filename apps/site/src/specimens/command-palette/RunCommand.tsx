@@ -14,32 +14,32 @@ const input = '.env-command-palette-input';
  * drawn anew at the end, which clears what it says it ran.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
   // Off the palette, which opens over where the button was, so no option shows the pointer's hover.
   { leave: true },
-  { wait: 1100 },
+  { wait: 660 },
   { cue: '↓' },
   { key: 'ArrowDown', on: input },
-  { wait: 650 },
+  { wait: 390 },
   { cue: '↓' },
   { key: 'ArrowDown', on: input },
-  { wait: 650 },
+  { wait: 390 },
   { cue: '↓' },
   { key: 'ArrowDown', on: input },
-  { wait: 650 },
+  { wait: 390 },
   { cue: '↑' },
   { key: 'ArrowUp', on: input },
-  { wait: 900 },
+  { wait: 540 },
   { cue: 'Enter' },
   { key: 'Enter', on: input },
-  { wait: 1400 },
+  { wait: 840 },
   { cue: 'none' },
-  { wait: 800 },
+  { wait: 480 },
   { cue: 'again' },
-  { wait: 300 },
+  { wait: 180 },
 ];
 
 function Running() {

@@ -12,28 +12,28 @@ const email = '.env-text-field:nth-child(2 of .env-text-field) .env-text-field-i
  * again brings the error back.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: email, x: 0.75 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 200 },
+  { wait: 120 },
   { type: 'example.com', into: email, every: 80 },
   // About two seconds with the whole address, so the error going away registers.
-  { wait: 2600 },
+  { wait: 1560 },
   // The domain is selected with a drag and deleted, so the address is visibly put back by hand.
   { to: email, text: 'example.com', x: 0, duration: 450 },
   { press: true },
   { to: email, text: 'example.com', x: 1, duration: 450 },
   { release: true, stay: true },
-  { wait: 700 },
+  { wait: 420 },
   { erase: 1, into: email },
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-button', duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 const whole = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);

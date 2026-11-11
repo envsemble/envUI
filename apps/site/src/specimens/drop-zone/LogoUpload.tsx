@@ -11,19 +11,19 @@ const zone = '.env-drop-zone-target';
  * with Replace and Remove. The pointer presses Remove, and the zone is back.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { carry: 'logo.png', as: 'image/png' },
   { to: zone, x: 1.15, y: 1.3 },
   { to: zone, x: 0.55, y: 0.55, duration: 700 },
-  { wait: 600 },
+  { wait: 360 },
   { drop: true },
-  { wait: 3300 },
+  { wait: 1980 },
   { to: '.env-button[data-variant="text"]', x: 0.5, y: 0.55, duration: 600 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Uploading() {

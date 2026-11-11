@@ -13,25 +13,25 @@ const budget = '.env-tree-item[data-id="budget"]';
  * whose own menu offers New document, and Esc closes it. The tree starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: budget, x: 0.35, y: 2.5 },
   { to: budget, x: 0.35, y: 0.55, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { rightClick: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: '.env-menu-item', x: 0.35, duration: 350 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: '.env-tree', x: 0.4, y: 0.95, duration: 600 },
-  { wait: 300 },
+  { wait: 180 },
   { rightClick: true },
-  { wait: 1500 },
+  { wait: 900 },
   { key: 'Escape', on: '.env-menu[data-open]' },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function RightClicking() {

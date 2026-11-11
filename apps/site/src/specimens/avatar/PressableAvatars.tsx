@@ -13,17 +13,17 @@ const person = (index: number) =>
  * figure starts again from its still.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-avatar-group', x: 0.3, y: 0.6 },
-  { wait: 900 },
+  { wait: 540 },
   { to: person(2), x: 0.5, y: 0.55, duration: 400 },
-  { wait: 700 },
+  { wait: 420 },
   { click: true },
-  { wait: 1800 },
+  { wait: 1080 },
   { leave: true },
-  { wait: 1200 },
+  { wait: 720 },
   { cue: 'again' },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 function Pressing() {

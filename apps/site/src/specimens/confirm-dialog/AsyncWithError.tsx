@@ -13,24 +13,24 @@ const confirm = '.env-dialog-actions .env-button:last-child';
  * its first attempt fails again and what it says it archived is gone.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: confirm, x: 0.5, y: 0.6, duration: 550 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
   // The archive takes 1.2 s, and fails.
-  { wait: 3300 },
+  { wait: 1980 },
   { to: confirm, x: 0.5, y: 0.6, duration: 300 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 3600 },
+  { wait: 2160 },
   { cue: 'again' },
-  { wait: 300 },
+  { wait: 180 },
 ];
 
 function Archiving() {

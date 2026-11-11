@@ -13,20 +13,20 @@ const minute = 60_000;
  * draft is drawn anew at the end, saved 20 minutes ago as it began.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
   { cue: 'save' },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 1800 },
+  { wait: 1080 },
   { cue: 'minute' },
-  { wait: 2000 },
+  { wait: 1200 },
   { cue: 'minute' },
-  { wait: 2200 },
+  { wait: 1320 },
   { cue: 'again' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 /**

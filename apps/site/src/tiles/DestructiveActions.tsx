@@ -18,20 +18,20 @@ const projects = ['Launch plan', 'Annual report', 'Press kit'];
 
 /** Archives a row at once, with no question first; Undo brings it back. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   // Over Archive for a moment, then pressed, so its row goes a second after the card is in view.
   { to: '[aria-label="Archive Annual report"]', duration: 600 },
-  { wait: 700 },
+  { wait: 420 },
   { press: true },
-  { wait: 300 },
+  { wait: 180 },
   { release: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: '.env-toast-action', duration: 500 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 function Projects() {

@@ -11,17 +11,17 @@ const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-ta
  * again, showing its source as it was typed.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: tab(2) },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1800 },
+  { wait: 1080 },
   { to: tab(1), duration: 400 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 1200 },
+  { wait: 720 },
 ];
 
 /** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */

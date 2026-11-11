@@ -8,23 +8,23 @@ import { MotionStage } from '../../figures/MotionStage';
  * a press outside doesn't close a ConfirmDialog. Cancel closes it.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: '.env-button', x: 0.55, y: 0.6 },
   { wait: 300 },
+  { to: '.env-button', x: 0.55, y: 0.6 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: '.env-dialog-backdrop', x: 0.1, y: 0.75, duration: 550 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: '.env-dialog-actions .env-button:first-child', x: 0.5, y: 0.6, duration: 650 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function PressingOutside() {

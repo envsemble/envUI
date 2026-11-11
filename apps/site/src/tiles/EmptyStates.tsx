@@ -15,18 +15,18 @@ const input = '.env-text-field-input';
  * same search again, which leaves none, as it began.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-button' },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: input, x: 0.3, duration: 450 },
   { click: true },
-  { wait: 200 },
+  { wait: 120 },
   { type: 'roadmap', into: input, every: 110 },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */

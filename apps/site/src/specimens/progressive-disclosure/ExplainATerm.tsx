@@ -11,18 +11,18 @@ const popover = '.env-popover';
  * read it, and Escape closes it.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: help, x: 0.5, y: 2.5 },
   { to: help, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { to: popover, x: 0.6, y: 0.45, duration: 500 },
-  { wait: 2600 },
+  { wait: 1560 },
   { key: 'Escape', on: popover },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Explaining() {

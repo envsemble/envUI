@@ -7,7 +7,7 @@ import { MotionStage } from '../../figures/MotionStage';
 const { props: example } = ColorByRank();
 
 function Toggling() {
-  const byRank = useTimeline([2200, 2200]) === 1;
+  const byRank = useTimeline([1320, 1320]) === 1;
   return (
     // A theme of its own, the page's, so the colors ease between the two.
     <Theme {...useTheme()}>

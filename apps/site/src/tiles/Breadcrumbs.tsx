@@ -16,17 +16,17 @@ const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .en
  * looks at the card, rather than holding still after its first seconds.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: link(1), y: 0.6 },
-  { wait: 600 },
+  { wait: 360 },
   { to: link(2), y: 0.6, duration: 450 },
-  { wait: 450 },
+  { wait: 270 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { cue: 'renew' },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /** How long the new trail takes to crossfade in over the one it replaces: the slow motion token. */

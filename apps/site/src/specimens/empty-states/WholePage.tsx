@@ -32,7 +32,7 @@ const cases: { icon: ReactNode; title: string; text: string; action: string }[] 
 function Cases() {
   // Each case a while to read, the frame staying as the page in it changes. The still, step 0,
   // is the first case too, left at once as the figure starts to play.
-  const step = useTimeline([10, 5000, 5000, 5000]);
+  const step = useTimeline([6, 3000, 3000, 3000]);
   const index = Math.max(0, step - 1);
   const shown = cases[index];
   return (

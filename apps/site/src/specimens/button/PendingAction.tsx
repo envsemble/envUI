@@ -6,22 +6,22 @@ import { MotionStage } from '../../figures/MotionStage';
 /*
  * The pointer presses Save changes: a spinner takes the label's place at the same width, and a
  * second press does nothing. The save ends, and the button comes back; then Refresh does the same.
- * The example's work takes 1.8 s; the waits here are paced to 0.6 of what they say.
+ * The example's work takes 1.8 s.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { click: true },
-  { wait: 2900 },
+  { wait: 1740 },
   { to: '.env-icon-button', x: 0.5, y: 0.55, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 3300 },
+  { wait: 1980 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Saving() {

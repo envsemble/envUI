@@ -11,23 +11,23 @@ const menuButton = '.env-icon-button';
  * opens. Cancel closes it, and focus returns to the menu's button, whose focus ring shows.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: menuButton, x: 0.55, y: 0.6 },
   { wait: 300 },
+  { to: menuButton, x: 0.55, y: 0.6 },
+  { wait: 180 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-menu-item', x: 0.35, y: 0.55, duration: 400 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1500 },
+  { wait: 900 },
   { to: '.env-dialog-actions .env-button:first-child', x: 0.5, y: 0.6, duration: 550 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
   { leave: true },
   { cue: 'returned' },
-  { wait: 2000 },
+  { wait: 1200 },
   { cue: 'away' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 /**

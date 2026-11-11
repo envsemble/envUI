@@ -14,21 +14,21 @@ const setting = (id: string) => `.env-list-item:has([id$="-${id}-title"]) .env-s
  * leaves by itself. Then the settings start anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: setting('summary'), x: 0.5, y: 2.5 },
   { to: setting('summary'), x: 0.5, y: 0.5, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: setting('directory'), x: 0.5, y: 0.5, duration: 600 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
   // The notification's own time on the stage, and its leaving.
-  { wait: 9500 },
+  { wait: 5700 },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Switching() {

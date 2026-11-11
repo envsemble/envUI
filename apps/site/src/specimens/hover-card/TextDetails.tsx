@@ -10,13 +10,13 @@ const trigger = '[tabindex="0"]';
  * then the pointer leaves, and the card closes.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: trigger, x: 0.5, y: 2.5 },
   { to: trigger, x: 0.5, y: 0.6, duration: 500 },
-  { wait: 2600 },
+  { wait: 1560 },
   { to: trigger, x: 1.6, y: 2.2, duration: 450 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 function Hovering() {

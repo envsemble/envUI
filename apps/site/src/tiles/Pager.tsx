@@ -14,21 +14,21 @@ const first = 1;
  * Goes forward through the guide twice with Next, each page's neighbours following, and back twice.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-pager-link-next', x: 0.5 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: '.env-pager-link-previous', x: 0.5, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /**

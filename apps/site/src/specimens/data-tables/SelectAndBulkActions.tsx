@@ -10,26 +10,26 @@ const tick = (row: number) => `tbody tr:nth-child(${row}) .env-checkbox`;
  * leave, and a notification offers Undo. It presses Undo, and they come back.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: tick(2), x: 0.5, y: 1.8 },
   { to: tick(2), duration: 350 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { to: tick(4), duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: '[aria-label="Archive 2 projects"]', duration: 600 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: '.env-toast-action', x: 0.5, y: 0.55, duration: 700 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Archiving() {

@@ -15,25 +15,25 @@ const tab = (index: number) =>
  * will land, and drops it there. Then the example starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: tab(3), x: 0.5, y: 1.6 },
   { to: tab(3), x: 0.5, y: 0.6, duration: 450 },
-  { wait: 450 },
+  { wait: 270 },
   { click: true },
-  { wait: 120 },
+  { wait: 72 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: tab(2), x: 0.5, y: 0.6, duration: 550 },
-  { wait: 300 },
+  { wait: 180 },
   { press: true },
   { to: tab(3), x: 0.4, y: 0.6, duration: 600 },
   { to: tab(3), x: 0.85, y: 0.6, duration: 500 },
-  { wait: 600 },
+  { wait: 360 },
   { release: true },
-  { wait: 1500 },
+  { wait: 900 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Arranging() {

@@ -28,19 +28,19 @@ const pitch = 95;
  * the page scrolls under its header.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   // Over the section below the header: the page's content is taller than the box, so the aim is
   // measured from the header, which stays in place.
   { to: '.env-page-header', x: 0.7, y: 1.7 },
-  { wait: 500 },
+  { wait: 300 },
   { wheel: pitch, duration: 450 },
-  { wait: 1300 },
+  { wait: 780 },
   { wheel: pitch, duration: 450 },
-  { wait: 1300 },
+  { wait: 780 },
   { wheel: -2 * pitch, duration: 650 },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /**

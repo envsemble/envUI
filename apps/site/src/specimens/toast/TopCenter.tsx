@@ -11,25 +11,25 @@ const dismiss = '.env-toast[data-tone="danger"] .env-toast-dismiss';
  * pointer dismisses it, a waiting one comes back, and they close by themselves.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-button', x: 0.5, y: 1.8 },
   { to: '.env-button', x: 0.55, y: 0.55, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1000 },
+  { wait: 600 },
   { click: true },
-  { wait: 1000 },
+  { wait: 600 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { click: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { to: dismiss, duration: 600 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
   // The reminders' time runs on, and the last has closed well before the loop ends.
-  { wait: 14500 },
+  { wait: 8700 },
 ];
 
 function Reminding() {

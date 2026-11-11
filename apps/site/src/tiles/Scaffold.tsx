@@ -20,17 +20,17 @@ const item = (index: number) =>
 
 /** Chooses Inbox in the bar, then Home again: the top bar's title follows, and the frame stays. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: item(2) },
-  { wait: 500 },
-  { click: true },
-  { wait: 1500 },
-  { to: item(1), duration: 400 },
   { wait: 300 },
   { click: true },
   { wait: 900 },
+  { to: item(1), duration: 400 },
+  { wait: 180 },
+  { click: true },
+  { wait: 540 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 const places = [

@@ -13,7 +13,7 @@ const zone = '.env-drop-zone-target';
  * gives way to its size, and the line under the list counts both. Then the list starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   {
     carry: [
       { name: 'annual-review.pdf', type: 'application/pdf', size: 2_516_582 },
@@ -22,13 +22,13 @@ const script: PointerStep[] = [
   },
   { to: zone, x: 0.9, y: 1.3 },
   { to: zone, x: 0.55, y: 0.55, duration: 550 },
-  { wait: 300 },
+  { wait: 180 },
   { drop: true },
-  { wait: 200 },
+  { wait: 120 },
   { leave: true },
-  { wait: 5200 },
+  { wait: 3120 },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Uploading() {

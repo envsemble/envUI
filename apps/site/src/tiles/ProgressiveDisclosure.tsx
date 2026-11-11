@@ -10,15 +10,15 @@ const formats = [
 
 /** Opens the advanced options, waits a moment to show them, and closes them again. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-disclosure summary', x: 0.25 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1800 },
+  { wait: 1080 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */

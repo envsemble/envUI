@@ -32,17 +32,17 @@ const at = (width: number) => (width + half) / across;
  * rather than at the gap, which moves during the drag.
  */
 const scriptOf = ({ list, widened }: typeof wide): PointerStep[] => [
-  { wait: 400 },
+  { wait: 240 },
   { to: panes, x: at(list) },
-  { wait: 400 },
+  { wait: 240 },
   { press: true },
   { to: panes, x: at(widened), duration: 1000 },
-  { wait: 1000 },
+  { wait: 600 },
   { to: panes, x: at(list), duration: 900 },
   { release: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 const scripts = { wide: scriptOf(wide), narrow: scriptOf(narrow) };
 

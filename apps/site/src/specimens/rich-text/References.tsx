@@ -13,25 +13,25 @@ const document = '.ProseMirror';
  * unseen, as it looks the same.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: `${document} p`, x: 0.97, y: 0.5 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { type: ' @pri', into: document, every: 160 },
-  { wait: 2000 },
+  { wait: 1200 },
   { key: 'Enter', on: document },
-  { wait: 1500 },
+  { wait: 900 },
   { keyDown: 'Control', on: document },
   { key: 'z', on: document },
-  { wait: 1400 },
+  { wait: 840 },
   { key: 'z', on: document },
   { keyUp: 'Control', on: document },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
   { cue: 'again' },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 function Mentioning() {

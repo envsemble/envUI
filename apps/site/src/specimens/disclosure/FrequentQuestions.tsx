@@ -11,17 +11,17 @@ const summary = (index: number) =>
  * it opens the first again, and the second closes.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: summary(2), x: 0.3, y: 0.55 },
-  { wait: 400 },
-  { click: true },
-  { wait: 1800 },
-  { to: summary(1), x: 0.3, y: 0.55, duration: 450 },
   { wait: 300 },
+  { to: summary(2), x: 0.3, y: 0.55 },
+  { wait: 240 },
   { click: true },
-  { wait: 1500 },
+  { wait: 1080 },
+  { to: summary(1), x: 0.3, y: 0.55, duration: 450 },
+  { wait: 180 },
+  { click: true },
+  { wait: 900 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Opening() {
