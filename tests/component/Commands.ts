@@ -1,5 +1,6 @@
 import type { BrowserCommand, BrowserCommandContext } from 'vitest/node';
 import type { CDPSession, Page, Route } from 'playwright';
+import { cssColor, pairs } from '../contrast/Pairs.ts';
 
 /**
  * Commands the component tests run in Node, on the Playwright page that holds the test's frame:
@@ -80,21 +81,18 @@ function session(context: BrowserCommandContext) {
 }
 
 /**
- * A finger at a point and lifted again, through Chromium's touch input: touchStart with the point,
- * touchEnd with none.
+ * A finger at a point, moved and lifted again, through Chromium's touch input: touchStart and
+ * touchMove with the point, touchEnd with none.
  */
-const touch: BrowserCommand<[type: 'touchStart' | 'touchEnd', x?: number, y?: number]> = async (
-  context,
-  type,
-  x = 0,
-  y = 0,
-) => {
+const touch: BrowserCommand<
+  [type: 'touchStart' | 'touchMove' | 'touchEnd', x?: number, y?: number]
+> = async (context, type, x = 0, y = 0) => {
   const point = await toPage(context, x, y);
   await (
     await session(context)
   ).send('Input.dispatchTouchEvent', {
     type,
-    touchPoints: type === 'touchStart' ? [{ x: Math.round(point.x), y: Math.round(point.y) }] : [],
+    touchPoints: type === 'touchEnd' ? [] : [{ x: Math.round(point.x), y: Math.round(point.y) }],
   });
 };
 
@@ -174,6 +172,18 @@ const unrouteModule: BrowserCommand<[name: string]> = async (context, name) => {
   await context.page.unroute(moduleFile(name), entry.handler);
 };
 
+/**
+ * Every color the contrast gate measures, by name, as CSS: the gate's pairs read style sheets from
+ * disk, so Node lists them for the page.
+ */
+const contrastColors: BrowserCommand<[], Record<string, string>> = () =>
+  Object.fromEntries(
+    [...new Set(pairs.flatMap((pair) => [pair.fg, ...pair.bg]))].map((name) => [
+      name,
+      cssColor(name),
+    ]),
+  );
+
 export const commands = {
   mouseMove,
   mouseDown,
@@ -191,6 +201,7 @@ export const commands = {
   moduleRequested,
   releaseModule,
   unrouteModule,
+  contrastColors,
 };
 
 export type Commands = typeof commands;
