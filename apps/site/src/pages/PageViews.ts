@@ -53,10 +53,10 @@ function viewIn<Module, V>(
 }
 
 /** The modules of the site's pages: its home, its galleries, its pages of docs/ and the Docs'. */
-const overview = () => import('./Overview');
-const galleries = () => import('./CatalogueGalleries');
-const cataloguePages = () => import('./CataloguePages');
-const docsPages = () => import('./DocsPages');
+const overview = () => import('./catalogue/Overview');
+const galleries = () => import('./catalogue/CatalogueGalleries');
+const cataloguePages = () => import('./catalogue/CataloguePages');
+const docsPages = () => import('./docs/DocsPages');
 
 /**
  * Each kind of page's view, in the module of its part of the site. Each module loads with the

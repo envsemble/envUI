@@ -82,7 +82,10 @@ test('llms.txt introduces envUI and points to the setup skill and the installed 
 });
 
 test('the Docs home and setup lead to the skill the site serves at /SKILL.md', () => {
-  const docsHome = readFileSync(join(repositoryRoot, 'apps/site/src/pages/AgentSetup.tsx'), 'utf8');
+  const docsHome = readFileSync(
+    join(repositoryRoot, 'apps/site/src/pages/docs/AgentSetup.tsx'),
+    'utf8',
+  );
   const prompt = /setupPrompt = '([^']+)'/.exec(docsHome)?.[1];
   assert.equal(prompt, 'Set up envUI in my app: envui.envsemble.com/SKILL.md');
   const setup = readFileSync(join(repositoryRoot, 'docs/setup.md'), 'utf8');

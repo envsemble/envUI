@@ -27,7 +27,7 @@ Each has one folder in `apps/site/src`:
 | loading       | Skeletons, load boundaries and retries while a part loads         | `loading/`                                           |
 | template      | The sections of a component or pattern page, in their order       | `template/`                                          |
 | markdown      | A page's Markdown, also with its option tables as legends         | `markdown/`                                          |
-| page          | A route's page in the catalogue or the Docs, and its data         | `pages/`                                             |
+| page          | A route's page, its data and how it loads                         | `pages/`; its views in `catalogue/` and `docs/`      |
 | route         | Addresses old and new, the page list, trails and scroll places    | `routes/`                                            |
 | navigation    | The rail, drawers, pager, page actions and the site's link        | `navigation/`                                        |
 | frame         | A page's frame: its banner, contents, footer and failure          | `frame/`                                             |

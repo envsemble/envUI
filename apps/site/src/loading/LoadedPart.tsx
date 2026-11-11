@@ -17,7 +17,7 @@ export function takeRenderedParts() {
 
 /**
  * A component that loads on its own, for LoadBoundary to show. `module` is the path in the
- * site app of the module `load` imports, such as `src/pages/Changelog.tsx`, and `modules`
+ * site app of the module `load` imports, such as `src/pages/docs/Changelog.tsx`, and `modules`
  * passes it on to LoadBoundary. `component` renders it, suspending until it has loaded, which
  * `load` starts: once it has, as before a pre-rendered page hydrates, it renders at once (loadOnce).
  * A load that failed stays failed, so `retry` drops it and asks for the module again, as

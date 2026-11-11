@@ -1,7 +1,7 @@
 import releases from 'virtual:envui-changelog-outline';
-import { LongPartSkeleton, placeholderText } from '../loading/Skeletons';
-import { recordedSize } from '../loading/RecordedSizes';
-import { PageMarkdown } from '../markdown/PageMarkdown';
+import { LongPartSkeleton, placeholderText } from '../../loading/Skeletons';
+import { recordedSize } from '../../loading/RecordedSizes';
+import { PageMarkdown } from '../../markdown/PageMarkdown';
 
 const changelogPath = '../packages/ui/CHANGELOG.md';
 

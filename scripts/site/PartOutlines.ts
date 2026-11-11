@@ -8,7 +8,7 @@ import {
   themes,
   tokenGroups,
   tokenValueText,
-} from '../../apps/site/src/pages/TokenGroups.ts';
+} from '../../apps/site/src/pages/docs/TokenGroups.ts';
 import { examplesDirectory, libraryChangelogFile, tokensDataFile } from '../RepositoryPaths.ts';
 
 /** The lines of each example's code, by page/Name, as its code block shows it. */

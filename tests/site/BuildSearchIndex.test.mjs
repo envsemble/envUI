@@ -66,7 +66,7 @@ test('every search result leads to a page there is, and to an element that page 
   const pages = new Map(documents.map((document) => [document.id, document]));
   const tokenRows = new Set(tokens.tokens.map(({ cssVariable }) => tokenSection(cssVariable)));
   // The ids a page renders: its headings, and on its Props view each export's props and their rows
-  // (apps/site/src/pages/PropsTables.tsx).
+  // (apps/site/src/pages/docs/PropsTables.tsx).
   const elements = (document, view) =>
     new Set(
       view === 'props'

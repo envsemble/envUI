@@ -2,7 +2,7 @@
 
 /** The release notes, newest first: scripts/site/ReleaseNotes.ts. */
 declare module 'virtual:envui-release-notes' {
-  const releases: import('./pages/ReleaseNotesData').Release[];
+  const releases: import('./pages/docs/ReleaseNotesData').Release[];
   export default releases;
 }
 

@@ -4,7 +4,7 @@ import { PlainCode } from './SimpleTable';
 // the package exports this data, so the reference reads the generated file.
 import tokenList from '@envsemble/envui/tokens.json';
 // The ids search leads to, as the search index writes them.
-import { tokenSection } from '../documentation/SearchAnchors';
+import { tokenSection } from '../../documentation/SearchAnchors';
 import { groupOf, themes, tokenGroups, tokenValueText } from './TokenGroups';
 import { TokenIntro, TokenName, TokenTable } from './TokenTables';
 

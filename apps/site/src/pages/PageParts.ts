@@ -10,12 +10,12 @@ import type { RoutePage } from '../routes/SiteRoutes';
  */
 export const pageParts = {
   tokenReference: lazyPart(
-    () => import('./TokenReference'),
+    () => import('./docs/TokenReference'),
     (module) => module.TokenReference,
     partModules.tokenReference,
   ),
   changelog: lazyPart(
-    () => import('./Changelog'),
+    () => import('./docs/Changelog'),
     (module) => module.Changelog,
     partModules.changelog,
   ),

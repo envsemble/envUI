@@ -8,10 +8,10 @@ import type { PageKind } from '../routes/SiteRoutes.ts';
 
 /** The modules of the pages' views, by their paths in the site app (PageViews.ts). */
 export const viewModules = {
-  home: 'src/pages/Overview.tsx',
-  galleries: 'src/pages/CatalogueGalleries.tsx',
-  catalogue: 'src/pages/CataloguePages.tsx',
-  docs: 'src/pages/DocsPages.tsx',
+  home: 'src/pages/catalogue/Overview.tsx',
+  galleries: 'src/pages/catalogue/CatalogueGalleries.tsx',
+  catalogue: 'src/pages/catalogue/CataloguePages.tsx',
+  docs: 'src/pages/docs/DocsPages.tsx',
 } as const;
 
 /** The module of each kind of page's view, which PageViews.ts loads it from. */
@@ -35,8 +35,8 @@ export const viewOfKind: { [Kind in PageKind]: keyof typeof viewModules } = {
  * the page (PageParts.ts), by their paths in the site app.
  */
 export const partModules = {
-  tokenReference: 'src/pages/TokenReference.tsx',
-  changelog: 'src/pages/Changelog.tsx',
+  tokenReference: 'src/pages/docs/TokenReference.tsx',
+  changelog: 'src/pages/docs/Changelog.tsx',
   palette: 'src/figures/foundations/ColorPalette.tsx',
 } as const;
 
