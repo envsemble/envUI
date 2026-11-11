@@ -6,8 +6,7 @@ import { useFiguresMounted } from './useFiguresMounted';
 import { useArrival } from './useArrival';
 import { usePulseNear } from './usePulseNear';
 import { recordedSize } from './RecordedSizes';
-import { flag } from '@envui-internal/internal/flag';
-import { classNames } from '@envui-internal/internal/classNames';
+import { classNames, flag } from '../shared/Attributes';
 
 /*
  * What the site shows while a part of a page loads, such as an example, its code or a specimen,

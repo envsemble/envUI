@@ -50,14 +50,37 @@ const confusingBrowserGlobals = [
 ];
 
 /**
- * The site reaches the library through its entry points, and what they don't export through
- * @envui-internal, the scripts' documentation model through @docs-model (apps/site/AGENTS.md): a
- * relative path into either would break unseen when a file there moves.
+ * The site reaches the library through its entry points, the few internals listed below through
+ * @envui-internal, and the scripts' documentation model through @docs-model (apps/site/AGENTS.md):
+ * a relative path into either would break unseen when a file there moves.
  */
 const siteImports = {
   regex: String.raw`^(\.\./)+(packages/ui/src|scripts)(/|$)`,
   message:
-    'Import the library from @envsemble/envui, its internals from @envui-internal/* and the documentation model from @docs-model/* (apps/site/AGENTS.md).',
+    'Import the library from @envsemble/envui, its listed internals from @envui-internal/* and the documentation model from @docs-model/* (apps/site/AGENTS.md).',
+};
+
+/**
+ * The library's internals the site may import, from packages/ui/src: what it must share with the
+ * library rather than keep a copy of. Anything smaller the site keeps in its own shared/.
+ */
+const siteInternals = [
+  // The pre-rendered page's code tokens and Markdown trees, handed to the library's components
+  // before they hydrate, and the highlighter that makes the tokens.
+  'content/internal/codeHighlighting',
+  'content/internal/givenCodeTokens',
+  'content/internal/givenMarkdownTrees',
+  // The link component an application gives the library, which the site's own links follow.
+  'internal/provider/LinkComponentContext',
+  // What a box paints, as dev mode decides it, which the fit centres a picture on.
+  'internal/dom/paints',
+  // How a motion token is read and eased, as the library's own motion reads it.
+  'internal/motion/motionTokens',
+];
+const siteInternalImports = {
+  regex: String.raw`^@envui-internal/(?!(${siteInternals.join('|')})$)`,
+  message:
+    'The site imports only the library internals listed in eslint.config.mjs (siteInternals): keep a small helper of its own in apps/site/src/shared/, or list the module with its reason.',
 };
 
 /**
@@ -94,6 +117,7 @@ const siteFolderOrder = siteFolders.slice(1).flatMap((folder, index) =>
         {
           patterns: [
             siteImports,
+            siteInternalImports,
             {
               regex: String.raw`^(\.\./){${depth}}(${siteFolders.slice(0, index + 1).join('|')})(/|$)`,
               message: `${folder}/ imports only the folders after it in apps/site/AGENTS.md's order: move what both use into ${folder}/ or below it.`,
@@ -274,7 +298,7 @@ export default defineConfig(
   },
   {
     files: ['apps/site/src/**/*.{ts,tsx}'],
-    rules: { 'no-restricted-imports': ['error', { patterns: [siteImports] }] },
+    rules: { 'no-restricted-imports': ['error', { patterns: [siteImports, siteInternalImports] }] },
   },
   ...siteFolderOrder,
   {

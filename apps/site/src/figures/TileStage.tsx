@@ -13,7 +13,7 @@ import { useFit } from '../fit/useFit';
 import { DeviceFrame } from './DeviceFrame';
 import { useAppFit } from '../fit/standalone/useAppFit';
 import { stageScript } from './StageScript';
-import { flag } from '@envui-internal/internal/flag';
+import { flag } from '../shared/Attributes';
 import { useBrowserStandIns } from '../motion/BrowserStandIns';
 
 /**

@@ -18,10 +18,9 @@ import { useInView } from '../motion/useInView';
 import { rootMotionDuration } from '../shared/RootMotionTokens';
 import { pixelTolerance, remeasure } from '../shared/Remeasure';
 import { FigureDevice, OnDevice } from './DeviceFrame';
-import { flag } from '@envui-internal/internal/flag';
+import { classNames, flag } from '../shared/Attributes';
 import { useBrowserStandIns } from '../motion/BrowserStandIns';
 import { useReaderTakeover } from '../motion/ReaderTakeover';
-import { classNames } from '@envui-internal/internal/classNames';
 
 /**
  * Whether an animated figure plays the example of a do or don't figure. Its stage is then that

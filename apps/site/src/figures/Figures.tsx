@@ -22,7 +22,7 @@ import { Specimen } from './Specimen';
 import { useFoundationFigures, type FoundationFigureEntry } from './foundations/FoundationFigures';
 import { FigureCode, FigurePart } from './foundations/FoundationFrame';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
-import { classNames } from '@envui-internal/internal/classNames';
+import { classNames } from '../shared/Attributes';
 import { StageSkeleton } from '../loading/Skeletons';
 import { useSubjectShown } from './useSubjectShown';
 

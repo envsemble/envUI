@@ -3,7 +3,7 @@ import { Grid, Page, Surface, type PageWidth } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../figures/MotionStage';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 import { remeasure } from '../../shared/Remeasure';
 
 /** The window the page sits in, in rem: wider than the large column, so Full reads as wider. */

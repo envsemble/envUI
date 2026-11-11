@@ -3,7 +3,7 @@
  * paints, the scale settings its style sets, what a held view must show of what its script acts
  * on, and the shape a resting picture is framed on. Nothing here writes to the page.
  */
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../shared/Lengths';
 import type { FitKind, Moment, StageScript } from './FitKind';
 import {
   cursorLength,

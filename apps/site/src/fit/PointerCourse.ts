@@ -3,7 +3,7 @@
  * that the fit keeps in view (useFit.ts). At rest, the still is framed on them the way the play
  * frames them; while playing, the view follows the current one.
  */
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../shared/Lengths';
 import { rowSelector } from './FitDraw';
 import { frameOnCourse, type Box } from './FitGeometry';
 import type { Aim, StageScript } from './FitKind';

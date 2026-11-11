@@ -17,7 +17,7 @@ import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';
 import { pendingAttribute, SectionOutline, useSectionOutline } from '../markdown/SectionOutline';
 import { subscribeToAddress } from '../routes/Address';
-import { useHydrated } from '@envui-internal/internal/react/useHydrated';
+import { useHydrated } from '../shared/useHydrated';
 
 /**
  * One section of a page; Rules opens with when to use it, after its own lead. Without

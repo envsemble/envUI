@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from 'react';
 import type { LineArtMotion } from '@envsemble/envui';
-import { useHydrated } from '@envui-internal/internal/react/useHydrated';
+import { useHydrated } from '../shared/useHydrated';
 import { useDisplaySettings } from '../display/DisplaySettings';
 import { bannerAppearAttribute, bannerDrawnKey } from '../display/DisplayStorage';
 

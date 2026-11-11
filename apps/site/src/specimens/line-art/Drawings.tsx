@@ -25,7 +25,7 @@ import { IconInkEraser } from '@envsemble/envui/icons/InkEraser';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import { IconRepeat } from '@envsemble/envui/icons/Repeat';
 import { SpecimenGrid, SpecimenHeadingLevel } from '../../figures/SpecimenFrame';
-import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
+import { prefersReducedMotion } from '../../shared/ReducedMotion';
 import { remeasure } from '../../shared/Remeasure';
 
 /** Each drawing's name, as people say it. */

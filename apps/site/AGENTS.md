@@ -23,7 +23,7 @@ Each has one folder in `apps/site/src`:
 | fit           | Drawing a tile's or a figure's picture to fit its stage          | [`fit/`](src/fit/README.md), its words               |
 | standalone    | A fitter of one kind of figure that doesn't build on `useFit`    | `fit/standalone/`, listed in the fit's README        |
 | motion        | Scripts that play a stage, where a tile or figure plays live     | `motion/`                                            |
-| shared        | The measuring loop and motion tokens that several folders use    | `shared/`                                            |
+| shared        | The measuring loop, motion tokens and small helpers folders use  | `shared/`                                            |
 | loading       | Skeletons, load boundaries and retries while a part loads        | `loading/`                                           |
 | template      | The sections of a component or pattern page, in their order      | `template/`                                          |
 | markdown      | A page's Markdown, also with its option tables as legends        | `markdown/`                                          |
@@ -54,7 +54,8 @@ Each has one folder in `apps/site/src`:
 ## What the site shares with the scripts and the library
 
 - What the site and its build scripts both read, the documentation's model and the search's terms and anchors, is in `scripts/docs/model/`, which the site imports as `@docs-model/<Module>`.
-- The site uses the library through its entry points. `@envui-internal/<path>`, `packages/ui/src/<path>`, is its only door into what they don't export, such as `internal/motion/reducedMotion`.
+- The site uses the library through its entry points. `@envui-internal/<path>`, `packages/ui/src/<path>`, is its only door into what they don't export, and it opens only for the modules `siteInternals` in `eslint.config.mjs` lists, each with its reason: the pre-rendered page's hand-offs (`content/internal/givenCodeTokens`, `givenMarkdownTrees`) and what the site must share with the library rather than copy.
+- A small helper the library also has, such as `classNames`, `flag`, `remPixels` or `useLatest`, the site keeps its own copy of in `shared/`.
 - The site's tsconfig, Vite config and `tests/support/ImportSource.mjs` alias both; ESLint rejects a relative path into `packages/ui/src` or `scripts/`.
 
 ## Where a component behaves differently than in a fixture

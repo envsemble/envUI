@@ -10,7 +10,7 @@ import { useNear } from '../figures/useNear';
 import { alternativesOf, type Alternative } from './RelatedPages';
 import type { TileFrame, TilePicture } from '../tiles/TilePictures';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
-import { flag } from '@envui-internal/internal/flag';
+import { flag } from '../shared/Attributes';
 
 /**
  * One alternative's tile, whose picture plays while the pointer or the keyboard is on it, and where

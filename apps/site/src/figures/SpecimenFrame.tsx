@@ -2,7 +2,7 @@ import { createContext, useContext, useLayoutEffect, useRef, type ReactNode } fr
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
 import { StillMark } from './StillMark';
 import { pixelTolerance, remeasure } from '../shared/Remeasure';
-import { classNames } from '@envui-internal/internal/classNames';
+import { classNames } from '../shared/Attributes';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in

@@ -5,7 +5,7 @@
  */
 import type { CarriedFile } from '../DragControl';
 import { textPoint } from './VirtualSelection';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 
 /**
  * One step of what the virtual pointer does, or of what happens around it:

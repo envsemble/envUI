@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { restoringScroll } from '../routes/ScrollRestoration';
-import { useHydrated } from '@envui-internal/internal/react/useHydrated';
+import { useHydrated } from '../shared/useHydrated';
 
 /** What the reader does that shows the rest at once: scrolling, pressing or typing. */
 const interruptions = ['wheel', 'touchstart', 'keydown', 'pointerdown'];

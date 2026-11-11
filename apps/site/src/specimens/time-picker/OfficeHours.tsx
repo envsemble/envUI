@@ -5,7 +5,7 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage, rowsAnd } from '../../figures/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 import { Renew } from '../../motion/Renew';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 
 const field = '.env-date-picker-control';
 const hours = '.env-time-list-column[data-part="hour"]';

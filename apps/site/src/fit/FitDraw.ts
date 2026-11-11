@@ -5,7 +5,7 @@
  * scroll while a tile plays, so they fade at their own bottom. Moving the view is ViewEasing.ts's
  * job. This file writes the page, never what the fit keeps.
  */
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../shared/Lengths';
 import type { Fitting } from './useFit';
 import { rowSlack } from './HeldView';
 import { moving, pictures } from './PaintedBoxes';
