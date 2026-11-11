@@ -72,6 +72,7 @@ export class PointerCursor {
   note() {
     const stage = this.scope.closest<HTMLElement>(stages);
     if (!stage) return;
+    // A stage's scope is an element of the page's HTML.
     this.noted = geometryOf(stage, this.scope as HTMLElement);
     queueMicrotask(() => (this.noted = null));
   }

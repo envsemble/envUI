@@ -42,6 +42,7 @@ function rootToken<T extends number | string>(
   }
   if (rootChanges.takeRecords().length) kept.clear();
   if (!kept.has(name)) kept.set(name, read(element));
+  // A name is kept only with what its own `read` returned.
   return kept.get(name) as T;
 }
 
