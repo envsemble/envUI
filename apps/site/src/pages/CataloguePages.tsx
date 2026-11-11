@@ -1,6 +1,6 @@
 import { Alert, Link, type TableOfContentsItem } from '@envsemble/envui';
 import type { DocumentationEntry } from '../documentation/DocumentationTypes';
-import { SiteBanner } from '../banner/SiteBanner';
+import { SiteBanner } from '../frame/SiteBanner';
 import { catalogueTrail } from '../routes/Trails';
 import type { DocumentPage, RoutePage } from '../routes/SiteRoutes';
 import { PartSwitch } from '../routes/OtherPart';

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Column, Text, type TableOfContentsItem } from '@envsemble/envui';
 import type { DocumentationEntry } from '../documentation/DocumentationTypes';
-import { SiteBanner } from '../banner/SiteBanner';
+import { SiteBanner } from '../frame/SiteBanner';
 import { pagesOf, type DocumentPage, type RoutePage } from '../routes/SiteRoutes';
 import { docsTrail } from '../routes/Trails';
 import { docsRoute } from '../routes/Address';

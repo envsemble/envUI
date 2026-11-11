@@ -1,5 +1,5 @@
 import { Column } from '@envsemble/envui';
-import { SiteBanner } from '../banner/SiteBanner';
+import { SiteBanner } from '../frame/SiteBanner';
 import { catalogueTrail } from '../routes/Trails';
 import type { RoutePage } from '../routes/SiteRoutes';
 import { Catalogue } from './Catalogue';

@@ -30,7 +30,7 @@ Each has one folder in `apps/site/src`:
 | page          | A route's page in the catalogue or the Docs, and its data         | `pages/`                                             |
 | route         | Addresses old and new, the page list, trails and scroll places    | `routes/`                                            |
 | navigation    | The rail, drawers, pager, page actions and the site's link        | `navigation/`                                        |
-| banner        | A page's banner, contents, footer and failure                     | `banner/`                                            |
+| frame         | A page's frame: its banner, contents, footer and failure          | `frame/`                                             |
 | display       | The Display menu: theme, contrast, scale, motion and palette      | `display/`                                           |
 | search        | The site's search and its index                                   | `search/`                                            |
 | brand         | The wordmarks and logos                                           | `brand/`                                             |

@@ -4,8 +4,8 @@
    the site-wide ones. */
 @import './Shell.css';
 @import '../pages/Docs.css';
-@import '../banner/Banners.css';
-@import '../banner/BannerMotifs.css';
+@import '../frame/Banners.css';
+@import '../frame/BannerMotifs.css';
 @import '../figures/Examples.css';
 @import '../pages/Overview.css';
 @import '../figures/foundations/DocsPalette.css';

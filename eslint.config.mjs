@@ -69,7 +69,7 @@ const siteImports = {
 const siteFolders = [
   'navigation',
   'pages',
-  'banner',
+  'frame',
   'search',
   'brand',
   'template',

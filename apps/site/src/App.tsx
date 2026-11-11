@@ -12,11 +12,11 @@ import {
 } from '@envsemble/envui';
 import { IconMenu } from '@envsemble/envui/icons/Menu';
 import { findPage, type Area, type RoutePage } from './routes/SiteRoutes';
-import { PageBoundary } from './banner/PageBoundary';
+import { PageBoundary } from './frame/PageBoundary';
 import { retryDocument } from './pages/PageContent';
-import { SiteBanner } from './banner/SiteBanner';
-import { ContentsItems, PageContents } from './banner/PageContents';
-import { PageFooter } from './banner/PageFooter';
+import { SiteBanner } from './frame/SiteBanner';
+import { ContentsItems, PageContents } from './frame/PageContents';
+import { PageFooter } from './frame/PageFooter';
 import { retryPageView, usePageContents, usePageView } from './pages/PageViews';
 import { preloadPage } from './pages/PreloadPage';
 import { Brand } from './brand/Brand';
