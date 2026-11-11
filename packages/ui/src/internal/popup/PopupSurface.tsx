@@ -157,7 +157,7 @@ export interface PopupSurfaceProps {
  * as it opens. Base UI moves it once the popup is placed, a few animation frames after it appears,
  * from no event of its own that tells it apart from focus people move: in Chromium about 20 ms,
  * six frames, after the popup element attaches. The window leaves room for a slow machine and ends
- * before people can reach into a popup that has just appeared. tests/browser/library/PortalContainer.spec.ts
+ * before people can reach into a popup that has just appeared. tests/component/PortalContainer.test.tsx
  * checks both sides: Base UI's opening focus goes back, and focus moved in after the window stays.
  */
 const openingFocusWindow = 500;

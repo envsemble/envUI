@@ -3,9 +3,9 @@
 // starving the browsers:
 //
 //   1. generated files, lint, formatting, types, the three builds and every unit test, side by side;
-//   2. on those builds, alone: the browser specs in Chromium, Firefox and WebKit with the contrast
-//      gate, and the accessibility scan of the hosted build, in one Playwright run; then the
-//      component tests, in Chromium and their engines tests in Firefox and WebKit;
+//   2. on those builds, alone: the browser specs in Chromium, Firefox and WebKit, and the
+//      accessibility scan of the hosted build, in one Playwright run; then the component tests,
+//      the contrast gate's among them, in Chromium and their engines tests in Firefox and WebKit;
 //   3. the visual baseline in Docker;
 //   4. live development, which edits sources, once nothing else reads them.
 //
@@ -119,7 +119,7 @@ if ((failed(phase1) || failed(built)) && !keepGoing) finish();
 // Phase 2: one Playwright run schedules the engines and the scan on the same workers.
 const phase2 = await series([
   task(
-    'browser, contrast and accessibility',
+    'browser and accessibility',
     [
       ...bin.playwright,
       'test',

@@ -1,6 +1,6 @@
 // The primitive palette's guarantees: every color sits in its grade's luminance band, and a grade
 // difference alone gives a contrast ratio, for any two hues. scripts/build/GeneratePalette.ts builds the
-// palette; tests/browser/library/Contrast.spec.ts checks the semantic pairs built from it.
+// palette; tests/component/Contrast.test.tsx checks the semantic pairs built from it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';

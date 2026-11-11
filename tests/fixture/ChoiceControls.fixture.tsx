@@ -4,10 +4,9 @@ import { Checkbox, Radio, RadioGroup, Column, Switch } from '@envsemble/envui';
 export const mount = 'standalone';
 
 /**
- * Checkbox, Switch and Radio with a class, a style and a ref each, for
- * tests/browser/library/Checkbox.spec.ts, Switch.spec.ts and Radio.spec.ts: the class and the style reach
- * the root, the label around the control; the ref and the other native props reach the input. A
- * checkbox without a visible label shows its hit area.
+ * Checkbox, Switch and Radio with a class, a style and a ref each, for tests/component/Checkbox.test.tsx
+ * and Radio.test.tsx: the ref reaches the input, the class and the style the root
+ * (ChoiceFields.test.mjs). A checkbox without a visible label shows its hit area.
  */
 export default function ChoiceControlsFixture() {
   const checkbox = useRef<HTMLInputElement>(null);

@@ -263,7 +263,7 @@ test("a spec is in the library's or the site's folder, or a component test", () 
 });
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
-  assert.deepEqual(specs('tests/browser/library/Tree.spec.ts'), ['Tree']);
+  assert.deepEqual(specs('tests/component/Tree.test.tsx'), ['Tree']);
   assert.deepEqual(specs('tests/browser/helpers/Chevron.ts'), ['Combobox', 'Select']);
   // Every spec imports Servers.ts: verify covers it.
   assert.deepEqual(specs('tests/browser/helpers/Servers.ts'), []);
@@ -296,14 +296,23 @@ test('static checks cover the changed files, and configuration the whole of its 
 });
 
 test('servers follow the specs that need them', () => {
-  assert.deepEqual(serversFor(['Tree']), ['fixture']);
+  // A library spec that opens the fixture page, in a checkout of its own.
+  const root = mkdtempSync(join(tmpdir(), 'envui-servers-'));
+  try {
+    mkdirSync(join(root, 'tests/browser/library'), { recursive: true });
+    writeFileSync(
+      join(root, 'tests/browser/library/Widget.spec.ts'),
+      "import { fixtureUrl } from '../helpers/Servers';",
+    );
+    assert.deepEqual(serversFor(['Widget'], root), ['fixture']);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+  // A component test needs none.
+  assert.deepEqual(serversFor(['Tree']), []);
   assert.deepEqual(serversFor(['SiteSmoke']), ['site-build']);
   assert.deepEqual(serversFor(['SiteFailures']), ['site']);
-  assert.deepEqual(serversFor(['Tree', 'SiteSmoke', 'SiteFailures']), [
-    'fixture',
-    'site',
-    'site-build',
-  ]);
+  assert.deepEqual(serversFor(['SiteSmoke', 'SiteFailures']), ['site', 'site-build']);
   assert.deepEqual(serversFor([]), []);
 });
 

@@ -1,10 +1,11 @@
+import { onTestFinished } from 'vitest';
 import { commands, type Locator } from 'vitest/browser';
 import type { Commands } from './Commands.ts';
 
 /** The commands' signatures in the browser: each without its context, returning a promise. */
 type Client<T> = {
-  [K in keyof T]: T[K] extends (context: never, ...args: infer A) => unknown
-    ? (...args: A) => Promise<void>
+  [K in keyof T]: T[K] extends (context: never, ...args: infer A) => infer R
+    ? (...args: A) => Promise<Awaited<R>>
     : never;
 };
 
@@ -106,4 +107,60 @@ export function addStyle(content: string) {
   style.dataset.testStyle = '';
   style.textContent = content;
   document.head.append(style);
+}
+
+/**
+ * Stands in for the clipboard until the test ends, and returns the texts written to it, in order,
+ * with the rejections no one handled. `available`: the Clipboard API writes; `selection`: copying a
+ * selection works, as the fallback where the API is missing; `neither`: nothing can be copied;
+ * `refused`: the Clipboard API refuses every write at once.
+ */
+export function recordClipboard(mode: 'available' | 'selection' | 'neither' | 'refused') {
+  const writes: string[] = [];
+  const unhandled: string[] = [];
+  const onUnhandled = (event: PromiseRejectionEvent) => unhandled.push(String(event.reason));
+  addEventListener('unhandledrejection', onUnhandled);
+  const refuse = () => Promise.reject(new DOMException('Write refused', 'NotAllowedError'));
+  Object.defineProperty(navigator, 'clipboard', {
+    configurable: true,
+    value:
+      mode === 'available'
+        ? {
+            writeText: async (text: string) => void writes.push(text),
+            write: async (items: ClipboardItem[]) => {
+              for (const item of items)
+                writes.push(await (await item.getType('text/plain')).text());
+            },
+          }
+        : mode === 'refused'
+          ? { writeText: refuse, write: refuse }
+          : undefined,
+  });
+  document.execCommand = (command: string) => {
+    if (command !== 'copy' || mode !== 'selection') return false;
+    const field = document.activeElement as HTMLTextAreaElement;
+    writes.push(field.value.slice(field.selectionStart, field.selectionEnd));
+    return true;
+  };
+  onTestFinished(() => {
+    removeEventListener('unhandledrejection', onUnhandled);
+    // The own properties go, and the browser's own clipboard and execCommand show through again.
+    delete (navigator as { clipboard?: unknown }).clipboard;
+    delete (document as { execCommand?: unknown }).execCommand;
+  });
+  return { writes, unhandled };
+}
+
+/**
+ * How much of an element shows in the viewport, from 0 to 1, clipped by the ancestors that scroll
+ * it, as Playwright's toBeInViewport reads it.
+ */
+export function viewportRatio(target: Target) {
+  return new Promise<number>((resolve) => {
+    const observer = new IntersectionObserver(([entry]) => {
+      observer.disconnect();
+      resolve(entry!.intersectionRatio);
+    });
+    observer.observe(elementOf(target));
+  });
 }
