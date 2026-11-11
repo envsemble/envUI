@@ -1,3 +1,4 @@
+import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
@@ -16,6 +17,17 @@ const workers = process.env.ENVUI_WORKERS ? Number(process.env.ENVUI_WORKERS) : 
 const viewport = { width: 1440, height: 1000 };
 // The language and time zone CI runs in, on every machine, so dates and numbers read the same.
 const contextOptions = { locale: 'en-US', timezoneId: 'UTC' };
+/**
+ * The files whose tests emulate touch in Chromium, each a project of its own, which gives it a page
+ * of its own: turned off again, touch emulation leaves the page the machine's own pointer, and a
+ * machine without a mouse, such as CI's Linux runners, has none, so a later file would find no
+ * fine pointer or hover. `--project='chromium*'` runs them with the rest.
+ */
+const folder = fileURLToPath(new URL('.', import.meta.url));
+const touchFiles = readdirSync(folder)
+  .filter((file) => file.endsWith('.test.tsx'))
+  .filter((file) => readFileSync(`${folder}${file}`, 'utf8').includes('commands.emulateTouch('))
+  .map((file) => `tests/component/${file}`);
 
 export default defineConfig({
   root: fileURLToPath(new URL('../..', import.meta.url)),
@@ -67,7 +79,12 @@ export default defineConfig({
       viewport,
       screenshotFailures: false,
       instances: [
-        { browser: 'chromium' },
+        { browser: 'chromium', exclude: touchFiles },
+        ...touchFiles.map((file) => ({
+          browser: 'chromium' as const,
+          name: `chromium ${file.replace(/^.*\/|\.test\.tsx$/g, '')}`,
+          include: [file],
+        })),
         {
           browser: 'firefox',
           // As in playwright.config.ts: no bounce-tracking warnings in the console.

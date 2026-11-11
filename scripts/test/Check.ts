@@ -265,7 +265,7 @@ const componentTask = (names: string[], engines: boolean) =>
       '--reporter=dot',
       ...(engines
         ? ['--project=firefox', '--project=webkit', '--tags-filter=engines']
-        : ['--project=chromium', '--tags-filter=!a11y']),
+        : ['--project=chromium*', '--tags-filter=!a11y']),
       ...(affected ? ['--retry=1'] : ['--bail=5']),
       ...names.map((name) => specFile(name)),
     ],

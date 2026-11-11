@@ -103,7 +103,8 @@ if (suite === 'library')
       'run',
       '--config',
       'tests/component/vitest.config.ts',
-      `--project=${browser}`,
+      // Chromium's files that emulate touch are projects of their own (vitest.config.ts).
+      `--project=${browser === 'chromium' ? 'chromium*' : browser}`,
       // The accessibility scan of the fixtures runs in `npm run test:a11y`.
       `--tags-filter=${browser === 'chromium' ? '!a11y' : 'engines'}`,
       ...vitestPassed,

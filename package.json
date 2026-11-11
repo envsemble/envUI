@@ -23,7 +23,7 @@
     "check": "node scripts/test/Check.ts",
     "check:affected": "node scripts/test/Check.ts --affected",
     "test": "node --test tests/*/*.test.mjs packages/*/test/*.test.mjs",
-    "test:component": "vitest run --config tests/component/vitest.config.ts --project=chromium --tags-filter=!a11y",
+    "test:component": "vitest run --config tests/component/vitest.config.ts \"--project=chromium*\" --tags-filter=!a11y",
     "test:component:engines": "vitest run --config tests/component/vitest.config.ts --project=firefox --project=webkit --tags-filter=engines",
     "test:browser": "playwright test --project=chromium --project=firefox --project=webkit --project=live-development",
     "test:library": "node scripts/test/TestBrowser.ts library",
