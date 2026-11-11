@@ -576,10 +576,11 @@ function ComboboxActions({
             {...triggerProps}
             variant="ghost"
             icon={<IconChevronRight />}
-            // IconButton requires a name; aria-labelledby gives it one where the label is undefined.
-            {...({ 'aria-label': labelId !== undefined ? undefined : ariaLabel } as {
-              'aria-label': string;
-            })}
+            // A field without a label or an aria-label leaves the trigger unnamed: an empty
+            // aria-label names nothing.
+            {...(labelId !== undefined
+              ? { 'aria-labelledby': labelId }
+              : { 'aria-label': ariaLabel ?? '' })}
           />
         )}
       />

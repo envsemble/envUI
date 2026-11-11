@@ -123,6 +123,7 @@ export const unions = (
     <CopyButton value="text" variant={variant} aria-label="Copy link" />
     <IconButton variant={anyVariant} icon={icon} aria-label="Settings" />
     <IconButton href="/settings" variant="ghost" icon={icon} aria-label="Settings" />
+    <IconButton icon={icon} aria-labelledby="settings-heading" />
     {/* @ts-expect-error IconButton is the one icon-only button. */}
     <Button iconOnly icon={icon} aria-label="Settings" />
   </>
@@ -136,3 +137,6 @@ export const iconUnionAccent = (
   // @ts-expect-error Only a primary button takes accent.
   <IconButton variant={strong} tone="accent" icon={icon} aria-label="Add" />
 );
+
+// @ts-expect-error An IconButton needs a name: aria-label or aria-labelledby.
+export const unnamedIconButton = <IconButton icon={icon} />;

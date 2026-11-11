@@ -282,7 +282,7 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 
 ### You provide
 
-- An `aria-label` on every icon-only button and ButtonGroup.
+- An `aria-label` on every icon-only button and ButtonGroup, or on an IconButton an `aria-labelledby` that points to visible text naming it.
 - `type="submit"` on the button that submits a form.
 - Routing behind `href`, through `LinkProvider`.
 - Focus for after a confirmed action removes the button.
