@@ -9,7 +9,7 @@ import { pendingAttribute, useSectionOutline } from '../../markdown/SectionOutli
 import type { DocumentationEntry } from '../../documentation/DocumentationTypes';
 import { PageMarkdown } from '../../markdown/PageMarkdown';
 import { LoadedPart } from '../../loading/LoadedPart';
-import { pageParts } from '../PageLoading';
+import { pageParts } from '../PageParts';
 import { PropsTables } from './PropsTables';
 import { providesOf } from '../../documentation/CatalogueContent';
 import { guideSubsections, raisedHeadings, wordsInCode } from '../../documentation/DocsContent';

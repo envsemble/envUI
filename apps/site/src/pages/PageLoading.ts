@@ -1,9 +1,14 @@
 /*
- * What a page loads, and when: its kind's view, its content, the large parts of it that load on
- * their own and a foundation's figures. Each module of a view or a part is named once, with its
- * path in the site app beside its import, which stays literal so the bundler gives it a file of its
- * own: the server reports a page's modules by those paths (Server.tsx), and the build links each
- * pre-rendered page's files by them (scripts/site/PagePreloads.ts, PrerenderSite.ts).
+ * What a page loads, and when: its kind's view, its content (PageContent.ts), the large parts of it
+ * that load on their own (PageParts.ts) and a foundation's figures. Each module of a view or a part
+ * is named once, with its path in the site app beside its import, which stays literal so the
+ * bundler gives it a file of its own: the server reports a page's modules by those paths
+ * (Server.tsx), and the build links each pre-rendered page's files by them
+ * (scripts/site/PagePreloads.ts, PrerenderSite.ts).
+ *
+ * The views take their content and parts from those two modules, never from this one, which
+ * imports the views: through a cycle, an edit of the documentation would reload the development
+ * server's page rather than update it in place.
  */
 import { use, useMemo, type ReactNode } from 'react';
 import type { TableOfContentsItem } from '@envsemble/envui';
@@ -11,10 +16,9 @@ import type { DocumentationEntry } from '../documentation/DocumentationTypes';
 import type { PageKind, PageOfKind, RoutePage } from '../routes/SiteRoutes';
 import { loadFoundationFigures } from '../figures/foundations/FoundationFigures';
 import { reloadModule } from '../loading/LoadBoundary';
-import { lazyPart } from '../loading/LoadedPart';
 import { loadOnce, settled, useLoaded } from '../loading/LoadOnce';
-import { moduleRegistry } from '../loading/ModuleRegistry';
-import { keepPageParts } from '../loading/RecordedSizes';
+import { loadDocument } from './PageContent';
+import { pageParts, partsOfPage } from './PageParts';
 
 /** What a kind of page renders, given its page. */
 type View<Kind extends PageKind> = (props: { page: PageOfKind<Kind> }) => ReactNode;
@@ -164,89 +168,6 @@ export function usePageContents(page: RoutePage | undefined): readonly TableOfCo
       !page || !view?.contents || (page.document && !content) ? [] : view.contents(page, content),
     [page, view, content],
   );
-}
-
-/** Records the sizes a page's content brings (keepPageParts) and returns the content. */
-const kept = (content: DocumentationEntry) => {
-  keepPageParts(content);
-  return content;
-};
-
-const contentFiles = import.meta.glob<DocumentationEntry>('/src/generated/pages/*.json', {
-  import: 'default',
-});
-
-/**
- * Each page's content, in a file of its own that loads with the page (moduleRegistry). In
- * development, a file asked for again after a failure is asked for as a module: Vite serves JSON
- * as a module only under `import` with a query that ends in `.json`. Its default export is the
- * content.
- */
-const contents = moduleRegistry(
-  Object.fromEntries(
-    Object.entries(contentFiles).map(([path, load]) => [path, () => load().then(kept)]),
-  ),
-  {
-    query: 'import&lang.json',
-    // A JSON module's default export is its parsed content.
-    pick: (module) => kept((module as { default: DocumentationEntry }).default),
-  },
-);
-
-const contentPath = (id: string) => `/src/generated/pages/${id}.json`;
-
-/**
- * A page's content, loaded once and kept (loadOnce): as the site starts, for the page it opens on,
- * and as a link to a page is about to be followed (preloadPage).
- */
-function loadDocument(id: string) {
-  if (!contents.has(contentPath(id))) throw new Error(`No content for the page ${id}`);
-  return contents.load(contentPath(id));
-}
-
-/** Drops a page's content that failed to load, so the page's next render loads it again. */
-export const retryDocument = (id: string) => contents.retry(contentPath(id));
-
-/** A page's content, suspending the page until it has loaded. */
-export const useDocument = (summary: { id: string }) => use(loadDocument(summary.id));
-
-/**
- * The large parts of pages that load on their own, with the page that shows them (LoadedPart): the
- * token reference, the changelog, and the colors guide's palette, its swatches with their color
- * picker. Here rather than with the views that show them, so the site's start can load a page's
- * before it hydrates the page the server rendered them in (preloadFirstPage).
- */
-export const pageParts = {
-  tokenReference: lazyPart(
-    () => import('./docs/TokenReference'),
-    (module) => module.TokenReference,
-    'src/pages/docs/TokenReference.tsx',
-  ),
-  changelog: lazyPart(
-    () => import('./docs/Changelog'),
-    (module) => module.Changelog,
-    'src/pages/docs/Changelog.tsx',
-  ),
-  palette: lazyPart(
-    () => import('../figures/foundations/ColorPalette'),
-    (module) => module.ColorPalette,
-    'src/figures/foundations/ColorPalette.tsx',
-  ),
-};
-
-/**
- * The parts a page shows, by its kind and the id of its page of docs/: the token reference, the
- * changelog, and the palette of the colors guide in the Docs (DocsPages.tsx). The browser loads
- * them before it hydrates the page the server rendered them in, else React renders them again.
- */
-export function partsOfPage(
-  kind: PageKind,
-  document: string | undefined,
-): (keyof typeof pageParts)[] {
-  if (kind === 'tokens') return ['tokenReference'];
-  if (kind === 'docs-changelog') return ['changelog'];
-  if (kind === 'foundation-guide' && document === 'colors') return ['palette'];
-  return [];
 }
 
 /**

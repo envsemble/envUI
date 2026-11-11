@@ -16,13 +16,8 @@ import { PageBoundary } from './frame/PageBoundary';
 import { SiteBanner } from './frame/SiteBanner';
 import { ContentsItems, PageContents } from './frame/PageContents';
 import { PageFooter } from './frame/PageFooter';
-import {
-  preloadPage,
-  retryDocument,
-  retryPageView,
-  usePageContents,
-  usePageView,
-} from './pages/PageLoading';
+import { retryDocument } from './pages/PageContent';
+import { preloadPage, retryPageView, usePageContents, usePageView } from './pages/PageLoading';
 import { Brand } from './brand/Brand';
 import { DocsNavigation, CatalogueNavigation } from './navigation/SiteNavigation';
 import { drawerless } from './navigation/CatalogueDestinations';

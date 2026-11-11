@@ -11,7 +11,8 @@ import { renderAt, routeHref } from './routes/Address';
 import { documentTitle, pageDescription } from './routes/PageHead';
 import { allPages, findPage, type RoutePage } from './routes/SiteRoutes';
 import { normalizeRoute, oldPaths } from './routes/OldAddresses';
-import { pageParts, partsOfPage, preloadFirstPage, viewModuleOf } from './pages/PageLoading';
+import { preloadFirstPage, viewModuleOf } from './pages/PageLoading';
+import { pageParts, partsOfPage } from './pages/PageParts';
 import { takeRenderedParts } from './loading/LoadedPart';
 import { pageCodeScript, renderWithCode } from './pages/PageCode';
 import { renderWithMarkdown } from './pages/PageMarkdownTrees';
@@ -93,7 +94,7 @@ export async function renderPage(route: string): Promise<RenderedPage> {
   const unloaded = parts.filter((module) => !loaded.has(module));
   if (unloaded.length)
     throw new Error(
-      `The page ${route} renders ${unloaded.join(', ')}, which partsOfPage (pages/PageLoading.ts) doesn't list for it.`,
+      `The page ${route} renders ${unloaded.join(', ')}, which partsOfPage (pages/PageParts.ts) doesn't list for it.`,
     );
   return {
     title: documentTitle(page, page.area),
