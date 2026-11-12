@@ -36,10 +36,11 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
     ],
     jobs: 'all',
   },
-  // Guides read by Prettier and the unit tests alone. The packaged README, the changelogs and the
-  // pages in docs/ are the site's content, below.
+  // Guides and the license, read by Prettier and the unit tests alone. The packaged README, the
+  // changelogs and the pages in docs/ are the site's content, below.
   {
     paths: [
+      'LICENSE',
       'AGENTS.md',
       'CONTRIBUTING.md',
       'contributing/**',
