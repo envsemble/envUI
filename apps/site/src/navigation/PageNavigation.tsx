@@ -4,7 +4,7 @@ import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { pagesOf, type RoutePage } from '../routes/SiteRoutes';
 import { routeHref } from '../routes/Address';
-import { preloadPageContent } from '../pages/PreloadPage';
+import { preloadPageContent } from '../pages/PageLoading';
 
 /**
  * Starts loading what the previous and next pages need once the page has loaded and the browser is

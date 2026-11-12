@@ -1,4 +1,4 @@
-import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
+import type { DocumentationMetadata } from '../documentation/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';
 import { pageOf } from './RelatedPages';
 import { classNames } from '@envui-internal/internal/classNames';

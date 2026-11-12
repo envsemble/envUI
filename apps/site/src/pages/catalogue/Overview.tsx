@@ -4,9 +4,9 @@ import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
 import { name } from '@envsemble/envui/package.json';
-import { EnvUILogo } from '../brand/EnvUILogo';
-import { docsRoute, routeHref } from '../routes/Address';
-import { pagesOf, sectionHome } from '../routes/SiteRoutes';
+import { EnvUILogo } from '../../brand/EnvUILogo';
+import { docsRoute, routeHref } from '../../routes/Address';
+import { pagesOf, sectionHome } from '../../routes/SiteRoutes';
 import { OverviewFan } from './OverviewFan';
 
 /**

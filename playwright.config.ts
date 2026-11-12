@@ -3,12 +3,6 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
 import { defaultPorts, resolveServers } from './scripts/test/CheckoutMarker.ts';
 
-/**
- * The servers this run needs (tests/browser/support/Servers.ts): ENVUI_SERVERS lists them (site,
- * site-build, fixture, or none; the site's name before, catalogue, still counts), as
- * `npm run check` sets it for the specs it picked. Without it a run that only scans the hosted
- * build (the a11y projects) needs none, and any other run needs all three.
- */
 /** The projects the command line names, if it names any. */
 const namedProjects = process.argv.flatMap((argument, index, all) =>
   argument === '--project'
@@ -17,13 +11,15 @@ const namedProjects = process.argv.flatMap((argument, index, all) =>
       ? [argument.slice(10)]
       : [],
 );
+/**
+ * The servers this run needs (tests/browser/support/Servers.ts): ENVUI_SERVERS lists them (site,
+ * site-build, fixture, or none), as `npm run check` sets it for the specs it picked. Without it a
+ * run that only scans the hosted build (the a11y projects) needs none, and any other run needs all
+ * three.
+ */
 function wantedServers() {
   if (process.env.ENVUI_SERVERS)
-    return new Set(
-      process.env.ENVUI_SERVERS.split(',')
-        .filter((name) => name !== 'none')
-        .map((name) => (name === 'catalogue' ? 'site' : name)),
-    );
+    return new Set(process.env.ENVUI_SERVERS.split(',').filter((name) => name !== 'none'));
   if (namedProjects.length && namedProjects.every((project) => project === 'a11y'))
     return new Set<string>();
   return new Set(['site', 'site-build', 'fixture']);

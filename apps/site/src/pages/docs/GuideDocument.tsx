@@ -1,11 +1,11 @@
 import { Fragment, Suspense, useRef, type RefObject } from 'react';
 import type { TableOfContentsItem } from '@envsemble/envui';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
-import { markdownHeadings, PageMarkdown } from '../markdown/PageMarkdown';
-import { StageSkeleton } from '../loading/Skeletons';
-import { useFoundationFigures } from '../figures/foundations/FoundationFigures';
-import { useSubjectShown } from '../figures/useSubjectShown';
-import { FigurePart } from '../figures/foundations/FoundationFrame';
+import type { DocumentationEntry } from '../../documentation/DocumentationTypes';
+import { markdownHeadings, PageMarkdown } from '../../markdown/PageMarkdown';
+import { StageSkeleton } from '../../loading/Skeletons';
+import { useFoundationFigures } from '../../figures/foundations/FoundationFigures';
+import { useSubjectShown } from '../../figures/useSubjectShown';
+import { FigurePart } from '../../figures/foundations/FoundationFrame';
 
 /**
  * A guide's figure: an empty ```tsx figure=Name``` fence, which the package leaves out. The guide's

@@ -1,25 +1,24 @@
 import { useMemo } from 'react';
 import { Column, Text, type TableOfContentsItem } from '@envsemble/envui';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
-import { SiteBanner } from '../banner/SiteBanner';
-import { pagesOf, type DocumentPage, type RoutePage } from '../routes/SiteRoutes';
-import { docsTrail } from '../routes/Trails';
-import { docsRoute } from '../routes/Address';
-import { PartSwitch } from '../routes/OtherPart';
+import type { DocumentationEntry } from '../../documentation/DocumentationTypes';
+import { SiteBanner } from '../../frame/SiteBanner';
+import { pagesOf, type DocumentPage, type RoutePage } from '../../routes/SiteRoutes';
+import { docsTrail } from '../../routes/Trails';
+import { docsRoute } from '../../routes/Address';
+import { PartSwitch } from '../../routes/OtherPart';
 import {
   changelogId,
   PageChangelog,
   TemplateContent,
   templateContents,
-} from '../template/TemplateContent';
-import { MetadataBadges } from '../template/MetadataBadges';
-import { useRevealed } from '../template/useRevealed';
-import { SectionOutline } from '../markdown/SectionOutline';
-import { useDocument } from './PageContent';
+} from '../../template/TemplateContent';
+import { MetadataBadges } from '../../template/MetadataBadges';
+import { useRevealed } from '../../template/useRevealed';
+import { SectionOutline } from '../../markdown/SectionOutline';
 import { GuideDocument, guideContents } from './GuideDocument';
-import { LoadedPart } from '../loading/LoadedPart';
-import { pageParts } from './PageParts';
-import { partsOfPage } from './ViewModules';
+import { LoadedPart } from '../../loading/LoadedPart';
+import { useDocument } from '../PageContent';
+import { pageParts, partsOfPage } from '../PageParts';
 import { ChangelogSkeleton } from './ChangelogOutline';
 import { tokenContents, TokenReferenceSkeleton } from './TokenTables';
 import { ReleaseNotes } from './ReleaseNotes';
@@ -39,7 +38,7 @@ import {
   Strings,
   WordsInCode,
 } from './DocsSections';
-import { wordsInCode, withoutAgentNote } from '@docs-model/DocsContent';
+import { wordsInCode, withoutAgentNote } from '../../documentation/DocsContent';
 
 /*
  * The Docs' route views: a guide, the token reference, the changelog, a foundation's developer

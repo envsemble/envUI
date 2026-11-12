@@ -6,7 +6,7 @@
  * DeviceMeasure.ts reads what they are decided from; nothing here reads the page, so
  * tests/site/Fit.test.ts tests it directly.
  */
-import type { DeviceKind } from '@docs-model/DocumentationTypes';
+import type { DeviceKind } from '../../documentation/DocumentationTypes';
 import type { Box } from '../FitGeometry';
 import { pixelTolerance } from '../../shared/Remeasure';
 

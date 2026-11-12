@@ -1,4 +1,4 @@
-import { componentGroups, type ComponentGroup } from '@docs-model/DocumentationTypes';
+import { componentGroups, type ComponentGroup } from '../documentation/DocumentationTypes';
 import { documents } from '../generated/Documentation';
 
 export { componentGroups, documents };

@@ -17,7 +17,6 @@
     "types": ["node"],
     "customConditions": ["envui-source"],
     "paths": {
-      "@docs-model/*": ["../scripts/docs/model/*"],
       "@envui-internal/*": ["../packages/ui/src/*"]
     }
   },

@@ -272,7 +272,7 @@ interface PageMember {
 export interface DocumentationEntry extends Omit<DocumentationSummary, 'outline' | 'metadata'> {
   /**
    * The recorded sizes of the page's examples and specimens and its examples' lines of code, which
-   * their skeletons keep: the build adds them (vite.config.ts).
+   * their skeletons keep: the build adds them (scripts/site/SiteData.ts).
    */
   partSizes?: Record<string, [number, number]>;
   exampleLines?: Record<string, number>;

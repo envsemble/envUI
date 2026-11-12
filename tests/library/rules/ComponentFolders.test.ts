@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { parse as parseYaml } from 'yaml';
-import { componentGroups } from '../../../scripts/docs/model/DocumentationTypes.ts';
+import { componentGroups } from '../../../apps/site/src/documentation/DocumentationTypes.ts';
 
 /** The family folder of each category. */
 const folders = {

@@ -9,7 +9,7 @@ import {
   searchIndex,
   tokenize,
   type SearchDocument,
-} from '@docs-model/SearchTerms';
+} from '../documentation/SearchTerms';
 
 /** What a search finds: its document's fields that the index stores, and how the query named it. */
 export interface SearchResult extends Pick<

@@ -1,11 +1,11 @@
-// What the Docs show of a page beside the catalogue (scripts/docs/model/DocsContent.ts).
+// What the Docs show of a page beside the catalogue (apps/site/src/documentation/DocsContent.ts).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/ImportSource.ts';
 
 const { raisedHeadings, guideSubsections, withoutAgentNote } = await importSource(
   'DocsContent',
-  'scripts/docs/model/DocsContent.ts',
+  'apps/site/src/documentation/DocsContent.ts',
 );
 
 test('raises #### headings a level, but not inside a code fence', () => {

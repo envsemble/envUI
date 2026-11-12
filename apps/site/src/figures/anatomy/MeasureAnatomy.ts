@@ -4,7 +4,7 @@
  * edge, the labels in the subject, and in a variants figure, its items and the room their names
  * and uses take. Nothing here changes the figure.
  */
-import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
+import type { AnatomyLegendItem } from '../../documentation/DocumentationTypes';
 import { union, type Box } from '../../fit/FitGeometry';
 import { openerBox } from '../../fit/standalone/OverlayRoom';
 import { remPixels } from '@envui-internal/internal/dom/lengths';

@@ -1,7 +1,7 @@
 // The headings of Markdown as the catalogue renders them, with the ids they take there: for the
 // search index, the generated documentation and the check that every #heading link has a heading.
 import { marked, type Token, type Tokens } from 'marked';
-import { headingSlugger } from './model/SearchAnchors.ts';
+import { headingSlugger } from '../../apps/site/src/documentation/SearchAnchors.ts';
 
 const entities: Record<string, string> = {
   amp: '&',

@@ -1,6 +1,6 @@
 /*
  * The words of a Props table, which the packaged Markdown's Props sections (scripts/docs/Compiler.ts)
- * and the Docs' tables (apps/site/src/pages/PropsTables.tsx) both write, as Markdown or as plain
+ * and the Docs' tables (apps/site/src/pages/docs/PropsTables.tsx) both write, as Markdown or as plain
  * text: a prop's description with when it is required or deprecated, and the elements whose native
  * props an export takes. It runs in Node and in the browser, so it imports nothing but types.
  */

@@ -1,12 +1,12 @@
 import { Alert, Link, type TableOfContentsItem } from '@envsemble/envui';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
-import { SiteBanner } from '../banner/SiteBanner';
-import { catalogueTrail } from '../routes/Trails';
-import type { DocumentPage, RoutePage } from '../routes/SiteRoutes';
-import { PartSwitch } from '../routes/OtherPart';
-import { TemplateContent, templateContents } from '../template/TemplateContent';
-import { MetadataBadges } from '../template/MetadataBadges';
-import { useDocument } from './PageContent';
+import type { DocumentationEntry } from '../../documentation/DocumentationTypes';
+import { SiteBanner } from '../../frame/SiteBanner';
+import { catalogueTrail } from '../../routes/Trails';
+import type { DocumentPage, RoutePage } from '../../routes/SiteRoutes';
+import { PartSwitch } from '../../routes/OtherPart';
+import { TemplateContent, templateContents } from '../../template/TemplateContent';
+import { MetadataBadges } from '../../template/MetadataBadges';
+import { useDocument } from '../PageContent';
 
 /**
  * A component's page in the catalogue: what it looks like and when to use it, in live figures

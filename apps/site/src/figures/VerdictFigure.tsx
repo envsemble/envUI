@@ -3,7 +3,7 @@ import { Column } from '@envsemble/envui';
 import { IconCheck } from '@envsemble/envui/icons/Check';
 import { IconClose } from '@envsemble/envui/icons/Close';
 import { IconWarning } from '@envsemble/envui/icons/Warning';
-import type { StageFill } from '@docs-model/DocumentationTypes';
+import type { StageFill } from '../documentation/DocumentationTypes';
 import { ExampleCode, ExampleRender } from './LiveExample';
 import { keepLinksInPlace } from './KeepLinksInPlace';
 import { OpenExample } from './OpenExample';

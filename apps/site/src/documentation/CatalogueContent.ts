@@ -67,14 +67,13 @@ export function subsections(markdown: string): string[] {
  * beside: no table, no fence, and not only a list.
  */
 export function lastSubsection(markdown: string): [string, string] | undefined {
-  const lines = markdown.split('\n');
-  let fence = false;
+  const scanned = fencedLines(markdown);
   let start = -1;
-  lines.forEach((line, index) => {
-    if (/^\s{0,3}(`{3,}|~{3,})/.test(line)) fence = !fence;
-    if (!fence && /^### /.test(line)) start = index;
+  scanned.forEach(({ line, fenced }, index) => {
+    if (!fenced && /^### /.test(line)) start = index;
   });
   if (start === -1) return undefined;
+  const lines = scanned.map(({ line }) => line);
   const body = lines.slice(start + 1).filter((line) => line.trim());
   if (!body.length || body.some((line) => /^\s*(\||`{3,}|~{3,})/.test(line))) return undefined;
   if (/^([-*+]|\d+[.)]) /.test(body[0])) return undefined;

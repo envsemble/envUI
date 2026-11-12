@@ -1,7 +1,7 @@
 import { Suspense, use, useRef, useState, type ReactNode } from 'react';
 import { Disclosure, Column, Text } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
-import type { DeviceKind, StageFill } from '@docs-model/DocumentationTypes';
+import type { DeviceKind, StageFill } from '../documentation/DocumentationTypes';
 import { FigureDevice, OnDevice } from './DeviceFrame';
 import { LoadBoundary } from '../loading/LoadBoundary';
 import {

@@ -7,10 +7,10 @@ import {
   type TableOfContentsItem,
 } from '@envsemble/envui';
 import { PageMarkdown, GuidanceLists, markdownHeadings } from '../markdown/PageMarkdown';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
-import type { DocumentationSection } from '@docs-model/DocumentationTypes';
+import type { DocumentationEntry } from '../documentation/DocumentationTypes';
+import type { DocumentationSection } from '../documentation/DocumentationTypes';
 import { FigureSection, sectionTitle } from '../figures/Figures';
-import { catalogueSection, docsOnlySections } from '@docs-model/CatalogueContent';
+import { catalogueSection, docsOnlySections } from '../documentation/CatalogueContent';
 import { Related, relatedId, relatedTitle } from './Related';
 import { alternativesOf } from './RelatedPages';
 import { WhenToUse } from './WhenToUse';

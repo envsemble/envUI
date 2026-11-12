@@ -9,7 +9,7 @@ import {
   redirectsFile,
 } from '../../scripts/site/PrerenderSite.ts';
 import { siteDescription } from '../../apps/site/src/routes/SiteDescription.ts';
-import { technicalText } from '../../scripts/docs/model/CatalogueContent.ts';
+import { technicalText } from '../../apps/site/src/documentation/CatalogueContent.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 import { importSource } from '../support/ImportSource.ts';
 import { elementsOf, firstElement, hasClass, textOf } from '../support/Markup.ts';

@@ -1,12 +1,12 @@
 import { PageMarkdown } from './PageMarkdown';
-import type { OptionTable } from '@docs-model/CatalogueContent';
+import type { OptionTable } from '../documentation/CatalogueContent';
 
 /**
  * An option table as the catalogue shows it: a legend, laid out as an anatomy figure's legend is,
  * each option's name followed by what it is for, and
  * below that any detail the table adds, such as the tones a variant takes. The Markdown keeps the
  * table, which the packaged page and agents read; its first column names the options, its last, Use
- * for, says what each is for (scripts/docs/model/CatalogueContent.ts).
+ * for, says what each is for (documentation/CatalogueContent.ts).
  */
 export function OptionLegend({ table, path }: { table: OptionTable; path: string }) {
   return (

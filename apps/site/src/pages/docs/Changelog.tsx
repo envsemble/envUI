@@ -1,5 +1,5 @@
-import changelog from '../../../../packages/ui/CHANGELOG.md?raw';
-import { PageMarkdown } from '../markdown/PageMarkdown';
+import changelog from '../../../../../packages/ui/CHANGELOG.md?raw';
+import { PageMarkdown } from '../../markdown/PageMarkdown';
 
 /**
  * The package's changelog as the releases write it, without its own title and a level lower, under

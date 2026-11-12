@@ -3,7 +3,7 @@ import type { LinkComponentProps } from '@envsemble/envui';
 import { navigate, routeOfLink } from '../routes/Address';
 import { findPage } from '../routes/SiteRoutes';
 import { normalizeRoute } from '../routes/OldAddresses';
-import { pageLoaded, preloadPage } from '../pages/PreloadPage';
+import { pageLoaded, preloadPage } from '../pages/PageLoading';
 
 /** The page of a route, such as components/button?section=props. */
 const pageOfRoute = (route: string) => findPage(route.split('?')[0]);
