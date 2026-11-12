@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useId, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useId, useRef } from 'react';
 import type {
   CSSProperties,
   FieldsetHTMLAttributes,
@@ -12,6 +12,7 @@ import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { setRef } from '../internal/react/setRef.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
 import '../styles/Base.css';
@@ -102,11 +103,12 @@ export function RadioGroup({
   const id = useId();
   const name = suppliedName ?? id;
   const fieldsetRef = useRef<HTMLFieldSetElement>(null);
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   // null is none while controlled, as undefined leaves the group to itself.
-  const value = controlledValue === null ? undefined : controlledValue;
-  const controlled = controlledValue !== undefined;
-  const selectedValue = controlled ? value : uncontrolledValue;
+  const [selectedValue, select, keepOwn] = useControllableState({
+    value: controlledValue,
+    defaultValue: defaultValue ?? null,
+    onChange: onValueChange,
+  });
   const ids = fieldMessageIds(id);
   const describedBy =
     [
@@ -119,8 +121,7 @@ export function RadioGroup({
   useFormReset(
     fieldsetRef,
     function applyReset() {
-      const resetValue = controlled ? value : defaultValue;
-      if (!controlled) setUncontrolledValue(resetValue);
+      const resetValue = keepOwn(defaultValue ?? null);
       const fieldset = fieldsetRef.current;
       for (const input of fieldset?.querySelectorAll<HTMLInputElement>('input[type="radio"]') ??
         []) {
@@ -129,10 +130,6 @@ export function RadioGroup({
     },
     props.form,
   );
-  function select(nextValue: string) {
-    if (!controlled) setUncontrolledValue(nextValue);
-    onValueChange?.(nextValue);
-  }
   const fieldset = (
     <fieldset
       {...props}
@@ -172,7 +169,7 @@ export function RadioGroup({
   return (
     <RadioContext.Provider
       value={{
-        value: selectedValue,
+        value: selectedValue ?? undefined,
         defaultValue,
         name,
         form: props.form,

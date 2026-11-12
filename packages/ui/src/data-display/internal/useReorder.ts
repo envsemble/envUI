@@ -10,7 +10,8 @@ import {
 } from 'react';
 import { useLatest } from '../../internal/useLatest.js';
 import { optionModule } from '../../internal/react/useOptionModule.js';
-import { dragThreshold, isLiftKey, isLiftedKey, isRowMoveKey } from './reorderKeys.js';
+import { dragThreshold } from '../../internal/dom/lengths.js';
+import { isLiftKey, isLiftedKey, isRowMoveKey } from './reorderKeys.js';
 import type {
   createReorder,
   Reorder,

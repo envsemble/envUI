@@ -23,7 +23,7 @@ import { IconUndo } from '@envsemble/envui/icons/Undo';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 // Internal primitives, which only envUI's own components use: the fixture mounts them directly.
 import { PopupSurface } from '../../packages/ui/src/internal/popup/PopupSurface.js';
-import { ListRow } from '../../packages/ui/src/internal/popup/ListRow.js';
+import { ListRow } from '../../packages/ui/src/internal/list/ListRow.js';
 import { ResizeHandle } from '../../packages/ui/src/internal/resize/ResizeHandle.js';
 import { useRovingFocus } from '../../packages/ui/src/forms/internal/useRovingFocus.js';
 import { useCopy } from '../../packages/ui/src/internal/useCopy.js';

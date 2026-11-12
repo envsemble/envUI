@@ -7,7 +7,7 @@ import {
   useKeepPageVisible,
   usePortalContainer,
 } from '../../internal/popup/PortalContainerContext.js';
-import { useOpenState } from '../../internal/popup/useOpenState.js';
+import { useControllableState } from '../../internal/react/useControllableState.js';
 import type { ComboboxOpenChangeDetails, ComboboxProps } from '../Combobox.js';
 
 /**
@@ -17,7 +17,7 @@ import type { ComboboxOpenChangeDetails, ComboboxProps } from '../Combobox.js';
  */
 export function useComboboxOpen({
   open,
-  defaultOpen,
+  defaultOpen = false,
   onOpenChange,
   popupRef,
   inputRef,
@@ -25,7 +25,11 @@ export function useComboboxOpen({
   popupRef: RefObject<HTMLElement | null>;
   inputRef: RefObject<HTMLElement | null>;
 }) {
-  const [popupOpen, setOpen] = useOpenState({ open, defaultOpen, onOpenChange });
+  const [popupOpen, setOpen] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const portal = usePortalContainer();
   // Base UI hides the rest of the page while the list is open; a contained one leaves it in reach.
   useKeepPageVisible(

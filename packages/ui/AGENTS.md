@@ -22,6 +22,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 
 - A boolean defaults to false, unless it turns off a feature shown by default: then name it after the feature, such as `header`, `closeButton` or a field's `visibleLabel`, and default it to true.
 - `show*` is for an opt-in display, such as Spinner's `showLabel`.
+- A value people may control, as `value` with `defaultValue` or `open` with `defaultOpen`, goes through `packages/ui/src/internal/react/useControllableState.ts`: `undefined` leaves it to the component, and `null` is a controlled none.
 - Signatures use envUI's own types; a third-party type stays where it is the point of a prop, such as Tiptap's `Editor` on RichTextEditor.
 
 ## Messages

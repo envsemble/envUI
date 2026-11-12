@@ -28,7 +28,7 @@ export function useTreeTransitions<Item extends TreeItem>(items: readonly Item[]
     if (!before) return lastChange.current;
     const same =
       before.length === items.length &&
-      before.every((item, index) => item.value === items[index]!.value);
+      before.every((item, index) => item.value === items[index].value);
     if (same) return lastChange.current;
     const motion = treeMotion(before, items);
     if (motion) return { arriving: noValues, motion };
@@ -47,7 +47,7 @@ export function useTreeTransitions<Item extends TreeItem>(items: readonly Item[]
   useLayoutEffect(function arrive() {
     const rows = rowsElement.current?.querySelectorAll('.env-tree-item[data-starting-style]');
     if (!rows?.length) return;
-    void getComputedStyle(rows[0]!).opacity;
+    void getComputedStyle(rows[0]).opacity;
     for (const row of rows) row.removeAttribute('data-starting-style');
   });
 

@@ -1,10 +1,11 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { IconSearch } from '../icons/Search.js';
 import { IconClose } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
 import { setRef } from '../internal/react/setRef.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { searchField as searchFieldMessages } from '../foundations/messages/searchField.js';
 import { TextField, type TextFieldProps } from './TextField.js';
@@ -74,21 +75,14 @@ export function SearchField({
   const messages = useMessages('searchField', searchFieldMessages);
   const clearName = clearLabel ?? messages.clear;
   const inputRef = useRef<HTMLInputElement>(null);
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const query = value ?? uncontrolledValue;
+  const [query, update, keepOwn] = useControllableState({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
   // The field renders its query itself, so a form reset, which resets only the native input,
   // restores an uncontrolled field's default query here.
-  useFormReset(
-    inputRef,
-    () => {
-      if (value === undefined) setUncontrolledValue(defaultValue);
-    },
-    props.form,
-  );
-  function update(next: string) {
-    if (value === undefined) setUncontrolledValue(next);
-    onValueChange?.(next);
-  }
+  useFormReset(inputRef, () => keepOwn(defaultValue), props.form);
   return (
     <TextField
       {...props}

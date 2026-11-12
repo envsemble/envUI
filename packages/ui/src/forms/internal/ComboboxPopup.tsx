@@ -4,7 +4,7 @@ import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useId, type ReactNode, type Ref } from 'react';
 import type { Direction } from '../../internal/provider/EnvUIContext.js';
 import { PopupSurface } from '../../internal/popup/PopupSurface.js';
-import { ListRow } from '../../internal/popup/ListRow.js';
+import { ListRow } from '../../internal/list/ListRow.js';
 import { Column, Grid } from '../../layout/Layout.js';
 import { Spinner } from '../../feedback/Spinner.js';
 import { IconCheck } from '../../icons/Check.js';

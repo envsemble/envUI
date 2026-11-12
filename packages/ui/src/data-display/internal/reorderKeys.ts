@@ -22,6 +22,3 @@ export function isRowMoveKey(event: KeyboardEvent<HTMLElement>) {
     (event.target as HTMLElement).closest('[data-row-target]') !== null
   );
 }
-
-/** How far, in CSS pixels, a press moves before it drags the row. */
-export const dragThreshold = 4;

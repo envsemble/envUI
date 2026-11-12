@@ -4,6 +4,12 @@ export function remPixels(element?: Element) {
   return Number.parseFloat(getComputedStyle(root).fontSize) || 16;
 }
 
+/**
+ * How far, in CSS pixels, a pointer moves with its button down before it drags what it pressed,
+ * such as a tab, a list's row or a time wheel, rather than pressing it.
+ */
+export const dragThreshold = 4;
+
 /** A computed length, such as `12.5px`, as its number of px; 0 for none, such as `auto`. */
 export const pixelsOf = (value: string) => Number.parseFloat(value) || 0;
 

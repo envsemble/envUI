@@ -11,7 +11,7 @@ import {
 } from '../../internal/popup/PortalContainerContext.js';
 import type { SkeletonProps } from '../../internal/skeleton.js';
 import { withDisplayName } from '../../internal/react/withDisplayName.js';
-import { markTriggerOwner } from '../../internal/popup/triggerOwner.js';
+import { markTriggerOwner } from '../../internal/trigger/triggerOwner.js';
 import { MenuPopup, menuParts } from '../internal/MenuPopup.js';
 import type { OpenChangeDetails } from '../internal/menuOpenChange.js';
 import { Item } from './MenuItem.js';

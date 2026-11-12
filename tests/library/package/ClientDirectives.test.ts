@@ -267,7 +267,7 @@ test('a Tooltip a server component writes around a Menu.Root describes its trigg
   const { renderToString } = await import('react-dom/server');
   const ui = await import('@envsemble/envui');
   const { isTriggerOwner, isTooltip } = await import(
-    pathToFileURL(join(repositoryRoot, 'packages/ui/dist/internal/popup/triggerOwner.js')).href
+    pathToFileURL(join(repositoryRoot, 'packages/ui/dist/internal/trigger/triggerOwner.js')).href
   );
   const trigger = h('button', { type: 'button', 'aria-label': 'Sort' });
   // The tooltip moves onto the menu's trigger, which Base UI's tooltip trigger marks.

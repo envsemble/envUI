@@ -21,7 +21,7 @@ function groupsOf<Command extends EditorCommand>(commands: readonly Command[]) {
   const groups: Command[][] = [];
   for (const command of commands) {
     const last = groups.at(-1);
-    if (last && editorCommandGroup[last[0]!] === editorCommandGroup[command]) last.push(command);
+    if (last && editorCommandGroup[last[0]] === editorCommandGroup[command]) last.push(command);
     else groups.push([command]);
   }
   return groups;

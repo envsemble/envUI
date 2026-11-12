@@ -14,6 +14,18 @@ const lazyType = Symbol.for('react.lazy');
 /** Stands for a lazy element type that hasn't loaded, or failed to. */
 const unresolved = Symbol('unresolved');
 
+/**
+ * The most lazy wrappers read through before a type counts as unresolved: a client reference wraps
+ * a component once, so more means a loop rather than a component.
+ */
+const lazyDepthLimit = 8;
+
+/**
+ * React's lazy element type, by the private fields React 19 gives it (checked against 19.3):
+ * `$$typeof` marks it, and `_init(_payload)` returns the component or throws while it loads.
+ * `tests/library/source/TriggerOwner.test.ts` reads them through React's own lazy, and fails if they
+ * change.
+ */
 interface Lazy {
   $$typeof: symbol;
   _payload: unknown;
@@ -32,7 +44,7 @@ const isLazy = (type: unknown): type is Lazy =>
 function resolve(type: unknown): unknown {
   let current = type;
   for (let depth = 0; isLazy(current); depth += 1) {
-    if (depth === 8) return unresolved;
+    if (depth === lazyDepthLimit) return unresolved;
     try {
       current = current._init(current._payload);
     } catch {

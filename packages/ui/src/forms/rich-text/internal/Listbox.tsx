@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { classNames } from '../../../internal/classNames.js';
-import { ListRow, type ListRowProps } from '../../../internal/popup/ListRow.js';
+import { ListRow, type ListRowProps } from '../../../internal/list/ListRow.js';
 import '../../../styles/Base.css';
 import '../../../styles/Listbox.css';
 

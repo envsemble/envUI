@@ -88,7 +88,7 @@ export function TimeWheel({
     const next = wraps ? wrap(index, count) : Math.min(Math.max(index, 0), count - 1);
     const available = nearestAvailable(entries, next, wraps, direction);
     // An index nearestAvailable found, so an entry.
-    if (available !== -1 && available !== currentIndex) onChoose(entries[available]!.value);
+    if (available !== -1 && available !== currentIndex) onChoose(entries[available].value);
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
@@ -114,7 +114,7 @@ export function TimeWheel({
       }
       typed.current = { text: kept, at };
       // An index matchTyped found, so an entry.
-      if (index !== -1 && index !== currentIndex) onChoose(entries[index]!.value);
+      if (index !== -1 && index !== currentIndex) onChoose(entries[index].value);
       return;
     }
     const moves: Record<string, [number, 1 | -1]> = {

@@ -16,7 +16,7 @@ import { IconButton } from '../actions/Button.js';
 import { Column } from '../layout/Layout.js';
 import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
-import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
+import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/provider/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
@@ -30,7 +30,7 @@ import {
   DialogPendingContext,
   DialogSurface,
   OverlayTheme,
-} from '../internal/popup/DialogParts.js';
+} from '../internal/dialog/DialogParts.js';
 import { withPendingAction } from './internal/DialogPendingAction.js';
 import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import { ResizeHandle } from '../internal/resize/ResizeHandle.js';
@@ -44,7 +44,7 @@ import { computedDirection } from '../internal/dom/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
 import type { ResizeDetails } from '../internal/resize/resizeDetails.js';
 import { flag } from '../internal/flag.js';
-import { useOpenState } from '../internal/popup/useOpenState.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import '../styles/Base.css';
 import '../styles/Sheet.css';
 
@@ -309,7 +309,11 @@ export function Sheet({
   const messages = useMessages('dialog', dialog);
   const provided = useEnvUI().dir;
   // Whether it shows, also where the application doesn't control it.
-  const [shown, setShown] = useOpenState({ open, defaultOpen, onOpenChange });
+  const [shown, setShown] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   // The touch swipe that closes a side sheet runs toward its edge, which is physical, so it follows the
   // direction where the sheet opens: the provider's, else its trigger's, read as it opens.
   const triggerRef = useRef<HTMLButtonElement>(null);

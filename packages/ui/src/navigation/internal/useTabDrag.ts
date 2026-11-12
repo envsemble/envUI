@@ -2,11 +2,10 @@
 
 import { useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react';
 import { isRightToLeft } from '../../internal/dom/direction.js';
+import { dragThreshold } from '../../internal/dom/lengths.js';
 import { useLatest } from '../../internal/useLatest.js';
 import { moveValue, tabElement } from './tabStrip.js';
 
-/** A pointer that moves this many pixels with its button down drags the tab rather than pressing it. */
-const dragThreshold = 4;
 /** Within this many pixels of the strip's edge, a drag scrolls the strip. */
 const edgeZone = 24;
 /** How far a drag near an edge scrolls the strip on each move, in pixels. */

@@ -7,7 +7,6 @@ import {
   useId,
   useLayoutEffect,
   useRef,
-  useState,
   type ComponentPropsWithRef,
   type ReactNode,
   type Ref,
@@ -16,6 +15,7 @@ import { classNames } from '../internal/classNames.js';
 import { Row } from '../layout/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { setRef } from '../internal/react/setRef.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import { useLocale } from '../internal/provider/EnvUIContext.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
@@ -135,14 +135,16 @@ export function Slider({
   const providedLocale = useLocale();
   const input = useRef<HTMLInputElement>(null);
   const control = useRef<HTMLDivElement>(null);
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? min);
+  const [current, change, keepOwn] = useControllableState({
+    value,
+    defaultValue: defaultValue ?? min,
+    onChange: onValueChange,
+  });
   const { reveal, pressed, handlers } = useSliderReveal(control, disabled);
-  const current = value ?? uncontrolledValue;
   useFormReset(
     input,
     function applyReset() {
-      const reset = value ?? defaultValue ?? min;
-      if (value === undefined) setUncontrolledValue(reset);
+      const reset = keepOwn(defaultValue ?? min);
       if (input.current) input.current.value = String(reset);
     },
     form,
@@ -225,10 +227,7 @@ export function Slider({
         }}
         data-ticks={flag(ticks > 1)}
         value={current}
-        onValueChange={(next) => {
-          if (value === undefined) setUncontrolledValue(next);
-          onValueChange?.(next);
-        }}
+        onValueChange={(next) => change(next)}
         onValueCommitted={(next) => onValueCommitted?.(next)}
         locale={locale ?? providedLocale}
         min={min}
@@ -272,7 +271,7 @@ export function Slider({
               </BaseSlider.Label>
               {/* The output names the range input it shows, and stays quiet while the value moves. */}
               <BaseSlider.Value className="env-slider-value" render={<Text render={<output />} />}>
-                {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
+                {(formatted, values) => (formatValue ? formatValue(values[0]) : formatted[0])}
               </BaseSlider.Value>
             </Row>
           </BaseSlider.Control>

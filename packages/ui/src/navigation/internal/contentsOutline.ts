@@ -31,10 +31,10 @@ export function outline(headings: readonly HeadingEntry[]): TableOfContentsItem[
   const root: TableOfContentsItem[] = [];
   const open: { level: number; children: TableOfContentsItem[] }[] = [];
   for (const heading of headings) {
-    while (open.length > 0 && open[open.length - 1]!.level >= heading.level) open.pop();
+    while (open.length > 0 && open[open.length - 1].level >= heading.level) open.pop();
     const children: TableOfContentsItem[] = [];
     const item = { id: heading.id, label: heading.label, children };
-    (open.length > 0 ? open[open.length - 1]!.children : root).push(item);
+    (open.length > 0 ? open[open.length - 1].children : root).push(item);
     open.push({ level: heading.level, children });
   }
   return root.map(withoutEmptyChildren);
@@ -129,10 +129,10 @@ export function currentSection(
 ): string | undefined {
   if (sections.length === 0) return undefined;
   const reached = reachedAt(sections, view);
-  let current = sections[0]!.id;
+  let current = sections[0].id;
   // A pixel of slack, for a section a link has just scrolled to a fraction short of its place.
   reached.forEach((at, index) => {
-    if (at <= view.scrolled + 1) current = sections[index]!.id;
+    if (at <= view.scrolled + 1) current = sections[index].id;
   });
   return current;
 }
@@ -149,7 +149,7 @@ export function readingPosition(sections: readonly SectionPosition[], view: Scro
   reached.forEach((at, each) => {
     if (at <= view.scrolled + 1) index = each;
   });
-  const from = reached[index]!;
+  const from = reached[index];
   const to = reached[index + 1];
   if (to === undefined || to <= from) return index;
   return index + Math.min(1, Math.max(0, (view.scrolled - from) / (to - from)));

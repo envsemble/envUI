@@ -43,8 +43,9 @@ const jsBudgets = [
 
 /** Each component's own envUI code, minified, its Base UI and Floating UI left out. */
 const componentBudgets = {
-  // 14,896 measured: 12,718, and closingFocus.ts, which every popup surface brings.
-  Tooltip: 15100,
+  // 15,336 measured (2026-11-11): 12,718, closingFocus.ts, which every popup surface brings, and
+  // useControllableState.ts with useLatest.ts, the open state every popup shares (was 14,896).
+  Tooltip: 15550,
   // 9,935 measured: 7,757, and closingFocus.ts.
   Popover: 10100,
   // 17,610 measured: 15,184, and closingFocus.ts with the submenu's guard.

@@ -18,6 +18,7 @@ import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { setRef } from '../internal/react/setRef.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
@@ -169,8 +170,11 @@ export function Composer({
   const id = suppliedId ?? generatedId;
   const descriptionId = `${id}-description`;
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const text = value ?? uncontrolledValue;
+  const [text, change, keepOwn] = useControllableState({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
   const blank = text.trim() === '';
   const rows = Math.max(1, Math.round(minRows));
   const maximumRows = Math.max(rows, Math.round(maxRows));
@@ -189,18 +193,7 @@ export function Composer({
   const canSend = onSend !== undefined || inForm;
 
   // The browser resets the native field; an uncontrolled composer follows with its own text.
-  useFormReset(
-    inputRef,
-    () => {
-      if (value === undefined) setUncontrolledValue(defaultValue);
-    },
-    form,
-  );
-
-  function change(next: string) {
-    if (value === undefined) setUncontrolledValue(next);
-    onValueChange?.(next);
-  }
+  useFormReset(inputRef, () => keepOwn(defaultValue), form);
 
   /** Sends the text, and reports whether it went. */
   function submit() {
