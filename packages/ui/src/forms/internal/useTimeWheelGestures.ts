@@ -92,10 +92,12 @@ export function useTimeWheelGestures({
     if (!state.moved) return;
     dragged.current = true;
     if (wheel.hasPointerCapture(event.pointerId)) wheel.releasePointerCapture(event.pointerId);
-    delete wheel.dataset.dragging;
     const speed = event.timeStamp - state.time > flingRestMs ? 0 : state.speed;
     const fling = prefersReducedMotion() ? 0 : speed * flingMs;
+    // The glide starts where the drag left the rows, so snapping stays off until the turn holds
+    // it off: back on, it would first pull them to the nearest row, as Firefox does at once.
     turning.turnTo(wheel, centredRow(wheel, loop, wheel.scrollTop - fling));
+    delete wheel.dataset.dragging;
   }
 
   // A mouse wheel turns the wheel a row a notch, and a touchpad as far as it scrolls, easing into
