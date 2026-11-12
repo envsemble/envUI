@@ -61,6 +61,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 ### CI
 
 - CI checks every pull request once it is ready, in parallel jobs: the static checks, the build with the unit tests, the library's browser tests in Chromium, the site's smoke and a secret scan. A change skips the browser jobs it can't affect (`scripts/test/ChooseJobs.ts`); a pull request into `main` runs all of them, and the Verify workflow runs the rest of `npm run verify` beside them.
+- Its `Burn-in` job runs each component test file and Playwright spec the pull request adds or edits several times in a row in Chromium, without retries, and fails on any failed run; `node scripts/test/BurnIn.ts <files>` runs it locally. Make a test that fails it wait for what it checks.
 - Each workflow ends in one job, `CI` or `Verify`, that the rulesets require; add a new job to its `needs`.
 - A push to `dev` seeds the npm and browser caches pull requests restore (`.github/workflows/caches.yml`).
 - `npm run test:library` (`--browser`, `--shard`) and `npm run test:site` run one browser suite as CI does. The library's shards split its component tests by the time each takes, from `tests/component/Durations.json`; refresh it as `scripts/test/RecordDurations.ts` says once files come or go or their times change much.

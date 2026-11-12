@@ -1,8 +1,10 @@
 name: Choose the jobs
-description: Which browser jobs a change needs (scripts/test/ChooseJobs.ts). Needs fetch-depth 2.
+description: >-
+  Which browser jobs a change needs, and which test files the burn-in repeats
+  (scripts/test/ChooseJobs.ts). Needs fetch-depth 2.
 inputs:
   full:
-    description: Run everything, whatever changed.
+    description: Run everything, whatever changed, and no burn-in.
     default: 'false'
 outputs:
   library:
@@ -11,6 +13,12 @@ outputs:
   site:
     description: Whether the site's smoke runs.
     value: ${{ steps.choose.outputs.site }}
+  burn-in:
+    description: Whether the burn-in runs.
+    value: ${{ steps.choose.outputs.burn-in }}
+  burn-in-files:
+    description: The browser test files the burn-in repeats, separated by spaces.
+    value: ${{ steps.choose.outputs.burn-in-files }}
 runs:
   using: composite
   steps:
@@ -24,16 +32,18 @@ runs:
         FULL: ${{ inputs.full }}
       run: |
         set -uo pipefail
-        # A script that fails runs everything too; its unit test (tests/tooling) reports why.
+        # A script that fails runs everything too, with no burn-in; its unit test (tests/tooling)
+        # reports why.
         choose() {
           if ! node scripts/test/ChooseJobs.ts "$@" > "$RUNNER_TEMP/jobs"; then
             echo "::warning::scripts/test/ChooseJobs.ts failed, so everything runs."
-            printf 'library=true\nsite=true\n' > "$RUNNER_TEMP/jobs"
+            printf 'library=true\nsite=true\nburn-in=false\nburn-in-files=\n' > "$RUNNER_TEMP/jobs"
           fi
           tee -a "$GITHUB_OUTPUT" < "$RUNNER_TEMP/jobs"
           exit 0
         }
-        # Anything but a pull request, and a release, runs everything.
+        # Anything but a pull request, and a release, runs everything. A release's test files were
+        # burned in on their way into dev.
         if [ "$EVENT" != pull_request ] || [ "$FULL" = true ]; then
           choose --full
         fi
@@ -43,4 +53,9 @@ runs:
           echo "::warning::The change could not be read, so everything runs."
           choose --full
         fi
-        choose --paths "$RUNNER_TEMP/changed-paths"
+        # What the burn-in repeats: the paths the change adds or edits, the deleted ones left out.
+        if ! git diff --name-only --no-renames --diff-filter=d HEAD^1 HEAD > "$RUNNER_TEMP/kept-paths"; then
+          echo "::warning::The added and edited files could not be read, so no burn-in runs."
+          choose --paths "$RUNNER_TEMP/changed-paths"
+        fi
+        choose --paths "$RUNNER_TEMP/changed-paths" --kept "$RUNNER_TEMP/kept-paths"
