@@ -2,7 +2,7 @@ import { Component, Suspense, useEffect, useRef, useState, type ReactNode } from
 import { Theme, useTheme } from '@envsemble/envui';
 import { IconArticle } from '@envsemble/envui/icons/Article';
 import { Playback, StageOverlays } from '../motion/Playback';
-import { useDisplaySettings } from '../display/DisplaySettings';
+import { useDisplaySettings } from '../display/useDisplaySettings';
 import { ExampleRender } from './LiveExample';
 import { FoundationTile } from '../tiles/foundations/FoundationTiles';
 import type { TileFrame, TilePicture } from '../tiles/TilePictures';

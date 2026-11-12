@@ -1,5 +1,0 @@
----
-'@envsemble/envui': patch
----
-
-The surfaces keep one order in every theme: the page and the recessed well lie below the default surface, and the filled and raised surfaces a step above it with one fill. In dark a raised surface (`--env-color-bg-raised`, tables, docked panels, the pager and `background="raised"`) is `#343638`, the filled surface's, rather than the default surface's shade, and in light at high contrast it is white, as cards are. In light the recessed surface (`--env-color-bg-recessed`) is `#f1f1f3`, between the page and the panes rather than lighter than both; it keeps the panes' fill at high contrast, where nothing fits between. The light selection (`--env-color-bg-selected`, with its hover and press) is a grade deeper, so a selected row still stands apart from a hovered one on the recessed surface. A page Card's action strip takes no band of its own, so the card no longer shows as its strip alone. See [Colors](https://github.com/envsemble/envUI/blob/main/docs/foundations/colors.md).

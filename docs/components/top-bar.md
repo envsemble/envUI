@@ -167,8 +167,3 @@ Put it in a Scaffold's top bar region, which is the banner landmark.
 The parts are the bar, `env-top-bar`, its start, `env-top-bar-start`, its title, `env-top-bar-title`, its actions, `env-top-bar-actions`, and the page progress, `env-top-bar-loading-bar`.
 
 - Keep the navigation in the Scaffold's navigation region, and two or three actions in the bar, the account last.
-
-## Changelog
-
-- **1.0.0**: TopBar, which replaces AppShell.Header and WindowFrame.TitleBar, with `sticky`, `titleBar` and `loading`.
-- **1.0.0-prerelease.6**: The loading bar follows the motion tokens: it completes in `--env-motion-duration-slow` with `--env-motion-ease-enter`, fades out in `--env-motion-duration-fast` with `--env-motion-ease-exit`, and is removed once its fade has ended; at once with durations of `0s`.

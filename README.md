@@ -9,7 +9,8 @@
 ![React 19](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)
 ![TypeScript types included](https://img.shields.io/badge/TypeScript-types_included-3178c6?logo=typescript&logoColor=white)
 ![Node.js 22.13+ or 24+](https://img.shields.io/badge/Node.js-22.13%2B_%7C_24%2B-417e38?logo=nodedotjs&logoColor=white)
-![Private package on GitHub Packages](https://img.shields.io/badge/GitHub_Packages-private-6e40c9?logo=github&logoColor=white)
+[![npm](https://img.shields.io/npm/v/@envsemble/envui?logo=npm&logoColor=white&color=cb3837)](https://www.npmjs.com/package/@envsemble/envui)
+![MIT license](https://img.shields.io/badge/license-MIT-555)
 
 envUI gives B2B SaaS products and AI developer tools one consistent interface: themes, components and patterns, from a button or a form to an app frame, a data table or a conversation with an agent. Its documentation is written for the people and the coding agents who build with it, and ships in the package.
 
@@ -22,7 +23,7 @@ envUI gives B2B SaaS products and AI developer tools one consistent interface: t
 
 ## Get started
 
-envUI is published privately to GitHub Packages, so installing it needs access to that registry. [Install and set up](https://envui.envsemble.com/docs) walks through it, with styles, theme and router. A coding agent can do the setup with you from one prompt:
+Install it from npm with `npm install --save-exact @envsemble/envui`. [Install and set up](https://envui.envsemble.com/docs/setup) walks through the rest: styles, theme and router. A coding agent can do the setup with you from one prompt:
 
 ```text
 Set up envUI in my app: envui.envsemble.com/SKILL.md

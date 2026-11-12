@@ -216,10 +216,3 @@ Without a `trigger`, open it with `open` and `onOpenChange`, which receives the 
 ### Customize
 
 A ConfirmDialog is an alert dialog with Dialog's parts: the surface, `env-dialog`, the question, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, with Cancel first and the confirm button last. The error is an Alert, `env-alert`, above the actions. Its surface looks as [Dialog's](dialog.md#customize) does.
-
-## Changelog
-
-- **1.0.0**: ConfirmDialog, an alert dialog with a neutral or danger tone that waits for its action and stays open when it fails.
-- **1.0.0-prerelease.6**: The dialog fades in with `--env-motion-ease-enter`, so it shows from its first frames rather than late, while it rises into place as before.
-- **1.0.0-prerelease.6**: `confirmDisabled` disables the confirm button, such as for a confirmation that waits on a typed name.
-- **1.0.0-prerelease.5**: The dialog takes the popups' color and soft shadow, with no outline edge, as Dialog does.

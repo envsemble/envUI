@@ -313,7 +313,3 @@ Render the MessageList from the start, empty, so the log exists before the first
 ### Composition
 
 The Column holds a Grid of one cell, whose row is `minmax(0, 1fr)`, with the MessageList and the Latest button in it, the button aligned to the end and centred over the log; then the Composer. An assistant's message takes `author`, Markdown as its content and CopyButton in `actions` once complete; your own messages take neither author nor actions. Between people, every message from someone else has its `author` and its time in `meta`, your own carry `status` while they are sent, and the composer's `start` can hold an attach IconButton. A placeholder reply while the first words are awaited is the reply's own skeleton, `skeleton` on its Message, never a Spinner in its place.
-
-## Changelog
-
-- **1.0.0**: The pattern.

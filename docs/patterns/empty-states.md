@@ -256,7 +256,3 @@ Keep the Scaffold and its navigation, and render the state as the router's page:
   </Page>
 </Scaffold>
 ```
-
-## Changelog
-
-- **1.0.0**: Empty states are built from Column, Text and Button, in place of the EmptyState component. The page is on the figure template, with a whole page and the empty states of the content guidelines.

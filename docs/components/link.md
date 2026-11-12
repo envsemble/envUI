@@ -130,8 +130,3 @@ A Button with `href` is the same native link, through the same `LinkProvider`, i
 ### Customize
 
 Link is a text Button with the class `env-link`, whose `data-underline` says whether it is underlined; CSS may target both. It takes the text button's colors. At rest its underline is a lighter line of its color; under the pointer and while pressed the underline takes the full color and the label darkens a step, then another.
-
-## Changelog
-
-- **1.0.0**: Link has a page of its own, split from the button page.
-- **1.0.0-prerelease.6**: An underlined link rests on a lighter line, its color at 40 %, and draws the underline in its full color under the pointer and while pressed, so rest, hover and press read apart.

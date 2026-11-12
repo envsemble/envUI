@@ -127,8 +127,3 @@ const euros = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR
 ### Composition
 
 AnimatedNumber is the root, `env-animated-number`, around the value, `env-animated-number-value`.
-
-## Changelog
-
-- **1.0.0**: The default format follows EnvUIProvider's `locale`. `format` is `formatValue`, as on Slider and CalendarHeatmap.
-- **1.0.0-prerelease.6**: The value it changed from rolls out quickly, `env-animated-number-previous`, and the new one rolls in at once, a whole line inside the number's box, so the number never blinks out and the two never read over each other; with reduced motion they cross-fade. Where the new value is wider or narrower, the box eases to its width.

@@ -185,15 +185,3 @@ The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title,
 ### Customize
 
 An Alert draws an edge only at high contrast, unless its outline color sets one, and its title and message take its text color while its icon and dismiss button take the icon's.
-
-## Changelog
-
-- **1.0.0**: No edge outside high contrast: the tone's stronger tint fills it, the title takes the tone's color as the icon does, and its corners are a card's, 1.25 rem. At high contrast it keeps the softer tint with an edge in the border color.
-- **1.0.0**: `actions` for `action`, as on Card and Dialog. `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
-- **1.0.0**: `Notice` is `Alert`, with `AlertTone` and the `env-alert-*` classes; the page is `alert`.
-- **1.0.0-prerelease.6**: The dismiss button's focus ring lies inside its circle, the size of its hover fill, rather than around it.
-- **1.0.0-prerelease.6**: In light, success and danger rest on lighter, clearer tints, as strong as information and warning.
-- **1.0.0-prerelease.6**: In light the tone's tint lies over the white raised surface, so it reads as its tone's color on the gray page; the title takes the text color, and the icon and the tint carry the tone.
-- **1.0.0-prerelease.6**: An alert rests on its tone's tint, `--env-color-bg-{tone}-muted`, in every theme and contrast, rather than the tone's hover layer, and takes the large corner of the radius scale, `--env-radius-lg`, which the compact scale tightens, rather than a fixed 1.25 rem, so a one-line alert no longer reads as a pill.
-- **1.0.0-prerelease.6**: Outline, ghost and text buttons among the actions take the alert's text color, an outline's edge the tone's color, and the tone's hover and press layers, rather than the link blue on every tone.
-- **1.0.0-prerelease.5**: A card's inset, 14 px above and below and 16 px at the sides; the title is semibold in the body size, 2 px above the message, which takes the small body size.

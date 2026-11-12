@@ -242,8 +242,3 @@ The top bar is the banner landmark and the body the main one, with the id `bodyI
 The parts are the root, `env-scaffold`, the top bar, `env-scaffold-top-bar`, the navigation's places, `env-scaffold-bar`, `env-scaffold-rail` and `env-scaffold-drawer`, the body, `env-scaffold-body`, and the skip links, `env-scaffold-skip-links`.
 
 - The page's title and actions go in its PageHeader, not the top bar, which belongs to the frame; the [app frame](../patterns/app-frame.md) pattern puts them together.
-
-## Changelog
-
-- **1.0.0**: Scaffold, which replaces AppShell and WindowFrame: a top bar region, the navigation forms by window class, and the body, with the document or the body scrolling.
-- **1.0.0-prerelease.5**: `skipLabel` and `skipNavigationLabel` are `skipToContentLabel` and `skipToNavigationLabel`, after their messages. `forms` is `navigationForms`, and `NavigationForm` is `ScaffoldNavigationForm`, so neither reads as a form of fields. `resolveNavigationForms` is internal.

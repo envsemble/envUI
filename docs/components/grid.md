@@ -133,7 +133,3 @@ Grid lays out its children in `columns`, one by default, with `gap` between rows
 Keep the visual order the document order: no `grid-row` or `grid-column` that moves what people read or tab through.
 
 - For items people count, use `render={<ul />}`, with each child a `li`, and name the list.
-
-## Changelog
-
-- **1.0.0**: Grid, with Row, Column and Box, the layout primitives.

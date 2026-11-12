@@ -31,10 +31,19 @@ jobs:
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ${{ vars.CI_LINUX_RUNNER }}
     timeout-minutes: 15
+    # WebKit runs one file at a time: two at once on the runner's two cores left a test past its
+    # timeouts in most runs (a 2-CPU container failed 2 runs of 3 with two, none of 3 with one) for
+    # about 5% more time. Firefox keeps two: one cost a fifth more and failed as often.
     strategy:
       fail-fast: false
       matrix:
-        browser: [firefox, webkit]
+        include:
+          - browser: firefox
+            workers: 2
+          - browser: webkit
+            workers: 1
+    env:
+      ENVUI_WORKERS: ${{ matrix.workers }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

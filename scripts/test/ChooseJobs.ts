@@ -1,13 +1,17 @@
 // Chooses the browser jobs CI runs for a change (.github/actions/choose-jobs): the library's browser
-// tests and the site's smoke. The static checks, the build and the unit tests always run; they take
-// a couple of minutes and read nearly every file, the guides included.
+// tests and the site's smoke, and the test files the burn-in repeats. The static checks, the build
+// and the unit tests always run; they take a couple of minutes and read nearly every file, the
+// guides included.
 //
-//   node scripts/test/ChooseJobs.ts [--paths <file>] [--full]
+//   node scripts/test/ChooseJobs.ts [--paths <file>] [--kept <file>] [--full]
 //
 // --paths names a file listing the changed paths, one to a line; without it, or with --full,
-// everything runs. It prints `library=` and `site=` lines for $GITHUB_OUTPUT, and why on stderr.
-// A path no rule names runs everything, so a new folder is tested until a rule places it. It reads
-// only Node's own modules: the job that runs it installs nothing.
+// everything runs. --kept lists the paths the change adds or edits, the deleted ones left out: the
+// burn-in (scripts/test/BurnIn.ts) repeats the browser test files among them, and without it, or
+// with --full, none. It prints `library=`, `site=`, `burn-in=` and `burn-in-files=` lines for
+// $GITHUB_OUTPUT, and why on stderr. A path no rule names runs everything, so a new folder is
+// tested until a rule places it. It reads only Node's own modules: the job that runs it installs
+// nothing.
 import { readFileSync } from 'node:fs';
 import { posix } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -36,10 +40,11 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
     ],
     jobs: 'all',
   },
-  // Guides read by Prettier and the unit tests alone. The packaged README, the changelogs and the
-  // pages in docs/ are the site's content, below.
+  // Guides and the license, read by Prettier and the unit tests alone. The packaged README, the
+  // changelogs and the pages in docs/ are the site's content, below.
   {
     paths: [
+      'LICENSE',
       'AGENTS.md',
       'CONTRIBUTING.md',
       'contributing/**',
@@ -115,18 +120,44 @@ export function chooseJobs(paths: readonly string[] | undefined) {
   return { jobs, reasons };
 }
 
+/**
+ * The browser test files whose own source a change adds or edits, which the burn-in repeats: the
+ * component tests and the Playwright specs, not the tests a changed component selects, so a change
+ * to no test file repeats nothing. The accessibility scan is left out, as CI's Chromium jobs leave
+ * it to `npm run test:a11y`.
+ */
+export const burnInFiles = (kept: readonly string[]) =>
+  [
+    ...new Set(
+      kept.filter((path) =>
+        /^(?:tests\/component\/(?!Accessibility\.)[\w-]+\.test\.tsx|tests\/browser\/(?:library|site)\/[\w-]+\.spec\.ts)$/.test(
+          path,
+        ),
+      ),
+    ),
+  ].sort();
+
 if (import.meta.main) {
   const { values } = parseArgs({
-    options: { paths: { type: 'string' }, full: { type: 'boolean', default: false } },
+    options: {
+      paths: { type: 'string' },
+      kept: { type: 'string' },
+      full: { type: 'boolean', default: false },
+    },
   });
-  const paths =
-    values.full || !values.paths
+  const read = (file: string | undefined) =>
+    values.full || !values.paths || !file
       ? undefined
-      : readFileSync(values.paths, 'utf8').split(/\r?\n/).filter(Boolean);
+      : readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean);
+  const paths = read(values.paths);
   const { jobs, reasons } = chooseJobs(paths);
+  const repeated = burnInFiles(read(values.kept) ?? []);
   console.error(
     paths ? `${paths.length} changed paths.` : 'Everything runs.',
     ...reasons.map((reason) => `\n  ${reason}`),
+    `\nburn-in: ${repeated.join(', ') || 'no browser test file added or edited'}`,
   );
   for (const [job, runs] of Object.entries(jobs)) console.log(`${job}=${runs}`);
+  console.log(`burn-in=${repeated.length > 0}`);
+  console.log(`burn-in-files=${repeated.join(' ')}`);
 }

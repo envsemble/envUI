@@ -248,6 +248,9 @@ describe('PanelDock', () => {
       await draft.fill('Unsent changes');
       // Focus inside a panel activates it.
       await expect.poll(attribute(() => dock.panel('report'), 'data-active')).toBe('');
+      // Firefox scrolls the typed text into view a frame after it is typed: past that, the draft
+      // may scroll out of view without the browser bringing it back.
+      await nextFrames();
       content().scrollTop = 120;
       list().scrollTop = 60;
 

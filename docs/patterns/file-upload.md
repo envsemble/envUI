@@ -244,7 +244,3 @@ Upload the files as they are added, and keep what the server returns for each, s
 ### Composition
 
 A Column holds the DropZone, a List.Root named with `aria-label`, and a caption Text with `role="status"`. Each List.Item has the file's name as `label`; its `description` is the size once done or the reason it failed, its children a Progress while it uploads, and its `end` a Row with Try again, when it failed, and Remove. In a form, the zone is `size="sm"` among the fields, with the list under it.
-
-## Changelog
-
-- **1.0.0**: The pattern.

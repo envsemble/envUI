@@ -261,12 +261,3 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
 ### Composition
 
 The parts are the list, `env-list`, each row, `env-list-item`, with its handle, `env-list-item-handle`, its start, `env-list-item-start`, its content, `env-list-item-content`, which holds the label and the description, and its action at the end. Rows render on the server; only the handle of a reorderable row needs the browser.
-
-## Changelog
-
-- **1.0.0**: List.Item takes `current` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label`, its `detail` is `description` and its `action` is `end`, as on CommandPalette's items and Button. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
-- **1.0.0-prerelease.6**: A pressed row's link or button, `data-row-target`, lays no pressed fill of its own: the row shows the press.
-- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
-- **1.0.0-prerelease.6**: In an interactive row the focus ring of the `data-row-target` link or button traces the row, not the label alone.
-- **1.0.0-prerelease.6**: The start slot is at least an icon wide, with its content centred, so a Spinner among icons keeps its label in line.
-- **1.0.0-prerelease.5**: List.Item's `selected` is `current`, as it marks the current row with `aria-current`; `selected` means chosen elsewhere.

@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/eslint-plugin-envui",
-  "version": "1.0.0-prerelease.5",
+  "version": "1.0.0",
   "description": "ESLint rules that point people and coding agents to envUI components instead of hand-rolled controls and raw colors",
   "homepage": "https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#readme",
   "bugs": {
@@ -14,7 +14,7 @@
     "envsemble"
   ],
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/envsemble/envUI.git",
@@ -49,7 +49,7 @@
     "typescript-eslint": "8.72.1"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }

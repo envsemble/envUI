@@ -6,7 +6,7 @@ Lint output reaches people and coding agents in their usual edit-and-check loop,
 
 ## Install
 
-The plugin is published to GitHub Packages with envUI, in the same `@envsemble` scope; an application that installs envUI already has the registry set up. It needs ESLint 10 and its flat config.
+The plugin is published to npm with envUI and has the same version number. It needs ESLint 10 and its flat config.
 
 ```sh
 npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@<the version of @envsemble/envui>

@@ -218,7 +218,3 @@ Every icon slot, the `env-icon` wrapper of Button, IconButton, Menu, navigation,
 ### Customize
 
 `--env-picture-size-sm`, `-md`, `-lg` and `-xl` hold the sizes from `sm` to `xl`, which Avatar and AvatarGroup take too, so they stay the same. The [lint rule `no-raw-graphics`](https://github.com/envsemble/envUI/blob/main/packages/eslint-plugin/README.md#no-raw-graphics) reports a raw `img`, an `svg` with a fixed size, another icon package, a Graphic without `alt` and a margin on one.
-
-## Changelog
-
-- **1.0.0**: Graphic, the application's own logos, icons and pictures at envUI's sizes.

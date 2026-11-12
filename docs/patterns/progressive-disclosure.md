@@ -222,7 +222,3 @@ A Popover with `side="bottom"` opens from an IconButton named for the term, such
 ### Composition
 
 The anatomy's parts are the visible layer, here a TextField's `env-text-field`, the Disclosure's summary, `env-disclosure summary`, its panel, `env-disclosure-panel`, and the More actions trigger, `env-button ~ env-button`.
-
-## Changelog
-
-- **1.0.0**: The page is on the figure template, with Accordion among the depths.

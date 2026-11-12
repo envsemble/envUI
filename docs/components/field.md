@@ -156,9 +156,3 @@ Field.Root holds a Field.Label, a Field.Control, a Field.Description and a Field
 ### Composition
 
 The parts are the root, `env-field`, the label, `env-field-label`, the control, `env-field-control`, the description, `env-field-description`, and the error, `env-field-error`. TextField, DatePicker and envUI's other fields are built from them, and so are fields of an application's own. `disabled` and `name` on Field.Root take precedence over the control's.
-
-## Changelog
-
-- **1.0.0**: Field, on Base UI's Field.
-- **1.0.0-prerelease.6**: Field.Label takes the size, weight and muted color of a field's floated label, so it reads as the labels of envUI's own fields do.
-- **1.0.0-prerelease.6**: Field.Control takes a text field's rounded corners rather than round ends.

@@ -137,7 +137,3 @@ In a narrow pane, stack the actions in a Column and give each Button `fullWidth`
   …
 </Surface>
 ```
-
-## Changelog
-
-- **1.0.0**: Column, Row, Grid and Box replace Stack: a Stack is a Column, or a Row with `direction="row"`. A Column has no gap of its own, where Stack's default was `gap={4}`.

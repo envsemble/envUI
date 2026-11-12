@@ -254,9 +254,3 @@ Give media an aspect ratio, with `width` and `height` or the CSS `aspect-ratio`,
 ### Composition
 
 A skeleton's root takes `aria-busy` and its content is inert, in `env-skeleton-content`, which has no box of its own. Bars have small rounded corners, over missing text and text that is there alike, and shapes keep their component's corners, such as a chip's, an avatar's round one or a card's. A skeleton List holds no wrapper, and beside it a visually hidden status says what is loading.
-
-## Changelog
-
-- **1.0.0**: Skeletons are the components themselves, with `skeleton` and `placeholders()`, in place of hand-built Skeleton placeholders. The page is on the figure template.
-- **1.0.0-prerelease.6**: Only the bars and shapes pulse: the skeleton's own surfaces, such as cards and rows, keep a faint tint that barely moves, so they keep their edges against the page and the layout stands still.
-- **1.0.0-prerelease.6**: A skeleton's breath lasts seven and a half times `--env-motion-duration-slow`, as long as before, with `--env-motion-ease`, so durations of `0s` stop it.

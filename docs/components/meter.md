@@ -108,9 +108,3 @@ A Meter takes its `value` between `min`, 0 by default, and `max`, 100 by default
 ### Composition
 
 The parts are the meter, `env-meter`, its label, `env-meter-label`, its value, `env-meter-value`, the track, `env-meter-track`, and the indicator, `env-meter-indicator`. `className`, `style`, `ref` and data attributes reach the root, and the numbers follow the provider's locale. The meter has no warning color of its own, so say in text when a limit is reached.
-
-## Changelog
-
-- **1.0.0**: The classes are `env-meter*`; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root, and numbers follow the provider's locale.
-- **1.0.0**: In the dark theme, meters reach 3:1 on every surface.
-- **1.0.0-prerelease.6**: The track is the neutral fill a Slider's track takes, so it shows on dark panels.

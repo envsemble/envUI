@@ -60,13 +60,20 @@ test(
     const pageElement = page.getByTestId('page').element() as HTMLElement;
     const published = () => pageElement.style.getPropertyValue('--env-page-header-block-size');
     const height = () => `${sticky().offsetHeight}px`;
-    await expect.poll(published).toBe(height());
+    // Both are read as the poll runs: in a frame's first mount the font may still be loading, and
+    // the header's height changes as it swaps in, its published height a frame later.
+    const publishesItsHeight = () =>
+      expect.poll(() => [published(), height()]).toSatisfy(([value, size]) => value === size);
+    await publishesItsHeight();
     // A field scrolled into view as it takes focus lands below the header.
     const field = page.getByTestId('far-field').element() as HTMLElement;
-    const clearOfHeader = () => {
-      const header = box(sticky());
-      return expect.poll(() => box(field).y).toBeGreaterThanOrEqual(header.y + header.height);
-    };
+    const clearOfHeader = () =>
+      expect
+        .poll(() => {
+          const header = box(sticky());
+          return box(field).y - (header.y + header.height);
+        })
+        .toBeGreaterThanOrEqual(0);
     body().scrollTo(0, 0);
     field.focus();
     await clearOfHeader();
@@ -75,7 +82,7 @@ test(
     const before = height();
     (page.getByTestId('frame').element() as HTMLElement).style.inlineSize = '20rem';
     await expect.poll(height).not.toBe(before);
-    await expect.poll(published).toBe(height());
+    await publishesItsHeight();
     body().scrollTo(0, 0);
     field.blur();
     field.focus();

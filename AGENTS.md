@@ -61,6 +61,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 ### CI
 
 - CI checks every pull request once it is ready, in parallel jobs: the static checks, the build with the unit tests, the library's browser tests in Chromium, the site's smoke and a secret scan. A change skips the browser jobs it can't affect (`scripts/test/ChooseJobs.ts`); a pull request into `main` runs all of them, and the Verify workflow runs the rest of `npm run verify` beside them.
+- Its `Burn-in` job runs each component test file and Playwright spec the pull request adds or edits several times in a row in Chromium, without retries, and fails on any failed run; `node scripts/test/BurnIn.ts <files>` runs it locally. Make a test that fails it wait for what it checks.
 - Each workflow ends in one job, `CI` or `Verify`, that the rulesets require; add a new job to its `needs`.
 - A push to `dev` seeds the npm and browser caches pull requests restore (`.github/workflows/caches.yml`).
 - `npm run test:library` (`--browser`, `--shard`) and `npm run test:site` run one browser suite as CI does. The library's shards split its component tests by the time each takes, from `tests/component/Durations.json`; refresh it as `scripts/test/RecordDurations.ts` says once files come or go or their times change much.
@@ -154,5 +155,5 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 1. **On the release branch**, for a stable release, leave prerelease mode first with `npx changeset pre exit`: `npm run changeset:version` in prerelease mode makes another prerelease (undo it with `git restore` and `git clean`, never by editing versions). Then `npm run changeset:version` writes the version, the lockfile and the changelogs.
 2. **Finish the changelog section:** the date in its heading, as in `## 1.0.0 — 2026-10-20`, and one or two sentences on what the release brings, the headline changes rather than a list; leave the generated entries as they are.
 3. **Check it** with `GITHUB_REF_NAME=v<version> node scripts/release/ValidateRelease.ts` (`--release-notes` prints the notes), retake the README's pictures with `npm run docs:readme-images` if the site's look changed, and commit it as `Release <version>`.
-4. **Merge** the branch into `dev`, then `dev` into `main` with a merge commit, through pull requests. The Release workflow validates, builds, publishes the packages to GitHub Packages and the GitHub release (`scripts/release/Publish.ts`); a re-run publishes only what is missing.
-5. **Merge `main` back into `dev`**, and grant a new package's Actions access to the repositories that read `@envsemble/envui`.
+4. **Merge** the branch into `dev`, then `dev` into `main` with a merge commit, through pull requests. The Release workflow validates, builds, publishes the packages to npm and the GitHub release (`scripts/release/Publish.ts`); a re-run publishes only what is missing.
+5. **Merge `main` back into `dev`.**

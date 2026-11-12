@@ -230,7 +230,3 @@ Tabs go under the PageHeader for the views of the object the page is about; a li
 ### Composition
 
 The primary navigation is a NavigationRail here, from Scaffold's `navigation`; the trail is Breadcrumbs in the PageHeader, the views Tabs below it, and quick open an IconButton in the TopBar's actions. A Pager ends a page read in order. The parts are the rail, `env-navigation-rail`, the quick-open button, `env-top-bar-actions > env-icon-button`, the trail, `env-breadcrumbs`, and the tabs, `env-tabs-list`.
-
-## Changelog
-
-- **1.0.0**: The page is on the figure template.

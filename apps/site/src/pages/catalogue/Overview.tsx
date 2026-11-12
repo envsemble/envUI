@@ -1,9 +1,9 @@
-import { Button, Card, Column, CopyButton, Link, Row, Text } from '@envsemble/envui';
+import { Button, Card, Column, CopyButton, Row, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
-import { name } from '@envsemble/envui/package.json';
+import { license, name, version } from '@envsemble/envui/package.json';
 import { EnvUILogo } from '../../brand/EnvUILogo';
 import { docsRoute, routeHref } from '../../routes/Address';
 import { pagesOf, sectionHome } from '../../routes/SiteRoutes';
@@ -45,8 +45,7 @@ const counts = (['component', 'pattern', 'foundation'] as const).map((kind) => (
 
 /**
  * The command that installs envUI, by the package's name in packages/ui/package.json: short, so it
- * keeps room to spare on a phone. docs/setup.md gives the registry it needs and the command that
- * pins the version exactly, which the line under it leads to.
+ * keeps room to spare on a phone. docs/setup.md gives the command that pins the version exactly.
  */
 const install = `npm i ${name}`;
 
@@ -66,7 +65,8 @@ export function Overview() {
             A React design system for clear, accessible interfaces.
           </Text>
           {/* The one way in, to setting envUI up, beside the command that installs it; under them,
-              one quiet line: how much the catalogue shows, and what installing needs first. */}
+              one quiet line: how much the catalogue shows, the version and the license, all read
+              from the package and its pages as the site builds. */}
           <Column gap={4} align="center">
             <Row gap={4} align="center" justify="center" wrap className="catalogue-overview-start">
               <Button href={routeHref(docsRoute)} endIcon={<IconArrowForward />}>
@@ -84,12 +84,8 @@ export function Overview() {
                   {count} {kind}s
                 </span>
               ))}
-              <span>
-                Installing needs{' '}
-                <Link href={routeHref(`${docsRoute}?section=registry-access`)}>
-                  registry access
-                </Link>
-              </span>
+              <span>Version {version}</span>
+              <span>{license} license</span>
             </Text>
           </Column>
         </Column>

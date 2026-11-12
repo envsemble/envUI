@@ -216,9 +216,3 @@ With `name`, a native form submits the last files the zone took, dropped ones to
 ### Composition
 
 The zone's frame is Field's root and error. Its parts are the zone, `env-drop-zone`, the target people press, `env-drop-zone-target`, with its icon, `env-drop-zone-icon`, its label, `env-drop-zone-label`, and its description, `env-drop-zone-description`; then the error, `env-field-error`. List the chosen files beside it, such as in a List with Replace and Remove, and keep links and other controls out of the zone.
-
-## Changelog
-
-- **1.0.0**: `onFiles` is `onFilesAccepted` and `onReject` is `onFilesRejected`; they run for dropped and browsed files alike. The zone is named by what it shows, its label and its description, and described by its error. Its frame is Field's root and error.
-- **1.0.0**: `FileDropzone` is `DropZone`, with the `env-drop-zone-*` classes; the page is `drop-zone`.
-- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.

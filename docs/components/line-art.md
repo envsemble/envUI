@@ -251,7 +251,3 @@ In a banner or a header, give the drawing a box at the end and keep the text abo
 The root is `env-line-art`, an SVG with `data-drawing` and `data-align`, whose shapes draw with `stroke: var(--env-color-border-muted)`, `stroke-width: 1px` and `vector-effect: non-scaling-stroke`, and `stroke: GrayText` in forced colors. Its `width` and `height` are its box's, `100%` of its container by default; set them, or its `style`, to place it.
 
 In motion, the root also has `data-motion`, and `data-turn`, `in` or `out`, in a loop. A motion takes `--env-line-art-duration`, `calc(var(--env-motion-duration-slow) * 10)` by default, and `play` half as long again; set it on the drawing to slow it down or speed it up. Each line is a dash of `pathLength="1"`, moved by `stroke-dashoffset`, so nothing but the lines moves.
-
-## Changelog
-
-- **1.0.0**: LineArt, sixteen geometric drawings in hairlines, with `drawing`, `align` and `label`, and `lineArtDrawings`; `motion`, `appear`, `disappear`, `loop` or `play`, and `onMotionEnd`.

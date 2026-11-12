@@ -100,7 +100,3 @@ Box renders a `div`, or the element in `render`, such as `render={<section />}`,
 ### Composition
 
 Put one inset on the region and a Column, Row or Grid inside it for the gaps, rather than a padded box around each child. Box has no fill, border or corners: a Surface has them.
-
-## Changelog
-
-- **1.0.0**: Box, with Row, Column and Grid, the layout primitives.

@@ -93,13 +93,14 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
   {
     kind: "a component's page in the Docs",
     path: '/docs/components/button',
-    // Its changelog is collapsed until the reader opens it.
+    // The Design | Code switch leads to the component's page in the catalogue.
     act: async (page) => {
-      const changelog = page.locator('.docs-changelog details');
-      await expect(changelog).not.toHaveAttribute('open');
-      await changelog.locator('summary').click();
-      await expect(changelog).toHaveAttribute('open');
-      await expect(changelog.locator('.docs-changelog-entries')).toBeVisible();
+      await page
+        .getByRole('navigation', { name: 'Design or code' })
+        .getByRole('link', { name: 'Design' })
+        .click();
+      await expect(page).toHaveURL(`${siteBuildUrl}/components/button`);
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
     },
   },
   {
