@@ -34,14 +34,7 @@ If the app already has its own UI components or another component library, set e
 
 ## Step 1: Install envUI
 
-envUI is on GitHub Packages. Add the registry to the project's `.npmrc`, creating it if missing and keeping its other lines:
-
-```ini
-@envsemble:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
-```
-
-Take the token from the GitHub CLI for each install, never writing it into a file: `NODE_AUTH_TOKEN=$(gh auth token) npm install --save-exact @envsemble/envui@{{version}}` (in PowerShell, set `$env:NODE_AUTH_TOKEN = gh auth token` first). If `gh` is missing, signed out or the install answers 401 or 403, ask the user to run `gh auth login` or `gh auth refresh -s read:packages` in their own terminal, then retry. Tell them CI needs `NODE_AUTH_TOKEN` too.
+Install the exact version with the project's package manager, such as `npm install --save-exact @envsemble/envui@{{version}}`.
 
 Then, as `node_modules/@envsemble/envui/docs/setup.md` shows:
 

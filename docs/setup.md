@@ -60,18 +60,6 @@ aliases:
 
 envUI is a package of React components and design tokens for React and React DOM 19. Install an exact version and read the docs shipped with it.
 
-## Registry access
-
-envUI is published to GitHub Packages for now, so npm needs its registry and a token:
-
-```ini
-# Project .npmrc
-@envsemble:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
-```
-
-Locally, `NODE_AUTH_TOKEN` is a classic GitHub token with `read:packages`; in GitHub Actions, the repository's `GITHUB_TOKEN` with `packages: read`, once it has Read access to the package. Keep real tokens out of committed files.
-
 ## Install a release
 
 ```sh

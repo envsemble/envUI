@@ -1,4 +1,4 @@
-import { Button, Card, Column, CopyButton, Link, Row, Text } from '@envsemble/envui';
+import { Button, Card, Column, CopyButton, Row, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
@@ -84,12 +84,6 @@ export function Overview() {
                   {count} {kind}s
                 </span>
               ))}
-              <span>
-                Installing needs{' '}
-                <Link href={routeHref(`${docsRoute}?section=registry-access`)}>
-                  registry access
-                </Link>
-              </span>
             </Text>
           </Column>
         </Column>

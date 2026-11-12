@@ -4,7 +4,7 @@ A Stylelint config for applications built with envUI. It reports raw colors, lit
 
 ## Install
 
-The config is published to GitHub Packages with envUI, in the same `@envsemble` scope, and has the same version number. Install the same version as `@envsemble/envui`. It needs Stylelint 17.
+The config is published to npm with envUI and has the same version number. Install the same version as `@envsemble/envui`. It needs Stylelint 17.
 
 ```sh
 npm install --save-dev --save-exact @envsemble/stylelint-config-envui@<the version of @envsemble/envui>

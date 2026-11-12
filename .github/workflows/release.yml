@@ -2,10 +2,10 @@ name: Release
 # Merging a pull request into main publishes its version when that version isn't released yet: the
 # CI and Verify workflows already ran every check on the pull request, so this job only validates,
 # builds and publishes. It creates a draft GitHub Release with the version's CHANGELOG section,
-# publishes the three packages under the version's dist-tag (latest, or the prerelease's name, such
-# as prerelease), then publishes the release, which creates its tag on the merge commit. A failed run
-# leaves the draft; re-running it publishes only what is still missing. It runs once per merge, on
-# the Linux runner the envsemble organization variable CI_LINUX_RUNNER names.
+# publishes the three packages to npm under the version's dist-tag (latest, or the prerelease's
+# name, such as prerelease), then publishes the release, which creates its tag on the merge commit.
+# A failed run leaves the draft; re-running it publishes only what is still missing. It runs once
+# per merge, on the Linux runner the envsemble organization variable CI_LINUX_RUNNER names.
 on:
   pull_request:
     branches: [main]
@@ -13,8 +13,8 @@ on:
 permissions:
   # Creates and publishes the release and its tag.
   contents: write
-  # Publishes the packages to GitHub Packages.
-  packages: write
+  # npm's trusted publishing: npm takes the job's OpenID Connect token in place of a stored one.
+  id-token: write
 defaults:
   run:
     shell: bash
@@ -40,7 +40,7 @@ jobs:
       # Without the dependencies' install scripts, which would run with the job's write token.
       - uses: ./.github/actions/setup
         with:
-          registry-url: https://npm.pkg.github.com
+          registry-url: https://registry.npmjs.org
           install-scripts: 'false'
       # A version with a published release is done; otherwise the release must be ready
       # (scripts/release/ValidateRelease.ts) before it is built.
@@ -53,6 +53,10 @@ jobs:
       # scripts/release/Publish.ts.
       - name: Publish the release
         if: ${{ steps.version.outputs.release == 'true' }}
+        # npm sets up trusted publishing only for a package that exists, so a package's first
+        # version goes out with NPM_TOKEN, a short-lived granular token that may publish without
+        # two-factor authentication. Once each package has its trusted publisher (this repository
+        # and release.yml), the secret is deleted and npm publishes with the job's identity alone.
         env:
-          NODE_AUTH_TOKEN: ${{ github.token }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: node scripts/release/Publish.ts
