@@ -6,6 +6,7 @@ import { readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { isPublished, publish, releaseState } from '../../scripts/release/Publish.ts';
+import { releaseNotes, releaseNotesLimit } from '../../scripts/release/ValidateRelease.ts';
 import { libraryPackageFile, repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const script = join(repositoryRoot, 'scripts/release/ValidateRelease.ts');
@@ -25,6 +26,33 @@ test('release notes contain only the released version', () => {
     'notes must not include a version heading or another version',
   );
   assert.doesNotMatch(notes, /^# Changelog/m);
+});
+
+test('release notes fit a GitHub release: a longer section gives its summary and a link', () => {
+  const changelog = (entries: number) =>
+    [
+      '# Changelog',
+      '',
+      '## 2.0.0 — 2026-01-01',
+      '',
+      'The summary.',
+      '',
+      '### Major Changes',
+      '',
+      ...Array.from({ length: entries }, (_, index) => `- Change ${index}.`),
+      '',
+      '## 1.0.0',
+      '',
+      'Older.',
+    ].join('\n');
+  const short = releaseNotes(changelog(2), '2.0.0');
+  assert.match(short, /^The summary\.\n\n### Major Changes\n\n- Change 0\.\n- Change 1\.\n$/);
+  const long = releaseNotes(changelog(releaseNotesLimit / 10), '2.0.0');
+  assert.ok(long.length < releaseNotesLimit);
+  assert.equal(
+    long,
+    'The summary.\n\nEvery change in 2.0.0 is in the [changelog](https://github.com/envsemble/envUI/blob/v2.0.0/packages/ui/CHANGELOG.md).\n',
+  );
 });
 
 test('a tag that does not match the package version is rejected', () => {
