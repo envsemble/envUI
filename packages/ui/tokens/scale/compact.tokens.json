@@ -1,11 +1,11 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "The compact scale: about 0.8 of comfortable in geometry and one step down in type, for desktop productivity apps. Icons keep a 1 rem floor, and borders and focus rings keep their widths.",
+  "$description": "The compact scale: about 0.8 of comfortable in space and corners, controls a step shorter, and one step down in type, for desktop productivity apps. Icons keep a 1 rem floor, and borders and focus rings keep their widths.",
   "control": {
     "$type": "dimension",
-    "height-sm": { "$value": { "value": 1.625, "unit": "rem" } },
-    "height-md": { "$value": { "value": 2, "unit": "rem" } },
-    "height-lg": { "$value": { "value": 2.375, "unit": "rem" } },
+    "height-sm": { "$value": { "value": 1.75, "unit": "rem" } },
+    "height-md": { "$value": { "value": 2.25, "unit": "rem" } },
+    "height-lg": { "$value": { "value": 2.75, "unit": "rem" } },
     "gap": { "$value": { "value": 0.375, "unit": "rem" } }
   },
   "icon": {
@@ -13,31 +13,27 @@
     "size-md": { "$value": { "value": 1, "unit": "rem" } },
     "size-lg": { "$value": { "value": 1.125, "unit": "rem" } }
   },
-  "field": {
-    "$type": "dimension",
-    "floating-height": { "$value": { "value": 2.75, "unit": "rem" } }
-  },
   "row": {
     "$type": "dimension",
     "height": { "$value": { "value": 1.75, "unit": "rem" } },
-    "padding-block-xs": { "$value": { "value": 0.125, "unit": "rem" } },
-    "padding-block-sm": { "$value": { "value": 0.1875, "unit": "rem" } },
+    "padding-block-xs": { "$value": { "value": 0, "unit": "rem" } },
+    "padding-block-sm": { "$value": { "value": 0.125, "unit": "rem" } },
     "padding-block-md": { "$value": { "value": 0.25, "unit": "rem" } },
     "padding-block-lg": { "$value": { "value": 0.375, "unit": "rem" } },
     "padding-inline": { "$value": { "value": 1.25, "unit": "rem" } }
   },
   "tree": {
     "$type": "dimension",
-    "$description": "A compact tree row keeps the 20 px content line, so its paddings are a pixel more than the row densities': 28 px at sm, as tall as a compact menu row, 30 px at md and 34 px at lg. At xs it takes the row density's, 24 px, as in the comfortable scale.",
+    "$description": "A compact tree row keeps the 20 px content line, so its paddings are a pixel more than the row densities': 28 px at sm, as tall as a compact menu row, 30 px at md and 34 px at lg. At xs it takes half its sm padding, 24 px, as in the comfortable scale.",
     "row-padding-block-sm": { "$value": { "value": 0.25, "unit": "rem" } },
     "row-padding-block-md": { "$value": { "value": 0.3125, "unit": "rem" } },
     "row-padding-block-lg": { "$value": { "value": 0.4375, "unit": "rem" } }
   },
-  "app-shell": {
+  "top-bar": {
     "$type": "dimension",
-    "header-height": { "$value": { "value": 2.625, "unit": "rem" } }
+    "height": { "$value": { "value": 2.625, "unit": "rem" } }
   },
-  "counter-badge": {
+  "badge-count": {
     "$type": "dimension",
     "height": { "$value": { "value": 1, "unit": "rem" } }
   },
@@ -60,12 +56,12 @@
     "size": {
       "$type": "dimension",
       "caption": { "$value": { "value": 0.6875, "unit": "rem" } },
-      "body-small": { "$value": { "value": 0.75, "unit": "rem" } },
+      "body-sm": { "$value": { "value": 0.75, "unit": "rem" } },
       "label": { "$value": { "value": 0.8125, "unit": "rem" } },
-      "label-small": { "$value": { "value": 0.75, "unit": "rem" } },
+      "label-sm": { "$value": { "value": 0.75, "unit": "rem" } },
       "body": { "$value": { "value": 0.8125, "unit": "rem" } },
-      "heading-small": { "$value": { "value": 0.875, "unit": "rem" } },
-      "heading": { "$value": { "value": 1, "unit": "rem" } }
+      "title": { "$value": { "value": 1, "unit": "rem" } },
+      "headline": { "$value": { "value": 1.25, "unit": "rem" } }
     }
   },
   "radius": {

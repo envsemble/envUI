@@ -1,7 +1,7 @@
 'use client';
 
 import type { CSSProperties, InputHTMLAttributes, Ref } from 'react';
-import { useFieldMetadata } from './internal/useFieldMetadata.js';
+import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import {
   FieldFrame,
   isLabelShown,
@@ -10,12 +10,18 @@ import {
   type TextFieldAffixProps,
   type TextFieldAppearanceProps,
   type TextFieldDecorationProps,
-} from './internal/FieldFrame.js';
+} from '../internal/field/FieldFrame.js';
+
+/** A text field's look: outline or ghost. */
+export type { FieldVariant as TextFieldVariant } from '../internal/field/FieldFrame.js';
+import '../styles/Base.css';
+import '../styles/TextField.css';
 
 // The prefix prop replaces the native RDFa attribute of the same name, and size the native width in
 // characters: a field's width comes from its layout.
 export interface TextFieldProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'>,
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'>,
     FieldProps,
     TextFieldAppearanceProps,
     TextFieldDecorationProps,
@@ -33,8 +39,8 @@ export interface TextFieldProps
 
 /**
  * A labelled single-line text input: a native input with a floating label, a description and an
- * error, at the control height in an outline or ghost look, or taller as the floating and underline
- * variants, with an optional start icon, end action, prefix and suffix.
+ * error, at the control height in an outline or ghost look, with an optional start icon, end
+ * action, prefix and suffix.
  */
 export function TextField({
   ref,
@@ -44,7 +50,7 @@ export function TextField({
   variant,
   startIcon,
   endAction,
-  showLabel,
+  visibleLabel,
   size,
   prefix,
   suffix,
@@ -71,18 +77,24 @@ export function TextField({
       .join(' ') || undefined;
   // A floating label needs a blank placeholder to detect the empty state; hidden labels leave it.
   const fieldPlaceholder =
-    label != null && isLabelShown({ showLabel }) ? placeholder || ' ' : placeholder;
+    label != null && isLabelShown({ visibleLabel }) ? placeholder || ' ' : placeholder;
   return (
     <FieldFrame
       id={id}
-      label={label != null ? <label htmlFor={id}>{label}</label> : null}
+      label={
+        label != null ? (
+          <label htmlFor={id} className="env-text-field-label">
+            {label}
+          </label>
+        ) : null
+      }
       description={description}
       error={error}
       floatingLabel
       variant={variant}
       startIcon={startIcon}
       endAction={endAction}
-      showLabel={showLabel}
+      visibleLabel={visibleLabel}
       size={size}
       prefix={prefix}
       suffix={suffix}

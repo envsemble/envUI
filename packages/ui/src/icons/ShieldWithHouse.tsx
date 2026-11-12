@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function ShieldWithHouse({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconShieldWithHouse({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M400-320q0-17 11.5-28.5T440-360h80q17 0 28.5 11.5T560-320v184q0 8 7 13t15 1q68-38 117-97.5T772-353L480-579 188-353q24 73 72.5 132T376-124q8 5 16 0t8-14v-182ZM160-705v189q0 18 1.5 40t5.5 39l264-205q22-17 49-17t49 17l264 205q4-17 5.5-39t1.5-40v-189q0-25-14.5-45T748-779l-240-90q-14-5-28-5t-28 5l-240 90q-23 9-37.5 29T160-705Z" /> : <path d="M480-579 256-405q19 63 56 114.5t88 86.5v-116q0-17 11.5-28.5T440-360h80q17 0 28.5 11.5T560-320v116q51-35 88-86.5T704-405L480-579ZM240-705v189q0 5 .5 11t.5 11l239-186 239 186q0-5 .5-11t.5-11v-189l-240-90-240 90ZM480-84q-7 0-13-1t-12-3q-135-45-215-166.5T160-516v-189q0-25 14.5-45t37.5-29l240-90q14-5 28-5t28 5l240 90q23 9 37.5 29t14.5 45v189q0 140-80 261.5T505-88q-6 2-12 3t-13 1Z" />}</Icon>;
 }

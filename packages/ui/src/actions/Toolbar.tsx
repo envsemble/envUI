@@ -8,21 +8,19 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import {
-  Button,
-  IconButton,
-  type IconButtonProps,
-  type ButtonProps as ButtonElementProps,
-  type ButtonVariant,
-} from './Button.js';
-import { Tooltip } from '../feedback/Tooltip.js';
+import { IconButton, type IconButtonProps, type ButtonVariant } from './Button.js';
+import { Tooltip } from '../overlays/Tooltip.js';
 import { Kbd } from '../content/Kbd.js';
-import { ControlDefaults } from '../internal/ControlDefaults.js';
+import { ControlDefaults } from '../internal/control/ControlDefaults.js';
 import { classNames } from '../internal/classNames.js';
-import { DirectedToolbarRoot } from '../internal/DirectedToolbarRoot.js';
-import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
-import { withDisplayName } from '../internal/withDisplayName.js';
+import { Column, Row } from '../layout/Layout.js';
+import { DirectedToolbarRoot } from './internal/DirectedToolbarRoot.js';
+import { keyShortcuts, shortcutChords } from './internal/shortcuts.js';
+import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Toolbar.css';
 
 export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** Names the toolbar for assistive technology, such as Formatting. */
@@ -34,13 +32,23 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * Without it, the control height of the container.
    */
   size?: ControlSize;
-  /** Disables every control inside. */
+  /**
+   * Disables every control inside.
+   * @default false
+   */
   disabled?: boolean;
   /**
    * Whether the arrow keys move from the last control to the first and back.
    * @default true
    */
   loopFocus?: boolean;
+  /**
+   * Milliseconds the pointer rests on a button or link before its tooltip opens, as Tooltip's
+   * delay; keyboard focus opens it at once. 0 shows every name at once, for a toolbar people scan
+   * by pointing, such as a canvas's view controls.
+   * @default 400
+   */
+  tooltipDelay?: number;
   /**
    * Another element to render the toolbar as, such as a ButtonGroup that connects its buttons;
    * the toolbar's class, attributes and keyboard handling merge into its props.
@@ -56,6 +64,24 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
  */
 const DisabledContext = createContext(false);
 
+/** How long the pointer rests on a button or link before its tooltip opens, from the root. */
+const TooltipDelayContext = createContext<number | undefined>(undefined);
+
+/** The toolbar's direction, which its groups follow. */
+const OrientationContext = createContext<'horizontal' | 'vertical'>('horizontal');
+
+/**
+ * A toolbar's or a group's line of controls: a Row, or a Column for a vertical toolbar, rendered as
+ * the element the application gives, if any.
+ */
+function lineOf(orientation: 'horizontal' | 'vertical', render: ReactElement | undefined) {
+  return orientation === 'vertical' ? (
+    <Column align="center" gap={1} render={render} />
+  ) : (
+    <Row align="center" gap={1} render={render} />
+  );
+}
+
 /**
  * A row, or a column, of controls for one subject, such as a text editor's formatting: one tab stop,
  * with the arrow keys moving between its controls (the APG toolbar pattern). Buttons the
@@ -66,7 +92,9 @@ function Root({
   size,
   disabled,
   loopFocus = true,
+  tooltipDelay,
   className,
+  render,
   children,
   ...props
 }: RootProps) {
@@ -74,17 +102,24 @@ function Root({
   return (
     <DirectedToolbarRoot
       {...props}
+      render={lineOf(orientation, render)}
       orientation={orientation}
       disabled={disabled}
       loopFocus={loopFocus}
       className={classNames('env-toolbar', className)}
+      // Base UI sets it too; written here, it is part of the toolbar's documented states.
+      data-orientation={orientation}
       data-size={size}
     >
-      <DisabledContext value={Boolean(disabled)}>
-        <ControlDefaults variant="ghost" size={size}>
-          {children}
-        </ControlDefaults>
-      </DisabledContext>
+      <OrientationContext value={orientation}>
+        <TooltipDelayContext value={tooltipDelay}>
+          <DisabledContext value={Boolean(disabled)}>
+            <ControlDefaults variant="ghost" size={size}>
+              {children}
+            </ControlDefaults>
+          </DisabledContext>
+        </TooltipDelayContext>
+      </OrientationContext>
     </DirectedToolbarRoot>
   );
 }
@@ -92,20 +127,26 @@ function Root({
 export interface GroupProps extends ComponentPropsWithRef<'div'> {
   /** Names the group, such as Text style, where its controls belong together. */
   'aria-label'?: string;
-  /** Disables every control in the group. */
+  /**
+   * Disables every control in the group.
+   * @default false
+   */
   disabled?: boolean;
   /** Another element to render the group as, such as a ButtonGroup. */
   render?: ReactElement;
 }
 
 /** Controls of a toolbar that belong together, such as the text styles. */
-function Group({ className, disabled, children, ...props }: GroupProps) {
+function Group({ className, disabled, render, children, ...props }: GroupProps) {
   const inherited = useContext(DisabledContext);
+  const orientation = useContext(OrientationContext);
   return (
     <BaseToolbar.Group
       {...props}
+      render={lineOf(orientation, render)}
       disabled={disabled}
       className={classNames('env-toolbar-group', className)}
+      data-orientation={orientation}
     >
       <DisabledContext value={inherited || Boolean(disabled)}>{children}</DisabledContext>
     </BaseToolbar.Group>
@@ -134,8 +175,10 @@ function tooltipContent(label: string, chords: string[][]) {
   );
 }
 
-export interface ButtonProps
-  extends Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label' | 'aria-pressed'> {
+export interface ButtonProps extends Omit<
+  ComponentPropsWithRef<'button'>,
+  'children' | 'aria-label' | 'aria-pressed'
+> {
   /** The icon, such as FormatBold. */
   icon: ReactNode;
   /**
@@ -156,7 +199,16 @@ export interface ButtonProps
   shortcut?: string;
   /** As Button's; ghost by default, from the toolbar. */
   variant?: ButtonVariant;
-  /** As Button's: a spinner replaces the icon while the work runs. */
+  /**
+   * As Button's: danger for an action that destroys, such as Delete, so it keeps its warning
+   * without a label.
+   * @default 'neutral'
+   */
+  tone?: 'neutral' | 'danger';
+  /**
+   * As Button's: a spinner replaces the icon while the work runs.
+   * @default false
+   */
   pending?: boolean;
 }
 
@@ -171,10 +223,12 @@ function ToolbarButton({
   shortcut,
   disabled,
   variant,
+  tone,
   className,
   ...props
 }: ButtonProps) {
   const off = useContext(DisabledContext) || Boolean(disabled);
+  const delay = useContext(TooltipDelayContext);
   const chords = shortcut ? shortcutChords(shortcut) : [];
   const button = (
     <BaseToolbar.Button
@@ -182,21 +236,29 @@ function ToolbarButton({
       focusableWhenDisabled={false}
       render={
         <IconButton
+          // IconButtonProps is a union of a button's and a link's; this is the button's.
           {...({
             ...props,
             variant,
+            tone,
             icon,
             'aria-label': label,
             'aria-pressed': pressed,
             'aria-keyshortcuts': keyShortcuts(chords),
-            'data-pressed': pressed || undefined,
+            'data-pressed': flag(pressed),
             className: classNames('env-toolbar-button', className),
           } as IconButtonProps)}
         />
       }
     />
   );
-  return off ? button : <Tooltip content={tooltipContent(label, chords)}>{button}</Tooltip>;
+  return off ? (
+    button
+  ) : (
+    <Tooltip content={tooltipContent(label, chords)} delay={delay}>
+      {button}
+    </Tooltip>
+  );
 }
 
 export type LinkProps = Omit<ComponentPropsWithRef<'a'>, 'children' | 'aria-label'> & {
@@ -208,20 +270,33 @@ export type LinkProps = Omit<ComponentPropsWithRef<'a'>, 'children' | 'aria-labe
   label: string;
 };
 
-/** An icon-only link of a toolbar, named by its label, which a tooltip shows. */
+/**
+ * An icon-only link of a toolbar, named by its label, which a tooltip shows. In a disabled toolbar
+ * or group it has no destination: it reports aria-disabled, leaves the arrow keys' path and has no
+ * tooltip, as a disabled button does.
+ */
 function Link({ icon, label, className, ...props }: LinkProps) {
+  const off = useContext(DisabledContext);
+  const delay = useContext(TooltipDelayContext);
+  if (off)
+    return (
+      <IconButton
+        {...props}
+        icon={icon}
+        disabled
+        aria-label={label}
+        className={classNames('env-toolbar-button', className)}
+      />
+    );
   return (
-    <Tooltip content={label}>
+    <Tooltip content={label} delay={delay}>
       <BaseToolbar.Link
         render={
-          <Button
-            {...({
-              ...props,
-              iconOnly: true,
-              icon,
-              'aria-label': label,
-              className: classNames('env-toolbar-button', className),
-            } as ButtonElementProps)}
+          <IconButton
+            {...props}
+            icon={icon}
+            aria-label={label}
+            className={classNames('env-toolbar-button', className)}
           />
         }
       />

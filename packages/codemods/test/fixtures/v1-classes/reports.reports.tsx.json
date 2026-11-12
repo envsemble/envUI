@@ -1,4 +1,0 @@
-[
-  "line 1: env-organization-menu-radio has no 1.0 class: OrganizationSwitcher marks the current organization with Menu's check now: style .env-menu-item-check for the radio and .env-menu-item-check-mark for its dot.",
-  "line 2: .env-document-tabs-close inside .env-document-tabs-tab matches nothing in 1.0: the close button sits beside the tab, in .env-document-tabs-item, which takes the hover and data-active: write .env-document-tabs-item:hover .env-document-tabs-close."
-]

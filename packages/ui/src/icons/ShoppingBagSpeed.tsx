@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function ShoppingBagSpeed({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconShoppingBagSpeed({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M230-240H90q-17 0-28.5-11.5T50-280q0-17 11.5-28.5T90-320h140q17 0 28.5 11.5T270-280q0 17-11.5 28.5T230-240Zm120-160H170q-17 0-28.5-11.5T130-440q0-17 11.5-28.5T170-480h180q17 0 28.5 11.5T390-440q0 17-11.5 28.5T350-400ZM240-80q-33 0-56.5-23.5T160-160h70q50 0 85-35t35-85q0-11-2-21t-5-19h7q50 0 85-35t35-85q0-51-35-85.5T350-560H210l10-80q4-35 26-57.5t54-22.5h80q8-75 51.5-117.5T550-880q64 0 106.5 47.5T698-720h102q36 1 60 28t19 63l-60 480q-4 30-26.5 49.5T740-80H240Zm220-640h159q1-33-22.5-56.5T540-800q-35 0-55.5 21.5T460-720Z" /> : <path d="m742-160 4.5-35q4.5-35 10.5-85 2-11 2.5-21t2.5-19l4.5-35q4.5-35 10.5-85 6-51 10.5-85.5L792-560l10-80v1l-60 479ZM240-80q-33 0-56.5-23.5T160-160h583l59-479H692l-11 85q-2 17-15 26.5t-30 7.5q-17-2-26.5-14.5T602-564l9-75H452l-11 84q-2 17-15 27t-30 8q-17-2-27-15t-8-30l9-74H220q4-34 26-57.5t54-23.5h80q8-75 51.5-117.5T550-880q64 0 106.5 47.5T698-720h102q36 1 60 28t19 63l-60 480q-4 30-26.5 49.5T740-80H240Zm220-640h159q1-33-22.5-56.5T540-800q-35 0-55.5 21.5T460-720ZM230-240H90q-17 0-28.5-11.5T50-280q0-17 11.5-28.5T90-320h140q17 0 28.5 11.5T270-280q0 17-11.5 28.5T230-240Zm120-160H170q-17 0-28.5-11.5T130-440q0-17 11.5-28.5T170-480h180q17 0 28.5 11.5T390-440q0 17-11.5 28.5T350-400Z" />}</Icon>;
 }

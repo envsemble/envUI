@@ -1,0 +1,88 @@
+import { useState } from 'react';
+import { AvatarButton, Button, Menu, TopBar } from '@envsemble/envui';
+import { IconUnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
+
+const organizations = [
+  { id: 'northwind', label: 'Northwind Labs', role: 'Admin' },
+  { id: 'contoso', label: 'Contoso', role: 'Member' },
+];
+
+const organization = (index: number) => `.env-menu-choice:nth-child(${index} of .env-menu-choice)`;
+const switcher = '.env-top-bar .env-button';
+
+/*
+ * Chooses Contoso from the open switcher, which closes it and shows Contoso in the bar. Then opens
+ * it again and chooses Northwind Labs, and opens it once more, as it began.
+ */
+const script: PointerStep[] = [
+  { wait: 240 },
+  { to: organization(1), x: 0.4 },
+  { wait: 180 },
+  { to: organization(2), x: 0.4, duration: 350 },
+  { wait: 240 },
+  { click: true },
+  { wait: 360 },
+  { to: switcher, duration: 400 },
+  { wait: 120 },
+  { click: true },
+  { wait: 420 },
+  { to: organization(1), x: 0.4, duration: 400 },
+  { wait: 240 },
+  { click: true },
+  { wait: 360 },
+  { to: switcher, duration: 350 },
+  { wait: 120 },
+  { click: true },
+  { wait: 360 },
+  { leave: true },
+  { wait: 240 },
+];
+
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 19, height: 14.25 };
+
+/**
+ * A top bar with the active organization's switcher at its start, open, and the signed-in person's
+ * avatar at its end.
+ */
+export default function AccountAndOrganizationsTile() {
+  const [open, setOpen] = useState(true);
+  const [current, setCurrent] = useState('northwind');
+  usePointer(script, {
+    onRest: () => {
+      setCurrent('northwind');
+      setOpen(true);
+    },
+  });
+  const active = organizations.find(({ id }) => id === current);
+  return (
+    <TopBar
+      style={{ inlineSize: '17rem' }}
+      start={
+        <Menu.Root
+          aria-label="Organizations"
+          align="start"
+          open={open}
+          onOpenChange={setOpen}
+          trigger={
+            <Button variant="secondary" endIcon={<IconUnfoldMore />}>
+              {active?.label}
+            </Button>
+          }
+        >
+          <Menu.RadioGroup label="Organizations" value={current} onValueChange={setCurrent}>
+            {organizations.map(({ id, label, role }) => (
+              <Menu.RadioItem key={id} value={id} description={role}>
+                {label}
+              </Menu.RadioItem>
+            ))}
+          </Menu.RadioGroup>
+        </Menu.Root>
+      }
+      actions={<AvatarButton name="Sam Lee" description="sam.lee@example.com" />}
+    />
+  );
+}

@@ -1,4 +1,6 @@
 ---
+title: Colors & themes
+summary: Colors named by their role, so every screen works in light, dark and high contrast.
 aliases:
   - dark mode
   - dark theme
@@ -6,15 +8,118 @@ aliases:
   - color scheme
   - high contrast
   - contrast
+avoidWhen:
+  - text: A plain pane in the surface colors.
+    use: Surface
+  - text: The main action in the primary color, or a danger action.
+    use: Button
+  - text: Navigation whose selected place takes the selected color.
+    use: NavigationDrawer
+  - text: Letting people pick a color of their own.
+    use: ColorPicker
+  - text: A short status in its tone, with words.
+    use: Badge
+  - text: Contrast, forced colors and what every component does for people.
+    see: accessibility
+examples:
+  Themes: example
+  Roles: example
+  Swatches: example
+  Status: example
+  OwnColors: example
 ---
 
 # Colors & themes
 
-## React usage
+## Options
+
+### Light, dark and high contrast
+
+People choose one, or the app follows their system.
+
+```tsx figure=Themes
+
+```
+
+1. **Light**
+2. **Light, high contrast**
+3. **Dark**
+4. **Dark, high contrast**
+
+### Colors are roles
+
+Each part of a screen takes a role, never a color of its own; the theme gives every role its color.
+
+```tsx figure=Roles
+
+```
+
+1. **Page**
+2. **Surface**
+3. **Filled card**
+4. **Text**
+5. **Supporting text**
+6. **Primary**
+
+### Every role in this theme
+
+A status shows its text, soft fill and solid fill. The Display menu switches the theme and contrast.
+
+```tsx figure=Swatches
+
+```
+
+1. **Surfaces**: Page, Recessed surface, Surface, Filled surface, Raised surface, Field, Backdrop.
+2. **Text and lines**: Text, Supporting text, Link, Edges, Hairlines, Focus ring.
+3. **Actions and selection**: Primary, On the primary, Quiet action, Accent, Selected, On the selected.
+4. **Status**: Neutral, Primary, Accent, Success, Warning, Danger, Done.
+
+### What each color means
+
+A tone means the same on every component.
+
+```tsx figure=Status
+
+```
+
+### Your own colors
+
+An area can take a color scheme of its own, such as a brand's; every component in it follows, hover and press included.
+
+```tsx figure=OwnColors
+
+```
+
+1. **Lavender**
+2. **Mint**
+3. **Peach**
+
+## Rules
+
+A tone always comes with words or an icon, so nobody has to tell colors apart.
+
+### Outlined and filled
+
+Fields that hold a value are outlined; what you press or drag keeps the filled gray.
+
+## Words to use
+
+Ask an agent for color in these words; envUI turns each into a role.
+
+| Words              | In code                                                                                                                                                                                                                                                                                                                        | Use for                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| A quieter surface  | `background="page"` on a Surface or Card, so it parts from the page by space rather than a fill                                                                                                                                                                                                                                | A panel that draws less attention.                 |
+| Success or warning | `tone` on Badge, Alert, Toast, Button and the components that take one: Badge takes neutral, primary, accent, success, warning, danger and done; Alert info, success, warning and danger; Toast neutral, info, success and danger; Button neutral, accent and danger. In your own CSS, `--env-color-fg-{tone}` and their tints | How something stands, such as saved or failed.     |
+| Its own color      | The component's color properties, such as `--env-button-container`; most components have them, listed on each one's page in the Docs under Color properties; see [Customize and extend](../customizing.md)                                                                                                                     | One element in a color the roles don’t give.       |
+| A dark area        | A nested `<Theme theme="dark">`, or `light` on a dark page                                                                                                                                                                                                                                                                     | One part of a page in the other theme.             |
+| High contrast      | `contrast="high"` on Theme, or `system`, the default, which follows the reader's system                                                                                                                                                                                                                                        | Stronger text and edges, for people who need them. |
+
+## Compose
+
+### Usage
 
 ```tsx
 import { Theme, Text, useTheme } from '@envsemble/envui';
-import '@envsemble/envui/styles.css';
 
 function ThemeLabel() {
   const { theme, contrast } = useTheme();
@@ -30,36 +135,48 @@ function ThemeLabel() {
 </Theme>;
 ```
 
-### Props & contracts
+| Name                    | Takes                                                                                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Theme theme             | Required: light or dark; scopes the tokens and provides the theme to React                                                                                   |
+| Theme contrast          | `high`; `standard`, even when the system asks for more; or `system`, the default, which follows `prefers-contrast: more`; inherited from the enclosing Theme |
+| Theme scale             | system, comfortable or compact, the app's [scale](spacing.md); inherited from the enclosing Theme                                                            |
+| useTheme()              | `{ theme, contrast, scale }` of the nearest Theme, also across envUI's portals                                                                               |
+| ThemePreferenceProvider | Stores the preference, follows the system and other windows, and themes the document root; see [setup](../setup.md)                                          |
+| useThemePreference()    | A `ThemePreferenceValue`: `preference` (light, dark or system), the resolved `theme`, `setPreference` and `toggleTheme`                                      |
+| ThemeToggle             | An IconButton that switches between light and dark                                                                                                           |
 
-| Name                    | Contract                                                                                                                                                                                                                                     |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Theme theme             | Required: light or dark; scopes tokens and provides React theme context                                                                                                                                                                      |
-| Theme contrast          | high for the high-contrast colors, standard to keep the standard ones even when the system asks for more contrast, system (the default outside any Theme) to follow prefers-contrast: more; inherited from the enclosing Theme when left out |
-| Theme native props      | children, ref, className, style and native div attributes                                                                                                                                                                                    |
-| Theme scale             | comfortable or compact, the app's [scale](../foundations/scale.md); inherited from the enclosing Theme when left out                                                                                                                         |
-| useTheme()              | `{ theme, contrast, scale }` of the nearest Theme, including across library portals                                                                                                                                                          |
-| ThemePreferenceProvider | Stores the preference, follows the system theme and other windows, and themes the document root; takes contrast as Theme does; see setup                                                                                                     |
-| useThemePreference()    | preference (light, dark or system), resolved theme, setPreference and toggleTheme                                                                                                                                                            |
-| ThemeToggle             | IconButton that switches between light and dark                                                                                                                                                                                              |
+#### The words of the figures
 
-### Status tones
+The Design tokens page of the Docs lists every value in each theme, and this guide ends with the palette, which shows each role's value in the theme you are reading in and lets you try another.
 
-Status icons, short status text and badges share these tokens. Each keeps at least 4.5:1 contrast on the page, the default surface and rows in both themes, also over its tint, and 7:1 at high contrast.
+- **Page**: `--env-color-bg-page`, the document's background, behind everything: below the panes and cards on it.
+- **Recessed surface**: `--env-color-bg-recessed`, a well on the page, `background="recessed"`, such as the stage of a preview: below the panes, and in dark a shade deeper than the page too; in light, where nothing deeper than the page keeps edges at 3:1, between the page and the panes.
+- **Surface**: `--env-color-bg-default`: Surface's `background="default"`, panes, the navigation and sheets, a step lighter than the page.
+- **Raised surface**: `--env-color-bg-raised`: tables, docked panels and `background="raised"`, a step above the panes with the filled card's fill: white in light.
+- **Filled card**: `--env-color-bg-muted`: a group inside a surface, a Card's fill, `background="muted"`, list rows and tab rails, a step above the surface: white in light.
+- **Text**: `--env-color-fg-default`, Text's default, for headings and the main words.
+- **Supporting text**: `--env-color-fg-muted`: `emphasis="muted"` on Text, details, captions, hints and icons.
+- **Primary**: `--env-color-bg-primary-emphasis`, the main action's fill; `--env-color-fg-primary` and `fg-link` in text, such as links and what is selected.
+- **Edges**: `--env-color-border-default`, the outline of fields and outline buttons, which have no fill.
+- **Selected**: `--env-color-bg-selected` with `--env-color-fg-on-selected`.
 
-| Token                           | 0.7 name             | Meaning                                             |
-| ------------------------------- | -------------------- | --------------------------------------------------- |
-| --env-color-fg-muted            | --color-tone-neutral | No particular state, such as archived               |
-| --env-color-fg-accent           | --color-tone-accent  | The current or highlighted state, such as in review |
-| --env-color-fg-success          | --color-tone-success | Healthy or ready                                    |
-| --env-color-fg-warning          | --color-tone-warning | Needs attention, such as blocked                    |
-| --env-color-fg-danger           | --color-tone-danger  | Failed or destructive                               |
-| --env-color-fg-done             | --color-tone-done    | Completed work, in purple                           |
-| --env-color-bg-{tone}-muted     | (computed)           | The tone's translucent tint behind badges or alerts |
-| --env-color-border-{tone}-muted | (computed)           | The faint edge of an alert in the tone              |
-| --env-color-border-{tone}       | (computed)           | The edge of an outlined badge in the tone           |
-| --env-color-bg-{tone}-emphasis  | --color-tone-{tone}  | A solid fill in the tone, as on solid badges        |
-| --env-color-fg-on-emphasis      | --color-on-tone      | Text and icons on a solid tone fill                 |
+#### Status tones
+
+Status icons, short status text and badges share these tokens, at least 4.5:1 on the page, surfaces and rows in both themes, and 7:1 at high contrast.
+
+| Token                             | Meaning                                                          |
+| --------------------------------- | ---------------------------------------------------------------- |
+| `--env-color-fg-muted`            | Neutral: no particular state, such as archived, and most actions |
+| `--env-color-fg-primary`          | Primary: what is current or highlighted                          |
+| `--env-color-fg-accent`           | Accent: what stands out, in purple, such as a featured item      |
+| `--env-color-bg-info-strong`      | Info, as a strong fill: something to know, neither good nor bad  |
+| `--env-color-fg-success`          | Success: healthy, ready or saved                                 |
+| `--env-color-fg-warning`          | Warning: needs attention soon                                    |
+| `--env-color-fg-danger`           | Danger: failed, or an action that destroys something             |
+| `--env-color-fg-done`             | Done: completed work                                             |
+| `--env-color-bg-{tone}-muted`     | The tone's tint behind badges and alerts                         |
+| `--env-color-bg-{tone}-emphasis`  | A solid fill in the tone, with `fg-on-emphasis`                  |
+| `--env-color-fg-{tone}-on-strong` | A toast's tone icon on its dark fill: success, info or danger    |
 
 ```css
 .work-status[data-status='blocked'] {
@@ -67,52 +184,40 @@ Status icons, short status text and badges share these tokens. Each keeps at lea
 }
 ```
 
-## Palette
+### Composition
 
-The colors come from a primitive palette of ten hues: neutral (the slightly blue-tinted gray of text, borders and surfaces), blue (the brand: primary actions, links, the light selection, focus), slate (a low-chroma blue-gray: the dark selection and the light navigation hover), steel (information), green (success), teal (success toasts), amber (warning), red (danger), violet (done) and purple (the important action). The palette is internal: components and apps use the semantic tokens below.
+#### Semantic tokens
 
-- Every hue has the same grades, from 0 (white) to 100 (black): steps of 5, and finer steps where surfaces sit: 0–6 in steps of 2 and 6–15 in steps of 1 for the light theme's surfaces and their selection, hover and pressed fills, and 80–100 in steps of 2 for the dark theme's.
-- A grade is a band of WCAG relative luminance shared by every hue, so contrast follows from the grade difference alone: 40 grades apart give at least 3:1, 50 at least 4.5:1 and 70 at least 7:1, for any two hues. Grade 50 has 4.58:1 against both white and black.
-- Each hue keeps the hue and chroma of today's colors, its seeds; only the lightness is solved so that the color lands in its grade's band.
-- `npm run palette:generate` writes the palette, and a test checks every guarantee over it.
+Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emphasis weakest first: `subtle`, `muted`, none, `emphasis` and `strong`. Every `fg-on-X` pairs with a `bg-X`, every state token has its resting token, and the contrast gate measures every pair a component paints, in all four themes.
 
-## Semantic tokens
+- **Backgrounds:** `bg-page` and `bg-recessed`, a well, below the surfaces; `bg-default`, and `bg-muted` and `bg-raised` a step above it, the surfaces; `bg-popup`, the fill of dialogs, menus and popovers, frosted or solid, white in light and in dark a step lighter than the surfaces they open over; `bg-field`, `bg-selected`; `bg-backdrop`, the backdrop behind dialogs.
+- **Fills:** `bg-neutral-muted`, a translucent layer of the text color under secondary buttons, chips, switch tracks and skeletons; `bg-neutral-subtle`, the state layer of controls without a fill, such as ghost and outline buttons; `emphasis` and `strong` solid fills.
+- **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-disabled` for the label and value of a disabled control, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
+- **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
 
-Semantic tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`. Every `fg-on-X` pairs with a `bg-X`, and the contrast gate measures every pair a component paints, in all four themes. The emphasis, weakest first: `subtle` (transparent at rest, a state layer under the pointer), `muted` (a translucent tint or edge), none (the role's own), `emphasis` (solid) and `strong` (solid, with white labels, or the dark edge of a strong fill). Every state token has its resting token: `bg-accent-subtle-hover` beside `bg-accent-subtle`.
+The colors come from an internal palette of eleven hues, and the pastel hues of avatars, in grades from 0 to 100, where the grade difference alone sets the contrast: 50 grades apart give at least 4.5:1. The light theme takes a nearly neutral gray, the dark theme a slightly blue-tinted one.
 
-- **Backgrounds:** `bg-page` behind everything; `bg-default`, `bg-muted` and `bg-raised`, the Surface backgrounds; `bg-popup` for menus, Select lists and popovers; `bg-field`; `bg-selected`, a blue tint in light and a blue-gray in dark; `bg-navigation-hover` and `-pressed` for navigation items; `bg-overlay`, the scrim behind dialogs, and `bg-overlay-muted`, the lighter one behind a drawer.
-- **Fills in a role:** `bg-neutral-muted` is the translucent fill of secondary buttons, tab rails, chips, switch tracks and skeletons, a layer of the text color that keeps its tone on any surface, and `bg-neutral-subtle` is the state layer of controls without a fill; `bg-{tone}-subtle`, transparent, with `-hover` and `-pressed`, is that layer in a tone, as on an alert's dismiss button. `bg-inset` is a background that leans back toward the page inside a fill, as a diff stat's pill does on a tab. Solid fills come as `emphasis` (white labels in light, dark labels in dark, as on primary buttons, chosen radios, checked checkboxes and switches, sliders, meters and spinners) and `strong` (white in both themes: labels at 4.5:1 on destructive buttons, important buttons, toasts and tooltips; on the brand's strong fill, which envUI's own controls don't take, only marks, at 3:1).
-- **Text:** `fg-default`; `fg-muted` for supporting text, icons, field labels, descriptions and placeholders; `fg-control` for navigation labels, secondary buttons and option labels; `fg-link`, and `fg-link-on-tint` for links on a tint, where `fg-link` falls below 4.5:1: alerts and list and table rows under the pointer point `fg-link` at it, and links on `bg-brand-muted` take it; `fg-accent`; `fg-on-selected`; and one per tone.
-- **Borders:** `border-default` is the boundary of a control that has no other edge, such as an outlined field or the composer, at least 3:1 on every surface. `border-muted` is for dividers and other decorative edges. `border-accent-emphasis`, `border-danger-emphasis` and `border-focus` mark focused, invalid and keyboard-focused controls. A tone's edges grow from `border-{tone}-muted`, the faint edge of an alert (accent, success, warning and danger), through `border-{tone}`, the translucent edge of an outlined badge (neutral, accent, success, warning, danger and done), to the solid `border-accent-emphasis` and `border-danger-emphasis` of a focused or invalid field, and `border-{neutral|success|info|danger}-strong`, the edge of a strong fill. A tone has only the edges a component draws. `border-media` is the inner edge of content of any color, such as images and the color picker's area.
+#### States and contrast
 
-Component tokens name a color that no one role does: `--env-color-list-item-bg`, with `-hover` and `-pressed`, is the default surface in light and the muted one in dark, and `--env-color-avatar-bg`, `-fg` and `-figure` are the fixed blues of avatars. The 0.7 names, such as `--color-text-muted`, are gone: the [migration guide](../migration.md#tokens) lists what replaces each, and the codemod `v1-classes` rewrites them. Every token is a custom property with the `--env-` prefix.
+- **Hover and pressed** are tokens of their own, other grades of the same hue, so labels keep their contrast in every state. A component given colors of its own through its color properties draws its states as state layers instead: the content color over the container at `--env-state-hover-opacity`, `--env-state-focus-opacity` and `--env-state-pressed-opacity`.
+- **Selection** stays apart from every other item, at rest and under the pointer, and carries a second cue: its label color, a check or a bar. Tree and table rows hover with a layer of their own, `--env-color-bg-row-hover`, quieter than the selection, so the selected row always reads strongest.
+- **High contrast** moves text to 7:1 and boundaries, indicators and focus rings to 4.5:1. A nested Theme and envUI's popups take the contrast and theme of where they open.
+- **Elevation** 0–3 is an edge, shown only where a surface is solid: popups float at 2, dialogs, sheets and the command palette at 3, and at high contrast a solid popup takes level 3's, the strongest. Elsewhere a popup or a dialog separates by its fill and a soft shadow, a sheet by its fill, and a modal by its backdrop too.
+- **Small popups are frosted:** menus, lists, popovers, pickers, hover cards, tooltips and the command palette let a little of what is behind them through, blurred, with a soft shadow and no edge; a tooltip's strong fill covers a little less and its shadow is smaller. Dialogs take the popups' fill and shadow, solid over their backdrop. At high contrast and with reduced transparency all are solid, with their edge.
+- **Shadows:** a popup's, which dialogs share, a tooltip's and an avatar's faint one, which parts the avatars of a group, are envUI's only shadows.
+- **Sheets** keep the navigation's fill, so navigation that opens in one looks as it does at the window's edge, and have no edge but at high contrast.
+- **Hairlines separate a list's items, never regions:** Markdown rules, table rows and accordion items take a hairline across their container's full width, never inset from its edges. Regions, such as a top bar, a footer, a sticky header, a tab bar and two panes, separate by space and background instead; controls keep their edges. A popup or a dialog has none: a popup's groups part by space and a quiet label, a dialog's heading, content and actions by space.
+- **Forced colors** take system colors, such as `Highlight` and `GrayText`, for every state a fill carried.
 
-## States, contrast and elevation
+#### Guidelines
 
-- **Hover and pressed** are tokens of their own (`--env-color-bg-brand-emphasis-hover`), other grades of the same hue chosen when the tokens are built, so labels keep their contrast on every state. Text and outlines gain contrast on hover; fills follow the direction they always had, as far as their labels allow: a destructive button lightens on hover and settles back halfway when pressed, since white labels need a darker red.
-- **Selection** must not be mistaken for another item, at rest or under the pointer: the selection, and a selected item under the pointer, keep a distance of at least ΔEOK 0.03 from the other items and their hover fills, 0.04 at high contrast, and the label of a selected item differs as much from the others. Every hover and pressed fill differs from its own rest by at least one just-noticeable difference, ΔEOK 0.02. The contrast gate measures those distances too, beside the ratios. In light, a navigation item under the pointer takes a blue-gray deeper than the selection; at high contrast and in dark it takes a gray. A selection also carries a second cue: its label color, a check mark or a bar.
-- **High contrast:** `contrast="high"` on a Theme moves text to 7:1 and every boundary, indicator and focus ring to 4.5:1, and so does the system's `prefers-contrast: more` while the contrast is `system`, the default. Dividers and popup edges become boundaries, fills get lighter layers, and checked controls take the emphasis fill. `contrast="standard"` keeps the standard colors even when the system asks for more contrast. A nested Theme and envUI's popups, such as menus, Select lists, tooltips and dialogs, take the contrast of the boundary they open from, as they take its color scheme: `<Theme theme="dark">` inside a high-contrast boundary is dark and high contrast. Theme writes `data-env-contrast`, `high` or `standard`, on its element, and none for `system`; style sheets can select it.
-- **Elevation** 0–3 (`--env-elevation-{level}-shadow`, `--env-elevation-{level}-border`) is a shadow and an edge color. Every popup takes both: menus, Select and Combobox lists, popovers, hover cards, the date picker, docked panels, tooltips and toasts at level 2, so they separate from a page or surface of their own color, as a dark tooltip does on a dark surface, and dialogs and the command palette at level 3. At standard contrast the edge is a subtle hairline, at least 1.2:1, since the shadow and the content identify the popup; in high contrast it is the 4.5:1 boundary, and under forced colors, where shadows are dropped, the boundary the system paints.
-- **Forced colors:** where the system replaces the colors, as the system's contrast themes do, it paints no fills or shadows, so every state a fill carried takes system colors instead: a selected, chosen, current or highlighted item takes `Highlight` and `HighlightText`, a checked box or a switch that is on `Highlight`, today's calendar day an outline, an invalid field a dashed border, a focused field an outline, and an unavailable item `GrayText`. Colors that are content, such as swatches, the color picker's area and the days of a calendar heatmap, keep their own.
-- **Tooltips and toasts** are strong fills, so their edge follows the fill rather than the page. The edge exists to separate a popup from a surface of its own color; around a dark tooltip or toast on a light page, the light popup edge would ring the fill like a halo. So in light each fill takes an edge of its own, `--env-color-border-{neutral|success|info|danger}-strong`: the fill a step darker, about 1.3:1 and ΔEOK 0.07 from it, which reads as the fill's own edge and still shows against a surface of the fill's color. High contrast keeps that step from its darker fills, far above 4.5:1 on the page. In dark the fills are lighter than the page, as every popup is, and take the popup edge of elevation 2, which is lighter still. Under forced colors the edge is the boundary the system paints, as on every popup.
+- Choose the role for what an element is, not the color it should have: `fg-muted` for any supporting text, `border-muted` for the line between a list's items. Separate regions by space or a background, not a line.
+- Use one role in both themes; the themes give it its grade.
+- Disabled controls take 0.48 opacity, which WCAG exempts from contrast.
+- Wrap the application's own portal content in `<Theme {...useTheme()}>`, so it takes the theme and contrast of where it opens.
 
-## Guidelines
+### Customize
 
-- Use the semantic role for what an element is, not for the color it should have: `fg-muted` for any supporting text, `border-default` for a control's only boundary, `border-muted` for a divider.
-- Use the same role for a component in both themes; the themes give the role its grade. Component tokens may take another role per theme, as list rows do.
-- Light theme uses a white page, cool pale surfaces, soft gray rows and blue actions and selection. Dark theme uses dark gray surfaces that grow lighter as they rise, and a soft blue for actions and selection.
-- Surfaces (page, default, muted, raised) are opaque. Fills drawn on them are translucent layers of the text color, so they keep their tone on the page and stay distinct on every other surface.
-- Disabled controls use 0.48 opacity, which WCAG exempts from contrast; a choice control or a slider fades with its label.
-- Focus rings are blue in both themes. A ring drawn inside a solid fill of its own color gains an inner ring in the label color.
-- Scope content with Theme. Nested boundaries and library portals retain the originating theme and contrast. Application-owned portal content needs a Theme boundary too: `<Theme {...useTheme()}>` inside the portal takes both from where the portal opens.
+Each component has public color properties, such as `--env-button-container`, for colors of its own on one instance. A nested `<Theme>` whose `style` sets the semantic tokens for each theme, such as `--env-color-bg-primary-emphasis` with its hover and pressed tokens, gives an area a color scheme of its own, such as a brand's. [Customize and extend](../customizing.md#recolor-an-area) describes both.
 
 TypeScript declarations provide the complete public API.
-
-## Related topics
-
-- [Surface](../components/surface.md)
-- [Button](../components/button.md)
-- [NavList](../components/nav-list.md)
-- [ColorPicker](../components/color-picker.md)
-- [Accessibility](../foundations/accessibility.md)
-- [Badge](../components/badge.md)

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <g transform="translate(10 20)">
+    <path d="M20 20H60" stroke="#000" stroke-width="10" fill="none"/>
+  </g>
+</svg>

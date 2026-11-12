@@ -1,9 +1,9 @@
 ---
 title: Progress
-summary: How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown.
+summary: How much of a task is done, or that it runs while the amount is unknown.
 status: beta
-since: 0.2.0
-category: Feedback & overlays
+since: 1.0.0
+category: Feedback
 aliases:
   - progress bar
   - progress indicator
@@ -13,130 +13,160 @@ aliases:
   - percent complete
   - indeterminate progress
 useWhen:
-  - A task whose completion can be measured, such as an upload, an import or an export.
-  - A task that has started but can't be measured yet, such as preparing an export (`value={null}`).
+  - A task whose completion can be measured, such as an upload or an import
+  - A task that has started but can't be measured yet, such as preparing an export
 avoidWhen:
+  - text: Files that each upload on their own, with a bar in each file's row.
+    see: file-upload
   - text: A measurement within a range, such as seats assigned or storage used.
     use: Meter
   - text: Work of unknown length in a small area, such as a panel that is updating.
     use: Spinner
-  - text: Content of a known shape while it loads, such as a card or a list.
-    use: Skeleton
-  - text: Loading a page or a route of an application, along the topbar.
-    use: AppShell
-  - text: Saying that a task finished or failed.
-    use: Toast
-related:
-  - meter
-  - spinner
-  - skeleton
-  - app-shell
-  - toast
+  - text: Loading a page or a route of an application, along the top bar.
+    use: TopBar
+  - text: Content of a known shape loading in its place, such as a card or a list, as a skeleton.
+    see: loading
 components:
   - Progress
+examples:
+  UploadingFile:
+    role: overview
+    motion: true
+  SetupSteps: example
+  ProgressAnatomy: anatomy
+  PreparingExport: example
+  ExportMembers: example
+  LongTaskName: example
+  OneBarForBatch:
+    role: do
+    caption: One bar for one task, however many items it covers.
+  BarPerFile:
+    role: caution
+    caption: 'A bar for every file of one task: more to follow than one bar for the whole.'
 ---
 
 # Progress
 
-## Overview
+## Variants
 
-Progress shows how much of a task is done as a labelled bar, such as an upload or an import. With `value={null}` it shows that the task runs while its amount is still unknown. Assistive technology reads it as a progress bar named by its label, with its value and range.
+### Steps
 
-Progress shares its look with Meter, which shows a measurement within a range. For loading a page or a route, AppShell.Root's `loading` shows a bar along its header.
+The track can split into equal steps that fill in turn.
 
-```tsx example=UploadingFile
+```tsx figure=SetupSteps motion
 
 ```
 
 ## Anatomy
 
-1. **Label** (`label`): muted 0.875 rem text at the start of the top row, which names the task.
-2. **Value** (optional, `valueText`): the value as text at the end of the row, in the strong text color at medium weight, such as 40%. The label and the value keep 0.75 rem apart and wrap onto two lines when they don't fit.
-3. **Track**: 0.625 rem tall and fully rounded, on the neutral fill, 0.5 rem below the row.
-4. **Indicator**: the control blue with rounded ends, from the start of the track to the share done; while the amount is unknown, a 40% wide indicator that sweeps across the track.
-
-The bar fills the width of its container; give the container a width where a full-width bar would be too long.
-
-## States and behaviour
-
-- **Known amount**: `value` between `min` and `max`, 0 and 100 by default. As the value changes, the indicator grows to it over 0.16 s; with a reduced-motion preference it changes at once. A value outside the range shows as the nearest end.
-- **Unknown amount**: with `value={null}` the indicator sweeps from the start of the track to its end every 1.2 s, and the bar reports no value. With a reduced-motion preference it rests at the start of the track.
-- **Done**: at `max` the bar is full and stays. It neither hides nor announces that the task ended; the application replaces it, or says so, such as with text or a Toast.
-- **Announcements**: changes of the value aren't announced; people hear the value as they reach the bar. Announce what matters, such as the end of the task, in a status.
-- **Read-only**: the bar takes no focus and no input.
-
-## Content guidelines
-
-- Name the task in the label, with what it acts on: "Uploading quarterly-report.pdf", "Importing contacts".
-- Write the value as a percentage, or as items done of the total where people count them: "40%", "120 of 480".
-- Write `aria-valuetext` with the unit in words where the value isn't a percentage: "120 of 480 contacts".
-- Change the label when the task moves to a new step, such as from "Preparing export" to "Exporting members".
-
-## Do and don't
-
-### Do
-
-- Start with `value={null}` until the amount of work is known, then show the amount.
-- Keep the bar in place from the start of the task to its end, and replace it with the result.
-- Offer a way to cancel a long task beside the bar, where the application can stop it.
-
-### Don't
-
-- Don't use Progress for a measurement within a range, such as storage used; use [Meter](../components/meter.md).
-- Don't show a bar for work that ends in a moment; show the pending state of the button that started it.
-- Don't move the bar backwards, or hold it just short of the end; show `value={null}` while the amount is unknown.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                             | Action                                                                                  |
-| ----------------------------------------------- | --------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Pass over the bar, which takes no focus; screen readers reach it as they read the page. |
-
-### envUI provides
-
-- `role="progressbar"` with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, and no `aria-valuenow` while the amount is unknown.
-- The label as the bar's name, through `aria-labelledby`.
-- `aria-valuetext` from the prop.
-- A label and a value in text colors that reach 4.5:1 on the canvas, panes and rows.
-- No motion with a reduced-motion preference: the indicator neither grows nor sweeps.
-
-### You provide
-
-- A label that names the task.
-- `aria-valuetext` where the value isn't a percentage, such as "120 of 480 contacts". Without it, a screen reader reads the value as a percentage, and an indeterminate bar as Loading.
-- The value as the task proceeds, and what happens when it ends or fails, such as a status message, a Toast or an Alert.
-
-## Examples
-
-### Items done of a total
-
-`max` is the number of items, and the value counts them; `aria-valuetext` reads it with its unit.
-
-```tsx example=ImportContacts
+```tsx figure=ProgressAnatomy
 
 ```
 
+1. **Progress** (`env-progress`)
+2. **Label** (`env-progress-label`, `label`)
+3. **Value** (`env-progress-value`, `valueText`)
+4. **Track** (`env-progress-track`)
+5. **Indicator** (`env-progress-indicator`, `value`)
+
+## Behaviour
+
+### Amount known
+
+The bar counts the work done, such as 40 of 100.
+
 ### Amount unknown
 
-`value={null}` shows a sweeping indicator while the task runs and its amount is still unknown.
+While the amount of work is unknown, the indicator sweeps along the track.
 
-```tsx example=PreparingExport
+```tsx figure=PreparingExport
 
 ```
 
 ### From preparing to done
 
-The export starts with an unknown amount, shows the share done once it is known, and ends with a status message in place of the bar. The button stays pending meanwhile.
+Start with an unknown amount, show the share once it is known, and replace the bar with the result.
 
-```tsx example=ExportMembers
+```tsx figure=ExportMembers motion
 
 ```
+
+### Adapting to width
+
+The bar fills its container. The label and the value wrap onto two lines where they don't fit.
+
+```tsx figure=LongTaskName widths="12 24" sweep
+
+```
+
+## Rules
+
+One bar stands for one task.
+
+```tsx figure=OneBarForBatch motion
+
+```
+
+```tsx figure=BarPerFile motion
+
+```
+
+### Moving forward
+
+Never move the bar backwards or hold it just short of the end, and offer a way to cancel a long task beside it.
+
+## Accessibility
+
+### envUI provides
+
+- `role="progressbar"` named by `label`, with its value and range, and no value while unknown.
+- `aria-valuetext` from the prop.
+- No growing or sweeping under reduced motion.
+
+### You provide
+
+- `aria-valuetext` where the value isn't a percentage, such as 120 of 480 contacts.
+- A status that says when the task ends or fails, since changes of the value aren't announced.
+
+## Compose
+
+### Usage
+
+Progress takes `value`, how much of the task is done, between `min`, 0 by default, and `max`, 100 by default, such as 40 of 100. Its `label`, above the bar, names it. `valueText` shows the value at the end of the label's row, formatted by the application; without it, no value shows. `aria-valuetext` is the value as assistive technology reads it, such as 120 of 480 contacts; without it, the value is read as a percentage of the range.
+
+```tsx source=UploadingFile
+
+```
+
+#### Amount unknown
+
+`value={null}` shows an indeterminate bar, which sweeps toward the end of the line, also in right-to-left text, and is read as Loading. Under reduced motion it stands still as faint stripes across the whole track, which no amount reads as. Start with `null`, set the value once it is known, and replace the bar with the result.
+
+```tsx
+<Progress
+  label={preparing ? 'Preparing export' : 'Exporting members'}
+  value={preparing ? null : percent}
+  valueText={preparing ? undefined : `${percent}%`}
+/>
+```
+
+#### Steps
+
+`segments` splits the track into that many equal steps, such as 4 for a task of four stages, each filling in turn.
+
+```tsx
+<Progress label="Setting up the workspace" value={2} max={4} segments={4} valueText="Step 2 of 4" />
+```
+
+### Composition
+
+The parts are the bar, `env-progress`, its label, `env-progress-label`, its value, `env-progress-value`, the track, `env-progress-track`, and the indicator, `env-progress-indicator`; with `segments`, the track holds one `env-progress-segment` per step. `className`, `style`, `ref` and data attributes reach the root. Changes of the value aren't announced, so say in a status when the task ends or fails. A TopBar's `loading` shows a page's progress.
 
 ## Changelog
 
 - **1.0.0**: The classes are `env-progress*`; `segments` splits the track into steps; an indeterminate bar is read as Loading, and sweeps toward the end of the line also in right-to-left text; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root.
-- **1.0.0**: `LoadingBar` is no longer exported: AppShell.Root's `loading` and `loadingLabel` show page progress, and Progress shows a task's.
-- **0.4.0**: The track uses the translucent neutral fill, so it stays visible on panes, rows and cards.
-- **0.2.0**: Progress.
+- **1.0.0**: `LoadingBar` is no longer exported: TopBar's `loading` and `loadingLabel` show page progress, and Progress shows a task's.
+- **1.0.0-prerelease.6**: An indeterminate bar sweeps at an even pace, so it enters the track as it leaves and the track never sits empty; the period is the same.
+- **1.0.0-prerelease.6**: An indeterminate bar sweeps in five times `--env-motion-duration-slow`, as fast as before, so durations of `0s` stop it.
+- **1.0.0-prerelease.6**: The track and the segments are the neutral fill a Slider's track takes, so empty steps show on dark panels.
+- **1.0.0-prerelease.6**: Under reduced motion an indeterminate bar shows faint stripes across the whole track, rather than a still bar partway along that read as a value.

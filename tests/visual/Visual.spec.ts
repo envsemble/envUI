@@ -1,11 +1,10 @@
 /**
  * Visual baseline: screenshots of today's identity, so that later changes are deliberate and
- * reviewed as image diffs. Every catalogue page's preview specimens and forced interaction states
- * are captured in light, or its first live example when it has no specimen; the theme sample of
- * samplePages (CatalogueThemes.ts) is captured in dark and high contrast as well. So are a few
- * density specimens of the test fixture, and a few lists, a tooltip and the toasts captured open.
- * Each template screen is captured alone, at its frame route, in light, comfortable and desktop,
- * and a sample of them in another theme, scale or width. Pattern pages compose the components
+ * reviewed as image diffs. Every catalogue page's specimens and forced interaction states
+ * are captured in light, and its first example where it has no specimen or only animated ones; an
+ * animated figure is captured as its still, with the catalogue's animations paused. The theme
+ * sample of samplePages (CatalogueThemes.ts) is captured in dark and high contrast as well. So are a few density specimens of the test fixture, and a few lists, a tooltip and the
+ * toasts of catalogue examples captured open in the fixture. Pattern pages compose the components
  * captured here, so they take no images of their own.
  *
  * Fonts and anti-aliasing differ between systems, so the baseline renders only in the Linux
@@ -25,19 +24,17 @@ import {
   type Page,
   type TestInfo,
 } from '@playwright/test';
-import { catalogueUrl, fixtureUrl } from '../browser/Servers';
+import { siteDevUrl, fixtureUrl } from '../browser/support/Servers';
 import {
   allThemes,
+  chooseScheme,
   emulateContrast,
   themesFor,
   type CatalogueTheme,
   type ThemeName,
-} from '../browser/CatalogueThemes';
-import {
-  guidePages,
-  referencePages,
-} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
-import { templateStates } from '../browser/TemplateChecks';
+} from '../browser/support/CatalogueThemes';
+import { groupedPages } from '../../apps/site/src/routes/SiteRoutes';
+import { displayStorageKeys } from '../../apps/site/src/display/DisplayStorage';
 
 /**
  * The density fixture's sections captured, each with a theme its boundaries take from the address:
@@ -53,27 +50,29 @@ const densityShots = [
 const now = new Date('2026-03-04T10:00:00Z');
 const snapshots = fileURLToPath(new URL('./snapshots/', import.meta.url));
 /**
- * The forced-state matrices of InteractionStates.ts, by catalogue page and matrix label. A page
+ * The forced-state matrices of InteractionStates.tsx, by catalogue page and matrix label. A page
  * must show exactly these, so a matrix that disappears, or a new one, fails until it is listed.
  */
 const stateMatrices: Record<string, string[]> = {
   button: ['Button'],
-  'nav-list': ['Navigation item'],
 };
 
 /**
- * A list or other popup the baseline captures open, beside its trigger, from a catalogue specimen or
- * example.
+ * A list or other popup the baseline captures open, beside its trigger, from a catalogue example.
+ * The catalogue plays these examples, or shows them open in a figure's own room, so each opens as an
+ * application's would, highlighted from the keyboard and in each theme, in the test fixture (`?fixture=layout-check`, LayoutCheck.fixture.tsx), on the catalogue's canvas, in a page of the
+ * theme, where its popups open into the document as an application's do.
  */
 interface OpenList {
   /** Names the snapshot after its theme: open/<theme>-<name>.png. */
   name: string;
   /** The themes it is captured in. */
   themes: readonly ThemeName[];
-  /** The catalogue page and view that show the list. */
-  route: string;
-  /** The control that opens the list. */
-  trigger: (page: Page) => Locator;
+  /** The example that shows the list: apps/site/src/examples/<page>/<example>.tsx. */
+  page: string;
+  example: string;
+  /** The control that opens the list; none where the example opens its popups itself. */
+  trigger?: (page: Page) => Locator;
   /** The key that opens the list from the focused trigger. */
   key?: string;
   /** Opens the popups otherwise than with `key` from the focused trigger. */
@@ -84,36 +83,20 @@ interface OpenList {
   count?: number;
   /** The option or item highlighted as the list opens from the keyboard; none for a tooltip or toasts. */
   highlighted?: string;
+  /**
+   * The list moves focus to its highlighted option, as a select or menu does, a moment after it
+   * opens; the capture waits for it, so the focus ring is on the option rather than the trigger. A
+   * combobox and the palette keep focus in their input.
+   */
+  focusesHighlighted?: boolean;
+  /** Pixels that may differ, where some edges are drawn a few levels apart from run to run. */
+  maxDiffPixels?: number;
   /** A modal palette covers the page, so its capture leaves the trigger out. */
   withTrigger: boolean;
-  /**
-   * Stops the page's timers before the popups open and runs only the frames they need to enter,
-   * so toasts that close after a few seconds stay for the capture.
-   */
-  pauseTimers?: boolean;
 }
 
-const liveExample = (page: Page, name: string) =>
-  page.locator(`.docs-live-example[data-example="${name}"]`);
-
-/** Toasts of the tones example, shown in order and captured stacked, with their timers stopped. */
-function toasts(name: string, tones: string[], themes: readonly ThemeName[]): OpenList {
-  const show = (page: Page, tone: string) =>
-    liveExample(page, 'Tones').getByRole('button', { name: `Show ${tone}`, exact: true });
-  return {
-    name,
-    themes,
-    route: 'components/toast/overview',
-    trigger: (page) => show(page, tones[0]),
-    open: async (page) => {
-      for (const tone of tones) await press(page, show(page, tone));
-    },
-    popup: (page) => page.locator('.env-toast'),
-    count: tones.length,
-    withTrigger: false,
-    pauseTimers: true,
-  };
-}
+/** The fixture's stage, which holds the example. */
+const stageOf = (page: Page) => page.getByTestId('layout-check-root');
 
 /**
  * Each list opens from the keyboard with its trigger focused and the pointer parked, so no hover
@@ -126,69 +109,71 @@ const openLists: OpenList[] = [
   {
     name: 'select',
     themes: ['light', 'dark', 'light-hc'],
-    route: 'components/select/preview',
-    trigger: (page) => page.getByRole('combobox', { name: 'Visibility', exact: true }),
+    page: 'select',
+    example: 'ProjectVisibility',
+    trigger: (page) => stageOf(page).getByRole('combobox', { name: 'Visibility', exact: true }),
     key: 'Space',
     popup: (page) => page.getByRole('listbox'),
     // Team is selected; Public is a disabled option below it.
     highlighted: 'Team',
+    focusesHighlighted: true,
     withTrigger: true,
   },
   {
     name: 'select-small',
     themes: ['light'],
-    route: 'components/select/preview',
-    trigger: (page) => page.getByRole('combobox', { name: 'Zoom', exact: true }),
+    page: 'select',
+    example: 'SmallToolbar',
+    trigger: (page) => stageOf(page).getByRole('combobox', { name: 'Zoom', exact: true }),
     key: 'Space',
     popup: (page) => page.getByRole('listbox'),
     highlighted: '100%',
+    focusesHighlighted: true,
     withTrigger: true,
   },
   {
     name: 'combobox',
     themes: ['light'],
-    route: 'components/combobox/overview',
-    trigger: (page) =>
-      liveExample(page, 'ChooseOwner').getByRole('combobox', { name: 'Owner', exact: true }),
+    page: 'combobox',
+    example: 'ChooseOwner',
+    trigger: (page) => stageOf(page).getByRole('combobox', { name: 'Owner', exact: true }),
     key: 'ArrowDown',
     popup: (page) => page.getByRole('listbox'),
     highlighted: 'Alex Morgan',
+    // The avatars' round edges come out up to four levels apart between runs, a few pixels each.
+    maxDiffPixels: 16,
     withTrigger: true,
   },
   {
     name: 'menu',
     themes: ['light', 'dark', 'light-hc'],
-    route: 'components/menu/overview',
-    trigger: (page) =>
-      liveExample(page, 'IconsAndShortcuts').getByRole('button', {
-        name: 'More actions',
-        exact: true,
-      }),
+    page: 'menu',
+    example: 'IconsAndShortcuts',
+    trigger: (page) => stageOf(page).getByRole('button', { name: 'More actions', exact: true }),
     key: 'ArrowDown',
     popup: (page) => page.getByRole('menu', { name: 'Report actions', exact: true }),
     highlighted: 'Rename',
+    focusesHighlighted: true,
     withTrigger: true,
   },
   {
     name: 'menu-choices',
     themes: ['light'],
-    route: 'components/menu/overview',
-    trigger: (page) =>
-      liveExample(page, 'Choices').getByRole('button', { name: 'View', exact: true }),
+    page: 'menu',
+    example: 'Choices',
+    trigger: (page) => stageOf(page).getByRole('button', { name: 'View', exact: true }),
     key: 'ArrowDown',
     popup: (page) => page.getByRole('menu', { name: 'View options', exact: true }),
     highlighted: 'Name',
+    focusesHighlighted: true,
     withTrigger: true,
   },
   {
     name: 'command-palette',
     themes: ['light'],
-    route: 'components/command-palette/overview',
-    trigger: (page) =>
-      liveExample(page, 'GoToDocument').getByRole('button', {
-        name: 'Go to document',
-        exact: true,
-      }),
+    page: 'command-palette',
+    example: 'GoToDocument',
+    trigger: (page) => stageOf(page).getByRole('button', { name: 'Search', exact: true }),
     key: 'Enter',
     popup: (page) => page.getByRole('dialog', { name: 'Go to document', exact: true }),
     highlighted: 'Roadmap.md',
@@ -198,12 +183,9 @@ const openLists: OpenList[] = [
     // A dark fill on a light page in the light themes: its edge must not read as a halo.
     name: 'tooltip',
     themes: ['light', 'dark'],
-    route: 'components/tooltip/overview',
-    trigger: (page) =>
-      liveExample(page, 'IconActions').getByRole('button', {
-        name: 'Refresh members',
-        exact: true,
-      }),
+    page: 'tooltip',
+    example: 'IconActions',
+    trigger: (page) => stageOf(page).getByRole('button', { name: 'Refresh members', exact: true }),
     // Keyboard focus opens a tooltip at once: Shift+Tab and Tab give the trigger keyboard focus,
     // whatever focus the script gave it.
     open: async (page, trigger) => {
@@ -214,51 +196,31 @@ const openLists: OpenList[] = [
     popup: (page) => page.locator('.env-tooltip', { hasText: 'Refresh members' }),
     withTrigger: true,
   },
-  // The strong fills of toasts, each with its edge. Three show at once, so the danger notice, which
-  // stays until it is dismissed, is captured on its own.
-  toasts('toasts', ['neutral', 'success', 'info'], ['light', 'dark']),
-  toasts('toast-error', ['danger'], ['light']),
-];
-
-/** Template pages, which have one view. */
-const templatePages = guidePages.filter((page) => page.section === 'Templates');
-/** Every template screen, as its page and file name. */
-const screensTaken = templatePages.flatMap(({ document }) =>
-  (document?.sections ?? []).flatMap((section) =>
-    section.blocks.flatMap((block) =>
-      block.kind === 'template' ? [{ page: document!.id, name: block.name }] : [],
-    ),
-  ),
-);
-const desktop = { viewport: 'desktop', width: 1280, height: 800 } as const;
-const phone = { viewport: 'phone', width: 390, height: 844 } as const;
-/**
- * The shots of a template screen: light, comfortable and desktop for every screen, and for a sample
- * of template pages another theme, scale or width.
- */
-const screenShots = (page: string) => [
-  { ...desktop, theme: 'light', scale: 'comfortable' },
-  ...((
-    {
-      'app-frame': [
-        { ...desktop, theme: 'dark', scale: 'comfortable' },
-        { ...phone, theme: 'light', scale: 'comfortable' },
-      ],
-      'dashboard-page': [{ ...desktop, theme: 'dark', scale: 'comfortable' }],
-      'settings-page': [{ ...desktop, theme: 'light', scale: 'compact' }],
-      'index-page': [{ ...desktop, theme: 'light', scale: 'compact' }],
-      'sign-in-page': [{ ...phone, theme: 'light', scale: 'comfortable' }],
-    } as Record<
-      string,
-      { viewport: string; width: number; height: number; theme: string; scale: string }[]
-    >
-  )[page] ?? []),
+  {
+    // The strong fills of toasts, each with its edge: the tones example shows one of each, kept
+    // until dismissed, stacked in the window's corner.
+    name: 'toasts',
+    themes: ['light', 'dark'],
+    page: 'toast',
+    example: 'Tones',
+    popup: (page) => page.locator('.env-toast'),
+    count: 4,
+    withTrigger: false,
+  },
 ];
 
 test.skip(
   process.env.ENVUI_VISUAL !== 'docker',
   'The visual baseline renders in the Linux Playwright image: run `npm run test:visual`.',
 );
+
+// Every animated figure and tile shows its still, the first frame of its loop: the catalogue starts
+// with the sidebar's pause on, as a reader who paused them finds it. Playing, a figure is caught at
+// another frame on each run, and the pointer no one sees presses outside the Display menu and
+// closes it.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript((key) => localStorage.setItem(key, 'paused'), displayStorageKeys.motion);
+});
 
 function slug(text: string) {
   return (
@@ -294,21 +256,29 @@ async function finishAnimations(page: Page) {
 
 /** Wait until fonts, lazy content and finite animations have finished. */
 async function settle(page: Page) {
-  await page
-    .getByText(/^Loading .*…$/)
-    .first()
-    .waitFor({ state: 'detached' });
+  // A skeleton of the site's (.site-loading, loading/Skeletons.tsx) marks a part that is still
+  // loading: an example, its code, a specimen, a demo, the icon list, the token reference or the
+  // changelog. A tile's (.catalogue-tile-loading) waits for the tile to come into view instead.
+  // A section still to show is its outline (data-site-pending, markdown/SectionOutline.ts) until
+  // it renders, with the skeletons of its parts.
+  await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
+  await page.locator('.site-loading').first().waitFor({ state: 'detached' });
+  // envUI ships its own Geist; a fallback face would make every text specimen drift. The fonts are
+  // ready at once while none has been asked for yet, as on a busy machine before the page has laid
+  // out its text, so it waits for Geist itself.
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() =>
+          [...document.fonts].some(
+            (font) => font.family.replace(/"/g, '') === 'envUI Geist' && font.status === 'loaded',
+          ),
+        ),
+      { message: 'envUI Geist is loaded' },
+    )
+    .toBe(true);
   await page.evaluate(() => document.fonts.ready);
   await finishAnimations(page);
-  // envUI ships its own Inter; a fallback face would make every text specimen drift.
-  expect(
-    await page.evaluate(() =>
-      [...document.fonts].some(
-        (font) => font.family.replace(/"/g, '') === 'envUI Inter' && font.status === 'loaded',
-      ),
-    ),
-    'envUI Inter is loaded',
-  ).toBe(true);
 }
 
 /** Click, then park the pointer and drop focus, so neither paints a state into later shots. */
@@ -318,13 +288,16 @@ async function press(page: Page, control: Locator) {
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
 }
 
-/** Switches the catalogue to the theme's scheme with its button, under the theme's contrast. */
+/** Switches the catalogue to the theme's scheme in its Display menu, under the theme's contrast. */
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
   const { scheme } = theme;
-  if ((await page.locator('.docs-app').getAttribute('data-env-theme')) !== scheme)
-    await press(page, page.getByRole('button', { name: `Switch to ${scheme} theme`, exact: true }));
-  await page.locator(`.docs-app[data-env-theme="${scheme}"]`).waitFor();
+  if ((await page.locator('html').getAttribute('data-env-theme')) !== scheme) {
+    await chooseScheme(page, scheme);
+    await page.mouse.move(0, 0);
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  }
+  await page.locator(`html[data-env-theme="${scheme}"]`).waitFor();
 }
 
 /** Names unique within a page: repeated titles get a counter. */
@@ -339,32 +312,34 @@ function namer() {
 
 /**
  * Every capture scrolls from the top, so a specimen's offset never depends on the one before.
- * Soft, so one run reports every changed image of a page.
+ * Soft, so one run reports every changed image of a page. A specimen taller than the window is
+ * captured in a window tall enough to hold it: scrolled through a shorter one, its image came out
+ * shifted, with its top cut off and a blank band below.
  */
 async function capture(locator: Locator, path: string[]) {
-  await locator.page().evaluate(() => window.scrollTo(0, 0));
-  await expect.soft(locator).toHaveScreenshot(path);
+  const page = locator.page();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  const viewport = page.viewportSize()!;
+  const height = Math.ceil((await locator.boundingBox())?.height ?? 0) + 64;
+  if (height > viewport.height) await page.setViewportSize({ ...viewport, height });
+  try {
+    await expect.soft(locator).toHaveScreenshot(path);
+  } finally {
+    if (height > viewport.height) await page.setViewportSize(viewport);
+  }
 }
 
-/** Waits until open popups have finished growing in, so their boxes have their final size. */
-async function settlePopups(page: Page, paused = false) {
-  if (paused) {
-    // A stopped clock runs no frames, so it runs a frame at a time until the popups have entered:
-    // a fraction of a second against the seconds a toast stays.
-    await expect
-      .poll(async () => {
-        await page.clock.runFor(16);
-        return page.locator('[data-starting-style]').count();
-      })
-      .toBe(0);
-    await page.clock.runFor(32);
-  } else {
-    await expect(page.locator('[data-starting-style]')).toHaveCount(0);
-    // The transition starts in the frame after the starting style is removed.
-    await page.evaluate(
-      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
-    );
-  }
+/**
+ * Waits until open popups have finished growing in, so their boxes have their final size, with
+ * the faces their text is the first to use.
+ */
+async function settlePopups(page: Page) {
+  await expect(page.locator('[data-starting-style]')).toHaveCount(0);
+  await page.evaluate(() => document.fonts.ready);
+  // The transition starts in the frame after the starting style is removed.
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
   await finishAnimations(page);
 }
 
@@ -421,52 +396,66 @@ function reconcile(testInfo: TestInfo, directory: string, recorded: string[], ta
 }
 
 test.describe('catalogue', () => {
-  for (const { path, reference, views } of referencePages) {
-    test(`${reference.title} (${path})`, async ({ page }, testInfo) => {
-      const directory = join(snapshots, 'catalogue', reference.id);
+  for (const { path, document: subject } of groupedPages) {
+    test(`${subject.title} (${path})`, async ({ page }, testInfo) => {
+      const directory = join(snapshots, 'catalogue', subject.id);
       const recorded = contents(directory);
       const taken = new Set<string>();
       const take = async (locator: Locator, file: string) => {
         taken.add(file);
-        await capture(locator, ['catalogue', reference.id, file]);
+        await capture(locator, ['catalogue', subject.id, file]);
       };
-      // A page not on the template shows its specimens in Preview; a page on the template shows
-      // its live examples in Overview and its specimens in whichever view their section is in.
-      const visited = reference.sections ? views.map((view) => view.id) : ['preview'];
+      // Each page shows its specimens, or its live examples, on one page: a foundation's visuals,
+      // a component's figures, or Field's in the Docs.
+      const visited = [path];
       await page.clock.setFixedTime(now);
-      await page.goto(`${catalogueUrl}/#/${path}/${visited[0]}`);
-      await page.locator('.docs-reference-tabs').waitFor();
+      await page.goto(`${siteDevUrl}/${path}`);
+      await page.locator('.site-page-header').waitFor();
       for (const theme of themesFor(path)) {
         await setTheme(page, theme);
         const name = namer();
         let specimens = 0;
+        // Specimens that play, such as a slider stretching past its ends, each captured as its still.
+        let animated = 0;
         const matrices: string[] = [];
-        const open = async (view: string) => {
-          await page.evaluate((hash) => (location.hash = hash), `/${path}/${view}`);
-          await page.locator('.docs-page-header').getByRole('tab', { selected: true }).waitFor();
-          // The development server keeps routes in the path, and opens a hash route there.
-          await expect(page).toHaveURL(new RegExp(`/${path}/${view}$`));
+        const open = async (route: string) => {
+          await expect(page).toHaveURL(new RegExp(`/${route}$`));
           await settle(page);
         };
         for (const view of visited) {
           await open(view);
           const examples = page.locator(
-            '.docs-preview .docs-example:not(.docs-example .docs-example)',
+            '.catalogue-specimen-area .site-example:not(.site-example .site-example)',
           );
           for (const example of await examples.all()) {
             if (!(await example.isVisible())) continue;
-            // Untitled examples are named after their first disclosure or specimen heading.
-            const heading = example
-              .locator(':scope > h2, :scope > .docs-example-heading > h2, summary, h3')
-              .first();
-            const title = (await heading.count()) ? await heading.textContent() : '';
+            // An example is named after its title; an untitled one after its specimen, such as
+            // InteractionStates, or else its first disclosure or part heading.
+            const own = example.locator(
+              ':scope > :is(h2, h3), :scope > .catalogue-example-heading > :is(h2, h3)',
+            );
+            const specimen = await example.evaluate(
+              (element) =>
+                element
+                  .closest('[data-catalogue-specimen]')
+                  ?.getAttribute('data-catalogue-specimen') ?? '',
+            );
+            const part = example.locator('summary, h3, h4').first();
+            const title = (await own.count())
+              ? await own.first().textContent()
+              : specimen
+                ? specimen.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+                : (await part.count())
+                  ? await part.textContent()
+                  : '';
             await take(example, `${theme.name}-${name(slug(title ?? ''))}.png`);
             specimens++;
+            if (await example.locator('.catalogue-motion-stage').count()) animated++;
           }
-          // The forced hover, pressed, focus and disabled states of InteractionStates.ts, which
-          // the catalogue keeps in closed disclosures.
+          // The forced hover, pressed, focus and disabled states of InteractionStates.tsx, opened
+          // where the catalogue keeps them in a closed disclosure.
           const states = page.locator(
-            '.docs-preview [role="region"][aria-label$="interaction states"]',
+            '.catalogue-specimen-area [role="region"][aria-label$="interaction states"]',
           );
           for (const matrix of await states.all()) {
             const label = ((await matrix.getAttribute('aria-label')) ?? '').replace(
@@ -476,20 +465,49 @@ test.describe('catalogue', () => {
             matrices.push(label);
             const summary = matrix.locator('xpath=ancestor::details[1]/summary');
             const closed = (await summary.count()) > 0 && !(await matrix.isVisible());
-            if (closed) await press(page, summary);
+            // A matrix shown open is already in its specimen's image.
+            if (!closed) continue;
+            await press(page, summary);
             await take(matrix, `${theme.name}-states-${name(slug(label))}.png`);
-            if (closed) {
-              await press(page, summary);
-              await expect(matrix).toBeHidden();
-            }
+            await press(page, summary);
+            await expect(matrix).toBeHidden();
           }
         }
-        // A page without a specimen gives its first live example, named after its file.
-        for (const view of specimens ? [] : visited) {
+        // A foundation page in the one-file structure shows the catalogue's own figures, each
+        // named after its label, such as Spacing's measured settings card.
+        if (!specimens) {
+          await open(visited[0]!);
+          for (const figure of await page
+            .locator('.site-template figure.site-topic-figure')
+            .all()) {
+            if (!(await figure.isVisible())) continue;
+            const label = (await figure.getAttribute('aria-label')) ?? '';
+            await take(figure, `${theme.name}-${name(slug(label))}.png`);
+            specimens++;
+          }
+        }
+        // A page without a specimen, or whose specimens all play, gives its first example too,
+        // named after its file: live, or the still of the animated specimen that plays it, whose
+        // file its Code toggle names. A still shows a moment of what its specimen is about; the
+        // first example shows the component as a page uses it.
+        for (const view of specimens > animated ? [] : visited) {
           await open(view);
-          const example = page.locator('.docs-live-example[data-example]').first();
+          const example = page
+            .locator(
+              '.site-live-example[data-example], .site-live-example-entry > .catalogue-motion-stage',
+            )
+            .first();
           if (!(await example.count())) continue;
-          const file = (await example.getAttribute('data-example')) ?? '';
+          const file =
+            (await example.getAttribute('data-example')) ??
+            /code, (\w+)\.tsx/i.exec(
+              (await example
+                .locator('xpath=..')
+                .locator(':scope > .site-live-example-code summary')
+                .textContent()) ?? '',
+            )?.[1] ??
+            '';
+          expect(file, 'The first example names its file').not.toBe('');
           await take(example, `${theme.name}-${name(`example-${slug(file)}`)}.png`);
           specimens++;
           break;
@@ -498,50 +516,7 @@ test.describe('catalogue', () => {
         expect(
           matrices.sort(),
           `The ${theme.name} page shows the interaction states listed in stateMatrices`,
-        ).toEqual([...(stateMatrices[reference.id] ?? [])].sort());
-      }
-      reconcile(testInfo, directory, recorded, taken);
-    });
-  }
-});
-
-test.describe('templates', () => {
-  for (const { page: id, name } of screensTaken) {
-    test(`${id}/${name}`, async ({ page }, testInfo) => {
-      const directory = join(snapshots, 'templates', id);
-      // The screen's images, and those of its states: light-compact-desktop-<Name>-<state>.png.
-      const recorded = contents(directory).filter((file) =>
-        new RegExp(`-${name}(?:-[a-z0-9-]+)?\\.png$`).test(file),
-      );
-      const taken = new Set<string>();
-      await page.clock.setFixedTime(now);
-      for (const { viewport, width, height, theme, scale } of screenShots(id)) {
-        await page.setViewportSize({ width, height });
-        await page.goto(
-          `${catalogueUrl}/?${new URLSearchParams({ frame: `${id}/${name}`, scale, theme })}`,
-        );
-        await page.locator('[data-template-frame]').waitFor();
-        await settle(page);
-        const file = `${theme}-${scale}-${viewport}-${name}.png`;
-        taken.add(file);
-        // The viewport, not the full page: what a reader sees first.
-        await expect.soft(page).toHaveScreenshot(['templates', id, file]);
-      }
-      // States the screen reaches through its controls, such as a refused submit, at the desktop
-      // width in light and comfortable.
-      const states = templateStates[`${id}/${name}`] ?? [];
-      if (states.length) await page.setViewportSize({ width: 1280, height: 800 });
-      for (const state of states) {
-        await page.goto(
-          `${catalogueUrl}/?${new URLSearchParams({ frame: `${id}/${name}`, scale: 'comfortable', theme: 'light' })}`,
-        );
-        await page.locator('[data-template-frame]').waitFor();
-        await settle(page);
-        await state.act(page);
-        await settle(page);
-        const file = `light-comfortable-desktop-${name}-${state.name}.png`;
-        taken.add(file);
-        await expect.soft(page).toHaveScreenshot(['templates', id, file]);
+        ).toEqual([...(stateMatrices[subject.id] ?? [])].sort());
       }
       reconcile(testInfo, directory, recorded, taken);
     });
@@ -554,7 +529,7 @@ test.describe('density', () => {
   for (const { section, theme } of densityShots) {
     test(`${section} (${theme})`, async ({ page }) => {
       await page.clock.setFixedTime(now);
-      await page.goto(`${fixtureUrl}/?fixture=density&section=${section}&theme=${theme}`);
+      await page.goto(`${fixtureUrl}/?fixture=scale&section=${section}&theme=${theme}`);
       const specimen = page.locator(`[data-density-section="${section}"]`);
       await specimen.waitFor();
       await expect(specimen).not.toContainText('Unknown density section');
@@ -568,45 +543,58 @@ test.describe('open lists', () => {
   for (const list of openLists) {
     for (const theme of allThemes.filter(({ name }) => list.themes.includes(name))) {
       test(`${list.name} (${theme.name})`, async ({ page }) => {
-        // Timers keep running until just before the popups open, so the page and its animations settle.
-        if (list.pauseTimers) await page.clock.install({ time: now });
-        else await page.clock.setFixedTime(now);
-        await page.goto(`${catalogueUrl}/#/${list.route}`);
-        await page.locator('.docs-reference-tabs').waitFor();
-        await setTheme(page, theme);
+        await page.clock.setFixedTime(now);
+        await emulateContrast(page, theme);
+        await page.goto(
+          `${fixtureUrl}/?fixture=layout-check&page=${list.page}&name=${list.example}&theme=${theme.scheme}`,
+        );
+        await expect(page.locator('[data-example-error]')).toHaveCount(0);
+        await stageOf(page).and(page.locator('[data-rendered]')).waitFor();
+        // A face loads when text first uses it, and an icon button's example shows none until its
+        // popup opens.
+        await page.evaluate(() => document.fonts.load('1em "envUI Geist"'));
         await settle(page);
+        await page.mouse.move(0, 0);
         // A modal popup hides the rest of the page from role queries, so the trigger is held as
         // an element to measure once the list is open.
-        const trigger = await list.trigger(page).elementHandle();
-        if (!trigger) throw new Error(`No trigger for the ${list.name} list`);
-        await trigger.evaluate((element) =>
-          element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
-        );
-        await page.mouse.move(0, 0);
-        // Toasts start their timers as they show, so the clock stops before they open. Nothing
-        // waits on a timer yet, so the second it skips to stop changes nothing.
-        if (list.pauseTimers)
-          await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
-        if (list.open) await list.open(page, trigger);
-        else {
-          await trigger.focus();
-          await page.keyboard.press(list.key!);
-        }
+        const trigger = list.trigger ? await list.trigger(page).elementHandle() : null;
+        if (list.trigger && !trigger) throw new Error(`No trigger for the ${list.name} list`);
         const popup = list.popup(page);
-        await expect(popup).toHaveCount(list.count ?? 1);
-        for (const each of await popup.all()) await expect(each).toBeVisible();
-        await settlePopups(page, list.pauseTimers);
+        // Options pass data-highlighted on to their parts, such as a radio item's indicator.
+        const highlighted = popup.locator(
+          '[data-highlighted]:not([data-highlighted] [data-highlighted])',
+        );
+        // A select or menu moves focus to its highlighted option a moment after it opens. On a busy
+        // machine Base UI now and then leaves focus on the trigger instead, with the list open; the
+        // list is then closed and opened again, at most twice, so the image shows the option focused.
+        for (let attempt = 1; ; attempt++) {
+          if (trigger && list.open) await list.open(page, trigger);
+          else if (trigger) {
+            await trigger.focus();
+            await page.keyboard.press(list.key!);
+          }
+          await expect(popup).toHaveCount(list.count ?? 1);
+          for (const each of await popup.all()) await expect(each).toBeVisible();
+          await settlePopups(page);
+          if (!list.focusesHighlighted) break;
+          try {
+            await expect(highlighted).toBeFocused({ timeout: 2000 });
+            break;
+          } catch (error) {
+            if (attempt === 3) throw error;
+            await page.keyboard.press('Escape');
+            await expect(popup).toHaveCount(0);
+            await finishAnimations(page);
+          }
+        }
         if (list.highlighted) {
-          // Options pass data-highlighted on to their parts, such as a radio item's indicator.
-          const highlighted = popup.locator(
-            '[data-highlighted]:not([data-highlighted] [data-highlighted])',
-          );
           await expect(highlighted).toHaveCount(1);
           await expect(highlighted).toContainText(list.highlighted);
         }
         const popups = await popup.all();
         await expect(page).toHaveScreenshot(['open', `${theme.name}-${list.name}.png`], {
-          clip: await around(page, list.withTrigger ? [trigger, ...popups] : popups),
+          clip: await around(page, list.withTrigger && trigger ? [trigger, ...popups] : popups),
+          maxDiffPixels: list.maxDiffPixels,
         });
       });
     }
@@ -615,9 +603,8 @@ test.describe('open lists', () => {
 
 // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
 // eslint-disable-next-line no-empty-pattern
-test('every snapshot folder belongs to a catalogue or template page, a density section or an open list', async ({}, testInfo) => {
-  const pages = new Set(referencePages.map(({ reference }) => reference.id));
-  const templates = new Set(templatePages.map(({ document }) => document!.id));
+test('every snapshot folder belongs to a catalogue page, a density section or an open list', async ({}, testInfo) => {
+  const pages = new Set(groupedPages.map(({ document }) => document.id));
   const density = new Set(densityShots.map(({ section, theme }) => `${theme}-${section}.png`));
   const open = new Set(
     openLists.flatMap((list) => list.themes.map((theme) => `${theme}-${list.name}.png`)),
@@ -632,11 +619,9 @@ test('every snapshot folder belongs to a catalogue or template page, a density s
   const unused = [
     ...stale(
       '',
-      (entry) =>
-        entry.isDirectory() && ['catalogue', 'density', 'open', 'templates'].includes(entry.name),
+      (entry) => entry.isDirectory() && ['catalogue', 'density', 'open'].includes(entry.name),
     ),
     ...stale('catalogue', (entry) => entry.isDirectory() && pages.has(entry.name)),
-    ...stale('templates', (entry) => entry.isDirectory() && templates.has(entry.name)),
     ...stale('density', (entry) => entry.isFile() && density.has(entry.name)),
     ...stale('open', (entry) => entry.isFile() && open.has(entry.name)),
   ];

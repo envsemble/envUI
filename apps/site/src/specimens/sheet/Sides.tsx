@@ -1,0 +1,102 @@
+import { Button, Column, DescriptionList, Row, Sheet } from '@envsemble/envui';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
+
+/** Each sheet: the marker on its trigger and its close button's name. */
+const sheets = [
+  { trigger: 'details', close: 'Close details' },
+  { trigger: 'outline', close: 'Close outline' },
+  { trigger: 'share', close: 'Close' },
+];
+const trigger = (name: string) => `[data-catalogue-target="${name}"]`;
+const close = (name: string) => `.env-sheet [aria-label="${name}"]`;
+
+/*
+ * The pointer opens the report's details, which slide in from the end, and closes them; then its
+ * outline, from the start; then its share choices, from the bottom, each closed again.
+ */
+const script: PointerStep[] = [
+  { wait: 300 },
+  ...sheets.flatMap((sheet, index): PointerStep[] => [
+    { to: trigger(sheet.trigger), x: 0.5, y: 0.6, duration: index === 0 ? 0 : 500 },
+    { wait: 210 },
+    { click: true },
+    { wait: 780 },
+    { to: close(sheet.close), duration: 550 },
+    { wait: 180 },
+    { click: true },
+    { wait: 420 },
+  ]),
+  { leave: true },
+  { wait: 360 },
+];
+
+function Opening() {
+  usePointer(script);
+  return (
+    <Row gap={3} justify="center">
+      <Sheet
+        title="Details"
+        description="Quarterly report"
+        closeLabel="Close details"
+        trigger={
+          <Button variant="secondary" data-catalogue-target="details">
+            Details
+          </Button>
+        }
+      >
+        <DescriptionList.Root aria-label="Report details">
+          <DescriptionList.Item label="Owner">Priya Shah</DescriptionList.Item>
+          <DescriptionList.Item label="Updated">12 March 2026</DescriptionList.Item>
+          <DescriptionList.Item label="Pages">18</DescriptionList.Item>
+        </DescriptionList.Root>
+      </Sheet>
+      <Sheet
+        side="start"
+        title="Outline"
+        closeLabel="Close outline"
+        trigger={
+          <Button variant="secondary" data-catalogue-target="outline">
+            Outline
+          </Button>
+        }
+      >
+        <Column gap={2}>
+          {['Summary', 'Revenue', 'Costs', 'Next quarter'].map((section) => (
+            <Button key={section} variant="text">
+              {section}
+            </Button>
+          ))}
+        </Column>
+      </Sheet>
+      <Sheet
+        side="bottom"
+        title="Share report"
+        closeLabel="Close"
+        trigger={
+          <Button variant="secondary" data-catalogue-target="share">
+            Share
+          </Button>
+        }
+      >
+        <Row gap={2}>
+          <Button variant="secondary">Copy link</Button>
+          <Button variant="secondary">Email</Button>
+        </Row>
+      </Sheet>
+    </Row>
+  );
+}
+
+/** A sheet from each side: the end, the start and the bottom, opened and closed in turn. */
+export default function Sides() {
+  return (
+    <SpecimenFrame size="content">
+      <MotionStage label="a sheet from each side" height="22rem">
+        <Opening />
+      </MotionStage>
+    </SpecimenFrame>
+  );
+}

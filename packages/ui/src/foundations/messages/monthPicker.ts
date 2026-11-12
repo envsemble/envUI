@@ -12,5 +12,3 @@ export const monthPicker = {
   /** The next-year button's name. */
   nextYear: 'Next year',
 };
-
-export type MonthPickerMessages = typeof monthPicker;

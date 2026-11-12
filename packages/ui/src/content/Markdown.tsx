@@ -3,7 +3,9 @@
 // so Markdown cannot be a server component even without its own useMemo.
 
 import {
+  createContext,
   createElement,
+  useContext,
   useMemo,
   type ComponentPropsWithRef,
   type ComponentPropsWithoutRef,
@@ -12,7 +14,7 @@ import {
 import ReactMarkdown, { type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { classNames } from '../internal/classNames.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import {
   markdown as markdownMessages,
   type MarkdownMessages,
@@ -22,6 +24,15 @@ import { Link } from '../actions/Link.js';
 import { Code } from './Code.js';
 import { CodeBlock } from './CodeBlock.js';
 import { Kbd } from './Kbd.js';
+import {
+  collectingMarkdown,
+  givenMarkdownTree,
+  noteMarkdownTree,
+  type MarkdownTree,
+} from './internal/givenMarkdownTrees.js';
+import '../styles/Base.css';
+import '../styles/Prose.css';
+import '../styles/Markdown.css';
 
 export interface MarkdownLinkProps extends ComponentPropsWithoutRef<'a'> {
   href: string;
@@ -57,10 +68,19 @@ interface HastNode {
 const textOf = (node: HastNode): string =>
   node.type === 'text' ? (node.value ?? '') : (node.children ?? []).map(textOf).join('');
 
+/** The text of a table's first header cell, which names its first column. */
+function firstHeader(table: HastNode): string {
+  const find = (node: HastNode): HastNode | undefined =>
+    node.tagName === 'th' ? node : node.children?.map(find).find(Boolean);
+  const header = find(table);
+  return header ? textOf(header).trim() : '';
+}
+
 /**
  * Names each table's scrolling region after the table: its caption, or the heading it follows, as
- * "Keyboard table" (messages.tableNamed), else "Table" (messages.table), numbered where several
- * take one name. Regions need names of their own, which one shared name such as "Table" is not.
+ * "Keyboard table" (messages.tableNamed), else its first column's header, as "Variant table", else
+ * "Table" (messages.table), numbered where several take one name. Regions need names of their
+ * own, which one shared name such as "Table" is not, also across the Markdown of one page.
  */
 function rehypeTableNames(messages: MarkdownMessages) {
   return () => (tree: HastNode) => {
@@ -73,10 +93,11 @@ function rehypeTableNames(messages: MarkdownMessages) {
       }
       if (node.type === 'element' && node.tagName === 'table') {
         const caption = node.children?.find((child) => child.tagName === 'caption');
+        const column = heading ? '' : firstHeader(node);
         const base = caption
           ? textOf(caption).trim()
-          : heading
-            ? messages.tableNamed({ name: heading })
+          : heading || column
+            ? messages.tableNamed({ name: heading || column })
             : messages.table;
         const count = (counts.get(base) ?? 0) + 1;
         counts.set(base, count);
@@ -116,7 +137,7 @@ function keepKeys(children: MarkdownNode[]) {
     ) {
       kept.push({ type: 'key', data: { hName: 'kbd' }, children: [text] });
       index += 2;
-    } else kept.push(children[index]!);
+    } else kept.push(children[index]);
   }
   return kept;
 }
@@ -137,9 +158,101 @@ function remarkDropHtml() {
 
 const markdownPlugins = [remarkGfm];
 
+/** A rehype plugin, last, that notes the tree `source` renders, while they are collected. */
+const noteTree = (source: string) => () => (tree: MarkdownTree) => noteMarkdownTree(source, tree);
+
 type TableProps = ComponentPropsWithoutRef<'table'> & {
   node?: unknown;
   'data-env-table-name'?: unknown;
+};
+
+/** What the elements of one Markdown render take from its props. */
+interface MarkdownOptions {
+  headingOffset: number;
+  renderLink: MarkdownProps['renderLink'];
+  codeCopyable: boolean;
+  messages: MarkdownMessages;
+}
+
+const MarkdownOptionsContext = createContext<MarkdownOptions | null>(null);
+
+function useMarkdownOptions(): MarkdownOptions {
+  const options = useContext(MarkdownOptionsContext);
+  if (!options) throw new Error('A Markdown element rendered outside Markdown.');
+  return options;
+}
+
+/**
+ * envUI's elements for Markdown, each one component for good: they read the props they depend on,
+ * such as `renderLink`, from the Markdown around them, so a new `renderLink` on every render, as an
+ * inline function is, renders the same elements again rather than building every one anew.
+ */
+function heading(level: 1 | 2 | 3 | 4 | 5 | 6): NonNullable<Components['h1']> {
+  return function MarkdownHeading({ node: _node, ...headingProps }) {
+    const { headingOffset } = useMarkdownOptions();
+    return createElement(`h${Math.min(6, level + headingOffset)}`, headingProps);
+  };
+}
+
+const elements: Components = {
+  h1: heading(1),
+  h2: heading(2),
+  h3: heading(3),
+  h4: heading(4),
+  h5: heading(5),
+  h6: heading(6),
+  a: function MarkdownLink({ node: _node, href, ...linkProps }) {
+    const { renderLink } = useMarkdownOptions();
+    if (!href) return <span>{linkProps.children}</span>;
+    return renderLink ? renderLink({ ...linkProps, href }) : <Link {...linkProps} href={href} />;
+  },
+  code: ({ node: _node, ...codeProps }) => <Code {...codeProps} />,
+  kbd: ({ node: _node, ...keyProps }) => <Kbd {...keyProps} />,
+  pre: function MarkdownCodeBlock({ node, children: preChildren }) {
+    const { codeCopyable } = useMarkdownOptions();
+    const code = node?.children.find(
+      (child) => child.type === 'element' && child.tagName === 'code',
+    );
+    if (!code || code.type !== 'element') return <pre>{preChildren}</pre>;
+    const source = code.children
+      .map((child) => (child.type === 'text' ? child.value : ''))
+      .join('');
+    const language = String(code.properties.className ?? '').match(/language-([^,\s]+)/)?.[1];
+    return (
+      <CodeBlock language={language} copyable={codeCopyable}>
+        {source}
+      </CodeBlock>
+    );
+  },
+  table: function MarkdownTable({
+    node: _node,
+    'data-env-table-name': name,
+    ...tableProps
+  }: TableProps) {
+    const { messages } = useMarkdownOptions();
+    return (
+      <div
+        className="env-markdown-table"
+        tabIndex={0}
+        role="region"
+        aria-label={typeof name === 'string' ? name : messages.table}
+      >
+        <table {...tableProps} />
+      </div>
+    );
+  },
+  input: function MarkdownTask({ checked }) {
+    const { messages } = useMarkdownOptions();
+    return (
+      <Checkbox
+        checked={Boolean(checked)}
+        disabled
+        aria-label={checked ? messages.taskDone : messages.taskOpen}
+      />
+    );
+  },
+  img: ({ node: _node, src, ...imageProps }) =>
+    src ? <img {...imageProps} src={src} loading="lazy" /> : <span>{imageProps.alt}</span>,
 };
 
 /**
@@ -158,84 +271,44 @@ export function Markdown({
   ...props
 }: MarkdownProps) {
   const messages = useMessages('markdown', markdownMessages);
-  const components = useMemo<Components>(() => {
-    const headings: Components = {};
-    for (const level of [1, 2, 3, 4, 5, 6] as const) {
-      headings[`h${level}`] = ({ node: _node, ...headingProps }) =>
-        createElement(`h${Math.min(6, level + headingOffset)}`, headingProps);
-    }
-    return {
-      ...headings,
-      a: ({ node: _node, href, ...linkProps }) =>
-        href ? (
-          renderLink ? (
-            renderLink({ ...linkProps, href })
-          ) : (
-            <Link {...linkProps} href={href} />
-          )
-        ) : (
-          <span>{linkProps.children}</span>
-        ),
-      code: ({ node: _node, ...codeProps }) => <Code {...codeProps} />,
-      kbd: ({ node: _node, ...keyProps }) => <Kbd {...keyProps} />,
-      pre: ({ node, children: preChildren }) => {
-        const code = node?.children.find(
-          (child) => child.type === 'element' && child.tagName === 'code',
-        );
-        if (!code || code.type !== 'element') return <pre>{preChildren}</pre>;
-        const source = code.children
-          .map((child) => (child.type === 'text' ? child.value : ''))
-          .join('');
-        const language = String(code.properties.className ?? '').match(/language-([^,\s]+)/)?.[1];
-        return (
-          <CodeBlock language={language} copyable={codeCopyable}>
-            {source}
-          </CodeBlock>
-        );
-      },
-      table: ({ node: _node, 'data-env-table-name': name, ...tableProps }: TableProps) => (
-        <div
-          className="env-markdown-table"
-          tabIndex={0}
-          role="region"
-          aria-label={typeof name === 'string' ? name : messages.table}
-        >
-          <table {...tableProps} />
-        </div>
-      ),
-      input: ({ checked }) => (
-        <Checkbox
-          checked={Boolean(checked)}
-          disabled
-          aria-label={checked ? messages.taskDone : messages.taskOpen}
-        />
-      ),
-      img: ({ node: _node, src, ...imageProps }) =>
-        src ? <img {...imageProps} src={src} loading="lazy" /> : <span>{imageProps.alt}</span>,
-    };
-  }, [headingOffset, renderLink, codeCopyable, messages]);
-  const mergedComponents = useMemo(
-    () => (componentOverrides ? { ...components, ...componentOverrides } : components),
-    [components, componentOverrides],
+  const options = useMemo<MarkdownOptions>(
+    () => ({ headingOffset, renderLink, codeCopyable, messages }),
+    [headingOffset, renderLink, codeCopyable, messages],
   );
+  const mergedComponents = useMemo(
+    () => (componentOverrides ? { ...elements, ...componentOverrides } : elements),
+    [componentOverrides],
+  );
+  // A tree given for the source, such as by the page this renders in pre-rendered with it, renders
+  // as it is: the empty source parses to nothing, which the tree replaces (givenMarkdownTrees.ts).
+  const given = givenMarkdownTree(children);
   const mergedRehypePlugins = useMemo(
-    () => [rehypeTableNames(messages), ...(rehypePlugins ?? [])],
-    [rehypePlugins, messages],
+    () =>
+      given
+        ? [() => () => given]
+        : [
+            rehypeTableNames(messages),
+            ...(rehypePlugins ?? []),
+            ...(collectingMarkdown() ? [noteTree(children)] : []),
+          ],
+    [given, rehypePlugins, messages, children],
   );
   const mergedRemarkPlugins = useMemo(
-    () => [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropHtml],
-    [remarkPlugins],
+    () => (given ? [] : [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropHtml]),
+    [given, remarkPlugins],
   );
   return (
     <div {...props} className={classNames('env-markdown', 'env-prose', className)}>
-      <ReactMarkdown
-        remarkPlugins={mergedRemarkPlugins}
-        rehypePlugins={mergedRehypePlugins}
-        components={mergedComponents}
-        skipHtml
-      >
-        {children}
-      </ReactMarkdown>
+      <MarkdownOptionsContext.Provider value={options}>
+        <ReactMarkdown
+          remarkPlugins={mergedRemarkPlugins}
+          rehypePlugins={mergedRehypePlugins}
+          components={mergedComponents}
+          skipHtml
+        >
+          {given ? '' : children}
+        </ReactMarkdown>
+      </MarkdownOptionsContext.Provider>
     </div>
   );
 }

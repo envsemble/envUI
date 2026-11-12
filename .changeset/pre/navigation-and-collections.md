@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': major
-'@envsemble/envui-codemods': minor
 '@envsemble/eslint-plugin-envui': minor
 ---
 
@@ -20,4 +19,4 @@ Menus, navigation and collections take the 1.0 vocabulary, and several of their 
 
 Migrate with the codemods: `envui-codemods v1-props` renames `trailing`, OrganizationSwitcher's, Tree's, Table.HeaderCell's and List.Item's props; `v1-structure` wraps a `contrast` List.Root in a muted Surface and reports a computed one; `v1-names` renames `OrganizationSwitcherOrganization` and `TreeOpenOptions`; and `v1-classes` renames the classes, `env-menu-theme` to `env-popup-theme` among them, and turns NavList's modifiers into attributes; it reports OrganizationSwitcher's `env-organization-menu-radio` and `-radio-dot`, whose radio is Menu's `.env-menu-item-check` and `-check-mark` now, and a selector that puts `.env-document-tabs-close` inside `.env-document-tabs-tab`, its sibling now. By hand: the `detail` and `trailing` fields of Tree and OrganizationSwitcher data, which TypeScript reports, and the count in an icon-only NavList.Item's `aria-label`, which the item now adds itself. The ESLint plugin reports the renamed types.
 
-Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md#navigation-and-collections).
+Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

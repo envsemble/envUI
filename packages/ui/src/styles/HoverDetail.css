@@ -1,0 +1,42 @@
+@layer env.components {
+  /* Text that shows more on hover or focus, a HoverCard's or Tooltip's text trigger, RelativeTime
+     among them: one rule draws them all. A dotted underline of round dots, well spaced, in the muted
+     text color, below the descenders, drawn as a background so the dots' size and spacing hold in
+     every browser. Not a link, so no link color, and the pointer stays the arrow over it rather than
+     the text cursor. Zero specificity, so the text's own styles and an application's win. */
+  :where(.env-hover-detail) {
+    /* The dots' diameter and the distance from one dot to the next. */
+    --env-hover-detail-dot: 0.125rem;
+    --env-hover-detail-pitch: calc(2.75 * var(--env-hover-detail-dot));
+    /* The dots sit this far below the text's box, clear of the descenders. */
+    --env-hover-detail-offset: 0.125rem;
+    padding-block-end: var(--env-hover-detail-offset);
+    background-image: radial-gradient(
+      circle closest-side,
+      var(--env-color-fg-muted) 70%,
+      transparent 100%
+    );
+    background-position: 0 100%;
+    background-size: var(--env-hover-detail-pitch) var(--env-hover-detail-dot);
+    background-repeat: round no-repeat;
+    cursor: default;
+  }
+  /* A container where such text repeats, such as a table, can set --env-hover-detail-rest-color to
+     transparent: the dots then show only under the pointer and with keyboard focus. */
+  :where(.env-hover-detail:not(:hover, :focus-visible)) {
+    background-image: radial-gradient(
+      circle closest-side,
+      var(--env-hover-detail-rest-color, var(--env-color-fg-muted)) 70%,
+      transparent 100%
+    );
+  }
+  /* Forced colors drop drawn backgrounds, so the system's own dotted underline stands in. */
+  @media (forced-colors: active) {
+    :where(.env-hover-detail) {
+      text-decoration-line: underline;
+      text-decoration-style: dotted;
+      text-decoration-color: CanvasText;
+      text-underline-offset: 0.25em;
+    }
+  }
+}

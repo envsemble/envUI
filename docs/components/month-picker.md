@@ -1,6 +1,6 @@
 ---
 title: MonthPicker
-summary: A field that opens a year of months to choose a month, such as a billing or reporting period.
+summary: A field that opens a year of months to choose a month.
 status: beta
 since: 1.0.0
 category: Forms & selection
@@ -12,142 +12,161 @@ aliases:
   - period picker
   - billing period
 useWhen:
-  - People choose a month of a year, such as the month a report covers or a billing period.
-  - The day doesn't matter, only the month.
+  - A month of a year, such as the month a report covers
 avoidWhen:
   - text: A day, or a day and a time.
     use: DatePicker
   - text: A choice among a few named periods, such as This month or Last month.
     use: SegmentedControl
-  - text: Activity per day over months, shown as shades.
-    use: CalendarHeatmap
-related:
-  - date-picker
-  - time-picker
-  - text-field
-  - calendar-heatmap
 components:
   - MonthPicker
+examples:
+  ReportMonth:
+    role: overview
+    open: true
+  MonthPickerAnatomy: anatomy
+  MonthPickerPopupAnatomy: anatomy
+  FiscalYear: example
+  ShortFormat: example
 ---
 
 # MonthPicker
 
-## Overview
+## Anatomy
 
-A month picker is a field that shows a month in the reader's locale, such as October 2026, and opens a year of months to choose it from. Its value is a month without a day or a zone, as `YYYY-MM`. It shares DatePicker's field and popup, and its months follow the calendar's keys.
-
-```tsx example=ReportMonth
+```tsx figure=MonthPickerAnatomy
 
 ```
 
-## Anatomy
+1. **Field** (`env-month-picker`)
+2. **Control** (`env-date-picker-control`)
+3. **Label** (`env-date-picker-label`, `label`)
+4. **Value** (`env-date-picker-value`)
+5. **Clear** (`env-date-picker-clear`, `clearable`)
+6. **Calendar icon** (`env-date-picker-icon`)
+7. **Description** (`env-field-description`, `description`)
 
-1. **Field**: a button in the shared text field's frame, with the floating `label`, `description` and `error`, showing the value or the `placeholder`.
-2. **Clear button** (`clearable`): a text icon button named `clearLabel` (Clear), while there is a value.
-3. **Calendar icon**: at the end of the field.
-4. **Popup**: the Popover surface below the field, with the year and its footer.
-5. **Year heading**: the year between the previous and next year buttons (`previousYearLabel`, `nextYearLabel`).
-6. **Months**: the year's twelve months in four rows of three, each named as the locale shortens it; this month has a ring and the chosen month a solid fill.
-7. **Footer**: This month at the start, and Clear with `clearable` at the end.
+```tsx figure=MonthPickerPopupAnatomy open
 
-## Variants and sizes
+```
 
-| Variant              | Use for                                                                                                              |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Month                | A month of a year. Choosing one closes the popup. The default.                                                       |
-| `variant="floating"` | A long form on a page: the field 3.5 rem tall inside its border, whose label floats above the value, as TextField's. |
+1. **Popup** (`env-month-picker-popup`)
+2. **Previous year** (`env-month-picker-previous`)
+3. **Year** (`env-month-picker-title::text`)
+4. **Next year** (`env-month-picker-next`)
+5. **Month** (`env-month-picker-month`)
+6. **Actions** (`env-date-picker-actions`)
 
-- A field fills its container's width.
-- `size` sets the field's height, as on every control: `sm`, `md` or `lg` in the app's [scale](../foundations/scale.md); without it the field takes its container's control height. `showLabel={false}` hides the label in a toolbar, so a placeholder and an `aria-label` name it.
-- The year is as wide as DatePicker's calendar; each month is as tall as a `md` control, and touch-tall on touch screens. The popup's buttons are `sm`.
+## Behaviour
 
-## States and behaviour
+### Choosing a month
 
-- **Opening and closing**: pressing the field, its label or its icon opens the year, as does <kbd>↓</kbd> or <kbd>↑</kbd>; pressing the field or its label again, a press outside and <kbd>Esc</kbd> close it and return focus to the field. As it opens, focus moves to the chosen month, or this month. `open`, `defaultOpen` and `onOpenChange` control it.
-- **Choosing**: choosing a month calls `onValueChange` with it and closes the popup; This month chooses the current month.
-- **Clearing**: with `clearable`, the clear button, Clear in the popup and <kbd>Backspace</kbd> or <kbd>Delete</kbd> on the field remove the value, and `onValueChange` receives null.
-- **Limits**: months outside `min` and `max` are unavailable and faded, the year buttons stop at them, This month is unavailable outside them, and values are kept within them.
-- **Locale**: `locale` sets how the value, the year and the month names are written, the browser's by default; `formatOptions` changes the field's format, such as `{ month: '2-digit', year: '2-digit' }` for a card's expiry. Months are Gregorian, also in a locale with a calendar of its own.
-- **Right to left**: a field in right-to-left text opens months that run right to left, where <kbd>←</kbd> and <kbd>→</kbd> follow the reading direction.
-- **Read only and disabled**: a read-only field shows its value and can be focused, but its popup doesn't open; like a read-only input it isn't validated. A disabled field can't be focused and is left out of the form.
-- **In forms**: `name` submits the value as `YYYY-MM`, `required` asks for one, and an empty required field takes focus when its form is submitted; a form reset restores an uncontrolled field's `defaultValue`. Validation and its `error` belong to the application.
+The month shows in the reader's language, and choosing one closes the popup.
 
-## Content guidelines
-
-- Name the field after the period, in sentence case: "Report month", "Billing period", "Expires".
-- Use the description for the limits: "Any month of the fiscal year, April to March."
-- Write an error that says how to correct the value: "Choose a month after the start."
-- Translate `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel`, or EnvUIProvider's `messages.monthPicker`, where the interface is not in English.
-
-## Do and don't
-
-### Do
-
-- Store and send the field's `YYYY-MM` value; it sorts and compares as text.
-- Use `min` and `max` for the months that can be chosen, and say so in the description.
-
-### Don't
-
-- Don't ask for a day when only the month matters; a DatePicker makes people pick a day that means nothing.
-- Don't use a month picker for a range of months in one field; use two fields, such as From and To.
-- Don't disable a month picker to show a month; use `readOnly`, which people can still focus and read.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                                                           | Action                                                                                                                                                                                 |
-| ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                               | Moves focus to the field, then its clear button. In an open popup, moves between the year buttons, the active month and the footer's buttons; moving focus out of the popup closes it. |
-| <kbd>Enter</kbd>, <kbd>Space</kbd>, <kbd>↓</kbd> or <kbd>↑</kbd> on the field | Opens the year with focus on the chosen month, or this month.                                                                                                                          |
-| <kbd>Backspace</kbd> or <kbd>Delete</kbd> on the field                        | Clears the value of a clearable field.                                                                                                                                                 |
-| <kbd>←</kbd>, <kbd>→</kbd>                                                    | Moves to the previous or next month, in the reading direction, on into the previous or next year.                                                                                      |
-| <kbd>↑</kbd>, <kbd>↓</kbd>                                                    | Moves to the month three before or after, a row up or down.                                                                                                                            |
-| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>                                      | Moves to the same month of the previous or next year.                                                                                                                                  |
-| <kbd>Home</kbd>, <kbd>End</kbd>                                               | Moves to the first or last month of the row.                                                                                                                                           |
-| <kbd>Enter</kbd> or <kbd>Space</kbd> on a month                               | Chooses the month and closes the popup.                                                                                                                                                |
-| <kbd>Esc</kbd>                                                                | Closes the popup and returns focus to the field; in a dialog, the next <kbd>Esc</kbd> closes the dialog.                                                                               |
-
-### envUI provides
-
-- The field as a `combobox` button named by its label, with the description and error as its description, `aria-invalid`, `aria-required` and `aria-readonly`.
-- The months as a grid named by the year, each named by its month and year, such as "October 2026", with the chosen month selected, this month marked as the current date and unavailable months disabled; the active month is the grid's one tab stop.
-- Focus that moves into the year as it opens and back to the field as it closes, and stays where it was when a key doesn't move the month.
-- The year heading as a polite live region, so the new year is announced as it changes, and year buttons that stay focusable at `min` and `max` and report `aria-disabled`.
-- This month's ring and the chosen month's fill with at least 3:1 contrast, and system colors under forced colors.
-
-### You provide
-
-- A `label`, or `aria-label` or `aria-labelledby` on a field without one.
-- Validation, such as the order of two months, and its `error`.
-- The labels in the application's language.
-
-## Examples
+<!-- specimen: ChoosingAMonth -->
 
 ### Within a fiscal year
 
-`min` and `max` make the months outside April to March unavailable, and the year buttons stop at them.
+Months outside the range a field allows are unavailable, and the year buttons stop at them.
 
-```tsx example=FiscalYear
+```tsx figure=FiscalYear motion
 
 ```
 
 ### A short format
 
-`formatOptions` writes the month and year as two digits each, as on a card.
+The field can write the month in a shorter form, such as 07/28.
 
-```tsx example=ShortFormat
+```tsx figure=ShortFormat
+
+```
+
+## Rules
+
+A month picker is for a month where the day doesn't matter, one month to a field.
+
+### Ranges
+
+Use two fields for a range of months, such as From and To.
+
+## Accessibility
+
+### Keyboard
+
+| Key                                                                         | Action                                           |
+| --------------------------------------------------------------------------- | ------------------------------------------------ |
+| <kbd>Enter</kbd>, <kbd>Space</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd> on the field | Opens the popup at the chosen value.             |
+| Arrow keys                                                                  | Move between months.                             |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>                                    | Moves a year.                                    |
+| <kbd>Enter</kbd>, <kbd>Space</kbd> on a month                               | Chooses the month.                               |
+| <kbd>Esc</kbd>                                                              | Closes the popup and returns focus to the field. |
+| <kbd>Backspace</kbd>, <kbd>Delete</kbd> on the field                        | Clears a clearable field.                        |
+
+### envUI provides
+
+- The field as a `combobox` button named by its label, with its description and error.
+- The year as a grid of months, each named by month and year, with one tab stop.
+
+### You provide
+
+- A `label`, or `aria-label` on a field without one.
+- Validation and its `error`.
+- The labels in the application's language.
+
+## Compose
+
+### Usage
+
+A MonthPicker takes its `label`, a `description` and an `error`, and its value is a month as `YYYY-MM`.
+
+- Uncontrolled: `defaultValue`, which a form reset restores.
+- Controlled: `value` and `onValueChange`, which receives the month, or `null` once the field is cleared.
+- `clearable` adds a clear button to the field and the popup.
+
+```tsx source=ReportMonth
 
 ```
 
-### In a form
+#### Range and format
 
-A required field submits its `YYYY-MM` value, and Reset empties it again.
+`min` and `max`, as `YYYY-MM`, make earlier and later months unavailable, as the FiscalYear example shows. `formatOptions` takes `Intl.DateTimeFormat` options for the shown value, by default the long month and the year, as the ShortFormat example shows; `locale` is EnvUIProvider's, else the browser's, and months are Gregorian, also in a locale with a calendar of its own.
 
-```tsx example=ExpenseForm
-
+```tsx
+<MonthPicker label="Budget month" min="2026-04" max="2027-03" />
+<MonthPicker label="Expires" formatOptions={{ month: '2-digit', year: '2-digit' }} />
 ```
+
+#### In a form
+
+`name` submits the month as `YYYY-MM`, and `required` keeps an empty field's form from submitting. Use `readOnly`, not `disabled`, for a month people can't change.
+
+```tsx
+<form onSubmit={submit}>
+  <MonthPicker label="Period" name="period" placeholder="Choose a month" required />
+  <Button type="submit">Submit expenses</Button>
+</form>
+```
+
+#### Sizes and the popup
+
+`size` is `sm`, `md` or `lg`; without it the field takes its container's control height. `visibleLabel={false}` hides the label for a field whose purpose is clear, and `placeholder` shows while it is empty. `open`, `defaultOpen` and `onOpenChange` control the popup; `onOpenChange` also receives why it opens or closes, `PickerOpenChangeDetails`. `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel` name its buttons.
+
+### Composition
+
+The field, `env-month-picker`, shares DatePicker's parts: the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the calendar icon, `env-date-picker-icon`; then the description, `env-field-description`, and the error, `env-field-error`. The popup is DatePicker's picker card, `env-picker-popup` with `env-date-picker-popup` and `env-month-picker-popup`. Its body, `env-picker-popup-body`, has a header, `env-month-picker-header`, with the previous year, `env-month-picker-previous`, the year, `env-month-picker-title`, and the next year, `env-month-picker-next`; the year's grid, `env-month-picker-year` and `env-month-picker-grid`, of months, `env-month-picker-month`, each with `data-month` and a mark, `env-month-picker-month-mark`; and its footer, `env-picker-popup-footer` with `env-date-picker-actions`, the actions. `ref` reaches the field's button, and `className` and `style` its root.
+
+### Customize
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog
 
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
 - **1.0.0**: MonthPicker, for a month of a year, with `min` and `max`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: The popup opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
+- **1.0.0-prerelease.6**: The year buttons show larger arrows, 1.25 rem, on slightly smaller buttons, and the header keeps a little room under it, as the calendar's.
+- **1.0.0-prerelease.6**: The grid's month names keep one length where the locale makes nearly all of them that long, such as Sep rather than Sept among en-GB's three-letter months; names with punctuation, and locales whose names vary, keep the locale's own.
+- **1.0.0-prerelease.6**: Months outside `min` and `max` take the disabled text color, faded, as a calendar's unavailable days do; this month keeps its accent color.
+- **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends. A small one with a visible label takes the medium height, so its floated label and its value each have room, and says so in the console while developing: `sm` is for a field with its label hidden.
+- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale. The year leads its header, its buttons side by side at the end; this month is in the accent color rather than ringed, and a month under the pointer takes the neutral fill.

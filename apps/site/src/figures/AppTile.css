@@ -1,0 +1,103 @@
+/* A card's picture of a piece of an application's frame, such as a Scaffold or a top bar
+   (wrapApp in figures/TileStage.tsx): it fills the picture as the application fills its window,
+   in the browser's window a page's figure is drawn in, an even margin around it. Its canvas is
+   laid out at the picture's size, less the margin, at its own size (useAppFit), from the stage's
+   top left corner, and clips what runs past its edges. */
+.catalogue-tile-stage:has(> .catalogue-tile-canvas[data-app]) {
+  container: catalogue-app-stage / inline-size;
+}
+
+.catalogue-tile-canvas[data-app] {
+  /* The room the frame keeps from the picture's edges, in rem, and the scale it is drawn at. */
+  --catalogue-app-margin: 1;
+  --catalogue-app-scale: 1;
+  inset: 0 auto auto 0;
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+}
+
+/* The window fills the canvas, and the tile fills its screen (useFill). */
+.catalogue-tile-canvas[data-app] > :not(.catalogue-overlay-layer) {
+  flex: 1 1 auto;
+  min-block-size: 0;
+}
+
+/* A tile with a least width, such as panes side by side, lays out no narrower, and where the card
+   is narrower still, its end is cut off, fading out (useAppFit). */
+.catalogue-tile-canvas[data-app] .site-device-screen > :not(.catalogue-overlay-layer) {
+  min-inline-size: var(--catalogue-app-least, 0);
+}
+
+.catalogue-tile-canvas[data-app][data-cut~='end'] .site-device-screen {
+  mask-image: linear-gradient(to right, var(--env-color-fg-default) calc(100% - 2rem), transparent);
+}
+
+/* The window at a card's size: a lighter stroke, smaller corners and a lower bar than a page's
+   figure draws, so the application keeps most of the picture. */
+.catalogue-tile-canvas[data-app] .site-device[data-fill] {
+  --site-device-stroke: 0.25rem;
+  --site-device-radius: 1rem;
+  --site-device-hairline: 1px;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.catalogue-tile-canvas[data-app] .site-device[data-fill] > .site-device-screen {
+  flex: 1 1 auto;
+  min-block-size: 0;
+}
+
+.catalogue-tile-canvas[data-app] .site-device[data-fill] .site-device-bar {
+  block-size: 2.25rem;
+  gap: 0.5rem;
+  padding-inline: 0.75rem 0.5rem;
+}
+
+.catalogue-tile-canvas[data-app] .site-device[data-fill] .site-device-glyphs {
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.catalogue-tile-canvas[data-app] .site-device[data-fill] .site-device-address {
+  block-size: 1.5rem;
+}
+
+/* On a narrow card, such as a phone's two to a row, smaller, at the least a page's figure draws a
+   window at (DeviceFrame.tsx), and the window closer to the edges with only its address in its
+   bar. */
+@container catalogue-app-stage (width < 16rem) {
+  .catalogue-tile-canvas[data-app] {
+    --catalogue-app-margin: 0.5;
+    --catalogue-app-scale: 0.75;
+  }
+
+  .catalogue-tile-canvas[data-app] .site-device[data-fill] {
+    --site-device-stroke: 0.1875rem;
+    --site-device-radius: 0.75rem;
+  }
+
+  .catalogue-tile-canvas[data-app] .site-device[data-fill] .site-device-bar {
+    block-size: 1.625rem;
+    padding-inline: 0.25rem;
+  }
+
+  .catalogue-tile-canvas[data-app] .site-device[data-fill] .site-device-glyphs {
+    display: none;
+  }
+
+  .catalogue-tile-canvas[data-app] .site-device[data-fill] .site-device-address {
+    block-size: 1.25rem;
+  }
+}
+
+/* A ruler a tile's pointer aims along, of a length in rem, from its frame's start, however wide the
+   frame fills its card (tiles/NavigationDrawer.tsx): unseen, and the pointer passes through it. */
+.catalogue-app-ruler {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  visibility: hidden;
+  pointer-events: none;
+}

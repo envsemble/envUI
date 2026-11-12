@@ -1,0 +1,130 @@
+/* A part of a page while it loads (loading/Skeletons.tsx): envUI's skeleton of its shape, in its
+   place and at its size, as the Loading pattern asks. It shows only once the load has taken a
+   moment, and keeps its space until then. */
+.site-loading:not([data-shown]) {
+  /* Not hidden: the skeleton measures its text's bars only where it is visible. */
+  opacity: 0;
+}
+/* One in a pre-rendered page's HTML (data-site-early) shows once it has waited that moment from
+   the page's first paint, as the browser first styles it, before the site's script runs, which
+   then says it shows (data-shown) too: from its start style, a transition after that wait. */
+.site-loading[data-site-early]:not(.site-loading-stage, [data-shown]) {
+  opacity: 1;
+  transition: opacity 0s linear var(--site-loading-delay);
+}
+@starting-style {
+  .site-loading[data-site-early]:not(.site-loading-stage, [data-shown]) {
+    opacity: 0;
+  }
+}
+
+/* A skeleton far from the view stands still, until it nears the view (usePulseNear.ts). */
+.site-loading[data-site-far],
+.site-loading[data-site-far] [data-env-skeleton] {
+  animation: none;
+}
+
+/* The skeleton's root is no surface of its own: what it holds, such as a code block or a table,
+   keeps its own fill and corners, and only a stage, or the room of a figure's subject on its
+   stage, pulses as a surface does. */
+.site-loading:not(.site-loading-stage) {
+  background-color: transparent;
+}
+.site-loading:not(.site-loading-stage, .site-loading-subject) {
+  background-image: none;
+}
+
+/* A figure's subject on its stage: a filled shape in the skeleton's paint, as media are, of the
+   room it will take, centred as the subject will be, or across the stage where its size wasn't
+   recorded. */
+.site-loading-subject {
+  inline-size: 100%;
+  min-block-size: 4rem;
+  border-radius: var(--env-radius-md);
+  forced-color-adjust: none;
+  background-image: var(--env-skeleton-paint);
+}
+
+/* A part that is its own stage, such as a specimen that plays an example: the stage itself, the
+   recessed canvas of every figure (Stage.css), at the least height a stage takes, with a filled
+   shape in its middle, inside the stage's padding, where what it plays will be. */
+.site-loading-stage {
+  position: relative;
+  inline-size: 100%;
+  min-block-size: 8rem;
+}
+/* The stage is there from the first frame, as the figure's stage will be, so the page shows where
+   the figure goes at once; only the shape in it waits its moment, so a quick load never flashes. */
+.site-loading-stage:not([data-shown]) {
+  opacity: 1;
+}
+.site-loading-stage:not([data-shown]) > .site-loading-stage-subject {
+  visibility: hidden;
+}
+.site-loading-stage[data-site-early]:not([data-shown]) > .site-loading-stage-subject {
+  visibility: visible;
+  transition: visibility 0s linear var(--site-loading-delay);
+}
+@starting-style {
+  .site-loading-stage[data-site-early]:not([data-shown]) > .site-loading-stage-subject {
+    visibility: hidden;
+  }
+}
+.site-loading-stage-subject {
+  position: absolute;
+  inset-block: var(--env-space-5);
+  inset-inline: 0;
+  inline-size: min(100% - 2 * var(--env-space-6), 28rem);
+  margin-inline: auto;
+  border-radius: var(--env-radius-md);
+  forced-color-adjust: none;
+  background-image: var(--env-skeleton-paint);
+}
+
+/* A long part (LongPartSkeleton): the whole of it laid out unseen to keep its room, and a skeleton
+   of its start over it. */
+.site-loading-long {
+  position: relative;
+}
+.site-loading-room {
+  visibility: hidden;
+}
+.site-loading-start {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+}
+
+/* A page while its content loads (PageSkeleton.tsx): its banner without its art, then its first
+   section, whose figure's stage or code is a filled shape of the room it takes. */
+.site-page-skeleton {
+  display: flex;
+  flex-direction: column;
+}
+.site-page-skeleton-lead {
+  max-inline-size: min(100%, 53ch);
+  font: var(--env-font-weight-regular) var(--env-font-size-title) / 1.5 var(--env-font-family);
+}
+.site-page-skeleton .site-banner-shapes {
+  visibility: hidden;
+}
+.site-page-skeleton-stage,
+.site-page-skeleton-code {
+  forced-color-adjust: none;
+  background-image: var(--env-skeleton-paint);
+}
+/* The stage square-cornered, as a page's figure is (Stage.css). */
+.site-page-skeleton-code {
+  block-size: 7.5rem;
+  border-radius: var(--env-radius-md);
+}
+
+/* The layer over the scrolling page that holds the copies of placeholders on their way out, each
+   where its placeholder was, as they fade out over what took their place (loading/useArrival.ts):
+   clipped to the page, so they never add to its length, and over its content. */
+.site-loading-leaving-layer {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+}

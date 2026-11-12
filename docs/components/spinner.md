@@ -2,8 +2,8 @@
 title: Spinner
 summary: Work of unknown length in a small area, such as a panel that is updating, as a turning arc.
 status: stable
-since: 0.4.0
-category: Feedback & overlays
+since: 1.0.0
+category: Feedback
 aliases:
   - loader
   - loading indicator
@@ -13,125 +13,109 @@ aliases:
   - throbber
   - circular progress
   - loading
+  - LoadingState
+  - loading state
 useWhen:
-  - Work of unknown length in a small area, such as a list that updates after a filter changes.
-  - An update to content already shown, beside the content, which stays in place meanwhile.
-  - Content whose shape isn't known while it loads, such as a file's preview (`size="lg"`).
+  - Work of unknown length in a small area, such as a list updating after a filter changes
+  - An update beside content that stays in place meanwhile
+  - Content of unknown shape while it loads, such as search results, with its label beside it
 avoidWhen:
-  - text: The work that follows a press, such as saving; show it on the button that started it with `pending`.
+  - text: The work that follows a press, such as saving, shown on the button that started it.
     use: Button
-  - text: Content of a known shape while it loads, such as a card or a list.
-    use: Skeleton
   - text: A task whose completion can be measured, such as an upload.
     use: Progress
-  - text: Loading a page or a route of an application, along the frame's header.
-    use: AppShell
-related:
-  - skeleton
-  - progress
-  - button
-  - app-shell
-  - accessibility
+  - text: Loading a page or a route of an application, along the top bar.
+    use: TopBar
+  - text: Content of a known shape loading in its place, such as a card or a list, as a skeleton.
+    see: loading
 components:
   - Spinner
+examples:
+  LoadingPreview:
+    role: overview
+    motion: true
+  Sizes: variants
+  SpinnerAnatomy:
+    role: anatomy
+    caption: Held still at one moment of its turn.
 ---
 
 # Spinner
 
-## Overview
+## Variants
 
-A spinner shows work of unknown length in a small area: a list that updates, a panel that refreshes, or a preview on its way. It is an arc in the control blue that turns. With a `label` assistive technology reads it as a progress bar named by the label; without one it is hidden, for a control or region that already says it is busy.
-
-For the work that follows a press, the button that started it shows a spinner itself with `pending`; see [Button](../components/button.md).
-
-```tsx example=UpdatingPanel
+```tsx figure=Sizes
 
 ```
 
-## Variants and sizes
+1. **Small**
+2. **Medium**
+3. **Large**
 
-| Size          | Use for                                                                                   |
-| ------------- | ----------------------------------------------------------------------------------------- |
-| `sm`, 1 rem   | Inside controls, and beside a line of text, a heading or the control that changed a list. |
-| `md`, 1.5 rem | A panel or a card that is updating, beside its content.                                   |
-| `lg`, 3 rem   | The middle of a region whose content is on its way, such as a preview.                    |
+| Size   | Use for                                                  |
+| ------ | -------------------------------------------------------- |
+| Small  | Inside controls, and beside a line of text or a heading. |
+| Medium | A panel or a card that is updating. The default.         |
+| Large  | The middle of a region whose content is on its way.      |
 
-- The spinner is a round-capped arc in the control blue, in a square of its size, that turns once every 1.4 s while it lengthens and shortens.
-- Inside a pending button it is small and takes the button's text color.
+## Anatomy
 
-## States and behaviour
+```tsx figure=SpinnerAnatomy specimen
 
-- **Motion**: the arc turns and lengthens continuously. With a reduced-motion preference it keeps turning at half the speed with a fixed arc, since it is the only sign of the work.
-- **Labelled or hidden**: with `label` the spinner has `role="progressbar"`, named by the label and without a value. Without a label it is hidden from assistive technology, for a pending button, a busy region or a status that already says what happens.
-- **Not announced**: a spinner that appears isn't read out by itself. Mark the region that updates with `aria-busy`, and say in a status what people wait for, where it matters.
-- **Read-only**: a spinner takes no focus and no input.
+```
 
-## Content guidelines
+1. **Spinner** (`env-spinner`)
+2. **Arc** (`env-spinner-arc`)
 
-- Name the work in the label, with what it acts on, as an ongoing action: "Updating tasks", "Loading the preview of quarterly-report.pdf".
-- Keep the content that is already shown in place while it updates, and put the spinner beside it, not over it.
+## Behaviour
 
-## Do and don't
+### Reduced motion
 
-### Do
+With reduced motion, the arc keeps turning, more slowly.
 
-- Show a spinner in the area that updates, close to what will change.
-- Use the pending state of the button that started the work instead of a separate spinner.
-- Keep the content already shown while it updates, and mark its region with `aria-busy`.
+## Rules
 
-### Don't
-
-- Don't use a spinner for content of a known shape; show [Skeleton](../components/skeleton.md) placeholders instead.
-- Don't use a spinner for a task whose progress can be measured; use [Progress](../components/progress.md).
-- Don't show several spinners for one piece of work, or a spinner for work that ends in a moment.
+When the work ends, the result or the error takes the spinner's place.
 
 ## Accessibility
 
-### Keyboard
-
-| Key                                             | Action                                                                                      |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Pass over the spinner, which takes no focus; screen readers reach it as they read the page. |
-
 ### envUI provides
 
-- `role="progressbar"` named by `label`, or the spinner hidden from assistive technology without one.
-- The control blue, at more than 3:1 on the canvas in both themes.
-- A slower, steady turn with a reduced-motion preference, instead of stopping.
+- `role="progressbar"` named by `label`, or the spinner hidden without one.
+- With `showLabel`, a busy `role="status"` whose label, Loading by default in the provider's language, is read as the status.
+- A slower turn with a fixed arc under reduced motion, instead of stopping.
 
 ### You provide
 
-- A `label` that names the work, unless a busy control or region already says so.
-- `aria-busy` on the region that updates, and a status message where people wait for the result.
-- Removing the spinner when the work ends, and showing the result or the error.
+- A `label`, unless a busy control or region already says what happens.
+- `aria-busy` on the region that updates, and a status where people wait for a result.
+- The result or the error in place of the spinner when the work ends.
 
-## Examples
+## Compose
 
-### Sizes
+### Usage
 
-Small, medium and large spinners (`sm`, `md` and `lg`), each with its own label.
+A Spinner's `label` names the work it stands for, such as Updating tasks, and names it as a progress bar for assistive technology; leave it out where a busy control or region already says what happens, and the spinner is hidden. `size` is `sm`, 1 rem, `md`, 1.5 rem and the default, or `lg`, 3 rem, as `data-size`.
 
-```tsx example=Sizes
-
-```
-
-### A list that updates
-
-Choosing another view keeps the tasks shown while the new ones load. A small spinner beside the choice says they are updating, and the list reports `aria-busy`.
-
-```tsx example=UpdatingList
+```tsx source=LoadingPreview
 
 ```
 
-### Content on its way
+#### With its label
 
-A large spinner in the middle of a preview's frame, which keeps its size while the file renders.
+`showLabel` shows the label beside the spinner, in a busy status line that centres the two in its row, for loading with no known shape, such as results whose number and shape aren't known until they arrive. Without a `label` it says Loading, in the provider's language.
 
-```tsx example=LoadingPreview
-
+```tsx
+<Spinner label="Searching documents" showLabel />
 ```
+
+### Composition
+
+For the work that follows a press, such as saving, set `pending` on the Button that started it, and for content of a known shape, `skeleton`, rather than a spinner. Set `aria-busy` on the region that updates, and put the result or the error in the spinner's place when the work ends.
+
+The parts are the spinner, `env-spinner`, its arc, `env-spinner-arc`, and with `showLabel` the label beside it, `env-spinner-label`.
 
 ## Changelog
 
-- **1.0.0**: `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
-- **0.4.0**: Spinner, in small, standard and large sizes; pending buttons show a small one.
+- **1.0.0**: `showLabel` shows the label beside the spinner, in a busy status, for loading with no known shape, in place of the LoadingState component of 1.0.0-prerelease.0. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
+- **1.0.0-prerelease.6**: A turn lasts six times `--env-motion-duration-slow`, about as long as before, with `--env-motion-ease`, so durations of `0s` stop it.

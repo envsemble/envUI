@@ -1,39 +1,87 @@
-/* Background geometry is independent of content layout and interactive behavior. */
-.env-surface {
-  box-sizing: border-box;
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  --env-surface-color: var(--env-color-bg-default);
-  --env-surface-padding: clamp(1.25rem, 3vw, 1.5rem);
-  --env-surface-radius: var(--env-radius-surface);
-  --env-surface-hover: var(--env-color-bg-default-hover);
-  --env-surface-pressed: var(--env-color-bg-default-pressed);
-  padding: var(--env-surface-padding);
-  border: 0;
-  border-radius: var(--env-surface-radius);
-  background: var(--env-surface-color);
-}
-.env-surface:where([data-background='muted']) {
-  --env-surface-color: var(--env-color-bg-muted);
-  --env-surface-hover: var(--env-color-bg-muted-hover);
-  --env-surface-pressed: var(--env-color-bg-muted-pressed);
-}
-.env-surface:where([data-background='page']) {
-  --env-surface-color: var(--env-color-bg-page);
-  --env-surface-hover: var(--env-color-bg-page-hover);
-  --env-surface-pressed: var(--env-color-bg-page-pressed);
-}
-.env-surface:where([data-background='raised']) {
-  --env-surface-color: var(--env-color-bg-raised);
-  --env-surface-hover: var(--env-color-bg-raised-hover);
-  --env-surface-pressed: var(--env-color-bg-raised-pressed);
-}
-.env-surface:where([data-radius='sm']) {
-  --env-surface-radius: var(--env-radius-sm);
-}
-.env-surface:where([data-radius='full']) {
-  --env-surface-radius: var(--env-radius-full);
-}
-.env-surface:where([data-radius='none']) {
-  --env-surface-radius: 0rem;
+@layer env.components {
+  /* Color properties: a surface's colors, which an application sets on one surface through style or
+     its own CSS. They are registered so they don't inherit: a surface inside keeps its own. */
+  @property --env-surface-container {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-surface-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-surface-outline {
+    syntax: '*';
+    inherits: false;
+  }
+
+  /* The muted-ground switch (below) is off outside any surface. */
+  .env-theme {
+    --env-surface-muted-ground: initial;
+  }
+
+  /* Background geometry is independent of content layout and interactive behavior. The surface's
+     color, --env-surface-color, is its container: what its contents, such as an avatar group's ring
+     or a navigation bar, take as the color beneath them. Unset, the content and outline properties
+     leave the inherited text color and no edge. */
+  .env-surface {
+    box-sizing: border-box;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    --env-surface-container-default: var(--env-color-bg-default);
+    --env-surface-hover: var(--env-color-bg-default-hover);
+    --env-surface-pressed: var(--env-color-bg-default-pressed);
+    /* A switch, private, as Theme.css's high-contrast one is: empty on a surface whose color is the
+       muted surface's, the muted and raised ones, a dialog's and a popup's (Dialog.css, Popup.css),
+       and invalid on any other, so what stands on it in the muted surface's own fill, such as a
+       vertical radio group's rows, can take another and keep its shape. */
+    --env-surface-muted-ground: initial;
+    --env-surface-color: var(--env-surface-container, var(--env-surface-container-default));
+    --env-surface-padding: clamp(1.25rem, 3vw, 1.5rem);
+    --env-surface-radius: var(--env-radius-surface);
+    padding: var(--env-surface-padding);
+    border: var(--env-control-border-width) solid var(--env-surface-outline);
+    border-radius: var(--env-surface-radius);
+    background: var(--env-surface-color);
+    color: var(--env-surface-content);
+  }
+  .env-surface:where([data-background='muted']) {
+    --env-surface-container-default: var(--env-color-bg-muted);
+    --env-surface-hover: var(--env-color-bg-muted-hover);
+    --env-surface-pressed: var(--env-color-bg-muted-pressed);
+  }
+  .env-surface:where([data-background='muted'], [data-background='raised']) {
+    --env-surface-muted-ground: ;
+  }
+  .env-surface:where([data-background='page']) {
+    --env-surface-container-default: var(--env-color-bg-page);
+    --env-surface-hover: var(--env-color-bg-page-hover);
+    --env-surface-pressed: var(--env-color-bg-page-pressed);
+  }
+  .env-surface:where([data-background='raised']) {
+    --env-surface-container-default: var(--env-color-bg-raised);
+    --env-surface-hover: var(--env-color-bg-raised-hover);
+    --env-surface-pressed: var(--env-color-bg-raised-pressed);
+  }
+  .env-surface:where([data-background='recessed']) {
+    --env-surface-container-default: var(--env-color-bg-recessed);
+    --env-surface-hover: var(--env-color-bg-recessed-hover);
+    --env-surface-pressed: var(--env-color-bg-recessed-pressed);
+  }
+
+  .env-surface:where([data-radius='sm']) {
+    --env-surface-radius: var(--env-radius-sm);
+  }
+  /* Rounded ends for a surface one row of controls tall, such as a toolbar: the capped full corner and
+     its padding, so a surface whose controls wrap onto more rows keeps the corners. */
+  .env-surface:where([data-radius='full']) {
+    --env-surface-radius: calc(var(--env-radius-full) + var(--env-surface-padding));
+  }
+  .env-surface:where([data-radius='none']) {
+    --env-surface-radius: 0rem;
+  }
+
+  /* In a skeleton, a surface carries the skeleton's tint over its fill (Skeleton.css). */
+  [data-env-skeleton] .env-surface {
+    background-image: var(--env-skeleton-overlay);
+  }
 }

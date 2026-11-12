@@ -1,0 +1,101 @@
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { Grid, Page, Surface, type PageWidth } from '@envsemble/envui';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
+import { remPixels } from '../../shared/Lengths';
+import { remeasure } from '../../shared/Remeasure';
+
+/** The window the page sits in, in rem: wider than the large column, so Full reads as wider. */
+const frame = { width: 88, height: 17 };
+
+/** Each width in turn, the column's width in rem, and what the ruler names it. */
+const widths: readonly { width: PageWidth; column: number; words: string }[] = [
+  { width: 'sm', column: 40, words: 'Small · 40 rem' },
+  { width: 'md', column: 60, words: 'Medium · 60 rem' },
+  { width: 'lg', column: 76, words: 'Large · 76 rem' },
+  // Full fills the window, inside its gutters.
+  { width: 'full', column: frame.width - 3, words: 'Full' },
+];
+
+/** How long each width shows, in ms; the last leads back to Small. */
+const durations = [900, 1200, 1200, 1200];
+
+/*
+ * A page in a window drawn small, its column widening from Small through Medium and Large to Full,
+ * and back to Small, with a ruler above it naming the width.
+ */
+function Widening() {
+  const step = useTimeline(durations);
+  const area = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.5);
+  const { width, column, words } = widths[step];
+
+  // The window is drawn at the scale that fits the stage, again as the stage resizes.
+  useLayoutEffect(() => {
+    const element = area.current;
+    if (!element) return;
+    const fit = () => {
+      const rem = remPixels();
+      // A little room on either side, so the window reads as one on the stage.
+      setScale(Math.min(1, (0.92 * element.clientWidth) / (frame.width * rem)));
+    };
+    return remeasure(fit, { first: 'now', resize: [element] }).stop;
+  }, []);
+
+  const ruler: CSSProperties = { inlineSize: `calc(${scale} * ${column}rem)` };
+  // The column's own width, Full's as wide as the window's, laid out at once as Page does.
+  const page: CSSProperties = { maxInlineSize: `calc(${column}rem + 2 * var(--env-page-gutter))` };
+  return (
+    <div
+      ref={area}
+      style={{ display: 'grid', justifyItems: 'center', rowGap: '1rem', inlineSize: '100%' }}
+    >
+      <div className="catalogue-width-ruler" style={ruler} aria-hidden="true">
+        <span className="catalogue-width-ruler-reading">{words}</span>
+      </div>
+      <div
+        style={{ inlineSize: `${frame.width * scale}rem`, blockSize: `${frame.height * scale}rem` }}
+      >
+        <div
+          style={{
+            inlineSize: `${frame.width}rem`,
+            blockSize: `${frame.height}rem`,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+          }}
+        >
+          <Surface
+            background="page"
+            radius="sm"
+            padding={0}
+            style={{ blockSize: '100%', overflow: 'hidden', containerType: 'inline-size' }}
+          >
+            <Page width={width} style={page}>
+              <Grid columns="2fr 1fr" gap={4}>
+                <Surface background="muted" radius="sm" style={{ blockSize: '7rem' }} />
+                <Surface background="muted" radius="sm" style={{ blockSize: '7rem' }} />
+                <Surface
+                  background="muted"
+                  radius="sm"
+                  style={{ blockSize: '4rem', gridColumn: '1 / -1' }}
+                />
+              </Grid>
+            </Page>
+          </Surface>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Page's widths, one after another, in a window drawn small: the column widens to each. */
+export default function ColumnWidths() {
+  return (
+    <SpecimenFrame size="wide">
+      <MotionStage label="the page column widening">
+        <Widening />
+      </MotionStage>
+    </SpecimenFrame>
+  );
+}

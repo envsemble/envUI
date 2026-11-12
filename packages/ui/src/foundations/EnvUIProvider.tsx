@@ -2,8 +2,9 @@
 
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { useContext, useMemo, useState, type ReactNode } from 'react';
-import { EnvUIContext, useLocale, type Direction } from '../internal/EnvUIContext.js';
+import { EnvUIContext, useLocale, type Direction } from '../internal/provider/EnvUIContext.js';
 import type { EnvUIMessages, EnvUIMessagesInput } from './messages/defaultMessages.js';
+import '../styles/Base.css';
 
 export type { EnvUIMessages, EnvUIMessagesInput };
 
@@ -16,7 +17,7 @@ export interface EnvUIProviderProps {
   locale?: string;
   /**
    * Overrides of envUI's built-in English strings, per namespace, such as
-   * `{ common: { close: 'Schließen' }, toast: { hidden: ({ count }) => t('hidden', { count }) } }`.
+   * `{ dialog: { close: 'Schließen' }, toast: { hidden: ({ count }) => t('hidden', { count }) } }`.
    * A message is a string, or a function of the values it names. Nested providers merge per
    * namespace, the inner winning; a component's own label prop, such as closeLabel, wins over both.
    */
@@ -27,6 +28,7 @@ export interface EnvUIProviderProps {
    * from dir attributes and CSS. It doesn't set the dir attribute: set that on the page or region.
    */
   dir?: Direction;
+  /** The application, or the part of it that takes these messages, locale and direction. */
   children?: ReactNode;
 }
 
@@ -40,9 +42,11 @@ function sameMessages(a: EnvUIMessagesInput | undefined, b: EnvUIMessagesInput |
     const keys = Object.keys(x);
     return (
       keys.length === Object.keys(y).length &&
+      // Object.keys gives strings; these are the keys of x.
       keys.every((key) => Object.is(x[key as keyof typeof x], y[key as keyof typeof y]))
     );
   };
+  // Object.keys gives strings; these are the namespaces of a.
   const namespaces = Object.keys(a) as (keyof EnvUIMessagesInput)[];
   return (
     namespaces.length === Object.keys(b).length &&

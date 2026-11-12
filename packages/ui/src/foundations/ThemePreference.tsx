@@ -4,19 +4,17 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useInsertionEffect,
+  useLayoutEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   type ReactNode,
 } from 'react';
-import { classNames } from '../internal/classNames.js';
-import { outsideTheme } from '../internal/outsideTheme.js';
-import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ThemeValue } from './Theme.js';
-import { IconButton, type IconButtonProps } from '../actions/Button.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { themeToggle } from './messages/themeToggle.js';
-import { DarkMode } from '../icons/DarkMode.js';
-import { LightMode } from '../icons/LightMode.js';
+import { outsideTheme } from './internal/outsideTheme.js';
+import { themeFromRootAttribute } from './internal/themeFromRoot.js';
+import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ColorScheme } from './Theme.js';
 import {
   contrastSourceAttribute,
   defaultThemeStorageKey,
@@ -24,12 +22,20 @@ import {
   ownScaleSource,
   scaleSourceAttribute,
   type ThemePreference,
-} from './ThemeBootstrap.js';
-import { ThemePreferenceContext, type ThemePreferenceValue } from './ThemePreferenceContext.js';
+} from './themeBootstrap.js';
+import {
+  ThemePreferenceContext,
+  type ThemePreferenceValue,
+} from './internal/ThemePreferenceContext.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
+import { useHydrated } from '../internal/react/useHydrated.js';
+
+export type { ThemePreferenceValue } from './internal/ThemePreferenceContext.js';
 
 const systemDarkQuery = '(prefers-color-scheme: dark)';
 
 export interface ThemePreferenceProviderProps {
+  /** The application, or the part of it that the preference themes. */
   children: ReactNode;
   /** localStorage key; match the bootstrap script's. Defaults to "env-theme". */
   storageKey?: string;
@@ -40,7 +46,12 @@ export interface ThemePreferenceProviderProps {
    * background, native controls, portals rendered by other libraries and the content of every
    * theme-color meta tag, which takes the canvas color. One provider per document applies to it:
    * pass false to any other, nested in it or beside it. In development, envUI reports two providers
-   * that both apply.
+   * that both apply. Outside any Theme, its boundary around the children is a plain element that
+   * takes the root's look, with none of a Theme's class and attributes, unless its contrast is
+   * system while the page set a contrast of its own on the root. Rendered on the server, and
+   * as the page hydrates, it renders the preference's default and leaves the page's look to the
+   * theme createThemeBootstrapScript gave the root, which knows the stored preference before the
+   * first paint; once hydrated, it takes the stored one.
    */
   applyToDocument?: boolean;
   /**
@@ -55,13 +66,13 @@ export interface ThemePreferenceProviderProps {
    */
   contrast?: ThemeContrast;
   /**
-   * The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme
-   * boundary around the children, and, marked as envUI's own, of the document root with
-   * applyToDocument. Without it, the boundary takes the scale of an enclosing Theme; outside any, a
-   * provider applying to the document gives its boundary a scale the page set on the root, so the
-   * application, the page and its portals share it, and otherwise comfortable. The root keeps a
-   * scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same
-   * scale to createThemeBootstrapScript so the root has it before the first paint.
+   * The app scale, comfortable, compact or `system` (compact under a fine pointer, comfortable on
+   * touch), as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of
+   * the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing
+   * Theme; outside any, a provider applying to the document gives its boundary a scale the page set
+   * on the root, so the application, the page and its portals share it, and otherwise `system`. The
+   * root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass
+   * the same scale to createThemeBootstrapScript so the root has it before the first paint.
    */
   scale?: ThemeScale;
   /** Class name for the Theme boundary around the children. */
@@ -89,7 +100,6 @@ interface DocumentWrites {
  * more, a provider at system still leaves a contrast another of them wrote.
  */
 const documentProviders = new Map<symbol, DocumentWrites>();
-let warnedAboutProviders = false;
 
 /**
  * Removes the root's contrast when envUI wrote it, the page has not written over it since, and no
@@ -144,7 +154,7 @@ function subscribeToRoot(change: () => void) {
 function readPageScale(): ThemeScale | undefined {
   const root = document.documentElement;
   const scale = root.dataset.envScale;
-  if (scale !== 'comfortable' && scale !== 'compact') return undefined;
+  if (scale !== 'comfortable' && scale !== 'compact' && scale !== 'system') return undefined;
   return root.getAttribute(scaleSourceAttribute) === ownScaleSource(scale) ? undefined : scale;
 }
 
@@ -160,10 +170,85 @@ function readPageContrast(): Exclude<ThemeContrast, 'system'> | undefined {
 
 const onServer = () => undefined;
 
-function readSystemTheme(): ThemeValue {
+/** On the root while a provider switches the page's colors: nothing transitions (Theme.css). */
+const switchingAttribute = 'data-env-theme-switching';
+
+function readSystemTheme(): ColorScheme {
   return typeof window !== 'undefined' && window.matchMedia?.(systemDarkQuery).matches
     ? 'dark'
     : 'light';
+}
+
+/**
+ * The preference kept in localStorage under a key, else the default; a choice made in another
+ * window or tab of the same origin applies here too.
+ */
+function useStoredPreference(storageKey: string, defaultPreference: ThemePreference) {
+  const [preference, setPreferenceState] = useState<ThemePreference>(() =>
+    typeof window === 'undefined'
+      ? defaultPreference
+      : readStoredPreference(storageKey, defaultPreference),
+  );
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.storageArea !== window.localStorage || event.key !== storageKey) return;
+      const next = event.newValue;
+      setPreferenceState(
+        next === 'light' || next === 'dark' || next === 'system' ? next : defaultPreference,
+      );
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [storageKey, defaultPreference]);
+  const setPreference = useCallback(
+    (next: ThemePreference) => {
+      setPreferenceState(next);
+      try {
+        window.localStorage.setItem(storageKey, next);
+      } catch {
+        // A blocked storage API should not prevent switching for this visit.
+      }
+    },
+    [storageKey],
+  );
+  return [preference, setPreference] as const;
+}
+
+/**
+ * The page's new colors show at once rather than easing, each restyled every frame until done.
+ * Before the new theme is styled, the root stops transitions; once it is, they resume, and as the
+ * colors no longer change, none start. A provider that doesn't apply to the document, such as one
+ * in a figure, leaves its transitions to ease. Colors still undefined, as the page hydrates, are
+ * the root's already and count as none shown.
+ */
+function useInstantColorSwitch(applyToDocument: boolean, colors: string | undefined) {
+  const shownColors = useRef<string | undefined>(undefined);
+  useInsertionEffect(() => {
+    if (
+      applyToDocument &&
+      colors !== undefined &&
+      shownColors.current !== undefined &&
+      shownColors.current !== colors
+    )
+      document.documentElement.setAttribute(switchingAttribute, '');
+  }, [applyToDocument, colors]);
+  useLayoutEffect(() => {
+    shownColors.current = colors;
+    const root = document.documentElement;
+    if (!root.hasAttribute(switchingAttribute)) return;
+    // Reading a computed style brings the page's styles up to date, with the new colors.
+    void getComputedStyle(root).transitionProperty;
+    // After the frame that shows them, so that frame's style isn't worked out twice.
+    let timer = 0;
+    const frame = requestAnimationFrame(() => {
+      timer = window.setTimeout(() => root.removeAttribute(switchingAttribute));
+    });
+    // A switch before then removes it in its own time.
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+    };
+  }, [colors]);
 }
 
 /** Owns the theme preference: persistence, the system theme and document-root theming. */
@@ -179,80 +264,76 @@ export function ThemePreferenceProvider({
   const inherited = useTheme();
   // Outside any Theme, a provider that applies to the document gives its boundary the scale and
   // contrast the page set on the root, which the page and other libraries' portals already show,
-  // rather than comfortable and system. It never writes them back as its own.
+  // rather than system. It never writes them back as its own.
   const fromPage = applyToDocument && inherited === outsideTheme;
   const pageScale = useSyncExternalStore(subscribeToRoot, readPageScale, onServer);
   const pageContrast = useSyncExternalStore(subscribeToRoot, readPageContrast, onServer);
   const appliedContrast = ownContrast ?? inherited.contrast;
   const contrast = ownContrast ?? (fromPage ? (pageContrast ?? 'system') : inherited.contrast);
-  const scale = ownScale ?? (fromPage ? (pageScale ?? 'comfortable') : inherited.scale);
-  const [preference, setPreferenceState] = useState<ThemePreference>(() =>
-    typeof window === 'undefined'
-      ? defaultPreference
-      : readStoredPreference(storageKey, defaultPreference),
-  );
-  const [systemTheme, setSystemTheme] = useState<ThemeValue>(() =>
+  const scale = ownScale ?? (fromPage ? (pageScale ?? 'system') : inherited.scale);
+  // Such a provider gives the root its theme, contrast and scale, so its boundary takes the root's
+  // look rather than one of its own (themeFromRootAttribute): the same element, before and after
+  // the page hydrates, whose class and attributes would otherwise change as it hydrates and restyle
+  // everything in it. Only a system contrast that leaves the page's own on the root differs.
+  const rootLook = fromPage && !(ownContrast === 'system' && pageContrast !== undefined);
+  const [storedPreference, setPreference] = useStoredPreference(storageKey, defaultPreference);
+  const [systemTheme, setSystemTheme] = useState<ColorScheme>(() =>
     typeof document !== 'undefined' && document.documentElement.dataset.envTheme === 'dark'
       ? 'dark'
       : readSystemTheme(),
   );
-  const theme: ThemeValue = preference === 'system' ? systemTheme : preference;
+  // The server, and the browser as it hydrates the server's markup, render the default preference
+  // with a light system theme, as the server knows neither; the stored preference and the system's
+  // theme follow in the render after. Meanwhile a provider applying to the document writes nothing
+  // on the root, where the bootstrap script has applied them already, and its boundary takes the
+  // root's look (rootLook), so nothing changes on screen as it hydrates.
+  const hydrated = useHydrated();
+  const preference = hydrated ? storedPreference : defaultPreference;
+  const theme: ColorScheme =
+    preference === 'system' ? (hydrated ? systemTheme : 'light') : preference;
   const [provider] = useState(() => Symbol('ThemePreferenceProvider'));
 
   useEffect(() => {
-    if (preference !== 'system' || !window.matchMedia) return;
+    if (storedPreference !== 'system' || !window.matchMedia) return;
     const query = window.matchMedia(systemDarkQuery);
     const update = () => setSystemTheme(query.matches ? 'dark' : 'light');
     update();
     query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);
-  }, [preference]);
+  }, [storedPreference]);
 
-  // A choice made in another window or tab of the same origin applies here too.
-  useEffect(() => {
-    const onStorage = (event: StorageEvent) => {
-      if (event.storageArea !== window.localStorage || event.key !== storageKey) return;
-      const next = event.newValue;
-      setPreferenceState(
-        next === 'light' || next === 'dark' || next === 'system' ? next : defaultPreference,
-      );
-    };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, [storageKey, defaultPreference]);
-
-  // One provider applies to the document; a second would write over the first's root theme.
-  useEffect(() => {
+  // One provider applies to the document; a second would write over the first's root theme. An
+  // insertion effect, as the writes below, so it registers before them.
+  useInsertionEffect(() => {
     if (!applyToDocument) return;
-    try {
-      if (
+    reportInDevelopment(
+      () =>
         process.env.NODE_ENV !== 'production' &&
         documentProviders.size > 0 &&
-        !warnedAboutProviders
-      ) {
-        warnedAboutProviders = true;
-        // A development-only report, as React reports an invalid prop.
-        // eslint-disable-next-line no-console
-        console.error(
-          'envUI: more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
-        );
-      }
-    } catch {
-      // No bundler defined process.env.NODE_ENV: written as in Theme.
-    }
+        'more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
+    );
     documentProviders.set(provider, {});
     // Once the provider unmounts or stops applying to the document, it releases what it wrote on
     // the root, as a provider at system does: what the page wrote or another provider holds stays.
     return () => {
       documentProviders.delete(provider);
       const root = document.documentElement;
+      root.removeAttribute(switchingAttribute);
       releaseContrast(root);
       releaseScale(root);
     };
   }, [applyToDocument, provider]);
 
-  useEffect(() => {
-    if (!applyToDocument) return;
+  useInstantColorSwitch(
+    applyToDocument,
+    hydrated ? `${theme} ${contrast} ${appliedContrast}` : undefined,
+  );
+
+  // The root takes the theme in an insertion effect, after the colors' switch above and before any
+  // layout effect: the boundary takes the root's look, so what a layout effect inside measures of
+  // the theme, such as a figure's colors, is the new theme's, as in a boundary of its own.
+  useInsertionEffect(() => {
+    if (!applyToDocument || !hydrated) return;
     const root = document.documentElement;
     root.classList.add('env-theme');
     root.dataset.envTheme = theme;
@@ -274,26 +355,20 @@ export function ThemePreferenceProvider({
       root.setAttribute(scaleSourceAttribute, ownScaleSource(ownScale));
     } else releaseScale(root);
     root.style.colorScheme = theme;
-    // The browser's own interface, such as a mobile address bar, takes the canvas color. Every
-    // theme-color tag follows, including ones written for a system color scheme with media.
-    const canvas = getComputedStyle(root).backgroundColor;
-    for (const browserTheme of document.querySelectorAll<HTMLMetaElement>(
-      'meta[name="theme-color"]',
-    ))
-      browserTheme.content = canvas;
-  }, [applyToDocument, theme, appliedContrast, ownScale, provider]);
+  }, [applyToDocument, hydrated, theme, appliedContrast, ownScale, provider]);
 
-  const setPreference = useCallback(
-    (next: ThemePreference) => {
-      setPreferenceState(next);
-      try {
-        window.localStorage.setItem(storageKey, next);
-      } catch {
-        // A blocked storage API should not prevent switching for this visit.
-      }
-    },
-    [storageKey],
-  );
+  // Before the paint, so the browser's own interface, such as a mobile address bar, takes the
+  // canvas color in the frame that shows it. Every theme-color tag follows, including ones written
+  // for a system color scheme with media. Only a page with one reads the color, which works out
+  // the page's style at once.
+  useLayoutEffect(() => {
+    if (!applyToDocument || !hydrated) return;
+    const browserThemes = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
+    if (!browserThemes.length) return;
+    const canvas = getComputedStyle(document.documentElement).backgroundColor;
+    for (const browserTheme of browserThemes) browserTheme.content = canvas;
+  }, [applyToDocument, hydrated, theme, appliedContrast, ownScale]);
+
   const value = useMemo<ThemePreferenceValue>(
     () => ({
       preference,
@@ -306,7 +381,13 @@ export function ThemePreferenceProvider({
 
   return (
     <ThemePreferenceContext value={value}>
-      <Theme theme={theme} contrast={contrast} scale={scale} className={className}>
+      <Theme
+        theme={theme}
+        contrast={contrast}
+        scale={scale}
+        className={className}
+        {...(rootLook && { [themeFromRootAttribute]: '' })}
+      >
         {children}
       </Theme>
     </ThemePreferenceContext>
@@ -318,38 +399,4 @@ export function useThemePreference(): ThemePreferenceValue {
   const value = useContext(ThemePreferenceContext);
   if (!value) throw new Error('useThemePreference must be used inside ThemePreferenceProvider.');
   return value;
-}
-
-export type ThemeToggleProps = (IconButtonProps extends infer Props
-  ? Props extends unknown
-    ? Omit<Props, 'icon' | 'aria-label' | 'onClick'>
-    : never
-  : never) & {
-  /**
-   * The button's name; without it, Switch to dark theme or Switch to light theme, or
-   * EnvUIProvider's messages.themeToggle.
-   */
-  'aria-label'?: string;
-};
-
-/** Switches between the light and dark themes and stores the choice. */
-export function ThemeToggle({
-  title,
-  className,
-  'aria-label': ownLabel,
-  ...props
-}: ThemeToggleProps) {
-  const { theme, toggleTheme } = useThemePreference();
-  const messages = useMessages('themeToggle', themeToggle);
-  const label = ownLabel ?? (theme === 'light' ? messages.toDark : messages.toLight);
-  return (
-    <IconButton
-      {...(props as IconButtonProps)}
-      className={classNames('env-theme-toggle', className)}
-      icon={theme === 'light' ? <DarkMode /> : <LightMode />}
-      aria-label={label}
-      title={title ?? label}
-      onClick={toggleTheme}
-    />
-  );
 }

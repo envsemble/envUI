@@ -1,23 +1,23 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { useResolvedLocale } from '../internal/useFormatters.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { monthPicker as monthPickerMessages } from '../foundations/messages/monthPicker.js';
 import { Button } from '../actions/Button.js';
-import { CalendarMonth } from '../icons/CalendarMonth.js';
+import { IconCalendarMonth } from '../icons/CalendarMonth.js';
 import { MonthGrid, monthGridActive } from './internal/MonthGrid.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
+import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
 import {
   clampMonth,
-  dateFormat,
   formatMonth,
   monthFirstDay,
   monthOfDay,
   now,
   parseMonth,
   toUtcDate,
-} from './internal/CalendarDays.js';
+} from '../internal/time/calendarDays.js';
+import '../styles/Base.css';
+import '../styles/DatePicker.css';
 
 export interface MonthPickerProps extends PickerFieldProps {
   /** The value: a month as YYYY-MM. null, or an empty string, for none. */
@@ -94,40 +94,26 @@ export function MonthPicker({
     disabled,
     readOnly,
   });
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const current = parseMonth(value === undefined ? uncontrolledValue : value);
+  const picked = usePickerValue({ value, defaultValue, onValueChange });
+  const current = parseMonth(picked.raw);
   const serialized = current === undefined ? '' : formatMonth(current);
   const minMonth = parseMonth(min);
   const maxMonth = parseMonth(max);
 
-  // On the server, and while its output hydrates, a field without a locale shows the value as every
-  // browser shows it, then in the reader's language.
-  const shownLocale = useResolvedLocale(locale);
-  const formatOptionsKey = JSON.stringify(formatOptions ?? null);
-  const formatter = useMemo(
-    () =>
-      // Months are wall-clock dates, formatted in UTC so no zone shifts them.
-      dateFormat(
-        shownLocale,
-        (JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ?? {
-          month: 'long',
-          year: 'numeric',
-        },
-      ),
-    [shownLocale, formatOptionsKey],
-  );
+  const { shownLocale, formatter } = usePickerFormatter(locale, formatOptions, {
+    month: 'long',
+    year: 'numeric',
+  });
   const display = current === undefined ? '' : formatter.format(toUtcDate(monthFirstDay(current)));
 
   function commit(next: number | null) {
     const result = next === null ? null : formatMonth(clampMonth(next, minMonth, maxMonth));
-    if ((result ?? '') === serialized) return;
-    if (value === undefined) setUncontrolledValue(result);
-    onValueChange?.(result);
+    picked.change(result, serialized);
   }
 
   function choose(month: number | null) {
     commit(month);
-    setOpen(false);
+    setOpen(false, month === null ? 'clear-press' : 'item-press');
   }
 
   const thisMonth = monthOfDay(now().day);
@@ -140,15 +126,32 @@ export function MonthPicker({
       {...fieldProps}
       serialized={serialized}
       display={display}
-      icon={<CalendarMonth />}
+      icon={<IconCalendarMonth />}
       rootClassName="env-date-picker env-month-picker"
       popupClassName="env-month-picker-popup"
       initialFocus={monthGridActive}
+      popupStart={
+        <Button
+          variant="text"
+          aria-disabled={!thisMonthAvailable || undefined}
+          onClick={() => {
+            if (thisMonthAvailable) choose(thisMonth);
+          }}
+        >
+          {thisMonthLabel ?? messages.thisMonth}
+        </Button>
+      }
+      popupEnd={
+        clearable &&
+        serialized && (
+          <Button variant="text" onClick={() => choose(null)}>
+            {clearLabel ?? messages.clear}
+          </Button>
+        )
+      }
       clearLabel={clearLabel ?? messages.clear}
       onClear={() => commit(null)}
-      onFormReset={() => {
-        if (value === undefined) setUncontrolledValue(defaultValue);
-      }}
+      onFormReset={picked.reset}
       open={open}
       setOpen={setOpen}
       disabled={disabled}
@@ -164,24 +167,6 @@ export function MonthPicker({
         previousYearLabel={previousYearLabel ?? messages.previousYear}
         nextYearLabel={nextYearLabel ?? messages.nextYear}
       />
-      <div className="env-date-picker-actions">
-        <Button
-          variant="text"
-          aria-disabled={!thisMonthAvailable || undefined}
-          onClick={() => {
-            if (thisMonthAvailable) choose(thisMonth);
-          }}
-        >
-          {thisMonthLabel ?? messages.thisMonth}
-        </Button>
-        {clearable && serialized && (
-          <span className="env-date-picker-actions-end">
-            <Button variant="text" onClick={() => choose(null)}>
-              {clearLabel ?? messages.clear}
-            </Button>
-          </span>
-        )}
-      </div>
     </PickerField>
   );
 }

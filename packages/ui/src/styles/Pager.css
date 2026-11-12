@@ -1,84 +1,80 @@
-.env-pager {
-  box-sizing: border-box;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: stretch;
-  gap: var(--env-space-4);
-  inline-size: 100%;
-  min-inline-size: 0;
-}
-.env-pager > .env-pager-link {
-  flex: 0 1 auto;
-}
-.env-pager-link {
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-4);
-  inline-size: fit-content;
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  min-block-size: var(--env-control-height-touch);
-  margin: 0;
-  padding: var(--env-space-3) var(--env-space-4);
-  border: 0.0625rem solid var(--env-color-border-muted);
-  border-radius: var(--env-radius-sm);
-  background: var(--env-color-bg-raised);
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-  text-align: start;
-  text-decoration: none;
-  transition:
-    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-    border-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-pager-link-copy {
-  display: grid;
-  gap: var(--env-space-1);
-  min-inline-size: 0;
-  flex: 1 1 auto;
-  overflow-wrap: anywhere;
-}
-.env-pager-link-label {
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-.env-pager-link-title {
-  font: var(--env-type-h2);
-}
-.env-pager-link .env-icon {
-  inline-size: 1.25rem;
-  block-size: 1.25rem;
-  color: var(--env-color-fg-accent);
-}
-.env-pager-link:hover {
-  background: var(--env-color-bg-raised-hover);
-  border-color: var(--env-color-border-muted-hover);
-}
-.env-pager-link:active {
-  background: var(--env-color-bg-raised-pressed);
-  border-color: var(--env-color-border-muted-pressed);
-}
-.env-pager-link:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-pager-link {
-    transition: none;
+@layer env.components {
+  .env-pager {
+    box-sizing: border-box;
+    inline-size: 100%;
   }
-}
+  .env-pager > .env-pager-link {
+    flex: 0 1 auto;
+  }
+  .env-pager-link {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--env-space-4);
+    inline-size: fit-content;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    min-block-size: var(--env-control-height-touch);
+    margin: 0;
+    padding: var(--env-space-3) var(--env-space-4);
+    border: 1px solid var(--env-color-border-muted);
+    border-radius: var(--env-radius-lg);
+    background: var(--env-color-bg-raised);
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body);
+    text-align: start;
+    text-decoration: none;
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      border-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  .env-pager-link-copy {
+    display: grid;
+    gap: var(--env-space-1);
+    min-inline-size: 0;
+    flex: 1 1 auto;
+    overflow-wrap: break-word;
+  }
+  .env-pager-link-label {
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
+  }
+  .env-pager-link-title {
+    font: var(--env-type-title);
+    letter-spacing: var(--env-type-title-letter-spacing);
+  }
+  .env-pager-link .env-icon {
+    --env-icon-size: 1.25rem;
+    color: var(--env-color-fg-primary);
+  }
+  .env-pager-link:hover {
+    background: var(--env-color-bg-raised-hover);
+    border-color: var(--env-color-border-muted-hover);
+  }
+  .env-pager-link:active {
+    background: var(--env-color-bg-raised-pressed);
+    border-color: var(--env-color-border-muted-pressed);
+  }
+  .env-pager-link:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-pager-link {
+      transition: none;
+    }
+  }
 
-/* Motion: a pager link settles a little while it is held, less than a compact control. Only
-   without a reduced-motion preference. */
-@media (prefers-reduced-motion: no-preference) {
-  .env-pager-link {
-    transition-property: background-color, color, border-color, transform;
-    transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease);
-  }
-  .env-pager-link:active:not([aria-disabled='true']) {
-    transform: scale(0.99);
+  /* Motion: a pager link settles a little while it is held, less than a compact control. Only
+     without a reduced-motion preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-pager-link {
+      transition-property: background-color, color, border-color, transform;
+      transition-duration: var(--env-motion-duration-fast);
+      transition-timing-function: var(--env-motion-ease-enter);
+    }
+    .env-pager-link:active:not([aria-disabled='true']) {
+      transform: scale(0.99);
+    }
   }
 }

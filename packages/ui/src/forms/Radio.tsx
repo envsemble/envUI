@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useId, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useId, useRef } from 'react';
 import type {
   CSSProperties,
   FieldsetHTMLAttributes,
@@ -8,9 +8,16 @@ import type {
   ReactNode,
   Ref,
 } from 'react';
+import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/setRef.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { Grid, Row } from '../layout/Layout.js';
+import { setRef } from '../internal/react/setRef.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
+import { useFormReset } from '../internal/field/useFormReset.js';
+import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
+import '../styles/Base.css';
+import '../styles/Radio.css';
+import '../styles/ConnectedRows.css';
 
 interface RadioContextValue {
   value: string | undefined;
@@ -33,8 +40,11 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
    * names the group for assistive technology; without it, use aria-label or aria-labelledby.
    */
   label?: ReactNode;
-  /** The value of the chosen option in a controlled group; update it from onValueChange. */
-  value?: string;
+  /**
+   * The value of the chosen option in a controlled group, or null for none; update it from
+   * onValueChange.
+   */
+  value?: string | null;
   /**
    * The value of the option an uncontrolled group starts with; a native form reset returns to it.
    * Without value or defaultValue, no option is chosen until people choose one.
@@ -42,6 +52,16 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
   defaultValue?: string;
   /** Receives the value of the option people choose. */
   onValueChange?: (value: string) => void;
+  /**
+   * Lasting guidance under the options, such as what the choice changes, linked to the group as its
+   * description.
+   */
+  description?: ReactNode;
+  /**
+   * A message under the options that says how to correct the choice, such as for a required group
+   * left empty; it joins the group's description, after the description.
+   */
+  error?: ReactNode;
   /**
    * The name every radio of the group submits its value under. Set it in a form; without it the
    * group takes a unique generated name, so its radios still work as one group.
@@ -67,9 +87,11 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
 export function RadioGroup({
   ref,
   label,
-  value,
+  value: controlledValue,
   defaultValue,
   onValueChange,
+  description,
+  error,
   name: suppliedName,
   required = false,
   disabled = false,
@@ -81,31 +103,73 @@ export function RadioGroup({
   const id = useId();
   const name = suppliedName ?? id;
   const fieldsetRef = useRef<HTMLFieldSetElement>(null);
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const selectedValue = value ?? uncontrolledValue;
-  useEffect(
-    function subscribeToFormReset() {
+  // null is none while controlled, as undefined leaves the group to itself.
+  const [selectedValue, select, keepOwn] = useControllableState({
+    value: controlledValue,
+    defaultValue: defaultValue ?? null,
+    onChange: onValueChange,
+  });
+  const ids = fieldMessageIds(id);
+  const describedBy =
+    [
+      props['aria-describedby'],
+      description != null ? ids.description : undefined,
+      error != null ? ids.error : undefined,
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined;
+  useFormReset(
+    fieldsetRef,
+    function applyReset() {
+      const resetValue = keepOwn(defaultValue ?? null);
       const fieldset = fieldsetRef.current;
-      const form = fieldset?.form;
-      if (!fieldset || !form) return;
-      return subscribeFormReset(form, function applyReset() {
-        const resetValue = value ?? defaultValue;
-        if (value === undefined) setUncontrolledValue(resetValue);
-        for (const input of fieldset.querySelectorAll<HTMLInputElement>('input[type="radio"]')) {
-          if (input.name === name) input.checked = input.value === resetValue;
-        }
-      });
+      for (const input of fieldset?.querySelectorAll<HTMLInputElement>('input[type="radio"]') ??
+        []) {
+        if (input.name === name) input.checked = input.value === resetValue;
+      }
     },
-    [value, defaultValue, name, props.form],
+    props.form,
   );
-  function select(nextValue: string) {
-    if (value === undefined) setUncontrolledValue(nextValue);
-    onValueChange?.(nextValue);
-  }
+  const fieldset = (
+    <fieldset
+      {...props}
+      ref={(node) => {
+        fieldsetRef.current = node;
+        setRef(ref, node);
+      }}
+      disabled={disabled}
+      aria-describedby={describedBy}
+      data-orientation={orientation}
+      className={classNames(
+        'env-radio-group',
+        orientation === 'vertical' ? 'env-connected-rows' : undefined,
+        className,
+      )}
+    />
+  );
+  const content = (
+    <>
+      {label != null && <legend>{label}</legend>}
+      {children}
+      {description != null && (
+        <small id={ids.description} className="env-radio-group-description">
+          {description}
+        </small>
+      )}
+      {/* The error looks as a field's does, the error icon before the message (Radio.css); a
+          fieldset has no Field.Root for Field.Error to join. */}
+      {error != null && (
+        <Row align="start" gap={2} id={ids.error} className="env-radio-group-error">
+          <IconError aria-hidden="true" focusable="false" />
+          <span>{error}</span>
+        </Row>
+      )}
+    </>
+  );
   return (
     <RadioContext.Provider
       value={{
-        value: selectedValue,
+        value: selectedValue ?? undefined,
         defaultValue,
         name,
         form: props.form,
@@ -115,32 +179,21 @@ export function RadioGroup({
         select,
       }}
     >
-      <fieldset
-        {...props}
-        ref={(node) => {
-          fieldsetRef.current = node;
-          setRef(ref, node);
-        }}
-        disabled={disabled}
-        data-orientation={orientation}
-        className={classNames(
-          'env-radio-group',
-          orientation === 'vertical' ? 'env-connected-rows' : undefined,
-          className,
-        )}
-      >
-        {label != null && <legend>{label}</legend>}
-        {children}
-      </fieldset>
+      {orientation === 'horizontal' ? (
+        <Row wrap render={fieldset}>
+          {content}
+        </Row>
+      ) : (
+        <Grid render={fieldset}>{content}</Grid>
+      )}
     </RadioContext.Provider>
   );
 }
 
-export interface RadioProps
-  extends Omit<
-    InputHTMLAttributes<HTMLInputElement>,
-    'type' | 'name' | 'checked' | 'defaultChecked' | 'value'
-  > {
+export interface RadioProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'name' | 'checked' | 'defaultChecked' | 'value'
+> {
   /**
    * The native radio input, so that a form library can register it and focus it; the other native
    * props reach it too.

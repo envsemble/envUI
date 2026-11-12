@@ -1,0 +1,73 @@
+import MaximizedPanel from '../../examples/panel-dock/MaximizedPanel';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
+
+const panel = (title: string) => `.env-panel-dock-panel[aria-label="${title}"]`;
+const control = (title: string, name: string) => `${panel(title)} [aria-label="${name}"]`;
+const tab = (label: string) => `.env-panel-dock-tab-restore[aria-label="Show ${label}"]`;
+
+/** An open panel's title: a maximized one's is at the start of the dock, far from its controls. */
+const title = (name: string) => `${panel(name)}:not([data-placement='fill']) .env-panel-dock-title`;
+
+/**
+ * The maximized panel's title while the other panel is a tab: what the pointer reads before it
+ * heads to the panel's controls, at the dock's other end.
+ */
+const filledTitle = (name: string, tabbed: string) =>
+  `.env-panel-dock:has(${tab(tabbed)}) ${panel(name)}[data-placement='fill'] .env-panel-dock-title`;
+
+/*
+ * The pointer minimizes the press release to a tab, restores the launch plan to the row, maximizes
+ * it again, and brings the press release back from its tab: the three modes in turn, ending where
+ * they began. It passes an open panel's title on its way to the panel's controls, which a window
+ * cut off at a phone's width shows together, at the dock's end, with the tabs; and the maximized
+ * panel's title, at the dock's start, before it heads to the panel's Restore, so such a window
+ * shows the panel it restores by its name and content first.
+ */
+const script: PointerStep[] = [
+  { wait: 300 },
+  { to: title('Press release'), x: 0.02, y: 0.9 },
+  { wait: 300 },
+  { to: control('Press release', 'Minimize'), duration: 700 },
+  { wait: 210 },
+  { click: true },
+  { wait: 240 },
+  { to: filledTitle('Launch plan', 'Press release'), x: 0.02, y: 0.9, duration: 700 },
+  { wait: 420 },
+  { to: control('Launch plan', 'Restore'), duration: 800 },
+  { wait: 300 },
+  { click: true },
+  { wait: 540 },
+  { to: title('Launch plan'), x: 0.02, y: 0.9, duration: 700 },
+  { wait: 300 },
+  { to: control('Launch plan', 'Maximize'), duration: 700 },
+  { wait: 210 },
+  { click: true },
+  { wait: 600 },
+  { to: tab('Press release'), duration: 700 },
+  { wait: 210 },
+  { click: true },
+  { wait: 540 },
+  { leave: true },
+  { wait: 480 },
+];
+
+function Switching() {
+  usePointer(script);
+  // As wide as the stage: the dock fills its region, which has no width of its own.
+  return (
+    <div style={{ inlineSize: '100%' }}>
+      <MaximizedPanel />
+    </div>
+  );
+}
+
+/** One dock through its modes: a panel minimized, restored, maximized and brought back. */
+export default function MaximizedPanelMotion() {
+  return (
+    <MotionStage label="the panels minimized, restored and maximized">
+      <Switching />
+    </MotionStage>
+  );
+}

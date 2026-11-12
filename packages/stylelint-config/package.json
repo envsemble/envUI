@@ -1,7 +1,7 @@
 {
   "name": "@envsemble/stylelint-config-envui",
-  "version": "1.0.0-prerelease.0",
-  "description": "Stylelint config that keeps application styles on envUI's tokens and off envUI's private markup",
+  "version": "1.0.0-prerelease.5",
+  "description": "Stylelint config that keeps application styles on envUI's tokens",
   "homepage": "https://github.com/envsemble/envUI/tree/main/packages/stylelint-config#readme",
   "bugs": {
     "url": "https://github.com/envsemble/envUI/issues"
@@ -20,30 +20,26 @@
     "directory": "packages/stylelint-config"
   },
   "files": [
-    "index.js",
-    "tokens.js",
-    "data",
-    "plugins",
+    "src",
     "README.md",
     "CHANGELOG.md"
   ],
   "exports": {
-    ".": "./index.js",
+    ".": "./src/index.js",
     "./package.json": "./package.json"
   },
   "engines": {
     "node": "^22.13.0 || >=24"
   },
   "scripts": {
-    "prepack": "node scripts/SyncTokens.mjs",
-    "sync:tokens": "node scripts/SyncTokens.mjs",
+    "prepack": "node ../../scripts/build/SyncLintPackages.ts",
     "test": "node --test test/*.test.mjs"
   },
   "peerDependencies": {
-    "stylelint": "^17.0.0"
+    "stylelint": "^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
-    "stylelint": "17.16.0"
+    "stylelint": "18.0.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

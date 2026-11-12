@@ -1,0 +1,67 @@
+import { useState } from 'react';
+import { RichTextEditor } from '@envsemble/envui/rich-text';
+import { useMedia } from '../motion/Autoplay';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { Renew } from '../motion/Renew';
+import { narrowGallery } from './Tiles';
+
+const line = '.ProseMirror p';
+/** The line, and the phrase in it that turns bold: short, and the same at every width. */
+const words = { text: 'Ship the plan', phrase: 'the plan', last: 'plan' };
+const bold = '[aria-label="Bold"]';
+
+/*
+ * Selects a phrase as a person would and presses Bold: the phrase turns bold in place, as the
+ * editor shows it, with no markup visible. A phrase rather than a word, so the heavier weight reads
+ * beside the plain words at a tile's size. A press after it clears the selection, so the bold
+ * phrase shows, and then the line is drawn again as it began, with a short fade (Renew).
+ */
+const { phrase, last } = words;
+const script: PointerStep[] = [
+  { wait: 180 },
+  { to: line, text: phrase, x: 0, duration: 0 },
+  { wait: 150 },
+  { press: true },
+  { to: line, text: phrase, x: 1, duration: 450 },
+  { release: true },
+  { wait: 180 },
+  { to: bold, duration: 450 },
+  { wait: 120 },
+  { click: true },
+  { wait: 270 },
+  { to: line, text: last, x: 1, duration: 400 },
+  { click: true },
+  { wait: 180 },
+  { leave: true },
+  { blur: true },
+  { wait: 840 },
+  { cue: 'renew' },
+  { wait: 300 },
+];
+
+/**
+ * A rich text editor with its fewest tools, Bold beside undo and redo, above a line whose phrase
+ * turns bold. In a phone's tile it is narrower, and its line is still one line. Its document is as
+ * tall as two lines, as a short note's editor is, or one line on a phone's lower stage, so the
+ * editor shows whole in a gallery's stage, with its edge and focus ring closed below the line.
+ */
+export default function RichTextTile() {
+  const [round, setRound] = useState(0);
+  const narrow = useMedia(narrowGallery);
+  usePointer(script, {
+    onCue: () => setRound((count) => count + 1),
+  });
+  return (
+    <Renew round={round}>
+      <RichTextEditor
+        aria-label="Launch note"
+        defaultValue={words.text}
+        toolbar={['bold']}
+        variant="ghost"
+        minRows={narrow ? 1 : 2}
+        style={{ inlineSize: narrow ? '8.5rem' : '12.5rem' }}
+      />
+    </Renew>
+  );
+}

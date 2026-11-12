@@ -1,0 +1,67 @@
+import type { CSSProperties } from 'react';
+import { Column, Row, Surface, Text, type SpaceStep } from '@envsemble/envui';
+import { SpecimenFrame } from '../../figures/SpecimenFrame';
+import { useTimeline } from '../../motion/Timeline';
+import { MotionStage } from '../../figures/MotionStage';
+
+const sizes: Record<SpaceStep, string> = {
+  0: '0',
+  1: '0.25 rem',
+  2: '0.5 rem',
+  3: '0.75 rem',
+  4: '1 rem',
+  5: '1.5 rem',
+  6: '2 rem',
+  7: '2.5 rem',
+  8: '3 rem',
+  9: '4 rem',
+};
+
+/**
+ * The two blocks' fill, set apart from the stage in every theme: the page's grey in the light
+ * themes, where the stage is lighter than the page and a row's white barely shows on it, and a
+ * row's in the dark ones.
+ */
+const block: CSSProperties = {
+  '--env-surface-container-default':
+    'light-dark(var(--env-color-bg-page), var(--env-color-bg-muted))',
+};
+
+/** Up the scale a step at a time, from 1 to 9, and back down to 1. */
+const order: SpaceStep[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2];
+const steps = order.map((step) => (step === 1 || step === 9 ? 780 : 420));
+
+function Stepping() {
+  const step = order[useTimeline(steps)];
+  return (
+    <Row gap={6} align="start" style={{ inlineSize: 'min(100%, 22rem)' }}>
+      <Column gap={1} style={{ inlineSize: '5rem' }}>
+        <Text variant="title">Step {step}</Text>
+        <Text variant="caption" emphasis="muted">
+          {sizes[step]}
+        </Text>
+      </Column>
+      {/* As tall as the largest gap holds from the start, the first block at its top, so only the
+          second moves, at once, as a Column lays out a new gap. */}
+      <Column gap={step} style={{ flex: 1, minBlockSize: 'calc(2 * 2.75rem + 4rem)' }}>
+        <Surface radius="sm" padding={2} style={block}>
+          <Text>First</Text>
+        </Surface>
+        <Surface radius="sm" padding={2} style={block}>
+          <Text>Second</Text>
+        </Surface>
+      </Column>
+    </Row>
+  );
+}
+
+/** One column whose gap steps up the spacing scale and back down. */
+export default function GapScale() {
+  return (
+    <SpecimenFrame size="content">
+      <MotionStage label="the gap stepping through the scale">
+        <Stepping />
+      </MotionStage>
+    </SpecimenFrame>
+  );
+}

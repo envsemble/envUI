@@ -1,9 +1,9 @@
 ---
 title: CommandPalette
-summary: A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks.
+summary: A quick-open dialog that finds a document, a page, a person or a command by name.
 status: stable
-since: 0.5.0
-category: Feedback & overlays
+since: 1.0.0
+category: Actions
 aliases:
   - quick open
   - command menu
@@ -11,13 +11,26 @@ aliases:
   - command launcher
   - cmdk
   - Ctrl+K
+  - ⌘K
   - spotlight
   - go to anything
   - jump to
   - omnibox
+  - SearchTrigger
+  - SearchButton
+  - search trigger
+  - search button
+  - quick open button
+  - command palette button
+  - search shortcut
+  - empty state
+  - no results
+  - suggestions
+  - recent items
 useWhen:
-  - People jump to a document, a page or a person by name, from anywhere in the application.
-  - People run a command by name, such as one that has no visible control or a shortcut they don't remember.
+  - Jumping to a document, a page or a person by name, from anywhere
+  - Running a command by name, such as one without a visible control
+  - A search button at the top of the navigation or in the top bar, with its shortcut
 avoidWhen:
   - text: Choosing a value for a form field from a long list.
     use: Combobox
@@ -25,120 +38,346 @@ avoidWhen:
     use: Menu
   - text: Searching or filtering the content on the page.
     use: SearchField
-  - text: A task with fields and a decision.
-    use: Dialog
-related:
-  - search-trigger
-  - dialog
-  - menu
-  - combobox
-  - kbd
-  - text-field
-  - accessibility
 components:
   - CommandPalette
+examples:
+  GoToDocument:
+    role: overview
+    open: true
+  RunCommand: example
+  InSidebar: example
+  IconOnly: example
+  CommandPaletteAnatomy: anatomy
+  TypeToSearch: example
+  NarrowSidebar: example
+  ShowRecent:
+    role: do
+    caption: Show recent items while the query is empty.
+  EmptyUntilTyped:
+    role: dont
+    caption: An empty list until people type.
+  ButtonLabel:
+    role: do
+    caption: Label the button Search, or what it searches where there are several.
+  TypingLabel:
+    role: dont
+    caption: "A placeholder's words on the button: people expect to type in it."
 ---
 
 # CommandPalette
 
-## Overview
+## Variants
 
-A command palette is a modal dialog near the top of the window: a search field over a list of options, built on Base UI's autocomplete. People type, move the highlight with the arrow keys and choose with <kbd>Enter</kbd> or a click, while focus stays in the field. The application owns everything else: the shortcut that opens it, the items, how they are filtered and ranked, and what choosing one does.
+### Run a command
 
-Open it from a [SearchTrigger](../components/search-trigger.md): the trigger shows where search is, shows its shortcut, ⌘K or Ctrl+K, and presses itself when the shortcut is pressed, so its `onClick` is the one place that opens the palette. Closing the palette returns focus to the trigger.
+An item can end with its shortcut or a badge, and hints below the list say what keys do.
 
-```tsx example=GoToDocument
+```tsx figure=RunCommand motion
+
+```
+
+### Opening it: the button and the shortcut
+
+A secondary [Button](button.md) with the search icon, its label and the shortcut's keys at its far end reads like a search field.
+
+- Pressing it opens the palette.
+- So does <kbd>⌘</kbd>+<kbd>K</kbd> on Apple platforms and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere, from anywhere in the window, text fields included.
+
+```tsx figure=InSidebar motion
+
+```
+
+### In a narrow header
+
+Search is an icon button named Search, with its label and keys in a [Tooltip](tooltip.md) that opens below it.
+
+```tsx figure=IconOnly motion
 
 ```
 
 ## Anatomy
 
-1. **Backdrop**: the dialog backdrop over the page; a press on it closes the palette.
-2. **Surface**: the raised surface Dialog and Popover share, up to 40 rem wide, with 0.5 rem padding and 1.75 rem corners.
-3. **Search field**: a pill with a search icon and the text input, named by `aria-label`, with the `placeholder` while empty.
-4. **Group heading** (an item's `group`): a small heading where the group changes between consecutive items.
-5. **Option** (each entry of `items`): a list row with an optional `icon`, the `label` with a muted `description` under it, and `end` content, such as a Kbd shortcut or a Badge.
-6. **Status** (`emptyLabel`): shown in place of the list when there are no items, No results by default; while there are items, it announces how many, such as 12 results, without showing.
-7. **Footer** (`hints`, `footer`): key hints as Kbd keys with what they do, then other content.
+```tsx figure=CommandPaletteAnatomy open
 
-## Variants and sizes
+```
 
-- The palette is up to 40 rem wide and fills narrower windows less the window gutter; it sits up to 6 rem, or 12% of the window, below the top.
-- The search field is as tall as a control. Options are at least 2.5 rem tall, and 2.75 rem on touch screens, with rounded corners inset by the surface's padding.
-- The list scrolls beyond 60% of the window's height, keeping the highlighted option in view.
+1. **Palette** (`env-command-palette`)
+2. **Search field** (`env-command-palette-input`, `placeholder`)
+3. **Group heading** (`env-command-palette-group-label`)
+4. **Item** (`env-command-palette-item`, `items`)
+5. **Key hints** (`env-command-palette-footer`, `hints`)
 
-## States and behaviour
+## Behaviour
 
-- **Opening and closing**: `open` and `onOpenChange` control the palette. It opens over a backdrop in the theme of the page around it, with focus in the search field; <kbd>Esc</kbd>, a press on the backdrop and, unless `closeOnAction` is false, choosing an option call `onOpenChange(false)`, and focus returns to where it was.
-- **Searching**: `inputValue` and `onInputValueChange` hold the text. A new query, and opening the palette, highlight the first item again, and the number of results is announced politely.
-- **Highlight**: the arrow keys move the highlight and wrap at the ends; <kbd>Home</kbd> and <kbd>End</kbd> reach the first and last option, and <kbd>Page Up</kbd> and <kbd>Page Down</kbd> move by a page of options. The pointer highlights the option it moves over.
-- **Choosing**: <kbd>Enter</kbd> or a click calls `onAction` with the item; with <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> held, `modifier` is true, such as to open a document beside the current one. Pressing an option leaves focus in the field.
-- **Groups**: items with the same `group` next to each other form a labelled group under one heading; keep a group's items together.
-- **Disabled options**: an item with `disabled` shows but can't be chosen.
-- **Input methods**: keys that belong to an input method's composition don't move the highlight or choose.
+### Suggestions and no matches
 
-## Content guidelines
+Suggestions show until people type, such as recent items, and choose like any result.
 
-- Name the palette after what it finds or does, with `aria-label`: "Go to document", "Run a command".
-- Write a placeholder that says what can be searched: "Search documents by name or folder".
-- Name commands with a verb and what they act on: "Invite people", "Open settings".
-- Use `description` for what tells similar items apart, such as a folder, and `emptyLabel` for what to try next: "No matching documents".
-- Show key hints only for keys the palette or the application handles.
+- With none yet, an invitation says what the palette finds.
+- When nothing matches, the empty state takes the list's place: it quotes what people typed and suggests checking the spelling or other words.
+- Typing again brings results back.
 
-## Do and don't
+```tsx figure=TypeToSearch open motion
 
-### Do
+```
 
-- Open the palette with a shortcut the application handles, such as <kbd>Ctrl</kbd>+<kbd>K</kbd>, and from a visible control too.
-- Rank the best matches first, and show recent items while the query is empty.
-- Clear the query as the palette closes, so it opens fresh.
-- Use `textValue` where an item's label isn't plain text.
+### Adapting to width
 
-### Don't
+The button that opens it fills its container, such as the top of a drawer.
 
-- Don't put fields or buttons inside options; an option is chosen as a whole.
-- Don't make the palette the only way to reach a command.
-- Don't show more groups than people can scan; let the query narrow them.
+- Keep its label short in a narrow sidebar.
+- Where even that doesn't fit, show the icon alone.
+
+```tsx figure=NarrowSidebar widths="18 11" sweep
+
+```
+
+## Rules
+
+The palette is a shortcut that shows something before people type, opened by a button labelled as a search.
+
+```tsx figure=ShowRecent open
+
+```
+
+```tsx figure=EmptyUntilTyped open
+
+```
+
+```tsx figure=ButtonLabel
+
+```
+
+```tsx figure=TypingLabel
+
+```
+
+### One way among others
+
+Keep another way to reach every command, such as a menu or a button: the palette is a shortcut, not the only path.
+
+### Results
+
+Rank the best matches first, and clear the query as the palette closes.
+
+### Content
+
+Name commands with a verb and what they act on, such as Invite people.
+
+- Tell similar items apart with a line under the label, such as a folder.
+- Show key hints only for keys the application handles.
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                                                 | Action                                                                    |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Typing                                                              | Changes the query; the first item is highlighted again.                   |
-| <kbd>↓</kbd>, <kbd>↑</kbd>                                          | Moves the highlight to the next or previous option, wrapping at the ends. |
-| <kbd>Home</kbd>, <kbd>End</kbd>                                     | Moves the highlight to the first or last option.                          |
-| <kbd>Page Down</kbd>, <kbd>Page Up</kbd>                            | Moves the highlight by a page of options.                                 |
-| <kbd>Enter</kbd>                                                    | Chooses the highlighted option.                                           |
-| <kbd>Ctrl</kbd>+<kbd>Enter</kbd> or <kbd>Cmd</kbd>+<kbd>Enter</kbd> | Chooses the highlighted option with `modifier`.                           |
-| <kbd>Esc</kbd>                                                      | Closes the palette and returns focus to where it was.                     |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                     | Stay in the dialog, which keeps focus while it is open.                   |
+| Key                                                                       | Action                                                               |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| <kbd>⌘</kbd>+<kbd>K</kbd>, or <kbd>Ctrl</kbd>+<kbd>K</kbd>                | Opens the palette from anywhere in the window.                       |
+| <kbd>↓</kbd>, <kbd>↑</kbd>                                                | Moves the highlight, wrapping at the ends.                           |
+| <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Page Up</kbd>, <kbd>Page Down</kbd> | Moves to the first or last option, or by a page.                     |
+| <kbd>Enter</kbd>                                                          | Chooses the highlighted option.                                      |
+| <kbd>Ctrl</kbd>+<kbd>Enter</kbd> or <kbd>Cmd</kbd>+<kbd>Enter</kbd>       | Chooses it another way the application sets, such as to open beside. |
+| <kbd>Esc</kbd>                                                            | Closes the palette and returns focus.                                |
 
 ### envUI provides
 
-- A modal dialog named by `aria-label`, which takes focus into its search field, keeps it inside and returns it on close.
-- The search field as a `combobox` that controls the `listbox`, with `aria-expanded` while there are options and the highlighted option as its active descendant, so focus never leaves the field.
-- Options named by their content or by `textValue`, in groups named by their headings; decorative icons hidden from assistive technology.
-- A polite status that announces the number of results as they change (`messages.commandPalette.results`), and says the empty message when nothing matches; key hints as Kbd keys.
+- A modal dialog named by `aria-label`, with focus in its search field, kept inside and returned on close.
+- Under a coarse pointer, such as a phone's, a close button after the search field in place of <kbd>Esc</kbd>, and no keys: neither the items' shortcuts nor the key hints show.
+- The field as a `combobox` over a `listbox`, with the highlighted option as its active descendant.
+- A polite count of results as they change.
+- The empty state's title and description in that same polite status, with its icon hidden from assistive technology.
+- For the button that opens it, a native `button` named by its label, or by `aria-label` when it shows only its icon, and the keys as Kbd, in the button's content color on every variant.
 
 ### You provide
 
 - The shortcut that opens the palette, and a visible control that opens it too.
-- An `aria-label` that names the palette, and the items, filtered and ranked.
-- What choosing an item does, and `textValue` for labels that aren't plain text.
+- `aria-keyshortcuts` on that control for the platform, `` `${modifier.key}+K` `` from `useModifierKey()`, and `aria-hidden` on the keys it shows, so the shortcut is announced once.
+- An `aria-label`, and the items, filtered and ranked.
+- `textValue` for labels that aren't plain text.
 
-## Examples
+## Words to use
 
-### Run a command
+Ask for the palette's states in these words.
 
-Commands with shortcuts as Kbd keys and a Badge as end content, under one group, with a footer.
+| Words          | In code                                                  | Use for                                                        |
+| -------------- | -------------------------------------------------------- | -------------------------------------------------------------- |
+| Suggestions    | `suggestedItems`, with a `group` such as Suggested       | Options shown before people type.                              |
+| Recent items   | `suggestedItems`, with a `group` such as Recently opened | The items people opened last, before they type.                |
+| Type to search | The empty state with an empty query: `emptyDescription`  | Inviting a search, and what it finds, with nothing to suggest. |
+| No results     | `emptyLabel`, `emptyDescription` and `emptyHint`         | Saying that the text found nothing, and what to try.           |
+| With an icon   | `emptyIcon`                                              | Marking an empty state, such as a search that failed.          |
 
-```tsx example=RunCommand
+## Compose
+
+### Usage
+
+The application owns the items and what choosing one does.
+
+- `open` opens the palette, such as from a shortcut and from a visible control.
+- `onOpenChange` receives false when <kbd>Esc</kbd>, a press on the backdrop or a choice closes it, and why, as a dialog's does: `escape-key`, `outside-press`, or `item-press` for a choice.
+- The application filters and ranks the `items` itself, from the text in `inputValue` and `onInputValueChange`, and clears that text as the palette closes.
+- `onAction` runs the chosen item, and `closeOnAction`, true by default, closes the palette after it.
+- `aria-label` names the dialog, its search field and its list.
+- `placeholder` shows in the empty field.
+- `suggestedItems` show in place of `items` while the field is empty, and the empty state in place of the list when there are no options.
+
+```tsx source=GoToDocument
 
 ```
 
+#### Items
+
+Each CommandPaletteItem has an `id` and a `label`, with `textValue` for a label that isn't plain text.
+
+- `description` is muted text under the label, such as a folder.
+- `icon` is a decorative icon before it.
+- `end` is content at the end, such as a Kbd shortcut or a Badge.
+- `disabled` shows an item that can't be chosen.
+- `group` names its group, whose heading shows where the group changes between items, such as Recently opened while the query is empty.
+
+#### Suggestions and the empty state
+
+`suggestedItems` show while the field is empty, or holds only spaces, in place of `items`, such as recent documents or suggested pages with a `group` heading; they are options like any other, highlighted, chosen with <kbd>Enter</kbd> or <kbd>Ctrl</kbd>+<kbd>Enter</kbd> and passed to `onAction`.
+
+With no options, the empty state shows in place of the list as the polite status: one muted line at an option's height, its title and then its description after a dot, so the palette keeps about its height as results come and go.
+
+- While the field is empty: Type to search, with no description; `emptyDescription` says what the palette finds.
+- When the text finds nothing: No results, and a hint that quotes the trimmed text.
+- While results load: the loading label, with a spinner at the search field's end, which also shows while results already found stay.
+- `emptyLabel` and `emptyDescription` replace the title and the description in either state, `null` or `false` hiding the description, and `emptyIcon` puts an icon at the start of the line, where an option's sits, such as an error icon. Pass a value that depends on the query to change one state only.
+- The icon is decorative and hidden from assistive technology; the title and description are announced.
+
+```tsx
+const typed = query.trim() !== '';
+
+<CommandPalette
+  aria-label="Go to document"
+  inputValue={query}
+  onInputValueChange={setQuery}
+  items={matches}
+  // Recent documents, each with group: 'Recently opened'.
+  suggestedItems={recent}
+  emptyLabel={typed ? 'No matching documents' : undefined}
+  emptyDescription={typed ? undefined : 'Find a document by its name or folder.'}
+  {...props}
+/>;
+```
+
+#### Commands and key hints
+
+`onAction` receives the item and `{ modifier }`, true while <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> was held, such as to open beside. `hints` show keys below the list as Kbd, such as `{ keys: ['Enter'], label: 'Open' }`, and `footer` holds other content after them, as the RunCommand example does. A hint with <kbd>Enter</kbd> in its keys hides while there is no option to choose, as results load or when nothing matches.
+
+```tsx
+<CommandPalette
+  open={open}
+  onOpenChange={setOpen}
+  aria-label="Run a command"
+  inputValue={query}
+  onInputValueChange={setQuery}
+  items={[
+    { id: 'new', label: 'New document', icon: <IconNoteAdd />, end: <Kbd keys={['Ctrl', 'N']} /> },
+    { id: 'automations', label: 'Create an automation', end: <Badge tone="primary">New</Badge> },
+  ]}
+  onAction={(item, { modifier }) => run(item.id, { beside: modifier })}
+  hints={[{ keys: ['Enter'], label: 'Run' }]}
+  footer="Shortcuts work anywhere in the workspace."
+/>
+```
+
+#### The button that opens it
+
+The button is a Button with `variant="secondary"`, IconSearch as its `startIcon`, and a Kbd of the keys in its `end` slot, as the InSidebar example does.
+
+- `aria-hidden` on the Kbd and `aria-keyshortcuts` on the button announce the shortcut once.
+- Its `onClick` opens the palette.
+- With `fullWidth` it fills its container, such as a NavigationDrawer's `header`.
+
+```tsx
+<Button
+  variant="secondary"
+  fullWidth
+  startIcon={<IconSearch />}
+  end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
+  aria-keyshortcuts={`${modifier.key}+K`}
+  onClick={() => setOpen(true)}
+>
+  Search
+</Button>
+```
+
+#### The shortcut
+
+The application listens for the shortcut once, at its root, however many buttons show it, and opens the same palette the button does. It skips an event whose `defaultPrevented` is set, so a key press that something else already handled, such as an editor's own shortcut, is left alone.
+
+`useModifierKey()`, on [Kbd's page](kbd.md), gives the platform's modifier.
+
+- Its `key`, `Meta` or `Control`, for `aria-keyshortcuts` and the listener.
+- Its `label`, ⌘ or Ctrl, for Kbd.
+- It is Ctrl on the server and while the page hydrates, so server-rendered markup matches, and becomes ⌘ on Apple platforms right after.
+- Don't read `navigator` while rendering: it doesn't exist on the server, and markup that differs from the server's fails to hydrate.
+
+```tsx
+const modifier = useModifierKey();
+
+useEffect(() => {
+  const onKeyDown = (event: KeyboardEvent) => {
+    const pressed =
+      modifier.key === 'Meta' ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+    if (event.defaultPrevented || !pressed || event.altKey || event.shiftKey) return;
+    if (event.key.toLowerCase() !== 'k') return;
+    event.preventDefault();
+    setSearchOpen((open) => !open);
+  };
+  addEventListener('keydown', onKeyDown);
+  return () => removeEventListener('keydown', onKeyDown);
+}, [modifier.key]);
+```
+
+#### Icon only
+
+In a narrow header, the button is an IconButton with `variant="ghost"`, `aria-label="Search"` and the same `aria-keyshortcuts`, inside a Tooltip with `side="bottom"` whose `content` holds the label and the Kbd, as the IconOnly example does.
+
+```tsx
+<Tooltip
+  side="bottom"
+  content={
+    <Row render={<span />} align="center" gap={2}>
+      Search <Kbd keys={[modifier.label, 'K']} />
+    </Row>
+  }
+>
+  <IconButton
+    variant="ghost"
+    icon={<IconSearch />}
+    aria-label="Search"
+    aria-keyshortcuts={`${modifier.key}+K`}
+    onClick={() => setOpen(true)}
+  />
+</Tooltip>
+```
+
+### Composition
+
+The palette is `env-command-palette`: its search field, `env-command-palette-search`, a large ghost [TextField](text-field.md) kept solid on the frosted palette, with its input, `env-command-palette-input`, and the close button shown under a coarse pointer, `env-command-palette-close`, in `env-command-palette-header`, the group headings, `env-command-palette-group-label`, the items, `env-command-palette-item`, the key hints in `env-command-palette-footer`, and the empty state, `env-command-palette-status` with `data-empty`: its icon, `env-command-palette-empty-icon`, title, `env-command-palette-empty-title`, and description, `env-command-palette-empty-description`. `className`, `style`, `ref` and data attributes reach the surface.
+
+The button that opens it is Button's: `env-button`, its icon, `env-button > env-icon`, its label, and the keys in its end slot, `env-button-end`. The icon-only button is an `env-icon-button` in a tooltip.
+
+### Customize
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
+
 ## Changelog
 
-- **1.0.0**: Opens from SearchTrigger, which handles the shortcut. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionOptions`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface.
-- **0.5.0**: CommandPalette, with grouped options, keyboard highlight, modifier selection and key `hints` shown as Kbd keys.
+- **1.0.0**: Opens from a Button with the shortcut's keys in its new `end` slot, in place of the SearchTrigger component. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionDetails`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface. A group's label, `env-command-palette-heading`, is `env-command-palette-group-label`, as in Menu.
+- **1.0.0-prerelease.6**: The palette fades in with `--env-motion-ease-enter`, so it shows from its first frames rather than late, while it drops into place as before.
+- **1.0.0-prerelease.6**: An item's shortcut is muted text in one unit, such as Ctrl+N, rather than a filled chip for each key; the key hints below the list keep their keys.
+- **1.0.0-prerelease.6**: The empty state is one muted line at an option's height, its title and description after a dot, rather than an icon on a circle over a centred title, so the palette keeps about its height as results come and go; it shows an icon only when `emptyIcon` gives one. While results load, a spinner turns at the search field's end, rather than in place of its icon or the empty state's.
+- **1.0.0-prerelease.6**: While it holds the caret, the search's edge takes the focus color as a hairline, rather than a ring that read as a second frame.
+- **1.0.0-prerelease.6**: A key hint for <kbd>Enter</kbd> hides while there is no option to choose, as results load or when nothing matches.
+- **1.0.0-prerelease.6**: Under a coarse pointer the palette hides the keys, the shortcuts in its items and the key hints of its footer, and shows a close button after the search field, `env-command-palette-close`, for touch screens with no <kbd>Esc</kbd>; the two share a row, `env-command-palette-header`.
+- **1.0.0-prerelease.5**: `onOpenChange` receives why the palette closes, `CommandPaletteOpenChangeDetails`, as a dialog's does.
+- **1.0.0-prerelease.5**: `defaultItems` is `suggestedItems`: `default` names an uncontrolled starting value everywhere else.
+- **1.0.0-prerelease.5**: The palette is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Its search is a large ghost TextField, opaque on the neutral fill with no outline, whose edge returns at high contrast; its headings are small and muted, its rows and keys are the popup lists', the keys side by side with the + read but not shown, and its hints are in the small label size. Its options take the text color rather than the controls', lie one under the next with no space between them, and its headings sit a little ahead of the rows.
+- **1.0.0-prerelease.4**: An empty state with an icon, a title and a description, which tells an invitation before people type from no results; `emptyDescription`, `emptyIcon` and `messages.commandPalette.emptyQuery` and `emptyHint`. `defaultItems` show before people type.
+- **1.0.0-prerelease.3**: The search trigger pattern is part of this page, as the button and the shortcut that open the palette; the pattern's address opens it.

@@ -1,9 +1,9 @@
 ---
 title: List
-summary: A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.
+summary: A vertical list of connected rows, each with a title, a detail and an action.
 status: stable
-since: 0.1.0
-category: Layout & surfaces
+since: 1.0.0
+category: Data display
 aliases:
   - GroupedRows
   - Row
@@ -19,188 +19,254 @@ aliases:
   - drag and drop list
   - selectable rows
 useWhen:
-  - Related items with a title, a short detail and an action each, such as the sections of a settings page.
-  - Items that each open a page or a document, such as recent plans (`interactive`).
-  - A short set of results or members under a search field.
-  - The list beside an item's details, with its current row marked (`selected`).
-  - Items people put in their own order, such as the slides of a deck or an agenda (`onReorder`).
+  - Related items with a title, a detail and an action each, such as settings
+  - Items that each open a page or a document, such as recent plans
+  - A short set of results or members under a search field
+  - The list beside an item's details, with its current row marked
+  - Items people put in their own order, such as an agenda
 avoidWhen:
   - text: Data compared across columns, or rows people sort by a value.
     use: Table
   - text: Destinations in an application's navigation.
-    use: NavList
+    use: NavigationDrawer
   - text: A hierarchy people expand, such as folders.
     use: Tree
   - text: One choice from a few options shown as rows.
     use: Radio
   - text: Content about one subject that stands on its own.
     use: Card
-related:
-  - card
-  - table
-  - nav-list
-  - surface
-  - radio
-  - spacing
 components:
   - List
+examples:
+  SettingsRows: overview
+  OnAPane: example
+  ExtraContent: example
+  RowDensity: example
+  ListAnatomy: anatomy
+  OpenFromRow: example
+  CurrentRow: example
+  CheckedRows: example
+  Reorder: example
+  NarrowRows: example
+  OneTarget:
+    role: do
+    caption: One link per row, which covers the row.
+  SeveralTargets:
+    role: dont
+    caption: 'Several links in a row: a press could open any of them.'
 ---
 
 # List
 
-## Overview
+## Variants
 
-A list is a column of connected rows on the shared row fill: the first and last rows keep large outer corners, and rows join with small inner ones. List.Root is a native `<ul>` and each List.Item an `<li>` with a title, an optional muted detail and an action at its end. A row can open what it names: with `interactive`, it reacts to hover, presses and keyboard focus like a clickable card, and the link marked `data-row-target` covers the row. A row can be the current one (`selected`), lead with an avatar or a checkbox (`start`), and, with `onReorder` on the list, be moved by its handle.
+### On a pane
 
-```tsx example=SettingsRows
+In a muted surface that holds only lists, the rows take the raised fill, so they stand out from it.
+
+```tsx figure=OnAPane
+
+```
+
+### More content
+
+More content can follow the description, such as a status.
+
+```tsx figure=ExtraContent
+
+```
+
+### Density
+
+Rows pack more or less tightly, from extra small to large, which changes only their padding, never the text.
+
+```tsx figure=RowDensity motion
 
 ```
 
 ## Anatomy
 
-1. **List** (List.Root): a `ul` of rows 0.125 rem apart. In a muted Surface that holds only lists, such as `<Surface background="muted" padding={3}>`, the rows take the raised fill; in a surface with more in it, such as a card, they keep the row fill. `density` sets how tightly the rows pack, from `xs` to `lg`; it changes only their block padding. `onReorder` makes the rows reorderable.
-2. **Row** (List.Item): at `md`, the default, at least 3.5 rem tall, with 0.75 rem block and 1.5 rem inline padding, so its text stays clear of the large corners.
-3. **Drag handle** (with `onReorder`): a small ghost IconButton with the DragIndicator icon at the start of the row, named "Reorder" and the row's label.
-4. **Start** (optional, `start`): content before the label, 0.5 rem apart, such as an Avatar, an icon or a Checkbox.
-5. **Label** (`label`): the row's main text, 0.875 rem in the row text color. Where it isn't a string, `textValue` gives the handle and the announcements its text.
-6. **Description** (optional, `description`): a `small` below the label in the muted row detail color.
-7. **More content** (optional, `children`): after the title and the detail, such as a Badge.
-8. **Action** (optional, `action`): a control at the end of the row, 0.75 rem from the text.
-
-## Variants and sizes
-
-| Variant                | Use for                                                                                                                  |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Default                | Rows on the page or in a dialog, on the shared row fill.                                                                 |
-| On a pane of their own | Rows in a `<Surface background="muted">` that holds only lists, in the raised row fill, so they stand out from the pane. |
-| Current row            | The row whose details show beside the list (`selected`), in the selected fill.                                           |
-| Checked rows           | Rows chosen with a Checkbox in `start`, which take the selected fill while it is checked.                                |
-| Reorderable            | Rows people put in order (`onReorder`), each with a drag handle at its start.                                            |
-
-<!-- specimen: Corners -->
-
-- One row alone keeps the 1.75 rem outer corners on every side; connected rows keep them at the outer ends and join with 0.5 rem corners.
-- The row is as wide as the list. Titles and details wrap, also within a long word or an address; when the action no longer fits beside the text, it moves below it.
-- Radio rows, Select options and the rows of a standard menu keep the same 1.5 rem inset.
-
-## States and behaviour
-
-- **Plain rows** don't respond to the pointer: their controls keep their own states.
-- **Interactive rows** (`interactive`): the row darkens on hover and while keyboard focus is anywhere inside it, and further while it is pressed; a link or button in its text doesn't also shrink as it is pressed.
-- **The row target**: mark one link or button in the row's text `data-row-target`. It covers the row, so a press anywhere on the row follows it, and keyboard and screen reader users still meet one link. Give a link `draggable={false}` too, so a press that moves a little opens it instead of dragging it. The row shows a press on the target, not on its other controls.
-- **Controls above the target**: the row's other links and buttons need `position: relative` to stay above the target, and so does anything whose tooltip should show; text under the target can't be selected. The start slot, with the drag handle, stays above it on its own.
-- **Current row** (`selected`): the row takes the selected fill, and its row target, or the row itself without one, gets `aria-current="true"` in the server's HTML. The target is found among the elements in `label`, `description` and `children` as written, not inside other components. Mark one row at a time.
-- **Checked rows**: a checked checkbox in the start slot gives its row the selected fill, so the chosen rows stand out.
-- **Reordering** (`onReorder`): each row's handle moves it. By keyboard, <kbd>Space</kbd> or <kbd>Enter</kbd> on the handle lifts the row, <kbd>↑</kbd> and <kbd>↓</kbd> move it while the others make room, <kbd>Home</kbd> and <kbd>End</kbd> move it to either end, <kbd>Space</kbd> or <kbd>Enter</kbd> drops it, and <kbd>Esc</kbd>, <kbd>Tab</kbd> or leaving the handle puts it back. A press of the handle that doesn't drag, such as a click, voice control's or a screen reader's, lifts the row the same way, and another drops it; while the row is lifted the handle is pressed. With a pointer, the row follows the handle as it is dragged, and the scroll area around the list scrolls near its edges. <kbd>Alt</kbd>+<kbd>↑</kbd> and <kbd>Alt</kbd>+<kbd>↓</kbd> on a row target move its row one place at once. The rows are the list's children, directly or in arrays and fragments, so each gets its handle: List.Item elements, or elements of a row component that passes the props it doesn't use on to its List.Item, such as `function SlideRow({ slide, ...props }) { return <List.Item {...props} label={slide} />; }`. In development, the list reports rows left without a handle in the console.
-- **The move**: nothing moves in the page until the row is dropped. The list then calls `onReorder(from, to)` with the row's index and its new one, the application moves the item in its own state, and focus stays on the handle or the row target that moved it. Rows move only vertically, in either text direction.
-- **Announcements**: a polite live region announces each step with the row's label, its position and the count: picked up, by pointer with how to move it, as the handle's description says how by keyboard, moved, stopped at the start or the end of the list, dropped, or put back. The same announcement twice is announced twice.
-- **On the server**: List.Root and List.Item render on the server. A list without `onReorder` ships no client code; a reorderable one adds the list's keys and announcements and each row's handle.
-
-## Content guidelines
-
-- Write the title as the item's name, such as a setting's or a document's, in sentence case.
-- Keep the detail to one short fact that helps tell items apart, such as who changed it and when, or a count.
-- Name the action with a verb, and add what it acts on to its accessible name when the label repeats: "More actions for Roadmap".
-- Keep the same kind of item in one list, and the same kind of action at the end of every row.
-
-## Do and don't
-
-### Do
-
-- Name a list with `aria-label` where its heading doesn't, such as "Recent plans".
-- Make a row interactive when it opens what it names, and mark its title link `data-row-target`.
-- Give the rows a pane of their own with a muted Surface that holds only the list.
-
-### Don't
-
-- Don't put several targets in one row, or a row target inside a row without `interactive`.
-- Don't use a list for data people compare across columns; use [Table](../components/table.md).
-- Don't put a long form or several actions in a row; open them from the row instead.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                                                      | Action                                                                                                 |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                          | Moves focus through the handles, links and controls of the rows; the rows themselves aren't focusable. |
-| <kbd>Enter</kbd>                                                         | Follows the row's link or presses its button.                                                          |
-| <kbd>Space</kbd> or <kbd>Enter</kbd> on a handle, or a press of it       | Lifts the row, or drops a lifted row in its new place.                                                 |
-| <kbd>↑</kbd>, <kbd>↓</kbd> on a lifted row's handle                      | Moves the row up or down one place.                                                                    |
-| <kbd>Home</kbd>, <kbd>End</kbd> on a lifted row's handle                 | Moves the row to the start or the end of the list.                                                     |
-| <kbd>Esc</kbd> or <kbd>Tab</kbd> on a lifted row's handle                | Puts the row back where it was.                                                                        |
-| <kbd>Alt</kbd>+<kbd>↑</kbd>, <kbd>Alt</kbd>+<kbd>↓</kbd> on a row target | Moves the row up or down one place at once.                                                            |
-
-### envUI provides
-
-- A native `ul` of `li` rows, so assistive technology announces a list and its count of items.
-- A row target that adds no element of its own: the row is reached and named by its one link or button.
-- The row's highlight while keyboard focus is inside an interactive row.
-- `aria-current="true"` on the current row's target.
-- Drag handles named "Reorder" and the row's label, in the provider's language, described by how to move the row without a pointer, and pressed (`aria-pressed`) while their row is lifted.
-- A polite live region that announces each step of a move with the position and the count, and the start or the end of the list.
-- Focus kept on the handle or the row target that moved a row.
-
-### You provide
-
-- An `aria-label` or `aria-labelledby` on List.Root where the list needs a name.
-- A link or button in the title of an interactive row, marked `data-row-target`, and `draggable={false}` on a link.
-- `position: relative` on the row's other controls, and accessible names that say which row they act on.
-- An accessible name for a checkbox in the start slot, such as "Choose Roadmap.md".
-- `textValue` on a reorderable row whose label isn't plain text, and the move itself in `onReorder`.
-
-## Examples
-
-### Rows that open something
-
-Each title link covers its row, so a press anywhere on the row opens the plan; the More actions button stays above it and names its row.
-
-```tsx example=OpenFromRow
+```tsx figure=ListAnatomy
 
 ```
 
-### Rows on a pane
+1. **List** (`env-list`)
+2. **Row** (`env-list-item`)
+3. **Handle** (`env-list-item-handle`)
+4. **Start** (`env-list-item-start > env-avatar`, `start`)
+5. **Content** (`env-list-item-content`, `label`)
+6. **Description** (`env-list-item-content > small`, `description`)
+7. **End** (`env-list-item > env-button:last-child`, `end`)
 
-A muted Surface that holds only the list puts the rows on a pane of their own, in the raised row fill.
+## Behaviour
 
-```tsx example=OnAPane
+### Rows that open something
+
+A whole row can open what it names, through its one link, while its other controls stay pressable above it.
+
+```tsx figure=OpenFromRow motion
 
 ```
 
 ### The current row
 
-An avatar leads each row, and choosing a person marks their row as the current one, as for a list beside the person's details.
+The row whose details show beside the list is marked as the current one.
 
-```tsx example=CurrentRow
+```tsx figure=CurrentRow
 
 ```
 
 ### Checked rows
 
-A checkbox in the start slot chooses rows for an action on several at once, and a checked row takes the selected fill.
+A checkbox at a row's start chooses it for an action on several rows at once.
 
-```tsx example=CheckedRows
+```tsx figure=CheckedRows motion
 
 ```
 
 ### Put in order
 
-With `onReorder`, each row gets a handle: drag it, or press <kbd>Space</kbd> on it and move the row with the arrow keys. The list reports the move, and the application moves the item.
+Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys.
 
-```tsx example=Reorder
+```tsx figure=Reorder motion
+
+```
+
+### Adapting to width
+
+Labels and descriptions wrap, and an action that no longer fits beside the text moves below it.
+
+```tsx figure=NarrowRows widths="32 16" sweep
 
 ```
 
-### More content in a row
+## Rules
 
-Children follow the title and the detail, such as a Badge with the item's status.
+A row opens one thing, and its description tells it apart from the others.
 
-```tsx example=ExtraContent
+```tsx figure=OneTarget
 
 ```
+
+```tsx figure=SeveralTargets
+
+```
+
+### Content
+
+Keep the description to one fact that tells items apart, such as who changed it and when. Name a repeated action after its row, such as More actions for Roadmap.
+
+## Accessibility
+
+### Keyboard
+
+| Key                                                         | Action                                                       |
+| ----------------------------------------------------------- | ------------------------------------------------------------ |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>             | Moves through the handles, links and controls of rows.       |
+| <kbd>Space</kbd>, <kbd>Enter</kbd>                          | On a handle, lifts the row, or drops a lifted row.           |
+| <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>Home</kbd>, <kbd>End</kbd> | While a row is lifted, moves it one place, or to either end. |
+| <kbd>Esc</kbd>, <kbd>Tab</kbd>                              | While a row is lifted, puts it back.                         |
+| <kbd>Alt</kbd>+<kbd>↑</kbd>, <kbd>Alt</kbd>+<kbd>↓</kbd>    | On a row's link or button, moves the row one place at once.  |
+
+### envUI provides
+
+- A native `ul` of `li` rows, announced with their count.
+- `aria-current="true"` on the current row's target.
+- Handles named Reorder and the row's label, described by how to move without a pointer.
+- A polite announcement of each step of a move, with the position and the count.
+
+### You provide
+
+- A name for the list where its heading doesn't give one.
+- One link or button marked `data-row-target` in an interactive row, with `draggable={false}` on a link.
+- Names for a start checkbox and for actions, which say which row they act on.
+- `textValue` on a reorderable row whose label isn't plain text, and the move in `onReorder`.
+
+## Compose
+
+### Usage
+
+List.Root is a `ul` of List.Item rows, each with its `label`, a `description` below it, one short fact, content at its `end`, such as a Button, and `children` after the description, such as a Badge. `start` holds content before the label, such as an Avatar, an icon or a Checkbox, in a slot at least an icon wide, so a narrower mark, such as a Spinner, keeps its label in line with its siblings'. Name the list with `aria-label` where its heading doesn't.
+
+```tsx source=SettingsRows
+
+```
+
+#### Rows that open something
+
+With `interactive`, a row reacts to hover, keyboard focus inside it and presses. Mark its one link or button `data-row-target`, which stretches it over the row; give a link `draggable={false}`, so a press that moves a little doesn't drag it. The row's other controls take `position: relative` to stay above it. While the target has keyboard focus, its ring traces the row's edge, the area a press follows.
+
+```tsx
+<List.Item
+  interactive
+  label={
+    <Link href="/plans/roadmap" underline={false} data-row-target draggable={false}>
+      Roadmap
+    </Link>
+  }
+  description="Updated today by Sam Lee"
+  end={
+    <IconButton
+      variant="text"
+      icon={<IconMoreHoriz />}
+      aria-label="More actions for Roadmap"
+      style={{ position: 'relative' }}
+    />
+  }
+/>
+```
+
+#### The current and checked rows
+
+`current` marks the current row, such as the one whose details show beside the list, with the selected fill and `aria-current="true"` on its `data-row-target`, or on the row without one. A row whose `start` checkbox is checked takes the selected fill too; name each checkbox after its row.
+
+```tsx
+<List.Item interactive current={id === shown} label="Roadmap" />
+```
+
+#### Put in order
+
+`onReorder` on List.Root gives each row a handle, moved by dragging it, by pressing it or by keyboard, and calls it with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The rows are the list's children, directly or in arrays and fragments: List.Item elements, or elements of a row component that passes the props it doesn't use on to its List.Item. `textValue` names a row whose `label` isn't plain text, for its handle and the announcements.
+
+```tsx
+<List.Root
+  aria-label="Agenda"
+  onReorder={(from, to) =>
+    setItems((list) => {
+      const next = [...list];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item!);
+      return next;
+    })
+  }
+>
+  {items.map(({ id, title, length }) => (
+    <List.Item key={id} label={title} description={length} />
+  ))}
+</List.Root>
+```
+
+#### Density and panes
+
+`density` is `xs`, `sm`, `md`, the default, or `lg`, and changes only the rows' block padding. Put a list directly in `<Surface background="muted" padding={3}>`, a muted Surface that holds only lists, and its rows take the raised fill.
+
+```tsx
+<Surface background="muted" padding={3}>
+  <List.Root aria-label="Notifications" density="sm">
+    …
+  </List.Root>
+</Surface>
+```
+
+### Composition
+
+The parts are the list, `env-list`, each row, `env-list-item`, with its handle, `env-list-item-handle`, its start, `env-list-item-start`, its content, `env-list-item-content`, which holds the label and the description, and its action at the end. Rows render on the server; only the handle of a reorderable row needs the browser.
 
 ## Changelog
 
-- **1.0.0**: List.Item takes `selected` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label` and its `detail` is `description`. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
-- **0.5.0**: `interactive` rows, which react to hover, focus inside them and presses, and open from anywhere through a `data-row-target`.
-- **0.1.0**: GroupedRows and Row, with connected corners.
+- **1.0.0**: List.Item takes `current` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label`, its `detail` is `description` and its `action` is `end`, as on CommandPalette's items and Button. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
+- **1.0.0-prerelease.6**: A pressed row's link or button, `data-row-target`, lays no pressed fill of its own: the row shows the press.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: In an interactive row the focus ring of the `data-row-target` link or button traces the row, not the label alone.
+- **1.0.0-prerelease.6**: The start slot is at least an icon wide, with its content centred, so a Spinner among icons keeps its label in line.
+- **1.0.0-prerelease.5**: List.Item's `selected` is `current`, as it marks the current row with `aria-current`; `selected` means chosen elsewhere.

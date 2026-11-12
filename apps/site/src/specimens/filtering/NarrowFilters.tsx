@@ -1,0 +1,53 @@
+import { useState } from 'react';
+import NarrowFilters from '../../examples/filtering/NarrowFilters';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
+
+const filters = '.catalogue-width-sweep-frame .env-button[data-variant="secondary"]';
+const show = '.env-sheet .env-button[data-variant="primary"]';
+
+/*
+ * At 24 rem the filters are folded into a Filters button beside the search: the pointer opens
+ * the sheet and closes it with Show 5 projects. Then the frame widens to 44 rem, where the
+ * filters sit in the toolbar, and narrows again.
+ */
+const script: PointerStep[] = [
+  { wait: 240 },
+  { to: filters, x: 0.5, y: 2.4 },
+  { to: filters, x: 0.5, y: 0.55, duration: 450 },
+  { wait: 120 },
+  { click: true },
+  { wait: 1020 },
+  { to: show, x: 0.5, y: 0.55, duration: 600 },
+  { wait: 150 },
+  { click: true },
+  { wait: 300 },
+  { leave: true },
+  { wait: 180 },
+  { cue: 'wide' },
+  // The frame's travel and its hold at 44 rem, then the way back and a moment at 24 rem.
+  { wait: 3180 },
+  { cue: 'narrow' },
+  { wait: 2580 },
+];
+
+function Sweeping() {
+  const [at, setAt] = useState(0);
+  usePointer(script, { onCue: (cue) => setAt(cue === 'wide' ? 1 : 0) });
+  return (
+    <WidthSweep widths={[24, 44]} at={at} classes>
+      <NarrowFilters />
+    </WidthSweep>
+  );
+}
+
+/** The toolbar folding its filters into a sheet in a narrow frame, which a pointer opens. */
+export default function NarrowFiltersMotion() {
+  return (
+    <MotionStage label="the filters folding into a sheet as the width changes" height="34rem">
+      <Sweeping />
+    </MotionStage>
+  );
+}

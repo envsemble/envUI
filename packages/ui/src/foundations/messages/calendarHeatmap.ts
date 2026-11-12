@@ -8,5 +8,3 @@ export const calendarHeatmap = {
   /** The high end of the legend. */
   more: 'More',
 };
-
-export type CalendarHeatmapMessages = typeof calendarHeatmap;

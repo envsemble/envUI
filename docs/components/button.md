@@ -1,26 +1,29 @@
 ---
 title: Button
-summary: Starts an action, or goes to a destination with href, alone, icon-only, confirmed in place, copying a value or connected in a group.
+summary: Starts an action, or goes to a destination as a link.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Actions
 aliases:
   - action
   - call to action
   - CTA
   - icon button
+  - close button
+  - dismiss button
+  - remove button
   - confirm button
   - copy button
   - button group
   - split button
   - toolbar button
 useWhen:
-  - Someone starts an action, such as saving, creating or sending.
-  - A prominent destination, such as the next step of a flow, should look like an action.
-  - An icon alone names a familiar action in a dense place, such as a toolbar (IconButton).
-  - An action takes effect at once and cannot be undone, such as removing someone's access (ConfirmButton).
-  - People copy a value to paste elsewhere, such as a link, an ID or a command (CopyButton).
-  - Related actions belong together, such as the main action and a menu of alternatives (ButtonGroup).
+  - Starting an action, such as saving or sending
+  - A prominent destination, such as the next step of a flow
+  - A familiar action as an icon alone, in a dense place (IconButton)
+  - An action that takes effect at once and can't be undone (ConfirmButton)
+  - Copying a value, such as a link or an ID (CopyButton)
+  - Related actions that belong together (ButtonGroup)
 avoidWhen:
   - text: A destination inside running text.
     use: Link
@@ -32,245 +35,330 @@ avoidWhen:
     use: Menu
   - text: A consequence that needs a choice or typed confirmation before it happens.
     use: Dialog
-related:
-  - link
-  - menu
-  - segmented-control
-  - dialog
-  - animated-number
-  - icons
-  - accessibility
 components:
   - Button
   - IconButton
   - ConfirmButton
   - CopyButton
   - ButtonGroup
+examples:
+  CreateProject: overview
+  Icons: example
+  ConnectedButtons: example
+  OnePrimaryAction:
+    role: do
+    caption: One primary button per group, at the end of its actions.
+  SeveralPrimaryActions:
+    role: dont
+    caption: 'Several primary buttons: none of them stands out.'
+  ExplainWhatIsMissing:
+    role: do
+    caption: Let people press it, then show what is missing.
+  DisabledUntilValid:
+    role: dont
+    caption: A disabled button that doesn’t say why.
+  SayWhatWillHappen: example
+  DismissTip: example
+  RemovePeople:
+    role: example
+    caption: Beside others like it, each button names what it removes.
+  ButtonAnatomy: anatomy
+  Variants: variants
+  PrimaryTones:
+    role: example
+    caption: The three primary tones side by side, to compare them; a group still has one primary.
+  QuietToolbar: example
+  ButtonLinks: example
+  PendingAction: example
+  ConfirmInPlace: example
+  CopyValue: example
+  NarrowActions: example
+  FillSidebar:
+    role: example
+    caption: A button or a group can fill its container.
 ---
 
 # Button
 
-## Overview
+## Variants
 
-A button starts an action. With `href` it renders a native link that looks like a button, for a destination that should read as the next step. Every button is a native `<button>` or `<a>`, so focus, activation, form submission and the disabled state behave as the platform's.
-
-The family shares Button's variants and states:
-
-- **IconButton** shows only an icon, named by `aria-label`; it is Button with `iconOnly`, secondary by default.
-- **ConfirmButton** names the consequence on the first press and acts on the second, for an action that cannot be undone.
-- **CopyButton** copies a value and reports the result.
-- **ButtonGroup** connects buttons into one row or column.
-
-```tsx example=CreateProject
+```tsx figure=Variants
 
 ```
 
-## Anatomy
+1. **Primary**
+2. **Secondary**
+3. **Outline**
+4. **Ghost**
+5. **Text**
+6. **Primary, accent**
 
-1. **Container**: the fill, border and corners of the variant. Labelled buttons are pills; icon-only buttons are circles, except primary ones in the accent tone, which are rounded squares.
-2. **Start icon** (optional, `startIcon`): decorative, at the control icon size of 1 rem.
-3. **Label**: the button's text and its accessible name. It wraps when space runs out.
-4. **End icon** (optional, `endIcon`): decorative, such as a chevron for a next step.
-5. **Spinner** (while `pending`): replaces the content without changing the button's size.
-6. **Focus ring**: the shared ring, shown for keyboard focus.
+| Variant         | Tones                        | Use for                                                                   |
+| --------------- | ---------------------------- | ------------------------------------------------------------------------- |
+| Primary         | Neutral (brand blue), danger | The main action of a group. One per group.                                |
+| Secondary       | Neutral                      | Other actions.                                                            |
+| Outline         | Neutral, danger              | Other actions on panes, dialogs and rows.                                 |
+| Ghost           | Neutral, danger              | An application's chrome, such as a toolbar.                               |
+| Text            | Neutral (link blue), danger  | A link-like action, underlined where needed.                              |
+| Primary, accent | Accent                       | The main action, where it must stand apart from the brand blue around it. |
 
-A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the shared 0.5 rem radius and each end keeps its variant's outer corners.
+### Tones
 
-## Variants and sizes
+Only the main action and links are blue: the neutral tone keeps each variant's own color, and the danger tone colors the label, or a primary's fill.
 
-`variant` sets the emphasis and `tone` the meaning, in the designed pairs below; `tone` is `neutral` unless set.
+```tsx figure=PrimaryTones
 
-| Variant     | Tones                   | Use for                                                                          |
-| ----------- | ----------------------- | -------------------------------------------------------------------------------- |
-| `primary`   | neutral, accent, danger | The main action of a view or group. Use one per group.                           |
-| `secondary` | neutral                 | Other actions, on the neutral fill without a border.                             |
-| `outline`   | neutral, danger         | Other actions on panes, dialogs and rows, with a border.                         |
-| `ghost`     | neutral, danger         | Actions in an application's chrome, such as a sidebar toggle or a toolbar.       |
-| `text`      | neutral, danger         | A link-like action without fill, border or inset; `underline` adds an underline. |
+```
 
-| Tone      | Use for                                                                                                                                    |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `neutral` | Most actions. The default.                                                                                                                 |
-| `accent`  | On a primary button, a rare, consequential action that must stand out, with 0.5 rem corners.                                               |
-| `danger`  | An action that deletes or ends something: the strong danger fill on a primary button, the danger color on outline, ghost and text buttons. |
+### In a toolbar
 
-<!-- specimen: VariantMatrix -->
+A button without a variant of its own takes its container's, such as ghost in a toolbar.
 
-<!-- specimen: Sizes -->
+```tsx figure=QuietToolbar
 
-- **Sizes**: `sm` for a small action where space is short, such as in a toolbar beside small fields or in a table cell; `md` for most actions; `lg` for the one prominent call to action of a page.
-- `size` sets the height, the same for every control of that size in the app's [scale](../foundations/scale.md): `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. IconButton and CopyButton take the same sizes, and so do accent buttons. `fullWidth` makes a labelled button as wide as its container, such as the actions of a narrow form stacked in a column.
-- A button without a size takes the control height of its container: buttons in a table cell are `sm`, as are those in a title bar, a panel header or a message's actions. A button beside a field takes the field's size.
-- On touch screens a button grows to 2.75 rem, tall and wide, in either [scale](../foundations/scale.md), as every control of its row does; its own box is its hit area, so a press on it never reaches a button beside it. The buttons of a ButtonGroup grow with their group, which keeps its round ends.
-- Labels are 0.875 rem, 0.8125 rem in the compact scale, with 0.25 rem vertical and 0.75 rem horizontal padding. Buttons fit their content; a labelled button can shrink and wrap its label, while an icon-only button keeps its square size, also in a squeezed row.
-- Primary buttons are blue in both themes: the control blue with white labels in the light theme, and the link's soft blue with dark labels in the dark theme.
-- Secondary buttons use the neutral fill and label color without a border; the fill is a translucent layer of the text color, so they stay visible on rows, panes and dialogs. Outlined buttons keep their border and link color.
-- Ghost buttons take the quiet icon color, darken to the text color over a state layer on hover and press, and show the focus ring, with no fill or border. A ghost label reads at 4.5:1 on the canvas, panes and rows. In the danger tone, outline, ghost and text buttons take the danger color, with the danger state layer on hover and press.
-- An icon-only text button takes the link color and a state layer on hover and press. A container whose chrome is quiet, such as a field's end, sets `--env-button-text-icon-color` and `--env-button-text-icon-color-active` on its own element, never on the button: the icons of the text buttons inside take the first at rest and the second on hover and press. New code uses a ghost button there, which looks the same with no custom property.
-- A button without a `variant` takes the one its container gives, where that variant has the button's tone: buttons the application puts in a [Toolbar](../components/toolbar.md) are ghost, a `tone="danger"` one too, but a `tone="accent"` Button stays primary, since ghost has no accent. Otherwise a Button is primary, an IconButton and a CopyButton secondary, and a ConfirmButton outline at rest, or secondary when icon-only.
-- Only the designed pairs type-check: an IconButton, CopyButton or icon-only ConfirmButton without a `variant` is neutral, so a tone needs a variant that takes it. A pair outside them, which only code past the types can ask for, renders neutral, and a development build reports it in the console.
+```
 
-## States and behaviour
+### Links
 
-- **Hover, pressed, focus and disabled**: hover and pressed take each variant's hover and pressed color tokens, as [colors and themes](../foundations/colors.md) describes; disabled buttons use the shared disabled opacity.
-- **Pending**: while `pending` is true a spinner replaces the content at the same size; the button reports `aria-busy` and `aria-disabled`, and ignores activation, including form submission and navigation.
-- **Links**: with `href` the button is a native link, rendered through the `LinkProvider`'s link component so routing stays with the application. A disabled link has no destination, cannot be focused or followed, and reports `aria-disabled`.
-- **ConfirmButton**: the first press arms it. It turns into a primary button in the danger tone, shows `confirmLabel` and announces it with "Press again to confirm." A second press runs `onConfirm`; a double click only arms it, since a second press within 400 ms is ignored. <kbd>Esc</kbd>, leaving the button, disabling it, starting its work and `armedDuration` (4 seconds) disarm it. An icon-only ConfirmButton is round at rest and grows when armed to show its icon with the confirm label, keeping focus.
-- **CopyButton**: a press writes the text with the asynchronous Clipboard API, or with `write`, the application's own clipboard writer, such as a desktop shell's bridge; without clipboard access, such as on an insecure connection, it copies a selection of a hidden field instead, also inside a dialog. A `write` that rejects reports "Couldn’t copy". A function `value` runs at the press, and a promise keeps the button pending until it resolves. The icon turns into a check and "Copied" (or "Couldn’t copy") shows in the tooltip and is announced for about two seconds, again for each press; <kbd>Esc</kbd> hides it. An icon-only CopyButton shows its name in a tooltip on hover and focus, also while disabled.
-- **ButtonGroup**: horizontal buttons share a height and vertical buttons fill the group's width. Labels wrap, and a group scrolls locally if its controls cannot fit. With `fullWidth` the group fills its container: labelled buttons share the room the icon-only ones leave. Hidden buttons don't count for the end corners.
+A button can go to a page instead of acting. [Link](link.md) says when a destination takes a button's shape.
 
-<!-- specimen: InteractionStates -->
-
-## Content guidelines
-
-- Start with a verb and say what will happen, such as "Create project" or "Remove access". When the outcome is known, put it in the label: "Show 128 homes", "Assign to Morgan". AnimatedNumber keeps a count current while people choose.
-- Use sentence case and keep labels short; don't end them with punctuation.
-- Name an icon-only button after its action, not its icon: "Delete draft", not "Trash".
-- A ConfirmButton's `confirmLabel` names the consequence as a question, with what is affected: "Remove Morgan?", "Cancel plan · 3 lose access".
-- Name a CopyButton after what it copies: "Copy link", "Copy ID".
-- Avoid vague labels such as "Click here", "OK" or "Submit" when a specific verb fits.
-
-## Do and don't
-
-### Do
-
-- Use one primary button per group, and put it where the eye ends: at the end of a dialog's actions or a form.
-- Use `href` for destinations and `onClick` for actions.
-- Show `pending` on the button that started the work, instead of disabling the whole form.
-- Give every ButtonGroup and every icon-only button an accessible name.
-
-### Don't
-
-- Don't use several primary buttons side by side; reserve the accent tone for rare, consequential actions.
-- Don't disable a button to explain a missing requirement; let people press it and show what is missing.
-- Don't use a Button for a destination inside a sentence; use [Link](../components/link.md).
-- Don't confirm everyday actions; use ConfirmButton only where the action cannot be undone.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                                     | Action                                                                                         |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>         | Moves focus to the next or previous button; a ButtonGroup keeps every button in the tab order. |
-| <kbd>Enter</kbd>                                        | Activates a button or follows a link.                                                          |
-| <kbd>Space</kbd>                                        | Activates a button.                                                                            |
-| <kbd>Enter</kbd> or <kbd>Space</kbd> on a ConfirmButton | Arms it; pressed again after a moment, confirms.                                               |
-| <kbd>Esc</kbd> on an armed ConfirmButton                | Disarms it.                                                                                    |
-| <kbd>Esc</kbd> on a CopyButton                          | Hides the result of the last copy.                                                             |
-
-### envUI provides
-
-- Native `<button>` and `<a>` elements, with `type="button"` by default so a button inside a form doesn't submit it unless asked.
-- The shared focus ring, and buttons at least 2.75 rem tall and wide on coarse pointers.
-- `aria-busy` and `aria-disabled` while pending, and `aria-disabled` on disabled links, which leave the tab order.
-- Decorative icons hidden from assistive technology.
-- ConfirmButton's announcement of the armed state, since a changed label on a focused button is not reliably read.
-- CopyButton's announcement of each result in a visually hidden status, and its name in a tooltip when icon-only.
-- `role="group"` on ButtonGroup.
-
-### You provide
-
-- A label that says what happens, or an `aria-label` on icon-only buttons, ButtonGroups and icon-only ConfirmButtons and CopyButtons.
-- `type="submit"` on the button that submits a form.
-- The routing behind `href`, through `LinkProvider`.
-- A way to recover from a ConfirmButton action where possible, such as an undo.
-- Focus for after a confirmed action removes the button, as a row's Remove does: move it to the neighbouring row's button, or to what replaces the button, so it doesn't fall back to the page.
-
-## Examples
-
-### Variants
-
-One primary action per group; the others step down in emphasis.
-
-```tsx example=Variants
+```tsx figure=ButtonLinks
 
 ```
 
 ### Icons
 
-`startIcon` and `endIcon` add decorative icons beside the label. An icon-only button, IconButton or Button with `iconOnly`, needs an `aria-label`.
+A button takes an icon at its start or its end. An IconButton shows an icon alone, with a name for assistive technology.
 
-```tsx example=Icons
-
-```
-
-### Ghost actions in chrome
-
-Ghost buttons suit an application's chrome, such as a sidebar toggle or a section's actions inside a surface: the icon color, with a state layer on hover and press.
-
-```tsx example=QuietToolbar
+```tsx figure=Icons
 
 ```
 
-### Destinations
+### Groups
 
-With `href` a button is a native link. Text buttons read as links; `underline` adds an underline.
+A ButtonGroup joins related buttons in a row or a column.
 
-```tsx example=ButtonLinks
+- It joins buttons of one variant, or filled primary and secondary buttons, such as a split button.
+- A split button's menu half takes the main half's variant and tone, and shows a chevron. The hairline between the halves then reads as one action with its options, not two actions.
+- A group that mixes an outline, ghost or text button with another variant keeps them apart as whole pills, such as an outline Back beside a primary Next.
+
+```tsx figure=ConnectedButtons
 
 ```
+
+### Sizes
+
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md). A button without a size of its own takes its container's, such as small in a table cell, and beside a field it takes the field's.
+
+<!-- specimen: Sizes -->
+
+## Anatomy
+
+```tsx figure=ButtonAnatomy
+
+```
+
+1. **Container** (`env-button`)
+2. **Start icon** (`env-button > env-icon:first-child`, `startIcon`)
+3. **Label** (`env-button::text`)
+4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
+
+## Behaviour
+
+### States
+
+Hover, press, keyboard focus and disabled, for each variant.
+
+- Keyboard focus draws a ring just outside the button. On an outline button the ring lies on its edge, which takes the ring's color; in dark, a primary button's ring takes the text color, apart from its soft blue fill.
+- A text button's ring reaches a little past its label, which stays in line with the text around it.
+
+<!-- specimen: InteractionStates -->
 
 ### Pending work
 
-A pending button keeps its size, shows a spinner and ignores repeated presses until the work ends.
+While its work runs, a spinner turns over the button and presses do nothing.
 
-```tsx example=PendingAction
+- The label and icons stay in place but transparent, so the button keeps its width and its name.
 
-```
-
-### Say what will happen
-
-Put the outcome in the label when it is known. AnimatedNumber rolls a count that changes while choices are made.
-
-```tsx example=SayWhatWillHappen
+```tsx figure=PendingAction motion
 
 ```
 
 ### Confirm in place
 
-ConfirmButton names the consequence on the first press and acts on the second. It disarms after a few seconds, when focus leaves and on <kbd>Esc</kbd>.
+ConfirmButton arms on the first press and acts on the second.
 
-```tsx example=ConfirmInPlace
+- <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.
+- Its armed label is short, with no question mark: the verb, or the verb and object, "Remove Sam".
+
+```tsx figure=ConfirmInPlace motion
 
 ```
 
 ### Copy to the clipboard
 
-After a press the icon turns into a check, and Copied shows and is announced for about two seconds.
+CopyButton copies a value and shows Copied, or Couldn’t copy, for about two seconds.
 
-```tsx example=CopyValue
-
-```
-
-### Your own clipboard
-
-`write` copies through the application's own clipboard, here a stand-in that takes a moment; the button shows the result as it does for the browser's.
-
-```tsx example=CustomClipboard
+```tsx figure=CopyValue motion
 
 ```
 
-### Connected buttons
+### Adapting to width
 
-ButtonGroup connects related actions in a row or a column. Prefer the same variant within a group; mix variants when related actions need different emphasis.
+A label stays on one line and its button keeps its width, so let a row of buttons wrap: whole buttons move to the next line. Icon-only buttons keep their size.
 
-```tsx example=ConnectedButtons
+- A button that fills its container and the buttons of a ButtonGroup can't move, so their labels wrap instead.
+- On touch screens every button grows to the size of a fingertip.
+- An icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with the area it answers to.
+
+```tsx figure=NarrowActions widths="30 16" sweep
+
+```
+
+```tsx figure=FillSidebar
 
 ```
 
-### Fill a sidebar
+## Rules
 
-With `fullWidth` a group fills its container: the labelled button takes the room the menu's chevron leaves.
+A button says what will happen, and only the main action of a group stands out.
 
-```tsx example=FillSidebar
+```tsx figure=OnePrimaryAction
 
 ```
+
+```tsx figure=SeveralPrimaryActions
+
+```
+
+```tsx figure=ExplainWhatIsMissing motion
+
+```
+
+```tsx figure=DisabledUntilValid
+
+```
+
+### Labels
+
+Start with a verb that says what will happen. When the outcome is known, put it in the label.
+
+```tsx figure=SayWhatWillHappen motion
+
+```
+
+### Close and remove
+
+An IconButton with the Close cross closes, dismisses or removes what it sits in.
+
+- Name it Close, in the application's language.
+- Where several sit together, name what each removes.
+
+```tsx figure=DismissTip
+
+```
+
+```tsx figure=RemovePeople
+
+```
+
+## Accessibility
+
+### Keyboard
+
+| Key                                             | Action                                        |
+| ----------------------------------------------- | --------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to the next or previous button.         |
+| <kbd>Enter</kbd>                                | Activates a button or follows a link.         |
+| <kbd>Space</kbd>                                | Activates a button.                           |
+| <kbd>Esc</kbd>                                  | Disarms a ConfirmButton; hides a copy result. |
+
+### envUI provides
+
+- Native `<button>` and `<a>`, with `type="button"`.
+- `aria-busy` and `aria-disabled` while pending.
+- Announcements of ConfirmButton’s armed state and CopyButton’s result.
+- `role="group"` on ButtonGroup.
+
+### You provide
+
+- An `aria-label` on every icon-only button and ButtonGroup, or on an IconButton an `aria-labelledby` that points to visible text naming it.
+- `type="submit"` on the button that submits a form.
+- Routing behind `href`, through `LinkProvider`.
+- Focus for after a confirmed action removes the button.
+
+## Compose
+
+### Usage
+
+```tsx
+<Button onClick={save}>Save</Button>
+<Button variant="secondary">Cancel</Button>
+<Button tone="danger">Delete project</Button>
+<Button href="/projects">Open projects</Button>
+<Button startIcon={<IconAdd />}>Create project</Button>
+<Button pending={saving} onClick={save}>Save changes</Button>
+```
+
+A button without a `variant` or a `size` takes its container's, such as `ghost` in a Toolbar and `sm` in a table cell. With `href` it renders the router link from `LinkProvider`.
+
+#### Icon only
+
+```tsx
+import { IconButton } from '@envsemble/envui';
+
+<IconButton icon={<IconSettings />} aria-label="Project settings" />;
+```
+
+An IconButton takes its container's variant too, and is otherwise `secondary`.
+
+#### Confirm and copy
+
+```tsx
+import { ConfirmButton, CopyButton } from '@envsemble/envui';
+
+<ConfirmButton confirmLabel="Remove Sam" onConfirm={() => remove('sam')}>
+  Remove
+</ConfirmButton>
+<CopyButton value={shareLink} aria-label="Copy link" />
+```
+
+ConfirmButton with `icon` and an `aria-label` is icon-only until armed. When the confirmed action removes the button, move focus to what takes its place, as the ConfirmInPlace example does. CopyButton's `write` copies through a clipboard of the application's own.
+
+### Composition
+
+```tsx
+import { ButtonGroup } from '@envsemble/envui';
+
+<ButtonGroup aria-label="Project actions">
+  <Button>Open</Button>
+  <Button>Edit</Button>
+</ButtonGroup>;
+```
+
+`orientation="vertical"` stacks a group, every button as wide as it; `fullWidth` makes a button or a group fill its container. `end` holds quiet content after the label, at the far end of a wide button, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.
+
+The label's parts are flex items the button's gap spaces apart, such as its words and a Badge. Words with an AnimatedNumber or an inline element, such as `<strong>`, in their line stay one run of text, `env-button-text`, spaced by their own word spaces.
+
+### Customize
+
+Parts the anatomy doesn't show: the spinner, `env-button-spinner`, the end slot, `env-button-end`, and the group, `env-button-group`. A container that sets `--env-icon-button-hit-area: var(--env-control-height-touch)` gives its smaller icon buttons the touch size under a coarse pointer, as Alert and Toast do for their close buttons.
+
+A wrapper of your own that passes a variant and a tone on types them as Button does: `ButtonEmphasisProps`, the designed pairs of `variant` and `tone`, `IconButtonEmphasisProps`, IconButton's, and `ButtonAppearanceProps`, the pairs with `size`, `fullWidth` and `underline`.
 
 ## Changelog
 
-- **1.0.0**: `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge, CounterBadge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
-- **0.6.0**: The `quiet` variant on Button, IconButton and ConfirmButton; CopyButton; ButtonGroup `fullWidth`.
-- **0.5.0**: ConfirmButton `icon`, an icon-only form that grows when armed.
-- **0.4.0**: `pending` on Button and IconButton; ConfirmButton.
-- **0.1.0**: Button, IconButton and ButtonGroup.
+- **1.0.0**: `end`, a quiet slot at the far end for a shortcut's keys, in the button's content color, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
+- **1.0.0-prerelease.6**: A ghost button's press eases in and out as the other variants' do, in the same color, and a button's hover and press land from their first frame.
+- **1.0.0-prerelease.6**: A text button's press reads apart from its hover: pressed, a text button with a label lays a faint layer of its label's color behind it; a danger one darkens a step under the pointer and another while pressed, as the link blue does, and a pressed link blue is a step deeper in light.
+- **1.0.0-prerelease.6**: In dark, a danger primary is a saturated red with a white label, the deepest fill beside the soft primary and accent ones, rather than a pastel coral that weighed no more than Save; it lightens a step on hover and deepens a small step pressed, as they do.
+- **1.0.0-prerelease.6**: In dark, primary and accent primary buttons share one soft lightness and strength, the accent a soft lilac; each lightens a step on hover and, pressed, deepens a small step below rest rather than turning nearly white.
+- **1.0.0-prerelease.6**: An outline button's focus ring lies on its edge, which takes the ring's color, rather than around a gray or red edge; in dark, a primary button's ring takes the text color.
+- **1.0.0-prerelease.6**: A label keeps to one line and its button to its width, so a row short of room wraps whole buttons, not their words; a `fullWidth` button and a ButtonGroup's still wrap their labels. A vertical group of outline buttons shares straight edges, round only at the column's outer corners.
+- **1.0.0-prerelease.6**: An outline button's label and icon take the text color, `--env-color-fg-default`, rather than the brand blue, so beside a primary button it reads as the other choice; a text button keeps the link blue. Ghost, outline and text icon buttons in the danger tone lay a faint tint of the danger color on hover and press, from `--env-color-bg-danger-subtle-hover`, rather than the neutral grey.
+- **1.0.0-prerelease.6**: Every pending button, an icon button's included, shows a spinner of an icon's size centred over its transparent label, in the label's color, and keeps its width and name.
+- **1.0.0-prerelease.6**: In light, a danger primary darkens on hover and press as the default and accent primaries do; in dark, the soft primaries deepen by a clearer, even step.
+- **1.0.0-prerelease.6**: A disabled button no longer fades as a whole: its label and icon take `--env-color-fg-disabled`, a filled one half the secondary's neutral fill and an outline one the muted edge, so it stays readable, also in dark.
+- **1.0.0-prerelease.6**: An accent primary is a pill like every other button, rather than having square corners.
+- **1.0.0-prerelease.6**: A ButtonGroup's buttons meet with a hairline between them and small inner corners, so the group reads as one control with pill ends; outline buttons in a group share their edge. A group that mixes an outline, ghost or text button with another variant keeps its buttons apart as whole pills.
+- **1.0.0-prerelease.5**: An outline button is an edge with no fill at rest, the same on the page, a pane, a card or a popup; hover and press lay a state layer over the surface beneath it.

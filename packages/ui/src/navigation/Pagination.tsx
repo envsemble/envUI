@@ -3,13 +3,16 @@
 import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { IconButton, type ButtonVariant } from '../actions/Button.js';
-import { Tooltip } from '../feedback/Tooltip.js';
-import { ChevronLeft } from '../icons/ChevronLeft.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
+import { Tooltip } from '../overlays/Tooltip.js';
+import { IconChevronLeft } from '../icons/ChevronLeft.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
 import { classNames } from '../internal/classNames.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { useFormatters } from '../internal/useFormatters.js';
+import { Row } from '../layout/Layout.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { useFormatters } from '../internal/provider/useFormatters.js';
 import { pagination } from '../foundations/messages/pagination.js';
+import '../styles/Base.css';
+import '../styles/Pagination.css';
 
 /** The items a page shows, for the text of the range. */
 export interface PaginationRange {
@@ -25,8 +28,10 @@ export interface PaginationRange {
   pageCount?: number;
 }
 
-export interface PaginationProps
-  extends Omit<ComponentPropsWithRef<'nav'>, 'children' | 'onChange'> {
+export interface PaginationProps extends Omit<
+  ComponentPropsWithRef<'nav'>,
+  'children' | 'onChange'
+> {
   /**
    * The page shown, counted from 1. It is kept within the pages that exist, so a page beyond the
    * end shows the last one.
@@ -100,7 +105,7 @@ interface Press {
 }
 
 /**
- * A compact pager for toolbars: the range of items shown, such as 1–60 of 245, and icon buttons
+ * Compact pagination for toolbars: the range of items shown, such as 1–60 of 245, and icon buttons
  * for the previous and next pages, in a navigation landmark. The application loads the pages; the
  * range is announced as it changes, and focus stays on the button pressed.
  */
@@ -159,7 +164,7 @@ export function Pagination({
     return (
       <Tooltip content={name}>
         <IconButton
-          icon={direction === 'previous' ? <ChevronLeft /> : <ChevronRight />}
+          icon={direction === 'previous' ? <IconChevronLeft /> : <IconChevronRight />}
           aria-label={name}
           variant={variant}
           pending={loading}
@@ -178,11 +183,18 @@ export function Pagination({
   }
 
   return (
-    <nav
-      {...props}
-      aria-label={label ?? messages.label}
-      className={classNames('env-pagination', className)}
-      data-size={size}
+    <Row
+      wrap
+      align="center"
+      gap={1}
+      render={
+        <nav
+          {...props}
+          aria-label={label ?? messages.label}
+          className={classNames('env-pagination', className)}
+          data-size={size}
+        />
+      }
     >
       {/* Announced when it changes, as a page loads; its own direction keeps numbers in order. */}
       <span className="env-pagination-range" dir="auto" aria-live="polite" aria-atomic="true">
@@ -196,6 +208,6 @@ export function Pagination({
       </span>
       {pageButton('previous')}
       {pageButton('next')}
-    </nav>
+    </Row>
   );
 }

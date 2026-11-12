@@ -1,4 +1,0 @@
-[
-  "line 5: closeNarrowSidebar is useSidebar().dismiss() in 1.0, which closes the drawer, a peek or a held rail.",
-  "line 8: AppShell.Root: AppShell is made of parts in 1.0: AppShell.Root around AppShell.SkipLinks, a Sidebar.Root with the navigation, an AppShell.Header with the title and actions and an AppShell.Main with the page; move the props of one that spreads props by hand, as the migration guide's app frame section shows."
-]

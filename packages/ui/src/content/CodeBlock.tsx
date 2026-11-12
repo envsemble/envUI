@@ -2,16 +2,19 @@
 
 import { Fragment, useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { IconButton } from '../actions/Button.js';
-import { ContentCopy } from '../icons/ContentCopy.js';
-import { Check } from '../icons/Check.js';
-import { useTheme } from '../foundations/Theme.js';
+import { IconContentCopy } from '../icons/ContentCopy.js';
+import { IconCheck } from '../icons/Check.js';
 import { codeBlock as codeBlockMessages } from '../foundations/messages/codeBlock.js';
 import { classNames } from '../internal/classNames.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { Row } from '../layout/Layout.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useCopy } from '../internal/useCopy.js';
-import { codeThemeStyle } from './internal/CodeThemes.js';
+import { useCodeContrast } from './internal/useCodeContrast.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
 import { tokenStyle } from './internal/codeTokenStyle.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Code.css';
 
 export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The source, as one string; it is shown, highlighted and copied as it is. */
@@ -40,16 +43,15 @@ export function CodeBlock({
   copyable = false,
   wrap = false,
   className,
-  style,
   ...props
 }: CodeBlockProps) {
-  const { theme } = useTheme();
   const messages = useMessages('codeBlock', codeBlockMessages);
-  const tokens = useCodeHighlighting(source, language);
+  const preRef = useRef<HTMLPreElement>(null);
+  const contrast = useCodeContrast(preRef);
+  const tokens = useCodeHighlighting(source, language, contrast === 'high');
   // Copied or failed shows for three seconds; where the clipboard fails, the code is selected for
   // people to copy themselves.
   const { copy, status, reset } = useCopy({ resetAfter: 3_000 });
-  const preRef = useRef<HTMLPreElement>(null);
   useEffect(() => reset(), [source, reset]);
 
   async function copySource(button: HTMLElement) {
@@ -64,24 +66,19 @@ export function CodeBlock({
   }
   const lineEndings = source.match(/\r\n|\r|\n/g) ?? [];
   return (
-    <div
-      {...props}
-      className={classNames('env-code-block', className)}
-      data-wrap={wrap || undefined}
-      style={{ ...codeThemeStyle(theme), ...style }}
-    >
+    <div {...props} className={classNames('env-code-block', className)} data-wrap={flag(wrap)}>
       {(label || copyable) && (
-        <div className="env-code-block-heading">
+        <Row wrap align="center" justify="between" gap={4} className="env-code-block-header">
           <span>{label ?? language ?? messages.title}</span>
           {copyable && (
             <IconButton
               variant="ghost"
-              icon={status === 'copied' ? <Check /> : <ContentCopy />}
+              icon={status === 'copied' ? <IconCheck /> : <IconContentCopy />}
               aria-label={status === 'copied' ? messages.copied : messages.copy}
               onClick={(event) => void copySource(event.currentTarget)}
             />
           )}
-        </div>
+        </Row>
       )}
       <pre
         ref={preRef}
@@ -93,7 +90,7 @@ export function CodeBlock({
             ? tokens.map((line, index) => (
                 <Fragment key={index}>
                   {line.map((token, tokenIndex) => (
-                    <span key={tokenIndex} style={tokenStyle(token[theme], token[`${theme}High`])}>
+                    <span key={tokenIndex} style={tokenStyle(token)}>
                       {token.content}
                     </span>
                   ))}

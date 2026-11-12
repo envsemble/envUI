@@ -1,7 +1,9 @@
-/* Motion: the theme toggle's new icon settles into size. Only without a reduced-motion
-   preference. */
-@media (prefers-reduced-motion: no-preference) {
-  .env-theme-toggle .env-icon > svg {
-    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+@layer env.components {
+  /* Motion: the theme toggle's new icon settles into size. Only without a reduced-motion
+     preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-theme-toggle .env-icon > svg {
+      animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+    }
   }
 }

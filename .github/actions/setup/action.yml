@@ -1,0 +1,78 @@
+name: Set up
+description: Node, the dependencies, and the Playwright browsers a job names, each cached.
+inputs:
+  browsers:
+    description: >-
+      Space-separated Playwright browsers to install: chromium-shell (the headless shell, all
+      headless Chromium needs), firefox or webkit. Empty installs none.
+    default: ''
+  registry-url:
+    description: The npm registry a job that publishes authenticates with, for the @envsemble scope.
+    default: ''
+  install-scripts:
+    description: >-
+      'false' installs without the dependencies' install scripts, as a job holding a write token
+      does.
+    default: 'true'
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      with:
+        node-version: 24
+        cache: npm
+        registry-url: ${{ inputs.registry-url }}
+        scope: ${{ inputs.registry-url && '@envsemble' || '' }}
+    # With npm's cache restored, about 5 s.
+    - shell: bash
+      env:
+        IGNORE_SCRIPTS: ${{ inputs.install-scripts == 'false' && '--ignore-scripts' || '' }}
+      run: npm ci --no-audit --no-fund $IGNORE_SCRIPTS
+    - name: Read the Playwright version
+      id: playwright
+      if: ${{ inputs.browsers != '' }}
+      shell: bash
+      env:
+        BROWSERS: ${{ inputs.browsers }}
+      run: |
+        echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+        echo "key=$(echo "$BROWSERS" | tr ' ' '-')" >> "$GITHUB_OUTPUT"
+    # One key per set of browsers, so a job restores only what it launches. Headless Chromium runs
+    # the headless shell, so the full browser is never downloaded.
+    - name: Restore the browsers
+      id: cache
+      if: ${{ inputs.browsers != '' }}
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ steps.playwright.outputs.key }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.playwright.outputs.version }}
+    - name: Install the browsers
+      if: ${{ inputs.browsers != '' && steps.cache.outputs.cache-hit != 'true' }}
+      shell: bash
+      env:
+        BROWSERS: ${{ inputs.browsers }}
+      run: |
+        for browser in $BROWSERS; do
+          if [ "$browser" = chromium-shell ]; then
+            npx playwright install --only-shell chromium
+          else
+            npx playwright install "$browser"
+          fi
+        done
+    # Playwright refuses to launch a browser whose system libraries are missing, so a launch, about
+    # a second, tells whether to install them: apt took 11 s for Chromium on every run.
+    - name: Install the browsers' missing system libraries
+      if: ${{ inputs.browsers != '' }}
+      shell: bash
+      env:
+        BROWSERS: ${{ inputs.browsers }}
+      run: |
+        read -ra engines <<< "${BROWSERS//chromium-shell/chromium}"
+        if ! node -e '
+          const playwright = require("@playwright/test");
+          (async () => {
+            for (const name of process.argv.slice(1)) await (await playwright[name].launch()).close();
+          })().catch((error) => { console.error(error.message); process.exit(1); });
+        ' "${engines[@]}"; then
+          npx playwright install-deps "${engines[@]}"
+        fi

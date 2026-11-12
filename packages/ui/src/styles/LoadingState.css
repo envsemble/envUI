@@ -1,5 +1,0 @@
-.env-loading-state {
-  min-inline-size: 0;
-  display: grid;
-  gap: var(--env-space-2);
-}

@@ -1,447 +1,544 @@
-/* Panels docked to the bottom inline-end edge of a region, beside the page: open panels side by side
-   in a row, one maximized panel filling the region behind them, and minimized panels as tabs in a
-   strip along the bottom. The dock fills its positioned container
-   and lets presses through around its panels. State attributes come from PanelDock. */
-.env-panel-dock {
-  --env-panel-dock-gap: var(--env-space-2);
-  /* Room around the row and the strip for the panels' shadows. */
-  --env-panel-dock-gutter: var(--env-space-5);
-  --env-panel-dock-tab-height: var(--env-control-height-sm);
-  /* The height of the header's small controls, which a coarse pointer raises to the touch height. */
-  --env-panel-dock-control: var(--env-control-height-sm);
-  --env-panel-dock-strip-size: 0rem;
-  --env-panel-dock-shadow: var(--env-elevation-2-shadow);
-  --env-panel-dock-active-shadow: var(--env-elevation-3-shadow);
-  position: absolute;
-  inset: 0;
-  z-index: calc(var(--env-z-sticky) - 1);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-inline-size: 0;
-  overflow: clip;
-  pointer-events: none;
-}
-.env-panel-dock[data-tabs] {
-  --env-panel-dock-strip-size: calc(var(--env-panel-dock-tab-height) + var(--env-space-2));
-}
-/* While a panel fills the region, the dock covers what lies beneath it, also around the tabs. */
-.env-panel-dock[data-filled] {
-  background: var(--env-color-bg-page);
-  pointer-events: auto;
-}
-
-/* The row never positions, transforms or contains its panels, so a maximized panel inside it fills
-   the dock instead of the row, and does not scroll with it. */
-.env-panel-dock-row {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--env-panel-dock-gap);
-  min-block-size: 0;
-  padding: var(--env-panel-dock-gutter) var(--env-panel-dock-gutter) 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scrollbar-width: thin;
-}
-/* Free room gathers before the panels, so they sit at the inline end; once they overflow, the row
-   scrolls from its start. The spacer takes no gap of its own. */
-.env-panel-dock-row::before,
-.env-panel-dock-strip::before {
-  content: '';
-  flex: 1 0 0;
-  margin-inline-end: calc(-1 * var(--env-panel-dock-gap));
-}
-/* An overflowing row takes the pointer, so its scrollbar works. */
-.env-panel-dock-row[data-overflowing] {
-  pointer-events: auto;
-}
-/* Open panels above a maximized one keep its header's first row in view. */
-.env-panel-dock[data-filled]:not([data-stacked]) > .env-panel-dock-row {
-  padding-block-start: calc(
-    var(--env-panel-dock-control) + 2 * var(--env-space-3) + var(--env-space-2)
-  );
-}
-
-/* A panel is the raised dialog surface with a hairline border and a shadow, rounded at the top and
-   standing on the bottom edge. It shares the row with its preferred width and shrinks toward its
-   minimum width when the row runs out of room. */
-.env-panel-dock-panel {
-  --env-panel-dock-panel-color: var(--env-color-bg-raised);
-  position: relative;
-  z-index: var(--env-z-raised);
-  flex: 0 1 var(--env-panel-dock-panel-width, 32rem);
-  min-inline-size: var(--env-panel-dock-panel-min-width, 20rem);
-  max-inline-size: var(--env-panel-dock-panel-max-width, 48rem);
-  block-size: var(--env-panel-dock-panel-height, 28rem);
-  display: flex;
-  flex-direction: column;
-  border: 0.0625rem solid var(--env-elevation-2-border);
-  border-block-end: 0;
-  border-start-start-radius: var(--env-radius-surface);
-  border-start-end-radius: var(--env-radius-surface);
-  background: var(--env-panel-dock-panel-color);
-  box-shadow: var(--env-panel-dock-shadow);
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-  overflow-wrap: anywhere;
-  pointer-events: auto;
-  outline: none;
-}
-/* The active panel is in front. */
-.env-panel-dock-panel[data-active] {
-  z-index: calc(var(--env-z-raised) + 1);
-  box-shadow: var(--env-panel-dock-active-shadow);
-}
-.env-panel-dock-panel:focus-visible,
-.env-panel-dock-content:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: -0.125rem;
-}
-/* A maximized panel, or the one panel a stacked dock shows, fills the region above the tabs,
-   behind the open panels. */
-.env-panel-dock-panel[data-placement='fill'] {
-  position: absolute;
-  inset: 0 0 var(--env-panel-dock-strip-size);
-  z-index: var(--env-z-base);
-  min-inline-size: 0;
-  max-inline-size: none;
-  block-size: auto;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
-/* Minimized panels, and those a stacked dock leaves out, keep their content and its scroll
-   positions out of sight: inert, invisible and out of the row. */
-.env-panel-dock-panel[data-placement='hidden'] {
-  position: absolute;
-  inset-block-end: 0;
-  inset-inline-end: 0;
-  z-index: calc(var(--env-z-base) - 1);
-  inline-size: min(var(--env-panel-dock-panel-width, 32rem), 100%);
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
-/* The content scrolls within the panel; a PanelDock.Header sticks to its top. Scroll padding as
-   tall as the header, which measures itself, and a little more for focus rings, brings a control
-   that takes focus out from beneath it (WCAG 2.4.11). */
-.env-panel-dock-content {
-  flex: 1 1 auto;
-  min-block-size: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  overscroll-behavior-block: contain;
-  scroll-padding-block-start: calc(var(--env-panel-dock-header-size, 0px) + var(--env-space-2));
-  border-start-start-radius: inherit;
-  border-start-end-radius: inherit;
-  outline: none;
-}
-/* The top edge resizes an open panel. It reaches a little above the panel, between its rounded
-   corners; a short bar shows on hover and takes the focus color with the keyboard and while
-   dragging. */
-.env-panel-dock-resize {
-  position: absolute;
-  inset-block-start: -0.375rem;
-  inset-inline: var(--env-radius-surface);
-  z-index: calc(var(--env-z-raised) + 1);
-  block-size: 0.75rem;
-  cursor: ns-resize;
-  touch-action: none;
-  outline: none;
-}
-.env-panel-dock-resize::after {
-  content: '';
-  position: absolute;
-  inset-block-start: 0.5rem;
-  inset-inline-start: calc(50% - 1.25rem);
-  inline-size: 2.5rem;
-  block-size: 0.25rem;
-  border-radius: var(--env-radius-full);
-  background: var(--env-color-border-muted);
-  opacity: 0;
-  transition:
-    opacity var(--env-motion-duration-fast) var(--env-motion-ease),
-    background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-panel-dock-resize:is(:hover, :focus-visible)::after,
-.env-panel-dock-panel[data-resizing] > .env-panel-dock-resize::after {
-  opacity: 1;
-}
-.env-panel-dock-resize:hover::after {
-  background: var(--env-color-border-muted-hover);
-}
-.env-panel-dock-resize:focus-visible::after,
-.env-panel-dock-panel[data-resizing] > .env-panel-dock-resize::after {
-  background: var(--env-color-border-focus);
-}
-/* While dragging, the panel selects no text and leaves embedded content, such as a frame, alone. */
-.env-panel-dock-panel[data-resizing] {
-  -webkit-user-select: none;
-  user-select: none;
-}
-.env-panel-dock-panel[data-resizing] > .env-panel-dock-content {
-  pointer-events: none;
-}
-
-/* A panel's header sticks to the top of its content: the title and its metadata at the start, the
-   application's actions and the window controls at the end, small like a title bar's. The title
-   keeps about 10 rem beside them; in a narrower panel they take a row of their own, above the
-   title, rather than squeezing it. Rows stack upward, so content below the title, such as Tabs,
-   comes first. */
-.env-panel-dock-header {
-  --env-control-height: var(--env-control-height-sm);
-  position: sticky;
-  inset-block-start: 0;
-  z-index: var(--env-z-raised);
-  display: flex;
-  flex-wrap: wrap-reverse;
-  align-items: start;
-  column-gap: var(--env-space-3);
-  row-gap: var(--env-space-2);
-  padding-block: var(--env-space-3);
-  padding-inline: var(--env-space-5) var(--env-space-3);
-  background: var(--env-panel-dock-panel-color, var(--env-color-bg-raised));
-  color: var(--env-color-fg-default);
-}
-.env-panel-dock-heading {
-  flex: 1 1 10rem;
-  min-inline-size: 0;
-  display: grid;
-  gap: 0.125rem;
-  /* Long words break only where they would overflow the line. */
-  overflow-wrap: break-word;
-}
-/* The first line of the title lines up with the small controls beside it. */
-.env-panel-dock-title {
-  margin: 0;
-  padding-block-start: max(0rem, calc((var(--env-panel-dock-control) - 1.4em) / 2));
-  font: var(--env-type-h1);
-  overflow-wrap: break-word;
-}
-.env-panel-dock-meta {
-  min-inline-size: 0;
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-.env-panel-dock-actions,
-.env-panel-dock-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.125rem;
-}
-/* On a row of their own the actions stay at the inline end. */
-.env-panel-dock-actions {
-  flex: 0 0 auto;
-  margin-inline-start: auto;
-}
-.env-panel-dock-header-content {
-  order: -1;
-  flex: 1 0 100%;
-  min-inline-size: 0;
-  margin-block-start: var(--env-space-1);
-}
-/* Once the content scrolls beneath it, a hairline in the panel's border color sets the header
-   apart, so text its edge cuts reads as scrolled away rather than broken. */
-.env-panel-dock-header {
-  transition: box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-panel-dock-header[data-scrolled] {
-  box-shadow: 0 0.0625rem 0 var(--env-color-border-muted);
-}
-
-/* Minimized panels wait as tabs along the bottom, at the inline end: a button that brings the
-   panel back and a close button. The strip scrolls sideways with the wheel, touch and the keyboard;
-   a scrollbar would cover the tabs. */
-.env-panel-dock-strip {
-  position: relative;
-  z-index: calc(var(--env-z-raised) + 2);
-  flex: 0 0 auto;
-  display: flex;
-  align-items: flex-end;
-  gap: var(--env-panel-dock-gap);
-  margin: 0;
-  padding: var(--env-space-2) var(--env-panel-dock-gutter) 0;
-  list-style: none;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-}
-.env-panel-dock-strip::-webkit-scrollbar {
-  display: none;
-}
-.env-panel-dock-tab {
-  flex: 0 0 auto;
-  max-inline-size: 14rem;
-  block-size: var(--env-panel-dock-tab-height);
-  display: flex;
-  align-items: center;
-  border: 0.0625rem solid var(--env-elevation-2-border);
-  border-block-end: 0;
-  border-start-start-radius: var(--env-radius-sm);
-  border-start-end-radius: var(--env-radius-sm);
-  background: var(--env-color-bg-popup);
-  box-shadow: var(--env-panel-dock-shadow);
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body-small);
-  pointer-events: auto;
-}
-.env-panel-dock-tab-restore {
-  flex: 1 1 auto;
-  align-self: stretch;
-  min-inline-size: 0;
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-2);
-  padding-block: 0;
-  padding-inline: var(--env-space-3) var(--env-space-1);
-  border: 0;
-  border-start-start-radius: inherit;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: start;
-  white-space: nowrap;
-  cursor: pointer;
-  outline: none;
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-panel-dock-tab-restore:hover {
-  background: var(--env-color-bg-neutral-subtle-hover);
-}
-.env-panel-dock-tab-restore:active {
-  background: var(--env-color-bg-neutral-subtle-pressed);
-}
-.env-panel-dock-tab .env-icon {
-  inline-size: var(--env-control-icon-size);
-  block-size: var(--env-control-icon-size);
-  color: var(--env-color-fg-muted);
-}
-.env-panel-dock-tab-label {
-  min-inline-size: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* The attention dot, such as for unsaved changes, follows the label. */
-.env-panel-dock-tab-attention {
-  flex: 0 0 auto;
-  inline-size: 0.5rem;
-  block-size: 0.5rem;
-  border-radius: 50%;
-  background: var(--env-color-fg-accent);
-}
-/* The close button, a CloseButton, is a small circle beside the restore button; under a coarse
-   pointer it takes the touch size, as every button does. */
-.env-panel-dock-tab-close {
-  --env-control-height: 1.5rem;
-  margin-inline: 0.125rem var(--env-space-1);
-}
-.env-panel-dock-tab-close .env-icon {
-  color: inherit;
-}
-.env-panel-dock-tab-restore:focus-visible,
-.env-panel-dock-tab-close:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: -0.125rem;
-}
-
-/* Measures the stackBelow width in the dock's own text size. It lies before the inline start, where
-   overflow is never scrollable. */
-.env-panel-dock-probe {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline-end: 100%;
-  block-size: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-@media (pointer: coarse) {
-  /* Tabs are rows of the strip, which grow to the touch height. */
+@layer env.components {
+  /* Panels docked to the bottom inline-end edge of a region, beside the page: open panels side by side
+     in a row, one maximized panel filling the region behind them, and minimized panels as tabs in a
+     strip that floats over the bottom edge, so a tab coming or going never moves the open panels. The
+     dock fills its positioned container and lets presses through around its panels. State attributes
+     come from PanelDock. */
   .env-panel-dock {
-    /* A tab holds its buttons at the touch height inside its top hairline. */
-    --env-panel-dock-tab-height: calc(
-      max(var(--env-control-height-sm), var(--env-control-height-touch)) +
-        var(--env-control-border-width)
+    --env-panel-dock-gap: var(--env-space-2);
+    /* Room around the row and the strip, between the panels and the region's edges. */
+    --env-panel-dock-gutter: var(--env-space-5);
+    --env-panel-dock-tab-height: var(--env-control-height-sm);
+    /* The height of the header's small controls, which a coarse pointer raises to the touch height. */
+    --env-panel-dock-control: var(--env-control-height-sm);
+    /* The strip's height while there are tabs: the room a panel filling the region leaves below it,
+       and the room open panels' content keeps clear at its end. */
+    --env-panel-dock-strip-size: 0rem;
+    /* The dock is the env-panel-dock container, and its font size is stackBelow / 37.5, so 37.5em in
+       its queries is stackBelow (em in a container query is the container's own; panels and tabs set
+       their own text). */
+    container: env-panel-dock / inline-size;
+    font-size: calc(var(--env-panel-dock-stack-below) / 37.5);
+    position: absolute;
+    inset: 0;
+    z-index: calc(var(--env-z-sticky) - 1);
+    overflow: clip;
+    pointer-events: none;
+  }
+  .env-panel-dock[data-tabs] {
+    --env-panel-dock-strip-size: calc(var(--env-panel-dock-tab-height) + var(--env-space-2));
+  }
+  /* While a panel fills the region, the dock covers what lies beneath it, also around the tabs. */
+  .env-panel-dock[data-filled] {
+    background: var(--env-color-bg-page);
+    pointer-events: auto;
+  }
+
+  /* The row never positions, transforms or contains its panels, so a maximized panel inside it fills
+     the dock instead of the row, and does not scroll with it. */
+  .env-panel-dock-row {
+    gap: var(--env-panel-dock-gap);
+    min-block-size: 0;
+    padding: var(--env-panel-dock-gutter) var(--env-panel-dock-gutter) 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+  /* Free room gathers before the panels, so they sit at the inline end; once they overflow, the row
+     scrolls from its start. The spacer takes no gap of its own. */
+  .env-panel-dock-row::before,
+  .env-panel-dock-strip::before {
+    content: '';
+    flex: 1 0 0;
+    margin-inline-end: calc(-1 * var(--env-panel-dock-gap));
+  }
+  /* An overflowing row takes the pointer, so its scrollbar works. */
+  .env-panel-dock-row[data-overflowing] {
+    pointer-events: auto;
+  }
+  /* Open panels above a maximized one keep its header's first row in view. */
+  .env-panel-dock[data-filled]:not([data-stacked]) > .env-panel-dock-row {
+    padding-block-start: calc(
+      var(--env-panel-dock-control) + 2 * var(--env-space-3) + var(--env-space-2)
     );
-    /* The header's controls grow to the touch height, as every button does. */
-    --env-panel-dock-control: max(var(--env-control-height-sm), var(--env-control-height-touch));
   }
-  /* A finger reaches the top edge across a larger band, and the bar always shows. */
-  .env-panel-dock-resize {
-    inset-block-start: -0.75rem;
-    block-size: 1.5rem;
+
+  /* A panel is the raised dialog surface with a hairline edge, rounded at the top and standing on
+     the bottom edge. It shares the row with its preferred width and shrinks toward its minimum width
+     when the row runs out of room. */
+  .env-panel-dock-panel {
+    --env-panel-dock-panel-color: var(--env-color-bg-raised);
+    /* A panel's sizes until it sets its own: its preferred width, the narrowest and widest it
+       takes, and its height. */
+    --env-panel-dock-panel-default-width: 32rem;
+    --env-panel-dock-panel-default-min-width: 20rem;
+    --env-panel-dock-panel-default-max-width: 48rem;
+    --env-panel-dock-panel-default-height: 28rem;
+    position: relative;
+    z-index: var(--env-z-raised);
+    flex: 0 1 var(--env-panel-dock-panel-width, var(--env-panel-dock-panel-default-width));
+    min-inline-size: var(
+      --env-panel-dock-panel-min-width,
+      var(--env-panel-dock-panel-default-min-width)
+    );
+    max-inline-size: var(
+      --env-panel-dock-panel-max-width,
+      var(--env-panel-dock-panel-default-max-width)
+    );
+    block-size: var(--env-panel-dock-panel-height, var(--env-panel-dock-panel-default-height));
+    border: 1px solid var(--env-elevation-2-border);
+    border-block-end: 0;
+    border-start-start-radius: var(--env-radius-surface);
+    border-start-end-radius: var(--env-radius-surface);
+    background: var(--env-panel-dock-panel-color);
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body);
+    overflow-wrap: break-word;
+    pointer-events: auto;
+    outline: none;
   }
-  .env-panel-dock-resize::after {
-    inset-block-start: 0.875rem;
+  /* The active panel is in front, and its edge takes the accent, the one cue that tells it from the
+     panels beside it; under high contrast the others' edge is already the default border. */
+  .env-panel-dock-panel[data-active] {
+    z-index: calc(var(--env-z-raised) + 1);
+    border-color: var(--env-color-border-primary-emphasis);
+  }
+  .env-panel-dock-panel:focus-visible,
+  .env-panel-dock-content:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
+  }
+  /* A maximized panel, or the one panel a stacked dock shows, fills the region above the tabs,
+     behind the open panels. */
+  .env-panel-dock-panel[data-placement='fill'] {
+    position: absolute;
+    inset: 0 0 var(--env-panel-dock-strip-size);
+    z-index: var(--env-z-base);
+    min-inline-size: 0;
+    max-inline-size: none;
+    block-size: auto;
+    border: 0;
+    border-radius: 0;
+  }
+  /* Minimized panels, and those a stacked dock leaves out, keep their content and its scroll
+     positions out of sight: inert, invisible and out of the row. */
+  .env-panel-dock-panel[data-placement='hidden'] {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    z-index: calc(var(--env-z-base) - 1);
+    inline-size: min(
+      var(--env-panel-dock-panel-width, var(--env-panel-dock-panel-default-width)),
+      100%
+    );
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* The content scrolls within the panel; a PanelDock.Header sticks to its top. Scroll padding as
+     tall as the header, which measures itself, and a little more for focus rings, brings a control
+     that takes focus out from beneath it (WCAG 2.4.11); at the end, the same for the tabs. */
+  .env-panel-dock-content {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    overscroll-behavior-block: contain;
+    --env-panel-dock-no-header: 0rem;
+    scroll-padding-block-start: calc(
+      var(--env-panel-dock-header-size, var(--env-panel-dock-no-header)) + var(--env-space-2)
+    );
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+    outline: none;
+  }
+  /* The tabs float over the bottom of the open panels, which keep their place. Their content keeps
+     the tabs' height clear at its end, so its last lines and actions scroll out from beneath them, and
+     content that fills the panel ends above them; content shorter than the panel doesn't move. */
+  .env-panel-dock-panel[data-placement='row'] > .env-panel-dock-content {
+    padding-block-end: var(--env-panel-dock-strip-size);
+    scroll-padding-block-end: calc(var(--env-panel-dock-strip-size) + var(--env-space-2));
+  }
+  /* The top edge resizes an open panel. It reaches a little above the panel, between its rounded
+     corners; a short bar shows on hover and takes the focus color with the keyboard and while
+     dragging. */
+  .env-panel-dock-resize-handle {
+    /* The band the pointer finds, half of it above the panel, wider under a coarse pointer. */
+    --env-panel-dock-resize-band: 0.75rem;
+    position: absolute;
+    inset-block-start: calc(var(--env-panel-dock-resize-band) / -2);
+    inset-inline: var(--env-radius-surface);
+    z-index: calc(var(--env-z-raised) + 1);
+    block-size: var(--env-panel-dock-resize-band);
+    cursor: ns-resize;
+    touch-action: none;
+    outline: none;
+  }
+  .env-panel-dock-resize-handle::after {
+    /* The bar, centred, a little below the panel's edge. */
+    --env-panel-dock-resize-bar-top: 0.5rem;
+    --env-panel-dock-resize-bar-width: 2.5rem;
+    content: '';
+    position: absolute;
+    inset-block-start: var(--env-panel-dock-resize-bar-top);
+    inset-inline-start: calc(50% - var(--env-panel-dock-resize-bar-width) / 2);
+    inline-size: var(--env-panel-dock-resize-bar-width);
+    block-size: var(--env-space-1);
+    border-radius: var(--env-radius-full);
+    background: var(--env-color-border-muted);
+    opacity: 0;
+    transition:
+      opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  .env-panel-dock-resize-handle:is(:hover, :focus-visible)::after,
+  .env-panel-dock-panel[data-resizing] > .env-panel-dock-resize-handle::after {
     opacity: 1;
   }
-  .env-panel-dock-tab-close {
-    margin-inline: 0;
+  .env-panel-dock-resize-handle:hover::after {
+    background: var(--env-color-border-muted-hover);
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-panel-dock-header,
-  .env-panel-dock-resize::after,
-  .env-panel-dock-tab-restore {
-    transition: none;
+  .env-panel-dock-resize-handle:focus-visible::after,
+  .env-panel-dock-panel[data-resizing] > .env-panel-dock-resize-handle::after {
+    background: var(--env-color-border-focus);
   }
-}
+  /* While dragging, the panel selects no text and leaves embedded content, such as a frame, alone. */
+  .env-panel-dock-panel[data-resizing] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .env-panel-dock-panel[data-resizing] > .env-panel-dock-content {
+    pointer-events: none;
+  }
 
-/* Motion: docked panels and their tabs fade in where they show; a panel that comes to fill the
-   region fades in afresh, also from the row. Without a reduced-motion preference panels rise from
-   the bottom edge into the row, a panel grows into the region it fills, and tabs rise into their
-   strip. PanelDock marks an entrance with data-entering until it ends, so a reorder, which moves
-   the elements, does not play it again. */
-.env-panel-dock-panel[data-entering][data-placement='row'],
-.env-panel-dock-tab[data-entering] {
-  animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
-}
-.env-panel-dock-panel[data-entering][data-placement='fill'] {
-  animation: env-panel-dock-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .env-panel-dock-panel[data-entering][data-placement='row'] {
-    animation: env-panel-dock-rise var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  /* A panel's header sticks to the top of its content: the title and its metadata at the start, the
+     application's actions and the window controls at the end, small like a title bar's. The title
+     keeps about 10 rem beside them; in a narrower panel they take a row of their own, above the
+     title, rather than squeezing it. Rows stack upward, so content below the title, such as Tabs,
+     comes first. */
+  .env-panel-dock-header {
+    --env-control-height: var(--env-control-height-sm);
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--env-z-raised);
+    display: flex;
+    flex-wrap: wrap-reverse;
+    align-items: start;
+    column-gap: var(--env-space-3);
+    row-gap: var(--env-space-2);
+    padding-block: var(--env-space-3);
+    padding-inline: var(--env-space-5) var(--env-space-3);
+    background: var(--env-panel-dock-panel-color, var(--env-color-bg-raised));
+    color: var(--env-color-fg-default);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  .env-panel-dock-heading {
+    /* The title's least room before the actions wrap below it. */
+    --env-panel-dock-heading-min-width: 10rem;
+    flex: 1 1 var(--env-panel-dock-heading-min-width);
+    gap: calc(var(--env-space-1) / 2);
+    /* Long words break only where they would overflow the line. */
+    overflow-wrap: break-word;
+  }
+  /* The first line of the title lines up with the small controls beside it. */
+  .env-panel-dock-title {
+    /* Half of what the controls are taller than its line, or none where they are not. */
+    --env-panel-dock-title-inset: max(
+      0rem,
+      calc((var(--env-panel-dock-control) - var(--env-type-headline-line-height)) / 2)
+    );
+    margin: 0;
+    padding-block-start: var(--env-panel-dock-title-inset);
+    font: var(--env-type-headline);
+    letter-spacing: var(--env-type-headline-letter-spacing);
+    overflow-wrap: break-word;
+  }
+  .env-panel-dock-meta {
+    min-inline-size: 0;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
+  }
+  .env-panel-dock-actions,
+  .env-panel-dock-controls {
+    gap: calc(var(--env-space-1) / 2);
+  }
+  /* On a row of their own the actions stay at the inline end. */
+  .env-panel-dock-actions {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+  }
+  .env-panel-dock-header-content {
+    order: -1;
+    flex: 1 0 100%;
+    min-inline-size: 0;
+    margin-block-start: var(--env-space-1);
+  }
+  /* Once the content scrolls beneath it, the header takes the default surface, a step below the
+     panel's raised one toward the page, which sets it apart without a line, so text its edge cuts
+     reads as scrolled away rather than broken. */
+  .env-panel-dock-header[data-scrolled] {
+    background-color: var(--env-color-bg-default);
+  }
+
+  /* Minimized panels wait as tabs along the bottom, at the inline end: a button that brings the
+     panel back and a close button. The strip floats over the bottom edge, in front of the open
+     panels, and lets presses through around its tabs. It comes after the panels, so focus reaches the
+     tabs after them. The strip scrolls sideways with the wheel, touch and the keyboard; a scrollbar
+     would cover the tabs. */
+  .env-panel-dock-strip {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: calc(var(--env-z-raised) + 2);
+    gap: var(--env-panel-dock-gap);
+    margin: 0;
+    padding: var(--env-space-2) var(--env-panel-dock-gutter) 0;
+    list-style: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .env-panel-dock-strip::-webkit-scrollbar {
+    display: none;
+  }
+  .env-panel-dock-tab {
+    /* A long title ends in an ellipsis past this width. */
+    --env-panel-dock-tab-max-width: 14rem;
+    flex: 0 0 auto;
+    max-inline-size: var(--env-panel-dock-tab-max-width);
+    block-size: var(--env-panel-dock-tab-height);
+    border: 1px solid var(--env-elevation-2-border);
+    border-block-end: 0;
+    border-start-start-radius: var(--env-radius-sm);
+    border-start-end-radius: var(--env-radius-sm);
+    background: var(--env-color-bg-popup);
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body-sm);
+    pointer-events: auto;
+  }
+  .env-panel-dock-tab-restore {
+    flex: 1 1 auto;
+    align-self: stretch;
+    min-inline-size: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--env-space-2);
+    padding-block: 0;
+    padding-inline: var(--env-space-3) var(--env-space-1);
+    border: 0;
+    border-start-start-radius: inherit;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  .env-panel-dock-tab-restore:hover {
+    background: var(--env-color-bg-neutral-subtle-hover);
+  }
+  .env-panel-dock-tab-restore:active {
+    background: var(--env-color-bg-neutral-subtle-pressed);
+  }
+  .env-panel-dock-tab .env-icon {
+    inline-size: var(--env-control-icon-size);
+    block-size: var(--env-control-icon-size);
+    color: var(--env-color-fg-muted);
+  }
+  .env-panel-dock-tab-label {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* The attention dot, such as for unsaved changes, follows the label. */
+  .env-panel-dock-tab-attention {
+    flex: 0 0 auto;
+    --env-panel-dock-attention-size: 0.5rem;
+    inline-size: var(--env-panel-dock-attention-size);
+    block-size: var(--env-panel-dock-attention-size);
+    border-radius: 50%;
+    background: var(--env-color-fg-primary);
+  }
+  /* The close button, an IconButton with a cross, is a small circle beside the restore button; under a coarse
+     pointer it takes the touch size, as every button does. */
+  .env-panel-dock-tab-close {
+    --env-icon-button-hit-area: var(--env-control-height-touch);
+    --env-control-height: 1.5rem;
+    margin-inline: calc(var(--env-space-1) / 2) var(--env-space-1);
+  }
+  .env-panel-dock-tab-close .env-icon {
+    color: inherit;
+  }
+  .env-panel-dock-tab-restore:focus-visible,
+  .env-panel-dock-tab-close:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
+  }
+
+  /* Stacking: below stackBelow, the dock's container query decides it, so the server's markup and the
+     first paint already stack. The probe takes a width where the dock stacks, which PanelDock reads,
+     and observes, to follow with data-stacked, which panels are inert, focus and onStackedChange. */
+  .env-panel-dock-probe {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 0;
+    block-size: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  /* Until PanelDock reads its layout, as on the server and while hydrating, the dock has
+     data-env-ssr-pending, and its markup carries both layouts: data-placement and data-tabs as panels
+     sit side by side, and data-env-ssr-placement, data-env-ssr-filled and data-env-ssr-tabs as the dock
+     stacks. Tabs and the strip that only one layout has say which with data-env-ssr-tab-in. */
+  @container env-panel-dock (width >= 37.5em) {
+    .env-panel-dock-strip[data-env-ssr-tab-in='stacked'],
+    .env-panel-dock-tab[data-env-ssr-tab-in='stacked'] {
+      display: none;
+    }
+  }
+  @container env-panel-dock (width < 37.5em) {
+    .env-panel-dock-probe {
+      inline-size: 100%;
+    }
+    .env-panel-dock[data-env-ssr-pending] > .env-panel-dock-row {
+      --env-panel-dock-strip-size: 0rem;
+    }
+    .env-panel-dock[data-env-ssr-tabs] > .env-panel-dock-row {
+      --env-panel-dock-strip-size: calc(var(--env-panel-dock-tab-height) + var(--env-space-2));
+    }
+    /* The panel that fills the region covers it above the tabs; the strip covers the rest. */
+    .env-panel-dock[data-env-ssr-filled] > .env-panel-dock-strip {
+      background: var(--env-color-bg-page);
+      pointer-events: auto;
+    }
+    .env-panel-dock-strip[data-env-ssr-tab-in='wide'],
+    .env-panel-dock-tab[data-env-ssr-tab-in='wide'],
+    .env-panel-dock-panel[data-env-ssr-placement] [data-window-control='maximize'] {
+      display: none;
+    }
+    .env-panel-dock-panel[data-env-ssr-placement='fill'] {
+      position: absolute;
+      inset: 0 0 var(--env-panel-dock-strip-size);
+      z-index: var(--env-z-base);
+      min-inline-size: 0;
+      max-inline-size: none;
+      block-size: auto;
+      border: 0;
+      border-radius: 0;
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    /* A panel the stacked first paint fills the region with already ends above the tabs. */
+    .env-panel-dock-panel[data-env-ssr-placement] > .env-panel-dock-content {
+      padding-block-end: 0;
+    }
+    .env-panel-dock-panel[data-env-ssr-placement='hidden'] {
+      position: absolute;
+      inset: auto 0 0 auto;
+      z-index: calc(var(--env-z-base) - 1);
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  @media (pointer: coarse) {
+    /* Tabs are rows of the strip, which grow to the touch height. */
+    .env-panel-dock {
+      /* A tab holds its buttons at the touch height inside its top hairline. */
+      --env-panel-dock-tab-height: calc(
+        max(var(--env-control-height-sm), var(--env-control-height-touch)) +
+          var(--env-control-border-width)
+      );
+      /* The header's controls grow to the touch height, as every button does. */
+      --env-panel-dock-control: max(var(--env-control-height-sm), var(--env-control-height-touch));
+    }
+    /* A finger reaches the top edge across a larger band, and the bar always shows. */
+    .env-panel-dock-resize-handle {
+      --env-panel-dock-resize-band: 1.5rem;
+    }
+    .env-panel-dock-resize-handle::after {
+      --env-panel-dock-resize-bar-top: 0.875rem;
+      opacity: 1;
+    }
+    .env-panel-dock-tab-close {
+      margin-inline: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-panel-dock-header,
+    .env-panel-dock-resize-handle::after,
+    .env-panel-dock-tab-restore {
+      transition: none;
+    }
+  }
+
+  /* Motion: docked panels and their tabs fade in where they show; a panel that comes to fill the
+     region fades in afresh, also from the row. Without a reduced-motion preference panels rise from
+     the bottom edge into the row, a panel grows into the region it fills, and tabs rise into their
+     strip. PanelDock marks an entrance with data-entering until it ends, so a reorder, which moves
+     the elements, does not play it again. */
+  .env-panel-dock-panel[data-entering][data-placement='row'],
+  .env-panel-dock-tab[data-entering] {
+    animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-panel-dock-panel[data-entering][data-placement='fill'] {
-    animation: env-panel-dock-grow var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+    animation: env-panel-dock-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
-  .env-panel-dock-tab[data-entering] {
-    animation: env-panel-dock-tab-rise var(--env-motion-duration-medium)
-      var(--env-motion-ease-enter);
+  @media (prefers-reduced-motion: no-preference) {
+    .env-panel-dock-panel[data-entering][data-placement='row'] {
+      animation: env-panel-dock-rise var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+    }
+    .env-panel-dock-panel[data-entering][data-placement='fill'] {
+      animation: env-panel-dock-grow var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+    }
+    .env-panel-dock-tab[data-entering] {
+      animation: env-panel-dock-tab-rise var(--env-motion-duration-medium)
+        var(--env-motion-ease-enter);
+    }
   }
-}
-@keyframes env-panel-dock-fade-in {
-  from {
-    opacity: 0;
+  @keyframes env-panel-dock-fade-in {
+    from {
+      opacity: 0;
+    }
   }
-}
-@keyframes env-panel-dock-rise {
-  from {
-    opacity: 0;
-    transform: translateY(1.5rem);
+  /* A panel rises 1.5 rem into place and a tab 0.75 rem: six and three of the smallest space. */
+  @keyframes env-panel-dock-rise {
+    from {
+      opacity: 0;
+      transform: translateY(calc(6 * var(--env-space-1)));
+    }
   }
-}
-@keyframes env-panel-dock-grow {
-  from {
-    opacity: 0;
-    transform: scale(0.98);
+  @keyframes env-panel-dock-grow {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
   }
-}
-@keyframes env-panel-dock-tab-rise {
-  from {
-    opacity: 0;
-    transform: translateY(0.75rem);
+  @keyframes env-panel-dock-tab-rise {
+    from {
+      opacity: 0;
+      transform: translateY(calc(3 * var(--env-space-1)));
+    }
   }
-}
 
-/* Forced colors: the system paints no fills or shadows, so the active panel’s edge takes the
-   selection color. */
-@media (forced-colors: active) {
-  .env-panel-dock-panel[data-active] {
-    border-color: Highlight;
+  /* Forced colors: the system paints no fills or shadows, so the active panel’s edge takes the
+     selection color, and a line under the header stands in for its fill once the content scrolls
+     beneath it, overlapping the content so nothing moves. */
+  @media (forced-colors: active) {
+    .env-panel-dock-panel[data-active] {
+      border-color: Highlight;
+    }
+    .env-panel-dock-header[data-scrolled] {
+      margin-block-end: calc(-1 * var(--env-control-border-width));
+      border-block-end: var(--env-control-border-width) solid CanvasText;
+    }
   }
 }

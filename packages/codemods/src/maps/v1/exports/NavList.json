@@ -1,6 +1,0 @@
-{
-  "@envsemble/envui": {
-    "NavigationItem": "NavList.Item",
-    "NavigationItemProps": "NavList.ItemProps"
-  }
-}

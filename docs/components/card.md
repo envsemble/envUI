@@ -1,9 +1,9 @@
 ---
 title: Card
-summary: A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button.
+summary: A rounded surface that groups content about one subject.
 status: stable
-since: 0.1.0
-category: Layout & surfaces
+since: 1.0.0
+category: App frame & layout
 aliases:
   - tile
   - panel
@@ -12,16 +12,20 @@ aliases:
   - link card
   - button card
   - action card
-  - feature card
-  - promo card
   - ClickableCard
   - ActionCard
   - FeatureCard
+  - feature card
+  - feature layout
+  - layout="feature"
+  - call to action card
+  - promo card
+  - onboarding card
 useWhen:
-  - Content about one subject stands apart from the page, such as a project's summary.
-  - A summary needs its own actions along the bottom, such as Share and Open (`actions`).
-  - The whole surface leads to one destination or starts one action, such as a project in a grid (`href`, `onClick`).
-  - A feature is introduced with an icon, a sentence and one action (`layout="feature"`).
+  - Content about one subject, such as a project's summary
+  - A summary with its own actions, such as Share and Open
+  - A whole surface that leads to one place or starts one action
+  - Introducing a feature with the one action that starts it, such as inviting the team
 avoidWhen:
   - text: A fill, padding and corners without card semantics or spacing, such as a toolbar's background.
     use: Surface
@@ -32,152 +36,258 @@ avoidWhen:
   - text: A message about the page or a section.
     use: Alert
   - text: A region with no content yet.
-    use: EmptyState
-related:
-  - surface
-  - stack
-  - list
-  - button
-  - typography
+    see: empty-states
+  - text: Content that needs no surface of its own, such as a form on a page.
+    use: Column
 components:
   - Card
+examples:
+  ProjectSummary:
+    role: overview
+    stage: shaded
+  ActionStrip: example
+  Destinations: example
+  StartOptions: example
+  ImportPlans: example
+  Backgrounds: variants
+  CardAnatomy: anatomy
+  InviteFeature: example
+  OneCardSections:
+    role: do
+    caption: One card per subject, with Text for its parts.
+  NestedCards:
+    role: dont
+    caption: 'Cards inside cards: the fills and corners stack up.'
 ---
 
 # Card
 
-## Overview
+## Variants
 
-A card is a rounded surface that groups content about one subject, spaced 1 rem apart. One component makes every kind of card:
+### Content card
 
-- **Content card** (the default): any content, with an optional title row (`title`, `meta`), a `description` and `actions` in a strip along its bottom.
-- **Feature card** (`layout="feature"`): an icon, a title, a description and one action, which stack in a narrow card.
-- **Link card** (`href`) and **button card** (`onClick`): the whole card is one native link or button.
+The default: a title, a short fact beside it, a description, its content, and actions in a strip along the bottom.
 
-```tsx example=ProjectSummary
+```tsx figure=ActionStrip
 
 ```
 
+### Link card
+
+The whole card is one link.
+
+```tsx figure=Destinations motion
+
+```
+
+### Button card
+
+The whole card is one button.
+
+```tsx figure=StartOptions motion
+
+```
+
+### Feature card
+
+An icon, a heading, a sentence and the one button that starts a feature.
+
+- The heading names the feature.
+- The sentence says what it gives people.
+- The button starts it with a verb, such as Invite people.
+
+```tsx figure=ImportPlans
+
+```
+
+### Backgrounds
+
+```tsx figure=Backgrounds stage=shaded
+
+```
+
+1. **Muted**
+2. **Default**
+3. **Page**
+
+| Background | Use for                                       |
+| ---------- | --------------------------------------------- |
+| Muted      | A card on the page or in a pane. The default. |
+| Default    | A quieter fill, such as a settings section.   |
+| Page       | The page's own color, parted by space alone.  |
+
 ## Anatomy
 
-1. **Surface** (`background`, `padding`): the fill with 1.75 rem corners and padding that grows from 1.25 to 1.5 rem with the window, or a fixed step of the spacing scale.
-2. **Header** (`title`, `meta`): the title, an `h3` in the title type, and `meta` in supporting text at the end of the row, 0.75 rem apart; the row wraps when it runs out of room. `headingLevel` sets another level for the page's outline.
-3. **Description** (`description`): a sentence under the title in muted text.
-4. **Content** (`children`): spaced 1 rem apart; Card sets no type of its own, so compose it from Text and other components.
-5. **Footer** (`actions`): a `footer` along the bottom, in the action strip's fill, with 0.75 rem block padding and the card's inline padding, its controls lined up at the end.
+```tsx figure=CardAnatomy
 
-The feature layout lays out an **icon** (`icon`), 1.5 rem in the muted color in a 2.75 rem box, the **title**, an `h2` in the headline type, the **description** in supporting text, more content 1 rem below, and the **actions** at the end.
+```
 
-## Variants and sizes
+1. **Surface** (`env-card`)
+2. **Header** (`env-card-header`)
+3. **Title** (`env-card-title`, `title`)
+4. **Meta** (`env-card-meta`, `meta`)
+5. **Description** (`env-card-description`, `description`)
+6. **Content** (`env-card-body > env-text:last-child`, `children`)
+7. **Actions** (`env-card-footer`, `actions`)
 
-| Background | Use for                                                                                     |
-| ---------- | ------------------------------------------------------------------------------------------- |
-| `muted`    | A card on the page or in a pane: the standalone card fill. The default.                     |
-| `default`  | A quieter fill that groups content, such as a section of a settings page.                   |
-| `page`     | A card in the page's own color, such as inside a pane, where only its corners set it apart. |
+## Behaviour
 
-<!-- specimen: Backgrounds -->
+### Loading
 
-| Layout    | Use for                                                                                |
-| --------- | -------------------------------------------------------------------------------------- |
-| `stack`   | Content spaced 1 rem apart, with the actions in a strip along the bottom. The default. |
-| `feature` | A feature with an icon at the start, its title and description, and one action.        |
+While its content loads, a card can show as its own skeleton, as [Loading](../patterns/loading.md) shows.
 
-- A card fills the width its container gives it; set its width on the container or a grid.
-- Text in a plain paragraph of a card with an action strip is muted body text, at most 32 characters wide.
-- A feature card narrower than 38 rem moves its action below the text, and the action fills the card's width; it follows its own width, not the window's.
+<!-- specimen: SkeletonFirst -->
 
-## States and behaviour
+### Adapting to width
 
-- **Link and button cards**: with `href` the card is a native link through the `LinkProvider`'s link component, and with `onClick` a native button with `type="button"`. The whole card, padding included, is the target. Hover and pressed take the hover and pressed colors of its background, and keyboard focus shows a focus outline 0.125 rem outside the card.
-- **Disabled**: a disabled button card cannot be pressed; a disabled link card has no destination, cannot be focused and reports `aria-disabled`. Both take the shared disabled opacity.
-- **Content in link and button cards**: an interactive card takes no `title`, `meta`, `description`, `actions` or `layout`, and its text, in the primary text color, aligns to the start. A button card can only hold phrasing content, such as spans.
-- **Action strip**: `actions` puts the strip along the bottom of a stacked card. It has a fill of its own, the action strip color, which sets it apart from the card's body in both themes.
+A card fills its container.
 
-## Content guidelines
+- In a narrow feature card, the button moves below the text.
 
-- Give a card a short title that names its subject, such as a project's name, and keep its text to a sentence or two.
-- Put the fact that matters most for choosing in `meta`, such as when the card was updated.
-- Name actions with verbs, and put the main one last: "Share", then "Open project".
-- Start a link card with its destination's name, so its accessible name, which is its whole text, starts with what people look for.
+```tsx figure=InviteFeature widths="40 24" sweep
 
-## Do and don't
+```
 
-### Do
+## Rules
 
-- Use `href` when the whole card goes to one place, and `onClick` when it starts one action.
-- Let a link or button card's text name it, and keep that text short: a title and a line of summary.
-- Set `headingLevel` to the level that fits the page's outline.
-- Lay cards out in a grid that fits as many columns as the room allows.
-- Put several actions in an action strip instead of making the card interactive.
+One card holds one subject, and lays out its parts inside it.
 
-### Don't
+```tsx figure=OneCardSections
 
-- Don't put links, buttons or other controls inside a link or button card.
-- Don't name a link or button card with `aria-label` or `aria-labelledby` that leaves out part of its visible text: speech input users say what they see.
-- Don't use a card for a list of similar rows; use [List](../components/list.md).
-- Don't nest cards inside each other.
-- Don't use a card only for its fill; use [Surface](../components/surface.md).
+```
+
+```tsx figure=NestedCards
+
+```
+
+### Content
+
+Put the fact that matters most for choosing beside the title.
+
+- Start a link card with its destination's name.
+- A link or button card holds no links or controls of its own.
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                             | Action                                                           |
-| ----------------------------------------------- | ---------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves focus to a link or button card, or into a card's controls. |
-| <kbd>Enter</kbd>                                | Follows a link card or presses a button card.                    |
-| <kbd>Space</kbd>                                | Presses a button card.                                           |
+| Key                                             | Action                                          |
+| ----------------------------------------------- | ----------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to a link or button card, or into a card. |
+| <kbd>Enter</kbd>                                | Follows a link card or presses a button card.   |
+| <kbd>Space</kbd>                                | Presses a button card.                          |
 
 ### envUI provides
 
-- Native `<a>` and `<button>` elements for link and button cards, named by their content, and `div` elements for content cards, or the element of `render`, such as `article`, with a `footer` for the action strip.
-- The title as an `h3`, or an `h2` in the feature layout, at the level `headingLevel` sets.
-- A focus outline around link and button cards, and `aria-disabled` with no destination on a disabled link card.
-- The feature layout's icon hidden from assistive technology.
+- Native `<a>` and `<button>` for link and button cards, named by their text.
+- The title as an `h3`, or the level of `headingLevel`.
+- A focus outline, and `aria-disabled` on a disabled link card.
 
 ### You provide
 
-- A heading level that fits the page's outline, through `headingLevel`.
-- `render={<article />}` for a card that stands on its own, such as a post in a feed.
-- The routing behind `href`, through `LinkProvider`.
+- A `headingLevel` that fits the page's outline.
+- `render={<article />}` for a card that stands on its own.
+- No `aria-label` that leaves out the card's visible text.
+- Routing behind `href`, through `LinkProvider`.
 
-## Examples
+## Compose
 
-### Action strip
+### Usage
 
-`title`, `meta` and `actions` make a title row and a strip of controls along the bottom; `render` makes the card an article.
+A content card takes its `title`, a `meta` fact at the end of the title row, a `description` under it, its content as `children`, and `actions` in a strip along the bottom.
 
-```tsx example=ActionStrip
+- Set `render={<article />}` on a card that stands on its own.
 
-```
-
-### Link cards
-
-Each card is one link, named by its title and summary, in a grid of as many columns as fit.
-
-```tsx example=Destinations
+```tsx source=ActionStrip
 
 ```
 
-### Button cards
+#### Link and button cards
 
-A button card starts an action, here one way to start a project; a disabled one cannot be pressed.
+With `href`, the whole card is one native link, through the application's router link from `LinkProvider`; with `onClick`, it is one native button.
 
-```tsx example=StartOptions
+- Either holds only phrasing content, such as spans, and no links or controls of its own, and its text names it.
+- `disabled` turns either off.
 
+```tsx
+<Card href="/projects/northwind">
+  <Text render={<span />} variant="title">
+    Northwind launch
+  </Text>
+  <Text render={<span />} emphasis="muted">
+    12 open tasks
+  </Text>
+</Card>
 ```
 
-### Feature cards
+#### Feature card
 
-The feature layout presents a feature with an icon and one action, and stacks them when the card is narrow.
+A feature card is a Card holding a Row with `wrap` and `align="center"`: the icon in a muted Text with `render={<span />}`, a Column of a headline Text and a `body-sm` Text, and the Button that starts the feature.
 
-```tsx example=FeatureCards
+- The Column takes `flex: '1 1 16rem'`, so the text keeps at least 16 rem and the button wraps below it in a narrower card.
+- Render the heading at the level the outline needs, such as `render={<h3 />}` under a section's `h2`; `variant="headline"` keeps its look.
+- The Button takes `href` where the action goes somewhere.
+- Lay several side by side in a Grid of even columns.
 
+```tsx
+<Card>
+  <Row wrap align="center" gap={4}>
+    <Text render={<span />} emphasis="muted">
+      <IconUploadFile width="1.5rem" height="1.5rem" />
+    </Text>
+    <Column gap={1} style={{ flex: '1 1 16rem' }}>
+      <Text render={<h3 />} variant="headline">
+        Import your plans
+      </Text>
+      <Text variant="body-sm">Bring in spreadsheets and documents from another tool.</Text>
+    </Column>
+    <Button variant="secondary">Import</Button>
+  </Row>
+</Card>
 ```
+
+#### Backgrounds
+
+`background` is `muted`, the default, `default` or `page`. `default` names the token role it paints, `--env-color-bg-default`, as Surface's does, not Card's default.
+
+```tsx
+<Card background="default" title="Notifications">
+  <Text emphasis="muted">Email for mentions and a weekly summary.</Text>
+</Card>
+```
+
+#### Loading
+
+`skeleton` shows the card as its own skeleton until its content arrives: text becomes bars and controls filled shapes.
+
+- Render the same cards over placeholder items, from `placeholders`.
+- A `title` or `description` given as undefined is a bar of its usual length.
+
+```tsx
+<Grid columns={2} gap={4}>
+  {(members ?? placeholders<Member>(2)).map((member) => (
+    <Card key={member.id} skeleton={!members} title={member.name} description={member.role} />
+  ))}
+</Grid>
+```
+
+### Composition
+
+The title is an `h3`; set `headingLevel` to fit the page's outline, and its type stays the title type.
+
+- Lay out the content with Text, Row and Column, one card per subject, never a card inside a card, and put cards side by side in a Grid.
+- A card fills its container's width.
+- The parts are the surface, `env-card`, its header, `env-card-header`, with the title, `env-card-title`, and the meta, `env-card-meta`; the description, `env-card-description`; the body, `env-card-body`; and the actions, `env-card-footer`.
+- A feature card's parts are envUI's own components inside it: its icon, `env-card env-text > svg`, its heading, `env-card env-text[data-variant='headline']`, its sentence, `env-card env-text[data-variant='body-sm']`, and its action, `env-card env-button`.
+
+### Customize
+
+- Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+- `padding` sets the inset as a step of the spacing scale, such as `6` for 2 rem, and `0` removes it.
 
 ## Changelog
 
-- **1.0.0**: ClickableCard, ActionCard and FeatureCard are Card: `onClick` makes a button card, `render` the element of a content card, and `layout="feature"` the feature card. `tone` is `background`, `heading` is `title`, which takes `headingLevel`, as on EmptyState, and Card takes `description`; the native `title` attribute is not a prop of a card. The page is `card`, after the component.
-- **0.5.0**: `meta` sits at the end of the heading row, also in right-to-left text.
-- **0.2.0**: Link cards render through the application's router link, from `LinkProvider`.
-- **0.1.0**: Card for plain, interactive and action-strip cards, with ClickableCard and ActionCard as wrappers; FeatureCard.
+- **1.0.0**: ClickableCard, ActionCard and FeatureCard are Card: `onClick` makes a button card, `render` the element of a content card, and the feature card is a Card holding a Row of Text and a Button, as [Feature card](#feature-card) shows, in place of `layout` and `icon`, with `env-card-layout` and `env-card-icon`. `tone` is `background`, `heading` is `title`, which takes `headingLevel`, and Card takes `description`; the native `title` attribute is not a prop of a card. The page is `card`, after the component.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: A page card's action strip takes no band of its own, so the card no longer shows as its strip alone.
+- **1.0.0-prerelease.3**: The feature cards pattern is the feature card on this page, which the pattern's address opens.

@@ -1,12 +1,15 @@
 'use client';
 
-import type { ComponentPropsWithRef, ReactNode } from 'react';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { Children, type ComponentPropsWithRef, type ReactNode } from 'react';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
-import { withDisplayName } from '../internal/withDisplayName.js';
-import { useLinkComponent } from '../internal/LinkContext.js';
-import { useEnvUI, useMessages } from '../internal/EnvUIContext.js';
+import { Row } from '../layout/Layout.js';
+import { withDisplayName } from '../internal/react/withDisplayName.js';
+import { useLinkComponent } from '../internal/provider/LinkComponentContext.js';
+import { useEnvUI, useMessages } from '../internal/provider/EnvUIContext.js';
 import { pager } from '../foundations/messages/pager.js';
+import '../styles/Base.css';
+import '../styles/Pager.css';
 
 export interface LinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> {
   /** The destination; the link renders through the LinkProvider's link component. */
@@ -86,19 +89,8 @@ function Next(props: NextProps) {
 
 export interface RootProps extends ComponentPropsWithRef<'nav'> {
   /**
-   * The destination before this page, as the props of Pager.Previous; leave it out, or pass null,
-   * on the first page of a sequence.
-   */
-  previous?: PreviousProps | null;
-  /**
-   * The destination after this page, as the props of Pager.Next; leave it out, or pass null, on
-   * the last page of a sequence.
-   */
-  next?: NextProps | null;
-  /**
-   * Pager.Previous and Pager.Next, instead of the previous and next props or beside one of them:
-   * they render between the previous prop's link and the next prop's, so the links keep their
-   * order.
+   * Pager.Previous and Pager.Next, in that order; leave one out on the first or the last page of a
+   * sequence.
    */
   children?: ReactNode;
   /**
@@ -109,31 +101,29 @@ export interface RootProps extends ComponentPropsWithRef<'nav'> {
 }
 
 /**
- * A centered pair of previous and next destinations in a navigation landmark, from the previous
- * and next props or from Pager.Previous and Pager.Next children; either one can be left out, and
- * without any it renders nothing.
+ * A centered pair of previous and next destinations in a navigation landmark, its Pager.Previous
+ * and Pager.Next children; either one can be left out, and without any it renders nothing.
  */
-function Root({
-  previous,
-  next,
-  children,
-  className,
-  'aria-label': ariaLabel,
-  ...props
-}: RootProps) {
+function Root({ children, className, 'aria-label': ariaLabel, ...props }: RootProps) {
   const messages = useMessages('pager', pager);
-  if (!previous && !next && children == null) return null;
+  if (Children.toArray(children).length === 0) return null;
 
   return (
-    <nav
-      {...props}
-      aria-label={ariaLabel ?? messages.label}
-      className={classNames('env-pager', className)}
+    <Row
+      wrap
+      justify="center"
+      align="stretch"
+      gap={4}
+      render={
+        <nav
+          {...props}
+          aria-label={ariaLabel ?? messages.label}
+          className={classNames('env-pager', className)}
+        />
+      }
     >
-      {previous && <Previous {...previous} />}
       {children}
-      {next && <Next {...next} />}
-    </nav>
+    </Row>
   );
 }
 

@@ -1,0 +1,499 @@
+@layer env.components {
+  /* Drawer, the navigation drawer: a column of destinations on the navigation's background, a plain
+     rectangle, each a rounded rectangle as wide as the drawer with its icon, label and count, under
+     the headings of their groups. It keeps its header and footer in view and scrolls its list. Every placement is
+     logical, so it follows the text direction. */
+  .env-navigation-drawer {
+    /* The drawer is as wide as its longest destination, within these bounds. */
+    --env-navigation-drawer-min-width: 15rem;
+    --env-navigation-drawer-max-width: 20rem;
+    box-sizing: border-box;
+    inline-size: fit-content;
+    min-inline-size: var(--env-navigation-drawer-min-width);
+    max-inline-size: var(--env-navigation-drawer-max-width);
+    block-size: 100%;
+    min-block-size: 0;
+    padding: var(--env-space-3);
+    /* The navigation's background, the default surface color; on a surface, such as a Sheet's, the
+       surface's color rather than a second fill on it. */
+    background: var(--env-surface-color, var(--env-color-bg-default));
+    color: var(--env-color-fg-default);
+  }
+  /* background="page": the page's background, so the drawer sits on the page; on a surface, the
+     surface's color. */
+  .env-navigation-drawer[data-background='page'] {
+    background: var(--env-surface-color, var(--env-color-bg-page));
+  }
+  .env-navigation-drawer-header,
+  .env-navigation-drawer-footer {
+    flex: none;
+    min-inline-size: 0;
+  }
+  .env-navigation-drawer-footer {
+    margin-block-start: auto;
+  }
+  .env-navigation-drawer-list,
+  .env-navigation-drawer-section > ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .env-navigation-drawer-list {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    /* Room for the inset focus ring of an item at the list's scrolled edge. */
+    scroll-padding-block: var(--env-space-1);
+  }
+  .env-navigation-drawer-list li {
+    min-inline-size: 0;
+  }
+  /* A group sits a little apart from the destinations or group before and after it. */
+  .env-navigation-drawer-section:not(:first-child) {
+    margin-block-start: var(--env-space-3);
+  }
+  .env-navigation-drawer-section:not(:last-child) {
+    margin-block-end: var(--env-space-3);
+  }
+  /* A group's heading lines up with its destinations' icons and labels. It is semibold in the text
+     color over the muted destinations, so each group stands apart from its destinations by type
+     alone, with no line or fill. */
+  .env-navigation-drawer-group-label {
+    display: block;
+    margin: 0;
+    padding: var(--env-space-1) var(--env-space-3);
+    color: var(--env-color-fg-default);
+    font: var(--env-font-weight-semibold) var(--env-font-size-body-sm) / 1.4 var(--env-font-family);
+    overflow-wrap: break-word;
+  }
+  /* resizable: the drawer is --env-navigation-drawer-width wide, which the component sets with its bounds, and
+     never more than half its container, such as the Scaffold, or of the window. The resize handle
+     (ResizeHandle.css) runs down its end edge, inside it, so nothing overflows the column that holds
+     it: the same handle as between Panes, a grip at its middle and never a line. It is as wide as the
+     drawer's padding, so it leaves the destinations alone, and under a coarse pointer wider, a touch
+     target across the edge. */
+  .env-navigation-drawer[data-resizable] {
+    position: relative;
+    inline-size: var(--env-navigation-drawer-width);
+    max-inline-size: min(var(--env-navigation-drawer-max-width), 50cqi);
+  }
+  /* A resizable drawer keeps each label and heading on one line, so its items keep their height as
+     people narrow it: what doesn't fit ends in an ellipsis, a label cut short shows in full in a
+     tooltip and a heading in its title (NavigationDrawer.tsx). */
+  .env-navigation-drawer[data-resizable]
+    :is(.env-navigation-drawer-label, .env-navigation-drawer-group-label) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-wrap: normal;
+  }
+  .env-navigation-drawer > .env-navigation-drawer-resize-handle {
+    --env-resize-handle-size: var(--env-space-3);
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+  }
+  @media (pointer: coarse) {
+    .env-navigation-drawer > .env-navigation-drawer-resize-handle {
+      --env-resize-handle-size: var(--env-space-5);
+    }
+  }
+
+  /* Color properties: a destination's colors, which an application sets on one Drawer.Item through
+     style or its own CSS. They don't inherit. selected and selected-content color the current
+     destination. */
+  @property --env-navigation-drawer-item-container {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-navigation-drawer-item-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-navigation-drawer-item-icon {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-navigation-drawer-item-selected {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-navigation-drawer-item-selected-content {
+    syntax: '*';
+    inherits: false;
+  }
+
+  .env-navigation-drawer-item {
+    /* With no color property set, the designed fills below apply in every state. The custom fill is
+       valid only while the application sets the container or the content (see Button.css), and
+       then hover, focus and press lay the content color over the container. */
+    --env-navigation-drawer-item-layer: initial;
+    --env-navigation-drawer-item-content-gate: color-mix(
+      in srgb,
+      var(--env-navigation-drawer-item-content) 0%,
+      transparent
+    );
+    --env-navigation-drawer-item-custom-base: var(
+      --env-navigation-drawer-item-container,
+      var(--env-navigation-drawer-item-content-gate)
+    );
+    --env-navigation-drawer-item-custom-layered: color-mix(
+      in srgb,
+      var(--env-navigation-drawer-item-custom-base),
+      currentColor var(--env-navigation-drawer-item-layer)
+    );
+    --env-navigation-drawer-item-custom-fill: var(
+      --env-navigation-drawer-item-custom-layered,
+      var(--env-navigation-drawer-item-custom-base)
+    );
+    --env-navigation-drawer-item-selected-gate: color-mix(
+      in srgb,
+      var(--env-navigation-drawer-item-selected-content) 0%,
+      var(--env-color-bg-selected)
+    );
+    --env-navigation-drawer-item-selected-base: var(
+      --env-navigation-drawer-item-selected,
+      var(--env-navigation-drawer-item-selected-gate)
+    );
+    --env-navigation-drawer-item-selected-layered: color-mix(
+      in srgb,
+      var(--env-navigation-drawer-item-selected-base),
+      currentColor var(--env-navigation-drawer-item-layer)
+    );
+    --env-navigation-drawer-item-selected-fill: var(
+      --env-navigation-drawer-item-selected-layered,
+      var(--env-navigation-drawer-item-selected-base)
+    );
+    /* The icon's color, for the icons inside, which can't read the item's own properties. */
+    --env-navigation-drawer-item-icon-color: var(
+      --env-navigation-drawer-item-icon,
+      var(--env-color-fg-muted)
+    );
+    /* The height the item draws at: the control height, or more under a coarse pointer. */
+    --env-navigation-drawer-item-height: var(--env-control-height);
+    --env-icon-size: var(--env-control-icon-size);
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: var(--env-navigation-drawer-item-height);
+    margin: 0;
+    padding: var(--env-space-1) var(--env-space-3);
+    border: 0;
+    /* The indicator's medium corner, as on the rail's and the bar's. */
+    border-radius: var(--env-radius-md);
+    background: var(--env-navigation-drawer-item-custom-fill, transparent);
+    /* Muted, under the group headings in the text color; a section's heading is an item too. */
+    color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted));
+    font: var(--env-font-weight-body) var(--env-font-size-body) / 1.4 var(--env-font-family);
+    text-align: start;
+    text-decoration: none;
+    overflow-wrap: break-word;
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  .env-navigation-drawer-item > .env-icon {
+    flex: none;
+  }
+  .env-navigation-drawer-label {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+  /* The count, at the item's end, in the pill of a count badge. */
+  .env-navigation-drawer-count {
+    box-sizing: border-box;
+    flex: none;
+    margin-inline-start: auto;
+    min-inline-size: var(--env-badge-count-height);
+    block-size: var(--env-badge-count-height);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--env-space-2);
+    border-radius: var(--env-radius-full);
+    background: var(--env-color-bg-neutral-muted);
+    color: var(--env-color-fg-default);
+    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .env-navigation-drawer-item:not([data-current]) .env-icon {
+    color: var(--env-navigation-drawer-item-icon-color, var(--env-color-fg-muted));
+  }
+  /* Hover and press fill the item and gain contrast on its muted label, as muted text that responds
+     to the pointer does. */
+  .env-navigation-drawer-item:hover {
+    --env-navigation-drawer-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+    color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted-hover));
+    background: var(--env-navigation-drawer-item-custom-fill, var(--env-color-bg-navigation-hover));
+  }
+  .env-navigation-drawer-item:active {
+    --env-navigation-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+    color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted-pressed));
+    background: var(
+      --env-navigation-drawer-item-custom-fill,
+      var(--env-color-bg-navigation-pressed)
+    );
+  }
+  /* The current destination takes the selected fill, or the application's selected and
+     selected-content, with lighter state layers, as the designed selected fills are close together. */
+  .env-navigation-drawer-item[data-current] {
+    color: var(--env-navigation-drawer-item-selected-content, var(--env-color-fg-on-selected));
+    background: var(--env-navigation-drawer-item-selected-fill, var(--env-color-bg-selected));
+  }
+  .env-navigation-drawer-item[data-current]:hover {
+    --env-navigation-drawer-item-layer: calc(var(--env-state-hover-opacity) * 75%);
+    background: var(--env-navigation-drawer-item-selected-fill, var(--env-color-bg-selected-hover));
+  }
+  .env-navigation-drawer-item[data-current]:active {
+    --env-navigation-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
+    background: var(
+      --env-navigation-drawer-item-selected-fill,
+      var(--env-color-bg-selected-pressed)
+    );
+  }
+  .env-navigation-drawer-item:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
+  }
+  /* A section: a destination with destinations nested under it, which open and close below it,
+     indented, as a list of their own. A destination that is only the section's heading is one item,
+     a button, with the chevron at its end; a link keeps the whole row, and the button that opens and
+     closes the section sits over its end, so the row reads as one item. */
+  .env-navigation-drawer-branch {
+    /* The round button at the end of a section's link, inside the item's height. */
+    --env-navigation-drawer-toggle-size: calc(var(--env-control-height) - 2 * var(--env-space-1));
+    /* How far nested destinations sit in from their section's: their labels start a step inside
+       the section's label, past its icon and the gap after it where it has one. */
+    --env-navigation-drawer-indent: var(--env-space-4);
+  }
+  .env-navigation-drawer-branch:has(
+    > .env-navigation-drawer-item > .env-navigation-drawer-label:not(:first-child),
+    > .env-navigation-drawer-branch-row
+      > .env-navigation-drawer-item
+      > .env-navigation-drawer-label:not(:first-child)
+  ) {
+    --env-navigation-drawer-indent: calc(
+      var(--env-control-icon-size) + var(--env-space-3) + var(--env-space-4)
+    );
+  }
+  .env-navigation-drawer-branch-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+  .env-navigation-drawer-branch-row > .env-navigation-drawer-item {
+    grid-area: 1 / 1 / 2 / 3;
+    /* The label and the count keep clear of the button over the item's end. */
+    padding-inline-end: calc(var(--env-navigation-drawer-toggle-size) + var(--env-space-2));
+  }
+  .env-navigation-drawer-toggle {
+    box-sizing: border-box;
+    grid-area: 1 / 2;
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--env-navigation-drawer-toggle-size);
+    block-size: var(--env-navigation-drawer-toggle-size);
+    margin: var(--env-space-1);
+    padding: 0;
+    border: 0;
+    border-radius: var(--env-radius-full);
+    background: transparent;
+    color: var(--env-color-fg-muted);
+    cursor: pointer;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  /* Over the current destination, the button takes its content color. */
+  .env-navigation-drawer-branch-row:has(> [data-current]) > .env-navigation-drawer-toggle {
+    color: var(--env-navigation-drawer-item-selected-content, var(--env-color-fg-on-selected));
+  }
+  .env-navigation-drawer-toggle:hover {
+    background: color-mix(
+      in srgb,
+      currentColor calc(var(--env-state-hover-opacity) * 100%),
+      transparent
+    );
+  }
+  .env-navigation-drawer-toggle:active {
+    background: color-mix(
+      in srgb,
+      currentColor calc(var(--env-state-pressed-opacity) * 100%),
+      transparent
+    );
+  }
+  .env-navigation-drawer-toggle:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
+  }
+  /* A section's heading puts its chevron where a link's button has it. */
+  .env-navigation-drawer-branch > .env-navigation-drawer-item {
+    padding-inline-end: calc(
+      var(--env-space-1) +
+        (var(--env-navigation-drawer-toggle-size) - var(--env-control-icon-size)) / 2
+    );
+  }
+  .env-navigation-drawer-item > .env-navigation-drawer-chevron {
+    margin-inline-start: auto;
+  }
+  /* The chevron points down, and up while the section is open: it turns half a circle, as Select's
+     does. */
+  .env-navigation-drawer-chevron {
+    inline-size: var(--env-control-icon-size);
+    block-size: var(--env-control-icon-size);
+    transform: rotate(90deg);
+  }
+  /* Its trigger, the heading's row or the link's button, says the section is open. */
+  .env-navigation-drawer-item[aria-expanded='true'] > .env-navigation-drawer-chevron,
+  .env-navigation-drawer-toggle[aria-expanded='true'] > .env-navigation-drawer-chevron {
+    transform: rotate(270deg);
+  }
+  /* The nested destinations grow to their height as the section opens and shrink as it closes,
+     fading in and out, as an accordion's panel does. A closed section keeps them in the page, hidden
+     until found. */
+  .env-navigation-drawer-children {
+    display: flex;
+    flex-direction: column;
+    gap: var(--env-space-1);
+    margin: 0;
+    padding: 0;
+    padding-inline-start: var(--env-navigation-drawer-indent);
+    list-style: none;
+    block-size: var(--collapsible-panel-height, auto);
+    overflow: hidden;
+    transition:
+      block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+      opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+  .env-navigation-drawer-children > li:first-child {
+    margin-block-start: var(--env-space-1);
+  }
+  .env-navigation-drawer-children:is([data-starting-style], [data-ending-style]) {
+    block-size: 0;
+    opacity: 0;
+  }
+  .env-navigation-drawer-children[hidden]:not([hidden='until-found']) {
+    display: none;
+  }
+  /* A browser that doesn't know hidden="until-found", such as WebKit, would let the panel's own
+     display show a closed section: its content isn't rendered, as the browsers that know it do,
+     which still lets them find it. */
+  .env-navigation-drawer-children[hidden='until-found'] {
+    content-visibility: hidden;
+  }
+  /* Under a coarse pointer, items grow to the touch height in every scale, as buttons do, and the
+     button at the end of a section's link with them. */
+  @media (pointer: coarse) {
+    .env-navigation-drawer-item {
+      --env-navigation-drawer-item-height: max(
+        var(--env-control-height),
+        var(--env-control-height-touch)
+      );
+    }
+    .env-navigation-drawer-branch {
+      --env-navigation-drawer-toggle-size: calc(
+        max(var(--env-control-height), var(--env-control-height-touch)) - 2 * var(--env-space-1)
+      );
+    }
+  }
+  /* Under a reduced-motion preference, fills change and sections open and close at once. */
+  @media (prefers-reduced-motion: reduce) {
+    .env-navigation-drawer-item,
+    .env-navigation-drawer-toggle,
+    .env-navigation-drawer-children {
+      transition: none;
+    }
+  }
+  /* Motion: a section's chevron turns, and a closing section's destinations fade over its whole
+     closing, so no empty band is left, only without a reduced-motion preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-navigation-drawer-chevron {
+      transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+    }
+    .env-navigation-drawer-children[data-ending-style] {
+      transition:
+        block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    }
+  }
+  /* Motion: an item settles slightly while it is held, only without a reduced-motion preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-navigation-drawer-item {
+      transition-property: background-color, color, transform;
+    }
+    .env-navigation-drawer-item:active {
+      transform: scale(0.98);
+    }
+  }
+  /* Forced colors: the system paints no fills, so an edge at its end sets the drawer apart from the
+     body and the current item takes the selection colors. */
+  @media (forced-colors: active) {
+    .env-navigation-drawer {
+      border-inline-end: 1px solid CanvasText;
+    }
+    .env-navigation-drawer-item[data-current] {
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+    .env-navigation-drawer-item[data-current] :where(*) {
+      color: inherit;
+    }
+    .env-navigation-drawer-item[data-current]:focus-visible {
+      outline-color: HighlightText;
+    }
+    .env-navigation-drawer-count {
+      border: 1px solid CanvasText;
+    }
+    /* The current item's colors are forced off, so its count takes the canvas's own. */
+    .env-navigation-drawer-item[data-current] .env-navigation-drawer-count {
+      background: Canvas;
+      color: CanvasText;
+    }
+  }
+
+  /* In a skeleton, a destination is its icon as a filled shape and its label as a bar, with no fill
+     for the current one, whether it is a link or a button. */
+  .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-navigation-drawer-item {
+    border-color: transparent;
+    box-shadow: none;
+    background: transparent;
+  }
+  .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-drawer-item,
+  .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-navigation-drawer-item
+    :not(.env-navigation-drawer-count) {
+    /* A destination is not a shape: its label draws as a bar. */
+    --env-skeleton-shape: 0;
+  }
+  .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-navigation-drawer-item
+    * {
+    visibility: visible;
+  }
+  .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-navigation-drawer-item
+    .env-icon
+    * {
+    visibility: hidden;
+  }
+  [data-env-skeleton] .env-navigation-drawer-count {
+    forced-color-adjust: none;
+    border-color: transparent;
+    --env-skeleton-shape: 1;
+    background: var(--env-skeleton-paint);
+  }
+  [data-env-skeleton] .env-navigation-drawer-count * {
+    visibility: hidden;
+  }
+  /* A section's toggle isn't drawn, so its row is the destination's icon, its bar and its count. */
+  .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-navigation-drawer-toggle {
+    visibility: hidden;
+  }
+  /* A destination whose label is loading, given as an empty string, is a bar of a label's length. */
+  .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-navigation-drawer-label {
+    --env-skeleton-placeholder: inline-block;
+    --env-skeleton-length: 8rem;
+  }
+}

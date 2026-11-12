@@ -1,0 +1,40 @@
+import { use, type ComponentType } from 'react';
+import type { LegendEntry } from './FoundationFrame';
+import { loadOnce } from '../../loading/LoadOnce';
+
+/**
+ * A foundation's or a guide's figure as its page registers it: the picture alone, which the page's
+ * Markdown places by name (```tsx figure=Name```) and gives its words, the legend that follows the
+ * fence: each numbered mark's, or each picture's, name and what it means. `wide` keeps it across
+ * the whole column rather than beside the text before it.
+ */
+export interface FoundationFigureEntry {
+  render: ComponentType<{ legend: readonly LegendEntry[]; caption?: string }>;
+  wide?: boolean;
+}
+
+type Figures = Record<string, FoundationFigureEntry>;
+
+/** Each foundation's figures, which load with the page, and a guide's, by the page's id. */
+const loaders: Record<string, () => Promise<Figures>> = {
+  colors: () => import('./Colors').then((module) => module.colorsFigures),
+  typography: () => import('./Typography').then((module) => module.typographyFigures),
+  spacing: () => import('./Spacing').then((module) => module.spacingFigures),
+  responsive: () => import('./Responsive').then((module) => module.responsiveFigures),
+  icons: () => import('./Icons').then((module) => module.iconsFigures),
+  accessibility: () => import('./Accessibility').then((module) => module.accessibilityFigures),
+  'dev-mode': () => import('../dev-mode/DevModeFigures').then((module) => module.devModeFigures),
+};
+const loads = new Map<string, Promise<Figures>>();
+
+/** A foundation page's figures, loaded once and kept (loadOnce); a page with none has none. */
+export function loadFoundationFigures(page: string): Promise<Figures> | undefined {
+  const loader = loaders[page];
+  return loader && loadOnce(loads, page, loader);
+}
+
+/** A foundation page's figures, by the page's id, suspending until they have loaded. */
+export function useFoundationFigures(page: string): Figures | undefined {
+  const load = loadFoundationFigures(page);
+  return load && use(load);
+}

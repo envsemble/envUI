@@ -1,0 +1,176 @@
+/* Do, don't and caution figures; the frame they share with other figures is in Figures.css. */
+
+/* A do, don't or caution figure, as a gallery's cells (VerdictFigure.tsx): the example on its stage, flat
+   and square-cornered as every figure of a page; under it, a little apart, a strip of the same fill
+   with its tag and its one sentence; and under that, its code switch. The stage is as tall as
+   the example, and at least 11 rem, or square where the example shows open or playing, the room
+   what opens needs; never wider than `--site-verdict-size`, so a pair side by side stays small
+   beside the text; alone, or in a narrow column, it starts where the text does. A `wide` figure,
+   whose point is a change across the column's width, spans the column instead. */
+.site-verdict {
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  min-inline-size: 0;
+  margin: 0;
+  row-gap: var(--env-space-2);
+}
+
+.site-verdict:not([data-shape='wide']) {
+  inline-size: min(100%, var(--site-verdict-size));
+}
+
+/* Side by side, the figures of a row are cells of one size, as a gallery's are: they share the run's
+   rows, so their stages are as tall as the row's tallest, what each shows centred in it, their
+   strips as tall as the row's tallest strip, and their code starts on one line under them. Stacked,
+   as on a phone, each keeps its own rows. 32 rem is where a run of do and don't figures goes two to a row
+   (Figures.css). */
+@container (width >= 32rem) {
+  .site-figure-run > .site-verdict {
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    align-self: stretch;
+    row-gap: var(--env-space-2);
+  }
+  .site-figure-run > .site-verdict > .site-verdict-stage {
+    align-self: stretch;
+  }
+}
+
+/* The stage is every stage's recessed canvas (Stage.css). A square clips what it holds, and its
+   overlays open in the box over it (below). */
+.site-verdict-stage {
+  --site-verdict-inset: var(--env-space-6);
+}
+
+.site-verdict[data-shape='fit'] .site-verdict-stage {
+  /* A gallery cell's least height, as every figure of a page has (Stage.css). */
+  min-block-size: 11rem;
+  overflow: clip;
+}
+
+/* Beside a square, such as a figure that plays, a figure is square too, so a row lines up: a pair
+   of a run laid out two to a row, or any of a run of three, which is one row. */
+.site-figure-run:not([data-count='3'])
+  > .site-verdict[data-shape='fit']:nth-child(odd):has(+ .site-verdict[data-shape='square'])
+  .site-verdict-stage,
+.site-figure-run:not([data-count='3'])
+  > .site-verdict[data-shape='square']:nth-child(odd)
+  + .site-verdict[data-shape='fit']
+  .site-verdict-stage,
+.site-figure-run[data-count='3']:has(> .site-verdict[data-shape='square'])
+  > .site-verdict[data-shape='fit']
+  .site-verdict-stage {
+  aspect-ratio: 1;
+}
+
+.site-verdict[data-shape='square'] .site-verdict-stage {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: clip;
+  contain: layout;
+}
+
+.site-verdict[data-shape='wide'] .site-verdict-stage {
+  min-block-size: 10rem;
+  padding: var(--env-space-7) var(--env-space-6);
+}
+
+/* The box the example lays out in, centred as on every stage. On a square it covers the stage,
+   its size set to what the example needs (useVerdictFit.ts), and is drawn at the scale that fits it
+   into the square, from its top left corner; the transform makes it the containing block of what
+   opens in it, so a dialog's backdrop covers the square. */
+.site-verdict-fit {
+  display: grid;
+  place-content: center stretch;
+  justify-items: center;
+  gap: var(--env-space-4);
+  min-inline-size: 0;
+  container-type: inline-size;
+}
+
+.site-verdict[data-shape='square'] .site-verdict-fit {
+  position: absolute;
+  inset-block-start: 0;
+  left: 0;
+  box-sizing: border-box;
+  inline-size: 100%;
+  /* Its width is what the example lays out in, wider than the stage where it is drawn smaller. */
+  max-inline-size: none;
+  min-block-size: 100%;
+  padding: var(--site-verdict-inset);
+  transform: scale(var(--site-verdict-scale, 1));
+  transform-origin: 0 0;
+}
+
+/* On a stage that fits its example, the box is in its place on the stage, as wide as the stage,
+   or wider and drawn smaller (useVerdictFit.ts), from its top left corner. */
+.site-verdict[data-shape='fit'] .site-verdict-fit {
+  box-sizing: border-box;
+  justify-self: start;
+  inline-size: 100%;
+  max-inline-size: none;
+  padding: var(--site-verdict-inset);
+  transform: scale(var(--site-verdict-scale, 1));
+  transform-origin: 0 0;
+}
+
+/* The strip under the stage: a second flat cell of the stage's fill (Stage.css), the tag at its
+   start, and the sentence beside it in body text, its lines wrapping under its own start, so the tag
+   stands alone at the start, on the sentence's first line. Paired strips are one height, from the
+   top (above). */
+.site-verdict-caption {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-content: start;
+  align-items: baseline;
+  column-gap: var(--env-space-2);
+  min-inline-size: 0;
+  padding: var(--env-space-3);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body);
+}
+
+/* The tag: a pill lighter than the strip, its icon and word in the verdict's color, its word on
+   the sentence's baseline. */
+.site-verdict-mark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--env-space-1);
+  padding: var(--env-space-1) var(--env-space-3);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-raised);
+  font-weight: var(--env-font-weight-medium);
+}
+
+.site-verdict-mark > svg {
+  flex: none;
+  align-self: center;
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+
+.site-verdict[data-verdict='do'] .site-verdict-mark {
+  color: var(--env-color-fg-success);
+}
+
+.site-verdict[data-verdict='dont'] .site-verdict-mark {
+  color: var(--env-color-fg-danger);
+}
+
+/* A caution, acceptable with care. */
+.site-verdict[data-verdict='caution'] .site-verdict-mark {
+  color: var(--env-color-fg-warning);
+}
+
+.site-verdict-sentence {
+  min-inline-size: 0;
+}
+
+@container (width < 30rem) {
+  .site-verdict[data-shape='wide'] .site-verdict-stage {
+    padding: var(--env-space-6) var(--env-space-4);
+  }
+
+  .site-verdict-stage {
+    --site-verdict-inset: var(--env-space-4);
+  }
+}

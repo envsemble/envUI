@@ -1,6 +1,0 @@
-{
-  "@envsemble/envui": {
-    "DateTimeField": "DatePicker",
-    "DateTimeFieldProps": "DatePickerProps"
-  }
-}

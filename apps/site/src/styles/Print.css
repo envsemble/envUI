@@ -1,0 +1,19 @@
+/* A printed page: its text and figures, without the site's navigation and controls. */
+@media print {
+  .site-compact-controls,
+  .site-sidebar,
+  .catalogue-rail,
+  .site-page-navigation,
+  .site-footer {
+    display: none;
+  }
+  .site-frame {
+    display: block;
+  }
+  .catalogue-specimen-area {
+    padding-inline: 1rem;
+  }
+  .catalogue-matrix-scroll {
+    overflow: visible;
+  }
+}

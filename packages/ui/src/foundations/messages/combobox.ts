@@ -9,6 +9,6 @@ export const combobox = {
   loading: 'Loading…',
   /** Shown in the popup when no option matches. */
   empty: 'No matches',
+  /** The clear button's name. */
+  clear: 'Clear',
 };
-
-export type ComboboxMessages = typeof combobox;

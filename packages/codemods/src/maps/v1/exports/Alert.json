@@ -1,7 +1,0 @@
-{
-  "@envsemble/envui": {
-    "Notice": "Alert",
-    "NoticeProps": "AlertProps",
-    "NoticeTone": "AlertTone"
-  }
-}

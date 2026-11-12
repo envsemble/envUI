@@ -10,5 +10,3 @@ export const table = {
   /** A column's resize handle. */
   resize: 'Resize',
 };
-
-export type TableMessages = typeof table;

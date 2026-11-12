@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function AutoFixOff({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 0 24 24" {...props}>{filled ? <path d="m19.55 6.025-.5-1.075-1.075-.5Q17.7 4.325 17.7 4t.275-.45l1.075-.5.5-1.075q.125-.275.45-.275t.45.275l.5 1.075 1.075.5q.275.125.275.45t-.275.45l-1.075.5-.5 1.075q-.125.275-.45.275t-.45-.275Zm-4 6.675L11.3 8.45l2.15-2.15q.3-.3.725-.3t.725.3l2.8 2.8q.3.3.3.725t-.3.725Zm3.55 9.2-6.4-6.35-6.15 6.15q-.3.3-.725.3t-.725-.3l-2.8-2.85q-.275-.275-.275-.7 0-.425.275-.7l6.15-6.15L2.1 4.9q-.3-.3-.3-.7 0-.4.3-.7.275-.275.7-.275.425 0 .7.275l17 17q.275.275.275.7 0 .425-.275.7-.3.3-.7.3-.4 0-.7-.3Z" /> : <path d="m19.55 6.025-.5-1.075-1.075-.5Q17.7 4.325 17.7 4t.275-.45l1.075-.5.5-1.075q.125-.275.45-.275t.45.275l.5 1.075 1.075.5q.275.125.275.45t-.275.45l-1.075.5-.5 1.075q-.125.275-.45.275t-.45-.275Zm-4 6.675L11.3 8.45l2.15-2.15q.3-.3.725-.3t.725.3l2.8 2.8q.3.3.3.725t-.3.725Zm3.55 9.2-6.4-6.35-6.15 6.15q-.3.3-.725.3t-.725-.3l-2.8-2.85q-.275-.275-.275-.7 0-.425.275-.7l6.15-6.15L2.1 4.9q-.275-.275-.288-.688Q1.8 3.8 2.1 3.5q.275-.275.7-.275.425 0 .7.275l17 17q.275.275.288.688.012.412-.288.712-.275.275-.688.275-.412 0-.712-.275ZM5.85 19.6l5.45-5.5-1.4-1.4-5.5 5.45Zm0 0L4.4 18.15l1.45 1.45Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "m19.55 6.025-.5-1.075-1.075-.5Q17.7 4.325 17.7 4t.275-.45l1.075-.5.5-1.075q.125-.275.45-.275t.45.275l.5 1.075 1.075.5q.275.125.275.45t-.275.45l-1.075.5-.5 1.075q-.125.275-.45.275t-.45-.275Zm-4 6.675L11.3 8.45l2.15-2.15q.3-.3.725-.3t.725.3l2.8 2.8q.3.3.3.725t-.3.725Zm3.55 9.2-6.4-6.35-6.15 6.15q-.3.3-.725.3t-.725-.3l-2.8-2.85q-.275-.275-.275-.7 0-.425.275-.7l6.15-6.15L2.1 4.9q-.";
+
+export function IconAutoFixOff({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 0 24 24" {...props}><path d={filled ? start + "3-.3-.3-.7 0-.4.3-.7.275-.275.7-.275.425 0 .7.275l17 17q.275.275.275.7 0 .425-.275.7-.3.3-.7.3-.4 0-.7-.3Z" : start + "275-.275-.288-.688Q1.8 3.8 2.1 3.5q.275-.275.7-.275.425 0 .7.275l17 17q.275.275.288.688.012.412-.288.712-.275.275-.688.275-.412 0-.712-.275ZM5.85 19.6l5.45-5.5-1.4-1.4-5.5 5.45Zm0 0L4.4 18.15l1.45 1.45Z"} /></Icon>;
 }

@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function PersonShield({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconPersonShield({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M720-83q-7 0-13.5-1.5T694-88q-62-25-98-83t-36-127v-77q0-11 5.5-21t16.5-15l120-60q8-5 18-5t18 5l120 60q11 5 16.5 15t5.5 21v77q0 69-36 127t-98 83q-6 2-12.5 3.5T720-83Zm-480-77q-33 0-56.5-23.5T160-240v-32q0-34 17.5-62.5T224-378q50-25 103-40t108-20q19-2 32 11t13 32v97q0 22 3 43.5t9 42.5q5 20-6 36t-30 16H240Zm240-320q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Z" /> : <path d="M458-240Zm-218 80q-33 0-56.5-23.5T160-240v-32q0-34 17.5-62.5T224-378q31-16 62.5-27t63.5-19q23-5 45-9t45-6q17-2 28.5 10t11.5 29q0 17-11.5 28.5T440-358q-18 2-35.5 4t-35.5 7q-28 7-55 17t-54 24q-9 5-14.5 14t-5.5 20v32h218q17 0 28.5 11.5T498-200q0 17-11.5 28.5T458-160H240Zm320-215q0-11 5.5-21t16.5-15l120-60q8-5 18-5t18 5l120 60q11 5 16.5 15t5.5 21v77q0 69-36 125t-98 85q-6 3-12.5 4T720-83q-7 0-13.5-1T694-88q-62-29-98-85t-36-125v-77Zm160 211q38-18 59-55t21-79v-52l-80-40-80 40v52q0 42 21 79t59 55ZM480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm240 363Z" />}</Icon>;
 }

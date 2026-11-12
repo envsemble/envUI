@@ -1,104 +1,141 @@
-/* Conversation entries. Messages from the person using the app are compact bubbles at the inline end;
-   messages from others are full-width content, so long formatted answers keep a readable measure. */
-.env-message-list {
-  display: grid;
-  align-content: start;
-  gap: var(--env-space-5);
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  overflow-wrap: anywhere;
-}
-.env-message {
-  display: grid;
-  justify-items: start;
-  gap: var(--env-space-2);
-  min-inline-size: 0;
-  margin: 0;
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-}
-.env-message[data-from='self'] {
-  justify-items: end;
-}
-.env-message > * {
-  min-inline-size: 0;
-  max-inline-size: 100%;
-}
-.env-message-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: var(--env-space-2);
-  font: var(--env-type-body-small);
-}
-.env-message-author {
-  color: var(--env-color-fg-default);
-  font-weight: var(--env-font-weight-medium);
-}
-.env-message-meta {
-  color: var(--env-color-fg-muted);
-}
-.env-message[data-from='other'] > .env-message-content {
-  inline-size: 100%;
-}
-/* The bubble takes the row tone on the canvas; as a translucent fill it stays distinct on panes. */
-.env-message[data-from='self'] > .env-message-content {
-  max-inline-size: min(100%, max(75%, 16rem));
-  padding: var(--env-space-2) var(--env-space-4);
-  border-radius: var(--env-radius-lg);
-  background: var(--env-color-bg-neutral-muted);
-}
-/* Plain text keeps the line breaks it was written with. */
-.env-message-content[data-text] {
-  white-space: pre-wrap;
-}
-.env-message[data-from='self'][data-status='failed'] > .env-message-content {
-  box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-danger);
-}
-.env-message-content > :first-child {
-  margin-block-start: 0;
-}
-.env-message-content > :last-child {
-  margin-block-end: 0;
-}
-.env-message-status {
-  /* The spinner takes the status's color, through its hook. */
-  --env-spinner-color: currentColor;
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-1);
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-.env-message[data-status='failed'] .env-message-status {
-  color: var(--env-color-fg-danger);
-}
-/* Actions are small text and icon buttons; on coarse pointers they grow to the touch height. */
-.env-message-actions {
-  --env-control-height: var(--env-control-height-sm);
-  /* The height the actions draw at, which a coarse pointer raises to the touch height. */
-  --env-message-action-height: var(--env-control-height);
-  justify-self: stretch;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--env-space-1);
-}
-/* A text icon action at the edge lines its icon up with the message, not its round hit area,
-   through Button's edge hooks. */
-.env-message[data-from='self'] > .env-message-actions {
-  --env-button-text-icon-edge-end: calc(
-    (var(--env-control-icon-size) - var(--env-message-action-height)) / 2
-  );
-  justify-content: flex-end;
-}
-.env-message[data-from='other'] > .env-message-actions {
-  --env-button-text-icon-edge-start: calc(
-    (var(--env-control-icon-size) - var(--env-message-action-height)) / 2
-  );
-}
-@media (pointer: coarse) {
+@layer env.components {
+  /* Conversation entries. Messages from the person using the app are compact bubbles at the inline end;
+     messages from others are full-width content, so long formatted answers keep a readable measure. */
+  .env-message-list {
+    align-content: start;
+    max-inline-size: 100%;
+    overflow-wrap: break-word;
+  }
+  /* While busy, a reply on its way, where it will show: its author, as a message's header, then a
+     small spinner and Working in the muted color. */
+  .env-message-list-busy {
+    column-gap: var(--env-space-2);
+    font: var(--env-type-body-sm);
+  }
+  .env-message {
+    justify-items: start;
+    margin: 0;
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body);
+  }
+  .env-message[data-from='self'] {
+    justify-items: end;
+  }
+  .env-message-header {
+    align-items: baseline;
+    column-gap: var(--env-space-2);
+    font: var(--env-type-body-sm);
+  }
+  .env-message-author {
+    color: var(--env-color-fg-default);
+    font-weight: var(--env-font-weight-medium);
+  }
+  .env-message-meta {
+    color: var(--env-color-fg-muted);
+  }
+  .env-message[data-from='other'] > .env-message-content,
+  .env-message[data-from='other'] > .env-skeleton-content > .env-message-content {
+    inline-size: 100%;
+  }
+  /* The bubble takes the row tone on the canvas; as a translucent fill it stays distinct on panes. */
+  .env-message[data-from='self'] > .env-message-content,
+  .env-message[data-from='self'] > .env-skeleton-content > .env-message-content {
+    /* Three quarters of the row, and never narrower than this where the row is narrow. */
+    --env-message-bubble-min-measure: 16rem;
+    max-inline-size: min(100%, max(75%, var(--env-message-bubble-min-measure)));
+    padding: var(--env-space-2) var(--env-space-4);
+    border-radius: var(--env-radius-lg);
+    background: var(--env-color-bg-neutral-muted);
+  }
+  /* Plain text keeps the line breaks it was written with. */
+  .env-message-content[data-text] {
+    white-space: pre-wrap;
+  }
+  .env-message[data-from='self'][data-status='failed'] > .env-message-content,
+  .env-message[data-from='self'][data-status='failed']
+    > .env-skeleton-content
+    > .env-message-content {
+    box-shadow: inset 0 0 0 1px var(--env-color-border-danger);
+  }
+  .env-message-content > :first-child {
+    margin-block-start: 0;
+  }
+  .env-message-content > :last-child {
+    margin-block-end: 0;
+  }
+  .env-message-status {
+    /* The spinner takes the status's color, through its hook. */
+    --env-spinner-color: currentColor;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
+  }
+  .env-message[data-status='failed'] .env-message-status {
+    color: var(--env-color-fg-danger);
+  }
+  /* Actions are small text and icon buttons; on coarse pointers they grow to the touch height. */
   .env-message-actions {
-    --env-message-action-height: max(var(--env-control-height), var(--env-control-height-touch));
+    --env-control-height: var(--env-control-height-sm);
+    /* The height the actions draw at, which a coarse pointer raises to the touch height. */
+    --env-message-action-height: var(--env-control-height);
+    justify-self: stretch;
+  }
+  /* A text icon action at the edge lines its icon up with the message, not its round hit area,
+     through Button's edge hooks. */
+  .env-message[data-from='self'] > .env-message-actions,
+  .env-message[data-from='self'] > .env-skeleton-content > .env-message-actions {
+    --env-button-text-icon-edge-end: calc(
+      (var(--env-control-icon-size) - var(--env-message-action-height)) / 2
+    );
+    justify-content: flex-end;
+  }
+  .env-message[data-from='other'] > .env-message-actions,
+  .env-message[data-from='other'] > .env-skeleton-content > .env-message-actions {
+    --env-button-text-icon-edge-start: calc(
+      (var(--env-control-icon-size) - var(--env-message-action-height)) / 2
+    );
+  }
+  @media (pointer: coarse) {
+    .env-message-actions {
+      --env-message-action-height: max(var(--env-control-height), var(--env-control-height-touch));
+    }
+  }
+
+  /* An author or meta given as undefined, as over a placeholder item, takes no room outside a
+     skeleton. In one, missing text is a bar: the author's and the meta's short, another person's
+     message three lines, and one's own a line in its bubble. */
+  .env-message-author:empty:not([data-env-skeleton] *),
+  .env-message-meta:empty:not([data-env-skeleton] *) {
+    display: none;
+  }
+  .env-message-header:not(:has(> :not(:empty))):not([data-env-skeleton] *) {
+    display: none;
+  }
+  [data-env-skeleton] :is(.env-message-author, .env-message-meta, .env-message-content) {
+    --env-skeleton-placeholder: inline-block;
+  }
+  [data-env-skeleton] .env-message-author {
+    --env-skeleton-length: 6rem;
+  }
+  [data-env-skeleton] .env-message-meta {
+    --env-skeleton-length: 4rem;
+  }
+  .env-message[data-from='other']:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-message-content {
+    --env-skeleton-length: 36rem;
+    --env-skeleton-lines: 3;
+    --env-skeleton-last: 60%;
+  }
+  .env-message[data-from='self']:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-message-content {
+    --env-skeleton-length: 12rem;
+  }
+  /* One's own bubble carries the skeleton's tint over its fill (Skeleton.css). The message has no
+     fill of its own, so it carries none: it would show a box that isn't there. */
+  .env-message[data-from='self'][data-env-skeleton] .env-message-content,
+  [data-env-skeleton] .env-message[data-from='self'] .env-message-content {
+    background-image: var(--env-skeleton-overlay);
+  }
+  .env-message[data-env-skeleton]:not(env-none) {
+    background-image: none;
   }
 }

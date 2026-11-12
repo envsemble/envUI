@@ -1,92 +1,154 @@
-.env-button-group {
-  display: inline-flex;
-  align-items: stretch;
-  gap: 0.125rem;
-  inline-size: fit-content;
-  max-inline-size: 100%;
-  min-inline-size: 0;
-  /* Connected buttons retain their corners and remain reachable in narrow containers. */
-  overflow: auto;
-  scrollbar-width: thin;
-  /* Rings are inset here, so on a solid fill Button adds its inner ring in the label color. */
-  --env-button-focus-inner-ring: 0.25rem;
-}
-.env-button-group > .env-button:focus-visible {
-  outline-offset: -0.125rem;
-}
+@layer env.components {
+  .env-button-group {
+    display: inline-flex;
+    align-items: stretch;
+    /* A hairline between the buttons and small inner corners, so the row reads as one control with
+       pill ends rather than separate buttons side by side. */
+    gap: var(--env-control-border-width);
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    /* Connected buttons retain their corners and remain reachable in narrow containers. */
+    overflow: auto;
+    scrollbar-width: thin;
+    /* Rings are inset here, so on a solid fill Button adds its inner ring in the label color. */
+    --env-button-focus-inner-ring: 0.25rem;
+    /* Connected buttons can't move to a line of their own, so in a narrow group a label wraps, and
+       may break inside a long word, rather than push the group past its container. */
+    --env-button-white-space: normal;
+    --env-button-overflow-wrap: anywhere;
+  }
+  .env-button-group > .env-button:focus-visible {
+    outline-offset: -2px;
+  }
 
-.env-button-group > .env-button {
-  block-size: auto;
-}
+  .env-button-group > .env-button {
+    block-size: auto;
+  }
 
-.env-button-group
-  > .env-button:not([data-variant='primary']:where([data-tone='accent'])):not(
-    :where(
-      :nth-child(1 of .env-button:not([hidden])):nth-last-child(1 of .env-button:not([hidden]))
+  .env-button-group
+    > .env-button:not(
+      :where(
+        :nth-child(1 of .env-button:not([hidden])):nth-last-child(1 of .env-button:not([hidden]))
+      )
+    ) {
+    /* Exactly half the button's height, not the capped full corner, which can be more: corners that
+       add up to more than the height would make the browser scale down the small inner ones too. It
+       follows the height the button draws at, which a coarse pointer raises to the touch height. */
+    border-radius: calc(var(--env-button-height) / 2);
+  }
+
+  .env-button-group > .env-button.env-icon-button {
+    inline-size: var(--env-button-height);
+    min-inline-size: var(--env-button-height);
+  }
+
+  .env-button-group > .env-button[hidden] {
+    display: none;
+  }
+
+  .env-button-group[data-orientation='horizontal']
+    > .env-button:not(:nth-child(1 of .env-button:not([hidden]))) {
+    border-start-start-radius: var(--env-radius-xs);
+    border-end-start-radius: var(--env-radius-xs);
+  }
+
+  .env-button-group[data-orientation='horizontal']
+    > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
+    border-start-end-radius: var(--env-radius-xs);
+    border-end-end-radius: var(--env-radius-xs);
+  }
+
+  .env-button-group[data-orientation='vertical'] {
+    flex-direction: column;
+  }
+
+  /* Outline buttons share one edge where they meet, rather than showing two edges a hairline apart. */
+  .env-button-group[data-orientation='horizontal']
+    > .env-button[data-variant='outline']:not(:nth-child(1 of .env-button:not([hidden]))) {
+    margin-inline-start: calc(-2 * var(--env-control-border-width));
+  }
+  /* A column of outline buttons is one framed control: the edges they share are straight across,
+     where small inner corners would notch them at both sides into a stack of separate pills, and
+     only the column's outer corners are round. */
+  .env-button-group[data-orientation='vertical']
+    > .env-button[data-variant='outline']:not(:nth-child(1 of .env-button:not([hidden]))) {
+    margin-block-start: calc(-2 * var(--env-control-border-width));
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+  }
+  .env-button-group[data-orientation='vertical']
+    > .env-button[data-variant='outline']:not(:nth-last-child(1 of .env-button:not([hidden]))) {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  /* fullWidth fills the container: in a row, labelled buttons share the room the icon-only ones
+     leave, such as a primary action and its menu's chevron across a sidebar, and a row of icon-only
+     buttons shares it evenly. */
+  .env-button-group[data-full-width] {
+    display: flex;
+    inline-size: 100%;
+  }
+
+  .env-button-group[data-full-width][data-orientation='horizontal']
+    > .env-button:not(.env-icon-button) {
+    flex: 1 1 auto;
+  }
+
+  .env-button-group[data-full-width][data-orientation='horizontal']:not(
+      :has(> .env-button:not(.env-icon-button):not([hidden]))
+    )
+    > .env-button {
+    flex: 1 1 0;
+  }
+
+  .env-button-group[data-orientation='vertical'] > .env-button {
+    inline-size: 100%;
+  }
+
+  .env-button-group[data-orientation='vertical']
+    > .env-button:not(:nth-child(1 of .env-button:not([hidden]))) {
+    border-start-start-radius: var(--env-radius-xs);
+    border-start-end-radius: var(--env-radius-xs);
+  }
+
+  .env-button-group[data-orientation='vertical']
+    > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
+    border-end-start-radius: var(--env-radius-xs);
+    border-end-end-radius: var(--env-radius-xs);
+  }
+
+  /* A group joins buttons of one variant, and the filled primary and secondary buttons together, such
+     as a split button. A group that mixes an outline, ghost or text button with another variant, such
+     as an outline Cancel beside a primary Save, would put a square inner edge against a pill: its
+     buttons stand apart instead, whole pills a small gap from each other. */
+  .env-button-group:is(
+    :has(> .env-button:not([hidden])[data-variant='outline']):has(
+      > .env-button:not([hidden]):not([data-variant='outline'])
+    ),
+    :has(> .env-button:not([hidden])[data-variant='ghost']):has(
+      > .env-button:not([hidden]):not([data-variant='ghost'])
+    ),
+    :has(> .env-button:not([hidden])[data-variant='text']):has(
+      > .env-button:not([hidden]):not([data-variant='text'])
     )
   ) {
-  /* A finite pill radius keeps the browser from scaling down the inner corners. It follows the
-     height the button draws at, which a coarse pointer raises to the touch height. */
-  border-radius: calc(var(--env-button-height) / 2);
-}
-
-.env-button-group > .env-button.env-icon-button {
-  inline-size: var(--env-button-height);
-  min-inline-size: var(--env-button-height);
-}
-
-.env-button-group > .env-button[hidden] {
-  display: none;
-}
-
-.env-button-group[data-orientation='horizontal']
-  > .env-button:not(:nth-child(1 of .env-button:not([hidden]))) {
-  border-start-start-radius: var(--env-radius-row-inner);
-  border-end-start-radius: var(--env-radius-row-inner);
-}
-
-.env-button-group[data-orientation='horizontal']
-  > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
-  border-start-end-radius: var(--env-radius-row-inner);
-  border-end-end-radius: var(--env-radius-row-inner);
-}
-
-.env-button-group[data-orientation='vertical'] {
-  flex-direction: column;
-}
-
-/* fullWidth fills the container: in a row, labelled buttons share the room the icon-only ones
-   leave, such as a primary action and its menu's chevron across a sidebar, and a row of icon-only
-   buttons shares it evenly. */
-.env-button-group[data-full-width] {
-  display: flex;
-  inline-size: 100%;
-}
-
-.env-button-group[data-full-width][data-orientation='horizontal']
-  > .env-button:not(.env-icon-button) {
-  flex: 1 1 auto;
-}
-
-.env-button-group[data-full-width][data-orientation='horizontal']:not(
-    :has(> .env-button:not(.env-icon-button):not([hidden]))
-  )
-  > .env-button {
-  flex: 1 1 0;
-}
-
-.env-button-group[data-orientation='vertical'] > .env-button {
-  inline-size: 100%;
-}
-
-.env-button-group[data-orientation='vertical']
-  > .env-button:not(:nth-child(1 of .env-button:not([hidden]))) {
-  border-start-start-radius: var(--env-radius-row-inner);
-  border-start-end-radius: var(--env-radius-row-inner);
-}
-
-.env-button-group[data-orientation='vertical']
-  > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
-  border-end-start-radius: var(--env-radius-row-inner);
-  border-end-end-radius: var(--env-radius-row-inner);
+    gap: var(--env-space-2);
+  }
+  .env-button-group:is(
+      :has(> .env-button:not([hidden])[data-variant='outline']):has(
+        > .env-button:not([hidden]):not([data-variant='outline'])
+      ),
+      :has(> .env-button:not([hidden])[data-variant='ghost']):has(
+        > .env-button:not([hidden]):not([data-variant='ghost'])
+      ),
+      :has(> .env-button:not([hidden])[data-variant='text']):has(
+        > .env-button:not([hidden]):not([data-variant='text'])
+      )
+    )
+    > .env-button {
+    border-radius: calc(var(--env-button-height) / 2);
+    margin: 0;
+  }
 }

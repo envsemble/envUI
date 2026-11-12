@@ -2,13 +2,13 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import stylelint from 'stylelint';
-import config, { hairlineProperties, rawColorFunction, stackingValues } from '../index.js';
-import { expectedTokens, libraryTokensUrl, tokensUrl } from '../scripts/SyncTokens.mjs';
+import config, { hairlineProperties, rawColorFunction, stackingValues } from '../src/index.js';
+import { lintPackages, staleFiles } from '../../../scripts/build/SyncLintPackages.ts';
 
 const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
-/** Values with nested fallbacks that the ESLint plugin's no-raw-colors tests read too. */
-const nestedFallbacks = JSON.parse(
-  readFileSync(new URL('../../../tests/lint/NestedFallbacks.json', import.meta.url), 'utf8'),
+/** The color values the ESLint plugin's no-raw-colors tests read too, which both packages read alike. */
+const colorValues = JSON.parse(
+  readFileSync(new URL('../../../tests/lint/ColorValues.json', import.meta.url), 'utf8'),
 );
 
 /** The rule and the marked text of each warning for some CSS in source order, with lines on request. */
@@ -34,50 +34,17 @@ async function message(code) {
 
 const passes = async (code) => assert.deepEqual(await lint(code), [], code);
 
-test('selectors of envUI classes are reported', async () => {
-  assert.deepEqual(
-    await lint(
-      [
-        '.card > .env-card-title { margin: 0; }',
-        ':global(.env-dialog) .actions { gap: 1rem; }',
-        '.list:has(.env-row-selected), .item:not(.env-row) { margin: 0; }',
-        '[class*="env-button"] { margin: 0; }',
-        "[class^='env-menu'] { margin: 0; }",
-        '@scope (.env-dialog) to (.env-dialog-body) { p { margin: 0; } }',
-        '.toolbar { & .env-icon-button { margin: 0; } }',
-      ].join('\n'),
-    ),
-    [
-      { rule: 'envui/no-private-classes', text: '.env-card-title' },
-      { rule: 'envui/no-private-classes', text: '.env-dialog' },
-      { rule: 'envui/no-private-classes', text: '.env-row-selected' },
-      { rule: 'envui/no-private-classes', text: '.env-row' },
-      { rule: 'envui/no-private-classes', text: '[class*="env-button' },
-      { rule: 'envui/no-private-classes', text: "[class^='env-menu" },
-      { rule: 'envui/no-private-classes', text: '.env-dialog' },
-      { rule: 'envui/no-private-classes', text: '.env-dialog-body' },
-      { rule: 'envui/no-private-classes', text: '.env-icon-button' },
-    ],
-  );
-  const warning = await message('.env-button-primary { opacity: 0.8; }');
-  assert.equal(
-    warning.text,
-    ".env-button-primary styles envUI's private markup, which can change in any envUI release. Use the component's props and envUI's tokens, or style a class of your own. (envui/no-private-classes)",
-  );
-  assert.equal(
-    warning.url,
-    'https://github.com/envsemble/envUI/blob/main/packages/stylelint-config/README.md#envuino-private-classes',
-  );
-});
-
-test("the theme boundary, the theme attribute and the application's own classes pass", async () => {
+test("envUI's part classes and state attributes, the theme boundary and the application's own classes pass", async () => {
+  await passes('.card > .env-card-title { margin: 0; }');
+  await passes('.list:has(.env-list-item[data-selected]) { margin: 0; }');
+  await passes('@scope (.env-dialog) to (.env-dialog-body) { p { margin: 0; } }');
   await passes('.env-theme { --env-font-size-body: 1.0625rem; }');
   await passes("[data-env-theme='dark'] .card { margin: 0; }");
   await passes('.my-env-banner, .environment { margin: 0; }');
   await passes('@scope (.card) { p { margin: 0; } }');
 });
 
-test('raw colors are reported, and colors from tokens pass', async () => {
+test('raw colors are reported by the rule for their kind, with the tokens for their property', async () => {
   assert.deepEqual(
     await lint(
       [
@@ -114,70 +81,29 @@ test('raw colors are reported, and colors from tokens pass', async () => {
     (await message('.a { border-color: rgb(0 0 0); }')).text,
     /such as var\(--env-color-border-default\) or another var\(--env-color-border-…\) role/,
   );
-  await passes('.a { color: var(--env-color-fg-default); background: transparent; }');
-  await passes('.a { color: hsl(from var(--env-color-fg-link) h s calc(l - 10)); }');
-  // Channels that all come from custom properties, and colors inside a CSS string.
-  await passes(
-    '.a { color: oklch(var(--l) var(--c) var(--h)); background: rgb(var(--rgb) / 50%); }',
-  );
-  await passes('.a { color: color(display-p3 var(--r) var(--g) var(--b)); }');
+  // Colors inside a CSS string pass, and one after it doesn't.
   await passes(`.a { content: "rgb(1 2 3)"; } .b { content: 'it\\'s hsl(0 0% 0%)'; }`);
-  assert.deepEqual(
-    await lint('.a { color: oklch(var(--l) 0.15 var(--h)); }\n.b { content: "a" rgb(1 2 3); }'),
-    [
-      { rule: 'declaration-property-value-disallowed-list', text: 'oklch(var(--l) 0.15 var(--h))' },
-      { rule: 'declaration-property-value-disallowed-list', text: '"a" rgb(1 2 3)' },
-    ],
-  );
+  assert.deepEqual(await lint('.b { content: "a" rgb(1 2 3); }'), [
+    { rule: 'declaration-property-value-disallowed-list', text: '"a" rgb(1 2 3)' },
+  ]);
   assert.match(
     (await message('.a { background: rgb(var(--x)), url("rgb(0 0 0)"), hsl(0 0% 0%); }')).text,
     /^Raw color hsl\(0 0% 0%\) in background/,
   );
-  await passes(
-    '.a { background: color-mix(in srgb, var(--env-color-bg-default) 80%, transparent); }',
-  );
-  await passes('.a { fill: currentColor; }');
 });
 
-test('equivalent color forms are treated alike', async () => {
-  // The comma form's last argument is the alpha, as the one after the slash is.
-  await passes('.a { color: rgba(var(--rgb), 0.5); background: rgb(var(--rgb) / 50%); }');
-  await passes('.a { color: rgba(var(--r), var(--g), var(--b), 0.5); }');
-  await passes('.a { color: rgb(var(--brand-rgb)); background: rgb(var(--rgb, var(--other))); }');
-  // Fallbacks nest: each is var()s whose own fallbacks are var()s, as the ESLint rule reads them.
-  for (const value of nestedFallbacks.custom) await passes(`.a { color: ${value}; }`);
-  for (const value of nestedFallbacks.raw)
-    assert.deepEqual(await lint(`.a { color: ${value}; }`), [
-      { rule: 'declaration-property-value-disallowed-list', text: value },
-    ]);
-  // A fallback is a color as much as the value, and each channel is a var().
-  assert.deepEqual(
-    await lint(
-      [
-        '.a { color: rgb(var(--rgb, 255 0 0)); }',
-        '.b { color: var(--accent, #0b57d0); }',
-        '.c { color: var(--accent, red); }',
-        '.d { color: rgb(calc(255) calc(0) calc(0)); }',
-        '.e { color: hsl(none none none); }',
-        '.f { color: rgb(var(--r), var(--g), 0); }',
-      ].join('\n'),
-    ),
-    [
-      { rule: 'declaration-property-value-disallowed-list', text: 'rgb(var(--rgb, 255 0 0))' },
-      { rule: 'color-no-hex', text: '#0b57d0' },
-      { rule: 'color-named', text: 'red' },
-      {
-        rule: 'declaration-property-value-disallowed-list',
-        text: 'rgb(calc(255) calc(0) calc(0))',
-      },
-      { rule: 'declaration-property-value-disallowed-list', text: 'hsl(none none none)' },
-      { rule: 'declaration-property-value-disallowed-list', text: 'rgb(var(--r), var(--g), 0)' },
-    ],
-  );
-  assert.match(
-    (await message('.a { color: rgb(var(--rgb, 255 0 0)); }')).text,
-    /^Raw color rgb\(var\(--rgb, 255 0 0\)\) in color/,
-  );
+test('color values are read as the ESLint plugin reads them', async () => {
+  for (const value of colorValues.accepted) await passes(`.a { color: ${value}; }`);
+  for (const entry of colorValues.rejected) {
+    const [value, color] = Array.isArray(entry) ? entry : [entry, entry];
+    const { text } = await message(`.a { color: ${value}; }`);
+    assert.ok(
+      [`Raw color ${color}: `, `Raw color ${color} in color: `].some((start) =>
+        text.startsWith(start),
+      ),
+      `${value}: ${text}`,
+    );
+  }
 });
 
 test('a literal z-index is reported, and stacking tokens pass', async () => {
@@ -191,7 +117,7 @@ test('a literal z-index is reported, and stacking tokens pass', async () => {
     "Literal z-index 999: use an envUI stacking token (--env-z-…) instead, such as var(--env-z-sticky) for a sticky header or var(--env-z-modal) for a modal layer, with calc() for a step between two, so the application's layers keep one order with envUI's popups and dialogs. (declaration-property-value-allowed-list)",
   );
   await passes('.a { z-index: auto; }');
-  await passes('.a { z-index: var(--env-z-popover); }');
+  await passes('.a { z-index: var(--env-z-popup); }');
   await passes('.a { z-index: calc(var(--env-z-sticky) + 1); }');
   await passes('.a { z-index: var(--app-z-modal); }');
   await passes('.a { z-index: calc(var(--app-z-modal) + 1); }');
@@ -236,30 +162,19 @@ test('a disable comment with a reason lets one line through', async () => {
   );
 });
 
-test('the config validates its plugin rule options', async () => {
-  const { results } = await stylelint.lint({
-    code: '.a {}',
-    config: { ...config, rules: { 'envui/no-private-classes': [true, { allowed: ['x'] }] } },
-  });
-  assert.equal(results[0].invalidOptionWarnings.length, 1);
-});
-
-test("the token names are the library's when the repository has its token list", () => {
-  const copy = JSON.parse(readFileSync(tokensUrl, 'utf8'));
-  if (existsSync(libraryTokensUrl)) {
-    assert.equal(
-      readFileSync(tokensUrl, 'utf8'),
-      expectedTokens(),
-      "data/tokens.json is behind the library's token list: run npm run sync:tokens --workspace @envsemble/stylelint-config-envui.",
-    );
-    assert.equal(copy.source, 'packages/ui/src/generated/tokens.json');
-  } else assert.equal(copy.source, 'embedded');
+test("the token names, their helper and the color policy are the repository's, copied", () => {
+  const directory = lintPackages['@envsemble/stylelint-config-envui'];
+  assert.deepEqual(
+    staleFiles().filter((path) => path.startsWith(`${directory}/`)),
+    [],
+    'Run npm run tokens:build.',
+  );
 });
 
 test('every token the messages and the README name exists in the library', () => {
-  const library = existsSync(libraryTokensUrl)
-    ? JSON.parse(readFileSync(libraryTokensUrl, 'utf8')).tokens.map((token) => token.cssVariable)
-    : Object.values(JSON.parse(readFileSync(tokensUrl, 'utf8')).tokens).flat();
+  const library = JSON.parse(
+    readFileSync(new URL('../../ui/src/generated/tokens.json', import.meta.url), 'utf8'),
+  ).tokens.map((token) => token.cssVariable);
   const rules = config.rules;
   const messages = [
     rules['color-no-hex'][1].message('#fff'),

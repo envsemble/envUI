@@ -2,7 +2,7 @@
 title: Radio
 summary: One choice from a few options shown together, side by side or as selectable rows.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - radio button
@@ -14,9 +14,9 @@ aliases:
   - choice group
   - single choice
 useWhen:
-  - People choose exactly one of two to five options, and seeing them all helps them choose, such as who can open a project.
-  - Each option needs a sentence that explains it, such as a role or a visibility (`orientation="vertical"`).
-  - A choice in a form or a dialog that takes effect when the form is saved.
+  - Exactly one of two to five options, all in view, such as who can open a project
+  - Options that each need a sentence to explain them, such as roles
+  - A choice in a form that takes effect when the form is saved
 avoidWhen:
   - text: More options than fit comfortably, or options people already know, such as a country or a time zone.
     use: Select
@@ -28,140 +28,169 @@ avoidWhen:
     use: Checkbox
   - text: A setting that turns on or off and applies at once.
     use: Switch
-related:
-  - checkbox
-  - select
-  - segmented-control
-  - switch
-  - dialog
-  - accessibility
 components:
   - RadioGroup
   - Radio
+examples:
+  ProjectAccess: overview
+  VisibilityRows:
+    role: example
+    caption: In rows, each option with a description.
+  RadioAnatomy: anatomy
+  RequiredChoice: example
+  WrappingOptions: example
+  DescribedRows:
+    role: do
+    caption: Short labels, with each explanation in a description.
+  LongInlineLabels:
+    role: caution
+    caption: 'Explanations packed into inline labels: long rows, slow to scan.'
 ---
 
 # Radio
 
-## Overview
+## Variants
 
-A radio group offers a few options and lets people choose exactly one; choosing an option clears the one chosen before. RadioGroup is a native fieldset whose legend names the group, and each Radio is a native radio input inside its label, so the arrow keys, Tab, form submission and reset behave as the platform's.
+| Layout    | Use for                                                         |
+| --------- | --------------------------------------------------------------- |
+| In a line | Short options people tell apart by name. The default.           |
+| In rows   | Options that need a sentence each, in rows that fill the width. |
 
-A group comes in two looks:
-
-- **Inline** (the default): radios before their labels, side by side, wrapping onto more lines when space runs out.
-- **Rows** (`orientation="vertical"`): connected rows that fill the width, with each option's label and description at the start and its radio at the end, for options that need explaining.
-
-```tsx example=ProjectAccess
+```tsx figure=VisibilityRows
 
 ```
 
 ## Anatomy
 
-1. **Group label** (`label` on RadioGroup): the fieldset's legend in the body text, 0.9375 rem, 1 rem above the options. It names the group.
-2. **Radio**: the native radio, 1 rem, in the control blue while chosen. It comes before its label inline, and at the end of a row.
-3. **Label** (`label` on Radio): the option's name in 0.875 rem text, 0.75 rem from the radio. Pressing it chooses the option.
-4. **Description** (optional, `description`): a muted line under the label in the same size, which helps people choose.
-5. **Row** (`orientation="vertical"`): the option's fill, which holds its label, description and radio; the whole row chooses the option.
+```tsx figure=RadioAnatomy
 
-## Variants and sizes
+```
 
-| Orientation  | Use for                                                                                                             |
-| ------------ | ------------------------------------------------------------------------------------------------------------------- |
-| `horizontal` | Short options people tell apart by their names, such as Team and Only me, in a form. The default.                   |
-| `vertical`   | Options that need a sentence each to choose between, such as a role or a visibility, in a form, a dialog or a pane. |
+1. **Group** (`env-radio-group`)
+2. **Group label** (`env-radio-group > legend`, `label`)
+3. **Option** (`env-radio`)
+4. **Label** (`env-radio > span::text`, `label`)
+5. **Description** (`env-radio-description`, `description`)
+6. **Radio** (`env-radio-input`)
 
-- **Horizontal**: options sit 2 rem apart side by side and wrap onto lines 1 rem apart.
-- **Rows**: rows fill the group's width, 0.125 rem apart, with 0.75 rem block and 1.5 rem inline padding, on the muted row fill. The group's outer corners are 1.75 rem and the corners between rows 0.5 rem, as in a [List](../components/list.md); a single row is rounded all round.
-- On touch screens every option, inline or a row, is at least 2.75 rem tall.
+## Behaviour
 
-## States and behaviour
+### States
 
-- **Choosing**: pressing a radio, its label or its row chooses the option and clears the one chosen before. People can't clear a choice, only make another, so leave none chosen where people must decide.
-- **Hover and pressed**: the radio takes its hover and pressed blues. A row takes the row hover fill under the pointer and the pressed fill while pressed, from the color tokens [colors and themes](../foundations/colors.md) describes, and settles slightly while pressed; an inline radio shrinks slightly while it or its label is pressed. With a reduced-motion preference nothing moves.
-- **Chosen**: the radio shows its dot; a chosen row keeps the hover fill, so it stands out from the others.
-- **Focus**: keyboard focus shows the browser's focus ring around the radio; a row also shows the shared focus ring around its edge.
-- **Disabled**: `disabled` on a Radio disables one option, and on RadioGroup every option. A disabled option takes the shared disabled opacity on its radio and the disabled text color on its label, doesn't react to the pointer, is skipped by the arrow keys and is left out of form submission.
-- **Controlled or not**: RadioGroup's `value` with `onValueChange` controls the choice; otherwise it starts from `defaultValue`, or with nothing chosen. `onValueChange` receives the chosen option's `value`, and a Radio's `onChange` the native event.
-- **Native forms**: the chosen option submits its `value` under the group's `name`; without `name` the group takes a unique generated one, so its radios still work as one group. `required` asks the browser to refuse the form until an option is chosen, and `form` ties the group to a form it sits outside of. A form reset returns an uncontrolled group to `defaultValue` and leaves a controlled one as `value` says; a reset the form prevents changes nothing.
-- A Radio works only inside a RadioGroup; elsewhere it throws an error.
+Choosing an option clears the one chosen before. People can't clear a choice, only make another. A chosen row takes the selection's fill, as a selected list row does.
 
-## Content guidelines
+<!-- specimen: States -->
 
-- Name the group with a short noun phrase in sentence case, without a colon: "Access", "Export format".
-- Give options short, parallel names that start the same way where they can: "Team", "Only me", "Anyone with the link".
-- Use `description` for the consequence that tells options apart, in one sentence: "Only the people you invite." Use it on every option of a group or on none.
-- Order options from the most common or the least permissive, and keep that order wherever the choice appears.
-- Say why an option is unavailable in its description, or in a sentence linked to the group with `aria-describedby`.
+### A required choice
 
-## Do and don't
+A required group with nothing chosen asks for a choice before the form is sent, and its error is tied to the group.
 
-### Do
+```tsx figure=RequiredChoice motion
 
-- Show every option, and keep to about five; use [Select](../components/select.md) for more.
-- Use rows where options need explaining, and horizontal radios where their names are enough.
-- Choose a default where one option suits most people, and leave none chosen where people must decide.
-- Give every RadioGroup in a form a `name`, and say what is missing when a required choice isn't made.
+```
 
-### Don't
+### Adapting to width
 
-- Don't use radios for views or filters that apply as soon as they change; use [SegmentedControl](../components/segmented-control.md).
-- Don't use a single radio, or radios for a yes-or-no setting; use [Checkbox](../components/checkbox.md) or [Switch](../components/switch.md).
-- Don't put links or buttons in a label or a description; the whole option is a label, and pressing it chooses the option.
-- Don't disable options without saying why.
+Options in a line wrap onto more lines, and rows fill the width.
+
+```tsx figure=WrappingOptions widths="30 14" sweep
+
+```
+
+## Rules
+
+Labels stay short, and an option that needs explaining says so in its description.
+
+```tsx figure=DescribedRows
+
+```
+
+```tsx figure=LongInlineLabels
+
+```
+
+### Defaults
+
+Choose a default where one option suits most people, and none where people must decide.
+
+### Controls in options
+
+Keep links and buttons out of labels and descriptions: pressing anywhere on an option chooses it.
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                                        | Action                                                                                                                           |
-| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>            | Moves focus into the group, to its chosen option or, while none is chosen, to its first or last option, and on out of the group. |
-| <kbd>↓</kbd> or <kbd>→</kbd>, <kbd>↑</kbd> or <kbd>←</kbd> | Chooses the next or previous option and moves focus to it, skipping disabled options. Most browsers wrap around at the ends.     |
-| <kbd>Space</kbd>                                           | Chooses the focused option while none is chosen.                                                                                 |
-| <kbd>Enter</kbd>                                           | Leaves the choice as it is; inside a form it submits the form, as <kbd>Enter</kbd> in a text field does.                         |
+| Key                                             | Action                                                        |
+| ----------------------------------------------- | ------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves into the group, to the chosen or first option, and out. |
+| Arrow keys                                      | Choose the next or previous option, skipping disabled ones.   |
+| <kbd>Space</kbd>                                | Chooses the focused option while none is chosen.              |
 
 ### envUI provides
 
-- A native `<fieldset>` named by its `<legend>`, and native `<input type="radio">` options that share the group's `name`, so assistive technology announces the group, each option's state and its position, such as 2 of 3.
-- A `<label>` around each radio with its label and description, which names the option and chooses it when pressed; the description is read as part of the name.
-- The shared focus ring on a focused radio, and around a focused row, and options at least 2.75 rem tall on coarse pointers.
-- Native disabled and required states, form submission and reset.
+- A native `<fieldset>` named by its `<legend>`, and native radios sharing one `name`.
+- Each option's label and description as its name, and its position, such as 2 of 3.
+- The focus ring, and options 2.75 rem tall on touch screens.
 
 ### You provide
 
-- A `label` for the group, or `aria-label` or `aria-labelledby` on RadioGroup where its name shows elsewhere.
+- A `label` for the group, or `aria-label`.
 - A `name` for a group in a form.
-- Guidance and errors: RadioGroup has no hint or error of its own, so link a sentence to it with `aria-describedby`, announce an error, and move focus to the group when a form is refused.
-- A reason near disabled options.
+- Focus on the group when a form is refused.
 
-## Examples
+## Compose
 
-### Selectable rows
+### Usage
 
-Rows suit options that need a sentence each. The disabled option says why in its description.
+A RadioGroup holds Radio options and is a native `<fieldset>`: its `label`, the legend, names the choice, or `aria-label` where it has none.
 
-```tsx example=VisibilityRows
+- Each Radio has a `value`, which the group reports and a form submits, its `label`, and an optional `description`, a short muted line read with its name.
+- Uncontrolled: `defaultValue`, which a form reset returns to.
+- Controlled: `value` and `onValueChange`; `null` chooses none.
+- Without either, no option is chosen until people choose one.
+- Set `name` in a form; without it the group takes a unique generated one.
+- `description` under the options, and `error`, such as for a required group left empty, describe the group, as on a field.
 
-```
-
-### A required choice
-
-The group starts with nothing chosen. Exporting without a choice shows an error linked to the group, announces it and moves focus to the first option.
-
-```tsx example=RequiredChoice
+```tsx source=ProjectAccess
 
 ```
 
-### A choice that can't change here
+#### Orientation
 
-A disabled group keeps its choice visible, and a sentence linked with `aria-describedby` says where to change it.
+`orientation` is `horizontal`, the default, radios before their labels side by side, which wrap onto more lines, or `vertical`, connected selectable rows that fill the width, for options with a description, as the VisibilityRows example shows.
 
-```tsx example=InheritedAccess
-
+```tsx
+<RadioGroup orientation="vertical" label="Visibility" name="visibility" defaultValue="team">
+  <Radio value="team" label="Team" description="Everyone at Northwind can open it." />
+  <Radio value="private" label="Private" description="Only the people you invite." />
+</RadioGroup>
 ```
+
+#### Required and disabled
+
+`required` asks for a choice before the form submits, through native constraint validation. Pass the message as `error` and move focus to the group when a form is refused, as the RequiredChoice example does. `disabled` disables every option: the group keeps its choice visible, but can't be focused or changed. Say where to change it in a sentence beside it.
+
+```tsx
+<RadioGroup label="Access" value="team" disabled aria-describedby={reason}>
+  <Radio value="team" label="Team" />
+  <Radio value="private" label="Private" />
+</RadioGroup>
+<Text id={reason} variant="body-sm">
+  This folder takes its access from Northwind launch. Change it there.
+</Text>
+```
+
+### Composition
+
+The parts are the group, `env-radio-group`, with `data-orientation` and its legend, `env-radio-group > legend`; each option, `env-radio`, the label around the radio and its text; the description, `env-radio-description`; and the native radio, `env-radio-input`. A Radio's `className` and `style` reach its root, and `ref` and the other native props the input, so a form library can register and focus it.
 
 ## Changelog
 
-- **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`, which the `v1-props` codemod writes. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.
-- **0.4.0**: Radio rows take the stronger row hover and pressed fills, settle like clickable cards while pressed, and keep 1.5 rem inline padding; radios shrink slightly while they or their labels are pressed.
-- **0.1.0**: Radio and RadioGroup, inline or as rows.
+- **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: The group's legend takes the size, weight and muted color of a field's floated label. In a vertical group, the chosen row's label keeps the text color, its choice shown by the selection's fill and the filled radio, and on a dialog, a popover or a muted or raised card or Surface, the rows take a faint neutral tint, so they keep their shape there.
+- **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the radio sits on the middle of its first line rather than across both lines.
+- **1.0.0-prerelease.6**: The group's error shows the error icon, as a field's does.
+- **1.0.0-prerelease.5**: RadioGroup takes `description` and `error`, as a field does, and a controlled `value` of `null` chooses none.
+- **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row and Select's chosen option do, rather than the hover fill.

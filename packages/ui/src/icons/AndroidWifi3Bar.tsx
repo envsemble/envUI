@@ -1,7 +1,7 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
 
-export function AndroidWifi3Bar({ filled: _filled = false, ...props }: MaterialSymbolProps) {
+export function IconAndroidWifi3Bar({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="M480-680q-88 0-171.5 27.5T155-571q-20 16-45.5 15.5T66-574q-17-17-17-42t20-40q88-70 193.5-107T480-800q113 0 218 37t193 107q20 15 20 40t-17 42q-18 18-43.5 18.5T805-571q-70-54-153-81.5T480-680Zm0 240q-41 0-79.5 10.5T327-398q-22 14-47.5 13T236-404q-17-17-16.5-41.5T240-484q53-37 114-56.5T480-560q65 0 126 19.5T720-484q20 14 20.5 38.5T724-404q-18 18-43.5 19T633-398q-35-21-73.5-31.5T480-440Zm0 280q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Z" /></Icon>;
 }

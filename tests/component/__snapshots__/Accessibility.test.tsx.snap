@@ -1,0 +1,331 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`accordion has no new accessibility violations 1`] = `{}`;
+
+exports[`adoption has no new accessibility violations 1`] = `
+{
+  "label-content-name-mismatch": {
+    "button.env-avatar-button": 1,
+  },
+}
+`;
+
+exports[`affixes has no new accessibility violations 1`] = `{}`;
+
+exports[`app-screen has no new accessibility violations 1`] = `
+{
+  "label-content-name-mismatch": {
+    "button.env-avatar-button": 1,
+  },
+  "landmark-unique": {
+    "div.env-panes-main": 1,
+  },
+}
+`;
+
+exports[`avatar-group has no new accessibility violations 1`] = `
+{
+  "label-content-name-mismatch": {
+    "button.env-avatar-button": 1,
+  },
+}
+`;
+
+exports[`badge has no new accessibility violations 1`] = `{}`;
+
+exports[`button-counts has no new accessibility violations 1`] = `{}`;
+
+exports[`button-group has no new accessibility violations 1`] = `{}`;
+
+exports[`calendar-heatmap has no new accessibility violations 1`] = `{}`;
+
+exports[`choice-controls has no new accessibility violations 1`] = `{}`;
+
+exports[`code-block has no new accessibility violations 1`] = `{}`;
+
+exports[`code-diff has no new accessibility violations 1`] = `
+{
+  "aria-command-name": {
+    "div.env-code-diff diffs-container": 1,
+  },
+}
+`;
+
+exports[`color-picker has no new accessibility violations 1`] = `{}`;
+
+exports[`colors has no new accessibility violations 1`] = `{}`;
+
+exports[`combobox has no new accessibility violations 1`] = `{}`;
+
+exports[`command-palette has no new accessibility violations 1`] = `{}`;
+
+exports[`composer has no new accessibility violations 1`] = `{}`;
+
+exports[`confirm-dialog has no new accessibility violations 1`] = `{}`;
+
+exports[`contact-sheet has no new accessibility violations 1`] = `
+{
+  "aria-hidden-focus": {
+    "div.env-command-palette-positioner span": 6,
+    "div.env-menubar span": 2,
+    "div.env-popup-positioner.env-menu-positioner span": 12,
+    "div.env-popup.env-menu span": 2,
+    "div.env-theme span": 22,
+  },
+}
+`;
+
+exports[`container-size has no new accessibility violations 1`] = `{}`;
+
+exports[`copy-button has no new accessibility violations 1`] = `{}`;
+
+exports[`data-display has no new accessibility violations 1`] = `
+{
+  "landmark-unique": {
+    "nav.env-breadcrumbs": 6,
+  },
+}
+`;
+
+exports[`date-picker has no new accessibility violations 1`] = `{}`;
+
+exports[`default-colors has no new accessibility violations 1`] = `{}`;
+
+exports[`description-list has no new accessibility violations 1`] = `{}`;
+
+exports[`dev-mode has no new accessibility violations 1`] = `{}`;
+
+exports[`dialog has no new accessibility violations 1`] = `{}`;
+
+exports[`direction has no new accessibility violations 1`] = `
+{
+  "aria-required-children": {
+    "div.env-theme div": 2,
+  },
+  "aria-required-parent": {
+    "div.env-theme div": 14,
+  },
+}
+`;
+
+exports[`disclosure has no new accessibility violations 1`] = `{}`;
+
+exports[`document-tabs has no new accessibility violations 1`] = `{}`;
+
+exports[`document-tabs-rerender has no new accessibility violations 1`] = `{}`;
+
+exports[`document-tabs-rtl has no new accessibility violations 1`] = `{}`;
+
+exports[`drop-zone has no new accessibility violations 1`] = `{}`;
+
+exports[`field has no new accessibility violations 1`] = `{}`;
+
+exports[`forced-colors has no new accessibility violations 1`] = `
+{
+  "label-content-name-mismatch": {
+    "td.env-month-picker-month": 11,
+  },
+}
+`;
+
+exports[`forms has no new accessibility violations 1`] = `{}`;
+
+exports[`graphic has no new accessibility violations 1`] = `{}`;
+
+exports[`hover-card has no new accessibility violations 1`] = `{}`;
+
+exports[`layout has no new accessibility violations 1`] = `{}`;
+
+exports[`layout-check has no new accessibility violations 1`] = `{}`;
+
+exports[`line-art has no new accessibility violations 1`] = `{}`;
+
+exports[`list has no new accessibility violations 1`] = `{}`;
+
+exports[`markdown has no new accessibility violations 1`] = `{}`;
+
+exports[`markdown-editor has no new accessibility violations 1`] = `{}`;
+
+exports[`menu has no new accessibility violations 1`] = `{}`;
+
+exports[`menubar has no new accessibility violations 1`] = `{}`;
+
+exports[`messages has no new accessibility violations 1`] = `
+{
+  "empty-table-header": {
+    "div.env-markdown-table th": 1,
+  },
+  "label-content-name-mismatch": {
+    "button.env-button": 1,
+    "button.env-color-picker-button": 1,
+    "button.env-panel-dock-tab-restore": 1,
+  },
+}
+`;
+
+exports[`month-picker has no new accessibility violations 1`] = `{}`;
+
+exports[`navigation has no new accessibility violations 1`] = `
+{
+  "label-content-name-mismatch": {
+    "a.env-navigation-drawer-item": 2,
+  },
+  "landmark-unique": {
+    "nav.env-navigation-bar": 6,
+    "nav.env-navigation-drawer": 6,
+    "nav.env-navigation-rail": 4,
+  },
+}
+`;
+
+exports[`navigation-drawer has no new accessibility violations 1`] = `{}`;
+
+exports[`navigation-drawer-nested has no new accessibility violations 1`] = `{}`;
+
+exports[`page-header has no new accessibility violations 1`] = `{}`;
+
+exports[`pagination has no new accessibility violations 1`] = `{}`;
+
+exports[`panel-dock has no new accessibility violations 1`] = `
+{
+  "landmark-main-is-top-level": {
+    "div.env-theme main": 2,
+  },
+  "landmark-no-duplicate-main": {
+    "div.env-theme main": 1,
+  },
+  "landmark-unique": {
+    "div.env-theme main": 1,
+    "section.env-panel-dock-panel": 6,
+  },
+  "scrollable-region-focusable": {
+    "div.env-panel-dock-content ol": 4,
+  },
+}
+`;
+
+exports[`panes has no new accessibility violations 1`] = `
+{
+  "target-size": {
+    "div.env-panes-list button": 3,
+  },
+}
+`;
+
+exports[`popover has no new accessibility violations 1`] = `{}`;
+
+exports[`portal-container has no new accessibility violations 1`] = `{}`;
+
+exports[`primitives has no new accessibility violations 1`] = `
+{
+  "aria-required-children": {
+    "div.env-theme div": 2,
+  },
+  "aria-required-parent": {
+    "div.env-theme div": 28,
+  },
+}
+`;
+
+exports[`relative-time has no new accessibility violations 1`] = `{}`;
+
+exports[`scaffold has no new accessibility violations 1`] = `{}`;
+
+exports[`scaffold-panes has no new accessibility violations 1`] = `
+{
+  "target-size": {
+    "div.env-panes-main button": 60,
+  },
+}
+`;
+
+exports[`scaffold-scroll-keys has no new accessibility violations 1`] = `
+{
+  "scrollable-region-focusable": {
+    "div.env-scaffold-drawer ul": 1,
+  },
+  "target-size": {
+    "div.env-scaffold-drawer a": 1,
+    "div.env-scaffold-drawer button": 1,
+  },
+}
+`;
+
+exports[`scale has no new accessibility violations 1`] = `
+{
+  "landmark-unique": {
+    "div.env-table-region": 2,
+    "div.env-theme aside": 1,
+    "nav.env-breadcrumbs": 1,
+    "nav.env-navigation-drawer": 2,
+    "nav.env-navigation-rail": 1,
+    "nav.env-pagination": 1,
+    "section.env-panel-dock-panel": 1,
+  },
+}
+`;
+
+exports[`segmented-control has no new accessibility violations 1`] = `{}`;
+
+exports[`sheet has no new accessibility violations 1`] = `{}`;
+
+exports[`skeleton has no new accessibility violations 1`] = `
+{
+  "landmark-no-duplicate-contentinfo": {
+    "footer.env-card-footer": 1,
+  },
+  "landmark-unique": {
+    "footer.env-card-footer": 1,
+    "nav.env-navigation-drawer": 1,
+  },
+  "scrollable-region-focusable": {
+    "div.env-surface": 2,
+  },
+}
+`;
+
+exports[`slider has no new accessibility violations 1`] = `{}`;
+
+exports[`stacking has no new accessibility violations 1`] = `{}`;
+
+exports[`table has no new accessibility violations 1`] = `{}`;
+
+exports[`table-of-contents has no new accessibility violations 1`] = `
+{
+  "heading-order": {
+    "div.env-theme h4": 1,
+  },
+  "scrollable-region-focusable": {
+    "div.env-theme div": 1,
+  },
+  "target-size": {
+    "a.env-table-of-contents-link": 3,
+  },
+}
+`;
+
+exports[`tabs has no new accessibility violations 1`] = `{}`;
+
+exports[`tabs-compact has no new accessibility violations 1`] = `{}`;
+
+exports[`tabs-rtl has no new accessibility violations 1`] = `{}`;
+
+exports[`tabs-scrolling has no new accessibility violations 1`] = `{}`;
+
+exports[`theme-contrast has no new accessibility violations 1`] = `{}`;
+
+exports[`theme-contrast-nested has no new accessibility violations 1`] = `{}`;
+
+exports[`theme-contrast-provider has no new accessibility violations 1`] = `{}`;
+
+exports[`theme-contrast-remount has no new accessibility violations 1`] = `{}`;
+
+exports[`theme-release has no new accessibility violations 1`] = `{}`;
+
+exports[`time-picker has no new accessibility violations 1`] = `{}`;
+
+exports[`toast has no new accessibility violations 1`] = `{}`;
+
+exports[`tooltip has no new accessibility violations 1`] = `{}`;
+
+exports[`tree has no new accessibility violations 1`] = `{}`;

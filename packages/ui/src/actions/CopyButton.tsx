@@ -9,23 +9,33 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react';
-import { Button, type ButtonProps, type IconButtonEmphasisProps } from './Button.js';
-import { TooltipNestingContext, TooltipPopup } from '../feedback/internal/TooltipPopup.js';
-import { Check } from '../icons/Check.js';
-import { ContentCopy } from '../icons/ContentCopy.js';
+import type { IconButtonEmphasisProps } from './Button.js';
+import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
+import {
+  TooltipNestingContext,
+  TooltipPopup,
+  tooltipDelay,
+} from '../internal/popup/TooltipPopup.js';
+import { IconCheck } from '../icons/Check.js';
+import { IconContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
-import { useButtonEmphasis } from '../internal/ControlDefaults.js';
+import { useButtonEmphasis } from '../internal/control/ControlDefaults.js';
 import { useCopy } from '../internal/useCopy.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { copy as copyMessages } from '../foundations/messages/copy.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { copyButton as copyButtonMessages } from '../foundations/messages/copyButton.js';
 import type { ControlSize } from '../foundations/Theme.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/CopyButton.css';
 
-interface CopyButtonBaseProps
-  extends Omit<ComponentPropsWithRef<'button'>, 'value' | 'onCopy' | 'children' | 'type'> {
+interface CopyButtonBaseProps extends Omit<
+  ComponentPropsWithRef<'button'>,
+  'value' | 'onCopy' | 'children' | 'type'
+> {
   /** The text to copy, or a function that returns it, also as a promise, when pressed. */
   value: string | (() => string | Promise<string>);
   /** Runs once the text is on the clipboard, with that text. */
-  onCopy?: (text: string) => void;
+  onCopied?: (text: string) => void;
   /**
    * Writes the text instead of the browser's Clipboard API, such as through a desktop app's
    * clipboard bridge. A rejected promise shows and announces failedLabel.
@@ -35,14 +45,20 @@ interface CopyButtonBaseProps
   size?: ControlSize;
   /** The icon at rest, ContentCopy by default; a check replaces it once the text is copied. */
   icon?: ReactNode;
-  /** Shown in the tooltip and announced after copying; Copied by default. */
+  /**
+   * Shown in the tooltip and announced after copying.
+   * @default 'Copied', or EnvUIProvider's messages.copyButton.copied
+   */
   copiedLabel?: string;
-  /** Shown in the tooltip and announced when nothing could be copied; Couldn’t copy by default. */
+  /**
+   * Shown in the tooltip and announced when nothing could be copied.
+   * @default 'Couldn’t copy', or EnvUIProvider's messages.copyButton.failed
+   */
   failedLabel?: string;
   /**
    * The button's name, also in an icon-only button's tooltip, where it has none of its own: no
-   * aria-label or aria-labelledby, and a label without words, such as an empty string; Copy by
-   * default.
+   * aria-label or aria-labelledby, and a label without words, such as an empty string.
+   * @default 'Copy', or EnvUIProvider's messages.copyButton.copy
    */
   copyLabel?: string;
 }
@@ -66,9 +82,14 @@ export type CopyButtonProps = CopyButtonBaseProps &
          * aria-label, such as Copy link; a blank one leaves it named by copyLabel.
          */
         children?: boolean | null;
+        /** The icon-only button's name, such as Copy link, which its tooltip shows. */
         'aria-label': string;
       }
-    | { children: CopyButtonLabel; 'aria-label'?: string }
+    | {
+        children: CopyButtonLabel;
+        /** A name in place of the label's words, where they don't say it as wanted. */
+        'aria-label'?: string;
+      }
   );
 
 /** How long the result of a press shows: the check, the tooltip and the announcement. */
@@ -81,7 +102,7 @@ const feedbackDuration = 2_000;
  */
 export function CopyButton({
   value,
-  onCopy,
+  onCopied,
   write,
   variant,
   tone,
@@ -97,7 +118,7 @@ export function CopyButton({
   ...props
 }: CopyButtonProps) {
   // A label prop wins over the provider's messages, which win over the English defaults.
-  const messages = useMessages('copy', copyMessages);
+  const messages = useMessages('copyButton', copyButtonMessages);
   const copiedLabel = ownCopiedLabel ?? messages.copied;
   const failedLabel = ownFailedLabel ?? messages.failed;
   const copyLabel = ownCopyLabel ?? messages.copy;
@@ -108,7 +129,7 @@ export function CopyButton({
   // Every press shows and announces its result again, also the same result twice in a row.
   const { copy, status, round, copying, waiting, reset } = useCopy({
     write,
-    onCopy,
+    onCopied,
     resetAfter: feedbackDuration,
     fieldClassName: 'env-copy-button-field',
   });
@@ -134,7 +155,7 @@ export function CopyButton({
   const tooltip = feedback ?? (iconOnly ? name : undefined);
   // The last text stays in the closing tooltip while it fades out.
   if (tooltip) shownText.current = tooltip;
-  const symbol = result?.copied ? <Check /> : (icon ?? <ContentCopy />);
+  const symbol = result?.copied ? <IconCheck /> : (icon ?? <IconContentCopy />);
   const shared = {
     ...props,
     ...emphasis,
@@ -142,21 +163,30 @@ export function CopyButton({
     onClick: press,
     className: classNames('env-copy-button', className),
     size,
-    'data-copied': result?.copied ? '' : undefined,
-    'data-failed': result && !result.copied ? '' : undefined,
+    'data-copied': flag(result?.copied),
+    'data-failed': flag(result && !result.copied),
   };
   const button = iconOnly ? (
-    <Button
-      {...({ ...shared, iconOnly: true, icon: symbol, 'aria-label': name ?? '' } as ButtonProps)}
-    />
-  ) : (
-    <Button
+    <ButtonBase
+      // ButtonBaseProps is a union by iconOnly, which the shared props alone do not pick.
       {...({
         ...shared,
+        fallbackVariant: 'primary',
+        iconOnly: true,
+        icon: symbol,
+        'aria-label': name ?? '',
+      } as ButtonBaseProps)}
+    />
+  ) : (
+    <ButtonBase
+      // ButtonBaseProps is a union by iconOnly, which the shared props alone do not pick.
+      {...({
+        ...shared,
+        fallbackVariant: 'primary',
         startIcon: symbol,
         'aria-label': name,
-        children: children as CopyButtonLabel,
-      } as ButtonProps)}
+        children,
+      } as ButtonBaseProps)}
     />
   );
   const hoverTarget = iconOnly && disabled;
@@ -179,7 +209,7 @@ export function CopyButton({
           }}
         >
           <BaseTooltip.Trigger
-            delay={400}
+            delay={tooltipDelay}
             render={
               hoverTarget ? <span className="env-tooltip-disabled-target" tabIndex={0} /> : button
             }

@@ -1,7 +1,7 @@
 {
   "name": "@envsemble/eslint-plugin-envui",
-  "version": "1.0.0-prerelease.0",
-  "description": "ESLint rules that point people and coding agents to envUI components instead of hand-rolled controls and envUI's private markup",
+  "version": "1.0.0-prerelease.5",
+  "description": "ESLint rules that point people and coding agents to envUI components instead of hand-rolled controls and raw colors",
   "homepage": "https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#readme",
   "bugs": {
     "url": "https://github.com/envsemble/envUI/issues"
@@ -37,9 +37,7 @@
     "node": "^22.13.0 || >=24"
   },
   "scripts": {
-    "prepack": "node scripts/SyncRenames.mjs && node scripts/SyncTokens.mjs",
-    "sync:renames": "node scripts/SyncRenames.mjs",
-    "sync:tokens": "node scripts/SyncTokens.mjs",
+    "prepack": "node ../../scripts/build/SyncLintPackages.ts",
     "dogfood": "node scripts/Dogfood.mjs",
     "test": "node --test test/*.test.mjs"
   },
@@ -47,8 +45,8 @@
     "eslint": "^10.0.0"
   },
   "devDependencies": {
-    "eslint": "10.12.0",
-    "typescript-eslint": "8.71.2"
+    "eslint": "10.14.0",
+    "typescript-eslint": "8.72.1"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

@@ -1,9 +1,9 @@
 ---
 title: HoverCard
-summary: A card of supplementary details that opens beside a link on hover and keyboard focus, like a link preview.
+summary: A card of supplementary details that opens beside a link, like a link preview.
 status: stable
-since: 0.6.0
-category: Feedback & overlays
+since: 1.0.0
+category: Overlays
 aliases:
   - PreviewCard
   - preview card
@@ -13,121 +13,162 @@ aliases:
   - person card
   - peek
 useWhen:
-  - A link or a name refers to something people may want a glance at before following it, such as a document's summary or a person's role.
+  - A glance at what a link or a name refers to, such as a document's summary or a person's role
 avoidWhen:
   - text: A short hint that names a control.
     use: Tooltip
   - text: Details or a small form that people open on purpose and work in.
     use: Popover
-  - text: A task that needs people's attention before they go on.
-    use: Dialog
-  - text: Information people need to complete a task, which must stay visible.
-    use: Alert
-related:
-  - popover
-  - tooltip
-  - link
-  - avatar
-  - accessibility
 components:
   - HoverCard
+examples:
+  DocumentPreview:
+    role: overview
+    open: true
+  PersonDetails:
+    role: example
+    caption: Large, with an avatar beside the name.
+  Placement: example
+  HoverCardAnatomy: anatomy
+  TextDetails: example
 ---
 
 # HoverCard
 
-## Overview
+## Variants
 
-A hover card shows supplementary details beside its trigger, usually a link, once the pointer rests on it or keyboard focus reaches it, like a preview of the page the link leads to. It stays open while the pointer moves onto it, so its text can be read and selected. Focus stays on the trigger, and the card is not a dialog. HoverCard is built on Base UI's preview card.
+### Widths
 
-```tsx example=DocumentPreview
+The card is as wide as its content, within its width's range, and narrows to fit the window.
+
+| Width  | Use for                                                         |
+| ------ | --------------------------------------------------------------- |
+| Medium | A short summary, such as a document's last change. The default. |
+| Large  | Richer details, such as a person with an avatar and a role.     |
+
+```tsx figure=PersonDetails open
+
+```
+
+### Placement
+
+The card opens below its trigger, centred on it, or on another side or lined up with one end, such as above a link near the bottom of a pane.
+
+```tsx figure=Placement open
 
 ```
 
 ## Anatomy
 
-1. **Trigger** (`trigger`): the element that opens the card, usually a Link; it receives the ref and the hover and focus handlers.
-2. **Card** (`children`): the raised surface Popover uses: the popup fill with a hairline border, 1.75 rem corners, 1.5 rem padding and a level-two shadow, 0.5 rem from the trigger. Its content is body text, 0.75 rem apart.
+```tsx figure=HoverCardAnatomy open
 
-## Variants and sizes
+```
 
-| Width | Use for                                                                       |
-| ----- | ----------------------------------------------------------------------------- |
-| `md`  | A short summary, such as a document's last change. About 20 rem. The default. |
-| `lg`  | Richer details, such as a person with an avatar and a role. About 28 rem.     |
+1. **Card** (`env-hover-card`, `children`)
+2. **Trigger** (`env-link`, `trigger`)
 
-- The card is at most the window's width less 2 rem, and as tall as the room beside the trigger allows; longer content scrolls.
-- `side` places it below the trigger by default, or above, beside it, or at the inline start or end, which follow the text direction; `align` lines it up with the trigger's centre by default, or its start or end. It flips and shifts to stay 0.5 rem inside the window.
+## Behaviour
 
-## States and behaviour
+### Hover and focus
 
-- **Opening**: the card opens once the pointer rests on the trigger for `delay` (600 ms), and at once when the trigger takes keyboard focus. A focus that isn't from the keyboard, such as a click, waits for the delay.
-- **Staying open**: it stays open while the pointer is on the trigger or on the card, so people can move onto it and select its text.
-- **Closing**: it closes `closeDelay` (300 ms) after the pointer leaves both the trigger and the card, when the trigger loses focus, and with <kbd>Esc</kbd>, which leaves focus on the trigger.
-- **Control**: `open`, `defaultOpen` and `onOpenChange` control it; `onOpenChange` reports each change and its `reason`, such as `trigger-hover` or `trigger-focus`.
-- **Theme and layers**: the card keeps the theme of the page around its trigger in its portal, and sits above dialogs.
+The pointer can move from the trigger onto the card without closing it, and focus stays on the trigger.
 
-## Content guidelines
+<!-- specimen: HoverAndFocus -->
 
-- Start with the name of what the link leads to, then one or two facts that help decide whether to follow it: "Roadmap — Changed today by Alex Morgan."
-- Keep it short enough to read at a glance.
-- Repeat nothing the trigger's text already says.
+### Text triggers
 
-## Do and don't
+Text that isn't a link can open a card too, with the dotted underline and the focus a [tooltip on text](tooltip.md#text) takes.
 
-### Do
+```tsx figure=TextDetails motion
 
-- Use a hover card for a preview of what a link or a name refers to.
-- Keep the details supplementary: the page the link leads to has them too.
-- Use the `lg` card for content with an avatar or several lines.
+```
 
-### Don't
+## Rules
 
-- Don't put links, buttons or fields in a hover card; keyboard and touch users can't move into it.
-- Don't put information people need in a hover card alone; touch screens have no hover.
-- Don't use a hover card for a control's name; use [Tooltip](../components/tooltip.md).
-- Don't put a Tooltip around a HoverCard or give one as its `trigger`: it shows no tooltip, and says so in the console while developing, as the card opens on the same hover and focus. Put what the tooltip would say in the card.
-- Don't open a hover card from a button that does something else; use [Popover](../components/popover.md) for details people open on purpose.
+### Supplementary details
+
+Keep the details supplementary: the page the link leads to has them too.
+
+### Interactive content
+
+No links, buttons or fields in the card: the keyboard and touch can't reach them.
+
+### Tooltips
+
+No [Tooltip](tooltip.md) around a hover card or as its trigger; put what it would say in the card.
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                             | Action                                                                                                             |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moving focus to the trigger opens the card at once; moving it on closes the card. Focus never moves into the card. |
-| <kbd>Esc</kbd>                                  | Closes the card and leaves focus on the trigger.                                                                   |
+| Key                                             | Action                                                            |
+| ----------------------------------------------- | ----------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Focus on the trigger opens the card at once; moving on closes it. |
+| <kbd>Esc</kbd>                                  | Closes the card and leaves focus on the trigger.                  |
 
 ### envUI provides
 
-- A card that opens on keyboard focus as it does on hover, and closes with <kbd>Esc</kbd>.
-- Focus that stays on the trigger: the card never takes or traps it and isn't announced as a dialog.
-- The card in the theme of its trigger, above dialogs, on a surface with contrast for its text.
+- A card that opens on keyboard focus as on hover, and closes with <kbd>Esc</kbd>.
+- Focus that stays on the trigger: the card never takes it and isn't a dialog.
+- The theme of its trigger, above dialogs.
 
 ### You provide
 
 - A trigger that works on its own, such as a link to a page with the same details.
-- The details somewhere people can reach without a pointer or a keyboard, since touch screens have no hover.
-- Headings and emphasis inside the card, such as Text in the section heading type.
+- `tabIndex={0}` on a text trigger, so keyboard focus reaches it.
+- Headings and emphasis inside the card, such as Text in the title type.
 
-## Examples
+## Compose
 
-### A person's details
+### Usage
 
-The `lg` card has room for an avatar beside the name and a role, and a line about the person.
+A HoverCard opens its details, `children`, beside its `trigger`, which receives the ref.
 
-```tsx example=PersonDetails
+- It opens on hover after `delay`, 600 ms by default, and at once on keyboard focus.
+- It closes `closeDelay`, 300 ms, after the pointer leaves the trigger and the card.
+- Leave it uncontrolled, or control it with `open` and `onOpenChange`; `defaultOpen` opens it on the first render.
 
-```
-
-### Above the trigger
-
-`side="top"` and `align="start"` open the card above the link, lined up with its start, such as for a link near the bottom of a pane.
-
-```tsx example=Placement
+```tsx source=DocumentPreview
 
 ```
+
+#### Text triggers
+
+A trigger that is text rather than a link, such as a span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`. Make it focusable with `tabIndex={0}`, so keyboard focus opens the card too; envUI warns in the console while developing when it isn't. A link or another control keeps its own look.
+
+```tsx
+<HoverCard trigger={<span tabIndex={0}>28 h 9 min</span>}>
+  <Text emphasis="muted">Reviews 11 h 40 min, drafting 9 h 5 min, meetings 7 h 24 min.</Text>
+</HoverCard>
+```
+
+#### Width and placement
+
+`width` sets how wide the card grows with its content: `md`, the default, from 12 rem up to 20 rem, or `lg`, from 20 rem up to 28 rem. It narrows to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; `align` is `center`, the default, `start` or `end`.
+
+```tsx
+<HoverCard
+  side="top"
+  align="start"
+  trigger={<Link href="/plans/sync-conflicts">sync conflicts</Link>}
+>
+  …
+</HoverCard>
+```
+
+### Composition
+
+Put a heading in it as Text in the title type, and keep links, buttons and fields out of it. A Tooltip around a HoverCard, or as its `trigger`, shows no tooltip.
+
+### Customize
+
+The card, `env-hover-card`, renders on PopupSurface in its trigger's theme and text direction, above dialogs, and takes `className`, `style`, `ref` and data attributes.
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog
 
-- **1.0.0**: `width` is `md` or `lg`; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction. A Tooltip around it, or as its `trigger`, shows no tooltip.
-- **0.6.0**: HoverCard.
+- **1.0.0**: A text trigger, such as a span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`, and one without `tabIndex` gets a warning while developing. `width` is `md` or `lg`, the widest the card grows as it sizes to its content; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction. A Tooltip around it, or as its `trigger`, shows no tooltip.
+- **1.0.0-prerelease.6**: A hover card opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
+- **1.0.0-prerelease.6**: A hover card's corners are the popups' own, as a popover's are, rather than a surface's.
+- **1.0.0-prerelease.5**: Hover cards are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.

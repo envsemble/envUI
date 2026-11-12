@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function ChromeReaderMode({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm360-80h280v-480H520v480Zm210-120q13 0 21.5-8.5T760-390q0-13-8.5-21.5T730-420H590q-13 0-21.5 8.5T560-390q0 13 8.5 21.5T590-360h140Zm0-100q13 0 21.5-8.5T760-490q0-13-8.5-21.5T730-520H590q-13 0-21.5 8.5T560-490q0 13 8.5 21.5T590-460h140Zm0-100q13 0 21.5-8.5T760-590q0-13-8.5-21.5T730-620H590q-13 0-21.5 8.5T560-590q0 13 8.5 21.5T590-560h140Z" /> : <path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h280v-480H160v480Zm360 0h280v-480H520v480Zm210-120q13 0 21.5-8.5T760-390q0-13-8.5-21.5T730-420H590q-13 0-21.5 8.5T560-390q0 13 8.5 21.5T590-360h140Zm0-100q13 0 21.5-8.5T760-490q0-13-8.5-21.5T730-520H590q-13 0-21.5 8.5T560-490q0 13 8.5 21.5T590-460h140Zm0-100q13 0 21.5-8.5T760-590q0-13-8.5-21.5T730-620H590q-13 0-21.5 8.5T560-590q0 13 8.5 21.5T590-560h140ZM160-240v-480 480Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm";
+
+export function IconChromeReaderMode({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "360-80h280v-480H520v480Zm210-120q13 0 21.5-8.5T760-390q0-13-8.5-21.5T730-420H590q-13 0-21.5 8.5T560-390q0 13 8.5 21.5T590-360h140Zm0-100q13 0 21.5-8.5T760-490q0-13-8.5-21.5T730-520H590q-13 0-21.5 8.5T560-490q0 13 8.5 21.5T590-460h140Zm0-100q13 0 21.5-8.5T760-590q0-13-8.5-21.5T730-620H590q-13 0-21.5 8.5T560-590q0 13 8.5 21.5T590-560h140Z" : start + "0-80h280v-480H160v480Zm360 0h280v-480H520v480Zm210-120q13 0 21.5-8.5T760-390q0-13-8.5-21.5T730-420H590q-13 0-21.5 8.5T560-390q0 13 8.5 21.5T590-360h140Zm0-100q13 0 21.5-8.5T760-490q0-13-8.5-21.5T730-520H590q-13 0-21.5 8.5T560-490q0 13 8.5 21.5T590-460h140Zm0-100q13 0 21.5-8.5T760-590q0-13-8.5-21.5T730-620H590q-13 0-21.5 8.5T560-590q0 13 8.5 21.5T590-560h140ZM160-240v-480 480Z"} /></Icon>;
 }

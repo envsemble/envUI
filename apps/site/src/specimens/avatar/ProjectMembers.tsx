@@ -1,0 +1,35 @@
+import ProjectMembers from '../../examples/avatar/ProjectMembers';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
+
+const pile = (index: number) =>
+  `.env-list-item:nth-child(${index} of .env-list-item) .env-avatar-group`;
+
+/*
+ * The pointer comes onto the first project's pile, which spreads along its arch; it moves down to
+ * the second's, which spreads as the first settles back, and leaves.
+ */
+const script: PointerStep[] = [
+  { wait: 300 },
+  { to: pile(1), x: 0.45, y: 0.6 },
+  { wait: 900 },
+  { to: pile(2), x: 0.45, y: 0.6, duration: 500 },
+  { wait: 900 },
+  { leave: true },
+  { wait: 600 },
+];
+
+function Hovering() {
+  usePointer(script);
+  return <ProjectMembers />;
+}
+
+/** The projects' piles of members, each spread in turn by a pointer no one sees. */
+export default function ProjectMembersMotion() {
+  return (
+    <MotionStage label="the piles spreading">
+      <Hovering />
+    </MotionStage>
+  );
+}

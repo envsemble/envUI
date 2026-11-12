@@ -1,9 +1,9 @@
 ---
 title: Avatar
-summary: A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group.
+summary: The picture of a person or an organization, alone or in a group.
 status: stable
-since: 0.2.0
-category: Content & guidance
+since: 1.0.0
+category: Data display
 aliases:
   - profile picture
   - profile photo
@@ -19,215 +19,251 @@ aliases:
   - facepile
   - people stack
 useWhen:
-  - A person or an organization is pictured beside their name, such as in a list of members or a comment.
-  - The signed-in account opens its menu from a picture in the application's chrome (AvatarButton).
-  - Who is involved matters more than each name where space is short, such as a project's members in a row (AvatarGroup).
+  - A person or an organization beside their name, such as in a list of members
+  - The signed-in account's menu in the application's chrome (AvatarButton)
+  - A few people in a row where space is short, such as a project's members (AvatarGroup)
 avoidWhen:
-  - text: A status or a count beside a label.
-    use: Badge
   - text: An icon for a thing or an action, not a person.
     use: Icon
   - text: Every name of a list of people that should be read.
     use: List
-related:
-  - menu
-  - list
-  - tooltip
-  - app-shell
-  - combobox
 components:
   - Avatar
   - AvatarButton
   - AvatarGroup
   - avatarHue
+examples:
+  PersonWithName: overview
+  AccountButton:
+    role: overview
+    caption: 'AvatarButton: an avatar as a button, with the name in a tooltip.'
+    motion: true
+  Sizes: variants
+  Fallbacks: example
+  AvatarAnatomy:
+    role: anatomy
+    caption: Spread, as under the pointer, and held level.
+  ProjectMembers: example
+  ChooseReviewers: example
+  PressableAvatars: example
+  NamesBeside:
+    role: do
+    caption: The name beside the avatar, wherever there is room.
+  AvatarsAlone:
+    role: caution
+    caption: 'Avatars alone, where room is short: people hover each one to learn who it is.'
 ---
 
 # Avatar
 
-## Overview
+## Variants
 
-An avatar is a round picture of a person or an organization. Without a picture it shows the default person picture, or initials for an organization, on a solid color that its name chooses. Beside a visible name it is decorative; with `named` it is an image named after the person.
-
-The family builds on it:
-
-- **AvatarButton** is an avatar as a button, such as the account menu's trigger, with a halo on hover, press and while its menu is open, and the name in a tooltip.
-- **AvatarGroup** overlaps the avatars of a set of people, with a chip that counts the people it doesn't show and lists them in its tooltip.
-
-```tsx example=PersonWithName
+```tsx figure=Sizes
 
 ```
 
-## Anatomy
+1. **Small**
+2. **Medium**
+3. **Large**
+4. **Extra large**
 
-1. **Picture** (`src`): the image, cut to a circle and covering it, loaded without a referrer.
-2. **Fallback** (`fallback`): the default person picture, a white figure, or the initials of `name` in white, on the solid color of the avatar's hue.
-3. **Halo** (AvatarButton): a round state layer 0.25 rem around the avatar.
-4. **Ring** (AvatarGroup): a ring in the color of the surface below each avatar, which keeps overlapping avatars apart.
-5. **Overflow chip** (AvatarGroup with `max` or `total`): the count of people not shown, such as +2, in a pill.
-
-## Variants and sizes
-
-### Sizes
-
-| Size | Use for                                                                          |
-| ---- | -------------------------------------------------------------------------------- |
-| `sm` | 1.5 rem, beside compact text, such as in a combobox option or a dense table row. |
-| `md` | 2 rem, in lists, comments and toolbars. The default.                             |
-| `lg` | 3 rem, beside a name and a second line, such as an account menu's header.        |
-| `xl` | 5.5 rem, on a profile page or a sign-in screen. Not for AvatarButton.            |
-
-### Fallbacks
-
-| Fallback   | Use for                                                      |
-| ---------- | ------------------------------------------------------------ |
-| `person`   | People. The default.                                         |
-| `initials` | Organizations, teams and other things that are not a person. |
-
-### Colors
-
-An avatar without a picture takes one of eight solid colors: blue, teal, green, amber, red, violet, purple or slate. Its `name` chooses the color, so a person or an organization has the same color on every page and in every session, and a list of people spreads across the colors. `hue` sets the color instead, such as an organization's own. The colors only tell people apart; they mean nothing else.
-
-<!-- specimen: Hues -->
-
-### Groups
-
-<!-- specimen: Groups -->
-
-### Measurements
-
-- Initials are the first letters of the first and last words of `name`, or the first two letters of a single word, in capitals, semibold at 0.38 of the avatar's size. They are white, at least 4.5:1 on every color, and 7:1 at high contrast, where the colors are a grade darker.
-- An AvatarButton is its avatar plus 0.25 rem of halo on every side, and at least 2.75 rem on touch screens.
-- In an AvatarGroup, each avatar lies over the one before it by an eighth of its size, and initials center in the part it leaves uncovered, so they stay clear; and the ring is an eighth of a rem, or a sixteenth of the size for larger avatars. An `md` group is as tall as a small control, 2 rem. A group never wraps or shrinks; choose `max` to fit the room.
-- On touch screens, each pressable avatar in a group is a target of at least 2.75 rem with its picture in the middle, and keeps that much uncovered, so smaller ones sit apart and larger ones overlap less.
-
-## States and behaviour
-
-- **Loading and failing**: the fallback shows while the picture loads and stays when it is missing or fails, without an error.
-- **AvatarButton**: a halo shows on hover, while pressed and while its menu is open (`aria-expanded`), and keyboard focus shows a focus outline. The tooltip, below the button, shows `name` and, on a second line, `description`. A menu supplies its `onClick` and the menu button semantics.
-- **AvatarGroup without actions**: the avatars are decorative, and the group is named with the count and every name, such as "4 people: Alex Morgan, Sam Lee, Priya Shah, Jordan Ellis".
-- **Pressable avatars**: with `onPersonClick` each avatar is a button, and a person with `href` is a link through the `LinkProvider`; each is named after the person, with the name in a tooltip on hover and keyboard focus. The avatar under the pointer or focus comes to the front with a state layer over its picture, and shrinks slightly while pressed without a reduced-motion preference.
-- **Overflow**: `max` sets how many avatars show; the chip counts the rest of `people` and of `total`, when `people` is only a preview of more. Its tooltip lists the hidden names, then "N more" (`messages.avatarGroup.more`, or `formatMore`) for people counted in `total` without a name. A `max` or `total` that is not a count, such as NaN, shows and counts everyone passed.
-- **Ring**: the ring takes the fill of the envUI surface the group sits on, such as a Card, a Surface or a Dialog, and the page's color elsewhere; set `--env-avatar-group-ring` for any other fill, such as `var(--env-color-list-item-bg)` on a List row.
-- **Right-to-left**: avatars run from the right, and the chip still reads +2.
-
-## Content guidelines
-
-- Pass the person's full name as `name`: it is the image's name, the tooltip, the source of the initials and what chooses the color. Pass the same name everywhere, so the color stays the same.
-- Name an AvatarButton after what it opens, such as "Open account menu", and use `description` for what tells accounts apart, such as the e-mail address.
-- Translate the group's name and the overflow text with `messages.avatarGroup` on EnvUIProvider, such as "4 personnes"; `formatLabel` and `formatMore` override them for one group.
-
-## Do and don't
-
-### Do
-
-- Write the person's name beside an avatar wherever there is room; the avatar then stays decorative.
-- Use the default person picture for people and initials for organizations.
-- Let the name choose the color; set `hue` only for an organization with a color of its own.
-- Use AvatarButton for the account menu's trigger, and give it an `aria-label` that says what it opens.
-- Choose `max` so a group fits its place without wrapping.
-
-### Don't
-
-- Don't use an avatar as the only place a name appears, unless it is named or in a group that names everyone.
-- Don't put an Avatar inside your own button; use AvatarButton, or `onPersonClick` in a group.
-- Don't give an avatar's color a meaning, such as a status or a role; use a Badge.
-- Don't use a group where people need to read every name; list them with their names.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                                       | Action                                                                                                                            |
-| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>           | Moves focus to an AvatarButton, to each pressable avatar of a group and to a group's overflow chip, whose tooltip opens on focus. |
-| <kbd>Enter</kbd>                                          | Presses an AvatarButton or a pressable avatar, or follows an avatar's link.                                                       |
-| <kbd>Space</kbd>                                          | Presses an AvatarButton or a pressable avatar that is a button.                                                                   |
-| <kbd>Esc</kbd> on the overflow chip or a pressable avatar | Closes its tooltip.                                                                                                               |
-
-### envUI provides
-
-- A decorative avatar hidden from assistive technology, or with `named` an image named by `name`.
-- AvatarButton as a native button named by `aria-label` or `name`, with the shared focus outline.
-- An AvatarGroup named with the count and every name, as a `group`; pressable avatars as native buttons and links named after each person.
-- The overflow chip as a tab stop and an image named by the people it stands for, so the keyboard and assistive technology reach the hidden names.
-- Pictures loaded without a referrer.
-
-### You provide
-
-- The person's name beside a decorative avatar, or `named`.
-- An `aria-label` on an AvatarButton that says what it opens, and the menu or action behind it.
-- `messages.avatarGroup` in the application's language, or an `aria-label` for the group.
-- `--env-avatar-group-ring` where a group sits on a fill that is not an envUI surface.
-
-## Examples
-
-### Colors
-
-The eight colors of an avatar without a picture, with initials and with the default person picture; each holds white at 4.5:1 or more.
-
-```tsx example=Colors
-
-```
-
-### Sizes
-
-Four sizes, from a compact row to a profile page; each is named here, with no name beside it.
-
-```tsx example=Sizes
-
-```
+| Size        | Use for                                               |
+| ----------- | ----------------------------------------------------- |
+| Small       | Compact text, such as a combobox option.              |
+| Medium      | Lists, comments and toolbars. The default.            |
+| Large       | A name with a second line, such as an account header. |
+| Extra large | A profile page. Not for AvatarButton.                 |
 
 ### Pictures and fallbacks
 
-A picture covers the circle. One that fails to load shows the default person picture, and an organization shows its initials.
+Without a picture, or while it loads or after it fails, an avatar shows the initials of its name, or the default person picture, such as for a guest.
 
-```tsx example=Fallbacks
-
-```
-
-### Colors from names
-
-Each name chooses its color, the same wherever the name appears.
-
-```tsx example=ColorsFromNames
+```tsx figure=Fallbacks
 
 ```
 
-### An organization's own color
+### Colors from the name
 
-`hue` sets the color, such as an organization's own, instead of the one its name would choose.
+The name chooses one of eight pastel colors, the same on every page.
 
-```tsx example=OwnColor
+- An organization can take another of them as its own.
+- Each is a soft fill with the initials or the figure in a deep shade of the same hue. In dark it turns over: a deep fill with light initials, so avatars stay quieter than the screen's text.
+- In a dense place, a table's cell or a small group, the fills are quieter, so a column of avatars doesn't outweigh the data beside it.
+- In a group, no two neighbours take colors that look alike.
+- Initials stay large enough to read; an avatar smaller than the small size, such as one sized to a dense row, shows its color alone.
+- The colors only tell people apart.
+
+<!-- specimen: Hues -->
+
+## Anatomy
+
+```tsx figure=AvatarAnatomy specimen
 
 ```
 
-### Account menu
+1. **Group** (`env-avatar-group`)
+2. **Avatar** (`env-avatar`)
+3. **Initials** (`env-avatar-fallback-initials::text`)
+4. **Person picture** (`env-avatar-person-figure`)
+5. **Overflow** (`env-avatar-group-overflow`, `max`)
 
-AvatarButton opens the account menu; its tooltip shows the name and the e-mail address, and its halo stays while the menu is open.
+## Behaviour
 
-```tsx example=AccountButton
+### A group as a pile
+
+AvatarGroup rests as a compact pile, like stacked cards, with the count of the rest in a circle.
+
+- Hovering, tapping or focusing it spreads the avatars along a gentle arch, so each one shows.
+- It keeps the room its spread takes, so nothing around it moves.
+- A ring in the color of the surface below parts each avatar from the one it lies on, and the last from the count, which lies flat at the bottom.
+
+```tsx figure=ProjectMembers motion
 
 ```
 
-### Members in a row
+### Chosen
 
-Groups on List rows show three or two avatars and count the rest, also people who are counted in `total` but not passed. The ring takes the row's fill.
+An avatar can show as chosen, such as in a list of people to pick from.
 
-```tsx example=ProjectMembers
+- A ring and a check, in the accent of a checked box, so the choice never rests on color alone.
+- It is a look only: the control around it, such as a checkbox, says it is chosen.
+
+```tsx figure=ChooseReviewers
 
 ```
 
 ### Pressable avatars
 
-With `onPersonClick` every avatar is a button named after the person; a person with `href` is a link. The chip lists the people it hides.
+Each avatar in a group can open something, such as the person's profile.
 
-```tsx example=PressableAvatars
+- While piled, the whole pile is one target that spreads it, so a press never lands on someone hidden under another.
+- Spread, each avatar is a target of its own, as large as a finger needs on a touch screen.
+
+```tsx figure=PressableAvatars motion
 
 ```
 
+## Rules
+
+Beside a visible name an avatar is decorative; on its own it can be a picture named after the person.
+
+```tsx figure=NamesBeside
+
+```
+
+```tsx figure=AvatarsAlone
+
+```
+
+### Names
+
+Give each person their full name, the same everywhere: it names the picture and chooses the initials and the color.
+
+### Groups and buttons
+
+Show only as many people in a group as fit without wrapping, and use AvatarButton rather than an avatar inside a button of your own.
+
+## Accessibility
+
+### Keyboard
+
+| Key                                             | Action                                                                                      |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to an AvatarButton, each pressable avatar and the count; focus in a group spreads it. |
+| <kbd>Enter</kbd>, <kbd>Space</kbd>              | Presses an AvatarButton or a pressable avatar.                                              |
+| <kbd>Esc</kbd>                                  | Closes a tooltip.                                                                           |
+
+### envUI provides
+
+- A decorative avatar hidden, or with `named` an image named by `name`.
+- A group named with its count and every name, such as 4 people: Alex Morgan, Sam Lee…
+- Pressable avatars as native buttons and links, named after each person.
+- A piled group as one pointer target, which spreads; its avatars take presses only once spread, apart and whole, so no target lies under another (WCAG 2.5.8).
+- The count as a tab stop, so the hidden names can be reached.
+
+### You provide
+
+- The name beside a decorative avatar, or `named`.
+- An `aria-label` on an AvatarButton that says what it opens.
+
+## Compose
+
+### Usage
+
+Avatar takes the person's or organization's `name`, a picture in `src`, and `fallback="person"` for the default person picture instead of the initials, which an empty name shows too. Beside a visible name it is decorative; `named` makes it an image named by `name`. `size` is `sm`, `md`, the default, `lg` or `xl`: 1.5, 2, 3 or 5.5 rem.
+
+```tsx
+<Avatar name="Alex Morgan" src={alex.picture} />
+<Avatar name="Northwind Labs" size="lg" named />
+```
+
+#### Chosen
+
+`selected` draws the ring and the check at its bottom end, `env-avatar-check`. It says nothing to assistive technology: the checkbox or option around it does, as in the ChooseReviewers example. An AvatarGroup person takes `selected` too, and comes in front of its neighbours so its check shows.
+
+```tsx
+<Checkbox
+  checked={chosen}
+  onCheckedChange={setChosen}
+  label={
+    <Row align="center" gap={3}>
+      <Avatar name="Sam Lee" selected={chosen} />
+      <Text render={<span />}>Sam Lee</Text>
+    </Row>
+  }
+/>
+```
+
+#### Colors
+
+`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses, and `avatarHues` lists the eight in order. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, and in the dark theme a deep fill with the initials and the figure in a light shade. In a table's cell and in a small AvatarGroup the fill takes half its chroma at the same lightness, so the initials keep their contrast; `--env-avatar-dense: 1` on a container of your own, such as a dense list, does the same for the avatars and groups in it. In an AvatarGroup, an avatar whose color looks like its neighbour's before it, the two blues, greens, pinks or warm hues, takes the next of the eight that doesn't.
+
+#### Groups
+
+AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`, `id` and `selected`. `max` sets how many show, and the count chip counts the rest; `total` counts people beyond a preview list.
+
+- At rest the avatars pile up, each a little off the line and turned, with the count chip at the bottom of the pile. A group of initials piles looser, so two letters stay whole under the next avatar, and rests upright and in line, as does a small group.
+- A small group, or any group in a table's cell, is dense: pictures overlap by 0.3 of the avatar, and initials only by the ring that parts them, so the letters stay clear.
+- The group always keeps the room its spread takes, so spreading never moves what is around it; `align="end"` piles a group at the end of that room, for a group that ends a row, such as a list row's action.
+- With reduced motion it spreads at once.
+- `formatMore` and `formatLabel` set its words.
+
+```tsx
+<AvatarGroup people={members} max={3} total={12} align="end" />
+```
+
+#### Pressable groups
+
+`onPersonClick` makes every avatar a button, which receives the person pressed; a person with `href` is a link, through the application's router link from `LinkProvider`.
+
+- While the group is piled its avatars and count take no pointer events, and a cover over the group, its `::before`, takes the pointer, so no avatar can be pressed or hovered then.
+- The cover stays for the medium motion duration after the group starts to spread, until the avatars are in place.
+- A hovering pointer spreads the group with `:hover`, and keyboard focus inside with `:focus-visible`; a click's focus, without a focus ring, doesn't hold it spread.
+- Where no pointer hovers, a tap on the pile sets `data-spread` on the group, until a tap outside it or five seconds without a tap in it.
+- Spread, each pressable avatar is a whole target, 2.75 rem on touch screens.
+
+```tsx source=PressableAvatars
+
+```
+
+### Composition
+
+The group is `env-avatar-group`, with an `env-avatar` for each person, an `env-avatar-group-item` button or link around each pressable one, and the count chip, `env-avatar-group-overflow`, whose tooltip lists the people it hides. A picture is `env-avatar-image`, the default person picture `env-avatar-person`, and AvatarButton `env-avatar-button`.
+
+### Customize
+
+Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. A lone avatar casts a faint shadow, 1 px down and 2 px soft, which the ring replaces in a group; a small avatar and one in a table cast none; under forced colors there is none, and `box-shadow: none` on `.env-avatar` removes it.
+
 ## Changelog
 
-- **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits, and it rings its avatars through the `--env-avatar-ring` hook. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
-- **0.6.0**: AvatarGroup.
-- **0.4.0**: AvatarButton; initials use the avatar blue of the default person picture.
-- **0.2.0**: Avatar, with the default person picture or initials as fallback.
+- **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: In the dark theme an avatar takes a deep fill of its hue with light initials, rather than the light theme's pastel, so avatars are no longer the brightest thing on a dark screen. The butter, sage and oat fills sit a little lighter, with paler initials, so they read as gold, green and oat rather than muddy brown and olive.
+- **1.0.0-prerelease.6**: Avatars in a table's cell and in a small group take quieter fills, and a small group or one in a table overlaps less, initials only by the ring. In a group, an avatar whose color looks like the one before it takes another.
+- **1.0.0-prerelease.6**: An avatar without a picture shows its name's initials by default, in place of the default person picture, which `fallback="person"` keeps. Avatars in a group take a ring in the color of the surface below, so their initials never run together.
+- **1.0.0-prerelease.6**: A small avatar and one in a table cast no shadow, so a column of them stays quiet.
+- **1.0.0-prerelease.6**: Initials stay legible at small sizes, at least the caption size; below `sm`, an avatar with initials is a disc of its color alone.
+- **1.0.0-prerelease.5**: AvatarGroup's `gather` is `align`, as Row and Popover name the inline axis, and its `data-gather` attribute is `data-align`.
+- **1.0.0-prerelease.5**: An avatar and AvatarGroup's count cast a faint, small shadow in a deeper shade of the surface below, so the avatars of a group part from one another.
+- **1.0.0-prerelease.3**: AvatarGroup rests as a compact pile, like stacked cards, which is one pointer target: hover, a tap or keyboard focus spreads it, and its avatars take presses only once spread, in place of a looser rest that kept 1.5 rem of each pressable avatar uncovered. A tap spreads a group on touch screens too, marked with `data-spread`. The count is a rounded square the size of the avatars, at the bottom of the pile.
+- **1.0.0-prerelease.2**: The eight colors are a new pastel palette of tonal pairs: a soft fill with initials and a figure in a deep shade of the same hue, rather than white. The hues are named for their colors, in `hue`, `data-hue` and the tokens: `blue` is `powder`, `teal` `seafoam`, `green` `sage`, `amber` `butter`, `red` `blush`, `violet` `periwinkle`, `purple` `orchid` and `slate` `oat`. `selected` shows an avatar as chosen, with a ring and a check, `env-avatar-check`. AvatarGroup rests bunched where a pointer can hover, with the count of the rest under the last avatar, and spreads along an arch under the pointer or with focus inside, within the room it keeps for the spread; `gather` sets where the avatars gather at rest. Avatars in a group and the count take no ring; `--env-avatar-ring` is gone, and `--env-avatar-group-ring` sets only the gap in a chosen avatar's ring.

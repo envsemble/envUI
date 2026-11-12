@@ -3,132 +3,58 @@
   <img src="assets/brand/envUI/envUI-lockup-black.svg" alt="envUI" width="240">
 </picture>
 
-**The shared interface library for envsemble.**
+**A React design system for clear, accessible interfaces.**
 
-[![CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
-![React 19](https://img.shields.io/badge/React-19-149eca)
-![Node.js 22.13+ or 24+](https://img.shields.io/badge/Node.js-22.13%2B%20%7C%2024%2B-417e38)
-![Private package](https://img.shields.io/badge/GitHub_Packages-private-6e40c9)
+[![Verify](https://github.com/envsemble/envUI/actions/workflows/verify.yml/badge.svg?branch=dev)](https://github.com/envsemble/envUI/actions/workflows/verify.yml)
+![React 19](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)
+![TypeScript types included](https://img.shields.io/badge/TypeScript-types_included-3178c6?logo=typescript&logoColor=white)
+![Node.js 22.13+ or 24+](https://img.shields.io/badge/Node.js-22.13%2B_%7C_24%2B-417e38?logo=nodedotjs&logoColor=white)
+![Private package on GitHub Packages](https://img.shields.io/badge/GitHub_Packages-private-6e40c9?logo=github&logoColor=white)
 
-envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and tooling for coding agents.
+envUI gives B2B SaaS products and AI developer tools one consistent interface: themes, components and patterns, from a button or a form to an app frame, a data table or a conversation with an agent. Its documentation is written for the people and the coding agents who build with it, and ships in the package.
 
-[For agents](docs/agent-tooling.md) · [Use envUI](.agents/skills/envui-use/SKILL.md) · [Migrate an app](.agents/skills/envui-migrate/SKILL.md) · [Changelog](packages/ui/CHANGELOG.md) · [CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
+[Website](https://envui.envsemble.com) · [Docs](https://envui.envsemble.com/docs) · [Changelog](packages/ui/CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/catalogue-dark.png">
-  <img src="assets/readme/catalogue-light.png" alt="The envUI catalogue showing buttons, icons and navigation in the light theme" width="1440">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/overview-dark.png">
+  <img src="assets/readme/overview-light.png" alt="The overview of the envUI website: its banner, with Get started beside the install command, over a fan of cards built with envUI: a pull request, a conversation with an assistant, a heatmap of deploys and a calendar" width="1440">
 </picture>
 
-_Actual envUI components in the local catalogue. The preview follows your light or dark appearance._
+## Get started
+
+envUI is published privately to GitHub Packages, so installing it needs access to that registry. [Install and set up](https://envui.envsemble.com/docs) walks through it, with styles, theme and router. A coding agent can do the setup with you from one prompt:
+
+```text
+Set up envUI in my app: envui.envsemble.com/SKILL.md
+```
+
+For an app that already has an interface of its own, read [Move an app to envUI](https://envui.envsemble.com/docs/migration) first.
 
 ## What’s inside
 
-- **Shared foundations:** scoped light/dark themes, design tokens, Inter, typography, surfaces and layout primitives.
-- **Everyday interactions:** actions, navigation, native form controls, selection, color picking, dialogs and toasts, with Base UI underpinning complex interactions.
-- **Content tools:** Markdown, code highlighting and Tiptap rich text on separate entry points.
-- **Local assets:** Inter and the official Material Symbols Rounded icons, with no font or icon CDN required.
-- **A visual catalogue:** live component previews plus a self-contained HTML build that opens offline.
+- **Foundations:** light, dark and high-contrast themes, design tokens, typography, spacing and density.
+- **Components:** actions, navigation, native form controls, selection, data display, dialogs and notifications, with Base UI under the complex interactions.
+- **Patterns:** components put together for what people do, such as forms, settings, data tables, app frames and conversations.
+- **Content:** Markdown, code highlighting, diffs and Tiptap rich text, on entry points of their own.
+- **Local assets:** the Geist fonts and Material Symbols Rounded icons ship in the package, with no CDN.
+- **Dev mode:** a page's layout described as text for agents and taken apart in 3D for people, from `@envsemble/envui/dev`.
+- **Lint rules:** an [ESLint plugin and a Stylelint config](https://envui.envsemble.com/docs?section=lint-rules) that name the envUI component or token to use instead of hand-built controls and raw colors.
 
-## Start using envUI
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/gallery-dark.png">
+  <img src="assets/readme/gallery-light.png" alt="The components gallery of the envUI website: a live tile for each component, grouped by what it is for, starting with the actions: Button, Link, Toolbar, Menu, Menubar and CommandPalette" width="1920">
+</picture>
 
-Requires React and React DOM 19, Node.js 22.13 or a later 22 release, or Node.js 24 or newer, for the `envui` command and the lint packages, plus access to the private `@envsemble` GitHub Packages registry. See [setup](docs/setup.md) for registry access and the [documentation index](docs/index.md) for examples matching the installed version.
+## Documentation
 
-```sh
-npm install --save-exact @envsemble/envui@<version>
-```
+The [website](https://envui.envsemble.com) has two parts. The catalogue shows every foundation, component and pattern, live. The [Docs](https://envui.envsemble.com/docs) are the developer reference: setup, guides, props, part names and the changelog. The same pages ship in the package under `docs/`, so an agent reads the ones for the version it has installed.
 
-Upgrading an application from envUI 0.x to 1.0? The `@envsemble/envui-codemods` package moves its imports, components, props, types and `env-*` classes to the 1.0 names and reports what needs a decision. Commit first, then run the six transforms in this order, before installing 1.0:
+## Contributing
 
-```sh
-npx @envsemble/envui-codemods@<version> v1-names src
-npx @envsemble/envui-codemods@<version> v1-app-shell src
-npx @envsemble/envui-codemods@<version> v1-structure src
-npx @envsemble/envui-codemods@<version> v1-render src
-npx @envsemble/envui-codemods@<version> v1-props src
-npx @envsemble/envui-codemods@<version> v1-classes src
-```
-
-The [migration guide](docs/migration.md), under "Upgrade from envUI 0.x to 1.0", explains each step, what the codemods leave to you and the renamed tokens.
-
-Import the stylesheet once at your application entry point, then compose public components:
-
-```tsx
-import { Button, Card, Stack, Text, Theme } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import '@envsemble/envui/styles.css';
-
-export function App() {
-  return (
-    <Theme theme="light">
-      <Card as="article">
-        <Stack gap={3}>
-          <Text as="h1" variant="page-heading">
-            Projects
-          </Text>
-          <Text tone="muted">A shared space for your team’s work.</Text>
-        </Stack>
-        <Button startIcon={<Add />}>Create project</Button>
-      </Card>
-    </Theme>
-  );
-}
-```
-
-Native form behavior stays familiar. Render this inside your application’s theme:
-
-```tsx
-import { ActionGroup, Button, Stack, TextField } from '@envsemble/envui';
-
-export function ProjectForm() {
-  return (
-    <form>
-      <Stack gap={4}>
-        <TextField name="projectName" label="Project name" required />
-        <ActionGroup>
-          <Button type="submit">Create project</Button>
-          <Button type="reset" variant="secondary">
-            Reset
-          </Button>
-        </ActionGroup>
-      </Stack>
-    </form>
-  );
-}
-```
-
-| Entry point                   | Use it for                          |
-| ----------------------------- | ----------------------------------- |
-| `@envsemble/envui`            | Foundations and everyday components |
-| `@envsemble/envui/icons/Name` | Individual icon imports             |
-| `@envsemble/envui/content`    | Markdown, code and Markdown editing |
-| `@envsemble/envui/rich-text`  | Rich-text rendering and editing     |
-| `@envsemble/envui/styles.css` | Shared styles and local font        |
-
-## Working with agents
-
-Coding agents get the same documentation as people, plus what helps them find a component before writing their own. [For agents](docs/agent-tooling.md) describes it all:
-
-- `npx --no envui agents` writes an index of envUI, under 8 KB, into the project's `AGENTS.md`, with the rule to search envUI before writing any UI element and to propose an addition instead of a local copy.
-- `npx --no envui -v` prints the installed envUI version. Pass `--version` after `--`, as `npx --no -- envui --version`; without it, npx prints its own version.
-- `npx --no envui mcp` serves the installed version's components, props, examples, patterns and tokens as an MCP server.
-- `manifest.json`, `llms.txt` and `llms-full.txt` hold the library as data and as text, generated from the same pages.
-
-| Skill                                                        | Responsibility                                                                          |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| [envui-use](.agents/skills/envui-use/SKILL.md)               | Build interfaces, looking up every element in envUI first                               |
-| [envui-migrate](.agents/skills/envui-migrate/SKILL.md)       | Adopt envUI, or upgrade it, while preserving routes, forms, data and behavior           |
-| [envui-contribute](.agents/skills/envui-contribute/SKILL.md) | When envUI lacks something, propose and add it upstream instead of keeping a local copy |
-
-The skills ship under `skills/` in the npm package; copy the three folders together into the project's skills folder, aligned with the package version. Installing the npm package registers nothing by itself.
-
-Documentation ships under `node_modules/@envsemble/envui/docs/`, with examples and props tables filled in, the example files in `docs/examples/` and every export’s props in `docs/generated/props.json`. Each component page carries frontmatter (summary, status, aliases, when to use it and what to use instead) and a Props section generated from the public TypeScript declarations. Edit the maintained pages under `docs/`; improve the relevant page as integrations reveal gaps.
+To work on envUI itself, start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Versions and license
 
-Published versions are immutable; breaking changes come in a new major version with migration notes. Prereleases are published under their own name as the dist-tag, such as `prerelease` for `1.0.0-prerelease.0` (`npm install @envsemble/envui@prerelease`), and stable releases under `latest`. The [changelog](packages/ui/CHANGELOG.md) describes each release.
+A published version never changes, and breaking changes come only in a new major version. Prereleases are published under the `prerelease` dist-tag, and stable releases under `latest`.
 
-envUI is proprietary and distributed privately. Bundled third-party assets and dependencies retain their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).
-
-## Develop envUI
-
-To work on envUI itself, run its catalogue and checks, or host and release it, see [contributing](CONTRIBUTING.md).
+envUI is proprietary and distributed privately. Bundled third-party assets and dependencies keep their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).

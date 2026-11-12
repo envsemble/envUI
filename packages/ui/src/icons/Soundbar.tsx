@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function Soundbar({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M451.5-588.5Q440-577 440-560v80q0 17 11.5 28.5T480-440q17 0 28.5-11.5T520-480v-80q0-17-11.5-28.5T480-600q-17 0-28.5 11.5Zm-103 377Q337-200 320-200h-80q-17 0-28.5-11.5T200-240q0-17 11.5-28.5T240-280h80q17 0 28.5 11.5T360-240q0 17-11.5 28.5Zm400 0Q737-200 720-200h-80q-17 0-28.5-11.5T600-240q0-17 11.5-28.5T640-280h80q17 0 28.5 11.5T760-240q0 17-11.5 28.5ZM280-440q33 0 56.5-23.5T360-520q0-33-23.5-56.5T280-600q-33 0-56.5 23.5T200-520q0 33 23.5 56.5T280-440Zm400 0q33 0 56.5-23.5T760-520q0-33-23.5-56.5T680-600q-33 0-56.5 23.5T600-520q0 33 23.5 56.5T680-440ZM160-320q-33 0-56.5-23.5T80-400v-240q0-33 23.5-56.5T160-720h640q33 0 56.5 23.5T880-640v240q0 33-23.5 56.5T800-320H160Z" /> : <path d="M451.5-588.5Q440-577 440-560v80q0 17 11.5 28.5T480-440q17 0 28.5-11.5T520-480v-80q0-17-11.5-28.5T480-600q-17 0-28.5 11.5Zm-103 377Q337-200 320-200h-80q-17 0-28.5-11.5T200-240q0-17 11.5-28.5T240-280h80q17 0 28.5 11.5T360-240q0 17-11.5 28.5Zm400 0Q737-200 720-200h-80q-17 0-28.5-11.5T600-240q0-17 11.5-28.5T640-280h80q17 0 28.5 11.5T760-240q0 17-11.5 28.5ZM280-440q33 0 56.5-23.5T360-520q0-33-23.5-56.5T280-600q-33 0-56.5 23.5T200-520q0 33 23.5 56.5T280-440Zm400 0q33 0 56.5-23.5T760-520q0-33-23.5-56.5T680-600q-33 0-56.5 23.5T600-520q0 33 23.5 56.5T680-440ZM160-320q-33 0-56.5-23.5T80-400v-240q0-33 23.5-56.5T160-720h640q33 0 56.5 23.5T880-640v240q0 33-23.5 56.5T800-320H160Zm0-80h640v-240H160v240Zm320-120Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M451.5-588.5Q440-577 440-560v80q0 17 11.5 28.5T480-440q17 0 28.5-11.5T520-480v-80q0-17-11.5-28.5T480-600q-17 0-28.5 11.5Zm-103 377Q337-200 320-200h-80q-17 0-28.5-11.5T200-240q0-17 11.5-28.5T240-280h80q17 0 28.5 11.5T360-240q0 17-11.5 28.5Zm400 0Q737-200 720-200h-80q-17 0-28.5-11.5T600-240q0-17 11.5-28.5T640-280h80q17 0 28.5 11.5T760-240q0 17-11.5 28.5ZM280-440q33 0 56.5-23.5T360-520q0-33-23.5-56.5T280-600q-33 0-56.5 23.5T200-520q0 33 23.5 56.5T280-440Zm400 0q33 0 56.5-23.5T760-520q0-33-23.5-56.5T680-600q-33 0-56.5 23.5T600-520q0 33 23.5 56.5T680-440ZM160-320q-33 0-56.5-23.5T80-400v-240q0-33 23.5-56.5T160-720h640q33 0 56.5 23.5T880-640v240q0 33-23.5 56.5T800-320H160Z";
+
+export function IconSoundbar({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start : start + "m0-80h640v-240H160v240Zm320-120Z"} /></Icon>;
 }

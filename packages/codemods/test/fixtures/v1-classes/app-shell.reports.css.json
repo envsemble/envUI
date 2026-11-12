@@ -1,6 +1,0 @@
-[
-  "line 7: .env-app-shell[data-compact] matches nothing in 1.0: AppShell.Root no longer marks the sidebar's state: select .env-sidebar[data-state='collapsed'], [data-rail] while it shows icons only and [data-peek] while it shows over the content; below the breakpoint the root has data-mobile and the sidebar is a drawer; the topbar's layout is data-header-span.",
-  "line 8: --env-sidebar-collapsed-width is removed in 1.0: A sidebar's rail is --env-control-height plus two --env-sidebar-inset wide; set --env-sidebar-inset to change it.",
-  "line 13: env-app-context has no 1.0 class: The topbar's context has no class of its own in 1.0: it sits in Sidebar.Header after the SidebarTrigger, or in AppShell.Header's start; style your own element there.",
-  "line 14: env-app-sidebar-backdrop has no 1.0 class: Below the breakpoint the sidebar is a Drawer, with the Drawer's own backdrop."
-]

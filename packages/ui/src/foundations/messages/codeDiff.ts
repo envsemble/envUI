@@ -8,9 +8,7 @@ export const codeDiff = {
   /** Says why, under the title. */
   failedDescription: 'The code highlighter did not load.',
   /** The retry button's label. */
-  retry: 'Retry',
+  retry: 'Try again',
   /** Names the region while the changes load. */
   loading: 'Loading changes',
 };
-
-export type CodeDiffMessages = typeof codeDiff;

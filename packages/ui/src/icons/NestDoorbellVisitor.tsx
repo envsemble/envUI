@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function NestDoorbellVisitor({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconNestDoorbellVisitor({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M480-80q-83 0-141.5-58.5T280-280v-400q0-83 58.5-141.5T480-880q83 0 141.5 58.5T680-680v200H560q-33 0-56.5 23.5T480-400q-33 0-56.5 23.5T400-320q0 32 23.5 55t56.5 25v160Zm80 0v-23q0-52 50-75t110-23q60 0 110 23t50 75v23H560Zm160-160q-33 0-56.5-23.5T640-320q0-33 23.5-56.5T720-400q33 0 56.5 23.5T800-320q0 33-23.5 56.5T720-240Zm-240-40q-17 0-28.5-11.5T440-320q0-17 11.5-28.5T480-360q17 0 28.5 11.5T520-320q0 17-11.5 28.5T480-280Zm0-280q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Z" /> : <path d="M720-240q-33 0-56.5-23.5T640-320q0-33 23.5-56.5T720-400q33 0 56.5 23.5T800-320q0 33-23.5 56.5T720-240ZM560-80v-23q0-44 44-70.5T720-200q72 0 116 26.5t44 70.5v23H560Zm-80-480q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0 80Zm-80 160q0 33 23.5 56.5T480-240q33 0 56.5-23.5T560-320q0-33-23.5-56.5T480-400q-33 0-56.5 23.5T400-320Zm80 40q-17 0-28.5-11.5T440-320q0-17 11.5-28.5T480-360q17 0 28.5 11.5T520-320q0 17-11.5 28.5T480-280ZM280-680q0-85 57.5-142.5T480-880q85 0 142.5 57.5T680-680v160q0 17-11.5 28.5T640-480q-17 0-28.5-11.5T600-520v-160q0-51-36-85.5T480-800q-48 0-84 34.5T360-680v400q0 42 27 75t66 42q14 3 23.5 14t9.5 25q0 20-15 32t-35 7q-68-15-112-68.5T280-280v-400Z" />}</Icon>;
 }

@@ -1,10 +1,11 @@
 ---
 title: Empty states
-summary: Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.
+summary: Show what a region holds when it has nothing to show, and the one way on.
 status: beta
 since: 1.0.0
 intent: Keep people informed
 aliases:
+  - EmptyState
   - empty state
   - no results
   - no data
@@ -12,145 +13,250 @@ aliases:
   - first use
   - nothing found
   - no access
+  - page not found
+  - not found
+  - 404 page
+  - offline
+  - error page
 useWhen:
-  - A list, a table or a page has nothing to show, for any reason.
-  - A search or filters match nothing.
-  - Content failed to load, or people may not see it.
+  - A list, a table or a page with nothing to show
+  - A search or filters that match nothing
+  - Content that failed to load, or that people may not see
+  - A whole page that can't show, such as one not found
 avoidWhen:
   - text: Content that is still loading.
     see: loading
   - text: Reporting that an action, such as a save, failed.
     see: feedback
 composes:
-  - EmptyState
+  - Alert
   - PageHeader
   - SearchField
   - Select
   - List
   - Table
-  - LoadingState
-  - Skeleton
+  - placeholders
   - Badge
+  - Scaffold
+  - TopBar
+  - Page
   - Button
   - Surface
-  - Stack
+  - Column
+  - Row
+  - Grid
   - Text
-related:
-  - loading
-  - feedback
-  - empty-state
-  - list
-  - table
+examples:
+  FirstUse:
+    role: overview
+    motion: true
+  NoResults: example
+  LoadFailed: example
+  NoAccess: example
+  AllDone: example
+  WholePage: example
+  EmptyStatesAnatomy: anatomy
+  OneAction:
+    role: do
+    caption: One action, the one that ends the state.
+  CompetingActions:
+    role: dont
+    caption: Several actions compete, and none says what ends the state.
 ---
 
 # Empty states
 
-## Overview
-
-Use this pattern when a region has nothing to show, to say why and what people can do. "Empty" has four causes, and each needs its own words and action: nothing exists yet, nothing matches, everything is done, or the content failed to load or isn't theirs to see. The state takes the place of the list or the table, under the toolbar that stays.
-
-```tsx example=FirstUse
-
-```
-
-## Anatomy
-
-1. **The region's frame:** the heading and the toolbar of the list or table, a [PageHeader](../components/page-header.md) with its `toolbar` or a row of its own. It stays, so people can change what they asked for.
-2. **The state:** an [EmptyState](../components/empty-state.md) in place of the [List](../components/list.md) or [Table](../components/table.md), with `align="center"` where it takes the region's place and the region gives it height, and `align="start"` inside a small card or panel.
-3. **Title:** the fact, a heading at the `headingLevel` that fits the page's outline.
-4. **Description:** why, or what comes next, in a sentence or two.
-5. **Action:** at most one [Button](../components/button.md) that resolves the state: "Create project", "Clear filters", "Try again", "Request access". A cleared queue has none.
-6. **Icon:** optional and decorative, such as a folder for first use or a lock for no access; `tone="danger"` brings the error icon.
-
-## States and behaviour
-
-| Kind       | When                                        | Title                                    | Action               |
-| ---------- | ------------------------------------------- | ---------------------------------------- | -------------------- |
-| First use  | Nothing has been made yet                   | "No projects yet", and why they help     | Create the first one |
-| No results | A search or a filter matches nothing        | "No matching projects", naming the query | Clear filters        |
-| Done       | People cleared a queue                      | "No reviews waiting"                     | None                 |
-| Failed     | The content couldn't load (`tone="danger"`) | "Couldn't load documents"                | Try again            |
-| No access  | The content exists, but not for this person | "You don't have access to this project"  | Request access       |
-
-- **Not while loading.** Show placeholders while content loads, and the empty state only once the answer is "nothing", as [Loading](loading.md) describes.
-- **No results keeps the filters.** The toolbar stays with the search and filters people set, a count in a status says how many match, and Clear filters resets them all and returns focus to the search.
-- **Failed is announced.** An EmptyState with `tone="danger"` has the alert role, so it is announced when it appears. Try again shows the loading state, then the content or the error again.
-- **First use offers the action once.** Until something exists, the empty state holds the create action; once it does, the page's own header action takes over.
-- **Leaving the state.** When the action resolves the state, its button goes with it: move focus to what replaced it, such as the new list, the search field or the region's heading.
-- **Height.** A centred state fills the height of the region it replaces, which the application gives it; it never makes a small card or dialog taller.
-
-## Content guidelines
-
-- Follow [Empty states](../foundations/content.md#empty-states): the title states the fact, the description says why or what next, and the action says what it does.
-- Name the query in a no-results description, inside curly quotes: "Nothing matches “roadmap” with these filters."
-- In a failure, say that people's work is safe, and avoid codes and blame, as [Error messages](../foundations/content.md#error-messages) describes.
-- Keep a done state factual: "No reviews waiting", not "All caught up! Great job!".
-
-## Do and don't
-
-### Do
-
-- Tell first use, no results, done, failed and no access apart, with their own words.
-- Keep the toolbar and the page's heading in place around the state.
-- Offer one action, and return focus to where people continue when it resolves the state.
-- Set `headingLevel` to fit the page's outline.
-
-### Don't
-
-- Don't show an empty state while content is loading.
-- Don't offer several competing actions, or decoration that pushes the message down.
-- Don't celebrate an empty queue.
-- Don't report a failed save or another failed action with an empty state; see [Notifications and feedback](feedback.md).
-
-## Accessibility
-
-### Focus and keyboard
-
-An empty state doesn't take focus when it appears. Its action is reached with Tab after the toolbar. When the action makes the state go away, move focus on: Clear filters returns it to the search field, Create project to the list that appears, Try again to the region's heading while the content loads, and Request access to the region that now says the request was sent. When the last item of a queue goes, focus moves to the region's heading.
-
-### envUI provides
-
-- The title as a heading of `headingLevel`, so the state is in the page's outline.
-- The alert role on a `tone="danger"` state, so a failure is announced as it appears.
-- The icon hidden from assistive technology.
-
-### You provide
-
-- The right kind of state, with its words and its one action.
-- A `headingLevel` that fits the page, and the region's height for a centred state.
-- A count of results in a `role="status"` text beside a search or filters, since a neutral state that appears as people type isn't announced.
-- Focus for when the action makes the state go away.
-
-## Examples
+## Variants
 
 ### No results
 
-The search and the status filter stay above the state, which names the query, and a count says how many match. Clear filters resets both and returns focus to the search.
+The search and the filters stay, and Clear filters resets them, as in [filtering](filtering.md).
 
-```tsx example=NoResults
+```tsx figure=NoResults motion
 
 ```
 
 ### Load failed
 
-In place of the table, a danger state says the documents are safe and offers Try again. The heading and the page's action stay.
+A failure is a danger [Alert](../components/alert.md), announced as it appears, in the room the table takes. It says the documents are safe.
 
-```tsx example=LoadFailed
+```tsx figure=LoadFailed
 
 ```
 
 ### No access
 
-The project exists, but not for this person: the state says who to ask, and Request access sends the request.
+The state says who to ask, and Request access sends the request.
 
-```tsx example=NoAccess
+```tsx figure=NoAccess
 
 ```
 
 ### All done
 
-When the last review is approved, the queue says so plainly, with what comes next and no action.
+When the last review is approved, the queue says so, and what comes next.
 
-```tsx example=AllDone
+```tsx figure=AllDone motion
 
 ```
+
+### A whole page
+
+When the whole page can't show, the frame stays and the page says so, with the way on.
+
+- Its address leads nowhere: Go to Home.
+- The person may not see it: Request access.
+- The device is offline: Try again.
+
+```tsx figure=WholePage stage=shaded motion
+
+```
+
+## Anatomy
+
+```tsx figure=EmptyStatesAnatomy
+
+```
+
+1. **The frame that stays** (`env-page-header`)
+2. **Icon** (`env-page-header ~ * env-text > svg`)
+3. **Heading** (`env-page-header ~ * env-text[data-variant='title']`)
+4. **Description** (`env-page-header ~ * env-text[data-variant='body-sm']`)
+5. **Action** (`env-page-header ~ * env-button`)
+
+## Behaviour
+
+### In place of the content
+
+The state takes the place of the list or the table, under the heading and toolbar that stay: an icon, a heading, a sentence and the one action.
+
+- Until something exists, it holds the create action.
+- Then the page's own action takes over.
+
+## Rules
+
+Each empty state says what happened, and offers the one way on.
+
+### Which to use
+
+Each kind says something different, and offers a different way on.
+
+| Kind         | Use for                                                      |
+| ------------ | ------------------------------------------------------------ |
+| First use    | Nothing has been made yet.                                   |
+| No results   | A search or a filter matches nothing.                        |
+| All done     | People cleared a queue, such as their reviews.               |
+| Load failed  | The content couldn't load, as a danger Alert.                |
+| No access    | The content exists, but not for this person.                 |
+| A whole page | The page can't show at all: not found, no access or offline. |
+
+```tsx figure=OneAction
+
+```
+
+```tsx figure=CompetingActions
+
+```
+
+### Placement
+
+Centre the state, with a large icon, where it takes a region's place and the region gives it height. In a small card or under a list's toolbar, start it at the edge, with a smaller icon.
+
+### Content
+
+The title states the fact, the description says why or what next, and one action at most resolves it.
+
+- First use says what the place is for, "No projects yet", and offers "Create project".
+- No results names the query in curly quotes, "Nothing matches “roadmap” with these filters.", and offers "Clear filters".
+- A done state stays factual, "No reviews waiting", never "All caught up! Great job!".
+- A failure says the work is safe, "Your documents are safe. Check your connection and try again.", and offers "Try again".
+- A whole page says what happened in its title: "Page not found", "You don't have access to this page" or "You're offline".
+
+## Accessibility
+
+### Focus and keyboard
+
+An empty state doesn't take focus; <kbd>Tab</kbd> reaches its action after the toolbar. When the action makes the state go, move focus on.
+
+- Clear filters moves it to the search.
+- Create project moves it to the new list.
+- Try again moves it to the region's heading.
+
+### envUI provides
+
+- The icons hidden from assistive technology, so the heading and the sentence are what is read.
+
+### You provide
+
+- The heading's level, such as `render={<h4 />}` under a section's `h3`, so the state takes its place in the page's outline; its look stays the title type whatever the level, except inside a section whose own heading is a title, such as in a pane, where it is body text so it doesn't match its section.
+- A danger Alert with `announce` for content that failed to load, so it is announced; a neutral state isn't.
+- The right kind of state, its words and its one action.
+- A count of results in a `role="status"` text beside a search, since a neutral state isn't announced.
+- For a whole page, the page's one `h1` and `document.title` saying what happened, such as "Page not found – Northwind".
+
+## Compose
+
+### Usage
+
+An empty state is a Column of Text and a Button, with no component of its own:
+
+- the icon in a muted Text;
+- the heading as Text with `variant="title"` at the level the outline needs, such as `render={<h4 />}`;
+- the description as Text with `variant="body-sm"`;
+- then the one Button.
+
+Render it in place of the List or the Table when there is nothing to show, and once something exists, show the page's own action instead.
+
+```tsx source=FirstUse
+
+```
+
+#### Placement and icon size
+
+Centred, the Column takes `align="center"`, `justify="center"` and `textAlign: 'center'`, with a 2.5 rem icon, in a region that gives it height, such as a Surface with a `minBlockSize`. At the start, under a toolbar or in a small card, it keeps the default alignment and a 1.5 rem icon.
+
+#### No results
+
+Keep the SearchField and the Select in the PageHeader's `toolbar`, and say the count of matches in a Text with `role="status"`, since a neutral state isn't announced. Clear filters resets the query and the filters, then focuses the search, as the button goes with the state.
+
+#### Load failed
+
+A failure is an Alert with `tone="danger"` and `announce`, its Try again Button in `actions`, in the table's place. Try again moves focus to the region's heading, a Text with `tabIndex={-1}` and a ref, while the same Table loads as a `skeleton` over `placeholders()` rows, as the LoadFailed example does.
+
+```tsx
+<Alert
+  tone="danger"
+  announce
+  title="Couldn’t load documents"
+  actions={
+    <Button variant="secondary" onClick={retry}>
+      Try again
+    </Button>
+  }
+>
+  Your documents are safe. Check your connection and try again.
+</Alert>
+```
+
+#### A whole page
+
+Keep the Scaffold and its navigation, and render the state as the router's page: the same Column, centred in the body, with the page's `h1` as its heading, as the WholePage example does. Not found offers a Link or Button to the home page, no access a Request access Button, and offline a Try again Button that loads the page again once the connection is back.
+
+```tsx
+<Scaffold topBar={<TopBar title="Northwind" />}>
+  <Page>
+    <Column gap={4} padding={5} align="center" justify="center" style={{ textAlign: 'center' }}>
+      <Text render={<h1 />} variant="title">
+        Page not found
+      </Text>
+      <Button variant="secondary" href="/">
+        Go to Home
+      </Button>
+    </Column>
+  </Page>
+</Scaffold>
+```
+
+## Changelog
+
+- **1.0.0**: Empty states are built from Column, Text and Button, in place of the EmptyState component. The page is on the figure template, with a whole page and the empty states of the content guidelines.

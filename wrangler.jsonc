@@ -1,26 +1,39 @@
-// The hosted catalogue: a Worker that serves the static build in dist/site from
-// `npm run build:site`. Page loads and files outside /assets/ are served without running the
-// script; it answers /assets/ and requests that match no file. CONTRIBUTING.md's Hosting section
-// describes deployment.
+// The hosted site, envui.envsemble.com: a Worker that serves the static build in dist/site from
+// `npm run build:site`, the catalogue at the root and the Docs under /docs, each page pre-rendered
+// into a file of its own, such as components/button.html for /components/button. Page loads and
+// files outside /assets/ are served without running the script; it answers /assets/ and requests
+// that match no file. `npm run site:dev` builds and serves it here.
+//
+// Deploying, once, with Workers Builds, which uses no GitHub Actions minutes:
+// 1. In the Cloudflare dashboard, Workers & Pages, import envsemble/envUI (limit the app to this
+//    repository) as the Worker `envui`, from the repository root: build `npm run build:site`, deploy
+//    `npx wrangler deploy`, preview `npx wrangler preview`; NODE_VERSION pins Node.
+// 2. `main` is the production branch, the only one that deploys: preview builds stay off.
+// 3. Add the custom domain envui.envsemble.com in the Worker's Domains & Routes (the zone must be
+//    on the same account). The site is public: no Cloudflare Access in front of it.
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "envui",
-  "main": "./apps/catalogue/site/Worker.mjs",
-  // From 2025-04-01, page loads of unknown paths get index.html without running the script.
+  "main": "./apps/site/hosting/Worker.mjs",
+  // From 2025-04-01, page loads of unknown paths get 404.html without running the script.
   "compatibility_date": "2026-10-12",
   "assets": {
     "directory": "./dist/site",
     "binding": "ASSETS",
-    // A path without a file answers with index.html, so routes can live in the URL path.
-    "not_found_handling": "single-page-application",
-    // /v0.7 redirects to /v0.7/, which serves v0.7/index.html.
+    // A page's address answers with its pre-rendered file, /components/button with
+    // components/button.html, and / with index.html, the home page's.
     "html_handling": "auto-trailing-slash",
+    // An address without a file answers with 404.html, Page not found, with a 404 status; at an
+    // old address that _redirects doesn't list, the browser renders the page it leads to there
+    // (apps/site/src/main.tsx). The old addresses it lists are redirected, and old hash addresses,
+    // /#/…, which only the browser sees, are redirected there from index.html.
+    "not_found_handling": "404-page",
     // The script answers /assets/ first, so a missing hashed file is not found even when a browser
-    // opens it as a page, rather than index.html cached for a year under its name.
+    // opens it as a page, rather than with the HTML of 404.html.
     "run_worker_first": ["/assets/*"],
   },
-  // The workers.dev address and the Preview URLs of branches stay off until Cloudflare Access
-  // protects them; the deploy steps in CONTRIBUTING.md turn them on after that.
+  // The site answers at its own domain only: no workers.dev address, and no public Preview URL for
+  // each branch, so what is live is always main.
   "workers_dev": false,
   "preview_urls": false,
   // `npm run site:dev -- --port <port>` chooses another port.

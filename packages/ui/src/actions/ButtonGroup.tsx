@@ -1,5 +1,10 @@
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+// The group restyles the buttons it holds, so Button's style sheet comes first.
+import '../styles/Button.css';
+import '../styles/ButtonGroup.css';
 
 export interface ButtonGroupProps extends ComponentPropsWithRef<'div'> {
   /** A row of buttons, or a column in which every button is as wide as the group. */
@@ -26,7 +31,7 @@ export function ButtonGroup({
       role={role}
       className={classNames('env-button-group', className)}
       data-orientation={orientation}
-      data-full-width={fullWidth || undefined}
+      data-full-width={flag(fullWidth)}
     />
   );
 }

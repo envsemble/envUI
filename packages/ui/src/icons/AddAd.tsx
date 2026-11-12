@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function AddAd({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M720-280h-80q-17 0-28.5-11.5T600-320q0-17 11.5-28.5T640-360h80v-80q0-17 11.5-28.5T760-480q17 0 28.5 11.5T800-440v80h80q17 0 28.5 11.5T920-320q0 17-11.5 28.5T880-280h-80v80q0 17-11.5 28.5T760-160q-17 0-28.5-11.5T720-200v-80ZM120-120q-33 0-56.5-23.5T40-200v-560q0-33 23.5-56.5T120-840h560q33 0 56.5 23.5T760-760v160q0 17-11.5 28.5T720-560q-17 0-28.5-11.5T680-600v-40H120v440h480q17 0 28.5 11.5T640-160q0 17-11.5 28.5T600-120H120Z" /> : <path d="M720-280h-80q-17 0-28.5-11.5T600-320q0-17 11.5-28.5T640-360h80v-80q0-17 11.5-28.5T760-480q17 0 28.5 11.5T800-440v80h80q17 0 28.5 11.5T920-320q0 17-11.5 28.5T880-280h-80v80q0 17-11.5 28.5T760-160q-17 0-28.5-11.5T720-200v-80ZM120-120q-33 0-56.5-23.5T40-200v-560q0-33 23.5-56.5T120-840h560q33 0 56.5 23.5T760-760v160q0 17-11.5 28.5T720-560q-17 0-28.5-11.5T680-600v-40H120v440h480q17 0 28.5 11.5T640-160q0 17-11.5 28.5T600-120H120Zm0-600h560v-40H120v40Zm0 0v-40 40Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M720-280h-80q-17 0-28.5-11.5T600-320q0-17 11.5-28.5T640-360h80v-80q0-17 11.5-28.5T760-480q17 0 28.5 11.5T800-440v80h80q17 0 28.5 11.5T920-320q0 17-11.5 28.5T880-280h-80v80q0 17-11.5 28.5T760-160q-17 0-28.5-11.5T720-200v-80ZM120-120q-33 0-56.5-23.5T40-200v-560q0-33 23.5-56.5T120-840h560q33 0 56.5 23.5T760-760v160q0 17-11.5 28.5T720-560q-17 0-28.5-11.5T680-600v-40H120v440h480q17 0 28.5 11.5T640-160q0 17-11.5 28.5T600-120H120Z";
+
+export function IconAddAd({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start : start + "m0-600h560v-40H120v40Zm0 0v-40 40Z"} /></Icon>;
 }

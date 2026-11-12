@@ -1,5 +1,9 @@
-/* Relative times take the surrounding type; tabular digits keep a changing count from shifting the
-   text beside it. */
-.env-relative-time {
-  font-variant-numeric: tabular-nums;
+@layer env.components {
+  /* Relative times take the surrounding type; tabular digits keep a changing count from shifting the
+     text beside it. A time reads as a time, and lists repeat them, so the dotted line that marks its
+     tooltip waits for the pointer or keyboard focus, as in a table; focus also shows its ring. */
+  .env-relative-time {
+    --env-hover-detail-rest-color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
 }

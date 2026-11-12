@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function EnhancedEncryption({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M440-320v80q0 17 11.5 28.5T480-200q17 0 28.5-11.5T520-240v-80h80q17 0 28.5-11.5T640-360q0-17-11.5-28.5T600-400h-80v-80q0-17-11.5-28.5T480-520q-17 0-28.5 11.5T440-480v80h-80q-17 0-28.5 11.5T320-360q0 17 11.5 28.5T360-320h80ZM240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm120-560h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z" /> : <path d="M440-320v80q0 17 11.5 28.5T480-200q17 0 28.5-11.5T520-240v-80h80q17 0 28.5-11.5T640-360q0-17-11.5-28.5T600-400h-80v-80q0-17-11.5-28.5T480-520q-17 0-28.5 11.5T440-480v80h-80q-17 0-28.5 11.5T320-360q0 17 11.5 28.5T360-320h80ZM240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm0-80h480v-400H240v400Zm120-480h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80ZM240-160v-400 400Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M440-320v80q0 17 11.5 28.5T480-200q17 0 28.5-11.5T520-240v-80h80q17 0 28.5-11.5T640-360q0-17-11.5-28.5T600-400h-80v-80q0-17-11.5-28.5T480-520q-17 0-28.5 11.5T440-480v80h-80q-17 0-28.5 11.5T320-360q0 17 11.5 28.5T360-320h80ZM240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm";
+
+export function IconEnhancedEncryption({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "120-560h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z" : start + "0-80h480v-400H240v400Zm120-480h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80ZM240-160v-400 400Z"} /></Icon>;
 }

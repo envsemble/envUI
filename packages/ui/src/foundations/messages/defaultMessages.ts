@@ -1,7 +1,5 @@
 import { common } from './common.js';
-import { accountMenu } from './accountMenu.js';
 import { alert } from './alert.js';
-import { appShell } from './appShell.js';
 import { avatarGroup } from './avatarGroup.js';
 import { breadcrumbs } from './breadcrumbs.js';
 import { calendar } from './calendar.js';
@@ -14,7 +12,7 @@ import { commandPalette } from './commandPalette.js';
 import { composer } from './composer.js';
 import { confirmButton } from './confirmButton.js';
 import { confirmDialog } from './confirmDialog.js';
-import { copy } from './copy.js';
+import { copyButton } from './copyButton.js';
 import { datePicker } from './datePicker.js';
 import { dialog } from './dialog.js';
 import { diffStat } from './diffStat.js';
@@ -26,22 +24,23 @@ import { markdown } from './markdown.js';
 import { markdownEditor } from './markdownEditor.js';
 import { message } from './message.js';
 import { monthPicker } from './monthPicker.js';
-import { navList } from './navList.js';
-import { organizationSwitcher } from './organizationSwitcher.js';
+import { navigation } from './navigation.js';
 import { pager } from './pager.js';
 import { pagination } from './pagination.js';
+import { panes } from './panes.js';
 import { panelDock } from './panelDock.js';
 import { rating } from './rating.js';
 import { relativeTime } from './relativeTime.js';
 import { richText } from './richText.js';
+import { scaffold } from './scaffold.js';
 import { searchField } from './searchField.js';
-import { searchTrigger } from './searchTrigger.js';
-import { splitPane } from './splitPane.js';
 import { table } from './table.js';
+import { tableOfContents } from './tableOfContents.js';
 import { textarea } from './textarea.js';
+import { themePreference } from './themePreference.js';
 import { timePicker } from './timePicker.js';
-import { themeToggle } from './themeToggle.js';
 import { toast } from './toast.js';
+import { topBar } from './topBar.js';
 import { tree } from './tree.js';
 
 /**
@@ -52,9 +51,7 @@ import { tree } from './tree.js';
  */
 export const defaultMessages = {
   common,
-  accountMenu,
   alert,
-  appShell,
   avatarGroup,
   breadcrumbs,
   calendar,
@@ -67,7 +64,7 @@ export const defaultMessages = {
   composer,
   confirmButton,
   confirmDialog,
-  copy,
+  copyButton,
   datePicker,
   dialog,
   diffStat,
@@ -79,22 +76,23 @@ export const defaultMessages = {
   markdownEditor,
   message,
   monthPicker,
-  navList,
-  organizationSwitcher,
+  navigation,
   pager,
   pagination,
+  panes,
   panelDock,
   rating,
   relativeTime,
   richText,
+  scaffold,
   searchField,
-  searchTrigger,
-  splitPane,
   table,
+  tableOfContents,
   textarea,
+  themePreference,
   timePicker,
-  themeToggle,
   toast,
+  topBar,
   tree,
 };
 

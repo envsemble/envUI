@@ -1,9 +1,10 @@
 'use client';
 
-import { useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useId, useMemo } from 'react';
+import { Grid, Row } from '../../layout/Layout.js';
 import { IconButton } from '../../actions/Button.js';
-import { ChevronLeft } from '../../icons/ChevronLeft.js';
-import { ChevronRight } from '../../icons/ChevronRight.js';
+import { IconChevronLeft } from '../../icons/ChevronLeft.js';
+import { IconChevronRight } from '../../icons/ChevronRight.js';
 import {
   clampMonth,
   dateFormat,
@@ -12,7 +13,10 @@ import {
   monthOfDay,
   now,
   toUtcDate,
-} from './CalendarDays.js';
+} from '../../internal/time/calendarDays.js';
+import { useActiveCell } from './useActiveCell.js';
+import '../../styles/Base.css';
+import '../../styles/MonthPicker.css';
 
 /** The month of the grid that holds its tab stop, where focus goes as the popup opens. */
 export function monthGridActive(root: ParentNode | null | undefined): HTMLElement | null {
@@ -21,6 +25,25 @@ export function monthGridActive(root: ParentNode | null | undefined): HTMLElemen
 
 /** A year's months in rows of three. */
 const columns = 3;
+
+/**
+ * The short names of a year's months in the format's locale, of one length where the locale makes
+ * nearly all of them that long: a longer name of letters alone is cut to it, such as Sept among
+ * en-GB's three-letter months, as long as the names stay distinct. Names with punctuation or digits,
+ * and a locale whose names vary in length, keep the locale's own.
+ */
+function shortMonthNames(format: Intl.DateTimeFormat): string[] {
+  const names = Array.from({ length: 12 }, (_, month) => format.format(Date.UTC(2001, month, 1)));
+  const length = (name: string) => Array.from(name).length;
+  const counts = new Map<number, number>();
+  for (const name of names) counts.set(length(name), (counts.get(length(name)) ?? 0) + 1);
+  const [common, count] = [...counts].reduce((most, entry) => (entry[1] > most[1] ? entry : most));
+  if (count < 9) return names;
+  const longer = names.filter((name) => length(name) > common);
+  if (!longer.every((name) => /^\p{L}+$/u.test(name))) return names;
+  const cut = names.map((name) => Array.from(name).slice(0, common).join(''));
+  return new Set(cut).size === names.length ? cut : names;
+}
 
 export interface MonthGridProps {
   value: number | undefined;
@@ -47,87 +70,51 @@ export function MonthGrid({
   nextYearLabel,
 }: MonthGridProps) {
   const headingId = useId();
-  const grid = useRef<HTMLTableElement>(null);
-  const focusActive = useRef(false);
   const thisMonth = monthOfDay(now().day);
-  // The active month is the grid's one tab stop; the year that holds it is shown. It follows the
-  // chosen month when that changes.
-  const [activeState, setActiveState] = useState(() => value ?? thisMonth);
-  const [trackedValue, setTrackedValue] = useState(value);
-  if (trackedValue !== value) {
-    setTrackedValue(value);
-    if (value !== undefined) setActiveState(value);
-  }
-  const active = clampMonth(activeState, min, max);
+  const isUnavailable = (month: number) =>
+    (min !== undefined && month < min) || (max !== undefined && month > max);
+  // The active month is the grid's one tab stop; the year that holds it is shown.
+  const { active, grid, moveTo, choose, handleKeyDown, focusCell } = useActiveCell({
+    chosen: value,
+    initial: () => thisMonth,
+    clamp: (month) => clampMonth(month, min, max),
+    isUnavailable,
+    onChoose,
+    moves: (month, _event, rtl) => {
+      const column = (month - Math.floor(month / 12) * 12) % columns;
+      return {
+        ArrowLeft: month + (rtl ? 1 : -1),
+        ArrowRight: month + (rtl ? -1 : 1),
+        ArrowUp: month - columns,
+        ArrowDown: month + columns,
+        Home: month - column,
+        End: month + columns - 1 - column,
+        PageUp: month - 12,
+        PageDown: month + 12,
+      };
+    },
+  });
   const year = Math.floor(active / 12);
   const first = year * 12;
 
   const formats = useMemo(
     () => ({
       year: dateFormat(locale, { year: 'numeric' }),
-      short: dateFormat(locale, { month: 'short' }),
+      short: shortMonthNames(dateFormat(locale, { month: 'short' })),
       long: dateFormat(locale, { month: 'long', year: 'numeric' }),
     }),
     [locale],
   );
 
-  useLayoutEffect(() => {
-    if (!focusActive.current) return;
-    focusActive.current = false;
-    monthGridActive(grid.current)?.focus();
-  });
-
-  const isUnavailable = (month: number) =>
-    (min !== undefined && month < min) || (max !== undefined && month > max);
-
-  function moveTo(month: number, focus: boolean) {
-    const next = clampMonth(month, min, max);
-    // A key that keeps the month leaves no request behind that would take focus back later.
-    if (next === active) return;
-    focusActive.current = focus;
-    setActiveState(next);
-  }
-
-  function choose(month: number) {
-    if (isUnavailable(month)) return;
-    setActiveState(month);
-    onChoose(month);
-  }
-
-  function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
-    if (event.altKey || event.ctrlKey || event.metaKey) return;
-    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
-    const column = (active - first) % columns;
-    const moves: Record<string, number> = {
-      ArrowLeft: active + (rtl ? 1 : -1),
-      ArrowRight: active + (rtl ? -1 : 1),
-      ArrowUp: active - columns,
-      ArrowDown: active + columns,
-      Home: active - column,
-      End: active + columns - 1 - column,
-      PageUp: active - 12,
-      PageDown: active + 12,
-    };
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      choose(active);
-      return;
-    }
-    const next = moves[event.key];
-    if (next === undefined) return;
-    event.preventDefault();
-    moveTo(next, true);
-  }
-
   const previousAvailable = min === undefined || first - 1 >= min;
   const nextAvailable = max === undefined || first + 12 <= max;
 
   return (
-    <div className="env-month-picker-year">
-      <div className="env-month-picker-header">
+    <Grid gap={2} className="env-month-picker-year">
+      <Row align="center" gap={1} className="env-month-picker-header">
         <IconButton
           variant="ghost"
-          icon={<ChevronLeft />}
+          icon={<IconChevronLeft />}
           aria-label={previousYearLabel}
           title={previousYearLabel}
           // Unavailable rather than disabled, so focus stays on the button at the earliest year.
@@ -137,12 +124,12 @@ export function MonthGrid({
             if (previousAvailable) moveTo(active - 12, false);
           }}
         />
-        <div className="env-month-picker-heading" id={headingId} aria-live="polite">
+        <div className="env-month-picker-title" id={headingId} aria-live="polite">
           {formats.year.format(toUtcDate(monthFirstDay(first)))}
         </div>
         <IconButton
           variant="ghost"
-          icon={<ChevronRight />}
+          icon={<IconChevronRight />}
           aria-label={nextYearLabel}
           title={nextYearLabel}
           aria-disabled={!nextAvailable || undefined}
@@ -151,7 +138,7 @@ export function MonthGrid({
             if (nextAvailable) moveTo(active + 12, false);
           }}
         />
-      </div>
+      </Row>
       <table
         ref={grid}
         role="grid"
@@ -179,11 +166,11 @@ export function MonthGrid({
                     // A press on an unavailable month leaves focus where it was.
                     onMouseDown={unavailable ? (event) => event.preventDefault() : undefined}
                     onClick={() => choose(month)}
-                    onFocus={() => {
-                      if (month !== active) setActiveState(month);
-                    }}
+                    onFocus={() => focusCell(month)}
                   >
-                    <span className="env-month-picker-month-mark">{formats.short.format(day)}</span>
+                    <span className="env-month-picker-month-mark">
+                      {formats.short[month - first]}
+                    </span>
                   </td>
                 );
               })}
@@ -191,6 +178,6 @@ export function MonthGrid({
           ))}
         </tbody>
       </table>
-    </div>
+    </Grid>
   );
 }

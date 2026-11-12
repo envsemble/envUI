@@ -2,7 +2,7 @@
 title: Combobox
 summary: A text field that filters a list of options as people type, to choose one option or, as chips, several.
 status: stable
-since: 0.6.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - autocomplete
@@ -19,9 +19,9 @@ aliases:
   - chips input
   - people picker
 useWhen:
-  - People choose one option from a list long enough to search, such as an owner among a team's members.
-  - People choose several options from such a list, which show as chips in the field (`multiple`).
-  - The options come from a search, such as contacts on a server (`filter={null}`).
+  - One option from a list long enough to search, such as an owner
+  - Several options from such a list, shown as chips
+  - Options found by a search, such as contacts on a server
 avoidWhen:
   - text: Choosing one of a handful of options, which people can scan without typing.
     use: Select
@@ -33,154 +33,248 @@ avoidWhen:
     use: SegmentedControl
   - text: Finding and running a command or opening a document by name.
     use: CommandPalette
-related:
-  - select
-  - text-field
-  - avatar
-  - command-palette
-  - menu
-  - accessibility
 components:
   - Combobox
+examples:
+  ChooseOwner:
+    role: overview
+    open: true
+  ComboboxAnatomy: anatomy
+  ComboboxListAnatomy: anatomy
+  Reviewers: example
+  ServerSearch: example
+  RequiredInForm: example
+  WrappingChips: example
+  SmallToolbar: example
 ---
 
 # Combobox
 
-## Overview
+## Anatomy
 
-A combobox is a text field with a list of options: typing filters the list, the first match is highlighted so <kbd>Enter</kbd> chooses it, and the field shows what was chosen. A single combobox shows the chosen option's label as its text; with `multiple`, chosen options are removable chips in the field. Focus stays in the field while people move through the options, as the WAI-ARIA combobox pattern describes. Combobox is built on Base UI's combobox and the shared text field.
-
-```tsx example=ChooseOwner
+```tsx figure=ComboboxAnatomy
 
 ```
 
-## Anatomy
+1. **Field** (`env-combobox`)
+2. **Chip** (`env-combobox-chip`)
+3. **Chip label** (`env-combobox-chip-label`)
+4. **Remove** (`env-combobox-chip-remove`)
+5. **Input** (`env-combobox-input`)
+6. **Clear** (`env-combobox-clear`, `clearable`)
+7. **Trigger** (`env-combobox-trigger`)
 
-1. **Field**: the shared text field, with the floating `label`, `description` and `error` of TextField.
-2. **Leading content** (an option's `leading`): such as an Avatar or an icon, before the chosen label in a single field, in chips and in options, at the size of its slot.
-3. **Chips** (`multiple`): one per chosen option at the start of the field, with its start content, label and a remove button; the field wraps them onto more rows.
-4. **Clear button** (`clearable`): a ghost icon button named `clearLabel` (Clear), while there is a value to clear.
-5. **Trigger**: a chevron button at the end of the field that opens the list and turns while it is open.
-6. **Popup**: the shared raised popup, as Select's, at least as wide as the field, with the options, group headings, and a status for loading or no matches.
-7. **Option** (each entry of `items`): a rounded row with a check mark slot, `start` content, the `label` and a muted `description` below it.
+```tsx figure=ComboboxListAnatomy open
 
-## Variants and sizes
+```
 
-| Variant    | Use for                                                                                                                           |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `outline`  | In forms, dialogs and toolbars: the field at the control height of its `size`, as a TextField. The default.                       |
-| `floating` | A long form on a page: the field 3.5 rem tall inside its border, whose label floats above the value, as TextField's floating one. |
+1. **List** (`env-combobox-popup`)
+2. **Option** (`env-combobox-item`, `items`)
+3. **Leading content** (`env-combobox-item env-avatar`, `start`)
+4. **Check** (`env-combobox-item-indicator`)
+
+## Behaviour
+
+### States
+
+A read-only field can be focused and its list browsed, but its value can't change; its chevron stays, muted, and doesn't answer the pointer, as a read-only Select's.
 
 <!-- specimen: States -->
 
-- A field fills its container's width; set the width on the container.
-- `size` sets the field's height, as on every control: `sm`, `md` or `lg` in the app's [scale](../foundations/scale.md); without it the field takes its container's control height. `showLabel={false}` hides the label in a toolbar, so a placeholder and an `aria-label` name it.
-- Leading content is 1.25 rem in options and the field, and 1.5 rem in chips and a floating field; an icon takes the control icon size.
-- Options are rows of the scale's row height, 2.25 rem or 1.75 rem in the compact scale, with 0.25 rem block and 0.5 rem inline padding; descriptions are 0.75 rem. The popup scrolls beyond 20 rem, or the room below the field.
-- On touch screens the field, chips and options grow to the touch height, and each chip's remove button has a hit area of the touch size: wrapped rows of chips lie that far apart.
+### Typing to filter
 
-## States and behaviour
+The list narrows as people type, and the whole list opens again from the field's button.
 
-- **Filtering**: by default, options whose label or description contains the typed text, ignoring case and accents in the `locale` (the browser's), show; `filter` replaces the test. With `filter={null}` the list shows `items` as given, for options the application finds itself; `loading` shows `loadingLabel` (Loading…) with a spinner and marks the list busy, and `emptyLabel` (No matches) shows when nothing matches.
-- **Highlight**: the first match is highlighted, also when options arrive after typing, so <kbd>Enter</kbd> chooses it. The arrow keys move the highlight, starting from the chosen option, and the pointer highlights the option it is on.
-- **Choosing one**: choosing an option closes the list, shows its label and start content in the field, and calls `onValueChange` with its value and option. Focusing the field selects the label, so typing replaces it with a query; a press keeps that selection. Without `clearable`, the value can change but not be removed: emptying the text and leaving the field brings the label back.
-- **Clearing**: with `clearable`, the clear button, <kbd>Esc</kbd> on the closed field and emptying the text remove a single value, and the clear button removes every chip. With nothing to clear, <kbd>Esc</kbd> changes nothing and goes on, such as to close an enclosing dialog.
-- **Choosing several**: with `multiple`, choosing an option adds a chip and keeps the list open, and choosing it again removes it. <kbd>Backspace</kbd> in the empty text removes the last chip, and each chip's remove button removes it. <kbd>Esc</kbd> never removes chips.
-- **Queries**: `onInputValueChange` receives the typed text, and an empty string once the query ends: when the text is cleared, or when the field shows the chosen label again after a choice or as people leave the query, so results for an abandoned query never stay for <kbd>Enter</kbd> to choose.
-- **Values without options**: chosen options keep their labels while `items` changes, such as with each search. A value the field never saw among `items` shows as itself, and `onValueChange` reports it as `{ value, label: value }`.
-- **Popup**: it opens below the field, flips above it near the bottom of the window, and keeps the theme of the page around the field, also inside a Dialog. `open`, `defaultOpen` and `onOpenChange` control it, such as to load the options as it opens.
-- **Read only and disabled**: a read-only field can be focused and its list browsed, but its value can't change and chips lose their remove buttons. A disabled field can't be focused, takes the shared disabled look and is left out of form submission.
-- **In forms**: `name` submits the value, or one entry for each chosen value; `required` asks for a value or at least one chip, and a form reset restores an uncontrolled field's `defaultValue`. Validation and its `error` belong to the application.
-
-## Content guidelines
-
-- Name the field after what people choose, in sentence case: "Owner", "Reviewers".
-- Use a placeholder for what to type in a field with a hidden label or one with chips, such as "Add people".
-- Give options a label that tells them apart and, where labels repeat, a description such as an e-mail address.
-- Write `emptyLabel` for what to do next, such as "Type a name to search" before a server search, and "No contacts found" after one.
-- Translate `clearLabel`, `removeLabel`, `loadingLabel` and `emptyLabel` where the interface is not in English.
-
-## Do and don't
-
-### Do
-
-- Use start content, such as Avatars, where it helps tell options apart.
-- Use `clearable` where the value is optional.
-- Keep the chosen options in `items` when the field first shows a saved value from a search.
-- Give a combobox the size of the buttons beside it, and an `aria-label` where its label is hidden.
-
-### Don't
-
-- Don't use a combobox for fewer than about seven options; use [Select](../components/select.md).
-- Don't use a combobox to search content; use [SearchField](../components/text-field.md).
-- Don't accept free text as a value; offer it as an option, or use a TextField.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                                                    | Action                                                                                                                     |
-| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                        | Moves focus to and from the field; the clear button, the chips and the trigger are not tab stops.                          |
-| Typing                                                                 | Filters the options, opens the list and highlights the first match.                                                        |
-| <kbd>↓</kbd>, <kbd>↑</kbd>                                             | Opens the list, or moves the highlight to the next or previous option.                                                     |
-| <kbd>Enter</kbd>                                                       | Chooses the highlighted option.                                                                                            |
-| <kbd>Esc</kbd>                                                         | Closes the list. On a closed clearable single field with a value, clears it; otherwise goes on, such as to close a dialog. |
-| <kbd>Backspace</kbd> in the empty text of a multiple field             | Removes the last chip.                                                                                                     |
-| <kbd>←</kbd> at the start of the text, then <kbd>←</kbd>, <kbd>→</kbd> | Moves focus to the last chip, then between chips and back to the text, in the reading direction.                           |
-| <kbd>Backspace</kbd> or <kbd>Delete</kbd> on a chip                    | Removes the focused chip.                                                                                                  |
-
-### envUI provides
-
-- The combobox pattern: the field is a `combobox` with `aria-expanded`, `aria-controls` and the highlighted option as its active descendant, and the list is a `listbox` of `option` rows with `aria-selected`; group headings name their groups.
-- The `label` tied to the field and the trigger, and the description and error linked to the field alone, with `aria-invalid` while `error` is set, so they are announced once.
-- An option's description read as its description, not its name, and decorative check marks and start content hidden from assistive technology.
-- The chosen options of a multiple field in its description, chips in a toolbar named after the field, and remove buttons named after each option, such as "Remove Alex Morgan".
-- A status that announces `loadingLabel` while the options load and `emptyLabel` when nothing matches, with the list marked busy meanwhile.
-- The shared focus rings, and touch-height fields, chips and options.
-
-### You provide
-
-- A `label`, or an `aria-label` on a field without one.
-- The options, and with `filter={null}` the search behind them.
-- Validation and its `error` message.
-- `clearLabel`, `removeLabel`, `loadingLabel` and `emptyLabel` in the application's language.
-
-## Examples
+<!-- specimen: ChooseOwner -->
 
 ### Several reviewers
 
-With `multiple`, chosen people show as chips in the field; <kbd>Backspace</kbd> in the empty text removes the last one.
+Where people choose several options, each shows as a chip in the field, and the list stays open as they choose.
 
-```tsx example=Reviewers
-
-```
-
-### Small, in a toolbar
-
-`size="sm"` gives the field the small control height, so it lines up with a small button beside it. Without a visible label, its placeholder guides; the popup groups its options under headings.
-
-```tsx example=SmallToolbar
+```tsx figure=Reviewers motion
 
 ```
 
 ### Search on a server
 
-With `filter={null}` the list shows the people the application finds for the typed text, with a loading status while it searches.
+The application can find the options itself, such as on a server, and a spinner shows while it searches.
 
-```tsx example=ServerSearch
+```tsx figure=ServerSearch motion
 
 ```
 
 ### In a form
 
-A multiple combobox submits one entry for each chosen topic. The application checks that one is chosen and shows the error; Reset returns to `defaultValue`.
+A required field shows its error when the form is sent without a value.
 
-```tsx example=RequiredInForm
+```tsx figure=RequiredInForm motion
 
 ```
 
+### Adapting to width
+
+A field fills its container, and chips wrap onto more rows.
+
+```tsx figure=WrappingChips widths="30 16" sweep
+
+```
+
+## Rules
+
+A combobox's value is always one of its options.
+
+### Optional values
+
+Give an optional value a clear button, so people can remove it, not only change it.
+
+### Options
+
+Options people could mistake for each other need telling apart, and only options are values.
+
+- Give options that share a label a description, such as an e-mail address.
+- Text people type is never the value: offer it as an option instead.
+
+### Labels
+
+Name the field after what people choose, and use the placeholder for what to type.
+
+A field without a visible label, such as in a toolbar, says what to type in its placeholder.
+
+```tsx figure=SmallToolbar
+
+```
+
+## Accessibility
+
+### Keyboard
+
+| Key                                             | Action                                                               |
+| ----------------------------------------------- | -------------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to and from the field; its buttons and chips take no tab stop. |
+| Typing                                          | Filters the options and highlights the first match.                  |
+| <kbd>↓</kbd>, <kbd>↑</kbd>                      | Opens the list, or moves the highlight.                              |
+| <kbd>Enter</kbd>                                | Chooses the highlighted option.                                      |
+| <kbd>Esc</kbd>                                  | Closes the list; on a closed clearable field, clears it.             |
+| <kbd>Backspace</kbd> in empty text              | Removes the last chip.                                               |
+| <kbd>←</kbd> at the start of the text           | Moves to the chips; <kbd>Backspace</kbd> removes the focused one.    |
+
+### envUI provides
+
+- The combobox pattern: a `combobox` field with a `listbox` of options and the highlighted one as its active descendant.
+- The label, description and error tied to the field, and `aria-invalid`.
+- Remove buttons named after their option, such as Remove Alex Morgan.
+- A status that announces loading and no matches.
+
+### You provide
+
+- A `label`, or `aria-label` on a field without one.
+- The options, and with `filter={null}` the search behind them.
+- Validation and its `error` message.
+- `clearLabel`, `removeLabel`, `loadingLabel` and `emptyLabel` in the application's language.
+
+## Compose
+
+### Usage
+
+Combobox takes its options as `items`, each with a `value` and a `label`, and optionally a `description` and `start` content, such as an Avatar; a ComboboxGroup puts items under a heading. An entry with an `items` array is a group, so an option has no field of that name.
+
+- Control it with `value`, `null` for none, and `onValueChange`, which receives the value and its item, or leave it uncontrolled with `defaultValue`.
+- `label`, `description` and `error` work as on TextField.
+- `clearable` adds a clear button while there is a value, and <kbd>Esc</kbd> on the closed field clears it too. Beside chips, it shows with a mouse only while the field is under the pointer or has focus; on a touch screen it always shows.
+
+```tsx source=ChooseOwner
+
+```
+
+#### Several options
+
+With `multiple`, `value` is an array of values, each shown as a chip with a remove button, and the list stays open as people choose.
+
+```tsx
+<Combobox
+  multiple
+  label="Reviewers"
+  placeholder="Add people"
+  items={people}
+  value={reviewers}
+  onValueChange={setReviewers}
+/>
+```
+
+#### Search on a server
+
+By default the list shows the options whose label or description contains the typed text, ignoring case and accents, in `locale`; `filter` takes a function of your own.
+
+- With `filter={null}` it shows `items` as given: search from `onInputValueChange`, which receives the typed text.
+- Set `loading` while the search runs, which shows `loadingLabel` instead of `emptyLabel`.
+- `onOpenChange` can load the options as the list opens; its second argument, `ComboboxOpenChangeDetails`, says why it opens or closes.
+
+```tsx
+<Combobox
+  label="Contact"
+  items={results}
+  filter={null}
+  onInputValueChange={setQuery}
+  loading={searching}
+  loadingLabel="Searching…"
+  emptyLabel={query ? 'No contacts found' : 'Type a name to search'}
+  value={contact}
+  onValueChange={setContact}
+/>
+```
+
+#### In a form
+
+`name` submits the value, or one entry for each chip, and a form reset restores `defaultValue`.
+
+- `readOnly` lets people focus the field and browse the list without changing the value.
+- Validation and its `error` belong to the application, such as an error set on submit when `new FormData(form).getAll('topics')` is empty.
+
+```tsx
+<Combobox
+  multiple
+  name="topics"
+  label="Topics"
+  items={topics}
+  defaultValue={['accessibility']}
+  required
+  error={error}
+/>
+```
+
+#### Sizes
+
+- `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height.
+- With `visibleLabel={false}`, a `placeholder` and an `aria-label` name it.
+
+```tsx
+<Combobox
+  size="sm"
+  visibleLabel={false}
+  aria-label="Document"
+  placeholder="Document"
+  items={documents}
+/>
+```
+
+### Composition
+
+The field is `env-field` with `env-combobox`: the control, `env-combobox-control`, holds the chips, `env-combobox-chip`, with their labels, `env-combobox-chip-label`, and remove buttons, `env-combobox-chip-remove`, IconButtons with a cross; then the input, `env-combobox-input`, the clear button, `env-combobox-clear`, and the trigger, `env-combobox-trigger`. The list is the shared popup, `env-combobox-popup`, and its options are its rows, `env-combobox-item`, with the check, `env-combobox-item-indicator`. `className` and `style` reach the field's root, and `ref` the input.
+
+### Customize
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
+
 ## Changelog
 
-- **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is a CloseButton: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`. An option's `leading` content is `start`, as on List.Item.
-- **0.6.0**: Combobox, for one option or several, with leading content, descriptions, groups, a server search, compact density and native form support.
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
+- **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is an IconButton with a cross: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`, and the icons at the start, `env-combobox-leading` and `env-combobox-value-leading`, are `env-combobox-start` and `env-combobox-value-icon`, as other components name their start slots. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`. An option's `leading` content is `start`, as on List.Item.
+- **1.0.0-prerelease.6**: The chevron turns over `--env-motion-duration-medium` with `--env-motion-ease-enter` as the list opens, and back in `--env-motion-duration-fast` with `--env-motion-ease-exit`, done when the list is.
+- **1.0.0-prerelease.6**: The list opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
+- **1.0.0-prerelease.6**: The chevron turns half a circle as the list opens and closes, rather than flipping over.
+- **1.0.0-prerelease.6**: Beside chips, the clear button shows with a mouse only while the field is under the pointer or has focus, and each chip's cross is a little smaller, so the field's end holds one cross at rest; the clear button and the chevron stand a step apart.
+- **1.0.0-prerelease.6**: While its list is open, the field keeps its focused frame, the accent edge and label, also when focus is in the popup, as when it opens under the pointer.
+- **1.0.0-prerelease.6**: An avatar in the field and in the options takes an avatar's small size, large enough for its initials, rather than a disc of its color alone; where initials don't fit, in a small field at the compact scale and in a chip, an avatar of initials is left out, while an icon, a photo or a figure stays. A read-only field keeps its chevron, muted, as a read-only Select does.
+- **1.0.0-prerelease.6**: A multiple field stays one row tall while its chips fit there; the input moves to a row of its own only once its text no longer fits.
+- **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends. A small one with a visible label takes the medium height, so its floated label and its value each have room, and says so in the console while developing: `sm` is for a field with its label hidden.
+- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, chosen ones take the selection's fill as well as their check mark, and groups part by space. Group labels sit a little ahead of the rows, and options lie one under the next with no space between them. A chosen option's check mark ends its row, after the label.

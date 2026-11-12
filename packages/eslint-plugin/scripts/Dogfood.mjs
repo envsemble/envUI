@@ -1,8 +1,8 @@
 // Counts what the recommended config reports in envUI's own catalogue and test fixture, without
-// enforcing it: they render raw elements and the library's classes on purpose. The counts show how
-// the rules behave on real envUI code, and what is left of the old names after the renames.
+// enforcing it: they render raw elements on purpose. The counts show how the rules behave on real
+// envUI code.
 //
-//   node scripts/Dogfood.mjs [directory …]   default: apps/catalogue/src tests/fixture
+//   node scripts/Dogfood.mjs [directory …]   default: apps/site/src tests/fixture
 
 import { ESLint } from 'eslint';
 import { fileURLToPath } from 'node:url';
@@ -11,9 +11,7 @@ import plugin from '../src/index.js';
 
 const repository = fileURLToPath(new URL('../../../', import.meta.url));
 const directories =
-  process.argv.slice(2).length > 0
-    ? process.argv.slice(2)
-    : ['apps/catalogue/src', 'tests/fixture'];
+  process.argv.slice(2).length > 0 ? process.argv.slice(2) : ['apps/site/src', 'tests/fixture'];
 
 const eslint = new ESLint({
   cwd: repository,
@@ -33,13 +31,16 @@ const eslint = new ESLint({
 /** What a message is about: the element, class, color or name, for grouping. */
 function subject(ruleId, message) {
   const patterns = {
+    'envui/no-inline-layout':
+      /^Inline `display: ([\w-]+)` lays out (a row or a column|a row|a column|a grid)/,
     'envui/no-html-elements': /^Use envUI's (\S+) instead of (.+?)(?:, or |: import)/,
-    'envui/no-private-classes': /^(\S+)/,
     'envui/no-raw-colors': /^Raw color (.+) in an inline style/,
-    'envui/no-renamed-exports': /^(?:In envUI 1\.0 )?(\S+)/,
+    'envui/no-raw-graphics':
+      /^(Use envUI's Graphic instead of a raw <img>|A raw <svg [^>]*>|Graphic needs alt|A margin on a Graphic|Use envUI's icons instead of [^:]+)/,
   };
   const match = message.match(patterns[ruleId]);
   if (!match) return message;
+  if (ruleId === 'envui/no-inline-layout') return `${match[1]} (${match[2]})`;
   return ruleId === 'envui/no-html-elements' ? `${match[2]} -> ${match[1]}` : match[1];
 }
 

@@ -1,6 +1,6 @@
 ---
 title: Toolbar
-summary: A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys.
+summary: A bar of icon buttons for one subject, such as an editor's formatting, in a row or a column.
 status: beta
 since: 1.0.0
 category: Actions
@@ -11,12 +11,12 @@ aliases:
   - button bar
   - tool palette
 useWhen:
-  - A set of controls acts on one subject, such as an editor's formatting or a diagram's view.
-  - Many icon-only actions sit together and would make a long tab sequence one by one.
-  - A tool is chosen from a palette and stays chosen, such as a drawing tool.
+  - Controls for one subject, such as an editor's formatting
+  - Many icon-only actions that would each take a tab stop
+  - A palette whose chosen tool stays chosen, such as drawing tools
 avoidWhen:
   - text: A form's or a dialog's actions, which keep a tab stop each.
-    use: Stack
+    use: Row
   - text: Buttons joined into one connected control, such as a main action and its menu.
     use: ButtonGroup
   - text: A choice of one view or filter, shown as a selected segment.
@@ -25,151 +25,221 @@ avoidWhen:
     use: Menubar
   - text: A page's search, filters and primary action, where fields keep their arrow keys.
     use: PageHeader
-related:
-  - page-header
-  - button
-  - segmented-control
-  - menubar
-  - tooltip
 components:
   - Toolbar
+examples:
+  FormattingToolbar:
+    role: overview
+    motion: true
+  DrawingTools:
+    role: example
+    caption: A vertical toolbar of toggles, where one tool stays chosen.
+  ViewControls: example
+  ToolbarAnatomy: anatomy
+  SameIconPressed:
+    role: do
+    caption: A toggle keeps its icon, pressed or not.
+  IconSwapsPressed:
+    role: dont
+    caption: 'A pressed toggle that changes its icon: people lose track of what it does.'
+  PageToolbar:
+    role: example
+    caption: "A page's toolbar: a Row in PageHeader's toolbar, not a Toolbar."
 ---
 
 # Toolbar
 
-## Overview
+## Variants
 
-A toolbar holds the controls for one subject, such as an editor's formatting, in a row or a column. It is one tab stop: <kbd>Tab</kbd> reaches its current control, and the arrow keys move between its controls, as the APG toolbar pattern describes. It is built on Base UI's Toolbar.
+### Orientation
 
-`Toolbar.Button` is an icon-only button named by its `label`, which a tooltip shows with its `shortcut`. With `pressed` it is a toggle, such as Bold, drawn selected and announced as pressed. Buttons inside a toolbar take the `ghost` variant unless they set another, also a Button of the application's own, such as a menu's trigger; such a button keeps a tab stop of its own, outside the arrow keys' path. The default stays in the toolbar: the buttons of a popover, menu or dialog opened from it take their own.
+| Orientation | Use for                           |
+| ----------- | --------------------------------- |
+| Horizontal  | Most toolbars. The default.       |
+| Vertical    | A palette, such as drawing tools. |
 
-```tsx example=FormattingToolbar
+```tsx figure=DrawingTools
+
+```
+
+### Over content
+
+A toolbar can float over dense content, such as a diagram, on a fully rounded surface with small buttons.
+
+Where people scan its icons by pointing at them, its buttons can show their names at once, with no wait.
+
+```tsx figure=ViewControls motion
 
 ```
 
 ## Anatomy
 
-1. **Root** (`Toolbar.Root`): the row or column, named with `aria-label`; `orientation`, `size` and `disabled` apply to everything inside.
-2. **Group** (`Toolbar.Group`): controls that belong together, such as the text styles, with an optional name.
-3. **Separator** (`Toolbar.Separator`): a line between groups, across the toolbar's direction.
-4. **Button** (`Toolbar.Button`): an icon-only button with `icon`, `label`, and optionally `pressed` and `shortcut`.
-5. **Link** (`Toolbar.Link`): an icon-only link with `href`, `icon` and `label`.
-6. **Tooltip**: the label, and the shortcut as keys, on hover and keyboard focus.
+```tsx figure=ToolbarAnatomy
 
-## Variants and sizes
+```
 
-- **Orientation**: `horizontal`, the default, runs left to right in the reading direction and answers <kbd>←</kbd> and <kbd>→</kbd>; `vertical` runs top to bottom and answers <kbd>↑</kbd> and <kbd>↓</kbd>, such as a palette of drawing tools.
-- **Size**: `size` gives the buttons inside the control height of `sm`, `md` or `lg`, 2, 2.5 or 3 rem in the comfortable scale; without it, they take the control height of their container. Use `sm` for a toolbar that floats over dense content.
-- **Pressed**: a pressed toggle takes the selected fill, `--env-color-bg-selected`, with the selected label color.
-- A toolbar keeps its controls on one line; give it room or fewer controls rather than letting it wrap.
+1. **Toolbar** (`env-toolbar`)
+2. **Group** (`env-toolbar-group`)
+3. **Button** (`env-toolbar-button`, `icon`)
+4. **Separator** (`env-toolbar-separator`)
 
-### Layouts
+## Behaviour
 
-Not every bar of controls is a Toolbar. A Toolbar is one tab stop that the arrow keys move through, which suits icon commands; a bar that holds a text field, a Select or a row of labelled actions is a [Stack](../components/stack.md) row, where every control keeps its tab stop and fields keep their arrow keys.
+### Names and toggles
 
-| Bar                                                     | Build it with                                                                                              | Why                                                                                        |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Icon commands: an editor's formatting, a canvas's tools | `Toolbar.Root` with `Toolbar.Button`s                                                                      | One tab stop, the arrow keys between the commands, tooltips with their shortcuts           |
-| A page's search, filters and primary action             | [PageHeader](../components/page-header.md)'s `toolbar`, a `<Stack direction="row" wrap justify="between">` | Fields keep their arrow keys, every control is a tab stop, the primary action ends the row |
-| A section's heading and count, with its actions         | `<Stack direction="row" wrap align="center" justify="between">` around a heading and the actions           | The actions sit at the end and wrap under the heading when there isn't room                |
-| A table's search and actions                            | A Stack row above `Table.Root`, with controls of the size that matches the table's row density             | Small controls over small rows; while the rows stack, a Select sorts them                  |
-| Actions in a window's title bar                         | `WindowFrame.TitleBar`'s `end`, its slot for actions at its end                                            | A few quiet commands beside the window's own: ghost buttons of the small size              |
+Each button is an icon, whose name and shortcut show in a tooltip.
 
-A page toolbar that lines up with a sidebar's header takes the frame's header height, `min-block-size: var(--env-app-shell-header-height)`.
+A button can also be a toggle that stays pressed.
 
-## States and behaviour
+### Buttons of your own
 
-- **Focus**: one control holds the tab stop. The arrow keys move it, and from the last control back to the first, unless `loopFocus` is false. The toolbar remembers the control people left.
-- **Disabled**: a disabled button leaves the arrow keys' path and shows no tooltip; `disabled` on the root or a group disables every control in it.
-- **Tooltips**: each button's label, and its shortcut as key caps, show on hover after a moment and at once on keyboard focus, and close on <kbd>Esc</kbd>.
-- **Shortcuts**: `shortcut` is shown in the tooltip and announced through `aria-keyshortcuts` in ARIA's key names, so Ctrl+B is announced as Control+B. A sequence, such as Ctrl+K Ctrl+B, is shown without the attribute, which lists only single chords. The application handles the keys themselves.
+A button of the application's own, such as a menu's trigger, keeps its own tab stop, outside the arrow keys' path.
 
-## Content guidelines
+## Rules
 
-- Name each button after its action, such as "Bold" or "Zoom in", not its icon.
-- Name the toolbar after its subject, such as "Formatting" or "Diagram view".
-- Write shortcuts with their keys joined by +, as the platform writes them, such as Ctrl+B.
+A toolbar holds icon commands for one subject, each named after its action.
 
-## Do and don't
+```tsx figure=SameIconPressed motion
 
-### Do
+```
 
-- Group related controls, and put separators between the groups.
-- Use `pressed` for controls that turn something on and off, and keep their icon the same in both states.
-- Keep the most used controls first in the reading order.
+```tsx figure=IconSwapsPressed motion
 
-### Don't
+```
 
-- Don't put text fields or other controls that use the arrow keys themselves in a toolbar; place them beside it.
-- Don't make a toolbar the only way to reach an action that people need without a pointer; mirror important actions in a menu or a shortcut.
-- Don't wrap a form's actions in a toolbar; they keep a tab stop each.
+### Other ways in
+
+Offer the important actions in a menu or a shortcut too.
+
+### Labels
+
+Name each button after its action, and the toolbar after its subject.
+
+- A button: Bold, rather than its icon.
+- A toolbar: Formatting.
+
+### Other bars
+
+Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a [Row](row.md), where every control keeps its tab stop and fields keep their arrow keys.
+
+| Bar                                         | Build it with                                     |
+| ------------------------------------------- | ------------------------------------------------- |
+| Icon commands, such as formatting or tools  | A Toolbar of its buttons                          |
+| A page's search, filters and primary action | A Row in the toolbar of a [PageHeader](page.md)   |
+| A section's heading with its actions        | A Row that wraps, with the actions at the end     |
+| A table's search and actions                | A Row above the table, in the size of its rows    |
+| Actions in a window's title bar             | A TopBar as a title bar, with small ghost buttons |
+
+```tsx figure=PageToolbar
+
+```
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                             | Action                                                                                    |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves focus into the toolbar, to the control that holds its tab stop, and out.            |
-| <kbd>→</kbd>, <kbd>←</kbd>                      | In a horizontal toolbar, moves to the next or previous control, in the reading direction. |
-| <kbd>↓</kbd>, <kbd>↑</kbd>                      | In a vertical toolbar, moves to the next or previous control.                             |
-| <kbd>Enter</kbd>, <kbd>Space</kbd>              | Presses the focused button, or follows the focused link.                                  |
-| <kbd>Esc</kbd>                                  | Closes the focused control's tooltip.                                                     |
+| Key                                             | Action                                                     |
+| ----------------------------------------------- | ---------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves into the toolbar, to the control last used, and out. |
+| <kbd>←</kbd>, <kbd>→</kbd>                      | Moves between controls of a horizontal toolbar.            |
+| <kbd>↑</kbd>, <kbd>↓</kbd>                      | Moves between controls of a vertical toolbar.              |
+| <kbd>Enter</kbd>, <kbd>Space</kbd>              | Presses the button, or follows the link.                   |
+| <kbd>Esc</kbd>                                  | Closes the tooltip.                                        |
 
 ### envUI provides
 
-- `role="toolbar"` with `aria-orientation`, and a group role on each `Toolbar.Group`.
-- A roving tab stop, so the toolbar is one stop in the tab order.
-- Each button's name from `label`, `aria-pressed` on toggles and `aria-keyshortcuts` from `shortcut`.
-- Disabled buttons out of the arrow keys' path.
+- `role="toolbar"` with `aria-orientation`, and a group role on each group.
+- One tab stop, with disabled buttons and links out of the arrow keys' path.
+- Names from `label`, `aria-pressed` on toggles and `aria-keyshortcuts` from `shortcut`.
 
 ### You provide
 
-- An `aria-label` on the root, and on each group whose controls share a name.
+- An `aria-label` on the toolbar, and on groups that share a name.
 - The behaviour behind each button and shortcut.
 
-## Examples
+## Compose
 
-### Diagram controls
+### Usage
 
-A pill Surface rendered as the toolbar floats it over a diagram, with small buttons and a link to help.
+Toolbar.Root, named by its `aria-label`, holds Toolbar.Button, Toolbar.Link, Toolbar.Group and Toolbar.Separator.
 
-```tsx example=ViewControls
+- A Toolbar.Button takes its `icon` and its `label`, which names it and shows in its tooltip with its `shortcut`, such as `Ctrl+B`, announced as `aria-keyshortcuts`.
+- With `pressed` it is a toggle, announced as pressed and drawn selected.
+- Its `variant` is Button's, `ghost` by default from the toolbar, and `pending` replaces the icon with a spinner.
+- A Toolbar.Link takes an `href`, through the link component of `LinkProvider`, with its `icon` and `label`.
+- A Toolbar.Group, named by its own `aria-label`, holds controls that belong together.
 
-```
-
-### Drawing tools
-
-A vertical toolbar of toggles, where one tool stays chosen.
-
-```tsx example=DrawingTools
+```tsx source=FormattingToolbar
 
 ```
 
-### Page toolbar
+#### Orientation and size
 
-A page's search and filter under its title, with the primary action at the end of the row: a Stack row in PageHeader's `toolbar`, not a Toolbar.
+`orientation` is `horizontal`, the default, or `vertical`, and sets which arrow keys move.
 
-```tsx example=PageToolbar
+- `size` is `sm`, `md` or `lg`; without it the buttons take their container's control height.
+- `loopFocus`, on by default, moves from the last control to the first and back.
+- `tooltipDelay` is how long, in milliseconds, the pointer rests on a button or link before its tooltip opens, 400 by default, as Tooltip's `delay`; keyboard focus opens it at once.
+- `disabled` on Toolbar.Root or a Toolbar.Group disables every control inside, links included.
 
+A Surface with `radius="full"` floats a small toolbar over content, as the ViewControls example does:
+
+```tsx
+<Surface
+  padding={1}
+  radius="full"
+  render={<Toolbar.Root aria-label="Diagram view" size="sm" tooltipDelay={0} />}
+  style={{ inlineSize: 'fit-content' }}
+>
+  <Toolbar.Button icon={<IconZoomOut />} label="Zoom out" shortcut="Ctrl+-" />
+  <Toolbar.Button icon={<IconZoomIn />} label="Zoom in" shortcut="Ctrl+=" />
+  <Toolbar.Separator />
+  <Toolbar.Link href="/help/diagrams" icon={<IconHelp />} label="Diagram help" />
+</Surface>
 ```
 
-### Section toolbar
+#### Buttons of your own
 
-A section's heading and count at the start and its actions at the end, wrapping when there isn't room.
+Buttons inside a toolbar take the `ghost` variant unless they set another.
 
-```tsx example=SectionToolbar
+- A Button of the application's own keeps its own tab stop, outside the arrow keys' path.
+- A Toolbar.Button can be the `trigger` of a Menu.Root or a Popover, for a dropdown in the toolbar: it stays in the arrow keys' path, with its name in its tooltip, which stays closed while its popup is open.
 
+#### Other bars
+
+A bar with a field, a Select or labelled actions is a Row:
+
+- `<Row wrap align="center" justify="between">` for a section's heading and its actions.
+- PageHeader's `toolbar` for a page's search, filters and primary action, as the PageToolbar example does: a Row whose field keeps its arrow keys, every control a tab stop, the primary action at the end.
+- A TopBar with `titleBar` for a window's title bar, with small ghost buttons in its `actions`.
+
+```tsx
+<PageHeader
+  title="Tasks"
+  toolbar={
+    <Row wrap align="center" justify="between" gap={3}>
+      <Row wrap align="center" gap={3}>
+        <SearchField label="Search tasks" placeholder="Search tasks" />
+        <SegmentedControl
+          aria-label="Status"
+          value={status}
+          onValueChange={setStatus}
+          items={statuses}
+        />
+      </Row>
+      <Button startIcon={<IconAdd />}>New task</Button>
+    </Row>
+  }
+/>
 ```
 
-### Table toolbar
+### Composition
 
-Small controls above a table of small rows, so the bar and the rows share one density.
-
-```tsx example=TableToolbar
-
-```
+The parts are the toolbar, `env-toolbar`; its groups, `env-toolbar-group`; its buttons and links, `env-toolbar-button`; its separators, `env-toolbar-separator`; and a button's tooltip, `env-toolbar-tooltip`. `render` on Toolbar.Root or Toolbar.Group renders it as another element, such as a ButtonGroup that connects its buttons, or onto a Surface that floats it.
 
 ## Changelog
 
 - **1.0.0**: Toolbar, on Base UI's Toolbar.
+- **1.0.0-prerelease.6**: `Toolbar.Button` takes `tone="danger"` for an action that destroys, such as Delete.
+- **1.0.0-prerelease.6**: A disabled toolbar or group disables its Toolbar.Link too: the link reports `aria-disabled`, has no destination and leaves the arrow keys' path.
+- **1.0.0-prerelease.4**: `tooltipDelay` on Toolbar.Root sets how long the pointer rests on a button or link before its tooltip opens; 0 shows every name at once.

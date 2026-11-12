@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function UniversalCurrency({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M300-460h-70q-13 0-21.5 8.5T200-430q0 13 8.5 21.5T230-400h90q17 0 28.5-11.5T360-440v-70q0-17-11.5-28.5T320-550h-60v-30h70q13 0 21.5-8.5T360-610q0-13-8.5-21.5T330-640H230q-13 0-21.5 8.5T200-610v90q0 13 8.5 21.5T230-490h70v30Zm300 20q-72 0-116 26.5T440-342v2q0 8 6 14t14 6h280q8 0 14-6t6-14v-2q0-45-44-71.5T600-440Zm0-40q33 0 56.5-23.5T680-560q0-33-23.5-56.5T600-640q-33 0-56.5 23.5T520-560q0 33 23.5 56.5T600-480ZM160-200q-33 0-56.5-23.5T80-280v-400q0-33 23.5-56.5T160-760h640q33 0 56.5 23.5T880-680v400q0 33-23.5 56.5T800-200H160Z" /> : <path d="M300-460h-70q-13 0-21.5 8.5T200-430q0 13 8.5 21.5T230-400h90q17 0 28.5-11.5T360-440v-70q0-17-11.5-28.5T320-550h-60v-30h70q13 0 21.5-8.5T360-610q0-13-8.5-21.5T330-640H230q-13 0-21.5 8.5T200-610v90q0 13 8.5 21.5T230-490h70v30Zm300 20q-72 0-116 26.5T440-342v2q0 8 6 14t14 6h280q8 0 14-6t6-14v-2q0-45-44-71.5T600-440Zm0-40q33 0 56.5-23.5T680-560q0-33-23.5-56.5T600-640q-33 0-56.5 23.5T520-560q0 33 23.5 56.5T600-480ZM160-200q-33 0-56.5-23.5T80-280v-400q0-33 23.5-56.5T160-760h640q33 0 56.5 23.5T880-680v400q0 33-23.5 56.5T800-200H160Zm0-80h640v-400H160v400Zm0 0v-400 400Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M300-460h-70q-13 0-21.5 8.5T200-430q0 13 8.5 21.5T230-400h90q17 0 28.5-11.5T360-440v-70q0-17-11.5-28.5T320-550h-60v-30h70q13 0 21.5-8.5T360-610q0-13-8.5-21.5T330-640H230q-13 0-21.5 8.5T200-610v90q0 13 8.5 21.5T230-490h70v30Zm300 20q-72 0-116 26.5T440-342v2q0 8 6 14t14 6h280q8 0 14-6t6-14v-2q0-45-44-71.5T600-440Zm0-40q33 0 56.5-23.5T680-560q0-33-23.5-56.5T600-640q-33 0-56.5 23.5T520-560q0 33 23.5 56.5T600-480ZM160-200q-33 0-56.5-23.5T80-280v-400q0-33 23.5-56.5T160-760h640q33 0 56.5 23.5T880-680v400q0 33-23.5 56.5T800-200H160Z";
+
+export function IconUniversalCurrency({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start : start + "m0-80h640v-400H160v400Zm0 0v-400 400Z"} /></Icon>;
 }

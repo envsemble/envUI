@@ -1,8 +1,8 @@
 ---
 title: Slider
-summary: A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.
+summary: A value in a known range, chosen by dragging or with the keyboard.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - range
@@ -13,8 +13,8 @@ aliases:
   - track bar
   - volume slider
 useWhen:
-  - People adjust a value by eye within a known range, such as opacity, volume or zoom, and see the result as they move it.
-  - The exact number matters less than its place in the range, and the value shows beside the label as it changes.
+  - A value adjusted by eye in a known range, such as opacity, volume or zoom
+  - A value whose place in the range matters more than the exact number
 avoidWhen:
   - text: People know the exact number they want, such as a price or a quantity.
     use: TextField
@@ -24,128 +24,196 @@ avoidWhen:
     use: Meter
   - text: Showing how far a task has got.
     use: Progress
-related:
-  - text-field
-  - segmented-control
-  - meter
-  - progress
-  - accessibility
 components:
   - Slider
+examples:
+  LayerOpacity:
+    role: overview
+    caption: A field among fields, with its label inside at the start, its value at the end and a fill that shows it.
+  SliderAnatomy:
+    role: anatomy
+    caption: As under the pointer, which shows the handle.
+  SaveOnRelease: example
+  SessionTimeout: example
+  NarrowSlider: example
 ---
 
 # Slider
 
-## Overview
+## Anatomy
 
-A slider chooses a value in a range by dragging a thumb along a track, pressing the track or with the keyboard. Its label and the current value sit above the track and a description below it. Slider is built on Base UI's slider, around a native range input, so the arrow keys, focus, form submission and reset behave as the platform's.
-
-```tsx example=LayerOpacity
+```tsx figure=SliderAnatomy specimen
 
 ```
 
-## Anatomy
+1. **Slider** (`env-slider`)
+2. **Field** (`env-slider-control`)
+3. **Label** (`env-slider-label`, `label`)
+4. **Fill** (`env-slider-indicator`)
+5. **Handle** (`env-slider-thumb`)
+6. **Value** (`env-slider-value`, `formatValue`)
+7. **Description** (`env-field-description`, `description`)
 
-1. **Label** (`label`): the value's name, at the start of the line above the track, in 0.875 rem text. It names the slider, and pressing it moves focus to the slider.
-2. **Value**: the current value at the end of the same line, in medium-weight figures of equal width, formatted by `formatValue`, such as 40%. It wraps under the label when the line is too narrow.
-3. **Track**: a 0.375 rem pill across the slider's width, in the translucent fill.
-4. **Indicator**: the part of the track from the start to the thumb, in the control blue.
-5. **Thumb**: a 1.25 rem circle in the control blue, centred on the value; at the ends it stays inside the slider.
-6. **Description** (optional, `description`): guidance under the track, 0.75 rem below it.
+## Behaviour
 
-The track sits in a pressable row 1.75 rem tall, 0.75 rem below the label. The slider fills the width of its container; set the width on the container. The ref and other `div` props reach the root element; `inputRef` reaches the native range input.
+### At rest
 
-## States and behaviour
+Slider is a field, as tall as the fields and with their corners, so it sits in a form among them.
 
-- **Hover and dragging**: a halo in the control blue, 0.375 rem wide, rings the thumb while the pointer is on the track's row and while the thumb is dragged.
-- **Focus**: keyboard focus shows the shared focus ring around the thumb.
-- **Pressing the track** moves the thumb there and sets the value; dragging moves it with the pointer, in whole `step`s from `min`.
-- **Changing and committing**: `onValueChange` receives the value each time it changes, as often as the thumb moves; `onValueCommitted` receives it once a change is complete: when the thumb is released, the track pressed, or after each key. Run work such as saving from `onValueCommitted`.
-- **Range and steps**: `min` and `max` set the range, 0 to 100 by default, and `step` the values between them, 1 apart by default. `largeStep`, for <kbd>Page Up</kbd>, <kbd>Page Down</kbd> and <kbd>Shift</kbd> with an arrow key, is a tenth of the range in whole steps by default.
-- **Disabled** (`disabled`): the track and thumb take the shared disabled opacity and the label and value the disabled text color. The slider can't be focused or moved, and forms leave it out.
-- **Controlled or not**: `value` with `onValueChange` controls the slider; otherwise it starts from `defaultValue`, or `min`.
-- **Native forms**: with `name` the value submits with the form, and `form` ties the slider to a form it sits outside of. A form reset returns an uncontrolled slider to `defaultValue` and leaves a controlled one as `value` says.
-- **Touch screens**: the row is 2.75 rem tall, the thumb 1.5 rem, and an invisible 2.75 rem target around the thumb is easy to press.
-- **Motion**: the halo eases in and out; with a reduced-motion preference it changes at once.
+### Under the pointer
 
-## Content guidelines
+When the pointer comes over the slider, a thin handle marks the value and faint ticks mark its steps.
 
-- Name the value in the label with a short noun phrase in sentence case, without a colon: "Opacity", "Notification volume", "Sign out after".
-- Format the value with its unit in `formatValue`, as people read it: "40%", "30 min", "20 GB". The same text is announced.
-- Put the range or what the value applies to in the description where it isn't obvious: "Minutes without activity, from 5 to 120."
-- Keep the label the same as the value changes; the value beside it shows the change.
+- Pressing anywhere moves the value there, and dragging carries it along.
+- On a touch screen they show only while the finger is down.
 
-## Do and don't
+<!-- specimen: UnderThePointer -->
 
-### Do
+### Past the ends
 
-- Show the effect of the value as it changes where people can see it, such as on the selected layer.
-- Choose a `step` that matches the precision people need, such as 5 minutes, and a range that keeps the steps easy to reach.
-- Save from `onValueCommitted`, so a drag saves once, not at every step.
-- Say in the description why a disabled slider can't change, and who can change it.
+Dragged past either end, the value stays at the minimum or maximum, and the slider stretches a little toward the pointer.
 
-### Don't
+- The further the pointer goes, the less it gives, up to a small limit.
+- The label and the value keep their shape and size.
+- Once let go, it eases back.
+- A press, the keyboard and a disabled slider don't stretch it, nor does it stretch where reduced motion is preferred.
 
-- Don't use a slider where people need an exact number; use [TextField](../components/text-field.md) with `type="number"`.
-- Don't use a slider for a few named levels; use [SegmentedControl](../components/segmented-control.md) or [Radio](../components/radio.md).
-- Don't use a slider to show a value people can't change; use [Meter](../components/meter.md) or [Progress](../components/progress.md).
-- Don't leave the value unformatted when it has a unit; people and assistive technology read the same text.
+<!-- specimen: PastTheEnds -->
+
+### With the keyboard
+
+Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded where it passes under the text.
+
+- The arrow keys move the value; the ticks stay hidden.
+
+<!-- specimen: WithTheKeyboard -->
+
+### Saving
+
+The value follows the pointer as it moves, and is reported once more when the pointer lets go or after a key. Save it then.
+
+```tsx figure=SaveOnRelease motion
+
+```
+
+### Steps
+
+A slider has a lowest and a highest value and a step between values.
+
+```tsx figure=SessionTimeout
+
+```
+
+### Disabled
+
+A disabled slider is dimmed: it can't be focused or moved, and forms leave it out.
+
+- Its description says who sets the value.
+
+### Adapting to width
+
+A slider fills its container.
+
+- Where it is narrow, a long label is cut short with an ellipsis, and the value keeps its room.
+
+```tsx figure=NarrowSlider widths="30 10" sweep
+
+```
+
+## Rules
+
+Match the range and the step to the precision people need.
+
+### Range and step
+
+Offer only the values people need, such as 5 to 120 minutes in steps of 5. Single minutes over a whole day leave no value easy to reach.
+
+### Show the effect
+
+Show the effect where people can see it as the value changes.
+
+### Labels
+
+Show the value with its unit, such as 30 minutes; the same text is announced.
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                                                                          | Action                                                                             |
-| -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                                              | Moves focus to and from the thumb; a disabled slider is skipped.                   |
-| <kbd>→</kbd> or <kbd>↑</kbd>, <kbd>←</kbd> or <kbd>↓</kbd>                                   | Increases or decreases the value by one `step`, stopping at the ends of the range. |
-| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>                                                     | Increases or decreases the value by `largeStep`, a tenth of the range by default.  |
-| <kbd>Shift</kbd>+<kbd>→</kbd> or <kbd>↑</kbd>, <kbd>Shift</kbd>+<kbd>←</kbd> or <kbd>↓</kbd> | Increases or decreases the value by `largeStep`.                                   |
-| <kbd>Home</kbd>, <kbd>End</kbd>                                                              | Sets the value to `min` or `max`.                                                  |
+| Key                                                                         | Action                                    |
+| --------------------------------------------------------------------------- | ----------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                             | Moves to and from the slider.             |
+| <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>                      | Moves a step, in the reading direction.   |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, or <kbd>Shift</kbd> with an arrow | Moves a large step, a tenth of the range. |
+| <kbd>Home</kbd>, <kbd>End</kbd>                                             | Moves to the minimum or maximum.          |
 
 ### envUI provides
 
-- A native range input with the `slider` role, named by the label and described by the description, with `aria-valuenow`, `min` and `max`, and `aria-valuetext` from `formatValue`, so assistive technology announces "40%" rather than 40.
-- The value as an `<output>` for the input, which stays quiet while the value moves, so the slider's own announcement isn't repeated.
-- Focus moved to the slider when its label is pressed, and the shared focus ring around the thumb.
-- A thumb and indicator at 3:1 contrast against the page, and a label and value at 4.5:1, in both themes.
-- A 2.75 rem row and touch target on coarse pointers.
-- Native disabled state, form submission and reset.
+- A native range input in Base UI's slider, named by its label.
+- The formatted value as `aria-valuetext`, such as 40%.
+- The description linked to the input, a focus ring around the whole field, and the touch height on touch screens, where the whole field takes the finger.
 
 ### You provide
 
-- A `label` that names the value.
-- A `formatValue` that adds the unit, in the application's language.
-- The effect of the value, and an announcement where saving happens out of sight, such as a status message.
+- A `label`, or `aria-label` on a slider without one.
+- A `formatValue` with the unit, in the application's language.
+- The effect of the value, and saving it.
 
-## Examples
+## Compose
 
-### Save once a change is complete
+### Usage
 
-The value follows the thumb as it moves, and `onValueCommitted` saves it once, when the thumb is released or after a key. A status line announces the save.
-
-```tsx example=SaveOnRelease
-
+```tsx
+<Slider
+  label="Opacity"
+  defaultValue={80}
+  formatValue={(value) => `${value}%`}
+  onValueCommitted={save}
+/>
 ```
 
-### Steps in a form
+Leave it uncontrolled, with `defaultValue`, the minimum by default, or control it with `value` and `onValueChange`, which receives the value as often as the handle moves. `formatValue` formats the value with its unit, as it shows at the end and is announced; without it, the number shows in the `locale`, EnvUIProvider's by default. `description` goes under it, and `error` says how to correct the value.
 
-`min`, `max` and `step` give whole 5-minute steps from 5 to 120, and `name` submits the value with the form. Reset returns the slider to `defaultValue`.
+#### Saving
 
-```tsx example=SessionTimeout
+`onValueCommitted` reports the value once a change is complete: when the pointer is released or the track pressed, and after each key. Save from it.
 
+#### Steps in a form
+
+`min` and `max`, 0 and 100 by default, set the range, and `step`, 1 by default, the distance between values, counted from `min`. `largeStep`, a tenth of the range in whole steps by default, is the change of <kbd>Page Up</kbd>, <kbd>Page Down</kbd> and an arrow with <kbd>Shift</kbd>. `name` submits the value with a form, `form` names a form the slider sits outside of, and a reset returns to `defaultValue`.
+
+#### Disabled
+
+```tsx
+<Slider
+  label="Storage per member"
+  description="Sam Lee, your administrator, sets this limit for everyone at Northwind."
+  min={5}
+  max={100}
+  step={5}
+  defaultValue={20}
+  formatValue={(value) => `${value} GB`}
+  disabled
+/>
 ```
 
-### A value people can't change
+### Composition
 
-A disabled slider keeps its value visible, and the description says who sets it.
+`ref` reaches the native range input, which holds the value and takes focus, as a field's does, so a form library can register it; `className`, `style` and the other native props go to the root. The row of the label and the value is `env-slider-header`, its numbers of one width. The field, `env-slider-control`, is the track's quiet tint, which takes the pointer. The span the value moves along, `env-slider-track`, runs across the whole field, so the fill is empty at the minimum and full at the maximum, and draws the faint ticks at the steps, or at the large steps where the steps are many.
 
-```tsx example=ManagedLimit
+The field marks what it shows besides its text and fill:
 
-```
+- `data-handle` while the handle shows, under a hovering or pressing pointer and with keyboard focus.
+- `data-ruler` while the ticks do, under a hovering or pressing pointer.
+- `data-dragging` while the pointer presses it and drags the value.
+- A release clears them until the pointer leaves and comes back.
 
 ## Changelog
 
-- **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, and `hint` is `description`, which the `v1-props` codemod writes. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes.
+- **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, `hint` is `description`, and `inputRef` is `ref`, which reaches the native range input as a field's does, while the root takes `className`, `style` and the other native props. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes. The row of the label and the value, `env-slider-heading`, is `env-slider-header`.
 - **1.0.0**: Sliders in the dark theme reach 3:1 contrast on every surface.
-- **0.5.0**: Slider, with `formatValue`, `min`, `max`, `step`, `largeStep`, `hint`, `disabled`, `name`, `form` and `onValueCommit`; the thumb grows on touch screens.
+- **1.0.0-prerelease.6**: A press on the track or a key moves the fill and the handle in `--env-motion-duration-fast` with `--env-motion-ease-enter`, so they agree with the value from the first frames, and a pressed handle, `data-dragging` on `env-slider-control`, grows a little.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: A press on the track or a key glides the fill and the handle to the value, and a drag past the ends eases back without overshooting.
+- **1.0.0-prerelease.5**: `error`, as on a field.
+- **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus, both fading where they pass under the text. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.

@@ -7,10 +7,11 @@ output/playwright/
 .cache/
 *.tgz
 /packages/ui/README.md
-/packages/ui/skills/
 /packages/ui/docs/
-/packages/ui/manifest.json
-/packages/ui/llms.txt
-/packages/ui/llms-full.txt
-/apps/catalogue/src/generated/
+# The site's generated data, but for the part sizes, which a run in a browser records.
+/apps/site/src/generated/*
+!/apps/site/src/generated/PartSizes.json
 .wrangler/
+
+# Local screenshots and scripts.
+.scratch/

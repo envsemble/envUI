@@ -1,8 +1,8 @@
 ---
 title: TextField
-summary: Single-line inputs, search fields and multiline textareas share labels, guidance and states.
+summary: A field for entering text, on one line or several.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - Input
@@ -21,10 +21,10 @@ aliases:
   - multiline text
   - description field
 useWhen:
-  - Someone types a short value on one line, such as a name, an e-mail address or a number.
-  - A value has a fixed start or a unit beside it, such as an address after a domain or a size in GB.
-  - People search or filter a list, a table or a sidebar by typing (SearchField).
-  - Someone writes text over several lines, such as a description or notes (Textarea).
+  - A short value on one line, such as a name or an e-mail address
+  - A value with a fixed start or a unit, such as a size in GB
+  - Searching a list, a table or a sidebar (SearchField)
+  - Text over several lines, such as notes (Textarea)
 avoidWhen:
   - text: Text that runs over several lines.
     use: Textarea
@@ -44,216 +44,299 @@ avoidWhen:
     use: Composer
   - text: Formatted text, such as headings, lists and links.
     use: MarkdownEditor
-related:
-  - select
-  - combobox
-  - date-picker
-  - composer
-  - markdown
-  - stack
-  - accessibility
 components:
   - TextField
   - SearchField
   - Textarea
+examples:
+  ProjectName:
+    role: overview
+    caption: 'Outline: a short value on one line, with a label and a description.'
+  SearchInSidebar:
+    role: overview
+    caption: 'Ghost: a search atop a sidebar, only its icon and words until it is used.'
+  Variants: variants
+  SearchInToolbar: example
+  FieldsBesideButtons: example
+  PrefixAndSuffix: example
+  IconAndEndAction: example
+  TextFieldAnatomy: anatomy
+  Validation: example
+  TextareaSizing: example
+  LongAddress: example
+  OutlineForm:
+    role: do
+    caption: Outline fields in a form, so people see where to type.
+  GhostForm:
+    role: dont
+    caption: 'Ghost fields in a form: a faint fill says less than an edge about where to type.'
+  LabelAndDescription:
+    role: do
+    caption: A label that names the value, and the rule in the description.
+  PlaceholderAsLabel:
+    role: dont
+    caption: 'Instructions in the placeholder: they vanish as people type.'
 ---
 
 # TextField
 
-## Overview
+## Variants
 
-A text field takes a short value on one line, such as a name, an address or a number. It is a native `<input>` with a label that rests in the empty field and floats into the outline while the field has focus or a value, and a description and an error linked to the control, so typing, autofill, form submission and reset behave as the platform's.
-
-The family shares the field's frame, label, description, error and states:
-
-- **SearchField** is a TextField for a query, with a search icon and, while it has a query, a clear button; <kbd>Esc</kbd> also clears. Its label is hidden by default, so it sits beside buttons with a placeholder.
-- **Textarea** takes text over several lines, at a fixed height that scrolls and resizes from its bottom edge, or growing with its content.
-
-```tsx example=ProjectName
+```tsx figure=Variants
 
 ```
 
-## Anatomy
+1. **Outline**
+2. **Ghost**
 
-1. **Control** (`env-text-field-control`): the border, fill and corners of the variant, around every part but the description and the error. Fields at the control height are pills; floating and underline fields and text areas have 1 rem corners. The field's root, which takes `className` and `style`, is [Field](../components/field.md)'s root, and the description and the error are its parts.
-2. **Label** (`label`): rests in the empty field and floats into the outline while the field has focus or a value, hiding only the outline behind it. `showLabel={false}` hides it, as SearchField does by default.
-3. **Start icon** (optional, `startIcon`): decorative, at the control icon size of 1 rem.
-4. **Prefix and suffix** (optional, `prefix`, `suffix`): short text in line with the value, not part of it.
-5. **Value**: the native input or textarea, with its placeholder.
-6. **End action** (optional, `endAction`): a control at the end of the field, such as SearchField's clear button.
-7. **Description** (optional, `description`) and **error** (optional, `error`): under the control, 0.75 rem below it; the error leads with an error icon.
-8. **Resize edge** (Textarea with fixed sizing): the whole bottom edge, drawn as a line in the border's color.
+| Variant | Use for                                                                                                 |
+| ------- | ------------------------------------------------------------------------------------------------------- |
+| Outline | In forms, dialogs, panes and toolbars, and a field on its own on a page. The default.                   |
+| Ghost   | A search in an application's chrome: atop a sidebar, among quiet buttons in a toolbar, or in a palette. |
 
-## Variants and sizes
+### Outline
 
-| Variant     | Use for                                                                                                                               |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `outline`   | In forms, dialogs, panes and toolbars: a thin border that turns blue on hover and focus, at the control height. The default.          |
-| `floating`  | A long form on a page: an outline field 3.5 rem tall, whose label floats above the value.                                             |
-| `underline` | A value in a document or a header, such as a title, where a border would compete with the content: an underline on hover and focus.   |
-| `ghost`     | A search at the top of a sidebar or a list: only the text and the start icon at rest, and a soft fill under the pointer and in focus. |
+An outline field has no fill of its own. It takes the background of what it sits on, such as a card or a dialog. Its label rests inside it and floats into the edge, which opens behind it.
 
-Textarea comes outline, underline or ghost.
+- It is as tall as a button of its size, so the two line up in a row.
+- Stacked in a Column or a Grid, it keeps a little room above it for its floated label.
+- A field on its own on a page, or in a long form, takes the large size.
+- It can be given a fill of its own where it needs one.
 
-<!-- specimen: Appearances -->
+### Ghost
 
-- Outline and ghost fields take the control height of their `size`, as every control does: `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. Without a size, a field takes its container's control height, `md` by default. The label rests in the middle and floats into the outline without adding height, so the field stays in line with buttons beside it. An end action is 0.5 rem shorter than the field. On touch screens fields grow to 2.75 rem, as every control does, and an end action takes presses up to 2.75 rem tall, within the field.
-- Floating and underline fields are 3.5 rem tall inside a 0.0625 rem border, 2.75 rem in the compact scale, with 1 rem padding. A field with a visible label keeps 0.5 rem above it for the floated label. See [scale and density](../foundations/scale.md).
-- A Textarea starts at 7.5 rem. With `rows`, a fixed Textarea is that many lines tall, at least 7.5 rem, and a growing one starts at that many lines, also below 7.5 rem.
-- Entered text and a resting label are 0.9375 rem, 0.8125 rem in the compact scale; a floated label, the description and the error are 0.875 rem. On touch screens, entered text, resting labels, prefixes and suffixes are 1 rem (16 px by default), so focusing a field does not zoom the page.
-- A field fills the width of its container; set the width on the container.
+A ghost field has no edge. A faint fill at rest shows where to type, and deepens under the pointer. Focus draws the accent edge an outline field takes.
 
-## States and behaviour
+- It has the outline field's corners, so the two sit together in a row.
+- Keep it to toolbars, an application's chrome and palettes. In a form, a faint fill says less than an edge, so a form's fields are outline.
+- Its label floats inside the fill, above the value, as there is no edge to cut a notch in, and stays within the field's height, so a ghost field is as tall as an outline one.
+- A read-only or disabled ghost field keeps a fainter fill, quieter than one to fill in.
+- An invalid ghost field shows a red edge.
+- The [CommandPalette](command-palette.md)'s search is a large ghost field that keeps its fill.
 
-- **Hover, pressed and focus**: an outline field's single thin border turns blue on hover and focus in both themes, without changing its fill or adding an outline. Hover and pressed shades are color tokens of their own, as [colors and themes](../foundations/colors.md) describes, also while the field has focus. The label and the start icon take the focus color. Underline fields show an underline on hover and focus; ghost fields take a soft fill and clear their placeholder once focused.
-- **Empty and filled**: the label rests in an empty field and floats into the outline once it has focus or a value. A labelled field shows its placeholder only while focused; a field with a hidden label shows it at rest.
-- **Invalid**: while `error` is set, the control reports `aria-invalid` and the message shows under the field. Outline and ghost fields turn their border red, and underline fields show a red underline, thicker on keyboard focus; hover and press change its shade, and the label turns red too.
-- **Read only** (`readOnly`): looks like an enabled field. People can focus, select and copy the value but not change it, and forms submit it.
-- **Disabled**: the field takes the shared disabled opacity, cannot be focused and is left out of form submission. Its prefix and suffix no longer place the caret, a Textarea cannot be resized and SearchField's clear button is disabled.
-- **Prefix and suffix**: they stay hidden while the label rests in an empty field and appear once the field has focus or a value; with a hidden label they always show. A long prefix is cut short with an ellipsis so the value keeps its room. Pressing the prefix places the caret at the start of the value, and the suffix at its end. A form submits only what people type.
-- **End action**: a button in the field that sets no `variant` takes `ghost`, the field's quiet icon color, which darkens to the text color over a state layer on hover and press. An end action eases in as it appears. The buttons of a popover or menu it opens take their own variants.
-- **SearchField**: the clear button shows while there is a query. Pressing it clears the query, reports an empty string to `onValueChange` and returns focus to the field. <kbd>Esc</kbd> clears too, and consumes the key so an enclosing dialog stays open; in an empty SearchField it goes on, such as to close the dialog. The query can be controlled with `value` and `onValueChange`, or start from `defaultValue`.
-- **Textarea sizing**: with `sizing="fixed"`, the default, the field keeps its height and scrolls its text. Its whole bottom edge resizes it, by dragging or from the keyboard, never below the minimum height nor above the maximum, or 500 lines without one; the edge follows the border's color on hover, focus and error, takes the pressed shade while dragging, and is 2.75 rem tall on touch screens. With `sizing="content"` the field grows and shrinks with its text and has no resize edge; browsers without native content sizing keep the edge.
-- **Native forms**: the controls are native, so `name`, `required`, `pattern`, autofill and form reset work as usual, and an uncontrolled field, SearchField too, returns to its `defaultValue` on reset. Validation and drafts belong to the application.
-
-<!-- specimen: States -->
-
-## Content guidelines
-
-- Name the value in the label with a short noun phrase in sentence case, without a colon: "Project name", "E-mail address".
-- Put lasting instructions, such as a format, a limit or what the value is for, in the description: "Used in links to the project." Keep it to one sentence.
-- Write an error that says how to correct the value, not only that it is wrong: "Use only lowercase letters, numbers and hyphens", not "Invalid handle".
-- Use a placeholder for an example of the value or, in a field with a hidden label, for what to type: "Search by name or e-mail". It disappears as people type, so it never holds the only instructions.
-- Keep a prefix or suffix to a few characters, such as the start of an address, a currency or a unit: "https://example.com/", "€", "GB".
-- Name a SearchField after what it searches: "Search members", "Find projects".
-- Name an end action after what it does: "Show password", "Copy address".
-
-## Do and don't
-
-### Do
-
-- Use TextField for one line and Textarea for text over several lines.
-- Give a field and the buttons beside it the same size, so they line up; use `variant="floating"` for a long form on a page.
-- Use an IconButton without a `variant` as `endAction`, so it takes the field's ghost look.
-- Set `type`, `autoComplete` and `inputMode` to match the value, such as `type="email"` with `autoComplete="email"`, so browsers offer the right keyboard and autofill.
-- Use `readOnly` for a value people can see and copy but not change.
-- Show an error once people leave the field or submit the form, and remove it as soon as the value is corrected.
-
-### Don't
-
-- Don't use a placeholder as the label or for instructions that must stay; use `label` and `description`.
-- Don't put controls or part of the value in a prefix or suffix; they cannot be focused and forms don't submit them.
-- Don't disable a field to show a value that cannot change; a disabled field cannot be focused or copied, and forms don't submit it.
-- Don't use ghost fields in forms, where people need to see where to type.
-- Don't add a search icon or a clear button to a SearchField; it has both.
-- Don't use a Textarea for a message in a conversation; use [Composer](../components/composer.md), which sends with <kbd>Enter</kbd>.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                                                             | Action                                                                                                                                                                |
-| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                                 | Moves focus to the next or previous field. An end action, such as SearchField's clear button, and a fixed Textarea's resize edge follow their field in the tab order. |
-| <kbd>Esc</kbd> in a SearchField with a query                                    | Clears the query and keeps focus in the field; an enclosing dialog stays open. In an empty SearchField the key goes on, such as to close the dialog.                  |
-| <kbd>Enter</kbd> or <kbd>Space</kbd> on SearchField's clear button              | Clears the query and returns focus to the field.                                                                                                                      |
-| <kbd>↑</kbd> or <kbd>↓</kbd> on a resize edge                                   | Shrinks or grows the Textarea by one line.                                                                                                                            |
-| <kbd>Shift</kbd>+<kbd>↑</kbd> or <kbd>Shift</kbd>+<kbd>↓</kbd> on a resize edge | Shrinks or grows the Textarea by five lines, as <kbd>Page Up</kbd> and <kbd>Page Down</kbd> do.                                                                       |
-| <kbd>Home</kbd> on a resize edge                                                | Restores the Textarea's minimum height.                                                                                                                               |
-
-### envUI provides
-
-- Native `<input>` and `<textarea>` elements, so typing, selection, autofill, native validation, form submission and reset behave as the platform's. SearchField is `type="search"`, a search box.
-- A `<label>` tied to the control, kept for assistive technology when `showLabel={false}` hides it.
-- The description and the error linked to the control as its description, and `aria-invalid` while `error` is set; the error icon is hidden from assistive technology.
-- The prefix and suffix read once, after the label and before the description.
-- Decorative start icons hidden from assistive technology.
-- SearchField's clear button, named "Clear search" (`clearLabel`, or `messages.searchField.clear` of [EnvUIProvider](../setup.md#locale-strings-and-direction)), with the same text in its tooltip.
-- Textarea's resize edge, a focusable `separator` named "Resize text area" (`messages.textarea.resize`) that controls the field, reports its height between the minimum and the CSS maximum height, or 500 lines without one, and describes its keys; it leaves the tab order while the field is disabled or grows with its content.
-- 1 rem text on touch screens, so focusing a field does not zoom the page, and a 2.75 rem resize edge for coarse pointers.
-
-### You provide
-
-- A `label` for every field, or `aria-label` or `aria-labelledby` on a TextField or Textarea whose name shows elsewhere.
-- An `aria-label` on every icon-only `endAction`.
-- Validation: when to check, the `error` message, and moving focus to the first invalid field when a form is refused.
-- `type`, `autoComplete` and `inputMode` that fit the value.
-- SearchField's clear label and Textarea's resize labels in the application's language, through EnvUIProvider's `messages`.
-- An announcement of the results when a search filters content as people type, such as a count in a status region.
-
-## Examples
-
-### Appearances
-
-Outline fields suit forms, underline fields a title in a document or a header, and ghost fields a search at the top of a sidebar.
-
-```tsx example=Variants
+```tsx figure=SearchInToolbar motion
 
 ```
 
-### Show an error
+### Sizes
 
-The description states the rule and the error says how to correct the value. Here the field is checked once people leave it, and the error goes as soon as the value fits.
+Outline and ghost fields come in the three control heights of the [scale](../foundations/spacing.md): small, medium and large.
 
-```tsx example=Validation
+- A field lines up with a button of its size.
+- Small is for a field with its label hidden, as in a dense toolbar or a filter row. A small field that shows its label takes the medium height, so the label and the value each keep room, and says so in the console while developing.
+
+```tsx figure=FieldsBesideButtons
 
 ```
 
 ### Prefix and suffix
 
-Short text in line with the value, such as the start of an address or a unit; forms submit only the value. It appears once the field has focus or a value, and always beside the placeholder of a field whose label is hidden.
+Short text in line with the value, which forms don't submit. Pressing it places the caret.
 
-```tsx example=PrefixAndSuffix
+```tsx figure=PrefixAndSuffix
 
 ```
 
 ### Icon and end action
 
-`startIcon` adds a decorative icon at the start; `endAction` holds a control at the end, here an IconButton that shows the password, which takes the ghost look of the field.
+An icon at the start only decorates the field.
 
-```tsx example=IconAndAction
+- The end can hold a control, such as a button that shows the password.
+- That control takes a quiet look to sit inside the field.
 
-```
-
-### Fields beside buttons
-
-Fields share the button height of their size. Without a visible label the placeholder guides; with its label shown, the label rests inside and floats into the outline without changing the height.
-
-```tsx example=FieldsBesideButtons
+```tsx figure=IconAndEndAction
 
 ```
 
-### Search a list
+## Anatomy
 
-SearchField filters as people type; its clear button and <kbd>Esc</kbd> clear the query. A status line announces how many members match.
-
-```tsx example=FilterList
+```tsx figure=TextFieldAnatomy
 
 ```
 
-### Search a sidebar
+1. **Field** (`env-text-field`)
+2. **Control** (`env-text-field-control`)
+3. **Label** (`env-text-field-label`, `label`)
+4. **Start icon** (`env-text-field-start`, `startIcon`)
+5. **Prefix** (`env-text-field-prefix`, `prefix`)
+6. **Input** (`env-text-field-input`)
+7. **End action** (`env-text-field-end`, `endAction`)
+8. **Description** (`env-field-description`, `description`)
 
-A ghost SearchField at the top of a sidebar shows only its icon and placeholder until the pointer or focus gives it a soft fill.
+## Behaviour
 
-```tsx example=SidebarSearch
+### States
+
+The label rests in an empty field and floats into the outline on focus or with a value.
+
+- Under the pointer, the outline darkens.
+- Focus alone draws it in the accent, twice as thick.
+
+<!-- specimen: States -->
+
+### Show an error
+
+An error marks the field invalid and shows under its description. Say how to correct the value.
+
+- Check on leaving the field and on submit, never while people type.
+- Clear the error as soon as the value fits.
+
+```tsx figure=Validation motion
 
 ```
+
+### Search
+
+A SearchField's clear button and <kbd>Esc</kbd> empty the query.
+
+- Its label is for assistive technology, unless it is set to show; with the label hidden, its placeholder says Search unless it is given another.
+
+<!-- specimen: ClearingTheQuery -->
 
 ### Textarea sizing
 
-A fixed Textarea scrolls its text; drag its bottom edge, or focus the edge and use the arrow keys, to resize it. With `sizing="content"` and `rows={1}`, a reply starts at one line and grows with its text.
+A Textarea keeps its height and scrolls, or grows with its text instead.
 
-```tsx example=TextareaSizing
+- People resize it by its bottom edge, by dragging or with the arrow keys.
+- The grip, two short diagonal lines in the end corner, shows under the pointer and while the field has focus. A Textarea that grows with its text has none.
+
+```tsx figure=TextareaSizing motion
 
 ```
 
+### Adapting to width
+
+A field fills its container; set the width there.
+
+- A long prefix is cut short so the value keeps its room.
+
+```tsx figure=LongAddress widths="30 16" sweep
+
+```
+
+## Rules
+
+Fields show where to type, name their value, and say what they take.
+
+```tsx figure=OutlineForm
+
+```
+
+```tsx figure=GhostForm
+
+```
+
+### Kinds of value
+
+Say what kind of value each field takes, such as an e-mail address, so the browser can fill it in and show the right keyboard.
+
+### Read-only values
+
+Show a value people can't change as read-only, so they can still focus and copy it.
+
+- Its outline stays as at rest and doesn't answer the pointer. The value stays as dark as any other.
+- A disabled field can't be focused, copied or submitted.
+
+### Labels
+
+Name the value in a short noun phrase, and keep lasting instructions in the description.
+
+```tsx figure=LabelAndDescription
+
+```
+
+```tsx figure=PlaceholderAsLabel
+
+```
+
+## Accessibility
+
+### Keyboard
+
+| Key                                                                | Action                                                    |
+| ------------------------------------------------------------------ | --------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                    | Moves to the next or previous field, then its end action. |
+| <kbd>Esc</kbd> in a SearchField                                    | Clears the query; in an empty one, the key goes on.       |
+| <kbd>↑</kbd>, <kbd>↓</kbd> on a resize edge                        | Shrinks or grows the Textarea by a line.                  |
+| <kbd>Shift</kbd>+<kbd>↑</kbd>, <kbd>Shift</kbd>+<kbd>↓</kbd> on it | Shrinks or grows it by five lines.                        |
+| <kbd>Home</kbd> on a resize edge                                   | Restores the Textarea's minimum height.                   |
+
+### envUI provides
+
+- Native `<input>` and `<textarea>`, so autofill, validation, submission and reset work.
+- A `<label>` tied to the control, kept for assistive technology when hidden.
+- The description and error as the control's description, and `aria-invalid`.
+- SearchField's clear button, named Clear search.
+- Textarea's resize edge as a `separator` named Resize text area.
+- 1 rem text on touch screens, so focusing a field doesn't zoom the page.
+
+### You provide
+
+- A `label` for every field, or `aria-label`.
+- An `aria-label` on an icon-only `endAction`.
+- Validation, the `error` text, and focus on the first invalid field.
+- An announcement of results when a search filters as people type.
+- The clear and resize labels and the search placeholder in the application's language, through EnvUIProvider's `messages`.
+
+## Compose
+
+### Usage
+
+```tsx
+<TextField label="Project name" name="project" defaultValue="Launch" />
+<TextField label="Owner" name="owner" value={owner} onValueChange={setOwner} />
+<SearchField label="Search members" value={query} onValueChange={setQuery} />
+<Textarea label="Notes" name="notes" sizing="content" rows={3} />
+```
+
+A TextField is a native `<input>` with its `label`, `description` and `error`. Give it a `name` for its form, and leave it uncontrolled, with `defaultValue`, or control it with `value` and `onValueChange`, which receives the string as people type.
+
+#### Errors
+
+`error` marks the field invalid, sets `aria-invalid` and shows under the description. Check on blur and on submit, and clear it as soon as the value fits.
+
+#### Variants and sizes
+
+```tsx
+<TextField size="lg" label="Owner" name="owner" />
+<TextField variant="ghost" label="Find projects" visibleLabel={false} startIcon={<IconSearch />} />
+<TextField size="sm" label="Filter" visibleLabel={false} placeholder="Filter" name="filter" />
+```
+
+`variant` is `outline`, the default, or `ghost`, as on Textarea. `size` is `sm`, `md` or `lg`; without it, a field takes its container's. `visibleLabel={false}` keeps the label for assistive technology only; `sm` is for a field with its label hidden, as [Sizes](#sizes) says.
+
+#### Prefix, suffix, icon and end action
+
+`prefix` and `suffix` are short text in line with the value, not part of it, and forms don't submit them. `startIcon` is decorative. `endAction` holds a control, such as an IconButton, which takes the ghost variant where it sets none; name an icon-only one with `aria-label`.
+
+#### Values the browser can help with
+
+Set `type`, `autoComplete` and `inputMode` to fit the value, such as `type="email"` with `autoComplete="email"`. Use `readOnly` for a value people can see and copy but not change: a `disabled` field can't be focused, copied or submitted.
+
+#### SearchField and Textarea
+
+SearchField takes `value` and `onValueChange`, or `defaultValue`; its `label` shows only with `showLabel`. Textarea keeps its height and scrolls with `sizing="fixed"`, the default, or grows with its text with `sizing="content"`; `rows` sets its height, or the lines it starts at.
+
+### Composition
+
+TextField, SearchField and Textarea are built from Field's parts: the root, `env-field` with `env-text-field`, the control and its contents, then the description and the error, `env-field-error`. The suffix is `env-text-field-suffix`, and a Textarea's resize edge `env-textarea-resize-handle`. Build a field of your own from the same parts, as [Build your own field](field.md) shows.
+
+A field fills its container's width, so set the width on the container, or on the field through `style`. Put fields in a native `<form>`, in a Column or a Grid: the inputs are native, so submission, reset and autofill work, and `ref` reaches the input for a form library.
+
+### Customize
+
+`className` and `style` reach the field's root, and `ref` and the other native props the input. CSS may target the part classes and their state attributes, such as `data-invalid` on the control, listed under Part names below.
+
 ## Changelog
 
-- **1.0.0**: `hint` is `description`, and the variants are `outline`, `floating`, `underline` and `ghost`: `outlined` is `outline`, `plain` is `underline` and `quiet` is `ghost`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the input; `ref` and the other native props still reach the input. TextField and Textarea take `onValueChange`. The frame is Field's parts, and the classes follow: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field` and `env-field-hint` `env-field-description`. A button in `endAction` takes the ghost variant where it sets none. Textarea's resize edge is a `separator`, and its labels and the clear label come from EnvUIProvider's `messages`.
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides. SearchField keeps `showLabel`, which shows its label where it is hidden by default.
+- **1.0.0**: `hint` is `description`, and the variants are `outline`, `floating` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, and `plain` is gone, for the default outline. `className` and `style` style the field's root rather than the input; `ref` and the other native props still reach the input. TextField and Textarea take `onValueChange`. The frame is Field's parts, and the classes follow: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field` and `env-field-hint` `env-field-description`. A button in `endAction` takes the ghost variant where it sets none. Textarea's resize edge is a `separator`, and its labels and the clear label come from EnvUIProvider's `messages`. Textarea's resize edge, `env-textarea-resize-edge`, is `env-textarea-resize-handle`, as every resize handle is named.
 - **1.0.0**: `Input` is `TextField`, with the same props, behaviour and look; the page is `text-field`.
-- **0.6.0**: The `quiet` variant on TextField and SearchField.
-- **0.5.0**: `prefix` and `suffix`; entered text, resting labels, prefixes and suffixes are 1 rem on touch screens; a growing Textarea with `rows` starts at that many lines.
-- **0.4.0**: `showLabel`; a floated label hides only the outline behind it; end actions take the field's icon color and state layers.
-- **0.3.0**: End actions ease in as they appear.
-- **0.2.0**: `startIcon`, `endAction` and `compact`; SearchField.
-- **0.1.0**: Input and Textarea, outlined and plain, with labels, descriptions and errors; Textarea's fixed and content sizing with its resize edge.
+- **1.0.0-prerelease.6**: The edge and the label change color in `--env-motion-duration-fast` with `--env-motion-ease-enter`, as every color under the pointer does; the label still floats and the notch still opens over `--env-motion-duration-medium`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: The outline's notch closes at the pace the floated label settles, so the edge never crosses it.
+- **1.0.0-prerelease.6**: A SearchField with its label hidden and no `placeholder` shows Search, `messages.searchField.placeholder`, rather than an empty field with only its icon.
+- **1.0.0-prerelease.6**: Textarea's resize grip is two short diagonal lines in its end corner, rather than a bar in the middle that read as a sheet's handle.
+- **1.0.0-prerelease.6**: A Textarea whose text runs past its `rows` clips that text at its padding, rather than showing the next line under the bottom border.
+- **1.0.0-prerelease.6**: The `floating` variant is gone: a field on its own or in a long form on a page takes `outline`, the default, with `size="lg"`. An outline field takes a text area's rounded corners rather than round ends, and so does a ghost field. A small field with a visible label takes the medium height, so its floated label and its value each have room, and says so in the console while developing: `sm` is for a field with its label hidden. A ghost field shows a faint fill at rest, fainter when it is read-only or disabled, so a labelled one no longer reads as a label and its value, and its label floats inside the fill, within the field's height, rather than across its top edge. A focused ghost field keeps its placeholder, as an outline one does. A disabled field no longer fades as a whole: its label, value and icons take `--env-color-fg-disabled` and its outline the muted border, so it stays readable, also in dark.
+- **1.0.0-prerelease.2**: The `underline` variant, which `plain` became in the earlier prereleases, is gone from TextField, SearchField and Textarea, for the default outline. Outline and floating fields have no fill of their own.

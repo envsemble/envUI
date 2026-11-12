@@ -6,4 +6,4 @@ PanelDock.Root's `showLabel`, the function that names a tab's button, is `openLa
 
 Migrate with the codemods: `envui-codemods v1-props` renames `showLabel` to `openLabel` on PanelDock.Root.
 
-Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

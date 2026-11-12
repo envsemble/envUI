@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/envui",
-  "version": "1.0.0-prerelease.0",
+  "version": "1.0.0-prerelease.5",
   "description": "envUI: the internal envsemble React component library",
   "homepage": "https://github.com/envsemble/envUI#readme",
   "bugs": {
@@ -21,17 +21,13 @@
     "directory": "packages/ui"
   },
   "bin": {
-    "envui": "./bin/envui.mjs"
+    "envui-graphic": "./bin/envui-graphic.js"
   },
   "files": [
-    "dist",
     "bin",
+    "dist",
     "README.md",
-    "skills",
     "docs",
-    "manifest.json",
-    "llms.txt",
-    "llms-full.txt",
     "CHANGELOG.md",
     "THIRD_PARTY_NOTICES.md",
     "licenses",
@@ -54,11 +50,17 @@
       "import": "./dist/rich-text.js",
       "default": "./dist/rich-text.js"
     },
-    "./content": {
-      "envui-source": "./src/content.ts",
-      "types": "./dist/content.d.ts",
-      "import": "./dist/content.js",
-      "default": "./dist/content.js"
+    "./code": {
+      "envui-source": "./src/code.ts",
+      "types": "./dist/code.d.ts",
+      "import": "./dist/code.js",
+      "default": "./dist/code.js"
+    },
+    "./markdown": {
+      "envui-source": "./src/markdown.ts",
+      "types": "./dist/markdown.d.ts",
+      "import": "./dist/markdown.js",
+      "default": "./dist/markdown.js"
     },
     "./diff": {
       "envui-source": "./src/diff.ts",
@@ -66,11 +68,23 @@
       "import": "./dist/diff.js",
       "default": "./dist/diff.js"
     },
+    "./color": {
+      "envui-source": "./src/color.ts",
+      "types": "./dist/color.d.ts",
+      "import": "./dist/color.js",
+      "default": "./dist/color.js"
+    },
     "./theme-bootstrap": {
       "envui-source": "./src/theme-bootstrap.ts",
       "types": "./dist/theme-bootstrap.d.ts",
       "import": "./dist/theme-bootstrap.js",
       "default": "./dist/theme-bootstrap.js"
+    },
+    "./dev": {
+      "envui-source": "./src/dev.ts",
+      "types": "./dist/dev.d.ts",
+      "import": "./dist/dev.js",
+      "default": "./dist/dev.js"
     },
     "./messages": {
       "envui-source": "./src/messages.ts",
@@ -82,11 +96,11 @@
       "envui-source": "./src/styles/index.css",
       "default": "./dist/styles.css"
     },
-    "./icons": {
-      "envui-source": "./src/icons/index.ts",
-      "types": "./dist/icons/index.d.ts",
-      "import": "./dist/icons/index.js",
-      "default": "./dist/icons/index.js"
+    "./parts.json": "./docs/generated/parts.json",
+    "./props.json": "./docs/generated/props.json",
+    "./tokens.json": {
+      "envui-source": "./src/generated/tokens.json",
+      "default": "./dist/tokens.json"
     },
     "./icons/*": {
       "envui-source": "./src/icons/*.tsx",
@@ -97,93 +111,22 @@
     "./assets/*": "./dist/assets/*",
     "./package.json": "./package.json"
   },
+  "imports": {
+    "#styles/*": {
+      "module": "./dist/styles/*",
+      "node": "./dist/styles/empty.js",
+      "default": "./dist/styles/*"
+    }
+  },
   "engines": {
     "node": "^22.13.0 || >=24"
   },
   "peerDependencies": {
-    "@pierre/diffs": "^1.5.2",
-    "@pierre/theme": "^2.0.0",
-    "@shikijs/langs": "^4.5.0",
-    "@tiptap/core": "^3.31.4",
-    "@tiptap/extension-image": "^3.31.4",
-    "@tiptap/extension-list": "^3.31.4",
-    "@tiptap/extension-mention": "^3.31.4",
-    "@tiptap/extension-placeholder": "^3.31.4",
-    "@tiptap/extension-table": "^3.31.4",
-    "@tiptap/markdown": "^3.31.4",
-    "@tiptap/pm": "^3.31.4",
-    "@tiptap/react": "^3.31.4",
-    "@tiptap/starter-kit": "^3.31.4",
-    "@tiptap/static-renderer": "^3.31.4",
-    "@tiptap/suggestion": "^3.31.4",
-    "marked": "^17.0.6",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1",
-    "shiki": "^4.5.0"
-  },
-  "peerDependenciesMeta": {
-    "@pierre/diffs": {
-      "optional": true
-    },
-    "@pierre/theme": {
-      "optional": true
-    },
-    "@shikijs/langs": {
-      "optional": true
-    },
-    "@tiptap/core": {
-      "optional": true
-    },
-    "@tiptap/extension-image": {
-      "optional": true
-    },
-    "@tiptap/extension-list": {
-      "optional": true
-    },
-    "@tiptap/extension-mention": {
-      "optional": true
-    },
-    "@tiptap/extension-placeholder": {
-      "optional": true
-    },
-    "@tiptap/extension-table": {
-      "optional": true
-    },
-    "@tiptap/markdown": {
-      "optional": true
-    },
-    "@tiptap/pm": {
-      "optional": true
-    },
-    "@tiptap/react": {
-      "optional": true
-    },
-    "@tiptap/starter-kit": {
-      "optional": true
-    },
-    "@tiptap/static-renderer": {
-      "optional": true
-    },
-    "@tiptap/suggestion": {
-      "optional": true
-    },
-    "marked": {
-      "optional": true
-    },
-    "react-markdown": {
-      "optional": true
-    },
-    "remark-gfm": {
-      "optional": true
-    },
-    "shiki": {
-      "optional": true
-    }
+    "react-dom": "^19.0.0"
   },
   "dependencies": {
-    "@base-ui/react": "1.8.0"
+    "@base-ui/react": "1.9.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
@@ -191,7 +134,9 @@
   },
   "devDependencies": {
     "@pierre/diffs": "1.5.2",
-    "@pierre/theme": "2.0.0",
+    "@react-aria/color": "3.2.1",
+    "@react-aria/i18n": "3.13.1",
+    "@react-stately/color": "3.10.1",
     "@shikijs/langs": "4.5.0",
     "@tiptap/core": "3.31.4",
     "@tiptap/extension-image": "3.31.4",

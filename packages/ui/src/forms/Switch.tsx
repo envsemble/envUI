@@ -2,8 +2,10 @@
 
 import type { CSSProperties, ReactNode, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { useCheckedInput, type CheckedProps } from './internal/useCheckedInput.js';
+import '../styles/Base.css';
+import '../styles/Switch.css';
 
 export interface SwitchProps extends CheckedProps<boolean> {
   /**
@@ -21,6 +23,11 @@ export interface SwitchProps extends CheckedProps<boolean> {
    * name the switch with aria-label or aria-labelledby.
    */
   label?: ReactNode;
+  /**
+   * A short, muted line under the label, such as what the option changes. It is part of the
+   * switch's label, so it is read with its name.
+   */
+  description?: ReactNode;
   /** Whether a controlled switch is on; update it from onCheckedChange. */
   checked?: boolean;
   /** Whether an uncontrolled switch starts on; a native form reset returns it to this state. */
@@ -36,6 +43,7 @@ export interface SwitchProps extends CheckedProps<boolean> {
 export function Switch({
   ref,
   label,
+  description,
   checked,
   defaultChecked = false,
   onCheckedChange,
@@ -66,7 +74,12 @@ export function Switch({
         aria-checked={checkedState === true}
         onChange={handleChange}
       />
-      {label != null && <span className="env-switch-label">{label}</span>}
+      {label != null && (
+        <span className="env-switch-label">
+          {label}
+          {description != null && <small className="env-switch-description">{description}</small>}
+        </span>
+      )}
     </label>
   );
 }

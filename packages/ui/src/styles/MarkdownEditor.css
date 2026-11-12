@@ -1,12 +1,9 @@
-.env-markdown-editor {
-  min-inline-size: 0;
-}
-.env-markdown-editor-write {
-  display: grid;
-  gap: var(--env-space-3);
-  min-inline-size: 0;
-}
-.env-markdown-source {
-  caret-color: var(--env-color-fg-default);
-  tab-size: 2;
+@layer env.components {
+  .env-markdown-editor {
+    min-inline-size: 0;
+  }
+  .env-markdown-editor-input {
+    caret-color: var(--env-color-fg-default);
+    tab-size: 2;
+  }
 }

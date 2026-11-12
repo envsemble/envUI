@@ -1,0 +1,108 @@
+import { useLayoutEffect, useRef } from 'react';
+import { Column, Page, PageHeader, Text } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import { narrowGallery } from './Tiles';
+
+/**
+ * The page's sections, each with its own line, short enough to fit on one line at a phone's width:
+ * an overview, then the three it scrolls through in turn.
+ */
+const sections = [
+  { title: 'Overview', line: 'A year of growth.' },
+  { title: 'Summary', line: 'Revenue rose 18%.' },
+  { title: 'Revenue', line: 'Plans brought $3.1M.' },
+  { title: 'Costs', line: 'Spending held at $2.6M.' },
+];
+
+/**
+ * About a section's height, in px. A turn of the wheel this far scrolls one section on, and the
+ * box, which snaps to its sections' starts, settles on that section's start under the header.
+ */
+const pitch = 95;
+
+/**
+ * The pointer comes over the page and turns the wheel one section on, twice, from Summary to
+ * Revenue to Costs, then back up to Summary, as a person reads a report, so the cursor shows why
+ * the page scrolls under its header.
+ */
+const script: PointerStep[] = [
+  { wait: 180 },
+  // Over the section below the header: the page's content is taller than the box, so the aim is
+  // measured from the header, which stays in place.
+  { to: '.env-page-header', x: 0.7, y: 1.7 },
+  { wait: 300 },
+  { wheel: pitch, duration: 450 },
+  { wait: 780 },
+  { wheel: pitch, duration: 450 },
+  { wait: 780 },
+  { wheel: -2 * pitch, duration: 650 },
+  { wait: 540 },
+  { leave: true },
+  { wait: 240 },
+];
+
+/**
+ * A page in a box that scrolls, as a window does, at its own size and as low as its header plus one
+ * whole section. Its still is scrolled past the overview to Summary, under the header stuck at the
+ * top with the fill it takes once content scrolls beneath it. While it plays, the pointer's wheel
+ * scrolls it one section at a time and back. The box snaps to the sections' starts, each held clear
+ * of the header by the Page's own scroll margin, so each turn rests with one whole section under
+ * the header; each section ends in space as deep as that margin, so the one above is entirely past
+ * the header's top. Space after the last section lets it scroll there too. In a phone's narrower
+ * tile the box is narrower, so the page is drawn at about its own size there.
+ */
+export default function PageTile() {
+  const narrow = useMedia(narrowGallery);
+  const box = useRef<HTMLDivElement>(null);
+  usePointer(script);
+  // Its still is drawn at Summary's start at once.
+  useLayoutEffect(() => {
+    const element = box.current;
+    const section = element?.querySelectorAll('section')[1];
+    if (!element || !section) return;
+    const frameBox = element.getBoundingClientRect();
+    const scale = frameBox.height / element.offsetHeight || 1;
+    const top =
+      (section.getBoundingClientRect().top - frameBox.top) / scale +
+      element.scrollTop -
+      parseFloat(getComputedStyle(section).scrollMarginBlockStart || '0');
+    element.scrollTop = Math.round(top);
+  }, [narrow]);
+  return (
+    <div
+      ref={box}
+      style={{
+        inlineSize: narrow ? '10rem' : '12.5rem',
+        blockSize: narrow ? '6.875rem' : '7.25rem',
+        overflowY: 'auto',
+        // The window's own scrollbar, as a page scrolled in an application shows it.
+        scrollbarWidth: 'thin',
+        scrollSnapType: 'y mandatory',
+        borderRadius: 'var(--env-radius-lg)',
+        background: 'var(--env-color-bg-page)',
+      }}
+    >
+      <Page header={<PageHeader headingLevel={3} sticky title="Annual report" />}>
+        <Column gap={9} style={{ paddingBlockEnd: '3rem' }}>
+          {sections.map(({ title, line }) => (
+            <Column
+              key={title}
+              gap={1}
+              render={<section />}
+              style={{ scrollSnapAlign: 'start', paddingBlockEnd: 'var(--env-space-2)' }}
+            >
+              <Text variant="title" render={<h4 />}>
+                {title}
+              </Text>
+              <Text variant="body-sm" emphasis="muted">
+                {line}
+              </Text>
+            </Column>
+          ))}
+        </Column>
+      </Page>
+    </div>
+  );
+}

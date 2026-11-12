@@ -1,0 +1,58 @@
+import ListAndDetail from '../../examples/panes/ListAndDetail';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
+
+const message = (id: string) => `.env-panes-list a[href="/inbox/${id}"]`;
+const back = '.env-panes-back .env-button';
+
+/*
+ * Narrow, one pane at a time: the pointer opens the budget review, which takes the list's place
+ * with a back button named Inbox, and goes back; then it opens the launch checklist and goes back,
+ * the message chosen as it began.
+ */
+const script: PointerStep[] = [
+  { wait: 300 },
+  { to: message('budget'), x: 0.4 },
+  { wait: 210 },
+  { click: true },
+  { wait: 1020 },
+  { to: back, duration: 600 },
+  { wait: 180 },
+  { click: true },
+  { wait: 600 },
+  { to: message('launch'), x: 0.4, duration: 600 },
+  { wait: 180 },
+  { click: true },
+  { wait: 900 },
+  { to: back, duration: 500 },
+  { wait: 180 },
+  { click: true },
+  { wait: 360 },
+  { leave: true },
+  { wait: 540 },
+];
+
+function Reading() {
+  usePointer(script);
+  return (
+    // As wide as the stage; a press on a message's link opens it here, never the link's page.
+    <div
+      style={{ inlineSize: '100%' }}
+      onClickCapture={(event) => {
+        if (event.target instanceof Element && event.target.closest('a')) event.preventDefault();
+      }}
+    >
+      <ListAndDetail />
+    </div>
+  );
+}
+
+/** Messages opened from the list and closed by the back button, one pane at a time. */
+export default function ListAndDetailMotion() {
+  return (
+    <MotionStage label="a message opened from the list and back">
+      <Reading />
+    </MotionStage>
+  );
+}

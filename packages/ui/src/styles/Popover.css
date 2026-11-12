@@ -1,19 +1,29 @@
-/* A floating panel in the raised popup colors, with the menu's corners. Popover and HoverCard render on
-   PopupSurface, which draws the look, the positioner's layer and the motion through env-popup. The
-   layout and the widths are Popover's and HoverCard's own. */
-.env-popover,
-.env-hover-card {
-  inline-size: min(20rem, calc(100vw - 2rem));
-  display: grid;
-  align-content: start;
-  gap: var(--env-space-3);
-  padding: var(--env-space-5);
-}
-.env-popover[data-width='lg'],
-.env-hover-card[data-width='lg'] {
-  inline-size: min(28rem, calc(100vw - 2rem));
-}
-.env-popover-title {
-  margin: 0;
-  font: var(--env-type-h2);
+@layer env.components {
+  /* A floating panel in the raised popup colors, with the menu's corners. Popover and HoverCard render on
+     PopupSurface, which draws the look, the positioner's layer and the motion through env-popup. The
+     layout and the widths are Popover's and HoverCard's own: as wide as the content, from 12 rem up to
+     20 rem, or for lg from 20 rem up to 28 rem, so a large one is wider even when what it holds is
+     short, and never wider than the room the positioner finds in the window (--available-width), so
+     it sizes to what it holds and stays on screen. */
+  .env-popover,
+  .env-hover-card {
+    --env-popover-room: var(--available-width, calc(100vw - 2rem));
+    --env-popover-min: 12rem;
+    --env-popover-max: 20rem;
+    inline-size: max-content;
+    min-inline-size: min(var(--env-popover-min), var(--env-popover-room));
+    max-inline-size: min(var(--env-popover-max), var(--env-popover-room));
+    align-content: start;
+    padding: var(--env-popup-panel-padding);
+  }
+  .env-popover[data-width='lg'],
+  .env-hover-card[data-width='lg'] {
+    --env-popover-min: 20rem;
+    --env-popover-max: 28rem;
+  }
+  .env-popover-title {
+    margin: 0;
+    font: var(--env-type-title);
+    letter-spacing: var(--env-type-title-letter-spacing);
+  }
 }

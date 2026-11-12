@@ -1,9 +1,9 @@
 ---
 title: Page
-summary: The column a page's content sits in, centered at one of four widths with the page gutter, and the page's header at its top.
+summary: The column a page's content sits in, under its title and actions.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - Container
   - container
@@ -13,102 +13,288 @@ aliases:
   - page column
   - page layout
   - main column
+  - page header
+  - page heading
+  - page title
+  - header bar
+  - title bar
+  - page toolbar
+  - heading row
+  - sticky header
 useWhen:
-  - A page's content needs a readable width in a wide window, such as a form, a document or a dashboard.
-  - A page has a heading with actions above its content, passed as its header.
+  - A readable width in a wide window, such as for a form or a document
+  - A page's title and the actions for the whole page, such as New project (PageHeader)
+  - A trail, a status or a count beside the title, or search and filters under it
+  - A page heading that stays in view as the page scrolls
 avoidWhen:
-  - text: The frame of an application, with its header and sidebars.
-    use: AppShell
-  - text: Content in a column or a row with even gaps inside a page.
-    use: Stack
-  - text: A background, an inset and corners around a part of a page.
-    use: Surface
-  - text: Two panes side by side that people resize.
-    use: SplitPane
-related:
-  - page-header
-  - stack
-  - surface
-  - app-shell
-  - responsive
+  - text: The frame of an application, with its top bar and navigation.
+    use: Scaffold
+  - text: The application's bar across every page, with its name, search and account menu.
+    use: TopBar
+  - text: Two panes side by side, such as a list and its detail.
+    use: Panes
+  - text: Content in a column with even gaps inside a page.
+    use: Column
+  - text: The heading of a section inside a page, with its own actions.
+    use: Row
+  - text: Controls for one subject that the arrow keys move between.
+    use: Toolbar
 components:
   - Page
+  - PageHeader
+examples:
+  WithHeader:
+    role: overview
+    device: window
+  WithBreadcrumbs: example
+  WithToolbar: example
+  PageAnatomy: anatomy
+  PageHeaderAnatomy: anatomy
+  Sticky: example
+  Gutters:
+    role: example
+    caption: The muted fill shows the gutter.
 ---
 
 # Page
 
-## Overview
+## Variants
 
-Page is the column a page's content sits in. It is centered in the space it has, grows to its `width` at most, pads its inline edges with the page gutter and puts its `header`, usually a [PageHeader](../components/page-header.md), at its top. It adds no landmark: it goes inside `AppShell.Main`, or the application's own `main`, and the content inside it lays itself out, with Stack and the components.
+### The header
 
-```tsx example=WithHeader
+The title can have a trail above it, a status or a count beside it and a sentence under it, with the page's actions at the end of its row.
+
+```tsx figure=WithBreadcrumbs
 
 ```
 
+### Search and filters
+
+A row below the title holds search, filters and view switches.
+
+- On a dense page, its buttons and the actions take the small control height.
+
+```tsx figure=WithToolbar
+
+```
+
+### Widths
+
+| Width  | Use for                                            |
+| ------ | -------------------------------------------------- |
+| Small  | A form, a settings page or a sign-in page.         |
+| Medium | A document, an article or the details of one item. |
+| Large  | A dashboard, a list or a table. The default.       |
+| Full   | A board, a canvas or a wide table.                 |
+
+<!-- specimen: ColumnWidths -->
+
+### Without the gutter
+
+A page can leave its sides to its content, such as a table that runs to the edges.
+
 ## Anatomy
 
-1. **Column**: a `div`, or the element in `render`, such as an `article`, centered with `margin-inline: auto`.
-2. **Header** (`header`): the page's PageHeader, at the top of the column.
-3. **Gutter** (`gutter`): the inline padding, from 1 rem on a phone to 2 rem on a wide window.
-4. **Content**: the page's children; under a header, in a block of their own 1.5 rem below it.
+```tsx figure=PageAnatomy
 
-## Variants and sizes
+```
 
-| Width          | Content width | Use for                                                          |
-| -------------- | ------------- | ---------------------------------------------------------------- |
-| `sm`           | 40 rem        | A form, a settings page or a sign-in page.                       |
-| `md`           | 60 rem        | A document, an article or the details of one item.               |
-| `lg` (default) | 76 rem        | A dashboard, a list, a table, most of an application's pages.    |
-| `full`         | The whole     | A board, a canvas or a wide table that uses all the width it has |
+1. **Page** (`env-page`)
+2. **Header** (`env-page-header`, `header`)
+3. **Content** (`env-page-content`, `children`)
 
-- The widths are rem, so they follow the reader's text size, and are custom properties of the page, `--env-page-width-sm`, `-md` and `-lg`, which an application may set on `.env-page` to change them everywhere.
-- The column is as wide as its `width` plus the gutter on each side; in a narrower space it takes the whole width.
-- The page's block padding, 1.5 rem above and 2 rem below, separates its content from the frame's header and the end of the page.
-- `gutter={false}` leaves the inline edges to the content, such as a page that is one full-bleed table; the gutter is `--env-page-gutter`, which a sticky PageHeader also reads to reach across it.
+```tsx figure=PageHeaderAnatomy
 
-## States and behaviour
+```
 
-- Page has no states and handles no keys; it is layout only.
-- A sticky PageHeader in `header` publishes its height on the page as `--env-page-header-block-size`, so content can stick below it and the frame's header: `inset-block-start: calc(var(--env-frame-sticky-top, 0px) + var(--env-page-header-block-size, 0px))`.
-- There is no Container: a Page without a header is the width container.
+1. **Header** (`env-page-header`)
+2. **Breadcrumbs** (`env-page-header-breadcrumbs`, `breadcrumbs`)
+3. **Start** (`env-page-header-start`, `start`)
+4. **Title** (`env-page-header-title`, `title`)
+5. **Meta** (`env-page-header-meta`, `meta`)
+6. **Description** (`env-page-header-description`, `description`)
+7. **Actions** (`env-page-header-actions`, `actions`)
+8. **Toolbar** (`env-page-header-toolbar`, `toolbar`)
 
-## Do and don't
+## Behaviour
 
-### Do
+### Sticky
 
-- Choose the width for what the page holds: `sm` for a form, `md` for reading, `lg` for most application pages.
-- Put the page's heading in `header`, so it shares the column and its gutter.
-- Lay out the content inside with Stack, and keep its own widths, such as a form's fields, to the components.
+A header can stay at the top of the area that scrolls, under a Scaffold's top bar.
 
-### Don't
+- What takes focus in the page keeps clear of it.
 
-- Don't nest pages; a part of a page that needs its own width takes it from its content or a Surface.
-- Don't add a `main` around a Page inside AppShell.Main, which already is one.
-- Don't use `full` for text: long lines are hard to read.
+```tsx figure=Sticky motion
+
+```
+
+### Adapting to width
+
+The gutter at the page's sides is narrower in a compact region, such as on a phone or in a narrow pane of a wide window, and the header follows its own width.
+
+- Where the header is narrow, the actions move under the title and wrap.
+- The title wraps too and is never cut short.
+- More actions than fit go in a [Menu](menu.md) as the last one.
+
+```tsx figure=Gutters widths="44 22" sweep classes
+
+```
+
+## Rules
+
+Page goes in a [Scaffold](scaffold.md)'s body, and its header sits at the top of the same column, so the title lines up with the content.
+
+### Width
+
+One page per page, never the full width for text. A part that needs a narrower width takes it from its own content.
+
+### One heading
+
+Give each page one header, whose title is the page's main heading.
+
+- In a pane or a dialog, its heading sits a level lower.
 
 ## Accessibility
 
 ### envUI provides
 
-- A plain element without a role, so the page adds no landmark of its own inside the frame's `main`.
-- Content in document order, so the reading and focus order follow what people see.
+- A plain element without a role, so the page adds no landmark inside the Scaffold's `main`.
+- The header as a `div`, no landmark, with the title as a heading at `headingLevel`.
+- The header's parts in the same order to read, to tab through and to see, at every width.
+- With a sticky header, a scroll margin that keeps what takes focus clear of it.
 
 ### You provide
 
-- The page's one `h1`, usually PageHeader's title.
-- A `main` landmark around the page, which `AppShell.Main` gives.
-- `render={<article />}` or another element where the page is one, such as a document.
+- The page's one `h1`, usually its header's title, and a `headingLevel` that fits the headings around a header in a pane or a dialog.
+- `render={<article />}` where the page is one, such as a document.
+- Names for icon-only actions and labels for the fields in the header's toolbar.
 
-## Examples
+## Compose
 
-### Widths
+### Usage
 
-The four widths, in a muted surface that shows the space around the column.
+Page holds the page's content as `children`, and its heading, a PageHeader, in `header`, at the top of the same column.
 
-```tsx example=Widths
+- Put it in a Scaffold's body, which is already the `main` landmark: add none around a Page.
+
+```tsx source=WithHeader
 
 ```
 
+#### Width and gutter
+
+- `width` is `sm`, 40 rem, `md`, 60 rem, `lg`, 76 rem and the default, or `full`.
+- `gutter` pads the column's inline edges with the page gutter, 1 rem in a compact region and 1.5 rem from medium, by the window class of the region the page sits in, so a page in a narrow pane of a wide window keeps the compact gutter.
+- `gutter={false}` leaves them to the content, such as a full-bleed table.
+
+```tsx
+<Page width="sm" header={<PageHeader title="Settings" />}>
+  …
+</Page>
+<Page width="full" gutter={false}>
+  …
+</Page>
+```
+
+#### Element and name
+
+`render` sets the element, a `div` by default, such as `render={<article />}` for a document. `name` names the node for dev mode, as `data-env-name`.
+
+#### The header
+
+A PageHeader takes the page's `title`, which wraps, balanced across its lines, and is never cut short.
+
+- `description` goes under it, in the smaller muted text.
+- `breadcrumbs` go above it, usually Breadcrumbs with `wrap={false}`.
+- `start` goes before it, such as an Avatar, an icon or a back IconButton.
+- `meta` goes beside it, such as Badges or a count.
+- The page's `actions` go at the end of the title row, the primary action last.
+- The page's title and actions go here, not in the top bar, which belongs to the frame.
+
+```tsx
+<PageHeader
+  title="Northwind launch"
+  description="Press kit, venue and invitations for the spring launch."
+  breadcrumbs={<Breadcrumbs wrap={false} items={trail} />}
+  meta={<Badge tone="success">On track</Badge>}
+  actions={
+    <>
+      <Button variant="secondary" startIcon={<IconShare />}>
+        Share
+      </Button>
+      <Button>New task</Button>
+    </>
+  }
+/>
+```
+
+#### Heading level
+
+The title is an `h1` by default. Set `headingLevel` lower for a header inside a pane, a dialog or a section under another heading; it looks the same at every level.
+
+#### Toolbar
+
+`toolbar` adds a second row under the title for search, filters and view switches, laid out with `<Row wrap justify="between">`.
+
+- A row that holds a text field is a Row, not a Toolbar, so the field keeps its arrow keys.
+- `controlSize` is `md`, the default, or `sm` for a dense page, such as one in a small window: it sizes the buttons and icon buttons in `actions` and `toolbar` that set none.
+- Give fields in the toolbar the same `size`.
+
+```tsx
+<PageHeader
+  title="People"
+  controlSize="sm"
+  actions={<Button startIcon={<IconAdd />}>Invite</Button>}
+  toolbar={
+    <Row wrap align="center" justify="between" gap={3}>
+      <SearchField label="Search people" size="sm" />
+      <SegmentedControl
+        aria-label="View"
+        size="sm"
+        value={view}
+        onValueChange={setView}
+        items={views}
+      />
+    </Row>
+  }
+/>
+```
+
+#### Sticky
+
+`sticky` keeps the header in view at the top of the area that scrolls, over the content under it: under a Scaffold's top bar where the document scrolls, or at the top of a Scaffold's body that scrolls.
+
+- As a Page's header, what scrolls into view below it, such as a field taking focus, keeps clear of it.
+- The header measures its height, which CSS reckons from its rows until script runs.
+
+```tsx
+<Page
+  header={
+    <PageHeader
+      sticky
+      title="Annual report"
+      actions={<Button variant="secondary">Download</Button>}
+    />
+  }
+>
+  …
+</Page>
+```
+
+### Composition
+
+The page, `env-page`, holds its header and its content, `env-page-content`, at its width.
+
+- It never paints, and it is the `env-page` size container for the content inside.
+- `data-width` carries a width other than `lg`, and `data-gutter="none"` a page without the gutter.
+
+The header is a `div`, no landmark, `env-page-header`, with the breadcrumbs, `env-page-header-breadcrumbs`, the start, `env-page-header-start`, the title, `env-page-header-title`, the meta, `env-page-header-meta`, the description, `env-page-header-description`, the actions, `env-page-header-actions`, and the toolbar, `env-page-header-toolbar`.
+
+- It responds to its own width: below 37.5 rem the actions move under the title and wrap.
+- Put more actions than fit in a Menu as the last one.
+
 ## Changelog
 
-- **1.0.0**: Page, with the widths `sm`, `md`, `lg` and `full`, `header`, `gutter` and `render`.
+- **1.0.0**: Page, with the widths `sm`, `md`, `lg` and `full`, `header`, `gutter`, `name` and `render`; invisible structure whose gutters follow the window class of the region it sits in, and the `env-page` container. PageHeader, with `title`, `headingLevel`, `description`, `breadcrumbs`, `start`, `meta`, `actions`, `toolbar`, `sticky` and `controlSize`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.3**: PageHeader is documented on this page, `page`, which its page's address opens.

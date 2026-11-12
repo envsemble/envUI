@@ -1,9 +1,9 @@
 ---
 title: Alert
-summary: An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.
+summary: An inline message about a page or a section, with an optional action.
 status: stable
-since: 0.5.0
-category: Feedback & overlays
+since: 1.0.0
+category: Feedback
 aliases:
   - Notice
   - banner
@@ -16,144 +16,184 @@ aliases:
   - warning message
   - error message
 useWhen:
-  - A message about a page or a section stays until it no longer applies, such as a paused sync or a blocked release.
-  - Something that just happened failed and the message should stay beside what it concerns, such as a save that didn't go through (`announce`).
-  - A section needs a warning before people act in it, such as storage that is almost full.
+  - A message that stays until it no longer applies, such as a paused sync
+  - A failure beside what it concerns, such as a save that didn't go through
+  - A warning before people act in a section, such as storage almost full
 avoidWhen:
   - text: Brief feedback after an action, such as Saved or Invitation sent.
-    use: Toast
+    use: ToastProvider
   - text: A region without content yet, such as an empty list or no search results.
-    use: EmptyState
-  - text: An error about one field of a form.
+    see: empty-states
+  - text: An error about one field, shown on the field.
     use: TextField
   - text: A status beside a label, such as Draft or Blocked.
     use: Badge
   - text: A decision people must make before going on.
     use: Dialog
-related:
-  - toast
-  - empty-state
-  - badge
-  - dialog
-  - colors
 components:
   - Alert
+examples:
+  BlockedRelease: overview
+  Tones: variants
+  CustomIcon: example
+  SaveFailed: example
+  OneAlert:
+    role: do
+    caption: One alert per situation, with its next step.
+  StackedAlerts:
+    role: dont
+    caption: Several alerts about one situation.
+  AlertAnatomy: anatomy
 ---
 
 # Alert
 
-## Overview
+## Variants
 
-An alert is a message about a page or a section that stays in place, above the content it concerns, until it no longer applies. Its tone sets the tint, the border and the icon; the text stays in the primary text color, so the message reads the same in every tone. An alert can hold an action for the next step and a dismiss button, and it chooses its live role by tone: info and success alerts are polite status messages, and warning and danger alerts interrupt only with `announce`.
+```tsx figure=Tones
 
-```tsx example=BlockedRelease
+```
+
+1. **Info**
+2. **Success**
+3. **Warning**
+4. **Danger**
+
+| Tone    | Use for                                                           |
+| ------- | ----------------------------------------------------------------- |
+| Info    | Something to know about the page. The default.                    |
+| Success | A result that stays relevant, where a toast would leave too soon. |
+| Warning | A problem to come unless people act.                              |
+| Danger  | Something that failed or stopped working.                         |
+
+### Another icon, or none
+
+An alert can take another icon in place of its tone's, or none at all.
+
+```tsx figure=CustomIcon
 
 ```
 
 ## Anatomy
 
-1. **Container**: the tone's light tint with a hairline border in the tone, 1 rem corners and 1 rem padding. The ref and other `div` props reach it.
-2. **Icon** (`icon`): the tone's icon in the tone color, 1.25 rem, beside the first line. `icon` replaces it, and `false` leaves it out.
-3. **Title** (optional, `title`): a short heading in medium weight, 1 rem.
-4. **Message** (optional, `children`): the body text, 0.9375 rem, 0.25 rem below the title.
-5. **Action** (optional, `action`): a row below the message, 0.75 rem from it, that wraps its controls with 0.5 rem between them.
-6. **Dismiss button** (with `onDismiss`): a 2 rem circle at the end of the first line, with a close icon in the tone color.
+```tsx figure=AlertAnatomy
 
-## Variants and sizes
+```
 
-| Tone      | Use for                                                                                                             |
-| --------- | ------------------------------------------------------------------------------------------------------------------- |
-| `info`    | Something people should know about the page or section, such as a paused sync or planned maintenance. The default.  |
-| `success` | A result that stays relevant, such as a plan that was shared, where a toast would leave too soon.                   |
-| `warning` | Something that will cause a problem unless people act, such as storage that is almost full or a blocked release.    |
-| `danger`  | Something that failed or stopped working, such as a save that didn't go through or a service that isn't responding. |
+1. **Container** (`env-alert`)
+2. **Icon** (`env-alert-icon`, `icon`)
+3. **Title** (`env-alert-title`, `title`)
+4. **Message** (`env-alert-message`, `children`)
+5. **Actions** (`env-alert-action`, `actions`)
+6. **Dismiss button** (`env-alert-dismiss`, `onDismiss`)
 
-- An alert fills the width of its container, and its text wraps, also within a long word or an address.
-- The icon, the content and the dismiss button sit in three columns 0.75 rem apart; the content takes the room the other two leave.
-- On touch screens the dismiss button grows to 2.75 rem.
+## Behaviour
 
-## States and behaviour
+### Announce a failure
 
-- **Live role**: info and success alerts have the `status` role, a polite live region, whether `announce` is set or not. Warning and danger alerts have no live role by default, since an alert that is there when the page loads should not interrupt; with `announce` they take the `alert` role and are announced at once.
-- **Dismissing**: with `onDismiss`, a dismiss button named `dismissLabel` (Dismiss) shows; a press calls `onDismiss`, and the application removes the alert. The button's name also shows as its native tooltip. On hover and press its circle takes a tint of the tone.
-- **Actions**: `action` holds any controls, such as a Button or a Link, and keeps their own states.
+A warning or a danger alert that appears because of something people just did, such as a save that failed, can be read out at once. Info and success alerts are always read politely, without interrupting.
 
-<!-- specimen: ToneMatrix -->
+```tsx figure=SaveFailed motion
 
-## Content guidelines
+```
 
-- Put the problem or the fact in the title, in a few words and sentence case, without a full stop: "Sync paused", "Storage almost full".
-- Use the message for what it means and what people can do, in one or two sentences: "Uploads stop once the space runs out."
-- Name an action after the next step: "Review blockers", "Upgrade storage". Offer one action, or two at most.
-- Make the message clear without its color or icon; "Couldn’t save the draft" reads as an error in any tone.
-- Translate `dismissLabel` where the interface is not in English.
+## Rules
 
-## Do and don't
+An alert sits above the content it concerns.
 
-### Do
+```tsx figure=OneAlert
 
-- Place the alert above the content it concerns, such as at the top of a page or a section.
-- Remove an alert once it no longer applies, such as when the sync resumes.
-- Set `announce` on a warning or a danger alert that appears because of something people just did, such as a failed save.
-- Let people dismiss an alert only when the message can safely be hidden.
+```
 
-### Don't
+```tsx figure=StackedAlerts
 
-- Don't use an alert for brief feedback after an action; use [Toast](../components/toast.md).
-- Don't stack several alerts about the same thing; combine them, or show the most urgent one.
-- Don't set `announce` on an alert that is there when the page loads.
-- Don't put a field's error in an alert alone; show it on the field with its `error`.
+```
+
+### Removing an alert
+
+Remove an alert once it no longer applies. Let people dismiss it only where the message can safely be hidden.
+
+<!-- specimen: RemovingAlerts -->
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                             | Action                                                                 |
-| ----------------------------------------------- | ---------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves focus to the controls of the action, then to the dismiss button. |
-| <kbd>Enter</kbd> or <kbd>Space</kbd> on Dismiss | Calls `onDismiss`.                                                     |
+| Key                                             | Action                                        |
+| ----------------------------------------------- | --------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to the action, then the dismiss button. |
+| <kbd>Enter</kbd>, <kbd>Space</kbd>              | Presses the focused button.                   |
 
 ### envUI provides
 
-- The `status` role on info and success alerts, and the `alert` role on warning and danger alerts with `announce`, so they are announced without interrupting or at once.
-- An icon for each tone, hidden from assistive technology, beside text in the primary text color, so the tone is not told by color alone.
-- A native dismiss button named by `dismissLabel`, with the name as its tooltip, the shared focus ring and a 2.75 rem touch target on coarse pointers.
+- The `status` role on info and success alerts, and `alert` on warning and danger alerts with `announce`.
+- An icon for each tone, hidden, beside text that carries the meaning.
+- A dismiss button named by `dismissLabel`, in the provider's language.
 
 ### You provide
 
-- A title or message that makes sense without the tone's color and icon.
-- Where focus goes after a dismissal, such as to the control the alert concerned, since the dismiss button leaves with the alert.
-- `announce` only on an alert that appears because of something that just happened, rendered at that moment.
-- `dismissLabel` in the application's language.
+- A message that makes sense without its color and icon.
+- `announce` only on an alert that appears because of something that just happened, never on one there when the page loads.
+- Focus for after a dismissal, such as on the control the alert concerned.
 
-## Examples
+## Compose
 
-### Tones
+### Usage
 
-Info for something to know, success for a result that stays relevant, warning before a problem and danger after one.
+An Alert takes its `tone`, a short `title`, the message as `children`, and `actions` below the message, such as a Button or a Link; a secondary Button there takes a fill that stands clear of the tint in both themes, and an outline, ghost or text Button is drawn in the alert's own colors: its label in the text color, an outline's edge in the tone's color, and the tone's layers on hover and press. Put it above the content it concerns, and remove it once it no longer applies.
 
-```tsx example=Tones
-
-```
-
-### Announce a failure
-
-A save that fails shows a danger alert with `announce`, so it is read at once. Dismissing it moves focus back to the button that saves.
-
-```tsx example=SaveFailed
+```tsx source=BlockedRelease
 
 ```
 
-### Another icon, or none
+#### Tones
 
-`icon` replaces the tone's icon with one that says more, and `icon={false}` leaves it out for a short message.
+`tone` is `info`, the default, `success`, `warning` or `danger`, for an error or a failure; a toast has `neutral` instead of `warning`, since a warning stays on the page, here. It sets the fill, the tone's tint, and the color of the icon; the title and the message keep the text color. An alert has no edge, except at high contrast, where an edge in the border color bounds it.
 
-```tsx example=CustomIcon
-
+```tsx
+<Alert title="Sync paused">Changes are saved on this device until you reconnect.</Alert>
+<Alert tone="danger" title="Couldn’t publish">Try again, or check the build log.</Alert>
 ```
+
+#### Announce a failure
+
+Info and success alerts take the `status` role and are read politely. `announce` gives a warning or danger alert the `alert` role, so it is read at once; set it only on an alert that appears because of something people just did, never on one there when the page loads. The SaveFailed example shows one after a failed save, and moves focus back to the save button when it is dismissed.
+
+```tsx
+<Alert tone="danger" title="Couldn’t save the draft" announce onDismiss={dismiss}>
+  Your changes are still in the editor; try again in a moment.
+</Alert>
+```
+
+#### Icon
+
+`icon` replaces the tone's icon, and `null` or `false` leaves it out.
+
+```tsx
+<Alert icon={<IconConstruction />} title="Maintenance on Saturday">…</Alert>
+<Alert tone="success" icon={false}>Priya Shah accepted the invitation.</Alert>
+```
+
+#### Dismiss
+
+`onDismiss` shows a dismiss button that calls it; the application removes the alert, and moves focus, such as to the control the alert concerned. Offer it only where the message can safely be hidden. `dismissLabel` names the button, and is also its tooltip.
+
+### Composition
+
+The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title, `env-alert-title`, the message, `env-alert-message`, the action, `env-alert-action`, and the dismiss button, `env-alert-dismiss`, an IconButton with a cross.
+
+### Customize
+
+An Alert draws an edge only at high contrast, unless its outline color sets one, and its title and message take its text color while its icon and dismiss button take the icon's.
 
 ## Changelog
 
-- **1.0.0**: `tone="danger"` for `error`; the dismiss button is a CloseButton named Dismiss in the provider's language.
+- **1.0.0**: No edge outside high contrast: the tone's stronger tint fills it, the title takes the tone's color as the icon does, and its corners are a card's, 1.25 rem. At high contrast it keeps the softer tint with an edge in the border color.
+- **1.0.0**: `actions` for `action`, as on Card and Dialog. `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
 - **1.0.0**: `Notice` is `Alert`, with `AlertTone` and the `env-alert-*` classes; the page is `alert`.
-- **0.5.0**: Notice, an inline banner in four tones with an action, a round dismiss button in its tone and `announce`.
+- **1.0.0-prerelease.6**: The dismiss button's focus ring lies inside its circle, the size of its hover fill, rather than around it.
+- **1.0.0-prerelease.6**: In light, success and danger rest on lighter, clearer tints, as strong as information and warning.
+- **1.0.0-prerelease.6**: In light the tone's tint lies over the white raised surface, so it reads as its tone's color on the gray page; the title takes the text color, and the icon and the tint carry the tone.
+- **1.0.0-prerelease.6**: An alert rests on its tone's tint, `--env-color-bg-{tone}-muted`, in every theme and contrast, rather than the tone's hover layer, and takes the large corner of the radius scale, `--env-radius-lg`, which the compact scale tightens, rather than a fixed 1.25 rem, so a one-line alert no longer reads as a pill.
+- **1.0.0-prerelease.6**: Outline, ghost and text buttons among the actions take the alert's text color, an outline's edge the tone's color, and the tone's hover and press layers, rather than the link blue on every tone.
+- **1.0.0-prerelease.5**: A card's inset, 14 px above and below and 16 px at the sides; the title is semibold in the body size, 2 px above the message, which takes the small body size.

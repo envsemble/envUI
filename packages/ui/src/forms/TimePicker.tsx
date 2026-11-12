@@ -1,14 +1,16 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { useResolvedLocale } from '../internal/useFormatters.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { timePicker as timePickerMessages } from '../foundations/messages/timePicker.js';
 import { Button } from '../actions/Button.js';
-import { Schedule } from '../icons/Schedule.js';
+import { IconSchedule } from '../icons/Schedule.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import { TimeList, timeListFirstColumn } from './internal/TimeList.js';
-import { dateFormat, formatTime, now, parseTime, toUtcDate } from './internal/CalendarDays.js';
+import { usePickerFormatter, usePickerValue } from './internal/usePickerValue.js';
+import { formatTime, now, parseTime, toUtcDate } from '../internal/time/calendarDays.js';
+import '../styles/Base.css';
+import '../styles/DatePicker.css';
+import '../styles/TimePicker.css';
 
 export interface TimePickerProps extends PickerFieldProps {
   /** The value: a time of day as HH:mm on the 24-hour clock. null, or an empty string, for none. */
@@ -28,10 +30,16 @@ export interface TimePickerProps extends PickerFieldProps {
    */
   minuteStep?: number;
   /**
-   * The locale of the shown value and the list's times, with its own 12- or 24-hour clock:
-   * EnvUIProvider's, else the browser's.
+   * The locale of the shown value and the list's times, with its own 12- or 24-hour clock unless
+   * `hourCycle` sets one: EnvUIProvider's, else the browser's.
    */
   locale?: string;
+  /**
+   * The clock of the shown value and the wheels, whatever the locale's: h23 for 18:00, with no
+   * AM/PM wheel, or h12 for 6:00 PM. The value stays HH:mm on the 24-hour clock.
+   * @default the locale's
+   */
+  hourCycle?: 'h12' | 'h23';
   /**
    * How the field shows the value: Intl.DateTimeFormat options, by default the short time style.
    */
@@ -60,6 +68,7 @@ export function TimePicker({
   max,
   minuteStep,
   locale,
+  hourCycle,
   formatOptions,
   disabled = false,
   readOnly = false,
@@ -79,26 +88,17 @@ export function TimePicker({
     disabled,
     readOnly,
   });
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const current = parseTime(value === undefined ? uncontrolledValue : value);
+  const picked = usePickerValue({ value, defaultValue, onValueChange });
+  const current = parseTime(picked.raw);
   const serialized = current === undefined ? '' : formatTime(current);
   const minMinutes = parseTime(min);
   const maxMinutes = parseTime(max);
 
-  // On the server, and while its output hydrates, a field without a locale shows the value as every
-  // browser shows it, then in the reader's language.
-  const shownLocale = useResolvedLocale(locale);
-  const formatOptionsKey = JSON.stringify(formatOptions ?? null);
-  const formatter = useMemo(
-    () =>
-      // Values are wall-clock times, formatted in UTC so no zone shifts them.
-      dateFormat(
-        shownLocale,
-        (JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ?? {
-          timeStyle: 'short',
-        },
-      ),
-    [shownLocale, formatOptionsKey],
+  const { formatter } = usePickerFormatter(
+    locale,
+    formatOptions,
+    { timeStyle: 'short' },
+    hourCycle,
   );
   const display = current === undefined ? '' : formatter.format(toUtcDate(0, current));
 
@@ -110,14 +110,12 @@ export function TimePicker({
       if (maxMinutes !== undefined) kept = Math.min(kept, maxMinutes);
       result = formatTime(kept);
     }
-    if ((result ?? '') === serialized) return;
-    if (value === undefined) setUncontrolledValue(result);
-    onValueChange?.(result);
+    picked.change(result, serialized);
   }
 
   function clear() {
     commit(null);
-    setOpen(false);
+    setOpen(false, 'clear-press');
   }
 
   const reference = now().minutes;
@@ -130,15 +128,32 @@ export function TimePicker({
       {...fieldProps}
       serialized={serialized}
       display={display}
-      icon={<Schedule />}
+      icon={<IconSchedule />}
       rootClassName="env-date-picker env-time-picker"
       popupClassName="env-time-picker-popup"
       initialFocus={timeListFirstColumn}
+      popupStart={
+        <Button
+          variant="text"
+          aria-disabled={!nowAvailable || undefined}
+          onClick={() => {
+            if (nowAvailable) commit(now().minutes);
+          }}
+        >
+          {nowLabel ?? messages.now}
+        </Button>
+      }
+      popupEnd={
+        clearable &&
+        serialized && (
+          <Button variant="text" onClick={clear}>
+            {clearLabel ?? messages.clear}
+          </Button>
+        )
+      }
       clearLabel={clearLabel ?? messages.clear}
       onClear={() => commit(null)}
-      onFormReset={() => {
-        if (value === undefined) setUncontrolledValue(defaultValue);
-      }}
+      onFormReset={picked.reset}
       open={open}
       setOpen={setOpen}
       disabled={disabled}
@@ -146,35 +161,16 @@ export function TimePicker({
       clearable={clearable}
     >
       {(name) => (
-        <>
-          <TimeList
-            {...name}
-            value={current}
-            onValueChange={commit}
-            minuteStep={minuteStep}
-            min={minMinutes}
-            max={maxMinutes}
-            locale={locale}
-          />
-          <div className="env-date-picker-actions">
-            <Button
-              variant="text"
-              aria-disabled={!nowAvailable || undefined}
-              onClick={() => {
-                if (nowAvailable) commit(now().minutes);
-              }}
-            >
-              {nowLabel ?? messages.now}
-            </Button>
-            <span className="env-date-picker-actions-end">
-              {clearable && serialized && (
-                <Button variant="text" onClick={clear}>
-                  {clearLabel ?? messages.clear}
-                </Button>
-              )}
-            </span>
-          </div>
-        </>
+        <TimeList
+          {...name}
+          value={current}
+          onValueChange={commit}
+          minuteStep={minuteStep}
+          min={minMinutes}
+          max={maxMinutes}
+          locale={locale}
+          hourCycle={hourCycle}
+        />
       )}
     </PickerField>
   );

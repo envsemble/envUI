@@ -2,10 +2,34 @@
 // styles to Stylelint; this config only reports likely bugs.
 import envui from '@envsemble/eslint-plugin-envui';
 import js from '@eslint/js';
+import { readdirSync } from 'node:fs';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+
+/**
+ * The library's families, the folders of packages/ui/src that hold components. A family's
+ * internal/ folder is its own: code two families use sits in the top-level internal/ (packages/ui/AGENTS.md).
+ */
+const families = readdirSync(new URL('packages/ui/src/', import.meta.url), { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+  .filter((name) => !['internal', 'styles', 'assets', 'generated', 'icons'].includes(name));
+
+/** An import of another family's internal/ folder, which a module of `family` may not make. */
+const otherFamiliesInternals = (family) => ({
+  regex: String.raw`^(\.\./)+(${families
+    .filter((other) => other !== family)
+    .join('|')})/([\w-]+/)*internal(/|$)`,
+  message: `Another family's internal/ folder is its own: move what ${family}/ shares with it to the top-level internal/ (packages/ui/AGENTS.md).`,
+});
+
+/**
+ * Folders of a family's internal/ that only the modules listed with them may import, besides each
+ * other: the Markdown editor's editing, links and preview are its own.
+ */
+const privateFolders = { 'content/internal/markdown': ['content/MarkdownEditor.tsx'] };
 
 /** Browser globals that are easy to use by accident in place of a local, such as `event`. */
 const confusingBrowserGlobals = [
@@ -25,6 +49,133 @@ const confusingBrowserGlobals = [
   'top',
 ];
 
+/**
+ * The site reaches the library through its entry points, and the few internals listed below
+ * through @envui-internal (apps/site/AGENTS.md): a relative path into its source would break
+ * unseen when a file there moves. The site imports nothing of the scripts, which import the
+ * site's documentation model.
+ */
+const siteImports = {
+  regex: String.raw`^(\.\./)+(packages/ui/src|scripts)(/|$)`,
+  message:
+    'Import the library from @envsemble/envui and its internals from @envui-internal/*; the site imports nothing of scripts/ (apps/site/AGENTS.md).',
+};
+
+/**
+ * The library's internals the site may import, from packages/ui/src: what it must share with the
+ * library rather than keep a copy of. Anything smaller the site keeps in its own shared/.
+ */
+const siteInternals = [
+  // The pre-rendered page's code tokens and Markdown trees, handed to the library's components
+  // before they hydrate, and the highlighter that makes the tokens.
+  'content/internal/codeHighlighting',
+  'content/internal/givenCodeTokens',
+  'content/internal/givenMarkdownTrees',
+  // The link component an application gives the library, which the site's own links follow.
+  'internal/provider/LinkComponentContext',
+  // What a box paints, as dev mode decides it, which the fit centres a picture on.
+  'internal/dom/paints',
+  // How a motion token is read and eased, as the library's own motion reads it.
+  'internal/motion/motionTokens',
+];
+const siteInternalImports = {
+  regex: String.raw`^@envui-internal/(?!(${siteInternals.join('|')})$)`,
+  message:
+    'The site imports only the library internals listed in eslint.config.mjs (siteInternals): keep a small helper of its own in apps/site/src/shared/, or list the module with its reason.',
+};
+
+/**
+ * The folders of apps/site/src from the top down: a folder imports only the folders after it, so
+ * imports between them run one way (apps/site/AGENTS.md). A rule per depth of file, as a relative
+ * path to another folder starts with one ../ for each folder the file is in.
+ */
+const siteFolders = [
+  'navigation',
+  'pages',
+  'frame',
+  'search',
+  'brand',
+  'template',
+  'specimens',
+  'figures',
+  'markdown',
+  'tiles',
+  'motion',
+  'fit',
+  'routes',
+  'loading',
+  'display',
+  'examples',
+  'shared',
+  'generated',
+  'documentation',
+];
+const siteFolderOrder = siteFolders.slice(1).flatMap((folder, index) =>
+  [1, 2, 3].map((depth) => ({
+    files: [`apps/site/src/${folder}/${'*/'.repeat(depth - 1)}*.{ts,tsx}`],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            siteImports,
+            siteInternalImports,
+            {
+              regex: String.raw`^(\.\./){${depth}}(${siteFolders.slice(0, index + 1).join('|')})(/|$)`,
+              message: `${folder}/ imports only the folders after it in apps/site/AGENTS.md's order: move what both use into ${folder}/ or below it.`,
+            },
+          ],
+        },
+      ],
+    },
+  })),
+);
+
+/**
+ * The site measures sizes through its one measuring loop, remeasure (apps/site/src/shared/
+ * Remeasure.ts), which owns the site's only ResizeObserver.
+ */
+const siteResizeObserver = {
+  selector: "NewExpression[callee.name='ResizeObserver']",
+  message:
+    'Measure through remeasure (apps/site/src/shared/Remeasure.ts), the site’s one measuring loop.',
+};
+
+/**
+ * Names the site declares with "preview" in them: the site's words for what it shows are example,
+ * specimen, tile, figure and stage (apps/site/AGENTS.md), and preview is an older name. Names it only reads,
+ * such as a library prop or an example's import, are left to where they are declared.
+ */
+const previewNames = [
+  'VariableDeclarator > Identifier.id',
+  'FunctionDeclaration > Identifier.id',
+  'ClassDeclaration > Identifier.id',
+  'TSTypeAliasDeclaration > Identifier.id',
+  'TSInterfaceDeclaration > Identifier.id',
+  'TSPropertySignature > Identifier.key',
+  'MethodDefinition > Identifier.key',
+  'PropertyDefinition > Identifier.key',
+  'ObjectExpression > Property > Identifier.key',
+  ':function > Identifier.params',
+].map((declared) => ({
+  selector: `${declared}[name=/preview/i]`,
+  message:
+    'Name it with the site’s words, example, specimen, tile, figure or stage (apps/site/AGENTS.md): preview is an older name.',
+}));
+
+/**
+ * A `data-*` attribute set by a conditional between `''` and `undefined`, in JSX or in an object of
+ * props: a state that is on or off goes through `flag()` (packages/ui/AGENTS.md).
+ */
+const emptyOrUndefined = `ConditionalExpression:matches([consequent.value=''][alternate.name='undefined'], [consequent.name='undefined'][alternate.value=''])`;
+const inlineFlags = [
+  `JSXAttribute[name.name=/^data-/] > JSXExpressionContainer > ${emptyOrUndefined}`,
+  `Property[key.value=/^data-/] > ${emptyOrUndefined}`,
+].map((selector) => ({
+  selector,
+  message: 'Set a state attribute that is on or off with flag() (src/internal/flag.ts).',
+}));
+
 export default defineConfig(
   globalIgnores([
     '**/dist/**',
@@ -36,13 +187,10 @@ export default defineConfig(
     'playwright-report/**',
     // Generated from pinned inputs by scripts; edit the generator instead.
     'packages/ui/src/icons/**',
-    'apps/catalogue/src/brand/EnvUILogo.tsx',
-    'apps/catalogue/src/generated/**',
-    // Packaged copies of the README, skills and documentation.
+    'apps/site/src/brand/EnvUILogo.tsx',
+    'apps/site/src/generated/**',
+    // Packaged copies of the documentation.
     'packages/ui/docs/**',
-    'packages/ui/skills/**',
-    // Codemod fixtures: inputs and expected outputs, compared byte for byte.
-    'packages/codemods/test/fixtures/**',
   ]),
   {
     files: ['**/*.{ts,tsx,mjs,js,cjs}'],
@@ -97,7 +245,7 @@ export default defineConfig(
   },
   {
     // Shipped code: no logging, and nothing that a strict Content Security Policy blocks.
-    files: ['packages/ui/src/**', 'apps/catalogue/src/**'],
+    files: ['packages/ui/src/**', 'apps/site/src/**'],
     rules: {
       'no-console': 'error',
       'no-eval': 'error',
@@ -106,10 +254,59 @@ export default defineConfig(
     },
   },
   {
+    files: ['packages/ui/src/**/*.{ts,tsx}'],
+    rules: { 'no-restricted-syntax': ['error', ...inlineFlags] },
+  },
+  ...families.map((family) => ({
+    files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
+    rules: { 'no-restricted-imports': ['error', { patterns: [otherFamiliesInternals(family)] }] },
+  })),
+  ...Object.entries(privateFolders).map(([folder, allowed]) => {
+    const [family, ...rest] = folder.split('/');
+    const name = rest.at(-1);
+    return {
+      files: [`packages/ui/src/${family}/**/*.{ts,tsx}`],
+      ignores: [
+        `packages/ui/src/${folder}/**`,
+        ...allowed.map((module) => `packages/ui/src/${module}`),
+      ],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              otherFamiliesInternals(family),
+              {
+                regex: String.raw`(^|/)${rest.join('/')}(/|$)|^\./${name}(/|$)`,
+                message: `${folder}/ is private to ${allowed.join(', ')}: build on its public API (eslint.config.mjs, privateFolders).`,
+              },
+            ],
+          },
+        ],
+      },
+    };
+  }),
+  {
+    // The site's own code. Examples are application code, where a preview is the product's word,
+    // such as a file's or the Markdown editor's, and where a ResizeObserver is the application's.
+    files: ['apps/site/src/**/*.{ts,tsx}'],
+    ignores: ['apps/site/src/examples/**'],
+    rules: { 'no-restricted-syntax': ['error', ...previewNames, siteResizeObserver] },
+  },
+  {
+    // The measuring loop is the one place in the site that creates a ResizeObserver.
+    files: ['apps/site/src/shared/Remeasure.ts'],
+    rules: { 'no-restricted-syntax': ['error', ...previewNames] },
+  },
+  {
+    files: ['apps/site/src/**/*.{ts,tsx}'],
+    rules: { 'no-restricted-imports': ['error', { patterns: [siteImports, siteInternalImports] }] },
+  },
+  ...siteFolderOrder,
+  {
     // Examples and templates are the code applications and agents copy, so they follow the rules
-    // envUI asks of applications: envUI's components over raw elements, no private classes and
-    // no raw colors.
+    // envUI asks of applications: envUI's components over raw elements and no raw colors.
     ...envui.configs.recommended,
-    files: ['apps/catalogue/src/examples/**/*.{ts,tsx}'],
+    files: ['apps/site/src/examples/**/*.{ts,tsx}'],
   },
 );

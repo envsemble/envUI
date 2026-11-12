@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "envui": {
-      "command": "node",
-      "args": ["node_modules/@envsemble/envui/bin/envui.mjs", "mcp"]
-    }
-  }
-}

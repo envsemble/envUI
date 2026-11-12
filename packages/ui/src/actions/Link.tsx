@@ -1,6 +1,8 @@
 import { classNames } from '../internal/classNames.js';
-import type { ActionElementProps } from '../internal/ActionElement.js';
+import type { ActionElementProps } from '../internal/control/ActionElement.js';
 import { Button } from './Button.js';
+import '../styles/Base.css';
+import '../styles/Button.css';
 
 export type LinkProps = Extract<ActionElementProps, { href: string }> & {
   /** Underline the link; true by default, so it stands out from the text around it. */

@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function SignLanguageOff({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconSignLanguageOff({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M110-71q-17-2-28-14.5T73-115q2-17 14.5-27t29.5-9l169 15 19-67-233-45q-17-3-26-16t-6-30q3-16 16.5-25.5T87-326l239 45 17-58-270-74q-17-4-24.5-18T46-462q5-16 18-24t30-4l270 74 15-53L84-764q-11-11-11.5-27.5T84-820q11-11 28-11t28 11l680 680q11 11 11.5 27.5T820-84q-11 11-28 11t-28-11L638-209l-14 53q-15 57-63 89T455-40L110-71Zm628-265L506-566l34-23-154-232q-10-14-7-29.5t17-25.5q14-9 29.5-6.5T452-866l154 233 50-34-81-197q-7-14-.5-29.5T596-916q16-6 31 0t22 21l101 244 46-52q11-12 26-18.5t32-4.5q29 2 48 23t10 52l-64 209q-6 20-18 36.5T801-378l-63 42Zm-127-12L190-568q-16-8-20.5-23.5T173-622q8-14 23.5-19t30.5 2l196 103 188 188Z" /> : <path d="M305-203 72-248q-17-3-26-16t-6-30q3-16 16.5-25.5T87-326l240 45-22 78Zm38-136L73-413q-17-4-24.5-18T46-462q5-16 18-24t30-4l270 74-21 77Zm202-253L386-821q-10-14-7-29.5t17-25.5q14-9 29.5-6.5T452-866l159 231-66 43Zm193 256-61-59 79-49q6-3 9.5-8.5T771-466l41-134-88 97-149-361q-7-14-.5-29.5T596-916q16-6 31 0t22 21l101 244 46-52q11-12 26-18t32-5q17 2 31 9.5t24 21.5l11 16-72 237q-6 20-18 36.5T801-378l-63 42Zm-127-12L190-568q-16-8-20.5-23.5T173-622q8-14 23.5-19t30.5 2l196 103 188 188ZM110-71q-17-2-28-14.5T73-115q2-17 14.5-27t29.5-9l345 31q29 3 53-13t32-45l26-96L84-764q-11-11-11.5-27.5T84-820q11-11 28-11t28 11l680 680q11 11 11.5 27.5T820-84q-11 11-28 11t-28-11L638-209l-14 53q-16 57-63.5 89T455-40L110-71Zm463-203Zm104-121Z" />}</Icon>;
 }

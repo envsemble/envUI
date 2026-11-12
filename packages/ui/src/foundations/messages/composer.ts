@@ -8,5 +8,3 @@ export const composer = {
   /** The stop button's name while a reply is generated. */
   stop: 'Stop',
 };
-
-export type ComposerMessages = typeof composer;

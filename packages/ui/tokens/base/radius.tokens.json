@@ -2,25 +2,43 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "radius": {
     "$type": "dimension",
-    "$description": "One corner scale for every component inside a theme boundary, from none to xl, and the roles that name a step of it. The full corner, 100vmax, is no DTCG dimension and stays in TokensHandwritten.css as --env-radius-full.",
-    "none": { "$value": { "value": 0, "unit": "rem" } },
-    "xs": { "$value": { "value": 0.25, "unit": "rem" } },
+    "$description": "One corner scale for every component inside a theme boundary, from none to xl, and the roles that name a step of it. The full corner, half the tallest single-line control, is a calculation DTCG cannot hold and stays in TokensHandwritten.css as --env-radius-full.",
+    "none": { "$description": "Square corners.", "$value": { "value": 0, "unit": "rem" } },
+    "xs": {
+      "$description": "The smallest corners, such as a checkbox's box and a color swatch.",
+      "$value": { "value": 0.25, "unit": "rem" }
+    },
     "sm": {
       "$description": "Small corners: buttons in a group, chips, menu rows, list rows inside a surface.",
       "$value": { "value": 0.5, "unit": "rem" }
     },
-    "md": { "$value": { "value": 0.75, "unit": "rem" } },
+    "md": {
+      "$description": "Corners between sm and lg, such as a navigation item's indicator.",
+      "$value": { "value": 0.75, "unit": "rem" }
+    },
     "lg": {
       "$description": "Medium corners: fields, tables, alerts and other blocks.",
       "$value": { "value": 1, "unit": "rem" }
     },
-    "xl": { "$value": { "value": 1.75, "unit": "rem" } },
+    "xl": {
+      "$description": "The largest corners of the scale.",
+      "$value": { "value": 1.75, "unit": "rem" }
+    },
     "surface": {
       "$description": "The rounded corners of surfaces, dialogs and popups.",
       "$value": "{radius.xl}"
     },
-    "row-outer": { "$value": "{radius.surface}" },
-    "row-inner": { "$value": "{radius.sm}" },
-    "row-single": { "$value": "{radius.row-outer}" }
+    "row-outer": {
+      "$description": "The outer corners of connected rows, the first row's top and the last row's bottom: a surface's.",
+      "$value": "{radius.surface}"
+    },
+    "row-inner": {
+      "$description": "The corners where connected rows meet: small, so the rows read as one block.",
+      "$value": "{radius.sm}"
+    },
+    "row-single": {
+      "$description": "A row that stands alone, with the outer corners on every side.",
+      "$value": "{radius.row-outer}"
+    }
   }
 }

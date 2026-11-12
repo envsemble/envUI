@@ -1,6 +1,5 @@
 'use client';
 
-import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   useLayoutEffect,
   useRef,
@@ -12,13 +11,17 @@ import {
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
-import { ActionElement } from '../internal/ActionElement.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { Row } from '../layout/Layout.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
+import { ActionElement } from '../internal/control/ActionElement.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
-import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
+import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Breadcrumbs.css';
 
-export interface BreadcrumbItem {
+export interface BreadcrumbsItem {
   /**
    * The level's name, such as a folder's title. Beyond 20 rem it ends with an ellipsis, and a
    * tooltip shows it in full on hover and keyboard focus.
@@ -32,7 +35,7 @@ export interface BreadcrumbItem {
 
 export interface BreadcrumbsProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /** From the top level to the current page, which is last. */
-  items: readonly BreadcrumbItem[];
+  items: readonly BreadcrumbsItem[];
   /**
    * The trail wraps onto more lines when it runs out of room; true by default. False keeps it on
    * one line, for a bar or header: the current page is cut short first, and earlier levels keep
@@ -65,7 +68,7 @@ function useTruncated(element: RefObject<HTMLElement | null>) {
 }
 
 /** One level: a link, a button, plain text or the current page, with its full label on hover. */
-function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
+function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
   const label = useRef<HTMLSpanElement>(null);
   const truncated = useTruncated(label);
   const [focused, setFocused] = useState(false);
@@ -106,13 +109,10 @@ function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
       </span>
     );
   }
-  // A label cut short shows in full in a tooltip, on hover and on keyboard focus.
-  // The tooltip stays in place while the label fits, so the element and its focus are kept.
   return (
-    <BaseTooltip.Root disabled={!truncated}>
-      <BaseTooltip.Trigger delay={400} render={crumb} />
-      {truncated && <TooltipPopup content={item.label} side="bottom" />}
-    </BaseTooltip.Root>
+    <CutLabelTooltip cut={truncated} label={item.label} side="bottom">
+      {crumb}
+    </CutLabelTooltip>
   );
 }
 
@@ -130,23 +130,29 @@ export function Breadcrumbs({
       {...props}
       aria-label={label ?? messages.label}
       className={classNames('env-breadcrumbs', className)}
-      data-nowrap={wrap ? undefined : ''}
+      data-nowrap={flag(!wrap)}
     >
-      <ol className="env-breadcrumbs-list">
+      <Row render={<ol />} wrap={wrap} align="center" gap={1} className="env-breadcrumbs-list">
         {items.map((item, index) => {
           const current = index === items.length - 1;
           return (
-            <li key={index} className="env-breadcrumbs-item">
+            <Row
+              key={index}
+              render={<li />}
+              align="center"
+              gap={1}
+              className="env-breadcrumbs-item"
+            >
               <Crumb item={item} current={current} />
               {!current && (
                 <span className="env-icon env-breadcrumbs-separator" aria-hidden="true">
-                  <ChevronRight />
+                  <IconChevronRight />
                 </span>
               )}
-            </li>
+            </Row>
           );
         })}
-      </ol>
+      </Row>
     </nav>
   );
 }

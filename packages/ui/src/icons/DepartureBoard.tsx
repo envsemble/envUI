@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function DepartureBoard({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconDepartureBoard({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M700-688v-92q0-8-6-14t-14-6q-8 0-14 6t-6 14v92q0 8 3 15.5t8 12.5l60 61q6 6 15 6t15-6q6-6 6-15t-6-15l-61-59Zm-20 208q-83 0-141.5-58.5T480-680q0-82 58-141t142-59q83 0 141.5 58.5T880-680q0 83-58.5 141.5T680-480ZM260-280q25 0 42.5-17.5T320-340q0-25-17.5-42.5T260-400q-25 0-42.5 17.5T200-340q0 25 17.5 42.5T260-280Zm280 0q25 0 42.5-17.5T600-340q0-25-17.5-42.5T540-400q-25 0-42.5 17.5T480-340q0 25 17.5 42.5T540-280ZM180-80q-25 0-42.5-17.5T120-140v-62q-20-21-30-46.5T80-300v-380q0-72 66.5-110T362-837q29-2 45 22.5t5 53.5q-6 20-9 41.5t-3 42.5q0 15-9.5 26T366-640H160v120h260q14 0 27 6.5t22 17.5q17 20 37 35.5t43 27.5q32 17 66.5 25.5T686-400q14 0 24 8.5t10 22.5v69q0 26-10 51.5T680-202v62q0 25-17.5 42.5T620-80q-25 0-42.5-17.5T560-140v-20H240v20q0 25-17.5 42.5T180-80Z" /> : <path d="M178-720h234-234Zm62 280h-80 480-400ZM180-80q-25 0-42.5-17.5T120-140v-62q-20-21-30-46.5T80-300v-380q0-88 79.5-124T400-840q17 0 28.5 11.5T440-800q0 17-10.5 28.5T402-760q-96 0-150 11.5T178-720h182q17 0 28.5 11.5T400-680q0 17-11.5 28.5T360-640H160v120h321q17 0 28 11.5t11 28.5q0 17-11.5 28.5T480-440H160v120q0 33 23.5 56.5T240-240h320q33 0 56.5-23.5T640-320v-39q0-17 11.5-28.5T680-399q17 0 28.5 11.5T720-359v59q0 26-10 51.5T680-202v62q0 25-17.5 42.5T620-80q-25 0-42.5-17.5T560-140v-20H240v20q0 25-17.5 42.5T180-80Zm500-400q-83 0-141.5-58.5T480-680q0-82 58-141t142-59q83 0 141.5 58.5T880-680q0 83-58.5 141.5T680-480ZM260-280q25 0 42.5-17.5T320-340q0-25-17.5-42.5T260-400q-25 0-42.5 17.5T200-340q0 25 17.5 42.5T260-280Zm280 0q25 0 42.5-17.5T600-340q0-25-17.5-42.5T540-400q-25 0-42.5 17.5T480-340q0 25 17.5 42.5T540-280Zm160-408v-92q0-8-6-14t-14-6q-8 0-14 6t-6 14v92q0 8 3 15.5t8 12.5l60 61q6 6 15 6t15-6q6-6 6-15t-6-15l-61-59Z" />}</Icon>;
 }

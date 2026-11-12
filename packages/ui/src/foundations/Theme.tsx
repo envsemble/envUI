@@ -2,10 +2,13 @@
 
 import { createContext, useContext, useMemo, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { outsideTheme } from '../internal/outsideTheme.js';
+import { outsideTheme } from './internal/outsideTheme.js';
+import { themeFromRootAttribute } from './internal/themeFromRoot.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
+import '../styles/Base.css';
 
 /** A color scheme. */
-export type ThemeValue = 'light' | 'dark';
+export type ColorScheme = 'light' | 'dark';
 
 /**
  * The contrast of a Theme: the standard colors, the high-contrast ones, or `system`, which takes the
@@ -14,12 +17,14 @@ export type ThemeValue = 'light' | 'dark';
 export type ThemeContrast = 'standard' | 'high' | 'system';
 
 /**
- * The app scale of a Theme: comfortable, the sizes of web and touch apps, or compact, about 0.8 of
- * them with type one step smaller, for desktop productivity apps.
+ * The app scale of a Theme: comfortable, the sizes of web and touch apps; compact, about 0.8 of
+ * them with type one step smaller, for desktop productivity apps; or `system`, which takes compact
+ * where the primary pointer is fine, such as a mouse or trackpad (`pointer: fine`), and comfortable
+ * on touch.
  */
-export type ThemeScale = 'comfortable' | 'compact';
+export type ThemeScale = 'comfortable' | 'compact' | 'system';
 
-export type { ControlSize } from '../internal/controlTypes.js';
+export type { ControlSize } from '../internal/control/controlTypes.js';
 
 /**
  * How tightly a data component, such as a Table, Tree or List, packs its rows: only the rows' block
@@ -30,14 +35,14 @@ export type RowDensity = 'xs' | 'sm' | 'md' | 'lg';
 
 /** The theme of the nearest Theme boundary, as useTheme returns it. */
 export interface ThemeContextValue {
-  theme: ThemeValue;
+  theme: ColorScheme;
   contrast: ThemeContrast;
   scale: ThemeScale;
 }
 
 export interface ThemeProps extends ComponentPropsWithRef<'div'> {
   /** The color scheme. */
-  theme: ThemeValue;
+  theme: ColorScheme;
   /**
    * `high` for the high-contrast colors; `standard` keeps the standard ones even while the system
    * asks for more contrast; `system` follows `prefers-contrast: more`. Defaults to the contrast of
@@ -47,18 +52,16 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
    */
   contrast?: ThemeContrast;
   /**
-   * The app scale of everything inside: comfortable, or compact for a desktop productivity app.
-   * Use one scale per app or window, and another only on a Theme around a whole region, such as a
-   * docked inspector. Defaults to the scale of the enclosing Theme, and to comfortable outside any.
-   * It wins over a `data-env-scale` attribute passed to the Theme.
+   * The app scale of everything inside: comfortable, compact, or `system`, which is compact under a
+   * fine pointer and comfortable on touch, chosen by the stylesheet. Use one scale per app or
+   * window, and another only on a Theme around a whole region, such as a docked inspector. Defaults
+   * to the scale of the enclosing Theme, and to `system` outside any. It wins over a
+   * `data-env-scale` attribute passed to the Theme.
    */
   scale?: ThemeScale;
 }
 
 const ThemeContext = createContext<ThemeContextValue>(outsideTheme);
-
-/** Invalid themes already warned about, so each is reported once. */
-const warnedThemes = new Set<string>();
 
 /** A theme as a warning shows it; JSON for an object, without throwing on any value. */
 function showTheme(theme: unknown): string {
@@ -85,22 +88,17 @@ function showTheme(theme: unknown): string {
 }
 
 /**
- * In development, the report about a theme that is neither light nor dark, unless it was made
- * already. In JavaScript, 0.x's `<Theme theme={useTheme()}>` now passes `{ theme, contrast }`,
- * which would theme nothing.
+ * In development, the report about a theme that is neither light nor dark. In JavaScript, 0.x's
+ * `<Theme theme={useTheme()}>` now passes `{ theme, contrast }`, which would theme nothing.
  */
-function themeReport(theme: unknown): { shown: string; message: string } | undefined {
+function themeReport(theme: unknown): string | undefined {
   if (theme === 'light' || theme === 'dark') return undefined;
-  const shown = showTheme(theme);
-  if (warnedThemes.has(shown)) return undefined;
-  return {
-    shown,
-    message:
-      `envUI: Theme takes a theme of "light" or "dark", not ${shown}.` +
-      (typeof theme === 'object' && theme !== null
-        ? ' useTheme() returns { theme, contrast }: write <Theme {...useTheme()}>.'
-        : ''),
-  };
+  return (
+    `Theme takes a theme of "light" or "dark", not ${showTheme(theme)}.` +
+    (typeof theme === 'object' && theme !== null
+      ? ' useTheme() returns { theme, contrast }: write <Theme {...useTheme()}>.'
+      : '')
+  );
 }
 
 /**
@@ -115,24 +113,7 @@ export function Theme({
   children,
   ...props
 }: ThemeProps) {
-  // Written inline so bundlers replace process.env.NODE_ENV, which leaves the check standing in a
-  // development build and drops the warning from a production one. `process` itself stays
-  // undefined in a browser, so the check must not test it: where nothing replaced the expression,
-  // as without a bundler, reading it throws and the warning stays silent. The report is built in
-  // there, by code that doesn't throw; console.error, which a test may make throw, runs outside, and
-  // the theme counts as reported once it has run.
-  let report: ReturnType<typeof themeReport>;
-  try {
-    if (process.env.NODE_ENV !== 'production') report = themeReport(theme);
-  } catch {
-    // No bundler defined process.env.NODE_ENV.
-  }
-  if (report) {
-    // A development-only report, as React reports an invalid prop.
-    // eslint-disable-next-line no-console
-    console.error(report.message);
-    warnedThemes.add(report.shown);
-  }
+  reportInDevelopment(() => process.env.NODE_ENV !== 'production' && themeReport(theme));
   const inherited = useContext(ThemeContext);
   // The prop wins; without it, a data-env-contrast or data-env-scale written on the Theme counts,
   // so that the context its nested Themes and popups read agrees with the attribute.
@@ -146,7 +127,7 @@ export function Theme({
   const scaleAttribute = attributes['data-env-scale'];
   const scale =
     ownScale ??
-    (scaleAttribute === 'comfortable' || scaleAttribute === 'compact'
+    (scaleAttribute === 'comfortable' || scaleAttribute === 'compact' || scaleAttribute === 'system'
       ? scaleAttribute
       : inherited.scale);
   const value = useMemo(() => ({ theme, contrast, scale }), [theme, contrast, scale]);
@@ -154,10 +135,14 @@ export function Theme({
     <ThemeContext value={value}>
       <div
         {...props}
-        className={classNames('env-theme', className)}
-        data-env-theme={theme}
-        data-env-contrast={contrast === 'system' ? undefined : contrast}
-        data-env-scale={scale}
+        className={className}
+        // A ThemePreferenceProvider's boundary that themes the root takes the root's look.
+        {...(!(themeFromRootAttribute in props) && {
+          className: classNames('env-theme', className),
+          'data-env-theme': theme,
+          'data-env-contrast': contrast === 'system' ? undefined : contrast,
+          'data-env-scale': scale,
+        })}
       >
         {children}
       </div>
@@ -168,7 +153,8 @@ export function Theme({
 /**
  * The theme of the nearest Theme, including across React portals: its color scheme, contrast and
  * scale. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of
- * `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`.
+ * `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of
+ * `system` leaves it to `pointer: fine`.
  */
 export function useTheme(): ThemeContextValue {
   return useContext(ThemeContext);

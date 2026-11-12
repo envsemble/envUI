@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function GameButtonL1({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M582-548v181q0 11 8 19t19 8q11 0 19-8t8-19v-242q0-5-2.5-8t-7.5-3h-23q-2 0-6 2l-77 55q-8 6-9.5 16t4.5 18q6 8 16 9.5t18-4.5l33-24ZM381-390v-203q0-11-8.5-19t-19.5-8q-11 0-19 8t-8 19v213q0 17 11.5 28.5T366-340h114q11 0 18-7t7-18q0-11-7-18t-18-7h-99Zm499-330v400q0 66-47 113t-113 47H240q-66 0-113-47T80-320v-400q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Z" /> : <path d="M582-548v181q0 11 8 19t19 8q11 0 19-8t8-19v-242q0-5-2.5-8t-7.5-3h-23q-2 0-6 2l-77 55q-8 6-9.5 16t4.5 18q6 8 16 9.5t18-4.5l33-24ZM381-390v-203q0-11-8.5-19t-19.5-8q-11 0-19 8t-8 19v213q0 17 11.5 28.5T366-340h114q11 0 18-7t7-18q0-11-7-18t-18-7h-99Zm499-330v400q0 66-47 113t-113 47H240q-66 0-113-47T80-320v-400q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-80 0H160v400q0 33 23.5 56.5T240-240h480q33 0 56.5-23.5T800-320v-400Zm0 0H160h640Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M582-548v181q0 11 8 19t19 8q11 0 19-8t8-19v-242q0-5-2.5-8t-7.5-3h-23q-2 0-6 2l-77 55q-8 6-9.5 16t4.5 18q6 8 16 9.5t18-4.5l33-24ZM381-390v-203q0-11-8.5-19t-19.5-8q-11 0-19 8t-8 19v213q0 17 11.5 28.5T366-340h114q11 0 18-7t7-18q0-11-7-18t-18-7h-99Zm499-330v400q0 66-47 113t-113 47H240q-66 0-113-47T80-320v-400q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Z";
+
+export function IconGameButtonL1({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start : start + "m-80 0H160v400q0 33 23.5 56.5T240-240h480q33 0 56.5-23.5T800-320v-400Zm0 0H160h640Z"} /></Icon>;
 }

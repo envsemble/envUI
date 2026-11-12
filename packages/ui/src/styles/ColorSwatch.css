@@ -1,20 +1,70 @@
-/* A round color sample with a hairline ring that keeps light and dark colors visible. */
-.env-color-swatch {
-  display: inline-block;
-  inline-size: 1rem;
-  block-size: 1rem;
-  border-radius: 100vmax;
-  box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-muted);
-}
-.env-icon > .env-color-swatch {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
-}
-
-/* Forced colors: a swatch shows a color as content, as an image does, so the system keeps it. */
-@media (forced-colors: active) {
+@layer env.components {
+  /* ColorSwatch, from @envsemble/envui/color: a small rounded square of a color with a hairline edge
+     that keeps light and dark colors visible, a checkerboard under a translucent one, and an optional
+     name and value beside it. */
   .env-color-swatch {
-    forced-color-adjust: none;
+    --env-color-swatch-size: 1rem;
+    --env-color-swatch-checker: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--env-space-2);
+    min-inline-size: 0;
+    vertical-align: middle;
+  }
+  .env-color-swatch[data-size='sm'] {
+    --env-color-swatch-size: 0.75rem;
+    --env-color-swatch-checker: 0.375rem;
+  }
+  .env-color-swatch-sample {
+    flex-shrink: 0;
+    inline-size: var(--env-color-swatch-size);
+    block-size: var(--env-color-swatch-size);
+    border-radius: var(--env-radius-xs);
+    background-color: var(--env-color-swatch-color);
+    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-muted);
+  }
+  .env-color-swatch-sample[data-translucent] {
+    background:
+      linear-gradient(var(--env-color-swatch-color), var(--env-color-swatch-color)),
+      repeating-conic-gradient(var(--env-color-bg-neutral-muted) 0 25%, transparent 0 50%) 0 0 /
+        var(--env-color-swatch-checker) var(--env-color-swatch-checker);
+  }
+  .env-color-swatch-value {
+    font-variant-numeric: tabular-nums;
+  }
+  .env-color-swatch-label + .env-color-swatch-value {
+    color: var(--env-color-fg-muted);
+  }
+  /* As a Button's icon, the sample takes the icon's size. */
+  .env-icon > .env-color-swatch {
+    display: block;
+    --env-color-swatch-size: 100%;
+  }
+  /* An icon button that shows a swatch alone, in the default secondary variant, draws no round fill
+     behind the square sample: it is a rounded square that shows its fill only on hover, keyboard
+     focus, press and while its popup is open. The selectors match Button.css's, so they keep the
+     specificity application styles meet and win by order. */
+  .env-icon-button:where([data-variant='secondary']:has(> .env-icon > .env-color-swatch)) {
+    border-radius: var(--env-radius-sm);
+    background: var(--env-button-custom-fill, transparent);
+  }
+  .env-icon-button:where([data-variant='secondary']:has(> .env-icon > .env-color-swatch)):is(
+      :hover,
+      :focus-visible,
+      [aria-expanded='true']
+    ):not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+  }
+  .env-icon-button:where(
+      [data-variant='secondary']:has(> .env-icon > .env-color-swatch)
+    ):active:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
+  }
+
+  /* Forced colors: a swatch shows a color as content, as an image does, so the system keeps it. */
+  @media (forced-colors: active) {
+    .env-color-swatch-sample {
+      forced-color-adjust: none;
+    }
   }
 }

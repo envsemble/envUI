@@ -23,10 +23,14 @@ const tail =
 const icon = ', or IconButton for an icon-only button';
 
 /** The error for an element, by the data the message is built from. */
-function uses(use, found, { alternatives = '', imports = use.split('.')[0], note = '' } = {}) {
+function uses(
+  use,
+  found,
+  { alternatives = '', imports = use.split('.')[0], note = '', source = '@envsemble/envui' } = {},
+) {
   return {
     messageId: 'useComponent',
-    data: { use, found, alternatives, imports, note: note && ` ${note}` },
+    data: { use, found, alternatives, imports, source, note: note && ` ${note}` },
   };
 }
 
@@ -55,18 +59,18 @@ ruleTester.run('no-html-elements', rule, {
     '<div onClick={() => setOpen(false)} />',
     '<li onClick={select}>One</li>',
     // A widget role on the component it names.
-    '<Menu.Root role="menu" />',
+    '<Tree role="tree" aria-label="Files" items={items} />',
     '<Dialog role="alertdialog" title="Delete?" />',
     '<Tabs role="tablist" items={items} />',
     // An envUI component that renders the role itself; a role on it refines its own.
-    'import { Popover, Menu } from \'@envsemble/envui\'; <><Popover role="dialog" /><Menu.Submenu role="menu" /></>;',
-    'import * as ui from \'@envsemble/envui\'; <><ui.Popover role="dialog" /><ui.Menu.Submenu role="menu" /></>;',
+    'import { Popover, Spinner } from \'@envsemble/envui\'; <><Popover role="dialog" /><Spinner role="progressbar" /></>;',
+    'import * as ui from \'@envsemble/envui\'; <><ui.Popover role="dialog" /><ui.Table.Root role="table" /></>;',
     'import { Popover as Card } from \'@envsemble/envui\'; <Card role="dialog" />;',
     'import { Spinner } from \'@envsemble/envui\'; <Spinner role="progressbar" label="Saving" />;',
-    'import { MarkdownEditor } from \'@envsemble/envui/content\'; <MarkdownEditor role="textbox" />;',
+    'import { MarkdownEditor } from \'@envsemble/envui/markdown\'; <MarkdownEditor role="textbox" />;',
     'import { RichTextEditor } from \'@envsemble/envui/rich-text\'; <RichTextEditor role="textbox" />;',
     // Without an import, the full name decides.
-    '<Menu.Submenu role="menu" />',
+    '<Table.Root role="table" />',
     // Roles envUI has no component for, and roles that only make sense inside a container.
     '<div role="region" aria-label="Summary" />',
     '<li role="menuitem">Rename</li>',
@@ -155,7 +159,12 @@ ruleTester.run('no-html-elements', rule, {
     { code: '<input type="time" />', errors: [uses('TimePicker', 'a raw <input type="time">')] },
     { code: '<input type="month" />', errors: [uses('MonthPicker', 'a raw <input type="month">')] },
     { code: '<input type="file" />', errors: [uses('DropZone', 'a raw <input type="file">')] },
-    { code: '<input type="color" />', errors: [uses('ColorPicker', 'a raw <input type="color">')] },
+    {
+      code: '<input type="color" />',
+      errors: [
+        uses('ColorPicker', 'a raw <input type="color">', { source: '@envsemble/envui/color' }),
+      ],
+    },
     {
       code: '<input type="submit" value="Send" />',
       errors: [
@@ -260,8 +269,8 @@ ruleTester.run('no-html-elements', rule, {
       errors: [uses('Dialog', '<Surface role="dialog">')],
     },
     {
-      code: 'import { Stack, Card } from \'@envsemble/envui\'; <Stack role="menu"><Card role="menuitem">Rename</Card></Stack>;',
-      errors: [uses('Menu.Root', '<Stack role="menu">')],
+      code: 'import { Column, Card } from \'@envsemble/envui\'; <Column role="menu"><Card role="menuitem">Rename</Card></Column>;',
+      errors: [uses('Menu.Root', '<Column role="menu">')],
     },
     {
       code: 'import * as ui from \'@envsemble/envui\'; <ui.Text role="alert">Saved</ui.Text>;',
@@ -273,17 +282,17 @@ ruleTester.run('no-html-elements', rule, {
     },
     // A part of the namespace that the role names is not the component that renders it.
     {
-      code: 'import { Menu } from \'@envsemble/envui\'; <><Menu.Separator role="menu" /><Menu.Item role="menu" /></>;',
+      code: 'import { Table } from \'@envsemble/envui\'; <><Table.Row role="table" /><Table.Cell role="table" /></>;',
       errors: [
-        uses('Menu.Root', '<Menu.Separator role="menu">'),
-        uses('Menu.Root', '<Menu.Item role="menu">'),
+        uses('Table.Root', '<Table.Row role="table">'),
+        uses('Table.Root', '<Table.Cell role="table">'),
       ],
     },
     {
-      code: '<><Menu.Separator role="menu" /><Menu.Item role="menu" /></>',
+      code: '<><Table.Row role="table" /><Table.Cell role="table" /></>',
       errors: [
-        uses('Menu.Root', '<Menu.Separator role="menu">'),
-        uses('Menu.Root', '<Menu.Item role="menu">'),
+        uses('Table.Root', '<Table.Row role="table">'),
+        uses('Table.Root', '<Table.Cell role="table">'),
       ],
     },
     // Another library's component is not envUI's, whatever its name.
@@ -302,9 +311,9 @@ ruleTester.run('no-html-elements', rule, {
       code: 'import { Surface as Dialog } from \'@envsemble/envui\'; <Dialog role="dialog" />;',
       errors: [uses('Dialog', '<Dialog role="dialog">')],
     },
-    // envUI's icons are not its components.
+    // envUI's icons are not its components, whatever their local name.
     {
-      code: 'import { Button } from \'@envsemble/envui/icons\'; <Button role="button" />;',
+      code: 'import { IconSmartButton as Button } from \'@envsemble/envui/icons/SmartButton\'; <Button role="button" />;',
       errors: [
         uses('Button', '<Button role="button">', {
           alternatives: icon,
@@ -504,7 +513,7 @@ ruleTester.run('no-html-elements with modules that re-export envUI', rule, {
       filename: page,
     },
     {
-      code: 'import { Popover as Card, Menu } from \'@/components/ui\'; <><Card role="dialog" /><Menu.Submenu role="menu" /></>;',
+      code: 'import { Popover as Card, Table } from \'@/components/ui\'; <><Card role="dialog" /><Table.Root role="table" /></>;',
       settings: reexports,
       filename: page,
     },

@@ -1,0 +1,57 @@
+@layer env.components {
+  /* A person's avatar as a control. The halo is a state layer, so it shows on any surface. */
+  .env-avatar-button {
+    flex: 0 0 auto;
+    inline-size: fit-content;
+    block-size: fit-content;
+    display: inline-grid;
+    place-items: center;
+    padding: var(--env-space-1);
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  .env-avatar-button:hover:not(:disabled) {
+    background: var(--env-color-bg-neutral-subtle-hover);
+  }
+  /* The halo stays while the button's menu is open. */
+  .env-avatar-button:is(:active, [aria-expanded='true']):not(:disabled) {
+    background: var(--env-color-bg-neutral-subtle-pressed);
+  }
+  .env-avatar-button:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
+  }
+  .env-avatar-button:disabled {
+    opacity: var(--env-state-disabled-opacity);
+    cursor: default;
+  }
+  /* Under a coarse pointer the halo around a small avatar grows to the touch height. */
+  @media (pointer: coarse) {
+    .env-avatar-button {
+      min-inline-size: var(--env-control-height-touch);
+      min-block-size: var(--env-control-height-touch);
+    }
+  }
+  .env-avatar-button-tooltip {
+    display: grid;
+  }
+  .env-avatar-button-tooltip > :last-child {
+    opacity: 0.8;
+  }
+
+  /* Motion: the avatar settles slightly while it is held, as a button does. Only without a
+     reduced-motion preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-avatar-button {
+      transition-property: background-color, color, border-color, transform;
+      transition-duration: var(--env-motion-duration-fast);
+      transition-timing-function: var(--env-motion-ease-enter);
+    }
+    .env-avatar-button:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+  }
+}

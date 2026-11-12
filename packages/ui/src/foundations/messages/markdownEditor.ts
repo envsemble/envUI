@@ -24,5 +24,3 @@ export const markdownEditor = {
   /** Said when the application's link picker failed. */
   pickerFailed: 'The link picker could not finish. Try again.',
 };
-
-export type MarkdownEditorMessages = typeof markdownEditor;

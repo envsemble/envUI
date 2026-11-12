@@ -1,18 +1,35 @@
-/* The parts MarkdownEditor and RichTextEditor share: the formatting toolbar, which scrolls sideways
-   where it is wider than the editor, and the status line under the field, out of sight while it
-   is empty. */
-.env-editor-toolbar {
-  min-inline-size: 0;
-  overflow-x: auto;
-  scrollbar-width: thin;
-  /* Let focus rings stay visible while keeping the buttons aligned with the field. */
-  padding: var(--env-space-2);
-  margin: calc(-1 * var(--env-space-2));
-}
-.env-editor-status:empty {
-  position: absolute;
-  inline-size: 0.0625rem;
-  block-size: 0.0625rem;
-  clip-path: inset(50%);
-  overflow: hidden;
+@layer env.components {
+  /* The parts MarkdownEditor and RichTextEditor share: the formatting toolbar, whose groups wrap onto
+     more rows where they are wider than the editor, so every button stays in view, and the status
+     line under the field, out of sight while it is empty. */
+  .env-editor-toolbar {
+    /* What leads a group after the first: its separator, the separator's margins and the group's
+       gap (Toolbar.css). */
+    --env-editor-toolbar-lead: calc(3 * var(--env-space-1) + var(--env-control-border-width));
+    min-inline-size: 0;
+    /* Room for the buttons' focus rings, whose ring and offset are a space step, while the buttons
+       line up with the field. What lies further out, the separator a row starts with, is cut off. */
+    padding: var(--env-space-1);
+    margin: calc(-1 * var(--env-space-1));
+    overflow: clip;
+  }
+  /* Each group after the first leads with its separator (EditorToolbar.tsx). The row starts a lead
+     before the toolbar, and the first group a lead into it, so a row that starts with a separator
+     has it out of view, and a row never ends with one. */
+  .env-editor-toolbar > .env-toolbar {
+    flex-wrap: wrap;
+    margin-inline-start: calc(-1 * var(--env-editor-toolbar-lead));
+  }
+  .env-editor-toolbar > .env-toolbar > .env-toolbar-group:first-child {
+    margin-inline-start: var(--env-editor-toolbar-lead);
+  }
+  .env-editor-status:empty {
+    /* Visually hidden: a pixel's box, clipped away, still read. */
+    --env-editor-status-size: 0.0625rem;
+    position: absolute;
+    inline-size: var(--env-editor-status-size);
+    block-size: var(--env-editor-status-size);
+    clip-path: inset(50%);
+    overflow: hidden;
+  }
 }

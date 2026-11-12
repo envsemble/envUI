@@ -3,26 +3,30 @@ title: Form layout and validation
 summary: Ask for information in a form, check it, and help people fix what's wrong.
 status: beta
 since: 1.0.0
-intent: Collect and change information
+intent: Enter and change data
 aliases:
   - form
   - form validation
   - error summary
   - error message
   - required field
+  - multi-step form
+  - stepper
+  - wizard
+  - which control
   - optional field
   - inline validation
   - submit
 useWhen:
-  - Someone gives or changes several pieces of information at once, and submits them together.
-  - A form refuses what people entered and they need to find and fix each problem.
+  - Several answers, given and submitted together
+  - Finding and fixing what a form refused
 avoidWhen:
   - text: A single setting that takes effect at once.
     see: settings
-  - text: Confirming a destructive action.
-    use: ConfirmDialog
-  - text: Filtering a list or a table as people choose.
-    use: SearchField
+  - text: Deleting or removing something, with undo or a confirmation.
+    see: destructive-actions
+  - text: Narrowing a list or a table as people choose, without submitting.
+    see: filtering
 composes:
   - Field
   - TextField
@@ -33,129 +37,216 @@ composes:
   - Radio
   - Checkbox
   - DatePicker
+  - Progress
+  - DescriptionList
   - Button
   - Alert
   - Link
-  - Stack
+  - Column
+  - Grid
+  - Row
   - Text
-related:
-  - settings
-  - destructive-actions
-  - field
-  - text-field
-  - select
-  - radio
+examples:
+  CreateProject: overview
+  OneColumn:
+    role: do
+    caption: One column, read top to bottom, with the action after the last field.
+  SideBySide:
+    role: caution
+    caption: 'Fields side by side: people miss the one beside their path.'
+  FormAnatomy: anatomy
+  ErrorSummary: example
+  GroupedChoices: example
+  LongFormInSteps: example
+  ValidationTiming: example
+  ServerError: example
 ---
 
 # Form layout and validation
 
-## Overview
-
-Use this pattern to ask for information in a form and get it right on the first submit: one column of labelled fields, the primary action after the last one, and errors that say how to fix each problem, shown when people submit or leave a field, with focus taken to where they need to act.
-
-```tsx example=CreateProject
-
-```
-
-## Anatomy
-
-1. **Form:** a native `form` with `noValidate`, so the application checks the fields and words the errors, and Enter in a field submits. One column, in a readable width.
-2. **Fields:** [TextField](../components/text-field.md), [Textarea](../components/text-field.md), [Select](../components/select.md), [Combobox](../components/combobox.md), [DatePicker](../components/date-picker.md), each with a visible `label`, a `description` for a format or a constraint, and an `error` while the value is wrong. Set `name`, `type` and `autoComplete` so the browser can fill and submit them. For a control of your own, [Field](../components/field.md) gives the same label, description and error.
-3. **Choices:** a [RadioGroup](../components/radio.md) of `Radio` options for one choice, a [Checkbox](../components/checkbox.md) for one yes-or-no answer, and a group of Checkboxes for several (see "Grouped choices").
-4. **Actions:** the primary [Button](../components/button.md), `type="submit"`, first and at the start of the row after the last field, with `pending` while the form is sent. A secondary action, such as Cancel, follows it.
-5. **Error summary:** after a refused submit, an [Alert](../components/alert.md) `tone="danger"` at the top of the form, its title "There is a problem" a level-2 heading, listing each error as a [Link](../components/link.md) to its field.
-6. **Outcome:** a [Text](../foundations/typography.md) with `role="status"` that says the form was saved, or a toast where the page changes.
-
-## States and behaviour
-
-- **Validate on submit first.** Check every field when people submit. If any is wrong, show each field's `error` and the error summary, and move focus to the summary. A form with one field, or one that only checks a single field, can move focus straight to it instead, as the lead example does. When focus is already in that field, as after Enter in it, focusing it again reads nothing, so say the error in a status instead; otherwise only move focus, so the error isn't read twice.
-- **Then on blur.** Once people have typed in a field, check it as they leave it.
-- **Never while typing.** An error doesn't appear while people type, but it goes as soon as the value is fixed: a field that was wrong is checked on every change, only to clear it.
-- **Keep submit enabled.** Never disable the submit button to signal invalid input; people can't tell why it doesn't work, and the button can't be focused to find out. Submit, and say what is wrong.
-- **Sending.** The submit button is `pending` while the form is sent: it keeps its size, reports busy and ignores presses. The fields stay as they are.
-- **Failure of the system.** When the server refuses or can't be reached, keep everything people entered, show an Alert at the top that says what happened and what to do, move focus to it, and let people submit again.
-- **Success.** Say it once in a status, or move on to the new page. Don't clear the form on a failure.
-- **Narrow windows.** The column fills the width; the action row wraps.
-- **Not covered: multi-step forms.** envUI has no stepper yet. Split a long form into pages of your own, each with its own submit and a "Back" link, and keep the steps short.
-
-## Content guidelines
-
-- Labels, optional fields and descriptions follow [Labels, descriptions and placeholders](../foundations/content.md#labels-descriptions-and-placeholders): a noun phrase, "(optional)" on the fields that are, never a placeholder as the label.
-- Errors follow [Error messages](../foundations/content.md#error-messages): say how to fix the value, "Enter an email address like name@example.com", with no "Error:" prefix. Use the same message in the field and in the summary.
-- Name the submit button after what it does, "Create project" or "Save details", following [Buttons and actions](../foundations/content.md#buttons-and-actions); never "Submit".
-- Title the error summary "There is a problem".
-
-## Do and don't
-
-### Do
-
-- Ask only for what you need, in the order people think of it.
-- Put the primary button first, at the start, after the last field.
-- Set `type` and `autoComplete` on fields people fill in often, such as names, email addresses and phone numbers.
-- Keep what people entered after any error.
-
-### Don't
-
-- Don't lay fields out in several columns; people miss the ones beside their path.
-- Don't disable submit until the form is valid.
-- Don't use a placeholder as a label or for instructions that must stay.
-- Don't show an error while people are still typing.
-- Don't mark required fields with an asterisk; mark the optional ones.
-
-## Accessibility
-
-### Focus and keyboard
-
-Tab moves through the fields in the order they show, and Enter in a text field submits the form. When a submit is refused, focus moves to the error summary, whose content is read as it takes focus; Tab then reaches its links, and each link moves focus to its field rather than only scrolling to it. Where a form moves focus straight to an invalid field instead, the field reads its label and its error as focus arrives. After Enter in that field, focus is already there and nothing is read, so only then does the status beside the actions say the error; after a click on the submit button, moving focus reads it, and the status stays empty. After a failure of the system, focus moves to the Alert at the top. After success, focus stays on the submit button and the status is announced.
-
-### envUI provides
-
-- Native inputs, text areas, radios and checkboxes, so typing, autofill, form submission and reset behave as the platform's.
-- A label tied to every field, and RadioGroup as a `fieldset` whose `legend` names its options.
-- The `description` and the `error` linked to the control as its description, and `aria-invalid` while `error` is set.
-- A pending Button that keeps its size, reports busy and ignores presses.
-- Alerts with a tone icon hidden from assistive technology; info and success Alerts as status messages.
-
-### You provide
-
-- `noValidate` and the checks, with an error message for each field.
-- Moving focus after a refused submit, to the summary or the invalid field: `tabIndex={-1}` and a ref on the summary Alert let it take focus.
-- Where focus goes straight to the field, the error in a status too, for when focus is already in the field.
-- A heading for the summary's title: `role="heading"` and `aria-level={2}` on an element in `title`.
-- Links in the summary whose `onClick` focuses their field.
-- A `fieldset` and `legend` around a group of checkboxes, until envUI has a checkbox group.
-- A status message, `role="status"`, when the form is saved.
-
-## Examples
+## Variants
 
 ### Error summary
 
-Submitting with errors shows each field's error and a summary at the top, which takes focus. Each link in it moves focus to its field. envUI has no error summary component yet: this is a danger Alert with a list of Links, and its title is made a heading by hand. Leave the Alert without `announce`: a danger Alert then has no role, so it is read once, as it takes focus, rather than announced as an alert and read again with focus.
+After a refused submit, a danger [Alert](../components/alert.md) titled "There is a problem" lists each error as a [Link](../components/link.md) that moves focus to its field. It is read once, as it takes focus, with no announcement of its own.
 
-```tsx example=ErrorSummary
-
-```
-
-### Validation timing
-
-A field is checked when people leave it, once they have typed in it, and on submit. While people type, an error only clears, as soon as the value is right. With two fields, a refused submit shows the error summary and moves focus to it.
-
-```tsx example=ValidationTiming
-
-```
-
-### Server error
-
-The first save fails: the fields keep their values, an Alert at the top says what happened and takes focus, and saving again succeeds.
-
-```tsx example=ServerError
+```tsx figure=ErrorSummary motion
 
 ```
 
 ### Grouped choices
 
-One choice of several is a RadioGroup. Several choices are Checkboxes in a native `fieldset` whose `legend` names them, since envUI has no checkbox group yet.
+Several checkboxes go in a group whose name says what they are for, as the choices of a [RadioGroup](../components/radio.md) do.
 
-```tsx example=GroupedChoices
+```tsx figure=GroupedChoices
 
 ```
+
+### A long form in steps
+
+A long form splits into a few short steps, each a page of its own with its fields.
+
+- [Progress](../components/progress.md), split into steps, says where people are.
+- Continue checks the step's fields before moving on, and Back keeps every answer.
+- The last step shows the answers before the form's own action.
+
+```tsx figure=LongFormInSteps motion
+
+```
+
+## Anatomy
+
+```tsx figure=FormAnatomy
+
+```
+
+1. **Error summary** (`env-alert`)
+2. **Field and its label** (`env-text-field-control`, `label`)
+3. **Description** (`env-field-description`, `description`)
+4. **Error** (`env-field-error`, `error`)
+5. **Primary action** (`env-button:not(env-link)`)
+
+## Behaviour
+
+### When to check
+
+On submit first: show each field's error, and move focus to the error summary, or straight to the field when there is only one.
+
+- Then as people leave a field they have typed in.
+- Never while they type, though an error goes as soon as the value is right.
+
+```tsx figure=ValidationTiming motion
+
+```
+
+### Sending
+
+While the form is sent, its submit button shows that it is working: it keeps its size and ignores presses.
+
+- When the server refuses or can't be reached, keep everything people entered.
+- Move focus to an [Alert](../components/alert.md) at the top that says what to do.
+
+```tsx figure=ServerError motion
+
+```
+
+## Rules
+
+The aim is a form people get right on the first submit.
+
+### Which control?
+
+Ask for a choice with the control that shows it best.
+
+| Control           | Use for                                                                                      |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| Checkbox          | A yes or no that waits for the submit, or several choices of a few.                          |
+| Switch            | A setting that applies at once, outside a form people submit, as in [settings](settings.md). |
+| Radio group       | One choice of a few, all in view, where people compare them.                                 |
+| Segmented control | One choice of a few short options that changes a view at once, such as a layout.             |
+| Select            | One choice of many, or of a few where room is short.                                         |
+| Combobox          | One choice of a long list that people type to find, such as a time zone or a person.         |
+
+### Dates and times
+
+A date, a time or a month each have a picker of their own, which people can also type into.
+
+| Control      | Use for                                                     |
+| ------------ | ----------------------------------------------------------- |
+| Date picker  | A day, such as a due date or a start date.                  |
+| Time picker  | A time of day, such as when a meeting starts.               |
+| Month picker | A month, such as a report's period or a card's expiry date. |
+
+```tsx figure=OneColumn
+
+```
+
+```tsx figure=SideBySide
+
+```
+
+### After an error
+
+Keep the submit button enabled, and say what is wrong after a submit.
+
+- A disabled button can't tell people why.
+- Keep what people entered after any error.
+
+### Labels
+
+A label is a short noun phrase with no colon, such as "Project name".
+
+- Mark the optional fields, "Description (optional)", never the required ones with a star.
+- A format or a limit goes in the description, read before people type.
+- A placeholder holds only an example value, such as name@example.com, never the label or instructions.
+- The submit button says what it does, "Create project", never "Submit".
+- Cancel, where a form has one, is a secondary Button before it, as a dialog's close button is.
+
+### Error messages
+
+Start with the fix, in the field's own words, such as "Enter a due date after the start date" or "Enter an email address like name@example.com".
+
+- Never "Error: invalid input" or "Project name is required!".
+- Blame no one and show no code; a reference may follow for support.
+- The summary is titled "There is a problem" and repeats each field's message word for word.
+
+## Accessibility
+
+### Focus and keyboard
+
+<kbd>Tab</kbd> follows the fields in the order they show, and <kbd>Enter</kbd> in a text field submits.
+
+- A refused submit moves focus to the summary, whose links each focus their field.
+- Where focus goes straight to the field and is already there, as after <kbd>Enter</kbd>, say the error in a status too.
+
+### envUI provides
+
+- Native inputs, radios and checkboxes, so typing, autofill and submission behave as the platform's.
+- A label tied to every field; the description and error linked to it, and `aria-invalid` while `error` is set.
+- RadioGroup as a `fieldset` with its `legend`, and a pending Button that reports busy.
+
+### You provide
+
+- `noValidate`, the checks and their messages, and focus after a refused submit: `tabIndex={-1}` and a ref on the summary.
+- Links in the summary whose `onClick` focuses their field.
+- A `fieldset` and `legend` around a group of checkboxes, and a `role="status"` message once saved.
+
+## Compose
+
+### Usage
+
+A form is a native `<form noValidate onSubmit={…}>`, and the application runs the checks. On submit, set each wrong field's `error` and focus the error summary, or the field when only one is wrong. Then check a field in its `onBlur`, and clear its `error` as soon as the value fits.
+
+```tsx source=ErrorSummary
+
+```
+
+#### Sending
+
+```tsx
+<Button type="submit" pending={sending}>
+  Create project
+</Button>
+```
+
+When the server refuses or can't be reached, keep the values and focus a danger Alert at the top.
+
+#### Error summary
+
+A danger Alert with `tabIndex={-1}` and a ref, without `announce`, so it is read once as it takes focus; its title takes `role="heading"`. Each error is a Link whose `onClick` focuses its field through the field's `ref`.
+
+#### Grouped choices and browser help
+
+A RadioGroup is a `fieldset` whose `legend` is its `label`; Checkboxes go in a native `fieldset` and `legend`. Set `type` and `autoComplete`, such as `autoComplete="email"`, on fields people fill in often.
+
+#### A long form in steps
+
+Keep every step's answers in state above the steps, so Back keeps them. Progress takes `segments` and `max` of the number of steps, `value` and `aria-valuetext`, such as "Step 2 of 3: Team". Continue, a `type="submit"` Button, checks only its step's fields, then focuses the next step's heading, a Text with `tabIndex={-1}`. The last step shows the answers in a DescriptionList, as the LongFormInSteps example does.
+
+### Composition
+
+One Column, kept to a width that reads easily, such as `maxInlineSize: '32rem'`, with the actions in a Row after the last field, the primary action last. A Grid suits only short fields that belong together, such as a city and a postal code. Field's parts build a control envUI lacks.
+
+## Changelog
+
+- **1.0.0**: The page is on the figure template, with a long form in steps, which controls to choose, and the labels and error messages of the content guidelines.

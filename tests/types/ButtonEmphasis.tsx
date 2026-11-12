@@ -33,22 +33,22 @@ export const designed = (
     <IconButton variant="secondary" tone="neutral" icon={icon} aria-label="Settings" />
     <IconButton variant="primary" tone="accent" icon={icon} aria-label="Add" />
     <IconButton variant="ghost" tone="danger" icon={icon} aria-label="Delete" />
-    <ConfirmButton confirmLabel="Remove?" onConfirm={noop}>
+    <ConfirmButton confirmLabel="Remove" onConfirm={noop}>
       Remove
     </ConfirmButton>
-    <ConfirmButton tone="danger" confirmLabel="Remove?" onConfirm={noop}>
+    <ConfirmButton tone="danger" confirmLabel="Remove" onConfirm={noop}>
       Remove
     </ConfirmButton>
-    <ConfirmButton variant="primary" tone="accent" confirmLabel="Publish?" onConfirm={noop}>
+    <ConfirmButton variant="primary" tone="accent" confirmLabel="Publish" onConfirm={noop}>
       Publish
     </ConfirmButton>
-    <ConfirmButton icon={icon} aria-label="Remove" confirmLabel="Remove?" onConfirm={noop} />
+    <ConfirmButton icon={icon} aria-label="Remove" confirmLabel="Remove" onConfirm={noop} />
     <ConfirmButton
       variant="ghost"
       tone="danger"
       icon={icon}
       aria-label="Remove"
-      confirmLabel="Remove?"
+      confirmLabel="Remove"
       onConfirm={noop}
     />
     <CopyButton value="text" aria-label="Copy link" />
@@ -67,13 +67,13 @@ export const iconButtonDanger = <IconButton tone="danger" icon={icon} aria-label
 export const iconButtonAccent = <IconButton tone="accent" icon={icon} aria-label="Add" />;
 export const confirmSecondaryAccent = (
   // @ts-expect-error A secondary button is neutral, also at rest.
-  <ConfirmButton variant="secondary" tone="accent" confirmLabel="Remove?" onConfirm={noop}>
+  <ConfirmButton variant="secondary" tone="accent" confirmLabel="Remove" onConfirm={noop}>
     Remove
   </ConfirmButton>
 );
 export const confirmDefaultAccent = (
   // @ts-expect-error Without a variant a ConfirmButton rests outline, which has no accent.
-  <ConfirmButton tone="accent" confirmLabel="Remove?" onConfirm={noop}>
+  <ConfirmButton tone="accent" confirmLabel="Remove" onConfirm={noop}>
     Remove
   </ConfirmButton>
 );
@@ -83,7 +83,7 @@ export const confirmIconDanger = (
     tone="danger"
     icon={icon}
     aria-label="Remove"
-    confirmLabel="Remove?"
+    confirmLabel="Remove"
     onConfirm={noop}
   />
 );
@@ -117,11 +117,15 @@ export const unions = (
     </Button>
     <IconButton variant={variant} icon={icon} aria-label="Settings" />
     <IconButton variant={strong} tone="danger" icon={icon} aria-label="Delete" />
-    <ConfirmButton variant={variant} confirmLabel="Remove?" onConfirm={noop}>
+    <ConfirmButton variant={variant} confirmLabel="Remove" onConfirm={noop}>
       Remove
     </ConfirmButton>
     <CopyButton value="text" variant={variant} aria-label="Copy link" />
-    <Button variant={anyVariant} iconOnly icon={icon} aria-label="Settings" />
+    <IconButton variant={anyVariant} icon={icon} aria-label="Settings" />
+    <IconButton href="/settings" variant="ghost" icon={icon} aria-label="Settings" />
+    <IconButton icon={icon} aria-labelledby="settings-heading" />
+    {/* @ts-expect-error IconButton is the one icon-only button. */}
+    <Button iconOnly icon={icon} aria-label="Settings" />
   </>
 );
 
@@ -133,3 +137,6 @@ export const iconUnionAccent = (
   // @ts-expect-error Only a primary button takes accent.
   <IconButton variant={strong} tone="accent" icon={icon} aria-label="Add" />
 );
+
+// @ts-expect-error An IconButton needs a name: aria-label or aria-labelledby.
+export const unnamedIconButton = <IconButton icon={icon} />;

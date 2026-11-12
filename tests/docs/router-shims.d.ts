@@ -1,5 +1,5 @@
 // Minimal declarations of the routers the setup page's recipes use, as far as the recipes use them,
-// so tests/RouterRecipes.test.mjs type-checks the recipes without installing the routers. Each
+// so tests/docs/RouterRecipes.test.ts type-checks the recipes without installing the routers. Each
 // link takes an anchor's props and a ref, as the router's own does.
 
 declare module '@tanstack/react-router' {

@@ -1,61 +1,93 @@
-/* Spinner: an arc that turns and lengthens, for work of unknown length in a small area. */
-.env-spinner {
-  display: inline-block;
-  flex: 0 0 auto;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
-  /* The hook --env-spinner-color recolors it, such as to a button's label color. */
-  color: var(--env-spinner-color, var(--env-color-bg-brand-emphasis));
-}
-.env-spinner:where([data-size='sm']) {
-  inline-size: 1rem;
-  block-size: 1rem;
-}
-.env-spinner:where([data-size='lg']) {
-  inline-size: 3rem;
-  block-size: 3rem;
-}
-.env-spinner > svg {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
-  animation: env-spinner-turn 1.4s linear infinite;
-}
-.env-spinner-arc {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 5;
-  stroke-linecap: round;
-  stroke-dasharray: 1 200;
-  animation: env-spinner-arc 1.4s ease-in-out infinite;
-}
-@keyframes env-spinner-turn {
-  to {
-    transform: rotate(360deg);
+@layer env.components {
+  /* Spinner: an arc that turns and lengthens, for work of unknown length in a small area. */
+  .env-spinner {
+    display: inline-block;
+    flex: 0 0 auto;
+    /* Its size: 1.5 rem, 1 rem when small and 3 rem when large. */
+    --env-spinner-size: 1.5rem;
+    inline-size: var(--env-spinner-size);
+    block-size: var(--env-spinner-size);
+    /* The hook --env-spinner-color recolors it, such as to a button's label color. */
+    color: var(--env-spinner-color, var(--env-color-bg-primary-emphasis));
   }
-}
-@keyframes env-spinner-arc {
-  0% {
-    stroke-dasharray: 1 200;
-    stroke-dashoffset: 0;
+  .env-spinner:where([data-size='sm']) {
+    --env-spinner-size: 1rem;
   }
-  50% {
-    stroke-dasharray: 90 200;
-    stroke-dashoffset: -35;
+  .env-spinner:where([data-size='lg']) {
+    --env-spinner-size: 3rem;
   }
-  100% {
-    stroke-dasharray: 90 200;
-    stroke-dashoffset: -124;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* The spinner keeps turning slowly, because it is the only sign of the work. */
   .env-spinner > svg {
-    animation-duration: 2.8s;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    /* A turn takes six times the slow duration, about 1.4 s, so motion tokens of 0s stop it. */
+    animation: env-spinner-turn calc(var(--env-motion-duration-slow) * 6) linear infinite;
   }
+  /* With its label shown: a status line that centres the spinner and a muted label in its row, for
+     loading with no known shape. The arc keeps the size the spinner's own box had. */
+  .env-spinner:not([data-label-hidden]) {
+    --env-spinner-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--env-space-3);
+    inline-size: auto;
+    block-size: auto;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
+  }
+  .env-spinner:not([data-label-hidden]):where([data-size='sm']) {
+    --env-spinner-size: 1rem;
+  }
+  .env-spinner:not([data-label-hidden]):where([data-size='lg']) {
+    --env-spinner-size: 3rem;
+  }
+  .env-spinner:not([data-label-hidden]) > svg {
+    flex: 0 0 auto;
+    inline-size: var(--env-spinner-size);
+    block-size: var(--env-spinner-size);
+    color: var(--env-spinner-color, var(--env-color-bg-primary-emphasis));
+  }
+  /* The circle is about 125.66 long (r 20). Its dash and gap add up to it, so the pattern repeats
+     once round and the arc ends a turn where it began; the arc never shortens below 30, about a
+     quarter turn, so a small spinner reads as an arc in every frame, never a lone dot. */
   .env-spinner-arc {
-    animation: none;
-    stroke-dasharray: 80 200;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 30 95.66;
+    animation: env-spinner-arc calc(var(--env-motion-duration-slow) * 6) var(--env-motion-ease)
+      infinite;
+  }
+  @keyframes env-spinner-turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes env-spinner-arc {
+    0% {
+      stroke-dasharray: 30 95.66;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 90 35.66;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 30 95.66;
+      stroke-dashoffset: -125.66;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* The spinner keeps turning slowly, because it is the only sign of the work. */
+    .env-spinner > svg {
+      animation-duration: calc(var(--env-motion-duration-slow) * 12);
+    }
+    .env-spinner-arc {
+      animation: none;
+      stroke-dasharray: 80 45.66;
+    }
   }
 }

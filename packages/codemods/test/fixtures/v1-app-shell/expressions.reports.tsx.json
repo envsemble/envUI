@@ -1,3 +1,0 @@
-[
-  "line 7: AppShell.Root: topbar is an expression, so the codemod can't tell where the mark and the context go: it placed them for the split topbar (headerSpan=\"main\"); move them to AppShell.Header's start for headerSpan=\"full\"."
-]

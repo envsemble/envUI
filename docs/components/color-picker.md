@@ -1,8 +1,8 @@
 ---
 title: ColorPicker
-summary: A color area, a hue slider and a HEX field for choosing an opaque color, and a color swatch that shows one.
+summary: Chooses a color, in the formats people work in.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - colour picker
@@ -11,12 +11,18 @@ aliases:
   - color field
   - hex color
   - hex input
+  - rgb
+  - hsl
+  - alpha
+  - opacity
+  - eyedropper
   - color swatch
   - swatch
   - color sample
 useWhen:
-  - People choose any opaque color, such as an accent or a label's color, by eye or by its HEX value.
-  - A button or a list shows a color that people chose, as a round sample (ColorSwatch).
+  - Any color, such as an accent, chosen by eye, by value or from presets
+  - A color in a toolbar, a row or a form that opens a picker (ColorPickerButton)
+  - A chosen color shown in a list or a table, with its value (ColorSwatch)
 avoidWhen:
   - text: Choosing one of a few named colors or themes.
     use: SegmentedControl
@@ -24,133 +30,290 @@ avoidWhen:
     use: Select
   - text: A light, dark or system appearance.
     use: Radio
-related:
-  - popover
-  - text-field
-  - button
-  - colors
-  - accessibility
 components:
   - ColorPicker
+  - ColorPickerButton
   - ColorSwatch
+examples:
+  MinimalPicker: overview
+  EveryFormat:
+    role: overview
+    caption: With alpha, one format at a time.
+  FormatsTogether: example
+  PickerButtonOpen: example
+  PresetSwatches: example
+  Swatches: example
+  SwatchFormats:
+    role: example
+    caption: Hex, RGB and HSL, a translucent color over a checkerboard, and the small size.
+  ColorPickerAnatomy: anatomy
+  FillWidth: example
+  PickerButton:
+    role: do
+    caption: The swatch and its value, named after the label.
+  SwatchAlone:
+    role: dont
+    caption: A swatch alone, which hides the value and names no color.
 ---
 
 # ColorPicker
 
-## Overview
+## Variants
 
-A color picker chooses one opaque color in three ways that stay in step: a color area for saturation and brightness, a hue slider and a native HEX field. The field is the shared text field, so it takes part in forms, validation and reset, and it accepts six hexadecimal digits with or without #. The picker reports valid colors as lowercase `#rrggbb`; the application owns the color and what it means.
+### Formats and values
 
-**ColorSwatch** is a round, decorative sample of a color, such as on the button that opens a ColorPicker in a Popover.
+The picker shows one format at a time, hex first, and the format menu switches to RGB or HSL.
 
-```tsx example=AccentColor
+- It can also show one format alone, with no menu, or several together.
+- Each channel's field shows its letter, such as R, G and B, beside its number.
+- A color with an alpha keeps it while it is translucent.
+
+<!-- specimen: FormatMenu -->
+
+### Several formats at once
+
+Several formats show their fields on a row each, with a copy button each. They edit the same color: typing in one moves the others.
+
+- The channels' letters and the hex value's # say which format a row holds.
+- The letters and numbers line up from row to row.
+- With an alpha, each row ends in it.
+
+```tsx figure=FormatsTogether motion
+
+```
+
+### Open from a button
+
+ColorPickerButton shows the color as a swatch and its value, and opens a picker in a popover.
+
+- It has no fill of its own: like a field, it takes the background of what it sits on.
+- One button can be given a fill of its own.
+
+```tsx figure=PickerButtonOpen motion
+
+```
+
+### Preset swatches
+
+A picker can offer colors to choose from, each with an optional name.
+
+```tsx figure=PresetSwatches motion
+
+```
+
+### Color swatches
+
+ColorSwatch shows a color as a small sample, with its value in a format and an optional label.
+
+As the icon of an icon button, it is a rounded square whose fill shows on hover, keyboard focus and press, and while its popup is open.
+
+```tsx figure=Swatches
+
+```
+
+```tsx figure=SwatchFormats
 
 ```
 
 ## Anatomy
 
-1. **Label** (`label`): the color's name above the picker, in supporting text; it names the picker's group and, with "HEX", its field.
-2. **Color area**: saturation across and brightness down for the current hue, with a round 1.75 rem handle; 3:2, between three small control heights and 14 rem tall.
-3. **Hue slider**: the hues as a bar under the area, as tall as a small control, with its own handle.
-4. **HEX field**: the shared text field labelled HEX, with a description, and an error when the draft isn't a color.
-5. **Swatch** (ColorSwatch): a round sample with a hairline ring in the strong border color, so white and black samples stay visible on every surface.
+```tsx figure=ColorPickerAnatomy
 
-## Variants and sizes
+```
 
-- The picker fills its container's width; the color area keeps its 3:2 shape within its height limits. Give the picker its width on the container, such as about 20 rem in a Popover.
-- The HEX field takes the field's `variant` and `size`, as a TextField does.
-- On touch screens the hue slider grows to 2.75 rem.
-- A ColorSwatch is 1 rem; as a Button's start icon, or inside another icon slot, it takes that icon's size.
+1. **Picker** (`env-color-picker`)
+2. **Label** (`env-color-picker-label`, `label`)
+3. **Color area** (`env-color-picker-area`)
+4. **Thumb** (`env-color-picker-area > env-color-picker-thumb`)
+5. **Hue slider** (`env-color-picker-slider[data-channel='hue']`)
+6. **Alpha slider** (`env-color-picker-slider[data-channel='alpha']`)
+7. **Format** (`env-color-picker-format`)
+8. **Fields** (`env-color-picker-fields`)
+9. **Eyedropper** (`env-color-picker-eye-dropper`)
+10. **Copy** (`env-color-picker-copy`)
+11. **Swatches** (`env-color-picker-swatches`, `swatches`)
+
+## Behaviour
+
+### States
+
+A read-only picker can be read and copied but not changed, and a disabled one takes no input.
 
 <!-- specimen: States -->
 
-## States and behaviour
+### Copy and the eyedropper
 
-- **Choosing**: dragging or pressing in the area or on the slider, the arrow keys, or a valid HEX value change the color, and `onValueChange` receives it, normalized to lowercase `#rrggbb`. `value` controls the picker; `defaultValue` starts an uncontrolled one at that color, or `#000000`.
-- **HEX drafts**: a partial or invalid draft doesn't call `onValueChange`. The field shows an error, "Use six hexadecimal digits (0–9, A–F).", reports itself invalid to the form and announces it; leaving the field with an invalid draft restores the last valid color and announces that. A valid draft is normalized as soon as it is typed.
-- **Rejected changes**: a controlled picker whose application keeps the old `value` returns the area, the slider and the field to it.
-- **Read only**: the area and the slider can't be changed or focused, and the HEX field stays focusable and copyable.
-- **Disabled**: nothing can be changed or focused, the label and the area take the shared disabled opacity, and forms leave the field out.
-- **In forms**: `name` submits the HEX field's value, `required` and `form` work as on a field, and a form reset restores an uncontrolled picker's `defaultValue` without calling `onValueChange`; a controlled picker keeps its `value`, and a reset the application cancels keeps the draft.
-- **Swatch**: ColorSwatch takes any CSS color as `color`, and is hidden from assistive technology.
+Copy copies the color as the fields show it.
 
-## Content guidelines
+The eyedropper picks a color from the screen in browsers that offer one, on the desktop; elsewhere it never shows.
 
-- Name the picker after what the color is for, in sentence case: "Accent color", "Label color".
-- Use the description for what the color affects, such as "Shown beside the project in lists."; by default it says how to write a HEX value.
-- Write the color beside a swatch, such as its HEX value or a name, since the swatch is decorative.
+### Adapting to width
 
-## Do and don't
+The picker fills its container but stays compact in a wide one, and everything under the area and the strips takes their width.
 
-### Do
+- The strips stay upright at the area's side at every width.
+- A narrow picker's area shrinks.
+- The format menu, the eyedropper and copy share a row.
+- The fields take the row under it, in equal columns that keep each channel's letter in its place in every format.
 
-- Open a picker from a button with a ColorSwatch and the color's value, in a Popover, where the color is a setting among others.
-- Check a chosen color's contrast where it carries text or meaning, and say what is wrong in `error`.
-- Keep the color in the application's state with `value` and `onValueChange`, or submit it with `name`.
+```tsx figure=FillWidth widths="22 15" sweep
 
-### Don't
+```
 
-- Don't use a picker for a short list of named colors; offer them as choices.
-- Don't rely on a swatch alone to name a color.
-- Don't expect alpha, short HEX or other color formats; the picker takes six-digit HEX colors only.
+## Rules
+
+A picker shows the color's value beside its swatch, and checks the contrast of a color that carries text.
+
+```tsx figure=PickerButton
+
+```
+
+```tsx figure=SwatchAlone
+
+```
+
+### Contrast
+
+Where the color carries text, check its contrast and say what is wrong under the picker.
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                                                                         | Action                                                                   |
-| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                                             | Moves focus to the color area, the hue slider and the HEX field in turn. |
-| <kbd>←</kbd>, <kbd>→</kbd> in the color area                                                | Lowers or raises the saturation by 1%, 10% with <kbd>Shift</kbd>.        |
-| <kbd>↑</kbd>, <kbd>↓</kbd> in the color area                                                | Raises or lowers the brightness by 1%, 10% with <kbd>Shift</kbd>.        |
-| <kbd>Page Up</kbd>, <kbd>Page Down</kbd> in the color area                                  | Raises or lowers the brightness by 10%.                                  |
-| <kbd>Home</kbd>, <kbd>End</kbd> in the color area                                           | Sets the saturation to none or full.                                     |
-| <kbd>←</kbd>, <kbd>→</kbd> on the hue slider                                                | Moves the hue back or forward by a degree, 18 with <kbd>Shift</kbd>.     |
-| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Home</kbd>, <kbd>End</kbd> on the hue slider | Moves the hue by 18 degrees, or to its ends.                             |
-| Typing in the HEX field                                                                     | Sets the color once the draft is six hexadecimal digits.                 |
+| Key                                             | Action                                                                                                                                                  |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves through the area, the sliders, the format, the fields, the eyedropper and copy; with several formats, through each row's fields and copy in turn. |
+| <kbd>←</kbd>, <kbd>→</kbd> in the color area    | Changes the saturation; <kbd>Shift</kbd> or <kbd>Page Up</kbd> by more.                                                                                 |
+| <kbd>↑</kbd>, <kbd>↓</kbd> in the color area    | Changes the brightness; <kbd>Shift</kbd> or <kbd>Page Up</kbd> by more.                                                                                 |
+| <kbd>↑</kbd>, <kbd>↓</kbd> in a slider          | Moves the hue or the alpha slider; <kbd>←</kbd>, <kbd>→</kbd> too.                                                                                      |
+| <kbd>Home</kbd>, <kbd>End</kbd> in a slider     | Moves the hue or the alpha slider to its bottom or its top.                                                                                             |
+| <kbd>↑</kbd>, <kbd>↓</kbd> in a field           | Steps its value.                                                                                                                                        |
+| <kbd>Enter</kbd> in a field                     | Commits what was typed, as leaving the field does.                                                                                                      |
+| <kbd>←</kbd>, <kbd>→</kbd> in the swatches      | Moves between swatches; <kbd>Enter</kbd> or <kbd>Space</kbd> chooses.                                                                                   |
 
 ### envUI provides
 
-- A group named by `label`, around the area and the slider, sliders named after the label, such as "Accent color saturation and brightness" and "Accent color hue", whose values say the saturation and brightness and the hue in degrees, and the HEX field named after the label, such as "Accent color HEX". Every one of these strings comes from EnvUIProvider's `messages.colorPicker`, and the percentages follow its locale.
-- The colors run left to right in every text direction, as in a picture, and so do the arrow keys.
-- The description and the error linked to the field, `aria-invalid` and the form's validity while a draft is invalid, and a status that announces invalid and discarded drafts.
-- A focus outline on the area and the slider, and the shared field's focus.
-- A swatch hidden from assistive technology.
+- A group named by `label`, with the area, sliders and fields named after their channels, such as Hue and Alpha, in the EnvUIProvider's language.
+- Value texts that say each channel and the color's name, such as dark vibrant blue.
+- A ColorSwatch alone named by its color's description; beside its value or label, the sample is hidden from assistive technology.
 
 ### You provide
 
 - A `label` that names what the color is for.
-- The color in text beside a ColorSwatch, such as on the button that shows it.
-- A check of the chosen color's contrast where it matters, and the message when it doesn't pass.
+- A contrast check where the color carries text, and its message in `error`.
 
-## Examples
+## Compose
 
-### Open from a swatch
+### Usage
 
-A secondary button shows the color as a swatch and its HEX value, and opens the picker in a Popover.
+ColorPicker, ColorPickerButton and ColorSwatch come from their own entry, `@envsemble/envui/color`, built on React Aria's color hooks, whose libraries the application installs.
 
-```tsx example=SwatchButton
+- A ColorPicker takes its `label`, which names it, a `description` and an `error`; `visibleLabel={false}` hides the label where something else names the picker, such as a popover.
+- `value` and `defaultValue`, `#000000` by default, take a CSS color string, such as `#6750a4`, `rgb(103, 80, 164)` or `hsl(256, 34%, 48%)`, or React Aria's `Color`.
+- `onValueChange` receives the color as a string in `valueFormat`; the picker keeps the hue of a gray itself.
+- `valueFormat` is `hex`, the default, `#rrggbb` or `#rrggbbaa` while translucent, `rgb` or `hsl`.
+- With `alpha`, the picker adds an alpha slider and field; without it, colors are opaque.
 
-```
-
-### In a form
-
-`name` submits the HEX value with the form, and Reset returns an uncontrolled picker to its `defaultValue`.
-
-```tsx example=ProjectColorForm
+```tsx source=MinimalPicker
 
 ```
 
-### Swatches beside names
+#### Formats
 
-ColorSwatch shows each label's color before its name, with the value written beside it; a white swatch keeps its ring.
+Without `formats`, the picker shows one format at a time, hex first, with the format menu.
 
-```tsx example=Swatches
+- `formats` with one format, such as `['hex']`, shows it alone, with no menu.
+- With two or more, such as `['hex', 'rgb', 'hsl']`, it shows each on a row of its own in that order, with its own copy button.
+- Each row is a group named after its format, so a screen reader says which Red or Alpha it is in.
 
+Offer only the formats and the alpha the stored color can hold: a color stored as `#rrggbb` takes `formats={['hex']}` and no `alpha`, rather than every format and an alpha it would lose.
+
+```tsx
+<ColorPicker label="Brand color" defaultValue="#6b4fa3" formats={['hex', 'rgb', 'hsl']} />
+<ColorPicker label="Label color" defaultValue="#2f6f62" formats={['hex']} />
 ```
+
+#### Copy, the eyedropper and swatches
+
+`copyable` and `eyeDropper` are on by default. The eyedropper shows only where the browser has one, Chromium-based browsers on the desktop. `swatches` lists preset colors under the fields: CSS color strings, `Color`s, or `{ color, label }` with a name.
+
+```tsx
+<ColorPicker
+  label="Project color"
+  defaultValue="#6b4fa3"
+  swatches={[
+    { color: '#3b6fd4', label: 'Blue' },
+    { color: '#2f6f62', label: 'Teal' },
+  ]}
+/>
+```
+
+#### ColorPickerButton
+
+ColorPickerButton takes the picker's props, and opens it in a popover.
+
+- `side` places the popover, `bottom` by default, lined up by `align`, `start` by default.
+- `defaultOpen` starts it open; `open` and `onOpenChange` let the application open and close it, such as once a swatch is chosen.
+- `size` is `sm`, `md` or `lg`, or its container's control height.
+- `className`, `style`, `ref` and the other native props, such as `aria-describedby`, reach the button.
+
+```tsx
+<ColorPickerButton label="Label color" defaultValue="#2f6f62" />
+```
+
+#### ColorSwatch
+
+ColorSwatch shows its `color`, with an optional alpha, and writes it in `format`, `hex`, `rgb` or `hsl`, after an optional `label`.
+
+- Without a format and a label, the sample stands alone, named by the color's description, such as dark purple.
+- `size` is `md`, 1 rem and the default, or `sm`, 0.75 rem, for dense rows; as a Button's icon it takes the icon's size.
+- As the icon of an IconButton in its default variant, the button draws no round fill behind the square sample.
+
+```tsx
+<ColorSwatch color="#6b4fa3" label="Design" format="hex" />
+```
+
+#### In a form
+
+`name` submits the color as a string in `valueFormat`, and `form` ties it to a form it sits outside; a reset returns to `defaultValue`.
+
+- The picker always holds a color, so it takes no `required`: keep "no color yet" in the form's own state and validate it there.
+- `readOnly` lets people read and copy the color but not change it.
+- `disabled` takes no input.
+
+```tsx
+<form onSubmit={apply}>
+  <ColorPicker
+    label="Project color"
+    name="color"
+    defaultValue="#6b4fa3"
+    formats={['hex', 'rgb']}
+    description="Shown beside the project in lists."
+  />
+  <Button type="submit">Apply color</Button>
+</form>
+```
+
+### Composition
+
+The picker fills its container up to 18 rem. The picker, `env-color-picker`, holds its label, `env-color-picker-label`; the controls, `env-color-picker-controls`, with the area, `env-color-picker-area`, and the sliders, `env-color-picker-sliders`, the hue, `env-color-picker-hue`, and the alpha, `env-color-picker-alpha`, each an `env-color-picker-slider` with its track, `env-color-picker-track`, and a thumb, `env-color-picker-thumb`, like the area's; and the values, `env-color-picker-values`, with the format, `env-color-picker-format`, the eyedropper, `env-color-picker-eye-dropper`, copy, `env-color-picker-copy`, and the fields, `env-color-picker-fields`, each an `env-color-picker-field` with its letter, `env-color-picker-field-label`, and input, `env-color-picker-input`. Several formats shown together are rows, `env-color-picker-row`. Then come the swatches, `env-color-picker-swatches`, each an `env-color-picker-swatch`, the description, `env-color-picker-description`, and the error, `env-color-picker-error`, the shared field error, `env-field-error`, with its icon. `data-channel` names a slider's or a field's channel, and `data-format` a row's format.
+
+ColorPickerButton is `env-color-picker-button`, with its value, `env-color-picker-button-value`, and its popover, `env-color-picker-popover`. ColorSwatch is `env-color-swatch`, with its sample, `env-color-swatch-sample`, its label, `env-color-swatch-label`, and its value, `env-color-swatch-value`.
+
+### Customize
+
+ColorPickerButton has no fill of its own; its container color gives it one.
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog
 
-- **1.0.0**: The color area and the hue are envUI's own, the hue on Base UI's Slider, so the package no longer depends on react-colorful and its `.react-colorful` classes are gone. Their names, after the picker's label, the area's value text, the hue's in degrees, and the HEX field's labels, description and messages, come from EnvUIProvider's `messages`, and the percentages follow its locale. The area moves by 1 % per arrow key, 10 % with Shift. `hint` is `description`, which the `v1-props` codemod writes, and `ref` reaches the HEX field.
-- **0.7.0**: ColorSwatch.
-- **0.1.0**: ColorPicker, with a color area, a hue slider and a HEX field.
+- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
+- **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. ColorPickerButton has no fill of its own, as fields have none. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: ColorPickerButton's popover opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
+- **1.0.0-prerelease.6**: The error shows the error icon before its message, as under every field.
+- **1.0.0-prerelease.5**: ColorPickerButton takes `open` and `onOpenChange`, and passes `ref` and the native props on to its button.
+- **1.0.0-prerelease.5**: `copy` is `copyable`, as on CodeBlock. `onValueChange` receives the string alone, without React Aria's `Color`.
+- **1.0.0-prerelease.5**: ColorPickerButton's popover is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency.
+- **1.0.0-prerelease.3**: `formats` with two or more formats shows their fields together, a row each with its own copy button, where in 1.0.0-prerelease.2 it limited the format menu to them; the format menu stays the default. Remove `formats` to keep the menu, which offers every format. `--env-color-picker-button-container` gives one ColorPickerButton a fill.

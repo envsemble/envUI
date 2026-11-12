@@ -6,5 +6,3 @@ export const confirmButton = {
   /** Announced when the button arms, after its confirm label. */
   armed: 'Press again to confirm.',
 };
-
-export type ConfirmButtonMessages = typeof confirmButton;

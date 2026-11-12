@@ -1,6 +1,0 @@
-{
-  "@envsemble/envui": {
-    "FileDropzone": "DropZone",
-    "FileDropzoneProps": "DropZoneProps"
-  }
-}

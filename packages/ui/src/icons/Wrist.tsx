@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function Wrist({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconWrist({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M244-280H80q-17 0-28.5-11.5T40-320v-320q0-17 11.5-28.5T80-680h144l44-45q17-17 39-26t46-9h407q17 0 28.5 11.5T800-720q0 17-11.5 28.5T760-680H560v60h280q17 0 28.5 11.5T880-580q0 17-11.5 28.5T840-540H560v60h320q17 0 28.5 11.5T920-440q0 17-11.5 28.5T880-400H560v60h240q17 0 28.5 11.5T840-300q0 17-11.5 28.5T800-260H485l6 12q17 35 10.5 72.5T468-111q-12 11-28 11t-27-11L244-280Z" /> : <path d="M244-280H80q-17 0-28.5-11.5T40-320q0-17 11.5-28.5T80-360h163q16 0 30.5 6t25.5 17l115 114-30-59q-10-20 1.5-39t34.5-19h380q17 0 28.5 11.5T840-300q0 17-11.5 28.5T800-260H485l6 12q17 35 10.5 72.5T468-111q-12 11-28 11t-27-11L244-280ZM40-640q0-17 11.5-28.5T80-680h144l44-45q17-17 39-26t46-9h407q17 0 28.5 11.5T800-720q0 17-11.5 28.5T760-680H353q-8 0-15 3.5t-13 8.5l-46 45q-11 11-25.5 17t-30.5 6H80q-17 0-28.5-11.5T40-640Zm0 188Zm840 52H600q-17 0-28.5-11.5T560-440q0-17 11.5-28.5T600-480h280q17 0 28.5 11.5T920-440q0 17-11.5 28.5T880-400Zm-40-140H600q-17 0-28.5-11.5T560-580q0-17 11.5-28.5T600-620h240q17 0 28.5 11.5T880-580q0 17-11.5 28.5T840-540Z" />}</Icon>;
 }

@@ -1,6 +1,6 @@
 ---
 title: Notifications and feedback
-summary: Tell people what happened, what state things are in and what needs them, in the place and at the volume each message deserves.
+summary: Tell people what happened, in the place and at the volume each message deserves.
 status: beta
 since: 1.0.0
 intent: Keep people informed
@@ -13,8 +13,8 @@ aliases:
   - unread count
   - status badge
 useWhen:
-  - People need to know the outcome of something they did, or of work that ran in the background.
-  - A page, a row or a destination has a state people should notice.
+  - The outcome of an action, or of work in the background
+  - A state people should notice, on a page, a row or a destination
 avoidWhen:
   - text: A value that is wrong in a form.
     see: forms
@@ -22,13 +22,13 @@ avoidWhen:
     see: loading
   - text: A region with nothing to show.
     see: empty-states
+  - text: Undo after a delete, or a confirmation before one.
+    see: destructive-actions
 composes:
-  - Toast
+  - ToastProvider
   - useToast
   - Alert
   - Badge
-  - CounterBadge
-  - NavList
   - List
   - DescriptionList
   - RelativeTime
@@ -36,138 +36,164 @@ composes:
   - Link
   - Select
   - TextField
-  - Stack
+  - Column
+  - Row
   - Text
-related:
-  - loading
-  - empty-states
-  - destructive-actions
-  - toast
-  - alert
-  - badge
+examples:
+  SaveConfirmation:
+    role: overview
+    motion: true
+  SectionAlert: example
+  BackgroundTask: example
+  StatusInRows: example
 ---
 
 # Notifications and feedback
 
-## Overview
-
-Use this pattern to choose where a message goes and how loudly it speaks. A message about a field belongs on the field, a condition of the page in an Alert on the page, the outcome of an action in a toast, and a state of a row or a destination in a Badge or a count beside it. Each is announced at most once, and only what needs people interrupts them.
-
-```tsx example=SaveConfirmation
-
-```
-
-## Anatomy
-
-Choose the surface by the message's scope, its urgency and whether people must act:
-
-| Message                                              | Surface                                                                                 | Announced                         | Stays                       |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------- | --------------------------- |
-| A value in a field is wrong                          | The field's `error`                                                                     | With the field, when it has focus | Until the value is fixed    |
-| A form was refused, or a save failed                 | An [Alert](../components/alert.md) `tone="danger"` at the top of the form, given focus  | Read as it takes focus            | Until the next submit       |
-| A condition of the page, such as read-only           | An Alert on the page                                                                    | No: read with the page            | While the condition lasts   |
-| Something just happened that interrupts, on the page | An Alert with `announce`, `tone="warning"` or `"danger"`                                | Yes, as an alert                  | Until resolved or dismissed |
-| The outcome of an action people started              | A toast from [useToast](../components/toast.md), success or neutral                     | Politely                          | 5 seconds                   |
-| The end of background work, with a next step         | A toast with an `action`, such as "Download"                                            | Politely                          | Until dismissed             |
-| An action failed and the page can't show it          | A toast with `tone="danger"` and "Try again"                                            | At once, as an alert              | Until dismissed             |
-| A decision people must make before going on          | A [Dialog](../components/dialog.md) or [ConfirmDialog](../components/confirm-dialog.md) | As it opens, with focus           | Until answered              |
-| The state of a row or an object                      | A [Badge](../components/badge.md) beside its name                                       | No: read with the row             | While the state lasts       |
-| New items behind a destination                       | A [CounterBadge](../components/badge.md) as the `end` of a NavList item                 | No: part of the item's name       | Until the items are seen    |
-
-1. **Field errors:** on the field, as [Form layout and validation](forms.md) describes.
-2. **Alert:** a title and one sentence, in its tone, with an `action` where there is one thing to do.
-3. **Toast:** one short sentence, at most one action, shown from anywhere under one `Toast.Provider`.
-4. **Badge:** a state in a word or two, in a tone that means the same everywhere.
-5. **CounterBadge:** a count with an `aria-label` that says what it counts, in a [NavList](../components/nav-list.md) item's `end`.
-6. **Status text:** a [Text](../foundations/typography.md) with `role="status"` for a quiet outcome beside its control, such as "Changes saved."
-
-## States and behaviour
-
-- **During the work.** The control that started it shows `pending`; nothing else announces it. See [Loading](loading.md).
-- **After an action.** A success or neutral toast closes after 5 seconds; the timer pauses while the pointer rests on it or it has keyboard focus, and while the window is in the background. A danger toast, and a toast with an action, stays until it is dismissed.
-- **Background work.** Say on the page that the work runs and that people can carry on. When it ends, a toast with the next step as its action reaches them wherever they are, and the page keeps the result too, since a toast can be dismissed.
-- **Conditions of the page.** An Alert that is there when the page loads describes it, and isn't announced. When its condition changes, change or remove the Alert. An Alert that appears because something just happened and must interrupt takes `announce`.
-- **Announce once.** One message per event: a toast or a status text, not both; a field error, not a toast too. Info and success Alerts are status messages, so changing their text is announced; don't also move focus to one, or it is read twice. An Alert that takes focus is a warning or danger one without `announce`, which has no role and is read once, with focus.
-- **Several at once.** Each toast placement shows three at a time by default; older ones wait behind a count of hidden notifications. Danger toasts always show.
-- **Not covered: a notification centre.** envUI has no list of past notifications yet. CounterBadge, [Popover](../components/popover.md) and [List](../components/list.md) are the parts to build one from.
-
-## Content guidelines
-
-- Follow [Feedback and status](../foundations/content.md#feedback-and-status): a toast is a short sentence naming what happened to what, in the past tense, "Invitation sent to jordan.kim@example.com.", or the state a change leaves where the past tense says too little; an Alert has a title and one sentence.
-- For a failure, follow [Error messages](../foundations/content.md#error-messages): say what happened, whether work is safe, and what to do.
-- Name a status in a word or two, the same word everywhere: "On track", "At risk", "Blocked", "Done".
-- Label a count with what it counts, "12 unread", not the number alone.
-- Don't start a message with "Success" or "Error"; the tone says it.
-
-## Do and don't
-
-### Do
-
-- Put a message as close as possible to what it is about.
-- Keep the button's `pending` state for the work, and the toast for how it ended.
-- Offer the next step in a toast for work that ends while people are elsewhere.
-- Use the same tone for the same status everywhere.
-
-### Don't
-
-- Don't show a toast for a field's error, or for a condition of the page.
-- Don't put the only way to reach something in a toast.
-- Don't announce a message that was there when the page loaded.
-- Don't rely on color alone: every Badge and tone has its words.
-- Don't ask for a decision in a toast; use a dialog.
-
-## Accessibility
-
-### Focus and keyboard
-
-Feedback doesn't move focus, with two exceptions: after a refused form or a failed save, focus moves to the Alert that says what went wrong, and when a control people used goes away, focus moves to what replaced it, such as the message that confirms a request. Toasts never take focus: <kbd>F6</kbd> moves to them, Tab moves through their actions, <kbd>Esc</kbd> dismisses one, and leaving returns focus to where it was.
-
-### envUI provides
-
-- Toast regions with a polite status that reads each new notification without moving focus, danger notifications announced at once as alerts, and <kbd>F6</kbd> to reach them.
-- Timers that pause on hover, on keyboard focus and in a background window; notifications with an action or a danger tone that stay.
-- Alerts whose info and success tones are status messages, and whose warning and danger tones take the alert role only with `announce`; tone icons hidden from assistive technology.
-- Badges whose label carries the meaning, with decorative icons hidden.
-- A CounterBadge in a NavList item's `end` as part of the item's name, with its `aria-label` read in place of the number.
-
-### You provide
-
-- One Toast.Provider at the application's root.
-- A message that makes sense out of context, and dismissing a toast once its action has run.
-- `announce` only on an Alert that appears because of something that just happened.
-- An `aria-label` on every CounterBadge whose number alone doesn't say what it counts.
-- Focus for when a control people used goes away.
-
-## Examples
+## Variants
 
 ### A condition of the page
 
-A read-only project says so in a warning Alert that stays while the condition lasts. It is read with the page, not announced, and it offers the one thing people can do. Once the request is sent, its button goes, so focus moves to the Alert, which reads its new text once: a warning Alert without `announce` has no role, so the change isn't announced as well.
+An Alert that is there when the page loads describes it and offers the one thing people can do.
 
-```tsx example=SectionAlert
+```tsx figure=SectionAlert
 
 ```
 
 ### Background work
 
-The export runs while people carry on. When it ends, a toast with a "Download" action reaches them, and the page keeps a link to the file.
+When the export ends, a toast with Download reaches people wherever they are, and the page keeps a link to the file too.
 
-```tsx example=BackgroundTask
+```tsx figure=BackgroundTask motion
 
 ```
 
 ### Status in rows
 
-Each project's status is a Badge in its row, in one tone per status, with its words carrying the meaning.
+One tone per status, everywhere.
 
-```tsx example=StatusInRows
+```tsx figure=StatusInRows
+
+```
+
+## Behaviour
+
+### Volume
+
+Each message is announced at most once, and only what calls for action interrupts. The outcome of an action people started is a [toast](../components/toast.md).
+
+## Rules
+
+Put each message where it belongs, at the volume it deserves.
+
+### Which to use
+
+Each kind of message has its place.
+
+| Message              | Use for                                                                             |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| A field's error      | A value in a field that is wrong, as [forms](forms.md) show it.                     |
+| An Alert on the page | A condition of the page, read with the page.                                        |
+| An announced Alert   | Something that just happened and must interrupt.                                    |
+| A toast              | The outcome of an action people started, announced politely.                        |
+| A danger toast       | An action that failed where the page can't show it, with Try again.                 |
+| A confirmation       | A decision people must make, in a [ConfirmDialog](../components/confirm-dialog.md). |
+| A badge              | The state of a row, read with the row, in a [Badge](../components/badge.md).        |
+
+### One message per event
+
+Put a message as close as it can be to what it is about, and say it once.
+
+- A toast or a status text, not both.
+- A field's error without a toast too.
+
+### Content
+
+Each message says what happened, or what to do, in a few words.
+
+- A toast names what happened to what, in the past tense, "Website refresh archived." or "Invitation sent to jordan.kim@example.com.", or the state a setting leaves, with one action at most.
+- An Alert's title is the condition, and its one sentence says what to do.
+- A failure says what happened, whether work is safe and what to do, "Couldn't load projects. Try again.", never an error code alone.
+- A status is a word or two, such as "On track", "At risk", "Blocked" or "Done", the same everywhere, with no prefix such as Success or Error: the tone says it.
+
+## Accessibility
+
+### Focus and keyboard
+
+Feedback doesn't move focus, with two exceptions.
+
+- To the Alert after a refused form or a failed save.
+- To what replaces a control people used.
+
+### envUI provides
+
+- Toast regions with a polite status, danger toasts announced at once, and <kbd>F6</kbd> to reach them.
+- Info and success Alerts as status messages; warning and danger ones take the alert role only with `announce`.
+- Badges whose words carry the meaning, and a destination's count in its name, such as Inbox, 12 new.
+
+### You provide
+
+- One ToastProvider at the root, and messages that make sense out of context.
+- `announce` only on an Alert that appears because something just happened.
+- An `aria-label` on every count whose number alone doesn't say what it counts.
+
+## Compose
+
+### Usage
+
+`useToast()` returns `show`, `dismiss` and `clear`. One ToastProvider at the application's root holds the toasts.
+
+- `show({ tone, message, action })` shows a toast and returns its id; `tone` is `neutral`, `success`, `info` or `danger`.
+- A success or neutral toast closes after its `duration`, 5 seconds by default.
+- A danger toast, and one with an `action`, stays until dismissed unless `duration` is set.
+- The provider's `limit`, 3 by default, sets how many show at a time.
+
+```tsx source=SaveConfirmation
 
 ```
 
-### Unread counts
+#### Background work
 
-A CounterBadge on a navigation item says how many new items wait there; its label says what it counts.
+A toast with an `action`, such as `{ label: 'Download', onClick }`, stays until dismissed; call `toast.dismiss(id)` once it has run. Keep the result on the page too, such as a Link with `download`, since a toast can be dismissed, and say the progress in a `role="status"` message, as the BackgroundTask example does.
 
-```tsx example=UnreadCount
-
+```tsx
+<Link href={`/exports/${file}`} download>
+  Download {file}
+</Link>
 ```
+
+#### Alerts
+
+A field's error is its `error` prop, as on the forms page. An Alert on the page from the start takes a `tone` and `actions`, and no `announce`, so it is read with the page; `announce` gives a warning or danger Alert the alert role, for one that appears because something just happened. After a refused form or failed save, a danger Alert with `tabIndex={-1}` and a ref takes focus.
+
+```tsx
+<Alert
+  tone="warning"
+  title="This project is read-only"
+  actions={
+    <Button variant="secondary" size="sm" onClick={requestAccess}>
+      Request edit access
+    </Button>
+  }
+>
+  Ask Alex Morgan, its owner, for edit access to change it.
+</Alert>
+```
+
+#### Status and counts
+
+A Badge's `tone` adds to its words, one tone per status everywhere, such as `success` for On track and `warning` for At risk. A NavigationDrawer or NavigationRail destination's `count` shows its unread items and is said with its label; 0 shows nothing. A count Badge's `aria-label` says what it counts, such as "12 unread".
+
+### Composition
+
+Status in rows is a List whose items take a Badge, with a RelativeTime in their description for when they changed, as the StatusInRows example does; a page's details beside an Alert are a DescriptionList. A notification centre is a Badge with `count` on its trigger, a Popover and a List of the notifications.
+
+```tsx
+<List.Item label={project.name} description={<RelativeTime value={project.updated} />}>
+  <Badge tone="success">On track</Badge>
+</List.Item>
+```
+
+## Changelog
+
+- **1.0.0**: The page is on the figure template, with the feedback and status wording of the content guidelines.

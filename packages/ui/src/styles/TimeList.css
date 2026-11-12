@@ -1,93 +1,124 @@
-/* Time list: a time of day on wheels side by side, hours, minutes and on a 12-hour clock the day's
-   halves, in the popups of DatePicker and TimePicker. Each wheel shows an odd number of rows and
-   snaps a row to its middle. The middle rows, side by side, read as one line: each has the solid
-   fill of a chosen calendar day and the regular body type, while the rows above and below are
-   smaller, dimmer and fade towards the edges. Coarse pointers get touch-tall rows. */
-.env-time-list {
-  --env-time-list-row: var(--env-control-height-md);
-  --env-time-list-rows: 5;
-  display: grid;
-  grid-auto-columns: minmax(max-content, 1fr);
-  grid-auto-flow: column;
-  gap: var(--env-space-1);
-  min-inline-size: 0;
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-.env-time-list-column {
-  position: relative;
-  block-size: calc(var(--env-time-list-rows) * var(--env-time-list-row));
-  min-inline-size: calc(1.5 * var(--env-time-list-row));
-  /* Room for the focus ring around the middle row, which sits outside its fill. */
-  padding-inline: var(--env-space-1);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scroll-snap-type: y mandatory;
-  scrollbar-width: none;
-  outline: none;
-  mask-image: linear-gradient(transparent, currentcolor 30%, currentcolor 70%, transparent);
-}
-.env-time-list-column::-webkit-scrollbar {
-  display: none;
-}
-/* The day periods don't loop: room above and below lets either reach the middle. */
-.env-time-list-column:not([data-loop]) {
-  padding-block: calc((var(--env-time-list-rows) - 1) / 2 * var(--env-time-list-row));
-}
-.env-time-list-row {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  block-size: var(--env-time-list-row);
-  padding-inline: var(--env-space-2);
-  border-radius: var(--env-radius-sm);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  scroll-snap-align: center;
-  cursor: pointer;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-time-list-row[data-centred] {
-  background: var(--env-color-bg-brand-emphasis);
-  color: var(--env-color-fg-on-emphasis);
-  font: var(--env-type-body);
-  font-weight: var(--env-font-weight-semibold);
-}
-/* The focus ring goes round the wheel's value, in the middle, where the edges' fade doesn't reach. */
-.env-time-list-column:focus-visible > .env-time-list-row[data-centred] {
-  outline: 2px solid var(--env-color-border-focus);
-  outline-offset: 1px;
-}
-.env-time-list-row[data-disabled] {
-  opacity: var(--env-state-disabled-opacity);
-  cursor: default;
-}
-@media (pointer: coarse) {
+@layer env.components {
+  /* Time list: a time of day on wheels side by side, hours, minutes and on a 12-hour clock the day's
+     halves, in the popups of DatePicker and TimePicker. Each wheel shows an odd number of rows and
+     snaps a row to its middle. The middle rows, side by side, read as one line: each has the solid
+     accent fill of the chosen calendar day beside it, as tall as a day and as round where its value
+     fits, so a chosen day and time look alike, and the body type in semibold, while the rows above and below are smaller and dimmer, and a
+     light fade hints at the wheel's edges. The fill and its text color change together, with no
+     transition, so a value is never left white without its fill. Unavailable times are struck
+     through in the disabled color, so they never read as the fade. Coarse pointers get touch-tall
+     rows. */
   .env-time-list {
-    --env-time-list-row: var(--env-control-height-touch);
+    /* A calendar day's height, as the picker card sets it. */
+    --env-time-list-row: var(--env-picker-popup-day, calc(var(--env-row-height) - 0.25rem));
+    --env-time-list-rows: 5;
+    display: grid;
+    grid-auto-columns: minmax(max-content, 1fr);
+    grid-auto-flow: column;
+    gap: var(--env-space-1);
+    min-inline-size: 0;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
   }
-}
-@media (prefers-reduced-motion: reduce) {
+  .env-time-list-column {
+    position: relative;
+    block-size: calc(var(--env-time-list-rows) * var(--env-time-list-row));
+    min-inline-size: var(--env-time-list-row);
+    /* Room for the focus ring around the middle row, which sits outside its fill. */
+    padding-inline: var(--env-space-1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    outline: none;
+    /* A light fade at the top and bottom edges hints that the wheel scrolls: it runs over the outer
+       rows' margin above and below their values, from part strength at the edge, so a value resting
+       there stays as legible as the others and only one scrolled past the edge shades off. */
+    --env-time-list-fade: calc(0.3 * var(--env-time-list-row));
+    --env-time-list-fade-edge: color-mix(in srgb, currentcolor 35%, transparent);
+    mask-image: linear-gradient(
+      var(--env-time-list-fade-edge),
+      currentcolor var(--env-time-list-fade),
+      currentcolor calc(100% - var(--env-time-list-fade)),
+      var(--env-time-list-fade-edge)
+    );
+  }
+  /* While the wheel eases into a row by itself, or follows a mouse dragging it, snapping would pull
+     each step back. */
+  .env-time-list-column:is([data-turning], [data-dragging]) {
+    scroll-snap-type: none;
+  }
+  .env-time-list-column[data-dragging],
+  .env-time-list-column[data-dragging] > .env-time-list-row {
+    cursor: grabbing;
+  }
+  .env-time-list-column::-webkit-scrollbar {
+    display: none;
+  }
+  /* A wheel that doesn't loop, the day periods' and one with fewer values than it shows rows, has
+     room above and below, so either end reaches the middle. */
+  .env-time-list-column:not([data-loop]) {
+    padding-block: calc((var(--env-time-list-rows) - 1) / 2 * var(--env-time-list-row));
+  }
   .env-time-list-row {
-    transition: none;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: max-content;
+    min-inline-size: var(--env-time-list-row);
+    block-size: var(--env-time-list-row);
+    margin-inline: auto;
+    padding-inline: var(--env-space-1);
+    /* Round, as the chosen calendar day is, and a pill for a longer value, such as a day period. */
+    border-radius: var(--env-radius-full);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    scroll-snap-align: center;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
-}
-
-/* Forced colors: the system paints no fills, so each wheel's value takes the system's selection
-   colors and unavailable rows the disabled color. */
-@media (forced-colors: active) {
-  .env-time-list-row[data-centred] {
-    forced-color-adjust: none;
-    background-color: Highlight;
-    color: HighlightText;
+  .env-time-list-row[data-centered] {
+    background: var(--env-color-bg-primary-emphasis);
+    color: var(--env-color-fg-on-emphasis);
+    font: var(--env-type-body);
+    font-weight: var(--env-font-weight-semibold);
   }
-  .env-time-list-column:focus-visible > .env-time-list-row[data-centred] {
-    outline-color: CanvasText;
+  /* The focus ring goes round the wheel's value, in the middle, where the edges' fade doesn't reach. */
+  .env-time-list-column:focus-visible > .env-time-list-row[data-centered] {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 1px;
   }
   .env-time-list-row[data-disabled] {
-    color: GrayText;
+    text-decoration: line-through;
+    cursor: default;
+  }
+  .env-time-list-row[data-disabled]:not([data-centered]) {
+    color: var(--env-color-fg-disabled);
+  }
+  .env-time-list-row[data-disabled][data-centered] {
+    opacity: var(--env-state-disabled-opacity);
+  }
+  @media (pointer: coarse) {
+    .env-time-list {
+      --env-time-list-row: var(--env-control-height-touch);
+    }
+  }
+
+  /* Forced colors: the system paints no fills, so each wheel's value takes the system's selection
+     colors and unavailable rows the disabled color. */
+  @media (forced-colors: active) {
+    .env-time-list-row[data-centered] {
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+    .env-time-list-column:focus-visible > .env-time-list-row[data-centered] {
+      outline-color: CanvasText;
+    }
+    .env-time-list-row[data-disabled] {
+      color: GrayText;
+    }
   }
 }

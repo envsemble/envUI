@@ -1,0 +1,250 @@
+// How the keyboard scrolls a Scaffold's body where it scrolls instead of the document: which keys
+// it takes and how far they scroll. Only a Scaffold with scroll="body" loads it (useScrollKeys.ts).
+import { reducedMotionQuery } from '../../internal/motion/reducedMotion.js';
+
+/** Roles of widgets that handle the scrolling keys themselves. */
+const widgetRoles = [
+  'tree',
+  'treeitem',
+  'treegrid',
+  'grid',
+  'gridcell',
+  'listbox',
+  'option',
+  'menu',
+  'menubar',
+  'menuitem',
+  'menuitemcheckbox',
+  'menuitemradio',
+  'tablist',
+  'tab',
+  'slider',
+  'spinbutton',
+  'radiogroup',
+  'radio',
+  'combobox',
+  'scrollbar',
+  'textbox',
+  'searchbox',
+];
+const widgetSelector = [
+  'input',
+  'textarea',
+  'select',
+  // Media controls and embedded content use the keys themselves.
+  'audio[controls]',
+  'video[controls]',
+  'iframe',
+  'embed',
+  'object',
+  ...widgetRoles.map((role) => `[role="${role}"]`),
+].join(', ');
+/** Elements that can take focus themselves. */
+const focusableSelector = [
+  'a[href]',
+  'area[href]',
+  'button',
+  'input',
+  'select',
+  'textarea',
+  'summary',
+  'audio[controls]',
+  'video[controls]',
+  'iframe',
+  'embed',
+  'object',
+  '[tabindex]',
+  '[contenteditable]',
+].join(', ');
+/** Controls that Space activates, so it does not scroll from them. Links follow Enter only. */
+const spaceSelector = 'button, summary, [role="button"], [role="checkbox"], [role="switch"]';
+/** Keys that only change others, which do not end a run of presses. */
+const modifierKeys = new Set(['Shift', 'Control', 'Alt', 'Meta']);
+
+/** Pixels per arrow key press, as browsers scroll a page. */
+const lineStep = 40;
+/** The share of the visible height a page key scrolls, keeping some context in view. */
+const pageShare = 0.875;
+
+/** What the region reads of a key press: an event, or one kept from before this code loaded. */
+export type ScrollKey = Pick<
+  KeyboardEvent,
+  | 'key'
+  | 'shiftKey'
+  | 'altKey'
+  | 'ctrlKey'
+  | 'metaKey'
+  | 'repeat'
+  | 'isComposing'
+  | 'defaultPrevented'
+  | 'composedPath'
+  | 'preventDefault'
+>;
+
+interface ScrollStep {
+  /** -1 toward the start, 1 toward the end. */
+  direction: -1 | 1;
+  /** Scroll by this amount, or to an edge when undefined. */
+  by?: number;
+}
+
+function scrollStep(event: ScrollKey, scroller: HTMLElement): ScrollStep | null {
+  const page = scroller.clientHeight * pageShare;
+  if (event.key === ' ')
+    return event.shiftKey ? { direction: -1, by: -page } : { direction: 1, by: page };
+  if (event.shiftKey) return null;
+  switch (event.key) {
+    case 'PageDown':
+      return { direction: 1, by: page };
+    case 'PageUp':
+      return { direction: -1, by: -page };
+    case 'ArrowDown':
+      return { direction: 1, by: lineStep };
+    case 'ArrowUp':
+      return { direction: -1, by: -lineStep };
+    case 'End':
+      return { direction: 1 };
+    case 'Home':
+      return { direction: -1 };
+    default:
+      return null;
+  }
+}
+
+function isElement(node: EventTarget | null): node is Element {
+  // Any target, read for its node type.
+  return (node as Node | null)?.nodeType === Node.ELEMENT_NODE;
+}
+
+/** An element and its ancestors, across shadow roots, as an event's composed path lists them. */
+function ancestors(element: Element) {
+  const chain: Element[] = [];
+  let node: Node | null = element;
+  while (node) {
+    if (isElement(node)) chain.push(node);
+    node =
+      node.parentNode ??
+      // A fragment with no parent is a shadow root.
+      (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? (node as ShadowRoot).host : null);
+  }
+  return chain;
+}
+
+/**
+ * Whether what has focus inside an element is out of sight: a shadow host, whose shadow root may be
+ * closed, as in any custom element. An element that cannot take focus itself, such as a span, only
+ * passes on a key from its closed shadow root; browsers let a scroll area take focus without a
+ * tabindex, so it is not one.
+ */
+function hidesFocus(element: Element, view: Window) {
+  if (element.shadowRoot !== null || element.localName.includes('-')) return true;
+  if ((element as HTMLElement).tabIndex >= 0 || element.matches(focusableSelector)) return false;
+  const { overflowX, overflowY } = view.getComputedStyle(element);
+  return !/^(auto|scroll)$/.test(overflowX) && !/^(auto|scroll)$/.test(overflowY);
+}
+
+/** How far an element can still scroll that way. */
+function room(element: Element, direction: -1 | 1) {
+  return direction > 0
+    ? element.scrollHeight - element.clientHeight - element.scrollTop
+    : element.scrollTop;
+}
+
+/**
+ * Scrolls the region with the keyboard: the window's keys and the targets of the pointer's presses,
+ * which useScrollKeys hears, reach it through `keyDown` and `press`, and it notes other input
+ * itself until `stop`.
+ */
+export function createScrollKeys(root: HTMLElement, scroller: HTMLElement, view: Window) {
+  const document = root.ownerDocument;
+  const reducedMotion = reducedMotionQuery(view);
+  // Where the smooth scroll of the last key is heading. The next key continues from there, so
+  // quick presses add up; the end of the scroll and any other input clear it.
+  let destination: number | null = null;
+  // Where the pointer last pressed: with focus on the document, browsers scroll that area.
+  let pressed: Element | null = null;
+
+  function scrollsThatWay(element: Element, direction: -1 | 1) {
+    return (
+      /^(auto|scroll)$/.test(view.getComputedStyle(element).overflowY) &&
+      room(element, direction) > 1
+    );
+  }
+
+  /** Whether the region takes the key, rather than the browser or the focused control. */
+  function claims(event: ScrollKey, direction: -1 | 1) {
+    // A document that still scrolls, such as a page showing the frame in a smaller area, keeps
+    // its keys.
+    const page = document.scrollingElement;
+    if (page && room(page, direction) > 1) return false;
+    // The composed path reaches into web components, such as a field in a shadow root.
+    const chain = event.composedPath().filter(isElement);
+    const focused = chain[0];
+    if (!focused) return false;
+    const onDocument = focused === document.body || focused === document.documentElement;
+    const origin = onDocument ? (pressed?.isConnected ? ancestors(pressed) : []) : chain;
+    // The browser scrolls the region from focus or the last press inside it.
+    if (origin.includes(scroller)) return false;
+    if (!onDocument) {
+      // Focus outside the root, such as in a dialog, belongs elsewhere.
+      const end = chain.indexOf(root);
+      if (end === -1) return false;
+      // Where the path ends at an element that holds focus out of sight, such as one with a field
+      // in a closed shadow root, the key may be typed; it stays with the browser.
+      if (hidesFocus(focused, view)) return false;
+      for (const element of chain.slice(0, end)) {
+        if (element.matches(widgetSelector) || (element as HTMLElement).isContentEditable)
+          return false;
+        if (event.key === ' ' && element.matches(spaceSelector)) return false;
+      }
+    }
+    return !origin.some((element) => scrollsThatWay(element, direction));
+  }
+
+  function onKeyDown(event: ScrollKey) {
+    const step =
+      event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey || event.metaKey
+        ? null
+        : scrollStep(event, scroller);
+    if (!step || !claims(event, step.direction)) {
+      if (!modifierKeys.has(event.key)) destination = null;
+      return;
+    }
+    event.preventDefault();
+    const end = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+    const from = Math.min(Math.max(destination ?? scroller.scrollTop, 0), end);
+    const top =
+      step.by === undefined
+        ? step.direction > 0
+          ? end
+          : 0
+        : Math.min(Math.max(from + step.by, 0), end);
+    // A held key repeats faster than a smooth scroll settles, so its repeats scroll at once.
+    const smooth = !event.repeat && !reducedMotion?.matches;
+    destination = smooth && Math.abs(top - scroller.scrollTop) >= 1 ? top : null;
+    scroller.scrollTo({ top, behavior: smooth ? 'smooth' : 'instant' });
+  }
+  /** A press of the pointer, on the first element of its event's composed path. */
+  function press(target: EventTarget | null) {
+    pressed = isElement(target) ? target : null;
+    destination = null;
+  }
+  function forget() {
+    destination = null;
+  }
+
+  // Other input is noted before the page handles it, without delaying it.
+  const early = { capture: true, passive: true };
+  view.addEventListener('wheel', forget, early);
+  view.addEventListener('touchstart', forget, early);
+  scroller.addEventListener('scrollend', forget);
+  return {
+    keyDown: onKeyDown,
+    press,
+    stop() {
+      view.removeEventListener('wheel', forget, early);
+      view.removeEventListener('touchstart', forget, early);
+      scroller.removeEventListener('scrollend', forget);
+    },
+  };
+}

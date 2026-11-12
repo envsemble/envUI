@@ -1,386 +1,648 @@
-/* Tables sit on a rounded surface with subtle row dividers and scroll sideways within their region. */
-.env-table-region {
-  --env-table-surface: var(--env-color-bg-raised);
-  /* Absolutely positioned content, such as visually hidden text in a cell, stays in the region and
-     scrolls with it instead of widening the page. */
-  position: relative;
-  box-sizing: border-box;
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  overflow-x: auto;
-  border: 0.0625rem solid var(--env-color-border-muted);
-  border-radius: var(--env-radius-lg);
-  background: var(--env-table-surface);
-  scrollbar-width: thin;
-}
-.env-table-region:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
-/* A sticky header needs the region to scroll vertically too; the application gives it a height.
-   Scrolling past either end, or over a region with nothing to scroll, moves the page. */
-.env-table-region[data-sticky-header] {
-  overflow-y: auto;
-}
-/* Cells pad their content by the row density, and the actions in them, such as an IconButton, take
-   the small control height, so a row stays close to the height of its text. */
-.env-table {
-  --env-table-row-padding: var(--env-row-padding-block-md);
-  --env-table-cell-padding: calc(var(--env-table-row-padding) + var(--env-space-1))
-    var(--env-space-4);
-  --env-control-height: var(--env-control-height-sm);
-  inline-size: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-  text-align: start;
-}
-.env-table[data-density='xs'] {
-  --env-table-row-padding: var(--env-row-padding-block-xs);
-}
-.env-table[data-density='sm'] {
-  --env-table-row-padding: var(--env-row-padding-block-sm);
-}
-.env-table[data-density='lg'] {
-  --env-table-row-padding: var(--env-row-padding-block-lg);
-}
-.env-table-caption {
-  padding: var(--env-space-3) var(--env-space-4) var(--env-space-1);
-  caption-side: top;
-  color: var(--env-color-fg-default);
-  font: var(--env-type-h2);
-  text-align: start;
-}
-.env-table-header-cell,
-.env-table-cell {
-  padding: var(--env-table-cell-padding);
-  text-align: start;
-  vertical-align: middle;
-}
-.env-table-header-cell {
-  /* The fill over the surface keeps the header opaque, so a sticky header covers scrolled rows. */
-  background:
-    linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
-    var(--env-table-surface);
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-  font-weight: var(--env-font-weight-medium);
-  white-space: nowrap;
-}
-.env-table-region[data-sticky-header] .env-table-head .env-table-header-cell {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: var(--env-z-raised);
-}
-/* Rows are separated by hairlines; the first body row meets the header without one. */
-.env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
-  border-block-start: 0.0625rem solid var(--env-color-border-muted);
-}
-.env-table-body .env-table-header-cell {
-  background: transparent;
-  color: var(--env-color-fg-default);
-  font: inherit;
-  font-weight: var(--env-font-weight-medium);
-  white-space: normal;
-}
-.env-table :is(.env-table-cell, .env-table-header-cell)[data-align='end'] {
-  text-align: end;
-}
-.env-table :is(.env-table-cell, .env-table-header-cell)[data-numeric] {
-  font-variant-numeric: tabular-nums;
-}
-.env-table :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
-  white-space: nowrap;
-}
-/* A secondary line, such as <Text variant="caption">, sits under the cell's main text. */
-.env-table-cell > .env-text:where([data-variant='caption']),
-.env-table-cell-content > .env-text:where([data-variant='caption']) {
-  margin-block-start: 0.125rem;
-}
-.env-table-row[data-interactive] {
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-table-row[data-interactive]:is(:hover, :focus-within) {
-  background: var(--env-color-bg-neutral-subtle-hover);
-}
-/* Links and text buttons in an unselected row under the pointer or holding focus take the link
-   colors for a tint: the link blue falls below 4.5:1 on the hover fill over the default surface in
-   the light theme. A selected row keeps the selection's text color, below. */
-.env-table-row[data-interactive]:not([aria-selected='true']):is(:hover, :focus-within) {
-  --env-color-fg-link: var(--env-color-fg-link-on-tint);
-  --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
-  --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
-}
-/* Selected rows take the navigation selection, with a bar at the start of the row. Links and text
-   buttons in them take the selection's text color at rest, on hover and on press, also while the row
-   is under the pointer or holds focus: the link blue falls below 4.5:1 on the selection fill in the
-   light theme. The row sets the link colors they read, so icon-only text buttons and links in rich
-   text follow too; danger text buttons keep the danger color, which holds 4.5:1 on the selection. */
-.env-table-row[aria-selected='true'] {
-  --env-color-fg-link: var(--env-color-fg-on-selected);
-  --env-color-fg-link-hover: var(--env-color-fg-on-selected);
-  --env-color-fg-link-pressed: var(--env-color-fg-on-selected);
-  background: var(--env-color-bg-selected);
-}
-.env-table-row[aria-selected='true'][data-interactive]:is(:hover, :focus-within) {
-  background: var(--env-color-bg-selected-hover);
-}
-/* There links share the selection's text color with the row's own text, so a link that looks like
-   one, a Link without its underline or a text button that is a link, is underlined to stay apart
-   from it, as color alone may not tell them apart. Links styled as buttons keep their look. */
-.env-table-row[aria-selected='true'] a[href]:is(:not([data-variant]), [data-variant='text']) {
-  text-decoration-line: underline;
-  text-underline-offset: 0.15em;
-}
-.env-table-row[aria-selected='true'] > :first-child {
-  box-shadow: inset 0.1875rem 0 0 var(--env-color-fg-on-selected);
-}
-.env-table-row[aria-selected='true'] > :first-child:dir(rtl) {
-  box-shadow: inset -0.1875rem 0 0 var(--env-color-fg-on-selected);
-}
-
-/* A sortable header is a button that fills its cell: the label and an arrow for the sort order. */
-.env-table-header-cell[data-sortable] {
-  padding: 0;
-}
-.env-table-sort-button {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-1);
-  inline-size: 100%;
-  margin: 0;
-  padding: var(--env-table-cell-padding);
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: inherit;
-  cursor: pointer;
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-/* At the end of a numeric column the arrow comes first, so the label lines up with the numbers. */
-.env-table-header-cell[data-align='end'] .env-table-sort-button {
-  flex-direction: row-reverse;
-}
-.env-table-sort-button:hover {
-  background: var(--env-color-bg-neutral-subtle-hover);
-}
-.env-table-sort-button:active {
-  background: var(--env-color-bg-neutral-subtle-pressed);
-}
-.env-table-sort-button:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: -0.125rem;
-}
-/* The focus ring follows the surface's outer corners in the first and last header cells. */
-.env-table-head .env-table-row:first-child > :first-child .env-table-sort-button {
-  border-start-start-radius: calc(var(--env-radius-lg) - 0.0625rem);
-}
-.env-table-head .env-table-row:first-child > :last-child .env-table-sort-button {
-  border-start-end-radius: calc(var(--env-radius-lg) - 0.0625rem);
-}
-.env-table-sort-button .env-icon {
-  color: var(--env-color-fg-muted);
-}
-.env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending']) {
-  color: var(--env-color-fg-default);
-}
-.env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending'])
-  .env-table-sort-button
-  .env-icon {
-  color: inherit;
-}
-.env-table-header-label {
-  display: block;
-  min-inline-size: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Fixed column widths: each column keeps its share of the table, and long content wraps or is cut
-   short with an ellipsis instead of widening it. */
-.env-table[data-fixed-layout] {
-  table-layout: fixed;
-}
-.env-table[data-fixed-layout] :is(.env-table-cell, .env-table-body .env-table-header-cell) {
-  overflow-wrap: anywhere;
-}
-.env-table[data-fixed-layout] :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.env-table-header-cell[data-resizable] {
-  position: relative;
-}
-/* The resize handle straddles nothing: it sits inside the end of its header cell, with a line on
-   the column boundary while it is hovered, focused or dragged. */
-.env-table-column-resize {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-end: 0;
-  z-index: var(--env-z-raised);
-  inline-size: var(--env-space-3);
-  cursor: col-resize;
-  touch-action: none;
-  outline: none;
-}
-.env-table-column-resize::after {
-  content: '';
-  position: absolute;
-  inset-block: var(--env-space-2);
-  inset-inline-end: 0;
-  inline-size: 0.125rem;
-  border-radius: var(--env-radius-full);
-  background: transparent;
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-table-head .env-table-row:hover .env-table-column-resize::after {
-  background: var(--env-color-border-muted);
-}
-.env-table-column-resize:hover::after {
-  background: var(--env-color-border-muted-hover);
-}
-.env-table-column-resize:is(:focus-visible, [data-resizing])::after {
-  inset-block: 0;
-  inline-size: 0.1875rem;
-  background: var(--env-color-border-focus);
-}
-/* While a column is resized, the pointer keeps the resize cursor and no text is selected. */
-.env-table[data-resizing] {
-  cursor: col-resize;
-  -webkit-user-select: none;
-  user-select: none;
-}
-@media (pointer: coarse) {
-  .env-table-column-resize {
-    inline-size: var(--env-space-5);
+@layer env.components {
+  /* The header band's fill and the rows' dividers. In dark, on the raised surface, the theme's own
+     roles read a step heavier than they do in light, so there the band is lighter and the dividers
+     sit closer to the surface, in the same hues, as much apart from it as in light. At high contrast
+     they keep the roles' values. */
+  .env-theme {
+    --env-table-band: var(--env-color-bg-neutral-muted);
+    --env-table-divider: var(--env-color-border-muted);
+    /* A selected row lays three quarters of the selection fill over the table's surface: rows are
+       wide bands, and at the full fill they outweigh the names and states in them, while their
+       checkboxes, the bulk bar or the start bar already mark them. It stays a step above a hovered
+       row. At high contrast rows take the full fill. */
+    --env-table-selected-weight: 75%;
   }
-  /* A sortable header is a button, at least the touch height in every scale and row density. */
-  .env-table-sort-button {
-    min-block-size: var(--env-control-height-touch);
+  .env-theme[data-env-contrast='high'] {
+    --env-table-selected-weight: 100%;
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-table-row[data-interactive],
-  .env-table-sort-button,
-  .env-table-column-resize::after {
-    transition: none;
+  @media (prefers-contrast: more) {
+    .env-theme:not([data-env-contrast='standard']) {
+      --env-table-selected-weight: 100%;
+    }
   }
-}
-
-/* An invisible probe as wide as stackBelow, in any CSS length, outside the region's scrollable area;
-   the table compares the region's width with it. */
-.env-table-stack-probe {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline-end: 100%;
-  block-size: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-/* A stacking table follows the width of its region, not the window. Below its stackBelow width the
-   region is marked stacked and each body row becomes a block on the table surface: the first cell is
-   its title, then each labelled value. */
-.env-table-cell-label {
-  display: none;
-}
-.env-table-region[data-stacked]
-  :is(
-    .env-table,
-    .env-table-body,
-    .env-table-row,
-    .env-table-cell,
-    .env-table-header-cell,
-    .env-table-caption
-  ) {
-  display: block;
-}
-/* The header row stays available to assistive technology and shows only while a sort button in
-   it has keyboard focus. */
-.env-table-region[data-stacked] .env-table-head:not(:focus-within) {
-  position: absolute;
-  inline-size: 0.0625rem;
-  block-size: 0.0625rem;
-  margin: -0.0625rem;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-.env-table-region[data-stacked] .env-table-head:focus-within {
-  display: block;
-}
-.env-table-region[data-stacked] .env-table-head .env-table-row {
-  display: flex;
-  flex-wrap: wrap;
-}
-.env-table-region[data-stacked] .env-table-head .env-table-header-cell {
-  display: block;
-  flex: 1 1 auto;
-}
-.env-table-region[data-stacked] .env-table-column-resize {
-  display: none;
-}
-/* The labels share a column as wide as the longest one, up to 10 rem, so the values line up and keep
-   the rest of the row; each labelled cell spans both columns through a subgrid. */
-.env-table-region[data-stacked] .env-table-body > .env-table-row {
-  display: grid;
-  grid-template-columns: fit-content(10rem) minmax(0, 1fr);
-  gap: var(--env-space-1) var(--env-space-3);
-  padding: var(--env-table-cell-padding);
-}
-.env-table-region[data-stacked] .env-table-body > .env-table-row + .env-table-row {
-  border-block-start: 0.0625rem solid var(--env-color-border-muted);
-}
-.env-table-region[data-stacked]
-  .env-table-body
-  > .env-table-row
-  > :is(.env-table-cell, .env-table-header-cell) {
-  grid-column: 1 / -1;
-  min-inline-size: 0;
-  padding: 0;
-  border-block-start: 0;
-  text-align: start;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-.env-table-region[data-stacked] .env-table-body > .env-table-row > :first-child {
-  margin-block-end: var(--env-space-1);
-  color: var(--env-color-fg-default);
-  font-weight: var(--env-font-weight-medium);
-}
-.env-table-region[data-stacked] .env-table-cell[data-labelled] {
-  display: grid;
-  grid-template-columns: subgrid;
-  align-items: baseline;
-}
-.env-table-region[data-stacked] .env-table-cell-content {
-  min-inline-size: 0;
-}
-.env-table-region[data-stacked] .env-table-cell-label {
-  display: block;
-  min-inline-size: 0;
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-  overflow-wrap: anywhere;
-}
-.env-table-region[data-stacked] .env-table-row[aria-selected='true'] {
-  box-shadow: inset 0.1875rem 0 0 var(--env-color-fg-on-selected);
-}
-.env-table-region[data-stacked] .env-table-row[aria-selected='true']:dir(rtl) {
-  box-shadow: inset -0.1875rem 0 0 var(--env-color-fg-on-selected);
-}
-.env-table-region[data-stacked] .env-table-row[aria-selected='true'] > :first-child {
-  box-shadow: none;
-}
-
-/* Forced colors: the system paints no fills or shadows, so a selected row is outlined in the
-   selection color, which keeps the controls in it legible. */
-@media (forced-colors: active) {
+  .env-theme[data-env-theme='dark']:not([data-env-contrast='high']) {
+    --env-table-band: oklch(from var(--env-color-bg-neutral-muted) l c h / calc(alpha * 0.65));
+    --env-table-divider: color-mix(
+      in srgb,
+      var(--env-color-border-muted) 60%,
+      var(--env-color-bg-raised)
+    );
+  }
+  @media (prefers-contrast: more) {
+    .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
+      --env-table-band: var(--env-color-bg-neutral-muted);
+      --env-table-divider: var(--env-color-border-muted);
+    }
+  }
+  /* Tables sit on a rounded surface with subtle row dividers and scroll sideways within their region. */
+  .env-table-region {
+    --env-table-surface: var(--env-color-bg-raised);
+    /* Avatar groups in the cells ring their avatars in the table's surface, with the row's fill
+       over it while the row is hovered or selected. */
+    --env-avatar-group-ring: var(--env-table-surface);
+    /* Avatars and their groups in the cells are dense, quieter among the rows of data. */
+    --env-avatar-dense: 1;
+    /* Absolutely positioned content, such as visually hidden text in a cell, stays in the region and
+       scrolls with it instead of widening the page. */
+    position: relative;
+    box-sizing: border-box;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--env-color-border-muted);
+    border-radius: var(--env-radius-lg);
+    background: var(--env-table-surface);
+    scrollbar-width: thin;
+  }
+  .env-table-region:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
+  }
+  /* A sticky header needs the region to scroll vertically too; the application gives it a height.
+     Scrolling past either end, or over a region with nothing to scroll, moves the page. */
+  .env-table-region[data-sticky-header] {
+    overflow-y: auto;
+  }
+  /* Cells pad their content by the row density, and the actions in them, such as an IconButton, take
+     the small control height, so a row stays close to the height of its text. */
+  .env-table {
+    /* Not stacked, unless its own region's query says so: a table nested in a stacked one doesn't
+       inherit the outer table's reading. */
+    --env-table-stacked: 0;
+    --env-table-row-padding: var(--env-row-padding-block-md);
+    --env-table-cell-padding: calc(var(--env-table-row-padding) + var(--env-space-1))
+      var(--env-space-4);
+    --env-control-height: var(--env-control-height-sm);
+    /* Links and times repeat down the rows, so the lines that mark them wait for the pointer or
+       keyboard focus: a Link shows its underline then, and a RelativeTime its dotted line, in every
+       row, selected or not. */
+    --env-button-rest-underline: none;
+    --env-hover-detail-rest-color: transparent;
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body);
+    text-align: start;
+  }
+  .env-table[data-density='xs'] {
+    --env-table-row-padding: var(--env-row-padding-block-xs);
+  }
+  .env-table[data-density='sm'] {
+    --env-table-row-padding: var(--env-row-padding-block-sm);
+  }
+  .env-table[data-density='lg'] {
+    --env-table-row-padding: var(--env-row-padding-block-lg);
+  }
+  .env-table-caption {
+    padding: 0 0 var(--env-space-2);
+    caption-side: top;
+    color: var(--env-color-fg-default);
+    font: var(--env-type-title);
+    text-align: start;
+  }
+  /* A captioned table names itself above its frame, as a heading over its rows, rather than as a
+     second header inside it: the frame and surface move from the region to the table, whose border
+     box leaves its caption out. The corner cells round with it. */
+  .env-table-region:has(> .env-table > .env-table-caption) {
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+  .env-table:has(> .env-table-caption) {
+    border: var(--env-control-border-width) solid var(--env-color-border-muted);
+    border-radius: var(--env-radius-lg);
+    background: var(--env-table-surface);
+  }
+  .env-table:has(> .env-table-caption)
+    .env-table-head
+    > .env-table-row:first-child
+    > :where(.env-table-header-cell, .env-table-cell):first-child {
+    border-start-start-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+  }
+  .env-table:has(> .env-table-caption)
+    .env-table-head
+    > .env-table-row:first-child
+    > :where(.env-table-header-cell, .env-table-cell):last-child {
+    border-start-end-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+  }
+  .env-table:has(> .env-table-caption)
+    > :last-child
+    > .env-table-row:last-child
+    > :where(.env-table-header-cell, .env-table-cell):first-child {
+    border-end-start-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+  }
+  .env-table:has(> .env-table-caption)
+    > :last-child
+    > .env-table-row:last-child
+    > :where(.env-table-header-cell, .env-table-cell):last-child {
+    border-end-end-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+  }
+  .env-table-header-cell,
+  .env-table-cell {
+    padding: var(--env-table-cell-padding);
+    text-align: start;
+    vertical-align: middle;
+  }
+  .env-table-header-cell {
+    /* The fill over the surface keeps the header opaque, so a sticky header covers scrolled rows. */
+    background:
+      linear-gradient(var(--env-table-band), var(--env-table-band)), var(--env-table-surface);
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
+    font-weight: var(--env-font-weight-medium);
+    white-space: nowrap;
+  }
+  .env-table-region[data-sticky-header] .env-table-head .env-table-header-cell {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--env-z-raised);
+  }
+  /* Rows are separated by hairlines; the first body row meets the header without one. */
+  .env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
+    border-block-start: 1px solid var(--env-table-divider);
+  }
+  .env-table-body .env-table-header-cell {
+    background: transparent;
+    color: var(--env-color-fg-default);
+    font: inherit;
+    font-weight: var(--env-font-weight-medium);
+    white-space: normal;
+  }
+  .env-table :is(.env-table-cell, .env-table-header-cell)[data-align='end'] {
+    text-align: end;
+  }
+  .env-table :is(.env-table-cell, .env-table-header-cell)[data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+  /* A number never breaks at its separators, such as $4,687.50 after the comma: where the columns
+     keep their widths, its column stays as wide as it, and the region scrolls. */
+  .env-table:not([data-fixed-layout]) .env-table-cell[data-numeric] {
+    white-space: nowrap;
+  }
+  .env-table :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
+    white-space: nowrap;
+  }
+  /* A secondary line, such as <Text variant="caption">, sits under the cell's main text. */
+  .env-table-cell > .env-text:where([data-variant='caption']),
+  .env-table-cell-content > .env-text:where([data-variant='caption']) {
+    margin-block-start: calc(var(--env-space-1) / 2);
+  }
+  /* It keeps to one line, so the rows stay even: what doesn't fit its column ends in an ellipsis
+     rather than wrapping, such as a repository's slug at a hyphen. It still widens its column as
+     far as its longest word, as wrapped text would, so a table with room shows it whole. */
+  .env-table-cell .env-text:where([data-variant='caption']) {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+  }
+  /* A link in a cell, a Link or a text button that is a link, such as the name that opens a row, is
+     set in the cell's text color: repeated down a column, the link blue would make it a solid colored
+     column. Its underline still shows under the pointer and with keyboard focus, and its focus ring
+     as everywhere. Text buttons that aren't links keep the link colors, as nothing else marks them. */
+  .env-table-cell a[href][data-variant='text'] {
+    --env-color-fg-link: currentColor;
+    --env-color-fg-link-hover: currentColor;
+    --env-color-fg-link-pressed: currentColor;
+  }
+  .env-table-row[data-interactive] {
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  .env-table-row[data-interactive]:is(:hover, :focus-within) {
+    --env-avatar-group-ring-tint: var(--env-color-bg-row-hover);
+    background: var(--env-color-bg-row-hover);
+  }
+  /* Links and text buttons in an unselected row under the pointer or holding focus take the link
+     colors for a tint: the link blue falls below 4.5:1 on the hover fill over the default surface in
+     the light theme. A selected row keeps the selection's text color, below. */
+  .env-table-row[data-interactive]:not([aria-selected='true']):is(:hover, :focus-within) {
+    --env-color-fg-link: var(--env-color-fg-link-on-muted);
+    --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
+    --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
+  }
+  /* Selected rows take the navigation selection, with a bar at the start of the row unless the row
+     starts with a checkbox, which says so already: the bar marks a row selected without one, such
+     as the row open in a detail pane. Links and text
+     buttons in them take the selection's text color at rest, on hover and on press, also while the row
+     is under the pointer or holds focus: the link blue falls below 4.5:1 on the selection fill in the
+     light theme. The row sets the link colors they read, so icon-only text buttons and links in rich
+     text follow too; danger text buttons keep the danger color, which holds 4.5:1 on the selection. */
   .env-table-row[aria-selected='true'] {
-    outline: 2px solid Highlight;
+    --env-color-fg-link: var(--env-color-fg-on-selected);
+    --env-color-fg-link-hover: var(--env-color-fg-on-selected);
+    --env-color-fg-link-pressed: var(--env-color-fg-on-selected);
+    --env-color-fg-danger-hover: var(--env-color-fg-danger);
+    --env-color-fg-danger-pressed: var(--env-color-fg-danger);
+    /* The bar's color, which a skeleton clears. */
+    --env-table-selection-bar: var(--env-color-fg-on-selected);
+    --env-table-selected: color-mix(
+      in oklab,
+      var(--env-color-bg-selected) var(--env-table-selected-weight, 100%),
+      var(--env-table-surface)
+    );
+    --env-avatar-group-ring-tint: var(--env-table-selected);
+    /* Soft badges lay their tint over the table's surface, not the selection's blue (Badge.css). */
+    --env-badge-underlay: var(--env-table-surface);
+    background: var(--env-table-selected);
+  }
+  .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :focus-within) {
+    --env-avatar-group-ring-tint: var(--env-color-bg-selected-hover);
+    background: var(--env-color-bg-selected-hover);
+  }
+  .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox']))
+    > :where(.env-table-header-cell, .env-table-cell):first-child {
+    box-shadow: inset 3px 0 0 var(--env-table-selection-bar);
+  }
+  .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox']))
+    > :where(.env-table-header-cell, .env-table-cell):first-child:dir(rtl) {
+    box-shadow: inset -3px 0 0 var(--env-table-selection-bar);
+  }
+
+  /* A sortable header is a button that fills its cell: the label and an arrow for the sort order. */
+  .env-table-header-cell[data-sortable] {
+    padding: 0;
+  }
+  .env-table-sort-button {
+    --env-table-sort-ring-inset: 0.125rem;
+    --env-table-sort-start-radius: var(--env-radius-sm);
+    --env-table-sort-end-radius: var(--env-radius-sm);
+
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--env-space-1);
+    inline-size: 100%;
+    margin: 0;
+    padding: var(--env-table-cell-padding);
+    border: 0;
+    /* A row's corners, which its focus ring follows (below). */
+    border-radius: var(--env-radius-sm);
+    border-start-start-radius: var(--env-table-sort-start-radius);
+    border-start-end-radius: var(--env-table-sort-end-radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    cursor: pointer;
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  /* At the end of a numeric column the arrow comes first, so the label lines up with the numbers. */
+  .env-table-header-cell[data-align='end'] .env-table-sort-button {
+    flex-direction: row-reverse;
+  }
+  /* Under the pointer a header takes no fill, lighter than a hovered row: its label darkens to the
+     text color and its arrow shows (below). */
+  .env-table-sort-button:hover {
+    color: var(--env-color-fg-default);
+  }
+  .env-table-sort-button:hover .env-icon {
+    color: inherit;
+  }
+  /* The focus ring is drawn a hair inside the header cell, so neither the frame nor the table's
+     rounded top corners cut it: a ring of its own, inset from the button's edge, with the button's
+     corners less that inset, a row's in most cells and the surface's outer corners in the first and
+     last header cells. It is a border, which forced colors paint in the system color. */
+  .env-table-head .env-table-row:first-child > :first-child .env-table-sort-button {
+    --env-table-sort-start-radius: calc(var(--env-radius-lg) - 0.0625rem);
+  }
+  .env-table-head .env-table-row:first-child > :last-child .env-table-sort-button {
+    --env-table-sort-end-radius: calc(var(--env-radius-lg) - 0.0625rem);
+  }
+  .env-table-sort-button:focus-visible {
+    outline: 2px solid transparent;
     outline-offset: -2px;
+  }
+  .env-table-sort-button:focus-visible::after {
+    content: '';
+    position: absolute;
+    inset: var(--env-table-sort-ring-inset);
+    border: calc(2 * var(--env-control-border-width)) solid var(--env-color-border-focus);
+    border-start-start-radius: calc(
+      var(--env-table-sort-start-radius) - var(--env-table-sort-ring-inset)
+    );
+    border-start-end-radius: calc(
+      var(--env-table-sort-end-radius) - var(--env-table-sort-ring-inset)
+    );
+    border-end-start-radius: calc(var(--env-radius-sm) - var(--env-table-sort-ring-inset));
+    border-end-end-radius: calc(var(--env-radius-sm) - var(--env-table-sort-ring-inset));
+    pointer-events: none;
+  }
+  .env-table-sort-button .env-icon {
+    color: var(--env-color-fg-muted);
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  /* With a pointer that hovers, an unsorted column's neutral arrow shows only while the pointer is
+     over the header row or the header has keyboard focus, as the resize handles do, so a dense header
+     rests on its labels; the sorted column's arrow always shows. It keeps its room, so the label
+     doesn't move. Without hover, as on touch, every arrow shows. */
+  @media (hover: hover) {
+    .env-table-header-cell[aria-sort='none'] .env-table-sort-button .env-icon {
+      opacity: 0;
+    }
+    .env-table-head .env-table-row:hover .env-table-sort-button .env-icon,
+    .env-table-header-cell .env-table-sort-button:focus-visible .env-icon {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-table-sort-button .env-icon {
+      transition: none;
+    }
+  }
+  .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending']) {
+    color: var(--env-color-fg-default);
+  }
+  .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending'])
+    .env-table-sort-button
+    .env-icon {
+    color: inherit;
+  }
+  .env-table-header-label {
+    display: block;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Fixed column widths: each column keeps its share of the table, and long content wraps or is cut
+     short with an ellipsis instead of widening it. */
+  .env-table[data-fixed-layout] {
+    table-layout: fixed;
+  }
+  .env-table[data-fixed-layout] :is(.env-table-cell, .env-table-body .env-table-header-cell) {
+    overflow-wrap: break-word;
+  }
+  .env-table[data-fixed-layout] :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* A header cell holds its column's resize handle (ColumnResizeHandle.css), whose line shows while
+     the pointer is over the header row. */
+  .env-table-header-cell[data-resizable] {
+    position: relative;
+  }
+  .env-table-head .env-table-row:hover .env-table-column-resize-handle::after {
+    background: var(--env-color-border-muted);
+  }
+  /* While a column is resized, the pointer keeps the resize cursor and no text is selected. */
+  .env-table[data-resizing] {
+    cursor: col-resize;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  @media (pointer: coarse) {
+    /* A sortable header is a button, at least the touch height in every scale and row density. */
+    .env-table-sort-button {
+      min-block-size: var(--env-control-height-touch);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-table-row[data-interactive],
+    .env-table-sort-button {
+      transition: none;
+    }
+  }
+
+  /* A stacking table follows the width of its region, not the window: the region is the env-table
+     container, as wide as its context gives it, and its font size is stackBelow / 37.5, so 37.5em in
+     the query below is stackBelow (em in a container query is the container's own; the table sets its
+     own text). Below that width each body row becomes a block on the table surface: the first cell is
+     its title, then each labelled value. CSS decides it, so the server's markup already stacks; the
+     table reads --env-table-stacked only to report it (data-stacked, onStackedChange). The region is
+     always the container, so the stacked layout is written for widths below it. */
+  .env-table-cell-label {
+    display: none;
+  }
+  /* Stacked, a captioned table keeps its caption above the frame: the body carries the frame. */
+  @container env-table (width < 37.5em) {
+    .env-table-region[data-narrow-layout='stack'] .env-table:has(> .env-table-caption) {
+      border: 0;
+      background: none;
+    }
+    .env-table-region[data-narrow-layout='stack']
+      .env-table:has(> .env-table-caption)
+      > .env-table-body {
+      overflow: clip;
+      border: var(--env-control-border-width) solid var(--env-color-border-muted);
+      border-radius: var(--env-radius-lg);
+      background: var(--env-table-surface);
+    }
+  }
+  .env-table-region[data-narrow-layout='stack'] {
+    container: env-table / inline-size;
+    inline-size: 100%;
+    font-size: calc(var(--env-table-stack-below) / 37.5);
+  }
+  @container env-table (width < 37.5em) {
+    .env-table-region[data-narrow-layout='stack'] .env-table {
+      --env-table-stacked: 1;
+    }
+    .env-table-region[data-narrow-layout='stack']
+      :is(
+        .env-table,
+        .env-table-body,
+        .env-table-row,
+        .env-table-cell,
+        .env-table-header-cell,
+        .env-table-caption
+      ) {
+      display: block;
+    }
+    /* The header row stays available to assistive technology and shows only while a sort button in
+       it has keyboard focus. */
+    .env-table-region[data-narrow-layout='stack'] .env-table-head:not(:focus-within) {
+      /* Visually hidden: a pixel's box, clipped away, still read. */
+      --env-table-head-hidden-size: 0.0625rem;
+      position: absolute;
+      inline-size: var(--env-table-head-hidden-size);
+      block-size: var(--env-table-head-hidden-size);
+      margin: calc(-1 * var(--env-table-head-hidden-size));
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .env-table-region[data-narrow-layout='stack'] .env-table-head:focus-within {
+      display: block;
+    }
+    .env-table-region[data-narrow-layout='stack'] .env-table-head .env-table-row {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .env-table-region[data-narrow-layout='stack'] .env-table-head .env-table-header-cell {
+      display: block;
+      flex: 1 1 auto;
+    }
+    .env-table-region[data-narrow-layout='stack'] .env-table-column-resize-handle {
+      display: none;
+    }
+    /* A stacked row is a compact block: its title on the first line, with the first labelled value
+       at its end without its label, as a status reads on its own, and any unlabelled cell after the
+       title, such as a menu of the row's actions, after that; then the other values, two to a line,
+       each under its label. The first line breaks off by an empty item as wide as the row. */
+    .env-table-region[data-narrow-layout='stack'] .env-table-body > .env-table-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      column-gap: var(--env-space-4);
+      padding: var(--env-table-cell-padding);
+    }
+    .env-table-region[data-narrow-layout='stack'] .env-table-body > .env-table-row::after {
+      content: '';
+      flex: 0 0 100%;
+      order: 1;
+    }
+    .env-table-region[data-narrow-layout='stack']
+      .env-table-body
+      > .env-table-row
+      + .env-table-row {
+      border-block-start: 1px solid var(--env-table-divider);
+    }
+    .env-table-region[data-narrow-layout='stack']
+      .env-table-body
+      > .env-table-row
+      > :is(.env-table-cell, .env-table-header-cell) {
+      flex: 0 0 auto;
+      min-inline-size: 0;
+      max-inline-size: 100%;
+      padding: 0;
+      border-block-start: 0;
+      text-align: start;
+      white-space: normal;
+      overflow-wrap: break-word;
+    }
+    /* The title takes the room its content needs and what the line has left; where a value after it
+       doesn't fit beside it, the value goes under it. */
+    .env-table-region[data-narrow-layout='stack'] .env-table-body > .env-table-row > :first-child {
+      flex: 1 1 auto;
+      color: var(--env-color-fg-default);
+      font-weight: var(--env-font-weight-medium);
+    }
+    /* The other values, after the first line, two to a line. */
+    .env-table-region[data-narrow-layout='stack']
+      .env-table-body
+      > .env-table-row
+      > .env-table-cell[data-labelled]:not(:first-child + *) {
+      flex: 0 0 calc((100% - var(--env-space-4)) / 2);
+      order: 2;
+      margin-block-start: var(--env-space-3);
+    }
+    .env-table-region[data-narrow-layout='stack']
+      .env-table-body
+      > .env-table-row
+      > :first-child
+      + .env-table-cell[data-labelled]
+      > .env-table-cell-label {
+      display: none;
+    }
+    .env-table-region[data-narrow-layout='stack'] .env-table-cell-content {
+      min-inline-size: 0;
+    }
+    .env-table-region[data-narrow-layout='stack'] .env-table-cell-label {
+      display: block;
+      min-inline-size: 0;
+      color: var(--env-color-fg-muted);
+      font: var(--env-type-body-sm);
+      overflow-wrap: break-word;
+    }
+    .env-table-region[data-narrow-layout='stack']
+      .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox'])) {
+      box-shadow: inset 3px 0 0 var(--env-table-selection-bar);
+    }
+    .env-table-region[data-narrow-layout='stack']
+      .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox'])):dir(
+        rtl
+      ) {
+      box-shadow: inset -3px 0 0 var(--env-table-selection-bar);
+    }
+    .env-table-region[data-narrow-layout='stack']
+      .env-table-row[aria-selected='true']
+      > :first-child {
+      box-shadow: none;
+    }
+  }
+
+  /* Forced colors: the system paints no fills or shadows, so a selected row is outlined in the
+     selection color, which keeps the controls in it legible. */
+  @media (forced-colors: active) {
+    .env-table-row[aria-selected='true'] {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
+    /* A sortable header's ring takes the system's text color. */
+    .env-table-sort-button:focus-visible::after {
+      border-color: CanvasText;
+    }
+  }
+
+  /* A region with more to scroll sideways fades at the edge it scrolls toward, its frame included, so
+     a column cut short reads as more to see rather than the table's end; scrolled to an end, that
+     edge is whole again. The fade is narrow, about a cell's padding, so it marks the edge without
+     dimming the column it cuts. A region with nothing to scroll has no scroll timeline and never
+     fades, nor does one with keyboard focus, whose ring the fade would cover. The fades' widths are
+     private and change in steps, just past each end. */
+  @supports (animation-timeline: scroll()) {
+    .env-table-region:not(:focus-visible) {
+      /* No fade, until the region's scroll timeline sets one. */
+      --env-table-fade-start: 0;
+      --env-table-fade-end: 0;
+      mask-image: linear-gradient(
+        to right,
+        transparent,
+        var(--env-color-fg-default) var(--env-table-fade-start),
+        var(--env-color-fg-default) calc(100% - var(--env-table-fade-end)),
+        transparent
+      );
+      animation: env-table-edge-fade linear both;
+      animation-timeline: scroll(self inline);
+    }
+  }
+  @keyframes env-table-edge-fade {
+    0% {
+      --env-table-fade-start: 0;
+      --env-table-fade-end: 0.75rem;
+    }
+    5%,
+    95% {
+      --env-table-fade-start: 0.75rem;
+      --env-table-fade-end: 0.75rem;
+    }
+    100% {
+      --env-table-fade-start: 0.75rem;
+      --env-table-fade-end: 0;
+    }
+  }
+
+  /* In a skeleton, the header's cells carry the skeleton's tint over their fill, as the region does
+     over its own (Skeleton.css). */
+  [data-env-skeleton] .env-table-head .env-table-header-cell {
+    background-image:
+      var(--env-skeleton-overlay), linear-gradient(var(--env-table-band), var(--env-table-band));
+  }
+  /* A sortable header's button isn't a shape, as other buttons are in a skeleton: its label is a bar,
+     as every header's is, and its arrow isn't drawn. */
+  [data-env-skeleton]:not(env-none) .env-table-head .env-table-sort-button {
+    --env-skeleton-shape: 0;
+    background: transparent;
+  }
+  [data-env-skeleton]:not(env-none) .env-table-head .env-table-sort-button > * {
+    visibility: visible;
+  }
+  [data-env-skeleton]:not(env-none) .env-table-head .env-table-sort-button > .env-icon {
+    visibility: hidden;
+  }
+  /* A loading table shows no selection: its rows aren't there yet, so a selected row takes neither
+     the selection's fill nor its bar. */
+  [data-env-skeleton] .env-table-row[aria-selected='true'] {
+    --env-table-selection-bar: transparent;
+    --env-avatar-group-ring-tint: transparent;
+    background: transparent;
+  }
+  /* In a skeleton, an empty cell, as over a placeholder row, is a bar of about a value's length. */
+  [data-env-skeleton] .env-table-cell {
+    --env-skeleton-placeholder: inline-block;
+    --env-skeleton-length: 6rem;
   }
 }

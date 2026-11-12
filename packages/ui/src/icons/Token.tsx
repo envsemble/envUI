@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function Token({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconToken({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M364-590q22-23 51.5-36.5T480-640q35 0 64.5 13.5T596-590l202-113-279-155q-18-11-39-11t-39 11L162-703l202 113Zm76 488v-223q-52-14-86-56.5T320-480q0-11 1-21t4-19L120-635v308q0 22 11 40.5t30 29.5l279 155Zm40-298q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm40 298 279-155q19-11 30-29.5t11-40.5v-308L635-520q3 10 4 19.5t1 20.5q0 56-34 98.5T520-325v223Z" /> : <path d="M480-92q-10 0-20-2.5t-19-7.5L161-257q-19-11-30-29.5T120-327v-306q0-22 11-40.5t30-29.5l280-155q9-5 19-7.5t20-2.5q10 0 20 2.5t19 7.5l280 155q19 11 30 29.5t11 40.5v306q0 22-11 40.5T799-257L519-102q-9 5-19 7.5T480-92ZM364-590q22-23 51.5-36.5T480-640q35 0 64.5 13.5T596-590l120-67-236-131-236 131 120 67Zm76 396v-131q-52-14-86-56.5T320-480q0-11 1-21t4-19l-125-70v263l240 133Zm40-206q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Zm40 206 240-133v-263l-125 70q3 10 4 19.5t1 20.5q0 56-34 98.5T520-325v131Z" />}</Icon>;
 }

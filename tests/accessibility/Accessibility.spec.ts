@@ -1,39 +1,32 @@
 /**
- * Accessibility gate: axe scans the first view of every catalogue page in light, every view of the
- * Button page (to cover each kind of view once), and the theme sample of samplePages
- * (tests/browser/CatalogueThemes.ts) in dark and both high-contrast themes too, and compares the
- * violations with KnownViolations.json. A new violation fails, and so does a listed
- * one that no longer occurs, so the list only shrinks. Run `npm run test:a11y`; after fixing
- * violations, or when a reviewed change has to add one, rewrite the list with
- * `npm run test:a11y:update` and review its diff.
+ * The site's accessibility scan: axe scans one page of each kind the site has, in light, and the
+ * pages of `allThemesOn` in dark and both high-contrast themes too, and compares the violations
+ * with KnownViolations.json. A new violation fails, and so does a listed one that no longer occurs,
+ * so the list only shrinks. The library's components are scanned in their fixtures
+ * (tests/component/Accessibility.test.tsx). Run `npm run test:a11y`; after fixing violations, or
+ * when a reviewed change has to add one, rewrite the lists with `npm run test:a11y:update` and
+ * review their diff.
  *
  * Violations are keyed by page, theme, axe rule and a stable target: the catalogue region (the
- * specimen's heading, sidebar, header…) and the element's tag with its env-/docs- classes, counted.
+ * specimen's heading, sidebar, header…) and the element's tag with its env-, site-, catalogue-
+ * and docs- classes, counted.
  * React ids and child positions are left out so unrelated edits do not move the keys.
- *
- * A template page's previews are iframes of the frame route, left out of the page's scan: each
- * template screen is scanned alone at its frame route instead, in light and the comfortable scale
- * at the desktop and phone widths, under routes such as
- * frame:settings-page/SettingsPage?scale=comfortable&width=1280.
  */
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdirSync, readFileSync, rmdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { serveSite, siteBuilt, siteUrl } from '../browser/HostedSite';
+import { serveSite, siteBuilt, siteUrl } from '../browser/support/HostedSite';
 import {
+  allThemes,
+  chooseScheme,
   emulateContrast,
-  themesFor,
   type CatalogueTheme,
   type ThemeName,
-} from '../browser/CatalogueThemes';
-import {
-  documentationPages,
-  guidePages,
-  overviewViews,
-} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+} from '../browser/support/CatalogueThemes';
+import { findPage } from '../../apps/site/src/routes/SiteRoutes';
 
-/** light on every page, and dark, light-hc and dark-hc on the pages of samplePages. */
+/** light on every page, and dark, light-hc and dark-hc on the pages of allThemesOn. */
 type Theme = ThemeName;
 /** rule id → stable target → count */
 type RuleCounts = Record<string, Record<string, number>>;
@@ -60,53 +53,33 @@ const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  */
 const highContrastRules = { 'color-contrast-enhanced': { enabled: true } };
 
-/** The page whose every view is scanned; every other page is scanned at its first view. */
-const everyView = 'components/button';
 /**
- * Every destination of the catalogue's own route list, at its first view (each of its views on
- * everyView), with the themes each route is scanned in: the page's themes at its first view, and
- * light at the others.
+ * A page of each kind: the home page, a component's, a pattern's and a foundation's page, a
+ * gallery, and in the Docs a component's page, a guide, the token reference and the changelog.
  */
-const pages = documentationPages.map(({ path, title, views }) => {
-  const all =
-    path === 'overview'
-      ? overviewViews.map((view) => `overview/${view.id}`)
-      : views.length
-        ? views.map((view) => `${path}/${view.id}`)
-        : [path];
-  const themes = themesFor(path);
-  return {
-    path,
-    title,
-    routes: (path === everyView ? all : all.slice(0, 1)).map((route, index) => ({
-      route,
-      themes: index ? themes.slice(0, 1) : themes,
-    })),
-  };
+const kinds = [
+  'overview',
+  'components/button',
+  'patterns/forms',
+  'foundations/colors',
+  'components',
+  'docs/components/button',
+  'docs/customizing',
+  'docs/tokens',
+  'docs/changelog',
+];
+/**
+ * Also scanned in dark and high contrast: the color roles and actions with their states, and the
+ * Docs' props tables and token swatches.
+ */
+const allThemesOn = new Set(['components/button', 'docs/tokens']);
+
+const pages = kinds.map((path) => {
+  const page = findPage(path);
+  if (!page) throw new Error(`Accessibility.spec.ts names a page the site does not have: ${path}.`);
+  const themes = allThemesOn.has(path) ? allThemes : allThemes.slice(0, 1);
+  return { path, title: page.title, routes: [{ route: path, themes }] };
 });
-/** Every template screen, by its template page's path, with the routes of its frame scans. */
-const screens = guidePages
-  .filter((page) => page.section === 'Templates')
-  .flatMap(({ path, document }) =>
-    (document?.sections ?? []).flatMap((section) =>
-      section.blocks.flatMap((block) =>
-        block.kind === 'template'
-          ? [
-              {
-                path,
-                frame: `${document!.id}/${block.name}`,
-                scans: [
-                  { scale: 'comfortable', width: 1280, height: 800, themes: ['light'] },
-                  { scale: 'comfortable', width: 390, height: 844, themes: ['light'] },
-                ] as const,
-              },
-            ]
-          : [],
-      ),
-    ),
-  );
-const frameRoute = (frame: string, scale: string, width: number) =>
-  `frame:${frame}?scale=${scale}&width=${width}`;
 /** Every route scanned, with the themes it is scanned in. */
 const routes = new Map<string, Set<string>>([
   ...pages.flatMap((page) =>
@@ -115,16 +88,15 @@ const routes = new Map<string, Set<string>>([
       new Set(themes.map((theme) => theme.name)),
     ]),
   ),
-  ...screens.flatMap(({ frame, scans }) =>
-    scans.map(({ scale, width, themes }): [string, Set<string>] => [
-      frameRoute(frame, scale, width),
-      new Set(themes),
-    ]),
-  ),
 ]);
 
+/** The note KnownViolations.json opens with: it is written, not edited. */
+const generatedNote =
+  'Written by tests/accessibility/Accessibility.spec.ts. After fixing violations, run npm run test:a11y:update; add to it only for a reviewed reason.';
+
 function readExceptions(): Violations {
-  return JSON.parse(readFileSync(exceptionsFile, 'utf8'));
+  const { $comment: _note, ...violations } = JSON.parse(readFileSync(exceptionsFile, 'utf8'));
+  return violations;
 }
 
 function sortKeys<T>(value: T): T {
@@ -158,7 +130,10 @@ function updateExceptions(change: (violations: Violations) => void) {
   try {
     const violations = readExceptions();
     change(violations);
-    writeFileSync(exceptionsFile, `${JSON.stringify(sortKeys(violations), null, 2)}\n`);
+    writeFileSync(
+      exceptionsFile,
+      `${JSON.stringify({ $comment: generatedNote, ...sortKeys(violations) }, null, 2)}\n`,
+    );
   } finally {
     rmdirSync(lock);
   }
@@ -168,13 +143,34 @@ function updating(testInfo: TestInfo) {
   return ['all', 'changed'].includes(testInfo.config.updateSnapshots);
 }
 
+/**
+ * Brings each skeleton into view in turn, as a reader scrolling the page does: a pre-rendered page
+ * renders a figure's subject only once it nears the view (apps/site/src/figures/useSubjectShown.ts).
+ * Playwright scrolls through the browser rather than the page's scrollIntoView, which the site
+ * stands in for while a stage plays (apps/site/src/motion/BrowserStandIns.ts).
+ */
+async function showFigures(page: Page) {
+  for (;;) {
+    const skeleton = (
+      await page.evaluateHandle(() => document.querySelector('.site-loading'))
+    ).asElement();
+    if (!skeleton) return;
+    // A skeleton may go as it scrolls, its subject rendered.
+    await skeleton.scrollIntoViewIfNeeded().catch(() => {});
+    await page.waitForFunction((element) => !element.isConnected, skeleton);
+  }
+}
+
 async function settle(page: Page) {
-  await page.locator('#docs-main').waitFor();
-  // Lazy previews and usage details announce themselves while they load.
-  await page
-    .getByText(/^Loading .*…$/)
-    .first()
-    .waitFor({ state: 'detached' });
+  await page.locator('#site-main').waitFor();
+  await showFigures(page);
+  // A skeleton of the site's (.site-loading, loading/Skeletons.tsx) marks a part that is still
+  // loading: an example, its code, a specimen, a demo, the icon list, the token reference or the
+  // changelog. A tile's (.catalogue-tile-loading) waits for the tile to come into view instead.
+  // A section still to show is its outline (data-site-pending, markdown/SectionOutline.ts) until
+  // it renders, with the skeletons of its parts.
+  await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
+  await page.locator('.site-loading').first().waitFor({ state: 'detached' });
   await page.evaluate(() => document.fonts.ready);
   // Theme changes transition colors; contrast measured mid-transition is neither theme's. The
   // animations' states are polled rather than their finished promises awaited: Chromium does not
@@ -200,10 +196,10 @@ async function settle(page: Page) {
  * it sees it; closed, its tokens are not rendered and the scan would pass over them.
  */
 async function expandCode(page: Page) {
-  await page.locator('#docs-main').waitFor();
+  await page.locator('#site-main').waitFor();
   await page.evaluate(() => {
     for (const details of document.querySelectorAll<HTMLDetailsElement>(
-      'details.docs-live-example-code',
+      'details.site-live-example-code',
     ))
       details.open = true;
   });
@@ -218,7 +214,7 @@ async function highlighted(page: Page) {
     [...document.querySelectorAll<HTMLElement>('.env-code-block pre')]
       .filter(
         (pre) =>
-          pre.closest('.docs-live-example-code') ||
+          pre.closest('.site-live-example-code') ||
           /^(?:tsx?|jsx?|typescript|javascript|json|css|html|xml|sh|bash|shell|ya?ml|sql|java|md|markdown|ini) code$/i.test(
             pre.getAttribute('aria-label') ?? '',
           ),
@@ -227,21 +223,17 @@ async function highlighted(page: Page) {
   );
 }
 
-/** Switches the catalogue to the theme's scheme with its button, under the theme's contrast. */
+/** Switches the catalogue to the theme's scheme in its Display menu, under the theme's contrast. */
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
-  const app = page.locator('.docs-app');
-  if ((await app.getAttribute('data-env-theme')) !== theme.scheme)
-    await page
-      .getByRole('button', { name: `Switch to ${theme.scheme} theme`, exact: true })
-      .click();
-  await page.locator(`.docs-app[data-env-theme="${theme.scheme}"]`).waitFor();
+  const root = page.locator('html');
+  if ((await root.getAttribute('data-env-theme')) !== theme.scheme)
+    await chooseScheme(page, theme.scheme);
+  await page.locator(`html[data-env-theme="${theme.scheme}"]`).waitFor();
 }
 
 async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
   const results = await new AxeBuilder({ page })
-    // Template previews are scanned alone, at their frame route.
-    .exclude('iframe.docs-template-frame')
     .options({
       runOnly: { type: 'tag', values: tags },
       ...(theme.endsWith('-hc') && { rules: highContrastRules }),
@@ -253,7 +245,7 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
     const targets = await page.evaluate(
       (selectors) => {
         const stable = (element: Element) =>
-          [...element.classList].filter((name) => /^(env|docs)-/.test(name));
+          [...element.classList].filter((name) => /^(env|site|catalogue|docs)-/.test(name));
         const part = (element: Element) =>
           element.localName +
           stable(element)
@@ -271,20 +263,20 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
           return element;
         };
         const region = (element: Element) => {
-          const example = element.closest('.docs-example');
+          const example = element.closest('.site-example');
           const heading = example?.querySelector(
-            ':scope > h2, :scope > .docs-example-heading > h2',
+            ':scope > h2, :scope > .catalogue-example-heading > h2',
           );
           if (heading?.textContent?.trim()) return heading.textContent.trim();
           if (example) return 'specimen';
           const regions: [string, string][] = [
-            ['.docs-sidebar', 'sidebar'],
-            ['.docs-header', 'top bar'],
-            ['.docs-page-header, .docs-page-banner, .docs-overview-hero', 'header'],
-            ['.docs-page-navigation', 'page navigation'],
-            ['.docs-article', 'article'],
-            ['.docs-preview', 'preview'],
-            ['#docs-main', 'main'],
+            ['.site-sidebar', 'sidebar'],
+            ['.site-compact-controls', 'page controls'],
+            ['.site-page-header, .site-page-banner, .catalogue-overview-hero', 'header'],
+            ['.site-page-navigation', 'page navigation'],
+            ['.site-article', 'article'],
+            ['.catalogue-specimen-area', 'specimen area'],
+            ['#site-main', 'main'],
           ];
           return regions.find(([selector]) => element.closest(selector))?.[1] ?? 'page';
         };
@@ -357,7 +349,7 @@ function compare(scan: Scan, known: RuleCounts = {}) {
 test.beforeAll(() => {
   if (!siteBuilt())
     throw new Error(
-      'The hosted catalogue is missing: run npm run test:a11y, which builds it first with npm run build:site.',
+      'The hosted site is missing: run npm run test:a11y, which builds it first with npm run build:site.',
     );
 });
 
@@ -371,7 +363,7 @@ for (const { path, title, routes: pageRoutes } of pages) {
     test.slow(pageRoutes.flatMap(({ themes }) => themes).length > 1);
     const scans: Scan[] = [];
     for (const { route, themes } of pageRoutes) {
-      await page.goto(`${siteUrl}/#/${route}`);
+      await page.goto(`${siteUrl}/${route === 'overview' ? '' : route}`);
       await expandCode(page);
       for (const theme of themes) {
         await setTheme(page, theme);
@@ -402,10 +394,10 @@ function record(testInfo: TestInfo, title: string, scans: Scan[]) {
   const report: string[] = [];
   for (const scan of scans) {
     const { added, fixed } = compare(scan, known[scan.route]?.[scan.theme]);
-    if (added.length) report.push(`  New violations on #/${scan.route} (${scan.theme}):`, ...added);
+    if (added.length) report.push(`  New violations on /${scan.route} (${scan.theme}):`, ...added);
     if (fixed.length)
       report.push(
-        `  No longer found, so remove from KnownViolations.json: #/${scan.route} (${scan.theme}):`,
+        `  No longer found, so remove from KnownViolations.json: /${scan.route} (${scan.theme}):`,
         ...fixed,
       );
   }
@@ -417,26 +409,6 @@ function record(testInfo: TestInfo, title: string, scans: Scan[]) {
         'Fix new violations. When the list is out of date, run `npm run test:a11y:update` and review its diff.',
       ].join('\n'),
     );
-}
-
-for (const { frame, scans: frameScans } of screens) {
-  test(`template ${frame} has no new accessibility violations`, async ({ page }, testInfo) => {
-    const scans: Scan[] = [];
-    for (const { scale, width, height, themes } of frameScans) {
-      await page.setViewportSize({ width, height });
-      for (const theme of themes) {
-        await page.goto(`${siteUrl}/?${new URLSearchParams({ frame, scale, theme })}`);
-        await page.locator('[data-template-frame]').waitFor();
-        await page
-          .getByText(/^Loading .*…$/)
-          .first()
-          .waitFor({ state: 'detached' });
-        await page.evaluate(() => document.fonts.ready);
-        scans.push(await scan(page, frameRoute(frame, scale, width), theme));
-      }
-    }
-    record(testInfo, `template ${frame}`, scans);
-  });
 }
 
 // Playwright requires the fixtures object as the first parameter, even when no fixture is used.

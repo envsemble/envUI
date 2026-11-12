@@ -11,25 +11,28 @@ The selected assets use Rounded, weight 400, grade 0, optical size 24, fill 0
 and fill 1. `icon-manifest.json` records the exact pinned upstream revision,
 complete catalogue, upstream paths, source SHA-256 hashes, Git blob hashes, and
 the upstream catalogue tree hash. Source SVGs are retained unchanged in the
-repository at `src/assets/material-symbols-rounded`; generated adapters add React props,
+repository at `vendor/material-symbols-rounded`; generated adapters add React props,
 relative dimensions, accessible SVG defaults, and `currentColor`.
 
-`Typography` is an envUI alias for the official `text_fields` symbol.
-Numeric leading upstream names receive an `Icon` prefix in their React export,
-for example `10k` becomes `Icon10k`. Other snake case names become PascalCase.
+Snake case upstream names become the PascalCase name of their module, and their
+React export takes an `Icon` prefix: `add` becomes `IconAdd` in `icons/Add`, and
+`10k` becomes `Icon10k` in `icons/10k`. `IconTypography` is an envUI alias for the
+official `text_fields` symbol.
 
 Generation uses verified local files and requires no network.
-Maintainers deliberately run `node scripts/SyncIcons.mjs --revision <full SHA>`
+Maintainers deliberately run `node scripts/build/SyncIcons.ts --revision <full SHA>`
 from the repository root to update the pinned official source, then run
-`node scripts/GenerateIcons.mjs`. A sync without `--revision` restores the existing
+`node scripts/build/GenerateIcons.ts`. A sync without `--revision` restores the existing
 pin. No install lifecycle script downloads or selects a floating catalogue.
 
-## Inter
+## Geist
 
-The bundled Inter font is included locally by envUI.
-Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter).
+The bundled Geist font is included locally by envUI.
+Copyright (c) 2023 Vercel, in collaboration with basement.studio (https://github.com/vercel/geist-font).
 Licensed under the SIL Open Font License, Version 1.1. The complete license is
-included in `licenses/Inter-LICENSE.txt`.
+included in `licenses/Geist-LICENSE.txt`. The bundled file is Geist 1.802's
+variable face, subset to Latin, Latin-1 and Latin Extended-A with the weight
+axis limited to 400 to 700; it keeps the name Geist.
 
 ## Base UI
 
@@ -43,9 +46,11 @@ The package's dependency and lockfile record the installed version.
 Markdown uses [react-markdown](https://github.com/remarkjs/react-markdown) and
 [remark-gfm](https://github.com/remarkjs/remark-gfm), licensed under MIT.
 Syntax highlighting uses [Shiki](https://github.com/shikijs/shiki), including its
-explicit language registrations, JavaScript regular-expression engine, and unmodified
-GitHub Light Default and GitHub Dark Default theme registrations. Shiki is licensed under MIT.
+explicit language registrations, JavaScript regular-expression engine, and the GitHub Light
+Default, GitHub Dark Dimmed, GitHub Light High Contrast and GitHub Dark High Contrast theme
+registrations, from GitHub's VS Code theme, with token colors that fall short of envUI's contrast
+targets made readable where they load. Shiki and the GitHub themes are licensed under MIT.
 
 `licenses/Runtime-Dependencies-LICENSE.txt` includes the locked runtime dependencies'
 copyright and license notices. The build generates this file from installed packages
-and embeds the same notices in the offline documentation artifact.
+and the hosted documentation site serves the same notices.

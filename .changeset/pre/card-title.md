@@ -6,4 +6,4 @@ Card takes its heading as `title`, as Alert, EmptyState and Dialog do, where it 
 
 Migrate with the codemods: `envui-codemods v1-props` renames `heading` to `title`, and `v1-structure` keeps ActionCard's and FeatureCard's `title` as it is. Move a native `title` tooltip of a 0.x content card to an element inside it.
 
-Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

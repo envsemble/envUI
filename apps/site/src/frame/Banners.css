@@ -1,0 +1,171 @@
+/* The banners of the catalogue and the Docs (SiteBanner.tsx), one card in both: every page's banner
+   reads from the start like a document, under its breadcrumbs, on the default surface's fill with
+   no edge, lifted off the page by the site's card shadow (Stage.css), with a LineArt drawing hidden
+   from assistive technology at its end, or, on the few catalogue pages with one, a motif drawn from
+   what the page shows (BannerMotif.tsx, BannerMotifs.css). The banner's width, which the home
+   page's hero shares, is in Shell.css. */
+.site-banner > :not(.site-banner-shapes, .catalogue-banner-motif) {
+  position: relative;
+  z-index: var(--env-z-raised);
+}
+
+/* The banner's top end corner (SiteBanner.tsx), such as the Design | Code switch: over the picture,
+   at the banner's corner, so the text keeps its column. */
+.site-banner > .site-page-banner-corner {
+  position: absolute;
+  inset-block-start: var(--env-space-4);
+  inset-inline-end: var(--env-space-4);
+}
+
+/* The banner's inline padding, as a length its text measures the picture by (below). */
+@property --site-banner-padding {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0rem;
+}
+
+/* Every banner: the text from the start, between the same margins, at the same sizes, on the
+   default surface's fill with no edge. Its text, badges and buttons keep their contrast there as on
+   any default surface (`surface` in tests/contrast/Pairs.ts), in every theme. */
+.site-banner {
+  --site-banner-padding: clamp(var(--env-space-6), 6cqi, var(--env-space-9));
+  padding-inline: var(--site-banner-padding);
+  border: 0;
+  background: var(--env-color-bg-default);
+}
+
+.site-banner
+  :is(.site-page-banner-content, .site-page-banner-heading, .site-page-banner-heading > *) {
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: start;
+}
+
+/* The text column ends where the picture at the banner's end starts to show, at every width:
+   the title, description and facts wrap before it rather than cross it. The column is the
+   banner's content and its end padding, less the part of the picture that shows (--site-banner-
+   art, below), measured in the banner's own width (cqi here is the banner's content box). The
+   trail above the title is short and stays on one line. Without a picture, the text fills the
+   banner. */
+.site-banner .site-page-banner-content {
+  --site-banner-text: calc(100cqi + var(--site-banner-padding) - var(--site-banner-art, 0rem));
+}
+
+.site-banner .site-page-banner-heading > :not(:first-child),
+.site-banner .site-page-banner-heading > :first-child > :not(.site-page-banner-breadcrumbs) {
+  max-inline-size: var(--site-banner-text);
+}
+
+.site-banner .site-page-banner-title {
+  max-inline-size: min(22ch, var(--site-banner-text));
+  font-size: clamp(2.5rem, calc(1.5rem + 3cqi), 3.25rem);
+}
+
+/* How much of the banner's end the picture shows on: a drawing's box (below) less its start, where
+   its fade has hardly begun; the palette's fan (BannerMotifs.css), which starts near its stage's
+   start, all but a sliver of its stage. Both boxes are a share of the banner's padding box. */
+@container site-page-header (width >= 44rem) {
+  .site-banner-shapes ~ .site-page-banner-content {
+    --site-banner-art: calc(0.7 * min(0.48 * (100cqi + 2 * var(--site-banner-padding)), 42rem));
+  }
+  .catalogue-banner-motif ~ .site-page-banner-content {
+    --site-banner-art: calc(0.9 * min(0.54 * (100cqi + 2 * var(--site-banner-padding)), 40rem));
+  }
+}
+
+/* In a narrow banner, the trail is the page's parent alone, a link back up: the title under it
+   names the page, and the levels above it would cut the trail short mid-word. */
+@container site-page-header (width < 36rem) {
+  .site-page-banner-breadcrumbs .env-breadcrumbs-item:not(:nth-last-child(2)),
+  .site-page-banner-breadcrumbs .env-breadcrumbs-separator {
+    display: none;
+  }
+}
+
+/* On a phone the banner is snugger, between narrower margins, its title smaller and its trail,
+   title, description and facts closer together, so the first screen reaches the page's first
+   figure. */
+@container site-page-header (width < 36rem) {
+  .site-banner.site-page-banner {
+    --site-banner-padding: var(--env-space-5);
+    padding-block: var(--env-space-4);
+  }
+  .site-banner .site-page-banner-title {
+    font-size: 2rem;
+  }
+  .site-banner .site-page-banner-heading > :first-child {
+    gap: var(--env-space-2);
+  }
+}
+
+/* A trail given as a line rather than breadcrumbs, such as a missing page's, is set as a trail's
+   earlier level is (Breadcrumbs.css): small and muted. */
+.site-banner .catalogue-page-banner-breadcrumb {
+  font: var(--env-type-body-sm);
+  color: var(--env-color-fg-muted);
+}
+
+/* The banner's picture (CatalogueBannerLines.tsx, DocsBannerLines.tsx): a LineArt drawing in a box
+   at the banner's end, cropped from its start where the banner is narrow. Its start fades out, as
+   a motif's does (BannerMotifs.css), so where a long title or description reaches over it, the
+   text stands on the plain fill. */
+.catalogue-banner-lines,
+.docs-banner-lines {
+  /* An opaque color for the fade's mask, which reads only its alpha. */
+  --site-banner-lines-opaque: var(--env-color-fg-default);
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: min(48%, 42rem);
+  mask-image: linear-gradient(to right, transparent 25%, var(--site-banner-lines-opaque) 70%);
+}
+/* The drawing draws itself in once a session (BannerAppear.ts), shorter than LineArt's own: in
+   four of the slow motion token, each line in half of it, one beat after another. */
+.catalogue-banner-lines {
+  --env-line-art-duration: calc(var(--env-motion-duration-slow) * 4);
+}
+/* Where it will draw itself in, as the head's script found before the first paint, a pre-rendered
+   page shows none of its lines until it starts to, rather than the whole drawing first. Where the
+   site's script hasn't run five seconds on, as when it failed to load, they show whole. */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-site-banner-appear] .catalogue-banner-lines:not([data-motion]) {
+    visibility: hidden;
+    animation: site-banner-lines-shown 0s 5s forwards;
+  }
+}
+@keyframes site-banner-lines-shown {
+  to {
+    visibility: visible;
+  }
+}
+/* On the dark banner, the same contrast reads louder than in light: the lines are quieter there,
+   so they keep light's presence. High contrast keeps them whole. */
+:where([data-env-theme='dark']) :is(.catalogue-banner-lines, .docs-banner-lines) {
+  opacity: 0.7;
+}
+:where([data-env-contrast='high']) :is(.catalogue-banner-lines, .docs-banner-lines) {
+  opacity: 1;
+}
+.catalogue-banner-lines:dir(rtl),
+.docs-banner-lines:dir(rtl) {
+  mask-image: linear-gradient(to left, transparent 25%, var(--site-banner-lines-opaque) 70%);
+}
+
+/* In a narrow pane, where the text spans the banner, the drawing would run under the text and
+   crowd it: the banner is its text alone there. */
+@container site-page-header (width < 44rem) {
+  .site-banner-shapes {
+    display: none;
+  }
+}
+
+/* The shapes' layer covers the banner and is a container of its size. It clips the shapes itself,
+   as the banner does: a shape reaching past the banner's edge would otherwise count, for the
+   accessibility scan, as part of what is beside the banner, such as its contents. */
+.site-banner-shapes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+  pointer-events: none;
+}

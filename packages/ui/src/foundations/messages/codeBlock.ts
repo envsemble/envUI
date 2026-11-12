@@ -18,5 +18,3 @@ export const codeBlock = {
   /** Announced when the clipboard is unavailable and the code is selected instead. */
   selected: 'Code selected. Use your keyboard or context menu to copy.',
 };
-
-export type CodeBlockMessages = typeof codeBlock;

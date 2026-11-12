@@ -1,6 +1,6 @@
 # @envsemble/stylelint-config-envui
 
-A Stylelint config for applications built with envUI. It reports style rules that select envUI's private markup, raw colors, literal stacking order, and px where the size should follow the reader's font size. Each message says what to use instead. The [ESLint plugin](../eslint-plugin/README.md) does the same for components, class names and inline styles.
+A Stylelint config for applications built with envUI. It reports raw colors, literal stacking order, and px where the size should follow the reader's font size. Each message says what to use instead. The [ESLint plugin](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin) does the same for components, class names and inline styles.
 
 ## Install
 
@@ -48,11 +48,9 @@ export default {
 
 ## Rules
 
-### envui/no-private-classes
+### Part classes
 
-envUI's markup and its `env-` class names are private: they change in any release, as the 1.0 renames change nearly all of them. `envui/no-private-classes`, a rule this package adds, reports selectors that target them: `.env-…` anywhere in a selector, including `:global(.env-dialog)`, `:has()`, `:not()` and nesting, attribute selectors on `class` such as `[class*="env-button"]`, and `@scope` boundaries. Use the component's props and envUI's tokens, or style a class of your own on your own element.
-
-`.env-theme`, the theme boundary on which the setup guide has applications set envUI's tokens, is allowed, and so are the `data-env-theme` attributes. Option: `allow`, the envUI classes that may be selected; the config sets `['env-theme']`.
+envUI's part classes (`env-<component>-<part>`, such as `.env-card-title`) and state attributes (`data-*`, such as `[data-selected]`) are public and versioned: an application may select them to adjust a component, and a release that renames or removes one is a major release. The package's `docs/generated/parts.json` lists them per component. Component tokens, the custom properties a component declares for itself such as `--env-card-padding`, are private and may change in any release; set the system tokens instead. The config reports nothing about either.
 
 ### Raw colors
 
@@ -64,23 +62,23 @@ Colors come from envUI's semantic color tokens, so they follow the theme and kee
 
 Custom properties are checked too, including inline overrides of envUI's own tokens.
 
-The token names in the messages come from [`data/tokens.json`](data/tokens.json). Before every pack, `scripts/SyncTokens.mjs` rewrites it from the library's generated token list (`packages/ui/src/generated/tokens.json` in the envUI repository), so a release names the tokens of the same envUI release, and the tests fail when a message or this README names a token that does not exist.
+The token names in the messages come from [`src/data/tokens.json`](src/data/tokens.json). Before every pack, the envUI repository's `scripts/build/SyncLintPackages.ts` rewrites it from the library's generated token list (`packages/ui/src/generated/tokens.json`), so a release names the tokens of the same envUI release, and the tests fail when a message or this README names a token that does not exist.
 
 ### Stacking order
 
 `declaration-property-value-allowed-list` allows `z-index` only as `auto`, a global keyword such as `inherit`, or a custom property (`var(--…)`, also inside `calc()`); the list is exported as `stackingValues`. Take the layer from envUI's stacking tokens, so the application's layers keep one order with envUI's own, lowest first:
 
-| Token             | Value | For                                                                        |
-| ----------------- | ----- | -------------------------------------------------------------------------- |
-| `--env-z-base`    | 0     | The flow of a page or a component                                          |
-| `--env-z-raised`  | 1     | A part over its siblings, such as a sticky table header                    |
-| `--env-z-sticky`  | 20    | The frame's sticky and fixed parts: the app header and the sidebar columns |
-| `--env-z-peek`    | 30    | A collapsed sidebar that opens over the content                            |
-| `--env-z-overlay` | 90    | The scrim behind a modal layer                                             |
-| `--env-z-modal`   | 100   | Dialogs, drawers and the command palette                                   |
-| `--env-z-popover` | 110   | Menus, popovers and the lists of selects and comboboxes                    |
-| `--env-z-toast`   | 120   | Notifications                                                              |
-| `--env-z-tooltip` | 130   | Tooltips                                                                   |
+| Token                     | Value | For                                                                        |
+| ------------------------- | ----- | -------------------------------------------------------------------------- |
+| `--env-z-base`            | 0     | The flow of a page or a component                                          |
+| `--env-z-raised`          | 1     | A part over its siblings, such as a sticky table header                    |
+| `--env-z-sticky`          | 20    | The frame's sticky and fixed parts: the app header and the sidebar columns |
+| `--env-z-supporting-pane` | 30    | A collapsed sidebar that opens over the content                            |
+| `--env-z-backdrop`        | 90    | The backdrop behind a modal layer                                          |
+| `--env-z-modal`           | 100   | Dialogs, drawers and the command palette                                   |
+| `--env-z-popup`           | 110   | Menus, popovers and the lists of selects and comboboxes                    |
+| `--env-z-toast`           | 120   | Notifications                                                              |
+| `--env-z-tooltip`         | 130   | Tooltips                                                                   |
 
 A step between two levels takes `calc()`, such as `calc(var(--env-z-sticky) + 1)` for a header above its sidebar, and an application's own layer can keep its name in a custom property of its own that reads a token, such as `--app-z-header: var(--env-z-sticky)`. The message names the tokens of the installed release. This rule takes one list of options.
 

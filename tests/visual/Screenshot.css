@@ -1,8 +1,7 @@
-/* Applied while the visual baseline takes a screenshot. The catalogue's top bar sticks below 48 rem,
-   and the display settings stick to the window's corner above it, so either would float over
-   whichever specimen is scrolled beneath it. */
-.docs-header,
-.docs-page-controls {
+/* Applied while the visual baseline takes a screenshot. The menu button and search of a narrow
+   window stick to the body's top, so they would float over whichever specimen is scrolled
+   beneath them. */
+.site-compact-controls {
   visibility: hidden !important;
 }
 /* The frame's scroll padding would scroll a specimen as tall as the viewport partly out of it,

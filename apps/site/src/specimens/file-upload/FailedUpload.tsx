@@ -1,0 +1,56 @@
+import { useState } from 'react';
+import FailedUpload from '../../examples/file-upload/FailedUpload';
+import type { PointerStep } from '../../motion/pointer/PointerPlan';
+import { usePointer } from '../../motion/pointer/PointerPlayback';
+import { MotionStage } from '../../figures/MotionStage';
+import { Renew } from '../../motion/Renew';
+
+const tryAgain = '[aria-label="Try again to upload team-photo.jpg"]';
+
+/*
+ * The photo's bar stops part way, and its row says it couldn't upload, with Try again. The pointer
+ * presses it: the bar starts over and fills, and gives way to the photo's size. Then it starts
+ * anew.
+ */
+const script: PointerStep[] = [
+  // A script's first wait is cut short; the pointer waits for the failure after a cue.
+  { cue: 'start' },
+  { wait: 1020 },
+  { to: tryAgain, x: 0.5, y: 2.2 },
+  { to: tryAgain, x: 0.5, y: 0.55, duration: 450 },
+  { wait: 150 },
+  { click: true },
+  { wait: 180 },
+  { leave: true },
+  { wait: 2640 },
+  { cue: 'renew' },
+  { wait: 420 },
+];
+
+function Retrying() {
+  const [round, setRound] = useState(0);
+  usePointer(script, {
+    onCue: (cue) => {
+      if (cue === 'renew') setRound((count) => count + 1);
+    },
+  });
+  return (
+    // As tall as the rows with the failure, so the figure keeps its height.
+    <div
+      style={{ display: 'grid', alignContent: 'start', inlineSize: '100%', minBlockSize: '12rem' }}
+    >
+      <Renew round={round}>
+        <FailedUpload />
+      </Renew>
+    </div>
+  );
+}
+
+/** An upload that fails part way and goes up once a pointer no one sees tries it again. */
+export default function FailedUploadMotion() {
+  return (
+    <MotionStage label="a failed upload tried again">
+      <Retrying />
+    </MotionStage>
+  );
+}

@@ -1,27 +1,24 @@
 'use client';
 
 import type { CSSProperties, Ref } from 'react';
-import { useFieldMetadata } from './internal/useFieldMetadata.js';
-import { TextareaControl, type TextareaControlProps } from './internal/TextareaControl.js';
-import {
-  FieldFrame,
-  type FieldProps,
-  type TextFieldAppearanceProps,
-} from './internal/FieldFrame.js';
+import { classNames } from '../internal/classNames.js';
+import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import { TextareaControl, type TextareaControlProps } from '../internal/field/TextareaControl.js';
+import { FieldFrame, type FieldProps } from '../internal/field/FieldFrame.js';
 
 export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** The native text area, so that a form library can register it and focus it. */
   ref?: Ref<HTMLTextAreaElement>;
-  /** The field's class, on its root element, beside env-field and env-text-field. */
+  /** The field's class, on its root element, beside env-field, env-text-field and env-textarea. */
   className?: string;
   /** Styles of the field's root element, such as its width in a row. */
   style?: CSSProperties;
   /**
-   * The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with
-   * its label resting at the top, so it has no floating variant.
+   * The field's look, as TextField's: outline or ghost. A text area is always tall, with its label
+   * resting at the top.
    * @default 'outline'
    */
-  variant?: Exclude<TextFieldAppearanceProps['variant'], 'floating'>;
+  variant?: 'outline' | 'ghost';
   /** Receives the text as people type, after the native onChange. */
   onValueChange?: (value: string) => void;
 }
@@ -51,13 +48,19 @@ export function Textarea({
   return (
     <FieldFrame
       id={id}
-      label={label != null ? <label htmlFor={id}>{label}</label> : null}
+      label={
+        label != null ? (
+          <label htmlFor={id} className="env-text-field-label">
+            {label}
+          </label>
+        ) : null
+      }
       description={description}
       error={error}
       floatingLabel
       multiline
       variant={variant}
-      className={className}
+      className={classNames('env-textarea', className)}
       style={style}
     >
       <TextareaControl

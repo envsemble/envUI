@@ -1,8 +1,12 @@
 'use client';
 
-import { useState, type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
+import { type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Stack } from '../foundations/Layout.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
+import { Column } from '../layout/Layout.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
+import '../styles/Base.css';
+import '../styles/Disclosure.css';
 
 export interface DisclosureProps extends Omit<ComponentPropsWithRef<'details'>, 'title'> {
   /** The summary: one line that says what the details hold and opens or closes them. */
@@ -38,9 +42,12 @@ export function Disclosure({
   children,
   ...props
 }: DisclosureProps) {
-  const [ownOpen, setOwnOpen] = useState(defaultOpen);
+  const [shown, setShown] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const controlled = open !== undefined;
-  const shown = controlled ? open : ownOpen;
   return (
     <details
       {...props}
@@ -55,8 +62,7 @@ export function Disclosure({
         // change the browser makes itself, such as find in page, goes back until the parent
         // passes the open that onOpenChange asks for.
         if (controlled) event.currentTarget.open = shown;
-        else setOwnOpen(next);
-        onOpenChange?.(next);
+        setShown(next);
       }}
       className={classNames('env-disclosure', className)}
     >
@@ -69,14 +75,17 @@ export function Disclosure({
           const inner = target.closest(interactive);
           if (inner && inner !== event.currentTarget && event.currentTarget.contains(inner)) return;
           event.preventDefault();
-          onOpenChange?.(!shown);
+          setShown(!shown);
         }}
       >
+        <span className="env-icon env-disclosure-indicator" aria-hidden="true">
+          <IconChevronRight />
+        </span>
         {title}
       </summary>
-      <Stack gap={2} className="env-disclosure-panel">
+      <Column gap={2} className="env-disclosure-panel">
         {children}
-      </Stack>
+      </Column>
     </details>
   );
 }

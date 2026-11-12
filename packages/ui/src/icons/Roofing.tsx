@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function Roofing({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M440-160q-33 0-56.5-23.5T360-240v-80q0-33 23.5-56.5T440-400h80q33 0 56.5 23.5T600-320v80q0 33-23.5 56.5T520-160h-80ZM120-464q-14 10-30 8t-26-16q-10-14-7.5-30T72-528l359-275q11-8 23.5-12t25.5-4q13 0 25.5 4t23.5 12l111 85v-22q0-25 17.5-42.5T700-800q25 0 42.5 17.5T760-740v114l129 98q13 10 15 26t-8 30q-10 14-26 16t-30-8L480-739 120-464Z" /> : <path d="M440-160q-33 0-56.5-23.5T360-240v-80q0-33 23.5-56.5T440-400h80q33 0 56.5 23.5T600-320v80q0 33-23.5 56.5T520-160h-80Zm0-80h80v-80h-80v80ZM120-464q-14 10-30 8t-26-16q-10-14-7.5-30T72-528l359-275q11-8 23.5-12t25.5-4q13 0 25.5 4t23.5 12l111 85v-22q0-25 17.5-42.5T700-800q25 0 42.5 17.5T760-740v114l129 98q13 10 15 26t-8 30q-10 14-26 16t-30-8L480-739 120-464Zm360 184Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M440-160q-33 0-56.5-23.5T360-240v-80q0-33 23.5-56.5T440-400h80q33 0 56.5 23.5T600-320v80q0 33-23.5 56.5T520-160h-80Z";
+
+export function IconRoofing({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "M120-464q-14 10-30 8t-26-16q-10-14-7.5-30T72-528l359-275q11-8 23.5-12t25.5-4q13 0 25.5 4t23.5 12l111 85v-22q0-25 17.5-42.5T700-800q25 0 42.5 17.5T760-740v114l129 98q13 10 15 26t-8 30q-10 14-26 16t-30-8L480-739 120-464Z" : start + "m0-80h80v-80h-80v80ZM120-464q-14 10-30 8t-26-16q-10-14-7.5-30T72-528l359-275q11-8 23.5-12t25.5-4q13 0 25.5 4t23.5 12l111 85v-22q0-25 17.5-42.5T700-800q25 0 42.5 17.5T760-740v114l129 98q13 10 15 26t-8 30q-10 14-26 16t-30-8L480-739 120-464Zm360 184Z"} /></Icon>;
 }

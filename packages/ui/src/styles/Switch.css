@@ -1,132 +1,231 @@
-/* Switch: a native checkbox with the switch role, drawn as a track and a thumb, inside its label. */
-.env-switch {
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  overflow-wrap: anywhere;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-3);
-  font: var(--env-type-body-small);
-  font-size: var(--env-font-size-body-small);
-  color: var(--env-color-fg-default);
-  cursor: pointer;
-  /* The row is at least the 24 px minimum target in both scales, with the track as drawn. */
-  min-block-size: var(--env-control-target-min);
-}
-.env-switch > span {
-  min-inline-size: 0;
-}
-.env-switch:has(input:disabled) {
-  cursor: default;
-}
-.env-switch:has(input:disabled) > * {
-  opacity: var(--env-state-disabled-opacity);
-}
-@media (pointer: coarse) {
-  .env-switch {
-    min-height: var(--env-control-height-touch);
+@layer env.components {
+  /* Color properties: a switch's colors, which an application sets on one switch through style or its
+     own CSS: container, outline and content the track, its ring and the thumb while off, selected and
+     selected-content the track and the thumb while on. They don't inherit; the switch passes them on
+     to its track. With them, hover and press are state layers of the thumb's color over the track
+     (see Button.css). */
+  @property --env-switch-container {
+    syntax: '*';
+    inherits: false;
   }
-}
+  @property --env-switch-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-switch-outline {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-switch-selected {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-switch-selected-content {
+    syntax: '*';
+    inherits: false;
+  }
 
-/* Switch track, thumb, and label have independent palette roles. The thumb is half the scale's small
-   control height, and the track holds two thumbs inside its padding, so both follow the scale. */
-.env-switch-input {
-  --env-switch-thumb: calc(var(--env-control-height-sm) / 2);
-  appearance: none;
-  box-sizing: border-box;
-  flex: 0 0 auto;
-  width: calc(2 * var(--env-switch-thumb) + 2 * var(--env-space-1));
-  height: calc(var(--env-switch-thumb) + 2 * var(--env-space-1));
-  margin: 0;
-  padding: var(--env-space-1);
-  border: 0;
-  border-radius: 100vmax;
-  background: var(--env-color-bg-neutral-muted);
-  /* The translucent track is too faint to be the switch's boundary, so a ring draws it at 3:1. */
-  box-shadow: inset 0 0 0 1px var(--env-color-border-default);
-  cursor: inherit;
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-switch-input::before {
-  content: '';
-  display: block;
-  width: var(--env-switch-thumb);
-  height: var(--env-switch-thumb);
-  border-radius: 50%;
-  background: var(--env-color-fg-control);
-  transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-switch-input:checked {
-  background: var(--env-color-bg-brand-emphasis);
-  box-shadow: none;
-}
-.env-switch-input:checked::before {
-  transform: translateX(100%);
-  background: var(--env-color-fg-on-emphasis);
-}
-/* In right-to-left text the thumb starts at the right, so it travels its own width to the left. */
-.env-switch-input:checked:dir(rtl)::before {
-  transform: translateX(-100%);
-}
-.env-switch-input:hover:not(:disabled) {
-  background: var(--env-color-bg-neutral-muted-hover);
-}
-.env-switch-input:active:not(:disabled) {
-  background: var(--env-color-bg-neutral-muted-pressed);
-}
-.env-switch-input:checked:hover:not(:disabled) {
-  background: var(--env-color-bg-brand-emphasis-hover);
-}
-.env-switch-input:checked:active:not(:disabled) {
-  background: var(--env-color-bg-brand-emphasis-pressed);
-}
-.env-switch-input:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-switch-input,
-  .env-switch-input::before {
-    transition: none;
+  /* Switch: a native checkbox with the switch role, drawn as a track and a thumb, inside its label. */
+  .env-switch {
+    --env-switch-handle: var(--env-switch-content, var(--env-color-fg-control));
+    --env-switch-on-handle: var(--env-switch-selected-content, var(--env-color-fg-on-emphasis));
+    --env-switch-ring: var(--env-switch-outline, var(--env-color-border-default));
+    /* Valid only while the application sets the track's or the thumb's color, off or on. */
+    --env-switch-off-gate: color-mix(
+      in srgb,
+      var(--env-switch-content) 0%,
+      var(--env-color-bg-neutral-muted)
+    );
+    --env-switch-off-base: var(--env-switch-container, var(--env-switch-off-gate));
+    --env-switch-on-gate: color-mix(
+      in srgb,
+      var(--env-switch-selected-content) 0%,
+      var(--env-color-bg-primary-emphasis)
+    );
+    --env-switch-on-base: var(--env-switch-selected, var(--env-switch-on-gate));
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-wrap: break-word;
+    /* The row is at least the 24 px minimum target in both scales, with the track as drawn. */
+    --env-switch-row: var(--env-control-target-min);
+    box-sizing: border-box;
+    display: inline-flex;
+    /* The track sits on the middle of the label's first line, and a one-line label in the middle
+       of the row, so a label that wraps or takes a description keeps the track beside its first
+       line. */
+    align-items: flex-start;
+    gap: var(--env-space-3);
+    min-block-size: var(--env-switch-row);
+    padding-block: max(0%, (var(--env-switch-row) - 1lh) / 2);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
+    color: var(--env-color-fg-default);
+    cursor: pointer;
   }
-}
-@media (prefers-reduced-motion: no-preference) {
+  .env-switch > span {
+    min-inline-size: 0;
+  }
+  .env-switch:has(input:disabled) {
+    cursor: default;
+  }
+  .env-switch:has(input:disabled) > :where(.env-switch-input, .env-switch-label) {
+    opacity: var(--env-state-disabled-opacity);
+  }
+  /* A switch that is unavailable fades whole with its label, so one that is on keeps its fill and its
+     thumb's place, faded, and still reads as on. */
+  @media (pointer: coarse) {
+    .env-switch {
+      --env-switch-row: var(--env-control-height-touch);
+    }
+  }
+
+  /* Switch track, thumb, and label have independent palette roles. The thumb is half the scale's small
+     control height, and the track holds two thumbs inside its padding, so both follow the scale. */
   .env-switch-input {
-    transition-property: background-color, color, border-color, transform;
-    transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease);
-  }
-  .env-switch:active:not(:has(input:disabled)) .env-switch-input {
-    transform: scale(0.9);
-  }
-}
-@media (forced-colors: active) {
-  .env-switch-input {
-    outline: 1px solid CanvasText;
-    outline-offset: -1px;
+    --env-switch-thumb: calc(var(--env-control-height-sm) / 2);
+    appearance: none;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: calc(2 * var(--env-switch-thumb) + 2 * var(--env-space-1));
+    height: calc(var(--env-switch-thumb) + 2 * var(--env-space-1));
+    /* The label's type, so 1lh is the label's line: the track's middle on the first line's. */
+    font: inherit;
+    margin: calc((1lh - var(--env-switch-thumb) - 2 * var(--env-space-1)) / 2) 0 0;
+    padding: var(--env-space-1);
+    --env-switch-layer: initial;
+    --env-switch-off-layered: color-mix(
+      in srgb,
+      var(--env-switch-off-base),
+      var(--env-switch-handle) var(--env-switch-layer)
+    );
+    --env-switch-off-fill: var(--env-switch-off-layered, var(--env-switch-off-base));
+    --env-switch-on-layered: color-mix(
+      in srgb,
+      var(--env-switch-on-base),
+      var(--env-switch-on-handle) var(--env-switch-layer)
+    );
+    --env-switch-on-fill: var(--env-switch-on-layered, var(--env-switch-on-base));
+    border: 0;
+    border-radius: var(--env-radius-full);
+    background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted));
+    /* The translucent track is too faint to be the switch's boundary, so a ring draws it at 3:1.
+       Under the pointer and while pressed, the checkbox's halo (Checkbox.css), the shared state
+       layer, rings the track, on or off, and takes no room. */
+    --env-switch-halo: 0 0 0 0 transparent;
+    box-shadow:
+      inset 0 0 0 1px var(--env-switch-ring, var(--env-color-border-default)),
+      var(--env-switch-halo);
+    cursor: inherit;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-switch-input::before {
-    background-color: CanvasText;
+    content: '';
+    display: block;
+    width: var(--env-switch-thumb);
+    height: var(--env-switch-thumb);
+    border-radius: 50%;
+    /* Off, the thumb is muted, at 3:1 on its track, so it doesn't outweigh a switch that is on; it
+       darkens with the ring under the pointer. */
+    background: var(
+      --env-switch-handle,
+      var(--env-switch-thumb-off, var(--env-color-border-default-pressed))
+    );
+    /* Its color changes with the track's, as it slides. */
+    transition:
+      transform var(--env-motion-duration-fast) var(--env-motion-ease),
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-switch-input:checked {
-    background-color: Highlight;
-    outline-color: Highlight;
+    background: var(--env-switch-on-fill, var(--env-color-bg-primary-emphasis));
+    box-shadow: var(--env-switch-halo);
   }
   .env-switch-input:checked::before {
-    background-color: HighlightText;
+    transform: translateX(100%);
+    background: var(--env-switch-on-handle, var(--env-color-fg-on-emphasis));
   }
-  .env-switch-input:disabled {
-    outline-color: GrayText;
+  /* In right-to-left text the thumb starts at the right, so it travels its own width to the left. */
+  .env-switch-input:checked:dir(rtl)::before {
+    transform: translateX(-100%);
   }
-  .env-switch-input:disabled::before {
-    background-color: GrayText;
+  /* Under the pointer and while pressed, a switch that is off deepens its track by the neutral state
+     layer's steps and darkens its ring to the muted text color, as a checkbox's edge does. */
+  .env-switch-input:hover:not(:disabled) {
+    --env-switch-layer: calc(var(--env-state-hover-opacity) * 100%);
+    --env-switch-halo: 0 0 0 0.25rem var(--env-color-bg-neutral-subtle-pressed);
+    --env-switch-ring: var(--env-switch-outline, var(--env-color-fg-muted));
+    --env-switch-thumb-off: var(--env-color-fg-muted);
+    background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted-hover));
   }
-  .env-switch-input:checked:disabled {
-    background-color: GrayText;
-    outline-color: GrayText;
+  .env-switch-input:active:not(:disabled) {
+    --env-switch-layer: calc(var(--env-state-pressed-opacity) * 100%);
+    --env-switch-halo:
+      0 0 0 0.25rem var(--env-color-bg-neutral-subtle-pressed),
+      0 0 0 0.25rem var(--env-color-bg-neutral-subtle-pressed);
+    --env-switch-ring: var(--env-switch-outline, var(--env-color-fg-muted-hover));
+    --env-switch-thumb-off: var(--env-color-fg-muted);
+    background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted-pressed));
   }
-  /* The knob of an unavailable switch that is on stays apart from its gray track. */
-  .env-switch-input:checked:disabled::before {
-    background-color: Canvas;
+  .env-switch-input:checked:hover:not(:disabled) {
+    background: var(--env-switch-on-fill, var(--env-color-bg-primary-emphasis-hover));
+  }
+  .env-switch-input:checked:active:not(:disabled) {
+    background: var(--env-switch-on-fill, var(--env-color-bg-primary-emphasis-pressed));
+  }
+  .env-switch-input:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-switch-input,
+    .env-switch-input::before {
+      transition: none;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-switch-input {
+      transition-property: background-color, color, border-color, box-shadow, transform;
+      transition-duration: var(--env-motion-duration-fast);
+      transition-timing-function: var(--env-motion-ease-enter);
+    }
+    .env-switch:active:not(:has(input:disabled)) .env-switch-input {
+      transform: scale(0.9);
+    }
+  }
+  @media (forced-colors: active) {
+    .env-switch-input {
+      outline: 1px solid CanvasText;
+      outline-offset: -1px;
+    }
+    .env-switch-input::before {
+      background-color: CanvasText;
+    }
+    .env-switch-input:checked {
+      background-color: Highlight;
+      outline-color: Highlight;
+    }
+    .env-switch-input:checked::before {
+      background-color: HighlightText;
+    }
+    .env-switch-input:disabled {
+      outline-color: GrayText;
+    }
+    .env-switch-input:disabled::before {
+      background-color: GrayText;
+    }
+    .env-switch-input:checked:disabled {
+      background-color: GrayText;
+      outline-color: GrayText;
+    }
+    /* The knob of an unavailable switch that is on stays apart from its gray track. */
+    .env-switch-input:checked:disabled::before {
+      background-color: Canvas;
+    }
+  }
+
+  /* A description under the label, muted, as a radio's is. */
+  .env-switch-description {
+    display: block;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
   }
 }

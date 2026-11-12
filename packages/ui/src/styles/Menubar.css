@@ -1,73 +1,72 @@
-/* An application menubar: a row of small text buttons, each opening a menu below it. */
-.env-menubar {
-  min-inline-size: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.125rem;
-}
-.env-menubar-trigger {
-  box-sizing: border-box;
-  flex: 0 0 auto;
-  min-block-size: var(--env-control-height-sm);
-  margin: 0;
-  padding: 0 var(--env-space-2);
-  border: 0;
-  border-radius: var(--env-radius-sm);
-  display: inline-flex;
-  align-items: center;
-  background: transparent;
-  color: var(--env-color-fg-default);
-  font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
-  white-space: nowrap;
-  cursor: pointer;
-  outline: none;
-  user-select: none;
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-menubar-trigger:hover:not([data-disabled]) {
-  background: var(--env-color-bg-neutral-subtle-hover);
-}
-/* The trigger of the open menu keeps a fill, so the menu reads as coming from it. */
-.env-menubar-trigger[data-popup-open] {
-  background: var(--env-color-bg-neutral-subtle-pressed);
-}
-.env-menubar-trigger:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: -0.125rem;
-}
-.env-menubar-trigger[data-disabled] {
-  opacity: var(--env-state-disabled-opacity);
-  cursor: default;
-}
-/* Under a coarse pointer, each trigger grows to the touch height and width, as buttons do, in either
-   scale. */
-@media (pointer: coarse) {
+@layer env.components {
+  /* An application menubar: a row of small text buttons, each opening a menu below it. */
+  .env-menubar {
+    gap: calc(var(--env-space-1) / 2);
+  }
   .env-menubar-trigger {
-    min-block-size: max(var(--env-control-height-sm), var(--env-control-height-touch));
-    min-inline-size: var(--env-control-height-touch);
-    justify-content: center;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    min-block-size: var(--env-control-height-sm);
+    margin: 0;
+    padding: 0 var(--env-space-2);
+    border: 0;
+    border-radius: var(--env-radius-sm);
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    color: var(--env-color-fg-default);
+    font: var(--env-font-weight-body) var(--env-font-size-label) / 1.4 var(--env-font-family);
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
-}
-/* Access keys are underlined while Alt is held, or while the keyboard has activated the menubar. */
-.env-menubar[data-access-keys-shown] .env-menubar-access-key {
-  text-decoration: underline;
-  text-decoration-thickness: 0.0625rem;
-  text-underline-offset: 0.15em;
-}
-
-/* Forced colors: the system paints no fills or shadows, so the trigger of the open menu takes
-   the system’s selection colors. */
-@media (forced-colors: active) {
+  .env-menubar-trigger:hover:not([data-disabled]) {
+    background: var(--env-color-bg-neutral-subtle-hover);
+  }
+  /* The trigger of the open menu keeps a fill, so the menu reads as coming from it. */
   .env-menubar-trigger[data-popup-open] {
-    forced-color-adjust: none;
-    background-color: Highlight;
-    color: HighlightText;
+    background: var(--env-color-bg-neutral-subtle-pressed);
   }
-  .env-menubar-trigger[data-popup-open] :where(*) {
-    color: inherit;
+  .env-menubar-trigger:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
   }
-  .env-menubar-trigger[data-popup-open]:focus-visible,
-  .env-menubar-trigger[data-popup-open] :focus-visible {
-    outline-color: HighlightText;
+  .env-menubar-trigger[data-disabled] {
+    opacity: var(--env-state-disabled-opacity);
+    cursor: default;
+  }
+  /* Under a coarse pointer, each trigger grows to the touch height and width, as buttons do, in either
+     scale. */
+  @media (pointer: coarse) {
+    .env-menubar-trigger {
+      min-block-size: max(var(--env-control-height-sm), var(--env-control-height-touch));
+      min-inline-size: var(--env-control-height-touch);
+      justify-content: center;
+    }
+  }
+  /* Access keys are underlined while Alt is held, or while the keyboard has activated the menubar. */
+  .env-menubar[data-access-keys-shown] .env-menubar-access-key {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
+  }
+
+  /* Forced colors: the system paints no fills or shadows, so the trigger of the open menu takes
+     the system’s selection colors. */
+  @media (forced-colors: active) {
+    .env-menubar-trigger[data-popup-open] {
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+    .env-menubar-trigger[data-popup-open] :where(*) {
+      color: inherit;
+    }
+    .env-menubar-trigger[data-popup-open]:focus-visible,
+    .env-menubar-trigger[data-popup-open] :focus-visible {
+      outline-color: HighlightText;
+    }
   }
 }

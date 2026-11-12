@@ -1,0 +1,210 @@
+/* Related, at the end of a page: a tile for each component or page to use
+   instead, from its frontmatter, each a tiny live picture of it on its recessed canvas, with its
+   name and when to pick it below. Each tile is a gallery's cell, on a tile's stage (TileStage.css). */
+
+/* Tiles of one size, framed as a gallery's are (Gallery.css). A row is rarely left with one alone:
+   one column until two fit, even counts and one two to a row, counts of three, five, six, seven and
+   nine and one three to a row, and once four fit, every count in tiles of a quarter of the column,
+   five, six and nine still in rows of three. A tile alone takes a column's width, not the row's. */
+.catalogue-related-tiles {
+  --catalogue-related-gap: var(--env-space-5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* Rows as close as a gallery's: each tile keeps the room its name and why slide into. */
+  gap: var(--env-space-3) var(--catalogue-related-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* In a narrow window under a mouse, as the gallery's (Gallery.css): components two to a row, on its
+   lower stages of 16:10, so a small one doesn't stand in empty space; a pattern's scene keeps a
+   row and its stage. On a touch screen the tiles stay one to a row (below). */
+@media not ((hover: none) or (pointer: coarse)) {
+  @container (width < 27.25rem) {
+    .catalogue-related-tiles.catalogue-related-tiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--env-space-4);
+    }
+    .catalogue-related-tile:has(> * > .catalogue-gallery-stage[data-scene]),
+    .catalogue-related-tile:has(> .catalogue-gallery-stage[data-scene]) {
+      grid-column: 1 / -1;
+    }
+    .catalogue-related-tiles
+      .catalogue-gallery-stage.catalogue-gallery-stage.catalogue-gallery-stage:not([data-scene]) {
+      aspect-ratio: 16 / 10;
+    }
+  }
+}
+
+@container (width >= 24rem) {
+  .catalogue-related-tiles:is(
+    [data-count='1'],
+    [data-count='2'],
+    [data-count='4'],
+    [data-count='6'],
+    [data-count='8']
+  ) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 36rem) {
+  .catalogue-related-tiles:is(
+    [data-count='1'],
+    [data-count='3'],
+    [data-count='5'],
+    [data-count='6'],
+    [data-count='7'],
+    [data-count='9']
+  ) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 48rem) {
+  .catalogue-related-tiles.catalogue-related-tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .catalogue-related-tiles:is([data-count='5'], [data-count='6'], [data-count='9'])
+    > :nth-child(3n + 1) {
+    grid-column-start: 1;
+  }
+}
+
+/* On a touch screen, one to a row at every width, as a gallery's cards are (Gallery.css): the
+   tile in the middle of the view plays as the reader scrolls. */
+@media (hover: none), (pointer: coarse) {
+  .catalogue-related-tiles.catalogue-related-tiles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* A Related tile is a gallery's cell (Gallery.css): its picture, and under it its name and when to
+   pick it, which slide and fade into view with it. That row is taller than a gallery's, for its two lines of
+   why, cut short after the second. */
+.catalogue-related-tile.catalogue-gallery-tile {
+  --catalogue-gallery-meta-height: 4.5rem;
+  /* Its two lines of why show whole only with the picture risen to the cell's top. */
+  --catalogue-gallery-rise: var(--catalogue-gallery-slide);
+}
+.catalogue-related-meta {
+  display: grid;
+  align-content: start;
+  row-gap: var(--env-space-1);
+  padding-block-start: var(--env-space-2);
+}
+.catalogue-related-meta .catalogue-related-line .env-markdown > * {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+/* The name, cut short with an ellipsis in its words' own box (Gallery.css); its link covers the
+   tile as a gallery cell's does. */
+.catalogue-related-name {
+  min-inline-size: 0;
+  font-weight: var(--env-font-weight-medium);
+}
+
+.catalogue-related-line .env-markdown {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-sm);
+}
+
+.catalogue-related-line .env-markdown > * {
+  margin: 0;
+}
+
+/* A foundation's tile, for a page without an example (tiles/foundations/FoundationTiles.tsx):
+   drawn with tokens, scaled to fit the stage as an example is. */
+.catalogue-foundation-tile-icons {
+  color: var(--env-color-fg-default);
+}
+
+.catalogue-foundation-tile-swatches > span {
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  border-radius: var(--env-radius-lg);
+  background: var(--env-color-bg-neutral-emphasis);
+}
+.catalogue-foundation-tile-swatches > [data-role='primary'] {
+  background: var(--env-color-bg-primary-emphasis);
+}
+.catalogue-foundation-tile-swatches > [data-role='accent'] {
+  background: var(--env-color-bg-accent-strong);
+}
+.catalogue-foundation-tile-swatches > [data-role='success'] {
+  background: var(--env-color-bg-success-emphasis);
+}
+.catalogue-foundation-tile-swatches > [data-role='warning'] {
+  background: var(--env-color-bg-warning-emphasis);
+}
+.catalogue-foundation-tile-swatches > [data-role='danger'] {
+  background: var(--env-color-bg-danger-emphasis);
+}
+
+.catalogue-foundation-tile-spacing > span {
+  block-size: var(--env-space-3);
+  border-radius: var(--env-radius-xs);
+  background: var(--env-color-bg-primary-solid);
+}
+.catalogue-foundation-tile-spacing > [data-step='1'] {
+  inline-size: calc(4 * var(--env-space-1));
+}
+.catalogue-foundation-tile-spacing > [data-step='2'] {
+  inline-size: calc(4 * var(--env-space-2));
+}
+.catalogue-foundation-tile-spacing > [data-step='3'] {
+  inline-size: calc(4 * var(--env-space-3));
+}
+.catalogue-foundation-tile-spacing > [data-step='4'] {
+  inline-size: calc(4 * var(--env-space-4));
+}
+.catalogue-foundation-tile-spacing > [data-step='5'] {
+  inline-size: calc(4 * var(--env-space-5));
+}
+.catalogue-foundation-tile-spacing > [data-step='6'] {
+  inline-size: calc(4 * var(--env-space-6));
+}
+.catalogue-foundation-tile-spacing > [data-step='7'] {
+  inline-size: calc(4 * var(--env-space-7));
+}
+.catalogue-foundation-tile-spacing > [data-step='8'] {
+  inline-size: calc(4 * var(--env-space-8));
+}
+
+.catalogue-foundation-tile-windows > span {
+  display: grid;
+  place-items: end center;
+  padding: var(--env-space-1);
+  border: 0.125rem solid var(--env-color-border-default);
+  border-radius: var(--env-radius-md);
+  background: var(--env-color-bg-default);
+  white-space: nowrap;
+}
+.catalogue-foundation-tile-windows > [data-size='compact'] {
+  inline-size: 4.5rem;
+  block-size: 7rem;
+}
+.catalogue-foundation-tile-windows > [data-size='medium'] {
+  inline-size: 7rem;
+  block-size: 8rem;
+}
+.catalogue-foundation-tile-windows > [data-size='expanded'] {
+  inline-size: 11rem;
+  block-size: 7rem;
+}
+
+/* The focus ring keyboard use shows, drawn on the button at rest. */
+.catalogue-foundation-tile-focus {
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: 0.125rem;
+}
+
+.catalogue-foundation-tile-content {
+  text-align: center;
+}

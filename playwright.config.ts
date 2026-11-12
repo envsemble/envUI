@@ -1,35 +1,43 @@
 import { availableParallelism } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
-import { resolveServers } from './scripts/CheckoutMarker.mjs';
+import { defaultPorts, resolveServers } from './scripts/test/CheckoutMarker.ts';
 
+/** The projects the command line names, if it names any. */
+const namedProjects = process.argv.flatMap((argument, index, all) =>
+  argument === '--project'
+    ? [all[index + 1]]
+    : argument.startsWith('--project=')
+      ? [argument.slice(10)]
+      : [],
+);
 /**
- * The development servers this run needs: ENVUI_SERVERS lists them (catalogue, fixture, or none),
- * as `npm run check` sets it for the specs it picked. Without it a run that only scans the hosted
- * build (the a11y projects) needs none, and any other run needs both.
+ * The servers this run needs (tests/browser/support/Servers.ts): ENVUI_SERVERS lists them (site,
+ * site-build, fixture, or none), as `npm run check` sets it for the specs it picked. Without it a
+ * run that only scans the hosted build (the a11y projects) needs none, and any other run needs all
+ * three.
  */
 function wantedServers() {
   if (process.env.ENVUI_SERVERS)
     return new Set(process.env.ENVUI_SERVERS.split(',').filter((name) => name !== 'none'));
-  const projects = process.argv.flatMap((argument, index, all) =>
-    argument === '--project'
-      ? [all[index + 1]]
-      : argument.startsWith('--project=')
-        ? [argument.slice(10)]
-        : [],
-  );
-  if (projects.length && projects.every((project) => project === 'a11y')) return new Set<string>();
-  return new Set(['catalogue', 'fixture']);
+  if (namedProjects.length && namedProjects.every((project) => project === 'a11y'))
+    return new Set<string>();
+  return new Set(['site', 'site-build', 'fixture']);
 }
 const wanted = wantedServers();
 
 // Ports, and whether a server running there belongs to this checkout and can be reused. Specs read
-// the chosen ports through tests/browser/Servers.ts; see scripts/CheckoutMarker.mjs.
+// the chosen ports through tests/browser/support/Servers.ts; see scripts/test/CheckoutMarker.ts.
 const servers = await resolveServers(
   Object.fromEntries(
     Object.entries({
-      catalogue: { variable: 'ENVUI_CATALOGUE_PORT', port: 8770, offset: 0 },
-      fixture: { variable: 'ENVUI_FIXTURE_PORT', port: 8766, offset: 1 },
+      site: { variable: 'ENVUI_SITE_PORT', port: defaultPorts.site, offset: 0 },
+      fixture: { variable: 'ENVUI_FIXTURE_PORT', port: defaultPorts.fixture, offset: 1 },
+      'site-build': {
+        variable: 'ENVUI_SITE_BUILD_PORT',
+        port: defaultPorts.siteBuild,
+        offset: 2,
+      },
     }).filter(([name]) => wanted.has(name)),
   ),
 );
@@ -51,6 +59,7 @@ const workers = configured
  * from 4 workers on), and with more their slowest specs run out of time. Locally each takes at most
  * half the workers, and 4; CI keeps its 3 shared. They come first in the projects, so their capped
  * share starts at once and Chromium and the accessibility scan, uncapped, fill the rest and the end.
+ * A run of one engine alone, as `npm run verify` makes, keeps the cap of 4 but not the half.
  */
 const totalWorkers =
   typeof workers === 'number'
@@ -58,7 +67,10 @@ const totalWorkers =
     : Math.max(1, Math.floor((availableParallelism() * parseFloat(workers)) / 100));
 const engineWorkers = process.env.CI
   ? undefined
-  : Math.max(1, Math.min(4, Math.floor(totalWorkers / 2)));
+  : Math.max(
+      1,
+      Math.min(4, namedProjects.length === 1 ? totalWorkers : Math.floor(totalWorkers / 2)),
+    );
 
 export default defineConfig({
   testDir: './tests/browser',
@@ -78,8 +90,8 @@ export default defineConfig({
   },
   // `npm run test:browser` runs the behavior projects; the gates below have their own scripts.
   projects: [
-    // Firefox and WebKit run only the tests tagged @engines, which depend on the engine; the rest,
-    // and the contrast gate (`npm run test:contrast`), run once, in Chromium.
+    // Firefox and WebKit run only the tests tagged @engines, which depend on the engine; the rest
+    // run once, in Chromium.
     {
       name: 'firefox',
       testIgnore: /LiveDevelopment/,
@@ -110,7 +122,7 @@ export default defineConfig({
       dependencies: ['chromium', 'firefox', 'webkit'],
       use: { ...devices['Desktop Chrome'] },
     },
-    // `npm run test:a11y`: axe over every catalogue page, Chromium only.
+    // `npm run test:a11y`: axe over a page of each kind the site has, Chromium only.
     {
       name: 'a11y',
       testDir: './tests/accessibility',
@@ -151,15 +163,29 @@ export default defineConfig({
       },
     },
   ],
+  // The site's development server, for the specs that need it. --force bundles the dependencies
+  // again as it starts. Vite reuses its bundle while the lockfile is unchanged, so after a change
+  // imports a dependency it holds none of, such as a code theme loaded on demand, the first page to
+  // ask for it makes Vite bundle it and reload every page the server has open, and the tests on those
+  // pages lose their state midway. The site's build and the fixture are served as built
+  // (scripts/test/ServeBuild.ts).
   webServer: [
-    servers.catalogue && {
-      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.catalogue.port} --strictPort`,
-      cwd: 'apps/catalogue',
-      url: `http://127.0.0.1:${servers.catalogue.port}`,
-      reuseExistingServer: servers.catalogue.reuse,
+    servers.site && {
+      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.site.port} --strictPort --force`,
+      cwd: 'apps/site',
+      url: `http://127.0.0.1:${servers.site.port}`,
+      reuseExistingServer: servers.site.reuse,
+    },
+    servers['site-build'] && {
+      command: `node scripts/test/ServeBuild.ts --app site --port ${servers['site-build'].port}`,
+      url: `http://127.0.0.1:${servers['site-build'].port}`,
+      reuseExistingServer: servers['site-build'].reuse,
+      // It builds the site and its server entry and pre-renders every page first: on a busy
+      // machine, or in the visual baseline's container, longer than a minute.
+      timeout: 180_000,
     },
     servers.fixture && {
-      command: `node node_modules/vite/bin/vite.js --config tests/fixture/vite.config.ts --host 127.0.0.1 --port ${servers.fixture.port} --strictPort`,
+      command: `node scripts/test/ServeBuild.ts --app fixture --port ${servers.fixture.port}`,
       url: `http://127.0.0.1:${servers.fixture.port}`,
       reuseExistingServer: servers.fixture.reuse,
     },

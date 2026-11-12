@@ -1,7 +1,7 @@
-// Stylelint for the library's and the catalogue's CSS. Existing violations of the rules that the
-// token work removes are recorded in stylelint-suppressions.json, and tests/StylelintSuppressions
-// requires the recorded counts to match the CSS exactly; anything new fails. See
-// docs/library-development.md.
+// Stylelint for the library's and the site's CSS. Existing violations of the rules that the
+// token work removes are recorded in stylelint-suppressions.json, and
+// tests/tooling/StylelintSuppressions.test.ts requires the recorded counts to match the CSS
+// exactly; anything new fails. See "Ports, workers and recorded lists" in AGENTS.md.
 import stylelint from 'stylelint';
 // The px allowlist, the raw color functions and the z-index values are the ones envUI's Stylelint
 // config ships, so applications and the library follow the same rules.
@@ -17,6 +17,9 @@ const {
 } = stylelint;
 
 const hexColor = '/#[\\da-f]{3,8}\\b/i';
+
+/** A name of the site's, by its part, or of the library's: kebab case after the prefix. */
+const sitePrefixed = '^(?:site|catalogue|docs|env)-[a-z0-9]+(?:-[a-z0-9]+)*$';
 
 /**
  * Where em may appear: typography that follows the element's own font size rather than the
@@ -132,14 +135,30 @@ export default {
   },
   overrides: [
     {
-      // Library components take sizes from tokens rather than literal rem values.
+      // Library components take sizes from tokens rather than literal rem values. Their classes are
+      // env-<component>-<part>, apart from the classes of the third-party markup they style (GFM's
+      // and TipTap's); their custom properties take the --env- prefix, apart from those Base UI sets
+      // on its parts, which they read.
       files: ['packages/ui/src/styles/**/*.css'],
-      rules: { 'declaration-property-unit-disallowed-list': { '/^(?!--)/': ['rem'] } },
+      rules: {
+        'declaration-property-unit-disallowed-list': { '/^(?!--)/': ['rem'] },
+        'selector-class-pattern': [
+          '^(?:env(?:-[a-z0-9]+)+|ProseMirror(?:-[a-z]+)?|contains-task-list|task-list-item|footnotes|is-editor-empty|selectedCell|tableWrapper)$',
+          { message: (name) => `Class "${name}": library classes are env-<component>-<part>.` },
+        ],
+        'custom-property-pattern': [
+          '^(?:env(?:-[a-z0-9]+)+|accordion-panel-height|active-tab-(?:left|top|width|height)|anchor-width|available-height|available-width|collapsible-panel-height|drawer-swipe-movement-[xy]|transform-origin)$',
+          { message: (name) => `Custom property "${name}": library properties are --env-….` },
+        ],
+      },
     },
     {
       // The token definitions, generated and hand-written: literal values belong here, in custom
       // properties, including the em line heights of the font shorthands.
-      files: ['packages/ui/src/styles/Tokens.css', 'packages/ui/src/styles/TokensHandwritten.css'],
+      files: [
+        'packages/ui/src/generated/Tokens.css',
+        'packages/ui/src/styles/TokensHandwritten.css',
+      ],
       rules: {
         'color-no-hex': null,
         'color-named': null,
@@ -149,6 +168,15 @@ export default {
         'declaration-property-value-allowed-list': null,
         'declaration-property-unit-disallowed-list': null,
         'unit-disallowed-list': unitRule(['px'], { px: hairlineProperties }),
+      },
+    },
+    {
+      // The site's classes and custom properties say which part they belong to (apps/site/AGENTS.md);
+      // env- are the library's, which the site styles through its part classes and reads as tokens.
+      files: ['apps/site/src/**/*.css'],
+      rules: {
+        'selector-class-pattern': sitePrefixed,
+        'custom-property-pattern': sitePrefixed,
       },
     },
   ],

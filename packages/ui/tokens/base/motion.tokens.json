@@ -3,21 +3,33 @@
   "motion": {
     "duration": {
       "$type": "duration",
-      "fast": { "$value": { "value": 0.12, "unit": "s" } },
-      "medium": { "$value": { "value": 0.16, "unit": "s" } },
-      "slow": { "$value": { "value": 0.24, "unit": "s" } }
+      "fast": {
+        "$description": "A small change, such as a state layer, a color under the pointer or a tooltip: 120 ms.",
+        "$value": { "value": 0.12, "unit": "s" }
+      },
+      "medium": {
+        "$description": "A part that opens, moves or fades in, such as a popup or a field's floating label: 160 ms.",
+        "$value": { "value": 0.16, "unit": "s" }
+      },
+      "slow": {
+        "$description": "A larger movement, such as a sheet sliding in or a dialog's backdrop: 240 ms.",
+        "$value": { "value": 0.24, "unit": "s" }
+      }
     },
-    "ease": { "$type": "cubicBezier", "$value": [0.45, 0, 0.2, 1] },
-    "ease-standard": { "$type": "cubicBezier", "$value": "{motion.ease}" },
+    "ease": {
+      "$description": "The standard easing of a change on screen, which speeds up and then settles.",
+      "$type": "cubicBezier",
+      "$value": [0.45, 0, 0.2, 1]
+    },
     "ease-enter": {
       "$type": "cubicBezier",
-      "$description": "Elements entering decelerate into place.",
+      "$description": "Elements entering, their fade included, and feedback under the pointer start at once and decelerate into place.",
       "$value": [0.05, 0.7, 0.1, 1]
     },
     "ease-exit": {
       "$type": "cubicBezier",
       "$description": "Leaving elements accelerate away.",
-      "$value": [0.3, 0, 0.8, 0.15]
+      "$value": [0.4, 0, 1, 1]
     }
   }
 }

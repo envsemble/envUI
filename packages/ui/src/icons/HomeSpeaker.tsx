@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function HomeSpeaker({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconHomeSpeaker({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="m248-480 31-233q2-11 8.5-19.5T304-745l316-126q18-8 35 2.5t19 30.5l43 358H248Zm135 360q-73 0-121-54.5T224-301l13-99h489l12 101q8 72-39 125.5T580-120H383Z" /> : <path d="M383-120q-73 0-121-54.5T224-301l55-412q2-11 8.5-19.5T304-745l316-126q18-8 35 2.5t19 30.5l64 539q8 72-39 125.5T580-120H383Zm0-80h197q36 0 60-27t19-63l-13-110H319l-15 109q-5 36 19 63.5t60 27.5Zm-27-479-27 199h307l-35-298-245 99Zm126 279Zm1-80Zm-1 80v-80 80Z" />}</Icon>;
 }

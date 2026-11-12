@@ -1,13 +1,16 @@
 'use client';
 
 import { Progress as BaseProgress } from '@base-ui/react/progress';
-import type { CSSProperties } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { useLocale, useMessages } from '../internal/EnvUIContext.js';
+import { Grid, Row } from '../layout/Layout.js';
+import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
-import type { BarProps } from './Meter.js';
+import type { RangeBarProps } from '../internal/rangeBarProps.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Meter.css';
 
-export interface ProgressProps extends BarProps {
+export interface ProgressProps extends RangeBarProps {
   /**
    * How much of the task is done, between min and max, such as 40 of 100; null while the amount of
    * work is unknown, which shows an indeterminate bar announced as Loading.
@@ -51,13 +54,14 @@ export function Progress({
       max={max}
       locale={locale}
       {...(spoken !== undefined && { 'aria-valuetext': spoken })}
+      render={<Grid gap={2} />}
       className={classNames('env-progress', className)}
-      data-segmented={steps !== undefined || undefined}
+      data-segmented={flag(steps !== undefined)}
     >
-      <div className="env-progress-heading">
+      <Row wrap justify="between" gap={3} className="env-progress-header">
         <BaseProgress.Label className="env-progress-label">{label}</BaseProgress.Label>
         {valueText != null && <span className="env-progress-value">{valueText}</span>}
-      </div>
+      </Row>
       <BaseProgress.Track className="env-progress-track">
         {steps === undefined || value === null ? (
           <BaseProgress.Indicator className="env-progress-indicator" />
@@ -66,11 +70,9 @@ export function Progress({
             <span
               key={step}
               className="env-progress-segment"
-              style={
-                {
-                  '--env-progress-segment-fill': Math.min(Math.max(done * steps - step, 0), 1),
-                } as CSSProperties
-              }
+              style={{
+                '--env-progress-segment-fill': Math.min(Math.max(done * steps - step, 0), 1),
+              }}
             />
           ))
         )}

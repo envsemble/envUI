@@ -1,0 +1,111 @@
+import { useState } from 'react';
+import { Checkbox, Column, Link, Row, Table, Text, Toolbar } from '@envsemble/envui';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import type { PointerStep } from '../motion/pointer/PointerPlan';
+import { usePointer } from '../motion/pointer/PointerPlayback';
+import type { TileWindow } from './Tiles';
+
+const projects = [
+  { id: 'website', name: 'Website refresh', tasks: 12 },
+  { id: 'report', name: 'Quarterly report', tasks: 5 },
+  { id: 'migration', name: 'Data migration', tasks: 8 },
+];
+
+const select = (name: string) => `[aria-label="Select ${name}"]`;
+const sort = '.env-table-sort-button';
+
+/*
+ * Selects a second row, which the bar counts; sorts the names the other way and back, with the
+ * selection staying on its rows; then clears the row again.
+ */
+const script: PointerStep[] = [
+  { wait: 240 },
+  { to: select('Website refresh') },
+  { wait: 240 },
+  { click: true },
+  { wait: 600 },
+  { to: sort, duration: 500 },
+  { wait: 180 },
+  { click: true },
+  { wait: 780 },
+  { click: true },
+  { wait: 600 },
+  { to: select('Website refresh'), duration: 500 },
+  { wait: 180 },
+  { click: true },
+  { wait: 360 },
+  { leave: true },
+  { wait: 300 },
+];
+
+const count = (selected: number) => (selected === 1 ? '1 project' : `${selected} projects`);
+
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
+export const tileWindow: TileWindow = { width: 19, height: 14.25 };
+
+/** A table of projects, sortable by name, whose selected rows a bar counts and acts on. */
+export default function DataTablesTile() {
+  const [direction, setDirection] = useState<Table.SortDirection>('ascending');
+  const [selected, setSelected] = useState(['report']);
+  usePointer(script);
+  const rows = [...projects].sort(
+    (a, b) => a.name.localeCompare(b.name) * (direction === 'ascending' ? 1 : -1),
+  );
+  const all = selected.length === projects.length;
+  return (
+    <Column gap={3} style={{ inlineSize: '17rem' }}>
+      <Row align="center" gap={3}>
+        <Text>{selected.length} selected</Text>
+        <Toolbar.Root aria-label="Selected projects">
+          <Toolbar.Button icon={<IconArchive />} label={`Archive ${count(selected.length)}`} />
+          <Toolbar.Button icon={<IconDelete />} label={`Delete ${count(selected.length)}…`} />
+        </Toolbar.Root>
+      </Row>
+      <Table.Root aria-label="Projects" defaultColumnWidths={[14, 60, 26]}>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>
+              <Checkbox
+                aria-label="Select all projects"
+                checked={all ? true : selected.length > 0 ? 'mixed' : false}
+                onCheckedChange={(checked) =>
+                  setSelected(checked && !all ? projects.map((project) => project.id) : [])
+                }
+              />
+            </Table.HeaderCell>
+            <Table.HeaderCell sortDirection={direction} onSortChange={setDirection}>
+              Name
+            </Table.HeaderCell>
+            <Table.HeaderCell numeric>Tasks</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          {rows.map((project) => (
+            <Table.Row key={project.id} selected={selected.includes(project.id)}>
+              <Table.Cell>
+                <Checkbox
+                  aria-label={`Select ${project.name}`}
+                  checked={selected.includes(project.id)}
+                  onCheckedChange={(checked) =>
+                    setSelected((current) =>
+                      checked
+                        ? [...current, project.id]
+                        : current.filter((id) => id !== project.id),
+                    )
+                  }
+                />
+              </Table.Cell>
+              <Table.Cell>
+                <Link href={`#${project.id}`} onClick={(event) => event.preventDefault()}>
+                  {project.name}
+                </Link>
+              </Table.Cell>
+              <Table.Cell numeric>{project.tasks}</Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table.Root>
+    </Column>
+  );
+}

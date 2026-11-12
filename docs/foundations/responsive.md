@@ -1,17 +1,22 @@
 ---
+title: Adapting to width
+summary: Components follow the space they sit in, and four window classes name where a layout changes.
 components:
-  - useMediaQuery
-  - useBreakpoint
-  - breakpointQuery
   - useContainerSize
+  - windowClassOf
 statuses: # Never released before 1.0, so beta until a release has used them.
-  useMediaQuery: beta
-  useBreakpoint: beta
-  breakpointQuery: beta
   useContainerSize: beta
+  windowClassOf: beta
 aliases:
+  - window class
+  - window classes
+  - size class
   - breakpoint
   - breakpoints
+  - compact
+  - medium
+  - expanded
+  - large
   - media query
   - responsive
   - mobile layout
@@ -22,37 +27,99 @@ aliases:
   - z-index
   - stacking order
   - layers
+avoidWhen:
+  - text: How space groups things, and the compact scale.
+    see: spacing
+  - text: Two panes that sit side by side once there is room.
+    use: Panes
+  - text: A readable column whose gutters follow the window class.
+    use: Page
+  - text: A task over the page, sized to the window.
+    use: Dialog
+  - text: A list of actions that opens over the page.
+    use: Menu
+  - text: A short label over the page.
+    use: Tooltip
+  - text: A notification over the page.
+    use: ToastProvider
+examples:
+  Widths: example
+  TextSize: example
 ---
 
-# Responsive layout & stacking
+# Adapting to width
 
-## React usage
+## Options
+
+### Four window classes
+
+envUI names four widths of window, so you and an agent can say where a layout changes. Each is measured on the window around the app, not on the screen.
+
+| Window class | Use for                                     |
+| ------------ | ------------------------------------------- |
+| Compact      | A phone held upright, or a narrow pane.     |
+| Medium       | A tablet held upright, or a narrow window.  |
+| Expanded     | A tablet held sideways, or a laptop window. |
+| Large        | A desktop window.                           |
+
+## Behaviour
+
+### Components follow their space
+
+An envUI component lays itself out for the space it sits in, not for the screen.
+
+- In a narrow pane it looks as it would on a phone.
+- Where there is room it spreads out, with nothing for an app to adjust.
+
+```tsx figure=Widths
+
+```
+
+1. **In a narrow pane**: The actions move under the name, and each label sits above its value.
+2. **With room to spare**: The same components spread out: the actions beside the name, labels beside values.
+
+### Popups fit the window
+
+Menus, dialogs and sheets size themselves to the window they open in, not to the pane they open from, so they always have room.
+
+### Larger text, narrower class
+
+The window classes follow the reader's text size: with larger text, a window counts as a narrower class, so its layout never gets cramped.
+
+```tsx figure=TextSize
+
+```
+
+## Rules
+
+Start from the phone: a screen is laid out for the compact class first, and spreads out from a class up. A list shows its details beside it from Expanded up, and above it below.
+
+## Words to use
+
+Ask an agent for a layout that adapts in these words; envUI turns each into a window class or a layout that follows its space.
+
+| Words                      | In code                                                                                   | Use for                                                                                   |
+| -------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| On a phone                 | The `compact` window class, the default layout every query starts from                    | The compact window class: the narrowest layout, which every screen starts from.           |
+| In a narrow pane           | The pane's own width; a region of your own becomes a window with `container="env-window"` | The same layout as on a phone, wherever the pane is.                                      |
+| Side by side from expanded | `@container env-window (width >= 52.5rem)` around the two-column layout                   | Two parts next to each other in a laptop or desktop window, one above the other below it. |
+| Stack on a phone           | The default, one-column layout, before any `width >=` query                               | Puts parts one above the other in the compact window class.                               |
+| Wrap                       | `wrap` on Row, so its children run onto the next line                                     | Lets a row of buttons or tags run onto the next line instead of squeezing.                |
+
+## Compose
+
+### Usage
 
 ```tsx
 import type { ReactNode } from 'react';
 import { useRef } from 'react';
-import { breakpointQuery, useBreakpoint, useContainerSize, useMediaQuery } from '@envsemble/envui';
-
-function ReportLayout({ report, details }: { report: ReactNode; details: ReactNode }) {
-  // From 64 rem up the details sit beside the report; below, they follow it.
-  const beside = useBreakpoint('lg');
-  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
-  return (
-    <div
-      className={beside ? 'report-columns' : 'report-stack'}
-      data-still={reducedMotion || undefined}
-    >
-      {report}
-      {details}
-    </div>
-  );
-}
+import { useContainerSize, windowClassOf, windowClasses } from '@envsemble/envui';
 
 function ChartPanel({ chart, legend }: { chart: ReactNode; legend: ReactNode }) {
-  // The legend moves under the chart when the panel itself is narrow, wherever it is placed.
+  // The legend moves under the chart when the panel itself is compact, wherever it is placed.
   const panel = useRef<HTMLDivElement>(null);
   const size = useContainerSize(panel);
-  const narrow = size !== undefined && size.inlineSize < 480;
+  const narrow = size !== undefined && windowClassOf(size.inlineSize) === 'compact';
   return (
     <div ref={panel}>
       {chart}
@@ -61,82 +128,78 @@ function ChartPanel({ chart, legend }: { chart: ReactNode; legend: ReactNode }) 
   );
 }
 
-// The same query for a matchMedia listener of your own.
-window.matchMedia(breakpointQuery('md', 'down'));
+// The width where a window class starts, for code of your own: '37.5rem'.
+const medium = windowClasses.medium;
 ```
 
-### Props & contracts
+```css
+/* Details beside the report from the expanded window class up; compact first. */
+.report {
+  display: grid;
+  gap: var(--env-space-6);
+}
+@container env-window (width >= 52.5rem) {
+  .report {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+```
 
-| Name                                          | Contract                                                                                                                                                                                                                                                                                                 |
-| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `breakpoints`                                 | `{ sm: '40rem', md: '48rem', lg: '64rem', xl: '80rem' }`, the values of the breakpoint tokens                                                                                                                                                                                                            |
-| `breakpointQuery(breakpoint, direction)`      | The media query from a breakpoint up, `(width >= 48rem)`, the default, or below it, `(width < 48rem)` with `'down'`; one of the two always matches                                                                                                                                                       |
-| `useMediaQuery(query, { defaultValue })`      | Whether the viewport matches `query`, kept up to date. On the server and while hydrating it returns `defaultValue` (false), then the browser's answer                                                                                                                                                    |
-| `useBreakpoint(breakpoint, { defaultValue })` | Whether the viewport is at least as wide as the breakpoint, as `useMediaQuery(breakpointQuery(breakpoint))`                                                                                                                                                                                              |
-| `useContainerSize(target, { box })`           | An element's `{ inlineSize, blockSize }` in CSS pixels along its writing mode, from a ResizeObserver: its content box, or its border box with `box: 'border-box'`. Undefined on the server and until the element is measured, before it paints; an element that stops being rendered keeps its last size |
-| `--env-breakpoint-sm` … `-xl`                 | The same widths as tokens, for reference: CSS can't read a custom property inside `@media`, so a style sheet writes the width itself                                                                                                                                                                     |
-| `--env-z-base` … `--env-z-tooltip`            | The stacking order of envUI's layers and the application's own, lowest first; below                                                                                                                                                                                                                      |
+| Name                                | Takes                                                                                                         |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `windowClasses`                     | `{ compact: '0rem', medium: '37.5rem', expanded: '52.5rem', large: '75rem' }`: where each window class starts |
+| `WindowClass`                       | `'compact'`, `'medium'`, `'expanded'` or `'large'`                                                            |
+| `env-window`                        | The container the outermost theme boundary is; a query on it measures the window class                        |
+| `useContainerSize(target, { box })` | An element's `{ inlineSize, blockSize }` in CSS pixels, measured before it paints; undefined on the server    |
+| `windowClassOf(inlineSize)`         | The window class of a width in CSS pixels, such as `useContainerSize`'s, at the root font size                |
+| `--env-z-base` … `--env-z-tooltip`  | The stacking order of envUI's layers and the application's own, lowest first                                  |
 
-## Breakpoints
+#### Window classes
 
-| Breakpoint | Width  | Where it falls                                                                   |
-| ---------- | ------ | -------------------------------------------------------------------------------- |
-| `sm`       | 40 rem | A large phone held sideways, or a narrow window                                  |
-| `md`       | 48 rem | A tablet held upright: the default line between a phone's layout and a wider one |
-| `lg`       | 64 rem | A tablet held sideways, or a laptop                                              |
-| `xl`       | 80 rem | A desktop window                                                                 |
+| Window class | Width                  | Where it falls                             |
+| ------------ | ---------------------- | ------------------------------------------ |
+| `compact`    | Narrower than 37.5 rem | A phone held upright, or a narrow pane     |
+| `medium`     | 37.5 to 52.5 rem       | A tablet held upright, or a narrow window  |
+| `expanded`   | 52.5 to 75 rem         | A tablet held sideways, or a laptop window |
+| `large`      | From 75 rem            | A desktop window                           |
 
-- Breakpoints are viewport widths, in rem, so they follow the reader's text size: at a larger text size a window reaches a layout's breakpoint later.
-- In a style sheet, write the width in the query from the table, such as `@media (width >= 48rem)`, the same query `breakpointQuery('md')` returns. A custom property such as `--env-breakpoint-md` holds the value but can't be read inside `@media`.
-- Use them for the page and the app frame: whether sidebars dock or become drawers, how many columns a page has, whether a detail pane sits beside its list.
+- The classes are Material's window size classes. They start at 600, 840 and 1200 px at the default text size, and are in rem, so they follow the reader's text size: with larger text, a window counts as a narrower class.
+- Measured on a container, never the viewport: a page embedded in a smaller frame gets the class of its own width. Menus, dialogs and sheets measure the window they open in.
+- `container="env-window"` on a primitive makes a region a window of its own, such as a preview. Don't give envUI's other `env-*` container names to your own.
+- Compact first: write the compact layout as the default and switch up with `width >=`. Where no `env-window` is found, no query matches and the compact layout shows. CSS can't read the `--env-window-class-*` tokens inside a query, so write the width.
 
-## Container queries first
+#### The words of the figures
 
-envUI's components respond to the width of their container, not the window's: a component in a narrow pane of a wide window lays out as it would on a phone. A Card in the feature layout, for one, puts its action on a row of its own in a narrow container. Do the same for a region of your own: give it `container-type: inline-size` and write `@container (width < 30rem)` rules, so it adapts wherever it is placed. Keep viewport breakpoints for decisions about the whole window.
+- **Components follow their space**: nothing to do; envUI components query their container, never the viewport.
+- **Popups fit the window**: nothing to do; menus, dialogs and sheets measure the window they open in.
 
-## The hooks
+### Composition
 
-`useMediaQuery` and `useBreakpoint` are for what CSS can't do: rendering different components, or none, at a width, such as a list beside its detail on a wide window and a list that opens its detail on a narrow one. Where only styles change, a media or container query does it without JavaScript and without a first render that differs.
+#### Containers only
 
-`useContainerSize` is the same for an element's own size: rendering something else when a panel is narrow, or moving content into another slot below a width, which a container query can't do. Pass a ref object, read once the element mounts, or the element itself, such as one a callback ref keeps in state. It measures before the browser paints, so the first paint already has the size; on the server it returns undefined, so render the wide layout there or nothing that depends on the size.
+envUI has no width media queries: components respond to their container, so a component in a narrow pane lays out as on a phone.
 
-A server can't know the window's width, so on the server and in the first render that hydrates its markup the hooks return `defaultValue`, false unless you set it; the browser's answer follows in the next render. Set `defaultValue` to the layout most visitors get, such as `true` for a desktop app, so the first paint matches it. A page rendered only in the browser gets the answer in its first render.
+- Do the same for a region of your own with `container: my-region / inline-size` and `@container my-region (width >= 37.5rem)`.
+- Media queries not about width stay: pointer, forced colors, reduced motion, contrast and color scheme.
+- `useContainerSize` is for what CSS can't do, such as rendering something else when a panel is narrow. Where only styles change, a container query does it without script and without a first render that differs.
 
-## Stacking order
+### Customize
 
-Every z-index in envUI comes from these tokens, and an application's own layers should too, so they keep one order with envUI's popups and dialogs:
+#### Stacking order
 
-| Token             | Value | For                                                                                                    |
-| ----------------- | ----- | ------------------------------------------------------------------------------------------------------ |
-| `--env-z-base`    | 0     | The flow of a page or a component                                                                      |
-| `--env-z-raised`  | 1     | A part raised over its siblings inside a component: a sticky table header, a resize handle             |
-| `--env-z-sticky`  | 20    | The frame's sticky and fixed parts that content scrolls under: the app header and the sidebar columns  |
-| `--env-z-peek`    | 30    | A collapsed sidebar that opens over the content without docking                                        |
-| `--env-z-overlay` | 90    | The scrim behind a modal layer                                                                         |
-| `--env-z-modal`   | 100   | Dialogs, drawers and the command palette                                                               |
-| `--env-z-popover` | 110   | Menus, popovers, hover cards and the lists of Select and Combobox, also when they open inside a dialog |
-| `--env-z-toast`   | 120   | Notifications, over the dialog they report on                                                          |
-| `--env-z-tooltip` | 130   | Tooltips, over everything they can describe                                                            |
+| Token                     | Value | For                                                                              |
+| ------------------------- | ----- | -------------------------------------------------------------------------------- |
+| `--env-z-base`            | 0     | The flow of a page or a component                                                |
+| `--env-z-raised`          | 1     | A part over its siblings inside a component, such as a sticky table header       |
+| `--env-z-sticky`          | 20    | The frame's sticky parts that content scrolls under: the top bar, the navigation |
+| `--env-z-supporting-pane` | 30    | A pane over the content that doesn't dock, such as a supporting pane as a sheet  |
+| `--env-z-backdrop`        | 90    | The backdrop behind a modal layer                                                |
+| `--env-z-modal`           | 100   | Dialogs, sheets and the command palette                                          |
+| `--env-z-popup`           | 110   | Menus, popovers and the lists of Select and Combobox                             |
+| `--env-z-toast`           | 120   | Notifications                                                                    |
+| `--env-z-tooltip`         | 130   | Tooltips                                                                         |
 
-- Take a level for what a layer is, not for the number: a sticky toolbar of your own takes `var(--env-z-sticky)`, a floating panel that opens from a button `var(--env-z-popover)`.
-- A step between two levels, or a part above or below its siblings, takes `calc()` of a level, such as `calc(var(--env-z-sticky) + 1)` for a header that must stay above its sidebar. Keep such steps small, so they stay between the levels.
-- envUI's popups are portaled to the end of the document, outside the application's stacking contexts. A layer of your own that should stay under them, such as a sticky header, must not create a stacking context above them: give it a level below `--env-z-overlay`.
-- envUI's Stylelint config reports a literal z-index and names these tokens.
-
-## Guidelines
-
-- Let components adapt to their container; use a viewport breakpoint only for the frame and the page.
-- Prefer CSS to the hooks wherever only styles change, so the server's markup is already right; reach for `useContainerSize` before a window breakpoint when what changes is a region's own content.
-- Use the same breakpoints across an application, so its frame, its pages and envUI agree about what a narrow window is.
-- Take every z-index from a stacking token.
+- Take a level for what a layer is: a sticky toolbar of your own takes `var(--env-z-sticky)`. A step between levels is a small `calc()`, such as `calc(var(--env-z-sticky) + 1)`.
+- envUI's popups are portaled to the end of the document; keep your own layers below `--env-z-backdrop`. envUI's Stylelint config reports a literal z-index.
 
 TypeScript declarations provide the complete public API.
-
-## Related topics
-
-- [Spacing & shape](../foundations/spacing.md)
-- [Scale & density](../foundations/scale.md)
-- [Dialog](../components/dialog.md)
-- [Menu](../components/menu.md)
-- [Tooltip](../components/tooltip.md)
-- [Toast](../components/toast.md)

@@ -10,20 +10,26 @@ import {
   type ReactNode,
 } from 'react';
 import {
-  Button,
   type ButtonAppearanceProps,
   type ButtonEmphasisProps,
   type ButtonTone,
   type ButtonVariant,
 } from './Button.js';
+import { ButtonBase } from './internal/ButtonBase.js';
 import { classNames } from '../internal/classNames.js';
-import { useButtonEmphasis } from '../internal/ControlDefaults.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useButtonEmphasis } from '../internal/control/ControlDefaults.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { confirmButton } from '../foundations/messages/confirmButton.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Button.css';
 
 type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
   Omit<ComponentPropsWithRef<'button'>, 'onClick' | 'type'> & {
-    /** The label while armed, naming what a second press does, such as “Remove Morgan?”. */
+    /**
+     * The label while armed: what a second press does, short and without a question mark, such
+     * as “Remove Morgan”.
+     */
     confirmLabel: ReactNode;
     /** Runs on the second press, while the button is armed. */
     onConfirm: () => void;
@@ -40,12 +46,6 @@ type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
  */
 type ConfirmButtonEmphasisProps<RestingTone extends ButtonTone> =
   | {
-      /**
-       * The resting appearance; armed, the button is always variant="primary" tone="danger".
-       * Without it, the container's variant, such as ghost in a toolbar, and else outline, or
-       * secondary for an icon-only button, like IconButton.
-       * @default 'outline', or 'secondary' with icon
-       */
       variant?: undefined;
       /**
        * The resting meaning, as Button's: neutral, or danger on a primary, outline, ghost or text
@@ -54,7 +54,16 @@ type ConfirmButtonEmphasisProps<RestingTone extends ButtonTone> =
        */
       tone?: RestingTone;
     }
-  | { variant: ButtonVariant; tone?: 'neutral' }
+  | {
+      /**
+       * The resting appearance; armed, the button is always variant="primary" tone="danger".
+       * Without it, the container's variant, such as ghost in a toolbar, and else outline, or
+       * secondary for an icon-only button, like IconButton.
+       * @default 'outline', or 'secondary' with icon
+       */
+      variant: ButtonVariant;
+      tone?: 'neutral';
+    }
   | { variant: 'primary' | 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' }
   | { variant: 'primary'; tone?: ButtonTone };
 
@@ -67,6 +76,7 @@ export type ConfirmButtonProps = ConfirmButtonBaseProps &
          * confirm label, so the consequence is still named.
          */
         icon: ReactNode;
+        /** The icon-only button's name at rest, such as Delete draft. */
         'aria-label': string;
         children?: never;
       } & ConfirmButtonEmphasisProps<'neutral'>)
@@ -118,14 +128,14 @@ export function ConfirmButton({
     disabled,
     pending,
     className: classNames('env-confirm-button', className),
-    'data-armed': armed ? '' : undefined,
+    'data-armed': flag(armed),
     onClick: (event: MouseEvent<HTMLElement>) => {
       if (armedAt === null) {
         setArmedAt(event.timeStamp);
         return;
       }
       // A double click arms the button only: the second press must be deliberate.
-      if (event.timeStamp - armedAt < DOUBLE_PRESS_GUARD_MS) return;
+      if (event.timeStamp - armedAt < doublePressGuard) return;
       setArmedAt(null);
       onConfirm();
     },
@@ -146,23 +156,30 @@ export function ConfirmButton({
       {/* At rest an icon-only button is round and named by its label; armed, it grows to name the
           consequence beside its icon. Both are the same button, so focus stays on it. */}
       {icon != null && !armed ? (
-        <Button {...shared} iconOnly icon={icon} aria-label={label ?? ''} />
-      ) : (
-        <Button
+        <ButtonBase
           {...shared}
+          fallbackVariant="primary"
+          iconOnly
+          icon={icon}
+          aria-label={label ?? ''}
+        />
+      ) : (
+        <ButtonBase
+          {...shared}
+          fallbackVariant="primary"
           startIcon={armed && icon != null ? icon : startIcon}
           endIcon={endIcon}
           // Armed, the visible confirm label names the button.
           aria-label={armed ? undefined : label}
         >
           {armed ? confirmLabel : children}
-        </Button>
+        </ButtonBase>
       )}
       {/* A label change on a focused button is not reliably announced, so the armed state is. */}
       <span className="env-confirm-button-status" role="status">
         {armed && (
           <>
-            {confirmLabel} {messages.armed}
+            {confirmLabel}. {messages.armed}
           </>
         )}
       </span>
@@ -170,4 +187,5 @@ export function ConfirmButton({
   );
 }
 
-const DOUBLE_PRESS_GUARD_MS = 400;
+/** A press this soon after the one that armed the button, in milliseconds, is a double click. */
+const doublePressGuard = 400;

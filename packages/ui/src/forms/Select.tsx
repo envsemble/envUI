@@ -1,25 +1,39 @@
 'use client';
 
 import {
-  useEffect,
+  useId,
   useRef,
-  useState,
   type ButtonHTMLAttributes,
   type ComponentProps,
   type CSSProperties,
   type Ref,
 } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
-import { useFieldMetadata } from './internal/useFieldMetadata.js';
-import { type ControlSize } from '../foundations/Theme.js';
-import { Button } from '../actions/Button.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
-import { Check } from '../icons/Check.js';
-import { FieldFrame, type FieldProps } from './internal/FieldFrame.js';
-import { PopupSurface } from '../internal/PopupSurface.js';
-import { ListRow } from '../internal/ListRow.js';
-import { setRef } from '../internal/setRef.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
+import { IconCheck } from '../icons/Check.js';
+import {
+  FieldFrame,
+  type FieldProps,
+  type FieldSizeProps,
+  type TextFieldDecorationProps,
+} from '../internal/field/FieldFrame.js';
+import { PopupSurface } from '../internal/popup/PopupSurface.js';
+import {
+  containedModal,
+  containedOpenChange,
+  usePortalContainer,
+} from '../internal/popup/PortalContainerContext.js';
+import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
+import { Grid } from '../layout/Layout.js';
+import { ListRow } from '../internal/list/ListRow.js';
+import { setRef } from '../internal/react/setRef.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
+import { classNames } from '../internal/classNames.js';
+import { flag } from '../internal/flag.js';
+import { useFormReset } from '../internal/field/useFormReset.js';
+import '../styles/Base.css';
+import '../styles/Select.css';
 
 /** One option of a Select. */
 export interface SelectItem {
@@ -27,22 +41,48 @@ export interface SelectItem {
   value: string;
   /** The option's name in the list and, once chosen, on the trigger; typing it jumps to the option. */
   label: string;
+  /** A muted second line under the label in the list, such as why the option is unavailable. */
+  description?: string;
   /** Show the option but don't let people choose it; the keyboard can still highlight it. */
   disabled?: boolean;
 }
+/** What a select's onOpenChange receives beside the requested state. */
+export interface SelectOpenChangeDetails {
+  /** Why it asks to open or close, such as trigger-press, item-press or escape-key. */
+  reason: Extract<
+    OverlayOpenChangeReason,
+    | 'trigger-press'
+    | 'outside-press'
+    | 'escape-key'
+    | 'window-resize'
+    | 'item-press'
+    | 'focus-out'
+    | 'list-navigation'
+    | 'cancel-open'
+    | 'imperative-action'
+    | 'none'
+  >;
+}
+
 export interface SelectProps
-  extends Omit<
+  extends
+    Omit<
       ButtonHTMLAttributes<HTMLButtonElement>,
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,
-    FieldProps {
+    FieldProps,
+    FieldSizeProps,
+    Pick<TextFieldDecorationProps, 'visibleLabel'> {
   /** The trigger, the button that shows the chosen option and opens the list. */
   ref?: Ref<HTMLButtonElement>;
   /** The field's class, on its root element, beside env-field and env-select. */
   className?: string;
   /** Styles of the field's root element. */
   style?: CSSProperties;
-  /** The options of the list, in order, each with a value, a label and whether it is disabled. */
+  /**
+   * The options of the list, in order, each with a value, a label, an optional description and
+   * whether it is disabled.
+   */
   items: readonly SelectItem[];
   /**
    * The chosen option's value in a controlled select, or null for none, which shows the
@@ -56,30 +96,32 @@ export interface SelectProps
   defaultValue?: string | null;
   /** Receives the value of the option people choose. */
   onValueChange?: (value: string | null) => void;
+  /** Whether the list is open, for a select the application controls with onOpenChange. */
+  open?: boolean;
+  /**
+   * Whether the list of an uncontrolled select starts open, such as in a picture of the open list.
+   * @default false
+   */
+  defaultOpen?: boolean;
+  /** Receives the requested state, and why, each time the list asks to open or close. */
+  onOpenChange?: (open: boolean, details: SelectOpenChangeDetails) => void;
+  /**
+   * People can read the chosen option, and a form submits it, but the list doesn't open.
+   * @default false
+   */
+  readOnly?: boolean;
   /** Submits the chosen option's value with a form under this name, through a hidden input. */
   name?: string;
   /**
    * Require a choice before the form submits: the browser refuses the form and moves focus to the
    * trigger while nothing is chosen.
+   * @default false
    */
   required?: boolean;
   /** What the trigger shows while nothing is chosen, such as Choose an owner. */
   placeholder?: string;
   /** A hint for the browser's autofill, such as country, set on the hidden input. */
   autoComplete?: string;
-  /**
-   * The trigger's Button variant, to suit its surroundings: secondary, a filled pill, for the page;
-   * or outline, a bordered pill, for panes, dialogs, rows and toolbars, where a fill would blend
-   * with the surface.
-   * @default 'secondary'
-   */
-  variant?: 'secondary' | 'outline';
-  /**
-   * The trigger's height, as on every control: sm, md or lg in the current scale. Without it, the
-   * trigger takes the control height of its container, md unless the container sets another. The
-   * popup's rows take the row height of the scale.
-   */
-  size?: ControlSize;
 }
 
 /** Select's positioner, which opens the list below the trigger rather than over it. */
@@ -93,10 +135,43 @@ const popupParts = {
   Popup: BaseSelect.Popup,
 };
 
+/** An option row: a check mark slot, the label and its description. */
+function SelectOption({ item }: { item: SelectItem }) {
+  const descriptionId = useId();
+  return (
+    <ListRow
+      render={
+        <BaseSelect.Item
+          value={item.value}
+          label={item.label}
+          disabled={item.disabled}
+          aria-describedby={item.description ? descriptionId : undefined}
+        />
+      }
+      className="env-select-item"
+      // A check mark shows the selected option; the slot keeps the labels aligned.
+      indicator={
+        <BaseSelect.ItemIndicator className="env-icon env-select-item-indicator">
+          <IconCheck />
+        </BaseSelect.ItemIndicator>
+      }
+      label={<BaseSelect.ItemText>{item.label}</BaseSelect.ItemText>}
+      description={
+        item.description ? (
+          // Announced through aria-describedby rather than as part of the option's name.
+          <span id={descriptionId} aria-hidden="true">
+            {item.description}
+          </span>
+        ) : undefined
+      }
+    />
+  );
+}
+
 /**
- * One choice from a list that stays collapsed until opened: a Button trigger that shows the chosen
- * option and opens a popup list, where a check mark shows the chosen option, with a label above it,
- * a description, an error and native form participation.
+ * One choice from a list that stays collapsed until opened: an outlined field, as TextField is,
+ * whose button shows the chosen option and opens a popup list, where a check mark shows the chosen
+ * option, with its label inside, a description, an error and native form participation.
  */
 export function Select({
   ref,
@@ -104,6 +179,10 @@ export function Select({
   value,
   defaultValue,
   onValueChange,
+  open: controlledOpen,
+  defaultOpen,
+  onOpenChange,
+  readOnly = false,
   name,
   required,
   disabled,
@@ -114,8 +193,8 @@ export function Select({
   'aria-invalid': invalid,
   placeholder,
   autoComplete,
-  variant = 'secondary',
   size,
+  visibleLabel,
   form,
   id: suppliedId,
   className,
@@ -125,38 +204,65 @@ export function Select({
   const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const controlRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? null);
-  const selectedValue = value === undefined ? uncontrolledValue : value;
-  useEffect(
-    function subscribeToFormReset() {
+  /** Whether the list last opened from the keyboard, where Base UI moves focus into it. */
+  const openedByKeyboard = useRef(false);
+  const portal = usePortalContainer();
+  const [selectedValue, changeValue, keepOwnValue] = useControllableState({
+    value,
+    defaultValue: defaultValue ?? null,
+    onChange: onValueChange,
+  });
+  const [open, setOpen] = useControllableState({
+    value: controlledOpen,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
+  // The label floats into the outline while the field holds a value or its list is open.
+  const labelFloats = selectedValue != null || open;
+  useFormReset(
+    inputRef,
+    function applyReset() {
       const input = inputRef.current;
-      const ownerForm = input?.form;
-      if (!input || !ownerForm) return;
-      return subscribeFormReset(ownerForm, function applyReset() {
-        const resetValue = value === undefined ? (defaultValue ?? null) : value;
-        if (value === undefined) setUncontrolledValue(resetValue);
-        input.value = resetValue ?? '';
-      });
+      const resetValue = keepOwnValue(defaultValue ?? null);
+      if (input) input.value = resetValue ?? '';
     },
-    [value, defaultValue, form],
+    form,
   );
-  function handleValueChange(nextValue: string | null) {
-    if (value === undefined) setUncontrolledValue(nextValue);
-    onValueChange?.(nextValue);
-  }
-  function getPopupOffset() {
-    const trigger = triggerRef.current;
-    const ownerWindow = trigger?.ownerDocument.defaultView;
-    return trigger && ownerWindow
-      ? Number.parseFloat(ownerWindow.getComputedStyle(trigger).columnGap) || 0
-      : 0;
-  }
   return (
     <BaseSelect.Root<string>
       items={items}
       value={selectedValue}
-      onValueChange={handleValueChange}
+      onValueChange={(next) => changeValue(next)}
+      open={open}
+      readOnly={readOnly}
+      onOpenChange={containedOpenChange(portal, triggerRef, (next, details) => {
+        setOpen(next, { reason: details.reason });
+        // A key, or the click a key gives a button (detail 0), rather than the pointer, which
+        // opens the list on mousedown.
+        const event = details.event;
+        if (next)
+          openedByKeyboard.current =
+            event?.type.startsWith('key') === true ||
+            (event?.type === 'click' && (event as MouseEvent).detail === 0);
+      })}
+      onOpenChangeComplete={(open) => {
+        // Base UI moves focus to the highlighted option a frame after the list opens from the
+        // keyboard. On a busy page that queued focus is now and then lost, leaving focus on the
+        // trigger with the list open and an option highlighted; once the list has opened, focus
+        // goes where Base UI meant. A pointer open is left as Base UI leaves it.
+        const trigger = triggerRef.current;
+        if (!open || !openedByKeyboard.current) return;
+        if (!trigger || trigger.ownerDocument.activeElement !== trigger) return;
+        const options = listRef.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [];
+        const option =
+          Array.from(options).find((each) => each.hasAttribute('data-highlighted')) ??
+          Array.from(options).find((each) => each.getAttribute('aria-selected') === 'true');
+        option?.focus({ preventScroll: true });
+      }}
+      modal={containedModal(portal, true)}
       name={name}
       required={required}
       disabled={disabled}
@@ -167,11 +273,28 @@ export function Select({
     >
       <FieldFrame
         id={id}
-        label={label != null ? <BaseSelect.Label>{label}</BaseSelect.Label> : null}
+        label={
+          label != null ? (
+            <BaseSelect.Label render={<label />} className="env-select-label">
+              {label}
+            </BaseSelect.Label>
+          ) : null
+        }
         description={description}
         error={error}
-        className="env-select"
+        floatingLabel
+        size={size}
+        visibleLabel={visibleLabel}
+        className={classNames('env-select', className)}
         style={style}
+        renderControlBox={(box) => (
+          <div
+            {...box}
+            ref={controlRef}
+            className={classNames(box.className, 'env-select-control')}
+            data-label-floating={flag(labelFloats)}
+          />
+        )}
       >
         <BaseSelect.Trigger
           {...triggerProps}
@@ -180,44 +303,37 @@ export function Select({
             triggerRef.current = node;
             setRef(ref, node);
           }}
-          className="env-select-trigger"
-          render={
-            variant === 'outline' ? (
-              <Button variant="outline" size={size} />
-            ) : (
-              <Button variant="secondary" size={size} />
-            )
-          }
+          className="env-text-field-input env-select-trigger"
         >
-          <BaseSelect.Value placeholder={placeholder} />
-          <BaseSelect.Icon className="env-icon env-select-icon">
-            <ChevronRight />
-          </BaseSelect.Icon>
+          <BaseSelect.Value
+            className="env-select-value"
+            placeholder={<span className="env-select-placeholder">{placeholder ?? ' '}</span>}
+          />
+          {/* The labels of every option, hidden, as generated content, which the trigger's text
+              leaves out: without a visible label, the field is as wide as its longest option. */}
+          <span className="env-select-sizer" aria-hidden="true">
+            {items.map((item) => (
+              <span key={item.value} data-label={item.label} />
+            ))}
+          </span>
         </BaseSelect.Trigger>
+        <span className="env-text-field-end env-select-end" aria-hidden="true">
+          <span className="env-icon env-select-icon">
+            <IconChevronRight />
+          </span>
+        </span>
         <PopupSurface
           parts={popupParts}
           side="bottom"
           align="start"
-          sideOffset={getPopupOffset}
-          trigger={triggerRef}
+          trigger={controlRef}
+          anchor={controlRef}
           className="env-select-popup"
+          layout={<Grid padding={1} />}
         >
-          <BaseSelect.List className="env-select-list">
+          <BaseSelect.List ref={listRef} render={<Grid />} className="env-select-list">
             {items.map((item) => (
-              <ListRow
-                key={item.value}
-                render={
-                  <BaseSelect.Item value={item.value} label={item.label} disabled={item.disabled} />
-                }
-                className="env-select-item"
-                // A check mark shows the selected option; the slot keeps the labels aligned.
-                indicator={
-                  <BaseSelect.ItemIndicator className="env-icon env-select-item-indicator">
-                    <Check />
-                  </BaseSelect.ItemIndicator>
-                }
-                label={<BaseSelect.ItemText>{item.label}</BaseSelect.ItemText>}
-              />
+              <SelectOption key={item.value} item={item} />
             ))}
           </BaseSelect.List>
         </PopupSurface>

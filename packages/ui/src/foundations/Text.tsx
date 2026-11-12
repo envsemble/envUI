@@ -1,6 +1,9 @@
 import type { ComponentPropsWithRef, ReactElement, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { renderElement } from '../internal/renderElement.js';
+import { markText } from '../internal/trigger/textMark.js';
+import { renderElement } from '../internal/react/renderElement.js';
+import '../styles/Base.css';
+import '../styles/Text.css';
 
 /**
  * A text style from the type scale: display for a page's introduction, body for running text,
@@ -58,3 +61,6 @@ export function Text<RenderedElement extends HTMLElement = HTMLParagraphElement>
     'data-emphasis': emphasis,
   });
 }
+
+// A HoverCard or Tooltip underlines a Text trigger that holds text (see hoverDetail).
+markText(Text);

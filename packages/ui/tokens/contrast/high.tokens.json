@@ -5,220 +5,602 @@
     "$type": "color",
     "bg": {
       "selected": {
-        "$root": { "$value": "{contrast-high.color.bg.selected}" },
-        "hover": { "$value": "{contrast-high.color.bg.selected.hover}" },
-        "pressed": { "$value": "{contrast-high.color.bg.selected.pressed}" }
+        "$root": {
+          "$value": "{contrast-high.color.bg.selected}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.selected.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.selected.pressed}"
+        }
       },
       "navigation": {
-        "hover": { "$value": "{contrast-high.color.bg.navigation.hover}" },
-        "pressed": { "$value": "{contrast-high.color.bg.navigation.pressed}" }
+        "hover": {
+          "$value": "{contrast-high.color.bg.navigation.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.navigation.pressed}"
+        }
       },
       "page": {
-        "hover": { "$value": "{contrast-high.color.bg.page.hover}" },
-        "pressed": { "$value": "{contrast-high.color.bg.page.pressed}" }
+        "$root": {
+          "$value": "{contrast-high.color.bg.page}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.page.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.page.pressed}"
+        }
       },
       "default": {
-        "hover": { "$value": "{contrast-high.color.bg.default.hover}" },
-        "pressed": { "$value": "{contrast-high.color.bg.default.pressed}" }
+        "$root": {
+          "$value": "{contrast-high.color.bg.default}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.default.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.default.pressed}"
+        }
       },
       "muted": {
-        "hover": { "$value": "{contrast-high.color.bg.muted.hover}" },
-        "pressed": { "$value": "{contrast-high.color.bg.muted.pressed}" }
+        "$root": {
+          "$value": "{contrast-high.color.bg.muted}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.muted.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.muted.pressed}"
+        }
       },
       "raised": {
-        "hover": { "$value": "{contrast-high.color.bg.raised.hover}" },
-        "pressed": { "$value": "{contrast-high.color.bg.raised.pressed}" }
+        "$root": {
+          "$value": "{contrast-high.color.bg.raised}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.raised.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.raised.pressed}"
+        }
       },
       "popup": {
-        "$root": { "$value": "{contrast-high.color.bg.popup}" },
-        "hover": { "$value": "{contrast-high.color.bg.popup.hover}" },
-        "pressed": { "$value": "{contrast-high.color.bg.popup.pressed}" }
+        "$root": {
+          "$value": "{contrast-high.color.bg.popup}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.popup.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.popup.pressed}"
+        }
       },
       "neutral": {
         "muted": {
-          "$root": { "$value": "{contrast-high.color.bg.neutral.muted}" },
-          "hover": { "$value": "{contrast-high.color.bg.neutral.muted.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.neutral.muted.pressed}" }
+          "$root": {
+            "$value": "{contrast-high.color.bg.neutral.muted}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.neutral.muted.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.neutral.muted.pressed}"
+          }
         },
-        "emphasis": { "$value": "{contrast-high.color.bg.neutral.emphasis}" },
+        "emphasis": {
+          "$value": "{contrast-high.color.bg.neutral.emphasis}"
+        },
         "subtle": {
-          "hover": { "$value": "{contrast-high.color.bg.neutral.subtle.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.neutral.subtle.pressed}" }
+          "hover": {
+            "$value": "{contrast-high.color.bg.neutral.subtle.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.neutral.subtle.pressed}"
+          }
         },
         "strong": {
-          "hover": { "$value": "{contrast-high.color.bg.neutral.strong.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.neutral.strong.pressed}" }
+          "hover": {
+            "$value": "{contrast-high.color.bg.neutral.strong.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.neutral.strong.pressed}"
+          }
         }
       },
-      "brand": {
+      "primary": {
         "emphasis": {
-          "$root": { "$value": "{contrast-high.color.bg.brand.emphasis}" },
-          "hover": { "$value": "{contrast-high.color.bg.brand.emphasis.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.brand.emphasis.pressed}" }
+          "$root": {
+            "$value": "{contrast-high.color.bg.primary.emphasis}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.primary.emphasis.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.primary.emphasis.pressed}"
+          }
         },
         "strong": {
-          "$root": { "$value": "{contrast-high.color.bg.brand.strong}" },
-          "hover": { "$value": "{contrast-high.color.bg.brand.strong.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.brand.strong.pressed}" }
+          "$root": {
+            "$value": "{contrast-high.color.bg.primary.strong}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.primary.strong.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.primary.strong.pressed}"
+          }
         },
-        "muted": { "$value": "{contrast-high.color.bg.brand.muted}" }
-      },
-      "accent": {
-        "emphasis": { "$value": "{contrast-high.color.bg.accent.emphasis}" },
-        "muted": { "$value": "{contrast-high.color.bg.accent.muted}" },
         "subtle": {
-          "hover": { "$value": "{contrast-high.color.bg.accent.subtle.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.accent.subtle.pressed}" }
+          "hover": {
+            "$value": "{contrast-high.color.bg.primary.subtle.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.primary.subtle.pressed}"
+          }
+        },
+        "muted": {
+          "$value": "{contrast-high.color.bg.primary.muted}"
+        },
+        "soft": {
+          "$value": "{contrast-high.color.bg.primary.muted}"
+        },
+        "solid": {
+          "$value": "{contrast-high.color.bg.primary.solid}"
         }
       },
       "success": {
-        "emphasis": { "$value": "{contrast-high.color.bg.success.emphasis}" },
-        "muted": { "$value": "{contrast-high.color.bg.success.muted}" },
+        "emphasis": {
+          "$value": "{contrast-high.color.bg.success.emphasis}"
+        },
+        "muted": {
+          "$value": "{contrast-high.color.bg.success.muted}"
+        },
         "subtle": {
-          "hover": { "$value": "{contrast-high.color.bg.success.subtle.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.success.subtle.pressed}" }
+          "hover": {
+            "$value": "{contrast-high.color.bg.success.subtle.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.success.subtle.pressed}"
+          }
         },
         "strong": {
-          "$root": { "$value": "{contrast-high.color.bg.success.strong}" },
-          "hover": { "$value": "{contrast-high.color.bg.success.strong.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.success.strong.pressed}" }
+          "$root": {
+            "$value": "{contrast-high.color.bg.success.strong}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.success.strong.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.success.strong.pressed}"
+          }
         }
       },
       "warning": {
-        "emphasis": { "$value": "{contrast-high.color.bg.warning.emphasis}" },
-        "muted": { "$value": "{contrast-high.color.bg.warning.muted}" },
+        "emphasis": {
+          "$value": "{contrast-high.color.bg.warning.emphasis}"
+        },
+        "muted": {
+          "$value": "{contrast-high.color.bg.warning.muted}"
+        },
         "subtle": {
-          "hover": { "$value": "{contrast-high.color.bg.warning.subtle.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.warning.subtle.pressed}" }
+          "hover": {
+            "$value": "{contrast-high.color.bg.warning.subtle.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.warning.subtle.pressed}"
+          }
         }
       },
       "danger": {
-        "emphasis": { "$value": "{contrast-high.color.bg.danger.emphasis}" },
-        "muted": { "$value": "{contrast-high.color.bg.danger.muted}" },
+        "emphasis": {
+          "$root": {
+            "$value": "{contrast-high.color.bg.danger.emphasis}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.danger.emphasis.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.danger.emphasis.pressed}"
+          }
+        },
+        "muted": {
+          "$value": "{contrast-high.color.bg.danger.muted}"
+        },
         "subtle": {
-          "hover": { "$value": "{contrast-high.color.bg.danger.subtle.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.danger.subtle.pressed}" }
+          "hover": {
+            "$value": "{contrast-high.color.bg.danger.subtle.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.danger.subtle.pressed}"
+          }
         },
         "strong": {
-          "$root": { "$value": "{contrast-high.color.bg.danger.strong}" },
-          "hover": { "$value": "{contrast-high.color.bg.danger.strong.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.danger.strong.pressed}" }
+          "$root": {
+            "$value": "{contrast-high.color.bg.danger.strong}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.danger.strong.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.danger.strong.pressed}"
+          }
         }
       },
       "done": {
-        "emphasis": { "$value": "{contrast-high.color.bg.done.emphasis}" },
-        "muted": { "$value": "{contrast-high.color.bg.done.muted}" }
+        "emphasis": {
+          "$value": "{contrast-high.color.bg.done.emphasis}"
+        },
+        "muted": {
+          "$value": "{contrast-high.color.bg.done.muted}"
+        }
       },
       "info": {
         "strong": {
-          "$root": { "$value": "{contrast-high.color.bg.info.strong}" },
-          "hover": { "$value": "{contrast-high.color.bg.info.strong.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.info.strong.pressed}" }
+          "$root": {
+            "$value": "{contrast-high.color.bg.info.strong}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.info.strong.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.info.strong.pressed}"
+          }
         }
       },
-      "important": {
+      "accent": {
+        "emphasis": {
+          "$root": {
+            "$value": "{contrast-high.color.bg.accent.emphasis}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.accent.emphasis.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.accent.emphasis.pressed}"
+          }
+        },
         "strong": {
-          "$root": { "$value": "{contrast-high.color.bg.important.strong}" },
-          "hover": { "$value": "{contrast-high.color.bg.important.strong.hover}" },
-          "pressed": { "$value": "{contrast-high.color.bg.important.strong.pressed}" }
+          "$root": {
+            "$value": "{contrast-high.color.bg.accent.strong}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.bg.accent.strong.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.accent.strong.pressed}"
+          }
+        },
+        "subtle": {
+          "hover": {
+            "$value": "{contrast-high.color.bg.accent.subtle.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.accent.subtle.pressed}"
+          }
+        },
+        "muted": {
+          "$value": "{contrast-high.color.bg.accent.muted}"
+        },
+        "soft": {
+          "$value": "{contrast-high.color.bg.accent.muted}"
+        },
+        "solid": {
+          "$value": "{contrast-high.color.bg.accent.solid}"
+        }
+      },
+      "recessed": {
+        "$root": {
+          "$value": "{contrast-high.color.bg.recessed}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.recessed.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.recessed.pressed}"
+        }
+      },
+      "list-item": {
+        "$root": {
+          "$value": "{contrast-high.color.bg.list-item}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.list-item.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.list-item.pressed}"
+        }
+      },
+      "row": {
+        "hover": {
+          "$value": "{contrast-high.color.bg.neutral.subtle.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.neutral.subtle.pressed}"
+        }
+      },
+      "avatar": {
+        "powder": {
+          "$value": "{contrast-high.color.bg.avatar.powder}"
+        },
+        "seafoam": {
+          "$value": "{contrast-high.color.bg.avatar.seafoam}"
+        },
+        "sage": {
+          "$value": "{contrast-high.color.bg.avatar.sage}"
+        },
+        "butter": {
+          "$value": "{contrast-high.color.bg.avatar.butter}"
+        },
+        "blush": {
+          "$value": "{contrast-high.color.bg.avatar.blush}"
+        },
+        "periwinkle": {
+          "$value": "{contrast-high.color.bg.avatar.periwinkle}"
+        },
+        "orchid": {
+          "$value": "{contrast-high.color.bg.avatar.orchid}"
+        },
+        "oat": {
+          "$value": "{contrast-high.color.bg.avatar.oat}"
         }
       }
     },
     "fg": {
-      "default": { "$value": "{contrast-high.color.fg.default}" },
+      "default": {
+        "$value": "{contrast-high.color.fg.default}"
+      },
       "muted": {
-        "$root": { "$value": "{contrast-high.color.fg.muted}" },
-        "hover": { "$value": "{contrast-high.color.fg.muted.hover}" },
-        "pressed": { "$value": "{contrast-high.color.fg.muted.pressed}" }
+        "$root": {
+          "$value": "{contrast-high.color.fg.muted}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.fg.muted.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.fg.muted.pressed}"
+        }
       },
-      "control": { "$value": "{contrast-high.color.fg.control}" },
+      "disabled": {
+        "$value": "{contrast-high.color.fg.disabled}"
+      },
+      "control": {
+        "$value": "{contrast-high.color.fg.control}"
+      },
       "link": {
-        "$root": { "$value": "{contrast-high.color.fg.link}" },
-        "hover": { "$value": "{contrast-high.color.fg.link.hover}" },
-        "pressed": { "$value": "{contrast-high.color.fg.link.pressed}" }
+        "$root": {
+          "$value": "{contrast-high.color.fg.link}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.fg.link.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.fg.link.pressed}"
+        }
       },
-      "link-on-tint": {
-        "$root": { "$value": "{contrast-high.color.fg.link}" },
-        "hover": { "$value": "{contrast-high.color.fg.link.hover}" },
-        "pressed": { "$value": "{contrast-high.color.fg.link.pressed}" }
+      "primary": {
+        "$value": "{contrast-high.color.fg.primary}"
       },
-      "accent": { "$value": "{contrast-high.color.fg.accent}" },
-      "on-selected": { "$value": "{contrast-high.color.fg.on-selected}" },
-      "success": { "$value": "{contrast-high.color.fg.success}" },
-      "warning": { "$value": "{contrast-high.color.fg.warning}" },
-      "danger": { "$value": "{contrast-high.color.fg.danger}" },
-      "done": { "$value": "{contrast-high.color.fg.done}" },
-      "on-emphasis": { "$value": "{contrast-high.color.fg.on-emphasis}" }
+      "accent": {
+        "$value": "{contrast-high.color.fg.accent}"
+      },
+      "on-selected": {
+        "$value": "{contrast-high.color.fg.on-selected}"
+      },
+      "success": {
+        "$value": "{contrast-high.color.fg.success}"
+      },
+      "warning": {
+        "$value": "{contrast-high.color.fg.warning}"
+      },
+      "danger": {
+        "$root": {
+          "$value": "{contrast-high.color.fg.danger}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.fg.danger.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.fg.danger.pressed}"
+        }
+      },
+      "done": {
+        "$value": "{contrast-high.color.fg.done}"
+      },
+      "on-emphasis": {
+        "$value": "{contrast-high.color.fg.on-emphasis}"
+      },
+      "success-on-strong": {
+        "$value": "{contrast-high.color.fg.success-on-strong}"
+      },
+      "info-on-strong": {
+        "$value": "{contrast-high.color.fg.info-on-strong}"
+      },
+      "danger-on-strong": {
+        "$value": "{contrast-high.color.fg.danger-on-strong}"
+      },
+      "link-on-muted": {
+        "$root": {
+          "$value": "{contrast-high.color.fg.link}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.fg.link.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.fg.link.pressed}"
+        }
+      },
+      "rating-star": {
+        "$value": "{contrast-high.color.fg.rating-star}"
+      },
+      "avatar": {
+        "powder": {
+          "$value": "{contrast-high.color.fg.avatar.powder}"
+        },
+        "seafoam": {
+          "$value": "{contrast-high.color.fg.avatar.seafoam}"
+        },
+        "sage": {
+          "$value": "{contrast-high.color.fg.avatar.sage}"
+        },
+        "butter": {
+          "$value": "{contrast-high.color.fg.avatar.butter}"
+        },
+        "blush": {
+          "$value": "{contrast-high.color.fg.avatar.blush}"
+        },
+        "periwinkle": {
+          "$value": "{contrast-high.color.fg.avatar.periwinkle}"
+        },
+        "orchid": {
+          "$value": "{contrast-high.color.fg.avatar.orchid}"
+        },
+        "oat": {
+          "$value": "{contrast-high.color.fg.avatar.oat}"
+        }
+      }
     },
     "border": {
       "default": {
-        "$root": { "$value": "{contrast-high.color.border.default}" },
-        "hover": { "$value": "{contrast-high.color.border.default.hover}" },
-        "pressed": { "$value": "{contrast-high.color.border.default.pressed}" }
-      },
-      "muted": {
-        "$root": { "$value": "{contrast-high.color.border.muted}" },
-        "hover": { "$value": "{contrast-high.color.border.muted.hover}" },
-        "pressed": { "$value": "{contrast-high.color.border.muted.pressed}" }
-      },
-      "accent": {
-        "$root": { "$value": "{contrast-high.color.border.accent}" },
-        "muted": { "$value": "{contrast-high.color.border.accent.muted}" },
-        "emphasis": {
-          "$root": { "$value": "{contrast-high.color.border.accent.emphasis}" },
-          "hover": { "$value": "{contrast-high.color.border.accent.emphasis.hover}" },
-          "pressed": { "$value": "{contrast-high.color.border.accent.emphasis.pressed}" }
+        "$root": {
+          "$value": "{contrast-high.color.border.default}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.border.default.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.border.default.pressed}"
         }
       },
-      "danger": {
-        "$root": { "$value": "{contrast-high.color.border.danger}" },
-        "muted": { "$value": "{contrast-high.color.border.danger.muted}" },
-        "strong": { "$value": "{contrast-high.color.border.danger.strong}" },
+      "muted": {
+        "$root": {
+          "$value": "{contrast-high.color.border.muted}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.border.muted.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.border.muted.pressed}"
+        }
+      },
+      "primary": {
+        "$root": {
+          "$value": "{contrast-high.color.border.primary}"
+        },
+        "muted": {
+          "$value": "{contrast-high.color.border.primary.muted}"
+        },
         "emphasis": {
-          "$root": { "$value": "{contrast-high.color.border.danger.emphasis}" },
-          "hover": { "$value": "{contrast-high.color.border.danger.emphasis.hover}" },
-          "pressed": { "$value": "{contrast-high.color.border.danger.emphasis.pressed}" }
+          "$root": {
+            "$value": "{contrast-high.color.border.primary.emphasis}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.border.primary.emphasis.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.border.primary.emphasis.pressed}"
+          }
+        }
+      },
+      "accent": {
+        "$value": "{contrast-high.color.border.accent}"
+      },
+      "danger": {
+        "$root": {
+          "$value": "{contrast-high.color.border.danger}"
+        },
+        "muted": {
+          "$value": "{contrast-high.color.border.danger.muted}"
+        },
+        "strong": {
+          "$value": "{contrast-high.color.border.danger.strong}"
+        },
+        "emphasis": {
+          "$root": {
+            "$value": "{contrast-high.color.border.danger.emphasis}"
+          },
+          "hover": {
+            "$value": "{contrast-high.color.border.danger.emphasis.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.border.danger.emphasis.pressed}"
+          }
         }
       },
       "neutral": {
-        "$root": { "$value": "{contrast-high.color.border.neutral}" },
-        "strong": { "$value": "{contrast-high.color.border.neutral.strong}" }
+        "$root": {
+          "$value": "{contrast-high.color.border.neutral}"
+        },
+        "strong": {
+          "$value": "{contrast-high.color.border.neutral.strong}"
+        }
       },
       "success": {
-        "$root": { "$value": "{contrast-high.color.border.success}" },
-        "muted": { "$value": "{contrast-high.color.border.success.muted}" },
-        "strong": { "$value": "{contrast-high.color.border.success.strong}" }
+        "$root": {
+          "$value": "{contrast-high.color.border.success}"
+        },
+        "muted": {
+          "$value": "{contrast-high.color.border.success.muted}"
+        },
+        "strong": {
+          "$value": "{contrast-high.color.border.success.strong}"
+        }
       },
       "warning": {
-        "$root": { "$value": "{contrast-high.color.border.warning}" },
-        "muted": { "$value": "{contrast-high.color.border.warning.muted}" }
+        "$root": {
+          "$value": "{contrast-high.color.border.warning}"
+        },
+        "muted": {
+          "$value": "{contrast-high.color.border.warning.muted}"
+        }
       },
-      "focus": { "$value": "{contrast-high.color.border.focus}" },
-      "info": { "strong": { "$value": "{contrast-high.color.border.info.strong}" } },
-      "done": { "$value": "{contrast-high.color.border.done}" }
-    },
-    "avatar": {
-      "bg": {
-        "$root": { "$value": "{palette.blue.70}" },
-        "teal": { "$value": "{palette.teal.70}" },
-        "green": { "$value": "{palette.green.70}" },
-        "amber": { "$value": "{palette.amber.70}" },
-        "red": { "$value": "{palette.red.70}" },
-        "violet": { "$value": "{palette.violet.70}" },
-        "purple": { "$value": "{palette.purple.70}" },
-        "slate": { "$value": "{palette.slate.70}" }
+      "focus": {
+        "$value": "{contrast-high.color.border.focus}"
+      },
+      "info": {
+        "strong": {
+          "$value": "{contrast-high.color.border.info.strong}"
+        }
+      },
+      "done": {
+        "$value": "{contrast-high.color.border.done}"
       }
     }
   },
   "elevation": {
-    "1": { "border": { "$type": "color", "$value": "{color.border.default}" } },
-    "2": { "border": { "$type": "color", "$value": "{color.border.default}" } },
+    "1": {
+      "border": {
+        "$type": "color",
+        "$value": "{color.border.default}"
+      }
+    },
+    "2": {
+      "border": {
+        "$type": "color",
+        "$value": "{color.border.default}"
+      }
+    },
     "3": {
       "border": {
         "$type": "color",
-        "$description": "Dialogs float over the scrim, so their edge keeps 4.5:1 against the scrim over the page.",
-        "$value": "{contrast-high.color.border.scrim}"
+        "$description": "Dialogs float over the backdrop, so their edge keeps 4.5:1 against the backdrop over the page.",
+        "$value": "{contrast-high.color.border.backdrop}"
       }
+    }
+  },
+  "state": {
+    "$type": "number",
+    "$description": "Lighter state layers, as the designed high-contrast state fills are, so text keeps 7:1 over them.",
+    "hover-opacity": {
+      "$value": 0.06
+    },
+    "focus-opacity": {
+      "$value": 0.07
+    },
+    "pressed-opacity": {
+      "$value": 0.07
     }
   }
 }

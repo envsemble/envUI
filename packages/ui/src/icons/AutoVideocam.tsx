@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function AutoVideocam({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 96 960 960" {...props}>{filled ? <path d="M160 896q-33 0-56.5-23.5T80 816V336q0-33 23.5-56.5T160 256h480q33 0 56.5 23.5T720 336v180l126-126q10-10 22-5t12 19v344q0 14-12 19t-22-5L720 636v180q0 33-23.5 56.5T640 896H160Zm190-270 32 70q5 12 18 12t18-12l32-70 70-32q12-5 12-18t-12-18l-70-32-32-70q-5-12-18-12t-18 12l-32 70-70 32q-12 5-12 18t12 18l70 32Z" /> : <path d="M160 896q-33 0-56.5-23.5T80 816V336q0-33 23.5-56.5T160 256h480q33 0 56.5 23.5T720 336v180l126-126q10-10 22-5t12 19v344q0 14-12 19t-22-5L720 636v180q0 33-23.5 56.5T640 896H160Zm0-80h480V336H160v480Zm0 0V336v480Zm190-190 32 70q5 12 18 12t18-12l32-70 70-32q12-5 12-18t-12-18l-70-32-32-70q-5-12-18-12t-18 12l-32 70-70 32q-12 5-12 18t12 18l70 32Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M160 896q-33 0-56.5-23.5T80 816V336q0-33 23.5-56.5T160 256h480q33 0 56.5 23.5T720 336v180l126-126q10-10 22-5t12 19v344q0 14-12 19t-22-5L720 636v180q0 33-23.5 56.5T640 896H160Zm";
+
+export function IconAutoVideocam({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 96 960 960" {...props}><path d={filled ? start + "190-270 32 70q5 12 18 12t18-12l32-70 70-32q12-5 12-18t-12-18l-70-32-32-70q-5-12-18-12t-18 12l-32 70-70 32q-12 5-12 18t12 18l70 32Z" : start + "0-80h480V336H160v480Zm0 0V336v480Zm190-190 32 70q5 12 18 12t18-12l32-70 70-32q12-5 12-18t-12-18l-70-32-32-70q-5-12-18-12t-18 12l-32 70-70 32q-12 5-12 18t12 18l70 32Z"} /></Icon>;
 }

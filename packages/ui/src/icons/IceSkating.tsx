@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
-export function IceSkating({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M120-80q-17 0-28.5-11.5T80-120q0-17 11.5-28.5T120-160h120v-80h-40q-33 0-56.5-23.5T120-320v-440q0-33 23.5-56.5T200-840h160q33 0 56.5 23.5T440-760v40H340q-8 0-14 6t-6 14q0 8 6 14t14 6h102v40H340q-8 0-14 6t-6 14q0 8 6 14t14 6h116q14 23 35.5 39t47.5 24l105 29q52 14 84 56.5t32 96.5v35q0 33-23.5 56.5T680-240h-40v80h80q50 0 85-35t35-85q0-17 11.5-28.5T880-320q17 0 28.5 11.5T920-280q0 83-58.5 141.5T720-80H120Zm200-80h240v-80H320v80Z" /> : <path d="M120-80q-17 0-28.5-11.5T80-120q0-17 11.5-28.5T120-160h120v-80h-40q-33 0-56.5-23.5T120-320v-440q0-33 23.5-56.5T200-840h200q33 0 56.5 23.5T480-760v100q0 27 16.5 49t42.5 29l105 29q51 14 83.5 56.5T760-400v80q0 33-23.5 56.5T680-240h-40v80h80q50 0 85-35t35-85q0-17 11.5-28.5T880-320q17 0 28.5 11.5T920-280q0 83-58.5 141.5T720-80H120Zm80-240h480v-80q0-27-16.5-47.5T621-476l-105-30q-36-11-63-35.5T412-600h-72q-8 0-14-6t-6-14q0-8 6-14t14-6h64q-2-12-2.5-20t-1.5-20h-60q-8 0-14-6t-6-14q0-8 6-14t14-6h60v-40H200v440Zm120 160h240v-80H320v80ZM200-320Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M120-80q-17 0-28.5-11.5T80-120q0-17 11.5-28.5T120-160h120v-80h-40q-33 0-56.5-23.5T120-320v-440q0-33 23.5-56.5T200-840h";
+
+export function IconIceSkating({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "160q33 0 56.5 23.5T440-760v40H340q-8 0-14 6t-6 14q0 8 6 14t14 6h102v40H340q-8 0-14 6t-6 14q0 8 6 14t14 6h116q14 23 35.5 39t47.5 24l105 29q52 14 84 56.5t32 96.5v35q0 33-23.5 56.5T680-240h-40v80h80q50 0 85-35t35-85q0-17 11.5-28.5T880-320q17 0 28.5 11.5T920-280q0 83-58.5 141.5T720-80H120Zm200-80h240v-80H320v80Z" : start + "200q33 0 56.5 23.5T480-760v100q0 27 16.5 49t42.5 29l105 29q51 14 83.5 56.5T760-400v80q0 33-23.5 56.5T680-240h-40v80h80q50 0 85-35t35-85q0-17 11.5-28.5T880-320q17 0 28.5 11.5T920-280q0 83-58.5 141.5T720-80H120Zm80-240h480v-80q0-27-16.5-47.5T621-476l-105-30q-36-11-63-35.5T412-600h-72q-8 0-14-6t-6-14q0-8 6-14t14-6h64q-2-12-2.5-20t-1.5-20h-60q-8 0-14-6t-6-14q0-8 6-14t14-6h60v-40H200v440Zm120 160h240v-80H320v80ZM200-320Z"} /></Icon>;
 }

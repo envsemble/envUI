@@ -1,37 +1,158 @@
-# envUI: notes for agents
+# envUI: rules for working on it
 
-This file is for agents working on envUI itself. It stays in the repository and is not packaged; the package carries its own agent files, described in `docs/agent-tooling.md`.
+The rules every change to envUI follows, for agents and people alike. They stay in the repository and are not packaged; apps that build with envUI read the docs the package ships. Paths are from the repository's root.
 
-## Testing: three tiers, never the full suite every turn
+| Rules for                                                                                   | In                                             |
+| ------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| The whole repository: names, checks, tests, generated files, changesets, pages and releases | This file                                      |
+| The library, `packages/ui`: files, props, messages, tokens, style sheets, parts, dev mode   | [packages/ui/AGENTS.md](packages/ui/AGENTS.md) |
+| The website, `apps/site`: its words and folders, and what it shares                         | [apps/site/AGENTS.md](apps/site/AGENTS.md)     |
+| Setting up and opening a change                                                             | [CONTRIBUTING.md](CONTRIBUTING.md)             |
+| Writing a component, pattern or foundation page                                             | [contributing/pages.md](contributing/pages.md) |
 
-| Tier     | Command                  | When                                                                                       | Time (24 threads)                     |
-| -------- | ------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------- |
-| Fast     | `npm run check`          | After each change, while you work                                                          | Under a minute for a component change |
-| Affected | `npm run check:affected` | Before pushing a branch or marking its pull request ready                                  | A few minutes for a component change  |
-| Full     | `npm run verify`         | When asked, or to reproduce a failure of the Verify workflow on a pull request into `main` | About 20 min (30 before the tiers)    |
+## Never name the applications built on envUI
 
-- **The fast tier** checks what the branch changed since its merge-base with `origin/envui-1.0` (else `origin/dev`; `--base <ref>` or `ENVUI_BASE` picks another), with uncommitted and untracked files: ESLint, Stylelint and Prettier on the changed files, incremental `tsc`, the generated-file checks the change touches, the unit tests that need no build, and the related browser specs in Chromium. It prints what it selected and why; `-- --dry-run` prints only that.
-- **The affected tier** adds the related specs' `@engines` tests in Firefox and WebKit, the builds the change needs with the unit tests on them, and live development when the catalogue changed. The accessibility scan and the screenshots run in the full tier.
-- **CI** checks every ready pull request: one `CI` job for pull requests into `dev`, and the full `npm run verify` as the Verify workflow for pull requests into `main`, the releases. Don't change `.github/workflows`, start or re-run runs, or change the required checks without asking.
-- **The full tier** runs everything. Don't run it, or `npm run test:browser`, `test:a11y` or `test:visual`, as a routine step: they take minutes, and the tiers above answer for a change.
-- A token, theme or other shared change runs the contrast gate and a small shared set of specs, not everything; the selection says so. Leave the rest to the full tier.
-- A spec runs when the component it is named after changes (`scripts/TestScope.mjs`). When a file's name doesn't name its spec, add it to `aliases` there instead of running everything.
-- Firefox and WebKit run only the tests tagged `@engines`: tag a test that depends on the engine (scrolling, focus, pointer and input methods, native forms, platform keys), and leave the rest to Chromium.
+- Don't name them in code, docs, comments, changesets, release notes or sample data: envUI's first versions gathered what those applications needed, and naming them makes a component read as built for one.
+- Describe the pattern instead.
+- Other products, such as the design systems envUI follows, may be named.
+- `npm test` rejects the names.
 
-## Write tests that stay fast
+## Name files
 
-- Prefer a unit test (`node --test`, `tests/*.test.mjs`) to a browser spec, and a computed-style or DOM assertion to a screenshot.
-- Give a browser spec its own fixture (`?fixture=<name>` in `tests/fixture`) and name it after the component it covers, so the selection finds it. Test a behaviour once, in its component's spec; leave colour to the contrast gate and appearance to the visual baseline.
-- No fixed sleeps: wait for a condition, such as `expect(…).toHaveText`, `expect.poll` or the element's animations finishing. Where a test must show that nothing happens for a while, wait just past the delay it proves and say so.
-- Navigate only as much as the test needs; check independent states on one page load.
-- Keep heavy checks out of the inner loop: builds, packed-tarball tests, three engines, the accessibility scan and the visual baseline belong to the affected and full tiers.
+- In the site, the tests and the scripts, name a module's file in PascalCase and a hook's `useX`.
+- Start the name of a script run as a command with a verb, such as `GenerateParts.ts`.
+- Name documentation files in lowercase.
+- Take a path into the repository, in a script or a test, from `scripts/RepositoryPaths.ts`.
+- The library names its files as [packages/ui/AGENTS.md](packages/ui/AGENTS.md#files) says.
 
-## Ports and workers
+## Checks: three tiers, never the full suite every turn
 
-The browser tests start or reuse the catalogue on 8770 and the fixture on 8766, and reuse a server only when it answers for this checkout; when another checkout holds a port, this one takes ports of its own. When another checkout runs its servers or tests, set `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT` to free ports, such as 8832 and 8833. `ENVUI_WORKERS` sets the browser workers (default: half the cores).
+| Tier     | Command                  | When                                                                                       |
+| -------- | ------------------------ | ------------------------------------------------------------------------------------------ |
+| Fast     | `npm run check`          | After each change, while you work: under a minute for a component change                   |
+| Affected | `npm run check:affected` | Before pushing a branch or marking its pull request ready: a few minutes                   |
+| Full     | `npm run verify`         | When asked, or to reproduce a failure of the Verify workflow on a pull request into `main` |
 
-## Everything else
+### The fast tier
 
-- Running, building, hosting and releasing envUI: [CONTRIBUTING.md](CONTRIBUTING.md).
-- Changing the library, its tokens, documentation and checks: [docs/library-development.md](docs/library-development.md).
-- envUI never names the products that use it, in code, docs, comments or sample data.
+- It checks what the branch changed since its merge-base with `origin/dev`; `--base <ref>` or `ENVUI_BASE` picks another. Uncommitted and untracked files count.
+- It runs ESLint, Stylelint and Prettier on those files, unused files and exports (`npm run lint:unused`, `knip.jsonc`), incremental `tsc`, the generated-file checks the change touches, the unit tests that need no build, and the related component tests and browser specs in Chromium.
+- `npm run check -- --dry-run` prints what it would run and why; `--files <a,b>` checks those files instead of the branch's changes, the quickest way to run only the tests a change concerns.
+
+### The affected tier
+
+- It runs every related test, also those the fast tier leaves out, and those tagged `engines` in Firefox and WebKit.
+- It adds the builds the change needs with the unit tests that read them, and live development when the catalogue changed.
+
+### The full tier
+
+- It runs everything, the accessibility scans and the visual baseline in Docker included; `npm run verify:no-visual` skips the screenshots and says the run doesn't count.
+- Don't run it, `test:browser`, `test:a11y` or `test:visual` as a routine step.
+
+### What a changed file runs
+
+`scripts/test/TestScope.ts` selects:
+
+- The test named after the file or its folder, such as `Checkbox.css` or `Checkbox.fixture.tsx` → `tests/component/Checkbox.test.tsx`, and the tests that import a changed helper.
+- The tests whose fixtures use the file, found through their imports with the TypeScript parser (`scripts/test/FixtureImports.ts`): in the fast tier all of them when they are few, else the most specific six; in the affected tier all of them.
+- What `pathRules` there gives the file by glob: the checks a configuration, token, icon or documentation file runs, and the specs of the shared files and the catalogue. A token, theme or shared file runs the contrast gate and a small shared set.
+- Add a file to `aliases` there only for a test neither its name nor the imports find.
+
+### CI
+
+- CI checks every pull request once it is ready, in parallel jobs: the static checks, the build with the unit tests, the library's browser tests in Chromium, the site's smoke and a secret scan. A change skips the browser jobs it can't affect (`scripts/test/ChooseJobs.ts`); a pull request into `main` runs all of them, and the Verify workflow runs the rest of `npm run verify` beside them.
+- Each workflow ends in one job, `CI` or `Verify`, that the rulesets require; add a new job to its `needs`.
+- A push to `dev` seeds the npm and browser caches pull requests restore (`.github/workflows/caches.yml`).
+- `npm run test:library` (`--browser`, `--shard`) and `npm run test:site` run one browser suite as CI does. The library's shards split its component tests by the time each takes, from `tests/component/Durations.json`; refresh it as `scripts/test/RecordDurations.ts` says once files come or go or their times change much.
+- Don't change `.github/workflows`, start or re-run runs, or change the required checks without asking.
+
+## Tests
+
+### Where each kind lives
+
+| What it checks                                                                                 | Kind                                  | Where                                                                                |
+| ---------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
+| Logic, and markup and ARIA rendered on the server                                              | Unit test, `node --test`              | The folder of what it tests, below                                                   |
+| Keyboard, focus, pointer, layout and positioning in a real browser                             | Component test, Vitest's browser mode | `tests/component/<Name>.test.tsx`                                                    |
+| The site's smoke journey of each kind of page, hydration and failures; the library's hydration | Playwright spec                       | `tests/browser/site/`, `tests/browser/library/`; helpers in `tests/browser/support/` |
+| Contrast, appearance, accessibility                                                            | Their gates                           | `npm run test:contrast`, `test:visual`, `test:a11y`                                  |
+
+- Unit tests go in `tests/library/`, `tests/site/`, `tests/docs/` (the documentation and its generators), `tests/tooling/` (the checks and the release) or `tests/lint/` (cases both lint packages' tests read; each package's own tests are in its `test/`).
+- The library's are in three folders: `source/` for its modules as written (server markup and logic), `rules/` for the rules the repository holds its source to, and `package/` for the built package, the only unit tests that need `npm run build`.
+- Unit tests and their helpers are TypeScript, which Node runs as it is; `npm run typecheck` checks them with `tests/tsconfig.json`, except the files it lists as not typed yet, a list that only shrinks.
+- Helpers a folder's tests share are in its `support/`, such as `tests/support/` and `tests/component/support/`; data a test reads sits beside it.
+- A component test mounts its fixture straight into the page (`mount`, `tests/component/support/Mount.tsx`) and drives it with the real mouse, keys and finger (`tests/component/support/Browser.ts`); it never opens a page of the site or the fixture.
+- Run one file as you work: `node --test tests/library/source/<Name>.test.ts`, or `npm run test:component -- tests/component/<Name>.test.tsx`.
+
+### When to add a test, and which
+
+- Add one when it protects the public contract (keyboard, focus, ARIA, behaviour, types, tokens, size) or a bug that happened.
+- Add none that the next section would delete.
+- Take the first kind in the table that can see it: Node before a component test, a component test before a Playwright spec, which is the site's alone.
+- Test a behaviour once, in its component's test, and check independent states on one mount.
+- Prefer a computed-style or DOM assertion to a screenshot.
+- Tag a component test `engines` (`{ tags: ['engines'] }`) when it depends on the engine (scrolling, focus, pointer and input methods, native forms, platform keys); Firefox and WebKit run only those.
+- No fixed sleeps: wait for a condition, such as `expect.poll` or the element's animations finishing. Where a test proves that a component waits for a delay, or that nothing happens within one, stop the page's timers and move them on (`stopTimers` and `passTime` in `tests/component/support/Browser.ts`).
+
+### When to delete a test
+
+- Delete one that nothing would miss: it checks what TypeScript already enforces, restates the implementation (class names, DOM nesting, a private helper's exact output), asserts what the visual baseline or the contrast gate already sees (sizes, colors, spacing, fonts), repeats trivial logic or another test's case, only checks that a mock was called, or tests Base UI's, React's or the browser's own behaviour.
+- Keep it all the same when it is the only check of the public contract (contrast, focus visibility and hit areas among it) or of what the package ships, guards a bug that happened (`git log -S` on its title or body finds a `fix`), parses or writes an external format, guards a release or the repository's rules, or is a site page's only check. When unsure, keep it.
+- A test that waits on real time for what matters gets a stopped clock, as above, rather than deletion.
+
+### Fixtures
+
+- Give a component test its own fixture and name both after the component it covers: `tests/fixture/<Name>.fixture.tsx` and `tests/component/<Name>.test.tsx`.
+- Make the fixture its module's default export. By default it mounts once, in light, in the host page.
+- Export `themes = true` to mount it once per theme, given as `theme`; `mount = 'standalone'` for a fixture that fills the viewport or needs it to itself; `mount = 'root'` for one that themes the document through its own provider.
+- Keep one fixture to a file: a variant a test mounts on its own takes its own file, such as `TabsRtl.fixture.tsx`.
+- Name a fixture several tests mount after what it shows, such as `ChoiceControls.fixture.tsx` for Checkbox, Radio and Switch.
+- The visual baseline opens fixtures on the fixture page: `tests/fixture/App.tsx` mounts `<Name>.fixture.tsx` as `?fixture=<name>`, its file's name in kebab case, such as `ButtonGroup.fixture.tsx` as `?fixture=button-group`; list a module there that mustn't mount on it.
+- The accessibility scan mounts every fixture too (`tests/component/Accessibility.test.tsx`).
+
+## Ports, workers and recorded lists
+
+- The browser tests start or reuse the site's development server on 8770, the site built as it is hosted on 8767 and the fixture, built for development, on 8766, reusing a server only when it answers for this checkout. A site spec opens the build (`siteBuildUrl`) unless it needs the development server (`siteDevUrl`): `tests/browser/support/Servers.ts` says which is which.
+- Beside another checkout's tests, set `ENVUI_SITE_PORT`, `ENVUI_SITE_BUILD_PORT` and `ENVUI_FIXTURE_PORT`, such as 8832, 8834 and 8833, and give Vitest's browser server its own port with `--api.port`, such as `--api.port=63450` (Vitest ignores `--browser.api.port`); `npm run test:library` passes it on.
+- `ENVUI_WORKERS` sets the workers (default: half the cores).
+- Lists that only shrink: `stylelint-suppressions.json` (after removing violations, `npm run lint:css -- --suppress`), the accessibility scans' `tests/accessibility/KnownViolations.json` and `tests/component/__snapshots__/Accessibility.test.tsx.snap` (`npm run test:a11y:update`) and the visual baseline (`npm run test:visual:update`, then review the images like code). Add to them only for a reviewed reason.
+- Disable a rule on one line with the reason: after `--`, as in `// eslint-disable-next-line rule -- reason` and `/* stylelint-disable-next-line rule -- reason */`, or in the comment just above when it takes a sentence.
+
+## Generated files
+
+- Icons, tokens, props, parts, exports, the catalogue's data and packaged copies have sources: edit those and regenerate (`npm run tokens:build`, `docs:props`, `docs:parts`, `docs:exports`, `icons:generate`).
+- `npm run check` fails while a generated file is stale.
+
+## Record the change
+
+- Give a change people using envUI notice a changeset: `npm run changeset`, the package and its bump, and the entry as it should read in the changelog, for someone using the package.
+- `major` breaks code, such as a renamed prop, value, part class or state; `minor` adds, such as a component, prop or token; `patch` fixes and keeps the API.
+- Tests, tooling and catalogue-only changes need none.
+- Link documentation from a changeset by its absolute URL on `main`, such as `https://github.com/envsemble/envUI/blob/main/docs/setup.md`, since the entry is read in several places.
+
+## Pages
+
+- Every component, pattern and foundation page in `docs/` is one Markdown file that feeds the catalogue, the Docs and the package. Write it as [contributing/pages.md](contributing/pages.md) says; the build fails on a page outside the structure.
+- Keep a fact on the page that owns it. When an integration finds a gap, improve that page rather than adding another guide.
+
+## The lint packages
+
+- `packages/eslint-plugin` and `packages/stylelint-config` hold applications to envUI's components and tokens; their READMEs document the rules and how to run their tests.
+- Make a new ESLint rule a file of `packages/eslint-plugin/src/rules/` named after it, registered in `src/index.js` and its recommended config, with its test in `test/<rule>.test.mjs` through `test/RuleTester.mjs`, and its section in the README.
+- Configure a Stylelint rule in `packages/stylelint-config/src/index.js` and test it in `test/config.test.mjs`.
+- Both packages are JavaScript with JSDoc types, which `npm run typecheck` checks through each package's `tsconfig.json`; the ESLint plugin's public types are its hand-written `index.d.ts`.
+- Each package ships its own `src/tokens.js`, `src/colorPolicy.js` and `src/data/tokens.json`, copies that `npm run tokens:build` writes (`scripts/build/SyncLintPackages.ts`): `tokens.js` from `scripts/build/LintPackageTokens.js`; `colorPolicy.js`, what both count as a raw color, from `scripts/build/LintPackageColorPolicy.js`; the data from the library's `packages/ui/src/generated/tokens.json`; and the ESLint plugin's `src/data/entryPoints.json` from the exports of `packages/ui/package.json`.
+- Edit the sources, never the copies; `npm run tokens:check` fails on a stale one.
+
+## Releases
+
+- Cut a release from `main` by merging `dev` into it; never release without being asked.
+- The library and the lint packages are a fixed group in Changesets and share one version.
+- A prerelease goes out under its name as the dist-tag, such as `prerelease`; a stable release under `latest`.
+- Published versions are immutable.
+
+1. **On the release branch**, for a stable release, leave prerelease mode first with `npx changeset pre exit`: `npm run changeset:version` in prerelease mode makes another prerelease (undo it with `git restore` and `git clean`, never by editing versions). Then `npm run changeset:version` writes the version, the lockfile and the changelogs.
+2. **Finish the changelog section:** the date in its heading, as in `## 1.0.0 — 2026-10-20`, and one or two sentences on what the release brings, the headline changes rather than a list; leave the generated entries as they are.
+3. **Check it** with `GITHUB_REF_NAME=v<version> node scripts/release/ValidateRelease.ts` (`--release-notes` prints the notes), retake the README's pictures with `npm run docs:readme-images` if the site's look changed, and commit it as `Release <version>`.
+4. **Merge** the branch into `dev`, then `dev` into `main` with a merge commit, through pull requests. The Release workflow validates, builds, publishes the packages to GitHub Packages and the GitHub release (`scripts/release/Publish.ts`); a re-run publishes only what is missing.
+5. **Merge `main` back into `dev`**, and grant a new package's Actions access to the repositories that read `@envsemble/envui`.

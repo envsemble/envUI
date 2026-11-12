@@ -2,8 +2,8 @@
 title: Surface
 summary: A container with a background, an inset and corners, but no layout of its own.
 status: beta
-since: 0.1.0
-category: Layout & surfaces
+since: 1.0.0
+category: App frame & layout
 aliases:
   - panel
   - pane
@@ -13,129 +13,134 @@ aliases:
   - paper
   - well
   - region
-  - toolbar
 useWhen:
-  - A region needs a background, an inset and corners, such as a detail pane or a side panel.
-  - A block should stand apart from what is around it, such as a raised summary on a pane.
-  - A toolbar floats over dense content, such as a diagram, with small controls inside.
+  - A region with a background, such as a detail pane or a side panel
+  - A block that stands apart, such as a summary on a pane
 avoidWhen:
   - text: Content with a heading, metadata and actions, or a block people press to open something.
     use: Card
   - text: Rows of items that people scan, each with a label, a description and actions.
     use: List
   - text: Space between children without a background.
-    use: Stack
-  - text: Content over the page that people dismiss, such as a form in a window.
-    use: Dialog
-  - text: A floating panel that opens from a button.
-    use: Popover
-related:
-  - stack
-  - card
-  - list
-  - spacing
-  - colors
+    use: Column
 components:
   - Surface
+  - placeholders
+  - isPlaceholder
+  - useSkeleton
+examples:
+  DetailPane: overview
 ---
 
 # Surface
 
-## Overview
+## Variants
 
-A surface gives a region a background, an inset on every side and rounded corners, and nothing else: it has no border, no gaps between its children and no behaviour. Lay out what it holds with a [Stack](../components/stack.md), through `render` on the same element or inside it. Card and other containers build on Surface.
+### Backgrounds
 
-```tsx example=DetailPane
+| Background | Use for                                                                      |
+| ---------- | ---------------------------------------------------------------------------- |
+| Default    | Panes and side regions. The default.                                         |
+| Muted      | A block that stands apart on a pane, and rows.                               |
+| Page       | A well inside a pane that returns to the page.                               |
+| Raised     | A layer on the page, such as a table or a docked panel.                      |
+| Recessed   | A well on the page that its content rises out of, such as a preview's stage. |
 
-```
+<!-- specimen: Backgrounds -->
 
-## Anatomy
+### Corners
 
-1. **Background** (`background`): the fill, with no border.
-2. **Inset** (`padding`): the space between the edge and the content, the same on every side.
-3. **Corners** (`radius`): the radius of all four corners.
-4. **Content**: the surface's children, laid out by what they are rendered with, such as a Stack.
+| Corners      | Use for                                       |
+| ------------ | --------------------------------------------- |
+| Large        | Panes and large regions. The default.         |
+| Small        | Small blocks.                                 |
+| Rounded ends | A group of controls.                          |
+| Square       | A band that meets the edges of its container. |
 
-## Variants and sizes
+<!-- specimen: Corners -->
 
-| Background | Use for                                                                                  |
-| ---------- | ---------------------------------------------------------------------------------------- |
-| `default`  | Panes and side regions on the page, in the default background. The default.              |
-| `muted`    | Blocks in the muted background of rows, such as a group of settings.                     |
-| `page`     | A region in the page background, such as a well inside a pane that returns to the page.  |
-| `raised`   | A block in the raised background that stands out on a pane, such as a summary inside it. |
+## Rules
 
-<!-- specimen: TonesAndCorners -->
+A surface lays out nothing itself: a [Column](column.md) or a [Row](row.md) lays out what it holds, as one element with it.
 
-- **Corners** (`radius`, named after the radius tokens): `xl`, the default, gives panes and other large regions 1.75 rem corners; `sm` gives small blocks, such as a summary inside a pane, 0.5 rem corners; `full` gives a toolbar or a bar of filters fully rounded ends; and `none` leaves square corners for a region that meets the edges of its container, such as a full-width band.
-- **Inset**: without `padding`, the inset follows the window: 1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide. `padding` takes a step of the spacing scale instead, from 1 (0.25 rem) to 9 (4 rem), and 0 removes it.
-- **Backgrounds**: each is the background role of its name in [colors and themes](../foundations/colors.md): `--env-color-bg-default`, `--env-color-bg-muted`, `--env-color-bg-page` and `--env-color-bg-raised`. In the light theme `raised` is white, like the page; in the dark theme it matches `default`.
-- **Width**: a surface is as wide as its container allows and never wider; set a width on it, or on its container, to make it narrower.
-- **Scale**: a surface keeps the scale of its Theme: its corners and inset spacing are a little smaller in the compact scale. For smaller controls in a toolbar, give them `size="sm"`; for a compact region, wrap it in a Theme with `scale="compact"`. See [scale and density](../foundations/scale.md).
+### Spacing
 
-## States and behaviour
-
-- A surface has no hover, pressed, focus or disabled state, and does nothing on its own. Interactive containers, such as a Card with `href`, add their own states.
-- `render` renders another element for its meaning, such as `render={<section />}` or `render={<aside />}`, or draws the surface onto another component, such as a Stack, without a wrapper.
-
-## Content guidelines
-
-- Give a surface that stands for a region a visible heading, such as "Billing", and name the region with it.
-- Keep one level of nesting where you can: a raised or muted block inside a pane, not a surface in a surface in a surface.
-
-## Do and don't
-
-### Do
-
-- Lay out a surface's content with a Stack through `render`, so the surface and its layout are one element.
-- Use `full` corners and controls of size `sm` for a toolbar that floats over dense content.
-- Use the background roles for what they mean: `default` for panes, `raised` for a block that stands out on a pane.
-
-### Don't
-
-- Don't add margins to a surface's children for space between them; lay them out with a [Stack](../components/stack.md).
-- Don't build a card from a surface by hand; use [Card](../components/card.md), which has its layout, actions and interactive states.
-- Don't tell regions apart by their background alone; the fills are close in contrast, so give each region a heading or a label.
-- Don't give a surface `role="toolbar"` unless you add arrow-key navigation; a group of controls with an accessible name keeps them all in the tab order.
+Space what a surface holds with the layout inside it, never with margins of its own.
 
 ## Accessibility
 
-### Keyboard
-
-| Key                                             | Action                                                                                                |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves through the controls inside, in order; the surface itself is not focusable and handles no keys. |
-
 ### envUI provides
 
-- A plain element with no role of its own, so it adds nothing to what assistive technology reads; `render` renders a section, an article, a navigation, a main or an aside region, a header or a footer instead.
+- A `div` with no role of its own, or the element in `render`, such as `render={<section />}`.
 
 ### You provide
 
-- A role and a name where the surface is a region or a group, such as `render={<section />}` with `aria-labelledby` pointing at its heading, or `role="group"` with an `aria-label` on a group of controls.
-- Headings or labels that set regions apart, rather than the background alone.
+- A heading for a surface that is a region, and its name, such as `aria-labelledby` on a section.
+- `role="group"` and an `aria-label` on a group of controls; a [Toolbar](toolbar.md) for one the arrow keys move through.
 
-## Examples
+## Compose
 
-### A raised block on a pane
+### Usage
 
-`background="raised"` sets a block apart on a pane; `sm` corners suit its smaller size.
+A Surface gives its content a `background`, an inset and corners.
 
-```tsx example=RaisedOnPane
+- Lay out what it holds through `render`, with a Column or a Row, so the surface and its layout are one element.
+- `render` also gives it its meaning, such as `render={<section />}`, and `ref` reaches the rendered element.
 
-```
-
-### Toolbar
-
-A pill surface holds controls over dense content, with controls of size `sm`. `render` lays them out as a row, and `role="group"` with a label names them together. For a toolbar the arrow keys move through, render the surface as a [Toolbar](../components/toolbar.md).
-
-```tsx example=Toolbar
+```tsx source=DetailPane
 
 ```
+
+#### Backgrounds, corners and inset
+
+- `background` is `default`, the default, `muted`, `page`, `raised` or `recessed`. In every theme the page and the recessed well lie below `default`, and `muted` and `raised` a step above it, with one fill; the recessed well is a shade deeper than the page in dark, and between the page and the panes in light, where it takes the panes' fill at high contrast.
+- `radius` is `xl`, 1.75 rem and the default, `sm`, 0.5 rem, `full`, fully rounded ends, or `none`, square.
+- `padding` sets the inset as a step of the spacing scale, from `1`, 0.25 rem, to `9`, 4 rem, and `0` removes it; without it, the inset grows from 1.25 rem in narrow windows to 1.5 rem from 50 rem wide.
+
+A group of controls, as wide as its controls in a Column with `align="start"`:
+
+```tsx
+<Surface
+  padding={1}
+  radius="full"
+  role="group"
+  aria-label="Diagram view"
+  render={<Row wrap align="center" gap={4} />}
+>
+  <IconButton variant="ghost" size="sm" icon={<IconZoomOut />} aria-label="Zoom out" />
+  <IconButton variant="ghost" size="sm" icon={<IconZoomIn />} aria-label="Zoom in" />
+  <Button variant="secondary" size="sm">
+    Fit to screen
+  </Button>
+</Surface>
+```
+
+#### Loading
+
+`skeleton` shows the surface and everything inside it as a skeleton until its content arrives: text becomes bars of its text style's length, and controls filled shapes.
+
+- Render the same components over stand-in items, `items ?? placeholders<Project>(3)`, whose fields are undefined; `isPlaceholder(item)` tells a stand-in by its id, and narrows the type, so the other branch reads the item's own fields.
+- A component of the application's own reads `useSkeleton()` to give its skeleton a look of its own, such as a chart's.
+
+```tsx
+// A detail pane that is a skeleton until its project arrives: the text it will hold is bars.
+<Surface skeleton={!project} style={{ inlineSize: '22rem' }}>
+  <Column gap={3}>
+    <Text render={<h3 />} variant="title">
+      {project?.name}
+    </Text>
+    <Text>{project?.brief}</Text>
+  </Column>
+</Surface>
+```
+
+### Customize
+
+- To recolor an area, its controls included, set the semantic tokens on a nested Theme, as [Customize and extend](../customizing.md#recolor-an-area) shows.
+- CSS may target `env-surface`, with `data-background` and `data-radius` for the values other than the defaults.
 
 ## Changelog
 
-- **1.0.0**: `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.
-- **0.5.0**: `density="compact"`, which gives the controls inside the compact height.
-- **0.4.0**: The inset is at least 1.25 rem.
-- **0.1.0**: Surface, with backgrounds, padding and corners.
+- **1.0.0**: `skeleton`, with `placeholders()`, `isPlaceholder()` and `useSkeleton()`. `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.
+- **1.0.0-prerelease.6**: `raised` is a step above `default` in dark too, with `muted`'s fill, and `recessed` lies below `default` in light too, between the page and the panes.
+- **1.0.0-prerelease.5**: `background="recessed"`, a well on the page a shade deeper than it, in `--env-color-bg-recessed`.

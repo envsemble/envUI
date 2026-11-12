@@ -1,7 +1,7 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
+import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
 
-export function AndroidCell4BarOff({ filled: _filled = false, ...props }: MaterialSymbolProps) {
+export function IconAndroidCell4BarOff({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="M600-160q-25 0-42.5-17.5T540-220v-96l-120-84v180q0 25-17.5 42.5T360-160q-25 0-42.5-17.5T300-220v-264L70-645q-17-12-20.5-32t8.5-37q12-17 32.5-21t37.5 8l704 494q17 12 21 32t-8 37q-12 17-32.5 20.5T775-152l-115-80v12q0 25-17.5 42.5T600-160Zm300-148-120-84v-348q0-25 17.5-42.5T840-800q25 0 42.5 17.5T900-740v432ZM60-220v-200q0-25 17.5-42.5T120-480q25 0 42.5 17.5T180-420v200q0 25-17.5 42.5T120-160q-25 0-42.5-17.5T60-220Zm600-256-120-84v-60q0-25 17.5-42.5T600-680q25 0 42.5 17.5T660-620v144Z" /></Icon>;
 }

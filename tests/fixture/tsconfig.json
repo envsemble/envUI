@@ -6,10 +6,11 @@
     "moduleResolution": "Bundler",
     "jsx": "react-jsx",
     "strict": true,
+    "types": ["node", "vite/client"],
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
     "customConditions": ["envui-source"]
   },
-  "include": ["*.tsx"]
+  "include": ["*.tsx", "../../packages/ui/src/customProperties.d.ts"]
 }

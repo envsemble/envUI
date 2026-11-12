@@ -2,7 +2,28 @@
    does an application's CSS outside cascade layers, whatever its specificity. */
 .env-theme {
   min-inline-size: 0;
-  overflow-wrap: anywhere;
+  /* A word longer than its line breaks where it would overflow, and only there: a column, a cell or
+     a button still keeps room for its longest word, so short words never break inside. */
+  overflow-wrap: break-word;
+  /* Standard contrast until a rule below says otherwise (see the switch at the end). */
+  --env-theme-high-contrast: initial;
+  /* Light until a rule below says otherwise (see the switch at the end). */
+  --env-theme-dark: initial;
+}
+/* The outermost theme boundary is the env-window container, on which the window classes are
+   measured: a themed document root, the Theme around an application, or the portal of a popup or a
+   dialog where the document root isn't themed. A size container is as wide as its context makes it,
+   never as its content, so it takes the whole width it is given rather than collapse where its
+   parent sizes to content. A nested boundary, such as a dark island in a row, sizes as any element
+   and is no container; a region opts in with <Box container="env-window">. It is a block, also
+   where it renders an inline element, whose inline size would be ignored and whose queries would
+   match nothing, and its padding is inside that width, so it never overflows its parent. Zero
+   specificity, so any class overrides them. */
+:where(.env-theme):not(:where(.env-theme .env-theme)) {
+  container: env-window / inline-size;
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
 }
 /* A themed document root keeps the browser's font size, so 1 rem stays the reader's size (16 px by
    default) and every rem measure keeps its designed size. Its body takes the body type instead,
@@ -14,15 +35,25 @@ html.env-theme > body {
   font: var(--env-type-body);
   /* A unitless line height, so content in another font size keeps lines in proportion to it; set
      --env-line-height-body to change it. */
-  line-height: var(--env-line-height-body, 1.4);
+  line-height: var(--env-line-height-body);
+}
+/* A ThemePreferenceProvider's boundary that takes the root's look, which has no theme of its own
+   (ThemePreference.tsx), sets envUI's type again as the boundary it stands for would. */
+.env-theme [data-env-ssr-root] {
+  min-inline-size: 0;
+  overflow-wrap: break-word;
+  font: var(--env-type-body);
+  line-height: var(--env-line-height-body);
 }
 .env-theme h1 {
   margin: 0;
-  font: var(--env-type-h1);
+  font: var(--env-type-headline);
+  letter-spacing: var(--env-type-headline-letter-spacing);
 }
 .env-theme :is(h2, h3, h4, h5, h6) {
   margin: 0;
-  font: var(--env-type-h2);
+  font: var(--env-type-title);
+  letter-spacing: var(--env-type-title-letter-spacing);
 }
 .env-theme p {
   margin: 0;
@@ -30,4 +61,34 @@ html.env-theme > body {
 }
 .env-theme a {
   color: inherit;
+}
+/* A switch for the high-contrast looks of components, set by each boundary as the tokens' contrast
+   is: empty under high contrast, and invalid otherwise, so a custom property that starts with it,
+   such as Alert's --env-alert-high-contrast-edge, holds its high-contrast value or nothing, and the
+   standard look applies. Every boundary sets it again, standard in its first rule, so the nearest
+   one decides. */
+.env-theme[data-env-contrast='high'] {
+  --env-theme-high-contrast: ;
+}
+@media (prefers-contrast: more) {
+  .env-theme:not([data-env-contrast='standard']) {
+    --env-theme-high-contrast: ;
+  }
+}
+/* A switch for what a component draws in each color scheme, set by each boundary as its theme is:
+   empty in the dark theme, and invalid in the light one, so a custom property that starts with it,
+   such as a code token's --env-code-token-dark-shown, holds its dark value or nothing. Markup that
+   carries both, as a highlighted code block does, is the same in either theme. */
+.env-theme[data-env-theme='dark'] {
+  --env-theme-dark: ;
+}
+/* While a ThemePreferenceProvider switches the page's theme or contrast, nothing transitions: the
+   new colors show in the frame they change, not eased over the next ones. Important in the first of
+   envUI's layers that sets it, so no component's transition wins. The provider marks the root it
+   themes, so the rule names the themed root, never the document's root as such. */
+.env-theme[data-env-theme-switching],
+.env-theme[data-env-theme-switching] *,
+.env-theme[data-env-theme-switching] ::before,
+.env-theme[data-env-theme-switching] ::after {
+  transition: none !important;
 }

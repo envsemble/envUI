@@ -1,6 +1,8 @@
 import {
   documentationUrl,
   findAttribute,
+  importedComponent,
+  insideAttribute,
   isFunction,
   isIntrinsic,
   jsxName,
@@ -10,9 +12,46 @@ import {
   resolveVariable,
   spreadsProps,
   staticValue,
+  unwrapExpression,
   walk,
 } from '../utilities.js';
 
+/**
+ * A component to render instead, and for an alternative, when to.
+ * @typedef {{ component: string, when?: string }} Suggestion
+ */
+
+/**
+ * An attribute's condition: true when it is present, false when it is absent, or a list of static
+ * values, compared case-insensitively, where null stands for an absent attribute and a trailing `*`
+ * matches a prefix. A condition on absence is not met while the element spreads props, which may
+ * supply the attribute.
+ * @typedef {boolean | (string | null)[]} AttributeCondition
+ */
+
+/**
+ * An entry of `data/elements.json`, of a widget role or of an element.
+ * @typedef {object} Entry
+ * @property {string} id What the rule's `allow` option names the entry by.
+ * @property {string} [role] The role a `role` attribute names, on any JSX element.
+ * @property {string[]} [owners] For a role, the envUI components that render it themselves, so that
+ *   a role on one refines its own, as Popover renders a dialog; the suggested components count too.
+ * @property {string} [element] The element's tag, or `*` for any element but those of `except`.
+ * @property {string[]} [except] For `*`, the tags it leaves.
+ * @property {Record<string, AttributeCondition>} [attributes] What the element's attributes must
+ *   meet for the entry to match.
+ * @property {Suggestion[] | null} use The component to render and its alternatives; null lets
+ *   the element pass.
+ * @property {string[]} [import] The bindings to import, by default the namespaces of `use`.
+ * @property {string} [from] The entry point they come from, by default `@envsemble/envui`.
+ * @property {string} [describe] How the message names what was found, `{tag}` standing for its tag.
+ * @property {string} [note] A sentence the message adds.
+ */
+
+/**
+ * The table: roles, checked first, then elements in order, the first that matches deciding.
+ * @type {{ roles: Entry[], elements: Entry[] }}
+ */
 const { roles, elements } = readData('elements.json');
 const rolesByName = new Map(roles.map((entry) => [entry.role, entry]));
 const knownIds = new Set([...roles, ...elements].flatMap((entry) => [entry.id, entry.element]));
@@ -28,15 +67,10 @@ function ownersOf(entry) {
 }
 
 /**
- * The envUI entry points that export components. The others export icons, assets and a script, whose
- * names, such as the `Button` icon, are not components.
+ * The specifiers of envUI's entry points, whose names count as envUI's. Those without components,
+ * such as `/dev`, export none of the owners' names.
  */
-const componentEntryPoints = new Set([
-  '@envsemble/envui',
-  '@envsemble/envui/content',
-  '@envsemble/envui/diff',
-  '@envsemble/envui/rich-text',
-]);
+const entryPoints = new Set(readData('entryPoints.json').entryPoints);
 
 /** The bindings an entry imports: its own list, or the namespaces of the components it uses. */
 function bindings(entry) {
@@ -51,7 +85,7 @@ function valueMatches(value, item) {
   return expected.endsWith('*') ? text.startsWith(expected.slice(0, -1)) : text === expected;
 }
 
-/** Whether an element meets an entry's attribute conditions; see the comment in elements.json. */
+/** Whether an element meets an entry's attribute conditions, as AttributeCondition says. */
 function attributesMatch(element, conditions = {}) {
   const spreads = spreadsProps(element);
   return Object.entries(conditions).every(([name, condition]) => {
@@ -119,22 +153,6 @@ function hasLinkComponentProps(fn, visitorKeys) {
   );
 }
 
-/**
- * An expression without the TypeScript `as`, `satisfies` and `!` around it, and without the chain
- * that optional chaining wraps around `adapters?.link`.
- */
-function unwrap(expression) {
-  let node = expression;
-  while (
-    node?.type === 'TSAsExpression' ||
-    node?.type === 'TSSatisfiesExpression' ||
-    node?.type === 'TSNonNullExpression' ||
-    node?.type === 'ChainExpression'
-  )
-    node = node.expression;
-  return node;
-}
-
 /** How the message names what was found, such as `a raw <input type="email">`. */
 function describeElement(entry, element, tag) {
   if (entry.describe) return entry.describe.replace('{tag}', tag);
@@ -178,7 +196,7 @@ export default {
     defaultOptions: [{ allow: [], renderProps: ['render'] }],
     messages: {
       useComponent:
-        "Use envUI's {{use}} instead of {{found}}{{alternatives}}: import { {{imports}} } from '@envsemble/envui'.{{note}} If envUI can't do what you need, propose an addition to envUI instead of a local copy.",
+        "Use envUI's {{use}} instead of {{found}}{{alternatives}}: import { {{imports}} } from '{{source}}'.{{note}} If envUI can't do what you need, propose an addition to envUI instead of a local copy.",
     },
   },
   create(context) {
@@ -186,7 +204,7 @@ export default {
     const { sourceCode } = context;
     const { isReexportModule } = pluginSettings(context);
     /** Whether names from a module are envUI's: an entry point, or a module that re-exports one. */
-    const isEnvuiSource = (source) => componentEntryPoints.has(source) || isReexportModule(source);
+    const isEnvuiSource = (source) => entryPoints.has(source) || isReexportModule(source);
     const unknown = allow.filter((id) => !knownIds.has(id));
     if (unknown.length > 0)
       throw new Error(
@@ -195,12 +213,7 @@ export default {
     const allowed = new Set(allow);
     const isAllowed = (entry) => allowed.has(entry.id) || allowed.has(entry.element);
     const insideRenderProp = (node) =>
-      context.sourceCode
-        .getAncestors(node)
-        .some(
-          (ancestor) =>
-            ancestor.type === 'JSXAttribute' && renderProps.includes(jsxName(ancestor.name)),
-        );
+      insideAttribute(sourceCode, node, (name) => renderProps.includes(name));
 
     function report(node, entry, found) {
       const [primary, ...alternatives] = entry.use;
@@ -214,6 +227,7 @@ export default {
             .map(({ component, when }) => `, or ${component} ${when}`)
             .join(''),
           imports: bindings(entry).join(', '),
+          source: entry.from ?? '@envsemble/envui',
           note: entry.note ? ` ${entry.note}` : '',
         },
       });
@@ -264,7 +278,7 @@ export default {
 
     /** The object literals an expression stands for, through variables and members. */
     function objectsOf(expression, seen) {
-      const node = unwrap(expression);
+      const node = unwrapExpression(expression);
       if (!node || seen.has(node)) return [];
       seen.add(node);
       if (node.type === 'ObjectExpression') return [node];
@@ -277,7 +291,7 @@ export default {
 
     /** The functions an expression stands for: itself, a wrapped one, a variable's or a member's. */
     function functionsOf(expression, seen = new Set()) {
-      const node = unwrap(expression);
+      const node = unwrapExpression(expression);
       if (!node || seen.has(node)) return [];
       seen.add(node);
       if (isFunction(node)) return [node];
@@ -301,34 +315,6 @@ export default {
     const isAdapter = (fn) => adapters.has(fn) || hasLinkComponentProps(fn, sourceCode.visitorKeys);
 
     /**
-     * What a JSX element name stands for when its first name is imported: the entry point, and the
-     * name that entry point exports, `Popover` for `<Popover>` or `<P>` imported as
-     * `Popover as P`, `Menu.Submenu` for `<Menu.Submenu>` or `<ui.Menu.Submenu>`. `name` is
-     * undefined for an import that names no export, such as a default import. `{}` for a local,
-     * and undefined for a name that nothing in the file declares.
-     */
-    function importedComponent(name) {
-      const members = [];
-      let root = name;
-      for (; root.type === 'JSXMemberExpression'; root = root.object)
-        members.unshift(root.property.name);
-      if (root.type !== 'JSXIdentifier') return undefined;
-      const variable = resolveVariable(sourceCode, root, root.name);
-      if (!variable?.defs.length) return undefined;
-      const definition = variable.defs.find((candidate) => candidate.type === 'ImportBinding');
-      if (!definition) return {};
-      const source = definition.parent.source?.value;
-      if (definition.node.type === 'ImportNamespaceSpecifier')
-        return { source, name: members.join('.') };
-      if (definition.node.type === 'ImportSpecifier')
-        return {
-          source,
-          name: [moduleExportName(definition.node.imported), ...members].join('.'),
-        };
-      return { source, name: undefined };
-    }
-
-    /**
      * Whether a component element renders a role itself, so that a role on it refines its own: an
      * envUI component of the role's owners, by the name its entry point, or a module listed in
      * `settings.envui.reexportModules`, exports when it is imported, or by its written name when
@@ -336,7 +322,7 @@ export default {
      */
     function ownsRole(node, entry) {
       const owners = ownersOf(entry);
-      const imported = importedComponent(node.name);
+      const imported = importedComponent(sourceCode, node.name);
       if (!imported) return owners.has(jsxName(node.name));
       return isEnvuiSource(imported.source) && owners.has(imported.name);
     }
@@ -374,7 +360,7 @@ export default {
         const entry = elements.find(
           (candidate) =>
             (candidate.element === name ||
-              (candidate.element === '*' && !candidate.except.includes(name))) &&
+              (candidate.element === '*' && !(candidate.except ?? []).includes(name))) &&
             attributesMatch(node, candidate.attributes),
         );
         if (!entry || entry.use === null || isAllowed(entry) || insideRenderProp(node)) return;

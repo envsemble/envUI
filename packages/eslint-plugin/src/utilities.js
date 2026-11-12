@@ -37,6 +37,16 @@ export function findAttribute(element, name) {
   );
 }
 
+/**
+ * Whether a node sits in the value of a JSX attribute whose name `accepts` takes, such as a part's
+ * `render` prop.
+ */
+export function insideAttribute(sourceCode, node, accepts) {
+  return sourceCode
+    .getAncestors(node)
+    .some((ancestor) => ancestor.type === 'JSXAttribute' && accepts(jsxName(ancestor.name)));
+}
+
 /** Whether a JSX opening element spreads props, which may supply any attribute. */
 export function spreadsProps(element) {
   return element.attributes.some((attribute) => attribute.type === 'JSXSpreadAttribute');
@@ -79,23 +89,6 @@ export function walk(node, visitorKeys, enter) {
   }
 }
 
-/**
- * The string pieces under a node: string literals, and the parts of template literals between their
- * expressions. `open` marks a template part that an expression continues.
- */
-export function stringParts(node, visitorKeys, { skip = () => false } = {}) {
-  const parts = [];
-  walk(node, visitorKeys, (child) => {
-    if (skip(child)) return false;
-    if (child.type === 'Literal' && typeof child.value === 'string')
-      parts.push({ node: child, text: child.value, open: false });
-    else if (child.type === 'TemplateElement')
-      parts.push({ node: child, text: child.value.cooked ?? child.value.raw, open: !child.tail });
-    return true;
-  });
-  return parts;
-}
-
 /** The name an import or export specifier refers to: an identifier, or a string literal name. */
 export function moduleExportName(node) {
   return node.type === 'Identifier' ? node.name : String(node.value);
@@ -111,6 +104,58 @@ export function resolveVariable(sourceCode, node, name) {
     if (variable) return variable;
   }
   return undefined;
+}
+
+/**
+ * What a JSX element name stands for when its first name is imported: the import's source, and
+ * the name that module exports, `Popover` for `<Popover>` or `<P>` imported as `Popover as P`,
+ * `Menu.Submenu` for `<Menu.Submenu>` or `<ui.Menu.Submenu>`. `name` is undefined for an import
+ * that names no export, such as a default import. `{}` for a local, and undefined for a name that
+ * nothing in the file declares.
+ */
+export function importedComponent(sourceCode, name) {
+  const members = [];
+  let root = name;
+  for (; root.type === 'JSXMemberExpression'; root = root.object)
+    members.unshift(root.property.name);
+  if (root.type !== 'JSXIdentifier') return undefined;
+  const variable = resolveVariable(sourceCode, root, root.name);
+  if (!variable?.defs.length) return undefined;
+  const definition = variable.defs.find((candidate) => candidate.type === 'ImportBinding');
+  if (!definition) return {};
+  const source = definition.parent.source?.value;
+  if (definition.node.type === 'ImportNamespaceSpecifier')
+    return { source, name: members.join('.') };
+  if (definition.node.type === 'ImportSpecifier')
+    return { source, name: [moduleExportName(definition.node.imported), ...members].join('.') };
+  return { source, name: undefined };
+}
+
+/** The name a style object's property sets: `display`, `backgroundColor` or `--accent`. */
+export function propertyName(property) {
+  const { key } = property;
+  if (!property.computed && key.type === 'Identifier') return key.name;
+  if (key.type === 'Literal') return String(key.value);
+  if (key.type === 'TemplateLiteral' && key.expressions.length === 0)
+    return key.quasis[0].value.cooked;
+  return undefined;
+}
+
+/**
+ * An expression without what wraps it but leaves its value as it is: the TypeScript `as`,
+ * `satisfies` and `!`, as in `{ … } as const`, and the chain that optional chaining wraps around
+ * `adapters?.link`.
+ */
+export function unwrapExpression(expression) {
+  let node = expression;
+  while (
+    node?.type === 'TSAsExpression' ||
+    node?.type === 'TSSatisfiesExpression' ||
+    node?.type === 'TSNonNullExpression' ||
+    node?.type === 'ChainExpression'
+  )
+    node = node.expression;
+  return node;
 }
 
 /** Whether a node is a function: a declaration, an expression or an arrow function. */

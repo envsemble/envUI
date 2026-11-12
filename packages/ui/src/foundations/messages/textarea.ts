@@ -9,5 +9,3 @@ export const textarea = {
   resizeDescription:
     'Drag the bottom edge, or use Up and Down arrows to resize. Home restores the minimum height.',
 };
-
-export type TextareaMessages = typeof textarea;

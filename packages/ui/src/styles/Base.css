@@ -1,0 +1,30 @@
+/* envUI's base, which every component's style sheet builds on: the order of envUI's cascade layers,
+   the reset, the tokens, the theme boundary, the surface and icon rules and motion keyframes that
+   nearly every component draws with, and the font face. Every rule is in a cascade layer of env, in
+   this order, so an application's CSS outside cascade layers always overrides envUI's, whatever its
+   specificity, and so does a layer the application declares after env. env.utilities is reserved
+   for single-purpose classes; envUI has none yet.
+
+   Each component's module imports this file before its own style sheet, so a bundler puts it
+   first. The component style sheets put their rules in env.components themselves; the parts below
+   that have no layer of their own, the reset, the generated tokens and the theme, take theirs as
+   they are imported here, the only place that loads them. */
+@layer env.reset, env.tokens, env.base, env.components, env.utilities;
+
+@import './Reset.css' layer(env.reset);
+@import '../generated/Tokens.css' layer(env.tokens);
+@import './TokensHandwritten.css' layer(env.tokens);
+@import './Surface.css';
+@import './Theme.css' layer(env.base);
+@import './Icon.css';
+@import './Motion.css';
+/* envUI's own Geist: one variable face from regular (400) to bold (700). Cascade layers order style
+   rules; a font face is no style rule, so it stays outside them, and an application's own face of
+   this name replaces it. */
+@font-face {
+  font-family: 'envUI Geist';
+  src: url('../assets/fonts/Geist.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}

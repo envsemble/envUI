@@ -1,6 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useState, type RefObject } from 'react';
+import { pixelsOf } from '../internal/dom/lengths.js';
 
 /** An element's size along its own writing mode, in CSS pixels. */
 export interface ContainerSize {
@@ -19,8 +20,6 @@ export interface ContainerSizeOptions {
   box?: 'content-box' | 'border-box';
 }
 
-const pixels = (value: string) => Number.parseFloat(value) || 0;
-
 /** The element's size now, as a ResizeObserver would report it. */
 function measure(element: Element, box: 'content-box' | 'border-box'): ContainerSize {
   const style = getComputedStyle(element);
@@ -31,8 +30,8 @@ function measure(element: Element, box: 'content-box' | 'border-box'): Container
       width = element.offsetWidth;
       height = element.offsetHeight;
     } else {
-      width = element.clientWidth - pixels(style.paddingLeft) - pixels(style.paddingRight);
-      height = element.clientHeight - pixels(style.paddingTop) - pixels(style.paddingBottom);
+      width = element.clientWidth - pixelsOf(style.paddingLeft) - pixelsOf(style.paddingRight);
+      height = element.clientHeight - pixelsOf(style.paddingTop) - pixelsOf(style.paddingBottom);
     }
   } else {
     const rect = element.getBoundingClientRect();
