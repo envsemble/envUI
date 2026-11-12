@@ -227,9 +227,3 @@ Panes.Divider, named by its `label`, Resize panes by default, resizes the suppor
 ### Composition
 
 The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `data-open`; the main pane, `env-panes-main`, and the supporting one, `env-panes-supporting`, with its close button, `env-panes-close`, and its backdrop, `env-panes-backdrop`, while it is a sheet, and the trigger that opens it, `env-panes-trigger`; the list, `env-panes-list`, and the detail, `env-panes-detail`, with its back button, `env-panes-back`; and the divider, `env-panes-divider`. Panes paints no background of its own: the surfaces in its panes do. `name` names the node for dev mode, as `data-env-name`.
-
-## Changelog
-
-- **1.0.0**: Panes, which replaces SplitPane and ListDetail: the supporting and list-detail behaviors, `splitAt` at a window class, a divider in rem, and Panes.Trigger, which opens the supporting sheet.
-- **1.0.0-prerelease.5**: The resized pane's `size`, `defaultSize`, `onSizeChange`, `minSize`, `maxSize` and `persistedSize` are `width`, `defaultWidth`, `onWidthChange`, `minWidth`, `maxWidth` and `persistedWidth`, as on Sheet, and `readPanesSize` is `readPanesWidth`. `defaultOpen` leaves the open state to Panes, and `onOpenChange` receives why. The part props are `Panes.MainProps`, `Panes.DetailProps` and `Panes.ListProps`.
-- **1.0.0-prerelease.5**: The supporting sheet is on a Sheet's fill, `--env-color-bg-default`, rather than `--env-color-bg-raised`, which differ only at high contrast in the light theme.

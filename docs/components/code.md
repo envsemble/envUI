@@ -214,10 +214,3 @@ envUI picks the code theme from the app theme: Shiki's `github-light-default` in
 ### Customize
 
 Inline code is one part, `env-code`. A block is `env-code-block`: its header, `env-code-block-header`, holds the label and the copy button, and the source is its `pre`; the copy result is announced from `env-code-block-copy-status`.
-
-## Changelog
-
-- **1.0.0**: Code, CodeBlock, CodeDiff and Markdown's code use Shiki's `github-light-default` and `github-dark-dimmed` code themes instead of the Pierre themes, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast; envUI no longer needs `@pierre/theme`. The `DiffCount` that `countDiffLines` feeds is `DiffStat`. Highlighted tokens reach 4.5:1 in both app themes, and 7:1 under high contrast, in code blocks and code diffs. CodeDiff takes CodeBlock's code theme, token colors and translucent layer, instead of a theme and an opaque grey of its own. CodeBlock's and CodeDiff's words come from EnvUIProvider's `messages`; the copy button copies through the selection fallback that CopyButton uses, and its status is `env-code-block-copy-status`. The row above a block's code, `env-code-block-heading`, is `env-code-block-header`.
-- **1.0.0-prerelease.6**: Inline code is quieter in running text: the monospace carries it, on half the neutral muted fill, and high contrast keeps the whole fill.
-- **1.0.0-prerelease.6**: A CodeDiff line that wraps hangs its continuation four characters in.
-- **1.0.0-prerelease.6**: In dark, CodeDiff's changed lines take a less saturated tint, and the line numbers' gutter keeps the full change color.

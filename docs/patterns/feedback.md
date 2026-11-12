@@ -193,7 +193,3 @@ Status in rows is a List whose items take a Badge, with a RelativeTime in their 
   <Badge tone="success">On track</Badge>
 </List.Item>
 ```
-
-## Changelog
-
-- **1.0.0**: The page is on the figure template, with the feedback and status wording of the content guidelines.

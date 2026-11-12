@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@changesets/config/schema.json",
   "baseBranch": "dev",
-  "access": "restricted",
+  "access": "public",
   "changelog": "./changelog.mjs",
   "commit": false,
   "format": "prettier",

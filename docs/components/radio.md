@@ -184,13 +184,3 @@ A RadioGroup holds Radio options and is a native `<fieldset>`: its `label`, the 
 ### Composition
 
 The parts are the group, `env-radio-group`, with `data-orientation` and its legend, `env-radio-group > legend`; each option, `env-radio`, the label around the radio and its text; the description, `env-radio-description`; and the native radio, `env-radio-input`. A Radio's `className` and `style` reach its root, and `ref` and the other native props the input, so a form library can register and focus it.
-
-## Changelog
-
-- **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.
-- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
-- **1.0.0-prerelease.6**: The group's legend takes the size, weight and muted color of a field's floated label. In a vertical group, the chosen row's label keeps the text color, its choice shown by the selection's fill and the filled radio, and on a dialog, a popover or a muted or raised card or Surface, the rows take a faint neutral tint, so they keep their shape there.
-- **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the radio sits on the middle of its first line rather than across both lines.
-- **1.0.0-prerelease.6**: The group's error shows the error icon, as a field's does.
-- **1.0.0-prerelease.5**: RadioGroup takes `description` and `error`, as a field does, and a controlled `value` of `null` chooses none.
-- **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row and Select's chosen option do, rather than the hover fill.

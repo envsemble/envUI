@@ -162,7 +162,3 @@ An application that translates passes the strings of the reader's language; the 
 ### Composition
 
 The pager is a `nav`, `env-pagination`, with the range, `env-pagination-range`, and the previous and next buttons, `env-pagination-button`, the next one last; a loading button shows the spinner, `env-button-spinner`. The end buttons stay focusable with `aria-disabled` where there is no page to go to.
-
-## Changelog
-
-- **1.0.0**: The range's numbers are in the locale, EnvUIProvider's or the runtime's, instead of always English, and the names and the range come from `messages.pagination`; `previousLabel`, `nextLabel`, `formatRange` and `aria-label` still override them.

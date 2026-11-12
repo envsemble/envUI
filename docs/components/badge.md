@@ -228,11 +228,3 @@ const destinations: Destination[] = [
 ### Composition
 
 The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its label, `env-badge-label`. A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`.
-
-## Changelog
-
-- **1.0.0**: A soft badge in the accent, success, warning or danger tone takes the tone's stronger tint, and its label is semibold; at high contrast it keeps the softer tint.
-- **1.0.0**: InfoChip is Badge, a pill, and its page joins this one. The `subtle` variant is `soft`. `Counter` is a Badge with `count`, `.env-badge[data-count]` with `env-badge-count-label`, and `DiffCount` is `DiffStat`, with its props type and the `env-diff-stat-*` classes; the page is `badge`. DiffStat writes its numbers and its name in the locale, and its name comes from `messages.diffStat.label`. A control sets the badges inside it through the `--env-badge-*`, `--env-badge-count-*` and `--env-diff-stat-*` hooks.
-- **1.0.0-prerelease.6**: A done badge leads with a check mark, and a soft one takes a fainter tint than neutral. On a selected Table row or List item, a soft badge lays its tint over the raised surface, so it stays apart from the selection's blue. DiffStat leaves out a side that is 0, such as +40 for a change that only adds.
-- **1.0.0-prerelease.6**: The `done` tone is a quiet slate blue-gray, in place of a cyan that sat too close to the success green at table size: completed things recede.
-- **1.0.0-prerelease.5**: A little roomier: 3 px above and below its label and 10 px at the sides, edge included.

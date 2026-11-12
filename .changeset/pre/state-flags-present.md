@@ -1,5 +1,0 @@
----
-'@envsemble/envui': major
----
-
-Every state attribute that is on or off is present, as `""`, or absent, as Base UI renders its own, so CSS selects it as `[data-x]`. These took `"true"`: Button's, ButtonGroup's, IconButton's and SegmentedControl's `data-full-width`; ColorPicker's `data-alpha`, `data-disabled`, `data-dragging`, `data-eye-dropper`, `data-invalid`, `data-readonly`, `data-selected` and `data-translucent`, and ColorSwatch's `data-translucent`; Composer's `data-running`, `data-disabled` and `data-start`; CodeBlock's `data-wrap`; Message's `data-text`; Progress's `data-segmented`; Toast's `data-limited`; TextField's `data-tall` and `data-label-hidden`; DatePicker's `data-label-floating`; CommandPalette's `data-empty`; PanelDock's `data-active`, `data-attention`, `data-filled`, `data-overflowing`, `data-resizing`, `data-scrolled`, `data-stacked` and `data-tabs`; RichTextEditor's `data-invalid`, `data-disabled` and `data-readonly`; TimeList's `data-centered`, `data-loop` and `data-disabled`. DocumentTabs' `data-preview` is present on a preview tab alone, where it took `"true"` or `"false"`.

@@ -1,5 +1,5 @@
 # @envsemble/eslint-plugin-envui
 
-## 1.0.0-prerelease.5
+## 1.0.0
 
-The last prerelease before 1.0, released with envUI and sharing its version. This changelog lists changes from 1.0.0 on.
+The first stable release, with envUI 1.0.0, whose version it shares.

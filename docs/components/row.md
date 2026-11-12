@@ -145,7 +145,3 @@ Row lays out its children side by side, in the reading direction.
 #### A row that becomes a column
 
 A row never turns into a column by itself. `container` makes it a size container of that name, so CSS can change the layout at a window class, such as `container="filters"` with `@container filters (width >= 37.5rem)`.
-
-## Changelog
-
-- **1.0.0**: Row, with Column, Grid and Box, replaces Stack: a Stack with `direction="row"` is a Row. A Row has no gap of its own, where Stack's default was `gap={4}`.

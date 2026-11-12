@@ -166,7 +166,3 @@ The group is a Surface with `role="group"` and an `aria-label`, rendering a Grid
   {/* One Column per figure */}
 </Surface>
 ```
-
-## Changelog
-
-- **1.0.0**: Key figures are a pattern built from Surface, Grid, Text and Badge, in place of the Stat component, with Stat.Root and Stat.Group.

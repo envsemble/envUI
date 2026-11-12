@@ -149,10 +149,3 @@ Never nest a disclosure in another.
 ### Customize
 
 The summary is `env-disclosure > summary`, and the details are in `env-disclosure-panel`.
-
-## Changelog
-
-- **1.0.0**: Disclosure takes `open`, `defaultOpen` and `onOpenChange(open)`; a native `onToggle` still passes through. `DisclosureNote` is `Disclosure`, and its content `env-disclosure-panel`; the page is `disclosure`.
-- **1.0.0-prerelease.6**: The details grow to their height as they open and shrink as they close, fading in and out, as an accordion's panel does, where the browser can size them to their content.
-- **1.0.0-prerelease.6**: The summary's chevron is the icon set's, `env-disclosure-indicator`, at the small icon size in the middle of its first line, as a tree's is, rather than a text character, and turns to point down while open; the panel lines up with the summary's words.
-- **1.0.0-prerelease.6**: The summary lays the shared state layer on hover and press, in a small rounded rectangle a little past its words, and its focus ring takes the same rounded corners rather than square ones.

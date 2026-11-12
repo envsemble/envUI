@@ -114,8 +114,3 @@ A Spinner's `label` names the work it stands for, such as Updating tasks, and na
 For the work that follows a press, such as saving, set `pending` on the Button that started it, and for content of a known shape, `skeleton`, rather than a spinner. Set `aria-busy` on the region that updates, and put the result or the error in the spinner's place when the work ends.
 
 The parts are the spinner, `env-spinner`, its arc, `env-spinner-arc`, and with `showLabel` the label beside it, `env-spinner-label`.
-
-## Changelog
-
-- **1.0.0**: `showLabel` shows the label beside the spinner, in a busy status, for loading with no known shape, in place of the LoadingState component of 1.0.0-prerelease.0. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
-- **1.0.0-prerelease.6**: A turn lasts six times `--env-motion-duration-slow`, about as long as before, with `--env-motion-ease`, so durations of `0s` stop it.

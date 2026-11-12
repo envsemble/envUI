@@ -191,7 +191,3 @@ Place the composer below the MessageList it adds to.
 ### Customize
 
 The composer, `env-composer`, is on the raised popup surface, `env-composer-surface`, which holds the input, `env-composer-input`, the start content, `env-composer-start`, and the send button, `env-composer-action`; the footer, `env-composer-footer`, sits below it.
-
-## Changelog
-
-- **1.0.0**: `footer` is `description`, as on a field, since it describes the field. `onSubmit` is `onSend`, which pairs with `sendLabel` and leaves the native submit event's name alone. The send and stop labels come from EnvUIProvider's `messages`, unless `sendLabel` and `stopLabel` set them.
