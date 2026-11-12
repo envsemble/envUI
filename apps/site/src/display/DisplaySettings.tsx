@@ -1,4 +1,4 @@
-import { createContext, use, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import {
   Button,
@@ -15,6 +15,11 @@ import { IconTune } from '@envsemble/envui/icons/Tune';
 import { displayStorageKeys } from './DisplayStorage';
 import { prefersReducedMotion } from '../shared/ReducedMotion';
 import { useHydrated } from '../shared/useHydrated';
+import {
+  DisplaySettingsContext,
+  useDisplaySettings,
+  type DisplaySettingsValue,
+} from './useDisplaySettings';
 
 const themes: readonly ThemePreference[] = ['system', 'light', 'dark'];
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];
@@ -60,18 +65,6 @@ function initialMotion() {
     prefersReducedMotion() ? 'paused' : 'playing',
   );
 }
-
-interface DisplaySettingsValue {
-  contrast: ThemeContrast;
-  scale: ThemeScale;
-  /** Whether every animation of the site is paused, the tiles' and the figures'. */
-  motionPaused: boolean;
-  setContrast: (contrast: ThemeContrast) => void;
-  setScale: (scale: ThemeScale) => void;
-  setMotionPaused: (paused: boolean) => void;
-}
-
-const DisplaySettingsContext = createContext<DisplaySettingsValue | null>(null);
 
 /**
  * The site's theme, contrast and scale, and whether its animations play, as the reader chose them
@@ -148,12 +141,6 @@ export function DisplaySettingsProvider({
       </ThemePreferenceProvider>
     </DisplaySettingsContext>
   );
-}
-
-export function useDisplaySettings() {
-  const value = use(DisplaySettingsContext);
-  if (!value) throw new Error('useDisplaySettings needs a DisplaySettingsProvider around it.');
-  return value;
 }
 
 /**
