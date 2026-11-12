@@ -13,7 +13,7 @@
     "envsemble"
   ],
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/envsemble/envUI.git",
@@ -42,7 +42,7 @@
     "stylelint": "18.0.0"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }

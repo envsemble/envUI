@@ -18,6 +18,7 @@ after(async () => {
 test('the package ships the config, its color policy, its token names and its documentation, and nothing else', () => {
   assert.deepEqual(packed.files, [
     'CHANGELOG.md',
+    'LICENSE',
     'README.md',
     'package.json',
     'src/colorPolicy.js',

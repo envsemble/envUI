@@ -18,6 +18,7 @@ after(async () => {
 test('the package ships the plugin, its data and its documentation, and nothing else', () => {
   assert.deepEqual(packed.files, [
     'CHANGELOG.md',
+    'LICENSE',
     'README.md',
     'index.d.ts',
     'package.json',
