@@ -1,5 +1,5 @@
 import { useEffect, useSyncExternalStore, type RefObject } from 'react';
-import { useDisplaySettings } from '../display/DisplaySettings';
+import { useDisplaySettings } from '../display/useDisplaySettings';
 import { reducedMotionQuery } from '../shared/ReducedMotion';
 
 /*

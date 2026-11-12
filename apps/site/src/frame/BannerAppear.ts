@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from 'react';
 import type { LineArtMotion } from '@envsemble/envui';
 import { useHydrated } from '../shared/useHydrated';
-import { useDisplaySettings } from '../display/DisplaySettings';
+import { useDisplaySettings } from '../display/useDisplaySettings';
 import { bannerAppearAttribute, bannerDrawnKey } from '../display/DisplayStorage';
 
 /** The address the site opened on, before the reader moved to another page. */
