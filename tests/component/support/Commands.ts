@@ -1,5 +1,5 @@
 import type { BrowserCommand, BrowserCommandContext } from 'vitest/node';
-import type { CDPSession, Page, Route } from 'playwright';
+import type { CDPSession, Frame, Page, Route } from 'playwright';
 import type * as Gate from '../../contrast/Gate.ts';
 
 /**
@@ -147,6 +147,36 @@ interface ModuleRoute {
 const routes = new Map<string, ModuleRoute>();
 const routeKey = (context: BrowserCommandContext, name: string) => `${context.sessionId} ${name}`;
 
+/**
+ * Waits until the page intercepts the frame's requests. The page's first route turns interception
+ * on, and its last one taken off turns it off, and Chromium may apply it a moment after the route
+ * is in place, as on a loaded Linux runner: a module the frame asks for at once then passes its
+ * route by and loads. Vitest probes for it the same way before it mocks a module
+ * (vitest-dev/vitest#8339): with a request that a probe's own route answers.
+ */
+const probePath = '/__envui_interception_probe__';
+async function interceptionApplies(context: BrowserCommandContext, frame: Frame) {
+  const probe = (route: Route) => route.fulfill({ status: 204, headers: { 'x-envui-probe': '1' } });
+  await context.page.route(`**${probePath}`, probe);
+  try {
+    const deadline = Date.now() + 5_000;
+    while (Date.now() < deadline) {
+      const intercepted = await frame.evaluate(
+        (url) =>
+          fetch(url, { cache: 'no-store' }).then(
+            (response) => response.headers.has('x-envui-probe'),
+            () => false,
+          ),
+        probePath,
+      );
+      if (intercepted) return;
+    }
+    throw new Error('The page does not intercept requests 5 s after a route was added');
+  } finally {
+    await context.page.unroute(`**${probePath}`, probe);
+  }
+}
+
 async function routeModule(
   context: BrowserCommandContext,
   name: string,
@@ -182,6 +212,7 @@ async function routeModule(
   };
   routes.set(routeKey(context, name), entry);
   await context.page.route(moduleFile(name), entry.handler);
+  await interceptionApplies(context, frame);
 }
 
 const holdModule: BrowserCommand<[name: string]> = (context, name) =>
