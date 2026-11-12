@@ -1,8 +1,8 @@
 import { beforeEach, expect, test } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/Slider.fixture.tsx';
-import { animationsDone, box, css, keyboard, mouse, nextFrames } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { animationsDone, box, css, keyboard, mouse, nextFrames } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   mount(fixture);

@@ -6,9 +6,9 @@ import { fileURLToPath } from 'node:url';
 import {
   documentationDirectory,
   examplesDirectory,
-  generateDocumentation,
   specimensDirectory,
-} from '../../scripts/docs/GenerateDocumentation.ts';
+} from '../../scripts/RepositoryPaths.ts';
+import { generateDocumentation } from '../../scripts/docs/GenerateDocumentation.ts';
 // `vite build` makes the static site: separate files with content-hashed names that browsers keep
 // cached, the catalogue at the root and the Docs under /docs, both from one index.html.
 import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
@@ -370,8 +370,9 @@ export default defineConfig(() => {
           server.middlewares.use((request, response, next) => {
             const name = request.url?.split('?')[0]?.slice(1) ?? '';
             if (!Object.hasOwn(agentFileTypes, name)) return next();
-            response.setHeader('Content-Type', agentFileTypes[name]!);
-            response.end(siteAgentFiles()[name as keyof typeof agentFileTypes]);
+            const file = name as keyof typeof agentFileTypes;
+            response.setHeader('Content-Type', agentFileTypes[file]);
+            response.end(siteAgentFiles()[file]);
           });
         },
         generateBundle() {

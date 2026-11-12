@@ -61,7 +61,7 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
     ],
     jobs: ['library', 'site'],
   },
-  { paths: ['tests/browser/helpers/**'], jobs: ['library', 'site'] },
+  { paths: ['tests/browser/support/**'], jobs: ['library', 'site'] },
   {
     paths: [
       'apps/site/**',
@@ -77,11 +77,12 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
     ],
     jobs: ['site'],
   },
-  // Unit tests, the full check's own suites, and the configuration of the static checks.
+  // Unit tests, the full check's own suites, the measuring scripts run by hand, and the
+  // configuration of the static checks.
   {
     paths: [
-      'tests/*/*.test.mjs',
-      'tests/{support,types,lint,rsc,docs,composition,graphic}/**',
+      'tests/{library,site,docs,tooling,support,types,lint}/**',
+      'scripts/measure/**',
       'tests/{accessibility,visual}/**',
       'eslint.config.mjs',
       'stylelint.config.mjs',

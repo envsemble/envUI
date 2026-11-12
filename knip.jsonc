@@ -3,7 +3,7 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   // An export tagged @internal is there for a unit test that bundles the module from its source,
-  // which knip cannot follow (tests/support/ImportSource.mjs).
+  // which knip cannot follow (tests/support/ImportSource.ts).
   "tags": ["-@internal"],
   "workspaces": {
     ".": {
@@ -14,19 +14,18 @@
         "scripts/build/GenerateFavicons.ts",
         "scripts/test/CheckContents.ts",
         "scripts/test/RecordDurations.ts",
-        "tests/*/*.test.mjs",
+        "tests/**/*.test.ts",
         "tests/browser/{library,site}/*.spec.ts",
         "tests/accessibility/*.spec.ts",
         "tests/component/*.test.tsx",
-        "tests/component/{vitest.config,Setup}.ts",
         // The fixture's pages, each loading one of these.
         "tests/fixture/{main,perf}.tsx",
         "tests/fixture/vite.config.ts",
         "tests/fixture/Hydration.fixture.tsx",
         "tests/types/*.tsx",
-        "tests/rsc/*.mjs",
+        "tests/library/package/rsc/*.ts",
       ],
-      "project": ["scripts/**/*.{ts,js}", "tests/**/*.{ts,tsx,mjs}"],
+      "project": ["scripts/**/*.{ts,js}", "tests/**/*.{ts,tsx}"],
       // Off: it takes every module in a folder named test, as scripts/test/, for a test file whose
       // exports go unchecked. The entries above list the tests.
       "node": false,

@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/MonthPicker.fixture.tsx';
-import { box, collectErrors, css, keyboard, mouse } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, collectErrors, css, keyboard, mouse } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   // Today is fixed, so this month is the same in every run; timers run as they do.

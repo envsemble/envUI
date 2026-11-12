@@ -16,14 +16,14 @@ import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdirSync, readFileSync, rmdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { serveSite, siteBuilt, siteUrl } from '../browser/helpers/HostedSite';
+import { serveSite, siteBuilt, siteUrl } from '../browser/support/HostedSite';
 import {
   allThemes,
   chooseScheme,
   emulateContrast,
   type CatalogueTheme,
   type ThemeName,
-} from '../browser/helpers/CatalogueThemes';
+} from '../browser/support/CatalogueThemes';
 import { findPage } from '../../apps/site/src/routes/SiteRoutes';
 
 /** light on every page, and dark, light-hc and dark-hc on the pages of allThemesOn. */

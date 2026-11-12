@@ -1,8 +1,16 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page, server, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/Menubar.fixture.tsx';
-import { addStyle, box, collectErrors, keyboard, mouse, nextFrames, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import {
+  addStyle,
+  box,
+  collectErrors,
+  keyboard,
+  mouse,
+  nextFrames,
+  shown,
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 let errors: string[] = [];
 

@@ -9,7 +9,7 @@ export type MotionEasing = 'ease' | 'ease-enter' | 'ease-exit';
 /**
  * A CSS time, such as `0.24s` or `240ms`, in milliseconds; 0 for anything else.
  *
- * @internal Exported for tests/library/MotionTokens.test.mjs.
+ * @internal Exported for tests/library/source/MotionTokens.test.ts.
  */
 export function parseTime(value: string): number {
   const time = value.trim();

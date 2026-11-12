@@ -1,8 +1,8 @@
 import { expect, onTestFinished, test } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/ColorPicker.fixture.tsx';
-import { css, keyboard, recordClipboard } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { css, keyboard, recordClipboard } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /**
  * Gives the page an eyedropper that picks `picked`, or takes the browser's away with null, until

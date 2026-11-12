@@ -15,8 +15,8 @@ import {
   shown,
   stopTimers,
   viewportRatio,
-} from './Browser.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 const treeOf = (theme = 'light') => page.getByRole('tree', { name: `Files ${theme}` });
 

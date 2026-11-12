@@ -1,6 +1,6 @@
 // Stylelint for the library's and the site's CSS. Existing violations of the rules that the
 // token work removes are recorded in stylelint-suppressions.json, and
-// tests/tooling/StylelintSuppressions.test.mjs requires the recorded counts to match the CSS
+// tests/tooling/StylelintSuppressions.test.ts requires the recorded counts to match the CSS
 // exactly; anything new fails. See "Ports, workers and recorded lists" in AGENTS.md.
 import stylelint from 'stylelint';
 // The px allowlist, the raw color functions and the z-index values are the ones envUI's Stylelint

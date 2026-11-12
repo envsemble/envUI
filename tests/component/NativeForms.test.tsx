@@ -1,7 +1,7 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Forms.fixture.tsx';
-import { mount } from './Mount.tsx';
+import { mount } from './support/Mount.tsx';
 
 // envUI's controls in a native form, tests/fixture/Forms.fixture.tsx: what a form submits, and
 // what its reset restores.

@@ -2,8 +2,8 @@ import { expect, test } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as choiceControls from '../fixture/ChoiceControls.fixture.tsx';
 import * as forms from '../fixture/Forms.fixture.tsx';
-import { box, css, mouse } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css, mouse } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** The label a choice control's input sits in, its root. */
 const rootOf = (input: Element) => input.closest('label')!;

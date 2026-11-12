@@ -2,9 +2,9 @@ import { afterEach, expect, test, vi } from 'vitest';
 import { commands, page, server } from 'vitest/browser';
 import * as fixture from '../fixture/ForcedColors.fixture.tsx';
 import * as popupsFixture from '../fixture/ThemeContrast.fixture.tsx';
-import { keyboard, nextFrames } from './Browser.ts';
-import { mount } from './Mount.tsx';
-import { closePopup, openPopup, popupKinds, popupShown } from './Popups.ts';
+import { keyboard, nextFrames } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
+import { closePopup, openPopup, popupKinds, popupShown } from './support/Popups.ts';
 
 /**
  * Under forced colors the system replaces envUI's colors, drops shadows and paints no fills, so a

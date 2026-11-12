@@ -3,8 +3,8 @@ import { commands, page } from 'vitest/browser';
 // The type brings dev mode's `window.envui` with it.
 import type { LayoutProblem } from '@envsemble/envui/dev';
 import * as fixture from '../fixture/Skeleton.fixture.tsx';
-import { box, css, keyboard, nextFrames, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css, keyboard, nextFrames, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** The skeletons fixture, once dev mode has installed `envui.layout`. */
 async function open() {

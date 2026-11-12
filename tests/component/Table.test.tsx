@@ -6,8 +6,8 @@ import { page, type Locator } from 'vitest/browser';
 import { Table } from '@envsemble/envui';
 import * as fixture from '../fixture/Table.fixture.tsx';
 import * as dataDisplay from '../fixture/DataDisplay.fixture.tsx';
-import { box, css, keyboard, mouse, nextFrames, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css, keyboard, mouse, nextFrames, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 const themes = ['light', 'dark'] as const;
 

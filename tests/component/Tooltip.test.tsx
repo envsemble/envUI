@@ -11,8 +11,8 @@ import {
   passTime,
   shown,
   stopTimers,
-} from './Browser.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /**
  * Opens the fixture once its web fonts are in, the medium weight of the buttons' labels included:

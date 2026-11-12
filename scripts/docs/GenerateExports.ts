@@ -121,7 +121,7 @@ if (import.meta.main) {
     if (!base.contract) {
       console.log(`${exportsPath} matches its sources.`);
       console.warn(
-        `[33mwarning: no change of the exports was checked: ${base.skipped.join('; ')}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.[0m`,
+        `[33mwarning: no change of the exports was checked: ${base.missing}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.[0m`,
       );
     } else {
       const changes = changedExports(base.contract, record, pendingChangesets());

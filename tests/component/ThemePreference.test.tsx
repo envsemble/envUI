@@ -5,8 +5,8 @@ import * as provider from '../fixture/ThemeContrastProvider.fixture.tsx';
 import * as nested from '../fixture/ThemeContrastNested.fixture.tsx';
 import * as remount from '../fixture/ThemeContrastRemount.fixture.tsx';
 import * as release from '../fixture/ThemeRelease.fixture.tsx';
-import { collectErrors, css, nextFrames } from './Browser.ts';
-import { mount, unmount } from './Mount.tsx';
+import { collectErrors, css, nextFrames } from './support/Browser.ts';
+import { mount, unmount } from './support/Mount.tsx';
 
 const root = document.documentElement;
 const attribute = (name: string) => () => root.getAttribute(name);

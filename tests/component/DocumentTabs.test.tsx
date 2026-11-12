@@ -3,8 +3,8 @@ import { commands, page, type Locator } from 'vitest/browser';
 import * as tabsFixture from '../fixture/DocumentTabs.fixture.tsx';
 import * as rerenderFixture from '../fixture/DocumentTabsRerender.fixture.tsx';
 import * as rtlFixture from '../fixture/DocumentTabsRtl.fixture.tsx';
-import { box, keyboard, mouse, nextFrames, shown, viewportRatio } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, keyboard, mouse, nextFrames, shown, viewportRatio } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 const lastLog =
   (theme = 'light') =>

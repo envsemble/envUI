@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/CodeDiff.fixture.tsx';
-import { mount } from './Mount.tsx';
+import { mount } from './support/Mount.tsx';
 
 /** The element Diffs renders into, whose shadow root holds the lines. */
 const host = (diff: Element) => [...diff.querySelectorAll('*')].find((each) => each.shadowRoot);

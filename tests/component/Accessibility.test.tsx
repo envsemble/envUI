@@ -2,8 +2,8 @@ import axe from 'axe-core';
 import { expect, test } from 'vitest';
 import type { FixtureModule } from '../fixture/FixtureMount.tsx';
 import { fixtureName } from '../fixture/FixtureName.ts';
-import { nextFrames } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { nextFrames } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /**
  * The accessibility scan of the library: axe over each component fixture as it mounts, in the

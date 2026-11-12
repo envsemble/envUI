@@ -6,6 +6,14 @@ inputs:
       Space-separated Playwright browsers to install: chromium-shell (the headless shell, all
       headless Chromium needs), firefox or webkit. Empty installs none.
     default: ''
+  registry-url:
+    description: The npm registry a job that publishes authenticates with, for the @envsemble scope.
+    default: ''
+  install-scripts:
+    description: >-
+      'false' installs without the dependencies' install scripts, as a job holding a write token
+      does.
+    default: 'true'
 runs:
   using: composite
   steps:
@@ -13,9 +21,13 @@ runs:
       with:
         node-version: 24
         cache: npm
+        registry-url: ${{ inputs.registry-url }}
+        scope: ${{ inputs.registry-url && '@envsemble' || '' }}
     # With npm's cache restored, about 5 s.
     - shell: bash
-      run: npm ci --no-audit --no-fund
+      env:
+        IGNORE_SCRIPTS: ${{ inputs.install-scripts == 'false' && '--ignore-scripts' || '' }}
+      run: npm ci --no-audit --no-fund $IGNORE_SCRIPTS
     - name: Read the Playwright version
       id: playwright
       if: ${{ inputs.browsers != '' }}

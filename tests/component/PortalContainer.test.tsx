@@ -1,8 +1,17 @@
 import { describe, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/PortalContainer.fixture.tsx';
-import { box, keyboard, mouse, nextFrames, passTime, shown, stopTimers } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import {
+  box,
+  keyboard,
+  mouse,
+  nextFrames,
+  passTime,
+  shown,
+  stopTimers,
+  waitOnRealTime,
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** Whether an element's box lies inside the preview region's. */
 function insidePreview(selector: string, preview = 'preview') {
@@ -23,8 +32,6 @@ const toasts = (layer: Locator, text?: string) =>
   [...layer.element().querySelectorAll('.env-toast')].filter(
     (toast) => text === undefined || toast.textContent?.includes(text),
   );
-/** Waits the given time, where a test proves that nothing happens meanwhile. */
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('PortalContainer, contained', () => {
   // First in the file: the frame loads the notices' module once, and the next test would find it
@@ -67,7 +74,7 @@ describe('PortalContainer, contained', () => {
       // No focus moved in, and the page neither hides behind a modal layer nor stops scrolling.
       // Base UI focuses a menu as it opens; waiting past the 500 ms in which a contained popup sends
       // that focus back (openingFocusWindow in PopupSurface.tsx) shows that it stays out.
-      await wait(600);
+      await waitOnRealTime(600);
       expect(document.activeElement).toBe(document.body);
       // After that window, focus moved in from outside the container stays.
       const firstItem = layer.getByRole('menuitem').elements()[0] as HTMLElement;

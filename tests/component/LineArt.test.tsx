@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/LineArt.fixture.tsx';
-import { mount } from './Mount.tsx';
+import { mount } from './support/Mount.tsx';
 
 /**
  * Each line's dash offset, in lines' lengths, to a hundredth: 0 draws it whole, 1 or -1 not at all.

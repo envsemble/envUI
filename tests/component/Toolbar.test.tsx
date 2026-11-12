@@ -1,8 +1,8 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Primitives.fixture.tsx';
-import { css, keyboard, passTime, shown, stopTimers } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { css, keyboard, passTime, shown, stopTimers } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 // tests/fixture/Primitives.fixture.tsx mounts its toolbars among envUI's primitives.
 beforeEach(() => {

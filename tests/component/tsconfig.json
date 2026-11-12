@@ -15,10 +15,9 @@
   },
   "include": [
     "*.tsx",
-    "Browser.ts",
-    "Commands.ts",
-    "Setup.ts",
+    "support/*.ts",
+    "support/*.tsx",
     "../../packages/ui/src/customProperties.d.ts",
-    "../contrast/culori.d.ts"
+    "../../scripts/build/culori.d.ts"
   ]
 }

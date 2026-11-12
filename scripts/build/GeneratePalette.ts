@@ -6,7 +6,7 @@
 //
 // Grade 0 is white and grade 100 black; grade 50 has 4.58:1 against both. A grade's band is the
 // luminance of `grade ± bandHalfWidth`, so even at its edges a difference of 40 grades gives at
-// least 3:1, 50 at least 4.5:1 and 70 at least 7:1, for any two hues. tests/library/Palette.test.mjs checks
+// least 3:1, 50 at least 4.5:1 and 70 at least 7:1, for any two hues. tests/library/source/Palette.test.ts checks
 // those guarantees over the generated file. A hue may add in-between grades, such as gray's 2.75, in
 // narrower bands, keyed with `-` for the point (`gray.2-75`).
 //

@@ -1,9 +1,10 @@
-// Which browser specs a source file concerns, by what their fixtures import. A spec opens fixtures,
+// Which browser tests a source file concerns, by what their fixtures import: the component tests
+// and the Playwright specs, both called specs below, as in TestScope.ts. A spec opens fixtures,
 // `?fixture=<name>` of tests/fixture/App.tsx, which is `<Name>.fixture.tsx`, or a page such as
 // ForcedColors.html, or renders library source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
 // components by name, and those import the modules and style sheets they draw with, all read with
 // the TypeScript parser, so how an import is written doesn't change what it finds. TestScope.ts
-// selects specs with it; tests/tooling/TestScope.test.mjs covers it.
+// selects specs with it; tests/tooling/TestScope.test.ts covers it.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import ts from 'typescript';
@@ -11,7 +12,7 @@ import { fixtureName } from '../../tests/fixture/FixtureName.ts';
 
 const library = 'packages/ui/src';
 const fixtures = 'tests/fixture';
-/** The browser specs' folder: the library's in library/, the site's in site/, helpers in helpers/. */
+/** The browser specs' folder: the library's in library/, the site's in site/, helpers in support/. */
 const specs = 'tests/browser';
 /**
  * The folders of specs, with the ending of their files: Playwright's browser specs, and the
@@ -214,7 +215,7 @@ function fixtureFiles(root: string) {
 function specRoots(sources: Sources, path: string, fixtureModules: Map<string, string>) {
   const helpers = importsOf(sources.text(path) ?? '')
     .map(({ specifier }) => specifier)
-    .filter((specifier) => specifier.startsWith('../helpers/'))
+    .filter((specifier) => specifier.startsWith('../support/'))
     .map((specifier) => `${specs}/${specifier.slice(3)}.ts`);
   const roots = new Set<string>();
   for (const file of [path, ...helpers]) {
@@ -231,7 +232,7 @@ function specRoots(sources: Sources, path: string, fixtureModules: Map<string, s
     // Imports of the fixture's modules and of the library, also those of source it writes out to
     // render, as a module in a template string.
     for (const item of importsOf(text))
-      if (!item.specifier.startsWith('../helpers/'))
+      if (!item.specifier.startsWith('../support/'))
         for (const module of sources.resolve(file, item)) roots.add(module);
   }
   return roots;

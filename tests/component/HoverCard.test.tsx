@@ -9,8 +9,8 @@ import {
   nextFrames,
   passTime,
   stopTimers,
-} from './Browser.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 const themes = ['light', 'dark'] as const;
 

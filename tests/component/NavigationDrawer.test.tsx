@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { page, server, type Locator } from 'vitest/browser';
 import * as resizable from '../fixture/NavigationDrawer.fixture.tsx';
 import * as nested from '../fixture/NavigationDrawerNested.fixture.tsx';
-import { box, css, keyboard, mouse, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css, keyboard, mouse, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 const widthOf = (drawer: Locator) => box(drawer).width;
 const focus = (target: Locator) => (target.element() as HTMLElement).focus();

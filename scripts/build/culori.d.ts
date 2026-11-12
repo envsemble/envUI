@@ -1,4 +1,5 @@
-// The parts of culori that scripts/build uses: culori ships no types.
+// The parts of culori that scripts/build and the contrast gate (tests/contrast/Contrast.ts) use:
+// culori ships no types.
 declare module 'culori' {
   export interface Rgb {
     mode: 'rgb';
@@ -27,4 +28,8 @@ declare module 'culori' {
   export function formatHex(color: Color | undefined): string;
   export function parse(color: string): Color | undefined;
   export function wcagLuminance(color: Color | undefined): number;
+  export function clampRgb(color: Rgb): Rgb;
+  export function blend(colors: Rgb[], mode: 'normal', space: 'rgb'): Rgb;
+  export function wcagContrast(a: Rgb, b: Rgb): number;
+  export function differenceEuclidean(mode: 'oklab'): (a: Rgb, b: Rgb) => number;
 }

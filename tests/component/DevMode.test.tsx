@@ -3,8 +3,17 @@ import { page, type Locator } from 'vitest/browser';
 // The type brings dev mode's `window.envui` with it.
 import type { LayoutProblem } from '@envsemble/envui/dev';
 import * as fixture from '../fixture/DevMode.fixture.tsx';
-import { box, css, keyboard, mouse, passTime, shown, stopTimers } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import {
+  box,
+  css,
+  keyboard,
+  mouse,
+  passTime,
+  shown,
+  stopTimers,
+  waitOnRealTime,
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 const title = document.title;
 
@@ -481,7 +490,7 @@ test(
     await expect
       .poll(async () => {
         const before = sceneStyle();
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        await waitOnRealTime(200);
         return before === sceneStyle();
       })
       .toBe(true);

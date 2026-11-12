@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Navigation.fixture.tsx';
-import { keyboard } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { keyboard } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 test(
   'destinations are tab stops in order, and Enter selects one',

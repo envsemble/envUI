@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Layout.fixture.tsx';
-import { box, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 test('icon-only buttons keep their square size where their container is squeezed', () => {
   mount(fixture);

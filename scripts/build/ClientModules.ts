@@ -18,7 +18,7 @@
 //   node scripts/build/ClientModules.ts           add the directive where a module needs it
 //   node scripts/build/ClientModules.ts --check   fail when a module lacks it or has it without need
 //
-// tests/library/ClientDirectives.test.mjs runs the check, and checks the built dist and a server render.
+// tests/library/package/ClientDirectives.test.ts runs the check, and checks the built dist and a server render.
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
 import ts from 'typescript';

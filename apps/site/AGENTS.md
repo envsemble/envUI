@@ -55,7 +55,7 @@ Each has one folder in `apps/site/src`:
 
 - What the site and its build scripts both read, the documentation's model and the search's terms and anchors, is in `scripts/docs/model/`, which the site imports as `@docs-model/<Module>`.
 - The site uses the library through its entry points. `@envui-internal/<path>`, `packages/ui/src/<path>`, is its only door into what they don't export, such as `internal/motion/reducedMotion`.
-- The site's tsconfig, Vite config and `tests/support/ImportSource.mjs` alias both; ESLint rejects a relative path into `packages/ui/src` or `scripts/`.
+- The site's tsconfig, Vite config and `tests/support/ImportSource.ts` alias both; ESLint rejects a relative path into `packages/ui/src` or `scripts/`.
 
 ## Where a component behaves differently than in a fixture
 
