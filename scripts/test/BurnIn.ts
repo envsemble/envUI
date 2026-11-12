@@ -11,13 +11,17 @@
 // The component tests repeat each test with Vitest's --repeats, which runs it once and then that
 // many times more, its hooks each time; the Playwright specs with --repeat-each, each run a test
 // of its own on a fresh page. Live development edits sources, so its runs go one at a time, last.
+// A change to many component test files, such as a helper renamed across them, runs them fewer
+// times, at least twice, so that the burn-in ends well inside its job's timeout.
 import { spawnSync } from 'node:child_process';
 import { parseArgs } from 'node:util';
 import { burnInFiles } from './ChooseJobs.ts';
+import { readDurations } from './ComponentShards.ts';
 import { isComponentTest } from './FixtureImports.ts';
 import { serversFor, specNeeds } from './TestScope.ts';
 import { bin } from './TestTasks.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
+import { median } from '../measure/Median.ts';
 
 const { values, positionals: files } = parseArgs({
   allowPositionals: true,
@@ -47,6 +51,23 @@ const run = (command: string[], env: Record<string, string> = {}, required = fal
 };
 
 const componentTests = files.filter(isComponentTest);
+/**
+ * The seconds the component tests' runs may take at most, by the time each file takes on CI's two
+ * workers (tests/component/Durations.json, a new file counting as the median): with the setup, the
+ * builds and the specs, the job ends well inside its timeout in ci.yml.
+ */
+const componentBudget = 6 * 60;
+const durations = readDurations();
+const typical = median(Object.values(durations));
+const componentSeconds = componentTests.reduce(
+  (sum, file) => sum + (durations[file] ?? typical),
+  0,
+);
+const componentRuns = Math.max(2, Math.min(runs, Math.floor(componentBudget / componentSeconds)));
+if (componentRuns < runs)
+  console.log(
+    `The ${componentTests.length} component test files take about ${Math.round(componentSeconds)} s a run, so they run ${componentRuns} times, not ${runs}.`,
+  );
 // A spec by its name, as TestScope.ts reads it: SiteSmoke for tests/browser/site/SiteSmoke.spec.ts.
 const specs = files
   .filter((file) => !isComponentTest(file))
@@ -66,7 +87,7 @@ if (componentTests.length)
     '--tags-filter=!a11y',
     '--passWithNoTests',
     '--retry=0',
-    `--repeats=${runs - 1}`,
+    `--repeats=${componentRuns - 1}`,
     ...(values['api.port'] ? [`--api.port=${values['api.port']}`] : []),
     ...componentTests,
   ]);
@@ -100,7 +121,7 @@ if (live.length) playwright(live, 'live-development', ['--no-deps', '--workers=1
 
 console.log(
   failed
-    ? `\nThe burn-in failed: a test above failed in one of its ${runs} runs. Make it wait for the condition it checks (AGENTS.md, Tests).`
-    : `\nEvery test passed ${runs} times in a row.`,
+    ? '\nThe burn-in failed: a test above failed in one of its runs. Make it wait for the condition it checks (AGENTS.md, Tests).'
+    : '\nEvery test passed every run.',
 );
 process.exit(failed ? 1 : 0);
