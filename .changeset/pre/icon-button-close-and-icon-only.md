@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': major
-'@envsemble/envui-codemods': major
 ---
 
 IconButton is the one icon-only button, and the one close button.

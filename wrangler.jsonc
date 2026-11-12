@@ -8,14 +8,9 @@
 // 1. In the Cloudflare dashboard, Workers & Pages, import envsemble/envUI (limit the app to this
 //    repository) as the Worker `envui`, from the repository root: build `npm run build:site`, deploy
 //    `npx wrangler deploy`, preview `npx wrangler preview`; NODE_VERSION pins Node.
-// 2. `main` is the production branch; with preview builds on, every other branch gets a Preview URL,
-//    `<branch>-envui.<subdomain>.workers.dev`, and pull requests a comment with it.
+// 2. `main` is the production branch, the only one that deploys: preview builds stay off.
 // 3. Add the custom domain envui.envsemble.com in the Worker's Domains & Routes (the zone must be
-//    on the same account).
-// 4. Protect it with Cloudflare Access: GitHub login through an OAuth app of the envsemble
-//    organization, allowing its members, and the one-time PIN for listed addresses.
-// 5. Only then enable Access for workers.dev and the Preview URLs, set `workers_dev` and
-//    `preview_urls` below to true, and check in a private window that both ask for the login.
+//    on the same account). The site is public: no Cloudflare Access in front of it.
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "envui",
@@ -37,8 +32,8 @@
     // opens it as a page, rather than with the HTML of 404.html.
     "run_worker_first": ["/assets/*"],
   },
-  // The workers.dev address and the Preview URLs of branches stay off until Cloudflare Access
-  // protects them (step 5 above).
+  // The site answers at its own domain only: no workers.dev address, and no public Preview URL for
+  // each branch, so what is live is always main.
   "workers_dev": false,
   "preview_urls": false,
   // `npm run site:dev -- --port <port>` chooses another port.

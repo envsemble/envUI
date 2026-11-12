@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': major
-'@envsemble/envui-codemods': patch
 ---
 
 A Table with `narrowLayout="stack"` stacks its rows through a container query on its region instead of measuring it in script, so server-rendered markup and the first paint already stack in a narrow region and nothing moves as the page hydrates. `stackBelow` still takes any CSS length or a number of pixels.

@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': major
-'@envsemble/envui-codemods': minor
 '@envsemble/eslint-plugin-envui': minor
 ---
 

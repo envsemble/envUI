@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': minor
-'@envsemble/envui-codemods': patch
 ---
 
 Bar, Rail and Drawer, the navigation forms: the navigation bar for compact windows, the rail for medium ones and the drawer from expanded, which Scaffold picks by window class.
