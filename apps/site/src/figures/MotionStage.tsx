@@ -12,7 +12,7 @@ import { IconPause } from '@envsemble/envui/icons/Pause';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '../documentation/DocumentationTypes';
 import { useVerdictFit } from '../fit/standalone/useVerdictFit';
-import { useDisplaySettings } from '../display/DisplaySettings';
+import { useDisplaySettings } from '../display/useDisplaySettings';
 import { Playback, StageOverlays } from '../motion/Playback';
 import { useInView } from '../motion/useInView';
 import { rootMotionDuration } from '../shared/RootMotionTokens';

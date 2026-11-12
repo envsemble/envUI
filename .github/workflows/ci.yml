@@ -9,7 +9,8 @@ name: CI
 # and a path no rule names, a failure to read the change, a release into main and any event other
 # than a pull request run everything. The static checks, the build and the unit tests always run:
 # the README, docs/ and the changesets ship in the package, and Prettier and the tests read the
-# contributors' guides too. Pull requests into main also run the rest of `npm run verify`, in
+# contributors' guides too. `Burn-in` runs the browser test files the pull request adds or edits
+# several times in a row. Pull requests into main also run the rest of `npm run verify`, in
 # verify.yml; merging one publishes its version (release.yml).
 on:
   pull_request:
@@ -37,6 +38,8 @@ jobs:
     outputs:
       library: ${{ steps.choose.outputs.library }}
       site: ${{ steps.choose.outputs.site }}
+      burn-in: ${{ steps.choose.outputs.burn-in }}
+      burn-in-files: ${{ steps.choose.outputs.burn-in-files }}
     steps:
       # Only what the choice reads; depth 2 brings the base the merge commit is diffed against.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -190,6 +193,37 @@ jobs:
           path: test-results
           if-no-files-found: ignore
 
+  # Each component test file and Playwright spec the pull request adds or edits, run several times
+  # in a row in Chromium with no retries (scripts/test/BurnIn.ts): a test that passes only some of
+  # the time fails the pull request that brings it, not a later one. Only the files whose own
+  # source changed, not the tests a changed component selects; a change to none starts no runner.
+  burn-in:
+    name: Burn-in
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.burn-in == 'true' }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          browsers: chromium-shell
+      - name: Run each added or edited test file several times
+        env:
+          FILES: ${{ needs.changes.outputs.burn-in-files }}
+        run: |
+          read -ra files <<< "$FILES"
+          node scripts/test/BurnIn.ts "${files[@]}"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ failure() }}
+        continue-on-error: true
+        with:
+          name: burn-in-failure-${{ github.sha }}
+          path: test-results
+          if-no-files-found: ignore
+
   secrets:
     name: Secret scan
     if: ${{ !github.event.pull_request.draft }}
@@ -219,7 +253,7 @@ jobs:
   ci:
     name: CI
     if: ${{ always() && !github.event.pull_request.draft }}
-    needs: [changes, static, build, library, site, secrets]
+    needs: [changes, static, build, library, site, burn-in, secrets]
     runs-on: ${{ vars.CI_LINUX_RUNNER }}
     timeout-minutes: 5
     steps:

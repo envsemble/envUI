@@ -1,4 +1,4 @@
-import { startTransition, useEffect, useState, type ReactNode } from 'react';
+import { startTransition } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { SiteRoot } from './App';
 // After App: its envUI components bring envUI's style sheets, which declare the order of the env
@@ -8,7 +8,7 @@ import { findPage } from './routes/SiteRoutes';
 import { currentRoute } from './routes/useSiteRoute';
 import { oldHashRoute } from './routes/Address';
 import { preloadFirstPage } from './pages/PageLoading';
-import { FiguresMounted } from './loading/useFiguresMounted';
+import { Started } from './loading/Started';
 import { givePageCode } from './pages/PageCode';
 import { givePageMarkdown } from './pages/PageMarkdownTrees';
 
@@ -26,24 +26,6 @@ const opening = preloadFirstPage(page);
 const prerendered = container.dataset.sitePage;
 const hydrates =
   prerendered !== undefined && oldHashRoute() === undefined && page?.path === prerendered;
-
-/**
- * The site as it starts. Once a pre-rendered page has hydrated, the parts that render in the
- * browser alone, such as its figures, mount (FiguresMounted), in a transition, which yields to the
- * browser as it goes rather than holding up the page in one long task. Rendering on the client
- * alone, they mount at once. It marks the document once the site has started, after every part's
- * effects, with `data-site-started`: before it, a press on a pre-rendered control has no handler
- * yet, which the browser tests wait for (SiteSpecHelpers.ts). It renders no element, so the
- * hydrated tree is the server's.
- */
-function Started({ hydrating, children }: { hydrating: boolean; children: ReactNode }) {
-  const [hydrated, setHydrated] = useState(!hydrating);
-  useEffect(() => {
-    document.documentElement.setAttribute('data-site-started', '');
-    startTransition(() => setHydrated(true));
-  }, []);
-  return <FiguresMounted value={hydrated}>{children}</FiguresMounted>;
-}
 
 void opening.then(() => {
   // The head hides a page it can't tell is the address's (PrerenderSite.ts): an old address, or

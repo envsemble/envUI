@@ -51,11 +51,15 @@ const ancestorAttribute = (locator: Locator, name: string) =>
   locator.element().parentElement!.closest(`[data-env-${name}]`)!.getAttribute(`data-env-${name}`);
 
 /**
- * Moves focus to a menu item once the menu holds focus: a menu takes focus as it opens, which would
- * otherwise race with the move.
+ * Waits until a menu holds focus, which it takes in the frame after it opens: until then a key goes
+ * to the element it opened from.
  */
+const holdsFocus = (menu: Locator) =>
+  expect.poll(() => menu.query()?.contains(document.activeElement)).toBe(true);
+
+/** Moves focus to a menu item once the menu holds focus, which would otherwise race with the move. */
 async function focusItem(menu: Locator, item: Locator) {
-  await expect.poll(() => menu.query()?.contains(document.activeElement)).toBe(true);
+  await holdsFocus(menu);
   (item.element() as HTMLElement).focus();
   await isFocused(item);
 }
@@ -371,6 +375,7 @@ describe('ContextMenu', () => {
       const menuBox = box(menu);
       expect(menuBox.y).toBeGreaterThanOrEqual(rowBox.y + rowBox.height - 1);
       expect(menuBox.y).toBeLessThan(rowBox.y + rowBox.height + 24);
+      await holdsFocus(menu);
       await keyboard.press('ArrowDown');
       await expect
         .element(menu.getByRole('menuitem', { name: 'Rename Gamma' }))

@@ -242,10 +242,12 @@ test(
     const last = box(dayOn('2026-10-10', heatmap));
     expect(last.x + last.width).toBeLessThanOrEqual(frame.x + frame.width + 1);
     expect(document.documentElement.scrollWidth <= innerWidth).toBe(true);
-    // Home scrolls the first week into view.
+    // Home scrolls the first week into view: WebKit scrolls to the focused day a moment later.
     heatmap.element().querySelector<HTMLElement>('td[tabindex="0"]')!.focus();
     await keyboard.press('Home');
-    expect(box(dayOn('2025-10-11', heatmap)).x).toBeGreaterThanOrEqual(frame.x - 1);
+    await expect
+      .poll(() => box(dayOn('2025-10-11', heatmap)).x)
+      .toBeGreaterThanOrEqual(frame.x - 1);
   },
 );
 
