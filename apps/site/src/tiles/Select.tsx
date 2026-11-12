@@ -17,27 +17,27 @@ const option = (index: number) => `.env-select-item:nth-child(${index})`;
  * second, and the open list rests a while before the loop starts over.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: option(1) },
-  { wait: 400 },
+  { wait: 240 },
   { to: option(2), duration: 400 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { to: trigger, duration: 400 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 500 },
-  { to: option(1), duration: 400 },
   { wait: 300 },
+  { to: option(1), duration: 400 },
+  { wait: 180 },
   { click: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { to: trigger, duration: 400 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 1600 },
+  { wait: 960 },
 ];
 
 /**

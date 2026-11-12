@@ -12,7 +12,7 @@ const carry: PointerStep = { carry: 'site-plan.pdf', as: 'application/pdf', size
  * Both scripts start with the example drawn anew, so its uploads start with the clock, and both
  * examples' uploads keep in step with the pointers.
  */
-const start: PointerStep[] = [{ cue: 'renew' }, { wait: 600 }];
+const start: PointerStep[] = [{ cue: 'renew' }, { wait: 360 }];
 
 /**
  * The do: the pointer brings a third file while two upload and drops it at once; the zone takes
@@ -23,12 +23,12 @@ export const readyScript: PointerStep[] = [
   carry,
   { to: zone, x: 0.6, y: 1.5 },
   { to: zone, x: 0.55, y: 0.55, duration: 600 },
-  { wait: 300 },
+  { wait: 180 },
   { drop: true },
-  { wait: 200 },
+  { wait: 120 },
   { leave: true },
   // As long as the don't, which waits for the zone.
-  { wait: 9133 },
+  { wait: 5480 },
 ];
 
 /**
@@ -40,13 +40,13 @@ export const busyScript: PointerStep[] = [
   carry,
   { to: zone, x: 0.6, y: 1.5 },
   { to: zone, x: 0.55, y: 0.55, duration: 600 },
-  { wait: 300 },
-  { wait: 3500 },
+  { wait: 180 },
+  { wait: 2100 },
   { to: zone, x: 0.55, y: 1.6, duration: 250 },
   { to: zone, x: 0.55, y: 0.55, duration: 300 },
-  { wait: 300 },
+  { wait: 180 },
   { drop: true },
-  { wait: 200 },
+  { wait: 120 },
   { leave: true },
-  { wait: 4600 },
+  { wait: 2760 },
 ];

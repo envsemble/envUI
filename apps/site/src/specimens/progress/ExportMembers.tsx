@@ -10,16 +10,16 @@ import { Renew } from '../../motion/Renew';
  * once the amount is known, and the result takes its place. The example is drawn anew at the end.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 350 },
-  { click: true },
   { wait: 300 },
+  { to: '.env-button', x: 0.55, y: 0.6 },
+  { wait: 210 },
+  { click: true },
+  { wait: 180 },
   { leave: true },
   // Preparing takes 1.2 s, the export 2.4 s; then the result stays a moment.
-  { wait: 8600 },
+  { wait: 5160 },
   { cue: 'again' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Exporting() {

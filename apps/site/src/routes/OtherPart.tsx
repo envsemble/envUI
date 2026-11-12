@@ -4,7 +4,7 @@ import { replaceAddress, revealSection, routeHref } from './Address';
 import { isAnchor, readingAnchor } from './ScrollRestoration';
 import { counterpartOf } from './Counterparts';
 import type { Area, RoutePage } from './SiteRoutes';
-import { flag } from '@envui-internal/internal/flag';
+import { flag } from '../shared/Attributes';
 import { useLinkComponent } from '@envui-internal/internal/provider/LinkComponentContext';
 
 /**

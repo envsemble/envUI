@@ -12,23 +12,23 @@ const option = '.env-combobox-item';
  * Alex Morgan. Then it clears the field, where it began.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: input, x: 0.2 },
-  { wait: 250 },
+  { wait: 150 },
+  { click: true },
+  { wait: 180 },
+  { type: 'ale', into: input, every: 220 },
+  { wait: 900 },
+  { to: option, x: 0.35, duration: 450 },
+  { wait: 150 },
+  { click: true },
+  { wait: 780 },
+  { to: clear, duration: 450 },
+  { wait: 120 },
   { click: true },
   { wait: 300 },
-  { type: 'ale', into: input, every: 220 },
-  { wait: 1500 },
-  { to: option, x: 0.35, duration: 450 },
-  { wait: 250 },
-  { click: true },
-  { wait: 1300 },
-  { to: clear, duration: 450 },
-  { wait: 200 },
-  { click: true },
-  { wait: 500 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Searching() {

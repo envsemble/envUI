@@ -4,7 +4,7 @@ import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../figures/MotionStage';
 
 /** The value grows, grows again, and shrinks back to where it began. */
-const steps = [1600, 1600, 1600];
+const steps = [960, 960, 960];
 const values = [1280, 1312, 1350];
 
 function Counting() {

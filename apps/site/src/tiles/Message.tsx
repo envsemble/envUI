@@ -8,17 +8,17 @@ const answer = '.env-message[data-from="other"] .env-message-content';
 
 /** Copies the answer with its action: its icon turns to a check and Copied shows, for a moment. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: answer, x: 0.5, y: 0.5 },
-  { wait: 150 },
+  { wait: 90 },
   { to: '.env-copy-button', duration: 450 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: answer, x: 0.5, y: 0.5, duration: 450 },
-  { wait: 150 },
+  { wait: 90 },
   { leave: true },
-  { wait: 1500 },
+  { wait: 900 },
 ];
 
 /**

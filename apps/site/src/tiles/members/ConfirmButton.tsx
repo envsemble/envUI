@@ -14,18 +14,18 @@ const remove = '.env-list-item:nth-child(2) button';
  * while later the list is drawn again as it began, with a short fade (Renew).
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: remove, x: 0.5 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: remove, x: 0.5, duration: 200 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 1600 },
+  { wait: 960 },
   { cue: 'renew' },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 function Members() {

@@ -12,21 +12,21 @@ const document = '.ProseMirror';
  * text at the end of the line, and Bold lets go.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: `${document} strong`, x: 0.02, y: 0.55 },
   { wait: 300 },
+  { to: `${document} strong`, x: 0.02, y: 0.55 },
+  { wait: 180 },
   { press: true },
   { to: `${document} strong`, x: 0.98, y: 0.55, duration: 700 },
   { release: true },
-  { wait: 1500 },
+  { wait: 900 },
   { to: `${document} p`, x: 0.97, y: 0.5, duration: 700 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1500 },
+  { wait: 900 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
   { blur: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Formatting() {

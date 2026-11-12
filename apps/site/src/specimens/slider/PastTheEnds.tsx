@@ -12,29 +12,29 @@ const control = '.env-slider-control';
  * is the slider's own, by a pointer no one sees (usePointer).
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: control, x: 0.6 },
-  { wait: 400 },
+  { wait: 240 },
   { press: true },
   { to: control, x: 1, duration: 600 },
   { to: control, x: 1.08, duration: 400 },
-  { wait: 300 },
+  { wait: 180 },
   { release: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: control, x: 0.95, duration: 400 },
   { press: true },
   { to: control, x: 0, duration: 900 },
   { to: control, x: -0.08, duration: 400 },
-  { wait: 300 },
+  { wait: 180 },
   { release: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: control, x: 0.05, duration: 400 },
   { press: true },
   { to: control, x: 0.6, duration: 700 },
   { release: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Dragged() {

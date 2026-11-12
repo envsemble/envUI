@@ -17,7 +17,7 @@ const narrowPaddings: SpaceStep[] = [3, 1];
  * shrinking. Each step lays the box out at once, as a Box does when its padding changes.
  */
 export default function BoxTile() {
-  const step = useTimeline([2200, 2200]);
+  const step = useTimeline([1320, 1320]);
   const narrow = useMedia(narrowGallery);
   return (
     <Surface

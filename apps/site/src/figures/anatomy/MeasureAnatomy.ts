@@ -7,7 +7,7 @@
 import type { AnatomyLegendItem } from '../../documentation/DocumentationTypes';
 import { union, type Box } from '../../fit/FitGeometry';
 import { openerBox } from '../../fit/standalone/OverlayRoom';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 import { partSelector } from './Parts';
 import type { AnatomyGeometry, Corners, Part } from './PlaceCallouts';
 import type { UseSize, VariantGeometry } from './PlaceVariants';

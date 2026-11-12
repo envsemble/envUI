@@ -12,17 +12,17 @@ const level = (index: number) =>
 
 /** Goes down into Files, with the trail and the title following, and back up by the trail. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: row(1) },
-  { wait: 400 },
-  { click: true },
-  { wait: 1500 },
-  { to: level(2), y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 240 },
   { click: true },
   { wait: 900 },
+  { to: level(2), y: 0.6, duration: 450 },
+  { wait: 180 },
+  { click: true },
+  { wait: 540 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /** What each level holds. */
@@ -34,7 +34,7 @@ const contents: Record<string, string[]> = {
 /** A tile's links lead nowhere; a choice stands in for the router. */
 const stay = (event: { preventDefault: () => void }) => event.preventDefault();
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 15, height: 11.25 };
 
 /** A page two levels down: the trail back up, its title, and what it holds, each a link down. */

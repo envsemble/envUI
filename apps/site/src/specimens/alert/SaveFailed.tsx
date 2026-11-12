@@ -8,17 +8,17 @@ import { MotionStage } from '../../figures/MotionStage';
  * above it. The pointer dismisses the alert, and the button is as it began.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 3000 },
+  { wait: 1800 },
   { to: '.env-alert .env-icon-button', duration: 550 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Saving() {

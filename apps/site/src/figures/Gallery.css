@@ -151,7 +151,7 @@
 /* The stage of a gallery tile: 4:3, the shape of a tile's window (Tiles.ts) and of a pattern's
    stage, so what a component opens below it has room and the cells are as tall as a pattern's;
    what is taller still, such as a calendar, is cut off at its foot, fading out through the rows
-   there. Each page's own tile lays out in its own window (tiles/Tiles.ts, Tile.css); a page
+   there. Each page's own tile lays out in its own window (tiles/Tiles.ts, TileStage.css); a page
    without one shows its example in a window that counts whole (TileStage.tsx), so it is drawn at
    the tiles' scale. */
 .catalogue-gallery-stage.catalogue-gallery-stage {

@@ -19,25 +19,25 @@ const bold = '[aria-label="Bold"]';
  */
 const { phrase, last } = words;
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: line, text: phrase, x: 0, duration: 0 },
-  { wait: 250 },
+  { wait: 150 },
   { press: true },
   { to: line, text: phrase, x: 1, duration: 450 },
   { release: true },
-  { wait: 300 },
+  { wait: 180 },
   { to: bold, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 450 },
+  { wait: 270 },
   { to: line, text: last, x: 1, duration: 400 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
   { blur: true },
-  { wait: 1400 },
+  { wait: 840 },
   { cue: 'renew' },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /**

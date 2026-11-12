@@ -12,7 +12,7 @@ const zone = '.env-drop-zone-target';
  * joins the list, and the zone says why the spreadsheet was turned away. Then it starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   {
     carry: [
       {
@@ -24,13 +24,13 @@ const script: PointerStep[] = [
   },
   { to: zone, x: 0.9, y: 1.3 },
   { to: zone, x: 0.55, y: 0.55, duration: 550 },
-  { wait: 300 },
+  { wait: 180 },
   { drop: true },
-  { wait: 200 },
+  { wait: 120 },
   { leave: true },
-  { wait: 2600 },
+  { wait: 1560 },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Dropping() {

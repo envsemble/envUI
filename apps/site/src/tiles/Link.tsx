@@ -9,15 +9,15 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
  * press would come from nowhere.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-link', x: 0.3 },
-  { wait: 900 },
+  { wait: 540 },
   { press: true },
-  { wait: 450 },
+  { wait: 270 },
   { release: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 /** A link on a line of its own under a line of text, a step apart. Its click stays in the tile. */

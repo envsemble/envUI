@@ -10,17 +10,17 @@ const segment = (index: number) =>
 
 /** Chooses Board, the selection sliding across, then List again. */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: segment(2) },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: segment(1), duration: 400 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /** A segmented control of two views, with List chosen. */

@@ -13,22 +13,22 @@ const input = 'input[type="search"]';
  * icon and placeholder again.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: input, x: 0.5, y: 2.4 },
   { to: input, x: 0.35, y: 0.5, duration: 500 },
-  { wait: 700 },
+  { wait: 420 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { type: 'Roadmap', into: input, every: 110 },
-  { wait: 900 },
+  { wait: 540 },
   { cue: 'escape' },
   { key: 'Escape' },
-  { wait: 700 },
+  { wait: 420 },
   { blur: true },
   { to: input, x: 0.5, y: 2.4, duration: 500 },
   { cue: 'none' },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Searching() {

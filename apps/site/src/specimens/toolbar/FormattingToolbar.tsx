@@ -12,16 +12,16 @@ const bold = '.env-toolbar-button[aria-label="Bold"]';
  * Bold, which stays pressed, and leaves. Then the toolbar starts anew, Bold not pressed.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: bold, x: 0.5, y: 2.4 },
   { to: bold, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 1500 },
+  { wait: 900 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 1500 },
+  { wait: 900 },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Formatting() {

@@ -1,11 +1,10 @@
 /*
  * The virtual pointer's script, as usePointer (PointerPlayback.ts) plays it: the steps a figure
- * writes, and the plan they make of its time, saying where the pointer is and what it does when, at
- * the site's brisk pace.
+ * writes, and the plan they make of its time, saying where the pointer is and what it does when.
  */
 import type { CarriedFile } from '../DragControl';
 import { textPoint } from './VirtualSelection';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 
 /**
  * One step of what the virtual pointer does, or of what happens around it:
@@ -126,12 +125,11 @@ const asideTook = 220;
 const asideReach = 1;
 
 /*
- * The pace of every animation, which is brisk: a script's and a timeline's waits are cut to this
- * share of what is written, and its moves and typing a little less, so a hand still moves at a
- * hand's speed. An animation starts at once: the wait before a script's first action is cut to
- * `firstWait` at most.
+ * A script's waits, like a timeline's steps, last the ms they say. Its moves and typing are
+ * written at a hand's easy speed and played a little brisker, at this share of what is written.
+ * An animation starts at once: the wait before a script's first action is cut to `firstWait` at
+ * most.
  */
-export const waitPace = 0.6;
 const movePace = 0.8;
 export const firstWait = 60;
 
@@ -154,14 +152,14 @@ export function planOf(script: readonly PointerStep[]): Plan {
     const step = script[index];
     const next = script[index + 1];
     if (!at || at.aside || at.text !== undefined || ('stay' in step && step.stay)) return;
-    if (!next || !('wait' in next) || next.wait * waitPace < asideAfter + asideTook) return;
+    if (!next || !('wait' in next) || next.wait < asideAfter + asideTook) return;
     const to = { ...at, aside: true };
     plan.moves.push({ start: time + asideAfter, end: time + asideAfter + asideTook, from: at, to });
     at = to;
   };
   for (const [index, step] of script.entries()) {
     if ('wait' in step) {
-      time += acted ? step.wait * waitPace : Math.min(firstWait - time, step.wait * waitPace);
+      time += acted ? step.wait : Math.min(firstWait - time, step.wait);
       continue;
     }
     acted = true;

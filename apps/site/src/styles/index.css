@@ -8,7 +8,7 @@
 @import '../frame/BannerMotifs.css';
 @import '../figures/Examples.css';
 @import '../pages/catalogue/Overview.css';
-@import '../figures/foundations/DocsPalette.css';
+@import '../figures/foundations/ColorPalette.css';
 @import '../figures/foundations/Foundations.css';
 @import '../specimens/InteractionStates.css';
 @import '../template/Template.css';
@@ -18,11 +18,11 @@
 @import '../loading/Loading.css';
 @import '../navigation/RouteProgress.css';
 @import '../figures/Figures.css';
-@import '../figures/Verdicts.css';
+@import '../figures/VerdictFigure.css';
 @import '../figures/anatomy/Anatomy.css';
 @import '../figures/dev-mode/DocsDevMode.css';
 @import './SiteText.css';
-@import '../figures/Tile.css';
+@import '../figures/TileStage.css';
 @import '../template/Related.css';
 @import '../figures/Gallery.css';
 @import '../figures/AppTile.css';

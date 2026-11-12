@@ -10,7 +10,7 @@ import { currentRoute } from '../routes/useSiteRoute';
 import { headingSlugger } from '../documentation/SearchAnchors';
 import { headingsOnly, useSectionOutline } from './SectionOutline';
 import { marked, type Token, type Tokens } from 'marked';
-import { classNames } from '@envui-internal/internal/classNames';
+import { classNames } from '../shared/Attributes';
 
 /**
  * The current page scrolled to `section`: its path alone, as the server that renders the page knows

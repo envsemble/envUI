@@ -12,25 +12,25 @@ const box = (index: number) =>
  * to 1 file, as it began.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: box(1) },
-  { wait: 450 },
+  { wait: 270 },
   { click: true },
-  { wait: 800 },
+  { wait: 480 },
   { to: box(3), duration: 500 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { to: box(3), x: 0.6 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { to: box(1), duration: 500 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 1000 },
+  { wait: 600 },
 ];
 
 function Checking() {

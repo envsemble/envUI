@@ -10,15 +10,15 @@ import { MotionStage } from '../../figures/MotionStage';
  * few rows' worth: the list is not much longer than the screen.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-scaffold-body', x: 0.6, y: 0.45 },
-  { wait: 400 },
+  { wait: 240 },
   { wheel: 150, duration: 1600 },
-  { wait: 1200 },
+  { wait: 720 },
   { wheel: -150, duration: 1600 },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Scrolling() {

@@ -11,14 +11,14 @@ const pick = (index: number): PointerStep[] => [
   // Pressed as it arrives, before the avatar's tooltip would open.
   { to: '.env-avatar-button', x: 0.55, y: 0.6, duration: 500 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: '.env-menu-submenu-trigger', x: 0.4, duration: 450 },
-  { wait: 700 },
+  { wait: 420 },
   { to: '.env-menu-submenu-trigger', x: 0.92, duration: 200 },
   { to: organization(index), x: 0.4, duration: 350 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 /*
@@ -27,12 +27,12 @@ const pick = (index: number): PointerStep[] => [
  * to Northwind.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-avatar-button', x: 0.3, y: 0.9 },
   ...pick(2),
   ...pick(1),
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Switching() {

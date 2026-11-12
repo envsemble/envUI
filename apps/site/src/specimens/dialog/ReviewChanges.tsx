@@ -8,20 +8,20 @@ import { MotionStage, roomFor } from '../../figures/MotionStage';
  * changed documents. The pointer reads down the table a moment, then presses Mark as reviewed.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: '.env-dialog tbody tr:nth-child(1)', x: 0.3, y: 0.5, duration: 600 },
   { to: '.env-dialog tbody tr:nth-child(3)', x: 0.4, y: 0.5, duration: 900 },
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-dialog-actions .env-button:last-child', x: 0.5, y: 0.6, duration: 550 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 function Reviewing() {

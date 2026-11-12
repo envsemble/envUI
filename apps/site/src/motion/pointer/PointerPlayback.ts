@@ -14,7 +14,7 @@ import {
   type PointerStep,
 } from './PointerPlan';
 import { joinClock } from '../Timeline';
-import { useLatest } from '@envui-internal/internal/useLatest';
+import { useLatest } from '../../shared/useLatest';
 import { pixelTolerance } from '../../shared/Remeasure';
 
 /*

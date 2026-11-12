@@ -4,7 +4,7 @@ import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 
 /** It turns while the tile plays. */
-const script: PointerStep[] = [{ cue: 'turn' }, { wait: 2800 }];
+const script: PointerStep[] = [{ cue: 'turn' }, { wait: 1680 }];
 
 /**
  * A large spinner. Its still is its turn held at a moment where the arc is long, so it reads as a

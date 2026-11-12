@@ -1,6 +1,6 @@
 import { use, useEffect, useRef, useState } from 'react';
 import { PlaybackContext, useCountedAnimation } from './Playback';
-import { firstWait, waitPace } from './pointer/PointerPlan';
+import { firstWait } from './pointer/PointerPlan';
 
 /*
  * Timelines: the steps of a stage's animation where something other than a pointer changes it, such
@@ -31,7 +31,7 @@ export function useTimeline(durations: readonly number[]) {
   // When a stage that rests at the still stops, the timeline goes back to the still at once, in the
   // same render.
   if (!playing && rest === 'start' && step !== 0) setStep(0);
-  const duration = (durations[step] ?? 0) * waitPace;
+  const duration = durations[step] ?? 0;
   const count = durations.length;
   useEffect(() => {
     if (!playing || count < 2) {
@@ -90,9 +90,10 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
   useCounted(countTimeline);
   const [step, setStep] = useState(0);
   if (!playing && rest === 'start' && step !== 0) setStep(0);
-  const paced = durations.map((duration) => duration * waitPace).join(' ');
+  // The durations as one value, so a new array of the same durations doesn't restart the clock.
+  const written = durations.join(' ');
   useEffect(() => {
-    const lengths = paced.split(' ').map(Number);
+    const lengths = written.split(' ').map(Number);
     const total = lengths.reduce((sum, length) => sum + length, 0);
     if (!playing || lengths.length < 2) return;
     // A new clock leaves the still at once, as a timeline that starts playing does.
@@ -112,6 +113,6 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
       window.clearTimeout(timer);
       own.leave();
     };
-  }, [playing, clock, paced]);
+  }, [playing, clock, written]);
   return playing || rest === 'hold' ? step : 0;
 }

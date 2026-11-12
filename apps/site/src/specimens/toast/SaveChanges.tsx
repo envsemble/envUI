@@ -9,16 +9,16 @@ import { MotionStage } from '../../figures/MotionStage';
  * itself.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 450 },
+  { wait: 270 },
   { click: true },
-  { wait: 2300 },
+  { wait: 1380 },
   { to: '.env-toast', x: 0.45, y: 0.55, duration: 600 },
-  { wait: 1800 },
+  { wait: 1080 },
   { leave: true },
   // Its time runs on from where the pointer held it, and it is gone well before the loop ends.
-  { wait: 8600 },
+  { wait: 5160 },
 ];
 
 function Saving() {

@@ -13,29 +13,29 @@ const previous = '.env-pager-link-previous';
  */
 const forward: PointerStep[] = [
   { to: next, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 const back: PointerStep[] = [
   { to: previous, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: next, x: 0.5, y: 0.55 },
   { wait: 300 },
+  { to: next, x: 0.5, y: 0.55 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   ...forward,
   ...forward,
   ...back,
   ...back,
   ...back,
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Stepping() {

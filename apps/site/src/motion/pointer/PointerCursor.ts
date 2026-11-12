@@ -14,7 +14,7 @@
 import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { IconDescription } from '@envsemble/envui/icons/Description';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 
 /** The stages a cursor is drawn in: a gallery's or a Related tile's, and a page's figure's. */
 const stages = '.catalogue-tile-stage, .catalogue-motion-stage';
@@ -72,6 +72,7 @@ export class PointerCursor {
   note() {
     const stage = this.scope.closest<HTMLElement>(stages);
     if (!stage) return;
+    // A stage's scope is an element of the page's HTML.
     this.noted = geometryOf(stage, this.scope as HTMLElement);
     queueMicrotask(() => (this.noted = null));
   }

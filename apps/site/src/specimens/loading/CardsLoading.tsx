@@ -8,9 +8,9 @@ import { Renew } from '../../motion/Renew';
 /*
  * The page opens anew each round: the cards show as their skeletons, the highlight sweeping
  * across them, until the projects land in the same places; a while to read them, and again. The
- * example's own load takes 1.6 s; the waits here are paced to 0.6 of what they say.
+ * example's own load takes 1.6 s.
  */
-const script: PointerStep[] = [{ cue: 'open' }, { wait: 7000 }];
+const script: PointerStep[] = [{ cue: 'open' }, { wait: 4200 }];
 
 function Opening() {
   const [round, setRound] = useState(0);

@@ -29,7 +29,7 @@ const narrowWidths = [fit(3), fit(2), fit(3), fit(2)];
  * Row does when its room changes.
  */
 export default function RowTile() {
-  const step = useTimeline([1800, 2000, 1800, 2000]);
+  const step = useTimeline([1080, 1200, 1080, 1200]);
   const narrow = useMedia(narrowGallery);
   return (
     <Surface

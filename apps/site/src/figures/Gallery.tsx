@@ -9,7 +9,7 @@ import { TileStage } from './TileStage';
 import { useNear } from './useNear';
 import { frameOf, tilePictureOf, type TilePicture } from '../tiles/TilePictures';
 import { preloadTile } from '../tiles/Tiles';
-import { flag } from '@envui-internal/internal/flag';
+import { flag } from '../shared/Attributes';
 
 /** One group of a gallery, such as a kind of component or what people are doing. */
 export interface GalleryGroup {

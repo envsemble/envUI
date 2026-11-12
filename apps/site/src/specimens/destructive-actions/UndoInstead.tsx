@@ -10,18 +10,18 @@ const archive = '[aria-label="Archive Website refresh"]';
  * so and offers Undo. The pointer presses Undo, and the row comes back to its place.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: archive, x: 0.5, y: 2.4 },
   { to: archive, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: '.env-toast-action', x: 0.5, y: 0.55, duration: 700 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Archiving() {

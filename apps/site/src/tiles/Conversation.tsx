@@ -29,25 +29,25 @@ const input = '.env-composer-input';
  * back to the first exchange.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: input, x: 0.3 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 200 },
+  { wait: 120 },
   { type: question, into: input, every: 70 },
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-composer-action', duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 3000 },
+  { wait: 1800 },
   { to: '.env-message-list', x: 0.5, y: 0.4, duration: 500 },
-  { wait: 1200 },
+  { wait: 720 },
   { cue: 'reset' },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 19, height: 14.25 };
 
 /** An exchange with an assistant above the composer, its reply streaming in as it is written. */

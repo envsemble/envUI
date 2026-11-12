@@ -6,18 +6,18 @@ const input = 'textarea';
 
 /** Types a reply, which grows the text area by a line as it wraps, and erases it again. */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: input, x: 0.3 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 250 },
+  { wait: 150 },
   { type: 'Looks good, ship it today.', into: input, every: 80 },
-  { wait: 1300 },
+  { wait: 780 },
   { erase: 26, into: input, every: 30 },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
   { blur: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 /** A reply's text area, one line at rest, that grows with what is typed (`sizing="content"`). */

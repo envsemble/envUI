@@ -36,19 +36,19 @@ const stop = () => undefined;
  * pointer presses Latest, and the log glides to the end. Then the conversation starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { cue: 'reply' },
-  { wait: 1500 },
+  { wait: 900 },
   { to: '.env-message-list', x: 0.5, y: 0.4, duration: 500 },
   { wheel: -170, duration: 700 },
-  { wait: 1300 },
+  { wait: 780 },
   { to: '.env-message-list + .env-button', x: 0.5, y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1500 },
+  { wait: 900 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 /** The conversation, with a reply that arrives a word at a time once `replying` is set. */

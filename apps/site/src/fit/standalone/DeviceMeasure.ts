@@ -3,7 +3,7 @@
  * the device's own px from its top left corner, and decides the fit from them (DeviceFit.ts).
  */
 import type { DeviceKind } from '../../documentation/DocumentationTypes';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 import type { Box } from '../FitGeometry';
 import type { Aim, ScriptReader } from '../FitKind';
 import {

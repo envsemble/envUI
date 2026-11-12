@@ -12,22 +12,22 @@ const hue = '.env-color-picker-slider .env-color-picker-track';
  * hue's thumb and the value below them.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: area, x: 0.72, y: 0.3 },
-  { wait: 250 },
+  { wait: 150 },
   { press: true },
   { to: area, x: 0.4, y: 0.5, duration: 600 },
   { to: area, x: 0.85, y: 0.2, duration: 600 },
   { release: true },
-  { wait: 300 },
+  { wait: 180 },
   { to: hue, y: 0.66, duration: 400 },
-  { wait: 150 },
+  { wait: 90 },
   { press: true },
   { to: hue, y: 0.9, duration: 600 },
   { release: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /**

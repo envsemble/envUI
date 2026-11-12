@@ -13,21 +13,21 @@ const button = (direction: 'previous' | 'next') =>
  * stays closed, so the range is all that changes.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: button('next') },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 800 },
+  { wait: 480 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: button('previous'), duration: 350 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 800 },
+  { wait: 480 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /** A list's second page of ten, with the buttons to the pages before and after it. */

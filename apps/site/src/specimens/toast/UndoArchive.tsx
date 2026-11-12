@@ -11,18 +11,18 @@ const undo = '.env-toast-action';
  * The pointer presses Undo, and the row comes back as the notification closes.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: archive, x: 0.5, y: 2 },
   { to: archive, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { to: undo, duration: 700 },
-  { wait: 500 },
-  { click: true },
   { wait: 300 },
+  { click: true },
+  { wait: 180 },
   { leave: true },
-  { wait: 1600 },
+  { wait: 960 },
 ];
 
 function Archiving() {

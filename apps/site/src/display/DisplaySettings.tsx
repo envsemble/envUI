@@ -13,8 +13,8 @@ import {
 } from '@envsemble/envui';
 import { IconTune } from '@envsemble/envui/icons/Tune';
 import { displayStorageKeys } from './DisplayStorage';
-import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
-import { useHydrated } from '@envui-internal/internal/react/useHydrated';
+import { prefersReducedMotion } from '../shared/ReducedMotion';
+import { useHydrated } from '../shared/useHydrated';
 
 const themes: readonly ThemePreference[] = ['system', 'light', 'dark'];
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];

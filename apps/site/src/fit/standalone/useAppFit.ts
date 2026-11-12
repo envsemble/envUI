@@ -1,5 +1,5 @@
 import { useLayoutEffect, type RefObject } from 'react';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 import { pixelTolerance, remeasure } from '../../shared/Remeasure';
 
 /**

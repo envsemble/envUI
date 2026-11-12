@@ -49,22 +49,22 @@ const logo = row('design/brand/logo.md');
  * keep. Then the pointer opens Engineering by its chevron, and the tree starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: logo, x: 0.3, y: 6 },
   { to: logo, x: 0.3, y: 0.5, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1500 },
+  { wait: 900 },
   { doubleClick: true },
-  { wait: 1500 },
+  { wait: 900 },
   { to: `${row('engineering')} .env-tree-chevron`, duration: 500 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Files() {

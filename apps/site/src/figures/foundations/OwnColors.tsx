@@ -151,7 +151,7 @@ function SchemeArea({
 }
 
 /** How long the components stay in each scheme, in ms. */
-const schemeStep = 2200;
+const schemeStep = 1320;
 
 /** A tile of the canvas: a component or two on a surface, as envUI draws it. */
 function Tile({ name, children }: { name: string; children: ReactNode }) {

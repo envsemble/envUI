@@ -16,31 +16,31 @@ const copy = '.env-menu-item:nth-child(1 of .env-menu-item)';
  * the note lets the word go, and the note is drawn anew as it began, with a short fade (Renew).
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: note, text: 'Friday', x: 0.1 },
-  { wait: 250 },
+  { wait: 150 },
   { press: true },
   { to: note, text: 'Friday', x: 0.9, duration: 400 },
   { release: true },
-  { wait: 600 },
+  { wait: 360 },
   { to: edit, x: 0.5, y: 0.6, duration: 500 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 500 },
-  { to: copy, x: 0.35, duration: 400 },
   { wait: 300 },
+  { to: copy, x: 0.35, duration: 400 },
+  { wait: 180 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   // Focus returns to the note as the menu closes, which the figure, inert, can only show.
   { focus: note },
-  { wait: 1800 },
+  { wait: 1080 },
   { to: note, x: 0.9, y: 0.8, duration: 450 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
   { blur: true },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Copying() {

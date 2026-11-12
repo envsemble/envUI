@@ -8,9 +8,9 @@ export const paneWidths = [16, 26];
 
 /*
  * Each step holds the pane at one width; the frame takes about 1.4 s to move from one to the
- * other, which the step includes. The waits are paced to 0.6 of what they say.
+ * other, which the step includes.
  */
-const steps = [4200, 4200];
+const steps = [2520, 2520];
 
 /**
  * The width the pane is at, by its index in paneWidths: the do and the don't take it from one

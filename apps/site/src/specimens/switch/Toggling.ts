@@ -6,14 +6,14 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
  * step; the don't's label says the state as it changes, the do's stays.
  */
 export const toggling = (later: boolean): PointerStep[] => [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-switch-input' },
-  // Written waits play at 0.6 of their length: 200 is a little more than a click's press.
-  { wait: 600 + (later ? 200 : 0) },
+  // 120 ms is a little more than a click's press.
+  { wait: 360 + (later ? 120 : 0) },
   { click: true },
-  { wait: 1900 },
+  { wait: 1140 },
   { click: true },
-  { wait: 1400 - (later ? 200 : 0) },
+  { wait: 840 - (later ? 120 : 0) },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];

@@ -11,21 +11,21 @@ import type { TileWindow } from './Tiles';
  * dialog again from the row's button, held open a while before the loop starts over.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-dialog .env-button[type="submit"]', x: 0.4, y: 0.6 },
-  { wait: 600 },
+  { wait: 360 },
   { click: true },
-  { wait: 3600 },
+  { wait: 2160 },
   { to: '.env-button:not([aria-haspopup])', duration: 400 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button[aria-haspopup]', duration: 350 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 /** How long deleting takes, pending, and how long the dialog then takes to close. */
@@ -36,7 +36,7 @@ const closing = 300;
 const narrow = { inlineSize: '12rem' } as const;
 
 /**
- * A larger window than the tiles' (Tile.css), as an overlay, with a lower least scale for its
+ * A larger window than the tiles' (TileStage.css), as an overlay, with a lower least scale for its
  * popup: a confirm dialog with its button beside it is wider than a tile's stage at a popup's
  * least.
  */

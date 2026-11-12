@@ -23,7 +23,7 @@ Each has one folder in `apps/site/src`:
 | fit           | Drawing a tile's or a figure's picture to fit its stage           | [`fit/`](src/fit/README.md), its words               |
 | standalone    | A fitter of one kind of figure that doesn't build on `useFit`     | `fit/standalone/`, listed in the fit's README        |
 | motion        | Scripts that play a stage, where a tile or figure plays live      | `motion/`                                            |
-| shared        | The measuring loop and motion tokens that several folders use     | `shared/`                                            |
+| shared        | The measuring loop, motion tokens and small helpers folders use   | `shared/`                                            |
 | loading       | Skeletons, load boundaries and retries while a part loads         | `loading/`                                           |
 | template      | The sections of a component or pattern page, in their order       | `template/`                                          |
 | markdown      | A page's Markdown, also with its option tables as legends         | `markdown/`                                          |
@@ -41,7 +41,7 @@ Each has one folder in `apps/site/src`:
 | Docs          | The part under /docs, and nothing else                            | `docs-` classes, `Docs*` names                       |
 
 - Give every folder of `apps/site/src` its row above.
-- Put a style sheet beside the code it styles, named after it, and import it in `styles/index.css` at its place, never from a module: the site's sheets are outside cascade layers, so their order decides between rules that weigh the same, and one list keeps that order whatever loads first.
+- Put a style sheet beside the code it styles, named after the module it styles, or after what it styles where several modules share it, such as `figures/Stage.css`, the stage every figure sits on; import it in `styles/index.css` at its place, never from a module: the site's sheets are outside cascade layers, so their order decides between rules that weigh the same, and one list keeps that order whatever loads first.
 - Other words for these, such as preview, demo, showcase and sample, are older names; don't add new uses. ESLint rejects a name the site declares with preview in it.
 - A playback depends on its example: change or rename the two together.
 
@@ -54,7 +54,8 @@ Each has one folder in `apps/site/src`:
 ## What the site shares with the scripts and the library
 
 - What the site and its build scripts both read, the documentation's model and the search's terms and anchors, is the site's `documentation/`, which the scripts import from there; the site imports nothing of `scripts/`.
-- The site uses the library through its entry points. `@envui-internal/<path>`, `packages/ui/src/<path>`, is its only door into what they don't export, such as `internal/motion/reducedMotion`.
+- The site uses the library through its entry points. `@envui-internal/<path>`, `packages/ui/src/<path>`, is its only door into what they don't export, and it opens only for the modules `siteInternals` in `eslint.config.mjs` lists, each with its reason: the pre-rendered page's hand-offs (`content/internal/givenCodeTokens`, `givenMarkdownTrees`) and what the site must share with the library rather than copy.
+- A small helper the library also has, such as `classNames`, `flag`, `remPixels` or `useLatest`, the site keeps its own copy of in `shared/`.
 - The site's tsconfig, Vite config and `tests/support/ImportSource.ts` alias it; ESLint rejects a relative path into `packages/ui/src` or `scripts/`.
 
 ## Where a component behaves differently than in a fixture

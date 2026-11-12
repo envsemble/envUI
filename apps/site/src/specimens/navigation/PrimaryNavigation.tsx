@@ -13,23 +13,23 @@ const place = (href: string) =>
  * icon move with each tap, and the page's title changes with it.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: place('/inbox'), x: 1.8, y: 0.5 },
   { to: place('/inbox'), x: 0.5, y: 0.4, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: place('/documents'), x: 0.5, y: 0.4, duration: 500 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: place('/projects'), x: 0.5, y: 0.4, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: place('/projects'), x: 1.8, y: 0.5, duration: 400 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Moving() {

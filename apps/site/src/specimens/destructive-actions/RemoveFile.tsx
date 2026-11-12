@@ -12,18 +12,18 @@ const remove = '.env-list-item:first-child .env-button';
  * removes the file. Then the example starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: remove, x: 0.5, y: 2.4 },
   { to: remove, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: remove, x: 0.5, y: 0.55, duration: 250 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Removing() {

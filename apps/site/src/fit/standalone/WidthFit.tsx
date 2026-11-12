@@ -6,9 +6,9 @@
  * width.
  */
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 import { pixelTolerance, remeasure } from '../../shared/Remeasure';
-import { flag } from '@envui-internal/internal/flag';
+import { flag } from '../../shared/Attributes';
 
 /** The least scale a frame is drawn at; a frame that would need a smaller one scrolls instead. */
 const leastFitScale = 0.7;

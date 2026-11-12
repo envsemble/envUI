@@ -9,23 +9,22 @@ const save = 'button[type="submit"]';
 
 /*
  * The pointer presses Save changes: the button shows its work at the same size, and then the
- * status says the project saved. Then the form starts anew. The example's save takes 1.5 s; the
- * waits here are paced to 0.6 of what they say.
+ * status says the project saved. Then the form starts anew. The example's save takes 1.5 s.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: save, x: 0.5, y: 2.2 },
   { to: save, x: 0.55, y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 80 },
+  { wait: 48 },
   // Off the button it pressed, so its spinner shows clear while it works.
   { to: save, x: 1.3, y: 1.9, duration: 300 },
-  { wait: 200 },
+  { wait: 120 },
   { leave: true },
-  { wait: 4000 },
+  { wait: 2400 },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Saving() {

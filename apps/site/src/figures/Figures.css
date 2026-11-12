@@ -4,7 +4,7 @@
    sub-topic clearly from the next, and one section far from the next, which the article's gap
    sets (Template.css). */
 .site-figures {
-  /* The widest a do or don't figure is drawn (Verdicts.css). */
+  /* The widest a do or don't figure is drawn (VerdictFigure.css). */
   --site-verdict-size: 23rem;
   container-type: inline-size;
 }
@@ -64,7 +64,7 @@
 /* A figure, as a gallery's cell: its stage, and under it on one row, as a cell's name and arrow,
    its caption at the start and its code switch at the end; open, the code runs under both, the
    switch keeping its place at the end. A figure without a caption has its switch alone on the
-   row. A do or don't figure lays its caption out its own way (Verdicts.css). */
+   row. A do or don't figure lays its caption out its own way (VerdictFigure.css). */
 :is(.site-live-example-entry, .site-verdict) {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

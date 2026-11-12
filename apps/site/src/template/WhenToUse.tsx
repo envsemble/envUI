@@ -1,7 +1,7 @@
 import type { DocumentationMetadata } from '../documentation/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';
 import { pageOf } from './RelatedPages';
-import { classNames } from '@envui-internal/internal/classNames';
+import { classNames } from '../shared/Attributes';
 
 /**
  * Component pages that paint nothing a reader sees, which Built from leaves out: the layout

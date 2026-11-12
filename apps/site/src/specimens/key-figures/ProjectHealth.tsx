@@ -12,17 +12,17 @@ const add = '.env-button';
  * and its trend reads +13%, then +14%. Then the figures start anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: add, x: 0.5, y: 2.2 },
   { to: add, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { click: true },
-  { wait: 1600 },
+  { wait: 960 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Adding() {

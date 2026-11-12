@@ -8,17 +8,17 @@ const copy = '.env-code-block-header .env-icon-button';
 
 /** Presses its copy button: the icon turns to a check and, a few seconds later, back. */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: 'pre', x: 0.6, y: 0.6 },
-  { wait: 200 },
+  { wait: 120 },
   { to: copy, duration: 500 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: 'pre', x: 0.6, y: 0.6, duration: 450 },
-  { wait: 150 },
+  { wait: 90 },
   { leave: true },
-  { wait: 2400 },
+  { wait: 1440 },
 ];
 
 /** A code block with a command and its copy button. */

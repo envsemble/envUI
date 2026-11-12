@@ -24,20 +24,20 @@ const row = (index: number) =>
  * it the current row, then the second again.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: row(1), x: 0.5 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: row(2), x: 0.5, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 16, height: 12 };
 
 /**

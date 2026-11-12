@@ -12,18 +12,18 @@ const back = '.env-panes-back .env-button';
  * names where it goes. It presses back, and the list returns.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: project, x: 0.5, y: 2.5 },
   { to: project, x: 0.5, y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1900 },
+  { wait: 1140 },
   { to: back, x: 0.5, y: 0.6, duration: 550 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 function Opening() {

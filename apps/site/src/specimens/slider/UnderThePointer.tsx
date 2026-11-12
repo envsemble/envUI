@@ -12,23 +12,23 @@ const control = '.env-slider-control';
  * back, which shows them again, and drags the value back to where it began.
  */
 const script: PointerStep[] = [
-  { wait: 600 },
+  { wait: 360 },
   { to: control, x: 0.3 },
-  { wait: 1000 },
+  { wait: 600 },
   { press: true },
   { to: control, x: 0.7, duration: 1000 },
   { release: true },
-  { wait: 1200 },
+  { wait: 720 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
   { to: control, x: 0.7 },
-  { wait: 800 },
+  { wait: 480 },
   { press: true },
   { to: control, x: 0.3, duration: 1000 },
   { release: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Hovered() {

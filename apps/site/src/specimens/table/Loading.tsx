@@ -21,7 +21,7 @@ const files: File[] = [
  * their place; then it loads again.
  */
 function Arriving() {
-  const step = useTimeline([2600, 3400]);
+  const step = useTimeline([1560, 2040]);
   const loading = step === 0;
   return (
     // One width, loading or loaded, so the rows arrive in the skeleton's place.

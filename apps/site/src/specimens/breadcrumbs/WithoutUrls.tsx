@@ -13,17 +13,17 @@ const crumb = (index: number) =>
  * It presses Research in the trail, and the trail shortens to where it began.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '[aria-label="Open Interviews"]', x: 0.5, y: 0.6 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { to: crumb(3), x: 0.5, y: 0.6, duration: 600 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Opening() {

@@ -14,26 +14,26 @@ const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-i
  * the link is in the source. The notes are then drawn anew as they began (Renew).
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: source, text: 'launch plan', x: 0.05 },
   { wait: 300 },
+  { to: source, text: 'launch plan', x: 0.05 },
+  { wait: 180 },
   { press: true },
   { to: source, text: 'launch plan', x: 0.95, duration: 450 },
   { release: true },
-  { wait: 450 },
+  { wait: 270 },
   { to: '[aria-label="Insert link"]', duration: 500 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: row(2), x: 0.4, duration: 450 },
-  { wait: 350 },
+  { wait: 210 },
   { to: row(1), x: 0.4, duration: 300 },
-  { wait: 450 },
+  { wait: 270 },
   { click: true },
-  { wait: 2200 },
+  { wait: 1320 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Linking() {

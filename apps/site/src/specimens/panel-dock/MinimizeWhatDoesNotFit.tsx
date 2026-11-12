@@ -14,15 +14,15 @@ const tab = (label: string) => `.env-panel-dock-tab-restore[aria-label="Show ${l
  * end, as it began.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: tab('Support queue') },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 2600 },
+  { wait: 1560 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
   { cue: 'again' },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function MakingRoom() {

@@ -10,19 +10,19 @@ const upload = '.env-button';
 /*
  * The pointer presses Upload 2 files: a bar for each file fills at its own pace, counting in MB,
  * and the status says both uploaded. Then the example starts anew. The example's upload takes
- * 2.5 s; the waits here are paced to 0.6 of what they say.
+ * 2.5 s.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: upload, x: 0.5, y: 2.4 },
   { to: upload, x: 0.55, y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 6400 },
+  { wait: 3840 },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Uploading() {

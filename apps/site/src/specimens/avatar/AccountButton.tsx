@@ -5,11 +5,11 @@ import { MotionStage } from '../../figures/MotionStage';
 
 /* The pointer rests on the avatar: the name's tooltip appears, and goes as the pointer leaves. */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-avatar-button', x: 0.55, y: 0.6 },
-  { wait: 2600 },
+  { wait: 1560 },
   { leave: true },
-  { wait: 1100 },
+  { wait: 660 },
 ];
 
 function Hovering() {

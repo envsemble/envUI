@@ -7,17 +7,17 @@ const summary = '.env-disclosure > summary';
 
 /** Presses its summary, which hides the details; pressing it again brings them back. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-disclosure-panel', x: 0.7, y: 0.5 },
-  { wait: 150 },
+  { wait: 90 },
   { to: summary, x: 0.45, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 /**

@@ -11,21 +11,21 @@ const close = '.env-sheet [aria-label="Close details"]';
  * presses Sam Lee, and the sheet shows Sam in place; then it closes the sheet.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: row(1), x: 0.5, y: 0.6 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { to: row(2), x: 0.5, y: 0.6, duration: 600 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { to: close, duration: 650 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Inspecting() {

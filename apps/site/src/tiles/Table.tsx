@@ -20,30 +20,30 @@ const sort = '.env-table-sort-button';
  * row below the other, and back, then clears the row again.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: row(1), x: 0.3 },
-  { wait: 350 },
+  { wait: 210 },
   { to: row(2), x: 0.3, duration: 300 },
-  { wait: 300 },
+  { wait: 180 },
   { to: row(1), x: 0.3, duration: 300 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: sort, duration: 500 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: row(1), x: 0.3, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 16, height: 12 };
 
 /** A table of projects and their open tasks, sortable by the tasks, whose rows can be chosen. */

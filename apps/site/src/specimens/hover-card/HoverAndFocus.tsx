@@ -9,15 +9,15 @@ import { MotionStage } from '../../figures/MotionStage';
  * the card, which stays open while it reads; then it leaves, and the card closes.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-link', x: 0.5, y: 2.5 },
   { to: '.env-link', x: 0.45, y: 0.6, duration: 500 },
-  { wait: 1700 },
+  { wait: 1020 },
   { to: '.env-hover-card', x: 0.35, y: 0.45, duration: 600 },
-  { wait: 2000 },
+  { wait: 1200 },
   { to: '.env-hover-card', x: 0.6, y: 1.8, duration: 450 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 function Hovering() {

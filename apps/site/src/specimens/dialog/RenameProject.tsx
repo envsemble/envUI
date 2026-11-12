@@ -11,28 +11,28 @@ const field = '.env-dialog input';
  * The pointer opens Rename project, deletes "launch" from the name and types "website",
  * then presses Enter: Save name spins and Cancel is disabled while the name saves. The dialog
  * closes, and the name above the button reads Northwind website. Then the example starts anew.
- * The example's save takes 2 s; the waits here are paced to 0.6 of what they say.
+ * The example's save takes 2 s.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 800 },
+  { wait: 480 },
   { to: field, x: 0.6, y: 0.62, duration: 600 },
-  { wait: 150 },
+  { wait: 90 },
   { click: true },
   { erase: 6, into: field, every: 90 },
-  { wait: 200 },
+  { wait: 120 },
   { type: 'website', into: field, every: 150 },
-  { wait: 500 },
+  { wait: 300 },
   { key: 'Enter', on: field },
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-dialog-actions .env-button:first-child', x: 0.5, y: 0.6, duration: 500 },
-  { wait: 3500 },
+  { wait: 2100 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Renaming() {

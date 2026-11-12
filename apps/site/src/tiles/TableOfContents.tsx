@@ -3,7 +3,7 @@ import { TableOfContents } from '@envsemble/envui';
 import { useHeldView } from '../motion/Playback';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
-import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
+import { prefersReducedMotion } from '../shared/ReducedMotion';
 
 /** How tall the hidden article's view and each of its sections are, in px. */
 const view = 100;
@@ -18,21 +18,21 @@ const entry = (name: string) => `.env-table-of-contents-link[href$="-${name}"]`;
  * Install again, back up the contents.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: entry('configure') },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: entry('deploy'), duration: 400 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: entry('install'), duration: 500 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /**

@@ -6,7 +6,7 @@ import { useTimeline } from '../motion/Timeline';
  * value at each step, which the bar follows with its own transition.
  */
 const values = [40, 55, 72, 86, 100, 0, 18];
-const durations = [700, 450, 550, 450, 1100, 450, 450];
+const durations = [420, 270, 330, 270, 660, 270, 270];
 
 /** A progress bar of an upload, with its label and value. */
 export default function ProgressTile() {

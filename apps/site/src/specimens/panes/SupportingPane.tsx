@@ -8,17 +8,17 @@ import { MotionStage } from '../../figures/MotionStage';
  * report with its owner and due date; it closes the sheet again.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: '.env-panes-trigger', x: 0.55, y: 0.6 },
-  { wait: 350 },
-  { click: true },
-  { wait: 2200 },
-  { to: '.env-panes-close .env-button', duration: 600 },
   { wait: 300 },
+  { to: '.env-panes-trigger', x: 0.55, y: 0.6 },
+  { wait: 210 },
   { click: true },
-  { wait: 700 },
+  { wait: 1320 },
+  { to: '.env-panes-close .env-button', duration: 600 },
+  { wait: 180 },
+  { click: true },
+  { wait: 420 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Opening() {

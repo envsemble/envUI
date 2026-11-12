@@ -6,8 +6,7 @@ import { useFiguresMounted } from './useFiguresMounted';
 import { useArrival } from './useArrival';
 import { usePulseNear } from './usePulseNear';
 import { recordedSize } from './RecordedSizes';
-import { flag } from '@envui-internal/internal/flag';
-import { classNames } from '@envui-internal/internal/classNames';
+import { classNames, flag } from '../shared/Attributes';
 
 /*
  * What the site shows while a part of a page loads, such as an example, its code or a specimen,
@@ -200,7 +199,7 @@ export function CodeSkeleton({ label, lines }: { label: string; lines: number })
 /**
  * A gallery's or Related's tile while its picture loads, once it has come near enough to load:
  * a skeleton over the whole stage, which pulses in its place until the picture is fitted on it
- * (Tile.css). The picture is decorative, as the tile's name leads to the page, so its skeleton
+ * (TileStage.css). The picture is decorative, as the tile's name leads to the page, so its skeleton
  * is hidden from assistive technology and says nothing.
  */
 export function TileSkeleton() {

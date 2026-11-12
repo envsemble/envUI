@@ -10,8 +10,8 @@ import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/env
 import { onIdle, scrollerOf } from '../shared/Idle';
 import { pixelTolerance, remeasure } from '../shared/Remeasure';
 import { usePlayback } from './Playback';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
-import { useLatest } from '@envui-internal/internal/useLatest';
+import { remPixels } from '../shared/Lengths';
+import { useLatest } from '../shared/useLatest';
 
 /*
  * An "Adapting to width" figure that plays: the example in one frame whose width sweeps between the

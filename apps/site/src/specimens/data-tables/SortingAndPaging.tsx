@@ -13,24 +13,24 @@ const sort = (column: number) => `th:nth-child(${column}) .env-table-sort-button
  * newest first again, on the first page.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: sort(1), x: 0.4, y: 1.6 },
   { to: sort(1), x: 0.4, y: 0.55, duration: 400 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: '.env-pagination-button[data-direction="next"]', x: 0.5, y: 0.55, duration: 700 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1500 },
+  { wait: 900 },
   { to: sort(4), x: 0.45, y: 0.55, duration: 700 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Sorting() {

@@ -1,6 +1,6 @@
 /* Related, at the end of a page: a tile for each component or page to use
    instead, from its frontmatter, each a tiny live picture of it on its recessed canvas, with its
-   name and when to pick it below. Each tile is a gallery's cell, on a tile's stage (Tile.css). */
+   name and when to pick it below. Each tile is a gallery's cell, on a tile's stage (TileStage.css). */
 
 /* Tiles of one size, framed as a gallery's are (Gallery.css). A row is rarely left with one alone:
    one column until two fit, even counts and one two to a row, counts of three, five, six, seven and

@@ -10,20 +10,20 @@ const trigger = (index: number) => `.env-accordion-item:nth-child(${index}) .env
 
 /** Opens the second question, which closes the first, then opens the first again, as it began. */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: trigger(2), x: 0.35 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { to: trigger(1), x: 0.35, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 15, height: 11.25 };
 
 /**

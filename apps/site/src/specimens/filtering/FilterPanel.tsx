@@ -13,23 +13,23 @@ const plans = '.env-popover .env-checkbox:nth-child(2 of .env-checkbox)';
  * reports behind the popover at once. It closes the popover, and the list starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: filters, x: 0.5, y: 2.4 },
   { to: filters, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 650 },
+  { wait: 390 },
   { to: plans, x: 0.12, y: 0.5, duration: 500 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: filters, x: 0.5, y: 0.55, duration: 600 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Filtering() {

@@ -15,14 +15,14 @@ const agenda = ['- Welcome', '- Roadmap review', '- Budget', '- Hiring plan', '-
  * are drawn anew as they began, with a short fade (Renew).
  */
 const scriptFor = (sizing: string): PointerStep[] => [
-  { wait: 500 },
+  { wait: 300 },
   ...agenda.flatMap((line, index): PointerStep[] => [
     { type: `${index ? '\n' : ''}${line}`, into: `[data-editor="${sizing}"] textarea`, every: 70 },
-    { wait: 250 },
+    { wait: 150 },
   ]),
-  { wait: 1800 },
+  { wait: 1080 },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 const scripts = { fixed: scriptFor('fixed'), content: scriptFor('content') };
 

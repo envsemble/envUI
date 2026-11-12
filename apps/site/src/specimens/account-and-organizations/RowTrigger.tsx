@@ -8,17 +8,17 @@ import { MotionStage } from '../../figures/MotionStage';
  * rests a moment, and the menu closes.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: '.env-button', x: 0.45, y: 0.6 },
-  { wait: 450 },
-  { click: true },
-  { wait: 900 },
-  { to: '.env-menu-item', x: 0.4, duration: 450 },
-  { wait: 1100 },
-  { key: 'Escape', on: '.env-menu' },
   { wait: 300 },
+  { to: '.env-button', x: 0.45, y: 0.6 },
+  { wait: 270 },
+  { click: true },
+  { wait: 540 },
+  { to: '.env-menu-item', x: 0.4, duration: 450 },
+  { wait: 660 },
+  { key: 'Escape', on: '.env-menu' },
+  { wait: 180 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Opening() {

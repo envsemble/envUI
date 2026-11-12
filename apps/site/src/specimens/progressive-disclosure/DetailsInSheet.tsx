@@ -11,18 +11,18 @@ const close = '.env-sheet [aria-label="Close details"]';
  * in place beneath it; then it closes the sheet.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: row(2), x: 0.4, y: 2.2 },
   { to: row(2), x: 0.4, y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 2000 },
+  { wait: 1200 },
   { to: close, duration: 650 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Opening() {

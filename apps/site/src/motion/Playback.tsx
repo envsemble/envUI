@@ -67,7 +67,7 @@ export function Playback({
   countAnimation?: () => () => void;
   /**
    * Whether it is drawn again when it stops, whatever its animations do, as a tile is, whose still
-   * draws without motion (Tile.css). That removes what an animation left behind and can't reset,
+   * draws without motion (TileStage.css). That removes what an animation left behind and can't reset,
    * such as a menu's highlighted item.
    */
   redraw?: boolean;

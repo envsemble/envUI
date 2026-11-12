@@ -5,17 +5,16 @@ import { MotionStage } from '../../figures/MotionStage';
 
 /*
  * The pointer presses Copy ID: it shows Copied for about two seconds, then comes back. A click by
- * the pointer no one sees never reaches the reader's clipboard. The waits here are paced to 0.6 of
- * what they say.
+ * the pointer no one sees never reaches the reader's clipboard.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-copy-button:not([aria-label])', x: 0.55, y: 0.6 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 4600 },
+  { wait: 2760 },
 ];
 
 function Copying() {

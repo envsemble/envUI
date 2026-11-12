@@ -13,20 +13,20 @@ const field = '.env-field-control';
  * name. Then the example starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: field, x: 0.3, y: 0.55 },
-  { wait: 350 },
-  { click: true },
   { wait: 300 },
+  { to: field, x: 0.3, y: 0.55 },
+  { wait: 210 },
+  { click: true },
+  { wait: 180 },
   { type: 'Web', into: field, every: 160 },
-  { wait: 450 },
+  { wait: 270 },
   { erase: 3, into: field, every: 110 },
-  { wait: 450 },
+  { wait: 270 },
   { key: 'Tab', on: field },
-  { wait: 2000 },
+  { wait: 1200 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Leaving() {
