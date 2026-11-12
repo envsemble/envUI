@@ -212,7 +212,3 @@ Measure the filters' own width with `useContainerSize` and take its window class
   {filters}
 </Sheet>
 ```
-
-## Changelog
-
-- **1.0.0**: The page is on the figure template.

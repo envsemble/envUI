@@ -246,7 +246,3 @@ Keep every step's answers in state above the steps, so Back keeps them. Progress
 ### Composition
 
 One Column, kept to a width that reads easily, such as `maxInlineSize: '32rem'`, with the actions in a Row after the last field, the primary action last. A Grid suits only short fields that belong together, such as a city and a postal code. Field's parts build a control envUI lacks.
-
-## Changelog
-
-- **1.0.0**: The page is on the figure template, with a long form in steps, which controls to choose, and the labels and error messages of the content guidelines.

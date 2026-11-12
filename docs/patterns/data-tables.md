@@ -195,8 +195,3 @@ The row's other actions are a Menu whose trigger is an IconButton with `aria-lab
   <Menu.Item onClick={() => setConfirming(true)}>Delete project…</Menu.Item>
 </Menu.Root>
 ```
-
-## Changelog
-
-- **1.0.0**: The page is on the figure template; sorting, selecting, loading and stacking rows are on Table.
-- **1.0.0-prerelease.6**: Stacked rows keep their sorting in a Select above them.

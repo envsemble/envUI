@@ -161,12 +161,3 @@ Progress takes `value`, how much of the task is done, between `min`, 0 by defaul
 ### Composition
 
 The parts are the bar, `env-progress`, its label, `env-progress-label`, its value, `env-progress-value`, the track, `env-progress-track`, and the indicator, `env-progress-indicator`; with `segments`, the track holds one `env-progress-segment` per step. `className`, `style`, `ref` and data attributes reach the root. Changes of the value aren't announced, so say in a status when the task ends or fails. A TopBar's `loading` shows a page's progress.
-
-## Changelog
-
-- **1.0.0**: The classes are `env-progress*`; `segments` splits the track into steps; an indeterminate bar is read as Loading, and sweeps toward the end of the line also in right-to-left text; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root.
-- **1.0.0**: `LoadingBar` is no longer exported: TopBar's `loading` and `loadingLabel` show page progress, and Progress shows a task's.
-- **1.0.0-prerelease.6**: An indeterminate bar sweeps at an even pace, so it enters the track as it leaves and the track never sits empty; the period is the same.
-- **1.0.0-prerelease.6**: An indeterminate bar sweeps in five times `--env-motion-duration-slow`, as fast as before, so durations of `0s` stop it.
-- **1.0.0-prerelease.6**: The track and the segments are the neutral fill a Slider's track takes, so empty steps show on dark panels.
-- **1.0.0-prerelease.6**: Under reduced motion an indeterminate bar shows faint stripes across the whole track, rather than a still bar partway along that read as a value.

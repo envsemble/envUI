@@ -189,9 +189,3 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
 ### Customize
 
 The list is `env-message-list`, with `env-message-list-busy` for its busy row, and each message `env-message`, with its author, `env-message-author`, and meta, `env-message-meta`, in its header, then its content, `env-message-content`, its actions, `env-message-actions`, and its status, `env-message-status`.
-
-## Changelog
-
-- **1.0.0**: Buttons in `actions` are small ghost buttons unless they set their own variant or size, and the statuses come from `messages.message`. The page is `message`, after the component, instead of `messages`. Message and MessageList can render in React Server Components.
-- **1.0.0-prerelease.6**: The busy row names who replies, `busyAuthor`, and says Working beside its spinner, `busyLabel` or `messages.message.working`.
-- **1.0.0-prerelease.6**: While `busy`, MessageList shows a quiet spinner in the muted color after the last message, `env-message-list-busy`.

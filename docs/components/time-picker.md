@@ -158,18 +158,3 @@ TimePicker shares DatePicker's field and its picker card, `env-picker-popup` wit
 ### Customize
 
 Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
-
-## Changelog
-
-- **1.0.0**: `showLabel` is `visibleLabel`, named after the label that `visibleLabel={false}` hides.
-- **1.0.0**: TimePicker, for a time of day chosen on wheels of hours, minutes and day periods on the locale's clock, with `minuteStep`, `min` and `max`.
-- **1.0.0-prerelease.6**: The popup opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
-- **1.0.0-prerelease.6**: A mouse drags a wheel as a finger does: the rows follow the pointer while its button is down, and a quick drag let go glides on and eases into a row; a press that doesn't move still chooses the row under it.
-- **1.0.0-prerelease.6**: As a wheel turns to a row pressed or scrolled to, the fill stays on that row rather than passing over the rows on the way, and a row's text takes the fill's color only while it is on the fill, so a value it leaves is never white on the popup; the field shows the new time once the wheel comes to rest.
-- **1.0.0-prerelease.6**: `hourCycle`, `h12` or `h23`, sets the clock of the field and its wheels whatever the locale's, such as 18:00 with no AM/PM wheel in English; the value stays `HH:mm`.
-- **1.0.0-prerelease.6**: The wheels' rows are a little less than a row height tall, as the calendar's days are, 24 px at the compact scale; touch screens keep the touch height.
-- **1.0.0-prerelease.6**: A clearable field's clear button and its clock icon stand a step apart, so they don't crowd each other in a small field.
-- **1.0.0-prerelease.6**: While its list of times is open, the field keeps its focused frame, the accent edge and label, also when focus is in the popup, as when it opens under the pointer.
-- **1.0.0-prerelease.6**: The chosen hour and minute take the chosen day's solid accent fill rather than the selection's tint, and are round and as tall as a day, as the chosen day is, so a chosen day and time look alike and the wheels stay narrow; a wheel with fewer values than it shows rows, such as minutes every 15, no longer loops and shows a value twice, while its arrow keys still wrap around. A light fade at a wheel's edges hints that it scrolls, while every value it shows stays legible, and times outside `min` and `max` are struck through in the disabled color, so they no longer look like the fade.
-- **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends. A small one with a visible label takes the medium height, so its floated label and its value each have room, and says so in the console while developing: `sm` is for a field with its label hidden.
-- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.

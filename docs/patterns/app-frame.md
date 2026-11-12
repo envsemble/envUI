@@ -250,7 +250,3 @@ Give the Scaffold `topBarSpan="full"`, so its `topBar` runs across the whole win
 ### Composition
 
 The parts are the top bar, `env-top-bar`, the search button, `env-top-bar-actions > env-icon-button`, the account menu's `env-avatar-button`, the rail, `env-navigation-rail`, and the page, `env-page`, with its `env-page-header`. Search opens a [CommandPalette](../components/command-palette.md#opening-it-the-button-and-the-shortcut), and the account menu is the [account and organizations](account-and-organizations.md) pattern. In an installed app's window, the title bar is the Scaffold's `env-top-bar`, its menubar `env-menubar` and its title `env-top-bar-title`, above the body, `env-scaffold-body`.
-
-## Changelog
-
-- **1.0.0**: The app frame is a pattern built from Scaffold, TopBar and the navigation forms, in place of AppShell, the app frame template and the WindowFrame component; the window frame pattern is its installed app's window. The page is on the figure template.

@@ -181,8 +181,3 @@ EnvUIProvider's `locale` names the months, weekdays and dates, through `Intl`; `
 ### Composition
 
 The parts are the month names, `env-calendar-heatmap-month`, the weekday names, `env-calendar-heatmap-weekday`, the days, `env-calendar-heatmap-day`, and the legend, `env-calendar-heatmap-legend`, with a swatch, `env-calendar-heatmap-swatch`, for each step. The tooltip is `env-calendar-heatmap-tooltip`, the shared tooltip popup. Put the exact figures elsewhere, such as a Table, where people compare them.
-
-## Changelog
-
-- **1.0.0**: `formatTooltip` is `renderTooltip`, as it returns content, as `render*` callbacks do; Weeks start on the locale's first day, as on Calendar, and `weekStart` takes any weekday; they started on Sunday. A date that doesn't exist, such as 2026-02-31, is left out and reported while developing, where it moved to the next month.
-- **1.0.0**: Month and weekday names, dates and numbers follow the locale, from `Intl`, and the legend comes from `messages.calendarHeatmap`; the tooltip is the shared tooltip popup. `Heatmap` is `CalendarHeatmap`, with `CalendarHeatmapDay`, `CalendarHeatmapCell` and the `env-calendar-heatmap-*` classes; the page is `calendar-heatmap`.

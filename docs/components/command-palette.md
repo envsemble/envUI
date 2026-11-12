@@ -366,18 +366,3 @@ The button that opens it is Button's: `env-button`, its icon, `env-button > env-
 ### Customize
 
 Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
-
-## Changelog
-
-- **1.0.0**: Opens from a Button with the shortcut's keys in its new `end` slot, in place of the SearchTrigger component. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionDetails`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface. A group's label, `env-command-palette-heading`, is `env-command-palette-group-label`, as in Menu.
-- **1.0.0-prerelease.6**: The palette fades in with `--env-motion-ease-enter`, so it shows from its first frames rather than late, while it drops into place as before.
-- **1.0.0-prerelease.6**: An item's shortcut is muted text in one unit, such as Ctrl+N, rather than a filled chip for each key; the key hints below the list keep their keys.
-- **1.0.0-prerelease.6**: The empty state is one muted line at an option's height, its title and description after a dot, rather than an icon on a circle over a centred title, so the palette keeps about its height as results come and go; it shows an icon only when `emptyIcon` gives one. While results load, a spinner turns at the search field's end, rather than in place of its icon or the empty state's.
-- **1.0.0-prerelease.6**: While it holds the caret, the search's edge takes the focus color as a hairline, rather than a ring that read as a second frame.
-- **1.0.0-prerelease.6**: A key hint for <kbd>Enter</kbd> hides while there is no option to choose, as results load or when nothing matches.
-- **1.0.0-prerelease.6**: Under a coarse pointer the palette hides the keys, the shortcuts in its items and the key hints of its footer, and shows a close button after the search field, `env-command-palette-close`, for touch screens with no <kbd>Esc</kbd>; the two share a row, `env-command-palette-header`.
-- **1.0.0-prerelease.5**: `onOpenChange` receives why the palette closes, `CommandPaletteOpenChangeDetails`, as a dialog's does.
-- **1.0.0-prerelease.5**: `defaultItems` is `suggestedItems`: `default` names an uncontrolled starting value everywhere else.
-- **1.0.0-prerelease.5**: The palette is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Its search is a large ghost TextField, opaque on the neutral fill with no outline, whose edge returns at high contrast; its headings are small and muted, its rows and keys are the popup lists', the keys side by side with the + read but not shown, and its hints are in the small label size. Its options take the text color rather than the controls', lie one under the next with no space between them, and its headings sit a little ahead of the rows.
-- **1.0.0-prerelease.4**: An empty state with an icon, a title and a description, which tells an invitation before people type from no results; `emptyDescription`, `emptyIcon` and `messages.commandPalette.emptyQuery` and `emptyHint`. `defaultItems` show before people type.
-- **1.0.0-prerelease.3**: The search trigger pattern is part of this page, as the button and the shortcut that open the palette; the pattern's address opens it.

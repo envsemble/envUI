@@ -244,7 +244,3 @@ The trigger is a Button with `variant="ghost"`, `fullWidth` and an `endIcon`, ho
 The switcher's first row is a `Menu.Header`, not an item: a centred Column with IconGroups3 above a headline Text, whose `id` names the radio group through `aria-labelledby`. Each organization is a `Menu.RadioItem` with the person's role as its `description`. A `Menu.Separator` and a `Menu.Item` with IconAdd end the menu with the create action. In a NavigationDrawer the switcher goes in its `header`.
 
 The parts are the trigger, `env-button`, the heading row, `env-menu-header`, each organization, `env-menu-item`, its role, `env-menu-item-description`, and the create action, `env-menu-separator + env-menu-item`.
-
-## Changelog
-
-- **1.0.0**: The account menu and the organization switcher are one pattern, built from Menu, Avatar and Button, in place of the AccountMenu and OrganizationSwitcher components. The page is on the figure template.

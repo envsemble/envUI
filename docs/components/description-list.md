@@ -139,8 +139,3 @@ DescriptionList.Root is a `dl`, and each DescriptionList.Item a term and its val
 ### Composition
 
 The parts are the list, `env-description-list`, with `data-layout`, `data-size` and `data-controls`; each item, `env-description-list-item`, a `div` around its label, `env-description-list-label`, a `dt`, and its value, `env-description-list-value`, a `dd`. Keep headings and long paragraphs out of values, and don't nest description lists.
-
-## Changelog
-
-- **1.0.0**: DescriptionList, with `layout`, `size` and `controls`.
-- **1.0.0-prerelease.6**: Stacked, the pairs stand further apart than a label from its value. Auto stacks below 18 rem of the list's width, in place of 24 rem, so a 360 px panel keeps its labels beside their values.

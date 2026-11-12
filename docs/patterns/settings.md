@@ -221,7 +221,3 @@ The danger zone is the last section: a List item whose `end` is an outline Butto
 ### Composition
 
 Lay the page out as a Page with a PageHeader, its sections in a Column, each a `section` with a `h2` or `h3` Text heading and a List of settings. A long page lists its sections in a NavigationDrawer beside them. The anatomy's parts are the section heading, `env-text`, each setting, `env-list-item`, its Switch, `env-switch`, and the danger zone's button, `env-button`. Text fields, Selects and a RadioGroup sit in a section that saves together; a DescriptionList shows values that are only read.
-
-## Changelog
-
-- **1.0.0**: The page is on the figure template.
