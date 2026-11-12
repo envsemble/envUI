@@ -35,10 +35,13 @@ const jsBudgets = [
   { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 32650 },
   // 108,029 measured (was 110,015).
   { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 109650 },
-  // 4,888 measured. Raised from 4,850 (4,832 measured on 2026-11-08): esbuild puts the modules the
-  // lazily loaded options share with a page, such as flag.js, in chunks of their own even where
-  // the page never loads the option, and the page imports them from there, 56 bytes.
-  { set: 'Theme + Button + Icon', measure: 'minified', budget: 4950 },
+  // 4,953 measured on 2026-11-11. Raised from 4,950 (4,888 measured): Theme's and the buttons'
+  // development reports go through reportInDevelopment, as every other report does, rather than
+  // each writing its own guard, 65 bytes. Raised from 4,850 (4,832 measured on 2026-11-08):
+  // esbuild puts the modules the lazily loaded options share with a page, such as flag.js, in
+  // chunks of their own even where the page never loads the option, and the page imports them from
+  // there, 56 bytes.
+  { set: 'Theme + Button + Icon', measure: 'minified', budget: 5050 },
 ];
 
 /** Each component's own envUI code, minified, its Base UI and Floating UI left out. */

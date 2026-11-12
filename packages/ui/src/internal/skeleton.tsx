@@ -25,6 +25,9 @@ export interface SkeletonAttributes {
   'aria-busy'?: true;
 }
 
+/** The class of a skeleton's inert content wrapper, which inSkeleton renders without a box. */
+export const skeletonContentClass = 'env-skeleton-content';
+
 /** Marks a skeleton's root: busy, and followed by the skeleton's styles. */
 export function skeletonAttributes(skeleton: boolean | undefined): SkeletonAttributes {
   return skeleton ? { 'data-env-skeleton': '', 'aria-busy': true } : {};
@@ -58,7 +61,7 @@ export function inSkeleton(skeleton: boolean, children: ReactNode): ReactNode {
   if (!skeleton) return children;
   return (
     <SkeletonScope skeleton>
-      <div className="env-skeleton-content" inert>
+      <div className={skeletonContentClass} inert>
         {children}
       </div>
     </SkeletonScope>

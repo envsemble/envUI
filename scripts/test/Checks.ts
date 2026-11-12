@@ -19,6 +19,8 @@ const typecheckProjects = {
   fixture: 'tests/fixture',
   component: 'tests/component',
   tests: 'tests',
+  'eslint-plugin': 'packages/eslint-plugin',
+  'stylelint-config': 'packages/stylelint-config',
 };
 
 /** The style sheets Stylelint checks when it checks them all. */

@@ -9,6 +9,7 @@ import { partClassOf } from './parts.js';
 import { remPixels } from '../internal/dom/lengths.js';
 import { toRem } from './units.js';
 import { alignPulses } from '../foundations/SkeletonScope.js';
+import { skeletonContentClass } from '../internal/skeleton.js';
 
 /** The attribute that marks a skeleton's root, which its styles follow. */
 const skeletonAttribute = 'data-env-skeleton';
@@ -69,10 +70,10 @@ function sizedByItsBox(element: HTMLElement): boolean {
   return after.width === before.width && after.height === before.height;
 }
 
-/** The class of a skeleton's inert content wrapper, which has no box of its own. */
-const wrapperClass = 'env-skeleton-content';
-
-/** Elements whose children must be their own, which a skeleton makes inert as a whole. */
+/**
+ * Elements whose children must be their own, which a skeleton makes inert as a whole, with
+ * skeletonListAttributes, rather than wrap.
+ */
 const unwrappable = new Set(['UL', 'OL', 'DL', 'TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR', 'SELECT']);
 
 /**
@@ -86,7 +87,7 @@ class Wrapper {
   private readonly made: boolean;
 
   constructor(private readonly surface: HTMLElement) {
-    this.element = surface.querySelector<HTMLElement>(`:scope > .${wrapperClass}`);
+    this.element = surface.querySelector<HTMLElement>(`:scope > .${skeletonContentClass}`);
     this.made = this.element === null;
   }
 
@@ -103,7 +104,7 @@ class Wrapper {
     if (!this.element) {
       if (unwrappable.has(this.surface.tagName)) return;
       this.element = document.createElement('div');
-      this.element.className = wrapperClass;
+      this.element.className = skeletonContentClass;
       this.element.inert = true;
       this.content = Array.from(this.surface.childNodes);
     }
@@ -124,7 +125,7 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
   const elements = [surface, ...Array.from(surface.querySelectorAll('*'))].filter(
     (element) =>
       !isDevElement(element) &&
-      !(element.parentElement === surface && element.matches(`.${wrapperClass}`)),
+      !(element.parentElement === surface && element.matches(`.${skeletonContentClass}`)),
   );
   const wasSkeleton = surface.hasAttribute(skeletonAttribute);
   // As the components do: the attribute, which the styles follow, and the wrapper around the content.

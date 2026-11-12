@@ -14,7 +14,8 @@ import type {
 import { layoutKinds } from './model.js';
 import { queriesFor, thresholdsFor } from './queries.js';
 import { roundToHundredth } from '../internal/dom/lengths.js';
-import { toRem, windowClassOf } from './units.js';
+import { toRem } from './units.js';
+import { windowClassOfRem } from '../foundations/windowClasses.js';
 
 /** A measurement read: its text, each node's line and problems, and every problem. */
 export interface Reading {
@@ -161,7 +162,7 @@ class Reader {
       return `${label} · ${node.hidden}${inside}`;
     }
     const widthRem = node.size.w / this.snapshot.rootPx;
-    const bits: string[] = [this.size(node.size.w, node.size.h), windowClassOf(widthRem)];
+    const bits: string[] = [this.size(node.size.w, node.size.h), windowClassOfRem(widthRem)];
     const container = this.container(node);
     if (container) bits.push(container);
     bits.push(...this.display(node));
@@ -289,7 +290,7 @@ class Reader {
     const { snapshot } = this;
     const { root, rootPx, window } = snapshot;
     const out = [
-      `root ${root.label} · ${this.size(root.box.w, root.box.h)} · ${windowClassOf(root.box.w / rootPx)} · window ${this.size(window.w, window.h)} · 1rem = ${rootPx}px`,
+      `root ${root.label} · ${this.size(root.box.w, root.box.h)} · ${windowClassOfRem(root.box.w / rootPx)} · window ${this.size(window.w, window.h)} · 1rem = ${rootPx}px`,
     ];
     const page = snapshot.tops.filter((index) => !snapshot.nodes[index].overlay);
     const overlays = snapshot.tops.filter((index) => snapshot.nodes[index].overlay);

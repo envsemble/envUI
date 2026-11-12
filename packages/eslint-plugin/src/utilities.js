@@ -37,6 +37,16 @@ export function findAttribute(element, name) {
   );
 }
 
+/**
+ * Whether a node sits in the value of a JSX attribute whose name `accepts` takes, such as a part's
+ * `render` prop.
+ */
+export function insideAttribute(sourceCode, node, accepts) {
+  return sourceCode
+    .getAncestors(node)
+    .some((ancestor) => ancestor.type === 'JSXAttribute' && accepts(jsxName(ancestor.name)));
+}
+
 /** Whether a JSX opening element spreads props, which may supply any attribute. */
 export function spreadsProps(element) {
   return element.attributes.some((attribute) => attribute.type === 'JSXSpreadAttribute');

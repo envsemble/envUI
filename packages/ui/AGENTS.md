@@ -9,13 +9,13 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 - Keep a namespace's parts in its file, or, when they are many, in a folder of its own whose entry is the namespace's file and holds the parts' names, as `actions/menu/Menu.tsx` does.
 - Put code one family uses in its `internal/` folder, and code two families use in the top-level `internal/`, grouped by concern, such as `internal/field/`; only a helper most families use, such as `flag.ts`, or a module whose concern no other shares, such as `useCopy.ts`, stays at its top. ESLint rejects an import of another family's `internal/`, and of a folder `privateFolders` in `eslint.config.mjs` keeps to the modules it names.
 - A component with many private modules may take its own folder in its family, with its own `internal/`, such as `feedback/toast/` and `forms/color/`.
-- `tests/library/rules/composition/Rules.json` gives each module its layer (imports go down: internal, foundations, base, composites, shell) and each class its owner, and `tests/library/rules/Composition.test.ts` holds the library to it. A folder's layer is under `layers.directories`; a module whose layer isn't its folder's is under `layers.modules` with its reason.
+- `tests/library/rules/composition/Rules.json` gives each module its layer (imports go down: internal, foundations, base, composites, shell) and each class its owner, and `tests/library/rules/Composition.test.ts` holds the library to it. A folder's layer is under `layers.directories`; a module whose layer isn't its folder's is under `layers.modules`, with its reason unless it is a component's choice between base and composites.
 
 ## Entry points
 
 - Public exports go through the entry points, such as `index.ts`, `markdown.ts` and `rich-text.ts`.
 - An entry point other than `index.ts` holds what loads an optional dependency, and is named after what it holds, such as `code` for Code and CodeBlock on Shiki.
-- Whatever a module the entry points `export *` exports is public: `docs/generated/exports.json` records every name and its kind (`npm run docs:exports`).
+- Whatever a module the entry points `export *` exports is public: `docs/generated/exports.json` records every name and its kind (`npm run docs:exports`). A component's module exports its components, their props and the hooks and types people use with them; a name only another module or a test needs goes in an `internal/` module, or, where it must stay beside the component, out of the entry point's list, as `index.ts` does for `calendarActiveDay`.
 - `npm run docs:check` fails on a change to the exports without a changeset, major for a name that goes.
 
 ## Props
@@ -40,9 +40,11 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 ## Changing a component touches
 
 - Its module in its family and its style sheet, `packages/ui/src/styles/<Name>.css`; a new component also its entry point's export.
-- `tests/library/rules/composition/Rules.json` for a new component (`base` if it renders no other component, else `composites`, under `layers.modules`), a new folder, or classes and style sheets it shares with another component (`classes`).
+- `tests/library/rules/composition/Rules.json` for a new folder, a component whose layer isn't its folder's (`composites` under `layers.modules` for one of a family's folder that renders another component), raw interactive HTML in a new leaf control (`interactive`), or classes and style sheets it shares with another component (`classes`).
 - `packages/ui/src/partDescriptions.json` for a new part, state or color property, then `npm run docs:parts`; a prop's TSDoc, then `npm run docs:props`.
 - Its strings in `packages/ui/src/foundations/messages/`.
+- `tests/contrast/Pairs.ts` for a color on a fill that no pair measures yet, such as one the component composes where it paints (`derived`).
+- `packages/eslint-plugin/src/data/elements.json` for a component that replaces an HTML element or a widget role, or renders a role itself (`owners`).
 - Its page, `docs/components/<name>.md` or `docs/patterns/`, with its examples in `apps/site/src/examples/<page>/` and its gallery tile in `apps/site/src/tiles/`.
 - Its component test and fixture, named as [Fixtures](../../AGENTS.md#fixtures) says.
 - A changeset, when people using envUI notice the change ([Record the change](../../AGENTS.md#record-the-change)).

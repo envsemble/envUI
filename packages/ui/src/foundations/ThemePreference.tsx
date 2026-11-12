@@ -27,7 +27,7 @@ import {
   ThemePreferenceContext,
   type ThemePreferenceValue,
 } from './internal/ThemePreferenceContext.js';
-import { reportOnce } from '../internal/developmentReport.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
 import { useHydrated } from '../internal/react/useHydrated.js';
 
 export type { ThemePreferenceValue } from './internal/ThemePreferenceContext.js';
@@ -306,14 +306,12 @@ export function ThemePreferenceProvider({
   // insertion effect, as the writes below, so it registers before them.
   useInsertionEffect(() => {
     if (!applyToDocument) return;
-    try {
-      if (process.env.NODE_ENV !== 'production' && documentProviders.size > 0)
-        reportOnce(
-          'more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
-        );
-    } catch {
-      // No bundler defined process.env.NODE_ENV: written as in Theme.
-    }
+    reportInDevelopment(
+      () =>
+        process.env.NODE_ENV !== 'production' &&
+        documentProviders.size > 0 &&
+        'more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
+    );
     documentProviders.set(provider, {});
     // Once the provider unmounts or stops applying to the document, it releases what it wrote on
     // the root, as a provider at system does: what the page wrote or another provider holds stays.

@@ -126,9 +126,9 @@ function readLibrary(rules) {
 }
 
 /**
- * The layers: their order and each module's layer, checked against the rules. A module listed with a
- * layer other than its directory's, beyond a component's choice between base and composites, gives
- * its reason.
+ * The layers: their order and each module's layer, checked against the rules. A module is listed
+ * only with a layer other than its directory's, and one beyond a component's choice between base and
+ * composites gives its reason.
  */
 function readLayers(library) {
   const { rules, problems, modules, planned, requireModule } = library;
@@ -150,6 +150,10 @@ function readLayers(library) {
   for (const [module, entry] of Object.entries(listed)) {
     const own = layeredModules[module];
     const folder = directoryLayer(module);
+    if (own === folder && typeof entry === 'string')
+      problems.push(
+        `${rulesFile} layers.modules puts ${module} in ${own}, its directory's layer already: remove it.`,
+      );
     const usual = own === folder || (components.has(own) && components.has(folder));
     if (!usual && typeof entry === 'string')
       problems.push(

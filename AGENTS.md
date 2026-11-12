@@ -140,6 +140,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 - `packages/eslint-plugin` and `packages/stylelint-config` hold applications to envUI's components and tokens; their READMEs document the rules and how to run their tests.
 - Make a new ESLint rule a file of `packages/eslint-plugin/src/rules/` named after it, registered in `src/index.js` and its recommended config, with its test in `test/<rule>.test.mjs` through `test/RuleTester.mjs`, and its section in the README.
 - Configure a Stylelint rule in `packages/stylelint-config/src/index.js` and test it in `test/config.test.mjs`.
+- Both packages are JavaScript with JSDoc types, which `npm run typecheck` checks through each package's `tsconfig.json`; the ESLint plugin's public types are its hand-written `index.d.ts`.
 - Each package ships its own `src/tokens.js`, `src/colorPolicy.js` and `src/data/tokens.json`, copies that `npm run tokens:build` writes (`scripts/build/SyncLintPackages.ts`): `tokens.js` from `scripts/build/LintPackageTokens.js`; `colorPolicy.js`, what both count as a raw color, from `scripts/build/LintPackageColorPolicy.js`; the data from the library's `packages/ui/src/generated/tokens.json`; and the ESLint plugin's `src/data/entryPoints.json` from the exports of `packages/ui/package.json`.
 - Edit the sources, never the copies; `npm run tokens:check` fails on a stale one.
 

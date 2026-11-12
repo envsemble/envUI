@@ -6,7 +6,7 @@
 import { memo, useLayoutEffect, useRef } from 'react';
 import type { Box, NodeData } from '../model.js';
 import { labelOf } from '../readout.js';
-import { windowClassOf } from '../units.js';
+import { windowClassOfRem } from '../../foundations/windowClasses.js';
 import { devStats, timed } from './stats.js';
 import { surfaceOf } from './surfaces.js';
 import { flag } from '../../internal/flag.js';
@@ -146,7 +146,7 @@ export const Plane = memo(
         data-plane={node.key}
         data-kind={node.kind}
         data-overlay={flag(node.overlay)}
-        data-window={windowClassOf(node.size.w / rootPx)}
+        data-window={windowClassOfRem(node.size.w / rootPx)}
         data-container={flag(node.container)}
         data-problems={flag(problems)}
         data-selected={flag(selected)}

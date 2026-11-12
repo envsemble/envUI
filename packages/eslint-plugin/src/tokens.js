@@ -40,7 +40,7 @@ function colorTokenSuggestion(property) {
   const role = property && roleOfProperty.find((entry) => entry.property.test(property))?.role;
   const family = families.find((entry) => entry.role === role)?.family;
   if (family) return `such as var(${family.example}) or another var(${family.prefix}…) role`;
-  const known = families.filter((entry) => entry.family).map((entry) => entry.family.prefix);
+  const known = families.flatMap((entry) => (entry.family ? [entry.family.prefix] : []));
   if (known.length === 0) return 'from envUI';
   const list = known.map((prefix) => `var(${prefix}…)`);
   return `one of the ${list.length > 1 ? `${list.slice(0, -1).join(', ')} or ${list.at(-1)}` : list[0]} roles`;

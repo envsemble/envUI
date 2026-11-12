@@ -4,7 +4,8 @@
 // foundations/: theme, text, icons, window classes, the provider and the skeleton every family takes.
 export * from './foundations/Theme.js';
 export * from './foundations/Text.js';
-export * from './foundations/windowClasses.js';
+// windowClassOfRem stays internal: the dev mode's readout, whose widths are in rem, takes it.
+export { windowClasses, windowClassOf, type WindowClass } from './foundations/windowClasses.js';
 export * from './foundations/useContainerSize.js';
 export * from './foundations/EnvUIProvider.js';
 export * from './foundations/PortalContainer.js';

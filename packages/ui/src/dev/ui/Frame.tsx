@@ -9,7 +9,8 @@
 import { useEffect, useRef, type HTMLAttributes, type KeyboardEvent } from 'react';
 import { Text } from '../../foundations/Text.js';
 import { roundToHundredth } from '../../internal/dom/lengths.js';
-import { windowClasses, windowClassOf } from '../units.js';
+import { windowClasses } from '../units.js';
+import { windowClassOfRem } from '../../foundations/windowClasses.js';
 
 /** The smallest and largest the frame lays the page out at, in rem. */
 const frameMin = 15;
@@ -217,7 +218,7 @@ export function Frame({
   rootPx: number;
   onSizeChange: (size: FrameSize) => void;
 }) {
-  const windowClass = windowClassOf(width / rootPx);
+  const windowClass = windowClassOfRem(width / rootPx);
   const text = [
     size.device,
     `${Math.round(width)}×${Math.round(height)}px`,

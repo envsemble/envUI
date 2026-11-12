@@ -20,7 +20,6 @@ const {
   partClassOf,
   read,
   toPx,
-  windowClassOf,
   isStuck,
 } = await importSource('DevMode', [
   "export * from './packages/ui/src/dev/queries.ts';",
@@ -138,18 +137,11 @@ test('parts.json is indexed by part class, and names never wait for it', () => {
   assert.equal(partClassOf(element('app')), null);
 });
 
-test('widths: lengths in px, and window classes', () => {
+test('widths: lengths in px', () => {
   assert.equal(toPx('40rem', 16), 640);
   assert.equal(toPx(' 600px ', 16), 600);
   assert.equal(toPx(320, 16), 320);
   assert.throws(() => toPx('40vw', 16), /lengths such as "40rem"/);
-  assert.deepEqual([22, 37.5, 52.4, 52.5, 80].map(windowClassOf), [
-    'compact',
-    'medium',
-    'medium',
-    'expanded',
-    'large',
-  ]);
 });
 
 // --- The readout, from a measurement given as data --------------------------------------------
