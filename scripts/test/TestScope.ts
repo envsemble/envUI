@@ -176,7 +176,6 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
     paths: [
       'packages/ui/src/**',
       'packages/ui/package.json',
-      'packages/ui/README.md',
       'README.md',
       'scripts/build/BuildLibrary.ts',
       'scripts/build/ClientModules.ts',
