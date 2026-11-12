@@ -10,18 +10,18 @@ import { Renew } from '../../motion/Renew';
  * presses Don’t save, which discards them and closes the dialog. Then the example starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: '.env-dialog-actions .env-button:nth-child(2)', x: 0.5, y: 0.6, duration: 550 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Closing() {

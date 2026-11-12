@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef, ReactElement, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { markText } from '../internal/popup/textMark.js';
+import { markText } from '../internal/trigger/textMark.js';
 import { renderElement } from '../internal/react/renderElement.js';
 import '../styles/Base.css';
 import '../styles/Text.css';

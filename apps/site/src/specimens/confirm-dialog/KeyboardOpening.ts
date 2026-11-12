@@ -9,18 +9,18 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
  * Their scripts are the same, and press no button, so the two stay in step.
  */
 const script: PointerStep[] = [
-  { wait: 1000 },
+  { wait: 600 },
   { cue: 'enter' },
-  { wait: 150 },
+  { wait: 90 },
   { cue: 'landed' },
-  { wait: 2600 },
+  { wait: 1560 },
   { cue: 'escape' },
   { key: 'Escape', on: '.env-dialog' },
-  { wait: 150 },
+  { wait: 90 },
   { cue: 'back' },
-  { wait: 1500 },
+  { wait: 900 },
   { cue: 'still' },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /**

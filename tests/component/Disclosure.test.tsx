@@ -1,8 +1,8 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Disclosure.fixture.tsx';
-import { keyboard, nextFrames } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { keyboard, nextFrames } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   mount(fixture);

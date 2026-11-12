@@ -13,28 +13,28 @@ const field = '.env-date-picker-trigger';
  * Opens it again from its field and chooses February again, as it began.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: month('2026-03') },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 800 },
+  { wait: 480 },
   { to: field, x: 0.4, duration: 400 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: month('2026-02'), duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { to: field, x: 0.4, duration: 400 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 20, height: 15 };
 
 /**

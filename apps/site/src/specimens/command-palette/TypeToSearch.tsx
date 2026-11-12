@@ -11,21 +11,21 @@ const input = '.env-command-palette-input';
  * its place, which brings the roadmap back; erased, the invitation comes back.
  */
 const script: PointerStep[] = [
-  { wait: 900 },
+  { wait: 540 },
   { type: 'forecast', into: input, every: 120 },
-  { wait: 1900 },
+  { wait: 1140 },
   // Selected by a drag from its start to past its end, and typed over.
   { to: input, x: 0, y: 0.5 },
-  { wait: 250 },
+  { wait: 150 },
   { press: true },
   { to: input, x: 0.5, y: 0.5, duration: 450 },
   { release: true },
   { leave: true },
-  { wait: 450 },
+  { wait: 270 },
   { type: 'road', into: input, every: 150 },
-  { wait: 1900 },
+  { wait: 1140 },
   { erase: 4, into: input, every: 90 },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Searching() {

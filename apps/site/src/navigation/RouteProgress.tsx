@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useReducer, useRef } from 'react';
-import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
+import { prefersReducedMotion } from '../shared/ReducedMotion';
 import { rootMotionDuration } from '../shared/RootMotionTokens';
 import { usePendingRoute } from './RouterLink';
 

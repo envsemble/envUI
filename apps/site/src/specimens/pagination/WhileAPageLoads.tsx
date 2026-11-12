@@ -9,7 +9,7 @@ const next = '.env-pagination-button[data-direction="next"]';
 
 const press = (button: string): PointerStep[] => [
   { click: true },
-  { wait: 1500 },
+  { wait: 900 },
   { to: button, x: 0.5, y: 0.55 },
 ];
 
@@ -19,23 +19,23 @@ const press = (button: string): PointerStep[] => [
  * to the first.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: next, x: 0.5, y: 0.55 },
-  { wait: 400 },
-  ...press(next),
-  ...press(next),
-  ...press(next),
-  { click: true },
-  { wait: 1500 },
-  { to: previous, x: 0.5, y: 0.55, duration: 450 },
   { wait: 300 },
+  { to: next, x: 0.5, y: 0.55 },
+  { wait: 240 },
+  ...press(next),
+  ...press(next),
+  ...press(next),
+  { click: true },
+  { wait: 900 },
+  { to: previous, x: 0.5, y: 0.55, duration: 450 },
+  { wait: 180 },
   ...press(previous),
   ...press(previous),
   ...press(previous),
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 function Paging() {

@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState, type ComponentProps, type PointerEvent } from 'react';
 import { NavigationDrawer } from '@envsemble/envui';
-import { useHydrated } from '@envui-internal/internal/react/useHydrated';
+import { useHydrated } from '../shared/useHydrated';
 import { drawerWidthKey, drawerWidths, storedDrawerWidthProperty } from '../display/DisplayStorage';
 import type { Area } from '../routes/SiteRoutes';
 

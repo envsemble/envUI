@@ -5,7 +5,7 @@ import { MotionStage } from '../../figures/MotionStage';
 
 /* The value steps up and past the end; the stars and the number snap to half steps, and stop at 5. */
 const values = [4.3, 4.6, 4.8, 5.4];
-const steps = [1500, 1500, 1500, 1700];
+const steps = [900, 900, 900, 1020];
 
 function Rounding() {
   const step = useTimeline(steps);

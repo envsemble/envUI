@@ -9,17 +9,17 @@ import { MotionStage } from '../../figures/MotionStage';
  * marked Stopped with Try again beside it, and the send button comes back.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-message-actions .env-button', x: 0.5, y: 1.6 },
   { to: '.env-message-actions .env-button', x: 0.5, y: 0.6, duration: 400 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
   { to: '.env-composer-action', x: 0.5, y: 0.55, duration: 700 },
-  { wait: 650 },
+  { wait: 390 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Stopping() {

@@ -12,21 +12,21 @@ const inbox = '.env-navigation-bar-item[aria-label="Inbox, 4 new"]';
  * Then the pointer presses Inbox, and the fill goes back to it.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: more, x: 0.5, y: 0.5 },
-  { wait: 400 },
-  { click: true },
-  { wait: 800 },
-  { to: '[role="menuitem"]:nth-child(2 of [role="menuitem"])', x: 0.4, y: 0.5, duration: 550 },
-  { wait: 350 },
-  { click: true },
-  { wait: 1500 },
-  { to: inbox, x: 0.5, y: 0.5, duration: 650 },
   { wait: 300 },
+  { to: more, x: 0.5, y: 0.5 },
+  { wait: 240 },
+  { click: true },
+  { wait: 480 },
+  { to: '[role="menuitem"]:nth-child(2 of [role="menuitem"])', x: 0.4, y: 0.5, duration: 550 },
+  { wait: 210 },
   { click: true },
   { wait: 900 },
+  { to: inbox, x: 0.5, y: 0.5, duration: 650 },
+  { wait: 180 },
+  { click: true },
+  { wait: 540 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Picking() {

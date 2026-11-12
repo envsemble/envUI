@@ -9,27 +9,35 @@ import { prerender } from 'react-dom/static';
 import { SiteRoot } from './App';
 import { renderAt, routeHref } from './routes/Address';
 import { documentTitle, pageDescription } from './routes/PageHead';
-import { allPages, findPage } from './routes/SiteRoutes';
+import { allPages, findPage, type RoutePage } from './routes/SiteRoutes';
 import { normalizeRoute, oldPaths } from './routes/OldAddresses';
-import { preloadFirstPage } from './pages/PreloadPage';
-import { partModules, partsOfPage, viewOfKind } from './pages/ViewModules';
+import { preloadFirstPage, viewModuleOf } from './pages/PageLoading';
+import { pageParts, partsOfPage } from './pages/PageParts';
 import { takeRenderedParts } from './loading/LoadedPart';
 import { pageCodeScript, renderWithCode } from './pages/PageCode';
 import { renderWithMarkdown } from './pages/PageMarkdownTrees';
 
+/** The paths in the site app of the modules of the parts a page shows (partsOfPage). */
+const partModulesOf = (page: RoutePage) =>
+  partsOfPage(page.kind, page.document?.id).map((part) => pageParts[part].modules[0]);
+
 /**
  * Every page the site serves: its route, such as components/button (the home page's is overview),
- * its address, such as /components/button (the home page's is /), and the id of the page of docs/
- * it shows, whose content it loads, the module of its kind's view, and the parts of it that load
- * on their own (partsOfPage), which it loads before it hydrates.
+ * its address, such as /components/button (the home page's is /), the id of the page of docs/ it
+ * shows, whose content it loads, the name of the module of its kind's view, such as catalogue, and
+ * the paths of the modules it loads before it hydrates: its view's, and those of the parts of it
+ * that load on their own (partsOfPage).
  */
-export const sitePages = allPages.map((page) => ({
-  route: page.path,
-  address: routeHref(page.path),
-  document: page.document?.id,
-  view: viewOfKind[page.kind],
-  parts: partsOfPage(page.kind, page.document?.id),
-}));
+export const sitePages = allPages.map((page) => {
+  const view = viewModuleOf(page.kind);
+  return {
+    route: page.path,
+    address: routeHref(page.path),
+    document: page.document?.id,
+    view: view.module,
+    modules: [view.path, ...partModulesOf(page)],
+  };
+});
 
 /**
  * A page pre-rendered: its tab's title and description, the HTML of the site's root, the element
@@ -82,13 +90,11 @@ export async function renderPage(route: string): Promise<RenderedPage> {
   await preloadFirstPage(page);
   const { html, code, markdown, parts } = await renderAddress(routeHref(route));
   // A part the browser doesn't load before it hydrates would render again there, with its skeleton.
-  const loaded = new Set<string>(
-    partsOfPage(page.kind, page.document?.id).map((part) => partModules[part]),
-  );
+  const loaded = new Set<string>(partModulesOf(page));
   const unloaded = parts.filter((module) => !loaded.has(module));
   if (unloaded.length)
     throw new Error(
-      `The page ${route} renders ${unloaded.join(', ')}, which partsOfPage (pages/ViewModules.ts) doesn't list for it.`,
+      `The page ${route} renders ${unloaded.join(', ')}, which partsOfPage (pages/PageParts.ts) doesn't list for it.`,
     );
   return {
     title: documentTitle(page, page.area),

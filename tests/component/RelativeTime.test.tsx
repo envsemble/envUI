@@ -2,8 +2,8 @@ import { beforeEach, expect, test, vi } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/RelativeTime.fixture.tsx';
 import { tooltipDelay } from '../../packages/ui/src/internal/popup/TooltipPopup.tsx';
-import { box, keyboard, mouse, passTime, stopTimers } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, keyboard, mouse, passTime, stopTimers } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   mount(fixture);

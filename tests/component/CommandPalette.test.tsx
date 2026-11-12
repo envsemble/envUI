@@ -1,8 +1,8 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/CommandPalette.fixture.tsx';
-import { box, collectErrors, keyboard, mouse, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, collectErrors, keyboard, mouse, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   mount(fixture);

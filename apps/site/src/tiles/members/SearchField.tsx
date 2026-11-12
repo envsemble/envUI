@@ -14,20 +14,20 @@ const input = '.env-text-field-input';
  * button, which brings them all back, as it began.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: input, x: 0.4 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 250 },
+  { wait: 150 },
   { type: 'pri', into: input, every: 220 },
-  { wait: 1300 },
+  { wait: 780 },
   { to: '.env-text-field [aria-label="Clear search"]', duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
   { blur: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 /**

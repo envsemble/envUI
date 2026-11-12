@@ -2,8 +2,8 @@ import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Messages.fixture.tsx';
 import { defaultMessages } from '../../packages/ui/src/foundations/messages/defaultMessages.ts';
-import { box, keyboard, mouse, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, keyboard, mouse, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 // The pseudo-locale check: tests/fixture/Messages.fixture.tsx renders the components whose strings
 // come from EnvUIProvider's messages with every message replaced by ⟦namespace.key⟧. No English

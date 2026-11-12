@@ -3,7 +3,7 @@ import { Grid, Page, Surface, type PageWidth } from '@envsemble/envui';
 import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../figures/MotionStage';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 import { remeasure } from '../../shared/Remeasure';
 
 /** The window the page sits in, in rem: wider than the large column, so Full reads as wider. */
@@ -19,7 +19,7 @@ const widths: readonly { width: PageWidth; column: number; words: string }[] = [
 ];
 
 /** How long each width shows, in ms; the last leads back to Small. */
-const durations = [1500, 2000, 2000, 2000];
+const durations = [900, 1200, 1200, 1200];
 
 /*
  * A page in a window drawn small, its column widening from Small through Medium and Large to Full,

@@ -14,27 +14,27 @@ const clear = 'button[aria-label="Clear search"]';
  * button empties it again.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: input, x: 0.5, y: 2.2 },
   { to: input, x: 0.4, y: 0.5, duration: 450 },
-  { wait: 150 },
+  { wait: 90 },
   { click: true },
-  { wait: 250 },
+  { wait: 150 },
   { type: 'Priya', into: input, every: 110 },
-  { wait: 900 },
+  { wait: 540 },
   { cue: 'escape' },
   { key: 'Escape' },
-  { wait: 1000 },
+  { wait: 600 },
   { cue: 'none' },
   { type: 'Sam Lee', into: input, every: 110 },
-  { wait: 600 },
+  { wait: 360 },
   { to: clear, duration: 500 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { blur: true },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Searching() {

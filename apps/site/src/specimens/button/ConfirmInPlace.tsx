@@ -8,17 +8,16 @@ const remove = (index: number) =>
 
 /*
  * The pointer presses Remove beside Sam Lee: it arms in place as Remove Sam. The pointer goes, and
- * 4 s later, unconfirmed, the button disarms by itself. The waits here are paced to 0.6 of what
- * they say.
+ * 4 s later, unconfirmed, the button disarms by itself.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: remove(2), x: 0.5, y: 0.6 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 7200 },
+  { wait: 4320 },
 ];
 
 function Removing() {

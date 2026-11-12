@@ -11,23 +11,23 @@ const box = (index: number) =>
  * each; it unticks them again, and the count rises back to where it began.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: box(1) },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: box(2), duration: 400 },
-  { wait: 250 },
-  { click: true },
-  { wait: 1500 },
+  { wait: 150 },
   { click: true },
   { wait: 900 },
-  { to: box(1), duration: 400 },
-  { wait: 250 },
   { click: true },
-  { wait: 1200 },
+  { wait: 540 },
+  { to: box(1), duration: 400 },
+  { wait: 150 },
+  { click: true },
+  { wait: 720 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 function Filtering() {

@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useState, type RefObject } from 'react';
-import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
+import { prefersReducedMotion } from '../shared/ReducedMotion';
 import { rootMotionDuration, rootMotionEasing } from '../shared/RootMotionTokens';
 import type { CatalogueSection } from '../routes/SiteRoutes';
-import { useLatest } from '@envui-internal/internal/useLatest';
+import { useLatest } from '../shared/useLatest';
 
 /** How the catalogue's drawer is moving, if it is (useDrawerMotion). */
 type DrawerMotion = 'arriving' | 'entering' | 'leaving' | 'holding' | 'switching';

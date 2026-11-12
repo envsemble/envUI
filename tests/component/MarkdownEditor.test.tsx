@@ -1,8 +1,8 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/MarkdownEditor.fixture.tsx';
-import { keyboard, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { keyboard, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   mount(fixture);

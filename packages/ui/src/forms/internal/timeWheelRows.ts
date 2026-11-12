@@ -41,7 +41,7 @@ export function nearestAvailable(
       let candidate = index + sign * distance;
       if (loop) candidate = wrap(candidate, count);
       // In range, as checked first.
-      if (candidate >= 0 && candidate < count && !entries[candidate]!.disabled) return candidate;
+      if (candidate >= 0 && candidate < count && !entries[candidate].disabled) return candidate;
     }
   }
   return -1;

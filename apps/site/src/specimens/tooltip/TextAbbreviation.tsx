@@ -10,19 +10,19 @@ import { PressedKeys } from '../../motion/PressedKeys';
  * pointer rests on CET: its tooltip opens after a moment, and closes as the pointer leaves.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { cue: 'tab' },
   { focus: 'abbr' },
-  { wait: 1900 },
+  { wait: 1140 },
   { blur: true },
   { cue: 'none' },
-  { wait: 900 },
+  { wait: 540 },
   { to: 'abbr', x: 0.5, y: 2.6 },
   { to: 'abbr', x: 0.5, y: 0.6, duration: 450 },
-  { wait: 2000 },
+  { wait: 1200 },
   { to: 'abbr', x: 0.5, y: 2.6, duration: 400 },
   { leave: true },
-  { wait: 1000 },
+  { wait: 600 },
 ];
 
 function Reading() {

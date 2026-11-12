@@ -17,7 +17,7 @@ const shares = [
   [90, 30, 5],
   [100, 65, 15],
 ];
-const steps = [900, 900, 1500, 350, 700, 800, 800, 800];
+const steps = [540, 540, 900, 210, 420, 480, 480, 480];
 
 /** The step of the batch's upload: the files done, each file's share, and the bars' round. */
 export function useBatch() {

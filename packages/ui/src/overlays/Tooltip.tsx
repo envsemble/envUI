@@ -11,7 +11,6 @@ import {
   useId,
   useLayoutEffect,
   useRef,
-  useState,
   type AriaAttributes,
   type ComponentPropsWithoutRef,
   type ReactElement,
@@ -20,13 +19,14 @@ import {
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { hoverDetailClass, isTextTrigger } from '../internal/popup/hoverDetail.js';
+import { hoverDetailClass, isTextTrigger } from '../internal/trigger/hoverDetail.js';
 import { setRef } from '../internal/react/setRef.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import {
   HoverCardTriggerContext,
   isTriggerOwner,
   markTooltip,
-} from '../internal/popup/triggerOwner.js';
+} from '../internal/trigger/triggerOwner.js';
 import {
   TooltipDescribesContext,
   TooltipNestingContext,
@@ -319,13 +319,15 @@ function TooltipTrigger({
   // closes that popup and the tooltip doesn't cover it.
   const expanded = isExpanded(trigger);
   const popupId = `${useId()}-tooltip`;
-  const [ownOpen, setOwnOpen] = useState(defaultOpen);
-  if (ownOpen && expanded) setOwnOpen(false);
-  const open = (controlledOpen ?? ownOpen) && !expanded;
-  function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
-    if (controlledOpen === undefined) setOwnOpen(next);
-    onOpenChange?.(next, { reason });
-  }
+  const [openState, setOpen, keepOwn] = useControllableState({
+    value: controlledOpen,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
+  // A tooltip that keeps its own state closes as the popup opens, rather than coming back as it
+  // closes.
+  if (openState && expanded) keepOwn(false);
+  const open = openState && !expanded;
   const portal = usePortalContainer();
   // The tooltip takes the text direction at its trigger, the control or its wrapper.
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -369,7 +371,7 @@ function TooltipTrigger({
           if (next && !isDisabled) setName(accessibleName(triggerRef.current) ?? ownName(trigger));
           // Base UI's tooltip reasons are a popover's, and disabled for a root it disables, which
           // this tooltip never does: a control that becomes disabled gets a fresh root (key).
-          setOpen(next, details.reason as PopoverOpenChangeReason);
+          setOpen(next, { reason: details.reason as PopoverOpenChangeReason });
         })}
       >
         <BaseTooltip.Trigger

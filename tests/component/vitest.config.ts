@@ -4,8 +4,9 @@ import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import react from '@vitejs/plugin-react';
 import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
-import { commands } from './Commands.ts';
-import { ShardByDuration } from './ShardByDuration.ts';
+import { commands } from './support/Commands.ts';
+import { ShardByDuration } from './support/ShardByDuration.ts';
+import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 /**
  * The library's component tests: each fixture mounted straight into a real browser page, with no
@@ -31,7 +32,7 @@ const touchFiles = readdirSync(folder)
   .map((file) => `tests/component/${file}`);
 
 export default defineConfig({
-  root: fileURLToPath(new URL('../..', import.meta.url)),
+  root: repositoryRoot,
   plugins: [tokensVitePlugin(), react()],
   resolve: {
     conditions: ['envui-source', 'module', 'browser', 'development|production'],
@@ -64,7 +65,7 @@ export default defineConfig({
   },
   test: {
     include: ['tests/component/**/*.test.tsx'],
-    setupFiles: ['tests/component/Setup.ts'],
+    setupFiles: ['tests/component/support/Setup.ts'],
     tags: [
       { name: 'engines', description: 'Depends on the engine: also runs in Firefox and WebKit' },
       { name: 'a11y', description: 'The accessibility scan, which `npm run test:a11y` runs' },

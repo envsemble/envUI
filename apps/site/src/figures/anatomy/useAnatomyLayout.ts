@@ -6,7 +6,7 @@
  * apart to make room for the text under each one (spreadItems).
  */
 import { useLayoutEffect, useState, type RefObject } from 'react';
-import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
+import type { AnatomyLegendItem } from '../../documentation/DocumentationTypes';
 import { remeasure, type Change } from '../../shared/Remeasure';
 import { labelWidths, measureParts, measureVariantItems, sizesOfUses } from './MeasureAnatomy';
 import { placeCallouts, type Callout } from './PlaceCallouts';

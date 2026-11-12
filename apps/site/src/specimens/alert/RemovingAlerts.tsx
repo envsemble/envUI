@@ -13,17 +13,17 @@ import { MotionStage } from '../../figures/MotionStage';
 const script: PointerStep[] = [
   // A cue first, so the wait after it is kept whole.
   { cue: 'start' },
-  { wait: 1600 },
+  { wait: 960 },
   { cue: 'synced' },
-  { wait: 900 },
+  { wait: 540 },
   { to: '.env-alert .env-icon-button', duration: 0 },
-  { wait: 500 },
-  { click: true },
-  { wait: 500 },
-  { leave: true },
-  { wait: 1000 },
-  { cue: 'again' },
   { wait: 300 },
+  { click: true },
+  { wait: 300 },
+  { leave: true },
+  { wait: 600 },
+  { cue: 'again' },
+  { wait: 180 },
 ];
 
 function Removing() {

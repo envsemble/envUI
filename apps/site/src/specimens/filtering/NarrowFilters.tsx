@@ -14,23 +14,23 @@ const show = '.env-sheet .env-button[data-variant="primary"]';
  * filters sit in the toolbar, and narrows again.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: filters, x: 0.5, y: 2.4 },
   { to: filters, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { to: show, x: 0.5, y: 0.55, duration: 600 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 500 },
-  { leave: true },
   { wait: 300 },
+  { leave: true },
+  { wait: 180 },
   { cue: 'wide' },
   // The frame's travel and its hold at 44 rem, then the way back and a moment at 24 rem.
-  { wait: 5300 },
+  { wait: 3180 },
   { cue: 'narrow' },
-  { wait: 4300 },
+  { wait: 2580 },
 ];
 
 function Sweeping() {

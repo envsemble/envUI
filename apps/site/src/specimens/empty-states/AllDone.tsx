@@ -12,20 +12,20 @@ const approve = '.env-list-item:first-child .env-button';
  * reviews waiting, with what comes next. Then the example starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: approve, x: 0.5, y: 2.4 },
   { to: approve, x: 0.5, y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: approve, x: 0.5, y: 0.6, duration: 250 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 2200 },
+  { wait: 1320 },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Approving() {

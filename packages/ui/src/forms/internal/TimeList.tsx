@@ -141,9 +141,9 @@ export function TimeList({
   );
   const periods = [0, 1].map((period): Entry => ({
     value: period,
-    label: clock.periodLabels[period]!,
+    label: clock.periodLabels[period],
     disabled: !overlaps(period * 720, period * 720 + 719, min, max),
-    keys: [clock.periodLabels[period]!.toLocaleLowerCase(shownLocale), period ? 'p' : 'a'],
+    keys: [clock.periodLabels[period].toLocaleLowerCase(shownLocale), period ? 'p' : 'a'],
   }));
 
   const columns: Record<

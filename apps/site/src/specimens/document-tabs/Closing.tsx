@@ -16,17 +16,17 @@ const tab = (index: number) =>
  * and the tab is back.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: `${tab(2)} .env-document-tabs-tab`, x: 0.5, y: 1.8 },
   { to: `${tab(2)} .env-document-tabs-tab`, x: 0.5, y: 0.6, duration: 400 },
-  { wait: 1000 },
+  { wait: 600 },
   { to: `${tab(1)} .env-document-tabs-close`, x: 0.5, y: 0.5, duration: 600 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Closing() {

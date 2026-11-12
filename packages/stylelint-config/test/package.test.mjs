@@ -3,7 +3,7 @@ import { rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { installAsPacked, runNode } from '../../../tests/support/Npm.mjs';
+import { installAsPacked, runNode } from '../../../tests/support/Npm.ts';
 
 let packed;
 

@@ -13,7 +13,7 @@ import { IconClose } from '../icons/Close.js';
 import { IconButton } from './Button.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { Spinner } from '../feedback/Spinner.js';
-import { DialogBackdrop, OverlayTheme } from '../internal/popup/DialogParts.js';
+import { DialogBackdrop, OverlayTheme } from '../internal/dialog/DialogParts.js';
 import type { DialogOpenChangeReason } from '../overlays/Dialog.js';
 import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
 import {

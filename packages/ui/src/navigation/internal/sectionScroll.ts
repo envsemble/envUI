@@ -26,7 +26,7 @@ export function readSections(
   elements: readonly HTMLElement[],
   doc: Document,
 ): { sections: SectionPosition[]; view: ScrollView } {
-  const scroller = scrollerOf(elements[0]!);
+  const scroller = scrollerOf(elements[0]);
   const scrolling = scroller ?? doc.scrollingElement ?? doc.documentElement;
   const padding =
     parseFloat(getComputedStyle(scroller ?? doc.documentElement).scrollPaddingTop) || 0;

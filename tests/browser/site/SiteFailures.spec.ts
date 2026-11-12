@@ -1,8 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteDevUrl } from '../helpers/Servers';
-import { moduleFiles, requireSite, serveSite, siteUrl } from '../helpers/HostedSite';
+import { siteDevUrl } from '../support/Servers';
+import { moduleFiles, requireSite, serveSite, siteUrl } from '../support/HostedSite';
 import { displayStorageKeys } from '../../../apps/site/src/display/DisplayStorage';
-import { goTo } from '../helpers/SiteSpecHelpers';
+import { goTo } from '../support/SiteSpecHelpers';
 
 /**
  * Opens the overview of the hosted build, then the Button page with every file under /assets/ that
@@ -14,7 +14,7 @@ import { goTo } from '../helpers/SiteSpecHelpers';
 async function openFailingButtonPage(page: Page) {
   // The page's view and content, which a failure would take the whole page down with, arrive.
   const loaded = new Set([
-    ...moduleFiles('src/pages/CataloguePages.tsx'),
+    ...moduleFiles('src/pages/catalogue/CataloguePages.tsx'),
     ...moduleFiles('src/generated/pages/button.json'),
   ]);
   let state: 'opening' | 'failing' | 'assets' | 'up' = 'opening';
@@ -105,7 +105,7 @@ test("in the hosted build, a pre-rendered page whose view can't load says so in 
 }) => {
   requireSite();
   // The page arrives pre-rendered, but the module that renders it does not.
-  const [view] = moduleFiles('src/pages/CataloguePages.tsx');
+  const [view] = moduleFiles('src/pages/catalogue/CataloguePages.tsx');
   await serveSite(page, { failing: (pathname) => pathname === view, failure: 'missing' });
   await page.goto(`${siteUrl}/components/button`);
   const main = page.getByRole('main');
@@ -237,7 +237,7 @@ test('an example that fails to render says so in place, and the rest of the page
 test('a page that fails to render says so, and the navigation leads to the others', async ({
   page,
 }) => {
-  await page.route('**/src/pages/Overview.tsx', (route) =>
+  await page.route('**/src/pages/catalogue/Overview.tsx', (route) =>
     route.fulfill({
       contentType: 'text/javascript',
       body: "export function Overview() { throw new Error('Broken page'); }",
@@ -267,7 +267,7 @@ test('a page that fails to render says so, and the navigation leads to the other
 test('a page that fails after a press takes the focus it dropped, and leads to the overview', async ({
   page,
 }) => {
-  await breakOnPress(page, '**/src/pages/Catalogue.tsx', 'Catalogue');
+  await breakOnPress(page, '**/src/pages/catalogue/Catalogue.tsx', 'Catalogue');
   await page.goto(`${siteDevUrl}/components`);
   const main = page.getByRole('main');
   const press = main.getByRole('button', { name: 'Break', exact: true });

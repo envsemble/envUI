@@ -13,22 +13,22 @@ const cancel = 'button[type="submit"] + .env-button';
  * Cancel: the saved name comes back and the badge goes. Then the section starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: name, x: 0.85, y: 2.2 },
   { to: name, x: 0.85, y: 0.5, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { erase: 4, into: name, every: 110 },
   { type: 'Patel', into: name, every: 120 },
-  { wait: 1100 },
+  { wait: 660 },
   { to: cancel, x: 0.5, y: 0.6, duration: 700 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1500 },
+  { wait: 900 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Editing() {

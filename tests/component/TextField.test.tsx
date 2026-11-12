@@ -3,8 +3,8 @@ import { page, type Locator } from 'vitest/browser';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as affixes from '../fixture/Affixes.fixture.tsx';
 import type { FixtureModule } from '../fixture/FixtureMount.tsx';
-import { box, collectErrors, css, keyboard } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, collectErrors, css, keyboard } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 let errors: string[] = [];
 

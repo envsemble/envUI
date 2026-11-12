@@ -5,7 +5,7 @@ import { recordedSize } from '../loading/RecordedSizes';
 import { remeasure } from '../shared/Remeasure';
 import { sitePopupOpen } from '../motion/SitePopup';
 import { press, triggerOf } from './PressTrigger';
-import { flag } from '@envui-internal/internal/flag';
+import { flag } from '../shared/Attributes';
 import { useBrowserStandIns } from '../motion/BrowserStandIns';
 
 /**

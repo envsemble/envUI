@@ -1,5 +1,5 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
-import type { DeviceKind } from '@docs-model/DocumentationTypes';
+import type { DeviceKind } from '../../documentation/DocumentationTypes';
 import { arrivedEvent } from '../../loading/useArrival';
 import { remeasure } from '../../shared/Remeasure';
 import type { ScriptReader } from '../FitKind';

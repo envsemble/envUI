@@ -23,15 +23,15 @@ const action = '.env-button';
 
 /** Releases the work in review with its button, then reopens it, as it began. */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: action },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1600 },
+  { wait: 960 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 /**

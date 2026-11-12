@@ -23,7 +23,7 @@ import {
   usePortalContainer,
 } from '../internal/popup/PortalContainerContext.js';
 import { isRightToLeft } from '../internal/dom/direction.js';
-import { useOpenState } from '../internal/popup/useOpenState.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 
 /** The Base UI parts of a context menu's popup. */
 const contextMenuParts = {
@@ -171,7 +171,11 @@ function WindowContextMenu({
   ref,
   style,
 }: ContextMenuProps) {
-  const [open, setOpenState] = useOpenState({ open: controlledOpen, onOpenChange });
+  const [open, setOpenState] = useControllableState({
+    value: controlledOpen,
+    defaultValue: false,
+    onChange: onOpenChange,
+  });
   const portal = usePortalContainer();
   const [target, setTarget] = useState<Element | null>(null);
   const [keyboardAnchor, setKeyboardAnchor] = useState<ReturnType<typeof elementAnchor> | null>(
@@ -290,7 +294,11 @@ function ContainedContextMenu({
   style,
 }: ContextMenuProps) {
   const portal = usePortalContainer();
-  const [open, setOpenState] = useOpenState({ open: controlledOpen, onOpenChange });
+  const [open, setOpenState] = useControllableState({
+    value: controlledOpen,
+    defaultValue: false,
+    onChange: onOpenChange,
+  });
   const [target, setTarget] = useState<Element | null>(null);
   const [anchor, setAnchor] = useState<{
     at: ReturnType<typeof pointOnElement> | ReturnType<typeof elementAnchor>;

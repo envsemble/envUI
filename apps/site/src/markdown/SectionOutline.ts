@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { flag } from '@envui-internal/internal/flag';
+import { flag } from '../shared/Attributes';
 
 /**
  * Whether a section of a page renders as its outline alone while it waits its turn to show

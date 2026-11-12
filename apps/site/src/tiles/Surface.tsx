@@ -13,7 +13,7 @@ const radii: SurfaceRadius[] = ['xl', 'sm', 'none'];
  * each change drawn at once, as a Surface draws a change of its props.
  */
 export default function SurfaceTile() {
-  const radius = radii[useTimeline([2000, 2000, 2000])];
+  const radius = radii[useTimeline([1200, 1200, 1200])];
   return (
     <Surface
       background="default"

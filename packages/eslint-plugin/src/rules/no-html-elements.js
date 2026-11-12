@@ -2,6 +2,7 @@ import {
   documentationUrl,
   findAttribute,
   importedComponent,
+  insideAttribute,
   isFunction,
   isIntrinsic,
   jsxName,
@@ -15,6 +16,42 @@ import {
   walk,
 } from '../utilities.js';
 
+/**
+ * A component to render instead, and for an alternative, when to.
+ * @typedef {{ component: string, when?: string }} Suggestion
+ */
+
+/**
+ * An attribute's condition: true when it is present, false when it is absent, or a list of static
+ * values, compared case-insensitively, where null stands for an absent attribute and a trailing `*`
+ * matches a prefix. A condition on absence is not met while the element spreads props, which may
+ * supply the attribute.
+ * @typedef {boolean | (string | null)[]} AttributeCondition
+ */
+
+/**
+ * An entry of `data/elements.json`, of a widget role or of an element.
+ * @typedef {object} Entry
+ * @property {string} id What the rule's `allow` option names the entry by.
+ * @property {string} [role] The role a `role` attribute names, on any JSX element.
+ * @property {string[]} [owners] For a role, the envUI components that render it themselves, so that
+ *   a role on one refines its own, as Popover renders a dialog; the suggested components count too.
+ * @property {string} [element] The element's tag, or `*` for any element but those of `except`.
+ * @property {string[]} [except] For `*`, the tags it leaves.
+ * @property {Record<string, AttributeCondition>} [attributes] What the element's attributes must
+ *   meet for the entry to match.
+ * @property {Suggestion[] | null} use The component to render and its alternatives; null lets
+ *   the element pass.
+ * @property {string[]} [import] The bindings to import, by default the namespaces of `use`.
+ * @property {string} [from] The entry point they come from, by default `@envsemble/envui`.
+ * @property {string} [describe] How the message names what was found, `{tag}` standing for its tag.
+ * @property {string} [note] A sentence the message adds.
+ */
+
+/**
+ * The table: roles, checked first, then elements in order, the first that matches deciding.
+ * @type {{ roles: Entry[], elements: Entry[] }}
+ */
 const { roles, elements } = readData('elements.json');
 const rolesByName = new Map(roles.map((entry) => [entry.role, entry]));
 const knownIds = new Set([...roles, ...elements].flatMap((entry) => [entry.id, entry.element]));
@@ -48,7 +85,7 @@ function valueMatches(value, item) {
   return expected.endsWith('*') ? text.startsWith(expected.slice(0, -1)) : text === expected;
 }
 
-/** Whether an element meets an entry's attribute conditions; see the comment in elements.json. */
+/** Whether an element meets an entry's attribute conditions, as AttributeCondition says. */
 function attributesMatch(element, conditions = {}) {
   const spreads = spreadsProps(element);
   return Object.entries(conditions).every(([name, condition]) => {
@@ -176,12 +213,7 @@ export default {
     const allowed = new Set(allow);
     const isAllowed = (entry) => allowed.has(entry.id) || allowed.has(entry.element);
     const insideRenderProp = (node) =>
-      context.sourceCode
-        .getAncestors(node)
-        .some(
-          (ancestor) =>
-            ancestor.type === 'JSXAttribute' && renderProps.includes(jsxName(ancestor.name)),
-        );
+      insideAttribute(sourceCode, node, (name) => renderProps.includes(name));
 
     function report(node, entry, found) {
       const [primary, ...alternatives] = entry.use;
@@ -328,7 +360,7 @@ export default {
         const entry = elements.find(
           (candidate) =>
             (candidate.element === name ||
-              (candidate.element === '*' && !candidate.except.includes(name))) &&
+              (candidate.element === '*' && !(candidate.except ?? []).includes(name))) &&
             attributesMatch(node, candidate.attributes),
         );
         if (!entry || entry.use === null || isAllowed(entry) || insideRenderProp(node)) return;

@@ -7,9 +7,8 @@ import { MotionStage } from '../../figures/MotionStage';
  * spinner's place; the file is opened again, and the frame spins again.
  */
 function Opening() {
-  const step = useTimeline([6000, 6000]);
-  // Each step opens the file anew, which renders it again: 2 s spinning, then its page a while,
-  // the timeline's steps being cut to 0.6 of what they are written as.
+  const step = useTimeline([3600, 3600]);
+  // Each step opens the file anew, which renders it again: 2 s spinning, then its page a while.
   return <LoadingPreview key={step} />;
 }
 

@@ -9,19 +9,19 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
  * the seats.
  */
 const script: PointerStep[] = [
-  { wait: 700 },
+  { wait: 420 },
   { to: '.env-button', x: 0.5, y: 0.6 },
-  { wait: 450 },
+  { wait: 270 },
   { click: true },
-  { wait: 1600 },
+  { wait: 960 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 3400 },
+  { wait: 2040 },
   { cue: 'fade' },
-  { wait: 400 },
+  { wait: 240 },
   { cue: 'again' },
-  { wait: 300 },
+  { wait: 180 },
 ];
 
 /** The round the figure is in, counted as it is drawn anew, and whether it is fading out. */

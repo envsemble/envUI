@@ -12,22 +12,22 @@ const samLee = '.env-menu-item:nth-child(1 of .env-menu-item)';
  * count follows. Then it adds the filter back through Add filter, and the list narrows again.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: token, x: 0.88, y: 2.6 },
   { to: token, x: 0.88, y: 0.5, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { to: add, x: 0.5, y: 0.55, duration: 500 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { to: samLee, x: 0.35, y: 0.5, duration: 400 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 function Removing() {

@@ -2,7 +2,7 @@
  * Where an anatomy figure's callouts are placed (useAnatomyLayout.ts), from what is measured of its
  * subject (MeasureAnatomy.ts): a numbered callout on each part, on the side the part is nearest to,
  * spread so that none overlap. A variants figure's names are placed in PlaceVariants.ts. Nothing
- * here reads the page (tests/site/PlaceCallouts.test.mjs).
+ * here reads the page (tests/site/PlaceCallouts.test.ts).
  */
 import { inside, union, type Box } from '../../fit/FitGeometry';
 import { pixelTolerance } from '../../shared/Remeasure';

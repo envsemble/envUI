@@ -5,7 +5,7 @@
  * A tile that holds its view (StageScript.holdsView, FitKind.ts), such as a picker resting open,
  * is framed once, on its still, which is written as its largest state. The view is placed so that
  * what the script acts on shows whole from the top of the picture, above the fade at the crop's
- * bottom, with the cursor on it. Nothing here reads the page, so tests/site/Fit.test.mjs tests it
+ * bottom, with the cursor on it. Nothing here reads the page, so tests/site/Fit.test.ts tests it
  * directly.
  */
 import { cursorRoom, inset, join, scaleTolerance, type Box } from './FitGeometry';

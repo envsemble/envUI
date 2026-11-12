@@ -5,8 +5,8 @@ import * as datePicker from '../fixture/DatePicker.fixture.tsx';
 import * as dialogs from '../fixture/Dialog.fixture.tsx';
 import * as menus from '../fixture/Menu.fixture.tsx';
 import * as toasts from '../fixture/Toast.fixture.tsx';
-import { addStyle, box, css, mouse, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { addStyle, box, css, mouse, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 // The env-window container: the outermost theme boundary takes the width its context gives it,
 // so it never collapses where its parent sizes to content, nested boundaries are no containers,

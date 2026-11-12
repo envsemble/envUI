@@ -9,9 +9,9 @@ const option = (index: number) =>
 /** Chooses a density: on to its option, a moment, and a click. */
 const choose = (index: number): PointerStep[] => [
   { to: option(index), x: 0.5, y: 0.6, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1000 },
+  { wait: 600 },
 ];
 
 /*
@@ -19,9 +19,9 @@ const choose = (index: number): PointerStep[] => [
  * breathe, while the buttons in them keep their height.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: option(2), x: 0.5, y: 0.6 },
   { wait: 300 },
+  { to: option(2), x: 0.5, y: 0.6 },
+  { wait: 180 },
   ...choose(1),
   ...choose(2),
   ...choose(3),
@@ -29,7 +29,7 @@ const script: PointerStep[] = [
   ...choose(3),
   ...choose(2),
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Choosing() {

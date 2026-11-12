@@ -15,7 +15,7 @@ const layouts = [
  * them above.
  */
 function Layouts() {
-  const step = useTimeline([1800, 1800, 1800]);
+  const step = useTimeline([1080, 1080, 1080]);
   const { layout, name } = layouts[step];
   return (
     <>

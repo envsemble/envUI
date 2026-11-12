@@ -44,13 +44,13 @@ const presses: readonly Press[] = [
   'back',
 ];
 const keyboardScript: PointerStep[] = [
-  { wait: 900 },
+  { wait: 540 },
   ...presses.flatMap((press, index): PointerStep[] => [
     { cue: press },
-    { wait: press === 'space' || presses[index + 1] === 'space' ? 1000 : 1150 },
+    { wait: press === 'space' || presses[index + 1] === 'space' ? 600 : 690 },
   ]),
   { cue: 'done' },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 /** A small form the keyboard moves through, its focus ring walking, with each key named. */

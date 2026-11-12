@@ -10,23 +10,23 @@ import { MotionStage, rowsAnd } from '../../figures/MotionStage';
  * year and closes the popup with Esc.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-date-picker-control', x: 0.4, y: 0.55 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: '.env-month-picker-next', duration: 550 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1900 },
+  { wait: 1140 },
   { to: '.env-month-picker-previous', duration: 600 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { key: 'Escape', on: '.env-month-picker-popup' },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Paging() {

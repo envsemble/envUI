@@ -5,7 +5,7 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage, rowsAnd } from '../../figures/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 import { Renew } from '../../motion/Renew';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 
 const field = '.env-date-picker-control';
 const hours = '.env-time-list-column[data-part="hour"]';
@@ -43,24 +43,24 @@ function startHour() {
 function scriptOf(row: number, from: number): PointerStep[] {
   const rows = lastHour - from;
   return [
-    { wait: 400 },
+    { wait: 240 },
     { to: field, x: 0.4, y: 2 },
     { to: field, x: 0.4, y: 0.5, duration: 450 },
-    { wait: 200 },
+    { wait: 120 },
     { click: true },
-    { wait: 900 },
+    { wait: 540 },
     { to: hours, x: 0.5, y: 0.5, duration: 500 },
-    { wait: 200 },
+    { wait: 120 },
     { wheel: rows * row, duration: Math.max(600, Math.abs(rows) * 280) },
-    { wait: 600 },
+    { wait: 360 },
     { wheel: row, duration: 500 },
-    { wait: 1700 },
+    { wait: 1020 },
     { cue: 'escape' },
     { key: 'Escape', on: '.env-date-picker-popup' },
     { leave: true },
-    { wait: 1400 },
+    { wait: 840 },
     { cue: 'renew' },
-    { wait: 600 },
+    { wait: 360 },
   ];
 }
 

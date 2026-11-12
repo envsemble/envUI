@@ -11,8 +11,8 @@ import {
   mouse,
   nextFrames,
   shown,
-} from './Browser.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** Computed colors of theme tokens, read beside an element so they resolve in its theme. */
 function tokenColors(locator: Locator, tokens: string[]) {

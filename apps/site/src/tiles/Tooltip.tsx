@@ -20,15 +20,15 @@ const button = (index: number) => `.env-icon-button:nth-child(${index} of .env-i
  */
 const script: PointerStep[] = [
   { to: button(2), y: 0.6 },
-  { wait: 1500 },
+  { wait: 900 },
   { to: button(2), y: 1.1, duration: 200 },
-  { wait: 450 },
+  { wait: 270 },
   { to: button(3), y: 0.6, duration: 300 },
-  { wait: 2000 },
+  { wait: 1200 },
   { to: button(3), y: 1.1, duration: 200 },
-  { wait: 450 },
+  { wait: 270 },
   { to: button(2), y: 0.6, duration: 300 },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /** How long the pointer rests on a button before its tooltip opens. */

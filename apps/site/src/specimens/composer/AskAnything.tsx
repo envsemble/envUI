@@ -12,24 +12,24 @@ const field = '.env-composer-input';
  * runs, then turns back. The example is drawn anew at the end, which clears what it says it sent.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: field, x: 0.3, y: 0.5 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   {
     type: 'Can you summarise the pricing research and list the open questions?',
     into: field,
     every: 55,
   },
-  { wait: 800 },
+  { wait: 480 },
   { key: 'Enter', on: field },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
   // The reply runs for 4 s.
-  { wait: 8200 },
+  { wait: 4920 },
   { cue: 'again' },
-  { wait: 300 },
+  { wait: 180 },
 ];
 
 function Asking() {

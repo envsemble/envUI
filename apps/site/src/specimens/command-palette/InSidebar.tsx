@@ -12,26 +12,26 @@ const input = '.env-command-palette-input';
  * Then Ctrl+K, ⌘K on Apple platforms, opens it again from the sidebar, and Esc closes it.
  */
 const scriptFor = (modifier: ModifierKey['key']): PointerStep[] => [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-navigation-drawer-header .env-button', x: 0.4, y: 0.6 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
   // Off the palette, which opens over the sidebar, so no option shows the pointer's hover.
   { leave: true },
-  { wait: 1400 },
+  { wait: 840 },
   { cue: 'escape' },
   { key: 'Escape', on: input },
-  { wait: 1300 },
+  { wait: 780 },
   { cue: 'shortcut' },
   { keyDown: modifier, on: '.env-navigation-drawer' },
   { key: 'k', on: '.env-navigation-drawer' },
   { keyUp: modifier, on: '.env-navigation-drawer' },
-  { wait: 1600 },
+  { wait: 960 },
   { cue: 'escape' },
   { key: 'Escape', on: input },
-  { wait: 1100 },
+  { wait: 660 },
   { cue: 'none' },
-  { wait: 300 },
+  { wait: 180 },
 ];
 
 function Opening() {

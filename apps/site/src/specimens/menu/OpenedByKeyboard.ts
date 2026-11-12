@@ -11,16 +11,16 @@ const trigger = '.env-icon-button';
  * step.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { focus: trigger },
-  { wait: 700 },
+  { wait: 420 },
   { cue: 'enter' },
-  { wait: 2400 },
+  { wait: 1440 },
   { cue: 'escape' },
   { key: 'Escape', on: '.env-menu' },
-  { wait: 700 },
+  { wait: 420 },
   { cue: 'still' },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /**

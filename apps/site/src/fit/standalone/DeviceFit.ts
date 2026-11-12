@@ -4,9 +4,9 @@
  * shows (the view), down and across the screen, so that what the figure needs shows whole and the
  * cut edges fall between words. Boxes are in the device's own px, from its top left corner.
  * DeviceMeasure.ts reads what they are decided from; nothing here reads the page, so
- * tests/site/Fit.test.mjs tests it directly.
+ * tests/site/Fit.test.ts tests it directly.
  */
-import type { DeviceKind } from '@docs-model/DocumentationTypes';
+import type { DeviceKind } from '../../documentation/DocumentationTypes';
 import type { Box } from '../FitGeometry';
 import { pixelTolerance } from '../../shared/Remeasure';
 

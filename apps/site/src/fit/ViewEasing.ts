@@ -4,7 +4,7 @@
  * duration with the standard easing. Only this file writes `view`; the fit asks it to move through
  * glideTo and settle.
  */
-import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
+import { prefersReducedMotion } from '../shared/ReducedMotion';
 import { rootEasingFunction, rootMotionDuration } from '../shared/RootMotionTokens';
 import { place } from './FitDraw';
 import type { Seen } from './FitMeasure';

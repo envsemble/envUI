@@ -10,15 +10,15 @@ const card = (index: number) => `.env-card:nth-child(${index} of .env-card)`;
  * takes the hover, as it is one link.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: card(1), x: 0.62, y: 0.7 },
-  { wait: 900 },
+  { wait: 540 },
   { to: card(2), x: 0.88, y: 0.25, duration: 550 },
-  { wait: 900 },
+  { wait: 540 },
   { to: card(3), x: 0.35, y: 0.8, duration: 550 },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Hovering() {

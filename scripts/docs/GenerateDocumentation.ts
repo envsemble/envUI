@@ -16,15 +16,17 @@
 // frontmatter), PageReader.ts (a page read and checked), DocumentationReader.ts (every page, its
 // index and links), LibraryVersions.ts (the versions a page names) and Compiler.ts (the props
 // tables and the Markdown the package ships); where things are is in scripts/RepositoryPaths.ts.
-// This file writes the catalogue's data and runs as the command; it exports what the modules did
-// as one file.
+// This file writes the catalogue's data and runs as the command.
 import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import type { DocumentationEntry, DocumentationSummary } from './model/DocumentationTypes.ts';
+import type {
+  DocumentationEntry,
+  DocumentationSummary,
+} from '../../apps/site/src/documentation/DocumentationTypes.ts';
 import { marked } from 'marked';
 import { headingsOf, plainText } from './MarkdownHeadings.ts';
-import { exportSection, headingSlugger } from './model/SearchAnchors.ts';
-import { providesHeadings } from './model/CatalogueContent.ts';
+import { exportSection, headingSlugger } from '../../apps/site/src/documentation/SearchAnchors.ts';
+import { providesHeadings } from '../../apps/site/src/documentation/CatalogueContent.ts';
 import { writeSearchIndex } from '../site/BuildSearchIndex.ts';
 import { documentationDirectory, generatedDocumentationFile } from '../RepositoryPaths.ts';
 import { pageKindOf, readProps } from './PageStructure.ts';
@@ -32,38 +34,6 @@ import { readDocumentation } from './DocumentationReader.ts';
 import { writeIfChanged } from '../build/GeneratedFiles.ts';
 import { documentedExports } from './Compiler.ts';
 import { readMessages, stringsOf } from './Messages.ts';
-
-export {
-  documentationDirectory,
-  examplesDirectory,
-  specimensDirectory,
-} from '../RepositoryPaths.ts';
-export { libraryVersions } from './LibraryVersions.ts';
-export {
-  codeSubsections,
-  exampleRoles,
-  examplesOf,
-  frontmatterSchema,
-  guideExportStatus,
-  importMarkdown,
-  intents,
-  pageKindOf,
-  pageSchemas,
-  pageSections,
-  readProps,
-  splitFrontmatter,
-} from './PageStructure.ts';
-export { fenceFor, isPropsTable } from './MarkdownBlocks.ts';
-export { readPartNames } from './validation/Legends.ts';
-export { readDocumentation } from './DocumentationReader.ts';
-export {
-  compileDocument,
-  compileDocumentation,
-  documentedExports,
-  exampleSource,
-  packageDocumentation,
-  renderProps,
-} from './Compiler.ts';
 
 /** Each page's content for the catalogue: generated/pages/<id>.json beside generatedDocumentationFile. */
 const pagesDirectory = resolve(dirname(generatedDocumentationFile), 'pages');
@@ -242,7 +212,7 @@ export function generateDocumentation() {
       })),
     };
   });
-  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '@docs-model/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
+  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '../documentation/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
   writeIfChanged(generatedDocumentationFile, source);
   const contents = new Map(
     entries.map((entry) => {

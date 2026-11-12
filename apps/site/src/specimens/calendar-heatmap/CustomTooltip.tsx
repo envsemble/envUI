@@ -12,17 +12,17 @@ const day = (row: number, week: number) =>
  * day, and on to the next week, and the tooltip follows; then it leaves, and the tooltip goes.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: day(2, 8) },
-  { wait: 1300 },
+  { wait: 780 },
   { to: day(3, 8), duration: 250 },
-  { wait: 900 },
+  { wait: 540 },
   { to: day(4, 8), duration: 250 },
-  { wait: 900 },
+  { wait: 540 },
   { to: day(4, 9), duration: 300 },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Hovering() {

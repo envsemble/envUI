@@ -29,7 +29,7 @@ const block: CSSProperties = {
 
 /** Up the scale a step at a time, from 1 to 9, and back down to 1. */
 const order: SpaceStep[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2];
-const steps = order.map((step) => (step === 1 || step === 9 ? 1300 : 700));
+const steps = order.map((step) => (step === 1 || step === 9 ? 780 : 420));
 
 function Stepping() {
   const step = order[useTimeline(steps)];

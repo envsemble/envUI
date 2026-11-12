@@ -8,17 +8,17 @@ const option = (index: number) =>
 
 /* The pointer chooses Yearly, and the price rolls up; then Monthly, and it rolls back down. */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: option(2), x: 0.45, y: 0.55 },
-  { wait: 350 },
-  { click: true },
-  { wait: 1700 },
-  { to: option(1), x: 0.55, y: 0.55, duration: 450 },
   { wait: 300 },
+  { to: option(2), x: 0.45, y: 0.55 },
+  { wait: 210 },
   { click: true },
-  { wait: 1300 },
+  { wait: 1020 },
+  { to: option(1), x: 0.55, y: 0.55, duration: 450 },
+  { wait: 180 },
+  { click: true },
+  { wait: 780 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Choosing() {

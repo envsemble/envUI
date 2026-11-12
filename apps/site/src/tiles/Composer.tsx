@@ -12,21 +12,21 @@ const input = '.env-composer-input';
  * send button is a stop button; then it is a send button again.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: input, x: 0.3 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 200 },
+  { wait: 120 },
   { type: 'Thanks!', into: input, every: 120 },
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-composer-action', duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { to: input, x: 0.45, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { leave: true },
-  { wait: 1200 },
+  { wait: 720 },
 ];
 
 /** A composer with its placeholder and its send button. */

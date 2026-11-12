@@ -21,7 +21,7 @@ interface Metrics {
 const defaultPixels = 16;
 
 function measureTextarea(input: HTMLTextAreaElement): Metrics {
-  const styles = input.ownerDocument.defaultView!.getComputedStyle(input);
+  const styles = (input.ownerDocument.defaultView ?? window).getComputedStyle(input);
   const minimumHeight = Number.parseFloat(styles.minHeight) || 0;
   const maximumHeight = Number.parseFloat(styles.maxHeight);
   return {

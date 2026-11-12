@@ -15,16 +15,16 @@ const refresh = '.env-top-bar-actions .env-icon-button';
  * shows that it was updated.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: refresh },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
   { cue: 'load' },
-  { wait: 5000 },
+  { wait: 3000 },
   { cue: 'done' },
-  { wait: 2400 },
+  { wait: 1440 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /**

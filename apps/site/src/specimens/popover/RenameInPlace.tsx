@@ -13,27 +13,27 @@ const field = '.env-popover .env-text-field-input';
  * the new name. The example is drawn anew at the end, with its first name.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: field, x: 0.92, y: 0.6, duration: 600 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { erase: 7, into: field, every: 90 },
-  { wait: 250 },
+  { wait: 150 },
   { type: 'brief.md', into: field, every: 120 },
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-popover button[type="submit"]', duration: 600 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1800 },
+  { wait: 1080 },
   { leave: true },
-  { wait: 300 },
+  { wait: 180 },
   { cue: 'again' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Renaming() {

@@ -15,28 +15,28 @@ const choice = (value: string) => `.env-radio:has(input[value="${value}"])`;
  * picks Compact, and the area steps down a scale. Then it puts both back, System and Comfortable.
  */
 const scriptFrom = (other: 'light' | 'dark'): PointerStep[] => [
-  { wait: 500 },
+  { wait: 300 },
   { to: choice(other), x: 0.3, y: 2.5 },
   { to: choice(other), x: 0.3, y: 0.5, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: choice('compact'), x: 0.3, y: 0.5, duration: 600 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
   { cue: 'compact' },
-  { wait: 1500 },
+  { wait: 900 },
   { to: choice('comfortable'), x: 0.3, y: 0.5, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
   { cue: 'comfortable' },
-  { wait: 900 },
+  { wait: 540 },
   { to: choice('system'), x: 0.3, y: 0.5, duration: 600 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1000 },
+  { wait: 600 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Choosing() {

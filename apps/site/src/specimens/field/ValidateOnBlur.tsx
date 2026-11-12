@@ -13,27 +13,27 @@ const field = '.env-field-control';
  * and the error goes. Then the example starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: field, x: 0.3, y: 0.55 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
   { type: 'Northwind Team', into: field, every: 110 },
-  { wait: 400 },
+  { wait: 240 },
   { key: 'Tab', on: field },
-  { wait: 1500 },
+  { wait: 900 },
   { to: field, x: 0.97, y: 0.55, duration: 500 },
-  { wait: 200 },
+  { wait: 120 },
   { press: true },
   { to: field, x: 0.01, y: 0.55, duration: 450 },
   { release: true },
-  { wait: 350 },
+  { wait: 210 },
   { type: 'northwind-team', into: field, every: 100 },
-  { wait: 400 },
+  { wait: 240 },
   { key: 'Tab', on: field },
-  { wait: 1500 },
+  { wait: 900 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Checking() {

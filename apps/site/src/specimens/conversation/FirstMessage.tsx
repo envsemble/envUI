@@ -13,16 +13,16 @@ const suggestion = '[data-env-layout="row"] > .env-button:nth-child(3)';
  * through as the thread fades out over it.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: suggestion, x: 0.5, y: 1.8 },
   { to: suggestion, x: 0.5, y: 0.6, duration: 450 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 3600 },
+  { wait: 2160 },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Asking() {

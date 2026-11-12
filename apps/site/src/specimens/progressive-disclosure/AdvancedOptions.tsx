@@ -12,24 +12,24 @@ const archived = '.env-disclosure-panel .env-checkbox';
  * archived projects, and closes the panel again.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: summary, x: 0.15, y: 2.5 },
   { to: summary, x: 0.15, y: 0.55, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: archived, x: 0.08, y: 0.5, duration: 500 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: summary, x: 0.15, y: 0.55, duration: 550 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 800 },
+  { wait: 480 },
   { leave: true },
   // Closed, the form shows as at the start; drawn anew, unseen, its box is clear again.
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Disclosing() {

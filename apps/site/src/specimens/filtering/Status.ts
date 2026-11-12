@@ -15,30 +15,30 @@ export function statusScript(apply: boolean): PointerStep[] {
   const press: PointerStep[] = apply
     ? [
         { to: '.env-button[data-variant="primary"]', x: 0.5, y: 0.55, duration: 600 },
-        { wait: 200 },
+        { wait: 120 },
         { click: true },
       ]
-    : [{ to: '.env-list', x: 0.7, y: 0.4, duration: 600 }, { wait: 200 }, { wait: 150 }];
+    : [{ to: '.env-list', x: 0.7, y: 0.4, duration: 600 }, { wait: 120 }, { wait: 90 }];
   const pick = (index: number): PointerStep[] => [
     { to: status, x: 0.45, y: 0.55, duration: 450 },
-    { wait: 200 },
+    { wait: 120 },
     { click: true },
-    { wait: 450 },
+    { wait: 270 },
     { to: option(index), x: 0.4, y: 0.5, duration: 350 },
-    { wait: 200 },
+    { wait: 120 },
     { click: true },
-    { wait: 900 },
+    { wait: 540 },
   ];
   return [
-    { wait: 400 },
+    { wait: 240 },
     { to: status, x: 0.45, y: 2.4 },
     ...pick(2),
     ...press,
-    { wait: 1600 },
+    { wait: 960 },
     ...pick(1),
     ...press,
-    { wait: 1200 },
+    { wait: 720 },
     { leave: true },
-    { wait: 400 },
+    { wait: 240 },
   ];
 }

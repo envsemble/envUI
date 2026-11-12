@@ -21,15 +21,15 @@ const input = '.env-command-palette-input';
  * it began.
  */
 const script: PointerStep[] = [
-  { wait: 600 },
+  { wait: 360 },
   { type: 'inv', into: input, every: 220 },
-  { wait: 1200 },
+  { wait: 720 },
   { erase: 3, into: input, every: 120 },
-  { wait: 700 },
+  { wait: 420 },
   { type: 'new', into: input, every: 220 },
-  { wait: 1200 },
+  { wait: 720 },
   { erase: 3, into: input, every: 120 },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 /**
@@ -38,15 +38,15 @@ const script: PointerStep[] = [
  * taller than the stage shows.
  */
 const narrowScript: PointerStep[] = [
-  { wait: 600 },
+  { wait: 360 },
   { type: 'inv', into: input, every: 220 },
-  { wait: 1400 },
+  { wait: 840 },
   { erase: 3, into: input, every: 120 },
-  { wait: 1200 },
+  { wait: 720 },
 ];
 
 /**
- * The tiles' window (Tile.css), with a lower least scale for its popup: a palette with its two
+ * The tiles' window (TileStage.css), with a lower least scale for its popup: a palette with its two
  * commands is taller than a phone's stage at a popup's least.
  */
 export const tileWindow: TileWindow = { popupLeast: 0.7 };

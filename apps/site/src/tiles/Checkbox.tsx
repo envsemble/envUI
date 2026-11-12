@@ -7,22 +7,22 @@ const box = (index: number) =>
 
 /** Checks the second, clears the first, and puts both back. */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: box(2) },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: box(1), duration: 350 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1000 },
+  { wait: 600 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { to: box(2), duration: 350 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /** Two checkboxes, one checked. */

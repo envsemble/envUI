@@ -15,7 +15,7 @@ import {
 } from 'react';
 import { setRef } from '../../internal/react/setRef.js';
 import { useHydrated } from '../../internal/react/useHydrated.js';
-import { useOpenState } from '../../internal/popup/useOpenState.js';
+import { useControllableState } from '../../internal/react/useControllableState.js';
 import { useDirection } from '../../internal/provider/useDirection.js';
 import {
   containedOpenChange,
@@ -96,12 +96,16 @@ export interface PickerFieldProps
 /** The open state of a picker's popup, controlled or not; a disabled or read-only field stays closed. */
 export function usePickerOpen({
   open,
-  defaultOpen,
+  defaultOpen = false,
   onOpenChange,
   disabled = false,
   readOnly = false,
 }: Pick<PickerFieldProps, 'open' | 'defaultOpen' | 'onOpenChange' | 'disabled' | 'readOnly'>) {
-  const [shown, setShown] = useOpenState({ open, defaultOpen, onOpenChange });
+  const [shown, setShown] = useControllableState({
+    value: open,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   function setOpen(next: boolean, reason: PickerOpenChangeReason) {
     if (next && (disabled || readOnly)) return;
     setShown(next, { reason });

@@ -1,8 +1,8 @@
 import { beforeEach, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/Accordion.fixture.tsx';
-import { css, keyboard, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { css, keyboard, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(async () => {
   await commands.emulateMedia({ reducedMotion: 'reduce' });

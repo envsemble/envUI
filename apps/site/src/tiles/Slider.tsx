@@ -10,19 +10,19 @@ const control = '.env-slider-control';
  * back to where it began, and releases.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: control, x: 0.4 },
-  { wait: 500 },
+  { wait: 300 },
   { press: true },
   { to: control, x: 0.7, duration: 750 },
-  { wait: 250 },
+  { wait: 150 },
   { to: control, x: 0.2, duration: 1100 },
-  { wait: 250 },
+  { wait: 150 },
   { to: control, x: 0.4, duration: 700 },
   { release: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /** A slider. */

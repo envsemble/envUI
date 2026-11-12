@@ -10,15 +10,15 @@ const control = '.env-switch-input';
  * turns the switch off again, and they go.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: control, x: 0.5, y: 0.5 },
-  { wait: 450 },
+  { wait: 270 },
   { click: true },
-  { wait: 2200 },
+  { wait: 1320 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Switching() {

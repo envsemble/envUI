@@ -6,11 +6,11 @@ import { MotionStage } from '../../figures/MotionStage';
 
 /* The pointer rests on the current page, cut short, and its tooltip shows the whole name. */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-breadcrumbs-current', x: 0.45, y: 0.55 },
-  { wait: 2800 },
+  { wait: 1680 },
   { leave: true },
-  { wait: 1100 },
+  { wait: 660 },
 ];
 
 function Hovering() {

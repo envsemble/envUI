@@ -11,23 +11,23 @@ const box = (index: number) =>
  * rolls down. It ticks Open again and unticks Done, which brings the count back where it began.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: box(3) },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: box(1), duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: box(3), duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Choosing() {

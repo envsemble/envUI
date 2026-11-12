@@ -18,13 +18,13 @@ const people = [
  * and rests gathered a while before it plays again.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-avatar-group > :first-child' },
-  { wait: 700 },
+  { wait: 420 },
   { to: '.env-avatar-group-overflow', duration: 450 },
-  { wait: 2200 },
+  { wait: 1320 },
   { leave: true },
-  { wait: 2400 },
+  { wait: 1440 },
 ];
 
 /**

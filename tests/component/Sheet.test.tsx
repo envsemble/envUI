@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/Sheet.fixture.tsx';
-import { box, css, keyboard, mouse, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css, keyboard, mouse, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /**
  * The warnings the file's mounts print: the resizable sheet with a CSS length warns as it mounts,

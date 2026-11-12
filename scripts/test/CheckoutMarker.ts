@@ -4,7 +4,7 @@
 // port would silently serve that checkout's code.
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
-import type { PreviewServer, ViteDevServer } from 'vite';
+import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const checkoutPath = '/__envui/checkout';
@@ -26,7 +26,7 @@ export function checkoutId(folder = repositoryRoot) {
 }
 
 /** The Vite plugin that answers the marker on a development or preview server. */
-export function checkoutMarker() {
+export function checkoutMarker(): Plugin {
   const id = checkoutId();
   // Returns nothing: a function returned would be taken for a middleware to add after Vite's.
   const answer = (server: ViteDevServer | PreviewServer) => {
@@ -65,7 +65,7 @@ export function checkoutPort(offset: number, id = checkoutId()) {
 
 /**
  * Picks each server's port and whether to reuse what runs there, and records the ports in the
- * environment, where tests/browser/helpers/Servers.ts and the worker processes read them. A port given in
+ * environment, where tests/browser/support/Servers.ts and the worker processes read them. A port given in
  * the environment is used as it is, and fails when another checkout serves it; a default port held
  * by another checkout or program gives way to this checkout's own.
  */

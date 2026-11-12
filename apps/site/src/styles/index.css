@@ -3,12 +3,12 @@
    figures, and printing comes late. Each sheet lives beside the code it styles; this folder holds
    the site-wide ones. */
 @import './Shell.css';
-@import '../pages/Docs.css';
-@import '../banner/Banners.css';
-@import '../banner/BannerMotifs.css';
+@import '../pages/docs/Docs.css';
+@import '../frame/Banners.css';
+@import '../frame/BannerMotifs.css';
 @import '../figures/Examples.css';
-@import '../pages/Overview.css';
-@import '../figures/foundations/DocsPalette.css';
+@import '../pages/catalogue/Overview.css';
+@import '../figures/foundations/ColorPalette.css';
 @import '../figures/foundations/Foundations.css';
 @import '../specimens/InteractionStates.css';
 @import '../template/Template.css';
@@ -18,18 +18,18 @@
 @import '../loading/Loading.css';
 @import '../navigation/RouteProgress.css';
 @import '../figures/Figures.css';
-@import '../figures/Verdicts.css';
+@import '../figures/VerdictFigure.css';
 @import '../figures/anatomy/Anatomy.css';
 @import '../figures/dev-mode/DocsDevMode.css';
 @import './SiteText.css';
-@import '../figures/Tile.css';
+@import '../figures/TileStage.css';
 @import '../template/Related.css';
 @import '../figures/Gallery.css';
 @import '../figures/AppTile.css';
-@import '../pages/FoundationCatalogue.css';
-@import '../pages/OverviewFan.css';
+@import '../pages/catalogue/FoundationCatalogue.css';
+@import '../pages/catalogue/OverviewFan.css';
 @import '../template/WhenToUse.css';
-@import '../pages/Changelog.css';
+@import '../pages/docs/Changelog.css';
 @import './Print.css';
 @import '../motion/ThemeFade.css';
 @import '../display/DisplaySettings.css';

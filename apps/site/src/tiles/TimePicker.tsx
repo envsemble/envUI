@@ -16,34 +16,34 @@ const row = (part: string, value: string) =>
  * opens it again, as it began.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: row('hour', '8') },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: row('minute', '15'), duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: row('hour', '8'), duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { wheel: 30, duration: 300 },
-  { wait: 700 },
+  { wait: 420 },
   { to: row('minute', '15'), duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { wheel: 30, duration: 300 },
-  { wait: 700 },
+  { wait: 420 },
   { to: field, x: 0.4, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 20, height: 15 };
 
 /**

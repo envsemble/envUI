@@ -12,9 +12,9 @@ import {
   passTime,
   shown,
   stopTimers,
-} from './Browser.ts';
-import { chevronTips, expectHalfTurn, slowChevron } from './Chevron.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { chevronTips, expectHalfTurn, slowChevron } from './support/Chevron.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   mount(fixture);

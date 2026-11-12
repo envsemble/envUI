@@ -10,20 +10,20 @@ const boundary = '.env-table-column-resize-handle';
  * then double-clicks it, which restores the starting widths.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: boundary, x: 0.5, y: 0.5 },
-  { wait: 500 },
+  { wait: 300 },
   { press: true },
   { to: '.env-table-region', x: 0.92, y: 0.2, duration: 1400 },
-  { wait: 300 },
+  { wait: 180 },
   { release: true },
-  { wait: 1500 },
+  { wait: 900 },
   { to: boundary, x: 0.5, y: 0.5, duration: 500 },
-  { wait: 400 },
+  { wait: 240 },
   { doubleClick: true },
-  { wait: 1200 },
+  { wait: 720 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Resizing() {

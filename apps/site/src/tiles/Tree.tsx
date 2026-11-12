@@ -16,27 +16,27 @@ const chevron = (id: string) => `${row(id)} .env-tree-chevron`;
  * Then expands Design again and chooses Brand.md, as it began.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: row('design/brand.md'), x: 0.6 },
-  { wait: 200 },
+  { wait: 120 },
   { to: chevron('design'), duration: 400 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: row('engineering/roadmap.md'), x: 0.45, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: chevron('design'), duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { to: row('design/brand.md'), x: 0.45, duration: 400 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 const files = [

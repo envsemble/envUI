@@ -1,14 +1,15 @@
 // Chooses what `npm run check` and `npm run check:affected` run for a change: which files to lint,
 // whether to typecheck, which generated files to check, and which browser specs to run.
 //
-// A spec is named after its component (tests/component/Button.test.tsx), and runs when that
-// component changes: a library or fixture file runs the spec of its name, or of the name `aliases`
+// The browser tests it selects are the component tests (tests/component/Button.test.tsx) and the
+// Playwright specs, both called specs in the code below. Each is named after what it covers, and
+// runs when that changes: a library or fixture file runs the spec of its name, or of the name `aliases`
 // gives it, and the specs whose fixtures use it (FixtureImports.ts); a changed spec runs itself; a
 // changed helper runs the specs that import it; and `pathRules` lists what other paths need, such
 // as the shared files and the catalogue, which name no component. The affected tier runs every
 // spec a change concerns; the fast tier leaves a helper many specs import to it, and of a file many
 // fixtures use runs the most specific few. A path that matches nothing runs no browser spec:
-// `npm run verify` covers it. Check.ts runs the result, and tests/tooling/TestScope.test.mjs covers
+// `npm run verify` covers it. Check.ts runs the result, and tests/tooling/TestScope.test.ts covers
 // the logic.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -24,8 +25,6 @@ export const aliases: Record<string, string[]> = {
   SearchField: ['TextField'],
   FieldFrame: ['TextField'],
   Popover: ['Dialog'],
-  Spinner: ['Skeleton'],
-  ConfirmButton: ['Button'],
   AvatarButton: ['Button'],
   LinkProvider: ['Button'],
   ActionElement: ['Button'],
@@ -43,23 +42,18 @@ export const aliases: Record<string, string[]> = {
   Avatar: ['AvatarGroup'],
   // The icon wrapper sizes whatever every icon slot holds, a Graphic's included.
   Icon: ['Graphic', 'Button', 'IconButton', 'Skeleton'],
-  PickerPopup: ['DatePicker', 'TimePicker', 'MonthPicker'],
   TimeList: ['DatePicker', 'TimePicker', 'ForcedColors'],
   TimeWheel: ['DatePicker', 'TimePicker', 'ForcedColors'],
   timeWheelRows: ['DatePicker', 'TimePicker'],
   useTimeWheelTurn: ['DatePicker', 'TimePicker'],
   useTimeWheelGestures: ['DatePicker', 'TimePicker'],
   MonthGrid: ['MonthPicker', 'ForcedColors'],
-  Code: ['CodeBlock'],
   TooltipPopup: ['Tooltip'],
   accessibleName: ['Tooltip'],
   DialogParts: ['Dialog', 'Skeleton'],
   skeleton: ['Skeleton'],
-  skeletonShift: ['Skeleton'],
   Listbox: ['Select', 'Combobox'],
   ListRow: ['List'],
-  'rich-text': ['RichTextEditor'],
-  color: ['ColorPicker'],
 };
 
 /** The specs a token, theme or other shared change runs. */
@@ -85,16 +79,20 @@ type Need =
 /**
  * What paths need besides their own lint and format and the specs of their names: checks and
  * browser specs. Each path is a glob from the repository's root, `**` reaching into folders, and
- * names files that exist (tests/tooling/TestScope.test.mjs).
+ * names files that exist (tests/tooling/TestScope.test.ts).
  */
 export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] = [
   {
     paths: [
       'packages/ui/src/**/*.{ts,tsx}',
       'apps/site/src/**/*.{ts,tsx}',
-      'tests/fixture/**/*.{ts,tsx}',
-      'tests/types/**/*.{ts,tsx}',
+      'tests/**/*.{ts,tsx}',
+      'playwright.config.ts',
+      'apps/site/vite.config.ts',
       'scripts/**/*.ts',
+      'scripts/build/LintPackage*.js',
+      'packages/eslint-plugin/src/**/*.js',
+      'packages/stylelint-config/src/**/*.js',
       '**/tsconfig.json',
     ],
     needs: ['typecheck'],
@@ -167,7 +165,12 @@ export const pathRules: { paths: string[]; needs?: Need[]; specs?: string[] }[] 
     paths: ['packages/ui/src/**/*.{ts,tsx,css,json}', 'docs/**', '.changeset/**'],
     needs: ['docs'],
   },
-  { paths: ['apps/site/**', 'scripts/docs/**'], needs: ['docs'], specs: siteSpecs },
+  // The site, all but its guide.
+  {
+    paths: ['apps/site/{src,hosting}/**', 'apps/site/*.{html,ts,json}', 'scripts/docs/**'],
+    needs: ['docs'],
+    specs: siteSpecs,
+  },
   { paths: ['wrangler.jsonc', 'scripts/site/**'], specs: siteSpecs },
   {
     paths: [
@@ -195,7 +198,7 @@ const rulesOf = (path: string) =>
 /** In the fast tier, more specs than this importing a changed helper leaves them to the affected tier. */
 const helperBudget = 8;
 /** In the fast tier, more specs than this whose fixtures use a changed file run the most specific. */
-const fixtureBudget = 6;
+export const fixtureBudget = 6;
 
 /** A spec's file, by its name: Button for tests/component/Button.test.tsx. */
 export const specFile = (name: string, root = repositoryRoot) =>
@@ -216,7 +219,7 @@ export function specNeeds(name: string, root = repositoryRoot) {
   const source = read(root, specFile(name, root));
   return {
     // Opens the hosted build, which npm run build:site writes.
-    site: importsOf(source).some(({ specifier }) => specifier === '../helpers/HostedSite'),
+    site: importsOf(source).some(({ specifier }) => specifier === '../support/HostedSite'),
     // Opens a page that the unit tests on the library build render.
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
@@ -262,20 +265,22 @@ export function specsFor(
     // What every component test runs on: its configuration, setup and core helpers, and the
     // mount it shares with the fixture page.
     else if (
-      /^tests\/component\/(?:vitest\.config|Setup|Browser|Commands|Mount)\.tsx?$/.test(path) ||
+      /^tests\/component\/(?:vitest\.config|support\/(?:Setup|Browser|Commands|Mount))\.tsx?$/.test(
+        path,
+      ) ||
       path === 'tests/fixture/FixtureMount.tsx'
     ) {
       for (const [name, file] of specPaths(root))
         if (isComponentTest(file)) found = add(name, `runs on ${path}`) || found;
     } else if (
-      /^tests\/browser\/helpers\/[^/]+\.ts$/.test(path) ||
-      /^tests\/component\/[^/]+\.tsx?$/.test(path)
+      /^tests\/browser\/support\/[^/]+\.ts$/.test(path) ||
+      /^tests\/component\/support\/[^/]+\.tsx?$/.test(path)
     ) {
       // A helper some specs share: those that import it.
       const helper = posix.basename(path);
       const specifiers = path.startsWith('tests/component/')
-        ? [`./${helper}`, `./${baseName(path)}`]
-        : [`../helpers/${baseName(path)}`];
+        ? [`./support/${helper}`, `./support/${baseName(path)}`]
+        : [`../support/${baseName(path)}`];
       const users = [...written].filter((spec) =>
         importsOf(read(root, specFile(spec, root))).some(({ specifier }) =>
           specifiers.includes(specifier),
@@ -355,7 +360,7 @@ export function selectScope(paths: readonly string[], options: ScopeOptions = {}
   return { ...scope, specs, unmatched, helpers, widelyUsed };
 }
 
-/** Which servers the specs need, for ENVUI_SERVERS (tests/browser/helpers/Servers.ts). */
+/** Which servers the specs need, for ENVUI_SERVERS (tests/browser/support/Servers.ts). */
 export function serversFor(names: readonly string[], root = repositoryRoot) {
   const servers = new Set<string>();
   for (const name of names) {
@@ -400,8 +405,8 @@ export function mergeChanges(entries: readonly Change[], untracked: readonly str
   return [...byPath.values()].sort((a, b) => a.path.localeCompare(b.path));
 }
 
-/** The integration branches a change is compared with, in order of preference. */
-const defaultBases = ['origin/envui-1.0', 'origin/dev'];
+/** The integration branch a change is compared with. */
+const defaultBase = 'origin/dev';
 
 function git(args: string[], root: string) {
   return execFileSync('git', args, {
@@ -412,32 +417,25 @@ function git(args: string[], root: string) {
   });
 }
 
-/**
- * The files changed since the merge-base with the integration branch, committed or not, and the
- * untracked ones. The branch is `base`, else ENVUI_BASE, else the first of defaultBases that exists.
- */
-/** The branches to compare with, in order: `base`, else ENVUI_BASE, else defaultBases. */
-export function baseCandidates(base?: string): string[] {
-  return base ? [base] : process.env.ENVUI_BASE ? [process.env.ENVUI_BASE] : defaultBases;
+/** The branch to compare with: `base`, else ENVUI_BASE, else defaultBase. */
+export function baseBranch(base?: string): string {
+  return base || process.env.ENVUI_BASE || defaultBase;
 }
 
+/**
+ * The files changed since the merge-base with the integration branch, committed or not, and the
+ * untracked ones.
+ */
 export function changedFiles({
   root = repositoryRoot,
   base,
 }: { root?: string; base?: string } = {}) {
-  const candidates = baseCandidates(base);
-  const found = candidates.find((ref) => {
-    try {
-      git(['rev-parse', '--verify', '--quiet', `${ref}^{commit}`], root);
-      return true;
-    } catch {
-      return false;
-    }
-  });
-  if (!found)
-    throw new Error(
-      `None of ${candidates.join(', ')} exists. Fetch it, or pass --base <ref> or set ENVUI_BASE.`,
-    );
+  const found = baseBranch(base);
+  try {
+    git(['rev-parse', '--verify', '--quiet', `${found}^{commit}`], root);
+  } catch {
+    throw new Error(`${found} doesn't exist. Fetch it, or pass --base <ref> or set ENVUI_BASE.`);
+  }
   const mergeBase = git(['merge-base', 'HEAD', found], root).trim();
   const entries = parseNameStatus(
     git(['diff', '--name-status', '-z', '-M', '--no-ext-diff', mergeBase], root),
@@ -462,20 +460,20 @@ function walk(root: string, directory: string, pattern: RegExp): string[] {
 
 const read = (root: string, path: string) => readFileSync(resolve(root, path), 'utf8');
 
+/** The folder of the unit tests that read the library build: packages/ui/dist, or a packed tarball. */
+const builtUnitTests = 'tests/library/package/';
+
 /**
- * The unit test files, split into those that read the library build (packages/ui/dist, or a packed
- * tarball) and the rest, which run in seconds without it.
+ * The unit test files, split into those that read the library build, in builtUnitTests, and the
+ * rest, which run in seconds without it.
  */
 export function unitTestFiles(root = repositoryRoot) {
   const files = [
-    ...walk(root, 'tests', /\.test\.mjs$/).filter((file) => /^tests\/[^/]+\/[^/]+$/.test(file)),
+    ...walk(root, 'tests', /\.test\.ts$/),
     ...walk(root, 'packages', /\.test\.mjs$/).filter((file) =>
       /^packages\/[^/]+\/test\/[^/]+$/.test(file),
     ),
   ].sort();
-  // A test reads the build through its path or through the packed consumer, which packs it.
-  const built = files.filter((file) =>
-    /packages\/ui\/dist|support\/PackedConsumer\.mjs/.test(read(root, file)),
-  );
+  const built = files.filter((file) => file.startsWith(builtUnitTests));
   return { built, fast: files.filter((file) => !built.includes(file)) };
 }

@@ -6,7 +6,7 @@
  * to (glideTo, ViewEasing.ts); they write nothing. Each step starts from where the previous one
  * left the view.
  */
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../shared/Lengths';
 import { cropFade } from './FitDraw';
 import {
   contain,

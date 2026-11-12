@@ -11,16 +11,16 @@ import { Renew } from '../../motion/Renew';
  * anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-surface .env-button', x: 0.5, y: 2 },
   { to: '.env-surface .env-button', x: 0.5, y: 0.6, duration: 450 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 2400 },
+  { wait: 1440 },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Creating() {

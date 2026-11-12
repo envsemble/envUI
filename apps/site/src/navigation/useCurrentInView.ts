@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../shared/Lengths';
 
 /**
  * Scrolls the drawer's list as the navigation mounts so the current page's link shows, as on a page

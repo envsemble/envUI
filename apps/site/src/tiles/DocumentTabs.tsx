@@ -34,25 +34,25 @@ const close = (id: string) =>
  * with its button, which shows Spec beside it again, then shows Plan, as it began.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: tab('Spec') },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: '.env-document-tabs-end .env-icon-button', duration: 350 },
-  { wait: 200 },
-  { click: true },
-  { wait: 1000 },
-  { to: close(untitled), duration: 350 },
-  { wait: 250 },
-  { click: true },
-  { wait: 700 },
-  { to: tab('Plan'), duration: 500 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
   { wait: 600 },
+  { to: close(untitled), duration: 350 },
+  { wait: 150 },
+  { click: true },
+  { wait: 420 },
+  { to: tab('Plan'), duration: 500 },
+  { wait: 120 },
+  { click: true },
+  { wait: 360 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /*
@@ -61,17 +61,17 @@ const script: PointerStep[] = [
  * began.
  */
 const short: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-document-tabs-end .env-icon-button' },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1000 },
+  { wait: 600 },
   { to: close(untitled), duration: 350 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 800 },
+  { wait: 480 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /**

@@ -1,31 +1,41 @@
 import { lazyPart } from '../loading/LoadedPart';
-import { partModules, partsOfPage, type PagePart } from './ViewModules';
-import type { RoutePage } from '../routes/SiteRoutes';
-
+import type { PageKind } from '../routes/SiteRoutes';
 /**
  * The large parts of pages that load on their own, with the page that shows them (LoadedPart): the
  * token reference, the changelog, and the colors guide's palette, its swatches with their color
  * picker. Here rather than with the views that show them, so the site's start can load a page's
- * before it hydrates the page the server rendered them in (preloadFirstPage).
+ * before it hydrates the page the server rendered them in (preloadFirstPage). Each names its
+ * module's path in the site app beside its import, as the views do (PageLoading.ts).
  */
 export const pageParts = {
   tokenReference: lazyPart(
-    () => import('./TokenReference'),
+    () => import('./docs/TokenReference'),
     (module) => module.TokenReference,
-    partModules.tokenReference,
+    'src/pages/docs/TokenReference.tsx',
   ),
   changelog: lazyPart(
-    () => import('./Changelog'),
+    () => import('./docs/Changelog'),
     (module) => module.Changelog,
-    partModules.changelog,
+    'src/pages/docs/Changelog.tsx',
   ),
   palette: lazyPart(
     () => import('../figures/foundations/ColorPalette'),
     (module) => module.ColorPalette,
-    partModules.palette,
+    'src/figures/foundations/ColorPalette.tsx',
   ),
-} satisfies Record<PagePart, unknown>;
+};
 
-/** Starts loading the parts a page shows (partsOfPage). */
-export const loadPageParts = (page: RoutePage) =>
-  partsOfPage(page.kind, page.document?.id).map((part) => pageParts[part].load());
+/**
+ * The parts a page shows, by its kind and the id of its page of docs/: the token reference, the
+ * changelog, and the palette of the colors guide in the Docs (DocsPages.tsx). The browser loads
+ * them before it hydrates the page the server rendered them in, else React renders them again.
+ */
+export function partsOfPage(
+  kind: PageKind,
+  document: string | undefined,
+): (keyof typeof pageParts)[] {
+  if (kind === 'tokens') return ['tokenReference'];
+  if (kind === 'docs-changelog') return ['changelog'];
+  if (kind === 'foundation-guide' && document === 'colors') return ['palette'];
+  return [];
+}

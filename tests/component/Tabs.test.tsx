@@ -3,8 +3,8 @@ import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Tabs.fixture.tsx';
 import * as rtl from '../fixture/TabsRtl.fixture.tsx';
 import * as scrolling from '../fixture/TabsScrolling.fixture.tsx';
-import { keyboard } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { keyboard } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** The computed display of the panel each tab of a tab list controls, in order. */
 function panelDisplays(list: string) {

@@ -13,20 +13,20 @@ const send = 'button[type="submit"]';
  * form starts anew, its address filled in again.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: send, x: 0.5, y: 2 },
   { to: send, x: 0.5, y: 0.6, duration: 450 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 80 },
+  { wait: 48 },
   // Off the button it pressed, so its spinner shows clear while it works.
   { to: send, x: 1.3, y: 1.8, duration: 300 },
-  { wait: 200 },
+  { wait: 120 },
   { leave: true },
   // The work, then the notification's own time on the stage, and its leaving.
-  { wait: 11000 },
+  { wait: 6600 },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Inviting() {

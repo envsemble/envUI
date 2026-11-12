@@ -15,23 +15,23 @@ const email = 'input[name="email"]';
  * error goes, from the field and the summary. Then the form starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: save, x: 0.5, y: 2.4 },
   { to: save, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { to: emailLink, x: 0.3, y: 0.6, duration: 600 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
   { focus: email },
-  { wait: 300 },
+  { wait: 180 },
   { type: 'example.com', into: email, every: 110 },
-  { wait: 1500 },
+  { wait: 900 },
   { blur: true },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Fixing() {

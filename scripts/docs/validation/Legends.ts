@@ -3,7 +3,10 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Tokens } from 'marked';
-import type { ExampleBlock, FoundationFigureBlock } from '../model/DocumentationTypes.ts';
+import type {
+  ExampleBlock,
+  FoundationFigureBlock,
+} from '../../../apps/site/src/documentation/DocumentationTypes.ts';
 import type { PageReading, PartNames } from '../PageReaderTypes.ts';
 import { documentationDirectory, librarySourceDirectory } from '../../RepositoryPaths.ts';
 

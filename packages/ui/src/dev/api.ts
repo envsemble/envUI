@@ -6,7 +6,8 @@ import type { LayoutProblem } from './model.js';
 import { read, type Reading } from './readout.js';
 import { skeletonShift, type SkeletonShiftOptions } from './skeletonShift.js';
 import { remPixels } from '../internal/dom/lengths.js';
-import { toPx, windowClassOf, type WindowClass } from './units.js';
+import { toPx } from './units.js';
+import { windowClassOf, type WindowClass } from '../foundations/windowClasses.js';
 
 export interface LayoutOptions {
   /**
@@ -157,7 +158,7 @@ export const layout: LayoutApi = {
       return {
         width: String(width),
         ...(height !== undefined && { height: String(height) }),
-        windowClass: windowClassOf(toPx(width, remPixels()) / remPixels()),
+        windowClass: windowClassOf(toPx(width, remPixels())),
         text: reading.text,
         problems: reading.problems,
       };

@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as dataDisplay from '../fixture/DataDisplay.fixture.tsx';
 import * as fixture from '../fixture/List.fixture.tsx';
-import { box, collectErrors, css, keyboard, mouse, nextFrames } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, collectErrors, css, keyboard, mouse, nextFrames } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** The live regions a reorderable list announces through, one at a time: the nth list's. */
 const announcer = (index = 0) => document.querySelectorAll('.env-list-announcer')[index]!;

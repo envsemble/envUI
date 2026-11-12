@@ -12,7 +12,7 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { build, defineConfig, Logger, parse } from '@terrazzo/parser';
-import type { ViteDevServer } from 'vite';
+import type { Plugin, ViteDevServer } from 'vite';
 import { formatted, readIfExists, writeIfChanged } from './GeneratedFiles.ts';
 import { createConfig } from './tokens/Config.ts';
 import { libraryDirectory, repositoryRoot } from '../RepositoryPaths.ts';
@@ -64,7 +64,7 @@ export async function buildTokens({
  * A Vite plugin that builds the tokens when the server or build starts and again whenever a file in
  * packages/ui/tokens changes; Vite then hot-reloads the regenerated Tokens.css.
  */
-export function tokensVitePlugin() {
+export function tokensVitePlugin(): Plugin {
   // One build at a time: a burst of edits rebuilds in order, and the last build wins.
   let queue: Promise<unknown> = Promise.resolve();
   return {

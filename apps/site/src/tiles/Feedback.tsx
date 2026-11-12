@@ -18,20 +18,20 @@ import type { TileWindow } from './Tiles';
  * a notification says how it went, in the place the last one held, so nothing moves.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-toast-dismiss' },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button', duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 80 },
+  { wait: 48 },
   // Off the button it pressed, so its spinner shows clearly while it works.
   { to: '.env-button', x: 1.35, y: 1.9, duration: 300 },
-  { wait: 250 },
+  { wait: 150 },
   { leave: true },
-  { wait: 2600 },
+  { wait: 1560 },
 ];
 
 const sent = { tone: 'success', message: 'Invitation sent.', duration: Infinity } as const;
@@ -64,7 +64,7 @@ function Invite() {
   );
 }
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 18, height: 16 };
 
 /**

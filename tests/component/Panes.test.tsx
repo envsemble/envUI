@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/Panes.fixture.tsx';
 import * as scaffoldPanes from '../fixture/ScaffoldPanes.fixture.tsx';
-import { box, css, keyboard, mouse, shown } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css, keyboard, mouse, shown } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** The fixture with the query it reads, such as `width=60rem&split=medium`. */
 const panes = (search = '') => mount(fixture, { search });

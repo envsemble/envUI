@@ -323,7 +323,7 @@ export function Tree<Item extends TreeItem>({
       content={(target) => {
         const id = target?.closest<HTMLElement>('.env-tree-item')?.dataset.id;
         const index = id === undefined ? undefined : indexById.get(id);
-        return contextMenu(index === undefined ? null : items[index]!);
+        return contextMenu(index === undefined ? null : items[index]);
       }}
     >
       {tree}

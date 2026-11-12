@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/Primitives.fixture.tsx';
-import { keyboard } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { keyboard } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 // Primitives.fixture.tsx mounts a grid and a list that move focus with useRovingFocus among
 // envUI's primitives.

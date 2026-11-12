@@ -1,7 +1,7 @@
 import { createElement as h } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
-import { beforeEach, describe, expect, onTestFinished, test, vi } from 'vitest';
+import { beforeEach, describe, expect, onTestFinished, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import { PanelDock, Theme } from '@envsemble/envui';
 import * as fixture from '../fixture/PanelDock.fixture.tsx';
@@ -14,8 +14,8 @@ import {
   nextFrames,
   passTime,
   stopTimers,
-} from './Browser.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** A length in pixels as a number of rem, to a hundredth, as the dock reports heights. */
 const inRem = (pixels: number) => Math.round((pixels / 16) * 100) / 100;
@@ -1260,10 +1260,7 @@ describe('PanelDock', () => {
 // second after the dock asks, comes only after the panel has closed, however long the steps take.
 test('a panel that closes while the dock awaits its answer leaves the others open', async () => {
   await commands.emulateMedia({ reducedMotion: 'reduce' });
-  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-  onTestFinished(() => {
-    vi.useRealTimers();
-  });
+  stopTimers();
   mount(fixture);
   const scope = dockScope('late');
   const log = logText('late');
@@ -1275,7 +1272,7 @@ test('a panel that closes while the dock awaits its answer leaves the others ope
   // The answer comes and renders the dock again; it asks for nothing else.
   const commits = () => Number(scope.element().dataset.commits);
   const before = commits();
-  await vi.advanceTimersByTimeAsync(1500);
+  await passTime(1500);
   await expect.poll(commits).toBeGreaterThan(before);
   expect(log()).toBe('p0 minimized');
   expect(rowOf(scope).ids()).toEqual(['p1', 'p2']);

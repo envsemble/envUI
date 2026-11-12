@@ -23,19 +23,19 @@ const entry = (index: number) => `.env-table-of-contents-link[href="#${sections[
  * little; and the guide scrolls back to its start.
  */
 const script: PointerStep[] = [
-  { wait: 900 },
+  { wait: 540 },
   { cue: 'next' },
-  { wait: 1400 },
+  { wait: 840 },
   { to: entry(3), x: 0.3, y: 0.5 },
-  { wait: 500 },
+  { wait: 300 },
   { click: true },
-  { wait: 1600 },
+  { wait: 960 },
   { to: entry(4), x: 0.3, y: 0.5, duration: 400 },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
   { cue: 'start' },
-  { wait: 1500 },
+  { wait: 900 },
 ];
 
 function Reading() {

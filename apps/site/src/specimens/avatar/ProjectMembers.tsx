@@ -11,13 +11,13 @@ const pile = (index: number) =>
  * the second's, which spreads as the first settles back, and leaves.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: pile(1), x: 0.45, y: 0.6 },
-  { wait: 1500 },
+  { wait: 900 },
   { to: pile(2), x: 0.45, y: 0.6, duration: 500 },
-  { wait: 1500 },
+  { wait: 900 },
   { leave: true },
-  { wait: 1000 },
+  { wait: 600 },
 ];
 
 function Hovering() {

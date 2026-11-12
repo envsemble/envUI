@@ -8,15 +8,15 @@ import { MotionStage } from '../../figures/MotionStage';
  * which stays at the top. It scrolls back to the start, and leaves.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-page-content', x: 0.5, y: 0.4 },
-  { wait: 400 },
+  { wait: 240 },
   { wheel: 260, duration: 1600 },
-  { wait: 1300 },
+  { wait: 780 },
   { wheel: -260, duration: 1300 },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 function Scrolling() {

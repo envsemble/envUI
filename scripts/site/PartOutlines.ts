@@ -1,6 +1,6 @@
 // What the site shows of a part of a page before the part loads: the outlines its skeletons are
 // drawn from (apps/site/src/loading/Skeletons.tsx), small enough to come with the page. The site
-// reads them when it builds or serves, through the virtual modules in apps/site/vite.config.ts, so
+// reads them when it builds or serves, through the virtual modules of SiteData.ts, so
 // they always match the files they outline.
 import { readdirSync, readFileSync } from 'node:fs';
 import {
@@ -8,7 +8,7 @@ import {
   themes,
   tokenGroups,
   tokenValueText,
-} from '../../apps/site/src/pages/TokenGroups.ts';
+} from '../../apps/site/src/pages/docs/TokenGroups.ts';
 import { examplesDirectory, libraryChangelogFile, tokensDataFile } from '../RepositoryPaths.ts';
 
 /** The lines of each example's code, by page/Name, as its code block shows it. */

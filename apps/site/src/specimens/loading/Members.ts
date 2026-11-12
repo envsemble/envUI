@@ -8,7 +8,7 @@ export const members = [
   { id: 'sam', name: 'Sam Lee', role: 'Engineer' },
 ];
 
-export const membersSteps = [2000, 3400];
+export const membersSteps = [1200, 2040];
 
 /** The clock the do and the don't share, so they play side by side in step. */
 export const membersClock = 'loading-members';

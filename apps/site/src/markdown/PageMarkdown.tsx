@@ -2,15 +2,15 @@ import { createContext, useContext, useMemo } from 'react';
 import { CopyButton, Link } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/code';
 import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/markdown';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import type { DocumentationEntry } from '../documentation/DocumentationTypes';
 import { documents } from '../routes/PageModel';
 import { groupedPages, routeOfDocument } from '../routes/SiteRoutes';
 import { inDocs, routeHref } from '../routes/Address';
 import { currentRoute } from '../routes/useSiteRoute';
-import { headingSlugger } from '@docs-model/SearchAnchors';
+import { headingSlugger } from '../documentation/SearchAnchors';
 import { headingsOnly, useSectionOutline } from './SectionOutline';
 import { marked, type Token, type Tokens } from 'marked';
-import { classNames } from '@envui-internal/internal/classNames';
+import { classNames } from '../shared/Attributes';
 
 /**
  * The current page scrolled to `section`: its path alone, as the server that renders the page knows
@@ -60,7 +60,7 @@ function textOf(node: { type: string; value?: string; children?: unknown[] }): s
 
 /**
  * A rehype plugin that gives each heading of a rendered document the id its text makes, as
- * scripts/docs/model/SearchAnchors.ts writes them, so links to #heading and search reach it.
+ * documentation/SearchAnchors.ts writes them, so links to #heading and search reach it.
  */
 const headingIds: NonNullable<MarkdownProps['rehypePlugins']>[number] = () => (tree) => {
   const slug = headingSlugger();

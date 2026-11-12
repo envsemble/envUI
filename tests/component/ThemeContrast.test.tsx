@@ -3,8 +3,8 @@ import { commands, page } from 'vitest/browser';
 import * as contrastFixture from '../fixture/ThemeContrast.fixture.tsx';
 import * as providerFixture from '../fixture/ThemeContrastProvider.fixture.tsx';
 import { themes } from '../contrast/Themes.ts';
-import { closePopup, openPopup, popupKinds, popupShown } from './Popups.ts';
-import { mount } from './Mount.tsx';
+import { closePopup, openPopup, popupKinds, popupShown } from './support/Popups.ts';
+import { mount } from './support/Mount.tsx';
 import type { FixtureModule } from '../fixture/FixtureMount.tsx';
 
 type Colors = Record<string, string>;

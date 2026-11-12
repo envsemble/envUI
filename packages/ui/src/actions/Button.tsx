@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import type { ActionElementProps } from '../internal/control/ActionElement.js';
+import type { ControlTone, ControlVariant } from '../internal/control/ControlDefaults.js';
 import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
 import type { ControlSize } from '../foundations/Theme.js';
 
@@ -7,13 +8,13 @@ import type { ControlSize } from '../foundations/Theme.js';
  * A button's emphasis: primary for the main action of a view, secondary and outline for the rest,
  * ghost for an application's chrome, such as a toolbar, and text for a link-like action.
  */
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'text';
+export type ButtonVariant = ControlVariant;
 
 /**
  * A button's meaning: neutral for most actions, accent for a rare consequential one that must stand
  * out, and danger for an action that deletes or ends something.
  */
-export type ButtonTone = 'neutral' | 'accent' | 'danger';
+export type ButtonTone = ControlTone;
 
 /**
  * The designed pairs of variant and tone: a primary button takes any tone; outline, ghost and text
@@ -113,12 +114,21 @@ type IconButtonElementProps =
       disabled?: boolean;
     });
 
+/** The button needs a name: aria-label, or aria-labelledby where visible text names it. */
+type IconButtonName =
+  | {
+      /** The action's name, which assistive technology announces, such as Open settings. */
+      'aria-label': string;
+      /** The id of visible text that names the action; this or aria-label. */
+      'aria-labelledby'?: string;
+    }
+  | { 'aria-label'?: string; 'aria-labelledby': string };
+
 export type IconButtonProps = IconButtonElementProps &
-  IconButtonEmphasisProps & {
+  IconButtonEmphasisProps &
+  IconButtonName & {
     /** The icon, such as Settings. */
     icon: ReactNode;
-    /** The action's name, which assistive technology announces, such as Open settings. */
-    'aria-label': string;
     /**
      * As Button's: a spinner replaces the icon while the work runs.
      * @default false
@@ -129,9 +139,9 @@ export type IconButtonProps = IconButtonElementProps &
   };
 
 /**
- * A square button that shows its icon alone, named by aria-label, such as a close button with the
- * Close cross; with href, a native link. Without a variant it takes its container's, and else the
- * neutral secondary one.
+ * A square button that shows its icon alone, named by aria-label or aria-labelledby, such as a
+ * close button with the Close cross; with href, a native link. Without a variant it takes its
+ * container's, and else the neutral secondary one.
  */
 export function IconButton(props: IconButtonProps) {
   return <ButtonBase {...(props as ButtonBaseProps)} iconOnly fallbackVariant="secondary" />;

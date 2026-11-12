@@ -10,22 +10,22 @@ const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-ta
  * the same header, and Overview again ends the round.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: tab(2), x: 0.5, y: 2.2 },
   { to: tab(2), x: 0.5, y: 0.6, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 1500 },
-  { to: tab(3), x: 0.5, y: 0.6, duration: 400 },
-  { wait: 250 },
-  { click: true },
-  { wait: 1500 },
-  { to: tab(1), x: 0.5, y: 0.6, duration: 550 },
-  { wait: 250 },
-  { click: true },
-  { wait: 600 },
-  { leave: true },
   { wait: 900 },
+  { to: tab(3), x: 0.5, y: 0.6, duration: 400 },
+  { wait: 150 },
+  { click: true },
+  { wait: 900 },
+  { to: tab(1), x: 0.5, y: 0.6, duration: 550 },
+  { wait: 150 },
+  { click: true },
+  { wait: 360 },
+  { leave: true },
+  { wait: 540 },
 ];
 
 function Switching() {

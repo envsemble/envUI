@@ -3,7 +3,7 @@ import { Column } from '@envsemble/envui';
 import { IconCheck } from '@envsemble/envui/icons/Check';
 import { IconClose } from '@envsemble/envui/icons/Close';
 import { IconWarning } from '@envsemble/envui/icons/Warning';
-import type { StageFill } from '@docs-model/DocumentationTypes';
+import type { StageFill } from '../documentation/DocumentationTypes';
 import { ExampleCode, ExampleRender } from './LiveExample';
 import { keepLinksInPlace } from './KeepLinksInPlace';
 import { OpenExample } from './OpenExample';
@@ -23,7 +23,7 @@ const verdicts = {
  * A do, don't or caution figure, as a gallery's cells: the live example on its stage; under it, a
  * strip of the same fill with its tag, a check, a cross or a warning with the word Do, Don't or
  * Caution in green, red or amber, a caution being acceptable with care rather than a mistake, and
- * its one sentence beside it; and under that, the example's code (Verdicts.css). The stage is as
+ * its one sentence beside it; and under that, the example's code (VerdictFigure.css). The stage is as
  * tall as the example, or square where the example shows open or playing, and the example is
  * drawn smaller where it needs more room than the stage's width (useVerdictFit). A `wide` figure,
  * whose point is a change across the column's width, keeps a stage as wide as the column and as

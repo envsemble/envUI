@@ -10,15 +10,15 @@ import { MotionStage } from '../../figures/MotionStage';
  * end, which clears its count of searches.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: '.env-icon-button', x: 0.55, y: 0.6 },
-  { wait: 2000 },
-  { click: true },
-  { wait: 1200 },
-  { leave: true },
-  { wait: 1500 },
-  { cue: 'again' },
   { wait: 300 },
+  { to: '.env-icon-button', x: 0.55, y: 0.6 },
+  { wait: 1200 },
+  { click: true },
+  { wait: 720 },
+  { leave: true },
+  { wait: 900 },
+  { cue: 'again' },
+  { wait: 180 },
 ];
 
 function Searching() {

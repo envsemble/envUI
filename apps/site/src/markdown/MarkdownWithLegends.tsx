@@ -1,5 +1,5 @@
 import { PageMarkdown } from './PageMarkdown';
-import { optionPieces } from '@docs-model/CatalogueContent';
+import { optionPieces } from '../documentation/CatalogueContent';
 import { OptionLegend } from './OptionLegend';
 import { useSectionOutline } from './SectionOutline';
 

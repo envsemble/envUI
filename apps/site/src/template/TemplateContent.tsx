@@ -7,17 +7,17 @@ import {
   type TableOfContentsItem,
 } from '@envsemble/envui';
 import { PageMarkdown, GuidanceLists, markdownHeadings } from '../markdown/PageMarkdown';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
-import type { DocumentationSection } from '@docs-model/DocumentationTypes';
+import type { DocumentationEntry } from '../documentation/DocumentationTypes';
+import type { DocumentationSection } from '../documentation/DocumentationTypes';
 import { FigureSection, sectionTitle } from '../figures/Figures';
-import { catalogueSection, docsOnlySections } from '@docs-model/CatalogueContent';
+import { catalogueSection, docsOnlySections } from '../documentation/CatalogueContent';
 import { Related, relatedId, relatedTitle } from './Related';
 import { alternativesOf } from './RelatedPages';
 import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';
 import { pendingAttribute, SectionOutline, useSectionOutline } from '../markdown/SectionOutline';
 import { subscribeToAddress } from '../routes/Address';
-import { useHydrated } from '@envui-internal/internal/react/useHydrated';
+import { useHydrated } from '../shared/useHydrated';
 
 /**
  * One section of a page; Rules opens with when to use it, after its own lead. Without

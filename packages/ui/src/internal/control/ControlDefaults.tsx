@@ -2,12 +2,12 @@
 
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import type { ControlSize } from './controlTypes.js';
-import { reportOnce } from '../developmentReport.js';
+import { reportInDevelopment } from '../developmentReport.js';
 
-/** The emphasis of a button: its variant. */
+/** A button's variant, the one list of them, which Button's ButtonVariant documents. */
 export type ControlVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'text';
 
-/** The meaning of a button: its tone. */
+/** A button's tone, the one list of them, which Button's ButtonTone documents. */
 export type ControlTone = 'neutral' | 'accent' | 'danger';
 
 /**
@@ -57,8 +57,8 @@ export function useControlDefaults(): ControlDefaultsValue {
 }
 
 /**
- * The tones each variant is designed in: a primary button takes any tone; outline, ghost and text
- * buttons take neutral or danger; a secondary button is neutral.
+ * The tones each variant is designed in, which Button's ButtonEmphasisProps types as its pairs and
+ * a development build's report lists.
  */
 const designedTones: Readonly<Record<ControlVariant, readonly ControlTone[]>> = {
   primary: ['neutral', 'accent', 'danger'],
@@ -95,16 +95,11 @@ export function resolveEmphasis(
     variant ??
     (containerVariant && takesTone(containerVariant, tone) ? containerVariant : fallbackVariant);
   if (takesTone(resolved, tone)) return { variant: resolved, tone };
-  let report: string | undefined;
-  // Written inline so bundlers replace process.env.NODE_ENV, as in Theme: where nothing replaced
-  // it, reading it throws and the report stays silent.
-  try {
-    if (process.env.NODE_ENV !== 'production')
-      report = `a ${resolved} button has no ${tone} tone, so it renders neutral. Primary buttons take neutral, accent or danger; outline, ghost and text buttons neutral or danger; secondary buttons neutral.`;
-  } catch {
-    // No bundler defined process.env.NODE_ENV.
-  }
-  if (report) reportOnce(report);
+  reportInDevelopment(
+    () =>
+      process.env.NODE_ENV !== 'production' &&
+      `a ${resolved} button has no ${tone} tone, so it renders neutral. A ${resolved} button takes ${new Intl.ListFormat('en', { type: 'disjunction' }).format(designedTones[resolved])}.`,
+  );
   return { variant: resolved, tone: 'neutral' };
 }
 

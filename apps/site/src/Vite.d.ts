@@ -1,14 +1,16 @@
 /// <reference types="vite/client" />
 
+// The virtual:envui-* modules, which scripts/site/SiteData.ts gives the site.
+
 /** The release notes, newest first: scripts/site/ReleaseNotes.ts. */
 declare module 'virtual:envui-release-notes' {
-  const releases: import('./pages/ReleaseNotesData').Release[];
+  const releases: import('./pages/docs/ReleaseNotesData').Release[];
   export default releases;
 }
 
 /**
  * The recorded size of each part that loads with a page, by its key (generated/PartSizes.json):
- * in a build, only those of no one page's, as each page's content brings its own (vite.config.ts).
+ * in a build, only those of no one page's, as each page's content brings its own.
  */
 declare module 'virtual:envui-part-sizes' {
   const sizes: Record<string, readonly [number, number]>;

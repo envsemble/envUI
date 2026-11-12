@@ -112,14 +112,14 @@ jobs:
     timeout-minutes: 10
     steps:
       # Depth 2: the merge commit and its parents, the first being the tip of the branch it merges
-      # into, which the contrast gate's registry (tests/contrast/ContrastRegistry.test.mjs) compares
+      # into, which the contrast gate's registry (tests/contrast/ContrastRegistry.test.ts) compares
       # its snapshot with.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 2
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - run: node scripts/docs/GenerateDocumentation.ts
+      # It generates the documentation too, which the unit tests read.
       - run: npm run -s build:library
       # node --test runs one file per core but one; on two cores that is one at a time, while most
       # files wait on npm, esbuild or the disk. Four at once take about 15 s less.

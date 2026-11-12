@@ -50,7 +50,7 @@ const followSteps: readonly { size: ControlSize; tone: AlertTone; title: string 
  * shrinks with its label and takes the color of its words.
  */
 function FollowTextSteps() {
-  const step = useTimeline(followSteps.map(() => 2600));
+  const step = useTimeline(followSteps.map(() => 1560));
   const { size, tone, title } = followSteps[step]!;
   return (
     <Column gap={4} align="center" className="catalogue-icons-sample">
@@ -88,20 +88,20 @@ const destination = (index: number) =>
  * icon, and the one it leaves goes back to outlined.
  */
 const destinationsScript: PointerStep[] = [
-  { wait: 700 },
+  { wait: 420 },
   { to: destination(2), y: 0.4 },
-  { wait: 300 },
+  { wait: 180 },
   ...[2, 3, 4, 5].flatMap((index): PointerStep[] => [
-    ...(index > 2 ? [{ to: destination(index), y: 0.4, duration: 450 }, { wait: 150 }] : []),
+    ...(index > 2 ? [{ to: destination(index), y: 0.4, duration: 450 }, { wait: 90 }] : []),
     { click: true },
-    { wait: 1100 },
+    { wait: 660 },
   ]),
   { to: destination(1), y: 0.4, duration: 900 },
-  { wait: 150 },
+  { wait: 90 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 const places = [

@@ -22,7 +22,7 @@
  * selection on the page.
  *
  * The state lives on the page's global object, so after a hot reload of this module the new
- * module finds the state that the installed methods read (tests/site/BrowserStandIns.test.mjs).
+ * module finds the state that the installed methods read (tests/site/BrowserStandIns.test.ts).
  */
 import { useLayoutEffect } from 'react';
 import { focusMark } from './pointer/PointerStates';
@@ -95,7 +95,7 @@ export function useBrowserStandIns() {
  * Holds the stand-ins on a realm's prototypes and returns the release. The first hold installs
  * them; once every hold is released, the browser's own methods are put back. A second release of
  * the same hold does nothing.
- * @internal Also for tests/site/BrowserStandIns.test.mjs, which holds them on a realm of its own.
+ * @internal Also for tests/site/BrowserStandIns.test.ts, which holds them on a realm of its own.
  */
 export function holdBrowserStandIns(realm: Realm = globalThis) {
   const element = realm.Element.prototype;

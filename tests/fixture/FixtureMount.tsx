@@ -20,7 +20,7 @@ export interface FixtureModule {
 
 /**
  * A fixture mounted as its module says, in a scale. The fixture page (App.tsx) and the component
- * tests (tests/component/Mount.tsx) both mount through it; `mounts` keys a fresh mount.
+ * tests (tests/component/support/Mount.tsx) both mount through it; `mounts` keys a fresh mount.
  */
 export function FixtureMount({
   module: { default: Fixture, themes, mount },

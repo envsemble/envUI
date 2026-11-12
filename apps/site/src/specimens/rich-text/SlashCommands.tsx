@@ -13,32 +13,32 @@ const document = '.ProseMirror';
  * editor is drawn anew then, its history with it, unseen, as it looks the same.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: `${document} p`, x: 0.2, y: 0.5 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { type: '/', into: document },
-  { wait: 900 },
+  { wait: 540 },
   // Down past the seven blocks to the agenda, the last.
   ...Array.from({ length: 7 }, (): PointerStep[] => [
     { key: 'ArrowDown', on: document },
-    { wait: 330 },
+    { wait: 198 },
   ]).flat(),
-  { wait: 900 },
+  { wait: 540 },
   { key: 'Enter', on: document },
-  { wait: 1700 },
+  { wait: 1020 },
   { keyDown: 'Control', on: document },
   { key: 'z', on: document },
-  { wait: 900 },
+  { wait: 540 },
   { key: 'z', on: document },
   { keyUp: 'Control', on: document },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
   { blur: true },
-  { wait: 400 },
+  { wait: 240 },
   { cue: 'again' },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 function Inserting() {

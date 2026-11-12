@@ -14,27 +14,27 @@ const email = 'input[name="email"]';
  * as the address is right. Then the form starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: address, x: 0.6, y: 2.4 },
   { to: address, x: 0.6, y: 0.5, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 150 },
+  { wait: 90 },
   { type: 'My Team', into: address, every: 130 },
-  { wait: 500 },
+  { wait: 300 },
   { key: 'Tab' },
   { focus: email },
-  { wait: 1500 },
+  { wait: 900 },
   { to: address, x: 0.6, y: 0.5, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 200 },
+  { wait: 120 },
   { erase: 7, into: address, every: 55 },
   { type: 'my-team', into: address, every: 120 },
-  { wait: 1400 },
+  { wait: 840 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Checking() {

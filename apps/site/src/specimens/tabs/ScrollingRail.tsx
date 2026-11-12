@@ -14,20 +14,20 @@ const widths = [40, 20];
  * the frame widens again.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { cue: 'narrow' },
   // The frame's way from 40 to 20 rem.
-  { wait: 3700 },
+  { wait: 2220 },
   { to: '.env-tabs-list', x: 0.5, y: 0.5 },
-  { wait: 300 },
+  { wait: 180 },
   { wheel: 400, axis: 'x', duration: 1200 },
-  { wait: 1100 },
+  { wait: 660 },
   { wheel: -400, axis: 'x', duration: 1200 },
-  { wait: 500 },
-  { leave: true },
   { wait: 300 },
+  { leave: true },
+  { wait: 180 },
   { cue: 'wide' },
-  { wait: 4200 },
+  { wait: 2520 },
 ];
 
 function Narrowing() {

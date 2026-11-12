@@ -10,13 +10,13 @@ const menu = (label: string) => `.env-menubar-trigger:nth-child(${label} of .env
 
 /** With Edit open, the pointer moves onto File, which opens in its place, and back to Edit. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: menu('1') },
-  { wait: 1100 },
+  { wait: 660 },
   { to: menu('2'), duration: 400 },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 type Open = 'file' | 'edit' | null;

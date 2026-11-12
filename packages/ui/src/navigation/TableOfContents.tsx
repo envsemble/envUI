@@ -155,7 +155,7 @@ export function TableOfContents({
       return;
     }
     const sectionIds = ids.split('\n');
-    const first = document.getElementById(sectionIds[0]!);
+    const first = document.getElementById(sectionIds[0]);
     const doc = first?.ownerDocument ?? document;
     let frame = 0;
 
@@ -200,7 +200,7 @@ export function TableOfContents({
       const target = event.target;
       // Only a scroll that moves the sections counts. They are looked up again each time: the page
       // may have rendered them anew since, and a section the effect found first may have left it.
-      const section = doc.getElementById(sectionIds[0]!);
+      const section = doc.getElementById(sectionIds[0]);
       if (target instanceof Element && section && !target.contains(section)) return;
       const choice = chosen.current;
       if (choice && !choice.settled) {

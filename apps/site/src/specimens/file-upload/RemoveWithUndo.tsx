@@ -10,18 +10,18 @@ const remove = '[aria-label="Remove budget-2026.xlsx"]';
  * so and offers Undo. The pointer presses Undo, and the row comes back to its place.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: remove, x: 0.5, y: 2.4 },
   { to: remove, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 1200 },
+  { wait: 720 },
   { to: '.env-toast-action', x: 0.5, y: 0.55, duration: 700 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Removing() {

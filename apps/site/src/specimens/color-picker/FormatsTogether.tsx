@@ -11,19 +11,19 @@ const thumb = `${area} .env-color-picker-thumb`;
  * RGB and HSL rows change together. It drags it back to where it began and lets go.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: thumb },
-  { wait: 300 },
+  { wait: 180 },
   { press: true },
   { to: area, x: 0.22, y: 0.14, duration: 900 },
-  { wait: 300 },
+  { wait: 180 },
   { to: area, x: 0.86, y: 0.52, duration: 1000 },
-  { wait: 300 },
+  { wait: 180 },
   { to: area, x: 0.52, y: 0.36, duration: 800 },
   { release: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Dragging() {

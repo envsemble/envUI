@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { dateFormat, withHourCycle } from '../../internal/time/calendarDays.js';
 import { useResolvedLocale } from '../../internal/provider/useFormatters.js';
+import { useControllableState } from '../../internal/react/useControllableState.js';
 
 /**
  * The value of a date, time or month picker as its owner holds it: the one it is given, or one it
@@ -19,16 +20,18 @@ export function usePickerValue({
   defaultValue: string | null;
   onValueChange: ((value: string | null) => void) | undefined;
 }) {
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const [raw, report, keepOwn] = useControllableState({
+    value,
+    defaultValue,
+    onChange: onValueChange,
+  });
   return {
-    raw: value === undefined ? uncontrolledValue : value,
+    raw,
     change(next: string | null, serialized: string) {
-      if ((next ?? '') === serialized) return;
-      if (value === undefined) setUncontrolledValue(next);
-      onValueChange?.(next);
+      if ((next ?? '') !== serialized) report(next);
     },
     reset() {
-      if (value === undefined) setUncontrolledValue(defaultValue);
+      keepOwn(defaultValue);
     },
   };
 }

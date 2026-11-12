@@ -1,8 +1,8 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as fixture from '../fixture/SegmentedControl.fixture.tsx';
-import { box, css, keyboard, mouse, passTime, stopTimers } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css, keyboard, mouse, passTime, stopTimers } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   mount(fixture);

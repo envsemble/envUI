@@ -11,13 +11,13 @@ const organization = (index: number) =>
 /** Opens the switcher and picks an organization, which closes it. */
 const pick = (index: number): PointerStep[] => [
   { to: '.env-button', x: 0.5, y: 0.6, duration: 500 },
-  { wait: 350 },
+  { wait: 210 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: organization(index), x: 0.35, duration: 450 },
-  { wait: 450 },
+  { wait: 270 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
 ];
 
 /*
@@ -26,14 +26,14 @@ const pick = (index: number): PointerStep[] => [
  * example is drawn anew without the message the switch left.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-button', x: 0.5, y: 1.4 },
   ...pick(2),
   ...pick(1),
   // The switch's message goes, as the example is drawn anew.
   { cue: 'renew' },
   { leave: true },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Switching() {

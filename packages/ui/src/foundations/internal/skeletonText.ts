@@ -72,7 +72,7 @@ function sync() {
   // make the browser work out the page again for each.
   const fresh = roots.filter((root) => !tracked.has(root));
   const statics = fresh.map((root) => getComputedStyle(root).position === 'static');
-  fresh.forEach((root, index) => track(root, statics[index]!));
+  fresh.forEach((root, index) => track(root, statics[index]));
   const drawn = roots.map((root) => [root, barsOf(root)] as const);
   for (const [root, values] of drawn)
     for (const [property, value] of Object.entries(values))

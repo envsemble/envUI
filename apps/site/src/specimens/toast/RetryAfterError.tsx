@@ -13,21 +13,21 @@ const retry = '.env-toast[data-tone="danger"] .env-toast-action';
  * itself. Then the page starts anew, its first attempt failing again.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-button', x: 0.5, y: 2 },
   { to: '.env-button', x: 0.55, y: 0.55, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 2900 },
+  { wait: 1740 },
   { to: retry, duration: 700 },
-  { wait: 500 },
+  { wait: 300 },
   { click: true },
-  { wait: 200 },
+  { wait: 120 },
   { leave: true },
   // The success arrives once publishing ends, and is gone well before the page starts anew.
-  { wait: 11500 },
+  { wait: 6900 },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Publishing() {

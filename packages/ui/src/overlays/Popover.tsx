@@ -3,7 +3,7 @@
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { useRef, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
+import { markTriggerOwner } from '../internal/trigger/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/popup/PopupSurface.js';
 import {
   containedOpenChange,
@@ -12,7 +12,7 @@ import {
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
-import { useOpenState } from '../internal/popup/useOpenState.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import '../styles/Base.css';
 import '../styles/Popover.css';
 
@@ -112,7 +112,11 @@ export function Popover({
   className,
   ...popupProps
 }: PopoverProps) {
-  const [open, changeOpen] = useOpenState({ open: controlledOpen, defaultOpen, onOpenChange });
+  const [open, changeOpen] = useControllableState({
+    value: controlledOpen,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const setOpen = (next: boolean, reason: PopoverOpenChangeReason) => changeOpen(next, { reason });
   const close = () => setOpen(false, 'close-press');
   // The popup takes the text direction at its trigger.

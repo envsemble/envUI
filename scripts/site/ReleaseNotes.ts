@@ -1,7 +1,7 @@
 // The release notes, apps/site/src/releases/release-notes.md, the highlights on the Docs'
 // Changelog page: one entry per release, newest first, with up to five highlights and the breaking
 // changes, each linking to the migration guide or the full changelog below them. The catalogue reads them when it builds, through the
-// virtual module in apps/site/vite.config.ts, and the checks below hold them to that shape.
+// virtual module of SiteData.ts, and the checks below hold them to that shape.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { headingsOf } from '../docs/MarkdownHeadings.ts';

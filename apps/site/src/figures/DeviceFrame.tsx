@@ -7,10 +7,10 @@ import { IconLock } from '@envsemble/envui/icons/Lock';
 import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 import { IconSignalCellular4Bar } from '@envsemble/envui/icons/SignalCellular4Bar';
 import { IconSignalWifi4Bar } from '@envsemble/envui/icons/SignalWifi4Bar';
-import type { DeviceKind } from '@docs-model/DocumentationTypes';
+import type { DeviceKind } from '../documentation/DocumentationTypes';
 import { useDeviceFit } from '../fit/standalone/useDeviceFit';
 import { stageScript } from './StageScript';
-import { flag } from '@envui-internal/internal/flag';
+import { flag } from '../shared/Attributes';
 
 /*
  * A device drawn around a page's figure: a phone or a browser's window whose screen is a window of

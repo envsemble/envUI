@@ -5,11 +5,11 @@ import { MotionStage } from '../../figures/MotionStage';
 
 /* The pointer rests on the short tab, and its tooltip gives the full title. */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-panel-dock-tab-restore[aria-label="Show Budget"]', x: 0.45, y: 0.6 },
-  { wait: 2600 },
+  { wait: 1560 },
   { leave: true },
-  { wait: 1000 },
+  { wait: 600 },
 ];
 
 function Hovering() {

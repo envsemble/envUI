@@ -10,23 +10,23 @@ const team = (index: number) =>
 /*
  * The pointer picks Marketing: after the short delay the list turns to placeholder items, and
  * Marketing's projects land in them. It picks Design again, whose projects have loaded, and they
- * show at once. The example's load takes 1.6 s; the waits here are paced to 0.6 of what they say.
+ * show at once. The example's load takes 1.6 s.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: team(2), x: 0.5, y: 2.2 },
   { to: team(2), x: 0.5, y: 0.6, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 4300 },
+  { wait: 2580 },
   { to: team(1), x: 0.5, y: 0.6, duration: 500 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
   // Design shows as at the start; drawn anew, unseen, Marketing loads again next round.
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Choosing() {

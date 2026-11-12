@@ -6,17 +6,17 @@ const option = (index: number) => `.env-radio:nth-child(${index} of .env-radio) 
 
 /** Chooses Private, then Team again. */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: option(2) },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: option(1), duration: 350 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /** A choice of two, with Team chosen. */

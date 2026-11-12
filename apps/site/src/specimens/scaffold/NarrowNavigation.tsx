@@ -64,15 +64,15 @@ const toggle = '.env-top-bar .env-icon-button';
  * drawer narrows to the rail; it presses it again, and the drawer comes back.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: toggle },
-  { wait: 500 },
+  { wait: 300 },
   { click: true },
-  { wait: 1700 },
+  { wait: 1020 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Narrowing() {

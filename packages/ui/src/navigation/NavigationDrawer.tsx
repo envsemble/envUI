@@ -19,6 +19,7 @@ import { IconChevronRight } from '../icons/ChevronRight.js';
 import { CutLabelTooltip } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { useLatest } from '../internal/useLatest.js';
+import { useControllableState } from '../internal/react/useControllableState.js';
 import { ResizeHandle } from '../internal/resize/ResizeHandle.js';
 import { containerWidth, useResizableWidth } from '../internal/resize/useResizableWidth.js';
 import { inSkeleton, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
@@ -352,34 +353,34 @@ function useExpanded(
   const path = currentPath(destinations);
   // One string for the path, which changes only as the current destination moves.
   const pathKey = JSON.stringify(path);
-  const [own, setOwn] = useState<readonly string[]>(() => joined(defaultExpanded, path));
-  const [ownPath, setOwnPath] = useState(pathKey);
+  const [shown, change, keepOwn] = useControllableState<readonly string[], string[]>({
+    value: expanded,
+    defaultValue: joined(defaultExpanded, path),
+    onChange: onExpandedChange,
+  });
   const controlled = expanded !== undefined;
+  const [ownPath, setOwnPath] = useState(pathKey);
   if (!controlled && ownPath !== pathKey) {
     // A new current destination opens its sections in the same render, as on a page load.
     setOwnPath(pathKey);
-    setOwn((open) => joined(open, path));
+    keepOwn(joined(shown, path));
   }
-  const shown = controlled ? expanded : own;
   // The latest open sections, so the effect below and setExpanded, one function across renders,
   // read them: a render that changes neither, such as one for each move of a resize, leaves the
   // destinations as they are.
-  const latest = useLatest({ shown, controlled, onExpandedChange });
+  const latest = useLatest(shown);
   useEffect(() => {
     if (!controlled) return;
-    const { shown: open, onExpandedChange: change } = latest.current;
     const keys = JSON.parse(pathKey) as string[];
-    if (keys.some((key) => !open.includes(key))) change?.(joined(open, keys));
-  }, [latest, controlled, pathKey]);
+    if (keys.some((key) => !latest.current.includes(key))) change(joined(latest.current, keys));
+  }, [latest, change, controlled, pathKey]);
   const set = useMemo(() => new Set(shown), [shown]);
   const setExpanded = useCallback(
     (key: string, open: boolean) => {
-      const { shown: current, controlled: kept, onExpandedChange: change } = latest.current;
-      const next = open ? joined(current, [key]) : current.filter((each) => each !== key);
-      if (!kept) setOwn(next);
-      change?.(next);
+      const current = latest.current;
+      change(open ? joined(current, [key]) : current.filter((each) => each !== key));
     },
-    [latest],
+    [latest, change],
   );
   return { expanded: set, setExpanded };
 }

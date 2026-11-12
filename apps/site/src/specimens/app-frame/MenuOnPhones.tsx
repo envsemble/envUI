@@ -17,31 +17,31 @@ const chapter = (id: string, where: string) =>
  * narrows again.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: menu, x: 0.5, y: 2.6 },
   { to: menu, x: 0.5, y: 0.5, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: chapter('installing', '.env-sheet'), x: 0.35, y: 0.5, duration: 550 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
   { cue: 'wide' },
   // The frame's travel to 44 rem.
-  { wait: 3300 },
+  { wait: 1980 },
   { to: chapter('introduction', '.catalogue-width-sweep-frame'), x: 0.35, y: 2.5 },
   { to: chapter('introduction', '.catalogue-width-sweep-frame'), x: 0.35, y: 0.5, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
   { cue: 'narrow' },
   // The way back to 22 rem, and a moment there.
-  { wait: 4200 },
+  { wait: 2520 },
 ];
 
 function Sweeping() {

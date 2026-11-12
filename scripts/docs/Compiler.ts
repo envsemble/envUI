@@ -14,8 +14,14 @@ import {
 } from './PageStructure.ts';
 import { cell, fenceFor } from './MarkdownBlocks.ts';
 import { readMessages, renderStrings, type MessageNamespace } from './Messages.ts';
-import type { AnatomyLegendItem, PropEntry } from './model/DocumentationTypes.ts';
-import { nativePropsSentence, propDescription } from './model/PropWording.ts';
+import type {
+  AnatomyLegendItem,
+  PropEntry,
+} from '../../apps/site/src/documentation/DocumentationTypes.ts';
+import {
+  nativePropsSentence,
+  propDescription,
+} from '../../apps/site/src/documentation/PropWording.ts';
 
 /** How the package names a do, a don't or a caution figure in a run of figures. */
 const verdictWords: Record<string, string> = { do: 'do', dont: "don't", caution: 'caution' };
@@ -38,7 +44,7 @@ const andList = (items: string[]) =>
  * The generated Props section of a page, as Markdown: each export's props in a table, where a prop
  * an export above says word for word is named after the table rather than repeated.
  */
-export function renderProps(names: readonly string[], props: PropsFile, headingDepth = 2) {
+function renderProps(names: readonly string[], props: PropsFile, headingDepth = 2) {
   const heading = '#'.repeat(headingDepth);
   const lines = [`${heading} Props`, ''];
   // The export that first lists a prop, by its name, type, default and description.
@@ -163,7 +169,7 @@ function renderParts(names: readonly string[], parts: PartsFile, headingDepth = 
 }
 
 /** An example's source as the package and agents read it. */
-export function exampleSource(page: string, name: string, directory = examplesDirectory) {
+function exampleSource(page: string, name: string, directory = examplesDirectory) {
   return readFileSync(resolve(directory, page, `${name}.tsx`), 'utf8');
 }
 

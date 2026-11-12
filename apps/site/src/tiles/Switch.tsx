@@ -4,15 +4,15 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 
 /** Hovers and clicks it on, then off again. */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: '.env-switch-input' },
-  { wait: 500 },
+  { wait: 300 },
   { click: true },
-  { wait: 1300 },
+  { wait: 780 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
 /** A switch with a short label. */

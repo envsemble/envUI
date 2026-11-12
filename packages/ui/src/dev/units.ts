@@ -1,4 +1,4 @@
-// Lengths for the readout: rem as the reader's unit, window classes by width.
+// Lengths for the readout: rem as the reader's unit, and the window classes' starts in it.
 
 import {
   windowClasses as windowClassStarts,
@@ -6,23 +6,10 @@ import {
 } from '../foundations/windowClasses.js';
 import { roundToHundredth } from '../internal/dom/lengths.js';
 
-export type { WindowClass };
-
-/**
- * The window classes by the width in rem where each begins, from the library's own thresholds in
- * foundations/windowClasses.ts: compact, medium from 37.5, expanded from 52.5, large from 75.
- */
+/** The window classes by the width in rem where each begins, from foundations/windowClasses.ts. */
 export const windowClasses: readonly { name: WindowClass; from: number }[] = (
   Object.entries(windowClassStarts) as [WindowClass, string][]
 ).map(([name, from]) => ({ name, from: Number.parseFloat(from) }));
-
-/** The window class of a width in rem. */
-export function windowClassOf(widthRem: number): WindowClass {
-  let current: WindowClass = 'compact';
-  for (const windowClass of windowClasses)
-    if (widthRem >= windowClass.from) current = windowClass.name;
-  return current;
-}
 
 /** A length in px as rem, rounded: 24 px at a 16 px root is 1.5. */
 export const toRem = (px: number, rootPx: number) => roundToHundredth(px / rootPx);

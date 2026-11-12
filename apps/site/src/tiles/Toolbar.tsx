@@ -16,19 +16,19 @@ const button = (label: string) => `.env-toolbar-button[aria-label="${label}"]`;
  * short fade (Renew).
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: button('Bold') },
-  { wait: 500 },
+  { wait: 300 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { to: button('Italic'), duration: 350 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 2400 },
+  { wait: 1440 },
   { cue: 'renew' },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /** A formatting toolbar: two toggles, a list and undo. */

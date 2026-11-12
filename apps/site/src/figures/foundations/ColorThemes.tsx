@@ -24,7 +24,7 @@ const themes: readonly { theme: ColorScheme; contrast: ThemeContrast }[] = [
 ];
 
 /** How long the screen stays in each theme, in ms. */
-const themeStep = 2000;
+const themeStep = 1200;
 
 /**
  * One screen in each theme in turn, in the legend's order, each theme beside its high contrast,

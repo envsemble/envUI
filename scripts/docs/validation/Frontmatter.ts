@@ -13,7 +13,7 @@ import {
   type RawFrontmatter,
 } from '../PageStructure.ts';
 import { isMap } from '../Shapes.ts';
-import { pageStatuses } from '../model/DocumentationTypes.ts';
+import { pageStatuses } from '../../../apps/site/src/documentation/DocumentationTypes.ts';
 import { deviceKinds, stageFills } from './Figures.ts';
 
 /** What a page's frontmatter is checked against: its kind, and the versions its since may name. */

@@ -1,7 +1,8 @@
 'use client';
 
-import { useMemo, useState, type RefObject } from 'react';
+import { useMemo, type RefObject } from 'react';
 import { useFormReset } from '../../internal/field/useFormReset.js';
+import { useControllableState } from '../../internal/react/useControllableState.js';
 import type { ComboboxItem } from './comboboxItems.js';
 import type { ComboboxProps } from '../Combobox.js';
 
@@ -22,16 +23,23 @@ export function useComboboxSelection<Item extends ComboboxItem>(
   const defaultSelection: ComboboxSelection = props.multiple
     ? [...(props.defaultValue ?? [])]
     : (props.defaultValue ?? null);
-  const [uncontrolledValue, setUncontrolledValue] = useState<ComboboxSelection>(defaultSelection);
-  const controlled = props.value !== undefined;
-  const selection: ComboboxSelection = props.value === undefined ? uncontrolledValue : props.value;
-  useFormReset(
-    nativeRef,
-    function applyReset() {
-      if (!controlled) setUncontrolledValue(defaultSelection);
+  const [selection, choose, keepOwn] = useControllableState({
+    value: props.value,
+    defaultValue: defaultSelection,
+    onChange: (next: ComboboxSelection, known: ReadonlyMap<string, Item>) => {
+      if (props.multiple) {
+        const values = typeof next === 'string' ? [next] : [...(next ?? [])];
+        props.onValueChange?.(
+          values,
+          values.map((chosen) => known.get(chosen) ?? { value: chosen, label: chosen }),
+        );
+      } else {
+        const single = typeof next === 'string' ? next : null;
+        props.onValueChange?.(single, single === null ? null : (known.get(single) ?? null));
+      }
     },
-    props.form,
-  );
+  });
+  useFormReset(nativeRef, () => keepOwn(defaultSelection), props.form);
   // Base UI's value type takes a mutable list, and the options known by value are rebuilt only as
   // the list changes: both once per selection.
   const { value, selectedValues } = useMemo(() => {
@@ -40,20 +48,6 @@ export function useComboboxSelection<Item extends ComboboxItem>(
     const values = [...selection];
     return { value: values, selectedValues: values };
   }, [selection]);
-
-  function choose(next: ComboboxSelection, known: ReadonlyMap<string, Item>) {
-    if (!controlled) setUncontrolledValue(next);
-    if (props.multiple) {
-      const values = typeof next === 'string' ? [next] : [...(next ?? [])];
-      props.onValueChange?.(
-        values,
-        values.map((chosen) => known.get(chosen) ?? { value: chosen, label: chosen }),
-      );
-    } else {
-      const single = typeof next === 'string' ? next : null;
-      props.onValueChange?.(single, single === null ? null : (known.get(single) ?? null));
-    }
-  }
 
   return { value, selectedValues, choose };
 }

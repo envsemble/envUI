@@ -11,25 +11,25 @@ const item = (index: number) => `.env-select-item:nth-child(${index} of .env-sel
  * opens the list again and chooses Team, as it began.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-select-trigger', x: 0.8, y: 0.55 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { key: 'p', on: highlighted },
-  { wait: 180 },
+  { wait: 108 },
   { key: 'r', on: highlighted },
-  { wait: 1000 },
+  { wait: 600 },
   { key: 'Enter', on: highlighted },
-  { wait: 1300 },
+  { wait: 780 },
   { click: true },
-  { wait: 800 },
+  { wait: 480 },
   { to: item(1), x: 0.3, y: 0.5, duration: 450 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 function Choosing() {

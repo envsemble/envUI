@@ -9,7 +9,7 @@ import {
 } from '@envsemble/envui';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useTimeline } from '../../motion/Timeline';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
+import { remPixels } from '../../shared/Lengths';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
 import { FoundationFrame } from './FoundationFrame';
 import { remeasure } from '../../shared/Remeasure';
@@ -76,7 +76,7 @@ function useTextFit() {
  * sizes its actions move under the name, and then its labels above their values.
  */
 function TextSizeSteps() {
-  const step = useTimeline(sizes.map(() => 3000));
+  const step = useTimeline(sizes.map(() => 1800));
   const [place, fit] = useTextFit();
   return (
     <div ref={place} className="catalogue-class-text-place">

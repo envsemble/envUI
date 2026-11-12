@@ -1,4 +1,4 @@
-import { headingSlug } from '@docs-model/SearchAnchors';
+import { headingSlug } from '../documentation/SearchAnchors';
 import { pagesOf, type RoutePage } from './SiteRoutes';
 
 /**

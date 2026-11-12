@@ -13,19 +13,19 @@ const block = WrapLongLines();
  * Then the same block wraps the line, and scrolls again.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-code-block pre', x: 0.6, y: 0.5 },
-  { wait: 300 },
+  { wait: 180 },
   { wheel: 520, axis: 'x', duration: 1400 },
-  { wait: 700 },
+  { wait: 420 },
   { wheel: -520, axis: 'x', duration: 900 },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 300 },
+  { wait: 180 },
   { cue: 'wrap' },
-  { wait: 2600 },
+  { wait: 1560 },
   { cue: 'scroll' },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Toggling() {

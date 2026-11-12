@@ -9,23 +9,23 @@ const input = '.env-text-field-input';
  * it, so the field is empty again, as it began. Each state holds long enough to read.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: input, x: 0.3 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { type: 'Northwind', into: input, every: 110 },
-  { wait: 1800 },
+  { wait: 1080 },
   { to: input, text: 'Northwind', x: 0.02, duration: 350 },
-  { wait: 200 },
+  { wait: 120 },
   { press: true },
   { to: input, text: 'Northwind', x: 1, duration: 450 },
   { release: true, stay: true },
-  { wait: 1400 },
+  { wait: 840 },
   { erase: 1, into: input },
-  { wait: 1400 },
+  { wait: 840 },
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 /** A text field with its label. */

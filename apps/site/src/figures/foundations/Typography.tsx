@@ -199,7 +199,7 @@ const textSteps: readonly { size: number; compact: boolean; label: string }[] = 
  */
 function TextSizeSteps() {
   const theme = useTheme();
-  const step = useTimeline(textSteps.map(() => 2400));
+  const step = useTimeline(textSteps.map(() => 1440));
   return (
     <>
       <CornerLabel>{textSteps[step]!.label}</CornerLabel>

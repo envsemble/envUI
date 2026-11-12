@@ -13,16 +13,16 @@ const save = 'button[type="submit"]';
  * starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: save, x: 0.5, y: 2.4 },
   { to: save, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 400 },
+  { wait: 240 },
   { leave: true },
-  { wait: 3800 },
+  { wait: 2280 },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Saving() {

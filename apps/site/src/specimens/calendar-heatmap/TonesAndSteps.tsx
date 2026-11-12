@@ -32,7 +32,7 @@ const looks: { tone: CalendarHeatmapProps['tone']; levels: number; name: string 
   { tone: 'primary', levels: 2, name: 'Primary, 2 steps' },
   { tone: 'primary', levels: 10, name: 'Primary, 10 steps' },
 ];
-const steps = looks.map(() => 1700);
+const steps = looks.map(() => 1020);
 
 function Stepping() {
   const step = useTimeline(steps);

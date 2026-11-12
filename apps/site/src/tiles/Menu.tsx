@@ -17,24 +17,24 @@ const undo = '.env-button:not([aria-haspopup])';
  * from its button, as it rests, held for a while before it plays again.
  */
 const script: PointerStep[] = [
-  { wait: 300 },
+  { wait: 180 },
   { to: item(1) },
-  { wait: 500 },
+  { wait: 300 },
   { to: item(2), duration: 300 },
   // Delete's highlight is held, so it can be read before the press.
-  { wait: 800 },
+  { wait: 480 },
   { click: true },
-  { wait: 1100 },
+  { wait: 660 },
   { to: undo, duration: 400 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { to: trigger, x: 0.6, y: 0.7, duration: 350 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 600 },
+  { wait: 360 },
   { leave: true },
-  { wait: 2650 },
+  { wait: 1590 },
 ];
 
 /** The row, as wide as the menu, so its end stays in place when Delete changes what it shows. */

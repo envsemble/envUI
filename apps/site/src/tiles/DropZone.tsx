@@ -15,19 +15,19 @@ const zone = '.env-drop-zone-target';
  * the zone back, as it began.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { carry: 'report.pdf', as: 'application/pdf' },
   { to: zone, x: 0.15, y: -0.35 },
   { to: zone, x: 0.55, y: 0.5, duration: 600 },
-  { wait: 400 },
+  { wait: 240 },
   { drop: true },
-  { wait: 2400 },
+  { wait: 1440 },
   { to: '.env-button', duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 700 },
+  { wait: 420 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /** How long the upload takes. */

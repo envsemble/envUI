@@ -12,7 +12,7 @@ import type { ToastController } from './useToastController.js';
 import type { ToastEntry } from './toastEntry.js';
 import type { ToastPlacement } from '../toastTypes.js';
 import { usePortalContainer } from '../../../internal/popup/PortalContainerContext.js';
-import { useModalOpen } from '../../../internal/popup/useModalPresence.js';
+import { useModalOpen } from '../../../internal/dialog/useModalPresence.js';
 import { Button, IconButton } from '../../../actions/Button.js';
 import { IconClose } from '../../../icons/Close.js';
 import { flag } from '../../../internal/flag.js';

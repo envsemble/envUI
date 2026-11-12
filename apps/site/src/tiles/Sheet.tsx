@@ -7,17 +7,17 @@ import type { TileWindow } from './Tiles';
 
 /** Closes the sheet with its close button, toward its edge, and opens it again from its button. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-sheet .env-dialog-heading .env-button' },
-  { wait: 700 },
+  { wait: 420 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: '.env-button[aria-haspopup]', duration: 500 },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 /** The page the sheet opens over, as large as the tile's window. */
@@ -35,7 +35,7 @@ const page = {
 const projects = ['Billing', 'Search'];
 
 /**
- * A lower window than the tiles' (Tile.css), as an overlay: a sheet of a title and a filter is
+ * A lower window than the tiles' (TileStage.css), as an overlay: a sheet of a title and a filter is
  * as tall as its window, so it shows whole.
  */
 export const tileWindow: TileWindow = { width: 14, height: 7, overlay: true };

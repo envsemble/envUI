@@ -35,7 +35,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 
 ### The fast tier
 
-- It checks what the branch changed since its merge-base with `origin/envui-1.0`, else `origin/dev`; `--base <ref>` or `ENVUI_BASE` picks another. Uncommitted and untracked files count.
+- It checks what the branch changed since its merge-base with `origin/dev`; `--base <ref>` or `ENVUI_BASE` picks another. Uncommitted and untracked files count.
 - It runs ESLint, Stylelint and Prettier on those files, unused files and exports (`npm run lint:unused`, `knip.jsonc`), incremental `tsc`, the generated-file checks the change touches, the unit tests that need no build, and the related component tests and browser specs in Chromium.
 - `npm run check -- --dry-run` prints what it would run and why; `--files <a,b>` checks those files instead of the branch's changes, the quickest way to run only the tests a change concerns.
 
@@ -74,12 +74,15 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 | ---------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
 | Logic, and markup and ARIA rendered on the server                                              | Unit test, `node --test`              | The folder of what it tests, below                                                   |
 | Keyboard, focus, pointer, layout and positioning in a real browser                             | Component test, Vitest's browser mode | `tests/component/<Name>.test.tsx`                                                    |
-| The site's smoke journey of each kind of page, hydration and failures; the library's hydration | Playwright spec                       | `tests/browser/site/`, `tests/browser/library/`; helpers in `tests/browser/helpers/` |
+| The site's smoke journey of each kind of page, hydration and failures; the library's hydration | Playwright spec                       | `tests/browser/site/`, `tests/browser/library/`; helpers in `tests/browser/support/` |
 | Contrast, appearance, accessibility                                                            | Their gates                           | `npm run test:contrast`, `test:visual`, `test:a11y`                                  |
 
 - Unit tests go in `tests/library/`, `tests/site/`, `tests/docs/` (the documentation and its generators), `tests/tooling/` (the checks and the release) or `tests/lint/` (cases both lint packages' tests read; each package's own tests are in its `test/`).
-- A component test mounts its fixture straight into the page (`mount`, `tests/component/Mount.tsx`) and drives it with the real mouse, keys and finger (`tests/component/Browser.ts`); it never opens a page of the site or the fixture.
-- Run one file as you work: `node --test tests/library/<Name>.test.mjs`, or `npm run test:component -- tests/component/<Name>.test.tsx`.
+- The library's are in three folders: `source/` for its modules as written (server markup and logic), `rules/` for the rules the repository holds its source to, and `package/` for the built package, the only unit tests that need `npm run build`.
+- Unit tests and their helpers are TypeScript, which Node runs as it is; `npm run typecheck` checks them with `tests/tsconfig.json`, except the files it lists as not typed yet, a list that only shrinks.
+- Helpers a folder's tests share are in its `support/`, such as `tests/support/` and `tests/component/support/`; data a test reads sits beside it.
+- A component test mounts its fixture straight into the page (`mount`, `tests/component/support/Mount.tsx`) and drives it with the real mouse, keys and finger (`tests/component/support/Browser.ts`); it never opens a page of the site or the fixture.
+- Run one file as you work: `node --test tests/library/source/<Name>.test.ts`, or `npm run test:component -- tests/component/<Name>.test.tsx`.
 
 ### When to add a test, and which
 
@@ -89,7 +92,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 - Test a behaviour once, in its component's test, and check independent states on one mount.
 - Prefer a computed-style or DOM assertion to a screenshot.
 - Tag a component test `engines` (`{ tags: ['engines'] }`) when it depends on the engine (scrolling, focus, pointer and input methods, native forms, platform keys); Firefox and WebKit run only those.
-- No fixed sleeps: wait for a condition, such as `expect.poll` or the element's animations finishing. Where a test proves that a component waits for a delay, or that nothing happens within one, stop the page's timers and move them on (`stopTimers` and `passTime` in `tests/component/Browser.ts`).
+- No fixed sleeps: wait for a condition, such as `expect.poll` or the element's animations finishing. Where a test proves that a component waits for a delay, or that nothing happens within one, stop the page's timers and move them on (`stopTimers` and `passTime` in `tests/component/support/Browser.ts`).
 
 ### When to delete a test
 
@@ -109,11 +112,11 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 
 ## Ports, workers and recorded lists
 
-- The browser tests start or reuse the site's development server on 8770, the site built as it is hosted on 8767 and the fixture, built for development, on 8766, reusing a server only when it answers for this checkout. A site spec opens the build (`siteBuildUrl`) unless it needs the development server (`siteDevUrl`): `tests/browser/helpers/Servers.ts` says which is which.
+- The browser tests start or reuse the site's development server on 8770, the site built as it is hosted on 8767 and the fixture, built for development, on 8766, reusing a server only when it answers for this checkout. A site spec opens the build (`siteBuildUrl`) unless it needs the development server (`siteDevUrl`): `tests/browser/support/Servers.ts` says which is which.
 - Beside another checkout's tests, set `ENVUI_SITE_PORT`, `ENVUI_SITE_BUILD_PORT` and `ENVUI_FIXTURE_PORT`, such as 8832, 8834 and 8833, and give Vitest's browser server its own port with `--api.port`, such as `--api.port=63450` (Vitest ignores `--browser.api.port`); `npm run test:library` passes it on.
 - `ENVUI_WORKERS` sets the workers (default: half the cores).
 - Lists that only shrink: `stylelint-suppressions.json` (after removing violations, `npm run lint:css -- --suppress`), the accessibility scans' `tests/accessibility/KnownViolations.json` and `tests/component/__snapshots__/Accessibility.test.tsx.snap` (`npm run test:a11y:update`) and the visual baseline (`npm run test:visual:update`, then review the images like code). Add to them only for a reviewed reason.
-- Disable a rule on one line with the reason: `// eslint-disable-next-line rule -- reason`, `/* stylelint-disable-next-line rule -- reason */`.
+- Disable a rule on one line with the reason: after `--`, as in `// eslint-disable-next-line rule -- reason` and `/* stylelint-disable-next-line rule -- reason */`, or in the comment just above when it takes a sentence.
 
 ## Generated files
 
@@ -137,6 +140,7 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 - `packages/eslint-plugin` and `packages/stylelint-config` hold applications to envUI's components and tokens; their READMEs document the rules and how to run their tests.
 - Make a new ESLint rule a file of `packages/eslint-plugin/src/rules/` named after it, registered in `src/index.js` and its recommended config, with its test in `test/<rule>.test.mjs` through `test/RuleTester.mjs`, and its section in the README.
 - Configure a Stylelint rule in `packages/stylelint-config/src/index.js` and test it in `test/config.test.mjs`.
+- Both packages are JavaScript with JSDoc types, which `npm run typecheck` checks through each package's `tsconfig.json`; the ESLint plugin's public types are its hand-written `index.d.ts`.
 - Each package ships its own `src/tokens.js`, `src/colorPolicy.js` and `src/data/tokens.json`, copies that `npm run tokens:build` writes (`scripts/build/SyncLintPackages.ts`): `tokens.js` from `scripts/build/LintPackageTokens.js`; `colorPolicy.js`, what both count as a raw color, from `scripts/build/LintPackageColorPolicy.js`; the data from the library's `packages/ui/src/generated/tokens.json`; and the ESLint plugin's `src/data/entryPoints.json` from the exports of `packages/ui/package.json`.
 - Edit the sources, never the copies; `npm run tokens:check` fails on a stale one.
 
@@ -150,5 +154,5 @@ The rules every change to envUI follows, for agents and people alike. They stay 
 1. **On the release branch**, for a stable release, leave prerelease mode first with `npx changeset pre exit`: `npm run changeset:version` in prerelease mode makes another prerelease (undo it with `git restore` and `git clean`, never by editing versions). Then `npm run changeset:version` writes the version, the lockfile and the changelogs.
 2. **Finish the changelog section:** the date in its heading, as in `## 1.0.0 — 2026-10-20`, and one or two sentences on what the release brings, the headline changes rather than a list; leave the generated entries as they are.
 3. **Check it** with `GITHUB_REF_NAME=v<version> node scripts/release/ValidateRelease.ts` (`--release-notes` prints the notes), retake the README's pictures with `npm run docs:readme-images` if the site's look changed, and commit it as `Release <version>`.
-4. **Merge** the branch into `dev`, then `dev` into `main` with a merge commit, through pull requests. The Release workflow validates, builds, publishes the packages to GitHub Packages and the GitHub release; a re-run publishes only what is missing.
+4. **Merge** the branch into `dev`, then `dev` into `main` with a merge commit, through pull requests. The Release workflow validates, builds, publishes the packages to GitHub Packages and the GitHub release (`scripts/release/Publish.ts`); a re-run publishes only what is missing.
 5. **Merge `main` back into `dev`**, and grant a new package's Actions access to the repositories that read `@envsemble/envui`.

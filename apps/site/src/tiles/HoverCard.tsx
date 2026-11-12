@@ -14,13 +14,13 @@ const trigger = '.env-link';
 const script: PointerStep[] = [
   { cue: 'live' },
   { to: trigger, x: 0.6, y: 0.6 },
-  { wait: 600 },
+  { wait: 360 },
   { to: '.env-hover-card strong', x: 0.5, y: 0.6, duration: 450 },
-  { wait: 900 },
+  { wait: 540 },
   { to: trigger, x: -0.75, y: 0.4, duration: 400 },
-  { wait: 1000 },
+  { wait: 600 },
   { to: trigger, x: 0.6, y: 0.6, duration: 450 },
-  { wait: 2200 },
+  { wait: 1320 },
 ];
 
 /**

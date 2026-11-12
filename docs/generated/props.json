@@ -3595,8 +3595,15 @@
     "IconButton": {
       "kind": "component",
       "source": "packages/ui/src/actions/Button.tsx",
-      "description": "A square button that shows its icon alone, named by aria-label, such as a close button with the Close cross; with href, a native link. Without a variant it takes its container's, and else the neutral secondary one.",
+      "description": "A square button that shows its icon alone, named by aria-label or aria-labelledby, such as a close button with the Close cross; with href, a native link. Without a variant it takes its container's, and else the neutral secondary one.",
       "props": [
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "requiredWhen": "`aria-label` is not set",
+          "description": "The id of visible text that names the action; this or aria-label."
+        },
         {
           "name": "disabled",
           "type": "boolean",
@@ -3626,16 +3633,17 @@
           "description": "The meaning, as Button's."
         },
         {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "requiredWhen": "`aria-labelledby` is not set",
+          "description": "The action's name, which assistive technology announces, such as Open settings."
+        },
+        {
           "name": "icon",
           "type": "ReactNode",
           "required": true,
           "description": "The icon, such as Settings."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": true,
-          "description": "The action's name, which assistive technology announces, such as Open settings."
         },
         {
           "name": "pending",
@@ -8389,6 +8397,13 @@
       "source": "packages/ui/src/foundations/ThemeToggle.tsx",
       "description": "Switches between the light and dark themes and stores the choice.",
       "props": [
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "requiredWhen": "in some forms",
+          "description": "The id of visible text that names the action; this or aria-label."
+        },
         {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",

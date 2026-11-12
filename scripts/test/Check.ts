@@ -4,10 +4,11 @@
 //
 //   node scripts/test/Check.ts [--affected] [--base <ref>] [--files <a,b,...>] [--dry-run]
 //
-// --base       the branch to compare with; else ENVUI_BASE, else origin/envui-1.0, else origin/dev
+// --base       the branch to compare with; else ENVUI_BASE, else origin/dev
 // --files      check these paths instead of the branch's changes, such as to try the selection
 // --dry-run    print the selection and stop
 import { parseArgs } from 'node:util';
+import { checks, generateDocumentation } from './Checks.ts';
 import { isComponentTest } from './FixtureImports.ts';
 import {
   changedFiles,
@@ -133,104 +134,32 @@ if (dryRun) process.exit(0);
 
 // Tasks.
 const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];
-const staticTasks: Task[] = [];
-if (scope.whole.lint)
-  staticTasks.push(
-    task('eslint', [...bin.eslint, '.', '--cache', '--cache-location', '.cache/eslint/']),
-  );
-else if (scope.lint.length)
-  staticTasks.push(
-    task(
-      'eslint',
-      [
-        ...bin.eslint,
-        '--cache',
-        '--cache-location',
-        '.cache/eslint/',
-        '--no-warn-ignored',
-        ...scope.lint,
-      ],
-      {
-        detail: `${scope.lint.length} files`,
-      },
-    ),
-  );
-// Unused files, exports and dependencies (knip.jsonc), wherever code or the packages changed.
-if (scope.whole.lint || scope.lint.length)
-  staticTasks.push(task('lint:unused', [...bin.npm, 'run', '-s', 'lint:unused']));
-if (scope.whole.css)
-  staticTasks.push(
-    task('stylelint', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/site/src/**/*.css']),
-  );
-else if (scope.css.length)
-  staticTasks.push(
-    task('stylelint', [...bin.stylelint, ...scope.css], { detail: `${scope.css.length} files` }),
-  );
-if (scope.whole.format) staticTasks.push(task('prettier', [...bin.prettier, '--check', '.']));
-else if (scope.format.length)
-  staticTasks.push(
-    task('prettier', [...bin.prettier, '--check', '--ignore-unknown', ...scope.format], {
-      detail: `${scope.format.length} files`,
-    }),
-  );
-if (scope.typecheck)
-  for (const [name, project] of [
-    ['ui', 'packages/ui/tsconfig.json'],
-    ['site', 'apps/site/tsconfig.json'],
-    ['types', 'tests/types/tsconfig.json'],
-    ['fixture', 'tests/fixture/tsconfig.json'],
-    ['component', 'tests/component/tsconfig.json'],
-    ['scripts', 'scripts/tsconfig.json'],
-  ])
-    staticTasks.push(
-      task(`tsc ${name}`, [
-        ...bin.tsc,
-        '-p',
-        project,
-        '--noEmit',
-        '--incremental',
-        '--tsBuildInfoFile',
-        `.cache/tsc/${name}.tsbuildinfo`,
-      ]),
-    );
-if (scope.generated.has('tokens'))
-  staticTasks.push(
-    task('tokens:check', node('scripts/build/GeneratePalette.ts', '--check')),
-    task('tokens:check build', node('scripts/build/BuildTokens.ts', '--check')),
-    task('tokens:check lint packages', node('scripts/build/SyncLintPackages.ts', '--check')),
-  );
-if (scope.generated.has('docs'))
-  staticTasks.push(
-    task('docs:check props', node('scripts/docs/ExtractProps.ts', '--check')),
-    task(
-      'docs:check parts',
-      node(
-        'scripts/docs/GenerateParts.ts',
-        '--check',
-        ...(baseOption ? ['--base', baseOption] : []),
-      ),
-    ),
-    task(
-      'docs:check exports',
-      node(
-        'scripts/docs/GenerateExports.ts',
-        '--check',
-        ...(baseOption ? ['--base', baseOption] : []),
-      ),
-    ),
-    task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),
-    task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
-  );
-if (scope.generated.has('icons'))
-  staticTasks.push(task('icons:check', node('scripts/build/GenerateIcons.ts', '--check')));
+const staticTasks: Task[] = [
+  ...(scope.whole.lint ? checks.lint() : scope.lint.length ? checks.lint(scope.lint) : []),
+  // Unused files, exports and dependencies (knip.jsonc), wherever code or the packages changed.
+  ...(scope.whole.lint || scope.lint.length ? checks['lint:unused']() : []),
+  ...(scope.whole.css
+    ? checks['lint:css']()
+    : scope.css.length
+      ? checks['lint:css'](scope.css)
+      : []),
+  ...(scope.whole.format
+    ? checks['format:check']()
+    : scope.format.length
+      ? checks['format:check'](scope.format)
+      : []),
+  ...(scope.typecheck ? checks.typecheck() : []),
+  ...(scope.generated.has('tokens') ? checks['tokens:check']() : []),
+  ...(scope.generated.has('docs') ? checks['docs:check'](baseOption) : []),
+  ...(scope.generated.has('icons') ? checks['icons:check']() : []),
+];
 staticTasks.push(
   task('unit tests', [...bin.node, '--test', ...fastUnitTests], {
     detail: `${fastUnitTests.length} files`,
   }),
 );
 
-// The catalogue reads the generated documentation, which is not committed.
-await series([task('generate documentation', node('scripts/docs/GenerateDocumentation.ts'))]);
+await series([generateDocumentation]);
 
 const browserTask = (names: string[], projects: string[], label: string) =>
   task(

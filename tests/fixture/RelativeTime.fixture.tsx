@@ -4,7 +4,7 @@ export const themes = true;
 
 /**
  * Times with their date and time in a tooltip, in English and German, one without a tooltip and one
- * inside the application's own Tooltip. Their words and clock are tests/library/RelativeTime.test.mjs's.
+ * inside the application's own Tooltip. Their words and clock are tests/library/source/RelativeTime.test.ts's.
  */
 export default function RelativeTimeFixture({ theme }: { theme: ColorScheme }) {
   return (

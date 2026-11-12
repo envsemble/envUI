@@ -10,20 +10,20 @@ const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-
  * pointer runs down its items to Sign out without pressing, and the menu closes.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-avatar-button', x: 0.55, y: 0.6 },
-  { wait: 450 },
+  { wait: 270 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { to: item(1), x: 0.4, duration: 450 },
-  { wait: 500 },
+  { wait: 300 },
   // Past Theme in one move, too quick for its submenu to open.
   { to: item(3), x: 0.4, duration: 400 },
-  { wait: 900 },
+  { wait: 540 },
   { key: 'Escape', on: '.env-menu' },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 function Opening() {

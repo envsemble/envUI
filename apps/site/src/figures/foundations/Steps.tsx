@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { classNames } from '@envui-internal/internal/classNames';
+import { classNames } from '../../shared/Attributes';
 
 /*
  * Parts of the foundations' animated figures that step through states, such as a card at each text

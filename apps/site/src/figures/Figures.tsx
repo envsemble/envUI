@@ -5,9 +5,9 @@ import type {
   ExampleBlock,
   FoundationFigureBlock,
   PlacedBlock,
-} from '@docs-model/DocumentationTypes';
+} from '../documentation/DocumentationTypes';
 import { PageMarkdown } from '../markdown/PageMarkdown';
-import type { DocumentationEntry } from '@docs-model/DocumentationTypes';
+import type { DocumentationEntry } from '../documentation/DocumentationTypes';
 import { AnatomyFigure } from './anatomy/AnatomyFigure';
 import { LiveExample, type Presentation } from './LiveExample';
 import { VerdictFigure } from './VerdictFigure';
@@ -17,12 +17,12 @@ import {
   leadParagraph,
   optionPieces,
   type OptionTable,
-} from '@docs-model/CatalogueContent';
+} from '../documentation/CatalogueContent';
 import { Specimen } from './Specimen';
 import { useFoundationFigures, type FoundationFigureEntry } from './foundations/FoundationFigures';
 import { FigureCode, FigurePart } from './foundations/FoundationFrame';
 import { pendingAttribute, useSectionOutline } from '../markdown/SectionOutline';
-import { classNames } from '@envui-internal/internal/classNames';
+import { classNames } from '../shared/Attributes';
 import { StageSkeleton } from '../loading/Skeletons';
 import { useSubjectShown } from './useSubjectShown';
 

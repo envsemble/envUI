@@ -11,8 +11,8 @@ import {
   mouse,
   nextFrames,
   shown,
-} from './Browser.ts';
-import { mount } from './Mount.tsx';
+} from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
   mount(fixture);

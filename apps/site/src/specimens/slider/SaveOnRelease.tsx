@@ -10,21 +10,21 @@ const control = '.env-slider-control';
  * saved only once it lets go; then it drags it back up to 60%, saved again.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: control, x: 0.6 },
-  { wait: 500 },
+  { wait: 300 },
   { press: true },
   { to: control, x: 0.35, duration: 1300 },
-  { wait: 300 },
+  { wait: 180 },
   { release: true },
-  { wait: 1600 },
+  { wait: 960 },
   { press: true },
   { to: control, x: 0.6, duration: 1300 },
-  { wait: 300 },
+  { wait: 180 },
   { release: true },
-  { wait: 1200 },
+  { wait: 720 },
   { leave: true },
-  { wait: 800 },
+  { wait: 480 },
 ];
 
 function Dragging() {

@@ -7,7 +7,7 @@ import './styles/index.css';
 import { findPage } from './routes/SiteRoutes';
 import { currentRoute } from './routes/useSiteRoute';
 import { oldHashRoute } from './routes/Address';
-import { preloadFirstPage } from './pages/PreloadPage';
+import { preloadFirstPage } from './pages/PageLoading';
 import { FiguresMounted } from './loading/useFiguresMounted';
 import { givePageCode } from './pages/PageCode';
 import { givePageMarkdown } from './pages/PageMarkdownTrees';
@@ -80,6 +80,6 @@ void opening.then(() => {
 // Those modules serve the start alone: a change to them, such as the documentation's while
 // developing, updates the pages that use them in place rather than loading the site again.
 import.meta.hot?.accept(
-  ['./routes/SiteRoutes', './routes/useSiteRoute', './pages/PreloadPage'],
+  ['./routes/SiteRoutes', './routes/useSiteRoute', './pages/PageLoading'],
   () => {},
 );

@@ -1,4 +1,4 @@
-// The runtime benchmarks' page (scripts/test/MeasureRuntime.ts): big lists and popups on their own,
+// The runtime benchmarks' page (scripts/measure/MeasureRuntime.ts): big lists and popups on their own,
 // built for production. ?scenario= picks what it holds, and window.envuiPerf runs the measurements
 // the script asks for, timed with performance.now() around React's commit and to the frame after.
 import { useLayoutEffect, useState } from 'react';

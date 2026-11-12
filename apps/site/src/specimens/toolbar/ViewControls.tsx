@@ -11,17 +11,17 @@ const button = (label: string) => `.env-toolbar-button[aria-label="${label}"]`;
  * show their names at once, with no wait, and the pointer leaves.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: button('Zoom out'), x: 0.5, y: 2.2 },
   { to: button('Zoom out'), x: 0.5, y: 0.55, duration: 450 },
-  { wait: 900 },
+  { wait: 540 },
   { to: button('Zoom in'), x: 0.5, y: 0.55, duration: 350 },
-  { wait: 900 },
+  { wait: 540 },
   { to: button('Diagram help'), x: 0.5, y: 0.55, duration: 400 },
-  { wait: 1000 },
+  { wait: 600 },
   { to: button('Diagram help'), x: 0.5, y: 2.4, duration: 400 },
   { leave: true },
-  { wait: 900 },
+  { wait: 540 },
 ];
 
 const steps = ['Sign up', 'Verify e-mail', 'Choose a plan'];

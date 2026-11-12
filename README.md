@@ -5,7 +5,11 @@
 
 **A React design system for clear, accessible interfaces.**
 
-[![CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
+[![Verify](https://github.com/envsemble/envUI/actions/workflows/verify.yml/badge.svg?branch=dev)](https://github.com/envsemble/envUI/actions/workflows/verify.yml)
+![React 19](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)
+![TypeScript types included](https://img.shields.io/badge/TypeScript-types_included-3178c6?logo=typescript&logoColor=white)
+![Node.js 22.13+ or 24+](https://img.shields.io/badge/Node.js-22.13%2B_%7C_24%2B-417e38?logo=nodedotjs&logoColor=white)
+![Private package on GitHub Packages](https://img.shields.io/badge/GitHub_Packages-private-6e40c9?logo=github&logoColor=white)
 
 envUI gives B2B SaaS products and AI developer tools one consistent interface: themes, components and patterns, from a button or a form to an app frame, a data table or a conversation with an agent. Its documentation is written for the people and the coding agents who build with it, and ships in the package.
 

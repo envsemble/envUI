@@ -26,20 +26,20 @@ const segment = (index: number) =>
 
 /** Chooses the month, the figures rolling to it, then the week again. */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: segment(2) },
-  { wait: 400 },
+  { wait: 240 },
   { click: true },
-  { wait: 1900 },
+  { wait: 1140 },
   { to: segment(1), duration: 400 },
-  { wait: 200 },
+  { wait: 120 },
   { click: true },
-  { wait: 1400 },
+  { wait: 840 },
   { leave: true },
-  { wait: 400 },
+  { wait: 240 },
 ];
 
-/** A larger window than the tiles' (Tile.css), drawn smaller: the component doesn't fit theirs. */
+/** A larger window than the tiles' (TileStage.css), drawn smaller: the component doesn't fit theirs. */
 export const tileWindow: TileWindow = { width: 18, height: 13.5 };
 
 /** Two key figures on a surface, with how each changed over the chosen period. */

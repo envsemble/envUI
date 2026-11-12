@@ -18,19 +18,19 @@ const close = (name: string) => `.env-sheet [aria-label="${name}"]`;
  * outline, from the start; then its share choices, from the bottom, each closed again.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   ...sheets.flatMap((sheet, index): PointerStep[] => [
     { to: trigger(sheet.trigger), x: 0.5, y: 0.6, duration: index === 0 ? 0 : 500 },
-    { wait: 350 },
+    { wait: 210 },
     { click: true },
-    { wait: 1300 },
+    { wait: 780 },
     { to: close(sheet.close), duration: 550 },
-    { wait: 300 },
+    { wait: 180 },
     { click: true },
-    { wait: 700 },
+    { wait: 420 },
   ]),
   { leave: true },
-  { wait: 600 },
+  { wait: 360 },
 ];
 
 function Opening() {

@@ -11,15 +11,15 @@ import type { TileWindow } from './Tiles';
  * stack.
  */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 240 },
   { to: '.env-toast-action' },
-  { wait: 700 },
+  { wait: 420 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 2600 },
+  { wait: 1560 },
   { cue: 'again' },
-  { wait: 2600 },
+  { wait: 1560 },
 ];
 
 /**
@@ -80,7 +80,7 @@ function Notices() {
   return null;
 }
 
-/** The tiles' window (Tile.css), as an overlay: drawn at the overlays' one scale. */
+/** The tiles' window (TileStage.css), as an overlay: drawn at the overlays' one scale. */
 export const tileWindow: TileWindow = { overlay: true };
 
 /**

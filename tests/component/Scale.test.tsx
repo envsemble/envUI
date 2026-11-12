@@ -15,8 +15,8 @@ import * as primitives from '../fixture/Primitives.fixture.tsx';
 import * as fixture from '../fixture/Scale.fixture.tsx';
 import { controlSizes, densityScales } from '../fixture/ScaleSections.fixture.ts';
 import * as tabsCompact from '../fixture/TabsCompact.fixture.tsx';
-import { box, css } from './Browser.ts';
-import { mount } from './Mount.tsx';
+import { box, css } from './support/Browser.ts';
+import { mount } from './support/Mount.tsx';
 
 /** The control heights of each scale, in CSS pixels at the default 16 px root. */
 const heights = {

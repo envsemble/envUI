@@ -29,8 +29,8 @@ function measureWave(body: HTMLElement, shape: SVGSVGElement): WaveLayout | null
   const links = body.querySelectorAll<HTMLElement>('.env-table-of-contents-link');
   if (links.length === 0) return null;
   const anchors = Array.from(links, (link) => link.offsetTop + link.offsetHeight / 2);
-  const first = links[0]!;
-  const last = links[links.length - 1]!;
+  const first = links[0];
+  const last = links[links.length - 1];
   // The shape runs past the first and last entries into the room the box leaves around them, where
   // the bulge tapers whole when the reader is at either end.
   const room = getComputedStyle(body);

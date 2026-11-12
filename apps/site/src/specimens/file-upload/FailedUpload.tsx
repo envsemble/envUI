@@ -15,16 +15,16 @@ const tryAgain = '[aria-label="Try again to upload team-photo.jpg"]';
 const script: PointerStep[] = [
   // A script's first wait is cut short; the pointer waits for the failure after a cue.
   { cue: 'start' },
-  { wait: 1700 },
+  { wait: 1020 },
   { to: tryAgain, x: 0.5, y: 2.2 },
   { to: tryAgain, x: 0.5, y: 0.55, duration: 450 },
-  { wait: 250 },
+  { wait: 150 },
   { click: true },
-  { wait: 300 },
+  { wait: 180 },
   { leave: true },
-  { wait: 4400 },
+  { wait: 2640 },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Retrying() {

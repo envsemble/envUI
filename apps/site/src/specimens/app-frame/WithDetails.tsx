@@ -13,18 +13,18 @@ const close = '[aria-label="Close"]';
  * details' heading, then the details' end with the close button the pointer heads to.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-panes-trigger', x: 0.5, y: 2.4 },
   { to: '.env-panes-trigger', x: 0.5, y: 0.6, duration: 450 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 2200 },
+  { wait: 1320 },
   { to: close, x: 0.5, y: 0.5, duration: 700 },
-  { wait: 300 },
+  { wait: 180 },
   { click: true },
-  { wait: 900 },
+  { wait: 540 },
   { leave: true },
-  { wait: 500 },
+  { wait: 300 },
 ];
 
 function Opening() {

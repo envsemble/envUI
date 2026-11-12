@@ -30,7 +30,7 @@ const tilePath = (id: string) => `/src/tiles/${pascal(id)}.tsx`;
 
 /**
  * A tile's window, the box it lays out in, where it differs from the tiles' one window, whose size
- * Tile.css sets. Every tile shares that window unless it declares its own, so components show at
+ * TileStage.css sets. Every tile shares that window unless it declares its own, so components show at
  * one scale across the galleries, about their own size. A component too large for it, such as a
  * calendar, declares a larger window, drawn smaller; a drawing declares a smaller one, drawn
  * larger, as a drawing has no size of its own. Sizes are in rem.

@@ -12,23 +12,23 @@ const exportButton = 'button[type="submit"]';
  * clears the error, and presses Export again, which exports. The example is drawn anew at the end.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { to: exportButton, x: 0.55, y: 0.6 },
-  { wait: 350 },
-  { click: true },
-  { wait: 1500 },
-  { to: '.env-radio:nth-child(2 of .env-radio) .env-radio-input', duration: 600 },
   { wait: 300 },
+  { to: exportButton, x: 0.55, y: 0.6 },
+  { wait: 210 },
   { click: true },
   { wait: 900 },
-  { to: exportButton, x: 0.55, y: 0.6, duration: 600 },
-  { wait: 300 },
+  { to: '.env-radio:nth-child(2 of .env-radio) .env-radio-input', duration: 600 },
+  { wait: 180 },
   { click: true },
-  { wait: 1800 },
+  { wait: 540 },
+  { to: exportButton, x: 0.55, y: 0.6, duration: 600 },
+  { wait: 180 },
+  { click: true },
+  { wait: 1080 },
   { leave: true },
-  { wait: 300 },
+  { wait: 180 },
   { cue: 'again' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Exporting() {

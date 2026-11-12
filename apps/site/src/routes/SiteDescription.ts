@@ -1,5 +1,5 @@
 /**
- * What the site is, in the head of index.html (vite.config.ts), and of a page without a summary
+ * What the site is, in the head of index.html (IndexHead.ts), and of a page without a summary
  * (PageHead.ts).
  */
 export const siteDescription =

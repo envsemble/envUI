@@ -10,14 +10,14 @@ import { Renew } from '../../motion/Renew';
  * disclosure opens itself onto the field and its error. Then the example starts anew.
  */
 const script: PointerStep[] = [
-  { wait: 500 },
+  { wait: 300 },
   { to: '.env-button[type="submit"]', x: 0.55, y: 0.6 },
-  { wait: 1000 },
+  { wait: 600 },
   { click: true },
-  { wait: 2600 },
+  { wait: 1560 },
   { leave: true },
   { cue: 'renew' },
-  { wait: 700 },
+  { wait: 420 },
 ];
 
 function Saving() {
