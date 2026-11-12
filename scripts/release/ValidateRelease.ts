@@ -4,7 +4,8 @@
 //
 //   GITHUB_REF_NAME=v<version> node scripts/release/ValidateRelease.ts [--release-notes]
 //
-// --release-notes prints the version's CHANGELOG section, the release's notes.
+// --release-notes prints the release's notes: the version's CHANGELOG section, or its summary and a
+// link to the section when the section is longer than a GitHub release takes.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { libraryChangelogFile, libraryPackageFile, repositoryRoot } from '../RepositoryPaths.ts';
@@ -41,8 +42,16 @@ export function validateRelease(tag: string | undefined) {
   };
 }
 
-/** The CHANGELOG section for one version: from its `## <version>` heading to the next `## ` heading. */
-function releaseNotes(changelog: string, version: string) {
+/** The most characters GitHub takes as a release's notes; a longer body fails with HTTP 422. */
+export const releaseNotesLimit = 125_000;
+
+/**
+ * The release's notes: the CHANGELOG section for one version, from its `## <version>` heading to
+ * the next `## ` heading. A section longer than `limit`, such as one that gathers several
+ * prereleases, gives its summary, the text before its first `### ` group, and a link to the
+ * changelog at the release's tag instead.
+ */
+export function releaseNotes(changelog: string, version: string, limit = releaseNotesLimit) {
   const lines = changelog.replaceAll('\r\n', '\n').split('\n');
   const start = lines.findIndex(
     (line) => line === `## ${version}` || line.startsWith(`## ${version} `),
@@ -54,7 +63,12 @@ function releaseNotes(changelog: string, version: string) {
     .join('\n')
     .trim();
   if (!body) throw new Error(`CHANGELOG.md section for ${version} is empty.`);
-  return `${body}\n`;
+  if (body.length < limit) return `${body}\n`;
+  const summary = body.split(/^### /m)[0]!.trim();
+  if (!summary)
+    throw new Error(`CHANGELOG.md section for ${version} needs a summary to link from.`);
+  const changelogUrl = `https://github.com/envsemble/envUI/blob/v${version}/packages/ui/CHANGELOG.md`;
+  return `${summary}\n\nEvery change in ${version} is in the [changelog](${changelogUrl}).\n`;
 }
 
 if (import.meta.main) {
