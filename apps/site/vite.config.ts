@@ -2,7 +2,7 @@
 // cached, the catalogue at the root and the Docs under /docs, both from one index.html. The site's
 // own plugins are in the modules of their concerns: index.html's head in src/IndexHead.ts, the rest
 // in scripts/.
-import { defineConfig } from 'vite';
+import { defineConfig, type UserConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
@@ -19,7 +19,7 @@ const iconList = fileURLToPath(new URL('../../packages/ui/src/icons/index.ts', i
 /** The library's source, the site's only door into what its entry points don't export. */
 const libraryInternals = fileURLToPath(new URL('../../packages/ui/src', import.meta.url));
 
-export default defineConfig(() => {
+export default defineConfig((): UserConfig => {
   return {
     plugins: [
       // Tells the browser tests which checkout this server serves.

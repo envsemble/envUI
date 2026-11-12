@@ -6,9 +6,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/ImportSource.ts';
 
-const { planOf, aimsOf, headingAt, presentAt, firstWait } = await importSource<
-  typeof import('../../apps/site/src/motion/pointer/PointerPlan.ts')
->('PointerPlan', 'apps/site/src/motion/pointer/PointerPlan.ts');
+/** What a test reads of a planned happening (PointerPlan.ts types it in full). */
+type Happening = { time: number; kind: string; text?: string };
+
+const { planOf, aimsOf, headingAt, presentAt, firstWait } = await importSource(
+  'PointerPlan',
+  'apps/site/src/motion/pointer/PointerPlan.ts',
+);
 
 test('a script plans its moves and presses at the times its waits say', () => {
   const plan = planOf([
@@ -26,7 +30,7 @@ test('a script plans its moves and presses at the times its waits say', () => {
   // The click holds its button 90 ms; during the wait after it, the pointer steps aside.
   const pressed = firstWait + 400 + 200;
   assert.deepEqual(
-    plan.happenings.map(({ time, kind }) => [time, kind]),
+    plan.happenings.map(({ time, kind }: Happening) => [time, kind]),
     [
       [pressed, 'press'],
       [pressed + 90, 'release'],
@@ -55,9 +59,9 @@ test('typing plans one character at a time, and a stayed press keeps the pointer
     { key: 'Enter', on: '.send' },
   ]);
   assert.equal(plan.moves.length, 1);
-  const typed = plan.happenings.filter(({ kind }) => kind === 'type');
+  const typed = plan.happenings.filter(({ kind }: Happening) => kind === 'type');
   assert.deepEqual(
-    typed.map(({ time, text }) => [time, text]),
+    typed.map(({ time, text }: Happening) => [time, text]),
     [
       [90 + 1000 + 80, 'a'],
       [90 + 1000 + 160, 'b'],

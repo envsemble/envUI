@@ -4,7 +4,7 @@
 // port would silently serve that checkout's code.
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
-import type { PreviewServer, ViteDevServer } from 'vite';
+import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const checkoutPath = '/__envui/checkout';
@@ -26,7 +26,7 @@ export function checkoutId(folder = repositoryRoot) {
 }
 
 /** The Vite plugin that answers the marker on a development or preview server. */
-export function checkoutMarker() {
+export function checkoutMarker(): Plugin {
   const id = checkoutId();
   // Returns nothing: a function returned would be taken for a middleware to add after Vite's.
   const answer = (server: ViteDevServer | PreviewServer) => {
