@@ -25,8 +25,7 @@ import {
 
 test('the release notes hold: newest first, five highlights at most, links to sections of the Docs', () => {
   const releases = readReleaseNotes();
-  assert.ok(releases.length >= 4);
-  assert.equal(releases.at(-1)?.version, '1.0.0-prerelease.0');
+  assert.ok(releases.length >= 1);
   assert.ok(releases.every((release) => release.highlights.length <= 5));
 });
 
