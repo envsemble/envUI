@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': major
-'@envsemble/envui-codemods': major
 '@envsemble/eslint-plugin-envui': patch
 ---
 

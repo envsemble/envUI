@@ -1,5 +1,25 @@
 # @envsemble/eslint-plugin-envui
 
+## 1.0.0-prerelease.5
+
+### Major Changes
+
+- The `no-renamed-exports` rule is removed. Delete it from any configuration or disable comment that names it: ESLint reports a rule it doesn't know.
+
+### Minor Changes
+
+- The `ThemeValue` type, `'light' | 'dark'`, is `ColorScheme`, as CSS calls it.
+- `CommandPaletteActionOptions`, the second argument of CommandPalette's `onAction`, is `CommandPaletteActionDetails`, as every callback's extra argument is named.
+- A new rule, `no-raw-graphics`, on as an error in `configs.recommended`, points pictures to envUI's Graphic and icons. It reports a raw `<img>`, which Graphic replaces for logos and, with `fit="cover"`, photos; a raw `<svg>` with a fixed `width`, `height` or `fill`, such as `width="24"`, outside an icon slot or a Graphic, and tells an icon component to write `width="1em" height="1em" fill="currentColor"`, as envUI's own icons do; imports from other icon packages, such as `lucide-react` or `react-icons/fa`; a `<Graphic>` without `alt`; and a margin on a `<Graphic>`, which `npx envui-graphic <file>` replaces by trimming the file's empty edges. Its `allow` option keeps an icon package you still need. See [no-raw-graphics](https://github.com/envsemble/envUI/blob/main/packages/eslint-plugin/README.md#no-raw-graphics).
+- Bar, Rail and Drawer are NavigationBar, NavigationRail and NavigationDrawer, with `NavigationBarProps`, `NavigationRailProps`, `NavigationDrawerProps` and `NavigationDrawerDestination`, after Material's navigation bar, rail and drawer: elsewhere a drawer is a panel over the page, and Bar named nothing in particular. Their part classes and color properties take the same names, `env-navigation-bar-*`, `env-navigation-rail-*` and `env-navigation-drawer-*` where they were `env-bar-*`, `env-rail-*` and `env-drawer-*`, and their style sheets are `NavigationBar.css`, `NavigationRail.css` and `NavigationDrawer.css`. The documentation page is `navigation-drawer`; `drawer` opens it.
+- `envui/no-hand-rolled-layout` is `envui/no-inline-layout`, after what it reports: flex and grid layout in inline styles, as `no-raw-colors` reports colors there. Rename it in your config and disable comments.
+
+### Patch Changes
+
+- `envui/no-inline-layout` reads a style through optional chaining and a non-null assertion, as `envui/no-html-elements` reads a component: `style={styles?.toolbar}` and `display: d!` are now reported where the constant they read sets a layout display.
+- Success, information and danger toasts take the neutral toast's dark fill, `--env-color-bg-neutral-strong`, with their icon in the tone's light grade on a faint disc of it, rather than a solid green, blue or red fill, so a notification no longer outweighs everything on a busy screen. The icon colors are new tokens, `--env-color-fg-success-on-strong`, `--env-color-fg-info-on-strong` and `--env-color-fg-danger-on-strong`, at 3:1 on the disc, 4.5:1 at high contrast; a toast whose content color is set takes that color for its icon too. `--env-color-bg-{success,info,danger}-strong` stay. Every toast in a region is one width, 22 rem, less the gutters on a phone, so a stack's edges line up rather than following each message's length. The ESLint plugin and the Stylelint config accept the new tokens.
+- The token lists the messages suggest include `--env-color-rating-star`, the filled stars' gold of a Rating.
+
 ## 1.0.0-prerelease.4
 
 No changes in this release.

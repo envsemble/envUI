@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': major
-'@envsemble/envui-codemods': major
 ---
 
 SearchTrigger is gone: CommandPalette's page builds the button that opens the palette from a secondary Button with the Search icon, its label and the shortcut's keys, or from a ghost IconButton in a Tooltip, and the application listens for ⌘K or Ctrl+K itself, once.

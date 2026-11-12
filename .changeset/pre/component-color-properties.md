@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': major
-'@envsemble/envui-codemods': minor
 ---
 
 Any single element can take colors of its own, Material's way. envUI's own colors don't change.

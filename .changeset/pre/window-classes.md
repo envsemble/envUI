@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': major
-'@envsemble/envui-codemods': minor
 ---
 
 envUI responds to containers at window classes rather than to the viewport: compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, which `windowClasses`, `WindowClass` and the `--env-window-class-*` tokens hold.
