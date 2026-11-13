@@ -5,6 +5,10 @@
   /* A word longer than its line breaks where it would overflow, and only there: a column, a cell or
      a button still keeps room for its longest word, so short words never break inside. */
   overflow-wrap: break-word;
+  /* No tap highlight: a phone's browser draws a box over the whole of a tapped control, square
+     where the control is round. Every control shows its own press, and its focus ring for the
+     keyboard. Inherited, so it holds inside every boundary and every popup's. */
+  -webkit-tap-highlight-color: transparent;
   /* Standard contrast until a rule below says otherwise (see the switch at the end). */
   --env-theme-high-contrast: initial;
   /* Light until a rule below says otherwise (see the switch at the end). */

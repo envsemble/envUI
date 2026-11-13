@@ -77,7 +77,6 @@
     scroll-snap-align: center;
     cursor: pointer;
     user-select: none;
-    -webkit-tap-highlight-color: transparent;
   }
   .env-time-list-row[data-centered] {
     background: var(--env-color-bg-primary-emphasis);
