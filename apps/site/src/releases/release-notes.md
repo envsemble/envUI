@@ -12,6 +12,10 @@ scripts/site/ReleaseNotes.ts reads and checks this file; the full changelog is p
 - A change, [with a link to its entry](/docs/changelog#release).
 -->
 
+## 1.0.1 — 2026-11-13
+
+- A tapped control on a phone no longer shows the browser's square tap highlight; its own press feedback shows instead.
+
 ## 1.0.0 — 2026-11-12
 
 - [envUI 1.0](/docs/changelog#100--2026-11-12) is the first stable release: from here, a breaking change waits for a major version.
