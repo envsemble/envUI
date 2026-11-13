@@ -80,9 +80,11 @@ function world({ release, published = [] }) {
       return published.includes(args[1].replace(/@[^@]+$/, ''))
         ? { status: 0, stdout: '1.0.0\n', stderr: '' }
         : { status: 1, stdout: '', stderr: 'npm error code E404' };
+    if (command === 'npm' && args[0] === 'publish')
+      return { status: 0, stdout: `+ ${args[2]}\n`, stderr: 'npm notice Publishing\n' };
     return { status: 0, stdout: '', stderr: '' };
   };
-  return { run, calls };
+  return { run, calls, logs: [] };
 }
 
 const prerelease = { version: '1.0.0-rc.1', prerelease: true, distTag: 'rc', notes: 'Notes.\n' };
@@ -92,6 +94,7 @@ const release = (state) =>
     sha: 'abc123',
     run: state.run,
     notesDirectory: mkdtempSync(join(tmpdir(), 'release-test-')),
+    log: (text) => state.logs.push(text),
   });
 
 test('a released version publishes nothing', () => {
@@ -121,6 +124,12 @@ test('a missing release is drafted, its packages published under the dist-tag, t
   ]);
   assert.match(state.calls[1], /--draft --target abc123 .* --prerelease$/);
   assert.match(state.calls[3], /--tag rc$/);
+  // npm's own words go to the log, so a run shows what the registry said of each package.
+  assert.deepEqual(state.logs, [
+    'npm notice Publishing\n+ @envsemble/envui\n',
+    'npm notice Publishing\n+ @envsemble/eslint-plugin-envui\n',
+    'npm notice Publishing\n+ @envsemble/stylelint-config-envui\n',
+  ]);
 });
 
 test('a draft left by a failed run is replaced, and only what the registry lacks is published', () => {

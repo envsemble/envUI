@@ -42,12 +42,12 @@ const runCommand: Run = (command, args) => {
   return { status, stdout, stderr };
 };
 
-/** Runs a command that must succeed, and returns its output. */
+/** Runs a command that must succeed, and returns its outcome. */
 function must(run: Run, command: 'gh' | 'npm', args: string[]) {
   const outcome = run(command, args);
   if (outcome.status !== 0)
     throw new Error(`${command} ${args.join(' ')} failed:\n${outcome.stderr}`);
-  return outcome.stdout;
+  return outcome;
 }
 
 /** Where the release of `tag` stands on GitHub. */
@@ -75,11 +75,14 @@ export function publish({
   sha,
   run = runCommand,
   notesDirectory = mkdtempSync(join(tmpdir(), 'envui-release-')),
+  log = (text: string) => process.stdout.write(text),
 }: {
   release: ReturnType<typeof validateRelease>;
   sha: string;
   run?: Run;
   notesDirectory?: string;
+  /** Takes npm's output for each package, which says whether the registry took it. */
+  log?: (text: string) => void;
 }) {
   const tag = `v${release.version}`;
   const state = releaseState(tag, run);
@@ -104,7 +107,14 @@ export function publish({
   const published: string[] = [];
   for (const name of packages) {
     if (isPublished(name, release.version, run)) continue;
-    must(run, 'npm', ['publish', '--workspace', name, '--tag', release.distTag]);
+    const { stdout, stderr } = must(run, 'npm', [
+      'publish',
+      '--workspace',
+      name,
+      '--tag',
+      release.distTag,
+    ]);
+    log(stderr + stdout);
     published.push(name);
   }
   must(run, 'gh', ['release', 'edit', tag, '--draft=false']);
