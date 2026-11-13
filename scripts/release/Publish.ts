@@ -27,8 +27,11 @@ export interface Outcome {
   stderr: string;
 }
 
-/** Runs gh or npm with these arguments; the tests pass their own. */
-export type Run = (command: 'gh' | 'npm', args: string[]) => Outcome;
+/**
+ * Runs gh or npm with these arguments; the tests pass their own. `shown` writes the command's
+ * output straight to the job's log instead of returning it.
+ */
+export type Run = (command: 'gh' | 'npm', args: string[], shown?: boolean) => Outcome;
 
 /** The packages, the library first, as each depends on nothing published after it. */
 const packages = [
@@ -37,17 +40,22 @@ const packages = [
   '@envsemble/stylelint-config-envui',
 ];
 
-const runCommand: Run = (command, args) => {
-  const { status, stdout, stderr } = spawnSync(command, args, { encoding: 'utf8' });
-  return { status, stdout, stderr };
+const runCommand: Run = (command, args, shown = false) => {
+  const { status, stdout, stderr } = spawnSync(command, args, {
+    encoding: 'utf8',
+    stdio: shown ? 'inherit' : 'pipe',
+  });
+  return { status, stdout: stdout ?? '', stderr: stderr ?? '' };
 };
 
-/** Runs a command that must succeed, and returns its outcome. */
-function must(run: Run, command: 'gh' | 'npm', args: string[]) {
-  const outcome = run(command, args);
+/** Runs a command that must succeed, and returns its output. */
+function must(run: Run, command: 'gh' | 'npm', args: string[], shown = false) {
+  const outcome = run(command, args, shown);
   if (outcome.status !== 0)
-    throw new Error(`${command} ${args.join(' ')} failed:\n${outcome.stderr}`);
-  return outcome;
+    throw new Error(
+      `${command} ${args.join(' ')} failed with status ${outcome.status}:\n${shown ? 'its output is above' : outcome.stderr}`,
+    );
+  return outcome.stdout;
 }
 
 /** Where the release of `tag` stands on GitHub. */
@@ -75,14 +83,11 @@ export function publish({
   sha,
   run = runCommand,
   notesDirectory = mkdtempSync(join(tmpdir(), 'envui-release-')),
-  log = (text: string) => process.stdout.write(text),
 }: {
   release: ReturnType<typeof validateRelease>;
   sha: string;
   run?: Run;
   notesDirectory?: string;
-  /** Takes npm's output for each package, which says whether the registry took it. */
-  log?: (text: string) => void;
 }) {
   const tag = `v${release.version}`;
   const state = releaseState(tag, run);
@@ -107,14 +112,14 @@ export function publish({
   const published: string[] = [];
   for (const name of packages) {
     if (isPublished(name, release.version, run)) continue;
-    const { stdout, stderr } = must(run, 'npm', [
-      'publish',
-      '--workspace',
-      name,
-      '--tag',
-      release.distTag,
-    ]);
-    log(stderr + stdout);
+    // Straight to the log, where npm's error stays whole: piped, it was cut off at 64 KB, inside
+    // the list of the tarball's files, which the warn level leaves out.
+    must(
+      run,
+      'npm',
+      ['publish', '--workspace', name, '--tag', release.distTag, '--loglevel', 'warn'],
+      true,
+    );
     published.push(name);
   }
   must(run, 'gh', ['release', 'edit', tag, '--draft=false']);

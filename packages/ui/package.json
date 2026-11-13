@@ -21,7 +21,7 @@
     "directory": "packages/ui"
   },
   "bin": {
-    "envui-graphic": "./bin/envui-graphic.js"
+    "envui-graphic": "bin/envui-graphic.js"
   },
   "files": [
     "bin",
