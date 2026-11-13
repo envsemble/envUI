@@ -160,7 +160,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   // The one command is envui-graphic, which trims a picture's empty edges; it loads sharp only
   // when it runs, so an application without sharp installs and runs envUI as before, and the
   // command says what to install.
-  assert.deepEqual(installedManifest.bin, { 'envui-graphic': './bin/envui-graphic.js' });
+  assert.deepEqual(installedManifest.bin, { 'envui-graphic': 'bin/envui-graphic.js' });
   const graphicBin = join(consumer.installedDirectory, 'bin/envui-graphic.js');
   assert.match(consumer.run(graphicBin, ['--help']), /^Usage: npx envui-graphic <file>/);
   await writeFile(join(consumer.directory, 'logo.png'), '');
