@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/stylelint-config-envui",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Stylelint config that keeps application styles on envUI's tokens",
   "homepage": "https://github.com/envsemble/envUI/tree/main/packages/stylelint-config#readme",
   "bugs": {

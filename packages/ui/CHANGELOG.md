@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.2 — 2026-11-13
+
+envUI's page on npm describes it as it is, and releases now publish through npm's trusted publishing.
+
+### Patch Changes
+
+- The package's description on npm says what envUI is, in place of the one from when it was internal.
+
 ## 1.0.1 — 2026-11-13
 
 A fix for phones: a tapped control no longer shows the browser's square tap highlight.
