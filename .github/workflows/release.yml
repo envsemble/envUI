@@ -5,7 +5,8 @@ name: Release
 # publishes the three packages to npm under the version's dist-tag (latest, or the prerelease's
 # name, such as prerelease), then publishes the release, which creates its tag on the merge commit.
 # A failed run leaves the draft; re-running it publishes only what is still missing. It runs once
-# per merge, on the Linux runner the envsemble organization variable CI_LINUX_RUNNER names.
+# per merge, on a GitHub-hosted runner: npm's trusted publishing accepts only those, and turns away
+# a self-hosted or third-party one, such as the runner CI_LINUX_RUNNER names, with a 404.
 on:
   pull_request:
     branches: [main]
@@ -22,7 +23,7 @@ jobs:
   release:
     name: Release
     if: ${{ github.event.pull_request.merged }}
-    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     # One release at a time. The group names whether the pull request merged, so a pull request
     # closed without merging never queues among the releases or cancels one waiting its turn.
