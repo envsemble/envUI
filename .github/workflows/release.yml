@@ -53,10 +53,6 @@ jobs:
       # scripts/release/Publish.ts.
       - name: Publish the release
         if: ${{ steps.version.outputs.release == 'true' }}
-        # npm sets up trusted publishing only for a package that exists, so a package's first
-        # version goes out with NPM_TOKEN, a short-lived granular token that may publish without
-        # two-factor authentication. Once each package has its trusted publisher (this repository
-        # and release.yml), the secret is deleted and npm publishes with the job's identity alone.
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # No npm token: each package's trusted publisher on npmjs.com is this repository's
+        # release.yml, and npm takes the job's identity in its place.
         run: node scripts/release/Publish.ts
