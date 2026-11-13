@@ -61,7 +61,6 @@
   .env-calendar-day {
     cursor: pointer;
     outline: none;
-    -webkit-tap-highlight-color: transparent;
   }
   .env-calendar-day-mark {
     box-sizing: border-box;

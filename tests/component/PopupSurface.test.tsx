@@ -47,3 +47,14 @@ test('takes the direction at its trigger while focus is elsewhere', async () => 
   await expect.poll(() => shown(popup)).toBe(true);
   expect(css(popup, 'direction')).toBe('rtl');
 });
+
+test('draws no tap highlight on a control or in a popup', async () => {
+  // Firefox has no tap highlight to turn off.
+  if (!CSS.supports('-webkit-tap-highlight-color', 'transparent')) return;
+  const trigger = page.getByRole('button', { name: 'Open ltr' });
+  await trigger.click();
+  const popup = page.getByTestId('popup-ltr');
+  await expect.poll(() => shown(popup)).toBe(true);
+  for (const element of [trigger, popup])
+    expect(css(element, '-webkit-tap-highlight-color')).toBe('rgba(0, 0, 0, 0)');
+});

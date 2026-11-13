@@ -45,7 +45,6 @@
     vertical-align: middle;
     cursor: pointer;
     outline: none;
-    -webkit-tap-highlight-color: transparent;
   }
   .env-month-picker-month-mark {
     box-sizing: border-box;
