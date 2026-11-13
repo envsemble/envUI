@@ -12,6 +12,10 @@ scripts/site/ReleaseNotes.ts reads and checks this file; the full changelog is p
 - A change, [with a link to its entry](/docs/changelog#release).
 -->
 
+## 1.0.2 — 2026-11-13
+
+- envUI's page on npm describes it as it is: a React design system for B2B SaaS products and AI developer tools.
+
 ## 1.0.1 — 2026-11-13
 
 - A tapped control on a phone no longer shows the browser's square tap highlight; its own press feedback shows instead.

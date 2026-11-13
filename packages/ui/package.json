@@ -1,7 +1,7 @@
 {
   "name": "@envsemble/envui",
-  "version": "1.0.1",
-  "description": "envUI: the internal envsemble React component library",
+  "version": "1.0.2",
+  "description": "A React design system for B2B SaaS products and AI developer tools, documented for people and coding agents",
   "homepage": "https://github.com/envsemble/envUI#readme",
   "bugs": {
     "url": "https://github.com/envsemble/envUI/issues"
