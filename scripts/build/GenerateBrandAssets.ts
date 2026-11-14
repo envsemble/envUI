@@ -8,25 +8,27 @@ import { repositoryRoot } from '../RepositoryPaths.ts';
  * catalogue's own: envUI ships no logos.
  */
 export async function generateBrandAssets() {
-  const [black, white] = await Promise.all(
-    ['black', 'white'].map((color) =>
-      readFile(resolve(repositoryRoot, `assets/brand/envUI/envUI-lockup-${color}.svg`), 'utf8'),
+  const [onLight, onDark] = await Promise.all(
+    ['on-light', 'on-dark'].map((background) =>
+      readFile(
+        resolve(repositoryRoot, `assets/brand/envUI/envui-horizontal-${background}.svg`),
+        'utf8',
+      ),
     ),
   );
   function geometry(source: string) {
     const viewBox = source.match(/viewBox="([^"]+)"/)?.[1];
     const paths = [...source.matchAll(/<path\b[^>]*\bd="([^"]+)"[^>]*\/\s*>/g)];
     const tags = [...source.matchAll(/<([\w:-]+)\b/g)].map((match) => match[1]);
-    if (!viewBox || paths.length !== 1 || tags.join(',') !== 'svg,title,path')
+    if (!viewBox || paths.length !== 1 || tags.join(',') !== 'svg,path')
       throw new Error('envUI lockup must contain one path and a viewBox.');
-    const path = paths[0][0];
-    if (!/fill-rule="evenodd"/.test(path) || !/clip-rule="evenodd"/.test(path))
-      throw new Error('Preserve the envUI lockup winding rules.');
+    if (!/fill-rule="evenodd"/.test(paths[0][0]))
+      throw new Error('Preserve the envUI lockup winding rule.');
     return { viewBox, path: paths[0][1] };
   }
-  const artwork = geometry(black);
-  if (JSON.stringify(artwork) !== JSON.stringify(geometry(white)))
-    throw new Error('envUI black and white lockups must share the same geometry.');
+  const artwork = geometry(onLight);
+  if (JSON.stringify(artwork) !== JSON.stringify(geometry(onDark)))
+    throw new Error('envUI lockups for light and dark backgrounds must share the same geometry.');
   const [, , width, height] = artwork.viewBox.split(/\s+/).map(Number);
   const output = `// Generated from assets/brand/envUI by scripts/build/GenerateBrandAssets.ts.
 import { Icon, type IconProps } from '@envsemble/envui';
@@ -46,7 +48,6 @@ export function EnvUILogo({ label = 'envUI', ...props }: EnvUILogoProps) {
       <path
         d=${JSON.stringify(artwork.path)}
         fillRule="evenodd"
-        clipRule="evenodd"
       />
     </Icon>
   );
