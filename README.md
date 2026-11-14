@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/envUI/envUI-lockup-white.svg">
-  <img src="assets/brand/envUI/envUI-lockup-black.svg" alt="envUI" width="240">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/envUI/envui-horizontal-on-dark.svg">
+  <img src="assets/brand/envUI/envui-horizontal-on-light.svg" alt="envUI" width="240">
 </picture>
 
 **A React design system for clear, accessible interfaces.**
