@@ -49,9 +49,10 @@ body {
   block-size: 0.864rem;
   inline-size: auto;
 }
-/* Its black artwork in a light theme and its white one in a dark theme (EnvUIDocsLogo.tsx). */
-:root[data-env-theme='dark'] .docs-brand-docs[data-docs-lockup='black'],
-:root:not([data-env-theme='dark']) .docs-brand-docs[data-docs-lockup='white'] {
+/* Its artwork for light backgrounds in a light theme and for dark ones in a dark theme
+   (EnvUIDocsLogo.tsx). */
+:root[data-env-theme='dark'] .docs-brand-docs[data-docs-lockup='on-light'],
+:root:not([data-env-theme='dark']) .docs-brand-docs[data-docs-lockup='on-dark'] {
   display: none;
 }
 /* The navigation at the start of a wide window: the catalogue's rail beside the drawer of the
