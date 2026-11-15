@@ -82,6 +82,9 @@ const green = {
     '--env-color-bg-primary-emphasis-hover': '#115a2a',
     '--env-color-bg-primary-emphasis-pressed': '#0b4520',
     '--env-color-fg-on-emphasis': '#ffffff',
+    '--env-color-bg-primary-strong': '#176f35',
+    '--env-color-bg-primary-strong-hover': '#115a2a',
+    '--env-color-bg-primary-strong-pressed': '#0b4520',
   },
   dark: {
     '--env-color-bg-primary-emphasis': '#7ad197',
@@ -105,7 +108,7 @@ function GreenArea({ children }: { children: React.ReactNode }) {
 ```
 
 - Give each theme its own values: a token takes another grade in the dark theme, and high contrast asks 7:1 of text.
-- Primary actions take `--env-color-bg-primary-strong`, under a white label: in light it follows `--env-color-bg-primary-emphasis`, and in dark it is a deeper color of its own, as the emphasis fill there is light enough for checked controls to stand out on dark surfaces.
+- Primary actions take `--env-color-bg-primary-strong`, under a white label, and checked controls take `--env-color-bg-primary-emphasis`: set both. In dark they differ, as the emphasis fill there is light enough for checked controls to stand out on dark surfaces.
 - A popup that opens from the area, such as a menu or a select's list, renders in a portal outside it. Set the same tokens on a class of yours and pass it to the popup, or set them on the application's Theme to recolor everything.
 - Override the roles, never the palette: the palette is internal and never becomes CSS.
 
