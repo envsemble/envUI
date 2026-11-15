@@ -62,7 +62,7 @@ A raw <svg width="24" height="24"> takes its size from the file: pass it to an i
 A link-styled action, a raw `<a>`, a `Link` or a `Button` with `variant="text"`, inside a `List.Item`, `Table.Row` or `Card` that takes the click itself: one with `href` or `onClick`, or a List.Item with a `data-row-target` inside, which stretches over the row. That target itself passes; an `interactive` row or Table.Row only highlights, so its links pass.
 
 ```text
-A Button with variant="text" inside a clickable List.Item: the row takes the click. Move the action into its end slot as a Button, or into a Menu.
+A Button with variant="text" inside a clickable List.Item: the row takes the click. Move the action into its end slot as a Button, or into a Menu. When it goes where the row goes, mark it data-row-target instead.
 ```
 
 ### label-vocabulary

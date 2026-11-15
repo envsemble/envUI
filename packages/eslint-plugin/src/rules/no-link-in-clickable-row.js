@@ -40,7 +40,7 @@ export default {
     schema: [],
     messages: {
       nested:
-        '{{found}} inside a clickable {{row}}: the row takes the click. Move the action into {{place}}, or into a Menu.',
+        '{{found}} inside a clickable {{row}}: the row takes the click. Move the action into {{place}}, or into a Menu. When it goes where the row goes, mark it data-row-target instead.',
     },
   },
   create(context) {

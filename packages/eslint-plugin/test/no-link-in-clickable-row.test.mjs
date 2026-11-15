@@ -46,7 +46,7 @@ ruleTester.run('no-link-in-clickable-row', rule, {
       errors: [
         {
           message:
-            'A Button with variant="text" inside a clickable Table.Row: the row takes the click. Move the action into a cell of its own as a Button, or into a Menu.',
+            'A Button with variant="text" inside a clickable Table.Row: the row takes the click. Move the action into a cell of its own as a Button, or into a Menu. When it goes where the row goes, mark it data-row-target instead.',
         },
       ],
     },
