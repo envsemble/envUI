@@ -199,6 +199,10 @@ test('a radius past the largest step is pointed to the full radius', async () =>
   );
 });
 
+test('a radius a little past the largest step is pointed to the nearest step', async () => {
+  assert.match((await message('.a { border-radius: 2rem; }')).text, /--env-radius-xl/);
+});
+
 test('an --env- name envUI does not define is reported, with the nearest public name', async () => {
   assert.equal(
     (await message('.a { color: var(--env-color-fg-defualt); }')).text,

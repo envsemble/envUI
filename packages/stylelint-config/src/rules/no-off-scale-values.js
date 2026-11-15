@@ -70,6 +70,8 @@ function literalLengths(value) {
   });
 }
 
+const clearlyFullyRoundedRem = 10;
+
 const rule = (primary) => (root, result) => {
   if (!validateOptions(result, ruleName, { actual: primary, possible: [true] })) return;
   root.walkDecls(scaleProperty, (declaration) => {
@@ -82,7 +84,7 @@ const rule = (primary) => (root, result) => {
       let message;
       if (rem === undefined || literal.length === 0)
         message = messages.unknown(length.text, property);
-      else if (full && Math.abs(rem) > largest)
+      else if (full && Math.abs(rem) > largest && Math.abs(rem) >= clearlyFullyRoundedRem)
         message = messages.full(length.text, property, full);
       else {
         const step = nearest(literal, Math.abs(rem));
