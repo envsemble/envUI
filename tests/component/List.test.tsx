@@ -31,7 +31,7 @@ function centre(locator: Locator) {
 
 test(
   'first in the file, so nothing has loaded the reorder code: a drag, keys and moves used before it loads still move the row, once each',
-  { tags: ['engines'] },
+  { tags: ['engines', 'once'] },
   async () => {
     await commands.holdModule('reorderController');
     try {

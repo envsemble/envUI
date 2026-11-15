@@ -75,6 +75,12 @@ export default defineConfig({
     tags: [
       { name: 'engines', description: 'Depends on the engine: also runs in Firefox and WebKit' },
       { name: 'a11y', description: 'The accessibility scan, which `npm run test:a11y` runs' },
+      {
+        name: 'once',
+        description:
+          'Holds for a fresh page only: a module loading for the first time, or a development report envUI makes once a page; the burn-in runs it once, not repeated',
+        repeats: 0,
+      },
     ],
     maxWorkers: workers,
     sequence: { sequencer: ShardByDuration },

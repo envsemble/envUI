@@ -204,17 +204,21 @@ describe('ConfirmDialog', () => {
     await expect.poll(log).toBe('delete repository');
   });
 
-  test('says while developing that a form in its content would nest in its own', async () => {
-    const errors = collectErrors();
-    await page.getByRole('button', { name: 'Archive project' }).click();
-    const archive = page.getByRole('alertdialog', { name: 'Archive Northwind launch?' });
-    await isShown(archive);
-    await keyboard.press('Escape');
-    await isHidden(archive);
-    await page.getByRole('button', { name: 'Rename project' }).click();
-    await isShown(page.getByRole('alertdialog', { name: 'Rename Northwind launch?' }));
-    await expect
-      .poll(() => errors.filter((error) => error.startsWith('envUI: ')))
-      .toEqual([expect.stringMatching(/ConfirmDialog's children hold a <form>.*use Dialog/)]);
-  });
+  test(
+    'says while developing that a form in its content would nest in its own',
+    { tags: ['once'] },
+    async () => {
+      const errors = collectErrors();
+      await page.getByRole('button', { name: 'Archive project' }).click();
+      const archive = page.getByRole('alertdialog', { name: 'Archive Northwind launch?' });
+      await isShown(archive);
+      await keyboard.press('Escape');
+      await isHidden(archive);
+      await page.getByRole('button', { name: 'Rename project' }).click();
+      await isShown(page.getByRole('alertdialog', { name: 'Rename Northwind launch?' }));
+      await expect
+        .poll(() => errors.filter((error) => error.startsWith('envUI: ')))
+        .toEqual([expect.stringMatching(/ConfirmDialog's children hold a <form>.*use Dialog/)]);
+    },
+  );
 });

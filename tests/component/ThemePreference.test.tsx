@@ -97,18 +97,22 @@ test('a provider leaves a contrast the application wrote over its own, also the 
   expect(attribute('data-env-contrast')()).toBe('high');
 });
 
-test('a provider at system leaves the contrast another mounted provider wrote', async () => {
-  const errors = collectErrors();
-  mount(nested);
-  await expect.poll(attribute('data-env-contrast')).toBe('high');
-  const after = otherTheme();
-  await page.getByTestId('inner-theme-toggle').click();
-  await expect.poll(attribute('data-env-theme')).toBe(after);
-  expect(attribute('data-env-contrast')()).toBe('high');
-  expect(attribute('data-env-scale')()).toBe('compact');
-  expect(attribute('data-env-scale-source')()).toBe('envui:compact');
-  expect(errors.filter((error) => error.includes('applyToDocument={false}'))).toHaveLength(1);
-});
+test(
+  'a provider at system leaves the contrast another mounted provider wrote',
+  { tags: ['once'] },
+  async () => {
+    const errors = collectErrors();
+    mount(nested);
+    await expect.poll(attribute('data-env-contrast')).toBe('high');
+    const after = otherTheme();
+    await page.getByTestId('inner-theme-toggle').click();
+    await expect.poll(attribute('data-env-theme')).toBe(after);
+    expect(attribute('data-env-contrast')()).toBe('high');
+    expect(attribute('data-env-scale')()).toBe('compact');
+    expect(attribute('data-env-scale-source')()).toBe('envui:compact');
+    expect(errors.filter((error) => error.includes('applyToDocument={false}'))).toHaveLength(1);
+  },
+);
 
 test('a provider without a scale leaves the scale the page set on the root, and gives it to the application', async () => {
   arrivesWith({ 'data-env-scale': 'compact' });

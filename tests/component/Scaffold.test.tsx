@@ -40,25 +40,29 @@ async function openScrollKeys() {
 }
 
 describe('Scaffold body scroll, as its code loads', { tags: ['engines'] }, () => {
-  test('first in the file, as the module loads once: a key pressed before the scrolling code has loaded scrolls once it has', async () => {
-    await commands.holdModule('scrollKeys');
-    try {
-      await commands.emulateMedia({ reducedMotion: 'reduce' });
-      mount(scrollKeys);
-      const content = element('.env-scaffold-body');
-      await commands.moduleRequested('scrollKeys');
-      window.focus();
-      await keyboard.press('PageDown');
-      await keyboard.press('ArrowDown');
-      await nextFrames();
-      expect(content.scrollTop).toBe(0);
-      await commands.releaseModule('scrollKeys');
-      const step = content.clientHeight * 0.875;
-      await expect.poll(() => Math.abs(content.scrollTop - (step + 40))).toBeLessThanOrEqual(1.5);
-    } finally {
-      await commands.unrouteModule('scrollKeys');
-    }
-  });
+  test(
+    'first in the file, as the module loads once: a key pressed before the scrolling code has loaded scrolls once it has',
+    { tags: ['once'] },
+    async () => {
+      await commands.holdModule('scrollKeys');
+      try {
+        await commands.emulateMedia({ reducedMotion: 'reduce' });
+        mount(scrollKeys);
+        const content = element('.env-scaffold-body');
+        await commands.moduleRequested('scrollKeys');
+        window.focus();
+        await keyboard.press('PageDown');
+        await keyboard.press('ArrowDown');
+        await nextFrames();
+        expect(content.scrollTop).toBe(0);
+        await commands.releaseModule('scrollKeys');
+        const step = content.clientHeight * 0.875;
+        await expect.poll(() => Math.abs(content.scrollTop - (step + 40))).toBeLessThanOrEqual(1.5);
+      } finally {
+        await commands.unrouteModule('scrollKeys');
+      }
+    },
+  );
 });
 
 describe('Scaffold', () => {

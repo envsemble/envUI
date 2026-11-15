@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { commands, page, server } from 'vitest/browser';
+import { commands, page } from 'vitest/browser';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as primitives from '../fixture/Primitives.fixture.tsx';
 import * as fixture from '../fixture/Scale.fixture.tsx';
@@ -151,27 +151,22 @@ test('tree rows are as tall as their density in each scale, and menu rows a popu
     .toEqual({ comfortable: 40, compact: 32 });
 });
 
+async function expectSystemScale(touch: boolean) {
+  await openSection('sizes', 'system');
+  expect(matchMedia('(pointer: fine)').matches).toBe(!touch);
+  const rowHeight = (element: Element) =>
+    getComputedStyle(element).getPropertyValue('--env-row-height');
+  const outer = document.querySelector('#root > .env-theme')!;
+  expect(outer.getAttribute('data-env-scale')).toBe('system');
+  expect(rowHeight(outer)).toBe(touch ? '2.25rem' : '1.75rem');
+  for (const scale of densityScales)
+    expect(rowHeight(scaleRoot(scale)), scale).toBe(scale === 'compact' ? '1.75rem' : '2.25rem');
+}
+
 test(
-  'the system scale is compact on a fine pointer and comfortable on a coarse one, and an explicit scale inside it wins',
+  'the system scale is compact on a fine pointer, and an explicit scale inside it wins',
   { tags: ['engines'] },
-  async () => {
-    const check = async (touch: boolean) => {
-      await openSection('sizes', 'system');
-      expect(matchMedia('(pointer: fine)').matches).toBe(!touch);
-      const rowHeight = (element: Element) =>
-        getComputedStyle(element).getPropertyValue('--env-row-height');
-      const outer = document.querySelector('#root > .env-theme')!;
-      expect(outer.getAttribute('data-env-scale')).toBe('system');
-      expect(rowHeight(outer)).toBe(touch ? '2.25rem' : '1.75rem');
-      for (const scale of densityScales)
-        expect(rowHeight(scaleRoot(scale)), scale).toBe(
-          scale === 'compact' ? '1.75rem' : '2.25rem',
-        );
-    };
-    await check(false);
-    const touchEmulatedThroughDevTools = server.browser === 'chromium';
-    if (touchEmulatedThroughDevTools) await onTouch(() => check(true));
-  },
+  () => expectSystemScale(false),
 );
 
 test('a popup opened in a scale keeps it', async () => {
@@ -246,6 +241,10 @@ test('every target is at least 24 px, or has 24 px of room, in every section and
       .map((element) => `${element.offsetWidth}×${element.offsetHeight}`);
     expect(small, scale).toEqual([]);
   }
+});
+
+test('on a coarse pointer the system scale is comfortable, and an explicit scale inside it wins', async () => {
+  await onTouch(() => expectSystemScale(true));
 });
 
 test('on a coarse pointer every control of a row is as tall, and at least the touch height', async () => {

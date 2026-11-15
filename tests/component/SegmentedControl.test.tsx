@@ -135,7 +135,9 @@ test('a full-width control splits its container evenly and cuts long labels shor
   expect(
     box(page.getByTestId('segments-light').getByRole('radiogroup', { name: 'Layout light' })).width,
   ).toBeLessThan(300);
+});
 
+test('on a touch screen a full-width control wraps long labels instead, and a tap chooses', async () => {
   await commands.emulateTouch(true);
   try {
     await page.viewport(1024, 900);
@@ -152,11 +154,13 @@ test('a full-width control splits its container evenly and cuts long labels shor
     expect(Math.abs(firstBox.height - secondBox.height)).toBeLessThan(1);
     await commands.touch(
       'touchStart',
-      firstBox.x + firstBox.width / 2,
-      firstBox.y + firstBox.height / 2,
+      secondBox.x + secondBox.width / 2,
+      secondBox.y + secondBox.height / 2,
     );
     await commands.touch('touchEnd');
-    await expect.element(first).toHaveAttribute('aria-checked', 'true');
+    await expect
+      .element(page.elementLocator(touched.segments[1]!))
+      .toHaveAttribute('aria-checked', 'true');
   } finally {
     await commands.emulateTouch(false);
   }

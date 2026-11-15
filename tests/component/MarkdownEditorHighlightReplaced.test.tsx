@@ -12,7 +12,7 @@ const highlighted = () =>
   (window as unknown as { delayedHighlighting?: { sources: string[]; loaded: boolean } })
     .delayedHighlighting;
 
-test('a delayed highlighting import skips superseded source', async () => {
+test('a delayed highlighting import skips superseded source', { tags: ['once'] }, async () => {
   await commands.holdModuleAs('codeHighlighting', recordingHighlighter);
   try {
     mount(fixture);

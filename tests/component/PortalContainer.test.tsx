@@ -35,22 +35,26 @@ const toasts = (layer: Locator, text?: string) =>
 const pastContainedOpeningFocusWindow = 600;
 
 describe('PortalContainer, contained', () => {
-  test('first in the file, as the module loads once: a contained notice shown before its code has loaded arrives once it has', async () => {
-    await commands.holdModule('PictureNotice');
-    try {
-      mount(fixture);
-      const layer = page.getByTestId('layer');
-      await commands.moduleRequested('PictureNotice');
-      await isShown(layer.getByRole('menu', { name: 'Actions' }));
-      expect(toasts(layer)).toHaveLength(0);
-      await commands.releaseModule('PictureNotice');
-      await isShown(layer.getByText('Changes saved.'));
-      await page.getByRole('button', { name: 'Notify' }).click();
-      await expect.poll(() => toasts(layer, 'Invitation sent.')).toHaveLength(1);
-    } finally {
-      await commands.unrouteModule('PictureNotice');
-    }
-  });
+  test(
+    'first in the file, as the module loads once: a contained notice shown before its code has loaded arrives once it has',
+    { tags: ['once'] },
+    async () => {
+      await commands.holdModule('PictureNotice');
+      try {
+        mount(fixture);
+        const layer = page.getByTestId('layer');
+        await commands.moduleRequested('PictureNotice');
+        await isShown(layer.getByRole('menu', { name: 'Actions' }));
+        expect(toasts(layer)).toHaveLength(0);
+        await commands.releaseModule('PictureNotice');
+        await isShown(layer.getByText('Changes saved.'));
+        await page.getByRole('button', { name: 'Notify' }).click();
+        await expect.poll(() => toasts(layer, 'Invitation sent.')).toHaveLength(1);
+      } finally {
+        await commands.unrouteModule('PictureNotice');
+      }
+    },
+  );
 
   test(
     'overlays open in the container, without locking the page or taking focus',

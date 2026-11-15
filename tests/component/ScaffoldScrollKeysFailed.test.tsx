@@ -6,7 +6,7 @@ import { mount } from './support/Mount.tsx';
 
 test(
   'alone in its file, as the module loads once: where the scrolling code fails to load the keys stay with the browser, and a remount tries again',
-  { tags: ['engines'] },
+  { tags: ['engines', 'once'] },
   async () => {
     await commands.failModule('scrollKeys');
     try {

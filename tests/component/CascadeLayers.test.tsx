@@ -101,6 +101,11 @@ test("a themed document's body has no margin, in envUI's lowest layer, so an app
   const root = document.documentElement;
   expect(root.classList.contains('env-theme')).toBe(false);
   expect(css(document.body, 'margin')).toBe('8px');
+  onTestFinished(() => {
+    root.classList.remove('env-theme');
+    for (const name of root.getAttributeNames())
+      if (name.startsWith('data-env-')) root.removeAttribute(name);
+  });
   mount(adoption);
   await expect.poll(() => root.classList.contains('env-theme')).toBe(true);
   expect(css(document.body, 'margin')).toBe('0px');

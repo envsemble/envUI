@@ -375,31 +375,35 @@ describe('Tooltip', () => {
     });
   });
 
-  test('around a HoverCard, or as its trigger, shows no tooltip but the card, and says while developing what a Tooltip cannot do', async () => {
-    const errors = collectErrors();
-    await openTooltips('warnings');
-    for (const [name, card] of [
-      ['Ada Lovelace', 'Ada card'],
-      ['Alan Turing', 'Alan card'],
-    ] as const) {
-      await page.getByRole('link', { name }).hover();
-      await isShown(page.getByText(card));
-      await pastOpening();
-      expect(tooltips()).toEqual([]);
-      await leave();
-      await isGone(page.getByText(card));
-    }
-    expect(document.body.textContent).toContain('Plain text');
-    await expect.element(button('In a fragment')).toBeInTheDocument();
-    await expect.element(button('Ref-less')).toBeInTheDocument();
-    const reports = errors.filter((error) => error.startsWith('envUI: A Tooltip'));
-    expect(reports).toHaveLength(4);
-    const all = reports.join(' ');
-    expect(all).toContain('it got string');
-    expect(all).toContain('it got a Fragment');
-    expect(all).toContain("child, RefLessButton, doesn't pass the ref");
-    expect(all).toContain('around a HoverCard');
-  });
+  test(
+    'around a HoverCard, or as its trigger, shows no tooltip but the card, and says while developing what a Tooltip cannot do',
+    { tags: ['once'] },
+    async () => {
+      const errors = collectErrors();
+      await openTooltips('warnings');
+      for (const [name, card] of [
+        ['Ada Lovelace', 'Ada card'],
+        ['Alan Turing', 'Alan card'],
+      ] as const) {
+        await page.getByRole('link', { name }).hover();
+        await isShown(page.getByText(card));
+        await pastOpening();
+        expect(tooltips()).toEqual([]);
+        await leave();
+        await isGone(page.getByText(card));
+      }
+      expect(document.body.textContent).toContain('Plain text');
+      await expect.element(button('In a fragment')).toBeInTheDocument();
+      await expect.element(button('Ref-less')).toBeInTheDocument();
+      const reports = errors.filter((error) => error.startsWith('envUI: A Tooltip'));
+      expect(reports).toHaveLength(4);
+      const all = reports.join(' ');
+      expect(all).toContain('it got string');
+      expect(all).toContain('it got a Fragment');
+      expect(all).toContain("child, RefLessButton, doesn't pass the ref");
+      expect(all).toContain('around a HoverCard');
+    },
+  );
 
   test('Tooltip keeps opening on hover after its control is enabled or disabled', async () => {
     mount(adoption);

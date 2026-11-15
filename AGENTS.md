@@ -57,7 +57,7 @@ Generated, never edited by hand: `packages/ui/src/generated/`, `packages/ui/toke
 
 - Take the first kind that can see it: a unit test in Node, then a component test (`tests/component/<Name>.test.tsx` with `tests/fixture/<Name>.fixture.tsx`, mounted with `mount` and driven by the real mouse and keys), then a Playwright spec, which is the site's alone.
 - Add a test for the public contract (keyboard, focus, ARIA, behaviour, types, tokens) or a bug that happened; test a behaviour once. Don't test what TypeScript, the visual baseline or the contrast gate already see.
-- No fixed sleeps: wait for a condition, or stop the page's timers (`stopTimers`, `passTime`). Tag a test `engines` when it depends on the engine.
+- No fixed sleeps: wait for a condition, or stop the page's timers (`stopTimers`, `passTime`). Tag a test `engines` when it depends on the engine, and `once` when it holds only for a fresh page (a module's first load, a report made once a page); every other test passes run again in the same page, as the burn-in runs it.
 - A fixture is its file's default export: `themes = true` mounts it per theme, `mount = 'standalone'` or `'root'` gives it the page.
 
 ## Record the change
