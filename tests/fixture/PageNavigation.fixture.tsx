@@ -38,7 +38,10 @@ export default function PageNavigationFixture() {
         header={<PageHeader title={title} focusOnNavigation={current !== 'Archive'} />}
       >
         {current === 'Settings' && (
-          <TextField label="Page name" value={name} onValueChange={setName} />
+          <>
+            <TextField label="Page name" value={name} onValueChange={setName} />
+            <Button onClick={() => setName((previous) => `${previous}!`)}>Rename</Button>
+          </>
         )}
       </Page>
     </Scaffold>

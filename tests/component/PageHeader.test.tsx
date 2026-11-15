@@ -109,6 +109,12 @@ test(
     await expect.element(title('Settings and more')).toBeInTheDocument();
     await nextFrames();
     await expect.element(name).toHaveFocus();
+    const rename = page.getByRole('button', { name: 'Rename' });
+    (rename.element() as HTMLElement).focus();
+    await keyboard.press('Enter');
+    await expect.element(title('Settings and more!')).toBeInTheDocument();
+    await nextFrames();
+    await expect.element(rename).toHaveFocus();
 
     (destination('Archive').element() as HTMLElement).focus();
     await keyboard.press('Enter');

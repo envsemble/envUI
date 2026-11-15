@@ -41,23 +41,23 @@ function focusBelongsElsewhere(document: Document) {
 }
 
 /**
- * Right after a page's own title in a Scaffold: moves focus to the title when the page changes
- * after the Scaffold first showed, as a new title mounts or the title's text changes. Focus stays
- * in a field people type in and in an open overlay. It renders nothing that takes room.
+ * Right after a page's own title in a Scaffold: moves focus to the title when a new page's header
+ * mounts after the Scaffold first showed. A title that changes on the same page leaves focus
+ * alone, and focus stays in a field people type in and in an open overlay. It renders nothing
+ * that takes room.
  */
 export function PageTitleFocus({ enabled }: { enabled: boolean }) {
   const pages = useContext(ScaffoldPagesContext);
   const marker = useRef<HTMLSpanElement>(null);
-  const shownText = useRef<string | null>(null);
+  const enabledOnMount = useRef(enabled);
+  const titleCounted = useRef(false);
   useEffect(() => {
     const title = marker.current?.previousElementSibling;
-    if (!pages || !(title instanceof HTMLElement)) return;
-    const text = title.textContent ?? '';
-    if (shownText.current === text) return;
-    shownText.current = text;
+    if (!pages || titleCounted.current || !(title instanceof HTMLElement)) return;
+    titleCounted.current = true;
     const pageChanged = pages.showTitle();
-    if (enabled && pageChanged && !focusBelongsElsewhere(title.ownerDocument))
+    if (enabledOnMount.current && pageChanged && !focusBelongsElsewhere(title.ownerDocument))
       title.focus({ preventScroll: true });
-  });
+  }, [pages]);
   return <span ref={marker} hidden />;
 }

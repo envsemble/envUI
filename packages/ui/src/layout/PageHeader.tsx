@@ -56,8 +56,8 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
    */
   controlSize?: 'sm' | 'md';
   /**
-   * In a Scaffold, moves focus to the title of a level 1 header when the page changes: as the
-   * header mounts after the Scaffold first showed, or as its title changes. People using a screen
+   * In a Scaffold, moves focus to the title of a level 1 header when the page changes: as a new
+   * page's header mounts after the Scaffold first showed, not as a title changes. People using a screen
    * reader then hear the new page, and the next Tab starts from it. Focus moved there shows no
    * ring, and focus in a field or an open overlay stays where it is. False leaves focus to the
    * application.

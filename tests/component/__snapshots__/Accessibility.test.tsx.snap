@@ -238,6 +238,8 @@ exports[`primitives has no new accessibility violations 1`] = `
 
 exports[`relative-time has no new accessibility violations 1`] = `{}`;
 
+exports[`row-controls has no new accessibility violations 1`] = `{}`;
+
 exports[`scaffold has no new accessibility violations 1`] = `{}`;
 
 exports[`scaffold-panes has no new accessibility violations 1`] = `
@@ -297,6 +299,8 @@ exports[`slider has no new accessibility violations 1`] = `{}`;
 
 exports[`stacking has no new accessibility violations 1`] = `{}`;
 
+exports[`surfaces has no new accessibility violations 1`] = `{}`;
+
 exports[`table has no new accessibility violations 1`] = `{}`;
 
 exports[`table-of-contents has no new accessibility violations 1`] = `
@@ -342,5 +346,7 @@ exports[`tooltip has no new accessibility violations 1`] = `{}`;
 exports[`top-bar has no new accessibility violations 1`] = `{}`;
 
 exports[`tree has no new accessibility violations 1`] = `{}`;
+
+exports[`value-commit has no new accessibility violations 1`] = `{}`;
 
 exports[`visually-hidden has no new accessibility violations 1`] = `{}`;
