@@ -75,16 +75,16 @@ if (check) {
     const unrecorded = removed.filter((item) => !item.recorded);
     if (removed.length)
       console.log(
-        `Gone since ${base.ref}:\n${removed.map((item) => `  ${item.label}${item.recorded ? ' (in a major changeset)' : ''}`).join('\n')}`,
+        `Gone since ${base.ref}:\n${removed.map((item) => `  ${item.label}${item.recorded ? ' (in a breaking change)' : ''}`).join('\n')}`,
       );
     if (unrecorded.length) {
       console.error(
-        `Part classes, state attributes and color properties are public: one that goes is a breaking change. Name each one above that no major changeset of @envsemble/envui names (a value with its attribute) in such a changeset, with what replaces it.`,
+        `Part classes, state attributes and color properties are public: one that goes is a breaking change. Name each one above that no changeset of @envsemble/envui records as breaking (a major one, or one with a "Breaking changes:" section) in such a changeset, naming it (a value with its attribute), with what replaces it.`,
       );
       process.exit(1);
     }
     console.log(
-      `${partsPath} matches its sources, and every part or state gone since ${base.ref} is in a major changeset.`,
+      `${partsPath} matches its sources, and every part or state gone since ${base.ref} is recorded as a breaking change.`,
     );
   }
 } else {

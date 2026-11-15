@@ -1,7 +1,7 @@
 // What a part contract lost against the one on the integration branch, and whether a major
 // changeset names each removal: part classes, state attributes and color properties are public, so
 // one that goes is a breaking change.
-import { isMajor, names } from '../ContractHistory.ts';
+import { recordsBreakingChange, names } from '../ContractHistory.ts';
 import type { PartsContract } from './Contract.ts';
 
 /** A name of a contract: a part, a color property, a state attribute, or one of its values. */
@@ -80,7 +80,7 @@ export function removedParts(
 ) {
   const now = contractNames(after);
   const kept = contractClasses(after);
-  const major = (Array.isArray(changesets) ? changesets : [changesets]).filter(isMajor);
+  const major = (Array.isArray(changesets) ? changesets : [changesets]).filter(recordsBreakingChange);
   /** Whether a part, attribute or value is still there, in this group or another. */
   const stays = (item: ContractItem) => {
     if (item.part) return kept.classes.has(item.part);

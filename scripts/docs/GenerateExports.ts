@@ -18,7 +18,7 @@ import {
   baseContract,
   baseOption,
   bumpsLibrary,
-  isMajor,
+  recordsBreakingChange,
   names,
   pendingChangesets,
 } from './ContractHistory.ts';
@@ -86,7 +86,7 @@ export function changedExports(
   const was = exportedNames(before);
   const now = exportedNames(after);
   const anyChangeset = changesets.some(bumpsLibrary);
-  const major = changesets.filter(isMajor);
+  const major = changesets.filter(recordsBreakingChange);
   const changes: { label: string; recorded: boolean }[] = [];
   for (const [label, { name, kind }] of was) {
     const current = now.get(label);
@@ -131,7 +131,7 @@ if (import.meta.main) {
         );
       if (changes.some((change) => !change.recorded)) {
         console.error(
-          'The entry points’ exports are public API. Record each change above in a changeset of @envsemble/envui: an added name in any, and a name that goes or changes its kind in a major one that names it.',
+          'The entry points’ exports are public API. Record each change above in a changeset of @envsemble/envui: an added name in any, and a name that goes or changes its kind in a major one, or under a `Breaking changes:` section, that names it.',
         );
         process.exit(1);
       }

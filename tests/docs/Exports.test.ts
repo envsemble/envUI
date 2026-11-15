@@ -20,6 +20,13 @@ test('an export that goes, or changes its kind, needs a major changeset that nam
     ['@envsemble/envui: Button (function, gone)', false],
     ['@envsemble/envui: ButtonProps (interface, now type)', false],
   ]);
+  assert.deepEqual(
+    labels([changeset('minor', 'Breaking changes:\n\n- `ButtonProps` is a type.')]),
+    [
+      ['@envsemble/envui: Button (function, gone)', false],
+      ['@envsemble/envui: ButtonProps (interface, now type)', true],
+    ],
+  );
   // A name is named whole: ButtonProps doesn't name Button.
   assert.deepEqual(labels([changeset('major', 'ButtonProps is a type.')]), [
     ['@envsemble/envui: Button (function, gone)', false],

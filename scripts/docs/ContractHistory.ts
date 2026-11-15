@@ -18,6 +18,9 @@ export const bumpsLibrary = (changeset: string) =>
 export const isMajor = (changeset: string) =>
   /^---\r?\n[\s\S]*?^\s*['"]?@envsemble\/envui['"]?\s*:\s*major\s*$[\s\S]*?^---/m.test(changeset);
 
+export const recordsBreakingChange = (changeset: string) =>
+  isMajor(changeset) || (bumpsLibrary(changeset) && /^Breaking changes:\s*$/m.test(changeset));
+
 /** Whether a text names a name whole, so a changeset about env-card-header doesn't name env-card. */
 export const names = (text: string, name: string) =>
   new RegExp(String.raw`(?<![\w-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\w-])`).test(
