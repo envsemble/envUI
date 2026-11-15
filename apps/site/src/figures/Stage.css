@@ -59,10 +59,7 @@
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-fan-card {
-  --catalogue-card-fill: light-dark(
-    var(--env-color-bg-page),
-    var(--env-color-bg-recessed)
-  );
+  --catalogue-card-fill: light-dark(var(--env-color-bg-page), var(--env-color-bg-recessed));
   background-color: var(--catalogue-card-fill);
 }
 
