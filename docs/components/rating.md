@@ -21,8 +21,6 @@ avoidWhen:
     use: Slider
   - text: A measurement within a known range, such as storage used.
     use: Meter
-  - text: A key figure on a dashboard, such as the average score this month.
-    see: key-figures
 components:
   - Rating
 examples:

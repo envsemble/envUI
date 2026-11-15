@@ -30,8 +30,8 @@ function appendMarkdown(blocks: DocumentationBlock[], raw: string) {
  * The sections of a page in the one-file structure, each with its blocks: Markdown, figures with
  * their legends, specimens and, in Compose, examples shown as code. It checks the structure: the
  * sections pageSections knows, once each, in its order, with Rules; every example the frontmatter
- * lists placed once, but the overview's, which the generated Overview shows; and on a component or
- * a pattern, an overview example and Accessibility's lists. A foundation's figures are the
+ * lists placed once, but the overview's, which the generated Overview shows; and on a component,
+ * an overview example and Accessibility's lists. A foundation's figures are the
  * catalogue's (figures/foundations); an example file there is the code of the figure of its name.
  */
 export function readPage(document: PageInput, body: string, context: PageContext) {
@@ -254,7 +254,7 @@ function pageProblems(page: PageReading) {
       if (item.required && !codeOrder.includes(index))
         problems.push(`"## ${codeTitle}" needs a "### ${item.title}" subsection: ${item.holds}`);
   // Every example the frontmatter lists is placed once, but the overview's, which the Overview
-  // shows; a component or pattern shows what it is with at least one, and says what envUI and the
+  // shows; a component shows what it is with at least one, and says what envUI and the
   // application provide under Accessibility.
   const entries = Object.entries(catalog);
   for (const [name, { role, open, stage, motion, wide, device }] of entries) {

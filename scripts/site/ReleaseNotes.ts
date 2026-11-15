@@ -1,18 +1,13 @@
 // The release notes, apps/site/src/releases/release-notes.md, the highlights on the Docs'
 // Changelog page: one entry per release, newest first, with up to five highlights and the breaking
-// changes, each linking to the migration guide or the full changelog below them. The catalogue reads them when it builds, through the
-// virtual module of SiteData.ts, and the checks below hold them to that shape.
+// changes, each linking to the full changelog below them. The catalogue reads them when it builds,
+// through the virtual module of SiteData.ts, and the checks below hold them to that shape.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { headingsOf } from '../docs/MarkdownHeadings.ts';
-import {
-  documentationDirectory,
-  libraryChangelogFile,
-  repositoryRoot,
-} from '../RepositoryPaths.ts';
+import { libraryChangelogFile, repositoryRoot } from '../RepositoryPaths.ts';
 
 const releaseNotesFile = resolve(repositoryRoot, 'apps/site/src/releases/release-notes.md');
-const migrationFile = resolve(documentationDirectory, 'migration.md');
 
 /** The most highlights an entry has. */
 const highlightLimit = 5;
@@ -119,7 +114,6 @@ function linkTargets() {
       ).map(({ id }) => id),
     );
   return {
-    '/docs/migration': ids(migrationFile),
     '/docs/changelog': ids(libraryChangelogFile),
   } as Record<string, Set<string>>;
 }
@@ -144,8 +138,7 @@ export function releaseNotesProblems(releases: ReleaseEntry[], targets = linkTar
     for (const href of [...release.highlights, ...release.breaking].flatMap(linksOf)) {
       const [path, section] = href.split('#');
       const ids = targets[path];
-      if (!ids)
-        problems.push(`${name} links to ${href}, which is not the migration guide or changelog.`);
+      if (!ids) problems.push(`${name} links to ${href}, which is not the changelog.`);
       else if (!section || !ids.has(section))
         problems.push(`${name} links to ${href}, a section that page doesn't have.`);
     }
@@ -163,4 +156,4 @@ export function readReleaseNotes(file = releaseNotesFile) {
 }
 
 /** The files the release notes depend on, which the catalogue watches while it runs. */
-export const releaseNotesSources = [releaseNotesFile, migrationFile, libraryChangelogFile];
+export const releaseNotesSources = [releaseNotesFile, libraryChangelogFile];

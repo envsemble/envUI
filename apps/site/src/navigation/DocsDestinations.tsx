@@ -19,9 +19,9 @@ function PageBadgeOf({ page }: { page: RoutePage }) {
 
 /**
  * The Docs' navigation: each section, such as Get started or Components, as a group under its
- * heading, its pages, then its groups, such as the kinds of component and the patterns' intents,
- * each a section of their pages that opens and closes, open while it holds the current page. A
- * section that is one page of its name, such as Changelog, is that page alone, under no heading.
+ * heading, its pages, then its groups, such as the kinds of component, each a section of their
+ * pages that opens and closes, open while it holds the current page. A section that is one page of
+ * its name, such as Changelog, is that page alone, under no heading.
  */
 export function docsDestinations(
   currentPath: string,

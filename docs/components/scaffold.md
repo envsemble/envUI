@@ -26,8 +26,6 @@ avoidWhen:
     use: Page
   - text: Two panes side by side inside the body, such as a list and its detail.
     use: Panes
-  - text: A whole frame to copy, with the navigation and a top bar, or an installed app's window.
-    see: app-frame
 components:
   - Scaffold
 examples:
@@ -241,4 +239,4 @@ The top bar is the banner landmark and the body the main one, with the id `bodyI
 
 The parts are the root, `env-scaffold`, the top bar, `env-scaffold-top-bar`, the navigation's places, `env-scaffold-bar`, `env-scaffold-rail` and `env-scaffold-drawer`, the body, `env-scaffold-body`, and the skip links, `env-scaffold-skip-links`.
 
-- The page's title and actions go in its PageHeader, not the top bar, which belongs to the frame; the [app frame](../patterns/app-frame.md) pattern puts them together.
+- The page's title and actions go in its PageHeader, not the top bar, which belongs to the frame.

@@ -25,7 +25,7 @@ Each has one folder in `apps/site/src`:
 | motion        | Scripts that play a stage, where a tile or figure plays live      | `motion/`                                            |
 | shared        | The measuring loop, motion tokens and small helpers folders use   | `shared/`                                            |
 | loading       | Skeletons, load boundaries and retries while a part loads         | `loading/`                                           |
-| template      | The sections of a component or pattern page, in their order       | `template/`                                          |
+| template      | The sections of a component page, in their order                  | `template/`                                          |
 | markdown      | A page's Markdown, also with its option tables as legends         | `markdown/`                                          |
 | page          | A route's page, its data and how it loads                         | `pages/`; its views in `catalogue/` and `docs/`      |
 | route         | Addresses old and new, the page list, trails and scroll places    | `routes/`                                            |

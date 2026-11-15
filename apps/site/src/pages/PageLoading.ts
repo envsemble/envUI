@@ -98,13 +98,8 @@ const views = {
   home: viewIn('home', (module) => ({ View: module.Overview })),
   foundations: viewIn('galleries', (module) => ({ View: module.FoundationsPage })),
   components: viewIn('galleries', (module) => ({ View: module.ComponentsPage })),
-  patterns: viewIn('galleries', (module) => ({ View: module.PatternsPage })),
   component: viewIn('catalogue', (module) => ({
     View: module.ComponentPage,
-    contents: module.catalogueContents,
-  })),
-  pattern: viewIn('catalogue', (module) => ({
-    View: module.PatternPage,
     contents: module.catalogueContents,
   })),
   foundation: viewIn('catalogue', (module) => ({

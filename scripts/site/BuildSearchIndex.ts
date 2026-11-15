@@ -65,12 +65,6 @@ export const standalonePages: {
     aliases: ['all components', 'component list', 'component gallery'],
   },
   {
-    page: 'patterns',
-    title: 'Patterns',
-    area: 'catalogue',
-    aliases: ['all patterns', 'pattern list', 'pattern gallery'],
-  },
-  {
     page: 'docs',
     title: 'Docs',
     area: 'docs',
@@ -97,13 +91,7 @@ export const unlistedPages = new Set(['index']);
 const docsOnlyPages = new Set(['field']);
 
 const kindOfGroup = (group: string): SearchKind =>
-  group === 'Foundations'
-    ? 'foundation'
-    : group === 'Patterns'
-      ? 'pattern'
-      : group === 'Setup and workflows'
-        ? 'guide'
-        : 'component';
+  group === 'Foundations' ? 'foundation' : group === 'Setup and workflows' ? 'guide' : 'component';
 
 /** Every export a page documents, with namespaces expanded to their parts. */
 function documentedExports(names: readonly string[], props: PropsFile | undefined): string[] {
@@ -195,20 +183,13 @@ export function searchDocuments({
     const frontmatter = document.frontmatter ?? {};
     const exports = documentedExports(frontmatter.components ?? [], props);
     for (const name of exports) homes.set(name, document);
-    // A pattern is found by what it composes and by what people are doing.
-    const composition = [...(frontmatter.composes ?? []), frontmatter.intent ?? ''];
     results.push({
       id: `page:${document.id}`,
       kind,
       title: document.title,
-      detail:
-        kind === 'pattern'
-          ? `Pattern · ${frontmatter.intent}`
-          : kind === 'guide'
-            ? 'Guide'
-            : document.group,
+      detail: kind === 'guide' ? 'Guide' : document.group,
       aliases: (frontmatter.aliases ?? []).join('\n'),
-      keywords: [...exports, ...composition].join(' ').trim(),
+      keywords: exports.join(' '),
       owner: '',
       text: [document.summary, ...(frontmatter.useWhen ?? [])].join('\n'),
       page: document.id,
@@ -226,7 +207,7 @@ export function searchDocuments({
     // as an export that leads to its first part's props.
     if (entry.kind === 'namespace' && pages.has(name)) continue;
     const home = (homes.get(name) ?? setup)!;
-    // Only a component or pattern page has a Props view with a place for each export and prop; on
+    // Only a component page has a Props view with a place for each export and prop; on
     // another page, both lead to the section that shows the export.
     const where = home.sections ? undefined : placeOf(name, home, documents);
     const place = where && placeRoute(where);

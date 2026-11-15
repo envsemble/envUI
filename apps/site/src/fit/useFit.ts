@@ -290,10 +290,9 @@ function holdFrame(f: Fitting, framed: Framed, seen: Seen) {
  * and draw by mode (FitMode): on a modal's screen, while playing, or at rest.
  *
  * Popups: an open popup, such as a menu beside its button, lays out in its tile's own window
- * (`data-popup`, Gallery.css), as wide as it was written for, also in a pattern's scene. It is
- * drawn whole, edges and corners in view, when that needs a scale no smaller than the popups'
- * least scale (`--catalogue-own-popup-least`, Gallery.css) or a scene's legible scale, so its words
- * stay as legible as the other tiles'. A larger popup, such as a picker, shows from its top and
+ * (`data-popup`, Gallery.css), as wide as it was written for. It is drawn whole, edges and corners
+ * in view, when that needs a scale no smaller than the popups' least scale
+ * (`--catalogue-own-popup-least`, Gallery.css), so its words stay as legible as the other tiles'. A larger popup, such as a picker, shows from its top and
  * fades out at the bottom; it is drawn whole across when that scale allows, else cut off at its
  * end. A modal, such as a dialog, uses the stage as its screen (FitScreen.ts). While playing, the
  * picture is drawn smaller only when what it opens needs it (FitPlaying.ts).
@@ -355,10 +354,9 @@ function fitScreen(f: Fitting, seen: Seen, script: StageScript, measured: Measur
  * sets the cut sides (decidePlayCut).
  */
 function fitPlaying(f: Fitting, boxes: Shown[], script: StageScript, { scales }: Measured) {
-  const { stage, canvas, kind, kept, view } = f;
+  const { stage, canvas, kept, view } = f;
   const drawn = decideDrawOut(
     f,
-    kind,
     script,
     boxes,
     scales,

@@ -31,27 +31,6 @@ export function ComponentPage({ page }: { page: DocumentPage }) {
 }
 
 /**
- * A pattern's page: every section of the template, in the page's order, and a link to its guide in
- * the Docs.
- */
-export function PatternPage({ page }: { page: DocumentPage }) {
-  const document = useDocument(page.document);
-  return (
-    <>
-      <SiteBanner
-        title={page.title}
-        trail={catalogueTrail(page)}
-        description={page.summary}
-        subject={document.id}
-        meta={document.metadata && <MetadataBadges metadata={document.metadata} plain />}
-        corner={<PartSwitch page={page} />}
-      />
-      <TemplateContent document={document} overviewHeading={false} />
-    </>
-  );
-}
-
-/**
  * The credit for the icons, at the top of the Icons page, on this page alone: envUI draws no icons
  * of its own, and uses Material Design's, under their license. The package carries the license and
  * its notice (packages/ui/THIRD_PARTY_NOTICES.md).

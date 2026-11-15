@@ -29,7 +29,7 @@
   overflow-wrap: break-word;
 }
 
-/* A page is parts, not one stream. A component or pattern page groups its sections into three
+/* A page is parts, not one stream. A component page groups its sections into three
    larger ones (TemplateContent.tsx); every section, in a group or starting one, stands the same
    section gap from the one before (Shell.css), and what is inside a section sits closer
    (Figures.css). */

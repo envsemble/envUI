@@ -36,7 +36,7 @@ export const inset = 16;
  */
 export const most = 2;
 
-/** The least scale a pattern's scene is drawn at in a gallery, so its words stay legible. */
+/** The popups' least scale where the stage sets none (`--catalogue-own-popup-least`). */
 export const legibleScale = 0.8;
 
 /** The space, in px, a moving tile view keeps between what it shows and the stage's edge. */
@@ -345,8 +345,6 @@ export function restingScale(kind: FitKind, resting: Resting) {
   switch (kind.scale) {
     case 'own':
       return componentScale(resting);
-    case 'legible':
-      return sceneScale(resting);
     case 'window':
       return resting.window;
     case 'content':
@@ -366,12 +364,6 @@ function componentScale({ own, popup, scales, popupScale, overlayWhole }: Restin
   return scales.overlay
     ? Math.min(scales.overlay, drawn, Math.max(scales.popupLeast, overlayWhole))
     : drawn;
-}
-
-/** A pattern's scene: its window's scale, capped at 1 and at least the legible scale. */
-function sceneScale({ window, popup, popupScale }: Resting) {
-  const scene = Math.max(legibleScale, Math.min(1, window));
-  return popup ? popupScale(scene) : scene;
 }
 
 /** An example or a specimen: as large as fits what it paints, at most its window's scale. */

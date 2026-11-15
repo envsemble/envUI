@@ -44,8 +44,8 @@ function CloseSheet({ onClose }: { onClose?: () => void }) {
 }
 
 /**
- * The catalogue's navigation, one pane: a NavigationRail of its destinations, Overview, Foundations,
- * Components and Patterns, under the envUI wordmark, beside a NavigationDrawer of the chosen
+ * The catalogue's navigation, one pane: a NavigationRail of its destinations, Overview, Foundations
+ * and Components, under the envUI wordmark, beside a NavigationDrawer of the chosen
  * destination's pages under search, both on the navigation's background with no seam or line
  * between them. A destination of one page, such as Overview, has no drawer in a wide window: the
  * rail stands alone, the page takes the width, and search is at the page's top start (App.tsx).

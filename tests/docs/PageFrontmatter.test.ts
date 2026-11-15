@@ -21,7 +21,7 @@ test('a page of a structured kind needs its frontmatter, and its frontmatter its
       /components\/switch\.md is not in the one-file structure: its frontmatter lists no examples/,
     );
     await rejects(body, /Component page components\/switch\.md needs frontmatter/);
-    // A pattern or foundation page is in the structure too.
+    // A foundation page is in the structure too.
     await mkdir(join(docs, 'foundations'), { recursive: true });
     await writeFile(
       join(docs, 'foundations', 'motion.md'),

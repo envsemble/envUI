@@ -106,7 +106,7 @@
   box-shadow: var(--catalogue-card-shadow-recessed);
 }
 
-/* In a component's, a pattern's or a foundation's page (TemplateContent.tsx), each figure is a
+/* In a component's or a foundation's page (TemplateContent.tsx), each figure is a
    gallery's cell (Gallery.css): its stage square-cornered and flat on the page, with no edge and
    no shadow, on the same fill as the galleries' pictures, so the page reads as the galleries and
    the home page do, and what it shows is the one thing raised. */
@@ -138,7 +138,7 @@
    foot, smaller, half as much. */
 .site-page-banner,
 .catalogue-explore-grid > .env-card {
-  --catalogue-card-fill: var(--env-surface-color);
+  --catalogue-card-fill: var(--_surface-color);
   box-shadow: var(--catalogue-card-shadow);
 }
 .site-page-navigation .env-pager-link {
@@ -267,8 +267,8 @@
 }
 
 /* A page's figure has a gallery cell's room around what it shows: a row of buttons sits in a calm
-   field rather than a strip, as a gallery's picture does. A component's or pattern's overview of one
-   figure, right under its banner, is the page's one large cell. */
+   field rather than a strip, as a gallery's picture does. A component's overview of one figure,
+   right under its banner, is the page's one large cell. */
 .site-figures .site-live-example {
   min-block-size: 11rem;
   padding-block: var(--env-space-7);

@@ -51,13 +51,12 @@ test("the skill's AGENTS.md block is short and points at docs the package ships"
   const words = text.split(/\s+/).filter(Boolean).length;
   assert.ok(words <= 80, `the AGENTS.md block has ${words} words; keep it to about 100 tokens`);
   assert.match(text, /every UI element/);
-  assert.match(text, /propose an addition to envUI instead of writing a local copy/);
   // The package ships docs/ with its index and the examples, and the lint packages their READMEs.
   const library = JSON.parse(
     readFileSync(join(repositoryRoot, 'packages/ui/package.json'), 'utf8'),
   );
   assert.ok(library.files.includes('docs'));
-  for (const path of ['docs/index.md', 'docs/setup.md', 'docs/migration.md'])
+  for (const path of ['docs/index.md', 'docs/setup.md'])
     assert.ok(skill.includes(`node_modules/@envsemble/envui/${path}`) || text.includes(path), path);
   assert.ok(existsSync(join(repositoryRoot, 'docs/index.md')));
   for (const name of ['eslint-plugin', 'stylelint-config']) {

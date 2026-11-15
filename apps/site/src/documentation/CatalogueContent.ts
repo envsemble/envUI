@@ -1,4 +1,4 @@
-// What the catalogue shows of a component, pattern or foundation page, and what it leaves to the
+// What the catalogue shows of a component or foundation page, and what it leaves to the
 // page in the Docs. The catalogue speaks plain language to people looking at envUI; a page's
 // developer part, its "## Compose" section and Accessibility's lists of what envUI and the
 // application provide, is for people who build with it, and so are the changelog and the props.

@@ -44,7 +44,7 @@
    foundation's stage. */
 .catalogue-motion-pause {
   position: absolute;
-  inline-size: var(--env-button-height);
+  inline-size: var(--_button-height);
   inset-block-end: var(--env-space-2);
   inset-inline-end: var(--env-space-2);
 }
@@ -90,7 +90,7 @@
 .catalogue-motion-subject .env-sheet[data-side='end'] .env-dialog-actions {
   padding-inline-end: max(
     0rem,
-    2 * var(--env-space-2) + var(--env-control-height-sm) - var(--env-surface-padding, 0rem)
+    2 * var(--env-space-2) + var(--env-control-height-sm) - var(--_surface-padding, 0rem)
   );
 }
 

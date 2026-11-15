@@ -26,8 +26,6 @@ avoidWhen:
     use: Progress
   - text: Loading a page or a route of an application, along the top bar.
     use: TopBar
-  - text: Content of a known shape loading in its place, such as a card or a list, as a skeleton.
-    see: loading
 components:
   - Spinner
 examples:

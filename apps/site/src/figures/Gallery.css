@@ -1,7 +1,7 @@
-/* The galleries of components and patterns (Gallery.tsx): by group, a cell for each page: its live
-   picture, inert, flat and square-cornered, in the reader's theme, and under it its name, which
-   slides into view as the pointer comes onto the cell: a component at its own size, a pattern's
-   scene scaled to fit. Cells are of one size, so the pictures line up in rows. */
+/* The galleries of foundations and components (Gallery.tsx): by group, a cell for each page: its
+   live picture, inert, flat and square-cornered, in the reader's theme, and under it its name,
+   which slides into view as the pointer comes onto the cell: a component at its own size. Cells
+   are of one size, so the pictures line up in rows. */
 /* The groups stand a page's section gap apart (Shell.css), as every section does. */
 .catalogue-gallery {
   /* As wide as the page's whole pane, past the column the text keeps to, less a gutter at either
@@ -43,7 +43,7 @@
 
 .catalogue-gallery-grid {
   display: grid;
-  /* As many to a row as fit at 24 rem, as a pattern's cells: two on a laptop's page, three or more
+  /* As many to a row as fit at 24 rem: two on a laptop's page, three or more
      on a wider one, and two in a narrow window; on a touch screen one (below). */
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
   gap: var(--env-space-3);
@@ -128,9 +128,13 @@
   }
 }
 
-/* The picture: square corners, no edge and no shadow, in a gallery and in Related alike. */
+/* The picture: square corners, no edge and no shadow, in a gallery and in Related alike. A
+   component's picture, not its stage, is clipped to the stage's corners: a popup measures the room
+   it has against the boxes that clip it, and would shift off its trigger to fit inside the stage,
+   rather than open where it opens in an application and be framed there (useFit.ts). */
 :is(.catalogue-gallery-grid, .catalogue-related-tiles)
   .catalogue-gallery-stage.catalogue-gallery-stage {
+  overflow: visible;
   border-radius: 0;
   box-shadow: none;
 }
@@ -148,47 +152,14 @@
   color: var(--env-color-fg-muted);
 }
 
-/* The stage of a gallery tile: 4:3, the shape of a tile's window (Tiles.ts) and of a pattern's
-   stage, so what a component opens below it has room and the cells are as tall as a pattern's;
-   what is taller still, such as a calendar, is cut off at its foot, fading out through the rows
-   there. Each page's own tile lays out in its own window (tiles/Tiles.ts, TileStage.css); a page
-   without one shows its example in a window that counts whole (TileStage.tsx), so it is drawn at
-   the tiles' scale. */
+/* The stage of a gallery tile: 4:3, the shape of a tile's window (Tiles.ts), so what a component
+   opens below it has room; what is taller still, such as a calendar, is cut off at its foot,
+   fading out through the rows there. Each page's own tile lays out in its own window
+   (tiles/Tiles.ts, TileStage.css); a page without one shows its example in a window that counts
+   whole (TileStage.tsx), so it is drawn at the tiles' scale. */
 .catalogue-gallery-stage.catalogue-gallery-stage {
   aspect-ratio: 4 / 3;
   max-block-size: none;
-}
-
-/* A pattern's scene takes a larger cell than a component's: three to a row on a wide page, two on
-   a narrower one and one on a phone, on a stage of 4:3, so the whole window its scene is written
-   for shows at about its own size and its words read as a page's do (useFit.ts). Every scene is
-   one piece of an application 17rem across, low enough to show whole as it plays, so each sits
-   centred in its stage with the same margins (tiles/). */
-.catalogue-gallery-grid[data-scenes] {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
-}
-
-/* So do Related's tiles where one of them is a scene, so they line up in a row. */
-:is(.catalogue-gallery-grid, .catalogue-related-tiles)[data-scenes]
-  .catalogue-gallery-stage.catalogue-gallery-stage {
-  aspect-ratio: 4 / 3;
-}
-
-/* A component's picture, not its stage, is clipped to the stage's corners, in a gallery and in
-   Related: a popup measures the room it has against the boxes that clip it, and would shift off its trigger to fit inside the stage,
-   rather than open where it opens in an application and be framed there (useFit.ts). */
-:is(.catalogue-gallery-grid, .catalogue-related-tiles):not([data-scenes])
-  .catalogue-gallery-stage.catalogue-gallery-stage {
-  overflow: visible;
-}
-
-/* A scene lays out from its window's top rather than its middle, also with its overlay layer: at
-   rest the view centres what it paints either way (useFit.ts), and as it plays, what grows or
-   shrinks in it, such as a list a filter narrows or files added, changes below what stays, which
-   holds still. */
-.catalogue-gallery-stage[data-scene] .catalogue-tile-canvas,
-.catalogue-gallery-stage[data-scene] .catalogue-tile-canvas:has(> .catalogue-overlay-layer) {
-  place-content: start stretch;
 }
 
 /* In a narrow window under a mouse, components two to a row on lower stages, so the gallery stays
@@ -197,12 +168,11 @@
    down to its least, `--catalogue-own-popup-least`, as legible as the tiles beside it; what is
    larger still is shown from its top and cut off at its end and its foot, fading out. Only an
    overlay, such as a notification or a dialog, is drawn smaller, at `--catalogue-overlay-scale`
-   (above): one of a notification's width shows whole there. A pattern's scene keeps its own card,
-   one to a row (above). On a touch screen the cards stay one to a row, on their own stages
-   (below). */
+   (above): one of a notification's width shows whole there. On a touch screen the cards stay one
+   to a row, on their own stages (below). */
 @media not ((hover: none) or (pointer: coarse)) {
   @container catalogue-gallery (width < 27.25rem) {
-    .catalogue-gallery-grid:not([data-scenes]) {
+    .catalogue-gallery-grid.catalogue-gallery-grid {
       --catalogue-own-least: 0rem;
       --catalogue-own-floor: 0.85;
       --catalogue-own-popup-least: 0.85;
@@ -210,10 +180,11 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .catalogue-gallery-grid:not([data-scenes]) .catalogue-gallery-stage.catalogue-gallery-stage {
+    .catalogue-gallery-grid.catalogue-gallery-grid
+      .catalogue-gallery-stage.catalogue-gallery-stage {
       aspect-ratio: 16 / 10;
     }
-    .catalogue-gallery-grid:not([data-scenes])
+    .catalogue-gallery-grid.catalogue-gallery-grid
       .catalogue-gallery-stage.catalogue-gallery-stage
       .catalogue-tile-canvas[data-own-size] {
       inline-size: min(14rem, (100% - 2rem) / var(--catalogue-own-floor));
@@ -221,7 +192,7 @@
     /* A popup shown open lays out no wider than the stage's room shows at the scale it is drawn
        at, `--catalogue-canvas-scale` (useFit.ts), first a popup's least, the fit's inset from its
        edges, so what fits its window fits the stage; one narrower is drawn larger. */
-    .catalogue-gallery-grid:not([data-scenes])
+    .catalogue-gallery-grid.catalogue-gallery-grid
       .catalogue-gallery-stage.catalogue-gallery-stage
       .catalogue-tile-canvas[data-own-size][data-popup] {
       inline-size: min(
@@ -232,12 +203,12 @@
     /* An overlay lays out as wide as the stage's room shows at the overlays' scale, so a popover
        keeps the inset from both edges; a notification with the gutters it keeps around it, about
        the fit's inset from the stage's edges, so it shows its message on one line (useFit.ts). */
-    .catalogue-gallery-grid:not([data-scenes])
+    .catalogue-gallery-grid.catalogue-gallery-grid
       .catalogue-gallery-stage.catalogue-gallery-stage
       .catalogue-tile-canvas[data-own-size][data-popup][data-overlay] {
       inline-size: calc((100% - 2rem) / var(--catalogue-overlay-scale));
     }
-    .catalogue-gallery-grid:not([data-scenes])
+    .catalogue-gallery-grid.catalogue-gallery-grid
       .catalogue-gallery-stage.catalogue-gallery-stage
       .catalogue-tile-canvas[data-own-size][data-popup][data-overlay]:has(.env-toast-viewport) {
       inline-size: calc((100% - 1.75rem) / var(--catalogue-overlay-scale) + 1.5rem);

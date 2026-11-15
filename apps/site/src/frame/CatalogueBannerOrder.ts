@@ -5,7 +5,7 @@ export const bannerSubject = (page: RoutePage) => page.document?.id ?? page.path
 
 /**
  * Each catalogue page's place in the catalogue's order, the order of its sidebar and galleries:
- * the foundations, then the components by group, then the patterns.
+ * the foundations, then the components by group.
  */
 const places = new Map(pagesOf('catalogue').map((page, index) => [bannerSubject(page), index]));
 

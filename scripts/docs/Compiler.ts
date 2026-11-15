@@ -202,14 +202,13 @@ function shippedYaml(document: DocumentRecord) {
 }
 
 /**
- * The Markdown of a component, pattern or foundation page as it ships, for agents: the whole file,
- * in its order, with each example's code once. The frontmatter lists every example with its role and
+ * The Markdown of a component or foundation page as it ships, for agents: the whole file, in its
+ * order, with each example's code once. The frontmatter lists every example with its role and
  * caption, and says what to use instead, so Related isn't repeated at the end; the Overview's
  * examples are there. In the body, a run of figures is one line that names them, an anatomy figure
  * its legend, a variants figure its option table and a foundation's figure its legend; Compose
  * holds the canonical example's source in full. The props name what an export shares with one above
- * rather than repeating it, and the releases are
- * in the package's CHANGELOG.md.
+ * rather than repeating it, and the releases are in the package's CHANGELOG.md.
  */
 function compilePage(
   document: DocumentRecord,
@@ -275,8 +274,8 @@ function compilePage(
 }
 
 /**
- * The Markdown of a page as it ships: a component, pattern or foundation page as compilePage writes
- * it, with its props; the index with each page's summary; and a guide as it is written, but for its
+ * The Markdown of a page as it ships: a component or foundation page as compilePage writes it,
+ * with its props; the index with each page's summary; and a guide as it is written, but for its
  * figures (```tsx figure=Name```), the catalogue's own pictures, which its words describe.
  */
 export function compileDocument(

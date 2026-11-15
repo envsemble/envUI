@@ -61,7 +61,7 @@ export interface WholeFor {
 
 /** How an open popup is drawn in its stage (decidePopups). */
 export interface Popups {
-  /** Whether it is a dialog over its backdrop (also in a scene). */
+  /** Whether it is a dialog over its backdrop. */
   dialog: boolean;
   /** The stage's size less the margin on each side. */
   room: StageSize;
@@ -103,7 +103,7 @@ export function decidePopups(
     component && popup && !dialog
       ? painted.map(({ box, popup: inOne }) => ({ box, pad: inOne ? popupRoom : inset }))
       : null;
-  // A component's popup, or a dialog (also in a scene), may use the stage less the margin.
+  // A component's popup, or a dialog, may use the stage less the margin.
   const roomy = dialog || (component && popup);
   const marginScale = roomy
     ? Math.min(room.across / (right - left), room.down / (bottom - top))
@@ -309,9 +309,8 @@ export function decideRestingPlace(
     const start = ownBoxes.length ? Math.min(...ownBoxes.map(({ box }) => box.left)) : left;
     toX = start * scale + width / 2;
   }
-  // A cropped picture taller than the stage shows from its top, such as a scene with a search
-  // above the results it filters, and stays centred across. A held view shows from its top down to
-  // what its script acts on, whole above the bottom fade.
+  // A cropped picture taller than the stage shows from its top, and stays centred across. A held
+  // view shows from its top down to what its script acts on, whole above the bottom fade.
   const fromTop = cropped(kind) && down > height && !inRoom;
   if (fromTop && keep) {
     // The held view's top goes where heldPlace puts it (heldTop). If no way fits at this scale,
@@ -381,16 +380,15 @@ interface CutBy {
 }
 
 /**
- * The sides a cropped resting picture (own size or legible scale) is cut off at, and a new start
+ * The sides a cropped resting picture (own size) is cut off at, and a new start
  * for the bottom fade when one is needed (feetInFade).
  *
  * When the view was moved (`shifted`) or the fade start is set, the sides are computed from the
  * view (cutSides). Otherwise they follow from the sizes: the bottom when it is taller than the
- * stage's space by more than the slack; the end when a component is wider; both sides when a
- * scene is wider than the stage.
+ * stage's space by more than the slack; the end when it is wider.
  */
 function cutAtRest(
-  { stage, canvas, kind }: Picture,
+  { stage, canvas }: Picture,
   script: StageScript,
   boxes: Shown[],
   scale: number,
@@ -399,7 +397,6 @@ function cutAtRest(
   fadeAt: number | null,
   how: CutBy,
 ): { sides: string; fadeAt?: number } {
-  const scene = kind.scale === 'legible';
   const { left, top, right, bottom, width, height } = how.extent;
   const across = (right - left) * scale;
   const down = (bottom - top) * scale;
@@ -426,8 +423,7 @@ function cutAtRest(
           .filter((side) => !(held && side === 'top'))
       : [
           down > height + slack && !how.inRoom ? 'bottom' : '',
-          !scene && across > width + slack && !how.inRoom && !how.acrossRoom ? 'end' : '',
-          scene && across > stage.clientWidth ? 'start end' : '',
+          across > width + slack && !how.inRoom && !how.acrossRoom ? 'end' : '',
         ];
   const sides = cut.filter(Boolean).join(' ');
   // When a point of the pointer's course reaches into the bottom fade, such as a list's second

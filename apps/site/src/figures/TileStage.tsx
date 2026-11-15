@@ -53,10 +53,9 @@ export function TileStage({
   playing?: boolean;
   className?: string;
   /**
-   * How its page's tile is framed (frameOf, tiles/TilePictures.ts): a component at its own size, cropped
-   * by its stage, as the components' gallery draws every component at one scale, a drawing, whose
-   * window is smaller than the tiles' (Tiles.ts), larger still; a pattern's scene no smaller than a
-   * legible scale, cropped by its stage, so its words can be read (fitKindOf).
+   * How its page's tile is framed (frameOf, tiles/TilePictures.ts): a component at its own size,
+   * cropped by its stage, as the components' gallery draws every component at one scale, and a
+   * drawing, whose window is smaller than the tiles' (Tiles.ts), larger still (fitKindOf).
    */
   frame?: TileFrame;
 }) {
@@ -113,7 +112,6 @@ export function TileStage({
     app ? undefined : frame,
   );
   const ownSize = kind.scale === 'own';
-  const scene = kind.scale === 'legible';
   useFit(stage, canvas, { on: shown && !app, kind, playing: plays, script: stageScript });
   useAppFit(stage, canvas, shown && Boolean(app), app?.least);
   useStillAtRest(canvasElement, kind.tile && !plays);
@@ -127,7 +125,6 @@ export function TileStage({
       data-stage={picture?.stage}
       data-empty={flag(!picture)}
       data-playing={flag(plays)}
-      data-scene={flag(scene)}
       data-still={flag(!(picture?.tile && animations > 0))}
     >
       {!picture ? (

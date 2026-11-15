@@ -35,7 +35,7 @@ export function renderLlmsText() {
   return [
     '# envUI',
     '',
-    "> envUI is envsemble's React component library: components, design tokens and patterns for interfaces that work in light, dark and high contrast, with TypeScript declarations and documentation written for people and coding agents.",
+    "> envUI is envsemble's React component library: components and design tokens for interfaces that work in light, dark and high contrast, with TypeScript declarations and documentation written for people and coding agents.",
     '',
     `- [Setup skill](${siteOrigin}/SKILL.md): installs envUI in a project with the user, points the project's AGENTS.md to its documentation and turns on its lint rules.`,
     '- Once envUI is installed, its documentation for the installed version is in `node_modules/@envsemble/envui/docs/`, starting at `docs/index.md`.',

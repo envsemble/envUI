@@ -14,7 +14,7 @@ export interface TrailStep {
  * pages have theirs (docsTrail): envUI, the page's section and, for a component, its kind, then the
  * page itself, such as envUI / Components / Forms & selection / Slider. A section leads where its
  * destination in the rail does, to all of its pages; a kind of component leads to its heading among
- * all the components. The page of all foundations, components or patterns is its section's own
+ * all the components. The page of all foundations or components is its section's own
  * step, and the Overview's pages follow envUI alone.
  */
 export function catalogueTrail(page: RoutePage): TrailStep[] {
@@ -22,8 +22,7 @@ export function catalogueTrail(page: RoutePage): TrailStep[] {
   if (page.kind === 'home') return steps;
   // A catalogue page's section is one of its destinations.
   const section = sectionHome(page.section as CatalogueSection);
-  const sectionIndex =
-    page.kind === 'foundations' || page.kind === 'components' || page.kind === 'patterns';
+  const sectionIndex = page.kind === 'foundations' || page.kind === 'components';
   if (!sectionIndex && section.kind !== 'home')
     steps.push({ label: page.section, route: section.path });
   if (page.kind === 'component' && page.group)

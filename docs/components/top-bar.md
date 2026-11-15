@@ -23,8 +23,6 @@ avoidWhen:
     use: Toolbar
   - text: Desktop menus such as File and Edit across the top.
     use: Menubar
-  - text: A whole frame to copy, or an installed application's window that draws its own title bar.
-    see: app-frame
 components:
   - TopBar
 examples:

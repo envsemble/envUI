@@ -39,7 +39,7 @@ examples:
 
 ### In a title bar
 
-The [app frame](../patterns/app-frame.md) pattern shows the whole title bar, in an installed app's window.
+A menubar in the title bar of an installed app's window, beside the window's own controls.
 
 ```tsx figure=InTitleBar
 
@@ -145,7 +145,7 @@ With `accessKeys` on Menubar.Root, holding <kbd>Alt</kbd> underlines each menu's
 
 #### In a title bar
 
-In a window that draws its own title bar, a TopBar with `titleBar`, put the menubar in its `start`, as the [app frame](../patterns/app-frame.md) pattern does in an installed app's window, and the InTitleBar example does.
+In a window that draws its own title bar, a TopBar with `titleBar`, put the menubar in its `start`, as the InTitleBar example does.
 
 ```tsx
 <TopBar

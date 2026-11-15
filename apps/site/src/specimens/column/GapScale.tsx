@@ -23,8 +23,7 @@ const sizes: Record<SpaceStep, string> = {
  * row's in the dark ones.
  */
 const block: CSSProperties = {
-  '--env-surface-container-default':
-    'light-dark(var(--env-color-bg-page), var(--env-color-bg-muted))',
+  '--_surface-container-default': 'light-dark(var(--env-color-bg-page), var(--env-color-bg-muted))',
 };
 
 /** Up the scale a step at a time, from 1 to 9, and back down to 1. */

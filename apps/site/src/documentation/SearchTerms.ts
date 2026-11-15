@@ -6,7 +6,7 @@ import type { Options, SearchOptions, SearchResult } from 'minisearch';
 
 /** What a search result is. */
 export type SearchKind =
-  'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page';
+  'component' | 'export' | 'prop' | 'token' | 'foundation' | 'guide' | 'page';
 
 /**
  * A document of the search index (scripts/site/BuildSearchIndex.ts): one result, with what it is found
@@ -158,7 +158,7 @@ export function queryOptionsFor(query: string): SearchOptions {
 }
 
 /** The kinds of result that are a page, which a query names by its title. */
-const pageKinds = new Set(['component', 'pattern', 'foundation', 'guide', 'page']);
+const pageKinds = new Set(['component', 'foundation', 'guide', 'page']);
 
 /** Whether a query's word matched a result's title. */
 const titleMatched = (result: SearchResult) =>
@@ -177,9 +177,9 @@ function named(result: SearchResult, words: readonly string[], key: string) {
 
 /**
  * Searches the index with a query: every word must match (queryOptionsFor). Where a query of
- * several words names no result that way, as "primary button" names none, finding the Navigation
- * pattern by its aliases but not Button, whose page never says primary, the pages and exports whose
- * title holds any of its words come first, best first, then what matched every word.
+ * several words names no result that way, as "primary button" names none, Button's page never
+ * saying primary, the pages and exports whose title holds any of its words come first, best
+ * first, then what matched every word.
  */
 export function searchIndex(index: MiniSearch, query: string): SearchResult[] {
   const options = queryOptionsFor(query);

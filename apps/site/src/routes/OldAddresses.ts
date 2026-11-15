@@ -24,8 +24,9 @@ const oldDocuments: Record<string, string> = {
   // Dev mode's page in the catalogue folded into its guide in the Docs.
   'dev-mode-overview': 'docs/dev-mode',
   changelog: 'docs/changelog',
-  // The codemods are gone: their page opens the migration guide.
-  codemods: 'docs/migration',
+  // The codemods and the migration guide are gone: their pages open the Docs' home.
+  codemods: docsRoute,
+  migration: docsRoute,
   // The agent skills are gone, and so is the guide for agents: setup leads to the skill.
   'agent-skills': codingAgents,
   'agent-tooling': codingAgents,
@@ -81,8 +82,9 @@ function overviewView({ path, search, section, rest }: OldAddress) {
 const movedPages: Record<string, string> = {
   // The setup guide is the Docs' home, which its Introduction was before.
   'docs/setup': docsRoute,
-  // The codemods are gone: their page opens the migration guide.
-  'docs/codemods': 'docs/migration',
+  // The codemods and the migration guide are gone: their pages open the Docs' home.
+  'docs/codemods': docsRoute,
+  'docs/migration': docsRoute,
   // Developing envUI locally is a contributor's guide now, in the repository.
   'docs/local-development': docsRoute,
   // The agent benchmark is gone: its page opens the overview.
@@ -91,23 +93,13 @@ const movedPages: Record<string, string> = {
   changelog: 'docs/changelog',
   // Dev mode's page in the catalogue folded into its guide in the Docs, which shows its pictures.
   'dev-mode': 'docs/dev-mode',
-  // What every pattern needs was one page in the Docs; each pattern's guide says it now, and the
-  // Docs' home lists the guides under Patterns.
-  'docs/patterns': docsRoute,
   'foundations/tokens': 'docs/tokens',
   // Scale & density joined Spacing & density.
   'docs/foundations/scale': 'docs/foundations/spacing',
   // Customize colors joined Customize and extend.
   'docs/customizing-colors': 'docs/customizing',
-  // The templates are gone: the app frame is a pattern now.
-  'templates/app-frame': 'patterns/app-frame',
-  // Patterns merged into others open the pattern they joined, in the catalogue and the Docs.
-  'patterns/window-frame': 'patterns/app-frame',
-  'docs/patterns/window-frame': 'docs/patterns/app-frame',
-  'patterns/account-menu': 'patterns/account-and-organizations',
-  'docs/patterns/account-menu': 'docs/patterns/account-and-organizations',
-  'patterns/organization-switcher': 'patterns/account-and-organizations',
-  'docs/patterns/organization-switcher': 'docs/patterns/account-and-organizations',
+  // The templates are gone, and so is the app frame pattern they became.
+  'templates/app-frame': docsRoute,
 };
 
 /**
@@ -148,14 +140,37 @@ function foldedPage({ path, search, section, rest }: OldAddress) {
   return `${folded.page}${rest()}`;
 }
 
-/** Component pages that became patterns, by their slug: the pattern each one opens. */
-const componentPatterns: Record<string, string> = {
-  'window-frame': 'app-frame',
-  'account-menu': 'account-and-organizations',
-  stat: 'key-figures',
-  stats: 'key-figures',
-  'empty-state': 'empty-states',
-};
+const patternIds = [
+  'account-and-organizations',
+  'account-menu',
+  'app-frame',
+  'conversation',
+  'data-tables',
+  'destructive-actions',
+  'empty-states',
+  'feedback',
+  'file-upload',
+  'filtering',
+  'forms',
+  'key-figures',
+  'loading',
+  'navigation',
+  'organization-switcher',
+  'progressive-disclosure',
+  'settings',
+  'window-frame',
+];
+
+/** Component pages that became patterns, by their slug. */
+const componentPatterns = [
+  'window-frame',
+  'account-menu',
+  'stat',
+  'stats',
+  'empty-state',
+  'loading',
+  'skeleton',
+];
 
 /** Pages merged into others, and pages that became others, each opening the page it is part of now. */
 function mergedPage({ path, rest }: OldAddress) {
@@ -166,10 +181,11 @@ function mergedPage({ path, rest }: OldAddress) {
   if (/^templates(?:\/|$)/.test(path)) return `${homeRoute}${rest()}`;
   // The content guidelines are the Writing guide in the Docs.
   if (/^(?:docs\/)?foundations\/content(?:\/|$)/.test(path)) return `docs/writing${rest()}`;
-  // Components that became patterns open their pattern.
+  // The patterns are gone, with the components that became them: they open the Docs' home.
+  if (/^(?:docs\/)?patterns(?:\/|$)/.test(path)) return docsRoute;
   const slug = path.split('/')[1] ?? '';
-  if (path.startsWith('components/') && Object.hasOwn(componentPatterns, slug))
-    return `patterns/${componentPatterns[slug]}${rest()}`;
+  if (path.startsWith('components/') && componentPatterns.includes(slug) && !groupedPageOf(slug))
+    return docsRoute;
   return undefined;
 }
 
@@ -191,8 +207,6 @@ const renamedPages: Partial<Record<string, string>> = {
   'components/keyboard': 'components/kbd',
   'components/layout': 'components/column',
   'components/stack': 'components/column',
-  'components/loading': 'patterns/loading',
-  'components/skeleton': 'patterns/loading',
   'components/markdown-editor': 'components/markdown',
   'components/input': 'components/text-field',
   'components/textarea': 'components/text-field',
@@ -221,7 +235,6 @@ const renamedPages: Partial<Record<string, string>> = {
  * guide there, and every other view is the catalogue's page.
  */
 function pageView(path: string, { section, rest }: OldAddress) {
-  if (path.startsWith('patterns/')) return `${path}${rest()}`;
   const [area, id, view] = path.split('/');
   const grouped = (area === 'components' || area === 'foundations') && groupedPageOf(id ?? '');
   if (!grouped) return `${path}${rest()}`;
@@ -268,7 +281,7 @@ export function normalizeRoute(route: string): string {
 
 /**
  * Old addresses whose path alone says where they lead: the pages that moved, were folded into
- * another, became a pattern or were renamed. The host answers each with a redirect
+ * another, went with the patterns or were renamed. The host answers each with a redirect
  * (scripts/site/PrerenderSite.ts writes them to _redirects), so a crawler, a link preview or a
  * reader without the site's script finds the page; normalizeRoute redirects the rest in the
  * browser, such as an old view of a page or an address whose query names a document.
@@ -278,7 +291,10 @@ export const oldPaths = [
   'docs/agent-skills',
   'docs/agent-tooling',
   ...Object.keys(foldedPages).flatMap((path) => [path, `docs/${path}`]),
-  ...Object.keys(componentPatterns).map((slug) => `components/${slug}`),
+  ...componentPatterns.map((slug) => `components/${slug}`),
+  'patterns',
+  'docs/patterns',
+  ...patternIds.flatMap((id) => [`patterns/${id}`, `docs/patterns/${id}`]),
   ...Object.keys(renamedPages),
   'foundations/composition',
   'docs/foundations/composition',

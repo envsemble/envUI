@@ -51,12 +51,15 @@ test('the addresses of the views before the catalogue and the Docs split open th
     // The setup guide is the Docs' home.
     'docs/setup': 'docs',
     'docs/setup?section=install-a-release': 'docs?section=install-a-release',
-    // The codemods went, and developing envUI locally is a contributor's guide now.
-    'docs/codemods': 'docs/migration',
+    // The codemods and the migration guide went, and developing envUI locally is a contributor's
+    // guide now.
+    'docs/codemods': 'docs',
+    'docs/migration': 'docs',
     'docs/local-development': 'docs',
     // The agent benchmark went, and its page opens the overview.
     benchmark: 'overview',
-    'get-started/migration': 'docs/migration',
+    'get-started/migration': 'docs',
+    'overview/get-started?document=migration': 'docs',
     // The catalogue's Get started page is the setup guide, the Docs' home.
     'get-started': 'docs',
     'contributing/library-development': 'overview',
@@ -79,13 +82,19 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'components/search-trigger':
       'components/command-palette?section=opening-it-the-button-and-the-shortcut',
     'docs/patterns/search-trigger': 'docs/components/command-palette',
-    // Patterns merged into others open the pattern they joined, in the catalogue and in the Docs.
-    'patterns/window-frame': 'patterns/app-frame',
-    'docs/patterns/window-frame': 'docs/patterns/app-frame',
-    'components/window-frame': 'patterns/app-frame',
-    'patterns/account-menu': 'patterns/account-and-organizations',
-    'patterns/organization-switcher': 'patterns/account-and-organizations',
-    'docs/patterns/organization-switcher': 'docs/patterns/account-and-organizations',
+    // The patterns went, with the components that became them: they open the Docs' home.
+    patterns: 'docs',
+    'docs/patterns': 'docs',
+    'patterns/forms': 'docs',
+    'patterns/forms?section=rules': 'docs',
+    'docs/patterns/forms': 'docs',
+    'patterns/window-frame': 'docs',
+    'docs/patterns/organization-switcher': 'docs',
+    'templates/app-frame': 'docs',
+    'components/window-frame': 'docs',
+    'components/stats/props': 'docs',
+    'components/loading': 'docs',
+    'components/skeleton': 'docs',
     // Old addresses that name a document that is gone open the page it became.
     'overview/get-started?document=dev-mode-overview': 'docs/dev-mode',
     'overview/get-started?document=agent-skills': 'docs?section=coding-agents',
@@ -105,9 +114,9 @@ test('the addresses of the views before the catalogue and the Docs split open th
 
 test("each page of a subject leads to its page in the other part, and a page without one to the other part's start", () => {
   const paired = (kinds) => pagesOf('catalogue').filter(({ kind }) => kinds.includes(kind));
-  // Every component, pattern and foundation in the catalogue has its page in the Docs, which
-  // leads back to it.
-  for (const page of paired(['component', 'pattern', 'foundation'])) {
+  // Every component and foundation in the catalogue has its page in the Docs, which leads back
+  // to it.
+  for (const page of paired(['component', 'foundation'])) {
     const docs = counterpartOf(page);
     assert.equal(docs, `docs/${page.path}`, page.path);
     assert.equal(findPage(docs)?.area, 'docs', page.path);
@@ -115,7 +124,7 @@ test("each page of a subject leads to its page in the other part, and a page wit
     assert.equal(otherPartRoute(page, 'catalogue'), docs);
   }
   // The catalogue's Overview and galleries lead to the Docs' home.
-  for (const page of paired(['home', 'components', 'patterns'])) {
+  for (const page of paired(['home', 'components'])) {
     assert.equal(counterpartOf(page), undefined, page.path);
     assert.equal(otherPartRoute(page, 'catalogue'), 'docs', page.path);
   }
@@ -137,17 +146,16 @@ test("each page of a subject leads to its page in the other part, and a page wit
 test("the Docs' navigation is a tree of sections and groups, and each page's trail follows it", () => {
   assert.deepEqual(
     docsTree.map(({ label }) => label),
-    ['Get started', 'Guides', 'Foundations', 'Components', 'Patterns', 'Changelog'],
+    ['Get started', 'Guides', 'Foundations', 'Components', 'Changelog'],
   );
   const section = (label) => docsTree.find((entry) => entry.label === label);
-  // Components by their group, in the catalogue's order, and patterns by their intent.
+  // Components by their group, in the catalogue's order.
   assert.deepEqual(section('Components').pages, []);
   const groups = section('Components').groups.map(({ label }) => label);
   assert.deepEqual(
     groups,
     componentGroups.filter((group) => groups.includes(group)),
   );
-  assert.ok(section('Patterns').groups.some(({ label }) => label === 'Enter and change data'));
   // Every page of the Docs is in the tree once.
   const inTree = docsTree.flatMap((entry) => [
     ...entry.pages,
@@ -161,12 +169,6 @@ test("the Docs' navigation is a tree of sections and groups, and each page's tra
   );
   const trail = (path) => docsTrail(findPage(path)).map(({ label }) => label);
   assert.deepEqual(trail('docs/components/button'), ['Docs', 'Components', 'Actions', 'Button']);
-  assert.deepEqual(trail('docs/patterns/forms'), [
-    'Docs',
-    'Patterns',
-    'Enter and change data',
-    'Form layout and validation',
-  ]);
   assert.deepEqual(trail('docs/foundations/spacing'), ['Docs', 'Foundations', 'Spacing & density']);
   // A section that is one page of its name is left out.
   assert.deepEqual(trail('docs/changelog'), ['Docs', 'Changelog']);

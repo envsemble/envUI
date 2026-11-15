@@ -1,7 +1,7 @@
 ---
 name: envui-setup
 description: Set up envUI, envsemble's React component library (@envsemble/envui), in a project with the user. Installs it at an exact version with its styles and theme, points the project's AGENTS.md at the docs in the package, and turns on its ESLint and Stylelint rules. Use when adding envUI to an app, or when an app with UI of its own wants to move to envUI.
-compatibility: Needs React and React DOM 19 and Node.js 22.13 or later. While envUI is private, installing it needs the GitHub CLI signed in with access to the envsemble packages.
+compatibility: Needs React and React DOM 19 and Node.js 22.13 or later.
 metadata:
   author: envsemble
   version: '{{version}}'
@@ -30,7 +30,7 @@ Leave out a step that is already done. Skip a step the user declines, and say on
 
 ## UI of its own
 
-If the app already has its own UI components or another component library, set envUI up beside them and change none of them. After setup, offer to plan a migration with the user, following `node_modules/@envsemble/envui/docs/migration.md`: map each existing component to envUI, choose a first slice, and agree what stays. Never rewrite, restyle or remove the app's UI without the user's approval of that plan.
+If the app already has its own UI components or another component library, set envUI up beside them and change none of them. After setup, offer to plan the move with the user: map each existing component to envUI, choose a first slice, and agree what stays. Never rewrite, restyle or remove the app's UI without the user's approval of that plan.
 
 ## Step 1: Install envUI
 
@@ -51,7 +51,7 @@ Add this block to `AGENTS.md` in the project root, creating the file if missing 
 
 ## UI: envUI
 
-Use envUI (`@envsemble/envui`) for every UI element. Its docs for the installed version are in `node_modules/@envsemble/envui/docs/`: start at `docs/index.md`, and copy from the examples in `docs/examples/`. When envUI lacks something, propose an addition to envUI instead of writing a local copy.
+Use envUI (`@envsemble/envui`) for every UI element. Its docs for the installed version are in `node_modules/@envsemble/envui/docs/`: start at `docs/index.md`, and copy from the examples in `docs/examples/`.
 
 <!-- END envui -->
 ```
@@ -65,7 +65,7 @@ Install both as dev dependencies at exactly `{{version}}`, the same version as e
 - `@envsemble/eslint-plugin-envui`, needing ESLint 10 and a flat config: add `envui.configs.recommended` to `eslint.config.js`, imported from `@envsemble/eslint-plugin-envui`.
 - `@envsemble/stylelint-config-envui`, needing Stylelint 17: add it to `extends` after the project's base config.
 
-`node_modules/@envsemble/envui/docs/setup.md` (Lint rules) and each package's README in `node_modules/@envsemble/` have the options. If the project has neither tool, offer to add it with a minimal config. If it runs an older ESLint or a legacy `.eslintrc`, say so and skip rather than upgrading it. In an app with UI of its own, the rules report its hand-built controls: that list is the migration's work, not this setup's. If it blocks the user's CI, ask whether to start those rules as warnings.
+`node_modules/@envsemble/envui/docs/setup.md` (Lint rules) and each package's README in `node_modules/@envsemble/` have the options. If the project has neither tool, offer to add it with a minimal config. If it runs an older ESLint or a legacy `.eslintrc`, say so and skip rather than upgrading it. In an app with UI of its own, the rules report its hand-built controls: that list is the work of moving to envUI, not this setup's. If it blocks the user's CI, ask whether to start those rules as warnings.
 
 ## Step 4: Verify
 
@@ -82,4 +82,4 @@ Run the project's type check or build and its lint, then start the app and confi
 
 ## After setup
 
-Tell the user what changed, file by file, and what they skipped. Then offer the next step: build a first screen with envUI, starting from its patterns in `docs/index.md`, or, for an app with UI of its own, plan the migration. To upgrade later, raise all three packages to the same new version and read the changelog. For anything else, read https://envui.envsemble.com/llms.txt.
+Tell the user what changed, file by file, and what they skipped. Then offer the next step: build a first screen with envUI or, for an app with UI of its own, plan the move. To upgrade later, raise all three packages to the same new version and read the changelog. For anything else, read https://envui.envsemble.com/llms.txt.

@@ -18,15 +18,14 @@ export type Area = 'catalogue' | 'docs';
  * The catalogue's destinations in its rail, in order; the drawer beside it lists their pages. Dev
  * mode and the changelog are in the Docs.
  */
-export const catalogueSections = ['Overview', 'Foundations', 'Components', 'Patterns'] as const;
+export const catalogueSections = ['Overview', 'Foundations', 'Components'] as const;
 export type CatalogueSection = (typeof catalogueSections)[number];
 
 /** What a page shows from docs/, which decides how it renders: each has its document. */
-type DocumentKind =
-  'component' | 'pattern' | 'foundation' | 'guide' | 'foundation-guide' | 'reference';
+type DocumentKind = 'component' | 'foundation' | 'guide' | 'foundation-guide' | 'reference';
 
 /** What a page of the site's own shows, with no document: a home, a gallery, the tokens, the changelog. */
-type OwnKind = 'home' | 'foundations' | 'components' | 'patterns' | 'docs-changelog' | 'tokens';
+type OwnKind = 'home' | 'foundations' | 'components' | 'docs-changelog' | 'tokens';
 
 /** What a page shows, which decides how it renders. */
 export type PageKind = DocumentKind | OwnKind;
@@ -104,13 +103,9 @@ export const pageHref = (page: GroupedPage) => routeHref(page.path);
  */
 export const componentDocsRoute = (id: string) => `docs/components/${id}`;
 
-/** The route of a pattern's page in the Docs: its guide to building it in code. */
-export const patternDocsRoute = (id: string) => `docs/patterns/${id}`;
-
 /** The route of a foundation's guide in the Docs: its written guidance and reference. */
 export const foundationDocsRoute = (id: string) => `docs/foundations/${id}`;
 
-const patternDocuments = documents.filter((document) => document.group === 'Patterns');
 const guideDocuments = documents.filter(
   (document) => document.group === 'Setup and workflows' && !unlistedDocuments.has(document.id),
 );
@@ -167,32 +162,13 @@ const cataloguePages: RoutePage[] = [
         document,
       })),
   ),
-  {
-    path: 'patterns',
-    title: 'Patterns',
-    label: 'All patterns',
-    area: 'catalogue',
-    section: 'Patterns',
-    kind: 'patterns',
-    summary: 'Components put together for what people do, by what they are doing.',
-  },
-  ...patternDocuments.map((document): RoutePage => ({
-    path: `patterns/${document.id}`,
-    title: document.title,
-    area: 'catalogue',
-    section: 'Patterns',
-    group: document.metadata?.intent,
-    kind: 'pattern',
-    summary: document.summary,
-    document,
-  })),
 ];
 
 /**
  * The guides that get an application going, in the Docs' Get started group; every other guide of
  * the index's Setup and workflows, such as customizing colors or dev mode, is in Guides.
  */
-const startGuides = new Set(['setup', 'migration']);
+const startGuides = new Set(['setup']);
 
 /** The guide the Docs open on, at their home: installing and setting envUI up. */
 const homeGuide = 'setup';
@@ -266,19 +242,6 @@ const docsPages: RoutePage[] = [
         document,
       })),
   ),
-  // Each pattern's guide, in the catalogue's order and by its intent: how to build it in code.
-  ...cataloguePages
-    .filter((page) => page.kind === 'pattern')
-    .map(({ document, title, summary, group }): RoutePage => ({
-      path: patternDocsRoute(document.id),
-      title,
-      area: 'docs',
-      section: 'Patterns',
-      group,
-      kind: 'reference',
-      summary,
-      document,
-    })),
   {
     path: 'docs/changelog',
     title: 'Changelog',
@@ -314,7 +277,7 @@ export const groupedPageOf = (id: string) => groupedPages.find((page) => page.do
  * The route of a page by its document id, such as `button`, or by a site page's, such as `tokens`,
  * scrolled to the element `section`. It knows only the current ids; the ids of documents that are
  * gone are in OldAddresses.ts. `view` picks the page's part in the Docs where the catalogue shows
- * the rest: `props` a component's or a pattern's page there, `usage` a foundation's guide.
+ * the rest: `props` a component's page there, `usage` a foundation's guide.
  */
 export function routeOfDocument(
   id: string,
@@ -329,21 +292,16 @@ export function routeOfDocument(
       return `${componentDocsRoute(id)}${query}`;
     return `${grouped.path}${query}`;
   }
-  if (view === 'props' && patternDocuments.some((document) => document.id === id))
-    return `${patternDocsRoute(id)}${query}`;
   if (id === 'index' || id === docsRoute) return `${docsRoute}${query}`;
   if (id === 'overview') return homeRoute;
   // The site's own pages that search results name (scripts/site/BuildSearchIndex.ts).
   const own: Record<string, string> = {
     foundations: 'foundations',
     components: 'components',
-    patterns: 'patterns',
     tokens: 'docs/tokens',
     'full-changelog': 'docs/changelog',
   };
   if (Object.hasOwn(own, id)) return `${own[id]}${query}`;
-  const page = allPages.find(
-    (entry) => entry.document?.id === id && (entry.kind === 'pattern' || entry.kind === 'guide'),
-  );
+  const page = allPages.find((entry) => entry.document?.id === id && entry.kind === 'guide');
   return page && `${page.path}${query}`;
 }

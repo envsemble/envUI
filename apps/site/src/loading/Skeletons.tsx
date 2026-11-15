@@ -9,11 +9,10 @@ import { recordedSize } from './RecordedSizes';
 import { classNames, flag } from '../shared/Attributes';
 
 /*
- * What the site shows while a part of a page loads, such as an example, its code or a specimen,
- * as the Loading pattern asks of applications (docs/patterns/loading.md): the part's shape as an
- * envUI skeleton, in its place and at its size, so nothing moves when it lands. Each skeleton is a
- * busy region whose content assistive technology skips, and one polite status for the whole page,
- * LoadingStatus, says what is loading. A placeholder shows only once a load has taken a noticeable
+ * What the site shows while a part of a page loads, such as an example, its code or a specimen:
+ * the part's shape as an envUI skeleton, in its place and at its size, so nothing moves when it
+ * lands. Each skeleton is a busy region whose content assistive technology skips, and one polite
+ * status for the whole page, LoadingStatus, says what is loading. A placeholder shows only once a load has taken a noticeable
  * moment, and keeps its space meanwhile, so a quick load never flashes it; once shown, it stays a
  * moment too (HoldPlaceholder), so it never flickers. As what it stood for lands and shows, the
  * two crossfade, so the place is never seen empty.

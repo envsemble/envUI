@@ -16,13 +16,12 @@ import {
   cutSides,
   drawOut,
   join,
-  legibleScale,
   margin,
   scaleTolerance,
   stagePoint,
   type Box,
 } from './FitGeometry';
-import type { FitKind, StageScript } from './FitKind';
+import type { StageScript } from './FitKind';
 import { stageSize, type Scales, type StageSize } from './FitMeasure';
 import { elementsOf, inkOf, inPopup, partOf, settling, type Shown } from './PaintedBoxes';
 import { heading } from './PointerCourse';
@@ -87,25 +86,22 @@ export function startRun(boxes: Shown[], view: Target, cut: string | undefined):
  * does not fit is shown from its start and fades out past the stage's edge.
  *
  * Limits:
- * - The scale is never below the least scale: the popups' least for a component, the legible
- *   scale for a scene. A component is drawn at its resting scale or at that least, never between.
+ * - The scale is never below the popups' least scale. A component is drawn at its resting scale or
+ *   at that least, never between.
  * - What opened is followed only after it stayed in place from one frame to the next. Until then
  *   it is `pending`, and the caller fits again in the next frame.
  * - A tile that holds its view never draws out.
  */
 export function decideDrawOut(
   { stage, canvas }: Stage,
-  kind: FitKind,
   script: StageScript,
   boxes: Shown[],
   { popupLeast }: Scales,
   run: Run,
   view: Target & { rest: number },
 ): { run: Run; target: Target | null } {
-  const component = kind.scale === 'own';
-  const least = Math.min(view.rest, component ? popupLeast : legibleScale);
-  const stepped = (scale: number) =>
-    component ? (scale >= view.rest - scaleTolerance ? view.rest : least) : scale;
+  const least = Math.min(view.rest, popupLeast);
+  const stepped = (scale: number) => (scale >= view.rest - scaleTolerance ? view.rest : least);
   const { across, down } = stageSize(stage);
   // The named elements: those in a popup, such as a select's options, and those named to count
   // anywhere, such as a panel it opens (StageScript).

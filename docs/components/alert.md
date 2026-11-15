@@ -22,8 +22,6 @@ useWhen:
 avoidWhen:
   - text: Brief feedback after an action, such as Saved or Invitation sent.
     use: ToastProvider
-  - text: A region without content yet, such as an empty list or no search results.
-    see: empty-states
   - text: An error about one field, shown on the field.
     use: TextField
   - text: A status beside a label, such as Draft or Blocked.

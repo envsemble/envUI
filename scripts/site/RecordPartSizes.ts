@@ -30,8 +30,8 @@ const parts = /\/src\/(examples|specimens|figures\/dev-mode)\//;
 
 /** Every page of the catalogue and the Docs, from the galleries and the Docs' home. */
 async function routes(page: Page) {
-  const found = new Set<string>(['components', 'patterns', 'foundations', 'docs']);
-  for (const index of ['components', 'patterns', 'foundations', 'docs']) {
+  const found = new Set<string>(['components', 'foundations', 'docs']);
+  for (const index of ['components', 'foundations', 'docs']) {
     await page.goto(`${site}/${index}`);
     await page.locator('.site-page-column h1').first().waitFor();
     const links = await page

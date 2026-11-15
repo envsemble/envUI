@@ -80,7 +80,7 @@ const headingIds: NonNullable<MarkdownProps['rehypePlugins']>[number] = () => (t
 };
 
 /**
- * Whether the Markdown below is guidance, as the pages of components, patterns and foundations are:
+ * Whether the Markdown below is guidance, as the pages of components and foundations are:
  * it takes `site-guidance`, and a component named at an item's end follows a muted dot.
  */
 export const GuidanceLists = createContext(false);

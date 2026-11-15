@@ -1,5 +1,5 @@
 /* The article every page's text sits in, the Overview's hero and the catalogue's index pages of
-   components, patterns and foundations. */
+   components and foundations. */
 .site-article {
   padding: 0 var(--site-gutter) 3rem;
 }
@@ -24,7 +24,7 @@
   gap: var(--env-space-5);
   container-type: inline-size;
 }
-/* The home page's three destinations share a row where it is wide enough. */
+/* The home page's two destinations share a row where it is wide enough. */
 .catalogue-explore-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
 }

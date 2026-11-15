@@ -105,9 +105,9 @@ test('a page ships the whole file, in its order, with code once', () => {
   assert.ok(hasLine(button, '1. **Container** (`env-button`)'));
   assert.ok(hasLine(button, '### You provide'));
   assert.match(button, /^Also `end`, `size`, .* as on Button\.$/m);
-  // A pattern's canonical example ships once, in full, in Compose.
-  const forms = compiled.get('patterns/forms.md');
-  assert.equal(forms.match(/^`{3,}tsx source=ErrorSummary$/gm)?.length, 1);
+  // A page's canonical example ships once, in full, in Compose.
+  const accordion = compiled.get('components/accordion.md');
+  assert.equal(accordion.match(/^`{3,}tsx source=FrequentQuestions$/gm)?.length, 1);
   // A foundation's figures are the catalogue's: their legends ship, and the frontmatter lists only
   // those with an example file, their code, which ships and is named before the legend.
   const spacing = compiled.get('foundations/spacing.md');

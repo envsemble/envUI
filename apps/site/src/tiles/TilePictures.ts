@@ -4,7 +4,7 @@
  */
 import type { StageFill } from '../documentation/DocumentationTypes';
 import { groupedPages } from '../routes/SiteRoutes';
-import { documents, type DocumentSummary } from '../routes/PageModel';
+import type { DocumentSummary } from '../routes/PageModel';
 import { hasFoundationTile } from './foundations/FoundationTiles';
 import { memberTileOf, tileOf, type TileModule } from './Tiles';
 
@@ -99,17 +99,12 @@ export function tilePictureOf(
   };
 }
 
-/**
- * How a tile is framed, as a gallery's is (Gallery.tsx): a component at its own size, a pattern's
- * scene at a legible scale.
- */
-export type TileFrame = 'own' | 'legible';
+/** How a tile is framed, as a gallery's is (Gallery.tsx): a component at its own size. */
+export type TileFrame = 'own';
 
 /** How a page's tile is framed, by its document's id, in a gallery and in Related. */
 export function frameOf(id?: string): TileFrame | undefined {
-  if (groupedPages.some((page) => page.document.id === id && page.section === 'Components'))
-    return 'own';
-  return documents.some((document) => document.id === id && document.group === 'Patterns')
-    ? 'legible'
+  return groupedPages.some((page) => page.document.id === id && page.section === 'Components')
+    ? 'own'
     : undefined;
 }

@@ -14,8 +14,7 @@ export interface DocsGroup {
 
 /**
  * The Docs' pages as a tree, in reading order: each section of the navigation, such as Get started
- * or Components, with its pages and its groups, such as the kinds of component and the patterns'
- * intents.
+ * or Components, with its pages and its groups, such as the kinds of component.
  */
 export const docsTree: DocsGroup[] = (() => {
   const sections: DocsGroup[] = [];

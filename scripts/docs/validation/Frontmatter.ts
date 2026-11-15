@@ -204,9 +204,6 @@ function schemaProblems(
       problems.push(
         `components lists ${name}, a part: list its namespace, ${name.split('.')[0]}, whose page documents its parts`,
       );
-  for (const name of Array.isArray(frontmatter.composes) ? frontmatter.composes : [])
-    if (typeof name === 'string' && name.includes('.'))
-      problems.push(`composes lists ${name}, a part: list its namespace, ${name.split('.')[0]}`);
   return problems;
 }
 

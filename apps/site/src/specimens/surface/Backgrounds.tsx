@@ -13,7 +13,7 @@ const backgrounds = [
  * shadow, as its fill is a pane's; where popups are solid, by a popup's edge instead.
  */
 const popup: CSSProperties = {
-  '--env-surface-outline': 'var(--env-popup-solid) var(--env-elevation-2-border)',
+  '--env-surface-outline': 'var(--_popup-solid) var(--env-elevation-2-border)',
   boxShadow: 'var(--env-popup-shadow)',
   marginInline: 'var(--env-space-6) calc(-1 * var(--env-space-6))',
   marginBlockEnd: 'calc(-1 * var(--env-space-6))',

@@ -35,8 +35,6 @@ avoidWhen:
     use: Table
   - text: A message about the page or a section.
     use: Alert
-  - text: A region with no content yet.
-    see: empty-states
   - text: Content that needs no surface of its own, such as a form on a page.
     use: Column
 components:
@@ -134,7 +132,7 @@ An icon, a heading, a sentence and the one button that starts a feature.
 
 ### Loading
 
-While its content loads, a card can show as its own skeleton, as [Loading](../patterns/loading.md) shows.
+While its content loads, a card can show as its own skeleton.
 
 <!-- specimen: SkeletonFirst -->
 

@@ -94,7 +94,7 @@ test('search finds components by alias, props and tokens by name, and pages befo
   assert.deepEqual(best('--env-color-fg-muted'), ['token:color.fg.muted']);
   assert.deepEqual(best('fg muted'), ['token:color.fg.muted']);
   assert.deepEqual(best('button'), ['page:button']);
-  assert.ok(best('loading', 3).includes('page:loading'));
+  assert.ok(best('loading', 3).includes('page:spinner'));
   // A typo in a longer word still finds it.
   assert.deepEqual(best('chnagelog'), ['page:full-changelog']);
 });
@@ -120,7 +120,6 @@ test('a page an alias names ranks above the props of that name', () => {
   assert.deepEqual(best('modal'), ['page:dialog']);
   assert.deepEqual(best('hint'), ['page:tooltip']);
   assert.deepEqual(best('shortcut'), ['page:kbd']);
-  assert.deepEqual(best('placeholder'), ['page:loading']);
   assert.deepEqual(best('topbar'), ['page:top-bar']);
   assert.deepEqual(best('dark mode'), ['page:colors']);
   // An export's own name counts more than a page's alias of it.
@@ -143,8 +142,7 @@ test('a page an alias names ranks above the props of that name', () => {
 });
 
 test('words that name no result together find the pages whose title holds one first', () => {
-  // Button's page never says primary, and the Navigation pattern matches both words by its
-  // aliases and keywords alone: the page named Button comes first.
+  // Button's page never says primary: the page named Button comes first.
   assert.deepEqual(best('primary button'), ['page:button']);
   // Words that name a result together keep every word: an alias, a prop by its export, a name's start.
   assert.deepEqual(best('error message'), ['page:field']);
@@ -210,7 +208,6 @@ test('the index stays small enough to load when search first opens', () => {
 test('a result names its area: the catalogue, or the Docs for the reference', () => {
   const area = (id) => records.find((record) => record.id === id)?.area;
   assert.equal(area('page:button'), 'catalogue');
-  assert.equal(area('page:loading'), 'catalogue');
   assert.equal(area('page:colors'), 'catalogue');
   assert.equal(area('page:field'), 'docs');
   assert.equal(area('page:setup'), 'docs');
@@ -230,34 +227,19 @@ test('a result names its area: the catalogue, or the Docs for the reference', ()
   assert.ok(!records.some(({ id }) => id.startsWith('guide:')));
 });
 
-test('a pattern or template names its kind, and what it composes finds it', () => {
-  const loading = records.find(({ id }) => id === 'page:loading');
-  assert.equal(loading.kind, 'pattern');
-  assert.equal(loading.detail, 'Pattern · Keep people informed');
-  assert.match(loading.keywords, /\bplaceholders\b/);
-  assert.match(loading.keywords, /Keep people informed/);
-  for (const record of records.filter(({ kind }) => kind === 'template'))
-    assert.equal(record.detail, 'Template', record.id);
-});
-
 /**
  * Queries people ask, and the pages they lead to: each runs once the pages it names are written.
  * `first` must be the best result; `among` must be in the first `within`.
  */
 const goldenQueries = [
-  { query: 'error summary', first: 'page:forms' },
-  { query: 'sign in', first: 'page:sign-in-page' },
-  { query: 'login page', first: 'page:sign-in-page' },
-  { query: 'dashboard', first: 'page:dashboard-page' },
-  { query: '404', first: 'page:empty-states' },
-  { query: 'not found', first: 'page:empty-states' },
-  { query: 'stepper', first: 'page:forms' },
-  { query: 'account menu', first: 'page:account-and-organizations' },
-  { query: 'workspace switcher', first: 'page:account-and-organizations' },
-  { query: 'installed app', first: 'page:app-frame' },
-  { query: 'empty state', first: 'page:empty-states' },
-  { query: 'stat', first: 'page:key-figures' },
-  { query: 'undo delete', first: 'page:destructive-actions' },
+  { query: 'account menu', first: 'page:menu' },
+  { query: 'title bar', first: 'page:top-bar' },
+  { query: 'confirm delete', first: 'page:confirm-dialog' },
+  { query: 'date range', first: 'page:date-picker' },
+  { query: 'dropdown', first: 'page:select' },
+  { query: 'modal', first: 'page:dialog' },
+  { query: 'progress bar', first: 'page:progress' },
+  { query: 'breadcrumb', first: 'page:breadcrumbs' },
 ];
 for (const { query, first, second } of goldenQueries) {
   const missing = [first, second].filter((id) => id && !records.some((record) => record.id === id));

@@ -120,7 +120,7 @@ const room: CSSProperties = { position: 'absolute', inset: '6%', containerType: 
 
 /** A drawing's card: its fill, a step lighter than the stage in every theme. */
 const card: CSSProperties = {
-  '--env-surface-container-default':
+  '--_surface-container-default':
     'light-dark(var(--env-color-bg-muted), var(--env-color-bg-default))',
 };
 

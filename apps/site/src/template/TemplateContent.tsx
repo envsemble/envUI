@@ -40,8 +40,7 @@ function Section({
       headingHidden={!overviewHeading && section.id === 'overview'}
       leadAfter
       lead={
-        section.id === 'rules' &&
-        (page.metadata?.useWhen.length || page.metadata?.composes?.length) ? (
+        section.id === 'rules' && page.metadata?.useWhen.length ? (
           <WhenToUse metadata={page.metadata} path={page.path} />
         ) : undefined
       }
@@ -158,7 +157,7 @@ function Sections({
 }
 
 /**
- * A component, pattern or foundation page of the catalogue: its sections in order, then Related;
+ * A component or foundation page of the catalogue: its sections in order, then Related;
  * a component's props, part names, what the application provides and changelog are on its page in
  * the Docs. For Field, whose whole page is in the Docs, `provides` keeps what envUI and the
  * application provide in Accessibility and `related={false}` leaves out Related, which the Docs
@@ -176,7 +175,7 @@ export function TemplateContent({
   related?: boolean;
   overviewHeading?: boolean;
 }) {
-  // A component's or pattern's page is guidance: its lists are check lists.
+  // A component's page is guidance: its lists are check lists.
   return (
     <GuidanceLists value>
       <Sections

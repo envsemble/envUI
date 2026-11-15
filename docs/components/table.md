@@ -21,8 +21,6 @@ useWhen:
 avoidWhen:
   - text: A few items, each with its own actions, that people don't compare field by field.
     use: List
-  - text: A handful of key figures for a dashboard, such as revenue this month.
-    see: key-figures
   - text: Items nested inside other items, such as folders and files.
     use: Tree
   - text: Arranging content in columns for layout, such as a set of summary cards.
@@ -136,7 +134,7 @@ The header row can stay in view while the rows scroll beneath it, in a region of
 
 ### Loading
 
-While its rows load, a table shows as its own skeleton, as [Loading](../patterns/loading.md) shows.
+While its rows load, a table shows as its own skeleton.
 
 <!-- specimen: Loading -->
 

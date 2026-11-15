@@ -23,9 +23,7 @@ avoidWhen:
   - text: Items people open or act on, one per row.
     use: List
   - text: Values people fill in and submit, as a form.
-    see: forms
-  - text: One headline number with its trend.
-    see: key-figures
+    see: field
 components:
   - DescriptionList
 examples:

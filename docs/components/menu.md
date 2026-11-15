@@ -23,8 +23,6 @@ useWhen:
   - Options that change a view, such as a sort order
   - Actions for an area on right click (ContextMenu)
 avoidWhen:
-  - text: The signed-in person's menu, with its header and theme submenu, or an organization switcher.
-    see: account-and-organizations
   - text: Choosing a value for a form field.
     use: Select
   - text: An application menubar, such as File, Edit and View.
@@ -225,7 +223,7 @@ ContextMenu makes its one child the region, which must accept native props and a
 
 #### Account menu
 
-Menu.Header holds the context at the top, such as the signed-in person's avatar, name and e-mail address, under an AvatarButton trigger, as the [account and organizations](../patterns/account-and-organizations.md) pattern builds it. The avatar sits at the end of a top bar, so the menu lines up with the trigger's end.
+Menu.Header holds the context at the top, such as the signed-in person's avatar, name and e-mail address, under an AvatarButton trigger. The avatar sits at the end of a top bar, so the menu lines up with the trigger's end.
 
 ```tsx
 <Menu.Root

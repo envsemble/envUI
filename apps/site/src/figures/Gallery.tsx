@@ -9,9 +9,8 @@ import { TileStage } from './TileStage';
 import { useNear } from './useNear';
 import { frameOf, tilePictureOf, type TilePicture } from '../tiles/TilePictures';
 import { preloadTile } from '../tiles/Tiles';
-import { flag } from '../shared/Attributes';
 
-/** One group of a gallery, such as a kind of component or what people are doing. */
+/** One group of a gallery, such as a kind of component. */
 export interface GalleryGroup {
   /** Its heading; a gallery of one untitled group shows its tiles alone. */
   title?: string;
@@ -47,8 +46,7 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
           near={near}
           playing={playing || autoplay}
           className="catalogue-tile-stage catalogue-gallery-stage"
-          // Components show at their own size, one scale for all; a pattern's scene at a legible
-          // scale, cropped to its middle.
+          // Components show at their own size, one scale for all.
           frame={frameOf(page.document?.id)}
         />
       </div>
@@ -72,12 +70,8 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   );
 }
 
-/** Marks a group of patterns, whose scenes take larger, taller cards than a component's, fewer to a
- * row, so their words read (Gallery.css). */
-const scenes = (group: GalleryGroup) => flag(group.pages.every((page) => page.kind === 'pattern'));
-
 /**
- * A gallery of pages, such as every component or every pattern: by group, a tile for each page
+ * A gallery of pages, such as every component: by group, a tile for each page
  * with a small live picture of it, inert, on the recessed canvas every example sits on. The groups'
  * headings lead, their tiles' names read under each picture, and the groups stand well apart (Gallery.css).
  */
@@ -100,14 +94,14 @@ export function Gallery({ groups }: { groups: GalleryGroup[] }) {
                 {group.pages.length}
               </Text>
             </Row>
-            <ul className="catalogue-gallery-grid" data-scenes={scenes(group)}>
+            <ul className="catalogue-gallery-grid">
               {group.pages.map((page) => (
                 <GalleryTile key={page.path} page={page} level={3} />
               ))}
             </ul>
           </Column>
         ) : (
-          <ul className="catalogue-gallery-grid" key={group.id} data-scenes={scenes(group)}>
+          <ul className="catalogue-gallery-grid" key={group.id}>
             {group.pages.map((page) => (
               <GalleryTile key={page.path} page={page} level={2} />
             ))}

@@ -3,9 +3,9 @@ import { IconSearch } from '@envsemble/envui/icons/Search';
 import { preloadSearch } from './SiteSearch';
 
 /**
- * The button that opens the documentation's search, built as the search trigger pattern shows: a
- * secondary Button with the search icon, its label and the shortcut's keys at the end, or the icon
- * alone in a ghost IconButton with the label and keys in a tooltip. The catalogue handles the
+ * The button that opens the documentation's search: a secondary Button with the search icon, its
+ * label and the shortcut's keys at the end, or the icon alone in a ghost IconButton with the label
+ * and keys in a tooltip. The catalogue handles the
  * shortcut itself, in App. A pointer or focus on it starts loading search's index.
  */
 export function SearchButton({

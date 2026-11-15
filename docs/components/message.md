@@ -20,8 +20,6 @@ useWhen:
   - A thread of comments, each with its author and time
   - A reply that streams in while people read
 avoidWhen:
-  - text: A whole conversation, with the log, the composer, a streaming reply and a failed send.
-    see: conversation
   - text: The field where people write and send the next message.
     use: Composer
   - text: Items people scan, open and act on, such as a list of conversations.

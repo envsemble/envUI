@@ -4,13 +4,13 @@
 // compiles the Markdown that ships in the package, where example files and generated props tables
 // are filled in.
 //
-// Component, pattern and foundation pages (docs/components, docs/patterns and docs/foundations)
-// are in the one-file structure: YAML frontmatter (see pageSchemas) that lists each example once,
-// with its role and caption, then the `##` sections of pageSections, in their order. An example is
-// a file in apps/site/src/examples/<page>/<Name>.tsx, or on a foundation one of the
-// catalogue's figures, placed by an empty fence ```tsx figure=Name```; the Overview, Props and
-// Related are generated, Related from its avoidWhen. The build fails on a page of these kinds that
-// is not in the structure. contributing/pages.md describes it for authors.
+// Component and foundation pages (docs/components and docs/foundations) are in the one-file
+// structure: YAML frontmatter (see pageSchemas) that lists each example once, with its role and
+// caption, then the `##` sections of pageSections, in their order. An example is a file in
+// apps/site/src/examples/<page>/<Name>.tsx, or on a foundation one of the catalogue's figures,
+// placed by an empty fence ```tsx figure=Name```; the Overview, Props and Related are generated,
+// Related from its avoidWhen. The build fails on a page of these kinds that is not in the
+// structure. contributing/pages.md describes it for authors.
 //
 // The work is in scripts/docs/: PageStructure.ts (the page kinds, sections, roles and
 // frontmatter), PageReader.ts (a page read and checked), DocumentationReader.ts (every page, its
@@ -144,8 +144,6 @@ export function generateDocumentation() {
       avoidWhen: frontmatter.avoidWhen ?? [],
       components: frontmatter.components ?? [],
       ...(frontmatter.statuses && { statuses: frontmatter.statuses }),
-      ...(frontmatter.intent && { intent: frontmatter.intent }),
-      ...(frontmatter.composes && { composes: frontmatter.composes }),
     };
     if (!sections) return { ...entry, metadata };
     // The ids of the headings in each section, numbered across the page, so the catalogue opens a
@@ -161,7 +159,6 @@ export function generateDocumentation() {
           block.kind === 'markdown' ? headingsOf(block.markdown, slug).map(({ id }) => id) : [],
         ),
       })),
-      // Pattern and template pages document no exports of their own; they link to what they compose.
       ...(kind === 'component' && {
         props: Object.fromEntries(
           documentedExports(frontmatter.components ?? [], props).map((name: string) => [

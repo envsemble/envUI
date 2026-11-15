@@ -2,7 +2,7 @@
 // section's lists and keyboard table, and its Changelog's order.
 import type { Token, Tokens } from 'marked';
 
-/** The `###` lists a component's or a pattern's Accessibility section needs. */
+/** The `###` lists a component's Accessibility section needs. */
 const providesHeadings = ['envUI provides', 'You provide'];
 
 /**

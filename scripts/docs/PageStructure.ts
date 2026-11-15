@@ -29,17 +29,9 @@ import {
  * useContainerSize, unless the page's `statuses` gives it another, or a guide's `status`.
  */
 export const guideExportStatus = 'stable';
-/** What people are doing, in order: a pattern page's intent groups it in the catalogue and agents. */
-const intents = [
-  'Enter and change data',
-  'Keep people informed',
-  'Work with lists and tables',
-  'Frame the application',
-];
 /** The kind of a page of docs/, by its folder. */
 export function pageKindOf(path: string) {
   if (path.startsWith('components/')) return 'component';
-  if (path.startsWith('patterns/')) return 'pattern';
   if (path.startsWith('foundations/')) return 'foundation';
   return 'guide';
 }
@@ -47,25 +39,21 @@ export function pageKindOf(path: string) {
  * The kinds of page in the one-file structure, with frontmatter of their own and the sections of
  * pageSections; a guide is written freely.
  */
-export const pageKinds = new Set(['component', 'pattern', 'foundation']);
-/** The kinds of page that document exports, which a page relates to by an export's name. */
-export const exportKinds = new Set(['component', 'pattern']);
+export const pageKinds = new Set(['component', 'foundation']);
 /** Index sections that hold one kind of page, each from its own folder. */
 export const indexSectionKinds = {
   Foundations: 'foundation',
-  Patterns: 'pattern',
 };
 export const kindFolders = {
   component: 'docs/components',
-  pattern: 'docs/patterns',
   foundation: 'docs/foundations',
   guide: 'the top of docs',
 };
 
 /**
- * The sections of a page in the one-file structure, the same for a component, a pattern and a
- * foundation, in the order the catalogue shows them and an agent reads them: what it is and its
- * examples in the frontmatter, then its variants or options, its parts, how it behaves, ending with
+ * The sections of a page in the one-file structure, the same for a component and a foundation, in
+ * the order the catalogue shows them and an agent reads them: what it is and its examples in the
+ * frontmatter, then its variants or options, its parts, how it behaves, ending with
  * how it adapts to width, its rules, which open with when to use it, its accessibility, the words
  * people use, and how to compose it in code. Overview is generated from the frontmatter's overview
  * examples, Props from the TypeScript declarations of the page's exports and Related from its
@@ -89,12 +77,10 @@ export interface Frontmatter {
   status?: string;
   since?: string;
   category?: string;
-  intent?: string;
   aliases?: string[];
   useWhen?: string[];
   avoidWhen?: AvoidEntry[];
   components?: string[];
-  composes?: string[];
   /** The status of each export that differs from the page's. */
   statuses?: Record<string, string>;
   /** A guide's names people search for each export it documents by. */
@@ -214,10 +200,9 @@ export const sourcePattern = /^tsx\s+source=(\S+)\s*$/;
 const importWidth = 60;
 
 /**
- * The generated start of "## Compose": how to import what the page documents or, on a pattern
- * page, what it composes, from the entries props.json gives each export. An import of several names
- * that would run past importWidth puts one name to a line, so the whole of it reads in the Docs'
- * column without scrolling.
+ * The generated start of "## Compose": how to import what the page documents, from the entries
+ * props.json gives each export. An import of several names that would run past importWidth puts
+ * one name to a line, so the whole of it reads in the Docs' column without scrolling.
  */
 function importMarkdown(names: readonly string[], props: PropsFile | undefined): string {
   const byEntry = new Map<string, string[]>();
@@ -310,19 +295,6 @@ export const frontmatterSchema: FrontmatterSchema = {
   /** Each example file once, by name, with its role and caption. */
   examples: { type: 'examples', required: true },
 };
-/** Frontmatter of a pattern page: required as a whole, with what it composes. */
-const compositionFrontmatter: FrontmatterSchema = {
-  title: { type: 'string', required: true },
-  summary: { type: 'string', required: true },
-  status: { type: 'string', required: true, values: pageStatuses },
-  since: { type: 'string', required: true, pattern: /^\d+\.\d+\.\d+$/ },
-  aliases: { type: 'strings', required: true, nonEmpty: true },
-  useWhen: { type: 'strings', required: true, nonEmpty: true },
-  avoidWhen: { type: 'avoid', required: true },
-  /** The exports, namespaces rather than parts, that the page's compositions combine. */
-  composes: { type: 'strings', required: true, nonEmpty: true },
-  examples: { type: 'examples', required: true },
-};
 /**
  * Frontmatter of a foundation page: what it is, the words people search for, its related pages and
  * its figures, which are the catalogue's (figures/foundations), each once with its role and
@@ -342,10 +314,6 @@ const foundationFrontmatter: FrontmatterSchema = {
 /** The frontmatter of each kind of page in the one-file structure; guides take otherFrontmatter. */
 export const pageSchemas: Record<string, FrontmatterSchema> = {
   component: frontmatterSchema,
-  pattern: {
-    ...compositionFrontmatter,
-    intent: { type: 'string', required: true, values: intents },
-  },
   foundation: foundationFrontmatter,
 };
 export const otherFrontmatter = new Set([
@@ -386,14 +354,12 @@ export const frontmatterOf = fields<Frontmatter>({
   status: optional(text),
   since: optional(text),
   category: optional(text),
-  intent: optional(text),
   aliases: texts,
   useWhen: texts,
   avoidWhen: optional(
     listOf(fields<AvoidEntry>({ text, use: optional(text), see: optional(text) })),
   ),
   components: texts,
-  composes: texts,
   statuses: optional(mapOf(text)),
   exportAliases: optional(mapOf(listOf(text))),
   examples: optional(

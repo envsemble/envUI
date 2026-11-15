@@ -107,7 +107,7 @@
   --env-text-field-outline: var(--env-color-border-primary-emphasis);
 }
 .catalogue-specimen-area .catalogue-force-focus .env-text-field-control {
-  --env-text-field-frame: calc(2 * var(--env-control-border-width));
+  --_text-field-frame: calc(2 * var(--env-control-border-width));
 }
 .catalogue-specimen-area .catalogue-force-focus .env-text-field-control > label {
   color: var(--env-color-fg-primary);
@@ -145,9 +145,9 @@
   display: contents;
 }
 .site-anatomy-subject .catalogue-force-spread .env-avatar-group {
-  --env-avatar-group-spread: 1;
+  --_avatar-group-spread: 1;
 }
 .site-anatomy-subject .catalogue-force-spread .env-avatar-group > * {
-  --env-avatar-group-arc-lift: 0rem;
-  --env-avatar-group-arc-turn: 0deg;
+  --_avatar-group-arc-lift: 0rem;
+  --_avatar-group-arc-turn: 0deg;
 }

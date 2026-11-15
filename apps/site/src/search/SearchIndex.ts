@@ -17,10 +17,9 @@ export interface SearchResult extends Pick<
   'id' | 'kind' | 'title' | 'owner' | 'detail' | 'page' | 'area' | 'view' | 'section'
 > {
   /**
-   * Whether the query matched what it is called, its name, aliases or keywords, not only its text;
-   * for a pattern, its name or aliases, as its keywords are the components it composes, which a
-   * query for one of them doesn't mean. An alias that only starts with the query, as Checkbox's
-   * select all does "sel", names a result only where no result's own name starts with it.
+   * Whether the query matched what it is called, its name, aliases or keywords, not only its text.
+   * An alias that only starts with the query, as Checkbox's select all does "sel", names a result
+   * only where no result's own name starts with it.
    */
   named: boolean;
   /**
@@ -53,7 +52,7 @@ export function searchDocumentation(query: string, limit: number): SearchResult[
       const byName = names.includes(key) || startsWords(words, [...own, ...wordsOf(owner ?? '')]);
       // Named by a field other than its text, as an alias or keyword: whole words of the query.
       const fields = Object.entries(match).filter(([, found]) =>
-        found.some((field) => field !== 'text' && (kind !== 'pattern' || field !== 'keywords')),
+        found.some((field) => field !== 'text'),
       );
       return {
         result,

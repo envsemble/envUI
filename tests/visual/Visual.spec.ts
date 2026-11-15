@@ -4,8 +4,7 @@
  * are captured in light, and its first example where it has no specimen or only animated ones; an
  * animated figure is captured as its still, with the catalogue's animations paused. The theme
  * sample of samplePages (CatalogueThemes.ts) is captured in dark and high contrast as well. So are a few density specimens of the test fixture, and a few lists, a tooltip and the
- * toasts of catalogue examples captured open in the fixture. Pattern pages compose the components
- * captured here, so they take no images of their own.
+ * toasts of catalogue examples captured open in the fixture.
  *
  * Fonts and anti-aliasing differ between systems, so the baseline renders only in the Linux
  * Playwright image: `npm run test:visual` checks it, `npm run test:visual:update` rewrites it.

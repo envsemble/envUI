@@ -2,7 +2,7 @@ import type { ComponentType } from 'react';
 import { moduleRegistry } from '../loading/ModuleRegistry';
 
 /*
- * The tiles' own pictures. A component or pattern page can have a small live picture written for
+ * The tiles' own pictures. A component page can have a small live picture written for
  * its tile in the galleries and in Related: apps/site/src/tiles/<Page>.tsx, named after the page's
  * id in PascalCase (segmented-control is SegmentedControl.tsx). The file default-exports the
  * picture's component, and exports `tileWindow` where the tile needs another window than the

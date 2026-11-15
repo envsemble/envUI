@@ -1,12 +1,12 @@
-# Write a component, pattern or foundation page
+# Write a component or foundation page
 
-Every component, pattern and foundation has one page in `docs/`: `docs/components/`, `docs/patterns/` or `docs/foundations/`, named in kebab case and the singular, such as `text-field.md` for TextField and its family. A page's Markdown is the one source for three readers:
+Every component and foundation has one page in `docs/`: `docs/components/` or `docs/foundations/`, named in kebab case and the singular, such as `text-field.md` for TextField and its family. A page's Markdown is the one source for three readers:
 
 - **The catalogue** shows its plain sections with figures, for people looking at envUI.
 - **The Docs** show the developer part the catalogue leaves out, so neither repeats the other.
 - **Agents** read the whole file as the package ships it, in the same order, with each example's code once.
 
-[Button](../docs/components/button.md), [Form layout and validation](../docs/patterns/forms.md) and [Spacing & density](../docs/foundations/spacing.md) are the model pages; read them, in the Markdown and on the website, before writing another. The build fails on a page outside this structure, the one-file structure.
+[Button](../docs/components/button.md) and [Spacing & density](../docs/foundations/spacing.md) are the model pages; read them, in the Markdown and on the website, before writing another. The build fails on a page outside this structure, the one-file structure.
 
 ## Write rules, not essays
 
@@ -25,19 +25,19 @@ The [writing guide](../docs/writing.md) holds the rules for the words of an inte
 
 After the YAML frontmatter and the `# Title`, a page has these `##` sections in this order, the catalogue's, so an agent reads the file as people see the page. Omit an optional one where it doesn't apply.
 
-| Section                            | Required                       | Holds                                                                                                                                         |
-| ---------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Overview                           | generated                      | The frontmatter's overview examples, side by side, the first on a component's page with its code open; don't write it.                        |
-| Variants (Options on a foundation) |                                | The variants figure and its option table, then the options in titled blocks, each beside its figure.                                          |
-| Anatomy                            |                                | The anatomy figure and its legend, and one sentence naming the parts the figure can't show.                                                   |
-| Behaviour                          |                                | States and what it does on its own, such as pending work or dismissing, in titled blocks, ending with `### Adapting to width`.                |
-| Rules                              | yes                            | A short lead, the do and don't figures, and titled blocks of rules, such as `### Labels`.                                                     |
-| Accessibility                      | on a component or pattern page | `### Keyboard`, a Key and Action table, or the focus and keys in a block of their own; then `### envUI provides` and `### You provide` lists. |
-| Words to use                       |                                | The phrases people ask for, as an option table; a column headed In code gives the props each phrase means.                                    |
-| Compose                            |                                | The developer part: [Compose](#compose-the-developer-part).                                                                                   |
-| Changelog                          |                                | Releases that changed the component, newest first, such as `- **1.1.0**: The quiet variant.`                                                  |
+| Section                            | Required            | Holds                                                                                                                                         |
+| ---------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Overview                           | generated           | The frontmatter's overview examples, side by side, the first on a component's page with its code open; don't write it.                        |
+| Variants (Options on a foundation) |                     | The variants figure and its option table, then the options in titled blocks, each beside its figure.                                          |
+| Anatomy                            |                     | The anatomy figure and its legend, and one sentence naming the parts the figure can't show.                                                   |
+| Behaviour                          |                     | States and what it does on its own, such as pending work or dismissing, in titled blocks, ending with `### Adapting to width`.                |
+| Rules                              | yes                 | A short lead, the do and don't figures, and titled blocks of rules, such as `### Labels`.                                                     |
+| Accessibility                      | on a component page | `### Keyboard`, a Key and Action table, or the focus and keys in a block of their own; then `### envUI provides` and `### You provide` lists. |
+| Words to use                       |                     | The phrases people ask for, as an option table; a column headed In code gives the props each phrase means.                                    |
+| Compose                            |                     | The developer part: [Compose](#compose-the-developer-part).                                                                                   |
+| Changelog                          |                     | Releases that changed the component, newest first, such as `- **1.1.0**: The quiet variant.`                                                  |
 
-The build adds **Props**, generated from the TypeScript declarations, after Compose, and **Related**, from `avoidWhen`; don't write them. It also fails on content before the first `##`, a blockquote, a heading written as HTML, or a component or pattern page without an overview example or Accessibility's two lists.
+The build adds **Props**, generated from the TypeScript declarations, after Compose, and **Related**, from `avoidWhen`; don't write them. It also fails on content before the first `##`, a blockquote, a heading written as HTML, or a component page without an overview example or Accessibility's two lists.
 
 ## Frontmatter
 
@@ -87,9 +87,9 @@ Register the page in [the index](../docs/index.md) under its group, with only it
 
 ## What each reader sees
 
-- **The catalogue** shows the sections up to Words to use in three groups: what it is (Overview to Behaviour); its Rules, opening with Use it when, from `useWhen`, and on a pattern Built from; then Accessibility, Words to use and Related. It leaves out Compose, the changelog, the two lists of what is provided and every column headed In code.
+- **The catalogue** shows the sections up to Words to use in three groups: what it is (Overview to Behaviour); its Rules, opening with Use it when, from `useWhen`; then Accessibility, Words to use and Related. It leaves out Compose, the changelog, the two lists of what is provided and every column headed In code.
 - **The Docs** show Compose, the two lists under Accessibility, the In code column as Words in code, and the generated Props, Part names and Color properties, with the changelog collapsed. [Field](../docs/components/field.md), which has no page in the catalogue, shows its whole page there.
-- **The switch** under a page's title, Design and Code, moves between its two pages, the catalogue's and the Docs', at the section the reader is in where the other page has it too, and otherwise at its top. A heading both pages show, such as a pattern's `### Sending`, keeps its place.
+- **The switch** under a page's title, Design and Code, moves between its two pages, the catalogue's and the Docs', at the section the reader is in where the other page has it too, and otherwise at its top. A heading both pages show keeps its place.
 - **The package** keeps the whole file: each example's entry on one line, a run of figures as one line that names them, an anatomy or variants figure as its legend or option table, and Compose with the props after it.
 
 ## Plain language in the catalogue
@@ -99,7 +99,7 @@ The catalogue is for people looking at envUI, often not developers, who then ask
 - **No inline code.** Name no props, values, part classes, tokens or container names. Say what matters in plain words: "the ghost variant", "a sheet from the bottom". Component names, such as SearchField, are names, not code.
 - **No technical values.** No hex colors, lengths, durations, percentages or contrast ratios, in text, captions, specimen titles, swatches and legends alike. Say what the value does, such as "the most space, between sections", and put the value in Compose.
 - **Options in words.** A table of variants, tones, sides or sizes names each option as people see it, such as Outline or From the bottom.
-- **No links into the Docs.** The catalogue reaches the Docs only through a page's Code switch. Link component, pattern and foundation pages, and say a point of a Docs page without the link; Compose, the changelog and the two lists of what is provided may link anywhere.
+- **No links into the Docs.** The catalogue reaches the Docs only through a page's Code switch. Link component and foundation pages, and say a point of a Docs page without the link; Compose, the changelog and the two lists of what is provided may link anywhere.
 
 ## Text in titled blocks
 
@@ -208,7 +208,7 @@ An ordered list right after an anatomy figure is its legend: each item the part'
 - A part reference is a class name, or a selector of class names without their dot, such as `env-button > env-icon:first-child`; `::text` at the end points at the element's own text, such as `env-button::text`.
 - A figure without a list numbers every part `docs/generated/parts.json` lists for the page's component, or for the one `of="Name"` names. Read a component's entry there before writing its legend.
 - `enlarge` draws a subject whose parts sit close half as large again; `width="38"` lays out a subject that shows all its parts only from a width, such as [Panes](../docs/components/panes.md) side by side.
-- Make the example small and complete, every part the legend names present once, the root first, then the parts in reading order. A sentence under the legend may say, for people reading the catalogue, how a pattern's parts fit together; what the figure leaves out and how a part is built are for Composition, in the Docs.
+- Make the example small and complete, every part the legend names present once, the root first, then the parts in reading order. A sentence under the legend may say, for people reading the catalogue, how the parts fit together; what the figure leaves out and how a part is built are for Composition, in the Docs.
 - **Callouts on what shows.** A callout points at what shows of a part: its edge, its text or its icon; only a region, with no edge of its own around several things, such as a card's actions, is outlined. The catalogue names in the legend alone, unnumbered, the outermost part around the others that has no edge of its own, such as a text field's root, and the part inside it as wide as it that holds several others, such as its control.
 - **Two callouts, two things.** No two callouts land on one box, and none points at nothing. Parts that look alike at rest, such as AnimatedNumber's window and its value, show apart with `specimen`: the catalogue numbers them on the example's playback, which holds the example in that moment, and a caption says which.
 
@@ -261,7 +261,7 @@ An outline field takes no fill of its own; give it one with its container color.
 ````
 
 - **Its `###` subsections, in this order:** `### Usage`, required, with short code for its common uses and options, code of one language with no words between in one block; `### Composition`, how its parts and the components around it fit together; `### Customize`, only what is particular to it, such as an edge drawn only at high contrast. Use `####` headings inside them.
-- **Generated around it:** `### Import`, from the exports the page documents or a pattern's `composes`, opens the section; Part names, Color properties and Strings follow Props, from `docs/generated/parts.json` and `defaultMessages`. Don't write them, nor the sentence [customizing](../docs/customizing.md) says once about color properties. On a component's page in the Docs, Usage opens with its first overview example, live and without its code, as the one figure the Docs show.
+- **Generated around it:** `### Import`, from the exports the page documents, opens the section; Part names, Color properties and Strings follow Props, from `docs/generated/parts.json` and `defaultMessages`. Don't write them, nor the sentence [customizing](../docs/customizing.md) says once about color properties. On a component's page in the Docs, Usage opens with its first overview example, live and without its code, as the one figure the Docs show.
 - **Code.** A snippet of a few lines in a `tsx` fence, or an example file of the page as code in an empty `tsx source=Name` fence, which the build fills in; at most one full example a page. `npm run docs:snippets` type-checks the snippets against envUI's API, supplying the imports and names they leave out; one that is pseudo-code on purpose takes `tsx nocheck`.
 - **Accessibility's lists** stay in Accessibility. Write the keyboard table from the code and its browser tests: the keys the component handles, and Tab for how focus enters and leaves. "envUI provides" names the roles, names, announcements and focus handling it does itself; "You provide", what the application must add, such as a label.
 
@@ -330,21 +330,6 @@ The galleries and Related show each page by a tile: `apps/site/src/tiles/<Page>.
 - **A still with a popup open** keeps it in state and puts it back with `usePointer`'s `onRest`.
 - **A popup whose script opens, closes and changes it**, such as a select's list, rests open in its largest state, through the component's own `defaultOpen` or `open`, and calls `useHeldView` (`apps/site/src/motion/Playback.tsx`): framed on that still, its view holds while it plays. Where it is taller than the stage, such as a picker, it shows from its field down to what its script acts on and what is chosen, whole above the fade at the stage's foot, so the script aims only at what shows whole.
 - **A tile that grows as it plays**, such as a note gaining a line, calls `useHeldView(true)`: it lays out from its window's top and is shown from its top, so what it adds grows downward.
-
-## Pattern pages
-
-A pattern page says how envUI's components combine for a recurring need, such as an app frame, forms or empty states: a need that takes two or more components together, or a choice between components. Guidance that fits one section of one component page is a variant or an example there instead. It is written in the same structure, with these differences:
-
-- **Frontmatter.** No `category`, `components` or `statuses`; `intent` groups it by what people are doing, _Enter and change data_, _Keep people informed_, _Work with lists and tables_ or _Frame the application_, and `composes` names every envUI export its examples import, namespaces rather than parts. Register it in the index under `## Patterns`, in intent order.
-- **Its decision**: which component or form to use when, as an option table under Rules, such as `### Which to use`.
-- **Its compositions**: the arrangements no component page shows, such as type to confirm, as titled blocks beside their figures under Variants, in examples of its own.
-- **Anatomy** numbers the composition's parts, with `of` naming the component it numbers.
-- **Behaviour** holds the flow and its timing, such as when to check and what happens on failure.
-- **Accessibility** opens with `### Focus and keyboard`, the flow of focus rather than a table of keys.
-- **Compose** shows its canonical example once, in full, as a `source` fence under Usage.
-- **It links, never repeats**: each component's own behaviour, such as how long a toast stays, is on its page. The words of its kind of screen are a block under Rules.
-
-The catalogue's Rules shows what it is Built from, the pages of its `composes`, without hooks, providers and layout primitives.
 
 ## Foundation pages
 

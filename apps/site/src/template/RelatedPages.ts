@@ -9,11 +9,11 @@ import { documents } from '../routes/PageModel';
 import { frameOf, tilePictureOf, type TileFrame, type TilePicture } from '../tiles/TilePictures';
 
 /**
- * The page that documents a component, for the components a page relates to and the exports a
- * pattern combines: a part such as Menu.Item is documented on the page of its namespace, and an
- * export such as Icon on the foundation's page that names it.
+ * The page that documents a component, for the components a page relates to: a part such as
+ * Menu.Item is documented on the page of its namespace, and an export such as Icon on the
+ * foundation's page that names it.
  */
-export function pageOf(component: string) {
+function pageOf(component: string) {
   const namespace = component.split('.')[0];
   return groupedPages.find((page) =>
     (page.document.metadata?.components ?? page.document.components)?.includes(namespace),

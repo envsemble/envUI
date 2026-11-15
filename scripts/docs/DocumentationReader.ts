@@ -13,7 +13,6 @@ import { libraryVersions, withLibraryVersion } from './LibraryVersions.ts';
 import {
   contained,
   examplesOf,
-  exportKinds,
   indexSectionKinds,
   kebab,
   kindFolders,
@@ -58,7 +57,7 @@ function decoded(fragment: string) {
   }
 }
 
-/** The component or pattern page that documents an export; a part such as Menu.Item is on its
+/** The component page that documents an export; a part such as Menu.Item is on its
  * namespace's. */
 function pageOfExport(
   documents: readonly DocumentRecord[],
@@ -66,7 +65,7 @@ function pageOfExport(
 ): DocumentRecord | undefined {
   return documents.find(
     (entry) =>
-      exportKinds.has(pageKindOf(entry.path)) &&
+      pageKindOf(entry.path) === 'component' &&
       entry.frontmatter?.components?.includes(name.split('.')[0]),
   );
 }
@@ -163,9 +162,6 @@ function checkNamedExports(
   for (const name of frontmatter?.components ?? [])
     if (!exported[name])
       throw new Error(`${path} lists ${name} in components, but envUI exports no ${name}.`);
-  for (const name of frontmatter?.composes ?? [])
-    if (!exported[name])
-      throw new Error(`${path} lists ${name} in composes, but envUI exports no ${name}.`);
   for (const { use } of frontmatter?.avoidWhen ?? [])
     if (use && !exported[use])
       throw new Error(`${path} suggests ${use} in avoidWhen, but envUI exports no ${use}.`);
@@ -196,7 +192,7 @@ function readEntry(
   const kind = pageKindOf(path);
   // A page's folder says its kind, and the index lists each kind of page under its section.
   checkIndexSection(path, kind, group);
-  // A component, pattern or foundation page is in the one-file structure: its frontmatter
+  // A component or foundation page is in the one-file structure: its frontmatter
   // lists its examples, and its sections follow the title in pageSections' order. A page that
   // isn't fails, so every page stays in it.
   const structured = pageKinds.has(kind);
@@ -232,7 +228,7 @@ function readEntry(
         specimens: filesOf(context.specimens, id),
         partNames: context.partNames,
       }),
-      frontmatter.components ?? frontmatter.composes ?? [],
+      frontmatter.components ?? [],
       props,
     );
   return document;

@@ -8,7 +8,6 @@ const groups: Record<SearchResult['kind'], string> = {
   component: 'Components',
   export: 'Components',
   foundation: 'Foundations',
-  pattern: 'Patterns',
   guide: 'Pages',
   page: 'Pages',
   prop: 'Props',
@@ -22,7 +21,7 @@ const groups: Record<SearchResult['kind'], string> = {
 const areas: Record<SearchResult['area'], string> = { catalogue: 'Catalogue', docs: 'Docs' };
 
 /** What the empty query finds after the current page's counterpart: the start of either part. */
-const suggestedRoutes = [docsRoute, 'components', 'patterns', 'docs/tokens'] as const;
+const suggestedRoutes = [docsRoute, 'components', 'docs/tokens'] as const;
 export type SuggestedRoute = (typeof suggestedRoutes)[number];
 
 /** A page search suggests before people type. Its id is the route it opens. */
@@ -37,7 +36,7 @@ export interface Suggestion {
 
 /**
  * What search suggests before people type: the page of the same subject in the other part, where
- * the current page has one, then the setup guide, every component, every pattern and the tokens.
+ * the current page has one, then the setup guide, every component and the tokens.
  */
 export function suggestionsFor(page: RoutePage | undefined): Suggestion[] {
   const counterpart = page && counterpartOf(page);
@@ -118,13 +117,12 @@ export interface Group {
 }
 
 /**
- * Results grouped by what they find: the pages, components, foundations, patterns and guides, then
+ * Results grouped by what they find: the pages, components, foundations and guides, then
  * the reference groups, props and tokens, each in the order of its best result. Within a group,
  * results keep their order, best first. Where the query names some results, by their names,
  * aliases or keywords, those come first, and results that only mention it in their text follow
  * them in a group of their own, folded into one row, so "date" lists DatePicker and the date props
- * before Table. A pattern is named by its title and aliases only, so "IconButton" lists IconButton
- * and its props rather than every pattern that uses it. The props of the components the query
+ * before Table. The props of the components the query
  * names come first, best first, so "date" lists DatePicker's before CalendarHeatmap's startDate,
  * their pass-through props, such as className, last; then the props it names by their own name.
  * Props show where the query names some by their own name, as many as it names, up to a few;

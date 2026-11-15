@@ -1,7 +1,6 @@
 import { Button, Card, Column, CopyButton, Row, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
-import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
 import { license, name, version } from '@envsemble/envui/package.json';
 import { EnvUILogo } from '../../brand/EnvUILogo';
@@ -26,19 +25,13 @@ const destinations = [
     icon: IconWidgets,
     text: 'The pieces a screen is made of: what each looks like and when to use it.',
   },
-  {
-    title: 'Patterns',
-    route: 'patterns',
-    icon: IconPattern,
-    text: 'Components put together for what people do, such as filling in a form.',
-  },
 ] as const;
 
 /**
  * How much the catalogue shows, counted from its pages as the site builds, so the hero's line of
- * facts never goes out of date: its components, patterns and foundations.
+ * facts never goes out of date: its components and foundations.
  */
-const counts = (['component', 'pattern', 'foundation'] as const).map((kind) => ({
+const counts = (['component', 'foundation'] as const).map((kind) => ({
   kind,
   count: pagesOf('catalogue').filter((page) => page.kind === kind).length,
 }));
@@ -51,7 +44,7 @@ const install = `npm i ${name}`;
 
 /**
  * The catalogue's home: what envUI is, the way to setting it up, a hand of cards built with it, and
- * the way to its foundations, components and patterns.
+ * the way to its foundations and components.
  */
 export function Overview() {
   return (

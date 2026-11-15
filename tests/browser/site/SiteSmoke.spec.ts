@@ -45,8 +45,8 @@ const journeys: { kind: string; path: string; act: (page: Page) => Promise<void>
     },
   },
   {
-    kind: "a pattern's page",
-    path: '/patterns/forms',
+    kind: "another component's page",
+    path: '/components/text-field',
     // The pager leads to the next page.
     act: async (page) => {
       const next = page

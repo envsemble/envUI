@@ -29,7 +29,7 @@ test("before people type, search suggests the page's counterpart, then the start
   const suggestions = search.suggestionsFor(button);
   assert.deepEqual(
     suggestions.map(({ id }) => id),
-    ['docs/components/button', 'docs', 'components', 'patterns', 'docs/tokens'],
+    ['docs/components/button', 'docs', 'components', 'docs/tokens'],
   );
   assert.equal(suggestions[0].suggested, undefined);
   assert.equal(suggestions[0].description, 'Docs · This page in code, with its props');
@@ -38,7 +38,7 @@ test("before people type, search suggests the page's counterpart, then the start
   // A page without a counterpart, or none, suggests the start of either part alone.
   assert.deepEqual(
     search.suggestionsFor(undefined).map(({ id }) => id),
-    ['docs', 'components', 'patterns', 'docs/tokens'],
+    ['docs', 'components', 'docs/tokens'],
   );
 });
 
@@ -55,9 +55,9 @@ test("a whole page opens in the reader's part; a place on a page opens where it 
 test('results named by the query come first, and those that only mention it fold into one row', () => {
   const groups = search.groupResults(
     [
-      result('pattern', 'Forms', { named: false }),
+      result('foundation', 'Typography', { named: false }),
       result('component', 'DatePicker'),
-      result('pattern', 'Filtering', { named: false }),
+      result('foundation', 'Spacing', { named: false }),
       result('guide', 'Dates'),
     ],
     none,
@@ -73,13 +73,13 @@ test('results named by the query come first, and those that only mention it fold
       search.groupResults(
         [
           result('component', 'DatePicker'),
-          result('pattern', 'Forms', { named: false }),
-          result('pattern', 'Filtering', { named: false }),
+          result('foundation', 'Typography', { named: false }),
+          result('foundation', 'Spacing', { named: false }),
         ],
         new Set(['Also mentioned in']),
       ),
     ).at(-1),
-    ['Also mentioned in', ['Forms', 'Filtering'], 0],
+    ['Also mentioned in', ['Typography', 'Spacing'], 0],
   );
 });
 

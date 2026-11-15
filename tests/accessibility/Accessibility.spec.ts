@@ -54,13 +54,13 @@ const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
 const highContrastRules = { 'color-contrast-enhanced': { enabled: true } };
 
 /**
- * A page of each kind: the home page, a component's, a pattern's and a foundation's page, a
+ * A page of each kind: the home page, two components' pages and a foundation's page, a
  * gallery, and in the Docs a component's page, a guide, the token reference and the changelog.
  */
 const kinds = [
   'overview',
   'components/button',
-  'patterns/forms',
+  'components/text-field',
   'foundations/colors',
   'components',
   'docs/components/button',

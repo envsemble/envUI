@@ -11,7 +11,6 @@ import { IconExtension } from '@envsemble/envui/icons/Extension';
 import { IconDataObject } from '@envsemble/envui/icons/DataObject';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
 import { IconCategory } from '@envsemble/envui/icons/Category';
-import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconArticle } from '@envsemble/envui/icons/Article';
 import { IconError } from '@envsemble/envui/icons/Error';
 import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
@@ -78,7 +77,6 @@ const icons: Record<ResultRow['kind'], ReactNode> = {
   component: <IconWidgets />,
   export: <IconExtension />,
   foundation: <IconCategory />,
-  pattern: <IconPattern />,
   guide: <IconArticle />,
   page: <IconArticle />,
   prop: <IconDataObject />,
@@ -88,7 +86,6 @@ const icons: Record<ResultRow['kind'], ReactNode> = {
 const suggestionIcons: Record<SuggestedRoute, ReactNode> = {
   [docsRoute]: <IconArticle />,
   components: <IconWidgets />,
-  patterns: <IconPattern />,
   'docs/tokens': <IconPalette />,
 };
 
@@ -101,7 +98,7 @@ type IndexState =
 
 /**
  * Searches the catalogue and the Docs in envUI's CommandPalette: components by their names and aliases,
- * their props, the tokens and the foundations, patterns and guides, each page once. A result opens
+ * their props, the tokens and the foundations and guides, each page once. A result opens
  * its page, in the part the reader is in where both show it, and the prop or token on it; with Ctrl or ⌘ held, in a new tab. Before people type, it suggests a few pages, the current page's counterpart first.
  */
 export function SiteSearch({
@@ -177,7 +174,7 @@ export function SiteSearch({
     };
   else
     empty = {
-      emptyDescription: `Nothing matches “${query.trim()}”. Search finds components by name or alias, their props, tokens, foundations, patterns and guides.`,
+      emptyDescription: `Nothing matches “${query.trim()}”. Search finds components by name or alias, their props, tokens, foundations and guides.`,
     };
   return (
     <CommandPalette

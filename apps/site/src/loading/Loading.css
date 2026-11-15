@@ -1,6 +1,6 @@
 /* A part of a page while it loads (loading/Skeletons.tsx): envUI's skeleton of its shape, in its
-   place and at its size, as the Loading pattern asks. It shows only once the load has taken a
-   moment, and keeps its space until then. */
+   place and at its size. It shows only once the load has taken a moment, and keeps its space
+   until then. */
 .site-loading:not([data-shown]) {
   /* Not hidden: the skeleton measures its text's bars only where it is visible. */
   opacity: 0;
@@ -42,7 +42,7 @@
   min-block-size: 4rem;
   border-radius: var(--env-radius-md);
   forced-color-adjust: none;
-  background-image: var(--env-skeleton-paint);
+  background-image: var(--_skeleton-paint);
 }
 
 /* A part that is its own stage, such as a specimen that plays an example: the stage itself, the
@@ -78,7 +78,7 @@
   margin-inline: auto;
   border-radius: var(--env-radius-md);
   forced-color-adjust: none;
-  background-image: var(--env-skeleton-paint);
+  background-image: var(--_skeleton-paint);
 }
 
 /* A long part (LongPartSkeleton): the whole of it laid out unseen to keep its room, and a skeleton
@@ -111,7 +111,7 @@
 .site-page-skeleton-stage,
 .site-page-skeleton-code {
   forced-color-adjust: none;
-  background-image: var(--env-skeleton-paint);
+  background-image: var(--_skeleton-paint);
 }
 /* The stage square-cornered, as a page's figure is (Stage.css). */
 .site-page-skeleton-code {

@@ -31,8 +31,8 @@ const parallel = 4;
 /** Every page of the catalogue and the Docs, from the galleries, the Docs' home and the navigation. */
 async function routes(browser: Browser) {
   const page = await browser.newPage({ viewport: window });
-  const found = new Set<string>(['components', 'patterns', 'foundations', 'docs']);
-  for (const index of ['components', 'patterns', 'foundations', 'docs']) {
+  const found = new Set<string>(['components', 'foundations', 'docs']);
+  for (const index of ['components', 'foundations', 'docs']) {
     await page.goto(`${site}/${index}`);
     await page.locator('.site-page-column h1').first().waitFor();
     const links = await page

@@ -139,7 +139,7 @@ export const hasProvides = (document: DocumentationEntry) => {
 };
 
 /**
- * What an application adds for a component or pattern to be accessible, and what envUI does for
+ * What an application adds for a component to be accessible, and what envUI does for
  * it, as the Accessibility section of its page writes them: plain lists under Accessibility, a
  * heading of the section's own.
  */

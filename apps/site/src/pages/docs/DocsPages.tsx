@@ -42,7 +42,7 @@ import { wordsInCode, withoutAgentNote } from '../../documentation/DocsContent';
 
 /*
  * The Docs' route views: a guide, the token reference, the changelog, a foundation's developer
- * part and a component's or a pattern's reference, each placing its sections (DocsSections.tsx).
+ * part and a component's reference, each placing its sections (DocsSections.tsx).
  */
 
 /** On the Docs' home, the guide's note on coding agents moves up under the prompt. */
@@ -164,7 +164,7 @@ export function FoundationGuidePage({ page }: { page: DocumentPage }) {
 }
 
 /**
- * A component's or a pattern's page in the Docs, its guide to using it in code, which complements
+ * A component's page in the Docs, its guide to using it in code, which complements
  * its page in the catalogue rather than repeating it: how to import it, its common uses, how its
  * parts compose and how to customize it, from the page's Compose; what the
  * application and envUI provide, which the catalogue leaves out; then, as reference, its props,
@@ -175,26 +175,26 @@ export function FoundationGuidePage({ page }: { page: DocumentPage }) {
  */
 export function DocsReferencePage({ page }: { page: DocumentPage }) {
   const document = useDocument(page.document);
-  const { cataloguePage, pattern } = catalogueKind(document);
+  const cataloguePage = cataloguePageOf(document);
   const metadata = document.metadata;
   // The guide, then once it has painted its reference, together: each step lays the whole page out
   // again, which costs more here than a step saves (useRevealed).
   const guide = useMemo(
-    () => <CodeGuide document={document} showExample={!!cataloguePage && !pattern} />,
-    [document, cataloguePage, pattern],
+    () => <CodeGuide document={document} showExample={!!cataloguePage} />,
+    [document, cataloguePage],
   );
   const parts = useMemo(
     () =>
       [
         cataloguePage && <WordsInCode key="words" document={document} />,
         cataloguePage && <Provides key="provides" document={document} />,
-        !pattern && <PropsSection key="props" document={document} />,
+        <PropsSection key="props" document={document} />,
         <PartNames key="parts" components={metadata?.components ?? []} />,
         <ColorProperties key="colors" components={metadata?.components ?? []} />,
         <Strings key="strings" document={document} />,
         <PageChangelog key="changelog" document={document} />,
       ].filter(Boolean),
-    [document, cataloguePage, pattern, metadata],
+    [document, cataloguePage, metadata],
   );
   const revealed = useRevealed(2);
   return (
@@ -220,11 +220,9 @@ export function DocsReferencePage({ page }: { page: DocumentPage }) {
   );
 }
 
-/** Whether a page in the Docs has a page in the catalogue, and whether that page is a pattern's. */
-function catalogueKind(document: DocumentationEntry) {
-  const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
-  return { cataloguePage, pattern: cataloguePage?.kind === 'pattern' };
-}
+/** The page in the catalogue of a page in the Docs, if it has one. */
+const cataloguePageOf = (document: DocumentationEntry) =>
+  pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
 
 /**
  * The sections of a page in the Docs, as its view renders them, for the page's contents to list
@@ -251,14 +249,14 @@ export function docsContents(
       ...provides,
       ...(whole.id === 'colors' ? [docsHeadings.palette] : []),
     ];
-  const { cataloguePage, pattern } = catalogueKind(whole);
+  const cataloguePage = cataloguePageOf(whole);
   const components = whole.metadata?.components ?? [];
   const changelog = whole.sections?.find((section) => section.id === 'changelog');
   return [
     ...(cataloguePage ? [] : templateContents(whole, { provides: true, related: false })),
     ...codeGuideContents(whole),
     ...(cataloguePage ? [...words, ...provides] : []),
-    ...(pattern ? [] : [docsHeadings.props]),
+    docsHeadings.props,
     ...(partEntries(components).length ? [docsHeadings.partNames] : []),
     ...(colorEntries(components).length ? [docsHeadings.colorProperties] : []),
     ...(whole.strings?.length ? [docsHeadings.strings] : []),

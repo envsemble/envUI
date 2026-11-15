@@ -14,11 +14,6 @@ export type FitKind =
    * every component at one scale this way: its tile, or the example of a component without one.
    */
   | { scale: 'own'; tile: boolean }
-  /**
-   * A pattern's scene, drawn no smaller than a legible scale. The patterns' gallery draws each
-   * scene this way, centred on what it paints and cropped by its stage where it is larger.
-   */
-  | { scale: 'legible'; tile: boolean }
   /** A page's own tile drawn at its window's scale, such as a drawing or a foundation's tile. */
   | { scale: 'window'; tile: true }
   /** An example or a specimen, as large as fits what it paints, at most its window's scale. */
@@ -34,8 +29,6 @@ const tileWindowWidth = 14;
 const kinds = {
   ownTile: { scale: 'own', tile: true },
   own: { scale: 'own', tile: false },
-  legibleTile: { scale: 'legible', tile: true },
-  legible: { scale: 'legible', tile: false },
   window: { scale: 'window', tile: true },
   content: { scale: 'content', tile: false },
 } as const satisfies Record<string, FitKind>;
@@ -43,26 +36,24 @@ const kinds = {
 /**
  * The kind a tile's picture is fitted as, from how its page frames it (`frame`, frameOf in
  * tiles/TilePictures.ts). `own` gives a component at its own size, except a drawing (a tile written
- * for a window narrower than the tiles'), which is drawn larger at its window's scale. `legible`
- * gives a pattern's scene at a legible scale. Without a frame, a tile is drawn at its window's
- * scale and anything else as large as what it paints.
+ * for a window narrower than the tiles'), which is drawn larger at its window's scale. Without a
+ * frame, a tile is drawn at its window's scale and anything else as large as what it paints.
  */
 export function fitKindOf(
   picture: { tile?: boolean; window?: { width: number } } | undefined,
-  frame: 'own' | 'legible' | undefined,
+  frame: 'own' | undefined,
 ): FitKind {
   const tile = Boolean(picture?.tile);
   const drawing = picture?.window !== undefined && picture.window.width < tileWindowWidth;
   if (frame === 'own' && !drawing) return tile ? kinds.ownTile : kinds.own;
-  if (frame === 'legible') return tile ? kinds.legibleTile : kinds.legible;
   return tile ? kinds.window : kinds.content;
 }
 
 /**
  * Whether a picture is cropped by its stage where it is larger, rather than drawn smaller to
- * fit. True for a component at its own size and a scene at a legible scale.
+ * fit. True for a component at its own size.
  */
-export const cropped = (kind: FitKind) => kind.scale === 'own' || kind.scale === 'legible';
+export const cropped = (kind: FitKind) => kind.scale === 'own';
 
 /** A point a tile's pointer heads to: an element, by its selector, and fractions of its box. */
 export interface Aim {

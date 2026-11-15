@@ -184,10 +184,10 @@ body {
    lists of pages stay dense; under a coarse pointer they keep the touch height (NavigationDrawer). */
 @media (pointer: fine) {
   .site-sidebar .env-navigation-drawer-item {
-    --env-navigation-drawer-item-height: var(--env-row-height);
+    --_navigation-drawer-item-height: var(--env-row-height);
   }
   .site-sidebar .env-navigation-drawer-branch {
-    --env-navigation-drawer-toggle-size: calc(var(--env-row-height) - 2 * var(--env-space-1));
+    --_navigation-drawer-toggle-size: calc(var(--env-row-height) - 2 * var(--env-space-1));
   }
 }
 /* In a wide window, search keeps its one place (--site-search-start) rather than centring in the
@@ -294,7 +294,7 @@ body {
 .site-search {
   background: color-mix(
     in srgb,
-    var(--env-popup-fill) max(var(--env-popup-opacity), 98%),
+    var(--_popup-fill) max(var(--env-popup-opacity), 98%),
     transparent
   );
 }

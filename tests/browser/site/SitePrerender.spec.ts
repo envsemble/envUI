@@ -5,13 +5,12 @@ import { displayStorageKeys, drawerWidthKey } from '../../../apps/site/src/displ
 
 /**
  * A page of each kind the build pre-renders (scripts/site/PrerenderSite.ts): the home page, a
- * component's, a pattern's and a foundation's, a gallery, and the Docs' component page, token
+ * component's and a foundation's, a gallery, and the Docs' component page, token
  * reference, changelog and foundation guide, the last three with parts that load on their own.
  */
 const sample = [
   '/',
   '/components/button',
-  '/patterns/forms',
   '/foundations/colors',
   '/components',
   '/docs/components/button',

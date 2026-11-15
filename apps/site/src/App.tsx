@@ -55,12 +55,7 @@ function PageView({ page }: { page: RoutePage }) {
  * rather than sections, and its index pages, galleries of tiles whose groups the drawer lists
  * already, which take the width instead.
  */
-const pagesWithoutContents = new Set<RoutePage['kind']>([
-  'home',
-  'foundations',
-  'components',
-  'patterns',
-]);
+const pagesWithoutContents = new Set<RoutePage['kind']>(['home', 'foundations', 'components']);
 
 /** The page at an address that names none, with a way back to its part's home. */
 function PageNotFound({ area }: { area: Area }) {

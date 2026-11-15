@@ -4,7 +4,7 @@ import type { DocumentationMetadata } from '../documentation/DocumentationTypes'
 import { statusTones } from '../routes/PageBadges';
 
 /**
- * Status and first release under the title of a component's or pattern's page, and after them
+ * Status and first release under the title of a component's page, and after them
  * `children`, such as the button to its counterpart in the catalogue or the Docs.
  */
 export function MetadataBadges({

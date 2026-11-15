@@ -29,7 +29,7 @@
   font: var(--env-font-weight-medium) 1.5rem / 1.25 var(--env-font-family);
   letter-spacing: -0.0125em;
 }
-/* A component's, a pattern's or a foundation's sections, as the home page titles its own: a step
+/* A component's or a foundation's sections, as the home page titles its own: a step
    quieter, so the figures, gallery cells, lead the page; a subsection's title in the title size,
    medium as the section's. */
 .site-figure-section-heading h2,
@@ -132,11 +132,11 @@
 /* The rules of a block, the bullets after its lead: envUI's sparks in the quieter color of
    supporting text, close together, so a block reads as its point and then its rules. */
 :where(.site-figure-section .env-markdown:not(.site-when *)) > ul {
-  --env-prose-list-item-gap: var(--env-space-2);
-  --env-prose-list-marker-fill: transparent;
-  --env-prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
-  --env-prose-list-marker-gap: var(--env-space-2);
-  --env-prose-list-mark-color: var(--env-color-fg-muted);
+  --_prose-list-item-gap: var(--env-space-2);
+  --_prose-list-marker-fill: transparent;
+  --_prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
+  --_prose-list-marker-gap: var(--env-space-2);
+  --_prose-list-mark-color: var(--env-color-fg-muted);
   line-height: var(--site-prose-leading);
   color: var(--env-color-fg-muted);
 }
@@ -162,7 +162,7 @@
 /* It stands on the recessed surface the example stages do, so it parts from the page by its fill,
    as a figure does; high contrast keeps the code theme's own. */
 .site-code-block > .env-code-block {
-  background: var(--env-code-background-now, var(--env-color-bg-recessed));
+  background: var(--_code-background-now, var(--env-color-bg-recessed));
   padding: var(--env-space-4) calc(var(--site-code-corner) + var(--env-space-2)) var(--env-space-4)
     var(--env-space-4);
 }

@@ -40,8 +40,6 @@ avoidWhen:
     use: Alert
   - text: How full or complete something is, such as storage used.
     use: Meter
-  - text: A headline number with its label and trend, such as on a dashboard.
-    see: key-figures
   - text: A count beside a destination in the navigation, which a NavigationDrawer item shows itself.
     use: NavigationDrawer
   - text: An identifier or a command in text.

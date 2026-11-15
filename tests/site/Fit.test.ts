@@ -23,10 +23,7 @@ test('a picture is fitted by its kind, and only a cropped tile that has shown pl
   assert.deepEqual(drawing, { scale: 'window', tile: true });
   assert.deepEqual(kinds.fitKindOf(undefined, undefined), { scale: 'content', tile: false });
   // The same kind is the same object, so the fit restarts only when the kind changes.
-  assert.equal(
-    kinds.fitKindOf({ tile: true }, 'legible'),
-    kinds.fitKindOf({ tile: true }, 'legible'),
-  );
+  assert.equal(kinds.fitKindOf({ tile: true }, 'own'), kinds.fitKindOf({ tile: true }, 'own'));
   const tile = kinds.fitKindOf({ tile: true }, 'own');
   const playing = { playing: true, shown: true };
   assert.equal(kinds.fitModeOf(tile, false, playing), 'playing');

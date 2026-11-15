@@ -60,10 +60,8 @@ function moduleSpecifiers(source) {
 const props = readProps();
 const documents = readDocumentation();
 const components = documents.filter((document) => document.path.startsWith('components/'));
-/** Pages in the one-file structure: component, pattern and foundation pages. */
+/** Pages in the one-file structure: component and foundation pages. */
 const sectioned = documents.filter((document) => document.sections);
-/** Pattern pages, which list what they compose. */
-const compositions = documents.filter((document) => document.frontmatter?.composes);
 
 test('every public export is documented on exactly one page', () => {
   const homes = new Map();
@@ -95,10 +93,10 @@ test('every alternative a page suggests has a page to link to', () => {
         );
 });
 
-test('every component, pattern and foundation page is in the one-file structure', () => {
+test('every component and foundation page is in the one-file structure', () => {
   // The build reads a page of these kinds only in the structure, so none is left outside it.
   const outside = documents
-    .filter((document) => /^(components|patterns|foundations)\//.test(document.path))
+    .filter((document) => /^(components|foundations)\//.test(document.path))
     .filter((document) => !document.sections || !document.frontmatter?.examples)
     .map(({ path }) => path);
   assert.deepEqual(outside, [], 'Write these pages as contributing/pages.md describes.');
@@ -267,43 +265,11 @@ test('the import reader finds the runtime names a source takes from envUI', () =
   );
 });
 
-test('a pattern composes only exports, and every export its files import', () => {
-  for (const document of compositions) {
-    const { composes } = document.frontmatter;
-    for (const name of composes) {
-      assert.ok(
-        props.exports[name],
-        `${document.path} composes ${name}, which envUI doesn't export.`,
-      );
-      assert.ok(!name.includes('.'), `${document.path} composes ${name}; list its namespace.`);
-    }
-    for (const section of document.sections)
-      for (const block of section.blocks) {
-        if (block.kind !== 'example') continue;
-        const source = readFileSync(
-          join(examplesDirectory, document.id, `${block.name}.tsx`),
-          'utf8',
-        );
-        for (const name of envuiImports(source))
-          if (props.exports[name])
-            assert.ok(
-              composes.includes(name),
-              `examples/${document.id}/${block.name}.tsx imports ${name}; add it to the composes of ${document.path}.`,
-            );
-      }
-  }
-});
-
 test('every page an avoidWhen entry sends readers to is indexed', () => {
   const ids = new Set(documents.map(({ id }) => id));
   for (const document of documents)
     for (const { see } of document.frontmatter?.avoidWhen ?? [])
       if (see) assert.ok(ids.has(see) && see !== document.id, `${document.path} sees ${see}.`);
-});
-
-test('the docs publish at least 8 patterns', () => {
-  const count = documents.filter((document) => document.group === 'Patterns').length;
-  assert.ok(count >= 8, `${count} patterns; 1.0 needs 8.`);
 });
 
 /** Words too common to say whether two sentences say the same thing. */
@@ -379,7 +345,7 @@ function catalogueMarkdown(document) {
 
 test('a page of the catalogue links nowhere in the Docs', () => {
   // The catalogue reaches the Docs only through a page's Docs button and the Docs link at the
-  // top: a component or pattern page links to other pages of the catalogue, a foundation's
+  // top: a component page links to other pages of the catalogue, a foundation's
   // without a heading, since a foundation's headings are in its page in the Docs.
   const links = sectioned
     .filter((document) => document.id !== 'field')
@@ -392,7 +358,7 @@ test('a page of the catalogue links nowhere in the Docs', () => {
             .slice('https://envui.invalid/docs/'.length)
             .split('#');
           if (path === 'components/field.md') return true;
-          if (/^(components|patterns)\/[a-z-]+\.md$/.test(path)) return false;
+          if (/^components\/[a-z-]+\.md$/.test(path)) return false;
           return !(/^foundations\/[a-z-]+\.md$/.test(path) && !fragment);
         })
         .map((href) => `${document.path}: ${href}`),

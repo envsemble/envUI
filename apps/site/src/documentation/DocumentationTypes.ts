@@ -202,9 +202,9 @@ export const pageStatuses = ['alpha', 'beta', 'stable', 'deprecated'] as const;
 /** A page's or an export's status: alpha, beta, stable or deprecated. */
 export type PageStatus = (typeof pageStatuses)[number];
 
-/** A component or pattern page's frontmatter beyond its title, summary and category. */
+/** A component page's frontmatter beyond its title, summary and category. */
 export interface DocumentationMetadata {
-  /** A component's or a pattern's; a foundation has none. */
+  /** A component's; a foundation has none. */
   status?: PageStatus;
   /** The status of an export that differs from the page's. */
   statuses?: Record<string, PageStatus>;
@@ -213,12 +213,8 @@ export interface DocumentationMetadata {
   useWhen: string[];
   /** Situations that call for something else, with the component to use or the page to read. */
   avoidWhen: { text: string; use?: string; see?: string }[];
-  /** The exports a component page documents; none on a pattern page. */
+  /** The exports a component page documents. */
   components: string[];
-  /** What people are doing, which groups a pattern page. */
-  intent?: string;
-  /** The exports a pattern page combines. */
-  composes?: string[];
 }
 
 /** An example figure a section places, as a page's tile picks one. */
@@ -250,7 +246,7 @@ export interface DocumentationSummary {
   components?: string[];
   /** A guide's status, where it has one, such as alpha. */
   status?: PageStatus;
-  /** The sections of a component, pattern or foundation page, outlined; absent on guides. */
+  /** The sections of a component or foundation page, outlined; absent on guides. */
   outline?: SectionOutline[];
   /**
    * The components a page documents besides the one it is named after, such as IconButton on
@@ -280,7 +276,7 @@ export interface DocumentationEntry extends Omit<DocumentationSummary, 'outline'
   /** A guide's Markdown after its title; the other pages show their sections. */
   markdown?: string;
   /**
-   * The sections of a component, pattern or foundation page, in the one-file structure; absent on
+   * The sections of a component or foundation page, in the one-file structure; absent on
    * guides.
    */
   sections?: DocumentationSection[];

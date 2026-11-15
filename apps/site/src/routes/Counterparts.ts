@@ -4,7 +4,6 @@ import {
   findPage,
   foundationDocsRoute,
   pagesOf,
-  patternDocsRoute,
   type Area,
   type PageKind,
   type RoutePage,
@@ -13,13 +12,12 @@ import {
 /** The route of the Docs' page of a subject the catalogue shows, by the kind of its page there. */
 const docsRouteOf: Partial<Record<PageKind, (id: string) => string>> = {
   component: componentDocsRoute,
-  pattern: patternDocsRoute,
   foundation: foundationDocsRoute,
 };
 
 /**
  * The pages of one subject in the two parts, each the other's counterpart, by their paths: a
- * component's, pattern's or foundation's page in the catalogue and its page in the Docs.
+ * component's or foundation's page in the catalogue and its page in the Docs.
  */
 const pairs = pagesOf('catalogue')
   .flatMap(({ path, kind, document }): [string, string][] => {

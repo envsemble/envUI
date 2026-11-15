@@ -19,8 +19,6 @@ useWhen:
 avoidWhen:
   - text: Exact figures people compare or read one by one.
     use: Table
-  - text: A headline number with its trend.
-    see: key-figures
   - text: Choosing a day.
     use: Calendar
 components:

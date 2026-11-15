@@ -37,22 +37,22 @@ test('the release notes checks find what is wrong', () => {
 ### Breaking changes
 
 - No link.
-- [A missing section](/docs/migration#nowhere).
+- [A missing section](/docs/changelog#nowhere).
 
 ## 0.2.0 — Upcoming
 
 - Two.
 `);
-  const problems = releaseNotesProblems(releases, { '/docs/migration': new Set(['tokens']) });
+  const problems = releaseNotesProblems(releases, { '/docs/changelog': new Set(['tokens']) });
   assert.deepEqual(problems, [
     'Release 0.1.0 comes before 0.2.0; list the newest first.',
     'Release 0.1.0 has a breaking change without a link.',
-    "Release 0.1.0 links to /docs/migration#nowhere, a section that page doesn't have.",
+    "Release 0.1.0 links to /docs/changelog#nowhere, a section that page doesn't have.",
     'Release 0.2.0 is upcoming but not the newest.',
   ]);
-  assert.deepEqual(inlinePieces('Use [`Row`](/docs/migration#tokens) now'), [
+  assert.deepEqual(inlinePieces('Use [`Row`](/docs/changelog#tokens) now'), [
     { kind: 'text', text: 'Use ' },
-    { kind: 'link', href: '/docs/migration#tokens', children: [{ kind: 'code', text: 'Row' }] },
+    { kind: 'link', href: '/docs/changelog#tokens', children: [{ kind: 'code', text: 'Row' }] },
     { kind: 'text', text: ' now' },
   ]);
 });
@@ -89,8 +89,8 @@ test('the token outline lists every token once, in its group, and each example i
   );
   const lines = readExampleLines();
   const source = readFileSync(
-    join(repositoryRoot, 'apps/site/src/examples/loading/CardsLoading.tsx'),
+    join(repositoryRoot, 'apps/site/src/examples/accordion/FrequentQuestions.tsx'),
     'utf8',
   );
-  assert.equal(lines['loading/CardsLoading'], source.trimEnd().split('\n').length);
+  assert.equal(lines['accordion/FrequentQuestions'], source.trimEnd().split('\n').length);
 });

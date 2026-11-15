@@ -98,7 +98,7 @@ test("a page's figures are skeletons at their recorded size until it hydrates", 
 test("a page's code is highlighted as it pre-renders, and its HTML carries the tokens", async () => {
   const { html, code } = await server.renderPage('docs/components/button');
   // Each token is a span in its theme's color, the light one's on the server.
-  assert.match(html, /<pre[^>]*><code><span style="--env-code-token:#/);
+  assert.match(html, /<pre[^>]*><code><span style="--_code-token:#/);
   const data = JSON.parse(
     /<script type="application\/json" id="site-page-code">(.*)<\/script>/.exec(code)[1],
   );
@@ -156,14 +156,14 @@ const notCatalogueWords = (element) =>
     'catalogue-banner-motif',
   ].some((name) => hasClass(element, name));
 
-test("the catalogue's component, pattern and foundation pages show no technical text", async () => {
+test("the catalogue's component and foundation pages show no technical text", async () => {
   // The catalogue is for people looking at envUI: no token names, hex colors, lengths, percentages
   // or code, which belong to the page's guide in the Docs. Its texts, names, titles and
   // placeholders count, as a reader and a screen reader meet them; its figures render in the
   // browser alone.
   const found: string[] = [];
   for (const { path, area, kind } of allPages) {
-    if (area !== 'catalogue' || !['component', 'pattern', 'foundation'].includes(kind)) continue;
+    if (area !== 'catalogue' || !['component', 'foundation'].includes(kind)) continue;
     const main = elementsOf(await pageRoot(path)).find((element) => hasClass(element, 'site-main'));
     assert.ok(main, `${path} has its main`);
     for (const [element, skipped] of walk(main, notCatalogueWords)) {

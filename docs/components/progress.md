@@ -16,16 +16,12 @@ useWhen:
   - A task whose completion can be measured, such as an upload or an import
   - A task that has started but can't be measured yet, such as preparing an export
 avoidWhen:
-  - text: Files that each upload on their own, with a bar in each file's row.
-    see: file-upload
   - text: A measurement within a range, such as seats assigned or storage used.
     use: Meter
   - text: Work of unknown length in a small area, such as a panel that is updating.
     use: Spinner
   - text: Loading a page or a route of an application, along the top bar.
     use: TopBar
-  - text: Content of a known shape loading in its place, such as a card or a list, as a skeleton.
-    see: loading
 components:
   - Progress
 examples:

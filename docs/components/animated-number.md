@@ -21,8 +21,6 @@ avoidWhen:
     use: Text
   - text: A compact count beside a label, such as unread messages.
     use: Badge
-  - text: A headline figure with its label and trend, such as on a dashboard.
-    see: key-figures
 components:
   - AnimatedNumber
 examples:

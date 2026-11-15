@@ -1,7 +1,6 @@
 import type { Destination, NavigationDrawerDestination } from '@envsemble/envui';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
-import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
 import {
   pagesOf,
@@ -17,7 +16,6 @@ const sectionIcons: Record<CatalogueSection, typeof IconHome> = {
   Overview: IconHome,
   Foundations: IconPalette,
   Components: IconWidgets,
-  Patterns: IconPattern,
 };
 
 /** The catalogue's destinations, for its rail: each opens its first page. */
@@ -53,7 +51,7 @@ export const drawerless = (page: RoutePage | undefined) =>
 
 /**
  * The pages of one of the catalogue's destinations, for its drawer: its pages of no group, such as
- * All components, then each group, such as a kind of component or a pattern's intent, as a section
+ * All components, then each group, such as a kind of component, as a section
  * of its pages that opens and closes, open while it holds the current page, as in the Docs.
  */
 export function pageDestinations(
