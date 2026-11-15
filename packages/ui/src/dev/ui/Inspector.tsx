@@ -99,7 +99,7 @@ function Sidebar({
       render={<Column gap={0} align="stretch" render={<aside aria-label={label} />} />}
       className="env-dev-sidebar"
       data-side={side}
-      style={{ '--env-dev-sidebar-width': `${resize.width}rem` }}
+      style={{ '--_dev-sidebar-width': `${resize.width}rem` }}
     >
       {children}
       <ResizeHandle
@@ -328,7 +328,7 @@ function Readout({ text }: { text: string }) {
   return (
     <pre className="env-dev-readout">
       {lines.map(({ indent, content }, index) => (
-        <span key={index} className="env-dev-readout-line" style={{ '--env-dev-indent': indent }}>
+        <span key={index} className="env-dev-readout-line" style={{ '--_dev-indent': indent }}>
           {content || '\u00a0'}
           {'\n'}
         </span>

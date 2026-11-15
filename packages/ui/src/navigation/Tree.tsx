@@ -306,7 +306,7 @@ export function Tree<Item extends TreeItem>({
         className="env-tree-rows"
         style={{
           blockSize: items.length * rowHeight,
-          '--env-tree-shift': `${shift}px`,
+          '--_tree-shift': `${shift}px`,
           // The starting shift applies at once; only the way back to 0 eases.
           transition: shift ? 'none' : undefined,
         }}

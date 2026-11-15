@@ -58,7 +58,7 @@ test(
     await expect.poll(() => box(sticky()).y).toBeCloseTo(box(body()).y, 0);
     // It publishes its height on its page, which keeps what scrolls into view clear of it.
     const pageElement = page.getByTestId('page').element() as HTMLElement;
-    const published = () => pageElement.style.getPropertyValue('--env-page-header-block-size');
+    const published = () => pageElement.style.getPropertyValue('--_page-header-block-size');
     const height = () => `${sticky().offsetHeight}px`;
     // Both are read as the poll runs: in a frame's first mount the font may still be loading, and
     // the header's height changes as it swaps in, its published height a frame later.

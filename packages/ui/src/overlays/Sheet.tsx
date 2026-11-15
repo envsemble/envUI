@@ -380,7 +380,7 @@ export function Sheet({
                 ref={attachPopup}
                 className={classNames('env-sheet', className)}
                 style={{
-                  ...(customWidth !== undefined && { '--env-sheet-width': customWidth }),
+                  ...(customWidth !== undefined && { '--_sheet-width': customWidth }),
                   ...style,
                 }}
                 data-side={side}

@@ -31,9 +31,9 @@ test('every Surface background takes its role and the role’s states', () => {
           )?.[1];
     assert.ok(rule, `Surface.css has no rule for background="${background}"`);
     for (const [property, suffix] of [
-      ['--env-surface-container-default', ''],
-      ['--env-surface-hover', '-hover'],
-      ['--env-surface-pressed', '-pressed'],
+      ['--_surface-container-default', ''],
+      ['--_surface-hover', '-hover'],
+      ['--_surface-pressed', '-pressed'],
     ]) {
       const token = `--env-color-bg-${background}${suffix}`;
       assert.match(

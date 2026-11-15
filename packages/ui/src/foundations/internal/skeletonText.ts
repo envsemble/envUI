@@ -6,7 +6,7 @@ import '../../styles/Skeleton.css';
 // such text as a line through it, square and in one color, which stays as the fallback until this
 // runs, as on a server. Here, a skeleton's root draws every bar in one pseudo-element over its
 // content (Skeleton.css, [data-env-skeleton-text]::after), masked by a rounded rectangle at each
-// line box of its text, which the script measures and sets as --env-skeleton-text-bars. Nothing is
+// line box of its text, which the script measures and sets as --_skeleton-text-bars. Nothing is
 // added to the content, so its layout and selectors don't change.
 
 /** The attribute that marks a root whose text bars the script draws, which hides the line through. */
@@ -116,11 +116,11 @@ function untrack(root: HTMLElement, state: Tracked) {
 
 /** The properties the script sets on a root: the bars, and the layer's place and size. */
 const layerProperties = [
-  '--env-skeleton-text-bars',
-  '--env-skeleton-text-left',
-  '--env-skeleton-text-top',
-  '--env-skeleton-text-width',
-  '--env-skeleton-text-height',
+  '--_skeleton-text-bars',
+  '--_skeleton-text-left',
+  '--_skeleton-text-top',
+  '--_skeleton-text-width',
+  '--_skeleton-text-height',
 ];
 
 interface Bar {
@@ -171,7 +171,7 @@ function barsOf(root: HTMLElement): Record<string, string> {
     if (parent.closest('.env-skeleton-status')) continue;
     const style = getComputedStyle(parent);
     // A shape, such as a button or a badge, is filled, and what it holds isn't drawn.
-    if (style.getPropertyValue('--env-skeleton-shape').trim() === '1') continue;
+    if (style.getPropertyValue('--_skeleton-shape').trim() === '1') continue;
     if (style.visibility !== 'visible') continue;
     const fontSize = Number.parseFloat(style.fontSize) || 16;
     range.selectNodeContents(text);
@@ -228,14 +228,14 @@ function barsOf(root: HTMLElement): Record<string, string> {
   }
   const layers = joined.map(
     (bar) =>
-      `var(--env-skeleton-rect) ${roundToHundredth(bar.x - left)}px ${roundToHundredth(bar.y - top)}px / ${roundToHundredth(bar.width)}px ${roundToHundredth(bar.height)}px no-repeat`,
+      `var(--_skeleton-rect) ${roundToHundredth(bar.x - left)}px ${roundToHundredth(bar.y - top)}px / ${roundToHundredth(bar.width)}px ${roundToHundredth(bar.height)}px no-repeat`,
   );
   return {
-    '--env-skeleton-text-bars':
+    '--_skeleton-text-bars':
       layers.length > 0 ? layers.join(', ') : 'linear-gradient(transparent 0 0)',
-    '--env-skeleton-text-left': `${roundToHundredth(left)}px`,
-    '--env-skeleton-text-top': `${roundToHundredth(top)}px`,
-    '--env-skeleton-text-width': `${roundToHundredth(right - left)}px`,
-    '--env-skeleton-text-height': `${roundToHundredth(bottom - top)}px`,
+    '--_skeleton-text-left': `${roundToHundredth(left)}px`,
+    '--_skeleton-text-top': `${roundToHundredth(top)}px`,
+    '--_skeleton-text-width': `${roundToHundredth(right - left)}px`,
+    '--_skeleton-text-height': `${roundToHundredth(bottom - top)}px`,
   };
 }

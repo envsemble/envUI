@@ -26,7 +26,7 @@ export function primitiveAttributes(
   variables: Record<string, string> = {},
 ) {
   const custom: Record<string, string> = { ...variables };
-  if (container) custom['--env-layout-container'] = container;
+  if (container) custom['--_layout-container'] = container;
   return {
     ...props,
     ...extra,

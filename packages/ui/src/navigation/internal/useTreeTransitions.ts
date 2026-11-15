@@ -61,7 +61,7 @@ export function useTreeTransitions<Item extends TreeItem>(items: readonly Item[]
     const element = rowsElement.current;
     if (!activeMotion || !element) return;
     // Reading the style makes the browser take the starting positions before they change.
-    void getComputedStyle(element).getPropertyValue('--env-tree-shift');
+    void getComputedStyle(element).getPropertyValue('--_tree-shift');
     if (!moving) {
       setMovingMotion(activeMotion);
       return;

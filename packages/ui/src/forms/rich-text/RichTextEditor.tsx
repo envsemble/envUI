@@ -146,7 +146,7 @@ export function RichTextEditor({
         minRows === undefined
           ? style
           : {
-              '--env-rich-text-min-block-size': `calc(${Math.max(1, Math.round(minRows))} * 1lh + 2 * var(--env-space-4))`,
+              '--_rich-text-min-block-size': `calc(${Math.max(1, Math.round(minRows))} * 1lh + 2 * var(--env-space-4))`,
               ...style,
             }
       }

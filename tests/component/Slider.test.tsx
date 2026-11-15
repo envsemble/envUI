@@ -168,7 +168,7 @@ function stateOf() {
     ticks: () => css(part(0, '.env-slider-track'), 'opacity', '::after'),
     // The fade at the fill's end: a gradient over its last stretch, out of sight at 0.
     fillEnd: () => css(part(0, '.env-slider-indicator'), 'opacity', '::after'),
-    veil: () => css(control, '--env-slider-veil'),
+    veil: () => css(control, '--_slider-veil'),
   };
 }
 
@@ -432,7 +432,7 @@ test(
       const springs = control
         .getAnimations()
         .some(
-          (animation) => (animation as CSSTransition).transitionProperty === '--env-slider-stretch',
+          (animation) => (animation as CSSTransition).transitionProperty === '--_slider-stretch',
         );
       expect(springs).toBe(true);
       await animationsDone(control);

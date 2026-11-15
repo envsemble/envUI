@@ -89,7 +89,7 @@ test('a primitive with container="env-window" is the window of what it holds', (
     .element()
     .insertAdjacentHTML(
       'beforeend',
-      `<div data-env-layout="box" data-env-container style="--env-layout-container: env-window; inline-size: 30rem">
+      `<div data-env-layout="box" data-env-container style="--_layout-container: env-window; inline-size: 30rem">
          <span class="window-probe" id="narrow-probe">Narrow</span>
        </div>
        <span class="window-probe" id="page-probe">Page</span>`,

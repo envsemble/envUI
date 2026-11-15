@@ -4,17 +4,17 @@
     display: inline-block;
     flex: 0 0 auto;
     /* Its size: 1.5 rem, 1 rem when small and 3 rem when large. */
-    --env-spinner-size: 1.5rem;
-    inline-size: var(--env-spinner-size);
-    block-size: var(--env-spinner-size);
+    --_spinner-size: 1.5rem;
+    inline-size: var(--_spinner-size);
+    block-size: var(--_spinner-size);
     /* The hook --env-spinner-color recolors it, such as to a button's label color. */
     color: var(--env-spinner-color, var(--env-color-bg-primary-emphasis));
   }
   .env-spinner:where([data-size='sm']) {
-    --env-spinner-size: 1rem;
+    --_spinner-size: 1rem;
   }
   .env-spinner:where([data-size='lg']) {
-    --env-spinner-size: 3rem;
+    --_spinner-size: 3rem;
   }
   .env-spinner > svg {
     display: block;
@@ -26,7 +26,7 @@
   /* With its label shown: a status line that centres the spinner and a muted label in its row, for
      loading with no known shape. The arc keeps the size the spinner's own box had. */
   .env-spinner:not([data-label-hidden]) {
-    --env-spinner-size: 1.5rem;
+    --_spinner-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -37,15 +37,15 @@
     font: var(--env-type-body-sm);
   }
   .env-spinner:not([data-label-hidden]):where([data-size='sm']) {
-    --env-spinner-size: 1rem;
+    --_spinner-size: 1rem;
   }
   .env-spinner:not([data-label-hidden]):where([data-size='lg']) {
-    --env-spinner-size: 3rem;
+    --_spinner-size: 3rem;
   }
   .env-spinner:not([data-label-hidden]) > svg {
     flex: 0 0 auto;
-    inline-size: var(--env-spinner-size);
-    block-size: var(--env-spinner-size);
+    inline-size: var(--_spinner-size);
+    block-size: var(--_spinner-size);
     color: var(--env-spinner-color, var(--env-color-bg-primary-emphasis));
   }
   /* The circle is about 125.66 long (r 20). Its dash and gap add up to it, so the pattern repeats

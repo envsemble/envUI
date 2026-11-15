@@ -16,7 +16,7 @@
   .env-scaffold {
     /* The room a top bar takes at the top of the window, which sticky content in the body keeps
        clear of where the document scrolls: the top bar region's height, which the Scaffold measures
-       (--env-scaffold-top-bar-size), and the top bar height until script runs. */
+       (--_scaffold-top-bar-size), and the top bar height until script runs. */
     --env-scaffold-sticky-top: 0rem;
     container: env-scaffold / inline-size;
     box-sizing: border-box;
@@ -31,38 +31,35 @@
   }
   .env-scaffold[data-scroll='document']:has(> .env-scaffold-top-bar) {
     --env-scaffold-sticky-top: var(
-      --env-scaffold-top-bar-size,
+      --_scaffold-top-bar-size,
       calc(var(--env-top-bar-height) + env(safe-area-inset-top))
     );
   }
   /* Where the document scrolls, the sticky top bar and bar cover its top and bottom edges, so the
      document keeps what scrolls into view, such as an element taking focus, clear of them (WCAG
      2.4.11): its scroll padding is the bars' heights, which the Scaffold measures and sets on the
-     root element as --env-scaffold-scroll-top and --env-scaffold-scroll-bottom, a bar that hides
+     root element as --_scaffold-scroll-top and --_scaffold-scroll-bottom, a bar that hides
      counting 0. Until script runs, these rules estimate them from the regions the Scaffold has; the
      root element sits outside the theme, so the estimates spell out the top bar height (3.25 rem)
      and a bar's (4.8 rem). A sticky PageHeader adds its own height through its Page content's scroll
      margin. Zero specificity, so an application's own scroll padding wins. Where the body scrolls,
      the bars sit outside its scrollport and take nothing from it. */
   :where(html:has(.env-scaffold[data-scroll='document'])) {
-    --env-scaffold-scroll-top-estimate: 0rem;
-    --env-scaffold-scroll-bottom-estimate: 0rem;
-    scroll-padding-block-start: var(
-      --env-scaffold-scroll-top,
-      var(--env-scaffold-scroll-top-estimate)
-    );
+    --_scaffold-scroll-top-estimate: 0rem;
+    --_scaffold-scroll-bottom-estimate: 0rem;
+    scroll-padding-block-start: var(--_scaffold-scroll-top, var(--_scaffold-scroll-top-estimate));
     scroll-padding-block-end: var(
-      --env-scaffold-scroll-bottom,
-      var(--env-scaffold-scroll-bottom-estimate)
+      --_scaffold-scroll-bottom,
+      var(--_scaffold-scroll-bottom-estimate)
     );
   }
   :where(html:has(.env-scaffold[data-scroll='document'] > .env-scaffold-top-bar)) {
-    --env-scaffold-scroll-top-estimate: calc(3.25rem + env(safe-area-inset-top));
+    --_scaffold-scroll-top-estimate: calc(3.25rem + env(safe-area-inset-top));
   }
   :where(
     html:has(.env-scaffold[data-scroll='document'] > .env-scaffold-navigation > .env-scaffold-bar)
   ) {
-    --env-scaffold-scroll-bottom-estimate: calc(4.8rem + env(safe-area-inset-bottom));
+    --_scaffold-scroll-bottom-estimate: calc(4.8rem + env(safe-area-inset-bottom));
   }
   /* The body scrolls: the Scaffold fills its container's height, the window's by default. Give it
      another block-size with your own class, such as in a preview. The frame clips rather than hides
@@ -86,12 +83,12 @@
     gap: var(--env-space-2);
   }
   .env-scaffold-skip-link {
-    --env-scaffold-skip-link-hidden-size: 0.0625rem;
+    --_scaffold-skip-link-hidden-size: 0.0625rem;
   }
   .env-scaffold-skip-link:not(:focus) {
     position: absolute;
-    inline-size: var(--env-scaffold-skip-link-hidden-size);
-    block-size: var(--env-scaffold-skip-link-hidden-size);
+    inline-size: var(--_scaffold-skip-link-hidden-size);
+    block-size: var(--_scaffold-skip-link-hidden-size);
     min-inline-size: 0;
     min-block-size: 0;
     margin: 0;
@@ -315,13 +312,13 @@
     margin-block-start: -100cqb;
   }
   .env-scaffold[data-scroll='document'] > .env-scaffold-body {
-    --env-scaffold-dock-size: calc(100dvh - var(--env-scaffold-sticky-top));
+    --_scaffold-dock-size: calc(100dvh - var(--env-scaffold-sticky-top));
   }
   .env-scaffold[data-scroll='document'] > .env-scaffold-body > .env-panel-dock {
     position: sticky;
     inset-block: var(--env-scaffold-sticky-top) 0;
     inset-inline: auto;
-    block-size: var(--env-scaffold-dock-size);
-    margin-block-start: calc(-1 * var(--env-scaffold-dock-size));
+    block-size: var(--_scaffold-dock-size);
+    margin-block-start: calc(-1 * var(--_scaffold-dock-size));
   }
 }

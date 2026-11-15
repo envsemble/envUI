@@ -5,11 +5,6 @@
      the text color and drawn a little heavier, without a heavier font, so no label rewraps as the
      reader moves, and every other one quieter. */
   .env-table-of-contents {
-    /* How far each level sits in from the one above it, the shape's width at its fullest, which is
-       also its column's, and the room above the first entry and below the last that it runs on
-       into, so its bulge tapers whole at either end. */
-    --env-table-of-contents-indent: var(--env-space-3);
-    --env-table-of-contents-stroke: var(--env-space-5);
     --env-table-of-contents-room: var(--env-space-4);
     min-inline-size: 0;
     font: var(--env-type-body-sm);
@@ -29,15 +24,13 @@
   }
   .env-table-of-contents-link {
     /* The link's indent, from its level's depth, which the component sets on each nested list. */
-    --env-table-of-contents-inset: calc(
-      var(--env-table-of-contents-depth, 0) * var(--env-table-of-contents-indent)
-    );
+    --_table-of-contents-inset: calc(var(--env-table-of-contents-depth, 0) * var(--env-space-3));
     display: block;
     padding-block: var(--env-space-1);
     /* Room before the label for the shape's column and a gap after it. */
     padding-inline: calc(
-        var(--env-space-1) + var(--env-table-of-contents-stroke) + var(--env-space-3) +
-          var(--env-table-of-contents-inset)
+        var(--env-space-1) + var(--env-space-5) + var(--env-space-3) +
+          var(--_table-of-contents-inset)
       )
       var(--env-space-2);
     border-radius: var(--env-radius-sm);
@@ -62,7 +55,7 @@
     position: absolute;
     inset-block: 0;
     inset-inline-start: var(--env-space-1);
-    inline-size: var(--env-table-of-contents-stroke);
+    inline-size: var(--env-space-5);
     block-size: 100%;
     overflow: visible;
     pointer-events: none;

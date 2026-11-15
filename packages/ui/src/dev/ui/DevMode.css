@@ -50,11 +50,11 @@
   :where(.env-dev-sidebar) {
     position: relative;
     flex: none;
-    inline-size: var(--env-dev-sidebar-width);
+    inline-size: var(--_dev-sidebar-width);
     min-block-size: 0;
   }
   .env-dev-sidebar > .env-dev-sidebar-resize {
-    --env-resize-handle-size: var(--env-space-3);
+    --_resize-handle-size: var(--env-space-3);
     position: absolute;
     inset-block: 0;
   }
@@ -66,7 +66,7 @@
   }
   @media (pointer: coarse) {
     .env-dev-sidebar > .env-dev-sidebar-resize {
-      --env-resize-handle-size: var(--env-space-5);
+      --_resize-handle-size: var(--env-space-5);
     }
   }
   /* The header's toggle sits in the window's top corner on the sidebar's side, where it stays
@@ -109,7 +109,7 @@
   /* Code in dev mode's own panels, in the code type: the Code component lives in the code entry,
      whose optional peers an app may not have installed. */
   :where(.env-dev-code) {
-    font-family: var(--env-code-font-family, ui-monospace, monospace);
+    font-family: var(--_code-font-family, ui-monospace, monospace);
     font-size: 0.9em;
     overflow-wrap: anywhere;
   }
@@ -124,15 +124,15 @@
     margin: 0;
     padding: var(--env-space-2) var(--env-space-3);
     white-space: normal;
-    font-family: var(--env-code-font-family, ui-monospace, monospace);
-    font-size: var(--env-code-font-size, 0.8125rem);
+    font-family: var(--_code-font-family, ui-monospace, monospace);
+    font-size: var(--_code-font-size, 0.8125rem);
     line-height: 1.5;
     background: var(--env-color-bg-muted);
     border-radius: var(--env-radius-md);
   }
   :where(.env-dev-readout-line) {
     display: block;
-    padding-inline-start: calc((var(--env-dev-indent, 0) + 2) * 1ch);
+    padding-inline-start: calc((var(--_dev-indent, 0) + 2) * 1ch);
     text-indent: -2ch;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
@@ -203,10 +203,10 @@
   /* The responsive frame: the rectangle the page is laid out in, above the planes, outlined in the
      focus color. Its line, handles and label keep their size on screen at any zoom. */
   :where(.env-dev-frame) {
-    --env-dev-unzoom: calc(1 / var(--env-dev-zoom, 1));
+    --_dev-unzoom: calc(1 / var(--_dev-zoom, 1));
     position: absolute;
     inset: 0;
-    border: calc(1.5px * var(--env-dev-unzoom)) solid var(--env-color-border-focus);
+    border: calc(1.5px * var(--_dev-unzoom)) solid var(--env-color-border-focus);
     border-radius: var(--env-radius-xs);
     pointer-events: none;
   }
@@ -216,7 +216,7 @@
     inset-inline-start: 50%;
     margin: 0;
     translate: -50% 0;
-    scale: var(--env-dev-unzoom);
+    scale: var(--_dev-unzoom);
     transform-origin: 50% 100%;
     padding-block-end: var(--env-space-2);
     white-space: nowrap;
@@ -227,7 +227,7 @@
     inline-size: var(--env-space-2);
     block-size: var(--env-space-7);
     translate: -50% -50%;
-    scale: var(--env-dev-unzoom);
+    scale: var(--_dev-unzoom);
     border-radius: var(--env-radius-full);
     background: var(--env-color-border-focus);
     cursor: ew-resize;
@@ -275,65 +275,65 @@
   /* stylelint-disable color-no-hex -- the palette's grades, as the comment above says */
   /* stylelint-disable-next-line no-duplicate-selectors -- the tints keep a rule of their own */
   :where(.env-dev-view) {
-    --env-dev-tint-oat: #e7dbce;
-    --env-dev-tint-seafoam: #b8e7de;
-    --env-dev-tint-sage: #cee4c3;
-    --env-dev-tint-periwinkle: #dadaff;
-    --env-dev-tint-butter: #efdca4;
-    --env-dev-tint-blush: #ffd3d4;
-    --env-dev-tint-orchid: #fad2ec;
+    --_dev-tint-oat: #e7dbce;
+    --_dev-tint-seafoam: #b8e7de;
+    --_dev-tint-sage: #cee4c3;
+    --_dev-tint-periwinkle: #dadaff;
+    --_dev-tint-butter: #efdca4;
+    --_dev-tint-blush: #ffd3d4;
+    --_dev-tint-orchid: #fad2ec;
   }
   :where(.env-theme[data-env-theme='dark'] .env-dev-view) {
-    --env-dev-tint-oat: #d8ccbf;
-    --env-dev-tint-seafoam: #a7d7cf;
-    --env-dev-tint-sage: #bed4b3;
-    --env-dev-tint-periwinkle: #cacaf3;
-    --env-dev-tint-butter: #e1cc95;
-    --env-dev-tint-blush: #f3c2c4;
-    --env-dev-tint-orchid: #ecc2dd;
+    --_dev-tint-oat: #d8ccbf;
+    --_dev-tint-seafoam: #a7d7cf;
+    --_dev-tint-sage: #bed4b3;
+    --_dev-tint-periwinkle: #cacaf3;
+    --_dev-tint-butter: #e1cc95;
+    --_dev-tint-blush: #f3c2c4;
+    --_dev-tint-orchid: #ecc2dd;
   }
   /* stylelint-enable color-no-hex */
   :where(.env-dev-plane) {
-    --env-dev-tint: var(--env-dev-tint-oat);
+    --_dev-tint: var(--_dev-tint-oat);
     position: absolute;
     left: 0;
     top: 0;
     overflow: hidden;
     transform-style: flat;
-    background: color-mix(in oklab, var(--env-dev-tint) 10%, transparent);
-    outline: 1px solid color-mix(in oklab, var(--env-dev-tint) 85%, transparent);
+    background: color-mix(in oklab, var(--_dev-tint) 10%, transparent);
+    outline: 1px solid color-mix(in oklab, var(--_dev-tint) 85%, transparent);
     outline-offset: -1px;
     border-radius: 0.125rem;
   }
   :where(.env-dev-plane[data-kind='row']) {
-    --env-dev-tint: var(--env-dev-tint-seafoam);
+    --_dev-tint: var(--_dev-tint-seafoam);
   }
   :where(.env-dev-plane[data-kind='column']) {
-    --env-dev-tint: var(--env-dev-tint-sage);
+    --_dev-tint: var(--_dev-tint-sage);
   }
   :where(.env-dev-plane[data-kind='grid']) {
-    --env-dev-tint: var(--env-dev-tint-periwinkle);
+    --_dev-tint: var(--_dev-tint-periwinkle);
   }
   :where(.env-dev-plane:is([data-kind='scaffold'], [data-kind='panes'])) {
-    --env-dev-tint: var(--env-dev-tint-butter);
+    --_dev-tint: var(--_dev-tint-butter);
   }
   :where(.env-dev-plane[data-kind='page']) {
-    --env-dev-tint: var(--env-dev-tint-blush);
+    --_dev-tint: var(--_dev-tint-blush);
   }
   :where(.env-dev-plane[data-overlay]) {
-    --env-dev-tint: var(--env-dev-tint-orchid);
+    --_dev-tint: var(--_dev-tint-orchid);
   }
   :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='compact']) {
-    --env-dev-tint: var(--env-dev-tint-blush);
+    --_dev-tint: var(--_dev-tint-blush);
   }
   :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='medium']) {
-    --env-dev-tint: var(--env-dev-tint-butter);
+    --_dev-tint: var(--_dev-tint-butter);
   }
   :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='expanded']) {
-    --env-dev-tint: var(--env-dev-tint-sage);
+    --_dev-tint: var(--_dev-tint-sage);
   }
   :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='large']) {
-    --env-dev-tint: var(--env-dev-tint-seafoam);
+    --_dev-tint: var(--_dev-tint-seafoam);
   }
   :where(.env-dev-view[data-color='window'] .env-dev-plane:not([data-container])) {
     outline-style: dotted;
@@ -342,7 +342,7 @@
     outline: 2px solid var(--env-color-border-danger-emphasis);
   }
   :where(.env-dev-plane[data-hovered]) {
-    background: color-mix(in oklab, var(--env-dev-tint) 22%, transparent);
+    background: color-mix(in oklab, var(--_dev-tint) 22%, transparent);
     outline-width: 2px;
   }
   :where(.env-dev-plane[data-selected]) {
@@ -387,7 +387,7 @@
     font-weight: var(--env-font-weight-medium);
     color: var(--env-color-fg-on-strong);
     /* stylelint-disable-next-line color-named -- darkens the tint by a tenth in either theme */
-    background: color-mix(in oklab, var(--env-dev-tint) 90%, black);
+    background: color-mix(in oklab, var(--_dev-tint) 90%, black);
     border-end-end-radius: 0.125rem;
     pointer-events: none;
   }
@@ -426,7 +426,7 @@
     inline-size: var(--env-space-3);
     block-size: var(--env-space-3);
     outline-width: 1.5px;
-    background: color-mix(in oklab, var(--env-dev-tint) 45%, transparent);
+    background: color-mix(in oklab, var(--_dev-tint) 45%, transparent);
   }
   /* The outline entries show an outline alone: solid for a container, dotted for the rest. */
   :where(.env-dev-swatch[data-window='none']) {
@@ -449,23 +449,23 @@
     font: var(--env-type-body-sm);
     font-size: var(--env-font-size-caption);
     line-height: 1.25rem;
-    background: color-mix(in oklab, var(--env-dev-tint) 35%, transparent);
-    border-inline-start: 1px solid var(--env-dev-tint);
+    background: color-mix(in oklab, var(--_dev-tint) 35%, transparent);
+    border-inline-start: 1px solid var(--_dev-tint);
   }
   :where(.env-dev-ruler-band[data-current]) {
-    background: color-mix(in oklab, var(--env-dev-tint) 70%, transparent);
+    background: color-mix(in oklab, var(--_dev-tint) 70%, transparent);
   }
   :where(.env-dev-ruler-band[data-window='compact']) {
-    --env-dev-tint: var(--env-dev-tint-blush);
+    --_dev-tint: var(--_dev-tint-blush);
   }
   :where(.env-dev-ruler-band[data-window='medium']) {
-    --env-dev-tint: var(--env-dev-tint-butter);
+    --_dev-tint: var(--_dev-tint-butter);
   }
   :where(.env-dev-ruler-band[data-window='expanded']) {
-    --env-dev-tint: var(--env-dev-tint-sage);
+    --_dev-tint: var(--_dev-tint-sage);
   }
   :where(.env-dev-ruler-band[data-window='large']) {
-    --env-dev-tint: var(--env-dev-tint-seafoam);
+    --_dev-tint: var(--_dev-tint-seafoam);
   }
   :where(.env-dev-ruler-line) {
     position: absolute;

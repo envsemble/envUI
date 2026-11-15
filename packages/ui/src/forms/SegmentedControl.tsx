@@ -170,7 +170,7 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
 
 /**
  * Places a segmented control's thumb over its chosen segment (the item with data-checked): its box,
- * measured against the track, as --env-segmented-control-thumb-left, -top, -width and -height,
+ * measured against the track, as --_segmented-control-thumb-left, -top, -width and -height,
  * physical, set on the thumb directly, so a change renders nothing. The thumb shows once it has
  * measured a chosen segment (`data-placed`) and hides while none is chosen; until then, as in the
  * server's markup, the chosen segment draws its own. It follows the choice, the segments' sizes and
@@ -194,10 +194,10 @@ function followThumb(thumb: HTMLElement): () => void {
     const scaleY = track.offsetHeight > 0 ? trackBox.height / track.offsetHeight : 1;
     const left = (box.left - trackBox.left) / scaleX + track.scrollLeft - track.clientLeft;
     const top = (box.top - trackBox.top) / scaleY + track.scrollTop - track.clientTop;
-    thumb.style.setProperty('--env-segmented-control-thumb-left', `${left}px`);
-    thumb.style.setProperty('--env-segmented-control-thumb-top', `${top}px`);
-    thumb.style.setProperty('--env-segmented-control-thumb-width', `${box.width / scaleX}px`);
-    thumb.style.setProperty('--env-segmented-control-thumb-height', `${box.height / scaleY}px`);
+    thumb.style.setProperty('--_segmented-control-thumb-left', `${left}px`);
+    thumb.style.setProperty('--_segmented-control-thumb-top', `${top}px`);
+    thumb.style.setProperty('--_segmented-control-thumb-width', `${box.width / scaleX}px`);
+    thumb.style.setProperty('--_segmented-control-thumb-height', `${box.height / scaleY}px`);
     thumb.setAttribute('data-placed', '');
   };
   place();

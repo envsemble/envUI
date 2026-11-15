@@ -185,19 +185,19 @@ export function Scaffold({
       );
       const publish = () => {
         const top = topBarRegion?.offsetHeight ?? 0;
-        root.style.setProperty('--env-scaffold-top-bar-size', `${top}px`);
+        root.style.setProperty('--_scaffold-top-bar-size', `${top}px`);
         if (scroll !== 'document') return;
-        html.style.setProperty('--env-scaffold-scroll-top', `${top}px`);
-        html.style.setProperty('--env-scaffold-scroll-bottom', `${barSlot?.offsetHeight ?? 0}px`);
+        html.style.setProperty('--_scaffold-scroll-top', `${top}px`);
+        html.style.setProperty('--_scaffold-scroll-bottom', `${barSlot?.offsetHeight ?? 0}px`);
       };
       publish();
       const observer = new ResizeObserver(publish);
       for (const region of [topBarRegion, barSlot]) if (region) observer.observe(region);
       return () => {
         observer.disconnect();
-        root.style.removeProperty('--env-scaffold-top-bar-size');
-        html.style.removeProperty('--env-scaffold-scroll-top');
-        html.style.removeProperty('--env-scaffold-scroll-bottom');
+        root.style.removeProperty('--_scaffold-top-bar-size');
+        html.style.removeProperty('--_scaffold-scroll-top');
+        html.style.removeProperty('--_scaffold-scroll-bottom');
       };
     },
     [root, scroll, hasTopBar, hasBar],

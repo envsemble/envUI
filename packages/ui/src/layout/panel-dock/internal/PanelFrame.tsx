@@ -166,10 +166,10 @@ export function PanelFrame({
           data-active={flag(panel.active)}
           data-resizing={flag(preview !== undefined)}
           style={{
-            '--env-panel-dock-panel-width': rems(panel.preferredWidth),
-            '--env-panel-dock-panel-min-width': rems(panel.minWidth),
-            '--env-panel-dock-panel-max-width': rems(panel.maxWidth),
-            '--env-panel-dock-panel-height': pixels(shownHeight),
+            '--_panel-dock-panel-width': rems(panel.preferredWidth),
+            '--_panel-dock-panel-min-width': rems(panel.minWidth),
+            '--_panel-dock-panel-max-width': rems(panel.maxWidth),
+            '--_panel-dock-panel-height': pixels(shownHeight),
           }}
           onPointerDownCapture={onActivate}
           onFocus={noteFocus}
@@ -192,7 +192,7 @@ export function PanelFrame({
         className="env-panel-dock-content"
         tabIndex={-1}
         onScroll={(event) => setScrolled(event.currentTarget.scrollTop > 0)}
-        style={headerSize > 0 ? { '--env-panel-dock-header-size': `${headerSize}px` } : undefined}
+        style={headerSize > 0 ? { '--_panel-dock-header-size': `${headerSize}px` } : undefined}
       >
         <PanelDockPanelContext value={context}>{content}</PanelDockPanelContext>
       </div>

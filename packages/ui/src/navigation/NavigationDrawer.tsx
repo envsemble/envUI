@@ -479,8 +479,8 @@ export function NavigationDrawer({
         resizable
           ? {
               '--env-navigation-drawer-width': `${resize.width}rem`,
-              '--env-navigation-drawer-min-width': `${resize.handleProps.min}rem`,
-              '--env-navigation-drawer-max-width': `${resize.handleProps.max}rem`,
+              '--_navigation-drawer-min-width': `${resize.handleProps.min}rem`,
+              '--_navigation-drawer-max-width': `${resize.handleProps.max}rem`,
               ...style,
             }
           : style

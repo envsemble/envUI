@@ -19,7 +19,7 @@ import { lineArtShapes } from './lineArtShapes.js';
 /**
  * Each drawing's lines, ready to move: each set one long, so a dash of one is the whole line, and
  * given its place in the order as a fraction of the time the lines start over
- * (--env-line-art-at), from 0 for the first beat to 1 for the last; and the line that finishes
+ * (--_line-art-at), from 0 for the first beat to 1 for the last; and the line that finishes
  * last as they draw in, and as they draw out, the other way round.
  */
 const moving = new Map<
@@ -39,7 +39,7 @@ function movingShapes(drawing: LineArtDrawing) {
   const shapes = Children.toArray(drawn).map((shape, index) =>
     cloneElement(shape as ReactElement<{ pathLength?: number; style?: CSSProperties }>, {
       pathLength: 1,
-      style: { '--env-line-art-at': at[index] },
+      style: { '--_line-art-at': at[index] },
     }),
   );
   // Every drawing has a beat, and every beat a line.
@@ -76,12 +76,12 @@ export function MovingLineArt({
   );
   // The lines keep their width on screen (non-scaling-stroke), which lays their dashes out on
   // screen too, while their length of one is the drawing's: the drawing's scale
-  // (--env-line-art-scale) sets the dashes to the lines' length on screen, at any size.
+  // (--_line-art-scale) sets the dashes to the lines' length on screen, at any size.
   useLayoutEffect(() => {
     if (!svg) return;
     const measure = () => {
       const scale = Math.max(svg.clientWidth / 480, svg.clientHeight / 330);
-      if (scale > 0) svg.style.setProperty('--env-line-art-scale', `${scale}px`);
+      if (scale > 0) svg.style.setProperty('--_line-art-scale', `${scale}px`);
     };
     measure();
     const resizes = new ResizeObserver(measure);

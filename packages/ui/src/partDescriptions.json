@@ -972,6 +972,12 @@
     }
   },
   "properties": {
+    "Avatar": {
+      "--env-avatar-dense": {
+        "use": "set",
+        "description": "1 on a container, such as a dense list, gives the avatars and groups in it fills at half their chroma, so their initials keep their contrast, as a table cell and a small AvatarGroup do."
+      }
+    },
     "IconButton": {
       "--env-icon-button-hit-area": {
         "use": "set",
@@ -1002,6 +1008,12 @@
       "--env-scaffold-sticky-top": {
         "use": "read",
         "description": "How far below the window's top sticky content in the body sticks: under the top bar where the document scrolls."
+      }
+    },
+    "Spinner": {
+      "--env-spinner-color": {
+        "use": "set",
+        "description": "The color of the spinners inside an element, such as a button’s label color; unset, the primary emphasis color."
       }
     },
     "TableOfContents": {

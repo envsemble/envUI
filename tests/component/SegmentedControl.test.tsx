@@ -36,7 +36,7 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
     // Segments in a recessed track, with no outline and no lines between them; the chosen one rises
     // on a raised thumb with a shadow, and no check marks it.
     const probe = document.createElement('span');
-    probe.style.backgroundColor = 'var(--env-segmented-control-thumb)';
+    probe.style.backgroundColor = 'var(--_segmented-control-thumb)';
     open.element().append(probe);
     const thumb = getComputedStyle(probe).backgroundColor;
     probe.remove();

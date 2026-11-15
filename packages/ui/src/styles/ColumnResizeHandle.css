@@ -19,8 +19,8 @@
     inset-block: var(--env-space-2);
     inset-inline-end: 0;
     /* The bar, thicker while the column resizes. */
-    --env-table-resize-bar: 0.125rem;
-    inline-size: var(--env-table-resize-bar);
+    --_table-resize-bar: 0.125rem;
+    inline-size: var(--_table-resize-bar);
     border-radius: var(--env-radius-full);
     background: transparent;
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
@@ -30,7 +30,7 @@
   }
   .env-table-column-resize-handle:is(:focus-visible, [data-resizing])::after {
     inset-block: 0;
-    --env-table-resize-bar: 0.1875rem;
+    --_table-resize-bar: 0.1875rem;
     background: var(--env-color-border-focus);
   }
   @media (pointer: coarse) {

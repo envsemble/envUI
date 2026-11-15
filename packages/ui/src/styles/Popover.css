@@ -7,19 +7,19 @@
      it sizes to what it holds and stays on screen. */
   .env-popover,
   .env-hover-card {
-    --env-popover-room: var(--available-width, calc(100vw - 2rem));
-    --env-popover-min: 12rem;
-    --env-popover-max: 20rem;
+    --_popover-room: var(--available-width, calc(100vw - 2rem));
+    --_popover-min: 12rem;
+    --_popover-max: 20rem;
     inline-size: max-content;
-    min-inline-size: min(var(--env-popover-min), var(--env-popover-room));
-    max-inline-size: min(var(--env-popover-max), var(--env-popover-room));
+    min-inline-size: min(var(--_popover-min), var(--_popover-room));
+    max-inline-size: min(var(--_popover-max), var(--_popover-room));
     align-content: start;
-    padding: var(--env-popup-panel-padding);
+    padding: var(--_popup-panel-padding);
   }
   .env-popover[data-width='lg'],
   .env-hover-card[data-width='lg'] {
-    --env-popover-min: 20rem;
-    --env-popover-max: 28rem;
+    --_popover-min: 20rem;
+    --_popover-max: 28rem;
   }
   .env-popover-title {
     margin: 0;

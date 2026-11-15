@@ -128,7 +128,7 @@ test('custom labels, weeks from Monday, levels and a tone', () => {
   assert.equal(level(heatmap, '2026-03-24'), '2');
   // The strongest step is the tone itself.
   assert.equal(heatmap.attributes['data-tone'], 'success');
-  assert.equal(day(heatmap, '2026-03-24').attributes.style, '--env-calendar-heatmap-mix:100%');
+  assert.equal(day(heatmap, '2026-03-24').attributes.style, '--_calendar-heatmap-mix:100%');
   assert.equal(textOf(byClass(heatmap, 'env-calendar-heatmap-legend')[0]), 'WenigerMehr');
 });
 
@@ -219,5 +219,5 @@ test('explicit thresholds color days of 0, and two levels color their only step 
   });
   assert.equal(level(two, '2026-05-05'), '0');
   assert.equal(level(two, '2026-05-04'), '1');
-  assert.equal(day(two, '2026-05-04').attributes.style, '--env-calendar-heatmap-mix:100%');
+  assert.equal(day(two, '2026-05-04').attributes.style, '--_calendar-heatmap-mix:100%');
 });

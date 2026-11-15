@@ -12,11 +12,11 @@
     overflow: auto;
     scrollbar-width: thin;
     /* Rings are inset here, so on a solid fill Button adds its inner ring in the label color. */
-    --env-button-focus-inner-ring: 0.25rem;
+    --_button-focus-inner-ring: 0.25rem;
     /* Connected buttons can't move to a line of their own, so in a narrow group a label wraps, and
        may break inside a long word, rather than push the group past its container. */
-    --env-button-white-space: normal;
-    --env-button-overflow-wrap: anywhere;
+    --_button-white-space: normal;
+    --_button-overflow-wrap: anywhere;
   }
   .env-button-group > .env-button:focus-visible {
     outline-offset: -2px;
@@ -35,12 +35,12 @@
     /* Exactly half the button's height, not the capped full corner, which can be more: corners that
        add up to more than the height would make the browser scale down the small inner ones too. It
        follows the height the button draws at, which a coarse pointer raises to the touch height. */
-    border-radius: calc(var(--env-button-height) / 2);
+    border-radius: calc(var(--_button-height) / 2);
   }
 
   .env-button-group > .env-button.env-icon-button {
-    inline-size: var(--env-button-height);
-    min-inline-size: var(--env-button-height);
+    inline-size: var(--_button-height);
+    min-inline-size: var(--_button-height);
   }
 
   .env-button-group > .env-button[hidden] {
@@ -148,7 +148,7 @@
       )
     )
     > .env-button {
-    border-radius: calc(var(--env-button-height) / 2);
+    border-radius: calc(var(--_button-height) / 2);
     margin: 0;
   }
 }

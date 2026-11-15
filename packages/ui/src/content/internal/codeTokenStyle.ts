@@ -12,10 +12,10 @@ import type { CodeToken } from './codeHighlighting.js';
 export function tokenStyle({ light, dark, lightHigh, darkHigh }: CodeToken): CSSProperties {
   const { fontStyle = 0 } = light;
   return {
-    '--env-code-token': light.color,
-    '--env-code-token-high': lightHigh?.color ?? light.color,
-    '--env-code-token-dark': dark.color,
-    '--env-code-token-dark-high': darkHigh?.color ?? dark.color,
+    '--_code-token': light.color,
+    '--_code-token-high': lightHigh?.color ?? light.color,
+    '--_code-token-dark': dark.color,
+    '--_code-token-dark-high': darkHigh?.color ?? dark.color,
     fontStyle: fontStyle & 1 ? 'italic' : undefined,
     fontWeight: fontStyle & 2 ? 700 : undefined,
     textDecoration:

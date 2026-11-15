@@ -17,11 +17,11 @@
     color: var(--env-color-border-default);
   }
   .env-rating-star {
-    --env-rating-star-size: 1.125rem;
+    --_rating-star-size: 1.125rem;
     position: relative;
     display: inline-flex;
-    inline-size: var(--env-rating-star-size);
-    block-size: var(--env-rating-star-size);
+    inline-size: var(--_rating-star-size);
+    block-size: var(--_rating-star-size);
   }
   .env-rating-star svg {
     display: block;
@@ -41,7 +41,7 @@
     color: var(--env-color-fg-rating-star);
   }
   .env-rating-star-half svg {
-    inline-size: var(--env-rating-star-size);
+    inline-size: var(--_rating-star-size);
     max-inline-size: none;
   }
 

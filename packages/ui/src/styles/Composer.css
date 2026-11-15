@@ -2,12 +2,12 @@
   /* The message field of a conversation, on the raised popup surface. The field grows with its text
      between the minimum and maximum rows, then scrolls; the round action stays at the end. */
   .env-composer {
-    --env-composer-min-rows: 1;
-    --env-composer-max-rows: 8;
+    --_composer-min-rows: 1;
+    --_composer-max-rows: 8;
     max-inline-size: 100%;
   }
   .env-composer-surface {
-    --env-composer-border: var(--env-color-border-default);
+    --_composer-border: var(--env-color-border-default);
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: 'input action';
@@ -15,7 +15,7 @@
     column-gap: var(--env-space-2);
     min-inline-size: 0;
     padding: var(--env-space-2);
-    border: 1px solid var(--env-composer-border);
+    border: 1px solid var(--_composer-border);
     border-radius: var(--env-radius-surface);
     background: var(--env-color-bg-popup);
     color: var(--env-color-fg-default);
@@ -37,8 +37,8 @@
     inline-size: 100%;
     min-inline-size: 0;
     /* One line sits centered beside the action; more lines grow upward from the same baseline. */
-    min-block-size: calc((var(--env-composer-min-rows) - 1) * 1lh + var(--env-control-height));
-    max-block-size: calc((var(--env-composer-max-rows) - 1) * 1lh + var(--env-control-height));
+    min-block-size: calc((var(--_composer-min-rows) - 1) * 1lh + var(--env-control-height));
+    max-block-size: calc((var(--_composer-max-rows) - 1) * 1lh + var(--env-control-height));
     margin: 0;
     padding-block: calc((var(--env-control-height) - 1lh) / 2);
     padding-inline: var(--env-space-4) 0;
@@ -65,7 +65,7 @@
   }
   .env-composer-start {
     /* The height its buttons draw at, which a coarse pointer raises to the touch height. */
-    --env-composer-start-height: var(--env-control-height);
+    --_composer-start-height: var(--env-control-height);
     grid-area: start;
     min-block-size: var(--env-control-height);
     /* Start content lines up with the field's text above it. */
@@ -76,13 +76,11 @@
   }
   /* A leading icon button reaches into that inset, so its icon, not its round target, lines up. */
   .env-composer-start > .env-icon-button:first-child {
-    margin-inline-start: calc(
-      (var(--env-control-icon-size) - var(--env-composer-start-height)) / 2
-    );
+    margin-inline-start: calc((var(--env-control-icon-size) - var(--_composer-start-height)) / 2);
   }
   @media (pointer: coarse) {
     .env-composer-start {
-      --env-composer-start-height: max(var(--env-control-height), var(--env-control-height-touch));
+      --_composer-start-height: max(var(--env-control-height), var(--env-control-height-touch));
     }
   }
   /* The action keeps the arrow of other buttons rather than the surface's text cursor. */
@@ -92,13 +90,13 @@
   }
   @media (hover: hover) {
     .env-composer:not([data-disabled]) .env-composer-surface:hover {
-      --env-composer-border: var(--env-color-fg-muted);
+      --_composer-border: var(--env-color-fg-muted);
     }
   }
   /* Focus in the field recolors the outline and doubles its weight; the action has its own ring. */
   .env-composer-surface:has(> .env-composer-input:focus) {
-    --env-composer-border: var(--env-color-border-primary-emphasis);
-    box-shadow: 0 0 0 1px var(--env-composer-border);
+    --_composer-border: var(--env-color-border-primary-emphasis);
+    box-shadow: 0 0 0 1px var(--_composer-border);
   }
   .env-composer[data-disabled] .env-composer-surface {
     cursor: default;

@@ -18,9 +18,9 @@
   .env-breadcrumbs-text,
   .env-breadcrumbs-current {
     /* A long crumb ends in an ellipsis past this width. */
-    --env-breadcrumbs-crumb-max-width: 20rem;
+    --_breadcrumbs-crumb-max-width: 20rem;
     min-inline-size: 0;
-    max-inline-size: var(--env-breadcrumbs-crumb-max-width);
+    max-inline-size: var(--_breadcrumbs-crumb-max-width);
     display: inline-flex;
     padding: calc(var(--env-space-1) / 2) var(--env-space-1);
     border-radius: var(--env-radius-sm);

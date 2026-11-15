@@ -1,0 +1,69 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "page": {
+    "$type": "dimension",
+    "gutter": {
+      "$description": "The space a Page keeps at its inline edges in a compact region: spacing step 4. A Page whose container is 37.5 rem or wider keeps spacing step 5, and a Page without a gutter none; inside a Page this property is the gutter it keeps, so content lines up with it.",
+      "$value": "{space.4}"
+    },
+    "width-sm": {
+      "$description": "The width of a Page's column at width sm, for a form or settings: 40 rem.",
+      "$value": { "value": 40, "unit": "rem" }
+    },
+    "width-md": {
+      "$description": "The width of a Page's column at width md, for reading: 60 rem.",
+      "$value": { "value": 60, "unit": "rem" }
+    },
+    "width-lg": {
+      "$description": "The width of a Page's column at width lg, its default: 76 rem.",
+      "$value": { "value": 76, "unit": "rem" }
+    }
+  },
+  "navigation-rail": {
+    "$type": "dimension",
+    "width": {
+      "$description": "The width of a NavigationRail: 5 rem.",
+      "$value": { "value": 5, "unit": "rem" }
+    }
+  },
+  "navigation-drawer": {
+    "$type": "dimension",
+    "width": {
+      "$description": "The width a resizable NavigationDrawer starts at, 17.5 rem; on a resizable drawer, the width it has now.",
+      "$value": { "value": 17.5, "unit": "rem" }
+    }
+  },
+  "panes": {
+    "$type": "dimension",
+    "size": {
+      "$description": "The width of the resized pane of Panes side by side, the supporting pane or the list, until people resize it: 22.5 rem; on Panes, the width it has now.",
+      "$value": { "value": 22.5, "unit": "rem" }
+    },
+    "other-min": {
+      "$description": "The least width the other pane of Panes side by side keeps beside the resized one: 16 rem.",
+      "$value": { "value": 16, "unit": "rem" }
+    }
+  },
+  "sheet": {
+    "$type": "dimension",
+    "width-md": {
+      "$description": "The width of a side Sheet at width md, its default, for details and filters: 24 rem.",
+      "$value": { "value": 24, "unit": "rem" }
+    },
+    "width-lg": {
+      "$description": "The width of a side Sheet at width lg, for content-heavy tasks: 44 rem.",
+      "$value": { "value": 44, "unit": "rem" }
+    }
+  },
+  "dialog": {
+    "$type": "dimension",
+    "width-md": {
+      "$description": "The width of a Dialog at width md, its default: 28 rem, never more than the window less its gutters.",
+      "$value": { "value": 28, "unit": "rem" }
+    },
+    "width-lg": {
+      "$description": "The width of a Dialog at width lg: 44 rem, never more than the window less its gutters.",
+      "$value": { "value": 44, "unit": "rem" }
+    }
+  }
+}

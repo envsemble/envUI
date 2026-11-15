@@ -1,9 +1,5 @@
 @layer env.components {
   .env-disclosure {
-    /* The chevron and the gap after it, which the panel's inset matches, so the details line up
-       with the summary's words. */
-    --env-disclosure-indicator-size: var(--env-icon-size-sm);
-    --env-disclosure-gap: var(--env-space-1);
     min-inline-size: 0;
     max-inline-size: 100%;
     overflow-wrap: break-word;
@@ -17,7 +13,7 @@
   .env-disclosure > summary {
     display: flex;
     align-items: flex-start;
-    gap: var(--env-disclosure-gap);
+    gap: var(--env-space-1);
     list-style: none;
     white-space: normal;
     cursor: pointer;
@@ -40,11 +36,11 @@
      middle of the summary's first line. It points in the reading direction while closed and turns to
      point down while open. */
   .env-disclosure-indicator.env-icon {
-    --env-icon-size: var(--env-disclosure-indicator-size);
+    --_icon-size: var(--env-icon-size-sm);
     block-size: 1lh;
   }
   .env-disclosure-indicator > svg {
-    block-size: var(--env-disclosure-indicator-size);
+    block-size: var(--env-icon-size-sm);
   }
   .env-disclosure-indicator:dir(rtl) {
     transform: scaleX(-1);
@@ -81,7 +77,7 @@
   }
   .env-disclosure-panel {
     margin-block: var(--env-space-2) 0;
-    margin-inline: calc(var(--env-disclosure-indicator-size) + var(--env-disclosure-gap)) 0;
+    margin-inline: calc(var(--env-icon-size-sm) + var(--env-space-1)) 0;
     color: inherit;
     font: inherit;
   }

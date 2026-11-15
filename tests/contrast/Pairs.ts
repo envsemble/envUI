@@ -1421,9 +1421,8 @@ const derived: Readonly<Record<string, string>> = {
     'color-mix(in srgb, var(--env-color-fg-primary) 30%, var(--env-color-bg-page))',
   // The frosted fill of popups (Popup.css), and the worst behind it: black under a light popup's
   // dark text, white under a dark popup's light text.
-  'popup-frosted':
-    'color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent)',
-  'popup-fill': 'var(--env-popup-fill)',
+  'popup-frosted': 'color-mix(in srgb, var(--_popup-fill) var(--env-popup-opacity), transparent)',
+  'popup-fill': 'var(--_popup-fill)',
   'popup-worst-backdrop': 'light-dark(#000, #fff)',
   // A tooltip's frosted fill and a key chip on it, a share of its light text (Tooltip.css), and
   // the worst behind it: white under its light text, in light and in dark.

@@ -42,10 +42,10 @@ test('a token carries its colors in both code themes, its standard ones at high 
     darkHigh,
   });
   assert.deepEqual(tokenStyle(token({ color: '#123456', fontStyle: 1 }, { color: '#654321' })), {
-    '--env-code-token': '#123456',
-    '--env-code-token-high': '#123456',
-    '--env-code-token-dark': '#654321',
-    '--env-code-token-dark-high': '#654321',
+    '--_code-token': '#123456',
+    '--_code-token-high': '#123456',
+    '--_code-token-dark': '#654321',
+    '--_code-token-dark-high': '#654321',
     fontStyle: 'italic',
     fontWeight: undefined,
     textDecoration: undefined,
@@ -53,13 +53,13 @@ test('a token carries its colors in both code themes, its standard ones at high 
   const high = tokenStyle(
     token({ color: '#123456' }, { color: '#654321' }, { color: '#000000' }, { color: '#ffffff' }),
   );
-  assert.equal(high['--env-code-token-high'], '#000000');
-  assert.equal(high['--env-code-token-dark-high'], '#ffffff');
+  assert.equal(high['--_code-token-high'], '#000000');
+  assert.equal(high['--_code-token-dark-high'], '#ffffff');
   assert.deepEqual(tokenStyle(token({ fontStyle: 2 | 4 | 8 }, {})), {
-    '--env-code-token': undefined,
-    '--env-code-token-high': undefined,
-    '--env-code-token-dark': undefined,
-    '--env-code-token-dark-high': undefined,
+    '--_code-token': undefined,
+    '--_code-token-high': undefined,
+    '--_code-token-dark': undefined,
+    '--_code-token-dark-high': undefined,
     fontStyle: undefined,
     fontWeight: 700,
     textDecoration: 'underline line-through',
@@ -100,7 +100,7 @@ test('every theme boundary sets the code colors codeColors.ts gives its theme', 
     for (const [, at, body] of css.matchAll(/^ {2}([^\n{]+) \{([^}]*)\}/gm))
       if (at === selector)
         for (const [, name, value] of body.matchAll(
-          /(--env-code-(?:back|fore)ground[\w-]*): ([^;]+);/g,
+          /(--_code-(?:back|fore)ground[\w-]*): ([^;]+);/g,
         ))
           properties[name] = value;
     return properties;

@@ -27,19 +27,19 @@
     padding-block-start: max(var(--env-space-8), env(safe-area-inset-top));
   }
   .env-sheet {
-    --env-sheet-width: 24rem;
-    --env-sheet-bottom-width: 40rem;
+    --_sheet-width: var(--env-sheet-width-md);
+    --_sheet-bottom-width: 40rem;
     /* A swipe toward the edge moves the sheet with the finger: Base UI sets the movement, and its
        own transform while the finger is down. */
-    --env-sheet-swipe-x: var(--drawer-swipe-movement-x, 0rem);
-    --env-sheet-swipe-y: var(--drawer-swipe-movement-y, 0rem);
+    --_sheet-swipe-x: var(--drawer-swipe-movement-x, 0rem);
+    --_sheet-swipe-y: var(--drawer-swipe-movement-y, 0rem);
     box-sizing: border-box;
     /* A column of its heading, body and actions, no taller than the sheet (below). */
     display: flex;
     flex-direction: column;
     max-block-size: none;
     outline: none;
-    transform: translate(var(--env-sheet-swipe-x), var(--env-sheet-swipe-y));
+    transform: translate(var(--_sheet-swipe-x), var(--_sheet-swipe-y));
     transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   /* Its heading, body and actions stack in a column no taller than the sheet: the body scrolls on its
@@ -83,12 +83,12 @@
     padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
   }
   .env-sheet[data-width='custom']:not([data-side='bottom']) {
-    inline-size: min(var(--env-sheet-width), 100%);
+    inline-size: min(var(--_sheet-width), 100%);
   }
   /* A bottom sheet: as wide as the window up to 40 rem, as tall as its content, with its top corners
      rounded, and clear of the safe area at the bottom. */
   .env-sheet[data-side='bottom'] {
-    inline-size: min(var(--env-sheet-bottom-width), 100%);
+    inline-size: min(var(--_sheet-bottom-width), 100%);
     max-block-size: 100%;
     border-block-end-width: 0;
     border-end-start-radius: 0;
@@ -100,7 +100,7 @@
      pads it. */
   @container env-window (width >= 37.5rem) {
     .env-sheet[data-width='md']:not([data-side='bottom']) {
-      inline-size: min(var(--env-sheet-width), 100%);
+      inline-size: min(var(--_sheet-width), 100%);
     }
     .env-sheet[data-width='md'][data-side='end'] {
       border-inline-start-width: var(--env-control-border-width);
@@ -113,8 +113,8 @@
   }
   @container env-window (width >= 52.5rem) {
     .env-sheet[data-width='lg']:not([data-side='bottom']) {
-      --env-sheet-width: 44rem;
-      inline-size: min(var(--env-sheet-width), 100%);
+      --_sheet-width: var(--env-sheet-width-lg);
+      inline-size: min(var(--_sheet-width), 100%);
     }
     .env-sheet[data-width='lg'][data-side='end'] {
       border-inline-start-width: var(--env-control-border-width);
@@ -136,11 +136,11 @@
      fill and its backdrop set it apart from the page, with no edge; at high contrast its elevation edge
      returns as its boundary, through the theme's high-contrast switch (Theme.css). */
   .env-sheet-viewport .env-sheet {
-    --env-surface-color: var(--env-color-bg-default);
-    --env-sheet-edge: var(--env-theme-high-contrast) var(--env-elevation-3-border);
-    border-color: var(--env-sheet-edge, transparent);
+    --_surface-color: var(--env-color-bg-default);
+    --_sheet-edge: var(--_theme-high-contrast) var(--env-elevation-3-border);
+    border-color: var(--_sheet-edge, transparent);
   }
-  /* resizable: a side sheet as wide as --env-sheet-width, which the component sets, at every window
+  /* resizable: a side sheet as wide as --_sheet-width, which the component sets, at every window
      width, but never wider than the window, with an edge on its inner side. Its content runs the
      sheet's full height and holds the resize handle (ResizeHandle.css), the same handle as between
      Panes: as wide as their gap, inside the inner edge over the padding, a grip at its middle and
@@ -148,16 +148,16 @@
      to the middle of the sheet's height should the sheet itself scroll. Under a coarse pointer it is as wide as the padding, a touch target that leaves the
      content alone. */
   .env-sheet[data-resizable]:is([data-side='start'], [data-side='end']) {
-    --env-sheet-padding-inline: max(
+    --_sheet-padding-inline: max(
       var(--env-space-5),
       env(safe-area-inset-left),
       env(safe-area-inset-right)
     );
-    --env-sheet-padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
-    --env-sheet-padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
-    inline-size: min(var(--env-sheet-width), 100%);
-    padding: var(--env-sheet-padding-block-start) var(--env-sheet-padding-inline)
-      var(--env-sheet-padding-block-end);
+    --_sheet-padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
+    --_sheet-padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
+    inline-size: min(var(--_sheet-width), 100%);
+    padding: var(--_sheet-padding-block-start) var(--_sheet-padding-inline)
+      var(--_sheet-padding-block-end);
   }
   .env-sheet[data-resizable][data-side='end'] {
     border-inline-start-width: var(--env-control-border-width);
@@ -170,23 +170,23 @@
     min-block-size: 100%;
   }
   .env-sheet[data-resizable] .env-sheet-resize-handle {
-    --env-resize-handle-size: var(--env-space-4);
+    --_resize-handle-size: var(--env-space-4);
     position: absolute;
-    inset-block: calc(-1 * var(--env-sheet-padding-block-start))
-      calc(-1 * var(--env-sheet-padding-block-end));
+    inset-block: calc(-1 * var(--_sheet-padding-block-start))
+      calc(-1 * var(--_sheet-padding-block-end));
   }
   .env-sheet[data-resizable] .env-sheet-resize-handle::after {
     position: sticky;
   }
   .env-sheet[data-resizable][data-side='end'] .env-sheet-resize-handle {
-    inset-inline-start: calc(-1 * var(--env-sheet-padding-inline));
+    inset-inline-start: calc(-1 * var(--_sheet-padding-inline));
   }
   .env-sheet[data-resizable][data-side='start'] .env-sheet-resize-handle {
-    inset-inline-end: calc(-1 * var(--env-sheet-padding-inline));
+    inset-inline-end: calc(-1 * var(--_sheet-padding-inline));
   }
   @media (pointer: coarse) {
     .env-sheet[data-resizable] .env-sheet-resize-handle {
-      --env-resize-handle-size: var(--env-space-5);
+      --_resize-handle-size: var(--env-space-5);
     }
   }
 
@@ -207,27 +207,27 @@
   }
   @media (prefers-reduced-motion: no-preference) {
     .env-sheet {
-      --env-sheet-offset-x: 2rem;
-      --env-sheet-offset-y: 0rem;
+      --_sheet-offset-x: 2rem;
+      --_sheet-offset-y: 0rem;
       transition:
         opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter),
         transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
     }
     .env-sheet:is([data-side='start'], [data-side='end']:dir(rtl)) {
-      --env-sheet-offset-x: -2rem;
+      --_sheet-offset-x: -2rem;
     }
     .env-sheet[data-side='start']:dir(rtl) {
-      --env-sheet-offset-x: 2rem;
+      --_sheet-offset-x: 2rem;
     }
     .env-sheet[data-side='bottom'] {
-      --env-sheet-offset-x: 0rem;
-      --env-sheet-offset-y: 2rem;
+      --_sheet-offset-x: 0rem;
+      --_sheet-offset-y: 2rem;
     }
     .env-sheet[data-starting-style],
     .env-sheet[data-ending-style] {
       transform: translate(
-        calc(var(--env-sheet-swipe-x) + var(--env-sheet-offset-x)),
-        calc(var(--env-sheet-swipe-y) + var(--env-sheet-offset-y))
+        calc(var(--_sheet-swipe-x) + var(--_sheet-offset-x)),
+        calc(var(--_sheet-swipe-y) + var(--_sheet-offset-y))
       );
     }
     .env-sheet[data-ending-style] {

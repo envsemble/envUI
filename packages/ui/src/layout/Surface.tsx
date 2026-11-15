@@ -93,7 +93,7 @@ export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({
       'data-radius': radius,
       style: {
         ...(padding !== undefined
-          ? { '--env-surface-padding': padding === 0 ? '0rem' : `var(--env-space-${padding})` }
+          ? { '--_surface-padding': padding === 0 ? '0rem' : `var(--env-space-${padding})` }
           : {}),
         ...style,
       },

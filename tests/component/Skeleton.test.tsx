@@ -185,7 +185,7 @@ test('the pulse runs in step across the page, slower with reduced motion, and st
     animation.pause();
     animation.currentTime = Number(animation.effect!.getComputedTiming().duration) * share;
     const result = {
-      pulse: css(root, '--env-skeleton-pulse'),
+      pulse: css(root, '--_skeleton-pulse'),
       paint: css(root.querySelector('.env-card-description')!, 'background-image', '::before'),
     };
     animation.play();
@@ -323,7 +323,7 @@ test('a skeleton takes the boxes its content takes loaded, through its inert wra
 const textBars = (root: HTMLElement) =>
   [
     ...root.style
-      .getPropertyValue('--env-skeleton-text-bars')
+      .getPropertyValue('--_skeleton-text-bars')
       .matchAll(/(-?[\d.]+)px (-?[\d.]+)px \/ ([\d.]+)px ([\d.]+)px/g),
   ].map((match) => match.slice(1).map(Number));
 
@@ -333,7 +333,7 @@ test('text that is there draws as rounded bars over its line boxes, in either di
   const projects = byTestId('projects');
   // The script marks the root once it has measured its text, and the line through goes.
   await expect.poll(() => projects.getAttribute('data-env-skeleton-text')).toBe('');
-  expect(css(projects, '--env-skeleton-color')).toBe('transparent');
+  expect(css(projects, '--_skeleton-color')).toBe('transparent');
   // One rounded bar per line box of the heading that is there, laid over it in the bar layer.
   const range = document.createRange();
   range.selectNodeContents(projects.querySelector('h2')!);
@@ -383,5 +383,5 @@ test('text that is there draws as rounded bars over its line boxes, in either di
   // Loaded, the bars and the marks go.
   await page.getByRole('button', { name: 'Load' }).click();
   await expect.poll(() => projects.hasAttribute('data-env-skeleton-text')).toBe(false);
-  expect(projects.style.getPropertyValue('--env-skeleton-text-bars')).toBe('');
+  expect(projects.style.getPropertyValue('--_skeleton-text-bars')).toBe('');
 });

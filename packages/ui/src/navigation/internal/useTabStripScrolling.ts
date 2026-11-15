@@ -22,7 +22,7 @@ export function useTabStripScrolling(
       if (!strip || !tab) return;
       // The tab clears the fade at the edge it comes in from, so none of it is faded. Only an edge
       // with more to scroll past it has a fade: at the strip's ends there is no room to leave.
-      const fade = parseFloat(getComputedStyle(strip).getPropertyValue('--env-document-tabs-fade'));
+      const fade = parseFloat(getComputedStyle(strip).getPropertyValue('--_document-tabs-fade'));
       const room = Number.isFinite(fade) ? fade * remPixels(strip) : 0;
       const beyond = scrollBeyond(strip);
       const stripBox = strip.getBoundingClientRect();

@@ -28,7 +28,7 @@
   :where([data-env-layout='row']) > :where(.env-skeleton-content) > * {
     margin-inline: 0;
   }
-  /* A grid is one column until columns sets --env-grid-columns: a count of equal columns, a
+  /* A grid is one column until columns sets --_grid-columns: a count of equal columns, a
      template, or auto-fill tracks of a minimum width. */
   :where([data-env-layout='grid']) {
     display: grid;
@@ -36,7 +36,7 @@
     min-inline-size: 0;
   }
   :where([data-env-layout='grid'][data-columns]) {
-    grid-template-columns: var(--env-grid-columns, minmax(0, 1fr));
+    grid-template-columns: var(--_grid-columns, minmax(0, 1fr));
   }
   :where([data-env-layout='grid']) > *,
   :where([data-env-layout='grid']) > :where(.env-skeleton-content) > * {
@@ -69,7 +69,7 @@
   /* A size container only through its container prop, which names it. */
   :where([data-env-layout][data-env-container]) {
     container-type: inline-size;
-    container-name: var(--env-layout-container, none);
+    container-name: var(--_layout-container, none);
   }
   /* Gap and padding take the numbered steps of the spacing scale, which the compact scale shrinks. */
   :where([data-env-layout][data-gap='0']) {

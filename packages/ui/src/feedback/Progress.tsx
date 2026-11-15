@@ -71,7 +71,7 @@ export function Progress({
               key={step}
               className="env-progress-segment"
               style={{
-                '--env-progress-segment-fill': Math.min(Math.max(done * steps - step, 0), 1),
+                '--_progress-segment-fill': Math.min(Math.max(done * steps - step, 0), 1),
               }}
             />
           ))

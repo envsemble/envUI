@@ -1,7 +1,7 @@
 @layer env.components {
   /* How far the rows below an expanding or collapsing row are from where they go, which Tree sets
      and eases to 0; a length, so the rows glide and the group's end moves with them. */
-  @property --env-tree-shift {
+  @property --_tree-shift {
     syntax: '<length>';
     inherits: true;
     initial-value: 0;
@@ -11,10 +11,10 @@
      selection, which always reads stronger than the hover. */
   .env-tree {
     /* The density sets the rows' block padding around their content line. */
-    --env-tree-item-padding: var(--env-tree-row-padding-block-sm);
-    --env-tree-item-height: calc(var(--env-row-content-height) + 2 * var(--env-tree-item-padding));
-    --env-tree-indent: 0.75rem;
-    --env-tree-icon-size: var(--env-control-icon-size);
+    --_tree-item-padding: var(--env-tree-row-padding-block-sm);
+    --_tree-item-height: calc(var(--env-row-content-height) + 2 * var(--_tree-item-padding));
+    --_tree-indent: 0.75rem;
+    --_tree-icon-size: var(--env-control-icon-size);
     box-sizing: border-box;
     position: relative;
     block-size: 100%;
@@ -30,13 +30,13 @@
   }
   .env-tree[data-density='xs'] {
     /* Half the sm padding: 24 px rows in either scale. */
-    --env-tree-item-padding: calc(var(--env-tree-row-padding-block-sm) / 2);
+    --_tree-item-padding: calc(var(--env-tree-row-padding-block-sm) / 2);
   }
   .env-tree[data-density='md'] {
-    --env-tree-item-padding: var(--env-tree-row-padding-block-md);
+    --_tree-item-padding: var(--env-tree-row-padding-block-md);
   }
   .env-tree[data-density='lg'] {
-    --env-tree-item-padding: var(--env-tree-row-padding-block-lg);
+    --_tree-item-padding: var(--env-tree-row-padding-block-lg);
   }
   .env-tree-rows {
     position: relative;
@@ -56,18 +56,18 @@
     opacity: 0;
   }
   .env-tree-group ~ .env-tree-item {
-    translate: 0 var(--env-tree-shift);
+    translate: 0 var(--_tree-shift);
   }
   .env-tree-item {
     box-sizing: border-box;
     position: absolute;
     inset-block-start: 0;
     inset-inline: 0;
-    block-size: var(--env-tree-item-height);
+    block-size: var(--_tree-item-height);
     display: flex;
     align-items: center;
     gap: var(--env-space-1);
-    padding-inline: calc(var(--env-space-1) + var(--env-tree-depth, 0) * var(--env-tree-indent))
+    padding-inline: calc(var(--env-space-1) + var(--_tree-depth, 0) * var(--_tree-indent))
       var(--env-space-2);
     border-radius: var(--env-radius-sm);
     cursor: pointer;
@@ -114,8 +114,8 @@
     background: transparent;
   }
   .env-tree-chevron {
-    inline-size: var(--env-tree-icon-size);
-    block-size: var(--env-tree-icon-size);
+    inline-size: var(--_tree-icon-size);
+    block-size: var(--_tree-icon-size);
     flex: 0 0 auto;
     display: grid;
     place-items: center;
@@ -136,8 +136,8 @@
     transform: scaleX(-1) rotate(90deg);
   }
   .env-tree .env-tree-icon {
-    inline-size: var(--env-tree-icon-size);
-    block-size: var(--env-tree-icon-size);
+    inline-size: var(--_tree-icon-size);
+    block-size: var(--_tree-icon-size);
     color: var(--env-color-fg-muted);
   }
   .env-tree-item[aria-selected='true'] :is(.env-tree-icon, .env-tree-chevron) {
@@ -170,15 +170,15 @@
   }
   @media (pointer: coarse) {
     .env-tree {
-      --env-tree-item-height: max(
+      --_tree-item-height: max(
         var(--env-control-height-touch),
-        calc(var(--env-row-content-height) + 2 * var(--env-tree-item-padding))
+        calc(var(--env-row-content-height) + 2 * var(--_tree-item-padding))
       );
     }
   }
   @media (prefers-reduced-motion: no-preference) {
     .env-tree-rows {
-      transition: --env-tree-shift var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+      transition: --_tree-shift var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     }
     .env-tree-group {
       transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);

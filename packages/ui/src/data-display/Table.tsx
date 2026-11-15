@@ -127,7 +127,7 @@ const columnResize = optionModule(() => import('./internal/ColumnResizeHandle.js
 
 /**
  * Whether a stacking table's rows are stacked, as its container query on the region laid them
- * out: read from the table's --env-table-stacked once it is in the document, and again as the
+ * out: read from the table's --_table-stacked once it is in the document, and again as the
  * region or the table resizes. CSS decides the layout; this only reports it, so the server's
  * markup and the first paint already stack where the region is narrow.
  */
@@ -150,7 +150,7 @@ function useStacked(
       // A hidden region, such as one in a hidden tab panel, lays nothing out; it keeps its state
       // until it shows again.
       if (element.getClientRects().length === 0) return;
-      setStacked(getComputedStyle(grid).getPropertyValue('--env-table-stacked').trim() === '1');
+      setStacked(getComputedStyle(grid).getPropertyValue('--_table-stacked').trim() === '1');
     };
     read();
     if (typeof ResizeObserver === 'undefined') return;
@@ -226,7 +226,7 @@ function Root({
       data-stacked={flag(stacked)}
       // The container query compares the region with 37.5em, an em of stackBelow / 37.5: in a
       // query, em is the container's own.
-      style={stack ? { '--env-table-stack-below': remLength(stackBelow) } : undefined}
+      style={stack ? { '--_table-stack-below': remLength(stackBelow) } : undefined}
     >
       {inSkeleton(
         skeleton,

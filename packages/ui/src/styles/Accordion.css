@@ -4,8 +4,6 @@
      a plus at its start that is a minus while the section is open, and a title in medium weight; the
      panel below is muted text lined up with the title, not under the indicator. */
   .env-accordion {
-    --env-accordion-indicator-size: var(--env-icon-size-lg);
-    --env-accordion-gap: var(--env-space-3);
     display: flex;
     flex-direction: column;
     min-inline-size: 0;
@@ -21,7 +19,7 @@
     box-sizing: border-box;
     display: flex;
     align-items: flex-start;
-    gap: var(--env-accordion-gap);
+    gap: var(--env-space-3);
     inline-size: 100%;
     padding-block: var(--env-space-4);
     padding-inline: var(--env-space-2);
@@ -62,15 +60,15 @@
     /* The two icons share one cell, so one fades into the other. */
     display: inline-grid;
     place-items: center;
-    inline-size: var(--env-accordion-indicator-size);
+    inline-size: var(--env-icon-size-lg);
     block-size: 1lh;
     color: var(--env-color-fg-muted);
     transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-accordion-indicator > svg {
     grid-area: 1 / 1;
-    inline-size: var(--env-accordion-indicator-size);
-    block-size: var(--env-accordion-indicator-size);
+    inline-size: var(--env-icon-size-lg);
+    block-size: var(--env-icon-size-lg);
   }
   /* A plus while closed, a minus while open: one of the two icons shows, and the other fades out
      as it fades in. */
@@ -100,9 +98,7 @@
   }
   .env-accordion-content {
     padding-block-end: var(--env-space-4);
-    padding-inline: calc(
-        var(--env-space-2) + var(--env-accordion-indicator-size) + var(--env-accordion-gap)
-      )
+    padding-inline: calc(var(--env-space-2) + var(--env-icon-size-lg) + var(--env-space-3))
       var(--env-space-2);
     color: var(--env-color-fg-muted);
     font: var(--env-type-body);
@@ -150,8 +146,8 @@
 
   /* In a skeleton, a title given as undefined, as over a placeholder item, is a bar. */
   [data-env-skeleton] .env-accordion-label {
-    --env-skeleton-placeholder: inline-block;
-    --env-skeleton-length: 14rem;
+    --_skeleton-placeholder: inline-block;
+    --_skeleton-length: 14rem;
   }
   /* An accordion has no fill of its own, so as a skeleton it carries no tint (Skeleton.css): it
      would show a box that isn't there. */

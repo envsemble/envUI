@@ -4,8 +4,8 @@
      the columns stand close around the small numbers. Today is in the accent color, the chosen day a
      solid fill, and unavailable days take the disabled color, faded. Coarse pointers get touch-sized days. */
   .env-calendar {
-    --env-calendar-day: calc(var(--env-row-height) - 0.25rem);
-    inline-size: calc(7 * var(--env-calendar-day));
+    --_calendar-day: calc(var(--env-row-height) - 0.25rem);
+    inline-size: calc(7 * var(--_calendar-day));
     max-inline-size: 100%;
     color: var(--env-color-fg-default);
     font: var(--env-type-body-sm);
@@ -53,7 +53,7 @@
   /* Weeks stand a hair apart; the days of a week touch. */
   .env-calendar-day,
   .env-calendar-pad {
-    block-size: calc(var(--env-calendar-day) + var(--env-space-1) / 2);
+    block-size: calc(var(--_calendar-day) + var(--env-space-1) / 2);
     padding: 0;
     text-align: center;
     vertical-align: middle;
@@ -66,7 +66,7 @@
     box-sizing: border-box;
     display: grid;
     place-items: center;
-    inline-size: min(100%, var(--env-calendar-day));
+    inline-size: min(100%, var(--_calendar-day));
     aspect-ratio: 1;
     margin-inline: auto;
     border-radius: 50%;
@@ -115,7 +115,7 @@
   }
   @media (pointer: coarse) {
     .env-calendar {
-      --env-calendar-day: var(--env-control-height-touch);
+      --_calendar-day: var(--env-control-height-touch);
     }
   }
   @media (prefers-reduced-motion: reduce) {

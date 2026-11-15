@@ -19,23 +19,21 @@
      transparency and under forced colors, it has no shadow and its elevation edge returns. What it
      holds takes the fill as the color beneath it. */
   .env-surface.env-dialog {
-    --env-surface-color: var(--env-popup-fill);
-    --env-surface-muted-ground: ;
-    --env-dialog-edge: var(--env-popup-solid) var(--env-elevation-3-border);
-    border-color: var(--env-dialog-edge, var(--env-popup-frosted-edge, transparent));
+    --_surface-color: var(--_popup-fill);
+    --_surface-muted-ground: ;
+    --_dialog-edge: var(--_popup-solid) var(--env-elevation-3-border);
+    border-color: var(--_dialog-edge, var(--_popup-frosted-edge, transparent));
     box-shadow: var(--env-popup-shadow);
   }
   .env-dialog {
-    /* The positioner's inline gutters, as the popup's margins: the positioner is the env-window
-       container, so its content box stays as wide as the window. */
-    --env-dialog-gutters: calc(
-      max(var(--env-viewport-gutter), env(safe-area-inset-left)) +
-        max(var(--env-viewport-gutter), env(safe-area-inset-right))
+    width: min(
+      var(--env-dialog-width-md),
+      100% -
+        calc(
+          max(var(--env-viewport-gutter), env(safe-area-inset-left)) +
+            max(var(--env-viewport-gutter), env(safe-area-inset-right))
+        )
     );
-    /* The widths of a dialog, md by default and lg. */
-    --env-dialog-width-md: 28rem;
-    --env-dialog-width-lg: 44rem;
-    width: min(var(--env-dialog-width-md), 100% - var(--env-dialog-gutters));
     margin-left: max(var(--env-viewport-gutter), env(safe-area-inset-left));
     margin-right: max(var(--env-viewport-gutter), env(safe-area-inset-right));
     /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
@@ -43,7 +41,14 @@
     transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-dialog[data-width='lg'] {
-    width: min(var(--env-dialog-width-lg), 100% - var(--env-dialog-gutters));
+    width: min(
+      var(--env-dialog-width-lg),
+      100% -
+        calc(
+          max(var(--env-viewport-gutter), env(safe-area-inset-left)) +
+            max(var(--env-viewport-gutter), env(safe-area-inset-right))
+        )
+    );
   }
   .env-dialog-title,
   .env-dialog-description {
@@ -113,10 +118,10 @@
   .env-dialog-positioner[data-placement='top'] {
     place-items: start center;
     /* 12% of the window down, at most this far. */
-    --env-dialog-top-max: 6rem;
+    --_dialog-top-max: 6rem;
     padding-block-start: max(
       var(--env-viewport-gutter),
-      min(12vh, var(--env-dialog-top-max)),
+      min(12vh, var(--_dialog-top-max)),
       env(safe-area-inset-top)
     );
   }
@@ -142,13 +147,13 @@
     }
     .env-dialog[data-starting-style],
     .env-dialog[data-ending-style] {
-      --env-dialog-rise: 0.75rem;
-      transform: translateY(var(--env-dialog-rise)) scale(0.98);
+      --_dialog-rise: 0.75rem;
+      transform: translateY(var(--_dialog-rise)) scale(0.98);
     }
     .env-dialog[data-placement='top'][data-starting-style],
     .env-dialog[data-placement='top'][data-ending-style] {
-      --env-dialog-drop: -0.5rem;
-      transform: translateY(var(--env-dialog-drop)) scale(0.98);
+      --_dialog-drop: -0.5rem;
+      transform: translateY(var(--_dialog-drop)) scale(0.98);
     }
     .env-dialog[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);

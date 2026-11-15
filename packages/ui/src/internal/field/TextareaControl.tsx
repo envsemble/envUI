@@ -56,7 +56,7 @@ export function TextareaControl({
   // rows are the minimum line count in CSS. Without rows a field starts at the shared 7.5 rem.
   const sizingStyle =
     sizing === 'content' || rows !== undefined
-      ? { '--env-textarea-rows': rows ?? 2, ...style }
+      ? { '--_textarea-rows': rows ?? 2, ...style }
       : style;
   return (
     <>

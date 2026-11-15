@@ -221,8 +221,8 @@ export function Slider({
         }}
         className={classNames('env-slider', className)}
         style={{
-          '--env-slider-ticks': ticks,
-          '--env-slider-fraction': fractionOf(current, min, max),
+          '--_slider-ticks': ticks,
+          '--_slider-fraction': fractionOf(current, min, max),
           ...style,
         }}
         data-ticks={flag(ticks > 1)}
@@ -283,9 +283,9 @@ export function Slider({
 
 /**
  * Marks where the slider's indicators pass under the label or the value, within half a line of
- * either, so the stylesheet fades them there while they show. --env-slider-veil on the control is 1
+ * either, so the stylesheet fades them there while they show. --_slider-veil on the control is 1
  * where the end of the fill and the handle sit under the text, and 0 elsewhere. For the ticks,
- * --env-slider-clear-start and --env-slider-clear-end bound the stretch clear of the text, from the
+ * --_slider-clear-start and --_slider-clear-end bound the stretch clear of the text, from the
  * track's left side, physical as the ticks are, so that either direction works.
  */
 function veilIndicatorUnderText(control: HTMLElement) {
@@ -310,9 +310,9 @@ function veilIndicatorUnderText(control: HTMLElement) {
       clearStart = Math.max(clearStart, box.right + margin - span.left);
     else clearEnd = Math.min(clearEnd, box.left - margin - span.left);
   }
-  control.style.setProperty('--env-slider-veil', veiled ? '1' : '0');
-  control.style.setProperty('--env-slider-clear-start', `${clearStart}px`);
-  control.style.setProperty('--env-slider-clear-end', `${clearEnd}px`);
+  control.style.setProperty('--_slider-veil', veiled ? '1' : '0');
+  control.style.setProperty('--_slider-clear-start', `${clearStart}px`);
+  control.style.setProperty('--_slider-clear-end', `${clearEnd}px`);
 }
 
 /**

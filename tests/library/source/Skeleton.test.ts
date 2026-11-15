@@ -92,7 +92,7 @@ test('the style sheet draws text as bars, shapes and missing text, and pulses ge
   // Missing text is a bar only in the parts that turn it on.
   assert.match(
     css,
-    /\[data-env-skeleton\]:not\(env-none\) :empty::before \{[^}]*display: var\(--env-skeleton-placeholder\);/,
+    /\[data-env-skeleton\]:not\(env-none\) :empty::before \{[^}]*display: var\(--_skeleton-placeholder\);/,
   );
   // The pulse: a breath of 7.5 slow durations, 1.8 s, from the motion tokens, so tokens of 0s stop
   // it; slower and half as deep with a reduced-motion preference, and none in forced colors.
@@ -106,7 +106,7 @@ test('the style sheet draws text as bars, shapes and missing text, and pulses ge
     block('@media (prefers-reduced-motion: reduce)'),
     /animation: env-skeleton-pulse-reduced calc\(var\(--env-motion-duration-slow\) \* 13\.5\)\s+var\(--env-motion-ease\) infinite;/,
   );
-  assert.match(block('@keyframes env-skeleton-pulse-reduced'), /--env-skeleton-pulse: 0\.5;/);
+  assert.match(block('@keyframes env-skeleton-pulse-reduced'), /--_skeleton-pulse: 0\.5;/);
   assert.match(block('@media (forced-colors: active)'), /animation: none;/);
   // Its keyframes are plain values: Firefox doesn't interpolate a registered custom property
   // between keyframes that use var().

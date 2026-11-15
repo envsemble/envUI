@@ -5,36 +5,36 @@
      not the file's. */
   .env-graphic {
     /* By default, the icon size of the slot it sits in, such as a button's, else a control's. */
-    --env-graphic-size: var(--env-icon-size, var(--env-control-icon-size));
+    --_graphic-size: var(--_icon-size, var(--env-control-icon-size));
     display: inline-grid;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     place-items: center;
     flex: none;
     box-sizing: border-box;
-    inline-size: var(--env-graphic-size);
-    block-size: var(--env-graphic-size);
+    inline-size: var(--_graphic-size);
+    block-size: var(--_graphic-size);
     vertical-align: middle;
   }
   /* The text step is the text's own size, centered on its lowercase letters as an icon in a line of
      text sits. */
   .env-graphic[data-size='text'] {
     /* stylelint-disable-next-line unit-disallowed-list -- the step follows the text's own size */
-    --env-graphic-size: 1em;
+    --_graphic-size: 1em;
     /* stylelint-disable-next-line unit-disallowed-list -- an offset that follows the text's size */
     vertical-align: -0.125em;
   }
   /* Avatar's sizes, from the same tokens. */
   .env-graphic[data-size='sm'] {
-    --env-graphic-size: var(--env-picture-size-sm);
+    --_graphic-size: var(--env-picture-size-sm);
   }
   .env-graphic[data-size='md'] {
-    --env-graphic-size: var(--env-picture-size-md);
+    --_graphic-size: var(--env-picture-size-md);
   }
   .env-graphic[data-size='lg'] {
-    --env-graphic-size: var(--env-picture-size-lg);
+    --_graphic-size: var(--env-picture-size-lg);
   }
   .env-graphic[data-size='xl'] {
-    --env-graphic-size: var(--env-picture-size-xl);
+    --_graphic-size: var(--env-picture-size-xl);
   }
   /* Fill is a block of its container's width, and of its height where the container has a
      definite one; where it has none, the height comes from the aspect, or from an img's own shape. A
@@ -104,8 +104,8 @@
   [data-env-skeleton] .env-graphic {
     forced-color-adjust: none;
     border-radius: var(--env-radius-sm);
-    --env-skeleton-shape: 1;
-    background: var(--env-skeleton-paint);
+    --_skeleton-shape: 1;
+    background: var(--_skeleton-paint);
   }
   [data-env-skeleton] .env-graphic * {
     visibility: hidden;

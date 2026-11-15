@@ -3,9 +3,6 @@
      more rows where they are wider than the editor, so every button stays in view, and the status
      line under the field, out of sight while it is empty. */
   .env-editor-toolbar {
-    /* What leads a group after the first: its separator, the separator's margins and the group's
-       gap (Toolbar.css). */
-    --env-editor-toolbar-lead: calc(3 * var(--env-space-1) + var(--env-control-border-width));
     min-inline-size: 0;
     /* Room for the buttons' focus rings, whose ring and offset are a space step, while the buttons
        line up with the field. What lies further out, the separator a row starts with, is cut off. */
@@ -18,17 +15,17 @@
      has it out of view, and a row never ends with one. */
   .env-editor-toolbar > .env-toolbar {
     flex-wrap: wrap;
-    margin-inline-start: calc(-1 * var(--env-editor-toolbar-lead));
+    margin-inline-start: calc(-1 * calc(3 * var(--env-space-1) + var(--env-control-border-width)));
   }
   .env-editor-toolbar > .env-toolbar > .env-toolbar-group:first-child {
-    margin-inline-start: var(--env-editor-toolbar-lead);
+    margin-inline-start: calc(3 * var(--env-space-1) + var(--env-control-border-width));
   }
   .env-editor-status:empty {
     /* Visually hidden: a pixel's box, clipped away, still read. */
-    --env-editor-status-size: 0.0625rem;
+    --_editor-status-size: 0.0625rem;
     position: absolute;
-    inline-size: var(--env-editor-status-size);
-    block-size: var(--env-editor-status-size);
+    inline-size: var(--_editor-status-size);
+    block-size: var(--_editor-status-size);
     clip-path: inset(50%);
     overflow: hidden;
   }

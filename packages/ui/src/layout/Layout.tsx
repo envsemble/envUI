@@ -180,7 +180,7 @@ export function Grid<RenderedElement extends HTMLElement = HTMLDivElement>({
       'grid',
       props,
       { 'data-columns': flag(columns !== undefined) },
-      columns === undefined ? {} : { '--env-grid-columns': gridTemplate(columns) },
+      columns === undefined ? {} : { '--_grid-columns': gridTemplate(columns) },
     ),
   );
 }

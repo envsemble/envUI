@@ -4,9 +4,9 @@
      in envUI's type, spaced as a document. */
   .env-prose {
     /* The lists' rhythm and markers (below): private, so they may change in any release. */
-    --env-prose-list-item-gap: var(--env-space-4);
-    --env-prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
-    --env-prose-list-marker-gap: var(--env-space-2);
+    --_prose-list-item-gap: var(--env-space-4);
+    --_prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
+    --_prose-list-marker-gap: var(--env-space-2);
     min-inline-size: 0;
     font: var(--env-type-body);
     color: var(--env-color-fg-default);
@@ -80,35 +80,33 @@
      A nested list steps down quietly: closer items, a smaller spark in the muted color, letters for
      numbers. Task lists keep their checkboxes (Markdown.css, RichText.css).
      The bullet is each item's ::after, masked to the spark (assets/marks/spark.svg).
-     --env-prose-list-marker-fill sets a circle behind it, and --env-prose-list-mark-color its color.
+     --_prose-list-marker-fill sets a circle behind it, and --_prose-list-mark-color its color.
      Both stay private. */
   .env-prose :where(ul, ol) {
     padding-inline-start: 0;
     list-style: none;
   }
   .env-prose :where(li + li) {
-    margin-block-start: var(--env-prose-list-item-gap);
+    margin-block-start: var(--_prose-list-item-gap);
   }
   .env-prose :where(li) > :where(ul, ol) {
-    --env-prose-list-item-gap: var(--env-space-2);
+    --_prose-list-item-gap: var(--env-space-2);
     margin-block-start: var(--env-space-2);
   }
   .env-prose :where(ul:not(.contains-task-list, [data-type='taskList']), ol) > :where(li) {
     position: relative;
-    padding-inline-start: calc(
-      var(--env-prose-list-marker-size) + var(--env-prose-list-marker-gap)
-    );
+    padding-inline-start: calc(var(--_prose-list-marker-size) + var(--_prose-list-marker-gap));
   }
   /* The circle behind a bullet, where a fill is set; none by default. Its line height is the item's,
      so 1lh is the item's first line. */
   .env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li)::before {
     position: absolute;
-    inset-block-start: calc((1lh - var(--env-prose-list-marker-size)) / 2);
+    inset-block-start: calc((1lh - var(--_prose-list-marker-size)) / 2);
     inset-inline-start: 0;
-    inline-size: var(--env-prose-list-marker-size);
-    block-size: var(--env-prose-list-marker-size);
+    inline-size: var(--_prose-list-marker-size);
+    block-size: var(--_prose-list-marker-size);
     border-radius: var(--env-radius-full);
-    background-color: var(--env-prose-list-marker-fill, transparent);
+    background-color: var(--_prose-list-marker-fill, transparent);
     content: '';
   }
   /* An ordered item's number, or a letter one level in, ending at the marker column's end and
@@ -116,7 +114,7 @@
   .env-prose :where(ol > li)::before {
     position: absolute;
     inset-block-start: 0;
-    inset-inline-end: calc(100% - var(--env-prose-list-marker-size));
+    inset-inline-end: calc(100% - var(--_prose-list-marker-size));
     color: var(--env-color-fg-muted);
     font-variant-numeric: tabular-nums;
     content: counter(list-item) '.';
@@ -126,16 +124,14 @@
   }
   /* A bullet's mark, in the middle of the marker column. */
   .env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li)::after {
-    --env-prose-list-mark-box: 0.5625rem;
+    --_prose-list-mark-box: 0.5625rem;
     position: absolute;
-    inset-block-start: calc((1lh - var(--env-prose-list-mark-box)) / 2);
-    inset-inline-start: calc(
-      (var(--env-prose-list-marker-size) - var(--env-prose-list-mark-box)) / 2
-    );
-    inline-size: var(--env-prose-list-mark-box);
-    block-size: var(--env-prose-list-mark-box);
+    inset-block-start: calc((1lh - var(--_prose-list-mark-box)) / 2);
+    inset-inline-start: calc((var(--_prose-list-marker-size) - var(--_prose-list-mark-box)) / 2);
+    inline-size: var(--_prose-list-mark-box);
+    block-size: var(--_prose-list-mark-box);
     border-radius: var(--env-radius-full);
-    background-color: var(--env-prose-list-mark-color, var(--env-color-fg-default));
+    background-color: var(--_prose-list-mark-color, var(--env-color-fg-default));
     mask: url('../assets/marks/spark.svg') center / contain no-repeat;
     content: '';
   }
@@ -145,7 +141,7 @@
     background-color: transparent;
   }
   .env-prose :where(li ul:not(.contains-task-list, [data-type='taskList']) > li)::after {
-    --env-prose-list-mark-box: 0.4375rem;
+    --_prose-list-mark-box: 0.4375rem;
     background-color: var(--env-color-fg-muted);
     mask: url('../assets/marks/spark.svg') center / contain no-repeat;
   }
@@ -178,7 +174,7 @@
   /* Words in a cell break only where they would overflow it, so a column keeps room for its longest
      word; inline code there does the same through its hook. */
   .env-prose :where(th, td) {
-    --env-code-overflow-wrap: break-word;
+    --_code-overflow-wrap: break-word;
     padding: var(--env-space-3) var(--env-space-4);
     border-block-end: 1px solid var(--env-color-border-muted);
     overflow-wrap: break-word;

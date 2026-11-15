@@ -256,7 +256,7 @@ body:has(> #root > .env-theme > .env-scaffold) {
   block-size: 24rem;
 }
 .fixture-dock-wider-open .env-panel-dock-panel[data-mode='open'] {
-  --env-panel-dock-panel-min-width: 420px;
+  --_panel-dock-panel-min-width: 420px;
 }
 /* Wide enough for one panel at its minimum width, not two, without stacking. */
 .fixture-dock-single {

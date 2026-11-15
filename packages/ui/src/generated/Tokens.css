@@ -195,6 +195,8 @@
   --env-control-height-touch: 2.75rem;
   --env-control-icon-size: 1rem;
   --env-control-target-min: 1.5rem;
+  --env-dialog-width-lg: 44rem;
+  --env-dialog-width-md: 28rem;
   --env-elevation-0-border: transparent;
   --env-elevation-1-border: #b1b1b4;
   --env-elevation-2-border: #b1b1b4;
@@ -221,6 +223,14 @@
   --env-motion-ease: cubic-bezier(0.45, 0, 0.2, 1);
   --env-motion-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
   --env-motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --env-navigation-drawer-width: 17.5rem;
+  --env-navigation-rail-width: 5rem;
+  --env-page-gutter: var(--env-space-4);
+  --env-page-width-lg: 76rem;
+  --env-page-width-md: 60rem;
+  --env-page-width-sm: 40rem;
+  --env-panes-other-min: 16rem;
+  --env-panes-size: 22.5rem;
   --env-picture-size-lg: 3rem;
   --env-picture-size-md: 2rem;
   --env-picture-size-sm: 1.5rem;
@@ -242,6 +252,8 @@
   --env-row-padding-block-sm: 0.25rem;
   --env-row-padding-block-xs: 0.125rem;
   --env-row-padding-inline: 1.5rem;
+  --env-sheet-width-lg: 44rem;
+  --env-sheet-width-md: 24rem;
   --env-space-1: 0.25rem;
   --env-space-2: 0.5rem;
   --env-space-3: 0.75rem;

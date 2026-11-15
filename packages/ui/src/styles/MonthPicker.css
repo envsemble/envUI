@@ -4,7 +4,7 @@
      is in the accent color, the chosen month a solid fill, and unavailable months are faded. Coarse
      pointers get touch-tall months. */
   .env-month-picker-year {
-    --env-month-picker-row: var(--env-control-height-md);
+    --_month-picker-row: var(--env-control-height-md);
     inline-size: calc(7 * var(--env-row-height));
     max-inline-size: 100%;
     color: var(--env-color-fg-default);
@@ -39,7 +39,7 @@
     border-spacing: 0;
   }
   .env-month-picker-month {
-    block-size: calc(var(--env-month-picker-row) + var(--env-space-2));
+    block-size: calc(var(--_month-picker-row) + var(--env-space-2));
     padding: 0;
     text-align: center;
     vertical-align: middle;
@@ -51,7 +51,7 @@
     display: grid;
     place-items: center;
     inline-size: calc(100% - var(--env-space-2));
-    block-size: var(--env-month-picker-row);
+    block-size: var(--_month-picker-row);
     margin-inline: auto;
     padding-inline: var(--env-space-1);
     border-radius: var(--env-radius-full);
@@ -100,7 +100,7 @@
   }
   @media (pointer: coarse) {
     .env-month-picker-year {
-      --env-month-picker-row: var(--env-control-height-touch);
+      --_month-picker-row: var(--env-control-height-touch);
     }
   }
   @media (prefers-reduced-motion: reduce) {

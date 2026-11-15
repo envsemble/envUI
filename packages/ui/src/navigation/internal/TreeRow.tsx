@@ -49,7 +49,7 @@ export function TreeRow({
       data-highlighted={flag(!leaving && highlighted)}
       data-starting-style={flag(arriving)}
       style={{
-        '--env-tree-depth': item.depth,
+        '--_tree-depth': item.depth,
         transform: `translateY(${top}px)`,
       }}
     >
@@ -119,7 +119,7 @@ export function placeRows<Item extends TreeItem>({
         data-ending-style={flag(kind === 'close' && moving)}
         style={{
           transform: `translateY(${start * rowHeight}px)`,
-          blockSize: `calc(${kind === 'open' ? size * rowHeight : 0}px + var(--env-tree-shift))`,
+          blockSize: `calc(${kind === 'open' ? size * rowHeight : 0}px + var(--_tree-shift))`,
         }}
       >
         {groupRows.map((item, offset) =>

@@ -19,8 +19,8 @@
   }
   .env-meter-track,
   .env-progress-track {
-    --env-meter-track-height: 0.625rem;
-    block-size: var(--env-meter-track-height);
+    --_meter-track-height: 0.625rem;
+    block-size: var(--_meter-track-height);
     overflow: hidden;
     border-radius: var(--env-radius-full);
     /* The neutral fill, the track a Slider draws, so empty steps still show on a dark panel, light
@@ -77,7 +77,7 @@
   .env-progress-segment::before {
     content: '';
     display: block;
-    inline-size: calc(var(--env-progress-segment-fill, 0) * 100%);
+    inline-size: calc(var(--_progress-segment-fill, 0) * 100%);
     block-size: 100%;
     border-radius: inherit;
     background: var(--env-color-bg-primary-emphasis);
@@ -136,8 +136,8 @@
   /* In a skeleton, a meter's or a progress bar's track is a bar of the skeleton's color, with no
      value in it. */
   [data-env-skeleton] :is(.env-meter-track, .env-progress-track, .env-progress-segment) {
-    --env-skeleton-shape: 1;
-    background: var(--env-skeleton-paint);
+    --_skeleton-shape: 1;
+    background: var(--_skeleton-paint);
     box-shadow: none;
   }
   [data-env-skeleton] :is(.env-meter-indicator, .env-progress-indicator),

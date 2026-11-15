@@ -157,7 +157,7 @@ test('Page renders invisible structure with its width, and its header above its 
   // Its gutter follows the window class of the region it sits in, compact first.
   const css = sheet('Page.css');
   assert.match(css, /container: env-page \/ inline-size;/);
-  assert.match(css, /--env-page-gutter: var\(--env-space-4\);/);
+  assert.match(css, /--env-page-gutter: var\(--_theme-page-gutter\);/);
   assert.match(
     css,
     /@container \(width >= 37\.5rem\) \{\s*\.env-page \{\s*--env-page-gutter: var\(--env-space-5\);/,

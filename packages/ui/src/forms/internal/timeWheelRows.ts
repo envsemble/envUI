@@ -15,7 +15,7 @@ export interface Entry {
   keys: string[];
 }
 
-/** The rows a wheel shows, --env-time-list-rows in TimeList.css. */
+/** The rows a wheel shows, --_time-list-rows in TimeList.css. */
 export const shownRows = 5;
 
 /** How many times a looping wheel repeats its entries: enough rows to scroll on in both ways. */

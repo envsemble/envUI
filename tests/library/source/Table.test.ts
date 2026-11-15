@@ -83,7 +83,7 @@ test('a table named by aria-labelledby names its scroll region too, and its stri
 
 test('stackBelow is the length the region compares, a bare number in rem', () => {
   const threshold = (stackBelow) =>
-    /--env-table-stack-below:([^;]+)/.exec(
+    /--_table-stack-below:([^;]+)/.exec(
       render(h(Table.Root, { 'aria-label': 'Stacking', narrowLayout: 'stack', stackBelow }))
         .attributes.style,
     )?.[1];

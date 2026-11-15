@@ -233,8 +233,8 @@ export function Composer({
       gap={2}
       className={classNames('env-composer', className)}
       style={{
-        '--env-composer-min-rows': rows,
-        '--env-composer-max-rows': maximumRows,
+        '--_composer-min-rows': rows,
+        '--_composer-max-rows': maximumRows,
         ...style,
       }}
       data-running={flag(running)}

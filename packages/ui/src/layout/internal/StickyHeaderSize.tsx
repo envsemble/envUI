@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef } from 'react';
 
 /**
- * Inside a sticky PageHeader: publishes the header's height as `--env-page-header-block-size` on
+ * Inside a sticky PageHeader: publishes the header's height as `--_page-header-block-size` on
  * its Page, so what scrolls into view below it keeps clear of it, also where its title wraps over
  * more lines than Page.css reckons with. Until it runs, as in the server's markup, Page.css
  * reckons the height from the header's rows. It also marks the header data-scrolled while the
@@ -36,7 +36,7 @@ export function StickyHeaderSize() {
     const page = header.parentElement;
     // Only a Page's own header publishes its height: Page marks itself as a layout.
     const publish = () =>
-      page?.style.setProperty('--env-page-header-block-size', `${header.offsetHeight}px`);
+      page?.style.setProperty('--_page-header-block-size', `${header.offsetHeight}px`);
     const ownPage = page?.getAttribute('data-env-layout') === 'page';
     if (ownPage) publish();
     const observer = new ResizeObserver(() => {
@@ -50,7 +50,7 @@ export function StickyHeaderSize() {
       view.removeEventListener('resize', schedule);
       observer.disconnect();
       header.removeAttribute('data-scrolled');
-      if (ownPage) page?.style.removeProperty('--env-page-header-block-size');
+      if (ownPage) page?.style.removeProperty('--_page-header-block-size');
     };
   }, []);
   return <span ref={marker} hidden />;

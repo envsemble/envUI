@@ -5,20 +5,17 @@
      dock fills its positioned container and lets presses through around its panels. State attributes
      come from PanelDock. */
   .env-panel-dock {
-    --env-panel-dock-gap: var(--env-space-2);
-    /* Room around the row and the strip, between the panels and the region's edges. */
-    --env-panel-dock-gutter: var(--env-space-5);
-    --env-panel-dock-tab-height: var(--env-control-height-sm);
+    --_panel-dock-tab-height: var(--env-control-height-sm);
     /* The height of the header's small controls, which a coarse pointer raises to the touch height. */
-    --env-panel-dock-control: var(--env-control-height-sm);
+    --_panel-dock-control: var(--env-control-height-sm);
     /* The strip's height while there are tabs: the room a panel filling the region leaves below it,
        and the room open panels' content keeps clear at its end. */
-    --env-panel-dock-strip-size: 0rem;
+    --_panel-dock-strip-size: 0rem;
     /* The dock is the env-panel-dock container, and its font size is stackBelow / 37.5, so 37.5em in
        its queries is stackBelow (em in a container query is the container's own; panels and tabs set
        their own text). */
     container: env-panel-dock / inline-size;
-    font-size: calc(var(--env-panel-dock-stack-below) / 37.5);
+    font-size: calc(var(--_panel-dock-stack-below) / 37.5);
     position: absolute;
     inset: 0;
     z-index: calc(var(--env-z-sticky) - 1);
@@ -26,7 +23,7 @@
     pointer-events: none;
   }
   .env-panel-dock[data-tabs] {
-    --env-panel-dock-strip-size: calc(var(--env-panel-dock-tab-height) + var(--env-space-2));
+    --_panel-dock-strip-size: calc(var(--_panel-dock-tab-height) + var(--env-space-2));
   }
   /* While a panel fills the region, the dock covers what lies beneath it, also around the tabs. */
   .env-panel-dock[data-filled] {
@@ -37,9 +34,9 @@
   /* The row never positions, transforms or contains its panels, so a maximized panel inside it fills
      the dock instead of the row, and does not scroll with it. */
   .env-panel-dock-row {
-    gap: var(--env-panel-dock-gap);
+    gap: var(--env-space-2);
     min-block-size: 0;
-    padding: var(--env-panel-dock-gutter) var(--env-panel-dock-gutter) 0;
+    padding: var(--env-space-5) var(--env-space-5) 0;
     overflow-x: auto;
     overflow-y: hidden;
     overscroll-behavior-x: contain;
@@ -51,7 +48,7 @@
   .env-panel-dock-strip::before {
     content: '';
     flex: 1 0 0;
-    margin-inline-end: calc(-1 * var(--env-panel-dock-gap));
+    margin-inline-end: calc(-1 * var(--env-space-2));
   }
   /* An overflowing row takes the pointer, so its scrollbar works. */
   .env-panel-dock-row[data-overflowing] {
@@ -60,7 +57,7 @@
   /* Open panels above a maximized one keep its header's first row in view. */
   .env-panel-dock[data-filled]:not([data-stacked]) > .env-panel-dock-row {
     padding-block-start: calc(
-      var(--env-panel-dock-control) + 2 * var(--env-space-3) + var(--env-space-2)
+      var(--_panel-dock-control) + 2 * var(--env-space-3) + var(--env-space-2)
     );
   }
 
@@ -68,30 +65,24 @@
      the bottom edge. It shares the row with its preferred width and shrinks toward its minimum width
      when the row runs out of room. */
   .env-panel-dock-panel {
-    --env-panel-dock-panel-color: var(--env-color-bg-raised);
+    --_panel-dock-panel-color: var(--env-color-bg-raised);
     /* A panel's sizes until it sets its own: its preferred width, the narrowest and widest it
        takes, and its height. */
-    --env-panel-dock-panel-default-width: 32rem;
-    --env-panel-dock-panel-default-min-width: 20rem;
-    --env-panel-dock-panel-default-max-width: 48rem;
-    --env-panel-dock-panel-default-height: 28rem;
+    --_panel-dock-panel-default-width: 32rem;
+    --_panel-dock-panel-default-min-width: 20rem;
+    --_panel-dock-panel-default-max-width: 48rem;
+    --_panel-dock-panel-default-height: 28rem;
     position: relative;
     z-index: var(--env-z-raised);
-    flex: 0 1 var(--env-panel-dock-panel-width, var(--env-panel-dock-panel-default-width));
-    min-inline-size: var(
-      --env-panel-dock-panel-min-width,
-      var(--env-panel-dock-panel-default-min-width)
-    );
-    max-inline-size: var(
-      --env-panel-dock-panel-max-width,
-      var(--env-panel-dock-panel-default-max-width)
-    );
-    block-size: var(--env-panel-dock-panel-height, var(--env-panel-dock-panel-default-height));
+    flex: 0 1 var(--_panel-dock-panel-width, var(--_panel-dock-panel-default-width));
+    min-inline-size: var(--_panel-dock-panel-min-width, var(--_panel-dock-panel-default-min-width));
+    max-inline-size: var(--_panel-dock-panel-max-width, var(--_panel-dock-panel-default-max-width));
+    block-size: var(--_panel-dock-panel-height, var(--_panel-dock-panel-default-height));
     border: 1px solid var(--env-elevation-2-border);
     border-block-end: 0;
     border-start-start-radius: var(--env-radius-surface);
     border-start-end-radius: var(--env-radius-surface);
-    background: var(--env-panel-dock-panel-color);
+    background: var(--_panel-dock-panel-color);
     color: var(--env-color-fg-default);
     font: var(--env-type-body);
     overflow-wrap: break-word;
@@ -113,7 +104,7 @@
      behind the open panels. */
   .env-panel-dock-panel[data-placement='fill'] {
     position: absolute;
-    inset: 0 0 var(--env-panel-dock-strip-size);
+    inset: 0 0 var(--_panel-dock-strip-size);
     z-index: var(--env-z-base);
     min-inline-size: 0;
     max-inline-size: none;
@@ -128,10 +119,7 @@
     inset-block-end: 0;
     inset-inline-end: 0;
     z-index: calc(var(--env-z-base) - 1);
-    inline-size: min(
-      var(--env-panel-dock-panel-width, var(--env-panel-dock-panel-default-width)),
-      100%
-    );
+    inline-size: min(var(--_panel-dock-panel-width, var(--_panel-dock-panel-default-width)), 100%);
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
@@ -146,9 +134,9 @@
     flex-direction: column;
     overflow: auto;
     overscroll-behavior-block: contain;
-    --env-panel-dock-no-header: 0rem;
+    --_panel-dock-no-header: 0rem;
     scroll-padding-block-start: calc(
-      var(--env-panel-dock-header-size, var(--env-panel-dock-no-header)) + var(--env-space-2)
+      var(--_panel-dock-header-size, var(--_panel-dock-no-header)) + var(--env-space-2)
     );
     border-start-start-radius: inherit;
     border-start-end-radius: inherit;
@@ -158,33 +146,33 @@
      the tabs' height clear at its end, so its last lines and actions scroll out from beneath them, and
      content that fills the panel ends above them; content shorter than the panel doesn't move. */
   .env-panel-dock-panel[data-placement='row'] > .env-panel-dock-content {
-    padding-block-end: var(--env-panel-dock-strip-size);
-    scroll-padding-block-end: calc(var(--env-panel-dock-strip-size) + var(--env-space-2));
+    padding-block-end: var(--_panel-dock-strip-size);
+    scroll-padding-block-end: calc(var(--_panel-dock-strip-size) + var(--env-space-2));
   }
   /* The top edge resizes an open panel. It reaches a little above the panel, between its rounded
      corners; a short bar shows on hover and takes the focus color with the keyboard and while
      dragging. */
   .env-panel-dock-resize-handle {
     /* The band the pointer finds, half of it above the panel, wider under a coarse pointer. */
-    --env-panel-dock-resize-band: 0.75rem;
+    --_panel-dock-resize-band: 0.75rem;
     position: absolute;
-    inset-block-start: calc(var(--env-panel-dock-resize-band) / -2);
+    inset-block-start: calc(var(--_panel-dock-resize-band) / -2);
     inset-inline: var(--env-radius-surface);
     z-index: calc(var(--env-z-raised) + 1);
-    block-size: var(--env-panel-dock-resize-band);
+    block-size: var(--_panel-dock-resize-band);
     cursor: ns-resize;
     touch-action: none;
     outline: none;
   }
   .env-panel-dock-resize-handle::after {
     /* The bar, centred, a little below the panel's edge. */
-    --env-panel-dock-resize-bar-top: 0.5rem;
-    --env-panel-dock-resize-bar-width: 2.5rem;
+    --_panel-dock-resize-bar-top: 0.5rem;
+    --_panel-dock-resize-bar-width: 2.5rem;
     content: '';
     position: absolute;
-    inset-block-start: var(--env-panel-dock-resize-bar-top);
-    inset-inline-start: calc(50% - var(--env-panel-dock-resize-bar-width) / 2);
-    inline-size: var(--env-panel-dock-resize-bar-width);
+    inset-block-start: var(--_panel-dock-resize-bar-top);
+    inset-inline-start: calc(50% - var(--_panel-dock-resize-bar-width) / 2);
+    inline-size: var(--_panel-dock-resize-bar-width);
     block-size: var(--env-space-1);
     border-radius: var(--env-radius-full);
     background: var(--env-color-border-muted);
@@ -230,14 +218,14 @@
     row-gap: var(--env-space-2);
     padding-block: var(--env-space-3);
     padding-inline: var(--env-space-5) var(--env-space-3);
-    background: var(--env-panel-dock-panel-color, var(--env-color-bg-raised));
+    background: var(--_panel-dock-panel-color, var(--env-color-bg-raised));
     color: var(--env-color-fg-default);
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-panel-dock-heading {
     /* The title's least room before the actions wrap below it. */
-    --env-panel-dock-heading-min-width: 10rem;
-    flex: 1 1 var(--env-panel-dock-heading-min-width);
+    --_panel-dock-heading-min-width: 10rem;
+    flex: 1 1 var(--_panel-dock-heading-min-width);
     gap: calc(var(--env-space-1) / 2);
     /* Long words break only where they would overflow the line. */
     overflow-wrap: break-word;
@@ -245,12 +233,12 @@
   /* The first line of the title lines up with the small controls beside it. */
   .env-panel-dock-title {
     /* Half of what the controls are taller than its line, or none where they are not. */
-    --env-panel-dock-title-inset: max(
+    --_panel-dock-title-inset: max(
       0rem,
-      calc((var(--env-panel-dock-control) - var(--env-type-headline-line-height)) / 2)
+      calc((var(--_panel-dock-control) - var(--env-type-headline-line-height)) / 2)
     );
     margin: 0;
-    padding-block-start: var(--env-panel-dock-title-inset);
+    padding-block-start: var(--_panel-dock-title-inset);
     font: var(--env-type-headline);
     letter-spacing: var(--env-type-headline-letter-spacing);
     overflow-wrap: break-word;
@@ -292,9 +280,9 @@
     inset-inline: 0;
     inset-block-end: 0;
     z-index: calc(var(--env-z-raised) + 2);
-    gap: var(--env-panel-dock-gap);
+    gap: var(--env-space-2);
     margin: 0;
-    padding: var(--env-space-2) var(--env-panel-dock-gutter) 0;
+    padding: var(--env-space-2) var(--env-space-5) 0;
     list-style: none;
     overflow-x: auto;
     overflow-y: hidden;
@@ -306,10 +294,10 @@
   }
   .env-panel-dock-tab {
     /* A long title ends in an ellipsis past this width. */
-    --env-panel-dock-tab-max-width: 14rem;
+    --_panel-dock-tab-max-width: 14rem;
     flex: 0 0 auto;
-    max-inline-size: var(--env-panel-dock-tab-max-width);
-    block-size: var(--env-panel-dock-tab-height);
+    max-inline-size: var(--_panel-dock-tab-max-width);
+    block-size: var(--_panel-dock-tab-height);
     border: 1px solid var(--env-elevation-2-border);
     border-block-end: 0;
     border-start-start-radius: var(--env-radius-sm);
@@ -358,9 +346,9 @@
   /* The attention dot, such as for unsaved changes, follows the label. */
   .env-panel-dock-tab-attention {
     flex: 0 0 auto;
-    --env-panel-dock-attention-size: 0.5rem;
-    inline-size: var(--env-panel-dock-attention-size);
-    block-size: var(--env-panel-dock-attention-size);
+    --_panel-dock-attention-size: 0.5rem;
+    inline-size: var(--_panel-dock-attention-size);
+    block-size: var(--_panel-dock-attention-size);
     border-radius: 50%;
     background: var(--env-color-fg-primary);
   }
@@ -407,10 +395,10 @@
       inline-size: 100%;
     }
     .env-panel-dock[data-env-ssr-pending] > .env-panel-dock-row {
-      --env-panel-dock-strip-size: 0rem;
+      --_panel-dock-strip-size: 0rem;
     }
     .env-panel-dock[data-env-ssr-tabs] > .env-panel-dock-row {
-      --env-panel-dock-strip-size: calc(var(--env-panel-dock-tab-height) + var(--env-space-2));
+      --_panel-dock-strip-size: calc(var(--_panel-dock-tab-height) + var(--env-space-2));
     }
     /* The panel that fills the region covers it above the tabs; the strip covers the rest. */
     .env-panel-dock[data-env-ssr-filled] > .env-panel-dock-strip {
@@ -424,7 +412,7 @@
     }
     .env-panel-dock-panel[data-env-ssr-placement='fill'] {
       position: absolute;
-      inset: 0 0 var(--env-panel-dock-strip-size);
+      inset: 0 0 var(--_panel-dock-strip-size);
       z-index: var(--env-z-base);
       min-inline-size: 0;
       max-inline-size: none;
@@ -453,19 +441,19 @@
     /* Tabs are rows of the strip, which grow to the touch height. */
     .env-panel-dock {
       /* A tab holds its buttons at the touch height inside its top hairline. */
-      --env-panel-dock-tab-height: calc(
+      --_panel-dock-tab-height: calc(
         max(var(--env-control-height-sm), var(--env-control-height-touch)) +
           var(--env-control-border-width)
       );
       /* The header's controls grow to the touch height, as every button does. */
-      --env-panel-dock-control: max(var(--env-control-height-sm), var(--env-control-height-touch));
+      --_panel-dock-control: max(var(--env-control-height-sm), var(--env-control-height-touch));
     }
     /* A finger reaches the top edge across a larger band, and the bar always shows. */
     .env-panel-dock-resize-handle {
-      --env-panel-dock-resize-band: 1.5rem;
+      --_panel-dock-resize-band: 1.5rem;
     }
     .env-panel-dock-resize-handle::after {
-      --env-panel-dock-resize-bar-top: 0.875rem;
+      --_panel-dock-resize-bar-top: 0.875rem;
       opacity: 1;
     }
     .env-panel-dock-tab-close {

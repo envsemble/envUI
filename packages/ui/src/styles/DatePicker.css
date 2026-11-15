@@ -10,10 +10,10 @@
      minimum width keeps the field from shrinking under 12rem in a row with room for it; alone, it
      counts as nothing while a container measures its content. */
   .env-date-picker {
-    --env-field-height: max(var(--env-control-height), var(--env-text-field-least, 0rem));
-    --env-date-picker-min-width: 12rem;
-    min-inline-size: min(var(--env-date-picker-min-width), 100%);
-    grid-template-columns: minmax(0, var(--env-date-picker-min-width)) minmax(0, 1fr);
+    --_field-height: max(var(--env-control-height), var(--_text-field-least, 0rem));
+    --_date-picker-min-width: 12rem;
+    min-inline-size: min(var(--_date-picker-min-width), 100%);
+    grid-template-columns: minmax(0, var(--_date-picker-min-width)) minmax(0, 1fr);
     column-gap: 0;
   }
   .env-date-picker > * {
@@ -21,28 +21,27 @@
   }
   @media (pointer: coarse) {
     .env-date-picker {
-      --env-field-height: max(var(--env-control-height), var(--env-control-height-touch));
+      --_field-height: max(var(--env-control-height), var(--env-control-height-touch));
     }
   }
   /* The actions at the end are as tall as the field's own icon buttons, a little less than the
      field. */
   .env-date-picker .env-date-picker-control {
-    --env-date-picker-action: max(
+    --_date-picker-action: max(
       var(--env-control-target-min),
-      calc(var(--env-field-height) - var(--env-space-2))
+      calc(var(--_field-height) - var(--env-space-2))
     );
-    --env-date-picker-actions: 1;
-    --env-date-picker-end: var(--env-space-1);
+    --_date-picker-actions: 1;
   }
   .env-date-picker .env-date-picker-control[data-action-count='2'] {
-    --env-date-picker-actions: 2;
+    --_date-picker-actions: 2;
   }
   .env-date-picker .env-date-picker-control > .env-date-picker-trigger {
     display: flex;
     align-items: center;
     padding-inline-end: calc(
-      var(--env-date-picker-end) + var(--env-date-picker-actions) * var(--env-date-picker-action) +
-        var(--env-date-picker-actions) * var(--env-space-1)
+      var(--env-space-1) + var(--_date-picker-actions) * var(--_date-picker-action) +
+        var(--_date-picker-actions) * var(--env-space-1)
     );
     text-align: start;
     cursor: pointer;
@@ -81,8 +80,8 @@
   .env-date-picker-end > .env-icon.env-date-picker-icon {
     display: grid;
     place-items: center;
-    inline-size: var(--env-date-picker-action);
-    block-size: var(--env-date-picker-action);
+    inline-size: var(--_date-picker-action);
+    block-size: var(--_date-picker-action);
   }
   .env-date-picker-end > .env-date-picker-icon > svg {
     inline-size: var(--env-control-icon-size);
@@ -91,13 +90,13 @@
   /* Carries the value for native forms; an invalid required field's message points at the field. */
   .env-date-picker-native {
     /* Visually hidden: a pixel's box, clipped away, still read. */
-    --env-date-picker-native-size: 0.0625rem;
+    --_date-picker-native-size: 0.0625rem;
     position: absolute;
     inset-block-end: 0;
     inset-inline-start: 50%;
-    inline-size: var(--env-date-picker-native-size);
-    block-size: var(--env-date-picker-native-size);
-    margin: calc(-1 * var(--env-date-picker-native-size));
+    inline-size: var(--_date-picker-native-size);
+    block-size: var(--_date-picker-native-size);
+    margin: calc(-1 * var(--_date-picker-native-size));
     padding: 0;
     border: 0;
     overflow: hidden;

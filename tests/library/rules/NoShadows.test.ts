@@ -138,7 +138,7 @@ function problems(sheets, { allowed = [] } = {}) {
 
 // The library's shadows.
 /** Faint and small, under an avatar (Avatar.css), so stacked avatars part from one another. */
-const avatarShadow = '--env-avatar-shadow';
+const avatarShadow = '--_avatar-shadow';
 /**
  * Soft, under the frosted popups and the dialogs that take their fill (Popup.css): it keeps a
  * translucent popup's edge where it crosses an area of its own color, and goes where it is solid.
@@ -150,7 +150,7 @@ const tooltipShadow = '--env-tooltip-shadow';
  * Under a segmented control's chosen segment (SegmentedControl.css), the raised thumb that rises
  * out of its track; an edge replaces it at high contrast.
  */
-const segmentShadow = '--env-segmented-control-shadow';
+const segmentShadow = '--_segmented-control-shadow';
 const libraryShadows = [avatarShadow, popupShadow, tooltipShadow, segmentShadow];
 
 /**
@@ -187,7 +187,7 @@ test('no token or custom property is a shadow but the avatars’, the popups’,
   const css = await shipped();
   const shadows = declarations(css)
     .map(({ prop }) => prop)
-    .filter((prop) => /^--env-.*shadow$/.test(prop));
+    .filter((prop) => /^--(?:env-|_).*shadow$/.test(prop));
   assert.deepEqual([...new Set(shadows)].sort(), [...libraryShadows].sort());
 });
 
@@ -267,7 +267,7 @@ test('the avatars’ shadow is small, faint and follows the surface below', asyn
   // place: rings alone, with no offset and no blur.
   assert.equal(values.length, 1, 'one shadow');
   const [, ringName, shadow] = values[0].match(/^var\(\s*(--[\w-]+),\s*(.*?)\s*\)$/);
-  assert.equal(ringName, '--env-avatar-group-ring-layers');
+  assert.equal(ringName, '--_avatar-group-ring-layers');
   const rings = declarations(css).filter(({ prop }) => prop === ringName);
   assert.equal(rings.length, 1, 'AvatarGroup.css declares the rings');
   for (const layer of split(rings[0].value, /,/)) {
@@ -279,7 +279,7 @@ test('the avatars’ shadow is small, faint and follows the surface below', asyn
   assert.deepEqual([x, y, blur], ['0', '1px', '2px']);
   assert.equal(rest.length, 1, 'no spread, one color');
   // Its color is derived from the surface below, never a literal color.
-  assert.match(rest[0], /^oklch\(\s*from var\(--env-surface-color, var\(--env-color-bg-page\)\)/);
+  assert.match(rest[0], /^oklch\(\s*from var\(--_surface-color, var\(--env-color-bg-page\)\)/);
   // Only an avatar uses it.
   assert.deepEqual(usersOf(css, avatarShadow), ['.env-avatar']);
 });
@@ -290,7 +290,7 @@ test('the chosen segment’s shadow is small, follows the theme, gives way at hi
   assert.equal(values.length, 1, 'one declaration');
   // The high-contrast edge first, then the shadow and a hairline ring as its fallback.
   const [edge, ...layers] = split(values[0].replace(/^var\(|\)$/g, ''), /,/);
-  assert.equal(edge, '--env-segmented-control-high-contrast-edge');
+  assert.equal(edge, '--_segmented-control-high-contrast-edge');
   assert.equal(layers.length, 2, 'a shadow and a hairline');
   const [drop, ring] = layers.map((layer) => split(layer, /\s/));
   // 1px down, blurred 2px, with no spread, in a color derived from a token.
@@ -301,8 +301,8 @@ test('the chosen segment’s shadow is small, follows the theme, gives way at hi
   assert.deepEqual(ring.slice(0, 3), ['0', '0', '0']);
   assert.equal(dropShadow(layers[1]), null);
   // The edge is valid only under high contrast (Theme.css's switch), and an inset ring.
-  const [edgeValue] = valuesOf(css, '--env-segmented-control-high-contrast-edge');
-  assert.match(edgeValue, /^var\(--env-theme-high-contrast\) inset 0 0 0 /);
+  const [edgeValue] = valuesOf(css, '--_segmented-control-high-contrast-edge');
+  assert.match(edgeValue, /^var\(--_theme-high-contrast\) inset 0 0 0 /);
   // The chosen segment, and the thumb that travels to it.
   assert.deepEqual(usersOf(css, segmentShadow), [
     '.env-segmented-control-item[data-checked]',

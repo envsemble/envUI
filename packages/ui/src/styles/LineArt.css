@@ -8,15 +8,14 @@
     --env-line-art-duration: calc(var(--env-motion-duration-slow) * 10);
     /* The muted edge is about 1.4:1 on a surface in light but 2.3:1 in dark, where the lines would
        stand out: dark takes 45 % of it, about 1.4:1 again. High contrast keeps the whole edge. */
-    --env-line-art-high-contrast-stroke: var(--env-theme-high-contrast)
-      var(--env-color-border-muted);
+    --_line-art-high-contrast-stroke: var(--_theme-high-contrast) var(--env-color-border-muted);
     display: block;
     inline-size: 100%;
     block-size: 100%;
     overflow: hidden;
     fill: none;
     stroke: var(
-      --env-line-art-high-contrast-stroke,
+      --_line-art-high-contrast-stroke,
       light-dark(
         var(--env-color-border-muted),
         color-mix(in srgb, var(--env-color-border-muted) 45%, transparent)
@@ -38,20 +37,20 @@
      (pathLength) and dashed in ones, so a dash offset of 0 draws it whole, one dash or minus one not
      at all, and in between part of it: from its start as the offset falls to 0, and
      away from its start as it falls from 0. The lines keep their width on screen, which lays their
-     dashes out on screen too, so the dashes are in the drawing's scale, --env-line-art-scale, which
+     dashes out on screen too, so the dashes are in the drawing's scale, --_line-art-scale, which
      LineArt measures. Only the dash moves, so the lines stay crisp hairlines and nothing around
      them moves. Each motion takes --env-line-art-duration, ten of the slow motion token; each line
-     moves for half of it, starting at its place in the order (--env-line-art-at, from 0 to 1). */
+     moves for half of it, starting at its place in the order (--_line-art-at, from 0 to 1). */
 
-  /* The keyframes move the dash offset itself, in dashes (--env-line-art-dash, a line's length on
+  /* The keyframes move the dash offset itself, in dashes (--_line-art-dash, a line's length on
      screen), rather than a custom property it is computed from: Firefox doesn't redraw a line's dash
      from a custom property as it animates. */
   .env-line-art[data-motion] > * {
-    --env-line-art-dash: var(--env-line-art-scale);
-    stroke-dasharray: var(--env-line-art-dash) var(--env-line-art-dash);
+    --_line-art-dash: var(--_line-art-scale);
+    stroke-dasharray: var(--_line-art-dash) var(--_line-art-dash);
     stroke-dashoffset: 0;
     animation-duration: calc(var(--env-line-art-duration) / 2);
-    animation-delay: calc(var(--env-line-art-duration) / 2 * var(--env-line-art-at, 0));
+    animation-delay: calc(var(--env-line-art-duration) / 2 * var(--_line-art-at, 0));
     animation-timing-function: var(--env-motion-ease);
     animation-fill-mode: both;
   }
@@ -60,7 +59,7 @@
   }
   .env-line-art:is([data-motion='disappear'], [data-turn='out']) > * {
     animation-name: env-line-art-disappear;
-    animation-delay: calc(var(--env-line-art-duration) / 2 * (1 - var(--env-line-art-at, 0)));
+    animation-delay: calc(var(--env-line-art-duration) / 2 * (1 - var(--_line-art-at, 0)));
   }
   /* A loop draws the lines in and holds the drawing whole for a quarter of the duration, then draws
      them out, each turn starting as the last one ends, so the two meet with nothing drawn. */
@@ -73,12 +72,12 @@
      rather than half of it, so only a few are on their way at once and the drawing stays whole. */
   .env-line-art[data-motion='play'] > * {
     animation-name: env-line-art-play;
-    animation-delay: calc(var(--env-line-art-duration) * var(--env-line-art-at, 0));
+    animation-delay: calc(var(--env-line-art-duration) * var(--_line-art-at, 0));
   }
 
   @keyframes env-line-art-appear {
     from {
-      stroke-dashoffset: var(--env-line-art-dash);
+      stroke-dashoffset: var(--_line-art-dash);
     }
     to {
       stroke-dashoffset: 0;
@@ -89,12 +88,12 @@
       stroke-dashoffset: 0;
     }
     to {
-      stroke-dashoffset: calc(-1 * var(--env-line-art-dash));
+      stroke-dashoffset: calc(-1 * var(--_line-art-dash));
     }
   }
   @keyframes env-line-art-loop-in {
     0% {
-      stroke-dashoffset: var(--env-line-art-dash);
+      stroke-dashoffset: var(--_line-art-dash);
     }
     66.667%,
     100% {
@@ -107,11 +106,11 @@
       animation-timing-function: var(--env-motion-ease-exit);
     }
     30% {
-      stroke-dashoffset: calc(-1 * var(--env-line-art-dash));
+      stroke-dashoffset: calc(-1 * var(--_line-art-dash));
       animation-timing-function: var(--env-motion-ease);
     }
     100% {
-      stroke-dashoffset: calc(-2 * var(--env-line-art-dash));
+      stroke-dashoffset: calc(-2 * var(--_line-art-dash));
     }
   }
 

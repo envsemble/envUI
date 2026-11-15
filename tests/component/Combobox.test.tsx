@@ -552,7 +552,7 @@ test('narrow containers wrap chips within the field, and the popup fits a phone'
   );
   // A field's corner: the large corner, no more than a third of the single-line field's height.
   const probe = document.createElement('div');
-  probe.style.blockSize = 'min(var(--env-radius-lg), var(--env-field-height) / 3)';
+  probe.style.blockSize = 'min(var(--env-radius-lg), var(--_field-height) / 3)';
   well.append(probe);
   const corner = probe.getBoundingClientRect().height;
   probe.remove();

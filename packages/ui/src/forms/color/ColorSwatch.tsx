@@ -46,7 +46,7 @@ function Swatch({
   const color = toColor(value, true);
   const { colorSwatchProps } = useColorSwatch({ color });
   const sampleStyle: CSSProperties = {
-    '--env-color-swatch-color': color.toString('css'),
+    '--_color-swatch-color': color.toString('css'),
   };
   const translucent = color.getChannelValue('alpha') < 1 || undefined;
   if (label == null && format === undefined)

@@ -9,11 +9,8 @@
     min-inline-size: 0;
     max-inline-size: 100%;
     /* 10 rem, or the lines minRows asks for and the document's padding (RichTextEditor). */
-    --env-rich-text-default-min-block-size: 10rem;
-    min-block-size: var(
-      --env-rich-text-min-block-size,
-      var(--env-rich-text-default-min-block-size)
-    );
+    --_rich-text-default-min-block-size: 10rem;
+    min-block-size: var(--_rich-text-min-block-size, var(--_rich-text-default-min-block-size));
     padding: var(--env-space-4);
     border-radius: inherit;
     outline: none;
@@ -154,8 +151,8 @@
   }
   .env-rich-text-document td,
   .env-rich-text-document th {
-    --env-rich-text-cell-min-width: 3rem;
-    min-inline-size: var(--env-rich-text-cell-min-width);
+    --_rich-text-cell-min-width: 3rem;
+    min-inline-size: var(--_rich-text-cell-min-width);
     position: relative;
   }
   .env-rich-text-document .selectedCell {
@@ -186,28 +183,28 @@
   }
   .env-rich-text-suggestions {
     box-sizing: border-box;
-    --env-rich-text-suggestions-min-width: 12rem;
-    --env-rich-text-suggestions-max-width: 24rem;
-    --env-rich-text-suggestions-max-height: 18rem;
+    --_rich-text-suggestions-min-width: 12rem;
+    --_rich-text-suggestions-max-width: 24rem;
+    --_rich-text-suggestions-max-height: 18rem;
     min-inline-size: min(
-      var(--env-rich-text-suggestions-min-width),
+      var(--_rich-text-suggestions-min-width),
       calc(100dvw - 2 * var(--env-viewport-gutter))
     );
     max-inline-size: min(
-      var(--env-rich-text-suggestions-max-width),
+      var(--_rich-text-suggestions-max-width),
       calc(100dvw - 2 * var(--env-viewport-gutter))
     );
     max-block-size: min(
-      var(--env-rich-text-suggestions-max-height),
+      var(--_rich-text-suggestions-max-height),
       calc(100dvh - 2 * var(--env-viewport-gutter))
     );
     overflow: auto;
     /* The edge of a solid list; frosted, it has none. */
-    --env-rich-text-suggestions-edge: var(--env-popup-solid) var(--env-popup-edge-color);
+    --_rich-text-suggestions-edge: var(--_popup-solid) var(--_popup-edge-color);
     border: var(--env-control-border-width) solid
-      var(--env-rich-text-suggestions-edge, var(--env-popup-frosted-edge, transparent));
-    border-radius: var(--env-popup-radius);
-    background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
+      var(--_rich-text-suggestions-edge, var(--_popup-frosted-edge, transparent));
+    border-radius: var(--_popup-radius);
+    background: color-mix(in srgb, var(--_popup-fill) var(--env-popup-opacity), transparent);
     box-shadow: var(--env-popup-shadow);
     -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
     backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);

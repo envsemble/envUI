@@ -69,7 +69,7 @@ async function tap(target: Element | Locator) {
 describe('Sheet', () => {
   test('opens at its edge in either direction, sliding from that edge, at the bottom as tall as its content, and across a compact window', async () => {
     const width = innerWidth;
-    const offset = (sheet: Locator, axis = 'x') => css(sheet, `--env-sheet-offset-${axis}`);
+    const offset = (sheet: Locator, axis = 'x') => css(sheet, `--_sheet-offset-${axis}`);
 
     const end = await open('Open filters', 'Filters');
     const endBox = box(end);

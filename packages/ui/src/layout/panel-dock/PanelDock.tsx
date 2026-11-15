@@ -253,7 +253,7 @@ function Root<Panel extends PanelDockPanel>({
         setRef(ref, node);
       }}
       className={classNames('env-panel-dock', className)}
-      style={{ ...style, '--env-panel-dock-stack-below': remLength(stackBelow) }}
+      style={{ ...style, '--_panel-dock-stack-below': remLength(stackBelow) }}
       data-stacked={flag(stacked)}
       data-filled={flag(filled)}
       data-tabs={flag(hasTabs)}

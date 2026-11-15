@@ -15,25 +15,25 @@
        gutter is the palette's margin, so the container measures the whole window. */
     container: env-window / inline-size;
     /* The palette opens near the top: 12% of the window down, at most this far. */
-    --env-command-palette-top-max: 6rem;
-    padding-block: max(var(--env-viewport-gutter), min(12vh, var(--env-command-palette-top-max)))
+    --_command-palette-top-max: 6rem;
+    padding-block: max(var(--env-viewport-gutter), min(12vh, var(--_command-palette-top-max)))
       var(--env-viewport-gutter);
     pointer-events: none;
   }
   .env-command-palette {
     /* The edge of a solid palette; frosted, it has none. */
-    --env-command-palette-edge: var(--env-popup-solid) var(--env-elevation-3-border);
+    --_command-palette-edge: var(--_popup-solid) var(--env-elevation-3-border);
     box-sizing: border-box;
-    --env-command-palette-width: 40rem;
-    inline-size: min(var(--env-command-palette-width), 100% - 2 * var(--env-viewport-gutter));
+    --_command-palette-width: 40rem;
+    inline-size: min(var(--_command-palette-width), 100% - 2 * var(--env-viewport-gutter));
     margin-inline: var(--env-viewport-gutter);
     max-block-size: 100%;
     /* An inset that keeps the rows' corners concentric with the palette's. */
-    padding: calc(var(--env-radius-surface) - var(--env-popup-row-radius));
+    padding: calc(var(--env-radius-surface) - var(--_popup-row-radius));
     border: var(--env-control-border-width) solid
-      var(--env-command-palette-edge, var(--env-popup-frosted-edge, transparent));
+      var(--_command-palette-edge, var(--_popup-frosted-edge, transparent));
     border-radius: var(--env-radius-surface);
-    background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
+    background: color-mix(in srgb, var(--_popup-fill) var(--env-popup-opacity), transparent);
     box-shadow: var(--env-popup-shadow);
     -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
     backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
@@ -62,21 +62,21 @@
     display: none;
   }
   .env-command-palette-search {
-    --env-text-field-ghost-solid:
+    --_text-field-ghost-solid:
       linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
-      var(--env-popup-fill);
-    --env-text-field-ghost-edge: var(--env-popup-solid) var(--env-color-border-default);
+      var(--_popup-fill);
+    --_text-field-ghost-edge: var(--_popup-solid) var(--env-color-border-default);
     /* Its focus is its own edge, below, so the field's focus frame stays a hairline in its edge. */
-    --env-text-field-ghost-focus-edge: transparent;
-    --env-text-field-ghost-focus-frame: var(--env-control-border-width);
+    --_text-field-ghost-focus-edge: transparent;
+    --_text-field-ghost-focus-frame: var(--env-control-border-width);
     /* A pill, which its focus edge below follows, rather than the fields' rounded rectangle. */
-    --env-text-field-ghost-corner: var(--env-radius-full);
+    --_text-field-ghost-corner: var(--env-radius-full);
     /* Where the options' icons sit, inside the control's border. */
-    --env-text-field-start-inset: calc(
-      var(--env-popup-row-padding-inline) - var(--env-control-border-width)
+    --_text-field-start-inset: calc(
+      var(--_popup-row-padding-inline) - var(--env-control-border-width)
     );
     /* While results load, a small spinner sits at its end, inset as its icon is at the start. */
-    --env-text-field-end-inset: var(--env-text-field-start-inset);
+    --_text-field-end-inset: var(--_text-field-start-inset);
     /* The containing block of its focus edge, below. */
     position: relative;
     flex: 0 0 auto;
@@ -102,7 +102,7 @@
     flex: 0 1 auto;
     min-block-size: 0;
     max-block-size: 60vh;
-    margin-block-start: var(--env-popup-group-gap);
+    margin-block-start: var(--_popup-group-gap);
     align-content: start;
     gap: 0;
     overflow-y: auto;
@@ -119,10 +119,10 @@
   /* Groups stand apart by space, under a small muted heading, with no line. */
   .env-command-palette-group + .env-command-palette-group,
   .env-command-palette-item + .env-command-palette-group {
-    margin-block-start: var(--env-popup-group-gap);
+    margin-block-start: var(--_popup-group-gap);
   }
   .env-command-palette-group-label {
-    padding: var(--env-popup-padding) var(--env-popup-label-padding-inline)
+    padding: var(--_popup-padding) var(--_popup-label-padding-inline)
       calc(0.1 * var(--env-control-height-md));
     color: var(--env-color-fg-muted);
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
@@ -144,8 +144,8 @@
     flex-wrap: wrap;
     align-items: center;
     min-block-size: var(--env-control-height-md);
-    margin-block-start: var(--env-popup-group-gap);
-    padding: var(--env-space-1) var(--env-popup-row-padding-inline);
+    margin-block-start: var(--_popup-group-gap);
+    padding: var(--env-space-1) var(--_popup-row-padding-inline);
     color: var(--env-color-fg-muted);
     font: var(--env-font-weight-body) var(--env-font-size-body) / 1.35 var(--env-font-family);
     overflow-wrap: break-word;
@@ -153,7 +153,7 @@
   .env-command-palette-empty-icon {
     display: inline-flex;
     flex: none;
-    margin-inline-end: var(--env-popup-row-gap);
+    margin-inline-end: var(--_popup-row-gap);
   }
   .env-command-palette-empty-icon > .env-icon {
     inline-size: var(--env-control-icon-size);
@@ -171,18 +171,18 @@
      line. */
   .env-command-palette-footer {
     /* Its keys are the rows' muted chips, side by side. */
-    --env-kbd-size: calc(0.5 * var(--env-control-height-md));
-    --env-kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
-    --env-kbd-radius: calc(0.125 * var(--env-control-height-md));
-    --env-kbd-fg: var(--env-color-fg-muted);
-    --env-kbd-bg: var(--env-color-bg-neutral-muted);
-    --env-kbd-border: transparent;
-    --env-kbd-border-end-width: var(--env-control-border-width);
-    --env-kbd-font-size: var(--env-font-size-caption);
-    --env-kbd-separator-padding-inline: calc(0.0625 * var(--env-control-height-md));
-    --env-kbd-separator-font: 0 / 1 var(--env-font-family);
+    --_kbd-size: calc(0.5 * var(--env-control-height-md));
+    --_kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
+    --_kbd-radius: calc(0.125 * var(--env-control-height-md));
+    --_kbd-fg: var(--env-color-fg-muted);
+    --_kbd-bg: var(--env-color-bg-neutral-muted);
+    --_kbd-border: transparent;
+    --_kbd-border-end-width: var(--env-control-border-width);
+    --_kbd-font-size: var(--env-font-size-caption);
+    --_kbd-separator-padding-inline: calc(0.0625 * var(--env-control-height-md));
+    --_kbd-separator-font: 0 / 1 var(--env-font-family);
     flex: 0 0 auto;
-    padding: var(--env-popup-group-gap) var(--env-popup-row-padding-inline)
+    padding: var(--_popup-group-gap) var(--_popup-row-padding-inline)
       calc(0.1 * var(--env-control-height-md));
     gap: var(--env-space-1) var(--env-space-4);
     color: var(--env-color-fg-muted);
@@ -231,8 +231,8 @@
     }
     .env-command-palette[data-starting-style],
     .env-command-palette[data-ending-style] {
-      --env-command-palette-rise: -0.5rem;
-      transform: translateY(var(--env-command-palette-rise)) scale(0.98);
+      --_command-palette-rise: -0.5rem;
+      transform: translateY(var(--_command-palette-rise)) scale(0.98);
     }
     .env-command-palette[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);

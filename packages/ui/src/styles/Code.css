@@ -6,50 +6,50 @@
   /* stylelint-disable color-no-hex, declaration-property-value-disallowed-list -- the code themes'
      own colors, outside the color tokens, as the colors of highlighted tokens are. */
   .env-theme {
-    --env-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
-    --env-code-font-size: 0.8125rem;
-    --env-code-background: rgb(31 31 34 / 0.06);
-    --env-code-background-high: rgb(31 31 34 / 0.06);
-    --env-code-foreground: #1f2328;
-    --env-code-foreground-high: #0e1116;
+    --_code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    --_code-font-size: 0.8125rem;
+    --_code-background: rgb(31 31 34 / 0.06);
+    --_code-background-high: rgb(31 31 34 / 0.06);
+    --_code-foreground: #1f2328;
+    --_code-foreground-high: #0e1116;
   }
   .env-theme[data-env-theme='dark'] {
-    --env-code-background: rgb(232 234 238 / 0.05);
-    --env-code-background-high: #0a0c10;
-    --env-code-foreground: #b2c0cd;
-    --env-code-foreground-high: #f0f3f6;
+    --_code-background: rgb(232 234 238 / 0.05);
+    --_code-background-high: #0a0c10;
+    --_code-foreground: #b2c0cd;
+    --_code-foreground-high: #f0f3f6;
   }
   /* stylelint-enable color-no-hex, declaration-property-value-disallowed-list */
   /* Code's colors come from the code theme, standard and high-contrast: a custom property that starts
-     with the theme's high-contrast switch (Theme.css), such as a token's --env-code-token-now, holds
+     with the theme's high-contrast switch (Theme.css), such as a token's --_code-token-now, holds
      its high-contrast color or nothing. */
   .env-code,
   .env-code-block,
   .env-code-diff {
-    --env-code-background-now: var(--env-theme-high-contrast) var(--env-code-background-high);
-    --env-code-foreground-now: var(--env-theme-high-contrast) var(--env-code-foreground-high);
+    --_code-background-now: var(--_theme-high-contrast) var(--_code-background-high);
+    --_code-foreground-now: var(--_theme-high-contrast) var(--_code-foreground-high);
 
-    background: var(--env-code-background-now, var(--env-code-background));
-    color: var(--env-code-foreground-now, var(--env-code-foreground));
+    background: var(--_code-background-now, var(--_code-background));
+    color: var(--_code-foreground-now, var(--_code-foreground));
   }
   /* Inline code: the monospace carries it, on half the neutral muted fill, a faint layer of the text
      color, so a sentence with several identifiers reads as text rather than a row of chips, and it
      still stands apart on the page, panes, cards, muted fills and popups alike. High contrast keeps
      the whole fill. */
   .env-code {
-    --env-code-inline-fill-now: var(--env-theme-high-contrast) var(--env-color-bg-neutral-muted);
+    --_code-inline-fill-now: var(--_theme-high-contrast) var(--env-color-bg-neutral-muted);
 
     /* stylelint-disable-next-line unit-disallowed-list -- inline code's padding follows its own font size, as the text around it does */
     padding: 0.125em 0.375em;
     border-radius: var(--env-radius-sm);
     background: var(
-      --env-code-inline-fill-now,
+      --_code-inline-fill-now,
       color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent)
     );
-    font: 0.9em/1.4 var(--env-code-font-family);
+    font: 0.9em/1.4 var(--_code-font-family);
     /* A container where a column should keep room for its longest word, such as a table cell, sets
-       --env-code-overflow-wrap to break-word. */
-    overflow-wrap: var(--env-code-overflow-wrap, anywhere);
+       --_code-overflow-wrap to break-word. */
+    overflow-wrap: var(--_code-overflow-wrap, anywhere);
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }
@@ -59,7 +59,7 @@
     max-inline-size: 100%;
     padding: var(--env-space-5);
     border-radius: var(--env-radius-sm);
-    font: var(--env-code-font-size) / 1.7 var(--env-code-font-family);
+    font: var(--_code-font-size) / 1.7 var(--_code-font-family);
   }
   .env-code-block pre {
     margin: 0;
@@ -73,12 +73,12 @@
   /* Each highlighted token has its color in each code theme, standard and high-contrast, as above:
      the dark theme's where the nearest Theme is dark (Theme.css's switch), else the light one's. */
   .env-code-block code span {
-    --env-code-token-now: var(--env-theme-high-contrast) var(--env-code-token-high);
-    --env-code-token-dark-now: var(--env-theme-high-contrast) var(--env-code-token-dark-high);
-    --env-code-token-dark-shown: var(--env-theme-dark)
-      var(--env-code-token-dark-now, var(--env-code-token-dark));
+    --_code-token-now: var(--_theme-high-contrast) var(--_code-token-high);
+    --_code-token-dark-now: var(--_theme-high-contrast) var(--_code-token-dark-high);
+    --_code-token-dark-shown: var(--_theme-dark)
+      var(--_code-token-dark-now, var(--_code-token-dark));
 
-    color: var(--env-code-token-dark-shown, var(--env-code-token-now, var(--env-code-token)));
+    color: var(--_code-token-dark-shown, var(--_code-token-now, var(--_code-token)));
   }
   .env-code-block pre:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
@@ -99,10 +99,10 @@
   }
   .env-code-block-copy-status {
     /* Visually hidden: a pixel's box, clipped away, still read. */
-    --env-code-block-copy-status-size: 0.0625rem;
+    --_code-block-copy-status-size: 0.0625rem;
     position: absolute;
-    inline-size: var(--env-code-block-copy-status-size);
-    block-size: var(--env-code-block-copy-status-size);
+    inline-size: var(--_code-block-copy-status-size);
+    block-size: var(--_code-block-copy-status-size);
     clip-path: inset(50%);
     overflow: hidden;
     white-space: nowrap;

@@ -67,7 +67,7 @@ export function ColorSlider({ channel, value, onChange, onChangeEnd, disabled }:
             ? // The alpha gradient over a checkerboard, which shows through translucent colors.
               {
                 ...trackProps.style,
-                background: `${trackProps.style?.background}, var(--env-color-picker-checkerboard)`,
+                background: `${trackProps.style?.background}, var(--_color-picker-checkerboard)`,
               }
             : trackProps.style
         }

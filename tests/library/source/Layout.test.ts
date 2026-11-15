@@ -23,7 +23,7 @@ test('a primitive adds no class of its own, so a part class names it', () => {
 
 test('Grid writes its columns as a template', () => {
   const columns = (value) =>
-    /--env-grid-columns:([^;"]+)/.exec(markup(h(Grid, { columns: value })))?.[1];
+    /--_grid-columns:([^;"]+)/.exec(markup(h(Grid, { columns: value })))?.[1];
   assert.equal(columns(3), 'repeat(3, minmax(0, 1fr))');
   assert.equal(columns('minmax(0, 2fr) 20rem'), 'minmax(0, 2fr) 20rem');
   assert.equal(columns({ min: '12rem' }), 'repeat(auto-fill, minmax(min(100%, 12rem), 1fr))');
@@ -34,7 +34,7 @@ test('Grid writes its columns as a template', () => {
 test('container names a size container, and the style keeps the application’s own', () => {
   assert.equal(
     markup(h(Box, { container: 'summary', style: { color: 'red' } })),
-    '<div data-env-layout="box" data-env-container="" style="--env-layout-container:summary;color:red"></div>',
+    '<div data-env-layout="box" data-env-container="" style="--_layout-container:summary;color:red"></div>',
   );
   assert.equal(
     markup(h(Row, { style: { margin: 0 } })),

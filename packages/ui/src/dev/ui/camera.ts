@@ -59,7 +59,7 @@ export function useCamera(lift: number) {
     const { rx, ry, zoom, px, py } = camera.current;
     element.style.transform = `translate(-50%, -50%) translate(${px}px, ${py}px) scale(${zoom}) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${-liftRef.current / 2}px)`;
     // The frame's handles and label keep their size on screen at any zoom.
-    element.style.setProperty('--env-dev-zoom', String(zoom));
+    element.style.setProperty('--_dev-zoom', String(zoom));
   }, []);
   // The planes' height changes with the levels shown and their spacing.
   useLayoutEffect(apply, [apply, lift]);

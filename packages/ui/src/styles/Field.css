@@ -3,7 +3,7 @@
      description and its error. */
   .env-field {
     /* The color of a field's error and of its invalid control. */
-    --env-field-error-color: var(--env-color-fg-danger);
+    --_field-error-color: var(--env-color-fg-danger);
     align-content: start;
     max-inline-size: 100%;
     overflow-wrap: break-word;
@@ -20,7 +20,7 @@
     color: var(--env-color-fg-muted);
   }
   .env-field-error {
-    color: var(--env-field-error-color);
+    color: var(--_field-error-color);
   }
   .env-field-error > svg {
     flex-shrink: 0;
@@ -50,7 +50,7 @@
      its own: it takes the background of what it sits on. A control given through render takes the
      same outline. */
   .env-field-control {
-    --env-field-control-border: var(--env-color-border-default);
+    --_field-control-border: var(--env-color-border-default);
     box-sizing: border-box;
     display: block;
     inline-size: 100%;
@@ -62,7 +62,7 @@
         calc((var(--env-control-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
       )
       var(--env-space-4);
-    border: var(--env-control-border-width) solid var(--env-field-control-border);
+    border: var(--env-control-border-width) solid var(--_field-control-border);
     /* A text field's corner: the large corner, no more than a third of the height, so a taller
        control given through render, such as a text area, keeps the same corners. */
     border-radius: min(var(--env-radius-lg), var(--env-control-height) / 3);
@@ -92,18 +92,18 @@
      shows focus alone. A read-only control keeps its resting edge, as TextField's does. */
   @media (hover: hover) {
     .env-field-control:hover:not(:disabled, [data-disabled], [readonly]) {
-      --env-field-control-border: var(--env-color-fg-muted);
+      --_field-control-border: var(--env-color-fg-muted);
     }
   }
   /* Focus draws the edge in the accent at twice its width, the second hairline inside it, so
      nothing moves. */
   .env-field-control:focus-visible,
   .env-field-control:focus-within {
-    --env-field-control-border: var(--env-color-border-primary-emphasis);
-    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-field-control-border);
+    --_field-control-border: var(--env-color-border-primary-emphasis);
+    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--_field-control-border);
   }
   .env-field-control:is([data-invalid], [aria-invalid='true']) {
-    --env-field-control-border: var(--env-color-fg-danger);
+    --_field-control-border: var(--env-color-fg-danger);
   }
   .env-field-control:is(:disabled, [data-disabled]) {
     opacity: var(--env-state-disabled-opacity);

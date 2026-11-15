@@ -21,6 +21,9 @@ const hexColor = '/#[\\da-f]{3,8}\\b/i';
 /** A name of the site's, by its part, or of the library's: kebab case after the prefix. */
 const sitePrefixed = '^(?:site|catalogue|docs|env)-[a-z0-9]+(?:-[a-z0-9]+)*$';
 
+/** A custom property the site reads or sets: its own, the library's, or a library part's private one. */
+const siteCustomProperty = '^(?:(?:site|catalogue|docs|env)-|_)[a-z0-9]+(?:-[a-z0-9]+)*$';
+
 /**
  * Where em may appear: typography that follows the element's own font size rather than the
  * reader's root size. Boxes, spacing and motion take rem, from tokens in the library.
@@ -137,8 +140,8 @@ export default {
     {
       // Library components take sizes from tokens rather than literal rem values. Their classes are
       // env-<component>-<part>, apart from the classes of the third-party markup they style (GFM's
-      // and TipTap's); their custom properties take the --env- prefix, apart from those Base UI sets
-      // on its parts, which they read.
+      // and TipTap's); their public custom properties take the --env- prefix and their private
+      // ones --_<component>-, apart from those Base UI sets on its parts, which they read.
       files: ['packages/ui/src/styles/**/*.css'],
       rules: {
         'declaration-property-unit-disallowed-list': { '/^(?!--)/': ['rem'] },
@@ -147,8 +150,11 @@ export default {
           { message: (name) => `Class "${name}": library classes are env-<component>-<part>.` },
         ],
         'custom-property-pattern': [
-          '^(?:env(?:-[a-z0-9]+)+|accordion-panel-height|active-tab-(?:left|top|width|height)|anchor-width|available-height|available-width|collapsible-panel-height|drawer-swipe-movement-[xy]|transform-origin)$',
-          { message: (name) => `Custom property "${name}": library properties are --env-….` },
+          '^(?:env(?:-[a-z0-9]+)+|_[a-z0-9]+(?:-[a-z0-9]+)*|accordion-panel-height|active-tab-(?:left|top|width|height)|anchor-width|available-height|available-width|collapsible-panel-height|drawer-swipe-movement-[xy]|transform-origin)$',
+          {
+            message: (name) =>
+              `Custom property "${name}": library properties are --env-… when public, --_<component>-… when private.`,
+          },
         ],
       },
     },
@@ -176,7 +182,7 @@ export default {
       files: ['apps/site/src/**/*.css'],
       rules: {
         'selector-class-pattern': sitePrefixed,
-        'custom-property-pattern': sitePrefixed,
+        'custom-property-pattern': siteCustomProperty,
       },
     },
   ],

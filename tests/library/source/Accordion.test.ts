@@ -38,6 +38,6 @@ test('a skeleton is one busy region: titles become bars and indicators shapes', 
   const css = readFileSync(join(repositoryRoot, 'packages/ui/src/styles/Accordion.css'), 'utf8');
   assert.match(
     css,
-    /\[data-env-skeleton\] \.env-accordion-label \{[^}]*--env-skeleton-placeholder: inline-block;/,
+    /\[data-env-skeleton\] \.env-accordion-label \{[^}]*--_skeleton-placeholder: inline-block;/,
   );
 });

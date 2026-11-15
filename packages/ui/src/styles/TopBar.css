@@ -10,14 +10,14 @@
     min-inline-size: 0;
     padding-inline: var(--env-space-4);
     /* The navigation's background, the default surface color; on a surface, the surface's color. */
-    background: var(--env-surface-color, var(--env-color-bg-default));
+    background: var(--_surface-color, var(--env-color-bg-default));
     color: var(--env-color-fg-default);
     white-space: nowrap;
   }
   /* background="page": the page's background, so the bar sits on the page; on a surface, the
      surface's color. */
   .env-top-bar[data-background='page'] {
-    background: var(--env-surface-color, var(--env-color-bg-page));
+    background: var(--_surface-color, var(--env-color-bg-page));
   }
   .env-top-bar-start,
   .env-top-bar-actions {
@@ -27,11 +27,11 @@
      img of its own, contained in that box whatever its file's size. An svg that follows the text,
      such as one of envUI's symbols, and the icon buttons, which set their own, keep their sizes. */
   .env-top-bar-start {
-    --env-icon-size: var(--env-picture-size-sm);
+    --_icon-size: var(--env-picture-size-sm);
   }
   .env-top-bar-start > :is(img, svg:not([width='1em'])) {
-    inline-size: var(--env-icon-size);
-    block-size: var(--env-icon-size);
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
     object-fit: contain;
   }
   /* The title takes the room left and truncates first. */
@@ -64,20 +64,20 @@
   .env-top-bar[data-title-bar] {
     --env-control-height: var(--env-control-height-sm);
     /* Inner padding at the inline start and end; the window controls add to the side they occupy. */
-    --env-top-bar-title-bar-start: var(--env-space-3);
-    --env-top-bar-title-bar-end: var(--env-space-3);
-    --env-top-bar-title-bar-left: var(--env-top-bar-title-bar-start);
-    --env-top-bar-title-bar-right: var(--env-top-bar-title-bar-end);
+    --_top-bar-title-bar-start: var(--env-space-3);
+    --_top-bar-title-bar-end: var(--env-space-3);
+    --_top-bar-title-bar-left: var(--_top-bar-title-bar-start);
+    --_top-bar-title-bar-right: var(--_top-bar-title-bar-end);
     display: grid;
     grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
     column-gap: var(--env-space-3);
     min-block-size: 0;
     /* The window reports a smaller height once the page is zoomed in; the small controls still fit. */
     block-size: max(env(titlebar-area-height, 0px), var(--env-title-bar-height));
-    padding-left: calc(env(titlebar-area-x, 0px) + var(--env-top-bar-title-bar-left));
+    padding-left: calc(env(titlebar-area-x, 0px) + var(--_top-bar-title-bar-left));
     padding-right: calc(
       100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) +
-        var(--env-top-bar-title-bar-right)
+        var(--_top-bar-title-bar-right)
     );
     font: var(--env-type-body-sm);
     -webkit-app-region: drag;
@@ -86,8 +86,8 @@
     user-select: none;
   }
   .env-top-bar[data-title-bar]:dir(rtl) {
-    --env-top-bar-title-bar-left: var(--env-top-bar-title-bar-end);
-    --env-top-bar-title-bar-right: var(--env-top-bar-title-bar-start);
+    --_top-bar-title-bar-left: var(--_top-bar-title-bar-end);
+    --_top-bar-title-bar-right: var(--_top-bar-title-bar-start);
   }
   /* The three sections keep their grid columns whichever the bar holds. */
   .env-top-bar[data-title-bar] > .env-top-bar-start,
@@ -149,7 +149,7 @@
 
   /* In a skeleton, a missing title, as before the page's data arrives, is a bar of a title's length. */
   [data-env-skeleton] .env-top-bar-title {
-    --env-skeleton-placeholder: inline-block;
-    --env-skeleton-length: 10rem;
+    --_skeleton-placeholder: inline-block;
+    --_skeleton-length: 10rem;
   }
 }

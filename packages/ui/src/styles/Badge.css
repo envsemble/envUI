@@ -5,11 +5,11 @@
      solid badge puts fg-on-emphasis on the tone's emphasis fill, fg-on-strong on danger's saturated
      red, and an outlined one draws the tone's edge.
      What holds a badge sets hooks on its own element, which every badge inside reads:
-     --env-badge-fg, --env-badge-bg and --env-badge-border (a border shorthand), whatever its tone and
-     variant, which a button sets (Button.css); --env-badge-count-fg, -bg and -border for a badge
+     --_badge-fg, --_badge-bg and --_badge-border (a border shorthand), whatever its tone and
+     variant, which a button sets (Button.css); --_badge-count-fg, -bg and -border for a badge
      with a count, which reads them instead, as a button, a menu item's end (Menu.css) and the
-     toasts' hidden count (Toast.css) set them; --env-badge-underlay, the surface a soft badge lays
-     its tint over, which a selected row sets (Table.css, List.css); and --env-diff-stat-fg, -bg and
+     toasts' hidden count (Toast.css) set them; --_badge-underlay, the surface a soft badge lays
+     its tint over, which a selected row sets (Table.css, List.css); and --_diff-stat-fg, -bg and
      -border for a diff stat, whose two tones then take that one color, which a button sets. */
   /* Color properties: a badge's colors, which an application sets on one badge through style or its
      own CSS. They don't inherit, and they win over its tone and variant and over the hooks of a
@@ -28,25 +28,24 @@
   }
   .env-badge {
     /* The edge of an outline the application set; invalid, and so not drawn, while none is. */
-    --env-badge-own-border: 0.0625rem solid var(--env-badge-outline);
-    --env-badge-tone: var(--env-color-fg-muted);
+    --_badge-own-border: 0.0625rem solid var(--env-badge-outline);
+    --_badge-tone: var(--env-color-fg-muted);
     /* A soft badge's fill: the tone's stronger tint, which the status tones set, or its tint; at high
        contrast always its tint (see Theme.css). */
-    --env-badge-tint: var(--env-color-bg-neutral-muted);
-    --env-badge-tonal: var(--env-badge-tint);
-    --env-badge-high-contrast-tint: var(--env-theme-high-contrast) var(--env-badge-tint);
-    --env-badge-soft: var(--env-badge-high-contrast-tint, var(--env-badge-tonal));
-    --env-badge-fill: var(--env-color-bg-neutral-emphasis);
-    --env-badge-on-fill: var(--env-color-fg-on-emphasis);
-    --env-badge-edge: var(--env-color-border-neutral);
+    --_badge-tint: var(--env-color-bg-neutral-muted);
+    --_badge-tonal: var(--_badge-tint);
+    --_badge-high-contrast-tint: var(--_theme-high-contrast) var(--_badge-tint);
+    --_badge-soft: var(--_badge-high-contrast-tint, var(--_badge-tonal));
+    --_badge-fill: var(--env-color-bg-neutral-emphasis);
+    --_badge-on-fill: var(--env-color-fg-on-emphasis);
+    --_badge-edge: var(--env-color-border-neutral);
     /* On a selected row, whose blue fill would swallow a translucent tint, the row sets
-       --env-badge-underlay to its surface, and a soft badge lays its tint over it, so it reads as it
+       --_badge-underlay to its surface, and a soft badge lays its tint over it, so it reads as it
        does on an unselected row; a primary one its softer tint, as its stronger one is close to the
        selection's blue. Invalid, so not used, while nothing sets an underlay. */
-    --env-badge-on-underlay: var(--env-badge-high-contrast-tint, var(--env-badge-tonal));
-    --env-badge-layered:
-      linear-gradient(var(--env-badge-on-underlay), var(--env-badge-on-underlay)),
-      var(--env-badge-underlay);
+    --_badge-on-underlay: var(--_badge-high-contrast-tint, var(--_badge-tonal));
+    --_badge-layered:
+      linear-gradient(var(--_badge-on-underlay), var(--_badge-on-underlay)), var(--_badge-underlay);
     box-sizing: border-box;
     inline-size: fit-content;
     max-inline-size: 100%;
@@ -56,77 +55,77 @@
     gap: var(--env-space-1);
     /* With the border, 3 px above and below and 10 px at the sides. */
     padding: calc(var(--env-space-1) / 2) calc(var(--env-space-2) + var(--env-control-border-width));
-    border: var(--env-badge-own-border, var(--env-badge-border, 1px solid transparent));
+    border: var(--_badge-own-border, var(--_badge-border, 1px solid transparent));
     border-radius: var(--env-radius-full);
     /* prettier-ignore */
-    background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-layered, var(--env-badge-soft))));
-    color: var(--env-badge-content, var(--env-badge-fg, var(--env-badge-tone)));
+    background: var(--env-badge-container, var(--_badge-bg, var(--_badge-layered, var(--_badge-soft))));
+    color: var(--env-badge-content, var(--_badge-fg, var(--_badge-tone)));
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
     white-space: nowrap;
     vertical-align: middle;
   }
   .env-badge[data-tone='primary'] {
-    --env-badge-tone: var(--env-color-fg-primary);
-    --env-badge-tint: var(--env-color-bg-primary-soft);
-    --env-badge-tonal: var(--env-color-bg-primary-subtle-hover);
-    --env-badge-fill: var(--env-color-bg-primary-solid);
-    --env-badge-edge: var(--env-color-border-primary);
-    --env-badge-on-underlay: var(--env-badge-tint);
+    --_badge-tone: var(--env-color-fg-primary);
+    --_badge-tint: var(--env-color-bg-primary-soft);
+    --_badge-tonal: var(--env-color-bg-primary-subtle-hover);
+    --_badge-fill: var(--env-color-bg-primary-solid);
+    --_badge-edge: var(--env-color-border-primary);
+    --_badge-on-underlay: var(--_badge-tint);
   }
   .env-badge[data-tone='accent'] {
-    --env-badge-tone: var(--env-color-fg-accent);
-    --env-badge-tint: var(--env-color-bg-accent-soft);
-    --env-badge-tonal: var(--env-color-bg-accent-subtle-hover);
-    --env-badge-fill: var(--env-color-bg-accent-solid);
-    --env-badge-edge: var(--env-color-border-accent);
+    --_badge-tone: var(--env-color-fg-accent);
+    --_badge-tint: var(--env-color-bg-accent-soft);
+    --_badge-tonal: var(--env-color-bg-accent-subtle-hover);
+    --_badge-fill: var(--env-color-bg-accent-solid);
+    --_badge-edge: var(--env-color-border-accent);
   }
   .env-badge[data-tone='success'] {
-    --env-badge-tone: var(--env-color-fg-success);
-    --env-badge-tint: var(--env-color-bg-success-muted);
-    --env-badge-tonal: var(--env-color-bg-success-subtle-hover);
-    --env-badge-fill: var(--env-color-bg-success-emphasis);
-    --env-badge-edge: var(--env-color-border-success);
+    --_badge-tone: var(--env-color-fg-success);
+    --_badge-tint: var(--env-color-bg-success-muted);
+    --_badge-tonal: var(--env-color-bg-success-subtle-hover);
+    --_badge-fill: var(--env-color-bg-success-emphasis);
+    --_badge-edge: var(--env-color-border-success);
   }
   .env-badge[data-tone='warning'] {
-    --env-badge-tone: var(--env-color-fg-warning);
-    --env-badge-tint: var(--env-color-bg-warning-muted);
-    --env-badge-tonal: var(--env-color-bg-warning-subtle-hover);
-    --env-badge-fill: var(--env-color-bg-warning-emphasis);
-    --env-badge-edge: var(--env-color-border-warning);
+    --_badge-tone: var(--env-color-fg-warning);
+    --_badge-tint: var(--env-color-bg-warning-muted);
+    --_badge-tonal: var(--env-color-bg-warning-subtle-hover);
+    --_badge-fill: var(--env-color-bg-warning-emphasis);
+    --_badge-edge: var(--env-color-border-warning);
   }
   .env-badge[data-tone='danger'] {
-    --env-badge-tone: var(--env-color-fg-danger);
-    --env-badge-tint: var(--env-color-bg-danger-muted);
-    --env-badge-tonal: var(--env-color-bg-danger-subtle-hover);
-    --env-badge-fill: var(--env-color-bg-danger-emphasis);
-    --env-badge-on-fill: var(--env-color-fg-on-strong);
-    --env-badge-edge: var(--env-color-border-danger);
+    --_badge-tone: var(--env-color-fg-danger);
+    --_badge-tint: var(--env-color-bg-danger-muted);
+    --_badge-tonal: var(--env-color-bg-danger-subtle-hover);
+    --_badge-fill: var(--env-color-bg-danger-emphasis);
+    --_badge-on-fill: var(--env-color-fg-on-strong);
+    --_badge-edge: var(--env-color-border-danger);
   }
   /* Completed work recedes: a soft done badge takes half its tint, quieter than a neutral one, and
      leads with a check mark (Badge.tsx), which sets it apart from neutral and primary by more than
      a hue. */
   .env-badge[data-tone='done'] {
-    --env-badge-tone: var(--env-color-fg-done);
-    --env-badge-tint: var(--env-color-bg-done-muted);
-    --env-badge-tonal: color-mix(in srgb, var(--env-color-bg-done-muted) 50%, transparent);
-    --env-badge-fill: var(--env-color-bg-done-emphasis);
-    --env-badge-edge: var(--env-color-border-done);
+    --_badge-tone: var(--env-color-fg-done);
+    --_badge-tint: var(--env-color-bg-done-muted);
+    --_badge-tonal: color-mix(in srgb, var(--env-color-bg-done-muted) 50%, transparent);
+    --_badge-fill: var(--env-color-bg-done-emphasis);
+    --_badge-edge: var(--env-color-border-done);
   }
   /* A soft badge's label is semibold, which sets it apart on its tint as the tone's text. */
   .env-badge:not([data-variant='solid'], [data-variant='outline'], [data-count]) {
     font-weight: var(--env-font-weight-semibold);
   }
   .env-badge[data-variant='solid'] {
-    background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-fill)));
-    color: var(--env-badge-content, var(--env-badge-fg, var(--env-badge-on-fill)));
+    background: var(--env-badge-container, var(--_badge-bg, var(--_badge-fill)));
+    color: var(--env-badge-content, var(--_badge-fg, var(--_badge-on-fill)));
   }
   .env-badge[data-variant='outline'] {
-    --env-badge-edge-border: 0.0625rem solid var(--env-badge-edge);
-    border: var(--env-badge-own-border, var(--env-badge-border, var(--env-badge-edge-border)));
-    background: var(--env-badge-container, var(--env-badge-bg, transparent));
+    --_badge-edge-border: 0.0625rem solid var(--_badge-edge);
+    border: var(--_badge-own-border, var(--_badge-border, var(--_badge-edge-border)));
+    background: var(--env-badge-container, var(--_badge-bg, transparent));
   }
   .env-badge .env-icon {
-    --env-icon-size: 0.875rem;
+    --_icon-size: 0.875rem;
   }
   .env-badge-label {
     min-inline-size: 0;
@@ -145,26 +144,26 @@
     justify-content: center;
     padding-block: 0;
     /* A digit's room either side, as a diff stat has. */
-    --env-badge-count-padding-inline: 0.375rem;
-    padding-inline: var(--env-badge-count-padding-inline);
-    border: var(--env-badge-own-border, var(--env-badge-count-border, none));
-    background: var(--env-badge-container, var(--env-badge-count-bg, var(--env-badge-soft)));
-    color: var(--env-badge-content, var(--env-badge-count-fg, var(--env-badge-tone)));
+    --_badge-count-padding-inline: 0.375rem;
+    padding-inline: var(--_badge-count-padding-inline);
+    border: var(--_badge-own-border, var(--_badge-count-border, none));
+    background: var(--env-badge-container, var(--_badge-count-bg, var(--_badge-soft)));
+    color: var(--env-badge-content, var(--_badge-count-fg, var(--_badge-tone)));
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
     font-variant-numeric: tabular-nums;
   }
   .env-badge[data-count][data-tone='neutral'] {
-    --env-badge-tone: var(--env-color-fg-default);
+    --_badge-tone: var(--env-color-fg-default);
   }
   /* The variant in :where(), so a skeleton's fill below still wins over it. */
   .env-badge[data-count]:where([data-variant='solid']) {
-    background: var(--env-badge-container, var(--env-badge-count-bg, var(--env-badge-fill)));
-    color: var(--env-badge-content, var(--env-badge-count-fg, var(--env-color-fg-on-emphasis)));
+    background: var(--env-badge-container, var(--_badge-count-bg, var(--_badge-fill)));
+    color: var(--env-badge-content, var(--_badge-count-fg, var(--env-color-fg-on-emphasis)));
   }
   .env-badge[data-count]:where([data-variant='outline']) {
     /* prettier-ignore */
-    border: var(--env-badge-own-border, var(--env-badge-count-border, var(--env-badge-edge-border)));
-    background: var(--env-badge-container, var(--env-badge-count-bg, transparent));
+    border: var(--_badge-own-border, var(--_badge-count-border, var(--_badge-edge-border)));
+    background: var(--env-badge-container, var(--_badge-count-bg, transparent));
   }
   /* A change as one count-sized pill: additions in the success tone, deletions in the danger tone. */
   .env-diff-stat {
@@ -176,30 +175,30 @@
     align-items: center;
     gap: var(--env-space-1);
     /* A count's room either side. */
-    --env-diff-stat-padding-inline: 0.375rem;
-    padding-inline: var(--env-diff-stat-padding-inline);
-    border: var(--env-diff-stat-border, none);
+    --_diff-stat-padding-inline: 0.375rem;
+    padding-inline: var(--_diff-stat-padding-inline);
+    border: var(--_diff-stat-border, none);
     border-radius: var(--env-radius-full);
-    background: var(--env-diff-stat-bg, var(--env-color-bg-neutral-muted));
+    background: var(--_diff-stat-bg, var(--env-color-bg-neutral-muted));
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
     vertical-align: middle;
   }
   .env-diff-stat-additions {
-    color: var(--env-diff-stat-fg, var(--env-color-fg-success));
+    color: var(--_diff-stat-fg, var(--env-color-fg-success));
   }
   .env-diff-stat-deletions {
-    color: var(--env-diff-stat-fg, var(--env-color-fg-danger));
+    color: var(--_diff-stat-fg, var(--env-color-fg-danger));
   }
   .env-badge-count-label,
   .env-diff-stat-label {
     /* Visually hidden: a pixel's box, clipped away, still read. */
-    --env-diff-stat-label-size: 0.0625rem;
+    --_diff-stat-label-size: 0.0625rem;
     position: absolute;
-    inline-size: var(--env-diff-stat-label-size);
-    block-size: var(--env-diff-stat-label-size);
-    margin: calc(-1 * var(--env-diff-stat-label-size));
+    inline-size: var(--_diff-stat-label-size);
+    block-size: var(--_diff-stat-label-size);
+    margin: calc(-1 * var(--_diff-stat-label-size));
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
@@ -208,12 +207,12 @@
   /* In a skeleton, a badge is a filled shape of its size, without its text or tone. */
   [data-env-skeleton] .env-badge {
     /* No underlay: the skeleton's paint is the fill. */
-    --env-badge-underlay: initial;
+    --_badge-underlay: initial;
     forced-color-adjust: none;
     border-color: transparent;
     box-shadow: none;
-    --env-skeleton-shape: 1;
-    background: var(--env-skeleton-paint);
+    --_skeleton-shape: 1;
+    background: var(--_skeleton-paint);
   }
   [data-env-skeleton] .env-badge * {
     visibility: hidden;

@@ -74,7 +74,7 @@ export function SwatchList({ swatches, value, onChange, alpha, disabled, label }
             className="env-color-picker-swatch"
             data-selected={flag(item === selected)}
             data-translucent={flag(item.color.getChannelValue('alpha') < 1)}
-            style={{ '--env-color-swatch-color': item.color.toString('css') }}
+            style={{ '--_color-swatch-color': item.color.toString('css') }}
             {...roving.getItemProps(item)}
             onClick={choose}
             onKeyDown={(event) => {

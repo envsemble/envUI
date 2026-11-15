@@ -141,7 +141,7 @@ test('actions without a variant or size of their own are small ghost buttons, th
     'var(--env-control-height-sm)',
   );
   assert.deepEqual(
-    css.filter((each) => each.prop === '--env-message-action-height').map((each) => each.value),
+    css.filter((each) => each.prop === '--_message-action-height').map((each) => each.value),
     [
       'var(--env-control-height)',
       'max(var(--env-control-height), var(--env-control-height-touch))',
@@ -154,8 +154,8 @@ test('actions without a variant or size of their own are small ghost buttons, th
     assert.match(
       declared(
         `.env-message[data-from='${from}'] > .env-message-actions, .env-message[data-from='${from}'] > .env-skeleton-content > .env-message-actions`,
-        `--env-button-text-icon-edge-${edge}`,
+        `--_button-text-icon-edge-${edge}`,
       ),
-      /var\(--env-control-icon-size\) - var\(--env-message-action-height\)/,
+      /var\(--env-control-icon-size\) - var\(--_message-action-height\)/,
     );
 });

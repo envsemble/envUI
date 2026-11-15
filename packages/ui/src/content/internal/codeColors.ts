@@ -134,10 +134,10 @@ export const codeThemeName = (scheme: ColorScheme, contrast: CodeContrast) =>
 export function codeThemeStyle(theme: ColorScheme): CSSProperties {
   const [standard, high] = [colors[theme].standard, colors[theme].high];
   return {
-    '--env-code-background': layerColor(standard.block),
-    '--env-code-background-high': layerColor(high.block),
-    '--env-code-foreground': standard.foreground,
-    '--env-code-foreground-high': high.foreground,
+    '--_code-background': layerColor(standard.block),
+    '--_code-background-high': layerColor(high.block),
+    '--_code-foreground': standard.foreground,
+    '--_code-foreground-high': high.foreground,
     colorScheme: theme,
   };
 }

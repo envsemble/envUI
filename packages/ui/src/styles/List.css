@@ -22,7 +22,7 @@
   /* List geometry is shared with selectable rows and select options. */
   .env-list {
     /* The density sets the rows' block padding; a row is at least as tall as a small control with it. */
-    --env-list-row-padding: calc(var(--env-row-padding-block-md) + var(--env-space-1));
+    --_list-row-padding: calc(var(--env-row-padding-block-md) + var(--env-space-1));
     overflow-wrap: break-word;
     gap: calc(var(--env-space-1) / 2);
     margin: 0;
@@ -30,43 +30,40 @@
     list-style: none;
   }
   .env-list > .env-list-item {
-    --env-list-item-container-default: var(--env-color-bg-list-item);
-    --env-list-item-fill-hover: var(--env-color-bg-list-item-hover);
-    --env-list-item-fill-pressed: var(--env-color-bg-list-item-pressed);
+    --_list-item-container-default: var(--env-color-bg-list-item);
+    --_list-item-fill-hover: var(--env-color-bg-list-item-hover);
+    --_list-item-fill-pressed: var(--env-color-bg-list-item-pressed);
     /* With no color property set, the designed fills below apply in every state. The custom fill is
        valid only while the application sets the container or the content (see Button.css), and
        then hover, focus and press lay the content color over the container. */
-    --env-list-item-layer: initial;
-    --env-list-item-content-gate: color-mix(
+    --_list-item-layer: initial;
+    --_list-item-content-gate: color-mix(
       in srgb,
       var(--env-list-item-content) 0%,
-      var(--env-list-item-container-default)
+      var(--_list-item-container-default)
     );
-    --env-list-item-custom-base: var(--env-list-item-container, var(--env-list-item-content-gate));
-    --env-list-item-custom-layered: color-mix(
+    --_list-item-custom-base: var(--env-list-item-container, var(--_list-item-content-gate));
+    --_list-item-custom-layered: color-mix(
       in srgb,
-      var(--env-list-item-custom-base),
-      currentColor var(--env-list-item-layer)
+      var(--_list-item-custom-base),
+      currentColor var(--_list-item-layer)
     );
-    --env-list-item-custom-fill: var(
-      --env-list-item-custom-layered,
-      var(--env-list-item-custom-base)
-    );
+    --_list-item-custom-fill: var(--_list-item-custom-layered, var(--_list-item-custom-base));
     box-sizing: border-box;
-    min-height: calc(var(--env-control-height-sm) + 2 * var(--env-list-row-padding));
-    padding: var(--env-list-row-padding) var(--env-row-padding-inline);
+    min-height: calc(var(--env-control-height-sm) + 2 * var(--_list-row-padding));
+    padding: var(--_list-row-padding) var(--env-row-padding-inline);
     font: var(--env-type-body-sm);
-    background: var(--env-list-item-custom-fill, var(--env-list-item-container-default));
+    background: var(--_list-item-custom-fill, var(--_list-item-container-default));
     color: var(--env-list-item-content, var(--env-color-fg-default));
   }
   .env-list[data-density='xs'] {
-    --env-list-row-padding: calc(var(--env-row-padding-block-xs) + var(--env-space-1));
+    --_list-row-padding: calc(var(--env-row-padding-block-xs) + var(--env-space-1));
   }
   .env-list[data-density='sm'] {
-    --env-list-row-padding: calc(var(--env-row-padding-block-sm) + var(--env-space-1));
+    --_list-row-padding: calc(var(--env-row-padding-block-sm) + var(--env-space-1));
   }
   .env-list[data-density='lg'] {
-    --env-list-row-padding: calc(var(--env-row-padding-block-lg) + var(--env-space-1));
+    --_list-row-padding: calc(var(--env-row-padding-block-lg) + var(--env-space-1));
   }
   /* A row with content before its label, such as a drag handle, an avatar or a checkbox: the start
      slot, then the text, which takes the room left, then the action. */
@@ -86,17 +83,17 @@
     /* An icon or a picture in it takes the size of a leading icon in a large row: one of envUI's
        symbols, rather than its text's size, a Graphic of the icon size, and an svg or img of the
        application's own, contained in that box whatever its file's size. */
-    --env-icon-size: var(--env-icon-size-lg);
+    --_icon-size: var(--env-icon-size-lg);
     /* At least an icon wide, with what it holds centred, so a narrower mark, such as a running
        step's Spinner among icons, leaves its label in line with its siblings'. */
     display: flex;
     align-items: center;
     justify-content: center;
-    min-inline-size: var(--env-icon-size);
+    min-inline-size: var(--_icon-size);
   }
   .env-list-item-start > :is(svg, img) {
-    inline-size: var(--env-icon-size);
-    block-size: var(--env-icon-size);
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
     object-fit: contain;
   }
   /* The handle, ahead of the label, reaches in toward the row's corner rather than the text. */
@@ -112,17 +109,17 @@
      or the application's selected and selected-content, with lighter state layers, as the designed
      selected fills are close together. */
   .env-list > .env-list-item:is([data-selected], :has(> .env-list-item-start input:checked)) {
-    --env-list-item-container-default: var(--env-color-bg-selected);
+    --_list-item-container-default: var(--env-color-bg-selected);
     /* Soft badges lay their tint over the raised surface, not the selection's blue (Badge.css). */
-    --env-badge-underlay: var(--env-color-bg-raised);
-    --env-list-item-fill-hover: var(--env-color-bg-selected-hover);
-    --env-list-item-fill-pressed: var(--env-color-bg-selected-pressed);
-    --env-list-item-content-gate: color-mix(
+    --_badge-underlay: var(--env-color-bg-raised);
+    --_list-item-fill-hover: var(--env-color-bg-selected-hover);
+    --_list-item-fill-pressed: var(--env-color-bg-selected-pressed);
+    --_list-item-content-gate: color-mix(
       in srgb,
       var(--env-list-item-selected-content) 0%,
       var(--env-color-bg-selected)
     );
-    --env-list-item-custom-base: var(--env-list-item-selected, var(--env-list-item-content-gate));
+    --_list-item-custom-base: var(--env-list-item-selected, var(--_list-item-content-gate));
     color: var(
       --env-list-item-selected-content,
       var(--env-list-item-content, var(--env-color-fg-default))
@@ -154,11 +151,11 @@
   }
   /* The reorder announcements: read, not shown. */
   .env-list-announcer {
-    --env-list-announcer-size: 0.0625rem;
+    --_list-announcer-size: 0.0625rem;
     position: absolute;
-    inline-size: var(--env-list-announcer-size);
-    block-size: var(--env-list-announcer-size);
-    margin: calc(-1 * var(--env-list-announcer-size));
+    inline-size: var(--_list-announcer-size);
+    block-size: var(--_list-announcer-size);
+    margin: calc(-1 * var(--_list-announcer-size));
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
@@ -174,8 +171,8 @@
     display: none;
   }
   [data-env-skeleton] .env-list-item-content > small {
-    --env-skeleton-placeholder: inline-block;
-    --env-skeleton-length: 10rem;
+    --_skeleton-placeholder: inline-block;
+    --_skeleton-length: 10rem;
   }
   /* On a muted Surface that holds only lists, a pane of their own, the rows take the default fill, so
      they stand out from it. A surface with more in it, such as a card with a heading, keeps the row
@@ -191,9 +188,9 @@
     > .env-skeleton-content
     > .env-list
     > .env-list-item {
-    --env-list-item-container-default: var(--env-color-bg-default);
-    --env-list-item-fill-hover: var(--env-color-bg-default-hover);
-    --env-list-item-fill-pressed: var(--env-color-bg-default-pressed);
+    --_list-item-container-default: var(--env-color-bg-default);
+    --_list-item-fill-hover: var(--env-color-bg-default-hover);
+    --_list-item-fill-pressed: var(--env-color-bg-default-pressed);
   }
   /* A row that opens something through a link or button inside reacts like a clickable card: to
      hover, to keyboard focus inside it and to presses. The link or button marked data-row-target
@@ -219,9 +216,9 @@
   /* The target's keyboard focus ring is the row's: it traces the row's corners inside its edge, the
      area a press follows, rather than the label alone, whose ring would cut into the description. */
   .env-list > .env-list-item[data-interactive]:has([data-row-target]:focus-visible) {
-    --env-list-item-focus-ring: 0.125rem;
-    outline: var(--env-list-item-focus-ring) solid var(--env-color-border-focus);
-    outline-offset: calc(-1 * var(--env-list-item-focus-ring));
+    --_list-item-focus-ring: 0.125rem;
+    outline: var(--_list-item-focus-ring) solid var(--env-color-border-focus);
+    outline-offset: calc(-1 * var(--_list-item-focus-ring));
   }
   .env-list > .env-list-item[data-interactive] [data-row-target]:focus-visible {
     outline: none;
@@ -232,8 +229,8 @@
     --env-color-fg-link: var(--env-color-fg-link-on-muted);
     --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
     --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
-    --env-list-item-layer: calc(var(--env-state-hover-opacity) * 100%);
-    background: var(--env-list-item-custom-fill, var(--env-list-item-fill-hover));
+    --_list-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+    background: var(--_list-item-custom-fill, var(--_list-item-fill-hover));
   }
   .env-list
     > .env-list-item[data-interactive]:is(
@@ -243,22 +240,22 @@
     --env-color-fg-link: var(--env-color-fg-link-on-muted);
     --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
     --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
-    --env-list-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
-    background: var(--env-list-item-custom-fill, var(--env-list-item-fill-pressed));
+    --_list-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+    background: var(--_list-item-custom-fill, var(--_list-item-fill-pressed));
   }
   .env-list
     > .env-list-item[data-interactive]:is(
       [data-selected],
       :has(> .env-list-item-start input:checked)
     ):is(:hover, :has(:focus-visible)) {
-    --env-list-item-layer: calc(var(--env-state-hover-opacity) * 75%);
+    --_list-item-layer: calc(var(--env-state-hover-opacity) * 75%);
   }
   .env-list
     > .env-list-item[data-interactive]:is(
       [data-selected],
       :has(> .env-list-item-start input:checked)
     ):is(:has([data-row-target]:active), :not(:has([data-row-target])):active) {
-    --env-list-item-layer: calc(var(--env-state-pressed-opacity) * 75%);
+    --_list-item-layer: calc(var(--env-state-pressed-opacity) * 75%);
   }
   @media (prefers-reduced-motion: reduce) {
     .env-list > .env-list-item[data-interactive] {
@@ -309,7 +306,7 @@
      a plain box around its rounded rows, so it carries none: its tint would show square corners
      between and around them. */
   [data-env-skeleton] .env-list-item {
-    background-image: var(--env-skeleton-overlay);
+    background-image: var(--_skeleton-overlay);
   }
   .env-list[data-env-skeleton]:not(env-none) {
     background-image: none;

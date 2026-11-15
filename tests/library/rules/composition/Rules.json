@@ -229,7 +229,7 @@
       "env-surface": "The surface helper, which components render through Surface.",
       "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
       "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
-      "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --env-icon-size.",
+      "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --_icon-size.",
       "env-prose": "The prose typography (Prose.css) of Markdown, RichText and RichTextEditor's document.",
       "env-skeleton-content": "A skeleton's inert content without a box, which every component that takes skeleton renders inside its busy root (Skeleton.css).",
       "env-skeleton-status": "The visually hidden status beside a skeleton list (Skeleton.css).",
@@ -576,7 +576,7 @@
             "env-page-header-toolbar",
             "env-page-header-actions"
           ],
-          "properties": ["--env-page-sticky-*", "scroll-margin-block-start"],
+          "properties": ["--_page-sticky-*", "scroll-margin-block-start"],
           "note": "A Page reckons the height of its sticky PageHeader from the rows the header has, read with :has(), so what scrolls into view in its content keeps clear of it; it never styles the header."
         },
         {
@@ -620,13 +620,13 @@
         {
           "stylesheet": "AvatarGroup.css",
           "classes": ["env-avatar-fallback-initials"],
-          "properties": ["--env-avatar-group-*"],
+          "properties": ["--_avatar-group-*"],
           "note": "A group reads with :has() whether its avatars show initials, which center in their circle, and then piles them looser and upright, setting only its own properties; it never styles the avatar."
         },
         {
           "stylesheet": "Combobox.css",
           "classes": ["env-avatar", "env-avatar-fallback-initials"],
-          "properties": ["--env-avatar-size", "--env-combobox-start-*"],
+          "properties": ["--_avatar-size", "--_combobox-start-*"],
           "note": "An avatar in a combobox's leading slot takes the slot's size; the combobox reads with :has() whether it shows initials, and where the slot is too small for them leaves it out or closes the slot, setting only its own properties and layout; it never styles the avatar."
         },
         {

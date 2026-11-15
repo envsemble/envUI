@@ -218,10 +218,10 @@ export function AvatarGroup({
   const counted = overflow > 0;
   const hues = groupHues(shown.map((person) => person.name));
   const place = (index: number): CSSProperties => ({
-    '--env-avatar-group-before': String(Math.min(index, shown.length - 1)),
-    '--env-avatar-group-after': String(Math.max(0, shown.length - 1 - index)),
-    '--env-avatar-group-count-before': index === shown.length ? '1' : '0',
-    '--env-avatar-group-count-after': counted && index < shown.length ? '1' : '0',
+    '--_avatar-group-before': String(Math.min(index, shown.length - 1)),
+    '--_avatar-group-after': String(Math.max(0, shown.length - 1 - index)),
+    '--_avatar-group-count-before': index === shown.length ? '1' : '0',
+    '--_avatar-group-count-after': counted && index < shown.length ? '1' : '0',
   });
   return (
     <div

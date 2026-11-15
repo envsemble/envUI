@@ -222,7 +222,7 @@ const isBackdrop = (element: Element) => element.classList.contains('env-panes-b
 /** Whether an element shows, as CSS decided: it has a box. */
 const shows = (element: HTMLElement | null) => element !== null && element.offsetParent !== null;
 
-/** The other pane's least width in rem, as `--env-panes-other-min` sets it in Panes.css. */
+/** The other pane's least width in rem, as the token `--env-panes-other-min` holds it. */
 const otherPaneMinWidth = 16;
 
 /** The widest the resized pane can be, in rem, beside the other pane's least width. */
