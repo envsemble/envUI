@@ -1,6 +1,4 @@
 @layer env.components {
-  /* Color properties: a card's colors, which an application sets on one card through style or its
-     own CSS. They take the place of Surface's, which a card also reads, and don't inherit. */
   @property --env-card-container {
     syntax: '*';
     inherits: false;
@@ -16,9 +14,6 @@
 
   .env-card {
     --_card-padding: var(--_surface-padding);
-    /* With no color property set, the designed fills below apply in every state. The custom fill is
-       valid only while the application sets the container or the content (see Button.css), and
-       then hover, focus and press lay the content color over the container. */
     --_card-layer: initial;
     /* prettier-ignore */
     --_card-content-gate: color-mix(in srgb, var(--env-card-content) 0%, var(--_surface-color));
@@ -41,9 +36,6 @@
     color: var(--env-card-content, var(--env-surface-content));
   }
 
-  /* A link or button card: the whole surface is the target, and its states change its fill alone.
-     With a container or content color of the application's, hover, focus and press lay the state
-     layer of its text color over it. */
   .env-card[data-interactive] {
     inline-size: 100%;
     margin: 0;
@@ -82,14 +74,10 @@
     }
   }
 
-  /* The heading row, which wraps when it runs out of room: the meta goes to its end; the header's
-     child selector outweighs the text margin reset that Text applies to every variant. */
   .env-card-header > .env-card-meta {
     margin-inline-start: auto;
   }
 
-  /* A title, meta or description given as undefined, as over a placeholder item, takes no room
-     outside a skeleton; in one it is a bar. */
   .env-card-title:empty:not([data-env-skeleton] *),
   .env-card-meta:empty:not([data-env-skeleton] *),
   .env-card-description:empty:not([data-env-skeleton] *),
@@ -97,9 +85,6 @@
     display: none;
   }
 
-  /* In a skeleton, the bars take the room the loaded text usually does, so the card keeps its size
-     when it loads: the title and the meta share one row, the title's bar giving way to the meta's in
-     a narrow card, and the description is one line, as a card's supporting sentence usually is. */
   .env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-title {
     --_skeleton-length: 9rem;
   }
@@ -116,8 +101,6 @@
     --_skeleton-last: 100%;
   }
 
-  /* A card with an action strip: the body takes the card's padding and the strip its own fill along
-     the bottom. */
   .env-card[data-actions] {
     padding: 0;
     overflow: hidden;
@@ -145,15 +128,11 @@
     justify-content: flex-end;
     gap: var(--env-space-4);
   }
-  /* A page card parts from the page by space alone, so its strip takes no fill of its own either:
-     a band would be all of the card that shows. */
   .env-card[data-actions][data-background='page'] > .env-card-footer,
   .env-card[data-actions][data-background='page'] > .env-skeleton-content > .env-card-footer {
     background-color: transparent;
   }
 
-  /* In a skeleton, a card carries the skeleton's tint over its fill (Skeleton.css), and so does its
-     action strip over its own. */
   [data-env-skeleton] .env-card,
   .env-card[data-actions][data-env-skeleton] .env-card-footer,
   [data-env-skeleton] .env-card[data-actions] .env-card-footer {

@@ -1,16 +1,3 @@
-// Generates docs/generated/exports.json, the record of the library's public API: every name each
-// entry point of packages/ui/package.json exports, with its kind, sorted. The entry points reach
-// their modules through `export *`, so whatever a component module exports is public; this record
-// makes each change to that list visible in review.
-//
-//   node scripts/docs/GenerateExports.ts           rewrite docs/generated/exports.json
-//   node scripts/docs/GenerateExports.ts --check [--base <ref>]
-//                                            fail when it differs from the source, or when a name
-//                                            changed since the base branch without a changeset of
-//                                            @envsemble/envui: a name that is added needs one, and
-//                                            a name that goes or changes its kind a major one that
-//                                            names it. The base is found as for the parts
-//                                            (scripts/docs/GenerateParts.ts).
 import { resolve } from 'node:path';
 import { Node, Project } from 'ts-morph';
 import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
@@ -28,10 +15,8 @@ import { libraryDirectory, repositoryRoot } from '../RepositoryPaths.ts';
 const exportsPath = 'docs/generated/exports.json';
 const exportsFile = resolve(repositoryRoot, exportsPath);
 
-/** Each entry point's exported names and their kinds, by the specifier applications import. */
 type ExportsRecord = Record<string, Record<string, string>>;
 
-/** The kind of an exported declaration, as the record names it. */
 function kindOf(declaration: Node) {
   if (Node.isSourceFile(declaration)) return 'namespace';
   if (Node.isFunctionDeclaration(declaration)) return 'function';
@@ -47,14 +32,12 @@ function kindOf(declaration: Node) {
 function buildExports(): ExportsRecord {
   const project = new Project({ tsConfigFilePath: resolve(libraryDirectory, 'tsconfig.json') });
   const record: ExportsRecord = {};
-  // Every entry point, by specifier, so the record reads in the same order whatever the manifest's.
   const entryPoints = libraryEntryPoints().sort((a, b) => a.specifier.localeCompare(b.specifier));
   for (const { specifier, file } of entryPoints) {
     const exported = [...project.getSourceFileOrThrow(file).getExportedDeclarations()];
     record[specifier] = Object.fromEntries(
       exported
         .map(([name, declarations]) => {
-          // A name can be a value and a type at once, such as a const and its type.
           const kinds = [...new Set(declarations.map(kindOf))].sort();
           return [name, kinds.join(' ')] as const;
         })
@@ -64,7 +47,6 @@ function buildExports(): ExportsRecord {
   return record;
 }
 
-/** Each name of a record, as `specifier: name`, with its kind. */
 function exportedNames(record: ExportsRecord | undefined) {
   const all = new Map<string, { name: string; kind: string }>();
   for (const [specifier, exported] of Object.entries(record ?? {}))
@@ -73,11 +55,6 @@ function exportedNames(record: ExportsRecord | undefined) {
   return all;
 }
 
-/**
- * What changed between two records: each name added, and each name gone or of another kind, with
- * whether pending changesets record it: an addition by any changeset of @envsemble/envui, a removal
- * or a change of kind by a major one that names it. Pure, for the tests.
- */
 export function changedExports(
   before: ExportsRecord | undefined,
   after: ExportsRecord,
@@ -113,7 +90,7 @@ if (import.meta.main) {
   } else {
     if (readIfExists(exportsFile) !== output) {
       console.error(
-        `${exportsPath} differs from the library's source. Run \`npm run docs:exports\` and commit the result, or, for a name only another module or a test needs, move it to an internal/ module (packages/ui/AGENTS.md, Entry points).`,
+        `${exportsPath} differs from the library's source. Run \`npm run docs:exports\` and commit the result, or, for a name only another module or a test needs, move it to an internal/ module.`,
       );
       process.exit(1);
     }

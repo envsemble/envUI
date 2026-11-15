@@ -1,6 +1,3 @@
-// Dev mode's readout without a page: container conditions and their thresholds, the parts index,
-// and the readout's text and problems from a measurement given as data. The root entry point, and
-// every other one, must not reach dev mode's code.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join, relative } from 'node:path';
@@ -42,7 +39,6 @@ test('container conditions: the widths they test and whether they hold', () => {
   assert.equal(holds('(min-width: 640px)', 40), true);
   assert.equal(holds('(max-width: 20rem) or (min-width: 60rem)', 40), false);
   assert.equal(holds('not (inline-size >= 37.5rem)', 22), true);
-  // A height, or a style query, can't be told from a width.
   assert.equal(holds('(block-size > 20rem)', 40), null);
 });
 
@@ -56,7 +52,6 @@ test('container queries are read from style sheets by container name, and credit
     {
       cssRules: [
         rule('env-scaffold', '(inline-size >= 37.5rem)', 2),
-        // A layer holds more: the same condition merges, another one adds.
         {
           cssRules: [
             rule('env-scaffold', '(inline-size >= 37.5rem)', 1),
@@ -83,7 +78,6 @@ test('container queries are read from style sheets by container name, and credit
     ],
   );
   assert.equal(queriesFor('env-scaffold', queries).length, 2);
-  // A named container isn't credited with the queries that name none; an unnamed one is.
   assert.deepEqual(
     queriesFor('', queries).map(({ condition }) => condition),
     ['(inline-size >= 24rem)'],
@@ -125,10 +119,7 @@ test('parts.json is indexed by part class, and names never wait for it', () => {
   assert.deepEqual(parts.states.get('Card'), [
     { attribute: 'data-skeleton', values: [''], parts: ['env-card'] },
   ]);
-  // Another format is refused rather than read as having no descriptions.
   assert.throws(() => indexParts([{ name: 'Card' }]), /no components/);
-  // A component's own class wins over a helper's on the same element; the window's container and
-  // dev mode's own classes are no parts.
   const element = (...classes) => ({ className: classes.join(' '), classList: classes });
   assert.equal(partClassOf(element('app', 'env-card', 'env-surface')), 'env-card');
   assert.equal(partClassOf(element('env-surface', 'env-dialog-surface')), 'env-dialog-surface');
@@ -144,11 +135,8 @@ test('widths: lengths in px', () => {
   assert.throws(() => toPx('40vw', 16), /lengths such as "40rem"/);
 });
 
-// --- The readout, from a measurement given as data --------------------------------------------
-
 const box = (x, y, w, h) => ({ x, y, w, h });
 let nextKey = 1;
-/** A node of a measurement, visible and quiet unless the test says otherwise. */
 function node(kind, name, at, more = {}) {
   return {
     key: nextKey++,
@@ -186,7 +174,6 @@ function node(kind, name, at, more = {}) {
     ...more,
   };
 }
-/** A measurement of nodes given as [node, parent index] pairs. */
 function snapshot(entries, more = {}) {
   const nodes = entries.map(([data, parent], index) => ({ ...data, index, parent }));
   for (const item of nodes) if (item.parent !== null) nodes[item.parent].children.push(item.index);
@@ -287,7 +274,6 @@ test('the readout lists each node with its layout, and folds identical siblings'
 });
 
 test('the readout counts rem from the root font size, also when it is not 16px', () => {
-  // 40rem is 800px at 20px a rem: the window class and the scaffold's 37.5rem query go by rem.
   assert.equal(toPx('40rem', 20), 800);
   const reading = read(
     snapshot(
@@ -335,12 +321,10 @@ test('what an element paints: a fill, an image, a shadow, or an edge of a color 
     );
   assert.deepEqual(paintsOf(style({})), []);
   assert.deepEqual(paintsOf(style({ backgroundColor: 'oklch(0.5 0.1 200 / 0)' })), []);
-  // Opaque, though it ends in a 0, its blue.
   assert.deepEqual(paintsOf(style({ backgroundColor: 'rgb(255, 0, 0)' })), [
     'background rgb(255, 0, 0)',
   ]);
   assert.deepEqual(paintsOf(style(edge('rgb(0, 0, 0)'))), ['a border (top, right, bottom, left)']);
-  // An edge that only takes room paints nothing: of no width, hidden or transparent.
   assert.deepEqual(paintsOf(style(edge('rgb(0, 0, 0)', '0px'))), []);
   assert.deepEqual(paintsOf(style(edge('rgb(0, 0, 0)', '1px', 'hidden'))), []);
   assert.deepEqual(paintsOf(style(edge('rgba(0, 0, 0, 0)'))), []);
@@ -349,12 +333,10 @@ test('what an element paints: a fill, an image, a shadow, or an edge of a color 
 
 test('a sticky element is stuck at any of the four edges, of the document or a scroll container', () => {
   const none = { top: 0, right: 0, bottom: 0, left: 0 };
-  // The document's scrollport: the viewport, scrolled part of the way along both axes.
   const viewport = {
     edges: { top: 0, left: 0, right: 800, bottom: 600 },
     hidden: { top: 200, bottom: 400, left: 50, right: 150 },
   };
-  // A container inside its border, at 100, 100 in the viewport.
   const container = {
     edges: { top: 101, left: 101, right: 401, bottom: 301 },
     hidden: { top: 30, bottom: 70, left: 10, right: 20 },
@@ -366,11 +348,9 @@ test('a sticky element is stuck at any of the four edges, of the document or a s
     assert.equal(isStuck('bottom', 8, at({ bottom: bottom - 8 }), port), true);
     assert.equal(isStuck('left', 4, at({ left: left + 4 }), port), true);
     assert.equal(isStuck('right', 4, at({ right: right - 4 }), port), true);
-    // Away from the line it sticks at, it scrolls with the content.
     assert.equal(isStuck('bottom', 8, at({ bottom: bottom - 40 }), port), false);
     assert.equal(isStuck('right', 4, at({ right: right - 40 }), port), false);
   }
-  // At its edge with nothing hidden past it, it is where it would be anyway: not stuck.
   const start = { ...container, hidden: { top: 0, bottom: 0, left: 0, right: 0 } };
   for (const edge of ['top', 'bottom', 'left', 'right'])
     assert.equal(isStuck(edge, 0, at({ [edge]: start.edges[edge] }), start), false, edge);
@@ -386,7 +366,6 @@ test('the readout finds what paints, spills, overflows, never sticks, leaves the
         }),
         null,
       ],
-      // Wider content in the grid makes the page wider too; only the grid is reported.
       [
         node('grid', 'wide', box(0, 0, 352, 16), {
           display: 'grid',
@@ -423,7 +402,6 @@ test('the readout finds what paints, spills, overflows, never sticks, leaves the
         }),
         3,
       ],
-      // A component painting through a primitive it renders is no fault: the node is its part.
       [
         node('column', 'env-card', box(0, 200, 352, 96), {
           part: 'env-card',
@@ -474,21 +452,18 @@ test('what is set out on purpose, or out of the flow, neither spills nor overflo
   const reading = read(
     snapshot([
       [node('page', 'page', box(0, 0, 352, 480), { display: 'block' }), null],
-      // A text button's hit area, set out 4 px past the row by its negative margin.
       [
         node('row', 'links', box(0, 0, 352, 40), {
           kids: [kid('a.env-button', box(300, 0, 56, 40), { outset: { ...none, right: 4 } })],
         }),
         0,
       ],
-      // A child out of the flow, such as a resize handle across the edge, never spills.
       [
         node('column', 'panel', box(0, 48, 352, 96), {
           kids: [kid('div.env-handle', box(0, 42, 352, 12), { detached: true })],
         }),
         0,
       ],
-      // Content 3 px wider by a hit area inside, and 16 px wider than that by something else.
       [
         node('row', 'start', box(0, 160, 18, 24), {
           scrollSize: { w: 21, clientW: 18, h: 24, clientH: 24 },
@@ -503,7 +478,6 @@ test('what is set out on purpose, or out of the flow, neither spills nor overflo
         }),
         0,
       ],
-      // Set out by 4 px, and sticking out 20 px.
       [
         node('row', 'spills', box(0, 240, 352, 40), {
           kids: [
@@ -551,7 +525,6 @@ test('no entry point but dev reaches dev mode, so production builds contain none
 });
 
 test('installDevMode() warns about parts in the wrong shape and installs all the same', async () => {
-  // The installer alone, with a stand-in for its UI and React's root, on a stand-in document.
   const installer = join(repositoryRoot, '.cache/unit/DevModeInstall.mjs');
   await build({
     absWorkingDir: repositoryRoot,
@@ -611,7 +584,6 @@ test('installDevMode() warns about parts in the wrong shape and installs all the
     await handle.ready;
     assert.equal(warnings.length, 1);
     assert.match(warnings[0], /the parts given are not docs\/generated\/parts\.json/);
-    // It installed all the same: the readout on the window, its style sheet, host and shortcut.
     assert.equal(window.envui.layout, handle.layout);
     assert.equal(appended.length, 2);
     assert.ok(appended.some((node) => 'data-env-dev-host' in node.attributes));

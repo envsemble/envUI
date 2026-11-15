@@ -1,10 +1,3 @@
-// Runs the contrast gate: its registry and snapshot in Node (tests/contrast/ContrastRegistry.test.ts),
-// then every pair measured in every theme in Chromium (tests/component/Contrast.test.tsx).
-//
-//   node scripts/test/CheckContrast.ts [--update-snapshots]
-//
-// --update-snapshots records what each pair is held to in tests/contrast/DeclaredPairs.json, as
-// tests/contrast/Snapshot.ts allows.
 import { spawnSync } from 'node:child_process';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 import { bin } from './TestTasks.ts';

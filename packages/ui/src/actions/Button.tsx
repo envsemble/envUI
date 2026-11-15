@@ -18,9 +18,7 @@ export type ButtonTone = ControlTone;
 
 /**
  * The designed pairs of variant and tone: a primary button takes any tone; outline, ghost and text
- * buttons take neutral or danger; a secondary button is neutral. The tones nest, so the members
- * below go from the tone every variant takes to the one only primary takes: a variant typed as a
- * union of variants, such as `'primary' | 'secondary'`, type-checks with the tones all of them take.
+ * buttons take neutral or danger; a secondary button is neutral.
  */
 export type ButtonEmphasisProps =
   | {
@@ -100,7 +98,6 @@ export function Button(props: ButtonProps) {
   return <ButtonBase {...props} fallbackVariant="primary" />;
 }
 
-/** IconButton's element: a native button, or with href a native link, as Button's. */
 type IconButtonElementProps =
   | (Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> & { href?: undefined })
   | (Omit<ComponentPropsWithRef<'a'>, 'children' | 'aria-label'> & {
@@ -114,7 +111,6 @@ type IconButtonElementProps =
       disabled?: boolean;
     });
 
-/** The button needs a name: aria-label, or aria-labelledby where visible text names it. */
 type IconButtonName =
   | {
       /** The action's name, which assistive technology announces, such as Open settings. */

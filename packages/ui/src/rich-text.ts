@@ -13,5 +13,4 @@ export type {
   RichTextSlashCommand,
   RichTextLinkEvent,
 } from './forms/rich-text/types.js';
-// What RichTextEditor's pickLink receives and returns, as MarkdownEditor's does.
 export type { MarkdownLink, MarkdownLinkRequest } from './content/MarkdownEditor.js';

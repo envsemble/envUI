@@ -8,7 +8,6 @@ const directionItems = ['One', 'Two', 'Three'].map((label) => ({
   content: <p>{label} panel</p>,
 }));
 
-/** Tabs in right-to-left text, from a dir attribute and from EnvUIProvider's dir. */
 export default function TabsRtlFixture() {
   return (
     <>
@@ -18,7 +17,6 @@ export default function TabsRtlFixture() {
       <EnvUIProvider dir="rtl">
         <Tabs aria-label="Provider tabs" items={directionItems} />
       </EnvUIProvider>
-      {/* A left-to-right region in a panel of right-to-left tabs keeps its own direction. */}
       <div dir="rtl">
         <Tabs
           aria-label="Tabs around a slider"

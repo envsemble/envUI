@@ -1,7 +1,3 @@
-// What the site shows of a part of a page before the part loads: the outlines its skeletons are
-// drawn from (apps/site/src/loading/Skeletons.tsx), small enough to come with the page. The site
-// reads them when it builds or serves, through the virtual modules of SiteData.ts, so
-// they always match the files they outline.
 import { readdirSync, readFileSync } from 'node:fs';
 import {
   groupOf,
@@ -11,7 +7,6 @@ import {
 } from '../../apps/site/src/pages/docs/TokenGroups.ts';
 import { examplesDirectory, libraryChangelogFile, tokensDataFile } from '../RepositoryPaths.ts';
 
-/** The lines of each example's code, by page/Name, as its code block shows it. */
 export function readExampleLines(): Record<string, number> {
   const lines: Record<string, number> = {};
   for (const page of readdirSync(examplesDirectory, { withFileTypes: true })) {
@@ -28,17 +23,12 @@ export function readExampleLines(): Record<string, number> {
 }
 export const exampleLinesSources = [examplesDirectory];
 
-/** The length of a line of Markdown as the reader sees it, without links' addresses or markup. */
 const shownLength = (text: string) =>
   text
     .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/[`*_]/g, '')
     .trim().length;
 
-/**
- * The shape of Markdown: its headings, blank lines, lists and code fences as they are, and the text
- * of every other line as ~N, its length, which the skeleton writes out as placeholder words.
- */
 export function markdownShape(markdown: string) {
   let fenced = false;
   return markdown
@@ -55,10 +45,6 @@ export function markdownShape(markdown: string) {
     .join('\n');
 }
 
-/**
- * The changelog as the Docs' Changelog page shows it, a level lower under Every change: each
- * release's heading, which the page's contents list from the start, and the shape of what it says.
- */
 export function readChangelogOutline(file = libraryChangelogFile) {
   const changelog = readFileSync(file, 'utf8')
     .replace(/\r\n?/g, '\n')
@@ -74,11 +60,11 @@ export function readChangelogOutline(file = libraryChangelogFile) {
 }
 export const changelogOutlineSources = [libraryChangelogFile];
 
-/** The length of a token's value as the reference shows it. */
+const colorSwatchCharacters = 2;
+
 function valueLength(value: { resolved?: unknown } | undefined, color: boolean) {
   const text = tokenValueText(value?.resolved);
-  // A color's swatch takes about two characters' room before it.
-  return text.length + (color ? 2 : 0);
+  return text.length + (color ? colorSwatchCharacters : 0);
 }
 
 interface Token {
@@ -90,10 +76,6 @@ interface Token {
   scales?: { compact?: { resolved?: unknown } };
 }
 
-/**
- * The token reference's groups, each with its title and a row for each token: its name, the length
- * of its description, and the length of each value it shows.
- */
 export function readTokenOutline(file = tokensDataFile) {
   const { tokens } = JSON.parse(readFileSync(file, 'utf8')) as { tokens: Token[] };
   return tokenGroups.flatMap((group) => {

@@ -6,6 +6,7 @@ import {
   useRef,
   type ComponentPropsWithRef,
   type KeyboardEvent,
+  type MouseEvent,
   type PointerEvent,
   type ReactNode,
 } from 'react';
@@ -29,8 +30,7 @@ import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/DocumentTabs.css';
 
-/** How far the floating copy of a dragged tab sits from the pointer, in pixels. */
-const dragImageOffset = 12;
+const dragImageOffsetFromPointerPx = 12;
 
 export interface DocumentTabsItem {
   /** The tab's value, a stable identifier, such as the document's path; value names the active one. */
@@ -125,7 +125,6 @@ export function DocumentTabs({
   const messages = useMessages('documentTabs', documentTabs);
   const closeName = closeLabel ?? ((name: string) => messages.close({ label: name }));
   const list = useRef<HTMLDivElement | null>(null);
-  // ← and → follow the text direction: the EnvUIProvider's, or the one at the strip.
   const [direction] = useDirection(list);
   const focusable = items.some((item) => item.value === value) ? value : (items[0]?.value ?? null);
 
@@ -133,13 +132,10 @@ export function DocumentTabs({
   const closeFocus = useTabCloseFocus(list, items, focusable);
   const { drag, onItemPointerDown } = useTabDrag({ list, items, onReorder });
 
-  // The line shows in the gap the tab would drop into: before the tab after that gap, or after the
-  // last tab.
   const dragged = drag ? items.find((item) => item.value === drag.id) : undefined;
   const dropBefore = drag && drag.gap < items.length ? items[drag.gap]?.value : undefined;
   const dropAfter = drag && drag.gap >= items.length ? items.at(-1)?.value : undefined;
 
-  /** The place a tab moves to, one to the left or right on screen, or -1 at the end. */
   function moveTarget(id: string, side: 'left' | 'right') {
     const index = items.findIndex((item) => item.value === id);
     const rtl = list.current ? isRightToLeft(list.current) : false;
@@ -159,11 +155,11 @@ export function DocumentTabs({
     );
   }
 
-  // Keys with Alt, Ctrl or ⌘ belong to the application, such as Ctrl+W or Alt+← for going back.
-  function onListKeyDown(
+  function leaveModifiedKeysToApplication(
     event: KeyboardEvent<HTMLDivElement> & { preventBaseUIHandler?: () => void },
   ) {
-    if (event.altKey || event.ctrlKey || event.metaKey) event.preventBaseUIHandler?.();
+    const modified = event.altKey || event.ctrlKey || event.metaKey;
+    if (modified) event.preventBaseUIHandler?.();
   }
 
   const strip = (
@@ -176,7 +172,7 @@ export function DocumentTabs({
       data-fade-left={flag(fades.left)}
       data-fade-right={flag(fades.right)}
       data-reordering={flag(drag)}
-      onKeyDown={onListKeyDown}
+      onKeyDown={leaveModifiedKeysToApplication}
     >
       {items.map((item) => (
         <DocumentTab
@@ -213,14 +209,13 @@ export function DocumentTabs({
           aria-label={contextMenuLabel ?? messages.contextMenu}
           onOpenChange={closeFocus.onMenuOpenChange}
           content={(target) => {
-            // Read from the tab's item, so the menu keeps its items while it closes after the tab.
             const tab = target
               ?.closest('.env-document-tabs-item')
               ?.querySelector<HTMLElement>('[role="tab"]');
             const id = tab?.dataset.tabId;
             const onTab = tab != null && id !== undefined;
-            // Without onCloseAll, only a tab offers a menu.
-            if (!onTab && !onCloseAll) return null;
+            const offersMenu = onTab || onCloseAll !== undefined;
+            if (!offersMenu) return null;
             return (
               <TabMenuItems
                 tab={onTab ? { id, label: tab.getAttribute('aria-label') ?? '' } : undefined}
@@ -252,12 +247,13 @@ export function DocumentTabs({
           </Slot>
         )}
         {drag && dragged && (
-          // The floating copy of the dragged tab, beside the pointer; decorative, since the drag is
-          // a pointer's alternative to the context menu.
           <div
             className="env-document-tabs-drag-image"
             aria-hidden="true"
-            style={{ left: drag.x + dragImageOffset, top: drag.y + dragImageOffset }}
+            style={{
+              left: drag.x + dragImageOffsetFromPointerPx,
+              top: drag.y + dragImageOffsetFromPointerPx,
+            }}
           >
             {dragged.icon != null && <DecorativeIcon>{dragged.icon}</DecorativeIcon>}
             <span className="env-document-tabs-tab-label">{dragged.label}</span>
@@ -268,20 +264,20 @@ export function DocumentTabs({
   );
 }
 
-/** Whether a key closes the focused tab: Delete, or Backspace for keyboards without a forward Delete key. */
 function closesTab(event: KeyboardEvent<HTMLElement>) {
   if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return false;
   if (event.key !== 'Delete' && event.key !== 'Backspace') return false;
   event.preventDefault();
-  // A held key closes one tab, not the tab after it as each repeat arrives.
-  return !event.repeat;
+  const heldKeyRepeat = event.repeat;
+  return !heldKeyRepeat;
 }
 
-/**
- * One document's tab beside its close button. The item lays the two out side by side, so the close
- * button isn't nested in the tab. It is a pointer's affordance: the keyboard closes a tab with
- * Delete or Backspace, as aria-keyshortcuts says, or from the context menu.
- */
+const middleButton = 1;
+
+const preventMiddlePressAutoscroll = (event: MouseEvent<HTMLDivElement>) => {
+  if (event.button === middleButton) event.preventDefault();
+};
+
 function DocumentTab({
   item,
   active,
@@ -296,12 +292,9 @@ function DocumentTab({
 }: Pick<DocumentTabsProps, 'panelId' | 'onClose' | 'onPin'> & {
   item: DocumentTabsItem;
   active: boolean;
-  /** The tab that Tab reaches in the strip. */
   focusable: boolean;
   closeName: (label: string) => string;
-  /** The tab is being dragged. */
   moving: boolean;
-  /** The side of the tab a dragged tab would drop on, where it would drop beside it. */
   drop: 'before' | 'after' | undefined;
   onPointerDown: (event: PointerEvent<HTMLDivElement>) => void;
 }) {
@@ -312,12 +305,9 @@ function DocumentTab({
       data-moving={moving ? 'pointer' : undefined}
       data-drop={drop}
       onPointerDown={onPointerDown}
-      onMouseDown={(event) => {
-        // A middle press would otherwise start autoscrolling.
-        if (event.button === 1) event.preventDefault();
-      }}
+      onMouseDown={preventMiddlePressAutoscroll}
       onAuxClick={(event) => {
-        if (event.button !== 1) return;
+        if (event.button !== middleButton) return;
         event.preventDefault();
         onClose(item.value);
       }}
@@ -325,7 +315,6 @@ function DocumentTab({
       <BaseTabs.Tab
         value={item.value}
         className="env-document-tabs-tab"
-        // The label names the tab, whatever its icon.
         aria-label={item.label}
         aria-controls={active ? panelId : undefined}
         aria-keyshortcuts="Delete Backspace"
@@ -355,10 +344,6 @@ function DocumentTab({
   );
 }
 
-/**
- * The context menu's items: on a tab, Close and, where the tabs reorder, Move left and Move right;
- * Close all tabs where the application offers it.
- */
 function TabMenuItems({
   tab,
   closeName,
@@ -369,11 +354,9 @@ function TabMenuItems({
   moveLeftLabel,
   moveRightLabel,
 }: {
-  /** The tab the menu opened on, if it opened on one. */
   tab: { id: string; label: string } | undefined;
   closeName: (label: string) => string;
   onClose: (id: string) => void;
-  /** Moves a tab one place on screen, where the tabs reorder. */
   onMove: ((id: string, side: 'left' | 'right') => void) | undefined;
   canMove: (id: string, side: 'left' | 'right') => boolean;
   closeAll: { onClick: () => void; label: string; disabled: boolean } | undefined;

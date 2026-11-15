@@ -18,47 +18,36 @@ import {
  * focus with it once the update is committed.
  */
 export function useFocusTracking(root: RefObject<HTMLElement | null>) {
-  // The element in each panel's content that last had focus, where restoring the panel returns.
-  const lastFocused = useRef(new Map<string, HTMLElement>());
-  // The panel whose content holds focus, also in a popup it opened, such as a menu in a portal:
-  // React's focus events reach the panel through portals. It holds the element that took focus, as
-  // an element that leaves while it has focus fires no blur, and focus elsewhere is no longer the
-  // panel's.
+  const lastFocusedInContent = useRef(new Map<string, HTMLElement>());
   const focusedPanel = useRef<FocusedPanel | null>(null);
-  // A panel its tab asked to bring back, which takes focus once it shows.
-  const pendingRestore = useRef<string | null>(null);
+  const panelToFocusOnceShown = useRef<string | null>(null);
   const before = locateFocus(root.current, focusedPanel.current);
 
   return {
     root,
     before,
-    /** The element in the panel's content that last had focus. */
-    lastFocusedIn: (id: string) => lastFocused.current.get(id),
-    /** Forgets the elements of panels no longer in the dock. */
+    lastFocusedIn: (id: string) => lastFocusedInContent.current.get(id),
     keepPanels: (ids: ReadonlySet<string>) => {
-      for (const id of lastFocused.current.keys()) if (!ids.has(id)) lastFocused.current.delete(id);
+      for (const id of lastFocusedInContent.current.keys())
+        if (!ids.has(id)) lastFocusedInContent.current.delete(id);
     },
-    /** The panel to focus once it shows, if any, which is then no longer pending. */
     takePendingRestore: () => {
-      const id = pendingRestore.current;
-      pendingRestore.current = null;
+      const id = panelToFocusOnceShown.current;
+      panelToFocusOnceShown.current = null;
       return id;
     },
-    /** The panel whose content holds focus now. */
     focusedId: () => {
       const focus = locateFocus(root.current, focusedPanel.current);
       return focus && !focus.tab ? focus.id : undefined;
     },
-    /** Focus entered the panel's content, or a popup it opened, or left it, with null. */
     onFocusWithin: (id: string, element: EventTarget | null) => {
       if (element) focusedPanel.current = { id, element };
       else if (focusedPanel.current?.id === id) focusedPanel.current = null;
     },
-    /** An element in the panel's content took focus. */
-    onFocusContent: (id: string, target: HTMLElement) => lastFocused.current.set(id, target),
-    /** The panel takes focus once it shows. */
+    onFocusContent: (id: string, target: HTMLElement) =>
+      lastFocusedInContent.current.set(id, target),
     focusOnShow: (id: string) => {
-      pendingRestore.current = id;
+      panelToFocusOnceShown.current = id;
     },
   };
 }
@@ -80,9 +69,7 @@ export function useDockFocus<Panel extends PanelDockPanel>(
   }: {
     panels: readonly Panel[];
     placements: ReadonlyMap<string, Placement>;
-    /** The panels behind their tabs. */
     tabs: readonly Panel[];
-    /** The panel that fills the region. */
     filling: Panel | undefined;
     frameOf: (id: string) => HTMLElement | undefined;
     strip: RefObject<HTMLElement | null>;
@@ -106,12 +93,7 @@ export function useDockFocus<Panel extends PanelDockPanel>(
     revealInWindow(frame.ownerDocument.defaultView, frame.getBoundingClientRect());
   }
 
-  /**
-   * Focuses a tab's button. A browser would scroll it into view as it likes, some to the middle of
-   * the window; the page scrolls only where the tab lies entirely outside it, and as little as shows
-   * it.
-   */
-  function focusTab(id: string | undefined) {
+  function focusTabWithoutBrowserScroll(id: string | undefined) {
     const tab = [...(strip.current?.children ?? [])].find(
       (element) => element instanceof HTMLElement && element.dataset.panelId === id,
     );
@@ -121,7 +103,6 @@ export function useDockFocus<Panel extends PanelDockPanel>(
     revealInWindow(button.ownerDocument.defaultView, button.getBoundingClientRect());
   }
 
-  /** Once the focused panel or tab leaves: the active or newest panel shown, or the last tab. */
   function focusRemaining() {
     const visible = panels.filter((panel) => placements.get(panel.id) !== 'hidden');
     const target =
@@ -129,10 +110,9 @@ export function useDockFocus<Panel extends PanelDockPanel>(
       visible.filter((panel) => placements.get(panel.id) === 'row').at(-1) ??
       filling;
     if (target) focusInto(target.id);
-    else focusTab(tabs.at(-1)?.id);
+    else focusTabWithoutBrowserScroll(tabs.at(-1)?.id);
   }
 
-  // Closed panels' elements are forgotten.
   useLayoutEffect(() => keepPanels(new Set(panels.map(({ id }) => id))));
 
   useLayoutEffect(() => {
@@ -143,7 +123,7 @@ export function useDockFocus<Panel extends PanelDockPanel>(
     if (!element) return;
     const page = element.ownerDocument;
     const focused = page.activeElement;
-    const lost = !focused || focused === page.body || !focused.isConnected;
+    const focusLost = !focused || focused === page.body || !focused.isConnected;
     if (restoring !== null && isShown(placements.get(restoring))) {
       focusInto(restoring);
       return;
@@ -151,26 +131,24 @@ export function useDockFocus<Panel extends PanelDockPanel>(
     if (!focusBefore) return;
     const placement = placements.get(focusBefore.id);
     if (focusBefore.tab) {
-      if (!lost) return;
+      if (!focusLost) return;
       if (placement === undefined) {
         const index = tabsBefore.indexOf(focusBefore.id);
         const next = tabs[Math.min(index, tabs.length - 1)];
-        if (next) focusTab(next.id);
+        if (next) focusTabWithoutBrowserScroll(next.id);
         else focusRemaining();
       } else if (isShown(placement)) focusInto(focusBefore.id);
       return;
     }
     if (placement === undefined) {
-      if (lost) focusRemaining();
+      if (focusLost) focusRemaining();
     } else if (placement === 'hidden') {
-      // Focus in a popup the panel opened, such as a menu in a portal, moves to the tab too.
-      if (lost || focusBefore.popup || frameOf(focusBefore.id)?.contains(focused))
-        focusTab(focusBefore.id);
-    } else if (lost) {
-      // A reorder can drop focus from an element that stays. An element that went with the new
-      // layout, such as the resize handle of a panel that now fills the region, or Maximize in a
-      // stacked dock, leaves focus to its panel.
-      if (focusBefore.element.isConnected) focusBefore.element.focus({ preventScroll: true });
+      const focusWasInPanelOrItsPopup =
+        focusLost || focusBefore.popup || frameOf(focusBefore.id)?.contains(focused);
+      if (focusWasInPanelOrItsPopup) focusTabWithoutBrowserScroll(focusBefore.id);
+    } else if (focusLost) {
+      const elementStayedThroughReorder = focusBefore.element.isConnected;
+      if (elementStayedThroughReorder) focusBefore.element.focus({ preventScroll: true });
       else focusInto(focusBefore.id);
     }
   });

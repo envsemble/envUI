@@ -1,10 +1,5 @@
 'use client';
 
-// Dev mode's two sidebars: the nodes as a tree on one side of the 3D view, with dev mode's theme at
-// its foot, and on the other the inspector, with the selected node in detail and the readout an
-// agent reads. Each is resizable by its inner edge, with the grip of a resizable NavigationDrawer, and hides
-// with the button in its header's outer corner.
-
 import { Fragment, memo, useMemo, useState, type ReactNode } from 'react';
 import { Button } from '../../actions/Button.js';
 import { CopyButton } from '../../actions/CopyButton.js';
@@ -31,20 +26,14 @@ import { toRem } from '../units.js';
 import { windowClassOfRem } from '../../foundations/windowClasses.js';
 import { SidebarToggle, type Side } from './Controls.js';
 import type { EditorTheme } from './editorTheme.js';
-import { sideWidths } from './sides.js';
+import { sideWidthsRem } from './sides.js';
 import type { LivePage } from './useLivePage.js';
 
-/** The full measurement and its readout, which the sidebars show. */
-type Full = NonNullable<LivePage['full']>;
+type FullMeasurement = NonNullable<LivePage['full']>;
 
-/** The narrowest the 3D view gets as a sidebar widens, in rem. */
-const viewLeast = 16;
+const narrowestViewRem = 16;
 
-/**
- * The widest a sidebar can be, in rem: all of dev mode's window but the other sidebar and the
- * narrowest view, so it widens well past half the window.
- */
-function roomFor(handle: HTMLElement) {
+function widestSidebarRem(handle: HTMLElement) {
   const sidebar = handle.closest('.env-dev-sidebar');
   const panel = handle.closest('.env-dev-panel');
   if (!sidebar || !panel) return Infinity;
@@ -52,14 +41,9 @@ function roomFor(handle: HTMLElement) {
   for (const other of Array.from(panel.querySelectorAll('.env-dev-sidebar')))
     if (other !== sidebar) others += other.getBoundingClientRect().width;
   const rem = remPixels(handle);
-  return (panel.getBoundingClientRect().width - others) / rem - viewLeast;
+  return (panel.getBoundingClientRect().width - others) / rem - narrowestViewRem;
 }
 
-/**
- * A sidebar: a flush, square pane on the navigation's background, as a NavigationDrawer is, resizable by its
- * inner edge with the same grip, keyboard and double click as a resizable NavigationDrawer's. It keeps its
- * width while it is dragged, rendering only itself, and hands it on once the drag ends.
- */
 function Sidebar({
   side,
   label,
@@ -69,13 +53,12 @@ function Sidebar({
 }: {
   side: Side;
   label: string;
-  /** The width it starts at, in rem, as it was last left. */
   defaultWidth: number;
-  /** Receives its width in rem once a drag ends, a key moves it or a double click resets it. */
   onWidthCommit: (width: number) => void;
   children: ReactNode;
 }) {
-  const bounds = sideWidths[side];
+  const bounds = sideWidthsRem[side];
+  const growsTowardTheStart = side === 'inspector';
   const [width, setWidth] = useState(defaultWidth);
   const resize = useResizableWidth({
     width,
@@ -86,9 +69,8 @@ function Sidebar({
       setWidth(next);
       if (committed) onWidthCommit(next);
     },
-    room: roomFor,
-    // The inspector, at the window's end, grows as its handle moves toward the start.
-    reverse: side === 'inspector',
+    room: widestSidebarRem,
+    reverse: growsTowardTheStart,
     widthText: (text) => `${text} rem`,
   });
   return (
@@ -113,22 +95,16 @@ function Sidebar({
 }
 
 export interface NodeTreeProps {
-  /** The full measurement, or null until the first one. */
   full: LivePage['full'];
   selected: number | null;
   onSelect: (key: number | null) => void;
   onTreeHover: (key: number | null) => void;
-  /** The width it starts at, in rem. */
   defaultWidth: number;
-  /** Receives its width in rem once people have resized it. */
   onWidthCommit: (width: number) => void;
-  /** Hides the tree; the same button, left floating over the view, shows it again. */
   onHide: () => void;
-  /** The theme of dev mode's own UI, chosen at the tree's foot; the page keeps its own. */
   editorTheme: { value: EditorTheme; onChange: (theme: EditorTheme) => void };
 }
 
-/** The nodes as a tree, in a sidebar of their own, with dev mode's theme at its foot. */
 export const NodeTree = memo(function NodeTree({
   full,
   selected,
@@ -178,7 +154,6 @@ const themeIcons: Record<EditorTheme['theme'], ReactNode> = {
   dark: <IconDarkMode />,
 };
 
-/** The theme of dev mode's own UI: the page's, light or dark, with or without high contrast. */
 function EditorThemeMenu({
   value,
   onChange,
@@ -224,21 +199,13 @@ function EditorThemeMenu({
 }
 
 export interface InspectorProps {
-  /** The full measurement, or null until the first one. */
   full: LivePage['full'];
   selected: number | null;
-  /** The width it starts at, in rem. */
   defaultWidth: number;
-  /** Receives its width in rem once people have resized it. */
   onWidthCommit: (width: number) => void;
-  /** Hides the inspector; the same button, left floating over the view, shows it again. */
   onHide: () => void;
 }
 
-/**
- * The selected node in detail, and the readout, in the sidebar across the view from the tree: two
- * tabs, beside the button that hides the inspector.
- */
 export const Inspector = memo(function Inspector({
   full,
   selected,
@@ -301,7 +268,7 @@ export const Inspector = memo(function Inspector({
                     Copy the readout
                   </CopyButton>
                 </Row>
-                <Readout text={full.reading.text} />
+                <WrappedReadout text={full.reading.text} />
               </Column>
             ) : null,
           },
@@ -311,12 +278,7 @@ export const Inspector = memo(function Inspector({
   );
 });
 
-/**
- * The readout's text as it fits the sidebar: each line wraps within it, its continuation indented
- * under the line's own indent, so nothing runs past the edge and the nesting stays readable. The
- * text copied is the readout as it is.
- */
-function Readout({ text }: { text: string }) {
+function WrappedReadout({ text }: { text: string }) {
   const lines = useMemo(
     () =>
       text.split('\n').map((line) => {
@@ -338,7 +300,7 @@ function Readout({ text }: { text: string }) {
 }
 
 interface NodesProps {
-  full: Full;
+  full: FullMeasurement;
   selected: number | null;
   onSelect: (key: number | null) => void;
   onTreeHover: (key: number | null) => void;
@@ -352,13 +314,13 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
     const visit = (node: NodeData, depth: number) => {
       const open = !collapsed.has(node.key);
       const problems = problemsByKey.get(node.key)?.length ?? 0;
+      const listsItsChildren = node.hidden === null;
       rows.push({
         value: String(node.key),
         depth,
         node,
         label: labelOf(node),
-        // A hidden node's nodes are counted in its readout line, not listed.
-        expandable: node.hidden === null && node.children.length > 0,
+        expandable: listsItsChildren && node.children.length > 0,
         expanded: open,
         description: node.hidden ?? undefined,
         tooltip: node.hidden ?? undefined,
@@ -370,7 +332,7 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
           <Badge variant="outline">container</Badge>
         ) : undefined,
       });
-      if (open && node.hidden === null)
+      if (open && listsItsChildren)
         for (const child of node.children) visit(snapshot.nodes[child], depth + 1);
     };
     for (const index of snapshot.tops) visit(snapshot.nodes[index], 0);
@@ -384,7 +346,6 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
       </Text>
     );
   return (
-    // Hovering a row shows its node in the 3D view.
     <div
       className="env-dev-tree"
       onPointerOver={(event) => {
@@ -412,14 +373,13 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
   );
 }
 
-/** A heading of the details, quiet and small, as a NavigationDrawer's group headings are. */
-const Heading = ({ children }: { children: ReactNode }) => (
+const DetailsHeading = ({ children }: { children: ReactNode }) => (
   <Text variant="caption" render={<h3 />}>
     {children}
   </Text>
 );
 
-function Details({ full, node }: { full: Full; node: NodeData }) {
+function Details({ full, node }: { full: FullMeasurement; node: NodeData }) {
   const { snapshot } = full;
   const element = snapshot.elements?.[node.index];
   const problems = full.problemsByKey.get(node.key) ?? [];
@@ -427,7 +387,6 @@ function Details({ full, node }: { full: Full; node: NodeData }) {
   const width = toRem(node.size.w, snapshot.rootPx);
   const queries = node.container ? queriesFor(node.container.name, snapshot.queries) : [];
   const thresholds = thresholdsFor(queries);
-  // Read once for the selected node: the tokens its style rules use.
   const tokens = useMemo(() => (element?.isConnected ? tokensUsedBy(element) : []), [element]);
   const states = element
     ? Array.from(element.attributes).filter(
@@ -473,7 +432,7 @@ function Details({ full, node }: { full: Full; node: NodeData }) {
       </DescriptionList.Root>
       {problems.length ? (
         <Column gap={1}>
-          <Heading>Problems</Heading>
+          <DetailsHeading>Problems</DetailsHeading>
           {problems.map((problem) => (
             <Text key={problem.message} variant="body-sm" className="env-dev-problem">
               {problem.message}
@@ -483,7 +442,7 @@ function Details({ full, node }: { full: Full; node: NodeData }) {
       ) : null}
       {queries.length ? (
         <Column gap={1}>
-          <Heading>Queries that ask about it</Heading>
+          <DetailsHeading>Queries that ask about it</DetailsHeading>
           {queries.map((query) => {
             const holds = conditionHolds(query.condition, width, snapshot.rootPx);
             return (
@@ -501,7 +460,7 @@ function Details({ full, node }: { full: Full; node: NodeData }) {
       ) : null}
       {tokens.length ? (
         <Column gap={1}>
-          <Heading>Tokens its styles use</Heading>
+          <DetailsHeading>Tokens its styles use</DetailsHeading>
           <Grid columns="minmax(0, 1fr) auto" gap={1}>
             {tokens.map((token) => (
               <Fragment key={token.name}>
@@ -523,8 +482,8 @@ function Details({ full, node }: { full: Full; node: NodeData }) {
       ) : null}
       {line ? (
         <Column gap={1}>
-          <Heading>Readout line</Heading>
-          <Readout text={line.trimStart()} />
+          <DetailsHeading>Readout line</DetailsHeading>
+          <WrappedReadout text={line.trimStart()} />
         </Column>
       ) : null}
     </Column>

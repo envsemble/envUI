@@ -39,8 +39,8 @@ export function useMarkdownEditing({
   }, []);
 
   useLayoutEffect(() => {
-    // A replacement supplied by the application starts a fresh document history.
-    if (history.current.entries[history.current.index].value !== content) {
+    const replacedByApplication = history.current.entries[history.current.index].value !== content;
+    if (replacedByApplication) {
       history.current = createMarkdownHistory(content);
       pendingSelection.current = null;
       setRevision((current) => current + 1);
@@ -108,17 +108,17 @@ export function useMarkdownEditing({
     emit(after, false);
   }
   function apply(before: MarkdownSelection, after: MarkdownSelection) {
-    const input = inputRef.current;
-    // A picker may resolve after props change. Check the current native control, not old props.
+    const currentNativeControl = inputRef.current;
     if (
-      !input ||
-      input.disabled ||
-      input.readOnly ||
+      !currentNativeControl ||
+      currentNativeControl.disabled ||
+      currentNativeControl.readOnly ||
       composing.current ||
-      input.value !== before.value
+      currentNativeControl.value !== before.value
     )
       return false;
-    if (input.maxLength >= 0 && after.value.length > input.maxLength) return false;
+    if (currentNativeControl.maxLength >= 0 && after.value.length > currentNativeControl.maxLength)
+      return false;
     recordMarkdownEdit(history.current, before, after, 'format');
     emit(after, true);
     return true;

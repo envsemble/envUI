@@ -1,28 +1,17 @@
 import { roundToHundredth } from '../../internal/dom/lengths.js';
-/**
- * The shape beside the contents that marks the reader's place: one stroke down the list, swelling
- * into a broad bulge at the reader's place and running thin a few entries away, like a brush's.
- * It keeps its shape as the place moves, gliding there (`glideTo` and `glideStep`). At the list's
- * first and last entries it stays whole: smaller, so it tapers before the shape ends.
- */
 
-/** How many entries away from the reader's place the shape still swells: two and a half. */
-const waveSpread = 2.5;
-/** How round the bulge is: above 2, fuller at its middle and quicker at its foot than a bell. */
-const waveRound = 3;
-/** How quickly the swell falls away: to half 0.9 entries from the reader's place. */
-const waveFall = 0.9 / Math.LN2 ** (1 / waveRound);
+const swellReachInEntries = 2.5;
+const bulgeRoundnessAboveBell = 3;
+const halfSwellDistanceInEntries = 0.9;
+const swellFalloff = halfSwellDistanceInEntries / Math.LN2 ** (1 / bulgeRoundnessAboveBell);
 /**
  * How thin the shape runs away from the reader's place, as a share of its fullest.
- * @internal Exported for tests/library/source/TableOfContents.test.ts.
+ * @internal
  */
 export const waveThin = 0.1;
-/** How far the entry under the pointer swells the shape, as a share of the reader's place. */
-const hoverSwell = 0.4;
-/** How many entries away from the one under the pointer its swell reaches. */
-const hoverSpread = 0.8;
-/** How finely the shape's edges are drawn, in px. */
-const step = 2;
+const hoverSwellShareOfPlace = 0.4;
+const hoverReachInEntries = 0.8;
+const edgeStepPx = 2;
 
 /** Where the entries sit beside the shape, in px from the top of its box. */
 export interface WaveLayout {
@@ -36,33 +25,27 @@ export interface WaveLayout {
   full: number;
 }
 
-/** A smooth bell: 1 at 0, easing to 0 at 1 and beyond, either way. */
-function bell(distance: number): number {
+function smoothBell(distance: number): number {
   const d = Math.min(1, Math.abs(distance));
   return Math.cos((d * Math.PI) / 2) ** 2;
 }
 
-/** The swell around the reader's place: a rounded bell that ends at the spread. */
-const edge = Math.exp(-((waveSpread / waveFall) ** waveRound));
-function swellAround(distance: number): number {
-  const fall = Math.exp(-(Math.abs(distance / waveFall) ** waveRound));
-  return Math.max(0, (fall - edge) / (1 - edge));
+const swellAtReach = Math.exp(-((swellReachInEntries / swellFalloff) ** bulgeRoundnessAboveBell));
+function swellAroundPlace(distance: number): number {
+  const fall = Math.exp(-(Math.abs(distance / swellFalloff) ** bulgeRoundnessAboveBell));
+  return Math.max(0, (fall - swellAtReach) / (1 - swellAtReach));
 }
 
 /**
  * How tall the bulge is in a list of so many entries, as a share of its height in a long one: in a
  * short list, shorter, so the thin stroke still runs beside some of it.
- * @internal Exported for tests/library/source/TableOfContents.test.ts.
+ * @internal
  */
 export function waveReach(count: number): number {
   return Math.min(1, Math.max(0.85, (count - 1) / 6));
 }
 
-/**
- * The entry at a height, as a fractional index: between two entries' middles in proportion, and
- * beyond the first and last at the spacing next to them.
- */
-function entryAt(anchors: readonly number[], y: number): number {
+function fractionalEntryAt(anchors: readonly number[], y: number): number {
   const count = anchors.length;
   if (count === 0) return 0;
   if (count === 1) return 0;
@@ -73,33 +56,25 @@ function entryAt(anchors: readonly number[], y: number): number {
   return to > from ? index + (y - from) / (to - from) : index;
 }
 
-/** How far a swell reaches either way, in entries: past it, under 3% of its fullest. */
-const waveFoot = waveFall * Math.log(1 / 0.03) ** (1 / waveRound);
-/** How much room a swell leaves before the shape's end for the thin stroke's round end, in entries. */
-const endTip = 0.12;
-/** How far toward the list's middle the bulge moves to fit, as a share of the room it lacks. */
-const endDrift = 0.3;
-/** The smallest the bulge is drawn to fit, as a share of its size. */
-const endLeast = 0.3;
+const footShareOfFullest = 0.03;
+const swellFootInEntries =
+  swellFalloff * Math.log(1 / footShareOfFullest) ** (1 / bulgeRoundnessAboveBell);
+const roundEndRoomInEntries = 0.12;
+const bulgeDriftShareOfMissingRoom = 0.3;
+const smallestBulgeShare = 0.3;
 
-/**
- * How large a swell is drawn to fit between the shape's ends, `before` and `after` entries away on
- * either side, when it would reach `foot` entries: 1 with room to spare, smaller as an end comes
- * closer, so it tapers whole before the end rather than being cut off by it.
- */
-function fitBetween(before: number, after: number, foot: number): number {
-  const room = Math.min(before, after) - endTip;
-  return Math.min(1, Math.max(endLeast, room / foot));
+function scaleToTaperWholeBetweenEnds(before: number, after: number, foot: number): number {
+  const room = Math.min(before, after) - roundEndRoomInEntries;
+  return Math.min(1, Math.max(smallestBulgeShare, room / foot));
 }
 
 /**
  * How far the shape swells at a fractional entry index, from 0 to 1: 1 at the reader's place, half
  * 0.9 entries away and nothing two and a half away, and shorter by `reach` in a short list; with a
  * smaller swell at each entry under the pointer, by how far its own has grown (`hovers`, from 0 to
- * 1 per entry), which merges with the bulge where they meet. Without a place, only those. Near
- * either of the shape's `ends`, fractional indexes, the bulge is drawn smaller, the same shape, and
- * a little toward the middle, so it tapers whole before the end; a swell under the pointer, shorter.
- * @internal Exported for tests/library/source/TableOfContents.test.ts.
+ * 1 per entry). Near either of the shape's `ends`, the bulge is drawn smaller and a little toward
+ * the middle, so it tapers whole before the end.
+ * @internal
  */
 export function swellAt(
   index: number,
@@ -111,30 +86,35 @@ export function swellAt(
   const [start, end] = ends;
   let swell = 0;
   if (place !== null) {
-    const foot = waveFoot * reach;
-    // Where the bulge would reach past an end, it moves a little away from it, then fits the rest.
-    const short = (room: number, foot: number) => Math.max(0, foot + endTip - room);
-    const at = place + endDrift * (short(place - start, foot) - short(end - place, foot));
+    const foot = swellFootInEntries * reach;
+    const missingRoom = (room: number, foot: number) =>
+      Math.max(0, foot + roundEndRoomInEntries - room);
+    const at =
+      place +
+      bulgeDriftShareOfMissingRoom *
+        (missingRoom(place - start, foot) - missingRoom(end - place, foot));
     const fit = Math.min(
-      fitBetween(at - start, Infinity, foot),
-      fitBetween(Infinity, end - at, foot),
+      scaleToTaperWholeBetweenEnds(at - start, Infinity, foot),
+      scaleToTaperWholeBetweenEnds(Infinity, end - at, foot),
     );
-    swell = fit * swellAround((index - at) / (reach * fit));
+    swell = fit * swellAroundPlace((index - at) / (reach * fit));
   }
   for (let entry = 0; entry < hovers.length; entry += 1) {
     const amount = hovers[entry];
     if (amount <= 0) continue;
-    const spread = hoverSpread * fitBetween(entry - start, end - entry, hoverSpread);
-    // Blended, not the larger of the two: where a hovered entry's swell meets the bulge they merge
-    // into one shape, with no dip between them, as two drops run together.
-    const hover = amount * hoverSwell * bell((index - entry) / spread);
-    swell = swell + hover - Math.min(1, swell) * hover;
+    const spread =
+      hoverReachInEntries *
+      scaleToTaperWholeBetweenEnds(entry - start, end - entry, hoverReachInEntries);
+    const hover = amount * hoverSwellShareOfPlace * smoothBell((index - entry) / spread);
+    swell = mergeLikeTwoDropsRunningTogether(swell, hover);
   }
   return swell;
 }
 
-/** How far the reader is into a section before the shape starts on to the next, as a share. */
-const dwell = 0.5;
+const mergeLikeTwoDropsRunningTogether = (swell: number, hover: number) =>
+  swell + hover - Math.min(1, swell) * hover;
+
+const sectionShareBeforeMovingOn = 0.5;
 
 /**
  * Where the shape swells for a reading position, a fractional section index: on the current
@@ -143,7 +123,10 @@ const dwell = 0.5;
  */
 export function wavePlace(position: number): number {
   const index = Math.floor(position);
-  const progress = Math.min(1, Math.max(0, (position - index - dwell) / (1 - dwell)));
+  const progress = Math.min(
+    1,
+    Math.max(0, (position - index - sectionShareBeforeMovingOn) / (1 - sectionShareBeforeMovingOn)),
+  );
   return index + progress * progress * (3 - 2 * progress);
 }
 
@@ -200,11 +183,12 @@ export function glideStep(
   return true;
 }
 
-/**
- * The radius of the round end at `end`, from which the shape runs `inward` (1 down, -1 up): the one
- * at which the shape, that far in, is as wide as the end, found by halving; at most `room`.
- */
-function roundEnd(width: (y: number) => number, end: number, inward: 1 | -1, room: number) {
+function roundEndRadiusWhereShapeIsAsWide(
+  width: (y: number) => number,
+  end: number,
+  inward: 1 | -1,
+  room: number,
+) {
   if (width(end + inward * room) >= 2 * room) return room;
   let low = 0;
   let high = room;
@@ -229,26 +213,21 @@ export function wavePath(
   const { anchors, top, bottom, full } = layout;
   if (anchors.length === 0 || !(bottom > top) || !(full > 0)) return '';
   const reach = waveReach(anchors.length);
-  // Where the shape ends, in entries, which the bulge fits between; a single entry's is all bulge.
-  const ends =
-    anchors.length > 1
-      ? ([entryAt(anchors, top), entryAt(anchors, bottom)] as const)
-      : ([-Infinity, Infinity] as const);
+  const singleEntryIsAllBulge = anchors.length <= 1;
+  const endsInEntries = singleEntryIsAllBulge
+    ? ([-Infinity, Infinity] as const)
+    : ([fractionalEntryAt(anchors, top), fractionalEntryAt(anchors, bottom)] as const);
   const width = (y: number) => {
-    const swell = swellAt(entryAt(anchors, y), place, hovers, reach, ends);
+    const swell = swellAt(fractionalEntryAt(anchors, y), place, hovers, reach, endsInEntries);
     return full * (waveThin + (1 - waveThin) * swell);
   };
-  // The ends are round and never overlap. Each starts where the shape is as wide as the round end,
-  // so the edge runs on into it: sized by the width at the very end, a bulge just short of it would
-  // step in to the end's width and stand out as a second peak.
   const room = (bottom - top) / 2;
-  const startRadius = roundEnd(width, top, 1, room);
-  const endRadius = roundEnd(width, bottom, -1, room);
+  const startRadius = roundEndRadiusWhereShapeIsAsWide(width, top, 1, room);
+  const endRadius = roundEndRadiusWhereShapeIsAsWide(width, bottom, -1, room);
   const from = top + startRadius;
   const to = bottom - endRadius;
-  // The end edge's heights and widths, leaving out points inside a run of one width.
   const edge: [number, number][] = [];
-  for (let y = from; y < to + step; y += step) {
+  for (let y = from; y < to + edgeStepPx; y += edgeStepPx) {
     const at = Math.min(y, to);
     const across = at === from ? startRadius * 2 : at === to ? endRadius * 2 : width(at);
     const last = edge.at(-1);

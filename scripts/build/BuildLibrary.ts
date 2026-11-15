@@ -29,13 +29,15 @@ await writeFile(
   await collectDependencyNotices(repositoryRoot),
 );
 
-// A release build replaces only the package's own generated output.
 if (relative(libraryDirectory, outputDirectory) !== 'dist')
   throw new Error('Library output must remain within packages/ui/dist.');
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
-// Every module, without the ambient declarations, which hold no code.
-const sourceEntryPoints = await findFiles(librarySourceDirectory, /(?<!\.d)\.tsx?$/);
+const moduleSourceWithoutAmbientDeclarations = /(?<!\.d)\.tsx?$/;
+const sourceEntryPoints = await findFiles(
+  librarySourceDirectory,
+  moduleSourceWithoutAmbientDeclarations,
+);
 await build({
   entryPoints: sourceEntryPoints,
   outbase: librarySourceDirectory,
@@ -55,32 +57,25 @@ execFileSync(
   ],
   { stdio: 'inherit' },
 );
-// The token list ships as `@envsemble/envui/tokens.json`.
 await cp(
   resolve(librarySourceDirectory, 'generated/tokens.json'),
   resolve(outputDirectory, 'tokens.json'),
 );
-// Each module imports the style sheets it draws with, as ../styles/Button.css in the source. In the
-// package they become #styles/Button.css, the package's own import (package.json "imports"): a
-// bundler, which sets the `module` condition, loads dist/styles/Button.css, and Node, which can't
-// load CSS, an empty module. So the modules a tree-shaken application keeps bring exactly their
-// style sheets, and the same modules still run in Node for server rendering and tests.
-const stylesheetImport = /^import "(?:\.\.?\/)+styles\/(\w+\.css)";$/gm;
+const relativeStylesheetImport = /^import "(?:\.\.?\/)+styles\/(\w+\.css)";$/gm;
 const importedStylesheets = new Set<string>();
 for (const file of await findFiles(outputDirectory, /\.js$/)) {
   const code = await readFile(file, 'utf8');
-  const rewritten = code.replace(stylesheetImport, (_, stylesheet: string) => {
+  const rewritten = code.replace(relativeStylesheetImport, (_, stylesheet: string) => {
     importedStylesheets.add(stylesheet);
     return `import "#styles/${stylesheet}";`;
   });
   if (rewritten !== code) await writeFile(file, rewritten);
 }
-// A style sheet a module imports as text, as dev mode imports its own, becomes that text in the
-// module, without comments and whitespace as the other style sheets ship.
-const stylesheetTextImport = /^import (\w+) from "(\.[^"]+\.css)\?raw"(?: with \{[^}]*\})?;$/gm;
+const rawStylesheetImportToInline =
+  /^import (\w+) from "(\.[^"]+\.css)\?raw"(?: with \{[^}]*\})?;$/gm;
 for (const file of await findFiles(outputDirectory, /\.js$/)) {
   const code = await readFile(file, 'utf8');
-  const imports = [...code.matchAll(stylesheetTextImport)];
+  const imports = [...code.matchAll(rawStylesheetImportToInline)];
   if (!imports.length) continue;
   let inlined = code;
   for (const [statement, name, specifier] of imports) {
@@ -97,8 +92,6 @@ for (const file of await findFiles(outputDirectory, /\.js$/)) {
   }
   await writeFile(file, inlined);
 }
-// The declarations carry no style sheet imports: they hold no types, and a checker that resolves
-// side-effect imports would look for declarations of CSS.
 const declarationStylesheetImport = /^import '(?:\.\.?\/)+styles\/\w+\.css';\n/gm;
 for (const file of await findFiles(outputDirectory, /\.d\.ts$/)) {
   const declarations = await readFile(file, 'utf8');
@@ -110,11 +103,6 @@ await writeFile(
   resolve(outputDirectory, 'styles/empty.js'),
   "// What a style sheet import of envUI's resolves to where CSS can't load, as in Node.\nexport {};\n",
 );
-// The style sheets ship without comments and whitespace, which only the sources need. Their rules
-// and values stay as written, in the same order and layers: custom properties keep their exact
-// text. styles.css holds them all, for applications without a bundler; dist/styles/ holds each one
-// a module imports, Base.css with the parts it imports. Each of those starts with the layer order,
-// so the layers keep their order whichever of envUI's style sheets a page loads first.
 const layerOrder = /^@layer [\w., ]+;$/m.exec(
   await readFile(resolve(librarySourceDirectory, 'styles/Base.css'), 'utf8'),
 )![0];
@@ -143,35 +131,32 @@ const stylesheetBuilds = await Promise.all([
 const minifiedLayerOrder = layerOrder.replaceAll(', ', ',');
 for (const output of stylesheetBuilds.flatMap(({ outputFiles }) => outputFiles)) {
   await mkdir(resolve(output.path, '..'), { recursive: true });
-  const ownSheet =
+  const moduleSheetLackingLayerOrder =
     output.path.endsWith('.css') &&
     !relative(resolve(outputDirectory, 'styles'), output.path).startsWith('..') &&
     !output.text.startsWith(minifiedLayerOrder);
-  await writeFile(output.path, ownSheet ? `${minifiedLayerOrder}${output.text}` : output.contents);
+  await writeFile(
+    output.path,
+    moduleSheetLackingLayerOrder ? `${minifiedLayerOrder}${output.text}` : output.contents,
+  );
 }
-// The package ships no logos: the brand artwork stays in the repository for the catalogue.
 await cp(resolve(repositoryRoot, 'assets/readme'), resolve(outputDirectory, 'assets/readme'), {
   recursive: true,
 });
 const documentationOutputDirectory = resolve(libraryDirectory, 'docs');
 if (relative(libraryDirectory, documentationOutputDirectory) !== 'docs')
   throw new Error('Packaged documentation must remain within packages/ui/docs.');
-// The packaged pages are compiled: example files and generated props tables are filled in, and
-// the examples ship beside them in docs/examples.
 packageDocumentation(documentationOutputDirectory);
 const readme = await readFile(resolve(repositoryRoot, 'README.md'), 'utf8');
-// The repository README opens with the envUI lockup; the packaged copy leaves it out.
-const packagedReadme = readme.replace(
-  /^<picture>(?:(?!<\/picture>)[\s\S])*?assets\/brand\/[\s\S]*?<\/picture>\s*/m,
-  '',
-);
+const brandLockupPicture =
+  /^<picture>(?:(?!<\/picture>)[\s\S])*?assets\/brand\/[\s\S]*?<\/picture>\s*/m;
+const packagedReadme = readme.replace(brandLockupPicture, '');
 if (packagedReadme.includes('assets/brand/'))
   throw new Error('The packaged README must not show brand artwork.');
 await writeFile(
   resolve(libraryDirectory, 'README.md'),
   packagedReadme
     .replaceAll('](packages/ui/CHANGELOG.md)', '](CHANGELOG.md)')
-    // The maintainers' guide stays in the repository.
     .replaceAll(
       '](CONTRIBUTING.md)',
       '](https://github.com/envsemble/envUI/blob/main/CONTRIBUTING.md)',

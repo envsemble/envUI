@@ -8,13 +8,11 @@ beforeEach(() => {
   mount(fixture);
 });
 
-/** Lines of text plus the field's 1 rem inset above and below. */
 const linesHigh = (field: Locator, lines: number) =>
   lines * Number.parseFloat(css(field, 'line-height')) + 32;
 
 const textbox = (name: string) => page.getByRole('textbox', { name, exact: true });
 const height = (field: Locator) => () => box(field).height;
-/** The control a field sits in, and its resize edge. */
 const controlOf = (field: Locator) => field.element().closest('.env-text-field-control')!;
 const edgeOf = (field: Locator) =>
   page
@@ -34,14 +32,10 @@ test(
     await expect.poll(height(one)).toBeCloseTo(linesHigh(one, 2), 0);
     await one.fill('');
     await expect.poll(height(one)).toBeCloseTo(linesHigh(one, 1), 0);
-    // Without rows, a growing field keeps the shared 7.5 rem start; a fixed one given rows is that
-    // many lines tall, under it.
     expect(box(textbox('Default lines')).height).toBe(120);
     const two = textbox('Two fixed lines');
     expect(box(two).height).toBeCloseTo(linesHigh(two, 2), 0);
 
-    // A ghost textarea shows a faint fill and no edge at rest, the accent frame while focused, and
-    // its label above it.
     const field = textbox('Ghost notes');
     const control = controlOf(field);
     expect(control.getAttribute('data-variant')).toBe('ghost');
@@ -66,7 +60,6 @@ test('the resize edge is a named separator that the arrow keys and Home move', a
   expect(edge.element().getAttribute('aria-description')).toMatch(/Up and Down arrows/);
   const before = box(field).height;
   await expect.element(edge).toHaveAttribute('aria-valuenow', String(Math.round(before)));
-  // Without a CSS maximum height, the separator still has a finite maximum above its value.
   expect(Number(edge.element().getAttribute('aria-valuemax'))).toBeGreaterThan(before * 10);
   (edge.element() as HTMLElement).focus();
   await keyboard.press('ArrowDown');
@@ -79,7 +72,6 @@ test('the resize edge is a named separator that the arrow keys and Home move', a
 });
 
 test('dragging the resize edge follows the pointer on the content as the page scrolls', async () => {
-  // Room below, so the page can scroll whatever the fixture's height.
   document.body.style.paddingBlockEnd = '200vh';
   try {
     const field = textbox('Two fixed lines');
@@ -92,7 +84,6 @@ test('dragging the resize edge follows the pointer on the content as the page sc
     await mouse.down();
     await mouse.move(x, y + 20, { steps: 4 });
     await expect.poll(height(field)).toBeCloseTo(before + 20, 0);
-    // The page scrolls under a pointer held still: the edge follows the pointer down the content.
     const from = scrollY;
     scrollBy(0, 30);
     const scrolled = scrollY - from;

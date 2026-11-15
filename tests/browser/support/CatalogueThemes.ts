@@ -1,22 +1,11 @@
-/**
- * The catalogue's themes, and those the visual baseline shows its pages in: every page in light,
- * and the pages in samplePages in dark, light high contrast and dark high contrast as well.
- */
 import { expect, type Page } from '@playwright/test';
 import { allPages } from '../../../apps/site/src/routes/SiteRoutes';
 
 export type ThemeName = 'light' | 'dark' | 'light-hc' | 'dark-hc';
 
 export interface CatalogueTheme {
-  /** Names the theme in snapshot files and in KnownViolations.json. */
   name: ThemeName;
-  /** The scheme chosen in the catalogue's Display menu. */
   scheme: 'light' | 'dark';
-  /**
-   * The emulated prefers-contrast. The token CSS applies the high-contrast values to every theme
-   * boundary under prefers-contrast: more unless the boundary opts out, so the catalogue and the
-   * popups it portals out both follow it without changing the page.
-   */
   contrast: 'no-preference' | 'more';
 }
 
@@ -30,14 +19,6 @@ const highContrastThemes: readonly CatalogueTheme[] = [
 ];
 export const allThemes: readonly CatalogueTheme[] = [...standardThemes, ...highContrastThemes];
 
-/**
- * The theme sample: pages also checked in dark and in high contrast. Every other page is checked in
- * light alone. Together they show the color roles, actions with their forced states, a field, table
- * rows, highlighted code, which takes high-contrast token colors of its own, and the Docs' props
- * tables and token swatches. The contrast gate
- * (tests/component/Contrast.test.tsx) measures every token pair in all four themes, and the visual
- * baseline's open lists capture menus and selects in dark and high contrast.
- */
 const samplePages: ReadonlySet<string> = new Set([
   'foundations/colors',
   'components/button',
@@ -56,20 +37,14 @@ if (unknownPages.length)
     `samplePages in tests/browser/support/CatalogueThemes.ts names pages the catalogue does not have: ${unknownPages.join(', ')}.`,
   );
 
-/** The themes a catalogue page, by its path such as components/button, is checked in. */
 export function themesFor(path: string): readonly CatalogueTheme[] {
   return samplePages.has(path) ? allThemes : standardThemes.slice(0, 1);
 }
 
-/** Emulates the theme's contrast preference; the catalogue's Display menu sets the scheme. */
 export async function emulateContrast(page: Page, theme: CatalogueTheme) {
   await page.emulateMedia({ contrast: theme.contrast });
 }
 
-/**
- * Chooses a scheme in the catalogue's Display menu, where the theme is, and closes the menu, which
- * returns focus to its button.
- */
 export async function chooseScheme(page: Page, scheme: 'light' | 'dark') {
   await page.getByRole('button', { name: 'Display', exact: true }).click();
   const menu = page.getByRole('menu', { name: 'Display' });

@@ -1,8 +1,4 @@
 @layer env.components {
-  /* Color properties: an option's colors, which an application sets on one Radio through style or its
-     own CSS: selected the chosen dot and ring, and, for a vertical group's rows, container the row
-     and content its label. They don't inherit. With a container or content color of the
-     application's, a row's hover and press are state layers of its label color (see Button.css). */
   @property --env-radio-container {
     syntax: '*';
     inherits: false;
@@ -16,8 +12,6 @@
     inherits: false;
   }
 
-  /* RadioGroup: a fieldset of Radio options, side by side (horizontal) or as connected selectable rows
-     (vertical). A Radio is its native input inside its label. */
   @media (pointer: coarse) {
     .env-radio {
       min-height: var(--env-control-height-touch);
@@ -30,8 +24,6 @@
     padding: 0;
     border: 0;
   }
-  /* The group's name reads as a field's label does: the floated label's size, weight and muted
-     color (TextField.css), so a form's labels read alike. */
   .env-radio-group legend {
     max-inline-size: 100%;
     margin-block-end: var(--env-space-4);
@@ -46,10 +38,6 @@
     /* prettier-ignore */
     --_radio-accent-pressed: var(--env-radio-selected, var(--env-color-bg-primary-emphasis-pressed));
   }
-  /* A vertical group's rows take the muted surface, white in light. On a surface of that color, a
-     dialog's, a popup's or a muted or raised one's (Surface.css), that would leave them no shape:
-     there they take a faint tint of the neutral fill, half of it at rest, as a ghost field's, and the
-     neutral fill's own steps under the pointer and pressed. */
   .env-radio-group[data-orientation='vertical'] {
     --_radio-row: var(--_surface-muted-ground)
       color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent);
@@ -57,9 +45,6 @@
     --_radio-row-pressed: var(--_surface-muted-ground) var(--env-color-bg-neutral-muted-hover);
   }
   .env-radio[data-orientation='vertical'] {
-    /* With no color property set, the designed fills below apply in every state. The custom fill is
-       valid only while the application sets the container or the content (see Button.css), and
-       then hover, focus and press lay the content color over the container. */
     --_radio-layer: initial;
     --_radio-content-gate: color-mix(
       in srgb,
@@ -74,7 +59,6 @@
     );
     --_radio-custom-fill: var(--_radio-custom-layered, var(--_radio-custom-base));
     display: flex;
-    /* The radio sits on the middle of the label's first line, beside a description too. */
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--env-space-3);
@@ -99,10 +83,6 @@
     /* prettier-ignore */
     background: var(--_radio-custom-fill, var(--_radio-row-pressed, var(--env-color-bg-muted-pressed)));
   }
-  /* The chosen row takes the selection's fill, as a selected list row and Select's chosen option
-     do, with their hover and pressed fills; with the filled radio that is enough, so its label keeps
-     the text color and its description stays muted. With a color property of the application's, it
-     keeps the hover layer at rest. */
   .env-radio[data-orientation='vertical']:has(input:checked) {
     --_radio-layer: calc(var(--env-state-hover-opacity) * 100%);
     background: var(--_radio-custom-fill, var(--env-color-bg-selected));
@@ -122,7 +102,6 @@
     width: var(--_radio-size);
     height: var(--_radio-size);
     flex: 0 0 auto;
-    /* The label's type, so 1lh is the label's line: the radio's middle on the first line's. */
     font: inherit;
     margin: calc((1lh - var(--_radio-size)) / 2) 0 0;
     accent-color: var(--_radio-accent, var(--env-color-bg-primary-emphasis));
@@ -134,7 +113,6 @@
   .env-radio-input:active:not(:disabled) {
     accent-color: var(--_radio-accent-pressed, var(--env-color-bg-primary-emphasis-pressed));
   }
-  /* A radio in its label, side by side with the group's others. */
   .env-radio[data-orientation='horizontal'] {
     min-inline-size: 0;
     max-inline-size: 100%;
@@ -147,8 +125,6 @@
     color: var(--env-color-fg-default);
     cursor: pointer;
   }
-  /* Keyboard focus rings the radio itself; a row rings the whole row. */
-  /* The ring's width and offset are hairlines, which don't scale with the text. */
   .env-radio[data-orientation='horizontal'] > .env-radio-input:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: 2px;
@@ -156,8 +132,6 @@
   .env-radio:has(input:disabled) {
     cursor: default;
   }
-  /* A disabled control fades with its label, at the opacity of every disabled control. The row of a
-     row radio keeps its surface, so the group's shape stays whole. */
   .env-radio:has(input:disabled) > :where(.env-radio-input, span) {
     opacity: var(--env-state-disabled-opacity);
   }
@@ -170,7 +144,6 @@
   .env-radio-group[data-orientation='horizontal'] > .env-radio-group-error {
     flex-basis: 100%;
   }
-  /* The group's description and error, as a field's are. */
   .env-radio-group-description,
   .env-radio-group-error {
     font: var(--env-type-body-sm);
@@ -178,7 +151,6 @@
   .env-radio-group-description {
     color: var(--env-color-fg-muted);
   }
-  /* The error, as a field's (Field.css): the error icon before the message, in the error color. */
   .env-radio-group-error {
     color: var(--env-color-fg-danger);
   }
@@ -194,8 +166,6 @@
     font: var(--env-type-body-sm);
   }
 
-  /* Motion: choice controls settle while they or their label are held, a radio row a little and
-     the control more; a check mark settles into size. Only without a reduced-motion preference. */
   @media (prefers-reduced-motion: no-preference) {
     .env-radio[data-orientation='vertical'],
     .env-radio-input {

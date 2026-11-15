@@ -4,7 +4,6 @@ import * as fixture from '../fixture/TopBar.fixture.tsx';
 import { box, css } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** Whether an element and its ancestors up to the bar leave what overflows it visible. */
 function unclipped(element: Element, bar: Element) {
   for (let node: Element | null = element; node && node !== bar; node = node.parentElement)
     if (getComputedStyle(node).overflowX !== 'visible') return false;

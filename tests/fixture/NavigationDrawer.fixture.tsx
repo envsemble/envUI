@@ -15,7 +15,6 @@ const destinations: NavigationDrawerDestination[] = [
   { label: 'Archive', href: '#archive' },
 ];
 
-/** Destinations whose label and heading are cut short once the drawer is narrowed. */
 const longDestinations: NavigationDrawerDestination[] = [
   { label: 'Inbox', href: '#inbox', group: 'Shared across the organization', current: true },
   {
@@ -25,7 +24,6 @@ const longDestinations: NavigationDrawerDestination[] = [
   },
 ];
 
-/** A page's sections, one with a badge and one with a delete button of its own. */
 const sections: NavigationDrawerDestination[] = [
   { label: 'Profile', href: '#profile', current: true },
   { label: 'Notifications and e-mail', href: '#notifications', badge: <Badge>New</Badge> },
@@ -43,7 +41,6 @@ const sections: NavigationDrawerDestination[] = [
   },
 ];
 
-/** A drawer beside some content in a container of a given width, as in a Scaffold. */
 function Frame({ width, dir, children }: { width: string; dir?: 'rtl'; children: ReactNode }) {
   return (
     <div
@@ -62,11 +59,6 @@ function Frame({ width, dir, children }: { width: string; dir?: 'rtl'; children:
   );
 }
 
-/**
- * Resizable drawers: one that keeps its own width, one the application controls in a narrower
- * container, which halves its room, one in right-to-left text, one that isn't resizable, one whose
- * long label and heading it cuts short as it narrows; and a page's sections in a narrow column.
- */
 export default function NavigationDrawerFixture() {
   const [width, setWidth] = useState(20);
   const [committed, setCommitted] = useState<number>();

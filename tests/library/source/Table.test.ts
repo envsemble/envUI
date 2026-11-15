@@ -1,7 +1,3 @@
-// Table's markup: a sort button named by its header and what pressing does, also where the header
-// is named by aria-label or aria-labelledby; a region named as its table is, with the strings from
-// EnvUIProvider's messages; and stackBelow as the length the region's container query compares,
-// a bare number in rem. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -16,7 +12,6 @@ const { Table, EnvUIProvider } = await importSource('Table', [
 
 const render = (element) => firstElement(renderToString(element));
 const byTag = (root, tag) => elementsOf(root).filter((element) => element.tag === tag);
-/** The name aria-labelledby gives an element, from the texts of the ids in `root` or `outside`. */
 const labelledName = (root, element, outside = {}) =>
   element.attributes['aria-labelledby']
     .split(' ')
@@ -25,8 +20,7 @@ const labelledName = (root, element, outside = {}) =>
       return named ? textOf(named) : outside[id];
     })
     .join(' ');
-/** A table of one header row with these headers. */
-const headed = (props, ...headers) =>
+const tableWithHeaderRow = (props, ...headers) =>
   render(
     h(
       Table.Root,
@@ -37,7 +31,7 @@ const headed = (props, ...headers) =>
   );
 
 test('a header named by aria-label or aria-labelledby lends its name to its sort button', () => {
-  const table = headed(
+  const table = tableWithHeaderRow(
     { 'aria-label': 'Icon headers' },
     h(
       Table.HeaderCell,
@@ -81,7 +75,7 @@ test('a table named by aria-labelledby names its scroll region too, and its stri
   assert.equal(labelledName(region, byTag(region, 'button')[0]), 'Quarter aufsteigend sortieren');
 });
 
-test('stackBelow is the length the region compares, a bare number in rem', () => {
+test('stackBelow is the length the region compares, a bare number in rem, 36 rem by default', () => {
   const threshold = (stackBelow) =>
     /--_table-stack-below:([^;]+)/.exec(
       render(h(Table.Root, { 'aria-label': 'Stacking', narrowLayout: 'stack', stackBelow }))
@@ -91,7 +85,6 @@ test('stackBelow is the length the region compares, a bare number in rem', () =>
   assert.equal(threshold(37.5), '37.5rem');
   assert.equal(threshold('60rem'), '60rem');
   assert.equal(threshold('calc(20rem + 160px)'), 'calc(20rem + 160px)');
-  // 36 rem by default; a table that scrolls instead compares nothing.
   assert.equal(threshold(undefined), '36rem');
   assert.equal(render(h(Table.Root, { 'aria-label': 'Scrolling' })).attributes.style, undefined);
 });

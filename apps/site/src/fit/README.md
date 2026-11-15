@@ -39,7 +39,7 @@ Each time the measuring loop calls it, in this order:
 
 ## Fit and motion
 
-The scripts that play a stage are in `motion/`. Imports run one way: `motion/` may import `fit/`, and `fit/` never imports `motion/` (ESLint rejects it, [apps/site/AGENTS.md](../../AGENTS.md)). A script registers what it acts on and where its pointer heads in `motion/MustShow.ts`; the fit reads that as a `StageScript` through a `ScriptReader` (`FitKind.ts`), which the figures pass in (`figures/StageScript.ts`).
+The scripts that play a stage are in `motion/`. Imports run one way: `motion/` may import `fit/`, and `fit/` never imports `motion/` (ESLint rejects it). A script registers what it acts on and where its pointer heads in `motion/MustShow.ts`; the fit reads that as a `StageScript` through a `ScriptReader` (`FitKind.ts`), which the figures pass in (`figures/StageScript.ts`).
 
 ## Words
 

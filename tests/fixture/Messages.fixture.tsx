@@ -34,7 +34,6 @@ import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
 import { CodeBlock } from '@envsemble/envui/code';
 import { Markdown, MarkdownEditor } from '@envsemble/envui/markdown';
 import { defaultMessages } from '@envsemble/envui/messages';
-// Content and display, whose strings and numbers follow the provider.
 import {
   AvatarGroup,
   CalendarHeatmap,
@@ -44,16 +43,11 @@ import {
   Rating,
   RelativeTime,
 } from '@envsemble/envui';
-// Internal: the hook envUI's components read their strings with.
 import { useMessages } from '../../packages/ui/src/internal/provider/EnvUIContext.js';
 import { common } from '../../packages/ui/src/foundations/messages/common.js';
 
 export const mount = 'standalone';
 
-/**
- * Every message replaced by ⟦namespace.key⟧, functions too, so a test can tell an overridable
- * string from an English default left in the markup.
- */
 const pseudoMessages = Object.fromEntries(
   Object.entries(defaultMessages).map(([namespace, keys]) => [
     namespace,
@@ -64,14 +58,12 @@ const pseudoMessages = Object.fromEntries(
       }),
     ),
   ]),
-) as EnvUIMessagesInput; // Object.fromEntries forgets the namespaces and keys it was given.
+) as EnvUIMessagesInput;
 
-/** Overlays and feedback: an alert, a loading state and bar, a drawer, notices and a palette. */
 function FeedbackStrings() {
   const toast = useToast();
   const [palette, setPalette] = useState(false);
   useEffect(() => {
-    // More notices than the visible limit, so the hidden count shows too.
     for (let index = 1; index <= 4; index++)
       toast.show({ message: `Notice ${index}`, duration: 0 });
     return () => toast.clear();
@@ -100,7 +92,6 @@ function FeedbackStrings() {
   );
 }
 
-/** Shell, dock, editors and code: a dock with a minimized panel, code, Markdown and its editor. */
 function ShellAndEditorStrings() {
   return (
     <>
@@ -117,7 +108,6 @@ function ShellAndEditorStrings() {
         </PanelDock.Root>
       </div>
       <CodeBlock copyable>npm run build</CodeBlock>
-      {/* The empty first header leaves the table no name of its own: messages.markdown.table. */}
       <Markdown>
         {[
           '|      | Seats |',
@@ -133,7 +123,6 @@ function ShellAndEditorStrings() {
   );
 }
 
-/** A reader of the common messages that counts its renders in data-renders, after each one. */
 const MessagesProbe = memo(function MessagesProbe() {
   const messages = useMessages('common', common);
   const ref = useRef<HTMLSpanElement>(null);
@@ -148,10 +137,6 @@ const MessagesProbe = memo(function MessagesProbe() {
   );
 });
 
-/**
- * A provider whose messages are written inline, which re-renders with its parent: the reader inside
- * must not, while the messages stay the same.
- */
 function InlineMessages() {
   const [renders, setRenders] = useState(0);
   return (
@@ -166,11 +151,6 @@ function InlineMessages() {
   );
 }
 
-/**
- * The components whose strings come from EnvUIProvider's messages, under the pseudo-locale. Each
- * batch that moves a family's strings adds its components here;
- * tests/component/Messages.test.tsx fails on any English default left in them.
- */
 export default function MessagesFixture() {
   return (
     <ThemePreferenceProvider theme={{ storageKey: 'fixture-messages-theme' }}>
@@ -179,12 +159,8 @@ export default function MessagesFixture() {
           <ConfirmButton confirmLabel="Remove" onConfirm={() => {}}>
             Remove
           </ConfirmButton>
-          {/* A blank name leaves it named by its copy label. */}
           <CopyButton value="Northwind" aria-label="" />
           <ThemeToggle />
-          {/* Content: a group's name and overflow, a rating's and a change's names, a message's
-              status, a heatmap's legend and a moment just passed. */}
-          {/* Only people counted in total, so the overflow chip is named by the more text alone. */}
           <AvatarGroup people={[]} total={3} />
           <Rating value={4.5} showValue />
           <DiffStat additions={12} deletions={3} />
@@ -209,8 +185,6 @@ export default function MessagesFixture() {
           <Dialog title="Settings" defaultOpen modal={false} disablePointerDismissal>
             Content
           </Dialog>
-          {/* Forms: the clear buttons, chip removes, the resize edge, the calendar's month
-              buttons, the send button and the color picker's sliders and field. */}
           <SearchField label="Find a customer" defaultValue="Northwind" />
           <Textarea label="Notes" />
           <Combobox
@@ -232,8 +206,6 @@ export default function MessagesFixture() {
           <Composer aria-label="Reply" defaultValue="Hello" onSend={() => {}} />
           <ColorPicker label="Accent" defaultValue="#336699" swatches={['#336699']} />
           <ColorPickerButton label="Border" defaultValue="#336699" />
-          {/* Layout: the divider between two panes, a detail's back button, and a scaffold's skip
-              links. */}
           <Panes.Root behavior="list-detail" open>
             <Panes.List label="Start">Start</Panes.List>
             <Panes.Divider />
@@ -251,7 +223,6 @@ export default function MessagesFixture() {
             <FeedbackStrings />
           </ToastProvider>
           <ShellAndEditorStrings />
-          {/* App parts: a reorderable list's handle and announcements, and a confirm dialog. */}
           <List.Root aria-label="Order" onReorder={() => {}}>
             <List.Item label="First" />
             <List.Item label="Second" />

@@ -77,7 +77,6 @@ export function PageHeader({
 }: PageHeaderProps) {
   const Heading = `h${headingLevel}` as const;
   return (
-    // A div, not a header: outside main, article or section a header would be a second banner.
     <Column
       gap={3}
       {...props}

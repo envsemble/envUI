@@ -26,12 +26,6 @@ const destinations: Destination[] = [
   { label: 'Settings', icon: <IconSettings />, href: '#settings' },
 ];
 
-/**
- * The default arrangement of an application: a Scaffold whose document scrolls, with a TopBar
- * and the real NavigationBar, NavigationRail and NavigationDrawer, around a Page with a sticky
- * header whose content is supporting Panes. The main pane is a long list of messages, each a
- * button, and the supporting pane, a sheet below expanded, holds a message's details.
- */
 export default function ScaffoldPanesFixture() {
   const [open, setOpen] = useState<boolean | null>(null);
   return (

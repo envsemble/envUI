@@ -1,5 +1,3 @@
-// Reads packages/ui/src against tests/library/rules/composition/Rules.json and finds what breaks each composition
-// rule. tests/library/rules/Composition.test.ts compares the findings with tests/library/rules/composition/Exceptions.json.
 import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, posix, relative, resolve, sep } from 'node:path';
@@ -14,17 +12,9 @@ export const exceptionsFile = 'tests/library/rules/composition/Exceptions.json';
 
 const sourceRoot = resolve('packages/ui/src');
 const stylesRoot = join(sourceRoot, 'styles');
-/**
- * Generated icons are listed, so imports of them resolve and they take a layer, but not read:
- * `npm run icons:check` holds each to its generator, whose one import is ../Icon.js. Reading
- * thousands of files would make this test slow.
- */
-const generated = 'icons/';
-const isGenerated = (module) => module.startsWith(generated) && module !== 'icons/index.ts';
-/**
- * The message modules hold strings, one module per namespace, and render nothing: they are no
- * components, so their names claim no classes.
- */
+const generatedIcons = 'icons/';
+const isGeneratedIconLeftUnread = (module) =>
+  module.startsWith(generatedIcons) && module !== 'icons/index.ts';
 const isMessages = (module) => module.startsWith('foundations/messages/');
 
 function walk(directory, found = []) {
@@ -37,7 +27,6 @@ function walk(directory, found = []) {
   return found;
 }
 
-/** A function from an offset in text to its 1-based line. */
 function lineIndex(text) {
   const starts = [0];
   for (let index = text.indexOf('\n'); index !== -1; index = text.indexOf('\n', index + 1))
@@ -55,19 +44,12 @@ function lineIndex(text) {
 }
 const baseName = (module) => posix.basename(module).replace(/\.tsx?$/, '');
 
-/**
- * A class or class prefix in TSX: `env-x`, or `env-x-*` where code appends to `env-x-`. Names may
- * also take BEM elements and modifiers (`env-x__part`, `env-x--state`).
- */
 const classPattern = /(?<![\w-])env-[a-z0-9]+(?:(?:--?|__)[a-z0-9]+)*-?/g;
 const classToken = (match) => (match.endsWith('-') ? `${match}*` : match);
-/** A class in a selector. */
 const selectorClassPattern = /\.(env-[a-z0-9]+(?:(?:--?|__)[a-z0-9]+)*)/g;
-/** Whether a class is a prefix itself or continues it with a part or modifier. */
 const continues = (name, prefix) =>
   name === prefix || (name.startsWith(prefix) && /^(?:-|__)/.test(name.slice(prefix.length)));
 
-/** What identifies a finding, and the exception entry that lists it, in each section. */
 export function keyOf(section, entry) {
   if (section === 'imports') return `${entry.module} -> ${entry.imports}`;
   if (section === 'interactive') return `${entry.module} ${entry.element}`;
@@ -75,7 +57,6 @@ export function keyOf(section, entry) {
   return `${entry.stylesheet} ${entry.class}`;
 }
 
-/** Adds a site to the finding its exception entry identifies, and returns the finding. */
 function record(findings, section, entry, site) {
   const key = keyOf(section, entry);
   const finding = findings.get(key) ?? { entry, sites: [], ...site.info };
@@ -84,17 +65,12 @@ function record(findings, section, entry, site) {
   return finding;
 }
 
-/**
- * The library as the rules read it: its modules, planned ones, the sources and style sheets, and the
- * problems found so far, with checks that a name in the rules exists.
- */
 function readLibrary(rules) {
   const problems = [];
   const modules = walk(sourceRoot)
     .map((path) => relative(sourceRoot, path).split(sep).join('/'))
     .sort();
   const moduleSet = new Set(modules);
-  // Planned modules don't exist yet; the rules may name them, and each stands for its component.
   const planned = (rules.planned?.modules ?? []).filter((module) => !moduleSet.has(module));
   const plannedSet = new Set(planned);
   const stylesheets = readdirSync(stylesRoot)
@@ -108,11 +84,10 @@ function readLibrary(rules) {
     planned,
     sources: new Map(
       modules
-        .filter((module) => !isGenerated(module))
+        .filter((module) => !isGeneratedIconLeftUnread(module))
         .map((module) => [module, readFileSync(join(sourceRoot, module), 'utf8')]),
     ),
     stylesheets,
-    // The allowances the findings used; one left unused is stale.
     usedAllowances: new Set(),
     requireModule(module, where) {
       if (!moduleSet.has(module) && !plannedSet.has(module))
@@ -125,11 +100,6 @@ function readLibrary(rules) {
   };
 }
 
-/**
- * The layers: their order and each module's layer, checked against the rules. A module is listed
- * only with a layer other than its directory's, and one beyond a component's choice between base and
- * composites gives its reason.
- */
 function readLayers(library) {
   const { rules, problems, modules, planned, requireModule } = library;
   const { order, directories, modules: listed } = rules.layers;
@@ -185,7 +155,6 @@ function readLayers(library) {
   return { order, rank, layerOf };
 }
 
-/** The library modules each module imports, each with the line of its first import. */
 function readImports({ problems, modules, moduleSet, sources }) {
   const resolveImport = (from, specifier) => {
     if (!specifier.startsWith('.')) return undefined;
@@ -217,7 +186,6 @@ function readImports({ problems, modules, moduleSet, sources }) {
   return imports;
 }
 
-/** The imports that go up the layers. */
 function importFindingsOf(imports, { rank, layerOf }) {
   const findings = new Map();
   for (const [module, targets] of imports)
@@ -230,10 +198,6 @@ function importFindingsOf(imports, { rank, layerOf }) {
   return findings;
 }
 
-/**
- * The components: a module each, named after it, planned ones and those the rules join, with the
- * modules, class prefixes, style sheets and slots of each, and each module's component.
- */
 function readComponents(library, layerOf) {
   const { rules, problems, modules, planned, stylesheets, requireModule, requireStylesheet } =
     library;
@@ -241,7 +205,7 @@ function readComponents(library, layerOf) {
   const componentOf = new Map();
   const ownStyles = (name) => new Set(stylesheets.includes(`${name}.css`) ? [`${name}.css`] : []);
   for (const module of modules) {
-    if (layerOf(module) === 'entries' || module.startsWith(generated) || isMessages(module))
+    if (layerOf(module) === 'entries' || module.startsWith(generatedIcons) || isMessages(module))
       continue;
     const name = baseName(module);
     if (components.has(name)) {
@@ -296,11 +260,6 @@ function readComponents(library, layerOf) {
   return { components, componentOf };
 }
 
-/**
- * Who owns a class: `ownerOf` names the component whose prefix it continues, or `shared`, and
- * remembers each class it was asked about (`seen`) and each that nothing owns (`unowned`). Each
- * style sheet's owners, which must be a component's or listed without one.
- */
 function readOwnership(library, components) {
   const { rules, problems, stylesheets, requireStylesheet } = library;
   const classRules = rules.classes;
@@ -317,7 +276,6 @@ function readOwnership(library, components) {
   const prefixes = [...prefixOwner.keys()].sort((a, b) => b.length - a.length);
   const unowned = new Map();
   const seen = new Set();
-  /** The component that owns a class, `shared`, or undefined. */
   const ownerOf = (token, where) => {
     const name = token.replace(/-\*$/, '');
     seen.add(name);
@@ -342,16 +300,11 @@ function readOwnership(library, components) {
   return { shared, ownerOf, seen, unowned, stylesheetOwners };
 }
 
-/** A pattern of property names, `*` standing for any run of letters and dashes. */
 const propertyPattern = (patterns) =>
   new RegExp(
     `^(?:${patterns.map((pattern) => pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[a-z-]*')).join('|')})$`,
   );
 
-/**
- * Raw interactive HTML in the modules, and classes a module emits that another component owns
- * but neither its own slot nor a component it imports.
- */
 function markupFindings(library, { components, componentOf }, imports, ownerOf) {
   const { rules, requireModule, modules, sources, usedAllowances } = library;
   const interactive = rules.interactive;
@@ -362,7 +315,7 @@ function markupFindings(library, { components, componentOf }, imports, ownerOf) 
   const interactiveFindings = new Map();
   const tsxClassFindings = new Map();
   for (const module of modules) {
-    if (module.startsWith(generated)) continue;
+    if (module.startsWith(generatedIcons)) continue;
     const file = ts.createSourceFile(
       module,
       sources.get(module),
@@ -414,16 +367,11 @@ function markupFindings(library, { components, componentOf }, imports, ownerOf) 
   return { interactiveFindings, tsxClassFindings };
 }
 
-/**
- * Selectors of a style sheet that name another component's classes, unless a child rule lets it
- * set layout properties, and those it allows, on them.
- */
 function stylesheetFindings(library, { ownerOf, stylesheetOwners }) {
   const { rules, stylesheets, requireStylesheet, usedAllowances } = library;
   const { layoutProperties, rules: childRules } = rules.classes.childRules;
   for (const rule of childRules) requireStylesheet(rule.stylesheet, 'classes.childRules');
   const layoutProperty = propertyPattern(layoutProperties);
-  /** The child rule that lets a stylesheet's selectors name a class, if any. */
   const childRuleFor = (stylesheet, token) => {
     const rule = childRules.find(
       (candidate) => candidate.stylesheet === stylesheet && candidate.classes.includes(token),
@@ -462,7 +410,6 @@ function stylesheetFindings(library, { ownerOf, stylesheetOwners }) {
   return findings;
 }
 
-/** Allowances that no longer allow anything, so the rules can't hide a later regression. */
 function staleAllowances(library, components, { shared, seen, stylesheetOwners }) {
   const { rules, problems, usedAllowances } = library;
   const { interactive, classes: classRules } = rules;
@@ -526,8 +473,6 @@ export function analyze() {
   return {
     problems: library.problems,
     layers: layers.order,
-    // Who owns what, for tests/library/rules/StyleImports.test.ts: each module's component, each component's
-    // style sheets, and a class's owner, a component or 'shared'.
     ownership: {
       ...componentMap,
       ownerOf: (token) => ownership.ownerOf(token, 'a test'),
@@ -541,14 +486,6 @@ export function analyze() {
   };
 }
 
-/**
- * The raw interactive elements a JSX tag can render, such as `button` or `role="button"`. A role
- * set by a condition counts with each role its branches can take. A role the source doesn't spell
- * out, such as role={role}, takes the roles listed for that expression, by its source text such as
- * `role` or `stand.role`, in its module under interactive.dynamicRoles; without them it is
- * `role={…}`, a finding of its own until they are listed. So a listing covers only that
- * expression, not every role={…} the module may add later.
- */
 export function interactiveElements(node, { elements, roles, dynamicRoles = {} }, module, used) {
   if (!ts.isIdentifier(node.tagName)) return [];
   const tag = node.tagName.text;
@@ -575,11 +512,6 @@ export function interactiveElements(node, { elements, roles, dynamicRoles = {} }
     .map((role) => `role="${role}"`);
 }
 
-/**
- * The roles a JSX tag's role attribute can take: its literal, or the literals of a condition's
- * branches, and the source text of the branches that are no literal. Undefined without a role
- * attribute.
- */
 function roleValues(node) {
   const attribute = node.attributes.properties.find(
     (property) => ts.isJsxAttribute(property) && property.name.getText() === 'role',
@@ -605,7 +537,6 @@ function roleValues(node) {
   return result;
 }
 
-/** A JSX attribute's literal value: a string, a number, true, or undefined when it is dynamic. */
 function attributeValue(node, name) {
   const attribute = node.attributes.properties.find(
     (property) => ts.isJsxAttribute(property) && property.name.getText() === name,
@@ -629,15 +560,13 @@ function attributeValue(node, name) {
   return undefined;
 }
 
-/**
- * Every complex selector of a stylesheet's style rules, with its line and the properties its rule
- * declares. Keyframe steps are skipped.
- */
-export function cssSelectors(css) {
-  // Blank comments and strings out, keeping offsets, so braces inside them can't end a block.
-  const text = css
+const blankCommentsAndStringsKeepingOffsets = (css) =>
+  css
     .replace(/\/\*[\s\S]*?\*\//g, (comment) => comment.replace(/[^\n]/g, ' '))
     .replace(/(["'])(?:\\.|(?!\1)[^\\\n])*\1/g, (string) => string.replace(/[^\n]/g, ' '));
+
+export function cssSelectors(css) {
+  const text = blankCommentsAndStringsKeepingOffsets(css);
   const lineOf = lineIndex(text);
   const selectors = [];
   const blocks = [];
@@ -669,14 +598,12 @@ export function cssSelectors(css) {
       }
       start = index + 1;
     } else if (character === ';') {
-      // A statement such as @import or @layer, or a declaration: neither starts a selector.
       start = index + 1;
     }
   }
   return selectors;
 }
 
-/** The selectors of a selector list, with each one's offset in the list. */
 function splitSelectors(prelude) {
   const parts = [];
   let depth = 0;

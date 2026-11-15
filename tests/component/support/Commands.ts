@@ -2,14 +2,6 @@ import type { BrowserCommand, BrowserCommandContext } from 'vitest/node';
 import type { CDPSession, Frame, Page, Route } from 'playwright';
 import type * as Gate from '../../contrast/Gate.ts';
 
-/**
- * Commands the component tests run in Node, on the Playwright page that holds the test's frame:
- * input at a point, as a person's mouse, keys and finger give it, and what the page emulates. A
- * point is in the frame's own CSS pixels, as getBoundingClientRect gives it; each command maps it
- * to the page.
- */
-
-/** The frame's offset in the page and its scale, from its CSS pixels to the page's. */
 async function frameGeometry(context: BrowserCommandContext) {
   const frame = await context.frame();
   const element = await frame.frameElement();
@@ -50,11 +42,6 @@ const mouseClick: BrowserCommand<
   await context.page.mouse.click(point.x, point.y, options);
 };
 
-/**
- * A quick drag let go while it moves: the pointer presses at one point, moves to another in steps
- * and is released at once, with no round trip to the page between, which would take long enough
- * to read as a rest.
- */
 const mouseFling: BrowserCommand<
   [fromX: number, fromY: number, toX: number, toY: number, steps: number]
 > = async (context, fromX, fromY, toX, toY, steps) => {
@@ -66,7 +53,6 @@ const mouseFling: BrowserCommand<
   await mouse.up();
 };
 
-/** Turns the wheel where the mouse is, by these CSS pixels, as Playwright's mouse.wheel does. */
 const mouseWheel: BrowserCommand<[deltaX: number, deltaY: number]> = async (
   context,
   deltaX,
@@ -97,7 +83,6 @@ const emulateMedia: BrowserCommand<[media: Media]> = async (context, media) => {
   await context.page.emulateMedia(media);
 };
 
-/** One Chromium DevTools session per page, which keeps the touch state and emulation it set. */
 const sessions = new WeakMap<Page, Promise<CDPSession>>();
 function session(context: BrowserCommandContext) {
   const opened = sessions.get(context.page) ?? context.page.context().newCDPSession(context.page);
@@ -105,10 +90,6 @@ function session(context: BrowserCommandContext) {
   return opened;
 }
 
-/**
- * A finger at a point, moved and lifted again, through Chromium's touch input: touchStart and
- * touchMove with the point, touchEnd with none.
- */
 const touch: BrowserCommand<
   [type: 'touchStart' | 'touchMove' | 'touchEnd', x?: number, y?: number]
 > = async (context, type, x = 0, y = 0) => {
@@ -121,39 +102,22 @@ const touch: BrowserCommand<
   });
 };
 
-/** Coarse pointers and touch, as a phone's: Chromium's touch emulation, on or off. */
 const emulateTouch: BrowserCommand<[enabled: boolean]> = async (context, enabled) => {
   await (
     await session(context)
   ).send('Emulation.setTouchEmulationEnabled', { enabled, maxTouchPoints: 1 });
 };
 
-/**
- * The module an option loads where it is used, matched by the name of its source file, held back
- * as a slow network would or failing as offline, or held and then answered with a stand-in's
- * source. A route lives on the page, which the frames of
- * test files running at once may share, so each test's route answers its own frame's requests
- * only and passes on the rest, and `unrouteModule` ends it.
- */
 const moduleFile = (name: string) => new RegExp(String.raw`/${name}\.tsx?(?:\?|$)`);
 
 interface ModuleRoute {
   handler: (route: Route) => Promise<void>;
-  /** Resolves once the frame has asked for the module. */
   requested: Promise<void>;
-  /** Lets it load: the held request, and every request from now on. */
   release: () => void;
 }
 const routes = new Map<string, ModuleRoute>();
 const routeKey = (context: BrowserCommandContext, name: string) => `${context.sessionId} ${name}`;
 
-/**
- * Waits until the page intercepts the frame's requests. The page's first route turns interception
- * on, and its last one taken off turns it off, and Chromium may apply it a moment after the route
- * is in place, as on a loaded Linux runner: a module the frame asks for at once then passes its
- * route by and loads. Vitest probes for it the same way before it mocks a module
- * (vitest-dev/vitest#8339): with a request that a probe's own route answers.
- */
 const probePath = '/__envui_interception_probe__';
 async function interceptionApplies(context: BrowserCommandContext, frame: Frame) {
   const probe = (route: Route) => route.fulfill({ status: 204, headers: { 'x-envui-probe': '1' } });
@@ -221,16 +185,13 @@ const holdModule: BrowserCommand<[name: string]> = (context, name) =>
 const failModule: BrowserCommand<[name: string]> = (context, name) =>
   routeModule(context, name, 'fail');
 
-/** Holds the module, and once released answers it with `source` instead. */
 const holdModuleAs: BrowserCommand<[name: string, source: string]> = (context, name, source) =>
   routeModule(context, name, 'hold', source);
 
-/** Resolves once the frame has asked for the module: held, or failed. */
 const moduleRequested: BrowserCommand<[name: string]> = async (context, name) => {
   await routes.get(routeKey(context, name))?.requested;
 };
 
-/** Lets a held module load, or a failing one load from now on. */
 const releaseModule: BrowserCommand<[name: string]> = (context, name) => {
   routes.get(routeKey(context, name))?.release();
 };
@@ -242,20 +203,11 @@ const unrouteModule: BrowserCommand<[name: string]> = async (context, name) => {
   await context.page.unroute(moduleFile(name), entry.handler);
 };
 
-/**
- * The text on the system clipboard, read in the page that holds the test's frame, which may read
- * it once granted: the frame may only write. Chromium only.
- */
 const clipboardText: BrowserCommand<[], string> = async (context) => {
   await context.page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   return context.page.evaluate(() => navigator.clipboard.readText());
 };
 
-/**
- * The contrast gate's Node side (tests/contrast/Gate.ts), loaded only by the tests that ask for
- * it: the colors a theme's pairs name, or every pair's without a theme, and the measure of the
- * colors the browser resolved.
- */
 const contrastColors: BrowserCommand<[theme?: string], Record<string, string>> = async (_, theme) =>
   (await import('../../contrast/Gate.ts')).contrastColors(theme);
 

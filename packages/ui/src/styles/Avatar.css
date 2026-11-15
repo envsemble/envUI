@@ -1,7 +1,4 @@
 @layer env.components {
-  /* Color properties: an avatar's colors, which an application sets on one avatar through style or
-     its own CSS: the fill behind its initials or figure, and the initials and figure. They don't
-     inherit, and they win over its hue. */
   @property --env-avatar-container {
     syntax: '*';
     inherits: false;
@@ -11,7 +8,6 @@
     inherits: false;
   }
 
-  /* Avatars, tooltips and bars reuse the shared palette and corner scale. */
   .env-avatar {
     --_avatar-size: var(--env-picture-size-md);
     position: relative;
@@ -21,48 +17,35 @@
     inline-size: var(--_avatar-size);
     block-size: var(--_avatar-size);
     border-radius: 50%;
-    /* A tonal pair of the avatar's hue, from data-hue: a soft pastel fill behind initials and a
-       figure in a deep shade of the same hue, and in dark a deep fill behind light ones, so an
-       avatar is never the brightest thing on a dark screen. */
     --_avatar-container-default: var(--env-color-bg-avatar);
     --_avatar-content-default: var(--env-color-fg-avatar);
     --_avatar-fill: var(--env-avatar-container, var(--_avatar-container-default));
     --_avatar-figure-color: var(--env-avatar-content, var(--_avatar-content-default));
     background: var(--_avatar-fill);
-    /* Dense, where --env-avatar-dense is 1, as in a table or a small AvatarGroup: the fill takes
-       half its chroma under a layer of its own gray at its lightness, so the initials keep their
-       contrast and a column of avatars stays quieter than the data beside it. */
+    --_avatar-dense-gray-layer-opacity: calc(var(--env-avatar-dense, 0) * 0.5);
     background-image: linear-gradient(
-      oklch(from var(--_avatar-fill) l 0 h / calc(var(--env-avatar-dense, 0) * 0.5)) 0 0
+      oklch(from var(--_avatar-fill) l 0 h / var(--_avatar-dense-gray-layer-opacity)) 0 0
     );
     color: var(--env-avatar-content, var(--_avatar-content-default));
-    /* Initials at 0.38 of the avatar, at least the caption size so they stay legible; smaller than
-       sm, too small for them, the avatar is a disc of its color alone. */
+    --_avatar-initials-size: max(var(--env-font-size-caption), calc(var(--_avatar-size) * 0.38));
+    --_avatar-zero-when-smaller-than-sm: max(
+      calc(0 * var(--_avatar-size)),
+      calc((var(--_avatar-size) - 0.96 * var(--env-picture-size-sm)) * 1000)
+    );
     font: var(--env-font-weight-semibold)
-      min(
-        max(var(--env-font-size-caption), calc(var(--_avatar-size) * 0.38)),
-        max(
-          calc(0 * var(--_avatar-size)),
-          calc((var(--_avatar-size) - 0.96 * var(--env-picture-size-sm)) * 1000)
-        )
-      ) /
-      1 var(--env-font-family);
+      min(var(--_avatar-initials-size), var(--_avatar-zero-when-smaller-than-sm)) / 1
+      var(--env-font-family);
     letter-spacing: 0.01em;
     user-select: none;
-    /* A faint, small drop shadow under a lone avatar, the one exception to envUI's rule of no drop
-       shadows: a pastel fill or a light photo keeps its circle on a surface of a near color, with no
-       line drawn around it. Its color is a deep shade of the surface below, the envUI surface it
-       sits on, else the page, and stronger the darker that is, so it reads as faintly on a dark
-       surface as on a light one. In an AvatarGroup the group's rings in the surface's color,
-       --_avatar-group-ring-layers, take its place, so each avatar parts from the one it lies on.
-       A small avatar and a dense one, as in a table, cast none, so a column of them stays quiet; a
-       chosen avatar keeps its rings alone, and under forced colors the system draws no shadow. */
+    --_avatar-neither-dense-nor-small: calc(
+      1 - max(var(--env-avatar-dense, 0), var(--_avatar-small, 0))
+    );
     --_avatar-shadow: var(
       --_avatar-group-ring-layers,
       0 1px 2px
         oklch(
           from var(--_surface-color, var(--env-color-bg-page)) calc(l * 0.3) calc(c * 0.5) h /
-            calc((0.26 - l * 0.15) * (1 - max(var(--env-avatar-dense, 0), var(--_avatar-small, 0))))
+            calc((0.26 - l * 0.15) * var(--_avatar-neither-dense-nor-small))
         )
     );
     box-shadow: var(--_avatar-shadow);
@@ -108,9 +91,6 @@
   .env-avatar-fallback {
     display: contents;
   }
-  /* Chosen: a ring in the accent of a checked box around the avatar, apart from it by the color of
-     the surface below, and a small check in the same accent at its bottom end, so the choice shows by
-     shape as well as color. */
   .env-avatar[data-selected] {
     --_avatar-selected-gap: var(
       --_avatar-group-ring-color,
@@ -174,11 +154,9 @@
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
-    /* Motion: the image fades in as it loads. */
     animation: env-motion-fade-in var(--env-motion-duration-slow) var(--env-motion-ease-enter);
   }
 
-  /* In a skeleton, an avatar is a filled shape of its size, without its picture or initials. */
   [data-env-skeleton] .env-avatar {
     forced-color-adjust: none;
     border-color: transparent;

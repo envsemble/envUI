@@ -3,10 +3,6 @@ import { DocumentTabs, Menu, Menubar } from '@envsemble/envui';
 
 export const mount = 'standalone';
 
-/**
- * A parent that re-renders DocumentTabs with a new inline items array as its menu opens, as its
- * input changes and on a timer.
- */
 export default function DocumentTabsRerenderFixture() {
   const [tabs, setTabs] = useState(['one', 'two', 'three']);
   const [value, setValue] = useState<string | null>('one');

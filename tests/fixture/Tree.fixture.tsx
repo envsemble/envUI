@@ -11,7 +11,6 @@ interface FileNode {
   children?: FileNode[];
 }
 
-/** 40 folders of 30 documents, with a nested folder in the first: over 1,200 rows when expanded. */
 function sampleFiles(): FileNode[] {
   return Array.from({ length: 40 }, (_, folder) => ({
     id: `folder-${folder + 1}`,

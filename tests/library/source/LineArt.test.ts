@@ -1,6 +1,3 @@
-// LineArt's markup: each drawing by its name, covering its box from where it sits, hidden from
-// assistive technology unless a label makes it an image, and its lines ready to move in the order
-// of each drawing's construction.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -28,7 +25,6 @@ test('sixteen drawings, each named in kebab case and drawn in lines of its own',
 
 test('it is hidden and sits at the end on its foot by default, covering its box', () => {
   const markup = renderToStaticMarkup(h(LineArt, { drawing: 'golden-section' }));
-  // Its sheet moved so the golden rectangle reaches the box's end and foot.
   assert.match(markup, /^<svg viewBox="-14 -30 480 330" preserveAspectRatio="xMaxYMax slice"/);
   assert.match(
     renderToStaticMarkup(h(LineArt, { drawing: 'monochord' })),

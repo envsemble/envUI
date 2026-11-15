@@ -54,8 +54,8 @@ const toneIcons: Record<AlertTone, ReactNode> = {
 };
 
 /**
- * An inline banner for a page- or section-level message, in its tone. It stays a server component:
- * its dismiss button is an IconButton with a cross, a client leaf named in the provider's language.
+ * An inline banner for a page- or section-level message, in its tone. It is a server component;
+ * its dismiss button is an IconButton with a cross, named in the provider's language.
  */
 export function Alert(allProps: AlertProps) {
   const {
@@ -71,7 +71,6 @@ export function Alert(allProps: AlertProps) {
     className,
     ...props
   } = allProps;
-  // A title or message given as undefined, as over a placeholder item, is a bar in a skeleton.
   const hasTitle = title != null || given(allProps, 'title');
   const hasMessage = children != null || given(allProps, 'children');
   const role = tone === 'info' || tone === 'success' ? 'status' : announce ? 'alert' : undefined;

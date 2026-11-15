@@ -1,6 +1,3 @@
-// Surface's backgrounds are the background roles: each value of `background` takes its role's
-// color, `--env-color-bg-<value>`, and the role's hover and pressed tokens for what is interactive on
-// it, such as a Card, and each of those is a token of the themes.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';

@@ -1,10 +1,4 @@
 @layer env.components {
-  /* A row of a popup list (ListRow): an icon, a label over its description, content, and an
-     indicator at the end, on the element of the list's own item. Its states come from Base UI's
-     data-highlighted, data-selected and data-disabled. Rows are the popup row height in body text,
-     with corners concentric with the popup's (Popup.css). The highlight, the pointer's or the keyboard's,
-     is the neutral fill over the frosted popup, with no ring, and the chosen option takes the
-     selection's fill and text with its check mark. */
   .env-list-row {
     box-sizing: border-box;
     display: flex;
@@ -39,7 +33,6 @@
     --_kbd-fg: var(--env-color-fg-default);
     background: var(--env-color-bg-neutral-muted);
   }
-  /* The chosen option is opaque, so its text keeps its contrast whatever shows through the popup. */
   .env-list-row[data-selected] {
     background: var(--env-color-bg-selected);
     color: var(--env-color-fg-on-selected);
@@ -53,9 +46,6 @@
   .env-list-row[data-selected]:active:not([data-disabled], [aria-disabled='true']) {
     background: var(--env-color-bg-selected-pressed);
   }
-  /* An unavailable row dims its indicator, icon and end, and its label takes the disabled text
-     color, as a menu item's does, so it reads as unavailable rather than as a description; its
-     description, which often says why, keeps the muted color and its smaller size, readable. */
   .env-list-row:is([data-disabled], [aria-disabled='true']) {
     color: var(--env-color-fg-disabled);
     cursor: default;
@@ -63,9 +53,6 @@
   .env-list-row:is([data-disabled], [aria-disabled='true']) > :not(.env-list-row-text) {
     opacity: var(--env-state-disabled-opacity);
   }
-  /* The indicator keeps its slot whether or not the row is chosen, so the rows' ends align. The icon's
-     slot takes the hook --_list-row-icon-size, which an owner whose rows lead with larger content,
-     such as avatars, sets on its own element. */
   .env-list-row-indicator,
   .env-list-row-icon {
     flex: 0 0 auto;
@@ -75,7 +62,6 @@
     block-size: var(--env-control-icon-size);
     --env-icon-size: var(--env-control-icon-size);
   }
-  /* The indicator, a chosen option's check mark, ends the row, after its label and any end content. */
   .env-list-row-indicator {
     order: 1;
     color: var(--env-color-bg-primary-emphasis);
@@ -100,8 +86,6 @@
     font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
     overflow-wrap: break-word;
   }
-  /* Beside a label with a description under it, the indicator, the icon and the end sit on the
-     middle of the label's line, 1lh in the row's type, rather than across both lines. */
   .env-list-row:has(> .env-list-row-text > .env-list-row-description) {
     align-items: flex-start;
   }
@@ -118,8 +102,6 @@
     gap: var(--env-space-1);
   }
 
-  /* Forced colors: the system paints no fills, so a highlighted row takes the selection colors and a
-     disabled one the disabled color. */
   @media (forced-colors: active) {
     .env-list-row:is([data-highlighted], [data-popup-open]),
     .env-list-row[data-selected]:is([data-highlighted], [data-popup-open]) {

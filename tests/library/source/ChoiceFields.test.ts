@@ -1,5 +1,3 @@
-// Choice controls take a field's words: RadioGroup a description and an error, Checkbox and Switch
-// a description, Slider an error, each linked to the control. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -50,7 +48,6 @@ test('a checkbox and a switch read their description with their label', () => {
     const label = render(
       h(Control, { label: 'Weekly digest', description: 'Every Monday morning.' }),
     );
-    // The label wraps the control, so its text, the description's with it, names the control.
     assert.equal(label.tag, 'label');
     assert.ok(elementsOf(label).some((element) => element.attributes.type === 'checkbox'));
     const description = find(label, (element) => hasClass(element, `env-${name}-description`));

@@ -23,7 +23,6 @@ import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { planOptions } from './SelectOptions.fixture.js';
 
-/** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
 const emphasis = {
   primary: { variant: 'primary' },
   secondary: { variant: 'secondary' },
@@ -91,8 +90,6 @@ function ColorControls({ theme }: { theme: ColorScheme }) {
           aria-label={`${theme} color isolation tabs`}
           data-testid={`${theme}-color-tabs`}
           items={[
-            // The tabs whose fills the color specs measure aren't first: the first tab of a rail
-            // draws its fill on a shape that reaches back over the rail's leading padding.
             {
               value: 'ghost',
               button: (
@@ -176,10 +173,6 @@ function ColorControls({ theme }: { theme: ColorScheme }) {
   );
 }
 
-/**
- * Overrides of the semantic tokens on a nested Theme, which recolor its area alone, beside the same
- * controls outside it; and a button given its own colors through its color properties.
- */
 function ColorOverrides() {
   return (
     <Theme theme="light" className="fixture-section" data-testid="color-overrides">
@@ -210,7 +203,6 @@ function ColorOverrides() {
   );
 }
 
-/** The controls in light and in dark, and overrides of their colors. */
 export default function ColorsFixture() {
   return (
     <>

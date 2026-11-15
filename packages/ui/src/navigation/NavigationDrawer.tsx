@@ -39,7 +39,6 @@ import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/NavigationDrawer.css';
 
-/** The part classes of the drawer's destinations: a row of icon, label and count. */
 const drawerClasses: DestinationClasses = {
   item: 'env-navigation-drawer-item',
   label: 'env-navigation-drawer-label',
@@ -139,12 +138,6 @@ export interface NavigationDrawerProps
   resizeLabel?: string;
 }
 
-/**
- * Whether a one-line label or heading is cut short with an ellipsis, measured as it resizes; never
- * where labels wrap. It is first measured as the observer reports its size, once the page is laid
- * out: measured as it mounts, each of a drawer's labels would lay the page out again, after what
- * the effects between them wrote, a long pause as a page with a long drawer hydrates.
- */
 function useCut(ref: RefObject<HTMLElement | null>, oneLine: boolean) {
   const [cut, setCut] = useState(false);
   useLayoutEffect(() => {
@@ -155,27 +148,19 @@ function useCut(ref: RefObject<HTMLElement | null>, oneLine: boolean) {
     }
     const measure = () => setCut(element.scrollWidth > element.clientWidth);
     if (typeof ResizeObserver === 'undefined') return measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
+    const firstMeasuresOnceLaidOutNotAtMount = new ResizeObserver(measure);
+    firstMeasuresOnceLaidOutNotAtMount.observe(element);
+    return () => firstMeasuresOnceLaidOutNotAtMount.disconnect();
   }, [ref, oneLine]);
   return cut;
 }
 
-/**
- * What every destination of a drawer reads: whether labels keep to one line, and the open sections.
- */
 interface DrawerState {
   oneLine: boolean;
   expanded: ReadonlySet<string>;
   setExpanded: (key: string, open: boolean) => void;
 }
 
-/**
- * A destination's control, such as a link. In a resizable drawer, whose labels keep to one line, a
- * label cut short with an ellipsis shows in full in a tooltip beside the drawer (CutLabelTooltip).
- * `as` renders the item as another trigger, such as the button that opens a section.
- */
 function DrawerControl({
   destination,
   oneLine,
@@ -214,17 +199,12 @@ function DrawerControl({
   );
 }
 
-/** A section's chevron, which points down, and up while the section is open. */
 const chevron = (
   <span className="env-icon env-navigation-drawer-chevron" aria-hidden="true">
     <IconChevronRight />
   </span>
 );
 
-/**
- * A destination's control alone, or in a row with the controls beside it: the destination's own end
- * content and a section's button, outside the link or button, over the row's fill.
- */
 function DrawerRow({
   destination,
   toggle,
@@ -248,13 +228,6 @@ function DrawerRow({
   );
 }
 
-/**
- * A destination with destinations nested under it: a section that opens and closes, its nested
- * destinations in a list below it, indented. A destination with a target is its link or button,
- * with a button at its end that opens and closes the section; one without is only its heading, a
- * button that does. A closed section keeps its links in the page, hidden until found, so search
- * engines and the browser's find in page reach them; find in page opens it.
- */
 function DrawerBranch({
   destination,
   nested,
@@ -311,7 +284,6 @@ function DrawerBranch({
   );
 }
 
-/** One destination of the drawer, in its list: a row, or a section that opens and closes. */
 function DrawerItem({
   destination,
   state,
@@ -331,11 +303,6 @@ function DrawerItem({
   );
 }
 
-/**
- * A group's heading and its destinations, a list of its own named by the heading. A heading cut
- * short in a resizable drawer gives its full text as its title, since a heading takes no focus for a
- * tooltip.
- */
 function Section({
   group,
   items,
@@ -370,74 +337,68 @@ function Section({
   );
 }
 
-/** The keys of the sections that hold the current destination, from the outermost in. */
-function currentPath(destinations: readonly NavigationDrawerDestination[]): string[] {
+function keysOfSectionsHoldingCurrent(
+  destinations: readonly NavigationDrawerDestination[],
+): string[] {
   for (const destination of destinations) {
     const nested = destination.children;
     if (nested === undefined || nested.length === 0) continue;
     if (nested.some((child) => child.current === true)) return [destinationKey(destination)];
-    const inner = currentPath(nested);
+    const inner = keysOfSectionsHoldingCurrent(nested);
     if (inner.length > 0) return [destinationKey(destination), ...inner];
   }
   return [];
 }
 
-/** The keys of both lists, each once, in their order. */
-const joined = (keys: readonly string[], more: readonly string[]) => [
+const unionInOrder = (keys: readonly string[], more: readonly string[]) => [
   ...new Set([...keys, ...more]),
 ];
 
-/**
- * The open sections: the application's, with `expanded` and onExpandedChange, or the drawer's own,
- * which start with `defaultExpanded`. The sections that hold the current destination open as it
- * becomes current: the drawer's own at once, and the application's through onExpandedChange.
- */
 function useExpanded(
   destinations: readonly NavigationDrawerDestination[],
   expanded: readonly string[] | undefined,
   defaultExpanded: readonly string[],
   onExpandedChange: ((expanded: string[]) => void) | undefined,
 ): Pick<DrawerState, 'expanded' | 'setExpanded'> {
-  const path = currentPath(destinations);
-  // One string for the path, which changes only as the current destination moves.
+  const path = keysOfSectionsHoldingCurrent(destinations);
   const pathKey = JSON.stringify(path);
   const [shown, change, keepOwn] = useControllableState<readonly string[], string[]>({
     value: expanded,
-    defaultValue: joined(defaultExpanded, path),
+    defaultValue: unionInOrder(defaultExpanded, path),
     onChange: onExpandedChange,
   });
   const controlled = expanded !== undefined;
   const [ownPath, setOwnPath] = useState(pathKey);
-  if (!controlled && ownPath !== pathKey) {
-    // A new current destination opens its sections in the same render, as on a page load.
+  const currentMovedWithinOwnState = !controlled && ownPath !== pathKey;
+  if (currentMovedWithinOwnState) {
     setOwnPath(pathKey);
-    keepOwn(joined(shown, path));
+    keepOwn(unionInOrder(shown, path));
   }
-  // The latest open sections, so the effect below and setExpanded, one function across renders,
-  // read them: a render that changes neither, such as one for each move of a resize, leaves the
-  // destinations as they are.
   const latest = useLatest(shown);
-  useEffect(() => {
-    if (!controlled) return;
-    const keys = JSON.parse(pathKey) as string[];
-    if (keys.some((key) => !latest.current.includes(key))) change(joined(latest.current, keys));
-  }, [latest, change, controlled, pathKey]);
+  useEffect(
+    function openApplicationsSectionsHoldingCurrent() {
+      if (!controlled) return;
+      const keys = JSON.parse(pathKey) as string[];
+      if (keys.some((key) => !latest.current.includes(key)))
+        change(unionInOrder(latest.current, keys));
+    },
+    [latest, change, controlled, pathKey],
+  );
   const set = useMemo(() => new Set(shown), [shown]);
   const setExpanded = useCallback(
     (key: string, open: boolean) => {
       const current = latest.current;
-      change(open ? joined(current, [key]) : current.filter((each) => each !== key));
+      change(open ? unionInOrder(current, [key]) : current.filter((each) => each !== key));
     },
     [latest, change],
   );
   return { expanded: set, setExpanded };
 }
 
-/** No open sections, the default of `defaultExpanded`, kept as one array across renders. */
-const noKeys: readonly string[] = [];
+const noOpenSections: readonly string[] = [];
 
-/** The widest a resizable drawer can be, in rem: half its container's width. */
-const roomFor = (handle: HTMLElement) => containerWidth(handle.parentElement ?? handle) / 2;
+const halfContainerWidthInRem = (handle: HTMLElement) =>
+  containerWidth(handle.parentElement ?? handle) / 2;
 
 /**
  * The navigation drawer for expanded and larger windows: a column at the window's start with every
@@ -451,7 +412,7 @@ const roomFor = (handle: HTMLElement) => containerWidth(handle.parentElement ?? 
 export function NavigationDrawer({
   destinations,
   expanded: expandedProp,
-  defaultExpanded = noKeys,
+  defaultExpanded = noOpenSections,
   onExpandedChange,
   header,
   footer,
@@ -478,10 +439,7 @@ export function NavigationDrawer({
     defaultExpanded,
     onExpandedChange,
   );
-  // The destinations render again only as they, the open sections or the heading level change, not
-  // as the drawer's width does: a resize renders the drawer and its handle on each move, and a
-  // long list of destinations, each with its tooltip, would make it lag.
-  const list = useMemo(() => {
+  const listKeptAcrossResizeMoves = useMemo(() => {
     const state: DrawerState = { oneLine: resizable, expanded, setExpanded };
     return (
       <Column render={<ul />} className="env-navigation-drawer-list" align="stretch" gap={1}>
@@ -513,7 +471,7 @@ export function NavigationDrawer({
     minWidth,
     maxWidth,
     onWidthChange,
-    room: roomFor,
+    room: halfContainerWidthInRem,
     reverse: false,
     widthText: (width) => messages.width({ width }),
   });
@@ -543,7 +501,7 @@ export function NavigationDrawer({
         skeleton,
         <>
           {header != null && <Slot className="env-navigation-drawer-header">{header}</Slot>}
-          {list}
+          {listKeptAcrossResizeMoves}
           {footer != null && <Slot className="env-navigation-drawer-footer">{footer}</Slot>}
         </>,
       )}

@@ -19,9 +19,7 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
     .elements()
     .map((item) => box(item).width);
   expect(widths).toHaveLength(4);
-  // The destinations share the bar's width.
   for (const width of widths) expect(Math.abs(width - widths[0]!)).toBeLessThan(1);
-  // Five destinations fit without More.
   const five = scope().getByRole('navigation', { name: 'Five bar' });
   expect(five.getByRole('listitem').elements()).toHaveLength(5);
   expect(five.element().querySelector('.env-navigation-bar-more')).toBeNull();
@@ -35,11 +33,9 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
     'Sent',
     'More',
   ]);
-  // More holds the current destination and counts what it holds: Labels, 4, and Archive, 1.
   const more = bar.getByRole('button', { name: 'More, 5 new, current page inside', exact: true });
   await expect.element(more).toHaveAttribute('data-current', '');
   await expect.element(more).not.toHaveAttribute('aria-current');
-  // Its text is its label, then its count, as its name reads them, with its icon drawn above.
   expect(more.element().textContent).toBe('More 5');
   const icon = box(more.element().querySelector('.env-navigation-bar-indicator')!);
   const label = box(more.element().querySelector('.env-navigation-bar-label')!);
@@ -64,7 +60,6 @@ test(
   { tags: ['engines'] },
   async () => {
     const bar = scope().getByRole('navigation', { name: 'Many bar' });
-    // Tab reaches More after the four destinations before it.
     (bar.getByRole('link', { name: 'Sent', exact: true }).element() as HTMLElement).focus();
     await keyboard.press('Tab');
     const more = page.elementLocator(bar.element().querySelector('.env-navigation-bar-more')!);
@@ -80,7 +75,6 @@ test(
     await expect.poll(() => document.activeElement).toBe(items()[1]);
     await keyboard.press('End');
     await expect.poll(() => document.activeElement).toBe(items().at(-1));
-    // Enter selects a destination without href, and the menu closes.
     await keyboard.press('Home');
     await expect.element(page.elementLocator(items()[0]!)).toHaveAccessibleName('Labels, 4 new');
     await keyboard.press('Enter');

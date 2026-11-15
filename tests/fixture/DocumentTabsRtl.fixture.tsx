@@ -4,7 +4,6 @@ import { initialTabs } from './DocumentTabs.fixture.js';
 
 export const mount = 'standalone';
 
-/** An overflowing DocumentTabs strip in right-to-left text. */
 export default function DocumentTabsRtlFixture() {
   const [value, setValue] = useState<string | null>(initialTabs[0]!.value);
   return (

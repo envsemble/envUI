@@ -169,7 +169,6 @@ function Cards() {
     meta: <Badge tone="success">Active</Badge>,
     description: 'New pricing page and onboarding.',
   };
-  // A link or button card is one control, so it holds its content as children.
   const linkContent = (
     <Column gap={1}>
       <Text variant="title" render={<span />}>

@@ -1,40 +1,18 @@
-// The Release workflow's work (.github/workflows/release.yml), on the merge commit of a pull
-// request into main:
-//
-//   node scripts/release/Publish.ts --plan   whether the version needs releasing, as release=true
-//                                            or false in GITHUB_OUTPUT, and, if it does, that the
-//                                            release is ready, before anything is built
-//   node scripts/release/Publish.ts          once the packages are built: validates the release,
-//                                            drafts the GitHub release with the version's notes,
-//                                            publishes each package the registry lacks under the
-//                                            version's dist-tag, then publishes the release, which
-//                                            tags the merge commit
-//
-// A version with a published release is done; a draft left by a failed run is replaced, and a
-// re-run publishes only what is still missing. Any answer from gh or npm other than "not found"
-// stops the run rather than guessing. SHA names the merge commit; gh and npm take their tokens from
-// the environment.
 import { spawnSync } from 'node:child_process';
 import { appendFileSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { libraryVersion, validateRelease } from './ValidateRelease.ts';
 
-/** How a command ended. */
 export interface Outcome {
   status: number | null;
   stdout: string;
   stderr: string;
 }
 
-/**
- * Runs gh or npm with these arguments; the tests pass their own. `shown` writes the command's
- * output straight to the job's log instead of returning it.
- */
 export type Run = (command: 'gh' | 'npm', args: string[], shown?: boolean) => Outcome;
 
-/** The packages, the library first, as each depends on nothing published after it. */
-const packages = [
+const packagesInDependencyOrder = [
   '@envsemble/envui',
   '@envsemble/eslint-plugin-envui',
   '@envsemble/stylelint-config-envui',
@@ -48,7 +26,6 @@ const runCommand: Run = (command, args, shown = false) => {
   return { status, stdout: stdout ?? '', stderr: stderr ?? '' };
 };
 
-/** Runs a command that must succeed, and returns its output. */
 function must(run: Run, command: 'gh' | 'npm', args: string[], shown = false) {
   const outcome = run(command, args, shown);
   if (outcome.status !== 0)
@@ -58,7 +35,6 @@ function must(run: Run, command: 'gh' | 'npm', args: string[], shown = false) {
   return outcome.stdout;
 }
 
-/** Where the release of `tag` stands on GitHub. */
 export function releaseState(tag: string, run: Run): 'released' | 'draft' | 'missing' {
   const view = run('gh', ['release', 'view', tag, '--json', 'isDraft', '--jq', '.isDraft']);
   if (view.status === 0) return view.stdout.trim() === 'false' ? 'released' : 'draft';
@@ -66,7 +42,6 @@ export function releaseState(tag: string, run: Run): 'released' | 'draft' | 'mis
   throw new Error(`gh release view ${tag} failed:\n${view.stderr}`);
 }
 
-/** Whether the registry has `name` at `version`. */
 export function isPublished(name: string, version: string, run: Run) {
   const view = run('npm', ['view', `${name}@${version}`, 'version']);
   if (view.status === 0) return true;
@@ -74,10 +49,6 @@ export function isPublished(name: string, version: string, run: Run) {
   throw new Error(`npm view ${name}@${version} failed:\n${view.stderr}`);
 }
 
-/**
- * Drafts the release of the validated version, publishes the packages the registry lacks and
- * publishes the release. Returns the packages it published.
- */
 export function publish({
   release,
   sha,
@@ -92,7 +63,6 @@ export function publish({
   const tag = `v${release.version}`;
   const state = releaseState(tag, run);
   if (state === 'released') return [];
-  // Only a draft, left by an earlier attempt, is replaced; a published release never is.
   if (state === 'draft') must(run, 'gh', ['release', 'delete', tag, '--yes']);
   const notesFile = join(notesDirectory, 'release-notes.md');
   writeFileSync(notesFile, release.notes);
@@ -110,15 +80,14 @@ export function publish({
     ...(release.prerelease ? ['--prerelease'] : []),
   ]);
   const published: string[] = [];
-  for (const name of packages) {
+  for (const name of packagesInDependencyOrder) {
     if (isPublished(name, release.version, run)) continue;
-    // Straight to the log, where npm's error stays whole: piped, it was cut off at 64 KB, inside
-    // the list of the tarball's files, which the warn level leaves out.
+    const showInLogSoLongErrorsAreNotCutOff = true;
     must(
       run,
       'npm',
       ['publish', '--workspace', name, '--tag', release.distTag, '--loglevel', 'warn'],
-      true,
+      showInLogSoLongErrorsAreNotCutOff,
     );
     published.push(name);
   }

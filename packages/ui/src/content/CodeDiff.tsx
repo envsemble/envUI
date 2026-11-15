@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type RefObject,
 } from 'react';
 import { Button } from '../actions/Button.js';
 import {
@@ -50,21 +51,15 @@ export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   layout?: 'auto' | 'unified';
 }
 
-/**
- * How far a wrapped line's continuation sits in from the line's start, in characters: a hanging
- * indent, so it doesn't read as a new line without a number. The line keeps Diffs' own 1 ch of
- * padding before its first character.
- */
-const wrapHang = 4;
+const wrappedLineHangingIndentCh = 4;
+const diffsOwnLinePaddingCh = 1;
 
-/**
- * Diffs paints its own background from the theme's editor color, and mixes its line tints, gutter
- * and separators from it. It takes a transparent one instead, so that the diff sits on the code
- * block's layer, which its root paints over whatever surface it is on, and each line's and word's
- * tint is its color at an opacity over that layer: the colors that keep the code theme's tokens
- * readable there. A line that wraps hangs its continuation by wrapHang.
- */
-function diffCSS({ addition, deletion, additionGutter, deletionGutter }: DiffTintColors) {
+function diffsCssOverTheCodeBlockLayer({
+  addition,
+  deletion,
+  additionGutter,
+  deletionGutter,
+}: DiffTintColors) {
   const percent = (opacity: number) => `${Math.round(opacity * 100)}%`;
   const word = (color: string) =>
     `color-mix(in srgb, ${color} ${percent(diffTintOpacity.word)}, transparent)`;
@@ -84,37 +79,27 @@ function diffCSS({ addition, deletion, additionGutter, deletionGutter }: DiffTin
   --mix-dark: ${kept};
 }
 [data-overflow=wrap] [data-line] {
-  padding-inline-start: ${1 + wrapHang}ch;
-  text-indent: -${wrapHang}ch;
+  padding-inline-start: ${diffsOwnLinePaddingCh + wrappedLineHangingIndentCh}ch;
+  text-indent: -${wrappedLineHangingIndentCh}ch;
 }`;
 }
 
-/**
- * Side by side from this many rem of the diff's own width. Not a window class: the diff measures
- * its own width, not the window's.
- */
-const splitFrom = 56;
+const splitFromOwnWidthRem = 56;
 
-/** The names of the code themes for a contrast, light and dark, the ones code blocks take. */
 const diffThemeNames = (contrast: CodeContrast) => ({
   light: codeThemeName('light', contrast),
   dark: codeThemeName('dark', contrast),
 });
-/**
- * The code themes and what is made of them, loaded with the highlighter rather than with the page:
- * the Shiki themes they start from are large, and a diff waits for its highlighter anyway.
- */
-const loadCodeThemes = () => import('./internal/codeThemes.js');
+const loadCodeThemesWithHighlighter = () => import('./internal/codeThemes.js');
 
 let themesRegistered = false;
-/** Registers the code themes with Diffs once, under their names; each is built when Diffs asks. */
-function registerThemes() {
+function registerCodeThemesWithDiffsOnce() {
   if (themesRegistered) return;
   themesRegistered = true;
   for (const contrast of ['standard', 'high'] as const)
     for (const scheme of ['light', 'dark'] as const)
       registerCustomTheme(codeThemeName(scheme, contrast), async () =>
-        (await loadCodeThemes()).codeTheme(scheme, contrast),
+        (await loadCodeThemesWithHighlighter()).codeTheme(scheme, contrast),
       );
 }
 
@@ -122,15 +107,10 @@ let highlighterReady: Promise<void> | undefined;
 const loadedLanguages = new Set<string>();
 const loadedContrasts = new Set<CodeContrast>();
 
-/**
- * Loads a language and the themes of a contrast into Diffs' highlighter, adding to what it has:
- * the high-contrast themes load only once a diff shows at high contrast.
- */
 function prepareHighlighter(language: string, contrast: CodeContrast) {
   if (loadedLanguages.has(language) && loadedContrasts.has(contrast) && highlighterReady)
     return highlighterReady;
-  // The code themes of code blocks; the app theme chooses between them.
-  registerThemes();
+  registerCodeThemesWithDiffsOnce();
   const contrasts = new Set([...loadedContrasts, contrast]);
   highlighterReady = preloadHighlighter({
     langs: [...loadedLanguages, language],
@@ -171,27 +151,29 @@ export function CodeDiff({
   const [attempt, setAttempt] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const contrast = useCodeContrast(rootRef);
-  // The highlighter with the language and the code themes, and the tints of the app theme. As the
-  // theme or contrast changes, the diff keeps the ones it shows until the new ones load, so it
-  // stays mounted, with its expanded lines and scroll: only the first load, or another language,
-  // shows the spinner.
-  const [shown, setShown] = useState<{
+  const [keptUntilNextLoads, setKeptUntilNextLoads] = useState<{
     lang: string;
     theme: typeof theme;
     contrast: CodeContrast;
     css: string;
   } | null>(null);
-  const loaded = shown?.lang === lang;
-  const [wide, setWide] = useState(false);
+  const loaded = keptUntilNextLoads?.lang === lang;
+  const wide = useWideEnoughToSplitBeforePaint(rootRef, layout === 'auto' && loaded);
 
   useEffect(() => {
     let active = true;
     Promise.all([
       prepareHighlighter(lang, contrast),
-      loadCodeThemes().then(({ diffTintColors }) => diffTintColors(theme, contrast)),
+      loadCodeThemesWithHighlighter().then(({ diffTintColors }) => diffTintColors(theme, contrast)),
     ]).then(
       ([, colors]) => {
-        if (active) setShown({ lang, theme, contrast, css: diffCSS(colors) });
+        if (active)
+          setKeptUntilNextLoads({
+            lang,
+            theme,
+            contrast,
+            css: diffsCssOverTheCodeBlockLayer(colors),
+          });
       },
       () => {
         if (active) setFailed(true);
@@ -202,55 +184,29 @@ export function CodeDiff({
     };
   }, [lang, theme, contrast, attempt]);
 
-  // Split and unified are different markup from Diffs, which CSS can't switch between, so the
-  // width is measured: as the diff loads, before it paints, so it never shows the other layout
-  // first, and again as the root resizes.
-  useLayoutEffect(() => {
-    const root = rootRef.current;
-    if (!root || layout !== 'auto' || !loaded) {
-      setWide(false);
-      return;
-    }
-    const rem = remPixels(root);
-    const style = getComputedStyle(root);
-    setWide(
-      root.clientWidth -
-        (Number.parseFloat(style.paddingLeft) || 0) -
-        (Number.parseFloat(style.paddingRight) || 0) >=
-        splitFrom * rem,
-    );
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry) setWide(entry.contentRect.width >= splitFrom * rem);
-    });
-    observer.observe(root);
-    return () => observer.disconnect();
-  }, [layout, loaded]);
-
   const fileDiff = useMemo(() => {
     const diff = parseDiffFromFile(
       { name: filename, contents: before, lang: lang },
       { name: filename, contents: after, lang: lang },
     );
-    // Diffs otherwise keys its render cache by the file names alone, which stay the same while the
-    // contents change, as in a live draft.
-    diff.cacheKey = JSON.stringify([filename, lang, before, after]);
+    const cacheKeyThatChangesWithContents = JSON.stringify([filename, lang, before, after]);
+    diff.cacheKey = cacheKeyThatChangesWithContents;
     return diff;
   }, [filename, lang, before, after]);
 
+  const previousThemeStillShown =
+    keptUntilNextLoads && keptUntilNextLoads.theme !== theme ? keptUntilNextLoads.theme : undefined;
   return (
-    // On the code block's layer, which the style sheet paints: Diffs leaves its background clear.
     <div
       {...props}
       ref={rootRef}
       className={classNames('env-code-diff', className)}
-      // Code.css gives it the nearest boundary's code colors; a diff still showing the theme before a
-      // switch keeps that theme's until the new one loads.
-      style={shown && shown.theme !== theme ? { ...codeThemeStyle(shown.theme), ...style } : style}
+      style={
+        previousThemeStillShown ? { ...codeThemeStyle(previousThemeStillShown), ...style } : style
+      }
       aria-busy={!loaded && !failed ? true : undefined}
     >
       {failed ? (
-        // An alert, so the failure is announced: the error icon, a heading, a sentence and Retry.
         <Column role="alert" gap={4} className="env-code-diff-failed">
           <span className="env-code-diff-failed-icon">
             <DecorativeIcon>
@@ -274,7 +230,7 @@ export function CodeDiff({
             {messages.retry}
           </Button>
         </Column>
-      ) : !loaded || !shown ? (
+      ) : !loaded || !keptUntilNextLoads ? (
         <Spinner label={messages.loading} showLabel />
       ) : before === after ? (
         <File
@@ -282,10 +238,10 @@ export function CodeDiff({
           disableWorkerPool
           options={{
             overflow: 'wrap',
-            theme: diffThemeNames(shown.contrast),
-            themeType: shown.theme,
+            theme: diffThemeNames(keptUntilNextLoads.contrast),
+            themeType: keptUntilNextLoads.theme,
             disableFileHeader: !header,
-            unsafeCSS: shown.css,
+            unsafeCSS: keptUntilNextLoads.css,
           }}
         />
       ) : (
@@ -295,16 +251,45 @@ export function CodeDiff({
           options={{
             diffStyle: wide ? 'split' : 'unified',
             overflow: 'wrap',
-            theme: diffThemeNames(shown.contrast),
-            themeType: shown.theme,
+            theme: diffThemeNames(keptUntilNextLoads.contrast),
+            themeType: keptUntilNextLoads.theme,
             disableFileHeader: !header,
             expandUnchanged,
-            unsafeCSS: shown.css,
+            unsafeCSS: keptUntilNextLoads.css,
           }}
         />
       )}
     </div>
   );
+}
+
+function useWideEnoughToSplitBeforePaint(
+  rootRef: RefObject<HTMLDivElement | null>,
+  measure: boolean,
+) {
+  const [wide, setWide] = useState(false);
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root || !measure) {
+      setWide(false);
+      return;
+    }
+    const rem = remPixels(root);
+    const style = getComputedStyle(root);
+    setWide(
+      root.clientWidth -
+        (Number.parseFloat(style.paddingLeft) || 0) -
+        (Number.parseFloat(style.paddingRight) || 0) >=
+        splitFromOwnWidthRem * rem,
+    );
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry) setWide(entry.contentRect.width >= splitFromOwnWidthRem * rem);
+    });
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [rootRef, measure]);
+  return wide;
 }
 
 function languageOf(filename: string) {

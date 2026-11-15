@@ -49,8 +49,6 @@ test('search covers every page, export, prop and token', () => {
   const pageTitles = new Set(
     records.filter(({ kind }) => kind !== 'export').map(({ title }) => title),
   );
-  // Every export in props.json is found: as an export of its own, or as the page of its name, such
-  // as Button, or a namespace, such as Menu, whose page has its name.
   for (const [name, entry] of Object.entries(props.exports)) {
     assert.ok(ids.has(`export:${name}`) || pageTitles.has(name), `${name} has no search document`);
     if (entry.kind === 'component')
@@ -63,8 +61,6 @@ test('search covers every page, export, prop and token', () => {
 test('every search result leads to a page there is, and to an element that page renders', () => {
   const pages = new Map(documents.map((document) => [document.id, document]));
   const tokenRows = new Set(tokens.tokens.map(({ cssVariable }) => tokenSection(cssVariable)));
-  // The ids a page renders: its headings, and on its Props view each export's props and their rows
-  // (apps/site/src/pages/docs/PropsTables.tsx).
   const elements = (document, view) =>
     new Set(
       view === 'props'
@@ -95,7 +91,6 @@ test('search finds components by alias, props and tokens by name, and pages befo
   assert.deepEqual(best('fg muted'), ['token:color.fg.muted']);
   assert.deepEqual(best('button'), ['page:button']);
   assert.ok(best('loading', 3).includes('page:spinner'));
-  // A typo in a longer word still finds it.
   assert.deepEqual(best('chnagelog'), ['page:full-changelog']);
 });
 
@@ -109,42 +104,32 @@ test('a whole name ranks first: an export, a prop by its export, a token', () =>
   assert.deepEqual(best('useToast'), ['export:useToast']);
   assert.deepEqual(best('Menu.Item'), ['export:Menu.Item']);
   assert.deepEqual(best('Theme'), ['export:Theme']);
-  // A prop's name alone still finds the props of that name, ahead of other matches.
   assert.ok(
     best('startIcon', 4).every((id) => id.startsWith('prop:') && id.endsWith('.startIcon')),
   );
 });
 
 test('a page an alias names ranks above the props of that name', () => {
-  // Many exports have a prop of the alias's name, such as Dialog's modal or a field's hint.
   assert.deepEqual(best('modal'), ['page:dialog']);
   assert.deepEqual(best('hint'), ['page:tooltip']);
   assert.deepEqual(best('shortcut'), ['page:kbd']);
   assert.deepEqual(best('topbar'), ['page:top-bar']);
   assert.deepEqual(best('dark mode'), ['page:colors']);
-  // An export's own name counts more than a page's alias of it.
   assert.deepEqual(best('icon'), ['export:Icon']);
   assert.ok(best('icon', 3).includes('page:icons'));
-  // A page whose title names the topic, as Spacing & density names spacing, ranks above pages and
-  // props that only mention it.
   assert.deepEqual(best('spacing'), ['page:spacing']);
   assert.deepEqual(best('scale'), ['page:spacing']);
   assert.deepEqual(best('density'), ['page:spacing']);
   assert.deepEqual(best('contrast'), ['page:colors']);
-  // An export's name written out finds the export before the page that lists it as an alias.
   assert.deepEqual(best('copy button'), ['export:CopyButton']);
   assert.ok(best('button group', 2).includes('export:ButtonGroup'));
-  // A five-letter word with a typo still finds it.
   assert.deepEqual(best('buton'), ['page:button']);
-  // A name that starts with the query ranks above a page that only lists it as an alias.
   assert.deepEqual(best('date'), ['page:date-picker']);
   assert.deepEqual(best('time'), ['page:time-picker']);
 });
 
 test('words that name no result together find the pages whose title holds one first', () => {
-  // Button's page never says primary: the page named Button comes first.
   assert.deepEqual(best('primary button'), ['page:button']);
-  // Words that name a result together keep every word: an alias, a prop by its export, a name's start.
   assert.deepEqual(best('error message'), ['page:field']);
   assert.deepEqual(best('button variant'), ['prop:Button.variant']);
   assert.deepEqual(best('date pi'), ['page:date-picker']);
@@ -177,13 +162,11 @@ test('an export on a page without a Props view leads to the section that shows i
     view: 'usage',
     section: 'usage',
   });
-  // A foundation in the one-file structure shows the props of the exports it documents.
   assert.deepEqual(place('prop:Text.variant'), {
     page: 'typography',
     view: 'props',
     section: 'props-Text-variant',
   });
-  // Every export and prop on such a page has a section to go to.
   for (const record of records.filter(({ kind }) => kind === 'export' || kind === 'prop'))
     assert.ok(record.section, `${record.id} leads to no section`);
 });
@@ -201,7 +184,6 @@ test('a result carries where it is: its page, view and element', () => {
 });
 
 test('the index stays small enough to load when search first opens', () => {
-  // About 0.5 MB, 0.1 MB compressed, in 2026-10.
   assert.ok(serialized.length < 1_000_000, `${serialized.length} bytes`);
 });
 
@@ -211,26 +193,19 @@ test('a result names its area: the catalogue, or the Docs for the reference', ()
   assert.equal(area('page:colors'), 'catalogue');
   assert.equal(area('page:field'), 'docs');
   assert.equal(area('page:setup'), 'docs');
-  // Dev mode is the Docs' alone: its page on the Site folded into its guide.
   assert.equal(area('page:dev-mode'), 'docs');
   assert.equal(area('page:dev-mode-overview'), undefined);
   assert.equal(area('prop:Button.variant'), 'docs');
   assert.equal(area('export:useTheme'), 'docs');
   assert.equal(area('token:color.fg.muted'), 'docs');
   for (const record of records) assert.ok(['catalogue', 'docs'].includes(record.area), record.id);
-  // The site's own pages: the Docs' home, tokens and the full changelog are in the Docs.
   const inDocs = new Set(['docs', 'tokens', 'full-changelog']);
   for (const { page, area: where } of standalonePages)
     assert.equal(where, inDocs.has(page) ? 'docs' : 'catalogue', page);
-  // A foundation is one result, its page in the catalogue, whose Docs button opens its guide.
   assert.deepEqual(best('colors and themes'), ['page:colors']);
   assert.ok(!records.some(({ id }) => id.startsWith('guide:')));
 });
 
-/**
- * Queries people ask, and the pages they lead to: each runs once the pages it names are written.
- * `first` must be the best result; `among` must be in the first `within`.
- */
 const goldenQueries = [
   { query: 'account menu', first: 'page:menu' },
   { query: 'title bar', first: 'page:top-bar' },

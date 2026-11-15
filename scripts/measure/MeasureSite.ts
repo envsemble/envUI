@@ -1,34 +1,3 @@
-// Load-speed benchmarks of the website as it is hosted: Lighthouse on a sample of pages, each cold
-// and with a warm cache, on a phone and a desktop, and a client-side navigation between two pages.
-// The numbers depend on the machine and what else runs on it: a measure to compare before and
-// after a change on one machine, not a pass/fail test.
-//
-//   node scripts/measure/MeasureSite.ts [--runs <n>] [--only <pages>] [--forms <forms>]
-//     [--no-build] [--site <dir>] [--no-navigation] [--label <name>] [--serve] [--report <label>]
-//
-// It builds the site (`npm run build:site`; --no-build serves the last build, --site <dir> another
-// build, such as a copy of the last one kept to compare with) and serves dist/site as Cloudflare
-// does: `wrangler dev` runs the Worker and the asset server, with their brotli and
-// the cache headers of _headers and Worker.mjs, and an HTTP/2 proxy over TLS in front of it on
-// ENVUI_SITE_PERF_PORT (9095 by default) gives the browser the multiplexed connection the hosted
-// site has, with a self-signed certificate (made with openssl into .cache/site-perf) that Chromium
-// trusts by its key. Lighthouse (npx lighthouse, pinned below) drives Playwright's Chromium.
-//
-// - Pages: --only takes some of home, components, button, colors, table, docs and docs-button.
-// - Forms: mobile (Lighthouse's default: Slow 4G and 4× CPU) and desktop (its desktop preset),
-//   both throttled by DevTools, so cached files cost what they cost; --forms picks one.
-// - Each page loads cold (Lighthouse clears the cache) and then warm (the same browser, its cache
-//   kept: the page revalidated, hashed files from the cache), --runs times (3 by default); the
-//   median of each number is reported.
-// - Navigation: the catalogue's Button page, loaded and settled, then the next page by its Next
-//   link (hovered, then pressed, on a desktop; tapped on a phone), and Checkbox by the address
-//   changing as going back does (history.pushState and a popstate event); the same in the Docs:
-//   the time until the new page's heading is painted with no loading placeholder in view, and
-//   what it fetched.
-//
-// It writes every run's numbers to .cache/site-perf/<label>.json as it goes, and prints the medians
-// as Markdown tables at the end; --report <label> prints them from that file. Another measurement at
-// the same time takes another ENVUI_SITE_PERF_PORT, such as 9105, which uses the next two as well.
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { X509Certificate, createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
@@ -60,15 +29,13 @@ const pages: Record<string, { path: string; title: string }> = {
 };
 const forms = ['mobile', 'desktop'] as const;
 type Form = (typeof forms)[number];
-/** Lighthouse's mobile throttling, which the navigation applies through CDP as DevTools does. */
-const mobileThrottling = {
+const lighthouseMobileThrottling = {
   latency: 150 * 3.75,
   downloadThroughput: ((1.6 * 1024 * 1024) / 8) * 0.9,
   uploadThroughput: ((750 * 1024) / 8) * 0.9,
   cpu: 4,
 };
-/** Lighthouse's screens: a Moto G Power for mobile, and its desktop preset's. */
-const contextOptions = (form: Form) =>
+const lighthouseScreenOptions = (form: Form) =>
   form === 'mobile'
     ? {
         viewport: { width: 412, height: 823 },
@@ -77,14 +44,8 @@ const contextOptions = (form: Form) =>
         hasTouch: true,
       }
     : { viewport: { width: 1350, height: 940 } };
-/**
- * What a page shows while a part of it loads, which the measures wait for until none is in view: a
- * part's or the whole page's skeleton (loading/Skeletons.tsx, pages/PageSkeleton.tsx), a tile's
- * skeleton, and a section still to show, hidden as its outline (markdown/SectionOutline.ts).
- */
 const loadingSelector = '.site-loading, .catalogue-tile-loading, [data-site-pending]';
 
-/** Whether none of what `selector` matches is in the window, run in the page. */
 const noneInView = (selector: string) =>
   ![...document.querySelectorAll(selector)].some((element) => {
     const box = element.getBoundingClientRect();
@@ -113,20 +74,14 @@ const chosenForms = (options.forms ?? forms.join(',')).split(',') as Form[];
 for (const form of chosenForms)
   if (!forms.includes(form)) throw new Error(`Unknown form ${form}: ${forms.join(', ')}.`);
 const label = options.label ?? new Date().toISOString().replace(/[:.]/g, '-');
-/** The build served: dist/site, or --site's. */
 const site = resolve(repositoryRoot, options.site ?? 'dist/site');
 
-/** A command line for the shell, which npm's commands need on Windows. */
-const commandLine = (parts: string[]) =>
+const shellCommandLine = (parts: string[]) =>
   parts.map((part) => (/^[\w@./:=,+-]+$/.test(part) ? part : `"${part}"`)).join(' ');
 
-/**
- * Runs a command to its end, failing on a non-zero exit, without blocking: the proxy answers in
- * this process meanwhile.
- */
-function run(parts: string[], quiet = false) {
+function runWithoutBlockingTheProxy(parts: string[], quiet = false) {
   return new Promise<string>((done, fail) => {
-    const child = spawn(commandLine(parts), {
+    const child = spawn(shellCommandLine(parts), {
       cwd: repositoryRoot,
       stdio: quiet ? 'pipe' : 'inherit',
       shell: true,
@@ -136,26 +91,24 @@ function run(parts: string[], quiet = false) {
     child.stderr?.on('data', (chunk: Buffer) => (output += chunk));
     child.on('error', fail);
     child.on('exit', (code) =>
-      code === 0 ? done(output) : fail(new Error(`${commandLine(parts)} failed:\n${output}`)),
+      code === 0 ? done(output) : fail(new Error(`${shellCommandLine(parts)} failed:\n${output}`)),
     );
   });
 }
 
 async function waitFor(url: string) {
   for (let attempt = 0; attempt < 120; attempt++) {
-    try {
-      const response = await fetch(url);
-      if (response.ok) return;
-    } catch {
-      // Not answering yet.
-    }
+    const answered = await fetch(url).then(
+      (response) => response.ok,
+      () => false,
+    );
+    if (answered) return;
     await new Promise((done) => setTimeout(done, 500));
   }
   throw new Error(`${url} did not answer.`);
 }
 
-/** The self-signed certificate of localhost, and the hash of its key that Chromium trusts. */
-async function certificate() {
+async function selfSignedCertificate() {
   const key = resolve(cache, 'localhost-key.pem');
   const cert = resolve(cache, 'localhost-cert.pem');
   if (!existsSync(cert)) {
@@ -207,9 +160,11 @@ const forwarded = (headers: IncomingHttpHeaders) =>
     Object.entries(headers).filter(([name]) => !name.startsWith(':') && !hopByHop.has(name)),
   );
 
-/** An HTTP/2 proxy over TLS in front of wrangler dev, which answers HTTP/1.1. */
-async function startProxy() {
-  const { key, cert, spki } = await certificate();
+const brotliFirstAsCloudflareServes = (acceptEncoding: string | undefined) =>
+  /\bbr\b/.test(String(acceptEncoding)) ? { 'accept-encoding': 'br, gzip' } : {};
+
+async function startHttp2ProxyOverTls() {
+  const { key, cert, spki } = await selfSignedCertificate();
   const server = createSecureServer({ key, cert, allowHTTP1: true }, (incoming, outgoing) => {
     const upstream = httpRequest(
       {
@@ -220,11 +175,7 @@ async function startProxy() {
         headers: {
           ...forwarded(incoming.headers),
           host: `localhost:${port}`,
-          // wrangler dev answers with the first encoding listed, gzip of Chromium's; Cloudflare
-          // serves brotli to a browser that takes it.
-          ...(/\bbr\b/.test(String(incoming.headers['accept-encoding']))
-            ? { 'accept-encoding': 'br, gzip' }
-            : {}),
+          ...brotliFirstAsCloudflareServes(incoming.headers['accept-encoding']),
         },
       },
       (response) => {
@@ -243,8 +194,9 @@ async function startProxy() {
 }
 
 function startWrangler() {
+  const ownStateSoOtherPortsRunBeside = resolve(cache, `wrangler-${port}`);
   return spawn(
-    commandLine([
+    shellCommandLine([
       'npx',
       'wrangler',
       'dev',
@@ -256,9 +208,8 @@ function startWrangler() {
       'warn',
       '--assets',
       site,
-      // Its own state, so measurements on other ports run beside it.
       '--persist-to',
-      resolve(cache, `wrangler-${port}`),
+      ownStateSoOtherPortsRunBeside,
     ]),
     { cwd: repositoryRoot, stdio: 'ignore', shell: true },
   );
@@ -286,18 +237,15 @@ type Report = {
 interface Chain {
   children?: Record<string, Chain>;
 }
-/** The requests in the longest chain of the network dependency tree, the page included. */
 const chainDepth = (chains: Record<string, Chain> | undefined): number =>
   chains ? Math.max(0, ...Object.values(chains).map((chain) => 1 + chainDepth(chain.children))) : 0;
-/** The tree of Lighthouse 13's network dependency insight: its first list section's chains. */
 const dependencyTree = (audit: Audit | undefined) => {
   const section = audit?.details?.items?.[0] as
     { value?: { chains?: Record<string, Chain> } } | undefined;
   return section?.value?.chains;
 };
 
-/** The numbers of one Lighthouse report. */
-function numbers(report: Report) {
+function lighthouseNumbers(report: Report) {
   const audit = (id: string) => report.audits[id];
   const value = (id: string) => audit(id)?.numericValue ?? NaN;
   const items = (id: string) => audit(id)?.details?.items ?? [];
@@ -315,7 +263,6 @@ function numbers(report: Report) {
   const longTasks = items('long-tasks');
   const renderBlocking = items('render-blocking-insight');
   return {
-    // Lighthouse's performance score, out of 100.
     score: (report.categories?.performance?.score ?? NaN) * 100,
     lcp: value('largest-contentful-paint'),
     fcp: value('first-contentful-paint'),
@@ -335,7 +282,6 @@ function numbers(report: Report) {
     cssRequests: summary.stylesheet?.requests ?? 0,
     chainDepth: chainDepth(dependencyTree(audit('network-dependency-tree-insight'))),
     renderBlockingRequests: renderBlocking.length,
-    // Script evaluation and parsing of every script, until the page settles.
     jsExecution: bootup.reduce(
       (sum, item) => sum + Number(item.scripting ?? 0) + Number(item.scriptParseCompile ?? 0),
       0,
@@ -352,11 +298,11 @@ function numbers(report: Report) {
     otherWork: breakdown.other ?? 0,
   };
 }
-type Numbers = ReturnType<typeof numbers>;
+type Numbers = ReturnType<typeof lighthouseNumbers>;
 
 async function lighthouse(path: string, form: Form, warm: boolean): Promise<Numbers> {
   const output = join(tmpdir(), `envui-site-perf-${process.pid}.json`);
-  await run(
+  await runWithoutBlockingTheProxy(
     [
       'npx',
       '-y',
@@ -375,30 +321,26 @@ async function lighthouse(path: string, form: Form, warm: boolean): Promise<Numb
   );
   const report = JSON.parse(await readFile(output, 'utf8')) as Report;
   await rm(output, { force: true });
-  return numbers(report);
+  return lighthouseNumbers(report);
 }
 
-/**
- * A client-side navigation from one page to another, in a fresh context with the form's
- * throttling: from the press on the page's Next link, or the address changing as going back does
- * (`to`), to the frame where another page's heading is shown with no loading placeholder in view,
- * and the bytes fetched until the network settles. On a desktop the pointer rests on the link for
- * 300 ms before the press, as a reader's does; on a phone the link is tapped.
- */
+const readerHoverBeforePress = 300;
+const firstPageLazyWorkSettleTime = 1000;
+
 async function navigation(from: string, form: Form, to?: string) {
   const browser = await chromium.connectOverCDP(`http://127.0.0.1:${debuggingPort}`);
-  const context = await browser.newContext(contextOptions(form));
+  const context = await browser.newContext(lighthouseScreenOptions(form));
   const page = await context.newPage();
   const session = await context.newCDPSession(page);
   await session.send('Network.enable');
   if (form === 'mobile') {
     await session.send('Network.emulateNetworkConditions', {
       offline: false,
-      latency: mobileThrottling.latency,
-      downloadThroughput: mobileThrottling.downloadThroughput,
-      uploadThroughput: mobileThrottling.uploadThroughput,
+      latency: lighthouseMobileThrottling.latency,
+      downloadThroughput: lighthouseMobileThrottling.downloadThroughput,
+      uploadThroughput: lighthouseMobileThrottling.uploadThroughput,
     });
-    await session.send('Emulation.setCPUThrottlingRate', { rate: mobileThrottling.cpu });
+    await session.send('Emulation.setCPUThrottlingRate', { rate: lighthouseMobileThrottling.cpu });
   }
   let bytes = 0;
   let requests = 0;
@@ -410,8 +352,7 @@ async function navigation(from: string, form: Form, to?: string) {
   });
   await page.goto(`${origin}${from}`, { waitUntil: 'networkidle', timeout: 120_000 });
   await page.waitForFunction(noneInView, loadingSelector, { timeout: 60_000 });
-  // The first page's lazy work, such as code highlighting after its figures, has finished.
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(firstPageLazyWorkSettleTime);
   await page.waitForLoadState('networkidle');
   const title = (await page.locator('h1').first().textContent())?.trim();
   const link = page.locator('.site-page-navigation a').last();
@@ -430,7 +371,7 @@ async function navigation(from: string, form: Form, to?: string) {
   counting = true;
   if (!to && form === 'desktop') {
     await link.hover();
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(readerHoverBeforePress);
     await link.click();
   } else if (!to) await link.tap();
   const time = await page.evaluate(
@@ -442,18 +383,21 @@ async function navigation(from: string, form: Form, to?: string) {
           dispatchEvent(new PopStateEvent('popstate'));
         } else start = (window as { pressed?: number }).pressed ?? start;
         const noneInView = (0, eval)(inView) as (selector: string) => boolean;
+        const neverShownTimeout = 60_000;
         const shown = () => {
-          // The new page's own heading, not its skeleton's.
-          const heading = document.querySelector(
+          const ownHeadingNotSkeletons = document.querySelector(
             'main h1:not(.site-loading *), h1:not(.site-loading *)',
           );
-          if (!heading?.textContent?.trim() || heading.textContent.trim() === title) return false;
+          if (
+            !ownHeadingNotSkeletons?.textContent?.trim() ||
+            ownHeadingNotSkeletons.textContent.trim() === title
+          )
+            return false;
           return noneInView(selector);
         };
         const frame = () => {
           if (shown()) requestAnimationFrame(() => done(performance.now() - start));
-          // A page that never shows is no time at all, rather than a hang.
-          else if (performance.now() - start > 60_000) done(NaN);
+          else if (performance.now() - start > neverShownTimeout) done(NaN);
           else requestAnimationFrame(frame);
         };
         frame();
@@ -468,13 +412,9 @@ async function navigation(from: string, form: Form, to?: string) {
   return { time, bytes, requests };
 }
 
-/**
- * The JavaScript and CSS a page loads cold and doesn't use by the time it settles, from Chromium's
- * coverage: bytes as served, before compression. Unthrottled, as throttling doesn't change it.
- */
-async function coverage(path: string, form: Form) {
+async function unthrottledColdLoadCoverage(path: string, form: Form) {
   const browser = await chromium.connectOverCDP(`http://127.0.0.1:${debuggingPort}`);
-  const context = await browser.newContext(contextOptions(form));
+  const context = await browser.newContext(lighthouseScreenOptions(form));
   const page = await context.newPage();
   await page.coverage.startJSCoverage({ resetOnNavigation: false });
   await page.coverage.startCSSCoverage({ resetOnNavigation: false });
@@ -489,13 +429,12 @@ async function coverage(path: string, form: Form) {
   for (const script of scripts) {
     if (!script.url.startsWith(origin) || !script.source) continue;
     jsTotal += script.source.length;
-    // Block coverage: ranges never run have count 0; nested ones can overlap.
-    const ranges = script.functions
+    const neverRunRanges = script.functions
       .flatMap((fn) => fn.ranges)
       .filter((range) => range.count === 0)
       .sort((a, b) => a.startOffset - b.startOffset);
     let end = 0;
-    for (const range of ranges) {
+    for (const range of neverRunRanges) {
       const start = Math.max(range.startOffset, end);
       if (range.endOffset > start) jsUnused += range.endOffset - start;
       end = Math.max(end, range.endOffset);
@@ -515,19 +454,17 @@ const fixed = (value: number, digits = 0) => (Number.isFinite(value) ? value.toF
 const kb = (value: number) => fixed(value / 1024, 0);
 
 type Navigation = { time: number; bytes: number; requests: number };
-/** Every run's numbers, as the measurement goes and as .cache/site-perf/<label>.json keeps them. */
 interface Measurement {
   label: string;
   runs: number;
   lighthouse: string;
   site: string;
   results: Record<string, Record<string, { cold: Numbers[]; warm: Numbers[] }>>;
-  unused: Record<string, Awaited<ReturnType<typeof coverage>>>;
+  unused: Record<string, Awaited<ReturnType<typeof unthrottledColdLoadCoverage>>>;
   navigations: Record<string, Navigation[]>;
 }
 
-/** The medians of a record, as Markdown tables. */
-function report({ results, unused, navigations }: Measurement) {
+function reportAsMarkdownTables({ results, unused, navigations }: Measurement) {
   const medians = (list: Numbers[]) =>
     Object.fromEntries(
       Object.keys(list[0] ?? {}).map((key) => [
@@ -573,8 +510,7 @@ function report({ results, unused, navigations }: Measurement) {
   return `${lines.join('\n')}\n\nTimes in ms; sizes transferred (compressed), coverage's as served.`;
 }
 
-/** Runs a step again once where it fails, such as a Lighthouse run that timed out; else NaN. */
-async function retried<T>(step: () => Promise<T>, failed: T): Promise<T> {
+async function retriedOnce<T>(step: () => Promise<T>, failed: T): Promise<T> {
   for (let attempt = 0; attempt < 2; attempt++)
     try {
       return await step();
@@ -588,12 +524,19 @@ async function main() {
   const file = resolve(cache, `${label}.json`);
   const from = options.report;
   if (from) {
-    console.log(report(JSON.parse(await readFile(resolve(cache, `${from}.json`), 'utf8'))));
+    console.log(
+      reportAsMarkdownTables(JSON.parse(await readFile(resolve(cache, `${from}.json`), 'utf8'))),
+    );
     return;
   }
-  if (!options['no-build'] && !options.site) await run(['npm', 'run', 'build:site']);
+  if (!options['no-build'] && !options.site)
+    await runWithoutBlockingTheProxy(['npm', 'run', 'build:site']);
   const wrangler = startWrangler();
-  const { server, spki } = await startProxy();
+  const { server, spki } = await startHttp2ProxyOverTls();
+  const extensionsOffSoPlaywrightKeepsItsCdpConnection = [
+    '--disable-extensions',
+    '--disable-component-extensions-with-background-pages',
+  ];
   const profile = join(tmpdir(), `envui-site-perf-profile-${process.pid}`);
   const chrome = spawn(
     chromium.executablePath(),
@@ -602,9 +545,7 @@ async function main() {
       `--remote-debugging-port=${debuggingPort}`,
       `--user-data-dir=${profile}`,
       `--ignore-certificate-errors-spki-list=${spki}`,
-      // Chromium's own extensions' service workers break Playwright's connection over CDP.
-      '--disable-extensions',
-      '--disable-component-extensions-with-background-pages',
+      ...extensionsOffSoPlaywrightKeepsItsCdpConnection,
       '--no-first-run',
       '--no-default-browser-check',
       'about:blank',
@@ -636,12 +577,11 @@ async function main() {
       unused: {},
       navigations: {},
     };
-    // Every run is kept as it ends, so a measurement that stops keeps what it measured.
     await mkdir(cache, { recursive: true });
     const save = () => writeFile(file, `${JSON.stringify(record, null, 2)}\n`);
-    // A first load, not counted, so the server and the browser have started.
-    await retried(() => coverage(pages[only[0]].path, 'desktop'), undefined);
-    const failed = numbers({ audits: {} });
+    const uncountedWarmUpLoad = () => unthrottledColdLoadCoverage(pages[only[0]].path, 'desktop');
+    await retriedOnce(uncountedWarmUpLoad, undefined);
+    const failed = lighthouseNumbers({ audits: {} });
     const nothing = Object.fromEntries(Object.keys(failed).map((key) => [key, NaN])) as Numbers;
     for (const form of chosenForms)
       for (const name of only) {
@@ -649,14 +589,17 @@ async function main() {
         (record.results[form] ??= {})[name] = entry;
         for (let index = 0; index < runs; index++) {
           const path = pages[name].path;
-          entry.cold.push(await retried(() => lighthouse(path, form, false), nothing));
-          entry.warm.push(await retried(() => lighthouse(path, form, true), nothing));
+          entry.cold.push(await retriedOnce(() => lighthouse(path, form, false), nothing));
+          entry.warm.push(await retriedOnce(() => lighthouse(path, form, true), nothing));
           await save();
           process.stderr.write(`${form} ${name} ${index + 1}/${runs}\n`);
         }
       }
     for (const name of only) {
-      const unused = await retried(() => coverage(pages[name].path, 'desktop'), undefined);
+      const unused = await retriedOnce(
+        () => unthrottledColdLoadCoverage(pages[name].path, 'desktop'),
+        undefined,
+      );
       if (unused) record.unused[name] = unused;
     }
     await save();
@@ -671,7 +614,7 @@ async function main() {
           const list = (record.navigations[`${form} ${key}`] = [] as Navigation[]);
           for (let index = 0; index < runs; index++)
             list.push(
-              await retried(() => navigation(start, form, to), {
+              await retriedOnce(() => navigation(start, form, to), {
                 time: NaN,
                 bytes: NaN,
                 requests: NaN,
@@ -680,7 +623,7 @@ async function main() {
           await save();
           process.stderr.write(`${form} navigation ${key}\n`);
         }
-    console.log(report(record));
+    console.log(reportAsMarkdownTables(record));
     console.log(`Every run: ${file}`);
   } finally {
     cleanUp();

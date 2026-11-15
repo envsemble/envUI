@@ -103,7 +103,6 @@ export function ColorPickerButton({
         onOpenChange={onOpenChange}
         className="env-color-picker-popover"
         trigger={
-          // A compact field-like button, with the small radius of the picker's controls.
           <button
             {...props}
             type="button"

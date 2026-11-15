@@ -11,7 +11,6 @@ beforeEach(() => {
 
 const tooltip = () => document.querySelector('.env-tooltip');
 const tooltipText = () => tooltip()?.textContent;
-/** Moves the mouse onto an element, scrolled into view first, as Playwright's hover() does. */
 async function hover(element: Element) {
   element.scrollIntoView({ block: 'nearest' });
   const point = box(element);
@@ -21,7 +20,6 @@ async function hover(element: Element) {
 test('the tooltip shows the date and time on hover, in the theme of the page', async () => {
   const time = (theme: string, testId: string) =>
     page.getByTestId(`relative-times-${theme}`).getByTestId(testId).element();
-  // The frame takes the key presses, Escape among them.
   window.focus();
   for (const theme of ['light', 'dark']) {
     await hover(time(theme, 'fixed'));
@@ -35,20 +33,17 @@ test('the tooltip shows the date and time on hover, in the theme of the page', a
   await expect.poll(tooltipText).toBe('16.10.2026, 12:00');
   await mouse.move(0, 0);
   await expect.poll(tooltip).toBeNull();
-  // A time with a tooltip takes the dotted underline of text with more on hover; one without, none.
   expect(time('light', 'fixed').classList.contains('env-hover-detail')).toBe(true);
   expect(time('light', 'no-tooltip').classList.contains('env-hover-detail')).toBe(false);
-  // Without a tooltip nothing opens: the check moves the clock just past the tooltip's delay.
   stopTimers();
   await hover(time('light', 'no-tooltip'));
-  await passTime(tooltipDelay + 100);
+  const justPastTooltipDelay = tooltipDelay + 100;
+  await passTime(justPastTooltipDelay);
   expect(tooltip()).toBeNull();
   vi.useRealTimers();
-  // The time is never a tab stop.
   const fixed = time('light', 'fixed') as HTMLElement;
   fixed.focus();
   expect(document.activeElement).not.toBe(fixed);
-  // Inside the application's own Tooltip, that tooltip shows instead of the date.
   await mouse.move(0, 0);
   await hover(time('light', 'in-tooltip'));
   await expect.poll(tooltipText).toBe('Updated by Alex Morgan light');

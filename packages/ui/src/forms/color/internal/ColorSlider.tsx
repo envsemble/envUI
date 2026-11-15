@@ -10,23 +10,13 @@ import '../../../styles/Base.css';
 import '../../../styles/ColorPicker.css';
 
 export interface ColorSliderProps {
-  /** The channel it moves: hue or alpha. */
   channel: Extract<ColorChannel, 'hue' | 'alpha'>;
-  /** The color it shows. */
   value: Color;
-  /** Receives the color as the slider moves. */
   onChange: (color: Color) => void;
-  /** Receives the color once a drag or a key press ends. */
   onChangeEnd?: (color: Color) => void;
-  /** Whether it takes no input. */
   disabled: boolean;
 }
 
-/**
- * One channel of a color on a vertical track that shows it, on React Aria's useColorSlider: a thumb
- * over a visually hidden range input named after the channel, such as Hue or Alpha. The top is the
- * channel's maximum; Up and Right raise it, Down and Left lower it.
- */
 export function ColorSlider({ channel, value, onChange, onChangeEnd, disabled }: ColorSliderProps) {
   const { locale } = useLocale();
   const trackRef = useRef<HTMLDivElement>(null);
@@ -52,6 +42,10 @@ export function ColorSlider({ channel, value, onChange, onChangeEnd, disabled }:
     },
     state,
   );
+  const alphaGradientOverCheckerboard = {
+    ...trackProps.style,
+    background: `${trackProps.style?.background}, var(--_color-picker-checkerboard)`,
+  };
   return (
     <div
       className={classNames('env-color-picker-slider', `env-color-picker-${channel}`)}
@@ -62,15 +56,7 @@ export function ColorSlider({ channel, value, onChange, onChangeEnd, disabled }:
         {...trackProps}
         ref={trackRef}
         className="env-color-picker-track"
-        style={
-          channel === 'alpha'
-            ? // The alpha gradient over a checkerboard, which shows through translucent colors.
-              {
-                ...trackProps.style,
-                background: `${trackProps.style?.background}, var(--_color-picker-checkerboard)`,
-              }
-            : trackProps.style
-        }
+        style={channel === 'alpha' ? alphaGradientOverCheckerboard : trackProps.style}
       >
         <div
           {...thumbProps}

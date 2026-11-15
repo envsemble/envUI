@@ -1,10 +1,3 @@
-// The site's search: one document per page, export, prop and token, from the same sources as the
-// site and the packaged docs (docs/, docs/generated/props.json and the token list), and the
-// MiniSearch index the site loads, written to apps/site/src/generated/SearchIndex.json by
-// GenerateDocumentation.ts. The site opens it with ⌘K or Ctrl+K, in the catalogue and the Docs.
-//
-// searchDocuments() is plain data, so other tools can index the same documents, each a
-// SearchDocument (apps/site/src/documentation/SearchTerms.ts) that names the page it is found on and its place there.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { marked } from 'marked';
@@ -26,11 +19,9 @@ import {
 } from '../../apps/site/src/documentation/SearchAnchors.ts';
 import { repositoryRoot, tokensDataFile } from '../RepositoryPaths.ts';
 
-/** The token list, packages/ui/src/generated/tokens.json. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; the token build writes it
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TokenList = Record<string, any>;
 
-/** What the search index is built from. */
 export interface SearchSources {
   documents: readonly DocumentRecord[];
   props: PropsFile;
@@ -39,7 +30,6 @@ export interface SearchSources {
 
 const searchIndexFile = resolve(repositoryRoot, 'apps/site/src/generated/SearchIndex.json');
 
-/** Pages of the site that no file in docs/ writes, each in its area. */
 export const standalonePages: {
   page: string;
   title: string;
@@ -84,16 +74,13 @@ export const standalonePages: {
   },
 ];
 
-/** The agents' index of the pages, which neither the catalogue nor the Docs show. */
 export const unlistedPages = new Set(['index']);
 
-/** Components documented in the Docs alone: Field, as "Build your own field". */
 const docsOnlyPages = new Set(['field']);
 
 const kindOfGroup = (group: string): SearchKind =>
   group === 'Foundations' ? 'foundation' : group === 'Setup and workflows' ? 'guide' : 'component';
 
-/** Every export a page documents, with namespaces expanded to their parts. */
 function documentedExports(names: readonly string[], props: PropsFile | undefined): string[] {
   return names.flatMap((name) => {
     const entry = props?.exports[name];
@@ -105,10 +92,6 @@ function documentedExports(names: readonly string[], props: PropsFile | undefine
 const sentence = (text: string, length = 240) =>
   text.length > length ? `${text.slice(0, length).replace(/\s+\S*$/, '')}…` : text;
 
-/**
- * The headed sections of a page's Markdown, in order, each with the id its rendered heading takes
- * and the Markdown under it up to the next heading, its code fences apart.
- */
 function sectionsOf(markdown: string) {
   const slug = headingSlugger();
   const sections: { slug: string; prose: string; code: string }[] = [];
@@ -128,11 +111,6 @@ function sectionsOf(markdown: string) {
 const mentions = (text: string, name: string) =>
   new RegExp(`(?<![\\w.])${name.replace(/[.$]/g, '\\$&')}(?![\\w])`).test(text);
 
-/**
- * Where a page that has no Props view says the most about an export: the first section whose code
- * uses it, on its own page and then on the foundations, else the first that names it. Returns the
- * page's document and the section's id, or the page alone when no section names the export.
- */
 function placeOf(
   name: string,
   home: DocumentRecord,
@@ -149,10 +127,6 @@ function placeOf(
   return { document: home };
 }
 
-/**
- * The route parts of a document's place, in the Docs: a foundation's guide, or a guide, at its
- * section.
- */
 function placeRoute({ document, section }: { document: DocumentRecord; section?: string }) {
   return {
     page: document.id,
@@ -162,20 +136,12 @@ function placeRoute({ document, section }: { document: DocumentRecord; section?:
   };
 }
 
-/**
- * The search documents of the documentation: `documents` as readDocumentation() returns them,
- * `props` as docs/generated/props.json and `tokens` as the token list holds them. Every export in
- * props.json is found, as the page that documents it when it shares its name, and else as an export
- * of its own, at its props on a page with a Props view, or else at the section of the page that
- * shows it; an export that no page lists is placed where the documentation shows it.
- */
 export function searchDocuments({
   documents,
   props,
   tokens,
 }: SearchSources & { tokens: TokenList }): SearchDocument[] {
   const results: SearchDocument[] = [];
-  /** The page that lists each export, by its name. */
   const homes = new Map<string, DocumentRecord>();
   for (const document of documents) {
     if (unlistedPages.has(document.id)) continue;
@@ -195,23 +161,16 @@ export function searchDocuments({
       page: document.id,
       area: kind === 'guide' || docsOnlyPages.has(document.id) ? 'docs' : 'catalogue',
     });
-    // A page the catalogue and the Docs both show, such as a foundation's, is one result: its page in
-    // the catalogue, whose Docs button opens the other.
   }
   const pages = new Set(
     results.filter(({ id }) => id.startsWith('page:')).map(({ title }) => title),
   );
   const setup = documents.find((document) => document.id === 'setup');
   for (const [name, entry] of Object.entries(props.exports)) {
-    // A namespace is found as the page of its name, such as Menu; one documented on another page,
-    // as an export that leads to its first part's props.
     if (entry.kind === 'namespace' && pages.has(name)) continue;
     const home = (homes.get(name) ?? setup)!;
-    // Only a component page has a Props view with a place for each export and prop; on
-    // another page, both lead to the section that shows the export.
     const where = home.sections ? undefined : placeOf(name, home, documents);
     const place = where && placeRoute(where);
-    // The page a result opens, which its detail names.
     const destination = where?.document ?? home;
     const own = (section: string) =>
       place ?? { page: home.id, area: 'docs' as const, view: 'props' as const, section };
@@ -260,7 +219,6 @@ export function searchDocuments({
   return results;
 }
 
-/** The site's own pages, as search documents. */
 function standalonePageDocuments(): SearchDocument[] {
   return standalonePages.map(({ page, title, area, aliases }) => ({
     id: `page:${page}`,
@@ -276,7 +234,6 @@ function standalonePageDocuments(): SearchDocument[] {
   }));
 }
 
-/** The site's MiniSearch index, serialized, of the documentation and the site's own pages. */
 export function buildSearchIndex({ documents, props, tokens = readTokens() }: SearchSources) {
   const index = new MiniSearch(indexOptions);
   index.addAll(
@@ -285,25 +242,14 @@ export function buildSearchIndex({ documents, props, tokens = readTokens() }: Se
   return JSON.stringify(index);
 }
 
-/**
- * A search document with the names a query may give it whole, folded as queries are: its title,
- * each topic of a page's title, an export's name written out in words, its aliases, a prop as its
- * export and name (Button variant), never its name alone, and a token as its name too
- * (color.fg.muted), a color by its role words too (fg muted). A query that is one of them ranks the
- * document first.
- */
 function withNames(document: SearchDocument) {
   const parted = !['export', 'prop', 'token'].includes(document.kind);
   const names = [
-    // A prop's name alone is no whole name of it: many exports share it, such as variant.
     ...(document.owner ? [] : [document.title]),
-    // Each topic a page's title names, such as spacing and shape for Spacing & shape.
     ...(parted ? document.title.split(/\s*(?:&|,|\band\b)\s*/) : []),
-    // An export's name written out, such as copy button for CopyButton.
     ...(document.kind === 'export' ? [document.title.replace(/(\p{Ll})(\p{Lu})/gu, '$1 $2')] : []),
     ...document.aliases.split('\n'),
     ...(document.owner ? [`${document.owner} ${document.title}`] : []),
-    // A token by its id, and a color by its role words alone, fg muted for color.fg.muted.
     ...(document.kind === 'token'
       ? [document.id.replace(/^token:/, ''), document.id.replace(/^token:color\./, '')]
       : []),
@@ -311,12 +257,10 @@ function withNames(document: SearchDocument) {
   return { ...document, names: [...new Set(names.map(nameKey).filter(Boolean))] };
 }
 
-/** The token list. */
 export function readTokens(): TokenList {
   return JSON.parse(readFileSync(tokensDataFile, 'utf8'));
 }
 
-/** Writes the site's index when it changed. */
 export function writeSearchIndex(sources: SearchSources) {
   const json = buildSearchIndex(sources);
   mkdirSync(dirname(searchIndexFile), { recursive: true });

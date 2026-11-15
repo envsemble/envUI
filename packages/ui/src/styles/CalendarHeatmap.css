@@ -1,15 +1,11 @@
 @layer env.components {
-  /* A calendar of daily values: weeks as columns, weekdays as rows. Each step mixes the tone into the
-     canvas, so higher values stand out more in both themes; empty days use the translucent fill. */
   .env-calendar-heatmap {
     --_calendar-heatmap-tone: var(--env-color-fg-primary);
     --_calendar-heatmap-cell: 0.75rem;
     --_calendar-heatmap-gap: 0.1875rem;
-    /* As wide as its weeks, so the legend ends with them, and never wider than its container. */
     inline-size: fit-content;
     max-inline-size: 100%;
     color: var(--env-color-fg-muted);
-    /* The legend's and labels' own size, fixed as the cells are. */
     --_calendar-heatmap-font-size: 0.75rem;
     font: var(--env-font-weight-regular) var(--_calendar-heatmap-font-size) / 1
       var(--env-font-family);
@@ -32,10 +28,6 @@
   .env-calendar-heatmap[data-tone='done'] {
     --_calendar-heatmap-tone: var(--env-color-fg-done);
   }
-  /* Narrow containers scroll the weeks sideways inside the heatmap. */
-  /* A reversed row, so its scroll origin is its end: it starts at the most recent weeks, also in the
-     server's markup, and keeps them in view as the weeks grow. The weeks sit at the inline start
-     where they fit. */
   .env-calendar-heatmap-scroll {
     display: flex;
     flex-direction: row-reverse;
@@ -64,7 +56,6 @@
     text-align: start;
     white-space: nowrap;
   }
-  /* A month name may run on above the following weeks; it never widens its own week. */
   .env-calendar-heatmap-month > span {
     display: block;
     inline-size: 0;
@@ -120,30 +111,22 @@
     inline-size: var(--_calendar-heatmap-cell);
     block-size: var(--_calendar-heatmap-cell);
   }
-  /* On touch screens the days are 1.25 rem and 24 px apart, so each meets the minimum target size
-     through its spacing (WCAG 2.5.8); a year scrolls sideways in a narrow container. */
   @media (pointer: coarse) {
     .env-calendar-heatmap {
       --_calendar-heatmap-cell: 1.25rem;
       --_calendar-heatmap-gap: 0.25rem;
     }
   }
-  /* A tooltip opened by hovering a day takes the pointer, so people can move onto it to read or
-     magnify it (WCAG 1.4.13). One opened by keyboard focus, or closing, takes none, so it never blocks
-     a press on what lies under it, such as a control above the latest weeks. */
   .env-calendar-heatmap-tooltip-positioner:is(:has(> [data-focus-opened]), [data-closed]) {
     pointer-events: none;
   }
 
-  /* Forced colors: a day's shade is its data, as an image's colors are, so the system keeps it. */
   @media (forced-colors: active) {
     .env-calendar-heatmap-day {
       forced-color-adjust: none;
     }
   }
 
-  /* In a skeleton, every day and swatch is a cell of the skeleton's color, whatever its level: the
-     levels are data that hasn't loaded. */
   [data-env-skeleton] :is(.env-calendar-heatmap-day, .env-calendar-heatmap-swatch) {
     forced-color-adjust: none;
     --_skeleton-shape: 1;

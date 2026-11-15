@@ -1,33 +1,26 @@
-// What a pointer dragging a slider does to it: the fill and the handle follow at once, and past
-// either end the slider stretches after the pointer, as a rubber band.
 import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
 
-/**
- * The most a slider stretches, as a fraction of its length, and, so that a wide one stays calm, at
- * most half its height.
- */
-const stretchMost = 0.06;
-/** How readily the stretch gives at first: at a pointer's first pixels past the end, about half. */
-const stretchGive = 0.55;
+const stretchMostOfLength = 0.06;
+const stretchGiveAtFirst = 0.55;
 
-/**
- * How far the slider stretches, in pixels, for a pointer this far past its end: a rubber band's
- * curve, which gives a little over half the distance at first and less the further it goes,
- * approaching the reach but never reaching it, and always short of the pointer.
- */
 function rubberBand(past: number, reach: number): number {
   if (!(past > 0) || !(reach > 0)) return 0;
-  return reach * (1 - 1 / (1 + (stretchGive * past) / reach));
+  return reach * (1 - 1 / (1 + (stretchGiveAtFirst * past) / reach));
 }
 
-/**
- * Follows a pointer that presses the slider's control and drags past either end: the control's
- * --_slider-stretch is the fraction it stretches by, and --_slider-stretch-origin the side it
- * stays fixed on, the one away from the pointer, physical, so either direction works. The stretch
- * is measured once a frame, at most, and follows at once (--_slider-stretch-spring, 0s); a release
- * sets it back to 0, and the stylesheet springs it back.
- * Under reduced motion it never stretches. Returns the cleanup.
- */
+const followAtOnceUntilReleaseSpringsBack = '0s';
+
+function unstretchedBoxWhileStillSpringingBack(control: HTMLElement) {
+  const now = Number.parseFloat(getComputedStyle(control).getPropertyValue('--_slider-stretch'));
+  const s = Number.isFinite(now) ? now : 0;
+  const box = control.getBoundingClientRect();
+  const width = box.width / (1 + s);
+  const height = box.height / (1 - s / 2);
+  const fromRight = control.style.getPropertyValue('--_slider-stretch-origin') === 'right';
+  const left = fromRight ? box.right - width : box.left;
+  return { left, width, height };
+}
+
 export function followOverdrag(control: HTMLElement): () => void {
   const owner = control.ownerDocument;
   const view = owner.defaultView;
@@ -45,15 +38,14 @@ export function followOverdrag(control: HTMLElement): () => void {
     const past = Math.max(pastRight, pastLeft, 0);
     if (past > 0) {
       control.style.setProperty('--_slider-stretch-origin', pastRight > 0 ? 'left' : 'right');
-      // Past the end, the stretch follows the pointer at once, until the release springs it back.
-      control.style.setProperty('--_slider-stretch-spring', '0s');
+      control.style.setProperty('--_slider-stretch-spring', followAtOnceUntilReleaseSpringsBack);
     }
     stretch(rubberBand(past, drag.reach) / drag.width);
   };
   const move = (event: PointerEvent) => {
     if (!drag || event.pointerId !== drag.id) return;
-    // A move without a button means the release went to something that kept it.
-    if (event.buttons === 0) return stop();
+    const releasedWhereSomethingKeptTheEvent = event.buttons === 0;
+    if (releasedWhereSomethingKeptTheEvent) return stop();
     pointerX = event.clientX;
     if (!frame) frame = view.requestAnimationFrame(apply);
   };
@@ -76,24 +68,18 @@ export function followOverdrag(control: HTMLElement): () => void {
     owner.removeEventListener('pointercancel', end, true);
     control.removeEventListener('lostpointercapture', end);
     view.removeEventListener('blur', end);
-    // Both in one change, as the release may be measured before the next frame.
+    springBackAtOnce();
+  };
+  const springBackAtOnce = () => {
     control.style.removeProperty('--_slider-stretch-spring');
     stretch(0);
   };
   const down = (event: PointerEvent) => {
     if (drag || event.button !== 0 || !event.isPrimary) return;
     if (prefersReducedMotion(view)) return;
-    // The box as it would be unstretched, as a press can come while the slider still springs back:
-    // its stretch so far, and the side it stretches from, give its length and where it starts.
-    const now = Number.parseFloat(getComputedStyle(control).getPropertyValue('--_slider-stretch'));
-    const s = Number.isFinite(now) ? now : 0;
-    const box = control.getBoundingClientRect();
-    const width = box.width / (1 + s);
-    const height = box.height / (1 - s / 2);
+    const { left, width, height } = unstretchedBoxWhileStillSpringingBack(control);
     if (!(width > 0)) return;
-    const fromRight = control.style.getPropertyValue('--_slider-stretch-origin') === 'right';
-    const left = fromRight ? box.right - width : box.left;
-    const reach = Math.min(width * stretchMost, height / 2);
+    const reach = Math.min(width * stretchMostOfLength, height / 2);
     drag = { id: event.pointerId, left, right: left + width, width, reach };
     pointerX = event.clientX;
     listen();
@@ -105,19 +91,14 @@ export function followOverdrag(control: HTMLElement): () => void {
   };
 }
 
-/**
- * Follows a pointer that presses the slider's control: once it moves while pressed, the slider's root
- * --_slider-glide is 0s, so the fill and the handle follow the drag at once, and a release takes
- * it away, so a press on the track or a key glides to its value (Slider.css). Returns the cleanup.
- */
 export function followDrag(control: HTMLElement, slider: HTMLElement): () => void {
   const owner = control.ownerDocument;
   const view = owner.defaultView;
   let pointer: number | null = null;
   const move = (event: PointerEvent) => {
     if (event.pointerId !== pointer) return;
-    // A move without a button means the release went to something that kept it.
-    if (event.buttons === 0) return stop();
+    const releasedWhereSomethingKeptTheEvent = event.buttons === 0;
+    if (releasedWhereSomethingKeptTheEvent) return stop();
     slider.style.setProperty('--_slider-glide', '0s');
   };
   const end = (event: Event) => {

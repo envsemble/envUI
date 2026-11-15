@@ -14,7 +14,7 @@ aliases:
   - nothing here
   - placeholder
 useWhen:
-  - A list, table or panel with nothing in it yet, such as a new workspace's projects
+  - A list, table or panel with nothing in it yet, such as a new workspace
   - A search or filter that finds nothing
 avoidWhen:
   - text: A region whose content is still loading.
@@ -46,40 +46,6 @@ components:
 
 ### Adapting to width
 
-It fills its region and centres in it; in a narrow region its icon and title are smaller and it sits closer together.
-
 ```tsx figure=NoMatches widths="40 18" sweep
-
-```
-
-## Rules
-
-Say what is missing, then how to fill it.
-
-### Words
-
-- The title names what isn't there, such as No projects yet.
-- The description says why, or what will show here.
-- An action fills the region where people can, such as Create project.
-
-## Accessibility
-
-### envUI provides
-
-- An icon hidden from assistive technology.
-- Text in reading order: title, description, actions.
-
-### You provide
-
-- Actions named after what they do.
-- An announcement where the region empties as people act, such as a live region around search results.
-
-## Compose
-
-### Usage
-
-EmptyState fills the region it is in and centres its content there: put it where the list or table would be. `title` is required; `icon`, `description` and `actions` are optional, and each is a slot that takes what you give it.
-
-```tsx source=NoProjects
 
 ```

@@ -1,31 +1,24 @@
 @layer env.components {
-  /* The parts MarkdownEditor and RichTextEditor share: the formatting toolbar, whose groups wrap onto
-     more rows where they are wider than the editor, so every button stays in view, and the status
-     line under the field, out of sight while it is empty. */
   .env-editor-toolbar {
     min-inline-size: 0;
-    /* Room for the buttons' focus rings, whose ring and offset are a space step, while the buttons
-       line up with the field. What lies further out, the separator a row starts with, is cut off. */
-    padding: var(--env-space-1);
-    margin: calc(-1 * var(--env-space-1));
+    --_editor-focus-ring-room: var(--env-space-1);
+    --_editor-separator-lead: calc(3 * var(--env-space-1) + var(--env-control-border-width));
+    padding: var(--_editor-focus-ring-room);
+    margin: calc(-1 * var(--_editor-focus-ring-room));
     overflow: clip;
   }
-  /* Each group after the first leads with its separator (EditorToolbar.tsx). The row starts a lead
-     before the toolbar, and the first group a lead into it, so a row that starts with a separator
-     has it out of view, and a row never ends with one. */
   .env-editor-toolbar > .env-toolbar {
     flex-wrap: wrap;
-    margin-inline-start: calc(-1 * calc(3 * var(--env-space-1) + var(--env-control-border-width)));
+    margin-inline-start: calc(-1 * var(--_editor-separator-lead));
   }
   .env-editor-toolbar > .env-toolbar > .env-toolbar-group:first-child {
-    margin-inline-start: calc(3 * var(--env-space-1) + var(--env-control-border-width));
+    margin-inline-start: var(--_editor-separator-lead);
   }
   .env-editor-status:empty {
-    /* Visually hidden: a pixel's box, clipped away, still read. */
-    --_editor-status-size: 0.0625rem;
+    --_editor-visually-hidden-size: 0.0625rem;
     position: absolute;
-    inline-size: var(--_editor-status-size);
-    block-size: var(--_editor-status-size);
+    inline-size: var(--_editor-visually-hidden-size);
+    block-size: var(--_editor-visually-hidden-size);
     clip-path: inset(50%);
     overflow: hidden;
   }

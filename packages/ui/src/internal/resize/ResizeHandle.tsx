@@ -47,7 +47,7 @@ export function ResizeHandle({
   ref,
   ...props
 }: ResizeHandleProps) {
-  const { handleProps, measure } = useResize({
+  const { handleProps, measureRoomTheLargestValueFollows: measure } = useResize({
     axis,
     value,
     min,
@@ -61,20 +61,21 @@ export function ResizeHandle({
     valueText,
     disabled,
   });
-  // The largest value it reports follows the room around it, read once it is placed and again as
-  // the window resizes, so it is right before the handle is focused or moved.
   const element = useRef<HTMLDivElement | null>(null);
   const latestMeasure = useLatest(measure);
   const measures = room !== undefined;
-  useEffect(() => {
-    const handle = element.current;
-    if (!measures || !handle) return;
-    const read = () => latestMeasure.current(handle);
-    read();
-    const view = handle.ownerDocument.defaultView;
-    view?.addEventListener('resize', read);
-    return () => view?.removeEventListener('resize', read);
-  }, [measures, latestMeasure]);
+  useEffect(
+    function measureRoomOncePlacedAndAsWindowResizes() {
+      const handle = element.current;
+      if (!measures || !handle) return;
+      const read = () => latestMeasure.current(handle);
+      read();
+      const view = handle.ownerDocument.defaultView;
+      view?.addEventListener('resize', read);
+      return () => view?.removeEventListener('resize', read);
+    },
+    [measures, latestMeasure],
+  );
   return (
     <div
       {...props}

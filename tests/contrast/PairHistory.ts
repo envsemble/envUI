@@ -1,18 +1,6 @@
-/**
- * The contrast gate's record of the pairs that left the registry of Pairs.ts or were held to less:
- * `dropped`, `renamed` and `relaxed`, each with its reason. Entries stay once DeclaredPairs.json
- * records them (Snapshot.ts), so the reasons can't be removed later.
- */
 import { onPage, onRecessed, pairName, pairs, type Relaxation } from './Pairs.ts';
 
-/**
- * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
- * must be listed here or in `renamed`: tests/contrast/DeclaredPairs.json holds the names declared
- * when it was last updated, and tests/contrast/ContrastRegistry.test.ts fails on a name that is gone from
- * `pairs` without an entry, and on a dropped pair that is still declared.
- */
 export const dropped: readonly { pair: string; rationale: string }[] = [
-  // A switch that is off has a muted thumb now, measured as a boundary at rest and in its states.
   ...['', '-hover', '-pressed'].flatMap((state) =>
     [
       '--env-color-bg-default',
@@ -26,8 +14,6 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
         'The thumb of a switch that is off is muted, so it no longer outweighs a switch that is on: --env-color-border-default-pressed at rest and --env-color-fg-muted under the pointer and pressed, each measured on the track at 3:1 as the control’s boundary.',
     })),
   ),
-  // Alerts have no edge outside high contrast, where the border color bounds them, measured as a
-  // boundary there.
   ...(['accent', 'success', 'warning', 'danger'] as const).flatMap((tone) =>
     ['--env-color-bg-page', '--env-color-bg-default', '--env-color-bg-recessed'].map((ground) => ({
       pair: `--env-color-border-${tone}-muted on ${ground}`,
@@ -105,8 +91,6 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
     rationale:
       'The catalogue’s section band is gone: Rules sits on the page’s background like every other group, so nothing paints on the band’s fill, and the same text on the page stays measured.',
   },
-  // A badge, counter or diff stat in a button keeps its own colors: Button no longer outlines it in
-  // its label color.
   ...[
     'badge-outline-important on --env-color-bg-accent-strong',
     'badge-outline-important on --env-color-bg-danger-emphasis',
@@ -162,12 +146,6 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
   ),
 ];
 
-/**
- * The pairs renamed when every token took the --env- prefix, in the CSS-architecture step of 1.0,
- * from the name DeclaredPairs.json recorded to the name the gate measures now. Each keeps what its
- * old name was held to.
- */
-/** Pairs whose tokens only took the prefix. */
 const prefixedPairs: readonly (readonly [from: string, to: string])[] = [
   [
     '--color-bg-brand-emphasis on --color-bg-default',
@@ -1042,7 +1020,6 @@ const prefixedPairs: readonly (readonly [from: string, to: string])[] = [
     'heatmap-accent-lowest on --env-color-bg-neutral-muted over --env-color-bg-page',
   ],
 ];
-/** Pairs that named a 0.7 alias, measured on the token that replaces it: a checked checkbox, a switch that is on and a spinner on the brand’s emphasis fill, which light checkboxes and switches also took as the strong fill of the same color; a list row on the list item’s component token; an avatar on its own; the action strip of a card on the default surface. */
 const aliasPairs: readonly (readonly [from: string, to: string])[] = [
   ['--color-action-strip on --color-bg-muted', '--env-color-bg-default on --env-color-bg-muted'],
   [
@@ -1190,7 +1167,6 @@ const aliasPairs: readonly (readonly [from: string, to: string])[] = [
     '--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-pressed',
   ],
 ];
-/** Pairs of tokens that changed beyond the prefix: border.{accent|danger} is the solid edge border.{accent|danger}.emphasis, and border.{tone}.emphasis the translucent edge border.{tone}. */
 const renamedTokenPairs: readonly (readonly [from: string, to: string])[] = [
   [
     '--color-border-accent on --color-bg-default',
@@ -1278,10 +1254,6 @@ const renamedTokenPairs: readonly (readonly [from: string, to: string])[] = [
   ],
 ];
 
-/**
- * Tokens the 1.0 API review renamed, from the old custom property to the new, with the reason. Every
- * pair that names one is measured under its new name, as `renamed` records.
- */
 const apiReviewTokens: readonly (readonly [from: string, to: string, rationale: string])[] = [
   [
     '--env-color-bg-overlay',
@@ -1585,16 +1557,10 @@ const apiReviewTokens: readonly (readonly [from: string, to: string, rationale: 
   ],
 ];
 
-/** The token names before the review, by their name now. */
-/** The token names before the review, by their name now: two old names may share a new one. */
 const beforeReview = new Map<string, { from: string[]; why: string }>();
 for (const [from, to, why] of apiReviewTokens)
   beforeReview.set(to, { from: [...(beforeReview.get(to)?.from ?? []), from], why });
 
-/**
- * A pair's names before the review, one for each name its tokens may have had: the name of each
- * token now, or one it had before the review, so a name recorded between two renames counts too.
- */
 const reviewed = (name: string): string[] =>
   name
     .split(' ')
@@ -1607,10 +1573,6 @@ const reviewed = (name: string): string[] =>
     )
     .map((words) => words.join(' '));
 
-/**
- * The pairs `apiReviewTokens` renames: each current pair, from its names before the review. A name
- * the gate measures again for another color, such as an accent pair now purple, isn't renamed.
- */
 function apiReviewRenames() {
   const current = new Set(pairs.map(pairName));
   return pairs.flatMap((pair) => {
@@ -1622,20 +1584,13 @@ function apiReviewRenames() {
   });
 }
 
-/**
- * Pairs the gate still measures under another name, from the old name to the new, with the reason.
- * tests/contrast/ContrastRegistry.test.ts checks that each old name is not declared, and that each new one
- * is, or has since been dropped or renamed onward in turn.
- */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
-  // A toast's tone icon stands bare on the toast, without its disc.
   ...(['success', 'info', 'danger'] as const).map((tone) => ({
     from: `--env-color-fg-${tone}-on-strong on toast-icon-disc-${tone} over --env-color-bg-neutral-strong`,
     to: `--env-color-fg-${tone}-on-strong on --env-color-bg-neutral-strong`,
     rationale:
       'A toast’s tone icon is drawn bare, larger, level with the message’s first line, so it is measured on the toast’s neutral strong fill itself.',
   })),
-  // Meter's and Progress's track is the neutral fill, as a Slider's track is.
   ...[
     '--env-color-bg-default',
     '--env-color-bg-muted',
@@ -1654,7 +1609,6 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
         'The track of Meter and Progress is the neutral fill a Slider’s track takes, --env-color-bg-neutral-muted, rather than a state layer’s faint tint, so empty steps show on dark panels.',
     })),
   ),
-  // Tree and table rows take a state layer of their own, a step quieter than a control's in light.
   ...(['--env-color-bg-selected', '--env-color-bg-selected-hover'] as const).flatMap((fill) =>
     ['--env-color-bg-default', '--env-color-bg-raised'].map((ground) => ({
       from: `${fill} on --env-color-bg-neutral-subtle-hover over ${ground}`,
@@ -1663,7 +1617,6 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
         'Tree and table rows take their own state layer, --env-color-bg-row-hover, a step quieter than a control’s in light, so a hovered row never weighs as much as the selection on the gray page.',
     })),
   ),
-  // The catalogue's canvas is the recessed surface, a token now rather than a formula of its own.
   ...onPage
     .flatMap((pair) => {
       const to = reviewed(pairName(onRecessed(pair)));
@@ -1677,14 +1630,12 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
       rationale:
         'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
     })),
-  // The thumb of a switch that is off, since dropped, was renamed onto the recessed surface first.
   ...['', '-hover', '-pressed'].map((state) => ({
     from: `--env-color-fg-control on --env-color-bg-neutral-muted${state} over catalogue-canvas`,
     to: `--env-color-fg-control on --env-color-bg-neutral-muted${state} over --env-color-bg-recessed`,
     rationale:
       'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
   })),
-  // The alerts' edges, since dropped, were renamed onto the recessed surface first.
   ...(['accent', 'success', 'warning', 'danger'] as const).map((tone) => ({
     from: `--env-color-border-${tone}-muted on catalogue-canvas`,
     to: `--env-color-border-${tone}-muted on --env-color-bg-recessed`,
@@ -1803,9 +1754,6 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
       'Every token takes the --env- prefix, and the tone borders are named by emphasis: the solid edge is border.{tone}.emphasis, the translucent one border.{tone}.',
   })),
   ...apiReviewRenames(),
-  // The danger emphasis fill is a saturated red with a white label in every theme, so a destructive
-  // primary outweighs the soft primary and accent fills in dark: its label, a solid danger badge's
-  // and what an end slot or a count draws in it are --env-color-fg-on-strong.
   ...['', '-hover', '-pressed'].flatMap((state) =>
     ['--env-color-fg-on-emphasis', 'button-end-separator-on-emphasis'].map((label) => ({
       from: `${label} on --env-color-bg-danger-emphasis${state}`,
@@ -1814,7 +1762,6 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
         'The danger primary takes a white label, --env-color-fg-on-strong, on its saturated red in every theme, rather than a dark one on a soft coral in dark, so a destructive action outweighs the soft primary and accent fills beside it.',
     })),
   ),
-  // A segment not chosen takes no layer under the pointer, only the text color on its label.
   ...[
     '--env-color-bg-page',
     '--env-color-bg-default',
@@ -1839,8 +1786,6 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     rationale:
       'A count on a danger primary is outlined in its white label, as on an important button, now that the danger fill takes --env-color-fg-on-strong.',
   },
-  // The selection is neutral by default; the accent selection, which Theme selection="accent"
-  // gives the selection tokens, keeps the pairs against the other items under the pointer.
   ...[
     '--env-color-bg-selected on --env-color-bg-navigation-hover',
     '--env-color-bg-selected on --env-color-bg-navigation-pressed',
@@ -1901,14 +1846,11 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     rationale:
       'The blue roles are primary, and the purple of accent actions is accent: one meaning for a tone on every component.',
   },
-  // The separator on the primary fill, since dropped, was renamed from the brand fill first.
   ...['', '-hover', '-pressed'].map((state) => ({
     from: `button-end-separator-on-emphasis on --env-color-bg-brand-emphasis${state}`,
     to: `button-end-separator-on-emphasis on --env-color-bg-primary-emphasis${state}`,
     rationale: 'The brand emphasis fill is the primary emphasis fill.',
   })),
-  // A secondary button's fill and its separator's, since dropped, were renamed onto the recessed
-  // surface first.
   ...['-hover', '-pressed'].map((state) => ({
     from: `--env-color-fg-default on --env-color-bg-neutral-muted${state} over catalogue-canvas`,
     to: `--env-color-fg-default on --env-color-bg-neutral-muted${state} over --env-color-bg-recessed`,
@@ -1923,18 +1865,6 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
   })),
 ];
 
-/**
- * Deliberate relaxations: pairs held to less than DeclaredPairs.json recorded, by a weaker kind
- * (distinct to difference, text to non-text), a switch between a ΔEOK distance and a ratio, a lower
- * minimum, or a contrast they are no longer measured in, also under a new name in `renamed`. Each
- * entry names the pair (its new name, if renamed), the requirement it is held to now, as the gate's
- * failure prints it (its kind, and its minimum at each contrast it is measured in, after any
- * `minimum` of its own), and the rationale. The gate accepts a looser pair only when a new entry
- * matches its new requirement exactly, and fails on a new entry that relaxes nothing. Each entry
- * approves one loosening: once `--update-snapshots` has recorded it, it is spent, so loosening the
- * pair again, even back to a requirement relaxed before, needs another entry with its own
- * rationale. Entries stay once recorded: they are the history of what was relaxed and why.
- */
 const segmentThumbHighContrast =
   'At high contrast the thumb keeps a layer of the neutral fill, measured there as segmented-control-thumb-high under the same pairs; the thumb as drawn at standard contrast, the raised neutral grade in dark, is measured there.';
 export const relaxed: readonly Relaxation[] = [

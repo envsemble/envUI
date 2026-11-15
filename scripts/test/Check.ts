@@ -1,12 +1,3 @@
-// `npm run check`: the fast tier, run after every change. `npm run check:affected`: the affected
-// tier, run before committing or merging a branch. Both check only what the branch changed against
-// its integration branch, as scripts/test/TestScope.ts selects it; `npm run verify` checks everything.
-//
-//   node scripts/test/Check.ts [--affected] [--base <ref>] [--files <a,b,...>] [--dry-run]
-//
-// --base       the branch to compare with; else ENVUI_BASE, else origin/dev
-// --files      check these paths instead of the branch's changes, such as to try the selection
-// --dry-run    print the selection and stop
 import { parseArgs } from 'node:util';
 import { checks, generateDocumentation } from './Checks.ts';
 import { isComponentTest } from './FixtureImports.ts';
@@ -62,35 +53,28 @@ if (!paths.length) {
 }
 
 const scope = selectScope(paths, { affected });
-// A list of changed files too long for one command line (Windows takes about 32,000 characters)
-// is checked as the whole repository instead, as a branch that moved many files needs anyway.
+const windowsCommandLineRoomForPaths = 24_000;
 const tooLong = (paths: readonly string[]) =>
-  paths.reduce((length, path) => length + path.length + 1, 0) > 24_000;
+  paths.reduce((length, path) => length + path.length + 1, 0) > windowsCommandLineRoomForPaths;
 if (tooLong(scope.lint)) scope.whole.lint = true;
 if (tooLong(scope.css)) scope.whole.css = true;
 if (tooLong(scope.format)) scope.whole.format = true;
 const { built: builtUnitTests, fast: fastUnitTests } = unitTestFiles();
-// A changed test of the build needs the build to run.
 if (paths.some((path) => builtUnitTests.includes(path))) scope.build.library = true;
 
-// The specs, split by what they need: live development edits sources and runs alone, and a spec
-// that opens what the library build renders waits for it; both run in the affected tier only.
 const needs = new Map([...scope.specs.keys()].map((name) => [name, specNeeds(name)]));
 const live = [...needs].filter(([, need]) => need.live).map(([name]) => name);
 const browserSpecs = [...needs]
   .filter(([, need]) => !need.live && (affected || !need.library))
   .map(([name]) => name);
 const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpecs.includes(name));
-// The component tests among them run in Vitest, the rest in Playwright.
 const componentTests = browserSpecs.filter((name) => isComponentTest(specFile(name)));
 const playwrightSpecs = browserSpecs.filter((name) => !componentTests.includes(name));
-// The site build takes seconds, so the fast tier builds it when its specs open it.
 const builds = {
   library: affected && scope.build.library,
   site: [...needs].some(([name, need]) => need.site && playwrightSpecs.includes(name)),
 };
 
-// What runs, and why.
 const list = (items: string[]) =>
   items.length > 6
     ? `${items.slice(0, 6).join(', ')} and ${items.length - 6} more`
@@ -132,11 +116,9 @@ if (unmatched.length) console.log(dim(`  no spec for ${list(unmatched)}; verify 
 console.log('');
 if (dryRun) process.exit(0);
 
-// Tasks.
 const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];
 const staticTasks: Task[] = [
   ...(scope.whole.lint ? checks.lint() : scope.lint.length ? checks.lint(scope.lint) : []),
-  // Unused files, exports and dependencies (knip.jsonc), wherever code or the packages changed.
   ...(scope.whole.lint || scope.lint.length ? checks['lint:unused']() : []),
   ...(scope.whole.css
     ? checks['lint:css']()
@@ -168,11 +150,8 @@ const browserTask = (names: string[], projects: string[], label: string) =>
       ...bin.playwright,
       'test',
       ...projects.map((project) => `--project=${project}`),
-      // Live development depends on the three engine projects; the run has already tested them.
       ...(projects.includes('live-development') ? ['--no-deps'] : []),
       '--reporter=dot',
-      // A test that fails once under the load of three engines and passes again is reported as
-      // flaky; one that fails twice fails the run.
       ...(affected ? ['--retries=1'] : ['--max-failures=5']),
       ...names.map((name) => specFile(name)),
     ],
@@ -181,8 +160,6 @@ const browserTask = (names: string[], projects: string[], label: string) =>
       detail: `${names.length} specs`,
     },
   );
-// The component tests (tests/component): every test in Chromium but the accessibility scan, which
-// `npm run test:a11y` runs, and in the affected tier those tagged engines in Firefox and WebKit too.
 const componentTask = (names: string[], engines: boolean) =>
   task(
     engines ? 'component (Firefox, WebKit)' : 'component (Chromium)',
@@ -204,7 +181,6 @@ const npmScript = (name: string) => series([task(name, [...bin.npm, 'run', '-s',
 const catalogueBuilds = builds.site ? [npmScript('build:site')] : [];
 
 if (!affected) {
-  // The browser specs start once the site build they open, if any, is done.
   const browser = async () => {
     if (!playwrightSpecs.length) return;
     const built = (await Promise.all(catalogueBuilds)).flat();
@@ -216,8 +192,6 @@ if (!affected) {
   };
   await Promise.all([parallel(staticTasks), browser(), components()]);
 } else {
-  // Phase 1: static checks, unit tests and the builds the browser specs need. The unit tests on
-  // the build also write .cache/Hydration.html, which Hydration.spec.ts opens.
   await Promise.all([
     parallel(staticTasks),
     ...catalogueBuilds,
@@ -229,7 +203,6 @@ if (!affected) {
         }),
       ]),
   ]);
-  // Phase 2: the specs in Chromium, and their @engines tests in Firefox and WebKit.
   await parallel([
     ...(playwrightSpecs.length
       ? [browserTask(playwrightSpecs, ['chromium', 'firefox', 'webkit'], 'browser (3 engines)')]
@@ -238,7 +211,6 @@ if (!affected) {
       ? [componentTask(componentTests, false), componentTask(componentTests, true)]
       : []),
   ]);
-  // Live development edits sources, so it runs once nothing else reads them.
   if (live.length) await series([browserTask(live, ['live-development'], 'live development')]);
 }
 

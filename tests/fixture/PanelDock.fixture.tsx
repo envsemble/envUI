@@ -26,7 +26,6 @@ import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 export const themes = true;
 
-/** A panel with a chat, whose messages the application adds, and which it can rewind to the start. */
 type FixturePanel = PanelDockPanel & { messages?: number; rewinds?: number };
 
 const initialPanels: FixturePanel[] = [
@@ -53,7 +52,6 @@ const initialPanels: FixturePanel[] = [
 
 const extraTitles = ['Roadmap', 'Release checklist', 'Interview notes', 'Design review'];
 
-/** Panels over a page in a positioned frame, with the application's own state and shortcuts. */
 export default function PanelDockFixture({ theme }: { theme: ColorScheme }) {
   const [panels, setPanels] = useState(initialPanels);
   const [stacked, setStacked] = useState(false);
@@ -65,7 +63,6 @@ export default function PanelDockFixture({ theme }: { theme: ColorScheme }) {
   const activeId = panels.find((panel) => panel.active)?.id;
 
   function changeMode(id: string, mode: PanelDockMode) {
-    // At most one panel is maximized: maximizing another returns the earlier one to the row.
     setPanels((current) =>
       current.map((panel) =>
         panel.id === id
@@ -83,7 +80,6 @@ export default function PanelDockFixture({ theme }: { theme: ColorScheme }) {
     record(`activate ${id}`);
   }
 
-  // The application's own shortcuts act on the active panel, wherever focus is, or reorder panels.
   function shortcut(event: KeyboardEvent) {
     if (!event.altKey) return;
     if (event.code === 'KeyR') {
@@ -91,7 +87,6 @@ export default function PanelDockFixture({ theme }: { theme: ColorScheme }) {
       setPanels((current) => [...current].reverse());
       return;
     }
-    // A reorder and a new message in every chat in the same update.
     if (event.code === 'KeyN') {
       event.preventDefault();
       setPanels((current) =>
@@ -99,7 +94,6 @@ export default function PanelDockFixture({ theme }: { theme: ColorScheme }) {
       );
       return;
     }
-    // A reorder that rewinds every chat to its first message in the same update.
     if (event.code === 'KeyT') {
       event.preventDefault();
       setPanels((current) =>
@@ -129,7 +123,6 @@ export default function PanelDockFixture({ theme }: { theme: ColorScheme }) {
     ]);
   }
 
-  // The page beneath is unavailable while a panel covers it.
   const covered = stacked
     ? panels.some((panel) => panel.mode !== 'minimized')
     : panels.some((panel) => panel.mode === 'maximized');
@@ -193,10 +186,6 @@ export default function PanelDockFixture({ theme }: { theme: ColorScheme }) {
   );
 }
 
-/**
- * The other docks, each with its own state, apart from the main dock's updates, which render none
- * of them again.
- */
 const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
   return (
     <>
@@ -215,7 +204,6 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
       />
       {theme === 'light' && (
         <>
-          {/* The application marks a panel active but never activates another. */}
           <MinimizingDock
             name="protective"
             theme={theme}
@@ -225,14 +213,12 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
               { id: 'beta', title: 'Beta', mode: 'minimized' },
             ]}
           />
-          {/* One panel wider than the row, and none active. */}
           <MinimizingDock
             name="lone"
             theme={theme}
             className="fixture-dock-single"
             initial={[{ id: 'solo', title: 'Solo', mode: 'open', minWidth: 45 }]}
           />
-          {/* The active panel alone is wider than the row. */}
           <MinimizingDock
             name="wide"
             theme={theme}
@@ -244,7 +230,6 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
             ]}
             activates
           />
-          {/* Narrower than stackBelow from the start. */}
           <MinimizingDock
             name="stacking"
             theme={theme}
@@ -257,7 +242,6 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
             activates
             labels={{ openLabel: (label) => `Bring back ${label}` }}
           />
-          {/* The application's style makes open panels wider at the least than minimized ones. */}
           <MinimizingDock
             name="wider"
             theme={theme}
@@ -268,7 +252,6 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
             ]}
             activates
           />
-          {/* The application's own state narrows the region below stackBelow. */}
           <MinimizingDock
             name="squeezed"
             theme={theme}
@@ -280,7 +263,6 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
             activates
             narrowTo="30rem"
           />
-          {/* The application opens a panel it minimized again itself, shortly after. */}
           <MinimizingDock
             name="reopening"
             theme={theme}
@@ -292,14 +274,12 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
             activates
             reopensAfter={100}
           />
-          {/* People type in a panel while the application opens others, and none is active. */}
           <MinimizingDock
             name="typing"
             theme={theme}
             initial={[{ id: 'draft', title: 'Draft', mode: 'open' }]}
             opensNotes
           />
-          {/* The application answers a second later, in a transition. */}
           <MinimizingDock
             name="late"
             theme={theme}
@@ -311,7 +291,6 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
             activates
             answerDelay={1000}
           />
-          {/* The application keeps its pinned panel open when asked to minimize it. */}
           <MinimizingDock
             name="keeping"
             theme={theme}
@@ -330,10 +309,6 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
   );
 });
 
-/**
- * A dock that minimizes its least recently active panel rather than scroll the row, and logs every
- * mode it asks for, also those the application refuses.
- */
 function MinimizingDock({
   name,
   theme,
@@ -350,20 +325,13 @@ function MinimizingDock({
   name: string;
   theme: ColorScheme;
   initial: PanelDockPanel[];
-  /** Whether the application activates the panels people press or bring back. */
   activates?: boolean;
-  /** A panel the application keeps open when asked to minimize it. */
   keeps?: string;
   className?: string;
-  /** Labels of the tabs' buttons. */
   labels?: Pick<PanelDock.RootProps<PanelDockPanel>, 'openLabel'>;
-  /** Milliseconds after which the application answers, in a transition; at once by default. */
   answerDelay?: number;
-  /** A width the application's own state can narrow the region to, as a sidebar opening does. */
   narrowTo?: string;
-  /** Milliseconds after which the application opens a panel it minimized when asked, itself. */
   reopensAfter?: number;
-  /** The application opens a note with Alt+O, wherever focus is in the region. */
   opensNotes?: boolean;
 }) {
   const [panels, setPanels] = useState(initial);
@@ -387,7 +355,6 @@ function MinimizingDock({
           });
         }}
       >
-        {/* Counts the dock's commits on its frame, without rendering anything for them. */}
         <Profiler
           id={name}
           onRender={() => frame.current?.setAttribute('data-commits', String(++commits.current))}
@@ -444,8 +411,6 @@ function MinimizingDock({
   );
 }
 
-/** A narrow dock whose application never activates panels: its tabs still show them. */
-/** The dock's and its window controls' names from EnvUIProvider's messages, in German. */
 const germanDock = {
   panelDock: {
     minimize: 'Minimieren',
@@ -459,10 +424,6 @@ const germanDock = {
   },
 };
 
-/**
- * A dock whose names come from EnvUIProvider's messages, with a panel that leaves out its window
- * controls, mounted in the panel-dock fixture.
- */
 function TranslatedDock() {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
     { id: 'entwurf', title: 'Entwurf', mode: 'open', active: true },
@@ -512,7 +473,6 @@ function PassiveDock({ theme }: { theme: ColorScheme }) {
           onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
         >
           {(panel) => (
-            // A form holds the header with the fields, as the header sticks within it.
             <form onSubmit={(event) => event.preventDefault()}>
               <PanelDock.Header title={panel.title} />
               <div className="fixture-dock-body">
@@ -544,10 +504,6 @@ function PassiveDock({ theme }: { theme: ColorScheme }) {
   );
 }
 
-/**
- * A narrow dock whose application neither marks a panel active nor activates one: the newest panel
- * fills it, and a tab shows its own panel.
- */
 function LooseDock({ theme }: { theme: ColorScheme }) {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
     { id: 'ex', title: `Ex ${theme}`, mode: 'open' },
@@ -596,7 +552,6 @@ function LooseDock({ theme }: { theme: ColorScheme }) {
   );
 }
 
-/** A document's window: a draft that must survive every change of mode and order. */
 function DocumentWindow({
   panel,
   theme,
@@ -610,7 +565,6 @@ function DocumentWindow({
   const [tip, setTip] = useState(true);
   const chat = useRef<HTMLOListElement>(null);
   const messages = panel.messages ?? 4;
-  // The chat shows its newest message, or its first once rewound.
   useLayoutEffect(() => {
     const list = chat.current;
     if (list) list.scrollTop = list.scrollHeight;
@@ -619,8 +573,6 @@ function DocumentWindow({
     const list = chat.current;
     if (list && panel.rewinds) list.scrollTop = 0;
   }, [panel.rewinds]);
-  // Counts how many times the content is mounted, so a remount shows; only mounting counts, not a
-  // new callback.
   useEffect(() => {
     onMount(1);
     return () => onMount(-1);
@@ -659,7 +611,6 @@ function DocumentWindow({
             <li key={index}>Section {index + 1}</li>
           ))}
         </ol>
-        {/* Removes itself when pressed, leaving focus nowhere. */}
         {tip && (
           <button type="button" onClick={() => setTip(false)}>
             Dismiss tip of {panel.title} {theme}

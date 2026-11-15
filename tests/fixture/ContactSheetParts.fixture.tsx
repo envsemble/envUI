@@ -2,19 +2,6 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { flag } from '../../packages/ui/src/internal/flag.js';
 
-/**
- * The library's contact sheets: every component of one family of the catalogue, in its variants,
- * tones and sizes, and each in its states side by side, so a reviewer judges the components
- * themselves. `?fixture=contact-sheet&family=<family>&theme=light|dark&scale=system|comfortable`.
- *
- * A cell that shows an interaction state names it in `data-cs-force` (hover, focus or pressed): the
- * capture script forces that pseudo-class on the cell's control through the browser's DevTools
- * protocol, so the component's own style sheet draws it. `data-cs-target` picks the control where
- * the first focusable element isn't it, `data-cs-highlight` gives the element it selects the
- * attributes a component sets itself under the pointer (`data-cs-mark-as`, by default the
- * `data-highlighted` of a list's cursor), and `data-cs-click` asks for a real click, such as to arm
- * a ConfirmButton.
- */
 type Force = 'hover' | 'focus' | 'pressed';
 
 interface CellProps {
@@ -24,13 +11,11 @@ interface CellProps {
   highlight?: string;
   markAs?: string;
   click?: string;
-  /** Room under the specimen for the tooltip a click opens, so it doesn't cover the caption. */
   tooltipRoom?: boolean;
   width?: CSSProperties['inlineSize'];
   children: ReactNode;
 }
 
-/** One specimen with its caption under it. */
 export function Cell({
   caption,
   force,
@@ -59,11 +44,6 @@ export function Cell({
   );
 }
 
-/**
- * A row of cells, with a label at its start. `middle` centres the cells' specimens on one line and
- * their captions on another, for specimens of different heights that sit side by side in use, such
- * as a badge and a count.
- */
 export function Strip({
   label,
   middle = false,
@@ -83,7 +63,6 @@ export function Strip({
   );
 }
 
-/** One component and its strips; the capture script splits sheets between sections. */
 export function Section({ name, children }: { name: string; children: ReactNode }) {
   return (
     <section className="cs-section" data-cs-component={name}>
@@ -93,10 +72,6 @@ export function Section({ name, children }: { name: string; children: ReactNode 
   );
 }
 
-/**
- * A region whose popups, dialogs, sheets and toasts render inside it, open in place, through a
- * contained PortalContainer.
- */
 export function Stage({
   height,
   width = '22rem',
@@ -117,7 +92,6 @@ export function Stage({
   );
 }
 
-/** A plain box that shows where a layout component places its children. */
 export function Block({ children, style }: { children?: ReactNode; style?: CSSProperties }) {
   return (
     <div className="cs-block" style={style}>
@@ -126,7 +100,6 @@ export function Block({ children, style }: { children?: ReactNode; style?: CSSPr
   );
 }
 
-/** The usual interaction states of a control, with the props of the disabled one. */
 export const interactionStates = [
   { caption: 'Rest', force: undefined },
   { caption: 'Hover', force: 'hover' },

@@ -3,17 +3,12 @@
 import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
 import { useHydrated } from '../../../internal/react/useHydrated.js';
 
-/** The server's output, in place before its way of showing was known. */
-const serverOutput = '\0server';
+const inPlaceFromServer = '\0server';
 
 /**
- * Marks a panel's or tab's entrance with data-entering while it plays: when it shows, and again each
- * time it shows in another way, given by key. A reorder moves the element in the document, which
- * starts its CSS animations over; once the attribute is gone, nothing plays again. The attribute is
- * set on the element itself, so the entrance renders nothing. Server output is in place before it
- * hydrates, without an entrance. An undefined key is a way of showing not known yet, which CSS
- * decides meanwhile: server output stays in place once it is known, and an element rendered in the
- * browser enters as it shows then.
+ * Marks a panel's or tab's entrance with data-entering while it plays: when it shows, and again
+ * each time it shows in another way, given by key. Server output is in place without an entrance;
+ * an undefined key is a way of showing not known yet, which CSS decides meanwhile.
  */
 export function useEntrance(
   element: RefObject<HTMLElement | null>,
@@ -26,12 +21,14 @@ export function useEntrance(
     const node = element.current;
     if (!node) return;
     if (key === undefined) {
-      if (!hydrated) shownAs.current = serverOutput;
+      if (!hydrated) shownAs.current = inPlaceFromServer;
       return;
     }
     if (shownAs.current === key) return;
     const enters =
-      showing && shownAs.current !== serverOutput && (shownAs.current !== undefined || hydrated);
+      showing &&
+      shownAs.current !== inPlaceFromServer &&
+      (shownAs.current !== undefined || hydrated);
     shownAs.current = key;
     if (enters) node.setAttribute('data-entering', '');
     else node.removeAttribute('data-entering');
@@ -40,12 +37,10 @@ export function useEntrance(
     const node = element.current;
     if (!node) return;
     const ended = (event: globalThis.AnimationEvent) => {
-      // An earlier animation can end late, after a new entrance began; that one keeps running.
-      if (
-        event.target !== node ||
-        node.getAnimations?.().some((animation) => animation.playState === 'running')
-      )
-        return;
+      const newerEntranceStillRunning = node
+        .getAnimations?.()
+        .some((animation) => animation.playState === 'running');
+      if (event.target !== node || newerEntranceStillRunning) return;
       node.removeAttribute('data-entering');
     };
     node.addEventListener('animationend', ended);

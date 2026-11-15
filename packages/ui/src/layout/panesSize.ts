@@ -19,13 +19,7 @@ export function readPanesWidth(
     if (separator < 0 || part.slice(0, separator).trim() !== name) continue;
     const value = part.slice(separator + 1).trim();
     if (value === '') return undefined;
-    let size: number;
-    try {
-      size = Number(decodeURIComponent(value));
-    } catch {
-      // A value that is no valid encoding, such as one with a stray %, keeps no width.
-      return undefined;
-    }
+    const size = Number(decodeOrUndefined(value));
     return Number.isFinite(size) ? size : undefined;
   }
   return undefined;
@@ -33,13 +27,28 @@ export function readPanesWidth(
 
 /** Keeps a width under a key in a cookie for a year, or forgets it, for every page of the site. */
 export function writePanesWidth(key: string, size: number | undefined) {
+  const name = encodeURIComponent(key);
+  setCookieWhereAvailable(
+    size === undefined
+      ? `${name}=; path=/; max-age=0; samesite=lax`
+      : `${name}=${size}; path=/; max-age=${oneYearInSeconds}; samesite=lax`,
+  );
+}
+
+const oneYearInSeconds = 31536000;
+
+function decodeOrUndefined(value: string) {
   try {
-    const name = encodeURIComponent(key);
-    document.cookie =
-      size === undefined
-        ? `${name}=; path=/; max-age=0; samesite=lax`
-        : `${name}=${size}; path=/; max-age=31536000; samesite=lax`;
+    return decodeURIComponent(value);
   } catch {
-    // Panes still work where cookies are unavailable, as in a sandboxed frame.
+    return undefined;
+  }
+}
+
+function setCookieWhereAvailable(cookie: string) {
+  try {
+    document.cookie = cookie;
+  } catch {
+    return;
   }
 }

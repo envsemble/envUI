@@ -2,9 +2,6 @@ import type { ReactNode } from 'react';
 import { SkeletonScope } from '../foundations/SkeletonScope.js';
 import '../styles/Base.css';
 import '../styles/Skeleton.css';
-// What every component that paints a container shares to become a skeleton: its prop, the
-// attributes that mark its root and the scope around its content. Plain functions, so a server
-// component calls them too.
 
 export interface SkeletonProps {
   /**

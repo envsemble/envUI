@@ -20,6 +20,15 @@ import '../styles/Base.css';
 import '../styles/Radio.css';
 import '../styles/ConnectedRows.css';
 
+function FieldsetErrorLikeFieldError({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <Row align="start" gap={2} id={id} className="env-radio-group-error">
+      <IconError aria-hidden="true" focusable="false" />
+      <span>{children}</span>
+    </Row>
+  );
+}
+
 interface RadioContextValue {
   value: string | undefined;
   defaultValue: string | undefined;
@@ -104,7 +113,6 @@ export function RadioGroup({
   const id = useId();
   const name = suppliedName ?? id;
   const fieldsetRef = useRef<HTMLFieldSetElement>(null);
-  // null is none while controlled, as undefined leaves the group to itself.
   const [selectedValue, select, keepOwn] = useControllableState({
     value: controlledValue,
     defaultValue: defaultValue ?? null,
@@ -165,13 +173,8 @@ export function RadioGroup({
           </Slot>
         </small>
       )}
-      {/* The error looks as a field's does, the error icon before the message (Radio.css); a
-          fieldset has no Field.Root for Field.Error to join. */}
       {error != null && (
-        <Row align="start" gap={2} id={ids.error} className="env-radio-group-error">
-          <IconError aria-hidden="true" focusable="false" />
-          <span>{error}</span>
-        </Row>
+        <FieldsetErrorLikeFieldError id={ids.error}>{error}</FieldsetErrorLikeFieldError>
       )}
     </>
   );

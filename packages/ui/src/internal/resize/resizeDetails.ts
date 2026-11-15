@@ -1,5 +1,3 @@
-// Shared by every resizable component and its resize hooks; the index entry exports it.
-
 /** What a resize callback receives beside the new width or widths. */
 export interface ResizeDetails {
   /**

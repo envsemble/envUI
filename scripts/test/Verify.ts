@@ -1,20 +1,3 @@
-// `npm run verify`: every check, for releases and for merging into dev or main. It runs what
-// `npm run verify` always ran, the parts side by side in phases that share one build:
-//
-//   1. generated files, lint, formatting, types, the three builds and every unit test;
-//   2. on those builds, the browser suites, each with its own servers, ports and share of the
-//      browser workers: the library in Chromium with the contrast gate, in Firefox and in WebKit,
-//      the site's smoke, the accessibility scans of the site's pages and of the fixtures, and the
-//      visual baseline in Docker;
-//   3. live development, which edits sources, once nothing else reads them.
-//
-//   node scripts/test/Verify.ts [--skip-visual] [--keep-going]
-//
-// --skip-visual (or ENVUI_SKIP_VISUAL=1) leaves the screenshots out, with a warning that the run
-// does not count as verified. --keep-going runs later phases after a failure. ENVUI_WORKERS sets
-// the browser workers all suites share (default: half the cores), and ENVUI_SITE_PORT,
-// ENVUI_FIXTURE_PORT and ENVUI_SITE_BUILD_PORT the first suite's ports, the others taking the ten
-// after each. The summary gives each part's time.
 import { availableParallelism } from 'node:os';
 import {
   bin,
@@ -48,7 +31,6 @@ const finish = () => {
   process.exit(ok ? 0 : 1);
 };
 
-// Docker first, so a run without it fails at once rather than after the other checks.
 if (!skipVisual && !(await dockerRunning())) {
   console.error(
     red(
@@ -58,11 +40,8 @@ if (!skipVisual && !(await dockerRunning())) {
   process.exit(1);
 }
 
-// Everything below reads the generated documentation.
 await series([generateDocumentation]);
 
-// Phase 1. The unit tests of the build run once it is done; one of them renders
-// .cache/Hydration.html, which Hydration.spec.ts opens in phase 2.
 const units = unitTestFiles();
 const [phase1, built] = await Promise.all([
   parallel([
@@ -88,8 +67,6 @@ const [phase1, built] = await Promise.all([
 ]);
 if ((failed(phase1) || failed(built)) && !keepGoing) finish();
 
-// Phase 2. Each suite's share of the workers, by its weight: about its test time on one worker,
-// so the suites end near the same time. The visual baseline renders in its own container.
 const suites = [
   { name: 'library (Chromium)', weight: 5, run: ['library', '--browser=chromium'] },
   { name: 'library (Firefox)', weight: 2, run: ['library', '--browser=firefox'] },
@@ -108,7 +85,6 @@ const totalWorkers = configured
 const totalWeight = suites.reduce((sum, suite) => sum + suite.weight, 0);
 const workersOf = (weight: number) =>
   Math.max(1, Math.round((Math.max(totalWorkers, suites.length) * weight) / totalWeight));
-/** The servers' ports of the suite at `index`: the ten after the one before's. */
 const ports = (index: number) => ({
   ENVUI_SITE_PORT: String(Number(process.env.ENVUI_SITE_PORT || defaultPorts.site) + 10 * index),
   ENVUI_FIXTURE_PORT: String(
@@ -118,8 +94,6 @@ const ports = (index: number) => ({
     Number(process.env.ENVUI_SITE_BUILD_PORT || defaultPorts.siteBuild) + 10 * index,
   ),
 });
-// As in CI: a test that passes on its second try is reported as flaky, not failed. Each suite
-// writes its own results folder, as Playwright empties the one it writes at its start.
 const playwrightOptions = (folder: string) => [
   '--reporter=dot',
   '--retries=1',
@@ -160,7 +134,6 @@ const phase2 = await parallel(
         ],
         { env, detail },
       );
-    // The screenshots get no second try.
     return task(
       suite.name,
       node('scripts/test/VisualTests.ts', '--reporter=dot', `--output=test-results/${folder}`),
@@ -170,7 +143,6 @@ const phase2 = await parallel(
 );
 if (failed(phase2) && !keepGoing) finish();
 
-// Phase 3, on the development server alone.
 await series([
   task(
     'live development',

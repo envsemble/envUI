@@ -1,16 +1,9 @@
-// Installs dev mode in a page: the readout as `envui.layout` on the window, and the toggle that
-// opens the 3D view and the inspector in a tab of their own: the page's address with the
-// `envui-dev` query parameter, which the installer in that tab reads to open dev mode over the
-// whole window, for as long as the tab stays open.
-
 import { createRoot, type Root } from 'react-dom/client';
 import { layout, type LayoutApi } from './api.js';
 import { devAttribute } from './elements.js';
 import { loadParts, setParts, type PartsFile } from './parts.js';
 import { DevMode, type DevModeController } from './ui/DevMode.js';
-// Its own style sheet, as text: Vite reads `?raw`, esbuild the `type`, and the library build puts
-// the text in the module (scripts/build/BuildLibrary.ts).
-import devStyles from './ui/DevMode.css?raw' with { type: 'text' };
+import devModeStyleSheetText from './ui/DevMode.css?raw' with { type: 'text' };
 
 export interface DevModeOptions {
   /**
@@ -64,37 +57,32 @@ declare global {
 
 let installed: DevModeHandle | null = null;
 
-/** The query parameter that marks a page opened as dev mode's tab. */
-const devModeParameter = 'envui-dev';
+const devModeQueryParameter = 'envui-dev';
 
-/** Whether this page was opened as dev mode's tab, with the envui-dev query parameter. */
 function isDevModeTab(): boolean {
   try {
-    return new URLSearchParams(window.location?.search ?? '').has(devModeParameter);
+    return new URLSearchParams(window.location?.search ?? '').has(devModeQueryParameter);
   } catch {
     return false;
   }
 }
 
-/**
- * The page's address with the envui-dev query parameter after its own, which keep their encoding.
- */
 function devModeAddress(href: string): string {
   const url = new URL(href);
-  if (!new URLSearchParams(url.search).has(devModeParameter))
-    url.search = url.search ? `${url.search}&${devModeParameter}` : devModeParameter;
+  if (!new URLSearchParams(url.search).has(devModeQueryParameter))
+    url.search = url.search ? `${url.search}&${devModeQueryParameter}` : devModeQueryParameter;
   return url.href;
 }
 
-/** Whether a key press opens dev mode: Alt+Shift+D, outside text entry. */
-function isShortcut(event: KeyboardEvent): boolean {
-  if (!event.altKey || !event.shiftKey || event.ctrlKey || event.metaKey || event.code !== 'KeyD')
-    return false;
+function isDevModeShortcut(event: KeyboardEvent): boolean {
+  const altShiftD =
+    event.altKey && event.shiftKey && !event.ctrlKey && !event.metaKey && event.code === 'KeyD';
+  if (!altShiftD) return false;
   const target = event.target;
-  return !(
+  const typingText =
     target instanceof HTMLElement &&
-    (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))
-  );
+    (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+  return !typingText;
 }
 
 /**
@@ -128,8 +116,7 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
       ? loadParts().then(noop)
       : typeof options.parts === 'string' || options.parts instanceof URL
         ? loadParts(options.parts).then(noop)
-        : // Parts handed over in the wrong shape don't stop dev mode: it runs without descriptions.
-          Promise.resolve(options.parts)
+        : Promise.resolve(options.parts)
             .then((parts) => {
               setParts(parts);
             })
@@ -143,7 +130,7 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
 
   const style = document.createElement('style');
   style.setAttribute(devAttribute, '');
-  style.textContent = devStyles;
+  style.textContent = devModeStyleSheetText;
   document.head.append(style);
 
   const host = document.createElement('div');
@@ -152,19 +139,17 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
   document.body.append(host);
 
   const listeners = new Set<(open: boolean) => void>();
-  // In dev mode's own tab, dev mode is open from the start and stays open: the tab is dev mode, and
-  // closing it ends it. It has no button there, and the shortcut does nothing.
-  const tab = isDevModeTab();
+  const inDevModeTab = isDevModeTab();
   const openInNewTab = () => {
-    const opened = window.open(devModeAddress(window.location.href), '_blank');
-    // A blocked tab leaves dev mode over this page instead.
-    if (opened) opened.opener = null;
-    else controller.setOpen(true);
+    const newTab = window.open(devModeAddress(window.location.href), '_blank');
+    const tabBlocked = newTab === null;
+    if (tabBlocked) controller.setOpen(true);
+    else newTab.opener = null;
   };
   const controller: DevModeController = {
-    open: tab || (options.open ?? false),
-    tab,
-    button: !tab && (options.button ?? true),
+    open: inDevModeTab || (options.open ?? false),
+    inDevModeTab,
+    showOpenButton: !inDevModeTab && (options.button ?? true),
     shortcut: options.shortcut === false ? null : 'Alt+Shift+D',
     root: options.root,
     host,
@@ -182,18 +167,22 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
   root.render(<DevMode controller={controller} />);
 
   const onKey = (event: KeyboardEvent) => {
-    if (!isShortcut(event)) return;
+    if (!isDevModeShortcut(event)) return;
     event.preventDefault();
-    if (!tab) openInNewTab();
+    if (!inDevModeTab) openInNewTab();
   };
   if (controller.shortcut) window.addEventListener('keydown', onKey);
 
-  // The page's own `window.envui`, if it has one, stays the same object; a layout it held comes
-  // back on uninstall.
   const envui = window.envui ?? (window.envui = {});
   const hadLayout = Object.prototype.hasOwnProperty.call(envui, 'layout');
-  const previousLayout = envui.layout;
+  const pageOwnLayout = envui.layout;
   envui.layout = layout;
+
+  const unmountAfterTheCurrentRender = () =>
+    window.setTimeout(() => {
+      root.unmount();
+      host.remove();
+    });
 
   let removed = false;
   const handle: DevModeHandle = {
@@ -207,15 +196,10 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
       if (removed) return;
       removed = true;
       window.removeEventListener('keydown', onKey);
-      // Unmounting while the app renders, as when an effect's cleanup uninstalls dev mode, waits
-      // for that render to end.
-      window.setTimeout(() => {
-        root.unmount();
-        host.remove();
-      });
+      unmountAfterTheCurrentRender();
       style.remove();
       if (envui.layout === layout) {
-        if (hadLayout) envui.layout = previousLayout;
+        if (hadLayout) envui.layout = pageOwnLayout;
         else delete envui.layout;
       }
       if (installed === handle) installed = null;

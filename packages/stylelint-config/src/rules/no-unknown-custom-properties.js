@@ -14,7 +14,6 @@ const { names } = JSON.parse(
 );
 const known = new Set(names);
 
-/** The number of single-character edits between two names. */
 function distance(a, b) {
   let previous = Array.from({ length: b.length + 1 }, (_, index) => index);
   for (let i = 1; i <= a.length; i++) {
@@ -30,7 +29,6 @@ function distance(a, b) {
   return previous[b.length];
 }
 
-/** The defined name nearest an unknown one, when it is near enough to be what was meant. */
 function nearestName(name) {
   let best;
   let bestDistance = Number.POSITIVE_INFINITY;

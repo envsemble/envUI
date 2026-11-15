@@ -18,31 +18,28 @@ import { useActiveCell } from './useActiveCell.js';
 import '../../styles/Base.css';
 import '../../styles/MonthPicker.css';
 
-/** The month of the grid that holds its tab stop, where focus goes as the popup opens. */
 export function monthGridActive(root: ParentNode | null | undefined): HTMLElement | null {
   return root?.querySelector<HTMLElement>('.env-month-picker-month[tabindex="0"]') ?? null;
 }
 
-/** A year's months in rows of three. */
-const columns = 3;
+const monthsPerRow = 3;
 
-/**
- * The short names of a year's months in the format's locale, of one length where the locale makes
- * nearly all of them that long: a longer name of letters alone is cut to it, such as Sept among
- * en-GB's three-letter months, as long as the names stay distinct. Names with punctuation or digits,
- * and a locale whose names vary in length, keep the locale's own.
- */
+const keepFocusWhereItWas = (event: { preventDefault: () => void }) => event.preventDefault();
+
 function shortMonthNames(format: Intl.DateTimeFormat): string[] {
   const names = Array.from({ length: 12 }, (_, month) => format.format(Date.UTC(2001, month, 1)));
   const length = (name: string) => Array.from(name).length;
   const counts = new Map<number, number>();
   for (const name of names) counts.set(length(name), (counts.get(length(name)) ?? 0) + 1);
   const [common, count] = [...counts].reduce((most, entry) => (entry[1] > most[1] ? entry : most));
-  if (count < 9) return names;
+  const nearlyAllShareOneLength = count >= 9;
+  if (!nearlyAllShareOneLength) return names;
   const longer = names.filter((name) => length(name) > common);
-  if (!longer.every((name) => /^\p{L}+$/u.test(name))) return names;
+  const longerAreLettersAlone = longer.every((name) => /^\p{L}+$/u.test(name));
+  if (!longerAreLettersAlone) return names;
   const cut = names.map((name) => Array.from(name).slice(0, common).join(''));
-  return new Set(cut).size === names.length ? cut : names;
+  const cutNamesStayDistinct = new Set(cut).size === names.length;
+  return cutNamesStayDistinct ? cut : names;
 }
 
 export interface MonthGridProps {
@@ -55,11 +52,6 @@ export interface MonthGridProps {
   nextYearLabel: string;
 }
 
-/**
- * A year of months to choose one from, as Calendar's month of days: the arrow keys move by month
- * and row, on into the next or previous year, Page Up and Page Down by year, Home and End to the
- * row's ends, and Enter or Space chooses.
- */
 export function MonthGrid({
   value,
   onChoose,
@@ -73,7 +65,6 @@ export function MonthGrid({
   const thisMonth = monthOfDay(now().day);
   const isUnavailable = (month: number) =>
     (min !== undefined && month < min) || (max !== undefined && month > max);
-  // The active month is the grid's one tab stop; the year that holds it is shown.
   const { active, grid, moveTo, choose, handleKeyDown, focusCell } = useActiveCell({
     chosen: value,
     initial: () => thisMonth,
@@ -81,14 +72,14 @@ export function MonthGrid({
     isUnavailable,
     onChoose,
     moves: (month, _event, rtl) => {
-      const column = (month - Math.floor(month / 12) * 12) % columns;
+      const column = (month - Math.floor(month / 12) * 12) % monthsPerRow;
       return {
         ArrowLeft: month + (rtl ? 1 : -1),
         ArrowRight: month + (rtl ? -1 : 1),
-        ArrowUp: month - columns,
-        ArrowDown: month + columns,
+        ArrowUp: month - monthsPerRow,
+        ArrowDown: month + monthsPerRow,
         Home: month - column,
-        End: month + columns - 1 - column,
+        End: month + monthsPerRow - 1 - column,
         PageUp: month - 12,
         PageDown: month + 12,
       };
@@ -117,7 +108,6 @@ export function MonthGrid({
           icon={<IconChevronLeft />}
           aria-label={previousYearLabel}
           title={previousYearLabel}
-          // Unavailable rather than disabled, so focus stays on the button at the earliest year.
           aria-disabled={!previousAvailable || undefined}
           className="env-month-picker-previous"
           onClick={() => {
@@ -147,10 +137,10 @@ export function MonthGrid({
         onKeyDown={handleKeyDown}
       >
         <tbody>
-          {Array.from({ length: 12 / columns }, (_, row) => (
+          {Array.from({ length: 12 / monthsPerRow }, (_, row) => (
             <tr key={row}>
-              {Array.from({ length: columns }, (_, column) => {
-                const month = first + row * columns + column;
+              {Array.from({ length: monthsPerRow }, (_, column) => {
+                const month = first + row * monthsPerRow + column;
                 const unavailable = isUnavailable(month);
                 const day = toUtcDate(monthFirstDay(month));
                 return (
@@ -163,8 +153,7 @@ export function MonthGrid({
                     aria-current={month === thisMonth ? 'date' : undefined}
                     aria-disabled={unavailable || undefined}
                     data-month={formatMonth(month)}
-                    // A press on an unavailable month leaves focus where it was.
-                    onMouseDown={unavailable ? (event) => event.preventDefault() : undefined}
+                    onMouseDown={unavailable ? keepFocusWhereItWas : undefined}
                     onClick={() => choose(month)}
                     onFocus={() => focusCell(month)}
                   >

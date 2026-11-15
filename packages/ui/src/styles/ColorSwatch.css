@@ -1,7 +1,4 @@
 @layer env.components {
-  /* ColorSwatch, from @envsemble/envui/color: a small rounded square of a color with a hairline edge
-     that keeps light and dark colors visible, a checkerboard under a translucent one, and an optional
-     name and value beside it. */
   .env-color-swatch {
     --_color-swatch-size: 1rem;
     --_color-swatch-checker: 0.5rem;
@@ -35,13 +32,11 @@
   .env-color-swatch-label + .env-color-swatch-value {
     color: var(--env-color-fg-muted);
   }
-  /* As a Button's icon, the sample takes the icon's size. */
   .env-icon > .env-color-swatch {
     display: block;
     --_color-swatch-size: 100%;
   }
 
-  /* Forced colors: a swatch shows a color as content, as an image does, so the system keeps it. */
   @media (forced-colors: active) {
     .env-color-swatch-sample {
       forced-color-adjust: none;

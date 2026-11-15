@@ -1,10 +1,5 @@
 @layer env.components {
-  /* The code theme's colors, standard and high-contrast, set by every boundary for its theme, so
-     code takes those of the nearest one, also on a page rendered on the server before it hydrates,
-     when only the root knows the reader's theme. They are fixed in codeColors.ts, which
-     tests/library/package/CodeHighlighting.test.ts holds these to. */
-  /* stylelint-disable color-no-hex, declaration-property-value-disallowed-list -- the code themes'
-     own colors, outside the color tokens, as the colors of highlighted tokens are. */
+  /* stylelint-disable color-no-hex, declaration-property-value-disallowed-list */
   .env-theme {
     --_code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
     --_code-font-size: 0.8125rem;
@@ -20,9 +15,6 @@
     --_code-foreground-high: #f0f3f6;
   }
   /* stylelint-enable color-no-hex, declaration-property-value-disallowed-list */
-  /* Code's colors come from the code theme, standard and high-contrast: a custom property that starts
-     with the theme's high-contrast switch (Theme.css), such as a token's --_code-token-now, holds
-     its high-contrast color or nothing. */
   .env-code,
   .env-code-block,
   .env-code-diff {
@@ -32,14 +24,10 @@
     background: var(--_code-background-now, var(--_code-background));
     color: var(--_code-foreground-now, var(--_code-foreground));
   }
-  /* Inline code: the monospace carries it, on half the neutral muted fill, a faint layer of the text
-     color, so a sentence with several identifiers reads as text rather than a row of chips, and it
-     still stands apart on the page, panes, cards, muted fills and popups alike. High contrast keeps
-     the whole fill. */
   .env-code {
     --_code-inline-fill-now: var(--_theme-high-contrast) var(--env-color-bg-neutral-muted);
 
-    /* stylelint-disable-next-line unit-disallowed-list -- inline code's padding follows its own font size, as the text around it does */
+    /* stylelint-disable-next-line unit-disallowed-list */
     padding: 0.125em 0.375em;
     border-radius: var(--env-radius-sm);
     background: var(
@@ -47,8 +35,6 @@
       color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent)
     );
     font: 0.9em/1.4 var(--_code-font-family);
-    /* A container where a column should keep room for its longest word, such as a table cell, sets
-       --_code-overflow-wrap to break-word. */
     overflow-wrap: var(--_code-overflow-wrap, anywhere);
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
@@ -70,8 +56,6 @@
   .env-code-block code {
     font: inherit;
   }
-  /* Each highlighted token has its color in each code theme, standard and high-contrast, as above:
-     the dark theme's where the nearest Theme is dark (Theme.css's switch), else the light one's. */
   .env-code-block code span {
     --_code-token-now: var(--_theme-high-contrast) var(--_code-token-high);
     --_code-token-dark-now: var(--_theme-high-contrast) var(--_code-token-dark-high);
@@ -98,18 +82,15 @@
     font: var(--env-type-body-sm);
   }
   .env-code-block-copy-status {
-    /* Visually hidden: a pixel's box, clipped away, still read. */
-    --_code-block-copy-status-size: 0.0625rem;
+    --_code-block-copy-status-visually-hidden-size: 0.0625rem;
     position: absolute;
-    inline-size: var(--_code-block-copy-status-size);
-    block-size: var(--_code-block-copy-status-size);
+    inline-size: var(--_code-block-copy-status-visually-hidden-size);
+    block-size: var(--_code-block-copy-status-visually-hidden-size);
     clip-path: inset(50%);
     overflow: hidden;
     white-space: nowrap;
   }
 
-  /* A code diff sits on a code block's layer: Diffs draws the code and tints its changed lines on a
-     transparent background, so they show over the layer the boundary paints, as a block's code does. */
   .env-code-diff {
     min-inline-size: 0;
     overflow: hidden;
@@ -119,7 +100,6 @@
   .env-code-diff-failed {
     padding: var(--env-space-5);
   }
-  /* A diff that failed to load says so with the error icon in the danger color. */
   .env-code-diff-failed-icon {
     color: var(--env-color-fg-danger);
   }

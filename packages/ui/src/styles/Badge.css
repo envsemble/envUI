@@ -1,15 +1,4 @@
 @layer env.components {
-  /* Badges: small pills that name a state in its tone. A soft badge has no edge: the status tones fill
-     it with their stronger tint and its label is semibold, and at high contrast it takes the tone's
-     softer tint. The tone's text color keeps 4.5:1 on the page, panes and rows, also over its tints; a
-     solid badge puts fg-on-emphasis on the tone's emphasis fill, fg-on-strong on danger's saturated
-     red, and an outlined one draws the tone's edge.
-     A badge keeps its own colors wherever it is placed. A control that holds a count, such as a
-     menu item's end (Menu.css) or the toasts' hidden count (Toast.css), sets --_badge-count-fg,
-     -bg and -border on its own element, which a badge with a count reads. */
-  /* Color properties: a badge's colors, which an application sets on one badge through style or its
-     own CSS. They don't inherit, and they win over its tone and variant and over the hooks of a
-     control around it. outline draws an edge in that color. */
   @property --env-badge-container {
     syntax: '*';
     inherits: false;
@@ -23,11 +12,8 @@
     inherits: false;
   }
   .env-badge {
-    /* The edge of an outline the application set; invalid, and so not drawn, while none is. */
     --_badge-own-border: 0.0625rem solid var(--env-badge-outline);
     --_badge-tone: var(--env-color-fg-muted);
-    /* A soft badge's fill: the tone's stronger tint, which the status tones set, or its tint; at high
-       contrast always its tint (see Theme.css). */
     --_badge-tint: var(--env-color-bg-neutral-muted);
     --_badge-tonal: var(--_badge-tint);
     --_badge-high-contrast-tint: var(--_theme-high-contrast) var(--_badge-tint);
@@ -42,7 +28,6 @@
     display: inline-flex;
     align-items: center;
     gap: var(--env-space-1);
-    /* With the border, 3 px above and below and 10 px at the sides. */
     padding: calc(var(--env-space-1) / 2) calc(var(--env-space-2) + var(--env-control-border-width));
     border: var(--_badge-own-border, 1px solid transparent);
     border-radius: var(--env-radius-full);
@@ -88,9 +73,6 @@
     --_badge-on-fill: var(--env-color-fg-on-strong);
     --_badge-edge: var(--env-color-border-danger);
   }
-  /* Completed work recedes: a soft done badge takes half its tint, quieter than a neutral one, and
-     leads with a check mark (Badge.tsx), which sets it apart from neutral and primary by more than
-     a hue. */
   .env-badge[data-tone='done'] {
     --_badge-tone: var(--env-color-fg-done);
     --_badge-tint: var(--env-color-bg-done-muted);
@@ -98,7 +80,6 @@
     --_badge-fill: var(--env-color-bg-done-emphasis);
     --_badge-edge: var(--env-color-border-done);
   }
-  /* A soft badge's label is semibold, which sets it apart on its tint as the tone's text. */
   .env-badge:not([data-variant='solid'], [data-variant='outline'], [data-count]) {
     font-weight: var(--env-font-weight-semibold);
   }
@@ -120,9 +101,6 @@
     text-overflow: ellipsis;
   }
 
-  /* A count: a compact round pill, as wide as it is tall for one digit, a size smaller in the compact
-     scale, in tabular figures. Its tone and variant color it as any badge's, but a neutral count's
-     figures take the default text color, and it reads the count hooks instead of the badge ones. */
   .env-badge[data-count] {
     position: relative;
     flex: 0 0 auto;
@@ -130,9 +108,8 @@
     block-size: var(--env-badge-count-height);
     justify-content: center;
     padding-block: 0;
-    /* A digit's room either side, as a diff stat has. */
-    --_badge-count-padding-inline: 0.375rem;
-    padding-inline: var(--_badge-count-padding-inline);
+    --_badge-count-digit-room: 0.375rem;
+    padding-inline: var(--_badge-count-digit-room);
     border: var(--_badge-own-border, var(--_badge-count-border, none));
     background: var(--env-badge-container, var(--_badge-count-bg, var(--_badge-soft)));
     color: var(--env-badge-content, var(--_badge-count-fg, var(--_badge-tone)));
@@ -142,7 +119,6 @@
   .env-badge[data-count][data-tone='neutral'] {
     --_badge-tone: var(--env-color-fg-default);
   }
-  /* The variant in :where(), so a skeleton's fill below still wins over it. */
   .env-badge[data-count]:where([data-variant='solid']) {
     background: var(--env-badge-container, var(--_badge-count-bg, var(--_badge-fill)));
     color: var(--env-badge-content, var(--_badge-count-fg, var(--env-color-fg-on-emphasis)));
@@ -152,7 +128,6 @@
     border: var(--_badge-own-border, var(--_badge-count-border, var(--_badge-edge-border)));
     background: var(--env-badge-container, var(--_badge-count-bg, transparent));
   }
-  /* A change as one count-sized pill: additions in the success tone, deletions in the danger tone. */
   .env-diff-stat {
     box-sizing: border-box;
     position: relative;
@@ -161,9 +136,8 @@
     display: inline-flex;
     align-items: center;
     gap: var(--env-space-1);
-    /* A count's room either side. */
-    --_diff-stat-padding-inline: 0.375rem;
-    padding-inline: var(--_diff-stat-padding-inline);
+    --_diff-stat-digit-room: 0.375rem;
+    padding-inline: var(--_diff-stat-digit-room);
     border: var(--_diff-stat-border, none);
     border-radius: var(--env-radius-full);
     background: var(--_diff-stat-bg, var(--env-color-bg-neutral-muted));
@@ -180,18 +154,16 @@
   }
   .env-badge-count-label,
   .env-diff-stat-label {
-    /* Visually hidden: a pixel's box, clipped away, still read. */
-    --_diff-stat-label-size: 0.0625rem;
+    --_diff-stat-visually-hidden-size: 0.0625rem;
     position: absolute;
-    inline-size: var(--_diff-stat-label-size);
-    block-size: var(--_diff-stat-label-size);
-    margin: calc(-1 * var(--_diff-stat-label-size));
+    inline-size: var(--_diff-stat-visually-hidden-size);
+    block-size: var(--_diff-stat-visually-hidden-size);
+    margin: calc(-1 * var(--_diff-stat-visually-hidden-size));
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
   }
 
-  /* In a skeleton, a badge is a filled shape of its size, without its text or tone. */
   [data-env-skeleton] .env-badge {
     forced-color-adjust: none;
     border-color: transparent;

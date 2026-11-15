@@ -1,29 +1,20 @@
-/** Whether an element is hidden from assistive technology, by aria-hidden, hidden or its style. */
 function hiddenFromAccessibility(element: Element): boolean {
   if (element.getAttribute('aria-hidden') === 'true' || element.hasAttribute('hidden')) return true;
   const style = element.ownerDocument.defaultView?.getComputedStyle(element);
   return !!style && (style.display === 'none' || style.visibility === 'hidden');
 }
 
-/**
- * The text an element contributes to a name, as assistive technology reads it: text hidden from
- * it, by aria-hidden, hidden or a display or visibility that hides it, counts for nothing, while
- * text hidden only visually counts; an image counts with its alternative text, and an element with
- * an aria-label inside with that label. The root itself is never checked for being hidden: the
- * stand-in of a disabled control hides the control it names, which must keep its name, and a
- * hidden label that aria-labelledby references directly still names. Below a hidden root, as in
- * such a label, hidden text counts too.
- */
-function nameText(node: Node, root: Node, hiddenCounts = false): string {
+function nameText(node: Node, root: Node, belowHiddenRoot = false): string {
   if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? '';
   if (!(node instanceof Element)) return '';
-  if (node !== root && !hiddenCounts && hiddenFromAccessibility(node)) return '';
-  if (node !== root) {
+  const isRoot = node === root;
+  if (!isRoot && !belowHiddenRoot && hiddenFromAccessibility(node)) return '';
+  if (!isRoot) {
     const label = node.getAttribute('aria-label')?.trim();
     if (label) return ` ${label} `;
   }
   if (node.tagName === 'IMG') return node.getAttribute('alt') ?? '';
-  return Array.from(node.childNodes, (child) => nameText(child, root, hiddenCounts)).join('');
+  return Array.from(node.childNodes, (child) => nameText(child, root, belowHiddenRoot)).join('');
 }
 
 /**
@@ -52,7 +43,6 @@ export function accessibleName(element: Element | null | undefined): string | un
   }
   const label = clean(element.getAttribute('aria-label'));
   if (label) return label;
-  // A labelable element has labels; any other has none.
   const labels = Array.from((element as HTMLInputElement).labels ?? []).filter(
     (each) => !hiddenFromAccessibility(each),
   );

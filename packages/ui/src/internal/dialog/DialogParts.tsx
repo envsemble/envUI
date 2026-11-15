@@ -13,12 +13,6 @@ import '../../styles/Base.css';
 import '../../styles/Dialog.css';
 
 /**
- * The parts Dialog, Sheet, CommandPalette and other modal surfaces share, inside a Base UI Dialog
- * or Drawer root: the backdrop, the raised surface, the heading block and the actions row. Each owner
- * adds its own class for its placement and motion.
- */
-
-/**
  * The theme boundary in a modal surface's portal. It has no box and is no container, so it starts
  * no stacking context: the backdrop and the surface's positioner keep their own layers, under what
  * opens over them, and the positioner, fixed over the viewport, is the env-window container.
@@ -115,10 +109,9 @@ export function DialogContent({
   skeleton?: boolean;
   children: ReactNode;
 }) {
-  // A skeleton dialog keeps focus on its popup, the busy root, which closes with Escape; its
-  // content is inert.
+  const contentInertWhileSkeleton = skeleton || undefined;
   return (
-    <Column gap={5} className="env-dialog-content" inert={skeleton || undefined}>
+    <Column gap={5} className="env-dialog-content" inert={contentInertWhileSkeleton}>
       <SkeletonScope skeleton={skeleton}>{children}</SkeletonScope>
     </Column>
   );

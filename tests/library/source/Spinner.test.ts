@@ -1,5 +1,3 @@
-// Spinner's markup: hidden without a label, a progress bar named by one, and with showLabel a busy
-// status with its label beside the arc, Loading by default in the provider's language.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -20,10 +18,8 @@ const { Spinner, EnvUIProvider } = await importSource('Spinner', [
 ]);
 
 const render = (element: ReactElement) => firstElement(renderToStaticMarkup(element));
-/** The label shown beside the arc, if the spinner shows one. */
 const shownLabel = (spinner: MarkupElement) =>
   elementsOf(spinner).find((element) => hasClass(element, 'env-spinner-label'));
-/** The text of the label shown beside the arc, which the spinner must show. */
 const labelText = (spinner: MarkupElement) =>
   textOf(findElement(spinner, (element) => hasClass(element, 'env-spinner-label')));
 

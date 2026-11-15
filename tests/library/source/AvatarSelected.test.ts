@@ -1,4 +1,3 @@
-// An avatar shown as chosen: a ring and a check, a look only, which the control around it announces.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -16,7 +15,6 @@ test('a selected avatar marks its state and draws a check hidden from assistive 
   const markup = renderToStaticMarkup(h(Avatar, { name: 'Sam Lee', named: true, selected: true }));
   assert.match(markup, /data-selected=""/);
   assert.match(markup, /<span class="env-avatar-check" aria-hidden="true">/);
-  // The avatar stays an image named by the person: the control around it says it is chosen.
   assert.match(markup, /role="img"/);
   assert.match(markup, /aria-label="Sam Lee"/);
   assert.doesNotMatch(markup, /aria-(selected|checked|pressed)/);

@@ -1,39 +1,59 @@
-// The reference node of the rich text schema, in a module that is not a client module: the
-// schema, its Markdown and its static HTML are plain functions, which a server component calls
-// through createRichTextExtensions. The editor's React view of a reference stays in Reference.tsx.
 import { createInlineMarkdownSpec, flattenExtensions, mergeAttributes } from '@tiptap/core';
 import Mention from '@tiptap/extension-mention';
 import { createReferenceNodeView } from './Reference.js';
 import { referenceFromAttributes } from './referenceAttributes.js';
 import type { RichTextRenderOptions } from '../types.js';
 import '../../../styles/Base.css';
-// Rich text's rules refine the prose typography, so Prose.css comes first.
 import '../../../styles/Prose.css';
 import '../../../styles/RichText.css';
 
-/** Use percent encoding inside Tiptap's shortcode utility so quotes/brackets roundtrip. */
+function parsePercentEncodedAttributes(source: string) {
+  const attributes: Record<string, string> = {};
+  for (const match of source.matchAll(/(\w+)="([^"\s]*)"/g)) {
+    try {
+      attributes[match[1]] = decodeURIComponent(match[2]);
+    } catch {
+      attributes[match[1]] = match[2];
+    }
+  }
+  return attributes;
+}
+
+function percentEncodeAttributesForRoundTrip(attributes: Record<string, unknown>) {
+  return Object.entries(attributes)
+    .filter(([, value]) => value != null)
+    .map(([key, value]) => `${key}="${encodeURIComponent(String(value))}"`)
+    .join(' ');
+}
+
 const referenceMarkdown = createInlineMarkdownSpec({
   nodeName: 'envReference',
   name: 'reference',
   selfClosing: true,
   allowedAttributes: ['id', 'label', 'kind', 'href', 'mentionSuggestionChar', 'marks'],
-  parseAttributes: (source) => {
-    const attributes: Record<string, string> = {};
-    for (const match of source.matchAll(/(\w+)="([^"\s]*)"/g)) {
-      try {
-        attributes[match[1]] = decodeURIComponent(match[2]);
-      } catch {
-        attributes[match[1]] = match[2];
-      }
-    }
-    return attributes;
-  },
-  serializeAttributes: (attributes) =>
-    Object.entries(attributes)
-      .filter(([, value]) => value != null)
-      .map(([key, value]) => `${key}="${encodeURIComponent(String(value))}"`)
-      .join(' '),
+  parseAttributes: parsePercentEncodedAttributes,
+  serializeAttributes: percentEncodeAttributesForRoundTrip,
 });
+
+type ReferenceMarkdownNode = Parameters<typeof referenceMarkdown.renderMarkdown>[0];
+
+function keepAtomMarksInShortcode(node: ReferenceMarkdownNode): ReferenceMarkdownNode {
+  return {
+    ...node,
+    attrs: {
+      ...node.attrs,
+      ...(node.marks?.length ? { marks: JSON.stringify(node.marks) } : {}),
+    },
+  };
+}
+
+function parseMarksOrNoneWhenMalformed(marks: string): unknown {
+  try {
+    return JSON.parse(marks);
+  } catch {
+    return undefined;
+  }
+}
 
 export function createReferenceExtension(options: RichTextRenderOptions) {
   const allowedMarks = new Set([
@@ -49,35 +69,23 @@ export function createReferenceExtension(options: RichTextRenderOptions) {
   return Mention.extend({
     name: 'envReference',
     ...referenceMarkdown,
-    // Tiptap's MarkdownManager wraps marks around text only. Retain atom marks as
-    // Tiptap JSON in the shortcode, then hand them straight back to the schema.
     renderMarkdown(node) {
-      return referenceMarkdown.renderMarkdown({
-        ...node,
-        attrs: {
-          ...node.attrs,
-          ...(node.marks?.length ? { marks: JSON.stringify(node.marks) } : {}),
-        },
-      });
+      return referenceMarkdown.renderMarkdown(keepAtomMarksInShortcode(node));
     },
     parseMarkdown(token, helpers) {
       const parsed = referenceMarkdown.parseMarkdown(token, helpers);
       if (!parsed || Array.isArray(parsed) || !('type' in parsed)) return parsed;
       const { marks, ...attrs } = parsed.attrs ?? {};
       if (typeof marks !== 'string') return { ...parsed, attrs };
-      try {
-        const decoded: unknown = JSON.parse(marks);
-        if (Array.isArray(decoded))
-          return {
-            ...parsed,
-            attrs,
-            marks: decoded.filter(
-              (mark) => mark && typeof mark.type === 'string' && allowedMarks.has(mark.type),
-            ),
-          };
-      } catch {
-        /* A malformed optional mark payload leaves the reference usable. */
-      }
+      const decoded = parseMarksOrNoneWhenMalformed(marks);
+      if (Array.isArray(decoded))
+        return {
+          ...parsed,
+          attrs,
+          marks: decoded.filter(
+            (mark) => mark && typeof mark.type === 'string' && allowedMarks.has(mark.type),
+          ),
+        };
       return { ...parsed, attrs };
     },
     addAttributes() {

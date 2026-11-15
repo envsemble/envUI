@@ -1,11 +1,4 @@
 @layer env.components {
-  /* Tabs switch panels, after Material's: text tabs on no fill of their own, with an indicator under
-     the selected one, whatever the buttons' variants. A segmented control, which picks a value,
-     looks different on purpose. */
-  /* Color properties: the tabs' colors, which an application sets on one Tabs through style or its
-     own CSS: container the rail, transparent by default, content the labels of the tabs not
-     selected, selected-content the selected tab's label and indicator its indicator. They don't
-     inherit; Tabs passes them on to its rail and tabs. */
   @property --env-tabs-container {
     syntax: '*';
     inherits: false;
@@ -24,34 +17,22 @@
   }
   .env-tabs {
     --_tabs-rail-color: var(--env-tabs-container, transparent);
-    /* The labels of the tabs not selected, a step stronger than the muted text, so an unavailable
-       tab's disabled color stands clearly apart from them. */
     --_tabs-label-color: var(--env-tabs-content, var(--env-color-fg-muted-hover));
     --_tabs-selected-color: var(--env-tabs-selected-content, var(--env-color-fg-primary));
     --_tabs-indicator-color: var(--env-tabs-indicator, var(--env-color-border-primary-emphasis));
   }
 
-  /* The whole rail is as tall as a control of its size, and its tabs fill it. */
   .env-tabs-list {
     --_tabs-rail: var(--env-control-height-lg);
-    /* The height the rail draws at: its size's, or the touch height under a coarse pointer. */
     --_tabs-height: var(--_tabs-rail);
     --_tabs-inset: 0rem;
     --_tabs-active-padding: var(--env-space-3);
+    --_tabs-indicator-thickness: calc(3 * var(--env-control-border-width));
     --env-control-height: var(--_tabs-height);
     inline-size: fit-content;
-    /* Inset focus rings remain visible when a long list needs scrolling. */
     overflow: auto;
     scrollbar-width: thin;
-    /* The tabs' offset parent, so the rail, which scrolls the selected tab into view, measures it
-       from its own start rather than from a positioned ancestor's, and starts with it in view. */
     position: relative;
-    /* The rail lines its first label up with the content below it. It reaches back before its
-       container's edge by a tab's inline padding, a button's or a text button's slimmer one, and
-       holds that much as leading padding of its own, which takes no presses; its first tab gives up
-       its leading padding, so its label starts at the content's edge, and draws its fill and focus
-       ring back over the rail's padding (below). So no tab's hit area reaches over what lies before
-       the rail, and none overlaps the next. */
     --_tabs-lead: var(--env-space-3);
     margin-inline-start: calc(-1 * var(--_tabs-lead));
     padding-inline-start: calc(var(--_tabs-inset) + var(--_tabs-lead));
@@ -64,15 +45,11 @@
   .env-tabs-list > * {
     pointer-events: auto;
   }
-  /* The rail has no fill of its own: the tabs sit on what the Tabs sit on. */
   .env-tabs-list.env-surface {
     --_surface-color: var(--_tabs-rail-color, transparent);
     --_surface-padding: var(--_tabs-inset);
     --_surface-radius: 0rem;
   }
-  /* Under a coarse pointer the rail grows to the touch height, like every control of its row, and
-     each tab's hit area covers the rail's padding above and below it, so it is as tall as the rail and
-     nothing reaches out of the rail, which scrolls, and it is at least as wide. */
   @media (pointer: coarse) {
     .env-tabs-list {
       --_tabs-height: max(var(--_tabs-rail), var(--env-control-height-touch));
@@ -103,12 +80,8 @@
     margin-inline: 0;
     max-inline-size: 100%;
   }
-  /* The indicator spans the label, inside the tab's inline padding: a button's, or a text button's
-     slimmer one. A text button of the application's own takes no margin back here, which would let
-     neighbouring tabs overlap and their labels run together. */
   .env-tabs-list > .env-tabs-tab {
     --_tabs-tab-padding: var(--env-space-3);
-    /* The faint layer a press lays (below). */
     --_tabs-press-layer: color-mix(
       in srgb,
       var(--env-color-bg-neutral-subtle-hover) 70%,
@@ -121,12 +94,6 @@
     overflow-wrap: break-word;
     transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
-  /* Every tab is a text tab, whatever its button's variant: no fill or edge of its own, its label
-     quieter than the text. Under the pointer no block or bar shows, as either would read as a
-     second selection: only the label takes the text color, and the indicator is the selected tab's
-     alone. A press, which lasts only as long as the button is held, lays a faint state layer under
-     the label as well (below), a step past hover. The states, unavailable included, are named so
-     these rules outweigh the button's own. */
   .env-tabs-list > .env-tabs-tab,
   .env-tabs-list > .env-tabs-tab:is(:disabled, [aria-disabled='true']),
   .env-tabs-list
@@ -136,8 +103,6 @@
     box-shadow: none;
     color: var(--_tabs-label-color, var(--env-color-fg-muted-hover));
   }
-  /* An unavailable tab takes the disabled text color, as an unavailable button does, and no state,
-     so it reads apart from the muted labels of the tabs that are there. */
   .env-tabs-list > .env-tabs-tab:is(:disabled, [aria-disabled='true']) {
     color: var(--env-color-fg-disabled);
   }
@@ -150,7 +115,6 @@
   .env-tabs-list > .env-tabs-tab:active:not(:disabled):not([aria-disabled='true']) {
     background: var(--_tabs-press-layer);
   }
-  /* The selected tab: its label in the accent's text color, with the indicator under it. */
   .env-tabs-list > .env-tabs-tab[data-active],
   .env-tabs-list
     > .env-tabs-tab[data-active]:is(:hover, :active, :focus-visible):not(:disabled):not(
@@ -158,15 +122,14 @@
     ) {
     color: var(--_tabs-selected-color, var(--env-color-fg-primary));
   }
-  /* Every tab draws the indicator's shape, transparent but on the selected tab. */
   .env-tabs-list > .env-tabs-tab::after {
     content: '';
     position: absolute;
     inset-inline: var(--_tabs-tab-padding);
     inset-block-end: 0;
-    block-size: calc(3 * var(--env-control-border-width));
-    border-start-start-radius: calc(3 * var(--env-control-border-width));
-    border-start-end-radius: calc(3 * var(--env-control-border-width));
+    block-size: var(--_tabs-indicator-thickness);
+    border-start-start-radius: var(--_tabs-indicator-thickness);
+    border-start-end-radius: var(--_tabs-indicator-thickness);
     background: transparent;
     pointer-events: none;
   }
@@ -176,55 +139,39 @@
       var(--_tabs-indicator-color, var(--env-color-border-primary-emphasis))
     );
   }
-  /* One indicator moves from tab to tab: Base UI's, placed by the selected tab's box
-     (--active-tab-*, physical), under its label inside its inline padding, as each tab's own shape
-     above is, which it takes the place of once it has measured. The selected tab's inline padding,
-     which the rail reads for the indicator: a button's, or a text button's slimmer one. */
   .env-tabs-list:has(> .env-tabs-tab[data-active][data-variant='text']) {
     --_tabs-active-padding: var(--env-space-1);
   }
   .env-tabs-list > .env-tabs-indicator {
-    /* Base UI sets the tab's box inline as it measures it; until then the indicator is hidden. */
     --active-tab-left: 0rem;
     --active-tab-top: 0rem;
     --active-tab-width: 0rem;
     --active-tab-height: 0rem;
-    /* The padding before the label, at the tab's start: none on the rail's first tab. */
     --_tabs-indicator-start: var(--_tabs-active-padding);
     position: absolute;
-    /* Physical, as Base UI measures the tab. */
     top: 0;
     left: 0;
     inline-size: calc(
       var(--active-tab-width) - var(--_tabs-indicator-start) - var(--_tabs-active-padding)
     );
-    block-size: calc(3 * var(--env-control-border-width));
-    border-start-start-radius: calc(3 * var(--env-control-border-width));
-    border-start-end-radius: calc(3 * var(--env-control-border-width));
+    block-size: var(--_tabs-indicator-thickness);
+    border-start-start-radius: var(--_tabs-indicator-thickness);
+    border-start-end-radius: var(--_tabs-indicator-thickness);
     background: var(--_tabs-indicator-color, var(--env-color-border-primary-emphasis));
     translate: calc(var(--active-tab-left) + var(--_tabs-indicator-start))
-      calc(
-        var(--active-tab-top) + var(--active-tab-height) - calc(3 * var(--env-control-border-width))
-      );
+      calc(var(--active-tab-top) + var(--active-tab-height) - var(--_tabs-indicator-thickness));
     pointer-events: none;
   }
   .env-tabs-list:has(> .env-tabs-tab:first-child[data-active]) > .env-tabs-indicator {
     --_tabs-indicator-start: 0rem;
   }
-  /* In right-to-left text the tab's start is its right side. */
   .env-tabs-list > .env-tabs-indicator:dir(rtl) {
     translate: calc(var(--active-tab-left) + var(--_tabs-active-padding))
-      calc(
-        var(--active-tab-top) + var(--active-tab-height) - calc(3 * var(--env-control-border-width))
-      );
+      calc(var(--active-tab-top) + var(--active-tab-height) - var(--_tabs-indicator-thickness));
   }
-  /* Once the indicator shows (data-placed, Tabs.tsx), the selected tab draws none of its own: the
-     indicator's own attribute, not hidden, as :has() asks (packages/ui/AGENTS.md, Style sheets). */
   .env-tabs-list:has(> .env-tabs-indicator[data-placed]) > .env-tabs-tab[data-active] {
     --_tabs-tab-indicator: transparent;
   }
-  /* It slides and resizes to the tab selected, once a tab has been selected, not as it first
-     measures. */
   @media (prefers-reduced-motion: no-preference) {
     .env-tabs-list
       > .env-tabs-indicator:is([data-activation-direction]):not(
@@ -240,9 +187,6 @@
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
   }
-  /* The first tab of the rail, its label at the content's edge: its focus ring is drawn a
-     tab's padding wider, back over the rail's leading padding, by a shape under its label that takes
-     no presses, so it surrounds the whole tab as the others' do. */
   .env-tabs-list > .env-tabs-tab:first-child {
     isolation: isolate;
     padding-inline-start: 0;
@@ -264,7 +208,6 @@
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
   }
-  /* Its press layer, too, covers the whole tab: the shape under its label takes it. */
   .env-tabs-list > .env-tabs-tab:first-child:active:not(:disabled):not([aria-disabled='true']) {
     background: transparent;
   }
@@ -278,7 +221,6 @@
   .env-tabs-panels {
     position: relative;
   }
-  /* Filling Tabs give the selected panel the height left below the list. */
   .env-tabs[data-fill] {
     min-block-size: 0;
   }
@@ -287,8 +229,6 @@
     min-block-size: 0;
     grid-template-rows: minmax(0, 1fr);
   }
-  /* Only the Tabs' own shown panels become columns: hidden panels, which keepMounted leaves in place,
-     stay hidden, and Tabs nested in a panel keep their layout. :where() keeps the rule's specificity. */
   .env-tabs[data-fill] > .env-tabs-panels > :where(.env-tabs-panel:not([hidden])) {
     display: flex;
     flex-direction: column;
@@ -305,15 +245,10 @@
   .env-tabs-panel[hidden] {
     display: none;
   }
-  /* The incoming panel starts half faded, not from nothing: the outgoing one is gone by its first
-     frame, and a panel that started invisible would leave the frames before its fade gets going
-     empty, a blink between the two. */
   .env-tabs-panel[data-starting-style] {
     opacity: 0.5;
     transform: translateY(var(--env-space-1));
   }
-  /* The outgoing panel goes at once, out of flow, so the two panels never show over each other and
-     content after the tabs settles as the tab changes; the incoming one fades in. */
   .env-tabs-panel[data-ending-style] {
     position: absolute;
     inset-inline: 0;
@@ -337,8 +272,6 @@
     }
   }
 
-  /* Forced colors: the system paints no fills, so the selected tab's label and indicator take the
-     system's selection color. */
   @media (forced-colors: active) {
     .env-tabs-list > .env-tabs-tab[data-active] {
       forced-color-adjust: none;
@@ -358,8 +291,6 @@
     .env-tabs-list > .env-tabs-tab[data-active]:focus-visible {
       outline-color: CanvasText;
     }
-    /* The lined-up first tab draws its ring on a shape under its label; with no fills to line up,
-       the tab draws the system's ring itself. */
     .env-tabs-list
       > .env-tabs-tab:first-child:focus-visible:not(:disabled):not([aria-disabled='true']) {
       outline-color: CanvasText;

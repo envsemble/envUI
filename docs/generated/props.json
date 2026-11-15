@@ -60,7 +60,7 @@
     "Accordion.Root": {
       "kind": "component",
       "source": "packages/ui/src/content/Accordion.tsx",
-      "description": "A list of sections, each a heading that shows and hides its panel, separated by full-width hairlines. A plus at the start of a heading becomes a minus while its section is open. One item is open at a time unless `multiple` is set. Built on Base UI's Accordion.",
+      "description": "A list of sections, each a heading that shows and hides its panel, separated by full-width hairlines. A plus at the start of a heading becomes a minus while its section is open. One item is open at a time unless `multiple` is set.",
       "props": [
         {
           "name": "children",
@@ -133,7 +133,7 @@
     "Alert": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Alert.tsx",
-      "description": "An inline banner for a page- or section-level message, in its tone. It stays a server component: its dismiss button is an IconButton with a cross, a client leaf named in the provider's language.",
+      "description": "An inline banner for a page- or section-level message, in its tone. It is a server component; its dismiss button is an IconButton with a cross, named in the provider's language.",
       "props": [
         {
           "name": "tone",
@@ -1660,7 +1660,7 @@
     "CommandPalette": {
       "kind": "component",
       "source": "packages/ui/src/actions/CommandPalette.tsx",
-      "description": "A quick-open dialog near the top of the window: a search field over a list of options the application filters and ranks, built on Base UI's Autocomplete inside a dialog. The arrow keys move the highlight while typing continues, and the number of results is announced as it changes. className, style, ref and data attributes go to the dialog's surface.",
+      "description": "A quick-open dialog near the top of the window: a search field over a list of options the application filters and ranks. The arrow keys move the highlight while typing continues, and the number of results is announced as it changes. className, style, ref and data attributes go to the dialog's surface.",
       "props": [
         {
           "name": "open",
@@ -3028,7 +3028,7 @@
           "name": "inputRef",
           "type": "Ref<HTMLInputElement>",
           "required": false,
-          "description": "The native file input that opens the file picker, for example from a Replace button. The zone holds no value a form library could register, as a field's input does, so ref reaches the zone itself, the drop target, and this ref the picker."
+          "description": "The native file input that opens the file picker, for example from a Replace button; ref reaches the zone itself."
         }
       ],
       "native": [
@@ -3301,7 +3301,7 @@
     "Field.Root": {
       "kind": "component",
       "source": "packages/ui/src/forms/Field.tsx",
-      "description": "A labelled form control with its description and error, for a control envUI has no field for, such as a control of the application's own: Field.Label names Field.Control, and the description and the error describe it, with ids, aria-invalid and the disabled state wired through Base UI's Field.",
+      "description": "A labelled form control with its description and error, for a control envUI has no field for, such as a control of the application's own: Field.Label names Field.Control, and the description and the error describe it.",
       "props": [
         {
           "name": "style",
@@ -3837,7 +3837,7 @@
     "List.Item": {
       "kind": "component",
       "source": "packages/ui/src/data-display/List.tsx",
-      "description": "One `li` row with a label, a description and content at its end; the current row, content at its start, and in a reorderable list a drag handle. It renders on the server: only the handle of a reorderable row needs the browser.",
+      "description": "One `li` row with a label, a description and content at its end; the current row, content at its start, and in a reorderable list a drag handle.",
       "props": [
         {
           "name": "label",
@@ -5951,7 +5951,7 @@
     "Panes.Root": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "Two panes side by side, after Material's pane patterns, and how they behave in less room: a main pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time. Invisible structure that never paints, except the supporting pane while it is a sheet, which is modal. Its own width decides, in CSS: it is the env-panes container. One state says whether the supporting pane shows, which every presentation follows: its close button closes it beside the main pane as well as as a sheet. Each pane's content scrolls on its own under its header when Panes has a height, as in a Scaffold's body that scrolls; an optional Panes.Divider resizes them.",
+      "description": "Two panes side by side, and how they behave in less room: a main pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time. Its own width decides, in CSS, and one state says whether the supporting pane shows, in every presentation. Each pane's content scrolls on its own under its header when Panes has a height; an optional Panes.Divider resizes them.",
       "props": [
         {
           "name": "behavior",
@@ -6067,7 +6067,7 @@
     "Panes.Supporting": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The supporting pane, at the end, such as details or filters for the main pane, with a close button in its header row. Beside the main pane, closing it gives the main pane the room and Panes.Trigger, which shows then, takes focus. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet is: fixed to the window over a backdrop, scrolling inside itself while the page stays. As a sheet it is a modal dialog with a close button: everything else on the page is inert, focus moves into it and Tab stays in it, and Escape, the close button or a press on the backdrop closes it, which returns focus to where it was. In a contained PortalContainer, such as a preview on a page, the sheet belongs to the container: it is not modal, so the page stays in use and focus stays where it is.",
+      "description": "The supporting pane, at the end, such as details or filters for the main pane, with a close button in its header row. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one, fixed to the window inside a Scaffold whose document scrolls. As a sheet, the rest of the page is inert, Tab stays inside, and Escape, the close button or a press on the backdrop closes it, returning focus to where it was. In a contained PortalContainer the sheet belongs to the container and is not modal.",
       "props": [
         {
           "name": "label",
@@ -6861,7 +6861,7 @@
     "Scaffold": {
       "kind": "component",
       "source": "packages/ui/src/layout/Scaffold.tsx",
-      "description": "The invisible structure of an application's screen, after Material's: a top bar region, a navigation region and the body. It never paints. It shows one navigation form at a time by its own width, CSS only: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
+      "description": "The invisible structure of an application's screen: a top bar region, a navigation region and the body. It never paints. It shows one navigation form at a time by its own width: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
       "props": [
         {
           "name": "topBar",

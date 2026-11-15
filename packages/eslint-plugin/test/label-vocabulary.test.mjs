@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import rule from '../src/rules/label-vocabulary.js';
-import { ruleTester } from './RuleTester.mjs';
+import { named, ruleTester } from './RuleTester.mjs';
 
 const replace = (label, rewritten) => ({ messageId: 'replace', data: { label, rewritten } });
 
@@ -10,15 +10,17 @@ ruleTester.run('label-vocabulary', rule, {
   valid: [
     '<Button>Save</Button>',
     '<Button onClick={copy}>Copy link</Button>',
-    // A word the table qualifies, such as Add for something new, is left to the writer.
-    '<Button>Add member</Button>',
+    ...named('A word the table qualifies, such as Add for something new, is left to the writer', [
+      '<Button>Add member</Button>',
+    ]),
     '<Button type="submit">Submit</Button>',
     '<Button>Send invitation</Button>',
     '<Pager.Next>Next</Pager.Next>',
-    // Sentences, words inside a label and other props.
-    '<Text>Submit the form when every field is filled in.</Text>',
-    '<Button>Save and submit</Button>',
-    '<Field description="Submit" />',
+    ...named('Sentences, words inside a label and other props', [
+      '<Text>Submit the form when every field is filled in.</Text>',
+      '<Button>Save and submit</Button>',
+      '<Field description="Submit" />',
+    ]),
   ],
   invalid: [
     { code: '<Button type="submit">Proceed</Button>', errors: [replace('Proceed', 'Continue')] },

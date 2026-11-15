@@ -46,16 +46,10 @@ export interface TypedText {
   time: number;
 }
 
-/** Whether a key now adds to the text typed ahead, rather than starting it over. */
-function isTyping(typed: TypedText) {
+function stillTypingAhead(typed: TypedText) {
   return performance.now() - typed.time <= typeaheadTimeout;
 }
 
-/**
- * Adds a key to the text typed ahead and returns the index of the row it names, or -1. A repeated
- * first letter cycles through matches from the row after the active one; longer text refines the
- * current match.
- */
 function findTypedRow(
   items: readonly TreeItem[],
   typed: TypedText,
@@ -76,8 +70,7 @@ function findTypedRow(
   return -1;
 }
 
-/** The index of the row's parent, the nearest shallower row above it, or -1 for a top-level row. */
-function parentIndex(items: readonly TreeItem[], index: number) {
+function nearestShallowerRowAbove(items: readonly TreeItem[], index: number) {
   const depth = items[index].depth;
   for (let above = index - 1; above >= 0; above -= 1) if (items[above].depth < depth) return above;
   return -1;
@@ -135,14 +128,15 @@ export function treeKeyAction(
         return { kind: 'stay' };
       }
       if (item.expandable && item.expanded) return { kind: 'expand', expanded: false };
-      const parent = parentIndex(items, active);
+      const parent = nearestShallowerRowAbove(items, active);
       return parent === -1 ? { kind: 'stay' } : move(parent);
     }
     case 'Enter':
       return { kind: 'open', preview: false };
-    case ' ':
-      // While typing ahead, a space belongs to the typed text.
-      return isTyping(typed) && typed.text ? typedRow() : { kind: 'open', preview: true };
+    case ' ': {
+      const spaceBelongsToTypedText = stillTypingAhead(typed) && typed.text;
+      return spaceBelongsToTypedText ? typedRow() : { kind: 'open', preview: true };
+    }
     default:
       return key.length === 1 ? typedRow() : null;
   }
@@ -152,18 +146,17 @@ export function treeKeyAction(
 export function siblingPositions(items: readonly TreeItem[]) {
   const positions = new Array<number>(items.length);
   const sizes = new Array<number>(items.length);
-  // Each open level keeps the indexes of its rows until a shallower row closes it.
-  const levels: number[][] = [];
+  const openLevelsRowIndexes: number[][] = [];
   const close = (depth: number) => {
-    while (levels.length > depth) {
-      const rows = levels.pop()!;
+    while (openLevelsRowIndexes.length > depth) {
+      const rows = openLevelsRowIndexes.pop()!;
       for (const index of rows) sizes[index] = rows.length;
     }
   };
   items.forEach((item, index) => {
     close(item.depth + 1);
-    while (levels.length < item.depth + 1) levels.push([]);
-    const rows = levels[item.depth];
+    while (openLevelsRowIndexes.length < item.depth + 1) openLevelsRowIndexes.push([]);
+    const rows = openLevelsRowIndexes[item.depth];
     rows.push(index);
     positions[index] = rows.length;
   });

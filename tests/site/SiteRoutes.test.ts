@@ -1,5 +1,3 @@
-// The site's addresses: the old ones that lead to the pages they became, each page's counterpart in
-// the other part, and the Docs' tree and trails (apps/site/src/routes/).
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { importSource } from '../support/ImportSource.ts';
@@ -34,7 +32,6 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'foundations/colors/preview': 'foundations/colors',
     'foundations/colors/usage': 'docs/foundations/colors',
     'foundations/tokens': 'docs/tokens',
-    // Nine foundations became six: merged pages open the page they joined.
     'foundations/scale': 'foundations/spacing',
     'foundations/scale/usage': 'docs/foundations/spacing',
     'docs/foundations/scale': 'docs/foundations/spacing',
@@ -45,31 +42,22 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'overview/components?section=components-actions': 'components?section=components-actions',
     'overview/get-started': 'docs',
     'overview/get-started?skill=migrate&section=local-development': 'docs?section=coding-agents',
-    // The agent skills' page went with the skills, and the guide for agents into setup.
     'docs/agent-skills': 'docs?section=coding-agents',
     'docs/agent-tooling': 'docs?section=coding-agents',
-    // The setup guide is the Docs' home.
     'docs/setup': 'docs',
     'docs/setup?section=install-a-release': 'docs?section=install-a-release',
-    // The codemods and the migration guide went, and developing envUI locally is a contributor's
-    // guide now.
     'docs/codemods': 'docs',
     'docs/migration': 'docs',
     'docs/local-development': 'docs',
-    // The agent benchmark went, and its page opens the overview.
     benchmark: 'overview',
     'get-started/migration': 'docs',
     'overview/get-started?document=migration': 'docs',
-    // The catalogue's Get started page is the setup guide, the Docs' home.
     'get-started': 'docs',
     'contributing/library-development': 'overview',
-    // The catalogue's changelog is the Docs' now, with its release notes.
     changelog: 'docs/changelog',
     'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
-    // Dev mode's page in the catalogue folded into its guide in the Docs.
     'dev-mode': 'docs/dev-mode',
     'dev-mode?section=opening-it': 'docs/dev-mode?section=opening-it',
-    // Pages folded into another open it, at the section that holds them, and in the Docs its page.
     'components/bar': 'components/navigation-drawer',
     'components/rail/props': 'docs/components/navigation-drawer',
     'components/drawer': 'components/navigation-drawer',
@@ -82,7 +70,6 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'components/search-trigger':
       'components/command-palette?section=opening-it-the-button-and-the-shortcut',
     'docs/patterns/search-trigger': 'docs/components/command-palette',
-    // The patterns went, with the components that became them: they open the Docs' home.
     patterns: 'docs',
     'docs/patterns': 'docs',
     'patterns/forms': 'docs',
@@ -96,27 +83,21 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'components/loading': 'docs',
     'components/skeleton': 'docs',
     'components/empty-state': 'components/empty-state',
-    // Old addresses that name a document that is gone open the page it became.
     'overview/get-started?document=dev-mode-overview': 'docs/dev-mode',
     'overview/get-started?document=agent-skills': 'docs?section=coding-agents',
     'overview/get-started?document=full-changelog': 'docs/changelog',
     'get-started/scale?section=density': 'foundations/spacing?section=density',
     'get-started/composition': 'docs/customizing',
-    // The content guidelines are the Writing guide in the Docs.
     'foundations/content': 'docs/writing',
     'docs/foundations/content': 'docs/writing',
   };
   for (const [from, to] of Object.entries(routes)) assert.equal(normalizeRoute(from), to, from);
-  // The ids of documents that are gone are old addresses' alone.
   assert.equal(routeOfDocument('dev-mode-overview'), undefined);
-  // Every page of both areas is its own route.
   for (const { path } of allPages) assert.equal(normalizeRoute(path), path);
 });
 
 test("each page of a subject leads to its page in the other part, and a page without one to the other part's start", () => {
   const paired = (kinds) => pagesOf('catalogue').filter(({ kind }) => kinds.includes(kind));
-  // Every component and foundation in the catalogue has its page in the Docs, which leads back
-  // to it.
   for (const page of paired(['component', 'foundation'])) {
     const docs = counterpartOf(page);
     assert.equal(docs, `docs/${page.path}`, page.path);
@@ -124,22 +105,18 @@ test("each page of a subject leads to its page in the other part, and a page wit
     assert.equal(counterpartOf(findPage(docs)), page.path, docs);
     assert.equal(otherPartRoute(page, 'catalogue'), docs);
   }
-  // The catalogue's Overview and galleries lead to the Docs' home.
   for (const page of paired(['home', 'components'])) {
     assert.equal(counterpartOf(page), undefined, page.path);
     assert.equal(otherPartRoute(page, 'catalogue'), 'docs', page.path);
   }
-  // A page of the Docs alone, such as a guide, the changelog or Field's, leads to the Overview.
   for (const path of [
     'docs',
-    // Dev mode is the Docs' alone: its page in the catalogue folded into its guide.
     'docs/dev-mode',
     'docs/changelog',
     'docs/tokens',
     'docs/components/field',
   ])
     assert.equal(otherPartRoute(findPage(path), 'docs'), 'overview', path);
-  // A page that isn't there leads to the other part's start.
   assert.equal(otherPartRoute(undefined, 'docs'), 'overview');
   assert.equal(otherPartRoute(undefined, 'catalogue'), 'docs');
 });
@@ -150,14 +127,12 @@ test("the Docs' navigation is a tree of sections and groups, and each page's tra
     ['Get started', 'Guides', 'Foundations', 'Components', 'Changelog'],
   );
   const section = (label) => docsTree.find((entry) => entry.label === label);
-  // Components by their group, in the catalogue's order.
   assert.deepEqual(section('Components').pages, []);
   const groups = section('Components').groups.map(({ label }) => label);
   assert.deepEqual(
     groups,
     componentGroups.filter((group) => groups.includes(group)),
   );
-  // Every page of the Docs is in the tree once.
   const inTree = docsTree.flatMap((entry) => [
     ...entry.pages,
     ...entry.groups.flatMap(({ pages }) => pages),
@@ -171,12 +146,9 @@ test("the Docs' navigation is a tree of sections and groups, and each page's tra
   const trail = (path) => docsTrail(findPage(path)).map(({ label }) => label);
   assert.deepEqual(trail('docs/components/button'), ['Docs', 'Components', 'Actions', 'Button']);
   assert.deepEqual(trail('docs/foundations/spacing'), ['Docs', 'Foundations', 'Spacing & density']);
-  // A section that is one page of its name is left out.
   assert.deepEqual(trail('docs/changelog'), ['Docs', 'Changelog']);
-  // The home is the setup guide, where Docs leads nowhere.
   assert.deepEqual(trail('docs'), ['Docs', 'Get started', 'Install and set up']);
   assert.equal(docsTrail(findPage('docs'))[0].route, undefined);
-  // Docs leads to their home; the section and group, which the navigation lists, lead nowhere.
   assert.deepEqual(
     docsTrail(findPage('docs/components/button')).map(({ route }) => route),
     ['docs', undefined, undefined, 'docs/components/button'],

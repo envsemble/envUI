@@ -1,27 +1,19 @@
 @layer env.components {
-  /* Calendar: a month of days as round marks side by side in a grid, as wide as seven days, under the
-     month's name and, at its end, the month buttons. A day is a little less than a row height, so
-     the columns stand close around the small numbers. Today is in the accent color, the chosen day a
-     solid fill, and unavailable days take the disabled color, faded. Coarse pointers get touch-sized days. */
   .env-calendar {
     --_calendar-day: calc(var(--env-row-height) - 0.25rem);
+    --_calendar-gap-between-weeks: calc(var(--env-space-1) / 2);
     inline-size: calc(7 * var(--_calendar-day));
     max-inline-size: 100%;
     color: var(--env-color-fg-default);
     font: var(--env-type-body-sm);
   }
   .env-calendar-header {
-    /* The month buttons, side by side at the end, are a little smaller than a control, with their
-       arrows a little larger than a control's icon, so they read at the compact scale too and leave
-       the month's name room for one line. The header keeps a little room under it, before the
-       weekdays. */
     --env-control-height: calc(0.7 * var(--env-control-height-md));
     --env-control-icon-size: 1.25rem;
     min-block-size: calc(0.8 * var(--env-control-height-md));
     gap: calc(var(--env-space-1) / 2);
     margin-block-end: var(--env-space-1);
   }
-  /* The month's name leads the header, a little in from the edge, with both buttons after it. */
   .env-calendar-title {
     order: -1;
     flex: 1 1 auto;
@@ -31,7 +23,6 @@
     font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
     overflow-wrap: break-word;
   }
-  /* The month buttons point back and forward in the reading direction. */
   .env-calendar-header .env-icon:dir(rtl) {
     transform: scaleX(-1);
   }
@@ -50,10 +41,9 @@
     text-align: center;
     white-space: nowrap;
   }
-  /* Weeks stand a hair apart; the days of a week touch. */
   .env-calendar-day,
   .env-calendar-pad {
-    block-size: calc(var(--_calendar-day) + var(--env-space-1) / 2);
+    block-size: calc(var(--_calendar-day) + var(--_calendar-gap-between-weeks));
     padding: 0;
     text-align: center;
     vertical-align: middle;
@@ -71,12 +61,8 @@
     margin-inline: auto;
     border-radius: 50%;
     font-variant-numeric: tabular-nums;
-    /* The neutral hover fill eases in and out. The chosen fill and its white text come and go at
-       once, the fill as an image over the background color, which doesn't transition, so its text
-       is never white on a fill half gone and the choice never shows on two at once. */
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
-  /* Under the pointer a day takes the neutral fill, as a popup's rows do. */
   .env-calendar-day:hover:not([aria-disabled='true'], [aria-selected='true'])
     > .env-calendar-day-mark {
     background: var(--env-color-bg-neutral-muted);
@@ -105,8 +91,6 @@
   .env-calendar-day[aria-disabled='true'] {
     cursor: default;
   }
-  /* A day outside the range, before min or after max, takes the disabled text color and fades,
-     so it can't be taken for one that can be chosen; today keeps its accent color, faded. */
   .env-calendar-day[aria-disabled='true'] > .env-calendar-day-mark {
     opacity: var(--env-state-disabled-opacity);
   }
@@ -124,11 +108,7 @@
     }
   }
 
-  /* Forced colors: the system paints no fills or shadows, so the chosen day takes the system’s
-     selection colors, today is outlined, and unavailable days take the disabled color. */
   @media (forced-colors: active) {
-    /* Today's outline gives way to the focus ring when the day has focus, as it does when a
-       calendar opens on today. */
     .env-calendar-day[aria-current='date']:not(:focus-visible) > .env-calendar-day-mark {
       outline: 1px solid CanvasText;
       outline-offset: -1px;

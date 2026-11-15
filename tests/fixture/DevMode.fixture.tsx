@@ -6,14 +6,10 @@ export const mount = 'standalone';
 
 declare global {
   interface Window {
-    /** The fixture's dev mode, for the specs to open over the page with open(). */
     envuiDevMode?: DevModeHandle;
   }
 }
 
-// Layout nodes as the primitives and scaffolds render them, written out by hand: a scaffold that
-// switches arrangement at 37.5rem, a page, a row of identical cards, and a few faults for the
-// readout to find.
 const styles = `
 .dev-scaffold { container: env-scaffold / inline-size; }
 .dev-frame { display: grid; gap: 1rem; padding: 1rem; }
@@ -39,10 +35,6 @@ const styles = `
 .dev-off-window { position: fixed; inset: auto; left: -4rem; top: 2rem; margin: 0; inline-size: 10rem; }
 `;
 
-/**
- * A page for dev mode: its readout, its checks at other widths, and its button. `&root=<selector>`
- * gives dev mode a root of its own, as the docs' demo does; `window.envuiDevMode` is its handle.
- */
 export default function DevModeFixture() {
   const popover = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -63,7 +55,6 @@ export default function DevModeFixture() {
             <Button variant="ghost" onClick={() => popover.current?.showPopover()}>
               Open the popover
             </Button>
-            {/* A dialog sits in a positioner fixed over the window, not in a floating box. */}
             <Dialog title="Details" trigger={<Button variant="ghost">Open the dialog</Button>}>
               In a dialog
             </Dialog>
@@ -74,11 +65,9 @@ export default function DevModeFixture() {
                 Heading
               </h2>
             </div>
-            {/* overflow: clip makes no scroll container: the heading sticks in the document. */}
             <div className="dev-clip-only" data-env-layout="column" data-env-name="clip-only">
               <div className="dev-sticky" data-env-layout="row" data-env-name="sticks-on" />
             </div>
-            {/* A component painting through a primitive it renders carries its part class. */}
             <div className="env-fixture-panel" data-env-layout="column">
               Panel
             </div>
@@ -92,8 +81,6 @@ export default function DevModeFixture() {
             <div className="dev-painted" data-env-layout="row" data-env-name="painted">
               Painted
             </div>
-            {/* Set out past their places on purpose, so no overflow: a negative margin, a hit area
-                past its box, a turned box, and a handle across the row's edge. */}
             <div className="dev-outsets" data-env-layout="row" data-env-name="outsets">
               <span className="dev-outset-margin">Margin</span>
               <span className="dev-outset-turned" />

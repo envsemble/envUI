@@ -8,7 +8,6 @@ import { mount } from './support/Mount.tsx';
 
 const scaffold = (search = '') => mount(scaffoldFixture, { search });
 
-/** Which navigation form shows: the form whose slot has a box. */
 const shownForms = () =>
   [...document.querySelectorAll('[data-navigation-form]')]
     .filter((slot) => getComputedStyle(slot).display !== 'none')
@@ -16,7 +15,6 @@ const shownForms = () =>
 
 const element = (selector: string) => document.querySelector<HTMLElement>(selector)!;
 const isFocused = (locator: Locator) => expect.element(locator).toHaveFocus();
-/** The slot a navigation form's stand-in sits in. */
 const slotOf = (form: string) => page.getByTestId(`${form}-form`).element().parentElement!;
 
 let listening: AbortController | undefined;
@@ -25,16 +23,11 @@ afterEach(() => {
   listening = undefined;
 });
 
-/**
- * Mounts the scroll keys fixture once the scaffold listens for keys, and records what it takes:
- * whether the last key reached the window cancelled. Focus is on the document, as in a fresh window.
- */
 async function openScrollKeys() {
   mount(scrollKeys);
   await expect.poll(() => shown(page.getByRole('main'))).toBe(true);
   await nextFrames();
   window.focus();
-  // A window listener added once the scaffold listens hears whether it took a key.
   listening = new AbortController();
   window.addEventListener(
     'keydown',
@@ -47,10 +40,7 @@ async function openScrollKeys() {
 }
 
 describe('Scaffold body scroll, as its code loads', { tags: ['engines'] }, () => {
-  // First in the file: the frame keeps a module once it has loaded it, and every Scaffold whose
-  // body scrolls loads this one as it mounts.
-  test('a key pressed before the scrolling code has loaded scrolls once it has', async () => {
-    // The scaffold loads the code as the body mounts: hold it back, as a slow network would.
+  test('first in the file, as the module loads once: a key pressed before the scrolling code has loaded scrolls once it has', async () => {
     await commands.holdModule('scrollKeys');
     try {
       await commands.emulateMedia({ reducedMotion: 'reduce' });
@@ -84,25 +74,21 @@ describe('Scaffold', () => {
     ] as const) {
       await page.getByRole('button', { name: `Width ${width}` }).click();
       await expect.poll(shownForms).toEqual([form]);
-      // Only the form that shows is in the accessibility tree.
       expect(page.getByRole('navigation').elements()).toHaveLength(1);
       expect(shown(page.getByRole('navigation', { name: `Main ${form}` }))).toBe(true);
       const navigation = box(page.getByTestId(`${form}-form`));
       const content = box(body);
       const outer = box(frame);
       if (form === 'bar') {
-        // At the bottom, across the width, below the body.
         expect(navigation.y).toBeGreaterThanOrEqual(content.y + content.height - 1);
         expect(navigation.width).toBeCloseTo(outer.width - 2, 0);
       } else {
-        // At the start, the full height, flush with the window's edges and the body.
         expect(navigation.x).toBeLessThan(content.x);
         expect(navigation.x).toBeCloseTo(outer.x + 1, 0);
         expect(navigation.y).toBeCloseTo(outer.y + 1, 0);
         expect(navigation.x + navigation.width).toBeCloseTo(content.x, 0);
       }
     }
-    // The window stayed as wide all along: the forms follow the scaffold's width, not the window's.
     expect(innerWidth).toBeGreaterThanOrEqual(80 * 16);
   });
 
@@ -113,7 +99,6 @@ describe('Scaffold', () => {
     await expect.poll(shownForms).toEqual([]);
     await page.getByRole('button', { name: 'Width 80rem' }).click();
     await expect.poll(shownForms).toEqual(['rail']);
-    // Given only a drawer, it stands in at every width.
     scaffold('width=30rem&only=drawer');
     await expect.poll(shownForms).toEqual(['drawer']);
   });
@@ -122,7 +107,6 @@ describe('Scaffold', () => {
     scaffold('width=60rem');
     await expect.element(page.getByRole('banner')).toHaveTextContent('Inbox');
     await expect.element(page.getByRole('main')).toHaveAttribute('id', 'main');
-    // The scaffold's first tab stops are the skip links, hidden until focused.
     (page.getByRole('button', { name: 'Width 80rem' }).element() as HTMLElement).focus();
     await keyboard.press('Tab');
     const toContent = page.getByRole('link', { name: 'Skip to content' });
@@ -130,12 +114,10 @@ describe('Scaffold', () => {
     expect(box(toContent).width).toBeGreaterThan(20);
     await keyboard.press('Tab');
     await isFocused(page.getByRole('link', { name: 'Skip to navigation' }));
-    // Skipping to the navigation focuses the form that shows, and Tab goes on inside it.
     await keyboard.press('Enter');
     await expect.poll(() => document.activeElement).toBe(slotOf('drawer'));
     await keyboard.press('Tab');
     await isFocused(page.getByTestId('drawer-form').getByRole('button', { name: 'Inbox' }));
-    // Skipping to the content focuses the body without scrolling it.
     (toContent.element() as HTMLElement).focus();
     await keyboard.press('Enter');
     await isFocused(page.getByRole('main'));
@@ -143,8 +125,6 @@ describe('Scaffold', () => {
     scaffold('landmarks=off');
     expect(page.getByRole('banner').elements()).toHaveLength(0);
     expect(page.getByRole('main').elements()).toHaveLength(0);
-    // Without landmarks, as a preview inside another page, it has no skip links, and its body an
-    // id of its own.
     expect(document.querySelectorAll('.env-scaffold-skip-link')).toHaveLength(0);
     const id = element('.env-scaffold-body').id;
     expect(id).toBeTruthy();
@@ -168,10 +148,8 @@ describe('Scaffold', () => {
     const frame = page.getByTestId('frame').element() as HTMLElement;
     const inbox = page.getByTestId('rail-form').getByRole('button', { name: 'Inbox' });
     (inbox.element() as HTMLElement).focus();
-    // Narrower, the bar shows instead of the rail: focus goes to its current destination.
     frame.style.inlineSize = '30rem';
     await isFocused(page.getByTestId('bar-form').getByRole('button', { name: 'Settings' }));
-    // Focus elsewhere stays where it is as the form changes.
     const search = page.getByRole('button', { name: 'Search' });
     (search.element() as HTMLElement).focus();
     frame.style.inlineSize = '60rem';
@@ -187,7 +165,6 @@ describe('Scaffold', () => {
     body.scrollTo(0, 400);
     await expect.poll(() => body.scrollTop).toBe(400);
     expect(box(bar)).toEqual(before);
-    // The document itself does not scroll.
     expect(document.scrollingElement!.scrollTop).toBe(0);
     expect({ overflowY: css(body, 'overflow-y'), gutter: css(body, 'scrollbar-gutter') }).toEqual({
       overflowY: 'auto',
@@ -210,7 +187,6 @@ describe('Scaffold', () => {
   });
 });
 
-/** The scroll position of an element once it has stayed still for a quarter of a second. */
 function settledTop(scroller: Element) {
   return new Promise<number>((resolve) => {
     let last = scroller.scrollTop;
@@ -225,19 +201,16 @@ function settledTop(scroller: Element) {
   });
 }
 
-/** Holds a key: its first press and then repeats, as a held key sends them. */
 async function hold(key: string, repeats: number) {
   await keyboard.down(key);
   for (let repeat = 0; repeat < repeats; repeat++) await keyboard.down(key);
   await keyboard.up(key);
 }
 
-/** Presses a key several times, faster than a smooth scroll settles. */
 async function pressQuickly(key: string, times: number) {
   for (let press = 0; press < times; press++) await keyboard.press(key);
 }
 
-/** Scrolls the document once the page has rendered, and waits until it has. */
 async function scrollDocument(top: number) {
   await expect.element(page.getByTestId('page-start')).toBeInTheDocument();
   await expect
@@ -257,16 +230,13 @@ describe('Scaffold document scroll', { tags: ['engines'] }, () => {
     const drawer = slotOf('drawer');
     const header = element('.env-page-header');
     expect(css(body, 'overflow-y')).toBe('visible');
-    // The Scaffold is at least as tall as the window, and grows with its content.
     expect(box(element('.env-scaffold')).height).toBeGreaterThan(700);
     await scrollDocument(2000);
     const top = box(bar);
     expect(top.y).toBeCloseTo(0, 0);
-    // The drawer stays in view, as tall as the window.
     const side = box(drawer);
     expect(side.y).toBeCloseTo(0, 0);
     expect(side.height).toBeCloseTo(700, 0);
-    // A sticky page header sits under the top bar's region, its hairline included.
     const region = box(element('.env-scaffold-top-bar'));
     expect(box(header).y).toBeCloseTo(region.y + region.height, 0);
   });
@@ -288,16 +258,11 @@ describe('Scaffold document scroll', { tags: ['engines'] }, () => {
 });
 
 describe('Scaffold document scroll, focus', { tags: ['engines'] }, () => {
-  /**
-   * Where the focused element sits against the top bar, the sticky header and the bar. Firefox
-   * moves focus without scrolling while only the edge of the element, under about a fifth of it,
-   * is behind a bar, counting it in view; Chromium and WebKit scroll it clear. So in Firefox an
-   * element is clear with up to a quarter of it behind a bar.
-   */
   const placement = () => {
     const active = document.activeElement!;
     const at = active.getBoundingClientRect();
-    const slack = server.browser === 'firefox' ? at.height / 4 : 0.5;
+    const firefoxCountsPartlyCoveredAsInView = server.browser === 'firefox';
+    const slack = firefoxCountsPartlyCoveredAsInView ? at.height / 4 : 0.5;
     const top = element('.env-scaffold-top-bar').getBoundingClientRect();
     const header = element('.env-page-header').getBoundingClientRect();
     const slot = document.querySelector('.env-scaffold-bar');
@@ -322,7 +287,6 @@ describe('Scaffold document scroll, focus', { tags: ['engines'] }, () => {
       (
         page.getByRole('button', { name: 'Message 1', exact: true }).element() as HTMLElement
       ).focus();
-      // The document scrolls, and its scroll padding is the bars' heights.
       const root = document.documentElement;
       const topBar = box(element('.env-scaffold-top-bar'));
       expect(Number.parseFloat(css(root, 'scroll-padding-top'))).toBeCloseTo(topBar.height, 0);
@@ -338,7 +302,6 @@ describe('Scaffold document scroll, focus', { tags: ['engines'] }, () => {
           .poll(placement)
           .toEqual({ name: `Message ${step}`, clearOfTop: true, clearOfBottom: true });
       }
-      // The document scrolled to keep focus in view.
       expect(document.scrollingElement!.scrollTop).toBeGreaterThan(0);
       for (let step = 39; step >= 1; step--) {
         await keyboard.press('Shift+Tab');
@@ -351,7 +314,6 @@ describe('Scaffold document scroll, focus', { tags: ['engines'] }, () => {
 
 describe('Scaffold body scroll', { tags: ['engines'] }, () => {
   test('the keyboard scrolls the body as it would the document', async () => {
-    // Without motion the scroll positions are exact.
     await commands.emulateMedia({ reducedMotion: 'reduce' });
     await openScrollKeys();
     const content = element('.env-scaffold-body');
@@ -360,7 +322,6 @@ describe('Scaffold body scroll', { tags: ['engines'] }, () => {
     const expectTop = (top: number) =>
       expect.poll(() => Math.abs(content.scrollTop - top)).toBeLessThanOrEqual(1.5);
 
-    // A fresh window: focus is on the document.
     await keyboard.press('PageDown');
     await expectTop(step);
     await keyboard.press('ArrowDown');
@@ -376,7 +337,6 @@ describe('Scaffold body scroll', { tags: ['engines'] }, () => {
     await keyboard.press('Home');
     await expectTop(0);
 
-    // From a destination in the navigation: the page keys scroll, while Space activates it.
     (
       page
         .getByRole('navigation', { name: 'Keys navigation' })
@@ -391,7 +351,6 @@ describe('Scaffold body scroll', { tags: ['engines'] }, () => {
     await nextFrames();
     expect(content.scrollTop).toBe(0);
 
-    // Widgets that use the keys keep them, such as a menubar trigger.
     (page.getByRole('menuitem', { name: 'File', exact: true }).element() as HTMLElement).focus();
     await keyboard.press('PageDown');
     await nextFrames();
@@ -422,15 +381,10 @@ describe('Scaffold body scroll', { tags: ['engines'] }, () => {
       }
       return result as Distances;
     }
-    // With focus in the body the browser scrolls it; from the document the scaffold does.
     const native = await distances(() => page.getByTestId('page-start').element().focus());
     const emulated = await distances(() => (document.activeElement as HTMLElement | null)?.blur());
-    // Engines step by different amounts, so a single press only comes close to the browser's own.
-    // An arrow key varies most: the scaffold steps 40px, as Chromium does, where WebKit on Linux
-    // steps 67px.
     expect(Math.abs(emulated.page - native.page)).toBeLessThanOrEqual(native.page / 3);
     expect(Math.abs(emulated.line - native.line)).toBeLessThanOrEqual(native.line / 2);
-    // Counted in single presses, quick presses add up and held keys repeat as in the browser.
     for (const [name, unit] of [
       ['quickPages', 'page'],
       ['heldPage', 'page'],
@@ -445,7 +399,6 @@ describe('Scaffold body scroll', { tags: ['engines'] }, () => {
     const content = element('.env-scaffold-body');
     const notes = page.getByTestId('sidebar-notes').element();
 
-    // A click in the page focuses the body, which the browser then scrolls.
     await page.getByText('Paragraph 2', { exact: true }).click();
     await expect.poll(() => document.activeElement).toBe(content);
     await keyboard.press('PageDown');
@@ -455,7 +408,6 @@ describe('Scaffold body scroll', { tags: ['engines'] }, () => {
     expect(taken()).toBe('false');
     const scrolled = await settledTop(content);
 
-    // With focus on the document, the browser scrolls the list that the pointer last pressed.
     await page.getByTestId('sidebar-notes').getByText('Note 3', { exact: true }).click();
     await expect.poll(() => document.activeElement).toBe(document.body);
     await keyboard.press('PageDown');
@@ -463,7 +415,6 @@ describe('Scaffold body scroll', { tags: ['engines'] }, () => {
     await expect.poll(() => notes.scrollTop).toBeGreaterThan(0);
     expect(await settledTop(content)).toBe(scrolled);
 
-    // After a press on the title, which does not scroll, the scaffold scrolls the body.
     await page.elementLocator(element('.env-top-bar-title')).click();
     await expect.poll(() => document.activeElement).toBe(document.body);
     await keyboard.press('PageDown');
@@ -480,25 +431,20 @@ describe('Scaffold body scroll', { tags: ['engines'] }, () => {
       expect
         .poll(async () => Math.abs((await settledTop(content)) - expected))
         .toBeLessThanOrEqual(1.5);
-    // Links follow Enter only, so Space scrolls from them as it would the document.
     (page.getByRole('link', { name: 'Settings' }).element() as HTMLElement).focus();
     await keyboard.press('Space');
     await expectTop(step);
-    // A field in an open shadow root keeps Space and the page keys.
     const field = page.getByRole('textbox', { name: 'Quick note' });
     (field.element() as HTMLElement).focus();
     await keyboard.type('a b');
     await keyboard.press('PageDown');
     await expect.element(field).toHaveValue('a b');
     await expectTop(step);
-    // The path of a key typed in a closed shadow root ends at its host, so the scaffold cannot
-    // tell a field from a button there and leaves Space and Home to it.
     element('fixture-closed-field').focus();
     await keyboard.type('c d');
     expect(taken()).toBe('false');
     await keyboard.press('Home');
     expect(taken()).toBe('false');
-    // Media controls use the keys too.
     (page.getByLabelText('Recording').element() as HTMLElement).focus();
     for (const key of ['Space', 'Home', 'ArrowDown']) {
       await keyboard.press(key);

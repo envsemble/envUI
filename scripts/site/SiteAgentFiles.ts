@@ -1,11 +1,3 @@
-// The files the hosted site serves to coding agents, at its root: SKILL.md, the setup skill that the
-// Docs' home gives people a prompt for, and llms.txt, in the llmstxt.org format. Neither ships in
-// the package, whose own docs/ agents read once envUI is installed.
-//
-// SKILL.md is apps/site/hosting/SKILL.md with the version of @envsemble/envui in place of
-// {{version}}; llms.txt is a signpost, not another index: the Docs and the skill say the rest.
-// agentFilesPlugin, in the site's Vite config, serves both while developing and writes them into
-// dist/site when it builds.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { Plugin } from 'vite';
@@ -14,10 +6,8 @@ import { repositoryRoot } from '../RepositoryPaths.ts';
 
 export { libraryVersion };
 
-/** Where the site is hosted. */
 export const siteOrigin = 'https://envui.envsemble.com';
 const skillTemplateFile = resolve(repositoryRoot, 'apps/site/hosting/SKILL.md');
-/** The setup skill for a version of envUI. */
 export function renderSkill({
   version = libraryVersion(),
   template,
@@ -26,11 +16,6 @@ export function renderSkill({
   return withLibraryVersion(source, version);
 }
 
-/**
- * The site's llms.txt, for an agent that arrives at the site rather than at a project: what envUI
- * is, and where it reads on, the setup skill to install envUI, then the documentation that ships
- * with the installed version. It lists no pages, so nothing in it can fall out of step with them.
- */
 export function renderLlmsText() {
   return [
     '# envUI',
@@ -43,25 +28,21 @@ export function renderLlmsText() {
   ].join('\n');
 }
 
-/** The files the site serves at its root, by name. */
 function siteAgentFiles() {
   return { 'SKILL.md': renderSkill(), 'llms.txt': renderLlmsText() };
 }
 
-/** The type each file for coding agents is served as. */
 const agentFileTypes = {
   'SKILL.md': 'text/markdown; charset=utf-8',
   'llms.txt': 'text/plain; charset=utf-8',
 };
 
-/** The plugin that serves the files for coding agents at the site's root and writes them into its build. */
 export const agentFilesPlugin = (): Plugin => ({
   name: 'envui-agent-files',
   configureServer(server) {
     server.middlewares.use((request, response, next) => {
       const name = request.url?.split('?')[0]?.slice(1) ?? '';
       if (!Object.hasOwn(agentFileTypes, name)) return next();
-      // Object.hasOwn doesn't narrow the name to one of the files.
       const file = name as keyof typeof agentFileTypes;
       response.setHeader('Content-Type', agentFileTypes[file]);
       response.end(siteAgentFiles()[file]);

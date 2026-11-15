@@ -62,5 +62,4 @@ export function Text<RenderedElement extends HTMLElement = HTMLParagraphElement>
   });
 }
 
-// A HoverCard or Tooltip underlines a Text trigger that holds text (see hoverDetail).
 markText(Text);

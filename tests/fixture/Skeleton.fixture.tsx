@@ -64,22 +64,16 @@ const projects: Project[] = [
   },
 ];
 
-/** Destinations over placeholder items: an empty label, and an icon of their kind. */
 const destinations = placeholders<{ label: string }>(3).map((destination) => ({
   label: destination.label ?? '',
   icon: <IconFolder />,
   href: `#${destination.id}`,
 }));
 
-/** A component of the application's own that reads whether it is in a skeleton. */
 function Reader() {
   return <span data-testid="reader">{useSkeleton() ? 'in a skeleton' : 'loaded'}</span>;
 }
 
-/**
- * Surfaces as skeletons, over placeholder items and over real content; a loaded copy of the same
- * surfaces for the shift check; popups that open as skeletons.
- */
 export default function SkeletonFixture() {
   const [loaded, setLoaded] = useState(false);
   const items = loaded ? projects : undefined;
@@ -94,13 +88,11 @@ export default function SkeletonFixture() {
         {loaded ? 'Unload' : 'Load'}
       </Button>
 
-      {/* Placeholder items in a surface that is a skeleton until they load. */}
       <Surface skeleton={!items} data-testid="projects" background="muted" padding={4}>
         <Column gap={3}>
           <Text variant="title" render={<h2 />}>
             Projects
           </Text>
-          {/* Badges, a label and counts in each variant, are filled shapes in a skeleton. */}
           <Row gap={2}>
             <Badge data-testid="badge-skeleton">Draft</Badge>
             <Badge count={3} tone="primary" variant="solid" data-testid="count-solid-skeleton" />
@@ -147,15 +139,12 @@ export default function SkeletonFixture() {
             </Table.Body>
           </Table.Root>
           <div data-testid="raw">Raw text in a div</div>
-          {/* Content laid out as a block of its own in the line draws its own bar. */}
           <Text data-testid="inline-blocks">
             Press <Kbd data-testid="kbd">K</Kbd> to open <AnimatedNumber value={42} /> projects.
           </Text>
-          {/* Running text over several lines: a bar on each line. */}
           <Text data-testid="multi-line" style={{ inlineSize: '12rem' }}>
             A paragraph long enough to wrap onto several lines in its narrow column.
           </Text>
-          {/* A skeleton inside a skeleton, and a list that holds no wrapper: neither is heard. */}
           <Card skeleton data-testid="nested-card" title="Nested" />
           <List.Root skeleton aria-label="Nested owners" data-testid="nested-list">
             <List.Item label="Sam Lee" />
@@ -163,8 +152,6 @@ export default function SkeletonFixture() {
         </Column>
       </Surface>
 
-      {/* The same content as a skeleton and loaded, whose children take the same boxes: raw
-          text elements in a column, and lists on a muted surface. */}
       {[true, false].map((skeleton) => (
         <Grid key={String(skeleton)} columns={2} gap={4}>
           <Surface
@@ -173,7 +160,6 @@ export default function SkeletonFixture() {
             render={<Column gap={2} />}
           >
             <p>A raw paragraph.</p>
-            {/* Elements with margins of the browser's own, which the column takes away. */}
             <h3>A raw heading</h3>
             <blockquote>A raw quotation.</blockquote>
           </Surface>
@@ -192,7 +178,6 @@ export default function SkeletonFixture() {
         </Grid>
       ))}
 
-      {/* A row as a skeleton on its own: its start slot is inert with the rest. */}
       <List.Root aria-label="Rows">
         <List.Item
           skeleton
@@ -202,20 +187,16 @@ export default function SkeletonFixture() {
         />
       </List.Root>
 
-      {/* Right to left: the bars start at the right. */}
       <Surface skeleton dir="rtl" data-testid="rtl" padding={4}>
         <Text variant="title" render={<h3 />} data-testid="rtl-title" />
       </Surface>
 
-      {/* Skeleton roots that scroll, as a wide table's region or a tall dialog: the bars past the
-          first screen are drawn too. */}
       {(['ltr', 'rtl'] as const).map((dir) => (
         <Surface
           key={dir}
           skeleton
           dir={dir}
           data-testid={`scrolling-${dir}`}
-          // Not a tab stop, as a scroller would be: the skeletons above it are skipped by Tab.
           tabIndex={-1}
           padding={2}
           style={{ inlineSize: '10rem', blockSize: '4rem', overflow: 'auto' }}
@@ -231,19 +212,16 @@ export default function SkeletonFixture() {
         </Surface>
       ))}
 
-      {/* A list skeleton on its own: inert, with a visually hidden busy status beside it. */}
       <List.Root skeleton aria-label="Owners loading" data-testid="list-skeleton">
         {placeholders<Project>(2).map((project) => (
           <List.Item key={project.id} label={project.owner} />
         ))}
       </List.Root>
 
-      {/* Navigation whose destinations are loading: bars and icon shapes. */}
       <NavigationDrawer skeleton data-testid="drawer" destinations={destinations} />
       <NavigationRail skeleton data-testid="rail" destinations={destinations} />
       <NavigationBar skeleton data-testid="bar" destinations={destinations} />
 
-      {/* The same content loaded, which the shift check toggles. */}
       <Surface data-testid="loaded" background="muted" padding={4}>
         <Column gap={3}>
           <Text variant="title" render={<h2 />}>
@@ -268,10 +246,8 @@ export default function SkeletonFixture() {
         </Column>
       </Surface>
 
-      {/* A part that changes size in a skeleton, which the shift check reports. */}
       <Surface data-testid="shifting" padding={4}>
         <Text className="fixture-shifts">Grows in a skeleton</Text>
-        {/* Media without an aspect ratio, which has no size until it loads. */}
         <img alt="" data-testid="no-ratio" />
       </Surface>
       <style>{`[data-env-skeleton] .fixture-shifts { padding-block: 1rem; }`}</style>

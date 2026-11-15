@@ -7,6 +7,20 @@ import type { TreeMotion } from './treeModel.js';
 import '../../styles/Base.css';
 import '../../styles/Tree.css';
 
+export interface TreeRowProps {
+  item: TreeItem;
+  id: string;
+  /** The row's position among its siblings, and their count. */
+  position: number | undefined;
+  setSize: number | undefined;
+  selected: boolean;
+  highlighted: boolean;
+  /** The row arrives with new items and fades in from its starting style. */
+  arriving: boolean;
+  top: number;
+  leaving: boolean;
+}
+
 /**
  * A tree's row, placed top pixels down its parent. A leaving row, in a group that collapses, is only
  * shown: it has no id, position or highlight.
@@ -21,19 +35,7 @@ export function TreeRow({
   arriving,
   top,
   leaving,
-}: {
-  item: TreeItem;
-  id: string;
-  /** The row's position among its siblings, and their count. */
-  position: number | undefined;
-  setSize: number | undefined;
-  selected: boolean;
-  highlighted: boolean;
-  /** The row arrives with new items and fades in from its starting style. */
-  arriving: boolean;
-  top: number;
-  leaving: boolean;
-}) {
+}: TreeRowProps) {
   return (
     <div
       id={leaving ? undefined : id}
@@ -82,6 +84,19 @@ export function TreeRow({
   );
 }
 
+export interface PlaceRowsOptions<Item extends TreeItem> {
+  items: readonly Item[];
+  /** The indexes of the rows in the document, in order. */
+  indexes: readonly number[];
+  motion: TreeMotion<Item> | null;
+  /** Whether the motion moves the rows to where they go, after a render where they were. */
+  moving: boolean;
+  rowHeight: number;
+  inView: (index: number) => boolean;
+  /** A row at its index, placed top pixels down its parent; a leaving row is only shown. */
+  row: (item: Item, index: number, top: number, leaving?: boolean) => ReactNode;
+}
+
 /**
  * The rows in the document, each placed at its index. While a row expands or collapses, its rows
  * sit in a group that grows or shrinks from the row's end, and the rows below follow the group's
@@ -95,18 +110,7 @@ export function placeRows<Item extends TreeItem>({
   rowHeight,
   inView,
   row,
-}: {
-  items: readonly Item[];
-  /** The indexes of the rows in the document, in order. */
-  indexes: readonly number[];
-  motion: TreeMotion<Item> | null;
-  /** Whether the motion moves the rows to where they go, after a render where they were. */
-  moving: boolean;
-  rowHeight: number;
-  inView: (index: number) => boolean;
-  /** A row at its index, placed top pixels down its parent; a leaving row is only shown. */
-  row: (item: Item, index: number, top: number, leaving?: boolean) => ReactNode;
-}): { rows: ReactNode; shift: number } {
+}: PlaceRowsOptions<Item>): { rows: ReactNode; shift: number } {
   const placed = (index: number) => row(items[index], index, index * rowHeight);
   if (!motion) return { rows: indexes.map(placed), shift: 0 };
   const { kind, start, rows: groupRows } = motion;

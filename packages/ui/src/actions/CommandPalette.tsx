@@ -141,9 +141,9 @@ export interface CommandPaletteProps extends Omit<
 
 /**
  * A quick-open dialog near the top of the window: a search field over a list of options the
- * application filters and ranks, built on Base UI's Autocomplete inside a dialog. The arrow keys
- * move the highlight while typing continues, and the number of results is announced as it
- * changes. className, style, ref and data attributes go to the dialog's surface.
+ * application filters and ranks. The arrow keys move the highlight while typing continues, and the
+ * number of results is announced as it changes. className, style, ref and data attributes go to
+ * the dialog's surface.
  */
 export function CommandPalette({
   open,
@@ -174,8 +174,8 @@ export function CommandPalette({
   const searchId = useId();
   const list = useRef<HTMLDivElement>(null);
   const query = inputValue.trim();
-  // Until people type, the default items, where there are any, show in place of the results.
-  const items = query === '' && suggestedItems ? suggestedItems : results;
+  const showSuggestions = query === '' && suggestedItems !== undefined;
+  const items = showSuggestions ? suggestedItems : results;
   const sections = sectionsOf(items);
   const grouped = sections.some((section) => section.label !== undefined);
   const empty = items.length === 0;
@@ -219,17 +219,14 @@ export function CommandPalette({
                   itemToStringValue={(item: CommandPaletteItem) => textOf(item)}
                   value={inputValue}
                   onValueChange={(next, details) => {
-                    // Choosing an option acts on it; the search text stays what people typed.
-                    if (details.reason === 'item-press') return;
+                    const optionChosen = details.reason === 'item-press';
+                    if (optionChosen) return;
                     onInputValueChange(next);
                   }}
                   onItemHighlighted={(item: CommandPaletteItem | undefined, details) =>
                     keys.onHighlight(item, details.index)
                   }
                 >
-                  {/* The search is a ghost TextField's frame around Autocomplete's input, kept
-                    solid on the frosted palette (CommandPalette.css). Under a coarse pointer, where
-                    there is no Esc, a close button follows it; elsewhere it doesn't show. */}
                   <Row align="center" gap={2} className="env-command-palette-header">
                     <FieldFrame
                       id={searchId}

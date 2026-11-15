@@ -1,14 +1,5 @@
 @layer env.components {
-  /* Keyboard keys: small key caps, a faint fill with a barely darker edge, heavier at the bottom. Fill
-     and edge are both the text color, translucent, so a key looks the same on any surface it sits on,
-     the page, a pane or a card; at high contrast the edge takes the border color. Their label sits on
-     the surrounding text's baseline, so keys line up in prose whatever glyphs they show. A container
-     that shows smaller or quieter keys, such as a menu's shortcuts, sets the custom properties below
-     on its own element: --_kbd-size, -padding-inline, -radius, -fg and -font-size for the keys,
-     and --_kbd-separator-padding-inline, -fg and -font for the + between them; a container that
-     draws keys as chips with no edge sets --_kbd-border-end-width to the other sides' width. */
   .env-kbd {
-    /* The key's own sizes, which the hooks above replace. */
     --_kbd-default-size: 1.375rem;
     --_kbd-default-padding-inline: 0.3125rem;
     --_kbd-default-radius: 0.3125rem;
@@ -20,7 +11,6 @@
     align-items: center;
     justify-content: center;
     padding-inline: var(--_kbd-padding-inline, var(--_kbd-default-padding-inline));
-    /* Hooks: a container sets --_kbd-fg, --_kbd-bg and --_kbd-border for its own fill. */
     --_kbd-high-contrast-edge: var(--_theme-high-contrast) var(--env-color-border-default);
     border: 1px solid
       var(
@@ -60,8 +50,6 @@
     font: var(--_kbd-separator-font, var(--env-type-body-sm));
   }
 
-  /* In a skeleton, a key keeps its cap and its label is a bar. A key is laid out as a block of its own
-     in the line, which the skeleton's line through text doesn't reach, so it draws its own. */
   [data-env-skeleton] .env-kbd {
     text-decoration: line-through var(--_skeleton-color);
     text-decoration-thickness: 0.8em;

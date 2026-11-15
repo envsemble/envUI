@@ -92,8 +92,7 @@ export type CopyButtonProps = CopyButtonBaseProps &
       }
   );
 
-/** How long the result of a press shows: the check, the tooltip and the announcement. */
-const feedbackDuration = 2_000;
+const resultDuration = 2_000;
 
 /**
  * Copies text to the clipboard. Icon-only by default, with its name in a tooltip, or a labelled
@@ -117,25 +116,21 @@ export function CopyButton({
   'aria-label': label,
   ...props
 }: CopyButtonProps) {
-  // A label prop wins over the provider's messages, which win over the English defaults.
   const messages = useMessages('copyButton', copyButtonMessages);
   const copiedLabel = ownCopiedLabel ?? messages.copied;
   const failedLabel = ownFailedLabel ?? messages.failed;
   const copyLabel = ownCopyLabel ?? messages.copy;
   const emphasis = useButtonEmphasis({ variant, tone, fallbackVariant: 'secondary' });
-  // Inside an application's own Tooltip, that tooltip describes the button.
-  const nested = useContext(TooltipNestingContext);
-  // From the press until the result shows, copying; waiting while a promised text is on its way.
-  // Every press shows and announces its result again, also the same result twice in a row.
+  const insideApplicationTooltip = useContext(TooltipNestingContext);
   const { copy, status, round, copying, waiting, reset } = useCopy({
     write,
     onCopied,
-    resetAfter: feedbackDuration,
+    resetAfter: resultDuration,
     fieldClassName: 'env-copy-button-field',
   });
   const result = status === 'idle' ? null : { copied: status === 'copied', count: round };
   const [hovered, setHovered] = useState(false);
-  const shownText = useRef('');
+  const lastTooltipText = useRef('');
 
   function press(event: MouseEvent<HTMLButtonElement>) {
     onClick?.(event);
@@ -143,18 +138,14 @@ export function CopyButton({
     void copy(value, event.currentTarget);
   }
 
-  // A label without words, such as an empty string, leaves the button icon-only, as it looks.
   const iconOnly = !hasWords(children);
-  // The button always has a name: its own, its label's words, or else copyLabel.
   const ownName = label?.trim() ? label : undefined;
   const named = ownName !== undefined || props['aria-labelledby'] != null || !iconOnly;
   const name = named ? ownName : copyLabel;
-  // A disabled button takes no pointer or focus events: around it, a target shows its name.
   const disabled = Boolean(props.disabled);
   const feedback = result ? (result.copied ? copiedLabel : failedLabel) : undefined;
   const tooltip = feedback ?? (iconOnly ? name : undefined);
-  // The last text stays in the closing tooltip while it fades out.
-  if (tooltip) shownText.current = tooltip;
+  if (tooltip) lastTooltipText.current = tooltip;
   const symbol = result?.copied ? <IconCheck /> : (icon ?? <IconContentCopy />);
   const shared = {
     ...props,
@@ -168,7 +159,6 @@ export function CopyButton({
   };
   const button = iconOnly ? (
     <ButtonBase
-      // ButtonBaseProps is a union by iconOnly, which the shared props alone do not pick.
       {...({
         ...shared,
         fallbackVariant: 'primary',
@@ -179,7 +169,6 @@ export function CopyButton({
     />
   ) : (
     <ButtonBase
-      // ButtonBaseProps is a union by iconOnly, which the shared props alone do not pick.
       {...({
         ...shared,
         fallbackVariant: 'primary',
@@ -189,20 +178,16 @@ export function CopyButton({
       } as ButtonBaseProps)}
     />
   );
-  const hoverTarget = iconOnly && disabled;
+  const disabledButtonNeedsHoverTarget = iconOnly && disabled;
+  const tooltipOpen = result !== null || (iconOnly && (hovered || copying));
   return (
     <>
-      {nested ? (
+      {insideApplicationTooltip ? (
         button
       ) : (
         <BaseTooltip.Root
-          // A control that becomes enabled or disabled changes the trigger element; a fresh
-          // tooltip listens to the new one, as Tooltip does.
-          key={hoverTarget ? 'disabled' : 'enabled'}
-          // A press ends the hover, as on any tooltip, but the name stays until the result
-          // replaces it. The result shows whether or not the pointer is still on the button,
-          // until it ends or Escape hides it.
-          open={result !== null || (iconOnly && (hovered || copying))}
+          key={disabledButtonNeedsHoverTarget ? 'hover-target' : 'button'}
+          open={tooltipOpen}
           onOpenChange={(open, details) => {
             setHovered(open);
             if (!open && details.reason === 'escape-key') reset();
@@ -211,15 +196,18 @@ export function CopyButton({
           <BaseTooltip.Trigger
             delay={tooltipDelay}
             render={
-              hoverTarget ? <span className="env-tooltip-disabled-target" tabIndex={0} /> : button
+              disabledButtonNeedsHoverTarget ? (
+                <span className="env-tooltip-disabled-target" tabIndex={0} />
+              ) : (
+                button
+              )
             }
           >
-            {hoverTarget ? button : undefined}
+            {disabledButtonNeedsHoverTarget ? button : undefined}
           </BaseTooltip.Trigger>
-          <TooltipPopup content={shownText.current} side="top" />
+          <TooltipPopup content={lastTooltipText.current} side="top" />
         </BaseTooltip.Root>
       )}
-      {/* A tooltip is not announced, so the result is, from a visually hidden status. */}
       <span className="env-copy-button-status" role="status">
         {result && <span key={result.count}>{feedback}</span>}
       </span>
@@ -227,10 +215,6 @@ export function CopyButton({
   );
 }
 
-/**
- * Whether a label has words: text other than white space, or an element, which may render some.
- * Empty text, and a list of nothing else, have none.
- */
 function hasWords(label: ReactNode): boolean {
   if (label === null || label === undefined || typeof label === 'boolean') return false;
   if (typeof label === 'string') return label.trim() !== '';

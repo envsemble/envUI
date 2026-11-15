@@ -88,20 +88,12 @@ interface Drag {
   pointerId: number;
   start: number;
   startValue: number;
-  /** The largest size for this drag: max, or less where the room allows less. */
-  max: number;
-  /** Size units per pixel of pointer movement, with the axis's and the direction's sign. */
-  scale: number;
+  maxForThisDrag: number;
+  signedUnitsPerPixel: number;
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-/**
- * Size units per pixel of pointer movement along the axis, read as a drag starts: a rem follows the
- * root's font size and a percent the extent of the element it is a share of. Pointer movement is in
- * screen pixels, and a scaled ancestor, as in a zoomed preview, draws the layout smaller or larger
- * than it is.
- */
 function unitsPerPixel(
   handle: HTMLElement,
   container: HTMLElement | null,
@@ -144,50 +136,44 @@ export function useResize({
 }: ResizeOptions): {
   handleProps: ResizeHandleElementProps;
   dragging: boolean;
-  /** Reads the room around the handle again, which the largest value it reports follows. */
-  measure: (handle: HTMLElement) => void;
+  measureRoomTheLargestValueFollows: (handle: HTMLElement) => void;
 } {
   const provided = useEnvUI().dir;
   const drag = useRef<Drag | null>(null);
   const [dragging, setDragging] = useState(false);
-  // A handle disabled or taken away while dragged ends the drag there, without a new size.
-  useEffect(() => {
-    if (!disabled || !drag.current) return;
-    drag.current = null;
-    setDragging(false);
-  }, [disabled]);
+  useEffect(
+    function endDragWithoutNewSizeOnceDisabled() {
+      if (!disabled || !drag.current) return;
+      drag.current = null;
+      setDragging(false);
+    },
+    [disabled],
+  );
 
-  /** +1 where the size grows toward the end of the axis on screen, -1 where toward its start. */
-  const sign = (element: Element) => {
+  const growthSign = (element: Element) => {
     const rtl = axis === 'inline' && (provided ?? getComputedStyle(element).direction) === 'rtl';
     return (rtl ? -1 : 1) * (reverse ? -1 : 1);
   };
   const change = (next: number, committed: boolean, upper = max) =>
     onChange(clamp(next, min, upper), { committed });
-  /** The largest size the room allows now, never under min nor over max. */
-  const upperAt = (handle: HTMLElement) => {
+  const largestRoomAllows = (handle: HTMLElement) => {
     const allowed = room?.(handle);
     return allowed !== undefined && Number.isFinite(allowed) ? clamp(allowed, min, max) : max;
   };
-  // The largest size the room allowed when last read, which the handle reports as its largest
-  // value: a size beyond it shows at it.
-  const [roomMax, setRoomMax] = useState<number>();
+  const [roomMaxWhenLastRead, setRoomMax] = useState<number>();
   const measure = (handle: HTMLElement) => {
     if (!room) return;
-    const upper = upperAt(handle);
+    const upper = largestRoomAllows(handle);
     setRoomMax((previous) => (previous === upper ? previous : upper));
   };
 
-  // Where the pointer is on the content, so a box that scrolls around the handle, the page among
-  // them, moves the drag as the pointer's own move would, never as far again.
-  const position = (event: ReactPointerEvent<HTMLElement>) =>
+  const pointerOnScrolledContent = (event: ReactPointerEvent<HTMLElement>) =>
     axis === 'inline'
       ? event.clientX + scrolledBy(event.currentTarget, 'x')
       : event.clientY + scrolledBy(event.currentTarget, 'y');
 
   const onPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
     if (disabled || event.button !== 0 || !event.isPrimary) return;
-    // Dragging selects no text and leaves focus where it is.
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
     const perPixel = unitsPerPixel(
@@ -196,28 +182,28 @@ export function useResize({
       axis === 'inline',
       unit,
     );
-    const upper = upperAt(event.currentTarget);
+    const upper = largestRoomAllows(event.currentTarget);
     measure(event.currentTarget);
     drag.current = {
       pointerId: event.pointerId,
-      start: position(event),
-      // A size beyond the room shows at the room's size, so the drag starts from there.
+      start: pointerOnScrolledContent(event),
       startValue: Math.min(value, upper),
-      max: upper,
-      scale: perPixel * sign(event.currentTarget),
+      maxForThisDrag: upper,
+      signedUnitsPerPixel: perPixel * growthSign(event.currentTarget),
     };
     setDragging(true);
   };
   const onPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
     const current = drag.current;
     if (!current || current.pointerId !== event.pointerId) return;
-    // A button released outside the window can arrive as a move without it.
-    if (event.pointerType === 'mouse' && (event.buttons & 1) === 0) end(event);
+    const releasedOutsideWindow = event.pointerType === 'mouse' && (event.buttons & 1) === 0;
+    if (releasedOutsideWindow) end(event);
     else
       change(
-        current.startValue + (position(event) - current.start) * current.scale,
+        current.startValue +
+          (pointerOnScrolledContent(event) - current.start) * current.signedUnitsPerPixel,
         false,
-        current.max,
+        current.maxForThisDrag,
       );
   };
   const end = (event: ReactPointerEvent<HTMLElement>) => {
@@ -227,23 +213,22 @@ export function useResize({
     setDragging(false);
     if (event.currentTarget.hasPointerCapture(event.pointerId))
       event.currentTarget.releasePointerCapture(event.pointerId);
-    // A cancelled drag, such as one the browser took over for scrolling, or one whose pointer the
-    // handle lost, returns to where it began.
-    if (event.type === 'pointercancel' || event.type === 'lostpointercapture')
-      change(current.startValue, true, current.max);
+    const cancelled = event.type === 'pointercancel' || event.type === 'lostpointercapture';
+    if (cancelled) change(current.startValue, true, current.maxForThisDrag);
     else
       change(
-        current.startValue + (position(event) - current.start) * current.scale,
+        current.startValue +
+          (pointerOnScrolledContent(event) - current.start) * current.signedUnitsPerPixel,
         true,
-        current.max,
+        current.maxForThisDrag,
       );
   };
 
   const onKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
     if (disabled || event.altKey || event.ctrlKey || event.metaKey) return;
     const amount = event.shiftKey ? largeStep : step;
-    const direction = sign(event.currentTarget);
-    const upper = upperAt(event.currentTarget);
+    const direction = growthSign(event.currentTarget);
+    const upper = largestRoomAllows(event.currentTarget);
     measure(event.currentTarget);
     const from = Math.min(value, upper);
     const forward = axis === 'inline' ? 'ArrowRight' : 'ArrowDown';
@@ -260,18 +245,16 @@ export function useResize({
     change(next, true, upper);
   };
 
-  // The values as the handle reports them: a size in rem keeps its fraction, as its text says it,
-  // and the largest is what the room allows, with the size no larger.
   const reported = unit === 'rem' ? roundToHundredth : Math.round;
-  const upper = Math.min(max, roomMax ?? max);
+  const upper = Math.min(max, roomMaxWhenLastRead ?? max);
   const shown = Math.min(value, upper);
+  const splitsSideBySide = axis === 'inline';
   return {
     dragging,
-    measure,
+    measureRoomTheLargestValueFollows: measure,
     handleProps: {
       role: 'separator',
-      // A handle that moves along the inline axis is a vertical line between side-by-side panes.
-      'aria-orientation': axis === 'inline' ? 'vertical' : 'horizontal',
+      'aria-orientation': splitsSideBySide ? 'vertical' : 'horizontal',
       'aria-valuenow': reported(shown),
       'aria-valuemin': reported(min),
       'aria-valuemax': reported(upper),

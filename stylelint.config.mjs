@@ -1,16 +1,16 @@
-// Stylelint for the library's and the site's CSS. Existing violations of the rules that the
-// token work removes are recorded in stylelint-suppressions.json, and
-// tests/tooling/StylelintSuppressions.test.ts requires the recorded counts to match the CSS
-// exactly; anything new fails. See "Ports, workers and recorded lists" in AGENTS.md.
 import { readFileSync } from 'node:fs';
 import stylelint from 'stylelint';
-// The px allowlist, the raw color functions and the z-index values are the ones envUI's Stylelint
-// config ships, so applications and the library follow the same rules.
 import {
   hairlineProperties,
   rawColorFunction,
   stackingValues,
 } from '@envsemble/stylelint-config-envui';
+import {
+  noStyleSheetComments,
+  styleSheetCommentRuleName,
+} from './scripts/lint/NoStyleSheetComments.ts';
+
+const commentFreeStyleSheets = ['tests/**/*.css'];
 
 const {
   createPlugin,
@@ -19,16 +19,10 @@ const {
 
 const hexColor = '/#[\\da-f]{3,8}\\b/i';
 
-/** A name of the site's, by its part, or of the library's: kebab case after the prefix. */
 const sitePrefixed = '^(?:site|catalogue|docs|env)-[a-z0-9]+(?:-[a-z0-9]+)*$';
 
-/** A custom property the site reads or sets: its own, the library's, or a library part's private one. */
 const siteCustomProperty = '^(?:(?:site|catalogue|docs|env)-|_)[a-z0-9]+(?:-[a-z0-9]+)*$';
 
-/**
- * Where em may appear: typography that follows the element's own font size rather than the
- * reader's root size. Boxes, spacing and motion take rem, from tokens in the library.
- */
 const textRelativeProperties = [
   'font',
   'font-size',
@@ -40,12 +34,13 @@ const textRelativeProperties = [
   'text-underline-offset',
 ];
 
+const functionsInCssPixels = ['env'];
+
 const unitRule = (units, ignoreProperties) => [
   units,
   {
     ignoreProperties,
-    // env() values are in CSS pixels by definition.
-    ignoreFunctions: ['env'],
+    ignoreFunctions: functionsInCssPixels,
     message: (unit) =>
       unit === 'em'
         ? 'Disallowed unit "em": em is only for typography that follows the element’s font size, such as line-height and letter-spacing; use rem or a token.'
@@ -53,16 +48,11 @@ const unitRule = (units, ignoreProperties) => [
   },
 ];
 
-/**
- * envui/font-weight-from-token: the `font` shorthand takes its weight from a token too, as
- * `font-weight` does; a literal weight in it, such as `font: 600 1rem/1.4 …`, is reported.
- */
 const fontWeightRuleName = 'envui/font-weight-from-token';
 const fontWeightMessages = ruleMessages(fontWeightRuleName, {
   rejected: (weight) =>
     `Literal font weight ${weight} in the font shorthand: take it from a token, such as var(--type-…) or a var(--…-font-weight) weight.`,
 });
-/** Words of a value outside functions, with their offsets; `/` is a word of its own. */
 function topLevelWords(value) {
   const words = [];
   let depth = 0;
@@ -92,9 +82,9 @@ const fontWeightFromToken = createPlugin(fontWeightRuleName, (primary) => (root,
   root.walkDecls(/^font$/i, (declaration) => {
     const words = topLevelWords(declaration.value);
     words.forEach(({ word, index }, position) => {
-      // A number after the slash is the line height; before it, only a weight is a bare number.
-      const number = /^[+-]?(?:\d+\.?\d*|\.\d+)$/.test(word) && words[position - 1]?.word !== '/';
-      if (!number && !/^(?:bold|bolder|lighter)$/i.test(word)) return;
+      const isLineHeight = words[position - 1]?.word === '/';
+      const isWeightNumber = /^[+-]?(?:\d+\.?\d*|\.\d+)$/.test(word) && !isLineHeight;
+      if (!isWeightNumber && !/^(?:bold|bolder|lighter)$/i.test(word)) return;
       const offset = declaration.prop.length + (declaration.raws.between ?? ':').length + index;
       report({
         result,
@@ -217,41 +207,40 @@ const slotContent = createPlugin(slotRuleName, (primary) => (root, result) => {
   });
 });
 
+const variableFontWeightRange = '/^\\d+\\s+\\d+$/';
+
+const libraryStyleSheets = ['packages/ui/src/styles/**/*.css'];
+const tokenDefinitions = [
+  'packages/ui/src/generated/Tokens.css',
+  'packages/ui/src/styles/TokensHandwritten.css',
+];
+const siteStyleSheets = ['apps/site/src/**/*.css'];
+const testStyleSheetsStandingInForAnApplication = ['tests/**/*.css'];
+
 /** @type {import('stylelint').Config} */
 export default {
   extends: ['stylelint-config-recommended'],
-  plugins: [fontWeightFromToken, slotContent],
-  reportDescriptionlessDisables: true,
+  plugins: [fontWeightFromToken, slotContent, noStyleSheetComments],
   reportInvalidScopeDisables: true,
   reportNeedlessDisables: true,
   rules: {
-    // Colors come from tokens.
     'color-no-hex': true,
     'color-named': 'never',
     'declaration-property-value-disallowed-list': { '/.*/': [rawColorFunction] },
-    // Stacking order and weights come from tokens.
     'declaration-property-value-allowed-list': {
       'z-index': stackingValues,
-      // A range such as `100 900` is a variable font's weights in @font-face.
-      'font-weight': ['inherit', 'normal', '/^var\\(--/', '/^\\d+\\s+\\d+$/'],
+      'font-weight': ['inherit', 'normal', '/^var\\(--/', variableFontWeightRange],
     },
     [fontWeightRuleName]: true,
-    // px only for hairlines, also as the fallback of var(); em only for typography; everything
-    // else that follows the text size uses rem.
     'unit-disallowed-list': unitRule(['px', 'em'], {
       px: hairlineProperties,
       em: textRelativeProperties,
     }),
-    // Reports the order of selectors for different elements, which component CSS does not rely on.
     'no-descending-specificity': null,
   },
   overrides: [
     {
-      // Library components take sizes from tokens rather than literal rem values. Their classes are
-      // env-<component>-<part>, apart from the classes of the third-party markup they style (GFM's
-      // and TipTap's); their public custom properties take the --env- prefix and their private
-      // ones --_<component>-, apart from those Base UI sets on its parts, which they read.
-      files: ['packages/ui/src/styles/**/*.css'],
+      files: libraryStyleSheets,
       rules: {
         [slotRuleName]: true,
         'declaration-property-unit-disallowed-list': { '/^(?!--)/': ['rem'] },
@@ -269,12 +258,7 @@ export default {
       },
     },
     {
-      // The token definitions, generated and hand-written: literal values belong here, in custom
-      // properties, including the em line heights of the font shorthands.
-      files: [
-        'packages/ui/src/generated/Tokens.css',
-        'packages/ui/src/styles/TokensHandwritten.css',
-      ],
+      files: tokenDefinitions,
       rules: {
         'color-no-hex': null,
         'color-named': null,
@@ -287,13 +271,23 @@ export default {
       },
     },
     {
-      // The site's classes and custom properties say which part they belong to (apps/site/AGENTS.md);
-      // env- are the library's, which the site styles through its part classes and reads as tokens.
-      files: ['apps/site/src/**/*.css'],
+      files: siteStyleSheets,
       rules: {
         'selector-class-pattern': sitePrefixed,
         'custom-property-pattern': siteCustomProperty,
       },
+    },
+    {
+      files: testStyleSheetsStandingInForAnApplication,
+      rules: {
+        'declaration-property-value-disallowed-list': null,
+        'unit-disallowed-list': null,
+        [fontWeightRuleName]: null,
+      },
+    },
+    {
+      files: commentFreeStyleSheets,
+      rules: { [styleSheetCommentRuleName]: true },
     },
   ],
 };

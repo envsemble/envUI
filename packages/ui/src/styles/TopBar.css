@@ -1,7 +1,4 @@
 @layer env.components {
-  /* TopBar: one row at the top bar height that never wraps, on the page's background, a plain
-     rectangle with no line below: the lead, its start content and the title, which takes the room
-     left; content centered in the bar; and the end content. The slots only place what they hold. */
   .env-top-bar {
     box-sizing: border-box;
     position: relative;
@@ -9,15 +6,11 @@
     min-block-size: var(--env-top-bar-height);
     min-inline-size: 0;
     padding-inline: var(--env-space-4);
-    /* The page's background, the same as the content beside it; on a surface, such as a Sheet's,
-       the surface's color rather than a second fill on it. */
     background: var(--_surface-color, var(--env-color-bg-page));
     color: var(--env-color-fg-default);
     font: var(--env-type-body);
     white-space: nowrap;
   }
-  /* background="default": the default surface color, so the bar stands apart from the page; on a
-     surface, the surface's color. */
   .env-top-bar[data-background='default'] {
     background: var(--_surface-color, var(--env-color-bg-default));
   }
@@ -44,12 +37,9 @@
   .env-top-bar-end {
     margin-inline-start: auto;
   }
-  /* The application's mark takes a small picture's size: a Graphic of the icon size, and an svg or
-     img of its own sizes itself to it. Icon buttons set their own. */
   .env-top-bar-start {
     --env-icon-size: var(--env-picture-size-sm);
   }
-  /* A title given as text is the bar's own: semibold, and it truncates first. */
   .env-top-bar-title-text {
     display: block;
     overflow: hidden;
@@ -65,42 +55,33 @@
     grid-column: 3;
     justify-self: end;
   }
-  /* A sticky bar stays at the top of the area that scrolls, over the content under it. */
   .env-top-bar[data-sticky] {
     position: sticky;
     inset-block-start: 0;
     z-index: var(--env-z-sticky);
   }
-  /* Page progress along the bar's bottom edge. */
   .env-top-bar-loading-bar {
     inset-block: auto 0;
   }
 
-  /* A window title bar, for installed web apps and desktop shells that draw their own title bar while
-     the system draws the window controls over the page (the Window Controls Overlay). The title bar
-     area environment variables describe the part of the window's top edge that the window controls
-     leave free; the bar takes its height and leaves room on either side. Outside such a window the variables are
-     undefined, and the bar falls back to --env-title-bar-height across the full width. Empty space
-     drags the window, controls inside stay clickable, and they take the small control height. The
-     title is centered in the window while the sides leave room for it. */
   .env-top-bar[data-title-bar] {
     --env-control-height: var(--env-control-height-sm);
-    /* Inner padding at the inline start and end; the window controls add to the side they occupy. */
     --_top-bar-title-bar-start: var(--env-space-3);
     --_top-bar-title-bar-end: var(--env-space-3);
     --_top-bar-title-bar-left: var(--_top-bar-title-bar-start);
     --_top-bar-title-bar-right: var(--_top-bar-title-bar-end);
+    --_top-bar-window-controls-height: env(titlebar-area-height, 0px);
+    --_top-bar-window-controls-left: env(titlebar-area-x, 0px);
+    --_top-bar-window-controls-right: calc(
+      100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw)
+    );
     display: grid;
     grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
     column-gap: var(--env-space-3);
     min-block-size: 0;
-    /* The window reports a smaller height once the page is zoomed in; the small controls still fit. */
-    block-size: max(env(titlebar-area-height, 0px), var(--env-title-bar-height));
-    padding-left: calc(env(titlebar-area-x, 0px) + var(--_top-bar-title-bar-left));
-    padding-right: calc(
-      100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) +
-        var(--_top-bar-title-bar-right)
-    );
+    block-size: max(var(--_top-bar-window-controls-height), var(--env-title-bar-height));
+    padding-left: calc(var(--_top-bar-window-controls-left) + var(--_top-bar-title-bar-left));
+    padding-right: calc(var(--_top-bar-window-controls-right) + var(--_top-bar-title-bar-right));
     font: var(--env-type-body-sm);
     -webkit-app-region: drag;
     app-region: drag;
@@ -111,8 +92,6 @@
     --_top-bar-title-bar-left: var(--_top-bar-title-bar-end);
     --_top-bar-title-bar-right: var(--_top-bar-title-bar-start);
   }
-  /* The lead, the middle and the end keep their grid columns whichever the bar holds. The title is
-     the middle's, centered in the window, in the bar's smaller text. */
   .env-top-bar[data-title-bar] > .env-top-bar-lead,
   .env-top-bar[data-title-bar] > .env-skeleton-content > .env-top-bar-lead {
     grid-column: 1;
@@ -129,7 +108,6 @@
   .env-top-bar[data-title-bar] .env-top-bar-title-text {
     font-weight: inherit;
   }
-  /* Controls, and the box around a text field's input, whose label and padding take presses too. */
   .env-top-bar[data-title-bar]
     :is(
       a,
@@ -164,14 +142,12 @@
     -webkit-user-select: text;
     user-select: text;
   }
-  /* Forced colors: the system paints no backgrounds, so an edge below sets the bar apart. */
   @media (forced-colors: active) {
     .env-top-bar {
       border-block-end: var(--env-control-border-width) solid CanvasText;
     }
   }
 
-  /* In a skeleton, a missing title, as before the page's data arrives, is a bar of a title's length. */
   [data-env-skeleton] .env-top-bar-title {
     --_skeleton-placeholder: inline-block;
     --_skeleton-length: 10rem;

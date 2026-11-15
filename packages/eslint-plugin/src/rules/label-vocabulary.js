@@ -1,29 +1,25 @@
 import { documentationUrl, jsxName, readData, staticValue } from '../utilities.js';
 
-/** The words a label never uses, by their lowercase spelling, with the word to write instead. */
 const replaced = Object.entries(readData('vocabulary.json').words).map(([word, use]) => ({
   word: word.toLowerCase(),
   use,
 }));
 
-/** Whether an attribute holds a label: children, label, aria-label, title or a …Label. */
 const isLabelAttribute = (name) =>
   ['children', 'label', 'aria-label', 'title'].includes(name) || /^[a-z]\w*Label$/.test(name);
 
-/** The most words a label has; longer text is a sentence, which the rule leaves alone. */
-const labelWords = 6;
+const mostWordsInALabel = 6;
 
-/** A label's text without its trailing ellipsis, or undefined for text that reads as a sentence. */
 function labelText(text) {
   const label = text
     .trim()
     .replace(/\s+/g, ' ')
     .replace(/(?:…|\.\.\.)$/, '');
-  if (!label || /[.!?:;,]/.test(label) || label.split(' ').length > labelWords) return undefined;
+  if (!label || /[.!?:;,]/.test(label) || label.split(' ').length > mostWordsInALabel)
+    return undefined;
   return label;
 }
 
-/** The label as it would read with the replaced word written instead. */
 function rewrite(label, { word, use }) {
   const rest = label.slice(word.length);
   const first = label[0] === label[0].toLowerCase() ? use[0].toLowerCase() : use[0];

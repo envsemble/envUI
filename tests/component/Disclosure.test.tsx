@@ -15,7 +15,6 @@ const details = (title: string) =>
   )!;
 const summary = (title: string) => details(title).querySelector('summary')!;
 const text = (testId: string) => () => page.getByTestId(testId).element().textContent;
-/** Whether the text shows: a closed details element's content has a box but is skipped. */
 const visible = (text: string) => () => scope().getByText(text).element().checkVisibility();
 const isOpen = (title: string) => () => details(title).hasAttribute('open');
 
@@ -28,12 +27,10 @@ test('a disclosure reports each change through onOpenChange, controlled or on it
   await page.elementLocator(summary('Controlled')).click();
   await expect.poll(isOpen('Controlled')).toBe(false);
   await expect.poll(changes).toBe('true false');
-  // Opening it through open reports nothing: only people's changes do.
   await scope().getByRole('button', { name: 'Open from outside' }).click();
   await expect.poll(isOpen('Controlled')).toBe(true);
   await expect.poll(visible('Controlled details')).toBe(true);
   expect(changes()).toBe('true false');
-  // A parent that ignores onOpenChange keeps a controlled disclosure as open says.
   const requests = text('disclosure-requests');
   await page.elementLocator(summary('Kept closed')).click();
   await expect.poll(requests).toBe('true');
@@ -42,7 +39,6 @@ test('a disclosure reports each change through onOpenChange, controlled or on it
   await page.elementLocator(summary('Kept closed')).click();
   await expect.poll(requests).toBe('true true');
   expect(isOpen('Kept closed')()).toBe(false);
-  // defaultOpen sets how a disclosure that keeps its own state starts.
   expect(visible('Details shown at first')()).toBe(true);
   await page.elementLocator(summary('Open at first')).click();
   await expect.poll(isOpen('Open at first')).toBe(false);
@@ -62,10 +58,8 @@ test('a controlled disclosure whose parent refuses the change never opens, not f
   summary('Kept closed').focus();
   await keyboard.press('Enter');
   await expect.poll(requests).toBe('true true');
-  // A toggle event would follow the change in a later task.
   await nextFrames();
   expect(opened).toEqual([]);
-  // The controlled disclosure still opens and closes when the parent follows the request.
   summary('Controlled').focus();
   await keyboard.press('Enter');
   await expect.poll(isOpen('Controlled')).toBe(true);

@@ -1,6 +1,3 @@
-// The catalogue's data from the repository: the release notes, which the Docs' Changelog page
-// reads when the site builds, and the outlines the skeletons of the parts that load with a page are
-// drawn from.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
@@ -60,7 +57,6 @@ test('the release notes checks find what is wrong', () => {
 test("the changelog's outline heads each release as the changelog does, over the shape of its text", () => {
   const changelog = readFileSync(libraryChangelogFile, 'utf8');
   const releases = readChangelogOutline();
-  // The page shows the changelog a level lower, so each release heading is one of the contents'.
   assert.deepEqual(
     releases.map(({ heading }) => heading),
     [...changelog.matchAll(/^## (.+)$/gm)].map(([, text]) => `### ${text.trim()}`),

@@ -1,19 +1,3 @@
-// Writes the files the lint packages share, into each package's src/: data/tokens.json, the envUI
-// tokens their messages name, from the library's generated token list
-// (packages/ui/src/generated/tokens.json); tokens.js, the helper that reads it, from
-// scripts/build/LintPackageTokens.js; and colorPolicy.js, what both count as a raw color, from
-// scripts/build/LintPackageColorPolicy.js. In the ESLint plugin, data/entryPoints.json, the
-// specifiers of the library's entry points, from the exports of packages/ui/package.json, and
-// data/vocabulary.json, the words a label replaces, from the vocabulary table of docs/writing.md.
-// In the Stylelint config, data/customProperties.json, every --env-* name envUI defines, from the
-// token list, the handwritten tokens and docs/generated/parts.json, and data/scales.json, the
-// spacing and radius steps, from the token list. Each package ships its own copies, so it works on
-// its own once installed; a published package names those of its own envUI release, as each pack
-// runs this first.
-//
-//   node scripts/build/SyncLintPackages.ts           write the copies
-//   node scripts/build/SyncLintPackages.ts --check   fail when a copy differs from its source
-
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
@@ -25,13 +9,11 @@ const handwrittenTokens = 'packages/ui/tokens/handwritten.json';
 const libraryParts = 'docs/generated/parts.json';
 const writingGuide = 'docs/writing.md';
 
-/** The modules each lint package ships a copy of, by their name in the package. */
 const copiedModules = {
   'tokens.js': 'scripts/build/LintPackageTokens.js',
   'colorPolicy.js': 'scripts/build/LintPackageColorPolicy.js',
 };
 
-/** Where each lint package keeps its copied modules, with data/tokens.json beside them. */
 export const lintPackages = {
   '@envsemble/eslint-plugin-envui': 'packages/eslint-plugin/src',
   '@envsemble/stylelint-config-envui': 'packages/stylelint-config/src',
@@ -66,7 +48,6 @@ interface PartsData {
   shared?: Record<string, PublicProperties>;
 }
 
-/** The custom properties of a token list's public tokens by type, without deprecated ones. */
 function summarizeTokens(list: TokenList) {
   const types: Record<string, string[]> = {};
   for (const token of list.tokens) {
@@ -82,12 +63,7 @@ function summarizeTokens(list: TokenList) {
 
 const printWidth = 100;
 
-/**
- * JSON laid out as Prettier formats it when every object is written expanded: an object's members
- * one per line, and an array of plain values on one line when it fits the print width, else one
- * per line.
- */
-function serializeJson(value: unknown) {
+function jsonAsPrettierFormatsItExpanded(value: unknown) {
   const json = (item: unknown) => JSON.stringify(item);
   const print = (item: unknown, indent: string, prefix: string, suffix: string): string[] => {
     if (Array.isArray(item)) {
@@ -117,7 +93,6 @@ function serializeJson(value: unknown) {
   return `${print(value, '', '', '').join('\n')}\n`;
 }
 
-/** The cells of a Markdown table's row. */
 const cells = (row: string) =>
   row
     .trim()
@@ -131,7 +106,6 @@ interface VocabularyRow {
   not: { text: string; qualified: boolean }[];
 }
 
-/** The rows of the Word | Means | Not table in a guide's "Buttons and actions" section. */
 function vocabularyRows(markdown: string) {
   const lines = markdown.split(/\r?\n/);
   const section = lines.findIndex((line) => /^##\s+Buttons and actions\s*$/.test(line));
@@ -164,13 +138,6 @@ function vocabularyRows(markdown: string) {
   return rows;
 }
 
-/**
- * The words of the vocabulary table of docs/writing.md that a label never uses, each with the word
- * to write instead: the Word of its row, or a label its meaning quotes that ends as it does, such
- * as "Sign out" for "Log out". A word the table qualifies, such as "Add, for something new" or
- * "Copy (Copy puts on a clipboard)", a word of the table itself and a word under two rows are left
- * out, since a label may rightly use them.
- */
 export function parseVocabulary(markdown: string) {
   const rows = vocabularyRows(markdown);
   const key = (text: string) => text.toLowerCase();
@@ -193,7 +160,6 @@ export function parseVocabulary(markdown: string) {
   return words;
 }
 
-/** Every --env-* name envUI defines, sorted. */
 function definedCustomProperties(list: TokenList, handwritten: object, parts: PartsData) {
   const names = new Set(list.tokens.map((token) => token.cssVariable));
   for (const id of Object.keys(handwritten))
@@ -205,14 +171,9 @@ function definedCustomProperties(list: TokenList, handwritten: object, parts: Pa
   return [...names].filter((name) => name.startsWith('--env-')).sort();
 }
 
-/** A literal length in rem, as a number of rem. */
 const remLength = (css: string) =>
   /^-?(?:\d+\.?\d*|\.\d+)rem$/.test(css) ? Number.parseFloat(css) : Number.POSITIVE_INFINITY;
 
-/**
- * The steps of the spacing and radius scales at the default scale, by custom property, smallest
- * first: the tokens of each group that are not another token's alias.
- */
 function scaleSteps(list: TokenList) {
   const steps = (group: string) =>
     Object.fromEntries(
@@ -227,18 +188,16 @@ function scaleSteps(list: TokenList) {
 
 const read = (path: string) => readFileSync(resolve(repositoryRoot, path), 'utf8');
 
-/** Each file the lint packages ship from a source, by its path in the repository, with its text. */
 export function expectedFiles(): Map<string, string> {
   const tokenList = JSON.parse(read(libraryTokens)) as TokenList;
-  const tokens = serializeJson({
+  const tokens = jsonAsPrettierFormatsItExpanded({
     $comment: tokensComment,
     source: libraryTokens,
     tokens: summarizeTokens(tokenList),
   });
-  const copies = Object.entries(copiedModules).map(([name, source]) => {
-    const copy = `// Generated from ${source} by npm run tokens:build; edit that file.\n${read(source)}`;
-    return [name, copy] as const;
-  });
+  const copies = Object.entries(copiedModules).map(
+    ([name, source]) => [name, read(source)] as const,
+  );
   const files = new Map<string, string>();
   for (const directory of Object.values(lintPackages)) {
     files.set(`${directory}/data/tokens.json`, tokens);
@@ -253,7 +212,7 @@ export function expectedFiles(): Map<string, string> {
   );
   files.set(
     `${eslintPlugin}/data/vocabulary.json`,
-    serializeJson({
+    jsonAsPrettierFormatsItExpanded({
       $comment: vocabularyComment,
       source: writingGuide,
       words: parseVocabulary(read(writingGuide)),
@@ -261,7 +220,7 @@ export function expectedFiles(): Map<string, string> {
   );
   files.set(
     `${stylelintConfig}/data/customProperties.json`,
-    serializeJson({
+    jsonAsPrettierFormatsItExpanded({
       $comment: customPropertiesComment,
       sources: [libraryTokens, handwrittenTokens, libraryParts],
       names: definedCustomProperties(
@@ -273,12 +232,15 @@ export function expectedFiles(): Map<string, string> {
   );
   files.set(
     `${stylelintConfig}/data/scales.json`,
-    serializeJson({ $comment: scalesComment, source: libraryTokens, ...scaleSteps(tokenList) }),
+    jsonAsPrettierFormatsItExpanded({
+      $comment: scalesComment,
+      source: libraryTokens,
+      ...scaleSteps(tokenList),
+    }),
   );
   return files;
 }
 
-/** The copies that differ from their sources, or are missing. */
 export function staleFiles() {
   return [...expectedFiles()]
     .filter(([path, text]) => !existsSync(resolve(repositoryRoot, path)) || read(path) !== text)

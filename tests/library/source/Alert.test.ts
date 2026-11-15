@@ -1,5 +1,3 @@
-// Alert's markup: a status or no live region by tone, an alert only when it announces, its icon
-// unless turned off, and a dismiss button on request. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -15,10 +13,8 @@ const render = (props: Record<string, unknown>, children = 'The message.') =>
   firstElement(renderToString(h(Alert, props, children)));
 
 test('notices use status and alert roles by tone, with an icon and a dismiss button on request', () => {
-  // Information and success are polite status messages.
   assert.equal(render({ title: 'Sync paused' }).attributes.role, 'status');
   assert.equal(render({ tone: 'success' }).attributes.role, 'status');
-  // Warnings and errors present from the start are not live regions.
   const blocked = render({
     tone: 'warning',
     title: 'Blocked',
@@ -37,7 +33,6 @@ test('notices use status and alert roles by tone, with an icon and a dismiss but
   assert.ok(
     !elementsOf(render({ tone: 'info', icon: false })).some((element) => element.tag === 'svg'),
   );
-  // One that announces, such as a failure after an action, is an alert.
   const failed = render({ tone: 'danger', announce: true, title: 'Save failed' });
   assert.equal(failed.attributes.role, 'alert');
   assert.match(textOf(failed), /Save failed/);

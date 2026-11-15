@@ -130,8 +130,7 @@ export function Slider({
   style,
   ...props
 }: SliderProps) {
-  // The arrow keys follow the text direction: Base UI reads it from its DirectionProvider.
-  const scope = useDirectionScope<HTMLDivElement>();
+  const directionScope = useDirectionScope<HTMLDivElement>();
   const id = useId();
   const providedLocale = useLocale();
   const input = useRef<HTMLInputElement>(null);
@@ -150,10 +149,6 @@ export function Slider({
     },
     form,
   );
-  // Where the fill's end and the handle pass under the label or the value, they fade while they
-  // show, so the text stays legible at full strength: measured again as the value moves, as the
-  // label or the value's format changes, as the slider or its text changes size, and where the
-  // handle comes to rest after a glide. At rest the stylesheet ignores the measure.
   useLayoutEffect(
     function veilAtCurrentValue() {
       if (control.current) veilIndicatorUnderText(control.current);
@@ -167,22 +162,19 @@ export function Slider({
     observer.observe(element);
     for (const text of element.querySelectorAll('.env-slider-label, .env-slider-value'))
       observer.observe(text);
-    const settle = (event: TransitionEvent) => {
+    const veilWhereHandleComesToRest = (event: TransitionEvent) => {
       if (
         event.propertyName !== 'opacity' &&
         (event.target as Element).matches('.env-slider-thumb')
       )
         veilIndicatorUnderText(element);
     };
-    element.addEventListener('transitionend', settle);
+    element.addEventListener('transitionend', veilWhereHandleComesToRest);
     return () => {
       observer.disconnect();
-      element.removeEventListener('transitionend', settle);
+      element.removeEventListener('transitionend', veilWhereHandleComesToRest);
     };
   }, []);
-  // Dragged past either end, the value stays there and the slider stretches a little after the
-  // pointer, as a rubber band, then springs back once let go. The stretch is set on the control
-  // directly, once a frame, so a drag renders nothing.
   useEffect(
     function stretchPastTheEnds() {
       const element = control.current;
@@ -191,14 +183,11 @@ export function Slider({
     },
     [disabled],
   );
-  // A press on the track or a key glides the fill and the handle to the value; a drag moves them at
-  // once.
   useEffect(function followDragging() {
     const element = control.current;
     if (!element) return;
     return followDrag(element, element.closest<HTMLElement>('.env-slider') ?? element);
   }, []);
-  // Faint ticks mark the steps, or, where they are many, the large steps, so they never crowd.
   const ticks = tickCount(min, max, step, largeStep);
   const describedByIds =
     [
@@ -208,16 +197,15 @@ export function Slider({
     ]
       .filter(Boolean)
       .join(' ') || undefined;
+  const inactiveGroupExemptFromContrast = disabled || undefined;
   return (
-    <DirectionProvider direction={scope.direction}>
+    <DirectionProvider direction={directionScope.direction}>
       <BaseSlider.Root
-        // The group, which the label names, is disabled with its range input, so its label and value
-        // read as part of an inactive control, which WCAG exempts from contrast, as they fade with it.
-        aria-disabled={disabled || undefined}
+        aria-disabled={inactiveGroupExemptFromContrast}
         {...props}
-        ref={scope.ref}
+        ref={directionScope.ref}
         onFocus={(event) => {
-          scope.onFocus();
+          directionScope.onFocus();
           onFocus?.(event);
         }}
         className={classNames('env-slider', className)}
@@ -250,8 +238,6 @@ export function Slider({
           >
             <BaseSlider.Track className="env-slider-track">
               <BaseSlider.Indicator className="env-slider-indicator" />
-              {/* The handle: a thin line at the value, which shows under the pointer, while pressed
-                  and with keyboard focus, beneath the label and the value. */}
               <BaseSlider.Thumb
                 className="env-slider-thumb"
                 inputRef={(node: HTMLInputElement | null) => {
@@ -264,13 +250,10 @@ export function Slider({
                 }
               />
             </BaseSlider.Track>
-            {/* The label and the value sit over the track, the fill and the handle, inside the
-                slider, in the type of a field's text, always at full strength. */}
             <Row align="center" justify="between" gap={3} className="env-slider-header">
               <BaseSlider.Label className="env-slider-label" render={<Text render={<div />} />}>
                 {label}
               </BaseSlider.Label>
-              {/* The output names the range input it shows, and stays quiet while the value moves. */}
               <BaseSlider.Value className="env-slider-value" render={<Text render={<output />} />}>
                 {(formatted, values) => (formatValue ? formatValue(values[0]) : formatted[0])}
               </BaseSlider.Value>
@@ -282,13 +265,6 @@ export function Slider({
   );
 }
 
-/**
- * Marks where the slider's indicators pass under the label or the value, within half a line of
- * either, so the stylesheet fades them there while they show. --_slider-veil on the control is 1
- * where the end of the fill and the handle sit under the text, and 0 elsewhere. For the ticks,
- * --_slider-clear-start and --_slider-clear-end bound the stretch clear of the text, from the
- * track's left side, physical as the ticks are, so that either direction works.
- */
 function veilIndicatorUnderText(control: HTMLElement) {
   const thumb = control.querySelector('.env-slider-thumb');
   const track = control.querySelector('.env-slider-track');
@@ -304,39 +280,32 @@ function veilIndicatorUnderText(control: HTMLElement) {
   )) {
     const box = text.getBoundingClientRect();
     if (box.width === 0) continue;
-    const margin = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
-    if (at >= box.left - margin && at <= box.right + margin) veiled = true;
-    // The text in the track's left half bounds the clear stretch on the left, the other on the right.
-    if (box.left + box.width / 2 < span.left + span.width / 2)
-      clearStart = Math.max(clearStart, box.right + margin - span.left);
-    else clearEnd = Math.min(clearEnd, box.left - margin - span.left);
+    const halfLine = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
+    if (at >= box.left - halfLine && at <= box.right + halfLine) veiled = true;
+    const textInLeftHalf = box.left + box.width / 2 < span.left + span.width / 2;
+    if (textInLeftHalf) clearStart = Math.max(clearStart, box.right + halfLine - span.left);
+    else clearEnd = Math.min(clearEnd, box.left - halfLine - span.left);
   }
   control.style.setProperty('--_slider-veil', veiled ? '1' : '0');
   control.style.setProperty('--_slider-clear-start', `${clearStart}px`);
   control.style.setProperty('--_slider-clear-end', `${clearEnd}px`);
 }
 
-/**
- * The value's place in the range, from 0 at min to 1 at max, which keeps the handle clear of the
- * rounded ends; 0 where the range is empty.
- */
 function fractionOf(value: number, min: number, max: number): number {
-  if (!(max > min)) return 0;
+  const emptyRange = !(max > min);
+  if (emptyRange) return 0;
   return Math.min(1, Math.max(0, (value - min) / (max - min)));
 }
 
-/**
- * How many equal parts the ticks cut the range into: the steps where there are at most 20, else
- * the large steps where they cut it evenly into at most 20. Otherwise none, as ticks between the
- * values the slider takes would mislead; one part draws none either.
- */
+const mostTickPartsBeforeCrowding = 20;
+
 function tickCount(min: number, max: number, step: number, largeStep: number): number {
   const range = max - min;
   if (!(range > 0)) return 0;
   for (const size of [step, largeStep]) {
     const parts = range / size;
-    if (size > 0 && Math.abs(parts - Math.round(parts)) < 1e-9 && parts <= 20)
-      return Math.round(parts);
+    const cutsEvenly = Math.abs(parts - Math.round(parts)) < 1e-9;
+    if (size > 0 && cutsEvenly && parts <= mostTickPartsBeforeCrowding) return Math.round(parts);
   }
   return 0;
 }

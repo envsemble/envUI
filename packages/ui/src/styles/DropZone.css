@@ -1,6 +1,4 @@
 @layer env.components {
-  /* A drop target for files: a dashed area with an icon, a label and a description that opens the file
-     picker when pressed. Files over it turn the outline solid blue on the selection tint. */
   .env-drop-zone {
     --_drop-zone-border: var(--env-color-border-default);
     min-inline-size: 0;
@@ -30,7 +28,6 @@
       background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-drop-zone-icon {
-    /* The round well of the icon, smaller in the small size. */
     --_drop-zone-icon-well: 2.75rem;
     --env-icon-size: 1.5rem;
     display: grid;
@@ -80,7 +77,6 @@
     opacity: var(--env-state-disabled-opacity);
     cursor: default;
   }
-  /* A small zone is one row: the icon, then the label above the description. */
   .env-drop-zone[data-size='sm'] .env-drop-zone-target {
     grid-template-columns: auto minmax(0, 1fr);
     justify-items: start;
@@ -104,8 +100,6 @@
     }
   }
 
-  /* Forced colors: the system paints no fills or shadows, so a zone that a file is dragged over
-     takes the selection color for its edge. */
   @media (forced-colors: active) {
     .env-drop-zone[data-drag-over] .env-drop-zone-target {
       border-color: Highlight;

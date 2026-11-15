@@ -1,5 +1,3 @@
-// A page's sections, read in the structure's order: Rules, Accessibility, Compose and the Markdown
-// they hold.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
@@ -31,14 +29,12 @@ test('a page is read into its sections, figures, legends and specimens', async (
     );
     const blocks = switchPage.sections.flatMap((section) => section.blocks);
     const figure = (name) => blocks.find((block) => block.name === name);
-    // The Overview is generated from the frontmatter's overview examples, named after the page.
     assert.deepEqual(switchPage.sections[0].blocks.at(-1), {
       kind: 'example',
       name: 'Basic',
       heading: 'Switch',
     });
     assert.ok(blocks.some((block) => block.kind === 'specimen' && block.name === 'States'));
-    // A figure's role and caption come from the frontmatter, its framing from its fence.
     assert.deepEqual(
       [figure('Instant').role, figure('Instant').caption],
       ['do', 'Use a switch for a setting that applies at once.'],
@@ -52,14 +48,11 @@ test('a page is read into its sections, figures, legends and specimens', async (
       { part: 'env-switch-input', text: '**Thumb** (`env-switch-input`)', name: 'Thumb' },
     ]);
     assert.deepEqual(figure('Narrow').widths, [16, 30]);
-    // The flag open shows the example's overlays open; stage=shaded the deeper stage of a whole
-    // window. Other figures leave both out.
     assert.equal(figure('OnSubmit').open, true);
     assert.equal(figure('Instant').open, undefined);
     assert.equal(figure('OnSubmit').stage, 'shaded');
     assert.equal(figure('Narrow').stage, 'shaded');
     assert.equal(figure('Instant').stage, undefined);
-    // Compose opens on the generated Import, with an example's source as code.
     const code = switchPage.sections.find((section) => section.id === 'code');
     assert.deepEqual(
       code.blocks.map((block) => block.kind),
@@ -70,9 +63,6 @@ test('a page is read into its sections, figures, legends and specimens', async (
       /^## Compose\n\n### Import\n\n```tsx\nimport \{ Switch \} from '@envsemble\/envui';\n```\n\n### Usage\n/,
     );
 
-    // The packaged page: the whole file in its order, each example once, by name; specimens left
-    // out; the props after Compose; no Related or changelog, which the frontmatter and the Docs
-    // hold.
     const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
     assert.ok(compiled.includes('examples: # Each file is examples/switch/<Name>.tsx.\n'));
     assert.ok(compiled.includes('  Basic: overview\n'));
@@ -98,10 +88,9 @@ test('a page is read into its sections, figures, legends and specimens', async (
   });
 });
 
-test('the sections are those the structure knows, once each, in its order, with Rules', async () => {
+test('the sections are those the structure knows, once each, in its order', async () => {
   await pageFixture(async ({ rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
-    // Sections: those the structure knows, once each, in its order, with Rules.
     await rejects(
       frontmatter + body.replace('## Variants', '## Usage'),
       /"## Usage" is not a section of a component page \(Variants, Anatomy, Behaviour, Rules, Accessibility, Words to use, Compose, Changelog\)/,
@@ -121,7 +110,6 @@ test('the sections are those the structure knows, once each, in its order, with 
         '\n## Variants\n\nOne size.\n',
       /"## Variants" must come before "## Changelog"/,
     );
-    // The changelog runs from the newest version, a release after its prereleases.
     await rejects(
       frontmatter +
         body.replace(
@@ -131,34 +119,101 @@ test('the sections are those the structure knows, once each, in its order, with 
       /"## Changelog" lists 1\.0\.0 below an older version: list the newest first/,
     );
     await rejects(
-      frontmatter + body.replace(/## Rules[\s\S]*?(?=## Accessibility)/, ''),
-      /"## Rules" is required/,
-    );
-    await rejects(
       frontmatter + body.replace('# Switch\n\n', '# Switch\n\nAn intro.\n\n'),
       /content must follow a "##" section heading/,
     );
   });
 });
 
-test('Accessibility lists what envUI and the application provide, and a Key and Action table', async () => {
-  await pageFixture(async ({ rejects }) => {
-    const [frontmatter, body] = [switchFrontmatter, switchBody];
-    // Accessibility: what envUI and the application provide, and a Key and Action table.
-    await rejects(frontmatter + body.replace('### You provide', '### Notes'), /You provide/);
-    await rejects(
-      frontmatter +
-        body.replace('### envUI provides\n\n- The switch role.\n', '### envUI provides\n'),
-      /"### envUI provides" list/,
+const referenceFrontmatter = switchFrontmatter.replace(/ {2}Instant:[\s\S]*?(?=---)/, '');
+const referenceBody = [
+  '# Switch',
+  '',
+  '## Anatomy',
+  '',
+  '```tsx figure=Parts',
+  '',
+  '```',
+  '',
+  '1. **Track** (`env-switch`)',
+  '',
+  '## Behaviour',
+  '',
+  '### Adapting to width',
+  '',
+  '```tsx figure=Narrow',
+  '',
+  '```',
+  '',
+  '## Accessibility',
+  '',
+  '### Keyboard',
+  '',
+  '| Key | Action |',
+  '| --- | --- |',
+  '| <kbd>Space</kbd> | Toggles the switch. |',
+  '',
+].join('\n');
+
+test('a page of only examples and reference reads, with Rules generated to open with when to use it', async () => {
+  await pageFixture(async ({ page, read, examples }) => {
+    await writeFile(page, referenceFrontmatter + referenceBody);
+    const documents = read();
+    const sections = documents[1].sections;
+    assert.deepEqual(
+      sections.map((section) => section.id),
+      ['overview', 'anatomy', 'behaviour', 'rules', 'accessibility', 'code'],
     );
+    assert.deepEqual(sections.find((section) => section.id === 'rules').blocks, [
+      { kind: 'markdown', markdown: '## Rules\n\n' },
+    ]);
+    const compiled = compileDocument(documents[1], documents, { props: switchProps, examples });
+    assert.deepEqual(
+      [...compiled.matchAll(/^## (.*)$/gm)].map(([, title]) => title),
+      ['Anatomy', 'Behaviour', 'Accessibility', 'Compose', 'Props'],
+    );
+  });
+});
+
+test('Accessibility, where a page has it, has a Key and Action table under Keyboard', async () => {
+  await pageFixture(async ({ page, read, rejects }) => {
+    const [frontmatter, body] = [switchFrontmatter, switchBody];
     await rejects(frontmatter + body.replace('| Key | Action |', '| Keys | Result |'), /"Key"/);
+    await writeFile(
+      page,
+      referenceFrontmatter + referenceBody.replace(/## Accessibility[\s\S]*/, ''),
+    );
+    assert.doesNotThrow(read);
+  });
+});
+
+test("a component page's useWhen and avoidWhen are a few lines each", async () => {
+  await pageFixture(async ({ rejects }) => {
+    const entries = (count) =>
+      Array.from(
+        { length: count },
+        (_, index) => `  - Setting ${index + 1} that applies at once.`,
+      ).join('\n');
+    await rejects(
+      switchFrontmatter.replace(
+        'useWhen: [A setting that applies immediately.]',
+        `useWhen:\n${entries(4)}`,
+      ) + switchBody,
+      /lists 4 entries in useWhen; keep the 3 that matter most/,
+    );
+    await rejects(
+      switchFrontmatter.replace(
+        'A choice that applies on submit.',
+        `A choice that applies on submit, ${'and more words '.repeat(5)}`,
+      ) + switchBody,
+      /an entry of avoidWhen longer than a line of 80 characters/,
+    );
   });
 });
 
 test('props, headings, quotes and specimens are written as the structure reads them', async () => {
   await pageFixture(async ({ rejects }) => {
     const [frontmatter, body] = [switchFrontmatter, switchBody];
-    // Lists, props and headings the structure generates or needs in Markdown.
     await rejects(
       frontmatter +
         body.replace(
@@ -204,7 +259,6 @@ test('a page saved with CRLF line endings reads as it does with LF', async () =>
   });
 });
 
-/** Compose with its usage and an example file shown as code, then a customization. */
 const compose = [
   '## Compose',
   '',
@@ -261,14 +315,12 @@ test('"## Compose" is the developer part, opened by the generated Import', async
       `${compose}<!-- specimen: States -->\n\n`,
       /"## Compose" shows code, not specimens/,
     );
-    // An example's source as code belongs in Compose only.
     await writeFile(
       page,
       switchFrontmatter +
         switchBody.replace('### Labels', '```tsx source=Basic\n\n```\n\n### Labels'),
     );
     assert.throws(read, /an example's source as code belongs in "## Compose"/);
-    // A page without Compose gets one, holding the Import.
     await writeFile(
       page,
       switchFrontmatter + switchBody.replace(/## Compose[\s\S]*?(?=## Changelog)/, ''),
@@ -284,7 +336,6 @@ test('the structure reads Markdown as it renders', async () => {
       await writeFile(page, source);
       assert.doesNotThrow(read);
     };
-    // Tables of attributes and a section on forwarding props are not props tables.
     await accepts(
       switchFrontmatter +
         switchBody.replace(
@@ -292,7 +343,6 @@ test('the structure reads Markdown as it renders', async () => {
           '#### Props forwarding\n\nOther props go to the input.\n\n| Attribute | Values |\n| --- | --- |\n| role | switch |\n\nGive every switch a `label`.',
         ),
     );
-    // A figure fence shown inside another fence is text, not a figure.
     await accepts(
       switchFrontmatter +
         switchBody.replace(
@@ -300,7 +350,6 @@ test('the structure reads Markdown as it renders', async () => {
           'Give every switch a `label`.\n\n````md\n```tsx figure=Instant\n```\n````',
         ),
     );
-    // A figure fence indented by up to three spaces is one.
     await writeFile(
       page,
       switchFrontmatter +

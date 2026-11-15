@@ -19,7 +19,6 @@ import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 
 export const mount = 'standalone';
 
-/** A toast shown as the preview mounts, kept until it is dismissed. */
 function SavedNotice() {
   const toast = useToast();
   useEffect(() => {
@@ -29,7 +28,6 @@ function SavedNotice() {
   return null;
 }
 
-/** A button that raises a short notice, which stays while the pointer rests on it. */
 function NotifyButton() {
   const toast = useToast();
   return (
@@ -39,14 +37,6 @@ function NotifyButton() {
   );
 }
 
-/**
- * Preview regions of a page, not inert, whose overlays render into a layer of each through a
- * contained PortalContainer, open as the page loads: a menu, a tooltip and a toast in one, a dialog
- * in another, a combobox's list in the third; a fourth holds a context menu, opened by right click,
- * a fifth a menubar, a sixth supporting Panes too narrow for two panes, open as a sheet, and a
- * seventh a date picker, closed.
- * The page is taller than the window, so its scroll can be checked.
- */
 export default function PortalContainerFixture() {
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   const [dialogLayer, setDialogLayer] = useState<HTMLDivElement | null>(null);
@@ -150,7 +140,6 @@ export default function PortalContainerFixture() {
         </PortalContainer>
         <div ref={setPickerLayer} data-testid="picker-layer" />
       </div>
-      {/* Taller than the window, so the page scrolls. */}
       <div style={{ blockSize: '150vh' }} />
     </Theme>
   );

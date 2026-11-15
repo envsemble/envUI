@@ -1,10 +1,5 @@
-// Placeholder items: stand-ins for data that hasn't arrived, so a page renders its normal components
-// over them in a skeleton. Plain functions, so a server component calls them too.
-
-/** The start of every placeholder item's id, which isPlaceholder() reads. */
 const placeholderPrefix = 'envui-placeholder-';
 
-/** Marks the placeholder type, so an item of the application's never passes for one. */
 declare const placeholderMark: unique symbol;
 
 /**
@@ -26,7 +21,6 @@ export type Placeholder<Item = object> = { id: string; readonly [placeholderMark
 export function placeholders<Item = object>(count: number): Placeholder<Item>[] {
   return Array.from(
     { length: Math.max(0, Math.floor(count)) },
-    // The mark is in the type only, which tells a placeholder from an item.
     (_, index) => ({ id: `${placeholderPrefix}${index}` }) as Placeholder<Item>,
   );
 }

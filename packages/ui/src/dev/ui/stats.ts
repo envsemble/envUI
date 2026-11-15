@@ -1,34 +1,22 @@
-// What dev mode's own work costs, for its debug panel: how often it measures the page, reads it
-// for the inspector, copies the planes' surfaces and renders the 3D view, and how long each took.
-// Counting is a few additions; the panel reads the counts while it is open.
-
-/** One kind of work: how many times it ran, the time it took in all, and the last time. */
 export interface WorkStats {
   count: number;
   totalMs: number;
   lastMs: number;
 }
 
-const work = () => ({ count: 0, totalMs: 0, lastMs: 0 });
+const noWorkYet = () => ({ count: 0, totalMs: 0, lastMs: 0 });
 
-/** Dev mode's work since it opened. */
 export const devStats = {
-  /** The geometry, measured at most once an animation frame while the page changes. */
-  geometry: work(),
-  /** The full measurement and its readout, once the page settles. */
-  reading: work(),
-  /** Copies of the planes' surfaces, each a node's. */
-  copies: work(),
-  /** Renders of the 3D view. */
+  geometry: noWorkYet(),
+  reading: noWorkYet(),
+  copies: noWorkYet(),
   viewRenders: 0,
 };
 
-/** Counts a render of the 3D view, which calls it as it renders. */
 export function countViewRender() {
   devStats.viewRenders += 1;
 }
 
-/** Runs work of a kind, timing it into the stats, and returns what it returns. */
 export function timed<T>(stats: WorkStats, run: () => T): T {
   const start = performance.now();
   try {

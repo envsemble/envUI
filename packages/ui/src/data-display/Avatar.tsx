@@ -36,15 +36,21 @@ export type AvatarHue = (typeof avatarHues)[number];
  * not count.
  */
 export function avatarHue(name: string): AvatarHue {
-  // FNV-1a over the name's UTF-16 code units: fast, stable and spread well for short strings.
-  let hash = 0x811c9dc5;
-  for (const char of name.trim().toLowerCase()) {
+  return avatarHues[fnv1aOfUtf16CodeUnits(name.trim().toLowerCase()) % avatarHues.length];
+}
+
+const fnv1aOffsetBasis = 0x811c9dc5;
+const fnv1aPrime = 0x01000193;
+
+function fnv1aOfUtf16CodeUnits(text: string) {
+  let hash = fnv1aOffsetBasis;
+  for (const char of text) {
     for (let index = 0; index < char.length; index += 1) {
       hash ^= char.charCodeAt(index);
-      hash = Math.imul(hash, 0x01000193);
+      hash = Math.imul(hash, fnv1aPrime);
     }
   }
-  return avatarHues[(hash >>> 0) % avatarHues.length];
+  return hash >>> 0;
 }
 
 export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
@@ -83,7 +89,6 @@ export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
   selected?: boolean;
 }
 
-/** The first letters of the first and last words, or the first two letters of a single word. */
 function getInitials(name: string, locale: string | undefined) {
   const words = name.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return '';
@@ -94,8 +99,7 @@ function getInitials(name: string, locale: string | undefined) {
   return initials.toLocaleUpperCase(locale);
 }
 
-/** The envsemble default account picture. */
-function PersonPicture() {
+function DefaultAccountPicture() {
   return (
     <svg className="env-avatar-person" viewBox="0 0 104.15 104.15" aria-hidden="true">
       <circle
@@ -153,7 +157,7 @@ export function Avatar({
       <BaseAvatar.Fallback
         className={classNames('env-avatar-fallback', `env-avatar-fallback-${fallback}`)}
       >
-        {fallback === 'person' ? <PersonPicture /> : initials}
+        {fallback === 'person' ? <DefaultAccountPicture /> : initials}
       </BaseAvatar.Fallback>
       {selected && (
         <span className="env-avatar-check" aria-hidden="true">

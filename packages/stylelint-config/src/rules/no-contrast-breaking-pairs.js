@@ -9,7 +9,6 @@ const {
 
 const ruleName = 'envui/no-contrast-breaking-pairs';
 
-/** The envUI color token a whole value is, as `var(--env-color-fg-default)`, with any fallback. */
 function wholeToken(value) {
   const match = /^\s*var\(\s*(--env-color-(fg|bg)-([\w-]+?))\s*(?:,.*)?\)\s*$/is.exec(value);
   return match ? { name: match[1], role: match[2], rest: match[3] } : undefined;
@@ -23,7 +22,6 @@ const example = (prefix) =>
   colorTokens.find((name) => name === `${prefix}default`) ??
   colorTokens.find((name) => name.startsWith(prefix));
 
-/** The background tokens a `fg-on-X` text token is made for: those with X as a part of their name. */
 const fillsFor = (surface) =>
   colorTokens.filter(
     (name) =>

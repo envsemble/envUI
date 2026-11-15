@@ -1,7 +1,3 @@
-// The token list, generated/tokens.json: every public token with its value in each theme and scale,
-// the hand-written tokens among them, for the docs, the lint packages and the package's
-// `tokens.json` export. Building it also fails on two tokens that become one custom property, and on
-// TokensHandwritten.css replacing a token.
 import { existsSync, readFileSync } from 'node:fs';
 import type { BuildHookOptions, Plugin } from '@terrazzo/parser';
 import { overridingCustomProperties } from './CssDeclarations.ts';
@@ -16,7 +12,6 @@ import {
   type ThemeName,
 } from './Themes.ts';
 
-/** A token's CSS value: one value, or a value per part of a composite token such as typography. */
 type CssValue = string | Record<string, string>;
 
 interface ThemeValue {
@@ -38,15 +33,8 @@ interface ListedToken {
   scales?: Record<string, ThemeValue>;
 }
 
-/** A custom property's value in a theme or scale, with the var() it reads resolved there. */
 type Resolve = (layer: string, name: string) => CssValue | undefined;
 
-/**
- * The values Tokens.css declares, by theme and by scale but comfortable, each part of a composite
- * token as a custom property of its own, which a token that aliases it reads; and how var()
- * resolves in each, as in the browser: the base set, then each theme's overrides on top of its
- * scheme's, and each scale over the light theme's values.
- */
 function declaredValues(getTransforms: BuildHookOptions['getTransforms']) {
   const declaredIn = (input: Record<string, string>) => {
     const values = new Map<string, CssValue>();
@@ -72,7 +60,6 @@ function declaredValues(getTransforms: BuildHookOptions['getTransforms']) {
     [layer, ...(fallback[layer] ?? [])]
       .map((each) => declared[each].get(name))
       .find((value) => value !== undefined);
-  // A composite token, such as typography, has a CSS value per part: { 'font-size': … }.
   const resolveValue = (layer: string, value: CssValue | undefined): CssValue | undefined => {
     if (value && typeof value === 'object')
       return Object.fromEntries(
@@ -83,7 +70,6 @@ function declaredValues(getTransforms: BuildHookOptions['getTransforms']) {
       );
     const alias = typeof value === 'string' ? value.match(/^var\((--[\w-]+)\)$/) : null;
     if (alias) return resolve(layer, alias[1]);
-    // A shorthand, such as a type role's font, reads its parts.
     return typeof value === 'string'
       ? value.replace(/var\((--[\w-]+)\)/g, (_, name: string) => resolve(layer, name) as string)
       : value;
@@ -92,17 +78,9 @@ function declaredValues(getTransforms: BuildHookOptions['getTransforms']) {
   return { declared, cssValue, resolve };
 }
 
-/**
- * Fails the build when two tokens would declare one custom property, or when TokensHandwritten.css
- * declares one of the tokens' outside its conditional media queries: Tokens.css would keep only
- * the last declaration, and TokensHandwritten.css, which loads after it, would silently replace the
- * token. A composite token, such as typography, also declares a property per part,
- * `--type-body-font-size`.
- */
 function checkCustomProperties(list: ListedToken[], handwrittenFile: URL) {
   const owners = new Map<string, string>();
   for (const token of list) {
-    // A theme can give a composite token parts that the others don't, so take them from every one.
     const parts = new Set(
       Object.values(token.values).flatMap(({ css }) =>
         css && typeof css === 'object' ? Object.keys(css) : [],
@@ -125,11 +103,6 @@ function checkCustomProperties(list: ListedToken[], handwrittenFile: URL) {
       );
 }
 
-/**
- * The public tokens TokensHandwritten.css declares, from tokens/handwritten.json, as entries of the
- * token list: each with its value as the style sheet declares it on the theme boundary, with the
- * tokens it reads resolved in every theme. Fails on a listed token the style sheet doesn't declare.
- */
 function handwrittenTokens(listFile: URL, cssFile: URL, resolve: Resolve): ListedToken[] {
   if (!existsSync(listFile)) return [];
   const listed = JSON.parse(readFileSync(listFile, 'utf8')) as Record<
@@ -169,12 +142,6 @@ function handwrittenTokens(listFile: URL, cssFile: URL, resolve: Resolve): Liste
 
 const numericOrder = (a: string, b: string) => a.localeCompare(b, 'en', { numeric: true });
 
-/**
- * envUI's own plugin: the lint rules, and the token list. It carries each token's value in every
- * theme, as the browser resolves Tokens.css alone: TokensHandwritten.css can change a few of them
- * under a condition, such as the touch sizes of --control-height and --title-bar-height under a
- * coarse pointer, and those values are not in it.
- */
 export function tokenList({
   handwrittenFile,
   handwrittenList,
@@ -217,7 +184,6 @@ export function tokenList({
                 }),
             };
           }
-          // The value under each scale but comfortable, where that scale changes the token.
           const scaled: Record<string, ThemeValue> = {};
           for (const scale of scaleRules) {
             if (!declared[scale.name].has(name)) continue;

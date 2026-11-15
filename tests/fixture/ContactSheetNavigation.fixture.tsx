@@ -501,10 +501,6 @@ const treeRows: TreeItem[] = [
   },
 ];
 
-/**
- * Moves a tree's cursor down one row by its own ↓ key, as a keyboard does, so the row the tree marks
- * as its cursor is the next one and the selection keeps none: the capture forces only the focus.
- */
 function CursorDown({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {

@@ -46,8 +46,7 @@ export interface RootProps extends ComponentPropsWithRef<'ul'>, SkeletonProps {
   onReorder?: (from: number, to: number) => void;
 }
 
-/** The prop List.Root gives the rows of a reorderable list, so they render their handles. */
-const reorderableProp = 'data-env-reorderable';
+const showsReorderHandleProp = 'data-env-reorderable';
 
 /**
  * A `ul` of rows. Plain by default: no fill, hairlines between the rows and their text in line with
@@ -63,10 +62,6 @@ function Root({
   children,
   ...props
 }: RootProps) {
-  // A reorderable list needs the browser; a list without it stays server-rendered markup, and
-  // ships no client code.
-  // A list's rows must be its children, so a skeleton list is inert as a whole, and a visually
-  // hidden status beside it is the busy region.
   const list = onReorder ? (
     <ReorderableList
       {...props}
@@ -75,7 +70,7 @@ function Root({
       onReorder={onReorder}
       className={className}
     >
-      {inSkeletonList(skeleton, markReorderable(children))}
+      {inSkeletonList(skeleton, markRowsToShowReorderHandle(children))}
     </ReorderableList>
   ) : (
     <Grid
@@ -100,17 +95,12 @@ function Root({
   );
 }
 
-/**
- * Tells the rows among the children, and in their fragments, to show a handle: each element gets
- * the prop, which List.Item reads and a row component passes on to its List.Item with the rest.
- */
-function markReorderable(children: ReactNode): ReactNode {
+function markRowsToShowReorderHandle(children: ReactNode): ReactNode {
   return Children.map(children, (child) => {
     if (!isValidElement<{ children?: ReactNode }>(child)) return child;
     if (child.type === Fragment)
-      return cloneElement(child, undefined, markReorderable(child.props.children));
-    // An item of any type takes the private prop that marks it reorderable.
-    return cloneElement(child, { [reorderableProp]: true } as object);
+      return cloneElement(child, undefined, markRowsToShowReorderHandle(child.props.children));
+    return cloneElement(child, { [showsReorderHandleProp]: true } as object);
   });
 }
 
@@ -162,15 +152,10 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
 
 type TargetProps = { 'data-row-target'?: unknown; 'aria-current'?: unknown; children?: ReactNode };
 
-/**
- * The content with `aria-current="true"` on its first `data-row-target` element, found among the
- * elements as written, and whether it found one.
- */
-function markCurrent(node: ReactNode): [ReactNode, boolean] {
+function markFirstRowTargetCurrent(node: ReactNode): [ReactNode, boolean] {
   let found = false;
   const visit = (each: ReactNode): ReactNode => {
     if (found || !isValidElement<TargetProps>(each)) return each;
-    // isValidElement narrows to the element, not its props.
     const element = each as ReactElement<TargetProps>;
     if (element.props['data-row-target'] != null && element.props['data-row-target'] !== false) {
       found = true;
@@ -186,16 +171,16 @@ function markCurrent(node: ReactNode): [ReactNode, boolean] {
   return found ? [marked, true] : [node, false];
 }
 
-/**
- * A row's layout: a wrapping Row's attributes on the li itself, as a Row around each of a long
- * list's rows would cost a component render of its own.
- */
-const itemLayout = rowAttributes({ wrap: true, align: 'center', justify: 'between', gap: 3 });
+const rowLayoutOnTheLiSavingARenderPerRow = rowAttributes({
+  wrap: true,
+  align: 'center',
+  justify: 'between',
+  gap: 3,
+});
 
 /**
- * One `li` row with a label, a description and content at its end; the current row, content at its start,
- * and in a reorderable list a drag handle. It renders on the server: only the handle of a
- * reorderable row needs the browser.
+ * One `li` row with a label, a description and content at its end; the current row, content at its
+ * start, and in a reorderable list a drag handle.
  */
 function Item(props: ItemProps) {
   const {
@@ -209,14 +194,14 @@ function Item(props: ItemProps) {
     skeleton = false,
     children,
     className,
-    [reorderableProp]: reorderable = false,
+    [showsReorderHandleProp]: reorderable = false,
     ...rest
-  } = props as ItemProps & { [reorderableProp]?: boolean };
+  } = props as ItemProps & { [showsReorderHandleProp]?: boolean };
   const hasDescription = description != null || given(props, 'description');
   let targetMarked = false;
   const mark = (node: ReactNode) => {
     if (!current || targetMarked || node == null) return node;
-    const [marked, found] = markCurrent(node);
+    const [marked, found] = markFirstRowTargetCurrent(node);
     targetMarked = found;
     return marked;
   };
@@ -229,7 +214,7 @@ function Item(props: ItemProps) {
     (typeof label === 'string' || typeof label === 'number' ? String(label) : undefined);
   return (
     <li
-      {...itemLayout}
+      {...rowLayoutOnTheLiSavingARenderPerRow}
       aria-current={current && !targetMarked ? 'true' : undefined}
       {...rest}
       {...skeletonAttributes(skeleton)}
@@ -265,8 +250,6 @@ function Item(props: ItemProps) {
   );
 }
 
-// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
-// application leaves unused.
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'List.Root');
 const ItemPart = /* @__PURE__ */ withDisplayName(Item, 'List.Item');
 export { RootPart as Root, ItemPart as Item };

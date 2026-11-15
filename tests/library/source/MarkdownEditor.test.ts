@@ -1,5 +1,3 @@
-// MarkdownEditor's markup, rendered on the server: an application's className and style reach the
-// editor's root, and the source's textarea keeps its own class.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';

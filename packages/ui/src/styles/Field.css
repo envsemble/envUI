@@ -1,8 +1,5 @@
 @layer env.components {
-  /* The look every field shares: the field (Field.Root, and the frame of envUI's own fields), its
-     description and its error. */
   .env-field {
-    /* The color of a field's error and of its invalid control. */
     --_field-error-color: var(--env-color-fg-danger);
     align-content: start;
     max-inline-size: 100%;
@@ -33,8 +30,6 @@
     max-inline-size: 100%;
     cursor: default;
   }
-  /* The label above its control, Field.Label's and every field's of envUI: the label size, in the
-     muted color, so a form's labels read alike. */
   .env-field-label,
   .env-field > label {
     font: var(--env-type-body);
@@ -44,10 +39,6 @@
   .env-field[data-disabled] > .env-field-label {
     opacity: var(--env-state-disabled-opacity);
   }
-  /* Field.Control: a native text input in the outlined field look, at the control height of its size
-     or its container's, so it lines up with buttons in a row, with the control radius and no fill of
-     its own: it takes the background of what it sits on. A control given through render takes the
-     same outline. */
   .env-field-control {
     --_field-control-border: var(--env-color-border-default);
     box-sizing: border-box;
@@ -67,7 +58,6 @@
     background: transparent;
     color: var(--env-color-fg-default);
     font: var(--env-type-body);
-    /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
     font-size: var(--env-control-font-size);
     caret-color: var(--env-color-border-primary-emphasis);
     transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
@@ -85,15 +75,11 @@
     color: var(--env-color-fg-muted);
     opacity: 1;
   }
-  /* Under the pointer the edge darkens to the muted text color, as a text field's does; the accent
-     shows focus alone. A read-only control keeps its resting edge, as TextField's does. */
   @media (hover: hover) {
     .env-field-control:hover:not(:disabled, [data-disabled], [readonly]) {
       --_field-control-border: var(--env-color-fg-muted);
     }
   }
-  /* Focus draws the edge in the accent at twice its width, the second hairline inside it, so
-     nothing moves. */
   .env-field-control:focus-visible,
   .env-field-control:focus-within {
     --_field-control-border: var(--env-color-border-primary-emphasis);
@@ -106,7 +92,6 @@
     opacity: var(--env-state-disabled-opacity);
     cursor: default;
   }
-  /* Under a coarse pointer the control grows to the touch height, as every control does. */
   @media (pointer: coarse) {
     .env-field-control {
       min-block-size: max(var(--env-control-height), var(--env-control-height-touch));
@@ -117,8 +102,6 @@
       transition: none;
     }
   }
-  /* Forced colors: the system paints no fills, so a focused control is outlined in the selection
-     color and an invalid one has a dashed border. */
   @media (forced-colors: active) {
     .env-field-control:is(:focus-visible, :focus-within) {
       outline: 2px solid Highlight;

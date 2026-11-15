@@ -1,4 +1,3 @@
-// Kbd's markup: one key cap, or keys pressed together as key caps joined by plus inside an outer kbd.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';

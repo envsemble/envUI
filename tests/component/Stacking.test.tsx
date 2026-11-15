@@ -4,7 +4,6 @@ import * as fixture from '../fixture/Stacking.fixture.tsx';
 import { box, keyboard, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** Whether nothing between an element and the root makes a stacking context of its own. */
 function inRootContext(node: Element) {
   for (let parent = node.parentElement; parent; parent = parent.parentElement) {
     const style = getComputedStyle(parent);
@@ -22,7 +21,6 @@ function inRootContext(node: Element) {
 }
 
 const zIndex = (element: Element) => Number(getComputedStyle(element).zIndex);
-/** The layer, by its class, that holds an element. */
 const layerOf = (element: Element, className: string) => element.closest(`.${className}`)!;
 
 test(
@@ -39,7 +37,6 @@ test(
     })!;
     const dialogLayer = layerOf(dialog.element(), 'env-dialog-positioner');
 
-    // A menu inside the dialog: its items are what a press over them reaches.
     await dialog.getByRole('button', { name: 'Actions' }).click();
     const menu = page.getByRole('menu', { name: 'Dialog actions' });
     await expect.element(menu).toBeVisible();
@@ -60,8 +57,6 @@ test(
     await expect.poll(() => shown(menu)).toBe(false);
     await expect.element(dialog).toBeVisible();
 
-    // A notice shown from the dialog waits until it closes (Toast's tests cover that), but its
-    // layer still stacks over the dialog's.
     await dialog.getByRole('button', { name: 'Show a notice' }).click();
     const notice = page.getByText('Saved over the dialog');
     await expect.poll(() => notice.query()).not.toBeNull();
@@ -70,7 +65,6 @@ test(
     expect(inRootContext(toastLayer)).toBe(true);
     expect(zIndex(toastLayer)).toBeGreaterThan(zIndex(dialogLayer));
 
-    // A tooltip in the dialog stacks over the dialog and the notice.
     await dialog.getByRole('button', { name: 'Hover for a tooltip' }).hover();
     const tooltip = page.getByText('Explains the control');
     await expect.element(tooltip).toBeVisible();

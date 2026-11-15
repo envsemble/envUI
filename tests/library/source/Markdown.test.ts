@@ -1,6 +1,3 @@
-// Markdown's markup: tables named for their region, tasks as envUI checkboxes, the application's
-// component overrides and plugins, and raw HTML ignored but for keys; and bold in semibold, which
-// the prose style sheet declares. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -23,14 +20,12 @@ const regionNames = (elements) =>
 
 const table = (header) => `| ${header} | Value |\n| --- | --- |\n| a | b |\n`;
 
-test('table regions are named after their heading, numbered where they share a name', () => {
+test('table regions are named after their heading or first column, numbered where they share a name, and tasks are envUI checkboxes', () => {
   const elements = render(
     `## Prices\n\n${table('Plan')}\n${table('Key')}\n${table('Key')}\n- [x] Draft the brief\n- [ ] Send it\n`,
   );
   assert.deepEqual(regionNames(elements), ['Prices table', 'Prices table 2', 'Prices table 3']);
-  // Without a heading, a table is named after its first column.
   assert.deepEqual(regionNames(render(table('Setting'))), ['Setting table']);
-  // Tasks are envUI checkboxes, not small native boxes.
   const tasks = elements.filter((element) => element.attributes.type === 'checkbox');
   assert.deepEqual(
     tasks.map((task) => task.attributes['aria-label']),
@@ -53,7 +48,6 @@ test('bold is semibold, heavier than the regular body text and a heading', () =>
   const token = (name) => tokens.find((each) => each.cssVariable === name).values.light;
   const semibold = Number(token('--env-font-weight-semibold').resolved);
   assert.equal(semibold, 600);
-  // Body text is regular and a heading's title medium, both lighter than semibold.
   for (const type of ['--env-type-body', '--env-type-title']) {
     const font = token(type).css['font-weight'];
     const name = String(font).match(/var\((--[\w-]+)\)/)?.[1];
@@ -61,7 +55,6 @@ test('bold is semibold, heavier than the regular body text and a heading', () =>
   }
 });
 
-/** A rehype plugin: headings get ids from their text. */
 const headingIds = () => (tree) => {
   const text = (node) =>
     node.type === 'text' ? node.value : (node.children ?? []).map(text).join('');
@@ -73,8 +66,7 @@ const headingIds = () => (tree) => {
   visit(tree);
 };
 
-/** Stands in for rehype-raw: raw HTML that reaches the HTML tree would show as marked text. */
-const renderRaw = () => (tree) => {
+const rehypeRawStandIn = () => (tree) => {
   const visit = (node) => {
     node.children = node.children?.map((child) =>
       child.type === 'raw'
@@ -91,7 +83,6 @@ const renderRaw = () => (tree) => {
   visit(tree);
 };
 
-/** A remark plugin: the text "TODO" becomes emphasized. */
 const emphasizeTodo = () => (tree) => {
   const visit = (node) => {
     if (node.type === 'emphasis') return;
@@ -116,11 +107,11 @@ const extended = [
   'Not keys: <kbd onclick="alert(1)">A</kbd> <kbd class="x">B</kbd>',
 ].join('\n\n');
 
-test('Markdown accepts component overrides and remark and rehype plugins', () => {
+test('Markdown accepts component overrides and remark and rehype plugins, and still ignores raw HTML but for keys around plain text', () => {
   const elements = render(extended, {
     headingOffset: 1,
     className: 'fixture-markdown',
-    rehypePlugins: [headingIds, renderRaw],
+    rehypePlugins: [headingIds, rehypeRawStandIn],
     remarkPlugins: [emphasizeTodo],
     components: {
       blockquote: ({ node: _node, ...props }) =>
@@ -129,23 +120,18 @@ test('Markdown accepts component overrides and remark and rehype plugins', () =>
   });
   const [root] = elements;
   assert.ok(hasClass(root, 'env-markdown') && hasClass(root, 'fixture-markdown'));
-  // envUI's heading offset still applies, and the rehype plugin's id reaches the element.
   const heading = elements.find((element) => element.tag === 'h2');
   assert.equal(textOf(heading), 'Project plan');
   assert.equal(heading.attributes.id, 'project-plan');
-  // The application's override wins over envUI's components.
   const quote = elements.find((element) => element.tag === 'blockquote');
   assert.equal(quote.attributes['data-custom-quote'], '');
   assert.equal(textOf(quote).trim(), 'A quoted decision');
-  // The remark plugin runs after envUI's own Markdown extensions, which still render tables.
   assert.deepEqual(elements.filter((element) => element.tag === 'em').map(textOf), ['TODO']);
   assert.ok(elements.some((element) => element.tag === 'table'));
-  // Raw HTML stays ignored, even with a rehype plugin that would render it.
   const text = textOf(root);
   assert.match(text, /Some inline HTML/);
   assert.ok(!elements.some((element) => 'data-raw' in element.attributes));
   assert.doesNotMatch(text, /A block|<span>/);
-  // Keys are the one exception: <kbd> around plain text renders as Kbd, and nothing else.
   const keys = elements.filter((element) => element.tag === 'kbd');
   assert.ok(keys.every((key) => hasClass(key, 'env-kbd')));
   assert.deepEqual(keys.map(textOf), ['Ctrl', 'P']);

@@ -1,4 +1,3 @@
-// A Combobox's options: their types, which Combobox.tsx exports, and the functions on them.
 import type { ReactNode } from 'react';
 
 /** One option of a Combobox. */
@@ -31,14 +30,12 @@ export type ComboboxFilter<Item extends ComboboxItem = ComboboxItem> = (
   query: string,
 ) => boolean;
 
-/** Whether an entry of the options is a group of them. */
 export function isGroup<Item extends ComboboxItem>(
   entry: Item | ComboboxGroup<Item>,
 ): entry is ComboboxGroup<Item> {
   return Array.isArray(entry.items);
 }
 
-/** The options, out of their groups. */
 export function flattenItems<Item extends ComboboxItem>(
   items: readonly Item[] | readonly ComboboxGroup<Item>[],
 ) {

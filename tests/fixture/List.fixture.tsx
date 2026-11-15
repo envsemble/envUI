@@ -15,7 +15,6 @@ export const mount = 'standalone';
 
 const slides = ['Intro', 'Roadmap', 'Budget', 'Questions'];
 
-/** Moves the item at `from` to `to`. */
 function moved<T>(items: T[], from: number, to: number) {
   const next = [...items];
   const [item] = next.splice(from, 1);
@@ -23,7 +22,6 @@ function moved<T>(items: T[], from: number, to: number) {
   return next;
 }
 
-/** A reorderable list of slides, each opening from its title. */
 function Slides({ testId }: { testId: string }) {
   const [items, setItems] = useState(slides);
   const [current, setCurrent] = useState('Roadmap');
@@ -61,12 +59,10 @@ function Slides({ testId }: { testId: string }) {
   );
 }
 
-/** A row component, as an application writes one, which passes the props it doesn't use on. */
 function SlideRow({ slide, ...props }: { slide: string } & Omit<List.ItemProps, 'label'>) {
   return <List.Item {...props} label={slide} description="Slide" />;
 }
 
-/** A row component that drops the props it doesn't use, so its row gets no handle. */
 function BareSlideRow({ slide }: { slide: string }) {
   return (
     <List.Item
@@ -80,7 +76,6 @@ function BareSlideRow({ slide }: { slide: string }) {
   );
 }
 
-/** Slides in row components, which pass their props on, or with `bare`, drop them. */
 function WrappedSlides({ bare = false }: { bare?: boolean }) {
   const [items, setItems] = useState(slides);
   const testId = bare ? 'bare-slides' : 'wrapped-slides';
@@ -104,11 +99,6 @@ function WrappedSlides({ bare = false }: { bare?: boolean }) {
   );
 }
 
-/**
- * Lists: reorderable slides with a current one, the same in
- * right-to-left text, slides in a row component, people with avatars in the start slot, and rows
- * chosen by checkboxes, and people under a filled surface. With &bare-rows, slides in a row component that drops List.Root's props.
- */
 export default function ListFixture() {
   const [checked, setChecked] = useState<string[]>(['Sam Lee']);
   const theme = useTheme();

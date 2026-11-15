@@ -12,10 +12,6 @@ import {
 
 const entryPoints = new Set(readData('entryPoints.json').entryPoints);
 
-/**
- * The rows and cards that can take a click themselves, each with what makes one interactive and
- * where an action of its own goes instead.
- */
 const rows = {
   'List.Item': {
     props: ['href', 'onClick'],
@@ -30,7 +26,6 @@ const rows = {
   Card: { props: ['href', 'onClick'], target: false, place: 'beside the card as a Button' },
 };
 
-/** Whether a JSX attribute is set to anything but false. */
 const isSet = (attribute) => attribute !== undefined && staticValue(attribute) !== false;
 
 /** @type {import('eslint').Rule.RuleModule} */
@@ -53,7 +48,6 @@ export default {
     const { isReexportModule } = pluginSettings(context);
     const isEnvuiSource = (source) => entryPoints.has(source) || isReexportModule(source);
 
-    /** The envUI component a JSX name stands for, such as `List.Item`, or undefined. */
     function envuiName(name) {
       if (isIntrinsic(name)) return undefined;
       const imported = importedComponent(sourceCode, name);
@@ -61,7 +55,6 @@ export default {
       return isEnvuiSource(imported.source) ? imported.name : undefined;
     }
 
-    /** How the message names a link-styled action, or undefined for anything else. */
     function linkStyled(element) {
       if (findAttribute(element, 'data-row-target')) return undefined;
       if (jsxName(element.name) === 'a') return 'A raw <a>';
@@ -73,7 +66,6 @@ export default {
       return undefined;
     }
 
-    /** The JSX elements a row holds, in its children and its props, apart from nested rows. */
     function inside(row) {
       const elements = [];
       walk(row, sourceCode.visitorKeys, (node) => {

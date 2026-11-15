@@ -1,5 +1,3 @@
-// Card's markup: its heading's level, the element it renders, and a pressable card as a native
-// button or link, named by its text. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';

@@ -62,25 +62,20 @@ export interface TableOfContentsProps extends Omit<ComponentPropsWithRef<'nav'>,
 
 const defaultLevels: readonly HeadingLevel[] = [2, 3];
 
-/** How long scrolling must pause before a scroll that a link started counts as finished. */
-const settleDelay = 150;
+const scrollPauseThatEndsLinkScrollMs = 150;
 
 interface ListProps {
   items: readonly TableOfContentsItem[];
   current: string | undefined;
-  /** The sections before the current one, in reading order: those the reader has passed. */
   passed: ReadonlySet<string>;
-  /** How deep this level is nested: 0 for the top. */
   depth: number;
   onNavigate: (event: MouseEvent<HTMLElement>, id: string) => void;
 }
 
-/** One level of the outline: its links, each with the level nested under it. */
 function List({ items, current, passed, depth, onNavigate }: ListProps) {
   return (
     <ol
       className="env-table-of-contents-list"
-      // The level's depth, which the links take their indent from.
       style={depth > 0 ? { '--env-table-of-contents-depth': depth } : undefined}
     >
       {items.map((item) => (
@@ -127,116 +122,112 @@ export function TableOfContents({
   const shape = useRef<SVGSVGElement>(null);
   const items = useContentsHeadings({ givenItems, container, levels, filter, own: root });
   const [current, setCurrent] = useState<string>();
-  // A section a link scrolls to: while the page scrolls there, the marks follow the scroll through
-  // the sections between; once scrolling pauses, the chosen section is current, also where the page
-  // can't bring it to the reading line, until the reader scrolls on.
-  const chosen = useRef<{ id: string; settled: boolean } | null>(null);
+  const chosenByLink = useRef<{ id: string; settled: boolean } | null>(null);
   const settle = useRef(0);
-  // Measures again on the next frame: set by the effect that tracks the scrolling.
-  const refresh = useRef<() => void>(() => {});
+  const measureOnNextFrame = useRef<() => void>(() => {});
   const settleLater = useCallback((delay: number) => {
     clearTimeout(settle.current);
-    const choice = chosen.current;
+    const choice = chosenByLink.current;
     if (!choice) return;
     settle.current = window.setTimeout(() => {
       choice.settled = true;
-      refresh.current();
+      measureOnNextFrame.current();
     }, delay);
   }, []);
   useEffect(() => () => clearTimeout(settle.current), []);
   const flat = useMemo(() => flatten(items), [items]);
   const ids = flat.map((entry) => entry.id).join('\n');
 
-  // The current section, from where the area that holds the sections has scrolled, and the shape
-  // beside the list that marks the reader's place.
-  useEffect(() => {
-    if (ids === '') {
-      setCurrent(undefined);
-      return;
-    }
-    const sectionIds = ids.split('\n');
-    const first = document.getElementById(sectionIds[0]);
-    const doc = first?.ownerDocument ?? document;
-    let frame = 0;
-
-    const drawer = createWaveDrawer(
-      () => root.current,
-      () => shape.current,
-      reducedMotionQuery(),
-    );
-    const update = () => {
-      frame = 0;
-      const choice = chosen.current;
-      if (choice?.settled) {
-        setCurrent(choice.id);
-        drawer.wave(sectionIds.indexOf(choice.id));
-        return;
-      }
-      const elements = sectionIds
-        .map((id) => doc.getElementById(id))
-        .filter((element): element is HTMLElement => element !== null);
-      if (elements.length === 0) {
+  useEffect(
+    function trackCurrentSectionAndDrawReadersPlace() {
+      if (ids === '') {
         setCurrent(undefined);
-        drawer.wave(null);
         return;
       }
-      const { sections, view } = readSections(elements, doc);
-      let next = currentSection(sections, view);
-      let position = readingPosition(sections, view);
-      if (choice) {
-        // On the way to a chosen section, the marks never pass it, though the page may scroll on
-        // to its end, where a later section would be current.
-        const chosenIndex = sectionIds.indexOf(choice.id);
-        if (position > chosenIndex) position = chosenIndex;
-        if (next && sectionIds.indexOf(next) > chosenIndex) next = choice.id;
-      }
-      setCurrent(next);
-      drawer.wave(position);
-    };
-    const schedule = () => {
-      if (frame === 0) frame = requestAnimationFrame(update);
-    };
-    const onScroll = (event: Event) => {
-      const target = event.target;
-      // Only a scroll that moves the sections counts. They are looked up again each time: the page
-      // may have rendered them anew since, and a section the effect found first may have left it.
-      const section = doc.getElementById(sectionIds[0]);
-      if (target instanceof Element && section && !target.contains(section)) return;
-      const choice = chosen.current;
-      if (choice && !choice.settled) {
-        // A scroll a link started: the marks follow it, and the choice settles once it pauses.
-        settleLater(settleDelay);
+      const sectionIds = ids.split('\n');
+      const first = document.getElementById(sectionIds[0]);
+      const doc = first?.ownerDocument ?? document;
+      let frame = 0;
+
+      const drawer = createWaveDrawer(
+        () => root.current,
+        () => shape.current,
+        reducedMotionQuery(),
+      );
+      const update = () => {
+        frame = 0;
+        const choice = chosenByLink.current;
+        if (choice?.settled) {
+          setCurrent(choice.id);
+          drawer.wave(sectionIds.indexOf(choice.id));
+          return;
+        }
+        const elements = sectionIds
+          .map((id) => doc.getElementById(id))
+          .filter((element): element is HTMLElement => element !== null);
+        if (elements.length === 0) {
+          setCurrent(undefined);
+          drawer.wave(null);
+          return;
+        }
+        const { sections, view } = readSections(elements, doc);
+        let next = currentSection(sections, view);
+        let position = readingPosition(sections, view);
+        if (choice) {
+          const chosenIndex = sectionIds.indexOf(choice.id);
+          if (position > chosenIndex) position = chosenIndex;
+          if (next && sectionIds.indexOf(next) > chosenIndex) next = choice.id;
+        }
+        setCurrent(next);
+        drawer.wave(position);
+      };
+      const schedule = () => {
+        if (frame === 0) frame = requestAnimationFrame(update);
+      };
+      const onScroll = (event: Event) => {
+        const target = event.target;
+        const sectionLookedUpAfresh = doc.getElementById(sectionIds[0]);
+        const movesNoSection =
+          target instanceof Element &&
+          sectionLookedUpAfresh &&
+          !target.contains(sectionLookedUpAfresh);
+        if (movesNoSection) return;
+        const choice = chosenByLink.current;
+        const scrollALinkStarted = choice && !choice.settled;
+        if (scrollALinkStarted) {
+          settleLater(scrollPauseThatEndsLinkScrollMs);
+          schedule();
+          return;
+        }
+        chosenByLink.current = null;
         schedule();
-        return;
-      }
-      chosen.current = null;
+      };
+      const onResize = () => schedule();
+      measureOnNextFrame.current = schedule;
       schedule();
-    };
-    const onResize = () => schedule();
-    refresh.current = schedule;
-    schedule();
-    doc.addEventListener('scroll', onScroll, { capture: true, passive: true });
-    window.addEventListener('resize', onResize);
-    const resizes = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(onResize);
-    if (first?.parentElement) resizes?.observe(first.parentElement);
-    // The list's own size: labels that wrap anew, or a font that loads, move its entries.
-    const body = root.current;
-    const reshapes =
-      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(drawer.remeasure);
-    if (body) reshapes?.observe(body);
-    body?.addEventListener('pointerover', drawer.onPointerOver);
-    body?.addEventListener('pointerleave', drawer.onPointerLeave);
-    return () => {
-      cancelAnimationFrame(frame);
-      drawer.stop();
-      doc.removeEventListener('scroll', onScroll, { capture: true });
-      window.removeEventListener('resize', onResize);
-      resizes?.disconnect();
-      reshapes?.disconnect();
-      body?.removeEventListener('pointerover', drawer.onPointerOver);
-      body?.removeEventListener('pointerleave', drawer.onPointerLeave);
-    };
-  }, [ids, settleLater]);
+      doc.addEventListener('scroll', onScroll, { capture: true, passive: true });
+      window.addEventListener('resize', onResize);
+      const resizes = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(onResize);
+      if (first?.parentElement) resizes?.observe(first.parentElement);
+      const body = root.current;
+      const entriesMovedByWrapOrFont =
+        typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(drawer.remeasure);
+      if (body) entriesMovedByWrapOrFont?.observe(body);
+      body?.addEventListener('pointerover', drawer.onPointerOver);
+      body?.addEventListener('pointerleave', drawer.onPointerLeave);
+      return () => {
+        cancelAnimationFrame(frame);
+        drawer.stop();
+        doc.removeEventListener('scroll', onScroll, { capture: true });
+        window.removeEventListener('resize', onResize);
+        resizes?.disconnect();
+        entriesMovedByWrapOrFont?.disconnect();
+        body?.removeEventListener('pointerover', drawer.onPointerOver);
+        body?.removeEventListener('pointerleave', drawer.onPointerLeave);
+      };
+    },
+    [ids, settleLater],
+  );
 
   const navigate = useCallback(
     (event: MouseEvent<HTMLElement>, id: string) => {
@@ -254,12 +245,12 @@ export function TableOfContents({
       if (!target) return;
       event.preventDefault();
       const choice = { id, settled: false };
-      chosen.current = choice;
+      chosenByLink.current = choice;
       target.scrollIntoView({
         behavior: prefersReducedMotion() ? 'instant' : 'smooth',
         block: 'start',
       });
-      settleLater(settleDelay * 2);
+      settleLater(scrollPauseThatEndsLinkScrollMs * 2);
       const hash = `#${id}`;
       if (window.location.hash !== hash) window.history.pushState(window.history.state, '', hash);
       focusSection(target);
@@ -280,7 +271,6 @@ export function TableOfContents({
       hidden={items.length === 0 ? true : props.hidden}
     >
       <div className="env-table-of-contents-body" ref={root}>
-        {/* The reader's place: one shape down the list, drawn by the wave drawer. */}
         <svg
           className="env-table-of-contents-wave"
           ref={shape}

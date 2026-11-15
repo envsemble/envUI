@@ -1,21 +1,12 @@
-// Container queries, read from the page's style sheets: which `@container` rules ask about a
-// container, the widths they test and whether each holds at a width.
-
 import { roundToHundredth } from '../internal/dom/lengths.js';
 
-/** One condition of `@container` rules, with every rule that asks it about one container name. */
 export interface ContainerQuery {
-  /** The container name the rules ask about; empty for the nearest container of any name. */
   container: string;
-  /** The condition, such as `(inline-size >= 37.5rem)`. */
   condition: string;
-  /** The style rules inside rules with this condition. */
   rules: number;
-  /** The widths the condition tests, in rem. */
   thresholds: number[];
 }
 
-/** The shape of the CSSOM rules read here, so that tests can hand in plain objects. */
 interface RuleLike {
   cssRules?: ArrayLike<RuleLike>;
   selectorText?: string;
@@ -27,10 +18,7 @@ interface RuleLike {
 const isContainerRule = (rule: RuleLike) =>
   typeof rule.containerName === 'string' && typeof rule.conditionText === 'string';
 
-/**
- * The widths a condition tests, in rem: `(width >= 600px)` at a 16 px root is 37.5.
- * @internal Exported for tests/library/source/DevMode.test.ts.
- */
+/** @internal */
 export function thresholdsOf(condition: string, rootPx: number): number[] {
   const widths = new Set<number>();
   for (const match of condition.matchAll(/(\d*\.?\d+)(rem|em|px)\b/g)) {
@@ -40,11 +28,6 @@ export function thresholdsOf(condition: string, rootPx: number): number[] {
   return [...widths].sort((a, b) => a - b);
 }
 
-/**
- * Whether a width condition holds at a width in rem; null when it can't tell, such as for a
- * height or a style query. It reads ranges (`inline-size >= 40rem`, `30rem < width <= 50rem`),
- * min-width and max-width, joined by `and` or `or`, and `not`.
- */
 export function conditionHolds(
   condition: string,
   widthRem: number,
@@ -111,18 +94,13 @@ function countStyleRules(rule: RuleLike): number {
   return (typeof rule.selectorText === 'string' ? 1 : 0) + nested;
 }
 
-/** The condition of a container rule without its container name. */
-function conditionOf(rule: RuleLike): string {
+function conditionWithoutContainerName(rule: RuleLike): string {
   if (rule.containerQuery) return rule.containerQuery;
   const text = rule.conditionText ?? '';
   return rule.containerName ? text.replace(/^\s*\S+\s+(?=\(|not\b)/, '') : text;
 }
 
-/**
- * Every `@container` rule in the style sheets, by the container name it asks about, with its
- * conditions merged: one entry per name and condition, counting the style rules inside.
- * @internal Exported for tests/library/source/DevMode.test.ts.
- */
+/** @internal */
 export function readContainerQueries(
   sheets: Iterable<{ cssRules: ArrayLike<RuleLike> }>,
   rootPx: number,
@@ -132,7 +110,7 @@ export function readContainerQueries(
     for (const rule of Array.from(rules)) {
       if (isContainerRule(rule)) {
         const container = rule.containerName ?? '';
-        const condition = conditionOf(rule);
+        const condition = conditionWithoutContainerName(rule);
         const list = byName.get(container) ?? [];
         byName.set(container, list);
         const count = Array.from(rule.cssRules ?? []).reduce(
@@ -153,61 +131,62 @@ export function readContainerQueries(
     }
   };
   for (const sheet of sheets) {
-    let rules: ArrayLike<RuleLike>;
-    try {
-      rules = sheet.cssRules;
-    } catch {
-      // A style sheet from another origin can't be read, and holds none of the page's own rules.
-      continue;
-    }
-    visit(rules);
+    const rules = cssRulesUnlessCrossOrigin(sheet);
+    if (rules) visit(rules);
   }
   return byName;
 }
 
-/**
- * The queries a container answers: those naming any of its names. A container without a name
- * answers the queries that name none; those ask whichever container is nearest the element they
- * style, so a named container is not credited with them.
- */
 export function queriesFor(
   containerName: string,
   queries: Map<string, ContainerQuery[]>,
 ): ContainerQuery[] {
   const names = containerName.split(/\s+/).filter((name) => name && name !== 'none');
-  return names.length ? names.flatMap((name) => queries.get(name) ?? []) : (queries.get('') ?? []);
+  const queriesOfTheNearestContainer = queries.get('') ?? [];
+  return names.length
+    ? names.flatMap((name) => queries.get(name) ?? [])
+    : queriesOfTheNearestContainer;
 }
 
-/** The widths a container's queries test, in rem, smallest first. */
 export const thresholdsFor = (queries: ContainerQuery[]) =>
   [...new Set(queries.flatMap((query) => query.thresholds))].sort((a, b) => a - b);
 
-let cached: { key: string; rootPx: number; queries: Map<string, ContainerQuery[]> } | null = null;
+let cachedUntilSheetsChange: {
+  key: string;
+  rootPx: number;
+  queries: Map<string, ContainerQuery[]>;
+} | null = null;
 
-/**
- * The page's container queries, read again only when its style sheets change: another sheet, or
- * another number of rules in one.
- */
-export function pageContainerQueries(rootPx: number): Map<string, ContainerQuery[]> {
-  const sheets = Array.from(document.styleSheets);
-  const key = sheets
+export function cssRulesUnlessCrossOrigin<Rules>(sheet: {
+  readonly cssRules: Rules;
+}): Rules | null {
+  try {
+    return sheet.cssRules;
+  } catch {
+    return null;
+  }
+}
+
+export function styleSheetsVersion(sheets: readonly CSSStyleSheet[]): string {
+  return sheets
     .map((sheet) => {
-      try {
-        return `${sheet.href ?? 'inline'}:${sheet.cssRules.length}`;
-      } catch {
-        return 'foreign';
-      }
+      const rules = cssRulesUnlessCrossOrigin(sheet);
+      return rules ? `${sheet.href ?? 'inline'}:${rules.length}` : 'foreign';
     })
     .join('|');
-  if (cached?.key !== key || cached.rootPx !== rootPx)
-    cached = {
+}
+
+export function pageContainerQueries(rootPx: number): Map<string, ContainerQuery[]> {
+  const sheets = Array.from(document.styleSheets);
+  const key = styleSheetsVersion(sheets);
+  if (cachedUntilSheetsChange?.key !== key || cachedUntilSheetsChange.rootPx !== rootPx)
+    cachedUntilSheetsChange = {
       key,
       rootPx,
       queries: readContainerQueries(
-        // A CSSRule shares none of RuleLike's optional fields, which only its kinds of rule add.
         sheets as unknown as { cssRules: ArrayLike<RuleLike> }[],
         rootPx,
       ),
     };
-  return cached.queries;
+  return cachedUntilSheetsChange.queries;
 }

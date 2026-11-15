@@ -67,8 +67,6 @@ test('CI runs the browser job of every spec the check tiers run for a file', () 
     specs.get(spec)?.startsWith('tests/browser/site/') ? 'site' : 'library';
   const missed: string[] = [];
   for (const file of files) {
-    // The specs pathRules gives the file; its name and its fixtures' imports choose specs only for
-    // the library's files, the fixtures and the specs themselves.
     const named = file.startsWith('tests/browser/site/')
       ? ['SiteSmoke']
       : /^(?:packages\/ui\/src|tests\/(?:fixture|component|browser\/library))\//.test(file)
@@ -92,8 +90,6 @@ test('the burn-in repeats the browser test files a change adds or edits, and not
       'tests/browser/site/SiteSmoke.spec.ts',
       'tests/browser/library/Hydration.spec.ts',
       'tests/component/Menu.test.tsx',
-      // The component a test covers, its fixture and helpers, and the accessibility scan, which
-      // CI's Chromium jobs leave to `npm run test:a11y`.
       'packages/ui/src/navigation/menu/Menu.tsx',
       'tests/fixture/Menu.fixture.tsx',
       'tests/component/support/Browser.ts',
@@ -131,7 +127,6 @@ test('the choice prints a line for each job, whose job CI skips only when it say
       'burn-in': 'true',
       'burn-in-files': 'tests/component/Menu.test.tsx',
     });
-    // A change that deletes its test file, and a full run, burn in nothing.
     writeFileSync(kept, '');
     assert.equal(choose('--paths', changed, '--kept', kept)['burn-in'], 'false');
     assert.deepEqual(choose('--full'), {
@@ -140,7 +135,6 @@ test('the choice prints a line for each job, whose job CI skips only when it say
       'burn-in': 'false',
       'burn-in-files': '',
     });
-    // Each boolean line names a job of the CI workflow that its CI job waits for.
     const workflow = readFileSync(join(repositoryRoot, '.github/workflows/ci.yml'), 'utf8');
     const needs = /^ {4}needs: \[(.*)\]$/m.exec(workflow.slice(workflow.indexOf('\n  ci:')))?.[1];
     for (const [job, value] of Object.entries(choose('--full')))

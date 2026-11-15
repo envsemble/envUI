@@ -6,12 +6,10 @@ import config, { hairlineProperties, rawColorFunction, stackingValues } from '..
 import { lintPackages, staleFiles } from '../../../scripts/build/SyncLintPackages.ts';
 
 const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
-/** The color values the ESLint plugin's no-raw-colors tests read too, which both packages read alike. */
 const colorValues = JSON.parse(
   readFileSync(new URL('../../../tests/lint/ColorValues.json', import.meta.url), 'utf8'),
 );
 
-/** The rule and the marked text of each warning for some CSS in source order, with lines on request. */
 async function lint(code, { lines = false } = {}) {
   const { results } = await stylelint.lint({ code, config });
   const [result] = results;
@@ -25,16 +23,17 @@ async function lint(code, { lines = false } = {}) {
     }));
 }
 
-/** The message of the one warning some CSS gets. */
 async function message(code) {
   const { results } = await stylelint.lint({ code, config });
   assert.equal(results[0].warnings.length, 1, JSON.stringify(results[0].warnings));
   return results[0].warnings[0];
 }
 
+const isApplicationOrMistypedExampleName = (name) =>
+  name.startsWith('--app-') || name.endsWith('-defualt');
+
 const passes = async (code) => assert.deepEqual(await lint(code), [], code);
 
-/** Some CSS as the config's fixes leave it. */
 async function fixed(code) {
   const result = await stylelint.lint({ code, config, fix: true });
   return result.code;
@@ -87,7 +86,6 @@ test('raw colors are reported by the rule for their kind, with the tokens for th
     (await message('.a { border-color: rgb(0 0 0); }')).text,
     /such as var\(--env-color-border-default\) or another var\(--env-color-border-…\) role/,
   );
-  // Colors inside a CSS string pass, and one after it doesn't.
   await passes(`.a { content: "rgb(1 2 3)"; } .b { content: 'it\\'s hsl(0 0% 0%)'; }`);
   assert.deepEqual(await lint('.b { content: "a" rgb(1 2 3); }'), [
     { rule: 'declaration-property-value-disallowed-list', text: '"a" rgb(1 2 3)' },
@@ -117,7 +115,6 @@ test('a literal z-index is reported, and stacking tokens pass', async () => {
     { rule: 'declaration-property-value-allowed-list', text: '10' },
     { rule: 'declaration-property-value-allowed-list', text: '-1' },
   ]);
-  // The message names envUI's stacking tokens.
   assert.equal(
     (await message('.a { z-index: 999; }')).text,
     "Literal z-index 999: use an envUI stacking token (--env-z-…) instead, such as var(--env-z-sticky) for a sticky header or var(--env-z-modal) for a modal layer, with calc() for a step between two, so the application's layers keep one order with envUI's popups and dialogs. (declaration-property-value-allowed-list)",
@@ -136,7 +133,6 @@ test('px is reported outside hairlines and offsets, and fixed to rem', async () 
         '.c { width: calc(100% - 24px); }',
         '@media (min-width: 600px) { .d { margin: 0; } }',
         '.e { font-size: 14px; }',
-        // Radii and table spacing scale, also in custom properties named for a border.
         '.f { --card-border-radius: 4px; }',
         '.g { border-spacing: 2px; }',
         '.h { --divider-color: 1px; }',
@@ -272,13 +268,11 @@ test('every token the messages and the README name exists in the library', () =>
   ];
   const named = [...messages, readme].flatMap((text) => [
     ...text.matchAll(/var\((--[\w-]+)(…)?/g),
-    // Bare names of envUI's color and stacking tokens, such as `--env-color-fg-default`.
     ...text.matchAll(/(?<![\w-])(--(?:env-)?(?:color|z)-[\w-]*)(…)?/g),
   ]);
   assert.ok(named.length > 0, 'the messages name tokens');
   for (const [, name, family] of named) {
-    // The application's own custom properties, and a mistyped name, in examples.
-    if (name.startsWith('--app-') || name.endsWith('-defualt')) continue;
+    if (isApplicationOrMistypedExampleName(name)) continue;
     if (family)
       assert.ok(
         library.some((token) => token.startsWith(name)),
@@ -297,7 +291,6 @@ test("envUI's own style sheets take px from the list this config ships", async (
     .filter(Boolean);
   assert.ok(pxLists.length >= 2, 'the repository sets px for components and for tokens');
   for (const list of pxLists) assert.equal(list, hairlineProperties);
-  // The raw color functions and the z-index values, too.
   assert.deepEqual(repository.rules['declaration-property-value-disallowed-list'], {
     '/.*/': [rawColorFunction],
   });
@@ -315,7 +308,6 @@ test('keywords, data URLs, backdrop filters and stroke widths pass', async () =>
   await passes(`.a { mask: url('data:image/svg+xml;utf8,<svg fill="rgb(1 2 3)"/>'); }`);
   await passes('.a { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }');
   await passes('.a { stroke-width: 1px; }');
-  // A color after a url() is still the style's own.
   assert.deepEqual(await lint('.a { background: url("a.svg") no-repeat, rgb(1 1 1); }'), [
     {
       rule: 'declaration-property-value-disallowed-list',

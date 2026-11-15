@@ -1,7 +1,3 @@
-// A relative import names its file with the file's own case. Windows and macOS find a file whose
-// name is written in another case, such as ImportSource.ts with a lowercase first letter, and
-// Linux doesn't, so a rename that misses an import passes locally and fails on CI. The tracked
-// files' paths, as git records them, are the truth on every system.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
@@ -15,7 +11,6 @@ const tracked = execFileSync('git', ['ls-files'], { cwd: repositoryRoot, encodin
 const exactly = new Set(tracked);
 const byLowerCase = new Map(tracked.map((path) => [path.toLowerCase(), path]));
 
-/** What an import without its extension may name, as the bundlers and TypeScript resolve it. */
 const endings = [
   '',
   '.ts',
@@ -29,13 +24,12 @@ const endings = [
   '/index.js',
 ];
 
-/** Generated from pinned inputs: thousands of files that import only their own neighbours. */
-const skipped = 'packages/ui/src/icons/';
+const generatedIcons = 'packages/ui/src/icons/';
 
 test('every relative import names its file in the case git records', () => {
   const wrong: string[] = [];
   for (const file of tracked) {
-    if (!/\.(m?js|jsx|tsx?|css)$/.test(file) || file.startsWith(skipped)) continue;
+    if (!/\.(m?js|jsx|tsx?|css)$/.test(file) || file.startsWith(generatedIcons)) continue;
     const text = readFileSync(join(repositoryRoot, file), 'utf8');
     for (const [, specifier] of text.matchAll(
       /(?:from|import|@import)\s*\(?\s*['"](\.{1,2}\/[^'"?]+)/g,

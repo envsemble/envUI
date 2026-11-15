@@ -1,18 +1,3 @@
-// CI's burn-in: runs the browser test files a pull request adds or edits several times in a row, in
-// Chromium and with no retries, so that a test that passes only some of the time fails the pull
-// request that brings it rather than a later one. The CI workflow's `Changes` job picks the files
-// (burnInFiles in scripts/test/ChooseJobs.ts).
-//
-//   node scripts/test/BurnIn.ts [--runs <n>] [--api.port <port>] <file>...
-//
-// --runs       how many times each test runs (default 5); any failed run fails the burn-in
-// --api.port   the port of Vitest's browser server, as for `npm run test:library`
-//
-// The component tests repeat each test with Vitest's --repeats, which runs it once and then that
-// many times more, its hooks each time; the Playwright specs with --repeat-each, each run a test
-// of its own on a fresh page. Live development edits sources, so its runs go one at a time, last.
-// A change to many component test files, such as a helper renamed across them, runs them fewer
-// times, at least twice, so that the burn-in ends well inside its job's timeout.
 import { spawnSync } from 'node:child_process';
 import { parseArgs } from 'node:util';
 import { burnInFiles } from './ChooseJobs.ts';
@@ -35,7 +20,6 @@ if (!files.length || unknown.length)
     `Usage: BurnIn.ts [--runs <n>] [--api.port <port>] <file>..., each a component test or a Playwright spec${unknown.length ? `, not ${unknown.join(', ')}` : ''}`,
   );
 
-/** Runs a command; `required` stops the burn-in at a failure, else it fails the burn-in at its end. */
 let failed = false;
 const run = (command: string[], env: Record<string, string> = {}, required = false) => {
   const [file, ...args] = command as [string, ...string[]];
@@ -51,24 +35,21 @@ const run = (command: string[], env: Record<string, string> = {}, required = fal
 };
 
 const componentTests = files.filter(isComponentTest);
-/**
- * The seconds the component tests' runs may take at most, by the time each file takes on CI's two
- * workers (tests/component/Durations.json, a new file counting as the median): with the setup, the
- * builds and the specs, the job ends well inside its timeout in ci.yml.
- */
-const componentBudget = 6 * 60;
+const componentBudgetSeconds = 6 * 60;
 const durations = readDurations();
 const typical = median(Object.values(durations));
 const componentSeconds = componentTests.reduce(
   (sum, file) => sum + (durations[file] ?? typical),
   0,
 );
-const componentRuns = Math.max(2, Math.min(runs, Math.floor(componentBudget / componentSeconds)));
+const componentRuns = Math.max(
+  2,
+  Math.min(runs, Math.floor(componentBudgetSeconds / componentSeconds)),
+);
 if (componentRuns < runs)
   console.log(
     `The ${componentTests.length} component test files take about ${Math.round(componentSeconds)} s a run, so they run ${componentRuns} times, not ${runs}.`,
   );
-// A spec by its name, as TestScope.ts reads it: SiteSmoke for tests/browser/site/SiteSmoke.spec.ts.
 const specs = files
   .filter((file) => !isComponentTest(file))
   .map((file) => ({ file, name: file.replace(/^.*\/|\.spec\.ts$/g, '') }))
@@ -76,7 +57,6 @@ const specs = files
 const live = specs.filter((spec) => spec.needs.live);
 const others = specs.filter((spec) => !spec.needs.live);
 
-// As CI's Chromium jobs run them: every test but the accessibility scan, here without retries.
 if (componentTests.length)
   run([
     ...bin.vitest,
@@ -92,8 +72,6 @@ if (componentTests.length)
     ...componentTests,
   ]);
 
-// The builds the specs open: the site's hosted build, and the library's hydration page, which a
-// unit test renders from the library build.
 if (others.some((spec) => spec.needs.site)) run([...bin.npm, 'run', '-s', 'build:site'], {}, true);
 if (others.some((spec) => spec.needs.library)) {
   run([...bin.node, 'scripts/build/BuildLibrary.ts'], {}, true);

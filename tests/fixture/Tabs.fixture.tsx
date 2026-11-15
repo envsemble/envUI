@@ -4,10 +4,6 @@ export const themes = true;
 
 const fillViews = ['Canvas', 'Outline', 'History'];
 
-/**
- * Filling Tabs that keep their inactive panels mounted: one with a nested Tabs in its first panel,
- * and one whose list sits beside a heading through renderList.
- */
 export default function TabsFixture({ theme }: { theme: ColorScheme }) {
   const items = (nested: boolean) =>
     fillViews.map((view, index) => ({

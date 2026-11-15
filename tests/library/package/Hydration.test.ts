@@ -21,18 +21,14 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
     outfile: server,
   });
   const { HydrationApp } = await import(pathToFileURL(server).href);
-  // The server renders on a fixed day, so the browser's own today can lie in another month.
   const RealDate = Date;
-  const serverTime = RealDate.parse('2026-03-17T10:00:00Z');
-  // A Date that is the server's moment when made without a value; called as a function, as no
-  // code here does, it would still give the real date.
+  const fixedServerTime = RealDate.parse('2026-03-17T10:00:00Z');
   globalThis.Date = class extends RealDate {
     constructor(...values: unknown[]) {
-      // The real Date takes what it is given, one value or a date's parts, which no one overload is.
-      super(...((values.length > 0 ? values : [serverTime]) as [number, number]));
+      super(...((values.length > 0 ? values : [fixedServerTime]) as [number, number]));
     }
     static now() {
-      return serverTime;
+      return fixedServerTime;
     }
   } as DateConstructor;
   let markup;
@@ -42,23 +38,16 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
     globalThis.Date = RealDate;
   }
   assert.match(markup, /Server value/);
-  // The server names the search shortcut with Ctrl, whatever platform it runs on.
   assert.match(markup, /aria-keyshortcuts="Control\+K"/);
-  // The server renders the panes with their size and the side-by-side split, which CSS decides.
   assert.match(markup, /--env-panes-size:22\.5rem/);
-  // A width kept in a cookie, which the server read: its markup has it.
   assert.match(markup, /--env-panes-size:30rem/);
   assert.match(markup, /data-split-at="medium"/);
-  // The server wrote the relative time in its own language; the browser corrects it.
   assert.match(markup, />in 2 days<\/time>/);
-  // Date fields and calendars without a locale write British English on the server, as the
-  // browser does while hydrating; a calendar without a value leaves today's month to the browser.
   assert.match(markup, />17 Mar 2026</);
   const localCalendar = markup.slice(markup.indexOf('aria-label="Hydrated local calendar"'));
   assert.match(localCalendar.slice(0, localCalendar.indexOf('</table>')), />March 2026</);
   const todayCalendar = markup.slice(markup.indexOf('aria-label="Hydrated today"'));
   assert.doesNotMatch(todayCalendar.slice(0, todayCalendar.indexOf('</table>')), /data-date=/);
-  // Nor does it tell whether its month buttons reach past min and max.
   const boundedCalendar = markup.slice(markup.indexOf('aria-label="Hydrated bounded today"'));
   assert.doesNotMatch(
     boundedCalendar.slice(0, boundedCalendar.indexOf('</table>')),
@@ -71,7 +60,6 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
     },
     jsx: 'automatic',
     bundle: true,
-    // The page loads styles.css itself.
     loader: { '.css': 'empty' },
     format: 'iife',
     platform: 'browser',

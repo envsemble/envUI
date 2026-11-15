@@ -1,10 +1,4 @@
 @layer env.components {
-  /* Color properties: a field's colors, which an application sets on one TextField or Textarea
-     through style or its own CSS: container its well, which is transparent by default, so the field
-     takes the background of what it sits on, content the entered text, outline its edge at
-     rest and indicator its edge while pressed and focused, with the caret. Under the pointer the
-     edge darkens toward the text, so the accent shows focus alone. They don't inherit; the field
-     passes them on to its parts. An invalid field keeps the error color. */
   @property --env-text-field-container {
     syntax: '*';
     inherits: false;
@@ -22,16 +16,12 @@
     inherits: false;
   }
 
-  /* A field: its label above, then its box at the control height of its size, or of its container
-     where it sets none. */
   .env-text-field {
     --_text-field-well: var(--env-text-field-container, transparent);
     --_text-field-text: var(--env-text-field-content, var(--env-color-fg-default));
     --_text-field-edge: var(--env-text-field-outline, var(--env-color-border-default));
     /* prettier-ignore */
     --_text-field-accent: var(--env-text-field-indicator, var(--env-color-border-primary-emphasis));
-    /* Under the pointer the edge darkens, from its rest color most of the way to the text's: the
-       muted text color with the designed ones, so the accent stays for focus. */
     --_text-field-edge-hover: color-mix(
       in srgb,
       var(--_text-field-edge) 40%,
@@ -42,7 +32,6 @@
       var(--env-color-border-primary-emphasis-pressed)
     );
     --_field-height: var(--env-control-height);
-    /* The color of the field's error and of its invalid control, as on every field. */
     --_field-error-color: var(--env-color-fg-danger);
   }
   .env-text-field[data-size='sm'] {
@@ -54,9 +43,7 @@
   .env-text-field[data-size='lg'] {
     --env-control-height: var(--env-control-height-lg);
   }
-  /* A hidden label stays available to assistive technology; the placeholder gives visible guidance. */
   .env-text-field[data-label-hidden] > label {
-    /* Visually hidden: a pixel's box, clipped away, still read. */
     --_text-field-label-hidden-size: 0.0625rem;
     position: absolute;
     width: var(--_text-field-label-hidden-size);
@@ -75,8 +62,6 @@
     color: var(--env-color-fg-disabled);
   }
 
-  /* The box: one edge in the field's color, and the control radius every control shares. Its own
-     color is the quiet one of the icon at its start. */
   .env-text-field-control {
     --_text-field-border-base: var(--_text-field-edge, var(--env-color-border-default));
     --_text-field-interaction-color: var(
@@ -101,8 +86,6 @@
       border-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
       background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
-  /* Under the pointer the edge darkens, unless the field has focus or its list is open, which keep
-     the accent. */
   @media (hover: hover) {
     .env-text-field-control:hover:not(
         :has(> .env-text-field-input:disabled),
@@ -120,10 +103,6 @@
     ) {
     --_text-field-border-color: var(--_text-field-interaction-pressed);
   }
-  /* Focus draws the edge in the accent and a second hairline of it inside, so the frame thickens
-     inward and nothing moves: one frame, with no ring around it. A field whose list or calendar is
-     open, a Select's, a Combobox's or a picker's, keeps it while focus is in the popup; a picker's
-     until its popup has closed (data-popup-open), as focus comes back. */
   .env-text-field-control:is(
     :focus-within,
     :has(> .env-text-field-input[aria-expanded='true']),
@@ -150,7 +129,6 @@
     background: transparent;
     color: var(--_text-field-text, var(--env-color-fg-default));
     font: var(--env-type-body);
-    /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
     font-size: var(--env-control-font-size);
     caret-color: var(--_text-field-accent, var(--env-color-border-primary-emphasis));
   }
@@ -158,17 +136,6 @@
     color: var(--env-color-fg-muted);
     opacity: 1;
   }
-  /* Ghost fields have no edge: at rest a faint fill, half the neutral fill, says where to type; a
-     read-only or disabled one keeps a fainter fill, so it still reads as a field, quieter than one
-     to fill in, and doesn't answer the pointer. The neutral fill shows under the pointer, and focus
-     draws the outline field's accent frame, so focus reads the same in every variant. An invalid
-     ghost field shows its red edge. The command palette's search is a ghost field that sets private
-     properties (CommandPalette.css): --_text-field-ghost-solid, a fill it keeps in every state;
-     --_text-field-ghost-edge, an edge; --_text-field-ghost-focus-edge and
-     --_text-field-ghost-focus-frame, the color and width of its frame while focused, as it draws a
-     focus ring of its own; --_text-field-ghost-corner, its corner; and, as any field may,
-     --_text-field-start-inset and --_text-field-end-inset, where its start icon and end actions
-     sit. */
   .env-text-field-control[data-variant='ghost'] {
     background: var(
       --_text-field-ghost-solid,
@@ -208,23 +175,16 @@
       var(--_text-field-ghost-focus-edge, var(--_text-field-border-color))
     );
   }
-  /* Read-only: the value keeps its full contrast and the frame its resting edge, which doesn't
-     answer the pointer, so the field reads as one to look at rather than to fill in, and not as an
-     unavailable one, whose edge quiets (below). Focus still draws the accent frame. Inputs mark it
-     with readonly, the fields whose control is a button with aria-readonly. */
   .env-text-field-control:has(> .env-text-field-input:is([readonly], [aria-readonly='true'])) {
     --_text-field-interaction-hover: var(--_text-field-border-base);
     --_text-field-interaction-pressed: var(--_text-field-border-base);
   }
-  /* Invalid controls recolor their existing edge. */
   .env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid]) {
     --_text-field-border-base: var(--_field-error-color);
     --_text-field-interaction-color: var(--_field-error-color);
     --_text-field-interaction-hover: var(--env-color-border-danger-emphasis-hover);
     --_text-field-interaction-pressed: var(--env-color-border-danger-emphasis-pressed);
   }
-  /* Disabled: the value, affixes and icons take the disabled text color, and the edge quiets to the
-     muted border, more than the text, rather than the whole field fading. */
   .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) {
     --_text-field-border-base: var(--env-color-border-muted);
     --_button-text-icon-color: var(--env-color-fg-disabled);
@@ -245,11 +205,7 @@
   .env-text-field-input:disabled {
     cursor: default;
   }
-  /* Text that scrolls clips at the padding, as a scroll box's content does at its edge, so a line
-     that runs on never shows in the padding or under the edge. While it doesn't scroll, the padding
-     is empty and nothing is cut. */
   textarea.env-text-field-input {
-    /* A text area's least height, as tall as about four lines. */
     --_textarea-min-height: 7.5rem;
     min-height: var(--_textarea-min-height);
     field-sizing: fixed;
@@ -258,8 +214,7 @@
     resize: none;
     mask-image: linear-gradient(
       transparent var(--env-space-4),
-      /* Any opaque color: the mask keeps what lies under its opaque part. */
-        var(--env-color-fg-default) var(--env-space-4) calc(100% - var(--env-space-4)),
+      var(--env-color-fg-default) var(--env-space-4) calc(100% - var(--env-space-4)),
       transparent calc(100% - var(--env-space-4))
     );
   }
@@ -270,24 +225,17 @@
       calc(var(--_textarea-rows, 2) * 1lh + var(--env-space-6))
     );
   }
-  /* Given rows, a field starts that many lines tall, also when that is less than 7.5 rem: a growing
-     one shrinks back to them, and a fixed one resizes down to them or to 7.5 rem, whichever is
-     less. */
   textarea.env-text-field-input[data-rows] {
     --_textarea-rows-height: calc(var(--_textarea-rows) * 1lh + 2 * var(--env-space-4));
-    --_textarea-rows-least: min(7.5rem, var(--_textarea-rows-height));
+    --_textarea-rows-least: min(var(--_textarea-min-height), var(--_textarea-rows-height));
     min-height: var(--_textarea-rows-least);
   }
   textarea.env-text-field-input[data-sizing='content'][data-rows] {
     min-height: var(--_textarea-rows-height);
   }
-  /* At rest the edge is the frame alone; the grip of the resize handle (TextareaResizeEdge.css)
-     shows under the pointer and while the field or the handle has focus, so the keyboard finds it,
-     as it does while it is dragged. */
   .env-text-field-control:is(:hover, :focus-within) > .env-textarea-resize-handle::after {
     opacity: 1;
   }
-  /* Older browsers retain the shared edge when native content sizing is unavailable. */
   @supports (field-sizing: content) {
     textarea.env-text-field-input[data-sizing='content'] + .env-textarea-resize-handle {
       display: none;
@@ -311,8 +259,6 @@
       transition: none;
     }
   }
-  /* The icon at the start and the actions at the end sit inside the box; the native input keeps its
-     full hit area and caret. */
   .env-text-field-start,
   .env-text-field-end {
     position: absolute;
@@ -323,44 +269,35 @@
     pointer-events: none;
   }
   .env-text-field-end {
-    /* Icon actions, such as the clear action, take the field's quiet icon color rather than the
-       link blue of text buttons, darkening to the field text on hover and press. The icons at the
-       end, as a select's chevron and a date's calendar, keep their color while the field has focus:
-       the frame shows focus. */
     --_button-text-icon-color: var(--env-color-fg-muted);
     --_button-text-icon-color-active: var(--env-color-fg-default);
     display: flex;
     align-items: center;
-    /* Two actions, as a clear button before a chevron or a calendar, stand a step apart, so their
-       icons don't crowd each other in a small field; the fields that hold two keep room for the
-       step (Combobox.css, DatePicker.css). */
     gap: var(--env-space-1);
     inset-inline-end: var(--_text-field-end-inset, var(--env-space-2));
     color: var(--env-color-fg-muted);
   }
-  .env-text-field-control[data-start-icon] > .env-text-field-input {
-    padding-inline-start: calc(
+  .env-text-field-control[data-start-icon] {
+    --_text-field-text-start-past-icon: calc(
       var(--_text-field-start-inset, var(--env-space-4)) + var(--env-control-icon-size) +
         var(--env-space-3)
     );
   }
+  .env-text-field-control[data-start-icon] > .env-text-field-input {
+    padding-inline-start: var(--_text-field-text-start-past-icon);
+  }
   .env-text-field-control[data-end-action] > .env-text-field-input {
     padding-inline-end: calc((var(--env-control-height) + var(--env-space-3)));
   }
-  /* Search inputs supply their own clear action. */
   .env-text-field-input[type='search']::-webkit-search-cancel-button {
     appearance: none;
   }
-  /* A single-line field shares the button height, so it lines up with buttons in a row. A field
-     that grows taller, as a combobox whose chips wrap, keeps the same corners. */
   .env-text-field:not([data-tall]) .env-text-field-control {
     box-sizing: border-box;
     display: flex;
     min-height: var(--_field-height);
   }
   .env-text-field:not([data-tall]) .env-text-field-input {
-    /* The box owns the height, including its edge, so it matches the button height exactly; the
-       block padding gives way where a line and the padding would outgrow it. */
     flex: 1 1 auto;
     min-height: 0;
     padding-block: min(
@@ -380,14 +317,11 @@
     > .env-text-field-input {
     padding-inline-end: var(--_field-height);
   }
-  /* Prefix and suffix text sit in line with the value, inside the box. A long prefix is cut short
-     with an ellipsis, so the control always keeps room for its value. */
   .env-text-field-control:is([data-prefix], [data-suffix]) {
     display: flex;
   }
   .env-text-field-control:is([data-prefix], [data-suffix]) > .env-text-field-input {
     flex: 1 1 0;
-    /* The room the value keeps beside a long prefix or suffix. */
     --_text-field-value-min-width: 6rem;
     min-inline-size: min(var(--_text-field-value-min-width), 50%);
   }
@@ -397,8 +331,6 @@
     align-self: center;
     min-inline-size: 0;
     overflow: hidden;
-    /* Quieter than muted text, so the value reads apart from its prefix or suffix, and still 4.5:1
-       on the field and on the surfaces a ghost field sits on. */
     /* contrast: text-field-affix */
     color: color-mix(in srgb, var(--env-color-fg-muted) 85%, transparent);
     font: var(--env-type-body);
@@ -420,10 +352,7 @@
     padding-inline-end: calc(var(--env-space-1) / 2);
   }
   .env-text-field-control[data-start-icon] > .env-text-field-prefix {
-    padding-inline-start: calc(
-      var(--_text-field-start-inset, var(--env-space-4)) + var(--env-control-icon-size) +
-        var(--env-space-3)
-    );
+    padding-inline-start: var(--_text-field-text-start-past-icon);
   }
   .env-text-field-control[data-end-action] > .env-text-field-suffix {
     padding-inline-end: calc((var(--env-control-height) + var(--env-space-3)));
@@ -438,10 +367,6 @@
     > .env-text-field-suffix {
     padding-inline-end: var(--_field-height);
   }
-  /* Under a coarse pointer, single-line fields grow to the touch height, whatever the scale, as every
-     control does, and their text to 1 rem. The actions inside keep their size, a little less than
-     the field's, and their hit area grows above and below them to the touch height, within the
-     field: never beside them, over the next action or the text. */
   @media (pointer: coarse) {
     .env-text-field {
       --_field-height: max(var(--env-control-height), var(--env-control-height-touch));
@@ -452,17 +377,12 @@
     }
   }
 
-  /* Motion: a field's actions settle in as they appear. Only without a reduced-motion preference;
-     an action that is always there, such as a combobox's chevron, stays still in its own sheet. */
   @media (prefers-reduced-motion: no-preference) {
     .env-text-field-end > * {
       animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     }
   }
 
-  /* Forced colors: the system paints no fills or shadows, so a focused field is outlined in the
-     selection color, an invalid one has a dashed edge, and a disabled one takes the disabled
-     color. */
   @media (forced-colors: active) {
     .env-text-field-control:focus-within {
       outline: 2px solid Highlight;

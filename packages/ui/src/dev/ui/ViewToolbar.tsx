@@ -1,9 +1,5 @@
 'use client';
 
-// The controls floating over the 3D view: the toolbar of four dropdowns at the top's middle, View,
-// Show, Responsive and View settings, and in the top corners how to move around and the buttons
-// that bring back a hidden sidebar. Each action has one place.
-
 import { memo, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
 import { Button } from '../../actions/Button.js';
 import * as Toolbar from '../../actions/Toolbar.js';
@@ -27,12 +23,11 @@ import { IconTune } from '../../icons/Tune.js';
 import { IconViewInAr } from '../../icons/ViewInAr.js';
 import * as Menu from '../../actions/menu/Menu.js';
 import { angles, type Angle } from './camera.js';
-import { HintedIconButton, SidebarToggle, instant, type Side } from './Controls.js';
+import { HintedIconButton, SidebarToggle, noTooltipDelay, type Side } from './Controls.js';
 import { deviceGroups } from './devices.js';
-import { realSize, type FrameSize } from './Frame.js';
+import { pageOwnSize, type FrameSize } from './Frame.js';
 import { ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './Icons.js';
 
-/** What the planes show, which the Show dropdown sets. */
 export interface ShowOptions {
   names: boolean;
   spacing: boolean;
@@ -40,13 +35,11 @@ export interface ShowOptions {
   colorBy: 'kind' | 'window';
 }
 
-/** The levels shown and how far apart, which View settings sets. */
 interface Levels {
   spacing: number;
   from: number;
   to: number;
-  /** The highest level the page has. */
-  most: number;
+  highestLevel: number;
 }
 
 const angleIcons: Record<Angle, ReactNode> = {
@@ -57,34 +50,28 @@ const angleIcons: Record<Angle, ReactNode> = {
   right: <ViewRight />,
 };
 
-/**
- * The View dropdown's three by two grid, row by row, laid out as the angles look at the page: Top
- * above Front, Left and Right beside it, and Tilted, which looks from above and to the right, in
- * the top right corner. null leaves a cell empty.
- */
-const angleGrid: (Angle | null)[] = [null, 'top', 'tilted', 'left', 'front', 'right'];
+const angleGridRows: (Angle | null)[][] = [
+  [null, 'top', 'tilted'],
+  ['left', 'front', 'right'],
+];
+const angleGrid = angleGridRows.flat();
 
-/** The floating controls take the pointer for themselves, not for the view. */
-const keepPointer = (event: ReactPointerEvent) => event.stopPropagation();
+const keepPointerFromTheView = (event: ReactPointerEvent) => event.stopPropagation();
 
 export interface ViewToolbarProps {
-  /** The angle the view is at, or null once a drag turned it. */
   angle: Angle | null;
-  /** Turns the view to an angle, with the whole page in view. */
   onAngle: (angle: Angle) => void;
   show: ShowOptions;
   onShowChange: (show: ShowOptions) => void;
   frame: FrameSize;
-  /** The page's own size, in px, which the frame starts at. */
   pageSize: { w: number; h: number };
   onFrameChange: (frame: FrameSize) => void;
   levels: Levels;
-  onLevelsChange: (levels: Omit<Levels, 'most'>) => void;
+  onLevelsChange: (levels: Omit<Levels, 'highestLevel'>) => void;
   debug: boolean;
   onDebugChange: (debug: boolean) => void;
 }
 
-/** The toolbar over the view: View, Show, Responsive and View settings. */
 export const ViewToolbar = memo(function ViewToolbar({
   angle,
   onAngle,
@@ -102,9 +89,9 @@ export const ViewToolbar = memo(function ViewToolbar({
     <Surface
       padding={1}
       radius="full"
-      render={<Toolbar.Root aria-label="3D view" size="sm" tooltipDelay={instant} />}
+      render={<Toolbar.Root aria-label="3D view" size="sm" tooltipDelay={noTooltipDelay} />}
       className="env-dev-float env-dev-toolbar"
-      onPointerDown={keepPointer}
+      onPointerDown={keepPointerFromTheView}
     >
       <ViewMenu angle={angle} onAngle={onAngle} />
       <ShowMenu show={show} onShowChange={onShowChange} />
@@ -119,11 +106,6 @@ export const ViewToolbar = memo(function ViewToolbar({
   );
 });
 
-/**
- * The View dropdown: the angles laid out as they look at the page, the current one marked. Each
- * turns the view there with the whole page in view, so picking the angle the view is at brings
- * the page back after zooming or panning.
- */
 function ViewMenu({ angle, onAngle }: { angle: Angle | null; onAngle: (angle: Angle) => void }) {
   return (
     <Popover aria-label="View" trigger={<Toolbar.Button icon={<IconViewInAr />} label="View" />}>
@@ -154,7 +136,6 @@ function ViewMenu({ angle, onAngle }: { angle: Angle | null; onAngle: (angle: An
   );
 }
 
-/** The Show dropdown: what the planes show, each a check item that leaves the dropdown open. */
 function ShowMenu({
   show,
   onShowChange,
@@ -201,11 +182,6 @@ function ShowMenu({
   );
 }
 
-/**
- * The Responsive dropdown: the responsive frame turned on and off, then, while it is on, the
- * device it takes, as a browser's responsive mode lists them, and its orientation. A device sets
- * the frame to its CSS viewport size; dragging the frame afterwards makes it one of any size.
- */
 function ResponsiveMenu({
   frame,
   pageSize,
@@ -243,7 +219,7 @@ function ResponsiveMenu({
           onFrameChange(
             next
               ? { width: Math.round(pageSize.w), height: Math.round(pageSize.h), device: null }
-              : realSize,
+              : pageOwnSize,
           )
         }
       >
@@ -294,7 +270,6 @@ function ResponsiveMenu({
   );
 }
 
-/** View settings: the levels shown and their spacing, and the performance panel. */
 function ViewSettings({
   levels,
   onLevelsChange,
@@ -302,11 +277,11 @@ function ViewSettings({
   onDebugChange,
 }: {
   levels: Levels;
-  onLevelsChange: (levels: Omit<Levels, 'most'>) => void;
+  onLevelsChange: (levels: Omit<Levels, 'highestLevel'>) => void;
   debug: boolean;
   onDebugChange: (debug: boolean) => void;
 }) {
-  const { spacing, from, to, most } = levels;
+  const { spacing, from, to, highestLevel } = levels;
   return (
     <Popover
       title="View settings"
@@ -324,7 +299,7 @@ function ViewSettings({
         <Slider
           label="From level"
           min={0}
-          max={Math.max(1, most)}
+          max={Math.max(1, highestLevel)}
           value={from}
           onValueChange={(value) =>
             onLevelsChange({ spacing, from: value, to: Math.max(to, value) })
@@ -333,7 +308,7 @@ function ViewSettings({
         <Slider
           label="To level"
           min={0}
-          max={Math.max(1, most)}
+          max={Math.max(1, highestLevel)}
           value={to}
           onValueChange={(value) =>
             onLevelsChange({ spacing, from: Math.min(from, value), to: value })
@@ -345,7 +320,6 @@ function ViewSettings({
   );
 }
 
-/** How to move around the view: each gesture beside what it does. */
 function MovingAround() {
   return (
     <DescriptionList.Root layout="stacked">
@@ -372,11 +346,6 @@ function MovingAround() {
   );
 }
 
-/**
- * The view's top corners: in the start one, the node tree's button while it is hidden; in the end
- * one, how to move around, and the inspector's button while it is hidden. Each sidebar's button
- * stays where it is in the sidebar's header.
- */
 export const ViewCorners = memo(function ViewCorners({
   sides,
   onShow,
@@ -392,7 +361,7 @@ export const ViewCorners = memo(function ViewCorners({
           radius="full"
           className="env-dev-float env-dev-corner"
           data-side="start"
-          onPointerDown={keepPointer}
+          onPointerDown={keepPointerFromTheView}
         >
           <SidebarToggle side="tree" shown={false} onClick={() => onShow('tree')} />
         </Surface>
@@ -403,7 +372,7 @@ export const ViewCorners = memo(function ViewCorners({
         render={<Row gap={1} align="center" />}
         className="env-dev-float env-dev-corner"
         data-side="end"
-        onPointerDown={keepPointer}
+        onPointerDown={keepPointerFromTheView}
       >
         <Popover
           title="Moving around"

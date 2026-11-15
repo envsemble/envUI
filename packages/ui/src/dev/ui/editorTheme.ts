@@ -1,18 +1,12 @@
-// The theme of dev mode's own UI, the editor around the page: the page's theme by default, or light
-// or dark, with or without high contrast. The choice is kept in localStorage across reloads. The
-// page keeps its own theme; dev mode never changes it.
-
 export interface EditorTheme {
-  /** `page`: the theme the page has as dev mode opens. */
   theme: 'page' | 'light' | 'dark';
   contrast: 'standard' | 'high';
 }
 
 const editorThemeKey = 'envui-dev-theme';
 
-const fallback: EditorTheme = { theme: 'page', contrast: 'standard' };
+const pageTheme: EditorTheme = { theme: 'page', contrast: 'standard' };
 
-/** The editor's theme as it was last chosen, or the page's. */
 export function loadEditorTheme(): EditorTheme {
   try {
     const stored = JSON.parse(localStorage.getItem(editorThemeKey) ?? 'null') as unknown;
@@ -24,15 +18,16 @@ export function loadEditorTheme(): EditorTheme {
       };
     }
   } catch {
-    // No storage, as in a private window, or something else under the key: the page's theme.
+    return pageTheme;
   }
-  return fallback;
+  return pageTheme;
 }
 
-export function saveEditorTheme(theme: EditorTheme) {
+export function saveEditorTheme(theme: EditorTheme): boolean {
   try {
     localStorage.setItem(editorThemeKey, JSON.stringify(theme));
+    return true;
   } catch {
-    // No storage: the choice lasts until the page reloads.
+    return false;
   }
 }

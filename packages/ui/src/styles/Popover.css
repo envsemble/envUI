@@ -1,10 +1,4 @@
 @layer env.components {
-  /* A floating panel in the raised popup colors, with the menu's corners. Popover and HoverCard render on
-     PopupSurface, which draws the look, the positioner's layer and the motion through env-popup. The
-     layout and the widths are Popover's and HoverCard's own: as wide as the content, from 12 rem up to
-     20 rem, or for lg from 20 rem up to 28 rem, so a large one is wider even when what it holds is
-     short, and never wider than the room the positioner finds in the window (--available-width), so
-     it sizes to what it holds and stays on screen. */
   .env-popover,
   .env-hover-card {
     --_popover-room: var(--available-width, calc(100vw - 2rem));

@@ -19,32 +19,23 @@ import { flag } from '../../../internal/flag.js';
 import '../../../styles/Base.css';
 import '../../../styles/PanelDock.css';
 
-/** How far an arrow key changes a panel's height, in pixels; with Shift, or Page Up and Down. */
-const resizeStep = 16;
-const resizeLargeStep = 64;
+const arrowKeyResizeStepPx = 16;
+const largeResizeStepPx = 64;
+
+const shareOfDockRoomPercent = (height: number, room: number) => Math.round((height / room) * 100);
 
 interface PanelFrameProps {
   panel: PanelDockPanel;
   placement: Placement;
-  /**
-   * Until the dock reads its layout, the panel's placement in a stacked dock, which the dock's
-   * container query shows where it is narrow.
-   */
   stackedPlacement: Placement | undefined;
   stacked: boolean;
-  /** The panel's height in pixels; before the dock measures itself, the requested one, if any. */
   height: number | undefined;
-  /** Resize bounds in pixels; only open panels in the row are resized. */
   bounds: HeightBounds | undefined;
   content: ReactNode;
   resizeLabel: string;
   changeMode: (id: string, mode: PanelDockMode) => void;
   close: (id: string) => void;
   onActivate: () => void;
-  /**
-   * Called with the element that takes focus in the panel's content, including popups it opened,
-   * and with null as focus leaves.
-   */
   onFocusWithin: (element: EventTarget | null) => void;
   onFocusContent: (target: HTMLElement) => void;
   onResize: (height: number) => void;
@@ -70,81 +61,64 @@ export function PanelFrame({
   const { id, mode } = panel;
   const frameId = useId();
   const frame = useRef<HTMLElement>(null);
-  // The height while the top edge is dragged; it is reported once the drag ends.
-  const [preview, setPreview] = useState<number>();
-  // The block size of a PanelDock.Header sticking to the top of the content, in pixels.
-  const [headerSize, setHeaderSize] = useState(0);
-  // Whether the content has scrolled from its top, where a fill then marks the header, which
-  // takes it from the panel's context wherever it sits in the content.
+  const [dragPreviewHeight, setDragPreviewHeight] = useState<number>();
+  const [stickyHeaderSize, setStickyHeaderSize] = useState(0);
   const [scrolled, setScrolled] = useState(false);
-  const shownHeight = preview ?? height;
-  // A panel whose placement the dock has not read yet is in place as CSS shows it, without an
-  // entrance of its own.
-  useEntrance(
-    frame,
-    stackedPlacement === undefined ? placement : undefined,
-    placement !== 'hidden',
-  );
-  // Hidden from people in either layout until the dock reads which one shows; where only the
-  // stacked one hides the panel, its container query already hides it from sight and from
-  // assistive technology.
-  const hidden = placement === 'hidden' && (stackedPlacement ?? 'hidden') === 'hidden';
+  const shownHeight = dragPreviewHeight ?? height;
+  const layoutRead = stackedPlacement === undefined;
+  const placementWithEntrance = layoutRead ? placement : undefined;
+  useEntrance(frame, placementWithEntrance, placement !== 'hidden');
+  const hiddenInEitherLayout =
+    placement === 'hidden' && (stackedPlacement ?? 'hidden') === 'hidden';
   const context = useMemo<PanelDockPanelContextValue>(
     () => ({
       mode,
       stacked,
       changeMode: (next) => changeMode(id, next),
       close: () => close(id),
-      reportHeaderSize: setHeaderSize,
+      reportHeaderSize: setStickyHeaderSize,
       scrolled,
     }),
     [id, mode, stacked, changeMode, close, scrolled],
   );
 
-  // The top edge resizes only an open panel in the row. When it goes during a drag, as when the
-  // panel is maximized or the dock stacks, the drag ends there, without a new height, as a
-  // cancelled one does.
   const resizable = placement === 'row' && bounds !== undefined;
   useLayoutEffect(() => {
-    if (!resizable) setPreview(undefined);
+    if (!resizable) setDragPreviewHeight(undefined);
   }, [resizable]);
+  const growsAsTopEdgeMovesUp = true;
   const { handleProps } = useResize({
     axis: 'block',
-    // The panel stands on the bottom edge, so it grows as its top edge moves up.
-    reverse: true,
+    reverse: growsAsTopEdgeMovesUp,
     value: shownHeight ?? 0,
     min: bounds?.min ?? 0,
     max: bounds?.max ?? 0,
-    step: resizeStep,
-    largeStep: resizeLargeStep,
+    step: arrowKeyResizeStepPx,
+    largeStep: largeResizeStepPx,
     disabled: !resizable,
-    // Read as the share of the room in the dock.
     valueText:
       bounds && bounds.room > 0
-        ? (value) => `${Math.round((value / bounds.room) * 100)}%`
+        ? (value) => `${shareOfDockRoomPercent(value, bounds.room)}%`
         : undefined,
     onChange: (value, { committed }) => {
       const next = Math.round(value);
       if (!committed) {
-        setPreview(next);
+        setDragPreviewHeight(next);
         return;
       }
-      setPreview(undefined);
-      // A cancelled drag ends at the height it began with, which is no change.
-      if (next !== height) onResize(next);
+      setDragPreviewHeight(undefined);
+      const cancelledDragEndsWhereItBegan = next === height;
+      if (!cancelledDragEndsWhereItBegan) onResize(next);
     },
   });
 
   function noteFocus(event: FocusEvent<HTMLElement>) {
     const target = event.target;
-    // Restoring a panel returns to an element in its content, not to the window control that
-    // minimized it, nor to the content area, which a press on a control focuses in some browsers.
-    if (
+    const restorableInContent =
       target instanceof HTMLElement &&
       target.parentElement?.closest('.env-panel-dock-content') &&
-      !target.closest('.env-panel-dock-controls')
-    )
-      onFocusContent(target);
+      !target.closest('.env-panel-dock-controls');
+    if (restorableInContent) onFocusContent(target);
     onFocusWithin(target);
     onActivate();
   }
@@ -158,13 +132,13 @@ export function PanelFrame({
           className="env-panel-dock-panel"
           aria-label={panel.title}
           tabIndex={-1}
-          inert={hidden}
+          inert={hiddenInEitherLayout}
           data-panel-id={id}
           data-mode={mode}
           data-placement={placement}
           data-env-ssr-placement={stackedPlacement}
           data-active={flag(panel.active)}
-          data-resizing={flag(preview !== undefined)}
+          data-resizing={flag(dragPreviewHeight !== undefined)}
           style={{
             '--_panel-dock-panel-width': rems(panel.preferredWidth),
             '--_panel-dock-panel-min-width': rems(panel.minWidth),
@@ -173,7 +147,6 @@ export function PanelFrame({
           }}
           onPointerDownCapture={onActivate}
           onFocus={noteFocus}
-          // Focus moving within the panel, or into a popup it opened, is followed by its focus event.
           onBlur={() => onFocusWithin(null)}
         />
       }
@@ -186,13 +159,15 @@ export function PanelFrame({
           className="env-panel-dock-resize-handle"
         />
       )}
-      {/* Pressing the content focuses it, so the keyboard scrolls it; it is not a tab stop of its
-          own, as some browsers would make a scrolling element. */}
       <div
         className="env-panel-dock-content"
         tabIndex={-1}
         onScroll={(event) => setScrolled(event.currentTarget.scrollTop > 0)}
-        style={headerSize > 0 ? { '--_panel-dock-header-size': `${headerSize}px` } : undefined}
+        style={
+          stickyHeaderSize > 0
+            ? { '--_panel-dock-header-size': `${stickyHeaderSize}px` }
+            : undefined
+        }
       >
         <PanelDockPanelContext value={context}>{content}</PanelDockPanelContext>
       </div>

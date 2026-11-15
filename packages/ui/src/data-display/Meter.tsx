@@ -32,6 +32,9 @@ export function Meter({
   ...props
 }: MeterProps) {
   const locale = useLocale();
+  const valueTextReplacingBaseUis = ariaValueText !== undefined && {
+    'aria-valuetext': ariaValueText,
+  };
   return (
     <BaseMeter.Root
       {...props}
@@ -39,8 +42,7 @@ export function Meter({
       min={min}
       max={max}
       locale={locale}
-      // Only a text of the application's replaces Base UI's formatted value.
-      {...(ariaValueText !== undefined && { 'aria-valuetext': ariaValueText })}
+      {...valueTextReplacingBaseUis}
       render={<Grid gap={2} />}
       className={classNames('env-meter', className)}
     >

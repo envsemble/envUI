@@ -1,21 +1,12 @@
 'use client';
 
-// The page in 3D: every node a plane, lifted by how deeply it is nested, so what is inside what
-// reads as what is above what. Sticky and floating nodes sit half a level higher, open overlays
-// above the whole page. Each plane carries the node's surfaces. The planes are drawn from the
-// measured boxes: the page itself can't be tilted, since scroll containers flatten 3D.
-//
-// The camera moves the scene's transform directly, and hover marks planes directly, so turning
-// the view, the wheel and hovering render nothing; the planes render when the page's geometry
-// changes, and copy their surfaces once it settles.
-
 import { memo, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import type { NodeData, Snapshot } from '../model.js';
 import { useCamera, useOrbit } from './camera.js';
 import type { Side } from './Controls.js';
 import { Frame, type FrameSize } from './Frame.js';
 import { Legend } from './Legend.js';
-import { NodeHoverCard, Ruler } from './NodeHints.js';
+import { NodeHoverCard, HoveredNodeRuler } from './NodeHints.js';
 import { PerformancePanel } from './PerformancePanel.js';
 import { Plane, SurfaceCache } from './Plane.js';
 import { countViewRender } from './stats.js';
@@ -30,25 +21,14 @@ export interface View3DProps {
   live: LivePage;
   selected: number | null;
   onSelect: (key: number | null) => void;
-  /**
-   * Set by the view to what marks a node's plane as hovered from outside, as the node tree does
-   * while the pointer rests on a node, without rendering the view.
-   */
-  highlight: RefObject<(key: number | null) => void>;
-  /** Which sidebars show: a hidden one leaves its button floating in its corner of the view. */
+  markPlaneHoveredRef: RefObject<(key: number | null) => void>;
   sides: { tree: boolean; inspector: boolean };
   onShow: (side: Side) => void;
-  /**
-   * The size the responsive frame lays the page out at; the page's own size, with no frame shown,
-   * until the reader turns the frame on.
-   */
   frame: FrameSize;
   onFrameChange: (frame: FrameSize) => void;
-  /** The element dev mode shows; the wheel scrolls nothing around it. */
   root: HTMLElement;
 }
 
-/** The nodes in a node, itself included, by key. */
 function subtreeOf(snapshot: Snapshot, key: number): Set<number> {
   const keys = new Set<number>();
   const start = snapshot.nodes.find((node) => node.key === key);
@@ -60,7 +40,6 @@ function subtreeOf(snapshot: Snapshot, key: number): Set<number> {
   return keys;
 }
 
-/** The hatching that the planes' padding and gaps are drawn with, which they name by id. */
 function SpacingPatterns() {
   return (
     <svg aria-hidden="true" width="0" height="0" style={{ position: 'absolute' }}>
@@ -88,6 +67,8 @@ function SpacingPatterns() {
   );
 }
 
+const neverStartTheBrowsersOwnDrag = (event: { preventDefault(): void }) => event.preventDefault();
+
 const defaultShow: ShowOptions = {
   names: true,
   spacing: true,
@@ -99,7 +80,7 @@ export const View3D = memo(function View3D({
   live,
   selected,
   onSelect,
-  highlight,
+  markPlaneHoveredRef,
   sides,
   onShow,
   frame,
@@ -116,17 +97,16 @@ export const View3D = memo(function View3D({
   const [debug, setDebug] = useState(false);
   const view = useRef<HTMLDivElement>(null);
   const card = useRef<HTMLDivElement>(null);
-  // Where the pointer is in the view, where the hover card goes.
-  const pointer = useRef({ x: 0, y: 0 });
+  const hoverCardPosition = useRef({ x: 0, y: 0 });
   const [surfaces] = useState(() => new SurfaceCache());
   useEffect(() => () => surfaces.dispose(), [surfaces]);
   const snapshotRef = useRef(snapshot);
   snapshotRef.current = snapshot;
 
   const measured = snapshot !== null;
-  const most = Math.ceil(Math.max(0, ...(snapshot?.nodes ?? []).map((node) => node.level)));
-  const top = Math.min(levels.to ?? most, most);
-  const from = Math.min(levels.from, most);
+  const highestLevel = Math.ceil(Math.max(0, ...(snapshot?.nodes ?? []).map((node) => node.level)));
+  const top = Math.min(levels.to ?? highestLevel, highestLevel);
+  const from = Math.min(levels.from, highestLevel);
   const lift = Math.max(0, top - from) * levels.spacing;
   const camera = useCamera(lift);
   const scene = camera.scene;
@@ -139,20 +119,26 @@ export const View3D = memo(function View3D({
     onFrameChange,
   });
 
-  // Forget the copies of nodes that are gone.
   useEffect(() => {
-    if (live.full) surfaces.keep(new Set(live.full.snapshot.nodes.map((node) => node.key)));
+    if (live.full)
+      surfaces.forgetNodesOtherThan(new Set(live.full.snapshot.nodes.map((node) => node.key)));
   }, [live.full, surfaces]);
 
-  const { hovered, hoveredRef, hover } = usePlaneHover({ scene, highlightRef: highlight });
+  const { hovered, hoveredRef, hover } = usePlaneHover({ scene, markPlaneHoveredRef });
 
-  useViewWheel({ view, root, camera, snapshot: snapshotRef, hovered: hoveredRef, measured });
+  useViewWheel({
+    view,
+    root,
+    camera,
+    snapshot: snapshotRef,
+    hovered: hoveredRef,
+    planesMounted: measured,
+  });
 
-  // With "only the selected" on, the view shows the selected node and what is inside it.
-  const focused = show.onlySelected ? selected : null;
+  const onlySelectedRoot = show.onlySelected ? selected : null;
   const shownKeys = useMemo(
-    () => (snapshot && focused !== null ? subtreeOf(snapshot, focused) : null),
-    [snapshot, focused],
+    () => (snapshot && onlySelectedRoot !== null ? subtreeOf(snapshot, onlySelectedRoot) : null),
+    [snapshot, onlySelectedRoot],
   );
   const orbit = useOrbit(camera, {
     onDragChange: setDragging,
@@ -164,8 +150,8 @@ export const View3D = memo(function View3D({
     [snapshot?.root.box.w, snapshot?.root.box.h],
   );
   const levelSettings = useMemo(
-    () => ({ spacing: levels.spacing, from, to: top, most }),
-    [levels.spacing, from, top, most],
+    () => ({ spacing: levels.spacing, from, to: top, highestLevel }),
+    [levels.spacing, from, top, highestLevel],
   );
   if (!snapshot) return <div className="env-dev-view" ref={view} />;
 
@@ -192,10 +178,13 @@ export const View3D = memo(function View3D({
       onPointerMove={(event) => {
         orbit.move(event);
         const room = event.currentTarget.getBoundingClientRect();
-        pointer.current = { x: event.clientX - room.left + 14, y: event.clientY - room.top + 14 };
+        hoverCardPosition.current = {
+          x: event.clientX - room.left + 14,
+          y: event.clientY - room.top + 14,
+        };
         if (card.current) {
-          card.current.style.left = `${pointer.current.x}px`;
-          card.current.style.top = `${pointer.current.y}px`;
+          card.current.style.left = `${hoverCardPosition.current.x}px`;
+          card.current.style.top = `${hoverCardPosition.current.y}px`;
         }
         if (orbit.moving()) return;
         const plane = (event.target as Element).closest<HTMLElement>('[data-plane]');
@@ -204,10 +193,7 @@ export const View3D = memo(function View3D({
       onPointerUp={orbit.up}
       onPointerCancel={orbit.up}
       onPointerLeave={() => hover(null)}
-      // The view never starts the browser's own drag: pressed on text selected across it, such as
-      // after Ctrl+A or a selection dragged out of a sidebar, the browser would drag the selection
-      // as a picture and cancel the pointer, and dragging would stop turning the view.
-      onDragStart={(event) => event.preventDefault()}
+      onDragStart={neverStartTheBrowsersOwnDrag}
     >
       <SpacingPatterns />
       <div ref={scene} className="env-dev-scene" style={{ width: origin.w, height: origin.h }}>
@@ -230,7 +216,7 @@ export const View3D = memo(function View3D({
           />
         ))}
         {show.colorBy === 'window' && hoveredNode && shown.includes(hoveredNode) ? (
-          <Ruler
+          <HoveredNodeRuler
             snapshot={snapshot}
             node={hoveredNode}
             origin={origin}
@@ -264,7 +250,6 @@ export const View3D = memo(function View3D({
       />
       <ViewCorners sides={sides} onShow={onShow} />
 
-      {/* The legend floats over the view, with no pane behind it. */}
       <Legend colorBy={show.colorBy} rootPx={snapshot.rootPx} />
       {debug ? <PerformancePanel planes={shown.length} /> : null}
 
@@ -272,7 +257,7 @@ export const View3D = memo(function View3D({
         <div
           ref={card}
           className="env-dev-card"
-          style={{ left: pointer.current.x, top: pointer.current.y }}
+          style={{ left: hoverCardPosition.current.x, top: hoverCardPosition.current.y }}
         >
           <NodeHoverCard
             snapshot={snapshot}

@@ -1,6 +1,4 @@
 @layer env.components {
-  /* The message field of a conversation, on the raised popup surface. The field grows with its text
-     between the minimum and maximum rows, then scrolls; the round action stays at the end. */
   .env-composer {
     --_composer-min-rows: 1;
     --_composer-max-rows: 8;
@@ -25,7 +23,6 @@
       border-color var(--env-motion-duration-medium) var(--env-motion-ease),
       box-shadow var(--env-motion-duration-medium) var(--env-motion-ease);
   }
-  /* Content at the start moves the action into a row of its own below the field. */
   .env-composer[data-start] .env-composer-surface {
     grid-template-areas:
       'input input'
@@ -37,7 +34,6 @@
     display: block;
     inline-size: 100%;
     min-inline-size: 0;
-    /* One line sits centered beside the action; more lines grow upward from the same baseline. */
     min-block-size: calc((var(--_composer-min-rows) - 1) * 1lh + var(--env-control-height));
     max-block-size: calc((var(--_composer-max-rows) - 1) * 1lh + var(--env-control-height));
     margin: 0;
@@ -48,7 +44,6 @@
     background: transparent;
     color: var(--env-color-fg-default);
     font: var(--env-type-body);
-    /* Coarse pointers take the larger control text, so focusing the field never zooms the page. */
     font-size: var(--env-control-font-size);
     caret-color: var(--env-color-border-primary-emphasis);
     resize: none;
@@ -83,7 +78,6 @@
       --_composer-start-height: max(var(--env-control-height), var(--env-control-height-touch));
     }
   }
-  /* The action keeps the arrow of other buttons rather than the surface's text cursor. */
   .env-composer-action {
     grid-area: action;
     cursor: default;

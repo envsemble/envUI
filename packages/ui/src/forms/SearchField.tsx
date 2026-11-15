@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, type KeyboardEvent } from 'react';
 import { IconSearch } from '../icons/Search.js';
 import { IconClose } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
@@ -10,6 +10,11 @@ import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { searchField as searchFieldMessages } from '../foundations/messages/searchField.js';
 import { TextField, type TextFieldProps } from './TextField.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
+
+function keepEscapeFromEnclosingDialog(event: KeyboardEvent) {
+  event.preventDefault();
+  event.stopPropagation();
+}
 
 export interface SearchFieldProps extends Omit<
   TextFieldProps,
@@ -80,9 +85,13 @@ export function SearchField({
     defaultValue,
     onChange: onValueChange,
   });
-  // The field renders its query itself, so a form reset, which resets only the native input,
-  // restores an uncontrolled field's default query here.
-  useFormReset(inputRef, () => keepOwn(defaultValue), props.form);
+  useFormReset(
+    inputRef,
+    function restoreDefaultQueryOverNativeReset() {
+      keepOwn(defaultValue);
+    },
+    props.form,
+  );
   return (
     <TextField
       {...props}
@@ -103,9 +112,7 @@ export function SearchField({
       onKeyDown={(event) => {
         props.onKeyDown?.(event);
         if (event.key === 'Escape' && query && !event.defaultPrevented) {
-          // Clearing consumes Escape, so an enclosing dialog stays open.
-          event.preventDefault();
-          event.stopPropagation();
+          keepEscapeFromEnclosingDialog(event);
           update('');
         }
       }}

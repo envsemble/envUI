@@ -1,25 +1,16 @@
 @layer env.components {
-  /* Rail, the navigation rail: a narrow column of destinations on the page's background, a
-     plain rectangle, each its icon in a rounded-rectangle indicator above a short label, with an optional
-     header and footer. The current destination fills its indicator; the count sits on the icon's top
-     end. Every placement is logical. */
   .env-navigation-rail {
     --_navigation-rail-indicator-width: 2.75rem;
     --_navigation-rail-indicator-height: 2rem;
-    /* The count's pill on the icon: as tall as it is wide for one digit. */
     --_navigation-rail-count-size: 1rem;
     box-sizing: border-box;
     inline-size: var(--env-navigation-rail-width);
     block-size: 100%;
     min-block-size: 0;
     padding-block: var(--env-space-3);
-    /* The page's background, the same as the content beside it; on a surface, such as a Sheet's,
-       the surface's color rather than a second fill on it. */
     background: var(--_surface-color, var(--env-color-bg-page));
     color: var(--env-color-fg-default);
   }
-  /* background="default": the default surface color, so the rail stands apart from the page; on a
-     surface, the surface's color. */
   .env-navigation-rail[data-background='default'] {
     background: var(--_surface-color, var(--env-color-bg-default));
   }
@@ -44,11 +35,6 @@
     list-style: none;
   }
 
-  /* Color properties: a destination's colors, which an application sets on one item through style or
-     its own CSS: container and selected color the indicator around its icon, at rest and when
-     current, content its label, icon its icon at rest and selected-content its icon when current.
-     They don't inherit; the item passes them on to its indicator, where currentColor in them is the
-     indicator's color. */
   @property --env-navigation-rail-item-container {
     syntax: '*';
     inherits: false;
@@ -71,9 +57,6 @@
   }
 
   .env-navigation-rail-item {
-    /* With no color property set, the designed fills below apply in every state. The custom fill is
-       valid only while the application sets the container or the content (see Button.css), and
-       then hover, focus and press lay the content color over the container. */
     --_navigation-rail-item-layer: initial;
     --_navigation-rail-item-content-gate: color-mix(
       in srgb,
@@ -98,8 +81,10 @@
       var(--env-navigation-rail-item-selected-content) 0%,
       var(--env-color-bg-selected)
     );
-    /* prettier-ignore */
-    --_navigation-rail-item-selected-base: var(--env-navigation-rail-item-selected, var(--_navigation-rail-item-selected-gate));
+    --_navigation-rail-item-selected-base: var(
+      --env-navigation-rail-item-selected,
+      var(--_navigation-rail-item-selected-gate)
+    );
     --_navigation-rail-item-selected-layered: color-mix(
       in srgb,
       var(--_navigation-rail-item-selected-base),
@@ -130,7 +115,6 @@
     text-align: center;
     text-decoration: none;
   }
-  /* The icon's indicator, above the label, which comes first in the item's text. */
   .env-navigation-rail-indicator {
     order: -1;
     position: relative;
@@ -147,7 +131,6 @@
     max-inline-size: 100%;
     overflow-wrap: break-word;
   }
-  /* The count, on the icon's top end, in the pill of an accent count badge. */
   .env-navigation-rail-count {
     box-sizing: border-box;
     position: absolute;
@@ -200,7 +183,6 @@
   .env-navigation-rail-item[data-current]:active .env-navigation-rail-indicator {
     background: var(--_navigation-rail-item-selected-fill, var(--env-color-bg-selected-pressed));
   }
-  /* Keyboard focus rings the indicator, as the item's visible shape, rather than the whole item. */
   .env-navigation-rail-item:focus-visible {
     outline: none;
   }
@@ -208,14 +190,11 @@
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: 2px;
   }
-  /* Under a reduced-motion preference, fills change at once. */
   @media (prefers-reduced-motion: reduce) {
     .env-navigation-rail-indicator {
       transition: none;
     }
   }
-  /* Motion: the indicator settles slightly while it is held, only without a reduced-motion
-     preference. */
   @media (prefers-reduced-motion: no-preference) {
     .env-navigation-rail-indicator {
       transition-property: background-color, transform;
@@ -224,8 +203,6 @@
       transform: scale(0.96);
     }
   }
-  /* Forced colors: the system paints no fills, so an edge at its end sets the rail apart from the
-     body, the current indicator takes the selection colors and the count an outline. */
   @media (forced-colors: active) {
     .env-navigation-rail {
       border-inline-end: 1px solid CanvasText;
@@ -241,15 +218,12 @@
     .env-navigation-rail-count {
       border: 1px solid CanvasText;
     }
-    /* The current indicator's colors are forced off, so its count takes the canvas's own. */
     .env-navigation-rail-item[data-current] .env-navigation-rail-count {
       background: Canvas;
       color: CanvasText;
     }
   }
 
-  /* In a skeleton, a destination is its icon as a filled shape and its label as a bar, with no fill
-     for the current one, whether it is a link or a button. */
   .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-rail-item {
     border-color: transparent;
     box-shadow: none;
@@ -259,7 +233,6 @@
   .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *)
     .env-navigation-rail-item
     :not(.env-navigation-rail-count) {
-    /* A destination is not a shape: its label draws as a bar. */
     --_skeleton-shape: 0;
   }
   .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-rail-item * {
@@ -275,14 +248,11 @@
     .env-navigation-rail-indicator {
     background: transparent;
   }
-  /* A count's badge lies over the icon, so a skeleton leaves it out: one shape for each
-     destination, and its label's bar. */
   .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *)
     .env-navigation-rail-item
     .env-navigation-rail-count {
     visibility: hidden;
   }
-  /* A destination whose label is loading, given as an empty string, is a bar of a label's length. */
   .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-navigation-rail-label {
     --_skeleton-placeholder: inline-block;
     --_skeleton-length: 3rem;

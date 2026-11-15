@@ -3,10 +3,6 @@ import { IconAccountCircle } from '@envsemble/envui/icons/AccountCircle';
 import { IconMenu } from '@envsemble/envui/icons/Menu';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 
-/**
- * Top bars 40 rem wide: one with a button centered in it, one whose long title given as text is cut
- * short, and one whose title is a button.
- */
 export default function TopBarFixture() {
   const start = <IconButton icon={<IconMenu />} aria-label="Open navigation" variant="ghost" />;
   const account = <IconButton icon={<IconAccountCircle />} aria-label="Account" variant="ghost" />;

@@ -16,35 +16,31 @@ export function useTabStripScrolling(
   items: readonly unknown[],
 ) {
   useLayoutEffect(() => {
-    function reveal() {
+    function revealWholeItemClearOfFade() {
       const strip = listRef.current;
       const tab = tabElement(strip, value)?.parentElement;
       if (!strip || !tab) return;
-      // The tab clears the fade at the edge it comes in from, so none of it is faded. Only an edge
-      // with more to scroll past it has a fade: at the strip's ends there is no room to leave.
       const fade = parseFloat(getComputedStyle(strip).getPropertyValue('--_document-tabs-fade'));
-      const room = Number.isFinite(fade) ? fade * remPixels(strip) : 0;
+      const fadeWidth = Number.isFinite(fade) ? fade * remPixels(strip) : 0;
       const beyond = scrollBeyond(strip);
       const stripBox = strip.getBoundingClientRect();
       const tabBox = tab.getBoundingClientRect();
-      const roomLeft = beyond.left ? room : 0;
-      const roomRight = beyond.right ? room : 0;
+      const roomLeft = beyond.left ? fadeWidth : 0;
+      const roomRight = beyond.right ? fadeWidth : 0;
       if (tabBox.left < stripBox.left + roomLeft)
         strip.scrollLeft -= stripBox.left + roomLeft - tabBox.left;
       else if (tabBox.right > stripBox.right - roomRight)
         strip.scrollLeft += tabBox.right - (stripBox.right - roomRight);
     }
-    reveal();
-    // Base UI also scrolls the active tab into view, and the labels may still widen as the font
-    // loads: the whole item, close button included, is revealed again once both have settled.
+    revealWholeItemClearOfFade();
     let cancelled = false;
-    const frame = requestAnimationFrame(reveal);
+    const afterBaseUiScrollsIt = requestAnimationFrame(revealWholeItemClearOfFade);
     void document.fonts?.ready.then(() => {
-      if (!cancelled) reveal();
+      if (!cancelled) revealWholeItemClearOfFade();
     });
     return () => {
       cancelled = true;
-      cancelAnimationFrame(frame);
+      cancelAnimationFrame(afterBaseUiScrollsIt);
     };
   }, [listRef, value, items]);
 

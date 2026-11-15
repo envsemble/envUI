@@ -65,8 +65,6 @@
     }
   }
 
-  /* Motion: a pager link settles a little while it is held, less than a compact control. Only
-     without a reduced-motion preference. */
   @media (prefers-reduced-motion: no-preference) {
     .env-pager-link {
       transition-property: background-color, color, border-color, transform;

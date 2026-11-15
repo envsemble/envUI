@@ -119,18 +119,8 @@ export interface RootProps<Panel extends PanelDockPanel = PanelDockPanel> extend
   resizeLabel?: (title: string) => string;
 }
 
-/**
- * The dock width below which one panel at a time fills it. Not a window class: the dock measures its
- * own width, which a page beside it narrows.
- */
 const defaultStackBelow = '40rem';
 
-/**
- * Panels docked to the bottom inline-end edge of a region, beside the page, for items people work
- * on alongside it, such as drafts and conversations: open panels side by side, one maximized panel
- * filling the region, and minimized panels as tabs. A panel's content stays mounted through every
- * change of mode and order.
- */
 function Root<Panel extends PanelDockPanel>({
   panels,
   children,
@@ -150,7 +140,6 @@ function Root<Panel extends PanelDockPanel>({
   ref,
   ...props
 }: RootProps<Panel>) {
-  // Words that fit a minimized panel and one a stacked dock leaves out alike.
   const messages = useMessages('panelDock', panelDockMessages);
   const tabsLabel = minimizedLabel ?? messages.minimized;
   const nameOpen = openLabel ?? ((label: string) => messages.open({ label }));
@@ -167,7 +156,7 @@ function Root<Panel extends PanelDockPanel>({
     [latest],
   );
   const close = useCallback((id: string) => latest.current.onClose(id), [latest]);
-  const { fitRow, returningTime, release } = useDockOverflow<Panel>({
+  const { fitRow, returningTime, leaveToPeople } = useDockOverflow<Panel>({
     overflow,
     changeMode,
     refresh,
@@ -181,14 +170,12 @@ function Root<Panel extends PanelDockPanel>({
   const hasStrip = shownTabs.length > 0;
   const filled = filling !== undefined;
   const focus = useFocusTracking(root);
-  const restoreScrollPositions = useScrollPreservation(row, arrangement.layout);
+  const restoreScrollPositions = useScrollPreservation(row, arrangement.layoutKey);
   const { heightOf, resize } = usePanelHeights(panels, measurements, (id, height) =>
     latest.current.onHeightChange?.(id, height),
   );
 
-  // Content is rendered by the application; internal updates, such as a resize, reuse the same
-  // elements, so they do not render the panels' content again.
-  const contents = useMemo(
+  const contentsReusedByInternalUpdates = useMemo(
     () => new Map(panels.map((panel) => [panel.id, children(panel)] as const)),
     [panels, children],
   );
@@ -202,10 +189,8 @@ function Root<Panel extends PanelDockPanel>({
   function restoreFromTab(panel: Panel) {
     focus.focusOnShow(panel.id);
     recency.bringForward(panel.id);
-    // A stacked dock shows the panel brought forward, even without an active panel.
     if (stacked) arrangement.chooseTab(panel.id);
-    // People brought the panel back: the dock leaves it to them from now on.
-    release(panel.id);
+    leaveToPeople(panel.id);
     if (panel.mode === 'minimized') latest.current.onModeChange(panel.id, 'open');
     if (!panel.active) latest.current.onActivate?.(panel.id);
     refresh();
@@ -220,15 +205,14 @@ function Root<Panel extends PanelDockPanel>({
 
   useStackedReport(stacked, onStackedChange);
 
-  // A panel that joins the row scrolls into view, so the newest shows while the row overflows.
   const previousRow = useRef<readonly string[]>([]);
   useLayoutEffect(() => {
     const rowElement = row.current;
     if (!rowElement) return;
     const before = new Set(previousRow.current);
     previousRow.current = rowIds;
-    const joined = rowIds.filter((id) => !before.has(id)).at(-1);
-    const frame = joined === undefined ? undefined : frameOf(joined);
+    const newestToJoinRow = rowIds.filter((id) => !before.has(id)).at(-1);
+    const frame = newestToJoinRow === undefined ? undefined : frameOf(newestToJoinRow);
     if (frame) reveal(rowElement, frame);
     setOverflowing(overflows(rowElement));
     fitRow(rowElement, {
@@ -269,7 +253,7 @@ function Root<Panel extends PanelDockPanel>({
         data-overflowing={flag(overflowing)}
         onScroll={(event) => onRowScroll(event.currentTarget)}
       >
-        <BeforeContent onLayout={restoreScrollPositions} />
+        <LayoutEffectBeforePanelContent onLayout={restoreScrollPositions} />
         {panels.map((panel) => {
           const placement = placements.get(panel.id)!;
           const { height, bounds } = heightOf(panel);
@@ -282,7 +266,7 @@ function Root<Panel extends PanelDockPanel>({
               stacked={stacked}
               height={height}
               bounds={placement === 'row' ? bounds : undefined}
-              content={contents.get(panel.id)}
+              content={contentsReusedByInternalUpdates.get(panel.id)}
               resizeLabel={nameResize(panel.title)}
               changeMode={changeMode}
               close={close}
@@ -324,11 +308,7 @@ function Root<Panel extends PanelDockPanel>({
   );
 }
 
-/**
- * Renders nothing. As the first child of the row, its layout effect runs before those of the
- * panels' content, which React runs in the order of the tree.
- */
-function BeforeContent({ onLayout }: { onLayout: () => void }) {
+function LayoutEffectBeforePanelContent({ onLayout }: { onLayout: () => void }) {
   useLayoutEffect(onLayout);
   return null;
 }
@@ -361,11 +341,6 @@ export interface HeaderProps extends Omit<ComponentPropsWithRef<'header'>, 'titl
   children?: ReactNode;
 }
 
-/**
- * The header of a docked panel. It sticks to the top of the panel while its content scrolls: the
- * title and its metadata at the start, the application's actions and the window controls at the
- * end, small like a title bar's.
- */
 function Header({
   title,
   meta,
@@ -380,8 +355,6 @@ function Header({
   const panel = useContext(PanelDockPanelContext);
   const header = useRef<HTMLElement>(null);
   const windowControls = controls && panel !== null;
-  // The panel's content keeps controls that take focus out from beneath the header, so it needs
-  // the header's size, which changes as the title wraps.
   const reportSize = panel?.reportHeaderSize;
   useLayoutEffect(() => {
     const element = header.current;
@@ -404,7 +377,6 @@ function Header({
         setRef(ref, node);
       }}
       className={classNames('env-panel-dock-header', className)}
-      // Also where the header sits deeper in the content, such as in a form.
       data-scrolled={flag(panel?.scrolled)}
     >
       <Grid className="env-panel-dock-heading">
@@ -413,7 +385,6 @@ function Header({
       </Grid>
       {(actions != null || windowControls) && (
         <Row align="center" className="env-panel-dock-actions">
-          {/* The application's buttons take the window controls' quiet look. */}
           <ControlDefaults variant="ghost">{actions}</ControlDefaults>
           {windowControls && <WindowControls />}
         </Row>
@@ -423,11 +394,6 @@ function Header({
   );
 }
 
-/**
- * Minimize, Maximize or Restore, and Close for the panel around them, as small icon buttons with
- * tooltips, named from EnvUIProvider's messages. A stacked dock already fills the region, so its
- * panels leave out Maximize.
- */
 function WindowControls() {
   const panel = useContext(PanelDockPanelContext)!;
   const messages = useMessages('panelDock', panelDockMessages);
@@ -465,7 +431,6 @@ function WindowControl({
   icon,
   onClick,
 }: {
-  /** Names the control for the dock's styles, as data-window-control. */
   control?: string;
   label: string;
   icon: ReactNode;
@@ -484,8 +449,17 @@ function WindowControl({
   );
 }
 
-// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
-// application leaves unused.
+/**
+ * Panels docked to the bottom inline-end edge of a region, beside the page, for items people work
+ * on alongside it, such as drafts and conversations: open panels side by side, one maximized panel
+ * filling the region, and minimized panels as tabs. A panel's content stays mounted through every
+ * change of mode and order.
+ */
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'PanelDock.Root');
+/**
+ * The header of a docked panel. It sticks to the top of the panel while its content scrolls: the
+ * title and its metadata at the start, the application's actions and the window controls at the
+ * end, small like a title bar's.
+ */
 const HeaderPart = /* @__PURE__ */ withDisplayName(Header, 'PanelDock.Header');
 export { RootPart as Root, HeaderPart as Header };

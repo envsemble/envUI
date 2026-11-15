@@ -15,7 +15,6 @@ import '../../../styles/PanelDock.css';
 
 interface PanelTabProps {
   panel: PanelDockPanel;
-  /** Until the dock reads its layout, the one layout that has the tab, where only one does. */
   tabIn: 'wide' | 'stacked' | undefined;
   openLabel: (label: string) => string;
   closeLabel: (label: string) => string;

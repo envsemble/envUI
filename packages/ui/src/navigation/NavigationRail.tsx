@@ -16,7 +16,6 @@ import { backgroundAttribute, type NavigationBackground } from './navigationBack
 import '../styles/Base.css';
 import '../styles/NavigationRail.css';
 
-/** The part classes of the rail's destinations. */
 const railClasses: DestinationClasses = {
   item: 'env-navigation-rail-item',
   indicator: 'env-navigation-rail-indicator',

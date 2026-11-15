@@ -32,7 +32,6 @@ export default function ButtonGroupFixture({ theme }: { theme: ColorScheme }) {
             </Button>
           </ButtonGroup>
         ))}
-        {/* Outline buttons share their edge; a mix with an outline one stands apart. */}
         <ButtonGroup aria-label="Range" data-testid="outline-row">
           <Button variant="outline">Day</Button>
           <Button variant="outline">Week</Button>
@@ -97,7 +96,6 @@ export default function ButtonGroupFixture({ theme }: { theme: ColorScheme }) {
           </ButtonGroup>
         </form>
         <output data-testid="activations">{activations}</output>
-        {/* Groups that fill a sidebar. */}
         <div className="fixture-sidebar" data-testid="sidebar">
           <ButtonGroup fullWidth aria-label="Start a document">
             <Button startIcon={<IconAdd />}>New document</Button>

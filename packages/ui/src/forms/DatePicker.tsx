@@ -165,7 +165,6 @@ function parseValue(value: string | null | undefined, withTime: boolean, default
   return { day, minutes: withTime ? (dateTime?.minutes ?? defaultMinutes) : 0 };
 }
 
-/** A bound as a moment: a day alone starts at its first minute as min and ends at its last as max. */
 function boundMoment(value: string | undefined, edge: 'start' | 'end') {
   const dateTime = parseDateTime(value);
   if (dateTime) return momentOf(dateTime.day, dateTime.minutes);
@@ -174,8 +173,7 @@ function boundMoment(value: string | undefined, edge: 'start' | 'end') {
   return edge === 'start' ? momentOf(day, 0) : momentOf(day + 1, 0) - 1;
 }
 
-/** A bound's time of day where it falls on the given day, for the list of times. */
-function boundMinutes(moment: number | undefined, day: number) {
+function boundMinutesOnDay(moment: number | undefined, day: number) {
   if (moment === undefined) return undefined;
   const bound = fromMoment(moment);
   return bound.day === day ? bound.minutes : undefined;
@@ -268,8 +266,7 @@ export function DatePicker({
     if (!withTime) setOpen(false, 'item-press');
   }
 
-  // Without a value, a chosen time goes with today, kept within min and max.
-  const timeDay = current?.day ?? clampDay(now().day, minDay, maxDay);
+  const dayForChosenTime = current?.day ?? clampDay(now().day, minDay, maxDay);
 
   function chooseNow() {
     const moment = now();
@@ -339,8 +336,6 @@ export function DatePicker({
       clearable={clearable}
     >
       {withTime ? (
-        // The times stand beside the days, as tall as the calendar; the chosen day's share of min
-        // and max limits them.
         <Grid gap={3} className="env-date-picker-panes">
           {calendar}
           <Grid gap={2} className="env-date-picker-time">
@@ -350,11 +345,11 @@ export function DatePicker({
             <TimeList
               aria-labelledby={timeHeadingId}
               value={current?.minutes}
-              onValueChange={(minutes) => commit({ day: timeDay, minutes })}
+              onValueChange={(minutes) => commit({ day: dayForChosenTime, minutes })}
               minuteStep={minuteStep}
               start={placeholderTime === undefined ? undefined : defaultMinutes}
-              min={boundMinutes(minMoment, timeDay)}
-              max={boundMinutes(maxMoment, timeDay)}
+              min={boundMinutesOnDay(minMoment, dayForChosenTime)}
+              max={boundMinutesOnDay(maxMoment, dayForChosenTime)}
               locale={locale}
               hourCycle={hourCycle}
             />

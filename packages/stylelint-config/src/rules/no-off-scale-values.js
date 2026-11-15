@@ -9,13 +9,11 @@ const {
 
 const ruleName = 'envui/no-off-scale-values';
 
-/** The properties whose lengths come from envUI's spacing scale or its radius scale. */
 export const scaleProperty =
   /^(?:gap|row-gap|column-gap|grid-(?:row-|column-)?gap|padding(?:-[a-z-]+)?|margin(?:-[a-z-]+)?|inset(?:-[a-z-]+)?|border(?:-[a-z]+)*-radius)$/i;
 
 const steps = JSON.parse(readFileSync(new URL('../data/scales.json', import.meta.url), 'utf8'));
 
-/** A scale's steps: those of a literal length in rem, by size, and the calculated ones. */
 function scale(name, label) {
   const entries = Object.entries(steps[name]);
   const literal = entries.flatMap(([token, css]) =>
@@ -30,11 +28,9 @@ const radius = scale('radius', 'radius');
 
 const scaleOf = (property) => (/radius$/i.test(property) ? radius : spacing);
 
-/** A length's size in rem, for the units that have one at the default font size. */
 const remOf = ({ value, unit }) =>
   unit === 'rem' ? value : unit === 'px' ? value / 16 : undefined;
 
-/** The step nearest a size in rem, the smaller one on a tie. */
 function nearest(steps, rem) {
   return steps.reduce((best, step) =>
     Math.abs(step.rem - rem) < Math.abs(best.rem - rem) ? step : best,
@@ -52,13 +48,11 @@ const messages = ruleMessages(ruleName, {
     `${length} in ${property} is off envUI's ${scaleOf(property).label} scale: write a var(${scaleOf(property).family}…) step.`,
 });
 
-/** Whether a value's word passes as it is: a custom property, or a calculation with one. */
 function passes(word) {
   const call = /^([\w-]+)\(/.exec(word);
   return call !== null && (/^(?:var|env)$/i.test(call[1]) || /\bvar\(/i.test(word));
 }
 
-/** The literal lengths of a value that the scale gives, with their offsets. */
 function literalLengths(value) {
   return topLevelWords(value).flatMap(({ word, index }) =>
     passes(word)

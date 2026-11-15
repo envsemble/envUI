@@ -10,11 +10,6 @@ import {
   type MarkdownSelection,
 } from './markdownFormatting.js';
 
-/**
- * MarkdownEditor's Insert link: the link from the built-in dialog or the application's picker,
- * inserted where the selection was, unless the source changed meanwhile. A newer request, or the
- * editor unmounting, drops a pending one. Problems are told through `setStatus`.
- */
 export function useMarkdownLink({
   inputRef,
   apply,
@@ -23,12 +18,9 @@ export function useMarkdownLink({
   setStatus,
   messages,
 }: {
-  /** The source's text area. */
   inputRef: RefObject<HTMLTextAreaElement | null>;
-  /** Replaces the selection with the edit, as the history records it; false where it is too long. */
   apply: (before: MarkdownSelection, after: MarkdownSelection) => boolean;
   pickLink: MarkdownEditorProps['pickLink'];
-  /** Shows the source, synchronously, so the link goes into a visible text area. */
   showSource: () => void;
   setStatus: (status: string) => void;
   messages: {
@@ -38,7 +30,6 @@ export function useMarkdownLink({
     pickerFailed: string;
   };
 }) {
-  // The selection the built-in dialog inserts at, while it is open.
   const [linkSelection, setLinkSelection] = useState<MarkdownSelection | null>(null);
   const [linkPending, setLinkPending] = useState(false);
   const linkRequestVersion = useRef(0);
@@ -89,7 +80,6 @@ export function useMarkdownLink({
     linkSelection,
     linkPending,
     requestLink,
-    /** Inserts the built-in dialog's link and closes it. */
     insertDialogLink(link: MarkdownLink) {
       if (linkSelection) insertLink(linkSelection, link);
       setLinkSelection(null);

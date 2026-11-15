@@ -189,21 +189,17 @@ export interface SheetProps
 /** The edge a Sheet slides in from: the end or the start edge, or the bottom. */
 export type SheetSide = 'bottom' | 'start' | 'end';
 
-/** The text direction at an element: its trigger's, else the focused element's or the document's. */
 function readDirection(source: Element | null): Direction {
   if (typeof document === 'undefined') return 'ltr';
   const element = source ?? document.activeElement ?? document.documentElement;
   return computedDirection(element);
 }
 
-/** Base UI's mark on an element that no swipe starts from: a drag on the handle resizes, by touch too. */
-const noSwipe = { 'data-base-ui-swipe-ignore': '' };
+const firstTabbableElement = true;
 
-/**
- * Says while developing that a resizable side sheet ignores a CSS length as its width, once a page:
- * its width is a number of rem then, which it starts at.
- */
-function reportCssWidth(width: string) {
+const ignoredBySwipeToClose = { 'data-base-ui-swipe-ignore': '' };
+
+function reportIgnoredCssWidth(width: string) {
   reportInDevelopment(
     () =>
       process.env.NODE_ENV !== 'production' &&
@@ -213,16 +209,11 @@ function reportCssWidth(width: string) {
   );
 }
 
-/** The widest a resizable sheet can be, in rem: its viewport's width, the window's. */
-const roomFor = (handle: HTMLElement) => {
+const viewportWidthInRem = (handle: HTMLElement) => {
   const viewport = handle.closest('.env-sheet-viewport');
   return viewport ? widthInRem(viewport) : Infinity;
 };
 
-/**
- * A sheet's width: md or lg by name, else a length as its custom width; a resizable side sheet's in
- * rem, which its handle changes.
- */
 function useSheetWidth({
   side,
   width,
@@ -238,22 +229,21 @@ function useSheetWidth({
     widthText: (width: string) => string;
   }) {
   const named = width === 'md' || width === 'lg';
-  // A bottom sheet is as tall as its content and as wide as the window, so only a side sheet
-  // resizes: its width in rem, the application's where width is a number.
-  const resizable = resizableOption && side !== 'bottom';
+  const isSideSheet = side !== 'bottom';
+  const resizable = resizableOption && isSideSheet;
   const cssWidth = resizable && typeof width === 'string' && !named ? width : undefined;
   useEffect(() => {
-    if (cssWidth !== undefined) reportCssWidth(cssWidth);
+    if (cssWidth !== undefined) reportIgnoredCssWidth(cssWidth);
   }, [cssWidth]);
+  const growsTowardStart = side === 'end';
   const resize = useResizableWidth({
     width: typeof width === 'number' ? width : undefined,
     defaultWidth: defaultWidth ?? (width === 'lg' ? 44 : 24),
     minWidth,
     maxWidth,
     onWidthChange,
-    room: roomFor,
-    // A sheet at the end grows as its inner edge, its start, moves toward the start.
-    reverse: side === 'end',
+    room: viewportWidthInRem,
+    reverse: growsTowardStart,
     widthText,
   });
   const customWidth = resizable
@@ -308,23 +298,20 @@ export function Sheet({
   const theme = useTheme();
   const messages = useMessages('dialog', dialog);
   const provided = useEnvUI().dir;
-  // Whether it shows, also where the application doesn't control it.
   const [shown, setShown] = useControllableState({
     value: open,
     defaultValue: defaultOpen,
     onChange: onOpenChange,
   });
-  // The touch swipe that closes a side sheet runs toward its edge, which is physical, so it follows the
-  // direction where the sheet opens: the provider's, else its trigger's, read as it opens.
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const [read, setRead] = useState<Direction>();
-  const direction = provided ?? read ?? 'ltr';
-  useLayoutEffect(() => {
-    if (shown && !provided) setRead(readDirection(triggerRef.current));
-  }, [shown, provided]);
-  // By keyboard or mouse, focus moves to the first element that takes Tab, as in a dialog (true:
-  // Base UI's own tabbable order, which knows radio groups and inert content), else the sheet. By
-  // touch, to the sheet itself, so a field first inside doesn't open the on-screen keyboard.
+  const [directionAtTrigger, setDirectionAtTrigger] = useState<Direction>();
+  const direction = provided ?? directionAtTrigger ?? 'ltr';
+  useLayoutEffect(
+    function readDirectionAsItOpens() {
+      if (shown && !provided) setDirectionAtTrigger(readDirection(triggerRef.current));
+    },
+    [shown, provided],
+  );
   const popup = useRef<HTMLDivElement | null>(null);
   const attachPopup = useCallback(
     (element: HTMLDivElement | null) => {
@@ -333,8 +320,9 @@ export function Sheet({
     },
     [ref],
   );
-  const defaultFocus = useCallback(
-    (interaction: string) => (interaction === 'touch' ? (popup.current ?? true) : true),
+  const focusSheetItselfOnTouch = useCallback(
+    (interaction: string) =>
+      interaction === 'touch' ? (popup.current ?? firstTabbableElement) : firstTabbableElement,
     [],
   );
   const towardEnd = (side === 'end') === (direction === 'ltr');
@@ -364,13 +352,11 @@ export function Sheet({
     >
       {trigger && <BaseDrawer.Trigger ref={triggerRef} render={trigger} />}
       <BaseDrawer.Portal container={portal.container}>
-        <OverlayTheme {...theme} dir={provided ?? read}>
+        <OverlayTheme {...theme} dir={provided ?? directionAtTrigger}>
           <ResetControlDefaults>
             {modal && <DialogBackdrop className="env-sheet-backdrop" />}
             <BaseDrawer.Viewport className="env-sheet-viewport" data-side={side}>
               <BaseDrawer.Popup
-                // The whole sheet is Base UI's drawer content, where a mouse or a pen selects text
-                // and never swipes: only a finger swipes the sheet closed, as on a phone.
                 render={
                   <BaseDrawer.Content
                     render={<DialogSurface radius={side === 'bottom' ? undefined : 'none'} />}
@@ -389,7 +375,7 @@ export function Sheet({
                 aria-label={title == null ? label : undefined}
                 aria-busy={pending || skeleton || undefined}
                 data-env-skeleton={flag(skeleton)}
-                initialFocus={portal.contained ? false : (initialFocus ?? defaultFocus)}
+                initialFocus={portal.contained ? false : (initialFocus ?? focusSheetItselfOnTouch)}
                 finalFocus={portal.contained ? false : finalFocus}
               >
                 <DialogPendingContext.Provider value={pending}>
@@ -412,8 +398,6 @@ export function Sheet({
                         ) : undefined
                       }
                     />
-                    {/* The body scrolls on its own, so the heading and the actions stay in view in
-                      a sheet too short for all it holds. */}
                     {children != null && (
                       <Column gap={5} className="env-sheet-body">
                         {children}
@@ -423,15 +407,12 @@ export function Sheet({
                       <DialogActions>{withPendingAction(actions, pending)}</DialogActions>
                     )}
                     {resizable && (
-                      // On the content, which runs the sheet's full height, so the handle stays as
-                      // tall as the sheet; the handle reaches out to the edge.
-                      // A drag on it resizes rather than swipes the sheet closed, by touch too.
                       <ResizeHandle
                         {...resize.handleProps}
                         label={resizeLabel ?? messages.resize}
                         grip
                         className="env-sheet-resize-handle"
-                        {...noSwipe}
+                        {...ignoredBySwipeToClose}
                       />
                     )}
                   </DialogContent>

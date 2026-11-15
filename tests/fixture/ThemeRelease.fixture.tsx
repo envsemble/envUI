@@ -12,10 +12,6 @@ const theme = defineTheme({
   corners: 'sharp',
 });
 
-/**
- * A provider at high contrast and the compact scale, filled, with the accent selection and sharp
- * corners, which the application stops applying to the document, or unmounts.
- */
 export default function ThemeReleaseFixture() {
   const [mounted, setMounted] = useState(true);
   const [applies, setApplies] = useState(true);

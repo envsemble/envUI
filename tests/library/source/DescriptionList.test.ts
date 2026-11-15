@@ -1,4 +1,3 @@
-// DescriptionList's markup, rendered on the server: a dl of terms and their definitions.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -24,7 +23,6 @@ test('a description list is a dl of terms and their definitions', () => {
   );
   assert.equal(list.tag, 'dl');
   assert.equal(list.attributes['aria-label'], 'Project facts');
-  // dl > div > dt + dd, as HTML allows.
   assert.deepEqual(
     list.children
       .filter((item) => typeof item === 'object')

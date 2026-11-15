@@ -9,7 +9,6 @@ import { useMessages } from '../../../internal/provider/EnvUIContext.js';
 import type { RichTextAttachment, RichTextEditorProps } from '../types.js';
 import { safeRichTextUrl } from './referenceAttributes.js';
 
-/** Links the selected text, or inserts the link's label, or else its address, where the cursor is. */
 function insertLink(editor: Editor, selection: Editor['state']['selection'], link: EditorLink) {
   if (!selection.empty) {
     editor
@@ -31,8 +30,7 @@ function insertLink(editor: Editor, selection: Editor['state']['selection'], lin
   }
 }
 
-/** An uploaded file as the document takes it: an image, or a reference to the file. */
-const attachmentContent = (attachment: RichTextAttachment) =>
+const attachmentAsDocumentNode = (attachment: RichTextAttachment) =>
   attachment.kind === 'image'
     ? { type: 'image', attrs: { src: attachment.url, alt: attachment.label } }
     : {
@@ -46,12 +44,6 @@ const attachmentContent = (attachment: RichTextAttachment) =>
         },
       };
 
-/**
- * Insert link and Attach files of RichTextEditor: the link from the built-in dialog or the
- * application's picker, and the uploaded files, each inserted where the selection was, unless the
- * document changed meanwhile. One runs at a time: the next, or the editor becoming disabled or
- * read-only, or a new controlled value, aborts it. status says what went wrong, or that files upload.
- */
 export function useLinksAndUploads({
   editor,
   value,
@@ -73,10 +65,9 @@ export function useLinksAndUploads({
     insert: (link: EditorLink) => void;
   } | null>(null);
   const pending = useRef<AbortController | null>(null);
-  // Where focus returns as the link dialog closes.
-  const focusTarget = useRef<HTMLElement | null>(null);
+  const linkDialogFocusReturn = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    focusTarget.current = editor?.view.dom ?? null;
+    linkDialogFocusReturn.current = editor?.view.dom ?? null;
   }, [editor]);
   useEffect(() => {
     pending.current?.abort();
@@ -86,8 +77,7 @@ export function useLinksAndUploads({
     return () => pending.current?.abort();
   }, [editor, disabled, readOnly, value]);
 
-  /** Aborts what runs, and returns the signal of what starts. */
-  function start() {
+  function abortRunningAndStart() {
     const controller = new AbortController();
     pending.current?.abort();
     pending.current = controller;
@@ -120,7 +110,7 @@ export function useLinksAndUploads({
       setLinkRequest({ selectedText, insert });
       return;
     }
-    const signal = start();
+    const signal = abortRunningAndStart();
     void Promise.resolve()
       .then(() => pickLink({ selectedText }))
       .then((link) => {
@@ -138,7 +128,7 @@ export function useLinksAndUploads({
     if (!editor || !onUpload || !files.length || disabled || readOnly || busy) return;
     const document = editor.state.doc;
     const selection = editor.state.selection;
-    const signal = start();
+    const signal = abortRunningAndStart();
     setStatus(messages.uploading);
     try {
       const attachments = [];
@@ -150,7 +140,7 @@ export function useLinksAndUploads({
             setStatus(messages.unsafeUpload);
             return;
           }
-          attachments.push(attachmentContent(attachment));
+          attachments.push(attachmentAsDocumentNode(attachment));
         }
       }
       if (editor.isDestroyed || !editor.isEditable || !editor.state.doc.eq(document)) {
@@ -165,9 +155,9 @@ export function useLinksAndUploads({
           .run();
       setStatus('');
     } catch (cause) {
-      // The application's own message, such as a rejection's, else the provider's.
-      if (!signal.aborted)
-        setStatus(cause instanceof Error && cause.message ? cause.message : messages.uploadFailed);
+      const applicationMessage =
+        cause instanceof Error && cause.message ? cause.message : undefined;
+      if (!signal.aborted) setStatus(applicationMessage ?? messages.uploadFailed);
     } finally {
       if (!signal.aborted) setBusy(false);
     }
@@ -178,7 +168,7 @@ export function useLinksAndUploads({
     busy,
     linkRequest,
     closeLinkRequest: () => setLinkRequest(null),
-    focusTarget,
+    focusTarget: linkDialogFocusReturn,
     requestLink,
     upload,
   };

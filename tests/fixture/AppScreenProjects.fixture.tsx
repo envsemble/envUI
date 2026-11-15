@@ -81,7 +81,6 @@ const statusTone = {
   paused: 'neutral',
 } as const;
 
-/** A project's status, soft throughout: the routine one, healthy, neutral, so the states that need people stand out. */
 function StatusBadge({ status }: { status: Status }) {
   return <Badge tone={statusTone[status]}>{statusLabel[status]}</Badge>;
 }
@@ -97,7 +96,6 @@ const people = [
   'Lena Fischer',
 ];
 
-/** Each project as id, name, repository, status, owner, environment, issues, minutes ago. */
 type ProjectRow = [string, string, string, Status, number, string, number, number];
 
 const projects: Project[] = (
@@ -136,7 +134,6 @@ const environments = [
   { value: 'Preview', label: 'Preview' },
 ];
 
-/** Read by assistive technology but not shown. Finding: envUI has no visually hidden helper. */
 const visuallyHidden: CSSProperties = {
   position: 'absolute',
   inlineSize: 1,
@@ -146,19 +143,11 @@ const visuallyHidden: CSSProperties = {
   whiteSpace: 'nowrap',
 };
 
-/** The bulk bar's height: a small control in the bar's padding. */
 const barHeight = 'calc(var(--env-control-height-sm) + 2 * var(--env-space-2))';
 
-/** A width in rem, such as a window class's, in CSS pixels at the document's font size. */
 const remToPixels = (width: string) =>
   Number.parseFloat(width) * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-/**
- * Whether what an element holds fits its width: false from the width where it first overflowed
- * until its container is as wide as it needed then, so the arrangement doesn't flip back and forth.
- * Finding: a row of controls whose width depends on the scale has no way to say when it no longer
- * fits; a window class alone, in rem, can't tell compact controls from comfortable ones.
- */
 function useFits(element: () => HTMLElement | null | undefined, available: number | undefined) {
   const [needed, setNeeded] = useState(0);
   const fits = available === undefined || available >= needed;
@@ -170,7 +159,6 @@ function useFits(element: () => HTMLElement | null | undefined, available: numbe
       if (excess > 1) setNeeded(available + excess);
     };
     check();
-    // What it holds can grow without a render, as when the fonts load.
     const observer = new ResizeObserver(check);
     for (const child of node.children) observer.observe(child);
     return () => observer.disconnect();
@@ -203,16 +191,10 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
     direction: 'descending',
   });
   const [page, setPage] = useState(1);
-  // Finding: a window class is a rem string, so comparing a measured width with it takes a helper
-  // of the application's own.
   const root = useRef<HTMLDivElement>(null);
-  // Finding: a stacked row is titled by its first cell, which here is the checkbox; while rows
-  // stack, the checkbox moves into the name cell and its own column goes.
   const [stacked, setStacked] = useState(false);
   const size = useContainerSize(root);
   const wide = size === undefined || size.inlineSize >= remToPixels(windowClasses.medium);
-  // The filters stay on one row while they fit it, else they move into a sheet, as on a phone; the
-  // members column goes while the table would otherwise scroll its last columns out of view.
   const filterRow = useRef<HTMLDivElement>(null);
   const inlineFilters = useFits(() => filterRow.current, size?.inlineSize) && wide;
   const showMembers = useFits(
@@ -235,8 +217,6 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
     setSort({ column, direction: next });
     setPage(1);
   };
-  // While rows stack, the header and its sort buttons are hidden, so one Select above the rows
-  // shows and changes the order.
   const sortOrder = `${sort.column} ${sort.direction}`;
   const sortControl = (
     <Select
@@ -304,13 +284,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
 
   return (
     <Column ref={root} gap={4}>
-      {/* The filters: the search, a Select, a multiple Combobox and the view, on one row, the
-          search taking the room left. Narrower than a medium window, measured on the table's own
-          width, they move into a sheet and the search stays in view, as the filtering pattern
-          does. */}
       <Row ref={filterRow} align="center" gap={3}>
-        {/* Layout glue: SearchField has no width of its own in a row; it keeps room for its
-            placeholder. */}
         <SearchField
           label="Search projects"
           placeholder="Search projects"
@@ -320,14 +294,11 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
           onValueChange={setQuery}
         />
         {inlineFilters ? (
-          // Layout glue: the filters keep their widths rather than squeezing their values, so the
-          // row overflows, and moves them into the sheet, once the search is at its narrowest.
           <Row align="center" gap={3} style={{ flex: '1 0 auto' }}>
             {filters}
             <Button variant="secondary" size="sm" startIcon={<IconAdd />}>
               Add filter
             </Button>
-            {/* Layout glue: Row has no way to push one child to the end. */}
             <Row align="center" gap={2} style={{ marginInlineStart: 'auto' }}>
               {viewControl}
             </Row>
@@ -355,12 +326,6 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
       <div role="status" style={visuallyHidden}>
         {selected.length > 0 ? `${projectCount(selected.length)} selected` : 'No projects selected'}
       </div>
-      {/* One row above the table: the filters in use that no control above shows, as tokens that
-          remove themselves, and while rows are selected the bulk bar in their place, so a phone
-          doesn't stack both above the first row. The owner shows in its Combobox, so it takes no
-          token. Finding: no chip component; a token is a small secondary Button with a close
-          icon, as the filtering pattern says. Layout glue: both keep the bar's height, so the
-          table stays put as the selection comes and goes. */}
       {selected.length === 0 ? (
         <Row
           wrap
@@ -390,7 +355,6 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
             gap={3}
             style={{ minBlockSize: 'var(--env-control-height-sm)' }}
           >
-            {/* Narrow, clearing is a cross beside the count, so the bar stays one row. */}
             <Row align="center" gap={1}>
               <Text variant="body-sm" style={{ paddingInlineStart: 'var(--env-space-2)' }}>
                 {selected.length} selected
@@ -405,8 +369,6 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                 />
               )}
             </Row>
-            {/* On a desktop the actions are labelled buttons; on a phone, where the bar keeps one
-                row, a toolbar of icons named by tooltips. */}
             {wide ? (
               <Row role="group" aria-label="Selected projects" align="center" gap={1}>
                 <Button variant="ghost" size="sm" startIcon={<IconRocketLaunch />}>
@@ -501,7 +463,6 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
               Updated
             </Table.HeaderCell>
             <Table.HeaderCell>
-              {/* Finding: an actions column has no header, and Table.HeaderCell asks for text. */}
               <span style={visuallyHidden}>Actions</span>
             </Table.HeaderCell>
           </Table.Row>
@@ -597,7 +558,6 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
   );
 }
 
-/** The chosen project's details, settings and recent activity. */
 function ProjectDetails({ project }: { project: Project }) {
   const toast = useToast();
   return (
@@ -661,8 +621,6 @@ function ProjectDetails({ project }: { project: Project }) {
         <Text render={<h3 />} variant="title">
           Activity
         </Text>
-        {/* One surface with the entries as rows on it, rather than a card each. Layout glue: the
-            rows take no fill of their own (List.Item's container color property). */}
         <Surface background="raised" padding={1}>
           <List.Root aria-label="Recent activity" density="sm">
             {activity.map((entry) => (
@@ -736,7 +694,6 @@ export function ProjectsScreen() {
               />
             }
           >
-            {/* Finding: PageHeader has no tabs slot, so the tabs follow it in the page. */}
             <Tabs
               aria-label="Project views"
               size="md"

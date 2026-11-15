@@ -150,7 +150,6 @@ function StrictToastFixture() {
   );
 }
 
-/** Toast triggers under a provider, and a provider mounted later in strict mode. */
 export default function ToastFixture() {
   return (
     <>

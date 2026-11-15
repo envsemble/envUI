@@ -10,7 +10,6 @@ import type { PanelDockPanel } from '../panelDockTypes.js';
  */
 export function useRecency(
   panels: readonly PanelDockPanel[],
-  /** The time a panel the dock is bringing back had among the others, where it is one. */
   returningTime: (id: string) => number | undefined,
 ) {
   const times = useRef(new Map<string, number>());
@@ -26,10 +25,9 @@ export function useRecency(
       if (panel.mode === 'minimized') continue;
       shownIds.add(panel.id);
       if (times.current.has(panel.id)) continue;
-      // A panel the dock brings back once it fits again returns to its place among the others.
-      const earlier = returningTime(panel.id);
-      if (earlier === undefined) bringForward(panel.id);
-      else times.current.set(panel.id, earlier);
+      const placeBeforeDockMinimizedIt = returningTime(panel.id);
+      if (placeBeforeDockMinimizedIt === undefined) bringForward(panel.id);
+      else times.current.set(panel.id, placeBeforeDockMinimizedIt);
     }
     for (const id of times.current.keys()) if (!shownIds.has(id)) times.current.delete(id);
   }, [panels, returningTime, bringForward]);

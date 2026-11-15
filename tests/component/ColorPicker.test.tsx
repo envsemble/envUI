@@ -4,11 +4,7 @@ import * as fixture from '../fixture/ColorPicker.fixture.tsx';
 import { css, keyboard, recordClipboard } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/**
- * Gives the page an eyedropper that picks `picked`, or takes the browser's away with null, until
- * the test ends. A picker reads it as it renders, so this comes before the mount.
- */
-function eyeDropper(picked: string | null) {
+function eyeDropperBeforeMount(picked: string | null) {
   const own = Object.getOwnPropertyDescriptor(window, 'EyeDropper');
   Object.defineProperty(window, 'EyeDropper', {
     configurable: true,
@@ -33,8 +29,7 @@ const picker = (name: string) => scope().getByRole('group', { name, exact: true 
 const output = (testId: string) => () => page.getByTestId(testId).element().textContent;
 const valueOf = (locator: Locator) => () => (locator.element() as HTMLInputElement).value;
 const focus = (locator: Locator) => (locator.element() as HTMLElement).focus();
-/** Types into a field and presses Enter, which commits it. */
-async function enter(field: Locator, text: string) {
+async function typeAndCommit(field: Locator, text: string) {
   await field.fill(text);
   await keyboard.press('Enter');
 }
@@ -61,15 +56,12 @@ test(
     await expect.poll(last).not.toBe('');
     const lessSaturated = last()!;
     expect(valueOf(hex)()).toBe(lessSaturated.toUpperCase());
-    // Up moves the brightness, the area's other channel.
     await keyboard.press('ArrowUp');
     await expect.poll(last).not.toBe(lessSaturated);
-    // The thumb shows its focus ring while the keyboard moves it.
     const thumb = controlled
       .element()
       .querySelector('.env-color-picker-area .env-color-picker-thumb')!;
     expect(css(thumb, 'outline-style')).toBe('solid');
-    // The hue slider is vertical: Up raises it and Down lowers it, as Right and Left do.
     const hue = controlled.getByRole('slider', { name: 'Hue' });
     await expect.element(hue).toHaveAttribute('aria-orientation', 'vertical');
     const before = Number(valueOf(hue)());
@@ -93,31 +85,28 @@ test('each format types the color in its own fields', async () => {
   const controlled = picker('Controlled color');
   const last = output('color-last');
   const hex = controlled.getByRole('textbox', { name: 'Hex' });
-  await enter(hex, 'ff8800');
+  await typeAndCommit(hex, 'ff8800');
   await expect.poll(last).toBe('#ff8800');
   await expect.poll(valueOf(hex)).toBe('#FF8800');
-  // A draft that is no color goes back to the color as focus leaves.
   await hex.fill('#12');
   (hex.element() as HTMLElement).blur();
   await expect.poll(valueOf(hex)).toBe('#FF8800');
   expect(output('color-changes')()).toBe('1');
 
   await chooseFormat(controlled, 'RGB');
-  // Each number shows its channel's letter.
   await expect.poll(() => labels(controlled)).toEqual(['R', 'G', 'B']);
   const red = controlled.getByRole('textbox', { name: 'Red' });
   expect(valueOf(red)()).toBe('255');
   expect(valueOf(controlled.getByRole('textbox', { name: 'Blue' }))()).toBe('0');
-  await enter(red, '16');
+  await typeAndCommit(red, '16');
   await expect.poll(last).toBe('#108800');
-  // The arrow keys step a channel.
   await keyboard.press('ArrowUp');
   await expect.poll(last).toBe('#118800');
 
   await chooseFormat(controlled, 'HSL');
   const lightness = controlled.getByRole('textbox', { name: 'Lightness' });
   await expect.element(controlled.getByRole('textbox', { name: 'Hue' })).toBeInTheDocument();
-  await enter(lightness, '50');
+  await typeAndCommit(lightness, '50');
   await expect.poll(valueOf(lightness)).toBe('50%');
   expect(controlled.getByRole('textbox', { name: 'Hex' }).query()).toBeNull();
 });
@@ -126,11 +115,10 @@ test(
   'several formats show their fields together, each editing the same color, and Tab moves row by row',
   { tags: ['engines'] },
   async () => {
-    eyeDropper(null);
+    eyeDropperBeforeMount(null);
     mount(fixture);
     const every = picker('Every format');
     const color = output('color-every');
-    // No select: a row for each format, named by the format it shows, in the order given.
     expect(every.getByRole('button', { name: /^Color format/ }).query()).toBeNull();
     expect(
       [...every.element().querySelectorAll('.env-color-picker-row')].map((row) =>
@@ -149,11 +137,9 @@ test(
     expect(valueOf(red)()).toBe('51');
     expect(valueOf(hue)()).toBe('210°');
     expect(valueOf(lightness)()).toBe('40%');
-    // Each row's channels show their letters, and alpha follows in every row.
     expect(labels(rgbRow)).toEqual(['R', 'G', 'B', 'A']);
     expect(labels(hslRow)).toEqual(['H', 'S', 'L', 'A']);
 
-    // Tab moves through the rows in order, each row's copy button after its fields.
     focus(hex);
     for (const next of [
       hexRow.getByRole('textbox', { name: 'Alpha' }),
@@ -169,25 +155,23 @@ test(
       await expect.element(next).toHaveFocus();
     }
 
-    // Typing in any format moves the others with it.
-    await enter(hex, 'ff8800');
+    await typeAndCommit(hex, 'ff8800');
     await expect.poll(color).toBe('#ff8800');
     expect(valueOf(red)()).toBe('255');
     expect(valueOf(blue)()).toBe('0');
     expect(valueOf(hue)()).toBe('32°');
-    await enter(red, '16');
+    await typeAndCommit(red, '16');
     await expect.poll(color).toBe('#108800');
     expect(valueOf(hex)()).toBe('#108800');
     await keyboard.press('ArrowUp');
     await expect.poll(color).toBe('#118800');
-    await enter(lightness, '50');
+    await typeAndCommit(lightness, '50');
     await expect.poll(valueOf(hex)).not.toBe('#118800');
     await expect.poll(color).toBe(valueOf(hex)().toLowerCase());
-    await enter(hslRow.getByRole('textbox', { name: 'Alpha' }), '50');
+    await typeAndCommit(hslRow.getByRole('textbox', { name: 'Alpha' }), '50');
     await expect.poll(valueOf(rgbRow.getByRole('textbox', { name: 'Alpha' }))).toBe('50%');
     expect(valueOf(hexRow.getByRole('textbox', { name: 'Alpha' }))()).toBe('50%');
     expect(color()).toMatch(/^#[0-9a-f]{6}80$/);
-    // The fields of every row share their columns, so the letters and numbers line up.
     const columns = [...every.element().querySelectorAll('.env-color-picker-fields')].map(
       (fields) => {
         const { x, width } = fields.getBoundingClientRect();
@@ -208,7 +192,7 @@ test('alpha has a slider and a field, and values keep it while translucent', asy
   const color = output('color-translucent');
   const alpha = translucent.getByRole('textbox', { name: 'Alpha' });
   expect(valueOf(alpha)()).toBe('50%');
-  await enter(alpha, '25');
+  await typeAndCommit(alpha, '25');
   await expect.poll(color).toBe('rgba(103, 80, 164, 0.25)');
   const slider = translucent.getByRole('slider', { name: 'Alpha' });
   await expect.element(slider).toHaveAttribute('aria-orientation', 'vertical');
@@ -216,10 +200,8 @@ test('alpha has a slider and a field, and values keep it while translucent', asy
   await keyboard.press('ArrowDown');
   await expect.poll(valueOf(alpha)).toBe('24%');
   await keyboard.press('End');
-  // Fully opaque, the value drops its alpha.
   await expect.poll(color).toBe('rgb(103, 80, 164)');
   expect(valueOf(alpha)()).toBe('100%');
-  // A preset keeps its own alpha; the arrow keys move between presets, and Enter chooses.
   const swatches = translucent.getByRole('listbox', { name: 'Swatches' });
   await swatches.getByRole('option', { name: 'Half green' }).click();
   await expect.poll(color).toBe('rgba(0, 128, 0, 0.5)');
@@ -230,7 +212,6 @@ test('alpha has a slider and a field, and values keep it while translucent', asy
   await expect.element(swatches.getByRole('option', { name: 'dark vibrant blue' })).toHaveFocus();
   await keyboard.press('Enter');
   await expect.poll(color).toBe('rgb(0, 0, 255)');
-  // The uncontrolled picker without alpha has neither slider nor field.
   const opaque = picker('Uncontrolled color');
   expect(opaque.getByRole('slider', { name: 'Alpha' }).query()).toBeNull();
   expect(opaque.getByRole('textbox', { name: 'Alpha' }).query()).toBeNull();
@@ -245,7 +226,6 @@ test('copy writes the color as the fields show it, also from a read-only picker'
   await chooseFormat(translucent, 'RGB');
   await translucent.getByRole('button', { name: 'Copy color' }).click();
   await expect.poll(() => writes.at(-1)).toBe('rgba(103, 80, 164, 0.5)');
-  // A read-only picker keeps its color from the keyboard, and still copies it.
   const readOnly = picker('Read only color');
   const hex = readOnly.getByRole('textbox', { name: 'Hex' });
   focus(hex);
@@ -256,18 +236,17 @@ test('copy writes the color as the fields show it, also from a read-only picker'
 });
 
 test('the eyedropper picks a color where the browser has one, and is hidden where it has none', async () => {
-  eyeDropper('#ff8800');
+  eyeDropperBeforeMount('#ff8800');
   const { remount } = mount(fixture);
   const controlled = picker('Controlled color');
   const pick = { name: 'Pick a color from the screen' };
   await controlled.getByRole('button', pick).click();
   await expect.poll(output('color-last')).toBe('#ff8800');
   await expect.poll(valueOf(controlled.getByRole('textbox', { name: 'Hex' }))).toBe('#FF8800');
-  // Turned off, and on a picker that takes no input, it doesn't show.
   expect(picker('Uncontrolled color').getByRole('button', pick).query()).toBeNull();
   expect(picker('Read only color').getByRole('button', pick).query()).toBeNull();
 
-  eyeDropper(null);
+  eyeDropperBeforeMount(null);
   remount();
   await expect
     .element(picker('Controlled color').getByRole('button', { name: 'Copy color' }))
@@ -291,7 +270,7 @@ test('a controlled picker follows its value, also when the application rejects o
     await keyboard.press('ArrowRight');
     await expect.poll(changes).toBe(String(++count));
     expect(valueOf(hue)()).toBe(acceptedHue);
-    await enter(hex, '#abcdef');
+    await typeAndCommit(hex, '#abcdef');
     await expect.poll(changes).toBe(String(++count));
     await expect.poll(valueOf(hex)).toBe('#1A73E8');
   }
@@ -307,7 +286,6 @@ test(
   async () => {
     mount(fixture);
     const values = output('color-values');
-    // ColorPickerButton opens its picker in a popover and returns focus as it closes.
     const button = scope().getByRole('button', { name: 'Button color, #2F6F62' });
     expect(button.element().textContent).toBe('#2F6F62');
     await button.click();
@@ -315,7 +293,7 @@ test(
     await expect
       .element(popover.getByRole('slider', { name: 'Button color, Color picker' }))
       .toHaveFocus();
-    await enter(popover.getByRole('textbox', { name: 'Hex' }), '#123456');
+    await typeAndCommit(popover.getByRole('textbox', { name: 'Hex' }), '#123456');
     const changed = scope().getByRole('button', { name: 'Button color, #123456' });
     await expect.element(changed).toBeInTheDocument();
     await keyboard.press('Escape');
@@ -324,8 +302,8 @@ test(
 
     const uncontrolled = picker('Uncontrolled color').getByRole('textbox', { name: 'Hex' });
     const external = picker('External color').getByRole('textbox', { name: 'Hex' });
-    await enter(uncontrolled, '#123456');
-    await enter(external, '#654321');
+    await typeAndCommit(uncontrolled, '#123456');
+    await typeAndCommit(external, '#654321');
     await scope().getByRole('button', { name: 'Submit colors' }).click();
     await expect.poll(values).toBe(
       JSON.stringify({
@@ -348,7 +326,6 @@ test(
     await expect
       .element(scope().getByRole('button', { name: 'Button color, #2F6F62' }))
       .toBeInTheDocument();
-    // A reset tells a controlled picker nothing; its value stays the application's.
     expect(output('color-changes')()).toBe('0');
   },
 );

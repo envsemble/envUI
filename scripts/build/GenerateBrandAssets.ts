@@ -3,10 +3,6 @@ import { resolve } from 'node:path';
 import { writeIfChanged } from './GeneratedFiles.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
-/**
- * Preserve the supplied artwork while making its monochrome paint theme-aware. The lockup is the
- * catalogue's own: envUI ships no logos.
- */
 export async function generateBrandAssets() {
   const [onLight, onDark] = await Promise.all(
     ['on-light', 'on-dark'].map((background) =>

@@ -1,8 +1,4 @@
 @layer env.components {
-  /* A table's column resize handles, which only a table with resizableColumns loads, with the code
-     that moves them (ColumnResizeHandle.tsx). A handle straddles nothing: it sits inside the end of
-     its header cell, with a line on the column boundary while it is hovered, focused or dragged, or
-     while the pointer is over the header row (Table.css). */
   .env-table-column-resize-handle {
     position: absolute;
     inset-block: 0;
@@ -18,7 +14,6 @@
     position: absolute;
     inset-block: var(--env-space-2);
     inset-inline-end: 0;
-    /* The bar, thicker while the column resizes. */
     --_table-resize-bar: 0.125rem;
     inline-size: var(--_table-resize-bar);
     border-radius: var(--env-radius-full);

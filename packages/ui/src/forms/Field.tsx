@@ -15,16 +15,14 @@ type ClassName = {
   className?: string;
 };
 
-/** Whether Field.Root was given invalid, which shows its error as Base UI's own failures do. */
-const InvalidContext = createContext(false);
+const RootGivenInvalidContext = createContext(false);
 
 export type RootProps = Omit<ComponentProps<typeof BaseField.Root>, 'className'> & ClassName;
 
 /**
  * A labelled form control with its description and error, for a control envUI has no field for,
  * such as a control of the application's own: Field.Label names Field.Control, and the
- * description and the error describe it, with ids, aria-invalid and the disabled state wired
- * through Base UI's Field.
+ * description and the error describe it.
  */
 function Root({ className, invalid, children, ...props }: RootProps) {
   return (
@@ -34,7 +32,7 @@ function Root({ className, invalid, children, ...props }: RootProps) {
       invalid={invalid}
       className={classNames('env-field', className)}
     >
-      <InvalidContext value={invalid === true}>{children}</InvalidContext>
+      <RootGivenInvalidContext value={invalid === true}>{children}</RootGivenInvalidContext>
     </BaseField.Root>
   );
 }
@@ -98,14 +96,13 @@ export type ErrorProps = Omit<ComponentProps<typeof BaseField.Error>, 'className
  * match={true} always.
  */
 function FieldError({ className, children, match, ...props }: ErrorProps) {
-  const invalid = useContext(InvalidContext);
+  const invalid = useContext(RootGivenInvalidContext);
   return (
     <BaseField.Error
       {...props}
       match={match ?? (invalid || undefined)}
       {...(children != null && { children })}
       className={classNames('env-field-error', className)}
-      // The message, the children or the browser's, follows the icon.
       render={({ children: message, ...errorProps }) => (
         <Row align="start" gap={2} {...errorProps}>
           <IconError aria-hidden="true" focusable="false" />
@@ -116,8 +113,6 @@ function FieldError({ className, children, match, ...props }: ErrorProps) {
   );
 }
 
-// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
-// application leaves unused.
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Field.Root');
 const LabelPart = /* @__PURE__ */ withDisplayName(Label, 'Field.Label');
 const ControlPart = /* @__PURE__ */ withDisplayName(Control, 'Field.Control');

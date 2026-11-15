@@ -8,7 +8,6 @@ const {
 
 const ruleName = 'envui/no-focus-outline-removal';
 
-/** Whether a declaration removes the outline: `outline: none`, `0` or `outline-style: none`. */
 function removesOutline(declaration) {
   const property = declaration.prop.toLowerCase();
   const words = declaration.value.trim().toLowerCase().split(/\s+/);
@@ -17,7 +16,6 @@ function removesOutline(declaration) {
   return false;
 }
 
-/** The properties that draw a focus indicator in the outline's place. */
 const replacement =
   /^(?:box-shadow|border(?:-[a-z]+)*|background(?:-[a-z]+)*|text-decoration(?:-[a-z]+)*)$/i;
 
@@ -26,10 +24,6 @@ const messages = ruleMessages(ruleName, {
     `outline: ${value} on :focus-visible removes the focus ring: leave envUI's focus ring, or draw another ring, such as box-shadow: 0 0 0 2px var(--env-color-border-focus).`,
 });
 
-/**
- * Whether a selector styles the focused element itself, `.item:focus-visible`, rather than
- * something inside it or a pseudo-element of it.
- */
 const targetsFocused = (selector) =>
   selector
     .split(',')
@@ -39,7 +33,6 @@ const targetsFocused = (selector) =>
         !/:focus-visible[^\s>+~]*::/i.test(one),
     );
 
-/** Whether a rule draws a focus ring: a visible outline or a box shadow on :focus-visible. */
 const drawsRing = (node) =>
   /:focus-visible/i.test(node.selector) &&
   node.nodes.some(

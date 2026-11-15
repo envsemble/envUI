@@ -1,6 +1,3 @@
-// The site's stand-ins for browser methods (apps/site/src/motion/BrowserStandIns.ts): installed
-// once while any stage holds them and removed when the last lets go, each calls the browser's own
-// method for anything it doesn't stand in for.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
@@ -10,12 +7,7 @@ import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const standIns = await importSource('BrowserStandIns', 'apps/site/src/motion/BrowserStandIns.ts');
 
-/**
- * A realm of its own, with an element that matches the selectors it is given as inside, and
- * methods that record each call that reaches them: the browser's own. Its stand-ins are held, and
- * `release` lets them go.
- */
-function realm() {
+function realmRecordingOwnCalls() {
   const calls = [];
   class Element {
     constructor(inside = []) {
@@ -60,7 +52,7 @@ function realm() {
 }
 
 test('held twice, each method is wrapped once, and the last release puts the own ones back', () => {
-  const { Element, HTMLElement, own, release } = realm();
+  const { Element, HTMLElement, own, release } = realmRecordingOwnCalls();
   const wrapped = Element.prototype.scrollIntoView;
   const focus = HTMLElement.prototype.focus;
   assert.notEqual(wrapped, own.scrollIntoView);
@@ -68,20 +60,18 @@ test('held twice, each method is wrapped once, and the last release puts the own
   assert.equal(Element.prototype.scrollIntoView, wrapped);
   assert.equal(HTMLElement.prototype.focus, focus);
   again();
-  // Released twice, a hold counts once: the first hold still holds them.
   again();
   assert.equal(Element.prototype.scrollIntoView, wrapped);
   release();
   assert.equal(Element.prototype.scrollIntoView, own.scrollIntoView);
   assert.equal(HTMLElement.prototype.focus, own.focus);
-  // Held again, they are installed again.
   const third = standIns.holdBrowserStandIns({ Element, HTMLElement });
   assert.notEqual(Element.prototype.scrollIntoView, own.scrollIntoView);
   third();
 });
 
 test('outside a stage or an example, every method is the browser’s own', () => {
-  const { HTMLElement, calls } = realm();
+  const { HTMLElement, calls } = realmRecordingOwnCalls();
   const element = new HTMLElement();
   element.scrollIntoView({ block: 'center' });
   element.focus({ preventScroll: true });
@@ -100,7 +90,7 @@ test('outside a stage or an example, every method is the browser’s own', () =>
 });
 
 test('scrolling into view stays inside a stage or an open example, never the page', () => {
-  const { HTMLElement, calls } = realm();
+  const { HTMLElement, calls } = realmRecordingOwnCalls();
   new HTMLElement(['.catalogue-tile-canvas']).scrollIntoView();
   new HTMLElement(['.site-live-example']).scrollIntoView(false);
   new HTMLElement(['.catalogue-open-example']).scrollIntoView({ block: 'nearest' });
@@ -109,13 +99,13 @@ test('scrolling into view stays inside a stage or an open example, never the pag
 });
 
 test('a live example the reader hasn’t reached for keeps focus to itself', () => {
-  const { HTMLElement, calls } = realm();
+  const { HTMLElement, calls } = realmRecordingOwnCalls();
   new HTMLElement([':not([data-touched])']).focus();
   assert.deepEqual(calls, []);
 });
 
 test('in a stage the keyboard is in, focus follows the pointer and :focus reads its mark', () => {
-  const { HTMLElement, calls } = realm();
+  const { HTMLElement, calls } = realmRecordingOwnCalls();
   const element = new HTMLElement();
   const followed = [];
   standIns.keyboardFocused.set(element, (next) => followed.push(next));
@@ -134,14 +124,12 @@ test('in a stage the keyboard is in, focus follows the pointer and :focus reads 
 });
 
 test('evaluated again, as on a hot reload, the module keeps the state its stand-ins read', async () => {
-  const { Element, calls } = realm();
-  // The same bundle, evaluated again as a module of its own.
+  const { Element, calls } = realmRecordingOwnCalls();
   const bundle = pathToFileURL(join(repositoryRoot, '.cache/unit/BrowserStandIns.mjs')).href;
   const again = await import(`${bundle}?evaluated=again`);
   assert.notEqual(again.holdBrowserStandIns, standIns.holdBrowserStandIns);
   assert.equal(again.captures, standIns.captures);
   assert.equal(again.keyboardFocused, standIns.keyboardFocused);
-  // A pointer its callers register now is one the installed stand-ins capture for.
   const element = new Element();
   again.captures.set(41, null);
   element.setPointerCapture(41);
@@ -149,7 +137,6 @@ test('evaluated again, as on a hot reload, the module keeps the state its stand-
   assert.ok(element.hasPointerCapture(41));
   again.captures.delete(41);
   assert.deepEqual(calls, []);
-  // Holding them from it changes nothing on a realm that has the stand-ins.
   const wrapped = Element.prototype.setPointerCapture;
   const release = again.holdBrowserStandIns({ Element, HTMLElement: class extends Element {} });
   assert.equal(Element.prototype.setPointerCapture, wrapped);

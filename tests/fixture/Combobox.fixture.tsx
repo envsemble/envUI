@@ -69,8 +69,7 @@ const tags: ComboboxItem[] = [
   'Testing',
 ].map((label) => ({ value: label.toLowerCase(), label }));
 
-// The server's contacts take values with a NUL in them, which a selection keeps as it is.
-const contacts = people.map((person) => ({
+const contactsWithNulInValues = people.map((person) => ({
   ...person,
   value: person.value.replace('-', '\u0000'),
 }));
@@ -91,7 +90,9 @@ function ServerSearch({ theme }: { theme: ColorScheme }) {
     setLoading(true);
     const timer = setTimeout(() => {
       const needle = query.trim().toLowerCase();
-      setResults(contacts.filter((person) => person.label.toLowerCase().startsWith(needle)));
+      setResults(
+        contactsWithNulInValues.filter((person) => person.label.toLowerCase().startsWith(needle)),
+      );
       setLoading(false);
     }, 400);
     return () => clearTimeout(timer);
@@ -129,7 +130,6 @@ export default function ComboboxFixture({ theme }: { theme: ColorScheme }) {
   const [reviewers, setReviewers] = useState<string[]>(['sam-lee']);
   const [reviewerChanges, setReviewerChanges] = useState(0);
   const [opened, setOpened] = useState(0);
-  // One mentioned person is no longer among the options.
   const [mentioned, setMentioned] = useState(['sam-lee', 'former-member', 'riley-chen']);
   const [mentionedItems, setMentionedItems] = useState('');
   return (

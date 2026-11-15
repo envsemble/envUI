@@ -1,31 +1,10 @@
-// Chooses the browser jobs CI runs for a change (.github/actions/choose-jobs): the library's browser
-// tests and the site's smoke, and the test files the burn-in repeats. The static checks, the build
-// and the unit tests always run; they take a couple of minutes and read nearly every file, the
-// guides included.
-//
-//   node scripts/test/ChooseJobs.ts [--paths <file>] [--kept <file>] [--full]
-//
-// --paths names a file listing the changed paths, one to a line; without it, or with --full,
-// everything runs. --kept lists the paths the change adds or edits, the deleted ones left out: the
-// burn-in (scripts/test/BurnIn.ts) repeats the browser test files among them, and without it, or
-// with --full, none. It prints `library=`, `site=`, `burn-in=` and `burn-in-files=` lines for
-// $GITHUB_OUTPUT, and why on stderr. A path no rule names runs everything, so a new folder is
-// tested until a rule places it. It reads only Node's own modules: the job that runs it installs
-// nothing.
 import { readFileSync } from 'node:fs';
 import { posix } from 'node:path';
 import { parseArgs } from 'node:util';
 
-/** A job a path can run. */
 export type Job = 'library' | 'site';
 
-/**
- * What a changed path runs, the first rule whose glob matches it deciding; `all` runs every job.
- * The library's change runs the site's smoke too, as the site renders the library.
- */
 export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
-  // The tooling every job runs on: its dependencies, the browser tests' configuration and servers,
-  // the builds, and CI itself.
   {
     paths: [
       'package.json',
@@ -40,21 +19,16 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
     ],
     jobs: 'all',
   },
-  // Guides and the license, read by Prettier and the unit tests alone. The packaged README, the
-  // changelogs and the pages in docs/ are the site's content, below.
   {
     paths: [
       'LICENSE',
       'AGENTS.md',
       'CONTRIBUTING.md',
       'contributing/**',
-      'packages/*/AGENTS.md',
-      'apps/site/AGENTS.md',
       'packages/{eslint-plugin,stylelint-config}/**',
     ],
     jobs: [],
   },
-  // The library's Markdown is the site's content too.
   { paths: ['packages/ui/**/*.md'], jobs: ['site'] },
   {
     paths: [
@@ -82,8 +56,6 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
     ],
     jobs: ['site'],
   },
-  // Unit tests, the full check's own suites, the measuring scripts run by hand, and the
-  // configuration of the static checks.
   {
     paths: [
       'tests/{library,site,docs,tooling,support,types,lint}/**',
@@ -103,7 +75,6 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
   },
 ];
 
-/** The jobs a change runs, and the path that decided each, or why everything runs. */
 export function chooseJobs(paths: readonly string[] | undefined) {
   const jobs = { library: false, site: false };
   const reasons: string[] = [];
@@ -120,12 +91,6 @@ export function chooseJobs(paths: readonly string[] | undefined) {
   return { jobs, reasons };
 }
 
-/**
- * The browser test files whose own source a change adds or edits, which the burn-in repeats: the
- * component tests and the Playwright specs, not the tests a changed component selects, so a change
- * to no test file repeats nothing. The accessibility scan is left out, as CI's Chromium jobs leave
- * it to `npm run test:a11y`.
- */
 export const burnInFiles = (kept: readonly string[]) =>
   [
     ...new Set(

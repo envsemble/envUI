@@ -1,24 +1,21 @@
 import type { ReactNode } from 'react';
 import type { LineArtDrawing } from '../LineArt.js';
 
-/*
- * LineArt's drawings: geometric constructions in thin lines, as on a draughtsman's sheet, each
- * following one rule, named above it. Their coordinates are computed in a sheet 480 wide and 330
- * tall, which LineArt's viewBox frames; lines that run on past the sheet's edges are cropped by it.
- *
- * Beside each drawing's shapes is its order, in which its lines draw themselves in, and out, as
- * LineArt's motions do: the order of its construction, as a draughtsman would set it out, from
- * the lines that frame it to the finer divisions they lead to. Each beat lists lines by their
- * place among the drawing's shapes, from 0; the lines of a beat move together, and the beats follow
- * one another evenly, so every drawing takes as long.
- */
+/** The sheet every drawing is constructed in, which LineArt's viewBox frames and crops. */
+export const lineArtSheet = { width: 480, height: 330 };
+
+/** A LineArt drawing: its shapes and the order its lines draw themselves in and out. */
 export interface LineArtShapes {
+  /** The drawing's lines, in `lineArtSheet`'s coordinates. */
   shapes: ReactNode;
+  /**
+   * The drawing's beats, in the order of its construction: each lists the lines that move
+   * together, by their index among `shapes`.
+   */
   order: readonly (readonly number[])[];
 }
 
 export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
-  // Golden section: A golden rectangle cut into squares, each with its quarter arc, the two diagonals crossing at the spiral’s pole.
   'golden-section': {
     shapes: (
       <>
@@ -43,10 +40,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="299.1" y1="300" x2="466" y2="30" />
       </>
     ),
-    // The rectangle and its diagonals, then each square's cut with its arc, from the largest.
     order: [[0], [17, 18], [1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12], [13, 14], [15, 16]],
   },
-  // Square, circle, triangle: One square holds its circle, its triangle and its diagonals; its edges and midlines run on as a grid of half-squares.
   'square-circle-triangle': {
     shapes: (
       <>
@@ -63,10 +58,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="456" y1="45" x2="216" y2="285" />
       </>
     ),
-    // The square, its midlines and the grid running on, the circle, the diagonals, the triangle.
     order: [[1, 3, 4, 6], [0, 2, 5], [7], [9, 10], [8]],
   },
-  // Whirling squares: Each square’s corners stand a fifth of the way along the last one’s sides, so the corners trace four spirals.
   'whirling-squares': {
     shapes: (
       <>
@@ -80,10 +73,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <polygon points="372,133.6 361.4,207 288,196.4 298.6,123" />
       </>
     ),
-    // The squares, from the outermost in.
     order: [[0], [1], [2], [3], [4], [5], [6], [7]],
   },
-  // Triangle and circles: An equilateral triangle between its incircle and circumcircle, half the size, its three axes drawn as diameters.
   'triangle-and-circles': {
     shapes: (
       <>
@@ -95,10 +86,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="123.3" y1="304" x2="476.7" y2="100" />
       </>
     ),
-    // The circumcircle, the triangle in it, its axes, and the incircle they meet.
     order: [[1], [0], [3, 4, 5], [2]],
   },
-  // Ford circles: A circle on the line at every fraction p/q from ½ to 1, its diameter 1/q², each touching its neighbours.
   'ford-circles': {
     shapes: (
       <>
@@ -120,10 +109,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <circle cx="390" cy="307.6" r="4.4" />
       </>
     ),
-    // The line, then the circles from the largest, those of one size together.
     order: [[0], [1], [2], [3], [4], [5, 6], [7], [8, 9, 10], [11, 12], [13, 14, 15]],
   },
-  // Harmonic division: A rectangle’s diagonal crossed by lines from its corner cuts the width into halves, thirds, quarters and on.
   'harmonic-division': {
     shapes: (
       <>
@@ -146,10 +133,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="466" y1="286" x2="393.3" y2="44" />
       </>
     ),
-    // The rectangle, its diagonals, then each cut with the line from the corner that gives the next.
     order: [[0, 1, 2, 3], [4, 11], [5, 12], [6, 13], [7, 14], [8, 15], [9, 16], [10]],
   },
-  // Pappus chain: Three semicircles on one line, an arbelos, and a chain of circles each touching its neighbours and two of the arcs.
   'pappus-chain': {
     shapes: (
       <>
@@ -169,10 +154,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <circle cx="453.3" cy="248.4" r="3.2" />
       </>
     ),
-    // The line, the three semicircles from the largest, then the chain from its largest circle.
     order: [[0], [1], [2, 3], [4], [5], [6], [7], [8], [9], [10], [11], [12], [13]],
   },
-  // Root rectangles: From a square, each diagonal swung down to the base gives the next rectangle: √2, √3, 2, √5.
   'root-rectangles': {
     shapes: (
       <>
@@ -195,10 +178,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="466" y1="-2" x2="466" y2="332" />
       </>
     ),
-    // The square, then each diagonal, the arc it swings, and the side it raises with the next one.
     order: [[0, 14, 15, 16], [1], [2], [3, 4], [5], [6, 7], [8], [9, 10], [11], [12, 13]],
   },
-  // Sacred cut: Arcs from a square’s corners through its centre cut each side, and the cuts run on as a nine-square grid.
   'sacred-cut': {
     shapes: (
       <>
@@ -215,10 +196,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="201" y1="110.7" x2="482" y2="110.7" />
       </>
     ),
-    // The square, its diagonals, the arcs from its corners and the cuts they make.
     order: [[0], [1, 2], [3, 4, 5, 6], [7, 8, 9, 10]],
   },
-  // Gothic tracery: Equilateral arches in a row, each holding two arches of half its span and the circle that touches all three, set out with compasses.
   'gothic-tracery': {
     shapes: (
       <>
@@ -253,7 +232,6 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="638" y1="204.1" x2="638" y2="332" />
       </>
     ),
-    // The springing line, the arches, the arches of half their span, the circles and the piers.
     order: [
       [0],
       [1, 2, 10, 11, 19, 20],
@@ -262,7 +240,6 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
       [8, 9, 17, 18, 26, 27, 28],
     ],
   },
-  // Quartered square: A square cut into quarters, the corner quarter cut again and on, each quarter left behind holding its circle on the diagonal.
   'quartered-square': {
     shapes: (
       <>
@@ -285,10 +262,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <circle cx="440.8" cy="37.2" r="4.4" />
       </>
     ),
-    // The square and its diagonal, then each quartering and the circle of the quarter left behind.
     order: [[0], [1], [2, 3], [4], [5, 6], [7], [8, 9], [10], [11, 12], [13], [14, 15], [16]],
   },
-  // Graded quadtree: A square quartered, and every quarter near the point at the end quartered again, four times over.
   'graded-quadtree': {
     shapes: (
       <>
@@ -341,7 +316,6 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="398" y1="357" x2="482" y2="357" />
       </>
     ),
-    // The square's quarters, then every quartering of a level together, four times over.
     order: [
       [0, 1, 2],
       [3, 4, 5, 6, 25, 26, 27, 28],
@@ -349,7 +323,6 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
       [13, 14, 17, 18, 19, 20, 21, 22, 23, 24, 31, 32, 35, 36, 37, 38, 39, 40, 41, 42],
     ],
   },
-  // Monochord: A string stopped at 1/2, 2/3 and 3/4 for the octave, fifth and fourth, a semicircle over the whole and over each length it sounds.
   monochord: {
     shapes: (
       <>
@@ -365,10 +338,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <path d="M18 316A168 168 0 0 1 354 316" />
       </>
     ),
-    // The string, its ends, the arc over the whole, then each stop with the arc over its length.
     order: [[0], [1, 2], [3], [4, 5], [6, 7], [8, 9]],
   },
-  // Logarithmic grid: One decade at the end, 1, 2, 3, 5 and 10 set at their logarithms both ways, as on a slide rule, with the diagonal where the scales agree.
   'logarithmic-grid': {
     shapes: (
       <>
@@ -385,10 +356,8 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="190" y1="16" x2="482" y2="16" />
       </>
     ),
-    // The scales' axes, each value both ways from 2 to 10, then the diagonal where they agree.
     order: [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [0]],
   },
-  // Pointed arcade: Equilateral arches, each struck from its springing points, every span three fifths of the last.
   'pointed-arcade': {
     shapes: (
       <>
@@ -411,7 +380,6 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="480" y1="186" x2="480" y2="332" />
       </>
     ),
-    // The springing line and the first pier, then each arch with the pier it lands on.
     order: [
       [0, 1],
       [2, 3, 4],
@@ -421,7 +389,6 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
       [14, 15, 16],
     ],
   },
-  // Root-two halving: A √2 rectangle halved, the half halved across, and on round, the cuts run out to the edges and two diagonals crossing at the pole.
   'root-two-halving': {
     shapes: (
       <>
@@ -441,7 +408,6 @@ export const lineArtShapes: Record<LineArtDrawing, LineArtShapes> = {
         <line x1="21.9" y1="322" x2="251" y2="-2" />
       </>
     ),
-    // The rectangle, its diagonals to the pole, then each halving in turn.
     order: [[0, 1, 2, 3], [12, 13], [4], [5], [6], [7], [8], [9], [10], [11]],
   },
 };

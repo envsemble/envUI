@@ -92,7 +92,6 @@ test('every token the messages and the README name exists in the library', () =>
   ];
   const named = [...messages, readme].flatMap((text) => [
     ...text.matchAll(/var\((--[\w-]+)(…)?/g),
-    // Bare names of envUI's color and stacking tokens, such as `--env-color-fg-default`.
     ...text.matchAll(/(?<![\w-])(--(?:env-)?(?:color|z)-[\w-]*)(…)?/g),
   ]);
   assert.ok(named.length > 0, 'the messages name tokens');

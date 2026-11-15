@@ -1,14 +1,12 @@
 @layer env.components {
-  /* LineArt: a geometric drawing in hairlines that fills its container's box, covering it and
-     cropped from the side away from where it sits, its start by default. Every line is a hairline at
-     any size, in the muted edge color, barely there in every theme. Right to left, the drawing is
-     mirrored, so it sits at the end and is cropped from the start there too. */
   .env-line-art {
-    /* How long a motion takes (see Motion below). */
     --env-line-art-duration: calc(var(--env-motion-duration-slow) * 10);
-    /* The muted edge is about 1.4:1 on a surface in light but 2.3:1 in dark, where the lines would
-       stand out: dark takes 45 % of it, about 1.4:1 again. High contrast keeps the whole edge. */
     --_line-art-high-contrast-stroke: var(--_theme-high-contrast) var(--env-color-border-muted);
+    --_line-art-dark-stroke-as-faint-as-light: color-mix(
+      in srgb,
+      var(--env-color-border-muted) 45%,
+      transparent
+    );
     display: block;
     inline-size: 100%;
     block-size: 100%;
@@ -16,10 +14,7 @@
     fill: none;
     stroke: var(
       --_line-art-high-contrast-stroke,
-      light-dark(
-        var(--env-color-border-muted),
-        color-mix(in srgb, var(--env-color-border-muted) 45%, transparent)
-      )
+      light-dark(var(--env-color-border-muted), var(--_line-art-dark-stroke-as-faint-as-light))
     );
     stroke-width: 1px;
     pointer-events: none;
@@ -31,20 +26,6 @@
     scale: -1 1;
   }
 
-  /* Motion: the lines draw themselves in, out, or in and out by turns, one beat after another in the
-     order of the drawing's construction: in, the lines that frame it first; out, the other way
-     round, so the lines that frame it go last and come back first. Each line is set one long
-     (pathLength) and dashed in ones, so a dash offset of 0 draws it whole, one dash or minus one not
-     at all, and in between part of it: from its start as the offset falls to 0, and
-     away from its start as it falls from 0. The lines keep their width on screen, which lays their
-     dashes out on screen too, so the dashes are in the drawing's scale, --_line-art-scale, which
-     LineArt measures. Only the dash moves, so the lines stay crisp hairlines and nothing around
-     them moves. Each motion takes --env-line-art-duration, ten of the slow motion token; each line
-     moves for half of it, starting at its place in the order (--_line-art-at, from 0 to 1). */
-
-  /* The keyframes move the dash offset itself, in dashes (--_line-art-dash, a line's length on
-     screen), rather than a custom property it is computed from: Firefox doesn't redraw a line's dash
-     from a custom property as it animates. */
   .env-line-art[data-motion] > * {
     --_line-art-dash: var(--_line-art-scale);
     stroke-dasharray: var(--_line-art-dash) var(--_line-art-dash);
@@ -61,15 +42,10 @@
     animation-name: env-line-art-disappear;
     animation-delay: calc(var(--env-line-art-duration) / 2 * (1 - var(--_line-art-at, 0)));
   }
-  /* A loop draws the lines in and holds the drawing whole for a quarter of the duration, then draws
-     them out, each turn starting as the last one ends, so the two meet with nothing drawn. */
   .env-line-art[data-turn='in'] > * {
     animation-name: env-line-art-loop-in;
     animation-duration: calc(var(--env-line-art-duration) / 4 * 3);
   }
-  /* Each line runs out past its end, quickening, and from before its start draws in again, settling:
-     a whole dash period on, so it ends where it began. The lines start over the whole duration
-     rather than half of it, so only a few are on their way at once and the drawing stays whole. */
   .env-line-art[data-motion='play'] > * {
     animation-name: env-line-art-play;
     animation-delay: calc(var(--env-line-art-duration) * var(--_line-art-at, 0));
@@ -114,8 +90,6 @@
     }
   }
 
-  /* Where reduced motion is preferred, the drawing shows where its motion ends at once, so a motion
-     that ends still ends, and a loop stays whole. */
   @media (prefers-reduced-motion: reduce) {
     .env-line-art[data-motion] > * {
       animation-duration: 0s;
@@ -126,7 +100,6 @@
     }
   }
 
-  /* In forced colors, where the muted edge is gone, the lines take the system's gray text color. */
   @media (forced-colors: active) {
     .env-line-art {
       stroke: GrayText;

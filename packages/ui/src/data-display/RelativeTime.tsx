@@ -54,17 +54,13 @@ export function RelativeTime({
   className,
   ...props
 }: RelativeTimeProps) {
-  // A prop wins over the nearest EnvUIProvider's locale and messages.relativeTime.now; without
-  // either, the runtime's locale, and English's "just now" or the locale's own word.
   const provider = useEnvUI();
   const locale = ownLocale ?? provider.locale;
   const nowLabel = ownNowLabel ?? (provider.messages.relativeTime?.now as string | undefined);
   const time = toTime(value);
-  // An invalid now, such as from missing data, leaves the text to the clock.
-  const given = now === undefined ? undefined : toTime(now);
-  const fixedNow = given !== undefined && Number.isFinite(given) ? given : undefined;
-  // Inside an application's own Tooltip, that tooltip describes the time.
-  const nested = useContext(TooltipNestingContext);
+  const givenNow = now === undefined ? undefined : toTime(now);
+  const fixedNow = givenNow !== undefined && Number.isFinite(givenNow) ? givenNow : undefined;
+  const insideApplicationTooltip = useContext(TooltipNestingContext);
   const live = fixedNow === undefined && Number.isFinite(time);
   const subscribe = useCallback(
     (onTick: () => void) => (live ? subscribeToClock(time, onTick) : () => {}),
@@ -74,28 +70,34 @@ export function RelativeTime({
   const text = useSyncExternalStore(subscribe, read, read);
   const hydrated = useHydrated();
   if (!Number.isFinite(time)) return null;
-  const withTooltip = tooltip && !nested;
+  const withTooltip = tooltip && !insideApplicationTooltip;
+  const hoverDetailTooltipDoesNotAddToParts = withTooltip && hoverDetailClass;
+  const serverTextAsSeparateNodeUntilHydrated = hydrated ? text : [text];
   const element = (
     <time
       dir="auto"
       {...props}
       dateTime={new Date(time).toISOString()}
-      // With a tooltip of its own, the time takes the dotted underline of text with more on hover,
-      // which Tooltip gives text it recognizes but not another component's part.
-      className={classNames('env-relative-time', withTooltip && hoverDetailClass, className)}
-      // The server's clock, time zone or language can differ from the browser's. The text then
-      // differs while hydrating, which is expected: it is rendered as a separate text node until
-      // hydration ends, then replaced by the browser's text, so the server's never lingers.
+      className={classNames('env-relative-time', hoverDetailTooltipDoesNotAddToParts, className)}
       suppressHydrationWarning
     >
-      {hydrated ? text : [text]}
+      {serverTextAsSeparateNodeUntilHydrated}
     </time>
   );
   if (!withTooltip) return element;
-  return <Tooltip content={<DateAndTime time={time} locale={locale} />}>{element}</Tooltip>;
+  return (
+    <Tooltip content={<DateAndTimeFormattedOnlyWhenShown time={time} locale={locale} />}>
+      {element}
+    </Tooltip>
+  );
 }
 
-/** Formatted only while the tooltip shows, so a long list does not format dates it never shows. */
-function DateAndTime({ time, locale }: { time: number; locale: RelativeTimeOptions['locale'] }) {
+function DateAndTimeFormattedOnlyWhenShown({
+  time,
+  locale,
+}: {
+  time: number;
+  locale: RelativeTimeOptions['locale'];
+}) {
   return dateTimeFormatter(locale).format(time);
 }

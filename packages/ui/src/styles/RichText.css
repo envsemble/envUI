@@ -1,25 +1,18 @@
 @layer env.components {
-  /* RichTextEditor: a field whose control box, the text field's, holds the document; the box draws
-     the border, the fill and the states of the field variants. RichText shows saved documents in the
-     same prose. */
   .env-rich-text-editor {
     min-inline-size: 0;
   }
   .env-rich-text-document {
     min-inline-size: 0;
     max-inline-size: 100%;
-    /* 10 rem, or the lines minRows asks for and the document's padding (RichTextEditor). */
     --_rich-text-default-min-block-size: 10rem;
     min-block-size: var(--_rich-text-min-block-size, var(--_rich-text-default-min-block-size));
     padding: var(--env-space-4);
     border-radius: inherit;
     outline: none;
-    /* The editing host takes the control font size: 1 rem on touch screens, where a smaller size on
-       the focused element zooms the page. */
     font-size: var(--env-control-font-size);
     caret-color: var(--env-color-border-primary-emphasis);
   }
-  /* Paragraphs set their own type, so they take the size too. */
   .env-rich-text-document p {
     font-size: var(--env-control-font-size);
   }
@@ -30,8 +23,6 @@
     height: 0;
     pointer-events: none;
   }
-  /* Saved text keeps its spaces and line breaks as the editor shows them: a single newline, a soft
-     break, starts a new line in both, and runs of spaces stay. */
   .env-rich-text {
     overflow-wrap: break-word;
     white-space: break-spaces;
@@ -41,7 +32,6 @@
     list-style: none;
     padding-inline-start: 0;
   }
-  /* The editor renders task items without data-type, so select them by their list. */
   .env-rich-text :where(ul[data-type='taskList'] > li),
   .env-rich-text-document :where(ul[data-type='taskList'] > li) {
     display: flex;
@@ -53,19 +43,14 @@
     min-inline-size: 0;
     flex: 1;
   }
-  /* A task's text sits beside its checkbox, not below it: no space before it, so a task's row is as
-     tall in RichText as in the editor. */
   .env-rich-text :where(ul[data-type='taskList'] > li > div) {
     margin-block-start: 0;
   }
-  /* The editor's task item: its checkbox beside the item's text, as in RichText. */
   .env-rich-text-task {
     display: flex;
     align-items: flex-start;
     gap: var(--env-space-2);
   }
-  /* A task's checkbox sits on the middle of the first line of its text, however the text wraps: its
-     slot is one line of the text tall, with the checkbox in the middle. */
   .env-rich-text-task-check {
     flex: 0 0 auto;
     display: flex;
@@ -76,9 +61,6 @@
     min-inline-size: 0;
     flex: 1;
   }
-  /* ProseMirror's base styles, which Tiptap would add in a style element outside any cascade layer:
-     here they are in envUI's layer, so the document's own rules, such as code blocks that scroll
-     rather than wrap, win over them, and an application's CSS still overrides both. */
   .env-rich-text-document.ProseMirror {
     position: relative;
     overflow-wrap: break-word;
@@ -93,9 +75,6 @@
   .env-rich-text-document [contenteditable='false'] [contenteditable='true'] {
     white-space: pre-wrap;
   }
-  /* Tiptap's !important here is kept: inside envUI's layer, an important declaration still wins
-     over an unlayered reset such as img { display: block } (Tailwind's preflight), which would
-     otherwise turn the separator into a line of its own. */
   .env-rich-text-document img.ProseMirror-separator {
     display: inline !important;
     inline-size: 0 !important;
@@ -123,7 +102,6 @@
       visibility: hidden;
     }
   }
-  /* Under reduced motion the gap cursor stays lit rather than blinking. */
   @media (prefers-reduced-motion: reduce) {
     .env-rich-text-document .ProseMirror-gapcursor::after {
       animation: none;
@@ -138,8 +116,6 @@
   .env-rich-text-document.ProseMirror-hideselection * {
     caret-color: transparent;
   }
-  /* A code block, a selected cell and a reference stand out from the editor by translucent fills,
-     which take the background of what the editor sits on, as the editor itself does. */
   .env-rich-text-document pre {
     padding: var(--env-space-4);
     background: var(--env-color-bg-neutral-muted);
@@ -167,8 +143,6 @@
     text-decoration: none;
     box-decoration-break: clone;
   }
-  /* Disabled, the document doesn't fade with its box: its text and references take the disabled text
-     color, as a disabled text field's value does, and the box quiets its outline. */
   .env-rich-text-editor-control[data-disabled]
     :is(.env-rich-text-document, .env-rich-text-reference) {
     color: var(--env-color-fg-disabled);
@@ -176,8 +150,6 @@
   .env-rich-text-reference:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
   }
-  /* The suggestions of a trigger, such as @: a list beside the caret, above what the editor sits in,
-     a frosted popup as menus are (Popup.css), with their corners and rows. */
   .env-rich-text-suggestions-positioner {
     z-index: var(--env-z-popup);
   }
@@ -199,7 +171,6 @@
       calc(100dvh - 2 * var(--env-viewport-gutter))
     );
     overflow: auto;
-    /* The edge of a solid list; frosted, it has none. */
     --_rich-text-suggestions-edge: var(--_popup-solid) var(--_popup-edge-color);
     border: var(--env-control-border-width) solid
       var(--_rich-text-suggestions-edge, var(--_popup-frosted-edge, transparent));

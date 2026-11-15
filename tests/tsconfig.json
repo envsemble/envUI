@@ -20,7 +20,6 @@
       "@envui-internal/*": ["../packages/ui/src/*"]
     }
   },
-  // The configurations of the component tests, the fixture and the site, which run in Node.
   "files": ["component/vitest.config.ts", "fixture/vite.config.ts", "../apps/site/vite.config.ts"],
   "include": [
     "**/*.ts",
@@ -28,9 +27,6 @@
     "../scripts/build/culori.d.ts",
     "../packages/ui/src/customProperties.d.ts"
   ],
-  // The component tests and the fixture and type tests have tsconfigs of their own. The files
-  // listed after them came over from untyped JavaScript and aren't typed yet: a list that only
-  // shrinks, so give a file its types and take it off.
   "exclude": [
     "component",
     "fixture",

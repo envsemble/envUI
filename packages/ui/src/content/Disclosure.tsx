@@ -28,8 +28,7 @@ export interface DisclosureProps extends Omit<ComponentPropsWithRef<'details'>, 
   onOpenChange?: (open: boolean) => void;
 }
 
-// Content inside a summary that takes a click for itself, so the summary does not toggle.
-const interactive =
+const controlsThatTakeTheirOwnClick =
   'a[href], button, input, select, textarea, label, iframe, embed, audio[controls], video[controls], [contenteditable]:not([contenteditable="false"])';
 
 /** A summary that shows and hides the details below it, on the native details element. */
@@ -49,36 +48,37 @@ export function Disclosure({
     onChange: onOpenChange,
   });
   const controlled = open !== undefined;
+  const revertUntilParentPassesOpen = (details: HTMLDetailsElement) => {
+    details.open = shown;
+  };
+  const askParentBeforeTogglingControlled = (event: MouseEvent<HTMLElement>) => {
+    if (!controlled || event.defaultPrevented) return;
+    const target = event.target as Element;
+    const ownClickControl = target.closest(controlsThatTakeTheirOwnClick);
+    if (
+      ownClickControl &&
+      ownClickControl !== event.currentTarget &&
+      event.currentTarget.contains(ownClickControl)
+    )
+      return;
+    event.preventDefault();
+    setShown(!shown);
+  };
   return (
     <details
       {...props}
       open={shown}
       onToggle={(event) => {
         onToggle?.(event);
-        // The browser opens and closes the element itself, also from find in page; the state
-        // follows it, and a toggle that only echoes the open prop reports nothing.
-        const next = event.currentTarget.open;
-        if (next === shown) return;
-        // A controlled disclosure shows what open says: a click asks through the summary, and a
-        // change the browser makes itself, such as find in page, goes back until the parent
-        // passes the open that onOpenChange asks for.
-        if (controlled) event.currentTarget.open = shown;
-        setShown(next);
+        const openedByBrowser = event.currentTarget.open;
+        const onlyEchoesOpenProp = openedByBrowser === shown;
+        if (onlyEchoesOpenProp) return;
+        if (controlled) revertUntilParentPassesOpen(event.currentTarget);
+        setShown(openedByBrowser);
       }}
       className={classNames('env-disclosure', className)}
     >
-      <summary
-        onClick={(event: MouseEvent<HTMLElement>) => {
-          // A controlled disclosure asks before it moves: the element would otherwise open for a
-          // frame before a parent that refuses the change puts it back.
-          if (!controlled || event.defaultPrevented) return;
-          const target = event.target as Element;
-          const inner = target.closest(interactive);
-          if (inner && inner !== event.currentTarget && event.currentTarget.contains(inner)) return;
-          event.preventDefault();
-          setShown(!shown);
-        }}
-      >
+      <summary onClick={askParentBeforeTogglingControlled}>
         <span className="env-icon env-disclosure-indicator" aria-hidden="true">
           <IconChevronRight />
         </span>

@@ -13,7 +13,6 @@ export interface ModifierKey {
   label: '⌘' | 'Ctrl';
 }
 
-/** Whether the browser runs on an Apple platform, where the modifier is ⌘; false outside a browser. */
 function isApplePlatform() {
   if (typeof navigator === 'undefined') return false;
   const { userAgentData } = navigator as Navigator & { userAgentData?: { platform?: string } };

@@ -2,7 +2,6 @@ import { Badge, Button, Surface, Tabs, Theme, type ColorScheme } from '@envsembl
 
 export const themes = true;
 
-/** Compact tabs with a counter in a compact bar. */
 export default function TabsCompactFixture({ theme }: { theme: ColorScheme }) {
   return (
     <Theme theme={theme} data-testid={`compact-tabs-${theme}`} className="fixture-section">

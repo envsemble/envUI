@@ -7,7 +7,6 @@
     font: var(--env-type-body);
     color: var(--env-color-fg-default);
   }
-  /* Display text introduces a page or hero; it scales with the viewport and keeps a tight measure. */
   .env-text:where([data-variant='display']) {
     font: var(--env-type-display);
     letter-spacing: -0.03em;
@@ -39,9 +38,6 @@
     color: var(--env-color-fg-muted);
   }
 
-  /* In a skeleton, Text given no text, as over a placeholder item, is a bar of its style's length:
-     running text is three lines and a paragraph's supporting text two, the last one shorter; a
-     heading, a caption and text inside a line are one bar. */
   [data-env-skeleton] .env-text {
     --_skeleton-placeholder: inline-block;
     --_skeleton-length: 36rem;
@@ -77,7 +73,6 @@
     --_skeleton-last: 100%;
   }
 
-  /* An animated number keeps the line box of the text around it; the rolling value is clipped to it. */
   .env-animated-number {
     position: relative;
     display: inline-flex;
@@ -88,8 +83,6 @@
   .env-animated-number-value {
     display: inline-block;
   }
-  /* The value it changed from, over the start of the new one while it leaves; its text comes from
-     an attribute, so the element's text stays the current value. */
   .env-animated-number-previous {
     position: absolute;
     inset-block-start: 0;
@@ -101,18 +94,12 @@
     content: attr(data-value);
   }
 
-  /* In a skeleton, an animated number is a bar: its value is laid out as a block of its own in the
-     line, which the skeleton's line through text doesn't reach, so it draws its own. */
   [data-env-skeleton] .env-animated-number-value {
     text-decoration: line-through var(--_skeleton-color);
     text-decoration-thickness: 0.8em;
     text-decoration-skip-ink: none;
   }
 
-  /* Motion: the value it changed from fades out quickly as the new one fades in, at once, so the
-     new value reads from the first frames and the number is never gone. Without a reduced-motion
-     preference they roll a whole line, inside the number's clipped box: up when it grows, the old
-     value out at the top as the new one comes in from below, and down when it shrinks. */
   .env-animated-number-value[data-direction] {
     animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter)
       both;

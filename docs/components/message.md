@@ -26,8 +26,6 @@ avoidWhen:
     use: List
   - text: A short notification that comes and goes, such as Message sent.
     use: ToastProvider
-  - text: Formatted text on its own, outside a conversation.
-    use: Markdown
 components:
   - Message
   - MessageList
@@ -37,12 +35,6 @@ examples:
   MessageAnatomy: anatomy
   DeliveryStatus: example
   BubbleWidth: example
-  CommentThread:
-    role: do
-    caption: Comments by others, each with its author, at full width.
-  SelfForOthers:
-    role: dont
-    caption: "Someone else's message in your bubble: the bubble means you."
 ---
 
 # Message
@@ -55,11 +47,6 @@ examples:
 
 1. **Yours**
 2. **Someone else's**
-
-| From           | Use for                                                                                |
-| -------------- | -------------------------------------------------------------------------------------- |
-| Yours          | The person using the app: a compact bubble at the end.                                 |
-| Someone else's | Anyone else, such as an assistant: full width, no bubble, room for a formatted answer. |
 
 ## Anatomy
 
@@ -79,124 +66,12 @@ examples:
 
 ### Delivery status
 
-A message can show that it is on its way, or that it wasn't sent.
-
-- Offer Try again beside one that failed.
-
 ```tsx figure=DeliveryStatus motion
 
 ```
 
 ### Adapting to width
 
-Your own bubble grows to three quarters of the list, and keeps a readable width in a narrow list.
-
 ```tsx figure=BubbleWidth widths="20 40" sweep
 
 ```
-
-## Rules
-
-The bubble means you; everyone else's messages run at full width, in the order they were sent.
-
-```tsx figure=CommentThread
-
-```
-
-```tsx figure=SelfForOthers
-
-```
-
-### Order and focus
-
-Keep messages oldest first, in one list.
-
-- Leave focus where it is as new ones arrive: the list announces them.
-
-### Content
-
-Name icon actions after what they do, such as Copy answer.
-
-## Accessibility
-
-### envUI provides
-
-- MessageList as a polite log, and `aria-busy` while `busy`, with the busy row shown but not read.
-- Each message as an `<article>`, with its author and meta in a header.
-- The status as text beside its icon.
-
-### You provide
-
-- A name for the list, such as Conversation with Sam Lee.
-- `busy` while a reply streams in.
-- Names for icon-only actions, and Try again for a failed message.
-- A height for a list that follows, and scrolling without moving focus for one that doesn't.
-
-## Compose
-
-### Usage
-
-A MessageList holds the conversation, oldest first, and each Message in it takes `from`:
-
-- `self` for the person using the app, a compact bubble at the inline end; your own bubble grows to three quarters of the list, and to at least 16 rem in a narrow list.
-- `other` for anyone else, such as an assistant or another participant, full-width content with no bubble.
-- Never set `from="self"` on someone else's message to put it on a side.
-
-`author` names who wrote it, `meta` holds supporting facts beside the author, such as a RelativeTime, and `children` the message: plain text keeps its line breaks, and formatted content, such as Markdown, fills the width of a message from someone else.
-
-```tsx source=Conversation
-
-```
-
-#### Actions and status
-
-`actions` holds small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are small ghost buttons. `status` is `sending`, with a spinner and Sending, or `failed`, with an error icon and Not sent; `statusLabel` replaces the words.
-
-```tsx
-<Message
-  from="self"
-  meta="09:41"
-  status={status}
-  actions={
-    status === 'failed' && (
-      <Button variant="text" onClick={retry}>
-        Try again
-      </Button>
-    )
-  }
->
-  {`Northwind Hall
-12 Harbour Street`}
-</Message>
-```
-
-#### Streaming
-
-`busy` on MessageList shows a busy row after the last message, where the reply will show: `busyAuthor`, who the reply comes from, as a message's author, then a quiet spinner and Working in the muted color (`busyLabel`, or `messages.message.working`). It reports `aria-busy` while a reply is on its way or streams in, until it is cleared.
-
-```tsx
-<MessageList aria-label="Conversation with Sam Lee" busy={streaming} busyAuthor="Assistant">
-  …
-</MessageList>
-```
-
-#### Following the conversation
-
-`follow` makes the list scroll by itself: give it a height, such as the rest of a column above a Composer. It opens at the latest message and keeps it in view while the reader is at the end; once they scroll away and more arrives, a Jump to latest button shows at its foot (`jumpToLatestLabel`, or `messages.message.jumpToLatest`), which scrolls back to the end. Without `follow`, the list grows with its messages and the page scrolls.
-
-```tsx
-<Column style={{ blockSize: '100%' }}>
-  <MessageList aria-label="Conversation with Sam Lee" follow busy={streaming}>
-    …
-  </MessageList>
-  <Composer aria-label="Message Sam Lee" onSend={send} />
-</Column>
-```
-
-### Composition
-
-`skeleton` shows a message as its own skeleton while it loads. Message and MessageList can render in React Server Components.
-
-### Customize
-
-The list is `env-message-list`, with `env-message-list-busy` for its busy row and `env-message-list-jump` for the place of its Jump to latest button, and each message `env-message`, with its author, `env-message-author`, and meta, `env-message-meta`, in its header, then its content, `env-message-content`, its actions, `env-message-actions`, and its status, `env-message-status`.

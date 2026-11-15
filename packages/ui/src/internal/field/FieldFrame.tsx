@@ -82,8 +82,7 @@ export interface TextFieldAffixProps {
   suffix?: string;
 }
 
-/** Pressing the prefix or suffix places the caret in the control, at the nearer end of its value. */
-function focusControl(event: MouseEvent<HTMLElement>) {
+function placeCaretAtNearerEnd(event: MouseEvent<HTMLElement>) {
   const control = event.currentTarget.parentElement?.querySelector('input');
   if (!control || control.disabled || event.button !== 0) return;
   event.preventDefault();
@@ -98,7 +97,6 @@ function focusControl(event: MouseEvent<HTMLElement>) {
   }
 }
 
-/** Whether a text field shows its label: unless visibleLabel is false. */
 function isLabelShown({ visibleLabel }: TextFieldDecorationProps) {
   return visibleLabel ?? true;
 }
@@ -112,9 +110,25 @@ export function FieldLabelContent({ children }: { children: ReactNode }) {
   );
 }
 
-/** The control box as a plain element; composed controls render it through their own primitive. */
 function renderPlainControlBox(props: FieldControlBoxProps) {
   return <div {...props} />;
+}
+
+export interface FieldFrameOwnProps {
+  id: string;
+  children: ReactNode;
+  /** The control sits in a text field's box, with its icon, affixes and actions. */
+  controlBox?: boolean;
+  /** A text area, which is tall. */
+  multiline?: boolean;
+  /** The owner's root class, beside env-field. */
+  className?: string;
+  /** The root's style, from the owner's style prop. */
+  style?: CSSProperties;
+  /** The root element. */
+  rootRef?: Ref<HTMLDivElement>;
+  /** Renders the control box, such as through a primitive that owns it; it receives its props. */
+  renderControlBox?: (props: FieldControlBoxProps) => ReactNode;
 }
 
 /**
@@ -145,22 +159,8 @@ export function FieldFrame({
   TextFieldAppearanceProps &
   TextFieldDecorationProps &
   FieldSizeProps &
-  TextFieldAffixProps & {
-    id: string;
-    children: ReactNode;
-    /** The control sits in a text field's box, with its icon, affixes and actions. */
-    controlBox?: boolean;
-    /** A text area, which is tall. */
-    multiline?: boolean;
-    /** The owner's root class, beside env-field. */
-    className?: string;
-    /** The root's style, from the owner's style prop. */
-    style?: CSSProperties;
-    /** The root element. */
-    rootRef?: Ref<HTMLDivElement>;
-    /** Renders the control box, such as through a primitive that owns it; it receives its props. */
-    renderControlBox?: (props: FieldControlBoxProps) => ReactNode;
-  }) {
+  TextFieldAffixProps &
+  FieldFrameOwnProps) {
   const ids = fieldMessageIds(id);
   return (
     <Field.Root
@@ -193,7 +193,7 @@ export function FieldFrame({
                     className="env-text-field-prefix"
                     id={`${id}-prefix`}
                     aria-hidden="true"
-                    onMouseDown={focusControl}
+                    onMouseDown={placeCaretAtNearerEnd}
                   >
                     {prefix}
                   </span>
@@ -204,7 +204,7 @@ export function FieldFrame({
                     className="env-text-field-suffix"
                     id={`${id}-suffix`}
                     aria-hidden="true"
-                    onMouseDown={focusControl}
+                    onMouseDown={placeCaretAtNearerEnd}
                   >
                     {suffix}
                   </span>

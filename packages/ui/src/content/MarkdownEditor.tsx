@@ -34,7 +34,6 @@ export interface MarkdownLinkRequest {
   /** The text selected at the time, which the link will wrap; empty without a selection. */
   selectedText: string;
 }
-/** The commands of MarkdownEditor's toolbar, in order: every one it offers. */
 const defaultMarkdownCommands: readonly MarkdownCommand[] = [
   'heading',
   'bold',
@@ -72,18 +71,15 @@ export interface MarkdownEditorProps extends Omit<
   pickLink?: (request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>;
 }
 
-/**
- * What a key with Ctrl or ⌘ does in the source: Z undoes and, with Shift, redoes, Y redoes, and B,
- * I and K format as the toolbar's bold, italic and link do. Keys with Alt are the application's.
- */
-function markdownShortcut(event: {
+function ctrlOrCommandShortcut(event: {
   key: string;
   altKey: boolean;
   ctrlKey: boolean;
   metaKey: boolean;
   shiftKey: boolean;
 }): 'undo' | 'redo' | 'bold' | 'italic' | 'link' | null {
-  if (event.altKey || (!event.metaKey && !event.ctrlKey)) return null;
+  const altLeftToApplication = event.altKey;
+  if (altLeftToApplication || (!event.metaKey && !event.ctrlKey)) return null;
   const key = event.key.toLowerCase();
   if (key === 'z') return event.shiftKey ? 'redo' : 'undo';
   if (key === 'y') return 'redo';
@@ -132,16 +128,16 @@ export function MarkdownEditor({
     onValueChange,
     form,
   });
-  // Whether an input method is composing, which formatting waits for.
-  const composingRef = editing.composing;
+  const inputMethodComposingRef = editing.composing;
   const [mode, setMode] = useState('write');
+  const showSource = () => setMode('write');
   const [status, setStatus] = useState('');
   const { linkSelection, linkPending, requestLink, insertDialogLink, closeDialog } =
     useMarkdownLink({
       inputRef: editing.inputRef,
       apply: editing.apply,
       pickLink,
-      showSource: () => setMode('write'),
+      showSource,
       setStatus,
       messages,
     });
@@ -155,7 +151,7 @@ export function MarkdownEditor({
   );
 
   function runCommand(command: MarkdownCommand) {
-    if (disabled || readOnly || linkPending || composingRef.current) return;
+    if (disabled || readOnly || linkPending || inputMethodComposingRef.current) return;
     const selection = editing.captureSelection();
     if (!selection) return;
     setStatus('');
@@ -196,23 +192,23 @@ export function MarkdownEditor({
             editing.handleChange(event);
           }}
           onCompositionStart={(event) => {
-            composingRef.current = true;
+            inputMethodComposingRef.current = true;
             onCompositionStart?.(event);
           }}
           onCompositionEnd={(event) => {
-            composingRef.current = false;
+            inputMethodComposingRef.current = false;
             onCompositionEnd?.(event);
           }}
           onInvalid={(event) => {
             onInvalid?.(event);
-            // Reveal the native field before the browser focuses an invalid control.
-            if (!event.defaultPrevented && mode !== 'write') flushSync(() => setMode('write'));
+            const revealFieldBeforeBrowserFocusesIt = !event.defaultPrevented && mode !== 'write';
+            if (revealFieldBeforeBrowserFocusesIt) flushSync(showSource);
           }}
           onKeyDown={(event) => {
             onKeyDown?.(event);
             if (event.defaultPrevented || event.nativeEvent.isComposing || disabled || readOnly)
               return;
-            const shortcut = markdownShortcut(event);
+            const shortcut = ctrlOrCommandShortcut(event);
             if (shortcut === 'undo' || shortcut === 'redo') {
               event.preventDefault();
               editing.moveHistory(shortcut === 'redo' ? 1 : -1);

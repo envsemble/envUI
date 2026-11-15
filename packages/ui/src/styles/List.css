@@ -1,7 +1,4 @@
 @layer env.components {
-  /* Color properties: a row's colors, which an application sets on one List.Item through style or
-     its own CSS. They are registered so they don't inherit, so a list inside a row keeps its own.
-     selected and selected-content color the current row and a row whose checkbox is checked. */
   @property --env-list-item-container {
     syntax: '*';
     inherits: false;
@@ -95,12 +92,9 @@
   .env-list[data-reordering] .env-list-item-handle {
     cursor: grabbing;
   }
-  /* The current row, and a row whose checkbox in its start slot is checked, take the selected fill,
-     or the application's selected and selected-content, with lighter state layers, as the designed
-     selected fills are close together. The current row's text is medium too, as the neutral
-     selection is close to a hovered row. */
   .env-list > .env-list-item:is([data-selected], :has(> .env-list-item-start input:checked)) {
     --_list-item-container-default: var(--env-color-bg-selected);
+    --_list-item-selected-layer-strength: 75%;
     --_list-item-fill-hover: var(--env-color-bg-selected-hover);
     --_list-item-fill-pressed: var(--env-color-bg-selected-pressed);
     --_list-item-content-gate: color-mix(
@@ -117,8 +111,6 @@
   .env-list > .env-list-item[data-selected] {
     font-weight: var(--env-font-weight-medium);
   }
-  /* A moving row is raised above the others, which make room for it, and takes the elevation edge as
-     a ring: envUI draws no shadows. */
   .env-list[data-reordering] > .env-list-item {
     position: relative;
     transition: translate var(--env-motion-duration-medium) var(--env-motion-ease);
@@ -130,7 +122,6 @@
       var(--_surface-color, var(--env-color-bg-page));
     box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-elevation-2-border);
   }
-  /* The row under the pointer follows it without delay. */
   .env-list > .env-list-item[data-moving='pointer'] {
     transition: none;
   }
@@ -139,7 +130,6 @@
       transition: none;
     }
   }
-  /* The reorder announcements: read, not shown. */
   .env-list-announcer {
     --_list-announcer-size: 0.0625rem;
     position: absolute;
@@ -161,10 +151,6 @@
     --_skeleton-placeholder: inline-block;
     --_skeleton-length: 10rem;
   }
-  /* Under a filled surface, on a muted Surface that holds only lists, a pane of their own, the rows
-     take the default fill, so they stand out from it. A surface with more in it, such as a card with
-     a heading, keeps the row fill. A skeleton's content wrapper and a skeleton list's status beside
-     it don't count. */
   .env-surface[data-background='muted']:not(
       :has(> :not(.env-list, .env-skeleton-status, .env-skeleton-content))
     ):not(:has(> .env-skeleton-content > :not(.env-list, .env-skeleton-status)))
@@ -180,18 +166,10 @@
     --_list-ground-hover: var(--_theme-filled) var(--env-color-bg-default-hover);
     --_list-ground-pressed: var(--_theme-filled) var(--env-color-bg-default-pressed);
   }
-  /* A row that opens something through a link or button inside reacts like a clickable card: to
-     hover, to keyboard focus inside it and to presses. The link or button marked data-row-target
-     covers the row with a pseudo-element (the row is its containing block), so a press anywhere on
-     the row follows it, and it is not dragged away as a link; the row shows a press on it, not on the
-     row's other controls. */
   .env-list > .env-list-item[data-interactive] {
     position: relative;
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
-  /* The target is as wide as its label, which wraps only where the row is too narrow: a button's
-     percentage cap would count it as no width in the row's text, which then wraps the label to the
-     description's width. */
   .env-list > .env-list-item[data-interactive] [data-row-target] {
     max-inline-size: none;
     -webkit-user-drag: none;
@@ -201,8 +179,6 @@
     position: absolute;
     inset: 0;
   }
-  /* The target's keyboard focus ring is the row's: it traces the row's corners inside its edge, the
-     area a press follows, rather than the label alone, whose ring would cut into the description. */
   .env-list > .env-list-item[data-interactive]:has([data-row-target]:focus-visible) {
     --_list-item-focus-ring: 0.125rem;
     outline: var(--_list-item-focus-ring) solid var(--env-color-border-focus);
@@ -211,8 +187,6 @@
   .env-list > .env-list-item[data-interactive] [data-row-target]:focus-visible {
     outline: none;
   }
-  /* Links and text buttons in a row under the pointer or pressed take the link colors for a tint: the
-     link blue falls below 4.5:1 on the row's hover and press fills in the light theme. */
   .env-list > .env-list-item[data-interactive]:is(:hover, :has(:focus-visible)) {
     --env-color-fg-link: var(--env-color-fg-link-on-muted);
     --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
@@ -236,14 +210,18 @@
       [data-selected],
       :has(> .env-list-item-start input:checked)
     ):is(:hover, :has(:focus-visible)) {
-    --_list-item-layer: calc(var(--env-state-hover-opacity) * 75%);
+    --_list-item-layer: calc(
+      var(--env-state-hover-opacity) * var(--_list-item-selected-layer-strength)
+    );
   }
   .env-list
     > .env-list-item[data-interactive]:is(
       [data-selected],
       :has(> .env-list-item-start input:checked)
     ):is(:has([data-row-target]:active), :not(:has([data-row-target])):active) {
-    --_list-item-layer: calc(var(--env-state-pressed-opacity) * 75%);
+    --_list-item-layer: calc(
+      var(--env-state-pressed-opacity) * var(--_list-item-selected-layer-strength)
+    );
   }
   @media (prefers-reduced-motion: reduce) {
     .env-list > .env-list-item[data-interactive] {
@@ -276,9 +254,6 @@
     + .env-list {
     margin-block-start: var(--env-space-3);
   }
-  /* Forced colors: the system paints no fills or shadows, so the current or checked row takes an
-     outline in the system's selection color, as a selected table row does, and a moving row one in
-     the text color. The row keeps the system's colors for the controls inside it. */
   @media (forced-colors: active) {
     .env-list > .env-list-item:is([data-selected], :has(> .env-list-item-start input:checked)) {
       outline: 2px solid Highlight;
@@ -290,9 +265,6 @@
     }
   }
 
-  /* In a skeleton, a row carries the skeleton's tint over its fill (Skeleton.css). A list's root is
-     a plain box around its rounded rows, so it carries none: its tint would show square corners
-     between and around them. */
   [data-env-skeleton] .env-list-item {
     background-image: var(--_skeleton-overlay);
   }

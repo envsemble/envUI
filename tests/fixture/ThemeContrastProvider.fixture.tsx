@@ -4,7 +4,6 @@ import { Popups } from './ThemeContrast.fixture.js';
 
 export const mount = 'root';
 
-/** A provider that sets the application's contrast. */
 export default function ThemeContrastProviderFixture() {
   const [contrast, setContrast] = useState<ThemeContrast>('high');
   return (

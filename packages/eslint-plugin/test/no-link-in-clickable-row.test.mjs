@@ -1,23 +1,29 @@
 import rule from '../src/rules/no-link-in-clickable-row.js';
-import { ruleTester } from './RuleTester.mjs';
+import { named, ruleTester } from './RuleTester.mjs';
 
 const nested = (found, row, place) => ({ messageId: 'nested', data: { found, row, place } });
 const endSlot = 'its end slot as a Button';
 
 ruleTester.run('no-link-in-clickable-row', rule, {
   valid: [
-    // A plain row may hold links, and an interactive row without a target only highlights.
-    '<List.Item label="Report" end={<Button variant="text">Open</Button>} />',
-    '<List.Item interactive label="Report" end={<Button variant="text">Share</Button>} />',
-    '<Table.Row interactive><Table.Cell><Link href="/p/1">Project</Link></Table.Cell></Table.Row>',
-    '<List.Item interactive label={<Link href="/r/1" data-row-target>Report</Link>} />',
-    '<List.Item interactive label={<Button variant="text" data-row-target onClick={open}>Report</Button>} />',
-    // A Button that isn't link-styled, in the end slot.
-    '<List.Item interactive label="Report" end={<Button variant="outline">Share</Button>} />',
+    ...named(
+      'A plain row may hold links, and an interactive row without a target only highlights',
+      [
+        '<List.Item label="Report" end={<Button variant="text">Open</Button>} />',
+        '<List.Item interactive label="Report" end={<Button variant="text">Share</Button>} />',
+        '<Table.Row interactive><Table.Cell><Link href="/p/1">Project</Link></Table.Cell></Table.Row>',
+        '<List.Item interactive label={<Link href="/r/1" data-row-target>Report</Link>} />',
+        '<List.Item interactive label={<Button variant="text" data-row-target onClick={open}>Report</Button>} />',
+      ],
+    ),
+    ...named("A Button that isn't link-styled, in the end slot", [
+      '<List.Item interactive label="Report" end={<Button variant="outline">Share</Button>} />',
+    ]),
     '<Card href="/r/1">Report</Card>',
     '<Table.Row><Table.Cell><Link href="/r/1">Report</Link></Table.Cell></Table.Row>',
-    // Another library's component of the same name.
-    'import { Card } from \'./cards\'; <Card href="/r/1"><a href="/x">x</a></Card>;',
+    ...named("Another library's component of the same name", [
+      'import { Card } from \'./cards\'; <Card href="/r/1"><a href="/x">x</a></Card>;',
+    ]),
   ],
   invalid: [
     {

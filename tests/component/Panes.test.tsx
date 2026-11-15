@@ -5,7 +5,6 @@ import * as scaffoldPanes from '../fixture/ScaffoldPanes.fixture.tsx';
 import { box, css, keyboard, mouse, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** The fixture with the query it reads, such as `width=60rem&split=medium`. */
 const panes = (search = '') => mount(fixture, { search });
 const setWidth = (width: string) => page.getByRole('button', { name: `Width ${width}` }).click();
 const focus = (target: Locator) => (target.element() as HTMLElement).focus();
@@ -34,8 +33,6 @@ describe('Panes, supporting', () => {
       expect(detail.x - (list.x + list.width)).toBeCloseTo(16, 0);
       if (search.includes('none')) continue;
       expect(shown(root.getByRole('separator', { name: 'Resize details' }))).toBe(true);
-      // It paints nothing while it is a pane, and each pane's body scrolls on its own, under its
-      // header, within the pane.
       expect(css(supporting, 'background-color')).toBe('rgba(0, 0, 0, 0)');
       expect(css(supporting, 'position')).toBe('static');
       const body = main.element().querySelector('.env-panes-body')!;
@@ -48,7 +45,6 @@ describe('Panes, supporting', () => {
       expect(box(root.getByTestId('main-header')).y).toBeCloseTo(box(main).y, 0);
     }
 
-    // splitAt sets where the panes sit side by side.
     panes('width=45rem&split=medium');
     expect(shown(page.getByTestId('supporting').getByRole('region', { name: 'Details' }))).toBe(
       true,
@@ -59,7 +55,6 @@ describe('Panes, supporting', () => {
       false,
     );
 
-    // Right to left, the supporting pane is at the left.
     panes('width=60rem&dir=rtl');
     const root = page.getByTestId('supporting');
     expect(box(root.getByRole('region', { name: 'Details' })).x).toBeLessThan(
@@ -79,15 +74,11 @@ describe('Panes, supporting', () => {
       const close = supporting.getByRole('button', { name: 'Close' });
       expect(shown(supporting)).toBe(false);
       expect(shown(root.getByRole('separator'))).toBe(false);
-      // Panes.Trigger opens the sheet, and says whether it is open and which pane it opens.
       const show = root.getByRole('button', { name: 'Show details' });
       await expect.element(show).toHaveAttribute('aria-expanded', 'false');
       await expect.element(show).toHaveAttribute('aria-controls', supporting.element().id);
-      // From the keyboard, as WebKit focuses no button that a press activates.
       focus(show);
       await keyboard.press('Enter');
-      // Medium: a side sheet at the end, as tall as the panes, over a backdrop; a modal dialog that
-      // focus moves into, with the rest of the panes inert.
       const sheet = root.getByRole('dialog', { name: 'Details' });
       await isShown(sheet);
       await expect.element(sheet).toHaveAttribute('aria-modal', 'true');
@@ -100,7 +91,6 @@ describe('Panes, supporting', () => {
       expect(placed.x + placed.width).toBeCloseTo(frame.x + frame.width - 1, 0);
       expect(placed.height).toBeCloseTo(frame.height - 2, 0);
       expect(shownElement(backdrop())).toBe(true);
-      // Tab stays in the sheet: its close button, its content, and round again.
       await keyboard.press('Tab');
       await isFocused(close);
       await keyboard.press('Tab');
@@ -113,7 +103,6 @@ describe('Panes, supporting', () => {
       await isHidden(supporting);
       await isFocused(show);
       expect(main.inert).toBe(false);
-      // Its close button and the backdrop close it too.
       await keyboard.press('Enter');
       await isShown(close);
       await close.click();
@@ -124,7 +113,6 @@ describe('Panes, supporting', () => {
       const cover = box(backdrop());
       await mouse.click(cover.x + 10, cover.y + 10);
       await isHidden(supporting);
-      // Compact: a bottom sheet across the width, shorter than the panes.
       await setWidth('30rem');
       await show.click();
       await isShown(supporting);
@@ -133,14 +121,11 @@ describe('Panes, supporting', () => {
       expect(bottom.width).toBeCloseTo(narrow.width - 2, 0);
       expect(bottom.y + bottom.height).toBeCloseTo(narrow.y + narrow.height - 1, 0);
       expect(bottom.height).toBeLessThan(narrow.height * 0.9);
-      // Wider again, the panes sit side by side, the pane open as it was: a region again beside a
-      // main pane that isn't inert, with its close button in its header row.
       page.getByTestId('supporting-frame').element().setAttribute('style', 'inline-size: 80rem');
       await expect.poll(() => css(supporting, 'position')).toBe('static');
       await isShown(root.getByRole('region', { name: 'Details' }));
       expect(main.inert).toBe(false);
       expect(shownElement(backdrop())).toBe(false);
-      // The trigger hides while the supporting pane shows beside the main one.
       expect(shown(show)).toBe(false);
     },
   );
@@ -156,7 +141,6 @@ describe('Panes, supporting', () => {
       const supporting = page.elementLocator(element(root, '.env-panes-supporting'));
       const close = supporting.getByRole('button', { name: 'Close' });
       const show = root.getByRole('button', { name: 'Show details' });
-      // Open as no one has chosen yet: the pane shows beside the main one, with its close button.
       await isShown(root.getByRole('region', { name: 'Details' }));
       await isShown(close);
       expect(shown(show)).toBe(false);
@@ -164,17 +148,14 @@ describe('Panes, supporting', () => {
       await keyboard.press('Enter');
       await isHidden(supporting);
       expect(page.getByTestId('reasons').element().textContent).toBe('close close-press');
-      // The main pane takes the room, the divider hides, and the trigger shows and takes focus.
       expect(box(main).width).toBeCloseTo(box(frame).width - 2, 0);
       expect(shown(root.getByRole('separator'))).toBe(false);
       await isShown(show);
       await isFocused(show);
       await expect.element(show).toHaveAttribute('aria-expanded', 'false');
-      // Narrower, it stays closed: no sheet opens.
       await setWidth('45rem');
       await expect.poll(() => css(supporting, 'position')).toBe('absolute');
       expect(shown(supporting)).toBe(false);
-      // The trigger opens it, beside the main pane once there is room again, with no modal.
       await setWidth('80rem');
       await isShown(show);
       focus(show);
@@ -195,7 +176,6 @@ describe('Panes, supporting', () => {
     const supporting = root.getByRole('region', { name: 'Details' });
     const width = box(supporting).width / 16;
     expect(width).toBeLessThan(30);
-    // ArrowRight narrows the supporting pane by 1 rem from the width it shows, not from 40 rem.
     focus(divider);
     await keyboard.press('ArrowRight');
     await expect.poll(() => box(supporting).width / 16).toBeCloseTo(width - 1, 0);
@@ -218,8 +198,6 @@ describe('Panes, supporting', () => {
         const supporting = root.getByRole('region', { name: 'Details' });
         await expect.element(divider()).toHaveAttribute('aria-valuetext', '22.5 rem');
         await expect.element(divider()).toHaveAttribute('aria-controls', supporting.element().id);
-        // The supporting pane is at the end: ArrowLeft moves the divider toward the start and
-        // grows it. Focus shows the divider.
         focus(divider());
         expect(css(divider(), 'outline-style')).toBe('solid');
         await keyboard.press('ArrowLeft');
@@ -227,7 +205,6 @@ describe('Panes, supporting', () => {
         await keyboard.press('Shift+ArrowRight');
         await expect.element(divider()).toHaveAttribute('aria-valuetext', '18.5 rem');
         expect(box(supporting).width).toBeCloseTo(18.5 * 16, 0);
-        // A drag of 32 px toward the start grows it by 2 rem.
         const handle = box(divider());
         const x = handle.x + handle.width / 2;
         const y = handle.y + handle.height / 2;
@@ -238,18 +215,14 @@ describe('Panes, supporting', () => {
         await mouse.up();
         await expect.element(divider()).toHaveAttribute('aria-valuetext', '20.5 rem');
         await expect.poll(() => page.getByTestId('sizes').element().textContent).toContain('20.5!');
-        // The size is kept in a cookie, and read again after the first render.
         expect(document.cookie).toContain('fixture-panes=20.5');
         fixtureMount.remount();
         await expect.element(divider()).toHaveAttribute('aria-valuetext', '20.5 rem');
-        // A width the server read from the cookie renders at once, and a double click returns to
-        // the default at once, not to it.
         panes('width=60rem&persist=fixture-kept&kept=30');
         await expect.element(divider()).toHaveAttribute('aria-valuetext', '30 rem');
         await divider().dblClick();
         await expect.element(divider()).toHaveAttribute('aria-valuetext', '22.5 rem');
         panes('width=60rem&persist=fixture-panes');
-        // A double click returns it to the default and forgets it.
         await expect.element(divider()).toHaveAttribute('aria-valuetext', '20.5 rem');
         await divider().dblClick();
         await expect.element(divider()).toHaveAttribute('aria-valuetext', '22.5 rem');
@@ -285,7 +258,6 @@ describe('Panes in a Scaffold whose document scrolls', { tags: ['engines'] }, ()
       await expect
         .poll(() => page.getByRole('button', { name: 'Message 60', exact: true }).query())
         .not.toBeNull();
-      // Far down a long main pane, the button that opens the sheet is out of view.
       await expect
         .poll(() => {
           window.scrollTo(0, 600);
@@ -301,8 +273,6 @@ describe('Panes in a Scaffold whose document scrolls', { tags: ['engines'] }, ()
       ).click();
       const sheet = page.getByRole('dialog', { name: 'Details' });
       await isShown(sheet);
-      // Where the page is as the sheet opens, once focus has scrolled it as far as it would:
-      // WebKit scrolls the focused message clear of the bars a moment later.
       let scrolled = -1;
       await expect
         .poll(() => {
@@ -314,25 +284,21 @@ describe('Panes in a Scaffold whose document scrolls', { tags: ['engines'] }, ()
         .toBe(true);
       await expect.element(sheet).toHaveAttribute('aria-modal', 'true');
       expect(css(sheet, 'position')).toBe('fixed');
-      // What a fixed box covers: the window, less the room the page keeps for its scrollbar.
-      const probe = document.createElement('div');
-      probe.style.cssText = 'position: fixed; inset: 0; pointer-events: none';
-      document.body.append(probe);
-      const view = probe.getBoundingClientRect();
-      probe.remove();
+      const fixedBox = document.createElement('div');
+      fixedBox.style.cssText = 'position: fixed; inset: 0; pointer-events: none';
+      document.body.append(fixedBox);
+      const view = fixedBox.getBoundingClientRect();
+      fixedBox.remove();
       const placed = box(sheet);
       if (side === 'bottom') {
-        // At the window's bottom, across it, shorter than it.
         expect(placed.y + placed.height).toBeCloseTo(view.height, 0);
         expect(placed.width).toBeCloseTo(view.width, 0);
         expect(placed.height).toBeLessThan(view.height);
       } else {
-        // At the window's end, as tall as it.
         expect(placed.x + placed.width).toBeCloseTo(view.width, 0);
         expect(placed.y).toBeCloseTo(0, 0);
         expect(placed.height).toBeCloseTo(view.height, 0);
       }
-      // The backdrop covers the window, the top bar included, which is inert with the navigation.
       const topBar = document.querySelector('.env-scaffold-top-bar')!;
       const top = box(topBar);
       expect(
@@ -346,7 +312,6 @@ describe('Panes in a Scaffold whose document scrolls', { tags: ['engines'] }, ()
           .querySelector('.env-scaffold-navigation > :not([style*="none"])')!
           .closest('[inert]'),
       ).not.toBeNull();
-      // The sheet scrolls inside itself while the page stays where it was.
       const inside = sheet.element().querySelector('.env-panes-body')!;
       inside.scrollTop = inside.scrollHeight;
       expect({
@@ -355,7 +320,6 @@ describe('Panes in a Scaffold whose document scrolls', { tags: ['engines'] }, ()
       }).toEqual({ scrolled: true, overflow: true });
       await commands.mouseWheel(0, 600);
       expect(document.scrollingElement!.scrollTop).toBe(scrolled);
-      // Escape closes it, and the page is live again where it was.
       await keyboard.press('Escape');
       await isHidden(sheet);
       expect(topBar.closest('[inert]')).toBeNull();
@@ -376,11 +340,9 @@ describe('Panes, list-detail', () => {
     await isShown(root.getByRole('region', { name: 'Website refresh' }));
     expect(shown(list)).toBe(true);
     expect(shown(root.getByRole('button', { name: 'All projects' }))).toBe(false);
-    // The detail's surface, as tall as the pane, ends at the pane's end.
     let surface = box(root.getByTestId('detail-surface'));
     let detailBox = box(root.getByRole('region', { name: 'Website refresh' }));
     expect(surface.y + surface.height).toBeCloseTo(detailBox.y + detailBox.height, 0);
-    // Focus stays on the row people chose.
     await isFocused(root.getByRole('button', { name: 'Website refresh' }));
 
     panes('width=45rem');
@@ -393,8 +355,6 @@ describe('Panes, list-detail', () => {
     await isHidden(list);
     const back = root.getByRole('button', { name: 'All projects' });
     await isFocused(back);
-    // A surface as tall as the pane fills the room below the back button: it ends at the pane's
-    // end, and the pane doesn't scroll by the button's height.
     const backBox = box(back);
     surface = box(root.getByTestId('detail-surface'));
     detailBox = box(detail);
@@ -405,7 +365,6 @@ describe('Panes, list-detail', () => {
     await back.click();
     await isShown(list);
     expect(shownElement(element(root, '.env-panes-detail'))).toBe(false);
-    // Focus returns to the list's current row.
     await isFocused(root.getByRole('button', { name: 'Annual report' }));
   });
 });

@@ -1,5 +1,3 @@
-// DiffStat's markup: the signed counts shown, hidden from assistive technology, and its full name
-// read in their place. Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';

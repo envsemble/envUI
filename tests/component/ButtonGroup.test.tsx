@@ -4,7 +4,6 @@ import * as fixture from '../fixture/ButtonGroup.fixture.tsx';
 import { box, css, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** The shown buttons of a group: their boxes and their corners, start-start first. */
 function buttons(group: Locator) {
   return [...group.element().children]
     .filter((child) => child.matches('.env-button:not([hidden])'))
@@ -25,8 +24,6 @@ test('corners connect along the row or column, past hidden and removed buttons, 
   const standalone = Number.parseFloat(
     css(scope.getByTestId('standalone'), 'border-top-left-radius'),
   );
-  // Inside a row the buttons connect at their inline ends, inside a column at their block ends,
-  // and keep a lone button's corners at the group's ends.
   for (const orientation of ['horizontal', 'vertical']) {
     const group = scope.getByTestId(orientation);
     await expect.element(group).toHaveAttribute('role', 'group');
@@ -42,7 +39,6 @@ test('corners connect along the row or column, past hidden and removed buttons, 
   }
 
   expect(buttons(scope.getByTestId('single'))[0]!.corners).toEqual(Array(4).fill(standalone));
-  // A lone accent icon button keeps its round corners.
   expect(buttons(scope.getByTestId('single-important'))[0]!.corners).toEqual(
     Array(4).fill(standalone),
   );
@@ -66,7 +62,6 @@ test('corners connect along the row or column, past hidden and removed buttons, 
   expect(css(continueButton, 'border-top-right-radius')).toBe(`${standalone}px`);
   expect(css(continueButton, 'border-top-left-radius')).toBe('4px');
 
-  // A full-width group fills its container, where its labelled button takes the room.
   const sidebar = scope.getByTestId('sidebar');
   const startRow = sidebar.getByRole('group', { name: 'Start a document' });
   const column = sidebar.getByRole('group', { name: 'Sidebar actions' });
@@ -75,7 +70,6 @@ test('corners connect along the row or column, past hidden and removed buttons, 
   const columnBox = box(column);
   expect(rowBox.width).toBeCloseTo(sidebarBox.width, 0);
   expect(columnBox.width).toBeCloseTo(sidebarBox.width, 0);
-  // The chevron keeps its square size, and the labelled button takes the rest of the row.
   const create = box(startRow.getByRole('button', { name: 'New document' }));
   const more = box(startRow.getByRole('button', { name: 'More ways to start' }));
   expect(more.width).toBeCloseTo(40, 0);
@@ -83,7 +77,6 @@ test('corners connect along the row or column, past hidden and removed buttons, 
   expect(create.width + more.width + 1).toBeCloseTo(rowBox.width, 0);
   for (const button of column.getByRole('button').elements())
     expect(box(button).width).toBeCloseTo(columnBox.width, 0);
-  // Icon-only buttons alone share the row evenly.
   const tools = sidebar.getByRole('group', { name: 'Sidebar tools' });
   const widths = tools
     .getByRole('button')

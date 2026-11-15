@@ -58,8 +58,6 @@ function Progresses() {
   return (
     <Section name="Progress">
       <Strip>
-        {/* The captions name the states rather than repeat the value, which the bar shows at its
-            top end. */}
         {(
           [
             [0, 'Not started'],
@@ -105,7 +103,6 @@ function Spinners() {
   );
 }
 
-/** Toasts in every tone, one with an action, one not dismissible, kept until the page closes. */
 function Toasts({ placement }: { placement: 'bottom-end' | 'top-center' }) {
   const toast = useToast();
   useEffect(() => {

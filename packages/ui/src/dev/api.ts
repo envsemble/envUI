@@ -1,6 +1,3 @@
-// The readout's API, `envui.layout` in the browser: the page as text, its problems, and both at
-// other widths and heights, measured synchronously.
-
 import { measure, resolveRoot } from './measure.js';
 import type { LayoutProblem } from './model.js';
 import { read, type Reading } from './readout.js';
@@ -71,8 +68,7 @@ export interface LayoutApi {
   skeletonShift(root?: Element | string, options?: SkeletonShiftOptions): LayoutProblem[];
 }
 
-/** The root's inline properties that resizing it sets, and puts back. */
-const resized = [
+const resizedRootProperties = [
   'inline-size',
   'width',
   'min-inline-size',
@@ -86,32 +82,30 @@ const resized = [
   'box-sizing',
 ];
 
-/**
- * Lays the root out at a width, and a height if one is given, in px, as `at()` measures it, until
- * the function it returns puts its inline style back as it was. Given a height, the root takes it
- * as a window would: content taller than it scrolls inside the root. Dev mode's responsive frame
- * holds it for as long as it is set.
- */
-export function resizeRoot(root: HTMLElement, width: number | null, height: number | null = null) {
+export function resizeRoot(
+  root: HTMLElement,
+  widthPx: number | null,
+  heightPx: number | null = null,
+) {
   const style = root.style;
   const hadStyle = root.hasAttribute('style');
-  const saved = resized.map(
+  const saved = resizedRootProperties.map(
     (name) => [name, style.getPropertyValue(name), style.getPropertyPriority(name)] as const,
   );
   style.setProperty('box-sizing', 'border-box', 'important');
   style.setProperty('flex', 'none', 'important');
-  if (width !== null) {
+  if (widthPx !== null) {
     style.setProperty('min-inline-size', '0', 'important');
     style.setProperty('max-inline-size', 'none', 'important');
-    style.setProperty('inline-size', `${width}px`, 'important');
+    style.setProperty('inline-size', `${widthPx}px`, 'important');
   }
-  if (height !== null) {
+  if (heightPx !== null) {
     style.setProperty('min-block-size', '0', 'important');
     style.setProperty('max-block-size', 'none', 'important');
-    style.setProperty('block-size', `${height}px`, 'important');
+    style.setProperty('block-size', `${heightPx}px`, 'important');
     style.setProperty('overflow', 'auto', 'important');
   }
-  return () => {
+  return function restoreRootStyle() {
     for (const [name, value, priority] of saved) {
       if (value) style.setProperty(name, value, priority);
       else style.removeProperty(name);
@@ -120,8 +114,7 @@ export function resizeRoot(root: HTMLElement, width: number | null, height: numb
   };
 }
 
-/** Resizes the root for one synchronous measurement, and puts it back. */
-function atSize<T>(
+function measureAtSize<T>(
   root: HTMLElement,
   width: number | string | undefined,
   height: number | string | undefined,
@@ -138,10 +131,9 @@ function atSize<T>(
   }
 }
 
-/** Measures and reads the page once, at a width and height if they are given. */
 function readLayout(options: LayoutOptions = {}): Reading {
   const root = resolveRoot(options.root);
-  return atSize(root, options.width, options.height, () =>
+  return measureAtSize(root, options.width, options.height, () =>
     read(measure(root, { inner: true, minTextCharacters: options.minTextCharacters })),
   );
 }

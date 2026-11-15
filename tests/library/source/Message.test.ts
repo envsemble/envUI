@@ -1,5 +1,3 @@
-// Message and MessageList, rendered on the server: a conversation is a polite log of articles with
-// their authors, status and actions, which reports when it is busy.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -23,7 +21,7 @@ const render = (element) => firstElement(renderToStaticMarkup(element));
 const byClass = (root, name) => elementsOf(root).filter((element) => hasClass(element, name));
 const icon = h('svg', { 'data-icon': '' });
 
-test('a conversation is a polite log of articles with authors, status and actions', () => {
+test('a conversation is a polite log of articles with authors, status named in text, named actions and line breaks kept', () => {
   const log = render(
     h(
       MessageList,
@@ -55,7 +53,6 @@ test('a conversation is a polite log of articles with authors, status and action
   );
   assert.deepEqual(byClass(messages[1], 'env-message-author').map(textOf), ['Aurora']);
   assert.deepEqual(byClass(messages[1], 'env-message-meta').map(textOf), ['09:41']);
-  // Plain text keeps its line breaks.
   const [plain] = byClass(messages[0], 'env-message-text');
   assert.equal(textOf(plain), 'Summarize the report\nand list the risks.');
   assert.ok(
@@ -65,7 +62,6 @@ test('a conversation is a polite log of articles with authors, status and action
     ),
   );
 
-  // A status names itself in text beside its icon, not by color alone.
   const status = (message) => textOf(byClass(message, 'env-message-status')[0]);
   assert.equal(messages[2].attributes['data-status'], 'sending');
   assert.equal(status(messages[2]), 'Sending');
@@ -73,7 +69,6 @@ test('a conversation is a polite log of articles with authors, status and action
   assert.equal(messages[3].attributes['data-status'], 'failed');
   assert.equal(status(messages[3]), 'Not sent');
   assert.equal(status(messages[4]), 'Could not deliver');
-  // The actions are its buttons, named.
   const buttons = (message) => elementsOf(message).filter((element) => element.tag === 'button');
   assert.equal(buttons(messages[1])[0].attributes['aria-label'], 'Copy answer');
   assert.equal(textOf(buttons(messages[3])[0]), 'Retry');
@@ -92,11 +87,9 @@ test('a busy log reports it while a reply streams in', () => {
   const idle = list(false);
   assert.equal(idle.attributes['aria-busy'], undefined);
   assert.equal(byClass(idle, 'env-message-list-busy').length, 0);
-  // While busy, assistive technology can wait instead of announcing each step of the reply.
   const busy = list(true);
   assert.equal(busy.attributes['aria-busy'], 'true');
   assert.equal(busy.attributes['aria-live'], 'polite');
-  // The busy row names who replies and says it works, shown rather than read.
   const [row] = byClass(busy, 'env-message-list-busy');
   assert.equal(row.attributes['aria-hidden'], 'true');
   assert.equal(textOf(row), 'AuroraWorking');

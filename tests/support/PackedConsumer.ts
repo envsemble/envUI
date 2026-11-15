@@ -1,10 +1,3 @@
-// An application that installs envUI as it is published: the library packed with npm, installed with
-// React and the libraries its entry points' setup names, at the versions envUI is tested with. The
-// package tests run its scripts and typecheck its code to see what an application sees.
-//
-// One installation serves every test file and run while the pack and the dependencies stay the
-// same: it is kept in .cache/package-consumer/<hash>/, and a lock lets one process install it while
-// the others wait. Needs the library build (npm run build).
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { copyFile, mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
@@ -15,14 +8,10 @@ import { npmCli, npmPack, runNode } from './Npm.ts';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
 const consumersDirectory = join(repositoryRoot, '.cache/package-consumer');
-/** Written once the installation is complete. */
-const readyMarker = '.installed';
-/** How long a process waits for another's installation, and when a lock counts as abandoned. */
+const installationCompleteMarker = '.installed';
 const lockTimeout = 5 * 60 * 1000;
-/** The time the package tests' before() hooks allow for packing and installing. */
 export const installTimeout = lockTimeout + 60 * 1000;
 
-/** Packs the library into `directory`: the tarball's path and the files it holds. */
 function pack(directory: string) {
   const { filename, files } = npmPack(join(repositoryRoot, 'packages/ui'), [
     '--pack-destination',
@@ -31,10 +20,6 @@ function pack(directory: string) {
   return { tarball: join(directory, filename), files };
 }
 
-/**
- * React, the tools the tests run in the consumer, and the libraries the setup guide names for the
- * code, markdown, rich-text, diff and color entries, at the versions of the repository's manifests.
- */
 async function consumerDependencies() {
   const read = async (path: string) =>
     JSON.parse(await readFile(join(repositoryRoot, path), 'utf8'));
@@ -56,10 +41,6 @@ async function consumerDependencies() {
   return dependencies;
 }
 
-/**
- * A hook that fails any import the consumer resolves outside its own installation, such as the
- * repository's React, so a test sees only what an application would.
- */
 const isolationHookSource = (boundary: string) => `
 import { registerHooks } from 'node:module';
 import { relative, isAbsolute } from 'node:path';
@@ -75,7 +56,6 @@ registerHooks({ resolve(specifier, context, nextResolve) {
 } });
 `;
 
-/** Runs `work` while holding the lock directory `lock`, taking over one older than the timeout. */
 async function withLock(lock: string, work: () => Promise<void>) {
   const started = Date.now();
   for (;;) {
@@ -103,7 +83,6 @@ async function withLock(lock: string, work: () => Promise<void>) {
   }
 }
 
-/** Installs the consumer in `directory`/consumer, with the tarball in `directory`/packed. */
 async function install(directory: string, tarball: string, dependencies: Record<string, string>) {
   await rm(directory, { recursive: true, force: true });
   const consumer = join(directory, 'consumer');
@@ -129,21 +108,15 @@ async function install(directory: string, tarball: string, dependencies: Record<
     consumer,
   );
   await writeFile(join(consumer, 'IsolationHook.mjs'), isolationHookSource(consumer));
-  await writeFile(join(consumer, readyMarker), '');
+  await writeFile(join(consumer, installationCompleteMarker), '');
 }
 
-/** Removes the installations of earlier packs, keeping `current` and the locks. */
 async function removeOtherInstallations(current: string) {
   for (const entry of await readdir(consumersDirectory))
     if (entry !== current && !entry.endsWith('.lock'))
       await rm(join(consumersDirectory, entry), { recursive: true, force: true });
 }
 
-/**
- * The packed consumer, installed or reused: its `directory`, the installed package's
- * (`installedDirectory`), a `require` that resolves as the consumer does, the files of the pack
- * (`packedFiles`), and ways to run code in it.
- */
 export async function packedConsumer() {
   await mkdir(consumersDirectory, { recursive: true });
   const packDirectory = await mkdtemp(join(repositoryRoot, '.cache/package-pack-'));
@@ -157,7 +130,7 @@ export async function packedConsumer() {
       .slice(0, 16);
     const root = join(consumersDirectory, key);
     await withLock(join(consumersDirectory, `${key}.lock`), async () => {
-      if (existsSync(join(root, 'consumer', readyMarker))) return;
+      if (existsSync(join(root, 'consumer', installationCompleteMarker))) return;
       await install(root, tarball, dependencies);
       await removeOtherInstallations(key);
     });
@@ -170,7 +143,6 @@ export async function packedConsumer() {
 function consumerAt(directory: string, packedFiles: string[]) {
   const consumerRequire = createRequire(join(directory, 'package.json'));
   const hook = join(directory, 'IsolationHook.mjs');
-  /** Runs a script, isolated to the consumer when it is one of the consumer's own. */
   const run = (script: string, args: readonly string[] = []) =>
     runNode(script, args, directory, script.startsWith(directory) ? hook : undefined);
   return {
@@ -179,16 +151,11 @@ function consumerAt(directory: string, packedFiles: string[]) {
     require: consumerRequire,
     packedFiles,
     run,
-    /** Writes the module `name` with `source` into the consumer, runs it and parses what it prints. */
     async runScript(name: string, source: string) {
       const script = join(directory, name);
       await writeFile(script, source);
       return JSON.parse(run(script));
     },
-    /**
-     * Typechecks `source` as `<name>.tsx` with the installed declarations, strictly, and returns
-     * the files the compiler read. `types` are the global type packages it loads.
-     */
     async typecheck(name: string, source: string, { types = ['react', 'react-dom'] } = {}) {
       await writeFile(join(directory, `${name}.tsx`), source);
       const project = join(directory, `tsconfig.${name}.json`);

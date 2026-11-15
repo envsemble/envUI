@@ -1,5 +1,3 @@
-// Reads the whole documentation in docs/: the index, which groups and orders the pages, each page
-// through PageReader.ts, and the links between them, checked as it goes.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, dirname, relative, resolve } from 'node:path';
 import { marked } from 'marked';
@@ -16,12 +14,15 @@ import {
   indexSectionKinds,
   kebab,
   kindFolders,
+  maxWhenEntries,
+  maxWhenEntryLength,
   pageKindOf,
   pageKinds,
   readProps,
   slugExceptions,
   splitFrontmatter,
   withImport,
+  withRules,
   type Frontmatter,
   type RawFrontmatter,
   type PageSection,
@@ -32,23 +33,19 @@ import { validateFrontmatter } from './validation/Frontmatter.ts';
 import { readPartNames } from './validation/Legends.ts';
 import type { PartNames } from './PageReaderTypes.ts';
 
-/** A page of docs/ as readDocumentation reads it. */
 export interface DocumentRecord {
   id: string;
   title: string;
   group: string;
   path: string;
   summary: string;
-  /** The ids of the pages it relates to. */
   related: string[];
   markdown: string;
   frontmatter?: Frontmatter;
   yaml?: string;
-  /** A page in the one-file structure's sections. */
   sections?: PageSection[];
 }
 
-/** A link's fragment with its percent escapes decoded, or as it is where they are malformed. */
 function decoded(fragment: string) {
   try {
     return decodeURIComponent(fragment);
@@ -57,8 +54,6 @@ function decoded(fragment: string) {
   }
 }
 
-/** The component page that documents an export; a part such as Menu.Item is on its
- * namespace's. */
 function pageOfExport(
   documents: readonly DocumentRecord[],
   name: string,
@@ -70,7 +65,6 @@ function pageOfExport(
   );
 }
 
-/** File names, without .tsx, in a page's example or specimen folder. */
 function filesOf(directory: string, page: string): Set<string> {
   const folder = resolve(directory, page);
   if (!existsSync(folder)) return new Set();
@@ -81,7 +75,6 @@ function filesOf(directory: string, page: string): Set<string> {
   );
 }
 
-/** What reading the index's entries needs: where the pages, examples and specimens are, and more. */
 interface EntryContext {
   directory: string;
   read: (file: string) => string;
@@ -92,9 +85,7 @@ interface EntryContext {
   partNames: PartNames;
 }
 
-/** Fails unless the index lists a page under the section of its kind, from its folder. */
 function checkIndexSection(path: string, kind: string, group: string) {
-  // A heading the index has but indexSectionKinds lacks reads as undefined.
   const sectionKind = indexSectionKinds[group as keyof typeof indexSectionKinds];
   const kindSection = Object.keys(indexSectionKinds).find(
     (section) => indexSectionKinds[section as keyof typeof indexSectionKinds] === kind,
@@ -109,7 +100,6 @@ function checkIndexSection(path: string, kind: string, group: string) {
     );
 }
 
-/** Fails unless a page of a structured kind has frontmatter that lists its examples. */
 function checkOneFileStructure(
   path: string,
   kind: string,
@@ -125,10 +115,6 @@ function checkOneFileStructure(
     );
 }
 
-/**
- * Fails unless a page in the one-file structure agrees with its index entry: its title and
- * category, no summary in the entry, and for a component the file and components named after it.
- */
 function checkStructuredEntry(
   { path, id, title, group, kind }: Record<'path' | 'id' | 'title' | 'group' | 'kind', string>,
   frontmatter: Frontmatter,
@@ -150,9 +136,27 @@ function checkStructuredEntry(
     throw new Error(`${path} must be named ${kebab(title)}.md after its title.`);
   if (component && !frontmatter.components?.includes(title.split('.')[0]) && exported?.[title])
     throw new Error(`${path} must list ${title}, its own component, in components.`);
+  if (component) checkWhenLists(path, frontmatter);
 }
 
-/** Fails when a page's frontmatter names an export envUI doesn't have. */
+function checkWhenLists(path: string, frontmatter: Frontmatter) {
+  const lists = {
+    useWhen: frontmatter.useWhen ?? [],
+    avoidWhen: (frontmatter.avoidWhen ?? []).map(({ text }) => text),
+  };
+  for (const [field, entries] of Object.entries(lists)) {
+    if (entries.length > maxWhenEntries)
+      throw new Error(
+        `${path} lists ${entries.length} entries in ${field}; keep the ${maxWhenEntries} that matter most.`,
+      );
+    const long = entries.find((entry) => entry.length > maxWhenEntryLength);
+    if (long)
+      throw new Error(
+        `${path} has an entry of ${field} longer than a line of ${maxWhenEntryLength} characters: "${long}"`,
+      );
+  }
+}
+
 function checkNamedExports(
   path: string,
   frontmatter: Frontmatter | undefined,
@@ -167,7 +171,6 @@ function checkNamedExports(
       throw new Error(`${path} suggests ${use} in avoidWhen, but envUI exports no ${use}.`);
 }
 
-/** The page an index entry under `group` lists, read and checked against the entry. */
 function readEntry(
   text: string,
   group: string,
@@ -190,11 +193,7 @@ function readEntry(
     throw new Error(`Documentation title differs from its index entry: ${path}`);
   const markdown = body.replace(/^# [^\n]+\r?\n\s*/, '');
   const kind = pageKindOf(path);
-  // A page's folder says its kind, and the index lists each kind of page under its section.
   checkIndexSection(path, kind, group);
-  // A component or foundation page is in the one-file structure: its frontmatter
-  // lists its examples, and its sections follow the title in pageSections' order. A page that
-  // isn't fails, so every page stays in it.
   const structured = pageKinds.has(kind);
   if (structured) checkOneFileStructure(path, kind, raw);
   const frontmatter = raw && validateFrontmatter(raw, path, { kind, versions: context.versions });
@@ -213,7 +212,6 @@ function readEntry(
     title,
     group,
     path,
-    // A page outside the one-file structure has its summary in the index (readEntry checks it).
     summary: (frontmatter?.summary ?? indexSummary ?? '').replace(/\s+/g, ' ').trim(),
     related: [],
     markdown,
@@ -221,24 +219,22 @@ function readEntry(
   };
   if (structured && frontmatter)
     document.sections = withImport(
-      readPage(document, markdown, {
-        kind,
-        catalog: examplesOf(frontmatter),
-        examples: filesOf(context.examples, id),
-        specimens: filesOf(context.specimens, id),
-        partNames: context.partNames,
-      }),
+      withRules(
+        readPage(document, markdown, {
+          kind,
+          catalog: examplesOf(frontmatter),
+          examples: filesOf(context.examples, id),
+          specimens: filesOf(context.specimens, id),
+          partNames: context.partNames,
+        }),
+        frontmatter.useWhen ?? [],
+      ),
       frontmatter.components ?? [],
       props,
     );
   return document;
 }
 
-/**
- * The ids of the pages a page relates to. A page's avoidWhen is its one list of related
- * components and pages, its Related section: each entry names an export to use or a page to read,
- * and each relation is named once. A guide relates to the pages its Related topics list links.
- */
 function relatedOf(document: DocumentRecord, documents: readonly DocumentRecord[]) {
   const relations: { key: string; page: string | undefined }[] = [];
   for (const { use, see } of document.frontmatter?.avoidWhen ?? []) {
@@ -284,7 +280,6 @@ function relatedOf(document: DocumentRecord, documents: readonly DocumentRecord[
   return related;
 }
 
-/** Fails on a link of a page to a file that isn't there, a page the index lacks or no heading. */
 function checkLinks(
   document: DocumentRecord,
   documents: readonly DocumentRecord[],
@@ -303,7 +298,6 @@ function checkLinks(
       );
       if (!linked) throw new Error(`Documentation link is missing from the index: ${token.href}`);
     }
-    // A link to a heading names one the page has, by the id the catalogue gives it.
     if (fragment && !headingsOf(linked.markdown).some(({ id }) => id === decoded(fragment)))
       throw new Error(
         `Broken documentation link in ${document.path}: ${token.href} names no heading of ${linked.path}.`,
@@ -311,10 +305,6 @@ function checkLinks(
   });
 }
 
-/**
- * The indexed documents. The index supplies discovery, catalogue groups and ordering; component
- * pages supply their title, summary and metadata in frontmatter.
- */
 export function readDocumentation(
   directory = documentationDirectory,
   {
@@ -331,8 +321,6 @@ export function readDocumentation(
     partNames?: PartNames;
   } = {},
 ): DocumentRecord[] {
-  // Pages saved with CRLF line endings read as LF, as Git checks them out, and with the library's
-  // version in place of {{version}}, such as in the install command.
   const read = (file: string) =>
     withLibraryVersion(readFileSync(file, 'utf8').replace(/\r\n?/g, '\n'));
   const context = { directory, read, props, examples, specimens, versions, partNames };

@@ -2,10 +2,6 @@ import { RelativeTime, Theme, Tooltip, type ColorScheme } from '@envsemble/envui
 
 export const themes = true;
 
-/**
- * Times with their date and time in a tooltip, in English and German, one without a tooltip and one
- * inside the application's own Tooltip. Their words and clock are tests/library/source/RelativeTime.test.ts's.
- */
 export default function RelativeTimeFixture({ theme }: { theme: ColorScheme }) {
   return (
     <Theme theme={theme} data-testid={`relative-times-${theme}`} className="fixture-section">
@@ -26,7 +22,6 @@ export default function RelativeTimeFixture({ theme }: { theme: ColorScheme }) {
         value="2026-10-14T09:00:00Z"
         now={Date.parse('2026-10-14T12:00:00Z')}
       />
-      {/* Inside the application's own Tooltip, that one describes the time. */}
       <Tooltip content={`Updated by Alex Morgan ${theme}`}>
         <RelativeTime
           data-testid="in-tooltip"

@@ -9,6 +9,7 @@ import {
   type ComponentPropsWithRef,
   type ReactElement,
   type ReactNode,
+  type SyntheticEvent,
 } from 'react';
 import { Button } from '../actions/Button.js';
 import { useTheme } from '../foundations/Theme.js';
@@ -108,19 +109,15 @@ export interface ConfirmDialogProps extends Omit<
   finalFocus?: DialogFocusTarget;
 }
 
-/** Whether a value is a promise or another thenable. */
 const isThenable = (value: unknown): value is PromiseLike<unknown> =>
   typeof (value as PromiseLike<unknown> | undefined)?.then === 'function';
 
-/** Reports a failed action the way an uncaught error would be, without stopping the dialog. */
-const report = (failure: unknown) => {
+const reportAsUncaught = (failure: unknown) => {
   if (typeof globalThis.reportError === 'function') globalThis.reportError(failure);
 };
 
-/**
- * Says while developing that the children hold a form of their own, which would nest in the
- * dialog's form: HTML has no nested forms, so its fields would submit the dialog's. Once a page.
- */
+const keepFromBubblingPastPortal = (event: SyntheticEvent) => event.stopPropagation();
+
 function reportNestedForm(form: HTMLFormElement | null) {
   reportInDevelopment(
     () =>
@@ -131,8 +128,7 @@ function reportNestedForm(form: HTMLFormElement | null) {
   );
 }
 
-/** The root of a ConfirmDialog in a contained PortalContainer: not modal, closed by its buttons. */
-function ContainedRoot(props: BaseAlertDialog.Root.Props) {
+function ContainedNonModalRoot(props: BaseAlertDialog.Root.Props) {
   return <BaseDialog.Root {...props} modal={false} disablePointerDismissal />;
 }
 
@@ -163,9 +159,7 @@ export function ConfirmDialog({
   const theme = useTheme();
   const messages = useMessages('confirmDialog', confirmDialog);
   const portal = usePortalContainer();
-  // An alert dialog is always modal; a contained one is a dialog that isn't, with the alert
-  // dialog's role, and a press outside still doesn't close it.
-  const Root = portal.contained ? ContainedRoot : BaseAlertDialog.Root;
+  const Root = portal.contained ? ContainedNonModalRoot : BaseAlertDialog.Root;
   const [isOpen, change] = useControllableState({
     value: open,
     defaultValue: defaultOpen,
@@ -174,28 +168,30 @@ export function ConfirmDialog({
   const [pending, setPending] = useState(false);
   const cancel = useRef<HTMLButtonElement>(null);
   const confirm = useRef<HTMLButtonElement>(null);
-  // Set before onConfirm runs, so a second press in the same tick or during the closing animation
-  // doesn't run the action again; cleared when it fails, when the dialog opens again, and when it
-  // succeeds but the application keeps a controlled dialog open.
-  const running = useRef(false);
-  useEffect(() => {
-    if (isOpen) running.current = false;
-  }, [isOpen]);
+  const confirmationRunning = useRef(false);
+  useEffect(
+    function allowConfirmingOnceReopened() {
+      if (isOpen) confirmationRunning.current = false;
+    },
+    [isOpen],
+  );
   const [confirmed, setConfirmed] = useState(0);
-  useEffect(() => {
-    if (confirmed > 0 && isOpen) running.current = false;
-    // Only after a confirmation: the render it closed the dialog in, or that kept it open.
+  useEffect(
+    function allowConfirmingAgainWhenKeptOpen() {
+      if (confirmed > 0 && isOpen) confirmationRunning.current = false;
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [confirmed]);
-  const run = async () => {
-    if (!isOpen || running.current) return;
-    running.current = true;
+    [confirmed],
+  );
+  const confirmOnce = async () => {
+    if (!isOpen || confirmationRunning.current) return;
+    confirmationRunning.current = true;
     let result: void | Promise<void>;
     try {
       result = onConfirm();
     } catch (failure) {
-      running.current = false;
-      report(failure);
+      confirmationRunning.current = false;
+      reportAsUncaught(failure);
       return;
     }
     if (isThenable(result)) {
@@ -203,9 +199,8 @@ export function ConfirmDialog({
       try {
         await result;
       } catch (failure) {
-        // A failed action keeps the dialog open; the application shows why with error.
-        running.current = false;
-        report(failure);
+        confirmationRunning.current = false;
+        reportAsUncaught(failure);
         return;
       } finally {
         setPending(false);
@@ -242,18 +237,14 @@ export function ConfirmDialog({
               >
                 <DialogContent>
                   <DialogHeader title={title} description={description} />
-                  {/* A form, so Enter in a field in children confirms through the same run as the
-                      confirm button, its submit button: pending, guarded and kept open on failure.
-                      It lays out as if it weren't there. */}
                   <form
                     ref={reportNestedForm}
                     className="env-confirm-dialog-form"
                     noValidate
                     onSubmit={(event) => {
                       event.preventDefault();
-                      // The dialog is portalled, but React events still bubble to a form around it.
-                      event.stopPropagation();
-                      if (!confirmDisabled) void run();
+                      keepFromBubblingPastPortal(event);
+                      if (!confirmDisabled) void confirmOnce();
                     }}
                   >
                     {children}

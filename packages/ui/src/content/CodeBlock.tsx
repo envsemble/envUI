@@ -49,20 +49,12 @@ export function CodeBlock({
   const preRef = useRef<HTMLPreElement>(null);
   const contrast = useCodeContrast(preRef);
   const tokens = useCodeHighlighting(source, language, contrast === 'high');
-  // Copied or failed shows for three seconds; where the clipboard fails, the code is selected for
-  // people to copy themselves.
-  const { copy, status, reset } = useCopy({ resetAfter: 3_000 });
+  const { copy, status, reset } = useCopy({ resetAfter: copyResultDuration });
   useEffect(() => reset(), [source, reset]);
 
   async function copySource(button: HTMLElement) {
     if (await copy(source, button)) return;
-    const pre = preRef.current;
-    if (!pre) return;
-    const range = pre.ownerDocument.createRange();
-    range.selectNodeContents(pre);
-    const selection = pre.ownerDocument.getSelection();
-    selection?.removeAllRanges();
-    selection?.addRange(range);
+    if (preRef.current) selectForPeopleToCopyThemselves(preRef.current);
   }
   const lineEndings = source.match(/\r\n|\r|\n/g) ?? [];
   return (
@@ -111,4 +103,14 @@ export function CodeBlock({
       )}
     </div>
   );
+}
+
+const copyResultDuration = 3_000;
+
+function selectForPeopleToCopyThemselves(pre: HTMLPreElement) {
+  const range = pre.ownerDocument.createRange();
+  range.selectNodeContents(pre);
+  const selection = pre.ownerDocument.getSelection();
+  selection?.removeAllRanges();
+  selection?.addRange(range);
 }

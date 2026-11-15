@@ -1,18 +1,3 @@
-// Runs the visual baseline (tests/visual) inside the official Linux Playwright image, pinned by
-// digest and run as linux/amd64, so the screenshots are identical on every machine. The checkout
-// is mounted at /work; node_modules come from named volumes holding a Linux install, refreshed only
-// when package-lock.json or the image changes.
-//
-//   node scripts/test/VisualTests.ts [--update] [--skip] [--preflight] [Playwright arguments]
-//
-// --update rewrites changed and missing snapshots. Nothing is deleted beforehand: once a page has
-// rendered every specimen, the spec removes the images it no longer takes, so a failed or stopped
-// update leaves the baseline as it was.
-//
-// Docker is required, so a run without it fails; --preflight only checks that, so `npm run verify`
-// fails before its other checks rather than after them. To skip the baseline knowingly, set
-// ENVUI_SKIP_VISUAL=1 or pass --skip (`npm run verify:no-visual` does); either prints a warning that
-// the screenshots were not compared.
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -29,15 +14,9 @@ const update = flag('--update');
 const skip = flag('--skip') || process.env.ENVUI_SKIP_VISUAL === '1';
 const preflight = flag('--preflight');
 
-/**
- * The image of each Playwright version, by the digest of its multi-platform index. After raising
- * @playwright/test, add the Digest that `docker buildx imagetools inspect
- * mcr.microsoft.com/playwright:v<version>-noble` prints, and rerun the baseline.
- */
 const imageDigests: Record<string, string> = {
   '1.65.0': 'sha256:6e3fb709361521eb27161606e6da6d2674e5e89fa16516cb37d6fdd91372273d',
 };
-/** Snapshots are rendered on x86-64; other hosts emulate it rather than draw different pixels. */
 const platform = 'linux/amd64';
 
 const manifest = JSON.parse(readFileSync(resolve(repositoryRoot, 'package.json'), 'utf8'));
@@ -86,17 +65,11 @@ if (info.status !== 0) {
 }
 if (preflight) process.exit(0);
 
-/**
- * On a Linux host the container runs as the host's user, so the snapshots, results and generated
- * files it writes into the checkout belong to that user rather than to root. Rootless Docker
- * already maps the container's root to the host's user.
- */
 const hostUser =
   process.platform === 'linux' && process.getuid!() !== 0 && !info.stdout.includes('rootless')
     ? `${process.getuid!()}:${process.getgid!()}`
     : undefined;
 
-// One set of volumes per checkout, so worktrees with different lockfiles do not reinstall each other.
 const checkout = createHash('sha256').update(repositoryRoot).digest('hex').slice(0, 10);
 const lock = createHash('sha256')
   .update(readFileSync(resolve(repositoryRoot, 'package-lock.json')))
@@ -125,8 +98,6 @@ const container = [
 ];
 
 if (hostUser) {
-  // Docker creates volumes owned by root, and a run before this one may have written its output as
-  // root too: hand both to the host's user first.
   const prepared = spawnSync(
     'docker',
     [
@@ -163,7 +134,6 @@ node scripts/docs/GenerateDocumentation.ts
 exec npx playwright test --project=visual "$@"
 `;
 
-// A plain run never writes a snapshot, so a missing image fails instead of being recorded.
 const choosesUpdate = args.some((arg) => /^(?:-u|--update-snapshots(?:=.*)?)$/.test(arg));
 const updateMode = update
   ? ['--update-snapshots=changed']
@@ -185,7 +155,6 @@ const result = spawnSync(
     '--env',
     `npm_config_cache=${npmCache}`,
     ...(process.env.CI ? ['--env', 'CI=1'] : []),
-    // Worker count and server ports, so a run can share a machine with other checkouts' servers.
     ...['ENVUI_WORKERS', 'ENVUI_SITE_PORT', 'ENVUI_SITE_BUILD_PORT', 'ENVUI_FIXTURE_PORT'].flatMap(
       (name) => (process.env[name] ? ['--env', `${name}=${process.env[name]}`] : []),
     ),

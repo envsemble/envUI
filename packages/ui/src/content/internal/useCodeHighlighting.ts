@@ -28,33 +28,34 @@ const languageAliases: Record<string, string> = {
   ini: 'ini',
 };
 
-/**
- * Render plain source on the server and first client render, then enrich it in place: with the
- * high-contrast colors too where `highContrast` asks for them. Source whose tokens were given
- * (givenCodeTokens.ts) renders highlighted from the first render.
- */
+const maxHighlightedSourceLength = 50_000;
+const maxHighlightedLineLength = 2_000;
+const keepPlainSourceWhenHighlightingFails = () => {};
+
+function givenStandardContrastTokens(source: string, language: string, highContrast: boolean) {
+  return highContrast ? undefined : givenCodeTokens({ source, language });
+}
+
 export function useCodeHighlighting(source: string, language?: string, highContrast = false) {
   const resolvedLanguage = languageAliases[language?.toLowerCase() ?? ''];
   const eligible =
     Boolean(resolvedLanguage) &&
-    source.length <= 50_000 &&
-    source.split(/\r\n|\r|\n/).every((line) => line.length <= 2_000);
+    source.length <= maxHighlightedSourceLength &&
+    source.split(/\r\n|\r|\n/).every((line) => line.length <= maxHighlightedLineLength);
   const [result, setResult] = useState<{
     source: string;
     language: string;
     tokens: CodeToken[][];
   } | null>(() => {
     const tokens =
-      eligible && resolvedLanguage && !highContrast
-        ? givenCodeTokens({ source, language: resolvedLanguage })
+      eligible && resolvedLanguage
+        ? givenStandardContrastTokens(source, resolvedLanguage, highContrast)
         : undefined;
     return tokens && resolvedLanguage ? { source, language: resolvedLanguage, tokens } : null;
   });
   useEffect(() => {
     if (!eligible || !resolvedLanguage) return;
-    const tokens = highContrast
-      ? undefined
-      : givenCodeTokens({ source, language: resolvedLanguage });
+    const tokens = givenStandardContrastTokens(source, resolvedLanguage, highContrast);
     if (tokens) {
       setResult((shown) =>
         shown?.tokens === tokens ? shown : { source, language: resolvedLanguage, tokens },
@@ -69,9 +70,7 @@ export function useCodeHighlighting(source: string, language?: string, highContr
       .then((tokens) => {
         if (current && tokens) setResult({ source, language: resolvedLanguage, tokens });
       })
-      .catch(() => {
-        /* The original source stays visible if highlighting is unavailable. */
-      });
+      .catch(keepPlainSourceWhenHighlightingFails);
     return () => {
       current = false;
     };

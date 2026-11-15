@@ -23,8 +23,6 @@ import '../styles/Card.css';
  */
 export type CardBackground = 'muted' | 'default' | 'page';
 
-/** The level of a card's heading, from h1 to h6. */
-
 interface CardSurfaceProps extends SkeletonProps {
   /**
    * The fill: muted, the standalone card fill; default, a quieter fill that groups content, such as

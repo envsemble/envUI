@@ -1,4 +1,3 @@
-// Reading docs/: the pages the index lists, their titles, and the links between them.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { writeFile } from 'node:fs/promises';
@@ -11,7 +10,6 @@ const discoveryIndex =
 
 const discoveryPage = '# Button\n\n## Example\n\n```tsx\n<Button>Save</Button>\n```\n';
 
-/** A docs/ folder of an index and the Button page it lists, which `run` rewrites and reads. */
 function discoveryFixture(run) {
   return inScratchFolder('documentation', async (fixture) => {
     await writeFile(join(fixture, 'index.md'), discoveryIndex);
@@ -38,7 +36,6 @@ test('a link reaches a page, and a heading the page has', async () => {
   await discoveryFixture(async ({ write, read }) => {
     await write('button.md', discoveryPage + '\n[Missing component](missing.md)\n');
     assert.throws(read, /Broken documentation link/);
-    // A link to a heading must name one the page has, as the catalogue gives it its id.
     await write('button.md', discoveryPage + '\n[The example](#example)\n');
     assert.equal(read().length, 2);
     await write('button.md', `# Button\n\n## Größe\n\n[Size](#gr%C3%B6%C3%9Fe)\n`);

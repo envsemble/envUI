@@ -15,7 +15,6 @@ export const mount = 'standalone';
 
 const params = () => new URLSearchParams(location.search);
 
-/** A stand-in for a navigation form: a named nav with its destinations as buttons. */
 function Destinations({ form }: { form: string }) {
   return (
     <nav aria-label={`Main ${form}`} data-testid={`${form}-form`} className="fixture-destinations">
@@ -33,7 +32,6 @@ const navigation = {
   drawer: <Destinations form="drawer" />,
 };
 
-/** A page long enough to scroll its body. */
 export function TallPage({ paragraphs = 200 }: { paragraphs?: number }) {
   return (
     <div className="fixture-tall-page">
@@ -47,18 +45,10 @@ export function TallPage({ paragraphs = 200 }: { paragraphs?: number }) {
   );
 }
 
-/**
- * A Scaffold in a frame whose width the test sets: a TopBar, stand-ins for the three navigation
- * forms and a long body. ?forms= takes the forms per window class as JSON, ?only= gives only the forms it lists, comma-separated, ?span=full puts the top bar
- * across the width, ?landmarks=off renders no landmarks and ?dir=rtl mirrors it. The body scrolls,
- * in a frame of a fixed height; ?scroll=document lets the document scroll, with the Scaffold at
- * least as tall as the window, and ?header=sticky puts the page in a Page with a sticky header.
- */
 export default function ScaffoldFixture() {
   const query = params();
   const [width, setWidth] = useState(query.get('width') ?? '80rem');
   const formsParameter = query.get('forms');
-  // The tests write valid forms.
   const forms = formsParameter ? (JSON.parse(formsParameter) as ScaffoldForms) : undefined;
   const only = query.get('only')?.split(',');
   const scroll = query.get('scroll') === 'document' ? 'document' : 'body';

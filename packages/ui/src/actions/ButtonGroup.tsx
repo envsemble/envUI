@@ -2,7 +2,6 @@ import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
-// The group restyles the buttons it holds, so Button's style sheet comes first.
 import '../styles/Button.css';
 import '../styles/ButtonGroup.css';
 

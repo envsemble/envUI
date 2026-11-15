@@ -22,11 +22,7 @@ avoidWhen:
     use: Tooltip
   - text: A preview of a link's destination, shown on hover.
     use: HoverCard
-  - text: A list of actions or destinations.
-    use: Menu
-  - text: Choosing a value for a form field from a list.
-    use: Select
-  - text: A task that needs people's full attention or more room, or a consequence to confirm.
+  - text: A task that needs full attention or more room.
     use: Dialog
 components:
   - Popover
@@ -43,18 +39,7 @@ examples:
 
 ## Variants
 
-### Widths
-
-A popover is as wide as its content, within its width's range.
-
-| Width  | Use for                                  |
-| ------ | ---------------------------------------- |
-| Medium | Details and a field or two. The default. |
-| Large  | A longer form.                           |
-
 ### Sides
-
-A popover opens below its trigger, above it or beside it, lined up with the trigger's start, center or end, and flips where there is no room.
 
 ```tsx figure=FieldHelp open wide
 
@@ -73,139 +58,8 @@ A popover opens below its trigger, above it or beside it, lined up with the trig
 
 ## Behaviour
 
-### Focus
-
-Popover takes focus as it opens, and also closes when focus leaves it.
-
-- It isn't modal, so the page stays usable.
-
 ### A small form
-
-An action inside the popover closes it once its work is done, such as Rename.
 
 ```tsx figure=RenameInPlace motion
 
 ```
-
-## Rules
-
-A popover is small, named, and never the only place for what matters.
-
-### Fields
-
-One to three fields at most, with the action last.
-
-### Names
-
-Give every popover a title, or a name for assistive technology where a title would repeat its trigger.
-
-- Name an icon-only trigger after what the popover holds, such as About billing periods.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                                 | Action                                                                         |
-| --------------------------------------------------- | ------------------------------------------------------------------------------ |
-| <kbd>Enter</kbd> or <kbd>Space</kbd> on the trigger | Opens the popover and moves focus in; on an open popover's trigger, closes it. |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>     | Moves through the popover; past its last element it closes and moves on.       |
-| <kbd>Esc</kbd>                                      | Closes the popover and returns focus to the trigger.                           |
-
-### envUI provides
-
-- `aria-haspopup="dialog"` and `aria-expanded` on the trigger, and a `dialog` named by its title.
-- Focus moved in on open, and back to the trigger when <kbd>Esc</kbd> or `close` closes it.
-- The theme of its trigger in the portal.
-
-### You provide
-
-- A `title` or an `aria-label`, and a name for an icon-only trigger.
-- The actions inside, and a call to `close` when one is done.
-
-## Compose
-
-### Usage
-
-A Popover opens from its `trigger`, such as a Button or an IconButton, which must take a ref and props: it receives the press handler, `aria-haspopup` and `aria-expanded`. `title` is a heading at the top that names it; without one, name it with `aria-label`. `children` is its content.
-
-```tsx source=DocumentDetails
-
-```
-
-#### A small form
-
-A function child receives `close`, for an action inside that closes the popover once it is done, such as a form's submit.
-
-```tsx
-<Popover aria-label="Rename document" width="lg" trigger={<Button>Rename</Button>}>
-  {(close) => (
-    <form onSubmit={(event) => rename(event, close)}>
-      <TextField label="Name" name="name" required />
-      <Button variant="secondary" onClick={close}>
-        Cancel
-      </Button>
-      <Button type="submit">Rename</Button>
-    </form>
-  )}
-</Popover>
-```
-
-#### Controlled
-
-Leave it uncontrolled, with `defaultOpen` to start open, or control it with `open` and `onOpenChange`, which receives the requested state and why: the trigger, <kbd>Esc</kbd>, a press outside, focus leaving it, or `close` as `close-press`.
-
-```tsx
-<Popover
-  title="Assignees"
-  open={open}
-  onOpenChange={(next) => {
-    setOpen(next);
-    if (next) setDraft(applied); // Each time it opens, start from the filters in use.
-  }}
-  trigger={<Button startIcon={<IconFilterList />}>Assignees</Button>}
->
-  {people.map((person) => (
-    <Checkbox
-      key={person}
-      label={person}
-      checked={draft.includes(person)}
-      onCheckedChange={(checked) => toggle(person, checked)}
-    />
-  ))}
-  <Button
-    onClick={() => {
-      setApplied(draft);
-      setOpen(false);
-    }}
-  >
-    Apply
-  </Button>
-</Popover>
-```
-
-#### Width, side and alignment
-
-`width` sets how wide the popover grows with its content: `md`, the default, from 12 rem up to 20 rem, or `lg`, from 20 rem up to 28 rem; it narrows to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; it flips to the other side without room. `align` is `start`, `center`, the default, or `end`.
-
-```tsx
-<Popover
-  title="Billing periods"
-  side="right"
-  align="start"
-  trigger={<IconButton variant="text" icon={<IconHelp />} aria-label="About billing periods" />}
->
-  <Text>Members added later are billed from the next period.</Text>
-</Popover>
-```
-
-### Customize
-
-Every popup, a popover, a menu, a Select's or a Combobox's list, a picker, a hover card, rich text suggestions and the command palette, is frosted. Three properties, set on a `.env-theme` boundary, change them all:
-
-- `--env-popup-opacity`, 88 % in light and 90 % in dark, how much of the popup's color covers what is behind it; `100%` makes popups solid. The color is `--env-color-bg-popup`.
-- `--env-popup-blur`, 1.375 rem, the blur of what shows through, with a little more saturation.
-- `--env-popup-shadow`, a soft shadow in the text's color in light and a deeper shade of the page in dark: with the avatars', envUI's only shadow.
-
-In dark a faint hairline of the text color keeps a frosted popup's edge, where its shadow barely shows. At high contrast, with reduced transparency and under forced colors popups are solid, with their elevation edge and no blur or shadow; at high contrast the edge is a modal's, `--env-elevation-3-border`, the strongest. Tooltips are frosted too, at `--env-tooltip-opacity` with a smaller `--env-tooltip-shadow`, as [Tooltip](tooltip.md#customize) describes.
-
-`className`, `style`, `ref` and data attributes reach the surface, `env-popover`, which has `data-width="lg"` when large and renders on PopupSurface in the trigger's text direction and theme. Its title is `env-popover-title`.

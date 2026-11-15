@@ -47,7 +47,6 @@ const destinations: Destination[] = [
   { label: 'Settings', icon: <IconSettings />, href: '#settings' },
 ];
 
-/** Toasts in a few tones, one with an action, kept until the page closes. */
 function Toasts() {
   const toast = useToast();
   useEffect(() => {
@@ -62,11 +61,6 @@ function Toasts() {
   return null;
 }
 
-/**
- * Every component that has color properties, at rest and disabled, with none set:
- * DefaultColors.test.tsx forces each control into its states and compares the colors it paints
- * with those the integration branch painted, so envUI's own colors can't drift.
- */
 export default function DefaultColorsFixture() {
   return (
     <Theme theme="light" className="fixture-section" data-testid="default-colors">

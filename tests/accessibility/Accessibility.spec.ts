@@ -1,17 +1,3 @@
-/**
- * The site's accessibility scan: axe scans one page of each kind the site has, in light, and the
- * pages of `allThemesOn` in dark and both high-contrast themes too, and compares the violations
- * with KnownViolations.json. A new violation fails, and so does a listed one that no longer occurs,
- * so the list only shrinks. The library's components are scanned in their fixtures
- * (tests/component/Accessibility.test.tsx). Run `npm run test:a11y`; after fixing violations, or
- * when a reviewed change has to add one, rewrite the lists with `npm run test:a11y:update` and
- * review their diff.
- *
- * Violations are keyed by page, theme, axe rule and a stable target: the catalogue region (the
- * specimen's heading, sidebar, header…) and the element's tag with its env-, site-, catalogue-
- * and docs- classes, counted.
- * React ids and child positions are left out so unrelated edits do not move the keys.
- */
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdirSync, readFileSync, rmdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -26,17 +12,13 @@ import {
 } from '../browser/support/CatalogueThemes';
 import { findPage } from '../../apps/site/src/routes/SiteRoutes';
 
-/** light on every page, and dark, light-hc and dark-hc on the pages of allThemesOn. */
 type Theme = ThemeName;
-/** rule id → stable target → count */
 type RuleCounts = Record<string, Record<string, number>>;
-/** page route → theme → rule counts */
 type Violations = Record<string, Partial<Record<Theme, RuleCounts>>>;
 interface Scan {
   route: string;
   theme: Theme;
   counts: RuleCounts;
-  /** rule id → what it checks, and the first offending element of each target */
   details: Record<
     string,
     { help: string; helpUrl: string; impact: string; samples: Record<string, string> }
@@ -44,20 +26,17 @@ interface Scan {
 }
 
 const exceptionsFile = fileURLToPath(new URL('./KnownViolations.json', import.meta.url));
-/** WCAG 2.0–2.2 A and AA plus axe's best practices: every rule except AAA and deprecated ones. */
-const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
-/**
- * High contrast promises text at 7:1, WCAG's AAA level (1.4.6), so its themes also run axe's AAA
- * contrast rule, color-contrast-enhanced, beside the AA rules. An enabled rule runs whatever the
- * tags, so this adds that one rule and no other AAA rule.
- */
+const aaAndBestPracticeTags = [
+  'wcag2a',
+  'wcag2aa',
+  'wcag21a',
+  'wcag21aa',
+  'wcag22aa',
+  'best-practice',
+];
 const highContrastRules = { 'color-contrast-enhanced': { enabled: true } };
 
-/**
- * A page of each kind: the home page, two components' pages and a foundation's page, a
- * gallery, and in the Docs a component's page, a guide, the token reference and the changelog.
- */
-const kinds = [
+const onePageOfEachKind = [
   'overview',
   'components/button',
   'components/text-field',
@@ -68,19 +47,14 @@ const kinds = [
   'docs/tokens',
   'docs/changelog',
 ];
-/**
- * Also scanned in dark and high contrast: the color roles and actions with their states, and the
- * Docs' props tables and token swatches.
- */
 const allThemesOn = new Set(['components/button', 'docs/tokens']);
 
-const pages = kinds.map((path) => {
+const pages = onePageOfEachKind.map((path) => {
   const page = findPage(path);
   if (!page) throw new Error(`Accessibility.spec.ts names a page the site does not have: ${path}.`);
   const themes = allThemesOn.has(path) ? allThemes : allThemes.slice(0, 1);
   return { path, title: page.title, routes: [{ route: path, themes }] };
 });
-/** Every route scanned, with the themes it is scanned in. */
 const routes = new Map<string, Set<string>>([
   ...pages.flatMap((page) =>
     page.routes.map(({ route, themes }): [string, Set<string>] => [
@@ -90,7 +64,6 @@ const routes = new Map<string, Set<string>>([
   ),
 ]);
 
-/** The note KnownViolations.json opens with: it is written, not edited. */
 const generatedNote =
   'Written by tests/accessibility/Accessibility.spec.ts. After fixing violations, run npm run test:a11y:update; add to it only for a reviewed reason.';
 
@@ -108,13 +81,9 @@ function sortKeys<T>(value: T): T {
   ) as T;
 }
 
-/**
- * Workers rewrite their own pages; a directory lock keeps the read-modify-write atomic. A rewrite
- * holds it for milliseconds, so a lock older than a minute is one a stopped update left behind, and
- * is removed.
- */
 function updateExceptions(change: (violations: Violations) => void) {
   const lock = `${exceptionsFile}.lock`;
+  const abandonedLockAge = 60_000;
   const wait = new Int32Array(new SharedArrayBuffer(4));
   for (let attempt = 0; ; attempt++) {
     try {
@@ -122,7 +91,10 @@ function updateExceptions(change: (violations: Violations) => void) {
       break;
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'EEXIST' || attempt > 500) throw error;
-      if (Date.now() - (statSync(lock, { throwIfNoEntry: false })?.mtimeMs ?? Date.now()) > 60_000)
+      if (
+        Date.now() - (statSync(lock, { throwIfNoEntry: false })?.mtimeMs ?? Date.now()) >
+        abandonedLockAge
+      )
         rmSync(lock, { recursive: true, force: true });
       else Atomics.wait(wait, 0, 0, 20);
     }
@@ -143,19 +115,12 @@ function updating(testInfo: TestInfo) {
   return ['all', 'changed'].includes(testInfo.config.updateSnapshots);
 }
 
-/**
- * Brings each skeleton into view in turn, as a reader scrolling the page does: a pre-rendered page
- * renders a figure's subject only once it nears the view (apps/site/src/figures/useSubjectShown.ts).
- * Playwright scrolls through the browser rather than the page's scrollIntoView, which the site
- * stands in for while a stage plays (apps/site/src/motion/BrowserStandIns.ts).
- */
 async function showFigures(page: Page) {
   for (;;) {
     const skeleton = (
       await page.evaluateHandle(() => document.querySelector('.site-loading'))
     ).asElement();
     if (!skeleton) return;
-    // A skeleton may go as it scrolls, its subject rendered.
     await skeleton.scrollIntoViewIfNeeded().catch(() => {});
     await page.waitForFunction((element) => !element.isConnected, skeleton);
   }
@@ -164,17 +129,9 @@ async function showFigures(page: Page) {
 async function settle(page: Page) {
   await page.locator('#site-main').waitFor();
   await showFigures(page);
-  // A skeleton of the site's (.site-loading, loading/Skeletons.tsx) marks a part that is still
-  // loading: an example, its code, a specimen, a demo, the icon list, the token reference or the
-  // changelog. A tile's (.catalogue-tile-loading) waits for the tile to come into view instead.
-  // A section still to show is its outline (data-site-pending, markdown/SectionOutline.ts) until
-  // it renders, with the skeletons of its parts.
   await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
   await page.locator('.site-loading').first().waitFor({ state: 'detached' });
   await page.evaluate(() => document.fonts.ready);
-  // Theme changes transition colors; contrast measured mid-transition is neither theme's. The
-  // animations' states are polled rather than their finished promises awaited: Chromium does not
-  // resolve that promise for a transition inside a closed disclosure, though the transition ends.
   await expect
     .poll(() =>
       page.evaluate(
@@ -191,10 +148,6 @@ async function settle(page: Page) {
     .toBe(0);
 }
 
-/**
- * Opens every example's Code disclosure, so axe checks the highlighted source as a reader who opens
- * it sees it; closed, its tokens are not rendered and the scan would pass over them.
- */
 async function expandCode(page: Page) {
   await page.locator('#site-main').waitFor();
   await page.evaluate(() => {
@@ -205,10 +158,6 @@ async function expandCode(page: Page) {
   });
 }
 
-/**
- * Waits until every code block in a language that is highlighted shows its tokens: those of the
- * examples, and those whose label names such a language, such as "tsx code".
- */
 async function highlighted(page: Page) {
   await page.waitForFunction(() =>
     [...document.querySelectorAll<HTMLElement>('.env-code-block pre')]
@@ -223,7 +172,6 @@ async function highlighted(page: Page) {
   );
 }
 
-/** Switches the catalogue to the theme's scheme in its Display menu, under the theme's contrast. */
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
   const root = page.locator('html');
@@ -235,7 +183,7 @@ async function setTheme(page: Page, theme: CatalogueTheme) {
 async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
   const results = await new AxeBuilder({ page })
     .options({
-      runOnly: { type: 'tag', values: tags },
+      runOnly: { type: 'tag', values: aaAndBestPracticeTags },
       ...(theme.endsWith('-hc') && { rules: highContrastRules }),
     })
     .analyze();
@@ -252,7 +200,6 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
             .map((name) => `.${name}`)
             .join('');
         const resolve = (selector: string | string[]) => {
-          // Targets inside shadow roots are a chain of selectors, one per root.
           const chain = Array.isArray(selector) ? selector : [selector];
           let root: Document | ShadowRoot | null | undefined = document;
           let element: Element | null = null;
@@ -313,7 +260,6 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
   return { route, theme, counts, details };
 }
 
-/** Lines for every count that differs from the known list; empty when they match. */
 function compare(scan: Scan, known: RuleCounts = {}) {
   const added: string[] = [];
   const fixed: string[] = [];
@@ -342,10 +288,6 @@ function compare(scan: Scan, known: RuleCounts = {}) {
   return { added, fixed };
 }
 
-// The scan runs on the hosted build, served from dist/site/ by page.route, so no server is
-// involved. The development server, with each module a request of its own, could drop a page's
-// files, as when it restarted or ran out of sockets, and leave the page blank until the test's
-// timeout.
 test.beforeAll(() => {
   if (!siteBuilt())
     throw new Error(
@@ -359,7 +301,6 @@ test.beforeEach(async ({ page }) => {
 
 for (const { path, title, routes: pageRoutes } of pages) {
   test(`${title} (${path}) has no new accessibility violations`, async ({ page }, testInfo) => {
-    // A page of the theme sample, or of every view, takes several scans of about 10 s each.
     test.slow(pageRoutes.flatMap(({ themes }) => themes).length > 1);
     const scans: Scan[] = [];
     for (const { route, themes } of pageRoutes) {
@@ -376,7 +317,6 @@ for (const { path, title, routes: pageRoutes } of pages) {
   });
 }
 
-/** Rewrites the known violations of these scans, or fails on any difference from them. */
 function record(testInfo: TestInfo, title: string, scans: Scan[]) {
   if (updating(testInfo)) {
     updateExceptions((violations) => {
@@ -411,7 +351,6 @@ function record(testInfo: TestInfo, title: string, scans: Scan[]) {
     );
 }
 
-// Playwright requires the fixtures object as the first parameter, even when no fixture is used.
 // eslint-disable-next-line no-empty-pattern
 test('known violations name only the scans that run', async ({}, testInfo) => {
   const stale = Object.entries(readExceptions()).flatMap(([route, themes]) =>

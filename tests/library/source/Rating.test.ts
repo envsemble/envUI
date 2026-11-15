@@ -1,5 +1,3 @@
-// Rating's markup: stars filled to the value in half steps, named once as an image, and numbers in
-// the provider's locale and messages, with DiffStat and AnimatedNumber beside it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -22,9 +20,8 @@ const render = (element) => firstElement(renderToStaticMarkup(element));
 const byClass = (root, name) => elementsOf(root).filter((element) => hasClass(element, name));
 const image = (root) => elementsOf(root).find((element) => element.attributes.role === 'img');
 
-test('a rating fills its stars to the value in half steps and is named once', () => {
+test('a rating fills its stars to the value in half steps, within its scale, and is named once', () => {
   const half = render(h(Rating, { value: 3.5, showValue: true }));
-  // One image named by the rating; the number beside it is hidden from assistive technology.
   assert.equal(image(half).attributes['aria-label'], '3.5 out of 5 stars');
   const [value] = byClass(half, 'env-rating-value');
   assert.equal(textOf(value), '3.5');
@@ -34,10 +31,8 @@ test('a rating fills its stars to the value in half steps and is named once', ()
     stars.map((star) => star.attributes['data-fill']),
     ['full', 'full', 'full', 'half', undefined],
   );
-  // Only the half star holds a half fill.
   assert.equal(byClass(stars[3], 'env-rating-star-half').length, 1);
   assert.equal(byClass(half, 'env-rating-star-half').length, 1);
-  // Other scales, values kept within the scale, and the label in another wording.
   assert.equal(byClass(render(h(Rating, { value: 7, max: 10 })), 'env-rating-star').length, 10);
   const over = render(h(Rating, { value: 9, formatLabel: (shown, max) => `${shown}/${max}` }));
   assert.equal(image(over).attributes['aria-label'], '5/5');

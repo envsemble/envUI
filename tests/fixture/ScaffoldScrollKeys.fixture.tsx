@@ -4,7 +4,6 @@ import { TallPage } from './Scaffold.fixture.js';
 
 export const mount = 'standalone';
 
-/** A field inside a web component, whose keys reach the page from its shadow root. */
 class ShadowField extends HTMLElement {
   constructor() {
     super();
@@ -16,7 +15,6 @@ class ShadowField extends HTMLElement {
 }
 if (!customElements.get('fixture-field')) customElements.define('fixture-field', ShadowField);
 
-/** A field in a closed shadow root, out of the page's sight; focusing the element focuses it. */
 class ClosedField extends HTMLElement {
   #field = document.createElement('input');
   constructor() {
@@ -32,7 +30,6 @@ class ClosedField extends HTMLElement {
 if (!customElements.get('fixture-closed-field'))
   customElements.define('fixture-closed-field', ClosedField);
 
-/** The same in an ordinary element, which cannot take focus itself. */
 function attachPlainField(host: HTMLSpanElement | null) {
   if (!host || 'value' in host) return;
   const field = document.createElement('input');
@@ -42,7 +39,6 @@ function attachPlainField(host: HTMLSpanElement | null) {
   Object.defineProperty(host, 'value', { get: () => field.value });
 }
 
-/** A menubar in the title bar, whose triggers use the arrow keys. */
 function NotesMenubar() {
   return (
     <Menubar.Root aria-label="Notes">
@@ -53,11 +49,6 @@ function NotesMenubar() {
   );
 }
 
-/**
- * A Scaffold that fills the window, for the scrolling keys: a title bar across the width with a
- * menubar, fields in open and closed shadow roots and media controls; a drawer stand-in with a
- * button, a link and a list that scrolls without taking focus; and a long body.
- */
 export default function ScaffoldScrollKeysFixture() {
   return (
     <Scaffold

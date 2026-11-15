@@ -15,16 +15,11 @@ import type { ColorFormat } from './colorValue.js';
 import '../../../styles/Base.css';
 import '../../../styles/ColorPicker.css';
 
-/**
- * ColorPicker's values: the fields of the chosen format, with a format menu where there are several,
- * or, `together`, every format's fields on a row of its own. The eyedropper follows the fields, on
- * the first row together, and each format has its copy button with `copyable`.
- */
 export function ColorValues({
   color,
   onChange,
   formats,
-  format,
+  oneAtATimeFormat: format,
   onFormatChange,
   together,
   alpha,
@@ -36,8 +31,7 @@ export function ColorValues({
   color: Color;
   onChange: (color: Color) => void;
   formats: readonly ColorFormat[];
-  /** The format shown one at a time. */
-  format: ColorFormat;
+  oneAtATimeFormat: ColorFormat;
   onFormatChange: (format: ColorFormat) => void;
   together: boolean;
   alpha: boolean;
@@ -47,7 +41,7 @@ export function ColorValues({
   readOnly: boolean;
 }) {
   const messages = useMessages('colorPicker', colorPickerMessages);
-  const shorts = {
+  const channelLetters = {
     red: messages.redShort,
     green: messages.greenShort,
     blue: messages.blueShort,
@@ -61,7 +55,7 @@ export function ColorValues({
       format={each}
       alpha={alpha}
       hexLabel={messages.hexField}
-      shorts={shorts}
+      channelLetters={channelLetters}
       value={color}
       onChange={onChange}
       disabled={disabled}
@@ -82,9 +76,6 @@ export function ColorValues({
     );
   if (together)
     return (
-      // Each format on a row of its own, named after it, its fields and its copy button in columns
-      // that line up from row to row; the eyedropper ends the first row. The channels' letters, and
-      // the hex value's #, say which format a row is.
       <div
         className="env-color-picker-values"
         data-formats="together"
@@ -127,7 +118,6 @@ export function ColorValues({
           >
             <Menu.RadioGroup
               value={format}
-              // The radio items' values are the formats.
               onValueChange={(next) => onFormatChange(next as ColorFormat)}
             >
               {formats.map((each) => (

@@ -1,7 +1,3 @@
-// CalendarHeatmap's markup, rendered on the server: a grid of named days with a single tab stop,
-// its labels, weeks and locale, the levels its values and thresholds give, and an update that
-// rescales them. Names are in British English, from Intl, with a comma after the weekday in some
-// runtimes.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -14,7 +10,6 @@ const { CalendarHeatmap, EnvUIProvider } = await importSource(
   'packages/ui/src/index.ts',
 );
 
-/** A deterministic year of activity, as the component tests' fixture has it. */
 function activity(end, days, seed) {
   const last = Date.parse(`${end}T00:00:00Z`);
   return Array.from({ length: days }, (_, index) => {
@@ -25,7 +20,6 @@ function activity(end, days, seed) {
 }
 const year = activity('2026-10-10', 365, 3);
 
-/** The heatmap's root, rendered in a locale. */
 const render = (props, locale = 'en-GB', messages) =>
   firstElement(
     renderToStaticMarkup(h(EnvUIProvider, { locale, messages }, h(CalendarHeatmap, props))),
@@ -50,11 +44,9 @@ test('a year of days is one grid with named cells and a single tab stop', () => 
   const stops = cells.filter((cell) => cell.attributes.tabindex === '0');
   assert.equal(stops.length, 1);
   assert.match(stops[0].attributes['aria-label'], /^Sat,? 10 Oct 2026: 0$/);
-  // Rows run by weekday: the first row holds the Sundays.
   const [firstRow] = all(grid, (element) => element.tag === 'tbody')[0].children;
   assert.match(days(firstRow)[0].attributes['aria-label'], /^Sun,? 12 Oct 2025: \d+$/);
   assert.match(day(grid, '2025-10-11').attributes['aria-label'], /^Sat,? 11 Oct 2025: \d+$/);
-  // Month and weekday names are visual; each day names its own date.
   assert.equal(
     all(grid, (element) => element.tag === 'thead')[0].attributes['aria-hidden'],
     'true',
@@ -65,7 +57,6 @@ test('a year of days is one grid with named cells and a single tab stop', () => 
   assert.equal(legend.attributes['aria-hidden'], 'true');
   assert.equal(textOf(legend), 'LessMore');
   assert.equal(byClass(legend, 'env-calendar-heatmap-swatch').length, 5);
-  // No tooltip is in the markup at rest.
   assert.equal(byClass(heatmap, 'env-tooltip-positioner').length, 0);
 });
 
@@ -76,7 +67,6 @@ test('an update rescales the days', () => {
   assert.equal(level(before, '2026-10-10'), '0');
   assert.equal(level(after, '2026-10-10'), '4');
   assert.match(day(after, '2026-10-10').attributes['aria-label'], /^Sat,? 10 Oct 2026: 20$/);
-  // With a larger maximum, fewer days reach the strongest step.
   const strongest = (root) => days(root).filter((cell) => cell.attributes['data-level'] === '4');
   assert.ok(strongest(after).length < strongest(before).length);
 });
@@ -117,7 +107,6 @@ test('custom labels, weeks from Monday, levels and a tone', () => {
   assert.equal(days(heatmap).length, 35);
   assert.deepEqual(labels(heatmap, 'env-calendar-heatmap-weekday'), ['Mo', 'Mi', 'Fr']);
   assert.deepEqual(labels(heatmap, 'env-calendar-heatmap-month'), ['Mär']);
-  // The first week starts on Monday 23 February; only Sunday 1 March is in range.
   const rows = all(heatmap, (element) => element.tag === 'tbody')[0].children;
   assert.deepEqual(
     rows.map((row) => row.children[1].attributes['aria-label'] ?? null),
@@ -126,7 +115,6 @@ test('custom labels, weeks from Monday, levels and a tone', () => {
   assert.equal(day(heatmap, '2026-03-03').attributes['aria-label'], 'Di 3 Mär 2026: 4 deployments');
   assert.equal(level(heatmap, '2026-03-03'), '1');
   assert.equal(level(heatmap, '2026-03-24'), '2');
-  // The strongest step is the tone itself.
   assert.equal(heatmap.attributes['data-tone'], 'success');
   assert.equal(day(heatmap, '2026-03-24').attributes.style, '--_calendar-heatmap-mix:100%');
   assert.equal(textOf(byClass(heatmap, 'env-calendar-heatmap-legend')[0]), 'WenigerMehr');
@@ -177,12 +165,10 @@ test('thresholds set the color steps, for example to color days by rank', () => 
     endDate: '2026-05-16',
     thresholds: [40, 1, 20, 10],
   });
-  // Thresholds in any order: 1, 10, 20 and 40 start the four steps above the empty one.
   assert.deepEqual(
     ['2026-05-04', '2026-05-05', '2026-05-06', '2026-05-07'].map((date) => level(heatmap, date)),
     ['1', '2', '3', '4'],
   );
-  // Below the first threshold a day shows as empty, like a day without data.
   assert.equal(level(heatmap, '2026-05-08'), '0');
   assert.equal(level(heatmap, '2026-05-09'), '0');
   assert.equal(byClass(heatmap, 'env-calendar-heatmap-swatch').length, 5);
@@ -201,7 +187,6 @@ test('explicit thresholds color days of 0, and two levels color their only step 
     endDate: '2026-05-09',
     thresholds: [0, 10],
   });
-  // A first threshold of 0 colors days of 0, with or without data; values below it stay empty.
   assert.equal(level(fromZero, '2026-05-04'), '1');
   assert.equal(level(fromZero, '2026-05-03'), '1');
   assert.equal(level(fromZero, '2026-05-05'), '2');

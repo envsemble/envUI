@@ -4,19 +4,16 @@ import * as choiceControls from '../fixture/ChoiceControls.fixture.tsx';
 import { box, css, keyboard, mouse } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** The label a choice control's input sits in, its root. */
 const rootOf = (input: Element) => input.closest('label')!;
 
 test('keyboard focus rings a radio side by side, and the whole row of a row radio', async () => {
   mount(choiceControls);
-  // Tab and the arrow keys move focus the way a keyboard user does, so the focus is visible.
   (page.getByRole('switch', { name: 'Alerts', exact: true }).element() as HTMLElement).focus();
   await keyboard.press('Tab');
   await expect.element(page.getByRole('radio', { name: 'Team', exact: true })).toHaveFocus();
   await keyboard.press('ArrowRight');
   const solo = page.getByRole('radio', { name: 'Solo', exact: true });
   await expect.element(solo).toHaveFocus();
-  // WebKit gives a radio focused from the keyboard no :focus-visible; elsewhere the ring shows.
   if (solo.element().matches(':focus-visible')) {
     expect(css(solo, 'outline-style')).toBe('solid');
     expect(Number.parseFloat(css(solo, 'outline-width'))).toBe(2);
@@ -28,7 +25,6 @@ test('keyboard focus rings a radio side by side, and the whole row of a row radi
   if (editor.element().matches(':focus-visible'))
     await expect.poll(() => css(rootOf(editor.element()), 'outline-style')).toBe('solid');
 
-  // The chosen row takes the selection fill, its label the text color, also under the pointer.
   const role = page.getByRole('group', { name: 'Role' }).element();
   const chosen = rootOf(page.getByRole('radio', { name: /Viewer/ }).element());
   const other = rootOf(editor.element());
@@ -46,7 +42,6 @@ test('keyboard focus rings a radio side by side, and the whole row of a row radi
     muted: token('--env-color-bg-muted'),
   };
   probe.remove();
-  // Arrowing to Editor chose it: choose Viewer again.
   await page.getByRole('radio', { name: /Viewer/ }).click();
   await mouse.move(0, 0);
   await expect.poll(() => css(chosen, 'background-color')).toBe(tokens.selected);

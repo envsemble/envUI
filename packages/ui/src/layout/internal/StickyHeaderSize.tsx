@@ -2,45 +2,43 @@
 
 import { useLayoutEffect, useRef } from 'react';
 
+const subpixelTolerance = 0.5;
+
 /**
- * Inside a sticky PageHeader: publishes the header's height as `--_page-header-block-size` on
- * its Page, so what scrolls into view below it keeps clear of it, also where its title wraps over
- * more lines than Page.css reckons with. Until it runs, as in the server's markup, Page.css
- * reckons the height from the header's rows. It also marks the header data-scrolled while the
- * content after it has scrolled beneath it, which PageHeader.css shows with the muted fill. It
- * renders nothing that takes room.
+ * Inside a sticky PageHeader: publishes the header's height as `--_page-header-block-size` on its
+ * Page, which Page.css estimates until it runs, and marks the header data-scrolled while the
+ * content after it has scrolled beneath it. It renders nothing that takes room.
  */
 export function StickyHeaderSize() {
   const marker = useRef<HTMLSpanElement>(null);
   useLayoutEffect(() => {
     const header = marker.current?.parentElement;
     if (!header) return;
-    // Content scrolls beneath the header once the element after it reaches above its bottom edge.
     let frame = 0;
     const mark = () => {
       frame = 0;
       const next = header.nextElementSibling;
-      const scrolled =
+      const contentScrolledBeneath =
         next !== null &&
-        next.getBoundingClientRect().top < header.getBoundingClientRect().bottom - 0.5;
-      header.toggleAttribute('data-scrolled', scrolled);
+        next.getBoundingClientRect().top <
+          header.getBoundingClientRect().bottom - subpixelTolerance;
+      header.toggleAttribute('data-scrolled', contentScrolledBeneath);
     };
     const schedule = () => {
       if (frame === 0) frame = requestAnimationFrame(mark);
     };
     mark();
-    // Scroll doesn't bubble: listening while capturing hears every element that scrolls.
     const view = header.ownerDocument.defaultView ?? window;
-    header.ownerDocument.addEventListener('scroll', schedule, { capture: true, passive: true });
+    const hearEveryElementThatScrolls = { capture: true, passive: true };
+    header.ownerDocument.addEventListener('scroll', schedule, hearEveryElementThatScrolls);
     view.addEventListener('resize', schedule, { passive: true });
     const page = header.parentElement;
-    // Only a Page's own header publishes its height: Page marks itself as a layout.
     const publish = () =>
       page?.style.setProperty('--_page-header-block-size', `${header.offsetHeight}px`);
-    const ownPage = page?.getAttribute('data-env-layout') === 'page';
-    if (ownPage) publish();
+    const isPagesOwnHeader = page?.getAttribute('data-env-layout') === 'page';
+    if (isPagesOwnHeader) publish();
     const observer = new ResizeObserver(() => {
-      if (ownPage) publish();
+      if (isPagesOwnHeader) publish();
       schedule();
     });
     observer.observe(header);
@@ -50,7 +48,7 @@ export function StickyHeaderSize() {
       view.removeEventListener('resize', schedule);
       observer.disconnect();
       header.removeAttribute('data-scrolled');
-      if (ownPage) page?.style.removeProperty('--_page-header-block-size');
+      if (isPagesOwnHeader) page?.style.removeProperty('--_page-header-block-size');
     };
   }, []);
   return <span ref={marker} hidden />;

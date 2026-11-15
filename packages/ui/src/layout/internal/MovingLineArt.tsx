@@ -14,37 +14,32 @@ import {
 } from 'react';
 import { setRef } from '../../internal/react/setRef.js';
 import type { LineArtDrawing, LineArtMotion } from '../LineArt.js';
-import { lineArtShapes } from './lineArtShapes.js';
+import { lineArtSheet, lineArtShapes } from './lineArtShapes.js';
 
-/**
- * Each drawing's lines, ready to move: each set one long, so a dash of one is the whole line, and
- * given its place in the order as a fraction of the time the lines start over
- * (--_line-art-at), from 0 for the first beat to 1 for the last; and the line that finishes
- * last as they draw in, and as they draw out, the other way round.
- */
-const moving = new Map<
+const movingShapesByDrawing = new Map<
   LineArtDrawing,
   { shapes: ReactNode[]; last: { in: number; out: number } }
 >();
 function movingShapes(drawing: LineArtDrawing) {
-  let found = moving.get(drawing);
+  let found = movingShapesByDrawing.get(drawing);
   if (found) return found;
   const { shapes: fragment, order: beats } = lineArtShapes[drawing];
-  const at: number[] = [];
+  const shareOfLoopAtStart: number[] = [];
   beats.forEach((lines, beat) => {
-    for (const line of lines) at[line] = beats.length > 1 ? beat / (beats.length - 1) : 0;
+    for (const line of lines)
+      shareOfLoopAtStart[line] = beats.length > 1 ? beat / (beats.length - 1) : 0;
   });
-  // A drawing is a Fragment of its shapes, each an SVG element.
-  const drawn = (fragment as ReactElement<{ children: ReactNode }>).props.children;
-  const shapes = Children.toArray(drawn).map((shape, index) =>
+  const shapesOfFragment = (fragment as ReactElement<{ children: ReactNode }>).props.children;
+  const shapes = Children.toArray(shapesOfFragment).map((shape, index) =>
     cloneElement(shape as ReactElement<{ pathLength?: number; style?: CSSProperties }>, {
       pathLength: 1,
-      style: { '--_line-art-at': at[index] },
+      style: { '--_line-art-at': shareOfLoopAtStart[index] },
     }),
   );
-  // Every drawing has a beat, and every beat a line.
-  found = { shapes, last: { in: beats.at(-1)!.at(-1)!, out: beats[0].at(-1)! } };
-  moving.set(drawing, found);
+  const lastLineDrawingIn = beats.at(-1)!.at(-1)!;
+  const lastLineDrawingOut = beats[0].at(-1)!;
+  found = { shapes, last: { in: lastLineDrawingIn, out: lastLineDrawingOut } };
+  movingShapesByDrawing.set(drawing, found);
   return found;
 }
 
@@ -74,29 +69,31 @@ export function MovingLineArt({
     },
     [ref],
   );
-  // The lines keep their width on screen (non-scaling-stroke), which lays their dashes out on
-  // screen too, while their length of one is the drawing's: the drawing's scale
-  // (--_line-art-scale) sets the dashes to the lines' length on screen, at any size.
-  useLayoutEffect(() => {
-    if (!svg) return;
-    const measure = () => {
-      const scale = Math.max(svg.clientWidth / 480, svg.clientHeight / 330);
-      if (scale > 0) svg.style.setProperty('--_line-art-scale', `${scale}px`);
-    };
-    measure();
-    const resizes = new ResizeObserver(measure);
-    resizes.observe(svg);
-    return () => resizes.disconnect();
-  }, [svg]);
-  // A loop's turn, which starts drawing in whenever the loop is set.
-  const [turn, setTurn] = useState({ motion, out: false });
-  if (turn.motion !== motion) setTurn({ motion, out: false });
-  const out = motion === 'disappear' || (motion === 'loop' && turn.out);
+  useLayoutEffect(
+    function scaleDashesToLinesOnScreen() {
+      if (!svg) return;
+      const measure = () => {
+        const scale = Math.max(
+          svg.clientWidth / lineArtSheet.width,
+          svg.clientHeight / lineArtSheet.height,
+        );
+        if (scale > 0) svg.style.setProperty('--_line-art-scale', `${scale}px`);
+      };
+      measure();
+      const resizes = new ResizeObserver(measure);
+      resizes.observe(svg);
+      return () => resizes.disconnect();
+    },
+    [svg],
+  );
+  const [loopTurn, setLoopTurn] = useState({ motion, out: false });
+  if (loopTurn.motion !== motion) setLoopTurn({ motion, out: false });
+  const out = motion === 'disappear' || (motion === 'loop' && loopTurn.out);
   const ended = (event: AnimationEvent<SVGSVGElement>) => {
     onAnimationEnd?.(event);
-    // The motion ends with the line that starts last, as every line takes as long.
-    if (event.target !== event.currentTarget.children[out ? lines.last.out : lines.last.in]) return;
-    if (motion === 'loop') setTurn({ motion, out: !out });
+    const lineThatStartsLast = event.currentTarget.children[out ? lines.last.out : lines.last.in];
+    if (event.target !== lineThatStartsLast) return;
+    if (motion === 'loop') setLoopTurn({ motion, out: !out });
     else onMotionEnd?.();
   };
   return (

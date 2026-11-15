@@ -92,18 +92,19 @@ export function SegmentedControl({
   onFocus,
   ...props
 }: SegmentedControlProps) {
-  // The arrow keys follow the text direction, which Base UI only knows from its own provider.
-  const scope = useDirectionScope<HTMLDivElement>(ref);
-  // The thumb travels to the chosen segment.
+  const directionScope = useDirectionScope<HTMLDivElement>(ref);
   const thumb = useRef<HTMLSpanElement>(null);
-  useLayoutEffect(() => (thumb.current ? followThumb(thumb.current) : undefined), []);
+  useLayoutEffect(
+    () => (thumb.current ? keepThumbOverChosenSegment(thumb.current) : undefined),
+    [],
+  );
   return (
-    <DirectionProvider direction={scope.direction}>
+    <DirectionProvider direction={directionScope.direction}>
       <RadioGroup
         {...props}
-        ref={scope.ref}
+        ref={directionScope.ref}
         onFocus={(event) => {
-          scope.onFocus();
+          directionScope.onFocus();
           onFocus?.(event);
         }}
         value={value}
@@ -127,15 +128,14 @@ export function SegmentedControl({
 function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: boolean }) {
   const labelRef = useRef<HTMLSpanElement>(null);
   const formatters = useFormatters();
-  // Whether a full-width segment cuts its label short, which its tooltip then shows whole.
-  const [cut, setCut] = useState(false);
+  const [labelCutShort, setLabelCutShort] = useState(false);
   useLayoutEffect(() => {
     const element = labelRef.current;
     if (!fullWidth || !element) {
-      setCut(false);
+      setLabelCutShort(false);
       return;
     }
-    const measure = () => setCut(element.scrollWidth > element.clientWidth);
+    const measure = () => setLabelCutShort(element.scrollWidth > element.clientWidth);
     measure();
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(measure);
@@ -175,21 +175,13 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
   );
   if (!fullWidth) return segment;
   return (
-    <CutLabelTooltip cut={cut} label={item.label} side="top">
+    <CutLabelTooltip cut={labelCutShort} label={item.label} side="top">
       {segment}
     </CutLabelTooltip>
   );
 }
 
-/**
- * Places a segmented control's thumb over its chosen segment (the item with data-checked): its box,
- * measured against the track, as --_segmented-control-thumb-left, -top, -width and -height,
- * physical, set on the thumb directly, so a change renders nothing. The thumb shows once it has
- * measured a chosen segment (`data-placed`) and hides while none is chosen; until then, as in the
- * server's markup, the chosen segment draws its own. It follows the choice, the segments' sizes and
- * the track's. Returns the cleanup.
- */
-function followThumb(thumb: HTMLElement): () => void {
+function keepThumbOverChosenSegment(thumb: HTMLElement): () => void {
   const track = thumb.parentElement;
   if (!track) return () => {};
   const place = () => {
@@ -202,15 +194,17 @@ function followThumb(thumb: HTMLElement): () => void {
     }
     const box = chosen.getBoundingClientRect();
     const trackBox = track.getBoundingClientRect();
-    // The track's own scale, such as a dialog's as it grows in, which the layout sizes leave out.
-    const scaleX = track.offsetWidth > 0 ? trackBox.width / track.offsetWidth : 1;
-    const scaleY = track.offsetHeight > 0 ? trackBox.height / track.offsetHeight : 1;
-    const left = (box.left - trackBox.left) / scaleX + track.scrollLeft - track.clientLeft;
-    const top = (box.top - trackBox.top) / scaleY + track.scrollTop - track.clientTop;
+    const transformScaleX = track.offsetWidth > 0 ? trackBox.width / track.offsetWidth : 1;
+    const transformScaleY = track.offsetHeight > 0 ? trackBox.height / track.offsetHeight : 1;
+    const left = (box.left - trackBox.left) / transformScaleX + track.scrollLeft - track.clientLeft;
+    const top = (box.top - trackBox.top) / transformScaleY + track.scrollTop - track.clientTop;
     thumb.style.setProperty('--_segmented-control-thumb-left', `${left}px`);
     thumb.style.setProperty('--_segmented-control-thumb-top', `${top}px`);
-    thumb.style.setProperty('--_segmented-control-thumb-width', `${box.width / scaleX}px`);
-    thumb.style.setProperty('--_segmented-control-thumb-height', `${box.height / scaleY}px`);
+    thumb.style.setProperty('--_segmented-control-thumb-width', `${box.width / transformScaleX}px`);
+    thumb.style.setProperty(
+      '--_segmented-control-thumb-height',
+      `${box.height / transformScaleY}px`,
+    );
     thumb.setAttribute('data-placed', '');
   };
   place();
@@ -225,15 +219,14 @@ function followThumb(thumb: HTMLElement): () => void {
       resize.observe(segment);
   };
   observeSegments();
-  // The choice, and segments added or taken away.
-  const mutations =
+  const choiceAndSegmentsObserver =
     view && 'MutationObserver' in view
       ? new view.MutationObserver((records) => {
           if (records.some((record) => record.type === 'childList')) observeSegments();
           place();
         })
       : undefined;
-  mutations?.observe(track, {
+  choiceAndSegmentsObserver?.observe(track, {
     childList: true,
     subtree: true,
     attributes: true,
@@ -241,6 +234,6 @@ function followThumb(thumb: HTMLElement): () => void {
   });
   return () => {
     resize?.disconnect();
-    mutations?.disconnect();
+    choiceAndSegmentsObserver?.disconnect();
   };
 }

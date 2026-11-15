@@ -1,24 +1,12 @@
 @layer env.components {
-  /* Panes: two panes side by side, and how they behave in less room. Its root is the env-panes
-     container and a grid that never paints: supporting Panes put the main pane, the divider and the
-     supporting pane in its three columns, list-detail Panes the list, the divider and the detail. A
-     column with nothing in it takes no room. Below data-split-at, compact first, supporting Panes
-     show the supporting pane as a sheet over the main one while data-open, a bottom sheet in a
-     compact width and a side sheet from a medium one, and list-detail Panes show one pane at a time:
-     the detail while data-open, else the list. From data-split-at the panes sit side by side, the
-     resized one --env-panes-size wide, and the other never under 16 rem beside the gap; the
-     supporting pane shows there unless data-closed. Every edge is logical, so it mirrors in
-     right-to-left text. */
   .env-panes {
-    /* The page left beside a side sheet. */
-    --_panes-sheet-room: 3.5rem;
+    --_panes-gap: var(--env-space-4);
+    --_panes-page-beside-side-sheet: 3.5rem;
     container: env-panes / inline-size;
     box-sizing: border-box;
     position: relative;
     display: grid;
     grid-template-rows: minmax(0, 1fr);
-    /* As tall as its container where that has a height, such as a Scaffold's body, so each pane
-       scrolls on its own; else as tall as its content. */
     block-size: 100%;
     min-block-size: 0;
     min-inline-size: 0;
@@ -57,40 +45,27 @@
   .env-panes-main {
     grid-column: 1;
   }
-  /* The divider shows only while the panes sit side by side. It is the gap between them, never a
-     line: panes that hold surfaces, such as a Surface each, stand apart across it. Its grip, hover
-     and focus are the resize handle's (ResizeHandle.css, data-grip), the same as a side Sheet's and
-     the Drawer's edge. It is exactly the gap, under a coarse pointer too. */
   .env-panes-divider {
-    --_resize-handle-size: var(--env-space-4);
+    --_resize-handle-size: var(--_panes-gap);
     display: none;
     grid-column: 2;
     grid-row: 1;
   }
-  /* Under a coarse pointer its hit area reaches the touch size across the gap without widening it. */
   @media (pointer: coarse) {
     .env-panes-divider::before {
       content: '';
       position: absolute;
       inset-block: 0;
-      inset-inline: calc((var(--env-space-4) - var(--env-control-height-touch)) / 2);
+      inset-inline: calc((var(--_panes-gap) - var(--env-control-height-touch)) / 2);
     }
   }
-  /* Without a divider the panes keep the same gap, so adding one moves nothing: the resized pane
-     holds it as a margin while the panes sit side by side, which --_panes-split says. */
   .env-panes[data-behavior='supporting']:not(:has(> .env-panes-divider)) > .env-panes-supporting {
-    margin-inline-start: calc(var(--_panes-split, 0) * var(--env-space-4));
+    margin-inline-start: calc(var(--_panes-split, 0) * var(--_panes-gap));
   }
   .env-panes[data-behavior='list-detail']:not(:has(> .env-panes-divider)) > .env-panes-list {
-    margin-inline-end: calc(var(--_panes-split, 0) * var(--env-space-4));
+    margin-inline-end: calc(var(--_panes-split, 0) * var(--_panes-gap));
   }
 
-  /* Supporting, below data-split-at: the supporting pane is a modal bottom sheet over the main pane
-     while open, as wide as the panes and at most 85% of their height, over a backdrop that closes it,
-     with its close button at the top end. It is on a Sheet's fill, the navigation's, so a surface in
-     it, which it holds side by side, reads as the same panel. As a Sheet, its fill and the backdrop set
-     it apart, with no edge; at high contrast its elevation edge returns (the switch is Theme.css's).
-     Inside a Scaffold whose document scrolls, Scaffold.css makes it the window's. */
   .env-panes-supporting {
     --_panes-sheet-edge: var(--_theme-high-contrast) var(--env-elevation-3-border);
     position: absolute;
@@ -109,8 +84,6 @@
   .env-panes[data-behavior='supporting'][data-open] > .env-panes-supporting {
     display: flex;
   }
-  /* The close button sits at the end of the supporting pane's header row, in every presentation;
-     with data-sheet-only, only while the pane is a sheet. */
   .env-panes-close {
     display: flex;
     flex: none;
@@ -127,13 +100,11 @@
     display: block;
     background: var(--env-color-bg-backdrop-muted);
   }
-  /* From a medium width, still below data-split-at: a side sheet at the end, as tall as the panes,
-     or the window's inside a Scaffold whose document scrolls (Scaffold.css). */
   @container env-panes (width >= 37.5rem) {
     .env-panes > .env-panes-supporting {
       inset-block: 0;
       inset-inline: auto 0;
-      inline-size: min(var(--env-panes-size), 100% - var(--_panes-sheet-room));
+      inline-size: min(var(--env-panes-size), 100% - var(--_panes-page-beside-side-sheet));
       max-block-size: none;
       border-width: 0;
       border-inline-start-width: var(--env-control-border-width);
@@ -141,8 +112,6 @@
     }
   }
 
-  /* List-detail, below data-split-at: one pane at a time across the whole width, the detail while
-     open with the back button at the start of its header row, else the list. */
   .env-panes-list,
   .env-panes-detail {
     grid-column: 1 / -1;
@@ -151,20 +120,14 @@
   .env-panes[data-behavior='list-detail']:not([data-open]) > .env-panes-detail {
     display: none;
   }
-  /* The back button keeps clear of the pane's corner: its label lines up 1 rem in, where a pane's
-     content usually starts, as a text button's label sits on its text's edge. */
   .env-panes-back {
     flex: none;
     padding-block: var(--env-space-3) var(--env-space-2);
     padding-inline: var(--env-space-4);
   }
-  /* The back arrow points toward the inline start, so it turns in right-to-left text. */
   .env-panes-back .env-icon:dir(rtl) {
     transform: scaleX(-1);
   }
-  /* From data-split-at: medium from 37.5 rem, expanded from 52.5 rem and large from 75 rem. The
-     panes sit side by side, the resized one --env-panes-size wide: the supporting pane unless it is
-     closed, when the main pane takes the room and the button that opens the pane shows. */
   @container env-panes (width >= 37.5rem) {
     .env-panes[data-split-at='medium']:not([data-closed])[data-behavior] > .env-panes-divider {
       display: block;
@@ -178,7 +141,7 @@
       grid-column: 3;
       inline-size: min(
         var(--env-panes-size),
-        100cqi - var(--env-panes-other-min) - var(--env-space-4)
+        100cqi - var(--env-panes-other-min) - var(--_panes-gap)
       );
       max-block-size: none;
       border: 0;
@@ -207,7 +170,7 @@
       grid-column: 1;
       inline-size: min(
         var(--env-panes-size),
-        100cqi - var(--env-panes-other-min) - var(--env-space-4)
+        100cqi - var(--env-panes-other-min) - var(--_panes-gap)
       );
     }
     .env-panes[data-split-at='medium'][data-behavior='list-detail'] > .env-panes-detail {
@@ -238,7 +201,7 @@
       grid-column: 3;
       inline-size: min(
         var(--env-panes-size),
-        100cqi - var(--env-panes-other-min) - var(--env-space-4)
+        100cqi - var(--env-panes-other-min) - var(--_panes-gap)
       );
       max-block-size: none;
       border: 0;
@@ -275,7 +238,7 @@
       grid-column: 1;
       inline-size: min(
         var(--env-panes-size),
-        100cqi - var(--env-panes-other-min) - var(--env-space-4)
+        100cqi - var(--env-panes-other-min) - var(--_panes-gap)
       );
     }
     .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='list-detail']
@@ -302,7 +265,7 @@
       grid-column: 3;
       inline-size: min(
         var(--env-panes-size),
-        100cqi - var(--env-panes-other-min) - var(--env-space-4)
+        100cqi - var(--env-panes-other-min) - var(--_panes-gap)
       );
       max-block-size: none;
       border: 0;
@@ -330,7 +293,7 @@
       grid-column: 1;
       inline-size: min(
         var(--env-panes-size),
-        100cqi - var(--env-panes-other-min) - var(--env-space-4)
+        100cqi - var(--env-panes-other-min) - var(--_panes-gap)
       );
     }
     .env-panes[data-split-at][data-behavior='list-detail'] > .env-panes-detail {
@@ -344,8 +307,6 @@
       display: none;
     }
   }
-  /* Forced colors: the sheet's edge takes the system's text color; the divider's grip is the resize
-     handle's (ResizeHandle.css). */
   @media (forced-colors: active) {
     .env-panes-supporting {
       border-color: CanvasText;

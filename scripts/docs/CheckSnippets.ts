@@ -1,44 +1,16 @@
-// Checks that the code in the docs' Markdown agrees with envUI's API. Example files are type-checked
-// with the site; this covers the snippets written in the pages: every ```tsx and ```ts fence of
-// docs/**/*.md (the generated folder aside) and contributing/pages.md that holds envUI code, but
-// `figure=` and `source=` fences, which only name an example file, and a fence marked `nocheck`
-// (```tsx nocheck), pseudo-code on purpose.
-//
-//   node scripts/docs/CheckSnippets.ts       (npm run docs:snippets; npm run docs:check runs it too)
-//
-// Each fence becomes a module of one TypeScript program against the library's source, resolved as
-// the site resolves `@envsemble/envui`. A snippet is a fragment, so on its first line, which the
-// page doesn't have, it gets what it leaves out: an import of each name it uses but doesn't declare
-// that an envUI entry exports (else the icon of that name, such as IconAdd), React's hooks,
-// `toast` as what useToast returns, and `any` for a DOM global it means as its own variable, such
-// as `open`. Its top-level JSX becomes an expression (`wrapSnippet`). Lines keep their numbers.
-//
-// It reports the diagnostics that mean the snippet disagrees with envUI's API (`reportedCodes`),
-// and only where envUI is on the other side (`aboutEnvUI`). Everything else comes from snippets
-// being partial and is ignored: names they assume (2304, 2552, 18004), modules other than envUI's
-// (2307), implicit any (off). Two more problems are reported: a snippet that doesn't parse, since
-// nothing of it is checked, and a component that is neither declared nor exported by envUI, since
-// it may be one envUI renamed; the application's own are listed in `applicationComponents`.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve, sep } from 'node:path';
 import ts from 'typescript';
 import { libraryEntryPoints } from './LibraryEntryPoints.ts';
 import { librarySourceDirectory, repositoryRoot } from '../RepositoryPaths.ts';
 
-/** A code fence of a page that holds TypeScript. */
 export interface Snippet {
-  /** The page, relative to the repository, with forward slashes. */
   file: string;
-  /** The 1-based line of the page where the fence's code starts. */
   line: number;
   lang: 'ts' | 'tsx';
   code: string;
 }
 
-/**
- * The ```ts and ```tsx fences of a Markdown page, in order, but those that place an example
- * (`figure=`, `source=`) or opt out (`nocheck`). A fence inside a longer fence is its text.
- */
 export function extractSnippets(markdown: string, file: string): Snippet[] {
   const lines = markdown.split(/\r?\n/);
   const snippets: Snippet[] = [];
@@ -68,11 +40,6 @@ export function extractSnippets(markdown: string, file: string): Snippet[] {
   return snippets;
 }
 
-/**
- * The snippet as a module, on the same lines: each run of top-level JSX, from a line that starts
- * with a tag at the margin to the next that starts a statement or a comment there, becomes one
- * fragment expression, `void (<>…</>);`, and a snippet that is one object literal `void ({…});`.
- */
 export function wrapSnippet(code: string): string {
   const lines = code.split('\n');
   const first = lines.findIndex((line) => line.trim() !== '');
@@ -97,7 +64,8 @@ export function wrapSnippet(code: string): string {
   return lines.join('\n');
 }
 
-/** The diagnostics that mean a snippet disagrees with envUI's API, when envUI is on the other side. */
+const cannotFindNameCodes = new Set([2304, 2552]);
+
 export const reportedCodes = new Map<number, string>([
   [2305, 'an import an entry does not export'],
   [2724, 'an import an entry does not export, with a suggestion'],
@@ -121,14 +89,8 @@ export const reportedCodes = new Map<number, string>([
   [2747, 'children of the wrong kind'],
 ]);
 
-/**
- * The entries an unimported name that several export comes from first, before the rest in the
- * manifest's order: the root, and markdown before rich-text, which also exports the Markdown link
- * types but loads Tiptap.
- */
 const preferredEntries = ['@envsemble/envui', '@envsemble/envui/markdown'];
 
-/** Every entry point's specifier, in order of preference for an unimported name. */
 const entries = [
   ...preferredEntries,
   ...libraryEntryPoints()
@@ -136,7 +98,6 @@ const entries = [
     .filter((specifier) => !preferredEntries.includes(specifier)),
 ];
 
-/** What snippets use from React without importing it, beside its hooks. */
 const reactNames = new Set([
   'Suspense',
   'Fragment',
@@ -148,10 +109,8 @@ const reactNames = new Set([
   'RefObject',
 ]);
 
-/** Names pages use, without declaring them, for what an envUI hook returns. */
 const hookValues = new Map([['toast', 'useToast']]);
 
-/** The DOM's lowercase globals a snippet calls as the browser's; any other it means as its own. */
 const browserAPIs = new Set([
   'addEventListener',
   'removeEventListener',
@@ -174,11 +133,6 @@ const browserAPIs = new Set([
   'window',
 ]);
 
-/**
- * The components pages render as the application's own, without declaring them. Any other
- * component that is neither declared nor exported by envUI is reported, since it may be one envUI
- * renamed.
- */
 export const applicationComponents = new Set([
   'App',
   'Summary',
@@ -187,7 +141,6 @@ export const applicationComponents = new Set([
   'PipelineIcon',
 ]);
 
-/** Whether an identifier names a component as a tag, or the namespace of one, such as <Foo.Bar>. */
 function isComponentTag(node: ts.Node): boolean {
   if (!ts.isIdentifier(node) || !/^[A-Z]/.test(node.text)) return false;
   let tag: ts.Node = node;
@@ -224,7 +177,6 @@ const inLibrary = (fileName: string) => {
   );
 };
 
-/** Whether a symbol, its alias followed, is declared in the library's source. */
 function declaredByEnvUI(checker: ts.TypeChecker, symbol: ts.Symbol | undefined): boolean {
   if (!symbol) return false;
   const target = symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
@@ -233,7 +185,6 @@ function declaredByEnvUI(checker: ts.TypeChecker, symbol: ts.Symbol | undefined)
   );
 }
 
-/** Whether a type, or one of a union's or intersection's members, is declared by envUI. */
 function typeOfEnvUI(checker: ts.TypeChecker, type: ts.Type | undefined, depth = 0): boolean {
   if (!type || depth > 3) return false;
   if (declaredByEnvUI(checker, type.aliasSymbol) || declaredByEnvUI(checker, type.getSymbol()))
@@ -243,7 +194,6 @@ function typeOfEnvUI(checker: ts.TypeChecker, type: ts.Type | undefined, depth =
   return false;
 }
 
-/** The deepest node of a file that spans the range. */
 function nodeAt(file: ts.SourceFile, start: number, length: number): ts.Node {
   let found: ts.Node = file;
   const visit = (node: ts.Node) => {
@@ -256,10 +206,6 @@ function nodeAt(file: ts.SourceFile, start: number, length: number): ts.Node {
   return found;
 }
 
-/**
- * Whether envUI is on the other side of a diagnostic: the innermost import, JSX element, call,
- * typed declaration, object literal with a contextual type or property access around it decides.
- */
 export function aboutEnvUI(checker: ts.TypeChecker, diagnostic: ts.Diagnostic): boolean {
   const file = diagnostic.file;
   if (!file || diagnostic.start === undefined) return false;
@@ -314,7 +260,6 @@ export function aboutEnvUI(checker: ts.TypeChecker, diagnostic: ts.Diagnostic): 
   return false;
 }
 
-/** Whether an identifier of the file resolves to something envUI declares. */
 function reachesEnvUI(checker: ts.TypeChecker, file: ts.SourceFile): boolean {
   let found = false;
   const visit = (node: ts.Node) => {
@@ -327,7 +272,6 @@ function reachesEnvUI(checker: ts.TypeChecker, file: ts.SourceFile): boolean {
   return found;
 }
 
-/** The names a snippet declares or imports itself, anywhere in it. */
 function declaredNames(file: ts.SourceFile): Set<string> {
   const names = new Set<string>();
   const bind = (name: ts.BindingName | ts.Identifier | undefined) => {
@@ -359,10 +303,6 @@ function declaredNames(file: ts.SourceFile): Set<string> {
   return names;
 }
 
-/**
- * The names a snippet uses as a value, a type or a tag: identifiers but property names, keys,
- * attribute names and the right of a qualified name.
- */
 function usedNames(file: ts.SourceFile): Map<string, ts.Identifier> {
   const used = new Map<string, ts.Identifier>();
   const visit = (node: ts.Node) => {
@@ -390,7 +330,6 @@ function usedNames(file: ts.SourceFile): Map<string, ts.Identifier> {
   return used;
 }
 
-/** A problem found in a snippet, at its line of the page. */
 export interface Finding {
   file: string;
   line: number;
@@ -398,7 +337,6 @@ export interface Finding {
   message: string;
 }
 
-/** A compiler host that reads the files of `virtual` from memory and caches the others it reads. */
 function virtualHost(virtual: Map<string, string>) {
   const host = ts.createCompilerHost(compilerOptions, true);
   const cache = new Map<string, ts.SourceFile>();
@@ -421,17 +359,12 @@ function virtualHost(virtual: Map<string, string>) {
   return host;
 }
 
-/** What a snippet may use without importing it, and where each name comes from. */
 interface ImportableNames {
-  /** The entry point that exports each name of envUI's, and whether it is a type. */
   exporter: Map<string, { entry: string; type: boolean }>;
-  /** React's hooks and the few other names snippets use from it, each whether it is a type. */
   fromReact: Map<string, boolean>;
-  /** The DOM's lowercase globals but the browser's APIs, which a snippet means as its own. */
   domGlobals: Set<string>;
 }
 
-/** The names the entries and React export, read from the program of the entries alone. */
 function importableNames(
   entryProgram: ts.Program,
   probe: string,
@@ -458,7 +391,6 @@ function importableNames(
   for (const symbol of reactModule ? checker.getExportsOfModule(reactModule) : [])
     if (/^use[A-Z]/.test(symbol.name) || reactNames.has(symbol.name))
       fromReact.set(symbol.name, !(symbol.flags & ts.SymbolFlags.Value));
-  // A snippet that assumes a variable of such a name, such as open, name or status, means its own.
   const probeFile = entryProgram.getSourceFile(probe);
   if (!probeFile) throw new Error(`the program of the entries lacks ${probe}`);
   const domGlobals = new Set(
@@ -477,17 +409,12 @@ function importableNames(
   return { exporter, fromReact, domGlobals };
 }
 
-/**
- * A snippet as a module: its code with what it leaves out on its first line, the imports and the
- * values it assumes, and whether it holds envUI code by the names it uses.
- */
 function snippetModule(
   snippet: Snippet,
   fileName: string,
   { exporter, fromReact, domGlobals }: ImportableNames,
   root: string,
 ) {
-  // An icon is its module's name with the Icon prefix: IconAdd is icons/Add, Icon10k icons/10k.
   const iconModule = (name: string) => {
     const module = /^Icon(\w+)$/.exec(name)?.[1];
     return module && existsSync(join(root, 'packages/ui/src/icons', `${module}.tsx`))
@@ -516,7 +443,6 @@ function snippetModule(
     } else {
       if (fromReact.has(name)) add('react', name, fromReact.get(name));
       else if (domGlobals.has(name)) assumed.push(`${name}: any`);
-      // A component no one declares may be one envUI renamed.
       else if (isComponentTag(node)) envUI = true;
       continue;
     }
@@ -531,7 +457,6 @@ function snippetModule(
   return { text: `${prelude}\n${code}\n`, envUI };
 }
 
-/** What the compiler reports about envUI in a snippet's module, as findings on its page. */
 function snippetFindings(
   snippet: Snippet,
   file: ts.SourceFile,
@@ -546,7 +471,6 @@ function snippetFindings(
       code,
       message,
     });
-  // A snippet that does not parse is not checked at all: its first syntax error says why.
   const [syntax] = program.getSyntacticDiagnostics(file);
   if (syntax) {
     report(
@@ -557,11 +481,9 @@ function snippetFindings(
     return findings;
   }
   for (const diagnostic of program.getSemanticDiagnostics(file)) {
-    // A diagnostic of a source file has a position.
     const start = diagnostic.start ?? 0;
     const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
-    // A component the snippet neither declares nor imports, and envUI doesn't export.
-    if (diagnostic.code === 2304 || diagnostic.code === 2552) {
+    if (cannotFindNameCodes.has(diagnostic.code)) {
       const node = nodeAt(file, start, diagnostic.length ?? 0);
       const name = node.getText(file);
       if (isComponentTag(node) && !applicationComponents.has(name))
@@ -578,14 +500,12 @@ function snippetFindings(
   return findings;
 }
 
-/** Checks the snippets: one program, every fence a module of it. */
 export function checkSnippets(
   snippets: readonly Snippet[],
   root = repositoryRoot,
 ): { findings: Finding[]; checked: Snippet[] } {
   const virtual = new Map<string, string>();
   const host = virtualHost(virtual);
-  // The names each entry exports, from a program of the entries alone.
   const probe = join(root, '.snippets-probe.ts');
   virtual.set(
     probe,
@@ -612,8 +532,6 @@ export function checkSnippets(
   for (const { snippet, fileName, envUI } of modules) {
     const file = program.getSourceFile(fileName);
     if (!file) throw new Error(`the program of the snippets lacks ${fileName}`);
-    // A snippet holds envUI code when it names an envUI module or component, or reaches something
-    // envUI declares, such as the global its dev mode installs; the rest is left alone.
     if (!envUI && !reachesEnvUI(checker, file)) continue;
     checked.push(snippet);
     findings.push(...snippetFindings(snippet, file, program, checker));
@@ -621,7 +539,6 @@ export function checkSnippets(
   return { findings, checked };
 }
 
-/** The pages whose fences are checked: docs/ but its generated folder, and contributing/pages.md. */
 export function snippetPages(root = repositoryRoot): string[] {
   const pages: string[] = [];
   const walk = (directory: string) => {

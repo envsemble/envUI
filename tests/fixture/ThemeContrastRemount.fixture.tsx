@@ -8,10 +8,6 @@ const users = [
   { id: 'second', contrast: 'system' },
 ] as const;
 
-/**
- * A provider keyed by the signed-in user, whose stored contrast it applies, so switching users
- * mounts a new provider.
- */
 export default function ThemeContrastRemountFixture() {
   const [user, setUser] = useState<(typeof users)[number]>(users[0]);
   return (

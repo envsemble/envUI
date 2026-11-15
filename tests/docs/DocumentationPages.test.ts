@@ -19,20 +19,11 @@ import { isPropsTable } from '../../scripts/docs/MarkdownBlocks.ts';
 import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
 import { readProps } from '../../scripts/docs/PageStructure.ts';
 
-/** Exports without a page that lists them in its frontmatter; the list only shrinks. */
 const undocumentedExports = [];
 
-/**
- * Modules an example may import: only what an application can, so its source can be copied, and
- * each icon by its own path, as the setup guide asks, rather than through the icons barrel.
- */
 const publicModules =
   /^(?:react|@envsemble\/envui(?:\/(?:code|markdown|diff|rich-text|color|icons\/[A-Za-z\d]+))?)$/;
 
-/**
- * Every module a source loads: static imports and re-exports, imports for their side effects, and
- * import() and require() with a literal path.
- */
 function moduleSpecifiers(source) {
   const file = ts.createSourceFile('Example.tsx', source, ts.ScriptTarget.Latest, true);
   const specifiers = [];
@@ -60,7 +51,6 @@ function moduleSpecifiers(source) {
 const props = readProps();
 const documents = readDocumentation();
 const components = documents.filter((document) => document.path.startsWith('components/'));
-/** Pages in the one-file structure: component and foundation pages. */
 const sectioned = documents.filter((document) => document.sections);
 
 test('every public export is documented on exactly one page', () => {
@@ -80,7 +70,6 @@ test('every public export is documented on exactly one page', () => {
 });
 
 test('every alternative a page suggests has a page to link to', () => {
-  // As the catalogue links them: a part such as Menu.Item goes to its namespace's page.
   const documented = new Set(
     documents.flatMap((document) => document.frontmatter?.components ?? []),
   );
@@ -94,7 +83,6 @@ test('every alternative a page suggests has a page to link to', () => {
 });
 
 test('every component and foundation page is in the one-file structure', () => {
-  // The build reads a page of these kinds only in the structure, so none is left outside it.
   const outside = documents
     .filter((document) => /^(components|foundations)\//.test(document.path))
     .filter((document) => !document.sections || !document.frontmatter?.examples)
@@ -113,7 +101,6 @@ test('pages list no props by hand', () => {
   }
 });
 
-/** The example or specimen files of every page, by page. */
 function files(directory) {
   if (!existsSync(directory)) return [];
   return readdirSync(directory, { withFileTypes: true })
@@ -130,7 +117,6 @@ function files(directory) {
 }
 
 test('every example file is referenced once, by its page, and imports only public modules', () => {
-  // A foundation's figure with an example file of its name shows it as its code.
   const referenced = new Map();
   for (const document of sectioned)
     for (const section of document.sections ?? [])
@@ -206,8 +192,6 @@ test('every specimen file is placed by its page, or plays or holds the example i
 
 test('every playback is named after an example of its page, and plays no other', () => {
   const examples = new Set(files(examplesDirectory).map(({ page, name }) => `${page}/${name}`));
-  // An example's playback: the specimen its figure plays (`motion`) or numbers (`specimen`), and
-  // any specimen named after an example of its page.
   const playbacks = new Set(
     files(specimensDirectory)
       .map(({ page, name }) => `${page}/${name}`)
@@ -234,7 +218,6 @@ test('every playback is named after an example of its page, and plays no other',
   }
 });
 
-/** The names a source imports from envUI's entries, icons apart: `import { Button, Row } …`. */
 function envuiImports(source) {
   const file = ts.createSourceFile('Example.tsx', source, ts.ScriptTarget.Latest, true);
   const names: string[] = [];
@@ -272,17 +255,12 @@ test('every page an avoidWhen entry sends readers to is indexed', () => {
       if (see) assert.ok(ids.has(see) && see !== document.id, `${document.path} sees ${see}.`);
 });
 
-/** Words too common to say whether two sentences say the same thing. */
 const commonWords = new Set(
   'a an the and or of to in on for with its it is as by at from that this be are which what who than into one their your can own such when where how all any so not no but if has have each'.split(
     ' ',
   ),
 );
 
-/**
- * The words that carry a sentence's meaning, without code, link targets or common words, and
- * without a plural's ending, so "panels" and "panel" count as one.
- */
 function meaningfulWords(text) {
   const words = text
     .replace(/`[^`]*`/g, ' ')
@@ -296,7 +274,6 @@ function meaningfulWords(text) {
   );
 }
 
-/** The first sentence of a page's Overview, where the section opens with text. */
 function overviewOpening(document) {
   const first = document.sections.find((section) => section.id === 'overview')?.blocks[0];
   if (first?.kind !== 'markdown') return '';
@@ -310,10 +287,7 @@ function overviewOpening(document) {
 }
 
 test("a page's Overview doesn't open by saying its summary again", () => {
-  // The banner shows the summary right above the Overview, so the Overview starts with what the
-  // banner doesn't say.
   const repeats = sectioned.flatMap((document) => {
-    // Naming the page's subject repeats nothing.
     const title = meaningfulWords(document.title);
     const opening = meaningfulWords(overviewOpening(document)).difference(title);
     const summary = meaningfulWords(document.summary);
@@ -329,11 +303,6 @@ test("a page's Overview doesn't open by saying its summary again", () => {
   );
 });
 
-/**
- * A page's Markdown as the catalogue shows it: without its changelog, its developer part, "##
- * Compose", the lists of what envUI and the application provide, and its tables' In code columns,
- * which its page in the Docs shows.
- */
 function catalogueMarkdown(document) {
   return withoutCodeColumns(
     document.markdown
@@ -344,9 +313,6 @@ function catalogueMarkdown(document) {
 }
 
 test('a page of the catalogue links nowhere in the Docs', () => {
-  // The catalogue reaches the Docs only through a page's Docs button and the Docs link at the
-  // top: a component page links to other pages of the catalogue, a foundation's
-  // without a heading, since a foundation's headings are in its page in the Docs.
   const links = sectioned
     .filter((document) => document.id !== 'field')
     .flatMap((document) =>
@@ -366,8 +332,76 @@ test('a page of the catalogue links nowhere in the Docs', () => {
   assert.deepEqual(links, [], 'Link these to a page of the catalogue, or say it without the link.');
 });
 
-/** Every page the catalogue shows: Field's page is in the Docs only. */
 const cataloguePages = () => sectioned.filter((document) => document.id !== 'field');
+
+const unwrittenSections = new Set(['Compose', 'Words to use', 'Changelog']);
+
+function writtenProse(document) {
+  const found = [];
+  for (const token of marked.lexer(document.markdown))
+    if (token.type === 'heading' && token.depth === 2 && unwrittenSections.has(token.text))
+      found.push(`"## ${token.text}"`);
+  for (const section of document.sections ?? []) {
+    if (section.id === 'overview' || section.id === 'code') continue;
+    let subsection = '';
+    for (const block of section.blocks) {
+      if (block.kind !== 'markdown') continue;
+      for (const token of marked.lexer(block.markdown)) {
+        if (token.type === 'space' || (token.type === 'heading' && token.depth === 2)) continue;
+        if (token.type === 'heading' && token.depth === 3) {
+          subsection = token.text;
+          if (section.id === 'accessibility' && subsection !== 'Keyboard')
+            found.push(`${section.title}: "### ${subsection}"`);
+          continue;
+        }
+        if (token.type === 'table' && section.id === 'accessibility' && subsection === 'Keyboard')
+          continue;
+        found.push(`${section.title}: ${token.raw.trim().split('\n')[0].slice(0, 60)}`);
+      }
+    }
+  }
+  return found;
+}
+
+test('a component page holds its examples and reference, and no prose', () => {
+  const found = components.flatMap((document) =>
+    writtenProse(document).map((text) => `${document.path}, ${text}`),
+  );
+  assert.deepEqual(
+    found,
+    [],
+    'A component page is its frontmatter, its examples under headings, their legends and specimens, and a keyboard table where its keys are not the ones people expect; its props, parts, color properties and import are generated. Say what it is for in summary, useWhen and avoidWhen, and let the API hold the rest.',
+  );
+});
+
+test('the prose check finds text, written code and sections a component page does not write', () => {
+  const markdown = (text) => ({ kind: 'markdown', markdown: text });
+  const found = writtenProse({
+    markdown: '## Variants\n\n## Compose\n\n### Usage\n',
+    sections: [
+      {
+        id: 'variants',
+        title: 'Variants',
+        blocks: [markdown('## Variants\n\n### Sizes\n\nTwo sizes.\n')],
+      },
+      {
+        id: 'accessibility',
+        title: 'Accessibility',
+        blocks: [
+          markdown(
+            '## Accessibility\n\n### Keyboard\n\n| Key | Action |\n| --- | --- |\n| <kbd>F6</kbd> | Moves. |\n\n### You provide\n\n- A label.\n',
+          ),
+        ],
+      },
+    ],
+  });
+  assert.deepEqual(found, [
+    '"## Compose"',
+    'Variants: Two sizes.',
+    'Accessibility: "### You provide"',
+    'Accessibility: - A label.',
+  ]);
+});
 
 test("a page's catalogue shows no inline code", () => {
   const found = cataloguePages().flatMap((document) =>
@@ -406,10 +440,6 @@ test("a page's catalogue text is in short paragraphs", () => {
   );
 });
 
-/**
- * The option tables right after a variants figure whose names are not the figure's, in its order:
- * the legend shows each name in the tag the figure's callout shows.
- */
 function unmatchedOptions(document) {
   const found = [];
   for (const section of document.sections ?? [])
@@ -455,15 +485,12 @@ test('technical text is found in words, and plain words are left alone', () => {
   );
 });
 
-/** The technical text in a page's catalogue Markdown, as plain words: keys are written as <kbd>. */
 const catalogueTechnicalText = (document) =>
   catalogueText(document).flatMap(({ markdown, text }) =>
     technicalText((markdown ?? text).replace(/`[^`]*`/g, '').replace(/<\/?kbd>/g, '')),
   );
 
 test("a component page's catalogue shows no technical text", () => {
-  // The catalogue is for people looking at envUI: lengths, tokens, percentages and code names go
-  // in the page's Compose, which its page in the Docs shows.
   const found = cataloguePages()
     .filter((document) => document.path.startsWith('components/'))
     .flatMap((document) =>

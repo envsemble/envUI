@@ -1,6 +1,3 @@
-// DatePicker and Calendar, rendered on the server: days before 1970, a locale with a calendar of its
-// own, fields named by other text or showing their placeholder, and disabled, read-only and invalid
-// fields.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -14,7 +11,6 @@ const render = (component, props) => firstElement(renderToStaticMarkup(h(compone
 const all = (root, test) => elementsOf(root).filter(test);
 const byClass = (root, name) => all(root, (element) => hasClass(element, name));
 const trigger = (root) => all(root, (element) => element.attributes.role === 'combobox')[0];
-/** A calendar's grid, named by its month's title. */
 function grid(root) {
   const [table] = all(root, (element) => element.attributes.role === 'grid');
   const title = all(
@@ -76,7 +72,6 @@ test('a field named by other text, and one without a label that shows its placeh
   const starts = render(DatePicker, { 'aria-labelledby': 'starts', locale: 'en-GB' });
   assert.equal(trigger(starts).attributes['aria-labelledby'], 'starts');
   assert.equal(all(starts, (element) => element.tag === 'label').length, 0);
-  // Without a label to rest in the field, its placeholder shows.
   const ends = render(DatePicker, {
     'aria-label': 'Ends',
     placeholder: 'Pick an end',

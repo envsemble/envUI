@@ -26,7 +26,6 @@ interface BadgeAppearanceProps extends Omit<ComponentPropsWithRef<'span'>, 'chil
   variant?: BadgeVariant;
 }
 
-/** A badge with a label. */
 interface LabelBadgeProps extends BadgeAppearanceProps {
   /**
    * A decorative icon before the label, such as a check mark; hidden from assistive technology. A
@@ -41,7 +40,6 @@ interface LabelBadgeProps extends BadgeAppearanceProps {
   count?: undefined;
 }
 
-/** A badge with a count. */
 interface CountBadgeProps extends BadgeAppearanceProps {
   /**
    * A count, such as 12, or short text such as 99+, in place of a label: a compact round pill, in

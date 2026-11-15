@@ -162,8 +162,9 @@ interface ComboboxMultipleProps<Item extends ComboboxItem> {
 export type ComboboxProps<Item extends ComboboxItem = ComboboxItem> = ComboboxSharedProps<Item> &
   (ComboboxSingleProps<Item> | ComboboxMultipleProps<Item>);
 
-/** Changes of the typed text that people make, rather than the field filling in a chosen label. */
-const typedChanges = new Set(['input-change', 'input-clear', 'clear-press', 'escape-key']);
+const noName = '';
+
+const reasonsPeopleType = new Set(['input-change', 'input-clear', 'clear-press', 'escape-key']);
 
 /**
  * A text field that filters a list of options as people type, for choosing one option or several.
@@ -229,8 +230,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     popupRef,
     inputRef,
   });
-  // The chips' arrow keys and the popup follow the text direction, read as the popup opens or
-  // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
 
   const { value: selection, selectedValues, choose } = useComboboxSelection(props, nativeRef);
@@ -244,52 +243,47 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   } = useComboboxOptions({ items, filter, locale, selectedValues });
 
   const singleItem = typeof selection === 'string' ? known.get(selection) : undefined;
-  // The text the input shows, which starts as the chosen option's label, and the query
-  // onInputValueChange reported last.
   const [inputText, setInputText] = useState(singleItem?.label ?? '');
-  const reportedQuery = useRef('');
+  const lastReportedQuery = useRef('');
 
   function handleValueChange(
     next: ComboboxSelection,
     details: BaseCombobox.Root.ChangeEventDetails,
   ) {
     if (details.isCanceled) return;
-    // Esc and emptying the text clear only a clearable single field that has a value. They keep
-    // the value otherwise, and Esc never removes chips, which go one at a time or with the clear
-    // button; Esc then goes on, such as to close a dialog.
     const escape = details.reason === 'escape-key';
-    const clearing = escape || (!isMultiple && details.reason === 'input-clear');
-    if (clearing && (!clearable || selectedValues.length === 0 || (isMultiple && escape))) {
+    const textEmptied = details.reason === 'input-clear';
+    const clearing = escape || (!isMultiple && textEmptied);
+    const nothingToClear = !clearable || selectedValues.length === 0;
+    const escapeNeverRemovesChips = isMultiple && escape;
+    if (clearing && (nothingToClear || escapeNeverRemovesChips)) {
       details.cancel();
       details.allowPropagation();
-      // Emptied text shows every option to choose another; closing the popup restores the label.
-      if (details.reason === 'input-clear' && !popupOpen) changeOpen(true, details.reason);
+      const showEveryOptionToChooseAnother = textEmptied && !popupOpen;
+      if (showEveryOptionToChooseAnother) changeOpen(true, details.reason);
       return;
     }
     choose(next, known);
   }
 
-  /**
-   * Keeps the text, and reports the query as people type. Esc keeps the text of a field that isn't
-   * clearable, and goes on, such as to close a dialog. Once a single field shows its chosen label
-   * again, the query is over and an empty one is reported, so options found for it, such as on a
-   * server, go with it.
-   */
+  function reportQuery(query: string) {
+    lastReportedQuery.current = query;
+    onInputValueChange?.(query);
+  }
+
   function handleInputValueChange(next: string, details: BaseCombobox.Root.ChangeEventDetails) {
     if (details.isCanceled) return;
-    if (details.reason === 'escape-key' && !clearable) {
+    const escapeKeepsText = details.reason === 'escape-key' && !clearable;
+    if (escapeKeepsText) {
       details.cancel();
       details.allowPropagation();
       return;
     }
     setInputText(next);
-    if (typedChanges.has(details.reason)) {
-      reportedQuery.current = next;
-      onInputValueChange?.(next);
-    } else if (!isMultiple && reportedQuery.current !== '') {
-      reportedQuery.current = '';
-      onInputValueChange?.('');
-    }
+    const typedByPerson = reasonsPeopleType.has(details.reason);
+    const chosenLabelEndsQuery = !typedByPerson && !isMultiple && lastReportedQuery.current !== '';
+    if (typedByPerson) reportQuery(next);
+    else if (chosenLabelEndsQuery) reportQuery('');
   }
 
   const hasChips = isMultiple && selectedValues.length > 0;
@@ -297,7 +291,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const describedByIds =
     [hasChips && selectionId, metadata['aria-describedby']].filter(Boolean).join(' ') || undefined;
   const showClear = clearable && !disabled && !readOnly;
-  // The clear button shows while there is a value to clear; the well keeps room for it only then.
   const clearShown = showClear && selectedValues.length > 0;
   const showStart = singleItem?.start != null && inputText === singleItem.label && !isMultiple;
   const ariaLabel = inputProps['aria-label'];
@@ -359,7 +352,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
               known={known}
               labelOf={labelOf}
               removeName={removeName}
-              editable={!disabled && !readOnly}
+              removable={!disabled && !readOnly}
             />
           )}
           <ComboboxInput
@@ -376,19 +369,16 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
             aria-describedby={describedByIds}
             placeholder={fieldPlaceholder}
           />
-          {/* The well reserves room for its actions, which stay at its end. */}
           <span className="env-text-field-end env-combobox-end">
             <ComboboxActions
               clearName={clearName}
               showClear={showClear}
-              // The field's label names the trigger; without one, the field's aria-label does.
-              labelId={label != null ? labelId : undefined}
-              ariaLabel={ariaLabel}
+              fieldLabelId={label != null ? labelId : undefined}
+              fieldAriaLabel={ariaLabel}
             />
           </span>
         </FieldFrame>
         {hasChips && (
-          // Read with the field, so the chosen options are known before the hint.
           <span id={selectionId} hidden>
             {selectedValues.map(labelOf).join(', ')}
           </span>
@@ -406,26 +396,18 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   );
 }
 
-/**
- * A Combobox's text input. Focusing it while it shows the chosen option's label selects the label,
- * so typing replaces it with a query; a press keeps that selection rather than placing the caret.
- */
 function ComboboxInput({
   ref,
   inputRef,
   chosenLabel,
   ...inputProps
 }: ComponentPropsWithoutRef<typeof BaseCombobox.Input> & {
-  /** The application's ref to the input. */
   ref: Ref<HTMLInputElement> | undefined;
-  /** The field's own ref to the input. */
   inputRef: RefObject<HTMLInputElement | null>;
-  /** The label that focus selects: a single, editable field's chosen option's, else undefined. */
   chosenLabel: string | undefined;
 }) {
-  // Whether the press now under way focused the input, rather than finding it focused.
-  const pressFocus = useRef(false);
-  const showsLabel = (input: HTMLInputElement) =>
+  const pressIsFocusingInput = useRef(false);
+  const showsChosenLabel = (input: HTMLInputElement) =>
     chosenLabel !== undefined && input.value === chosenLabel;
 
   return (
@@ -437,37 +419,32 @@ function ComboboxInput({
       }}
       onPointerDown={(event) => {
         inputProps.onPointerDown?.(event);
-        pressFocus.current =
+        pressIsFocusingInput.current =
           event.currentTarget.ownerDocument.activeElement !== event.currentTarget;
       }}
       onFocus={(event) => {
         inputProps.onFocus?.(event);
-        if (showsLabel(event.currentTarget)) event.currentTarget.select();
+        if (showsChosenLabel(event.currentTarget)) event.currentTarget.select();
       }}
       onMouseUp={(event) => {
         inputProps.onMouseUp?.(event);
-        if (pressFocus.current && showsLabel(event.currentTarget)) event.preventDefault();
-        pressFocus.current = false;
+        const keepLabelSelectedOverCaret =
+          pressIsFocusingInput.current && showsChosenLabel(event.currentTarget);
+        if (keepLabelSelectedOverCaret) event.preventDefault();
+        pressIsFocusingInput.current = false;
       }}
       className="env-text-field-input env-combobox-input"
     />
   );
 }
 
-/**
- * The field's well as Base UI's input group, with room for its actions. For several options it is
- * the chips' well, which the text input shares, so Backspace and the arrow keys reach the chips; a
- * toolbar, named as the field is, while it holds chips.
- */
 function controlBox({
   multiple,
   clearShown,
   toolbarName,
 }: {
   multiple: boolean;
-  /** The clear button shows beside the trigger. */
   clearShown: boolean;
-  /** The toolbar's name while the well holds chips, else undefined. */
   toolbarName: { 'aria-labelledby'?: string; 'aria-label'?: string } | undefined;
 }) {
   return function renderControlBox(boxProps: FieldControlBoxProps) {
@@ -487,20 +464,18 @@ function controlBox({
   };
 }
 
-/** The chosen options of a combobox that takes several, as chips in its field. */
 function ComboboxChips({
   values,
   known,
   labelOf,
   removeName,
-  editable,
+  removable,
 }: {
   values: readonly string[];
   known: ReadonlyMap<string, ComboboxItem>;
   labelOf: (value: string) => string;
   removeName: (label: string) => string;
-  /** Whether each chip has a remove button. */
-  editable: boolean;
+  removable: boolean;
 }) {
   return values.map((selected) => {
     const item = known.get(selected);
@@ -509,8 +484,9 @@ function ComboboxChips({
       <BaseCombobox.Chip
         key={selected}
         className="env-combobox-chip"
-        // A chip is no widget, so the field's read-only state is the input's alone.
-        render={({ 'aria-readonly': _readOnly, ...chipProps }) => <div {...chipProps} />}
+        render={({ 'aria-readonly': _readOnlyBelongsToInput, ...chipProps }) => (
+          <div {...chipProps} />
+        )}
       >
         {item?.start != null && (
           <span className="env-combobox-start" aria-hidden="true">
@@ -518,7 +494,7 @@ function ComboboxChips({
           </span>
         )}
         <span className="env-combobox-chip-label">{text}</span>
-        {editable && (
+        {removable && (
           <BaseCombobox.ChipRemove
             className="env-combobox-chip-remove"
             render={
@@ -531,19 +507,16 @@ function ComboboxChips({
   });
 }
 
-/** The actions at the end of a combobox's well: the clear button and the trigger that opens the list. */
 function ComboboxActions({
   clearName,
   showClear,
-  labelId,
-  ariaLabel,
+  fieldLabelId,
+  fieldAriaLabel,
 }: {
   clearName: string;
   showClear: boolean;
-  /** The id of the field's label, which names the trigger; undefined for a field without one. */
-  labelId: string | undefined;
-  /** The field's aria-label, which names the trigger where the field has no label. */
-  ariaLabel: string | undefined;
+  fieldLabelId: string | undefined;
+  fieldAriaLabel: string | undefined;
 }) {
   return (
     <>
@@ -562,23 +535,19 @@ function ComboboxActions({
       )}
       <BaseCombobox.Trigger
         className="env-combobox-trigger"
-        {...(labelId !== undefined ? { 'aria-labelledby': labelId } : {})}
-        // Base UI's Field gives it the field's description and error, which the input already
-        // announces; the chevron leaves them out.
+        {...(fieldLabelId !== undefined ? { 'aria-labelledby': fieldLabelId } : {})}
         render={({
-          'aria-describedby': _describedBy,
-          'aria-invalid': _invalid,
+          'aria-describedby': _describedByAnnouncedOnInput,
+          'aria-invalid': _invalidAnnouncedOnInput,
           ...triggerProps
         }) => (
           <IconButton
             {...triggerProps}
             variant="ghost"
             icon={<IconChevronRight />}
-            // A field without a label or an aria-label leaves the trigger unnamed: an empty
-            // aria-label names nothing.
-            {...(labelId !== undefined
-              ? { 'aria-labelledby': labelId }
-              : { 'aria-label': ariaLabel ?? '' })}
+            {...(fieldLabelId !== undefined
+              ? { 'aria-labelledby': fieldLabelId }
+              : { 'aria-label': fieldAriaLabel ?? noName })}
           />
         )}
       />

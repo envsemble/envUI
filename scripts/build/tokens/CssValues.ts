@@ -1,10 +1,8 @@
-// How Tokens.css writes a token's value: the transform plugin-css calls for each token.
 import type { TokenNormalized } from '@terrazzo/parser';
 import { transformCSSValue, type TransformCSSValueOptions } from '@terrazzo/token-tools/css';
 import { converter, formatHex } from 'culori';
 import { envuiExtensions, isInternal } from './Themes.ts';
 
-/** A DTCG color, as the parser normalizes it. */
 interface DtcgColor {
   colorSpace: string;
   components: number[];
@@ -30,10 +28,6 @@ const toRgb = converter('rgb');
 const channel = (value: number) => Math.round(Math.min(1, Math.max(0, value)) * 255);
 const round = (value: number, digits: number) => Number(value.toFixed(digits));
 
-/**
- * A DTCG color as CSS: opaque colors as their sRGB hex, translucent ones as rgb() with the exact
- * alpha, so the browser, the contrast gate and the token list all see the same 8-bit values.
- */
 function cssColor(color: DtcgColor) {
   const alpha = color.alpha ?? 1;
   if (alpha === 0) return 'transparent';
@@ -55,11 +49,8 @@ function cssColor(color: DtcgColor) {
 
 const length = ({ value, unit }: DtcgLength) => (value === 0 ? '0' : `${value}${unit}`);
 
-/**
- * A typography token's parts, as plugin-css writes them, with the line height in em where the
- * token's `$extensions` ask for it (`lineHeightUnit: 'em'`): the font shorthands of the type roles
- * keep the line height of their own size, also in descendants with another font size.
- */
+const zeroKeepingUnitForCalc = ({ unit }: DtcgLength) => `0${unit}`;
+
 function typography(token: TokenNormalized, options: TransformCSSValueOptions) {
   const parts = transformCSSValue(token, options);
   const unit = envuiExtensions(token).lineHeightUnit;
@@ -68,12 +59,6 @@ function typography(token: TokenNormalized, options: TransformCSSValueOptions) {
   return { ...parts, 'line-height': `${parts['line-height']}${unit}` };
 }
 
-/**
- * CSS values: colors as cssColor() writes them, shadows with those colors, a zero length as `0`,
- * font names in single quotes, and numbers marked with a CSS unit (percentages). A token that
- * aliases another public token is written as var(), plugin-css's default; one that aliases the
- * palette or a high-contrast value carries the resolved value, because those never become CSS.
- */
 export function transform(token: TokenNormalized, options: TransformCSSValueOptions) {
   if (token.aliasChain?.length && !isInternal(token.aliasChain[0])) return undefined;
   const value: unknown = token.$value;
@@ -96,11 +81,10 @@ export function transform(token: TokenNormalized, options: TransformCSSValueOpti
         )
         .join(', ');
     case 'dimension':
-      // A zero keeps its unit, so a calc() that adds a length to it, such as a row density's
-      // padding and a space, stays valid.
-      return (value as DtcgLength).value === 0 ? `0${(value as DtcgLength).unit}` : undefined;
+      return (value as DtcgLength).value === 0
+        ? zeroKeepingUnitForCalc(value as DtcgLength)
+        : undefined;
     case 'fontFamily':
-      // Single quotes, as Prettier writes them, so the CSS and the token list carry the same text.
       return (value as string[])
         .map((name) => (/^[a-z-]+$/.test(name) ? name : `'${name}'`))
         .join(', ');

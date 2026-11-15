@@ -24,7 +24,6 @@ test('moves with the arrow keys, Home and End, in the reading direction', async 
   await keyboard.press('Home');
   await expect.element(ltr).toHaveAttribute('aria-valuenow', '100');
   await expect.poll(committed('ltr')).toBe('100');
-  // In RTL the pane grows toward the left.
   const rtl = page.getByTestId('resize-rtl').getByRole('separator');
   (rtl.element() as HTMLElement).focus();
   await keyboard.press('ArrowLeft');
@@ -33,7 +32,6 @@ test('moves with the arrow keys, Home and End, in the reading direction', async 
 
 test('follows the pointer and commits as the drag ends', { tags: ['engines'] }, async () => {
   const handle = page.getByTestId('resize-ltr').getByRole('separator');
-  // The mouse moves in the viewport, so the handle must be in it.
   handle.element().scrollIntoView({ block: 'center' });
   const { x, y, width, height } = box(handle);
   await mouse.move(x + width / 2, y + height / 2);

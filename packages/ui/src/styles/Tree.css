@@ -1,16 +1,10 @@
 @layer env.components {
-  /* How far the rows below an expanding or collapsing row are from where they go, which Tree sets
-     and eases to 0; a length, so the rows glide and the group's end moves with them. */
   @property --_tree-shift {
     syntax: '<length>';
     inherits: true;
     initial-value: 0;
   }
-  /* A virtualized tree: the tree scrolls itself and positions its rendered rows by index. Rows follow
-     navigation colors: transparent at rest, the row state layer on hover, and the navigation
-     selection, which always reads stronger than the hover. */
   .env-tree {
-    /* The density sets the rows' block padding around their content line. */
     --_tree-item-padding: var(--env-tree-row-padding-block-sm);
     --_tree-item-height: calc(var(--env-row-content-height) + 2 * var(--_tree-item-padding));
     --_tree-indent: 0.75rem;
@@ -29,7 +23,6 @@
     outline: none;
   }
   .env-tree[data-density='xs'] {
-    /* Half the sm padding: 24 px rows in either scale. */
     --_tree-item-padding: calc(var(--env-tree-row-padding-block-sm) / 2);
   }
   .env-tree[data-density='md'] {
@@ -42,10 +35,6 @@
     position: relative;
     min-inline-size: 0;
   }
-  /* The rows an expanding row reveals grow from its end to their height and fade in, and the rows a
-     collapsing row hides shrink and fade out, as an accordion's panel does, on the entering curve, so
-     the press shows from its first frame: the group stays until it has closed, and the rows below
-     follow its end. */
   .env-tree-group {
     position: absolute;
     inset-block-start: 0;
@@ -64,7 +53,7 @@
     inset-block-start: 0;
     inset-inline: 0;
     block-size: var(--_tree-item-height);
-    --_tree-lead: calc(var(--_tree-icon-size) + var(--env-space-1));
+    --_tree-room-before-label: calc(var(--_tree-icon-size) + var(--env-space-1));
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
@@ -81,14 +70,9 @@
       background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
       opacity var(--env-motion-duration-medium) var(--env-motion-ease);
   }
-  /* The rows an expanded row reveals fade in where they arrive, from their starting style; the rows
-     scrolled into view don't. */
   .env-tree-item[data-starting-style] {
     opacity: 0;
   }
-  /* A tree marks its selection with a light tint, so its rows' layers stay below it: hover at three
-     quarters of the row hover layer and a press at the full one, a step quieter than a table's
-     rows, so a passing pointer never outweighs the selected row. */
   .env-tree-item:hover {
     background: color-mix(in srgb, var(--env-color-bg-row-hover) 75%, transparent);
   }
@@ -105,7 +89,6 @@
   .env-tree-item[aria-selected='true']:active {
     background: var(--env-color-bg-selected-pressed);
   }
-  /* The active row shows the focus ring only while the tree has keyboard focus. */
   .env-tree[data-focus-visible]:focus .env-tree-item[data-highlighted] {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
@@ -117,8 +100,6 @@
   .env-tree-item[aria-disabled='true']:is(:hover, :active) {
     background: transparent;
   }
-  /* The chevron is as tall as the row, so the row's first line is: what doesn't fit on it, the end
-     before the label, wraps to a second line outside the row, which leaves the row whole. */
   .env-tree-chevron {
     inline-size: var(--_tree-icon-size);
     block-size: 100%;
@@ -148,17 +129,14 @@
     color: var(--env-color-fg-muted);
   }
   .env-tree-item:has(> .env-tree-icon) {
-    --_tree-lead: calc(2 * (var(--_tree-icon-size) + var(--env-space-1)));
+    --_tree-room-before-label: calc(2 * (var(--_tree-icon-size) + var(--env-space-1)));
   }
   .env-tree-item[aria-selected='true'] :is(.env-tree-icon, .env-tree-chevron) {
     color: inherit;
   }
-  /* The label keeps its room: at most the row's width after the chevron and the icon, so it is never
-     the part that leaves the line, and it ends with an ellipsis only beyond that. The selected
-     row's label is medium, as the neutral selection is close to a hovered row. */
   .env-tree-label {
     min-inline-size: 0;
-    max-inline-size: calc(100% - var(--_tree-lead));
+    max-inline-size: calc(100% - var(--_tree-room-before-label));
     flex: 0 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -166,9 +144,6 @@
   .env-tree-item[aria-selected='true'] .env-tree-label {
     font-weight: var(--env-font-weight-medium);
   }
-  /* The detail takes only the room the label and the end leave, so it never pushes the end out, and
-     gives way first. It keeps more room from the label than the row's other parts, so it never
-     reads as part of the name. */
   .env-tree-description {
     min-inline-size: 0;
     max-inline-size: max-content;
@@ -199,14 +174,10 @@
     .env-tree-group {
       transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
-    /* Closing, the rows fade as long as the rows below take to close the gap, so no empty band is
-       left. */
     .env-tree-group[data-ending-style] {
       transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     }
   }
-  /* Under a reduced-motion preference fills change, the chevron turns and revealed rows show at
-     once, as an accordion's panel does. */
   @media (prefers-reduced-motion: reduce) {
     .env-tree-item,
     .env-tree-chevron .env-icon {
@@ -214,8 +185,6 @@
     }
   }
 
-  /* Forced colors: the system paints no fills or shadows, so the selected row takes the system’s
-     selection colors. */
   @media (forced-colors: active) {
     .env-tree-item[aria-selected='true'] {
       forced-color-adjust: none;

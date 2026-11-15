@@ -79,12 +79,13 @@ export interface TreeActionDetails {
   preview: boolean;
 }
 
-/** The native events the tree handles itself, for its rows; the others reach its element. */
-type TreeOwnEvents = 'onClick' | 'onDoubleClick' | 'onContextMenu' | 'onPointerDown';
+type EventsTreeHandlesForRows = 'onClick' | 'onDoubleClick' | 'onContextMenu' | 'onPointerDown';
+
+const startingShiftAppliesAtOnce = 'none';
 
 export interface TreeProps<Item extends TreeItem> extends Omit<
   ComponentPropsWithRef<'div'>,
-  'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu' | TreeOwnEvents
+  'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu' | EventsTreeHandlesForRows
 > {
   /**
    * The visible rows in order, flattened: an expanded row is followed by its visible descendants.
@@ -153,7 +154,6 @@ export function Tree<Item extends TreeItem>({
   const treeId = useId().replace(/[^A-Za-z0-9-]/g, '');
   const container = useRef<HTMLDivElement>(null);
   const [activeId, setActiveId] = useState<string | null>(selectedId);
-  // Keyboard focus shows a ring on the active row; pointer focus does not.
   const [focusVisible, setFocusVisible] = useState(false);
   const pointerFocus = useRef(false);
   const typeahead = useRef<TypedText>({ text: '', time: 0 });
@@ -166,13 +166,12 @@ export function Tree<Item extends TreeItem>({
   const { positions, sizes } = useMemo(() => siblingPositions(items), [items]);
   const { rowsElement, arriving, motion, moving } = useTreeTransitions(items);
 
-  // The active row falls back to the selected or first row when it leaves the visible rows.
-  const lastActiveIndex = useRef(0);
+  const fallbackActiveIndex = useRef(0);
   const selectedIndex = selectedId === null ? undefined : indexById.get(selectedId);
   let activeIndex = activeId === null ? -1 : (indexById.get(activeId) ?? -1);
   if (activeIndex === -1 && items.length > 0)
-    activeIndex = selectedIndex ?? Math.min(lastActiveIndex.current, items.length - 1);
-  lastActiveIndex.current = Math.max(activeIndex, 0);
+    activeIndex = selectedIndex ?? Math.min(fallbackActiveIndex.current, items.length - 1);
+  fallbackActiveIndex.current = Math.max(activeIndex, 0);
   const activeItem = activeIndex === -1 ? undefined : items[activeIndex];
 
   const { rowHeight, pageRows, indexes, inView, scrollToIndex, onScroll } = useTreeViewport({
@@ -206,8 +205,8 @@ export function Tree<Item extends TreeItem>({
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.target !== event.currentTarget || !activeItem) return;
-    // Keys with Alt, Ctrl or ⌘ belong to the application, such as Alt+← for going back.
-    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const keyBelongsToApplication = event.altKey || event.ctrlKey || event.metaKey;
+    if (keyBelongsToApplication) return;
     const action = treeKeyAction(
       event.key,
       items,
@@ -247,7 +246,6 @@ export function Tree<Item extends TreeItem>({
     open(item, false);
   }
 
-  /** A row at its index, placed top pixels down its parent; a leaving row is only shown. */
   const row = (item: Item, index: number, top: number, leaving = false) => (
     <TreeRow
       key={item.value}
@@ -309,8 +307,7 @@ export function Tree<Item extends TreeItem>({
         style={{
           blockSize: items.length * rowHeight,
           '--_tree-shift': `${shift}px`,
-          // The starting shift applies at once; only the way back to 0 eases.
-          transition: shift ? 'none' : undefined,
+          transition: shift ? startingShiftAppliesAtOnce : undefined,
         }}
       >
         {rows}

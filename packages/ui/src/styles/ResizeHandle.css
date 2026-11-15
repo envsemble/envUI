@@ -1,11 +1,4 @@
 @layer env.components {
-  /* ResizeHandle: a window splitter's handle. The owner places it on the edge it moves. By default a
-     line shows on hover, after a moment, at once on keyboard focus and while dragging, as between a
-     table's columns. With data-grip, for a handle between two surfaces or on a surface's edge, as in
-     Panes, a side Sheet and the Drawer, it is never a line: three small dots at its middle are the
-     grip that says it moves, which darken under the pointer and take the focus color with keyboard
-     focus or while dragging, and focus rings the handle. Hook, set on the owner's element:
-     --_resize-handle-size, its thickness, also under a coarse pointer. */
   .env-resize-handle {
     position: relative;
     flex: 0 0 auto;
@@ -51,10 +44,6 @@
     background: var(--env-color-border-focus);
     transition-delay: 0s;
   }
-  /* data-grip: the grip, three dots in a column at the handle's middle, on its ::after in place of the
-     line. The grip is a box as tall as its dots, centered across the handle's length, so an owner
-     whose handle is taller than the room it shows in, such as a sheet's that scrolls with its
-     content, can keep it in view with position: sticky on it. */
   .env-resize-handle[data-grip] {
     --_resize-handle-grip-dot: 0.1875rem;
     --_resize-handle-grip-length: calc(5 * var(--_resize-handle-grip-dot));
@@ -63,8 +52,6 @@
   }
   .env-resize-handle[data-grip]::after {
     display: block;
-    /* Both edges, so that a sticky grip keeps to the middle of the room it shows in; an absolute
-       one is as tall as its dots and keeps the start. */
     inset-block: calc(50% - var(--_resize-handle-grip-length) / 2);
     inset-inline: 0;
     inline-size: auto;
@@ -89,7 +76,6 @@
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
   }
-  /* Under a coarse pointer the handle's hit area reaches the touch size across its line. */
   @media (pointer: coarse) {
     .env-resize-handle[data-axis='inline'] {
       inline-size: var(--_resize-handle-size, var(--env-control-height-touch));
@@ -98,7 +84,6 @@
       block-size: var(--_resize-handle-size, var(--env-control-height-touch));
     }
   }
-  /* Forced colors: the line and the grip take the system's colors. */
   @media (forced-colors: active) {
     .env-resize-handle:not([data-grip]):focus-visible::after,
     .env-resize-handle:not([data-grip])[data-resizing]::after {

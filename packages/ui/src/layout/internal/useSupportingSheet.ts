@@ -1,16 +1,7 @@
 'use client';
 
-// Panes' supporting pane makes itself a modal sheet rather than rendering a Sheet. Sheet, on Base
-// UI's Drawer, renders its popup in a portal only while it is open, while the supporting pane is one
-// element at every width: CSS lays it out beside the main pane from `splitAt` and over it below, so
-// its content, scroll position and focus carry over as the Panes widen or narrow, and the server
-// renders the same markup at every width. What Base UI gives Sheet, a modal dialog's inert page,
-// focus moving in and back, Tab kept inside and the still page, is written here for that element;
-// a change to how Sheet does one of them belongs here too (tests/component/Panes.test.tsx).
-
 import { useLayoutEffect, useRef, useState, type KeyboardEvent, type RefObject } from 'react';
 
-/** What Tab reaches inside an element, in order. */
 const tabbables = (element: HTMLElement) =>
   [
     ...element.querySelectorAll<HTMLElement>(
@@ -18,25 +9,21 @@ const tabbables = (element: HTMLElement) =>
     ),
   ].filter((candidate) => candidate.tabIndex >= 0 && candidate.getClientRects().length > 0);
 
-/**
- * Makes everything on the page inert but the sheet and what holds it, and what `stays` keeps live,
- * so aria-modal holds; returns what undoes it.
- */
-function inertOthers(sheet: HTMLElement, stays: (element: Element) => boolean) {
+function inertEverythingButSheet(sheet: HTMLElement, staysLive: (element: Element) => boolean) {
   const document = sheet.ownerDocument;
   const others: HTMLElement[] = [];
   for (let node: Element = sheet; node.parentElement && node !== document.body;) {
-    for (const other of node.parentElement.children)
+    for (const other of node.parentElement.children) {
+      const isLiveRegion = other.hasAttribute('aria-live');
       if (
         other instanceof HTMLElement &&
         other !== node &&
         !other.inert &&
-        // What `stays` keeps stays live, and so do live regions, such as toasts, which announce
-        // what happens meanwhile.
-        !stays(other) &&
-        !other.hasAttribute('aria-live')
+        !staysLive(other) &&
+        !isLiveRegion
       )
         others.push(other);
+    }
     node = node.parentElement;
   }
   for (const other of others) other.inert = true;
@@ -45,11 +32,7 @@ function inertOthers(sheet: HTMLElement, stays: (element: Element) => boolean) {
   };
 }
 
-/**
- * Keeps the page still under a sheet fixed to the window, keeping its scrollbar's room so nothing
- * moves; returns what restores it.
- */
-function holdPageScroll(sheet: HTMLElement) {
+function holdPageStillUnderFixedSheet(sheet: HTMLElement) {
   if (getComputedStyle(sheet).position !== 'fixed') return () => {};
   const html = sheet.ownerDocument.documentElement;
   const kept = { overflow: html.style.overflow, gutter: html.style.scrollbarGutter };
@@ -61,20 +44,22 @@ function holdPageScroll(sheet: HTMLElement) {
   };
 }
 
+function recalculateStylesSoWebKitAllowsFocus(element: HTMLElement) {
+  element.getBoundingClientRect();
+}
+
 /**
- * Panes' supporting pane as a sheet, which CSS decides by positioning it over the main pane below
- * `splitAt`: whether it is one, read while it is open and again as the Panes' width changes, and
- * whether it is modal, as it is unless it belongs to a contained PortalContainer rather than the
- * window. While it is modal, everything else on the page is inert and focus moves in; as it closes,
- * focus goes back to where it was. A sheet that becomes a pane beside the main one, as the Panes
- * widen, keeps focus where it is. A sheet fixed to the window keeps the page still. What `stays`
- * keeps, such as the backdrop a press on closes the sheet, stays live.
+ * Panes' supporting pane as a modal sheet below `splitAt`, one element at every width: whether CSS
+ * makes it a sheet, and whether it is modal, as it is unless it belongs to a contained
+ * PortalContainer. While it is modal, the rest of the page but what `staysLive` keeps is inert,
+ * focus moves in and the page under a sheet fixed to the window stays still; as it closes, focus
+ * goes back to where it was.
  */
 export function useSupportingSheet(
   pane: RefObject<HTMLElement | null>,
   open: boolean,
   contained: boolean,
-  stays: (element: Element) => boolean,
+  staysLive: (element: Element) => boolean,
 ) {
   const [sheet, setSheet] = useState(false);
   useLayoutEffect(() => {
@@ -93,10 +78,8 @@ export function useSupportingSheet(
     return () => observer.disconnect();
   }, [pane, open]);
   const modal = sheet && !contained;
-  // Read as the modal ends, in the same commit as a close: whether the sheet stays open, as it does
-  // when it becomes a pane beside the main one.
-  const openRef = useRef(open);
-  openRef.current = open;
+  const openAsModalEnds = useRef(open);
+  openAsModalEnds.current = open;
   useLayoutEffect(() => {
     const element = pane.current;
     if (!modal || !element) return;
@@ -104,20 +87,20 @@ export function useSupportingSheet(
     const active = document.activeElement;
     const returnFocus = active instanceof HTMLElement ? active : null;
     if (!element.contains(active)) element.focus();
-    const restoreOthers = inertOthers(element, stays);
-    const releasePage = holdPageScroll(element);
+    const restoreOthers = inertEverythingButSheet(element, staysLive);
+    const releasePage = holdPageStillUnderFixedSheet(element);
     return () => {
       restoreOthers();
       releasePage();
-      if (openRef.current) return;
+      const stillOpenAsPaneBesideMain = openAsModalEnds.current;
+      if (stillOpenAsPaneBesideMain) return;
       const now = document.activeElement;
-      const lost = now === null || now === document.body || element.contains(now);
-      if (!returnFocus?.isConnected || !lost) return;
-      // WebKit lets focus onto what was inert only once styles are worked out again.
-      returnFocus.getBoundingClientRect();
+      const focusLostWithSheet = now === null || now === document.body || element.contains(now);
+      if (!returnFocus?.isConnected || !focusLostWithSheet) return;
+      recalculateStylesSoWebKitAllowsFocus(returnFocus);
       returnFocus.focus();
     };
-  }, [pane, modal, stays]);
+  }, [pane, modal, staysLive]);
   return { sheet, modal };
 }
 

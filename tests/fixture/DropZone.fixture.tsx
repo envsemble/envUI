@@ -5,10 +5,6 @@ export const themes = true;
 
 const names = (files: File[]) => files.map((file) => file.name).join(' ');
 
-/**
- * An image chosen in a drop zone, shown with actions to replace or remove it; its form submits the
- * image the application keeps.
- */
 function AvatarPicker({ theme }: { theme: ColorScheme }) {
   const picker = useRef<HTMLInputElement>(null);
   const [avatar, setAvatar] = useState<File | null>(null);

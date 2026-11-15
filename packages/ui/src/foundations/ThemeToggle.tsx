@@ -10,7 +10,6 @@ import { useThemePreference } from './ThemePreference.js';
 import '../styles/Base.css';
 import '../styles/ThemeToggle.css';
 
-/** IconButton's props as a button: a toggle runs its own onClick, so it is never a link. */
 type ToggleButtonProps = Extract<IconButtonProps, { href?: undefined }>;
 
 export type ThemeToggleProps = (ToggleButtonProps extends infer Props

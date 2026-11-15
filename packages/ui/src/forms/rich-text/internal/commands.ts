@@ -1,7 +1,6 @@
 import type { Editor } from '@tiptap/core';
 import type { RichTextCommand } from '../types.js';
 
-/** Every command of RichTextEditor's toolbar, in order. */
 export const defaultRichTextCommands: readonly RichTextCommand[] = [
   'heading',
   'bold',
@@ -17,7 +16,6 @@ export const defaultRichTextCommands: readonly RichTextCommand[] = [
   'table',
 ];
 
-/** The block commands the slash menu offers, in order, before the application's own. */
 export const slashCommandIds: readonly Exclude<RichTextCommand, 'link'>[] = [
   'heading',
   'bullet-list',

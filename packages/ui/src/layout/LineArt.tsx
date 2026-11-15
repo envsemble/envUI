@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { lineArtShapes } from './internal/lineArtShapes.js';
+import { lineArtSheet, lineArtShapes } from './internal/lineArtShapes.js';
 import { MovingLineArt } from './internal/MovingLineArt.js';
 import '../styles/Base.css';
 import '../styles/LineArt.css';
@@ -72,12 +72,7 @@ export interface LineArtProps extends Omit<ComponentPropsWithRef<'svg'>, 'childr
 
 const aspect = { start: 'xMinYMax', center: 'xMidYMax', end: 'xMaxYMax' } as const;
 
-/**
- * Where a drawing's sheet starts, for the drawings whose lines stop short of its foot or its end:
- * the sheet is moved so they reach both, and a drawing rests on its box's foot at every size with
- * no strip of empty sheet below it or beside its end.
- */
-const sheetOrigin: Partial<Record<LineArtDrawing, string>> = {
+const sheetOriginSoLinesReachFootAndEnd: Partial<Record<LineArtDrawing, string>> = {
   'pappus-chain': '0 -18',
   'golden-section': '-14 -30',
   'whirling-squares': '-7 -22',
@@ -89,8 +84,8 @@ const sheetOrigin: Partial<Record<LineArtDrawing, string>> = {
  * A geometric drawing in hairlines that fills its container's box, for a banner's end, an empty
  * state or the background of a header: its lines in the muted edge color in every theme, one
  * device pixel wide at any size, and the system's gray text color in forced colors. It covers the
- * box, resting on its foot and cropped from its start by default, and is hidden from assistive technology unless a label
- * makes it an image. With `motion`, its lines draw themselves in, out, or in and out again.
+ * box, resting on its foot and cropped from its start by default, and is hidden from assistive
+ * technology unless a label makes it an image. With `motion`, its lines draw themselves in, out, or in and out again.
  */
 export function LineArt({
   drawing,
@@ -102,7 +97,7 @@ export function LineArt({
   ...props
 }: LineArtProps) {
   const root = {
-    viewBox: `${sheetOrigin[drawing] ?? '0 0'} 480 330`,
+    viewBox: `${sheetOriginSoLinesReachFootAndEnd[drawing] ?? '0 0'} ${lineArtSheet.width} ${lineArtSheet.height}`,
     preserveAspectRatio: `${aspect[align]} slice`,
     focusable: 'false',
     role: label ? 'img' : undefined,
@@ -110,7 +105,6 @@ export function LineArt({
     'aria-hidden': label ? undefined : true,
     ...props,
   } as const;
-  // A drawing in motion moves on the client; a still one is markup alone, which a server renders.
   return motion ? (
     <MovingLineArt
       {...root}

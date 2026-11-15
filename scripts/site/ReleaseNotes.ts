@@ -1,7 +1,3 @@
-// The release notes, apps/site/src/releases/release-notes.md, the highlights on the Docs'
-// Changelog page: one entry per release, newest first, with up to five highlights and the breaking
-// changes, each linking to the full changelog below them. The catalogue reads them when it builds,
-// through the virtual module of SiteData.ts, and the checks below hold them to that shape.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { headingsOf } from '../docs/MarkdownHeadings.ts';
@@ -9,20 +5,13 @@ import { libraryChangelogFile, repositoryRoot } from '../RepositoryPaths.ts';
 
 const releaseNotesFile = resolve(repositoryRoot, 'apps/site/src/releases/release-notes.md');
 
-/** The most highlights an entry has. */
 const highlightLimit = 5;
 
-/**
- * A line of inline Markdown as pieces the page renders: text, `code` and [links](href), whose
- * text may hold code too.
- */
-/** A piece of a line of the release notes: text, code, or a link whose text has pieces of its own. */
 export type InlinePiece =
   | { kind: 'text'; text: string }
   | { kind: 'code'; text: string }
   | { kind: 'link'; href: string; children: InlinePiece[] };
 
-/** One release's entry in the release notes. */
 export interface ReleaseEntry {
   version: string;
   date: string | null;
@@ -46,7 +35,6 @@ export function inlinePieces(text: string): InlinePiece[] {
   return pieces;
 }
 
-/** Reads the release notes' Markdown into entries, in the file's order. */
 export function parseReleaseNotes(markdown: string): ReleaseEntry[] {
   const releases: ReleaseEntry[] = [];
   let list: 'highlights' | 'breaking' = 'highlights';
@@ -83,7 +71,6 @@ export function parseReleaseNotes(markdown: string): ReleaseEntry[] {
   return releases;
 }
 
-/** A version's parts, for ordering: 1.0.0-prerelease.2 is [1, 0, 0, 2], a release [x, y, z, ∞]. */
 function versionKey(version: string) {
   const [core, pre] = version.split('-') as [string, string | undefined];
   const preNumber = pre ? Number(pre.split('.').at(-1)) : Infinity;
@@ -97,13 +84,11 @@ function compareVersions(a: string, b: string) {
   return 0;
 }
 
-/** Every link in an entry's pieces. */
 const linksOf = (pieces: InlinePiece[]): string[] =>
   pieces.flatMap((piece) =>
     piece.kind === 'link' ? [piece.href, ...linksOf(piece.children)] : [],
   );
 
-/** The pages of the Docs the notes may link to, each with its heading ids. */
 function linkTargets() {
   const ids = (file: string) =>
     new Set(
@@ -118,10 +103,6 @@ function linkTargets() {
   } as Record<string, Set<string>>;
 }
 
-/**
- * The problems of the release notes: an entry with too many highlights, versions out of order,
- * a breaking change without a link, or a link to a section the Docs don't have.
- */
 export function releaseNotesProblems(releases: ReleaseEntry[], targets = linkTargets()) {
   const problems: string[] = [];
   releases.forEach((release, index) => {
@@ -146,7 +127,6 @@ export function releaseNotesProblems(releases: ReleaseEntry[], targets = linkTar
   return problems;
 }
 
-/** The release notes, checked; a problem stops the build. */
 export function readReleaseNotes(file = releaseNotesFile) {
   const releases = parseReleaseNotes(readFileSync(file, 'utf8'));
   const problems = releaseNotesProblems(releases);
@@ -155,5 +135,4 @@ export function readReleaseNotes(file = releaseNotesFile) {
   return releases;
 }
 
-/** The files the release notes depend on, which the catalogue watches while it runs. */
 export const releaseNotesSources = [releaseNotesFile, libraryChangelogFile];

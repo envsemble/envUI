@@ -32,27 +32,13 @@ examples:
   TitleBar: example
   TopBarAnatomy: anatomy
   TitleFirstToGo: example
-  FewActions:
-    role: do
-    caption: Two or three actions, the account last.
-  ManyActions:
-    role: dont
-    caption: 'Many actions: the title is cut down to nothing.'
 ---
 
 # TopBar
 
 ## Variants
 
-### Its background
-
-The bar is a plain rectangle in the navigation's background, with no line below. On the page's background instead: see [Scaffold](scaffold.md#backgrounds).
-
 ### Title bar
-
-The bar can be the window's own title bar in an installed web app: empty space drags the window, the title is centred and the controls are small.
-
-- It then spans the whole Scaffold.
 
 ```tsx figure=TitleBar stage=shaded widths="40"
 
@@ -73,98 +59,6 @@ The bar can be the window's own title bar in an installed web app: empty space d
 
 ### Adapting to width
 
-The bar never wraps: a title given as text is cut short first, and the start and end content keep their size. Other content in the title or the center decides how it fits.
-
 ```tsx figure=TitleFirstToGo stage=shaded widths="40 20" sweep
 
 ```
-
-## Rules
-
-The bar goes in a [Scaffold](scaffold.md)'s top bar region, the screen's banner, and keeps room for its title.
-
-```tsx figure=FewActions stage=shaded
-
-```
-
-```tsx figure=ManyActions stage=shaded
-
-```
-
-### Layout
-
-The title names the application or the section.
-
-- The navigation goes in the Scaffold's navigation region, not in the top bar.
-
-## Accessibility
-
-### envUI provides
-
-- A plain element, which the Scaffold's banner region names; `render` gives it another element.
-- The page progress as a named progress bar while it shows.
-- In a title bar, controls that stay clickable where the window drags.
-
-### You provide
-
-- Names for icon-only buttons, such as Search or Back to projects.
-- A `loadingLabel` that names what loads, in the application's language.
-
-## Compose
-
-### Usage
-
-A TopBar holds, in reading order:
-
-- `start` content before the title, such as a navigation or back IconButton or the application's mark;
-- its `title`, the application's or the section's name, which is no heading; text is cut short first;
-- `center` content, centered in the bar, such as a search trigger;
-- `end` content, such as a search trigger and the account menu.
-
-Each holds what you give it without styling it, so a button there keeps its focus ring and its colors.
-
-Put it in a Scaffold's top bar region, which is the banner landmark.
-
-```tsx source=AppTopBar
-
-```
-
-#### Background
-
-`background` is `default`, the navigation's background, as a plain rectangle with no line below, or `page`, which puts it on the page's background, opaque when it sticks, while the navigation keeps its own. On a surface, such as a Sheet, both take the surface's color.
-
-#### Page progress
-
-`loading` shows a thin bar along the bottom edge while the next page loads, after a short delay so quick loads never flash it. `loadingLabel` names it.
-
-```tsx
-// True while the next page loads from the server.
-<TopBar title="Northwind" loading={loading} loadingLabel="Loading Projects" />
-```
-
-#### Title bar
-
-`titleBar` makes the bar the window's own title bar in an installed web app that draws its own, through the Window Controls Overlay: empty space drags the window, it leaves room for the controls the system draws, the title is centred and the controls are small.
-
-- Put it in a Scaffold with `topBarSpan="full"`.
-
-```tsx
-<TopBar
-  titleBar
-  title="Roadmap.md"
-  start={<Menubar.Root aria-label="Application menu">…</Menubar.Root>}
-  end={<IconButton icon={<IconShare />} aria-label="Share" />}
-/>
-```
-
-#### Outside a Scaffold
-
-`sticky` keeps a bar outside a Scaffold at the top of the scrolling area as the document scrolls; in a Scaffold's top bar region it is unneeded, since the body scrolls under it.
-
-- `render={<header />}` makes such a bar the page's banner; it is a `div` by default.
-
-### Composition
-
-The parts are the bar, `env-top-bar`, its start side, `env-top-bar-lead`, with the start, `env-top-bar-start`, and the title, `env-top-bar-title`; its middle, `env-top-bar-middle`, with the center, `env-top-bar-center`; its end, `env-top-bar-end`; and the page progress, `env-top-bar-loading-bar`.
-
-- Keep the navigation in the Scaffold's navigation region, and two or three actions in the bar, the account last.

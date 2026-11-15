@@ -1,5 +1,3 @@
-// What the site's search shows (apps/site/src/search/SearchResults.ts): the suggestions before people
-// type, the groups of results and the palette's rows of them, and where a result opens.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { importSource } from '../support/ImportSource.ts';
@@ -7,7 +5,6 @@ import { importSource } from '../support/ImportSource.ts';
 const search = await importSource('SearchResults', 'apps/site/src/search/SearchResults.ts');
 const routes = await importSource('SearchRoutes', 'apps/site/src/routes/SiteRoutes.ts');
 
-/** A search result, named by the query unless said otherwise. */
 const result = (kind, title, fields = {}) => ({
   id: `${kind}:${title}`,
   kind,
@@ -35,7 +32,6 @@ test("before people type, search suggests the page's counterpart, then the start
   assert.equal(suggestions[0].description, 'Docs · This page in code, with its props');
   assert.equal(suggestions[1].suggested, 'docs');
   assert.ok(suggestions.every(({ group }) => group === 'Suggested'));
-  // A page without a counterpart, or none, suggests the start of either part alone.
   assert.deepEqual(
     search.suggestionsFor(undefined).map(({ id }) => id),
     ['docs', 'components', 'docs/tokens'],
@@ -67,7 +63,6 @@ test('results named by the query come first, and those that only mention it fold
     ['Pages', ['Dates'], 0],
     ['Also mentioned in', [], 2],
   ]);
-  // Expanded, the row's results show in place.
   assert.deepEqual(
     shape(
       search.groupResults(
@@ -100,7 +95,6 @@ test("the named components' props come first, pass-through props last, as many a
     ['Components', ['DatePicker'], 0],
     ['Props', ['value', 'min', 'className'], 2],
   ]);
-  // A query that names no prop by its own name shows them all in the group's row.
   const textarea = search.groupResults(
     [result('component', 'Textarea'), prop('size', 'Textarea'), prop('variant', 'Textarea')],
     none,

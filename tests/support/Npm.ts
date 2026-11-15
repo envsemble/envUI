@@ -1,5 +1,3 @@
-// Running npm and Node scripts from the tests the way an application would, outside npm's own
-// environment, and installing a package as npm packs it.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
@@ -8,14 +6,14 @@ import { delimiter, dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 
-/** npm's CLI script, also when the tests run without npm. */
+const debianAndUbuntuNpmCli = '/usr/share/nodejs/npm/bin/npm-cli.js';
+
 export function npmCli() {
   const candidates = [
     process.env.npm_execpath,
     join(dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js'),
     resolve(dirname(process.execPath), '../lib/node_modules/npm/bin/npm-cli.js'),
-    // Where Debian's and Ubuntu's nodejs package puts npm, which none of the others find.
-    '/usr/share/nodejs/npm/bin/npm-cli.js',
+    debianAndUbuntuNpmCli,
     ...(process.env.PATH ?? '')
       .split(delimiter)
       .map((directory) => join(directory, 'node_modules/npm/bin/npm-cli.js')),
@@ -25,10 +23,6 @@ export function npmCli() {
   return candidate;
 }
 
-/**
- * Runs a Node script in `cwd` without npm's environment, first importing the module `hook` if
- * given, and returns what it prints.
- */
 export function runNode(script: string, args: readonly string[], cwd: string, hook?: string) {
   try {
     return execFileSync(
@@ -56,27 +50,17 @@ export function runNode(script: string, args: readonly string[], cwd: string, ho
   }
 }
 
-/**
- * Runs npm pack in `packageDirectory` with `args`: the pack's `filename` and its `files`, with
- * forward slashes, sorted.
- */
 export function npmPack(packageDirectory: string, args: readonly string[]) {
   const result = JSON.parse(runNode(npmCli(), ['pack', '--json', ...args], packageDirectory));
-  // A list, or an object by package name when npm packs inside a workspace.
-  const packed: { filename: string; files: { path: string }[] }[] = Array.isArray(result)
-    ? result
-    : Object.values(result);
+  const packedInWorkspace = !Array.isArray(result);
+  const packed: { filename: string; files: { path: string }[] }[] = packedInWorkspace
+    ? Object.values(result)
+    : result;
   assert.equal(packed.length, 1);
   const [{ filename, files }] = packed;
   return { filename, files: files.map(({ path }) => path.replaceAll('\\', '/')).sort() };
 }
 
-/**
- * Installs the package in `packageDirectory` as npm would pack it, by copying the files of its
- * pack into the node_modules of a new consumer folder in the repository's .cache, where its peer
- * dependencies resolve to the repository's. Returns the consumer's `directory`, to remove after
- * the tests, and the `files` of the pack.
- */
 export async function installAsPacked(packageDirectory: string) {
   const { name } = JSON.parse(await readFile(join(packageDirectory, 'package.json'), 'utf8'));
   const { files } = npmPack(packageDirectory, [

@@ -9,13 +9,6 @@ const {
 
 const ruleName = 'envui/no-px';
 
-/**
- * Where px may appear: hairlines and offsets that must not scale with the text, such as border and
- * outline widths, focus-ring offsets and shadow offsets. Custom properties take px only when their
- * name ends in one of those: `--…-border-width`, `--…-ring-offset`, `--…-shadow`, `--…-hairline`.
- * Radii and table spacing scale, so they take rem. envUI's own style sheets use this list too, so
- * the two cannot drift apart.
- */
 export const hairlineProperties = [
   '/^border(?:-(?:top|right|bottom|left|block|inline)(?:-(?:start|end))?)?(?:-width)?$/',
   '/^outline(?:-width|-offset)?$/',
@@ -33,26 +26,21 @@ export const hairlineProperties = [
 
 const isHairlineProperty = propertyMatcher(hairlineProperties);
 
-/** The base size a rem stands for, the browser's default font size. */
-const rootSize = 16;
+const browserDefaultFontSize = 16;
 
-/** A length in px as rem, such as `1.5rem` for `24px`. */
 const asRem = (px) => {
-  const rem = Number((px / rootSize).toFixed(4));
+  const rem = Number((px / browserDefaultFontSize).toFixed(4));
   return rem === 0 ? '0' : `${rem}rem`;
 };
 
-/** The px lengths of a value outside `var()` fallbacks and `env()`, which are in CSS pixels. */
 const pxLengths = (value) =>
   numbers(value).filter(
     ({ unit, functions }) =>
       unit === 'px' && !functions.some((name) => name === 'var' || name === 'env'),
   );
 
-/** A hairline, 1px or less, keeps px: a fix to rem would blur it. */
 const isHairline = ({ value }) => Math.abs(value) <= 1;
 
-/** The value with its px lengths, hairlines apart, written in rem. */
 function remValue(value) {
   let fixed = '';
   let last = 0;
@@ -71,7 +59,6 @@ const messages = ruleMessages(ruleName, {
     `${px}: draw a hairline with a border, an outline or a box-shadow, where px passes; px is only for border and outline widths, focus-ring offsets and shadow offsets.`,
 });
 
-/** The at-rules whose conditions measure lengths. */
 const conditionRules = /^(?:media|container|custom-media)$/i;
 
 const rule = (primary) => (root, result) => {

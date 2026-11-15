@@ -4,9 +4,7 @@ import * as fixture from '../fixture/Table.fixture.tsx';
 import { box, mouse, shown } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-// A file of its own: the frame keeps a module once it has loaded it, so the module must not have
-// loaded before this test makes it fail and then holds it back.
-test('a table whose resize code fails to load keeps its columns, and a remount loads it as it renders, the first drag resizing', async () => {
+test('alone in its file, as the module loads once: a table whose resize code fails to load keeps its columns, and a remount loads it as it renders, the first drag resizing', async () => {
   const name = 'ColumnResizeHandle';
   await commands.failModule(name);
   try {
@@ -20,7 +18,6 @@ test('a table whose resize code fails to load keeps its columns, and a remount l
     await report().getByRole('button').click();
     await expect.poll(() => report().element().getAttribute('aria-sort')).toBe('ascending');
 
-    // Held back, as a slow network would, the handles' code leaves the header as it is without them.
     await commands.unrouteModule(name);
     await commands.holdModule(name);
     fixtureMount.remount();
@@ -29,7 +26,6 @@ test('a table whose resize code fails to load keeps its columns, and a remount l
     expect(separators()).toBe(0);
     await commands.releaseModule(name);
     await expect.poll(separators).toBe(3);
-    // Once it has loaded, the first drag resizes, with the handle's own style.
     const handle = reports().getByRole('separator', { name: 'Resize Report' });
     await expect.poll(() => getComputedStyle(handle.element()).cursor).toBe('col-resize');
     const tableWidth = box(reports()).width;

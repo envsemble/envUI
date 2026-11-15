@@ -5,7 +5,6 @@ export const mount = 'standalone';
 
 const source = 'npm install @envsemble/envui\nnpm run build';
 
-/** Code blocks to copy, in English and with the provider's words. */
 export default function CodeBlockFixture() {
   return (
     <Column gap={4}>

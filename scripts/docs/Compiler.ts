@@ -1,6 +1,3 @@
-// Compiles the documentation into the Markdown the package ships in docs/, for agents and readers
-// without the catalogue: each page whole, with its examples' code, the generated Props, Parts and
-// Strings sections, and the example sources beside it.
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { readDocumentation, type DocumentRecord } from './DocumentationReader.ts';
@@ -23,10 +20,8 @@ import {
   propDescription,
 } from '../../apps/site/src/documentation/PropWording.ts';
 
-/** How the package names a do, a don't or a caution figure in a run of figures. */
 const verdictWords: Record<string, string> = { do: 'do', dont: "don't", caution: 'caution' };
 
-/** Every runtime export a page documents, with namespaces expanded to their parts. */
 export function documentedExports(names: readonly string[], props: PropsFile | undefined) {
   return names.flatMap((name): string[] => {
     const entry = props?.exports[name];
@@ -40,14 +35,9 @@ const codeCell = (text: string) => `\`${cell(text)}\``;
 const andList = (items: string[]) =>
   items.length === 1 ? items[0] : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
 
-/**
- * The generated Props section of a page, as Markdown: each export's props in a table, where a prop
- * an export above says word for word is named after the table rather than repeated.
- */
 function renderProps(names: readonly string[], props: PropsFile, headingDepth = 2) {
   const heading = '#'.repeat(headingDepth);
   const lines = [`${heading} Props`, ''];
-  // The export that first lists a prop, by its name, type, default and description.
   const firstWith = new Map<string, string>();
   const propKey = (prop: PropEntry) =>
     JSON.stringify([
@@ -71,7 +61,6 @@ function renderProps(names: readonly string[], props: PropsFile, headingDepth = 
       lines.push(native ? `No props of its own. ${native}` : 'Takes no props.', '');
       continue;
     }
-    // A prop said word for word on an export above is named after the table, not repeated.
     const shared = new Map<string, string[]>();
     const own = entry.props.filter((prop: PropEntry) => {
       const owner = firstWith.get(propKey(prop));
@@ -107,8 +96,7 @@ function renderProps(names: readonly string[], props: PropsFile, headingDepth = 
   return lines.join('\n');
 }
 
-/** docs/generated/parts.json: each component's part classes, states and color properties. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; GenerateParts writes it
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PartsFile = { components: Record<string, any> };
 
 function readParts(directory = documentationDirectory): PartsFile | undefined {
@@ -116,10 +104,6 @@ function readParts(directory = documentationDirectory): PartsFile | undefined {
   return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
 }
 
-/**
- * The generated Part names and Color properties of a page, as Markdown, from parts.json: the same
- * lists the page in the Docs shows, so a page's prose never repeats them.
- */
 function renderParts(names: readonly string[], parts: PartsFile, headingDepth = 2) {
   const heading = '#'.repeat(headingDepth);
   const entries = names.flatMap((name) => {
@@ -168,17 +152,10 @@ function renderParts(names: readonly string[], parts: PartsFile, headingDepth = 
   return lines.join('\n');
 }
 
-/** An example's source as the package and agents read it. */
 function exampleSource(page: string, name: string, directory = examplesDirectory) {
   return readFileSync(resolve(directory, page, `${name}.tsx`), 'utf8');
 }
 
-/**
- * The frontmatter of a page as it ships: as written, with each example once, by its role and
- * caption, under a comment that says where its file is; how the catalogue frames an overview is
- * left out. A foundation's figures are the catalogue's, and its legends say what they show, so
- * only those with an example file, their code, are listed.
- */
 function shippedYaml(document: DocumentRecord) {
   const foundation = pageKindOf(document.path) === 'foundation';
   const coded = new Set(
@@ -201,15 +178,6 @@ function shippedYaml(document: DocumentRecord) {
   return `${(document.yaml ?? '').replace(/\n*$/, '\n').replace(/^examples:[^\n]*\n(?:[ \t]+[^\n]*\n)*/m, examples)}`;
 }
 
-/**
- * The Markdown of a component or foundation page as it ships, for agents: the whole file, in its
- * order, with each example's code once. The frontmatter lists every example with its role and
- * caption, and says what to use instead, so Related isn't repeated at the end; the Overview's
- * examples are there. In the body, a run of figures is one line that names them, an anatomy figure
- * its legend, a variants figure its option table and a foundation's figure its legend; Compose
- * holds the canonical example's source in full. The props name what an export shares with one above
- * rather than repeating it, and the releases are in the package's CHANGELOG.md.
- */
 function compilePage(
   document: DocumentRecord,
   { props, examples, title }: { props: string; examples: string; title: string },
@@ -242,7 +210,6 @@ function compilePage(
         const fence = fenceFor(source);
         text += `${fence}tsx source=${block.name}\n${source}${fence}\n`;
       } else if (block.kind === 'figure') {
-        // A foundation's figure: its example file, where it has one, then its legend.
         flush();
         if (block.code) text += `\nExample: ${block.name}.\n\n`;
         if (block.legend) text += `\n${legendLines(block.legend, true)}\n\n`;
@@ -255,29 +222,27 @@ function compilePage(
         const table = next?.kind === 'markdown' && next.markdown.trimStart().startsWith('|');
         if (block.legend && !table) text += `\n${legendLines(block.legend)}\n\n`;
       } else if (block.kind === 'example')
-        // A do, a don't or a caution says so; its rule is its caption, in the frontmatter.
         run.push(
           block.role ? `${block.name} (${verdictWords[block.role] ?? block.role})` : block.name,
         );
     }
     flush();
-    return text.replace(/\n{3,}/g, '\n\n').replace(/\s*$/, '\n');
+    return text
+      .replace(/\n{3,}/g, '\n\n')
+      .replace(/(?<=\n)### [^\n]*\n+(?=### |$)/g, '')
+      .replace(/\s*$/, '\n');
   };
   const parts: string[] = [];
   for (const section of document.sections!) {
     if (['overview', 'related', 'changelog'].includes(section.id)) continue;
-    parts.push(write(section));
+    const written = write(section);
+    if (written.trim() !== `## ${section.title}`) parts.push(written);
     if (section.id === 'code' && props) parts.push(props);
   }
   if (props && !document.sections!.some((section) => section.id === 'code')) parts.push(props);
   return `${head}${title}${parts.join('\n')}`.replace(/\n*$/, '\n');
 }
 
-/**
- * The Markdown of a page as it ships: a component or foundation page as compilePage writes it,
- * with its props; the index with each page's summary; and a guide as it is written, but for its
- * figures (```tsx figure=Name```), the catalogue's own pictures, which its words describe.
- */
 export function compileDocument(
   document: DocumentRecord,
   documents: readonly DocumentRecord[],
@@ -321,7 +286,6 @@ export function compileDocument(
   return `${head}${title}${markdown}`;
 }
 
-/** Every packaged documentation file: compiled pages, the index and the example sources. */
 export function compileDocumentation(
   directory = documentationDirectory,
   {
@@ -354,7 +318,6 @@ export function compileDocumentation(
   return files;
 }
 
-/** Writes the package's docs/: compiled pages and examples, and every other file as it is. */
 export function packageDocumentation(outputDirectory: string) {
   rmSync(outputDirectory, { recursive: true, force: true });
   cpSync(documentationDirectory, outputDirectory, { recursive: true });

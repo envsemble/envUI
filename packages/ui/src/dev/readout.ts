@@ -1,6 +1,3 @@
-// The readout: a measurement as text, for agents and tests, and the problems it shows. Plain
-// functions of the data, so they run without a page.
-
 import type {
   Box,
   ChildData,
@@ -17,26 +14,18 @@ import { roundToHundredth } from '../internal/dom/lengths.js';
 import { toRem } from './units.js';
 import { windowClassOfRem } from '../foundations/windowClasses.js';
 
-/** A measurement read: its text, each node's line and problems, and every problem. */
 export interface Reading {
-  /** The whole readout, as `envui.layout.describe()` returns it. */
   text: string;
-  /** Each node's own line, by its index. */
   lines: string[];
-  /** Each node's problems, by its index. */
   problemsByNode: LayoutProblem[][];
-  /** Every problem, once. */
   problems: LayoutProblem[];
 }
 
-/** The kinds of envUI's layout primitives, by name. */
 const layoutKindNames = new Set<string>(layoutKinds);
 
-/** A node as the readout names it: its kind, and its name where that isn't the kind. */
 export const labelOf = (node: Pick<NodeData, 'kind' | 'name'>) =>
   node.name === node.kind ? node.kind : `${node.kind} "${node.name}"`;
 
-/** The nodes from the top down to this one, such as `scaffold > page > grid "cards"`. */
 function pathOf(snapshot: Snapshot, node: NodeData): string {
   const labels: string[] = [];
   for (
@@ -52,10 +41,8 @@ class Reader {
   readonly lines: string[];
   readonly problemsByNode: LayoutProblem[][];
   readonly all: LayoutProblem[] = [];
-  /** Content wider than a node, by node: only the deepest is reported. */
-  readonly overflowing = new Map<number, string>();
-  /** Nodes with a child sticking out: the nodes around them overflow because of it. */
-  readonly spilling = new Set<number>();
+  readonly contentOverflowCandidates = new Map<number, string>();
+  readonly nodesWithSpillingChild = new Set<number>();
 
   constructor(readonly snapshot: Snapshot) {
     this.lines = snapshot.nodes.map(() => '');
@@ -75,8 +62,6 @@ class Reader {
     this.problemsByNode[node.index].push(problem);
     this.all.push(problem);
   }
-
-  // --- One node's line ------------------------------------------------------------------------
 
   display(node: NodeData): string[] {
     const bits: string[] = [];
@@ -181,14 +166,11 @@ class Reader {
     return `${label} · ${bits.join(' · ')}`;
   }
 
-  // --- Checks ----------------------------------------------------------------------------------
-
   check(node: NodeData) {
     const label = labelOf(node);
     const { rootPx } = this.snapshot;
-    // A component may paint through a primitive it renders, which carries its part class; a
-    // layout node without one is the app's own, and never paints.
-    if (layoutKindNames.has(node.kind) && node.part === null && node.paints.length)
+    const appOwnLayoutNode = layoutKindNames.has(node.kind) && node.part === null;
+    if (appOwnLayoutNode && node.paints.length)
       this.problem(
         node,
         'layout-paints',
@@ -235,7 +217,7 @@ class Reader {
         const past = sidesPast(node.box, child.box, child.outset);
         if (!past.length) continue;
         spills = true;
-        this.spilling.add(node.index);
+        this.nodesWithSpillingChild.add(node.index);
         this.problem(
           node,
           'child-overflow',
@@ -243,46 +225,46 @@ class Reader {
         );
       }
     }
-    // What a negative margin inside sets out past the node widens its content by design too.
-    const wider = node.scrollSize.w - node.scrollSize.clientW - (node.outsetInside ?? 0);
+    const outsetByDesign = node.outsetInside ?? 0;
+    const wider = node.scrollSize.w - node.scrollSize.clientW - outsetByDesign;
     if (!spills && wider > 1)
-      this.overflowing.set(
+      this.contentOverflowCandidates.set(
         node.index,
         `${label}: its content is ${roundToHundredth(wider / rootPx)}rem wider than it (${this.rem(node.scrollSize.clientW)}rem) and it doesn't scroll${clips ? ', so the content is cut off' : ''}. Let the content wrap or shrink (min-inline-size: 0), or let it scroll.`,
       );
   }
 
-  // --- The tree --------------------------------------------------------------------------------
-
-  /** The lines of a node and everything in it, with identical siblings folded into one line. */
   walk(node: NodeData, depth: number): string[] {
     const indent = '  '.repeat(depth);
     const line = this.line(node);
     this.lines[node.index] = line;
     const block = [`${indent}${line}`];
-    // A hidden node's line counts the nodes inside it, which aren't listed.
     if (node.hidden !== null) return block;
     this.check(node);
-    let run: { shape: string; first: string; more: string[] } | null = null;
-    const flush = () => {
-      if (!run?.more.length) return;
+    let alikeSiblings: { shape: string; first: string; more: string[] } | null = null;
+    const foldAlikeSiblings = () => {
+      if (!alikeSiblings?.more.length) return;
       const names =
-        run.more.length <= 6 ? ` (${run.more.map((name) => `"${name}"`).join(', ')})` : '';
-      block.push(`${indent}  … and ${run.more.length} more like "${run.first}"${names}`);
+        alikeSiblings.more.length <= 6
+          ? ` (${alikeSiblings.more.map((name) => `"${name}"`).join(', ')})`
+          : '';
+      block.push(
+        `${indent}  … and ${alikeSiblings.more.length} more like "${alikeSiblings.first}"${names}`,
+      );
     };
     for (const index of node.children) {
       const child = this.snapshot.nodes[index];
       const lines = this.walk(child, depth + 1);
       const shape = lines.join('\n').replace(/"[^"]*"/g, '"#"');
-      if (run && shape === run.shape) {
-        run.more.push(child.name);
+      if (alikeSiblings && shape === alikeSiblings.shape) {
+        alikeSiblings.more.push(child.name);
         continue;
       }
-      flush();
-      run = { shape, first: child.name, more: [] };
+      foldAlikeSiblings();
+      alikeSiblings = { shape, first: child.name, more: [] };
       block.push(...lines);
     }
-    flush();
+    foldAlikeSiblings();
     return block;
   }
 
@@ -300,12 +282,12 @@ class Reader {
       out.push('', `open overlays (${overlays.length}):`);
       for (const index of overlays) out.push(...this.walk(snapshot.nodes[index], 1));
     }
-    // Content wider than a node: only the deepest node, since those around it overflow because of it.
-    for (const [index, message] of this.overflowing) {
-      const inside = [...this.overflowing.keys(), ...this.spilling].some(
-        (other) => other !== index && isInside(snapshot, other, index),
-      );
-      if (!inside) this.problem(snapshot.nodes[index], 'content-overflow', message);
+    for (const [index, message] of this.contentOverflowCandidates) {
+      const causedByANodeInside = [
+        ...this.contentOverflowCandidates.keys(),
+        ...this.nodesWithSpillingChild,
+      ].some((other) => other !== index && isInside(snapshot, other, index));
+      if (!causedByANodeInside) this.problem(snapshot.nodes[index], 'content-overflow', message);
     }
     out.push('', this.all.length ? `problems (${this.all.length}):` : 'problems: none');
     for (const problem of this.all) out.push(`  - ${problem.message}`);
@@ -318,10 +300,6 @@ class Reader {
   }
 }
 
-/**
- * How far a child reaches past each side of its parent, beyond what its negative margins set it out
- * by, where it does by more than 1 px.
- */
 function sidesPast(parent: Box, child: Box, outset?: ChildData['outset']): [number, string][] {
   const sides: [number, string][] = [
     [parent.x - child.x - (outset?.left ?? 0), 'left'],
@@ -332,14 +310,12 @@ function sidesPast(parent: Box, child: Box, outset?: ChildData['outset']): [numb
   return sides.filter(([distance]) => distance > 1);
 }
 
-/** Whether a node is inside another one. */
 function isInside(snapshot: Snapshot, index: number, ancestor: number): boolean {
   for (let at = snapshot.nodes[index].parent; at !== null; at = snapshot.nodes[at].parent)
     if (at === ancestor) return true;
   return false;
 }
 
-/** Reads a measurement: its text, each node's line and problems. */
 export function read(snapshot: Snapshot): Reading {
   return new Reader(snapshot).read();
 }

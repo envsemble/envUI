@@ -1,11 +1,4 @@
 @layer env.components {
-  /* Combobox: the shared text field with a popup of options to choose one or several of. Labels,
-     guidance, validation, sizes and touch heights follow TextField; the popup is the shared popup
-     (PopupSurface) at Select's size, with rows (ListRow) where a check mark shows each chosen
-     option. */
-
-  /* The field's height, as TextField sets it: its size's control height, and the touch height under a
-     coarse pointer. */
   .env-combobox {
     --_field-height: var(--env-control-height);
   }
@@ -14,9 +7,6 @@
       --_field-height: max(var(--env-control-height), var(--env-control-height-touch));
     }
   }
-  /* The control box lays out the chosen option's leading content, the chips and the text input in
-     rows. Its padding keeps one row as tall as a TextField of its size, and leaves room for the
-     actions at its end. */
   .env-combobox .env-combobox-control {
     --_combobox-row: 1.375rem;
     --_combobox-action: max(
@@ -28,21 +18,21 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--env-space-1);
-    padding-block: calc(
+    --_combobox-padding-block-to-field-height: calc(
       (var(--_field-height) - 2 * var(--env-control-border-width) - var(--_combobox-row)) / 2
     );
-    padding-inline: var(--env-space-3)
-      calc(
-        var(--env-space-1) + var(--_combobox-actions) * var(--_combobox-action) +
-          var(--_combobox-actions) * var(--env-space-1)
-      );
+    --_combobox-room-for-actions: calc(
+      var(--env-space-1) + var(--_combobox-actions) * var(--_combobox-action) +
+        var(--_combobox-actions) * var(--env-space-1)
+    );
+    padding-block: var(--_combobox-padding-block-to-field-height);
+    padding-inline: var(--env-space-3) var(--_combobox-room-for-actions);
     cursor: text;
   }
   .env-combobox .env-combobox-control[data-action-count='2'] {
     --_combobox-actions: 2;
   }
   .env-combobox .env-combobox-control > .env-combobox-input {
-    /* The room typing keeps beside the chips before it wraps to a line of its own. */
     --_combobox-input-min-width: 4rem;
     flex: 1 1 var(--_combobox-input-min-width);
     inline-size: auto;
@@ -52,10 +42,6 @@
     border-radius: 0;
     text-overflow: ellipsis;
   }
-  /* Beside chips, the input is as wide as its text, and takes what the chips leave of the row: it
-     moves to a row of its own only once its text no longer fits there, so the field grows only as
-     the chips and the text wrap. Where the engine can't size an input to its text, it keeps room
-     for a few letters. */
   @supports (field-sizing: content) {
     .env-combobox .env-combobox-control:has(> .env-combobox-chip) > .env-combobox-input {
       flex: 1 1 auto;
@@ -66,7 +52,6 @@
   .env-combobox .env-combobox-control > .env-combobox-input:read-only {
     cursor: default;
   }
-  /* The chevron points down, and up while the popup is open, turning half a circle as Select's does. */
   .env-combobox-trigger .env-icon {
     transform: rotate(90deg);
   }
@@ -78,15 +63,12 @@
     > :is(.env-combobox-trigger, .env-combobox-clear) {
     cursor: default;
   }
-  /* A read-only combobox's chevron stays, in the field's quiet icon color, and doesn't answer the
-     pointer, as a read-only Select's; its list is still browsed from the keyboard. */
   .env-combobox-control:has(> .env-combobox-input[readonly]:not(:disabled))
     .env-combobox-end
     > .env-combobox-trigger {
     pointer-events: none;
   }
 
-  /* Leading content, such as an avatar or an icon, takes the size of its slot wherever it appears. */
   .env-combobox-start {
     --_combobox-start-size: 1.5rem;
     flex: 0 0 auto;
@@ -97,51 +79,35 @@
     color: var(--env-color-fg-muted);
     --env-icon-size: min(var(--env-control-icon-size), var(--_combobox-start-size));
   }
-  /* An avatar of the default size takes the slot's; one given a size keeps it. Between the two in
-     specificity, :not(env-none) being one type selector, which every element matches, so neither
-     depends on which style sheet a bundler puts first. */
   :where(.env-combobox-start) > .env-avatar:not(env-none) {
     --_avatar-size: var(--_combobox-start-size);
   }
-  /* An icon takes the control's icon size, or the slot's where that is smaller (--env-icon-size, set
-     above): one of envUI's, a Graphic of the icon size, or an svg or img of the application's own,
-     contained in that box whatever its file's size. */
   .env-combobox-start > :is(svg, img),
   .env-combobox-start > .env-icon {
     inline-size: var(--env-icon-size);
     block-size: var(--env-icon-size);
     object-fit: contain;
   }
-  /* The chosen option's icon or avatar takes an avatar's small size, large enough for its initials,
-     where the field has room for it below the floated label; a shorter field, such as a small one
-     at the compact scale, keeps an icon smaller. */
   .env-combobox .env-combobox-value-icon {
-    --_combobox-start-size: min(var(--env-picture-size-sm), var(--_field-height) - 0.375rem);
+    --_combobox-start-room-below-label: min(
+      var(--env-picture-size-sm),
+      var(--_field-height) - 0.375rem
+    );
+    --_combobox-start-size: var(--_combobox-start-room-below-label);
     margin-block: calc((var(--_combobox-row) - var(--_combobox-start-size)) / 2);
   }
-  /* An avatar of initials is left out where they wouldn't fit, rather than shown as a blank disc:
-     below Avatar's least size for initials (Avatar.css) the slot and the space after it close up.
-     A photo or a figure keeps its place. */
   .env-combobox .env-combobox-value-icon:has(> .env-avatar > .env-avatar-fallback-initials) {
     --_combobox-start-fit: calc(
-      (
-          min(var(--env-picture-size-sm), var(--_field-height) - 0.375rem) - 0.96 *
-            var(--env-picture-size-sm)
-        ) *
-        1000
+      (var(--_combobox-start-room-below-label) - 0.96 * var(--env-picture-size-sm)) * 1000
     );
     --_combobox-start-size: min(
-      var(--env-picture-size-sm),
-      var(--_field-height) - 0.375rem,
+      var(--_combobox-start-room-below-label),
       max(0rem, var(--_combobox-start-fit))
     );
     --_combobox-start-gap: clamp(0rem, var(--_combobox-start-fit), var(--env-space-1));
     margin-inline-end: calc(var(--_combobox-start-gap) - var(--env-space-1));
   }
 
-  /* Color properties: a chip's colors, which an application sets on the chips through its own CSS,
-     such as .my-field .env-combobox-chip: its fill and its label. They don't inherit. Its remove
-     button lays the state layer of the label color over it. */
   @property --env-combobox-chip-container {
     syntax: '*';
     inherits: false;
@@ -150,7 +116,6 @@
     syntax: '*';
     inherits: false;
   }
-  /* Chips: each chosen option of a multiple combobox, removable with its button or Backspace. */
   .env-combobox-chip {
     box-sizing: border-box;
     display: inline-flex;
@@ -174,12 +139,9 @@
     padding-inline-end: var(--env-space-2);
   }
   .env-combobox-chip:has(> .env-combobox-start) {
-    /* The avatar sits close to the chip's rounded start. */
     --_combobox-chip-start-inset: 0.1875rem;
     padding-inline-start: var(--_combobox-chip-start-inset);
   }
-  /* A chip is too short for an avatar's initials, so it leaves an avatar of initials out rather than
-     show a blank disc; an icon, a photo or a figure stays. */
   .env-combobox-chip > .env-combobox-start:has(> .env-avatar > .env-avatar-fallback-initials) {
     display: none;
   }
@@ -199,21 +161,15 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  /* The remove button is an IconButton with a cross, a little smaller than the chip, at that size also under a
-     coarse pointer, where its hit area reaches past it (below). */
   .env-combobox-chip-remove {
     --env-control-height: calc(var(--_combobox-row) - 0.25rem);
     --_button-touch-height: 0rem;
-    /* A little smaller than the field's own actions, so a chip's cross reads as the chip's and not
-       as one of them. */
     --env-icon-size: 0.75rem;
     flex: 0 0 auto;
     border-radius: calc(var(--env-radius-sm) - var(--env-space-1) / 2);
   }
 
-  /* The popup: at most 20 rem tall, where the options scroll. */
   .env-combobox-popup {
-    /* The rows' leading content is an avatar's small size, large enough for its initials. */
     --_list-row-icon-size: var(--env-picture-size-sm);
     width: max-content;
     min-width: min(var(--anchor-width), var(--available-width));
@@ -237,13 +193,10 @@
     overscroll-behavior: contain;
     scroll-padding-block: var(--env-space-1);
   }
-  /* Groups stand apart by space, with no line. */
   .env-combobox-group + .env-combobox-group {
     margin-block-start: var(--_popup-group-gap);
   }
 
-  /* Options are the shared rows, inset by the popup's padding. Hover and the keyboard highlight them;
-     a check mark and a heavier label show the chosen ones. */
   .env-combobox-item {
     text-align: start;
     overflow-wrap: break-word;
@@ -277,11 +230,6 @@
     overflow-wrap: break-word;
   }
 
-  /* Coarse pointers keep the touch height for options, and larger chips and remove buttons. Wrapped
-     rows of chips lie a small step apart, as they do for a mouse, and each remove button's hit area
-     reaches across that step to the middle of the gap on either side: as tall as a row and its gap,
-     so the hit areas of rows above and below meet without overlapping, and over the label on the
-     field's edge, so a press there removes the chip. */
   @media (pointer: coarse) {
     .env-combobox .env-combobox-control {
       --_combobox-row: 1.75rem;
@@ -297,11 +245,6 @@
     }
   }
 
-  /* Beside chips, each with its own cross, the clear button that removes them all shows under a
-     fine pointer only while the field is under it or has focus, so the field's end holds one cross
-     at rest; its room stays, so nothing moves. It stays in the accessibility tree and in reach of
-     the keyboard, which shows it as focus reaches the field, and under a coarse pointer it always
-     shows. */
   @media (hover: hover) and (pointer: fine) {
     .env-combobox-control:has(> .env-combobox-chip):not(:hover, :focus-within)
       > .env-combobox-end
@@ -315,9 +258,6 @@
     }
   }
 
-  /* Motion: the chevron, always in the field, doesn't settle in as the field's other actions do,
-     and turns as the list opens, and quickly back as it closes, done when the list is, without a
-     reduced-motion preference. */
   .env-combobox-trigger {
     animation: none;
   }
@@ -330,8 +270,6 @@
     }
   }
 
-  /* Forced colors: an unavailable item under the highlight keeps the selection pair, which reads,
-     and fades as every unavailable item does: GrayText on Highlight would not read. */
   @media (forced-colors: active) {
     .env-combobox-item[data-disabled][data-highlighted] {
       color: HighlightText;

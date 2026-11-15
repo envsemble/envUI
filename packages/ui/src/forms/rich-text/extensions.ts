@@ -11,6 +11,11 @@ import { createReferenceExtension } from './internal/referenceExtension.js';
 import { createTaskItemNodeView } from './internal/taskItem.js';
 import type { RichTextRenderOptions } from './types.js';
 
+const tiptapReadsOnlyWhatAMarkedInstanceHas = (instance: Marked) =>
+  instance as unknown as typeof marked;
+
+const suggestionThatNeverOpens = { char: '\u0000', allow: () => false };
+
 /**
  * The Tiptap extensions RichTextEditor and RichText share: formatting, lists and task lists,
  * tables, safe links and images, Markdown with raw HTML kept as text, a placeholder and references.
@@ -19,17 +24,17 @@ import type { RichTextRenderOptions } from './types.js';
 export function createRichTextExtensions(
   options: RichTextRenderOptions & { placeholder?: string } = {},
 ): AnyExtension[] {
-  // Keep raw HTML literal on both server and browser. Tiptap otherwise needs a
-  // browser DOMParser for HTML embedded in Markdown, giving different SSR output.
-  const parser = new Marked({ tokenizer: { html: () => false, tag: () => false } });
+  const rawHtmlAsTextWithoutBrowserDomParser = new Marked({
+    tokenizer: { html: () => false, tag: () => false },
+  });
   return [
     StarterKit.configure({
       underline: false,
       link: { openOnClick: false, isAllowedUri: safeRichTextUrl },
     }),
-    // The option is typed as marked's module, but Tiptap reads only what an instance has too: its
-    // Lexer, defaults, lexer, use and setOptions.
-    Markdown.configure({ marked: parser as unknown as typeof marked }),
+    Markdown.configure({
+      marked: tiptapReadsOnlyWhatAMarkedInstanceHas(rawHtmlAsTextWithoutBrowserDomParser),
+    }),
     TaskList,
     TaskItem.extend({ addNodeView: () => createTaskItemNodeView() }).configure({ nested: true }),
     TableKit,
@@ -42,7 +47,7 @@ export function createRichTextExtensions(
     Placeholder.configure({ placeholder: options.placeholder ?? '' }),
     createReferenceExtension(options).configure({
       suggestions: [],
-      suggestion: { char: '\u0000', allow: () => false },
+      suggestion: suggestionThatNeverOpens,
     }),
     ...(options.extensions ?? []),
   ];

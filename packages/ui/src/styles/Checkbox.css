@@ -1,9 +1,4 @@
 @layer env.components {
-  /* Color properties: a checkbox's colors, which an application sets on one checkbox through style or
-     its own CSS: outline the box's edge while unchecked, selected its fill while checked or
-     indeterminate, and icon the check mark. They don't inherit; the checkbox passes them on to its
-     box. With selected or icon set, the checked box's hover and press are state layers of the mark's
-     color over its fill (see Button.css). */
   @property --env-checkbox-outline {
     syntax: '*';
     inherits: false;
@@ -17,7 +12,6 @@
     inherits: false;
   }
 
-  /* Checkbox: a native checkbox drawn as a box with a check mark, inside its label. */
   .env-checkbox {
     --_checkbox-edge: var(--env-checkbox-outline, var(--env-color-fg-muted));
     --_checkbox-edge-hover: var(--env-checkbox-outline, var(--env-color-fg-default));
@@ -31,12 +25,9 @@
     min-inline-size: 0;
     max-inline-size: 100%;
     overflow-wrap: break-word;
-    /* The row is at least the 24 px minimum target in both scales, with the box as drawn. */
     --_checkbox-row: var(--env-control-target-min);
     box-sizing: border-box;
     display: inline-flex;
-    /* The box sits on the middle of the label's first line, and a one-line label in the middle of
-       the row, so a label that wraps or takes a description keeps the box beside its first line. */
     align-items: flex-start;
     gap: var(--env-space-3);
     min-block-size: var(--_checkbox-row);
@@ -52,14 +43,9 @@
   .env-checkbox:has(input:disabled) {
     cursor: default;
   }
-  /* Its two parts by name, not every child (`> *`), which :has() asks (packages/ui/AGENTS.md,
-     Style sheets). */
   .env-checkbox:has(input:disabled) > :where(.env-checkbox-box, .env-checkbox-label) {
     opacity: var(--env-state-disabled-opacity);
   }
-  /* A checked or mixed box that is unavailable reads as unavailable rather than as a lighter brand
-     color, as an unavailable button does: the neutral fill, with its mark in the disabled text
-     color, at full strength while its label fades. */
   .env-checkbox:has(input:disabled:is(:checked, :indeterminate)) > .env-checkbox-box {
     opacity: 1;
   }
@@ -69,22 +55,15 @@
   .env-checkbox-input:is(:checked, :indeterminate):disabled + .env-checkbox-indicator {
     color: var(--env-color-fg-disabled);
   }
-  /* Read-only (aria-readonly), as a finished checklist is: the box keeps its colors and its state,
-     and doesn't answer the pointer. */
   .env-checkbox:has(input[aria-readonly='true']) {
     cursor: default;
     pointer-events: none;
   }
-  /* A checkbox without a visible label is no wider than its box: an invisible hit area centered on
-     it takes presses across the minimum target, and the touch target under a coarse pointer, while
-     the box and the layout around it stay as they are. */
   .env-checkbox:not(:has(> .env-checkbox-label)) {
     --_checkbox-target: var(--env-control-target-min);
     --_checkbox-hit-area: block;
     position: relative;
   }
-  /* Shown through the checkbox's own property, which :has() asks (packages/ui/AGENTS.md, Style
-     sheets). */
   .env-checkbox::before {
     content: '';
     display: var(--_checkbox-hit-area, none);
@@ -101,8 +80,6 @@
     }
   }
 
-  /* Checkbox geometry is distinct from radio; input retains native semantics. The box takes the scale's
-     medium icon size and its smallest corners, so it follows the scale. */
   .env-checkbox-box {
     --_checkbox-size: var(--env-icon-size-md);
     position: relative;
@@ -112,10 +89,6 @@
     flex: 0 0 auto;
     margin-block-start: calc((1lh - var(--_checkbox-size)) / 2);
   }
-  /* Under the pointer and while pressed, a halo of the shared state layer rings the box, a circle
-     a little past its corners, as an icon button's state layer is; the box itself stays as it is,
-     empty while unchecked, so it never reads as an unavailable one. The halo takes no room: it
-     reaches into the gap before the label and a little past the row. */
   .env-checkbox-box::before {
     --_checkbox-halo: calc(0.4 * var(--_checkbox-size));
     content: '';
@@ -129,7 +102,6 @@
       linear-gradient(currentcolor 0 0);
     pointer-events: none;
   }
-  /* The halo's fill, set on the box, as the hit area's display above. */
   .env-checkbox-box:has(> .env-checkbox-input:hover:not(:disabled)) {
     --_checkbox-halo-fill: var(--env-color-bg-neutral-subtle-pressed);
   }
@@ -160,10 +132,8 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    /* Snapped to whole pixels, so the check mark sits on the pixel grid at every box size; an engine
-       without round() keeps the unsnapped padding before it. */
     padding: calc(var(--_checkbox-size) / 9);
-    /* stylelint-disable-next-line unit-disallowed-list -- The pixel grid is in CSS pixels. */
+    /* stylelint-disable-next-line unit-disallowed-list */
     padding: round(calc(var(--_checkbox-size) / 9), 1px);
     color: var(--_checkbox-mark, var(--env-color-fg-on-emphasis));
     pointer-events: none;
@@ -186,13 +156,11 @@
     content: '';
     position: absolute;
     inset-inline: calc(var(--_checkbox-size) / 4.5);
-    /* The dash: an eighth of a rem either side of the middle. */
     --_checkbox-dash: 0.125rem;
     inset-block-start: calc(50% - var(--_checkbox-dash) / 2);
     height: var(--_checkbox-dash);
     background: currentColor;
   }
-  /* Under the pointer and while pressed, an unchecked box also darkens its edge to the text color. */
   .env-checkbox-input:hover:not(:disabled) {
     --_checkbox-layer: calc(var(--env-state-hover-opacity) * 100%);
     border-color: var(--_checkbox-edge-hover, var(--env-color-fg-default));
@@ -226,8 +194,6 @@
     .env-checkbox-box::before {
       transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
-    /* The box fills and empties with its mark, from the first frame, so the mark's fade shows on
-       the fill. */
     .env-checkbox-input {
       transition:
         background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
@@ -236,8 +202,6 @@
     .env-checkbox:active:not(:has(input:disabled)) .env-checkbox-box {
       transform: scale(0.9);
     }
-    /* The mark settles in from a little smaller as the box is checked, and fades out, quicker, with
-       the fill as it is cleared, at its size, then hides. */
     .env-checkbox-indicator {
       opacity: 0;
       scale: 0.8;
@@ -256,9 +220,6 @@
     }
   }
 
-  /* Forced colors: the system paints no fills or shadows, so checked boxes and switches take the
-     system’s selection colors and a switch draws its track and thumb in system colors; Radio.css
-     outlines a chosen radio row. */
   @media (forced-colors: active) {
     .env-checkbox-input:is(:checked, :indeterminate) {
       border-color: Highlight;
@@ -276,7 +237,6 @@
     }
   }
 
-  /* A description under the label, muted, as a radio's is. */
   .env-checkbox-description {
     display: block;
     color: var(--env-color-fg-muted);

@@ -179,7 +179,7 @@ function catalogueMarkdown(section: Pick<DocumentationSection, 'id'>, markdown: 
 
 /**
  * A section as the catalogue shows it (catalogueMarkdown), and nothing where that leaves only its
- * heading.
+ * heading, but Rules, which opens with when to use it.
  */
 export function catalogueSection(section: DocumentationSection): DocumentationSection | undefined {
   const blocks = section.blocks.map((block) =>
@@ -187,9 +187,11 @@ export function catalogueSection(section: DocumentationSection): DocumentationSe
       ? { ...block, markdown: catalogueMarkdown(section, block.markdown) }
       : block,
   );
-  const empty = blocks.every(
-    (block) => block.kind === 'markdown' && !block.markdown.replace(/^## .*$/m, '').trim(),
-  );
+  const empty =
+    section.id !== 'rules' &&
+    blocks.every(
+      (block) => block.kind === 'markdown' && !block.markdown.replace(/^## .*$/m, '').trim(),
+    );
   return empty ? undefined : { ...section, blocks };
 }
 

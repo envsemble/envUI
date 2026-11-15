@@ -39,7 +39,7 @@ Install the exact version with the project's package manager, such as `npm insta
 Then, as `node_modules/@envsemble/envui/docs/setup.md` shows:
 
 - with a bundler, the components bring their own styles; without one, import `@envsemble/envui/styles.css` once in the client entry, never both;
-- wrap the app in `ThemePreferenceProvider`, or `Theme` for a fixed theme, and add the theme bootstrap script to the document head;
+- define the app's theme once with `defineTheme` from `@envsemble/envui/theme-bootstrap`, give it to `ThemePreferenceProvider`'s `theme` around the app, and add `createThemeBootstrapScript(theme)` to the document head; use `Theme` alone for a fixed theme;
 - register the app's router link with `LinkProvider`, from the recipes there.
 
 ## Step 2: Point AGENTS.md to the docs
@@ -63,9 +63,9 @@ Where a workspace installs envUI in a folder above, write the path from `AGENTS.
 Install both as dev dependencies at exactly `{{version}}`, the same version as envUI:
 
 - `@envsemble/eslint-plugin-envui`, needing ESLint 10 and a flat config: add `envui.configs.recommended` to `eslint.config.js`, imported from `@envsemble/eslint-plugin-envui`.
-- `@envsemble/stylelint-config-envui`, needing Stylelint 17: add it to `extends` after the project's base config.
+- `@envsemble/stylelint-config-envui`, needing Stylelint 17 or 18: add it to `extends` after the project's base config.
 
-`node_modules/@envsemble/envui/docs/setup.md` (Lint rules) and each package's README in `node_modules/@envsemble/` have the options. If the project has neither tool, offer to add it with a minimal config. If it runs an older ESLint or a legacy `.eslintrc`, say so and skip rather than upgrading it. In an app with UI of its own, the rules report its hand-built controls: that list is the work of moving to envUI, not this setup's. If it blocks the user's CI, ask whether to start those rules as warnings.
+Each package's README in `node_modules/@envsemble/` has the options. If the project has neither tool, offer to add it with a minimal config. If it runs an older ESLint or a legacy `.eslintrc`, say so and skip rather than upgrading it. In an app with UI of its own, the rules report its hand-built controls: that list is the work of moving to envUI, not this setup's. If it blocks the user's CI, ask whether to start those rules as warnings.
 
 ## Step 4: Verify
 
@@ -73,12 +73,10 @@ Run the project's type check or build and its lint, then start the app and confi
 
 ## Critical rules
 
-- Never write a token into a file or print it, and never read or print environment files.
+- Never read or print environment files.
 - Pin `@envsemble/envui`, its ESLint plugin and its Stylelint config at the same exact version.
 - Don't change the app's existing UI as part of setup.
-- Take envUI's API from the docs and type declarations in `node_modules/@envsemble/envui/`, not from memory.
-- Import icons one by one: `Icon<Name>` from `@envsemble/envui/icons/<Name>`, such as `IconAdd` from `@envsemble/envui/icons/Add`.
-- Show the app's own logos, icons and pictures with `Graphic`, a file in `src` or the app's SVG component inside it, never a raw `<img>` or a fixed-size `<svg>`; trim a new file once with `npx envui-graphic <file>`.
+- Take envUI's API from the docs and type declarations in `node_modules/@envsemble/envui/`, not from memory; the lint's messages say what to write instead.
 
 ## After setup
 

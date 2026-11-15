@@ -1,12 +1,9 @@
-// What the documentation's tests share: a scratch folder, and a Switch page in the one-file
-// structure with its example and specimen files and stand-in props.
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve } from 'node:path';
 import { readDocumentation } from '../../scripts/docs/DocumentationReader.ts';
 import type { PropsFile } from '../../scripts/docs/PageStructure.ts';
 
-/** Runs `run` in a new folder of .cache named after `prefix`, and removes the folder after. */
 export async function inScratchFolder<T>(prefix: string, run: (folder: string) => Promise<T>) {
   const cache = resolve('.cache');
   await mkdir(cache, { recursive: true });
@@ -56,7 +53,6 @@ export const switchFrontmatter = [
   '',
 ].join('\n');
 
-/** A Switch page in the one-file structure: short text, figures placed by name and a legend. */
 export const switchBody = [
   '# Switch',
   '',
@@ -163,11 +159,6 @@ export const switchProps: PropsFile = {
   },
 };
 
-/**
- * A docs/ folder with one component page, its example and specimen files and stand-in props, which
- * `run` rewrites and reads.
- */
-/** What pageFixture hands its test: the page's path, its folders, and ways to read them. */
 interface PageFixture {
   page: string;
   docs: string;
@@ -200,7 +191,6 @@ export function pageFixture(run: (fixture: PageFixture) => Promise<void>) {
     const versions = new Set(['0.1.0', '0.2.0']);
     const read = () =>
       readDocumentation(docs, { props: switchProps, examples, specimens, versions });
-    /** Writes `source` as the page, and expects reading the docs to fail with `pattern`. */
     const rejects = async (source: string, pattern: RegExp) => {
       await writeFile(page, source);
       assert.throws(read, pattern);

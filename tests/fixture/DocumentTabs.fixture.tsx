@@ -32,7 +32,6 @@ export default function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
       data-testid={`document-tabs-${theme}`}
       className="fixture-section"
       onKeyDown={(event) => {
-        // The application's own close shortcut, like Ctrl+W in a desktop app.
         if (event.altKey && event.code === 'KeyW' && value) {
           event.preventDefault();
           close(value);
@@ -56,7 +55,6 @@ export default function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
             );
             record(`pin ${id}`);
           }}
-          // The dark strip leaves onCloseAll out: only its tabs offer a menu, with Close alone.
           onCloseAll={
             theme === 'light'
               ? () => {

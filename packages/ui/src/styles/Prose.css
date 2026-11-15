@@ -1,9 +1,5 @@
 @layer env.components {
-  /* Prose: the typography of formatted text, which Markdown, RichText and RichTextEditor's document
-     share through the env-prose class: paragraphs, headings, lists, quotes, tables, images and rules
-     in envUI's type, spaced as a document. */
   .env-prose {
-    /* The lists' rhythm and markers (below): private, so they may change in any release. */
     --_prose-list-item-gap: var(--env-space-4);
     --_prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
     --_prose-list-marker-gap: var(--env-space-2);
@@ -15,8 +11,6 @@
   .env-prose :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table, hr) {
     margin: 0;
   }
-  /* Blocks in a quote or an item stand a step apart; what runs in their line, such as a second key cap
-     in an item, takes no margin, which would make its line taller. */
   .env-prose > * + *,
   .env-prose
     :where(blockquote, li)
@@ -69,19 +63,9 @@
   .env-prose p {
     font: var(--env-type-body);
   }
-  /* Bold stands out from the regular body text, in semibold rather than a heading's medium. */
   .env-prose strong {
     font-weight: var(--env-font-weight-semibold);
   }
-  /* Lists: each item's marker sits in a narrow column at its start, on the middle of the item's first
-     line, and the item's text starts a gap after it; items stand a full step apart, so a list breaks
-     a wall of text into points. A bullet is a small spark, four points with curved sides, in the text
-     color; a number is plain, in tabular figures in the muted text color, ending at the column's end.
-     A nested list steps down quietly: closer items, a smaller spark in the muted color, letters for
-     numbers. Task lists keep their checkboxes (Markdown.css, RichText.css).
-     The bullet is each item's ::after, masked to the spark (assets/marks/spark.svg).
-     --_prose-list-marker-fill sets a circle behind it, and --_prose-list-mark-color its color.
-     Both stay private. */
   .env-prose :where(ul, ol) {
     padding-inline-start: 0;
     list-style: none;
@@ -97,8 +81,6 @@
     position: relative;
     padding-inline-start: calc(var(--_prose-list-marker-size) + var(--_prose-list-marker-gap));
   }
-  /* The circle behind a bullet, where a fill is set; none by default. Its line height is the item's,
-     so 1lh is the item's first line. */
   .env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li)::before {
     position: absolute;
     inset-block-start: calc((1lh - var(--_prose-list-marker-size)) / 2);
@@ -109,8 +91,6 @@
     background-color: var(--_prose-list-marker-fill, transparent);
     content: '';
   }
-  /* An ordered item's number, or a letter one level in, ending at the marker column's end and
-     growing back from it when it has more digits. */
   .env-prose :where(ol > li)::before {
     position: absolute;
     inset-block-start: 0;
@@ -122,7 +102,6 @@
   .env-prose :where(li ol > li)::before {
     content: counter(list-item, lower-alpha) '.';
   }
-  /* A bullet's mark, in the middle of the marker column. */
   .env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li)::after {
     --_prose-list-mark-box: 0.5625rem;
     position: absolute;
@@ -135,8 +114,6 @@
     mask: url('../assets/marks/spark.svg') center / contain no-repeat;
     content: '';
   }
-  /* One level in, a smaller spark in the muted text color, with no circle behind it, whatever the
-     list around it draws. */
   .env-prose :where(li ul:not(.contains-task-list, [data-type='taskList']) > li)::before {
     background-color: transparent;
   }
@@ -145,7 +122,6 @@
     background-color: var(--env-color-fg-muted);
     mask: url('../assets/marks/spark.svg') center / contain no-repeat;
   }
-  /* Forced colors paint fills in the canvas color: the spark takes the text's color instead. */
   @media (forced-colors: active) {
     .env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li)::after {
       background-color: CanvasText;
@@ -171,8 +147,6 @@
     font: var(--env-type-body-sm);
     text-align: start;
   }
-  /* Words in a cell break only where they would overflow it, so a column keeps room for its longest
-     word; inline code there does the same through its hook. */
   .env-prose :where(th, td) {
     --_code-overflow-wrap: break-word;
     padding: var(--env-space-3) var(--env-space-4);

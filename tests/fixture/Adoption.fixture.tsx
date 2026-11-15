@@ -31,7 +31,6 @@ import { IconSearch } from '@envsemble/envui/icons/Search';
 
 export const mount = 'root';
 
-/** Stands in for a router link: it records client navigation instead of loading a page. */
 function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   return (
     <a
@@ -48,7 +47,6 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   );
 }
 
-/** Components added for application adoption. */
 export default function AdoptionFixture() {
   const [query, setQuery] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -140,7 +138,6 @@ export default function AdoptionFixture() {
             Save changes
           </Button>
           <output data-testid="pending-presses">{presses}</output>
-          {/* A wide button with the keys of its shortcut in the end slot, as a search trigger. */}
           <div style={{ inlineSize: '20rem' }}>
             <Button
               variant="secondary"

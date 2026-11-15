@@ -15,49 +15,9 @@ aliases:
 
 # Writing
 
-The words of an interface built with envUI: titles, labels, buttons and messages. This guide holds the rules every screen shares. A component's own labels are on its page, such as [Button](components/button.md)'s.
-
-## Voice
-
-Write as a calm, direct colleague who knows the task: plain words, short sentences and the active voice.
-
-- Speak to the reader as "you"; never "the user".
-- Say what happened and what to do next, without blame, jargon or codes.
-- No exclamation marks, "please", "simply", "just", "easy" or "oops".
-- "We" only where a person or a service really acted: "We sent a code to sam.lee@example.com".
-
-| Do                                     | Don't                                            |
-| -------------------------------------- | ------------------------------------------------ |
-| Project archived.                      | Success! Your project has been archived!         |
-| You can restore it from Archived.      | Simply go to Archived if you want to restore it. |
-| Your changes weren't saved. Try again. | Oops! We had a problem saving. Please try again. |
-| Sam Lee can now edit Website refresh.  | The user has been granted edit permissions.      |
-
-## Capitalisation and punctuation
-
-- Sentence case everywhere: only the first word and proper names take a capital.
-- No full stop on a label, button, title, tab or menu item; a sentence takes one.
-- An ellipsis (…) only on an action that asks for more before it acts: "Rename…".
-- Curly quotes and apostrophes, “Website refresh”, can’t; an en dash for a range, 1–5 March.
-
-| Do                    | Don't                  |
-| --------------------- | ---------------------- |
-| Create project        | Create New Project     |
-| Notification settings | Notification Settings: |
-| Rename…               | Rename...              |
-
-## Lists
-
-A list is for a few short, parallel items, usually not full sentences, such as the things a plan includes. Use one sparingly: a column of sentences reads as a wall of text, so write a point that needs a sentence as a sentence, and a few rules as a short paragraph. More than five or six items, or items with several facts each, are a table.
+Sentence case everywhere, and no full stop on a label, button, title, tab or menu item. An ellipsis (…) ends an action that asks for more before it acts, such as a button that opens a dialog: "Rename…". Name a button by its verb and object, "Export report", and a link by its destination. `envui/label-vocabulary` reports in a label each word the table below replaces.
 
 ## Buttons and actions
-
-- A verb and its object, "Export report"; a verb alone only where the object is plain, such as "Save" at the end of a form.
-- One verb through a flow: "Delete project…", "Delete Website refresh?", "Delete project".
-- The count in a label that acts on several things: "Archive 4 projects".
-- A link named after its destination, never "Click here" or "Learn more" alone.
-
-Words people confuse, by what they mean:
 
 | Word      | Means                                                                     | Not                                    |
 | --------- | ------------------------------------------------------------------------- | -------------------------------------- |
@@ -84,27 +44,6 @@ Words people confuse, by what they mean:
 | Invite    | Ask someone to join.                                                      | Add, for someone not yet a member      |
 | Share     | Give others access or a link.                                             | Send or Publish, for giving access     |
 
-## Numbers, dates and time
+## Numbers and translation
 
-- Format with `Intl` in the locale `useLocale` returns from [EnvUIProvider](setup.md#locale-strings-and-direction), so they match envUI's own.
-- A recent moment with [RelativeTime](components/relative-time.md), "3 hours ago"; a date further away, or one people plan by, as a date, "4 Mar 2026".
-- Plurals from the count with a function or `Intl.PluralRules`, never by adding "s".
-- Digits, the locale's separators, and a non-breaking space between a number and its unit: "12 MB".
-
-## Inclusive and accessible wording
-
-- Name the control, not where it is or how to press it: "Select Export", not "Click the button on the right".
-- Gender-neutral words, and no idioms, which don't translate.
-- Alternative text by an image's purpose; none for decoration.
-- Link and button text unique on a page: "Edit Website refresh".
-
-## Ready for translation
-
-- Whole sentences with their values in them, "Archived {name}.", never built from pieces.
-- Room for text to grow by about 30%; no text in images or icons.
-- envUI's own strings through EnvUIProvider's `messages`, in the application's language.
-
-## Related topics
-
-- [Accessibility](foundations/accessibility.md)
-- [Typography](foundations/typography.md)
+Format numbers and dates with `Intl` in the locale `useLocale` returns, and recent moments with [RelativeTime](components/relative-time.md). Write whole sentences with their values in them, never built from pieces, and leave room for text to grow.

@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useMemo, type ComponentPropsWithRef } from 'react';
+import { useId, useMemo, type ComponentPropsWithRef, type MouseEvent } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { useControllableState } from '../internal/react/useControllableState.js';
@@ -74,8 +74,17 @@ export function calendarActiveDay(root: ParentNode | null | undefined): HTMLElem
   return root?.querySelector<HTMLElement>('.env-calendar-day[tabindex="0"]') ?? null;
 }
 
-/** Six weeks always fit a month, so the calendar keeps its height from month to month. */
-const weeksShown = 6;
+const weeksThatFitAnyMonth = 6;
+
+const firstSundayAfterEpoch = 3;
+
+function unavailableButFocusable(available: boolean) {
+  return !available || undefined;
+}
+
+function keepFocusWhereItWas(event: MouseEvent) {
+  event.preventDefault();
+}
 
 function firstGraphemes(text: string, count: number) {
   const Segmenter = (Intl as { Segmenter?: typeof Intl.Segmenter }).Segmenter;
@@ -88,12 +97,7 @@ function firstGraphemes(text: string, count: number) {
   return graphemes.slice(0, count).join('');
 }
 
-/**
- * The weekday names above the columns, at every width: the short names' first two letters, as Mo Tu
- * We in English, which fit the narrowest days, where those still tell the seven apart, else the
- * narrow names where they do, else the short names. Each column's header carries the full name.
- */
-function weekdayNames(short: string[], narrow: string[]) {
+function shortestDistinctWeekdayNames(short: string[], narrow: string[]) {
   const distinct = (names: string[]) => new Set(names).size === names.length;
   const twoLetters = short.map((name) => firstGraphemes(name.replace(/\.$/, ''), 2));
   if (distinct(twoLetters)) return twoLetters;
@@ -132,9 +136,6 @@ export function Calendar({
   const selectedDay = parseDay(selectedValue);
   const minDay = parseDay(min);
   const maxDay = parseDay(max);
-  // On the server, and while its output hydrates, the calendar renders what every browser renders
-  // alike: without a locale, the server's fallback, and no today, which only the reader's clock
-  // knows. The reader's language, week and today follow at once.
   const hydrated = useHydrated();
   const shownLocale = useResolvedLocale(locale);
   const today = hydrated ? now().day : undefined;
@@ -143,7 +144,6 @@ export function Calendar({
 
   const isUnavailable = (day: number) =>
     (minDay !== undefined && day < minDay) || (maxDay !== undefined && day > maxDay);
-  // The active day is the grid's one tab stop; the month that holds it is shown.
   const { active, grid, moveTo, choose, handleKeyDown, focusCell } = useActiveCell({
     chosen: selectedDay,
     initial: () => now().day,
@@ -164,9 +164,8 @@ export function Calendar({
       };
     },
   });
-  // Without a chosen day the month is today's, so the server leaves the days to the browser, and
-  // with them whether the month buttons reach past min and max.
-  const daysShown = hydrated || selectedDay !== undefined;
+  const monthKnownWithoutClock = selectedDay !== undefined;
+  const daysShown = hydrated || monthKnownWithoutClock;
 
   const formats = useMemo(
     () => ({
@@ -193,10 +192,9 @@ export function Calendar({
   const nextAvailable = !daysShown || maxDay === undefined || nextMonth <= maxDay;
   const weekdays = useMemo(() => {
     const samples = Array.from({ length: 7 }, (_, column) =>
-      // 1970-01-04, day 3, was a Sunday.
-      toUtcDate(3 + ((firstWeekday + column) % 7)),
+      toUtcDate(firstSundayAfterEpoch + ((firstWeekday + column) % 7)),
     );
-    const names = weekdayNames(
+    const names = shortestDistinctWeekdayNames(
       samples.map((sample) => formats.weekday.format(sample)),
       samples.map((sample) => formats.weekdayNarrow.format(sample)),
     );
@@ -220,8 +218,7 @@ export function Calendar({
           icon={<IconChevronLeft />}
           aria-label={previousName}
           title={previousName}
-          // Unavailable rather than disabled, so focus stays on the button at the earliest month.
-          aria-disabled={!previousAvailable || undefined}
+          aria-disabled={unavailableButFocusable(previousAvailable)}
           className="env-calendar-previous"
           onClick={() => {
             if (previousAvailable) moveTo(addMonths(active, -1), false);
@@ -239,7 +236,7 @@ export function Calendar({
           icon={<IconChevronRight />}
           aria-label={nextName}
           title={nextName}
-          aria-disabled={!nextAvailable || undefined}
+          aria-disabled={unavailableButFocusable(nextAvailable)}
           className="env-calendar-next"
           onClick={() => {
             if (nextAvailable) moveTo(addMonths(active, 1), false);
@@ -263,14 +260,12 @@ export function Calendar({
           </tr>
         </thead>
         <tbody>
-          {Array.from({ length: weeksShown }, (_, week) => (
+          {Array.from({ length: weeksThatFitAnyMonth }, (_, week) => (
             <tr key={week}>
               {Array.from({ length: 7 }, (_, column) => {
                 const day = gridStart + week * 7 + column;
-                // Days of other months leave empty cells, which keep each day under its weekday,
-                // also for assistive technology.
-                if (!daysShown || dayParts(day).month !== shownMonth)
-                  return <td key={day} className="env-calendar-pad" />;
+                const outsideShownMonth = !daysShown || dayParts(day).month !== shownMonth;
+                if (outsideShownMonth) return <td key={day} className="env-calendar-pad" />;
                 const unavailable = isUnavailable(day);
                 return (
                   <td
@@ -282,8 +277,7 @@ export function Calendar({
                     aria-current={day === today ? 'date' : undefined}
                     aria-disabled={unavailable || undefined}
                     data-date={formatDay(day)}
-                    // A press on an unavailable day leaves focus where it was.
-                    onMouseDown={unavailable ? (event) => event.preventDefault() : undefined}
+                    onMouseDown={unavailable ? keepFocusWhereItWas : undefined}
                     onClick={() => choose(day)}
                     onFocus={() => focusCell(day)}
                   >

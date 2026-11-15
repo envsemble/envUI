@@ -1,5 +1,3 @@
-// A text field's words: its label, its hint and its error, each linked to the control through
-// Field's frame (Field.Root around the control, Field.Description and Field.Error). Server markup.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../../support/ImportSource.ts';
@@ -15,7 +13,6 @@ const { TextField, Textarea } = await importSource('Field', [
 const render = (element) => firstElement(renderToString(element));
 const find = (root, matches) => elementsOf(root).find(matches);
 const control = (root, tag) => find(root, (element) => element.tag === tag);
-/** The text of the label whose for names the element. */
 const labelOf = (root, element) =>
   textOf(
     find(root, (each) => each.tag === 'label' && each.attributes.for === element.attributes.id),

@@ -17,8 +17,7 @@ interface Metrics {
   fontSize: number;
 }
 
-/** What a length counts as where it doesn't parse, such as a line height of normal: a default rem. */
-const defaultPixels = 16;
+const unparsedLengthPixels = 16;
 
 function measureTextarea(input: HTMLTextAreaElement): Metrics {
   const styles = (input.ownerDocument.defaultView ?? window).getComputedStyle(input);
@@ -30,20 +29,19 @@ function measureTextarea(input: HTMLTextAreaElement): Metrics {
     maximumHeight: Number.isFinite(maximumHeight)
       ? Math.max(minimumHeight, maximumHeight)
       : Infinity,
-    lineHeight: Number.parseFloat(styles.lineHeight) || defaultPixels,
-    fontSize: Number.parseFloat(styles.fontSize) || defaultPixels,
+    lineHeight: Number.parseFloat(styles.lineHeight) || unparsedLengthPixels,
+    fontSize: Number.parseFloat(styles.fontSize) || unparsedLengthPixels,
   };
 }
 
-/** The lines a text area without a CSS maximum height can be resized to. */
-const practicalMaximumLines = 500;
+const practicalMaximumLinesWithoutCssMaximum = 500;
 
 const unmeasured: Metrics = {
   height: 0,
   minimumHeight: 0,
   maximumHeight: Infinity,
-  lineHeight: defaultPixels,
-  fontSize: defaultPixels,
+  lineHeight: unparsedLengthPixels,
+  fontSize: unparsedLengthPixels,
 };
 
 /**
@@ -66,34 +64,35 @@ export function TextareaResizeEdge({
   const [metrics, setMetrics] = useState<Metrics>(unmeasured);
   const manualHeight = useRef<{ original: string; applied: string } | null>(null);
 
-  // The height the handle reports and starts a drag from follows the text area's own, whatever
-  // changes it.
-  useLayoutEffect(() => {
-    const input = inputRef.current;
-    if (!input) return;
-    const measure = () =>
-      setMetrics((current) => {
-        const next = measureTextarea(input);
-        return Object.keys(next).every(
-          (key) => next[key as keyof Metrics] === current[key as keyof Metrics],
-        )
-          ? current
-          : next;
-      });
-    measure();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(input);
-    return () => observer.disconnect();
-  }, [inputRef]);
+  useLayoutEffect(
+    function followTextareaHeightWhateverChangesIt() {
+      const input = inputRef.current;
+      if (!input) return;
+      const measure = () =>
+        setMetrics((current) => {
+          const next = measureTextarea(input);
+          return Object.keys(next).every(
+            (key) => next[key as keyof Metrics] === current[key as keyof Metrics],
+          )
+            ? current
+            : next;
+        });
+      measure();
+      if (typeof ResizeObserver === 'undefined') return;
+      const observer = new ResizeObserver(measure);
+      observer.observe(input);
+      return () => observer.disconnect();
+    },
+    [inputRef],
+  );
 
   useLayoutEffect(() => {
     const input = inputRef.current;
     const automatic =
       sizing === 'content' &&
       input?.ownerDocument.defaultView?.CSS.supports('field-sizing', 'content');
-    // A manually chosen fixed height must not constrain automatic content sizing.
-    if (input && automatic) {
+    const manualHeightWouldConstrainContentSizing = input && automatic;
+    if (manualHeightWouldConstrainContentSizing) {
       if (manualHeight.current && input.style.height === manualHeight.current.applied) {
         input.style.height = manualHeight.current.original;
       }
@@ -104,21 +103,25 @@ export function TextareaResizeEdge({
   function resizeTo(height: number) {
     const input = inputRef.current;
     if (!input || input.disabled || !Number.isFinite(height)) return;
-    // In em, so the chosen height follows the text size.
-    const nextHeight = `${height / metrics.fontSize}em`;
+    const nextHeightInEmToFollowTextSize = `${height / metrics.fontSize}em`;
     if (!manualHeight.current || input.style.height !== manualHeight.current.applied) {
-      manualHeight.current = { original: input.style.height, applied: nextHeight };
+      manualHeight.current = {
+        original: input.style.height,
+        applied: nextHeightInEmToFollowTextSize,
+      };
     }
-    input.style.height = nextHeight;
+    input.style.height = nextHeightInEmToFollowTextSize;
     manualHeight.current.applied = input.style.height;
   }
 
   const bounded = Number.isFinite(metrics.maximumHeight);
-  // A separator needs a finite maximum: without a CSS one, a practical maximum of a few hundred
-  // lines, or the current height where it is taller.
   const maximum = bounded
     ? metrics.maximumHeight
-    : Math.max(metrics.height, metrics.minimumHeight, metrics.lineHeight * practicalMaximumLines);
+    : Math.max(
+        metrics.height,
+        metrics.minimumHeight,
+        metrics.lineHeight * practicalMaximumLinesWithoutCssMaximum,
+      );
   const { handleProps } = useResize({
     axis: 'block',
     value: metrics.height,
@@ -133,9 +136,9 @@ export function TextareaResizeEdge({
   return (
     <div
       {...handleProps}
-      // Without a maximum height, End has no height to go to: the practical maximum is not one.
       onKeyDown={(event) => {
-        if (event.key === 'End' && !bounded) return;
+        const noMaximumToGoTo = event.key === 'End' && !bounded;
+        if (noMaximumToGoTo) return;
         handleProps.onKeyDown(event);
       }}
       className="env-textarea-resize-handle"

@@ -1,19 +1,12 @@
 @layer env.components {
-  /* Color properties: ColorPickerButton's fill, container, which an application sets on one button
-     through style or its own CSS; transparent by default, so the button takes the background of what
-     it sits on, as a field does. It doesn't inherit. */
   @property --env-color-picker-button-container {
     syntax: '*';
     inherits: false;
   }
 
-  /* ColorPicker, from @envsemble/envui/color, after the color panels of design tools: a square
-     saturation and brightness area with thin vertical hue and alpha strips at its side, a row with the
-     eyedropper, the format, quiet fields that name their channels and copy, and preset swatches. React Aria paints
-     the area's and the strips' gradients inline; they are content, as the thumbs' white edge and the
-     checkerboard under translucent colors are. */
   .env-color-picker {
     --_color-picker-max-width: 18rem;
+    --_color-picker-field-letter-inset: var(--env-space-1);
     --_color-picker-thumb-size: 0.75rem;
     --_color-picker-strip-thumb-size: 0.875rem;
     --_color-picker-strip-width: 0.625rem;
@@ -24,21 +17,17 @@
         transparent 0 50%
       )
       0 0 / var(--_color-picker-checker) var(--_color-picker-checker);
-    /* stylelint-disable color-named -- A thumb's white edge, ringed in translucent black, shows on
-       every color, as on an image. */
+    /* stylelint-disable color-named */
     --_color-picker-thumb-color: white;
     --_color-picker-thumb-ring: color-mix(in srgb, black 50%, transparent);
     /* stylelint-enable color-named */
     --_color-picker-intrinsic-width: 16rem;
     container: env-color-picker / inline-size;
-    /* A size container has no width of its own: where nothing sets one, as in a row or a popup that
-       takes its content's width, the picker is 16 rem wide. */
     contain-intrinsic-inline-size: var(--_color-picker-intrinsic-width);
     display: flex;
     flex-direction: column;
     gap: var(--env-space-2);
     min-inline-size: 0;
-    /* Everything under the area and the strips takes their width, so a wide picker stays compact. */
     max-inline-size: var(--_color-picker-max-width);
     color: var(--env-color-fg-default);
     font: var(--env-type-body-sm);
@@ -47,10 +36,6 @@
     font: var(--env-type-body-sm);
   }
 
-  /* The area and the strips have square corners: their colors run edge to edge, as in a design
-     tool. The area is square and takes the width the strips leave; the strips stand at its side, as
-     tall as it, and the outer one ends at the picker's edge. The gap between them is the picker's
-     own, as under them. */
   .env-color-picker-controls {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -63,7 +48,6 @@
     box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media);
     cursor: crosshair;
   }
-  /* A small round thumb with a white edge and a thin dark ring outside it. */
   .env-color-picker-thumb {
     box-sizing: border-box;
     inline-size: var(--_color-picker-thumb-size);
@@ -81,8 +65,6 @@
     outline-offset: 1px;
   }
 
-  /* The strips side by side. A thumb reaches half its size past the strip's ends, as the area's
-     thumb does past the area's edges, and a little past its sides. */
   .env-color-picker-sliders {
     display: flex;
     gap: var(--env-space-1);
@@ -99,16 +81,10 @@
   }
   .env-color-picker-slider .env-color-picker-thumb {
     --_color-picker-thumb-size: var(--_color-picker-strip-thumb-size);
-    /* Physical, as React Aria's translate(-50%, -50%) that centres the thumb is, in either
-       direction. */
-    left: 50%;
+    --_color-picker-physical-left-as-react-aria-translates: 50%;
+    left: var(--_color-picker-physical-left-as-react-aria-translates);
   }
 
-  /* Under the area and the strips, at their width: the format at the start, the eyedropper and copy
-     at the end, ending at the outer strip's edge; and the fields on a row of their own, in equal
-     columns, one for each channel and one for alpha, so the letters and numbers keep their places
-     in every format. Hex spans the channels' columns. Without the format, the fields take its
-     place. */
   .env-color-picker-values {
     display: grid;
     grid-template-areas: 'format eye-dropper copy' 'fields fields fields';
@@ -126,9 +102,10 @@
     display: flex;
     grid-area: format;
     min-inline-size: 0;
-    /* The ghost button's text starts where the fields' letters do; its fill under the pointer
-       reaches a little past the area's edge. */
-    margin-inline-start: calc(var(--env-space-1) - var(--env-space-3));
+    --_color-picker-format-text-on-field-letters: calc(
+      var(--_color-picker-field-letter-inset) - var(--env-space-3)
+    );
+    margin-inline-start: var(--_color-picker-format-text-on-field-letters);
   }
   .env-color-picker-copy {
     display: flex;
@@ -138,7 +115,6 @@
     display: grid;
     grid-area: fields;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    /* The fields' own padding parts them, so a narrow picker keeps room for 100%. */
     gap: 0;
     min-inline-size: 0;
   }
@@ -148,9 +124,6 @@
   .env-color-picker-field[data-channel='hex'] {
     grid-column: span 3;
   }
-  /* Several formats together: a row for each, its fields and its copy button, in columns that line
-     up from row to row, and the eyedropper at the end of the first. The fields keep their equal
-     columns, so the letters and numbers of every format line up too. */
   .env-color-picker-values[data-formats='together'] {
     grid-template-areas: none;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -176,8 +149,6 @@
     grid-area: auto;
     grid-column: -2;
   }
-  /* A quiet field: no outline at rest, a fill under the pointer, and the field's accent edge while
-     focused. The channel's letter sits muted before its number. */
   .env-color-picker-field {
     box-sizing: border-box;
     display: flex;
@@ -185,9 +156,7 @@
     gap: var(--env-space-1);
     min-inline-size: 0;
     block-size: var(--env-control-height-sm);
-    /* The next column's padding parts a number from the letter after it, so a narrow picker keeps
-       room for 100%. */
-    padding-inline: var(--env-space-1) 0;
+    padding-inline: var(--_color-picker-field-letter-inset) 0;
     border-radius: var(--env-radius-sm);
     cursor: text;
     transition:
@@ -207,7 +176,6 @@
   .env-color-picker-field-label {
     flex-shrink: 0;
     color: var(--env-color-fg-muted);
-    /* At its column's start, in line with the format's text above. */
     text-align: start;
     user-select: none;
   }
@@ -230,7 +198,6 @@
     opacity: var(--env-state-disabled-opacity);
     cursor: default;
   }
-  /* Preset swatches: small squares with a slight radius in rows; the chosen one takes a ring. */
   .env-color-picker-swatches {
     display: flex;
     flex-wrap: wrap;
@@ -272,7 +239,6 @@
     color: var(--env-color-fg-danger);
   }
 
-  /* Disabled: the colors fade with the controls; read-only keeps them, without the pointers. */
   .env-color-picker[data-disabled]
     :is(
       .env-color-picker-label,
@@ -292,9 +258,6 @@
     cursor: default;
   }
 
-  /* ColorPickerButton: a compact, field-like button with the small radius, the color's swatch and its
-     value. Like a field, it has no fill of its own and takes the background of what it sits on, until
-     its color property gives it one. Its popover holds the picker at a compact width. */
   .env-color-picker-button {
     box-sizing: border-box;
     display: inline-flex;
@@ -362,9 +325,6 @@
     }
   }
 
-  /* Forced colors: the area, the strips, the thumbs and the swatches show colors as content, as an
-     image does, so the system keeps them; the chosen swatch takes the selection color's ring, and
-     the fields and the button their system edges. */
   @media (forced-colors: active) {
     .env-color-picker-area,
     .env-color-picker-track,

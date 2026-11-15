@@ -1,7 +1,6 @@
 import type { ColorFormat, ColorValue } from './colorValue.js';
 import type { ColorPickerSwatch } from './SwatchList.js';
 
-/** The props ColorPicker and ColorPickerButton share: the color, its formats and the tools. */
 export interface ColorPickerValueProps {
   /**
    * The color's name, such as Accent color; it names the picker, and ColorPickerButton's popover

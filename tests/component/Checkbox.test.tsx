@@ -5,7 +5,6 @@ import * as forms from '../fixture/Forms.fixture.tsx';
 import { box, css, mouse } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
-/** The label a choice control's input sits in, its root. */
 const rootOf = (input: Element) => input.closest('label')!;
 
 test("each control's ref reaches its input", async () => {
@@ -14,7 +13,6 @@ test("each control's ref reaches its input", async () => {
   await expect
     .poll(() => page.getByTestId('choice-refs').element().textContent)
     .toBe('INPUT:checkbox INPUT:checkbox INPUT:radio');
-  // The label still toggles the box.
   const subscribe = page.getByRole('checkbox', { name: 'Subscribe', exact: true });
   await page.getByText('Subscribe', { exact: true }).click();
   await expect.element(subscribe).toBeChecked();
@@ -52,7 +50,6 @@ test('boxes and tracks follow the scale, on targets of 24 px, or the touch heigh
       ]);
       expect(box(rootOf(subscribe)).height, label).toBeGreaterThanOrEqual(target);
 
-      // The switch's track and thumb.
       const alerts = page.getByRole('switch', { name: 'Alerts', exact: true }).element();
       const track = box(alerts);
       expect([track.width, track.height].map(Math.round), label).toEqual(
@@ -63,8 +60,6 @@ test('boxes and tracks follow the scale, on targets of 24 px, or the touch heigh
         .toBe(scale === 'comfortable' ? '16px' : '14px');
       expect(box(rootOf(alerts)).height, label).toBeGreaterThanOrEqual(target);
 
-      // A checkbox without a visible label takes presses across the target, its box and its
-      // row's width in the layout staying as drawn.
       const select = page.getByRole('checkbox', { name: 'Select row', exact: true });
       const selectBox = box(select);
       expect([selectBox.width, selectBox.height].map(Math.round), label).toEqual([size, size]);
@@ -76,7 +71,6 @@ test('boxes and tracks follow the scale, on targets of 24 px, or the touch heigh
         ),
         label,
       ).toEqual([target, target]);
-      // A press just inside the target, beside the box, toggles it; one just outside doesn't.
       const centerX = selectBox.x + selectBox.width / 2;
       const centerY = selectBox.y + selectBox.height / 2;
       const reach = target / 2 - 2;

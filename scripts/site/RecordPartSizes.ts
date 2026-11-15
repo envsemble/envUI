@@ -1,20 +1,3 @@
-// Records the size of every figure's subject that loads with its page, an example, a specimen or a
-// guide's figure, in apps/site/src/generated/PartSizes.json: its skeleton keeps that size while it
-// loads (StageSkeleton in loading/Skeletons.tsx), so the page doesn't move when it lands. Of an
-// example shown open, it records its stage too, which keeps that height until its overlays rest
-// open in it (reserveStage in OpenExample.tsx). It opens every page of the catalogue and the Docs
-// in a desktop window with the parts held back, notes where each skeleton is, lets the parts load
-// and measures what took each one's place. It records the room of each group of the token
-// reference and each release of the changelog too, which their skeletons keep, and the box of each
-// figure of a foundation's or a guide's page, which its skeleton keeps on a pre-rendered page until
-// the page hydrates.
-//
-//   npm run site:part-sizes                the site at http://127.0.0.1:8770 (npm run dev)
-//   npm run site:part-sizes -- <site URL>  another running site
-//
-// Run it when figures change size, such as after adding examples, and commit the record. A part it
-// hasn't recorded keeps the stage's least height while it loads, so a stale record only moves the
-// page a little.
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { chromium, type Page, type Route } from '@playwright/test';
@@ -23,12 +6,10 @@ import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 const recordFile = resolve(repositoryRoot, 'apps/site/src/generated/PartSizes.json');
-/** The window the sizes are recorded in, a desktop's, beside the page's contents. */
 const window = { width: 1440, height: 1000 };
-/** The files of the parts a page loads on its own, in development, where each is its own file. */
 const parts = /\/src\/(examples|specimens|figures\/dev-mode)\//;
+const entrancesAndPlayingFiguresSettleMs = 1500;
 
-/** Every page of the catalogue and the Docs, from the galleries and the Docs' home. */
 async function routes(page: Page) {
   const found = new Set<string>(['components', 'foundations', 'docs']);
   for (const index of ['components', 'foundations', 'docs']) {
@@ -43,22 +24,17 @@ async function routes(page: Page) {
   return [...found].sort();
 }
 
-/** The sizes of the parts on one page, by their keys, in rem. */
 async function measure(page: Page, route: string) {
   const held: Route[] = [];
   let holding = true;
   await page.route(parts, (request) => (holding ? held.push(request) : request.continue()));
   await page.goto(`${site}/${route}`);
   await page.locator('.site-page-column h1').first().waitFor();
-  // Every skeleton has rendered once the requests stop growing.
   let count = -1;
   while (count !== held.length) {
     count = held.length;
     await page.waitForTimeout(800);
   }
-  // Where each skeleton is: between the elements beside it, which are there before and after it
-  // loads, so what lands between them is the part. A skeleton beside another isn't measured, as
-  // what lands there could be either's.
   const marked = await page.evaluate(() => {
     const keys: string[] = [];
     document.querySelectorAll<HTMLElement>('[data-site-part]').forEach((skeleton, index) => {
@@ -66,7 +42,6 @@ async function measure(page: Page, route: string) {
       const after = skeleton.nextElementSibling;
       if (before?.hasAttribute('data-site-part') || after?.hasAttribute('data-site-part')) return;
       const parent = skeleton.parentElement!;
-      // The key, and which of the elements beside it there are.
       parent.setAttribute(
         `data-record-${index}`,
         JSON.stringify([skeleton.dataset.sitePart, Boolean(before), Boolean(after)]),
@@ -81,8 +56,7 @@ async function measure(page: Page, route: string) {
   for (const request of held) await request.continue().catch(() => {});
   await page.locator('[data-site-part]').first().waitFor({ state: 'detached', timeout: 30_000 });
   await page.evaluate(() => document.fonts.ready);
-  // Entrances settle, and a figure that plays reaches its tallest.
-  await page.waitForTimeout(1500);
+  await page.waitForTimeout(entrancesAndPlayingFiguresSettleMs);
   const sizes = await page.evaluate(() => {
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
     const round = (value: number) => Math.round((value / rem) * 100) / 100;
@@ -99,7 +73,6 @@ async function measure(page: Page, route: string) {
         const after = children.findIndex((child) =>
           child.hasAttribute(`data-record-after-${index}`),
         );
-        // An element beside it that the page rendered anew leaves the part's place unknown.
         if ((hadBefore && before === -1) || (hadAfter && after === -1)) continue;
         const boxes = children
           .slice(before + 1, after === -1 ? undefined : after)
@@ -115,8 +88,6 @@ async function measure(page: Page, route: string) {
     }
     return result;
   });
-  // The stage of each example shown open, with its overlays resting open in it, which it keeps
-  // from as it starts loading until they rest there (reserveStage in OpenExample.tsx).
   Object.assign(
     sizes,
     await page.evaluate(() => {
@@ -134,9 +105,6 @@ async function measure(page: Page, route: string) {
       return result;
     }),
   );
-  // The figures of a page of its own, a foundation's or a guide's, which load with it rather than
-  // on their own: the box of each, its legend and code included, which its skeleton keeps on a
-  // pre-rendered page until the page has hydrated (useFiguresMounted in loading/).
   Object.assign(
     sizes,
     await page.evaluate(() => {
@@ -158,8 +126,6 @@ async function measure(page: Page, route: string) {
       return result;
     }),
   );
-  // The long parts, whose skeletons keep the room they take once loaded: each group of the token
-  // reference, with its heading, and each release of the changelog, from its heading to the next.
   await page
     .locator('.site-loading')
     .first()
@@ -214,7 +180,6 @@ try {
       continue;
     }
     const { marked, sizes } = measured;
-    // A part placed on several pages keeps the size of its first.
     for (const [key, size] of Object.entries(sizes)) record[key] ??= size;
     const missing = marked.filter((key) => !sizes[key]);
     console.log(
@@ -226,7 +191,6 @@ try {
       .sort()
       .map((key) => [key, record[key]]),
   );
-  // One part to a line, as Prettier keeps it.
   const comment =
     'Recorded by scripts/site/RecordPartSizes.ts (npm run site:part-sizes): the width and height, in rem, of each part that loads with a page, which its skeleton keeps while it loads.';
   const lines = [

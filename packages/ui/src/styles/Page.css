@@ -1,8 +1,4 @@
 @layer env.components {
-  /* Page: the page column, its widths and its gutter, invisible structure that never paints. The
-     column is centered and grows to its width; the gutter pads its inline edges. Its gutter and its
-     block padding follow the window class of the region it sits in, the nearest container around it,
-     compact first; the page itself is the env-page container for its content. */
   .env-page {
     --env-page-gutter: var(--_theme-page-gutter);
     --_page-gutter: var(--env-page-gutter);
@@ -33,9 +29,6 @@
   .env-page[data-gutter='none'] {
     --env-page-gutter: 0rem;
   }
-  /* The content under the page's header, the page's space below it. In a compact page, where the
-     header's actions already take a row of their own above it, content such as tabs follows them
-     at the gap between a page's sections; from a medium page it keeps more. */
   .env-page-content {
     margin-block-start: var(--env-space-4);
   }
@@ -45,14 +38,9 @@
     }
   }
 
-  /* A sticky header covers the top of the area that scrolls, so what scrolls into view below it, such
-     as an element taking focus or an anchor's target, keeps clear of it (WCAG 2.4.11); a Scaffold
-     whose document scrolls keeps the top bar above it clear with the document's scroll padding, which
-     adds to this margin. The header publishes its height as
-     --_page-header-block-size once script runs, so a title that wraps counts; until then, as in
-     the server's markup, the height is reckoned from the rows it has, a title line, then its
-     breadcrumbs, description, toolbar and, in a compact page, actions under the title. */
   .env-page:has(> .env-page-header[data-sticky]) {
+    --_page-sticky-header-padding: calc(2 * var(--env-space-4));
+    --_page-sticky-focus-clearance: var(--env-space-2);
     --_page-sticky-title: max(1.3 * var(--env-font-size-headline), var(--env-control-height));
     --_page-sticky-small-line: calc(1.4 * var(--env-type-body-sm-font-size));
     --_page-sticky-breadcrumbs: 0rem;
@@ -78,14 +66,13 @@
     scroll-margin-block-start: calc(
       var(
           --_page-header-block-size,
-          2 * var(--env-space-4) + var(--_page-sticky-title) + var(--_page-sticky-breadcrumbs) +
-            var(--_page-sticky-description) + var(--_page-sticky-toolbar) +
-            var(--_page-sticky-actions)
+          var(--_page-sticky-header-padding) + var(--_page-sticky-title) +
+            var(--_page-sticky-breadcrumbs) + var(--_page-sticky-description) +
+            var(--_page-sticky-toolbar) + var(--_page-sticky-actions)
         ) +
-        var(--env-space-2)
+        var(--_page-sticky-focus-clearance)
     );
   }
-  /* From a medium page the actions sit at the end of the title row, adding no row of their own. */
   @container env-page (width >= 37.5rem) {
     .env-page > .env-page-header[data-sticky] ~ .env-page-content * {
       --_page-sticky-actions: 0rem;

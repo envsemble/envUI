@@ -5,8 +5,7 @@ import { useLocale } from './EnvUIContext.js';
 import { defaultServerLocale } from './locale.js';
 import { useHydrated } from '../react/useHydrated.js';
 
-/** Intl formatters, cached per locale and options, so components share them. */
-const cache = new Map<string, unknown>();
+const sharedFormatters = new Map<string, unknown>();
 
 function cached<Formatter>(
   kind: string,
@@ -15,9 +14,8 @@ function cached<Formatter>(
   create: () => Formatter,
 ): Formatter {
   const key = `${kind}\u0000${locale ?? ''}\u0000${JSON.stringify(options ?? {})}`;
-  if (!cache.has(key)) cache.set(key, create());
-  // The key says what create made, set on the line above.
-  return cache.get(key) as Formatter;
+  if (!sharedFormatters.has(key)) sharedFormatters.set(key, create());
+  return sharedFormatters.get(key) as Formatter;
 }
 
 /** The formatters of one locale. */
@@ -31,7 +29,6 @@ export interface Formatters {
   list(options?: Intl.ListFormatOptions): Intl.ListFormat;
 }
 
-/** The formatters of a locale, undefined for the runtime's, created once per locale and options. */
 function formattersFor(locale: string | undefined): Formatters {
   return {
     locale,

@@ -9,15 +9,12 @@ import {
 } from '@envsemble/envui';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 
-// Pictures whose files are wider than tall and far larger than any step, so a box that took its
-// size from the file would show it: a 96 by 48 px PNG and a 192 by 96 px SVG.
 const png =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAwCAYAAADuFn/PAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAvklEQVR4nO2VQQEEQQyD1sD5HgH4zcngUR4xAE36/XgrT2PwBf+pB5gAEjAbQg3AB9EEcTP9ABIwG0INwAfRBHEz/QASMBtCDcAH0QRxM/0AEjAbQg3AB9EEcTP9ABIwG0INwAfRBHEz/QASMBtCDcAH0QRxM/0AEjAbQg3AB9EEcTP9ABIwG0INwAfRBHEz/QASMBtCDcAH0QRxM/0AEjAbQg3AB9EEcTP9ABIwG0INwAfRBHEz/QASMBuCmT/G1NI7mgDopgAAAABJRU5ErkJggg==';
 const svg = `data:image/svg+xml,${encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="192" height="96" viewBox="0 0 192 96"><rect width="192" height="96" fill="#0d9488"/></svg>',
 )}`;
 
-/** An application's own icon component as it is often written: the file's size and color. */
 function IconPipeline() {
   return (
     <svg
@@ -55,8 +52,6 @@ export default function GraphicFixture() {
       <div data-testid="graphic-fill-box" style={{ inlineSize: '14rem', blockSize: '6rem' }}>
         <Graphic src={png} alt="" size="fill" data-testid="png-fill" />
       </div>
-      {/* A container with no height of its own: fill takes its width and its height from the
-          aspect, or a square for a file in the text color. */}
       <div data-testid="graphic-fill-auto" style={{ inlineSize: '16rem' }}>
         <Graphic src={png} alt="" size="fill" aspect="16/9" fit="cover" data-testid="fill-aspect" />
         <div>

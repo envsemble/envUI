@@ -3,7 +3,6 @@ import { commands, page } from 'vitest/browser';
 import * as fixture from '../fixture/MarkdownEditor.fixture.tsx';
 import { mount } from './support/Mount.tsx';
 
-/** A highlighter that records what it highlights, standing in for the one loaded on demand. */
 const recordingHighlighter = `window.delayedHighlighting = { sources: [], loaded: true };
 export async function highlightCode(source) {
   window.delayedHighlighting.sources.push(source);
@@ -13,8 +12,6 @@ const highlighted = () =>
   (window as unknown as { delayedHighlighting?: { sources: string[]; loaded: boolean } })
     .delayedHighlighting;
 
-// A file of its own: the frame keeps the highlighter once it has loaded it, so it must not have
-// loaded before this test holds it back.
 test('a delayed highlighting import skips unmounted source', async () => {
   await commands.holdModuleAs('codeHighlighting', recordingHighlighter);
   try {

@@ -64,33 +64,36 @@ export interface ThemePreferenceProviderProps {
   className?: string;
 }
 
-function readStoredPreference(storageKey: string, fallback: ThemePreference): ThemePreference {
+function readStorageUnlessBlocked(key: string): string | null {
   try {
-    const stored = window.localStorage.getItem(storageKey);
-    if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
+    return window.localStorage.getItem(key);
   } catch {
-    // Storage can be blocked; the default still applies.
+    return null;
   }
-  return fallback;
 }
 
-/** What a provider applying to the document has written on the root. */
+function writeStorageUnlessBlocked(key: string, value: string): boolean {
+  try {
+    window.localStorage.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function readStoredPreference(storageKey: string, fallback: ThemePreference): ThemePreference {
+  const stored = readStorageUnlessBlocked(storageKey);
+  return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : fallback;
+}
+
 interface DocumentWrites {
   contrast?: Exclude<ThemeContrast, 'system'>;
   scale?: ThemeScale;
   look?: Record<string, string>;
 }
 
-/**
- * The providers applying to the document now, with what each wrote there. Only one should; with
- * more, a provider at system still leaves a contrast another of them wrote.
- */
 const documentProviders = new Map<symbol, DocumentWrites>();
 
-/**
- * Removes the root's contrast when envUI wrote it, the page has not written over it since, and no
- * mounted provider holds it. A marker the page's own contrast no longer matches goes on its own.
- */
 function releaseContrast(root: HTMLElement) {
   const marker = root.getAttribute(contrastSourceAttribute);
   if (marker === null) return;
@@ -104,10 +107,6 @@ function releaseContrast(root: HTMLElement) {
   root.removeAttribute(contrastSourceAttribute);
 }
 
-/**
- * Removes the root's scale when envUI wrote it, the page has not written over it since, and no
- * mounted provider holds it, as releaseContrast does for the contrast.
- */
 function releaseScale(root: HTMLElement) {
   const marker = root.getAttribute(scaleSourceAttribute);
   if (marker === null) return;
@@ -126,7 +125,6 @@ function releaseLook(root: HTMLElement, look: Record<string, string> | undefined
     if (root.getAttribute(attribute) === value) root.removeAttribute(attribute);
 }
 
-/** Calls back whenever the root's scale or contrast, or envUI's markers of them, change. */
 function subscribeToRoot(change: () => void) {
   const observer = new MutationObserver(change);
   observer.observe(document.documentElement, {
@@ -141,7 +139,6 @@ function subscribeToRoot(change: () => void) {
   return () => observer.disconnect();
 }
 
-/** The root's scale when the page set it rather than envUI. */
 function readPageScale(): ThemeScale | undefined {
   const root = document.documentElement;
   const scale = root.dataset.envScale;
@@ -149,7 +146,6 @@ function readPageScale(): ThemeScale | undefined {
   return root.getAttribute(scaleSourceAttribute) === ownScaleSource(scale) ? undefined : scale;
 }
 
-/** The root's contrast when the page set it rather than envUI. */
 function readPageContrast(): Exclude<ThemeContrast, 'system'> | undefined {
   const root = document.documentElement;
   const contrast = root.dataset.envContrast;
@@ -161,7 +157,10 @@ function readPageContrast(): Exclude<ThemeContrast, 'system'> | undefined {
 
 const onServer = () => undefined;
 
-/** On the root while a provider switches the page's colors: nothing transitions (Theme.css). */
+const serverSystemTheme: ColorScheme = 'light';
+
+const restyleNow = (element: Element) => void getComputedStyle(element).transitionProperty;
+
 const switchingAttribute = 'data-env-theme-switching';
 
 function readSystemTheme(): ColorScheme {
@@ -170,10 +169,6 @@ function readSystemTheme(): ColorScheme {
     : 'light';
 }
 
-/**
- * The preference kept in localStorage under a key, else the default; a choice made in another
- * window or tab of the same origin applies here too.
- */
 function useStoredPreference(storageKey: string, defaultPreference: ThemePreference) {
   const [preference, setPreferenceState] = useState<ThemePreference>(() =>
     typeof window === 'undefined'
@@ -194,31 +189,21 @@ function useStoredPreference(storageKey: string, defaultPreference: ThemePrefere
   const setPreference = useCallback(
     (next: ThemePreference) => {
       setPreferenceState(next);
-      try {
-        window.localStorage.setItem(storageKey, next);
-      } catch {
-        // A blocked storage API should not prevent switching for this visit.
-      }
+      writeStorageUnlessBlocked(storageKey, next);
     },
     [storageKey],
   );
   return [preference, setPreference] as const;
 }
 
-/**
- * The page's new colors show at once rather than easing, each restyled every frame until done.
- * Before the new theme is styled, the root stops transitions; once it is, they resume, and as the
- * colors no longer change, none start. A provider that doesn't apply to the document, such as one
- * in a figure, leaves its transitions to ease. Colors still undefined, as the page hydrates, are
- * the root's already and count as none shown.
- */
 function useInstantColorSwitch(applyToDocument: boolean, colors: string | undefined) {
   const shownColors = useRef<string | undefined>(undefined);
   useInsertionEffect(() => {
+    const colorsAlreadyShown = shownColors.current !== undefined;
     if (
       applyToDocument &&
       colors !== undefined &&
-      shownColors.current !== undefined &&
+      colorsAlreadyShown &&
       shownColors.current !== colors
     )
       document.documentElement.setAttribute(switchingAttribute, '');
@@ -227,16 +212,13 @@ function useInstantColorSwitch(applyToDocument: boolean, colors: string | undefi
     shownColors.current = colors;
     const root = document.documentElement;
     if (!root.hasAttribute(switchingAttribute)) return;
-    // Reading a computed style brings the page's styles up to date, with the new colors.
-    void getComputedStyle(root).transitionProperty;
-    // After the frame that shows them, so that frame's style isn't worked out twice.
+    restyleNow(root);
     let timer = 0;
-    const frame = requestAnimationFrame(() => {
+    const resumeTransitionsAfterTheFrameThatShowsThem = requestAnimationFrame(() => {
       timer = window.setTimeout(() => root.removeAttribute(switchingAttribute));
     });
-    // A switch before then removes it in its own time.
     return () => {
-      cancelAnimationFrame(frame);
+      cancelAnimationFrame(resumeTransitionsAfterTheFrameThatShowsThem);
       clearTimeout(timer);
     };
   }, [colors]);
@@ -259,35 +241,25 @@ export function ThemePreferenceProvider({
   const surface = definition.surface ?? inherited.surface;
   const selection = definition.selection ?? inherited.selection;
   const corners = definition.corners ?? inherited.corners;
-  // Outside any Theme, a provider that applies to the document gives its boundary the scale and
-  // contrast the page set on the root, which the page and other libraries' portals already show,
-  // rather than system. It never writes them back as its own.
-  const fromPage = applyToDocument && inherited === outsideTheme;
+  const takesPageScaleAndContrast = applyToDocument && inherited === outsideTheme;
   const pageScale = useSyncExternalStore(subscribeToRoot, readPageScale, onServer);
   const pageContrast = useSyncExternalStore(subscribeToRoot, readPageContrast, onServer);
   const appliedContrast = ownContrast ?? inherited.contrast;
-  const contrast = ownContrast ?? (fromPage ? (pageContrast ?? 'system') : inherited.contrast);
-  const scale = ownScale ?? (fromPage ? (pageScale ?? 'system') : inherited.scale);
-  // Such a provider gives the root its theme, contrast and scale, so its boundary takes the root's
-  // look rather than one of its own (themeFromRootAttribute): the same element, before and after
-  // the page hydrates, whose class and attributes would otherwise change as it hydrates and restyle
-  // everything in it. Only a system contrast that leaves the page's own on the root differs.
-  const rootLook = fromPage && !(ownContrast === 'system' && pageContrast !== undefined);
+  const contrast =
+    ownContrast ?? (takesPageScaleAndContrast ? (pageContrast ?? 'system') : inherited.contrast);
+  const scale = ownScale ?? (takesPageScaleAndContrast ? (pageScale ?? 'system') : inherited.scale);
+  const leavesPageContrastOnRoot = ownContrast === 'system' && pageContrast !== undefined;
+  const boundaryTakesRootLook = takesPageScaleAndContrast && !leavesPageContrastOnRoot;
   const [storedPreference, setPreference] = useStoredPreference(storageKey, defaultPreference);
   const [systemTheme, setSystemTheme] = useState<ColorScheme>(() =>
     typeof document !== 'undefined' && document.documentElement.dataset.envTheme === 'dark'
       ? 'dark'
       : readSystemTheme(),
   );
-  // The server, and the browser as it hydrates the server's markup, render the default preference
-  // with a light system theme, as the server knows neither; the stored preference and the system's
-  // theme follow in the render after. Meanwhile a provider applying to the document writes nothing
-  // on the root, where the bootstrap script has applied them already, and its boundary takes the
-  // root's look (rootLook), so nothing changes on screen as it hydrates.
   const hydrated = useHydrated();
   const preference = hydrated ? storedPreference : defaultPreference;
   const theme: ColorScheme =
-    preference === 'system' ? (hydrated ? systemTheme : 'light') : preference;
+    preference === 'system' ? (hydrated ? systemTheme : serverSystemTheme) : preference;
   const [provider] = useState(() => Symbol('ThemePreferenceProvider'));
 
   useEffect(() => {
@@ -299,91 +271,86 @@ export function ThemePreferenceProvider({
     return () => query.removeEventListener('change', update);
   }, [storedPreference]);
 
-  // One provider applies to the document; a second would write over the first's root theme. An
-  // insertion effect, as the writes below, so it registers before them.
-  useInsertionEffect(() => {
-    if (!applyToDocument) return;
-    reportInDevelopment(
-      () =>
-        process.env.NODE_ENV !== 'production' &&
-        documentProviders.size > 0 &&
-        'more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
-    );
-    documentProviders.set(provider, {});
-    // Once the provider unmounts or stops applying to the document, it releases what it wrote on
-    // the root, as a provider at system does: what the page wrote or another provider holds stays.
-    return () => {
-      const { look } = documentProviders.get(provider) ?? {};
-      documentProviders.delete(provider);
-      const root = document.documentElement;
-      root.removeAttribute(switchingAttribute);
-      releaseContrast(root);
-      releaseScale(root);
-      releaseLook(root, look);
-    };
-  }, [applyToDocument, provider]);
+  useInsertionEffect(
+    function registerBeforeWritingRoot() {
+      if (!applyToDocument) return;
+      reportInDevelopment(
+        () =>
+          process.env.NODE_ENV !== 'production' &&
+          documentProviders.size > 0 &&
+          'more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
+      );
+      documentProviders.set(provider, {});
+      return function releaseWhatItWrote() {
+        const { look } = documentProviders.get(provider) ?? {};
+        documentProviders.delete(provider);
+        const root = document.documentElement;
+        root.removeAttribute(switchingAttribute);
+        releaseContrast(root);
+        releaseScale(root);
+        releaseLook(root, look);
+      };
+    },
+    [applyToDocument, provider],
+  );
 
   useInstantColorSwitch(
     applyToDocument,
     hydrated ? `${theme} ${contrast} ${appliedContrast} ${selection}` : undefined,
   );
 
-  // The root takes the theme in an insertion effect, after the colors' switch above and before any
-  // layout effect: the boundary takes the root's look, so what a layout effect inside measures of
-  // the theme, such as a figure's colors, is the new theme's, as in a boundary of its own.
-  useInsertionEffect(() => {
-    if (!applyToDocument || !hydrated) return;
-    const root = document.documentElement;
-    root.classList.add('env-theme');
-    root.dataset.envTheme = theme;
-    // Like a Theme boundary, the root leaves system contrast to prefers-contrast: more. What envUI
-    // writes carries a marker with the value, so a provider removes a contrast that it, a provider
-    // before it (such as one keyed by the user) or the bootstrap script wrote, and one the page set
-    // itself, or wrote over envUI's, stays.
-    const written = appliedContrast === 'system' ? undefined : appliedContrast;
-    documentProviders.set(provider, { ...documentProviders.get(provider), contrast: written });
-    if (written) {
-      root.dataset.envContrast = written;
-      root.setAttribute(contrastSourceAttribute, ownContrastSource(written));
-    } else releaseContrast(root);
-    // The root takes a scale the provider is given, marked with its value as the contrast is;
-    // without one it keeps a scale the page set and drops one envUI wrote.
-    documentProviders.set(provider, { ...documentProviders.get(provider), scale: ownScale });
-    if (ownScale) {
-      root.dataset.envScale = ownScale;
-      root.setAttribute(scaleSourceAttribute, ownScaleSource(ownScale));
-    } else releaseScale(root);
-    const look = {
-      [lookAttributes.surface]: surface,
-      [lookAttributes.selection]: selection,
-      [lookAttributes.corners]: corners,
-    };
-    for (const [attribute, value] of Object.entries(look)) root.setAttribute(attribute, value);
-    documentProviders.set(provider, { ...documentProviders.get(provider), look });
-    root.style.colorScheme = theme;
-  }, [
-    applyToDocument,
-    hydrated,
-    theme,
-    appliedContrast,
-    ownScale,
-    surface,
-    selection,
-    corners,
-    provider,
-  ]);
+  useInsertionEffect(
+    function themeRootBeforeLayoutEffects() {
+      if (!applyToDocument || !hydrated) return;
+      const root = document.documentElement;
+      root.classList.add('env-theme');
+      root.dataset.envTheme = theme;
+      const contrastToWrite = appliedContrast === 'system' ? undefined : appliedContrast;
+      documentProviders.set(provider, {
+        ...documentProviders.get(provider),
+        contrast: contrastToWrite,
+      });
+      if (contrastToWrite) {
+        root.dataset.envContrast = contrastToWrite;
+        root.setAttribute(contrastSourceAttribute, ownContrastSource(contrastToWrite));
+      } else releaseContrast(root);
+      documentProviders.set(provider, { ...documentProviders.get(provider), scale: ownScale });
+      if (ownScale) {
+        root.dataset.envScale = ownScale;
+        root.setAttribute(scaleSourceAttribute, ownScaleSource(ownScale));
+      } else releaseScale(root);
+      const look = {
+        [lookAttributes.surface]: surface,
+        [lookAttributes.selection]: selection,
+        [lookAttributes.corners]: corners,
+      };
+      for (const [attribute, value] of Object.entries(look)) root.setAttribute(attribute, value);
+      documentProviders.set(provider, { ...documentProviders.get(provider), look });
+      root.style.colorScheme = theme;
+    },
+    [
+      applyToDocument,
+      hydrated,
+      theme,
+      appliedContrast,
+      ownScale,
+      surface,
+      selection,
+      corners,
+      provider,
+    ],
+  );
 
-  // Before the paint, so the browser's own interface, such as a mobile address bar, takes the
-  // canvas color in the frame that shows it. Every theme-color tag follows, including ones written
-  // for a system color scheme with media. Only a page with one reads the color, which works out
-  // the page's style at once.
-  useLayoutEffect(() => {
-    if (!applyToDocument || !hydrated) return;
-    const browserThemes = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
-    if (!browserThemes.length) return;
-    const canvas = getComputedStyle(document.documentElement).backgroundColor;
-    for (const browserTheme of browserThemes) browserTheme.content = canvas;
-  }, [applyToDocument, hydrated, theme, appliedContrast, ownScale, selection]);
+  useLayoutEffect(
+    function matchBrowserInterfaceToCanvasBeforePaint() {
+      if (!applyToDocument || !hydrated) return;
+      const browserThemes = document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]');
+      if (!browserThemes.length) return;
+      const canvas = getComputedStyle(document.documentElement).backgroundColor;
+      for (const browserTheme of browserThemes) browserTheme.content = canvas;
+    },
+    [applyToDocument, hydrated, theme, appliedContrast, ownScale, selection],
+  );
 
   const value = useMemo<ThemePreferenceValue>(
     () => ({
@@ -405,7 +372,7 @@ export function ThemePreferenceProvider({
         selection={selection}
         corners={corners}
         className={className}
-        {...(rootLook && { [themeFromRootAttribute]: '' })}
+        {...(boundaryTakesRootLook && { [themeFromRootAttribute]: '' })}
       >
         {children}
       </Theme>

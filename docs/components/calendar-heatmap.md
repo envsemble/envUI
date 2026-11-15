@@ -36,27 +36,17 @@ examples:
 
 ## Variants
 
-### Tones
-
-A heatmap is drawn in one tone, the primary by default, or any status tone, which [Colors & themes](../foundations/colors.md) describes.
-
 ### Color steps
-
-Five steps by default, the empty one included; a heatmap can have as few as two or as many as ten.
 
 <!-- specimen: TonesAndSteps -->
 
 ### Color by rank
-
-Each color step can start where the application chooses, such as at quantiles of the data, so a few very busy days don't leave the rest pale.
 
 ```tsx figure=ColorByRank motion
 
 ```
 
 ### A tooltip of your own
-
-The application can lay out the tooltip itself; each day's name keeps its date and value.
 
 ```tsx figure=CustomTooltip motion
 
@@ -78,104 +68,24 @@ The application can lay out the tooltip itself; each day's name keeps its date a
 
 ### Languages
 
-The months, weekdays, dates and the legend follow the application's language, and weeks start on the locale's first day, as a calendar's do.
-
 ```tsx figure=ApplicationStrings
 
 ```
 
 ### Adapting to width
 
-The heatmap is never wider than its container: a narrow one scrolls the weeks, starting at the latest. On touch screens, days grow to fit a fingertip.
-
 ```tsx figure=ScrollingWeeks widths="30 16" sweep
 
 ```
-
-## Rules
-
-A heatmap shows the pattern; put the exact figures elsewhere, where people compare them.
-
-### Names
-
-Name the heatmap after what it counts and when, such as Deployments in the last year, and give each day a value with its unit, such as 4 deployments.
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                                             | Action                                                  |
-| --------------------------------------------------------------- | ------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                 | Moves into the grid, on the latest or last focused day. |
-| <kbd>↑</kbd>, <kbd>↓</kbd>                                      | Moves to the previous or next day.                      |
-| <kbd>←</kbd>, <kbd>→</kbd>                                      | Moves to the same weekday a week earlier or later.      |
-| <kbd>Home</kbd>, <kbd>End</kbd>                                 | Moves to the same weekday in the first or last week.    |
-| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>                        | Moves to the first or last day of the week.             |
-| <kbd>Ctrl</kbd>+<kbd>Home</kbd>, <kbd>Ctrl</kbd>+<kbd>End</kbd> | Moves to the first or the latest day.                   |
-| <kbd>Esc</kbd>                                                  | Hides the tooltip.                                      |
-
-### envUI provides
-
-- A read-only `grid` with a cell for each day, named with its date and value.
-- One tab stop, the tooltip on focus as on hover, and a focus outline.
-- Month and weekday names and the legend hidden; each day's name says it all.
-
-### You provide
-
-- A name for the heatmap, and values whose names say their unit.
-- The exact figures elsewhere, where people compare them.
-
-## Compose
-
-### Usage
-
-CalendarHeatmap takes `data`, one entry per day with its `date`, as YYYY-MM-DD, its `value`, which chooses the color step, and a `label` with the value in words and its unit, such as 4 deployments. Days without an entry count as 0. `startDate` and `endDate` set the days shown, from the earliest to the latest day in `data` by default. Name the grid with `aria-label`, or `aria-labelledby` for a visible heading.
-
-```tsx source=Deployments
-
-```
-
-#### Tones and color steps
-
-`tone` is `primary`, the default, `accent`, `success`, `warning`, `danger`, `done` or `neutral`: the tone the colors are mixed from. `levels` sets the color steps, the empty one included, from 2 to 10, and 5 by default; `maxValue` sets the value that takes the strongest color, the largest value shown by default.
-
-#### Color by rank
-
-`thresholds` sets the lowest value of each color step above the empty one, in ascending order, up to nine, such as quantiles of the data, as ColorByRank computes them; they replace `levels` and `maxValue`.
-
-```tsx
-<CalendarHeatmap aria-label="Edits by rank" data={data} thresholds={[1, 3, 5, 8]} />
-```
-
-#### Tooltip
-
-`renderTooltip` receives the day, with its `date`, `value`, `label` and `level`, the color step from 0, and returns the tooltip's content; the day's accessible name keeps its date and value. `formatValue` and `formatDate` write a value and a date.
-
-```tsx
-<CalendarHeatmap
-  aria-label="Reviews in ten weeks"
-  data={data}
-  formatValue={reviews}
-  renderTooltip={({ date, value }) => (
-    <>
-      <strong>{reviews(value)}</strong>
-      <br />
-      {dates.format(new Date(`${date}T00:00:00Z`))}
-    </>
-  )}
-/>
-```
-
-#### Languages
-
-EnvUIProvider's `locale` names the months, weekdays and dates, through `Intl`; `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` set them for one heatmap. Weeks start on the locale's first day, as on Calendar; `weekStart` sets another, from `0` for Sunday to `6` for Saturday, such as `weekStart={1}` for Monday.
-
-```tsx
-<EnvUIProvider messages={{ calendarHeatmap: { less: 'Quieter', more: 'Busier' } }}>
-  <CalendarHeatmap aria-label="Activity in the first quarter" data={data} weekStart={1} />
-</EnvUIProvider>
-```
-
-### Composition
-
-The parts are the month names, `env-calendar-heatmap-month`, the weekday names, `env-calendar-heatmap-weekday`, the days, `env-calendar-heatmap-day`, and the legend, `env-calendar-heatmap-legend`, with a swatch, `env-calendar-heatmap-swatch`, for each step. The tooltip is `env-calendar-heatmap-tooltip`, the shared tooltip popup. Put the exact figures elsewhere, such as a Table, where people compare them.
+| Key                                                             | Action                                               |
+| --------------------------------------------------------------- | ---------------------------------------------------- |
+| <kbd>↑</kbd>, <kbd>↓</kbd>                                      | Moves to the previous or next day.                   |
+| <kbd>←</kbd>, <kbd>→</kbd>                                      | Moves to the same weekday a week earlier or later.   |
+| <kbd>Home</kbd>, <kbd>End</kbd>                                 | Moves to the same weekday in the first or last week. |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>                        | Moves to the first or last day of the week.          |
+| <kbd>Ctrl</kbd>+<kbd>Home</kbd>, <kbd>Ctrl</kbd>+<kbd>End</kbd> | Moves to the first or the latest day.                |

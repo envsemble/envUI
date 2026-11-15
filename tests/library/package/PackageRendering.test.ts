@@ -1,6 +1,3 @@
-// The packed package rendering on a server, in Node with no DOM globals, as an application's server
-// renders it: the components and icons, rich text, and the display and panel dock components,
-// whose contracts a strict TypeScript consumer also checks.
 import assert from 'node:assert/strict';
 import { before, test } from 'node:test';
 import { installTimeout, packedConsumer } from '../../support/PackedConsumer.ts';
@@ -115,7 +112,7 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
   assert.match(ssr.customIcon, /aria-label="Custom star"/);
 });
 
-test('packed rich text statically renders the shared Markdown schema and reference marks', async () => {
+test('packed rich text statically renders the shared Markdown schema and reference marks, and a finished task read-only rather than disabled', async () => {
   const formattedSource =
     '## Heading\n\n**Bold** *italic* ~~strike~~ `code` [guide](/guide)\n\n- [x] Done\n- [ ] Open\n\n> Quote\n\n| Name | State |\n| --- | --- |\n| One | Ready |\n\n```js\nconst value = 1;\n```';
   const result = await consumer.runScript(
@@ -157,7 +154,6 @@ test('packed rich text statically renders the shared Markdown schema and referen
   assert.doesNotMatch(result.unsafe, /href="javascript:|src="data:/);
   assert.match(result.literalHtml, /&lt;strong&gt;raw HTML&lt;\/strong&gt;/);
   assert.match(result.unknown, /Usable/);
-  // A finished task's checkbox is read-only, in full color, not disabled (readOnlyCheckbox.ts).
   assert.match(result.task, /aria-readonly="true"/);
   assert.doesNotMatch(result.task, /disabled/);
   assert.match(result.editor, /name="source"/);
@@ -191,7 +187,6 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
     }));
   `,
   );
-  // React writes dateTime; attribute names in HTML are case-insensitive.
   assert.match(
     display.relative,
     /<time [^>]*datetime="2026-10-16T12:00:00.000Z"[^>]*>in 2 days<\/time>/i,
@@ -227,25 +222,25 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
       <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="sm" />
     </>;
     void text;
-    // @ts-expect-error An icon-only copy button requires an accessible name.
-    const unnamedCopy = <CopyButton value="text" />;
-    // @ts-expect-error Children that render nothing leave the button icon-only, without a name.
-    const falseLabel = <CopyButton value="text">{false}</CopyButton>;
-    // @ts-expect-error So does null.
-    const nullLabel = <CopyButton value="text">{null}</CopyButton>;
+    // @ts-expect-error
+    const iconOnlyCopyButtonNeedsAName = <CopyButton value="text" />;
+    // @ts-expect-error
+    const falseChildrenLeaveCopyButtonIconOnly = <CopyButton value="text">{false}</CopyButton>;
+    // @ts-expect-error
+    const nullChildrenLeaveCopyButtonIconOnly = <CopyButton value="text">{null}</CopyButton>;
     const namedWithoutLabel = <CopyButton value="text" aria-label="Copy">{null}</CopyButton>;
-    // @ts-expect-error Avatar groups take the avatar sizes.
-    const unknownSize = <AvatarGroup people={[]} size="huge" />;
-    // @ts-expect-error A pager asks the application for pages.
-    const inertPager = <Pagination page={1} pageSize={10} />;
-    // @ts-expect-error Relative times have three formats.
-    const unknownFormat = <RelativeTime value={0} format="tiny" />;
-    void [unnamedCopy, falseLabel, nullLabel, namedWithoutLabel, unknownSize, inertPager, unknownFormat];
+    // @ts-expect-error
+    const avatarGroupTakesAvatarSizes = <AvatarGroup people={[]} size="huge" />;
+    // @ts-expect-error
+    const paginationAsksForPages = <Pagination page={1} pageSize={10} />;
+    // @ts-expect-error
+    const relativeTimeHasThreeFormats = <RelativeTime value={0} format="tiny" />;
+    void [iconOnlyCopyButtonNeedsAName, falseChildrenLeaveCopyButtonIconOnly, nullChildrenLeaveCopyButtonIconOnly, namedWithoutLabel, avatarGroupTakesAvatarSizes, paginationAsksForPages, relativeTimeHasThreeFormats];
   `,
   );
 });
 
-test('the panel dock renders its panels, tabs and header on a server and types its contracts', async () => {
+test('the panel dock renders its panels, minimized ones out of sight, its tabs and header on a server without an entrance, and types its contracts', async () => {
   const dock = await consumer.runScript(
     'DockConsumer.mjs',
     `
@@ -271,12 +266,10 @@ test('the panel dock renders its panels, tabs and header on a server and types i
   );
   for (const name of ['Minimize', 'Maximize', 'Close'])
     assert.match(dock.html, new RegExp(`aria-label="${name}"`));
-  // A minimized panel's content renders too, kept out of sight behind its tab.
   assert.match(dock.html, /<section [^>]*data-panel-id="budget"[^>]*data-placement="hidden"/);
   assert.match(dock.html, /Body of Budget/);
   assert.match(dock.html, /aria-label="Show Budget"/);
   assert.match(dock.html, /Unsaved changes/);
-  // Server output is in place before it hydrates, without an entrance.
   assert.doesNotMatch(dock.html, /data-entering/);
 
   await consumer.typecheck(
@@ -310,19 +303,19 @@ test('the panel dock renders its panels, tabs and header on a server and types i
         </PanelDock.Root>
       </EnvUIProvider>
     );
-    // @ts-expect-error A dock names its tabs' buttons with openLabel; showLabel, its 0.x name, is not a prop.
-    const earlierName = <PanelDock.Root {...dockProps} showLabel={(label) => 'Show ' + label}>{() => null}</PanelDock.Root>;
-    // @ts-expect-error A dock's tab labels are functions of each tab's text.
-    const plainRestore = <PanelDock.Root {...dockProps} openLabel="Show">{() => null}</PanelDock.Root>;
-    // @ts-expect-error A dock scrolls or minimizes what does not fit.
-    const unknownOverflow = <PanelDock.Root {...dockProps} overflow="hide">{() => null}</PanelDock.Root>;
-    // @ts-expect-error A panel is open, minimized or maximized.
-    const unknownMode: PanelDockPanel = { id: 'notes', title: 'Notes', mode: 'closed' };
-    // @ts-expect-error A dock asks the application to change modes and close panels.
-    const inertDock = <PanelDock.Root panels={documents}>{() => null}</PanelDock.Root>;
-    // @ts-expect-error The window controls are on or off; their names come from the provider's messages.
-    const ownControls = <PanelDock.Header title="Notes" controls={<span />} />;
-    void [earlierName, plainRestore, unknownOverflow, unknownMode, inertDock, ownControls];
+    // @ts-expect-error
+    const showLabelIsNoLongerAProp = <PanelDock.Root {...dockProps} showLabel={(label) => 'Show ' + label}>{() => null}</PanelDock.Root>;
+    // @ts-expect-error
+    const openLabelIsAFunctionOfTabText = <PanelDock.Root {...dockProps} openLabel="Show">{() => null}</PanelDock.Root>;
+    // @ts-expect-error
+    const dockScrollsOrMinimizesOverflow = <PanelDock.Root {...dockProps} overflow="hide">{() => null}</PanelDock.Root>;
+    // @ts-expect-error
+    const panelIsOpenMinimizedOrMaximized: PanelDockPanel = { id: 'notes', title: 'Notes', mode: 'closed' };
+    // @ts-expect-error
+    const dockAsksForModeChangesAndClosing = <PanelDock.Root panels={documents}>{() => null}</PanelDock.Root>;
+    // @ts-expect-error
+    const windowControlsAreOnOrOff = <PanelDock.Header title="Notes" controls={<span />} />;
+    void [showLabelIsNoLongerAProp, openLabelIsAFunctionOfTabText, dockScrollsOrMinimizesOverflow, panelIsOpenMinimizedOrMaximized, dockAsksForModeChangesAndClosing, windowControlsAreOnOrOff];
   `,
   );
 });

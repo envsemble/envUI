@@ -4,10 +4,6 @@ const {
   utils: { report },
 } = stylelint;
 
-/**
- * The numbers of a CSS value with their units, such as `16px` or `-0.5rem`, outside strings and
- * `url()`, each with its offset and the names of the functions it sits in, outermost first.
- */
 export function numbers(value) {
   const found = [];
   const functions = [];
@@ -61,10 +57,6 @@ export function numbers(value) {
   return found;
 }
 
-/**
- * The words of a value outside functions, with their offsets, such as `0.5rem` and `calc(…)` in
- * `0.5rem calc(…)`; spaces, commas and slashes separate them.
- */
 export function topLevelWords(value) {
   const words = [];
   let depth = 0;
@@ -99,12 +91,10 @@ export function topLevelWords(value) {
   return words;
 }
 
-/** Where a declaration's value starts in the declaration's text. */
 const valueOffset = (declaration) =>
   declaration.prop.length + (declaration.raws.between ?? ':').length;
 
 /**
- * Reports a range of a declaration's value.
  * @param {{ result: any, ruleName: string, declaration: any, message: string, start: number, length: number, fix?: () => void }} problem
  */
 export function reportInValue({ result, ruleName, declaration, message, start, length, fix }) {
@@ -120,7 +110,6 @@ export function reportInValue({ result, ruleName, declaration, message, start, l
   });
 }
 
-/** A property name list of strings and `/…/` patterns, as a test of a property. */
 export function propertyMatcher(list) {
   const tests = list.map((entry) => {
     const pattern = /^\/(.*)\/([a-z]*)$/.exec(entry);
@@ -133,6 +122,5 @@ export function propertyMatcher(list) {
   return (property) => tests.some((test) => test(property.toLowerCase()));
 }
 
-/** The documentation of a rule: its section in the package README. */
 export const documentationUrl = (rule) =>
   `https://github.com/envsemble/envUI/blob/main/packages/stylelint-config/README.md#${rule}`;

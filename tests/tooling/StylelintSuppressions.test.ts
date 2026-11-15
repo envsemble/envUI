@@ -6,15 +6,9 @@ import stylelint from 'stylelint';
 import { repositoryRoot } from '../../scripts/RepositoryPaths.ts';
 import { styleSheets } from '../../scripts/test/Checks.ts';
 
-// stylelint-suppressions.json records the violations that predate the style rules, per file and
-// rule. Stylelint fails only when a count rises, so a recorded count above the real one would leave
-// room for new violations. This test lints without the suppressions and requires the recorded
-// counts to equal the real ones.
-
 const suppressionsFile = 'stylelint-suppressions.json';
 const recordAgain = `Record the lower counts with \`npm run lint:css -- --suppress\` while \`npm run lint:css\` passes, and commit ${suppressionsFile}.`;
 
-/** Every warning of the linted style sheets without the suppressions, with its file. */
 let linted;
 async function warnings() {
   linted ??= lintAll();
@@ -27,7 +21,6 @@ async function lintAll() {
     for await (const file of glob(pattern, { cwd: repositoryRoot }))
       files.add(file.split(sep).join('/'));
   for (const file of [...files].sort()) {
-    // Linting the code rather than the file leaves the suppressions file out.
     const { results } = await stylelint.lint({
       code: await readFile(join(repositoryRoot, file), 'utf8'),
       codeFilename: join(repositoryRoot, file),
@@ -39,7 +32,6 @@ async function lintAll() {
   return found;
 }
 
-/** Violations per file and rule, as stylelint-suppressions.json records them. */
 async function violations() {
   const counts = {};
   for (const { file, rule } of await warnings()) {
@@ -50,7 +42,6 @@ async function violations() {
   return counts;
 }
 
-/** Lines for the counts that differ, rises and drops apart. */
 function compareCounts(actual, recorded) {
   const rises: string[] = [];
   const drops: string[] = [];
@@ -87,9 +78,7 @@ test('stylelint-suppressions.json records exactly the CSS violations there are',
   assert.deepEqual(report, [], report.join('\n'));
 });
 
-// The stacking order comes from the --env-z-* tokens everywhere, so no suppression may hide a
-// literal z-index: a new one fails here even where the file's count of the rule would allow it.
-test('no style sheet sets a literal z-index', async () => {
+test("no style sheet sets a literal z-index, even where its file's suppressed count allows one", async () => {
   const literal = (await warnings())
     .filter(
       ({ rule, text }) =>

@@ -17,11 +17,11 @@ export type { FieldVariant as TextFieldVariant } from '../internal/field/FieldFr
 import '../styles/Base.css';
 import '../styles/TextField.css';
 
-// The prefix prop replaces the native RDFa attribute of the same name, and size the native width in
-// characters: a field's width comes from its layout.
+type NativeAttributesTheFieldRedefines = 'prefix' | 'size';
+
 export interface TextFieldProps
   extends
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'size'>,
+    Omit<InputHTMLAttributes<HTMLInputElement>, NativeAttributesTheFieldRedefines>,
     FieldProps,
     TextFieldAppearanceProps,
     TextFieldDecorationProps,
@@ -65,7 +65,6 @@ export function TextField({
 }: TextFieldProps) {
   const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;
-  // The prefix and suffix are read with the field, before its description and error.
   const describedByIds =
     [
       prefix != null && `${id}-prefix`,

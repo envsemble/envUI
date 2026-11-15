@@ -1,5 +1,4 @@
 @layer env.components {
-  /* Listbox: the options of a list whose focus stays in a text input, as ListRows. */
   .env-listbox {
     min-inline-size: 0;
   }
@@ -9,7 +8,6 @@
     min-inline-size: 0;
     padding: var(--_popup-padding);
   }
-  /* With no options, the list takes no room and the status beside it says why. */
   .env-listbox-options:empty {
     padding: 0;
   }

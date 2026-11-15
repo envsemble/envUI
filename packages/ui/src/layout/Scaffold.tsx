@@ -116,12 +116,12 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
 }
 
 /**
- * The invisible structure of an application's screen, after Material's: a top bar region, a
- * navigation region and the body. It never paints. It shows one navigation form at a time by its
- * own width, CSS only: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one
- * and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the
- * bar and the rail or the drawer kept in view; `scroll="body"` scrolls the body alone. Skip links
- * to the body and the navigation come first.
+ * The invisible structure of an application's screen: a top bar region, a navigation region and
+ * the body. It never paints. It shows one navigation form at a time by its own width: a
+ * NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one
+ * and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top
+ * bar, the bar and the rail or the drawer kept in view; `scroll="body"` scrolls the body alone.
+ * Skip links to the body and the navigation come first.
  */
 export function Scaffold({
   topBar,
@@ -160,9 +160,8 @@ export function Scaffold({
     },
     [bodyRef],
   );
-  // Where the body scrolls rather than the document, the keyboard scrolls the body as it would the
-  // document, also before anything in it has focus.
-  useScrollKeys(scroll === 'body' ? root : null, body);
+  const bodyScrollsInsteadOfDocument = scroll === 'body';
+  useScrollKeys(bodyScrollsInsteadOfDocument ? root : null, body);
 
   const resolved = resolveNavigationForms(navigation, navigationForms);
   const shown = new Set(Object.values(resolved));
@@ -170,13 +169,8 @@ export function Scaffold({
   const hasTopBar = topBar != null;
   const hasBar = shown.has('bar');
 
-  // The bars' heights, which CSS can't know where a top bar wraps or is a window's title bar, or
-  // whatever a bar's labels take: the top bar's for what sticks under it, and, where the document
-  // scrolls, both as the document's scroll padding, so what scrolls into view, such as an element
-  // taking focus, keeps clear of the bars (WCAG 2.4.11). A bar that hides measures 0. Until script
-  // runs, Scaffold.css estimates them.
   useEffect(
-    function publishBarSizes() {
+    function publishBarSizesCssCannotKnow() {
       if (!root || (!hasTopBar && !hasBar)) return;
       const html = root.ownerDocument.documentElement;
       const topBarRegion = root.querySelector<HTMLElement>(':scope > .env-scaffold-top-bar');
@@ -186,7 +180,8 @@ export function Scaffold({
       const publish = () => {
         const top = topBarRegion?.offsetHeight ?? 0;
         root.style.setProperty('--_scaffold-top-bar-size', `${top}px`);
-        if (scroll !== 'document') return;
+        const documentScrollPaddingKeepsFocusClearOfBars = scroll === 'document';
+        if (!documentScrollPaddingKeepsFocusClearOfBars) return;
         html.style.setProperty('--_scaffold-scroll-top', `${top}px`);
         html.style.setProperty('--_scaffold-scroll-bottom', `${barSlot?.offsetHeight ?? 0}px`);
       };
@@ -203,9 +198,7 @@ export function Scaffold({
     [root, scroll, hasTopBar, hasBar],
   );
   useNavigationFocusHandoff(root, hasNavigation, navigationId);
-  // Every form that shows at some window class is rendered; CSS shows the one for the Scaffold's
-  // width, and the others are display: none, out of the tab order and the accessibility tree.
-  const slot = (form: ScaffoldNavigationForm) =>
+  const slotThatCssShowsAtItsWidth = (form: ScaffoldNavigationForm) =>
     shown.has(form) ? (
       <div className={`env-scaffold-${form}`} data-navigation-form={form}>
         {navigation?.[form]}
@@ -214,13 +207,12 @@ export function Scaffold({
 
   const skipToNavigation = (event: MouseEvent<HTMLElement>) => {
     const region = root?.querySelector<HTMLElement>(`[id="${CSS.escape(navigationId)}"]`);
-    // The form that shows is the one with a box.
-    const form = [...(region?.children ?? [])].find(
+    const formThatShows = [...(region?.children ?? [])].find(
       (child): child is HTMLElement => child instanceof HTMLElement && child.offsetParent !== null,
     );
-    if (!form) return;
+    if (!formThatShows) return;
     event.preventDefault();
-    focusRegion(form);
+    focusRegion(formThatShows);
   };
   const skipToBody = (event: MouseEvent<HTMLElement>) => {
     if (!body) return;
@@ -255,7 +247,6 @@ export function Scaffold({
             {skipToContentLabel ?? messages.skipToContent}
           </Button>
           {hasNavigation && (
-            // Hidden where the Scaffold's width shows no navigation form.
             <Button
               href={`#${navigationId}`}
               variant="secondary"
@@ -271,9 +262,9 @@ export function Scaffold({
       {topBar != null && <Banner className="env-scaffold-top-bar">{topBar}</Banner>}
       {hasNavigation && (
         <div id={navigationId} className="env-scaffold-navigation">
-          {slot('drawer')}
-          {slot('rail')}
-          {slot('bar')}
+          {slotThatCssShowsAtItsWidth('drawer')}
+          {slotThatCssShowsAtItsWidth('rail')}
+          {slotThatCssShowsAtItsWidth('bar')}
         </div>
       )}
       <Main ref={attachBody} id={mainId} tabIndex={-1} className="env-scaffold-body">

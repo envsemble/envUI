@@ -53,12 +53,6 @@ import {
 
 export const mount = 'standalone';
 
-/*
- * The same content in the comfortable and the compact scale, one above the other. The visual
- * baseline captures each section in both themes, and the browser tests measure the sizes section;
- * open one with ?fixture=scale&section=<name>&theme=<light|dark>.
- */
-
 const plans = [
   { value: 'starter', label: 'Starter' },
   { value: 'team', label: 'Team' },
@@ -97,7 +91,6 @@ function Row({
   );
 }
 
-/** Every control that takes a size, at one size: they must all be as tall. */
 function SizeRow({ size }: { size: ControlSize }) {
   const [filter, setFilter] = useState('all');
   const [page, setPage] = useState(1);
@@ -158,10 +151,6 @@ function SizeRow({ size }: { size: ControlSize }) {
   );
 }
 
-/**
- * Fields with their labels shown, outline and ghost, beside a button of their size: at md and lg
- * every one is as tall as the button; at sm a labelled field takes the md height, room for its label.
- */
 function LabelledRow({ size }: { size: ControlSize }) {
   return (
     <Row label={`size="${size}", labels shown`} data-labelled-row={size}>
@@ -480,7 +469,6 @@ function NavigationSection() {
   );
 }
 
-/** A desktop view with every component at its default size and density. */
 function DesktopSection() {
   const [filter, setFilter] = useState('all');
   return (
@@ -535,8 +523,6 @@ function DesktopSection() {
   );
 }
 
-/** Small buttons 4 px apart in a layout of the application's own: a press must reach the button it
- * lands on under a coarse pointer, whatever the layout. */
 function TightButtons({ label }: { label: string }) {
   return ['Cut', 'Copy', 'Paste', 'Undo'].map((name) => (
     <Button key={name} size="sm" variant="secondary" aria-label={`${name}, ${label}`}>
@@ -552,7 +538,6 @@ const tightLayouts = [
   { name: 'reverse', title: 'A reversed row' },
 ] as const;
 
-/** A panel with its header's actions beside the window controls, as a docked panel shows them. */
 function DockedPanel() {
   return (
     <div className="density-dock-frame">
@@ -577,7 +562,6 @@ function DockedPanel() {
   );
 }
 
-/** Tight layouts of small buttons, and a docked panel's header, for the touch hit areas. */
 function LayoutsSection() {
   return (
     <div className="density-columns" data-columns="4">
@@ -624,10 +608,9 @@ const densitySections: Record<DensitySection, () => ReactNode> = {
   layouts: LayoutsSection,
 };
 
-/** One section in each scale, one above the other. */
 function ScaledSection({ name, theme }: { name: string; theme: ColorScheme }) {
   const Section = (densitySectionNames as readonly string[]).includes(name)
-    ? densitySections[name as DensitySection] // includes() doesn't narrow name.
+    ? densitySections[name as DensitySection]
     : undefined;
   return (
     <div className="density-section" data-density-section={name} data-density-theme={theme}>
@@ -651,11 +634,10 @@ export default function ScaleFixture() {
   const query = new URLSearchParams(location.search);
   const section = query.get('section');
   const theme = query.get('theme');
-  // Open menus lock page scrolling, so they render only on their own.
+  const scrollLockingSection = 'menu';
   const sections: string[] = section
     ? [section]
-    : densitySectionNames.filter((name) => name !== 'menu');
-  // The tests ask only for light or dark.
+    : densitySectionNames.filter((name) => name !== scrollLockingSection);
   const themes: ColorScheme[] = theme ? [theme as ColorScheme] : ['light', 'dark'];
   return (
     <div className="density-fixture">

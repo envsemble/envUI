@@ -317,7 +317,6 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
             </Table.Row>
           </Table.Body>
         </Table.Root>
-        {/* A number of pixels works as well. */}
         <Table.Root aria-label={`Number threshold ${theme}`} narrowLayout="stack" stackBelow={37.5}>
           <Table.Head>
             <Table.Row>
@@ -429,7 +428,6 @@ export default function TableFixture({ theme }: { theme: ColorScheme }) {
           </Table.Body>
         </Table.Root>
       </div>
-      {/* A table named by a heading, whose strings come from EnvUIProvider. */}
       <h3 id={'labelled-table-' + theme}>Quarterly figures {theme}</h3>
       <EnvUIProvider messages={{ table: { sortAscending: 'aufsteigend sortieren' } }}>
         <Table.Root aria-labelledby={'labelled-table-' + theme}>

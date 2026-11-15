@@ -35,11 +35,7 @@ examples:
 
 ## Options
 
-### A few styles, each with a job
-
-envUI sets text in six styles, from the one large line that opens a page to small notes.
-
-- Each style has one job, so a title or a note looks the same on every screen.
+Six text styles, each with one job, in one typeface at a regular and a medium weight. Supporting text steps back by color, not by size.
 
 ```tsx figure=Screen
 
@@ -50,10 +46,6 @@ envUI sets text in six styles, from the one large line that opens a page to smal
 3. **Body**
 4. **Small body**
 5. **Caption**
-
-### Every style
-
-Each style, largest first, in the theme you are reading in, with what it is for.
 
 ```tsx figure=Styles
 
@@ -66,28 +58,13 @@ Each style, largest first, in the theme you are reading in, with what it is for.
 5. **Small body**: Supporting text, a step smaller and quieter.
 6. **Caption**: A note under a figure or a chart.
 
-### Quieter, not smaller
-
-Text can step back without getting smaller: supporting text takes a quieter color than the main text, at any size.
-
-- The main color is for what people read first, and the quieter one for details, dates and hints.
-- Both keep their contrast in every theme, high contrast included.
-
 ```tsx figure=Emphasis
 
 ```
 
-### One typeface, two weights
-
-Everything is set in one typeface, at a regular weight for reading and a medium weight for headings and labels.
-
-- A bold weight is kept for the strongest emphasis in a small space, such as today in a calendar.
-
 ## Behaviour
 
-### Text follows the reader
-
-Text grows with the text size people choose in their browser, and the compact scale makes every style a step smaller.
+Text follows the reader's text size, and the compact scale sets every style a step smaller.
 
 ```tsx figure=TextSize
 
@@ -95,13 +72,7 @@ Text grows with the text size people choose in their browser, and the compact sc
 
 ## Rules
 
-Running text reads best in short paragraphs whose lines stop at a comfortable length.
-
-### A lead, then quieter detail
-
-Open a page or a section with a sentence or two in the main color that say what matters.
-
-- Set the detail after it in the quieter color, or a step smaller, so people can read the start and skip the rest.
+Open with a sentence in the main color, then the detail in the quieter one. Keep paragraphs short and lines about 60 to 75 characters long. Text adds no space around itself: the layout sets the gaps.
 
 ```tsx figure=Hierarchy
 
@@ -111,46 +82,15 @@ Open a page or a section with a sentence or two in the main color that say what 
 2. **Supporting text**: The detail after it, in the quieter color.
 3. **Small body**: A note under a title, a step smaller.
 
-### Lines a comfortable length
-
-A line holds about as many words as a line of a book.
-
-- However wide the window, a paragraph wraps at that length, so the eye finds the start of the next line easily.
-
 ```tsx figure=Measure
 
 ```
 
-### Short paragraphs
-
-A paragraph makes one point in a few lines.
-
-- Two points are two paragraphs, which read faster than one long block.
-
-### Space belongs to the layout
-
-Text adds no space around itself.
-
-- The space between a title and its paragraph comes from the group they are in, so text sits the same in every component.
-
-## Words to use
-
-Ask an agent for text in these words; envUI turns each into a style, so the result matches the rest of the app.
-
-| Words            | In code                                                                       | Use for                                                                                      |
-| ---------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| A hero line      | `variant="display"`, once per view at most                                    | The display style: one large line that opens a page.                                         |
-| A page title     | `variant="headline"` on the page's heading element, such as `render={<h1 />}` | The headline style, as the page’s main heading.                                              |
-| A section title  | `variant="title"` on the section's heading element, such as `render={<h2 />}` | The title style, for a pane, a section, a card or a dialog.                                  |
-| Supporting text  | `variant="body-sm"`, muted by default                                         | Text a step smaller and quieter, for details and hints.                                      |
-| A caption        | `variant="caption"`                                                           | A small, quiet note under a figure or a chart.                                               |
-| Quieter text     | `emphasis="muted"` on Text of any variant                                     | The same size in the quieter color of supporting text.                                       |
-| A lead           | The first paragraph as body in the default color; the detail after it muted   | The sentence or two that open a page or a section, in the main color, before quieter detail. |
-| Short paragraphs | A few lines each, with `max-inline-size: 53ch` on running text                | Running text in paragraphs of a few lines, each line a comfortable length.                   |
-
 ## Compose
 
 ### Usage
+
+The element sets the document's structure and `variant` the look, apart; `emphasis="muted"` quiets text of any variant.
 
 ```tsx
 import { Column, Text } from '@envsemble/envui';
@@ -159,62 +99,44 @@ import { Column, Text } from '@envsemble/envui';
   <Text render={<h1 />} variant="headline">
     Project overview
   </Text>
-  <Text render={<h2 />} variant="title">
-    Project details
-  </Text>
   <Text>Shared context for your team.</Text>
   <Text emphasis="muted">Updated today</Text>
 </Column>;
 ```
 
-| Name          | Takes                                                                       |
-| ------------- | --------------------------------------------------------------------------- |
-| Text variant  | display, headline, title, body (the default), body-sm or caption            |
-| Text emphasis | default, muted or subtle, in place of the variant's own color               |
-| Text render   | The element, such as `render={<h2 />}` or `render={<span />}`; p by default |
+### Customize
+
+Generated from the token list by `npm run docs:guides`; values at the default 16 px root.
 
 #### Text styles
 
-At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes in each scale lists them; compact takes each a step smaller. Display, headline and title are medium (500), the rest regular (400).
+| Token                 | Comfortable                                                                    | Compact                                                                        | Use                                                                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--env-type-body`     | `400 0.9375rem / 1.4em`                                                        | `400 0.8125rem / 1.4em`                                                        | Running text: Text's body variant, regular.                                                                                                 |
+| `--env-type-body-sm`  | `400 0.875rem / 1.4em`                                                         | `400 0.75rem / 1.4em`                                                          | Supporting text: Text's body-sm and caption variants, regular.                                                                              |
+| `--env-type-display`  | `500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif` | `500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif` | Display text, Text's display variant: medium, 1.75 to 2.75 rem with the window, set tight.                                                  |
+| `--env-type-headline` | `500 1.375rem / 1.3em`                                                         | `500 1.25rem / 1.3em`                                                          | A page's heading: Text's headline variant, medium, its lines tighter than body text's and its letters a touch closer, as larger type wants. |
+| `--env-type-title`    | `500 1.125rem / 1.35em`                                                        | `500 1rem / 1.35em`                                                            | A section's heading: Text's title variant, medium, its lines a little tighter than body text's and its letters a touch closer.              |
 
-| Variant    | In the catalogue | Size                                                    | Color                    |
-| ---------- | ---------------- | ------------------------------------------------------- | ------------------------ |
-| `display`  | Display          | 1.75 to 2.75 rem, with the window, `--env-type-display` | `--env-color-fg-default` |
-| `headline` | Headline         | 1.375 rem, `--env-type-headline`                        | `--env-color-fg-default` |
-| `title`    | Title            | 1.125 rem, `--env-type-title`                           | `--env-color-fg-default` |
-| `body`     | Body             | 0.9375 rem, `--env-type-body`                           | `--env-color-fg-default` |
-| `body-sm`  | Small body       | 0.875 rem, `--env-type-body-sm`                         | `--env-color-fg-muted`   |
-| `caption`  | Caption          | 0.875 rem, `--env-type-body-sm`                         | `--env-color-fg-muted`   |
+#### Font sizes
 
-`emphasis` replaces a variant's color: `default` is `--env-color-fg-default`, and `muted` and `subtle` are both `--env-color-fg-muted` today.
+| Token                      | Comfortable | Compact     | Use                                                                                                                          |
+| -------------------------- | ----------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `--env-font-size-body`     | `0.9375rem` | `0.8125rem` | Running text: Text's body variant and a type role's default, 15 px in the comfortable scale.                                 |
+| `--env-font-size-body-sm`  | `0.875rem`  | `0.75rem`   | Supporting text: Text's body-sm and caption variants, 14 px in the comfortable scale.                                        |
+| `--env-font-size-caption`  | `0.75rem`   | `0.6875rem` | Captions, a menu's group labels and other small secondary text.                                                              |
+| `--env-font-size-headline` | `1.375rem`  | `1.25rem`   | A page's heading: Text's headline variant, 22 px in the comfortable scale: a clear step above a section's title.             |
+| `--env-font-size-label`    | `0.875rem`  | `0.8125rem` | The label of a control, and the text of menu, tree and option rows.                                                          |
+| `--env-font-size-label-sm` | `0.8125rem` | `0.75rem`   | A label inside a field at the control height, such as a combobox chip's.                                                     |
+| `--env-font-size-title`    | `1.125rem`  | `1rem`      | A section's heading: Text's title variant, 18 px in the comfortable scale: a step above body text in size as well as weight. |
 
-#### The words of the figures
+#### Typeface and weights
 
-- **Body**: `variant="body"`, the default.
-- **Text follows the reader**: nothing to do; type is in rem and follows the scale.
-- **Space belongs to the layout**: Text has no margins; set `gap` on the Column or Row around it.
-
-### Composition
-
-- Choose the element for the document's structure and the variant for its look, apart: a section's `h2` may be a title.
-- One display text per view at most, for a page's hero; it scales from 1.75 to 2.75 rem and balances its lines.
-- Geist at regular (400) and medium (500, a touch lighter in dark, 460, where light text on a dark ground reads heavier), from `--env-font-weight-*`; semibold (600) for bold in running text, such as Markdown's, and otherwise only for the strongest emphasis in a small space, such as today in a calendar.
-- Text adds no outer spacing: a Column, a Row or the component around it owns the gaps.
-- Vary the text by its role rather than setting everything as body: open with what matters in the default color, and set supporting text, such as a description under a title, details and hints, `emphasis="muted"` or `body-sm`.
-- Keep running text to a readable measure, about 60–75 characters a line: give paragraphs and Markdown a `max-inline-size` of about `53ch`, since Text and Markdown fill their container. Write short paragraphs, one point each, a few lines long.
-
-#### Lists
-
-Formatted text, which Markdown, RichText and RichTextEditor render in the `env-prose` class, sets its lists apart from the text around them.
-
-- A bullet is a small spark, four points with curved sides, in the text color, on the middle of the item's first line; one level in, a smaller spark in the muted color.
-- An ordered item's number is plain, in tabular figures in the muted text color.
-- Items stand a full step apart.
-- A nested list steps down quietly, with closer items and a small muted ring, or a letter for an ordered item.
-- Task lists keep their checkboxes.
-
-### Customize
-
-Type takes the `--env-type-*` and `--env-font-*` tokens, such as `--env-type-body` and `--env-font-weight-medium`, which follow the theme's [scale](spacing.md) and the reader's text size.
-
-TypeScript declarations provide the complete public API.
+| Token                        | Comfortable                 | Compact                     | Use                                                                                                |
+| ---------------------------- | --------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------- |
+| `--env-font-family`          | `'envUI Geist', sans-serif` | `'envUI Geist', sans-serif` | envUI's typeface, Geist, which the package ships, falling back to the system's sans-serif.         |
+| `--env-font-weight-body`     | `400`                       | `400`                       | The weight of running text, which the body type roles take: regular.                               |
+| `--env-font-weight-medium`   | `500`                       | `500`                       | Medium, 500: headings, labels that lead and emphasis in a row.                                     |
+| `--env-font-weight-regular`  | `400`                       | `400`                       | Regular, 400: running text and most labels.                                                        |
+| `--env-font-weight-semibold` | `600`                       | `600`                       | Semibold, 600: the strongest emphasis in a small space, such as today in a calendar.               |
+| `--env-line-height-body`     | `1.4`                       | `1.4`                       | The line height of a theme boundary's text, which an application may set: 1.4 times the font size. |

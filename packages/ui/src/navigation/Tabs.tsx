@@ -27,7 +27,6 @@ interface TabsItemFields {
   disabled?: boolean;
 }
 
-/** A tab's control: its label and icon, or a control of the application's own. */
 type TabsItemControl =
   | {
       /** The tab's text, which names it. */
@@ -107,11 +106,7 @@ function isDisabled(item: TabsItem) {
   return Boolean(item.disabled || item.button?.props.disabled);
 }
 
-/**
- * The item's control: its own button, or a ghost button with its label and icon, which keeps a
- * button's inline padding, so neighbouring tabs stay apart. The tab takes a text tab's look either way.
- */
-function buttonOf(item: TabsItem): ReactElement<ComponentPropsWithRef<'button'>> {
+function ghostButtonOrOwn(item: TabsItem): ReactElement<ComponentPropsWithRef<'button'>> {
   return (
     item.button ?? (
       <Button variant="ghost" startIcon={item.icon}>
@@ -143,7 +138,6 @@ function TabButton({
     'aria-selected': active,
     'aria-controls': props['aria-controls'],
   });
-  // Base UI composes the consumer's handlers and ref with its tab behavior.
   const element = useRender({ render: tabButton, props });
   return <SymbolIconFill selected={active}>{element}</SymbolIconFill>;
 }
@@ -171,16 +165,13 @@ export function Tabs({
   onFocus,
   ...props
 }: TabsProps) {
-  // The tab list's arrow keys follow the text direction, which Base UI only knows from
-  // its own provider. Only the list reads it: the panels keep the direction around the tabs, so a
-  // slider or a popup in a panel of another direction follows its own.
-  const scope = useDirectionScope(ref);
+  const listDirectionScope = useDirectionScope(ref);
   const initialValue =
     defaultValue === undefined
       ? (items.find((item) => !isDisabled(item))?.value ?? null)
       : defaultValue;
   const list = (
-    <DirectionProvider direction={scope.direction}>
+    <DirectionProvider direction={listDirectionScope.direction}>
       <BaseTabs.List
         render={
           <Surface background="muted" radius="full" render={<Row align="center" gap={1} />} />
@@ -199,21 +190,19 @@ export function Tabs({
             render={(tabProps, state) => (
               <TabButton
                 {...tabProps}
-                button={buttonOf(item)}
+                button={ghostButtonOrOwn(item)}
                 active={state.active}
                 disabled={state.disabled}
               />
             )}
           />
         ))}
-        {/* One indicator, which moves to the selected tab; until it has measured the tab, as in the
-            server's markup, the selected tab draws its own. Base UI hides it until then; it says
-            it shows with data-placed, which Tabs.css finds it by. */}
         <BaseTabs.Indicator
           className="env-tabs-indicator"
-          render={(indicatorProps) => (
-            <span {...indicatorProps} data-placed={flag(!indicatorProps.hidden)} />
-          )}
+          render={(indicatorProps) => {
+            const measuredSelectedTab = !indicatorProps.hidden;
+            return <span {...indicatorProps} data-placed={flag(measuredSelectedTab)} />;
+          }}
         />
       </BaseTabs.List>
     </DirectionProvider>
@@ -222,9 +211,9 @@ export function Tabs({
     <BaseTabs.Root
       render={<Column gap={4} />}
       {...props}
-      ref={scope.ref}
+      ref={listDirectionScope.ref}
       onFocus={(event) => {
-        scope.onFocus();
+        listDirectionScope.onFocus();
         onFocus?.(event);
       }}
       className={classNames('env-tabs', className)}

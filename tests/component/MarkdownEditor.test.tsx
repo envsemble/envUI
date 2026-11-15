@@ -23,8 +23,6 @@ test(
     const nativeInput = textarea(source);
     const submitted = () => page.getByTestId('markdown-submitted').element().textContent;
 
-    // The formatting toolbar is one tab stop, in groups the arrow keys cross: text styles, lists,
-    // blocks, links and history, a line between each.
     const toolbar = form.getByRole('toolbar').first();
     expect(toolbar.getByRole('group').elements()).toHaveLength(5);
     expect(toolbar.getByRole('separator').elements()).toHaveLength(4);
@@ -42,7 +40,6 @@ test(
     await expect.element(button(toolbar, 'Bulleted list')).toHaveFocus();
     await keyboard.press('ArrowLeft');
     await expect.element(button(toolbar, 'Inline code')).toHaveFocus();
-    // Formatting the source can't be told from the caret, so its buttons act once, not as toggles.
     await expect.element(button(toolbar, 'Bold')).not.toHaveAttribute('aria-pressed');
 
     await source.fill('alpha');
@@ -96,7 +93,6 @@ test('submitting an empty preview reveals and focuses the required native source
   const form = page.getByTestId('required-markdown');
   await tab(form, 'Preview').click();
   await isShown(form.getByText('Nothing to preview.'));
-  // Finish closing Write before native validation opens it again.
   const write = form
     .element()
     .querySelector<HTMLElement>(

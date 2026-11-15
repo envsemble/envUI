@@ -1,6 +1,3 @@
-// Stylelint config for applications built with envUI: colors and stacking order from tokens,
-// and rem for everything that follows the reader's font size, with px only for hairlines.
-// See README.md.
 import { rawColorCalls, rawColorFunction } from './colorPolicy.js';
 import noContrastBreakingPairs from './rules/no-contrast-breaking-pairs.js';
 import noFocusOutlineRemoval from './rules/no-focus-outline-removal.js';
@@ -12,26 +9,15 @@ import { colorTokenAdvice, tokens } from './tokens.js';
 const documentation =
   'https://github.com/envsemble/envUI/blob/main/packages/stylelint-config/README.md';
 
-/**
- * Color functions with a channel that is not a custom property, as a Stylelint regular expression
- * (colorPolicy.js). envUI's own style sheets use it too.
- */
 export { rawColorFunction };
 
-/**
- * Where px may appear: hairlines and offsets that must not scale with the text, such as border and
- * outline widths, focus-ring offsets and shadow offsets. envUI's own style sheets use this list
- * too, so the two cannot drift apart.
- */
 export { hairlineProperties };
 
-/** envUI's stacking tokens, the custom properties of z-index layers such as `--env-z-modal`. */
 const stackingTokens = Object.values(tokens)
   .flat()
   .filter((name) => /^--(?:env-)?z(?:-index)?-/.test(name))
   .sort();
 
-/** What to do instead of a literal z-index, depending on whether envUI has stacking tokens. */
 function stackingAdvice() {
   if (stackingTokens.length > 0) {
     const named = (pattern) => stackingTokens.find((name) => pattern.test(name));
@@ -48,10 +34,6 @@ function stackingAdvice() {
   return 'envUI has no stacking tokens yet. Avoid a literal z-index, or set it through a documented custom property of your own, such as var(--app-z-header), so the order of layers lives in one place.';
 }
 
-/**
- * The z-index values that pass: `auto`, the global keywords, and a custom property, also inside
- * calc(). envUI's own style sheets use the same list.
- */
 export const stackingValues = [
   'auto',
   'inherit',
