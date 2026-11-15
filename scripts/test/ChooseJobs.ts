@@ -60,6 +60,7 @@ export const jobRules: { paths: string[]; jobs: Job[] | 'all' }[] = [
     paths: [
       'tests/{library,site,docs,tooling,support,types,lint}/**',
       'scripts/measure/**',
+      'scripts/lint/**',
       'tests/{accessibility,visual}/**',
       'eslint.config.mjs',
       'stylelint.config.mjs',

@@ -7,11 +7,6 @@ import { PressedKeys } from '../../motion/PressedKeys';
 
 const input = 'input[type="search"]';
 
-/*
- * The pointer rests on the ghost search, and its fill shows. It clicks, the placeholder clears,
- * and it types a file's name. Esc empties the search, and the pointer leaves: the field is only its
- * icon and placeholder again.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: input, x: 0.5, y: 2.4 },
@@ -44,7 +39,6 @@ function Searching() {
   );
 }
 
-/** A ghost search in a toolbar, filled under a pointer no one sees and while it types. */
 export default function SearchInToolbarMotion() {
   return (
     <MotionStage label="the ghost search filling as it is used">

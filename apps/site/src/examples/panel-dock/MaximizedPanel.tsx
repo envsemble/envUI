@@ -22,16 +22,12 @@ export default function MaximizedPanel() {
   const update = (change: (panel: PanelDockPanel) => PanelDockPanel) =>
     setPanels((current) => current.map(change));
   const changeMode = (id: string, mode: PanelDockMode) =>
-    // One panel at a time is maximized; maximizing another returns the earlier one.
-    update((panel) =>
-      panel.id === id
-        ? { ...panel, mode }
-        : mode === 'maximized' && panel.mode === 'maximized'
-          ? { ...panel, mode: 'open' }
-          : panel,
-    );
+    update((panel) => {
+      if (panel.id === id) return { ...panel, mode };
+      const isTheEarlierMaximized = mode === 'maximized' && panel.mode === 'maximized';
+      return isTheEarlierMaximized ? { ...panel, mode: 'open' } : panel;
+    });
   return (
-    // The dock fills a positioned region with a height, such as the area below a topbar.
     <Surface
       background="muted"
       padding={0}
@@ -49,7 +45,6 @@ export default function MaximizedPanel() {
         {(panel) => (
           <>
             <PanelDock.Header title={panel.title} meta="Edited by Alex Morgan" />
-            {/* The body's inset lines up with the header's title. */}
             <Text style={{ padding: '0 1.5rem 1.5rem' }}>{notes[panel.id]}</Text>
           </>
         )}

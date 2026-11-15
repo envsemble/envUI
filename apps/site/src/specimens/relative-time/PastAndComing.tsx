@@ -5,7 +5,6 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const time = (index: number) => `.env-text:nth-child(${index}) > .env-relative-time`;
 
-/* The pointer rests on each time in turn, and its tooltip gives the exact date and time. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: time(1), x: 0.5, y: 0.6 },
@@ -25,7 +24,6 @@ function Hovering() {
   return <PastAndComing />;
 }
 
-/** Each relative time's exact date, in its tooltip, as a pointer no one sees rests on it. */
 export default function PastAndComingMotion() {
   return (
     <MotionStage label="the exact dates in the tooltips" height="12rem">

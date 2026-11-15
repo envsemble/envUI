@@ -7,10 +7,6 @@ import { narrowGallery } from './Tiles';
 
 const input = '.env-composer-input';
 
-/**
- * Clicks into it, types a message and sends it: the field clears and, while the reply comes, the
- * send button is a stop button; then it is a send button again.
- */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: input, x: 0.3 },
@@ -29,7 +25,8 @@ const script: PointerStep[] = [
   { wait: 720 },
 ];
 
-/** A composer with its placeholder and its send button. */
+const simulatedReplyMs = 1300;
+
 export default function ComposerTile() {
   const narrow = useMedia(narrowGallery);
   const [replying, setReplying] = useState(false);
@@ -44,8 +41,7 @@ export default function ComposerTile() {
       onStop={() => setReplying(false)}
       onSend={() => {
         setReplying(true);
-        // A timer stands in for the reply.
-        timer.current = window.setTimeout(() => setReplying(false), 1300);
+        timer.current = window.setTimeout(() => setReplying(false), simulatedReplyMs);
       }}
       style={{ inlineSize: narrow ? '8.5rem' : '11rem' }}
     />

@@ -6,10 +6,6 @@ import { MotionStage } from '../../figures/MotionStage';
 const archive = 'button[aria-label="Archive Onboarding emails"]';
 const undo = '.env-toast-action';
 
-/*
- * The pointer archives Onboarding emails: the row leaves, and a notification with Undo arrives.
- * The pointer presses Undo, and the row comes back as the notification closes.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: archive, x: 0.5, y: 2 },
@@ -25,16 +21,17 @@ const script: PointerStep[] = [
   { wait: 960 },
 ];
 
+const threeRowsHeight = '10rem';
+
 function Archiving() {
   usePointer(script);
   return (
-    // As wide and tall as the three rows, at the top, so the others stay put as one leaves.
     <div
       style={{
         display: 'grid',
         alignContent: 'start',
         inlineSize: 'min(100%, 18rem)',
-        blockSize: '10rem',
+        blockSize: threeRowsHeight,
       }}
     >
       <UndoArchive />
@@ -42,7 +39,6 @@ function Archiving() {
   );
 }
 
-/** A project archived and brought back with Undo by a pointer no one sees. */
 export default function UndoArchiveMotion() {
   return (
     <MotionStage label="a project archived and brought back with Undo" height="18rem">

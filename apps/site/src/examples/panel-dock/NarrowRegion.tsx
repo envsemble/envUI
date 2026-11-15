@@ -24,10 +24,8 @@ export default function NarrowRegion() {
     setPanels((current) => current.map(change));
   const changeMode = (id: string, mode: PanelDockMode) =>
     update((panel) => (panel.id === id ? { ...panel, mode } : panel));
-  // The page beneath is out of reach while a panel fills the stacked dock.
-  const covered = stacked && panels.some((panel) => panel.mode !== 'minimized');
+  const pageIsCovered = stacked && panels.some((panel) => panel.mode !== 'minimized');
   return (
-    // Below stackBelow, 40 rem of the dock's own width, one panel at a time fills the region.
     <Surface
       background="muted"
       padding={0}
@@ -37,7 +35,7 @@ export default function NarrowRegion() {
         overflow: 'hidden',
       }}
     >
-      <Column gap={2} inert={covered} style={{ padding: '1.5rem' }}>
+      <Column gap={2} inert={pageIsCovered} style={{ padding: '1.5rem' }}>
         <Text render={<h3 />} variant="title">
           Messages
         </Text>
@@ -52,7 +50,6 @@ export default function NarrowRegion() {
         {(panel) => (
           <>
             <PanelDock.Header title={panel.title} meta="Direct message" />
-            {/* The body's inset lines up with the header's title. */}
             <Text style={{ padding: '0 1.5rem 1.5rem' }}>{lastMessages[panel.id]}</Text>
           </>
         )}

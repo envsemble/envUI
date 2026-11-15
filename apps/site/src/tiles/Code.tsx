@@ -6,7 +6,6 @@ import { narrowGallery } from './Tiles';
 
 const copy = '.env-code-block-header .env-icon-button';
 
-/** Presses its copy button: the icon turns to a check and, a few seconds later, back. */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: 'pre', x: 0.6, y: 0.6 },
@@ -21,7 +20,6 @@ const script: PointerStep[] = [
   { wait: 1440 },
 ];
 
-/** A code block with a command and its copy button. */
 export default function CodeTile() {
   const narrow = useMedia(narrowGallery);
   usePointer(script);

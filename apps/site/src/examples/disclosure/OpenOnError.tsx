@@ -10,7 +10,6 @@ export default function OpenOnError() {
     event.preventDefault();
     const invalid = /\s/.test(domain);
     setError(invalid ? 'Remove the spaces from the domain.' : undefined);
-    // An error inside the disclosure opens it, so the field and its message show.
     if (invalid) setAdvanced(true);
   };
 

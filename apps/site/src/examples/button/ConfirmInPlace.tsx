@@ -10,7 +10,6 @@ export default function ConfirmInPlace() {
   const list = useRef<HTMLUListElement>(null);
   const restoreMembers = useRef<HTMLButtonElement>(null);
   const draft = useRef<HTMLUListElement>(null);
-  // A confirmed button goes away with what it removed, so focus moves on to what is there now.
   const focusNext = useRef<(() => void) | null>(null);
   useEffect(() => {
     focusNext.current?.();

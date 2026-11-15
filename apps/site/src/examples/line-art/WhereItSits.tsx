@@ -4,7 +4,6 @@ const aligns = ['end', 'start', 'center'] as const;
 
 export default function WhereItSits() {
   return (
-    // Boxes narrower than the drawing's sheet crop it from the side away from where it sits.
     <Row gap={5}>
       {aligns.map((align) => (
         <Surface

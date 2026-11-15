@@ -10,7 +10,8 @@ import {
   styleSheetCommentRuleName,
 } from './scripts/lint/NoStyleSheetComments.ts';
 
-const commentFreeStyleSheets = ['tests/**/*.css'];
+const commentFreeStyleSheets = ['tests/**/*.css', 'packages/ui/src/**/*.css', 'apps/site/**/*.css'];
+const generatedStyleSheets = ['packages/ui/src/generated/**/*.css'];
 
 const {
   createPlugin,
@@ -288,6 +289,10 @@ export default {
     {
       files: commentFreeStyleSheets,
       rules: { [styleSheetCommentRuleName]: true },
+    },
+    {
+      files: generatedStyleSheets,
+      rules: { [styleSheetCommentRuleName]: null },
     },
   ],
 };

@@ -33,13 +33,6 @@ import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel, StepStack } from './Steps';
 import { FoundationFrame, NumberedLegend, type LegendEntry } from './FoundationFrame';
 
-/*
- * The figures of the Spacing & density foundation. Its words are in docs/foundations/spacing.md,
- * the page's one source, which places each figure by name and gives it its legend: the name of each
- * numbered mark, or of each picture of a run, and what it means.
- */
-
-/** A figure's words, from the page's Markdown. */
 interface FigureWords {
   legend: readonly LegendEntry[];
 }
@@ -52,10 +45,6 @@ const reviewers: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jord
   }),
 );
 
-/**
- * A settings card, measured: the space inside each group (1), between the groups of a section (2)
- * and between its sections (3).
- */
 function GroupingFigure({ legend }: FigureWords) {
   return (
     <FoundationFrame
@@ -97,7 +86,6 @@ function GroupingFigure({ legend }: FigureWords) {
   );
 }
 
-/** A toolbar of five kinds of control at one size, with guides along their tops and bottoms. */
 function AlignFigure() {
   return (
     <FoundationFrame label="Controls of one size line up" className="catalogue-marked-stage">
@@ -129,10 +117,6 @@ function AlignFigure() {
   );
 }
 
-/**
- * One small screen with the four kinds of corner on it, each numbered: its surface, an alert
- * inside it, the round ends of a button, and a person's circle.
- */
 function ShapesFigure({ legend }: FigureWords) {
   return (
     <FoundationFrame
@@ -167,7 +151,6 @@ function ShapesFigure({ legend }: FigureWords) {
   );
 }
 
-/** A small dialog's content, which the figure shows in each scale. */
 function ScaleSample() {
   return (
     <Surface
@@ -192,16 +175,12 @@ function ScaleSample() {
   );
 }
 
-/** The scales the figure switches between, in the legend's order. */
 const scales: readonly ThemeScale[] = ['comfortable', 'compact'];
+const scaleStepMs = 2520;
 
-/**
- * One dialog switching between the comfortable and the compact scale, its controls, text, corners
- * and gaps stepping together, with the scale named in the corner.
- */
 function ScaleSteps({ legend }: FigureWords) {
   const theme = useTheme();
-  const step = useTimeline(scales.map(() => 2520));
+  const step = useTimeline(scales.map(() => scaleStepMs));
   return (
     <>
       <CornerLabel>{legend[step]?.name}</CornerLabel>
@@ -233,8 +212,9 @@ const reports = [
   { name: 'Pricing research', owner: 'Alex Morgan' },
 ];
 
-/** The row densities the figure moves between, in the legend's order. */
 const densities: readonly RowDensity[] = ['sm', 'md'];
+const densityStepMs = 2160;
+const shownTable = 1;
 
 function ReportsTable({ density }: { density: RowDensity }) {
   return (
@@ -257,20 +237,18 @@ function ReportsTable({ density }: { density: RowDensity }) {
   );
 }
 
-/**
- * One table whose rows close up and open out again, the text keeping its size, with the density
- * named in the corner. A copy at the regular density, unseen, keeps the figure at its height.
- */
 function RowSteps({ legend }: FigureWords) {
-  const step = useTimeline(densities.map(() => 2160));
+  const step = useTimeline(densities.map(() => densityStepMs));
   return (
     <>
       <CornerLabel>{legend[step]?.name}</CornerLabel>
       <StepStack
         className="catalogue-rows-steps"
         count={2}
-        at={1}
-        render={(index) => <ReportsTable density={index ? densities[step]! : 'md'} />}
+        at={shownTable}
+        render={(index) => (
+          <ReportsTable density={index === shownTable ? densities[step]! : 'md'} />
+        )}
       />
     </>
   );
@@ -285,13 +263,9 @@ function RowsFigure({ legend }: FigureWords) {
 }
 
 const reviewersInput = '.catalogue-tall .env-combobox-input';
-const reviewer = (index: number) => `.env-combobox-item:nth-child(${index} of .env-combobox-item)`;
+const reviewerOption = (position: number) =>
+  `.env-combobox-item:nth-child(${position} of .env-combobox-item)`;
 
-/**
- * The pointer adds four reviewers, one by one, and the field grows to a second line and a third;
- * the button's container then narrows, so its label wraps. The pointer clears the field, the
- * container widens again, and the figure is back at its start.
- */
 const tallScript: PointerStep[] = [
   { wait: 420 },
   { to: reviewersInput, x: 0.5, y: 0.8 },
@@ -299,7 +273,7 @@ const tallScript: PointerStep[] = [
   { click: true },
   { wait: 300 },
   ...[1, 2, 3, 4].flatMap((index): PointerStep[] => [
-    { to: reviewer(index), x: 0.4, duration: 350 },
+    { to: reviewerOption(index), x: 0.4, duration: 350 },
     { wait: 150 },
     { click: true },
     { wait: 330 },
@@ -320,7 +294,6 @@ const tallScript: PointerStep[] = [
   { wait: 360 },
 ];
 
-/** One line tall, round ends; taller, as it fills or wraps, the same corners make a rectangle. */
 function TallSteps() {
   const [narrow, setNarrow] = useState(false);
   usePointer(tallScript, { onCue: (cue) => setNarrow(cue === 'narrow') });
@@ -328,8 +301,6 @@ function TallSteps() {
     <Row align="start" justify="center" gap={6} className="catalogue-tall">
       <div className="catalogue-tall-slot">
         <Box className="catalogue-tall-box" data-narrow={narrow || undefined}>
-          {/* It fills its container, so it wraps its label as that narrows, as a button does that
-              can't move to a line of its own. */}
           <Button className="catalogue-tall-save" fullWidth>
             Save the changes
           </Button>
@@ -354,7 +325,6 @@ function TallFigure() {
   );
 }
 
-/** The figures docs/foundations/spacing.md places, by name. */
 export const spacingFigures: Record<string, FoundationFigureEntry> = {
   Grouping: { render: GroupingFigure, wide: true },
   Align: { render: AlignFigure, wide: true },

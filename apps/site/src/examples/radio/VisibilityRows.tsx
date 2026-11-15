@@ -10,7 +10,6 @@ export default function VisibilityRows() {
       name="visibility"
       value={visibility}
       onValueChange={setVisibility}
-      // As wide as a form column.
       style={{ inlineSize: 'min(100%, 28rem)' }}
     >
       <Radio value="team" label="Team" description="Everyone at Northwind can open it." />

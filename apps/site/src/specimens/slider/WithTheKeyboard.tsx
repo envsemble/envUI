@@ -6,10 +6,6 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const thumb = '.env-slider-thumb input';
 
-/*
- * The keyboard's focus arrives on the slider, which shows its focus ring and its handle; the arrow
- * keys step the value up and back down, with no ticks; and focus moves on.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { focus: thumb },
@@ -35,7 +31,6 @@ function Stepped() {
   );
 }
 
-/** Slider with the keyboard: focus shows its ring and handle, and the arrow keys step the value. */
 export default function WithTheKeyboard() {
   return (
     <SpecimenFrame size="field">

@@ -4,7 +4,6 @@ import { usePointer } from '../motion/pointer/PointerPlayback';
 
 const option = (index: number) => `.env-radio:nth-child(${index} of .env-radio) .env-radio-input`;
 
-/** Chooses Private, then Team again. */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: option(2) },
@@ -19,7 +18,6 @@ const script: PointerStep[] = [
   { wait: 240 },
 ];
 
-/** A choice of two, with Team chosen. */
 export default function RadioTile() {
   usePointer(script);
   return (

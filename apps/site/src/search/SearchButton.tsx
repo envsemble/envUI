@@ -2,12 +2,6 @@ import { Button, IconButton, Kbd, Row, Tooltip, useModifierKey } from '@envsembl
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { preloadSearch } from './SiteSearch';
 
-/**
- * The button that opens the documentation's search: a secondary Button with the search icon, its
- * label and the shortcut's keys at the end, or the icon alone in a ghost IconButton with the label
- * and keys in a tooltip. The catalogue handles the
- * shortcut itself, in App. A pointer or focus on it starts loading search's index.
- */
 export function SearchButton({
   iconOnly = false,
   onClick,
@@ -17,7 +11,6 @@ export function SearchButton({
   onClick: () => void;
   className?: string;
 }) {
-  // The keys of the search shortcut, as the button shows them, and as aria-keyshortcuts names them.
   const modifier = useModifierKey();
   const keys = [modifier.label, 'K'];
   const ariaKeyShortcuts = `${modifier.key}+K`;
@@ -47,10 +40,6 @@ export function SearchButton({
     <Button
       variant="secondary"
       startIcon={<IconSearch />}
-      // The keys show for a keyboard alone: a touch screen has none (Shell.css). Both modifiers'
-      // keys render, and the one the head's script found the platform's shows (Shell.css), so a
-      // pre-rendered page shows ⌘ on an Apple platform from the first paint, not Ctrl until it
-      // has hydrated, as useModifierKey would.
       end={
         <>
           <Kbd

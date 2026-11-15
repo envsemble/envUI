@@ -5,10 +5,8 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 import { Renew } from '../../motion/Renew';
 
-/*
- * Advanced settings closed. The pointer presses Save site: the domain has a space, so the
- * disclosure opens itself onto the field and its error. Then the example starts anew.
- */
+const formWithSettingsOpenHeight = '15.25rem';
+
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-button[type="submit"]', x: 0.55, y: 0.6 },
@@ -24,13 +22,12 @@ function Saving() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // As tall as the form with its settings open, so the fields above stay put as they open.
     <div
       style={{
         display: 'grid',
         alignContent: 'start',
         inlineSize: '100%',
-        minBlockSize: '15.25rem',
+        minBlockSize: formWithSettingsOpenHeight,
       }}
     >
       <Renew round={round}>
@@ -40,7 +37,6 @@ function Saving() {
   );
 }
 
-/** A disclosure that opens itself onto an error when the pointer saves the form. */
 export default function OpenOnErrorMotion() {
   return (
     <MotionStage label="the disclosure opening onto an error">

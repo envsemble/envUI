@@ -1,6 +1,5 @@
 import { Badge, Column, Row, Surface, Text } from '@envsemble/envui';
 
-// The element follows the document's outline; the variant sets the style.
 export default function Screen() {
   return (
     <Surface background="default" padding={6} radius="xl" render={<Column gap={6} />}>

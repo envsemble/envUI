@@ -8,7 +8,6 @@ import {
   Surface,
 } from '@envsemble/envui';
 
-// Each component lays itself out for the space it has: nothing to set for a narrow pane.
 export default function Widths() {
   return (
     <Surface background="default" padding={5} radius="xl" render={<Column gap={5} />}>

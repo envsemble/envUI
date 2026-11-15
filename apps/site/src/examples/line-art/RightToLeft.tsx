@@ -2,7 +2,6 @@ import { LineArt, PageHeader, Surface } from '@envsemble/envui';
 
 export default function RightToLeft() {
   return (
-    // Right to left, the drawing sits at the banner's end, on the left, mirrored.
     <Surface
       dir="rtl"
       lang="ar"

@@ -31,7 +31,6 @@ function readStored<T extends string>(key: string, values: readonly T[], fallbac
     const stored = localStorage.getItem(key);
     return values.find((value) => value === stored) ?? fallback;
   } catch {
-    // Storage can be blocked; the catalogue then starts with the defaults.
     return fallback;
   }
 }
@@ -39,25 +38,18 @@ function readStored<T extends string>(key: string, values: readonly T[], fallbac
 function store(key: string, value: string) {
   try {
     localStorage.setItem(key, value);
+    return true;
   } catch {
-    // A blocked storage API keeps the choice for this visit only.
+    return false;
   }
 }
 
-/**
- * The scale the address asks for with ?scale=compact, ?scale=comfortable or ?scale=system, to
- * review a page at that scale without changing the stored setting.
- */
 function requestedScale(): ThemeScale | undefined {
   if (typeof location === 'undefined') return undefined;
   const requested = new URLSearchParams(location.search).get('scale');
   return scales.find((scale) => scale === requested);
 }
 
-/**
- * Whether the site's animations start paused: where the reader prefers reduced motion, until they
- * play them.
- */
 function initialMotion() {
   return readStored(
     displayStorageKeys.motion,
@@ -66,17 +58,6 @@ function initialMotion() {
   );
 }
 
-/**
- * The site's theme, contrast and scale, and whether its animations play, as the reader chose them
- * in the Display menu: stored in localStorage,
- * the theme by ThemePreferenceProvider and the others here, and kept in step with the site's other
- * windows. The theme follows the system until the reader picks one, the contrast follows
- * `prefers-contrast` until then, and the animations start paused where reduced motion is preferred.
- * A pre-rendered page renders the defaults on the server and as it hydrates, as the server knows no
- * reader's settings, and the stored ones in the render after; the head's scripts have applied the
- * theme, the contrast and the scale to the root before the first paint (HeadScripts.ts), so the page
- * looks the same throughout.
- */
 export function DisplaySettingsProvider({
   className,
   children,
@@ -102,8 +83,6 @@ export function DisplaySettingsProvider({
     addEventListener('storage', onStorage);
     return () => removeEventListener('storage', onStorage);
   }, []);
-  // The library's useHydrated, not the site's useFiguresMounted: the reader's stored settings
-  // show in the render right after hydrating, as the head's scripts already show them.
   const hydrated = useHydrated();
   const shown = hydrated
     ? { contrast, scale, motion }
@@ -141,25 +120,11 @@ export function DisplaySettingsProvider({
   );
 }
 
-/**
- * Changes the page's colors, a theme or a contrast chosen in the Display menu, crossfading the
- * whole window from the old ones to the new (DisplaySettings.css), rather than swapping them in one
- * frame. The new colors are drawn at once underneath, with nothing in the
- * page transitioning (ThemePreferenceProvider). With motion reduced, or in a browser without view
- * transitions, they change at once.
- */
 function switchColors(change: () => void) {
   if (typeof document.startViewTransition !== 'function' || prefersReducedMotion()) return change();
   document.startViewTransition(() => flushSync(change));
 }
 
-/**
- * The Display menu: the theme, the contrast, the scale and the motion, each stored as it is chosen,
- * four groups of plain choices alike. Motion pauses every animation of the site, the tiles' and the
- * figures', on every page, or plays them again; a figure's own button overrides it for that figure
- * (MotionStage.tsx). iconOnly shows its trigger as an icon, in a narrow window. It opens below its
- * trigger, at the page's top end.
- */
 export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
   const { contrast, setContrast, scale, setScale, motionPaused, setMotionPaused } =
     useDisplaySettings();
@@ -171,7 +136,6 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
       align="end"
       trigger={
         iconOnly ? (
-          // The Tooltip passes the menu button's props and ref on to the IconButton.
           <Tooltip content="Display">
             <IconButton variant="ghost" icon={<IconTune />} aria-label="Display" />
           </Tooltip>
@@ -186,7 +150,6 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
         label="Theme"
         value={preference}
         onValueChange={(next) =>
-          // The group's values are the themes'.
           switchColors(() => setPreference(themes.find((value) => value === next)!))
         }
       >
@@ -205,7 +168,6 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
         label="Contrast"
         value={contrast}
         onValueChange={(next) =>
-          // The group's values are the contrasts'.
           switchColors(() => setContrast(contrasts.find((value) => value === next)!))
         }
       >
@@ -223,7 +185,6 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
       <Menu.RadioGroup
         label="Scale"
         value={scale}
-        // The group's values are the scales'.
         onValueChange={(next) => setScale(scales.find((value) => value === next)!)}
       >
         <Menu.RadioItem value="system" closeOnClick={false}>

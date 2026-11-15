@@ -29,7 +29,6 @@ export default function Themes() {
         />
         <Switch label="High contrast" checked={high} onCheckedChange={setHigh} />
       </Row>
-      {/* Everything inside takes the theme; "system" contrast follows the reader's setting. */}
       <Theme theme={theme} contrast={high ? 'high' : 'system'}>
         <Surface background="default" padding={5} radius="xl" render={<Column gap={4} />}>
           <Row wrap justify="between" align="start" gap={3}>

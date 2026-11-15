@@ -7,7 +7,6 @@ import type { InlinePiece, Release } from './ReleaseNotesData';
 const formatDate = (date: string) =>
   new Intl.DateTimeFormat('en', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(date));
 
-/** A line of the release notes: its text, code and links to the Docs. */
 function Pieces({ pieces }: { pieces: InlinePiece[] }): ReactNode {
   return pieces.map((piece, index) => (
     <Fragment key={index}>
@@ -22,7 +21,6 @@ function Pieces({ pieces }: { pieces: InlinePiece[] }): ReactNode {
   ));
 }
 
-/** A release's highlights or breaking changes, in envUI's list style, which prose gives its lists. */
 function ReleaseList({ items }: { items: InlinePiece[][] }) {
   return (
     <div className="env-prose docs-release-list">
@@ -37,13 +35,8 @@ function ReleaseList({ items }: { items: InlinePiece[][] }) {
   );
 }
 
-/** A release's slug, which its heading takes as an id: 1-0-0-prerelease-1. */
 const releaseId = (version: string) => `release-${version.replace(/[^\w]+/g, '-')}`;
 
-/**
- * One release: its version and date as quiet labels, its highlights, then what it breaks, under the
- * page's Highlights heading.
- */
 function ReleaseEntry({ release }: { release: Release }) {
   const id = releaseId(release.version);
   return (
@@ -71,7 +64,6 @@ function ReleaseEntry({ release }: { release: Release }) {
   );
 }
 
-/** The release notes: a few lines on each release, newest first. */
 export function ReleaseNotes() {
   return (
     <Column gap={7} className="docs-releases">

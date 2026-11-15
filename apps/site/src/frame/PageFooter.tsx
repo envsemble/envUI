@@ -5,23 +5,12 @@ import { docsRoute, homeRoute, routeHref } from '../routes/Address';
 
 const repository = 'https://github.com/envsemble/envUI';
 
-/**
- * Where the footer leads that the navigation beside the page doesn't show on every page: the Docs,
- * the changelog and the source. The catalogue's destinations and pages are in the rail and the
- * drawer, so the footer doesn't list them again.
- */
 const links = [
   { label: 'Docs', href: routeHref(docsRoute) },
   { label: 'Changelog', href: routeHref('docs/changelog') },
   { label: 'Source', href: repository },
 ];
 
-/**
- * The foot of every page of the catalogue and the Docs, on the default surface's fill: one compact
- * row that closes the page, the wordmark and the package's version at its start and a few quiet
- * links at its end, which wrap under them in a narrow page. The credit for the icons is on the
- * Icons page.
- */
 export function PageFooter() {
   return (
     <footer className="site-footer">

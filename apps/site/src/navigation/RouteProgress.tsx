@@ -3,17 +3,14 @@ import { prefersReducedMotion } from '../shared/ReducedMotion';
 import { rootMotionDuration } from '../shared/RootMotionTokens';
 import { usePendingRoute } from './RouterLink';
 
-/**
- * How long, in ms, a pressed link's page may take before the bar shows: a page that loads quickly
- * never flashes it, as the navigation shows the destination at once meanwhile.
- */
-const showDelay = 150;
+const showDelayMs = 150;
+
+const missedTransitionEndGraceMs = 100;
 
 type Phase = 'idle' | 'waiting' | 'running' | 'finishing';
 
 interface State {
   phase: Phase;
-  /** Each run of the bar, which starts afresh, also as it resumes while it finishes. */
   run: number;
 }
 
@@ -33,13 +30,6 @@ function reduce(state: State, event: 'start' | 'show' | 'stop' | 'hide'): State 
   }
 }
 
-/**
- * A quiet sign that the page a link leads to is loading, once it has taken a moment: a thin bar
- * along the top of the page, beside the navigation, that creeps forward while the page loads, then
- * completes and fades out as it shows, as envUI's LoadingBar on a TopBar does (the site has no top
- * bar, so it draws its own, RouteProgress.css). With motion reduced, it appears at its full width
- * and leaves at once.
- */
 export function RouteProgress() {
   const pending = usePendingRoute() !== undefined;
   const [{ phase, run }, dispatch] = useReducer(reduce, { phase: 'idle', run: 0 });
@@ -47,11 +37,9 @@ export function RouteProgress() {
   useEffect(() => dispatch(pending ? 'start' : 'stop'), [pending]);
   useEffect(() => {
     if (phase !== 'waiting') return;
-    const timer = window.setTimeout(() => dispatch('show'), showDelay);
+    const timer = window.setTimeout(() => dispatch('show'), showDelayMs);
     return () => window.clearTimeout(timer);
   }, [phase]);
-  // Finishing, it completes and fades out, and leaves once its fade has ended; a timer at the
-  // transitions' length stands in for an end that never comes, such as in a hidden tab.
   useEffect(() => {
     const element = indicator.current;
     if (phase !== 'finishing' || !element) return;
@@ -62,15 +50,13 @@ export function RouteProgress() {
     element.addEventListener('transitionend', end);
     const timer = window.setTimeout(
       () => dispatch('hide'),
-      rootMotionDuration('slow') + rootMotionDuration('fast') + 100,
+      rootMotionDuration('slow') + rootMotionDuration('fast') + missedTransitionEndGraceMs,
     );
     return () => {
       element.removeEventListener('transitionend', end);
       window.clearTimeout(timer);
     };
   }, [phase, run]);
-  // Over the page's own column, the scrolling body, as the window's top over the navigation would
-  // start where the reader isn't looking.
   const bar = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     const element = bar.current;

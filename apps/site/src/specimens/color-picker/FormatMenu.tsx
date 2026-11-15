@@ -7,10 +7,8 @@ import { MotionStage } from '../../figures/MotionStage';
 const format = '.env-color-picker-format .env-button';
 const choice = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
 
-/*
- * The pointer opens the format menu and picks RGB: the hex field gives way to R, G and B. It
- * opens it again for HSL, and once more for Hex, where it began.
- */
+const roomForMenuBelow = '8.5rem';
+
 const script: PointerStep[] = [
   { wait: 240 },
   { to: format, x: 0.4 },
@@ -44,15 +42,12 @@ const script: PointerStep[] = [
 function Switching() {
   usePointer(script);
   return (
-    // Room below the picker for the menu, which opens under its button, so the stage keeps one
-    // height as it opens and closes.
-    <div style={{ inlineSize: 'min(100%, 14rem)', paddingBlockEnd: '8.5rem' }}>
+    <div style={{ inlineSize: 'min(100%, 14rem)', paddingBlockEnd: roomForMenuBelow }}>
       <ColorPicker label="Highlight color" defaultValue="#6b4fa3" />
     </div>
   );
 }
 
-/** The format menu switching the picker's fields from hex to RGB, HSL and back. */
 export default function FormatMenu() {
   return (
     <SpecimenFrame size="field">

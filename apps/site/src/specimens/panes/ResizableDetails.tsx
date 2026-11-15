@@ -9,13 +9,9 @@ import { WidthSweep } from '../../motion/WidthSweep';
 const divider = '.env-panes-divider';
 const panes = '.env-panes';
 
-/*
- * The pointer drags the gap toward the start, past where the details stop at their widest; then
- * toward the end, past where they stop at their least width. It lets go, and the keyboard takes the
- * gap: four presses of the left arrow widen the details a step each, back to where they began. The
- * points it heads to span both stops, near enough together that a window cut off at a phone's width
- * keeps them, and the details, in one view as the gap moves.
- */
+const detailsBesideTheGap = '.env-panes-supporting .env-description-list-value';
+const mediumWindowWidthRem = 40;
+
 const script: PointerStep[] = [
   { wait: 300 },
   { to: divider, x: 0.5, y: 0.5 },
@@ -45,20 +41,16 @@ const script: PointerStep[] = [
 
 function Resizing() {
   usePointer(script);
-  // The details stay in view beside the gap, on a window's screen cut off at a phone's width too.
-  useMustShow('.env-panes-supporting .env-description-list-value');
-  // A frame of a medium window, where the panes sit side by side, drawn smaller on a narrow stage;
-  // on a window's screen, the window itself.
+  useMustShow(detailsBesideTheGap);
   const onScreen = useOnScreen();
   if (onScreen) return <ResizableDetails />;
   return (
-    <WidthSweep widths={[40]} at={0} ruler={false} outline={false}>
+    <WidthSweep widths={[mediumWindowWidthRem]} at={0} ruler={false} outline={false}>
       <ResizableDetails />
     </WidthSweep>
   );
 }
 
-/** The details resized by dragging the gap, and by the arrow keys. */
 export default function ResizableDetailsMotion() {
   return (
     <MotionStage label="the details resized by pointer and keys">

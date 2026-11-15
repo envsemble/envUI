@@ -58,7 +58,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Accordion
 
 - Parts: `env-accordion`, `env-accordion-content`, `env-accordion-header`, `env-accordion-indicator`, `env-accordion-item`, `env-accordion-label` (slot), `env-accordion-panel`, `env-accordion-trigger`
-- States: `data-disabled` on `env-accordion-trigger`; `data-ending-style` on `env-accordion-panel`; `data-env-skeleton`; `data-panel-open` on `env-accordion-trigger`; `data-starting-style` on `env-accordion-panel`
+- States: `data-disabled` on `env-accordion-trigger`; `data-ending-style` on `env-accordion-panel`; `data-env-skeleton`; `data-interactive` on `env-accordion-trigger`; `data-panel-open` on `env-accordion-trigger`; `data-starting-style` on `env-accordion-panel`
 
 ### Alert
 

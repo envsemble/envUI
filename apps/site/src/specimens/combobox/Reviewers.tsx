@@ -8,10 +8,8 @@ const option = (index: number) => `.env-combobox-item:nth-child(${index} of .env
 const remove = (index: number) =>
   `.env-combobox-chip:nth-child(${index} of .env-combobox-chip) .env-combobox-chip-remove`;
 
-/*
- * The pointer opens the list and picks Alex Morgan and Jordan Ellis: a chip comes for each, and
- * the list stays open. It closes the list with its trigger, then removes the two new chips, where it began.
- */
+const fieldWithOpenListHeight = roomFor(21, 22.5, 30);
+
 const script: PointerStep[] = [
   { wait: 240 },
   { to: trigger },
@@ -44,15 +42,13 @@ const script: PointerStep[] = [
 
 function Choosing() {
   usePointer(script);
-  // The field at the top of a box as tall as it and its whole open list, so the list fits in the
-  // stage from the start, taller on a narrow stage, where the chips wrap and push the list down.
   return (
     <div
       style={{
         display: 'grid',
         justifyItems: 'center',
         inlineSize: '100%',
-        minBlockSize: roomFor(21, 22.5, 30),
+        minBlockSize: fieldWithOpenListHeight,
       }}
     >
       <Reviewers />
@@ -60,7 +56,6 @@ function Choosing() {
   );
 }
 
-/** The reviewers field, two people picked from its open list by a pointer no one sees. */
 export default function ReviewersMotion() {
   return (
     <MotionStage label="chips coming as people are picked">

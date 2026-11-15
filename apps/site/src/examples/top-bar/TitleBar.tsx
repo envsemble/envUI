@@ -3,8 +3,6 @@ import { IconShare } from '@envsemble/envui/icons/Share';
 
 export default function TitleBar() {
   return (
-    // The window's own title bar in an installed app: empty space drags the window, the title is
-    // centred, and the controls are small.
     <TopBar
       titleBar
       title="Roadmap.md"

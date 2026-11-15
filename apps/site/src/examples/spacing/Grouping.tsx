@@ -1,7 +1,5 @@
 import { Column, Surface, Switch, Text, TextField } from '@envsemble/envui';
 
-// Say what belongs together: a tight gap inside a group, a roomier one between groups, and the
-// widest between sections.
 export default function Grouping() {
   return (
     <Surface background="default" padding={6} radius="xl" render={<Column gap={8} />}>

@@ -11,7 +11,6 @@ export default function CustomElements() {
   return (
     <Markdown
       components={{
-        // Quotes in these notes are rules, so they render as an info alert.
         blockquote: ({ node: _node, children }) => <Alert title="Rule">{children}</Alert>,
       }}
     >

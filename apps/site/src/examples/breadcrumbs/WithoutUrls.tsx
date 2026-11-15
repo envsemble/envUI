@@ -17,7 +17,6 @@ export default function WithoutUrls() {
   const folder = path[path.length - 1];
   const open = (next: string[]) => {
     setPath(next);
-    // The pressed crumb becomes the current page, which is not a control: focus moves to the title.
     requestAnimationFrame(() => heading.current?.focus());
   };
   return (

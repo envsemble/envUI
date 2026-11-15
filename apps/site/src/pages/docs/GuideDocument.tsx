@@ -7,13 +7,8 @@ import { useFoundationFigures } from '../../figures/foundations/FoundationFigure
 import { useSubjectShown } from '../../figures/useSubjectShown';
 import { FigurePart } from '../../figures/foundations/FoundationFrame';
 
-/**
- * A guide's figure: an empty ```tsx figure=Name``` fence, which the package leaves out. The guide's
- * figures are registered for its page in FoundationFigures.ts and load with the first that shows.
- */
 const figureFence = /^```tsx figure=([A-Za-z]\w*)\n\n?```[ \t]*$/m;
 
-/** A guide's figure while it loads, and on a pre-rendered page until it renders (useSubjectShown). */
 const guideFigureSkeleton = (
   page: string,
   name: string,
@@ -35,26 +30,24 @@ function GuideFigure({ page, name }: { page: string; name: string }) {
   );
 }
 
-/** A guide's Markdown and the names of its figures, by turns: the split keeps each figure's name. */
 const guidePieces = (document: DocumentationEntry) =>
   (document.markdown ?? '').split(new RegExp(figureFence.source, 'gm'));
 
-/** The sections of a guide (GuideDocument): the h2 headings of each piece of its Markdown. */
+const isFigureName = (pieceIndex: number) => pieceIndex % 2 === 1;
+
 export const guideContents = (document: DocumentationEntry): TableOfContentsItem[] =>
   guidePieces(document)
-    .filter((_, index) => index % 2 === 0)
+    .filter((_, index) => !isFigureName(index))
     .flatMap((piece) => markdownHeadings(piece))
     .filter(({ level }) => level === 2)
     .map(({ id, text }) => ({ id, label: text }));
 
-/** A guide page's Markdown, with its figures in place. */
 export function GuideDocument({ document }: { document: DocumentationEntry }) {
   const pieces = guidePieces(document);
   if (pieces.length === 1) return <PageMarkdown document={document} />;
-  // Markdown and figure names alternate: the split keeps each figure's name.
   return pieces.map((piece, index) => (
     <Fragment key={index}>
-      {index % 2 ? (
+      {isFigureName(index) ? (
         <Suspense fallback={guideFigureSkeleton(document.id, piece)}>
           <GuideFigure page={document.id} name={piece} />
         </Suspense>

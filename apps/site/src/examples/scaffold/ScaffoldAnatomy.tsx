@@ -19,7 +19,6 @@ const destinations: Destination[] = [
 
 export default function ScaffoldAnatomy() {
   return (
-    // The rail at every width, so the figure keeps its parts on a narrow page.
     <Scaffold
       scroll="body"
       landmarks={false}

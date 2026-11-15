@@ -6,7 +6,6 @@ const text =
   'See the [launch plan](/documents/launch-plan) and the [pricing research](/documents/pricing), ' +
   'or the [public changelog](https://example.com/changelog).';
 
-/** The application's documents, which open in its side panel. */
 const documents: Record<string, { title: string; summary: string }> = {
   '/documents/launch-plan': {
     title: 'Launch plan',
@@ -21,7 +20,6 @@ const documents: Record<string, { title: string; summary: string }> = {
 
 export default function OpenInPanel() {
   const [open, setOpen] = useState(false);
-  // The document shown, which stays in the panel while it slides out.
   const [href, setHref] = useState<string | null>(null);
   const shown = href ? documents[href] : undefined;
   return (
@@ -33,14 +31,13 @@ export default function OpenInPanel() {
               {...props}
               href={target}
               onClick={(event) => {
-                // Plain clicks on documents open the panel; modified clicks keep the browser's.
-                const plain =
+                const plainLeftClick =
                   event.button === 0 &&
                   !event.metaKey &&
                   !event.ctrlKey &&
                   !event.shiftKey &&
                   !event.altKey;
-                if (plain && documents[target]) {
+                if (plainLeftClick && documents[target]) {
                   event.preventDefault();
                   setHref(target);
                   setOpen(true);

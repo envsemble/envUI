@@ -15,21 +15,14 @@ import { useCurrentInView } from './useCurrentInView';
 import { useDrawerMotion } from './useDrawerMotion';
 
 interface NavigationProps {
-  /** The page shown, whose destination and page the navigation marks as current. */
   page?: RoutePage;
-  /** The route's path, such as components/button. */
   routePath: string;
-  /** Whether the navigation is in the sheet of a narrower window. */
   inSheet?: boolean;
-  /** Runs as a page is chosen, such as to close the sheet the navigation sits in. */
   onChoose?: () => void;
-  /** Opens search. */
   onSearch: () => void;
-  /** Closes the sheet the navigation sits in, from its button on the wordmark's row. */
   onClose?: () => void;
 }
 
-/** The sheet's close button, at the end of the navigation's first row, the wordmark's. */
 function CloseSheet({ onClose }: { onClose?: () => void }) {
   if (!onClose) return null;
   return (
@@ -43,15 +36,6 @@ function CloseSheet({ onClose }: { onClose?: () => void }) {
   );
 }
 
-/**
- * The catalogue's navigation, one pane: a NavigationRail of its destinations, Overview, Foundations
- * and Components, under the envUI wordmark, beside a NavigationDrawer of the chosen
- * destination's pages under search, both on the navigation's background with no seam or line
- * between them. A destination of one page, such as Overview, has no drawer in a wide window: the
- * rail stands alone, the page takes the width, and search is at the page's top start (App.tsx).
- * A rail item opens its destination's first page; in the sheet of a narrower window it leaves the
- * sheet open, so a page can be chosen.
- */
 export function CatalogueNavigation({
   page,
   routePath,
@@ -64,6 +48,7 @@ export function CatalogueNavigation({
   const section = catalogueSectionOf(page);
   const pages = sectionPages(section);
   const drawer = useDrawerMotion(element, inSheet || pages.length > 1, section, routePath);
+  const drawerLeaving = drawer.motion === 'leaving' || undefined;
   return (
     <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
       <NavigationRail
@@ -79,9 +64,8 @@ export function CatalogueNavigation({
           aria-label={drawer.drawn.section}
           className="site-sidebar"
           data-site-drawer={drawer.motion}
-          // On its way out it is a picture of what was there, which nothing reaches.
-          inert={drawer.motion === 'leaving' || undefined}
-          aria-hidden={drawer.motion === 'leaving' || undefined}
+          inert={drawerLeaving}
+          aria-hidden={drawerLeaving}
           header={
             onClose ? (
               <div className="site-drawer-top">
@@ -103,11 +87,6 @@ export function CatalogueNavigation({
   );
 }
 
-/**
- * The Docs' navigation: a NavigationDrawer of every page of the Docs, as a tree of their sections and groups
- * (docsDestinations), with the wordmark and search side by side at its top, or in the sheet, which
- * is narrower, the wordmark and the sheet's close button, and search under them.
- */
 export function DocsNavigation({
   routePath,
   inSheet = false,

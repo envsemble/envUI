@@ -11,17 +11,11 @@ const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-
 const trigger = '.env-button[aria-haspopup]';
 const undo = '.env-button:not([aria-haspopup])';
 
-/**
- * Starts from the open menu, as it rests: moves down it and chooses Delete, which closes the menu
- * and deletes the report, whose row then offers to undo it. Then undoes it and opens the menu again
- * from its button, as it rests, held for a while before it plays again.
- */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: item(1) },
   { wait: 300 },
   { to: item(2), duration: 300 },
-  // Delete's highlight is held, so it can be read before the press.
   { wait: 480 },
   { click: true },
   { wait: 660 },
@@ -37,18 +31,8 @@ const script: PointerStep[] = [
   { wait: 1590 },
 ];
 
-/** The row, as wide as the menu, so its end stays in place when Delete changes what it shows. */
 const row = { inlineSize: '12rem' } as const;
 
-/**
- * A report's row with its actions menu, open below the icon button that opens it and aligned with
- * the button's end, so the row's name stays in view beside it. The menu has two items, so it shows
- * whole at about its own size in a gallery's low tile. Delete removes the report, and its row
- * offers Undo in its place. The view is held on the still, with the menu open, which is its largest
- * state, so the row stays in place as the menu closes and opens again (useHeldView). When the tile
- * stops, the report is there and its menu is open again, rather than drawn again, which would make
- * it appear with motion again.
- */
 export default function MenuTile() {
   const [open, setOpen] = useState(true);
   const [deleted, setDeleted] = useState(false);

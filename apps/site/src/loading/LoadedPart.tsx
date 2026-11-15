@@ -2,27 +2,14 @@ import { Suspense, use, useState, type ComponentType, type ReactNode } from 'rea
 import { LoadBoundary, reloadModule } from './LoadBoundary';
 import { loadOnce } from './LoadOnce';
 
-/** The modules of the parts rendered since takeRenderedParts last ran. */
-const rendered = new Set<string>();
+const renderedPartModules = new Set<string>();
 
-/**
- * The modules of the parts rendered since it last ran, by their paths in the site app: the server
- * checks that a page loaded each before it rendered (Server.tsx).
- */
 export function takeRenderedParts() {
-  const parts = [...rendered];
-  rendered.clear();
+  const parts = [...renderedPartModules];
+  renderedPartModules.clear();
   return parts;
 }
 
-/**
- * A component that loads on its own, for LoadBoundary to show. `module` is the path in the
- * site app of the module `load` imports, such as `src/pages/docs/Changelog.tsx`, and `modules`
- * passes it on to LoadBoundary. `component` renders it, suspending until it has loaded, which
- * `load` starts: once it has, as before a pre-rendered page hydrates, it renders at once (loadOnce).
- * A load that failed stays failed, so `retry` drops it and asks for the module again, as
- * reloadModule does, at that path from the app's root, where Vite serves it in development.
- */
 export function lazyPart<M, P extends object>(
   load: () => Promise<M>,
   pick: (module: M) => ComponentType<P>,
@@ -34,7 +21,7 @@ export function lazyPart<M, P extends object>(
     modules: [module] as const,
     load: () => loadOnce(loads, module, () => from().then(pick)),
     component: function Part(props: P) {
-      rendered.add(module);
+      renderedPartModules.add(module);
       const Loaded = use(part.load());
       return <Loaded {...props} />;
     },
@@ -47,12 +34,6 @@ export function lazyPart<M, P extends object>(
   return part;
 }
 
-/**
- * A large part of a page that loads with the page that shows it, such as the token reference or
- * the changelog, in place, with a retry where it fails to load. Until it has loaded, `placeholder`
- * holds its place: its headings, which the page's contents list from the start, over skeletons of
- * what they head.
- */
 export function LoadedPart({
   part,
   what,

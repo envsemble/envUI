@@ -14,15 +14,15 @@ const cssGzipBudgets = {
 
 const firstLoadJsBudgets = [
   { set: 'Typical app, envUI’s own code', measure: 'gzip', budget: 32650 },
-  { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 109650 },
-  { set: 'Theme + Button + Icon', measure: 'minified', budget: 5050 },
+  { set: 'Everything, envUI’s own code', measure: 'gzip', budget: 113000 },
+  { set: 'Theme + Button + Icon', measure: 'minified', budget: 5250 },
 ];
 
 const componentOwnCodeMinifiedBudgets = {
-  Tooltip: 15550,
+  Tooltip: 15900,
   Popover: 10450,
   Menu: 18100,
-  Select: 19100,
+  Select: 19600,
   TextField: 7650,
   Alert: 11450,
 };

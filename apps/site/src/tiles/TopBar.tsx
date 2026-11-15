@@ -9,11 +9,6 @@ import { narrowGallery } from './Tiles';
 
 const refresh = '.env-top-bar-end .env-icon-button';
 
-/**
- * Hovers and presses Refresh: the page progress creeps along the bar's bottom edge, over the page,
- * for a while, as a page takes to load, then completes across it and fades, and the page below
- * shows that it was updated.
- */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: refresh },
@@ -27,13 +22,6 @@ const script: PointerStep[] = [
   { wait: 300 },
 ];
 
-/**
- * An application's top bar over the top of its page, as wide as a gallery's tile shows: the title,
- * the actions at the end, and the page below saying when it was updated. Both are on a surface
- * whose edge is drawn, so the progress, along the bar's bottom edge, runs across all of it, between
- * the bar and the page. In a phone's narrower tile the bar keeps only the refresh action, so it is
- * drawn at about its own size there.
- */
 export default function TopBarTile() {
   const narrow = useMedia(narrowGallery);
   const [loading, setLoading] = useState(false);

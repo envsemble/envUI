@@ -20,8 +20,6 @@ const initialEntries: Entry[] = [
 export default function ContextMenuForRows() {
   const [entries, setEntries] = useState(initialEntries);
   const list = useRef<HTMLUListElement>(null);
-  // A deleted row takes its More actions button with it, so focus moves to the next row's, or to
-  // the list when it is empty.
   const focusNext = useRef<(() => void) | null>(null);
   useEffect(() => {
     focusNext.current?.();
@@ -38,7 +36,6 @@ export default function ContextMenuForRows() {
     setEntries((current) => current.filter((item) => item.id !== entry.id));
   };
 
-  // The same actions open from each row's button and from a right click on the row.
   const actionsFor = (entry: Entry) => (
     <>
       <Menu.Item

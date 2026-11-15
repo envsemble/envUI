@@ -13,7 +13,6 @@ export default function SmallToolbar() {
     setZoom(zoomLevels[Math.min(Math.max(index, 0), zoomLevels.length - 1)] ?? '100');
   };
   return (
-    // The toolbar is as wide as its controls.
     <Column gap={4} align="start">
       <Surface
         background="default"
@@ -23,7 +22,6 @@ export default function SmallToolbar() {
         aria-label="Diagram"
         render={<Row wrap align="center" gap={4} />}
       >
-        {/* The label starts clear of the rounded end, as the buttons' own padding does. */}
         <Text
           render={<span />}
           variant="body-sm"

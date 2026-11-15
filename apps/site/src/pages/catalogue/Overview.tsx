@@ -8,10 +8,6 @@ import { docsRoute, routeHref } from '../../routes/Address';
 import { pagesOf, sectionHome } from '../../routes/SiteRoutes';
 import { OverviewFan } from './OverviewFan';
 
-/**
- * Where the home page leads, each with what it is for rather than what it lists, so a page that
- * moves or merges never leaves it out of date.
- */
 const destinations = [
   {
     title: 'Foundations',
@@ -27,25 +23,13 @@ const destinations = [
   },
 ] as const;
 
-/**
- * How much the catalogue shows, counted from its pages as the site builds, so the hero's line of
- * facts never goes out of date: its components and foundations.
- */
 const counts = (['component', 'foundation'] as const).map((kind) => ({
   kind,
   count: pagesOf('catalogue').filter((page) => page.kind === kind).length,
 }));
 
-/**
- * The command that installs envUI, by the package's name in packages/ui/package.json: short, so it
- * keeps room to spare on a phone. docs/setup.md gives the command that pins the version exactly.
- */
 const install = `npm i ${name}`;
 
-/**
- * The catalogue's home: what envUI is, the way to setting it up, a hand of cards built with it, and
- * the way to its foundations and components.
- */
 export function Overview() {
   return (
     <>
@@ -57,16 +41,12 @@ export function Overview() {
           <Text variant="display" className="catalogue-overview-lede">
             A React design system for clear, accessible interfaces.
           </Text>
-          {/* The one way in, to setting envUI up, beside the command that installs it; under them,
-              one quiet line: how much the catalogue shows, the version and the license, all read
-              from the package and its pages as the site builds. */}
           <Column gap={4} align="center">
             <Row gap={4} align="center" justify="center" wrap className="catalogue-overview-start">
               <Button href={routeHref(docsRoute)} endIcon={<IconArrowForward />}>
                 Get started
               </Button>
               <span className="catalogue-overview-install">
-                {/* The command the button copies, on one line (Overview.css). */}
                 <code>{install}</code>
                 <CopyButton value={install} variant="ghost" aria-label="Copy install command" />
               </span>

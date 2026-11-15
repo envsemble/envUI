@@ -101,7 +101,7 @@ const ThemeContext = createContext<ThemeContextValue>(outsideTheme);
 
 const unshowableObject = 'an object';
 
-function describeThemeForWarning(theme: unknown): string {
+function describeThemeInReport(theme: unknown): string {
   if (typeof theme !== 'object' || theme === null) return String(theme);
   try {
     const objectsContainingValue: unknown[] = [];
@@ -126,7 +126,7 @@ function describeThemeForWarning(theme: unknown): string {
 function themeReport(theme: unknown): string | undefined {
   if (theme === 'light' || theme === 'dark') return undefined;
   return (
-    `Theme takes a theme of "light" or "dark", not ${describeThemeForWarning(theme)}.` +
+    `Theme takes a theme of "light" or "dark", not ${describeThemeInReport(theme)}.` +
     (typeof theme === 'object' && theme !== null
       ? ' useTheme() returns { theme, contrast }: write <Theme {...useTheme()}>.'
       : '')

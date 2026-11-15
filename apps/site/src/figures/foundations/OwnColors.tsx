@@ -26,34 +26,18 @@ import { CornerLabel } from './Steps';
 import { FoundationFrame } from './FoundationFrame';
 import { useHighContrast, useNarrow, type FigureWords } from './ColorFigures';
 
-/**
- * A pastel color scheme of an application's own: the hue, in OKLCH, that tints its surfaces, text
- * and edges and colors its accent, in the legend's order. Each takes the same grades in each theme,
- * so the three are one family of schemes.
- */
 const schemes: readonly { hue: number }[] = [{ hue: 300 }, { hue: 165 }, { hue: 48 }];
 
-/** A color in OKLCH: its lightness, chroma and hue, and its opacity if it has one. */
 const oklch = (lightness: number, chroma: number, hue: number, alpha?: number) =>
   `oklch(${lightness} ${chroma} ${hue}${alpha === undefined ? '' : ` / ${alpha}`})`;
 
-/**
- * The roles a scheme gives its area, with their hover and press, as an application gives an area
- * colors of its own (customizing.md's Recolor an area). It keeps envUI's own grades and only moves
- * them to its hue: a pale tinted page with paler surfaces and cards and a deep accent in the light
- * theme, lighter again at high contrast, and deep tinted ones with a pale accent in the dark; a tint of the accent for what is selected, with
- * accent text on it; translucent tinted fills for quiet controls. At high contrast the accent goes
- * a step further from the page, and text and edges keep the theme's own, stronger colors.
- */
 function schemeColors(
   { hue }: (typeof schemes)[number],
   theme: ColorScheme,
-  high: boolean,
+  highContrast: boolean,
 ): CSSProperties {
   const light = theme === 'light';
   const step = (lightness: number, by: number) => lightness + (light ? -by : by);
-  // A fill's hover and press: a step further from the page, or, for the accent, deeper in both
-  // themes, as envUI's own accent fills.
   const tone = (role: string, lightness: number, chroma: number, deeper = false) => {
     const at = (by: number) => (deeper ? lightness - by : step(lightness, by));
     return {
@@ -62,19 +46,18 @@ function schemeColors(
       [`--env-color-${role}-pressed`]: oklch(at(0.07), chroma, hue),
     };
   };
-  // The accent: a deep color on light surfaces, a pale one on dark.
-  const accent = light ? (high ? 0.36 : 0.43) : high ? 0.9 : 0.84;
-  const chroma = light ? 0.11 : high ? 0.06 : 0.08;
-  // The ink a translucent fill is mixed from: dark on light surfaces, pale on dark.
-  const ink = (alpha: number) =>
+  const accentLightness = light ? (highContrast ? 0.36 : 0.43) : highContrast ? 0.9 : 0.84;
+  const accentChroma = light ? 0.11 : highContrast ? 0.06 : 0.08;
+  const translucentInk = (alpha: number) =>
     light ? oklch(0.25, 0.04, hue, alpha) : oklch(0.94, 0.02, hue, alpha);
   const fills = {
     ...(light
       ? {
-          // As envUI's light theme: the page deepest, the surfaces a step lighter, cards the lightest.
-          '--env-color-bg-page': high ? oklch(0.96, 0.02, hue) : oklch(0.935, 0.03, hue),
-          '--env-color-bg-default': high ? oklch(0.98, 0.01, hue) : oklch(0.965, 0.018, hue),
-          '--env-color-bg-raised': high ? oklch(0.98, 0.01, hue) : oklch(0.965, 0.018, hue),
+          '--env-color-bg-page': highContrast ? oklch(0.96, 0.02, hue) : oklch(0.935, 0.03, hue),
+          '--env-color-bg-default': highContrast
+            ? oklch(0.98, 0.01, hue)
+            : oklch(0.965, 0.018, hue),
+          '--env-color-bg-raised': highContrast ? oklch(0.98, 0.01, hue) : oklch(0.965, 0.018, hue),
           '--env-color-bg-muted': oklch(0.99, 0.006, hue),
           '--env-color-fg-on-emphasis': oklch(1, 0, 0),
           ...tone('bg-selected', 0.9, 0.05),
@@ -91,22 +74,26 @@ function schemeColors(
           '--env-color-bg-navigation-hover': oklch(0.32, 0.03, hue),
           '--env-color-bg-navigation-pressed': oklch(0.36, 0.035, hue),
         }),
-    ...tone('bg-primary-emphasis', accent, chroma, true),
-    ...tone('border-primary-emphasis', accent, chroma, true),
-    '--env-color-bg-primary-solid': oklch(accent, chroma, hue),
-    '--env-color-fg-primary': oklch(accent, chroma, hue),
-    '--env-color-fg-on-selected': oklch(step(accent, high ? 0.05 : 0.03), chroma, hue),
-    '--env-color-border-focus': oklch(accent, chroma, hue),
-    '--env-color-border-primary': oklch(accent, chroma, hue, 0.55),
-    '--env-color-bg-primary-muted': oklch(accent, chroma, hue, light ? 0.12 : 0.14),
-    '--env-color-bg-primary-soft': oklch(accent, chroma, hue, light ? 0.08 : 0.14),
-    '--env-color-bg-neutral-muted': ink(light ? 0.08 : 0.12),
-    '--env-color-bg-neutral-muted-hover': ink(light ? 0.14 : 0.19),
-    '--env-color-bg-neutral-muted-pressed': ink(light ? 0.2 : 0.26),
-    '--env-color-bg-neutral-subtle-hover': ink(0.08),
-    '--env-color-bg-neutral-subtle-pressed': ink(0.1),
+    ...tone('bg-primary-emphasis', accentLightness, accentChroma, true),
+    ...tone('border-primary-emphasis', accentLightness, accentChroma, true),
+    '--env-color-bg-primary-solid': oklch(accentLightness, accentChroma, hue),
+    '--env-color-fg-primary': oklch(accentLightness, accentChroma, hue),
+    '--env-color-fg-on-selected': oklch(
+      step(accentLightness, highContrast ? 0.05 : 0.03),
+      accentChroma,
+      hue,
+    ),
+    '--env-color-border-focus': oklch(accentLightness, accentChroma, hue),
+    '--env-color-border-primary': oklch(accentLightness, accentChroma, hue, 0.55),
+    '--env-color-bg-primary-muted': oklch(accentLightness, accentChroma, hue, light ? 0.12 : 0.14),
+    '--env-color-bg-primary-soft': oklch(accentLightness, accentChroma, hue, light ? 0.08 : 0.14),
+    '--env-color-bg-neutral-muted': translucentInk(light ? 0.08 : 0.12),
+    '--env-color-bg-neutral-muted-hover': translucentInk(light ? 0.14 : 0.19),
+    '--env-color-bg-neutral-muted-pressed': translucentInk(light ? 0.2 : 0.26),
+    '--env-color-bg-neutral-subtle-hover': translucentInk(0.08),
+    '--env-color-bg-neutral-subtle-pressed': translucentInk(0.1),
   };
-  const lines = light
+  const textAndEdges = light
     ? {
         '--env-color-fg-default': oklch(0.24, 0.035, hue),
         '--env-color-fg-control': oklch(0.3, 0.045, hue),
@@ -121,10 +108,9 @@ function schemeColors(
         '--env-color-border-default': oklch(0.62, 0.035, hue),
         '--env-color-border-muted': oklch(0.4, 0.03, hue),
       };
-  return high ? fills : { ...fills, ...lines };
+  return highContrast ? fills : { ...fills, ...textAndEdges };
 }
 
-/** An area in a scheme, in a theme, at the reader's contrast. */
 function SchemeArea({
   scheme,
   theme,
@@ -137,23 +123,21 @@ function SchemeArea({
   children: ReactNode;
 }) {
   const { contrast } = useTheme();
-  const high = useHighContrast(contrast);
+  const showsHighContrast = useHighContrast(contrast);
   return (
     <Theme
       theme={theme}
       contrast={contrast}
       className={className}
-      style={schemeColors(schemes[scheme] ?? schemes[0]!, theme, high)}
+      style={schemeColors(schemes[scheme] ?? schemes[0]!, theme, showsHighContrast)}
     >
       {children}
     </Theme>
   );
 }
 
-/** How long the components stay in each scheme, in ms. */
-const schemeStep = 1320;
+const schemeStepMs = 1320;
 
-/** A tile of the canvas: a component or two on a surface, as envUI draws it. */
 function Tile({ name, children }: { name: string; children: ReactNode }) {
   return (
     <Surface padding={4} className="catalogue-scheme-tile" data-tile={name}>
@@ -162,15 +146,9 @@ function Tile({ name, children }: { name: string; children: ReactNode }) {
   );
 }
 
-/**
- * The same components in a scheme of the application's own, filling the stage: a trip planner's
- * page with surfaces for its tiles, each a component or two in its usual variant: a short form, tabs,
- * a switch, a choice of answers, uploads under way, a search, and the navigation with a count. It
- * steps through the schemes, the one shown named in the corner.
- */
 function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boolean }) {
   const page = useTheme();
-  const scheme = useTimeline(schemes.map(() => schemeStep));
+  const scheme = useTimeline(schemes.map(() => schemeStepMs));
   const [answer, setAnswer] = useState('going');
   const [place, setPlace] = useState('trips');
   const destination = (id: string) => ({ current: place === id, onClick: () => setPlace(id) });
@@ -228,7 +206,6 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
             <Progress label="Porto" value={6} max={20} valueText="6 of 20" />
           </Column>
         </Tile>
-        {/* A phone leaves the search out, as it shows the navigation as a bar. */}
         {!narrow && (
           <Tile name="search">
             <SearchField label="Search photos" placeholder="Search" />
@@ -246,7 +223,6 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
   );
 }
 
-/** The same components in each of a few pastel schemes of an application's own, chosen in turn. */
 export function OwnColorsFigure({ legend }: FigureWords) {
   return (
     <FoundationFrame
@@ -259,15 +235,10 @@ export function OwnColorsFigure({ legend }: FigureWords) {
   );
 }
 
-/** The narrowest the figure shows its tiles three across in, in rem. */
-const schemesWidth = 38;
+const threeAcrossMinWidthRem = 38;
 
-/**
- * The canvas at the figure's width: on a narrower one, as on a phone, the tiles one under another,
- * the quiet actions in a row, and the navigation a bar, as an application shows it there.
- */
 function SchemeSteps({ names }: { names: readonly string[] }) {
-  const [ref, narrow] = useNarrow(schemesWidth);
+  const [ref, narrow] = useNarrow(threeAcrossMinWidthRem);
   return (
     <div ref={ref} className="catalogue-scheme-steps">
       <SchemeChoice key={narrow ? 'narrow' : 'wide'} names={names} narrow={narrow} />

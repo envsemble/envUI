@@ -3,15 +3,11 @@ import { SpecimenFrame } from '../../figures/SpecimenFrame';
 import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../figures/MotionStage';
 
-/*
- * The card as its skeleton a moment, over two steps, as a timeline's first step is cut short as
- * it starts; then filled in, and a while to read it.
- */
-const steps = [360, 540, 1800];
+const skeletonSteps = [360, 540];
+const steps = [...skeletonSteps, 1800];
 
 function Loading() {
-  const loading = useTimeline(steps) < 2;
-  // Over a placeholder item, the card's slots are given as undefined: each shows a bar.
+  const loading = useTimeline(steps) < skeletonSteps.length;
   return (
     <Card
       skeleton={loading}
@@ -26,7 +22,6 @@ function Loading() {
   );
 }
 
-/** A card as its own skeleton while its content loads, then filled in. */
 export default function SkeletonFirst() {
   return (
     <SpecimenFrame size="content">

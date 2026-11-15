@@ -6,7 +6,6 @@ import { IconRadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecke
 import { IconTaskAlt } from '@envsemble/envui/icons/TaskAlt';
 import { IconWarning } from '@envsemble/envui/icons/Warning';
 
-// Each tone with words and an icon, so nobody has to tell colors apart.
 export default function Status() {
   return (
     <Row wrap gap={2}>

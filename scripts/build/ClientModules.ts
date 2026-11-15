@@ -331,7 +331,7 @@ async function main() {
       console.error(`${module.file} ${module.reasons[0]}: start it with ${directive}`);
     for (const module of needless)
       console.error(
-        `${module.file} uses nothing client-only that the check can see: remove ${directive}, or say why in a // @client-module comment`,
+        `${module.file} uses nothing client-only that the check can see: remove ${directive}, or mark it with // @client-module`,
       );
     if (missing.length + needless.length > 0) process.exitCode = 1;
     else console.log(`${modules.filter((module) => module.client).length} client modules.`);

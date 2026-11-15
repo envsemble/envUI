@@ -1,6 +1,5 @@
 import { Button, Column, Row, Surface, Text, TextField, Theme, useTheme } from '@envsemble/envui';
 
-// An app takes one scale, on its root Theme; here a region keeps the theme and turns compact.
 export default function Scales() {
   const theme = useTheme();
   return (

@@ -7,6 +7,5 @@ const visibilityOptions = [
 ];
 
 export default function SelectListAnatomy() {
-  // Shown open in the docs; without defaultOpen, the list opens from the field.
   return <Select label="Visibility" items={visibilityOptions} defaultValue="team" defaultOpen />;
 }

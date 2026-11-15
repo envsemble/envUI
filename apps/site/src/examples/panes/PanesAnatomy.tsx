@@ -2,8 +2,6 @@ import { Column, List, Panes, Surface, Text } from '@envsemble/envui';
 
 export default function PanesAnatomy() {
   return (
-    // Side by side from a medium width, so the figure shows both panes on most pages. Each pane
-    // holds a surface; the divider is the gap between them.
     <Panes.Root
       behavior="list-detail"
       splitAt="medium"

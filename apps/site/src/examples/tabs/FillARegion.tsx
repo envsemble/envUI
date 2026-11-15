@@ -6,7 +6,6 @@ const steps = ['Draft', 'Review', 'Publish'];
 
 function View({ children }: { children: ReactNode }) {
   return (
-    // The view fills the panel, as a canvas would.
     <Surface render={<Grid />} background="muted" style={{ flex: 1, placeItems: 'center' }}>
       {children}
     </Surface>
@@ -42,7 +41,6 @@ function Outline() {
 
 export default function FillARegion() {
   return (
-    // The region has a size of its own, as an application's layout gives it.
     <Column style={{ inlineSize: 'min(100%, 32rem)', blockSize: '16rem' }}>
       <Tabs
         aria-label="Diagram views"

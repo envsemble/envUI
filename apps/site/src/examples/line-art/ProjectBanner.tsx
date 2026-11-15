@@ -2,8 +2,6 @@ import { LineArt, PageHeader, Surface } from '@envsemble/envui';
 
 export default function ProjectBanner() {
   return (
-    // The banner holds the drawing at its end, across about half its width; the header stays
-    // above it, and its text keeps to the start.
     <Surface
       background="default"
       padding={6}

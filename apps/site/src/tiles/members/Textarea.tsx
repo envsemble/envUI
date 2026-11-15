@@ -4,7 +4,6 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 
 const input = 'textarea';
 
-/** Types a reply, which grows the text area by a line as it wraps, and erases it again. */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: input, x: 0.3 },
@@ -20,7 +19,6 @@ const script: PointerStep[] = [
   { wait: 360 },
 ];
 
-/** A reply's text area, one line at rest, that grows with what is typed (`sizing="content"`). */
 export default function TextareaTile() {
   usePointer(script);
   return (

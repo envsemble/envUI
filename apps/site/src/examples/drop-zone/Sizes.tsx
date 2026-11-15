@@ -4,7 +4,6 @@ const ignore = () => undefined;
 
 export default function Sizes() {
   return (
-    // As wide as a form column.
     <Column gap={5} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <DropZone
         label="Drop a logo here, or browse"

@@ -6,10 +6,6 @@ import { MotionStage } from '../../figures/MotionStage';
 const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-item)`;
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
 
-/*
- * The pointer right-clicks a row: the row's menu opens where the pointer is. It runs over the
- * menu's items, and the menu closes.
- */
 const script: PointerStep[] = [
   { wait: 360 },
   { to: row(2), x: 0.3, y: 0.55 },
@@ -31,7 +27,6 @@ function RightClicking() {
   return <ContextMenuForRows />;
 }
 
-/** The rows of documents, one right-clicked for its menu by a pointer no one sees. */
 export default function ContextMenuForRowsMotion() {
   return (
     <MotionStage label="the menu opening on a right click">

@@ -9,11 +9,6 @@ import { Renew } from '../../motion/Renew';
 const tab = (index: number) =>
   `.env-document-tabs-item:nth-child(${index} of .env-document-tabs-item) .env-document-tabs-tab`;
 
-/*
- * Interviews.md is a preview, its label in italics. The pointer double-clicks it, and it is kept:
- * its label turns upright. Then the pointer drags Decisions.md past it, a marker showing where it
- * will land, and drops it there. Then the example starts anew.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: tab(3), x: 0.5, y: 1.6 },
@@ -50,8 +45,7 @@ function Arranging() {
   );
 }
 
-/** A preview tab kept by a double click, then a tab dragged into a new place. */
-// eslint-disable-next-line no-restricted-syntax -- a preview tab is the document tabs' own word
+// eslint-disable-next-line no-restricted-syntax
 export default function PreviewAndReorderMotion() {
   return (
     <SpecimenFrame>

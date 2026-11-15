@@ -5,12 +5,6 @@ import type { RoutePage } from '../../routes/SiteRoutes';
 import { Catalogue } from './Catalogue';
 import { FoundationCatalogue } from './FoundationCatalogue';
 
-/*
- * The catalogue's galleries: its foundations and components, each as tiles that lead to their
- * pages.
- */
-
-/** Every foundation at a glance, each a way to its page. */
 export function FoundationsPage({ page }: { page: RoutePage }) {
   return (
     <>
@@ -27,7 +21,6 @@ export function FoundationsPage({ page }: { page: RoutePage }) {
   );
 }
 
-/** Every component, by what it is for. */
 export function ComponentsPage({ page }: { page: RoutePage }) {
   return (
     <>

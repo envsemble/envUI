@@ -1,26 +1,12 @@
-/* The device a page's figure is drawn in (figures/DeviceFrame.tsx): a line drawing of a phone or
-   a browser's window around the figure, at the device's own size, scaled to fit the stage. Its
-   lengths are the device's own, in the scale of what it shows, its stroke too; the hairline under a
-   window's address bar is divided by the scale, so it stays one pixel at any size. */
 .site-device-stage {
-  /* The most a device is drawn high, so a phone leaves the page around it in view. */
   --site-device-most: 40rem;
   --site-device-hairline: calc(1px / var(--site-device-scale, 1));
   justify-self: stretch;
   inline-size: 100%;
 }
 
-/* The place the device holds on the stage, its view at its scale, centred. A device too large to
-   show whole at a legible scale is cut off there (DeviceStage), out to the stage's edge, and what
-   is cut off at an edge fades out over the last stretch, as a tile's crop does (TileStage.css),
-   rather than ending in a slice through a line. Every cut edge, a side or the foot, fades alike,
-   over a stretch long enough that a line of text cut at a side, such as a page beside a window's
-   navigation, reads as running on past it. The fade eases in and out, so the window's own
-   surfaces and lines, running into it side by side, dissolve without the band a straight ramp
-   leaves where it meets the solid part. */
 .site-device-fit {
   --site-device-fade: 3rem;
-  /* Any opaque color: the mask reads only its alpha. */
   --site-device-opaque: var(--env-color-fg-default);
   --site-device-1: color-mix(in srgb, var(--site-device-opaque) 3%, transparent);
   --site-device-2: color-mix(in srgb, var(--site-device-opaque) 16%, transparent);
@@ -91,8 +77,6 @@
   mask-composite: intersect;
 }
 
-/* The device at its own size, scaled from its top left corner into its place, hidden until it is.
-   Physical sides, so it scales into place in either direction of text. */
 .site-device-row {
   position: absolute;
   top: 0;
@@ -109,8 +93,6 @@
   visibility: visible;
 }
 
-/* The device's body: one solid stroke all round, a share of the device's own size, with large
-   rounded corners, and the screen right up to its inner edge. */
 .site-device {
   --site-device-stroke: 0.4375rem;
   --site-device-radius: 2rem;
@@ -128,7 +110,6 @@
   --site-device-radius: 1.5rem;
 }
 
-/* The screen: the figure's window, which its fixed overlays stay inside. */
 .site-device-screen {
   position: relative;
   flex: none;
@@ -138,7 +119,6 @@
   background-color: var(--env-color-bg-page);
 }
 
-/* The bar over the screen: a phone's status bar, or a window's address bar. */
 .site-device-bar {
   display: flex;
   flex: none;
@@ -169,7 +149,6 @@
   font-size: 0.875rem;
 }
 
-/* The home indicator: a short rounded line at the foot of the phone, in the middle. */
 .site-device-home {
   flex: none;
   align-self: center;
@@ -192,7 +171,6 @@
   color: var(--env-color-fg-muted);
 }
 
-/* The address, in a field's fill, a pill across the rest of the bar. */
 .site-device-address {
   display: flex;
   flex: 1 1 auto;
@@ -206,7 +184,6 @@
   color: var(--env-color-fg-muted);
 }
 
-/* A stage with a device: room around it as around any example, no more. */
 .site-live-example[data-device] {
   padding: var(--env-space-5);
 }

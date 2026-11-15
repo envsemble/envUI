@@ -1,10 +1,6 @@
 import { headingSlug } from '../documentation/SearchAnchors';
 import { pagesOf, type RoutePage } from './SiteRoutes';
 
-/**
- * A group of the Docs' navigation, such as Guides, or Actions within Components: its pages, then
- * its own groups, with the id of its heading on the Docs' home.
- */
 export interface DocsGroup {
   label: string;
   id: string;
@@ -12,10 +8,6 @@ export interface DocsGroup {
   groups: DocsGroup[];
 }
 
-/**
- * The Docs' pages as a tree, in reading order: each section of the navigation, such as Get started
- * or Components, with its pages and its groups, such as the kinds of component.
- */
 export const docsTree: DocsGroup[] = (() => {
   const sections: DocsGroup[] = [];
   for (const page of pagesOf('docs')) {

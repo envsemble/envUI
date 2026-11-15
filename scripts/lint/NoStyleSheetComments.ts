@@ -14,12 +14,13 @@ const messages = ruleMessages(styleSheetCommentRuleName, {
 });
 
 const stylelintDirective = /^stylelint-(?:disable(?:-next-line|-line)?|enable)(?:\s|$)/;
+const contrastMarker = /^contrast: [a-z0-9]+(?:-[a-z0-9]+)*$/;
 const licenceWords = /\b(?:copyright|licen[cs]e|spdx-license-identifier)\b/i;
 const rawsWithComments = ['value', 'selector', 'params'] as const;
 
 function directiveStatus(text: string): 'directive' | 'reasoned' | undefined {
   if (stylelintDirective.test(text)) return /\s--(?:\s|$)/.test(text) ? 'reasoned' : 'directive';
-  if (text === 'prettier-ignore') return 'directive';
+  if (text === 'prettier-ignore' || contrastMarker.test(text)) return 'directive';
   return undefined;
 }
 

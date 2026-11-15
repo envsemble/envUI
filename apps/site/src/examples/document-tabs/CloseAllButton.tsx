@@ -38,7 +38,6 @@ export default function CloseAllButton() {
         if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)]?.value ?? null);
       }}
       onCloseAll={closeAll}
-      // The application's own buttons, after the tabs and on their hairline.
       end={
         <>
           <Tooltip content="New document">

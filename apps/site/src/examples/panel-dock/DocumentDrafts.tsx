@@ -20,8 +20,7 @@ import { IconShare } from '@envsemble/envui/icons/Share';
 interface Document {
   id: string;
   title: string;
-  /** A shorter chip label for a long title. */
-  label?: string;
+  shortLabel?: string;
   editor: string;
   summary: string;
   draft: string;
@@ -45,7 +44,7 @@ const documents: Document[] = [
   {
     id: 'budget',
     title: 'Budget for the second half',
-    label: 'Budget',
+    shortLabel: 'Budget',
     editor: 'Priya Shah',
     summary: 'Support hiring trails the plan by two people.',
     draft: 'Move the design review to the first week.',
@@ -67,10 +66,9 @@ function panelFor(document: Document, mode: PanelDockMode, active = false): Docu
   return {
     id: document.id,
     title: document.title,
-    label: document.label,
+    label: document.shortLabel,
     mode,
     active,
-    // The application keeps each panel's height, in pixels; this one leaves the buttons in view.
     height: 20,
     icon: <IconDescription />,
     tooltip: `${document.title} · ${document.editor}`,
@@ -78,7 +76,6 @@ function panelFor(document: Document, mode: PanelDockMode, active = false): Docu
   };
 }
 
-/** A document's window. Its draft lives in the panel's own state, which every mode keeps. */
 function DocumentWindow({
   document,
   onChangedChange,
@@ -88,7 +85,6 @@ function DocumentWindow({
 }) {
   const [draft, setDraft] = useState(document.draft);
   const changed = draft !== '';
-  // Reports only when the draft starts or stops differing; the callback is new on every render.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => onChangedChange(changed), [changed]);
   return (
@@ -106,7 +102,6 @@ function DocumentWindow({
           </Menu.Root>
         }
       />
-      {/* The body's inset lines up with the header's title. */}
       <Column gap={4} style={{ padding: '0 1.5rem 1.5rem' }}>
         <Text emphasis="muted">{document.summary}</Text>
         <Textarea
@@ -146,18 +141,16 @@ export default function DocumentDrafts() {
     update((panel) =>
       panel.id === id ? { ...panel, attention: changed ? 'Unsaved changes' : undefined } : panel,
     );
-  // The page beneath is out of reach while a panel covers it.
-  const covered = panels.some((panel) =>
+  const pageIsCovered = panels.some((panel) =>
     stacked ? panel.mode !== 'minimized' : panel.mode === 'maximized',
   );
   return (
-    // The dock fills a positioned region with a height, such as the area below a topbar.
     <Surface
       background="muted"
       padding={0}
       style={{ position: 'relative', blockSize: '34rem', overflow: 'hidden' }}
     >
-      <Column gap={4} inert={covered} style={{ padding: '2rem' }}>
+      <Column gap={4} inert={pageIsCovered} style={{ padding: '2rem' }}>
         <Text render={<h3 />} variant="title">
           Documents
         </Text>
@@ -170,7 +163,7 @@ export default function DocumentDrafts() {
               startIcon={<IconDescription />}
               onClick={() => open(document)}
             >
-              {document.label ?? document.title}
+              {document.shortLabel ?? document.title}
             </Button>
           ))}
         </Row>
@@ -178,14 +171,11 @@ export default function DocumentDrafts() {
       <PanelDock.Root
         panels={panels}
         onModeChange={(id, mode) =>
-          // One panel at a time is maximized; maximizing another returns the earlier one.
-          update((panel) =>
-            panel.id === id
-              ? { ...panel, mode }
-              : mode === 'maximized' && panel.mode === 'maximized'
-                ? { ...panel, mode: 'open' }
-                : panel,
-          )
+          update((panel) => {
+            if (panel.id === id) return { ...panel, mode };
+            const isTheEarlierMaximized = mode === 'maximized' && panel.mode === 'maximized';
+            return isTheEarlierMaximized ? { ...panel, mode: 'open' } : panel;
+          })
         }
         onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
         onActivate={(id) => update((panel) => ({ ...panel, active: panel.id === id }))}

@@ -10,7 +10,6 @@ export default function Destinations() {
     <Menu.Root
       aria-label="Help"
       align="start"
-      // Shown open in the docs; without defaultOpen, it opens from its trigger.
       defaultOpen
       trigger={
         <Button variant="secondary" endIcon={<IconExpandMore />}>

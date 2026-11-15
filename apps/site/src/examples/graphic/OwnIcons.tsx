@@ -4,7 +4,6 @@ import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { IconStar } from '@envsemble/envui/icons/Star';
 
-/** An icon of the application's own, as an SVG component with a viewBox. */
 function PipelineIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -14,7 +13,6 @@ function PipelineIcon() {
 }
 
 export default function OwnIcons() {
-  // The router knows the current page; here a press stands in for it.
   const [current, setCurrent] = useState('/pipelines');
   const destination = (href: string) => ({
     href,

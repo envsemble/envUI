@@ -42,14 +42,14 @@ const sections = [
   },
 ];
 
+const contentsBesideArticleFromPx = 36 * 16;
+
 export default function DocsArticle() {
   const frame = useRef<HTMLDivElement>(null);
   const article = useRef<HTMLElement>(null);
   const size = useContainerSize(frame);
-  // Beside the article from 36 rem; a narrower page leaves the contents out.
-  const wide = (size?.inlineSize ?? 0) >= 36 * 16;
+  const showContents = (size?.inlineSize ?? 0) >= contentsBesideArticleFromPx;
   return (
-    // A box that scrolls stands in for the window; the header sticks at its top edge.
     <div
       ref={frame}
       tabIndex={0}
@@ -69,8 +69,7 @@ export default function DocsArticle() {
               </Column>
             ))}
           </Column>
-          {wide && (
-            // The contents stay in view below the header as the article scrolls.
+          {showContents && (
             <div style={{ position: 'sticky', insetBlockStart: '5rem', inlineSize: '12rem' }}>
               <TableOfContents
                 aria-label="Sections of the guide"

@@ -49,8 +49,7 @@ const files: FileNode[] = [
 export default function FileTree() {
   const [expanded, setExpanded] = useState(() => new Set(['design', 'design/brand']));
   const [selected, setSelected] = useState<string | null>('design/brand/colors.md');
-  // The visible rows in order: an expanded folder is followed by its children.
-  const rows = useMemo(() => {
+  const visibleRows = useMemo(() => {
     const visible: TreeItem[] = [];
     const visit = (nodes: FileNode[], depth: number) => {
       for (const node of nodes) {
@@ -78,11 +77,10 @@ export default function FileTree() {
       return next;
     });
   return (
-    // The tree fills its parent's height and scrolls itself.
     <div style={{ blockSize: '15rem', inlineSize: 'min(100%, 20rem)' }}>
       <Tree
         aria-label="Files"
-        items={rows}
+        items={visibleRows}
         value={selected}
         onAction={(row) =>
           row.expandable ? setFolder(row.value, !row.expanded) : setSelected(row.value)

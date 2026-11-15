@@ -1,5 +1,3 @@
-/* The editable palette on the colors guide in the Docs (ColorPalette.tsx): its rows of swatches
-   and the dialog that edits one. */
 .docs-palette-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -22,14 +20,11 @@
   overflow-wrap: anywhere;
 }
 .docs-swatch {
-  /* The label of a swatch reads on whatever color the reader picks, in either theme: fixed ink,
-     dark on light colors and white on dark ones, rather than a role that follows the theme. */
-  /* stylelint-disable-next-line color-no-hex -- fixed ink, see above */
+  /* stylelint-disable-next-line color-no-hex */
   --docs-ink-dark: #1e1f21;
-  /* stylelint-disable-next-line color-no-hex -- fixed ink, see above */
+  /* stylelint-disable-next-line color-no-hex */
   --docs-ink-light: #ffffff;
-  /* On a mid-tone, where the dark ink reads too faintly: see Colors.tsx. */
-  /* stylelint-disable-next-line color-no-hex -- fixed ink, see above */
+  /* stylelint-disable-next-line color-no-hex */
   --docs-ink-black: #000000;
   inline-size: 100%;
   block-size: 100%;
@@ -37,7 +32,6 @@
   justify-content: flex-start;
   text-align: start;
 }
-/* A swatch of the page's own color, such as the page's, takes a hairline so it shows on the page. */
 .docs-swatch[data-edge]:not(:focus-visible) {
   outline: 1px solid var(--env-color-border-muted);
   outline-offset: -1px;
@@ -52,8 +46,6 @@
     monospace;
   overflow-wrap: anywhere;
 }
-/* In a narrow container, each row stacks its label over its swatches, which take a touch
-   target's height. */
 @container (width < 24rem) {
   .docs-palette-row {
     grid-template-columns: minmax(0, 1fr);

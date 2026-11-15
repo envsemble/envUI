@@ -19,7 +19,6 @@ export default function FromMenu() {
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        // The menu item is gone once the menu closes; focus returns to the menu's button.
         finalFocus={menuButton}
         tone="danger"
         title="Delete Northwind launch?"

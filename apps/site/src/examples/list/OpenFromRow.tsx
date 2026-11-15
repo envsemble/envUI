@@ -7,6 +7,8 @@ const plans = [
   { id: 'pricing', name: 'Pricing research', updated: 'Updated yesterday by Priya Shah' },
 ];
 
+const aboveRowLink = { position: 'relative' } as const;
+
 export default function OpenFromRow() {
   const [result, setResult] = useState('');
   return (
@@ -17,8 +19,6 @@ export default function OpenFromRow() {
             key={id}
             interactive
             label={
-              // data-row-target stretches the link over the row; draggable={false} keeps a press
-              // that moves a little from dragging the link instead of opening it.
               <Link
                 href={`/plans/${id}`}
                 underline={false}
@@ -38,8 +38,7 @@ export default function OpenFromRow() {
                     variant="text"
                     icon={<IconMoreHoriz />}
                     aria-label={`More actions for ${name}`}
-                    // The row's other controls stay above the link that covers the row.
-                    style={{ position: 'relative' }}
+                    style={aboveRowLink}
                   />
                 }
               >

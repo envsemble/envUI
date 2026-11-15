@@ -39,7 +39,6 @@ const tones = { 'In progress': 'primary', Blocked: 'warning', Done: 'success' } 
 
 export default function ProjectStatus() {
   return (
-    // On a phone, each project is a block of its own rather than a row that scrolls sideways.
     <Table.Root caption="Projects" narrowLayout="stack">
       <Table.Head>
         <Table.Row>

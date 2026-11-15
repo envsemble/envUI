@@ -1,9 +1,6 @@
-/* The start of a page's Rules, from its frontmatter: a short plain list of what it is for under Use
-   it when. */
 .site-when {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  /* Apart, as one sub-topic from the next. */
   row-gap: var(--env-space-8);
   min-inline-size: 0;
 }
@@ -16,9 +13,6 @@
   margin-block-end: 0;
 }
 
-/* A Use it when list of more than three items runs in two columns where its section has room for
-   both at a readable width, the first half on the left, each column read top to bottom, and no
-   item split between them; one column where it is narrow. */
 .site-when .catalogue-when-columns {
   container-type: inline-size;
 }

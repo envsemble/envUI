@@ -7,15 +7,17 @@ export default function SaveFailed() {
   const timer = useRef<number>(undefined);
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
-  const save = () => {
-    setStatus('saving');
-    // Stands in for a request that fails.
+  const sendRequestThatFails = () => {
     timer.current = window.setTimeout(() => setStatus('failed'), 800);
   };
+  const save = () => {
+    setStatus('saving');
+    sendRequestThatFails();
+  };
+  const returnFocusToTheActionTheAlertConcerns = () => saveButton.current?.focus();
   const dismiss = () => {
     setStatus('idle');
-    // The dismiss button goes with the alert, so focus moves to the action it concerns.
-    saveButton.current?.focus();
+    returnFocusToTheActionTheAlertConcerns();
   };
 
   return (

@@ -6,10 +6,8 @@ import { MotionStage } from '../../figures/MotionStage';
 const box = (index: number) =>
   `.env-checkbox:nth-child(${index} of .env-checkbox) .env-checkbox-box`;
 
-/*
- * The pointer ticks Done, and the count in the button rolls up; it unticks Open, and the count
- * rolls down. It ticks Open again and unticks Done, which brings the count back where it began.
- */
+const widestCountButtonWidth = '8.25rem';
+
 const script: PointerStep[] = [
   { wait: 300 },
   { to: box(3) },
@@ -33,14 +31,12 @@ const script: PointerStep[] = [
 function Choosing() {
   usePointer(script);
   return (
-    // As wide as the button with its widest count, so nothing moves as the count changes.
-    <div style={{ inlineSize: '8.25rem' }}>
+    <div style={{ inlineSize: widestCountButtonWidth }}>
       <ShowResults />
     </div>
   );
 }
 
-/** The overview's filters, ticked and unticked by a pointer no one sees, and the count rolling. */
 export default function ShowResultsMotion() {
   return (
     <MotionStage label="the count rolling as the filters change">

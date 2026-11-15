@@ -8,10 +8,6 @@ const row = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-i
 const person = (index: number) =>
   `[data-nested] .env-menu-item:nth-child(${index} of .env-menu-item)`;
 
-/*
- * The pointer opens Share and rests on Send to, whose submenu opens beside it. It moves into the
- * submenu and down its people, and a press outside closes the menus.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-button', x: 0.6, y: 0.6 },
@@ -39,15 +35,12 @@ const script: PointerStep[] = [
 function Opening() {
   usePointer(script);
   return (
-    // Share sits at the start of a box as wide as its menu and submenu together, which the stage
-    // centres.
     <Column align="start" style={{ blockSize: '14rem', inlineSize: 'min(100%, 27rem)' }}>
       <Submenus />
     </Column>
   );
 }
 
-/** Share's submenu, opened beside its row by a pointer no one sees. */
 export default function SubmenusMotion() {
   return (
     <MotionStage label="the submenu opening">

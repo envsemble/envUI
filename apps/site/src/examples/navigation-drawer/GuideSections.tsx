@@ -11,7 +11,6 @@ const pages = [
 
 export default function GuideSections() {
   const [current, setCurrent] = useState('/guide/install');
-  // Without icons, the drawer suits the sections of a guide; NavigationRail and NavigationBar need icons.
   const destinations: NavigationDrawerDestination[] = pages.map((page) => ({
     ...page,
     current: current === page.href,

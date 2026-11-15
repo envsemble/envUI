@@ -4,14 +4,8 @@ export default function PersonDetails() {
   return (
     <Text>
       Assigned to{' '}
-      <HoverCard
-        // Shown open in the docs; without defaultOpen, it opens on hover and focus.
-        defaultOpen
-        width="lg"
-        trigger={<Link href="/people/priya-shah">Priya Shah</Link>}
-      >
+      <HoverCard defaultOpen width="lg" trigger={<Link href="/people/priya-shah">Priya Shah</Link>}>
         <Column gap={3}>
-          {/* The avatar beside the name and role. */}
           <Row align="center" gap={3}>
             <Avatar name="Priya Shah" size="lg" />
             <div>

@@ -7,11 +7,6 @@ import { Renew } from '../../motion/Renew';
 
 const field = '.env-popover .env-text-field-input';
 
-/*
- * The pointer presses Rename, and the popover opens with the name in its field; it takes "plan.md"
- * off the end, types "brief.md" and presses Rename in the popover, which closes as the title takes
- * the new name. The example is drawn anew at the end, with its first name.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
@@ -22,7 +17,7 @@ const script: PointerStep[] = [
   { wait: 120 },
   { click: true },
   { wait: 180 },
-  { erase: 7, into: field, every: 90 },
+  { erase: 'plan.md'.length, into: field, every: 90 },
   { wait: 150 },
   { type: 'brief.md', into: field, every: 120 },
   { wait: 300 },
@@ -40,8 +35,6 @@ function Renaming() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // The title and trigger at the top of a box as tall as they and the open popover, so the
-    // popover fits in the stage from the start.
     <div style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%' }}>
       <div style={{ minBlockSize: '15rem' }}>
         <Renew round={round}>
@@ -52,7 +45,6 @@ function Renaming() {
   );
 }
 
-/** A document renamed in a popover that opens from its button, by a pointer no one sees. */
 export default function RenameInPlaceMotion() {
   return (
     <MotionStage label="the document renamed in the popover">

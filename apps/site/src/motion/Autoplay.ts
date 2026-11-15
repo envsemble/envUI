@@ -2,27 +2,11 @@ import { useEffect, useSyncExternalStore, type RefObject } from 'react';
 import { useDisplaySettings } from '../display/useDisplaySettings';
 import { reducedMotionQuery } from '../shared/ReducedMotion';
 
-/*
- * Tiles that play by themselves where the reader can't hover, as on a phone, where the galleries
- * read as a feed. Once scrolling settles, the tile that is mostly in view and nearest the middle of
- * the viewport plays, and the one that played before goes back to its still, as when the pointer
- * leaves it. Only one tile plays at a time on the whole page, the galleries' tiles and Related's
- * alike. Nothing plays by itself when the Display menu paused the animations or the reader prefers
- * reduced motion.
- */
-
-/** A device without hover: a touch screen. A mouse, at any width, keeps hover and focus. */
 const touchQuery = '(hover: none), (pointer: coarse)';
-/**
- * How long scrolling must rest before a tile starts, in ms, so a fling plays nothing on its way.
- */
-const settle = 150;
-/** The share of a tile in view that counts as mostly in view. */
-const mostly = 0.6;
-/** How much nearer the middle another tile has to be to take over from the one playing, in px. */
-const keep = 48;
+const settleDelayMs = 150;
+const mostlyInViewShare = 0.6;
+const takeoverMarginPx = 48;
 
-/** The tiles that may play by themselves, and those in the viewport now, with their share in it. */
 const tiles = new Set<Element>();
 const inView = new Map<Element, number>();
 let current: Element | null = null;
@@ -36,13 +20,11 @@ function play(next: Element | null) {
   for (const listener of listeners) listener();
 }
 
-/** The share of a box in the viewport, out of as much of the box as the viewport can hold. */
 function shownShare(box: DOMRect) {
   const shown = Math.min(box.bottom, innerHeight) - Math.max(box.top, 0);
   return shown / Math.max(1, Math.min(box.height, innerHeight));
 }
 
-/** Picks the tile to play: the one that is mostly in view and nearest the viewport's middle. */
 function pick() {
   timer = undefined;
   let best: Element | null = null;
@@ -50,7 +32,7 @@ function pick() {
   let currentDistance = Infinity;
   for (const element of inView.keys()) {
     const box = element.getBoundingClientRect();
-    if (shownShare(box) < mostly) continue;
+    if (shownShare(box) < mostlyInViewShare) continue;
     const distance = Math.hypot(
       box.left + box.width / 2 - innerWidth / 2,
       box.top + box.height / 2 - innerHeight / 2,
@@ -61,14 +43,13 @@ function pick() {
       best = element;
     }
   }
-  // The one playing keeps playing unless another is clearly nearer, so a small scroll doesn't
-  // switch them.
-  play(currentDistance - nearest < keep ? current : best);
+  const currentNearEnoughToKeep = currentDistance - nearest < takeoverMarginPx;
+  play(currentNearEnoughToKeep ? current : best);
 }
 
 function schedule() {
   clearTimeout(timer);
-  timer = setTimeout(pick, settle);
+  timer = setTimeout(pick, settleDelayMs);
 }
 
 function start() {
@@ -77,15 +58,12 @@ function start() {
       for (const entry of entries) {
         if (entry.isIntersecting) inView.set(entry.target, entry.intersectionRatio);
         else inView.delete(entry.target);
-        // When the one playing is scrolled mostly out of view, it stops at once, before scrolling
-        // settles.
-        if (entry.target === current && entry.intersectionRatio < mostly) play(null);
+        if (entry.target === current && entry.intersectionRatio < mostlyInViewShare) play(null);
       }
       schedule();
     },
-    { threshold: [0, mostly] },
+    { threshold: [0, mostlyInViewShare] },
   );
-  // Scrolling anywhere, the page or a box inside it, moves the tiles.
   addEventListener('scroll', schedule, { capture: true, passive: true });
   addEventListener('resize', schedule);
   return (observer = watching);
@@ -100,7 +78,6 @@ function stop() {
   removeEventListener('resize', schedule);
 }
 
-/** Adds a tile to those that play by themselves. Returns the function that removes it. */
 function register(element: Element) {
   tiles.add(element);
   (observer ?? start()).observe(element);
@@ -119,10 +96,6 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
-/**
- * Whether a media query matches now, updated as it changes. Takes the query, or a function that
- * returns its MediaQueryList, such as the library's reducedMotionQuery.
- */
 export function useMedia(query: string | (() => MediaQueryList | null)) {
   const list = () => (typeof query === 'string' ? matchMedia(query) : query());
   return useSyncExternalStore(
@@ -136,12 +109,6 @@ export function useMedia(query: string | (() => MediaQueryList | null)) {
   );
 }
 
-/**
- * Whether a tile plays by itself now: on a device without hover, while it is the tile that is
- * mostly in view and nearest the viewport's middle. `held` is whether the keyboard plays it, which
- * makes it the one that plays, so two never play at once. Pass the tile's element, the one its link
- * covers.
- */
 export function useAutoplay(element: RefObject<HTMLElement | null>, held = false) {
   const { motionPaused } = useDisplaySettings();
   const touch = useMedia(touchQuery);

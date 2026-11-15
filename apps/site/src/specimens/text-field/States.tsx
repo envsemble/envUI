@@ -1,10 +1,6 @@
 import { TextField } from '@envsemble/envui';
 import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
-/**
- * An outline field in each state, side by side: empty, under the pointer and focused as the
- * catalogue forces them (InteractionStates.css), filled, invalid, read-only and disabled.
- */
 export default function States() {
   return (
     <SpecimenFrame size="collection" still>

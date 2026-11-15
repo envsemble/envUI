@@ -7,11 +7,6 @@ import { Renew } from '../../motion/Renew';
 
 const minute = 60_000;
 
-/*
- * The pointer presses Save draft, and the time reads "just now"; then the figure's clock moves on a
- * minute at a time, and the text keeps up, 1 minute ago, 2 minutes ago, with nothing reloaded. The
- * draft is drawn anew at the end, saved 20 minutes ago as it began.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-button', x: 0.55, y: 0.6 },
@@ -29,10 +24,6 @@ const script: PointerStep[] = [
   { wait: 420 },
 ];
 
-/**
- * The overview's draft, its clock the figure's own, `now`, so it can move on faster than time does;
- * the example keeps its text current from the real clock.
- */
 function Draft({ now, savedAt, onSave }: { now: number; savedAt: number; onSave: () => void }) {
   return (
     <Column gap={3} align="start">
@@ -70,7 +61,6 @@ function Saving() {
   );
 }
 
-/** The draft saved, its time reading "just now" and then keeping up as minutes pass. */
 export default function DraftSavedMotion() {
   return (
     <MotionStage label="the saved time keeping up">

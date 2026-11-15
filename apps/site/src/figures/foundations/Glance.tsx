@@ -14,15 +14,6 @@ import { IconShare } from '@envsemble/envui/icons/Share';
 import { IconStar } from '@envsemble/envui/icons/Star';
 import { edges, gap, Item, Mark } from './LayoutDrawing';
 
-/*
- * The pictures of the page of all foundations (FoundationCatalogue.tsx), one for each foundation:
- * the system's own values in its tokens, so they follow the reader's theme, contrast and scale.
- * Space, width and the keyboard are drawn in hairlines (LayoutDrawing.ts);
- * type, color and icons show themselves. They are pictures: hidden from assistive technology,
- * since the foundation's name beside them says what they are.
- */
-
-/** The tones of the palette, as the Colors page names them. */
 const tones = [
   { id: 'primary', name: 'Primary' },
   { id: 'accent', name: 'Accent' },
@@ -40,7 +31,6 @@ const toneStyle = (tone: string): CSSProperties => ({
     tone === 'neutral' ? 'var(--env-color-fg-default)' : `var(--env-color-fg-${tone})`,
 });
 
-/** A row for each tone: its name, then its soft fill, its solid fill and its text. */
 function ColorsPicture() {
   return (
     <div className="catalogue-glance catalogue-glance-palette" aria-hidden="true">
@@ -60,7 +50,6 @@ function ColorsPicture() {
   );
 }
 
-/** The text styles, largest first, each named in itself, as the Typography page names them. */
 const styles: readonly { variant: TextVariant; name: string }[] = [
   { variant: 'display', name: 'Display' },
   { variant: 'headline', name: 'Headline' },
@@ -70,7 +59,6 @@ const styles: readonly { variant: TextVariant; name: string }[] = [
   { variant: 'caption', name: 'Caption' },
 ];
 
-/** The typeface's letters large, and each style's name in its style. */
 function TypographyPicture() {
   return (
     <div className="catalogue-glance catalogue-glance-type" aria-hidden="true">
@@ -86,40 +74,36 @@ function TypographyPicture() {
   );
 }
 
-/** The frame's inset, the space within a group and the space between the groups. */
-const inset = 'var(--env-space-4)';
-const within = 'var(--env-space-3)';
-const between = 'var(--env-space-7)';
+const frameInset = 'var(--env-space-4)';
+const spaceWithinGroup = 'var(--env-space-3)';
+const spaceBetweenGroups = 'var(--env-space-7)';
 
-/** Where a mark stands in the frame's inset, centred in it. */
-const inInset = `calc((${inset} - var(--env-space-1)) / 2)`;
+const markOffsetInInset = `calc((${frameInset} - var(--env-space-1)) / 2)`;
 
-/** The first group's heading, by its height. */
-const heading = '1.25rem';
+const headingHeight = '1.25rem';
 
-/**
- * Space groups things: in a frame, a heading and its lines close together, and further below, a
- * group of a field, a button and an icon button of one height, each in its corners; the space
- * within the first group and between the two marked at the start.
- */
 function SpacingPicture() {
   return (
     <div className="catalogue-glance catalogue-glance-drawing" aria-hidden="true">
-      <div style={{ position: 'relative', padding: inset }}>
+      <div style={{ position: 'relative', padding: frameInset }}>
         {edges()}
         <Mark
-          {...gap('block', { from: `calc(${inset} + ${heading})`, across: within, off: inInset })}
+          {...gap('block', {
+            from: `calc(${frameInset} + ${headingHeight})`,
+            across: spaceWithinGroup,
+            off: markOffsetInInset,
+          })}
         />
         <Mark
           {...gap('block', {
-            from: `calc(${inset} + ${heading} + 2 * ${within} + 1.75rem)`,
-            across: between,
-            off: inInset,
+            from: `calc(${frameInset} + ${headingHeight} + 2 * ${spaceWithinGroup} + 1.75rem)`,
+            across: spaceBetweenGroups,
+            off: markOffsetInInset,
           })}
         />
         <Column gap={7} style={{ position: 'relative' }}>
           <Column gap={3}>
-            <Item width="6rem" height={heading} />
+            <Item width="6rem" height={headingHeight} />
             <Item width="10rem" height="0.875rem" />
             <Item width="8rem" height="0.875rem" />
           </Column>
@@ -134,7 +118,6 @@ function SpacingPicture() {
   );
 }
 
-/** The four window classes, each a window of its width with the panes a layout gives it there. */
 const windows = [
   { id: 'compact', name: 'Compact', panes: 1 },
   { id: 'medium', name: 'Medium', panes: 1 },
@@ -142,7 +125,6 @@ const windows = [
   { id: 'large', name: 'Large', panes: 3 },
 ] as const;
 
-/** A window of each class, side by side from the narrowest, with its panes, and its name. */
 function ResponsivePicture() {
   return (
     <div className="catalogue-glance catalogue-glance-windows" aria-hidden="true">
@@ -180,7 +162,6 @@ const icons = [
   IconDelete,
 ];
 
-/** A grid of icons, outlined, with one selected and filled, as navigation fills its current place. */
 function IconsPicture() {
   return (
     <div className="catalogue-glance catalogue-glance-icons" aria-hidden="true">
@@ -193,14 +174,10 @@ function IconsPicture() {
   );
 }
 
-/**
- * A small form drawn in hairlines, a field, a checkbox with its label and a button, the focus ring
- * around the button, and beside it the key that moves the ring from one to the next.
- */
 function AccessibilityPicture() {
   return (
     <div className="catalogue-glance catalogue-glance-drawing" aria-hidden="true">
-      <div style={{ position: 'relative', padding: inset }}>
+      <div style={{ position: 'relative', padding: frameInset }}>
         {edges()}
         <Column gap={3} align="start" style={{ position: 'relative' }}>
           <Item width="8rem" height="1.75rem" radius="var(--env-radius-sm)" />
@@ -218,7 +195,6 @@ function AccessibilityPicture() {
   );
 }
 
-/** Each foundation's picture, by its page's id. */
 export const glancePictures: Record<string, ComponentType> = {
   colors: ColorsPicture,
   typography: TypographyPicture,

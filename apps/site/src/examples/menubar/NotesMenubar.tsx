@@ -9,7 +9,6 @@ const recent = ['Roadmap', 'Interview notes', 'Launch checklist'];
 
 export default function NotesMenubar() {
   const note = useRef<HTMLTextAreaElement>(null);
-  // The field that had focus before the menubar took it, which Edit commands act on.
   const editTarget = useRef<Element | null>(null);
   const [lastCommand, setLastCommand] = useState('');
   const [wordWrap, setWordWrap] = useState(true);
@@ -19,7 +18,6 @@ export default function NotesMenubar() {
 
   return (
     <Column gap={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
-      {/* Stands in for the application's window. */}
       <Surface background="default" padding={3}>
         <Column gap={3}>
           <Menubar.Root aria-label="Notes menu" accessKeys>

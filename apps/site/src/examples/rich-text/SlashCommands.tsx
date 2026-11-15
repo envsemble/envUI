@@ -1,6 +1,5 @@
 import { RichTextEditor, type RichTextSlashCommand } from '@envsemble/envui/rich-text';
 
-// The application's own commands follow the built-in blocks in the menu.
 const commands: RichTextSlashCommand[] = [
   {
     id: 'agenda',

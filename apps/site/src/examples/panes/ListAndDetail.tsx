@@ -11,9 +11,6 @@ export default function ListAndDetail() {
   const [chosen, setChosen] = useState(messages[0]);
   const [open, setOpen] = useState(false);
   return (
-    // Side by side from an expanded width of their own; narrower, one at a time, the message
-    // with a back button to the list. Each pane holds a surface, so the divider is the gap
-    // between two surfaces.
     <Panes.Root
       behavior="list-detail"
       open={open}
@@ -29,7 +26,6 @@ export default function ListAndDetail() {
                 key={message.id}
                 current={message.id === chosen.id}
                 label={
-                  // The row's target: the item that opens the message, where Back returns focus.
                   <Link
                     href={`/inbox/${message.id}`}
                     underline={false}

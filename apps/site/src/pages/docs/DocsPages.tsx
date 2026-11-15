@@ -40,21 +40,11 @@ import {
 } from './DocsSections';
 import { wordsInCode, withoutAgentNote } from '../../documentation/DocsContent';
 
-/*
- * The Docs' route views: a guide, the token reference, the changelog, a foundation's developer
- * part and a component's reference, each placing its sections (DocsSections.tsx).
- */
-
-/** On the Docs' home, the guide's note on coding agents moves up under the prompt. */
 function guideParts(whole: DocumentationEntry, home: boolean) {
   const { markdown, note } = home ? withoutAgentNote(whole.markdown ?? '') : {};
   return { document: note ? { ...whole, markdown } : whole, note };
 }
 
-/**
- * A guide of docs/, such as migration, with its figures in place. The setup guide is the Docs'
- * home, with the prompt that sets envUI up with a coding agent at its top.
- */
 export function GuidePage({ page }: { page: DocumentPage }) {
   const whole = useDocument(page.document);
   const home = page.path === docsRoute;
@@ -77,7 +67,6 @@ export function GuidePage({ page }: { page: DocumentPage }) {
   );
 }
 
-/** Every design token, with its value in each theme and scale. */
 export function TokensPage({ page }: { page: RoutePage }) {
   return (
     <>
@@ -98,14 +87,9 @@ export function TokensPage({ page }: { page: RoutePage }) {
   );
 }
 
-/** The Changelog page's two sections. */
 const highlights = { id: 'highlights', label: 'Highlights' };
 const everyChange = { id: 'every-change', label: 'Every change' };
 
-/**
- * What changed in each release of @envsemble/envui: the release notes, a few lines on each release
- * with what it breaks, then every change as the releases write them.
- */
 export function ChangelogDocsPage({ page }: { page: RoutePage }) {
   return (
     <>
@@ -137,11 +121,6 @@ export function ChangelogDocsPage({ page }: { page: RoutePage }) {
   );
 }
 
-/**
- * A foundation's page in the Docs, the developer part its page in the catalogue leaves out, from
- * the same file: Compose, the words of the page mapped to code, and what the application and envUI
- * provide. No Related.
- */
 export function FoundationGuidePage({ page }: { page: DocumentPage }) {
   const document = useDocument(page.document);
   return (
@@ -163,22 +142,12 @@ export function FoundationGuidePage({ page }: { page: DocumentPage }) {
   );
 }
 
-/**
- * A component's page in the Docs, its guide to using it in code, which complements
- * its page in the catalogue rather than repeating it: how to import it, its common uses, how its
- * parts compose and how to customize it, from the page's Compose; what the
- * application and envUI provide, which the catalogue leaves out; then, as reference, its props,
- * part names and color properties, and its changelog. It repeats no section of the catalogue and
- * shows no Related: the page goes from its header to Import and Usage, which a component's opens
- * with the component, live and compact: its catalogue's first overview example. Field, which has
- * no page in the catalogue, shows its whole page here, on the page, as "Build your own field".
- */
+const guideThenReference = 2;
+
 export function DocsReferencePage({ page }: { page: DocumentPage }) {
   const document = useDocument(page.document);
   const cataloguePage = cataloguePageOf(document);
   const metadata = document.metadata;
-  // The guide, then once it has painted its reference, together: each step lays the whole page out
-  // again, which costs more here than a step saves (useRevealed).
   const guide = useMemo(
     () => <CodeGuide document={document} showExample={!!cataloguePage} />,
     [document, cataloguePage],
@@ -196,7 +165,7 @@ export function DocsReferencePage({ page }: { page: DocumentPage }) {
       ].filter(Boolean),
     [document, cataloguePage, metadata],
   );
-  const revealed = useRevealed(2);
+  const referencePending = useRevealed(guideThenReference) < guideThenReference;
   return (
     <>
       <SiteBanner
@@ -207,27 +176,18 @@ export function DocsReferencePage({ page }: { page: DocumentPage }) {
         meta={metadata && <MetadataBadges metadata={metadata} />}
         corner={<PartSwitch page={page} />}
       />
-      {/* Field, which has no page in the catalogue, shows the whole file, what envUI and the
-          application provide in place. */}
       {!cataloguePage && <TemplateContent document={document} provides related={false} />}
-      <Column gap={8} className="site-article docs-api" aria-busy={revealed < 2 || undefined}>
+      <Column gap={8} className="site-article docs-api" aria-busy={referencePending || undefined}>
         {guide}
-        {/* Until then, the reference is its outline, its headings hidden in place, which the
-            page's contents list from the start (SectionOutline). */}
-        <SectionOutline value={revealed < 2}>{parts}</SectionOutline>
+        <SectionOutline value={referencePending}>{parts}</SectionOutline>
       </Column>
     </>
   );
 }
 
-/** The page in the catalogue of a page in the Docs, if it has one. */
 const cataloguePageOf = (document: DocumentationEntry) =>
   pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
 
-/**
- * The sections of a page in the Docs, as its view renders them, for the page's contents to list
- * from the first render: each the id and words of its heading.
- */
 export function docsContents(
   page: RoutePage,
   whole: DocumentationEntry | undefined,

@@ -1,7 +1,6 @@
 import { Avatar, avatarHues, Row } from '@envsemble/envui';
 import { SpecimenFrame, SpecimenGrid, SpecimenPart } from '../../figures/SpecimenFrame';
 
-/** Every hue an avatar without a picture takes, with initials and with the default person picture. */
 export default function Hues() {
   return (
     <SpecimenFrame size="collection">

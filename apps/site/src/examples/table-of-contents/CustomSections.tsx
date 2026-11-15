@@ -8,7 +8,6 @@ const results = [
 export default function CustomSections() {
   return (
     <Row gap={5} align="start" style={{ inlineSize: '100%' }}>
-      {/* The sections are cards, not headings: the contents names each in words of its own. */}
       <TableOfContents
         aria-label="Sections of the review"
         style={{ inlineSize: '9rem', flexShrink: 0 }}

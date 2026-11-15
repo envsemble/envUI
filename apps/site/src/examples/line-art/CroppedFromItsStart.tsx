@@ -2,7 +2,6 @@ import { LineArt, PageHeader, Surface } from '@envsemble/envui';
 
 export default function CroppedFromItsStart() {
   return (
-    // As the banner narrows, the drawing keeps its end in view and loses its start.
     <Surface
       background="default"
       padding={6}

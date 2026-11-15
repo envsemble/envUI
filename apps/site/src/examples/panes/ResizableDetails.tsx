@@ -2,9 +2,6 @@ import { Column, DescriptionList, Panes, Surface, Text } from '@envsemble/envui'
 
 export default function ResizableDetails() {
   return (
-    // Each pane holds a surface, and the divider is the gap between them, with its grip in the
-    // middle. It resizes the supporting pane, by pointer and the arrow keys, and the width people
-    // choose is kept on this device.
     <Panes.Root
       behavior="supporting"
       splitAt="medium"

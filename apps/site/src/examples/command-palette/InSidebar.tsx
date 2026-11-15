@@ -46,7 +46,6 @@ export default function InSidebar() {
             variant="secondary"
             fullWidth
             startIcon={<IconSearch />}
-            // The keys show the shortcut, which aria-keyshortcuts announces.
             end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
             aria-keyshortcuts={`${modifier.key}+K`}
             onClick={() => setOpen(true)}

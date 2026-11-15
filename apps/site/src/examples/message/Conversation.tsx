@@ -9,6 +9,7 @@ interface Entry {
 
 const answer =
   'Noted. I added it to the launch checklist and will remind Sam Lee on Friday, before the review.';
+const simulatedWordMs = 120;
 
 export default function Conversation() {
   const [messages, setMessages] = useState<Entry[]>([
@@ -40,7 +41,6 @@ export default function Conversation() {
       { id: id + 1, from: 'other', text: words[0] },
     ]);
     setReplying(true);
-    // A timer stands in for a reply that streams in word by word.
     timer.current = window.setInterval(() => {
       shown += 1;
       const reply = words.slice(0, shown).join(' ');
@@ -48,7 +48,7 @@ export default function Conversation() {
         list.map((entry) => (entry.id === id + 1 ? { ...entry, text: reply } : entry)),
       );
       if (shown === words.length) stop();
-    }, 120);
+    }, simulatedWordMs);
   }
 
   return (

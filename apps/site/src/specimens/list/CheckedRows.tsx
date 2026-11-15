@@ -6,11 +6,6 @@ import { MotionStage } from '../../figures/MotionStage';
 const box = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) .env-list-item-start`;
 
-/*
- * Pricing research is checked. The pointer checks Roadmap and then Interview notes, and the button
- * counts up, to Download 2 files and then 3 files; it unchecks them again, and the count goes back
- * to 1 file, as it began.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: box(1) },
@@ -38,7 +33,6 @@ function Checking() {
   return <CheckedRows />;
 }
 
-/** Files checked one by one by a pointer no one sees, the button counting them. */
 export default function CheckedRowsMotion() {
   return (
     <MotionStage label="rows checked for an action">

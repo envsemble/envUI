@@ -15,7 +15,6 @@ export default function FindPlan() {
   const [query, setQuery] = useState('');
   const [opened, setOpened] = useState('');
   const search = query.trim().toLowerCase();
-  // The results start once people type, and grow down below the field, which stays put.
   const matches = search ? plans.filter((plan) => plan.name.toLowerCase().includes(search)) : [];
   return (
     <Column gap={4} align="start">

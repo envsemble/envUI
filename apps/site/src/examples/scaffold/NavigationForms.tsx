@@ -16,10 +16,8 @@ import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 
-/** Stands in for the window: a Scaffold fills its container, the window's height by default. */
-const preview: CSSProperties = { blockSize: '22rem' };
+const previewWindow: CSSProperties = { blockSize: '22rem' };
 
-/** What each destination shows: a list longer than the window, which scrolls under the bars. */
 const contents: Record<string, { label: string; description: string }[]> = {
   Home: [
     { label: 'Website refresh', description: 'Updated today by Priya Shah' },
@@ -54,7 +52,6 @@ const contents: Record<string, { label: string; description: string }[]> = {
 
 export default function NavigationForms() {
   const [current, setCurrent] = useState('Home');
-  // One array of destinations, which each navigation form takes.
   const destinations: Destination[] = [
     { label: 'Home', icon: <IconHome /> },
     { label: 'Inbox', icon: <IconInbox />, count: 3 },
@@ -65,12 +62,10 @@ export default function NavigationForms() {
     onClick: () => setCurrent(destination.label),
   }));
   return (
-    // The Scaffold shows the form for its own width: the bar in a compact width, the rail in a
-    // medium one and the drawer from expanded.
     <Scaffold
       scroll="body"
       landmarks={false}
-      style={preview}
+      style={previewWindow}
       topBar={
         <TopBar title="Northwind" end={<IconButton icon={<IconSearch />} aria-label="Search" />} />
       }

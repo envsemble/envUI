@@ -5,11 +5,8 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const zone = '.env-drop-zone-target';
 
-/*
- * The pointer carries logo.png in from outside the stage: the zone lights up under it, and the
- * pointer drops it. A spinner takes the icon's place while it uploads, and then the logo shows
- * with Replace and Remove. The pointer presses Remove, and the zone is back.
- */
+const zoneHeight = '9.5625rem';
+
 const script: PointerStep[] = [
   { wait: 300 },
   { carry: 'logo.png', as: 'image/png' },
@@ -29,13 +26,12 @@ const script: PointerStep[] = [
 function Uploading() {
   usePointer(script);
   return (
-    // As tall as the zone, so the logo's row takes its place at its top.
     <div
       style={{
         display: 'grid',
         alignContent: 'start',
         inlineSize: '100%',
-        minBlockSize: '9.5625rem',
+        minBlockSize: zoneHeight,
       }}
     >
       <div style={{ display: 'grid', justifyItems: 'center' }}>
@@ -45,7 +41,6 @@ function Uploading() {
   );
 }
 
-/** A logo dropped on the zone by a pointer no one sees: it uploads, then shows. */
 export default function LogoUploadMotion() {
   return (
     <MotionStage label="a logo dropped and uploaded">

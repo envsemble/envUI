@@ -8,11 +8,6 @@ const parent = `${group} > .env-checkbox .env-checkbox-input`;
 const child = (index: number) =>
   `${group} > * > .env-checkbox:nth-child(${index} of .env-checkbox) .env-checkbox-input`;
 
-/*
- * One project of three is ticked, so All projects is mixed. The pointer ticks the other two, and
- * the parent turns checked; it presses the parent, which clears them all; it ticks the first
- * project, and the parent is mixed again, where it began.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: child(2) },
@@ -40,7 +35,6 @@ function Selecting() {
   return <SelectAll />;
 }
 
-/** A parent checkbox following its children as a pointer no one sees ticks them. */
 export default function SelectAllMotion() {
   return (
     <MotionStage label="the parent following its children">

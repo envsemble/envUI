@@ -5,10 +5,6 @@ import { MotionStage } from '../../figures/MotionStage';
 
 const dismiss = '.env-toast .env-toast-dismiss';
 
-/*
- * The pointer presses Export members and moves away: a moment later the export is ready, and its
- * notification stays, however long it waits, until the pointer dismisses it.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { to: '.env-button', x: 0.5, y: 2 },
@@ -31,7 +27,6 @@ function Exporting() {
   return <ExportReady />;
 }
 
-/** An export that finishes later, its notification kept until a pointer no one sees dismisses it. */
 export default function ExportReadyMotion() {
   return (
     <MotionStage label="a notification kept until it is dismissed" height="16rem">

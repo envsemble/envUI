@@ -8,7 +8,6 @@ import { IconViewTimeline } from '@envsemble/envui/icons/ViewTimeline';
 export default function SmallToolbar() {
   const [layout, setLayout] = useState('list');
   return (
-    // The toolbar is as wide as its controls.
     <Column gap={4} align="start">
       <Surface
         background="default"
@@ -26,7 +25,6 @@ export default function SmallToolbar() {
           items={[
             { value: 'list', label: 'List', icon: <IconViewList /> },
             { value: 'board', label: 'Board', icon: <IconViewModule /> },
-            // Not available yet for this workspace.
             { value: 'timeline', label: 'Timeline', icon: <IconViewTimeline />, disabled: true },
           ]}
         />

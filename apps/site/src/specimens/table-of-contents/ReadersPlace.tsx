@@ -5,7 +5,6 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 
-/** The guide's sections, with ids of the figure's own, as a page holds them once. */
 const sections = [
   { id: 'catalogue-readers-place-install', title: 'Install' },
   { id: 'catalogue-readers-place-configure', title: 'Configure' },
@@ -13,15 +12,9 @@ const sections = [
   { id: 'catalogue-readers-place-monitor', title: 'Monitor' },
 ];
 
-/** A section's entry in the contents, by its place in the guide, from 1. */
-const entry = (index: number) => `.env-table-of-contents-link[href="#${sections[index - 1].id}"]`;
+const entry = (placeFromOne: number) =>
+  `.env-table-of-contents-link[href="#${sections[placeFromOne - 1].id}"]`;
 
-/*
- * The reader scrolls the guide down a section, the shape beside the contents gliding with their
- * place; the pointer presses Deploy, and the guide scrolls that section to its top, below the
- * guide's header, which stays; the pointer rests on a later entry, which swells the shape a
- * little; and the guide scrolls back to its start.
- */
 const script: PointerStep[] = [
   { wait: 540 },
   { cue: 'next' },
@@ -42,31 +35,28 @@ function Reading() {
   const guide = useRef<HTMLDivElement>(null);
   const header = useRef<HTMLDivElement>(null);
   const at = useRef(0);
-  /** Scrolls the guide to a section, its top just below the header. */
-  const show = (index: number) => {
+  const scrollSectionBelowHeader = (index: number) => {
     const element = guide.current;
     if (!element) return;
     at.current = index;
     const section = element.querySelector<HTMLElement>(`#${sections[index].id}`);
-    // The guide is the sections' offset parent, so a section's offset is its scroll position.
-    const top = (section?.offsetTop ?? 0) - (header.current?.offsetHeight ?? 0);
+    const sectionScrollTopInGuide = section?.offsetTop ?? 0;
+    const top = sectionScrollTopInGuide - (header.current?.offsetHeight ?? 0);
     element.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   };
   usePointer(script, {
-    onCue: (cue) => show(cue === 'start' ? 0 : Math.min(at.current + 1, sections.length - 1)),
+    onCue: (cue) =>
+      scrollSectionBelowHeader(cue === 'start' ? 0 : Math.min(at.current + 1, sections.length - 1)),
   });
-  // A link scrolls its section to the top of the page and puts it in the address; on the stage,
-  // the figure scrolls its guide there instead, as the link does the page.
-  const follow = (event: MouseEvent) => {
+  const scrollGuideInsteadOfPage = (event: MouseEvent) => {
     const link = event.target instanceof Element ? event.target.closest('a') : null;
     const index = sections.findIndex(({ id }) => link?.getAttribute('href') === `#${id}`);
     if (index < 0) return;
     event.preventDefault();
-    show(index);
+    scrollSectionBelowHeader(index);
   };
   return (
-    <Row gap={6} align="start" onClickCapture={follow}>
-      {/* The guide, a pane that scrolls under its header, which stays. */}
+    <Row gap={6} align="start" onClickCapture={scrollGuideInsteadOfPage}>
       <Surface
         ref={guide}
         radius="sm"
@@ -81,7 +71,6 @@ function Reading() {
       >
         <div
           ref={header}
-          // On the pane's own fill, so the sections pass under it.
           style={{
             position: 'sticky',
             insetBlockStart: 0,
@@ -116,7 +105,6 @@ function Reading() {
   );
 }
 
-/** TableOfContents beside a guide as it scrolls: the shape beside it marks the reader's place. */
 export default function ReadersPlace() {
   return (
     <SpecimenFrame size="content">

@@ -5,8 +5,6 @@ import { IconInfo } from '@envsemble/envui/icons/Info';
 export default function SupportingByWidth() {
   const [open, setOpen] = useState<boolean | null>(null);
   return (
-    // Side by side from 52.5 rem; narrower, Details opens the pane as a sheet: at the end in a
-    // medium width, from the bottom in a compact one.
     <Panes.Root
       behavior="supporting"
       open={open}

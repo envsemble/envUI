@@ -8,11 +8,6 @@ const task = `${editor} li:nth-child(2 of li) .env-checkbox-input`;
 const tuesday = `${editor} .ProseMirror strong`;
 const bold = `${editor} [aria-label="Bold"]`;
 
-/*
- * The pointer ticks "Send the press kit", and the preview below ticks it too. It selects
- * "Tuesday", where Bold shows pressed, and presses Bold: the word turns plain in the editor and
- * in the preview, and bold again with a second press. It unticks the task, as it began.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: task },
@@ -48,8 +43,7 @@ function Editing() {
   );
 }
 
-/** The notes edited, each change mirrored in the preview below, by a pointer no one sees. */
-// eslint-disable-next-line no-restricted-syntax -- named after its example, whose preview is the editor's own
+// eslint-disable-next-line no-restricted-syntax
 export default function EditAndPreviewMotion() {
   return (
     <MotionStage label="the preview following the edits">

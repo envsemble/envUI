@@ -4,7 +4,6 @@ import { Accordion, Button, Column } from '@envsemble/envui';
 export default function OpenFromOutside() {
   const [open, setOpen] = useState<string[]>([]);
   return (
-    // value and onValueChange control which sections are open, such as from a button elsewhere.
     <Column gap={4} align="start" style={{ inlineSize: 'min(100%, 32rem)' }}>
       <Button variant="secondary" onClick={() => setOpen(['billing'])}>
         Show billing help

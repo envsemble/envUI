@@ -3,17 +3,14 @@ import { Badge, Text } from '@envsemble/envui';
 import type { DocumentationMetadata } from '../documentation/DocumentationTypes';
 import { statusTones } from '../routes/PageBadges';
 
-/**
- * Status and first release under the title of a component's page, and after them
- * `children`, such as the button to its counterpart in the catalogue or the Docs.
- */
+const isComponentName = (name: string) => /^[A-Z]/.test(name);
+
 export function MetadataBadges({
   metadata,
   plain = false,
   children,
 }: {
   metadata: Pick<DocumentationMetadata, 'status' | 'statuses' | 'since'>;
-  /** Leave out the statuses of exports that are code, such as a hook, as the catalogue does. */
   plain?: boolean;
   children?: ReactNode;
 }) {
@@ -24,11 +21,8 @@ export function MetadataBadges({
           {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
         </Badge>
       )}
-      {/* In the catalogue, a component's status only: a hook or a function, such as
-          useModifierKey, is code, which the catalogue never names; its page in the Docs shows
-          its status. */}
       {Object.entries(metadata.statuses ?? {})
-        .filter(([name]) => !plain || /^[A-Z]/.test(name))
+        .filter(([name]) => !plain || isComponentName(name))
         .map(([name, status]) => (
           <Badge key={name} tone={statusTones[status]}>
             {`${name}: ${status[0].toUpperCase()}${status.slice(1)}`}

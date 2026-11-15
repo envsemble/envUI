@@ -6,7 +6,6 @@ const documents = ['Launch plan', 'Q3 notes', 'Hiring brief'];
 
 export default function FillSidebar() {
   return (
-    // A sidebar: the group fills its width, above the documents.
     <Surface
       background="page"
       padding={4}

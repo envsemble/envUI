@@ -62,10 +62,9 @@ test('public components import and render on a server with no DOM globals', () =
   assert.match(ssr.html, /aria-label="Hex"/);
   assert.match(ssr.html, /name="accent"[^>]*value="#abcdef"/);
   assert.match(ssr.html, /aria-label="Border color, #123456"/);
-  assert.ok(
-    ssr.html.includes(
-      'class="env-color-swatch-label">Violet</span><span class="env-color-swatch-value">rgb(103, 80, 164)',
-    ),
+  assert.match(
+    ssr.html,
+    /class="env-color-swatch-label"[^>]*>Violet<\/span><span class="env-color-swatch-value">rgb\(103, 80, 164\)/,
     'A color swatch writes its label and its value in the format asked for.',
   );
   assert.match(ssr.html, /data-env-theme="dark"/);

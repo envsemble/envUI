@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
 import { Button, ConfirmDialog, Column, Text } from '@envsemble/envui';
 
+const simulatedArchiveMs = 1200;
+
 export default function AsyncWithError() {
   const [error, setError] = useState('');
   const [result, setResult] = useState('');
   const attempts = useRef(0);
-  // Stands in for a request: the first attempt fails, the next succeeds.
   const archive = () =>
     new Promise<void>((resolve, reject) => {
       attempts.current += 1;
@@ -18,7 +19,7 @@ export default function AsyncWithError() {
           setResult('Northwind launch archived');
           resolve();
         }
-      }, 1200);
+      }, simulatedArchiveMs);
     });
   return (
     <Column gap={4} align="center">

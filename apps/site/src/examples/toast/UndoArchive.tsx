@@ -16,7 +16,6 @@ function Projects() {
           setProjects((current) =>
             initialProjects.filter((project) => project === name || current.includes(project)),
           );
-          // The action doesn't close the notification by itself.
           toast.dismiss(id);
         },
       },

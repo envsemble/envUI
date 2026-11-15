@@ -8,7 +8,6 @@ export default function ExtraContent() {
         description="sam.lee@example.com"
         end={<Button variant="outline">Resend</Button>}
       >
-        {/* Children follow the title and detail, such as a status. */}
         <Badge tone="warning">Expires tomorrow</Badge>
       </List.Item>
       <List.Item

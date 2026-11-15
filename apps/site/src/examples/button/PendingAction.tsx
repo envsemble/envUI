@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { Button, IconButton, Row } from '@envsemble/envui';
 import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 
-/** Work that takes a moment, such as saving; a timer stands in for it here. */
+const simulatedWorkMs = 1800;
+
 function useWork() {
   const [pending, setPending] = useState(false);
   const start = () => {
     setPending(true);
-    window.setTimeout(() => setPending(false), 1800);
+    window.setTimeout(() => setPending(false), simulatedWorkMs);
   };
   return [pending, start] as const;
 }

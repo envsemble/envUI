@@ -15,6 +15,8 @@ const eslintDirective =
 const typeScriptDirective = /^@ts-(?:expect-error|ignore|nocheck|check)(?=\s|:|$)/;
 const bundlerAnnotation = /^(?:[@#]__(?:PURE|NO_SIDE_EFFECTS)__|@vite-ignore)$/;
 const tripleSlashDirective = /^\/\s*<reference\s/;
+const clientModuleMarker = /^@client-module(?=\s|:|$)/;
+const knipTag = /^\*\s*@internal\s*$/;
 const jsDocTypeTag =
   /^@(?:type|typedef|callback|template|satisfies|import|param|returns?|property|overload)\b/;
 const licenceWords = /\b(?:copyright|licen[cs]e|spdx-license-identifier)\b/i;
@@ -26,6 +28,9 @@ function directiveStatus(comment: Comment): 'directive' | 'reasoned' | undefined
   const typeScript = typeScriptDirective.exec(text);
   if (typeScript) return text.slice(typeScript[0].length).trim() ? 'reasoned' : 'directive';
   if (text === 'prettier-ignore' || bundlerAnnotation.test(text)) return 'directive';
+  const clientModule = comment.type === 'Line' && clientModuleMarker.exec(text);
+  if (clientModule) return text.slice(clientModule[0].length).trim() ? 'reasoned' : 'directive';
+  if (comment.type === 'Block' && knipTag.test(comment.value)) return 'directive';
   if (comment.type === 'Line' && tripleSlashDirective.test(comment.value)) return 'directive';
   return undefined;
 }
@@ -57,58 +62,59 @@ const declarationTypes = new Set([
   'TSEnumDeclaration',
   'TSDeclareFunction',
   'TSModuleDeclaration',
+  'ExportNamedDeclaration',
+  'ExportDefaultDeclaration',
+  'ExportAllDeclaration',
 ]);
 
-function declaredNames(node: AnyNode): string[] {
-  if (node.type === 'VariableDeclaration')
-    return (node.declarations as { id: AnyNode }[]).flatMap(({ id }) =>
-      id.type === 'Identifier' ? [id.name as string] : [],
-    );
-  const id = node.id as AnyNode | null | undefined;
-  return id?.type === 'Identifier' ? [id.name as string] : [];
+const memberListKeys: Record<string, string> = {
+  TSTypeLiteral: 'members',
+  TSInterfaceBody: 'body',
+  TSEnumBody: 'members',
+  TSEnumDeclaration: 'members',
+  ClassBody: 'body',
+};
+
+const childNodes = (node: AnyNode) =>
+  Object.entries(node)
+    .filter(([key]) => key !== 'parent' && key !== 'loc' && key !== 'range')
+    .flatMap(([, value]) => (Array.isArray(value) ? value : [value]))
+    .filter((value): value is AnyNode => !!value && typeof value === 'object' && 'type' in value);
+
+function members(node: AnyNode): AnyNode[] {
+  const key = memberListKeys[node.type];
+  const own = key && Array.isArray(node[key]) ? (node[key] as AnyNode[]) : [];
+  return [...own, ...childNodes(node).flatMap(members)];
 }
 
-function typeMembers(node: unknown): AnyNode[] {
-  if (!node || typeof node !== 'object') return [];
-  const typed = node as AnyNode;
-  const own =
-    typed.type === 'TSTypeLiteral'
-      ? (typed.members as AnyNode[])
-      : typed.type === 'TSInterfaceBody'
-        ? (typed.body as AnyNode[])
-        : [];
-  const children = Object.entries(typed)
-    .filter(([key]) => key !== 'parent' && key !== 'loc' && key !== 'range')
-    .flatMap(([, value]) => (Array.isArray(value) ? value : [value]));
-  return [...own, ...children.flatMap(typeMembers)];
+const expressionWrappers = new Set(['TSAsExpression', 'TSSatisfiesExpression']);
+
+function unwrapped(node: AnyNode | null | undefined): AnyNode | undefined {
+  if (!node) return undefined;
+  return expressionWrappers.has(node.type) ? unwrapped(node.expression as AnyNode) : node;
+}
+
+function declarationsOf(statement: AnyNode): AnyNode[] {
+  const declaration = (statement.declaration as AnyNode | null | undefined) ?? statement;
+  return declaration.type === 'VariableDeclaration' ? (declaration.declarations as AnyNode[]) : [];
+}
+
+function objectProperties(statement: AnyNode): AnyNode[] {
+  return declarationsOf(statement).flatMap((declarator) => {
+    const value = unwrapped(declarator.init as AnyNode | null);
+    return value?.type === 'ObjectExpression' ? (value.properties as AnyNode[]) : [];
+  });
 }
 
 function documentableStarts(program: AST.Program) {
-  const body = program.body as unknown as AnyNode[];
-  const exportedNames = new Set(
-    body
-      .filter((node) => node.type === 'ExportNamedDeclaration' && !node.source)
-      .flatMap((node) => node.specifiers as { local: { name?: string } }[])
-      .flatMap(({ local }) => (local.name ? [local.name] : [])),
+  const statements = (program.body as unknown as AnyNode[]).filter((node) =>
+    declarationTypes.has(node.type),
   );
-  const exported = body.flatMap((node): { start: AnyNode; declaration: AnyNode }[] => {
-    if (node.type === 'ExportNamedDeclaration' || node.type === 'ExportDefaultDeclaration')
-      return node.declaration ? [{ start: node, declaration: node.declaration as AnyNode }] : [];
-    if (
-      declarationTypes.has(node.type) &&
-      declaredNames(node).some((name) => exportedNames.has(name))
-    )
-      return [{ start: node, declaration: node }];
-    return [];
-  });
-  const isTypeDeclaration = (node: AnyNode) =>
-    node.type === 'TSInterfaceDeclaration' || node.type === 'TSTypeAliasDeclaration';
   return new Set(
     [
-      ...exported.map(({ start }) => start),
-      ...exported
-        .filter(({ declaration }) => isTypeDeclaration(declaration))
-        .flatMap(({ declaration }) => typeMembers(declaration)),
+      ...statements,
+      ...statements.flatMap(objectProperties),
+      ...childNodes(program as unknown as AnyNode).flatMap(members),
     ].map((node) => node.range?.[0]),
   );
 }
@@ -127,7 +133,7 @@ const noComments: Rule.RuleModule = {
     type: 'suggestion',
     docs: {
       description:
-        'Reports comments other than tool directives, licence headers and doc comments on the public API.',
+        'Reports comments other than tool directives, licence headers and doc comments on declarations and members of the public API.',
     },
     schema: [
       {

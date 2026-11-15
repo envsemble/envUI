@@ -9,12 +9,6 @@ import { Renew } from '../../motion/Renew';
 const tab = (index: number) =>
   `.env-document-tabs-item:nth-child(${index} of .env-document-tabs-item)`;
 
-/*
- * The pointer comes onto Decisions.md, and its close button shows, as the active tab's always
- * does. It moves on to Roadmap.md, the active tab, and presses its close button: the tab closes,
- * and Decisions.md, its neighbour, becomes active. Then the example starts anew,
- * and the tab is back.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: `${tab(2)} .env-document-tabs-tab`, x: 0.5, y: 1.8 },
@@ -43,7 +37,6 @@ function Closing() {
   );
 }
 
-/** A tab closed by its close button, which shows under the pointer; its neighbour takes over. */
 export default function ClosingMotion() {
   return (
     <SpecimenFrame>

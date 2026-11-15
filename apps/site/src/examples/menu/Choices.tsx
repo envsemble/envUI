@@ -13,7 +13,6 @@ export default function Choices() {
   const [hiddenFiles, setHiddenFiles] = useState(false);
   const [extensions, setExtensions] = useState(true);
   return (
-    // The line beside the trigger stays in view while the menu is open below it.
     <Row gap={4} align="center" wrap>
       <Menu.Root
         aria-label="View options"

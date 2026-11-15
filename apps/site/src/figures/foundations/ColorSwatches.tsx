@@ -3,12 +3,6 @@ import { useContext } from 'react';
 import type { FigureWords } from './ColorFigures';
 import { FigurePart } from './FoundationFrame';
 
-/**
- * The colors of each role, in four groups: seven surfaces, six text and line roles, six actions and seven statuses, in the
- * legend's order: each group is a legend entry, its name the group's and its text the names of its
- * roles, separated by commas. A status shows its three colors in one swatch: its text, its soft fill
- * and its solid fill.
- */
 const roleGroups: readonly (readonly (readonly string[])[])[] = [
   [
     ['bg-page'],
@@ -46,11 +40,9 @@ const roleGroups: readonly (readonly (readonly string[])[])[] = [
   ],
 ];
 
-/** A role's name from a group's legend text, "Page, Surface, Filled surface…", by its place. */
 const roleName = (text: string | undefined, index: number) =>
   (text ?? '').replace(/\.$/, '').split(/,\s*/)[index] ?? '';
 
-/** The roles in the reader's theme, each group a continuous strip of swatches: a specimen of the system. */
 export function SwatchesFigure({ legend }: FigureWords) {
   return (
     <div className="catalogue-role-groups" data-site-figure={useContext(FigurePart)}>

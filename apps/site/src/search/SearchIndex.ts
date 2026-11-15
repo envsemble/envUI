@@ -1,6 +1,4 @@
 import MiniSearch from 'minisearch';
-// Written by scripts/site/BuildSearchIndex.ts when the documentation is generated; read as text,
-// which MiniSearch parses on load.
 import serializedIndex from '../generated/SearchIndex.json?raw';
 import {
   indexOptions,
@@ -11,34 +9,21 @@ import {
   type SearchDocument,
 } from '../documentation/SearchTerms';
 
-/** What a search finds: its document's fields that the index stores, and how the query named it. */
 export interface SearchResult extends Pick<
   SearchDocument,
   'id' | 'kind' | 'title' | 'owner' | 'detail' | 'page' | 'area' | 'view' | 'section'
 > {
-  /**
-   * Whether the query matched what it is called, its name, aliases or keywords, not only its text.
-   * An alias that only starts with the query, as Checkbox's select all does "sel", names a result
-   * only where no result's own name starts with it.
-   */
   named: boolean;
-  /**
-   * For a prop, whether the query names the prop itself, its own name and not only its export's,
-   * as "sel" names Table.Row's selected but not Select's open.
-   */
   namesProp: boolean;
 }
 
 const index = MiniSearch.loadJSON(serializedIndex, indexOptions);
 
-/** The words of a name, folded, as a query's are. */
 const wordsOf = (text: string) => tokenize(text).map(processTerm);
 
-/** Whether every word of a query starts a word of one of the names. */
 const startsWords = (words: readonly string[], names: readonly string[]) =>
   words.every((word) => names.some((name) => name.startsWith(word)));
 
-/** The best matches of a query, best first. */
 export function searchDocumentation(query: string, limit: number): SearchResult[] {
   const words = wordsOf(query);
   const key = nameKey(query);
@@ -48,17 +33,15 @@ export function searchDocumentation(query: string, limit: number): SearchResult[
       const { kind, title, owner, match } = result;
       const names = (result.names as readonly string[] | undefined) ?? [];
       const own = wordsOf(title);
-      // Named by what it is called: its own name, or its export's, starts with the query.
       const byName = names.includes(key) || startsWords(words, [...own, ...wordsOf(owner ?? '')]);
-      // Named by a field other than its text, as an alias or keyword: whole words of the query.
-      const fields = Object.entries(match).filter(([, found]) =>
+      const nonTextMatches = Object.entries(match).filter(([, found]) =>
         found.some((field) => field !== 'text'),
       );
       return {
         result,
         byName,
-        byWhole: fields.some(([term]) => words.includes(term)),
-        byPrefix: fields.length > 0,
+        byWholeNonTextWord: nonTextMatches.some(([term]) => words.includes(term)),
+        byNonTextPrefix: nonTextMatches.length > 0,
         namesProp:
           kind === 'prop' &&
           (names.includes(key) ||
@@ -66,11 +49,10 @@ export function searchDocumentation(query: string, limit: number): SearchResult[
               words.some((word) => own.some((name) => name.startsWith(word))))),
       };
     });
-  // An alias the query only starts names a result only where no page's or export's own name does.
-  const ownNamed = results.some(
+  const someOwnNameMatches = results.some(
     ({ result, byName }) => byName && result.kind !== 'prop' && result.kind !== 'token',
   );
-  return results.map(({ result, byName, byWhole, byPrefix, namesProp }) => ({
+  return results.map(({ result, byName, byWholeNonTextWord, byNonTextPrefix, namesProp }) => ({
     id: result.id,
     kind: result.kind,
     title: result.title,
@@ -80,7 +62,8 @@ export function searchDocumentation(query: string, limit: number): SearchResult[
     area: result.area,
     view: result.view,
     section: result.section,
-    named: (byName && byPrefix) || byWhole || (!ownNamed && byPrefix),
+    named:
+      (byName && byNonTextPrefix) || byWholeNonTextWord || (!someOwnNameMatches && byNonTextPrefix),
     namesProp,
   }));
 }

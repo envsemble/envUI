@@ -11,10 +11,6 @@ import { narrowGallery } from './Tiles';
 const row = (id: string) => `.env-tree-item[data-id="${id}"]`;
 const chevron = (id: string) => `${row(id)} .env-tree-chevron`;
 
-/*
- * Collapses Design with its chevron and chooses Roadmap.md in Engineering, which moves up under it.
- * Then expands Design again and chooses Brand.md, as it began.
- */
 const script: PointerStep[] = [
   { wait: 180 },
   { to: row('design/brand.md'), x: 0.6 },
@@ -44,10 +40,6 @@ const files = [
   { id: 'engineering', label: 'Engineering', children: ['Roadmap.md'] },
 ];
 
-/**
- * Two folders of files, both open, with Brand.md chosen. In a phone's narrower tile the tree is a
- * little narrower, so it is drawn at about its own size there.
- */
 export default function TreeTile() {
   const narrow = useMedia(narrowGallery);
   const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());

@@ -12,7 +12,6 @@ const projects = [
 
 export default function SearchInSidebar() {
   const [query, setQuery] = useState('');
-  // The router knows the current page; here a press stands in for it.
   const [current, setCurrent] = useState(projects[0]);
   const destinations: Destination[] = projects
     .filter((name) => name.toLowerCase().includes(query.trim().toLowerCase()))

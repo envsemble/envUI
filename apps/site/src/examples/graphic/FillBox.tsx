@@ -1,6 +1,5 @@
 import { Graphic } from '@envsemble/envui';
 
-/** Stands in for the import of an illustration file, such as `import empty from './empty.svg'`. */
 const illustration =
   'data:image/svg+xml,' +
   encodeURIComponent(
@@ -14,7 +13,6 @@ const illustration =
 
 export default function FillBox() {
   return (
-    // A box of the layout's own, such as an empty state's picture area: fill takes all of it.
     <div style={{ inlineSize: '16rem', blockSize: '8rem' }}>
       <Graphic src={illustration} alt="" size="fill" />
     </div>

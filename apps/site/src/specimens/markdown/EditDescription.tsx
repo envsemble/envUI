@@ -8,11 +8,6 @@ import { Renew } from '../../motion/Renew';
 const source = 'textarea.env-markdown-editor-input';
 const tab = (index: number) => `[role="tab"]:nth-child(${index} of [role="tab"])`;
 
-/*
- * The pointer types a line into the description, selects "review" and presses Bold, which wraps it
- * in asterisks. It switches to Preview, where the text reads as it will, bold included, and back
- * to Write. The editor is then drawn anew as it began, with a short fade (Renew).
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: source, x: 0.85, y: 0.75 },
@@ -47,8 +42,6 @@ function Writing() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // As tall as the editor with the line typed, from the start, the editor at its top, so nothing
-    // moves as it grows.
     <div style={{ inlineSize: 'min(100%, 30rem)', minBlockSize: '25rem' }}>
       <Renew round={round}>
         <div style={{ inlineSize: '100%' }}>
@@ -59,7 +52,6 @@ function Writing() {
   );
 }
 
-/** The description written, formatted and previewed by a pointer no one sees. */
 export default function EditDescriptionMotion() {
   return (
     <MotionStage label="the description written and previewed">

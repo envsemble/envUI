@@ -2,7 +2,6 @@ import { Accordion } from '@envsemble/envui';
 
 export default function SeveralOpen() {
   return (
-    // multiple lets people keep several sections open to compare them.
     <Accordion.Root
       multiple
       defaultValue={['notifications', 'privacy']}

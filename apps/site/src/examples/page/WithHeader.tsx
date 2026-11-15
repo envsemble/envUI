@@ -11,7 +11,6 @@ export default function WithHeader() {
     <Page
       width="md"
       header={
-        // Level 3 inside these docs; a page's own header keeps the default, 1.
         <PageHeader
           headingLevel={3}
           title="Projects"

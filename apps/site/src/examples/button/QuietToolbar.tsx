@@ -7,7 +7,6 @@ export default function QuietToolbar() {
   return (
     <Column gap={4} align="start">
       <Surface background="default" padding={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
-        {/* A toolbar row: the title takes the room the actions leave. */}
         <Row align="center" gap={1}>
           <IconButton variant="ghost" icon={<IconMenu />} aria-label="Toggle sidebar" />
           <Text render={<span />} variant="title" style={{ flex: '1 1 auto' }}>

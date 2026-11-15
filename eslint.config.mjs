@@ -12,6 +12,8 @@ const commentFreeFiles = [
   'tests/**',
   'packages/eslint-plugin/**',
   'packages/stylelint-config/**',
+  'packages/ui/src/**',
+  'apps/site/**',
   '*.{js,mjs,cjs,ts}',
 ];
 const publicApiWithDocComments = '^packages/ui/src/(?!icons/|generated/)';

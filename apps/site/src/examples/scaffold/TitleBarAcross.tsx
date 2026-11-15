@@ -17,7 +17,6 @@ const destinations: Destination[] = [
 
 export default function TitleBarAcross() {
   return (
-    // topBarSpan="full": the top bar runs across the whole width, above the drawer.
     <Scaffold
       scroll="body"
       landmarks={false}

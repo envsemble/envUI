@@ -36,6 +36,15 @@ test('a stylelint-disable directive without a reason passes', async () => {
 test('prettier-ignore passes', () =>
   passes('.grid {\n  /* prettier-ignore */\n  grid-template: "a b" "c d";\n}'));
 
+test('a contrast marker the contrast tests read passes', () =>
+  passes('.thumb {\n  /* contrast: segmented-control-thumb */\n  background: red;\n}'));
+
+test('a contrast marker with more words is reported', () =>
+  fails(
+    '.thumb {\n  /* contrast: the thumb, on purpose */\n  background: red;\n}',
+    nameItInTheCode,
+  ));
+
 test('a licence header at the top of the style sheet passes', () =>
   passes('/* Copyright 2026 Example. Released under the MIT License. */\n.logo { fill: red; }'));
 

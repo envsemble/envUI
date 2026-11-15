@@ -8,9 +8,6 @@ import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
-/*
- * A piece of work's states, each with its tone.
- */
 const states = {
   draft: { tone: 'neutral', label: 'Draft', icon: <IconEditNote /> },
   review: { tone: 'primary', label: 'In review', icon: <IconRateReview /> },
@@ -21,7 +18,6 @@ type State = keyof typeof states;
 
 const action = '.env-button';
 
-/** Releases the work in review with its button, then reopens it, as it began. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: action },
@@ -34,12 +30,6 @@ const script: PointerStep[] = [
   { wait: 360 },
 ];
 
-/**
- * Two pieces of work, each with a badge naming its state in its tone. A badge shows the state it is
- * given, so it changes only when the state does: here when the work in review is released with a
- * button below them, and reopened. Its labels are short and the same at every width. In a phone's
- * narrower tile they sit closer to their badges, so the tile is drawn at about its own size there.
- */
 export default function BadgeTile() {
   const narrow = useMedia(narrowGallery);
   const [launch, setLaunch] = useState<State>('review');

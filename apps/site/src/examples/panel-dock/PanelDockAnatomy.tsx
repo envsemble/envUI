@@ -7,8 +7,6 @@ export default function PanelDockAnatomy() {
     { id: 'budget', title: 'Budget', mode: 'minimized' },
   ]);
   return (
-    // The dock fills a positioned region with a height; a small one, which shows its panels side
-    // by side from 30 rem rather than 40.
     <Surface
       background="muted"
       padding={0}

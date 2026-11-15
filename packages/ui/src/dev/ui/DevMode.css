@@ -1,13 +1,3 @@
-/* Dev mode's own style sheet, which dev/install.tsx imports as text and adds to the document while
-   dev mode is installed: it ships in the dev entry alone, never in styles.css. dev mode is built of
-   envUI's components and layout primitives, which style themselves; these rules place its panes and
-   floating controls and draw the 3D view, from envUI's tokens.
-
-   The rules are in envUI's components layer, after the components' own: a selector of dev mode's
-   own parts is :where(), of no specificity, as the layout primitives' are, so it wins only by
-   coming later; one that adjusts a part of an envUI component it renders, such as a resize
-   handle's place, takes a second class, as the component's own rule does. The first line repeats
-   envUI's layer order, so the components' layer keeps its place whichever style sheet loads first. */
 @layer env.reset, env.tokens, env.base, env.components, env.utilities;
 @layer env.components {
   :where([data-env-dev-host]) {
@@ -19,7 +9,6 @@
   :where(.env-dev) {
     display: contents;
   }
-  /* Dev mode's own popups portal into the host, beside its UI, and take the pointer there. */
   :where([data-env-dev-host] > :not(.env-dev)) {
     pointer-events: auto;
   }
@@ -29,8 +18,6 @@
     inset-inline-end: var(--env-space-4);
     pointer-events: auto;
   }
-  /* The panel covers the whole window: the sidebars on the navigation's background, the view on
-     the page's between them, set apart by their fills with no line between. */
   :where(.env-dev-panel) {
     position: fixed;
     inset: 0;
@@ -45,8 +32,6 @@
     outline: none;
   }
 
-  /* The sidebars: flush, square panes as wide as people drag them, each with the grip of a
-     resizable NavigationDrawer on its inner edge, inside it. */
   :where(.env-dev-sidebar) {
     position: relative;
     flex: none;
@@ -69,8 +54,6 @@
       --_resize-handle-size: var(--env-space-5);
     }
   }
-  /* The header's toggle sits in the window's top corner on the sidebar's side, where it stays
-     floating over the view while the sidebar is hidden. */
   :where(.env-dev-sidebar-head) {
     flex: none;
     padding: var(--env-space-2) var(--env-space-3);
@@ -86,7 +69,6 @@
   :where(.env-dev-sidebar-note) {
     padding-inline: var(--env-space-3);
   }
-  /* The tree scrolls itself; it keeps clear of the resize handle on its end edge. */
   :where(.env-dev-tree) {
     flex: 1 1 auto;
     min-block-size: 0;
@@ -96,8 +78,6 @@
     flex: 1 1 auto;
     min-block-size: 0;
   }
-  /* The inspector's panel scrolls what its tab holds, the readout too, and keeps the wheel at its
-     ends from scrolling the page under dev mode. */
   :where(.env-dev-tab-panel) {
     overflow: auto;
     overscroll-behavior: contain;
@@ -106,16 +86,11 @@
   :where(.env-dev-wrap) {
     overflow-wrap: anywhere;
   }
-  /* Code in dev mode's own panels, in the code type: the Code component lives in the code entry,
-     whose optional peers an app may not have installed. */
   :where(.env-dev-code) {
     font-family: var(--_code-font-family, ui-monospace, monospace);
     font-size: 0.9em;
     overflow-wrap: anywhere;
   }
-  /* The readout, on the muted fill code blocks take, as wide as the sidebar: each line wraps within
-     it, its continuation hanging two characters in from the line's own indent. As tall as its
-     text: a flex item that scrolls would shrink to nothing in a short column. */
   :where(.env-dev-readout) {
     flex: none;
     min-inline-size: 0;
@@ -141,7 +116,6 @@
     color: var(--env-color-fg-danger);
   }
 
-  /* The 3D view, a size container its floating controls follow. */
   :where(.env-dev-view) {
     container: env-dev-view / inline-size;
     position: relative;
@@ -171,8 +145,6 @@
     border-radius: var(--env-radius-xs);
   }
 
-  /* The view's floating controls: surfaces with the edge of a floating layer and no shadow, the
-     toolbar at the top's middle, the corners' buttons in the top corners. */
   .env-dev-float {
     --env-surface-outline: var(--env-elevation-2-border);
     position: absolute;
@@ -192,16 +164,12 @@
   :where(.env-dev-corner[data-side='end']) {
     inset-inline-end: var(--env-space-2);
   }
-  /* The performance panel, which View settings turns on, in the bottom end corner, above the
-     legend. */
   .env-dev-performance {
     inset-block: auto var(--env-space-8);
     inset-inline-end: var(--env-space-2);
     pointer-events: none;
   }
 
-  /* The responsive frame: the rectangle the page is laid out in, above the planes, outlined in the
-     focus color. Its line, handles and label keep their size on screen at any zoom. */
   :where(.env-dev-frame) {
     --_dev-unzoom: calc(1 / var(--_dev-zoom, 1));
     position: absolute;
@@ -249,7 +217,6 @@
     block-size: var(--env-space-2);
     cursor: ns-resize;
   }
-  /* A corner's handle is a small square, which moves both edges. */
   :where(.env-dev-frame-handle:is([data-edge='bottom-start'], [data-edge='bottom-end'])) {
     inline-size: var(--env-space-3);
     block-size: var(--env-space-3);
@@ -268,12 +235,8 @@
     outline-offset: 0.125rem;
   }
 
-  /* Dev mode's own tints, a soft pastel set for the planes of the 3D view and its padding and gap
-     patterns, lighter in the light theme. They are its own, so no public token they once borrowed
-     can change them: the palette's grades 10 (light) and 15 (dark) of each hue, written out because
-     the palette is internal and has no custom properties. */
-  /* stylelint-disable color-no-hex -- the palette's grades, as the comment above says */
-  /* stylelint-disable-next-line no-duplicate-selectors -- the tints keep a rule of their own */
+  /* stylelint-disable color-no-hex */
+  /* stylelint-disable-next-line no-duplicate-selectors */
   :where(.env-dev-view) {
     --_dev-tint-oat: #e7dbce;
     --_dev-tint-seafoam: #b8e7de;
@@ -386,12 +349,11 @@
     font-size: var(--env-font-size-caption);
     font-weight: var(--env-font-weight-medium);
     color: var(--env-color-fg-on-strong);
-    /* stylelint-disable-next-line color-named -- darkens the tint by a tenth in either theme */
+    /* stylelint-disable-next-line color-named */
     background: color-mix(in oklab, var(--_dev-tint) 90%, black);
     border-end-end-radius: 0.125rem;
     pointer-events: none;
   }
-  /* The hovered plane's card follows the pointer, on a popup's fill and edge. */
   :where(.env-dev-card) {
     position: absolute;
     z-index: calc(var(--env-z-raised) + 1);
@@ -402,9 +364,6 @@
     border-radius: var(--env-radius-md);
     pointer-events: none;
   }
-  /* The legend floats over the view with no pane: quiet small text in a corner, where the planes
-     seldom reach, and none in a narrow view, which needs the room. The frame's label is small text
-     too. */
   :where(.env-dev-legend, .env-dev-frame-label) {
     font: var(--env-type-body-sm);
     font-size: var(--env-font-size-caption);
@@ -428,7 +387,6 @@
     outline-width: 1.5px;
     background: color-mix(in oklab, var(--_dev-tint) 45%, transparent);
   }
-  /* The outline entries show an outline alone: solid for a container, dotted for the rest. */
   :where(.env-dev-swatch[data-window='none']) {
     background: none;
   }

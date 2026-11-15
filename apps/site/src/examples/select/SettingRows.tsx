@@ -17,10 +17,7 @@ export default function SettingRows() {
       <List.Item
         label="E-mail digest"
         description="A summary of what changed in your projects."
-        end={
-          // The row's title shows the name, so the select takes it as its aria-label.
-          <Select aria-label="E-mail digest" items={digestOptions} defaultValue="weekly" />
-        }
+        end={<Select aria-label="E-mail digest" items={digestOptions} defaultValue="weekly" />}
       />
       <List.Item
         label="Due date reminders"

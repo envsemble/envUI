@@ -26,7 +26,6 @@ export default function CurrentRow() {
                 data-row-target
                 draggable={false}
                 onClick={(event) => {
-                  // The details show beside the list, so the link only chooses the row.
                   event.preventDefault();
                   setCurrent(id);
                 }}

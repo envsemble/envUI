@@ -8,11 +8,6 @@ const themes: { title: string; theme: ColorScheme; contrast: ThemeContrast }[] =
   { title: 'Dark, high contrast', theme: 'dark', contrast: 'high' },
 ];
 
-/**
- * One drawing in each theme, always the muted edge color, a quiet line: on a light theme's page,
- * deeper than the light canvas, and on a dark theme's surface, lighter than the dark canvas, so
- * every box shows on the canvas in either theme.
- */
 export default function Themes() {
   return (
     <SpecimenFrame size="collection">
@@ -21,7 +16,7 @@ export default function Themes() {
           <SpecimenPart key={title} title={title}>
             <Theme
               theme={theme}
-              contrast={contrast} // The theme's own box, rounded as the surface in it is.
+              contrast={contrast}
               style={{
                 inlineSize: '100%',
                 borderRadius: 'var(--env-radius-surface)',

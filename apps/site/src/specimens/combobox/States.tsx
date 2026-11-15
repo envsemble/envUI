@@ -8,7 +8,6 @@ const people: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan 
   },
 );
 
-/** A field with nothing chosen, and an invalid, a read-only and a disabled one. */
 export default function States() {
   return (
     <SpecimenFrame size="collection">

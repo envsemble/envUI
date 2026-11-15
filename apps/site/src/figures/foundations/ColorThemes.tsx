@@ -15,7 +15,6 @@ import { CornerLabel } from './Steps';
 import { FoundationFrame } from './FoundationFrame';
 import type { FigureWords } from './ColorFigures';
 
-/** The theme and contrast of each sample, in the legend's order. */
 const themes: readonly { theme: ColorScheme; contrast: ThemeContrast }[] = [
   { theme: 'light', contrast: 'standard' },
   { theme: 'light', contrast: 'high' },
@@ -23,16 +22,10 @@ const themes: readonly { theme: ColorScheme; contrast: ThemeContrast }[] = [
   { theme: 'dark', contrast: 'high' },
 ];
 
-/** How long the screen stays in each theme, in ms. */
-const themeStep = 1200;
+const themeStepMs = 1200;
 
-/**
- * One screen in each theme in turn, in the legend's order, each theme beside its high contrast,
- * named in the corner: the screen cuts to each, its page, surface, filled card, text, meter, badge
- * and buttons at once.
- */
 function ThemeSteps({ names }: { names: readonly string[] }) {
-  const step = useTimeline(themes.map(() => themeStep));
+  const step = useTimeline(themes.map(() => themeStepMs));
   const { theme, contrast } = themes[step] ?? themes[0]!;
   return (
     <>
@@ -63,7 +56,6 @@ function ThemeSteps({ names }: { names: readonly string[] }) {
   );
 }
 
-/** One screen stepping through each theme and contrast, the one shown named in the corner. */
 export function ThemesFigure({ legend }: FigureWords) {
   return (
     <FoundationFrame label="One screen in each theme" motion="the screen in each theme">

@@ -13,7 +13,6 @@ export default function Reorder() {
   return (
     <List.Root
       aria-label="Agenda"
-      // The list reports the move; the application moves the item in its own state.
       onReorder={(from, to) =>
         setItems((list) => {
           const next = [...list];

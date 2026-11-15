@@ -9,8 +9,7 @@ const documents: DocumentTabsItem[] = [
   { value: 'releases/october.md', label: 'October release notes and follow-ups.md' },
 ].map((tab) => ({ ...tab, icon: <IconDescription />, tooltip: tab.value }));
 
-/** The panel below the strip, which the application renders. */
-const panel = { minBlockSize: '8rem', padding: '1.5rem' } as const;
+const panelStyle = { minBlockSize: '8rem', padding: '1.5rem' } as const;
 
 export default function OpenDocuments() {
   const [tabs, setTabs] = useState(documents);
@@ -21,7 +20,6 @@ export default function OpenDocuments() {
     const index = tabs.findIndex((tab) => tab.value === id);
     const remaining = tabs.filter((tab) => tab.value !== id);
     setTabs(remaining);
-    // Closing the active tab activates its neighbour.
     if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)]?.value ?? null);
   };
 
@@ -34,7 +32,6 @@ export default function OpenDocuments() {
         panelId="open-document"
         onValueChange={setValue}
         onClose={close}
-        // Drag a tab, or use Move left and Move right in its context menu, to put it elsewhere.
         onReorder={(ids) =>
           setTabs((current) => ids.map((id) => current.find((tab) => tab.value === id)!))
         }
@@ -48,7 +45,7 @@ export default function OpenDocuments() {
           )
         }
       />
-      <div id="open-document" role="tabpanel" aria-label={active?.label} style={panel}>
+      <div id="open-document" role="tabpanel" aria-label={active?.label} style={panelStyle}>
         {active ? (
           <Text emphasis="muted">{active.tooltip}</Text>
         ) : (

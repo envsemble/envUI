@@ -10,8 +10,6 @@ export default function ListDetailByWidth() {
   const [chosen, setChosen] = useState(messages[0]!);
   const [open, setOpen] = useState(false);
   return (
-    // Side by side from 52.5 rem; narrower, one pane at a time: a message opens over the list,
-    // with a back button to it. Each pane holds a surface, as where a divider sits between them.
     <Panes.Root
       behavior="list-detail"
       open={open}

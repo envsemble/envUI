@@ -3,7 +3,6 @@ import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 export default function OneLine() {
   return (
-    // A header bar in a narrow pane: the trail takes the room the status and the action leave.
     <Surface
       background="muted"
       padding={2}

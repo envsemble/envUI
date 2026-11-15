@@ -1,7 +1,6 @@
 import { DatePicker } from '@envsemble/envui';
 
 export default function DatePickerPopupAnatomy() {
-  // Shown open in the docs; without defaultOpen, the calendar opens from the field.
   return (
     <DatePicker
       label="Publish on"

@@ -11,7 +11,6 @@ const pages = [
 ];
 
 export default function StepThroughAGuide() {
-  // The router knows the current page; here a click stands in for it.
   const [index, setIndex] = useState(0);
   const previous = pages[index - 1];
   const next = pages[index + 1];

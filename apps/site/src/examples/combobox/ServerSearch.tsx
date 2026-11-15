@@ -15,6 +15,8 @@ const directory: ComboboxItem[] = [
   return { value: handle, label: name, description: `${handle}@example.com` };
 });
 
+const simulatedSearchMs = 500;
+
 export default function ServerSearch() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<ComboboxItem[]>([]);
@@ -25,17 +27,15 @@ export default function ServerSearch() {
   useEffect(() => {
     const text = query.trim().toLowerCase();
     if (!text) {
-      // A choice ends the query as the list closes: its results stay until it has gone.
       if (open) setResults([]);
       setSearching(false);
       return;
     }
     setSearching(true);
-    // Stands in for a request to a server.
     const timer = window.setTimeout(() => {
       setResults(directory.filter((person) => person.label.toLowerCase().includes(text)));
       setSearching(false);
-    }, 500);
+    }, simulatedSearchMs);
     return () => window.clearTimeout(timer);
   }, [query, open]);
 

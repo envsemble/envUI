@@ -14,13 +14,6 @@ import { AtTextSize, CornerLabel, StepStack } from './Steps';
 import { FoundationFrame } from './FoundationFrame';
 import { remeasure } from '../../shared/Remeasure';
 
-/*
- * The Adapting to width foundation's figure of the reader's text size: one profile in a frame of
- * one width, at a larger text size step by step, falling back to its narrow form though the width
- * never changes.
- */
-
-/** A profile's header and details, each following its own width. */
 function Profile() {
   return (
     <Surface background="default" padding={5} radius="xl" render={<Column gap={5} />}>
@@ -44,19 +37,14 @@ function Profile() {
   );
 }
 
-/** The text sizes the profile steps through. */
-const sizes = [1, 1.25, 2] as const;
+const textScales = [1, 1.25, 2] as const;
 
-/** Each text size's name in the corner, in plain words. */
 const sizeNames = ['Usual text size', 'Larger text', 'Text twice the size'] as const;
 
-/** The frame's width, in rem: wide enough for the profile's header to spread out at 100%. */
-const frameWidth = 41;
+const frameWidthRem = 41;
 
-/**
- * The scale the frame is drawn at, so it fits its stage: smaller on a narrow stage, but measured at
- * its own width, so the profile lays out as it would in a frame that wide.
- */
+const textSizeStepMs = 1800;
+
 function useTextFit() {
   const place = useRef<HTMLDivElement>(null);
   const [fit, setFit] = useState(1);
@@ -64,19 +52,15 @@ function useTextFit() {
     const element = place.current;
     if (!element) return;
     const measure = () => {
-      setFit(Math.min(1, element.clientWidth / ((frameWidth + 1) * remPixels())));
+      setFit(Math.min(1, element.clientWidth / ((frameWidthRem + 1) * remPixels())));
     };
     return remeasure(measure, { first: 'now', resize: [element] }).stop;
   }, []);
   return [place, fit] as const;
 }
 
-/**
- * The profile in its frame at each text size, with the size named in the corner: at the larger
- * sizes its actions move under the name, and then its labels above their values.
- */
 function TextSizeSteps() {
-  const step = useTimeline(sizes.map(() => 1800));
+  const step = useTimeline(textScales.map(() => textSizeStepMs));
   const [place, fit] = useTextFit();
   return (
     <div ref={place} className="catalogue-class-text-place">
@@ -84,10 +68,10 @@ function TextSizeSteps() {
       <div style={{ zoom: fit }}>
         <StepStack
           className="catalogue-fixed-frame catalogue-class-text-frame"
-          count={sizes.length}
+          count={textScales.length}
           at={step}
           render={(index) => (
-            <AtTextSize size={sizes[index]!}>
+            <AtTextSize size={textScales[index]!}>
               <Profile />
             </AtTextSize>
           )}

@@ -8,10 +8,6 @@ import { PressedKeys } from '../../motion/PressedKeys';
 
 const note = 'textarea';
 
-/*
- * In the note, Alt is held: the menubar underlines each menu's access key. Alt with E opens Edit,
- * its first item highlighted, and Esc closes it again.
- */
 const script: PointerStep[] = [
   { wait: 360 },
   { cue: 'Alt' },
@@ -44,7 +40,6 @@ function Holding() {
   );
 }
 
-/** The notes menubar's access keys, shown while Alt is held, and Alt+E opening Edit. */
 export default function AccessKeys() {
   return (
     <SpecimenFrame>

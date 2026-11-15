@@ -7,7 +7,6 @@ export default function ListBesideAHeading() {
         aria-label="Orders"
         size="sm"
         renderList={(list) => (
-          // The heading and the list share a row; the panels follow below.
           <Row wrap align="center" justify="between" gap={3}>
             <Text render={<h3 />} variant="title">
               Orders

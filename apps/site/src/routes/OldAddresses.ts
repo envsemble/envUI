@@ -1,54 +1,34 @@
 import { docsRoute, homeRoute } from './Address';
 import { findPage, groupedPageOf, routeOfDocument } from './SiteRoutes';
 
-/** An old address being read: its path, and its query, which a step may change as it reads it. */
 interface OldAddress {
   path: string;
   search: URLSearchParams;
-  /** The element id it scrolls to, as the address arrived. */
   section: string | null;
-  /** Its query as it now stands, with its `?`, or nothing. */
   rest: () => string;
 }
 
-/** The setup guide's section on coding agents, which the agents' pages that are gone open. */
 const codingAgents = `${docsRoute}?section=coding-agents`;
 
-/**
- * The ids of documents that are gone, which old addresses name (`?document=` and
- * `get-started/<id>`): the route each one opens now.
- */
 const oldDocuments: Record<string, string> = {
-  // The catalogue's Get started page is the setup guide, the Docs' home.
   'get-started': docsRoute,
-  // Dev mode's page in the catalogue folded into its guide in the Docs.
   'dev-mode-overview': 'docs/dev-mode',
   changelog: 'docs/changelog',
-  // The codemods and the migration guide are gone: their pages open the Docs' home.
   codemods: docsRoute,
   migration: docsRoute,
-  // The agent skills are gone, and so is the guide for agents: setup leads to the skill.
   'agent-skills': codingAgents,
   'agent-tooling': codingAgents,
-  // Pages merged into others.
   'customizing-colors': 'docs/customizing',
   composition: 'docs/customizing',
   scale: 'foundations/spacing',
 };
 
-/** The route of a document an old address names, by its id then or now, at `section`. */
 function routeOfOldDocument(id: string, section?: string) {
   const route = Object.hasOwn(oldDocuments, id) ? oldDocuments[id] : undefined;
   if (route === undefined) return routeOfDocument(id, { section });
-  // A route that names its own section keeps it.
   return section && !route.includes('?') ? `${route}?${new URLSearchParams({ section })}` : route;
 }
 
-/**
- * The overview's views: the components and Get started, which held the setup guide, the agents'
- * skills and the guides by their document's id. The catalogue's Get started page that followed is
- * the setup guide too.
- */
 function overviewView({ path, search, section, rest }: OldAddress) {
   if (/^overview\/components(?:\/|$)/.test(path))
     return section && section !== 'overview-components'
@@ -71,41 +51,26 @@ function overviewView({ path, search, section, rest }: OldAddress) {
     return `${docsRoute}${rest()}`;
   }
   if (/^overview\//.test(path)) return `${homeRoute}${rest()}`;
-  // The guides of Get started moved to the Docs, and the contributing pages are gone.
   const guide = /^get-started\/(.+)$/.exec(path)?.[1];
   if (guide) return routeOfOldDocument(guide, section ?? undefined) ?? docsRoute;
   if (/^contributing(?:\/|$)/.test(path)) return homeRoute;
   return undefined;
 }
 
-/** Pages that moved, by their old path: the path each one opens, its query kept. */
 const movedPages: Record<string, string> = {
-  // The setup guide is the Docs' home, which its Introduction was before.
   'docs/setup': docsRoute,
-  // The codemods and the migration guide are gone: their pages open the Docs' home.
   'docs/codemods': docsRoute,
   'docs/migration': docsRoute,
-  // Developing envUI locally is a contributor's guide now, in the repository.
   'docs/local-development': docsRoute,
-  // The agent benchmark is gone: its page opens the overview.
   benchmark: homeRoute,
-  // The catalogue's changelog moved to the Docs, with its release notes.
   changelog: 'docs/changelog',
-  // Dev mode's page in the catalogue folded into its guide in the Docs, which shows its pictures.
   'dev-mode': 'docs/dev-mode',
   'foundations/tokens': 'docs/tokens',
-  // Scale & density joined Spacing & density.
   'docs/foundations/scale': 'docs/foundations/spacing',
-  // Customize colors joined Customize and extend.
   'docs/customizing-colors': 'docs/customizing',
-  // The templates are gone, and so is the app frame pattern they became.
   'templates/app-frame': docsRoute,
 };
 
-/**
- * Pages folded into another page, by their path in the catalogue: the page that holds them now, and the
- * section of it that does, if one. Their pages in the Docs open the other's.
- */
 const foldedPages: Record<string, { page: string; section?: string }> = {
   'components/bar': { page: 'components/navigation-drawer' },
   'components/rail': { page: 'components/navigation-drawer' },
@@ -115,20 +80,14 @@ const foldedPages: Record<string, { page: string; section?: string }> = {
     page: 'components/command-palette',
     section: 'opening-it-the-button-and-the-shortcut',
   },
-  // SearchTrigger was a component before it was a pattern.
   'components/search-trigger': {
     page: 'components/command-palette',
     section: 'opening-it-the-button-and-the-shortcut',
   },
 };
 
-/** Whether an element id is a place on a component's page in the Docs: an export's or a prop's. */
 const apiSection = (section: string | null) => section?.startsWith('props-') ?? false;
 
-/**
- * Pages folded into another open it: in the catalogue at the section that holds them, unless the
- * address names one, and in the Docs the other's page there.
- */
 function foldedPage({ path, search, section, rest }: OldAddress) {
   const [, area, id, view] =
     /^(?:docs\/)?(components|patterns)\/([^/]+)(?:\/(.+))?$/.exec(path) ?? [];
@@ -161,19 +120,12 @@ const patternIds = [
   'window-frame',
 ];
 
-/** Component pages that became patterns, by their slug. */
 const componentPatterns = ['window-frame', 'account-menu', 'stat', 'stats', 'loading', 'skeleton'];
 
-/** Pages merged into others, and pages that became others, each opening the page it is part of now. */
 function mergedPage({ path, rest }: OldAddress) {
-  // Nine foundations became six: Composition & extension became the Docs' guide Customize and
-  // extend.
   if (/^(?:docs\/)?foundations\/composition(?:\/|$)/.test(path)) return `docs/customizing${rest()}`;
-  // The other templates' screens open the overview.
   if (/^templates(?:\/|$)/.test(path)) return `${homeRoute}${rest()}`;
-  // The content guidelines are the Writing guide in the Docs.
   if (/^(?:docs\/)?foundations\/content(?:\/|$)/.test(path)) return `docs/writing${rest()}`;
-  // The patterns are gone, with the components that became them: they open the Docs' home.
   if (/^(?:docs\/)?patterns(?:\/|$)/.test(path)) return docsRoute;
   const slug = path.split('/')[1] ?? '';
   if (path.startsWith('components/') && componentPatterns.includes(slug) && !groupedPageOf(slug))
@@ -181,7 +133,6 @@ function mergedPage({ path, rest }: OldAddress) {
   return undefined;
 }
 
-/** The old names of pages, by the first two parts of their path: the page each one is now. */
 const renamedPages: Partial<Record<string, string>> = {
   'components/text': 'foundations/typography',
   'components/notes': 'components/disclosure',
@@ -222,10 +173,6 @@ const renamedPages: Partial<Record<string, string>> = {
   'foundations/scale': 'foundations/spacing',
 };
 
-/**
- * A page's views are gone: its props are on its page in the Docs, a foundation's guidance in its
- * guide there, and every other view is the catalogue's page.
- */
 function pageView(path: string, { section, rest }: OldAddress) {
   const [area, id, view] = path.split('/');
   const grouped = (area === 'components' || area === 'foundations') && groupedPageOf(id ?? '');
@@ -242,10 +189,6 @@ function pageView(path: string, { section, rest }: OldAddress) {
   );
 }
 
-/**
- * Keeps old addresses working: the views pages had before the catalogue and the Docs split, the
- * old names of pages and the pages that moved, each opens the page it became.
- */
 export function normalizeRoute(route: string): string {
   const [path = '', ...query] = route.split('?');
   const search = new URLSearchParams(query.join('?'));
@@ -258,26 +201,16 @@ export function normalizeRoute(route: string): string {
   if (!path) return `${homeRoute}${address.rest()}`;
   const opened = overviewView(address);
   if (opened !== undefined) return opened;
-  // The agent skills' page is gone with the skills, and so is the guide for agents: setup's
-  // section on coding agents leads to the skill.
   if (path === 'docs/agent-skills' || path === 'docs/agent-tooling') return codingAgents;
   if (Object.hasOwn(movedPages, path)) return `${movedPages[path]}${address.rest()}`;
   const moved = foldedPage(address) ?? mergedPage(address);
   if (moved !== undefined) return moved;
   if (findPage(path)) return `${path}${address.rest()}`;
   const [area, id, ...view] = path.split('/');
-  // A key holds a slash, so no property every object has reads as one.
   const renamed = renamedPages[`${area}/${id}`];
   return pageView(renamed ? [renamed, ...view].join('/') : path, address);
 }
 
-/**
- * Old addresses whose path alone says where they lead: the pages that moved, were folded into
- * another, went with the patterns or were renamed. The host answers each with a redirect
- * (scripts/site/PrerenderSite.ts writes them to _redirects), so a crawler, a link preview or a
- * reader without the site's script finds the page; normalizeRoute redirects the rest in the
- * browser, such as an old view of a page or an address whose query names a document.
- */
 export const oldPaths = [
   ...Object.keys(movedPages),
   'docs/agent-skills',

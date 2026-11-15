@@ -3,10 +3,6 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 
-/*
- * Narrow, the details wait in a sheet: the pointer presses Details, and the sheet rises over the
- * report with its owner and due date; it closes the sheet again.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-panes-trigger', x: 0.55, y: 0.6 },
@@ -30,7 +26,6 @@ function Opening() {
   );
 }
 
-/** The report's details in a sheet that Details opens, where the panes don't fit side by side. */
 export default function SupportingPaneMotion() {
   return (
     <MotionStage label="the details opening from the button">

@@ -9,11 +9,6 @@ import { narrowGallery } from './Tiles';
 
 const zone = '.env-drop-zone-target';
 
-/**
- * Picks up a file inside the stage, above the zone, drags it over the zone and drops it. It uploads
- * for a moment, then the file takes the zone's place, uploaded, until it is removed, which brings
- * the zone back, as it began.
- */
 const script: PointerStep[] = [
   { wait: 240 },
   { carry: 'report.pdf', as: 'application/pdf' },
@@ -30,15 +25,8 @@ const script: PointerStep[] = [
   { wait: 300 },
 ];
 
-/** How long the upload takes. */
-const uploading = 1100;
+const uploadMs = 1100;
 
-/**
- * A drop zone for documents, the small one, which shows whole in a gallery's low tile, and narrower
- * in a phone's, so it is drawn whole at its own size there too. Its words are short and the same at
- * every width, so each stays on one line. Once a file has uploaded, it shows in the zone's place,
- * as tall as the zone, so nothing around it moves.
- */
 export default function DropZoneTile() {
   const [file, setFile] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -51,7 +39,7 @@ export default function DropZoneTile() {
   });
   useEffect(() => {
     if (!pending) return;
-    const timer = setTimeout(() => setPending(false), uploading);
+    const timer = setTimeout(() => setPending(false), uploadMs);
     return () => clearTimeout(timer);
   }, [pending]);
   const inlineSize = narrow ? '8.75rem' : '12.5rem';

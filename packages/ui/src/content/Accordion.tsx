@@ -17,8 +17,6 @@ const HeadingLevelContext = createContext<Exclude<HeadingLevel, 1>>(3);
 const asBaseUiMutableList = (values: readonly string[] | undefined) =>
   values as string[] | undefined;
 
-const skeletonKeepsRowASurface = { 'data-interactive': '' };
-
 export interface RootProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange'>, SkeletonProps {
   /** The items: Accordion.Item, one for each section. */
@@ -136,7 +134,7 @@ function Item(allProps: ItemProps) {
       onOpenChange={onOpenChange ? (open) => onOpenChange(open) : undefined}
     >
       <BaseAccordion.Header render={<Heading />} className="env-accordion-header">
-        <BaseAccordion.Trigger className="env-accordion-trigger" {...skeletonKeepsRowASurface}>
+        <BaseAccordion.Trigger className="env-accordion-trigger" data-interactive="">
           <span className="env-accordion-indicator" aria-hidden="true">
             <IconAdd />
             <IconRemove />

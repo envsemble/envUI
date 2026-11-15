@@ -1,7 +1,3 @@
-/* The site's style sheets, in the one order of their cascade: all but ThemeFade.css are outside
-   cascade layers, so where two rules weigh the same the later wins. Page framing precedes the
-   figures, and printing comes late. Each sheet lives beside the code it styles; this folder holds
-   the site-wide ones. */
 @import './Shell.css';
 @import '../pages/docs/Docs.css';
 @import '../frame/Banners.css';

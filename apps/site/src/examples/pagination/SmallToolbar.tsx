@@ -4,7 +4,6 @@ import { Grid, Pagination, SearchField, Surface } from '@envsemble/envui';
 export default function SmallToolbar() {
   const [page, setPage] = useState(1);
   return (
-    // A toolbar row: the field takes the room the pager leaves.
     <Surface
       background="muted"
       padding={2}

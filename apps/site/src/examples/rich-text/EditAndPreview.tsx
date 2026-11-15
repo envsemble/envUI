@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Column, Surface, Text } from '@envsemble/envui';
 import { RichText, RichTextEditor } from '@envsemble/envui/rich-text';
 
-const lastMeeting = `### Launch review
+const lastMeetingMarkdown = `### Launch review
 
 Decisions from **Tuesday**:
 
@@ -10,8 +10,7 @@ Decisions from **Tuesday**:
 - [ ] Send the press kit to Priya Shah`;
 
 export default function EditAndPreview() {
-  // The value is Markdown, saved as it is and shown again with RichText.
-  const [notes, setNotes] = useState(lastMeeting);
+  const [notes, setNotes] = useState(lastMeetingMarkdown);
   return (
     <Column gap={5}>
       <RichTextEditor label="Meeting notes" value={notes} onValueChange={setNotes} />

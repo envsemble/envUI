@@ -8,8 +8,6 @@
   margin: 0 0 var(--env-space-9);
   min-width: 0;
 }
-/* Sections share the frame; only their actual specimens need a size limit, and running text its
-   measure, which it sets as --catalogue-measure (SiteText.css). */
 .site-example > :not(h2):not(.catalogue-caption) {
   max-inline-size: min(100%, var(--catalogue-example-width), var(--catalogue-measure, 100%));
 }
@@ -81,8 +79,6 @@
   color: var(--env-color-fg-muted);
   font-weight: var(--env-font-weight-regular);
   padding: 0.5rem 0.75rem 1rem;
-  /* A name breaks between words alone, and a cell's content not at all: what doesn't fit its
-     column runs past it, and the matrix stacks instead (MatrixScroll in SpecimenFrame.tsx). */
   overflow-wrap: normal;
 }
 .catalogue-matrix tbody th {
@@ -94,8 +90,6 @@
   white-space: nowrap;
 }
 
-/* A matrix whose columns don't fit, as on a phone (MatrixScroll in SpecimenFrame.tsx): a block for each
-   row, its name over its cells listed down, each cell after its column's name. */
 .site-figures .catalogue-matrix-scroll[data-stacked] :is(.catalogue-matrix, tbody) {
   display: grid;
   gap: var(--env-space-6);
@@ -137,8 +131,6 @@
   margin: 0;
 }
 
-/* An editor in a run of states: as wide as its cell, its text at the start as in a form, and three
-   lines tall rather than its own ten rem, so the run stays short. */
 .catalogue-short-editor {
   inline-size: 100%;
   text-align: start;
@@ -147,8 +139,6 @@
   min-block-size: 4.5rem;
 }
 
-/* A Box's inset made visible on its animated figure (specimens/box): its edge dashed, as a width
-   frame's is, and the inset easing from one step to the next. */
 .catalogue-inset-box {
   outline: 0.0625rem dashed var(--env-color-border-default);
   transition: padding var(--env-motion-duration-slow) var(--env-motion-ease);
@@ -159,19 +149,17 @@
   }
 }
 
-/* The area of the Settings page's appearance figure (specimens/settings), which takes the theme
-   chosen in it: only its surface shows, rounded, without the page color square around it. */
 .catalogue-motion-subject .catalogue-appearance-area {
   background: none;
 }
 
-/* Table's Density motion (specimens/table/RowDensity.tsx): room below the control for what the five
-   rows, the header's included, still grow by up to Large, two paddings each, so the figure keeps one
-   height as the density changes. */
 .catalogue-row-density {
   --site-row-padding: var(--env-row-padding-block-md);
+  --_row-paddings-of-five-rows: 10;
   inline-size: 100%;
-  padding-block-end: calc(10 * (var(--env-row-padding-block-lg) - var(--site-row-padding)));
+  padding-block-end: calc(
+    var(--_row-paddings-of-five-rows) * (var(--env-row-padding-block-lg) - var(--site-row-padding))
+  );
 }
 .catalogue-row-density:has(.env-table[data-density='xs']) {
   --site-row-padding: var(--env-row-padding-block-xs);

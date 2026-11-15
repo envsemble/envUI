@@ -3,14 +3,9 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 
-/** A day by its weekday's row and its week's column. */
-const day = (row: number, week: number) =>
-  `.env-calendar-heatmap-grid tbody tr:nth-child(${row}) td:nth-child(${week + 1})`;
+const day = (weekdayRow: number, week: number) =>
+  `.env-calendar-heatmap-grid tbody tr:nth-child(${weekdayRow}) td:nth-child(${week + 1})`;
 
-/*
- * The pointer rests on a day, and the tooltip of its own opens; it moves down the week, day by
- * day, and on to the next week, and the tooltip follows; then it leaves, and the tooltip goes.
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: day(2, 8) },
@@ -30,7 +25,6 @@ function Hovering() {
   return <CustomTooltip />;
 }
 
-/** The reviews heatmap, its own tooltip following a pointer no one sees across the days. */
 export default function CustomTooltipMotion() {
   return (
     <MotionStage label="the tooltip following the pointer" height="15rem">

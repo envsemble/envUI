@@ -4,7 +4,6 @@ import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
-// Icons take the size and color of their label; one that stands alone gets a name of its own.
 export default function FollowText() {
   return (
     <Column gap={4} align="center">

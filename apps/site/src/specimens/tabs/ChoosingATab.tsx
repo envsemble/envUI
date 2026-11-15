@@ -7,11 +7,8 @@ import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { MotionStage } from '../../figures/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 
-/*
- * Tabs fade the panel leaving out as the one coming fades in, in the same place, so panels next to
- * each other along the rail hold their content apart: Summary and Activity a short line at the top,
- * Files its upload button at the top's end and its files below.
- */
+const tallestPanelHeight = '8.75rem';
+
 const views: { value: string; label: string; content: ReactNode }[] = [
   { value: 'summary', label: 'Summary', content: <Text>The launch plan and its budget.</Text> },
   {
@@ -35,12 +32,6 @@ const views: { value: string; label: string; content: ReactNode }[] = [
   { value: 'reports', label: 'Reports', content: <Text>Reports open after a week of data.</Text> },
 ];
 
-/*
- * The keyboard's focus enters the rail on the chosen tab; the right arrow key moves it tab by tab,
- * each showing its panel at once, and on to the disabled Reports, which it reaches but doesn't
- * choose; the left arrow key goes back to Summary, and focus moves on. Each key shows as a cap in
- * the stage's corner as it is pressed (PressedKeys).
- */
 const script: PointerStep[] = [
   { wait: 300 },
   { cue: 'Tab' },
@@ -70,7 +61,6 @@ const script: PointerStep[] = [
 ];
 
 function Choosing() {
-  // The key just pressed, as a cap in the stage's corner, since no pointer shows it.
   const [pressed, setPressed] = useState<{ keys: string[]; press: number } | null>(null);
   usePointer(script, {
     onCue: (cue) =>
@@ -83,8 +73,7 @@ function Choosing() {
       <PressedKeys keys={pressed?.keys ?? null} press={pressed?.press ?? 0} />
       <Tabs
         aria-label="Project views"
-        // As tall as the tallest panel, Files, so the rail stays where it is as the panels change.
-        style={{ inlineSize: 'min(100%, 26rem)', minBlockSize: '8.75rem' }}
+        style={{ inlineSize: 'min(100%, 26rem)', minBlockSize: tallestPanelHeight }}
         items={views.map(({ value, label, content }) => ({
           value,
           button: <Button>{label}</Button>,
@@ -96,7 +85,6 @@ function Choosing() {
   );
 }
 
-/** Tabs chosen with the arrow keys: each panel at once, and a disabled tab reached, not chosen. */
 export default function ChoosingATab() {
   return (
     <SpecimenFrame size="content">
