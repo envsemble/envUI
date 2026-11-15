@@ -9,9 +9,11 @@ export default function ThemeContrastProviderFixture() {
   const [contrast, setContrast] = useState<ThemeContrast>('high');
   return (
     <ThemePreferenceProvider
-      storageKey="fixture-contrast-theme"
-      defaultPreference="dark"
-      contrast={contrast}
+      theme={{
+        storageKey: 'fixture-contrast-theme',
+        defaultPreference: 'dark',
+        contrast: contrast,
+      }}
       className="fixture-main"
     >
       <div data-testid="contrast-provider">

@@ -44,7 +44,7 @@
     letter-spacing: var(--env-type-title-letter-spacing);
   }
   .env-pager-link .env-icon {
-    --_icon-size: 1.25rem;
+    --env-icon-size: 1.25rem;
     color: var(--env-color-fg-primary);
   }
   .env-pager-link:hover {

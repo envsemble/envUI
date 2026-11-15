@@ -91,6 +91,18 @@ const overlay = '--env-color-bg-backdrop'; // the backdrop behind dialogs
 const selected = '--env-color-bg-selected';
 const selectedHover = '--env-color-bg-selected-hover';
 const selectedPressed = '--env-color-bg-selected-pressed';
+// The accent selection, which Theme selection="accent" gives the selection tokens (Theme.css).
+const selectedAccent = '--env-color-bg-selected-accent';
+const selectedAccentHover = '--env-color-bg-selected-accent-hover';
+const selectedAccentPressed = '--env-color-bg-selected-accent-pressed';
+const selections = [
+  selected,
+  selectedHover,
+  selectedPressed,
+  selectedAccent,
+  selectedAccentHover,
+  selectedAccentPressed,
+];
 const popupHover = '--env-color-bg-popup-hover';
 const popupPressed = '--env-color-bg-popup-pressed';
 const fill = '--env-color-bg-neutral-muted'; // the translucent fill of tab rails, chips, secondary buttons
@@ -695,9 +707,9 @@ const registry: readonly ContrastPair[] = merged([
     ...text('--env-color-fg-default', [['--env-color-bg-neutral-muted-pressed', frosted, behind]]),
     ...different(fill, [[frosted, behind]], 'A highlighted option or menu item on a frosted popup'),
     ...distinct(
-      selected,
+      selectedAccent,
       [[fill, frosted, behind]],
-      'The chosen option against a highlighted one on a frosted popup',
+      'The chosen option of the accent selection against a highlighted one on a frosted popup',
     ),
     ...focus(
       '--env-color-border-focus',
@@ -745,9 +757,7 @@ const registry: readonly ContrastPair[] = merged([
       '--env-color-bg-muted-hover',
       popup,
       popupHover,
-      selected,
-      selectedHover,
-      selectedPressed,
+      ...selections,
       raised,
       row,
     ],
@@ -775,18 +785,19 @@ const registry: readonly ContrastPair[] = merged([
     'Selected navigation items, tabs, tree rows and Select options, the bar at the start of a selected table row, and links and text buttons in a selected table row, at rest, on hover and on press',
   ),
   ...text(
+    '--env-color-fg-on-selected-accent',
+    [selectedAccent, selectedAccentHover, selectedAccentPressed],
+    'Selected navigation items, tabs, tree rows and Select options of the accent selection, at rest, on hover and on press',
+  ),
+  ...text(
     '--env-color-fg-danger',
-    [selected, selectedHover, selectedPressed],
+    selections,
     'Danger text buttons in a selected table row, which keep the danger color, at rest, under the pointer or holding focus, and pressed',
   ),
-  ...text(
-    '--env-color-fg-default',
-    [selected, selectedHover, selectedPressed],
-    'Selected table and tree rows',
-  ),
+  ...text('--env-color-fg-default', selections, 'Selected table and tree rows'),
   ...text(
     '--env-color-fg-muted',
-    [selected, selectedHover, selectedPressed],
+    selections,
     'Details of selected tree rows and captions in selected table rows',
   ),
   ...text(
@@ -872,34 +883,44 @@ const registry: readonly ContrastPair[] = merged([
     [navigationPressed],
     "A navigation drawer's item pressed",
   ),
-  ...distinct(
-    '--env-color-fg-on-selected',
-    ['--env-color-fg-muted'],
-    'The current item of a navigation drawer against its other items',
-  ),
-  ...nonText('--env-color-fg-on-selected', [[fill, page]], 'The bar of the active document tab'),
+  ...['--env-color-fg-on-selected', '--env-color-fg-on-selected-accent'].flatMap((label) => [
+    ...distinct(
+      label,
+      ['--env-color-fg-muted'],
+      'The current item of a navigation drawer against its other items',
+    ),
+    ...nonText(label, [[fill, page]], 'The bar of the active document tab'),
+  ]),
 
-  // Selection must not be mistaken for the other items around it, at rest or under the pointer, and
-  // must stay selected while it is under the pointer itself: a selected row next to a hovered one,
-  // a hovered selected row against a hovered unselected one. Every state also differs from its rest.
-  ...distinct(
-    selected,
-    [
-      popup,
-      popupHover,
-      surface,
-      page,
-      raised,
-      [treeRowHover, page],
-      [treeRowHover, surface],
-      [treeRowHover, raised],
-    ],
-    'The selection against the other items, at rest and under the pointer: Select options, tree and table rows',
+  // Selection must not be mistaken for the surfaces it lies on, and must stay selected while it is
+  // under the pointer itself. The accent selection must also not be mistaken for the other items
+  // around it under the pointer: a selected row next to a hovered one, a hovered selected row
+  // against a hovered unselected one. The neutral selection is a gray, as hover is, so its second
+  // cue, a bar, a check or its weight, tells it from a hovered item.
+  ...[selected, selectedAccent].flatMap((selection) =>
+    distinct(
+      selection,
+      [popup, surface, page, raised],
+      'The selection against the surfaces it lies on: Select options, navigation items, tree and table rows',
+    ),
   ),
-  ...distinct(selected, [navigationHover], 'A selected navigation item next to a hovered one'),
-  ...distinct(selected, [navigationPressed], 'A selected navigation item next to a pressed one'),
   ...distinct(
-    selectedHover,
+    selectedAccent,
+    [popupHover, [treeRowHover, page], [treeRowHover, surface], [treeRowHover, raised]],
+    'The accent selection against the other items under the pointer: Select options, tree and table rows',
+  ),
+  ...distinct(
+    selectedAccent,
+    [navigationHover],
+    'A selected navigation item of the accent selection next to a hovered one',
+  ),
+  ...distinct(
+    selectedAccent,
+    [navigationPressed],
+    'A selected navigation item of the accent selection next to a pressed one',
+  ),
+  ...distinct(
+    selectedAccentHover,
     [
       navigationHover,
       popupHover,
@@ -907,9 +928,10 @@ const registry: readonly ContrastPair[] = merged([
       [treeRowHover, surface],
       [treeRowHover, raised],
     ],
-    'A selected item under the pointer against an unselected one under the pointer: navigation items, Select options, tree and table rows',
+    'An item of the accent selection under the pointer against an unselected one under the pointer: navigation items, Select options, tree and table rows',
   ),
   ...different(selectedHover, [selected], 'A selected item under the pointer'),
+  ...different(selectedAccentHover, [selectedAccent], 'An accent-selected item under the pointer'),
   ...different(popupHover, [popup], 'A highlighted option or menu item'),
   ...different(
     navigationHover,
@@ -923,9 +945,9 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...different(treeRowHover, [surface, page, raised], 'A tree or table row under the pointer'),
   ...distinct(
-    '--env-color-fg-on-selected',
+    '--env-color-fg-on-selected-accent',
     ['--env-color-fg-control', '--env-color-fg-default'],
-    'The label of a selected item against the labels of the others',
+    'The label of an item of the accent selection against the labels of the others',
   ),
   ...different(
     surface,
@@ -1213,27 +1235,6 @@ const registry: readonly ContrastPair[] = merged([
     [[fill, page]],
     'The lightest step of a calendar heatmap against an empty day',
   ),
-  ...nonText(
-    'badge-outline-primary',
-    ['--env-color-bg-primary-emphasis', '--env-color-bg-accent-emphasis'],
-    'The outline of a badge or counter on a primary button in the neutral or accent tone',
-    {
-      minimum: { standard: 1.5, high: 3 },
-      rationale:
-        'Decorative: the pill’s text is the button’s label color, which the primary button pairs measure at 4.5:1; the outline only groups it. Held to 1.5:1, and 3:1 in high contrast, so it stays visible.',
-    },
-  ),
-  ...nonText(
-    'badge-outline-important',
-    ['--env-color-bg-accent-strong', '--env-color-bg-danger-emphasis'],
-    'The outline of a badge or counter on an important button or a danger primary, on a white label',
-    {
-      minimum: { standard: 1.5, high: 3 },
-      rationale:
-        'Decorative: the pill’s text is the button’s label color, which the important button pairs measure at 4.5:1; the outline only groups it. Held to 1.5:1, and 3:1 in high contrast, so it stays visible.',
-    },
-  ),
-
   // The + between the keys in a button's end slot: the button's content color at 80%, decorative,
   // since the keys around it name the shortcut. The keys and any text in the slot are the label's
   // color on no fill of their own, which the button pairs above measure.
@@ -1303,9 +1304,7 @@ const registry: readonly ContrastPair[] = merged([
     '--env-color-border-focus',
     [
       popupHover,
-      selected,
-      selectedHover,
-      selectedPressed,
+      ...selections,
       navigationHover,
       navigationPressed,
       rowPressed,
@@ -1362,8 +1361,6 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * - The + between the keys in a button's end slot is a share of the button's label color,
  *   `currentColor` (Button.css sets Kbd.css's hooks); each label color a variant, tone and state
  *   takes is measured.
- * - A badge or counter inside a primary or important button is outlined in a share of the button's
- *   label color, `currentColor`, which only the button knows (Button.css sets Badge.css's hooks).
  * - Calendar heatmap steps mix the tone into the page by a share that depends on how many steps the
  *   data has, from 30% at the lightest to the full tone (CalendarHeatmap.tsx and .css). The
  *   lightest step of the default accent tone is measured.
@@ -1405,7 +1402,6 @@ const ofLabel = (formula: string, token: string) =>
   formula.replace(/(^|[^\w-])currentColor(?![\w-])/g, `$1var(${token})`);
 
 const separator = markedColor('packages/ui/src/styles/Button.css', 'button-end-separator');
-const badgeOutline = markedColor('packages/ui/src/styles/Button.css', 'badge-outline');
 const tooltipFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-frosted');
 const tooltipKeyFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-key');
 
@@ -1415,8 +1411,6 @@ const derived: Readonly<Record<string, string>> = {
       (label) => [`button-end-separator-${label}`, ofLabel(separator, `--env-color-fg-${label}`)],
     ),
   ),
-  'badge-outline-primary': ofLabel(badgeOutline, '--env-color-fg-on-emphasis'),
-  'badge-outline-important': ofLabel(badgeOutline, '--env-color-fg-on-strong'),
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-primary) 30%, var(--env-color-bg-page))',
   // The frosted fill of popups (Popup.css), and the worst behind it: black under a light popup's

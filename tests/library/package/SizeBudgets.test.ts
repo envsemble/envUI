@@ -18,8 +18,9 @@ const stylesheetBudget = 58200;
 
 /** The CSS a page loads with the bundle set's components, minified, gzip. */
 const cssBudgets = {
-  // 14,868 measured (the text area's resize handle in a style sheet of its own; was 15,104).
-  'Small app (Theme, Button, TextField, Card)': 15100,
+  // 15,179 measured (2026-11-15): the theme settings' rules for surface, selection and corners and
+  // the Slot's placement (was 14,868).
+  'Small app (Theme, Button, TextField, Card)': 15400,
   // 30,873 measured (also Table's column resize handles in theirs; was 31,248).
   'Typical app (23 components, with Base UI)': 31350,
   // 53,383 measured.
@@ -49,10 +50,12 @@ const componentBudgets = {
   // 15,336 measured (2026-11-11): 12,718, closingFocus.ts, which every popup surface brings, and
   // useControllableState.ts with useLatest.ts, the open state every popup shares (was 14,896).
   Tooltip: 15550,
-  // 9,935 measured: 7,757, and closingFocus.ts.
-  Popover: 10100,
-  // 17,610 measured: 15,184, and closingFocus.ts with the submenu's guard.
-  Menu: 17850,
+  // 10,277 measured (2026-11-15): 7,757, closingFocus.ts, and Theme's surface, selection and
+  // corners, which the popup's boundary keeps (was 9,935).
+  Popover: 10450,
+  // 17,926 measured (2026-11-15): 15,184, closingFocus.ts with the submenu's guard, and Theme's
+  // surface, selection and corners, which the popup's boundary keeps (was 17,610).
+  Menu: 18100,
   // 18,815 measured: 16,470, and closingFocus.ts.
   Select: 19100,
   // 7,524 measured.

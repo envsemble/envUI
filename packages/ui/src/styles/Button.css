@@ -12,7 +12,7 @@
     /* The height the button draws at: the control height, or more under a coarse pointer. */
     --_button-height: var(--env-control-height);
     /* Its icons take the control icon size. */
-    --_icon-size: var(--env-control-icon-size);
+    --env-icon-size: var(--env-control-icon-size);
     inline-size: fit-content;
     display: inline-flex;
     align-items: center;
@@ -57,31 +57,13 @@
       currentColor var(--_button-layer)
     );
     --_button-custom-fill: var(--_button-custom-layered, var(--_button-custom-base));
-    --_badge-fg: currentColor;
-    --_badge-bg: transparent;
-    /* contrast: badge-outline */
-    --_badge-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
-  }
-
-  /* Badges in a button, such as a tab with a count, through Badge.css's hooks: a badge takes the
-     button's text color as an outlined pill, which the end of the rule above sets. A badge with a
-     count or a diff stat keeps its own filled pill, except on the solid primary fills, where that
-     pill can't keep its contrast: there it is an outlined pill in the text color too. The outline is
-     the label color at 55%, which only the button knows; the contrast gate measures it on each fill
-     as a derived color (tests/contrast/Pairs.ts). */
-  .env-button:is([data-variant='primary']) {
-    --_badge-count-fg: currentColor;
-    --_badge-count-bg: transparent;
-    --_badge-count-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
-    --_diff-stat-fg: currentColor;
-    --_diff-stat-bg: transparent;
-    --_diff-stat-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
-  }
-  /* On a button's own fill, which already adds up with a tab rail's, a diff stat's pill leans halfway
-     back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
-     and its tones keep their 4.5:1 contrast in both themes. */
-  .env-button:not([data-variant='primary']) {
-    --_diff-stat-bg: var(--env-color-bg-inset);
+    --_kbd-fg: currentColor;
+    --_kbd-bg: color-mix(in srgb, currentColor 10%, transparent);
+    --_kbd-border: color-mix(in srgb, currentColor 5%, transparent);
+    /* contrast: button-end-separator */
+    --_kbd-separator-fg: color-mix(in srgb, currentColor 80%, transparent);
+    --_kbd-separator-padding-inline: calc(0.0375 * var(--env-control-height-md));
+    --_kbd-separator-font: 0 / 1 var(--env-font-family);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -606,27 +588,8 @@
   .env-button-content {
     display: contents;
   }
-  /* The end slot, such as a shortcut's keys, at the far end of a button wider than its content, while
-     the icon and label stay at the start. Its colors come from the button's own content color,
-     currentColor, so they follow every variant, tone, state and color property: text in it takes the
-     label's color, which holds 4.5:1 on every fill, and keys are drawn as everywhere else, in the
-     label's color: a faint fill of it at 10% with an edge 5% stronger, as Kbd.css draws keys from the
-     text color (Kbd.css's hooks). The keys of a combination stand side by side, the + between them
-     read but not shown, as in menus, popup lists and tooltips; its color, at 80%, holds 3:1 where an
-     application shows it again. */
   .env-button-end {
-    display: inline-flex;
-    flex: 0 0 auto;
-    align-items: center;
     margin-inline-start: auto;
-    white-space: nowrap;
-    --_kbd-fg: currentColor;
-    --_kbd-bg: color-mix(in srgb, currentColor 10%, transparent);
-    --_kbd-border: color-mix(in srgb, currentColor 5%, transparent);
-    /* contrast: button-end-separator */
-    --_kbd-separator-fg: color-mix(in srgb, currentColor 80%, transparent);
-    --_kbd-separator-padding-inline: calc(0.0375 * var(--env-control-height-md));
-    --_kbd-separator-font: 0 / 1 var(--env-font-family);
   }
   /* Transparent rather than hidden, so the label stays the button's accessible name and its width. */
   .env-button[data-pending] > .env-button-content {
@@ -655,8 +618,8 @@
   .env-button .env-button-spinner {
     position: absolute;
     inset: 0;
-    inline-size: var(--_icon-size);
-    block-size: var(--_icon-size);
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
     margin: auto;
   }
 

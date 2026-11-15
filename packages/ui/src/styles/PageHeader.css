@@ -34,11 +34,11 @@
      keep their sizes. */
   .env-page-header-start {
     flex: none;
-    --_icon-size: var(--env-picture-size-md);
+    --env-icon-size: var(--env-picture-size-md);
   }
   .env-page-header-start > :is(img, svg:not([width='1em'])) {
-    inline-size: var(--_icon-size);
-    block-size: var(--_icon-size);
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
     object-fit: contain;
   }
   .env-page-header-heading {

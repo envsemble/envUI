@@ -13,6 +13,7 @@
   --_theme-high-contrast: initial;
   /* Light until a rule below says otherwise (see the switch at the end). */
   --_theme-dark: initial;
+  --_theme-filled: initial;
   --_theme-page-gutter: var(--env-page-gutter);
 }
 /* The outermost theme boundary is the env-window container, on which the window classes are
@@ -96,4 +97,47 @@ html.env-theme > body {
 .env-theme[data-env-theme-switching] ::before,
 .env-theme[data-env-theme-switching] ::after {
   transition: none !important;
+}
+.env-theme[data-env-selection='accent'] {
+  --env-color-bg-selected: var(--env-color-bg-selected-accent);
+  --env-color-bg-selected-hover: var(--env-color-bg-selected-accent-hover);
+  --env-color-bg-selected-pressed: var(--env-color-bg-selected-accent-pressed);
+  --env-color-fg-on-selected: var(--env-color-fg-on-selected-accent);
+}
+.env-theme[data-env-surface='filled'] {
+  --_theme-filled: ;
+  --env-color-bg-item: var(--env-color-bg-list-item);
+  --env-color-bg-item-hover: var(--env-color-bg-list-item-hover);
+  --env-color-bg-item-pressed: var(--env-color-bg-list-item-pressed);
+}
+.env-theme[data-env-corners='sharp'] {
+  --env-radius-xs: 0rem;
+  --env-radius-sm: 0.125rem;
+  --env-radius-md: 0.125rem;
+  --env-radius-lg: 0.25rem;
+  --env-radius-xl: 0.25rem;
+  --env-radius-full: 0.25rem;
+}
+.env-theme[data-env-corners='round'] {
+  --env-radius-xs: 0.375rem;
+  --env-radius-sm: 0.75rem;
+  --env-radius-md: 1.125rem;
+  --env-radius-lg: 1.5rem;
+  --env-radius-xl: 2.5rem;
+}
+.env-theme[data-env-corners='round'][data-env-scale='compact'] {
+  --env-radius-xs: 0.25rem;
+  --env-radius-sm: 0.5625rem;
+  --env-radius-md: 0.875rem;
+  --env-radius-lg: 1.125rem;
+  --env-radius-xl: 2rem;
+}
+@media (pointer: fine) {
+  .env-theme[data-env-corners='round']:not([data-env-scale='comfortable']) {
+    --env-radius-xs: 0.25rem;
+    --env-radius-sm: 0.5625rem;
+    --env-radius-md: 0.875rem;
+    --env-radius-lg: 1.125rem;
+    --env-radius-xl: 2rem;
+  }
 }

@@ -16,7 +16,8 @@ export * from './foundations/ThemePreference.js';
 export * from './foundations/ThemeToggle.js';
 export {
   createThemeBootstrapScript,
-  type ThemeBootstrapOptions,
+  defineTheme,
+  type ThemeDefinition,
   type ThemePreference,
 } from './foundations/themeBootstrap.js';
 export * from './foundations/ThemeMenuRadioGroup.js';

@@ -7,13 +7,24 @@
       "bg": {
         "selected": {
           "$root": {
-            "$value": "{palette.blue.11}"
+            "$value": "{palette.gray.15}"
           },
           "hover": {
-            "$value": "{palette.blue.13}"
+            "$value": "{palette.gray.12}"
           },
           "pressed": {
-            "$value": "{palette.blue.14}"
+            "$value": "{palette.gray.10}"
+          },
+          "accent": {
+            "$root": {
+              "$value": "{palette.blue.11}"
+            },
+            "hover": {
+              "$value": "{palette.blue.13}"
+            },
+            "pressed": {
+              "$value": "{palette.blue.14}"
+            }
           }
         },
         "navigation": {
@@ -501,7 +512,9 @@
           "$value": "{palette.purple.80}"
         },
         "on-selected": {
-          "$value": "{palette.blue.84}"
+          "accent": {
+            "$value": "{palette.blue.84}"
+          }
         },
         "success": {
           "$value": "{palette.green.80}"

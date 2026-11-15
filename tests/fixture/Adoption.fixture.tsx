@@ -59,7 +59,7 @@ export default function AdoptionFixture() {
   const [homes, setHomes] = useState(3);
   const [seatsFull, setSeatsFull] = useState(false);
   return (
-    <ThemePreferenceProvider storageKey="fixture-theme" className="fixture-adoption">
+    <ThemePreferenceProvider theme={{ storageKey: 'fixture-theme' }} className="fixture-adoption">
       <LinkProvider component={RecordingLink}>
         <section>
           <div data-testid="adoption-plain-text">Plain application text</div>

@@ -1,0 +1,18 @@
+[data-env-slot] {
+  display: block;
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+[data-env-slot='row'] {
+  display: flex;
+  align-items: center;
+}
+[data-env-slot-grow] {
+  flex-grow: 1;
+}
+[data-env-slot-shrink='first'] {
+  flex-shrink: 1000;
+}
+[data-env-slot-shrink='never'] {
+  flex-shrink: 0;
+}

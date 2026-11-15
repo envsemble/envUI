@@ -116,16 +116,30 @@
       },
       "selected": {
         "$root": {
-          "$description": "Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, distinct from the other items around it, at rest and under the pointer: ΔEOK 0.03 or more, 0.04 at high contrast.",
-          "$value": "{palette.blue.8}"
+          "$description": "Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A neutral gray deeper than the surfaces in every theme, distinct from them at rest: ΔEOK 0.03 or more, 0.04 at high contrast. The item’s second cue, a bar, a check or its weight, tells it from a hovered item. Under Theme selection=\"accent\" it takes bg.selected.accent.",
+          "$value": "{palette.gray.13}"
         },
         "hover": {
-          "$description": "A selected item under the pointer: visibly deeper than the selection, and distinct from an unselected item under the pointer.",
-          "$value": "{palette.blue.10}"
+          "$description": "A selected item under the pointer: a step toward the surface from the selection.",
+          "$value": "{palette.gray.10}"
         },
         "pressed": {
-          "$description": "A selected item while pressed. Muted text and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.blue.11}"
+          "$description": "A selected item while pressed: another step toward the surface. Muted text and an inset focus ring keep their minimums on it.",
+          "$value": "{palette.gray.8}"
+        },
+        "accent": {
+          "$root": {
+            "$description": "The accent selection, which Theme selection=\"accent\" gives bg.selected: a blue tint in light and a blue-gray in dark, distinct from the other items around it, at rest and under the pointer: ΔEOK 0.03 or more, 0.04 at high contrast; paired with fg.on-selected.accent.",
+            "$value": "{palette.blue.8}"
+          },
+          "hover": {
+            "$description": "An item of the accent selection under the pointer: visibly deeper than it, and distinct from an unselected item under the pointer.",
+            "$value": "{palette.blue.10}"
+          },
+          "pressed": {
+            "$description": "An item of the accent selection while pressed. Muted text and an inset focus ring keep their minimums on it.",
+            "$value": "{palette.blue.11}"
+          }
         }
       },
       "navigation": {
@@ -643,6 +657,24 @@
           }
         }
       },
+      "item": {
+        "$root": {
+          "$description": "The fill of an item of a list, a table or a grid of cards, at rest, by the Theme’s surface: none when plain, so the item lies on its surface, and the list item’s fill when filled.",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0
+          }
+        },
+        "hover": {
+          "$description": "An item under the pointer: the row’s state layer when plain, the list item’s hover fill when filled.",
+          "$value": "{color.bg.row.hover}"
+        },
+        "pressed": {
+          "$description": "An item while pressed: the row’s pressed layer when plain, the list item’s pressed fill when filled.",
+          "$value": "{color.bg.row.pressed}"
+        }
+      },
       "row": {
         "hover": {
           "$description": "The state layer over a tree or table row under the pointer: clear over the row's surface, and a step below the selection, so the selected row always reads strongest.",
@@ -809,8 +841,14 @@
         "$value": "{palette.purple.65}"
       },
       "on-selected": {
-        "$description": "Text and indicators on bg.selected and its states.",
-        "$value": "{palette.blue.65}"
+        "$root": {
+          "$description": "Text and indicators on bg.selected and its states: the default text color. Under Theme selection=\"accent\" it takes fg.on-selected.accent.",
+          "$value": "{color.fg.default}"
+        },
+        "accent": {
+          "$description": "Text and indicators on bg.selected.accent and its states.",
+          "$value": "{palette.blue.65}"
+        }
       },
       "success": {
         "$description": "Success text and icons.",

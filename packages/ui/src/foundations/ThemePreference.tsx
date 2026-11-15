@@ -18,9 +18,11 @@ import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ColorScheme 
 import {
   contrastSourceAttribute,
   defaultThemeStorageKey,
+  lookAttributes,
   ownContrastSource,
   ownScaleSource,
   scaleSourceAttribute,
+  type ThemeDefinition,
   type ThemePreference,
 } from './themeBootstrap.js';
 import {
@@ -37,10 +39,14 @@ const systemDarkQuery = '(prefers-color-scheme: dark)';
 export interface ThemePreferenceProviderProps {
   /** The application, or the part of it that the preference themes. */
   children: ReactNode;
-  /** localStorage key; match the bootstrap script's. Defaults to "env-theme". */
-  storageKey?: string;
-  /** Used when nothing is stored. Defaults to "system". */
-  defaultPreference?: ThemePreference;
+  /**
+   * The application's theme, from defineTheme: its storage key, default preference, contrast,
+   * scale, surface, selection and corners. Give createThemeBootstrapScript the same theme, so the
+   * root has it before the first paint. Left out, the stored preference is under `env-theme`, the
+   * contrast and scale are an enclosing Theme's, or else the page's on the root, or else system,
+   * and the look is an enclosing Theme's, or else plain, neutral and rounded.
+   */
+  theme?: ThemeDefinition;
   /**
    * Theme the document root as well as this subtree (default). Root theming covers the page
    * background, native controls, portals rendered by other libraries and the content of every
@@ -54,27 +60,6 @@ export interface ThemePreferenceProviderProps {
    * first paint; once hydrated, it takes the stored one.
    */
   applyToDocument?: boolean;
-  /**
-   * Contrast of the Theme boundary around the children, and of the document root with
-   * applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme.
-   * Defaults to the contrast of an enclosing Theme; outside any, a provider applying to the
-   * document gives its boundary a contrast the page set on the root, and otherwise system. With
-   * system, the provider removes from the root only a contrast that envUI wrote and the page left
-   * unchanged: a provider, this one or one before it, or the bootstrap script. Pass a contrast that
-   * is fixed for the application to createThemeBootstrapScript too, so the root has it before the
-   * first paint.
-   */
-  contrast?: ThemeContrast;
-  /**
-   * The app scale, comfortable, compact or `system` (compact under a fine pointer, comfortable on
-   * touch), as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of
-   * the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing
-   * Theme; outside any, a provider applying to the document gives its boundary a scale the page set
-   * on the root, so the application, the page and its portals share it, and otherwise `system`. The
-   * root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass
-   * the same scale to createThemeBootstrapScript so the root has it before the first paint.
-   */
-  scale?: ThemeScale;
   /** Class name for the Theme boundary around the children. */
   className?: string;
 }
@@ -93,6 +78,7 @@ function readStoredPreference(storageKey: string, fallback: ThemePreference): Th
 interface DocumentWrites {
   contrast?: Exclude<ThemeContrast, 'system'>;
   scale?: ThemeScale;
+  look?: Record<string, string>;
 }
 
 /**
@@ -133,6 +119,11 @@ function releaseScale(root: HTMLElement) {
   for (const writes of documentProviders.values()) if (writes.scale === scale) return;
   delete root.dataset.envScale;
   root.removeAttribute(scaleSourceAttribute);
+}
+
+function releaseLook(root: HTMLElement, look: Record<string, string> | undefined) {
+  for (const [attribute, value] of Object.entries(look ?? {}))
+    if (root.getAttribute(attribute) === value) root.removeAttribute(attribute);
 }
 
 /** Calls back whenever the root's scale or contrast, or envUI's markers of them, change. */
@@ -254,14 +245,20 @@ function useInstantColorSwitch(applyToDocument: boolean, colors: string | undefi
 /** Owns the theme preference: persistence, the system theme and document-root theming. */
 export function ThemePreferenceProvider({
   children,
-  storageKey = defaultThemeStorageKey,
-  defaultPreference = 'system',
+  theme: definition = {},
   applyToDocument = true,
-  contrast: ownContrast,
-  scale: ownScale,
   className,
 }: ThemePreferenceProviderProps) {
+  const {
+    storageKey = defaultThemeStorageKey,
+    defaultPreference = 'system',
+    contrast: ownContrast,
+    scale: ownScale,
+  } = definition;
   const inherited = useTheme();
+  const surface = definition.surface ?? inherited.surface;
+  const selection = definition.selection ?? inherited.selection;
+  const corners = definition.corners ?? inherited.corners;
   // Outside any Theme, a provider that applies to the document gives its boundary the scale and
   // contrast the page set on the root, which the page and other libraries' portals already show,
   // rather than system. It never writes them back as its own.
@@ -316,17 +313,19 @@ export function ThemePreferenceProvider({
     // Once the provider unmounts or stops applying to the document, it releases what it wrote on
     // the root, as a provider at system does: what the page wrote or another provider holds stays.
     return () => {
+      const { look } = documentProviders.get(provider) ?? {};
       documentProviders.delete(provider);
       const root = document.documentElement;
       root.removeAttribute(switchingAttribute);
       releaseContrast(root);
       releaseScale(root);
+      releaseLook(root, look);
     };
   }, [applyToDocument, provider]);
 
   useInstantColorSwitch(
     applyToDocument,
-    hydrated ? `${theme} ${contrast} ${appliedContrast}` : undefined,
+    hydrated ? `${theme} ${contrast} ${appliedContrast} ${selection}` : undefined,
   );
 
   // The root takes the theme in an insertion effect, after the colors' switch above and before any
@@ -354,8 +353,25 @@ export function ThemePreferenceProvider({
       root.dataset.envScale = ownScale;
       root.setAttribute(scaleSourceAttribute, ownScaleSource(ownScale));
     } else releaseScale(root);
+    const look = {
+      [lookAttributes.surface]: surface,
+      [lookAttributes.selection]: selection,
+      [lookAttributes.corners]: corners,
+    };
+    for (const [attribute, value] of Object.entries(look)) root.setAttribute(attribute, value);
+    documentProviders.set(provider, { ...documentProviders.get(provider), look });
     root.style.colorScheme = theme;
-  }, [applyToDocument, hydrated, theme, appliedContrast, ownScale, provider]);
+  }, [
+    applyToDocument,
+    hydrated,
+    theme,
+    appliedContrast,
+    ownScale,
+    surface,
+    selection,
+    corners,
+    provider,
+  ]);
 
   // Before the paint, so the browser's own interface, such as a mobile address bar, takes the
   // canvas color in the frame that shows it. Every theme-color tag follows, including ones written
@@ -367,7 +383,7 @@ export function ThemePreferenceProvider({
     if (!browserThemes.length) return;
     const canvas = getComputedStyle(document.documentElement).backgroundColor;
     for (const browserTheme of browserThemes) browserTheme.content = canvas;
-  }, [applyToDocument, hydrated, theme, appliedContrast, ownScale]);
+  }, [applyToDocument, hydrated, theme, appliedContrast, ownScale, selection]);
 
   const value = useMemo<ThemePreferenceValue>(
     () => ({
@@ -385,6 +401,9 @@ export function ThemePreferenceProvider({
         theme={theme}
         contrast={contrast}
         scale={scale}
+        surface={surface}
+        selection={selection}
+        corners={corners}
         className={className}
         {...(rootLook && { [themeFromRootAttribute]: '' })}
       >

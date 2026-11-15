@@ -32,8 +32,13 @@ export interface StateRecord {
  * component reads its layout in the browser, such as a dock that stacks before it hydrates. Neither
  * the contract nor the docs list them, and they may change in any release. So is
  * data-env-theme-switching, which ThemePreferenceProvider sets on the themed root for the frame a
- * theme switch restyles, pausing transitions.
+ * theme switch restyles, pausing transitions; and data-env-slot and data-env-slot-*, the placement
+ * of a Slot.
  */
 export function isPrivateState(attribute: string) {
-  return attribute.startsWith('data-env-ssr-') || attribute === 'data-env-theme-switching';
+  return (
+    attribute.startsWith('data-env-ssr-') ||
+    attribute.startsWith('data-env-slot') ||
+    attribute === 'data-env-theme-switching'
+  );
 }

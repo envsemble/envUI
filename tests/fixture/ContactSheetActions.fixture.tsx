@@ -343,9 +343,11 @@ function ThemeToggles() {
   return (
     <Section name="ThemeToggle">
       <ThemePreferenceProvider
-        storageKey="contact-sheet-theme"
-        defaultPreference={params.get('theme') === 'dark' ? 'dark' : 'light'}
-        scale={params.get('scale') === 'system' ? 'system' : 'comfortable'}
+        theme={{
+          storageKey: 'contact-sheet-theme',
+          defaultPreference: params.get('theme') === 'dark' ? 'dark' : 'light',
+          scale: params.get('scale') === 'system' ? 'system' : 'comfortable',
+        }}
       >
         <Strip>
           {interactionStates.map(({ caption, force }) => (

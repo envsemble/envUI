@@ -34,6 +34,8 @@ function literalValues(type: Type): Set<string> | undefined {
 export function readSource() {
   const project = new Project({ tsConfigFilePath: resolve(libraryDirectory, 'tsconfig.json') });
   const classes = new Map<string, { files: Set<string> }>();
+  const slots = new Set<string>();
+  const slotNames = new Set<Node>();
   const warnings: string[] = [];
   /** The JSX element whose attribute holds a node, if any. */
   const elementOf = (node: Node) => {
@@ -95,6 +97,11 @@ export function readSource() {
         if (isClassName(name) && initializer) {
           anchors.push(initializer);
           const element = node.getParent().getParentOrThrow();
+          if (
+            (Node.isJsxOpeningElement(element) || Node.isJsxSelfClosingElement(element)) &&
+            element.getTagNameNode().getText() === 'Slot'
+          )
+            slotNames.add(initializer);
           for (const identifier of initializer.getDescendants())
             if (Node.isIdentifier(identifier))
               for (const declaration of identifier.getSymbol()?.getDeclarations() ?? [])
@@ -144,6 +151,8 @@ export function readSource() {
         anchors.push(node.getInitializer());
     });
     for (const { name, node } of classesIn(anchors, path, warnings)) {
+      if (slotNames.has(node) || node.getFirstAncestor((ancestor) => slotNames.has(ancestor)))
+        slots.add(name);
       const entry = classes.get(name) ?? { files: new Set<string>() };
       entry.files.add(path);
       classes.set(name, entry);
@@ -162,6 +171,7 @@ export function readSource() {
   }
   return {
     classes,
+    slots,
     states,
     imports: importsOf(files),
     renders: rendersOf(files),

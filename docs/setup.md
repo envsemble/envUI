@@ -5,6 +5,7 @@ components:
   - LinkProvider
   - PortalContainer
   - createThemeBootstrapScript
+  - defineTheme
   - Theme
   - ThemePreferenceProvider
   - ThemeToggle
@@ -98,29 +99,39 @@ Each component's module imports its own style sheet, after the base every compon
 For a whole application, `ThemePreferenceProvider` replaces the fixed `Theme`. It follows the system theme until the user picks one with `ThemeToggle`, stores that choice, applies a choice made in another window of the same origin, and themes the document root, so the page background, native controls, other libraries' portals and `<meta name="theme-color">` match.
 
 - **Type.** The root keeps the browser's font size, so 1 rem stays the reader's. To change envUI's typeface, size or line height, set `--env-font-family`, `--env-font-size-body` and `--env-line-height-body` for `.env-theme` in a style sheet loaded after envUI's, not in a `body` rule.
+- **One theme definition.** `defineTheme` from `@envsemble/envui/theme-bootstrap` holds the storage key, the default preference, the contrast, the scale, and the look: `surface` (`plain` or `filled`), `selection` (`neutral` or `accent`) and `corners` (`sharp`, `rounded` or `round`). The provider's `theme` and `createThemeBootstrapScript` take the same object, so the first paint and the application agree.
 - **Contrast and scale.** `contrast` is `high`, `standard` or `system`. Left out, the provider takes a surrounding `Theme`'s, and else follows `prefers-contrast: more`, keeping a `data-env-contrast` the page set on the root; `scale` does the same, else `system`: compact under a fine pointer, comfortable on touch ([Spacing & density](foundations/spacing.md)). The provider marks the contrast it writes with `data-env-contrast-source`; a page that keeps a contrast of its own on the root removes that attribute.
-- **One per document.** A second provider, such as for a section with a preference of its own, passes `applyToDocument={false}`; envUI warns in development about two. Unmounted, a provider removes the contrast and scale it wrote.
+- **One per document.** A second provider, such as for a section with a preference of its own, passes `applyToDocument={false}`; envUI warns in development about two. Unmounted, a provider removes the contrast, scale and look it wrote.
+
+```ts
+// theme.ts
+import { defineTheme } from '@envsemble/envui/theme-bootstrap';
+
+export const theme = defineTheme({ storageKey: 'app-theme', scale: 'comfortable' });
+```
 
 ```tsx
 import { ThemePreferenceProvider, ThemeToggle } from '@envsemble/envui';
+import { theme } from './theme';
 
-<ThemePreferenceProvider storageKey="app-theme">
+<ThemePreferenceProvider theme={theme}>
   <ThemeToggle />
 </ThemePreferenceProvider>;
 ```
 
-Add the bootstrap script to the document head so a saved dark theme does not flash light while the application loads. `createThemeBootstrapScript` from `@envsemble/envui/theme-bootstrap` returns the inline script; use the same storage key as the provider:
+Add the bootstrap script to the document head so a saved dark theme does not flash light while the application loads. `createThemeBootstrapScript` from `@envsemble/envui/theme-bootstrap` returns the inline script for the same theme:
 
 ```ts
 // vite.config.ts
 import { createThemeBootstrapScript } from '@envsemble/envui/theme-bootstrap';
+import { theme } from './src/theme';
 
 const themeBootstrap = {
   name: 'theme-bootstrap',
   transformIndexHtml: () => [
     {
       tag: 'script',
-      children: createThemeBootstrapScript({ storageKey: 'app-theme' }),
+      children: createThemeBootstrapScript(theme),
       injectTo: 'head-prepend',
     },
   ],

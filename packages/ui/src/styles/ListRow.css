@@ -62,7 +62,7 @@
     place-items: center;
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
-    --_icon-size: var(--env-control-icon-size);
+    --env-icon-size: var(--env-control-icon-size);
   }
   /* The indicator, a chosen option's check mark, ends the row, after its label and any end content. */
   .env-list-row-indicator {
@@ -75,7 +75,7 @@
   .env-list-row-icon {
     inline-size: var(--_list-row-icon-size, var(--env-control-icon-size));
     block-size: var(--_list-row-icon-size, var(--env-control-icon-size));
-    --_icon-size: var(--_list-row-icon-size, var(--env-control-icon-size));
+    --env-icon-size: var(--_list-row-icon-size, var(--env-control-icon-size));
     color: var(--env-color-fg-muted);
   }
   .env-list-row-text {

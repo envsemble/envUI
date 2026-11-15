@@ -125,7 +125,7 @@
     background: var(--env-badge-container, var(--_badge-bg, transparent));
   }
   .env-badge .env-icon {
-    --_icon-size: 0.875rem;
+    --env-icon-size: 0.875rem;
   }
   .env-badge-label {
     min-inline-size: 0;

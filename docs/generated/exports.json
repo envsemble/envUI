@@ -239,9 +239,10 @@
     "Textarea": "function",
     "TextareaProps": "interface",
     "Theme": "function",
-    "ThemeBootstrapOptions": "interface",
     "ThemeContextValue": "interface",
     "ThemeContrast": "type",
+    "ThemeCorners": "type",
+    "ThemeDefinition": "interface",
     "ThemeMenuRadioGroup": "function",
     "ThemeMenuRadioGroupProps": "interface",
     "ThemePreference": "type",
@@ -250,6 +251,8 @@
     "ThemePreferenceValue": "interface",
     "ThemeProps": "interface",
     "ThemeScale": "type",
+    "ThemeSelection": "type",
+    "ThemeSurface": "type",
     "ThemeToggle": "function",
     "ThemeToggleProps": "type",
     "TimePicker": "function",
@@ -276,6 +279,7 @@
     "avatarHue": "function",
     "avatarHues": "const",
     "createThemeBootstrapScript": "function",
+    "defineTheme": "function",
     "formatRelativeTime": "function",
     "isPlaceholder": "function",
     "lineArtDrawings": "const",
@@ -362,8 +366,9 @@
     "createRichTextExtensions": "function"
   },
   "@envsemble/envui/theme-bootstrap": {
-    "ThemeBootstrapOptions": "interface",
+    "ThemeDefinition": "interface",
     "ThemePreference": "type",
-    "createThemeBootstrapScript": "function"
+    "createThemeBootstrapScript": "function",
+    "defineTheme": "function"
   }
 }

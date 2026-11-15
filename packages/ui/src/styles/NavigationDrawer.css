@@ -171,7 +171,7 @@
     );
     /* The height the item draws at: the control height, or more under a coarse pointer. */
     --_navigation-drawer-item-height: var(--env-control-height);
-    --_icon-size: var(--env-control-icon-size);
+    --env-icon-size: var(--env-control-icon-size);
     box-sizing: border-box;
     inline-size: 100%;
     min-block-size: var(--_navigation-drawer-item-height);

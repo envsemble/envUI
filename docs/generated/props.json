@@ -8264,7 +8264,7 @@
     "Theme": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "An explicit, scoped theme: a color scheme, a contrast and a scale, which nested Themes and envUI's popups keep. Theme preference and persistence belong to the app.",
+      "description": "An explicit, scoped theme: a color scheme, a contrast, a scale, and the surface, selection and corners of the look, which nested Themes and envUI's popups keep. Theme preference and persistence belong to the app.",
       "props": [
         {
           "name": "theme",
@@ -8283,6 +8283,24 @@
           "type": "'comfortable' | 'compact' | 'system'",
           "required": false,
           "description": "The app scale of everything inside: comfortable, compact, or `system`, which is compact under a fine pointer and comfortable on touch, chosen by the stylesheet. Use one scale per app or window, and another only on a Theme around a whole region, such as a docked inspector. Defaults to the scale of the enclosing Theme, and to `system` outside any. It wins over a `data-env-scale` attribute passed to the Theme."
+        },
+        {
+          "name": "surface",
+          "type": "'plain' | 'filled'",
+          "required": false,
+          "description": "How rows, tables and cards draw inside: plain or filled. Defaults to the surface of the enclosing Theme, and to plain outside any."
+        },
+        {
+          "name": "selection",
+          "type": "'neutral' | 'accent'",
+          "required": false,
+          "description": "The tone of selected items inside: neutral or accent. Defaults to the selection of the enclosing Theme, and to neutral outside any."
+        },
+        {
+          "name": "corners",
+          "type": "'sharp' | 'rounded' | 'round'",
+          "required": false,
+          "description": "The corner shape inside: sharp, rounded or round. Defaults to the corners of the enclosing Theme, and to rounded outside any."
         }
       ],
       "native": [
@@ -8348,18 +8366,11 @@
           "description": "The application, or the part of it that the preference themes."
         },
         {
-          "name": "storageKey",
-          "type": "string",
+          "name": "theme",
+          "type": "ThemeDefinition",
           "required": false,
-          "default": "'env-theme'",
-          "description": "localStorage key; match the bootstrap script's. Defaults to \"env-theme\"."
-        },
-        {
-          "name": "defaultPreference",
-          "type": "'light' | 'dark' | 'system'",
-          "required": false,
-          "default": "'system'",
-          "description": "Used when nothing is stored. Defaults to \"system\"."
+          "default": "{}",
+          "description": "The application's theme, from defineTheme: its storage key, default preference, contrast, scale, surface, selection and corners. Give createThemeBootstrapScript the same theme, so the root has it before the first paint. Left out, the stored preference is under `env-theme`, the contrast and scale are an enclosing Theme's, or else the page's on the root, or else system, and the look is an enclosing Theme's, or else plain, neutral and rounded."
         },
         {
           "name": "applyToDocument",
@@ -8367,18 +8378,6 @@
           "required": false,
           "default": "true",
           "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color. One provider per document applies to it: pass false to any other, nested in it or beside it. In development, envUI reports two providers that both apply. Outside any Theme, its boundary around the children is a plain element that takes the root's look, with none of a Theme's class and attributes, unless its contrast is system while the page set a contrast of its own on the root. Rendered on the server, and as the page hydrates, it renders the preference's default and leaves the page's look to the theme createThemeBootstrapScript gave the root, which knows the stored preference before the first paint; once hydrated, it takes the stored one."
-        },
-        {
-          "name": "contrast",
-          "type": "'standard' | 'high' | 'system'",
-          "required": false,
-          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme; outside any, a provider applying to the document gives its boundary a contrast the page set on the root, and otherwise system. With system, the provider removes from the root only a contrast that envUI wrote and the page left unchanged: a provider, this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the application to createThemeBootstrapScript too, so the root has it before the first paint."
-        },
-        {
-          "name": "scale",
-          "type": "'comfortable' | 'compact' | 'system'",
-          "required": false,
-          "description": "The app scale, comfortable, compact or `system` (compact under a fine pointer, comfortable on touch), as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing Theme; outside any, a provider applying to the document gives its boundary a scale the page set on the root, so the application, the page and its portals share it, and otherwise `system`. The root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the first paint."
         },
         {
           "name": "className",
@@ -9124,8 +9123,18 @@
     "createThemeBootstrapScript": {
       "kind": "function",
       "source": "packages/ui/src/foundations/themeBootstrap.ts",
-      "description": "Inline script for the document head. It themes the root element before the first paint, so a saved or system dark theme does not flash light while the application loads, and a high or standard contrast applies from the start.",
-      "signature": "({ storageKey, defaultPreference, contrast, scale, }?: ThemeBootstrapOptions): string",
+      "description": "Inline script for the document head. It themes the root element before the first paint, so a saved or system dark theme does not flash light while the application loads, and the contrast, scale, surface, selection and corners of the theme apply from the start. Give it the theme ThemePreferenceProvider takes.",
+      "signature": "(theme?: ThemeDefinition): string",
+      "entries": [
+        "@envsemble/envui",
+        "@envsemble/envui/theme-bootstrap"
+      ]
+    },
+    "defineTheme": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/themeBootstrap.ts",
+      "description": "Defines an application's theme once, for ThemePreferenceProvider's `theme` and createThemeBootstrapScript, so the two can't drift apart.",
+      "signature": "(definition?: ThemeDefinition): Readonly<ThemeDefinition>",
       "entries": [
         "@envsemble/envui",
         "@envsemble/envui/theme-bootstrap"
@@ -9215,7 +9224,7 @@
     "useTheme": {
       "kind": "function",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "The theme of the nearest Theme, including across React portals: its color scheme, contrast and scale. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of `system` leaves it to `pointer: fine`.",
+      "description": "The theme of the nearest Theme, including across React portals: its color scheme, contrast, scale, surface, selection and corners. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of `system` leaves it to `pointer: fine`.",
       "signature": "(): ThemeContextValue",
       "entries": [
         "@envsemble/envui"

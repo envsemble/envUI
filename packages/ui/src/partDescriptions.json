@@ -124,7 +124,10 @@
     "Button": {
       "env-button": "The button.",
       "env-button-content": "The button's label and icons.",
-      "env-button-end": "The quiet content at the button's end, such as a shortcut's keys.",
+      "env-button-end": "The slot of the quiet content at the button's far end, such as a shortcut's keys.",
+      "env-button-end-icon": "The slot of the icon after the label.",
+      "env-button-label": "The slot of the label, the button's children.",
+      "env-button-start-icon": "The slot of the icon before the label.",
       "env-button-spinner": "The spinner of a pending button."
     },
     "ButtonGroup": {

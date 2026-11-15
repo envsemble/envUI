@@ -1,3 +1,5 @@
+import type { ThemeDefinition } from '@envsemble/envui';
+
 /**
  * Where the site stores the reader's display settings in localStorage. The script that applies
  * them before the site loads is in HeadScripts.ts.
@@ -8,6 +10,10 @@ export const displayStorageKeys = {
   scale: 'envui-site-scale',
   motion: 'envui-site-motion',
 } as const;
+
+export const siteTheme = {
+  storageKey: displayStorageKeys.theme,
+} as const satisfies ThemeDefinition;
 
 /** Where the site keeps the width the reader gives a part's drawer, the catalogue's or the Docs'. */
 export const drawerWidthKey = (area: 'catalogue' | 'docs') => `envui-site-drawer-width-${area}`;

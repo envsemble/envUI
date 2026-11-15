@@ -83,17 +83,17 @@
     /* An icon or a picture in it takes the size of a leading icon in a large row: one of envUI's
        symbols, rather than its text's size, a Graphic of the icon size, and an svg or img of the
        application's own, contained in that box whatever its file's size. */
-    --_icon-size: var(--env-icon-size-lg);
+    --env-icon-size: var(--env-icon-size-lg);
     /* At least an icon wide, with what it holds centred, so a narrower mark, such as a running
        step's Spinner among icons, leaves its label in line with its siblings'. */
     display: flex;
     align-items: center;
     justify-content: center;
-    min-inline-size: var(--_icon-size);
+    min-inline-size: var(--env-icon-size);
   }
   .env-list-item-start > :is(svg, img) {
-    inline-size: var(--_icon-size);
-    block-size: var(--_icon-size);
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
     object-fit: contain;
   }
   /* The handle, ahead of the label, reaches in toward the row's corner rather than the text. */

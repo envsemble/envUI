@@ -197,7 +197,7 @@ import logo from './logo.svg';
 </Graphic>
 ```
 
-- `size="icon"`, the default, reads `--env-icon-size`, which an icon slot sets, else `--env-control-icon-size`; `text` sits a little below the middle of the line, as an icon in text does.
+- `size="icon"`, the default, reads `--env-icon-size`, 1 rem at the root, which an icon slot sets; `text` sits a little below the middle of the line, as an icon in text does.
 - `size="fill"` is a block as wide as its container, and as tall where the container has a definite height; otherwise an `img` takes its own shape's height, and a file in the text color is square.
 - `aspect`, such as `"16/9"`, sets the box's `aspect-ratio`: a step is then its height, and a fill takes its height from its width, so it needs no height from its container. `fit="cover"` covers the box and crops a file's picture, for a photo or a screenshot.
 - The picture is an `img` with `object-fit: contain`, or `cover`, or the SVG at 100% of the box, in a grid of fixed tracks, so its size never comes from the file. An SVG component needs a `viewBox`; its `width` and `height` don't count.

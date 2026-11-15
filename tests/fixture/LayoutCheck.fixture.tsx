@@ -59,9 +59,8 @@ export default function LayoutCheckFixture() {
   if (!Example) return <pre data-example-error="">No example file {path}</pre>;
   return (
     <ThemePreferenceProvider
+      theme={{ defaultPreference: 'light', storageKey: 'envui-layout-check-theme' }}
       applyToDocument={false}
-      defaultPreference="light"
-      storageKey="envui-layout-check-theme"
     >
       <Theme theme={theme} className="fixture-layout-check-page">
         <Column

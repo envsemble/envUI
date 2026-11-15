@@ -42,7 +42,7 @@
     transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-drop-zone-icon > .env-icon {
-    --_icon-size: 1.5rem;
+    --env-icon-size: 1.5rem;
   }
   .env-drop-zone-label {
     font-weight: var(--env-font-weight-medium);

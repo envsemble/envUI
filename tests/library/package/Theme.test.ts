@@ -126,6 +126,28 @@ test('a Theme writes its scale, which nested Themes inherit, and a data-env-scal
   assert.match(prop, /data-env-scale="comfortable"/);
 });
 
+test('a Theme writes its surface, selection and corners, which nested Themes and useTheme take', () => {
+  function Inner() {
+    const { surface, selection, corners } = useTheme();
+    return h('output', null, `${surface} ${selection} ${corners}`);
+  }
+  const plain = render(h(Theme, { theme: 'light' }, h(Inner))).markup;
+  assert.match(
+    plain,
+    /data-env-surface="plain" data-env-selection="neutral" data-env-corners="rounded"/,
+  );
+  const nested = render(
+    h(
+      Theme,
+      { theme: 'light', surface: 'filled', selection: 'accent', corners: 'sharp' },
+      h(Theme, { theme: 'dark', corners: 'round' }, h(Inner)),
+    ),
+  ).markup;
+  assert.equal(nested.match(/data-env-surface="filled"/g)?.length, 2);
+  assert.equal(nested.match(/data-env-selection="accent"/g)?.length, 2);
+  assert.match(nested, /<output>filled accent round<\/output>/);
+});
+
 test('ThemePreferenceProvider renders its default on the server and leaves the look to the root', () => {
   function Inner() {
     return h('output', null, useTheme().theme);
@@ -133,14 +155,25 @@ test('ThemePreferenceProvider renders its default on the server and leaves the l
   // Applying to the document, its boundary has none of a theme boundary's class and attributes, so
   // until the page hydrates it takes the theme the bootstrap script gave the root.
   const root = render(
-    h(ThemePreferenceProvider, { className: 'app', defaultPreference: 'system' }, h(Inner)),
+    h(
+      ThemePreferenceProvider,
+      { className: 'app', theme: { defaultPreference: 'system' } },
+      h(Inner),
+    ),
   ).markup;
   assert.match(root, /^<div data-env-ssr-root="" class="app"><output>light<\/output><\/div>$/);
   // One that doesn't apply to the document themes its own boundary, with the default preference.
   const own = render(
-    h(ThemePreferenceProvider, { applyToDocument: false, defaultPreference: 'dark' }, h(Inner)),
+    h(
+      ThemePreferenceProvider,
+      { applyToDocument: false, theme: { defaultPreference: 'dark' } },
+      h(Inner),
+    ),
   ).markup;
-  assert.match(own, /^<div class="env-theme" data-env-theme="dark" data-env-scale="system">/);
+  assert.match(
+    own,
+    /^<div class="env-theme" data-env-theme="dark" data-env-scale="system" data-env-surface="plain" data-env-selection="neutral" data-env-corners="rounded">/,
+  );
   assert.match(own, /<output>dark<\/output>/);
 });
 

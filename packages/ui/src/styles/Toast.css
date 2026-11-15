@@ -150,7 +150,7 @@
      these colors win over the ghost ones. */
   .env-toast-dismiss {
     --env-icon-button-hit-area: var(--env-control-height-touch);
-    --_icon-size: 1.125rem;
+    --env-icon-size: 1.125rem;
     color: inherit;
   }
   .env-toast-dismiss:hover:not(:disabled):not([aria-disabled='true']) {

@@ -95,13 +95,24 @@
       },
       "selected": {
         "$root": {
-          "$value": "{palette.slate.80}"
+          "$value": "{palette.gray.70}"
         },
         "hover": {
-          "$value": "{palette.slate.75}"
+          "$value": "{palette.gray.75}"
         },
         "pressed": {
-          "$value": "{palette.slate.70}"
+          "$value": "{palette.gray.80}"
+        },
+        "accent": {
+          "$root": {
+            "$value": "{palette.slate.80}"
+          },
+          "hover": {
+            "$value": "{palette.slate.75}"
+          },
+          "pressed": {
+            "$value": "{palette.slate.70}"
+          }
         }
       },
       "navigation": {
@@ -523,6 +534,21 @@
           "$value": "{color.bg.muted.pressed}"
         }
       },
+      "item": {
+        "$root": {
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0
+          }
+        },
+        "hover": {
+          "$value": "{color.bg.row.hover}"
+        },
+        "pressed": {
+          "$value": "{color.bg.row.pressed}"
+        }
+      },
       "row": {
         "hover": {
           "$value": {
@@ -612,7 +638,12 @@
         "$value": "{palette.purple.20}"
       },
       "on-selected": {
-        "$value": "{palette.blue.15}"
+        "$root": {
+          "$value": "{color.fg.default}"
+        },
+        "accent": {
+          "$value": "{palette.blue.15}"
+        }
       },
       "success": {
         "$value": "{palette.green.20}"

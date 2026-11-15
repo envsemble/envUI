@@ -2,6 +2,7 @@
 // token work removes are recorded in stylelint-suppressions.json, and
 // tests/tooling/StylelintSuppressions.test.ts requires the recorded counts to match the CSS
 // exactly; anything new fails. See "Ports, workers and recorded lists" in AGENTS.md.
+import { readFileSync } from 'node:fs';
 import stylelint from 'stylelint';
 // The px allowlist, the raw color functions and the z-index values are the ones envUI's Stylelint
 // config ships, so applications and the library follow the same rules.
@@ -108,10 +109,118 @@ const fontWeightFromToken = createPlugin(fontWeightRuleName, (primary) => (root,
   });
 });
 
+const slotRuleName = 'envui/slot-content';
+const slotMessages = ruleMessages(slotRuleName, {
+  inside: (selector, slot) =>
+    `Selector "${selector}" reaches inside the slot ${slot}: a slot holds what the application gives it and never styles it. Style the content through its own component, or the slot itself for placement only.`,
+  text: (property, slot) =>
+    `"${property}" on the slot ${slot}: a slot only places what it holds; its text, color and overflow are the content's own.`,
+});
+const slotTextProperties =
+  /^(?:font(?:-.*)?|color|overflow(?:-.*)?|text-overflow|text-wrap(?:-.*)?|white-space(?:-.*)?|(?:-webkit-)?line-clamp|line-height|letter-spacing|word-spacing|text-transform|text-decoration(?:-.*)?)$/i;
+
+function readSlotClasses() {
+  const contract = JSON.parse(
+    readFileSync(new URL('./docs/generated/parts.json', import.meta.url), 'utf8'),
+  );
+  return new Set(
+    [...Object.values(contract.components), ...Object.values(contract.shared)].flatMap((entry) =>
+      entry.parts.filter((part) => part.slot).map((part) => part.class),
+    ),
+  );
+}
+
+function compoundsOf(selector) {
+  const compounds = [];
+  let depth = 0;
+  let quote = '';
+  let current = '';
+  let combinator = '';
+  const close = (next) => {
+    if (current) {
+      compounds.push({ text: current, combinator: '' });
+      current = '';
+    }
+    if (next && compounds.length) compounds[compounds.length - 1].combinator = next;
+  };
+  for (const character of selector) {
+    if (quote) {
+      current += character;
+      if (character === quote) quote = '';
+      continue;
+    }
+    if (character === '"' || character === "'") quote = character;
+    if (character === '(' || character === '[') depth++;
+    if (character === ')' || character === ']') depth--;
+    if (depth === 0 && /[\s>+~]/.test(character)) {
+      if (character !== ' ' && !/\s/.test(character)) combinator = character;
+      else if (!combinator) combinator = ' ';
+      if (current) close();
+      continue;
+    }
+    if (combinator) {
+      close(combinator);
+      combinator = '';
+    }
+    current += character;
+  }
+  close();
+  return compounds;
+}
+
+function classesOf(compound) {
+  let text = compound;
+  for (let start = text.search(/:(?:not|has)\(/i); start !== -1;) {
+    let depth = 0;
+    let end = text.indexOf('(', start);
+    for (; end < text.length; end++) {
+      if (text[end] === '(') depth++;
+      else if (text[end] === ')' && --depth === 0) break;
+    }
+    text = text.slice(0, start) + text.slice(end + 1);
+    start = text.search(/:(?:not|has)\(/i);
+  }
+  return [...text.matchAll(/\.(-?[_a-z][\w-]*)/gi)].map((match) => match[1]);
+}
+
+const slotContent = createPlugin(slotRuleName, (primary) => (root, result) => {
+  if (!validateOptions(result, slotRuleName, { actual: primary, possible: [true] })) return;
+  const slots = readSlotClasses();
+  root.walkRules((rule) => {
+    for (const selector of rule.selectors) {
+      const compounds = compoundsOf(selector);
+      for (const { text, combinator } of compounds) {
+        const slot = classesOf(text).find((name) => slots.has(name));
+        if (slot && (combinator === ' ' || combinator === '>'))
+          report({
+            result,
+            ruleName: slotRuleName,
+            node: rule,
+            message: slotMessages.inside,
+            messageArgs: [selector, slot],
+          });
+      }
+      const subject = compounds.at(-1);
+      const slot = subject && classesOf(subject.text).find((name) => slots.has(name));
+      if (!slot) continue;
+      rule.each((node) => {
+        if (node.type === 'decl' && slotTextProperties.test(node.prop))
+          report({
+            result,
+            ruleName: slotRuleName,
+            node,
+            message: slotMessages.text,
+            messageArgs: [node.prop, slot],
+          });
+      });
+    }
+  });
+});
+
 /** @type {import('stylelint').Config} */
 export default {
   extends: ['stylelint-config-recommended'],
-  plugins: [fontWeightFromToken],
+  plugins: [fontWeightFromToken, slotContent],
   reportDescriptionlessDisables: true,
   reportInvalidScopeDisables: true,
   reportNeedlessDisables: true,
@@ -144,6 +253,7 @@ export default {
       // ones --_<component>-, apart from those Base UI sets on its parts, which they read.
       files: ['packages/ui/src/styles/**/*.css'],
       rules: {
+        [slotRuleName]: true,
         'declaration-property-unit-disallowed-list': { '/^(?!--)/': ['rem'] },
         'selector-class-pattern': [
           '^(?:env(?:-[a-z0-9]+)+|ProseMirror(?:-[a-z]+)?|contains-task-list|task-list-item|footnotes|is-editor-empty|selectedCell|tableWrapper)$',

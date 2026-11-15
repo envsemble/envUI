@@ -5,7 +5,7 @@
      not the file's. */
   .env-graphic {
     /* By default, the icon size of the slot it sits in, such as a button's, else a control's. */
-    --_graphic-size: var(--_icon-size, var(--env-control-icon-size));
+    --_graphic-size: var(--env-icon-size);
     display: inline-grid;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     place-items: center;

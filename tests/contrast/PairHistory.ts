@@ -105,6 +105,18 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
     rationale:
       'The catalogue’s section band is gone: Rules sits on the page’s background like every other group, so nothing paints on the band’s fill, and the same text on the page stays measured.',
   },
+  // A badge, counter or diff stat in a button keeps its own colors: Button no longer outlines it in
+  // its label color.
+  ...[
+    'badge-outline-important on --env-color-bg-accent-strong',
+    'badge-outline-important on --env-color-bg-danger-emphasis',
+    'badge-outline-primary on --env-color-bg-accent-emphasis',
+    'badge-outline-primary on --env-color-bg-primary-emphasis',
+  ].map((pair) => ({
+    pair,
+    rationale:
+      'A badge, counter or diff stat inside a button keeps its own fill and colors, measured where it is drawn on the surfaces, rather than an outline in the button’s label color.',
+  })),
 ];
 
 /**
@@ -1783,6 +1795,62 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     to: 'badge-outline-important on --env-color-bg-danger-emphasis',
     rationale:
       'A count on a danger primary is outlined in its white label, as on an important button, now that the danger fill takes --env-color-fg-on-strong.',
+  },
+  // The selection is neutral by default; the accent selection, which Theme selection="accent"
+  // gives the selection tokens, keeps the pairs against the other items under the pointer.
+  ...[
+    '--env-color-bg-selected on --env-color-bg-navigation-hover',
+    '--env-color-bg-selected on --env-color-bg-navigation-pressed',
+    '--env-color-bg-selected on --env-color-bg-neutral-muted over popup-frosted over --env-color-bg-default',
+    '--env-color-bg-selected on --env-color-bg-neutral-muted over popup-frosted over --env-color-bg-muted',
+    '--env-color-bg-selected on --env-color-bg-neutral-muted over popup-frosted over --env-color-bg-page',
+    '--env-color-bg-selected on --env-color-bg-neutral-muted over popup-frosted over --env-color-bg-recessed',
+    '--env-color-bg-selected on --env-color-bg-popup-hover',
+    '--env-color-bg-selected on --env-color-bg-row-hover over --env-color-bg-default',
+    '--env-color-bg-selected on --env-color-bg-row-hover over --env-color-bg-page',
+    '--env-color-bg-selected on --env-color-bg-row-hover over --env-color-bg-raised',
+    '--env-color-bg-selected on --env-color-bg-row-hover over --env-color-bg-recessed',
+    '--env-color-bg-selected-hover on --env-color-bg-navigation-hover',
+    '--env-color-bg-selected-hover on --env-color-bg-popup-hover',
+    '--env-color-bg-selected-hover on --env-color-bg-row-hover over --env-color-bg-default',
+    '--env-color-bg-selected-hover on --env-color-bg-row-hover over --env-color-bg-page',
+    '--env-color-bg-selected-hover on --env-color-bg-row-hover over --env-color-bg-raised',
+    '--env-color-bg-selected-hover on --env-color-bg-row-hover over --env-color-bg-recessed',
+    '--env-color-fg-on-selected on --env-color-fg-control',
+    '--env-color-fg-on-selected on --env-color-fg-default',
+  ].map((from) => ({
+    from,
+    to: from.replace(
+      /^--env-color-(bg-selected|fg-on-selected)(-hover)? /,
+      (_, token: string, state = '') => `--env-color-${token}-accent${state} `,
+    ),
+    rationale:
+      'The selection is neutral by default, a gray deeper than the surfaces with the default text color, told from a hovered item by its second cue, a bar, a check or its weight; it is still measured against the surfaces it lies on. The accent selection, which Theme selection="accent" gives the selection tokens, keeps these pairs under its own tokens, with the values the selection had.',
+  })),
+  ...[
+    '--env-color-bg-selected on --env-color-bg-neutral-muted over popup-frosted over catalogue-canvas',
+    '--env-color-bg-selected on --env-color-bg-row-hover over catalogue-canvas',
+    '--env-color-bg-selected-hover on --env-color-bg-row-hover over catalogue-canvas',
+  ].map((from) => ({
+    from,
+    to: from
+      .replace(
+        /^--env-color-bg-selected(-hover)? /,
+        (_, state = '') => `--env-color-bg-selected-accent${state} `,
+      )
+      .replace(/catalogue-canvas$/, '--env-color-bg-recessed'),
+    rationale:
+      'The accent selection keeps the pairs against the other items under the pointer, measured on the recessed surface the catalogue’s canvas is.',
+  })),
+  {
+    from: 'badge-outline-important on --env-color-bg-important-strong',
+    to: 'badge-outline-important on --env-color-bg-accent-strong',
+    rationale: 'The important fill is the accent strong fill.',
+  },
+  {
+    from: 'badge-outline-primary on --env-color-bg-brand-emphasis',
+    to: 'badge-outline-primary on --env-color-bg-primary-emphasis',
+    rationale: 'The brand emphasis fill is the primary emphasis fill.',
   },
 ];
 

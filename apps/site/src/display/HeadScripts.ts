@@ -17,6 +17,7 @@ import {
   drawerWidthKey,
   drawerWidths,
   modifierAttribute,
+  siteTheme,
   storedDrawerWidthProperty,
 } from './DisplayStorage.ts';
 
@@ -40,7 +41,7 @@ const renamedStorageKeys: readonly (readonly [before: string, now: string])[] = 
  */
 export const headScript = () =>
   createStorageMigrationScript() +
-  createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }) +
+  createThemeBootstrapScript(siteTheme) +
   createDisplayBootstrapScript() +
   createSiteBootstrapScript();
 

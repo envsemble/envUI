@@ -101,7 +101,7 @@
     inline-size: var(--_combobox-start-size);
     block-size: var(--_combobox-start-size);
     color: var(--env-color-fg-muted);
-    --_icon-size: min(var(--env-control-icon-size), var(--_combobox-start-size));
+    --env-icon-size: min(var(--env-control-icon-size), var(--_combobox-start-size));
   }
   /* An avatar of the default size takes the slot's; one given a size keeps it. Between the two in
      specificity, :not(env-none) being one type selector, which every element matches, so neither
@@ -109,13 +109,13 @@
   :where(.env-combobox-start) > .env-avatar:not(env-none) {
     --_avatar-size: var(--_combobox-start-size);
   }
-  /* An icon takes the control's icon size, or the slot's where that is smaller (--_icon-size, set
+  /* An icon takes the control's icon size, or the slot's where that is smaller (--env-icon-size, set
      above): one of envUI's, a Graphic of the icon size, or an svg or img of the application's own,
      contained in that box whatever its file's size. */
   .env-combobox-start > :is(svg, img),
   .env-combobox-start > .env-icon {
-    inline-size: var(--_icon-size);
-    block-size: var(--_icon-size);
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
     object-fit: contain;
   }
   /* The chosen option's icon or avatar takes an avatar's small size, large enough for its initials,
@@ -212,7 +212,7 @@
     --_button-touch-height: 0rem;
     /* A little smaller than the field's own actions, so a chip's cross reads as the chip's and not
        as one of them. */
-    --_icon-size: 0.75rem;
+    --env-icon-size: 0.75rem;
     flex: 0 0 auto;
     border-radius: calc(var(--env-radius-sm) - var(--env-space-1) / 2);
   }
@@ -294,7 +294,7 @@
       row-gap: var(--env-space-2);
     }
     .env-combobox-chip-remove {
-      --_icon-size: 0.875rem;
+      --env-icon-size: 0.875rem;
       --env-icon-button-hit-area: calc(var(--_combobox-row) + var(--env-space-2));
       z-index: var(--env-z-raised);
     }

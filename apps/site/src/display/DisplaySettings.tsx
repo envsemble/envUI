@@ -12,7 +12,7 @@ import {
   type ThemeScale,
 } from '@envsemble/envui';
 import { IconTune } from '@envsemble/envui/icons/Tune';
-import { displayStorageKeys } from './DisplayStorage';
+import { displayStorageKeys, siteTheme } from './DisplayStorage';
 import { prefersReducedMotion } from '../shared/ReducedMotion';
 import { useHydrated } from '../shared/useHydrated';
 import {
@@ -132,9 +132,7 @@ export function DisplaySettingsProvider({
   return (
     <DisplaySettingsContext value={value}>
       <ThemePreferenceProvider
-        storageKey={displayStorageKeys.theme}
-        contrast={shown.contrast}
-        scale={shown.scale}
+        theme={{ ...siteTheme, contrast: shown.contrast, scale: shown.scale }}
         className={className}
       >
         {children}

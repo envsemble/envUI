@@ -3,7 +3,7 @@ import { classNames } from '../../internal/classNames.js';
 import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import { ActionElement, type ActionElementProps } from '../../internal/control/ActionElement.js';
 import { SpinnerArc } from '../../internal/control/SpinnerArc.js';
-import { textRuns } from '../../internal/control/textRuns.js';
+import { Slot } from '../../internal/layout/Slot.js';
 import type { ButtonAppearanceProps, ButtonVariant } from '../Button.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
@@ -44,12 +44,26 @@ export function ButtonBase({
     <DecorativeIcon>{icon}</DecorativeIcon>
   ) : (
     <>
-      {startIcon != null && <DecorativeIcon>{startIcon}</DecorativeIcon>}
-      {/* Words and a number in their line, such as Show 12 tasks, stay one line of text, which the
-          button's gap would otherwise space out. */}
-      {textRuns(children, 'env-button-text')}
-      {endIcon != null && <DecorativeIcon>{endIcon}</DecorativeIcon>}
-      {end != null && <span className="env-button-end">{end}</span>}
+      {startIcon != null && (
+        <Slot className="env-button-start-icon" element="span" layout="row" shrink="never">
+          <DecorativeIcon>{startIcon}</DecorativeIcon>
+        </Slot>
+      )}
+      {children != null && (
+        <Slot className="env-button-label" element="span">
+          {children}
+        </Slot>
+      )}
+      {endIcon != null && (
+        <Slot className="env-button-end-icon" element="span" layout="row" shrink="never">
+          <DecorativeIcon>{endIcon}</DecorativeIcon>
+        </Slot>
+      )}
+      {end != null && (
+        <Slot className="env-button-end" element="span" layout="row" shrink="never">
+          {end}
+        </Slot>
+      )}
     </>
   );
   return (

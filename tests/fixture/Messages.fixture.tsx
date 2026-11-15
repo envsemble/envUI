@@ -173,7 +173,7 @@ function InlineMessages() {
  */
 export default function MessagesFixture() {
   return (
-    <ThemePreferenceProvider storageKey="fixture-messages-theme">
+    <ThemePreferenceProvider theme={{ storageKey: 'fixture-messages-theme' }}>
       <EnvUIProvider messages={pseudoMessages} locale="en-XA">
         <Column gap={4} data-testid="messages">
           <ConfirmButton confirmLabel="Remove" onConfirm={() => {}}>

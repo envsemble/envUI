@@ -183,15 +183,15 @@ import { Button, Column, Surface, Table, Text, TextField, Theme } from '@envsemb
 </Theme>;
 ```
 
-| Prop                          | Takes                                                                                                                           |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `gap`, `padding`              | Spacing steps 0–9 on Row, Column, Grid, Box and Surface; 0 to 4 rem in the comfortable scale, smaller in compact                |
-| Theme scale                   | system, comfortable or compact; inherited from the enclosing Theme, system outside any; written to `data-env-scale`             |
-| ThemePreferenceProvider scale | As on Theme, for its boundary and the document root; left out, it inherits `<html data-env-scale>`                              |
-| createThemeBootstrapScript    | `scale: 'compact'` or `'comfortable'` writes `data-env-scale` to the root before the first paint; system writes nothing         |
-| Control `size`                | sm, md or lg on Button, IconButton, the fields, Select, Combobox, DatePicker, SegmentedControl, Pagination and the rail of Tabs |
-| Row `density`                 | xs, sm, md or lg on Table.Root, Tree and List.Root: only the rows' block padding changes                                        |
-| Touch minimum                 | 2.75 rem: every control grows to it under a coarse pointer                                                                      |
+| Prop                       | Takes                                                                                                                           |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `gap`, `padding`           | Spacing steps 0–9 on Row, Column, Grid, Box and Surface; 0 to 4 rem in the comfortable scale, smaller in compact                |
+| Theme scale                | system, comfortable or compact; inherited from the enclosing Theme, system outside any; written to `data-env-scale`             |
+| defineTheme scale          | As on Theme, for ThemePreferenceProvider's boundary and the document root; left out, it inherits `<html data-env-scale>`        |
+| createThemeBootstrapScript | The same theme: `compact` or `comfortable` writes `data-env-scale` to the root before the first paint; system writes nothing    |
+| Control `size`             | sm, md or lg on Button, IconButton, the fields, Select, Combobox, DatePicker, SegmentedControl, Pagination and the rail of Tabs |
+| Row `density`              | xs, sm, md or lg on Table.Root, Tree and List.Root: only the rows' block padding changes                                        |
+| Touch minimum              | 2.75 rem: every control grows to it under a coarse pointer                                                                      |
 
 #### The words of the figures
 
@@ -216,7 +216,7 @@ Within a scale, `size` picks one of three control heights for a deliberate local
 - Use relative units; let text wrap and controls grow with their content. In your own grids, `minmax(0, 1fr)` tracks, `min-inline-size: 0` on flex children and `max-inline-size: 100%` on media.
 - Choose Surface for a plain pane and Card for a content surface, and keep their corners.
 - Use `--env-radius-full` where a pill is meant, never `50%` or `9999px`: one line tall it draws round ends, and an element that grows taller, such as a wrapping button, keeps the same corners. `50%` is only for parts that are always square, such as avatars and round icon buttons.
-- **One scale per app or window**, on the root Theme or ThemePreferenceProvider. Leave it at `system` for a tool used with a mouse and on touch; set `comfortable` for a website with room to breathe, or `compact` for a dense tool on touch too. A fixed scale, rendered on the server, goes to the provider and to `createThemeBootstrapScript` too, so the first paint has it.
+- **One scale per app or window**, on the root Theme or ThemePreferenceProvider. Leave it at `system` for a tool used with a mouse and on touch; set `comfortable` for a website with room to breathe, or `compact` for a dense tool on touch too. A fixed scale goes in the theme `defineTheme` returns, which the provider and `createThemeBootstrapScript` both take, so the first paint has it.
 - **Another scale only at a Theme boundary around a whole region**, such as a docked inspector: `<Theme {...useTheme()} scale="compact">`.
 - **Rows match:** a button beside a field takes its size, and a table's toolbar follows its rows.
 - Choose a row density for how people read: `sm` or `xs` for scanning, `md` or `lg` for reading row by row.
@@ -236,6 +236,7 @@ Inside a Theme these tokens follow the theme, its scale and the reader's text si
 | `--env-radius-full`                                               | Rounded ends: buttons, navigation items, badges; half the tallest single-line control, 1.5 rem at most, so a taller element is a rounded rectangle |
 | `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | Control heights, to line up with                                                                                                                   |
 | `--env-control-icon-size`                                         | 1 rem: the icon inside controls                                                                                                                    |
+| `--env-icon-size`                                                 | The icons here, to line up with: 1 rem at the root, and the size a button, navigation item or row gives the icons inside it                        |
 
 #### Corners by what they are
 

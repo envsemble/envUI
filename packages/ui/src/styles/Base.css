@@ -16,6 +16,7 @@
 @import './TokensHandwritten.css' layer(env.tokens);
 @import './Surface.css';
 @import './Theme.css' layer(env.base);
+@import './Slot.css' layer(env.base);
 @import './Icon.css';
 @import './Motion.css';
 /* envUI's own Geist: one variable face from regular (400) to bold (700). Cascade layers order style

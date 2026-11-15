@@ -21,9 +21,7 @@ export default function AppScreenFixture() {
     // An application themes the document root through its provider, so the page background and
     // the portals follow; the fixture's own key keeps a stored choice out of the other fixtures.
     <ThemePreferenceProvider
-      storageKey="fixture-app-screen"
-      defaultPreference={theme}
-      scale={scale}
+      theme={{ storageKey: 'fixture-app-screen', defaultPreference: theme, scale: scale }}
     >
       <ToastProvider>
         {query.get('screen') === 'agent' ? (

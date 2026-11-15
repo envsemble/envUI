@@ -109,7 +109,7 @@
       --env-navigation-bar-item-icon,
       var(--env-color-fg-muted)
     );
-    --_icon-size: var(--env-control-icon-size);
+    --env-icon-size: var(--env-control-icon-size);
     box-sizing: border-box;
     inline-size: 100%;
     margin: 0;

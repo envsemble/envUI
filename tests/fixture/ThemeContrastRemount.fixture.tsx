@@ -16,9 +16,8 @@ export default function ThemeContrastRemountFixture() {
   const [user, setUser] = useState<(typeof users)[number]>(users[0]);
   return (
     <ThemePreferenceProvider
+      theme={{ storageKey: 'fixture-remount-theme', contrast: user.contrast }}
       key={user.id}
-      storageKey="fixture-remount-theme"
-      contrast={user.contrast}
       className="fixture-main"
     >
       <Button onClick={() => setUser(users[1])}>Switch to the second user</Button>

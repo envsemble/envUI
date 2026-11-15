@@ -26,28 +26,41 @@ test('LinkProvider routes destinations and leaves disabled links native', async 
   expect(errors).toEqual([]);
 });
 
-test("a number within a label's words stays in their line, and a badge keeps the button's gap", async () => {
+test("a number within a label's words stays in their line, and a badge or diff stat keeps its own colors", async () => {
   mount(buttonCounts);
   const button = page.getByTestId('show-tasks-light');
   await expect.element(button).toHaveTextContent('Show 33 tasks');
   const element = button.element();
   const number = element.querySelector('.env-animated-number')!.getBoundingClientRect();
   const words = document.createRange();
-  const run = element.querySelector('.env-button-text')!.firstChild!;
+  const run = element.querySelector('.env-button-label')!.firstChild!;
   words.setStart(run, 0);
   words.setEnd(run, run.textContent!.trimEnd().length);
-  // The space between "Show" and the number: a word space, narrower than the button's gap.
   const space = number.left - words.getBoundingClientRect().right;
   expect(space).toBeGreaterThan(0);
   expect(space).toBeLessThan(Number.parseFloat(css(element, 'column-gap')));
-  // A badge is an item of its own, the gap from the words before it: only the number's button
-  // holds a run of text.
-  expect(
-    page
-      .getByTestId('button-counts-light')
-      .element()
-      .querySelectorAll('.env-button .env-button-text'),
-  ).toHaveLength(1);
+  const section = page.getByTestId('button-counts-light').element();
+  const primary = [...section.querySelectorAll('.env-button')].find((each) =>
+    each.textContent!.startsWith('primary'),
+  )!;
+  const standaloneOf = (testId: string) => page.getByTestId(testId).element();
+  for (const [selector, standalone] of [
+    ['.env-badge', standaloneOf('badge-light')],
+    ['.env-diff-stat', standaloneOf('diff-stat-light')],
+    [
+      '.env-diff-stat-additions',
+      standaloneOf('diff-stat-light').querySelector('.env-diff-stat-additions'),
+    ],
+    [
+      '.env-diff-stat-deletions',
+      standaloneOf('diff-stat-light').querySelector('.env-diff-stat-deletions'),
+    ],
+  ] as const)
+    for (const property of ['background-color', 'color', 'border-color'])
+      if (selector !== '.env-diff-stat' || property === 'background-color')
+        expect(css(primary.querySelector(selector)!, property), `${selector} ${property}`).toBe(
+          css(standalone!, property),
+        );
   // A text button alone in a box as wide as its content keeps its words in a line: its margins
   // give its padding back, which its largest width allows for.
   const alone = page.getByTestId('text-alone-light');

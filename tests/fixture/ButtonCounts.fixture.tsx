@@ -89,6 +89,7 @@ export default function ButtonCountsFixture({ theme }: { theme: ColorScheme }) {
         Show <AnimatedNumber value={33} /> tasks
       </Button>
       <DiffStat additions={12} deletions={3} data-testid={`diff-stat-${theme}`} />
+      <Badge count={7} data-testid={`badge-${theme}`} />
       {/* A text button alone in a box as wide as its content, as a list row's name. */}
       <Row>
         <div>
