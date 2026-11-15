@@ -38,10 +38,12 @@ export interface TextFieldProps
   onValueChange?: (value: string) => void;
   /**
    * Receives the value once people finish editing it: on Enter, and when the field loses focus
-   * with a value that changed since. With it, Esc puts back the value last committed. Use it for a
-   * setting that applies at once, such as a port, rather than on every key.
+   * with a value that changed since. With it, Esc puts back the value last committed. Return false
+   * to reject the value, such as a port out of range: it stays in the field for people to correct,
+   * and Esc still puts back the last value accepted. Use it for a setting that applies at once,
+   * such as a port, rather than on every key.
    */
-  onValueCommitted?: (value: string) => void;
+  onValueCommitted?: (value: string) => boolean | void;
 }
 
 function typeValue(input: HTMLInputElement, value: string) {
@@ -88,10 +90,16 @@ export function TextField({
     invalid,
   );
   const committed = useRef<string | null>(null);
+  const rejected = useRef<string | null>(null);
   const commit = (input: HTMLInputElement) => {
     if (!onValueCommitted || input.value === committed.current) return;
-    committed.current = input.value;
-    onValueCommitted(input.value);
+    const value = input.value;
+    if (onValueCommitted(value) === false) {
+      rejected.current = value;
+      return;
+    }
+    committed.current = value;
+    rejected.current = null;
   };
   const { id } = metadata;
   const describedByIds =
@@ -138,7 +146,9 @@ export function TextField({
         }}
         onFocus={(event) => {
           onFocus?.(event);
-          committed.current = event.currentTarget.value;
+          if (event.currentTarget.value !== rejected.current) {
+            committed.current = event.currentTarget.value;
+          }
         }}
         onBlur={(event) => {
           onBlur?.(event);

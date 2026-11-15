@@ -90,6 +90,9 @@
             "$value": "{palette.gray.10}"
           }
         },
+        "field": {
+          "$value": "{palette.neutral.0}"
+        },
         "neutral": {
           "muted": {
             "$root": {

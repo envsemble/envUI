@@ -83,7 +83,7 @@ For a whole application, `ThemePreferenceProvider` replaces the fixed `Theme`: i
 ```ts
 import { defineTheme } from '@envsemble/envui/theme-bootstrap';
 
-export const theme = defineTheme({ storageKey: 'app-theme', scale: 'comfortable' });
+export const theme = defineTheme({ storageKey: 'app-theme' });
 ```
 
 ```tsx

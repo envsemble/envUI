@@ -89,6 +89,9 @@
           "$value": "{contrast-high.color.bg.popup.pressed}"
         }
       },
+      "field": {
+        "$value": "{contrast-high.color.bg.field}"
+      },
       "neutral": {
         "muted": {
           "$root": {

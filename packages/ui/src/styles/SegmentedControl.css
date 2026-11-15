@@ -51,13 +51,13 @@
     );
     /* contrast: segmented-control-thumb */
     --_segmented-control-thumb-standard: light-dark(
-      var(--env-color-bg-muted),
+      var(--env-color-bg-raised),
       var(--env-color-bg-neutral-strong-hover)
     );
     /* contrast: segmented-control-thumb-high */
     --_segmented-control-thumb-high: var(--_theme-high-contrast)
       light-dark(
-        var(--env-color-bg-muted),
+        var(--env-color-bg-raised),
         color-mix(in srgb, var(--env-color-bg-neutral-muted-hover) 85%, transparent)
       );
     --_segmented-control-thumb: var(

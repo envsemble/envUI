@@ -7117,9 +7117,9 @@
         },
         {
           "name": "onValueCommitted",
-          "type": "(value: string) => void",
+          "type": "(value: string) => boolean | void",
           "required": false,
-          "description": "Receives the value once people finish editing it: on Enter, and when the field loses focus with a value that changed since. With it, Esc puts back the value last committed. Use it for a setting that applies at once, such as a port, rather than on every key."
+          "description": "Receives the value once people finish editing it: on Enter, and when the field loses focus with a value that changed since. With it, Esc puts back the value last committed. Return false to reject the value, such as a port out of range: it stays in the field for people to correct, and Esc still puts back the last value accepted. Use it for a setting that applies at once, such as a port, rather than on every key."
         },
         {
           "name": "error",
@@ -8284,9 +8284,9 @@
         },
         {
           "name": "onValueCommitted",
-          "type": "(value: string) => void",
+          "type": "(value: string) => boolean | void",
           "required": false,
-          "description": "Receives the value once people finish editing it: on Enter, and when the field loses focus with a value that changed since. With it, Esc puts back the value last committed. Use it for a setting that applies at once, such as a port, rather than on every key."
+          "description": "Receives the value once people finish editing it: on Enter, and when the field loses focus with a value that changed since. With it, Esc puts back the value last committed. Return false to reject the value, such as a port out of range: it stays in the field for people to correct, and Esc still puts back the last value accepted. Use it for a setting that applies at once, such as a port, rather than on every key."
         },
         {
           "name": "label",

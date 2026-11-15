@@ -196,3 +196,29 @@ test(
     await expect.poll(commits).toBe('port=7421 port=74210 search=ada');
   },
 );
+
+test(
+  'a value onValueCommitted rejects stays in the field, and Esc puts back the last accepted value',
+  { tags: ['engines'] },
+  async () => {
+    await open(valueCommit);
+    const commits = () => page.getByTestId('commits').element().textContent;
+    const port = page.getByRole('textbox', { name: 'Port', exact: true });
+    await port.click();
+    await keyboard.press('End');
+    await keyboard.type('x');
+    await keyboard.press('Enter');
+    await expect.poll(commits).toBe('rejected=7420x');
+    await expect.element(port).toHaveValue('7420x');
+    await keyboard.press('Escape');
+    await expect.element(port).toHaveValue('7420');
+    await keyboard.type('y');
+    await keyboard.press('Tab');
+    await expect.poll(commits).toBe('rejected=7420x rejected=7420y');
+    await port.click();
+    await keyboard.press('Escape');
+    await expect.element(port).toHaveValue('7420');
+    await keyboard.press('Tab');
+    expect(commits()).toBe('rejected=7420x rejected=7420y');
+  },
+);
