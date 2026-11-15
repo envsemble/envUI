@@ -18,8 +18,6 @@ const routerAdapter = existsSync(setupGuide)
     )?.[1]
   : undefined;
 
-const tail =
-  " If envUI can't do what you need, propose an addition to envUI instead of a local copy.";
 const icon = ', or IconButton for an icon-only button';
 
 /** The error for an element, by the data the message is built from. */
@@ -38,6 +36,9 @@ const textNote = 'TextField takes the same type.';
 
 ruleTester.run('no-html-elements', rule, {
   valid: [
+    // Base UI's components, which an application may use directly for a widget envUI doesn't have.
+    'import { Menu } from \'@base-ui/react/menu\'; <Menu.Popup role="dialog" />;',
+    'import * as Base from \'@base-ui/react\'; <Base.Toolbar.Button role="button" />;',
     // envUI components and other components.
     '<Button onClick={save}>Save</Button>',
     '<TextField label="Name" type="email" />',
@@ -88,11 +89,51 @@ ruleTester.run('no-html-elements', rule, {
     { code: '<Slot as={<button />} />', options: [{ renderProps: ['render', 'as'] }] },
   ],
   invalid: [
+    // A raw button whose props map one to one becomes Button, imported beside envUI's other names.
+    {
+      code: `import { Card } from '@envsemble/envui';
+<button type="button" onClick={save} aria-describedby="hint">Save</button>;`,
+      output: `import { Card, Button } from '@envsemble/envui';
+<Button type="button" onClick={save} aria-describedby="hint">Save</Button>;`,
+      errors: [
+        uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
+      ],
+    },
+    {
+      code: '<button type="submit">Save</button>;',
+      output: `import { Button } from '@envsemble/envui';
+<Button type="submit">Save</Button>;`,
+      errors: [
+        uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
+      ],
+    },
+    // No fix where the props don't map: no written type, a class of its own, or an icon alone.
+    {
+      code: '<button onClick={save}>Save</button>;',
+      output: null,
+      errors: [
+        uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
+      ],
+    },
+    {
+      code: '<button type="button" className="pill">Save</button>;',
+      output: null,
+      errors: [
+        uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
+      ],
+    },
+    {
+      code: '<button type="button"><svg /></button>;',
+      output: null,
+      errors: [
+        uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
+      ],
+    },
     {
       code: '<button onClick={save}>Save</button>',
       errors: [
         {
-          message: `Use envUI's Button instead of a raw <button>, or IconButton for an icon-only button: import { Button, IconButton } from '@envsemble/envui'.${tail}`,
+          message: `Use envUI's Button instead of a raw <button>, or IconButton for an icon-only button: import { Button, IconButton } from '@envsemble/envui'.`,
           line: 1,
           column: 2,
           endColumn: 8,
@@ -103,7 +144,7 @@ ruleTester.run('no-html-elements', rule, {
       code: '<input type="email" />',
       errors: [
         {
-          message: `Use envUI's TextField instead of a raw <input type="email">: import { TextField } from '@envsemble/envui'. TextField takes the same type.${tail}`,
+          message: `Use envUI's TextField instead of a raw <input type="email">: import { TextField } from '@envsemble/envui'. TextField takes the same type.`,
         },
       ],
     },

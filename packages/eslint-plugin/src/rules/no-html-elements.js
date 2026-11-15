@@ -163,10 +163,22 @@ function describeElement(entry, element, tag) {
   return value === undefined ? 'a raw <input type={…}>' : `a raw <input type="${value}">`;
 }
 
+/** The entry of a raw button, which a fix turns into Button where the props map one to one. */
+const buttonEntry = 'button';
+
+/** The attributes Button passes on to its native button unchanged. */
+const passedThrough =
+  /^(?:aria-[\w-]+|data-[\w-]+|on[A-Z]\w*|id|key|ref|name|value|form|formAction|formMethod|formNoValidate|formTarget|formEncType|title|disabled|type|tabIndex|autoFocus)$/;
+
+/** Whether a module is Base UI's, which an application may use directly. */
+const isBaseUi = (source) =>
+  typeof source === 'string' && /^@base-ui(?:-components)?\/react(?:\/|$)/.test(source);
+
 /** @type {import('eslint').Rule.RuleModule} */
 export default {
   meta: {
     type: 'suggestion',
+    fixable: 'code',
     docs: {
       description:
         'Disallow raw HTML elements and widget roles that envUI already provides as components',
@@ -196,7 +208,7 @@ export default {
     defaultOptions: [{ allow: [], renderProps: ['render'] }],
     messages: {
       useComponent:
-        "Use envUI's {{use}} instead of {{found}}{{alternatives}}: import { {{imports}} } from '{{source}}'.{{note}} If envUI can't do what you need, propose an addition to envUI instead of a local copy.",
+        "Use envUI's {{use}} instead of {{found}}{{alternatives}}: import { {{imports}} } from '{{source}}'.{{note}}",
     },
   },
   create(context) {
@@ -217,7 +229,9 @@ export default {
 
     function report(node, entry, found) {
       const [primary, ...alternatives] = entry.use;
+      const fix = entry.id === buttonEntry ? buttonFix(node) : undefined;
       context.report({
+        ...(fix ? { fix } : {}),
         node: node.name,
         messageId: 'useComponent',
         data: {
@@ -231,6 +245,60 @@ export default {
           note: entry.note ? ` ${entry.note}` : '',
         },
       });
+    }
+
+    /**
+     * The fix of a raw button to envUI's Button, when its props map one to one: a written type, so
+     * the button keeps it, only attributes Button passes on to its native button as they are, and a
+     * text label. Undefined otherwise, or when the name Button is something else here.
+     */
+    function buttonFix(node) {
+      const element = node.parent;
+      if (!element.closingElement || spreadsProps(node)) return undefined;
+      if (!node.attributes.every((attribute) => passedThrough.test(jsxName(attribute.name))))
+        return undefined;
+      const type = findAttribute(node, 'type');
+      if (!type || !['button', 'submit', 'reset'].includes(String(staticValue(type))))
+        return undefined;
+      const labelled = element.children.some(
+        (child) => child.type === 'JSXText' && child.value.trim() !== '',
+      );
+      if (!labelled) return undefined;
+      const bound = resolveVariable(sourceCode, node, 'Button');
+      const envuiButton = (definition) =>
+        definition.type === 'ImportBinding' &&
+        definition.node.type === 'ImportSpecifier' &&
+        moduleExportName(definition.node.imported) === 'Button' &&
+        isEnvuiSource(definition.parent.source.value);
+      if (bound?.defs.length && !bound.defs.every(envuiButton)) return undefined;
+      return (fixer) => {
+        const fixes = [
+          fixer.replaceText(node.name, 'Button'),
+          fixer.replaceText(element.closingElement.name, 'Button'),
+        ];
+        if (bound?.defs.length) return fixes;
+        const program = sourceCode.ast;
+        const envuiImport = program.body.find(
+          (statement) =>
+            statement.type === 'ImportDeclaration' &&
+            statement.source.value === '@envsemble/envui' &&
+            /** @type {{ importKind?: string }} */ (statement).importKind !== 'type' &&
+            statement.specifiers.length > 0 &&
+            statement.specifiers.every((specifier) => specifier.type === 'ImportSpecifier'),
+        );
+        if (envuiImport)
+          fixes.push(
+            fixer.insertTextAfter(/** @type {any} */ (envuiImport).specifiers.at(-1), ', Button'),
+          );
+        else {
+          const first = program.body[0];
+          const line = "import { Button } from '@envsemble/envui';\n";
+          fixes.push(
+            first ? fixer.insertTextBefore(first, line) : fixer.insertTextAfterRange([0, 0], line),
+          );
+        }
+        return fixes;
+      };
     }
 
     /** The functions that LinkProvider elements in this file render as their link component. */
@@ -350,6 +418,8 @@ export default {
         // its own; on any other, such as <Surface role="dialog"> or another library's Dialog, the
         // role hand-rolls the widget.
         if (roleEntry && !isIntrinsic(node.name) && ownsRole(node, roleEntry)) return;
+        if (!isIntrinsic(node.name) && isBaseUi(importedComponent(sourceCode, node.name)?.source))
+          return;
         if (roleEntry) {
           if (isAllowed(roleEntry)) return;
           if (insideRenderProp(node)) return;

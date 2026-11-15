@@ -1,0 +1,24 @@
+{
+  "$comment": "envUI's spacing and radius steps at the default scale, smallest first, which envui/no-off-scale-values names. A step whose value is not a length is a calculation, such as the full corner of a pill. scripts/build/SyncLintPackages.ts writes this file from the library's generated token list before every pack.",
+  "source": "packages/ui/src/generated/tokens.json",
+  "space": {
+    "--env-space-1": "0.25rem",
+    "--env-space-2": "0.5rem",
+    "--env-space-3": "0.75rem",
+    "--env-space-4": "1rem",
+    "--env-space-5": "1.5rem",
+    "--env-space-6": "2rem",
+    "--env-space-7": "2.5rem",
+    "--env-space-8": "3rem",
+    "--env-space-9": "4rem"
+  },
+  "radius": {
+    "--env-radius-none": "0rem",
+    "--env-radius-xs": "0.25rem",
+    "--env-radius-sm": "0.5rem",
+    "--env-radius-md": "0.75rem",
+    "--env-radius-lg": "1rem",
+    "--env-radius-xl": "1.75rem",
+    "--env-radius-full": "calc(max(var(--env-control-height-lg), var(--env-control-height-touch)) / 2)"
+  }
+}

@@ -15,7 +15,7 @@ aliases:
 
 # Writing
 
-The words of an interface built with envUI: titles, labels, buttons and messages. This guide holds the rules every screen shares. The words of one kind of screen live with its pattern: labels and error messages with [forms](patterns/forms.md), empty states with [empty states](patterns/empty-states.md), toasts, alerts and statuses with [feedback](patterns/feedback.md), and confirmations with [destructive actions](patterns/destructive-actions.md). A component's own labels are on its page, such as [Button](components/button.md)'s.
+The words of an interface built with envUI: titles, labels, buttons and messages. This guide holds the rules every screen shares. A component's own labels are on its page, such as [Button](components/button.md)'s.
 
 ## Voice
 
@@ -65,24 +65,24 @@ Words people confuse, by what they mean:
 | Add       | Put something that exists into something else: "Add Sam Lee to the team". | Create                                 |
 | Delete    | Remove for good: the thing is gone.                                       | Remove, when the thing is gone         |
 | Remove    | Take out of a place; the thing remains: "Remove from team".               | Delete, when the thing remains         |
-| Save      | Keep changes made in a form or a document.                                | Submit, OK                             |
+| Save      | Keep changes made in a form or a document.                                | Submit, for keeping changes, OK        |
 | Apply     | Use settings or filters and stay where you are.                           | Save, for filters                      |
 | Done      | Finish a task or close a panel after changes that are already kept.       | OK                                     |
 | Cancel    | Abandon what is in progress, changes included.                            | Close, when changes would be lost      |
 | Close     | Dismiss something with nothing pending.                                   | Cancel, when nothing is lost           |
-| Edit      | Change the content of something.                                          | Modify, Update                         |
+| Edit      | Change the content of something.                                          | Modify, Update, for changing content   |
 | Rename    | Change only the name.                                                     | Edit, for a name alone                 |
 | Duplicate | Make a copy beside the original.                                          | Clone, Copy (Copy puts on a clipboard) |
-| Archive   | Put out of the way, restorable.                                           | Delete, Hide                           |
-| Restore   | Bring back something archived or deleted.                                 | Undelete, Recover                      |
+| Archive   | Put out of the way, restorable.                                           | Delete, Hide, for putting away         |
+| Restore   | Bring back something archived or deleted.                                 | Undelete, Recover, for deleted things  |
 | Sign in   | Start a session; the noun and the verb are the same. "Sign out" ends it.  | Log in, Login, Log out                 |
-| Continue  | Go on to the next step of a flow; "Back" returns.                         | Next, Proceed                          |
-| Try again | Repeat something that failed.                                             | Retry, Reload                          |
-| Undo      | Reverse what just happened.                                               | Revert, Cancel                         |
+| Continue  | Go on to the next step of a flow; "Back" returns.                         | Proceed, Next, for a step of a flow    |
+| Try again | Repeat something that failed.                                             | Retry, Reload, after a failure         |
+| Undo      | Reverse what just happened.                                               | Revert, for what just happened, Cancel |
 | Export    | Turn data into a file in another format.                                  | Download, for a conversion             |
 | Download  | Copy a file that exists to the device.                                    | Export, for a file that exists         |
 | Invite    | Ask someone to join.                                                      | Add, for someone not yet a member      |
-| Share     | Give others access or a link.                                             | Send, Publish                          |
+| Share     | Give others access or a link.                                             | Send or Publish, for giving access     |
 
 ## Numbers, dates and time
 
@@ -108,7 +108,3 @@ Words people confuse, by what they mean:
 
 - [Accessibility](foundations/accessibility.md)
 - [Typography](foundations/typography.md)
-- [Form layout and validation](patterns/forms.md)
-- [Empty states](patterns/empty-states.md)
-- [Notifications and feedback](patterns/feedback.md)
-- [Destructive actions](patterns/destructive-actions.md)

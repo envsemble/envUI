@@ -26,9 +26,11 @@ test('the package ships the plugin, its data and its documentation, and nothing 
     'src/data/elements.json',
     'src/data/entryPoints.json',
     'src/data/tokens.json',
+    'src/data/vocabulary.json',
     'src/index.js',
+    'src/rules/label-vocabulary.js',
     'src/rules/no-html-elements.js',
-    'src/rules/no-inline-layout.js',
+    'src/rules/no-link-in-clickable-row.js',
     'src/rules/no-raw-colors.js',
     'src/rules/no-raw-graphics.js',
     'src/tokens.js',
@@ -46,7 +48,7 @@ test('an application lints with the installed recommended config', async () => {
     import { createRequire } from 'node:module';
     const location = createRequire(import.meta.url).resolve('@envsemble/eslint-plugin-envui');
     const code = "import { Alert } from '@envsemble/envui';\\n" +
-      "export const App = () => <form style={{ color: '#000', display: 'grid' }}><button /><img src='logo.png' alt='' /></form>;";
+      "export const App = () => <form style={{ color: '#000', display: 'grid' }}><button>Proceed</button><img src='https://cdn.example/logo.png' alt='' /></form>;";
     const messages = new Linter().verify(code, [envui.configs.recommended], 'App.jsx');
     console.log(JSON.stringify({ location, rules: messages.map((message) => message.ruleId ?? message.message) }));
   `,
@@ -58,8 +60,8 @@ test('an application lints with the installed recommended config', async () => {
   );
   assert.deepEqual(rules, [
     'envui/no-raw-colors',
-    'envui/no-inline-layout',
     'envui/no-html-elements',
+    'envui/label-vocabulary',
     'envui/no-raw-graphics',
   ]);
 });

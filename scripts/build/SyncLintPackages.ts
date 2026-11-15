@@ -2,10 +2,14 @@
 // tokens their messages name, from the library's generated token list
 // (packages/ui/src/generated/tokens.json); tokens.js, the helper that reads it, from
 // scripts/build/LintPackageTokens.js; and colorPolicy.js, what both count as a raw color, from
-// scripts/build/LintPackageColorPolicy.js; and in the ESLint plugin, data/entryPoints.json, the
-// specifiers of the library's entry points, from the exports of packages/ui/package.json. Each
-// package ships its own copies, so it works on its own once installed; a published package names
-// the tokens and entry points of its own envUI release, as each pack runs this first.
+// scripts/build/LintPackageColorPolicy.js. In the ESLint plugin, data/entryPoints.json, the
+// specifiers of the library's entry points, from the exports of packages/ui/package.json, and
+// data/vocabulary.json, the words a label replaces, from the vocabulary table of docs/writing.md.
+// In the Stylelint config, data/customProperties.json, every --env-* name envUI defines, from the
+// token list, the handwritten tokens and docs/generated/parts.json, and data/scales.json, the
+// spacing and radius steps, from the token list. Each package ships its own copies, so it works on
+// its own once installed; a published package names those of its own envUI release, as each pack
+// runs this first.
 //
 //   node scripts/build/SyncLintPackages.ts           write the copies
 //   node scripts/build/SyncLintPackages.ts --check   fail when a copy differs from its source
@@ -17,6 +21,10 @@ import { libraryEntryPoints } from '../docs/LibraryEntryPoints.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const libraryTokens = 'packages/ui/src/generated/tokens.json';
+const handwrittenTokens = 'packages/ui/tokens/handwritten.json';
+const libraryParts = 'docs/generated/parts.json';
+const writingGuide = 'docs/writing.md';
+
 /** The modules each lint package ships a copy of, by their name in the package. */
 const copiedModules = {
   'tokens.js': 'scripts/build/LintPackageTokens.js',
@@ -31,10 +39,31 @@ export const lintPackages = {
 
 const entryPointsComment = `The specifiers of envUI's entry points, whose exports no-html-elements counts as envUI's. scripts/build/SyncLintPackages.ts writes this file from the exports of packages/ui/package.json before every pack.`;
 
-const comment = `The custom properties of envUI's public tokens, by DTCG type, that the package's messages suggest. scripts/build/SyncLintPackages.ts writes this file from the library's generated token list (${libraryTokens}) before every pack; source says where the names came from.`;
+const tokensComment = `The custom properties of envUI's public tokens, by DTCG type, that the package's messages suggest. scripts/build/SyncLintPackages.ts writes this file from the library's generated token list (${libraryTokens}) before every pack; source says where the names came from.`;
+
+const vocabularyComment = `The words envui/label-vocabulary reports in a label, each with the word to write instead. scripts/build/SyncLintPackages.ts writes this file from the vocabulary table of ${writingGuide} before every pack, leaving out the words the table qualifies, those that are a word of the table themselves and those it lists under two words.`;
+
+const customPropertiesComment = `Every --env-* custom property envUI defines: its tokens, its handwritten tokens and the public colour properties and properties of its components. envui/no-unknown-custom-properties reports any other. scripts/build/SyncLintPackages.ts writes this file from the sources below before every pack.`;
+
+const scalesComment = `envUI's spacing and radius steps at the default scale, smallest first, which envui/no-off-scale-values names. A step whose value is not a length is a calculation, such as the full corner of a pill. scripts/build/SyncLintPackages.ts writes this file from the library's generated token list before every pack.`;
+
+interface Token {
+  id: string;
+  type: string;
+  cssVariable: string;
+  deprecated?: unknown;
+  values: Record<string, { css: string; resolved: string }>;
+}
 
 interface TokenList {
-  tokens: { type: string; cssVariable: string; deprecated?: unknown }[];
+  tokens: Token[];
+}
+
+type PublicProperties = { colors?: { property: string }[]; properties?: { property: string }[] };
+
+interface PartsData {
+  components: Record<string, PublicProperties>;
+  shared?: Record<string, PublicProperties>;
 }
 
 /** The custom properties of a token list's public tokens by type, without deprecated ones. */
@@ -51,36 +80,161 @@ function summarizeTokens(list: TokenList) {
   );
 }
 
+const printWidth = 100;
+
 /**
- * The text of data/tokens.json for the given names, laid out as Prettier formats it: a type's
- * names on one line when they fit the repository's print width, else one per line.
+ * JSON laid out as Prettier formats it when every object is written expanded: an object's members
+ * one per line, and an array of plain values on one line when it fits the print width, else one
+ * per line.
  */
-function serializeTokens(types: Record<string, string[]>) {
-  const json = (value: unknown) => JSON.stringify(value);
-  const lines = ['{', `  "$comment": ${json(comment)},`, `  "source": ${json(libraryTokens)},`];
-  lines.push('  "tokens": {');
-  Object.entries(types).forEach(([type, names], index, entries) => {
-    const comma = index < entries.length - 1 ? ',' : '';
-    const line = `    ${json(type)}: [${names.map(json).join(', ')}]${comma}`;
-    if (line.length <= 100) lines.push(line);
-    else
-      lines.push(
-        `    ${json(type)}: [`,
-        ...names.map(
-          (name, position) => `      ${json(name)}${position < names.length - 1 ? ',' : ''}`,
+function serializeJson(value: unknown) {
+  const json = (item: unknown) => JSON.stringify(item);
+  const print = (item: unknown, indent: string, prefix: string, suffix: string): string[] => {
+    if (Array.isArray(item)) {
+      const line = `${indent}${prefix}[${item.map(json).join(', ')}]${suffix}`;
+      if (line.length <= printWidth || item.length === 0) return [line];
+      return [
+        `${indent}${prefix}[`,
+        ...item.map(
+          (element, index) => `${indent}  ${json(element)}${index < item.length - 1 ? ',' : ''}`,
         ),
-        `    ]${comma}`,
-      );
-  });
-  lines.push('  }', '}', '');
-  return lines.join('\n');
+        `${indent}]${suffix}`,
+      ];
+    }
+    if (item !== null && typeof item === 'object') {
+      const entries = Object.entries(item);
+      if (entries.length === 0) return [`${indent}${prefix}{}${suffix}`];
+      return [
+        `${indent}${prefix}{`,
+        ...entries.flatMap(([key, member], index) =>
+          print(member, `${indent}  `, `${json(key)}: `, index < entries.length - 1 ? ',' : ''),
+        ),
+        `${indent}}${suffix}`,
+      ];
+    }
+    return [`${indent}${prefix}${json(item)}${suffix}`];
+  };
+  return `${print(value, '', '', '').join('\n')}\n`;
+}
+
+/** The cells of a Markdown table's row. */
+const cells = (row: string) =>
+  row
+    .trim()
+    .replace(/^\||\|$/g, '')
+    .split('|')
+    .map((cell) => cell.trim());
+
+interface VocabularyRow {
+  word: string;
+  means: string;
+  not: { text: string; qualified: boolean }[];
+}
+
+/** The rows of the Word | Means | Not table in a guide's "Buttons and actions" section. */
+function vocabularyRows(markdown: string) {
+  const lines = markdown.split(/\r?\n/);
+  const section = lines.findIndex((line) => /^##\s+Buttons and actions\s*$/.test(line));
+  if (section === -1) throw new Error(`${writingGuide} has no "Buttons and actions" section.`);
+  const header = lines.findIndex(
+    (line, index) =>
+      index > section && line.trim().startsWith('|') && cells(line).join('|') === 'Word|Means|Not',
+  );
+  if (header === -1) throw new Error(`${writingGuide} has no Word | Means | Not table.`);
+  const rows: VocabularyRow[] = [];
+  for (const line of lines.slice(header + 2)) {
+    if (!line.trim().startsWith('|')) break;
+    const [word = '', means = '', not = ''] = cells(line);
+    const entries: VocabularyRow['not'] = [];
+    let group: VocabularyRow['not'] = [];
+    for (const piece of not.split(/,\s*/)) {
+      if (/^[a-z]/.test(piece)) {
+        for (const entry of group) entry.qualified = true;
+        continue;
+      }
+      const text = piece.replace(/\s*\(.*\)\s*$/, '').trim();
+      group = text
+        .split(/\s+or\s+/)
+        .filter(Boolean)
+        .map((alternative) => ({ text: alternative, qualified: text !== piece.trim() }));
+      entries.push(...group);
+    }
+    rows.push({ word, means, not: entries });
+  }
+  return rows;
+}
+
+/**
+ * The words of the vocabulary table of docs/writing.md that a label never uses, each with the word
+ * to write instead: the Word of its row, or a label its meaning quotes that ends as it does, such
+ * as "Sign out" for "Log out". A word the table qualifies, such as "Add, for something new" or
+ * "Copy (Copy puts on a clipboard)", a word of the table itself and a word under two rows are left
+ * out, since a label may rightly use them.
+ */
+export function parseVocabulary(markdown: string) {
+  const rows = vocabularyRows(markdown);
+  const key = (text: string) => text.toLowerCase();
+  const tableWords = new Set(rows.map(({ word }) => key(word)));
+  const rowCount = new Map<string, number>();
+  for (const row of rows)
+    for (const { text } of row.not) rowCount.set(key(text), (rowCount.get(key(text)) ?? 0) + 1);
+  const lastWord = (text: string) => key(text).split(/\s+/).at(-1);
+  const words: Record<string, string> = {};
+  for (const { word, means, not } of rows)
+    for (const { text, qualified } of not) {
+      if (qualified || tableWords.has(key(text)) || rowCount.get(key(text))! > 1) continue;
+      const counterpart = [...means.matchAll(/"([^"]+)"/g)]
+        .map(([, quoted]) => quoted!)
+        .find(
+          (quoted) => lastWord(quoted) === lastWord(text) && lastWord(quoted) !== lastWord(word),
+        );
+      words[text] = counterpart ?? word;
+    }
+  return words;
+}
+
+/** Every --env-* name envUI defines, sorted. */
+function definedCustomProperties(list: TokenList, handwritten: object, parts: PartsData) {
+  const names = new Set(list.tokens.map((token) => token.cssVariable));
+  for (const id of Object.keys(handwritten))
+    if (!id.startsWith('$')) names.add(`--env-${id.replaceAll('.', '-')}`);
+  const components = [...Object.values(parts.components), ...Object.values(parts.shared ?? {})];
+  for (const component of components)
+    for (const { property } of [...(component.colors ?? []), ...(component.properties ?? [])])
+      names.add(property);
+  return [...names].filter((name) => name.startsWith('--env-')).sort();
+}
+
+/** A literal length in rem, as a number of rem. */
+const remLength = (css: string) =>
+  /^-?(?:\d+\.?\d*|\.\d+)rem$/.test(css) ? Number.parseFloat(css) : Number.POSITIVE_INFINITY;
+
+/**
+ * The steps of the spacing and radius scales at the default scale, by custom property, smallest
+ * first: the tokens of each group that are not another token's alias.
+ */
+function scaleSteps(list: TokenList) {
+  const steps = (group: string) =>
+    Object.fromEntries(
+      list.tokens
+        .filter((token) => token.id.startsWith(`${group}.`) && !token.deprecated)
+        .map((token) => [token.cssVariable, Object.values(token.values)[0]!.css.trim()] as const)
+        .filter(([, css]) => !css.startsWith('var('))
+        .sort(([, a], [, b]) => remLength(a) - remLength(b)),
+    );
+  return { space: steps('space'), radius: steps('radius') };
 }
 
 const read = (path: string) => readFileSync(resolve(repositoryRoot, path), 'utf8');
 
 /** Each file the lint packages ship from a source, by its path in the repository, with its text. */
 export function expectedFiles(): Map<string, string> {
-  const tokens = serializeTokens(summarizeTokens(JSON.parse(read(libraryTokens)) as TokenList));
+  const tokenList = JSON.parse(read(libraryTokens)) as TokenList;
+  const tokens = serializeJson({
+    $comment: tokensComment,
+    source: libraryTokens,
+    tokens: summarizeTokens(tokenList),
+  });
   const copies = Object.entries(copiedModules).map(([name, source]) => {
     const copy = `// Generated from ${source} by npm run tokens:build; edit that file.\n${read(source)}`;
     return [name, copy] as const;
@@ -90,10 +244,36 @@ export function expectedFiles(): Map<string, string> {
     files.set(`${directory}/data/tokens.json`, tokens);
     for (const [name, copy] of copies) files.set(`${directory}/${name}`, copy);
   }
+  const eslintPlugin = lintPackages['@envsemble/eslint-plugin-envui'];
+  const stylelintConfig = lintPackages['@envsemble/stylelint-config-envui'];
   const entryPoints = libraryEntryPoints().map(({ specifier }) => specifier);
   files.set(
-    `${lintPackages['@envsemble/eslint-plugin-envui']}/data/entryPoints.json`,
+    `${eslintPlugin}/data/entryPoints.json`,
     `${JSON.stringify({ $comment: entryPointsComment, entryPoints }, null, 2)}\n`,
+  );
+  files.set(
+    `${eslintPlugin}/data/vocabulary.json`,
+    serializeJson({
+      $comment: vocabularyComment,
+      source: writingGuide,
+      words: parseVocabulary(read(writingGuide)),
+    }),
+  );
+  files.set(
+    `${stylelintConfig}/data/customProperties.json`,
+    serializeJson({
+      $comment: customPropertiesComment,
+      sources: [libraryTokens, handwrittenTokens, libraryParts],
+      names: definedCustomProperties(
+        tokenList,
+        JSON.parse(read(handwrittenTokens)) as object,
+        JSON.parse(read(libraryParts)) as PartsData,
+      ),
+    }),
+  );
+  files.set(
+    `${stylelintConfig}/data/scales.json`,
+    serializeJson({ $comment: scalesComment, source: libraryTokens, ...scaleSteps(tokenList) }),
   );
   return files;
 }

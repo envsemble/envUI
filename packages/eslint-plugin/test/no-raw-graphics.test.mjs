@@ -26,6 +26,10 @@ const graphic = "import { Graphic } from '@envsemble/envui';\n";
 
 ruleTester.run('no-raw-graphics', rule, {
   valid: [
+    // The application's own images, such as a brand logo: a local path or an imported image file.
+    '<img src="/brand/logo.svg" alt="Acme" />',
+    '<img src="./logo.png" alt="" />',
+    'import logo from \'./assets/logo.svg\'; <img src={logo} alt="Acme" />;',
     // envUI's Graphic and icons.
     `${graphic}<Graphic src={logo} alt="Acme" size="md" />`,
     `${graphic}<Graphic alt=""><AcmeMark /></Graphic>`,
@@ -77,6 +81,9 @@ ruleTester.run('no-raw-graphics', rule, {
     },
   ],
   invalid: [
+    { code: '<img src="https://cdn.example.com/logo.svg" alt="" />', errors: [img] },
+    { code: '<img src="//cdn.example.com/logo.svg" alt="" />', errors: [img] },
+    { code: 'import { avatar } from \'./user\'; <img src={avatar} alt="" />;', errors: [img] },
     {
       code: '<img src={logo} alt="Acme" />',
       errors: [

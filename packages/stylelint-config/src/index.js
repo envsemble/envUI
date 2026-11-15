@@ -2,6 +2,11 @@
 // and rem for everything that follows the reader's font size, with px only for hairlines.
 // See README.md.
 import { rawColorCalls, rawColorFunction } from './colorPolicy.js';
+import noContrastBreakingPairs from './rules/no-contrast-breaking-pairs.js';
+import noFocusOutlineRemoval from './rules/no-focus-outline-removal.js';
+import noOffScaleValues from './rules/no-off-scale-values.js';
+import noPx, { hairlineProperties } from './rules/no-px.js';
+import noUnknownCustomProperties from './rules/no-unknown-custom-properties.js';
 import { colorTokenAdvice, tokens } from './tokens.js';
 
 const documentation =
@@ -12,6 +17,13 @@ const documentation =
  * (colorPolicy.js). envUI's own style sheets use it too.
  */
 export { rawColorFunction };
+
+/**
+ * Where px may appear: hairlines and offsets that must not scale with the text, such as border and
+ * outline widths, focus-ring offsets and shadow offsets. envUI's own style sheets use this list
+ * too, so the two cannot drift apart.
+ */
+export { hairlineProperties };
 
 /** envUI's stacking tokens, the custom properties of z-index layers such as `--env-z-modal`. */
 const stackingTokens = Object.values(tokens)
@@ -51,30 +63,15 @@ export const stackingValues = [
   '/^calc\\(.*var\\(--/',
 ];
 
-/**
- * Where px may appear: hairlines and offsets that must not scale with the text, such as border and
- * outline widths, focus-ring offsets and shadow offsets. Custom properties take px only when their
- * name ends in one of those: `--…-border-width`, `--…-ring-offset`, `--…-shadow`, `--…-hairline`.
- * Radii and table spacing scale, so they take rem. envUI's own style sheets use this list too, so
- * the two cannot drift apart.
- */
-export const hairlineProperties = [
-  '/^border(?:-(?:top|right|bottom|left|block|inline)(?:-(?:start|end))?)?(?:-width)?$/',
-  '/^outline(?:-width|-offset)?$/',
-  '/^column-rule(?:-width)?$/',
-  'box-shadow',
-  'text-shadow',
-  'filter',
-  '/^(?:-webkit-)?backdrop-filter$/',
-  'stroke-width',
-  'text-decoration-thickness',
-  'text-underline-offset',
-  '/^--[\\w-]*(?:border|outline|ring|divider|rule|stroke)-(?:width|offset)$/',
-  '/^--[\\w-]*(?:shadow|hairline)$/',
-];
-
 /** @type {import('stylelint').Config} */
 export default {
+  plugins: [
+    noPx,
+    noOffScaleValues,
+    noUnknownCustomProperties,
+    noContrastBreakingPairs,
+    noFocusOutlineRemoval,
+  ],
   rules: {
     'color-no-hex': [
       true,
@@ -105,16 +102,10 @@ export default {
         url: `${documentation}#stacking-order`,
       },
     ],
-    'unit-disallowed-list': [
-      ['px'],
-      {
-        ignoreProperties: { px: hairlineProperties },
-        // env() values and custom property fallbacks that scripts measure are in CSS pixels.
-        ignoreFunctions: ['env', 'var'],
-        message: (unit) =>
-          `Use rem instead of ${unit}, so the size follows the reader's font size; px is only for hairlines: border and outline widths, focus-ring offsets and shadow offsets.`,
-        url: `${documentation}#units`,
-      },
-    ],
+    'envui/no-px': true,
+    'envui/no-off-scale-values': true,
+    'envui/no-unknown-custom-properties': true,
+    'envui/no-contrast-breaking-pairs': true,
+    'envui/no-focus-outline-removal': true,
   },
 };

@@ -7,6 +7,7 @@ import {
   jsxName,
   pluginSettings,
   propertyName,
+  resolveVariable,
   spreadsProps,
   staticValue,
 } from '../utilities.js';
@@ -125,6 +126,12 @@ const isTypeOnly = (node, kind) =>
 /** The prop whose value a part renders in place of its own element, as no-html-elements skips. */
 const renderProp = 'render';
 
+/** A path in the application itself, relative or from its root, such as `/logo.svg`. */
+const localPath = /^(?:\.{1,2}\/|\/(?!\/))/;
+
+/** A module that is an image file, such as `./logo.svg` or `@/assets/logo.png?url`. */
+const imageModule = /\.(?:apng|avif|bmp|gif|ico|jpe?g|png|svg|webp)(?:\?.*)?$/i;
+
 /** @type {import('eslint').Rule.RuleModule} */
 export default {
   meta: {
@@ -195,6 +202,28 @@ export default {
       return (
         (imported.source === '@envsemble/envui' || isReexportModule(imported.source)) &&
         imported.name === 'Graphic'
+      );
+    }
+
+    /**
+     * Whether an img shows one of the application's own images, such as a brand logo: its src is a
+     * relative or root-relative path, or an imported image module.
+     */
+    function isLocalImage(node) {
+      const src = findAttribute(node, 'src');
+      if (!src) return false;
+      const value = staticValue(src);
+      if (typeof value === 'string') return localPath.test(value);
+      const expression = src.value?.type === 'JSXExpressionContainer' && src.value.expression;
+      if (expression?.type !== 'Identifier') return false;
+      const variable = resolveVariable(sourceCode, expression, expression.name);
+      return Boolean(
+        variable?.defs.length &&
+        variable.defs.every(
+          (definition) =>
+            definition.type === 'ImportBinding' &&
+            imageModule.test(String(definition.parent.source.value)),
+        ),
       );
     }
 
@@ -285,7 +314,8 @@ export default {
       JSXOpeningElement(node) {
         const name = jsxName(node.name);
         if (name === 'img') {
-          if (!insideRenderProp(node)) context.report({ node: node.name, messageId: 'img' });
+          if (!insideRenderProp(node) && !isLocalImage(node))
+            context.report({ node: node.name, messageId: 'img' });
         } else if (name === 'svg') checkSvg(node);
         else if (isGraphic(node.name)) checkGraphic(node);
       },

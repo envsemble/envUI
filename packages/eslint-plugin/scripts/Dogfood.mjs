@@ -31,16 +31,15 @@ const eslint = new ESLint({
 /** What a message is about: the element, class, color or name, for grouping. */
 function subject(ruleId, message) {
   const patterns = {
-    'envui/no-inline-layout':
-      /^Inline `display: ([\w-]+)` lays out (a row or a column|a row|a column|a grid)/,
     'envui/no-html-elements': /^Use envUI's (\S+) instead of (.+?)(?:, or |: import)/,
     'envui/no-raw-colors': /^Raw color (.+) in an inline style/,
+    'envui/no-link-in-clickable-row': /^(.+?) inside a clickable (\S+):/,
+    'envui/label-vocabulary': /instead of "(.+)"\.$/,
     'envui/no-raw-graphics':
       /^(Use envUI's Graphic instead of a raw <img>|A raw <svg [^>]*>|Graphic needs alt|A margin on a Graphic|Use envUI's icons instead of [^:]+)/,
   };
   const match = message.match(patterns[ruleId]);
   if (!match) return message;
-  if (ruleId === 'envui/no-inline-layout') return `${match[1]} (${match[2]})`;
   return ruleId === 'envui/no-html-elements' ? `${match[2]} -> ${match[1]}` : match[1];
 }
 
