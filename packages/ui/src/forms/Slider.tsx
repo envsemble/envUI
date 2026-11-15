@@ -20,6 +20,7 @@ import { useLocale } from '../internal/provider/EnvUIContext.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { FieldFrame } from '../internal/field/FieldFrame.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { followDrag, followOverdrag } from './internal/sliderDrag.js';
 import { useSliderReveal } from './internal/useSliderReveal.js';
@@ -33,9 +34,10 @@ export interface SliderProps extends Omit<
 > {
   /**
    * The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends
-   * in an ellipsis where the slider is too narrow for it.
+   * in an ellipsis where the slider is too narrow for it. Leave it out only in a List.Item's
+   * control, where the row's label names the slider.
    */
-  label: string;
+  label?: string;
   /**
    * Lasting guidance under the slider, such as what the value applies to, linked to the slider as
    * its description.
@@ -189,9 +191,10 @@ export function Slider({
     return followDrag(element, element.closest<HTMLElement>('.env-slider') ?? element);
   }, []);
   const ticks = tickCount(min, max, step, largeStep);
+  const naming = useRowControlNaming({ label, ...props, 'aria-describedby': describedBy });
   const describedByIds =
     [
-      describedBy,
+      naming['aria-describedby'],
       description != null ? fieldMessageIds(id).description : undefined,
       error != null ? fieldMessageIds(id).error : undefined,
     ]
@@ -244,16 +247,24 @@ export function Slider({
                   input.current = node;
                   setRef(ref, node);
                 }}
+                {...(label == null && { 'aria-labelledby': naming['aria-labelledby'] })}
                 aria-describedby={describedByIds}
                 getAriaValueText={(formatted, number) =>
                   formatValue ? formatValue(number) : formatted
                 }
               />
             </BaseSlider.Track>
-            <Row align="center" justify="between" gap={3} className="env-slider-header">
-              <BaseSlider.Label className="env-slider-label" render={<Text render={<div />} />}>
-                {label}
-              </BaseSlider.Label>
+            <Row
+              align="center"
+              justify={label != null ? 'between' : 'end'}
+              gap={3}
+              className="env-slider-header"
+            >
+              {label != null && (
+                <BaseSlider.Label className="env-slider-label" render={<Text render={<div />} />}>
+                  {label}
+                </BaseSlider.Label>
+              )}
               <BaseSlider.Value className="env-slider-value" render={<Text render={<output />} />}>
                 {(formatted, values) => (formatValue ? formatValue(values[0]) : formatted[0])}
               </BaseSlider.Value>

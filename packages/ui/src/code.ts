@@ -1,2 +1,1 @@
-export * from './content/Code.js';
-export * from './content/CodeBlock.js';
+export * from './content/HighlightedCodeBlock.js';

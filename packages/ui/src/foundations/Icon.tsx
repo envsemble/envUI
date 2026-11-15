@@ -1,4 +1,6 @@
 import type { SVGProps } from 'react';
+import { classNames } from '../internal/classNames.js';
+import '../styles/Base.css';
 
 /** An icon's tone: the status colors' text grades, or neutral, the color of its text. */
 export type IconTone = 'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'done';
@@ -20,11 +22,12 @@ export interface SymbolIconProps extends Omit<IconProps, 'children'> {
 }
 
 /**
- * The SVG that envUI's symbols render: 1 em, `currentColor`, and hidden from assistive technology
- * unless labelled. An application's own icons and logos go in Graphic, as a file or an SVG
+ * The SVG that envUI's symbols render: `--env-icon-size` square, the size the component around it
+ * sets, such as a List row's start, and else the control icon size; `currentColor`, and hidden
+ * from assistive technology unless labelled. An application's own icons and logos go in Graphic, as a file or an SVG
  * component inside it.
  */
-export function Icon({ label, tone = 'neutral', style, children, ...props }: IconProps) {
+export function Icon({ label, tone = 'neutral', style, className, children, ...props }: IconProps) {
   const accessible = Boolean(label || props['aria-label'] || props['aria-labelledby']);
   const toneStyle = tone === 'neutral' ? style : { color: `var(--env-color-fg-${tone})`, ...style };
   return (
@@ -39,6 +42,7 @@ export function Icon({ label, tone = 'neutral', style, children, ...props }: Ico
       aria-label={label}
       style={toneStyle}
       {...props}
+      className={classNames('env-icon-symbol', className)}
     >
       {children}
     </svg>

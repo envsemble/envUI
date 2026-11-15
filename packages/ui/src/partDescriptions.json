@@ -185,7 +185,8 @@
     "CodeBlock": {
       "env-code-block": "The block of code.",
       "env-code-block-copy-status": "The announcement that the code was copied.",
-      "env-code-block-header": "The row above the code: its label, such as a file name, and the copy button."
+      "env-code-block-header": "The row above the code: its label, such as a file name, and the copy button.",
+      "env-code-block-token": "One highlighted piece of the source, in its syntax color."
     },
     "CodeDiff": {
       "env-code-diff": "The diff of two versions of code.",
@@ -395,7 +396,8 @@
       "env-hover-detail": "Text that shows more on hover or focus, a HoverCard's or Tooltip's text trigger, with a quiet dotted underline; an application's own text component can take it too."
     },
     "Icon": {
-      "env-icon": "An icon."
+      "env-icon": "An icon.",
+      "env-icon-symbol": "The SVG of one of envUI's symbols, `--env-icon-size` square."
     },
     "IconButton": {
       "env-icon-button": "The button that shows only an icon."
@@ -415,14 +417,19 @@
     "List": {
       "env-list": "The list.",
       "env-list-announcer": "The announcements of a reordered item.",
+      "env-list-description": "The slot of the sentence under a list's title, in muted text.",
+      "env-list-header": "The list's title and description above its rows.",
       "env-list-item": "One item.",
       "env-list-item-content": "The column with an item's label, description and more content.",
+      "env-list-item-control": "The slot of the control at an item's end, which the item's label names.",
       "env-list-item-description": "An item's description, in muted text.",
-      "env-list-item-end": "The slot of the content at an item's end, such as a button or a switch.",
+      "env-list-item-end": "The slot of the content at an item's end, such as a button or a badge.",
       "env-list-item-extra": "The slot of more content under an item's label and description.",
       "env-list-item-handle": "The handle that reorders an item.",
       "env-list-item-label": "The slot of an item's name.",
-      "env-list-item-start": "The slot of the content before an item's label, such as a checkbox or an avatar."
+      "env-list-item-start": "The slot of the content before an item's label, such as a checkbox or an avatar.",
+      "env-list-section": "The column of a titled list: its header above its rows.",
+      "env-list-title": "The list's heading."
     },
     "ListRow": {
       "env-list-row": "The row anatomy of menu, select and combobox options.",
@@ -869,6 +876,9 @@
       "env-tree-item": "One item.",
       "env-tree-label": "An item's label.",
       "env-tree-rows": "The rows of a level."
+    },
+    "VisuallyHidden": {
+      "env-visually-hidden": "Content for assistive technology alone, clipped out of view."
     }
   },
   "colors": {

@@ -1,7 +1,8 @@
 'use client';
 
-import type { CSSProperties, InputHTMLAttributes, Ref } from 'react';
+import { useRef, type CSSProperties, type InputHTMLAttributes, type Ref } from 'react';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import {
   FieldFrame,
   FieldLabelContent,
@@ -35,12 +36,23 @@ export interface TextFieldProps
   style?: CSSProperties;
   /** Receives the value as people type, after the native onChange. */
   onValueChange?: (value: string) => void;
+  /**
+   * Receives the value once people finish editing it: on Enter, and when the field loses focus
+   * with a value that changed since. With it, Esc puts back the value last committed. Use it for a
+   * setting that applies at once, such as a port, rather than on every key.
+   */
+  onValueCommitted?: (value: string) => void;
+}
+
+function typeValue(input: HTMLInputElement, value: string) {
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set?.call(input, value);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 /**
  * A labelled single-line text input: a native input with its label above it, a description and an
  * error, at the control height in an outline or ghost look, with an optional start icon, end
- * action, prefix and suffix.
+ * action, prefix and suffix. In a List.Item's control, without a label, the row names it.
  */
 export function TextField({
   ref,
@@ -59,11 +71,28 @@ export function TextField({
   style,
   onChange,
   onValueChange,
+  onValueCommitted,
+  onFocus,
+  onBlur,
+  onKeyDown,
   'aria-describedby': describedBy,
   'aria-invalid': invalid,
   ...props
 }: TextFieldProps) {
-  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
+  const naming = useRowControlNaming({ label, ...props, 'aria-describedby': describedBy });
+  const metadata = useFieldMetadata(
+    suppliedId,
+    description,
+    error,
+    naming['aria-describedby'],
+    invalid,
+  );
+  const committed = useRef<string | null>(null);
+  const commit = (input: HTMLInputElement) => {
+    if (!onValueCommitted || input.value === committed.current) return;
+    committed.current = input.value;
+    onValueCommitted(input.value);
+  };
   const { id } = metadata;
   const describedByIds =
     [
@@ -100,11 +129,35 @@ export function TextField({
         {...props}
         ref={ref}
         {...metadata}
+        aria-labelledby={naming['aria-labelledby']}
         aria-describedby={describedByIds}
         className="env-text-field-input"
         onChange={(event) => {
           onChange?.(event);
           onValueChange?.(event.currentTarget.value);
+        }}
+        onFocus={(event) => {
+          onFocus?.(event);
+          committed.current = event.currentTarget.value;
+        }}
+        onBlur={(event) => {
+          onBlur?.(event);
+          commit(event.currentTarget);
+        }}
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
+          if (!onValueCommitted || event.defaultPrevented || event.nativeEvent.isComposing) return;
+          const input = event.currentTarget;
+          if (event.key === 'Enter') commit(input);
+          if (
+            event.key === 'Escape' &&
+            committed.current !== null &&
+            input.value !== committed.current
+          ) {
+            event.preventDefault();
+            event.stopPropagation();
+            typeValue(input, committed.current);
+          }
         }}
       />
     </FieldFrame>

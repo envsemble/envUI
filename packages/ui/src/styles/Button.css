@@ -115,19 +115,19 @@
   }
 
   .env-button:where([data-variant='secondary']) {
-    background: var(--_button-custom-fill, transparent);
+    --_button-container-default: var(--env-color-bg-neutral-muted);
+    --_button-disabled-edge: transparent;
+    background: var(--_button-custom-fill, var(--env-color-bg-neutral-muted));
     color: var(--env-button-content, var(--env-color-fg-default));
-    border-color: var(--env-button-outline, var(--env-color-border-muted));
+    border-color: var(--env-button-outline, transparent);
   }
 
   .env-button:where([data-variant='secondary']):hover:not(:disabled):not([aria-disabled='true']) {
-    background: var(--_button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
-    border-color: var(--env-button-outline, var(--env-color-border-muted-hover));
+    background: var(--_button-custom-fill, var(--env-color-bg-neutral-muted-hover));
   }
 
   .env-button:where([data-variant='secondary']):active:not(:disabled):not([aria-disabled='true']) {
-    background: var(--_button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
-    border-color: var(--env-button-outline, var(--env-color-border-muted-pressed));
+    background: var(--_button-custom-fill, var(--env-color-bg-neutral-muted-pressed));
   }
 
   .env-button:where([data-variant='outline']) {
@@ -452,7 +452,12 @@
       [data-variant='secondary'],
       [data-variant='text']:not(.env-icon-button)
     ):is(:disabled, [aria-disabled='true']):not([data-pending]) {
-    border-color: var(--env-color-border-muted);
+    border-color: var(--_button-disabled-edge, var(--env-color-border-muted));
+  }
+  .env-button:where([data-variant='secondary']):is(:disabled, [aria-disabled='true']):not(
+      [data-pending]
+    ) {
+    background: color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent);
   }
 
   .env-button:where([data-full-width]):not(.env-icon-button) {

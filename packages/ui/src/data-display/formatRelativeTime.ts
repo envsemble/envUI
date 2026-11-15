@@ -35,6 +35,14 @@ export interface RelativeTimeOptions {
 const month = 30.436875 * day;
 const year = 365.2425 * day;
 
+function calendarDaysBetween(from: number, to: number) {
+  const startOfDay = (time: number) => {
+    const date = new Date(time);
+    return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+  };
+  return Math.round((startOfDay(to) - startOfDay(from)) / day);
+}
+
 export function toTime(value: RelativeTimeValue | undefined) {
   return new Date(value ?? Number.NaN).getTime();
 }
@@ -93,7 +101,9 @@ export function dateTimeFormatter(locale: RelativeTimeOptions['locale']) {
 
 /**
  * A moment as text relative to another, by default the current time, such as "in 2 days",
- * "3 hours ago" or "just now", through Intl.RelativeTimeFormat. An invalid moment gives an empty
+ * "3 hours ago", "yesterday" or "just now", through Intl.RelativeTimeFormat. A moment a day or so
+ * away on the next or the previous calendar day reads "tomorrow" or "yesterday", in the locale's
+ * words. An invalid moment gives an empty
  * string; an invalid now is ignored, as by RelativeTime, for the current time.
  */
 export function formatRelativeTime(value: RelativeTimeValue, options: RelativeTimeOptions = {}) {
@@ -103,6 +113,9 @@ export function formatRelativeTime(value: RelativeTimeValue, options: RelativeTi
   const now = Number.isFinite(givenNow) ? givenNow : Date.now();
   if (!Number.isFinite(time)) return '';
   const unit = relativeUnit(time - now);
+  const calendarDays = calendarDaysBetween(now, time);
+  if (unit?.[1] === 'day' && Math.abs(calendarDays) === 1)
+    return relativeFormatter(locale, format, 'auto').format(calendarDays, 'day');
   if (unit) return relativeFormatter(locale, format, 'always').format(...unit);
   if (nowLabel !== undefined) return nowLabel;
   const auto = relativeFormatter(locale, format, 'auto');

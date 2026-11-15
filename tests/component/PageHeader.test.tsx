@@ -1,7 +1,8 @@
 import { beforeEach, expect, test } from 'vitest';
 import { page } from 'vitest/browser';
 import * as fixture from '../fixture/PageHeader.fixture.tsx';
-import { box, css } from './support/Browser.ts';
+import * as navigation from '../fixture/PageNavigation.fixture.tsx';
+import { box, css, keyboard, nextFrames } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
 beforeEach(() => {
@@ -75,5 +76,44 @@ test(
     field.blur();
     field.focus();
     await clearOfHeader();
+  },
+);
+
+test(
+  'in a Scaffold, focus moves to the title of the page navigated to, without a ring, but not on the first load',
+  { tags: ['engines'] },
+  async () => {
+    mount(navigation);
+    const title = (name: string) => page.getByRole('heading', { level: 1, name });
+    const destination = (name: string) =>
+      page.getByRole('navigation', { name: 'Main' }).getByRole('button', { name });
+    await expect.element(title('Inbox')).toBeInTheDocument();
+    await nextFrames();
+    expect(document.activeElement).not.toBe(title('Inbox').element());
+
+    await destination('Settings').click();
+    await expect.element(title('Settings')).toHaveFocus();
+    expect(css(title('Settings'), 'outline-style')).toBe('none');
+
+    (destination('Inbox').element() as HTMLElement).focus();
+    await keyboard.press('Enter');
+    await expect.element(title('Inbox')).toHaveFocus();
+    expect(css(title('Inbox'), 'outline-style')).toBe('none');
+    await keyboard.press('Tab');
+    expect(document.activeElement).not.toBe(title('Inbox').element());
+
+    await destination('Settings').click();
+    const name = page.getByRole('textbox', { name: 'Page name' });
+    await name.click();
+    await keyboard.type(' and more');
+    await expect.element(title('Settings and more')).toBeInTheDocument();
+    await nextFrames();
+    await expect.element(name).toHaveFocus();
+
+    (destination('Archive').element() as HTMLElement).focus();
+    await keyboard.press('Enter');
+    await expect.element(title('Archive')).toBeInTheDocument();
+    await nextFrames();
+    await expect.element(destination('Archive')).toHaveFocus();
   },
 );

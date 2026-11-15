@@ -1,6 +1,6 @@
 import { Suspense, use, useRef, useState, type ReactNode } from 'react';
 import { Disclosure, Column, Text } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/code';
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 import type { DeviceKind, StageFill } from '../documentation/DocumentationTypes';
 import { FigureDevice, OnDevice } from './DeviceFrame';
 import { LoadBoundary } from '../loading/LoadBoundary';
@@ -28,9 +28,14 @@ import { keepLinksInPlace } from './KeepLinksInPlace';
 function Source({ page, name }: { page: string; name: string }) {
   const source = use(exampleSource(page, name));
   return (
-    <CodeBlock language="tsx" label={`${name}.tsx`} copyable className="site-example-source">
+    <HighlightedCodeBlock
+      language="tsx"
+      label={`${name}.tsx`}
+      copyable
+      className="site-example-source"
+    >
       {source.replace(/\n$/, '')}
-    </CodeBlock>
+    </HighlightedCodeBlock>
   );
 }
 

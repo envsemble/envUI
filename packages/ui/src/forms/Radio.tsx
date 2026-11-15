@@ -16,6 +16,7 @@ import { useControllableState } from '../internal/react/useControllableState.js'
 import { useFormReset } from '../internal/field/useFormReset.js';
 import { fieldMessageIds } from '../internal/field/useFieldMetadata.js';
 import { Slot } from '../internal/layout/Slot.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import '../styles/Base.css';
 import '../styles/Radio.css';
 import '../styles/ConnectedRows.css';
@@ -47,7 +48,8 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
   ref?: Ref<HTMLFieldSetElement>;
   /**
    * The group's visible name, such as Visibility, as the fieldset's legend above the options. It
-   * names the group for assistive technology; without it, use aria-label or aria-labelledby.
+   * names the group for assistive technology. Without it, a List.Item whose control it is names it,
+   * or name it with aria-label or aria-labelledby.
    */
   label?: ReactNode;
   /**
@@ -81,8 +83,10 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
   required?: boolean;
   /**
    * How the options are laid out: horizontal, radios before their labels side by side that wrap
-   * onto more lines; or vertical, connected selectable rows that fill the width, with the label and
-   * description at the start and the radio at the end, for options that need explaining.
+   * onto more lines; or vertical, rows that fill the width as a List's do, with the label and
+   * description at the start and the radio at the end, for options that need explaining. The rows
+   * follow the Theme's surface: plain, with hairlines between them and the radio showing the
+   * choice; filled, joined tiles where the chosen one takes the selected fill.
    * @default 'horizontal'
    */
   orientation?: 'horizontal' | 'vertical';
@@ -119,9 +123,10 @@ export function RadioGroup({
     onChange: onValueChange,
   });
   const ids = fieldMessageIds(id);
+  const naming = useRowControlNaming({ label, ...props });
   const describedBy =
     [
-      props['aria-describedby'],
+      naming['aria-describedby'],
       description != null ? ids.description : undefined,
       error != null ? ids.error : undefined,
     ]
@@ -147,6 +152,7 @@ export function RadioGroup({
         setRef(ref, node);
       }}
       disabled={disabled}
+      aria-labelledby={naming['aria-labelledby']}
       aria-describedby={describedBy}
       data-orientation={orientation}
       className={classNames(

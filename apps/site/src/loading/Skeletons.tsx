@@ -1,6 +1,5 @@
 import { useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
-import { Surface } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/code';
+import { CodeBlock, Surface } from '@envsemble/envui';
 import { earlyPlaceholderDelayMs, useDelayPassed, usePlaceholderShown } from './LoadingStore';
 import { useFiguresMounted } from './useFiguresMounted';
 import { useArrival } from './useArrival';
@@ -136,7 +135,7 @@ export function CodeSkeleton({ label, lines }: { label: string; lines: number })
   ).join('\n');
   return (
     <PartSkeleton what="code">
-      <CodeBlock language="text" label={label} copyable className="site-example-source">
+      <CodeBlock label={label} copyable className="site-example-source">
         {text}
       </CodeBlock>
     </PartSkeleton>

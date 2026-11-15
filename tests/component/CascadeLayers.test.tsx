@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest';
+import { expect, onTestFinished, test } from 'vitest';
 import { commands, page } from 'vitest/browser';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as layers from '../fixture/CascadeLayers.fixture.tsx';
@@ -81,6 +81,31 @@ test("an application's CSS outside cascade layers overrides envUI's without !imp
   expect(read('dark')).toBe(darkHigh);
   expect(read('light', 'standard')).toBe(light);
   expect(read('dark', 'standard')).toBe(dark);
+});
+
+function setAsideTheTestRunnersBodyStyle() {
+  const runners = [...document.querySelectorAll('style')].filter((style) =>
+    [...(style.sheet?.cssRules ?? [])].some(
+      (rule) => rule instanceof CSSStyleRule && rule.selectorText === 'body',
+    ),
+  );
+  for (const style of runners) style.disabled = true;
+  onTestFinished(() => {
+    for (const style of runners) style.disabled = false;
+  });
+}
+
+test("a themed document's body has no margin, in envUI's lowest layer, so an application's body margin wins; a host page keeps its own", async () => {
+  setAsideTheTestRunnersBodyStyle();
+  mount(layers);
+  const root = document.documentElement;
+  expect(root.classList.contains('env-theme')).toBe(false);
+  expect(css(document.body, 'margin')).toBe('8px');
+  mount(adoption);
+  await expect.poll(() => root.classList.contains('env-theme')).toBe(true);
+  expect(css(document.body, 'margin')).toBe('0px');
+  addStyle('body { margin: 12px; }');
+  expect(css(document.body, 'margin')).toBe('12px');
 });
 
 test('a themed document root keeps the browser font size and its body the body type; an application body rule styles the body, while envUI keeps its type inside its boundaries', async () => {

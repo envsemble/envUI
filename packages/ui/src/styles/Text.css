@@ -37,6 +37,9 @@
   .env-text:where([data-emphasis='subtle']) {
     color: var(--env-color-fg-muted);
   }
+  .env-text:where([data-tabular-numbers]) {
+    font-variant-numeric: tabular-nums;
+  }
 
   [data-env-skeleton] .env-text {
     --_skeleton-placeholder: inline-block;

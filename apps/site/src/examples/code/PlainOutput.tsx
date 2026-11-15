@@ -1,4 +1,4 @@
-import { CodeBlock } from '@envsemble/envui/code';
+import { CodeBlock } from '@envsemble/envui';
 
 export default function PlainOutput() {
   return (

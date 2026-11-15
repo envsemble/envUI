@@ -39,18 +39,33 @@
     --_radio-accent-pressed: var(--env-radio-selected, var(--env-color-bg-primary-emphasis-pressed));
   }
   .env-radio-group[data-orientation='vertical'] {
-    --_radio-row: var(--_surface-muted-ground)
+    --_radio-row-padding: calc(var(--env-row-padding-block-md) + var(--env-space-1));
+    --_radio-filled-gap: var(--_theme-filled) calc(var(--env-space-1) / 2);
+    --_radio-filled-padding: var(--_theme-filled) var(--env-row-padding-inline);
+    --_radio-plain-divider: var(--_theme-filled) 0;
+    --_radio-pressed-scale: var(--_theme-filled) 0.99;
+    --_radio-row: var(--_theme-filled) var(--_surface-muted-ground)
       color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent);
-    --_radio-row-hover: var(--_surface-muted-ground) var(--env-color-bg-neutral-muted);
-    --_radio-row-pressed: var(--_surface-muted-ground) var(--env-color-bg-neutral-muted-hover);
+    --_radio-row-hover: var(--_theme-filled) var(--_surface-muted-ground)
+      var(--env-color-bg-neutral-muted);
+    --_radio-row-pressed: var(--_theme-filled) var(--_surface-muted-ground)
+      var(--env-color-bg-neutral-muted-hover);
+    --_radio-selected: var(--_theme-filled) var(--env-color-bg-selected);
+    --_radio-selected-hover: var(--_theme-filled) var(--env-color-bg-selected-hover);
+    --_radio-selected-pressed: var(--_theme-filled) var(--env-color-bg-selected-pressed);
+    --_radio-selected-layer: var(--_theme-filled) calc(var(--env-state-hover-opacity) * 100%);
+    gap: var(--_radio-filled-gap, 0);
+  }
+  .env-radio-group[data-orientation='vertical']
+    > :is(.env-radio-group-description, .env-radio-group-error) {
+    margin-block-start: var(--env-space-2);
   }
   .env-radio[data-orientation='vertical'] {
+    --_radio-fill: var(--_radio-row, var(--env-color-bg-item));
+    --_radio-fill-hover: var(--_radio-row-hover, var(--env-color-bg-item-hover));
+    --_radio-fill-pressed: var(--_radio-row-pressed, var(--env-color-bg-item-pressed));
     --_radio-layer: initial;
-    --_radio-content-gate: color-mix(
-      in srgb,
-      var(--env-radio-content) 0%,
-      var(--_radio-row, var(--env-color-bg-muted))
-    );
+    --_radio-content-gate: color-mix(in srgb, var(--env-radio-content) 0%, var(--_radio-fill));
     --_radio-custom-base: var(--env-radio-container, var(--_radio-content-gate));
     --_radio-custom-layered: color-mix(
       in srgb,
@@ -58,40 +73,46 @@
       currentColor var(--_radio-layer)
     );
     --_radio-custom-fill: var(--_radio-custom-layered, var(--_radio-custom-base));
+    box-sizing: border-box;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--env-space-3);
     min-width: 0;
-    padding: var(--env-space-3) var(--env-row-padding-inline);
-    background: var(--_radio-custom-fill, var(--_radio-row, var(--env-color-bg-muted)));
+    min-height: calc(var(--env-control-height-sm) + 2 * var(--_radio-row-padding));
+    padding: var(--_radio-row-padding) var(--_radio-filled-padding, 0);
+    background: var(--_radio-custom-fill, var(--_radio-fill));
     font: var(--env-type-body-sm);
     font-size: var(--env-font-size-body-sm);
     color: var(--env-radio-content, var(--env-color-fg-default));
     cursor: pointer;
   }
+  .env-radio[data-orientation='vertical'] ~ .env-radio[data-orientation='vertical'] {
+    border-block-start: var(--_radio-plain-divider, var(--env-control-border-width)) solid
+      var(--env-color-border-muted);
+  }
   .env-radio > span {
     min-inline-size: 0;
   }
+  .env-radio[data-orientation='vertical']:has(input:checked) {
+    --_radio-fill: var(--_radio-selected, var(--_radio-row, var(--env-color-bg-item)));
+    --_radio-fill-hover: var(
+      --_radio-selected-hover,
+      var(--_radio-row-hover, var(--env-color-bg-item-hover))
+    );
+    --_radio-fill-pressed: var(
+      --_radio-selected-pressed,
+      var(--_radio-row-pressed, var(--env-color-bg-item-pressed))
+    );
+    --_radio-layer: var(--_radio-selected-layer);
+  }
   .env-radio[data-orientation='vertical']:hover:not(:has(input:disabled)) {
     --_radio-layer: calc(var(--env-state-hover-opacity) * 100%);
-    /* prettier-ignore */
-    background: var(--_radio-custom-fill, var(--_radio-row-hover, var(--env-color-bg-muted-hover)));
+    background: var(--_radio-custom-fill, var(--_radio-fill-hover));
   }
   .env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
     --_radio-layer: calc(var(--env-state-pressed-opacity) * 100%);
-    /* prettier-ignore */
-    background: var(--_radio-custom-fill, var(--_radio-row-pressed, var(--env-color-bg-muted-pressed)));
-  }
-  .env-radio[data-orientation='vertical']:has(input:checked) {
-    --_radio-layer: calc(var(--env-state-hover-opacity) * 100%);
-    background: var(--_radio-custom-fill, var(--env-color-bg-selected));
-  }
-  .env-radio[data-orientation='vertical']:has(input:checked):hover:not(:has(input:disabled)) {
-    background: var(--_radio-custom-fill, var(--env-color-bg-selected-hover));
-  }
-  .env-radio[data-orientation='vertical']:has(input:checked):active:not(:has(input:disabled)) {
-    background: var(--_radio-custom-fill, var(--env-color-bg-selected-pressed));
+    background: var(--_radio-custom-fill, var(--_radio-fill-pressed));
   }
   .env-radio[data-orientation='vertical']:has(input:focus-visible) {
     outline: 2px solid var(--env-color-border-focus);
@@ -174,7 +195,7 @@
       transition-timing-function: var(--env-motion-ease-enter);
     }
     .env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
-      transform: scale(0.99);
+      transform: scale(var(--_radio-pressed-scale, 1));
     }
     .env-radio[data-orientation='horizontal']:active:not(:has(input:disabled)) .env-radio-input {
       transform: scale(0.9);

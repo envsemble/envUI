@@ -1,5 +1,5 @@
-import { EnvUIProvider, Column } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/code';
+import { CodeBlock, EnvUIProvider, Column } from '@envsemble/envui';
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 
 export const mount = 'standalone';
 
@@ -8,9 +8,12 @@ const source = 'npm install @envsemble/envui\nnpm run build';
 export default function CodeBlockFixture() {
   return (
     <Column gap={4}>
-      <CodeBlock copyable language="sh" data-testid="install">
+      <CodeBlock copyable data-testid="install">
         {source}
       </CodeBlock>
+      <HighlightedCodeBlock language="ts" label="answer.ts" data-testid="highlighted">
+        {'const answer = 42;'}
+      </HighlightedCodeBlock>
       <EnvUIProvider
         messages={{
           codeBlock: {

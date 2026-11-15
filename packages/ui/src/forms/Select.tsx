@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconCheck } from '../icons/Check.js';
 import {
@@ -225,7 +226,14 @@ export function Select({
   style,
   ...triggerProps
 }: SelectProps) {
-  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
+  const naming = useRowControlNaming({ label, ...triggerProps, 'aria-describedby': describedBy });
+  const metadata = useFieldMetadata(
+    suppliedId,
+    description,
+    error,
+    naming['aria-describedby'],
+    invalid,
+  );
   const { id } = metadata;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const controlRef = useRef<HTMLDivElement>(null);
@@ -303,6 +311,9 @@ export function Select({
         <BaseSelect.Trigger
           {...triggerProps}
           {...metadata}
+          {...(naming['aria-labelledby'] != null && {
+            'aria-labelledby': naming['aria-labelledby'],
+          })}
           ref={(node: HTMLButtonElement | null) => {
             triggerRef.current = node;
             setRef(ref, node);

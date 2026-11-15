@@ -33,6 +33,7 @@ const memberTiles = moduleRegistry(import.meta.glob<TileModule>('/src/tiles/memb
 const shownByPageTile: Readonly<Record<string, string>> = {
   RichTextEditor: 'rich-text',
   CodeBlock: 'code',
+  HighlightedCodeBlock: 'code',
 };
 
 export const memberTileOf = (component: string) => {

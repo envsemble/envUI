@@ -2,6 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { commands, page, type Locator } from 'vitest/browser';
 import * as dataDisplay from '../fixture/DataDisplay.fixture.tsx';
 import * as fixture from '../fixture/List.fixture.tsx';
+import * as rowControls from '../fixture/RowControls.fixture.tsx';
+import * as surfaces from '../fixture/Surfaces.fixture.tsx';
 import { box, collectErrors, css, keyboard, mouse, nextFrames } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
 
@@ -318,4 +320,75 @@ test('rows are plain by default, parted by hairlines with their text at the list
   await expect.poll(() => css(row, 'background-color')).not.toBe('rgba(0, 0, 0, 0)');
   expect(css(target, 'color')).toBe(css(row, 'color'));
   expect(css(target, 'text-decoration-line')).toBe('none');
+});
+
+test('a titled list is named by its heading, and a control in a row is named and described by the row, once', async () => {
+  mount(surfaces, { search: 'surface=plain' });
+  const list = page.getByRole('list', { name: 'Remote access', exact: true });
+  await expect
+    .element(list)
+    .toHaveAccessibleDescription('Let your other devices reach this computer.');
+  await expect
+    .element(page.getByRole('heading', { level: 2, name: 'Remote access', exact: true }))
+    .toBeVisible();
+  const port = list.getByRole('textbox', { name: 'Port', exact: true });
+  await expect.element(port).toHaveAccessibleName('Port');
+  await expect.element(port).toHaveAccessibleDescription('Default 7420.');
+  const allow = list.getByRole('switch');
+  await expect.element(allow).toHaveAccessibleName('Allow paired devices');
+  await expect
+    .element(allow)
+    .toHaveAccessibleDescription('They can see and steer the agents on this computer.');
+  await expect.element(list.getByRole('combobox')).toHaveAccessibleName('Channel');
+  const [portRow] = list
+    .getByRole('listitem')
+    .elements()
+    .filter((row) => row.textContent?.startsWith('Port'));
+  const field = port.element();
+  expect(box(field).x).toBeGreaterThan(box(portRow!.querySelector('.env-list-item-label')!).x);
+});
+
+test(
+  "a row's start icon takes the start's icon size and sits centred on the row",
+  { tags: ['engines'] },
+  async () => {
+    mount(surfaces, { search: 'surface=plain' });
+    const row = page
+      .getByRole('list', { name: 'Paired devices', exact: true })
+      .getByRole('listitem')
+      .first()
+      .element();
+    const icon = row.querySelector('.env-list-item-start svg')!;
+    const probe = document.createElement('div');
+    probe.style.inlineSize = 'var(--env-icon-size-lg)';
+    row.append(probe);
+    const size = box(probe).width;
+    probe.remove();
+    expect(box(icon).width).toBe(size);
+    expect(box(icon).height).toBe(size);
+    const rowBox = box(row);
+    const content = box(row.querySelector('.env-list-item-content')!);
+    expect(
+      Math.abs(box(icon).y + box(icon).height / 2 - (content.y + content.height / 2)),
+    ).toBeLessThan(1);
+    expect(box(icon).y).toBeGreaterThan(rowBox.y);
+  },
+);
+
+test("every envUI control without a label of its own takes the row's name, and one with a label keeps it", async () => {
+  mount(rowControls);
+  const list = page.getByRole('list', { name: 'Row controls', exact: true });
+  const checkbox = list.getByRole('checkbox');
+  await expect.element(checkbox).toHaveAccessibleName('Sync');
+  await expect.element(checkbox).toHaveAccessibleDescription('Keep this computer in step.');
+  const channel = list.getByRole('group', { name: 'Channel', exact: true });
+  await expect.element(channel).toHaveAccessibleDescription('Where updates come from.');
+  await expect
+    .element(list.getByRole('radiogroup', { name: 'Density', exact: true }))
+    .toBeVisible();
+  const volume = list.getByRole('slider');
+  await expect.element(volume).toHaveAccessibleName('Volume');
+  await expect.element(volume).toHaveAccessibleDescription('Of every sound.');
+  await expect.element(list.getByRole('searchbox')).toHaveAccessibleName('Filter');
+  await expect.element(list.getByRole('switch')).toHaveAccessibleName('Mute alerts');
 });

@@ -23,12 +23,10 @@
   background: var(--env-color-bg-danger-emphasis-pressed);
 }
 .catalogue-specimen-area .catalogue-force-hover.env-button:where([data-variant='secondary']) {
-  background: var(--env-color-bg-neutral-subtle-hover);
-  border-color: var(--env-color-border-muted-hover);
+  background: var(--env-color-bg-neutral-muted-hover);
 }
 .catalogue-specimen-area .catalogue-force-pressed.env-button:where([data-variant='secondary']) {
-  background: var(--env-color-bg-neutral-subtle-pressed);
-  border-color: var(--env-color-border-muted-pressed);
+  background: var(--env-color-bg-neutral-muted-pressed);
 }
 .catalogue-specimen-area .catalogue-force-hover.env-button:where([data-variant='outline']) {
   background: var(--env-color-bg-neutral-subtle-hover);
@@ -66,9 +64,10 @@
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
-.catalogue-specimen-area .catalogue-force-focus.env-button:where([data-variant='outline']) {
-  outline-color: var(--env-color-border-focus);
-  outline-offset: 0.0625rem;
+.catalogue-specimen-area
+  .catalogue-force-focus.env-button:where([data-variant='outline'], [data-variant='secondary']) {
+  outline-offset: 0;
+  border-color: var(--env-color-border-focus);
 }
 .catalogue-specimen-area .catalogue-force-hover.env-button:where([data-variant='ghost']) {
   --_labelled-ghost-hover-layer: 70%;

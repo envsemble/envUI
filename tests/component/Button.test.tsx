@@ -245,7 +245,7 @@ test('a button given its own colors lays state layers of its content color over 
   await mouse.move(...center(tinted));
   const probe = document.createElement('span');
   probe.style.backgroundColor =
-    'color-mix(in srgb, transparent, rgb(11 110 79) calc(var(--env-state-hover-opacity) * 100%))';
+    'color-mix(in srgb, var(--env-color-bg-neutral-muted), rgb(11 110 79) calc(var(--env-state-hover-opacity) * 100%))';
   tinted.append(probe);
   const expected = getComputedStyle(probe).backgroundColor;
   probe.remove();

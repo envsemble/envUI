@@ -188,6 +188,8 @@ exports[`navigation-drawer-nested has no new accessibility violations 1`] = `{}`
 
 exports[`page-header has no new accessibility violations 1`] = `{}`;
 
+exports[`page-navigation has no new accessibility violations 1`] = `{}`;
+
 exports[`pagination has no new accessibility violations 1`] = `{}`;
 
 exports[`panel-dock has no new accessibility violations 1`] = `
@@ -319,6 +321,8 @@ exports[`tabs-rtl has no new accessibility violations 1`] = `{}`;
 
 exports[`tabs-scrolling has no new accessibility violations 1`] = `{}`;
 
+exports[`text has no new accessibility violations 1`] = `{}`;
+
 exports[`theme-contrast has no new accessibility violations 1`] = `{}`;
 
 exports[`theme-contrast-nested has no new accessibility violations 1`] = `{}`;
@@ -338,3 +342,5 @@ exports[`tooltip has no new accessibility violations 1`] = `{}`;
 exports[`top-bar has no new accessibility violations 1`] = `{}`;
 
 exports[`tree has no new accessibility violations 1`] = `{}`;
+
+exports[`visually-hidden has no new accessibility violations 1`] = `{}`;

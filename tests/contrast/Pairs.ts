@@ -341,7 +341,16 @@ const registry: readonly ContrastPair[] = merged([
       [layerHover, ground],
       [layerPressed, ground],
     ]),
-    'The label of an outline or secondary button and of a Select trigger, on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
+    'The label of an outline button and of a Select trigger, on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
+  ),
+  ...text(
+    '--env-color-fg-default',
+    [page, surface, muted, raised, recessed].flatMap((ground) => [
+      [fill, ground],
+      ['--env-color-bg-neutral-muted-hover', ground],
+      ['--env-color-bg-neutral-muted-pressed', ground],
+    ]),
+    'The label of a secondary button on its translucent neutral fill, over the page, a pane, a card, a raised surface or a recessed one, at rest, hovered and pressed',
   ),
   ...text(
     '--env-color-fg-on-strong',
@@ -1096,6 +1105,14 @@ const registry: readonly ContrastPair[] = merged([
     [layerHover, raised],
     [layerPressed, raised],
   ]),
+  ...buttonEndSeparator(
+    'default',
+    [page, surface, muted, raised, recessed].flatMap((ground) => [
+      [fill, ground],
+      ['--env-color-bg-neutral-muted-hover', ground],
+      ['--env-color-bg-neutral-muted-pressed', ground],
+    ]),
+  ),
   ...buttonEndSeparator('link', [page, surface, muted, raised]),
   ...buttonEndSeparator('danger', [
     raised,

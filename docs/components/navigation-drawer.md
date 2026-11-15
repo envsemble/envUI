@@ -47,7 +47,7 @@ useWhen:
   - The same destinations on a tablet, as icons over labels (NavigationRail)
   - Three to five destinations along the bottom of a phone (NavigationBar)
 avoidWhen:
-  - text: Switching between views of the same content in one place.
+  - text: Views of one subject that fill a region, such as a summary and activity.
     use: Tabs
   - text: A deep hierarchy that people expand and collapse, such as folders and files.
     use: Tree

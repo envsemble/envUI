@@ -1,3 +1,6 @@
+html.env-theme > body {
+  margin: 0;
+}
 .env-theme,
 .env-theme *,
 .env-theme ::before,

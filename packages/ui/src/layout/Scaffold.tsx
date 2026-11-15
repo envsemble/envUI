@@ -20,6 +20,7 @@ import { useScrollKeys } from './internal/useScrollKeys.js';
 import { resolveNavigationForms } from './internal/navigationForms.js';
 import { focusRegion } from './internal/scaffoldFocus.js';
 import { useNavigationFocusHandoff } from './internal/useNavigationFocusHandoff.js';
+import { ScaffoldPagesContext, useScaffoldPages } from './internal/PageTitleFocus.js';
 import '../styles/Base.css';
 import '../styles/Scaffold.css';
 
@@ -160,6 +161,7 @@ export function Scaffold({
     },
     [bodyRef],
   );
+  const pages = useScaffoldPages();
   const bodyScrollsInsteadOfDocument = scroll === 'body';
   useScrollKeys(bodyScrollsInsteadOfDocument ? root : null, body);
 
@@ -268,7 +270,7 @@ export function Scaffold({
         </div>
       )}
       <Main ref={attachBody} id={mainId} tabIndex={-1} className="env-scaffold-body">
-        {children}
+        <ScaffoldPagesContext value={pages}>{children}</ScaffoldPagesContext>
       </Main>
     </div>
   );

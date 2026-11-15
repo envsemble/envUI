@@ -1035,6 +1035,10 @@
         {
           "class": "env-code-block-header",
           "description": "The row above the code: its label, such as a file name, and the copy button."
+        },
+        {
+          "class": "env-code-block-token",
+          "description": "One highlighted piece of the source, in its syntax color."
         }
       ],
       "states": [
@@ -2515,6 +2519,10 @@
         {
           "class": "env-icon",
           "description": "An icon."
+        },
+        {
+          "class": "env-icon-symbol",
+          "description": "The SVG of one of envUI's symbols, `--env-icon-size` square."
         }
       ],
       "states": []
@@ -2744,6 +2752,15 @@
           "description": "The announcements of a reordered item."
         },
         {
+          "class": "env-list-description",
+          "description": "The slot of the sentence under a list's title, in muted text.",
+          "slot": true
+        },
+        {
+          "class": "env-list-header",
+          "description": "The list's title and description above its rows."
+        },
+        {
           "class": "env-list-item",
           "description": "One item."
         },
@@ -2752,12 +2769,17 @@
           "description": "The column with an item's label, description and more content."
         },
         {
+          "class": "env-list-item-control",
+          "description": "The slot of the control at an item's end, which the item's label names.",
+          "slot": true
+        },
+        {
           "class": "env-list-item-description",
           "description": "An item's description, in muted text."
         },
         {
           "class": "env-list-item-end",
-          "description": "The slot of the content at an item's end, such as a button or a switch.",
+          "description": "The slot of the content at an item's end, such as a button or a badge.",
           "slot": true
         },
         {
@@ -2778,6 +2800,14 @@
           "class": "env-list-item-start",
           "description": "The slot of the content before an item's label, such as a checkbox or an avatar.",
           "slot": true
+        },
+        {
+          "class": "env-list-section",
+          "description": "The column of a titled list: its header above its rows."
+        },
+        {
+          "class": "env-list-title",
+          "description": "The list's heading."
         }
       ],
       "states": [
@@ -2907,7 +2937,6 @@
       "uses": [
         "Checkbox",
         "Code",
-        "CodeBlock",
         "Kbd",
         "Link",
         "Prose"
@@ -4537,7 +4566,6 @@
         "Button",
         "Checkbox",
         "Code",
-        "CodeBlock",
         "Field",
         "Icon",
         "Link",
@@ -5725,6 +5753,15 @@
           ]
         },
         {
+          "attribute": "data-tabular-numbers",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-text"
+          ]
+        },
+        {
           "attribute": "data-variant",
           "values": [
             "body",
@@ -6560,6 +6597,17 @@
       "uses": [
         "Icon"
       ]
+    },
+    "VisuallyHidden": {
+      "root": "env-visually-hidden",
+      "source": "packages/ui/src/content/VisuallyHidden.tsx",
+      "parts": [
+        {
+          "class": "env-visually-hidden",
+          "description": "Content for assistive technology alone, clipped out of view."
+        }
+      ],
+      "states": []
     }
   },
   "shared": {

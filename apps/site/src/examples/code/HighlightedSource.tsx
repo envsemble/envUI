@@ -1,4 +1,4 @@
-import { CodeBlock } from '@envsemble/envui/code';
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 
 const source = `// Saves the draft
 <Button onClick={save}>
@@ -7,8 +7,8 @@ const source = `// Saves the draft
 
 export default function HighlightedSource() {
   return (
-    <CodeBlock language="tsx" label="SaveButton.tsx" copyable>
+    <HighlightedCodeBlock language="tsx" label="SaveButton.tsx" copyable>
       {source}
-    </CodeBlock>
+    </HighlightedCodeBlock>
   );
 }

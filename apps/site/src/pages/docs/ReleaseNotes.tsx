@@ -1,6 +1,5 @@
 import { Fragment, type ReactNode } from 'react';
-import { Column, Link, Text } from '@envsemble/envui';
-import { Code } from '@envsemble/envui/code';
+import { Code, Column, Link, Text } from '@envsemble/envui';
 import releases from 'virtual:envui-release-notes';
 import type { InlinePiece, Release } from './ReleaseNotesData';
 

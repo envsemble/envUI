@@ -47,6 +47,10 @@
     "Checkbox": "function",
     "CheckboxProps": "interface",
     "CheckboxState": "type",
+    "Code": "function",
+    "CodeBlock": "function",
+    "CodeBlockProps": "interface",
+    "CodeProps": "type",
     "ColorScheme": "type",
     "Column": "function",
     "ColumnProps": "type",
@@ -276,6 +280,8 @@
     "TreeActionDetails": "interface",
     "TreeItem": "interface",
     "TreeProps": "interface",
+    "VisuallyHidden": "function",
+    "VisuallyHiddenProps": "interface",
     "Weekday": "type",
     "WindowClass": "type",
     "avatarHue": "function",
@@ -298,10 +304,8 @@
     "windowClasses": "const"
   },
   "@envsemble/envui/code": {
-    "Code": "function",
-    "CodeBlock": "function",
-    "CodeBlockProps": "interface",
-    "CodeProps": "type"
+    "HighlightedCodeBlock": "function",
+    "HighlightedCodeBlockProps": "interface"
   },
   "@envsemble/envui/color": {
     "Color": "interface",

@@ -117,15 +117,15 @@
       "selected": {
         "$root": {
           "$description": "Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A neutral gray deeper than the surfaces in every theme, distinct from them at rest: ΔEOK 0.03 or more, 0.04 at high contrast. The item’s second cue, a bar, a check or its weight, tells it from a hovered item. Under Theme selection=\"accent\" it takes bg.selected.accent.",
-          "$value": "{palette.gray.13}"
+          "$value": "{palette.gray.11}"
         },
         "hover": {
           "$description": "A selected item under the pointer: a step toward the surface from the selection.",
-          "$value": "{palette.gray.10}"
+          "$value": "{palette.gray.8}"
         },
         "pressed": {
           "$description": "A selected item while pressed: another step toward the surface. Muted text and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.gray.8}"
+          "$value": "{palette.gray.7}"
         },
         "accent": {
           "$root": {

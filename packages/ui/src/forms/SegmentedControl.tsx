@@ -18,6 +18,7 @@ import { Slot } from '../internal/layout/Slot.js';
 import { useDirectionScope } from '../internal/provider/useDirection.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
 import { flag } from '../internal/flag.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import '../styles/Base.css';
 import '../styles/SegmentedControl.css';
 
@@ -56,8 +57,11 @@ export interface SegmentedControlProps extends Omit<
   defaultValue?: string;
   /** Receives the value of the item people choose, by pressing it or with the arrow keys. */
   onValueChange?: (value: string) => void;
-  /** The group's accessible name, such as Work items; the control has no visible label. */
-  'aria-label': string;
+  /**
+   * The group's accessible name, such as Work items; the control has no visible label. Leave it out
+   * only in a List.Item's control, where the row's label names it.
+   */
+  'aria-label'?: string;
   /**
    * The height, as on every control: sm, md or lg in the current scale, so it lines up with buttons
    * and fields of the same size. Without it, it takes the control height of its container, md
@@ -84,6 +88,7 @@ export function SegmentedControl({
   defaultValue = items[0]?.value,
   onValueChange,
   'aria-label': label,
+  'aria-describedby': describedBy,
   size,
   fullWidth = false,
   disabled = false,
@@ -94,6 +99,11 @@ export function SegmentedControl({
 }: SegmentedControlProps) {
   const directionScope = useDirectionScope<HTMLDivElement>(ref);
   const thumb = useRef<HTMLSpanElement>(null);
+  const naming = useRowControlNaming({
+    'aria-label': label,
+    'aria-labelledby': props['aria-labelledby'],
+    'aria-describedby': describedBy,
+  });
   useLayoutEffect(
     () => (thumb.current ? keepThumbOverChosenSegment(thumb.current) : undefined),
     [],
@@ -112,6 +122,7 @@ export function SegmentedControl({
         onValueChange={(next) => onValueChange?.(next)}
         disabled={disabled}
         aria-label={label}
+        {...naming}
         className={classNames('env-segmented-control', className)}
         data-size={size}
         data-full-width={flag(fullWidth)}

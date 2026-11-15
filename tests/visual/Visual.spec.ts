@@ -27,6 +27,9 @@ const densityShots = [
   { section: 'desktop', theme: 'light' },
   { section: 'desktop', theme: 'dark' },
 ] as const;
+const surfaceShots = ['plain', 'filled'].flatMap((surface) =>
+  ['light', 'dark'].map((theme) => ({ surface, theme })),
+);
 const frozenTime = new Date('2026-03-04T10:00:00Z');
 const snapshots = fileURLToPath(new URL('./snapshots/', import.meta.url));
 const stateMatrices: Record<string, string[]> = {
@@ -427,6 +430,19 @@ test.describe('density', () => {
   }
 });
 
+test.describe('surfaces', () => {
+  for (const { surface, theme } of surfaceShots) {
+    test(`list and radio rows (${surface}, ${theme})`, async ({ page }) => {
+      await page.clock.setFixedTime(frozenTime);
+      await page.goto(`${fixtureUrl}/?fixture=surfaces&surface=${surface}&theme=${theme}`);
+      const specimen = page.locator(`[data-surfaces="${surface}-${theme}"]`);
+      await specimen.waitFor();
+      await settle(page);
+      await expect(specimen).toHaveScreenshot(['surfaces', `${theme}-${surface}.png`]);
+    });
+  }
+});
+
 test.describe('open lists', () => {
   for (const list of openLists) {
     for (const theme of allThemes.filter(({ name }) => list.themes.includes(name))) {
@@ -483,12 +499,13 @@ test.describe('open lists', () => {
 });
 
 // eslint-disable-next-line no-empty-pattern
-test('every snapshot folder belongs to a catalogue page, a density section or an open list', async ({}, testInfo) => {
+test('every snapshot folder belongs to a catalogue page, a density section, a surface or an open list', async ({}, testInfo) => {
   const pages = new Set(groupedPages.map(({ document }) => document.id));
   const density = new Set(densityShots.map(({ section, theme }) => `${theme}-${section}.png`));
   const open = new Set(
     openLists.flatMap((list) => list.themes.map((theme) => `${theme}-${list.name}.png`)),
   );
+  const surfaces = new Set(surfaceShots.map(({ surface, theme }) => `${theme}-${surface}.png`));
   const stale = (folder: string, belongs: (entry: Dirent) => boolean) =>
     existsSync(join(snapshots, folder))
       ? readdirSync(join(snapshots, folder), { withFileTypes: true })
@@ -498,11 +515,13 @@ test('every snapshot folder belongs to a catalogue page, a density section or an
   const unused = [
     ...stale(
       '',
-      (entry) => entry.isDirectory() && ['catalogue', 'density', 'open'].includes(entry.name),
+      (entry) =>
+        entry.isDirectory() && ['catalogue', 'density', 'open', 'surfaces'].includes(entry.name),
     ),
     ...stale('catalogue', (entry) => entry.isDirectory() && pages.has(entry.name)),
     ...stale('density', (entry) => entry.isFile() && density.has(entry.name)),
     ...stale('open', (entry) => entry.isFile() && open.has(entry.name)),
+    ...stale('surfaces', (entry) => entry.isFile() && surfaces.has(entry.name)),
   ];
   if (updating(testInfo)) {
     for (const path of unused) rmSync(join(snapshots, path), { recursive: true });

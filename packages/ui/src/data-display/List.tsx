@@ -1,35 +1,31 @@
-import {
-  Children,
-  cloneElement,
-  Fragment,
-  isValidElement,
-  type ComponentPropsWithRef,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import type { ComponentPropsWithRef, ReactNode } from 'react';
 import type { RowDensity } from '../foundations/Theme.js';
-import { classNames } from '../internal/classNames.js';
-import { Grid } from '../layout/Layout.js';
-import { Slot } from '../internal/layout/Slot.js';
-import { SkeletonStatus } from '../foundations/SkeletonScope.js';
-import { Text } from '../foundations/Text.js';
-import {
-  inSkeleton,
-  inSkeletonList,
-  given,
-  skeletonAttributes,
-  skeletonListAttributes,
-  type SkeletonProps,
-} from '../internal/skeleton.js';
+import type { HeadingLevel } from '../foundations/headingLevel.js';
+import type { SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/react/withDisplayName.js';
-import { ListReorderHandle, ReorderableList } from './internal/ReorderableList.js';
-import { flag } from '../internal/flag.js';
-import { rowAttributes } from '../internal/layout/primitiveAttributes.js';
+import { renderItem, renderList } from './internal/ListRows.js';
+import { ControlledItem, TitledList } from './internal/ListNaming.js';
 import '../styles/Base.css';
 import '../styles/List.css';
 import '../styles/ConnectedRows.css';
 
-export interface RootProps extends ComponentPropsWithRef<'ul'>, SkeletonProps {
+export interface RootProps extends Omit<ComponentPropsWithRef<'ul'>, 'title'>, SkeletonProps {
+  /**
+   * The heading above the rows, such as Remote access for a group of settings. It names the list,
+   * so that a page of such groups has one consistent outline.
+   */
+  title?: ReactNode;
+  /**
+   * The heading's level, for the page's outline: 2 under the page's own heading, 3 inside a section
+   * that has one. It looks the same at every level.
+   * @default 2
+   */
+  headingLevel?: Exclude<HeadingLevel, 1>;
+  /**
+   * A sentence under the title, in muted text, such as what the group's settings change. It
+   * describes the list.
+   */
+  description?: ReactNode;
   /**
    * How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text.
    * @default 'md'
@@ -46,62 +42,15 @@ export interface RootProps extends ComponentPropsWithRef<'ul'>, SkeletonProps {
   onReorder?: (from: number, to: number) => void;
 }
 
-const showsReorderHandleProp = 'data-env-reorderable';
-
 /**
  * A `ul` of rows. Plain by default: no fill, hairlines between the rows and their text in line with
  * the content around the list. Under a Theme with `surface="filled"`, the rows are tiles joined into
  * one block with shared outer corners, and in a muted Surface that holds only lists they take the
  * raised fill, so they stand out from it. With onReorder, people move the rows by their handles.
+ * With a title, a heading above the rows names the list.
  */
-function Root({
-  density = 'md',
-  onReorder,
-  skeleton = false,
-  className,
-  children,
-  ...props
-}: RootProps) {
-  const list = onReorder ? (
-    <ReorderableList
-      {...props}
-      {...skeletonListAttributes(skeleton)}
-      density={density}
-      onReorder={onReorder}
-      className={className}
-    >
-      {inSkeletonList(skeleton, markRowsToShowReorderHandle(children))}
-    </ReorderableList>
-  ) : (
-    <Grid
-      render={
-        <ul
-          {...props}
-          {...skeletonListAttributes(skeleton)}
-          data-density={density}
-          className={classNames('env-list', 'env-connected-rows', className)}
-        />
-      }
-    >
-      {inSkeletonList(skeleton, children)}
-    </Grid>
-  );
-  if (!skeleton) return list;
-  return (
-    <>
-      {list}
-      <SkeletonStatus label={props['aria-label']} />
-    </>
-  );
-}
-
-function markRowsToShowReorderHandle(children: ReactNode): ReactNode {
-  return Children.map(children, (child) => {
-    if (!isValidElement<{ children?: ReactNode }>(child)) return child;
-    if (child.type === Fragment)
-      return cloneElement(child, undefined, markRowsToShowReorderHandle(child.props.children));
-    return cloneElement(child, { [showsReorderHandleProp]: true } as object);
-  });
+function Root(props: RootProps) {
+  return props.title == null ? renderList(props) : <TitledList {...props} />;
 }
 
 export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
@@ -118,12 +67,18 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
    */
   description?: ReactNode;
   /**
-   * Content at the end of the row, such as a Button, a Switch or a Badge, which keeps its size; it
-   * moves below the text when it doesn't fit beside it.
+   * Content at the end of the row, such as a Button or a Badge, which keeps its size; it moves below
+   * the text when it doesn't fit beside it. The control of the setting a row names goes in control.
    */
   end?: ReactNode;
   /** More content under the label and the description, such as a row of Badges, placed as given. */
   children?: ReactNode;
+  /**
+   * The setting the row is about, at the row's end: a Switch, Select, TextField, SearchField,
+   * Checkbox, RadioGroup, SegmentedControl or Slider given no label of its own. The row's label
+   * names it and the row's description describes it, so it isn't labelled twice.
+   */
+  control?: ReactNode;
   /**
    * The row opens something through a link or button inside: it reacts to hover, keyboard focus
    * inside it and presses. Mark that link or button `data-row-target` to stretch it over the row.
@@ -150,104 +105,12 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
   textValue?: string;
 }
 
-type TargetProps = { 'data-row-target'?: unknown; 'aria-current'?: unknown; children?: ReactNode };
-
-function markFirstRowTargetCurrent(node: ReactNode): [ReactNode, boolean] {
-  let found = false;
-  const visit = (each: ReactNode): ReactNode => {
-    if (found || !isValidElement<TargetProps>(each)) return each;
-    const element = each as ReactElement<TargetProps>;
-    if (element.props['data-row-target'] != null && element.props['data-row-target'] !== false) {
-      found = true;
-      return element.props['aria-current'] == null
-        ? cloneElement(element, { 'aria-current': 'true' })
-        : element;
-    }
-    if (element.props.children == null) return element;
-    const children = Children.map(element.props.children, visit);
-    return found ? cloneElement(element, undefined, children) : element;
-  };
-  const marked = Children.map(node, visit);
-  return found ? [marked, true] : [node, false];
-}
-
-const rowLayoutOnTheLiSavingARenderPerRow = rowAttributes({
-  wrap: true,
-  align: 'center',
-  justify: 'between',
-  gap: 3,
-});
-
 /**
- * One `li` row with a label, a description and content at its end; the current row, content at its
- * start, and in a reorderable list a drag handle.
+ * One `li` row with a label, a description and content at its end, or the control of the setting it
+ * names; the current row, content at its start, and in a reorderable list a drag handle.
  */
 function Item(props: ItemProps) {
-  const {
-    label,
-    description,
-    end,
-    interactive = false,
-    current = false,
-    start,
-    textValue,
-    skeleton = false,
-    children,
-    className,
-    [showsReorderHandleProp]: reorderable = false,
-    ...rest
-  } = props as ItemProps & { [showsReorderHandleProp]?: boolean };
-  const hasDescription = description != null || given(props, 'description');
-  let targetMarked = false;
-  const mark = (node: ReactNode) => {
-    if (!current || targetMarked || node == null) return node;
-    const [marked, found] = markFirstRowTargetCurrent(node);
-    targetMarked = found;
-    return marked;
-  };
-  const shownLabel = mark(label);
-  const shownDescription = mark(description);
-  const shownChildren = mark(children);
-  const hasStart = start != null || reorderable;
-  const text =
-    textValue ??
-    (typeof label === 'string' || typeof label === 'number' ? String(label) : undefined);
-  return (
-    <li
-      {...rowLayoutOnTheLiSavingARenderPerRow}
-      aria-current={current && !targetMarked ? 'true' : undefined}
-      {...rest}
-      {...skeletonAttributes(skeleton)}
-      className={classNames('env-list-item', 'env-connected-row', className)}
-      data-interactive={flag(interactive)}
-      data-selected={flag(current)}
-      data-start={flag(hasStart)}
-    >
-      {inSkeleton(
-        skeleton,
-        <>
-          {reorderable && <ListReorderHandle textValue={text} />}
-          {start != null && (
-            <Slot className="env-list-item-start" layout="row" shrink="never">
-              {start}
-            </Slot>
-          )}
-          <div className="env-list-item-content">
-            <Slot className="env-list-item-label">
-              {shownLabel ?? <Text render={<span />} variant="body-sm" />}
-            </Slot>
-            {hasDescription && <div className="env-list-item-description">{shownDescription}</div>}
-            {shownChildren != null && <Slot className="env-list-item-extra">{shownChildren}</Slot>}
-          </div>
-          {end != null && (
-            <Slot className="env-list-item-end" layout="row" shrink="never">
-              {end}
-            </Slot>
-          )}
-        </>,
-      )}
-    </li>
-  );
+  return props.control == null ? renderItem(props) : <ControlledItem {...props} />;
 }
 
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'List.Root');

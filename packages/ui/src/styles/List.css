@@ -75,6 +75,10 @@
   .env-list-item-content {
     min-inline-size: 0;
   }
+  .env-list-header {
+    font: var(--env-type-body-sm);
+    color: var(--env-color-fg-muted);
+  }
   .env-list-item-start {
     position: relative;
     z-index: var(--env-z-raised);

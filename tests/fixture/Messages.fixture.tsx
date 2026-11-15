@@ -29,9 +29,9 @@ import {
   PanelDock,
   type EnvUIMessagesInput,
   Spinner,
+  CodeBlock,
 } from '@envsemble/envui';
 import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
-import { CodeBlock } from '@envsemble/envui/code';
 import { Markdown, MarkdownEditor } from '@envsemble/envui/markdown';
 import { defaultMessages } from '@envsemble/envui/messages';
 import {

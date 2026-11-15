@@ -56,7 +56,7 @@
   .env-code-block code {
     font: inherit;
   }
-  .env-code-block code span {
+  .env-code-block-token {
     --_code-token-now: var(--_theme-high-contrast) var(--_code-token-high);
     --_code-token-dark-now: var(--_theme-high-contrast) var(--_code-token-dark-high);
     --_code-token-dark-shown: var(--_theme-dark)

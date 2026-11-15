@@ -49,3 +49,33 @@ test("a bundler keeps only the namespace parts an application uses, bundling the
     );
   }
 });
+
+async function bundledModules(module: string) {
+  const result = await build({
+    stdin: {
+      contents: `export * from ${JSON.stringify(module)};\n`,
+      resolveDir: dist,
+      loader: 'js',
+    },
+    bundle: true,
+    write: false,
+    metafile: true,
+    format: 'esm',
+    logLevel: 'silent',
+    plugins: [
+      {
+        name: 'external',
+        setup: (builder) =>
+          builder.onResolve({ filter: /^[^./]/ }, (args) => ({ path: args.path, external: true })),
+      },
+    ],
+  });
+  return Object.keys(result.metafile.inputs);
+}
+
+test('the main entry point reaches no syntax highlighter, so CodeBlock costs none; HighlightedCodeBlock’s entry point does', async () => {
+  const reachesHighlighter = (modules: string[]) =>
+    modules.some((module) => module.endsWith('/codeHighlighting.js'));
+  assert.equal(reachesHighlighter(await bundledModules('./index.js')), false);
+  assert.equal(reachesHighlighter(await bundledModules('./code.js')), true);
+});

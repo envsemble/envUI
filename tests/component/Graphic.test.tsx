@@ -56,7 +56,7 @@ test('fill is a block that takes its height from an aspect, and a step with an a
   expect(Math.abs(step.width - (lg * 4) / 3)).toBeLessThan(0.5);
 });
 
-test("a slot sizes what it holds: an icon slot any child to its icon size, and TopBar's and PageHeader's start a graphic to a picture's, leaving envUI's symbols be", () => {
+test("a slot sizes what it holds: an icon slot any child to its icon size, and TopBar's and PageHeader's start a graphic or one of envUI's symbols to a picture's", () => {
   const icon = pxAtFixture('var(--env-control-icon-size)');
   for (const testId of ['button-img', 'button-graphic', 'button-svg']) {
     const slot = box(child(testId, '.env-icon'));
@@ -75,7 +75,5 @@ test("a slot sizes what it holds: an icon slot any child to its icon size, and T
   ] as const)
     expectSize(box(byTestId(testId)), pxAtFixture(token), testId);
   const symbol = child('top-bar-symbol', '.env-top-bar-start > svg');
-  expect(Math.abs(box(symbol).width - Number.parseFloat(css(symbol, 'font-size')))).toBeLessThan(
-    0.5,
-  );
+  expectSize(box(symbol), pxAtFixture('var(--env-picture-size-sm)'), 'top-bar-symbol');
 });

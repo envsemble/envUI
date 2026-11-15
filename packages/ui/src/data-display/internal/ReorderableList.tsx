@@ -80,7 +80,9 @@ export function ReorderableList({
   onKeyDown,
   children,
   ...props
-}: RootProps & { onReorder: NonNullable<RootProps['onReorder']> }) {
+}: Omit<RootProps, 'title' | 'headingLevel' | 'description'> & {
+  onReorder: NonNullable<RootProps['onReorder']>;
+}) {
   const element = useRef<HTMLUListElement | null>(null);
   const messages = useMessages('list', listMessages);
   const format = useFormatters();

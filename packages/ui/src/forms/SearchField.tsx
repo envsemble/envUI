@@ -28,10 +28,11 @@ export interface SearchFieldProps extends Omit<
   | 'onValueChange'
 > {
   /**
-   * The field's accessible name, such as Search members. It shows as a floating label only with
-   * showLabel; otherwise a placeholder gives the visible guidance.
+   * The field's accessible name, such as Search members. It shows above the field only with
+   * showLabel; otherwise a placeholder gives the visible guidance. Leave it out only in a
+   * List.Item's control, where the row's label names the field.
    */
-  label: string;
+  label?: string;
   /**
    * Show the label in the field, as TextField does. A search field leaves it out, so that it sits
    * in a toolbar with a placeholder such as Search.

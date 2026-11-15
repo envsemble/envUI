@@ -86,8 +86,11 @@ export * from './data-display/Meter.js';
 
 export * from './content/Disclosure.js';
 export * as Accordion from './content/Accordion.js';
+export * from './content/Code.js';
+export * from './content/CodeBlock.js';
 export * from './content/Kbd.js';
 export * from './content/useModifierKey.js';
+export * from './content/VisuallyHidden.js';
 export * from './content/Message.js';
 export * from './content/Composer.js';
 

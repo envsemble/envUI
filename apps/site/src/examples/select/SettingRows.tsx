@@ -13,16 +13,16 @@ const reminderOptions = [
 
 export default function SettingRows() {
   return (
-    <List.Root aria-label="Notifications">
+    <List.Root title="Notifications">
       <List.Item
         label="E-mail digest"
         description="A summary of what changed in your projects."
-        end={<Select aria-label="E-mail digest" items={digestOptions} defaultValue="weekly" />}
+        control={<Select items={digestOptions} defaultValue="weekly" />}
       />
       <List.Item
         label="Due date reminders"
         description="For tasks assigned to you."
-        end={<Select aria-label="Due date reminders" items={reminderOptions} defaultValue="1d" />}
+        control={<Select items={reminderOptions} defaultValue="1d" />}
       />
     </List.Root>
   );

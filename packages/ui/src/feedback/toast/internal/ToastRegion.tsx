@@ -27,8 +27,13 @@ type ToastObject = BaseToast.Root.ToastObject<ToastEntry>;
 
 const pictureNoticeLoadedByContainedRegions = optionModule(() => import('./PictureNotice.js'));
 
-const dangerInterruptsAsAlert = { role: 'alert', 'aria-modal': undefined } as const;
 const announcedByStatusAndAlertsInstead = 'off';
+const dangerInterruptsAsAlert = { role: 'alert', 'aria-modal': undefined } as const;
+const statusTheAnnouncerReads = {
+  role: 'status',
+  'aria-live': announcedByStatusAndAlertsInstead,
+  'aria-modal': undefined,
+} as const;
 
 function entrySetByController(toast: ToastObject) {
   return toast.data!;
@@ -302,7 +307,7 @@ function LiveToast({
       swipeDirection={swipeDirection}
       data-limited={flag(limited)}
       inert={limited || undefined}
-      {...(danger && dangerInterruptsAsAlert)}
+      {...(danger ? dangerInterruptsAsAlert : statusTheAnnouncerReads)}
       onMouseEnter={() => controller.pause(toast.id, 'hover')}
       onMouseLeave={() => controller.resume(toast.id, 'hover')}
       onFocusCapture={(event) => {
@@ -317,7 +322,9 @@ function LiveToast({
     >
       <ToastBody
         tone={entry.tone}
-        message={<BaseToast.Title className="env-toast-message" title={entry.message} />}
+        message={
+          <BaseToast.Title className="env-toast-message" title={entry.message} render={<div />} />
+        }
         action={
           entry.action && (
             <BaseToast.Action

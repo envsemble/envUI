@@ -5,6 +5,7 @@ import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/react/setRef.js';
 import { useCheckedInput, type CheckedProps } from './internal/useCheckedInput.js';
 import { Slot } from '../internal/layout/Slot.js';
+import { useRowControlNaming } from '../internal/field/rowControl.js';
 import '../styles/Base.css';
 import '../styles/Switch.css';
 
@@ -21,7 +22,7 @@ export interface SwitchProps extends CheckedProps<boolean> {
   /**
    * The setting the switch turns on or off, such as Show completed tasks, beside the track. It names
    * the switch, stays the same in both states, and pressing it toggles the switch too. Without it,
-   * name the switch with aria-label or aria-labelledby.
+   * a List.Item whose control it is names it, or name it with aria-label or aria-labelledby.
    */
   label?: ReactNode;
   /**
@@ -60,10 +61,12 @@ export function Switch({
     onChange,
     props.form,
   );
+  const naming = useRowControlNaming({ label, ...props });
   return (
     <label className={classNames('env-switch', className)} style={style}>
       <input
         {...props}
+        {...naming}
         type="checkbox"
         role="switch"
         ref={(node) => {

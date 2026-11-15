@@ -165,6 +165,27 @@ test('danger notices are alerts at once and never wait behind the hidden count',
   );
 });
 
+test('each notice is a status, or an alert for danger, without a heading, inside the notifications region', async () => {
+  await trigger('toast-neutral').click();
+  await trigger('toast-error').click();
+  await expect.poll(() => notices().length).toBe(2);
+  const notifications = page.getByRole('region', { name: 'Notifications' });
+  await expect.element(notifications.getByRole('status')).toHaveTextContent('Neutral notice');
+  await expect
+    .element(notifications.getByRole('alert'))
+    .toHaveTextContent('Persistent error notice');
+  expect(notices().map((each) => each.getAttribute('role'))).toEqual(
+    expect.arrayContaining(['status', 'alert']),
+  );
+  for (const each of notices()) {
+    expect(each.hasAttribute('aria-modal')).toBe(false);
+    expect(each.querySelector('h1, h2, h3, h4, h5, h6, [role="heading"]')).toBeNull();
+  }
+  expect(document.querySelector('[role="dialog"], [role="alertdialog"]')).toBeNull();
+  expect(notice('Neutral notice')!.getAttribute('aria-live')).toBe('off');
+  await expect.poll(() => announcer().textContent).toContain('Neutral notice');
+});
+
 test('notice timers run out after five seconds by default, and pause for focus, hover and the region together', async () => {
   stopClock();
   await trigger('toast-neutral').click();

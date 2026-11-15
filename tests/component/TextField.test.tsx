@@ -2,6 +2,7 @@ import { afterEach, beforeEach, expect, test } from 'vitest';
 import { page, type Locator } from 'vitest/browser';
 import * as adoption from '../fixture/Adoption.fixture.tsx';
 import * as affixes from '../fixture/Affixes.fixture.tsx';
+import * as valueCommit from '../fixture/ValueCommit.fixture.tsx';
 import type { FixtureModule } from '../fixture/FixtureMount.tsx';
 import { box, collectErrors, css, keyboard } from './support/Browser.ts';
 import { mount } from './support/Mount.tsx';
@@ -162,3 +163,36 @@ test('a field shows its label above its box, right to left too, and focus thicke
   expect(css(control, 'outline-style')).toBe('none');
   expect(box(control)).toEqual(wellBox);
 });
+
+test(
+  'onValueCommitted fires on Enter and on leaving a changed field, and Esc puts back the committed value',
+  { tags: ['engines'] },
+  async () => {
+    await open(valueCommit);
+    const commits = () => page.getByTestId('commits').element().textContent;
+    const port = page.getByRole('textbox', { name: 'Port', exact: true });
+    await port.click();
+    await keyboard.press('End');
+    await keyboard.press('Backspace');
+    await keyboard.type('1');
+    expect(commits()).toBe('');
+    await keyboard.press('Enter');
+    await expect.poll(commits).toBe('port=7421');
+    await keyboard.type('9');
+    await expect.element(port).toHaveValue('74219');
+    await keyboard.press('Escape');
+    await expect.element(port).toHaveValue('7421');
+    await keyboard.press('Tab');
+    expect(commits()).toBe('port=7421');
+    await port.click();
+    await keyboard.type('0');
+    await keyboard.press('Tab');
+    await expect.poll(commits).toBe('port=7421 port=74210');
+
+    const search = page.getByRole('searchbox', { name: 'Search members', exact: true });
+    await search.click();
+    await keyboard.type('ada');
+    await keyboard.press('Enter');
+    await expect.poll(commits).toBe('port=7421 port=74210 search=ada');
+  },
+);

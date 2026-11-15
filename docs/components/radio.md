@@ -14,13 +14,12 @@ aliases:
   - choice group
   - single choice
 useWhen:
-  - Exactly one of two to five options, all in view, such as who can open a project
   - Options that each need a sentence to explain them, such as roles
-  - A choice in a form that takes effect when the form is saved
+  - One of two to five options that must all stay in view, such as in a form
 avoidWhen:
-  - text: More options than fit, or ones people know, such as a time zone.
+  - text: A setting in a list row whose options are short names, such as a theme.
     use: Select
-  - text: Switching between views or filters that apply at once, such as List and Board.
+  - text: Views or filters of the content in front of people, such as List and Board.
     use: SegmentedControl
   - text: Several options people can choose together, or one option on its own.
     use: Checkbox

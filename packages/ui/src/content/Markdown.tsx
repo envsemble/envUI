@@ -21,7 +21,7 @@ import {
 import { Checkbox } from '../forms/Checkbox.js';
 import { Link } from '../actions/Link.js';
 import { Code } from './Code.js';
-import { CodeBlock } from './CodeBlock.js';
+import { HighlightedCodeBlock } from './HighlightedCodeBlock.js';
 import { Kbd } from './Kbd.js';
 import {
   collectingMarkdown,
@@ -198,9 +198,9 @@ const stableElementsReadingPropsFromContext: Components = {
       .join('');
     const language = String(code.properties.className ?? '').match(/language-([^,\s]+)/)?.[1];
     return (
-      <CodeBlock language={language} copyable={codeCopyable}>
+      <HighlightedCodeBlock language={language} copyable={codeCopyable}>
         {source}
-      </CodeBlock>
+      </HighlightedCodeBlock>
     );
   },
   table: function MarkdownTable({

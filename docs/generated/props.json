@@ -969,7 +969,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The text beside the box, which names the checkbox; pressing it toggles the checkbox."
+          "description": "The text beside the box, which names the checkbox; pressing it toggles the checkbox. Without it, a List.Item whose control it is names it, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "description",
@@ -1013,25 +1013,19 @@
         "code"
       ],
       "entries": [
-        "@envsemble/envui/code"
+        "@envsemble/envui"
       ]
     },
     "CodeBlock": {
       "kind": "component",
       "source": "packages/ui/src/content/CodeBlock.tsx",
-      "description": "Source display in the code theme of the app theme, with that code theme's own colors; copy always uses the original string. Its words come from EnvUIProvider's messages.codeBlock.",
+      "description": "Source, a command or output as plain text in the code theme of the app theme, such as a command to copy; copy always uses the original string. It loads no highlighter: HighlightedCodeBlock, from `@envsemble/envui/code`, colors a language's syntax. Its words come from EnvUIProvider's messages.codeBlock.",
       "props": [
         {
           "name": "children",
           "type": "string",
           "required": true,
-          "description": "The source, as one string; it is shown, highlighted and copied as it is."
-        },
-        {
-          "name": "language",
-          "type": "string",
-          "required": false,
-          "description": "The language to highlight: js, jsx, ts, tsx, java, json, html, xml, css, sql, sh, bash, yaml, md or ini, or their full names. Other values, and none, leave the source plain text."
+          "description": "The source, as one string; it is shown and copied as it is."
         },
         {
           "name": "label",
@@ -1058,7 +1052,7 @@
         "div"
       ],
       "entries": [
-        "@envsemble/envui/code"
+        "@envsemble/envui"
       ]
     },
     "CodeDiff": {
@@ -3517,6 +3511,51 @@
         "@envsemble/envui"
       ]
     },
+    "HighlightedCodeBlock": {
+      "kind": "component",
+      "source": "packages/ui/src/content/HighlightedCodeBlock.tsx",
+      "description": "Source with its syntax colored, in the code theme of the app theme, with that code theme's own colors; copy always uses the original string. The highlighter loads with the first block that names a language it knows. For a command or output, CodeBlock shows plain text without it.",
+      "props": [
+        {
+          "name": "language",
+          "type": "string",
+          "required": false,
+          "description": "The language to highlight: js, jsx, ts, tsx, java, json, html, xml, css, sql, sh, bash, yaml, md or ini, or their full names. Other values, and none, leave the source plain text."
+        },
+        {
+          "name": "children",
+          "type": "string",
+          "required": true,
+          "description": "The source, as one string; it is shown and copied as it is."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "description": "Names the block in its heading and for assistive technology, such as a file name."
+        },
+        {
+          "name": "copyable",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows a copy button in the heading that copies the source; false by default."
+        },
+        {
+          "name": "wrap",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Wraps long lines instead of scrolling them; false by default."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui/code"
+      ]
+    },
     "HoverCard": {
       "kind": "component",
       "source": "packages/ui/src/overlays/HoverCard.tsx",
@@ -3606,7 +3645,7 @@
     "Icon": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Icon.tsx",
-      "description": "The SVG that envUI's symbols render: 1 em, `currentColor`, and hidden from assistive technology unless labelled. An application's own icons and logos go in Graphic, as a file or an SVG component inside it.",
+      "description": "The SVG that envUI's symbols render: `--env-icon-size` square, the size the component around it sets, such as a List row's start, and else the control icon size; `currentColor`, and hidden from assistive technology unless labelled. An application's own icons and logos go in Graphic, as a file or an SVG component inside it.",
       "props": [
         {
           "name": "label",
@@ -3837,7 +3876,7 @@
     "List.Item": {
       "kind": "component",
       "source": "packages/ui/src/data-display/List.tsx",
-      "description": "One `li` row with a label, a description and content at its end; the current row, content at its start, and in a reorderable list a drag handle.",
+      "description": "One `li` row with a label, a description and content at its end, or the control of the setting it names; the current row, content at its start, and in a reorderable list a drag handle.",
       "props": [
         {
           "name": "label",
@@ -3855,13 +3894,19 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Content at the end of the row, such as a Button, a Switch or a Badge, which keeps its size; it moves below the text when it doesn't fit beside it."
+          "description": "Content at the end of the row, such as a Button or a Badge, which keeps its size; it moves below the text when it doesn't fit beside it. The control of the setting a row names goes in control."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
           "description": "More content under the label and the description, such as a row of Badges, placed as given."
+        },
+        {
+          "name": "control",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The setting the row is about, at the row's end: a Switch, Select, TextField, SearchField, Checkbox, RadioGroup, SegmentedControl or Slider given no label of its own. The row's label names it and the row's description describes it, so it isn't labelled twice."
         },
         {
           "name": "interactive",
@@ -3908,8 +3953,27 @@
     "List.Root": {
       "kind": "component",
       "source": "packages/ui/src/data-display/List.tsx",
-      "description": "A `ul` of rows. Plain by default: no fill, hairlines between the rows and their text in line with the content around the list. Under a Theme with `surface=\"filled\"`, the rows are tiles joined into one block with shared outer corners, and in a muted Surface that holds only lists they take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles.",
+      "description": "A `ul` of rows. Plain by default: no fill, hairlines between the rows and their text in line with the content around the list. Under a Theme with `surface=\"filled\"`, the rows are tiles joined into one block with shared outer corners, and in a muted Surface that holds only lists they take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles. With a title, a heading above the rows names the list.",
       "props": [
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The heading above the rows, such as Remote access for a group of settings. It names the list, so that a page of such groups has one consistent outline."
+        },
+        {
+          "name": "headingLevel",
+          "type": "Exclude<HeadingLevel, 1>",
+          "required": false,
+          "default": "2",
+          "description": "The heading's level, for the page's outline: 2 under the page's own heading, 3 inside a section that has one. It looks the same at every level."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A sentence under the title, in muted text, such as what the group's settings change. It describes the list."
+        },
         {
           "name": "density",
           "type": "'xs' | 'sm' | 'md' | 'lg'",
@@ -5453,6 +5517,13 @@
           "required": false,
           "default": "'md'",
           "description": "The size of the buttons and icon buttons in `actions` and `toolbar` that set none: sm for a dense page, such as one in a small window, or md. Give fields in the toolbar the same `size`."
+        },
+        {
+          "name": "focusOnNavigation",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "In a Scaffold, moves focus to the title of a level 1 header when the page changes: as the header mounts after the Scaffold first showed, or as its title changes. People using a screen reader then hear the new page, and the next Tab starts from it. Focus moved there shows no ring, and focus in a field or an open overlay stays where it is. False leaves focus to the application."
         }
       ],
       "native": [
@@ -6410,7 +6481,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology; without it, use aria-label or aria-labelledby."
+          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology. Without it, a List.Item whose control it is names it, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "value",
@@ -6460,7 +6531,7 @@
           "type": "'horizontal' | 'vertical'",
           "required": false,
           "default": "'horizontal'",
-          "description": "How the options are laid out: horizontal, radios before their labels side by side that wrap onto more lines; or vertical, connected selectable rows that fill the width, with the label and description at the start and the radio at the end, for options that need explaining."
+          "description": "How the options are laid out: horizontal, radios before their labels side by side that wrap onto more lines; or vertical, rows that fill the width as a List's do, with the label and description at the start and the radio at the end, for options that need explaining. The rows follow the Theme's surface: plain, with hairlines between them and the radio showing the choice; filled, joined tiles where the chosen one takes the selected fill."
         },
         {
           "name": "disabled",
@@ -6958,8 +7029,8 @@
         {
           "name": "label",
           "type": "string",
-          "required": true,
-          "description": "The field's accessible name, such as Search members. It shows as a floating label only with showLabel; otherwise a placeholder gives the visible guidance."
+          "required": false,
+          "description": "The field's accessible name, such as Search members. It shows above the field only with showLabel; otherwise a placeholder gives the visible guidance. Leave it out only in a List.Item's control, where the row's label names the field."
         },
         {
           "name": "showLabel",
@@ -7045,6 +7116,12 @@
           "description": "The field's look: outline, a box with a thin edge, or ghost, a faint fill without an edge, for a search at the top of a sidebar or a list."
         },
         {
+          "name": "onValueCommitted",
+          "type": "(value: string) => void",
+          "required": false,
+          "description": "Receives the value once people finish editing it: on Enter, and when the field loses focus with a value that changed since. With it, Esc puts back the value last committed. Use it for a setting that applies at once, such as a port, rather than on every key."
+        },
+        {
           "name": "error",
           "type": "ReactNode",
           "required": false,
@@ -7097,8 +7174,8 @@
         {
           "name": "aria-label",
           "type": "string",
-          "required": true,
-          "description": "The group's accessible name, such as Work items; the control has no visible label."
+          "required": false,
+          "description": "The group's accessible name, such as Work items; the control has no visible label. Leave it out only in a List.Item's control, where the row's label names it."
         },
         {
           "name": "size",
@@ -7450,8 +7527,8 @@
         {
           "name": "label",
           "type": "string",
-          "required": true,
-          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends in an ellipsis where the slider is too narrow for it."
+          "required": false,
+          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider, and ends in an ellipsis where the slider is too narrow for it. Leave it out only in a List.Item's control, where the row's label names the slider."
         },
         {
           "name": "description",
@@ -7676,7 +7753,7 @@
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": "The setting the switch turns on or off, such as Show completed tasks, beside the track. It names the switch, stays the same in both states, and pressing it toggles the switch too. Without it, name the switch with aria-label or aria-labelledby."
+          "description": "The setting the switch turns on or off, such as Show completed tasks, beside the track. It names the switch, stays the same in both states, and pressing it toggles the switch too. Without it, a List.Item whose control it is names it, or name it with aria-label or aria-labelledby."
         },
         {
           "name": "description",
@@ -8150,6 +8227,13 @@
           "description": "How strong the text is: default, the text color; muted, for supporting text; subtle, the weakest, for text that should recede, such as a hint beside a value."
         },
         {
+          "name": "tabularNumbers",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Gives every digit the same width, so numbers line up in a column and a value that changes, such as a countdown or a code, doesn't shift the text around it."
+        },
+        {
           "name": "render",
           "type": "ReactElement",
           "required": false,
@@ -8172,7 +8256,7 @@
     "TextField": {
       "kind": "component",
       "source": "packages/ui/src/forms/TextField.tsx",
-      "description": "A labelled single-line text input: a native input with its label above it, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with its label above it, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix. In a List.Item's control, without a label, the row names it.",
       "props": [
         {
           "name": "ref",
@@ -8197,6 +8281,12 @@
           "type": "(value: string) => void",
           "required": false,
           "description": "Receives the value as people type, after the native onChange."
+        },
+        {
+          "name": "onValueCommitted",
+          "type": "(value: string) => void",
+          "required": false,
+          "description": "Receives the value once people finish editing it: on Enter, and when the field loses focus with a value that changed since. With it, Esc puts back the value last committed. Use it for a setting that applies at once, such as a port, rather than on every key."
         },
         {
           "name": "label",
@@ -9181,6 +9271,25 @@
         "@envsemble/envui"
       ]
     },
+    "VisuallyHidden": {
+      "kind": "component",
+      "source": "packages/ui/src/content/VisuallyHidden.tsx",
+      "description": "Content that assistive technology reads and the screen doesn't show, such as words that complete a short label, or a heading over a region whose purpose shows without one.",
+      "props": [
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<h2 />} for a heading only assistive technology reads; a span by default."
+        }
+      ],
+      "native": [
+        "span"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "avatarHue": {
       "kind": "function",
       "source": "packages/ui/src/data-display/Avatar.tsx",
@@ -9231,7 +9340,7 @@
     "formatRelativeTime": {
       "kind": "function",
       "source": "packages/ui/src/data-display/formatRelativeTime.ts",
-      "description": "A moment as text relative to another, by default the current time, such as \"in 2 days\", \"3 hours ago\" or \"just now\", through Intl.RelativeTimeFormat. An invalid moment gives an empty string; an invalid now is ignored, as by RelativeTime, for the current time.",
+      "description": "A moment as text relative to another, by default the current time, such as \"in 2 days\", \"3 hours ago\", \"yesterday\" or \"just now\", through Intl.RelativeTimeFormat. A moment a day or so away on the next or the previous calendar day reads \"tomorrow\" or \"yesterday\", in the locale's words. An invalid moment gives an empty string; an invalid now is ignored, as by RelativeTime, for the current time.",
       "signature": "(value: RelativeTimeValue, options?: RelativeTimeOptions): string",
       "entries": [
         "@envsemble/envui"

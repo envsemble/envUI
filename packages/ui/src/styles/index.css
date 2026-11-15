@@ -23,6 +23,7 @@
 @import './TableOfContents.css';
 @import './Pagination.css';
 @import './Kbd.css';
+@import './VisuallyHidden.css';
 @import './List.css';
 @import './Spinner.css';
 @import './LineArt.css';

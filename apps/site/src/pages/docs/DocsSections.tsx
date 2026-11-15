@@ -1,5 +1,4 @@
-import { Column, DescriptionList, Text, type TableOfContentsItem } from '@envsemble/envui';
-import { Code } from '@envsemble/envui/code';
+import { Code, Column, DescriptionList, Text, type TableOfContentsItem } from '@envsemble/envui';
 import { ExampleSource } from '../../figures/LiveExample';
 import { UsageFigure } from '../../figures/Figures';
 import { ColorPaletteSkeleton } from '../../figures/foundations/ColorPaletteSkeleton';

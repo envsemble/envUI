@@ -20,7 +20,7 @@ aliases:
   - file diff
 useWhen:
   - A command, a value or a file name in a sentence (Code)
-  - Source, commands or output to read or copy (CodeBlock)
+  - Commands, output or source to read or copy (CodeBlock, HighlightedCodeBlock)
   - The changes between two versions of a file (CodeDiff)
 avoidWhen:
   - text: Keys of a shortcut.
@@ -32,6 +32,7 @@ avoidWhen:
 components:
   - Code
   - CodeBlock
+  - HighlightedCodeBlock
   - CodeDiff
   - countDiffLines
 examples:

@@ -1,6 +1,6 @@
 import { useId, useMemo, useRef, useState } from 'react';
 import { Button, SearchField, Column, Row, Switch, Text, Sheet } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/code';
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 import * as symbols from 'envui-icon-list';
 import { SpecimenFrame } from '../SpecimenFrame';
 import { iconPageSize as pageSize } from './Icons';
@@ -63,11 +63,11 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
         </div>
       </Column>
       <Text variant="caption">Inherits the surrounding text color.</Text>
-      <CodeBlock language="tsx" label="React import" copyable>
+      <HighlightedCodeBlock language="tsx" label="React import" copyable>
         {`import { ${name} } from '@envsemble/envui/icons/${moduleName(name)}';
 
 <${name}${filled ? ' filled' : ''} />`}
-      </CodeBlock>
+      </HighlightedCodeBlock>
     </Column>
   );
 }

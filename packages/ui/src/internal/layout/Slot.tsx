@@ -5,6 +5,7 @@ import '../../styles/Base.css';
 export interface SlotProps {
   className: string;
   children: ReactNode;
+  id?: string;
   element?: 'div' | 'span';
   layout?: 'flow' | 'row';
   grow?: boolean;
@@ -14,6 +15,7 @@ export interface SlotProps {
 export function Slot({
   className,
   children,
+  id,
   element: Element = 'div',
   layout = 'flow',
   grow,
@@ -21,6 +23,7 @@ export function Slot({
 }: SlotProps) {
   return (
     <Element
+      id={id}
       className={className}
       data-env-slot={layout}
       data-env-slot-grow={flag(grow)}

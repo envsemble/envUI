@@ -106,19 +106,6 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
     rationale:
       'A field’s label sits above the field, in the muted label color, and no longer takes the accent while the field has focus; the focused edge stays measured as a boundary.',
   },
-  ...['-hover', '-pressed'].flatMap((state) =>
-    [
-      '--env-color-bg-default',
-      '--env-color-bg-muted',
-      '--env-color-bg-page',
-      '--env-color-bg-raised',
-      '--env-color-bg-recessed',
-    ].map((ground) => ({
-      pair: `--env-color-fg-default on --env-color-bg-neutral-muted${state} over ${ground}`,
-      rationale:
-        'A secondary button has no fill: its label sits on the surface, and on the neutral state layer over it while hovered and pressed, measured as an outline button’s.',
-    })),
-  ),
   ...['', '-hover', '-pressed'].flatMap((state) =>
     [
       '--env-color-bg-default',

@@ -1,4 +1,4 @@
-import { CodeBlock } from '@envsemble/envui/code';
+import { CodeBlock } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
@@ -24,12 +24,7 @@ export default function CodeTile() {
   const narrow = useMedia(narrowGallery);
   usePointer(script);
   return (
-    <CodeBlock
-      language="sh"
-      label="Terminal"
-      copyable
-      style={{ inlineSize: narrow ? '10rem' : '11rem' }}
-    >
+    <CodeBlock label="Terminal" copyable style={{ inlineSize: narrow ? '10rem' : '11rem' }}>
       {'npm run build'}
     </CodeBlock>
   );

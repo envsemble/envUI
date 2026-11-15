@@ -1,12 +1,16 @@
 @layer env.components {
+  .env-icon,
+  .env-icon-symbol {
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
+    flex-shrink: 0;
+  }
+
   .env-icon {
     display: inline-grid;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     place-items: center;
-    width: var(--env-icon-size);
-    height: var(--env-icon-size);
     fill: currentColor;
-    flex-shrink: 0;
   }
 
   .env-icon > * {

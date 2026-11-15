@@ -135,3 +135,27 @@ test('formats, languages and the time element', () => {
     '3 hours ago',
   );
 });
+
+test('a moment on the previous or the next calendar day reads yesterday or tomorrow, in the locale’s words', () => {
+  const now = new Date(2026, 9, 14, 12).getTime();
+  const at = (days: number, hours = 12) => new Date(2026, 9, 14 + days, hours).getTime();
+  const format = (time: number, options = {}) =>
+    formatRelativeTime(time, { now, locale, ...options });
+  assert.equal(format(at(-1)), 'yesterday');
+  assert.equal(format(at(1)), 'tomorrow');
+  assert.equal(format(at(-1, 1)), 'yesterday');
+  assert.equal(format(at(-1), { locale: 'de' }), 'gestern');
+  assert.equal(format(at(1), { format: 'short' }), 'tomorrow');
+  assert.equal(format(at(-2)), '2 days ago');
+  assert.equal(format(at(-7)), '1 week ago');
+  assert.equal(format(now - 3 * hour), '3 hours ago');
+  const lateEvening = new Date(2026, 9, 14, 23, 30).getTime();
+  assert.equal(
+    formatRelativeTime(new Date(2026, 9, 14, 0, 30).getTime(), { now: lateEvening, locale }),
+    '1 day ago',
+  );
+  assert.equal(
+    textOf(firstElement(renderToStaticMarkup(h(RelativeTime, { value: at(-1), now, locale })))),
+    'yesterday',
+  );
+});

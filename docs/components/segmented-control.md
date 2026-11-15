@@ -19,12 +19,12 @@ useWhen:
   - How a toolbar lays out content, such as List and Board
   - A choice between two scopes in a narrow container, such as a sidebar
 avoidWhen:
-  - text: Each option has a panel of its own, such as the sections of a settings page.
-    use: Tabs
-  - text: A choice in a form that is saved with it, or options that need explaining.
-    use: RadioGroup
-  - text: More than five options, or options with long names.
+  - text: A setting rather than a view, such as a theme, or more than five options.
     use: Select
+  - text: Options that each need a sentence to explain them.
+    use: RadioGroup
+  - text: Each option shows a panel of its own, such as a project's summary and activity.
+    use: Tabs
 components:
   - SegmentedControl
 examples:

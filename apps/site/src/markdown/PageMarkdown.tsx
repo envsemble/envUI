@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo } from 'react';
 import { CopyButton, Link } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/code';
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/markdown';
 import type { DocumentationEntry } from '../documentation/DocumentationTypes';
 import { documents } from '../routes/PageModel';
@@ -154,7 +154,7 @@ const elements: NonNullable<MarkdownProps['components']> = {
     const language = String(code.properties.className ?? '').match(/language-([^,\s]+)/)?.[1];
     return (
       <div className="site-code-block">
-        <CodeBlock language={language}>{source}</CodeBlock>
+        <HighlightedCodeBlock language={language}>{source}</HighlightedCodeBlock>
         <div className="site-code-block-corner">
           <CopyButton value={source} variant="ghost" size="sm" aria-label="Copy code" />
         </div>

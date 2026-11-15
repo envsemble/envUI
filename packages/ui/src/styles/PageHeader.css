@@ -36,6 +36,7 @@
   }
   .env-page-header-title {
     text-wrap: balance;
+    outline: none;
   }
   .env-page-header-actions {
     flex: 1 1 100%;

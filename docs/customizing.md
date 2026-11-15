@@ -136,7 +136,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### CodeBlock
 
-- Parts: `env-code-block`, `env-code-block-copy-status`, `env-code-block-header`
+- Parts: `env-code-block`, `env-code-block-copy-status`, `env-code-block-header`, `env-code-block-token`
 - States: `data-wrap`
 
 ### CodeDiff
@@ -241,7 +241,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### Icon
 
-- Parts: `env-icon`
+- Parts: `env-icon`, `env-icon-symbol`
 
 ### IconButton
 
@@ -267,7 +267,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 ### List
 
-- Parts: `env-list`, `env-list-announcer`, `env-list-item`, `env-list-item-content`, `env-list-item-description`, `env-list-item-end` (slot), `env-list-item-extra` (slot), `env-list-item-handle`, `env-list-item-label` (slot), `env-list-item-start` (slot)
+- Parts: `env-list`, `env-list-announcer`, `env-list-description` (slot), `env-list-header`, `env-list-item`, `env-list-item-content`, `env-list-item-control` (slot), `env-list-item-description`, `env-list-item-end` (slot), `env-list-item-extra` (slot), `env-list-item-handle`, `env-list-item-label` (slot), `env-list-item-start` (slot), `env-list-section`, `env-list-title`
 - States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-env-skeleton` on `env-list`, `env-list-item-description`; `data-interactive` on `env-list-item`; `data-label` on `env-list-item-handle`; `data-moving` (`keyboard`, `pointer`) on `env-list-item`; `data-reorderable`; `data-reordering`; `data-selected` on `env-list-item`; `data-start` on `env-list-item`
 - Color properties: `--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected`, `--env-list-item-selected-content`
 
@@ -463,7 +463,7 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 ### Text
 
 - Parts: `env-text`
-- States: `data-emphasis` (`default`, `muted`, `subtle`); `data-variant` (`body`, `body-sm`, `caption`, `display`, `headline`, `title`)
+- States: `data-emphasis` (`default`, `muted`, `subtle`); `data-tabular-numbers`; `data-variant` (`body`, `body-sm`, `caption`, `display`, `headline`, `title`)
 
 ### TextField
 
@@ -518,6 +518,10 @@ Generated from `docs/generated/parts.json` by `npm run docs:guides`.
 
 - Parts: `env-tree`, `env-tree-chevron`, `env-tree-description`, `env-tree-end` (slot), `env-tree-group`, `env-tree-icon`, `env-tree-item`, `env-tree-label`, `env-tree-rows`
 - States: `data-density` (`lg`, `md`, `sm`, `xs`); `data-ending-style` on `env-tree-group`; `data-expanded` on `env-tree-chevron`; `data-focus-visible`; `data-highlighted` on `env-tree-item`; `data-id` on `env-tree-item`; `data-starting-style` on `env-tree-group`, `env-tree-item`
+
+### VisuallyHidden
+
+- Parts: `env-visually-hidden`
 
 ## Shared parts
 

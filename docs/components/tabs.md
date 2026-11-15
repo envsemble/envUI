@@ -21,7 +21,7 @@ avoidWhen:
     use: SegmentedControl
   - text: Open documents that people close, reorder and keep, as in an editor.
     use: DocumentTabs
-  - text: An application's destinations, or a side list of a page's sections.
+  - text: An application's destinations, or the sections of a settings screen.
     use: NavigationDrawer
 components:
   - Tabs

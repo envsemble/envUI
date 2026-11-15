@@ -95,13 +95,13 @@
       },
       "selected": {
         "$root": {
-          "$value": "{palette.gray.70}"
-        },
-        "hover": {
           "$value": "{palette.gray.75}"
         },
-        "pressed": {
+        "hover": {
           "$value": "{palette.gray.80}"
+        },
+        "pressed": {
+          "$value": "{palette.gray.84}"
         },
         "accent": {
           "$root": {

@@ -5,8 +5,9 @@ import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
 import type { ControlSize } from '../foundations/Theme.js';
 
 /**
- * A button's emphasis: primary for the main action of a view, secondary and outline for the rest,
- * ghost for an application's chrome, such as a toolbar, and text for a link-like action.
+ * A button's emphasis: primary for the main action of a view; secondary, a quiet neutral fill, and
+ * outline, a thin edge, for the rest; ghost for an application's chrome, such as a toolbar, and
+ * text for a link-like action.
  */
 export type ButtonVariant = ControlVariant;
 

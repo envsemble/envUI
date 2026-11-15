@@ -84,6 +84,7 @@ Where things are in `node_modules/@envsemble/envui/`:
 - [Markdown](components/markdown.md)
 - [Code](components/code.md)
 - [Kbd](components/kbd.md)
+- [VisuallyHidden](components/visually-hidden.md)
 - [Message](components/message.md)
 - [Composer](components/composer.md)
 - [Accordion](components/accordion.md)

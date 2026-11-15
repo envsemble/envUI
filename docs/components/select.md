@@ -17,9 +17,10 @@ aliases:
   - choose from a list
 useWhen:
   - One of several known options, such as a role, a sort order or a time zone
-  - A setting in a row or a toolbar, such as a digest's frequency or a zoom level
+  - A setting with a few options in a List.Item's control, such as a theme
+  - A choice in a toolbar, such as a zoom level
 avoidWhen:
-  - text: Two to five options that read better side by side.
+  - text: Options that each need a sentence, or that must all stay in view.
     use: RadioGroup
   - text: Finding one option in a long list by typing, or choosing several.
     use: Combobox

@@ -2,6 +2,7 @@ import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 're
 import {
   Badge,
   Button,
+  CodeBlock,
   Column,
   CommandPalette,
   Composer,
@@ -33,7 +34,7 @@ import {
   type CommandPaletteItem,
   type Destination,
 } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/code';
+import { HighlightedCodeBlock } from '@envsemble/envui/code';
 import { CodeDiff, countDiffLines } from '@envsemble/envui/diff';
 import { IconAttachFile } from '@envsemble/envui/icons/AttachFile';
 import { IconBolt } from '@envsemble/envui/icons/Bolt';
@@ -150,9 +151,9 @@ function Conversation() {
               First I ran the delivery tests 50 times against a partner stub that fails at random.
               One case fails today:
             </Text>
-            <CodeBlock language="bash" label="Terminal" copyable>
+            <HighlightedCodeBlock language="bash" label="Terminal" copyable>
               {command}
-            </CodeBlock>
+            </HighlightedCodeBlock>
             <CodeBlock label="Output">{output}</CodeBlock>
           </Column>
         </Message>

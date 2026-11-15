@@ -1,6 +1,6 @@
 ---
 title: Icons
-summary: Thousands of Material Symbols that follow their text, outlined or filled.
+summary: Thousands of Material Symbols, sized by their component, outlined or filled.
 components:
   - Icon
 aliases:
@@ -39,7 +39,7 @@ Thousands of Material Symbols, each outlined or filled. Navigation and tabs fill
 
 ## Behaviour
 
-An icon takes the color and size of the text around it.
+An icon takes the color of the text around it, and the size that the component around it sets for its icons.
 
 ```tsx figure=FollowText
 
@@ -53,7 +53,7 @@ An icon beside a label is silent to screen readers; one that stands alone, such 
 
 ### Usage
 
-Import each icon by its own path, `Icon<Name>` from `@envsemble/envui/icons/<Name>`.
+Import each icon by its own path, `Icon<Name>` from `@envsemble/envui/icons/<Name>`. An icon is `--env-icon-size` square; set it on an element of your own to size the icons inside.
 
 ```tsx
 import { Button } from '@envsemble/envui';

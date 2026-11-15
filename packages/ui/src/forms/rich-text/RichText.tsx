@@ -8,7 +8,7 @@ import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { richText as richTextMessages } from '../../foundations/messages/richText.js';
 import { Link } from '../../actions/Link.js';
 import { Code } from '../../content/Code.js';
-import { CodeBlock } from '../../content/CodeBlock.js';
+import { HighlightedCodeBlock } from '../../content/HighlightedCodeBlock.js';
 import { Checkbox } from '../Checkbox.js';
 import { readOnlyCheckboxProps } from './internal/readOnlyCheckbox.js';
 import { createRichTextExtensions } from './extensions.js';
@@ -70,7 +70,9 @@ export function RichText({
           </li>
         ),
         codeBlock: ({ node }) => (
-          <CodeBlock language={node.attrs?.language}>{node.textContent}</CodeBlock>
+          <HighlightedCodeBlock language={node.attrs?.language}>
+            {node.textContent}
+          </HighlightedCodeBlock>
         ),
         image: ({ node }) =>
           node.attrs?.src && safeRichTextUrl(node.attrs.src) ? (

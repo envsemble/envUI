@@ -4,6 +4,7 @@ import { Text } from '../foundations/Text.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/control/ControlDefaults.js';
 import { StickyHeaderSize } from './internal/StickyHeaderSize.js';
+import { PageTitleFocus } from './internal/PageTitleFocus.js';
 import { Slot } from '../internal/layout/Slot.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';
@@ -54,6 +55,15 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
    * @default 'md'
    */
   controlSize?: 'sm' | 'md';
+  /**
+   * In a Scaffold, moves focus to the title of a level 1 header when the page changes: as the
+   * header mounts after the Scaffold first showed, or as its title changes. People using a screen
+   * reader then hear the new page, and the next Tab starts from it. Focus moved there shows no
+   * ring, and focus in a field or an open overlay stays where it is. False leaves focus to the
+   * application.
+   * @default true
+   */
+  focusOnNavigation?: boolean;
 }
 
 /**
@@ -72,10 +82,13 @@ export function PageHeader({
   toolbar,
   sticky = false,
   controlSize = 'md',
+  focusOnNavigation = true,
   className,
   ...props
 }: PageHeaderProps) {
   const Heading = `h${headingLevel}` as const;
+  const isPagesOwnHeading = headingLevel === 1;
+  const titleTakesFocus = isPagesOwnHeading && focusOnNavigation;
   return (
     <Column
       gap={3}
@@ -93,9 +106,18 @@ export function PageHeader({
         )}
         <Column gap={1} className="env-page-header-heading">
           <Row wrap align="center" className="env-page-header-title-line">
-            <Text variant="headline" render={<Heading className="env-page-header-title" />}>
+            <Text
+              variant="headline"
+              render={
+                <Heading
+                  className="env-page-header-title"
+                  tabIndex={titleTakesFocus ? -1 : undefined}
+                />
+              }
+            >
               {title}
             </Text>
+            {isPagesOwnHeading && <PageTitleFocus enabled={focusOnNavigation} />}
             {meta != null && (
               <Slot className="env-page-header-meta" layout="row">
                 {meta}

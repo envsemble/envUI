@@ -1,8 +1,8 @@
-import { CodeBlock } from '@envsemble/envui/code';
+import { CodeBlock } from '@envsemble/envui';
 
 export default function CodeBlockAnatomy() {
   return (
-    <CodeBlock language="sh" label="Terminal" copyable>
+    <CodeBlock label="Terminal" copyable>
       {'npm run build'}
     </CodeBlock>
   );
