@@ -58,4 +58,4 @@ To work on envUI itself, start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
 A published version never changes, and breaking changes come only in a new major version. Prereleases are published under the `prerelease` dist-tag, and stable releases under `latest`.
 
-envUI is proprietary and distributed privately. Bundled third-party assets and dependencies keep their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).
+envUI is open source under the [MIT license](LICENSE). It covers the code, not the envUI name or logos, which remain envsemble's. Bundled third-party assets and dependencies keep their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).
