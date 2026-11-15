@@ -5,6 +5,7 @@ import { libraryEntryPoints } from '../docs/LibraryEntryPoints.ts';
 import { repositoryRoot } from '../RepositoryPaths.ts';
 
 const libraryTokens = 'packages/ui/src/generated/tokens.json';
+const libraryTokenStyles = 'packages/ui/src/generated/Tokens.css';
 const handwrittenTokens = 'packages/ui/tokens/handwritten.json';
 const libraryParts = 'docs/generated/parts.json';
 const writingGuide = 'docs/writing.md';
@@ -160,8 +161,14 @@ export function parseVocabulary(markdown: string) {
   return words;
 }
 
-function definedCustomProperties(list: TokenList, handwritten: object, parts: PartsData) {
+function definedCustomProperties(
+  list: TokenList,
+  tokenStyles: string,
+  handwritten: object,
+  parts: PartsData,
+) {
   const names = new Set(list.tokens.map((token) => token.cssVariable));
+  for (const [, name] of tokenStyles.matchAll(/(--env-[\w-]+)\s*:/g)) names.add(name!);
   for (const id of Object.keys(handwritten))
     if (!id.startsWith('$')) names.add(`--env-${id.replaceAll('.', '-')}`);
   const components = [...Object.values(parts.components), ...Object.values(parts.shared ?? {})];
@@ -222,9 +229,10 @@ export function expectedFiles(): Map<string, string> {
     `${stylelintConfig}/data/customProperties.json`,
     jsonAsPrettierFormatsItExpanded({
       $comment: customPropertiesComment,
-      sources: [libraryTokens, handwrittenTokens, libraryParts],
+      sources: [libraryTokens, libraryTokenStyles, handwrittenTokens, libraryParts],
       names: definedCustomProperties(
         tokenList,
+        read(libraryTokenStyles),
         JSON.parse(read(handwrittenTokens)) as object,
         JSON.parse(read(libraryParts)) as PartsData,
       ),

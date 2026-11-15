@@ -19,6 +19,9 @@ ruleTester.run('no-link-in-clickable-row', rule, {
     ...named("A Button that isn't link-styled, in the end slot", [
       '<List.Item interactive label="Report" end={<Button variant="outline">Share</Button>} />',
     ]),
+    ...named('A text Button already in the end slot of a clickable row', [
+      '<List.Item onClick={open} label="Report" end={<Button variant="text">Share</Button>} />',
+    ]),
     '<Card href="/r/1">Report</Card>',
     '<Table.Row><Table.Cell><Link href="/r/1">Report</Link></Table.Cell></Table.Row>',
     ...named("Another library's component of the same name", [
@@ -27,7 +30,7 @@ ruleTester.run('no-link-in-clickable-row', rule, {
   ],
   invalid: [
     {
-      code: '<List.Item onClick={open} label="Report" end={<Button variant="text">Share</Button>} />',
+      code: '<List.Item onClick={open} label="Report"><Button variant="text">Share</Button></List.Item>',
       errors: [nested('A Button with variant="text"', 'List.Item', endSlot)],
     },
     {

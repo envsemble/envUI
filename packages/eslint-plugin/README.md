@@ -67,10 +67,10 @@ A Button with variant="text" inside a clickable List.Item: the row takes the cli
 
 ### label-vocabulary
 
-A label, a JSX text child or a `children`, `label`, `aria-label`, `title` or `…Label` prop, that is or starts with a word the vocabulary table of envUI's writing guide replaces, from [`src/data/vocabulary.json`](src/data/vocabulary.json). Text that reads as a sentence passes.
+The label of an action, `Button`, `IconButton`, `ConfirmButton`, `CopyButton`, `Link` or `Menu.Item`, in its text or its `children`, `label`, `aria-label` or `…Label` prop, that is a word the vocabulary table of envUI's writing guide replaces, from [`src/data/vocabulary.json`](src/data/vocabulary.json). A label with more words, such as "Clone repository", passes.
 
 ```text
-Write "Edit profile" instead of "Modify profile".
+Write "Edit" instead of "Modify".
 ```
 
 ## Development

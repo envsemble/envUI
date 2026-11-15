@@ -243,7 +243,9 @@ export default {
             fixer.insertTextAfter(/** @type {any} */ (envuiImport).specifiers.at(-1), ', Button'),
           );
         else {
-          const first = program.body[0];
+          const first = program.body.find(
+            (statement) => !('directive' in statement && statement.directive),
+          );
           const line = "import { Button } from '@envsemble/envui';\n";
           fixes.push(
             first ? fixer.insertTextBefore(first, line) : fixer.insertTextAfterRange([0, 0], line),

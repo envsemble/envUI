@@ -45,7 +45,10 @@ export function MessageListFollow({ label }: { label: string | undefined }) {
       resize.observe(list);
       for (const child of list.children) resize.observe(child);
     };
-    const mutation = new MutationObserver(() => {
+    const mutation = new MutationObserver((records) => {
+      for (const record of records)
+        for (const node of record.removedNodes)
+          if (node.nodeType === Node.ELEMENT_NODE) resize.unobserve(node as Element);
       observe();
       onResize();
     });

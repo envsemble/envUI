@@ -70,6 +70,8 @@ export default {
       const elements = [];
       walk(row, sourceCode.visitorKeys, (node) => {
         if (node === row) return true;
+        if (node.type === 'JSXAttribute' && node.parent === row.openingElement)
+          return jsxName(node.name) !== 'end';
         if (node.type !== 'JSXElement') return true;
         if (rows[envuiName(node.openingElement.name)]) return false;
         elements.push(node.openingElement);

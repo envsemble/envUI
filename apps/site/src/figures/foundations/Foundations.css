@@ -291,7 +291,7 @@
   align-content: start;
   gap: var(--env-space-3);
 }
-.catalogue-role-group > h4 {
+.catalogue-role-group > h3 {
   margin: 0;
 }
 .catalogue-role-swatches {

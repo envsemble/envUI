@@ -6,7 +6,21 @@ const replaced = Object.entries(readData('vocabulary.json').words).map(([word, u
 }));
 
 const isLabelAttribute = (name) =>
-  ['children', 'label', 'aria-label', 'title'].includes(name) || /^[a-z]\w*Label$/.test(name);
+  ['children', 'label', 'aria-label'].includes(name) || /^[a-z]\w*Label$/.test(name);
+
+const actionComponents = new Set([
+  'Button',
+  'IconButton',
+  'ConfirmButton',
+  'CopyButton',
+  'Link',
+  'Menu.Item',
+]);
+
+const isAction = (openingElement) => actionComponents.has(jsxName(openingElement.name));
+
+const isActionChild = (node) =>
+  node.parent.type === 'JSXElement' && isAction(node.parent.openingElement);
 
 const mostWordsInALabel = 6;
 
@@ -45,7 +59,7 @@ export default {
       const label = typeof text === 'string' ? labelText(text) : undefined;
       if (!label) return;
       const lower = label.toLowerCase();
-      const entry = replaced.find(({ word }) => lower === word || lower.startsWith(`${word} `));
+      const entry = replaced.find(({ word }) => lower === word);
       if (entry)
         context.report({
           node,
@@ -56,17 +70,18 @@ export default {
 
     return {
       JSXText(node) {
-        check(node, node.value);
+        if (isActionChild(node)) check(node, node.value);
       },
       JSXExpressionContainer(node) {
-        if (node.parent.type !== 'JSXElement' && node.parent.type !== 'JSXFragment') return;
+        if (!isActionChild(node)) return;
         const { expression } = node;
         if (expression.type === 'Literal') check(node, expression.value);
         else if (expression.type === 'TemplateLiteral' && expression.expressions.length === 0)
           check(node, expression.quasis[0].value.cooked);
       },
       JSXAttribute(node) {
-        if (node.value && isLabelAttribute(jsxName(node.name))) check(node, staticValue(node));
+        if (node.value && isAction(node.parent) && isLabelAttribute(jsxName(node.name)))
+          check(node, staticValue(node));
       },
     };
   },

@@ -212,10 +212,10 @@
   }
 
   .env-button:where([data-variant='text']).env-icon-button:first-child {
-    margin-inline-start: var(--_button-text-icon-edge-start, 0);
+    margin-inline-start: 0;
   }
   .env-button:where([data-variant='text']).env-icon-button:last-child {
-    margin-inline-end: var(--_button-text-icon-edge-end, 0);
+    margin-inline-end: 0;
   }
 
   .env-button:where([data-variant='text']).env-icon-button:hover:not(:disabled):not(

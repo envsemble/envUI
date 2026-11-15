@@ -19,7 +19,7 @@ Breaking changes:
 - `data-label-floating`, on the boxes of Select (`env-select-control`) and of the pickers (`env-date-picker-control`), is removed: the label no longer floats.
 - A field's label is no longer inside `env-text-field-control`: it is the field root's first child, above the box. Styles that placed the label in the box, or read it there, read `.env-text-field > label` instead.
 - A field's end action sits in a slot of its own, `env-text-field-end-action`, inside `env-text-field-end`; its start icon is the slot `env-text-field-start`, which no longer takes the accent while the field has focus.
-- TextField's `prefix` and `suffix` take a string, which the field cuts short with an ellipsis, rather than any content.
+- TextField's and SearchField's `prefix` and `suffix` take a string, which the field cuts short with an ellipsis, rather than any content.
 - A SegmentedControl item's `label` and a Slider's `label` take a string, which they cut short with an ellipsis, rather than any content.
 - A field's description renders as a `div` rather than a `small`, so it can hold any content.
 - `--env-text-field-indicator` no longer colors the label, which stays in the label color while the field has focus.

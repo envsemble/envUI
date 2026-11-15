@@ -20,7 +20,8 @@ function scale(name, label) {
     /^-?(?:\d+\.?\d*|\.\d+)rem$/.test(css) ? [{ token, rem: Number.parseFloat(css), css }] : [],
   );
   const family = entries.length ? entries[0][0].replace(/-[^-]+$/, '-') : '--env-';
-  return { label, literal, family };
+  const full = entries.find(([token]) => token.endsWith('-full'))?.[0];
+  return { label, literal, family, full };
 }
 
 const spacing = scale('space', 'spacing');
@@ -44,6 +45,8 @@ const messages = ruleMessages(ruleName, {
     `${length} in ${property}: write ${write(token, negative)} instead, envUI's ${scaleOf(property).label} step of that size.`,
   nearest: (length, property, token, css, negative) =>
     `${length} in ${property} is off envUI's ${scaleOf(property).label} scale: write the nearest step, ${write(token, negative)} (${css}), or another var(${scaleOf(property).family}…) step.`,
+  full: (length, property, token) =>
+    `${length} in ${property} is past envUI's largest ${scaleOf(property).label} step: write var(${token}) for a fully rounded corner.`,
   unknown: (length, property) =>
     `${length} in ${property} is off envUI's ${scaleOf(property).label} scale: write a var(${scaleOf(property).family}…) step.`,
 });
@@ -53,33 +56,34 @@ function passes(word) {
   return call !== null && (/^(?:var|env)$/i.test(call[1]) || /\bvar\(/i.test(word));
 }
 
+const onScaleUnit = (unit) => unit === 'rem' || unit === 'px';
+
 function literalLengths(value) {
-  return topLevelWords(value).flatMap(({ word, index }) =>
-    passes(word)
-      ? []
-      : numbers(word)
-          .filter(
-            ({ value: size, unit, functions }) =>
-              size !== 0 &&
-              unit !== '%' &&
-              unit !== '' &&
-              !functions.some((name) => name === 'var' || name === 'env'),
-          )
-          .map((length) => ({ ...length, index: index + length.index })),
-  );
+  return topLevelWords(value).flatMap(({ word, index }) => {
+    if (passes(word)) return [];
+    const lengths = numbers(word).filter(
+      ({ value: size, unit, functions }) =>
+        size !== 0 && unit !== '' && !functions.some((name) => name === 'var' || name === 'env'),
+    );
+    if (!lengths.every(({ unit }) => onScaleUnit(unit))) return [];
+    return lengths.map((length) => ({ ...length, index: index + length.index }));
+  });
 }
 
 const rule = (primary) => (root, result) => {
   if (!validateOptions(result, ruleName, { actual: primary, possible: [true] })) return;
   root.walkDecls(scaleProperty, (declaration) => {
     const property = declaration.prop.toLowerCase();
-    const { literal } = scaleOf(property);
+    const { literal, full } = scaleOf(property);
+    const largest = Math.max(...literal.map((step) => step.rem));
     for (const length of literalLengths(declaration.value)) {
       const rem = remOf(length);
       const negative = length.value < 0;
       let message;
       if (rem === undefined || literal.length === 0)
         message = messages.unknown(length.text, property);
+      else if (full && Math.abs(rem) > largest)
+        message = messages.full(length.text, property, full);
       else {
         const step = nearest(literal, Math.abs(rem));
         message =

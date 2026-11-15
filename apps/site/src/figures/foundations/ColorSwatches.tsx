@@ -51,7 +51,7 @@ export function SwatchesFigure({ legend }: FigureWords) {
           const title = legend[group]?.name ?? '';
           return (
             <section key={group} className="catalogue-role-group">
-              <Text render={<h4 />} variant="title">
+              <Text render={<h3 />} variant="title">
                 {title}
               </Text>
               <ul className="catalogue-role-swatches" aria-label={title}>

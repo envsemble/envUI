@@ -16,6 +16,12 @@ ruleTester.run('label-vocabulary', rule, {
     '<Button type="submit">Submit</Button>',
     '<Button>Send invitation</Button>',
     '<Pager.Next>Next</Pager.Next>',
+    ...named('Text outside an action, and an action label that only starts with a word', [
+      '<h2>Login history</h2>',
+      '<th>Retry count</th>',
+      '<Field label="Retry" />',
+      '<Button>Clone repository</Button>',
+    ]),
     ...named('Sentences, words inside a label and other props', [
       '<Text>Submit the form when every field is filled in.</Text>',
       '<Button>Save and submit</Button>',
@@ -24,10 +30,7 @@ ruleTester.run('label-vocabulary', rule, {
   ],
   invalid: [
     { code: '<Button type="submit">Proceed</Button>', errors: [replace('Proceed', 'Continue')] },
-    {
-      code: '<Button>Modify profile…</Button>',
-      errors: [replace('Modify profile', 'Edit profile')],
-    },
+    { code: '<Button>Modify…</Button>', errors: [replace('Modify', 'Edit')] },
     { code: '<Menu.Item label="Log out" />', errors: [replace('Log out', 'Sign out')] },
     { code: '<IconButton aria-label="clone" />', errors: [replace('clone', 'duplicate')] },
     { code: "<ConfirmButton confirmLabel={'Retry'} />", errors: [replace('Retry', 'Try again')] },

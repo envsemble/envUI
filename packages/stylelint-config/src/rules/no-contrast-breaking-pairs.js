@@ -16,6 +16,7 @@ function wholeToken(value) {
 
 const backgroundProperty = /^background(?:-color)?$/i;
 const textProperty = /^color$/i;
+const maskProperty = /^(?:-webkit-)?mask(?:-|$)/i;
 
 const colorTokens = tokens.color ?? [];
 const example = (prefix) =>
@@ -43,21 +44,25 @@ const rule = (primary) => (root, result) => {
   root.walkRules((node) => {
     let text;
     let fill;
+    const masked = node.nodes.some(
+      (declaration) => declaration.type === 'decl' && maskProperty.test(declaration.prop),
+    );
     for (const declaration of node.nodes) {
       if (declaration.type !== 'decl') continue;
       const token = wholeToken(declaration.value);
       if (!token) continue;
       const at = { start: declaration.value.indexOf(token.name), length: token.name.length };
       if (backgroundProperty.test(declaration.prop)) {
-        if (token.role === 'fg')
-          reportInValue({
-            result,
-            ruleName,
-            declaration,
-            message: messages.textAsBackground(token.name, declaration.prop),
-            ...at,
-          });
-        else fill = { declaration, token };
+        if (token.role === 'fg') {
+          if (!masked)
+            reportInValue({
+              result,
+              ruleName,
+              declaration,
+              message: messages.textAsBackground(token.name, declaration.prop),
+              ...at,
+            });
+        } else fill = { declaration, token };
       } else if (textProperty.test(declaration.prop)) {
         if (token.role === 'bg')
           reportInValue({

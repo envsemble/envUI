@@ -23,4 +23,5 @@ Breaking changes:
 - TopBar, NavigationDrawer, NavigationRail and NavigationBar default to `background="page"` and always write `data-background`, `page` or `default`. Write `background="default"` for the earlier fill.
 - Panes' `open` and `defaultOpen` default to `null` rather than `false`; an application that keeps `open` as `false` until people open the pane now has the pane closed side by side too: start it at `null`. Panes.Supporting shows its close button side by side unless `closeButton={false}`. Each pane's content is in `env-panes-body`, which scrolls in place of the pane, under `env-panes-header`.
 - Breadcrumbs' item `label` is a string.
+- A Dialog's, a Sheet's and a ConfirmDialog's `description` renders a `div` rather than a `p`, so it can hold any content.
 - `--env-z-backdrop` is now only a backdrop in the page, such as a supporting pane's; modal backdrops are at `--env-z-modal`.

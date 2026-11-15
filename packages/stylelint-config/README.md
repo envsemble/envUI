@@ -58,7 +58,7 @@ px outside hairline properties (border and outline widths, shadows, focus-ring o
 
 ### envui/no-off-scale-values
 
-A literal length in `gap`, `padding*`, `margin*`, `inset*` or `border-*radius`; `0`, `auto`, percentages and calculations with a token pass, and sizes such as `inline-size` aren't checked.
+A rem or px length in `gap`, `padding*`, `margin*`, `inset*` or `border-*radius`; `0`, `auto`, other units, calculations with another unit or a token pass, and sizes such as `inline-size` aren't checked. A radius past the largest step points to `var(--env-radius-full)`.
 
 ```text
 0.5rem in gap: write var(--env-space-2) instead, envUI's spacing step of that size.
@@ -74,7 +74,7 @@ An `--env-*` name, used or set, that isn't one of envUI's tokens or public prope
 
 ### envui/no-contrast-breaking-pairs
 
-In one rule, a text color for a fill, such as `var(--env-color-fg-on-emphasis)`, on a background that isn't one of those fills; a `var(--env-color-fg-…)` token as a whole background, or a `var(--env-color-bg-…)` token as a whole `color`.
+In one rule, a text color for a fill, such as `var(--env-color-fg-on-emphasis)`, on a background that isn't one of those fills; a `var(--env-color-fg-…)` token as a whole background, unless the rule sets a mask, or a `var(--env-color-bg-…)` token as a whole `color`.
 
 ```text
 --env-color-fg-on-emphasis is made for the emphasis fills, not --env-color-bg-default: write one of the emphasis fills, such as var(--env-color-bg-accent-emphasis), or a text color made for --env-color-bg-default.

@@ -214,6 +214,7 @@ test(
     await expect.element(required).toHaveAttribute('aria-required', 'true');
     await isFocused(required);
     await keyboard.press('Escape');
+    nativeInput.focus();
     await keyboard.press('ArrowDown');
     await isOpen();
     await option('Aurora').click();

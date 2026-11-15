@@ -120,6 +120,16 @@ ruleTester.run('no-html-elements', rule, {
             uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
           ],
         },
+        {
+          code: `'use client';
+<button type="submit">Save</button>;`,
+          output: `'use client';
+import { Button } from '@envsemble/envui';
+<Button type="submit">Save</Button>;`,
+          errors: [
+            uses('Button', 'a raw <button>', { alternatives: icon, imports: 'Button, IconButton' }),
+          ],
+        },
       ],
     ),
     ...named(

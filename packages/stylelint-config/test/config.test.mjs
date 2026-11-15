@@ -169,9 +169,9 @@ test('px is reported outside hairlines and offsets, and fixed to rem', async () 
 test("spacing and radius lengths off envUI's scales are reported with the step to write", async () => {
   assert.deepEqual(
     (
-      await lint('.a { padding: 8px 0.6rem; gap: 2em; margin: -0.5rem auto; border-radius: 4px; }')
+      await lint('.a { padding: 8px 0.6rem; gap: 2rem; margin: -0.5rem auto; border-radius: 4px; }')
     ).map(({ text }) => text),
-    ['8px', '0.6rem', '2em', '-0.5rem', '4px'],
+    ['8px', '0.6rem', '2rem', '-0.5rem', '4px'],
   );
   assert.equal(
     (await message('.a { gap: 0.5rem; }')).text,
@@ -183,6 +183,19 @@ test("spacing and radius lengths off envUI's scales are reported with the step t
   );
   await passes(
     '.a { margin: 0 auto; padding: 0; gap: 5%; inline-size: 13rem; inset: calc(var(--env-space-2) + 1px); }',
+  );
+});
+
+test('lengths in units other than rem and px, alone or in a calculation, are not checked against the scales', async () => {
+  await passes(
+    '.a { margin-inline: calc(50% - 50vw); padding-inline: 1ch; margin-block: 0.5em; inset-block-start: 100dvh; }',
+  );
+});
+
+test('a radius past the largest step is pointed to the full radius', async () => {
+  assert.equal(
+    (await message('.a { border-radius: 9999px; }')).text,
+    "9999px in border-radius is past envUI's largest radius step: write var(--env-radius-full) for a fully rounded corner. (envui/no-off-scale-values)",
   );
 });
 
@@ -198,6 +211,10 @@ test('an --env- name envUI does not define is reported, with the nearest public 
   await passes(
     '.a { --env-button-container: var(--env-color-bg-muted); color: var(--env-color-fg-default); --app-gap: 1rem; }',
   );
+});
+
+test('the members of a composite type token are known names', async () => {
+  await passes('.a { letter-spacing: var(--env-type-headline-letter-spacing); }');
 });
 
 test('token pairs that break contrast are reported', async () => {
@@ -222,6 +239,15 @@ test('token pairs that break contrast are reported', async () => {
   );
   await passes(
     '.a { background: color-mix(in oklch, var(--env-color-fg-default) 8%, transparent); }',
+  );
+});
+
+test('a text color as the fill of a masked icon passes', async () => {
+  await passes(
+    [
+      '.a { mask: url("icon.svg") center / contain no-repeat; background-color: var(--env-color-fg-muted); }',
+      '.b { -webkit-mask-image: url("icon.svg"); background: var(--env-color-fg-default); }',
+    ].join('\n'),
   );
 });
 

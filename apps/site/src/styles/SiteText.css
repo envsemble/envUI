@@ -96,7 +96,6 @@
 
 :where(.site-figure-section .env-markdown:not(.site-when *)) > ul {
   --_prose-list-item-gap: var(--env-space-2);
-  --_prose-list-marker-fill: transparent;
   --_prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
   --_prose-list-marker-gap: var(--env-space-2);
   --_prose-list-mark-color: var(--env-color-fg-muted);
